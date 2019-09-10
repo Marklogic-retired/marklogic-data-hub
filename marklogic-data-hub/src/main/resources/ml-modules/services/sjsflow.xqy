@@ -19,12 +19,12 @@ declare function ml-sjsflow:source-format() as xs:string {
 declare function ml-sjsflow:get(
   $context as map:map, $params as map:map
 ) as document-node()? {
-  map:get(xdmp:apply($caller,$extName,$modPath,"GET",$context,$params),"results")
+  map:get(xdmp:apply($caller,$extName,$modPath,"GET",$context,$params),"result")
 };
 declare function ml-sjsflow:delete(
   $context as map:map, $params as map:map
 ) as document-node()? {
-  map:get(xdmp:apply($caller,$extName,$modPath,"DELETE",$context,$params),"results")
+  map:get(xdmp:apply($caller,$extName,$modPath,"DELETE",$context,$params),"result")
 };
 declare function ml-sjsflow:post(
   $context as map:map, $params as map:map, $input as document-node()*
