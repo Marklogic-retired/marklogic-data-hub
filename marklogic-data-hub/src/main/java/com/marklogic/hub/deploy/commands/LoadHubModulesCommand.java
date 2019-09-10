@@ -63,7 +63,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
         AssetFileLoader assetFileLoader = new AssetFileLoader(modulesClient);
         prepareAssetFileLoader(assetFileLoader, context);
 
-        DefaultModulesLoader modulesLoader = new DefaultModulesLoader(assetFileLoader);
+        HubModulesLoader modulesLoader = new HubModulesLoader(assetFileLoader);
         modulesLoader.addFailureListener((throwable, client) -> {
             // ensure we throw the first exception
             if (caughtException == null) {
@@ -95,7 +95,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
         if (batchSize != null) {
             loader.setBatchSize(batchSize);
         }
-        
+
         JarDocumentFileReader jarDocumentFileReader = new JarDocumentFileReader();
         jarDocumentFileReader.addDocumentFileProcessor(new CacheBusterDocumentFileProcessor());
         jarDocumentFileReader.addDocumentFileProcessor(new TokenReplacerDocumentFileProcessor(buildModuleTokenReplacer(appConfig)));

@@ -122,7 +122,7 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
         PropertiesModuleManager moduleManager = getModulesManager();
         AssetFileLoader assetFileLoader = getAssetFileLoader(config, moduleManager);
 
-        DefaultModulesLoader modulesLoader = new DefaultModulesLoader(assetFileLoader);
+        DefaultModulesLoader modulesLoader = new HubModulesLoader(assetFileLoader);
         modulesLoader.setModulesManager(moduleManager);
         modulesLoader.setTaskExecutor(this.threadPoolTaskExecutor);
         modulesLoader.setShutdownTaskExecutorAfterLoadingModules(false);
