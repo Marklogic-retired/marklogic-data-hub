@@ -806,7 +806,7 @@ public class DataHubImpl implements DataHub {
              * Replace ml-gradle's DeployOtherServersCommand with a subclass that has DHF-specific functionality
              */
             if (c instanceof DeployOtherServersCommand) {
-                newCommands.add(new DeployHubOtherServersCommand());
+                newCommands.add(new DeployHubOtherServersCommand(this));
             }
             else {
                 newCommands.add(c);
