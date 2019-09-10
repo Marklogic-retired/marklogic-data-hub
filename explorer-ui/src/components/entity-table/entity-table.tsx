@@ -85,7 +85,9 @@ const EntityTable:React.FC<Props> = (props) => {
     if (props.facetValues.length) {
       const name = entity.info.title.toLowerCase();
       const collectionObject = props.facetValues.find(collection => collection.name === name + '-collection');
-      documentCount = collectionObject.count;
+      if (collectionObject) {
+        documentCount = collectionObject.count;
+      }
     }
 
     let parsedEntity = {
