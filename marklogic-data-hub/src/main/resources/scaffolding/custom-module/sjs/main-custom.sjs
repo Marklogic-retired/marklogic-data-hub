@@ -81,8 +81,8 @@ function main(content, options) {
   //gets headers, return null if cannot be found
   let headers = datahub.flow.flowUtils.getHeadersAsObject(doc) || {};
 
-  //If you want to set attachments, use the $attachments key and grab the node version
-  instance['$attachments'] = datahub.flow.flowUtils.createAttachments(doc, outputFormat);
+  //If you want to set attachments, uncomment here
+  // instance['$attachments'] = doc;
 
   //for ES models, you will want to specify entity/version if they are not already part of your instance
   //instance['$title'] = 'myEntity';
