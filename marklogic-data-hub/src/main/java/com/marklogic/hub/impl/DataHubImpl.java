@@ -633,6 +633,11 @@ public class DataHubImpl implements DataHub {
 
         AppConfig appConfig = hubConfig.getAppConfig();
         if (appConfig != null) {
+            appConfig.setContentDatabaseName(hubConfig.getDbName(DatabaseKind.FINAL));
+            appConfig.setTriggersDatabaseName(hubConfig.getDbName(DatabaseKind.FINAL_TRIGGERS));
+            appConfig.setSchemasDatabaseName(hubConfig.getDbName(DatabaseKind.FINAL_SCHEMAS));
+            appConfig.setModulesDatabaseName(hubConfig.getDbName(DatabaseKind.MODULES));
+
             Map<String, String> customTokens = appConfig.getCustomTokens();
             customTokens.put("%%mlStagingDbName%%", hubConfig.getDbName(DatabaseKind.STAGING));
             customTokens.put("%%mlFinalDbName%%", hubConfig.getDbName(DatabaseKind.FINAL));
