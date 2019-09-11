@@ -6,18 +6,35 @@ import SearchPagination from '../components/search-pagination/search-pagination'
 import { Layout, Spin } from 'antd';
 import SearchSummary from '../components/search-summary/search-summary';
 import SearchResults from '../components/search-results/search-results';
+import { entityFromJSON } from '../util/data-conversion';
+
+interface SearchParams {
+  start: number,
+  pageLength: number,
+  entities: string[]
+}
 
 const Browse: React.FC = () => {
   const { Content, Sider } = Layout;
 
   const [data, setData] = useState();
+  const [entities, setEntites] = useState<any[]>([]);
   const [facets, setFacets] = useState();
   const [searchUrl, setSearchUrl] = useState<any>({ url: `/datahub/v2/search?format=json&database=data-hub-FINAL`, method: 'post' });
   const [searchQuery, setSearchQuery] = useState();
-  const [searchParams, setSearchParams] = useState({ start: 1, pageLength: 10 });
+  const [searchParams, setSearchParams] = useState({ start: 1, pageLength: 10, entities: entities });
   const [searchFacets, setSearchFacets] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [totalDocuments, setTotalDocuments] = useState();
+
+  const getEntityModel = async () => {
+    try {
+      const response = await axios(`/datahub/v2/models`);
+      setEntites([ ...entityFromJSON(response.data).map(entity => entity.info.title)]);
+    } catch (error) {
+      // console.log('error', error.response);
+    }
+  }
 
   const getSearchResults = async () => {
     try {
@@ -27,7 +44,7 @@ const Browse: React.FC = () => {
         url: searchUrl.url,
         data: {
           query: searchQuery,
-          entityNames: [], // TODO handle entity selection
+          entityNames: searchParams.entities,
           start: searchParams.start,
           pageLength: searchParams.pageLength,
           facets: searchFacets
@@ -44,6 +61,7 @@ const Browse: React.FC = () => {
   }
 
   useEffect(() => {
+    getEntityModel();
     getSearchResults();
   }, [searchQuery, searchParams, searchFacets]);
 
@@ -73,6 +91,11 @@ const Browse: React.FC = () => {
     }
   }
 
+  const handleOptionSelect = (option: string) => {
+    console.log('Selected Option is ' + option);
+    option === 'All Entities' ?  setSearchParams({ ...searchParams, entities: []}) :  setSearchParams({ ...searchParams, entities: [option]});
+  }
+
   return (
     <Layout>
       <Sider width={300} style={{ background: '#f3f3f3' }}>
@@ -82,7 +105,7 @@ const Browse: React.FC = () => {
         />
       </Sider>
       <Content style={{ background: '#fff', padding: '24px' }}>
-        <SearchBar searchCallback={handleSearch} />
+      <SearchBar searchCallback={handleSearch} optionSelectCallback={handleOptionSelect} entities={entities}/>
         {isLoading ? 
           <Spin tip="Loading..." style={{ margin: '100px auto', width: '100%'}} />
           : 
