@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import axios from 'axios';
 import { Layout, Menu, Icon } from 'antd';
@@ -11,33 +11,41 @@ interface Props extends RouteComponentProps<any> {}
 
 const { SubMenu } = Menu;
 
-const Header:React.FC<Props> = ({history}) => {
+const Header:React.FC<Props> = ({ location }) => {
   const { user, userNotAuthenticated } = useContext(AuthContext);
+  const [selectedMenu, setSelectedMenu] = useState<string[]>([]);
   
   const handleLogout = async () => {
     try {
       let response = await axios(`/datahub/v2/logout`);
       console.log('response', response);
       userNotAuthenticated();
-      history.push('/');
     } catch (error) {
       // console.log(error.response);
     }
   };
+
+  useEffect(() => {
+    if (location.pathname === '/detail'){
+      setSelectedMenu(['/browse']);
+    } else {
+      setSelectedMenu([location.pathname]);
+    }
+  }, [location.pathname]);
 
   const showMenu = user.authenticated && (
     <Menu
       id="menu-links" 
       mode="horizontal"
       theme="dark"
-      defaultSelectedKeys={['view']}
+      selectedKeys={selectedMenu}
       style={{ lineHeight: '64px' }}
     >
-      <Menu.Item key="view">
+      <Menu.Item key="/view">
         View Entities
         <Link to="/view"/>
       </Menu.Item>
-      <Menu.Item key="browse">
+      <Menu.Item key="/browse">
         Browse Documents
         <Link to="/browse"/>
       </Menu.Item>
@@ -55,7 +63,7 @@ const Header:React.FC<Props> = ({history}) => {
       </div>
       <div id="title" className={styles.title}>Data Hub Explorer</div>
       {showMenu}
-      <a id="help-icon" className={styles.helpContain} target="_blank" href="https://www.marklogic.com/">
+      <a id="help-icon" className={styles.helpContain} target="_blank" rel="noopener noreferrer" href="https://www.marklogic.com/">
         <Icon className={styles.help} type="question-circle"/>
       </a>
     </Layout.Header>

@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { RouteComponentProps } from 'react-router-dom';
+import { AuthContext } from '../util/auth-context';
 import styles from './Detail.module.scss';
 import TableView from '../components/table-view/table-view';
 import JsonView from '../components/json-view/json-view';
@@ -12,6 +13,7 @@ interface Props extends RouteComponentProps<any> { }
 const Detail: React.FC<Props> = ({ history }) => {
 
   const { Content } = Layout;
+  const { userNotAuthenticated } = useContext(AuthContext);
   const [selected, setSelected] = useState('instance');
   const [data, setData] = useState();
   const [query, setQuery] = useState(history.location.state.uri);
@@ -22,11 +24,18 @@ const Detail: React.FC<Props> = ({ history }) => {
   useEffect(() => {
     setIsLoading(true);
     const fetchData = async () => {
-      const result = await axios(
-        `/v1/documents?database=` + database + `&uri=${query}`,
-      );
-      setData(result.data);
-      setIsLoading(false);
+      try {
+        const result = await axios(
+          `/v1/documents?database=` + database + `&uri=${query}`,
+        );
+        setData(result.data);
+        setIsLoading(false);
+      } catch (error) {
+        // console.log('error', error.response);
+        if (error.response.status === 401) {
+          userNotAuthenticated();
+        }
+      }
     };
 
     
