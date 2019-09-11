@@ -120,6 +120,9 @@ function post(context, params, input) {
       "failedItems": tracelib.getFailedItems(),
       "errors": errors
     }
+    if(resp.errorCount > 0){
+      fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([400, "Plugin error", resp]));
+    }
   }
   else {
     resp = 'error';
