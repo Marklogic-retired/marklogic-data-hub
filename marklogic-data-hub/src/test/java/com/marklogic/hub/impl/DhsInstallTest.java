@@ -92,6 +92,11 @@ public class DhsInstallTest extends HubTestBase {
         hubConfig.modifyCustomTokensMap(appConfig);
         assertEquals("my-staging-db", appConfig.getCustomTokens().get("%%mlStagingDbName%%"));
 
+        appConfig.setContentDatabaseName("my-final-db");
+        appConfig.setTriggersDatabaseName("my-final-triggers");
+        appConfig.setSchemasDatabaseName("my-final-schemas");
+        appConfig.setModulesDatabaseName("my-modules");
+
         new DataHubImpl().setKnownValuesForDhsInstall(hubConfig);
 
         assertEquals(HubConfig.DEFAULT_STAGING_NAME, hubConfig.getHttpName(DatabaseKind.STAGING));
@@ -119,6 +124,12 @@ public class DhsInstallTest extends HubTestBase {
         assertEquals(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, tokens.get("%%mlStagingSchemasDbName%%"));
         assertEquals(HubConfig.DEFAULT_FINAL_TRIGGERS_DB_NAME, tokens.get("%%mlFinalTriggersDbName%%"));
         assertEquals(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, tokens.get("%%mlFinalSchemasDbName%%"));
+
+        // Verify that ml-gradle's "default" database properties are set to the expected default values as well
+        assertEquals(HubConfig.DEFAULT_FINAL_NAME, appConfig.getContentDatabaseName());
+        assertEquals(HubConfig.DEFAULT_FINAL_TRIGGERS_DB_NAME, appConfig.getTriggersDatabaseName());
+        assertEquals(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, appConfig.getSchemasDatabaseName());
+        assertEquals(HubConfig.DEFAULT_MODULES_DB_NAME, appConfig.getModulesDatabaseName());
     }
 
     @Test
