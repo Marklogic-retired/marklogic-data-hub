@@ -23,7 +23,7 @@ pipeline{
                       println("Explorer Build FAILED")
                       script{
                       def email;
-                    if(env.CHANGE_AUTHOR){
+                    if(env.CHANGE_AUTHOR_EMAIL){
                     	def author=env.CHANGE_AUTHOR_EMAIL.toString().trim().toLowerCase()
                     	email=author;
                     }else{
@@ -37,12 +37,14 @@ pipeline{
 		stage('Unit-Tests'){
 		agent { label 'explorerLinux'}
 			steps{
-				sh 'cd $WORKSPACE/explorer-ui/explorer-ui;npm install; CI=true npm run test | true'
-				junit '**/TEST-*.xml'
+				sh 'cd $WORKSPACE/explorer-ui;npm install; CI=true npm run test | true'
+				junit '**/*.xml'
 				script{
 				if(env.CHANGE_TITLE){
 				JIRA_ID=env.CHANGE_TITLE.split(':')[0]
+				if(JIRA_ID.startsWith("DHFPROD")){
 				jiraAddComment comment: 'Jenkins Unit Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+				}
 				}
 				}
 			}
