@@ -9,22 +9,27 @@
 
 	.name {
 		display: inline-block;
-		width: 110px;
+		width: 115px;
+		position: relative;
+		top: 5px;
 		font-size: 15px;
 		font-weight: bold;
 		padding: 5px 0 0 5px;
+		white-space: nowrap;
+    	overflow: hidden;
+    	text-overflow: ellipsis;
 	}
 
 	.summary {
 		display: inline-block;
-		width: 140px;
+		width: 135px;
 		text-align: right;
 		padding: 0;
 		font-size: 12px;
 
 		.selected {
 			display: inline-block;
-			width: 75px;
+			width: 70px;
 			padding: 0 5px 0 0;
 			color: #666;
 		}
