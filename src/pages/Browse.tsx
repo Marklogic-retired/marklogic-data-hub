@@ -22,7 +22,7 @@ const Browse: React.FC = () => {
   const [facets, setFacets] = useState();
   const [searchUrl, setSearchUrl] = useState<any>({ url: `/datahub/v2/search?format=json&database=data-hub-FINAL`, method: 'post' });
   const [searchQuery, setSearchQuery] = useState();
-  const [searchParams, setSearchParams] = useState({ start: 1, pageLength: 10, entities: entities });
+  const [searchParams, setSearchParams] = useState<SearchParams>({ start: 1, pageLength: 10, entities: entities });
   const [searchFacets, setSearchFacets] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [totalDocuments, setTotalDocuments] = useState();
