@@ -20,5 +20,6 @@ declare function ml-sjsInputFlow:source-format() as xs:string {
 declare function ml-sjsInputFlow:transform(
   $context as map:map, $params as map:map, $input as document-node()
 ) as document-node() {
+  map:set-javascript-by-ref($context, fn:true()),
   map:get(xdmp:apply($caller,$extName,$modPath,"transform",$context,$params,$input), "result")
 };

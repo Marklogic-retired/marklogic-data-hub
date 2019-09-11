@@ -19,24 +19,29 @@ declare function ml-flows:source-format() as xs:string {
 declare function ml-flows:get(
   $context as map:map, $params as map:map
 ) as document-node()? {
+  map:set-javascript-by-ref($context, fn:true()),
   map:get(xdmp:apply($caller,$extName,$modPath,"GET",$context,$params),"result")
 };
 declare function ml-flows:delete(
   $context as map:map, $params as map:map
 ) as document-node()? {
+  map:set-javascript-by-ref($context, fn:true()),
   map:get(xdmp:apply($caller,$extName,$modPath,"DELETE",$context,$params),"result")
 };
 declare function ml-flows:post(
   $context as map:map, $params as map:map, $input as document-node()*
 ) as document-node()? {
+  map:set-javascript-by-ref($context, fn:true()),
   map:get(xdmp:apply($caller,$extName,$modPath,"POST",$context,$params,$input), "results")
 };
 declare function ml-flows:put($context as map:map, $params as map:map, $input as document-node()*
 ) as document-node()? {
+  map:set-javascript-by-ref($context, fn:true()),
   map:get(xdmp:apply($caller,$extName,$modPath,"PUT",$context,$params,$input), "results")
 };
 declare function ml-flows:transform(
   $context as map:map, $params as map:map, $input as document-node()?
 ) as document-node()? {
+  map:set-javascript-by-ref($context, fn:true()),
   map:get(xdmp:apply($caller,$extName,$modPath,"transform",$context,$params,$input), "results")
 };
