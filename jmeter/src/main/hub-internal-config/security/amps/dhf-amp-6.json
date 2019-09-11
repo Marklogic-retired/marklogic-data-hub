@@ -1,0 +1,7 @@
+{
+  "namespace" : "http://marklogic.com/rest-api/lib/endpoint-util",
+  "local-name" : "add-cookie",
+  "document-uri" : "/data-hub/5/rest-api/lib/endpoint-util.xqy",
+  "modules-database" : "%%mlModulesDbName%%",
+  "role" : [ "rest-reader-internal" ]
+}

@@ -1,0 +1,21 @@
+{
+  "id": 0,
+  "fname": "Will",
+  "lname": "Hopkins",
+  "lastname": "Hopkins",
+  "age": 45,
+  "gender": "male",
+  "eyeColor": "green",
+  "company": "COMVENE",
+  "email": "janethopkins@comvene.com",
+  "phone": "+1 (988) 597-3702",
+  "street": "428 Aster Court",
+  "city": "Wyoming",
+  "state": "District Of Columbia",
+  "zip": "90644-0000",
+  "isActive": true,
+  "balance": "$3,614.67",
+  "registered": "2014-08-10T02:46:25 +07:00",
+  "favoriteFruit": "apple",
+  "synonym": "large"
+}

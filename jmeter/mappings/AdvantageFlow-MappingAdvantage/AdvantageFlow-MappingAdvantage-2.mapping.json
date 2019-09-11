@@ -1,0 +1,26 @@
+{
+  "language" : "zxx",
+  "name" : "AdvantageFlow-MappingAdvantage",
+  "description" : "Default description",
+  "version" : 2,
+  "targetEntityType" : "http://example.org/Customer-0.0.1/Customer",
+  "sourceContext" : "/",
+  "sourceURI" : "/Users/ayuwono/dhf-test/input/advantage/cust101.json",
+  "properties" : {
+    "zip" : {
+      "sourcedFrom" : "Postal"
+    },
+    "firstname" : {
+      "sourcedFrom" : "FirstName"
+    },
+    "id" : {
+      "sourcedFrom" : "customerID"
+    },
+    "email" : {
+      "sourcedFrom" : "Email"
+    },
+    "lastname" : {
+      "sourcedFrom" : "LastName"
+    }
+  }
+}
