@@ -8,6 +8,9 @@
 
 Make sure that there is no DHF installed
 
+- git clone Explorer-UI: https://project.marklogic.com/repo/scm/prod/explorer-ui.git
+- git checkout develop
+- cd jmeter
 - To setup: ./setup.sh
 
 - To run jmeter test: jmeter -n -Jthreads=10 -Jcount=1 -Jrumpup=10 -Jhost=192.168.56.1 -Jport=3000 -t explorer_performance.jmx -l result.jtl
