@@ -1,10 +1,20 @@
-# explorer-concurrent-users
+# Running explorer concurrent users jmeter tests
 
-To setup: ./setup.sh
+- Run explorer backend springboot:
+* git clone Datahub Enterprise: https://project.marklogic.com/repo/scm/prod/datahubenterprise.git
+* checkout develop branch
+* ./gradlew build -x test -Pskipui=true
+* java -jar explorer/build/libs/explorer-5.0.2.jar & (run this is a background process)
 
-To teardown: ./teardown.sh
+Make sure that there is no DHF installed
 
-Standalone tasks:
+- To setup: ./setup.sh
+
+- To run jmeter test: jmeter -n -Jthreads=10 -Jcount=1 -Jrumpup=10 -Jhost=192.168.56.1 -Jport=3000 -t explorer_performance.jmx -l result.jtl
+
+- To teardown: ./teardown.sh
+
+# Standalone tasks:
 
 1) Install data-hub and add entities:
 ./gradlew mlDeploy
