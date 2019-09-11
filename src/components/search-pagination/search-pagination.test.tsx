@@ -1,4 +1,5 @@
 import React from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
 import { shallow, mount } from 'enzyme';
 import Pagination from './search-pagination';
 
@@ -7,7 +8,7 @@ describe("Search Pagination component", () => {
     let wrapper;
 
     beforeAll(() => {
-        wrapper = mount(<Pagination />);
+        wrapper = mount(<Router><Pagination total={10}/></Router>);
       });
 
     test("renders", () => {
