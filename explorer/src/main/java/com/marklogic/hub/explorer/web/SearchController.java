@@ -30,22 +30,22 @@ public class SearchController {
     return searchService.search(searchQuery).get();
   }
 
-    @RequestMapping(method = RequestMethod.GET)
-    @ResponseBody
-    public ResponseEntity<Document> search(@RequestParam String docUri) {
-        Document doc = searchService.getDocument(docUri);
-        HttpHeaders headers = new HttpHeaders();
+  @RequestMapping(method = RequestMethod.GET)
+  @ResponseBody
+  public ResponseEntity<Document> search(@RequestParam String docUri) {
+    Document doc = searchService.getDocument(docUri);
+    HttpHeaders headers = new HttpHeaders();
 
-        if(doc == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        if(doc.getContent().startsWith("<")) {
-            headers.setContentType(MediaType.APPLICATION_XML);
-        } else {
-            headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        }
-        return new ResponseEntity<>(doc, headers, HttpStatus.OK);
+    if (doc == null) {
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
+    if (doc.getContent().startsWith("<")) {
+      headers.setContentType(MediaType.APPLICATION_XML);
+    } else {
+      headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+    }
+    return new ResponseEntity<>(doc, headers, HttpStatus.OK);
+  }
 
 }
