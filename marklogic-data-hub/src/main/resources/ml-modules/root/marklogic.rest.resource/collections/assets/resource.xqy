@@ -10,7 +10,7 @@ declare option xdmp:mapping "false";
 declare private variable $extName := "ml:collections";
 declare private variable $modPath := "/data-hub/5/services/collections.sjs";
 declare private variable $caller  := xdmp:function(
-  xs:QName("applyOnce"), "/MarkLogic/rest-api/lib/extensions-util.sjs"
+  xs:QName("applyOnce"), "/data-hub/5/rest-api/lib/extensions-util.sjs"
 );
 
 declare function ml-collections:source-format() as xs:string {

@@ -10,7 +10,7 @@ declare option xdmp:mapping "false";
 declare private variable $extName := "ml:traceSearchResults";
 declare private variable $modPath := "/data-hub/4/transforms/traceSearchResults.sjs";
 declare private variable $caller  := xdmp:function(
-  xs:QName("applyOnce"), "/MarkLogic/rest-api/lib/extensions-util.sjs"
+  xs:QName("applyOnce"), "/data-hub/5/rest-api/lib/extensions-util.sjs"
 );
 
 declare function ml-traceSearchResults:source-format() as xs:string {
