@@ -85,10 +85,16 @@ defaultMappingLib.cachedEntityByTitleAndVersion['Customer:0.0.1'] = customerEnti
 defaultMappingLib.cachedEntityByTitleAndVersion['Order:0.0.1'] = orderEntity;
 
 const template = fn.tail(xdmp.tidy(mappingLib.buildEntityMappingXML(customerMapping.toObject(), customerEntity.toObject()), { inputXml: 'yes'}));
+
+/*
+Per DHFPROD-2811, the "optional" is expected on the required ID element. If it's not marked as optional, and doesn't
+have a value, then it will be added as ID:"". But that will not fail schema validation. Thus, by making it optional,
+the "ID" property won't be included at all, which will properly fail schema validation.
+ */
 const expectedTemplate = fn.tail(xdmp.tidy(`
   <m:entity name="Customer" xmlns:m="http://marklogic.com/entity-services/mapping">
     <Customer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-      <ID xsi:type="xs:string"><m:val>string(@CustomerID)</m:val></ID>
+      <m:optional><ID xsi:type="xs:string"><m:val>string(@CustomerID)</m:val></ID></m:optional>
       <m:optional><Date xsi:type="xs:dateTime"><m:val>parseDateTime('DD/MM/YYYY-hh:mm:ss', date)</m:val></Date></m:optional>
       <m:for-each><m:select>orders/order</m:select>
         <Orders datatype='array'>

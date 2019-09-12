@@ -33,7 +33,6 @@ function esMapsJSONasExpected() {
     },
     "targetEntity" : "Customer"
   }).value.toObject().envelope.instance.Customer;
-  console.log("INSTANCE", mappedInstance);
   const message = `Unexpected output: ${describe(mappedInstance)}`;
   return [
     test.assertEqual(15, mappedInstance.sum, message),

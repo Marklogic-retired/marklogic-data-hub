@@ -1,0 +1,34 @@
+{
+  "info": {
+    "title": "Customer",
+    "version": "0.0.1",
+    "description": "A customer",
+    "baseUri": "http://www.marklogic.com/"
+  },
+  "definitions": {
+    "Customer": {
+      "required": [
+        "FirstName",
+        "LastName"
+      ],
+      "properties": {
+        "Id": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "FirstName": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "LastName": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Email": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}

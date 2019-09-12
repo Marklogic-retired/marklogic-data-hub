@@ -14,7 +14,8 @@
         "collections": [
           "default-mapping",
           "mdm-content"
-        ]
+        ],
+        "validateEntity": false
       }
     }
   }
