@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rapi:transform-metadata xmlns:rapi="http://marklogic.com/rest-api"><rapi:name>ml:jobSearchResults</rapi:name><rapi:source-format>xquery</rapi:source-format><rapi:title>ml:jobSearchResults</rapi:title><rapi:description>
+  </rapi:description><rapi:transform-parameters/></rapi:transform-metadata>
