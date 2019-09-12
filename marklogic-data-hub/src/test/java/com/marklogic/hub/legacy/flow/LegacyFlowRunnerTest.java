@@ -264,7 +264,7 @@ public class LegacyFlowRunnerTest extends HubTestBase {
             installUserModules(getHubFlowRunnerConfig(), false);
         }
         catch(Exception e) {
-            Assert.assertTrue(e.getMessage().toUpperCase().contains("SEC-URIPRIV:"));
+            Assert.assertTrue(e.getMessage().toUpperCase().contains("SEC-URIPRIV:") || e.getMessage().toLowerCase().contains("do not have permission"));
         }
         //The flow should not be deployed.
         assertNull(getModulesFile("/entities/"+ENTITY+"/harmonize/FlowWithHubUser/FlowWithHubUser.xml"));
@@ -275,7 +275,7 @@ public class LegacyFlowRunnerTest extends HubTestBase {
             installUserModules(getHubFlowRunnerConfig(), false);
         }
         catch(Exception e) {
-            Assert.assertTrue(e.getMessage().toUpperCase().contains("SEC-URIPRIV:"));
+            Assert.assertTrue(e.getMessage().toUpperCase().contains("SEC-URIPRIV:") || e.getMessage().toLowerCase().contains("do not have permission"));
         }
         getDataHubAdminConfig();
         assertNull(getModulesFile("/entities/"+ENTITY+".entity.json"));

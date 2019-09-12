@@ -9,7 +9,7 @@ import module namespace lid = "http://marklogic.com/util/log-id"
     at "/MarkLogic/appservices/utils/log-id.xqy";
 
 import module namespace eput = "http://marklogic.com/rest-api/lib/endpoint-util"
-    at "/MarkLogic/rest-api/lib/lib/endpoint-util.xqy";
+    at "/MarkLogic/rest-api/lib/endpoint-util.xqy";
 
 import module namespace parameters = "http://marklogic.com/rest-api/endpoints/parameters"
     at "/MarkLogic/rest-api/endpoints/parameters.xqy";
