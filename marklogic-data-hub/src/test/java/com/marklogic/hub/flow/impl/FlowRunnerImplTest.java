@@ -1,40 +1,17 @@
 package com.marklogic.hub.flow.impl;
 
-import com.marklogic.bootstrap.Installer;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.impl.FailedRequest;
-import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.RunFlowResponse;
-import org.custommonkey.xmlunit.XMLUnit;
-
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.io.IOException;
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-class FlowRunnerImplTest extends HubTestBase {
-    @BeforeEach
-    public void setup() throws IOException {
-        XMLUnit.setIgnoreWhitespace(true);
-        createProjectDir();
-        getDataHubAdminConfig();
-    }
+class FlowRunnerImplTest  {
 
-    @AfterAll
-    public static void cleanup() throws IOException {
-        new Installer().teardownProject();
-    }
     @Test
     public void testFlowRunnerException() {
         RunFlowResponse resp = null;
-        FlowRunnerImpl fr = new FlowRunnerImpl(adminHubConfig);
+        FlowRunnerImpl fr = new FlowRunnerImpl();
         FailedRequest req = new FailedRequest();
         req.setMessageCode("RESTAPI-SRVEXERR");
         req.setMessageString("{\n" +
@@ -54,7 +31,7 @@ class FlowRunnerImplTest extends HubTestBase {
     @Test
     public void testFlowRunnerExceptionWithoutPluginError() {
         RunFlowResponse resp = null;
-        FlowRunnerImpl fr = new FlowRunnerImpl(adminHubConfig);
+        FlowRunnerImpl fr = new FlowRunnerImpl();
         FailedRequest req = new FailedRequest();
         req.setMessageCode("RESTAPI-SRVEXERR");
         req.setMessageString("{\n" +
