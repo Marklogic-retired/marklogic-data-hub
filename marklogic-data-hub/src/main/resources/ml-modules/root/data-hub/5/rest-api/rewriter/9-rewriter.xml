@@ -207,12 +207,12 @@
 
         <match-path matches="^/(v1|LATEST)/config/resources/?$">
             <match-accept any-of="application/json application/xml text/json text/xml */*">
-                <dispatch>/MarkLogic/rest-api/endpoints/resource-list-query.xqy</dispatch>
+                <dispatch>/data-hub/5/rest-api/endpoints/resource-list-query.xqy</dispatch>
             </match-accept>
             <match-header name="accept">
                 <dispatch>/MarkLogic/rest-api/endpoints/unacceptable-type.xqy</dispatch>
             </match-header>
-            <dispatch>/MarkLogic/rest-api/endpoints/resource-list-query.xqy</dispatch>
+            <dispatch>/data-hub/5/rest-api/endpoints/resource-list-query.xqy</dispatch>
         </match-path>
 
         <match-path matches="^/(v1|LATEST)/config/resources/([^/]+)/?$">
