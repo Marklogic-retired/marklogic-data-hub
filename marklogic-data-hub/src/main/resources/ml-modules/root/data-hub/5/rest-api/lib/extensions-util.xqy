@@ -429,7 +429,6 @@ declare function extut:get-extension-function(
     $function-name  as xs:string
 ) as xdmp:function?
 {
-    xdmp:log(fn:string-join(("get-extension-function:", $extension-type, $extension-name, $function-name),", ")),
     if ($extension-type eq "transform-all") then
         let $source-format := try {
             xdmp:apply(

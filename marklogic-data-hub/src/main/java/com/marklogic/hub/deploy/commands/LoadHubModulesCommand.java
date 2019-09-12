@@ -100,7 +100,8 @@ public class LoadHubModulesCommand extends AbstractCommand {
         jarDocumentFileReader.addDocumentFileProcessor(new CacheBusterDocumentFileProcessor());
         jarDocumentFileReader.addDocumentFileProcessor(new TokenReplacerDocumentFileProcessor(buildModuleTokenReplacer(appConfig)));
         jarDocumentFileReader.addDocumentFileProcessor(new CollectionsDocumentFileProcessor("hub-core-module"));
-        jarDocumentFileReader.addDocumentFileProcessor(new HubPermissionsDocumentFileProcessor(appConfig.getModulePermissions()));
+        jarDocumentFileReader.addDocumentFileProcessor(new PermissionsDocumentFileProcessor(appConfig.getModulePermissions()));
+        jarDocumentFileReader.addDocumentFileProcessor(new HubRESTDocumentFileProcessor());
         loader.setDocumentFileReader(jarDocumentFileReader);
     }
 
