@@ -24,12 +24,19 @@ const Detail: React.FC<Props> = ({ history }) => {
   useEffect(() => {
     setIsLoading(true);
     const fetchData = async () => {
-      const result = await axios(
-        `datahub/v2/search?docUri=${query}`,
-      );
-      
-      setData(JSON.parse(result.data.content));
-      setIsLoading(false);
+      try {
+        const result = await axios(
+          `datahub/v2/search?docUri=${query}`,
+        );
+
+        setData(JSON.parse(result.data.content));
+        setIsLoading(false);
+      } catch (error) {
+        // console.log('error', error.response);
+        if (error.response.status === 401) {
+          userNotAuthenticated();
+        }
+      }
     };
 
     fetchData();
@@ -47,7 +54,7 @@ const Detail: React.FC<Props> = ({ history }) => {
         </div>
         <div className={styles.header}>
           <div className={styles.heading}>
-          {data && <DocumentHeader document={data} />}
+            {data && <DocumentHeader document={data} />}
           </div>
           <div id='menu' className={styles.menu}>
             <Menu onClick={(event) => handleClick(event)} mode="horizontal" selectedKeys={[selected]}>
@@ -61,11 +68,11 @@ const Detail: React.FC<Props> = ({ history }) => {
           </div>
         </div>
         <div>
-        {
-          isLoading ? <Spin tip="Loading..." style={{ margin: '100px auto', width: '100%'}} />
-          : 
-          selected === 'instance' ? (data && <TableView document={data} />) : (data && <JsonView document={data} />)
-        }        </div>
+          {
+            isLoading ? <Spin tip="Loading..." style={{ margin: '100px auto', width: '100%' }} />
+              :
+              selected === 'instance' ? (data && <TableView document={data} />) : (data && <JsonView document={data} />)
+          }        </div>
       </Content>
     </Layout>
   );
