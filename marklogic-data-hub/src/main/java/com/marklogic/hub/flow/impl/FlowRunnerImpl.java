@@ -74,6 +74,9 @@ public class FlowRunnerImpl implements FlowRunner {
         this.destinationDatabase = hubConfig.getDbName(DatabaseKind.FINAL);
     }
 
+    //This constructor is only for unit testing purposes
+    protected FlowRunnerImpl(){}
+
     @Override
     public FlowRunner withFlow(Flow flow) {
         this.flow = flow;
