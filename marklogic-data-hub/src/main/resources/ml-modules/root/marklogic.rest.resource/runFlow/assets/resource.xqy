@@ -10,7 +10,7 @@ declare option xdmp:mapping "false";
 declare private variable $extName := "ml:runFlow";
 declare private variable $modPath := "/data-hub/5/services/runFlow.sjs";
 declare private variable $caller  := xdmp:function(
-  xs:QName("applyOnce"), "/MarkLogic/rest-api/lib/extensions-util.sjs"
+  xs:QName("applyOnce"), "/data-hub/5/rest-api/lib/extensions-util.sjs"
 );
 
 declare function ml-runFlow:source-format() as xs:string {

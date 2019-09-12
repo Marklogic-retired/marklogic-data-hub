@@ -15,7 +15,7 @@
 :)
 xquery version "1.0-ml";
 
-module namespace transform = "http://marklogic.com/rest-api/transform/trace-json";
+module namespace transform = "http://marklogic.com/rest-api/transform/ml:trace-json";
 
 import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
   at "/data-hub/4/impl/perflog-lib.xqy";
