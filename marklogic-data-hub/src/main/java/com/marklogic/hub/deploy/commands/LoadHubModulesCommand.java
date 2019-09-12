@@ -63,7 +63,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
         AssetFileLoader assetFileLoader = new AssetFileLoader(modulesClient);
         prepareAssetFileLoader(assetFileLoader, context);
 
-        HubModulesLoader modulesLoader = new HubModulesLoader(assetFileLoader);
+        DefaultModulesLoader modulesLoader = new DefaultModulesLoader(assetFileLoader);
         modulesLoader.addFailureListener((throwable, client) -> {
             // ensure we throw the first exception
             if (caughtException == null) {
@@ -100,7 +100,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
         jarDocumentFileReader.addDocumentFileProcessor(new CacheBusterDocumentFileProcessor());
         jarDocumentFileReader.addDocumentFileProcessor(new TokenReplacerDocumentFileProcessor(buildModuleTokenReplacer(appConfig)));
         jarDocumentFileReader.addDocumentFileProcessor(new CollectionsDocumentFileProcessor("hub-core-module"));
-        jarDocumentFileReader.addDocumentFileProcessor(new PermissionsDocumentFileProcessor(appConfig.getModulePermissions()));
+        jarDocumentFileReader.addDocumentFileProcessor(new HubPermissionsDocumentFileProcessor(appConfig.getModulePermissions()));
         loader.setDocumentFileReader(jarDocumentFileReader);
     }
 
