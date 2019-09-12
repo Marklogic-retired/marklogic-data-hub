@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import { RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps, Link } from 'react-router-dom';
 import { AuthContext } from '../util/auth-context';
 import styles from './Detail.module.scss';
 import TableView from '../components/table-view/table-view';
@@ -50,7 +50,7 @@ const Detail: React.FC<Props> = ({ history }) => {
     <Layout>
       <Content style={{ background: '#fff', padding: '18px 36px' }}>
         <div id='back-button'>
-          <PageHeader style={{ padding: '0px', marginBottom: '20px' }} onBack={() => history.push('/browse')} title="Back" />
+          <PageHeader style={{ padding: '0px', marginBottom: '20px' }} onBack={() => history.push('/browse')} title={<Link to={{ pathname: "/browse" }}>Back</Link>} />
         </div>
         <div className={styles.header}>
           <div className={styles.heading}>
