@@ -1,0 +1,20 @@
+{
+  "id": 3,
+  "fname": "Palma",
+  "lname": "Murphy",
+  "age": 22,
+  "gender": "female",
+  "eyeColor": "brown",
+  "company": "ETERNIS",
+  "email": "caseymurphy@eternis.com",
+  "phone": "+1 (819) 531-2294",
+  "street": "683 Reed Street",
+  "city": "Vicksburg",
+  "state": "Mississippi",
+  "zip": "86288",
+  "isActive": false,
+  "balance": "$3,707.20",
+  "registered": "2016-05-21T03:33:06 +07:00",
+  "favoriteFruit": "banana",
+  "synonym": "sport"
+}

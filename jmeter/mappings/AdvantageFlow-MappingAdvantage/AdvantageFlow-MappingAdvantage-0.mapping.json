@@ -1,0 +1,10 @@
+{
+  "language" : "zxx",
+  "name" : "AdvantageFlow-MappingAdvantage",
+  "description" : "",
+  "version" : 0,
+  "targetEntityType" : "http://example.org/Customer-0.0.1/Customer",
+  "sourceContext" : "/",
+  "sourceURI" : "",
+  "properties" : { }
+}

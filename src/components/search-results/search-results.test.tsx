@@ -1,14 +1,15 @@
 import React from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
 import { shallow, mount } from 'enzyme';
 import SearchResults from './search-results';
 import MockData from '../../assets/mock-data/search-results';
 
-describe("Search Pagination component", () => {
+describe("Search Results component", () => {
 
     let wrapper;
 
     beforeAll(() => {
-        wrapper = mount(<SearchResults data={MockData}/>);
+        wrapper = mount(<Router><SearchResults data={MockData}/></Router>);
     });
 
     test("renders", () => {

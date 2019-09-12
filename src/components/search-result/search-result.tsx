@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import styles from './search-result.module.scss';
 
 const SearchResult = (props) => {
@@ -43,4 +43,4 @@ const SearchResult = (props) => {
     )
 }
 
-export default SearchResult;
+export default withRouter(SearchResult);
