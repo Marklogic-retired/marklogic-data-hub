@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
+import { AuthContext } from '../util/auth-context';
 import Sidebar from '../components/sidebar/sidebar';
 import SearchBar from '../components/search-bar/search-bar';
 import SearchPagination from '../components/search-pagination/search-pagination';
@@ -11,6 +12,7 @@ import { entityFromJSON } from '../util/data-conversion';
 const Browse: React.FC = () => {
   const { Content, Sider } = Layout;
 
+  const { userNotAuthenticated } = useContext(AuthContext);
   const [data, setData] = useState();
   const [entities, setEntites] = useState<any[]>([]);
   const [facets, setFacets] = useState();
@@ -50,7 +52,10 @@ const Browse: React.FC = () => {
       setTotalDocuments(response.data.total);
       setIsLoading(false);
     } catch (error) {
-      console.log('error', error.response);
+      // console.log('error', error.response);
+      if (error.response.status === 401) {
+        userNotAuthenticated();
+      }
     }
   }
 

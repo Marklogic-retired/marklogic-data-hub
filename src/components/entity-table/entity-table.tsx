@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import styles from './entity-table.module.scss';
+import React from 'react';
+// import styles from './entity-table.module.scss';
 import { Table } from 'antd';
 
 type Props = {

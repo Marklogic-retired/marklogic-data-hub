@@ -1,15 +1,13 @@
 import React, { useContext, useState } from 'react';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Form, Icon, Input, Button, Typography } from 'antd';
 import axios from 'axios';
 import styles from './login-form.module.scss';
 import { AuthContext } from '../../util/auth-context';
 
-interface Props extends RouteComponentProps<any> {}
 
 const { Text } = Typography;
 
-const LoginForm: React.FC<Props> = ({ history }) => {
+const LoginForm: React.FC = () => {
 
   const { userAuthenticated } = useContext(AuthContext);
   const [username, setUsername] = useState('');
@@ -26,9 +24,8 @@ const LoginForm: React.FC<Props> = ({ history }) => {
         password
       });
       if (response.status === 200) {
-        userAuthenticated(username);
         setErrorResponse('');
-        history.push('/view');
+        userAuthenticated(username);
       } 
     } catch (error) {
       console.log('error', error.response); 
@@ -101,4 +98,4 @@ const LoginForm: React.FC<Props> = ({ history }) => {
   );
 }
 
-export default withRouter(LoginForm);
+export default LoginForm;
