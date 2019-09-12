@@ -14,7 +14,7 @@ public class HubRESTDocumentFileProcessor implements DocumentFileProcessor {
     public DocumentFile processDocumentFile(DocumentFile documentFile) {
         String docURI = documentFile.getUri();
         if (docURI.startsWith("/marklogic.rest.") || docURI.contains("rest-api")) {
-            if (docURI.startsWith("/marklogic.rest.")) {
+            if (docURI.startsWith("/marklogic.rest.") && !docURI.contains("trace-json")) {
                 String newURI = docURI.replaceFirst("^/marklogic\\.rest\\.(resource|transform)/", "/marklogic.rest.$1/ml:");
                 documentFile.setUri(newURI);
             }

@@ -1,6 +1,6 @@
 xquery version "1.0-ml";
 
-module namespace resource = "http://marklogic.com/rest-api/resource/sm-match-options";
+module namespace resource = "http://marklogic.com/rest-api/resource/ml:sm-match-options";
 
 import module namespace matcher = "http://marklogic.com/smart-mastering/matcher"
   at "/com.marklogic.smart-mastering/matcher.xqy";

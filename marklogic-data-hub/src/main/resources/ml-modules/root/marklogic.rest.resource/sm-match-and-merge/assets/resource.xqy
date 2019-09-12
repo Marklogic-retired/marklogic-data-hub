@@ -1,6 +1,6 @@
 xquery version "1.0-ml";
 
-module namespace resource = "http://marklogic.com/rest-api/resource/sm-match-and-merge";
+module namespace resource = "http://marklogic.com/rest-api/resource/ml:sm-match-and-merge";
 
 import module namespace process = "http://marklogic.com/smart-mastering/process-records"
   at "/com.marklogic.smart-mastering/process-records.xqy";
