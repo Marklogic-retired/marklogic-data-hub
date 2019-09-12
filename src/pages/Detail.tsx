@@ -24,21 +24,14 @@ const Detail: React.FC<Props> = ({ history }) => {
   useEffect(() => {
     setIsLoading(true);
     const fetchData = async () => {
-      try {
-        const result = await axios(
-          `/v1/documents?database=` + database + `&uri=${query}`,
-        );
-        setData(result.data);
-        setIsLoading(false);
-      } catch (error) {
-        // console.log('error', error.response);
-        if (error.response.status === 401) {
-          userNotAuthenticated();
-        }
-      }
+      const result = await axios(
+        `datahub/v2/search?docUri=${query}`,
+      );
+      
+      setData(JSON.parse(result.data.content));
+      setIsLoading(false);
     };
 
-    
     fetchData();
   }, []);
 

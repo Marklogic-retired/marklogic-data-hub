@@ -5,9 +5,9 @@ import styles from './detail-header.module.scss';
 const Header = (props) => {
     const { Text } = Typography;
     var envelope = props.document.envelope;
-    const innerObject = Object.keys(envelope.instance)[0];
+    const document = Object.keys(envelope.instance)[0];
     const title = envelope.instance.info.title; 
-    const id = envelope.instance[innerObject].id
+    const id = envelope.instance[document].id
     const timestamp = envelope.headers.createdOn;
     const sources = envelope.headers.sources[0].name;
     const fileType = 'JSON';
