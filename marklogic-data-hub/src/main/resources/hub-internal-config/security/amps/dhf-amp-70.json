@@ -1,6 +1,6 @@
 {
-  "namespace" : "hhtp://marklogic.com/rest-api/models/document-model-update-transform",
-  "local-name" : "xdmp-add-response-header",
+  "namespace" : "http://marklogic.com/rest-api/models/document-model-update-transform",
+  "local-name" : "post-bulk-documents",
   "document-uri" : "/data-hub/5/rest-api/models/document-model-update-transform.xqy",
   "modules-database" : "%%mlModulesDbName%%",
   "role" : [ "rest-reader-internal" ]
