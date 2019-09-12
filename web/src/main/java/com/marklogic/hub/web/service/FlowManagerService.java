@@ -29,6 +29,7 @@ import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.util.json.JSONUtils;
+import com.marklogic.hub.validate.CustomStepValidator;
 import com.marklogic.hub.web.exception.BadRequestException;
 import com.marklogic.hub.web.exception.DataHubException;
 import com.marklogic.hub.web.exception.NotFoundException;
@@ -76,6 +77,8 @@ public class FlowManagerService {
 
     @Autowired
     private AsyncFlowService asyncFlowService;
+
+    private CustomStepValidator customStepValidator;
 
     public List<FlowStepModel> getFlows() {
         return asyncFlowService.getFlows(true);
@@ -139,6 +142,16 @@ public class FlowManagerService {
 
     public List<String> getFlowNames() {
         return flowManager.getFlowNames();
+    }
+
+    public JsonNode validateStep(String flowName, String stepId){
+        Flow flow = flowManager.getFlow(flowName);
+        if (flow == null) {
+            throw new NotFoundException("Could not find a flow with a name of " + flowName);
+        }
+        String stepNum = getStepKeyInStepMap(flow, stepId);
+        customStepValidator = new CustomStepValidator(hubConfig.newStagingClient());
+        return customStepValidator.validate(flowName, stepNum);
     }
 
     public void deleteFlow(String flowName) {

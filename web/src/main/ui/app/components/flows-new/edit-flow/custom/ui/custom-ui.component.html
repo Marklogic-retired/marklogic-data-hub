@@ -27,6 +27,9 @@
       (change)="onChange()"
     />
   </mat-form-field>
+  <button id="validate-btn"
+          mat-raised-button color="primary"
+          (click)="this.openValidateDialog(flow, step)">VALIDATE</button>
   <!-- Adding fields for Custom Ingestion Step-->
   <div *ngIf="createStepInitials(step) === 'CUSTOM' && step.stepDefinitionName === step.name && step.stepDefinitionType === 'INGESTION'">
   <div class="Input-label"

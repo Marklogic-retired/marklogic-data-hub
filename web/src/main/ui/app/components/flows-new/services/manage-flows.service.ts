@@ -65,6 +65,11 @@ export class ManageFlowsService {
     console.log(`DELETE api/flows/${flowId}/steps/${stepId}`);
     return this.http.delete(`api/flows/${flowId}/steps/${stepId}`);
   }
+
+  validateStep(flowId: string, stepId: string) {
+    console.log(`POST api/flows/${flowId}/steps/${stepId}/validate`);
+    return this.http.post(`api/flows/${flowId}/steps/${stepId}/validate`, null);
+  }
   getCollections(database: string) {
     console.log('GET api/collections/' + database);
     return this.http.get<Array<string>>('api/collections/' + database);

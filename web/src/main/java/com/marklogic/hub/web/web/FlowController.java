@@ -15,6 +15,7 @@
  */
 package com.marklogic.hub.web.web;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.util.metrics.tracer.JaegerConfig;
 import com.marklogic.hub.web.exception.DataHubException;
@@ -23,20 +24,16 @@ import com.marklogic.hub.web.model.StepModel;
 import com.marklogic.hub.web.service.FlowManagerService;
 import io.opentracing.Scope;
 import io.opentracing.Span;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.Callable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.Callable;
 
 @Controller
 @RequestMapping("/api/flows")
@@ -136,6 +133,13 @@ public class FlowController {
     public ResponseEntity<?> createStep(@PathVariable String flowName, @RequestParam(value = "stepOrder", required = false) Integer stepOrder, @RequestBody String stepJson) {
         StepModel stepModel = flowManagerService.createStep(flowName, stepOrder, null, stepJson);
         return new ResponseEntity<>(stepModel, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/{flowName}/steps/{stepId}/validate", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<?> validateStep(@PathVariable String flowName, @PathVariable String stepId) {
+        JsonNode validatedStep = flowManagerService.validateStep(flowName, stepId);
+        return new ResponseEntity<>(validatedStep, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{flowName}/steps/{stepId}", method = RequestMethod.PUT)
