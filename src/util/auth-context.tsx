@@ -26,20 +26,17 @@ export const AuthContext = React.createContext<IAuthContextInterface>({
 
 const AuthProvider: React.FC<{ children: any }> = ({children}) => {
   
-  const [name, setName] = useState('');
-  const [authenticated, setAuthenticated] = useState(false);
+  const [user, setUser] = useState({ name: '', authenticated: false });
   const sessionUser = sessionStorage.getItem('dataHubExplorerUser');
 
   const userAuthenticated = (username: string) => {
     sessionStorage.setItem('dataHubExplorerUser', username);
-    setAuthenticated(true);
-    setName(username);
+    setUser({ name: username, authenticated: true });
   };
 
   const userNotAuthenticated = () => {
     sessionStorage.setItem('dataHubExplorerUser', '');
-    setName('');
-    setAuthenticated(false);
+    setUser({ name: '', authenticated: false });
   };
 
   useEffect(() => {
@@ -49,7 +46,7 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user: {name, authenticated}, userAuthenticated, userNotAuthenticated}}>
+    <AuthContext.Provider value={{ user, userAuthenticated, userNotAuthenticated}}>
       {children}
     </AuthContext.Provider>
   )

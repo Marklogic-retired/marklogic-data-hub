@@ -35,7 +35,7 @@ const App: React.FC<Props> = ({history, location}) => {
         history.push('/view');
       }
     }
-  }, [user.authenticated]);
+  }, [user]);
 
   return (
     <>
