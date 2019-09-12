@@ -1,0 +1,23 @@
+{
+  "language" : "zxx",
+  "name" : "CustomerMapping",
+  "description" : "",
+  "version" : 0,
+  "targetEntityType" : "http://marklogic.com/Customer-0.0.1/Customer",
+  "sourceContext" : "/",
+  "sourceURI" : "",
+  "properties" : {
+    "Id": {
+      "sourcedFrom": "customerId"
+    },
+    "FirstName": {
+      "sourcedFrom": "firstName"
+    },
+    "LastName": {
+      "sourcedFrom": "lastName"
+    },
+    "Email": {
+      "sourcedFrom": "emailAddress"
+    }
+  }
+}

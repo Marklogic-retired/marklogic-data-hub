@@ -1,0 +1,23 @@
+{
+  "name": "myNewFlow",
+  "options": {
+    "collections": ["myNewFlow"]
+  },
+  "description": "flow description",
+  "steps": {
+    "1": {
+      "stepDefinitionName": "entity-services-mapping",
+      "stepDefinitionType": "MAPPING",
+      "options": {
+        "sourceDatabase": "data-hub-FINAL",
+        "targetDatabase": "data-hub-FINAL",
+        "mapping" : {
+          "name" : "CustomerMapping",
+          "version" : 0
+        },
+        "validateEntity": "reject",
+        "outputFormat": "json"
+      }
+    }
+  }
+}
