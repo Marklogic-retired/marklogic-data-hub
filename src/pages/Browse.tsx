@@ -62,6 +62,7 @@ const Browse: React.FC = () => {
   const handleSearch = (searchString: string) => {
     console.log('The user typed string is ' + searchString);
     setSearchQuery(searchString);
+    setSearchParams({ ...searchParams, start: 1});
   }
   
   const handlePageChange = (pageNumber: number) => {
@@ -83,6 +84,7 @@ const Browse: React.FC = () => {
       delete newSearchFacets[constraint];
       setSearchFacets(newSearchFacets);
     }
+    setSearchParams({ ...searchParams, start: 1});
   }
 
   const handleOptionSelect = (option: string) => {
