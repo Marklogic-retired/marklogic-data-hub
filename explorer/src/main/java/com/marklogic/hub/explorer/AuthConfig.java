@@ -71,10 +71,6 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
   protected void configure(AuthenticationManagerBuilder auth) throws Exception {
     super.configure(auth);
     auth.parentAuthenticationManager(markLogicAuthenticationManager);
-
-//        TODO: Erase credentials?
-//        We can reuse the credentials to re-establish connection with MarkLogic if ML session expires but user session is still valid.
-//        auth.eraseCredentials(false);
   }
 
   /**
