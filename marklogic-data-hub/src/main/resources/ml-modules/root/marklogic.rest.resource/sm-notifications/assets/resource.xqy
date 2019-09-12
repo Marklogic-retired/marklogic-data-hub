@@ -1,6 +1,6 @@
 xquery version "1.0-ml";
 
-module namespace ext = "http://marklogic.com/rest-api/resource/sm-notifications";
+module namespace ext = "http://marklogic.com/rest-api/resource/ml:sm-notifications";
 
 import module namespace matcher = "http://marklogic.com/smart-mastering/matcher"
   at "/com.marklogic.smart-mastering/matcher.xqy";
