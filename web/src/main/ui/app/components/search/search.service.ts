@@ -17,14 +17,24 @@ export class SearchService {
     };
 
     let facets = {};
-    for (let key of Object.keys(activeFacets)) {
-      if (activeFacets[key].values) {
-        facets[key] = []
-      }
-      for (let value of activeFacets[key].values) {
-        facets[key].push(value);
+    let facetNames = Object.keys(activeFacets);
+
+    if(facetNames.includes("Collection")) {
+      facets["Collection"] = [];
+      for (let value of activeFacets["Collection"].values) {
+        facets["Collection"].push(value);
       }
     }
+
+    // Links to DHFPROD-3137. Commenting this code to read only Collection facet
+    // for (let key of Object.keys(activeFacets)) {
+    //   if (activeFacets[key].values) {
+    //     facets[key] = []
+    //   }
+    //   for (let value of activeFacets[key].values) {
+    //     facets[key].push(value);
+    //   }
+    // }
 
     data['facets'] = facets;
 

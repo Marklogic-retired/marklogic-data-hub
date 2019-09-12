@@ -143,6 +143,14 @@ export class SearchComponent implements OnDestroy, OnInit {
       this.currentPage,
       this.pageLength
     ).subscribe(response => {
+      response["results"].forEach(function (result) {
+        result["matches"] = [];
+      })
+      for(var facet in response.facets) {
+        if(facet !== "Collection") {
+          delete response.facets[facet];
+        }
+      }
       this.searchResponse = response;
     },
     () => {},
