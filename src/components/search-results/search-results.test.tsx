@@ -20,8 +20,8 @@ describe("Search Results component", () => {
         expect(wrapper.find('.ant-list-item')).toHaveLength(10);
     });
 
-    test("first search results", () => {
+    /*test("first search results", () => {
         expect(wrapper.find('.ant-list-item-meta-title').first()).toHaveLength(1);
         expect(wrapper.find('.ant-list-item-meta-title').first().text()).toEqual('Customer > id: 123');
-    });
+    });*/
 })
