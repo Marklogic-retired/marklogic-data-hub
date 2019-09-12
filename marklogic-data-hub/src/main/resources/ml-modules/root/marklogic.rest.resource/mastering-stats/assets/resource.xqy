@@ -15,7 +15,7 @@
 :)
 xquery version "1.0-ml";
 
-module namespace service = "http://marklogic.com/rest-api/resource/mastering-stats";
+module namespace service = "http://marklogic.com/rest-api/resource/ml:mastering-stats";
 
 import module namespace const = "http://marklogic.com/smart-mastering/constants"
 at "/com.marklogic.smart-mastering/constants.xqy";
