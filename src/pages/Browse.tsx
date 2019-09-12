@@ -8,12 +8,6 @@ import SearchSummary from '../components/search-summary/search-summary';
 import SearchResults from '../components/search-results/search-results';
 import { entityFromJSON } from '../util/data-conversion';
 
-interface SearchParams {
-  start: number,
-  pageLength: number,
-  entities: string[]
-}
-
 const Browse: React.FC = () => {
   const { Content, Sider } = Layout;
 
@@ -22,7 +16,7 @@ const Browse: React.FC = () => {
   const [facets, setFacets] = useState();
   const [searchUrl, setSearchUrl] = useState<any>({ url: `/datahub/v2/search?format=json&database=data-hub-FINAL`, method: 'post' });
   const [searchQuery, setSearchQuery] = useState();
-  const [searchParams, setSearchParams] = useState<SearchParams>({ start: 1, pageLength: 10, entities: entities });
+  const [searchParams, setSearchParams] = useState({ start: 1, pageLength: 10, entities: entities });
   const [searchFacets, setSearchFacets] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [totalDocuments, setTotalDocuments] = useState();
