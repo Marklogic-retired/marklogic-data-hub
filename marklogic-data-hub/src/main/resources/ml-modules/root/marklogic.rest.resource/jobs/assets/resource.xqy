@@ -10,7 +10,7 @@ declare option xdmp:mapping "false";
 declare private variable $extName := "ml:jobs";
 declare private variable $modPath := "/data-hub/5/services/jobs.sjs";
 declare private variable $caller  := xdmp:function(
-  xs:QName("applyOnce"), "/MarkLogic/rest-api/lib/extensions-util.sjs"
+  xs:QName("applyOnce"), "/data-hub/5/rest-api/lib/extensions-util.sjs"
 );
 
 declare function ml-jobs:source-format() as xs:string {
