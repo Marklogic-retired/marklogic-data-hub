@@ -16,6 +16,7 @@ function transform(context, params, content) {
       let permissionsExpression = `xdmp.defaultPermissions().concat([
       xdmp.permission('${datahub.config.FLOWOPERATORROLE}','execute'),
       xdmp.permission('${datahub.config.FLOWDEVELOPERROLE}','execute'),
+      xdmp.permission('${datahub.config.FLOWDEVELOPERROLE}','update'),
       xdmp.permission('${datahub.config.FLOWOPERATORROLE}','read'),
       xdmp.permission('${datahub.config.FLOWDEVELOPERROLE}','read')
       ])`;
