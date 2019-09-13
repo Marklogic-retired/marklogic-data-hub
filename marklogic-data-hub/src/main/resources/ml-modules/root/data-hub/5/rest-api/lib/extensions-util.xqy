@@ -466,29 +466,15 @@ declare private function extut:get-extension-function(
         if (exists($fcached))
         then $fcached
         else
-            let $system-module :=
-                if ($extension-type eq "transform")
-                then map:get($system-transforms,$extension-name)
-                else map:get($system-resource-extensions,$extension-name)
-            let $function    :=
-                if (empty($system-module))
-                then xdmp:function(
-                    if ($source-format eq "xquery")
-                        then QName(extut:get-extension-namespace($extension-type,$extension-name), $function-name)
-                        else xs:QName($function-name),
-                    extut:make-source-uri(
-                        extut:make-base-uri($extension-type,$extension-name), $extension-type, $source-format
-                        )
-                    )
-                else if ($extension-type eq "transform")
-                then xdmp:function(
-                    QName(concat("http://marklogic.com/rest-api/transform/",$system-module), $function-name),
-                    concat("/MarkLogic/data-hub-framework/transforms/",$system-module,".xqy")
-                    )
-                else  xdmp:function(
-                    QName(concat("http://marklogic.com/rest-api/extensions/",$system-module), $function-name),
-                    concat("/MarkLogic/data-hub-framework/extensions/",$system-module,".xqy")
-                    )
+            let $function :=
+              xdmp:function(
+                if ($source-format eq "xquery")
+                    then QName(extut:get-extension-namespace($extension-type,$extension-name), $function-name)
+                    else xs:QName($function-name),
+                extut:make-source-uri(
+                    extut:make-base-uri($extension-type,$extension-name), $extension-type, $source-format
+                )
+            )
             return (
                 if (empty($function)) then ()
                 else map:put($function-cache,$fkey,$function),
