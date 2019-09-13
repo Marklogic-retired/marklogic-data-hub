@@ -26,9 +26,10 @@ const Detail: React.FC<Props> = ({ history }) => {
     const fetchData = async () => {
       try {
         const result = await axios(
-          `/v1/documents?database=` + database + `&uri=${query}`,
+          `datahub/v2/search?docUri=${query}`,
         );
-        setData(result.data);
+
+        setData(JSON.parse(result.data.content));
         setIsLoading(false);
       } catch (error) {
         // console.log('error', error.response);
@@ -38,7 +39,6 @@ const Detail: React.FC<Props> = ({ history }) => {
       }
     };
 
-    
     fetchData();
   }, []);
 
@@ -54,7 +54,7 @@ const Detail: React.FC<Props> = ({ history }) => {
         </div>
         <div className={styles.header}>
           <div className={styles.heading}>
-          {data && <DocumentHeader document={data} />}
+            {data && <DocumentHeader document={data} />}
           </div>
           <div id='menu' className={styles.menu}>
             <Menu onClick={(event) => handleClick(event)} mode="horizontal" selectedKeys={[selected]}>
@@ -68,11 +68,11 @@ const Detail: React.FC<Props> = ({ history }) => {
           </div>
         </div>
         <div>
-        {
-          isLoading ? <Spin tip="Loading..." style={{ margin: '100px auto', width: '100%'}} />
-          : 
-          selected === 'instance' ? (data && <TableView document={data} />) : (data && <JsonView document={data} />)
-        }        </div>
+          {
+            isLoading ? <Spin tip="Loading..." style={{ margin: '100px auto', width: '100%' }} />
+              :
+              selected === 'instance' ? (data && <TableView document={data} />) : (data && <JsonView document={data} />)
+          }        </div>
       </Content>
     </Layout>
   );
