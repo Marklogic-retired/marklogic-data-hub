@@ -157,7 +157,7 @@ declare function post(
             then trace:error-trace($item-context, $batch-error, xdmp:elapsed-time() - $before)
             else trace:error-trace($item-context, $ex, xdmp:elapsed-time() - $before)
           }
-        let $resp :=
+        let $output :=
           document {
             object-node {
               "totalCount": fn:count($identifiers),
@@ -167,6 +167,11 @@ declare function post(
               "errors": $errors
             }
           }
+        let $resp :=
+          if (trace:get-error-count() > 0) then
+            fn:error((),"RESTAPI-SRVEXERR", (400, "Plugin error", text{$output}))
+          else
+            $output
         return
           $resp
       else
