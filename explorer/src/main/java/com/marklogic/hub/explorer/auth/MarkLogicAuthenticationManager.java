@@ -16,14 +16,13 @@
  */
 package com.marklogic.hub.explorer.auth;
 
-import java.security.NoSuchAlgorithmException;
-
-import javax.net.ssl.SSLContext;
-
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.FailedRequestException;
+import com.marklogic.client.ext.DatabaseClientConfig;
+import com.marklogic.client.ext.DefaultConfiguredDatabaseClientFactory;
+import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.hub.explorer.util.DatabaseClientHolder;
+import com.marklogic.hub.explorer.util.ExplorerConfig;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +44,9 @@ public class MarkLogicAuthenticationManager implements AuthenticationProvider,
 
   @Autowired
   DatabaseClientHolder databaseClientHolder;
+
+  @Autowired
+  ExplorerConfig explorerConfig;
 
   public MarkLogicAuthenticationManager() {
   }
@@ -73,34 +75,23 @@ public class MarkLogicAuthenticationManager implements AuthenticationProvider,
       throw new BadCredentialsException("Invalid credentials");
     }
 
-    // TODO: Possibly use 'ml-java-client-util' for client creation
-    DatabaseClientFactory.SecurityContext securityContext = new DatabaseClientFactory.DigestAuthContext(
-        username, password);
-    try {
-      SSLContext sslContext = SSLContext.getDefault();
-    } catch (NoSuchAlgorithmException e) {
-      e.printStackTrace();
+    DatabaseClientConfig clientConfig = new DatabaseClientConfig(explorerConfig.getHostname(),
+        explorerConfig.getFinalPort(), username, password);
+    clientConfig.setDatabase(explorerConfig.getFinalDbName());
+    clientConfig.setSecurityContextType(
+        SecurityContextType.valueOf(explorerConfig.getFinalAuthMethod().toUpperCase()));
+    clientConfig.setSslHostnameVerifier(explorerConfig.getFinalSslHostnameVerifier());
+    clientConfig.setSslContext(explorerConfig.getFinalSslContext());
+    clientConfig.setCertFile(explorerConfig.getFinalCertFile());
+    clientConfig.setCertPassword(explorerConfig.getFinalCertPassword());
+    clientConfig.setExternalName(explorerConfig.getFinalExternalName());
+    clientConfig.setTrustManager(explorerConfig.getFinalTrustManager());
+    if (explorerConfig.getHostLoadBalancer()) {
+      clientConfig.setConnectionType(DatabaseClient.ConnectionType.GATEWAY);
     }
-//        securityContext.withSSLContext(sslContext, new X509TrustManager() {
-//            @Override
-//            public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
-//
-//            }
-//
-//            @Override
-//            public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
-//
-//            }
-//
-//            @Override
-//            public X509Certificate[] getAcceptedIssuers() {
-//                return new X509Certificate[0];
-//            }
-//        });
+    DatabaseClient databaseClient = new DefaultConfiguredDatabaseClientFactory()
+        .newDatabaseClient(clientConfig);
 
-    // TODO: Get info from config/properties file.
-    DatabaseClient databaseClient = DatabaseClientFactory
-        .newClient(hostname, 8011, securityContext, DatabaseClient.ConnectionType.GATEWAY);
     try {
       databaseClient.newDocumentManager().exists("user");
     } catch (FailedRequestException ex) {

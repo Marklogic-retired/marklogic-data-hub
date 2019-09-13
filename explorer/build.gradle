@@ -59,6 +59,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-devtools")
 
     compile 'com.marklogic:marklogic-client-api:5.0.0'
+    compile 'com.marklogic:ml-javaclient-util:3.13.3'
 
     runtimeOnly 'org.springframework.boot:spring-boot-devtools'
     implementation 'org.springframework.session:spring-session-core'
@@ -75,8 +76,11 @@ dependencies {
 }
 
 
-configurations {
-    all*.exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+configurations.all {
+    exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+    resolutionStrategy {
+        force 'com.marklogic:marklogic-client-api:5.0.0'
+    }
 }
 
 task startRest {
