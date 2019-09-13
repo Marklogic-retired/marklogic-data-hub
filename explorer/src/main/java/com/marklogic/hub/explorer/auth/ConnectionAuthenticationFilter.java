@@ -82,8 +82,8 @@ public class ConnectionAuthenticationFilter extends
 
     final LoginInfo loginInfo = new ObjectMapper()
         .readValue(request.getInputStream(), LoginInfo.class);
-    String username = loginInfo.getUsername();
-    String password = loginInfo.getPassword();
+    String username = loginInfo.username;
+    String password = loginInfo.password;
 
     if (username == null) {
       username = "";
