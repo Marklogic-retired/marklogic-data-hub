@@ -48,6 +48,8 @@ public interface HubConfig {
     String ENTITY_CONFIG_DIR = PATH_PREFIX + "entity-config";
     String STAGING_ENTITY_QUERY_OPTIONS_FILE = "staging-entity-options.xml";
     String FINAL_ENTITY_QUERY_OPTIONS_FILE = "final-entity-options.xml";
+    String EXP_STAGING_ENTITY_QUERY_OPTIONS_FILE = "exp-staging-entity-options.xml";
+    String EXP_FINAL_ENTITY_QUERY_OPTIONS_FILE = "exp-final-entity-options.xml";
     String STAGING_ENTITY_DATABASE_FILE = "staging-database.json";
     String FINAL_ENTITY_DATABASE_FILE = "final-database.json";
 

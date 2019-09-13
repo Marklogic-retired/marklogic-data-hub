@@ -38,7 +38,7 @@ declare function post(
 
   perf:log('/v1/resources/validate:get', function() {
     document {
-      hent:dump-search-options($input)
+      hent:dump-search-options($input, $params)
     }
   })
 };
