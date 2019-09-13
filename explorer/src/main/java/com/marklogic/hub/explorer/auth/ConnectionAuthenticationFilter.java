@@ -96,7 +96,7 @@ public class ConnectionAuthenticationFilter extends
     username = username.trim();
 
     ConnectionAuthenticationToken authRequest = new ConnectionAuthenticationToken(
-        username, password, "localhost");
+        username, password);
 
     // Allow subclasses to set the "details" property
     setDetails(request, authRequest);

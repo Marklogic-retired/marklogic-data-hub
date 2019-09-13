@@ -68,10 +68,8 @@ public class MarkLogicAuthenticationManager implements AuthenticationProvider,
     ConnectionAuthenticationToken token = (ConnectionAuthenticationToken) authentication;
     String username = token.getPrincipal().toString();
     String password = token.getCredentials().toString();
-    String hostname = token.getHostname().toString();
 
-    if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password) || StringUtils
-        .isEmpty(hostname)) {
+    if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
       throw new BadCredentialsException("Invalid credentials");
     }
 
@@ -106,7 +104,7 @@ public class MarkLogicAuthenticationManager implements AuthenticationProvider,
     databaseClientHolder.setDatabaseClient(databaseClient);
 
     return new ConnectionAuthenticationToken(token.getPrincipal(), token.getCredentials(),
-        token.getHostname(), token.getAuthorities());
+        token.getAuthorities());
   }
 }
 

@@ -42,7 +42,6 @@ public class ConnectionAuthenticationToken extends AbstractAuthenticationToken {
 
   private final Object principal;
   private Object credentials;
-  private Object hostname;
 
   // ~ Constructors
   // ===================================================================================================
@@ -52,11 +51,10 @@ public class ConnectionAuthenticationToken extends AbstractAuthenticationToken {
    * <code>ConnectionAuthenticationToken</code>, as the {@link #isAuthenticated()}
    * will return <code>false</code>.
    */
-  public ConnectionAuthenticationToken(Object principal, Object credentials, Object hostname) {
+  public ConnectionAuthenticationToken(Object principal, Object credentials) {
     super(null);
     this.principal = principal;
     this.credentials = credentials;
-    this.hostname = hostname;
     setAuthenticated(false);
   }
 
@@ -66,12 +64,11 @@ public class ConnectionAuthenticationToken extends AbstractAuthenticationToken {
    * producing a trusted (i.e. {@link #isAuthenticated()} = <code>true</code>) authentication
    * token.
    */
-  public ConnectionAuthenticationToken(Object principal, Object credentials, Object hostname,
+  public ConnectionAuthenticationToken(Object principal, Object credentials,
       Collection<? extends GrantedAuthority> authorities) {
     super(authorities);
     this.principal = principal;
     this.credentials = credentials;
-    this.hostname = hostname;
     super.setAuthenticated(true); // must use super, as we override
   }
 
@@ -84,10 +81,6 @@ public class ConnectionAuthenticationToken extends AbstractAuthenticationToken {
 
   public Object getPrincipal() {
     return this.principal;
-  }
-
-  public Object getHostname() {
-    return this.hostname;
   }
 
   public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
