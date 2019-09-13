@@ -66,6 +66,7 @@ class Flow {
         this.globalContext[key] = Object.create(this.globalContext[key]);
       }
     }
+    this.writeQueue = [];
   }
 
   getFlowNames() {
@@ -348,6 +349,7 @@ class Flow {
           flowInstance.globalContext.failedItems.push(flowInstance.globalContext.uri);
           flowInstance.datahub.debug.log({message: `Error running step: ${e.toString()}. ${e.stack}`, type: 'error'});
         }
+        flowInstance.globalContext.uri = null;
       }
     }
     flowInstance.globalContext.uri = null;
