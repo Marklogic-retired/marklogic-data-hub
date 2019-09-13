@@ -5,9 +5,12 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.fasterxml.jackson.annotation.JsonRawValue;
+
 @XmlRootElement(name = "Document")
 public class Document {
 
+  @JsonRawValue
   private String content;
 
   private Map<String, String> metaData;
