@@ -102,9 +102,8 @@ class AuthTest {
   }
 
   private String getLoginPayload(String username, String password) throws JsonProcessingException {
-    ConnectionAuthenticationFilter.LoginInfo loginInfo = new ConnectionAuthenticationFilter.LoginInfo();
-    loginInfo.username = username;
-    loginInfo.password = password;
+    ConnectionAuthenticationFilter.LoginInfo loginInfo = new ConnectionAuthenticationFilter.LoginInfo(
+        username, password);
     return new ObjectMapper().writeValueAsString(loginInfo);
   }
 }

@@ -82,8 +82,8 @@ public class ConnectionAuthenticationFilter extends
 
     final LoginInfo loginInfo = new ObjectMapper()
         .readValue(request.getInputStream(), LoginInfo.class);
-    String username = loginInfo.username;
-    String password = loginInfo.password;
+    String username = loginInfo.getUsername();
+    String password = loginInfo.getPassword();
 
     if (username == null) {
       username = "";
@@ -202,8 +202,24 @@ public class ConnectionAuthenticationFilter extends
 
   public static class LoginInfo {
 
-    public String username;
-    public String password;
+    private String username;
+    private String password;
+
+    public LoginInfo() {
+    }
+
+    public LoginInfo(String username, String password) {
+      this.username = username;
+      this.password = password;
+    }
+
+    public String getUsername() {
+      return username;
+    }
+
+    public String getPassword() {
+      return password;
+    }
   }
 
 }
