@@ -19,6 +19,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.datamovement.*;
 import com.marklogic.client.datamovement.impl.JobTicketImpl;
 import com.marklogic.client.extensions.ResourceManager;
@@ -28,13 +29,15 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.legacy.collector.LegacyCollector;
 import com.marklogic.hub.legacy.collector.DiskQueue;
-import com.marklogic.hub.legacy.job.Job;
-import com.marklogic.hub.legacy.job.LegacyJobManager;
-import com.marklogic.hub.legacy.job.JobStatus;
+import com.marklogic.hub.legacy.collector.LegacyCollector;
 import com.marklogic.hub.legacy.flow.*;
+import com.marklogic.hub.legacy.job.Job;
+import com.marklogic.hub.legacy.job.JobStatus;
+import com.marklogic.hub.legacy.job.LegacyJobManager;
+import org.apache.commons.lang3.StringUtils;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
@@ -70,6 +73,9 @@ public class LegacyFlowRunnerImpl implements LegacyFlowRunner {
         this.stagingClient = hubConfig.newStagingClient();
         this.destinationDatabase = hubConfig.getDbName(DatabaseKind.FINAL);
     }
+
+    //This constructor is only for unit testing purposes
+    protected LegacyFlowRunnerImpl(){}
 
     @Override
     public LegacyFlowRunner withFlow(LegacyFlow flow) {
@@ -369,7 +375,8 @@ public class LegacyFlowRunnerImpl implements LegacyFlowRunner {
         }
 
         public RunFlowResponse run(String jobId, String[] items, Map<String, Object> options) {
-            RunFlowResponse resp;
+            RunFlowResponse resp = null;
+            ObjectMapper objectMapper = new ObjectMapper();
             try {
                 RequestParameters params = new RequestParameters();
                 params.add("entity-name", flow.getEntityName());
@@ -378,7 +385,6 @@ public class LegacyFlowRunnerImpl implements LegacyFlowRunner {
                 params.put("identifiers", items);
                 params.put("target-database", targetDatabase);
                 if (options != null) {
-                    ObjectMapper objectMapper = new ObjectMapper();
                     params.put("options", objectMapper.writeValueAsString(options));
                 }
                 ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, new StringHandle("{}").withFormat(Format.JSON));
@@ -389,7 +395,6 @@ public class LegacyFlowRunnerImpl implements LegacyFlowRunner {
                     else {
                         ResourceServices.ServiceResult res = resultItr.next();
                         StringHandle handle = new StringHandle();
-                        ObjectMapper objectMapper = new ObjectMapper();
                         resp = objectMapper.readValue(res.getContent(handle).get(), RunFlowResponse.class);
                     }
                 }
@@ -400,10 +405,25 @@ public class LegacyFlowRunnerImpl implements LegacyFlowRunner {
                 }
             }
             catch(Exception e) {
-                e.printStackTrace();
-                throw new RuntimeException(e);
+                resp = handleFlowRunnerException (e);
             }
             return resp;
         }
+    }
+
+    protected RunFlowResponse handleFlowRunnerException (Exception e) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        RunFlowResponse resp = null;
+        if(e instanceof FailedRequestException && StringUtils.containsIgnoreCase(((FailedRequestException) e).getFailedRequest().getStatus(), "Plugin error")){
+            try {
+                resp = objectMapper.readValue(((FailedRequestException)e).getFailedRequest().getMessage(), RunFlowResponse.class);
+            } catch (IOException ex) {
+                throw new RuntimeException("Unexpected IO error while parsing exception from running flow; original exception: " + e.getMessage());
+            }
+        }
+        else{
+            throw new RuntimeException(e);
+        }
+        return resp;
     }
 }
