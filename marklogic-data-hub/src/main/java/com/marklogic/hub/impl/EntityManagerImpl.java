@@ -78,13 +78,18 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
 
             File stagingFile = Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile();
             File finalFile = Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile();
+            File expStagingFile = Paths.get(dir.toString(), HubConfig.EXP_STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile();
+            File expFinalFile = Paths.get(dir.toString(), HubConfig.EXP_FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile();
 
             long lastModified = Math.max(stagingFile.lastModified(), finalFile.lastModified());
             List<JsonNode> entities = getModifiedRawEntities(lastModified);
             if (entities.size() > 0) {
-                String options = generator.generateOptions(entities);
+                String options = generator.generateOptions(entities, false);
                 FileUtils.writeStringToFile(stagingFile, options);
                 FileUtils.writeStringToFile(finalFile, options);
+                String expOptions = generator.generateOptions(entities, true);
+                FileUtils.writeStringToFile(expStagingFile, expOptions);
+                FileUtils.writeStringToFile(expFinalFile, expOptions);
                 return true;
             }
         } catch (IOException e) {
@@ -99,8 +104,8 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         saveQueryOptions();
 
         HashMap<Enum, Boolean> loadedResources = new HashMap<>();
-        if (deployFinalQueryOptions()) loadedResources.put(DatabaseKind.FINAL, true);
-        if (deployStagingQueryOptions()) loadedResources.put(DatabaseKind.STAGING, true);
+        if (deployFinalQueryOptions() && deployExpFinalQueryOptions()) loadedResources.put(DatabaseKind.FINAL, true);
+        if (deployStagingQueryOptions() && deployExpStagingQueryOptions()) loadedResources.put(DatabaseKind.STAGING, true);
         return loadedResources;
     }
 
@@ -111,6 +116,14 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
 
     public boolean deployStagingQueryOptions() {
         return deployQueryOptions(hubConfig.newStagingClient(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE);
+    }
+
+    public boolean deployExpFinalQueryOptions() {
+        return deployQueryOptions(hubConfig.newFinalClient(), HubConfig.EXP_FINAL_ENTITY_QUERY_OPTIONS_FILE);
+    }
+
+    public boolean deployExpStagingQueryOptions() {
+        return deployQueryOptions(hubConfig.newStagingClient(), HubConfig.EXP_STAGING_ENTITY_QUERY_OPTIONS_FILE);
     }
 
     private boolean deployQueryOptions(DatabaseClient client, String filename) {
@@ -416,17 +429,18 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
     private class QueryOptionsGenerator extends ResourceManager {
         private static final String NAME = "ml:searchOptionsGenerator";
 
-        private RequestParameters params = new RequestParameters();
-
         QueryOptionsGenerator(DatabaseClient client) {
             super();
             client.init(NAME, this);
         }
 
-        String generateOptions(List<JsonNode> entities) {
+        String generateOptions(List<JsonNode> entities, boolean forExplorer) {
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode node = objectMapper.valueToTree(entities);
+                RequestParameters params = new RequestParameters();
+                params.put("forExplorer", Boolean.toString(forExplorer));
+
                 ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, new JacksonHandle(node));
                 if (resultItr == null || !resultItr.hasNext()) {
                     throw new IOException("Unable to generate query options");

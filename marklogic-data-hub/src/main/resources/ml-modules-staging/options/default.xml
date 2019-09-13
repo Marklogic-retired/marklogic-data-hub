@@ -12,29 +12,4 @@
       <field name="datahubCreatedByStep"/>
     </word>
   </constraint>
-  <constraint name="createdByJobRangeConstraint">
-    <range>
-      <field name="datahubCreatedByJob"/>
-    </range>
-  </constraint>
-  <constraint name="createdByStepRangeConstraint">
-    <range>
-      <field name="datahubCreatedByStep"/>
-    </range>
-  </constraint>
-  <constraint name="createdOnRangeConstraint">
-    <range>
-      <field name="datahubCreatedOn"/>
-    </range>
-  </constraint>
-  <constraint name="createdByRangeConstraint">
-    <range>
-      <field name="datahubCreatedBy"/>
-    </range>
-  </constraint>
-  <constraint name="createdInFlowRangeConstraint">
-    <range>
-      <field name="datahubCreatedInFlow"/>
-    </range>
-  </constraint>
 </options>

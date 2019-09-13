@@ -126,6 +126,47 @@ declare %private function hent:fix-options($nodes as node()*)
               <search:field name="datahubCreatedByStep"/>
             </search:value>
           </search:constraint>,
+          hent:fix-options($n/node())
+        }
+      case element(search:additional-query) return ()
+      case element(search:return-facets) return <search:return-facets>true</search:return-facets>
+      case element() return
+        element { fn:node-name($n) } {
+          $n/namespace::node(),
+          $n/@*,
+          hent:fix-options($n/node()),
+
+          let $is-range-constraint := $n[self::search:range] and $n/..[self::search:constraint]
+          where $is-range-constraint and fn:not($n/search:facet-option[starts-with(., "limit=")])
+          return <search:facet-option>limit=25</search:facet-option>
+        }
+      case text() return
+        fn:replace($n, "es:", "*:")
+      default return $n
+};
+
+declare %private function hent:fix-options-exp($nodes as node()*)
+{
+  for $n in $nodes
+  return
+    typeswitch($n)
+      case element(search:options) return
+        element { fn:node-name($n) } {
+          $n/namespace::node(),
+          $n/@*,
+          <search:constraint name="Collection">
+            <search:collection/>
+          </search:constraint>,
+          <search:constraint name="createdByJob">
+            <search:value>
+              <search:field name="datahubCreatedByJob"/>
+            </search:value>
+          </search:constraint>,
+          <search:constraint name="createdByStep">
+            <search:value>
+              <search:field name="datahubCreatedByStep"/>
+            </search:value>
+          </search:constraint>,
           <search:constraint name="createdByJobRangeConstraint">
             <search:range>
               <search:field name="datahubCreatedByJob"/>
@@ -151,7 +192,7 @@ declare %private function hent:fix-options($nodes as node()*)
               <search:field name="datahubCreatedInFlow"/>
             </search:range>
           </search:constraint>,
-          hent:fix-options($n/node())
+          hent:fix-options-exp($n/node())
         }
       case element(search:additional-query) return ()
       case element(search:return-facets) return <search:return-facets>true</search:return-facets>
@@ -159,14 +200,14 @@ declare %private function hent:fix-options($nodes as node()*)
         element { fn:node-name($n) } {
          $n/namespace::node(),
          $n/@*,
-         hent:fix-options($n/node()),
+         hent:fix-options-exp($n/node()),
          <search:extract-path xmlns:search="http://marklogic.com/appservices/search" xmlns:es="http://marklogic.com/entity-services">/envelope/*:headers</search:extract-path>}
       case element(search:transform-results) return <!--<search:transform-results apply="empty-snippet"></search:transform-results>-->
       case element() return
         element { fn:node-name($n) } {
           $n/namespace::node(),
           $n/@*,
-          hent:fix-options($n/node()),
+          hent:fix-options-exp($n/node()),
 
           let $is-range-constraint := $n[self::search:range] and $n/..[self::search:constraint]
           where $is-range-constraint and fn:not($n/search:facet-option[starts-with(., "limit=")])
@@ -177,12 +218,15 @@ declare %private function hent:fix-options($nodes as node()*)
       default return $n
 };
 
-declare function hent:dump-search-options($entities as json:array)
+declare function hent:dump-search-options($entities as json:array, $params as map:map)
 {
   let $uber-model := hent:uber-model(json:array-values($entities) ! xdmp:to-json(.)/object-node())
-  return
-  (: call fix-options because of https://github.com/marklogic/entity-services/issues/359 :)
-    hent:fix-options(es:search-options-generate($uber-model))
+
+  return if (fn:compare (map:get($params, "forExplorer"),"true") = 0)
+    then
+        hent:fix-options-exp(es:search-options-generate($uber-model))
+    else (
+        hent:fix-options(es:search-options-generate($uber-model)))
 };
 
 declare function hent:dump-pii($entities as json:array)
