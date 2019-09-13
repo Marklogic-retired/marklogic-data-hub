@@ -42,12 +42,12 @@ const App: React.FC<Props> = ({history, location}) => {
     <>
       <Header/>
       <SearchProvider>
-      <Switch>
-        <Route path="/" exact render={() => <Home/>}/>
-        <PrivateRoute path="/view" exact component={View} />
-        <PrivateRoute path="/browse" exact component={Browse}/>
-        <PrivateRoute path="/detail" exact component={Detail}/>
-      </Switch>
+        <Switch>
+          <Route path="/" exact render={() => <Home/>}/>
+          <PrivateRoute path="/view" exact component={View} />
+          <PrivateRoute path="/browse" exact component={Browse}/>
+          <PrivateRoute path="/detail" exact component={Detail}/>
+        </Switch>
       </SearchProvider>
     </>
   );
