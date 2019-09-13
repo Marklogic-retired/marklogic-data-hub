@@ -87,8 +87,8 @@ public class MarkLogicAuthenticationManager implements AuthenticationProvider,
     if (explorerConfig.getHostLoadBalancer()) {
       clientConfig.setConnectionType(DatabaseClient.ConnectionType.GATEWAY);
     }
-    DatabaseClient databaseClient = new DefaultConfiguredDatabaseClientFactory()
-        .newDatabaseClient(clientConfig);
+    DatabaseClient databaseClient =
+        new DefaultConfiguredDatabaseClientFactory().newDatabaseClient(clientConfig);
 
     try {
       databaseClient.newDocumentManager().exists("user");
