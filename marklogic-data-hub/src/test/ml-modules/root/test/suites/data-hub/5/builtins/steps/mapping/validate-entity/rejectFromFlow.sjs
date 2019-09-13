@@ -5,7 +5,11 @@ const test = require("/test/test-helper.xqy");
 
 const datahub = DataHubSingleton.instance();
 
-if (esMappingLib.versionIsCompatibleWithES()) {
+if (xdmp.version().startsWith("10.0-2019")) {
+  console.log("Not running test due to bug https://bugtrack.marklogic.com/53122");
+}
+
+else if (esMappingLib.versionIsCompatibleWithES()) {
   const content = ["/content/invalid-customer.json", "/content/valid-customer.json"].map(uri => {
     return {
       uri: uri,
