@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from 'react';
 import { Switch } from 'react-router';
 import { Route, Redirect, RouteComponentProps, withRouter } from 'react-router-dom';
 import { AuthContext } from './util/auth-context';
+import SearchProvider from './util/search-context';
 import Header from './components/header/header';
 import Home from './pages/Home';
 import View from './pages/View';
@@ -40,12 +41,14 @@ const App: React.FC<Props> = ({history, location}) => {
   return (
     <>
       <Header/>
+      <SearchProvider>
       <Switch>
         <Route path="/" exact render={() => <Home/>}/>
         <PrivateRoute path="/view" exact component={View} />
         <PrivateRoute path="/browse" exact component={Browse}/>
         <PrivateRoute path="/detail" exact component={Detail}/>
       </Switch>
+      </SearchProvider>
     </>
   );
 }

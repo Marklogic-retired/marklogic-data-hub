@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import { RouteComponentProps, Link } from 'react-router-dom';
+import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
 import { AuthContext } from '../util/auth-context';
 import styles from './Detail.module.scss';
 import TableView from '../components/table-view/table-view';
@@ -10,16 +10,16 @@ import { Layout, Menu, PageHeader, Spin } from 'antd';
 
 interface Props extends RouteComponentProps<any> { }
 
-const Detail: React.FC<Props> = ({ history }) => {
+const Detail: React.FC<Props> = ({ history, location }) => {
 
   const { Content } = Layout;
   const { userNotAuthenticated } = useContext(AuthContext);
   const [selected, setSelected] = useState('instance');
   const [data, setData] = useState();
-  const [query, setQuery] = useState(history.location.state.uri);
+  const [query, setQuery] = useState(location.state.uri);
   const [isLoading, setIsLoading] = useState(false);
 
-  let database = history.location.state.database;
+  let database = location.state.database;
 
   useEffect(() => {
     setIsLoading(true);
@@ -78,4 +78,4 @@ const Detail: React.FC<Props> = ({ history }) => {
   );
 }
 
-export default Detail as any;
+export default withRouter(Detail);
