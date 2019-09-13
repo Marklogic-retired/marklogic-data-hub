@@ -15,7 +15,7 @@
 :)
 xquery version "1.0-ml";
 
-module namespace transform = "http://marklogic.com/rest-api/transform/ml:trace-json";
+module namespace transform = "http://marklogic.com/rest-api/transform/ml:traceUISearchResults";
 
 import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
   at "/data-hub/4/impl/perflog-lib.xqy";
@@ -29,7 +29,7 @@ declare function transform(
   $content as document-node()
   ) as document-node()
 {
-  perf:log('/transforms/trace-json:transform', function() {
+  perf:log('/transforms/traceUISearchResults:transform', function() {
 
     map:put($context, "output-types", "application/json"),
     document {
