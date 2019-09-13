@@ -506,7 +506,7 @@ declare function extut:make-transform-wrapper(
     return document {text {concat('xquery version "1.0-ml";
 module namespace ',$transform-name,' = "',$transform-ns,'";
 import module namespace extut = "http://marklogic.com/rest-api/lib/extensions-util"
-    at "/MarkLogic/rest-api/lib/extensions-util.xqy";
+    at "/data-hub/5/rest-api/lib/extensions-util.xqy";
 declare namespace xsl = "http://www.w3.org/1999/XSL/Transform";
 declare default function namespace "http://www.w3.org/2005/xpath-functions";
 declare option xdmp:mapping "false";
@@ -954,7 +954,7 @@ declare private function extut:transform-all-js(
 {
     xdmp:apply(
         xdmp:function(
-            xs:QName("applyList"), "/MarkLogic/rest-api/lib/extensions-util.sjs"
+            xs:QName("applyList"), "/data-hub/5/rest-api/lib/extensions-util.sjs"
             ),
         $extension-name,
         extut:make-source-uri(
@@ -1314,7 +1314,7 @@ declare function extut:make-javascript-wrapper(
         ) as map:map {
             xdmp:apply(
                 xdmp:function(
-                    xs:QName("applyOnce"), "/MarkLogic/rest-api/lib/extensions-util.sjs"
+                    xs:QName("applyOnce"), "/data-hub/5/rest-api/lib/extensions-util.sjs"
                     ),
                 (), $module-path, $func-name, $context, $params, ()
             )
@@ -1326,7 +1326,7 @@ declare function extut:make-javascript-wrapper(
         ) as map:map {
             xdmp:apply(
                 xdmp:function(
-                    xs:QName("applyOnce"), "/MarkLogic/rest-api/lib/extensions-util.sjs"
+                    xs:QName("applyOnce"), "/data-hub/5/rest-api/lib/extensions-util.sjs"
                     ),
                 (), $module-path, $func-name, $context, $params, $input
             )
@@ -1345,7 +1345,7 @@ declare private function extut:javascript-wrapper-module(
 module namespace {$extension-name} = "{$extension-ns}";
 
 import module namespace extut = "http://marklogic.com/rest-api/lib/extensions-util"
-    at "/MarkLogic/rest-api/lib/extensions-util.xqy";
+    at "/data-hub/5/rest-api/lib/extensions-util.xqy";
 
 declare default function namespace "http://www.w3.org/2005/xpath-functions";
 declare option xdmp:mapping "false";
@@ -1353,7 +1353,7 @@ declare option xdmp:mapping "false";
 declare private variable $extName := "{$extension-name}";
 declare private variable $modPath := "{$module-uri}";
 declare private variable $caller  := xdmp:function(
-    xs:QName("applyOnce"), "/MarkLogic/rest-api/lib/extensions-util.sjs"
+    xs:QName("applyOnce"), "/data-hub/5/rest-api/lib/extensions-util.sjs"
     );
 
 declare function {$extension-name}:source-format() as xs:string {{
