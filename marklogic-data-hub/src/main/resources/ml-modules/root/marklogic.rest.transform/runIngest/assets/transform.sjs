@@ -3,7 +3,6 @@ const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const datahub = DataHubSingleton.instance();
 
 function transform(context, params, content) {
-
   let flowName = params['flow-name'] ? xdmp.urlDecode(params['flow-name']) : "default-ingestion";
   let flow = datahub.flow.getFlow(flowName);
   if (!flow) {
