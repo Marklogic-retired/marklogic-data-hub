@@ -969,6 +969,9 @@ public class DataHubImpl implements DataHub {
 
     @Override
     public String getServerVersion() {
+        if(serverVersion == null) {
+            serverVersion = versions.getMarkLogicVersion();
+        }
         return serverVersion;
     }
 
