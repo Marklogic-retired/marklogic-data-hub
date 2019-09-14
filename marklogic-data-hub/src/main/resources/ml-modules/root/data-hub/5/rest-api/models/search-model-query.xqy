@@ -17,7 +17,7 @@ import module namespace eput = "http://marklogic.com/rest-api/lib/endpoint-util"
     at "/MarkLogic/rest-api/lib/endpoint-util.xqy";
 
 import module namespace docmodcom = "http://marklogic.com/rest-api/models/document-model-common"
-    at "/MarkLogic/rest-api/models/document-model-common.xqy";
+    at "document-model-common.xqy";
 
 import module namespace transmod = "http://marklogic.com/rest-api/models/transaction-model"
     at "transaction-model.xqy";
