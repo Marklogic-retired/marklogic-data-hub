@@ -36,6 +36,7 @@ import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.MlcpRunner;
 import com.marklogic.hub.validate.EntitiesValidator;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,6 +51,7 @@ import org.w3c.dom.Document;
 
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -761,7 +763,9 @@ public class EndToEndFlowTests extends HubTestBase {
     }
 
     private void copyFile(String srcDir, Path dstDir) {
-        FileUtil.copy(getResourceStream(srcDir), dstDir.toFile());
+        InputStream inputStream = getResourceStream(srcDir);
+        FileUtil.copy(inputStream, dstDir.toFile());
+        IOUtils.closeQuietly(inputStream);
     }
 
     private void installDocs(DataFormat dataFormat, String collection, DatabaseClient srcClient, boolean useEs, int testSize) {

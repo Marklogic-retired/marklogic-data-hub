@@ -293,14 +293,17 @@ public class HubProjectImpl implements HubProject {
 
         // Ant-style path matching
         Resource[] resources = new Resource[0];
+        InputStream is = null;
         try {
             resources = resolver.getResources("classpath:hub-internal-config/security/amps/*.json");
             for (Resource resource : resources) {
-                InputStream is = resource.getInputStream();
+                is = resource.getInputStream();
                 FileUtil.copy(is, ampsDir.resolve(resource.getFilename()).toFile());
             }
         } catch (IOException e) {
             logger.error("Failed to load amp resource", e);
+        } finally {
+            IOUtils.closeQuietly(is);
         }
 
         writeResourceFile("hub-internal-config/security/roles/flow-operator-role.json", rolesDir.resolve("flow-operator-role.json"), true);
@@ -372,8 +375,13 @@ public class HubProjectImpl implements HubProject {
     private void writeResourceFile(String srcFile, Path dstFile, boolean overwrite) {
         if (overwrite || !dstFile.toFile().exists()) {
             logger.info("Getting file: " + srcFile);
-            InputStream inputStream = HubProject.class.getClassLoader().getResourceAsStream(srcFile);
-            FileUtil.copy(inputStream, dstFile.toFile());
+            InputStream inputStream = null;
+            try {
+                inputStream = HubProject.class.getClassLoader().getResourceAsStream(srcFile);
+                FileUtil.copy(inputStream, dstFile.toFile());
+            } finally {
+                IOUtils.closeQuietly(inputStream);
+            }
         }
     }
 
@@ -382,10 +390,11 @@ public class HubProjectImpl implements HubProject {
     }
 
     private void writeResourceFileWithReplace(Map<String, String> customTokens, String srcFile, Path dstFile, boolean overwrite) {
+        InputStream inputStream = null;
         try {
             if (overwrite || !dstFile.toFile().exists()) {
                 logger.info("Getting file with Replace: " + srcFile);
-                InputStream inputStream = HubProject.class.getClassLoader().getResourceAsStream(srcFile);
+                inputStream = HubProject.class.getClassLoader().getResourceAsStream(srcFile);
 
                 String fileContents = IOUtils.toString(inputStream);
                 for (String key : customTokens.keySet()) {
@@ -402,6 +411,8 @@ public class HubProjectImpl implements HubProject {
         }
         catch(IOException e) {
             throw new RuntimeException(e);
+        } finally {
+            IOUtils.closeQuietly(inputStream);
         }
     }
 
@@ -581,13 +592,17 @@ public class HubProjectImpl implements HubProject {
                 //move the rest of the payloads that are not part of the set to
                 // hub-internal-config
                 else if(! obsoleteFiles.contains(path.toLowerCase())) {
+                    InputStream inputStream = null;
                     try {
+                        inputStream = Files.newInputStream(f);
                         FileUtils.copyInputStreamToFile(
-                                Files.newInputStream(f),
+                                inputStream,
                                 getHubConfigDir().resolve(sourceDir.relativize(f)).toFile());
                     } catch (IOException e) {
                         logger.error("Unable to copy file "+f.getFileName());
                         throw new RuntimeException(e);
+                    } finally {
+                        IOUtils.closeQuietly(inputStream);
                     }
                 }
             });
@@ -690,13 +705,17 @@ public class HubProjectImpl implements HubProject {
                 }
                 //copy all other files in user-config to ml-config except the obsolete ones
                 else if(! obsoleteFiles.contains(path.toLowerCase())) {
+                    InputStream inputStream = null;
                     try {
+                        inputStream = Files.newInputStream(f);
                         FileUtils.copyInputStreamToFile(
-                                Files.newInputStream(f),
+                                inputStream,
                                 getUserConfigDir().resolve(sourceDir.relativize(f)).toFile());
                     } catch (IOException e) {
                         logger.error("Unable to copy "+f.getFileName());
                         throw new RuntimeException(e);
+                    } finally {
+                        IOUtils.closeQuietly(inputStream);
                     }
                 }
 

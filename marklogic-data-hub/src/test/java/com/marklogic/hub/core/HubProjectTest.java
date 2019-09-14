@@ -102,6 +102,7 @@ public class HubProjectTest extends HubTestBase {
         InputStream updatedStream = IOUtils.toInputStream(fileContents);
 
         props.load(updatedStream);
+        updatedStream.close();
         propsStream.close();
 
         assertEquals(config.getAppConfig().getHost(), props.getProperty("mlHost"));

@@ -29,6 +29,7 @@ import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.FixMethodOrder;
 import org.junit.jupiter.api.*;
@@ -38,10 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -93,12 +91,16 @@ public class PiiE2E extends HubTestBase
         Path dest = Paths.get(PROJECT_PATH).getFileName().toAbsolutePath();
         Stream<Path> stream = Files.walk(src);
         stream.filter(f -> !Files.isDirectory(f)).forEach(sourcePath -> {
+            InputStream inputStream = null;
             try {
+                inputStream = Files.newInputStream(sourcePath);
                 FileUtils.copyInputStreamToFile(
-                    Files.newInputStream(sourcePath),
+                    inputStream,
                     dest.resolve(src.relativize(sourcePath)).toFile());
             } catch (Exception e) {
                 throw new RuntimeException(e);
+            } finally {
+                IOUtils.closeQuietly(inputStream);
             }
         });
 
@@ -289,6 +291,8 @@ public class PiiE2E extends HubTestBase
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
+        } finally {
+            br.close();
         }
 
     }
@@ -308,7 +312,9 @@ public class PiiE2E extends HubTestBase
         Path hubEntitiesDir = project.getHubEntitiesDir();
         hubEntitiesDir.toFile().mkdirs();
         Assertions.assertTrue(hubEntitiesDir.toFile().exists());
-        FileUtil.copy(getResourceStream("pii-test/test-entities/EmployeePii.entity.json"), hubEntitiesDir.resolve("EmployeePii.entity.json").toFile());
+        InputStream inputStream = getResourceStream("pii-test/test-entities/EmployeePii.entity.json");
+        FileUtil.copy(inputStream, hubEntitiesDir.resolve("EmployeePii.entity.json").toFile());
+        IOUtils.closeQuietly(inputStream);
     }
 
     private void runInputFLow() throws URISyntaxException

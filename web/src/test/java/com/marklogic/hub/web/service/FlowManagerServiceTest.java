@@ -30,6 +30,7 @@ import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.web.WebApplication;
 import com.marklogic.hub.web.model.MappingModel;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,9 +41,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -78,8 +79,9 @@ class FlowManagerServiceTest extends AbstractServiceTest {
         hubConfig.refreshProject();
 
         Path flowDir = projectDir.resolve("flows");
-
-        FileUtil.copy(getResourceStream("flow-manager/flows/testFlow.flow.json"), flowDir.resolve("testFlow.flow.json").toFile());
+        InputStream inputStream = getResourceStream("flow-manager/flows/testFlow.flow.json");
+        FileUtil.copy(inputStream, flowDir.resolve("testFlow.flow.json").toFile());
+        IOUtils.closeQuietly(inputStream);
 
         installUserModules(getDataHubAdminConfig(), true);
     }
@@ -203,10 +205,11 @@ class FlowManagerServiceTest extends AbstractServiceTest {
     @Test
     void deleteCustomStepThatIsNotReferencedByAnyOtherFlows() {
         String customStepName = "myTestCustomStep";
-        FileUtil.copy(getResourceStream(
-            "scaffolding-test/" + customStepName + StepDefinitionManager.STEP_DEFINITION_FILE_EXTENSION), getDataHubAdminConfig().getStepsDirByType(StepDefinition.StepDefinitionType.CUSTOM)
+        InputStream inputStream = getResourceStream(
+            "scaffolding-test/" + customStepName + StepDefinitionManager.STEP_DEFINITION_FILE_EXTENSION);
+        FileUtil.copy(inputStream, getDataHubAdminConfig().getStepsDirByType(StepDefinition.StepDefinitionType.CUSTOM)
             .resolve(customStepName + "/" + customStepName + StepDefinitionManager.STEP_DEFINITION_FILE_EXTENSION).toFile());
-
+        IOUtils.closeQuietly(inputStream);
         assertEquals(1, stepDefinitionManager.getStepDefinitions().size(),
             "Should have the one custom step that was just copied over");
 

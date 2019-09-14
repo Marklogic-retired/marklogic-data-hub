@@ -7,6 +7,7 @@ import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.util.HubModuleManager;
+import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -19,6 +20,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -80,7 +82,9 @@ public class MasterTest extends HubTestBase {
                 Path subResourcePath = resourcePath.resolve(childFile.getName());
                 copyFileStructure(subResourcePath, subProjectPath);
             } else {
-                Files.copy(getResourceStream(resourcePath.resolve(childFile.getName()).toString().replaceAll("\\\\","/")), projectPath.resolve(childFile.getName()));
+                InputStream inputStream = getResourceStream(resourcePath.resolve(childFile.getName()).toString().replaceAll("\\\\","/"));
+                Files.copy(inputStream, projectPath.resolve(childFile.getName()));
+                IOUtils.closeQuietly(inputStream);
             }
         }
     }
