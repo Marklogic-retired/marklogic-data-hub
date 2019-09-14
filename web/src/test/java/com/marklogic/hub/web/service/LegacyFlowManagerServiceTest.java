@@ -34,6 +34,7 @@ import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.MlcpRunner;
 import com.marklogic.hub.web.WebApplication;
 import com.marklogic.hub.web.auth.ConnectionAuthenticationToken;
+import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -46,6 +47,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -103,24 +105,50 @@ public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
             CodeFormat.XQUERY, DataFormat.XML, false);
 
         Path inputDir = projectDir.resolve("plugins/entities/" + ENTITY + "/input");
-        FileUtil.copy(getResourceStream("legacy-flow-manager/sjs-flow/headers.sjs"), inputDir.resolve("sjs-json-input-flow/headers.sjs").toFile());
-        FileUtil.copy(getResourceStream("legacy-flow-manager/sjs-flow/content-input.sjs"), inputDir.resolve("sjs-json-input-flow/content.sjs").toFile());
-        FileUtil.copy(getResourceStream("legacy-flow-manager/sjs-flow/triples.sjs"), inputDir.resolve("sjs-json-input-flow/triples.sjs").toFile());
+        InputStream inputStream = getResourceStream("legacy-flow-manager/sjs-flow/headers.sjs");
+        FileUtil.copy(inputStream, inputDir.resolve("sjs-json-input-flow/headers.sjs").toFile());
+        IOUtils.closeQuietly(inputStream);
+        inputStream = getResourceStream("legacy-flow-manager/sjs-flow/content-input.sjs");
+        FileUtil.copy(inputStream, inputDir.resolve("sjs-json-input-flow/content.sjs").toFile());
+        IOUtils.closeQuietly(inputStream);
+        inputStream = getResourceStream("legacy-flow-manager/sjs-flow/triples.sjs");
+        FileUtil.copy(inputStream, inputDir.resolve("sjs-json-input-flow/triples.sjs").toFile());
+        IOUtils.closeQuietly(inputStream);
 
-        FileUtil.copy(getResourceStream("legacy-flow-manager/sjs-flow/headers.sjs"), inputDir.resolve("sjs-xml-input-flow/headers.sjs").toFile());
-        FileUtil.copy(getResourceStream("legacy-flow-manager/sjs-flow/content-input.sjs"), inputDir.resolve("sjs-xml-input-flow/content.sjs").toFile());
-        FileUtil.copy(getResourceStream("legacy-flow-manager/sjs-flow/triples.sjs"), inputDir.resolve("sjs-xml-input-flow/triples.sjs").toFile());
+        inputStream = getResourceStream("legacy-flow-manager/sjs-flow/headers.sjs");
+        FileUtil.copy(inputStream, inputDir.resolve("sjs-xml-input-flow/headers.sjs").toFile());
+        IOUtils.closeQuietly(inputStream);
+        inputStream = getResourceStream("legacy-flow-manager/sjs-flow/content-input.sjs");
+        FileUtil.copy(inputStream, inputDir.resolve("sjs-xml-input-flow/content.sjs").toFile());
+        IOUtils.closeQuietly(inputStream);
+        inputStream = getResourceStream("legacy-flow-manager/sjs-flow/triples.sjs");
+        FileUtil.copy(inputStream, inputDir.resolve("sjs-xml-input-flow/triples.sjs").toFile());
+        IOUtils.closeQuietly(inputStream);
 
-        FileUtil.copy(getResourceStream("legacy-flow-manager/xqy-flow/headers-json.xqy"), inputDir.resolve("xqy-json-input-flow/headers.xqy").toFile());
-        FileUtil.copy(getResourceStream("legacy-flow-manager/xqy-flow/content-input.xqy"), inputDir.resolve("xqy-json-input-flow/content.xqy").toFile());
-        FileUtil.copy(getResourceStream("legacy-flow-manager/xqy-flow/triples.xqy"), inputDir.resolve("xqy-json-input-flow/triples.xqy").toFile());
+        inputStream = getResourceStream("legacy-flow-manager/xqy-flow/headers-json.xqy");
+        FileUtil.copy(inputStream, inputDir.resolve("xqy-json-input-flow/headers.xqy").toFile());
+        IOUtils.closeQuietly(inputStream);
+        inputStream = getResourceStream("legacy-flow-manager/xqy-flow/content-input.xqy");
+        FileUtil.copy(inputStream, inputDir.resolve("xqy-json-input-flow/content.xqy").toFile());
+        IOUtils.closeQuietly(inputStream);
+        inputStream = getResourceStream("legacy-flow-manager/xqy-flow/triples.xqy");
+        FileUtil.copy(inputStream, inputDir.resolve("xqy-json-input-flow/triples.xqy").toFile());
+        IOUtils.closeQuietly(inputStream);
 
-        FileUtil.copy(getResourceStream("legacy-flow-manager/xqy-flow/headers-xml.xqy"), inputDir.resolve("xqy-xml-input-flow/headers.xqy").toFile());
-        FileUtil.copy(getResourceStream("legacy-flow-manager/xqy-flow/content-input.xqy"), inputDir.resolve("xqy-xml-input-flow/content.xqy").toFile());
-        FileUtil.copy(getResourceStream("legacy-flow-manager/xqy-flow/triples.xqy"), inputDir.resolve("xqy-xml-input-flow/triples.xqy").toFile());
+        inputStream = getResourceStream("legacy-flow-manager/xqy-flow/headers-xml.xqy");
+        FileUtil.copy(inputStream, inputDir.resolve("xqy-xml-input-flow/headers.xqy").toFile());
+        IOUtils.closeQuietly(inputStream);
+        inputStream = getResourceStream("legacy-flow-manager/xqy-flow/content-input.xqy");
+        FileUtil.copy(inputStream, inputDir.resolve("xqy-xml-input-flow/content.xqy").toFile());
+        IOUtils.closeQuietly(inputStream);
+        inputStream = getResourceStream("legacy-flow-manager/xqy-flow/triples.xqy");
+        FileUtil.copy(inputStream, inputDir.resolve("xqy-xml-input-flow/triples.xqy").toFile());
+        IOUtils.closeQuietly(inputStream);
 
         Path harmonizeDir = projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize");
-        FileUtil.copy(getResourceStream("legacy-flow-manager/sjs-harmonize-flow/headers.sjs"), harmonizeDir.resolve("sjs-json-harmonization-flow/headers.sjs").toFile());
+        inputStream = getResourceStream("legacy-flow-manager/sjs-harmonize-flow/headers.sjs");
+        FileUtil.copy(inputStream, harmonizeDir.resolve("sjs-json-harmonization-flow/headers.sjs").toFile());
+        IOUtils.closeQuietly(inputStream);
 
         installUserModules(getDataHubAdminConfig(), true);
     }

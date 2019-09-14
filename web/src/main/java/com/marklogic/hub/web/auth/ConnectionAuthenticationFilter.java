@@ -20,9 +20,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.web.service.EnvironmentConfig;
 import com.marklogic.hub.web.service.ProjectManagerService;
-import java.io.IOException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
@@ -30,6 +27,10 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.Assert;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * Processes an authentication form submission. Called
@@ -104,7 +105,7 @@ public class ConnectionAuthenticationFilter extends
         }
 
         username = username.trim();
-        
+
         hubConfig.setMlUsername(username);
         hubConfig.setMlPassword(password);
         hubConfig.resetAppConfigs();
