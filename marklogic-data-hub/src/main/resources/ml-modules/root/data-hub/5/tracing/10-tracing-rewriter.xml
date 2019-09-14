@@ -855,4 +855,21 @@
             <dispatch>/MarkLogic/rest-api/endpoints/internal-version.xqy</dispatch>
         </match-path>
     </match-path>
+    <match-path matches="^/hub">
+      <match-path matches="^/hub/traces">
+        <match-path matches="^/hub/traces/?$">
+          <dispatch>/data-hub/4/tracing/get-traces.xqy</dispatch>
+        </match-path>
+        <match-path matches="^/hub/traces/ids">
+          <dispatch>/data-hub/4/tracing/get-ids.xqy</dispatch>
+        </match-path>
+        <match-path matches="^/hub/traces/search">
+          <dispatch>/data-hub/4/tracing/search.xqy</dispatch>
+        </match-path>
+        <match-path matches="^/hub/traces/(\d+)">
+          <add-query-param name="id">$1</add-query-param>
+          <dispatch>/data-hub/4/tracing/get-trace.xqy</dispatch>
+        </match-path>
+      </match-path>
+    </match-path>
 </rewriter>

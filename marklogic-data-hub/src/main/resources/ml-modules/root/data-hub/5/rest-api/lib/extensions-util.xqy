@@ -437,15 +437,22 @@ declare function extut:get-extension-function(
                     )
                 )
             } catch($e) { }
-        return
+        return function($context, $params) {
+            for $request in map:get($context,"requests")
+            let $req-context := map:get($request,"context")
+            let $input := map:get($request,"input")
+            where fn:exists($input/binary()) and map:get($req-context,"input-type") = ("application/xml", "application/json")
+            return
+              map:put($request,"input", xdmp:unquote(xdmp:binary-decode($input, "UTF-8"))),
             if ($source-format eq "javascript")
-            then extut:transform-all-js($extension-name, ?, ?)
+            then extut:transform-all-js($extension-name, $context, $params)
             else extut:transform-all(
                 extut:get-extension-function(
                     "transform",$extension-name,$function-name,"xquery"
                     ),
-                ?,
-                ?)
+                $context,
+                $params)
+        }
     else extut:get-extension-function(
         $extension-type,$extension-name,$function-name,"xquery"
         )
@@ -858,7 +865,6 @@ declare function extut:invoke-service(
                 =>map:with("txn-curr",$txn-curr)=>map:with("txn-mode",$txn-mode),
                 map:entry("input",$input)
                 ),
-
             xdmp:invoke-function(
                 function() {
                     extut:call-service(
@@ -925,9 +931,15 @@ declare private function extut:transform-all(
     map:entry("response",
         for $request in map:get($context,"requests")
         let $context := map:get($request,"context")
+        let $input := map:get($request,"input")
+        let $input :=
+          if (fn:exists($input/binary()) and map:get($context,"input-type") = ("application/xml", "application/json")) then
+            xdmp:unquote(xdmp:binary-decode($input, "UTF-8"))
+          else
+            $input
         return extut:make-output(
             $context,
-            xdmp:apply($func, $context, $params, map:get($request,"input"))
+            xdmp:apply($func, $context, $params, $input)
             )
         )
 };

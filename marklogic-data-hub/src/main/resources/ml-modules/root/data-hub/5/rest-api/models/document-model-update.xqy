@@ -38,7 +38,7 @@ import schema namespace rapi = "http://marklogic.com/rest-api"
     at "restapi.xsd";
 
 import module namespace docmodcom = "http://marklogic.com/rest-api/models/document-model-common"
-    at "/MarkLogic/rest-api/models/document-model-common.xqy";
+    at "document-model-common.xqy";
 
 (: needed for patch :)
 import module namespace docmodqry = "http://marklogic.com/rest-api/models/document-model-query"
