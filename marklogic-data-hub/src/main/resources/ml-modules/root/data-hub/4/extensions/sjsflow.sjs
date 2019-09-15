@@ -121,7 +121,12 @@ function post(context, params, input) {
       "errors": errors
     }
     if(resp.errorCount > 0){
-      fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([400, "Plugin error", resp]));
+      for (let i = 0; i < errors.length; i++) {
+         if((errors[i].stack && errors[i].stack.includes("DATAHUB-PLUGIN-ERROR"))
+         || (errors[i].name && errors[i].name.includes("DATAHUB-PLUGIN-ERROR"))) {
+           fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([400, "Plugin error", resp]));
+         }
+      }
     }
   }
   else {
