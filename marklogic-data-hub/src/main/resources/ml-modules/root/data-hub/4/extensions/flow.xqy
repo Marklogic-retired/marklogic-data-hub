@@ -167,8 +167,13 @@ declare function post(
               "errors": $errors
             }
           }
+        let $is-plugin-error :=
+          for $error in json:array-values($errors)
+            where contains(xdmp:to-json($error)/code, "DATAHUB-PLUGIN-ERROR") or contains(xdmp:to-json($error)/formatString , "DATAHUB-PLUGIN-ERROR")
+          return fn:true()
+
         let $resp :=
-          if (trace:get-error-count() > 0) then
+          if (trace:get-error-count() > 0 and $is-plugin-error) then
             fn:error((),"RESTAPI-SRVEXERR", (400, "Plugin error", text{$output}))
           else
             $output
