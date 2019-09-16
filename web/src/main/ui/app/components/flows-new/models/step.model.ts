@@ -53,7 +53,7 @@ export class Step {
       inputFilePath: filePath,
       inputFileType: 'json',
       outputURIReplacement: '',
-      separator: ',',
+      separator: '',
     };
     step.fileLocations = fileLocations;
     step.options = new IngestionOptions();
@@ -119,7 +119,7 @@ export class Step {
         inputFilePath: filePath,
         inputFileType: 'json',
         outputURIReplacement: '',
-        separator: ',',
+        separator: '',
       };
       step.fileLocations = fileLocations;
     }
@@ -178,7 +178,7 @@ export class Step {
             inputFilePath: projectDirectory,
             inputFileType: 'json',
             outputURIReplacement: '',
-            separator: ','
+            separator: ''
           };
           newStep.fileLocations = fileLocations;
         }
@@ -204,7 +204,7 @@ export class Step {
               inputFilePath: projectDirectory,
               inputFileType: 'json',
               outputURIReplacement: '',
-              separator: ','
+              separator: ''
             };
             newStep.fileLocations = fileLocations;
           }
