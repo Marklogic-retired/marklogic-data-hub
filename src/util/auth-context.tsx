@@ -26,7 +26,7 @@ export const AuthContext = React.createContext<IAuthContextInterface>({
 
 const AuthProvider: React.FC<{ children: any }> = ({children}) => {
   
-  const [user, setUser] = useState({ name: '', authenticated: false });
+  const [user, setUser] = useState(defaultUserData);
   const sessionUser = sessionStorage.getItem('dataHubExplorerUser');
 
   const userAuthenticated = (username: string) => {

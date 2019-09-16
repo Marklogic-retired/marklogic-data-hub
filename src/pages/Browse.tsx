@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
+import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
 import { AuthContext } from '../util/auth-context';
+import { SearchContext } from '../util/search-context';
 import Sidebar from '../components/sidebar/sidebar';
 import SearchBar from '../components/search-bar/search-bar';
 import SearchPagination from '../components/search-pagination/search-pagination';
@@ -9,26 +11,38 @@ import SearchSummary from '../components/search-summary/search-summary';
 import SearchResults from '../components/search-results/search-results';
 import { entityFromJSON } from '../util/data-conversion';
 
-const Browse: React.FC = () => {
+interface Props extends RouteComponentProps<any> { }
+
+const Browse: React.FC<Props> = ({location}) => {
   const { Content, Sider } = Layout;
 
   const { userNotAuthenticated } = useContext(AuthContext);
+  const { 
+    searchOptions,
+    setPage,
+    setPageLength,
+    setSearchFacets,
+    setEntityClearQuery,
+  } = useContext(SearchContext);
+
   const [data, setData] = useState();
   const [entities, setEntites] = useState<any[]>([]);
   const [facets, setFacets] = useState();
   const [searchUrl, setSearchUrl] = useState<any>({ url: `/datahub/v2/search`, method: 'post' });
-  const [searchQuery, setSearchQuery] = useState();
-  const [searchParams, setSearchParams] = useState({ start: 1, pageLength: 10, entities: entities });
-  const [searchFacets, setSearchFacets] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [entitiesLoaded, setEntitiesLoaded] = useState(false);
   const [totalDocuments, setTotalDocuments] = useState();
 
   const getEntityModel = async () => {
     try {
       const response = await axios(`/datahub/v2/models`);
       setEntites([ ...entityFromJSON(response.data).map(entity => entity.info.title)]);
+      setEntitiesLoaded(true);
     } catch (error) {
       // console.log('error', error.response);
+      if (error.response.status === 401) {
+        userNotAuthenticated();
+      }
     }
   }
 
@@ -39,11 +53,11 @@ const Browse: React.FC = () => {
         method: searchUrl.method,
         url: searchUrl.url,
         data: {
-          query: searchQuery,
-          entityNames: searchParams.entities,
-          start: searchParams.start,
-          pageLength: searchParams.pageLength,
-          facets: searchFacets
+          query: searchOptions.query,
+          entityNames: searchOptions.entityNames,
+          start: searchOptions.start,
+          pageLength: searchOptions.pageLength,
+          facets: searchOptions.searchFacets
         }
       });
       console.log('response.data', response.data);
@@ -53,48 +67,31 @@ const Browse: React.FC = () => {
       setIsLoading(false);
     } catch (error) {
       // console.log('error', error.response);
-      if (error.response.status === 401) {
-        userNotAuthenticated();
-      }
     }
   }
+  useEffect(() => {
+    if(location.state && location.state.entity){
+      setEntityClearQuery(location.state.entity);
+    }
+    getEntityModel();
+  }, []);
 
   useEffect(() => {
-    getEntityModel();
-    getSearchResults();
-  }, [searchQuery, searchParams, searchFacets]);
-
-  const handleSearch = (searchString: string) => {
-    console.log('The user typed string is ' + searchString);
-    setSearchQuery(searchString);
-    setSearchParams({ ...searchParams, start: 1});
-  }
+    if (entitiesLoaded) {
+      getSearchResults();
+    }
+  }, [searchOptions, entitiesLoaded]);
   
   const handlePageChange = (pageNumber: number) => {
-    console.log('The user selected page ' + pageNumber);
-    setSearchParams({ ...searchParams, start: pageNumber});
+    setPage(pageNumber);
   }
 
   const handlePageLengthChange = (current: number, pageSize: number) => {
-    console.log('The user changed page length ' + pageSize);
-    setSearchParams({ ...searchParams, pageLength: pageSize, start: 1});
+    setPageLength(current, pageSize);
   }
 
   const handleFacetClick = (constraint, vals) => {
-    console.log('Updated a facet ' + constraint + ': ' + vals);
-    if (vals.length > 0) {
-      setSearchFacets({ ...searchFacets, [constraint]: vals});
-    } else {
-      let newSearchFacets = { ...searchFacets };
-      delete newSearchFacets[constraint];
-      setSearchFacets(newSearchFacets);
-    }
-    setSearchParams({ ...searchParams, start: 1});
-  }
-
-  const handleOptionSelect = (option: string) => {
-    console.log('Selected Option is ' + option);
-    option === 'All Entities' ?  setSearchParams({ ...searchParams, entities: []}) :  setSearchParams({ ...searchParams, entities: [option]});
+    setSearchFacets(constraint, vals);
   }
 
   return (
@@ -106,30 +103,30 @@ const Browse: React.FC = () => {
         />
       </Sider>
       <Content style={{ background: '#fff', padding: '24px' }}>
-      <SearchBar searchCallback={handleSearch} optionSelectCallback={handleOptionSelect} entities={entities}/>
+      <SearchBar entities={entities}/>
         {isLoading ? 
           <Spin tip="Loading..." style={{ margin: '100px auto', width: '100%'}} />
           : 
           <>
-            <SearchSummary total={totalDocuments} start={searchParams.start} length={searchParams.pageLength} />
+            <SearchSummary total={totalDocuments} start={searchOptions.start} length={searchOptions.pageLength} />
             <SearchPagination 
               total={totalDocuments} 
               onPageChange={handlePageChange} 
               onPageLengthChange={handlePageLengthChange} 
-              currentPage={searchParams.start}
-              pageLength={searchParams.pageLength} 
+              currentPage={searchOptions.start}
+              pageLength={searchOptions.pageLength} 
             />
             <br />
             <br />
             <SearchResults data={data} />
             <br />
-            <SearchSummary total={totalDocuments} start={searchParams.start} length={searchParams.pageLength} />
+            <SearchSummary total={totalDocuments} start={searchOptions.start} length={searchOptions.pageLength} />
             <SearchPagination 
               total={totalDocuments} 
               onPageChange={handlePageChange} 
               onPageLengthChange={handlePageLengthChange} 
-              currentPage={searchParams.start}
-              pageLength={searchParams.pageLength} 
+              currentPage={searchOptions.start}
+              pageLength={searchOptions.pageLength} 
             />
           </>
         }
@@ -138,4 +135,4 @@ const Browse: React.FC = () => {
   );
 }
 
-export default Browse;
+export default withRouter(Browse);

@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { Link } from 'react-router-dom';
 // import styles from './entity-table.module.scss';
 import { Table } from 'antd';
+import { SearchContext } from '../../util/search-context';
 
 type Props = {
   entities: any[];
@@ -8,6 +10,7 @@ type Props = {
 }
 
 const EntityTable:React.FC<Props> = (props) => {
+  const { setEntity } = useContext(SearchContext);
 
   const expandedRowRender = (entity) => {
     const columns = [
@@ -62,6 +65,14 @@ const EntityTable:React.FC<Props> = (props) => {
       title: 'Entity Name', 
       dataIndex: 'name', 
       width: 200,
+      render: text => { return (
+        <Link to={{
+          pathname: "/browse", 
+          state: { entity: text} }}
+        >
+          {text}
+        </Link>
+      )},  
       sorter: (a, b) => { return a.name.localeCompare(b.name) }
     },
     { 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { mount } from 'enzyme';
+import { BrowserRouter as Router, Link } from 'react-router-dom';
 import EntityTable from './entity-table';
 import { entityFromJSON } from '../../util/data-conversion';
 import MockEntities from '../../assets/mock-data/model-response';
@@ -10,7 +11,14 @@ describe("Entity Table component", () => {
 
     beforeAll(() => {
         let entites = entityFromJSON(MockEntities);
-        wrapper = mount(<EntityTable entities={entites} facetValues={EntityProperties.Collection.facetValues}/>)
+        wrapper = mount(
+          <Router>
+            <EntityTable 
+              entities={entites} 
+              facetValues={EntityProperties.Collection.facetValues}
+            />
+          </Router>
+        )
     });
 
     it("entity table renders", () => {
