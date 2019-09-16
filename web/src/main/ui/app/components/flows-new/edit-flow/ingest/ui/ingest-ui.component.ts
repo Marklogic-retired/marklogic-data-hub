@@ -244,6 +244,7 @@ export class IngestUiComponent implements OnInit{
   }
 
   onChange() {
+    this.initializeFieldSep();
     this.saveStep.emit(this.step);
     this.buildURIPreview();
     this.updateMlcpCommand();
@@ -324,7 +325,9 @@ export class IngestUiComponent implements OnInit{
       this.step.fileLocations.separator = this.OtherDelimiter;
     }
 
-    this.onChange();
+    this.saveStep.emit(this.step);
+    this.buildURIPreview();
+    this.updateMlcpCommand();
   }
 
   defaultSep(): string {
@@ -337,5 +340,16 @@ export class IngestUiComponent implements OnInit{
     let othDelim: string;
     othDelim = [',',';','|','\\t'].includes(this.step.fileLocations.separator) ?  '' : this.step.fileLocations.separator;
     return othDelim;
+  }
+
+  initializeFieldSep() {
+    if (this.step.fileLocations.inputFileType === 'csv') {
+      if (this.step.fileLocations.separator === '') {
+        this.step.fileLocations.separator = ',';
+        this.csvSep = this.step.fileLocations.separator;
+      }
+    } else {
+      this.step.fileLocations.separator = '';
+    }
   }
 }
