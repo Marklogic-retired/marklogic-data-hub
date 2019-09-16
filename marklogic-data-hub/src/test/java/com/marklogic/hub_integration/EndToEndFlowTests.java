@@ -125,6 +125,7 @@ public class EndToEndFlowTests extends HubTestBase {
 
     @BeforeAll
     public static void setup() {
+        new Installer().teardownProject();
         XMLUnit.setIgnoreWhitespace(true);
         new Installer().setupProject();
     }
@@ -148,6 +149,10 @@ public class EndToEndFlowTests extends HubTestBase {
 
         scaffolding.createEntity(ENTITY);
 
+        if (!isSetup) {
+            installHubModules();
+            isSetup = true;
+        }
         installUserModules(getDataHubAdminConfig(), true);
     }
 

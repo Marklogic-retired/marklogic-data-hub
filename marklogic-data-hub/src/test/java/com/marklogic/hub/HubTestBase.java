@@ -34,18 +34,15 @@ import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.ext.SecurityContextType;
-import com.marklogic.client.ext.file.CollectionsDocumentFileProcessor;
 import com.marklogic.client.ext.file.JarDocumentFileReader;
-import com.marklogic.client.ext.file.PermissionsDocumentFileProcessor;
-import com.marklogic.client.ext.file.TokenReplacerDocumentFileProcessor;
-import com.marklogic.client.ext.modulesloader.impl.AssetFileLoader;
-import com.marklogic.client.ext.modulesloader.impl.DefaultModulesFinder;
-import com.marklogic.client.ext.modulesloader.impl.DefaultModulesLoader;
 import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager;
 import com.marklogic.client.ext.tokenreplacer.DefaultTokenReplacer;
 import com.marklogic.client.ext.tokenreplacer.TokenReplacer;
 import com.marklogic.client.io.*;
-import com.marklogic.hub.deploy.commands.*;
+import com.marklogic.hub.deploy.commands.LoadHubArtifactsCommand;
+import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
+import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
+import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.impl.DataHubImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
@@ -943,27 +940,6 @@ public class HubTestBase {
         deployer.deploy(adminHubConfig.getAppConfig());
     }
 
-
-    protected LoadModulesCommand loadModulesCommand(HubConfig hubConfig) {
-        // Code below is to emulate loadHubModulesCommand without loading search options
-        DatabaseClient modulesClient = hubConfig.newModulesDbClient();
-        AppConfig appConfig = hubConfig.getAppConfig();
-        AssetFileLoader assetFileLoader = new AssetFileLoader(modulesClient);
-        if (jarDocumentFileReader == null) {
-            jarDocumentFileReader = new JarDocumentFileReader();
-            jarDocumentFileReader.addDocumentFileProcessor(new TokenReplacerDocumentFileProcessor(buildModuleTokenReplacer(appConfig)));
-            jarDocumentFileReader.addDocumentFileProcessor(new CollectionsDocumentFileProcessor("hub-core-module"));
-            jarDocumentFileReader.addDocumentFileProcessor(new PermissionsDocumentFileProcessor(appConfig.getModulePermissions()));
-            jarDocumentFileReader.addDocumentFileProcessor(new HubRESTDocumentFileProcessor());
-        }
-        assetFileLoader.setDocumentFileReader(jarDocumentFileReader);
-        DefaultModulesLoader modulesLoader = new DefaultModulesLoader(assetFileLoader);
-        modulesLoader.loadModules("classpath*:/ml-modules", new DefaultModulesFinder(), modulesClient);
-        LoadModulesCommand loadModulesCommand = new LoadModulesCommand();
-        loadModulesCommand.setModulesLoader(modulesLoader);
-        return loadModulesCommand;
-    }
-
     protected void installUserModules(HubConfig hubConfig, boolean force) {
         logger.debug("Installing user modules into MarkLogic");
         List<Command> commands = new ArrayList<>();
@@ -973,7 +949,8 @@ public class HubTestBase {
         loadUserArtifactsCommand.setForceLoad(force);
         commands.add(loadUserArtifactsCommand);
 
-        commands.add(loadModulesCommand(hubConfig));
+        LoadModulesCommand loadModulesCommand = new LoadModulesCommand();
+        commands.add(loadModulesCommand);
 
         SimpleAppDeployer deployer = new SimpleAppDeployer(((HubConfigImpl)hubConfig).getManageClient(), ((HubConfigImpl)hubConfig).getAdminManager());
         deployer.setCommands(commands);
