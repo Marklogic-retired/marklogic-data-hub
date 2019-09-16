@@ -218,11 +218,10 @@ declare %private function hent:fix-options-exp($nodes as node()*)
       default return $n
 };
 
-declare function hent:dump-search-options($entities as json:array, $params as map:map)
+declare function hent:dump-search-options($entities as json:array, $for-explorer as xs:boolean?)
 {
   let $uber-model := hent:uber-model(json:array-values($entities) ! xdmp:to-json(.)/object-node())
-
-  return if (fn:compare (map:get($params, "forExplorer"),"true") = 0)
+  return if ($for-explorer = fn:true())
     then
         hent:fix-options-exp(es:search-options-generate($uber-model))
     else (
