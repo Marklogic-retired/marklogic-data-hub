@@ -37,8 +37,13 @@ declare function post(
   debug:dump-env(),
 
   perf:log('/v1/resources/validate:get', function() {
-    document {
-      hent:dump-search-options($input, $params)
+    let $for-explorer :=
+    if ( map:contains($params, "forExplorer") ) then
+       xs:boolean(map:get($params, "forExplorer"))
+    else
+       fn:false()
+    return document {
+      hent:dump-search-options($input, $for-explorer)
     }
   })
 };
