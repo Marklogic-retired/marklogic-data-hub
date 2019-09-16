@@ -346,12 +346,12 @@ public class DataHubImpl implements DataHub {
             }
 
             HashSet<String> services = new HashSet<>();
-            for (Resource r : resolver.getResources("classpath*:/ml-modules/services/*.xqy")) {
+            for (Resource r : resolver.getResources("classpath*:/ml-modules/root/marklogic.rest.resource/*")) {
                 services.add(r.getFilename().replaceAll("\\.(xqy|sjs)", ""));
             }
 
             HashSet<String> transforms = new HashSet<>();
-            for (Resource r : resolver.getResources("classpath*:/ml-modules/transforms/*")) {
+            for (Resource r : resolver.getResources("classpath*:/ml-modules/root/marklogic.rest.transform/*")) {
                 transforms.add(r.getFilename().replaceAll("\\.(xqy|sjs)", ""));
             }
 
@@ -388,7 +388,8 @@ public class DataHubImpl implements DataHub {
             JsonNode transformsList = transformExtensionsManager.listTransforms(new JacksonHandle()).get();
             transformsList.findValuesAsText("name").forEach(
                 x -> {
-                    if (!transforms.contains(x)) {
+                    // may be missing ml: prefix
+                    if (!(transforms.contains(x) || transforms.contains(x.substring(3)))) {
                         transformExtensionsManager.deleteTransform(x);
                     }
                 }
@@ -399,7 +400,8 @@ public class DataHubImpl implements DataHub {
             JsonNode resourceExtensions = resourceExtensionsManager.listServices(new JacksonHandle()).get();
             resourceExtensions.findValuesAsText("name").forEach(
                 x -> {
-                    if (!services.contains(x)) {
+                    // may be missing ml: prefix
+                    if (!(services.contains(x) || services.contains(x.substring(3)))) {
                         resourceExtensionsManager.deleteServices(x);
                     }
                 }
