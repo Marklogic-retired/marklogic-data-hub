@@ -21,6 +21,7 @@ const Detail: React.FC<Props> = ({ history }) => {
   const [query, setQuery] = useState(history.location.state.uri);
   const [isLoading, setIsLoading] = useState(false);
   const [contentType, setContentType] = useState();
+  const [xml, setXml] = useState();
 
   let database = history.location.state.database;
 
@@ -32,20 +33,22 @@ const Detail: React.FC<Props> = ({ history }) => {
           `datahub/v2/search?docUri=${query}`,
         );
 
-        setData(JSON.parse(result.data.content));
-        const contentType = result.headers.get("content-type");
-        if (contentType && contentType.indexOf("application/json") !== -1) {
-          setContentType('json')
-        } else if (contentType && contentType.indexOf("application/xml") !== -1) {
-          setContentType('xml')
+        const content = result.headers['content-type'];
+
+        if (content.indexOf("application/json") !== -1) {
+          setContentType('json');
+          setData(JSON.parse(result.data.content));
+        } else if (content.indexOf("application/xml") !== -1) {
+          setContentType('xml');
+          let decodedXml = decodeXml(result.data);
+          setData(convertXmlToJson(decodedXml));
+          setXml(decodeXml(decodedXml));
         }
 
-        console.log('CONTENT IS ', contentType)
-
-        setData(result.data);
         setIsLoading(false);
+
       } catch (error) {
-        // console.log('error', error.response);
+        console.log('error', error.response);
         if (error.response.status === 401) {
           userNotAuthenticated();
         }
@@ -59,34 +62,32 @@ const Detail: React.FC<Props> = ({ history }) => {
     setSelected(event.key);
   }
 
-  const getXmlObject = (xmlData) => {
+  const convertXmlToJson = (xmlData) => {
     var parser = require('fast-xml-parser');
-    var he = require('he');
-
     var options = {
-      attributeNamePrefix : "@_",
-      attrNodeName: "attr", //default is 'false'
-      textNodeName : "#text",
-      ignoreAttributes : true,
-      ignoreNameSpace : false,
-      allowBooleanAttributes : false,
-      parseNodeValue : true,
-      parseAttributeValue : false,
+      attributeNamePrefix: "",
+      attrNodeName: false, //default is 'false'
+      textNodeName: "#text",
+      ignoreAttributes: true,
+      ignoreNameSpace: false,
+      allowBooleanAttributes: false,
+      parseNodeValue: true,
+      parseAttributeValue: false,
       trimValues: true,
       cdataTagName: "__cdata", //default is 'false'
       cdataPositionChar: "\\c",
       localeRange: "", //To support non english character in tag/attribute values.
-      parseTrueNumberOnly: false,
-      attrValueProcessor: a => he.decode(a, {isAttributeValue: true}),//default is a=>a
-      tagValueProcessor : a => he.decode(a) //default is a=>a
-  };
+      parseTrueNumberOnly: false
+    };
 
-    if( parser.validate(xmlData) === true) { 
-    var jsonObj = parser.parse(xmlData,options);
+    if (parser.validate(xmlData) === true) {
+      return parser.parse(xmlData, options).Document;
+    }
+  }
 
-    console.log(jsonObj);
-    return jsonObj;
-}
+  const decodeXml = (xml) => {
+    var he = require('he');
+    return he.decode(xml);
   }
 
   return (
@@ -97,7 +98,7 @@ const Detail: React.FC<Props> = ({ history }) => {
         </div>
         <div className={styles.header}>
           <div className={styles.heading}>
-            {data && <DocumentHeader document={data} />}
+            {data && <DocumentHeader document={data} contentType={contentType} />}
           </div>
           <div id='menu' className={styles.menu}>
             <Menu onClick={(event) => handleClick(event)} mode="horizontal" selectedKeys={[selected]}>
@@ -114,12 +115,10 @@ const Detail: React.FC<Props> = ({ history }) => {
           {
             isLoading ? <Spin tip="Loading..." style={{ margin: '100px auto', width: '100%' }} />
               :
-              // selected === 'instance' ? (data && <TableView document={data} />) : (data && <JsonView document={data} />)
-              // selected === 'instance' ? (data && <TableView document={data} />) : (data && <XmlView />)
               contentType === 'json' ?
-                selected === 'instance' ? (data && <TableView document={data} />) : (data && <JsonView document={data} />)
+                selected === 'instance' ? (data && <TableView document={data} contentType={contentType} />) : (data && <JsonView document={data} />)
                 :
-                selected === 'instance' ? (data && <TableView document={data} />) : (data && <XmlView document={data} />)
+                selected === 'instance' ? (data && <TableView document={data} contentType={contentType} />) : (data && <XmlView document={xml} />)
           }
         </div>
       </Content>

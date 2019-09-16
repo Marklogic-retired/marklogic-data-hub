@@ -2,15 +2,21 @@ import React, { useState } from 'react';
 import { Table } from 'antd';
 
 const TableView = (props) => {
+  const [expanded, setExpanded] = useState(false);
 
-  const document = Object.keys(props.document.envelope.instance)[0];
   let data = new Array();
 
-  Object.keys(props.document.envelope.instance[document]).forEach(function (key) {
-    data.push({ property: key, value: props.document.envelope.instance[document][key] });
-  });
-
-  const [expanded, setExpanded] = useState(false);
+  if (props.contentType === 'json') {
+    var document = Object.keys(props.document.envelope.instance)[0];
+    Object.keys(props.document.envelope.instance[document]).forEach(function (key) {
+      data.push({ property: key, value: props.document.envelope.instance[document][key] });
+    });
+  } else if (props.contentType === 'xml') {
+    document = Object.keys(props.document.content.envelope.instance)[1];
+    Object.keys(props.document.content.envelope.instance[document]).forEach(function (key) {
+      data.push({ property: key, value: props.document.content.envelope.instance[document][key] });
+    });
+  }
 
   const handleClick = () => {
     expanded === false ? setExpanded(true) : setExpanded(false)

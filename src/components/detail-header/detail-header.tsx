@@ -4,14 +4,26 @@ import styles from './detail-header.module.scss';
 
 const Header = (props) => {
     const { Text } = Typography;
-    var envelope = props.document.envelope;
-    const document = Object.keys(envelope.instance)[0];
-    const title = envelope.instance.info.title; 
-    const id = envelope.instance[document].id
-    const timestamp = envelope.headers.createdOn;
-    const sources = envelope.headers.sources[0].name;
-    const fileType = 'JSON';
-    const user = envelope.headers.createdBy;
+    const fileType = props.contentType.toUpperCase();
+    var envelope, document, title, id, timestamp, sources, user;
+
+    if (fileType === 'JSON') {
+        envelope = props.document.envelope;
+        document = Object.keys(envelope.instance)[0];
+        title = envelope.instance.info.title;
+        id = envelope.instance[document].id
+        timestamp = envelope.headers.createdOn;
+        sources = envelope.headers.sources[0].name;
+        user = envelope.headers.createdBy;
+    } else if (fileType === 'XML') {
+        envelope = props.document.content.envelope;
+        document = Object.keys(envelope.instance)[1];
+        title = envelope.instance.info.title;
+        id = envelope.instance[document].id
+        timestamp = props.document.metaData.entry.find(x => x.key === 'datahubCreatedOn').value;
+        sources = props.document.metaData.entry.find(x => x.key === 'datahubCreatedInFlow').value;
+        user = props.document.metaData.entry.find(x => x.key === 'datahubCreatedBy').value;
+    }
 
     return (
         <>
