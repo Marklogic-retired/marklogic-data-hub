@@ -142,6 +142,10 @@ public class EndToEndFlowTests extends HubTestBase {
     	createProjectDir();
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
 
+        if (!isSetup) {
+            installHubModules();
+            isSetup = true;
+        }
         enableTracing();
         enableDebugging();
 
@@ -149,10 +153,6 @@ public class EndToEndFlowTests extends HubTestBase {
 
         scaffolding.createEntity(ENTITY);
 
-        if (!isSetup) {
-            installHubModules();
-            isSetup = true;
-        }
         installUserModules(getDataHubAdminConfig(), true);
     }
 
