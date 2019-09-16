@@ -409,8 +409,7 @@ public class DataHubImpl implements DataHub {
                 "cts:uris((),(),cts:not-query(cts:collection-query('hub-core-module')))[\n" +
                     "  fn:not(\n" +
                     "    fn:matches(., \"^.+options/(" + String.join("|", options) + ").xml$\") or\n" +
-                    "    fn:matches(., \"/marklogic.rest.resource/(" + String.join("|", services) + ")/assets/(metadata\\.xml|resource\\.(xqy|sjs))\") or\n" +
-                    "    fn:matches(., \"/marklogic.rest.transform/(" + String.join("|", transforms) + ")/assets/(metadata\\.xml|transform\\.(xqy|sjs))\")\n" +
+                    "    fn:starts-with(., \"/marklogic.rest.\")\n" +
                     "  )\n" +
                     "] ! xdmp:document-delete(.)\n";
             runInDatabase(query, hubConfig.getDbName(DatabaseKind.MODULES));
