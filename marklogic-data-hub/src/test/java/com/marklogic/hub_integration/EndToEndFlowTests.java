@@ -121,6 +121,7 @@ public class EndToEndFlowTests extends HubTestBase {
     private String installDocError;
     @Autowired
     private Scaffolding scaffolding;
+    private EntitiesValidator ev = null;
 
     @BeforeAll
     public static void setup() {
@@ -156,7 +157,9 @@ public class EndToEndFlowTests extends HubTestBase {
     }
 
     private JsonNode validateUserModules() {
-        EntitiesValidator ev = EntitiesValidator.create(getDataHubAdminConfig().newStagingClient());
+        if (ev == null) {
+            ev = EntitiesValidator.create(getDataHubAdminConfig().newStagingClient());
+        }
         return ev.validateAll();
     }
 
