@@ -177,6 +177,7 @@ class FlowManagerServiceTest extends AbstractServiceTest {
 
         // Install artifacts so we can verify that the mappings are deleted
         installHubArtifacts(hubConfig, true);
+        installUserModules(hubConfig, true);
 
         // Verify the mappings exist
         GenericDocumentManager stagingDocumentManager = stagingClient.newDocumentManager();

@@ -578,9 +578,10 @@ public class HubTestBase {
     }
 
     public void deleteProjectDir() {
-        if (new File(PROJECT_PATH).exists()) {
+        File projectPath = new File(PROJECT_PATH);
+        if (projectPath.exists()) {
             try {
-                FileUtils.forceDelete(new File(PROJECT_PATH));
+                FileUtils.forceDelete(projectPath);
             } catch (IOException e) {
                 logger.warn("Unable to delete the project directory", e);
             }
