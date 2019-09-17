@@ -20,13 +20,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.mapping.Mapping;
 import com.marklogic.hub.web.model.MappingModel;
 import com.marklogic.hub.web.service.MappingManagerService;
-import java.io.IOException;
-import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.util.ArrayList;
 
 @Controller
 @RequestMapping("/api/current-project")
@@ -79,5 +80,11 @@ public class MappingController {
         @PathVariable String mapName) throws ClassNotFoundException, IOException {
         mappingManagerService.deleteMapping(mapName);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @RequestMapping(value = "/mappings/functions", method = RequestMethod.GET)
+    @ResponseBody
+    public JsonNode getMappingFunctions() {
+        return mappingManagerService.getMappingFunctions();
     }
 }

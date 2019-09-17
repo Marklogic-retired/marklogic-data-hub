@@ -22,6 +22,7 @@ import com.marklogic.hub.MappingManager;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.mapping.Mapping;
+import com.marklogic.hub.mapping.MappingFunctions;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.web.model.MappingModel;
 import org.apache.commons.io.FileUtils;
@@ -99,4 +100,8 @@ public class MappingManagerService {
         }
     }
 
+    public JsonNode getMappingFunctions() {
+        MappingFunctions mappingFunctions = new MappingFunctions(hubConfig.newStagingClient());
+        return mappingFunctions.getMappingFunctions();
+    }
 }
