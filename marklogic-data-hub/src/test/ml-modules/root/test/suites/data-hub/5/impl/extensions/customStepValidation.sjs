@@ -4,7 +4,10 @@ const stepValidate = require("/data-hub/5/extensions/stepValidate.sjs");
 
 function checkPermissions() {
   let operatorRole = xdmp.role("flow-operator-role").toString();
-  let modPerms = xdmp.documentGetPermissions("/flows/default-ingestion.flow.json");
+  let modPerms = fn.head(xdmp.eval('xdmp.documentGetPermissions("/data-hub/5/extensions/stepValidate.sjs")', null,
+    {
+      "database" : xdmp.database(xdmp.databaseName(xdmp.modulesDatabase()))
+    }));
   return [
     test.assertEqual(true, stepValidate.checkPermissions(modPerms, operatorRole),
       "This document should have right permissions for 'flowOperator'")
