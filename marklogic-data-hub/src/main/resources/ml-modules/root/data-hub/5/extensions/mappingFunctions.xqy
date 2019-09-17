@@ -37,22 +37,3 @@ declare %rapi:transaction-mode("query") function mappingFunctions:get(
 ) as map:map {
   xdmp:apply($caller,$extName,$modPath,"GET",$context,$params)
 };
-declare %rapi:transaction-mode("query") function mappingFunctions:delete(
-  $context as map:map, $params as map:map
-) as map:map {
-  xdmp:apply($caller,$extName,$modPath,"DELETE",$context,$params)
-};
-declare %rapi:transaction-mode("query") function mappingFunctions:post(
-  $context as map:map, $params as map:map, $input as document-node()*
-) as map:map {
-  xdmp:apply($caller,$extName,$modPath,"POST",$context,$params,$input)
-};
-declare %rapi:transaction-mode("query") function mappingFunctions:put($context as map:map, $params as map:map, $input as document-node()*
-) as map:map {
-  xdmp:apply($caller,$extName,$modPath,"PUT",$context,$params,$input)
-};
-declare function mappingFunctions:transform(
-  $context as map:map, $params as map:map, $input as document-node()?
-) as map:map {
-  xdmp:apply($caller,$extName,$modPath,"transform",$context,$params,$input)
-};
