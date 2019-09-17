@@ -14,13 +14,13 @@ import module namespace sut = "http://marklogic.com/rest-api/lib/search-util"
     at "/MarkLogic/rest-api/lib/search-util.xqy";
 
 import module namespace eput = "http://marklogic.com/rest-api/lib/endpoint-util"
-    at "/MarkLogic/rest-api/lib/endpoint-util.xqy";
+    at "../lib/endpoint-util.xqy";
 
 import module namespace docmodcom = "http://marklogic.com/rest-api/models/document-model-common"
     at "document-model-common.xqy";
 
 import module namespace transmod = "http://marklogic.com/rest-api/models/transaction-model"
-    at "transaction-model.xqy";
+    at "/MarkLogic/rest-api/models/transaction-model.xqy";
 
 import module namespace search-impl = "http://marklogic.com/appservices/search-impl"
     at "/MarkLogic/appservices/search/search-impl.xqy";
