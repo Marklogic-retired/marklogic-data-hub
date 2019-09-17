@@ -37,7 +37,7 @@ public class SearchQuery {
     this.query = query;
   }
 
-  public void setEntityName(List<String> entityNames) {
+  public void setEntityNames(List<String> entityNames) {
     this.entityNames = (entityNames != null) ? entityNames : new ArrayList<>();
   }
 
