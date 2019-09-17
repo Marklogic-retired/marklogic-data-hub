@@ -16,6 +16,7 @@ public class AbstractServiceTest extends HubTestBase {
         adminHubConfig.refreshProject();
         ConnectionAuthenticationToken authenticationToken = new ConnectionAuthenticationToken("admin", "admin", "localhost", 1, "local");
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        installHubModules();
     }
 
 }
