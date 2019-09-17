@@ -1,6 +1,5 @@
 package com.marklogic.hub.explorer.service;
 
-import com.marklogic.client.ResourceNotFoundException;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.explorer.model.Document;
 import com.marklogic.hub.explorer.model.SearchQuery;
@@ -21,10 +20,7 @@ public class SearchService {
   }
 
   public Document getDocument(String docUri) {
-    try {
-      return searchUtil.getDocument(docUri);
-    } catch (ResourceNotFoundException rnfe) {
-      return null;
-    }
+    Document doc = searchUtil.getDocument(docUri);
+    return doc;
   }
 }

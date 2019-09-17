@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.marklogic.client.ResourceNotFoundException;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.explorer.model.Document;
 import com.marklogic.hub.explorer.model.SearchQuery;
@@ -115,9 +114,7 @@ public class SearchServiceTest {
   public void testGetDocument() {
     String mockDocUri = "/example.json";
     when(mockSearchUtil.getDocument(mockDocUri)).thenReturn(mockDocument);
-    System.out.println(mockDocument.getContent());
     Document actualDoc = searchServiceMock.getDocument(mockDocUri);
-    System.out.println(actualDoc.getContent());
     assertTrue(actualDoc.getContent().equals(mockDocument.getContent()));
     assertTrue(actualDoc.getMetaData().equals(mockDocument.getMetaData()));
   }
@@ -125,7 +122,7 @@ public class SearchServiceTest {
   @Test
   public void testGetNonExistingDocument() {
     String fakeDocUri = "/example1.json";
-    when(mockSearchUtil.getDocument(fakeDocUri)).thenThrow(ResourceNotFoundException.class);
+    when(mockSearchUtil.getDocument(fakeDocUri)).thenReturn(null);
     Document actualDoc = searchServiceMock.getDocument(fakeDocUri);
     assertTrue(actualDoc == null);
   }

@@ -84,9 +84,13 @@ public class SearchUtil {
     DocumentMetadataHandle documentMetadataReadHandle = new DocumentMetadataHandle();
 
     // Fetching document content and meta-data
-    content = docMgr.readAs(docUri, documentMetadataReadHandle, String.class,
-        new ServerTransform("ml:prettifyXML"));
-    metadata = documentMetadataReadHandle.getMetadataValues();
+    try {
+      content = docMgr.readAs(docUri, documentMetadataReadHandle, String.class,
+          new ServerTransform("ml:prettifyXML"));
+      metadata = documentMetadataReadHandle.getMetadataValues();
+    } catch (ResourceNotFoundException rnfe) {
+      return null;
+    }
 
     // Setting content and meta-data to Document object
     document.setContent(content);
