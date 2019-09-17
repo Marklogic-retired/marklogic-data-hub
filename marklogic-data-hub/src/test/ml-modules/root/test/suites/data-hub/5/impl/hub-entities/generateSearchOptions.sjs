@@ -14,7 +14,7 @@ const input =
 const params = false;
 const options = hent.dumpSearchOptions(input, params);
 
-[
+let assertions = [
   test.assertEqual("limit=25", xs.string(fn.head(options.xpath("/*:constraint[@name = 'title']/*:range/*:facet-option/text()"))),
     "To avoid displaying large numbers of values in facets in QuickStart, range constraints default to a max of 25 values"
   ),
@@ -26,10 +26,12 @@ const options = hent.dumpSearchOptions(input, params);
 
 const expParams = true;
 const expOtions = hent.dumpSearchOptions(input, expParams);
-[
+assertions.concat([
   test.assertEqual("limit=25", xs.string(fn.head(expOtions.xpath("/*:constraint[@name = 'title']/*:range/*:facet-option/text()"))),
     "To avoid displaying large numbers of values in facets in QuickStart, range constraints default to a max of 25 values"
   ),
+  test.assertExists(expOtions.xpath("/*:constraint[@name = 'createdByJobRangeConstraint']")),
+  test.assertExists(expOtions.xpath("/*:constraint[@name = 'createdOnRangeConstraint']")),
   test.assertExists(expOtions.xpath("/*:values[@name = 'Book']/*:range/*:element[@name = 'title']")),
   test.assertNotExists(expOtions.xpath("/*:values[@name = 'Book']/*:range/*:facet-option"),
     "A facet option does not need to be set on the values element"),
@@ -37,4 +39,4 @@ const expOtions = hent.dumpSearchOptions(input, expParams);
     "To see the sourced From, created on and created by information on the search snippet"
   ),
   test.assertNotExists(expOtions.xpath("/*:transform-results"), "Enabling the snippet information by disabling empty-snippet")
-];
+]);
