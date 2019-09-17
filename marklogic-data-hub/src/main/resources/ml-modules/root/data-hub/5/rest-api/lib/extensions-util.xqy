@@ -63,6 +63,7 @@ declare private variable $system-resource-extensions-50 := map:map()
     =>map:with("ml:batches",    "batches")
     =>map:with("ml:hubstats",   "hubstats")
     =>map:with("ml:hubversion", "hubversion")
+    =>map:with("ml:mappingValidator", "mappingValidator")
     =>map:with("ml:smMerge",    "smMerge")
     =>map:with("ml:stepValidate","stepValidate");
 

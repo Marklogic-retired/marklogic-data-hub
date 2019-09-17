@@ -2,6 +2,7 @@
 
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const datahub = DataHubSingleton.instance();
+const es = require('/MarkLogic/entity-services/entity-services');
 const mappingLib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
 const sem = require("/MarkLogic/semantics.xqy");
 const semPrefixes = {es: 'http://marklogic.com/entity-services#'};
@@ -77,6 +78,10 @@ function buildMapProperties(mapping, entityModel) {
   for (let prop in mapProperties) {
     if (mapProperties.hasOwnProperty(prop)) {
       let isRequired = requiredProps.includes(prop);
+      if (!entityProperties.hasOwnProperty(prop)) {
+        // TODO Can pass in a JSON object instead of a string message, but not able to reference the properties on it
+        throw Error("The property '" + prop + "' is not defined by the entity model");
+      }
       let dataType = entityProperties[prop].datatype;
       let isArray = false;
       if (dataType === 'array') {
@@ -200,6 +205,71 @@ function escapeXML(input = '') {
     .replace(/}/g, '&#125;');
 }
 
+/**
+ * Validates all property mappings in the given mapping object.
+ *
+ * @param mapping
+ * @return {{targetEntityType: *, properties: {}}}
+ */
+function validateMapping(mapping) {
+  let validatedMapping = {
+    targetEntityType : mapping.targetEntityType,
+    properties : {}
+  };
+
+  Object.keys(mapping.properties).forEach(propertyName => {
+    let sourcedFrom = mapping.properties[propertyName].sourcedFrom;
+    let result = validatePropertyMapping(mapping.targetEntityType, propertyName, sourcedFrom);
+    validatedMapping.properties[propertyName] = result;
+  });
+
+  return validatedMapping;
+}
+
+/**
+ * Validate a single property mapping by constructing a mapping consisting of just the given property mapping.
+ *
+ * @param targetEntityType
+ * @param propertyName
+ * @param sourcedFrom
+ * @return {{sourcedFrom: *, errorMessage: *}|{sourcedFrom: *}}
+ */
+function validatePropertyMapping(targetEntityType, propertyName, sourcedFrom) {
+  let mapping = {
+    "targetEntityType": targetEntityType,
+    "properties": {}
+  };
+
+  mapping.properties[propertyName] = {
+    "sourcedFrom": sourcedFrom
+  };
+
+  try {
+    let xmlMapping = buildMappingXML(fn.head(xdmp.unquote(xdmp.quote(mapping))));
+
+    // As of trunk 10.0-20190916, mappings are being validated against entity schemas in the schema database.
+    // This doesn't seem expected, as the validation will almost always fail.
+    // Thus, this is not using es.mappingCompile, which does validation, and just invokes the transform instead.
+    let stylesheet = xdmp.xsltInvoke("/MarkLogic/entity-services/mapping-compile.xsl", xmlMapping)
+
+    xdmp.xsltEval(stylesheet, [], {staticCheck: true});
+    // In the future, we'll capture a value here that results from applying the successfully validated mapping against a document
+    return {
+      sourcedFrom: sourcedFrom
+    };
+  } catch (e) {
+    // TODO Move this into a separate function for easier testing?
+    let errorMessage = e.message;
+    if (e.data != null && e.data.length > 0) {
+      errorMessage += ": " + e.data[0];
+    }
+    return {
+      sourcedFrom : sourcedFrom,
+      errorMessage : errorMessage
+    }
+  }
+}
+
 function versionIsCompatibleWithES(version = xdmp.version()) {
   let numberSensitiveCollation = 'http://marklogic.com/collation//MO';
   let isNightly = /^[0-9]+\.[0-9]+-[0-9]{8}$/.test(version);
@@ -216,5 +286,6 @@ module.exports = {
   buildEntityMappingXML,
   getEntityName,
   getTargetEntity,
-  versionIsCompatibleWithES
+  versionIsCompatibleWithES,
+  validateMapping
 };
