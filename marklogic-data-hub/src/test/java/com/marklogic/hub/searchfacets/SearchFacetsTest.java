@@ -11,6 +11,8 @@ import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.DataHub;
+import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
@@ -18,10 +20,10 @@ import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.step.StepDefinition;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.Test;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -31,9 +33,12 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.TestInstance.Lifecycle;
 
+/* These tests will be passing once the indexes are being deployed to the databases.*/
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ApplicationConfig.class)
+@TestInstance(Lifecycle.PER_CLASS)
 public class SearchFacetsTest extends HubTestBase {
 
     @Autowired
@@ -42,25 +47,29 @@ public class SearchFacetsTest extends HubTestBase {
     @Autowired
     private HubConfigImpl hubConfig;
 
+    @Autowired
+    private EntityManager entityManager;
+
+    @Autowired
+    private DataHub dataHub;
+
     @AfterAll
     public static void cleanUp(){
         new Installer().deleteProjectDir();
     }
 
     @BeforeAll
-    public static void setup() {
+    public void setup() throws IOException {
         XMLUnit.setIgnoreWhitespace(true);
         new Installer().deleteProjectDir();
-    }
-
-    @BeforeEach
-    public void setupEach() throws IOException {
         basicSetup();
         getDataHubAdminConfig();
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
         FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/entities/e2eentity.entity.json"),
             hubConfig.getHubEntitiesDir().toFile());
+        entityManager.saveDbIndexes();
         installUserModules(getDataHubAdminConfig(), true);
+        dataHub.updateIndexes();
         FileUtils.copyDirectory(getResourceFile("flow-runner-test/flows"), hubConfig.getFlowsDir().toFile());
         FileUtils.copyDirectory(getResourceFile("flow-runner-test/input"),
             hubConfig.getHubProjectDir().resolve("input").toFile());
@@ -82,15 +91,16 @@ public class SearchFacetsTest extends HubTestBase {
     public void testSearchFacets() throws InterruptedException {
         DatabaseClient finalClient = hubConfig.newFinalClient();
         QueryManager queryMgr = finalClient.newQueryManager();
-        StructuredQueryBuilder qb = queryMgr.newStructuredQueryBuilder();
+        StructuredQueryBuilder qb = queryMgr.newStructuredQueryBuilder("exp-final-entity-options");
         StructuredQueryDefinition sqd = qb.and();
 
         SearchHandle resultsHandle = new SearchHandle();
         queryMgr.search(sqd, resultsHandle);
         String[] facets = resultsHandle.getFacetNames();
         String[] expectedFacets = {"Collection", "createdByJobRangeConstraint", "createdByStepRangeConstraint",
-            "createdOnRangeConstraint", "createdByRangeConstraint", "createdInFlowRangeConstraint"};
-        assertTrue(facets.length == 6,"There should be 5 meta data range indexes and 1 collection index");
+            "createdOnRangeConstraint", "createdInFlowRangeConstraint", "name", "salary"};
+        assertTrue(facets.length == 7,"There should be 4 meta data range indexes, 1 collection index and" +
+            "2 entity properties range indexes");
         assertTrue(Arrays.equals(facets, expectedFacets), "The returned facets on the empty search should match with" +
             "expected facets");
     }
@@ -101,7 +111,7 @@ public class SearchFacetsTest extends HubTestBase {
     public void testSnippetAndSearchContent() throws InterruptedException, IOException {
         DatabaseClient finalClient = hubConfig.newFinalClient();
         QueryManager queryMgr = finalClient.newQueryManager();
-        StructuredQueryBuilder qb = queryMgr.newStructuredQueryBuilder();
+        StructuredQueryBuilder qb = queryMgr.newStructuredQueryBuilder("exp-final-entity-options");
         StructuredQueryDefinition sqd = qb.and();
         sqd.setCriteria("123");
         StringHandle resultsHandle = new StringHandle();
