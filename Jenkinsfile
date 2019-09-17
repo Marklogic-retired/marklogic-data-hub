@@ -59,7 +59,7 @@ pipeline{
 			steps{
 			script{
 			    props = readProperties file:'data-hub/pipeline.properties';
-				copyRPM 'Release','9.0-10'
+				copyRPM 'Release','10.0-2'
 				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
 				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;set +e;./gradlew clean;./gradlew marklogic-data-hub:test;sleep 10s;./gradlew ml-data-hub:test;./gradlew web:test;'
 				junit '**/TEST-*.xml'
@@ -315,6 +315,78 @@ pipeline{
   			beforeAgent true
 		}
 		parallel{
+		stage('rh7_cluster_10.0-Nightly'){
+        			agent { label 'dhfLinuxAgent'}
+        			steps{
+        			script{
+                        props = readProperties file:'data-hub/pipeline.properties';
+        				copyRPM 'Latest','10.0'
+        				def dockerhost=setupMLDockerCluster 3
+        				sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test;sleep 10s;./gradlew ml-data-hub:test;sleep 10s;./gradlew web:test;sleep 10s;./gradlew marklogic-data-hub:testBootstrap;sleep 10s;./gradlew ml-data-hub:testFullCycle;"'
+        				}
+        				junit '**/TEST-*.xml'
+        					script{
+        				 commitMessage = sh (returnStdout: true, script:'''
+        			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
+        			def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
+        				def commit=slurper.message.toString().trim();
+        				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
+        				JIRA_ID=JIRA_ID.split(" ")[0];
+        				commitMessage=null;
+        				//jiraAddComment comment: 'Jenkins rh7_cluster_10.0-Nightly Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+        				}
+        			}
+        			post{
+        				 always{
+        				  	sh 'rm -rf $WORKSPACE/xdmp'
+        				  }
+                          success {
+                            println("rh7_cluster_10.0-Nightly Tests Completed")
+                            sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on rh7 cluster 10.0-nightly of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'rh7_cluster_10.0-Nightly Tests $BRANCH_NAME Passed'
+                            // sh './gradlew publish'
+                           }
+                           unsuccessful {
+                              println("rh7_cluster_10.0-nightly Tests Failed")
+                              sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on 10.0-Nightly rh7 cluster failed. Please fix the tests and create a PR or create a bug for the failures.',false,'rh7_cluster_10.0-Nightly Tests for $BRANCH_NAME Failed'
+                          }
+                          }
+        		}
+        		stage('rh7_cluster_9.0-Nightly'){
+                        			agent { label 'dhfLinuxAgent'}
+                        			steps{
+                        			script{
+                                        props = readProperties file:'data-hub/pipeline.properties';
+                        				copyRPM 'Latest','9.0'
+                        				def dockerhost=setupMLDockerCluster 3
+                        				sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test;sleep 10s;./gradlew ml-data-hub:test;sleep 10s;./gradlew web:test;sleep 10s;./gradlew marklogic-data-hub:testBootstrap;sleep 10s;./gradlew ml-data-hub:testFullCycle;"'
+                        				}
+                        				junit '**/TEST-*.xml'
+                        					script{
+                        				 commitMessage = sh (returnStdout: true, script:'''
+                        			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
+                        			def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
+                        				def commit=slurper.message.toString().trim();
+                        				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
+                        				JIRA_ID=JIRA_ID.split(" ")[0];
+                        				commitMessage=null;
+                        				//jiraAddComment comment: 'Jenkins rh7_cluster_9.0-Nightly Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+                        				}
+                        			}
+                        			post{
+                        				 always{
+                        				  	sh 'rm -rf $WORKSPACE/xdmp'
+                        				  }
+                                          success {
+                                            println("rh7_cluster_10.0-Nightly Tests Completed")
+                                            sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on rh7 cluster 9.0-nightly of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'rh7_cluster_9.0-Nightly Tests $BRANCH_NAME Passed'
+                                            // sh './gradlew publish'
+                                           }
+                                           unsuccessful {
+                                              println("rh7_cluster_10.0-nightly Tests Failed")
+                                              sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on 9.0-Nightly rh7 cluster failed. Please fix the tests and create a PR or create a bug for the failures.',false,'rh7_cluster_9.0-Nightly Tests for $BRANCH_NAME Failed'
+                                          }
+                                          }
+                        		}
 		stage('rh7_cluster_9.0-9'){
 			agent { label 'dhfLinuxAgent'}
 			steps{
