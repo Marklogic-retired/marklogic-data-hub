@@ -81,4 +81,10 @@ public class MappingController {
         mappingManagerService.deleteMapping(mapName);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @RequestMapping(value = "/mappings/functions", method = RequestMethod.GET)
+    @ResponseBody
+    public JsonNode getMappingFunctions() {
+        return mappingManagerService.getMappingFunctions();
+    }
 }
