@@ -389,7 +389,7 @@ public class DataHubImpl implements DataHub {
             transformsList.findValuesAsText("name").forEach(
                 x -> {
                     // may be missing ml: prefix
-                    if (!(transforms.contains(x) || transforms.contains(x.substring(3)))) {
+                    if (!(transforms.contains(x) || transforms.contains(x.substring(3)) || x.startsWith("ml:"))) {
                         transformExtensionsManager.deleteTransform(x);
                     }
                 }
@@ -401,7 +401,7 @@ public class DataHubImpl implements DataHub {
             resourceExtensions.findValuesAsText("name").forEach(
                 x -> {
                     // may be missing ml: prefix
-                    if (!(services.contains(x) || services.contains(x.substring(3)))) {
+                    if (!(services.contains(x) || services.contains(x.substring(3)) || x.startsWith("ml:"))) {
                         resourceExtensionsManager.deleteServices(x);
                     }
                 }
