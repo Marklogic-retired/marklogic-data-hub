@@ -7,31 +7,30 @@ import TableView from '../components/table-view/table-view';
 import JsonView from '../components/json-view/json-view';
 import DocumentHeader from '../components/detail-header/detail-header';
 import { Layout, Menu, PageHeader, Spin } from 'antd';
-
 import XmlView from '../components/xml-view/xml-view';
 
 interface Props extends RouteComponentProps<any> { }
 
 const Detail: React.FC<Props> = ({ history, location }) => {
-
   const { Content } = Layout;
   const { userNotAuthenticated } = useContext(AuthContext);
   const [selected, setSelected] = useState('instance');
   const [data, setData] = useState();
-  const [query, setQuery] = useState(location.state.uri);
+  const [query, setQuery] = useState(location.pathname.replace('/detail', ''));
   const [isLoading, setIsLoading] = useState(false);
   const [contentType, setContentType] = useState();
   const [xml, setXml] = useState();
 
-  let database = location.state.database;
+  // let database = location.state.database;
 
   useEffect(() => {
     setIsLoading(true);
     const fetchData = async () => {
       try {
-        const result = await axios(
-          `datahub/v2/search?docUri=${query}`,
-        );
+        const result = await axios({
+          baseURL: 'http://localhost:3000',
+          url: `datahub/v2/search?docUri=${query}`
+        });
 
         const content = result.headers['content-type'];
 
