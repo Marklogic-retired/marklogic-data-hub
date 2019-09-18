@@ -8,10 +8,11 @@ function main(content, options) {
   let mergeOptions = new NodeBuilder().addNode({ options: options.mergeOptions }).toNode();
   for (const item of content) {
     uris.push(item.uri);
-    item.context.collections = collImpl.onArchive({ [item.uri]: item.context.originalCollections }, mergeOptions.xpath('options/algorithms/collections/onArchive'));
+    item.context.collections = collImpl.onArchive({ [item.uri]: Sequence.from(item.context.originalCollections) }, mergeOptions.xpath('options/algorithms/collections/onArchive'));
   }
   let mergedDocument = fn.head(merging.buildMergeModelsByUri(uris, mergeOptions));
   let contentArray = content.toArray();
+  contentArray.push(mergedDocument['audit-trace']);
   mergedDocument.context = mergedDocument.context || {
     permissions: Sequence.from(contentArray.map((item) => item.context.permissions))
   };

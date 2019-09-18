@@ -22,7 +22,7 @@ class MergeEntitiesTask extends HubTask  {
         def options = (JsonNode) (project.hasProperty('options') ? new ObjectMapper().readTree(project.property('options').toString()) : new ObjectMapper().readTree('{}'))
         println "mergeURIs: " + mergeURIs
         println "flowName: " + flowName
-        println "stepNumber: " + preview
+        println "stepNumber: " + stepNumber
         println "preview: " + preview
         println "options: " + options
 

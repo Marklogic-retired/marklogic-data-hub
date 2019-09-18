@@ -405,7 +405,7 @@ declare function merge-impl:rollback-merge(
     else
       $all-contributing-uris[(@last-merge|../last-merge) = $last-merge-dateTime] ! fn:string(.)
   let $merge-doc-in-previous := $previous-uris = $merged-doc-uri
-  where fn:exists($latest-auditing-receipt-for-doc)
+  where fn:exists(($latest-auditing-receipt-for-doc,$last-merge-dateTime))
   return (
     let $prevent-auto-match :=
       if ($block-future-merges) then
@@ -418,6 +418,7 @@ declare function merge-impl:rollback-merge(
           ,$on-merge-options)
     where fn:not($previous-doc-uri = $merged-doc-uri or merge-impl:source-of-other-merged-doc($previous-doc-uri, $merged-doc-uri))
     return (
+      $previous-doc-uri,
       xdmp:document-set-collections($previous-doc-uri, $new-collections)
     ),
     if ($merge-doc-in-previous) then
