@@ -142,6 +142,7 @@ public class MasterTest extends HubTestBase {
         List<String> docsToMerge = Arrays.asList("/person-1.json","/person-1-1.json","/person-1-2.json","/person-1-3.json");
         masteringManager.merge(docsToMerge, "myNewFlow","3", Boolean.FALSE, new ObjectMapper().createObjectNode());
         assertEquals(1, getFinalDocCount("mdm-merged"),"One merge should have occurred");
+        assertEquals(1, getFinalDocCount("mdm-auditing"),"One auditing document should have been created");
         assertEquals(docsToMerge.size(), getFinalDocCount("mdm-archived"),docsToMerge.size() + " documents should have been archived");
     }
 
