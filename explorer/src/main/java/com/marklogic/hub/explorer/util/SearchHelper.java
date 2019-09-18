@@ -18,15 +18,17 @@ import com.marklogic.hub.explorer.model.Document;
 import com.marklogic.hub.explorer.model.SearchQuery;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 @Component
-public class SearchUtil {
+public class SearchHelper {
 
   private static final String QUERY_OPTIONS = "exp-final-entity-options";
-
+  private static final Logger logger = LoggerFactory.getLogger(SearchHelper.class);
   @Autowired
   DatabaseClientHolder databaseClientHolder;
 
@@ -75,27 +77,21 @@ public class SearchUtil {
   }
 
   public Document getDocument(String docUri) throws ResourceNotFoundException {
-    String content = null;
-    Map<String, String> metadata = null;
     DatabaseClient client = databaseClientHolder.getDatabaseClient();
-    Document document = new Document();
 
     GenericDocumentManager docMgr = client.newDocumentManager();
     DocumentMetadataHandle documentMetadataReadHandle = new DocumentMetadataHandle();
 
     // Fetching document content and meta-data
     try {
-      content = docMgr.readAs(docUri, documentMetadataReadHandle, String.class,
+      String content = docMgr.readAs(docUri, documentMetadataReadHandle, String.class,
           new ServerTransform("ml:prettifyXML"));
-      metadata = documentMetadataReadHandle.getMetadataValues();
+      Map<String, String> metadata = documentMetadataReadHandle.getMetadataValues();
+      return new Document(content, metadata);
     } catch (ResourceNotFoundException rnfe) {
+      logger.error("The requested document " + docUri + " do not exist");
+      logger.error(rnfe.getMessage());
       return null;
     }
-
-    // Setting content and meta-data to Document object
-    document.setContent(content);
-    document.setMetaData(metadata);
-
-    return document;
   }
 }

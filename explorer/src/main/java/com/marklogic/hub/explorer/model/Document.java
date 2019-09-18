@@ -11,23 +11,19 @@ import com.fasterxml.jackson.annotation.JsonRawValue;
 public class Document {
 
   @JsonRawValue
-  private String content;
+  private final String content;
+  private final Map<String, String> metaData;
 
-  private Map<String, String> metaData;
+  public Document(String content, Map<String, String> metaData) {
+    this.content = content;
+    this.metaData = (metaData != null) ? metaData : new HashMap<>();
+  }
 
   public String getContent() {
     return content;
   }
 
-  public void setContent(String content) {
-    this.content = content;
-  }
-
   public Map<String, String> getMetaData() {
     return metaData;
-  }
-
-  public void setMetaData(Map<String, String> metaData) {
-    this.metaData = (metaData != null) ? metaData : new HashMap<>();
   }
 }

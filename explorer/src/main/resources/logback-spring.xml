@@ -22,27 +22,16 @@
     <!-- encoders are assigned the type
          ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
     <encoder>
-      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %highlight(%-5level) %logger{36} - %msg%n</pattern>
     </encoder>
   </appender>
 
   <logger name="org.springframework" level="WARN"/>
   <logger name="org.apache.http" level="WARN"/>
 
-  <logger name="com.marklogic.spring.batch.core.repository.dao.MarkLogicStepExecutionDao" level="WARN"/>
-  <logger name="com.marklogic.spring.batch.core.repository.dao.MarkLogicJobExecutionDao" level="WARN"/>
   <logger name="com.marklogic.client.impl.DocumentManagerImpl" level="WARN"/>
   <logger name="com.marklogic.client.impl.DatabaseClientImpl" level="WARN"/>
-  <logger name="com.marklogic" level="INFO"/>
-  <logger name="com.marklogic.appdeployer" level="INFO"/>
   <logger name="com.marklogic.hub" level="INFO"/>
-  <logger name="com.marklogic.contentpump" level="INFO"/>
-  <logger name="com.marklogic.mapreduce" level="INFO"/>
   <logger name="org.apache.catalina.webresources.Cache" level="ERROR"/>
-  <logger name="org.apache.hadoop.util.NativeCodeLoader" level="ERROR"/>
   <logger name="java.util.prefs" level="OFF"/>
-
-  <root>
-    <appender-ref ref="STDOUT" />
-  </root>
 </configuration>

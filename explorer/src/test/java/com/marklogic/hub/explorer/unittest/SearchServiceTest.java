@@ -10,7 +10,7 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.explorer.model.Document;
 import com.marklogic.hub.explorer.model.SearchQuery;
 import com.marklogic.hub.explorer.service.SearchService;
-import com.marklogic.hub.explorer.util.SearchUtil;
+import com.marklogic.hub.explorer.util.SearchHelper;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 public class SearchServiceTest {
 
   @Mock
-  SearchUtil mockSearchUtil;
+  SearchHelper mockSearchHelper;
 
   @InjectMocks
   SearchService searchServiceMock;
@@ -50,18 +50,17 @@ public class SearchServiceTest {
     mockQuery.setStart(1);
 
     // Create Document object
-    mockDocument = new Document();
-    mockDocument.setContent("{\"content\":\"This is a sample json document content\"}");
+    String content = "{\"content\":\"This is a sample json document content\"}";
     Map<String,String> metadata = new HashMap<>();
     metadata.put("createdOn", "2019-09-13T14:28:34.513434-07:00");
     metadata.put("createdBy", "flowDeveloper");
-    mockDocument.setMetaData(metadata);
+    mockDocument = new Document(content, metadata);
   }
 
   @Test
   public void testSearch() {
     StringHandle mockHandle = new StringHandle("This is some sample search data");
-    when(mockSearchUtil.search(mockQuery)).thenReturn(mockHandle);
+    when(mockSearchHelper.search(mockQuery)).thenReturn(mockHandle);
     StringHandle resultHandle = searchServiceMock.search(mockQuery);
     assertTrue(resultHandle.get().equals(mockHandle.get()));
   }
@@ -72,7 +71,7 @@ public class SearchServiceTest {
     mockQuery.setFacets(new HashMap<>());
 
     StringHandle mockHandle = new StringHandle("This is some sample search data");
-    when(mockSearchUtil.search(mockQuery)).thenReturn(mockHandle);
+    when(mockSearchHelper.search(mockQuery)).thenReturn(mockHandle);
     StringHandle resultHandle = searchServiceMock.search(mockQuery);
     assertTrue(resultHandle.get().equals(mockHandle.get()));
   }
@@ -83,7 +82,7 @@ public class SearchServiceTest {
     mockQuery.setEntityNames(new ArrayList<>());
 
     StringHandle mockHandle = new StringHandle("This is some sample search data");
-    when(mockSearchUtil.search(mockQuery)).thenReturn(mockHandle);
+    when(mockSearchHelper.search(mockQuery)).thenReturn(mockHandle);
     StringHandle resultHandle = searchServiceMock.search(mockQuery);
     assertTrue(resultHandle.get().equals(mockHandle.get()));
   }
@@ -94,7 +93,7 @@ public class SearchServiceTest {
     mockQuery.setFacets(null);
 
     StringHandle mockHandle = new StringHandle("This is some sample search data");
-    when(mockSearchUtil.search(mockQuery)).thenReturn(mockHandle);
+    when(mockSearchHelper.search(mockQuery)).thenReturn(mockHandle);
     StringHandle resultHandle = searchServiceMock.search(mockQuery);
     assertTrue(resultHandle.get().equals(mockHandle.get()));
   }
@@ -105,7 +104,7 @@ public class SearchServiceTest {
     mockQuery.setEntityNames(null);
 
     StringHandle mockHandle = new StringHandle("This is some sample search data");
-    when(mockSearchUtil.search(mockQuery)).thenReturn(mockHandle);
+    when(mockSearchHelper.search(mockQuery)).thenReturn(mockHandle);
     StringHandle resultHandle = searchServiceMock.search(mockQuery);
     assertTrue(resultHandle.get().equals(mockHandle.get()));
   }
@@ -113,7 +112,7 @@ public class SearchServiceTest {
   @Test
   public void testGetDocument() {
     String mockDocUri = "/example.json";
-    when(mockSearchUtil.getDocument(mockDocUri)).thenReturn(mockDocument);
+    when(mockSearchHelper.getDocument(mockDocUri)).thenReturn(mockDocument);
     Document actualDoc = searchServiceMock.getDocument(mockDocUri);
     assertTrue(actualDoc.getContent().equals(mockDocument.getContent()));
     assertTrue(actualDoc.getMetaData().equals(mockDocument.getMetaData()));
@@ -122,7 +121,7 @@ public class SearchServiceTest {
   @Test
   public void testGetNonExistingDocument() {
     String fakeDocUri = "/example1.json";
-    when(mockSearchUtil.getDocument(fakeDocUri)).thenReturn(null);
+    when(mockSearchHelper.getDocument(fakeDocUri)).thenReturn(null);
     Document actualDoc = searchServiceMock.getDocument(fakeDocUri);
     assertTrue(actualDoc == null);
   }
