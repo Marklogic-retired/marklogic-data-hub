@@ -1,4 +1,0 @@
-<role-properties xmlns="http://marklogic.com/manage">
-  <role-name>example-role1</role-name>
-  <description>Test role for example application</description>
-</role-properties>

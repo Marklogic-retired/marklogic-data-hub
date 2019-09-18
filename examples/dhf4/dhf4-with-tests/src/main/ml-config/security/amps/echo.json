@@ -1,7 +1,0 @@
-{
-  "namespace": "org:example",
-  "local-name": "echo",
-  "document-uri": "/example/example-lib.xqy",
-  "modules-database": "%%MODULES_DATABASE%%",
-  "role": ["admin"]
-}

@@ -1,8 +1,0 @@
-{
-  "collection-name": "final-temporal-collection",
-  "system-axis": "final-system",
-  "valid-axis": "final-valid",
-  "option": [
-    "updates-safe"
-  ]
-}

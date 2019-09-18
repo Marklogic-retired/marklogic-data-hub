@@ -1,8 +1,0 @@
-{
-  "language" : "zxx",
-  "name" : "BuildAdmissions",
-  "description" : "",
-  "type" : "CUSTOM",
-  "version" : 1,
-  "modulePath" : "/custom-modules/custom/BuildAdmissions/main.sjs"
-}

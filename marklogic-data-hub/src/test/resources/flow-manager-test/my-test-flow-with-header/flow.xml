@@ -1,9 +1,0 @@
-<flow xmlns="http://marklogic.com/data-hub">
-  <name>my-test-flow-with-header</name>
-  <entity>test</entity>
-  <type>harmonize</type>
-  <data-format>xml</data-format>
-  <code-format>xqy</code-format>
-  <collector code-format="xqy" module="/entities/test/harmonize/my-test-flow-with-header/collector.xqy"></collector>
-  <main code-format="xqy" module="/entities/test/harmonize/my-test-flow-with-header/main.xqy"></main>
-</flow>

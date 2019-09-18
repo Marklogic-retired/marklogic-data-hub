@@ -1,4 +1,0 @@
-{
-  "server-name": "%%mlJobAppserverName%%",
-  "default-error-format": "xml"
-}

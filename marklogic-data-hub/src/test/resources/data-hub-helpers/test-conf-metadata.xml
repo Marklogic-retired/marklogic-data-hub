@@ -1,8 +1,0 @@
-<?xml  version="1.0" encoding="UTF-8"?>
-<rapi:transform-metadata xmlns:rapi="http://marklogic.com/rest-api">
-<rapi:name>test-conf-transform</rapi:name>
-<rapi:source-format>xquery</rapi:source-format>
-<rapi:title>test-conf-transform</rapi:title>
-<rapi:transform-parameters>
-</rapi:transform-parameters>
-</rapi:transform-metadata>

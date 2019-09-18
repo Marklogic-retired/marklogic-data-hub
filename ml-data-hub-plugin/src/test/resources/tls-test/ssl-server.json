@@ -1,9 +1,0 @@
-{
-  "ssl-certificate-template": "dhf-cert",
-  "ssl-allow-sslv3": false,
-  "ssl-allow-tls": true,
-  "ssl-disable-sslv3": true,
-  "ssl-disable-tlsv1": true,
-  "ssl-disable-tlsv1-1": true,
-  "ssl-disable-tlsv1-2": false
-}

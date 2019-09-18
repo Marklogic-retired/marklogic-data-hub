@@ -1,8 +1,0 @@
-{
-  "language" : "zxx",
-  "name" : "generate-dictionary",
-  "description" : "",
-  "type" : "CUSTOM",
-  "version" : 2,
-  "modulePath" : "/custom-modules/custom/generate-dictionary/main.sjs"
-}

@@ -1,9 +1,0 @@
-<?xml version="1.0" ?>
-<flow xmlns="http://marklogic.com/data-hub">
-<name>hl7</name>
-<entity>test-entity</entity>
-<type>input</type>
-<data-format>xml</data-format>
-<code-format>xqy</code-format>
-<main code-format="xqy" module="/entities/test-entity/input/hl7/main.xqy"></main>
-</flow>

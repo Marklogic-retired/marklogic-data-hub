@@ -1,8 +1,0 @@
-{
-  "collection-name": "staging-temporal-collection",
-  "system-axis": "staging-system",
-  "valid-axis": "staging-valid",
-  "option": [
-    "updates-safe"
-  ]
-}
