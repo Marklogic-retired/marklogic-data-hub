@@ -36,18 +36,25 @@ function post(context, params, input) {
     let stepRef = flow.steps[stepNumber];
     let stepDetails = datahub.flow.step.getStepByNameAndType(stepRef.stepDefinitionName, stepRef.stepDefinitionType);
     let modPath = stepDetails.modulePath;
-    let response, validationOutput;
+    let response, validationOutput, modPerms;
 
     let operatorRole = xdmp.role(datahub.config.FLOWOPERATORROLE).toString();
-    let modPerms = fn.head(datahub.hubUtils.queryLatest(function () {
-      return xdmp.documentGetPermissions(modPath)
-    }, datahub.config.MODULESDATABASE));
-
-    if (!(modPerms === undefined || modPerms.length == 0)) {
-      if(!checkPermissions(modPerms, operatorRole)) {
-        response =  {"valid":false, "response" : "The 'flowOperator' role must have read and execute capability on module " + modPath};
-        return response;
+    try{
+      modPerms = fn.head(datahub.hubUtils.queryLatest(function () {
+      if (fn.docAvailable(modPath)){
+        return xdmp.documentGetPermissions(modPath);
       }
+      return fn.error(xs.QName("ERROR"), "Module " + modPath + " not found");
+      },datahub.config.MODULESDATABASE));
+    }
+    catch (ex) {
+      response =  {"valid":false, "response" : "Module " + modPath + " not found."};
+      return response;
+    }
+
+    if(!checkPermissions(modPerms, operatorRole)) {
+      response =  {"valid":false, "response" : "The 'flowOperator' role must have read and execute capability on module " + modPath};
+      return response;
     }
 
     validationOutput = staticCheck(modPath);

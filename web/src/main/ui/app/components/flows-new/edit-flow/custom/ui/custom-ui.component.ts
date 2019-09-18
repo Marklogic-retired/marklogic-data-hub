@@ -136,7 +136,7 @@ export class CustomUiComponent implements OnInit{
     let title;
     this.manageFlowsService.validateStep(this.flow.name, this.step.name + "-" + this.step.stepDefinitionType.toLowerCase()).subscribe(resp => {
     if(resp["valid"]) {
-      title = "Validation Passed";
+      title = "Validation Successful";
     }
     else {
       title = "Validation Failed";
