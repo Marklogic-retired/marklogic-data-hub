@@ -489,21 +489,31 @@ public class HubTestBase {
 
     // this method creates a project dir and copies the gradle.properties in.
     public void createProjectDir(String projectDirName) {
-        try {
-            File projectDir = new File(projectDirName);
-            if (!projectDir.isDirectory() || !projectDir.exists()) {
-                projectDir.mkdirs();
-            }
+        File projectDir = new File(projectDirName);
+        if (!projectDir.isDirectory() || !projectDir.exists()) {
+            projectDir.mkdirs();
+        }
 
-            // force module loads for new test runs.
-            File timestampDirectory = new File(projectDir + "/.tmp");
-            if ( timestampDirectory.exists() ) {
+        // force module loads for new test runs.
+        File timestampDirectory = new File(projectDir + "/.tmp");
+        if ( timestampDirectory.exists() ) {
+            try {
                 FileUtils.forceDelete(timestampDirectory);
+            } catch (Exception ex) {
+                logger.warn("Unable to delete .tmp directory: " + ex.getMessage());
             }
-            File finalTimestampDirectory = new File( "build/ml-javaclient-util");
-            if ( finalTimestampDirectory.exists() ) {
+        }
+
+        File finalTimestampDirectory = new File( "build/ml-javaclient-util");
+        if ( finalTimestampDirectory.exists() ) {
+            try {
                 FileUtils.forceDelete(finalTimestampDirectory);
+            } catch (Exception ex) {
+                logger.warn("Unable to delete build/ml-javaclient-util directory: " + ex.getMessage());
             }
+        }
+
+        try {
             Path devProperties = Paths.get(".").resolve("gradle.properties");
             Path projectProperties = projectDir.toPath().resolve("gradle.properties");
             Files.copy(devProperties, projectProperties, REPLACE_EXISTING);
