@@ -999,7 +999,7 @@ public class HubTestBase {
 
         // Provides some time for post-commit triggers to complete
         try {
-            Thread.sleep(3000);
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             logger.warn("Unexpected error while trying to sleep: " + e.getMessage(), e);
         }
