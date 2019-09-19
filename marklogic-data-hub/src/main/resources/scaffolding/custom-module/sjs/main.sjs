@@ -14,6 +14,14 @@
   limitations under the License.
 */
 
+/* Custom steps for data hub 5 are 'on rails' code execution within a single transaction, after which the output
+   from these steps will create in-memory objects that will then be written in one single, isolated transaction.
+
+   This is designed to run in QUERY (read-only) mode by default. If you need transactionally consistent updates or
+   serializable read locking on documents, then you must upgrade to an UPDATE transaction either through an update
+   (such as declareUpdate()) or by setting the value of 'stepUpdate' as true in the options and it will be
+   executed in update mode.
+ */
 const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
 
@@ -49,7 +57,7 @@ function main(content, options) {
   let headers = {};
    */
 
-  //Here we check to make sure it's still there before operating on it
+  //Here is an example of a check to make sure it's still present in the cluster before operating on it
   if (!fn.docAvailable(id)) {
     datahub.debug.log({message: 'The document with the uri: ' + id + ' could not be found.', type: 'error'});
     throw Error('The document with the uri: ' + id + ' could not be found.')
@@ -64,13 +72,13 @@ function main(content, options) {
   }
 
   //get our instance, default shape of envelope is envelope/instance, else it'll return an empty object/array
-  let instance = datahub.flow.flowUtils.getInstance(doc) || {};
+  let instance = datahub.flow.flowUtils.getInstanceAsObject(doc) || {};
 
   // get triples, return null if empty or cannot be found
-  let triples = datahub.flow.flowUtils.getTriples(doc) || [];
+  let triples = datahub.flow.flowUtils.getTriplesAsObject(doc) || [];
 
   //gets headers, return null if cannot be found
-  let headers = datahub.flow.flowUtils.getHeaders(doc) || {};
+  let headers = datahub.flow.flowUtils.getHeadersAsObject(doc) || {};
 
   //If you want to set attachments, uncomment here
   // instance['$attachments'] = doc;
@@ -82,17 +90,21 @@ function main(content, options) {
   //form our envelope here now, specifying our output format
   let envelope = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
 
+  //create our return content object, we have a handy helper function for creating a json scaffolding, but you
+  //can also do a node-based one by using nodebuilder, especially if you're dealing with xml!
+  let newContent = datahub.flow.flowUtils.createContentAsObject();
+
   //assign our envelope value
-  content.value = envelope;
+  newContent.value = envelope;
 
   //assign the uri we want, in this case the same
-  content.uri = id;
+  newContent.uri = id;
 
   //assign the context we want
-  content.context = context;
+  newContent.context = context;
 
-  //now let's return out our content to be written
-  return content;
+  //now let's return out our content to be written, it can be any combination of
+  return newContent;
 }
 
 module.exports = {
