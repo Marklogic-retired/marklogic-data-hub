@@ -24,7 +24,7 @@ public class VerifyDhfInDhsCommand extends AbstractVerifyCommand {
     @Override
     public void run(ApplicationContext context, Options options) {
         // TODO This is hacky, need a better mechanism for building these properties post 5.0.2
-        Properties props = new InstallIntoDhsCommand().buildDefaultProjectProperties();
+        Properties props = new InstallIntoDhsCommand().buildDefaultProjectProperties(options);
         initializeProject(context, options, props);
 
         long start = System.currentTimeMillis();
