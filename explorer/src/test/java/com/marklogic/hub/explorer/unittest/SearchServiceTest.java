@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.explorer.model.Document;
@@ -33,6 +34,7 @@ public class SearchServiceTest {
 
   private SearchQuery mockQuery;
   private Document mockDocument;
+  private Optional<Document> mockOptional;
 
   @Before
   public void setUpDocs() {
@@ -55,6 +57,7 @@ public class SearchServiceTest {
     metadata.put("createdOn", "2019-09-13T14:28:34.513434-07:00");
     metadata.put("createdBy", "flowDeveloper");
     mockDocument = new Document(content, metadata);
+    mockOptional = Optional.ofNullable(mockDocument);
   }
 
   @Test
@@ -112,18 +115,17 @@ public class SearchServiceTest {
   @Test
   public void testGetDocument() {
     String mockDocUri = "/example.json";
-    when(mockSearchHelper.getDocument(mockDocUri)).thenReturn(mockDocument);
-    Document actualDoc = searchServiceMock.getDocument(mockDocUri);
-    assertTrue(actualDoc.getContent().equals(mockDocument.getContent()));
-    assertTrue(actualDoc.getMetaData().equals(mockDocument.getMetaData()));
+    when(mockSearchHelper.getDocument(mockDocUri)).thenReturn(mockOptional);
+    Optional<Document> actualDoc = searchServiceMock.getDocument(mockDocUri);
+    assertTrue(actualDoc.get().getContent().equals(mockOptional.get().getContent()));
+    assertTrue(actualDoc.get().getMetaData().equals(mockOptional.get().getMetaData()));
   }
 
   @Test
   public void testGetNonExistingDocument() {
     String fakeDocUri = "/example1.json";
-    when(mockSearchHelper.getDocument(fakeDocUri)).thenReturn(null);
-    Document actualDoc = searchServiceMock.getDocument(fakeDocUri);
-    assertTrue(actualDoc == null);
+    when(mockSearchHelper.getDocument(fakeDocUri)).thenReturn(Optional.empty());
+    Optional<Document> actualDoc = searchServiceMock.getDocument(fakeDocUri);
+    assertTrue(!actualDoc.isPresent());
   }
-
 }

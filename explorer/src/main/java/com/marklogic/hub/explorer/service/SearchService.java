@@ -1,5 +1,7 @@
 package com.marklogic.hub.explorer.service;
 
+import java.util.Optional;
+
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.explorer.model.Document;
 import com.marklogic.hub.explorer.model.SearchQuery;
@@ -19,8 +21,8 @@ public class SearchService {
     return searchHelper.search(searchQuery);
   }
 
-  public Document getDocument(String docUri) {
-    Document doc = searchHelper.getDocument(docUri);
+  public Optional<Document> getDocument(String docUri) {
+    Optional<Document> doc = searchHelper.getDocument(docUri);
     return doc;
   }
 }

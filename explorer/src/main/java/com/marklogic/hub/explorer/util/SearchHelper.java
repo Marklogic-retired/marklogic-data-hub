@@ -3,6 +3,7 @@ package com.marklogic.hub.explorer.util;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.ResourceNotFoundException;
@@ -76,7 +77,7 @@ public class SearchHelper {
     return queryMgr.search(finalQueryDef, resultHandle, searchQuery.getStart());
   }
 
-  public Document getDocument(String docUri) throws ResourceNotFoundException {
+  public Optional<Document> getDocument(String docUri) {
     DatabaseClient client = databaseClientHolder.getDatabaseClient();
 
     GenericDocumentManager docMgr = client.newDocumentManager();
@@ -87,11 +88,11 @@ public class SearchHelper {
       String content = docMgr.readAs(docUri, documentMetadataReadHandle, String.class,
           new ServerTransform("ml:prettifyXML"));
       Map<String, String> metadata = documentMetadataReadHandle.getMetadataValues();
-      return new Document(content, metadata);
+      return Optional.ofNullable(new Document(content, metadata));
     } catch (ResourceNotFoundException rnfe) {
       logger.error("The requested document " + docUri + " do not exist");
       logger.error(rnfe.getMessage());
-      return null;
+      return Optional.ofNullable(null);
     }
   }
 }

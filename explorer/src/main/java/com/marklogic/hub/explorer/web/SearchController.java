@@ -1,5 +1,7 @@
 package com.marklogic.hub.explorer.web;
 
+import java.util.Optional;
+
 import com.marklogic.hub.explorer.model.Document;
 import com.marklogic.hub.explorer.model.SearchQuery;
 import com.marklogic.hub.explorer.service.SearchService;
@@ -33,19 +35,16 @@ public class SearchController {
   @RequestMapping(method = RequestMethod.GET)
   @ResponseBody
   public ResponseEntity<Document> search(@RequestParam String docUri) {
-    Document doc = searchService.getDocument(docUri);
+    Optional<Document> optionalContent = searchService.getDocument(docUri);
     HttpHeaders headers = new HttpHeaders();
-
-    if (doc == null) {
-      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    if (doc.getContent().startsWith("<")) {
-      headers.setContentType(MediaType.APPLICATION_XML);
-    } else {
-      headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-    }
-    return new ResponseEntity<>(doc, headers, HttpStatus.OK);
+    optionalContent.map(content -> {
+      if(content.getContent().startsWith("<")) {
+        headers.setContentType(MediaType.APPLICATION_XML);
+      } else {
+        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+      }
+      return new ResponseEntity<>(content, headers, HttpStatus.OK);
+    });
+    return new ResponseEntity<>(HttpStatus.OK);
   }
-
 }
