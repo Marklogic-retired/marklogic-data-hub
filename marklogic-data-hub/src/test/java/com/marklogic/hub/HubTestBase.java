@@ -927,6 +927,11 @@ public class HubTestBase {
         }
     }
 
+    public JsonNode outputToJson(List<String> stepOutput, int index, String field) throws Exception{
+        JsonNode jsonOutput = new ObjectMapper().readTree(stepOutput.toString());
+        return jsonOutput.get(index).get(field);
+    }
+
     protected void assertJsonEqual(String expected, String actual, boolean strict) {
         try {
             JSONAssert.assertEquals(expected, actual, false);
