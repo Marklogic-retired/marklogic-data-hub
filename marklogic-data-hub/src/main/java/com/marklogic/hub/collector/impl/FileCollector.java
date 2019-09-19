@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Stream;
 
 public class FileCollector {
     private String filePath;
@@ -54,19 +55,19 @@ public class FileCollector {
             if(!(Files.exists(dirPath)) || !(Files.isDirectory(dirPath))) {
                 throw new RuntimeException("The path doesn't exist or is not a directory");
             }
-            Files.find(dirPath,
+            try (Stream<Path> files = Files.find(dirPath,
                 Integer.MAX_VALUE,
-                (filePath, fileAttr) -> fileAttr.isRegularFile())
-                .forEach(path -> {
+                (filePath, fileAttr) -> fileAttr.isRegularFile())) {
+                files.forEach(path -> {
                     File file = path.toFile();
                     String fileName = FilenameUtils.getExtension(file.getName()).toLowerCase();
                     if (fileFormat.containsKey(inputFormat.toLowerCase()) && fileFormat.get(inputFormat.toLowerCase()).contains(fileName)) {
                         results.add(path.toFile().getAbsolutePath());
-                    }
-                    else if("binary".equalsIgnoreCase(inputFormat) && !csvExts.contains(fileName) && !jsonExts.contains(fileName) && !xmlExts.contains(fileName)){
+                    } else if ("binary".equalsIgnoreCase(inputFormat) && !csvExts.contains(fileName) && !jsonExts.contains(fileName) && !xmlExts.contains(fileName)) {
                         results.add(path.toFile().getAbsolutePath());
                     }
                 });
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

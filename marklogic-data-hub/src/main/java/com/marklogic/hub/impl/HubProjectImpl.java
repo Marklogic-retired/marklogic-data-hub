@@ -404,9 +404,9 @@ public class HubProjectImpl implements HubProject {
                         fileContents = fileContents.replace(key, value);
                     }
                 }
-                FileWriter writer = new FileWriter(dstFile.toFile());
-                writer.write(fileContents);
-                writer.close();
+                try(FileWriter writer = new FileWriter(dstFile.toFile())) {
+                    writer.write(fileContents);
+                }
             }
         }
         catch(IOException e) {
@@ -482,130 +482,129 @@ public class HubProjectImpl implements HubProject {
     private void upgradeHubInternalConfig(Path sourceDir, Path renamedSourceDir, Set<String> obsoleteFiles) throws IOException {
         if (Files.exists(sourceDir)) {
             logger.info("Upgrading hub-internal-config dir");
-            Files.walk(Paths.get(sourceDir.toUri()))
-            .filter( f -> !Files.isDirectory(f))
-            .forEach(f -> {
-                String path = f.toFile().getName();
-                //copy jobs,staging db to hub-internal-config
-                if(path.toLowerCase().equals("job-database.json")
-                || path.toLowerCase().equals("staging-database.json")) {
-                    logger.info("Processing "+ f.toFile().getAbsolutePath());
-                    ObjectMapper mapper = new ObjectMapper();
-                    ObjectNode rootNode;
-                    File jsonFile = f.toFile();
-                    try {
-                        rootNode = (ObjectNode)mapper.readTree(jsonFile);
-                        rootNode.put("schema-database", "%%mlStagingSchemasDbName%%");
-                        logger.info("Setting \"schema-database\" to \"%%mlStagingSchemasDbName%%\"");
-                        rootNode.put("triggers-database", "%%mlStagingTriggersDbName%%");
-                        logger.info("Setting \"triggers-database\" to \"%%mlStagingTriggersDbName%%\"");
-
-                        if (path.toLowerCase().equals("job-database.json")) {
-                            addPathRangeIndexesToJobDatabase(rootNode);
-                        }
-
-                        String dbFile = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
-                        logger.info("Writing "+ f.toFile().getAbsolutePath() +" to "
-                        +getHubDatabaseDir().resolve(f.getFileName()).toFile().getAbsolutePath());
-                        FileUtils.writeStringToFile(getHubDatabaseDir().resolve(f.getFileName()).toFile(), dbFile);
-                    } catch (IOException e) {
-                        logger.error("Unable to update "+f.getFileName());
-                        throw new RuntimeException(e);
-                    }
-
-                }
-                //copy modules,final db to ml-config
-                else if(path.toLowerCase().equals("modules-database.json")
-                || path.toLowerCase().equals("final-database.json")) {
-                    try {
-                        if (path.toLowerCase().equals("modules-database.json")) {
-                            logger.info("Writing "+ f.toFile().getAbsolutePath() +" to "
-                                    +getUserDatabaseDir().resolve(f.getFileName()).toFile().getAbsolutePath());
-                            FileUtils.copyFile(f.toFile(), getUserDatabaseDir().resolve(f.getFileName()).toFile());
-                        }
-                        else {
-                            logger.info("Processing "+ f.toFile().getAbsolutePath());
+            try(Stream<Path> files = Files.walk(Paths.get(sourceDir.toUri()))) {
+                files.filter(f -> !Files.isDirectory(f))
+                    .forEach(f -> {
+                        String path = f.toFile().getName();
+                        //copy jobs,staging db to hub-internal-config
+                        if (path.toLowerCase().equals("job-database.json")
+                            || path.toLowerCase().equals("staging-database.json")) {
+                            logger.info("Processing " + f.toFile().getAbsolutePath());
                             ObjectMapper mapper = new ObjectMapper();
                             ObjectNode rootNode;
                             File jsonFile = f.toFile();
                             try {
-                                rootNode = (ObjectNode)mapper.readTree(jsonFile);
-                                rootNode.put("schema-database", "%%mlFinalSchemasDbName%%");
-                                logger.info("Setting \"schema-database\" to \"%%mlFinalSchemasDbName%%\"");
-                                rootNode.put("triggers-database", "%%mlFinalTriggersDbName%%");
-                                logger.info("Setting \"triggers-database\" to \"%%mlFinalTriggersDbName%%\"");
+                                rootNode = (ObjectNode) mapper.readTree(jsonFile);
+                                rootNode.put("schema-database", "%%mlStagingSchemasDbName%%");
+                                logger.info("Setting \"schema-database\" to \"%%mlStagingSchemasDbName%%\"");
+                                rootNode.put("triggers-database", "%%mlStagingTriggersDbName%%");
+                                logger.info("Setting \"triggers-database\" to \"%%mlStagingTriggersDbName%%\"");
+
+                                if (path.toLowerCase().equals("job-database.json")) {
+                                    addPathRangeIndexesToJobDatabase(rootNode);
+                                }
+
                                 String dbFile = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
-                                logger.info("Writing "+ f.toFile().getAbsolutePath() +" to "
-                                +getUserDatabaseDir().resolve(f.getFileName()).toFile().getAbsolutePath());
-                                FileUtils.writeStringToFile(getUserDatabaseDir().resolve(f.getFileName()).toFile(), dbFile);
+                                logger.info("Writing " + f.toFile().getAbsolutePath() + " to "
+                                    + getHubDatabaseDir().resolve(f.getFileName()).toFile().getAbsolutePath());
+                                FileUtils.writeStringToFile(getHubDatabaseDir().resolve(f.getFileName()).toFile(), dbFile);
                             } catch (IOException e) {
-                                logger.error("Unable to update "+f.getFileName());
+                                logger.error("Unable to update " + f.getFileName());
                                 throw new RuntimeException(e);
                             }
 
                         }
-                    } catch (IOException e) {
-                        logger.error("Unable to update "+f.getFileName());
-                        throw new RuntimeException(e);
-                    }
-                }
-                //copy jobs,staging server to hub-internal-config
-                else if(path.toLowerCase().endsWith("job-server.json")
-                || path.toLowerCase().endsWith("staging-server.json")) {
-                    logger.info("Processing "+ f.toFile().getAbsolutePath());
-                    ObjectMapper mapper = new ObjectMapper();
-                    JsonNode rootNode = null;
-                    File jsonFile = f.toFile();
-                    try {
-                        rootNode = mapper.readTree(jsonFile);
-                        //set the url-rewriter and error-handler
-                        if(path.toLowerCase().endsWith("staging-server.json")) {
-                            logger.info("Setting \"url-rewriter\" to \"/data-hub/5/rest-api/rewriter.xml\"");
-                            ((ObjectNode) rootNode).put("url-rewriter", "/data-hub/5/rest-api/rewriter/%%mlServerVersion%%-rewriter.xml");
-                            logger.info("Setting \"error-handler\" to \"/MarkLogic/rest-api/error-handler.xqy\"");
-                            ((ObjectNode) rootNode).put("error-handler", "/MarkLogic/rest-api/error-handler.xqy");
+                        //copy modules,final db to ml-config
+                        else if (path.toLowerCase().equals("modules-database.json")
+                            || path.toLowerCase().equals("final-database.json")) {
+                            try {
+                                if (path.toLowerCase().equals("modules-database.json")) {
+                                    logger.info("Writing " + f.toFile().getAbsolutePath() + " to "
+                                        + getUserDatabaseDir().resolve(f.getFileName()).toFile().getAbsolutePath());
+                                    FileUtils.copyFile(f.toFile(), getUserDatabaseDir().resolve(f.getFileName()).toFile());
+                                } else {
+                                    logger.info("Processing " + f.toFile().getAbsolutePath());
+                                    ObjectMapper mapper = new ObjectMapper();
+                                    ObjectNode rootNode;
+                                    File jsonFile = f.toFile();
+                                    try {
+                                        rootNode = (ObjectNode) mapper.readTree(jsonFile);
+                                        rootNode.put("schema-database", "%%mlFinalSchemasDbName%%");
+                                        logger.info("Setting \"schema-database\" to \"%%mlFinalSchemasDbName%%\"");
+                                        rootNode.put("triggers-database", "%%mlFinalTriggersDbName%%");
+                                        logger.info("Setting \"triggers-database\" to \"%%mlFinalTriggersDbName%%\"");
+                                        String dbFile = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
+                                        logger.info("Writing " + f.toFile().getAbsolutePath() + " to "
+                                            + getUserDatabaseDir().resolve(f.getFileName()).toFile().getAbsolutePath());
+                                        FileUtils.writeStringToFile(getUserDatabaseDir().resolve(f.getFileName()).toFile(), dbFile);
+                                    } catch (IOException e) {
+                                        logger.error("Unable to update " + f.getFileName());
+                                        throw new RuntimeException(e);
+                                    }
+
+                                }
+                            } catch (IOException e) {
+                                logger.error("Unable to update " + f.getFileName());
+                                throw new RuntimeException(e);
+                            }
                         }
-                        else {
-                            logger.info("Setting \"url-rewriter\" to \"/data-hub/5/tracing/tracing-rewriter.xml\"");
-                            ((ObjectNode) rootNode).put("url-rewriter", "/data-hub/5/tracing/tracing-rewriter.xml");
+                        //copy jobs,staging server to hub-internal-config
+                        else if (path.toLowerCase().endsWith("job-server.json")
+                            || path.toLowerCase().endsWith("staging-server.json")) {
+                            logger.info("Processing " + f.toFile().getAbsolutePath());
+                            ObjectMapper mapper = new ObjectMapper();
+                            JsonNode rootNode = null;
+                            File jsonFile = f.toFile();
+                            try {
+                                rootNode = mapper.readTree(jsonFile);
+                                //set the url-rewriter and error-handler
+                                if (path.toLowerCase().endsWith("staging-server.json")) {
+                                    logger.info("Setting \"url-rewriter\" to \"/data-hub/5/rest-api/rewriter.xml\"");
+                                    ((ObjectNode) rootNode).put("url-rewriter", "/data-hub/5/rest-api/rewriter/%%mlServerVersion%%-rewriter.xml");
+                                    logger.info("Setting \"error-handler\" to \"/MarkLogic/rest-api/error-handler.xqy\"");
+                                    ((ObjectNode) rootNode).put("error-handler", "/MarkLogic/rest-api/error-handler.xqy");
+                                } else {
+                                    logger.info("Setting \"url-rewriter\" to \"/data-hub/5/tracing/tracing-rewriter.xml\"");
+                                    ((ObjectNode) rootNode).put("url-rewriter", "/data-hub/5/tracing/tracing-rewriter.xml");
+                                }
+                                String serverFile = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
+                                logger.info("Writing " + f.toFile().getAbsolutePath() + " to "
+                                    + getHubServersDir().resolve(f.getFileName()).toFile().getAbsolutePath());
+                                FileUtils.writeStringToFile(getHubServersDir().resolve(f.getFileName()).toFile(), serverFile);
+                            } catch (IOException e) {
+                                logger.error("Unable to update " + f.getFileName());
+                                throw new RuntimeException(e);
+                            }
                         }
-                        String serverFile = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
-                        logger.info("Writing "+ f.toFile().getAbsolutePath() +" to "
-                                +getHubServersDir().resolve(f.getFileName()).toFile().getAbsolutePath());
-                        FileUtils.writeStringToFile(getHubServersDir().resolve(f.getFileName()).toFile(), serverFile);
-                    } catch (IOException e) {
-                        logger.error("Unable to update "+f.getFileName());
-                        throw new RuntimeException(e);
-                    }
-                }
-                //copy final server to ml-config
-                else if(path.toLowerCase().equals("final-server.json")) {
-                    try {
-                        logger.info("Writing "+ f.toFile().getAbsolutePath() +" to "
-                                +getUserServersDir().resolve(f.getFileName()).toFile().getAbsolutePath());
-                        FileUtils.copyFile(f.toFile(), getUserServersDir().resolve(f.getFileName()).toFile());
-                    } catch (IOException e) {
-                        logger.error("Unable to update "+f.getFileName());
-                        throw new RuntimeException(e);
-                    }
-                }
-                //move the rest of the payloads that are not part of the set to
-                // hub-internal-config
-                else if(! obsoleteFiles.contains(path.toLowerCase())) {
-                    InputStream inputStream = null;
-                    try {
-                        inputStream = Files.newInputStream(f);
-                        FileUtils.copyInputStreamToFile(
-                                inputStream,
-                                getHubConfigDir().resolve(sourceDir.relativize(f)).toFile());
-                    } catch (IOException e) {
-                        logger.error("Unable to copy file "+f.getFileName());
-                        throw new RuntimeException(e);
-                    } finally {
-                        IOUtils.closeQuietly(inputStream);
-                    }
-                }
-            });
+                        //copy final server to ml-config
+                        else if (path.toLowerCase().equals("final-server.json")) {
+                            try {
+                                logger.info("Writing " + f.toFile().getAbsolutePath() + " to "
+                                    + getUserServersDir().resolve(f.getFileName()).toFile().getAbsolutePath());
+                                FileUtils.copyFile(f.toFile(), getUserServersDir().resolve(f.getFileName()).toFile());
+                            } catch (IOException e) {
+                                logger.error("Unable to update " + f.getFileName());
+                                throw new RuntimeException(e);
+                            }
+                        }
+                        //move the rest of the payloads that are not part of the set to
+                        // hub-internal-config
+                        else if (!obsoleteFiles.contains(path.toLowerCase())) {
+                            InputStream inputStream = null;
+                            try {
+                                inputStream = Files.newInputStream(f);
+                                FileUtils.copyInputStreamToFile(
+                                    inputStream,
+                                    getHubConfigDir().resolve(sourceDir.relativize(f)).toFile());
+                            } catch (IOException e) {
+                                logger.error("Unable to copy file " + f.getFileName());
+                                throw new RuntimeException(e);
+                            } finally {
+                                IOUtils.closeQuietly(inputStream);
+                            }
+                        }
+                    });
+            }
            // Files.copy(sourceDir, destDir, StandardCopyOption.REPLACE_EXISTING);
             FileUtils.moveDirectory(sourceDir.toFile(), renamedSourceDir.toFile());
         }
@@ -657,69 +656,70 @@ public class HubProjectImpl implements HubProject {
     private void upgradeUserConfig(Path sourceDir, Path renamedSourceDir, Set<String> obsoleteFiles) throws IOException {
         if (Files.exists(sourceDir)) {
             logger.info("Upgrading user-config dir");
-            Files.walk(Paths.get(sourceDir.toUri()))
-            .filter( f -> !Files.isDirectory(f))
-            .forEach(f -> {
-                String path = f.toFile().getName();
-                List<File> filesToMerge = new ArrayList<>();
-                //copy modules,final db to ml-config
-                if(path.toLowerCase().equals("modules-database.json")
-                || path.toLowerCase().equals("final-database.json")) {
-                    try {
-                        ObjectMapper mapper = new ObjectMapper();
-                        //File copied to src/main/ml-config/databases earlier
-                        filesToMerge.add(getUserDatabaseDir().resolve(f.getFileName()).toFile());
-                        //File from user-config/databases
-                        filesToMerge.add(f.toFile());
-                        // write merged file back
-                        logger.info("Merging "+ path + "from hub-internal-config and user-config");
-                        String dbFile = mapper.writerWithDefaultPrettyPrinter().
-                                writeValueAsString(JsonNodeUtil.mergeJsonFiles(filesToMerge));
-                        logger.info("Writing merged "+ path + "to "+getUserDatabaseDir().toFile().getAbsolutePath());
-                        FileUtils.writeStringToFile(getUserDatabaseDir().resolve(f.getFileName()).toFile(), dbFile);
+            try (Stream<Path> files = Files.walk(Paths.get(sourceDir.toUri()))) {
+                files.filter(f -> !Files.isDirectory(f))
+                    .forEach(f -> {
+                        String path = f.toFile().getName();
+                        List<File> filesToMerge = new ArrayList<>();
+                        //copy modules,final db to ml-config
+                        if (path.toLowerCase().equals("modules-database.json")
+                            || path.toLowerCase().equals("final-database.json")) {
+                            try {
+                                ObjectMapper mapper = new ObjectMapper();
+                                //File copied to src/main/ml-config/databases earlier
+                                filesToMerge.add(getUserDatabaseDir().resolve(f.getFileName()).toFile());
+                                //File from user-config/databases
+                                filesToMerge.add(f.toFile());
+                                // write merged file back
+                                logger.info("Merging " + path + "from hub-internal-config and user-config");
+                                String dbFile = mapper.writerWithDefaultPrettyPrinter().
+                                    writeValueAsString(JsonNodeUtil.mergeJsonFiles(filesToMerge));
+                                logger.info("Writing merged " + path + "to " + getUserDatabaseDir().toFile().getAbsolutePath());
+                                FileUtils.writeStringToFile(getUserDatabaseDir().resolve(f.getFileName()).toFile(), dbFile);
 
-                    } catch (IOException e) {
-                        logger.error("Unable to update "+f.getFileName());
-                        throw new RuntimeException(e);
-                    }
-                }
-                //copy final server to ml-config
-                else if(path.toLowerCase().equals("final-server.json")) {
-                    try {
-                        ObjectMapper mapper = new ObjectMapper();
-                        //File copied to src/main/hub-internal-config/servers earlier
-                        filesToMerge.add(getUserServersDir().resolve(f.getFileName()).toFile());
-                        //File from user-config/servers
-                        filesToMerge.add(f.toFile());
-                        // write merged file back
-                        logger.info("Merging "+ path + "from hub-internal-config and user-config");
-                        String serverFile = mapper.writerWithDefaultPrettyPrinter().
-                                writeValueAsString(JsonNodeUtil.mergeJsonFiles(filesToMerge));
-                        logger.info("Writing merged "+ path + "to "+getUserServersDir().toFile().getAbsolutePath());
-                        FileUtils.writeStringToFile(getUserServersDir().resolve(f.getFileName()).toFile(),
-                                serverFile);
-                    } catch (IOException e) {
-                        logger.error("Unable to update "+f.getFileName());
-                        throw new RuntimeException(e);
-                    }
-                }
-                //copy all other files in user-config to ml-config except the obsolete ones
-                else if(! obsoleteFiles.contains(path.toLowerCase())) {
-                    InputStream inputStream = null;
-                    try {
-                        inputStream = Files.newInputStream(f);
-                        FileUtils.copyInputStreamToFile(
-                                inputStream,
-                                getUserConfigDir().resolve(sourceDir.relativize(f)).toFile());
-                    } catch (IOException e) {
-                        logger.error("Unable to copy "+f.getFileName());
-                        throw new RuntimeException(e);
-                    } finally {
-                        IOUtils.closeQuietly(inputStream);
-                    }
-                }
+                            } catch (IOException e) {
+                                logger.error("Unable to update " + f.getFileName());
+                                throw new RuntimeException(e);
+                            }
+                        }
+                        //copy final server to ml-config
+                        else if (path.toLowerCase().equals("final-server.json")) {
+                            try {
+                                ObjectMapper mapper = new ObjectMapper();
+                                //File copied to src/main/hub-internal-config/servers earlier
+                                filesToMerge.add(getUserServersDir().resolve(f.getFileName()).toFile());
+                                //File from user-config/servers
+                                filesToMerge.add(f.toFile());
+                                // write merged file back
+                                logger.info("Merging " + path + "from hub-internal-config and user-config");
+                                String serverFile = mapper.writerWithDefaultPrettyPrinter().
+                                    writeValueAsString(JsonNodeUtil.mergeJsonFiles(filesToMerge));
+                                logger.info("Writing merged " + path + "to " + getUserServersDir().toFile().getAbsolutePath());
+                                FileUtils.writeStringToFile(getUserServersDir().resolve(f.getFileName()).toFile(),
+                                    serverFile);
+                            } catch (IOException e) {
+                                logger.error("Unable to update " + f.getFileName());
+                                throw new RuntimeException(e);
+                            }
+                        }
+                        //copy all other files in user-config to ml-config except the obsolete ones
+                        else if (!obsoleteFiles.contains(path.toLowerCase())) {
+                            InputStream inputStream = null;
+                            try {
+                                inputStream = Files.newInputStream(f);
+                                FileUtils.copyInputStreamToFile(
+                                    inputStream,
+                                    getUserConfigDir().resolve(sourceDir.relativize(f)).toFile());
+                            } catch (IOException e) {
+                                logger.error("Unable to copy " + f.getFileName());
+                                throw new RuntimeException(e);
+                            } finally {
+                                IOUtils.closeQuietly(inputStream);
+                            }
+                        }
 
-            });
+                    });
+            }
            // Files.copy(sourceDir, destDir, StandardCopyOption.REPLACE_EXISTING);
             FileUtils.moveDirectory(sourceDir.toFile(), renamedSourceDir.toFile());
         }

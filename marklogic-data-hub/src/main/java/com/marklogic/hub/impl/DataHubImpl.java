@@ -347,12 +347,12 @@ public class DataHubImpl implements DataHub {
 
             HashSet<String> services = new HashSet<>();
             for (Resource r : resolver.getResources("classpath*:/ml-modules/root/marklogic.rest.resource/*")) {
-                services.add(r.getFilename().replaceAll("\\.(xqy|sjs)", ""));
+                services.add(r.getFilename());
             }
 
             HashSet<String> transforms = new HashSet<>();
             for (Resource r : resolver.getResources("classpath*:/ml-modules/root/marklogic.rest.transform/*")) {
-                transforms.add(r.getFilename().replaceAll("\\.(xqy|sjs)", ""));
+                transforms.add(r.getFilename());
             }
 
             ServerConfigurationManager configMgr = hubConfig.newStagingClient().newServerConfigManager();
