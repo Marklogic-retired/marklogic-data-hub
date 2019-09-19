@@ -159,7 +159,7 @@ public class MappingTest extends HubTestBase {
 
         RunStepResponse mappingJob = runFlowResp("OrderJSON", "1","2").getStepResponses().get("2");
 
-        String output = mappingJob.outputToJson(mappingJob.stepOutput, 0, "message").toString();
+        String output = outputToJson(mappingJob.stepOutput, 0, "message").toString();
         String expected = "Expected JSON string or object.";
         assertFalse(mappingJob.isSuccess(), "Mapping job should fail for non JSON memory lookup");
         assertTrue(output.contains(expected),"Expected "+expected+" to be a substring of " + output);
@@ -177,7 +177,7 @@ public class MappingTest extends HubTestBase {
 
         RunStepResponse mappingJob = runFlowResp("OrderJSON", "1","2").getStepResponses().get("2");
 
-        String output = mappingJob.outputToJson(mappingJob.stepOutput, 0, "message").toString();
+        String output = outputToJson(mappingJob.stepOutput, 0, "message").toString();
         String expected = "Lookup value not found";
         assertTrue(mappingJob.isSuccess(), "Mapping job should not fail for missing lookup values");
         assertTrue(output.contains(expected),"Expected "+expected+" to be a substring of "+output);
@@ -195,7 +195,7 @@ public class MappingTest extends HubTestBase {
         runInDatabase("xdmp:document-insert('/lookupDictionary/invalidURI.json', object-node"+getJsonFromResource("mapping-test/lookupDictionary/validDictionary.json")+")", HubConfig.DEFAULT_STAGING_NAME);
         RunStepResponse mappingJob = runFlowResp("OrderJSON", "1","2").getStepResponses().get("2");
 
-        String output = mappingJob.outputToJson(mappingJob.stepOutput, 0, "message").toString();
+        String output = outputToJson(mappingJob.stepOutput, 0, "message").toString();
         String expected = "Dictionary not found at '/lookupDictionary/validDictionary.json'";
 
         assertFalse(mappingJob.isSuccess(), "Mapping job should fail when document lookup has an invalid input URI");
@@ -217,7 +217,7 @@ public class MappingTest extends HubTestBase {
             ")", HubConfig.DEFAULT_STAGING_NAME);
         RunStepResponse mappingJob = runFlowResp("OrderJSON", "1","2").getStepResponses().get("2");
 
-        String output = mappingJob.outputToJson(mappingJob.stepOutput, 0, "message").toString();
+        String output = outputToJson(mappingJob.stepOutput, 0, "message").toString();
         String expected = "Dictionary at '/lookupDictionary/invalidDictionary.xml' is not a JSON Object";
 
         assertFalse(mappingJob.isSuccess(), "Mapping job should fail when document lookup is invalid");
@@ -267,7 +267,7 @@ public class MappingTest extends HubTestBase {
 
         RunStepResponse mappingJob = runFlowResp("OrderJSON", "1","2").getStepResponses().get("2");
 
-        String output = mappingJob.outputToJson(mappingJob.stepOutput, 0, "message").toString();
+        String output = outputToJson(mappingJob.stepOutput, 0, "message").toString();
         String expected = "The given date pattern (YYYY.MM.DD) is not supported.";
 
         assertFalse(mappingJob.isSuccess(), "Mapping job should fail for invalid date pattern");
@@ -284,7 +284,7 @@ public class MappingTest extends HubTestBase {
 
         RunStepResponse mappingJob = runFlowResp("OrderJSON", "1","2").getStepResponses().get("2");
 
-        String output = mappingJob.outputToJson(mappingJob.stepOutput, 0, "message").toString();
+        String output = outputToJson(mappingJob.stepOutput, 0, "message").toString();
         String expected = "Given value doesn't match with the specified pattern (YYYYMMDD,01/08/1996) for parsing date string.";
 
         assertFalse(mappingJob.isSuccess(), "Mapping job should fail for invalid standard formats");
@@ -302,7 +302,7 @@ public class MappingTest extends HubTestBase {
 
         RunStepResponse mappingJob = runFlowResp("OrderJSON", "1","2").getStepResponses().get("2");
 
-        String output = mappingJob.outputToJson(mappingJob.stepOutput, 0, "message").toString();
+        String output = outputToJson(mappingJob.stepOutput, 0, "message").toString();
         String expected = "Given value doesn't match with the specified pattern (Mon DD, YYYY,08.01.1996) for parsing date string.";
 
         assertFalse(mappingJob.isSuccess(), "Mapping job should fail for invalid non standard formats");
@@ -321,7 +321,7 @@ public class MappingTest extends HubTestBase {
 
         RunStepResponse mappingJob = runFlowResp("OrderJSON", "1","2").getStepResponses().get("2");
 
-        String output = mappingJob.outputToJson(mappingJob.stepOutput, 0, "message").toString();
+        String output = outputToJson(mappingJob.stepOutput, 0, "message").toString();
         String expected = "Given value 51100 for date string is invalid.";
 
         assertFalse(mappingJob.isSuccess(), "Mapping job should fail for invalid date string value");
@@ -338,7 +338,7 @@ public class MappingTest extends HubTestBase {
 
         RunStepResponse mappingJob = runFlowResp("OrderJSON", "1","2").getStepResponses().get("2");
 
-        String output = mappingJob.outputToJson(mappingJob.stepOutput, 0, "message").toString();
+        String output = outputToJson(mappingJob.stepOutput, 0, "message").toString();
         String expected = "The given dateTime pattern (YYYYMMDD Thhmmss) is not supported.";
 
         assertFalse(mappingJob.isSuccess(), "Mapping job should fail for invalid date time pattern");
@@ -355,7 +355,7 @@ public class MappingTest extends HubTestBase {
 
         RunStepResponse mappingJob = runFlowResp("OrderJSON", "1","2").getStepResponses().get("2");
 
-        String output = mappingJob.outputToJson(mappingJob.stepOutput, 0, "message").toString();
+        String output = outputToJson(mappingJob.stepOutput, 0, "message").toString();
         String expected = "Given value doesn't match with the specified pattern for parsing dateTime string.";
 
         assertFalse(mappingJob.isSuccess(), "Mapping job should fail for invalid date time pattern");

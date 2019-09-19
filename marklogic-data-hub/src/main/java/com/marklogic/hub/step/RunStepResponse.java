@@ -16,15 +16,12 @@
 package com.marklogic.hub.step;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.impl.Step;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -199,8 +196,4 @@ public class RunStepResponse {
             successfulBatches, failedBatches, stepStartTime, stepEndTime);
     }
 
-    public JsonNode outputToJson(List<String> stepOutput, int index, String field) throws Exception{
-        JsonNode jsonOutput = new ObjectMapper().readTree(stepOutput.toString());
-        return jsonOutput.get(index).get(field);
-    }
 }
