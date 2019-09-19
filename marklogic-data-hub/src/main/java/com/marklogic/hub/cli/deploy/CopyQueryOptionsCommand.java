@@ -26,8 +26,8 @@ public class CopyQueryOptionsCommand extends AbstractCommand {
             "  '/Evaluator/data-hub-STAGING/rest-api/options/default.xml',\n" +
             "  '/Evaluator/data-hub-FINAL/rest-api/options/default.xml'\n" +
             "].forEach(uri => {\n" +
-            "  xdmp.documentInsert(uri.replace('Evaluator', 'Curator'), cts.doc(uri), \n" +
-            "    xdmp.documentGetPermissions(uri), xdmp.documentGetCollections(uri));\n" +
+            "  if (fn.docAvailable(uri)) { xdmp.documentInsert(uri.replace('Evaluator', 'Curator'), cts.doc(uri), \n" +
+            "    xdmp.documentGetPermissions(uri), xdmp.documentGetCollections(uri));}\n" +
             "});\n" +
             "\n" +
             "const finalUri = '/Evaluator/data-hub-FINAL/rest-api/options/default.xml';\n" +
@@ -39,8 +39,8 @@ public class CopyQueryOptionsCommand extends AbstractCommand {
             "  '/Evaluator/data-hub-ANALYTICS/rest-api/options/default.xml',\n" +
             "  '/Evaluator/data-hub-OPERATION/rest-api/options/default.xml'\n" +
             "].forEach(uri => {\n" +
-            "  xdmp.documentInsert(uri, cts.doc(finalUri), xdmp.documentGetPermissions(finalUri), \n" +
-            "    xdmp.documentGetCollections(finalUri));\n" +
+            "  if (fn.docAvailable(finalUri)) {xdmp.documentInsert(uri, cts.doc(finalUri), xdmp.documentGetPermissions(finalUri), \n" +
+            "    xdmp.documentGetCollections(finalUri));}\n" +
             "})";
 
         DatabaseClient client = hubConfig.newModulesDbClient();

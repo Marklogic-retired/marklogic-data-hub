@@ -19,7 +19,7 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
 
     @Override
     public void run(ApplicationContext context, Options options) {
-        initializeProject(context, options, buildDefaultProjectProperties());
+        initializeProject(context, options, buildDefaultProjectProperties(options));
 
         logger.info("Installing DHF version " + hubConfig.getJarVersion());
 
@@ -84,25 +84,31 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
      * Builds a default set of project properties based on assumptions of how DHS works. These can then be overridden
      * via "-P" arguments on the command line.
      *
+     * @param options
      * @return
      */
-    protected Properties buildDefaultProjectProperties() {
+    protected Properties buildDefaultProjectProperties(Options options) {
         // Include System properties so that a client can override e.g. mlHost/mlUsername/mlPassword via JVM props
         Properties props = new Properties();
         for (String key : System.getProperties().stringPropertyNames()) {
             props.put(key, System.getProperties().getProperty(key));
         }
 
-        applyDhsSpecificProperties(props);
+        applyDhsSpecificProperties(props, options.isDisableSsl());
         return props;
     }
 
     /**
-     * Public so that it can be reused by DHF Gradle plugin.
+     * Public so that it can be reused by DHF Gradle plugin. Assumes that SSL should be used for connecting to
+     * MarkLogic.
      *
      * @param props
      */
     public void applyDhsSpecificProperties(Properties props) {
+        applyDhsSpecificProperties(props, false);
+    }
+
+    public void applyDhsSpecificProperties(Properties props, boolean disableSsl) {
         props.setProperty("mlIsHostLoadBalancer", "true");
         props.setProperty("mlIsProvisionedEnvironment", "true");
         props.setProperty("mlAppServicesPort", "8010");
@@ -114,7 +120,16 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
         props.setProperty("mlModulePermissions",
             "flowDeveloper,read,flowDeveloper,execute,flowDeveloper,insert,flowOperator,read,flowOperator,execute,flowOperator,insert");
 
-        setDefaultPropertiesForSecureConnections(props);
+        props.setProperty("mlAppServicesAuthentication", "basic");
+        props.setProperty("mlFinalAuth", "basic");
+        props.setProperty("mlJobAuth", "basic");
+        props.setProperty("mlStagingAuth", "basic");
+
+        if (!disableSsl) {
+            setDefaultPropertiesForSecureConnections(props);
+        } else {
+            logger.info("Not setting default property values for secure connections to MarkLogic");
+        }
     }
 
     /**
@@ -131,16 +146,9 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
         props.setProperty("mlManageScheme", "https");
         props.setProperty("mlManageSimpleSsl", "true");
 
-        props.setProperty("mlAppServicesAuthentication", "basic");
         props.setProperty("mlAppServicesSimpleSsl", "true");
-
-        props.setProperty("mlFinalAuth", "basic");
         props.setProperty("mlFinalSimpleSsl", "true");
-
-        props.setProperty("mlJobAuth", "basic");
         props.setProperty("mlJobSimpleSsl", "true");
-
-        props.setProperty("mlStagingAuth", "basic");
         props.setProperty("mlStagingSimpleSsl", "true");
     }
 }
