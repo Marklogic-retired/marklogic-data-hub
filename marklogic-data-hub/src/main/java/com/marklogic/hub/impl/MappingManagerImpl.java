@@ -124,10 +124,10 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
             Object json = objectMapper.readValue(mappingString, Object.class);
-            FileOutputStream fileOutputStream = new FileOutputStream(file);
-            fileOutputStream.write(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(json).getBytes());
-            fileOutputStream.flush();
-            fileOutputStream.close();
+            try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
+                fileOutputStream.write(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(json).getBytes());
+                fileOutputStream.flush();
+            }
         } catch (JsonProcessingException e) {
             throw new DataHubProjectException("Could not serialize mapping for project.");
         } catch (IOException e){
@@ -182,9 +182,7 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
             }
         }
         if(targetFileName !=null ){
-            try {
-                //String jsonMap = new String(Files.readAllBytes(mappingPath.resolve(targetFileName)), StandardCharsets.UTF_8);
-                FileInputStream fileInputStream = new FileInputStream(mappingPath.resolve(targetFileName).toFile());
+            try (FileInputStream fileInputStream = new FileInputStream(mappingPath.resolve(targetFileName).toFile())) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode node = objectMapper.readTree(fileInputStream);
                 Mapping newMap = createMappingFromJSON(node);

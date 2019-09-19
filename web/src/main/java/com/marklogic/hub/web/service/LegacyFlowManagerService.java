@@ -143,9 +143,9 @@ public class LegacyFlowManagerService {
         }
         Path filePath = getHarmonizeOptionsFilePath(destFolder, entityName, flowName);
         FileWriter fw = new FileWriter(filePath.toString());
-        BufferedWriter bw = new BufferedWriter(fw);
-        bw.write(harmonizeOptionsFileContent);
-        bw.close();
+        try (BufferedWriter bw = new BufferedWriter(fw)) {
+            bw.write(harmonizeOptionsFileContent);
+        }
     }
 
 
@@ -161,9 +161,9 @@ public class LegacyFlowManagerService {
         }
         Path filePath = getMlcpOptionsFilePath(destFolder, entityName, flowName);
         FileWriter fw = new FileWriter(filePath.toString());
-        BufferedWriter bw = new BufferedWriter(fw);
-        bw.write(mlcpOptionsFileContent);
-        bw.close();
+        try (BufferedWriter bw = new BufferedWriter(fw)) {
+            bw.write(mlcpOptionsFileContent);
+        }
     }
 
     public Map<String, Object> getFlowMlcpOptionsFromFile(String entityName, String flowName) throws IOException {
