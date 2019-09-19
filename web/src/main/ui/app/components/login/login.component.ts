@@ -73,7 +73,7 @@ export class LoginComponent implements OnInit {
   hubUpdating: boolean = false;
   hubUpdateFailed: boolean = false;
   hubUpdateError: string = '';
-  hubUpdateLink: string = 'https://marklogic.github.io/marklogic-data-hub/upgrade/';
+  hubUpdateLink: string = 'https://docs.marklogic.com/datahub/upgrade.html';
 
   loginError: string = null;
   loggingIn: boolean = false;
