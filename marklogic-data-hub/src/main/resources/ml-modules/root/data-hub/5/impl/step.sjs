@@ -112,7 +112,6 @@ class Step {
   //grab the module and require it
   makeFunction(flow, funcName, moduleUri) {
     let stepModule = this.hubUtils.retrieveModuleLibrary(moduleUri);
-    stepModule.flow = flow;
     if (this.performance.performanceMetricsOn())  {
       return this.performance.instrumentStep(stepModule, stepModule[funcName], flow.globalContext.jobId, flow.globalContext.batchId, flow.globalContext.flow.name, moduleUri, flow.globalContext.uri);
     }

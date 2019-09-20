@@ -28,7 +28,7 @@ function checkOptions(content, options, filteredContent = []) {
   options.mergeOptions.targetEntity = options.targetEntity;
   options.matchOptions.targetEntity = options.targetEntity;
   // provide default empty array values for collections to simplify later logic
-  options.mergeOptions.collections = Object.assign({"content": [], "archived": []},options.mergeOptions.collections);
+  options.mergeOptions.collections = Object.assign({"content": [], "archived": [], "merged": [], "notification": [], "auditing": []},options.mergeOptions.collections);
   options.matchOptions.collections = Object.assign({"content": []},options.matchOptions.collections);
   // sanity check the collections set for the match/merge options
   if (options.matchOptions.collections.content.length) {
@@ -38,17 +38,22 @@ function checkOptions(content, options, filteredContent = []) {
   }
   const contentCollection = fn.head(masteringCollections.getCollections(Sequence.from(options.mergeOptions.collections.content), masteringConsts['CONTENT-COLL']));
   const archivedCollection = fn.head(masteringCollections.getCollections(Sequence.from(options.mergeOptions.collections.archived), masteringConsts['ARCHIVED-COLL']));
+  const mergedCollection = fn.head(masteringCollections.getCollections(Sequence.from(options.mergeOptions.collections.merged), masteringConsts['MERGED-COLL']));
+  const notificationCollection = fn.head(masteringCollections.getCollections(Sequence.from(options.mergeOptions.collections.notification), masteringConsts['NOTIFICATION-COLL']));
+  const auditingCollection = fn.head(masteringCollections.getCollections(Sequence.from(options.mergeOptions.collections.auditing), masteringConsts['AUDITING-COLL']));
   let contentHasExpectedContentCollection = true;
   let contentHasTargetEntityCollection = true;
-  let unlockedURIs = mergeImpl.filterOutLockedUris(Sequence.from(content.toArray().map((item) => item.uri))).toArray();
-  for (const item of content) {
-    let docCollections = item.context.originalCollections || [];
-    if (!docCollections.includes(archivedCollection) && unlockedURIs.includes(item.uri)) {
-      mergeImpl.lockForUpdate(item.uri);
-      item.context.collections = Sequence.from(docCollections);
-      filteredContent.push(item);
-      contentHasExpectedContentCollection = contentHasExpectedContentCollection && docCollections.includes(contentCollection);
-      contentHasTargetEntityCollection = contentHasTargetEntityCollection && docCollections.includes(options.targetEntity);
+  if (content) {
+    let unlockedURIs = mergeImpl.filterOutLockedUris(Sequence.from(content.toArray().map((item) => item.uri))).toArray();
+    for (const item of content) {
+      let docCollections = item.context.originalCollections || [];
+      if (!docCollections.includes(archivedCollection) && unlockedURIs.includes(item.uri)) {
+        mergeImpl.lockForUpdate(item.uri);
+        item.context.collections = Sequence.from(docCollections);
+        filteredContent.push(item);
+        contentHasExpectedContentCollection = contentHasExpectedContentCollection && docCollections.includes(contentCollection);
+        contentHasTargetEntityCollection = contentHasTargetEntityCollection && docCollections.includes(options.targetEntity);
+      }
     }
   }
   if (!contentHasExpectedContentCollection) {
@@ -61,11 +66,43 @@ function checkOptions(content, options, filteredContent = []) {
       xdmp.log(`Expected collection "${contentCollection}" not found on content. You may need to review your match/merge options`, 'warning');
     }
   }
-  return { archivedCollection, contentCollection };
+  return { archivedCollection, contentCollection, mergedCollection, notificationCollection, auditingCollection };
+}
+
+function jobReport(jobID, stepResponse, options) {
+  let collectionsInformation = checkOptions(null, options);
+  let jobQuery = cts.fieldValueQuery('datahubCreatedByJob', jobID);
+  return {
+    jobID,
+    jobReportID: sem.uuidString(),
+    flowName: stepResponse.flowName,
+    stepName: stepResponse.stepName,
+    success: stepResponse.success,
+    numberOfDocumentsProcessed: stepResponse.totalEvents,
+    numberOfDocumentsSuccessfullyProcessed: stepResponse.successfulEvents,
+    numberOfMerges: cts.estimate(cts.andQuery([
+      jobQuery,
+      cts.collectionQuery(collectionsInformation.mergedCollection)
+    ])),
+    documentsArchived: cts.estimate(cts.andQuery([
+      jobQuery,
+      cts.collectionQuery(collectionsInformation.archivedCollection)
+    ])),
+    masterDocuments: cts.estimate(cts.andQuery([
+      jobQuery,
+      cts.collectionQuery(collectionsInformation.contentCollection)
+    ])),
+    notificationDocuments: cts.estimate(cts.andQuery([
+      jobQuery,
+      cts.collectionQuery(collectionsInformation.archivedCollection)
+    ])),
+    collectionsInformation
+  };
 }
 
 module.exports = {
   main: main,
   // export checkOptions for unit test
-  checkOptions: checkOptions
+  checkOptions: checkOptions,
+  jobReport
 };

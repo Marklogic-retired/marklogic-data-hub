@@ -82,13 +82,36 @@ function post(context, params, input) {
         else {
           let tempTime = jobDoc.job.stepResponses[step].stepStartTime;
           jobDoc.job.stepResponses[step]  = JSON.parse(stepResponse);
-          jobDoc.job.stepResponses[step].stepStartTime = tempTime;
-          jobDoc.job.stepResponses[step].stepEndTime = fn.currentDateTime();
+          let stepResp = jobDoc.job.stepResponses[step];
+          stepResp.stepStartTime = tempTime;
+          stepResp.stepEndTime = fn.currentDateTime();
+          let stepDef = fn.head(datahub.hubUtils.queryLatest(function () {
+              return datahub.flow.step.getStepByNameAndType(stepResp.stepDefinitionName, stepResp.stepDefinitionType);
+            },
+            datahub.config.FINALDATABASE
+          ));
+          let jobsReportFun = datahub.flow.step.makeFunction(datahub.flow, 'jobReport', stepDef.modulePath);
+          if (jobsReportFun) {
+            let flowStep = fn.head(datahub.hubUtils.queryLatest(function () {
+                return datahub.flow.getFlow(stepResp.flowName).steps[step];
+              },
+              datahub.config.FINALDATABASE
+            ));
+            let options = Object.assign({}, stepDef.options, flowStep.options);
+            let jobReport = fn.head(datahub.hubUtils.queryLatest(function () {
+                return jobsReportFun(jobId, stepResp, options);
+              },
+              options.targetDatabase || datahub.config.FINALDATABASE
+            ));
+            if (jobReport) {
+              datahub.hubUtils.writeDocument(`/jobs/reports/${stepResp.flowName}/${step}/${jobId}.json`, jobReport, datahub.jobs.jobsPermissions, ['Jobs','JobReport'], datahub.config.JOBDATABASE);
+            }
+          }
         }
     }
 
     //Update the job doc
-    datahub.hubUtils.writeDocument("/jobs/"+ jobId +".json", jobDoc, "xdmp.defaultPermissions()", ['Jobs','Job'], datahub.config.JOBDATABASE);
+    datahub.hubUtils.writeDocument("/jobs/"+ jobId +".json", jobDoc, datahub.jobs.jobsPermissions, ['Jobs','Job'], datahub.config.JOBDATABASE);
     resp = jobDoc;
   }
   else {
