@@ -66,10 +66,8 @@ if(method === 'GET') {
           } else {
             urisEval = "cts.uris(null, null, " + query + ")";
           }
-          resp = xdmp.eval(urisEval, {options: options}, {database: xdmp.database(database)});
+          xdmp.eval(urisEval, {options: options}, {database: xdmp.database(database)});
         } catch (err) {
-          //TODO log error message from 'err'
-
           datahub.debug.log(err);
           resp = fn.error(null, 'RESTAPI-INVALIDREQ', err);
         }
@@ -83,7 +81,9 @@ if(method === 'GET') {
 
     }
   }
-  resp
+  if(resp) {
+    resp
+  }
 } else {
   fn.error(null, 'RESTAPI-INVALIDREQ', 'unsupported method: '+method);
 }
