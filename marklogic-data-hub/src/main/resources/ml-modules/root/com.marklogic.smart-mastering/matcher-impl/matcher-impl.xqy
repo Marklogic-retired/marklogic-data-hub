@@ -459,8 +459,13 @@ declare function match-impl:search(
   let $matching-weights-map := map:entry("values", ())
   let $_accumulate-scores :=
     cts:element-walk(document{$matching-queries}, $QUERIES_WITH_WEIGHT,
-      $matching-weights-map => map:put("values",
-        ($matching-weights-map => map:get("values"), fn:head(($cts:node/@weight, 1))))
+      let $weight := fn:head(($cts:node/@weight, 1))
+      return
+      (
+        $matching-weights-map => map:put("values",
+          ($matching-weights-map => map:get("values"), $weight)),
+        $matching-weights-map => map:put(xdmp:md5(document {$cts:node}), $weight)
+      )
     )
   let $score :=
       fn:sum(
@@ -485,7 +490,11 @@ declare function match-impl:search(
           cts:walk(
             $result,
             $cts-walk-query,
-            $cts:node/<match>{xdmp:path(., fn:true())}</match>
+            (let $query-hashes := $cts:queries ! xdmp:md5(document {.})
+            let $weight := fn:sum($query-hashes ! ($matching-weights-map => map:get(.)))
+            return <match weight="{$weight}">
+                      <path>{xdmp:path($cts:node, fn:true())}</path>
+                   </match>)
           )
         }
       else ()
@@ -517,7 +526,7 @@ declare function match-impl:_results-json-config()
     ),
     map:put($config, "json-children", "queries"),
     map:put($config, "attribute-names",
-      ("name","localname", "namespace", "function",
+      ("name","localname", "namespace", "function", "weight",
       "at", "property-name", "weight", "above", "label","algorithm-ref")
     ),
     $config
