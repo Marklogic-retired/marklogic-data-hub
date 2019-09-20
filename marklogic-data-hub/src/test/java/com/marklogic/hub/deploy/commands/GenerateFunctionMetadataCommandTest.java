@@ -78,14 +78,14 @@ public class GenerateFunctionMetadataCommandTest extends HubTestBase {
     //TODO Find a better home for this, since it could be used elsewhere.
     public boolean versionIsCompatibleWithES(String version) {
         boolean compatibleWithES = false;
-        int majorVersion = Integer.parseInt(version.replace("^([0-9]+)\\..*$", "$1"));
+        int majorVersion = Integer.parseInt(version.replaceAll("^([0-9]+)\\..*$", "$1"));
         if (majorVersion >= 9) {
             boolean isNightly = Pattern.matches("^[0-9]+\\.[0-9]+-[0-9]{8}$", version);
             if (isNightly) {
-                int dateInt = Integer.parseInt(version.replace("^[0-9]+\\.[0-9]+-([0-9]{8})$", "$1"));
+                int dateInt = Integer.parseInt(version.replaceAll("^[0-9]+\\.[0-9]+-([0-9]{8})$", "$1"));
                 compatibleWithES = dateInt >= 20190726;
             } else if (majorVersion == 9) {
-                int minorInt = Integer.parseInt(version.replace("^[0-9]+\\.[0-9]+-([0-9]{2,})$", "$1"));
+                int minorInt = Integer.parseInt(version.replaceAll("^[0-9]+\\.[0-9]+-([0-9]{2,})$", "$1"));
                 compatibleWithES = minorInt >= 10;
             } else {
                 compatibleWithES = true;

@@ -1,5 +1,5 @@
 const test = require("/test/test-helper.xqy");
-const stepValidate = require("/data-hub/5/extensions/stepValidate.sjs");
+const stepValidate = require("/marklogic.rest.resource/stepValidate/assets/resource.sjs");
 
 
 function checkPermissions() {
