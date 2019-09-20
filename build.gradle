@@ -30,9 +30,6 @@ repositories {
     jcenter()
     maven { url 'http://repo.spring.io/milestone' }
     maven { url 'https://developer.marklogic.com/maven2/' }
-
-    // Needed for marklogic-junit
-    maven { url 'https://dl.bintray.com/marklogic-community/Maven/' }
 }
 
 sourceCompatibility = 1.11
