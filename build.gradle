@@ -21,7 +21,6 @@ plugins {
     id 'java'
     id 'eclipse'
     id 'idea'
-    id 'com.moowork.node' version '1.2.0'
     id 'org.springframework.boot' version '2.1.7.RELEASE'
 }
 apply plugin: 'io.spring.dependency-management'
