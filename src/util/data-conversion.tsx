@@ -82,7 +82,7 @@ export const entityParser = (data : any) => {
     if (entityDefinition) {
       parsedEntity = {
         name: entityDefinition['name'],
-        primaryKey: entityDefinition['primaryKey']
+        primaryKey: entityDefinition.hasOwnProperty('primaryKey') ? entityDefinition['primaryKey'] : ''
       }
     }
     return parsedEntity
