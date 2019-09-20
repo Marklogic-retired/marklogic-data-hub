@@ -1,18 +1,28 @@
 import React from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import styles from './search-result.module.scss';
 
-const SearchResult = (props) => {
+interface Props extends RouteComponentProps {
+  item: any;
+  entityDefArray:any[];
+};
+
+const SearchResult:React.FC<Props> = (props) => {
+  const itemEntityName = Object.keys(props.item.extracted.content[0]);
+  const itemEntityProperties = Object.values<any>(props.item.extracted.content[0]);
+  const entityDef = props.entityDefArray.find(entity => entity.name === itemEntityName[0]);
+  const primaryKeyValue = entityDef.primaryKey && itemEntityProperties[0][entityDef.primaryKey];
 
     return (
         <div>
             <div className={styles.title}>
-                <span className={styles.entityName}>Customer</span>
+                <span className={styles.entityName}>{itemEntityName}</span>
+                {entityDef.primaryKey && <span className={styles.primaryKey}>{entityDef.primaryKey}:</span> }
                 <Link to={{ 
                     pathname: "/detail", 
                     state: { uri: props.item.uri, database: "data-hub-FINAL" }}}
                 >
-                    {props.item.uri}
+                    {entityDef.primaryKey ? primaryKeyValue : props.item.uri}
                 </Link>
             </div>
             <div className={styles.snippet}>
@@ -32,7 +42,7 @@ const SearchResult = (props) => {
                 </div>
                 <div className={styles.metaItem}>
                     <span className={styles.metaLabel}>File Type</span>
-                    <span className={styles.metaValue}>JSON</span>
+                    <span className={styles.format}>{props.item.format}</span>
                 </div>
                 <div className={styles.metaItem}>
                     <span className={styles.metaLabel}>User</span>

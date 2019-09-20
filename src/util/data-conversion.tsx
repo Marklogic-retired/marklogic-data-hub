@@ -74,3 +74,17 @@ export const entityFromJSON = (data: any) => {
   });
   return entityArray;
 }
+
+export const entityParser = (data : any) => {
+  return data.map((entity, index) => {
+    const entityDefinition = entity.definitions.find(definition => definition.name === entity.info.title);
+    let parsedEntity = {}
+    if (entityDefinition) {
+      parsedEntity = {
+        name: entityDefinition['name'],
+        primaryKey: entityDefinition['primaryKey']
+      }
+    }
+    return parsedEntity
+  }); 
+}

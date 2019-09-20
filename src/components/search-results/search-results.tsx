@@ -5,6 +5,7 @@ import styles from './search-results.module.scss';
 
 type Props = {
     data: any[];
+    entityDefArray:any[];
 };
 
 const SearchResults:React.FC<Props> = (props) => {
@@ -18,6 +19,7 @@ const SearchResults:React.FC<Props> = (props) => {
                     <List.Item>
                         <SearchResult
                             item={item}
+                            entityDefArray={props.entityDefArray}
                         />
                     </List.Item>
                 )}

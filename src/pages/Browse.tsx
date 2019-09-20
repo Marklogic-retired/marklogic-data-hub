@@ -9,7 +9,7 @@ import SearchPagination from '../components/search-pagination/search-pagination'
 import { Layout, Spin } from 'antd';
 import SearchSummary from '../components/search-summary/search-summary';
 import SearchResults from '../components/search-results/search-results';
-import { entityFromJSON } from '../util/data-conversion';
+import { entityFromJSON, entityParser } from '../util/data-conversion';
 
 interface Props extends RouteComponentProps<any> { }
 
@@ -27,6 +27,7 @@ const Browse: React.FC<Props> = ({location}) => {
 
   const [data, setData] = useState();
   const [entities, setEntites] = useState<any[]>([]);
+  const [entityDefArray, setEntityDefArray] = useState<any[]>([]);
   const [facets, setFacets] = useState();
   const [searchUrl, setSearchUrl] = useState<any>({ url: `/datahub/v2/search`, method: 'post' });
   const [isLoading, setIsLoading] = useState(false);
@@ -36,7 +37,9 @@ const Browse: React.FC<Props> = ({location}) => {
   const getEntityModel = async () => {
     try {
       const response = await axios(`/datahub/v2/models`);
+      const parsedModelData = entityFromJSON(response.data);
       setEntites([ ...entityFromJSON(response.data).map(entity => entity.info.title)]);
+      setEntityDefArray(entityParser(parsedModelData));
       setEntitiesLoaded(true);
     } catch (error) {
       // console.log('error', error.response);
@@ -118,7 +121,7 @@ const Browse: React.FC<Props> = ({location}) => {
             />
             <br />
             <br />
-            <SearchResults data={data} />
+            <SearchResults data={data} entityDefArray={entityDefArray} />
             <br />
             <SearchSummary total={totalDocuments} start={searchOptions.start} length={searchOptions.pageLength} />
             <SearchPagination 
