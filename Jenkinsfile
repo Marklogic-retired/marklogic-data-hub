@@ -7,6 +7,15 @@ def prResponse="";
 def prNumber;
 def props;
 def githubAPIUrl="https://api.github.com/repos/marklogic/marklogic-data-hub"
+
+def loadProperties() {
+    node {
+        checkout scm
+        properties = new Properties()
+        props.load(propertiesFile.newDataInputStream())
+        echo "Immediate one ${properties.repo}"
+    }
+}
 pipeline{
 	agent none;
 	options {
