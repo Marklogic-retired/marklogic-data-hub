@@ -21,7 +21,9 @@ import { Flow } from "../../models/flow.model";
       [targetEntity]="this.targetEntity"
       [conns]="this.conns"
       [sampleDocSrcProps]="this.sampleDocSrcProps"
+      [step]="this.step"
       [editURIVal]="this.editURIVal"
+      [functionLst]="functionLst"
       (updateURI)="this.updateURI($event)"
       (updateMap)="this.updateMap($event)"
     ></app-mapping-ui>
@@ -59,6 +61,7 @@ export class MappingComponent implements OnInit {
   public mapping: any = new Mapping();
   private isSourceURIInvalid: boolean = false;
   public editURIVal: string;
+  public functionLst: object = {};
 
   updateURI(event) {
     this.conns = event.conns;
@@ -99,6 +102,7 @@ export class MappingComponent implements OnInit {
       }
       this.loadEntity();
       this.loadMap();
+      this.getFunctionList();
     }
   }
 
@@ -320,6 +324,14 @@ export class MappingComponent implements OnInit {
       result = 'string';
     }
     return result;
+  }
+
+  getFunctionList (){
+    this.manageFlowsService.getFunctions().subscribe( resp => {
+      this.functionLst = resp;
+      console.log("resp",resp);
+      console.log("functionLst",this.functionLst);
+    });
   }
 
 }
