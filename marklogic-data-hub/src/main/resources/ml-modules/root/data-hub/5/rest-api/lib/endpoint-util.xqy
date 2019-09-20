@@ -1,6 +1,6 @@
 xquery version "1.0-ml";
 
-(: Copyright 2011-2019 MarkLogic Corporation.  All Rights Reserved. :)
+(: Copyright 2011-2018 MarkLogic Corporation.  All Rights Reserved. :)
 
 module namespace eput = "http://marklogic.com/rest-api/lib/endpoint-util";
 
@@ -8,7 +8,7 @@ import module namespace lid = "http://marklogic.com/util/log-id"
     at "/MarkLogic/appservices/utils/log-id.xqy";
 
 import module namespace dbut = "http://marklogic.com/rest-api/lib/db-util"
-    at "../lib/db-util.xqy";
+    at "/MarkLogic/rest-api/lib/db-util.xqy";
 
 import module namespace tformod = "http://marklogic.com/rest-api/models/transform-model"
     at "../models/transform-model.xqy";
@@ -69,7 +69,7 @@ declare private function eput:default-properties(
 {
 (: When new properties are added, you MUST update the schema;
  : validation of parameters is schema-based :)
-    map:map(<map:map xmlns:map="http://marklogic.com/xdmp/map" 
+    map:map(<map:map xmlns:map="http://marklogic.com/xdmp/map"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema">
        <map:entry key="content-versions">
          <map:value xsi:type="xs:string">none</map:value>
@@ -197,10 +197,10 @@ declare function eput:set-property(
     $rest-group-id   as xs:unsignedLong?,
     $rest-server-id  as xs:unsignedLong?,
     $rest-modules-id as xs:unsignedLong?
-) as empty-sequence() 
+) as empty-sequence()
 {
     let $properties := eput:get-properties-map()
-    let $validate := 
+    let $validate :=
         if (map:contains(eput:default-properties(), $property-name)) then ()
         else error((),"RESTAPI-UNSUPPORTEDPROP",$property-name)
     let $update := map:put($properties,$property-name,$property-value)
@@ -237,11 +237,11 @@ declare function eput:make-document-uri(
 {
     xdmp:security-assert("http://marklogic.com/xdmp/privileges/rest-reader", "execute"),
 
-    let $rest-group      := 
+    let $rest-group      :=
         if (exists($group-name))
         then $group-name
         else xdmp:group-name()
-    let $rest-server     := 
+    let $rest-server     :=
         if (exists($server-name))
         then $server-name
         else xdmp:server-name(xdmp:server())
@@ -368,11 +368,11 @@ declare function eput:get-property(
 {
     let $properties := eput:get-properties-map()
     let $validate :=
-        if (($property-name = map:keys($properties)) 
+        if (($property-name = map:keys($properties))
             and not($property-name = $filtered-properties))
         then ()
         else error((),"RESTAPI-UNSUPPORTEDPROP",$property-name)
-    return element {concat("rapi:",$property-name)} {map:get($properties,$property-name)} 
+    return element {concat("rapi:",$property-name)} {map:get($properties,$property-name)}
 };
 
 (: Use this for properties access internally :)
@@ -448,7 +448,7 @@ declare function eput:get-properties(
 {
     let $properties := eput:get-properties-map()
     return
-        element {"rapi:properties"} { 
+        element {"rapi:properties"} {
             for $key in map:keys($properties)
             where not($key = $filtered-properties)
             order by $key
@@ -458,14 +458,14 @@ declare function eput:get-properties(
 
 (: Call this only to serialize JSON :)
 declare function eput:get-json-properties(
-) as json:object 
+) as json:object
 {
     let $input  := eput:get-properties-map()
     let $json := json:object()
-    let $_ := 
+    let $_ :=
         for $key in map:keys($input)
         where not($key = $filtered-properties)
-        return map:put($json,$key,map:get($input,$key)) 
+        return map:put($json,$key,map:get($input,$key))
      return $json
 };
 
@@ -591,7 +591,7 @@ declare function eput:get-content-type(
 {
     let $format := map:get($params, "format")
     return
-        if ($format eq "json") 
+        if ($format eq "json")
         then "application/json"
         else if ($format eq "xml")
         then "application/xml"
@@ -631,7 +631,7 @@ declare function eput:get-inbound-content-type(
         else
             let $format := map:get($params, "format")
             return
-                if ($format eq "json") 
+                if ($format eq "json")
                 then "application/json"
                 else if ($format eq "xml")
                 then "application/xml"
@@ -654,9 +654,9 @@ declare function eput:get-content-format(
         then "json"
         else if (matches($content-type,"^(application|text)/(xml|[^+]+\+xml)$"))
         then "xml"
-        else if (matches($content-type,"^application/(xquery|sparql\-query|n\-triples|n\-quads|x\-turtle|trig)")) 
+        else if (matches($content-type,"^application/(xquery|sparql\-query|n\-triples|n\-quads|x\-turtle|trig)"))
         then "text"
-        else if (matches($content-type,"^application/(sparql\-update)")) 
+        else if (matches($content-type,"^application/(sparql\-update)"))
         then "text"
         else if (matches($content-type,"^text/")) (: covers all of text/* not handled above :)
         then "text"
@@ -838,7 +838,7 @@ declare function eput:produce-error-response(
     if (empty($errors)) then ()
     else
         let $response := eput:invoke-module(
-            "../error-handler.xqy",
+            "/MarkLogic/rest-api/error-handler.xqy",
             (QName("http://marklogic.com/xdmp/error", "errors"), $errors),
             ()
             )
@@ -885,7 +885,7 @@ declare function eput:get-db-config(
     let $last-list      := eput:get-db-timestamp-and-config()
     let $last-timestamp :=
         if (count($last-list) ne 2) then 0
-        else subsequence($last-list,1,1) 
+        else subsequence($last-list,1,1)
     let $current-list   :=
         mout:read-database-config(xdmp:database(),$last-timestamp)
     return
@@ -1085,7 +1085,7 @@ declare function eput:xslt-invoke(
 
     if ($transform instance of element(xsl:stylesheet))
     then xdmp:xslt-eval($transform, $input)
-    else if (starts-with($transform, "../"))
+    else if (starts-with($transform, "/MarkLogic/rest-api/"))
     then xdmp:xslt-invoke($transform, $input)
     else ()
 };
@@ -1104,7 +1104,7 @@ declare function eput:parse-byte-range(
             let $raw-bounds  := $spec/as:match/as:group
             let $raw-start   := $raw-bounds[@nr eq 1]/text()/xs:long(data(.))
             let $raw-end     := $raw-bounds[@nr eq 2]/text()/xs:long(data(.))
-            let $start-bound := 
+            let $start-bound :=
                 if (exists($raw-start))
                 then $raw-start
                 else if (exists($raw-end))
@@ -1248,7 +1248,7 @@ declare function eput:lookup-role-ids(
 (: converts from a sequence of uri strings to text/uri-list :)
 declare function eput:to-uri-list($uris as xs:string*) as xs:string
 {
-   (: I think this string-join will prevent streaming, 
+   (: I think this string-join will prevent streaming,
     : but it will guarantee that every line ends with CRLF :)
    string-join(for $uri in $uris return ($uri, "&#13;&#10;"))
 };

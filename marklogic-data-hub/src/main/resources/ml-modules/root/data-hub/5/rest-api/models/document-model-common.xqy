@@ -5,19 +5,19 @@ xquery version "1.0-ml";
 module namespace docmodcom = "http://marklogic.com/rest-api/models/document-model-common";
 
 import module namespace jsonbld = "http://marklogic.com/rest-api/lib/json-build"
-    at "../lib/json-build.xqy";
+    at "/MarkLogic/rest-api/lib/json-build.xqy";
 
 import module namespace json="http://marklogic.com/xdmp/json"
      at "/MarkLogic/json/json.xqy";
 
 import module namespace eput = "http://marklogic.com/rest-api/lib/endpoint-util"
-    at "../lib/endpoint-util.xqy";
+    at "/MarkLogic/rest-api/lib/endpoint-util.xqy";
 
 import module namespace dbut = "http://marklogic.com/rest-api/lib/db-util"
-    at "../lib/db-util.xqy";
+    at "/MarkLogic/rest-api/lib/db-util.xqy";
 
 import module namespace tformod = "http://marklogic.com/rest-api/models/transform-model"
-    at "../models/transform-model.xqy";
+    at "transform-model.xqy";
 
 import module namespace lid = "http://marklogic.com/util/log-id"
     at "/MarkLogic/appservices/utils/log-id.xqy";
@@ -71,7 +71,7 @@ declare function docmodcom:parse-metadata(
 {
     if (empty($metadata-doc)) then ()
     else if ($metadata-format eq "json")
-    then xdmp:from-json($metadata-doc) 
+    then xdmp:from-json($metadata-doc)
     else $metadata-doc/node()
 };
 
@@ -132,7 +132,7 @@ declare function docmodcom:parse-quality(
         return docmodcom:convert-json-quality($uri,$meta-parsed)
         case element(rapi:metadata)
         return $meta-parsed/rapi:quality/data(.)
-        default return () 
+        default return ()
 };
 
 declare function docmodcom:parse-metadata-values(
@@ -147,7 +147,7 @@ declare function docmodcom:parse-metadata-values(
         return docmodcom:convert-json-metadata-values($uri,$meta-parsed)
         case element(rapi:metadata)
         return docmodcom:convert-metadata-values($uri,$meta-parsed/rapi:metadata-values/rapi:metadata-value)
-        default return () 
+        default return ()
 };
 
 declare function docmodcom:convert-json-collection(
@@ -201,18 +201,29 @@ declare function docmodcom:convert-json-properties(
 {
     if (empty($map)) then ()
     else
-        let $properties := jsonbld:get-map-sequence($map,"properties")
-        return
-            if (empty($properties)) then ()
-            else if (not($properties instance of map:map))
+        let $props-raw := jsonbld:get-map-sequence($map,"properties")
+        let $props-xml :=
+            if (empty($props-raw)) then ()
+            else if (not($props-raw instance of map:map))
             then error((),"RESTAPI-INVALIDCONTENT",("properties not an object. uri: "||$uri))
-            else (
+            else map:get($props-raw,"$ml.xml")
+        let $properties :=
+            if (empty($props-xml))
+            then $props-raw
+            else
+                typeswitch($props-xml)
+                case xs:string        return xdmp:unquote($props-xml,(),("format-xml"))/element()
+                case xs:untypedAtomic return xdmp:unquote($props-xml,(),("format-xml"))/element()
+                default return error((),"RESTAPI-INVALIDCONTENT",
+                    ("$ml.xml must provide XML properties as a string. uri: "||$uri))
+        return
+            typeswitch($properties)
+            case map:map return (
                 let $system-props := map:get($properties,"$ml.prop")
                 return
                     if (empty($system-props)) then ()
                     else (
                         for $system-name in map:keys($system-props)
-                        (: TODO: determine other system properties to filter out :)
                         where $system-name ne "last-modified"
                         return element {concat("prop:",$system-name)} {
                             map:get($system-props,$system-name)
@@ -223,6 +234,20 @@ declare function docmodcom:convert-json-properties(
 
                 json:transform-from-json($properties, json:config("basic"))/*
                 )
+            case element(prop:properties) return (
+                for $property in $properties/(element() except prop:last-modified)
+                return
+                    element {node-name($property)} {
+                        $property/@*,
+                        $property/namespace::*,
+                        $property/node()
+                        },
+                if (exists($properties/rapi:json-serialization)) then ()
+                else <rapi:json-serialization as="xml"/>
+                )
+            case element() return error((),"RESTAPI-INVALIDCONTENT",
+                ("$ml.xml must provide XML prop:properties as a string. uri: "||$uri))
+            default return ()
 };
 
 declare function docmodcom:convert-json-quality(
@@ -263,7 +288,7 @@ declare function docmodcom:convert-metadata-values(
 ) as map:map?
 {
    if (empty($values)) then ()
-   else 
+   else
        let $metadata := map:map()
        return (
            for $v in $values
@@ -412,7 +437,7 @@ declare function docmodcom:get-metadata-input-type(
     else
         let $format := map:get($params,"format")
         return
-        if (exists($format)) then 
+        if (exists($format)) then
             if ($format = ("json","xml"))
             then concat("application/",$format)
             else error((),"REST-INVALIDPARAM",concat(
@@ -439,7 +464,7 @@ declare function docmodcom:get-metadata-output-type(
 {
     let $format := map:get($params,"format")
     return
-    if (exists($format)) then 
+    if (exists($format)) then
         if ($format = ("json","xml"))
         then concat("application/",$format)
         else error((),"REST-INVALIDPARAM",concat(
@@ -859,7 +884,7 @@ declare function docmodcom:read-metadata-json(
                     jsonbld:array(
                         let $permissions := docmodcom:read-permissions($uri)
                         let $role-map    := docmodcom:make-role-map($permissions)
-                        let $role-ids    := 
+                        let $role-ids    :=
                             if (empty($role-map)) then ()
                             else map:keys($role-map)[. ne ""]
                         let $role-names  :=
@@ -881,85 +906,99 @@ declare function docmodcom:read-metadata-json(
                      : * basic props convert using the basic transform
                      : * system props contain only text and do not repeat
                      :)
-                    let $properties   := docmodcom:read-properties($uri)
-                    let $system-props := $properties/prop:*
-                    let $system-pair  :=
-                        if (empty($system-props)) then ()
-                        else (
-                            jsonbld:key("$ml.prop"),
-                            jsonbld:object(
-                                for $system-prop in $system-props
-                                return (
-                                    jsonbld:key(local-name($system-prop)),
-                                    jsonbld:value(data($system-prop))
-                                    )
-                                )
-                            )
-                    let $basic-props  := $properties/json-basic:*
-                    let $other-props  :=
-                        if (exists($basic-props)) then ()
-                        else $properties/* except $system-props
-                    let $other-map    :=
-                        if (empty($other-props)) then ()
-                        else
-                            let $map := map:map()
-                            return (
-                                for $other-prop in $other-props
-                                let $other-name  := local-name($other-prop)
-                                let $other-value :=
-                                    if (exists($other-prop/*))
-                                    then $other-prop/*
-                                    else data($other-prop)
-                                return map:put(
-                                    $map,
-                                    $other-name,
-                                    (map:get($map,$other-name), $other-value)
-                                    ),
-
-                                $map
-                                )
-                    let $full-cfg     :=
-                        if (empty($other-map)) then ()
-                        else json:config("full")
+                    let $properties  := docmodcom:read-properties($uri)
+                    let $json-serial := $properties/rapi:json-serialization
                     return
-                        if (exists($basic-props)) then
-                            let $object := json:transform-to-json-string(
-                                <json-basic:json type="object">{
-                                    $basic-props
-                                }</json-basic:json>,
-                                json:config("basic")
-                                )
-                            return
-                                if (empty($system-pair))
-                                then $object
-                                else concat(
-                                    '{',
-                                    (: get the keys from the object :)
-                                    substring($object,2,string-length($object)-2), ',',
-
-                                    string-join($system-pair,':'),
-                                    '}'
-                                    )
-                        else jsonbld:object((
-                            if (empty($other-map)) then ()
-                            else 
-                                for $other-name in map:keys($other-map)
-                                let $other-values :=
-                                    for $other-value in map:get($other-map,$other-name)
-                                    return
-                                        if ($other-value instance of element())
-                                        then json:transform-to-json-string($other-value,$full-cfg)
-                                        else jsonbld:value($other-value)
-                                return (
-                                    jsonbld:key($other-name),
-
-                                    if (count($other-values) gt 1 or $other-values instance of element())
-                                    then jsonbld:array($other-values)
-                                    else $other-values
-                                    ),
-
-                            $system-pair
+                        if ($json-serial/@as/string(.) eq "xml")
+                        then jsonbld:object((
+                            jsonbld:key("$ml.xml"),
+                            jsonbld:value(xdmp:quote(
+                                $properties,
+                                map:entry("method","xml")
+                                =>map:with("indent","no")
+                                ))
                             ))
+                        else
+                            let $system-props := $properties/prop:*
+                            let $system-pair  :=
+                                if (empty($system-props)) then ()
+                                else (
+                                    jsonbld:key("$ml.prop"),
+                                    jsonbld:object(
+                                        for $system-prop in $system-props
+                                        return (
+                                            jsonbld:key(local-name($system-prop)),
+                                            jsonbld:value(
+                                                if (empty($system-prop/element()))
+                                                then data($system-prop)
+                                                else xdmp:quote($system-prop)
+                                                )
+                                            )
+                                        )
+                                    )
+                            let $basic-props  := $properties/json-basic:*
+                            let $other-props  :=
+                                if (exists($basic-props)) then ()
+                                else $properties/* except $system-props
+                            let $other-map    :=
+                                if (empty($other-props)) then ()
+                                else
+                                    let $map := map:map()
+                                    return (
+                                        for $other-prop in $other-props
+                                        let $other-name  := local-name($other-prop)
+                                        let $other-value :=
+                                            if (exists($other-prop/*))
+                                            then $other-prop/*
+                                            else data($other-prop)
+                                        return map:put(
+                                            $map,
+                                            $other-name,
+                                            (map:get($map,$other-name), $other-value)
+                                            ),
+
+                                        $map
+                                        )
+                            return
+                                if (exists($basic-props)) then
+                                    let $object := json:transform-to-json-string(
+                                        <json-basic:json type="object">{
+                                            $basic-props
+                                        }</json-basic:json>,
+                                        json:config("basic")
+                                        )
+                                    return
+                                        if (empty($system-pair))
+                                        then $object
+                                        else concat(
+                                            '{',
+                                            (: get the keys from the object :)
+                                            substring($object,2,string-length($object)-2), ',',
+
+                                            string-join($system-pair,':'),
+                                            '}'
+                                            )
+                                else jsonbld:object((
+                                    if (empty($other-map)) then ()
+                                    else
+                                        let $full-cfg :=json:config("full")
+                                        for $other-name in map:keys($other-map)
+                                        let $other-values :=
+                                            for $other-value in map:get($other-map,$other-name)
+                                            return
+                                                if ($other-value instance of element())
+                                                then json:transform-to-json-string($other-value,$full-cfg)
+                                                else jsonbld:value($other-value)
+                                        return (
+                                            jsonbld:key($other-name),
+
+                                            if (count($other-values) gt 1 or $other-values instance of element())
+                                            then jsonbld:array($other-values)
+                                            else $other-values
+                                            ),
+
+                                    $system-pair
+                                    ))
                     ),
             if (not($categories = ("quality","metadata"))) then ()
                else ("quality", head((docmodcom:read-quality($uri), 0))),
@@ -1042,5 +1081,5 @@ declare function docmodcom:escape-quoted(
    $uri as xs:string
 ) as xs:string
 {
-   replace(replace($uri, '\\', '\\\\'), '"', '\\"')   
+   replace(replace($uri, '\\', '\\\\'), '"', '\\"')
 };

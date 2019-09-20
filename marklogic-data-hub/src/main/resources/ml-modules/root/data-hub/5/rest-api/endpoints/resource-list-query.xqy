@@ -6,10 +6,10 @@ import module namespace rsrcmodqry = "http://marklogic.com/rest-api/models/resou
     at "../models/resource-model-query.xqy";
 
 import module namespace parameters = "http://marklogic.com/rest-api/endpoints/parameters"
-    at "../endpoints/parameters.xqy";
+    at "/MarkLogic/rest-api/endpoints/parameters.xqy";
 
 import module namespace eput = "http://marklogic.com/rest-api/lib/endpoint-util"
-    at "../lib/endpoint-util.xqy";
+    at "/MarkLogic/rest-api/lib/endpoint-util.xqy";
 
 import module namespace lid = "http://marklogic.com/util/log-id"
     at "/MarkLogic/appservices/utils/log-id.xqy";

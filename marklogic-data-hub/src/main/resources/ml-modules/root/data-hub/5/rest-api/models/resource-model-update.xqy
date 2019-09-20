@@ -5,22 +5,22 @@ xquery version "1.0-ml";
 module namespace rsrcmodupd = "http://marklogic.com/rest-api/models/resource-model-update";
 
 import module namespace dbut = "http://marklogic.com/rest-api/lib/db-util"
-    at "../lib/db-util.xqy";
+    at "/MarkLogic/rest-api/lib/db-util.xqy";
 
 import module namespace extut = "http://marklogic.com/rest-api/lib/extensions-util"
     at "../lib/extensions-util.xqy";
 
 import module namespace transmod = "http://marklogic.com/rest-api/models/transaction-model"
-    at "../models/transaction-model.xqy";
+    at "/MarkLogic/rest-api/models/transaction-model.xqy";
 
 import module namespace eput = "http://marklogic.com/rest-api/lib/endpoint-util"
-    at "../lib/endpoint-util.xqy";
+    at "/MarkLogic/rest-api/lib/endpoint-util.xqy";
 
 import module namespace lid = "http://marklogic.com/util/log-id"
     at "/MarkLogic/appservices/utils/log-id.xqy";
 
 import module namespace rsrcmodcom = "http://marklogic.com/rest-api/models/resource-model-common"
-    at "../models/resource-model-common.xqy";
+    at "/MarkLogic/rest-api/models/resource-model-common.xqy";
 
 declare namespace rapi  = "http://marklogic.com/rest-api";
 
@@ -67,7 +67,7 @@ declare function rsrcmodupd:put-item(
         (: collect the parameters for each method :)
         for $key in map:keys($params)[contains(.,":")]
         let $method := substring-before($key,":")
-        return 
+        return
             if (not($method = $method-list)) then ()
             else
                 let $method-map   :=
@@ -165,7 +165,7 @@ declare function rsrcmodupd:put-source(
                     }</rapi:method>
             }</rapi:methods>
             )
-    let $source-format := 
+    let $source-format :=
         if (contains($content-type, "javascript"))
         then "javascript"
         else "xquery"

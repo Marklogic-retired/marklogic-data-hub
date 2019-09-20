@@ -68,14 +68,17 @@ public class JobsController {
     @ResponseBody
     public byte[] exportJobs(@RequestBody JobExport jobExport) {
         byte[] response = null;
+        InputStream is = null;
         try {
             File zipFile = jobService.exportJobs(jobExport.jobIds);
-            InputStream is = new FileInputStream(zipFile);
+            is = new FileInputStream(zipFile);
             response = IOUtils.toByteArray(is);
         } catch (FileNotFoundException e) {
             throw new DataHubException(e.getMessage(), e);
         } catch (IOException e) {
             throw new DataHubException(e.getMessage(), e);
+        } finally {
+            IOUtils.closeQuietly(is);
         }
 
         return response;

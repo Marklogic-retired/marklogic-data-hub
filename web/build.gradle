@@ -75,7 +75,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-devtools")
 
     // Needed for the Upload feature using mlcp
-    compile("com.marklogic:mlcp:9.0.8") {
+    compile("com.marklogic:mlcp:10.0.1") {
         exclude group: 'org.apache.avro', module: 'avro-tools'
     }
     //this really needs to go
@@ -92,7 +92,7 @@ dependencies {
     // JUnit Jupiter API and TestEngine implementation
     testCompile "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
     testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
-  
+
     testCompile "org.junit.platform:junit-platform-runner:${junitPlatformVersion}"
     testCompile "io.rest-assured:rest-assured:3.0.3"
     testCompile files(project(':marklogic-data-hub').sourceSets.test.output)

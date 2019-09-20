@@ -13,6 +13,7 @@ import com.marklogic.hub.HubProject;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.HubModuleManager;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,6 +22,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -55,8 +57,9 @@ public class EntityServicesAlignmentTest extends HubTestBase {
         Path orderDir = project.getHubEntitiesDir().resolve("Order");
         orderDir.toFile().mkdirs();
         assertTrue(orderDir.toFile().exists());
-        FileUtil.copy(getResourceStream("es-alignment-test/Order.entity.json"),
-            orderDir.resolve("Order.entity.json").toFile());
+        InputStream inputStream = getResourceStream("es-alignment-test/Order.entity.json");
+        FileUtil.copy(inputStream, orderDir.resolve("Order.entity.json").toFile());
+        IOUtils.closeQuietly(inputStream);
     }
 
     private HubModuleManager getPropsMgr() {

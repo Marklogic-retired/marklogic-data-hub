@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rapi:resource-metadata xmlns:rapi="http://marklogic.com/rest-api"><rapi:name>ml:sm-merge-option-names</rapi:name><rapi:source-format>xquery</rapi:source-format><rapi:title>sm-merge-option-names</rapi:title><rapi:methods><rapi:method><rapi:method-name>get</rapi:method-name></rapi:method></rapi:methods></rapi:resource-metadata>
