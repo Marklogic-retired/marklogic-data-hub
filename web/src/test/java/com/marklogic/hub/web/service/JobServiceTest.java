@@ -38,6 +38,7 @@ public class JobServiceTest extends HubTestBase {
     public void setup() throws IOException {
         deleteProjectDir();
         createProjectDir();
+        installHubModules();
     }
 
     @Test

@@ -11,6 +11,10 @@ import java.io.File;
  */
 public class DhsDeployServersCommand extends DeployHubOtherServersCommand {
 
+    public DhsDeployServersCommand() {
+        super(null);
+    }
+
     @Override
     protected String adjustPayloadBeforeSavingResource(CommandContext context, File f, String payload) {
         final String[] originalIncludeProperties = context.getAppConfig().getIncludeProperties();

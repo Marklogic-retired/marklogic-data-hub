@@ -15,10 +15,12 @@
  */
 package com.marklogic.bootstrap;
 
-import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.admin.QueryOptionsManager;
+import com.marklogic.client.admin.ServerConfigurationManager;
 import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
 import com.marklogic.client.io.DOMHandle;
+import com.marklogic.client.io.QueryOptionsListHandle;
 import com.marklogic.hub.*;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -40,6 +42,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Set;
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 import static org.junit.jupiter.api.Assertions.*;
@@ -64,7 +67,7 @@ public class DataHubInstallTest extends HubTestBase
     public void setDataHub(DataHub dataHub){
         DataHubInstallTest.dataHub = dataHub;
     }
-    
+
     @BeforeAll
     public static void setupOnce() {
         new Installer().deleteProjectDir();
@@ -167,7 +170,7 @@ public class DataHubInstallTest extends HubTestBase
         assertXMLEqual(expectedXml, actualXml);
         actualXml = finalSchemasClient.newDocumentManager().read("/tde/tdedoc.xml").next().getContent(new DOMHandle()).get();
         assertXMLEqual(expectedXml, actualXml);
-        
+
         //checking if triggers are written
         assertTrue(stagingTriggersClient.newServerEval().xquery("fn:count(fn:doc())").eval().next().getNumber().intValue() == 6);
         //we write 5 triggers as part of installation
@@ -182,10 +185,22 @@ public class DataHubInstallTest extends HubTestBase
 
         assertTrue(getModulesFile("/com.marklogic.hub/config.xqy").startsWith(getResource("data-hub-test/core-modules/config.xqy")));
 
-        assertTrue(getModulesFile("/Default/data-hub-JOBS/rest-api/options/traces.xml").length() > 0, "trace options not installed");
-        assertTrue(getModulesFile("/Default/data-hub-JOBS/rest-api/options/jobs.xml").length() > 0, "jobs options not installed");
-        assertTrue(getModulesFile("/Default/data-hub-STAGING/rest-api/options/default.xml").length() > 0, "staging options not installed");
-        assertTrue(getModulesFile("/Default/data-hub-FINAL/rest-api/options/default.xml").length() > 0, "final options not installed");
+        ServerConfigurationManager jobsConfigMgr = adminHubConfig.newJobDbClient().newServerConfigManager();
+        QueryOptionsManager jobsOptionsManager = jobsConfigMgr.newQueryOptionsManager();
+        Set<String> jobsOptions = jobsOptionsManager.optionsList(new QueryOptionsListHandle()).getValuesMap().keySet();
+        assertTrue(jobsOptions.contains("traces"), "trace options not installed");
+        assertTrue(jobsOptions.contains("jobs"), "jobs options not installed");
+
+        ServerConfigurationManager stagingConfigMgr = adminHubConfig.newStagingClient().newServerConfigManager();
+        QueryOptionsManager stagingOptionsManager = stagingConfigMgr.newQueryOptionsManager();
+        Set<String> stagingOptions = stagingOptionsManager.optionsList(new QueryOptionsListHandle()).getValuesMap().keySet();
+
+        assertTrue(stagingOptions.contains("default"), "staging options not installed");
+
+        ServerConfigurationManager finalConfigMgr = adminHubConfig.newFinalClient().newServerConfigManager();
+        QueryOptionsManager finalOptionsManager = finalConfigMgr.newQueryOptionsManager();
+        Set<String> finalOptions = finalOptionsManager.optionsList(new QueryOptionsListHandle()).getValuesMap().keySet();
+        assertTrue(finalOptions.contains("default"), "final options not installed");
     }
 
     @Test
@@ -283,13 +298,19 @@ public class DataHubInstallTest extends HubTestBase
             getXmlFromResource("data-hub-test/hl7.xml"),
             getModulesDocument("/entities/test-entity/input/hl7/hl7.xml"));
 
+        ServerConfigurationManager stagingConfigMgr = adminHubConfig.newStagingClient().newServerConfigManager();
+        QueryOptionsManager stagingOptionsManager = stagingConfigMgr.newQueryOptionsManager();
+
         assertXMLEqual(
             getXmlFromResource("data-hub-test/plugins/entities/test-entity/input/REST/options/doctors.xml"),
-            getModulesDocument("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/doctors.xml"));
+            stagingOptionsManager.readOptions("doctors", new DOMHandle()).get());
+
+        ServerConfigurationManager finalConfigMgr = adminHubConfig.newFinalClient().newServerConfigManager();
+        QueryOptionsManager finalOptionsManager = finalConfigMgr.newQueryOptionsManager();
 
         assertXMLEqual(
             getXmlFromResource("data-hub-test/plugins/entities/test-entity/harmonize/REST/options/patients.xml"),
-            getModulesDocument("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/patients.xml"));
+            finalOptionsManager.readOptions("patients", new DOMHandle()).get());
 
         assertXMLEqual(
             getXmlFromResource("data-hub-helpers/test-conf-metadata.xml"),

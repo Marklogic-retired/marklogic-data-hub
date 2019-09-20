@@ -11,19 +11,19 @@ import module namespace json="http://marklogic.com/xdmp/json"
      at "/MarkLogic/json/json.xqy";
 
 import module namespace eput = "http://marklogic.com/rest-api/lib/endpoint-util"
-    at "../lib/endpoint-util.xqy";
+    at "/MarkLogic/rest-api/lib/endpoint-util.xqy";
 
 import module namespace transmod = "http://marklogic.com/rest-api/models/transaction-model"
-    at "../models/transaction-model.xqy";
+    at "/MarkLogic/rest-api/models/transaction-model.xqy";
 
 import module namespace tformod = "http://marklogic.com/rest-api/models/transform-model"
-    at "../models/transform-model.xqy";
+    at "transform-model.xqy";
 
 import module namespace dbut = "http://marklogic.com/rest-api/lib/db-util"
-    at "../lib/db-util.xqy";
+    at "/MarkLogic/rest-api/lib/db-util.xqy";
 
 import module namespace docmodcom = "http://marklogic.com/rest-api/models/document-model-common"
-    at "../models/document-model-common.xqy";
+    at "document-model-common.xqy";
 
 import schema namespace rapi = "http://marklogic.com/rest-api"
     at "restapi.xsd";
@@ -452,7 +452,7 @@ declare function docmodqry:produce-content(
 ) as document-node()?
 {
     if (empty($content))
-    then docmodqry:read-content($uri) 
+    then docmodqry:read-content($uri)
     else if (exists($start-range)) then
         document {
             (: HTTP range is zero-based but xdmp:subbinary is one-based :)

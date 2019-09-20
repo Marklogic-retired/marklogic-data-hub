@@ -349,13 +349,13 @@ public class DataHubImpl implements DataHub {
             }
 
             HashSet<String> services = new HashSet<>();
-            for (Resource r : resolver.getResources("classpath*:/ml-modules/services/*.xqy")) {
-                services.add(r.getFilename().replaceAll("\\.(xqy|sjs)", ""));
+            for (Resource r : resolver.getResources("classpath*:/ml-modules/root/marklogic.rest.resource/*")) {
+                services.add(r.getFilename());
             }
 
             HashSet<String> transforms = new HashSet<>();
-            for (Resource r : resolver.getResources("classpath*:/ml-modules/transforms/*")) {
-                transforms.add(r.getFilename().replaceAll("\\.(xqy|sjs)", ""));
+            for (Resource r : resolver.getResources("classpath*:/ml-modules/root/marklogic.rest.transform/*")) {
+                transforms.add(r.getFilename());
             }
 
             ServerConfigurationManager configMgr = hubConfig.newStagingClient().newServerConfigManager();
@@ -391,7 +391,8 @@ public class DataHubImpl implements DataHub {
             JsonNode transformsList = transformExtensionsManager.listTransforms(new JacksonHandle()).get();
             transformsList.findValuesAsText("name").forEach(
                 x -> {
-                    if (!transforms.contains(x)) {
+                    // may be missing ml: prefix
+                    if (!(transforms.contains(x) || transforms.contains(x.substring(3)) || x.startsWith("ml:"))) {
                         transformExtensionsManager.deleteTransform(x);
                     }
                 }
@@ -402,7 +403,8 @@ public class DataHubImpl implements DataHub {
             JsonNode resourceExtensions = resourceExtensionsManager.listServices(new JacksonHandle()).get();
             resourceExtensions.findValuesAsText("name").forEach(
                 x -> {
-                    if (!services.contains(x)) {
+                    // may be missing ml: prefix
+                    if (!(services.contains(x) || services.contains(x.substring(3)) || x.startsWith("ml:"))) {
                         resourceExtensionsManager.deleteServices(x);
                     }
                 }
@@ -412,8 +414,7 @@ public class DataHubImpl implements DataHub {
                 "cts:uris((),(),cts:not-query(cts:collection-query('hub-core-module')))[\n" +
                     "  fn:not(\n" +
                     "    fn:matches(., \"^.+options/(" + String.join("|", options) + ").xml$\") or\n" +
-                    "    fn:matches(., \"/marklogic.rest.resource/(" + String.join("|", services) + ")/assets/(metadata\\.xml|resource\\.(xqy|sjs))\") or\n" +
-                    "    fn:matches(., \"/marklogic.rest.transform/(" + String.join("|", transforms) + ")/assets/(metadata\\.xml|transform\\.(xqy|sjs))\")\n" +
+                    "    fn:starts-with(., \"/marklogic.rest.\")\n" +
                     "  )\n" +
                     "] ! xdmp:document-delete(.)\n";
             runInDatabase(query, hubConfig.getDbName(DatabaseKind.MODULES));
@@ -809,7 +810,7 @@ public class DataHubImpl implements DataHub {
              * Replace ml-gradle's DeployOtherServersCommand with a subclass that has DHF-specific functionality
              */
             if (c instanceof DeployOtherServersCommand) {
-                newCommands.add(new DeployHubOtherServersCommand());
+                newCommands.add(new DeployHubOtherServersCommand(this));
             }
             else {
                 newCommands.add(c);
@@ -973,6 +974,9 @@ public class DataHubImpl implements DataHub {
 
     @Override
     public String getServerVersion() {
+        if(serverVersion == null) {
+            serverVersion = versions.getMarkLogicVersion();
+        }
         return serverVersion;
     }
 

@@ -173,66 +173,66 @@ public class LegacyJobManagerImpl implements LegacyJobManager {
     }
 
     @Override public void importJobs(Path importFilePath) throws IOException {
-        ZipFile importZip = new ZipFile(importFilePath.toFile());
-        Enumeration<? extends ZipEntry> entries = importZip.entries();
+        try(ZipFile importZip = new ZipFile(importFilePath.toFile())) {
+            Enumeration<? extends ZipEntry> entries = importZip.entries();
 
-        DataMovementManager dmm = jobClient.newDataMovementManager();
-        WriteBatcher writer = dmm
-            .newWriteBatcher()
-            .withJobName("Load jobs")
-            .withBatchSize(50);
-        JobTicket ticket = dmm.startJob(writer);
-
-        // Add each Job entry to the writer; set aside the Trace entries.
-        ArrayList<ZipEntry> traceEntries = new ArrayList<ZipEntry>();
-        DocumentMetadataHandle jobMetadata = new DocumentMetadataHandle().withCollections("job");
-        while (entries.hasMoreElements()) {
-            ZipEntry entry = entries.nextElement();
-
-            if (entry.getName().startsWith("/jobs/")) {
-                // Delimiter = \A, which is the beginning of the input
-                Scanner s = new Scanner(importZip.getInputStream(entry)).useDelimiter("\\A");
-                String entryText = s.hasNext() ? s.next() : "";
-
-                writer.add(
-                    entry.getName(),
-                    jobMetadata,
-                    new StringHandle(entryText).withFormat(Format.JSON)
-                );
-            }
-            else {
-                traceEntries.add(entry);
-            }
-        }
-
-        writer.flushAndWait();
-        dmm.stopJob(ticket);
-        dmm.release();
-
-        if (traceEntries.size() > 0) {
-            dmm = this.jobClient.newDataMovementManager();
-            writer = dmm
+            DataMovementManager dmm = jobClient.newDataMovementManager();
+            WriteBatcher writer = dmm
                 .newWriteBatcher()
-                .withJobName("Load traces");
-            ticket = dmm.startJob(writer);
+                .withJobName("Load jobs")
+                .withBatchSize(50);
+            JobTicket ticket = dmm.startJob(writer);
 
-            DocumentMetadataHandle traceMetadata = new DocumentMetadataHandle().withCollections("trace");
+            // Add each Job entry to the writer; set aside the Trace entries.
+            ArrayList<ZipEntry> traceEntries = new ArrayList<ZipEntry>();
+            DocumentMetadataHandle jobMetadata = new DocumentMetadataHandle().withCollections("job");
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
 
-            for (ZipEntry entry: traceEntries) {
-                // Delimiter = \A, which is the beginning of the input
-                Scanner s = new Scanner(importZip.getInputStream(entry)).useDelimiter("\\A");
-                String entryText = s.hasNext() ? s.next() : "";
+                if (entry.getName().startsWith("/jobs/")) {
+                    // Delimiter = \A, which is the beginning of the input
+                    Scanner s = new Scanner(importZip.getInputStream(entry)).useDelimiter("\\A");
+                    String entryText = s.hasNext() ? s.next() : "";
 
-                writer.add(
-                    entry.getName(),
-                    traceMetadata,
-                    new StringHandle(entryText)
-                        .withFormat(entry.getName().endsWith(".json") ? Format.JSON : Format.XML)
-                );
+                    writer.add(
+                        entry.getName(),
+                        jobMetadata,
+                        new StringHandle(entryText).withFormat(Format.JSON)
+                    );
+                } else {
+                    traceEntries.add(entry);
+                }
             }
+
             writer.flushAndWait();
             dmm.stopJob(ticket);
             dmm.release();
+
+            if (traceEntries.size() > 0) {
+                dmm = this.jobClient.newDataMovementManager();
+                writer = dmm
+                    .newWriteBatcher()
+                    .withJobName("Load traces");
+                ticket = dmm.startJob(writer);
+
+                DocumentMetadataHandle traceMetadata = new DocumentMetadataHandle().withCollections("trace");
+
+                for (ZipEntry entry : traceEntries) {
+                    // Delimiter = \A, which is the beginning of the input
+                    Scanner s = new Scanner(importZip.getInputStream(entry)).useDelimiter("\\A");
+                    String entryText = s.hasNext() ? s.next() : "";
+
+                    writer.add(
+                        entry.getName(),
+                        traceMetadata,
+                        new StringHandle(entryText)
+                            .withFormat(entry.getName().endsWith(".json") ? Format.JSON : Format.XML)
+                    );
+                }
+                writer.flushAndWait();
+                dmm.stopJob(ticket);
+                dmm.release();
+            }
         }
     }
 

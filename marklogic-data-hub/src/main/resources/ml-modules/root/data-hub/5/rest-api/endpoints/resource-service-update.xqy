@@ -3,16 +3,16 @@ xquery version "1.0-ml";
 (: Copyright 2011-2019 MarkLogic Corporation.  All Rights Reserved. :)
 
 import module namespace parameters = "http://marklogic.com/rest-api/endpoints/parameters"
-    at "../endpoints/parameters.xqy";
+    at "/MarkLogic/rest-api/endpoints/parameters.xqy";
 
 import module namespace rsrcmodcom = "http://marklogic.com/rest-api/models/resource-model-common"
-    at "../models/resource-model-common.xqy";
+    at "/MarkLogic/rest-api/models/resource-model-common.xqy";
 
 import module namespace rsrcmodupd = "http://marklogic.com/rest-api/models/resource-model-update"
     at "../models/resource-model-update.xqy";
 
 import module namespace eput = "http://marklogic.com/rest-api/lib/endpoint-util"
-    at "../lib/endpoint-util.xqy";
+    at "/MarkLogic/rest-api/lib/endpoint-util.xqy";
 
 import module namespace lid = "http://marklogic.com/util/log-id"
     at "/MarkLogic/appservices/utils/log-id.xqy";
