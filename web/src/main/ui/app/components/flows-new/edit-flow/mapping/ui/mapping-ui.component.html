@@ -1,27 +1,24 @@
-<div layout-padding layout="column" class="map-page">
-
-  <div *ngIf="!targetEntity" class="map-container">
-    <em>Before configuring this mapping you must set a target entity. You can create new entities in the <a [routerLink]="['/entities']">Entities</a> view.</em>
-  </div>
-
-  <div *ngIf="targetEntity && !targetEntity.hasDocs" class="map-container">
-    <em>Before configuring this mapping you must ingest source documents.</em>
-  </div>
-
-  <div [ngClass]="{ hidden: !(targetEntity && targetEntity.hasDocs)}" class="map-container">
-
-    <div id="source">
-      <div id="source-heading">
-        <div class="item-title">
-          <div class="item-type">Source</div>
-          <span class="help-icon">
-            <a href="https://marklogic.github.io/marklogic-data-hub/harmonize/mapping/#changing-the-mapping-source-document" target="_blank"><i class="fa fa-question-circle fa-lg"></i></a>
-          </span>
-        </div>
-        <p *ngIf="!editingURI" class="item-identifying-info">
-          <span class="uri-label" tooltip="The URI of the source document from which QuickStart generates the list of source property names." container="body">URI:</span>
+<!-- layout-padding -->
+<!-- New Source Design for mapping expression -->
+<div class="source-prop-container-map-exp">
+    
+    <span>
+  
+   <div class="Source_Tbl">
+      <div class="item-title">
+      <div class="item-type">Source Data</div>
+      <!-- <span class="help-icon">
+          <a href="https://marklogic.github.io/marklogic-data-hub/harmonize/mapping/#changing-the-mapping-source-document" target="_blank"><i class="fa fa-question-circle fa-lg"></i></a>
+        </span> -->
+      </div>
+      <p class="item-identifying-info">
+          <span class="uri-label" tooltip="The Query of the source document from which QuickStart generates the list of source property names." container="body">Query: </span>
+          <span class="edit-source-query" (click)="this.OpenFullSourceQuery()" tooltip="{{ this.step.options.sourceQuery }}" container="body">{{ getInitialChars(this.step.options.sourceQuery, 30, '...') }}</span>
+      </p>
+      <p *ngIf="!editingURI" class="item-identifying-info">
+          <span class="uri-label" tooltip="The URI of the source document from which QuickStart generates the list of source property names." container="body">URI: </span>
           <span (click)="editingURI=true" ng-class="sample-doc-uri" class="sample-doc-uri" tooltip="{{ getURITooltip(mapping.sourceURI, 45) }}" container="body">{{ getLastChars(mapping.sourceURI, 45, '...') }}</span>
-          <span class="fa fa-pencil edit-item" (click)="editingURI=true"></span>
+          <span class="fa fa-pencil edit-item" (click)="editingURI=true">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
         </p>
         <p *ngIf="editingURI" class="edit-uri">
           <span class="uri-label" tooltip="The URI of the source document from which QuickStart generates the list of source property names." container="body">URI:</span>
@@ -29,93 +26,100 @@
           <span class="edit-save" (click)="onUpdateURI();"><i class="fa fa-check"></i></span>
           <span class="edit-cancel" (click)="cancelEditURI()"><i class="fa fa-remove"></i></span>
         </p>
-      </div>
+  <mat-table id="source-new-table" 
+             [dataSource]="dataSource"
+             #table class="source-props" 
+             matSort>
+    <ng-container matColumnDef="key">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
+      <mat-cell *matCellDef="let srcProp">{{srcProp.key}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="val">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Value</mat-header-cell>
+      <mat-cell *matCellDef="let srcProp">{{ isQuoted(srcProp.type) ? '"' : '' }}{{ srcProp.val | slice:0:valMaxLen }}{{ srcProp.val.length > valMaxLen ? '...' : '' }}{{ isQuoted(srcProp.type) ? '"' : '' }}</mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>      
+</div>
 
-      <!-- Dropdown row for each entity property -->
-      <div *ngFor="let entityProp of targetEntity?.definition.properties; let i = index;" class="source-prop-container">
+<mat-divider [vertical]="true"></mat-divider>
 
-          <div class="btn-group" dropdown #dropdown="bs-dropdown" (onShown)="filterFocus[entityProp.name] = true;" (onHidden)="filterFocus[entityProp.name] = false;">
-            <button dropdownToggle type="button" class="btn prop-select {{ 'prop-entity-' + entityProp.name }}">
 
-              <div class="prop-clear-control {{ 'prop-clear-control-' + entityProp.name }}">
-                <span *ngIf="conns[entityProp.name]"
-                      class="fa fa-remove"
-                      (click)="clearSelection($event, entityProp.name)">
-                </span>
-              </div>
 
-              <!-- Connection exists, display selected item -->
-              <div *ngIf="conns[entityProp.name] && getConnSrcData(entityProp.name, 'key')">
-                <div class="prop-select-content {{ 'prop-select-content-' + entityProp.name }}">
-                  <span class="prop-name">{{ getConnSrcData(entityProp.name, 'key') }}</span>
-                  <span class="prop-type">{{ getConnSrcData(entityProp.name, 'type') }}</span>
-                  <span class="prop-val" title="{{ getConnSrcData(entityProp.name, 'val') }}">{{ isQuoted(getConnSrcData(entityProp.name, 'type')) ? '"' : '' }}{{ getConnSrcData(entityProp.name, 'val') | slice:0:valMaxLen }}{{ getConnSrcData(entityProp.name, 'val').length > valMaxLen ? '...' : '' }}{{ isQuoted(getConnSrcData(entityProp.name, 'type')) ? '"' : '' }}</span>
-                </div>
-              </div>
-
-              <!-- Connection does not exist, display placeholder -->
-              <div *ngIf="!conns[entityProp.name] || !getConnSrcData(entityProp.name, 'key')">
-                <div class="prop-select-content unselected">Select...</div>
-              </div>
-
-              <div class="prop-select-control"><span class="fa fa-caret-down"></span></div>
-            </button>
-            <div *dropdownMenu class="dropdown-menu" role="menu">
-              <div class="dropdown-filter dropdown-filter-{{entityProp.name}}"><input type="text" [(ngModel)]="filterText[entityProp.name]" [focusElement]="filterFocus[entityProp.name]" (click)="$event.stopPropagation();" /></div>
-              <ul class="prop-select-menu prop-select-menu-{{entityProp.name}}"l>
-                <li *ngFor="let srcProp of sampleDocSrcProps | listFilter:['key','type']:filterText[entityProp.name]"
-                    role="menuitem"
-                    class="prop-select-item"
-                    (mouseup)="handleSelection(entityProp.name, srcProp.key); dropdown.hide();">
-                  <a class="dropdown-item dropdown-item-{{srcProp.key}}" href="javascript:void(0)">
-                    <span class="prop-name">{{srcProp.key}}</span>
-                    <span class="prop-type">{{srcProp.type}}</span>
-                    <span class="prop-val" title="{{type}}">{{ isQuoted(srcProp.type) ? '"' : '' }}{{ srcProp.val | slice:0:valMaxLen }}{{ srcProp.val.length > valMaxLen ? '...' : '' }}{{ isQuoted(srcProp.type) ? '"' : '' }}</span>
-                  </a>
-                </li>
-              </ul>
+  <div class="Entities_Tbl">
+      <div class="item-title"> 
+    <div class="item-type">Entity</div>
+    <!-- <span class="help-icon">
+        <a href="https://marklogic.github.io/marklogic-data-hub/refs/index-settings/" target="_blank"><i class="fa fa-question-circle fa-lg"></i></a>
+    </span> -->
+    <br>
+    <br>
+    </div>
+    <p class="target-entity-title" ng-class="title-entity-model">{{ targetEntity?.info.title }} </p>
+    <br>
+    <mat-table id="source-new-table-entities" 
+              [dataSource]="targetEntity?.definition.properties" 
+              class="Entity-props" 
+              matSort>
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
+        <mat-cell *matCellDef="let entProp">{{entProp.name}}</mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="datatype">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Type</mat-header-cell>
+        <mat-cell *matCellDef="let entProp">{{entProp.datatype}}
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="expression">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Expression</mat-header-cell>
+          <mat-cell *matCellDef="let entProp; let i = index">
+            <div class="textField">
+            <textarea
+              id="edit-expression"
+              matInput
+              cdkTextareaAutosize
+              #autosize="cdkTextareaAutosize"
+             #fieldName [(ngModel)]="mapExpresions[entProp.name]" (change)="handleSelection(entProp.name, mapExpresions[entProp.name])" type="text" class="map-expr" [includeBorders]="true"
+              ></textarea>
             </div>
-          </div><!-- button-group -->
+              
+              <!--cdkAutosizeMinRows="1"
+              cdkAutosizeMaxRows="2"></textarea> -->
+              <!-- <span class="edit-save" [matMenuTriggerFor]="menu">f(x)</span> -->
+              &nbsp;&nbsp;<mat-icon id="fields-list" class="list-icon" [matMenuTriggerFor]="fieldListMenu" [matMenuTriggerData]="{indx: i}"><i class="far fa-list fa-xs"></i></mat-icon>
+              &nbsp;&nbsp;<mat-icon id="function-list" class="list-icon" [matMenuTriggerFor]="menu" [matMenuTriggerData]="{ind: entProp.name,indx: i}"><i class="far fa-function fa-xs"></i></mat-icon>
+              &nbsp;&nbsp;
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="value">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>&nbsp;&nbsp;Value</mat-header-cell>
+          <mat-cell *matCellDef="let entProp">
+          </mat-cell>
+        </ng-container>
+        <!-- <ng-container matColumnDef="value">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Value</mat-header-cell>
+            <mat-cell *matCellDef="let entProp; let i = index">
+                <input type="text" class="map-expr-val" [(ngModel)]="mapExpValue[i]" />
+            </mat-cell>
+          </ng-container> -->
+      
+      <mat-header-row *matHeaderRowDef="displayedEntityColumns; sticky:true"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedEntityColumns;"></mat-row>
+    </mat-table>
+  </div>
+  </span>
+  
+</div>
 
-      </div><!-- ngFor -->
+<mat-menu class="mat-menu-list" #menu="matMenu">
+  <ng-template matMenuContent let-indx="indx">
+    <div class="mat-menu-list-btn" mat-menu-item *ngFor="let func of functionLst | keyvalue" (click)="insertFunction(func.key,indx)">{{func.key}}</div>
+  </ng-template>
+</mat-menu>
 
-    </div><!-- source -->
-
-    <div id="target">
-      <div id="target-heading">
-        <div class="item-title">
-          <div class="item-type">Entity</div>
-          <span class="help-icon">
-            <a href="https://marklogic.github.io/marklogic-data-hub/refs/index-settings/" target="_blank"><i class="fa fa-question-circle fa-lg"></i></a>
-          </span>
-        </div>
-        <p class="item-identifying-info"ng-class="title-entity-model">{{ targetEntity?.info.title }}
-        </p>
-      </div>
-
-      <div *ngIf="targetEntity?.definition.properties.length === 0" class="no-properties">
-        <em>{{ targetEntity?.info.title }} has no properties to map. Add them in the <a [routerLink]="['/entities']">Entities</a> view.</em>
-      </div>
-
-      <!-- Row for each entity property -->
-      <div *ngFor="let prop of targetEntity?.definition.properties; let i = index;">
-
-        <div class="entity-prop-container {{ 'entity-prop-container-' + prop.name }} ">
-          <span class="prop-name">{{prop.name}}</span>
-          <span class="prop-type">{{prop.datatype}}</span>
-          <span class="entity-icons">
-            <span class="entity-icon" tooltip="Primary Key" container="body"><i class="fa fa-key fa-fw" [ngClass]="isPrimaryKey(prop.name) ? 'entity-icon-selected' : 'icon-hide'"></i></span>
-            <span class="entity-icon" tooltip="Element Range Index" container="body"><i class="fa fa-bolt fa-fw" [ngClass]="hasElementRangeIndex(prop.name) ? 'entity-icon-selected' : 'icon-hide'"></i></span>
-            <span class="entity-icon" tooltip="Path Range Index" container="body"><i class="fa fa-code fa-fw" [ngClass]="hasRangeIndex(prop.name) ? 'entity-icon-selected' : 'icon-hide'"></i></span>
-            <span class="entity-icon" tooltip="Word Lexicon" container="body"><i class="fa fa-krw fa-fw" [ngClass]="hasWordLexicon(prop.name) ? 'entity-icon-selected' : 'icon-hide'"></i></span>
-            <span class="entity-icon" tooltip="Required Field" container="body"><i class="fa fa-exclamation fa-fw" [ngClass]="isRequired(prop.name)? 'entity-icon-selected' : 'icon-hide'"></i></span>
-            <span class="entity-icon" tooltip="Personally Identifiable Information" container="body"><i class="fa fa-lock fa-fw" [ngClass]="isPII(prop.name)? 'entity-icon-selected' : 'icon-hide'"></i></span>
-          </span>
-        </div>
-
-      </div><!-- ngFor -->
-    </div><!-- target -->
-
-  </div><!-- map-container -->
-
-</div><!-- layout-padding -->
+<mat-menu class="mat-menu-list" #fieldListMenu="matMenu">
+  <ng-template matMenuContent>
+    <div class="mat-menu-list-btn" mat-menu-item *ngFor="let srcProp of this.sampleDocSrcProps" >{{srcProp.key}}</div>
+  </ng-template>
+</mat-menu>

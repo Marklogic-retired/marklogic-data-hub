@@ -26,7 +26,8 @@
               "node_modules/font-awesome/css/font-awesome.css",
               "node_modules/codemirror/lib/codemirror.css",
               "node_modules/@angular-mdl/popover/popover.css",
-              "node_modules/@angular-mdl/select/select.css"
+              "node_modules/@angular-mdl/select/select.css",
+              "node_modules/@fortawesome/fontawesome-pro/css/all.css"
             ],
             "scripts": []
           },
@@ -80,6 +81,7 @@
               "node_modules/mdi/css/materialdesignicons.css",
               "node_modules/material-design-icons-iconfont/dist/material-design-icons.css",
               "node_modules/font-awesome/css/font-awesome.css",
+              "node_modules/@fortawesome/fontawesome-pro/css/all.css",
               "node_modules/codemirror/lib/codemirror.css",
               "src/main/ui/styles.scss"
             ],

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges, ViewChild, ViewChildren, QueryList, ViewEncapsulation } from '@angular/core';
 import { Entity } from '../../../../../models/index';
 import { MdlDialogService } from '@angular-mdl/core';
 
@@ -6,19 +6,26 @@ import * as _ from 'lodash';
 import * as moment from 'moment';
 import { Mapping } from "../../../../mappings/mapping.model";
 
+import {MatDialog, MatPaginator, MatSort, MatTable, MatTableDataSource} from "@angular/material";
+import { Step } from '../../../models/step.model';
+
+//import { ManageFlowsService } from "../../../services/manage-flows.service";
+
 @Component({
   selector: 'app-mapping-ui',
   templateUrl: './mapping-ui.component.html',
-  styleUrls: ['./mapping-ui.component.scss']
+  styleUrls: ['./mapping-ui.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class MappingUiComponent implements OnChanges {
 
   @Input() mapping: Mapping = new Mapping();
   @Input() targetEntity: Entity = null;
   @Input() conns: object = {};
-  @Input() sampleDocSrcProps: Array<any> = [];
+  @Input() sampleDocSrcProps: Array<any>;
   @Input() editURIVal: string = '';
-
+  @Input() step: Step;
+  @Input() functionLst: object;
   @Output() updateURI = new EventEmitter();
   @Output() updateMap = new EventEmitter();
 
@@ -32,10 +39,99 @@ export class MappingUiComponent implements OnChanges {
 
   public editingURI: boolean = false;
   public editingSourceContext: boolean = false;
+  
+  displayedColumns = ['key', 'val'];
+  displayedEntityColumns = ['name','datatype','expression','value'];
+
+  dataSource: MatTableDataSource<any>;
+  mapExpresions = {};
+  mapExpValue: Array<any> = [];
+  runningStatus = false;
+ 
+  mapFunctions = {
+
+    sum: {
+      category: "in-built",
+
+      description: "This function is used for calculating addition of two or more values.",
+
+      signature: "sum(a,b)"
+    },
+
+    avg: {
+      category: "in-built",
+
+      description: "This function is used for calculating average of two or more values.",
+
+      signature: "avg(a,b)"
+    },
+
+    percent: {
+
+      category: "custom",
+
+      description: "<Custom description>",
+
+      signature: "percent(a,b)"
+    },
+
+    other: {
+
+      category: "in-built",
+
+      description: "<Other description>",
+
+      signature: ""
+    }
+
+  }
+functionList = Object.keys(this.mapFunctions);//['avg','sum','percent','Others']; 
+
+public fncLst: Object;
+
+  @ViewChild(MatTable)
+  table: MatTable<any>;
+
+  @ViewChild(MatPaginator)
+  paginator: MatPaginator;
+
+  @ViewChild(MatSort)
+  sort: MatSort;
+
+  @ViewChildren('fieldName') fieldName:QueryList<any>;
 
   /**
    * Update the sample document based on a URI.
    */
+
+  ngOnInit(){
+    if (!this.dataSource){
+      
+   this.dataSource = new MatTableDataSource<any>(this.sampleDocSrcProps);
+    }
+  if(_.isEmpty(this.mapExpresions)) {
+    this.mapExpresions = this.conns;
+  }
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+  updateDataSource() {
+    if (!this.dataSource){
+      this.dataSource = new MatTableDataSource<any>(this.sampleDocSrcProps);
+       }
+    this.dataSource.data = this.sampleDocSrcProps;
+  }
+
+  renderRows(): void {
+    this.updateDataSource();
+    if(_.isEmpty(this.mapExpresions)) {
+      this.mapExpresions = this.conns;
+    }
+  }
+
   onUpdateURI() {
     if (Object.keys(this.conns).length > 0) {
       let result = this.dialogService.confirm(
@@ -109,7 +205,8 @@ export class MappingUiComponent implements OnChanges {
   }
 
   constructor(
-    private dialogService: MdlDialogService
+    private dialogService: MdlDialogService,
+    public dialog: MatDialog
   ) {}
 
   /**
@@ -124,6 +221,9 @@ export class MappingUiComponent implements OnChanges {
     if (changes.conns) {
       this.connsOrig = _.cloneDeep(changes.conns.currentValue);
     }
+    if (changes.sampleDocSrcProps){
+      this.renderRows();
+       } 
   }
 
   /**
@@ -247,6 +347,15 @@ export class MappingUiComponent implements OnChanges {
     return result;
   }
 
+  getInitialChars(str, num, suffix) {
+    suffix = suffix ? suffix : '...';
+    let result = str;
+    if (typeof str === 'string' && str.length > num) {
+      result = str.substr(0, num) + suffix;
+    }
+    return result;
+  }
+
    /**
     * Return string if sufficiently long, otherwise empty string
     * @param str String to return
@@ -313,6 +422,35 @@ export class MappingUiComponent implements OnChanges {
    */
   isPrimaryKey(name) {
     return _.includes(this.targetEntity.definition.primaryKey, name);
+  }
+
+  executeFunctions(funcName, propName) {
+    this.mapExpresions[propName] = this.mapExpresions[propName] + " " + this.functionsDef(funcName);
+    console.log(funcName, propName, this.mapExpresions[propName])
+  }
+
+  functionsDef(funcName) {
+    return this.functionLst[funcName].signature
+  }
+
+  OpenFullSourceQuery() {
+    let result = this.dialogService.alert(
+      this.step.options.sourceQuery,
+      'OK'
+    );
+    result.subscribe();
+
+  }
+
+  insertFunction(fname, index) {
+
+    var startPos = this.fieldName.toArray()[index].nativeElement.selectionStart;
+    this.fieldName.toArray()[index].nativeElement.focus();
+    this.fieldName.toArray()[index].nativeElement.value = this.fieldName.toArray()[index].nativeElement.value.substr(0, this.fieldName.toArray()[index].nativeElement.selectionStart) + this.functionsDef(fname) + this.fieldName.toArray()[index].nativeElement.value.substr(this.fieldName.toArray()[index].nativeElement.selectionStart, this.fieldName.toArray()[index].nativeElement.value.length);
+
+    this.fieldName.toArray()[index].nativeElement.selectionStart = startPos;
+    this.fieldName.toArray()[index].nativeElement.selectionEnd = startPos + this.functionsDef(fname).length;
+    this.fieldName.toArray()[index].nativeElement.focus();
   }
 
 }

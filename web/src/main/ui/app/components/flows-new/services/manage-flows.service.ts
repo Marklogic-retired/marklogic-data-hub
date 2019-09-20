@@ -5,7 +5,8 @@ import { Step } from '../models/step.model';
 
 
 @Injectable()
-export class ManageFlowsService {
+export class 
+ManageFlowsService {
 
   constructor(
     private http: HttpClient,
@@ -93,5 +94,10 @@ export class ManageFlowsService {
   }
   deleteMap(mapName) {
     return this.http.delete('api/current-project/mappings/' + mapName);
+  }
+
+  getFunctions() {
+    console.log('GET api/current-project/mappings/functions');
+    return this.http.get('api/current-project/mappings/functions');
   }
 }

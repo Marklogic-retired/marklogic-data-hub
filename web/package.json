@@ -70,6 +70,7 @@
     "@angular/compiler-cli": "^7.2.8",
     "@angular/language-service": "^7.2.4",
     "@babel/core": "^7.4.4",
+    "@fortawesome/fontawesome-pro": "^5.10.2",
     "@storybook/addon-actions": "^5.1.0-alpha.39",
     "@storybook/addon-backgrounds": "^5.1.0-alpha.39",
     "@storybook/addon-centered": "^5.1.0-alpha.39",
