@@ -37,14 +37,14 @@ public class SearchController {
   public ResponseEntity<Document> search(@RequestParam String docUri) {
     Optional<Document> optionalContent = searchService.getDocument(docUri);
     HttpHeaders headers = new HttpHeaders();
-    if (optionalContent.isPresent()) {
-      if (optionalContent.get().getContent().startsWith("<")) {
+
+    return optionalContent.map(content -> {
+      if(content.getContent().startsWith("<")) {
         headers.setContentType(MediaType.APPLICATION_XML);
       } else {
         headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
       }
-      return new ResponseEntity<>(optionalContent.get(), headers, HttpStatus.OK);
-    }
-    return new ResponseEntity<>(HttpStatus.OK);
+      return new ResponseEntity<>(content, headers, HttpStatus.OK);
+    }).orElse(new ResponseEntity<>(HttpStatus.OK));
   }
 }
