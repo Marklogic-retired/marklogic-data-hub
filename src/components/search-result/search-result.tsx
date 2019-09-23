@@ -9,7 +9,7 @@ const SearchResult = (props) => {
             <div className={styles.title}>
                 <span className={styles.entityName}>Customer</span>
                 <Link to={{ 
-                    pathname: "/detail", 
+                    pathname: `/detail/${props.item.uri.startsWith('/') && props.item.uri.substring(1)}`, 
                     state: { uri: props.item.uri, database: "data-hub-FINAL" }}}
                 >
                     {props.item.uri}

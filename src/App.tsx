@@ -15,6 +15,8 @@ interface Props extends RouteComponentProps<any> {}
 const App: React.FC<Props> = ({history, location}) => {
   const { user } = useContext(AuthContext);
 
+  document.title = 'Explorer'
+
   const PrivateRoute = ({ component: Component, ...rest }) => (
     <Route {...rest} render={ props => (
       user.authenticated === true ? (
@@ -46,7 +48,7 @@ const App: React.FC<Props> = ({history, location}) => {
           <Route path="/" exact render={() => <Home/>}/>
           <PrivateRoute path="/view" exact component={View} />
           <PrivateRoute path="/browse" exact component={Browse}/>
-          <PrivateRoute path="/detail" exact component={Detail}/>
+          <PrivateRoute path="/detail/:id" component={Detail}/>
         </Switch>
       </SearchProvider>
     </>
