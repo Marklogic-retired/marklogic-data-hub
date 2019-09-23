@@ -8,9 +8,9 @@ interface Props extends RouteComponentProps {
 };
 
 const SearchResult:React.FC<Props> = (props) => {
-  const itemEntityName = Object.keys(props.item.extracted.content[0]);
-  const itemEntityProperties = Object.values<any>(props.item.extracted.content[0]);
-  const entityDef = props.entityDefArray.find(entity => entity.name === itemEntityName[0]);
+  const itemEntityName = Object.keys(props.item.extracted.content[1]);
+  const itemEntityProperties = Object.values<any>(props.item.extracted.content[1]);
+  const entityDef = props.entityDefArray.length && props.entityDefArray.find(entity => entity.name === itemEntityName[0]);
   const primaryKeyValue = entityDef.primaryKey && itemEntityProperties[0][entityDef.primaryKey];
 
     return (
