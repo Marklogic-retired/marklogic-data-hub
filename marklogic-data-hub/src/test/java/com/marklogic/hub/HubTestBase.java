@@ -969,6 +969,13 @@ public class HubTestBase {
 
         LoadModulesCommand loadModulesCommand = new LoadModulesCommand();
         commands.add(loadModulesCommand);
+        //Call 'generateFunctionMetadataCommand' if mapping functions are deployed. If mapping is deployed first
+        // and it references custom functions, mapping xslt will not have reference to custom functions and tests
+        // would fail with XDMP-UNDFUN: (err:XPST0017) Undefined function customDateTime().
+
+        if(hubConfig.getHubProject().getCustomModulesDir().resolve("mapping-functions").toFile().exists()){
+            commands.add(generateFunctionMetadataCommand);
+        }
 
         loadUserArtifactsCommand.setForceLoad(force);
         commands.add(loadUserArtifactsCommand);
@@ -992,24 +999,6 @@ public class HubTestBase {
         // Provides some time for post-commit triggers to complete
         try {
             Thread.sleep(1500);
-        } catch (InterruptedException e) {
-            logger.warn("Unexpected error while trying to sleep: " + e.getMessage(), e);
-        }
-    }
-
-    protected void generateFunctionMetadata(HubConfig hubConfig) {
-        logger.debug("Generating function metadata into MarkLogic");
-        List<Command> commands = new ArrayList<>();
-
-        commands.add(generateFunctionMetadataCommand);
-
-        SimpleAppDeployer deployer = new SimpleAppDeployer(((HubConfigImpl)hubConfig).getManageClient(), ((HubConfigImpl)hubConfig).getAdminManager());
-        deployer.setCommands(commands);
-        deployer.deploy(hubConfig.getAppConfig());
-
-        // Provides some time for post-commit triggers to complete
-        try {
-            Thread.sleep(5000);
         } catch (InterruptedException e) {
             logger.warn("Unexpected error while trying to sleep: " + e.getMessage(), e);
         }
