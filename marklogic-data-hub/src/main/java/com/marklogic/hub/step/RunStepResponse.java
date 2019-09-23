@@ -195,5 +195,4 @@ public class RunStepResponse {
             stepDefinitionType, String.valueOf(success), status, totalEvents, successfulEvents, failedEvents,
             successfulBatches, failedBatches, stepStartTime, stepEndTime);
     }
-
 }

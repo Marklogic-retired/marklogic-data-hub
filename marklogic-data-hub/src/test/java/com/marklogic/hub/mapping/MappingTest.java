@@ -369,7 +369,6 @@ public class MappingTest extends HubTestBase {
 
         installHubArtifacts(getDataHubAdminConfig(), true);
         installUserModules(getDataHubAdminConfig(), true);
-        generateFunctionMetadata(getDataHubAdminConfig());
 
         RunStepResponse mappingJob = runFlowResp("OrderJSON", "1","2").getStepResponses().get("2");
         assertTrue(mappingJob.isSuccess(), "Mapping job failed");
