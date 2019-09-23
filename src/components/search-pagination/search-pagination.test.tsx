@@ -8,7 +8,16 @@ describe("Search Pagination component", () => {
     let wrapper;
 
     beforeAll(() => {
-        wrapper = mount(<Router><Pagination total={10}/></Router>);
+        wrapper = mount(
+        <Router>
+          <Pagination 
+            total={10}
+            pageLength={1}
+            currentPage={1}
+            OnPageChange={jest.fn()}
+            onPageLengthChange={jest.fn()}
+          />
+        </Router>);
       });
 
     test("renders", () => {

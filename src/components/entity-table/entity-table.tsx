@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 // import styles from './entity-table.module.scss';
 import { Table } from 'antd';
-import { SearchContext } from '../../util/search-context';
 
 type Props = {
   entities: any[];
@@ -10,7 +9,6 @@ type Props = {
 }
 
 const EntityTable:React.FC<Props> = (props) => {
-  const { setEntity } = useContext(SearchContext);
 
   const expandedRowRender = (entity) => {
     const columns = [

@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Form, Icon, Input, Button, Typography } from 'antd';
+import { Form, Icon, Input, Button, Typography, Spin } from 'antd';
 import axios from 'axios';
 import styles from './login-form.module.scss';
 import { AuthContext } from '../../util/auth-context';
@@ -12,6 +12,7 @@ const LoginForm: React.FC = () => {
   const { userAuthenticated } = useContext(AuthContext);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [errorResponse, setErrorResponse] = useState('');
   const [isUsernameTouched, setUsernameTouched] = useState(false);
   const [isPasswordTouched, setPasswordTouched] = useState(false);
@@ -19,12 +20,14 @@ const LoginForm: React.FC = () => {
   const handleSubmit = async (event) => {
     if (event) event.preventDefault();
     try {
+      setIsLoading(true);
       let response = await axios.post('/datahub/v2/login', {
         username,
         password
       });
       if (response.status === 200) {
         setErrorResponse('');
+        setIsLoading(false);
         userAuthenticated(username);
       } 
     } catch (error) {
@@ -88,12 +91,12 @@ const LoginForm: React.FC = () => {
         <a className={styles.forgot} href="">
           Forgot password?
         </a>
-        <Button type="primary" htmlType="submit" className={styles.loginButton}>
+        <Button type="primary" disabled={isLoading} htmlType="submit" className={styles.loginButton}>
           Submit
         </Button>
+        {isLoading && <Spin  style={{ marginLeft: '7px' }} />}
         <Text type="danger">{errorResponse}</Text>
       </Form.Item>
-      
     </Form>
   );
 }
