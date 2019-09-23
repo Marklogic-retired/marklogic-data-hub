@@ -27,16 +27,13 @@ const Detail: React.FC<Props> = ({ history, location }) => {
     setIsLoading(true);
     const fetchData = async () => {
       try {
-        const result = await axios({
-          baseURL: 'http://localhost:3000',
-          url: `datahub/v2/search?docUri=${query}`
-        });
+        const result = await axios(`datahub/v2/search?docUri=${query}`);
 
         const content = result.headers['content-type'];
 
         if (content.indexOf("application/json") !== -1) {
           setContentType('json');
-          setData(JSON.parse(result.data.content));
+          setData(result.data.content);
         } else if (content.indexOf("application/xml") !== -1) {
           setContentType('xml');
           let decodedXml = decodeXml(result.data);
