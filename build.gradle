@@ -22,6 +22,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'org.springframework.boot' version '2.1.7.RELEASE'
+    id 'maven-publish'
 }
 apply plugin: 'io.spring.dependency-management'
 
@@ -33,6 +34,8 @@ repositories {
 
 sourceCompatibility = 1.11
 targetCompatibility = 1.11
+
+group = 'com.marklogic'
 
 ext.junitPlatformVersion = '1.3.1'
 ext.junitJupiterVersion  = '5.3.1'
@@ -112,4 +115,81 @@ task stopBootrun {
     println 'Shutting down application...'
     println connection.inputStream.text
   }
+}
+javadoc {
+    options.overview = 'src/main/resources/overview.html'
+}
+Node pomCustomizations = new NodeBuilder(). project {
+    name 'explorer'
+    packaging 'jar'
+    textdescription 'Library for Creating an Operational Data Hub on MarkLogic'
+    url 'https://project.marklogic.com/repo/scm/prod/datahubenterprise.git'
+
+    scm {
+        url 'git@project.marklogic.com:product/datahubenterprise.git'
+        connection 'scm:git@project.marklogic.com:product/datahubenterprise.git'
+        developerConnection 'scm:git@project.marklogic.com:product/datahubenterprise.git'
+    }
+
+    licenses {
+        license {
+            name 'The Apache Software License, Version 2.0'
+            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+        }
+    }
+
+    developers {
+        developer {
+            name 'MarkLogic'
+            email 'java-sig@marklogic.com'
+            organization 'MarkLogic'
+            organizationUrl 'https://www.marklogic.com'
+        }
+        developer {
+            name 'MarkLogic Github Contributors'
+            email 'general@developer.marklogic.com'
+            organization 'Github Contributors'
+            organizationUrl 'https://project.marklogic.com/repo/scm/prod/datahubenterprise.git/graphs/contributors'
+        }
+    }
+}
+
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+publishing {
+    publications {
+        main(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+
+            pom.withXml {
+                asNode().appendNode('description', pomCustomizations.textdescription.text())
+                asNode().append(pomCustomizations.developers)
+                asNode().append(pomCustomizations.name)
+                asNode().append(pomCustomizations.packaging)
+                asNode().append(pomCustomizations.url)
+                asNode().append(pomCustomizations.scm)
+                asNode().append(pomCustomizations.licenses)
+            }
+        }
+    }
+    repositories {
+        maven {
+            if(project.hasProperty("mavenUser")) {
+                credentials {
+                    username mavenUser
+                    password mavenPassword
+                }
+            }
+            url publishUrl
+        }
+    }
 }
