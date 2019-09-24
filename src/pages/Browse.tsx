@@ -70,6 +70,9 @@ const Browse: React.FC<Props> = ({location}) => {
       setIsLoading(false);
     } catch (error) {
       // console.log('error', error.response);
+      if (error.response.status === 401) {
+        userNotAuthenticated();
+      }
     }
   }
   useEffect(() => {

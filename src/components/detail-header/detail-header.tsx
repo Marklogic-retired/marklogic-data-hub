@@ -41,8 +41,6 @@ const Header = (props) => {
                     <Text>{sources}</Text>
                     <Text type="secondary">&nbsp; &nbsp; File Type: </Text>
                     <Text>{fileType}</Text>
-                    <Text type="secondary">&nbsp; &nbsp; User: </Text>
-                    <Text>{user}</Text>
                 </div>
             </div>
         </>
