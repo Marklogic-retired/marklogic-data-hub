@@ -4,7 +4,6 @@
 package com.marklogic.hub.explorer.auth;
 
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.ext.DatabaseClientConfig;
 import com.marklogic.client.ext.DefaultConfiguredDatabaseClientFactory;
 import com.marklogic.client.ext.SecurityContextType;
@@ -15,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -64,13 +64,13 @@ public class MarkLogicAuthenticationManager implements AuthenticationProvider,
     DatabaseClient databaseClient =
         new DefaultConfiguredDatabaseClientFactory().newDatabaseClient(clientConfig);
 
-    try {
-      databaseClient.newDocumentManager().exists("user");
-    } catch (FailedRequestException ex) {
-      if (ex.getMessage().contains("Unauthorized")) {
-        throw new BadCredentialsException("Invalid credentials");
+    DatabaseClient.ConnectionResult connectionResult = databaseClient.checkConnection();
+
+    if (!connectionResult.isConnected()) {
+      if (connectionResult.getStatusCode() != null && connectionResult.getStatusCode() == 401) {
+        throw new BadCredentialsException(connectionResult.getErrorMessage());
       } else {
-        throw ex;
+        throw new AuthenticationServiceException(connectionResult.getErrorMessage());
       }
     }
 
