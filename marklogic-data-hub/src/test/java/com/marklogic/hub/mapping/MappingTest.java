@@ -9,7 +9,6 @@ import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.util.HubModuleManager;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.json.JSONObject;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -143,7 +142,7 @@ public class MappingTest extends HubTestBase {
             "\"CustomerID\": \"VINET\", " +
             "\"OrderID\": \"10249\" " +
             "}";
-        JSONObject actual = getQueryResults("cts:search(fn:doc('/input/json/order1.json')/envelope/instance/Order, cts:collection-query('OrderJSONMapping'))", HubConfig.DEFAULT_FINAL_NAME);
+        JsonNode actual = getQueryResults("cts:search(fn:doc('/input/json/order1.json')/envelope/instance/Order, cts:collection-query('OrderJSONMapping'))", HubConfig.DEFAULT_FINAL_NAME);
         assertJsonEqual(jsonString, actual.toString(), false);
     }
 
@@ -253,7 +252,7 @@ public class MappingTest extends HubTestBase {
             "\"ShippedDate5\": \"1996-08-01\", " +
             "\"DateTimeFormat1\": \"1996-07-04T14:25:55-07:00\"" +
         "}";
-        JSONObject actual = getQueryResults("cts:search(fn:doc('/input/json/order1.json')/envelope/instance/Order, cts:collection-query('OrderJSONMapping'))", HubConfig.DEFAULT_FINAL_NAME);
+        JsonNode actual = getQueryResults("cts:search(fn:doc('/input/json/order1.json')/envelope/instance/Order, cts:collection-query('OrderJSONMapping'))", HubConfig.DEFAULT_FINAL_NAME);
         assertJsonEqual(jsonString, actual.toString(), true);
     }
 
@@ -377,7 +376,7 @@ public class MappingTest extends HubTestBase {
             "\"CustomerID\": \"VINET\", " +
             "\"OrderID\": \"10249\" " +
             "}";
-        JSONObject actual = getQueryResults("cts:search(fn:doc('/input/json/order1.json')/envelope/instance/Order, cts:collection-query('OrderJSONMapping'))", HubConfig.DEFAULT_FINAL_NAME);
+        JsonNode actual = getQueryResults("cts:search(fn:doc('/input/json/order1.json')/envelope/instance/Order, cts:collection-query('OrderJSONMapping'))", HubConfig.DEFAULT_FINAL_NAME);
         assertJsonEqual(jsonString, actual.toString(), true);
     }
 
@@ -399,7 +398,7 @@ public class MappingTest extends HubTestBase {
             "\"OrderID\": \"10249\", " +
             "\"Priciest\": 30.199" +
             "}";
-        JSONObject actual = getQueryResults("cts:search(fn:doc('/input/json/order1.json')/envelope/instance/Order, cts:collection-query('OrderJSONMapping'))", HubConfig.DEFAULT_FINAL_NAME);
+        JsonNode actual = getQueryResults("cts:search(fn:doc('/input/json/order1.json')/envelope/instance/Order, cts:collection-query('OrderJSONMapping'))", HubConfig.DEFAULT_FINAL_NAME);
         assertJsonEqual(jsonString, actual.toString(), false);
     }
 }
