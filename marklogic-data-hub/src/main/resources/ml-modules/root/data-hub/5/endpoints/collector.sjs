@@ -30,61 +30,50 @@ parameters.queryParameter(requestParams, "options",fn.false(),fn.false())
 parameters.queryParameter(requestParams, "step",fn.false(),fn.false())
 parameters.queryParameter(requestParams, "database",fn.true(),fn.false())
 
-if(method === 'GET') {
-  const flowName = requestParams["flow-name"];
-  let step = requestParams.step;
-  if (!step) {
-    step = 1;
-  }
-  let options = requestParams.options ? JSON.parse(requestParams.options) : {};
-
-  let flowDoc= datahub.flow.getFlow(flowName);
-  let resp;
-  if (!fn.exists(flowDoc)) {
-    resp = fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([404, "Not Found", "The requested flow was not found"]));
-  } else {
-    let stepDoc = flowDoc.steps[step];
-    if (!stepDoc) {
-      resp = fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([404, "Not Found", `The step number "${step}" of the flow was not found`]));
-    }
-    let baseStep = datahub.flow.step.getStepByNameAndType(stepDoc.stepDefinitionName, stepDoc.stepDefinitionType);
-    if (!baseStep) {
-      resp = fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([404, "Not Found", `A step with name "${stepDoc.stepDefinitionName}" and type of "${stepDoc.stepDefinitionType}" was not found`]));
-    }
-    let combinedOptions = Object.assign({}, baseStep.options, flowDoc.options, stepDoc.options, options);
-    const database = combinedOptions.sourceDatabase || requestParams.database;
-    if (stepDoc) {
-      if(!combinedOptions.sourceQuery && flowDoc.sourceQuery) {
-        combinedOptions.sourceQuery = flowDoc.sourceQuery;
-      }
-      let query = combinedOptions.sourceQuery;
-      if (query) {
-        try {
-          let urisEval;
-          if (/^\s*cts\.uris\(.*\)\s*$/.test(query)) {
-            urisEval = query;
-          } else {
-            urisEval = "cts.uris(null, null, " + query + ")";
-          }
-          resp = xdmp.eval(urisEval, {options: options}, {database: xdmp.database(database)});
-        } catch (err) {
-          //TODO log error message from 'err'
-
-          datahub.debug.log(err);
-          resp = fn.error(null, 'RESTAPI-INVALIDREQ', err);
-        }
-      } else {
-        resp = fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([404, "Not Found", "The collector query was empty"]));
-        datahub.debug.log("The collector query was empty");
-      }
-    } else {
-      resp = fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([404, "Not Found", "The requested step was not found"]));
-      datahub.debug.log("The requested step was not found");
-
-    }
-  }
-  resp
-} else {
+// Refactored to not set xdmp.eval results to variable for efficiency reasons
+if (method !== 'GET') {
   fn.error(null, 'RESTAPI-INVALIDREQ', 'unsupported method: '+method);
 }
+const flowName = requestParams["flow-name"];
+let step = requestParams.step;
+if (!step) {
+  step = 1;
+}
+let options = requestParams.options ? JSON.parse(requestParams.options) : {};
 
+let flowDoc= datahub.flow.getFlow(flowName);
+if (!fn.exists(flowDoc)) {
+  fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([404, "Not Found", "The requested flow was not found"]));
+}
+let stepDoc = flowDoc.steps[step];
+if (!stepDoc) {
+  fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([404, "Not Found", `The step number "${step}" of the flow was not found`]));
+}
+let baseStep = datahub.flow.step.getStepByNameAndType(stepDoc.stepDefinitionName, stepDoc.stepDefinitionType);
+if (!baseStep) {
+  fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([404, "Not Found", `A step with name "${stepDoc.stepDefinitionName}" and type of "${stepDoc.stepDefinitionType}" was not found`]));
+}
+let combinedOptions = Object.assign({}, baseStep.options, flowDoc.options, stepDoc.options, options);
+const database = combinedOptions.sourceDatabase || requestParams.database;
+if(!combinedOptions.sourceQuery && flowDoc.sourceQuery) {
+  combinedOptions.sourceQuery = flowDoc.sourceQuery;
+}
+let query = combinedOptions.sourceQuery;
+if (!query) {
+  datahub.debug.log("The collector query was empty");
+  fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([404, "Not Found", "The collector query was empty"]));
+}
+try {
+  let urisEval;
+  if (/^\s*cts\.uris\(.*\)\s*$/.test(query)) {
+    urisEval = query;
+  } else {
+    urisEval = "cts.uris(null, null, " + query + ")";
+  }
+  xdmp.eval(urisEval, {options: options}, {database: xdmp.database(database)});
+} catch (err) {
+  //TODO log error message from 'err'
+
+  datahub.debug.log(err);
+  fn.error(null, 'RESTAPI-INVALIDREQ', err);
+}
