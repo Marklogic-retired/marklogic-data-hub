@@ -1,6 +1,6 @@
 {
   "mapping" : {
-    "language" : "zxx",                                    // should always be here and this value
+    "lang" : "zxx",                                    // should always be here and this value
     "name" : "default",                        // should be NCName
     "description" : "",         // optional longer description of the mapping
     "version" : "1",                                       // do not change - this is the version of the payload

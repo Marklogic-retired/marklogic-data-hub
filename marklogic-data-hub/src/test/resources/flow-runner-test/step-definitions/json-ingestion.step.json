@@ -1,5 +1,5 @@
 {
-  "language": "zxx",
+  "lang": "zxx",
   "name": "json-ingestion",
   "type": "INGESTION",
   "version": 1,

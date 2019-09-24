@@ -53,7 +53,7 @@ storiesOf('Components|Mappings', module)
     props: {
       mapping: object('mapping', {
         description: "A mapping description.",
-        language: "zxx",
+        lang: "zxx",
         name: "Widget Mapping",
         properties: {
           srcprop1: {sourcedFrom: "entityprop1"},

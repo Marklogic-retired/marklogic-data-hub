@@ -1,5 +1,5 @@
 {
-  "language" : "zxx",
+  "lang" : "zxx",
   "name" : "OrderMappingXml",
   "description" : "Default description",
   "version" : 2,

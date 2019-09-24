@@ -1,5 +1,5 @@
 {
-  "language": "zxx",
+  "lang": "zxx",
   "name": "default-ingestion",
   "type": "ingestion",
   "version": 1,

@@ -1,5 +1,5 @@
 {
-  "language" : "zxx",
+  "lang" : "zxx",
   "name" : "person",
   "description" : "Default description",
   "version" : 1,

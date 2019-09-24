@@ -115,14 +115,29 @@ public interface Mapping {
      * Return the language key setting
      * @return the string key
      */
+    @Deprecated
     String getLanguage();
+
+    /**
+     * Return the language key setting
+     * @return the string key
+     */
+    String getLang();
 
     /**
      * *CAREFUL - DO NOT TOUCH IF YOU DON'T EXPLICITLY KNOW WHAT THIS VALUE REPRESENTS*
      * Sets the language for the mapping to use for MarkLogic server
      * @param language - sets the language key for the server - don't modify please!
      */
+    @Deprecated
     void setLanguage(String language);
+
+    /**
+     * *CAREFUL - DO NOT TOUCH IF YOU DON'T EXPLICITLY KNOW WHAT THIS VALUE REPRESENTS*
+     * Sets the language for the mapping to use for MarkLogic server
+     * @param language - sets the language key for the server - don't modify please!
+     */
+    void setLang(String lang);
 
     /**
      * Serializes the mapping as a json string

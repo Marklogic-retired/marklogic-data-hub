@@ -15,6 +15,6 @@
     "collections": ["default-ingestion"]
   },
   "customHook" : { },
-  "language" : "zxx",
+  "lang" : "zxx",
   "modulePath": "/no-op.sjs"
 }
