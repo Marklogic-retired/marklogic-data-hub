@@ -1,0 +1,12 @@
+.dockerignore
+.gitignore
+.git/
+.idea/
+.DS_Store
+.github/
+.gradle/
+
+gradle/
+build/
+out/
+styleguide/
