@@ -33,6 +33,7 @@
       "stepDefinitionName": "mastering",
       "stepDefinitionType": "MASTERING",
       "options": {
+        "provenanceGranularityLevel": "fine",
         "sourceDatabase": "data-hub-FINAL",
         "targetDatabase": "data-hub-FINAL"
       }

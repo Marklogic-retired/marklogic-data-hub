@@ -69,10 +69,43 @@ declare function process:process-match-and-merge-with-options(
   $merge-options as item(),
   $match-options as item(),
   $filter-query as cts:query,
-  $persist-results as xs:boolean)
+  $persist-results as xs:boolean
+)
+{
+  process:process-match-and-merge-with-options(
+    $input,
+    $merge-options,
+    $match-options,
+    $filter-query,
+    $persist-results,
+    fn:false()
+  )
+};
+
+(:
+ : Identify matches for a target document. Merge any documents where the match
+ : score is above the merge threshold; record notification for matches above
+ : that threshold.
+ :
+ : @param $input  URIs of the target documents or map:map objects that contain the document in the value entry
+ : @param $merge-options  the JSON or XML representing the merge options
+ : @param $match-options  the JSON or XML representing the match options
+ : @param $filter-query  a cts:query used to restrict matches to a set, such as a specific entity type or collection
+ : @param $persist-results  a boolean to determine if results should be persisted to the database
+ : @param $fine-grain-provenance a boolean to determine if fine grain provenance should be tracked
+ : @return merged docs, if any, otherwise any notification documents
+ :)
+declare function process:process-match-and-merge-with-options(
+  $input as item()*,
+  $merge-options as item(),
+  $match-options as item(),
+  $filter-query as cts:query,
+  $persist-results as xs:boolean,
+  $fine-grain-provenance as xs:boolean
+)
 {
   if ($persist-results) then
-    proc-impl:process-match-and-merge-with-options-save($input, $merge-options, $match-options, $filter-query)
+    proc-impl:process-match-and-merge-with-options-save($input, $merge-options, $match-options, $filter-query, $fine-grain-provenance)
   else
-    proc-impl:process-match-and-merge-with-options($input, $merge-options, $match-options, $filter-query)
+    proc-impl:process-match-and-merge-with-options($input, $merge-options, $match-options, $filter-query, $fine-grain-provenance)
 };

@@ -384,32 +384,44 @@ class Flow {
   }
 
   buildFineProvenanceData(jobId, flowName, stepName, stepDefName, stepDefType, content, info) {
-    let previousUris = info.derivedFrom;
+    let previousUris = fn.distinctValues(Sequence.from([Sequence.from(Object.keys(content.provenance)),Sequence.from(info.derivedFrom)]));
     let prov = this.datahub.prov;
     let newDocURI = content.uri;
     let docProvIDs = [];
     // setup variables to group prov info by properties
     let docProvPropertyIDsByProperty = {};
-    let docProvPropertyValuesByProperty = {};
+    let docProvPropertyMetadataByProperty = {};
     let docProvDocumentIDsByProperty = {};
     for (let prevUri of previousUris) {
       let docProvenance = content.provenance[prevUri];
-      let docProperties = Object.keys(docProvenance);
-      let docPropRecords = prov.createStepPropertyRecords(jobId, flowName, stepName, stepDefName, stepDefType, prevUri, docProperties, info);
-      let docProvID = docPropRecords[0];
-      docProvIDs.push(docProvID);
-      let docProvPropertyIDKeyVals = docPropRecords[1];
-      // accumulating changes here, since merges can have multiple docs with input per property.
-      for (let origProp of Object.keys(docProvPropertyIDKeyVals)) {
-        let propDetails = docProvenance[origProp];
-        let prop = propDetails.destination;
+      if (docProvenance) {
+        let docProperties = Object.keys(docProvenance);
+        let docPropRecords = prov.createStepPropertyRecords(jobId, flowName, stepName, stepDefName, stepDefType, prevUri, docProperties, info);
+        let docProvID = docPropRecords[0];
+        docProvIDs.push(docProvID);
+        let docProvPropertyIDKeyVals = docPropRecords[1];
+        // accumulating changes here, since merges can have multiple docs with input per property.
+        for (let origProp of Object.keys(docProvPropertyIDKeyVals)) {
+          let propDetails = docProvenance[origProp];
+          let prop = propDetails.type || propDetails.destination;
 
-        docProvPropertyValuesByProperty[prop] = docProvPropertyValuesByProperty[prop] || [];
-        docProvPropertyValuesByProperty[prop].push(propDetails.value);
-        docProvPropertyIDsByProperty[prop] = docProvPropertyIDsByProperty[prop] || [];
-        docProvPropertyIDsByProperty[prop].push(docProvPropertyIDKeyVals[origProp]);
-        docProvDocumentIDsByProperty[prop] = docProvDocumentIDsByProperty[prop] || [];
-        docProvDocumentIDsByProperty[prop].push(docProvID);
+          docProvPropertyMetadataByProperty[prop] = docProvPropertyMetadataByProperty[prop] || {};
+          const propMetadata = docProvPropertyMetadataByProperty[prop];
+          for (const propDetailsKey of Object.keys(propDetails)) {
+            if (propDetails.hasOwnProperty(propDetailsKey)) {
+              propMetadata[propDetailsKey] = propMetadata[propDetailsKey] || [];
+              if (Array.isArray(propDetails[propDetailsKey])) {
+                propMetadata[propDetailsKey] = propMetadata[propDetailsKey].concat(propDetails[propDetailsKey]);
+              } else {
+                propMetadata[propDetailsKey].push(propDetails[propDetailsKey]);
+              }
+            }
+          }
+          docProvPropertyIDsByProperty[prop] = docProvPropertyIDsByProperty[prop] || [];
+          docProvPropertyIDsByProperty[prop].push(docProvPropertyIDKeyVals[origProp]);
+          docProvDocumentIDsByProperty[prop] = docProvDocumentIDsByProperty[prop] || [];
+          docProvDocumentIDsByProperty[prop].push(docProvID);
+        }
       }
     }
 
@@ -417,8 +429,14 @@ class Flow {
     for (let prop of Object.keys(docProvPropertyIDsByProperty)) {
       let docProvDocumentIDs = docProvDocumentIDsByProperty[prop];
       let docProvPropertyIDs = docProvPropertyIDsByProperty[prop];
-      let docProvPropertyValues = docProvPropertyValuesByProperty[prop];
-      let propInfo = Object.assign({}, info, { metadata: { value: docProvPropertyValues.join(',') } });
+      let docProvPropertyMetadata = docProvPropertyMetadataByProperty[prop];
+      for (const propDetailsKey of Object.keys(docProvPropertyMetadata)) {
+        if (docProvPropertyMetadata.hasOwnProperty(propDetailsKey)) {
+          let dedupedMeta = fn.distinctValues(Sequence.from(docProvPropertyMetadata[propDetailsKey]));
+          docProvPropertyMetadata[propDetailsKey] = fn.count(dedupedMeta) <= 1 ? fn.string(fn.head(dedupedMeta)) : xdmp.describe(dedupedMeta.toArray(), Sequence.from([]), Sequence.from([]));
+        }
+      }
+      let propInfo = Object.assign({}, info, { metadata: docProvPropertyMetadata });
       let newPropertyProvID = prov.createStepPropertyAlterationRecord(jobId, flowName, stepName, stepDefName, stepDefType, prop, docProvDocumentIDs, docProvPropertyIDs, propInfo);
       newPropertyProvIDs.push(newPropertyProvID);
     }

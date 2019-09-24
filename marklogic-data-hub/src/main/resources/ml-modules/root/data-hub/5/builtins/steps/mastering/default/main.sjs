@@ -1,3 +1,5 @@
+const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
+const datahub = DataHubSingleton.instance();
 const mastering = require("/com.marklogic.smart-mastering/process-records.xqy");
 const mergeImpl = require("/com.marklogic.smart-mastering/survivorship/merging/base.xqy");
 const masteringCollections = require("/com.marklogic.smart-mastering/impl/collections.xqy");
@@ -13,7 +15,14 @@ function main(content, options) {
   // Data Hub will persist the results for us.
   let persistResults = false;
   if (filteredContent.length) {
-    return mastering.processMatchAndMergeWithOptions(Sequence.from(filteredContent), mergeOptions, matchOptions, cts.trueQuery(), persistResults);
+    return mastering.processMatchAndMergeWithOptions(
+      Sequence.from(filteredContent),
+      mergeOptions,
+      matchOptions,
+      cts.trueQuery(),
+      persistResults,
+      datahub.prov.granularityLevel() === datahub.prov.FINE_LEVEL
+    );
   } else {
     return emptySequence;
   }

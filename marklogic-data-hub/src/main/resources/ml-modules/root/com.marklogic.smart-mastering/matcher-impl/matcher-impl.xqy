@@ -133,15 +133,17 @@ declare function match-impl:compile-match-options(
         for $score in $scoring/matcher:reduce
         let $type := fn:local-name($score)
         let $weight := fn:number($score/@weight)
+        let $algorithm-ref := $score/@algorithm-ref
         return
           map:new((
             map:entry("queryID", sem:uuid-string()),
             map:entry("type",$type),
             map:entry("weight",$weight),
+            map:entry("algorithm", fn:head(($algorithm-ref, "standard"))),
             map:entry(
               "valuesToQueryFunction",
               if ($type eq "reduce") then
-                let $algorithm := $score/@algorithm-ref ! map:get($algorithms, .)
+                let $algorithm := $algorithm-ref ! map:get($algorithms, .)
                 return
                   if (fn:exists($algorithm)) then
                     algorithms:execute-algorithm($algorithm, ?, $score, $options)
@@ -156,7 +158,6 @@ declare function match-impl:compile-match-options(
     let $compiled-match-options := map:new((
         map:entry("options", $options),
         map:entry("scoreRatio", $score-ratio),
-        map:entry("scoring", $scoring),
         map:entry("algorithms", $algorithms),
         map:entry("queries", $queries),
         map:entry("orderedThresholds",
@@ -231,8 +232,11 @@ declare function match-impl:find-document-matches-by-options(
     let $start-elapsed := xdmp:elapsed-time()
     let $is-json := (xdmp:node-kind($document) = "object" or fn:exists($document/(object-node()|array-node())))
     let $compiled-options := match-impl:compile-match-options($options, $is-json, $minimum-threshold)
-    let $scoring := $compiled-options => map:get("scoring")
     let $values-by-qname := match-impl:values-by-qname($document, $compiled-options)
+    let $query-prov as map:map? :=
+        if ($include-results and $include-matches) then
+          map:map()
+        else ()
     let $cached-queries := map:map()
     let $minimum-threshold-combinations-query :=
       cts:or-query(
@@ -240,7 +244,7 @@ declare function match-impl:find-document-matches-by-options(
         let $query-maps := $query-set => map:get("queries")
         let $queries :=
             for $query-map in $query-maps
-            return match-impl:query-map-to-query($query-map, $values-by-qname, $cached-queries)
+            return match-impl:query-map-to-query($query-map, $values-by-qname, $cached-queries, $query-prov)
         where fn:exists($queries)
         return
           if (fn:count($queries) gt 1) then
@@ -278,7 +282,7 @@ declare function match-impl:find-document-matches-by-options(
         attribute start { $start },
         $serialized-match-query,
         if ($include-results and $estimate gt 0) then
-          let $boost-query := match-impl:build-boost-query($document, $values-by-qname, $compiled-options, $cached-queries)
+          let $boost-query := match-impl:build-boost-query($document, $values-by-qname, $compiled-options, $cached-queries, $query-prov)
           return
               match-impl:search(
                 $match-query,
@@ -287,10 +291,10 @@ declare function match-impl:find-document-matches-by-options(
                 $minimum-threshold,
                 $start,
                 $page-length,
-                $scoring,
                 $compiled-options,
                 $include-matches,
-                $is-json
+                $is-json,
+                $query-prov
               )
         else (),
         if (xdmp:trace-enabled($const:TRACE-PERFORMANCE)) then
@@ -333,13 +337,15 @@ declare function match-impl:seq-contains($s1, $s2)
  : @param $values-by-qname  map:map that organizes document values by QName
  : @param $compiled-options map:map with compiled details about match options
  : @param $cached-queries map:map containing previously created queries
+ : @param $query-prov map:map to optionally track the provenance of queries contributing to match
  : @return a cts:or-query that will be used as a boost query
  :)
 declare function match-impl:build-boost-query(
   $document as node(),
   $values-by-qname as map:map,
   $compiled-options as map:map,
-  $cached-queries as map:map
+  $cached-queries as map:map,
+  $query-prov as map:map?
 )
 {
   cts:or-query((
@@ -348,7 +354,7 @@ declare function match-impl:build-boost-query(
       if ($query-map => map:get("type") = "reduce") then
         ($query-map => map:get("valuesToQueryFunction"))($document)
       else
-        match-impl:query-map-to-query($query-map, $values-by-qname, $cached-queries)
+        match-impl:query-map-to-query($query-map, $values-by-qname, $cached-queries, $query-prov)
   ))
 };
 
@@ -357,13 +363,14 @@ declare function match-impl:build-boost-query(
  : @param $query-map  map:map describing a query to generate
  : @param $values-by-qname  map:map that organizes document values by QName
  : @param $cached-queries  map:map caching previously generated queries
- : @param $include-weight  boolean include weight in query
+ : @param $query-prov map:map to optionally track the provenance of queries contributing to match
  : @return cts:query?
  :)
 declare function match-impl:query-map-to-query(
   $query-map as map:map,
   $values-by-qname as map:map,
-  $cached-queries as map:map
+  $cached-queries as map:map,
+  $query-prov as map:map?
 )
 {
   if (map:contains($query-map, "queryID") and map:contains($cached-queries, $query-map => map:get("queryID"))) then
@@ -377,6 +384,12 @@ declare function match-impl:query-map-to-query(
           ($query-map => map:get("valuesToQueryFunction"))($values)
     return (
       map:put($cached-queries, $query-map => map:get("queryID"), $query),
+      if (fn:exists($query-prov)) then
+        let $query-hashes := fn:distinct-values(cts:element-walk(document{$query}, $QUERIES_WITH_WEIGHT, element query-hash{xdmp:md5(document {$cts:node})})//query-hash !
+          fn:string(.))
+        for $query-hash in $query-hashes
+        return map:put($query-prov, $query-hash, $query-map)
+      else (),
       $query
     )
 };
@@ -410,10 +423,11 @@ declare function match-impl:values-by-qname(
  : @param $min-threshold  lowest score required to hit a threshold
  : @param $start  paging: 1-based index
  : @param $page-length  paging
- : @param $scoring  part of match options
  : @param $algorithms  map derived from match options
  : @param $options  full match options; included to pass to reduce algorithm
  : @param $include-matches
+ : @param $is-json
+ : @param $query-prov an optional map for tracking how options/algorithms contributed to matches
  : @return results specify document URIs that matches for provided document
  :)
 declare function match-impl:search(
@@ -423,10 +437,10 @@ declare function match-impl:search(
   $min-threshold as xs:double,
   $start as xs:int,
   $page-length as xs:int,
-  $scoring as element(matcher:scoring),
   $compiled-options as map:map,
   $include-matches as xs:boolean,
-  $is-json as xs:boolean
+  $is-json as xs:boolean,
+  $query-prov as map:map?
 ) {
   let $range := $start to ($start + $page-length - 1)
   let $query :=
@@ -489,10 +503,24 @@ declare function match-impl:search(
              node instead :)
           cts:walk(
             $result,
-            $cts-walk-query,
-            (let $query-hashes := $cts:queries ! xdmp:md5(document {.})
+            cts:or-query($matching-queries),
+            (let $query-hashes := fn:distinct-values($cts:queries !
+                cts:element-walk(document{.}, $QUERIES_WITH_WEIGHT, element query-hash{xdmp:md5(document {$cts:node})})//query-hash !
+                fn:string(.))
             let $weight := fn:sum($query-hashes ! ($matching-weights-map => map:get(.)))
             return <match weight="{$weight}">
+                      {
+                        let $node-name := fn:string(fn:head((fn:node-name($cts:node),fn:node-name($cts:node/..))))
+                        for $query-hash in $query-hashes
+                        let $query-map := map:get($query-prov, $query-hash)
+                        return
+                          <contributions>
+                            <nodeName>{$node-name}</nodeName>
+                            <algorithm>{fn:string(fn:head(($query-map ! map:get(., "algorithm") ! fn:string(.),"standard")))}</algorithm>
+                            <weight>{fn:string($matching-weights-map => map:get($query-hash))}</weight>
+                          </contributions>
+                      }
+                      <value>{fn:data($cts:node)}</value>
                       <path>{xdmp:path($cts:node, fn:true())}</path>
                    </match>)
           )
@@ -517,7 +545,7 @@ declare function match-impl:_results-json-config()
 {
   let $config := json:config("custom")
   return (
-    map:put($config, "array-element-names", ("result","matches",xs:QName("cts:option"),xs:QName("cts:text"),xs:QName("cts:element"))),
+    map:put($config, "array-element-names", ("result","matches","algorithms",xs:QName("cts:option"),xs:QName("cts:text"),xs:QName("cts:element"))),
     map:put($config, "full-element-names",
       (xs:QName("cts:query"),
       xs:QName("cts:and-query"),

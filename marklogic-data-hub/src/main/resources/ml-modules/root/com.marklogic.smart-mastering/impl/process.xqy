@@ -44,7 +44,7 @@ declare function proc-impl:process-match-and-merge($input as item()*)
       for $merge-options in $merging-options
       let $match-options := matcher:get-options(fn:string($merge-options/merging:match-options), $const:FORMAT-XML)
       return
-        proc-impl:process-match-and-merge-with-options-save($input, $merge-options, $match-options, cts:true-query())
+        proc-impl:process-match-and-merge-with-options-save($input, $merge-options, $match-options, cts:true-query(), fn:false())
     else
       fn:error($const:NO-MERGE-OPTIONS-ERROR, "No Merging Options are present. See: https://marklogic-community.github.io/smart-mastering-core/docs/merging-options/")
 };
@@ -68,7 +68,8 @@ declare function proc-impl:process-match-and-merge(
       $input,
       $all-options => map:get("merge-options"),
       $all-options => map:get("match-options"),
-      $filter-query
+      $filter-query,
+      fn:false()
     )
 };
 
@@ -90,16 +91,25 @@ declare function proc-impl:consolidate-merges(
   $matching-options,
   $max-scan,
   $merge-threshold,
-  $filter-query
+  $filter-query,
+  $provenance-map as map:map?
 ) as map:map
 {
   map:new((
     let $merges :=
       fn:distinct-values(
         for $key in map:keys($matches)
-        let $merge-uris as xs:string* := map:get($matches, $key)/result[@action=$const:MERGE-ACTION]/@uri
+        let $merge-items as element()* := map:get($matches, $key)/result[@action=$const:MERGE-ACTION]
+        let $merge-uris as xs:string* := $merge-items/@uri
         where fn:exists($merge-uris)
-        return
+        return (
+          if (fn:exists($provenance-map)) then
+            proc-impl:record-match-provenance(
+              $provenance-map,
+              $key,
+              $merge-items
+            )
+          else (),
           let $additional-uris :=
             proc-impl:expand-uris-for-merge(
               $merge-uris,
@@ -108,7 +118,8 @@ declare function proc-impl:consolidate-merges(
               $matching-options,
               $max-scan,
               $merge-threshold,
-              $filter-query
+              $filter-query,
+              $provenance-map
             )
           return
             fn:string-join(
@@ -118,6 +129,7 @@ declare function proc-impl:consolidate-merges(
               return $uri,
               $STRING-TOKEN
             )
+        )
       )
     for $merge in $merges
     let $uris := fn:tokenize($merge, $STRING-TOKEN)
@@ -148,7 +160,8 @@ declare function proc-impl:expand-uris-for-merge(
   $matching-options,
   $max-scan,
   $merge-threshold,
-  $filter-query
+  $filter-query,
+  $provenance-map as map:map?
 ) (: as xs:string* ~leaving off for tail recursion~ :)
 {
   let $additional-uris :=
@@ -174,10 +187,18 @@ declare function proc-impl:expand-uris-for-merge(
             (: return results :)
             fn:true()
           )[result/@action = $const:MERGE-ACTION]
+        let $merge-items := $results/result[@action=$const:MERGE-ACTION]
         where fn:exists($results)
         return (
           map:put($matches, $merge-uri, $results),
-          $results/result[@action=$const:MERGE-ACTION]/@uri ! fn:string(.)
+          $merge-items/@uri ! fn:string(.),
+          if (fn:exists($provenance-map)) then
+            proc-impl:record-match-provenance(
+              $provenance-map,
+              $merge-uri,
+              $merge-items
+            )
+          else ()
         )
   let $new-uris := $additional-uris[fn:not(. = $accumlated-uris)]
   return
@@ -191,8 +212,42 @@ declare function proc-impl:expand-uris-for-merge(
         $matching-options,
         $max-scan,
         $merge-threshold,
-        $filter-query
+        $filter-query,
+        $provenance-map
       )
+};
+
+declare function proc-impl:record-match-provenance(
+  $provenance-map as map:map,
+  $uri as xs:string,
+  $merge-items as element()*
+) {
+  if (fn:not(map:contains($provenance-map, $uri))) then
+    map:put(
+      $provenance-map,
+      $uri,
+      map:new((
+        for $merge-item in $merge-items
+        let $matched-document := fn:string($merge-item/@uri)
+        return map:entry(
+          $matched-document,
+          map:new((
+            for $match in $merge-item/matches/match
+            return map:entry(
+              fn:string($match/path),
+              map:new((
+                map:entry("type", "matchInformation"),
+                map:entry("destination", $uri),
+                map:entry("matchedDocuments", $matched-document),
+                map:entry("matchedValues", fn:string($match/value)),
+                map:entry("matchContributions", fn:string-join($match/contributions ! fn:concat(algorithm,"(",nodeName,"):",weight), ";"))
+              ))
+            )
+          ))
+        )
+      ))
+    )
+  else ()
 };
 
 declare function proc-impl:consolidate-notifies($all-matches as map:map, $merged-into as map:map)
@@ -242,7 +297,9 @@ declare function proc-impl:process-match-and-merge-with-options(
   $input as item()*,
   $merge-options as item(),
   $match-options as item(),
-  $filter-query as cts:query) as json:array
+  $filter-query as cts:query,
+  $fine-grain-provenance as xs:boolean
+) as json:array
 {
   (: increment usage count :)
   tel:increment(),
@@ -310,7 +367,7 @@ declare function proc-impl:process-match-and-merge-with-options(
                 1,
                 $max-scan,
                 $minimum-threshold,
-                fn:false(),
+                $fine-grain-provenance,
                 $filter-query
               )
             )
@@ -321,11 +378,16 @@ declare function proc-impl:process-match-and-merge-with-options(
         xdmp:trace($const:TRACE-PERFORMANCE, "proc-impl:process-match-and-merge-with-options: Matches: " || (xdmp:elapsed-time() - $start-elapsed))
       else ()
     )
-  let $consolidated-merges := proc-impl:consolidate-merges($all-matches,
-    $matching-options,
-    $max-scan,
-    $merge-threshold,
-    $filter-query)
+  let $provenance-map := if ($fine-grain-provenance) then map:map() else ()
+  let $consolidated-merges := xdmp:eager(
+    proc-impl:consolidate-merges($all-matches,
+      $matching-options,
+      $max-scan,
+      $merge-threshold,
+      $filter-query,
+      $provenance-map
+    )
+  )
   let $merged-uris := map:keys($consolidated-merges)
   let $merged-into := map:map()
   let $on-merge-options := $merge-options/merging:algorithms/merging:collections/merging:on-merge
@@ -348,6 +410,31 @@ declare function proc-impl:process-match-and-merge-with-options(
           else
             $const:FORMAT-JSON
         )
+        let $doc-provenance-info := $merged-doc-def => map:get("provenance")
+        let $prov-entry := if ($fine-grain-provenance) then (
+            map:entry("provenance",
+              fn:fold-left(
+                function($map1,$map2) {
+                  map:new(
+                    for $key in fn:distinct-values((map:keys($map1),map:keys($map2)))
+                    return
+                      map:entry(
+                        $key,
+                        if (map:contains($map1, $key)) then
+                          if (map:contains($map2, $key)) then
+                            ($map1 => map:get($key)) + ($map2 => map:get($key))
+                          else
+                            ($map1 => map:get($key))
+                        else
+                          ($map2 => map:get($key))
+                      )
+                  )
+                },
+                $doc-provenance-info,
+                fn:distinct-values((map:keys($doc-provenance-info), $distinct-uris)) ! map:get($provenance-map, .)
+              )
+            )
+          ) else ()
         return (
           $distinct-uris ! map:put($merged-into, ., $merge-uri),
           $merged-doc-def
@@ -358,6 +445,7 @@ declare function proc-impl:process-match-and-merge-with-options(
             map:entry("value",
               $merged-doc
             ),
+            $prov-entry,
             map:entry("context",
               map:new((
                 map:entry("collections",
@@ -566,13 +654,15 @@ declare function proc-impl:process-match-and-merge-with-options-save(
   $input as item()*,
   $merge-options as item(),
   $match-options as item(),
-  $filter-query as cts:query)
+  $filter-query as cts:query,
+  $fine-grain-provenance as xs:boolean)
 {
   let $actions as item()* := json:array-values(proc-impl:process-match-and-merge-with-options(
       $input,
       $merge-options,
       $match-options,
-      $filter-query
+      $filter-query,
+      $fine-grain-provenance
     ))
   for $action in $actions
   return
