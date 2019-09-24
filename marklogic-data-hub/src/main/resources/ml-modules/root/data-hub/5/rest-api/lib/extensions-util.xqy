@@ -473,6 +473,7 @@ declare private function extut:get-extension-function(
         if (exists($fcached))
         then $fcached
         else
+            let $extension-name := extut:translate-ml-prefix($extension-name)
             let $function :=
               xdmp:function(
                 if ($source-format eq "xquery")
@@ -593,7 +594,7 @@ declare private function extut:make-base-uri(
     $extension-name as xs:string
 ) as xs:string
 {
-    concat("/marklogic.rest.",$extension-type,"/",$extension-name,"/")
+    concat("/marklogic.rest.",$extension-type,"/",extut:translate-ml-prefix($extension-name),"/")
 };
 
 declare private function extut:make-metadata-uri(
@@ -1384,4 +1385,17 @@ declare function {$extension-name}:transform(
 }};
 </case>)
     return document { $module-body }
+};
+
+(: DH 5 addition for handling the ml: prefix :)
+declare private function extut:translate-ml-prefix(
+  $extension-name as xs:string
+) as xs:string
+{
+  if (starts-with($extension-name,"ml:")) then
+    let $post-fix := substring-after($extension-name, "ml:")
+    return
+      concat("ml", upper-case(substring($post-fix,1,1)), substring($post-fix,2))
+  else
+    $extension-name
 };
