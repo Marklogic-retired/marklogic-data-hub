@@ -59,9 +59,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.skyscreamer.jsonassert.JSONAssert;
-import org.skyscreamer.jsonassert.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -707,17 +705,18 @@ public class HubTestBase {
         return count;
     }
 
-    protected JSONObject getQueryResults(String query, String database) {
+    protected JsonNode getQueryResults(String query, String database) {
         EvalResultIterator resultItr = runInDatabase(query, database);
         if (resultItr == null || ! resultItr.hasNext()) {
             return null;
         }
         EvalResult res = resultItr.next();
-
-        JSONObject json = null;
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode json = null;
         try {
-            json = (JSONObject) JSONParser.parseJSON(res.getString());
-        } catch (JSONException e) {
+            json = mapper.readTree(res.getString());
+        } catch (IOException e) {
+            logger.error(e.getMessage());
             e.printStackTrace();
         }
         return json;
@@ -969,13 +968,10 @@ public class HubTestBase {
 
         LoadModulesCommand loadModulesCommand = new LoadModulesCommand();
         commands.add(loadModulesCommand);
-        //Call 'generateFunctionMetadataCommand' if mapping functions are deployed. If mapping is deployed first
+        //'generateFunctionMetadataCommand' must be called before deploying mappings. If mapping is deployed first
         // and it references custom functions, mapping xslt will not have reference to custom functions and tests
         // would fail with XDMP-UNDFUN: (err:XPST0017) Undefined function customDateTime().
-
-        if(hubConfig.getHubProject().getCustomModulesDir().resolve("mapping-functions").toFile().exists()){
-            commands.add(generateFunctionMetadataCommand);
-        }
+        commands.add(generateFunctionMetadataCommand);
 
         loadUserArtifactsCommand.setForceLoad(force);
         commands.add(loadUserArtifactsCommand);
