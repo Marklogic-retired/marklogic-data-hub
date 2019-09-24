@@ -1,6 +1,6 @@
 FROM gradle:jdk11 as build-stage
 RUN mkdir -p /usr/src/explorer
-COPY /explorer /usr/src/explorer/
+COPY . /usr/src/explorer/
 WORKDIR /usr/src/explorer
 RUN gradle build -x test
 
