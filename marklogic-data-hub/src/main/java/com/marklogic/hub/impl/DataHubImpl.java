@@ -349,13 +349,13 @@ public class DataHubImpl implements DataHub {
             }
 
             HashSet<String> services = new HashSet<>();
-            for (Resource r : resolver.getResources("classpath*:/ml-modules/root/marklogic.rest.resource/*")) {
-                services.add(r.getFilename());
+            for (Resource r : resolver.getResources("classpath*:/ml-modules/services/*")) {
+                services.add(r.getFilename().replaceAll("\\.(sjs|xqy)$",""));
             }
 
             HashSet<String> transforms = new HashSet<>();
-            for (Resource r : resolver.getResources("classpath*:/ml-modules/root/marklogic.rest.transform/*")) {
-                transforms.add(r.getFilename());
+            for (Resource r : resolver.getResources("classpath*:/ml-modules/transforms/*")) {
+                transforms.add(r.getFilename().replaceAll("\\.(sjs|xqy)$",""));
             }
 
             ServerConfigurationManager configMgr = hubConfig.newStagingClient().newServerConfigManager();
@@ -391,8 +391,7 @@ public class DataHubImpl implements DataHub {
             JsonNode transformsList = transformExtensionsManager.listTransforms(new JacksonHandle()).get();
             transformsList.findValuesAsText("name").forEach(
                 x -> {
-                    // may be missing ml: prefix
-                    if (!(transforms.contains(x) || transforms.contains(x.substring(3)) || x.startsWith("ml:"))) {
+                    if (!(transforms.contains(x) || x.startsWith("ml"))) {
                         transformExtensionsManager.deleteTransform(x);
                     }
                 }
@@ -403,8 +402,7 @@ public class DataHubImpl implements DataHub {
             JsonNode resourceExtensions = resourceExtensionsManager.listServices(new JacksonHandle()).get();
             resourceExtensions.findValuesAsText("name").forEach(
                 x -> {
-                    // may be missing ml: prefix
-                    if (!(services.contains(x) || services.contains(x.substring(3)) || x.startsWith("ml:"))) {
+                    if (!(services.contains(x) || x.startsWith("ml"))) {
                         resourceExtensionsManager.deleteServices(x);
                     }
                 }
