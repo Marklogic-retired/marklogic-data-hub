@@ -781,7 +781,7 @@ declare function merge-impl:build-headers(
             merge-impl:distinct-node-values($docs/envelope/headers/sources)
           }),
           map:entry("merge-options", object-node {
-            "language": "zxx",
+            "lang": "zxx",
             "value": (
               if (fn:exists($merge-options-uri))
               then

@@ -29,21 +29,21 @@ import com.marklogic.hub.error.DataHubProjectException;
 
 import java.util.HashMap;
 
-@JsonPropertyOrder({ "language", "name", "description", "version",  "targetEntityType", "sourceContext", "sourceURI", "properties"})
+@JsonPropertyOrder({ "lang", "name", "description", "version",  "targetEntityType", "sourceContext", "sourceURI", "properties"})
 public class MappingImpl implements Mapping {
 
     private String name;
     private String sourceContext;
     private String targetEntityType;
     private String description;
-    private String language;
+    private String lang;
     private int version;
     private String sourceURI;
     private HashMap<String, ObjectNode> properties;
 
     public MappingImpl(String name) {
         this.name = name;
-        this.language = "zxx";
+        this.lang = "zxx";
         this.version = 1;
         this.description = "Default description";
         this.sourceContext = "/";
@@ -101,7 +101,10 @@ public class MappingImpl implements Mapping {
         }
 
         if(json.has("language")) {
-            setLanguage(json.get("language").asText());
+            setLang(json.get("language").asText());
+        }
+        if(json.has("lang")) {
+            setLang(json.get("lang").asText());
         }
 
         if(json.has("sourceURI")) {
@@ -193,13 +196,25 @@ public class MappingImpl implements Mapping {
     }
 
     @Override
+    @Deprecated
     public String getLanguage() {
-        return language;
+        return lang;
     }
 
     @Override
+    @Deprecated
     public void setLanguage(String language) {
-        this.language = language;
+        this.lang = language;
+    }
+
+    @Override
+    public String getLang() {
+        return lang;
+    }
+
+    @Override
+    public void setLang(String lang) {
+        this.lang = lang;
     }
 
     @Override

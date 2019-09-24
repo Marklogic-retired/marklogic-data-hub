@@ -1,5 +1,5 @@
 {
-  "language" : "zxx",
+  "lang" : "zxx",
   "name" : "PopulateAdmissions",
   "description" : "",
   "type" : "CUSTOM",

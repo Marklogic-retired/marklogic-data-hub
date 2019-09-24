@@ -241,7 +241,7 @@ export class MappingComponent implements OnInit {
         targetEntityType =  baseUri + this.targetEntity.name + '-' +
           this.targetEntity.info.version + '/' + this.targetEntity.name,
         mapObj = {
-          language:         this.mapping.language || 'zxx',
+          lang:         this.mapping.lang || 'zxx',
           name:             this.mapName,
           description:      this.mapping.description || '',
           version:          this.mapping.version || '0',
