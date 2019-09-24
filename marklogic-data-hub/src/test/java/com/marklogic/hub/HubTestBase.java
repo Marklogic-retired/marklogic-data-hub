@@ -36,6 +36,7 @@ import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager;
 import com.marklogic.client.io.*;
+import com.marklogic.client.io.marker.AbstractReadHandle;
 import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.impl.DataHubImpl;
@@ -706,20 +707,8 @@ public class HubTestBase {
     }
 
     protected JsonNode getQueryResults(String query, String database) {
-        EvalResultIterator resultItr = runInDatabase(query, database);
-        if (resultItr == null || ! resultItr.hasNext()) {
-            return null;
-        }
-        EvalResult res = resultItr.next();
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode json = null;
-        try {
-            json = mapper.readTree(res.getString());
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-            e.printStackTrace();
-        }
-        return json;
+        AbstractReadHandle res = runInDatabase(query, database, new JacksonHandle());
+        return ((JacksonHandle)res).get();
     }
 
     protected int getTelemetryInstallCount(){
@@ -839,6 +828,28 @@ public class HubTestBase {
     }
 
     protected EvalResultIterator runInDatabase(String query, String databaseName) {
+        try {
+            return getServerEval(databaseName).xquery(query).eval();
+        }
+        catch(FailedRequestException e) {
+            logger.error("Failed run code: " + query, e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    protected AbstractReadHandle runInDatabase(String query, String databaseName, AbstractReadHandle handle) {
+        try {
+            return getServerEval(databaseName).xquery(query).eval(handle);
+        }
+        catch(FailedRequestException e) {
+            logger.error("Failed run code: " + query, e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    private ServerEvaluationCall getServerEval(String databaseName) {
         ServerEvaluationCall eval;
         switch(databaseName) {
             case HubConfig.DEFAULT_STAGING_NAME:
@@ -864,14 +875,7 @@ public class HubTestBase {
                 eval = stagingClient.newServerEval();
                 break;
         }
-        try {
-            return eval.xquery(query).eval();
-        }
-        catch(FailedRequestException e) {
-            logger.error("Failed run code: " + query, e);
-            e.printStackTrace();
-            throw e;
-        }
+        return eval;
     }
 
     protected void uninstallModule(String path) {
