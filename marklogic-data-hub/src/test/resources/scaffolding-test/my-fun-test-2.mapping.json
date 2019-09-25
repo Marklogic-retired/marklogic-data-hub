@@ -1,5 +1,5 @@
 {
-  "language" : "zxx",
+  "lang" : "zxx",
   "name" : "my-fun-test",
   "description" : "This is a test.",
   "version" : 2,
@@ -16,4 +16,4 @@
       "sourcedFrom" : "gender"
     }
   }
-} 
+}

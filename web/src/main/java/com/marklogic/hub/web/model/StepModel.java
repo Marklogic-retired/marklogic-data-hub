@@ -34,7 +34,7 @@ public class StepModel {
     protected StepDefinition.StepDefinitionType stepDefinitionType;
     protected String description;
     protected JsonNode options;
-    protected String language;
+    protected String lang;
     protected Boolean isValid;
     protected JsonNode customHook;
     protected Integer batchSize;
@@ -94,12 +94,22 @@ public class StepModel {
         this.options = options;
     }
 
+    @Deprecated
     public String getLanguage() {
-        return language;
+        return lang;
     }
 
+    @Deprecated
     public void setLanguage(String language) {
-        this.language = language;
+        this.lang = language;
+    }
+
+    public String getLang() {
+        return lang;
+    }
+
+    public void setLang(String lang) {
+        this.lang = lang;
     }
 
     public Boolean getIsValid() {
@@ -174,7 +184,7 @@ public class StepModel {
 
         step.setDescription(jsonObject.getString("description"));
         step.setOptions(jsonObject.getNode("options"));
-        step.setLanguage("zxx");
+        step.setLang("zxx");
         step.setIsValid(jsonObject.getBoolean("isValid"));
         step.setCustomHook(jsonObject.getNode("customHook"));
         step.setBatchSize(jsonObject.getInt("batchSize"));
@@ -212,7 +222,7 @@ public class StepModel {
         node.put("name", getName());
         node.put("description", getDescription());
         node.set("options", getOptions());
-        node.put("language", getLanguage());
+        node.put("lang", getLang());
         node.put("isValid", getIsValid());
         node.set("customHook", getCustomHook());
         node.put("batchSize", getBatchSize());

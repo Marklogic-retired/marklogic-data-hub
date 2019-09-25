@@ -28,7 +28,7 @@ public abstract class AbstractStepDefinition implements StepDefinition {
     private final static int DEFAULT_BATCH_SIZE = 100;
     private final static int DEFAULT_THREAD_COUNT = 4;
 
-    private String language;
+    private String lang;
     private String name;
     private String description;
     private StepDefinitionType type;
@@ -43,7 +43,7 @@ public abstract class AbstractStepDefinition implements StepDefinition {
     private Integer threadCount;
 
     protected AbstractStepDefinition() {
-        language = "zxx";
+        lang = "zxx";
         description = "";
         version = 1;
 
@@ -55,9 +55,14 @@ public abstract class AbstractStepDefinition implements StepDefinition {
         threadCount = DEFAULT_THREAD_COUNT;
     }
 
-
+    @Deprecated
     public String getLanguage() {
-        return language;
+        return lang;
+    }
+
+    @Override
+    public String getLang() {
+        return lang;
     }
 
     public String getName() {

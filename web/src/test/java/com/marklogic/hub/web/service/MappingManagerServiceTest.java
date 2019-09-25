@@ -87,7 +87,7 @@ public class MappingManagerServiceTest extends AbstractServiceTest {
     public void testMappingVersion() throws IOException {
         String mappingName = "testMapping";
         String jsonString = "{" +
-                            "   \"language\":\"zxx\"," +
+                            "   \"lang\":\"zxx\"," +
                             "   \"name\":\"" + mappingName + "\"," +
                             "   \"description\":\"\"," +
                             "   \"version\":\"0\"," +
@@ -120,7 +120,7 @@ public class MappingManagerServiceTest extends AbstractServiceTest {
     public void testMappingNameWithWhitespace() throws IOException {
         String mappingName = "test mapping";
         String jsonString = "{" +
-            "   \"language\":\"zxx\"," +
+            "   \"lang\":\"zxx\"," +
             "   \"name\":\"" + mappingName + "\"," +
             "   \"description\":\"\"," +
             "   \"version\":\"0\"," +

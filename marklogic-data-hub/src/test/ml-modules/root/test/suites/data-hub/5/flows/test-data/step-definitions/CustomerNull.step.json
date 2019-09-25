@@ -10,6 +10,6 @@
     "sourceQuery" : "cts.collectionQuery('default-ingestion')"
   },
   "customHook" : { },
-  "language" : "zxx",
+  "lang" : "zxx",
   "modulePath" : "/test/custom-null-step/main.sjs"
 }

@@ -68,7 +68,7 @@ export class EditFlowComponent implements OnInit, OnDestroy {
   navigationPopState: any;
 
   @Output() clipboardSuccess = new EventEmitter();
-  
+
   constructor(
    private manageFlowsService: ManageFlowsService,
    private projectService: ProjectService,
@@ -239,7 +239,7 @@ export class EditFlowComponent implements OnInit, OnDestroy {
         targetEntityType = baseUri + entity.name + '-' +
           entity.info.version + '/' + entity.name,
         mapObj = {
-          language:         'zxx',
+          lang:         'zxx',
           name:             mapName,
           description:      '',
           version:          '0',

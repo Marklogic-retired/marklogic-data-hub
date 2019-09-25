@@ -97,7 +97,7 @@ let $assertions := (
     },
     "id": $smid,
     "merge-options": object-node {
-    "language": "zxx",
+    "lang": "zxx",
     "value": "/com.marklogic.smart-mastering/options/merging/test-options.xml"
     }
     }

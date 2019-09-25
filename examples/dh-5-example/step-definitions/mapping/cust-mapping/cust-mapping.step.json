@@ -1,5 +1,5 @@
 {
-  "language" : "zxx",
+  "lang" : "zxx",
   "name" : "cust-mapping",
   "description" : null,
   "type" : "MAPPING",
