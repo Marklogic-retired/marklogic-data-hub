@@ -102,14 +102,19 @@ function invalidUseOfCustomFunction() {
   ];
 }
 
-[]
-  .concat(validMapping())
-  .concat(invalidProperty())
-  .concat(missingFunctionReference())
-  .concat(incorrectNumberOfFunctionArguments())
-  .concat(functionSyntaxError())
-  .concat(mixOfValidAndInvalidExpressions())
-  .concat(validUseOfCustomFunction())
-  .concat(invalidUseOfCustomFunction())
-;
+if (esMappingLib.versionIsCompatibleWithES()) {
+  []
+    .concat(validMapping())
+    .concat(invalidProperty())
+    .concat(missingFunctionReference())
+    .concat(incorrectNumberOfFunctionArguments())
+    .concat(functionSyntaxError())
+    .concat(mixOfValidAndInvalidExpressions())
+    .concat(validUseOfCustomFunction())
+    .concat(invalidUseOfCustomFunction())
+  ;
+}
+else {
+  []
+}
 
