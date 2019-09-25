@@ -462,8 +462,6 @@ pipeline{
                    }
                    unsuccessful {
                       println("rh7_cluster_9.0-10 Failed")
-                      sh 'mkdir -p MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/MLLogs/'
-                      archiveArtifacts artifacts: 'MLLogs/**/*'
                       sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on 9.0-10 rh7 cluster failed. Please fix the tests and create a PR or create a bug for the failures.',false,'rh7_cluster_9.0-10 Tests for $BRANCH_NAME Failed'
                   }
                   }
@@ -498,8 +496,6 @@ pipeline{
                    }
                    unsuccessful {
                       println("rh7_cluster_10.0-2 Tests Failed")
-                      sh 'mkdir -p MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/MLLogs/'
-                      archiveArtifacts artifacts: 'MLLogs/**/*'
                       sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on 10.0-2 rh7 cluster failed. Please fix the tests and create a PR or create a bug for the failures.',false,'rh7_cluster_10.0-2 Tests for $BRANCH_NAME Failed'
                   }
                   }
@@ -534,8 +530,6 @@ pipeline{
                    }
                    unsuccessful {
                       println("rh7_cluster_10.0-1 Tests Failed")
-                      sh 'mkdir -p MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/MLLogs/'
-                      archiveArtifacts artifacts: 'MLLogs/**/*'
                       sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on 10.0-1 rh7 cluster failed. Please fix the tests and create a PR or create a bug for the failures.',false,'rh7_cluster_10.0-1 Tests for $BRANCH_NAME Failed'
                   }
                   }
