@@ -1,5 +1,5 @@
 {
-  "language" : "zxx",
+  "lang" : "zxx",
   "name" : "AdvantageEnrich",
   "description" : "custom step to enrich Advantage customer data",
   "type" : "CUSTOM",

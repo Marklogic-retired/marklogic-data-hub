@@ -32,7 +32,7 @@ public class MappingModel extends JsonPojo {
     protected String targetEntityType;
     protected String description;
     protected String sourceURI;
-    protected String language;
+    protected String lang;
     protected int version = 1;
     protected JsonNode properties;
 
@@ -89,12 +89,22 @@ public class MappingModel extends JsonPojo {
         this.sourceURI = sourceURI;
     }
 
+    @Deprecated
     public String getLanguage() {
-        return language;
+        return lang;
     }
 
+    @Deprecated
     public void setLanguage(String language) {
-        this.language = language;
+        this.lang = language;
+    }
+
+    public String getLang() {
+        return lang;
+    }
+
+    public void setLang(String lang) {
+        this.lang = lang;
     }
 
     public int getVersion() {
@@ -118,7 +128,7 @@ public class MappingModel extends JsonPojo {
         mapping.setTargetEntityType(node.get("targetEntityType").asText());
         mapping.setSourceContext(node.get("sourceContext").asText());
         mapping.setProperties(node.get("properties"));
-        mapping.setLanguage("zxx");
+        mapping.setLang("zxx");
 
         return mapping;
     }
@@ -127,8 +137,8 @@ public class MappingModel extends JsonPojo {
         ObjectNode node = JsonNodeFactory.instance.objectNode();
 
         node.put("version", getVersion());
-        if(getLanguage() != null) {
-            node.put("language", getLanguage());
+        if(getLang() != null) {
+            node.put("lang", getLang());
         }
         node.put("name", getName());
         node.set("properties", getProperties());
@@ -156,7 +166,7 @@ public class MappingModel extends JsonPojo {
         }
         MappingModel that = (MappingModel) o;
         if (!name.equalsIgnoreCase(that.name)) return false;
-        if (StringUtils.isNotEmpty(language) ? !language.equals(that.language) : StringUtils.isNotEmpty(that.language)) {
+        if (StringUtils.isNotEmpty(lang) ? !lang.equals(that.lang) : StringUtils.isNotEmpty(that.lang)) {
             return false;
         }
         if (StringUtils.isNotEmpty(sourceContext) ? !sourceContext.equals(that.sourceContext) : StringUtils.isNotEmpty(that.sourceContext)) {

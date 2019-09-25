@@ -15,7 +15,7 @@ export const flowsModelArray = [{
     "isValid": true,
     "isRunning": false,
     "config": {"mlcp": "options"},
-    "language": "en",
+    "lang": "en",
     "version": "1"
   }, {
     "id": "step-2-flow-1",
@@ -27,7 +27,7 @@ export const flowsModelArray = [{
     "isValid": true,
     "isRunning": false,
     "config": {"mlcp": "options"},
-    "language": "en",
+    "lang": "en",
     "version": "1"
   }, {
     "id": "step-3-flow-1",
@@ -39,7 +39,7 @@ export const flowsModelArray = [{
     "isValid": true,
     "isRunning": false,
     "config": {"mlcp": "options"},
-    "language": "en",
+    "lang": "en",
     "version": "1"
   }, {
     "id": "step-4-flow-1",
@@ -51,7 +51,7 @@ export const flowsModelArray = [{
     "isValid": true,
     "isRunning": false,
     "config": {"mlcp": "options"},
-    "language": "en",
+    "lang": "en",
     "version": "1"
   }],
   "jobs": ["job-1-flow-1", "job-2-flow-1", "job-3-flow-1", "job-4-flow-1"],
@@ -86,7 +86,7 @@ export const flowsModelArray = [{
     "isValid": true,
     "isRunning": false,
     "config": {"mlcp": "options"},
-    "language": "en",
+    "lang": "en",
     "version": "1"
   }, {
     "id": "step-2-flow-2",
@@ -98,7 +98,7 @@ export const flowsModelArray = [{
     "isValid": true,
     "isRunning": false,
     "config": {"mapping": "options"},
-    "language": "en",
+    "lang": "en",
     "version": "1"
   }, {
     "id": "step-3-flow-2",
@@ -110,7 +110,7 @@ export const flowsModelArray = [{
     "isValid": true,
     "isRunning": false,
     "config": {"mastering": "options"},
-    "language": "en",
+    "lang": "en",
     "version": "1"
   }, {
     "id": "step-4-flow-2",
@@ -122,7 +122,7 @@ export const flowsModelArray = [{
     "isValid": true,
     "isRunning": false,
     "config": {"custom": "options"},
-    "language": "en",
+    "lang": "en",
     "version": "1"
   }],
   "jobs": ["job-1-flow-2", "job-2-flow-2", "job-3-flow-2", "job-4-flow-2"],
@@ -157,7 +157,7 @@ export const flowsModelArray = [{
     "isValid": true,
     "isRunning": false,
     "config": {"mlcp": "options"},
-    "language": "en",
+    "lang": "en",
     "version": "1"
   }, {
     "id": "step-2-flow-3",
@@ -169,7 +169,7 @@ export const flowsModelArray = [{
     "isValid": true,
     "isRunning": false,
     "config": {"mapping": "options"},
-    "language": "en",
+    "lang": "en",
     "version": "1"
   }, {
     "id": "step-3-flow-3",
@@ -181,7 +181,7 @@ export const flowsModelArray = [{
     "isValid": true,
     "isRunning": false,
     "config": {"mastering": "options"},
-    "language": "en",
+    "lang": "en",
     "version": "1"
   }, {
     "id": "step-4-flow-3",
@@ -193,7 +193,7 @@ export const flowsModelArray = [{
     "isValid": true,
     "isRunning": false,
     "config": {"custom": "options"},
-    "language": "en",
+    "lang": "en",
     "version": "1"
   }],
   "jobs": ["job-1-flow-3"],
@@ -228,7 +228,7 @@ export const flowsModelArray = [{
     "isValid": false,
     "isRunning": false,
     "config": {"mlcp": "options"},
-    "language": "en",
+    "lang": "en",
     "version": "1"
   }],
   "jobs": [],

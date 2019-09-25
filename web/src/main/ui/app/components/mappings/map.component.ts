@@ -213,7 +213,7 @@ export class MapComponent implements OnInit {
     });
 
     let mapObj = {
-        "language" : "zxx",
+        "lang" : "zxx",
         "name" : this.mapName,
         "description" : this.mapping.description || "",  // TODO
         "version" : this.mapping.version || "0",

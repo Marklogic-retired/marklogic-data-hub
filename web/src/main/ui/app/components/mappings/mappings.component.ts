@@ -100,7 +100,7 @@ export class MappingsComponent implements OnInit, OnDestroy {
       save: (newMapName: string, newMapDesc: string) => {
 
         let mapObj = {
-          "language" : "zxx",
+          "lang" : "zxx",
           "name" : newMapName,
           "description" : newMapDesc,
           "version" : "0",

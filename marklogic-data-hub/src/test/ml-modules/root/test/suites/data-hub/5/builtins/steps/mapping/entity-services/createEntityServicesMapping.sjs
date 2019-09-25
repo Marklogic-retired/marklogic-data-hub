@@ -8,7 +8,7 @@ function describe(item) {
 
 // set caches to avoid DB inserts
 let customerMapping = fn.head(xdmp.unquote(`{
-  "language" : "zxx",
+  "lang" : "zxx",
   "name" : "CustomerXML-CustomerXMLMapping",
   "description" : "",
   "version" : 0,
@@ -32,7 +32,7 @@ let customerMapping = fn.head(xdmp.unquote(`{
 }
 }`));
 let orderMapping = fn.head(xdmp.unquote(`{
-  "language" : "zxx",
+  "lang" : "zxx",
   "name" : "OrderXML-CustomerXMLMapping",
   "description" : "",
   "version" : 0,

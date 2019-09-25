@@ -102,7 +102,15 @@ public interface StepDefinition {
      *
      * @return 'zxx', the default setting
      */
+    @Deprecated
     String getLanguage();
+
+    /**
+     * Returns the language setting of the step
+     *
+     * @return 'zxx', the default setting
+     */
+    String getLang();
 
     /**
      * Return the step version
