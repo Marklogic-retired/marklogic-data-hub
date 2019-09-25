@@ -122,7 +122,7 @@ javadoc {
 Node pomCustomizations = new NodeBuilder(). project {
     name 'explorer'
     packaging 'jar'
-    textdescription 'Library for Creating an Operational Data Hub on MarkLogic'
+    textdescription 'Library for Creating an Explorers on MarkLogic'
     url 'https://project.marklogic.com/repo/scm/prod/datahubenterprise.git'
 
     scm {
@@ -131,12 +131,7 @@ Node pomCustomizations = new NodeBuilder(). project {
         developerConnection 'scm:git@project.marklogic.com:product/datahubenterprise.git'
     }
 
-    licenses {
-        license {
-            name 'The Apache Software License, Version 2.0'
-            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-        }
-    }
+
 
     developers {
         developer {
@@ -145,12 +140,7 @@ Node pomCustomizations = new NodeBuilder(). project {
             organization 'MarkLogic'
             organizationUrl 'https://www.marklogic.com'
         }
-        developer {
-            name 'MarkLogic Github Contributors'
-            email 'general@developer.marklogic.com'
-            organization 'Github Contributors'
-            organizationUrl 'https://project.marklogic.com/repo/scm/prod/datahubenterprise.git/graphs/contributors'
-        }
+
     }
 }
 
@@ -177,7 +167,7 @@ publishing {
                 asNode().append(pomCustomizations.packaging)
                 asNode().append(pomCustomizations.url)
                 asNode().append(pomCustomizations.scm)
-                asNode().append(pomCustomizations.licenses)
+
             }
         }
     }
