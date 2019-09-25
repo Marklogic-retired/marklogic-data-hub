@@ -122,7 +122,7 @@ javadoc {
 Node pomCustomizations = new NodeBuilder(). project {
     name 'explorer'
     packaging 'jar'
-    textdescription 'Library for Creating an Explorers on MarkLogic'
+    textdescription 'Library for Creating an Explorer on MarkLogic'
     url 'https://project.marklogic.com/repo/scm/prod/datahubenterprise.git'
 
     scm {
