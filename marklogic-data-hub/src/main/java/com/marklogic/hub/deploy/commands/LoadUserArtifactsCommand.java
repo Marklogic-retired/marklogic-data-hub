@@ -15,6 +15,9 @@
  */
 package com.marklogic.hub.deploy.commands;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.AbstractCommand;
 import com.marklogic.appdeployer.command.CommandContext;
@@ -28,8 +31,10 @@ import com.marklogic.client.ext.modulesloader.impl.*;
 import com.marklogic.client.ext.util.DefaultDocumentPermissionsParser;
 import com.marklogic.client.ext.util.DocumentPermissionsParser;
 import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.mgmt.util.ObjectMapperFactory;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -41,6 +46,7 @@ import java.io.InputStream;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.regex.Pattern;
 
 /**
@@ -53,6 +59,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
     private HubConfig hubConfig;
 
     private DocumentPermissionsParser documentPermissionsParser = new DefaultDocumentPermissionsParser();
+    private ObjectMapper objectMapper;
 
     public void setForceLoad(boolean forceLoad) {
         this.forceLoad = forceLoad;
@@ -60,8 +67,10 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
 
     private boolean forceLoad = false;
 
+
     public LoadUserArtifactsCommand() {
         super();
+        this.objectMapper = ObjectMapperFactory.getObjectMapper();
         setExecuteSortOrder(SortOrderConstants.DEPLOY_TRIGGERS + 1);
     }
 
@@ -279,17 +288,58 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
     ) throws IOException {
         if (forceLoad || propertiesModuleManager.hasFileBeenModifiedSinceLastLoaded(r.getFile())) {
             InputStream inputStream = r.getInputStream();
-            StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
-            inputStream.close();
-            for (DocumentWriteSet writeSet: writeSets) {
-                writeSet.add(docId, meta, handle);
+
+            JsonNode json;
+            try {
+                json = objectMapper.readTree(inputStream);
+            } finally {
+                inputStream.close();
+            }
+
+            if (json instanceof ObjectNode && json.has("language")) {
+                json = replaceLanguageWithLang((ObjectNode)json);
+                try {
+                    objectMapper.writeValue(r.getFile(), json);
+                } catch (Exception ex) {
+                    logger.warn("Unable to replace 'language' with 'lang' in artifact file: " + r.getFile().getAbsolutePath()
+                        + ". You should replace 'language' with 'lang' yourself in this file. Error cause: " + ex.getMessage(), ex);
+                }
+            }
+
+            for (DocumentWriteSet writeSet : writeSets) {
+                writeSet.add(docId, meta, new JacksonHandle(json));
             }
             propertiesModuleManager.saveLastLoadedTimestamp(r.getFile(), new Date());
         }
     }
 
+    /**
+     * Per DHFPROD-3193 and an update to MarkLogic 10.0-2, "lang" must now be used instead of "language". To ensure that
+     * a user artifact is never loaded with "language", this command handles both updating the JSON that will be loaded
+     * into MarkLogic and updating the artifact file.
+     *
+     * @param object
+     * @return
+     */
+    protected ObjectNode replaceLanguageWithLang(ObjectNode object) {
+        ObjectNode newObject = objectMapper.createObjectNode();
+        newObject.put("lang", object.get("language").asText());
+        Iterator<String> fieldNames = object.fieldNames();
+        while (fieldNames.hasNext()) {
+            String fieldName = fieldNames.next();
+            if (!"language".equals(fieldName)) {
+                newObject.set(fieldName, object.get(fieldName));
+            }
+        }
+        return newObject;
+    }
+
     public void setHubConfig(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
+    }
+
+    public void setObjectMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
     }
 
     abstract class ResourceToURI {

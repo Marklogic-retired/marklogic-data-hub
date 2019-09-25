@@ -15,8 +15,10 @@
  */
 package com.marklogic.hub.deploy.commands;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.mgmt.util.ObjectMapperFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,8 +29,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 @ExtendWith(SpringExtension.class)
@@ -38,6 +39,20 @@ public class LoadUserArtifactsCommandTest extends HubTestBase {
     @BeforeEach
     public void setup() {
         loadUserArtifactsCommand.setHubConfig(getDataHubAdminConfig());
+    }
+
+    @Test
+    public void replaceLanguageWithLang() {
+        ObjectNode object = ObjectMapperFactory.getObjectMapper().createObjectNode();
+        object.put("language", "zxx");
+        object.put("something", "else");
+
+        object = loadUserArtifactsCommand.replaceLanguageWithLang(object);
+        assertEquals("zxx", object.get("lang").asText());
+        assertEquals("else", object.get("something").asText());
+        assertFalse(object.has("language"));
+        assertEquals("lang", object.fieldNames().next(),
+            "lang should still be the first field name in the JSON object");
     }
 
     @Test
