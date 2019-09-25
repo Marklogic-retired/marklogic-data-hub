@@ -4,7 +4,7 @@ const esMappingLib = require('/data-hub/5/builtins/steps/mapping/entity-services
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const datahub = DataHubSingleton.instance();
 
-function transform(context, params, content) {
+function mlGenerateFunctionMetadata(context, params, content) {
   if (esMappingLib.versionIsCompatibleWithES()) {
     let uri = context.uri;
     let pattern = '^(.*)\.(sjs|mjs|xqy)$';
@@ -43,4 +43,4 @@ function transform(context, params, content) {
   return content;
 }
 
-exports.transform = transform;
+exports.transform = mlGenerateFunctionMetadata;
