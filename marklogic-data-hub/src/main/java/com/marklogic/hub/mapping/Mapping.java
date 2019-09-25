@@ -135,7 +135,7 @@ public interface Mapping {
     /**
      * *CAREFUL - DO NOT TOUCH IF YOU DON'T EXPLICITLY KNOW WHAT THIS VALUE REPRESENTS*
      * Sets the language for the mapping to use for MarkLogic server
-     * @param language - sets the language key for the server - don't modify please!
+     * @param lang - sets the language key for the server - don't modify please!
      */
     void setLang(String lang);
 
