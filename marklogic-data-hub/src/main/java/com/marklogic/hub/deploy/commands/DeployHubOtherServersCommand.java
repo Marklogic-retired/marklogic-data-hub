@@ -45,8 +45,15 @@ public class DeployHubOtherServersCommand extends DeployOtherServersCommand {
             AppConfig appConfig = context.getAppConfig();
             Map<String, String> customTokens = appConfig.getCustomTokens();
             //set the server version for the rewriter
-            String serverVersion = this.dataHub.getServerVersion();
-            customTokens.put("%%mlServerVersion%%", serverVersion != null ? serverVersion.replaceAll("([^.]+)\\..*", "$1") : "9");
+            final String token = "%%mlServerVersion%%";
+            try {
+                String serverVersion = this.dataHub.getServerVersion();
+                customTokens.put(token, serverVersion != null ? serverVersion.replaceAll("([^.]+)\\..*", "$1") : "9");
+            } catch (Exception ex) {
+                logger.warn("Unable to determine the server version; cause: " + ex.getMessage());
+                logger.warn("Will set mlServerVersion to 9 as a fallback");
+                customTokens.put(token, "9");
+            }
             appConfig.setCustomTokens(customTokens);
             Map<String, Object> contextMap = context.getContextMap();
             contextMap.put("AppConfig", appConfig);

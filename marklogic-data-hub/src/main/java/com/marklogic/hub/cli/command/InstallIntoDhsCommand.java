@@ -5,6 +5,7 @@ import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
 import com.marklogic.appdeployer.command.security.DeployAmpsCommand;
 import com.marklogic.appdeployer.command.security.DeployPrivilegesCommand;
+import com.marklogic.hub.DataHub;
 import com.marklogic.hub.cli.Options;
 import com.marklogic.hub.cli.deploy.CopyQueryOptionsCommand;
 import com.marklogic.hub.cli.deploy.DhsDeployServersCommand;
@@ -34,7 +35,7 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
         // Update the servers in the Curator group
         groupName = "Curator";
         modifyHubConfigForDhs(groupName);
-        deployer.setCommands(Arrays.asList(new DhsDeployServersCommand()));
+        deployer.setCommands(Arrays.asList(new DhsDeployServersCommand(dataHub)));
         deployer.deploy(hubConfig.getAppConfig());
     }
 
@@ -50,7 +51,7 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
         commands.add(new DeployPrivilegesCommand());
         commands.add(new DeployAmpsCommand());
         commands.add(dbCommand);
-        commands.add(new DhsDeployServersCommand());
+        commands.add(new DhsDeployServersCommand(dataHub));
         commands.add(new DeployDatabaseFieldCommand());
 
         Map<String, List<Command>> commandMap = dataHub.buildCommandMap();

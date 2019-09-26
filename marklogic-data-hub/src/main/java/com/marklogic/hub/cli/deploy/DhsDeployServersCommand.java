@@ -1,6 +1,7 @@
 package com.marklogic.hub.cli.deploy;
 
 import com.marklogic.appdeployer.command.CommandContext;
+import com.marklogic.hub.DataHub;
 import com.marklogic.hub.deploy.commands.DeployHubOtherServersCommand;
 
 import java.io.File;
@@ -11,8 +12,8 @@ import java.io.File;
  */
 public class DhsDeployServersCommand extends DeployHubOtherServersCommand {
 
-    public DhsDeployServersCommand() {
-        super(null);
+    public DhsDeployServersCommand(DataHub dataHub) {
+        super(dataHub);
     }
 
     @Override

@@ -34,17 +34,18 @@ public abstract class AbstractVerifyCommand extends AbstractInstallerCommand {
     }
 
     protected void verifyAmps() {
-        // For amps - there are 66 of them, will just verify that the first and last ones exist
+        // For amps - just spot-checking a couple of them
         AmpManager ampManager = new AmpManager(hubConfig.getManageClient());
         Amp firstAmp = new Amp();
-        firstAmp.setLocalName("addResponseHeader");
+        firstAmp.setLocalName("map-to-xml");
         firstAmp.setModulesDatabase(hubConfig.getAppConfig().getModulesDatabaseName());
-        firstAmp.setDocumentUri("/data-hub/5/rest-api/lib/endpoint-util.sjs");
+        firstAmp.setDocumentUri("/com.marklogic.smart-mastering/survivorship/merging/base.xqy");
+        firstAmp.setNamespace("http://marklogic.com/smart-mastering/survivorship/merging");
         Amp lastAmp = new Amp();
-        lastAmp.setLocalName("invoke-service");
-        lastAmp.setDocumentUri("/data-hub/5/rest-api/lib/extensions-util.xqy");
+        lastAmp.setLocalName("construct-type");
+        lastAmp.setDocumentUri("/com.marklogic.smart-mastering/survivorship/merging/base.xqy");
         lastAmp.setModulesDatabase(hubConfig.getAppConfig().getModulesDatabaseName());
-        lastAmp.setNamespace("http://marklogic.com/rest-api/lib/extensions-util");
+        lastAmp.setNamespace("http://marklogic.com/smart-mastering/survivorship/merging");
         for (Amp amp : new Amp[]{firstAmp, lastAmp}) {
             verify(ampManager.ampExists(amp.getJson()), "Expected amp to have been created: " + amp.getJson());
         }
@@ -127,9 +128,10 @@ public abstract class AbstractVerifyCommand extends AbstractInstallerCommand {
     }
 
     protected void verifyStagingServer(String groupName) {
+        final String version = getServerMajorVersion();
         verifyRewriterAndErrorHandler(new ServerManager(hubConfig.getManageClient(), groupName).getPropertiesAsXml("data-hub-STAGING"),
-            "/data-hub/5/rest-api/rewriter.xml",
-            "/data-hub/5/rest-api/error-handler.xqy"
+            format("/data-hub/5/rest-api/rewriter/%s-rewriter.xml", version),
+            "/MarkLogic/rest-api/error-handler.xqy"
         );
     }
 
@@ -141,8 +143,9 @@ public abstract class AbstractVerifyCommand extends AbstractInstallerCommand {
     }
 
     protected void verifyJobServer(String groupName) {
+        final String version = getServerMajorVersion();
         verifyRewriterAndErrorHandler(new ServerManager(hubConfig.getManageClient(), groupName).getPropertiesAsXml("data-hub-JOBS"),
-            "/data-hub/5/tracing/tracing-rewriter.xml",
+            format("/data-hub/5/tracing/%s-tracing-rewriter.xml", version),
             "/MarkLogic/rest-api/error-handler.xqy"
         );
     }
