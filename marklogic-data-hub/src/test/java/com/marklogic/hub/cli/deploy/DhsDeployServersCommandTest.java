@@ -26,7 +26,7 @@ public class DhsDeployServersCommandTest {
         server.setPort(8123);
         server.setAuthentication("digestbasic");
 
-        final String payload = new DhsDeployServersCommand().adjustPayloadBeforeSavingResource(context, null, server.getJson());
+        final String payload = new DhsDeployServersCommand(null).adjustPayloadBeforeSavingResource(context, null, server.getJson());
         JsonNode node = ObjectMapperFactory.getObjectMapper().readTree(payload);
         assertEquals("some-server", node.get("server-name").asText());
         assertEquals("some-rewriter", node.get("url-rewriter").asText());

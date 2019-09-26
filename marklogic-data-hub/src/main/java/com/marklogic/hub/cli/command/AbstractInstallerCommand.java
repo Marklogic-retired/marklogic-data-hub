@@ -74,4 +74,15 @@ public abstract class AbstractInstallerCommand extends LoggingObject implements 
         }
     }
 
+    // TODO Some duplication between this and the logic in DeployHubOtherServersCommand
+    protected String getServerMajorVersion() {
+        try {
+            String serverVersion = this.dataHub.getServerVersion();
+            return serverVersion != null ? serverVersion.replaceAll("([^.]+)\\..*", "$1") : "9";
+        } catch (Exception ex) {
+            logger.warn("Unable to determine the server version; cause: " + ex.getMessage());
+            logger.warn("Will use 9 as a fallback");
+            return "9";
+        }
+    }
 }
