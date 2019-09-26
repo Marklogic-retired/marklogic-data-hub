@@ -152,9 +152,9 @@ public class ScaffoldingImpl implements Scaffolding {
 
             try {
                 String fileContents = buildFlowFromDefaultFlow(customTokens);
-                FileWriter writer = new FileWriter(flowFile);
-                writer.write(fileContents);
-                writer.close();
+                try (FileWriter writer = new FileWriter(flowFile)) {
+                    writer.write(fileContents);
+                }
             }
             catch (IOException e) {
                 throw new RuntimeException(e);

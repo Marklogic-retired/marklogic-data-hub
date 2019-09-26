@@ -8,10 +8,10 @@ import module namespace lid = "http://marklogic.com/util/log-id"
     at "/MarkLogic/appservices/utils/log-id.xqy";
 
 import module namespace dbut = "http://marklogic.com/rest-api/lib/db-util"
-    at "../lib/db-util.xqy";
+    at "/MarkLogic/rest-api/lib/db-util.xqy";
 
 import module namespace eput = "http://marklogic.com/rest-api/lib/endpoint-util"
-    at "endpoint-util.xqy";
+    at "/MarkLogic/rest-api/lib/endpoint-util.xqy";
 
 import module namespace hof = "http://marklogic.com/higher-order"
     at "/MarkLogic/appservices/utils/higher-order.xqy";
@@ -26,46 +26,9 @@ declare variable $extut:trace-id := "restapi.extensions";
 
 declare private variable $is-untraced := ();
 
-declare private variable $system-transforms-40 := map:map()
-    =>map:with("ml:extractContent",       "get-content")
-    =>map:with("ml:inputFlow",            "run-flow")
-    =>map:with("ml:sjsInputFlow",         "run-sjs-flow")
-    =>map:with("ml:jobSearchResults",     "job-search")
-    =>map:with("ml:traceSearchResults",   "trace-search")
-    =>map:with("ml:traceUISearchResults", "trace-json")
-    =>map:with("ml:prettifyXML",          "prettify");
+declare private variable $system-transforms := map:map();
 
-declare private variable $system-transforms-50 := map:map()
-    =>map:with("ml:runFlow",              "run-flow")
-    =>map:with("ml:runIngest",            "dmsdk-ingest")
-    =>map:with("ml:generateFunctionMetadata", "generate-function-metadata");
-
-declare private variable $system-resource-extensions-40 := map:map()
-    =>map:with("ml:dbConfigs",              "db-configs")
-    =>map:with("ml:debug",                  "debug")
-    =>map:with("ml:deleteJobs",             "delete-jobs")
-    =>map:with("ml:entity",                 "entity")
-    =>map:with("ml:flow",                   "flow")
-    =>map:with("ml:sjsFlow",                "sjsflow")
-    =>map:with("ml:hubstats",               "hubstats")
-    =>map:with("ml:hubversion",             "hubversion")
-    =>map:with("ml:piiGenerator",           "pii-generator")
-    =>map:with("ml:scaffoldContent",        "scaffold-content")
-    =>map:with("ml:searchOptionsGenerator", "search-options-generator")
-    =>map:with("ml:tracing",                "tracing")
-    =>map:with("ml:validate",               "validate");
-
-declare private variable $system-resource-extensions-50 := map:map()
-    =>map:with("ml:runFlow",    "runFlow")
-    =>map:with("ml:flows",      "flows")
-    =>map:with("ml:jobs",       "jobs")
-    =>map:with("ml:collections","collections")
-    =>map:with("ml:batches",    "batches")
-    =>map:with("ml:hubstats",   "hubstats")
-    =>map:with("ml:hubversion", "hubversion")
-    =>map:with("ml:mappingValidator", "mappingValidator")
-    =>map:with("ml:smMerge",    "smMerge")
-    =>map:with("ml:stepValidate","stepValidate");
+declare private variable $system-resource-extensions := map:map();
 
 declare function extut:check-untraced() as xs:boolean {
     if (exists($is-untraced)) then ()
@@ -474,21 +437,28 @@ declare function extut:get-extension-function(
                     )
                 )
             } catch($e) { }
-        return
+        return function($context, $params) {
+            for $request in map:get($context,"requests")
+            let $req-context := map:get($request,"context")
+            let $input := map:get($request,"input")
+            where fn:exists($input/binary()) and map:get($req-context,"input-type") = ("application/xml", "application/json")
+            return
+              map:put($request,"input", xdmp:unquote(xdmp:binary-decode($input, "UTF-8"))),
             if ($source-format eq "javascript")
-            then extut:transform-all-js($extension-name, ?, ?)
+            then extut:transform-all-js($extension-name, $context, $params)
             else extut:transform-all(
                 extut:get-extension-function(
                     "transform",$extension-name,$function-name,"xquery"
                     ),
-                ?,
-                ?)
+                $context,
+                $params)
+        }
     else extut:get-extension-function(
         $extension-type,$extension-name,$function-name,"xquery"
         )
 };
 
-declare function extut:get-extension-function(
+declare private function extut:get-extension-function(
     $extension-type as xs:string,
     $extension-name as xs:string,
     $function-name  as xs:string,
@@ -503,39 +473,16 @@ declare function extut:get-extension-function(
         if (exists($fcached))
         then $fcached
         else
-            let $system-module :=
-                if ($extension-type eq "transform")
-                then
-                  let $_ := map:get($system-transforms-40,$extension-name)
-                  return
-                    if (fn:empty($_)) then
-                      ("5", map:get($system-transforms-50,$extension-name))
-                    else ("4", $_)
-                else
-                  let $_ := map:get($system-resource-extensions-40,$extension-name)
-                  return
-                    if (fn:empty($_)) then
-                      ("5" , map:get($system-resource-extensions-50,$extension-name))
-                    else ("4", $_)
-            let $function    :=
-                if (fn:count($system-module) < 2)
-                then xdmp:function(
-                    if ($source-format eq "xquery")
-                        then QName(extut:get-extension-namespace($extension-type,$extension-name), $function-name)
-                        else xs:QName($function-name),
-                    extut:make-source-uri(
-                        extut:make-base-uri($extension-type,$extension-name), $extension-type, $source-format
-                        )
-                    )
-                else if ($extension-type eq "transform")
-                then xdmp:function(
-                    QName(concat("http://marklogic.com/rest-api/transform/",$system-module[2]), $function-name),
-                    concat("/data-hub/", $system-module[1] , "/transforms/",$system-module[2],".xqy")
-                    )
-                else  xdmp:function(
-                    QName(concat("http://marklogic.com/rest-api/extensions/",$system-module[2]), $function-name),
-                    concat("/data-hub/", $system-module[1]  , "/extensions/",$system-module[2],".xqy")
-                    )
+            let $extension-name := extut:translate-ml-prefix($extension-name)
+            let $function :=
+              xdmp:function(
+                if ($source-format eq "xquery")
+                    then QName(extut:get-extension-namespace($extension-type,$extension-name), $function-name)
+                    else xs:QName($function-name),
+                extut:make-source-uri(
+                    extut:make-base-uri($extension-type,$extension-name), $extension-type, $source-format
+                )
+            )
             return (
                 if (empty($function)) then ()
                 else map:put($function-cache,$fkey,$function),
@@ -553,7 +500,7 @@ declare function extut:make-transform-wrapper(
     return document {text {concat('xquery version "1.0-ml";
 module namespace ',$transform-name,' = "',$transform-ns,'";
 import module namespace extut = "http://marklogic.com/rest-api/lib/extensions-util"
-    at "../lib/extensions-util.xqy";
+    at "/data-hub/5/rest-api/lib/extensions-util.xqy";
 declare namespace xsl = "http://www.w3.org/1999/XSL/Transform";
 declare default function namespace "http://www.w3.org/2005/xpath-functions";
 declare option xdmp:mapping "false";
@@ -647,7 +594,7 @@ declare private function extut:make-base-uri(
     $extension-name as xs:string
 ) as xs:string
 {
-    concat("/marklogic.rest.",$extension-type,"/",$extension-name,"/")
+    concat("/marklogic.rest.",$extension-type,"/",extut:translate-ml-prefix($extension-name),"/")
 };
 
 declare private function extut:make-metadata-uri(
@@ -919,7 +866,6 @@ declare function extut:invoke-service(
                 =>map:with("txn-curr",$txn-curr)=>map:with("txn-mode",$txn-mode),
                 map:entry("input",$input)
                 ),
-
             xdmp:invoke-function(
                 function() {
                     extut:call-service(
@@ -986,9 +932,15 @@ declare private function extut:transform-all(
     map:entry("response",
         for $request in map:get($context,"requests")
         let $context := map:get($request,"context")
+        let $input := map:get($request,"input")
+        let $input :=
+          if (fn:exists($input/binary()) and map:get($context,"input-type") = ("application/xml", "application/json")) then
+            xdmp:unquote(xdmp:binary-decode($input, "UTF-8"))
+          else
+            $input
         return extut:make-output(
             $context,
-            xdmp:apply($func, $context, $params, map:get($request,"input"))
+            xdmp:apply($func, $context, $params, $input)
             )
         )
 };
@@ -1001,7 +953,7 @@ declare private function extut:transform-all-js(
 {
     xdmp:apply(
         xdmp:function(
-            xs:QName("applyList"), "../lib/extensions-util.sjs"
+            xs:QName("applyList"), "/data-hub/5/rest-api/lib/extensions-util.sjs"
             ),
         $extension-name,
         extut:make-source-uri(
@@ -1361,7 +1313,7 @@ declare function extut:make-javascript-wrapper(
         ) as map:map {
             xdmp:apply(
                 xdmp:function(
-                    xs:QName("applyOnce"), "../lib/extensions-util.sjs"
+                    xs:QName("applyOnce"), "/data-hub/5/rest-api/lib/extensions-util.sjs"
                     ),
                 (), $module-path, $func-name, $context, $params, ()
             )
@@ -1373,7 +1325,7 @@ declare function extut:make-javascript-wrapper(
         ) as map:map {
             xdmp:apply(
                 xdmp:function(
-                    xs:QName("applyOnce"), "../lib/extensions-util.sjs"
+                    xs:QName("applyOnce"), "/data-hub/5/rest-api/lib/extensions-util.sjs"
                     ),
                 (), $module-path, $func-name, $context, $params, $input
             )
@@ -1392,7 +1344,7 @@ declare private function extut:javascript-wrapper-module(
 module namespace {$extension-name} = "{$extension-ns}";
 
 import module namespace extut = "http://marklogic.com/rest-api/lib/extensions-util"
-    at "../lib/extensions-util.xqy";
+    at "/data-hub/5/rest-api/lib/extensions-util.xqy";
 
 declare default function namespace "http://www.w3.org/2005/xpath-functions";
 declare option xdmp:mapping "false";
@@ -1400,7 +1352,7 @@ declare option xdmp:mapping "false";
 declare private variable $extName := "{$extension-name}";
 declare private variable $modPath := "{$module-uri}";
 declare private variable $caller  := xdmp:function(
-    xs:QName("applyOnce"), "../lib/extensions-util.sjs"
+    xs:QName("applyOnce"), "/data-hub/5/rest-api/lib/extensions-util.sjs"
     );
 
 declare function {$extension-name}:source-format() as xs:string {{
@@ -1433,4 +1385,17 @@ declare function {$extension-name}:transform(
 }};
 </case>)
     return document { $module-body }
+};
+
+(: DH 5 addition for handling the ml: prefix :)
+declare private function extut:translate-ml-prefix(
+  $extension-name as xs:string
+) as xs:string
+{
+  if (starts-with($extension-name,"ml:")) then
+    let $post-fix := substring-after($extension-name, "ml:")
+    return
+      concat("ml", upper-case(substring($post-fix,1,1)), substring($post-fix,2))
+  else
+    $extension-name
 };

@@ -95,7 +95,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
         if (batchSize != null) {
             loader.setBatchSize(batchSize);
         }
-        
+
         JarDocumentFileReader jarDocumentFileReader = new JarDocumentFileReader();
         jarDocumentFileReader.addDocumentFileProcessor(new CacheBusterDocumentFileProcessor());
         jarDocumentFileReader.addDocumentFileProcessor(new TokenReplacerDocumentFileProcessor(buildModuleTokenReplacer(appConfig)));

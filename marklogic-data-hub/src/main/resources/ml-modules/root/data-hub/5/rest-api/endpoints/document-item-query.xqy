@@ -9,10 +9,10 @@ import module namespace lid = "http://marklogic.com/util/log-id"
     at "/MarkLogic/appservices/utils/log-id.xqy";
 
 import module namespace eput = "http://marklogic.com/rest-api/lib/endpoint-util"
-    at "../lib/endpoint-util.xqy";
+    at "/MarkLogic/rest-api/lib/endpoint-util.xqy";
 
 import module namespace parameters = "http://marklogic.com/rest-api/endpoints/parameters"
-    at "../endpoints/parameters.xqy";
+    at "/MarkLogic/rest-api/endpoints/parameters.xqy";
 
 declare default function namespace "http://www.w3.org/2005/xpath-functions";
 declare option xdmp:mapping "false";
@@ -61,7 +61,7 @@ declare private function local:docmod-callback(
 
     if (empty($response-range)) then ()
     else eput:add-response-header("Content-Range",$response-range),
-    
+
     let $timestamp := xdmp:request-timestamp()
     return if (exists($timestamp)) then eput:add-response-header("ML-Effective-Timestamp",string($timestamp)) else ()
 };

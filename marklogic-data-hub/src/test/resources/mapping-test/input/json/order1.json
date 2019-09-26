@@ -1,0 +1,49 @@
+{
+   "OrderID": "10249",
+   "CustomerID": "VINET",
+   "EmployeeID": 1,
+   "DateTimeFormat1": "1996/07/04 14:25:55",
+   "DateTimeFormat2": "1996/07/04-14:25:55",
+   "DateTimeFormat3": "04/07/1996 14:25:55",
+   "DateTimeFormat4": "04/07/1996-14:25:55",
+   "DateTimeFormat5": "19960704142555",
+   "RequiredDate1": "08/01/1996",
+   "RequiredDate2": "08-01-1996",
+   "RequiredDate3": "01.08.1996",
+   "RequiredDate4": "1996/08/01",
+   "RequiredDate5": "01 Aug 1996",
+   "ShippedDate1": "01/08/1996",
+   "ShippedDate2": "08.01.1996",
+   "ShippedDate3": "19960716",
+   "ShippedDate4": "Jul 16, 1996",
+   "ShippedDate5": "01-Aug-1996",
+   "ShipVia": "3",
+   "Freight": "32.3800",
+   "ShipName": "Vins et alcools Chevalier",
+   "ShipAddress": "59 rue de l'Abbaye",
+   "ShipCity": "Reims",
+   "ShipRegion": [],
+   "ShipPostalCode": "51100",
+   "ShipCountry": "France",
+   "PurchasedItems": [
+     {
+       "ProductID": 10,
+       "UnitPrice": "12.2300",
+       "Quantity": "13",
+       "ProductName": "prod10"
+     },
+     {
+       "ProductID": 41,
+       "UnitPrice": "7.8000",
+       "Quantity": "14",
+       "ProductName": "prod41"
+     },
+     {
+       "ProductID": 71,
+       "UnitPrice": "30.1990",
+       "Quantity": "15",
+       "ProductName": "prod71"
+     }
+   ]
+}
+

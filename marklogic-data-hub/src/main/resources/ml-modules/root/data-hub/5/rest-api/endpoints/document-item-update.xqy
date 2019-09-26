@@ -4,15 +4,15 @@ xquery version "1.0-ml";
 
 import module namespace docmodupd = "http://marklogic.com/rest-api/models/document-model-update"
     at "../models/document-model-update.xqy";
-    
+
 import module namespace eput = "http://marklogic.com/rest-api/lib/endpoint-util"
-    at "../lib/endpoint-util.xqy";
+    at "/MarkLogic/rest-api/lib/endpoint-util.xqy";
 
 import module namespace lid = "http://marklogic.com/util/log-id"
     at "/MarkLogic/appservices/utils/log-id.xqy";
 
 import module namespace parameters = "http://marklogic.com/rest-api/endpoints/parameters"
-    at "../endpoints/parameters.xqy";
+    at "/MarkLogic/rest-api/endpoints/parameters.xqy";
 
 declare default function namespace "http://www.w3.org/2005/xpath-functions";
 declare option xdmp:mapping "false";
@@ -132,7 +132,9 @@ declare private function local:validate-bulk-write-params(
     let $extra-names := parameters:validate-parameter-names($params,())
     return
         if (empty($extra-names)) then ()
-        else error((),"REST-UNSUPPORTEDPARAM", "invalid parameters: " || string-join($extra-names,", ") || " for " || map:get($params,"uri") )
+        else error((),"REST-UNSUPPORTEDPARAM",  concat(
+            "invalid parameters: ",string-join($extra-names,", ")," for bulk write with transform"
+            ))
 };
 
 declare private function local:validate-delete-params(
@@ -315,7 +317,7 @@ return (
         map:put($headers,"x-http-method-override","PATCH"),
 
         local:validate-patch-params($params),
-        
+
         docmodupd:patch($headers,$params,$env)
         )
     case "DELETE" return (
@@ -325,7 +327,7 @@ return (
         else map:put($env, "host-cookie-adder", eput:add-host-cookie#1),
 
         local:validate-delete-params($params),
-        
+
         docmodupd:delete($headers,$params,$env)
         )
     default return error((), "REST-UNSUPPORTEDMETHOD",$method)

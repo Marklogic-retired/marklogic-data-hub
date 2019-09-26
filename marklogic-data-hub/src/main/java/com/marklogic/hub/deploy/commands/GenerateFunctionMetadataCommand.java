@@ -45,8 +45,8 @@ public class GenerateFunctionMetadataCommand extends AbstractCommand {
 
         StructuredQueryBuilder sb = modulesClient.newQueryManager().newStructuredQueryBuilder();
 
-
-        ServerTransform serverTransform = new ServerTransform("ml:generateFunctionMetadata");
+        // This transform needs to be the camelcase prefix instead of the ml: prefix since it is run as part of modules load.
+        ServerTransform serverTransform = new ServerTransform("mlGenerateFunctionMetadata");
 
         ApplyTransformListener transformListener = new ApplyTransformListener()
             .withTransform(serverTransform)

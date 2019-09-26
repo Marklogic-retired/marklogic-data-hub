@@ -39,6 +39,7 @@ import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.*;
 import com.marklogic.hub.util.json.JSONObject;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
@@ -658,40 +659,41 @@ public class WriteStepRunner implements StepRunner {
     }
 
     private void addToBatcher(File file, Format fileFormat) throws  IOException{
+        // This docStream must not be closed, or use try-resource due to WriteBatcher needing the stream open
         FileInputStream docStream = new FileInputStream(file);
         //note these ORs are for forward compatibility if we swap out the filecollector for another lib
-        if(inputFileType.equalsIgnoreCase("csv") || inputFileType.equalsIgnoreCase("tsv") || inputFileType.equalsIgnoreCase("psv")) {
+        if (inputFileType.equalsIgnoreCase("csv") || inputFileType.equalsIgnoreCase("tsv") || inputFileType.equalsIgnoreCase("psv")) {
             CsvSchema schema = CsvSchema.emptySchema()
                 .withHeader()
                 .withColumnSeparator(separator.charAt(0));
             JacksonCSVSplitter splitter = new JacksonCSVSplitter().withCsvSchema(schema);
             try {
-                if(! writeBatcher.isStopped()) {
+                if (!writeBatcher.isStopped()) {
                     Stream<JacksonHandle> contentStream = splitter.split(docStream);
                     contentStream.forEach(jacksonHandle -> this.processCsv(jacksonHandle, file));
                 }
             } catch (Exception e) {
-               throw new RuntimeException(e);
+                IOUtils.closeQuietly(docStream);
+                throw new RuntimeException(e);
             }
-        }
-        else {
+        } else {
             InputStreamHandle handle = new InputStreamHandle(docStream);
-            handle.setFormat(fileFormat);
             try {
-                if(! writeBatcher.isStopped()) {
+                handle.setFormat(fileFormat);
+                if (!writeBatcher.isStopped()) {
                     try {
                         String uri = file.getAbsolutePath();
                         //In case of Windows, C:\\Documents\\abc.json will be converted to /c/Documents/abc.json
-                        if(SystemUtils.OS_NAME.toLowerCase().contains("windows")){
+                        if (SystemUtils.OS_NAME.toLowerCase().contains("windows")) {
                             uri = "/" + FilenameUtils.separatorsToUnix(StringUtils.replaceOnce(uri, ":", ""));
                         }
                         writeBatcher.add(generateAndEncodeURI(outputURIReplace(uri)), handle);
-                    }
-                    catch (IllegalStateException e) {
+                    } catch (IllegalStateException e) {
                         logger.error("WriteBatcher has been stopped");
                     }
                 }
             } catch (URISyntaxException e) {
+                IOUtils.closeQuietly(handle);
                 throw new RuntimeException(e);
             }
         }

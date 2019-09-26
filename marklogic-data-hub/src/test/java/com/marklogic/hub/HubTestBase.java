@@ -34,12 +34,13 @@ import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.ext.SecurityContextType;
+import com.marklogic.client.ext.file.JarDocumentFileReader;
 import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager;
+import com.marklogic.client.ext.tokenreplacer.DefaultTokenReplacer;
+import com.marklogic.client.ext.tokenreplacer.TokenReplacer;
 import com.marklogic.client.io.*;
-import com.marklogic.hub.deploy.commands.LoadHubArtifactsCommand;
-import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
-import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
-import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
+import com.marklogic.client.io.marker.AbstractReadHandle;
+import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.impl.DataHubImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
@@ -137,6 +138,9 @@ public class HubTestBase {
     protected LoadUserArtifactsCommand loadUserArtifactsCommand;
 
     @Autowired
+    protected GenerateFunctionMetadataCommand generateFunctionMetadataCommand;
+
+    @Autowired
     protected Scaffolding scaffolding;
 
     @Autowired
@@ -153,6 +157,8 @@ public class HubTestBase {
 
     @Autowired
     protected JobMonitorImpl jobMonitor;
+
+    protected JarDocumentFileReader jarDocumentFileReader = null;
 
     // to speedup dev cycle, you can create a hub and set this to true.
     // for true setup/teardown, must be 'false'
@@ -234,26 +240,31 @@ public class HubTestBase {
             adminHubConfig.initHubProject();
         }
         // note the app config loads dhf defaults from classpath
+        InputStream p2 = null;
         try {
             Properties p = new Properties();
-            InputStream p2 = new FileInputStream("gradle.properties");
+            p2 = new FileInputStream("gradle.properties");
             p.load(p2);
             properties.putAll(p);
-            p2.close();
         }
         catch (IOException e) {
             System.err.println("Properties file not loaded.");
+        } finally {
+            IOUtils.closeQuietly(p2);
         }
 
         // try to load the local environment overrides file
+        InputStream is = null;
         try {
             Properties p = new Properties();
-            InputStream is = new FileInputStream("gradle-local.properties");
+            is = new FileInputStream("gradle-local.properties");
             p.load(is);
             properties.putAll(p);
         }
         catch (IOException e) {
             System.err.println("gradle-local.properties file not loaded.");
+        } finally {
+            IOUtils.closeQuietly(is);
         }
         boolean sslStaging = Boolean.parseBoolean(properties.getProperty("mlStagingSimpleSsl"));
         boolean sslJob = Boolean.parseBoolean(properties.getProperty("mlJobSimpleSsl"));
@@ -578,9 +589,10 @@ public class HubTestBase {
     }
 
     public void deleteProjectDir() {
-        if (new File(PROJECT_PATH).exists()) {
+        File projectPath = new File(PROJECT_PATH);
+        if (projectPath.exists()) {
             try {
-                FileUtils.forceDelete(new File(PROJECT_PATH));
+                FileUtils.forceDelete(projectPath);
             } catch (IOException e) {
                 logger.warn("Unable to delete the project directory", e);
             }
@@ -595,13 +607,18 @@ public class HubTestBase {
     }
 
     protected String getResource(String resourceName) {
+        InputStream inputStream = null;
+        String output = null;
         try {
-            InputStream inputStream = getResourceStream(resourceName);
-            return IOUtils.toString(inputStream);
+            inputStream = getResourceStream(resourceName);
+            output = IOUtils.toString(inputStream);
         }
         catch(IOException e) {
             throw new RuntimeException(e);
+        } finally {
+            IOUtils.closeQuietly(inputStream);
         }
+        return output;
     }
 
     protected String getModulesFile(String uri) {
@@ -628,16 +645,20 @@ public class HubTestBase {
     }
 
     protected Document getXmlFromInputStream(InputStream inputStream) {
+        Document output = null;
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setIgnoringElementContentWhitespace(true);
             factory.setNamespaceAware(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
 
-            return builder.parse(inputStream);
+            output = builder.parse(inputStream);
         } catch (IOException | SAXException | ParserConfigurationException e) {
             throw new RuntimeException(e);
+        } finally {
+            IOUtils.closeQuietly(inputStream);
         }
+        return output;
     }
 
     protected JsonNode getJsonFromResource(String resourceName) {
@@ -703,6 +724,11 @@ public class HubTestBase {
         EvalResult res = resultItr.next();
         count = Math.toIntExact((long) res.getNumber());
         return count;
+    }
+
+    protected JsonNode getQueryResults(String query, String database) {
+        AbstractReadHandle res = runInDatabase(query, database, new JacksonHandle());
+        return ((JacksonHandle)res).get();
     }
 
     protected int getTelemetryInstallCount(){
@@ -780,6 +806,7 @@ public class HubTestBase {
             writeSet.add(path, permissions, handle);
         });
         modMgr.write(writeSet);
+        writeSet.parallelStream().forEach((writeOp) -> { IOUtils.closeQuietly((InputStreamHandle) writeOp.getContent());});
         clearFlowCache();
     }
 
@@ -800,6 +827,7 @@ public class HubTestBase {
         }
         modMgr.write(path, permissions, handle);
         clearFlowCache();
+        handle.close();
     }
 
     protected void clearFlowCache() {
@@ -822,38 +850,45 @@ public class HubTestBase {
     }
 
     protected EvalResultIterator runInDatabase(String query, String databaseName) {
-        ServerEvaluationCall eval;
-        switch(databaseName) {
-            case HubConfig.DEFAULT_STAGING_NAME:
-                eval = stagingClient.newServerEval();
-                break;
-            case HubConfig.DEFAULT_FINAL_NAME:
-                eval = finalClient.newServerEval();
-                break;
-            case HubConfig.DEFAULT_MODULES_DB_NAME:
-                eval = stagingModulesClient.newServerEval();
-                break;
-
-            case HubConfig.DEFAULT_JOB_NAME:
-                eval = jobClient.newServerEval();
-                break;
-            case HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME:
-                eval = finalSchemasClient.newServerEval();
-                break;
-            case HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME:
-                eval = stagingSchemasClient.newServerEval();
-                break;
-            default:
-                eval = stagingClient.newServerEval();
-                break;
-        }
         try {
-            return eval.xquery(query).eval();
+            return getServerEval(databaseName).xquery(query).eval();
         }
         catch(FailedRequestException e) {
             logger.error("Failed run code: " + query, e);
             e.printStackTrace();
             throw e;
+        }
+    }
+
+    protected AbstractReadHandle runInDatabase(String query, String databaseName, AbstractReadHandle handle) {
+        try {
+            return getServerEval(databaseName).xquery(query).eval(handle);
+        }
+        catch(FailedRequestException e) {
+            logger.error("Failed run code: " + query, e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    private ServerEvaluationCall getServerEval(String databaseName) {
+        return getClientByName(databaseName).newServerEval();
+    }
+
+    protected DatabaseClient getClientByName(String databaseName) {
+        switch(databaseName) {
+            case HubConfig.DEFAULT_FINAL_NAME:
+                return finalClient;
+            case HubConfig.DEFAULT_MODULES_DB_NAME:
+                return stagingModulesClient;
+            case HubConfig.DEFAULT_JOB_NAME:
+                return jobClient;
+            case HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME:
+                return finalSchemasClient;
+            case HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME:
+                return stagingSchemasClient;
+            default:
+                return stagingClient;
         }
     }
 
@@ -919,6 +954,11 @@ public class HubTestBase {
         }
     }
 
+    public JsonNode outputToJson(List<String> stepOutput, int index, String field) throws Exception{
+        JsonNode jsonOutput = new ObjectMapper().readTree(stepOutput.toString());
+        return jsonOutput.get(index).get(field);
+    }
+
     protected void assertJsonEqual(String expected, String actual, boolean strict) {
         try {
             JSONAssert.assertEquals(expected, actual, false);
@@ -946,6 +986,10 @@ public class HubTestBase {
 
         LoadModulesCommand loadModulesCommand = new LoadModulesCommand();
         commands.add(loadModulesCommand);
+        //'generateFunctionMetadataCommand' must be called before deploying mappings. If mapping is deployed first
+        // and it references custom functions, mapping xslt will not have reference to custom functions and tests
+        // would fail with XDMP-UNDFUN: (err:XPST0017) Undefined function customDateTime().
+        commands.add(generateFunctionMetadataCommand);
 
         loadUserArtifactsCommand.setForceLoad(force);
         commands.add(loadUserArtifactsCommand);
@@ -953,6 +997,20 @@ public class HubTestBase {
         SimpleAppDeployer deployer = new SimpleAppDeployer(((HubConfigImpl)hubConfig).getManageClient(), ((HubConfigImpl)hubConfig).getAdminManager());
         deployer.setCommands(commands);
         deployer.deploy(hubConfig.getAppConfig());
+    }
+
+    private TokenReplacer buildModuleTokenReplacer(AppConfig appConfig) {
+        DefaultTokenReplacer r = new DefaultTokenReplacer();
+        final Map<String, String> customTokens = appConfig.getCustomTokens();
+        if (customTokens != null && !customTokens.isEmpty()) {
+            r.addPropertiesSource(() -> {
+                Properties p = new Properties();
+                p.putAll(customTokens);
+                return p;
+            });
+        }
+
+        return r;
     }
 
     protected void installHubArtifacts(HubConfig hubConfig, boolean force) {

@@ -17,32 +17,32 @@ import module namespace lid = "http://marklogic.com/util/log-id"
     at "/MarkLogic/appservices/utils/log-id.xqy";
 
 import module namespace eput = "http://marklogic.com/rest-api/lib/endpoint-util"
-    at "../lib/endpoint-util.xqy";
+    at "/MarkLogic/rest-api/lib/endpoint-util.xqy";
 
 import module namespace transmod = "http://marklogic.com/rest-api/models/transaction-model"
-    at "../models/transaction-model.xqy";
+    at "/MarkLogic/rest-api/models/transaction-model.xqy";
 
 import module namespace tformod = "http://marklogic.com/rest-api/models/transform-model"
-    at "../models/transform-model.xqy";
+    at "transform-model.xqy";
 
 import module namespace dbut = "http://marklogic.com/rest-api/lib/db-util"
-    at "../lib/db-util.xqy";
+    at "/MarkLogic/rest-api/lib/db-util.xqy";
 
 import module namespace json-path = "http://marklogic.com/appservices/json-path"
     at "/MarkLogic/appservices/utils/json-path.xqy";
 
 import module namespace replib = "http://marklogic.com/rest-api/lib/replace-lib"
-    at "../lib/replace-lib.xqy";
+    at "/MarkLogic/rest-api/lib/replace-lib.xqy";
 
 import schema namespace rapi = "http://marklogic.com/rest-api"
     at "restapi.xsd";
 
 import module namespace docmodcom = "http://marklogic.com/rest-api/models/document-model-common"
-    at "../models/document-model-common.xqy";
+    at "document-model-common.xqy";
 
 (: needed for patch :)
 import module namespace docmodqry = "http://marklogic.com/rest-api/models/document-model-query"
-    at "../models/document-model-query.xqy";
+    at "document-model-query.xqy";
 
 import module namespace temporal = "http://marklogic.com/xdmp/temporal" at "/MarkLogic/temporal.xqy";
 
@@ -772,7 +772,7 @@ declare function docmodupd:put-content(
 ) as empty-sequence()
 {
     let $with-overwrite := ($update-policy eq "overwrite-metadata")
-    let $env-body       := (map:get($env,"contains-body") eq "true")
+    let $env-body       := (map:get($env,"contains-body") = "true")
     let $trans-name     := map:get($params,"transform")
     let $body-getter as function(*)? :=
         if ($env-body) then ()
@@ -2736,7 +2736,7 @@ declare function docmodupd:apply-sjs-operations(
 
         let $result := xdmp:apply(
             xdmp:function(xs:QName("applyOperations"),
-                "../models/document-model-update.sjs"),
+                "/MarkLogic/rest-api/models/document-model-update.sjs"),
 
             $is-xml,
 
@@ -3549,11 +3549,15 @@ declare private function docmodupd:produce-content(
                 case attribute() return
                     attribute {node-name($node)} {string-join($content/string(.),'')}
                 case element()   return
-                    typeswitch($content)
-                    case element(rapi:text) return $content/text()
-                    case element()          return $content
-                    case text()             return element {node-name($node)} {$node/@*, $content}
-                    default                 return element {node-name($node)} {$node/@*}
+                    let $child-elem := $content/self::element()
+                    return
+                        typeswitch($child-elem)
+                        case element(rapi:text) return $child-elem/text()
+                        case element()          return $child-elem
+                        default                 return element {node-name($node)} {
+                            $node/@*,
+                            $content/self::text()
+                            }
                 default          return $content
         return
             if (not($is-xml) and (
@@ -3591,9 +3595,9 @@ declare private function docmodupd:prepare-content(
         if (exists($contentKey))
         then map:get($patch-content,$contentKey)
         else $operation/node()
-    return
+   return
         if (not($is-apply-input))
-        then $content
+            then $content
         else if (not($is-xml)) then
             for $item in (
                 if ($content instance of array-node())
@@ -3805,7 +3809,12 @@ declare private function docmodupd:write-bulk-documents(
                 else docmodupd:disposition-map(map:get($headers,$disposition-key))
             let $categories      :=
                 if (empty($document-params)) then ()
-                else head((map:get($document-params,"category"), "content"))
+                else
+                    let $category-params := map:get($document-params,"category")
+                    return
+                        if (exists($category-params))
+                        then $category-params
+                        else "content"
             let $is-metadata     := not($categories = "content")
             let $curr-uri        :=
                 let $uri :=
@@ -3835,7 +3844,7 @@ declare private function docmodupd:write-bulk-documents(
                 else docmodupd:content-format(
                     $curr-uri,
                     $trans-name,
-                        eput:uri-content-type($curr-uri)
+                    eput:uri-content-type($curr-uri)
                         [. ne "application/x-unknown-content-type"],
                     $content-type,
                     ()
@@ -4365,14 +4374,14 @@ declare private function docmodupd:content-format(
         if (empty($trans-name) and exists($uri-format))
         then $uri-format
         else eput:content-type-format($content-type)
-        return
-            if (exists($content-format))
-            then $content-format
-            else if (exists($uri-format))
-            then $uri-format
-            else if (exists($param-format))
-            then $param-format
-            else "binary"
+    return
+        if (exists($content-format))
+        then $content-format
+        else if (exists($uri-format))
+        then $uri-format
+        else if (exists($param-format))
+        then $param-format
+        else "binary"
 };
 
 declare private function docmodupd:lock-uris(

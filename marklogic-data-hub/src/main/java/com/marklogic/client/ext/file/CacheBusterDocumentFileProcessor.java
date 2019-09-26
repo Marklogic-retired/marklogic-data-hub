@@ -15,15 +15,15 @@
  */
 package com.marklogic.client.ext.file;
 
-import com.marklogic.client.ext.file.DocumentFile;
-import com.marklogic.client.ext.file.DocumentFileProcessor;
 import com.marklogic.client.ext.helper.FilenameUtil;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.client.io.Format;
+import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.util.FileCopyUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.UUID;
 
 public class CacheBusterDocumentFileProcessor extends LoggingObject implements DocumentFileProcessor {
@@ -37,10 +37,14 @@ public class CacheBusterDocumentFileProcessor extends LoggingObject implements D
             if (text == null) {
                 Resource resource = documentFile.getResource();
                 if (resource != null) {
+                    InputStream inputStream = null;
                     try {
-                        text = new String(FileCopyUtils.copyToByteArray(resource.getInputStream()));
+                        inputStream = resource.getInputStream();
+                        text = new String(FileCopyUtils.copyToByteArray(inputStream));
                     } catch (IOException ie) {
                         logger.warn("Unable to replace tokens in file: " + documentFile.getUri() + "; cause: " + ie.getMessage());
+                    } finally {
+                        IOUtils.closeQuietly(inputStream);
                     }
                 }
             }

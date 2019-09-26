@@ -38,6 +38,7 @@ import com.marklogic.hub.mapping.Mapping;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.bootstrap.Installer;
+import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,6 +48,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.w3c.dom.Document;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -301,7 +303,9 @@ public class MappingE2E extends HubTestBase {
     }
 
     private void copyFile(String srcDir, Path dstDir) {
-        FileUtil.copy(getResourceStream(srcDir), dstDir.toFile());
+        InputStream inputStream = getResourceStream(srcDir);
+        FileUtil.copy(inputStream, dstDir.toFile());
+        IOUtils.closeQuietly(inputStream);
     }
 
     private void installDocs(String flowName, DataFormat dataFormat, String collection, DatabaseClient srcClient) {

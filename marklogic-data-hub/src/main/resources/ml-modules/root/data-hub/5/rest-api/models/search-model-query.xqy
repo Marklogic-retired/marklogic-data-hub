@@ -11,22 +11,22 @@ import module namespace search = "http://marklogic.com/appservices/search"
     at "/MarkLogic/appservices/search/search.xqy";
 
 import module namespace sut = "http://marklogic.com/rest-api/lib/search-util"
-    at "../lib/search-util.xqy";
-    
+    at "/MarkLogic/rest-api/lib/search-util.xqy";
+
 import module namespace eput = "http://marklogic.com/rest-api/lib/endpoint-util"
     at "../lib/endpoint-util.xqy";
 
 import module namespace docmodcom = "http://marklogic.com/rest-api/models/document-model-common"
-    at "../models/document-model-common.xqy";
-    
+    at "document-model-common.xqy";
+
 import module namespace transmod = "http://marklogic.com/rest-api/models/transaction-model"
-    at "transaction-model.xqy";
+    at "/MarkLogic/rest-api/models/transaction-model.xqy";
 
 import module namespace search-impl = "http://marklogic.com/appservices/search-impl"
     at "/MarkLogic/appservices/search/search-impl.xqy";
 
 (: Warning: this implementation import is for debugging output :)
-import module namespace ast = "http://marklogic.com/appservices/search-ast" 
+import module namespace ast = "http://marklogic.com/appservices/search-ast"
     at "/MarkLogic/appservices/search/ast.xqy";
 
 declare namespace http       = "xdmp:http";
@@ -56,14 +56,24 @@ declare function searchmodq:search-get(
 ) as item()?
 {
     eput:response-add-host-cookie($headers, $params, $env),
-    if (starts-with(head(map:get($headers,"accept")),"multipart/mixed"))
-    then 
-        let $options          := sut:options($params)
-        let $structured-query := searchmodq:make-query($params,$options)
-        return searchmodq:get-bulk-results($headers,$params,$env,$structured-query,$options)
-    else searchmodq:get-response(
-        searchmodq:resolve-search-get($params),$headers,$params,$env
-        )
+    let $options          := sut:options($params)
+    let $structured-query := searchmodq:make-query($params,$options)
+    return
+        if (starts-with(head(map:get($headers,"accept")),"multipart/mixed"))
+        then searchmodq:get-bulk-results($headers,$params,$env,$structured-query,$options)
+        else if (map:get($params,"view") eq "ctsquery")
+        then searchmodq:get-query-response(
+            search-impl:do-convert-query($options,$structured-query),
+            $headers,
+            $params,
+            $env
+            )
+        else searchmodq:get-response(
+            searchmodq:resolve($structured-query,$options,$params),
+            $headers,
+            $params,
+            $env
+            )
 };
 
 (: entry point for POST on /search; invokes for transaction if id supplied :)
@@ -71,44 +81,30 @@ declare function searchmodq:search-post(
     $headers as map:map,
     $params  as map:map,
     $env     as map:map?,
-    $input   as document-node()?
+    $doc     as document-node()?
 ) as item()?
 {
     eput:response-add-host-cookie($headers, $params, $env),
-    if (starts-with(head(map:get($headers,"accept")),"multipart/mixed")) then
-        let $combined-query   := sut:make-combined-query($input/node())
-        let $options          := sut:make-options($params,$combined-query)
-        let $structured-query := searchmodq:make-query($params,$input/node(),$combined-query,$options)
-        return searchmodq:get-bulk-results($headers,$params,$env,$structured-query,$options)
-    else searchmodq:get-response(
-        searchmodq:resolve-search-post($headers,$params,$input/node()),
-        $headers,
-        $params,
-        $env
-        )
-};
-
-(: resolve query and options for /search :)
-declare function searchmodq:resolve-search-get(
-    $params as map:map
-) as element(search:response)
-{
-    let $options          := sut:options($params)
-    let $structured-query := searchmodq:make-query($params,$options)
-    return searchmodq:resolve($structured-query,$options,$params)
-};
-
-(: resolve query and options for /search :)
-declare function searchmodq:resolve-search-post(
-    $headers as map:map,
-    $params as map:map,
-    $input as node()?
-) as element(search:response)
-{
+    let $input            := $doc/node()
     let $combined-query   := sut:make-combined-query($input)
     let $options          := sut:make-options($params,$combined-query)
     let $structured-query := searchmodq:make-query($params,$input,$combined-query,$options)
-    return searchmodq:resolve($structured-query,$options,$params)
+    return
+        if (starts-with(head(map:get($headers,"accept")),"multipart/mixed"))
+        then searchmodq:get-bulk-results($headers,$params,$env,$structured-query,$options)
+        else if (map:get($params,"view") eq "ctsquery")
+        then searchmodq:get-query-response(
+            search-impl:do-convert-query($options,$structured-query),
+            $headers,
+            $params,
+            $env
+            )
+        else searchmodq:get-response(
+            searchmodq:resolve($structured-query,$options,$params),
+            $headers,
+            $params,
+            $env
+            )
 };
 
 declare function searchmodq:make-query(
@@ -204,10 +200,10 @@ declare function searchmodq:get-bulk-results(
         then search-impl:extract-paths($querydef, $docs)
         else error((),"RESTAPI-INVALIDREQ",
             "searchable expression for bulk document read must qualify documents")
-    let $uris            := 
+    let $uris            :=
         for $doc in $docs
         return document-uri($doc)
-    let $estimate        := search-impl:do-result-estimate($querydef,true(),$docs) 
+    let $estimate        := search-impl:do-result-estimate($querydef,true(),$docs)
     let $timestamp       := ast:get-annotations($querydef)/@timestamp
     let $response        :=
         if ($view = "none") then ()
@@ -236,7 +232,7 @@ declare function searchmodq:get-bulk-results(
         eput:call-header($env, "vnd.marklogic.start",           string($start)),
         eput:call-header($env, "vnd.marklogic.pageLength",      string($page-length)),
         if (empty($estimate)) then ()
-        else 
+        else
             (eput:call-header($env, "vnd.marklogic.result-estimate", string($estimate)),
             if ($estimate eq 0) then ()
             else map:put($env, "has-matches", true())
@@ -276,7 +272,7 @@ declare function searchmodq:get-response(
     $notify-type  as xs:boolean
 ) as item()?
 {
-    let $response := 
+    let $response :=
         if ($content-type = ("application/json", "text/json")) then
             let $root :=
                 if ($response instance of document-node())
@@ -285,12 +281,33 @@ declare function searchmodq:get-response(
             return
                 if ($root instance of element(search:response))
                 then sut:response-to-json-object(
-                    $root, (map:get($params,"view"),"results")[1]
+                    $root, head((map:get($params,"view"),"results"))
                     )
                 else $response
         else $response
     return
         eput:transform-response($response,$content-type,$headers,$params,$env,(),$notify-type)
+};
+
+declare function searchmodq:get-query-response(
+    $query   as cts:query,
+    $headers as map:map,
+    $params  as map:map,
+    $env     as map:map?
+) as document-node()
+{
+    let $response-type := eput:get-content-type($params,$headers)
+    let $responder  :=
+        if (empty($env)) then ()
+        else map:get($env,"responder")
+    return (
+        if (empty($responder)) then ()
+        else $responder($response-type),
+
+        if ($response-type = ("application/json", "text/json"))
+        then xdmp:to-json($query)
+        else document {$query}
+        )
 };
 
 declare private function searchmodq:make-structured-query(

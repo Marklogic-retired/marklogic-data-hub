@@ -1,0 +1,7 @@
+{
+  "namespace" : "http://www.w3.org/2005/xpath-functions",
+  "local-name" : "xdmp-add-response-header",
+  "document-uri" : "/data-hub/5/rest-api/endpoints/resource-service-query.xqy",
+  "modules-database" : "%%mlModulesDbName%%",
+  "role" : [ "rest-reader-internal" ]
+}
