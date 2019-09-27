@@ -17,7 +17,7 @@
 
 package com.marklogic.gradle.task
 
-import com.marklogic.hub.HubConfig
+
 import org.gradle.testkit.runner.UnexpectedBuildFailure
 import spock.lang.IgnoreIf
 
@@ -51,24 +51,17 @@ class UpdateIndexesTaskTest extends BaseTest {
 
 		// Loading modules to databases
 		runTask('mlLoadModules')
+        runTask('hubSaveIndexes')
 
-		// Copying Staging and Final database Index info files to src/main/entity-config dir
+		// Copying Job database Index info files to src/main/entity-config dir
 		Path dir = hubConfig().getEntityDatabaseDir()
 		if (!dir.toFile().exists()) {
 			dir.toFile().mkdirs()
 		}
 
-		File dstFile = Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_DATABASE_FILE).toFile()
-		String entityConfigStream = new File("src/test/resources/update-indexes/staging-database.json").getAbsolutePath()
-		Files.copy(new File(entityConfigStream).toPath(), dstFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
-
-		dstFile = Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_DATABASE_FILE).toFile();
-		entityConfigStream = new File("src/test/resources/update-indexes/final-database.json").getAbsolutePath()
-		Files.copy(new File(entityConfigStream).toPath(), dstFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
-
 		dir = hubConfig().getHubConfigDir()
-		dstFile = Paths.get(dir.toString(), "databases", "job-database.json").toFile()
-		entityConfigStream = new File("src/test/resources/update-indexes/job-database.json").getAbsolutePath();
+		File dstFile = Paths.get(dir.toString(), "databases", "job-database.json").toFile()
+		String entityConfigStream = new File("src/test/resources/update-indexes/job-database.json").getAbsolutePath();
 		Files.copy(new File(entityConfigStream).toPath(), dstFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 	}
 
