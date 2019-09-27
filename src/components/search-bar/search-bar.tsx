@@ -47,6 +47,7 @@ const SearchBar = ({ entities }) => {
                     placeholder="Type search text"
                     enterButton="Search"
                     size="large"
+                    allowClear
                     onSearch={value => handleSearch(value)}
                 />
             </div>
