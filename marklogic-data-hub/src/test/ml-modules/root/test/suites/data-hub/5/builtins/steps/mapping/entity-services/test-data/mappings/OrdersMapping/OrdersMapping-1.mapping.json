@@ -17,17 +17,48 @@
       "sourcedFrom" : "sum(items ! (quantity * price))"
     },
     "customer" : {
+      "targetEntityType" : "http://marklogic.com/data-hub/example/CustomerType-0.0.1/CustomerType",
       "sourcedFrom": "customer",
-      "externalMapping" : {
-        "externalName": "CustomersMapping",
-        "externalVersion": 1
+      "properties" : {
+        "firstname" : {
+          "sourcedFrom" : "firstName"
+        },
+        "gender" : {
+          "sourcedFrom" : "memoryLookup(gender, '{\"m\": \"Male\", \"f\": \"Female\", \"nb\": \"Non-Binary\"}')"
+        },
+        "phone" : {
+          "sourcedFrom" : "phone"
+        },
+        "id" : {
+          "sourcedFrom" : "id"
+        },
+        "postal" : {
+          "sourcedFrom" : "postal"
+        },
+        "updated" : {
+          "sourcedFrom" : "updated"
+        },
+        "email" : {
+          "sourcedFrom" : "email"
+        },
+        "lastname" : {
+          "sourcedFrom" : "lastName"
+        }
       }
     },
     "items" : {
+      "targetEntityType" : "http://marklogic.com/data-hub/example/ItemType-0.0.1/ItemType",
       "sourcedFrom": "items",
-      "externalMapping" : {
-        "externalName": "ItemsMapping",
-        "externalVersion": 1
+      "properties" : {
+        "name" : {
+          "sourcedFrom" : "name"
+        },
+        "quantity" : {
+          "sourcedFrom" : "quantity"
+        },
+        "price" : {
+          "sourcedFrom" : "price"
+        }
       }
     }
   }
