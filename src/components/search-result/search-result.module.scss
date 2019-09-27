@@ -4,9 +4,14 @@
 	font-weight: bold;
 
 	.entityName {
-		color: #999;
+		color: #666;
 		font-weight: bold;
 		padding-right: 8px;
+	}
+
+	.primaryKey {
+	  color: #666;
+	  padding-right: 5px;
 	}
 
 }
@@ -21,25 +26,20 @@
 
 	.metaItem {
 		display: inline-block;
-		width: 240px;
+		width: 260px;
 	}
 
 	.metaLabel {
 		font-weight: bold;
-		color: #999;
+		color: #666;
 		padding-right: 8px;
 	}
 
 	.metaValue {
-		padding-right: 5px;
+		padding-right: 15px;
   }
   .format {
     padding-right: 5px;
     text-transform: uppercase;
   }
-}
-
-.primaryKey {
-  color: #777;
-  padding-right: 5px;
 }
