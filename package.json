@@ -14,6 +14,8 @@
     "react-router-dom": "^5.0.1",
     "react-scripts": "3.0.1",
     "react-xml-viewer": "^1.0.3",
+    "reactour": "^1.15.2",
+    "styled-components": "^4.4.0",
     "typescript": "3.5.3",
     "xml2js": "^0.4.22"
   },
