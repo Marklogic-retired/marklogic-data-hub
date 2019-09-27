@@ -115,6 +115,7 @@ const EntityTable:React.FC<Props> = (props) => {
       columns={columns}
       expandedRowRender={expandedRowRender}
       dataSource={realData}
+      pagination={{defaultPageSize: 20, size: 'small'}}
     />
   );
 }
