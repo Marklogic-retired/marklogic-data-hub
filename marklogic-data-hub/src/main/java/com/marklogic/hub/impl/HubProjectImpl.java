@@ -310,12 +310,14 @@ public class HubProjectImpl implements HubProject {
             IOUtils.closeQuietly(is);
         }
 
-        writeResourceFile("hub-internal-config/security/roles/flow-operator-role.json", rolesDir.resolve("flow-operator-role.json"), true);
-        writeResourceFile("hub-internal-config/security/users/flow-operator-user.json", usersDir.resolve("flow-operator-user.json"), true);
-        writeResourceFile("hub-internal-config/security/roles/flow-developer-role.json", rolesDir.resolve("flow-developer-role.json"), true);
-        writeResourceFile("hub-internal-config/security/users/flow-developer-user.json", usersDir.resolve("flow-developer-user.json"), true);
-        writeResourceFile("hub-internal-config/security/roles/data-hub-admin-role.json", rolesDir.resolve("data-hub-admin-role.json"), true);
+        writeRoleFile(rolesDir, "data-hub-admin-role.json");
+        writeRoleFile(rolesDir, "entity-model-reader.json");
+        writeRoleFile(rolesDir, "flow-developer-role.json");
+        writeRoleFile(rolesDir, "flow-operator-role.json");
 
+        writeResourceFile("hub-internal-config/security/users/flow-developer-user.json", usersDir.resolve("flow-developer-user.json"), true);
+        writeResourceFile("hub-internal-config/security/users/flow-operator-user.json", usersDir.resolve("flow-operator-user.json"), true);
+        
         writeResourceFile("hub-internal-config/security/privileges/dhf-internal-data-hub.json", privilegesDir.resolve("dhf-internal-data-hub.json"), true);
         writeResourceFile("hub-internal-config/security/privileges/dhf-internal-entities.json", privilegesDir.resolve("dhf-internal-entities.json"), true);
         writeResourceFile("hub-internal-config/security/privileges/dhf-internal-mappings.json", privilegesDir.resolve("dhf-internal-mappings.json"), true);
@@ -362,6 +364,10 @@ public class HubProjectImpl implements HubProject {
         writeResourceFile("scaffolding/build_gradle", projectDir.resolve("build.gradle"));
         writeResourceFileWithReplace(customTokens, "scaffolding/gradle_properties", projectDir.resolve("gradle.properties"));
         writeResourceFile("scaffolding/gradle-local_properties", projectDir.resolve("gradle-local.properties"));
+    }
+
+    private void writeRoleFile(Path rolesDir, String filename) {
+        writeResourceFile("hub-internal-config/security/roles/" + filename, rolesDir.resolve(filename), true);
     }
 
     private void makeExecutable(Path file) {

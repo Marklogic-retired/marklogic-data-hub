@@ -173,6 +173,8 @@ public class HubConfigImpl implements HubConfig
 
     protected String modulePermissions;
 
+    private String entityModelPermissions;
+
     private ManageConfig manageConfig;
     private ManageClient manageClient;
     private AdminConfig adminConfig;
@@ -848,6 +850,11 @@ public class HubConfigImpl implements HubConfig
     }
 
     @Override
+    public String getEntityModelPermissions() {
+        return entityModelPermissions;
+    }
+
+    @Override
     @Deprecated
     public String getProjectDir() {
         return hubProject.getProjectDirString();
@@ -861,6 +868,10 @@ public class HubConfigImpl implements HubConfig
 
     public void setModulePermissions(String modulePermissions) {
         this.modulePermissions = modulePermissions;
+    }
+
+    public void setEntityModelPermissions(String entityModelPermissions) {
+        this.entityModelPermissions = entityModelPermissions;
     }
 
     @JsonIgnore
@@ -1286,6 +1297,13 @@ public class HubConfigImpl implements HubConfig
         }
         else {
             projectProperties.setProperty("mlModulePermissions", modulePermissions);
+        }
+
+        if (entityModelPermissions == null) {
+            entityModelPermissions = getEnvPropString(projectProperties, "mlEntityModelPermissions", environment.getProperty("mlEntityModelPermissions"));
+        }
+        else {
+            projectProperties.setProperty("mlEntityModelPermissions", entityModelPermissions);
         }
 
         DHFVersion = getEnvPropString(projectProperties, "mlDHFVersion", environment.getProperty("mlDHFVersion"));
@@ -2026,6 +2044,7 @@ public class HubConfigImpl implements HubConfig
         dataHubAdminRoleName = null;
         customForestPath = null;
         modulePermissions = null;
+        entityModelPermissions = null;
         hubLogLevel = null;
         loadBalancerHost = null;
         isHostLoadBalancer = null;

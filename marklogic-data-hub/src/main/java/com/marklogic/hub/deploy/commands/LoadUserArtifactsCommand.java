@@ -43,7 +43,10 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.*;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Date;
 import java.util.Iterator;
@@ -104,8 +107,6 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
 
     @Override
     public void execute(CommandContext context) {
-        AppConfig config = context.getAppConfig();
-
         DatabaseClient stagingClient = hubConfig.newStagingClient();
         DatabaseClient finalClient = hubConfig.newFinalClient();
 
@@ -127,7 +128,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         DocumentWriteSet finalFlowDocumentWriteSet = finalDocMgr.newWriteSet();
         PropertiesModuleManager propertiesModuleManager = getModulesManager();
         ResourceToURI entityResourceToURI = new ResourceToURI(){
-            public String toURI(Resource r) throws IOException {
+            public String toURI(Resource r) {
                 return "/entities/" + r.getFilename();
             }
         };
@@ -137,7 +138,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
             }
         };
         ResourceToURI flowResourceToURI = new ResourceToURI(){
-            public String toURI(Resource r) throws IOException {
+            public String toURI(Resource r) {
                 return "/flows/" + r.getFilename();
             }
         };
@@ -161,7 +162,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                             entityDefModulesFinder,
                             propertiesModuleManager,
                             entityResourceToURI,
-                            "http://marklogic.com/entity-services/models",
+                            buildMetadataForEntityModels(hubConfig),
                             stagingEntityDocumentWriteSet,
                             finalEntityDocumentWriteSet
                         );
@@ -180,7 +181,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                                 mappingDefModulesFinder,
                                 propertiesModuleManager,
                                 mappingResourceToURI,
-                                "http://marklogic.com/data-hub/mappings",
+                                buildMetadata("http://marklogic.com/data-hub/mappings", hubConfig.getModulePermissions()),
                                 stagingMappingDocumentWriteSet,
                                 finalMappingDocumentWriteSet
                             );
@@ -203,7 +204,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                             stepDefModulesFinder,
                             propertiesModuleManager,
                             stepResourceToURI,
-                            "http://marklogic.com/data-hub/step-definition",
+                            buildMetadata("http://marklogic.com/data-hub/step-definition", hubConfig.getModulePermissions()),
                             stagingStepDefDocumentWriteSet,
                             finalStepDefDocumentWriteSet
                         );
@@ -223,7 +224,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                             flowDefModulesFinder,
                             propertiesModuleManager,
                             flowResourceToURI,
-                            "http://marklogic.com/data-hub/flow",
+                            buildMetadata("http://marklogic.com/data-hub/flow", hubConfig.getModulePermissions()),
                             stagingFlowDocumentWriteSet,
                             finalFlowDocumentWriteSet
                         );
@@ -256,27 +257,50 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         }
     }
 
+    /**
+     * As of 5.1.0, entity model permissions are separate from module permissions. Though if entity model permissions
+     * are not defined, then this falls back to using module permissions.
+     *
+     * @param config
+     * @return
+     */
+    protected DocumentMetadataHandle buildMetadataForEntityModels(HubConfig config) {
+        String permissions = config.getEntityModelPermissions();
+        if (permissions == null || permissions.trim().length() < 1) {
+            if (logger.isInfoEnabled()) {
+                logger.info("Entity model permissions were not set, so using module permissions; consider setting mlEntityModelPermissions " +
+                    "in case you want entity models to have custom permissions.");
+            }
+            permissions = config.getModulePermissions();
+        }
+        return buildMetadata("http://marklogic.com/entity-services/models", permissions);
+    }
+
     private void executeWalk(
         Path dir,
         ModulesFinder modulesFinder,
         PropertiesModuleManager propertiesModuleManager,
         ResourceToURI resourceToURI,
-        String collection,
+        DocumentMetadataHandle metadata,
         DocumentWriteSet... writeSets
     ) throws IOException {
         Modules modules = modulesFinder.findModules(dir.toString());
-        DocumentMetadataHandle meta = new DocumentMetadataHandle();
-        meta.getCollections().add(collection);
-        documentPermissionsParser.parsePermissions(hubConfig.getModulePermissions(), meta.getPermissions());
         for (Resource r : modules.getAssets()) {
             addResourceToWriteSets(
                 r,
                 propertiesModuleManager,
                 resourceToURI.toURI(r),
-                meta,
+                metadata,
                 writeSets
             );
         }
+    }
+
+    private DocumentMetadataHandle buildMetadata(String collection, String permissions) {
+        DocumentMetadataHandle meta = new DocumentMetadataHandle();
+        meta.getCollections().add(collection);
+        documentPermissionsParser.parsePermissions(permissions, meta.getPermissions());
+        return meta;
     }
 
     private void addResourceToWriteSets(

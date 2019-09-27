@@ -16,13 +16,15 @@
 package com.marklogic.hub.deploy.commands;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
+import com.marklogic.hub.impl.HubConfigImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -106,5 +108,33 @@ public class LoadUserArtifactsCommandTest extends HubTestBase {
         startPath = Paths.get("c:\\temp\\my-project\\plugins\\mappings");
         dir = Paths.get("c:\\temp\\my-project\\plugins\\mappings\\my-mappings");
         assertTrue(loadUserArtifactsCommand.isArtifactDir(dir, startPath));
+    }
+
+    @Test
+    public void defaultEntityModelPermissions() {
+        DocumentMetadataHandle.DocumentPermissions perms = loadUserArtifactsCommand.buildMetadataForEntityModels(adminHubConfig).getPermissions();
+        assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("entity-model-reader").iterator().next());
+    }
+
+    @Test
+    public void customEntityModelPermissions() {
+        HubConfigImpl config = new HubConfigImpl();
+        config.setEntityModelPermissions("manage-user,read,manage-admin,update");
+        DocumentMetadataHandle.DocumentPermissions perms = loadUserArtifactsCommand.buildMetadataForEntityModels(config).getPermissions();
+        assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("manage-user").iterator().next());
+        assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("manage-admin").iterator().next());
+    }
+
+    @Test
+    public void nullEntityModelPermissions() {
+        HubConfigImpl config = new HubConfigImpl();
+        config.setEntityModelPermissions(null);
+        config.setModulePermissions("rest-reader,read,rest-writer,update");
+
+        DocumentMetadataHandle.DocumentPermissions perms = loadUserArtifactsCommand.buildMetadataForEntityModels(config).getPermissions();
+        final String message = "When entity model permissions are null, the command should use module permissions instead";
+        assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("rest-reader").iterator().next(), message);
+        assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("rest-writer").iterator().next(), message);
+        assertNull(perms.get("entity-model-reader"));
     }
 }
