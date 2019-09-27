@@ -67,7 +67,7 @@ public class ValidateMappingTest extends HubTestBase {
 
     @Test
     public void validMapping() {
-        if (versions.isVersionCompatibleWithES()) {
+        if(versions.isVersionCompatibleWithES()){
             JsonNode response = mgr.validateJsonMapping("{\n" +
                 "  \"targetEntityType\": \"http://marklogic.com/data-hub/example/CustomerType-0.0.1/CustomerType\",\n" +
                 "  \"properties\": {\n" +
@@ -84,7 +84,7 @@ public class ValidateMappingTest extends HubTestBase {
 
     @Test
     public void invalidMapping() {
-        if (versions.isVersionCompatibleWithES()) {
+        if(versions.isVersionCompatibleWithES()) {
             JsonNode response = mgr.validateJsonMapping("{\n" +
                 "  \"targetEntityType\": \"http://marklogic.com/data-hub/example/CustomerType-0.0.1/CustomerType\",\n" +
                 "  \"properties\": {\n" +

@@ -28,6 +28,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
@@ -62,6 +64,12 @@ public class HubProjectImpl implements HubProject {
     private Path pluginsDir;
     private Path stepDefinitionsDir;
     private String userModulesDeployTimestampFile = USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES;
+
+    @Autowired @Lazy
+    private FlowManagerImpl flowManager;
+
+    @Autowired @Lazy
+    private Versions versions;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -476,6 +484,19 @@ public class HubProjectImpl implements HubProject {
                 }
             }
         }
+        upgradeFlows();
+    }
+
+    protected void upgradeFlows() {
+        flowManager.getFlows().forEach(flow ->{
+            flow.getSteps().values().forEach((step) -> {
+                if((step.getStepDefinitionType().equals(StepDefinition.StepDefinitionType.MAPPING)) &&
+                    versions.isVersionCompatibleWithES() && step.getStepDefinitionName().equalsIgnoreCase("default-mapping")){
+                    step.setStepDefinitionName("entity-services-mapping");
+                }
+            });
+            flowManager.saveFlow(flow);
+        });
     }
 
     @Override  public String getHubModulesDeployTimestampFile() {

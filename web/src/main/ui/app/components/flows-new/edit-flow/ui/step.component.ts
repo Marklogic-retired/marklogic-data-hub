@@ -101,7 +101,7 @@ export class StepComponent implements OnChanges {
       }
     }
     else if (step.stepDefinitionType === this.stepType.MAPPING){
-      if(step.stepDefinitionName === 'default-mapping'){
+      if(step.stepDefinitionName === 'default-mapping' || step.stepDefinitionName === 'entity-services-mapping'){
         return 'MAPPING';
       }
       else{

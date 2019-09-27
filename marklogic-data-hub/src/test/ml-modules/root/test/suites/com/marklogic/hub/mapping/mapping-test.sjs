@@ -84,12 +84,26 @@ function mapsXMLasExpected() {
   ];
 }
 
+function versionIsCompatibleWithESTest() {
+  return [
+    test.assertEqual(true, esMappingLib.versionIsCompatibleWithES("9.0-20190924")),
+    test.assertEqual(true, esMappingLib.versionIsCompatibleWithES("9.0-11")),
+    test.assertEqual(true, esMappingLib.versionIsCompatibleWithES("10.0-20190826")),
+    test.assertEqual(true, esMappingLib.versionIsCompatibleWithES("10.0-2.1")),
+    test.assertEqual(false, esMappingLib.versionIsCompatibleWithES("9.0-20190810")),
+    test.assertEqual(false, esMappingLib.versionIsCompatibleWithES("9.0-9.19")),
+    test.assertEqual(false, esMappingLib.versionIsCompatibleWithES("10.0-1.4"))
+  ]
+}
+
 let assertions = [];
 if (esMappingLib.versionIsCompatibleWithES()) {
   assertions = assertions
     .concat(mapsJSONasExpected())
     .concat(esMapsJSONasExpected())
     .concat(mapsJSONtoXMLasExpected())
-    .concat(mapsXMLasExpected());
+    .concat(mapsXMLasExpected())
+    .concat(versionIsCompatibleWithESTest());
+
 }
 assertions;

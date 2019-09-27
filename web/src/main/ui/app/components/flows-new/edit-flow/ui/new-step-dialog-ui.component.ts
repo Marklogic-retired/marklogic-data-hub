@@ -10,6 +10,7 @@ import {CustomFieldValidator} from "../../../common";
 import {Flow} from "../../models/flow.model";
 import * as _ from 'lodash';
 import {InstantErrorStateMatcher} from "../../validators/instant-error-match.validator";
+import { EnvironmentService } from '../../../../services/environment';
 
 @Component({
   selector: 'app-new-step-dialog-ui',
@@ -85,7 +86,8 @@ export class NewStepDialogUiComponent implements OnInit {
         "targetEntity"]
 
   constructor(
-    private formBuilder: FormBuilder) {}
+    private formBuilder: FormBuilder,
+    private envService: EnvironmentService,) {}
 
   ngOnInit() {
     this.tooltips = FlowsTooltips.ingest;
@@ -309,7 +311,12 @@ export class NewStepDialogUiComponent implements OnInit {
       this.newStep.stepDefinitionName = this.newStep.name;
    
     } else {
-      this.newStep.stepDefinitionName = 'default-' + (this.newStep.stepDefType || '').toLowerCase();
+      if(this.newStep.stepDefType === StepType.MAPPING && this.envService.settings.isVersionCompatibleWithES){
+        this.newStep.stepDefinitionName = 'entity-services-' + (this.newStep.stepDefType || '').toLowerCase();
+      }
+      else {
+        this.newStep.stepDefinitionName = 'default-' + (this.newStep.stepDefType || '').toLowerCase();
+      }
     }
   
     this.newStep.description = this.newStepForm.value.description;
@@ -481,7 +488,7 @@ export class NewStepDialogUiComponent implements OnInit {
       }
     }
     else if (step.stepDefinitionType === StepType.MAPPING){
-      if(step.stepDefinitionName === 'default-mapping'){
+      if(step.stepDefinitionName === 'default-mapping' || step.stepDefinitionName === 'entity-services-mapping'){
         return 'MAPPING';
       }
       else{

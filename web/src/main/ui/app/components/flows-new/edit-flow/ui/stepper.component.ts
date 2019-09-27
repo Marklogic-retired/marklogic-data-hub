@@ -125,7 +125,7 @@ export class StepperComponent extends CdkStepper implements OnChanges, AfterCont
       }
     }
     else if (step.stepDefinitionType === this.stepType.MAPPING){
-      if(step.stepDefinitionName === 'default-mapping'){
+      if(step.stepDefinitionName === 'default-mapping' || step.stepDefinitionName === 'entity-services-mapping'){
         return 'MAPPING';
       }
       else{

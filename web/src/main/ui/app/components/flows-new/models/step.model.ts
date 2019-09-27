@@ -187,7 +187,7 @@ export class Step {
         newStep.options.outputFormat = 'json';
         newStep.options.targetDatabase = databases.staging;
       }
-      if (json.stepDefinitionType === StepType.MAPPING && json.stepDefinitionName === 'default-mapping') {
+      if (json.stepDefinitionType === StepType.MAPPING && (json.stepDefinitionName === 'default-mapping' || json.stepDefinitionName === 'entity-services-mapping')) {
         newStep.options = new MappingOptions();
         newStep.options.sourceDatabase = databases.staging;
         newStep.options.targetDatabase = databases.final;
@@ -197,7 +197,7 @@ export class Step {
         newStep.options.sourceDatabase = databases.final;
         newStep.options.targetDatabase = databases.final;
       }
-      if (json.stepDefinitionType === StepType.CUSTOM || (json.stepDefinitionType === StepType.INGESTION && json.stepDefinitionName !== 'default-ingestion') || (json.stepDefinitionType === StepType.MAPPING && json.stepDefinitionName !== 'default-mapping') || (json.stepDefinitionType === StepType.MASTERING && json.stepDefinitionName !== 'default-mastering')) {
+      if (json.stepDefinitionType === StepType.CUSTOM || (json.stepDefinitionType === StepType.INGESTION && json.stepDefinitionName !== 'default-ingestion') || (json.stepDefinitionType === StepType.MAPPING && (json.stepDefinitionName !== 'default-mapping' || json.stepDefinitionName === 'entity-services-mapping')) || (json.stepDefinitionType === StepType.MASTERING && json.stepDefinitionName !== 'default-mastering')) {
         if (json.stepDefinitionType === StepType.INGESTION) {
           if (json.fileLocations.inputFilePath === 'path/to/folder') {
             const fileLocations = {
