@@ -1,7 +1,3 @@
-upstream api_server {
-	server	172.0.1.0:8080;
-}
-
 server {
   listen 80;
   server_name localhost;
@@ -14,7 +10,7 @@ server {
   }
 
   location /datahub/ {
-    proxy_pass        http://api_server;
+    proxy_pass        http://${API_URL};
     proxy_redirect off;
     proxy_set_header X-Real-IP $remote_addr;
 		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
