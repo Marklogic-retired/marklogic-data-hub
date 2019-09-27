@@ -27,7 +27,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
     setIsLoading(true);
     const fetchData = async () => {
       try {
-        const result = await axios(`datahub/v2/search?docUri=${query}`);
+        const result = await axios(`/datahub/v2/search?docUri=${query}`);
 
         const content = result.headers['content-type'];
 

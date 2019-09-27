@@ -44,10 +44,6 @@ const SearchResult:React.FC<Props> = (props) => {
                     <span className={styles.metaLabel}>File Type</span>
                     <span className={styles.format}>{props.item.format}</span>
                 </div>
-                <div className={styles.metaItem}>
-                    <span className={styles.metaLabel}>User</span>
-                    <span className={styles.metaValue}>admin</span>
-                </div>
             </div>
         </div>
     )

@@ -26,7 +26,8 @@ const Header:React.FC<Props> = ({ location }) => {
   };
 
   useEffect(() => {
-    if (location.pathname === '/detail'){
+    let path = location.pathname.split('/');
+    if (path[1] === 'detail'){
       setSelectedMenu(['/browse']);
     } else {
       setSelectedMenu([location.pathname]);
