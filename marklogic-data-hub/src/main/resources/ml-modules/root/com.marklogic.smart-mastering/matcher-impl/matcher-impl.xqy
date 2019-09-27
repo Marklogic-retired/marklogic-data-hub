@@ -508,18 +508,18 @@ declare function match-impl:search(
                 cts:element-walk(document{.}, $QUERIES_WITH_WEIGHT, element query-hash{xdmp:md5(document {$cts:node})})//query-hash !
                 fn:string(.))
             let $weight := fn:sum($query-hashes ! ($matching-weights-map => map:get(.)))
+            let $node-name := fn:string(fn:head((fn:node-name($cts:node),fn:node-name($cts:node/..))))
             return <match weight="{$weight}">
                       {
-                        let $node-name := fn:string(fn:head((fn:node-name($cts:node),fn:node-name($cts:node/..))))
                         for $query-hash in $query-hashes
                         let $query-map := map:get($query-prov, $query-hash)
                         return
                           <contributions>
-                            <nodeName>{$node-name}</nodeName>
                             <algorithm>{fn:string(fn:head(($query-map ! map:get(., "algorithm") ! fn:string(.),"standard")))}</algorithm>
                             <weight>{fn:string($matching-weights-map => map:get($query-hash))}</weight>
                           </contributions>
                       }
+                      <nodeName>{$node-name}</nodeName>
                       <value>{fn:data($cts:node)}</value>
                       <path>{xdmp:path($cts:node, fn:true())}</path>
                    </match>)

@@ -386,6 +386,7 @@ class Flow {
   buildFineProvenanceData(jobId, flowName, stepName, stepDefName, stepDefType, content, info) {
     let previousUris = fn.distinctValues(Sequence.from([Sequence.from(Object.keys(content.provenance)),Sequence.from(info.derivedFrom)]));
     let prov = this.datahub.prov;
+    let hubUtils = this.datahub.hubUtils;
     let newDocURI = content.uri;
     let docProvIDs = [];
     // setup variables to group prov info by properties
@@ -408,13 +409,9 @@ class Flow {
           docProvPropertyMetadataByProperty[prop] = docProvPropertyMetadataByProperty[prop] || {};
           const propMetadata = docProvPropertyMetadataByProperty[prop];
           for (const propDetailsKey of Object.keys(propDetails)) {
-            if (propDetails.hasOwnProperty(propDetailsKey)) {
+            if (propDetails.hasOwnProperty(propDetailsKey) && propDetails[propDetailsKey]) {
               propMetadata[propDetailsKey] = propMetadata[propDetailsKey] || [];
-              if (Array.isArray(propDetails[propDetailsKey])) {
-                propMetadata[propDetailsKey] = propMetadata[propDetailsKey].concat(propDetails[propDetailsKey]);
-              } else {
-                propMetadata[propDetailsKey].push(propDetails[propDetailsKey]);
-              }
+              propMetadata[propDetailsKey] = propMetadata[propDetailsKey].concat(hubUtils.normalizeToArray(propDetails[propDetailsKey]));
             }
           }
           docProvPropertyIDsByProperty[prop] = docProvPropertyIDsByProperty[prop] || [];
@@ -432,8 +429,11 @@ class Flow {
       let docProvPropertyMetadata = docProvPropertyMetadataByProperty[prop];
       for (const propDetailsKey of Object.keys(docProvPropertyMetadata)) {
         if (docProvPropertyMetadata.hasOwnProperty(propDetailsKey)) {
-          let dedupedMeta = fn.distinctValues(Sequence.from(docProvPropertyMetadata[propDetailsKey]));
-          docProvPropertyMetadata[propDetailsKey] = fn.count(dedupedMeta) <= 1 ? fn.string(fn.head(dedupedMeta)) : xdmp.describe(dedupedMeta.toArray(), Sequence.from([]), Sequence.from([]));
+          let dedupedMeta = Sequence.from(docProvPropertyMetadata[propDetailsKey]);
+          docProvPropertyMetadata[propDetailsKey] = fn.count(dedupedMeta) <= 1 ? fn.string(fn.head(dedupedMeta)) : dedupedMeta.toArray();
+          if (!(typeof docProvPropertyMetadata[propDetailsKey] === 'string' || docProvPropertyMetadata[propDetailsKey] instanceof xs.string)) {
+            docProvPropertyMetadata[propDetailsKey] = xdmp.toJsonString(docProvPropertyMetadata[propDetailsKey]);
+          }
         }
       }
       let propInfo = Object.assign({}, info, { metadata: docProvPropertyMetadata });

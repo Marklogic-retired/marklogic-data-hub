@@ -122,6 +122,14 @@ public class MasterTest extends HubTestBase {
         assertEquals(209, getFinalDocCount("mdm-content"), "We end with the correct amount of final docs");
         // Setting this to 40 or greater as occasionally we get 41 in the pipeline. See bug https://project.marklogic.com/jira/browse/DHFPROD-3178
         assertTrue(getFinalDocCount("mdm-notification") >= 40, "Not enough notifications are created");
+        // Check for JobReport for mastering with correct count
+        String reportQueryText = "cts:and-query((" +
+            "cts:collection-query('JobReport')," +
+            "cts:json-property-value-query('jobID', '"+ masterJob.getJobId() +"')," +
+            "cts:json-property-value-query('count', 209)" +
+            "))";
+        assertTrue(existsByQuery(reportQueryText, HubConfig.DEFAULT_JOB_NAME), "Missing valid mastering job report!");
+        assertTrue(getFinalDocCount("mdm-notification") >= 40, "Not enough notifications are created");
         testUnmerge();
     }
 

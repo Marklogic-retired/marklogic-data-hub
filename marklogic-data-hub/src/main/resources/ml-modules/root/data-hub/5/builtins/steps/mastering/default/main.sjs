@@ -1,3 +1,18 @@
+/**
+ Copyright 2012-2019 MarkLogic Corporation
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const datahub = DataHubSingleton.instance();
 const mastering = require("/com.marklogic.smart-mastering/process-records.xqy");
@@ -81,6 +96,11 @@ function checkOptions(content, options, filteredContent = []) {
 function jobReport(jobID, stepResponse, options) {
   let collectionsInformation = checkOptions(null, options);
   let jobQuery = cts.fieldValueQuery('datahubCreatedByJob', jobID);
+  let mergedQuery = cts.andQuery([
+      jobQuery,
+      cts.collectionQuery(collectionsInformation.mergedCollection),
+      cts.collectionQuery(collectionsInformation.contentCollection)
+    ]);
   return {
     jobID,
     jobReportID: sem.uuidString(),
@@ -89,29 +109,48 @@ function jobReport(jobID, stepResponse, options) {
     success: stepResponse.success,
     numberOfDocumentsProcessed: stepResponse.totalEvents,
     numberOfDocumentsSuccessfullyProcessed: stepResponse.successfulEvents,
-    numberOfMerges: cts.estimate(cts.andQuery([
-      jobQuery,
-      cts.collectionQuery(collectionsInformation.mergedCollection)
-    ])),
-    documentsArchived: cts.estimate(cts.andQuery([
-      jobQuery,
-      cts.collectionQuery(collectionsInformation.archivedCollection)
-    ])),
-    masterDocuments: cts.estimate(cts.andQuery([
-      jobQuery,
-      cts.collectionQuery(collectionsInformation.contentCollection)
-    ])),
-    notificationDocuments: cts.estimate(cts.andQuery([
-      jobQuery,
-      cts.collectionQuery(collectionsInformation.archivedCollection)
-    ])),
-    collectionsInformation
+    resultingMerges: {
+      count: cts.estimate(mergedQuery),
+      query: `createdByJob:"${jobID}" AND Collection:"${collectionsInformation.mergedCollection}" AND Collection:"${collectionsInformation.contentCollection}"`
+    },
+    documentsArchived: {
+      count: cts.estimate(cts.andQuery([
+        jobQuery,
+        cts.collectionQuery(collectionsInformation.archivedCollection)
+      ])),
+      query: `createdByJob:"${jobID}" AND Collection:"${collectionsInformation.archivedCollection}"`
+    },
+    masterDocuments: {
+      count: cts.estimate(cts.andQuery([
+        jobQuery,
+        cts.collectionQuery(collectionsInformation.contentCollection)
+      ])),
+      query: `createdByJob:"${jobID}" AND Collection:"${collectionsInformation.contentCollection}"`
+    },
+    notificationDocuments: {
+      count: cts.estimate(cts.andQuery([
+        jobQuery,
+        cts.collectionQuery(collectionsInformation.notificationCollection)
+      ])),
+      query: `createdByJob:"${jobID}" AND Collection:"${collectionsInformation.notificationCollection}"`
+    },
+    collectionsInformation,
+    matchProvenanceQuery: `// Run this against the '${options.targetDatabase || datahub.config.FINALDATABASE}' database with the 'data-hub-admin-role' or other privileged user
+    const masteringLib = require('/data-hub/5/builtins/steps/mastering/default/lib.sjs'); 
+    
+    let mergedQuery = cts.andQuery([
+      cts.fieldValueQuery('datahubCreatedByJob', '${jobID}'),
+      cts.collectionQuery('${collectionsInformation.mergedCollection}'),
+      cts.collectionQuery('${collectionsInformation.contentCollection}')
+    ]);
+    masteringLib.matchDetailsByMergedQuery(mergedQuery);
+    `
   };
 }
 
 module.exports = {
-  main: main,
+  main,
   // export checkOptions for unit test
-  checkOptions: checkOptions,
+  checkOptions,
   jobReport
 };
