@@ -172,6 +172,11 @@ declare %private function hent:fix-options-exp($nodes as node()*)
               <search:field name="datahubCreatedByJob"/>
             </search:range>
           </search:constraint>,
+          <search:constraint name="createdByJobWordConstraint">
+            <search:word>
+              <search:field name="datahubCreatedByJob"/>
+            </search:word>
+          </search:constraint>,
           <search:constraint name="createdByStepRangeConstraint">
             <search:range>
               <search:field name="datahubCreatedByStep"/>
@@ -196,7 +201,7 @@ declare %private function hent:fix-options-exp($nodes as node()*)
          $n/namespace::node(),
          $n/@*,
          hent:fix-options-exp($n/node()),
-         <search:extract-path xmlns:search="http://marklogic.com/appservices/search" xmlns:es="http://marklogic.com/entity-services">/envelope/*:headers</search:extract-path>}
+         <search:extract-path xmlns:es="http://marklogic.com/entity-services">/*:envelope/*:headers</search:extract-path>}
       case element(search:transform-results) return <!--<search:transform-results apply="empty-snippet"></search:transform-results>-->
       case element() return
         element { fn:node-name($n) } {
