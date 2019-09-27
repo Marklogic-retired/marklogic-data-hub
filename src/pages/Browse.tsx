@@ -102,6 +102,7 @@ const Browse: React.FC<Props> = ({location}) => {
       <Sider width={300} style={{ background: '#f3f3f3' }}>
         <Sidebar 
           facets={facets} 
+          selectedEntities={searchOptions.entityNames}
           onFacetClick={handleFacetClick}
         />
       </Sider>
