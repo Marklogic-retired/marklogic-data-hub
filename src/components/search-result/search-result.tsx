@@ -13,6 +13,14 @@ const SearchResult:React.FC<Props> = (props) => {
   const entityDef = props.entityDefArray.length && props.entityDefArray.find(entity => entity.name === itemEntityName[0]);
   const primaryKeyValue = entityDef.primaryKey && itemEntityProperties[0][entityDef.primaryKey];
 
+  // result metadata
+  // TODO format createdOnVal using momentjs
+  const createdOnVal: string = props.item.extracted.content[0].headers.createdOn.toString().substring(0, 19);
+  const sourcesVal: string = props.item.extracted.content[0].headers.sources.map(src => {
+    return src.name;
+  }).join(', ');
+  const fileTypeVal: string = props.item.format;
+
     return (
         <div>
             <div className={styles.title}>
@@ -33,16 +41,16 @@ const SearchResult:React.FC<Props> = (props) => {
             </div>
             <div className={styles.metadata}>
                 <div className={styles.metaItem}>
-                    <span className={styles.metaLabel}>Created</span>
-                    <span className={styles.metaValue}>2019-09-01 11:01:23</span>
+                    <span className={styles.metaLabel}>Created On</span>
+                    <span className={styles.metaValue}>{createdOnVal}</span>
                 </div>
                 <div className={styles.metaItem}>
                     <span className={styles.metaLabel}>Sources</span>
-                    <span className={styles.metaValue}>AdvantageFlow</span>
+                    <span className={styles.metaValue}>{sourcesVal}</span>
                 </div>
                 <div className={styles.metaItem}>
                     <span className={styles.metaLabel}>File Type</span>
-                    <span className={styles.format}>{props.item.format}</span>
+                    <span className={styles.format}>{fileTypeVal}</span>
                 </div>
                 <div className={styles.metaItem}>
                     <span className={styles.metaLabel}>User</span>
