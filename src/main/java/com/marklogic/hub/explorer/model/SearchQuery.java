@@ -1,3 +1,4 @@
+/** Copyright 2019 MarkLogic Corporation. All rights reserved. */
 package com.marklogic.hub.explorer.model;
 
 import java.util.ArrayList;
