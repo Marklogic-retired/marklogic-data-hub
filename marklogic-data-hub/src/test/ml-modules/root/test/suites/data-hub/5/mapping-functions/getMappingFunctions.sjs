@@ -1,4 +1,4 @@
-const mappingFunctions = require('/data-hub/5/extensions/mappingFunctions.sjs');
+const mappingFunctions = require('/marklogic.rest.resource/mlMappingFunctions/assets/resource.sjs');
 const test = require("/test/test-helper.xqy");
 
 function testMappingFunctions() {

@@ -54,6 +54,8 @@ public class EnvironmentConfig {
 
     private String DHFVersion;
 
+    private boolean isVersionCompatibleWithES;
+
     public InstallInfo getInstallInfo() {
         return installInfo;
     }
@@ -90,6 +92,10 @@ public class EnvironmentConfig {
         return DHFVersion;
     }
 
+    public boolean isVersionCompatibleWithES() {
+        return isVersionCompatibleWithES;
+    }
+
     @JsonIgnore
     public void checkIfInstalled() {
         projectDir = mlSettings.getHubProject().getProjectDirString();
@@ -98,6 +104,7 @@ public class EnvironmentConfig {
         this.marklogicVersion = versions.getMarkLogicVersion();
         this.runningVersion = this.mlSettings.getJarVersion();
         this.DHFVersion = versions.getDHFVersion();
+        this.isVersionCompatibleWithES = versions.isVersionCompatibleWithES();
 
         // Replace "-SNAPSHOT" in version with ".0" as QS compares versions and fails if version number contains text
         installedVersion = installedVersion.replace("-SNAPSHOT", ".0");

@@ -198,7 +198,7 @@ export class CustomUiComponent implements OnInit{
       }
     }
     else if (step.stepDefinitionType === 'MAPPING'){
-      if(step.stepDefinitionName === 'default-mapping'){
+      if(step.stepDefinitionName === 'default-mapping' || step.stepDefinitionName === 'entity-services-mapping'){
         return 'MAPPING';
       }
       else{

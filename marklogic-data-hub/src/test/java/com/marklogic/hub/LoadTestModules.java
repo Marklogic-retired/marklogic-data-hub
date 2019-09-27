@@ -4,7 +4,6 @@ import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.DefaultAppConfigFactory;
 import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
-import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand;
 import com.marklogic.mgmt.util.SimplePropertySource;
 
 import java.util.Properties;
@@ -48,11 +47,10 @@ public class LoadTestModules {
         config.getModulePaths().add("../build/mlBundle/marklogic-unit-test-modules/ml-modules");
         config.getModulePaths().add("../src/test/ml-modules");
 
-        // Need to run GenerateFunctionMetadataCommand as well so that function metadata is generated both for
-        // core mapping functions and custom functions under src/test/ml-modules/root/custom-modules.
+        // Removing GenerateFunctionMetaDataCommand as the command has spring related dependencies (hubConfig, versions
+        // objects have to be created
         new SimpleAppDeployer(
-            new LoadModulesCommand(),
-            new GenerateFunctionMetadataCommand(config.newAppServicesDatabaseClient("data-hub-MODULES"))
+            new LoadModulesCommand()
         ).deploy(config);
     }
 }

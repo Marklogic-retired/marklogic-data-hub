@@ -5,7 +5,7 @@ import { MdlDialogService } from '@angular-mdl/core';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import { Mapping } from "../../../../mappings/mapping.model";
-
+import { EnvironmentService } from '../../../../../services/environment';
 import {MatDialog, MatPaginator, MatSort, MatTable, MatTableDataSource} from "@angular/material";
 import { Step } from '../../../models/step.model';
 
@@ -33,6 +33,7 @@ export class MappingUiComponent implements OnChanges {
   private connsOrig: object = {};
 
   public valMaxLen: number = 15;
+  public isVersionCompatibleWithES: boolean = false;
 
   public filterFocus: object = {};
   public filterText: object = {};
@@ -47,47 +48,6 @@ export class MappingUiComponent implements OnChanges {
   mapExpresions = {};
   mapExpValue: Array<any> = [];
   runningStatus = false;
- 
-  mapFunctions = {
-
-    sum: {
-      category: "in-built",
-
-      description: "This function is used for calculating addition of two or more values.",
-
-      signature: "sum(a,b)"
-    },
-
-    avg: {
-      category: "in-built",
-
-      description: "This function is used for calculating average of two or more values.",
-
-      signature: "avg(a,b)"
-    },
-
-    percent: {
-
-      category: "custom",
-
-      description: "<Custom description>",
-
-      signature: "percent(a,b)"
-    },
-
-    other: {
-
-      category: "in-built",
-
-      description: "<Other description>",
-
-      signature: ""
-    }
-
-  }
-functionList = Object.keys(this.mapFunctions);//['avg','sum','percent','Others']; 
-
-public fncLst: Object;
 
   @ViewChild(MatTable)
   table: MatTable<any>;
@@ -112,6 +72,7 @@ public fncLst: Object;
   if(_.isEmpty(this.mapExpresions)) {
     this.mapExpresions = this.conns;
   }
+  this.isVersionCompatibleWithES = this.envService.settings.isVersionCompatibleWithES;
   }
 
   ngAfterViewInit() {
@@ -206,6 +167,7 @@ public fncLst: Object;
 
   constructor(
     private dialogService: MdlDialogService,
+    private envService: EnvironmentService,
     public dialog: MatDialog
   ) {}
 
