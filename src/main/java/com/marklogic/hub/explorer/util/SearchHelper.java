@@ -1,4 +1,6 @@
-/** Copyright 2019 MarkLogic Corporation. All rights reserved. */
+/**
+ * Copyright 2019 MarkLogic Corporation. All rights reserved.
+ */
 package com.marklogic.hub.explorer.util;
 
 import java.util.ArrayList;
@@ -30,7 +32,9 @@ import org.springframework.util.CollectionUtils;
 public class SearchHelper {
 
   private static final String QUERY_OPTIONS = "exp-final-entity-options";
+  private static final String JOB_WORD_CONSTRAINT_NAME = "createdByJobWordConstraint";
   private static final Logger logger = LoggerFactory.getLogger(SearchHelper.class);
+
   @Autowired
   DatabaseClientHolder databaseClientHolder;
 
@@ -53,10 +57,16 @@ public class SearchHelper {
     // Filtering by facets
     searchQuery.getFacets().forEach((facetType, facetValues) -> {
       StructuredQueryDefinition facetDef = null;
-      facetDef = facetType.equals("Collection") ?
-          queryBuilder.collectionConstraint(facetType, facetValues.toArray(new String[0])) :
-          queryBuilder.rangeConstraint(facetType, StructuredQueryBuilder.Operator.EQ,
-              facetValues.toArray(new String[0]));
+
+      if (facetType.equals("Collection")) {
+        facetDef = queryBuilder.collectionConstraint(facetType, facetValues.toArray(new String[0]));
+      } else if (facetType.equals("createdByJobRangeConstraint")) {
+        facetDef = queryBuilder
+            .wordConstraint(JOB_WORD_CONSTRAINT_NAME, facetValues.toArray(new String[0]));
+      } else {
+        facetDef = queryBuilder.rangeConstraint(facetType, StructuredQueryBuilder.Operator.EQ,
+            facetValues.toArray(new String[0]));
+      }
 
       if (facetDef != null) {
         queries.add(facetDef);
@@ -87,7 +97,7 @@ public class SearchHelper {
     // Fetching document content and meta-data
     try {
       String content = docMgr.readAs(docUri, documentMetadataReadHandle, String.class,
-          new ServerTransform("ml:prettifyXML"));
+          new ServerTransform("mlPrettifyXML"));
       Map<String, String> metadata = documentMetadataReadHandle.getMetadataValues();
       return Optional.ofNullable(new Document(content, metadata));
     } catch (ResourceNotFoundException rnfe) {
