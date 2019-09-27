@@ -10,10 +10,19 @@ if (mappingLib.versionIsCompatibleWithES()) {
     outputFormat: 'json'
   }).value.root;
   let instance = result.envelope.instance;
-  assertions = assertions.concat([
-    test.assertEqual('2019-12-07', fn.string(instance.OrderType.purchaseDate)),
-    test.assertEqual(165.05, fn.number(instance.OrderType.orderCost)),
-    test.assertEqual('Female', fn.string(instance.OrderType.customer.CustomerType.gender))
-  ]);
+  try {
+    assertions = assertions.concat([
+      test.assertEqual('2019-12-07', fn.string(instance.OrderType.purchaseDate)),
+      test.assertEqual(165.05, fn.number(instance.OrderType.orderCost)),
+      test.assertEqual('Female', fn.string(instance.OrderType.customer.CustomerType.gender), `Ge`)
+    ]);
+  } catch (e) {
+    assertions.push(
+      test.assertFalse(
+        fn.true(),
+        `Error "${e.toString()}" encountered testing instance '${xdmp.describe(instance, Sequence.from([]), Sequence.from([]))}'`
+      )
+    );
+  }
 }
 assertions;

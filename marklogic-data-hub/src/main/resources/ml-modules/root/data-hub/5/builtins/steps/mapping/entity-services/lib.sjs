@@ -88,14 +88,16 @@ function buildMapProperties(mapping, entityModel) {
         isArray = true;
         dataType = entityProperties[prop].items.datatype;
       }
-      let externalMappingRef = mapProperties[prop].externalMapping;
-      let sourcedFrom = escapeXML(mapProperties[prop].sourcedFrom);
-      if (externalMappingRef || isArray) {
+      let mapProperty = mapProperties[prop];
+      let sourcedFrom = escapeXML(mapProperty.sourcedFrom);
+      let externalMappingRef = mapProperty.externalMapping;
+      let isInternalMapping = mapProperty.targetEntityType && mapProperty.properties;
+      if (externalMappingRef || isInternalMapping || isArray) {
         let propLine;
-        if (externalMappingRef) {
-          let externalMapping = mappingLib.getMappingWithVersion(externalMappingRef.externalName, externalMappingRef.externalVersion).toObject();
-          let externalEntityName = getEntityName(externalMapping.targetEntityType);
-          propLine = `<${prop} ${isArray? 'datatype="array"':''}><m:call-template name="${externalEntityName}"/></${prop}>`;
+        if (externalMappingRef || isInternalMapping) {
+          let subMapping = (isInternalMapping) ? mapProperty : mappingLib.getMappingWithVersion(externalMappingRef.externalName, externalMappingRef.externalVersion).toObject();
+          let subEntityName = getEntityName(subMapping.targetEntityType);
+          propLine = `<${prop} ${isArray? 'datatype="array"':''}><m:call-template name="${subEntityName}"/></${prop}>`;
         } else {
           propLine = `<${prop} datatype="array" xsi:type="xs:${dataType}"><m:val>.</m:val></${prop}>`;
         }
@@ -118,6 +120,10 @@ function getRelatedMappings(mapping, related = [mapping]) {
   // get references to external mappings
   if (dhMappingTraceIsEnabled) {
     xdmp.trace(dhMappingTrace, `Getting related mappings for '${xdmp.describe(mapping)}'`);
+  }
+  let internalMappings = mapping.xpath('/properties//object-node()[exists(targetEntityType) and exists(properties)]');
+  for (let internalMapping of internalMappings) {
+    related.push(internalMapping);
   }
   let externalReferences = mapping.xpath('/properties/*/externalMapping');
   for (let mappingRef of externalReferences) {
