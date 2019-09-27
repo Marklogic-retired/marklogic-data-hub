@@ -19,7 +19,7 @@ return (
     test:assert-equal(1, fn:count($def-match/@threshold[. = "Definitive Match"])),
     test:assert-equal(1, fn:count($def-match/@action[. = $constants:MERGE-ACTION])),
     test:assert-exists($def-match/matches),
-    test:assert-equal(6, fn:count($def-match/matches/node()))
+    test:assert-equal(6, fn:count($def-match/matches/match))
   ),
 
   let $likely-match := $actual/result[@threshold="Likely Match"]
@@ -28,6 +28,6 @@ return (
     test:assert-equal(1, fn:count($likely-match/@threshold[. = "Likely Match"])),
     test:assert-equal(1, fn:count($likely-match/@action[. = $constants:NOTIFY-ACTION])),
     test:assert-exists($likely-match/matches),
-    test:assert-equal(3, fn:count($likely-match/matches/node()))
+    test:assert-equal(3, fn:count($likely-match/matches/match), "Expected 3 matches. Got: " || xdmp:describe($likely-match/matches/match, (),()))
   )
 )

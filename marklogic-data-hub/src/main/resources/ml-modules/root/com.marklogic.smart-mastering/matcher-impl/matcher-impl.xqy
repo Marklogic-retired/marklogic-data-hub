@@ -502,7 +502,7 @@ declare function match-impl:search(
              content type (json != xml) we store the path to the
              node instead :)
           cts:walk(
-            $result,
+            $result/*:envelope/*:instance,
             cts:or-query($matching-queries),
             (let $query-hashes := fn:distinct-values($cts:queries !
                 cts:element-walk(document{.}, $QUERIES_WITH_WEIGHT, element query-hash{xdmp:md5(document {$cts:node})})//query-hash !
