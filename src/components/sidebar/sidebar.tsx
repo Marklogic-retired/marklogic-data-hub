@@ -32,11 +32,13 @@ const Sidebar = (props) => {
 
   return (
     <div className={styles.sidebarContainer}>
-      <Facets 
-        title="Entity Properties"
-        data={entityFacets}
-        onFacetClick={handleFacetClick}
-      />
+      {props.selectedEntities.length === 0 ? <></> :
+        <Facets 
+          title="Entity Properties"
+          data={entityFacets}
+          onFacetClick={handleFacetClick}
+        />
+      }
       <Facets 
         title="Hub Properties"
         data={sortedHubFacets}
