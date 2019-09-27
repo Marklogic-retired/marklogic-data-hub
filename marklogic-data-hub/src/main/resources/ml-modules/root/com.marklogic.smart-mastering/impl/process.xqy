@@ -226,26 +226,42 @@ declare function proc-impl:record-match-provenance(
     map:put(
       $provenance-map,
       $uri,
-      map:new((
-        for $merge-item in $merge-items
-        let $matched-document := fn:string($merge-item/@uri)
-        return map:entry(
-          $matched-document,
+      map:entry($uri,
           map:new((
-            for $match in $merge-item/matches/match
+            for $merge-item in $merge-items
             return map:entry(
-              fn:string($match/path),
+              fn:string($merge-item/@uri),
               map:new((
-                map:entry("type", "matchInformation"),
-                map:entry("destination", $uri),
-                map:entry("matchedDocuments", $matched-document),
-                map:entry("matchedValues", fn:string($match/value)),
-                map:entry("matchContributions", fn:string-join($match/contributions ! fn:concat(algorithm,"(",nodeName,"):",weight), ";"))
+                 for $match in $merge-item/matches/match
+                 let $node-name := fn:string($match/nodeName)
+                 let $weight := fn:number($match/@weight)
+                 order by fn:number($match/@weight) descending, $node-name
+                 return
+                    map:entry(
+                      $node-name,
+                      map:map()
+                        => map:with("weight", $weight)
+                        => map:with("matchedValues", json:to-array(
+                            for $value in fn:distinct-values(($match/value ! fn:string(.)))
+                            order by $value
+                            return $value)
+                          )
+                        => map:with("matchedAlgorithms", json:to-array(
+                            for $contribution in $match/contributions
+                            let $weight := fn:number($contribution/weight)
+                            let $algorithm := fn:string($contribution/algorithm)
+                            order by $weight descending, $node-name, $algorithm
+                            return map:map()
+                              => map:with("name", $algorithm)
+                              => map:with("weight", $weight)
+                          )
+                          )
+                      )
+                )
               ))
             )
-          ))
-        )
-      ))
+          )
+      )
     )
   else ()
 };
@@ -412,28 +428,23 @@ declare function proc-impl:process-match-and-merge-with-options(
         )
         let $doc-provenance-info := $merged-doc-def => map:get("provenance")
         let $prov-entry := if ($fine-grain-provenance) then (
-            map:entry("provenance",
-              fn:fold-left(
-                function($map1,$map2) {
-                  map:new(
-                    for $key in fn:distinct-values((map:keys($map1),map:keys($map2)))
-                    return
-                      map:entry(
-                        $key,
-                        if (map:contains($map1, $key)) then
-                          if (map:contains($map2, $key)) then
-                            ($map1 => map:get($key)) + ($map2 => map:get($key))
-                          else
-                            ($map1 => map:get($key))
-                        else
-                          ($map2 => map:get($key))
-                      )
+            let $match-prov :=
+              map:entry(
+                $merge-uri,
+                let $related-prov-maps := fn:distinct-values((map:keys($doc-provenance-info), $distinct-uris)) ! map:get($provenance-map, .)
+                let $match-information := map:new((
+                      map:entry("destination", $merge-uri),
+                      map:entry("type", "matchInformation"),
+                      map:entry("matchedDocuments", proc-impl:combine-maps(map:map(), $related-prov-maps))
+                    ))
+                return
+                  map:entry(
+                    "matchInformation",
+                    $match-information
                   )
-                },
-                $doc-provenance-info,
-                fn:distinct-values((map:keys($doc-provenance-info), $distinct-uris)) ! map:get($provenance-map, .)
               )
-            )
+            return
+              map:entry("provenance", $doc-provenance-info + $match-prov)
           ) else ()
         return (
           $distinct-uris ! map:put($merged-into, ., $merge-uri),
@@ -733,4 +744,10 @@ declare function proc-impl:retrieve-write-object(
       map:put($write-objects-by-uri, $uri, $write-obj),
       $write-obj
     )
+};
+
+declare function proc-impl:combine-maps($base-map as map:map, $maps as map:map*) {
+  fn:fold-left(function($map1,$map2) {
+    $map1 + $map2
+  }, $base-map, $maps)
 };
