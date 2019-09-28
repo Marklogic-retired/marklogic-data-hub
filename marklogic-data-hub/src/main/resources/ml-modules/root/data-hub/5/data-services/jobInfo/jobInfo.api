@@ -1,0 +1,13 @@
+{
+    "functionName": "latestJobInfo",
+    "params": [
+        {
+            "name": "model",
+            "datatype": "string"
+        }
+    ],
+    "return": {
+        "datatype": "jsonDocument",
+        "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
+}
