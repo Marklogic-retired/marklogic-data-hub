@@ -1,0 +1,4 @@
+{
+  "endpointDirectory": "/data-hub/5/data-services/jobInfo/",
+  "$javaClass": "com.marklogic.hub.explorer.job.JobInfo"
+}
