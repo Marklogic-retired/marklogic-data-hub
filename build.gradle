@@ -23,6 +23,7 @@ plugins {
     id 'idea'
     id 'org.springframework.boot' version '2.1.7.RELEASE'
     id 'maven-publish'
+    id 'com.marklogic.ml-development-tools' version '4.2.0'
 }
 apply plugin: 'io.spring.dependency-management'
 
@@ -76,6 +77,9 @@ dependencies {
     testCompile group: 'org.mockito', name: 'mockito-junit-jupiter', version: '3.0.0'
 }
 
+task generateJobInfo(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask) {
+    serviceDeclarationFile = 'src/main/resources/ml-modules/jobInfo/service.json'
+}
 
 configurations.all {
     exclude group: 'org.slf4j', module: 'slf4j-log4j12'
