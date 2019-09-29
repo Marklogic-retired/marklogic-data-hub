@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 public class DatabaseClientHolder {
 
   private DatabaseClient databaseClient;
+  private DatabaseClient dataServiceClient;
 
   public DatabaseClient getDatabaseClient() {
     return databaseClient;
@@ -28,10 +29,22 @@ public class DatabaseClientHolder {
     this.databaseClient = databaseClient;
   }
 
+  public DatabaseClient getDataServiceClient() {
+    return dataServiceClient;
+  }
+
+  public void setDataServiceClient(DatabaseClient dataServiceClient) {
+    this.dataServiceClient = dataServiceClient;
+  }
+
   @PreDestroy
   public void cleanUp() {
     if (databaseClient != null) {
       databaseClient.release();
+    }
+
+    if (dataServiceClient != null) {
+      dataServiceClient.release();
     }
   }
 }
