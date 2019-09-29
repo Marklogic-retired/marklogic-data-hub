@@ -1,4 +1,6 @@
-/** Copyright 2019 MarkLogic Corporation. All rights reserved. */
+/**
+ * Copyright 2019 MarkLogic Corporation. All rights reserved.
+ */
 package com.marklogic.hub.explorer.service;
 
 import java.util.ArrayList;
@@ -8,6 +10,7 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentRecord;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.io.Format;
+import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
@@ -41,16 +44,16 @@ public class ModelService {
     queryMgr.setPageLength(Integer.MAX_VALUE);
     StructuredQueryBuilder sb = queryMgr.newStructuredQueryBuilder("default");
 
-    JsonNode jsonRes = JsonNodeFactory.instance.arrayNode();
+    ArrayNode jsonRes = JsonNodeFactory.instance.arrayNode();
 
     GenericDocumentManager docMgr = dbClient.newDocumentManager();
-    StringHandle handle = new StringHandle();
+    JacksonHandle handle = new JacksonHandle();
     docMgr
         .search(sb.collection(ENTITY_MODEL_COLLECTION_NAME), 0)
         .forEach(
             documentRecord -> {
               documentRecord.getContent(handle);
-              ((ArrayNode) jsonRes).add(handle.get());
+              jsonRes.add(handle.get());
             });
 
     return jsonRes;
