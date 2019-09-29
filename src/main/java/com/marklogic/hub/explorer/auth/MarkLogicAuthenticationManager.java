@@ -1,4 +1,6 @@
-/** Copyright 2019 MarkLogic Corporation. All rights reserved. */
+/**
+ * Copyright 2019 MarkLogic Corporation. All rights reserved.
+ */
 package com.marklogic.hub.explorer.auth;
 
 import com.marklogic.client.DatabaseClient;
@@ -87,6 +89,15 @@ public class MarkLogicAuthenticationManager implements AuthenticationProvider,
 
     // Now that we're authorized, store the databaseClient for future use in a session scoped bean.
     databaseClientHolder.setDatabaseClient(databaseClient);
+
+    /*
+     * Creating and storing a DatabaseClient object w/o explicitly specifying the database name as
+     * data services only works with the default database associated with the App Server.
+     */
+    clientConfig.setDatabase(null);
+    DatabaseClient dataServiceClient =
+        new DefaultConfiguredDatabaseClientFactory().newDatabaseClient(clientConfig);
+    databaseClientHolder.setDataServiceClient(dataServiceClient);
 
     return new ConnectionAuthenticationToken(token.getPrincipal(), token.getCredentials(),
         token.getAuthorities());
