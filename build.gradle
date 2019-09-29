@@ -38,7 +38,7 @@ targetCompatibility = 1.11
 group = 'com.marklogic'
 
 ext.junitPlatformVersion = '1.3.1'
-ext.junitJupiterVersion  = '5.3.1'
+ext.junitJupiterVersion = '5.3.1'
 
 dependencies {
     compile 'javax.annotation:javax.annotation-api:1.3.2'
@@ -85,19 +85,19 @@ configurations.all {
 }
 
 task startRest {
-  doFirst {
-    def executorService = Executors.newSingleThreadExecutor()
-    executorService.submit({
-      tasks.findMainClass.execute()
-      pid = tasks.bootRun.execute()
-    } as Runnable)
-  }
+    doFirst {
+        def executorService = Executors.newSingleThreadExecutor()
+        executorService.submit({
+            tasks.findMainClass.execute()
+            pid = tasks.bootRun.execute()
+        } as Runnable)
+    }
 }
 
 test {
     useJUnitPlatform()
-    testLogging{
-        events 'started','passed', 'skipped', 'failed'
+    testLogging {
+        events 'started', 'passed', 'skipped', 'failed'
         exceptionFormat 'full'
     }
 }
@@ -107,19 +107,21 @@ wrapper {
 }
 
 task stopBootrun {
-  doLast {
-    println("STOPPING Spring Boot")
-    def connection = new URL("http://localhost:8080/shutdown").openConnection()
-    connection.setRequestMethod("POST")
-    connection.connect()
-    println 'Shutting down application...'
-    println connection.inputStream.text
-  }
+    doLast {
+        println("STOPPING Spring Boot")
+        def connection = new URL("http://localhost:8080/shutdown").openConnection()
+        connection.setRequestMethod("POST")
+        connection.connect()
+        println 'Shutting down application...'
+        println connection.inputStream.text
+    }
 }
+
 javadoc {
     options.overview = 'src/main/resources/overview.html'
 }
-Node pomCustomizations = new NodeBuilder(). project {
+
+Node pomCustomizations = new NodeBuilder().project {
     name 'explorer'
     packaging 'jar'
     textdescription 'Library for Creating an Explorer on MarkLogic'
@@ -130,7 +132,6 @@ Node pomCustomizations = new NodeBuilder(). project {
         connection 'scm:git@project.marklogic.com:product/datahubenterprise.git'
         developerConnection 'scm:git@project.marklogic.com:product/datahubenterprise.git'
     }
-
 
 
     developers {
@@ -173,7 +174,7 @@ publishing {
     }
     repositories {
         maven {
-            if(project.hasProperty("mavenUser")) {
+            if (project.hasProperty("mavenUser")) {
                 credentials {
                     username mavenUser
                     password mavenPassword
