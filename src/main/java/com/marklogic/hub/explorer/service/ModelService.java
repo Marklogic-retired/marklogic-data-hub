@@ -5,6 +5,7 @@ package com.marklogic.hub.explorer.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentRecord;
@@ -57,6 +58,24 @@ public class ModelService {
             });
 
     return jsonRes;
+  }
+
+  /**
+   * Get all entity model names
+   *
+   * @return a list of all entity model names
+   */
+  public List<String> getModelNames() {
+    List<String> modelNamesList = new ArrayList<>();
+    ArrayNode arrayNode = (ArrayNode) getModels();
+    arrayNode
+        .forEach(jsonNode -> Optional.ofNullable(jsonNode)
+            .map(node -> node.get("info"))
+            .map(node -> node.get("title"))
+            .map(JsonNode::textValue)
+            .ifPresent(modelNamesList::add));
+
+    return modelNamesList;
   }
 
   /**
