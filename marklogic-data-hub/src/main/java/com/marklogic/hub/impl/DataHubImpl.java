@@ -263,25 +263,26 @@ public class DataHubImpl implements DataHub {
                 return false;
             }
             if(serverVersion.isNightly()){
+                //Support all 10.0-nightly on or after 6/20/2019 and 9.0-nightly on or after 7/25/2019
                 if(serverVersion.getMajor() == 9) {
-                    Date minDate = new GregorianCalendar(2018, Calendar.NOVEMBER, 5).getTime();
+                    Date minDate = new GregorianCalendar(2019, Calendar.JULY, 25).getTime();
                     Date date = new SimpleDateFormat("y-M-d").parse(serverVersion.getDateString());
                     if (date.before(minDate)) {
                         return false;
                     }
                 }
-                //Support all 10.0-nightly on or after 6/11/2019
                 if(serverVersion.getMajor() == 10) {
-                    Date minDate = new GregorianCalendar(2019, Calendar.JUNE, 1).getTime();
+                    Date minDate = new GregorianCalendar(2019, Calendar.JUNE, 20).getTime();
                     Date date = new SimpleDateFormat("y-M-d").parse(serverVersion.getDateString());
                     if (date.before(minDate)) {
                         return false;
                     }
                 }
             }
+            //5.1.0 supports server versions 9.x >= 9.0-10 and 10.x >= 10.0.1
             else {
                 if(serverVersion.getMajor() == 9){
-                    if(serverVersion.getMinor() < 900) {
+                    if(serverVersion.getMinor() < 1000) {
                         return false;
                     }
                 }
