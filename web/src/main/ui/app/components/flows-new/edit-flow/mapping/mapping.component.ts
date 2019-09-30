@@ -24,8 +24,10 @@ import { Flow } from "../../models/flow.model";
       [step]="this.step"
       [editURIVal]="this.editURIVal"
       [functionLst]="functionLst"
+      [nestEnt] = "nestEnt"
       (updateURI)="this.updateURI($event)"
       (updateMap)="this.updateMap($event)"
+      (nestEntity)="this.getEntity($event)"
     ></app-mapping-ui>
   `
 })
@@ -38,6 +40,8 @@ export class MappingComponent implements OnInit {
 
   // Entity Model
   public targetEntity: Entity;
+  public nestEnt: Entity;
+  public dataSourceEntity: {};
 
   // Source Document
   private sourceDbType: string = 'STAGING';
@@ -332,6 +336,16 @@ export class MappingComponent implements OnInit {
       console.log("resp",resp);
       console.log("functionLst",this.functionLst);
     });
+  }
+
+   
+  getEntity(event): void {
+    this.entitiesService.entitiesChange.subscribe(entities => {
+      this.nestEnt = _.find(entities, (e: Entity) => {
+        return e.name === event.entName;
+      });
+    });
+    this.entitiesService.getEntities();
   }
 
 }
