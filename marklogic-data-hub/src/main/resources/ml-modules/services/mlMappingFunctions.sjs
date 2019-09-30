@@ -56,7 +56,9 @@ function getXpathFunctions() {
     if (String(xpathFunctions[i]).includes("fn:")){
       let xpathFunction ={};
       xpathFunction["category"] = "xpath";
-      xpathFunction["signature"] = xdmp.functionSignature(xpathFunctions[i]).replace("function", xdmp.functionName(xpathFunctions[i]));
+      let signature = xdmp.functionSignature(xpathFunctions[i]).replace("function", xdmp.functionName(xpathFunctions[i]));
+      signature = signature.match(/fn:(.*?) as.*?/)[1];
+      xpathFunction["signature"] = signature;
       response[xdmp.functionName(xpathFunctions[i])] = xpathFunction;
     }
   }
