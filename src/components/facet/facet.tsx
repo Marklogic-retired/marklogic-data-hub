@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Checkbox, Icon } from 'antd';
+import { SearchContext } from '../../util/search-context';
 import styles from './facet.module.scss';
 
 const Facet = (props) => {
+  const { setSearchFacets } = useContext(SearchContext);
   const limit = 3;
   const [show, toggleShow] = useState(true);
   const [more, toggleMore] = useState(props.facetValues.length > limit);
@@ -13,23 +15,20 @@ const Facet = (props) => {
     // Selection
     if (e.target.checked && index === -1) {
       setChecked([...checked, e.target.value]);
-      // pass facet state to parent
-      props.onFacetClick(props.constraint, [...checked, e.target.value]);
+      setSearchFacets(props.constraint, [...checked, e.target.value]);
     } 
     // Deselection
     else if (index !== -1){
       let newChecked = [...checked];
       newChecked.splice(index, 1);
       setChecked(newChecked);
-      // pass facet state to parent
-      props.onFacetClick(props.constraint, newChecked);
+      setSearchFacets(props.constraint, newChecked);
     }
   }
 
   const handleClear = () => {
     setChecked([]);
-    // pass facet state to parent
-    props.onFacetClick(props.constraint, []);
+    setSearchFacets(props.constraint, []);
   }
 
   const numToShow = (props.facetValues.length > limit && more) ? 

@@ -25,7 +25,6 @@ const Facets = (props) => {
             constraint={facet.facetName}
             facetValues={facet.facetValues}
             key={facet.facetName}
-            onFacetClick={handleFacetClick}
           />
           )
          })}

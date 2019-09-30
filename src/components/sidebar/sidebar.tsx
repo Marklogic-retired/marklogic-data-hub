@@ -28,9 +28,6 @@ const Sidebar = (props) => {
     }
   }, [props.selectedEntities, props.facets]);
   
-  const handleFacetClick = (constraint, vals) => {
-    props.onFacetClick(constraint, vals);
-  }
 
   return (
     <div className={styles.sidebarContainer}>
@@ -38,13 +35,11 @@ const Sidebar = (props) => {
         <Facets 
           title="Entity Properties"
           facets={entityFacets}
-          onFacetClick={handleFacetClick}
         />
       }
       <Facets 
         title="Hub Properties"
         facets={hubFacets}
-        onFacetClick={handleFacetClick}
       />
     </div>
   );
