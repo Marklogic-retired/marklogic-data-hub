@@ -222,7 +222,7 @@ public class Versions extends ResourceManager {
     private boolean isVersionCompatibleWithESServer(Versions.MarkLogicVersion serverVersion) {
         if(!serverVersion.isNightly()) {
             return ((serverVersion.getMajor() == 10 && serverVersion.getMinor() >= 200) ||
-                (serverVersion.getMajor() == 9 && serverVersion.getMinor() >= 1002));
+                (serverVersion.getMajor() == 9 && serverVersion.getMinor() >= 1100));
         }
         return false;
     }

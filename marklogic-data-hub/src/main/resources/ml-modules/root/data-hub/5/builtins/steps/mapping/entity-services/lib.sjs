@@ -275,7 +275,7 @@ function versionIsCompatibleWithES(version = xdmp.version()) {
   else {
     var major = /^([0-9]+)\..*$/.exec(version)[1];
     if (major === "9") {
-      return fn.compare(version, '9.0-10.2', numberSensitiveCollation) >= 0;
+      return fn.compare(version, '9.0-11', numberSensitiveCollation) >= 0;
     }
     else if (major === "10"){
       return fn.compare(version, '10.0-2', numberSensitiveCollation) >= 0;
