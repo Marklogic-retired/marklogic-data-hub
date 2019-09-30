@@ -78,6 +78,17 @@ pipeline{
                   }
              }
 		}
+		stage('publish'){
+        		when {
+                  		branch 'develop'
+                	 }
+        		agent { label 'explorerLinux'}
+        		steps{
+        	        sh 'cd $WORKSPACE/explorer-ui;docker rmi mlregistry.marklogic.com/explorer/explorer-ui:5.1-snapshot || true; docker build . -t  mlregistry.marklogic.com/explorer/explorer-ui:5.1-snapshot;docker push   mlregistry.marklogic.com/explorer/explorer-ui:5.1-snapshot'
+        		}
+
+
+        		}
 
 	}
 }
