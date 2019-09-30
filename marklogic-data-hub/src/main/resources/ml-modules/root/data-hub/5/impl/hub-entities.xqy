@@ -167,27 +167,27 @@ declare %private function hent:fix-options-exp($nodes as node()*)
               <search:field name="datahubCreatedByStep"/>
             </search:value>
           </search:constraint>,
-          <search:constraint name="createdByJobRangeConstraint">
+          <search:constraint name="createdByJobRange">
             <search:range>
               <search:field name="datahubCreatedByJob"/>
             </search:range>
           </search:constraint>,
-          <search:constraint name="createdByJobWordConstraint">
+          <search:constraint name="createdByJobWord">
             <search:word>
               <search:field name="datahubCreatedByJob"/>
             </search:word>
           </search:constraint>,
-          <search:constraint name="createdByStepRangeConstraint">
+          <search:constraint name="createdByStepRange">
             <search:range>
               <search:field name="datahubCreatedByStep"/>
             </search:range>
           </search:constraint>,
-          <search:constraint name="createdOnRangeConstraint">
+          <search:constraint name="createdOnRange">
             <search:range>
               <search:field name="datahubCreatedOn"/>
             </search:range>
           </search:constraint>,
-          <search:constraint name="createdInFlowRangeConstraint">
+          <search:constraint name="createdInFlowRange">
             <search:range>
               <search:field name="datahubCreatedInFlow"/>
             </search:range>
