@@ -110,6 +110,10 @@ export class MappingComponent implements OnInit {
     }
   }
 
+  loadEntityDataSource() {
+      this.targetEntity
+  }
+
   loadEntity(): void {
     this.entitiesService.entitiesChange.subscribe(entities => {
       this.targetEntity = _.find(entities, (e: Entity) => {
@@ -347,5 +351,6 @@ export class MappingComponent implements OnInit {
     });
     this.entitiesService.getEntities();
   }
+  
 
 }
