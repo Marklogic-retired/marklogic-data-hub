@@ -66,6 +66,24 @@ export class MappingUiComponent implements OnChanges {
   expandedElement: any;
   public fncLst: Object;
   dataSourceEntity: Array<any> = [];
+  docsArray = [
+    "/Users/nshrivas/Documents/HubProjects/data-hub-mapping-test/data/MOCK_DATA.json-0-1", 
+    "/Users/nshrivas/Documents/HubProjects/data-hub-mapping-test/data/MOCK_DATA.json-0-10", 
+    "/Users/nshrivas/Documents/HubProjects/data-hub-mapping-test/data/MOCK_DATA.json-0-100", 
+    "/Users/nshrivas/Documents/HubProjects/data-hub-mapping-test/data/MOCK_DATA.json-0-1000", 
+    "/Users/nshrivas/Documents/HubProjects/data-hub-mapping-test/data/MOCK_DATA.json-0-101", 
+    "/Users/nshrivas/Documents/HubProjects/data-hub-mapping-test/data/MOCK_DATA.json-0-102", 
+    "/Users/nshrivas/Documents/HubProjects/data-hub-mapping-test/data/MOCK_DATA.json-0-103", 
+    "/Users/nshrivas/Documents/HubProjects/data-hub-mapping-test/data/MOCK_DATA.json-0-104", 
+    "/Users/nshrivas/Documents/HubProjects/data-hub-mapping-test/data/MOCK_DATA.json-0-105", 
+    "/Users/nshrivas/Documents/HubProjects/data-hub-mapping-test/data/MOCK_DATA.json-0-106", 
+    "/Users/nshrivas/Documents/HubProjects/data-hub-mapping-test/data/MOCK_DATA.json-0-107", 
+    "/Users/nshrivas/Documents/HubProjects/data-hub-mapping-test/data/MOCK_DATA.json-0-108", 
+    "/Users/nshrivas/Documents/HubProjects/data-hub-mapping-test/data/MOCK_DATA.json-0-109" ];
+
+    disableURINavLeft: boolean = false;
+    disableURINavRight: boolean = false;
+    uriIndex = 0;
 
 
   @ViewChild(MatTable)
@@ -169,7 +187,29 @@ export class MappingUiComponent implements OnChanges {
 
   //   return this.dataSourceEntity
   // }
+  onNavigateURIList(index) {
+    if (index < 0 || index > this.docsArray.length) {
+      this.uriIndex = index;
+      if (index < 0) {
+        this.disableURINavLeft = true;
+      } else {
+        this.disableURINavRight = true;
+      }
 
+
+    } else {
+      this.disableURINavLeft = false;
+      this.disableURINavRight = false;
+
+      //console.log("else part ", this.docsArray[index]);
+      this.uriIndex = index;
+      this.editURIVal = this.docsArray[index];
+
+      this.onUpdateURI();
+
+    }
+
+  }
   onUpdateURI() {
     if (Object.keys(this.conns).length > 0) {
       let result = this.dialogService.confirm(
