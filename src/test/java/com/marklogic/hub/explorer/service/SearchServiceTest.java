@@ -45,9 +45,9 @@ public class SearchServiceTest {
   @BeforeEach
   public void setUpDocs() {
     // Create Facet Map
-    List<String> facetValues = Arrays.asList("220", "350");
+    List<String> priceFacetValues = Arrays.asList("220", "350");
     Map<String, List<String>> facets = new HashMap<>();
-    facets.put("Price", facetValues);
+    facets.put("Price", priceFacetValues);
 
     // Create Search Query object
     mockQuery = new SearchQuery();
@@ -111,6 +111,17 @@ public class SearchServiceTest {
   public void testSearchWithNullEntities() {
     // Setting entities list to be null
     mockQuery.setEntityNames(null);
+
+    StringHandle mockHandle = new StringHandle("This is some sample search data");
+    when(mockSearchHelper.search(mockQuery)).thenReturn(mockHandle);
+    StringHandle resultHandle = searchServiceMock.search(mockQuery);
+    assertTrue(resultHandle.get().equals(mockHandle.get()));
+  }
+
+  @Test
+  public void testSearchWithSingleJobId() {
+    List<String> jobFacetValues = Arrays.asList("custom-job-id-1", "custom-job-id-2");
+    mockQuery.getFacets().put("createdByJobRange", jobFacetValues);
 
     StringHandle mockHandle = new StringHandle("This is some sample search data");
     when(mockSearchHelper.search(mockQuery)).thenReturn(mockHandle);
