@@ -5,9 +5,11 @@
 /e2e/node_modules
 /.pnp
 .pnp.js
+.vscode
 
 # testing
 /coverage
+/e2e/cypress/screenshots
 
 # production
 /build
