@@ -67,31 +67,35 @@ public class ValidateMappingTest extends HubTestBase {
 
     @Test
     public void validMapping() {
-        JsonNode response = mgr.validateJsonMapping("{\n" +
-            "  \"targetEntityType\": \"http://marklogic.com/data-hub/example/CustomerType-0.0.1/CustomerType\",\n" +
-            "  \"properties\": {\n" +
-            "    \"id\": {\n" +
-            "      \"sourcedFrom\": \"id\"\n" +
-            "    }\n" +
-            "  }\n" +
-            "}");
+        if (versions.isVersionCompatibleWithES()) {
+            JsonNode response = mgr.validateJsonMapping("{\n" +
+                "  \"targetEntityType\": \"http://marklogic.com/data-hub/example/CustomerType-0.0.1/CustomerType\",\n" +
+                "  \"properties\": {\n" +
+                "    \"id\": {\n" +
+                "      \"sourcedFrom\": \"id\"\n" +
+                "    }\n" +
+                "  }\n" +
+                "}");
 
-        assertNull(response.get("properties").get("id").get("errorMessage"),
-            "The mapping is valid, and thus there shouldn't be an errorMessage property");
+            assertNull(response.get("properties").get("id").get("errorMessage"),
+                "The mapping is valid, and thus there shouldn't be an errorMessage property");
+        }
     }
 
     @Test
     public void invalidMapping() {
-        JsonNode response = mgr.validateJsonMapping("{\n" +
-            "  \"targetEntityType\": \"http://marklogic.com/data-hub/example/CustomerType-0.0.1/CustomerType\",\n" +
-            "  \"properties\": {\n" +
-            "    \"id\": {\n" +
-            "      \"sourcedFrom\": \"concat(id, ')\"\n" +
-            "    }\n" +
-            "  }\n" +
-            "}");
+        if (versions.isVersionCompatibleWithES()) {
+            JsonNode response = mgr.validateJsonMapping("{\n" +
+                "  \"targetEntityType\": \"http://marklogic.com/data-hub/example/CustomerType-0.0.1/CustomerType\",\n" +
+                "  \"properties\": {\n" +
+                "    \"id\": {\n" +
+                "      \"sourcedFrom\": \"concat(id, ')\"\n" +
+                "    }\n" +
+                "  }\n" +
+                "}");
 
-        assertEquals("Invalid XPath expression: concat(id, ')", response.get("properties").get("id").get("errorMessage").asText(),
-            "The id mapping expression has an error, and thus it should be reported");
+            assertEquals("Invalid XPath expression: concat(id, ')", response.get("properties").get("id").get("errorMessage").asText(),
+                "The id mapping expression has an error, and thus it should be reported");
+        }
     }
 }
