@@ -1,4 +1,4 @@
-package com.marklogic.hub.explorer.unittest;
+package com.marklogic.hub.explorer.service;
 
 import java.io.IOException;
 

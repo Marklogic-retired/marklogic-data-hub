@@ -1,5 +1,5 @@
 /** Copyright 2019 MarkLogic Corporation. All rights reserved. */
-package com.marklogic.hub.explorer.unittest;
+package com.marklogic.hub.explorer.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
