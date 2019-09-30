@@ -1,24 +1,30 @@
 // Maps constraint name to user-friendly facet label.
 // Order of object properties determines order in sidebar.
-const hubPropertiesConfig = {
-  "Collection": {
-    "name": "Collection"
+const hubPropertiesConfig = [ 
+  {
+    facetName: "Collection",
+    displayName: "Collection"
   },
-  "createdByRangeConstraint": {
-    "name": "Created By"
+  {
+    facetName: "createdByRangeConstraint",
+    displayName: "Created By"
   },
-  "createdOnRangeConstraint": {
-    "name": "Created On"
+  {
+    facetName: "createdOnRangeConstraint",
+    displayName: "Created On"
   },
-  "createdByJobRangeConstraint": {
-    "name": "Job ID"
+  {
+    facetName: "createdByJobRangeConstraint",
+    displayName: "Job ID"
   },
-  "createdInFlowRangeConstraint": {
-    "name": "Flow"
+  {
+    facetName: "createdInFlowRangeConstraint",
+    displayName: "Flow"
   },
-  "createdByStepRangeConstraint": {
-    "name": "Step"
-  }
-};
+  {
+    facetName: "createdByStepRangeConstraint",
+    displayName: "Step"
+  },
+]
 
 export default hubPropertiesConfig;

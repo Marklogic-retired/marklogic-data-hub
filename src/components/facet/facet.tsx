@@ -3,10 +3,9 @@ import { Checkbox, Icon } from 'antd';
 import styles from './facet.module.scss';
 
 const Facet = (props) => {
-
   const limit = 3;
   const [show, toggleShow] = useState(true);
-  const [more, toggleMore] = useState(props.data.facetValues.length > limit);
+  const [more, toggleMore] = useState(props.facetValues.length > limit);
   const [checked, setChecked] = useState<string[]>([]);
 
   const handleClick = (e) => {
@@ -33,10 +32,10 @@ const Facet = (props) => {
     props.onFacetClick(props.constraint, []);
   }
 
-  const numToShow = (props.data.facetValues.length > limit && more) ? 
-    limit : props.data.facetValues.length;
+  const numToShow = (props.facetValues.length > limit && more) ? 
+    limit : props.facetValues.length;
 
-  const values = props.data.facetValues.slice(0, numToShow).map((f, i) =>
+  const values = props.facetValues.slice(0, numToShow).map((f, i) =>
     <div key={i}>
       <div className={styles.checkContainer}>
         <Checkbox 
@@ -70,7 +69,7 @@ const Facet = (props) => {
         {values}
         <div 
           className={styles.more}
-          style={{display: (props.data.facetValues.length > limit) ? 'block' : 'none'}}
+          style={{display: (props.facetValues.length > limit) ? 'block' : 'none'}}
           onClick={() => toggleMore(!more)}
         >{(more) ? 'more >>' : '<< less'}</div>
       </div>

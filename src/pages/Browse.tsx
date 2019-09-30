@@ -107,6 +107,7 @@ const Browse: React.FC<Props> = ({location}) => {
           facets={facets} 
           selectedEntities={searchOptions.entityNames}
           onFacetClick={handleFacetClick}
+          entityDefArray={entityDefArray} 
         />
       </Sider>
       <Content style={{ background: '#fff', padding: '24px' }}>
