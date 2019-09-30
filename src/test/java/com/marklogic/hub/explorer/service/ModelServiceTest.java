@@ -1,3 +1,6 @@
+/**
+ * Copyright 2019 MarkLogic Corporation. All rights reserved.
+ */
 package com.marklogic.hub.explorer.service;
 
 import java.io.IOException;
@@ -6,6 +9,8 @@ import com.marklogic.hub.explorer.service.ModelService;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +25,6 @@ import static org.mockito.Mockito.when;
 @RunWith(JUnitPlatform.class)
 @ExtendWith(MockitoExtension.class)
 public class ModelServiceTest {
-
   @Mock
   protected ModelService modelService;
 
@@ -318,35 +322,35 @@ public class ModelServiceTest {
   public void testGetModelByTitle() throws IOException {
     ObjectMapper mapper = new ObjectMapper();
     JsonNode jsonNode = mapper.readTree(PATIENT_ENTITY_MODEL);
-    final String entity[] = new String[1];
+    ArrayNode entity = JsonNodeFactory.instance.arrayNode();
     if (jsonNode.isArray()) {
       jsonNode.forEach(e -> {
         if ("Labs".equals(e.get("info").get("title").asText())) {
-          entity[0] = e.toString();
+          entity.add(e.toString());
           return;
         }
       });
     }
-    when(modelService.getModel("Labs")).thenReturn(entity[0]);
-    String resultObj = modelService.getModel("Labs");
-    assertTrue(entity[0].equals(resultObj));
+    when(modelService.getModel("Labs")).thenReturn(entity);
+    JsonNode resultObj = modelService.getModel("Labs");
+    assertTrue(resultObj.size() == 1 && entity.equals(resultObj));
   }
 
   @Test
   public void testGetModelNoSuchTitle() throws IOException {
     ObjectMapper mapper = new ObjectMapper();
     JsonNode jsonNode = mapper.readTree(PATIENT_ENTITY_MODEL);
-    final String entity[] = new String[1];
+    ArrayNode entity = JsonNodeFactory.instance.arrayNode();
     if (jsonNode.isArray()) {
       jsonNode.forEach(e -> {
         if ("Lab".equals(e.get("info").get("title").asText())) {
-          entity[0] = e.toString();
+          entity.add(e.toString());
           return;
         }
       });
     }
-    when(modelService.getModel("Lab")).thenReturn(entity[0]);
-    String resultObj = modelService.getModel("Lab");
-    assertTrue(resultObj == null);
+    when(modelService.getModel("Lab")).thenReturn(entity);
+    JsonNode resultObj = modelService.getModel("Lab");
+    assertTrue(resultObj.size() == 0 && entity.equals(resultObj));
   }
 }

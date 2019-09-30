@@ -80,10 +80,10 @@ public class ModelService {
 
   /**
    * Get an entity info by name
-   *
-   * @return a string representation for an entity
+   * @param modelName A model name
+   * @return Json representation for an entity
    */
-  public String getModel(String modelName) {
+  public JsonNode getModel(String modelName) {
     DatabaseClient dbClient = dbClientHolder.getDatabaseClient();
     QueryManager queryMgr = dbClient.newQueryManager();
 
@@ -100,7 +100,7 @@ public class ModelService {
     List<DocumentRecord> documentRecords = new ArrayList<>();
     docMgr.search(sbd, 0, sh).forEach(documentRecords::add);
 
-    StringHandle handle = new StringHandle();
+    JacksonHandle handle = new JacksonHandle();
     if (!documentRecords.isEmpty()) {
       documentRecords.get(0).getContent(handle);
     }

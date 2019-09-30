@@ -1,4 +1,6 @@
-/** Copyright 2019 MarkLogic Corporation. All rights reserved. */
+/**
+ * Copyright 2019 MarkLogic Corporation. All rights reserved.
+ */
 package com.marklogic.hub.explorer.web;
 
 import java.io.IOException;
@@ -33,7 +35,7 @@ public class ModelController {
   @RequestMapping(value = "/{modelName}", method = RequestMethod.GET)
   @ResponseBody
   public ResponseEntity<?> getModel(@PathVariable String modelName) throws IOException {
-    String json = modelService.getModel(modelName);
+    JsonNode json = modelService.getModel(modelName);
     return new ResponseEntity<>(json, HttpStatus.OK);
   }
 }
