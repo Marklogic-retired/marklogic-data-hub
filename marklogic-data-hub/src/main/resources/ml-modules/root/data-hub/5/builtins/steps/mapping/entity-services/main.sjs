@@ -85,33 +85,23 @@ function main(content, options) {
 
 // Extracted for unit testing purposes
 function buildEnvelope(entityInfo, doc, instance, outputFormat, options) {
+  let flowUtils = datahub.flow.flowUtils;
   let triples = [];
-  let headers = datahub.flow.flowUtils.createHeaders(options);
+  let headers = flowUtils.createHeaders(options);
 
   if (options.triples && Array.isArray(options.triples)) {
     for (let triple of options.triples) {
-      triples.push(xdmp.toJSON(sem.rdfParse(JSON.stringify(triple), "rdfjson")));
+      triples.push(sem.triple(triple));
     }
   }
 
-  let docHeaders = datahub.flow.flowUtils.getHeaders(doc);
-  let docTriples = datahub.flow.flowUtils.getTriples(doc);
+  let docHeaders = flowUtils.normalizeValuesInNode(flowUtils.getHeaders(doc)) || {};
+  let docTriples = flowUtils.normalizeValuesInNode(flowUtils.getTriples(doc)) || [];
 
-  if(docHeaders) {
-    docHeaders = docHeaders.toObject();
-  } else {
-    docHeaders = {};
-  }
-  if(docTriples){
-    docTriples = docTriples.toObject();
-  } else {
-    docTriples = [];
-  }
-  headers = Object.assign({}, headers, docHeaders);
-  triples = triples.concat(docTriples);
-  let attachments = datahub.flow.flowUtils.cleanData(doc, "content", outputFormat);
-  headers = datahub.flow.flowUtils.cleanData(headers, "headers", outputFormat);
-  triples = datahub.flow.flowUtils.cleanData(triples, "triples", outputFormat);
+
+  headers = flowUtils.mergeHeaders(headers, docHeaders, outputFormat);
+  triples = triples.concat(datahub.hubUtils.normalizeToArray(docTriples));
+  let attachments = flowUtils.cleanData(doc, "content", outputFormat);
   let nb = new NodeBuilder().startDocument();
   if (outputFormat === datahub.flow.flowUtils.consts.JSON) {
     if ((!doc instanceof Element && !doc instanceof XMLDocument) && (doc instanceof Object || doc instanceof ObjectNode)) {
@@ -120,17 +110,17 @@ function buildEnvelope(entityInfo, doc, instance, outputFormat, options) {
     nb.addNode({
       envelope: {
         headers: headers,
-        triples: triples,
+        triples: triples.map((triple) => flowUtils.normalizeTriple(triple).toObject()),
         instance: Object.assign({
-            info: entityInfo
-          }, instance.toObject()),
+          info: entityInfo
+        }, instance.toObject()),
         attachments: attachments
       }
     });
   } else {
     nb.startElement("envelope", "http://marklogic.com/entity-services");
     nb.startElement("headers", "http://marklogic.com/entity-services");
-    if (headers && headers instanceof Sequence) {
+    if (flowUtils.isNonStringIterable(headers)) {
       for (let header of headers) {
         nb.addNode(header);
       }
@@ -140,20 +130,12 @@ function buildEnvelope(entityInfo, doc, instance, outputFormat, options) {
     nb.endElement();
 
     nb.startElement("triples", "http://marklogic.com/entity-services");
-    if (triples && triples instanceof Sequence) {
+    if (flowUtils.isNonStringIterable(triples)) {
       for (let triple of triples) {
-        if (triple instanceof sem.triple) {
-          nb.addNode(datahub.flow.flowUtils.tripleToXml(triple));
-        } else {
-          nb.addNode(triple);
-        }
+        nb.addNode(flowUtils.tripleToXml(flowUtils.normalizeTriple(triple)));
       }
     } else if (triples) {
-      if (triples instanceof sem.triple) {
-        nb.addNode(datahub.flow.flowUtils.tripleToXml(triples));
-      } else {
-        nb.addNode(triples);
-      }
+      nb.addNode(flowUtils.tripleToXml(flowUtils.normalizeTriple(triples)));
     }
     nb.endElement();
     if(instance.nodeName === 'instance') {

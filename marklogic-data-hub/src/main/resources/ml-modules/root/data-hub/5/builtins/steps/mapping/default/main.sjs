@@ -95,8 +95,9 @@ function main(content, options) {
 
 // Extracted for unit testing purposes
 function buildEnvelope(doc, instance, outputFormat, options) {
+  let flowUtils = datahub.flow.flowUtils;
   let triples = [];
-  let headers = datahub.flow.flowUtils.createHeaders(options);
+  let headers = flowUtils.createHeaders(options);
 
   if (options.triples && Array.isArray(options.triples)) {
     for (let triple of options.triples) {
@@ -104,24 +105,11 @@ function buildEnvelope(doc, instance, outputFormat, options) {
     }
   }
 
-  let docHeaders = datahub.flow.flowUtils.getHeaders(doc);
-  let docTriples = datahub.flow.flowUtils.getTriples(doc);
-
-  if(docHeaders) {
-    docHeaders = docHeaders.toObject();
-  } else {
-    docHeaders = {};
-  }
-  if(docTriples){
-    docTriples = docTriples.toObject();
-  } else {
-    docTriples = [];
-  }
-
-  headers = Object.assign({}, headers, docHeaders);
+  let docHeaders = flowUtils.normalizeValuesInNode(flowUtils.getHeaders(doc)) || {};
+  let docTriples = flowUtils.normalizeValuesInNode(flowUtils.getTriples(doc)) || [];
+  headers = flowUtils.mergeHeaders(headers, docHeaders, outputFormat);
   triples = triples.concat(docTriples);
-
-  return datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
+  return flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
 }
 
 module.exports = {
