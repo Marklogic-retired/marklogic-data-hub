@@ -6,11 +6,8 @@
   "targetEntityType" : "http://marklogic.com/example/Employee-0.0.1/Employee",
   "sourceContext" : "/",
   "properties" : {
-    "price" : {
-      "sourcedFrom" : "price"
-    },
-    "id" : {
-      "sourcedFrom" : "id"
+    "name" : {
+      "sourcedFrom" : "name"
     }
   }
 }

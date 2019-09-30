@@ -17,4 +17,13 @@ function mapInstance(uri, validateEntity, outputFormat) {
   );
 }
 
+function canTestJsonSchemaValidation() {
+  if (xdmp.version().startsWith("10.0-2019") || xdmp.version().startsWith("10.0-2")) {
+    console.log("Not running test due to bug https://bugtrack.marklogic.com/53122");
+    return false;
+  }
+  return true;
+}
+
 exports.mapInstance = mapInstance;
+exports.canTestJsonSchemaValidation = canTestJsonSchemaValidation;

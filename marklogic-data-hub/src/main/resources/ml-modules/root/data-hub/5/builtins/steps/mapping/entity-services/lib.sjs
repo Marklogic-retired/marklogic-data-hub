@@ -271,6 +271,10 @@ function validatePropertyMapping(targetEntityType, propertyName, sourcedFrom) {
 }
 
 function versionIsCompatibleWithES(version = xdmp.version()) {
+  // Turns out 9.0-10.2 is fine, but 9.0-10 before that is not
+  if (version == '9.0-10' || version == '9.0-10.1') {
+    return false;
+  }
   let numberSensitiveCollation = 'http://marklogic.com/collation//MO';
   let isNightly = /^[0-9]+\.[0-9]+-[0-9]{8}$/.test(version);
   if (isNightly) {

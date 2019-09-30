@@ -1,15 +1,12 @@
 const config = require("/com.marklogic.hub/config.sjs");
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const esMappingLib = require("/data-hub/5/builtins/steps/mapping/entity-services/lib.sjs");
+const lib = require("lib/lib.sjs");
 const test = require("/test/test-helper.xqy");
 
 const datahub = DataHubSingleton.instance();
 
-if (xdmp.version().startsWith("10.0-2019")) {
-  console.log("Not running test due to bug https://bugtrack.marklogic.com/53122");
-}
-
-else if (esMappingLib.versionIsCompatibleWithES()) {
+if (lib.canTestJsonSchemaValidation() && esMappingLib.versionIsCompatibleWithES()) {
   const content = ["/content/invalid-customer.json", "/content/valid-customer.json"].map(uri => {
     return {
       uri: uri,
