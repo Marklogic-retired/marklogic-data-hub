@@ -26,6 +26,7 @@ import com.marklogic.rest.util.JsonNodeUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 
 /**
  * Extends ml-app-deployer's standard command for deploying a single database and adds DHF-specific functionality.
@@ -78,6 +79,11 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
                 ObjectNode payloadNode = (ObjectNode) ObjectMapperFactory.getObjectMapper().readTree(payload);
                 payloadNode = mergePayloadWithEntityConfigFileIfItExists(payloadNode);
                 removeSchemaAndTriggersDatabaseSettingsInAProvisionedEnvironment(payloadNode);
+
+                // language is somehow being added in a test; not sure how, but strip it out if it exists
+                if (payloadNode.has("language")) {
+                    payloadNode.remove("language");
+                }
                 return payloadNode.toString();
             } catch (IOException e) {
                 throw new DataHubConfigurationException(e);
