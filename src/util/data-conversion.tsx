@@ -21,8 +21,7 @@ export const entityFromJSON = (data: any) => {
     collation: string
   }
 
-  let entityArray: EntityModel[] = data.map( raw => {
-    const item = JSON.parse(raw);
+  let entityArray: EntityModel[] = data.map( item => {
     // TODO check uri and baseUri diff with server
     let entityModel: EntityModel = {
       uri: item['uri'],
