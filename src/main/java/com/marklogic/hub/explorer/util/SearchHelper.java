@@ -32,7 +32,11 @@ import org.springframework.util.CollectionUtils;
 public class SearchHelper {
 
   private static final String QUERY_OPTIONS = "exp-final-entity-options";
-  private static final String JOB_WORD_CONSTRAINT_NAME = "createdByJobWordConstraint";
+  
+  private static final String COLLECTION_CONSTRAINT_NAME = "Collection";
+  private static final String JOB_WORD_CONSTRAINT_NAME = "createdByJobWord";
+  private static final String JOB_RANGE_CONSTRAINT_NAME = "createdByJobRange";
+
   private static final Logger logger = LoggerFactory.getLogger(SearchHelper.class);
 
   @Autowired
@@ -58,9 +62,9 @@ public class SearchHelper {
     searchQuery.getFacets().forEach((facetType, facetValues) -> {
       StructuredQueryDefinition facetDef = null;
 
-      if (facetType.equals("Collection")) {
+      if (facetType.equals(COLLECTION_CONSTRAINT_NAME)) {
         facetDef = queryBuilder.collectionConstraint(facetType, facetValues.toArray(new String[0]));
-      } else if (facetType.equals("createdByJobRangeConstraint")) {
+      } else if (facetType.equals(JOB_RANGE_CONSTRAINT_NAME)) {
         facetDef = queryBuilder
             .wordConstraint(JOB_WORD_CONSTRAINT_NAME, facetValues.toArray(new String[0]));
       } else {
