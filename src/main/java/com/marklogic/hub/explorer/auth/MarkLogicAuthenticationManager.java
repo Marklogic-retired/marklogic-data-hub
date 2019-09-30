@@ -60,20 +60,7 @@ public class MarkLogicAuthenticationManager implements AuthenticationProvider,
       throw new BadCredentialsException("Invalid credentials");
     }
 
-    DatabaseClientConfig clientConfig = new DatabaseClientConfig(explorerConfig.getHostname(),
-        explorerConfig.getFinalPort(), username, password);
-    clientConfig.setDatabase(explorerConfig.getFinalDbName());
-    clientConfig.setSecurityContextType(
-        SecurityContextType.valueOf(explorerConfig.getFinalAuthMethod().toUpperCase()));
-    clientConfig.setSslHostnameVerifier(explorerConfig.getFinalSslHostnameVerifier());
-    clientConfig.setSslContext(explorerConfig.getFinalSslContext());
-    clientConfig.setCertFile(explorerConfig.getFinalCertFile());
-    clientConfig.setCertPassword(explorerConfig.getFinalCertPassword());
-    clientConfig.setExternalName(explorerConfig.getFinalExternalName());
-    clientConfig.setTrustManager(explorerConfig.getFinalTrustManager());
-    if (explorerConfig.getHostLoadBalancer()) {
-      clientConfig.setConnectionType(DatabaseClient.ConnectionType.GATEWAY);
-    }
+    DatabaseClientConfig clientConfig = getClientConfig(username, password);
     DatabaseClient databaseClient =
         new DefaultConfiguredDatabaseClientFactory().newDatabaseClient(clientConfig);
 
@@ -94,13 +81,32 @@ public class MarkLogicAuthenticationManager implements AuthenticationProvider,
      * Creating and storing a DatabaseClient object w/o explicitly specifying the database name as
      * data services only works with the default database associated with the App Server.
      */
-    clientConfig.setDatabase(null);
+    DatabaseClientConfig dataServiceClientConfig = getClientConfig(username, password);
+    dataServiceClientConfig.setDatabase(null);
     DatabaseClient dataServiceClient =
-        new DefaultConfiguredDatabaseClientFactory().newDatabaseClient(clientConfig);
+        new DefaultConfiguredDatabaseClientFactory().newDatabaseClient(dataServiceClientConfig);
     databaseClientHolder.setDataServiceClient(dataServiceClient);
 
     return new ConnectionAuthenticationToken(token.getPrincipal(), token.getCredentials(),
         token.getAuthorities());
+  }
+
+  private DatabaseClientConfig getClientConfig(String username, String password) {
+    DatabaseClientConfig clientConfig = new DatabaseClientConfig(explorerConfig.getHostname(),
+        explorerConfig.getFinalPort(), username, password);
+    clientConfig.setDatabase(explorerConfig.getFinalDbName());
+    clientConfig.setSecurityContextType(
+        SecurityContextType.valueOf(explorerConfig.getFinalAuthMethod().toUpperCase()));
+    clientConfig.setSslHostnameVerifier(explorerConfig.getFinalSslHostnameVerifier());
+    clientConfig.setSslContext(explorerConfig.getFinalSslContext());
+    clientConfig.setCertFile(explorerConfig.getFinalCertFile());
+    clientConfig.setCertPassword(explorerConfig.getFinalCertPassword());
+    clientConfig.setExternalName(explorerConfig.getFinalExternalName());
+    clientConfig.setTrustManager(explorerConfig.getFinalTrustManager());
+    if (explorerConfig.getHostLoadBalancer()) {
+      clientConfig.setConnectionType(DatabaseClient.ConnectionType.GATEWAY);
+    }
+    return clientConfig;
   }
 }
 
