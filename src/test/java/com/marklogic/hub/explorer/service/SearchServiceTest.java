@@ -13,9 +13,7 @@ import java.util.Optional;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.explorer.model.Document;
 import com.marklogic.hub.explorer.model.SearchQuery;
-import com.marklogic.hub.explorer.service.SearchService;
 import com.marklogic.hub.explorer.util.SearchHelper;
-
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +22,6 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -61,7 +58,7 @@ public class SearchServiceTest {
 
     // Create Document object
     String content = "{\"content\":\"This is a sample json document content\"}";
-    Map<String,String> metadata = new HashMap<>();
+    Map<String, String> metadata = new HashMap<>();
     metadata.put("createdOn", "2019-09-13T14:28:34.513434-07:00");
     metadata.put("createdBy", "flowDeveloper");
     mockDocument = new Document(content, metadata);
@@ -134,6 +131,23 @@ public class SearchServiceTest {
   @Test
   public void testGetDocument() {
     String mockDocUri = "/example.json";
+    when(mockSearchHelper.getDocument(mockDocUri)).thenReturn(mockOptional);
+    Optional<Document> actualDoc = searchServiceMock.getDocument(mockDocUri);
+    assertTrue(actualDoc.get().getContent().equals(mockOptional.get().getContent()));
+    assertTrue(actualDoc.get().getMetaData().equals(mockOptional.get().getMetaData()));
+  }
+
+  @Test
+  public void testGetXMLDocument() {
+    String mockDocUri = "/example.xml";
+    String content = "<envelope><instance><info><title>Order</title><version>0.0.1</version></info>"
+        + "<Order><OrderID>10249</OrderID><CustomerID>TOMSP</CustomerID></Order></instance></envelope>";
+    Map<String, String> metadata = new HashMap<>();
+    metadata.put("createdOn", "2019-09-13T14:28:34.513434-07:00");
+    metadata.put("createdBy", "flowDeveloper");
+    mockDocument = new Document(content, metadata);
+    mockOptional = Optional.ofNullable(mockDocument);
+
     when(mockSearchHelper.getDocument(mockDocUri)).thenReturn(mockOptional);
     Optional<Document> actualDoc = searchServiceMock.getDocument(mockDocUri);
     assertTrue(actualDoc.get().getContent().equals(mockOptional.get().getContent()));
