@@ -2,9 +2,11 @@ import React, { useContext, useState, useEffect } from 'react';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import axios from 'axios';
 import { Layout, Menu, Icon } from 'antd';
+import Tour from 'reactour';
 import styles from './header.module.scss';
 import DatahubIcon from '../datahub-icon/datahub-icon';
 import { AuthContext } from '../../util/auth-context';
+import { viewSteps, browseSteps, detailSteps, loginSteps } from '../../config/guided-tour-steps';
 
 
 interface Props extends RouteComponentProps<any> {}
@@ -14,7 +16,17 @@ const { SubMenu } = Menu;
 const Header:React.FC<Props> = ({ location }) => {
   const { user, userNotAuthenticated } = useContext(AuthContext);
   const [selectedMenu, setSelectedMenu] = useState<string[]>([]);
-  
+  const [tourSteps, setTourSteps] = useState<any[]>([]);
+  const [isTourOpen, setIsTourOpen] = useState(false);
+
+  const closeTour = () => {
+    setIsTourOpen(false);
+  }
+
+  const showTour = () => {
+    setIsTourOpen(true);
+  }
+
   const handleLogout = async () => {
     try {
       let response = await axios(`/datahub/v2/logout`);
@@ -27,10 +39,25 @@ const Header:React.FC<Props> = ({ location }) => {
 
   useEffect(() => {
     let path = location.pathname.split('/');
-    if (path[1] === 'detail'){
-      setSelectedMenu(['/browse']);
-    } else {
-      setSelectedMenu([location.pathname]);
+    console.log('path', path);
+    switch(path[1]) {
+      case 'view':
+        setSelectedMenu([location.pathname]);
+        setTourSteps(viewSteps);
+        break;
+      case 'browse':
+        setSelectedMenu([location.pathname]);
+        setTourSteps(browseSteps);
+        break;
+      case 'detail':
+        setSelectedMenu(['/browse']);
+        setTourSteps(detailSteps);
+        break;
+      case '':
+        setTourSteps(loginSteps);
+        break;
+      default:
+        break;
     }
   }, [location.pathname]);
 
@@ -64,9 +91,15 @@ const Header:React.FC<Props> = ({ location }) => {
       </div>
       <div id="title" className={styles.title}>Data Hub Explorer</div>
       {showMenu}
-      <a id="help-icon" className={styles.helpContain} target="_blank" rel="noopener noreferrer" href="https://www.marklogic.com/">
+      <a id="help-icon" className={styles.helpContain} onClick={showTour}>
         <Icon className={styles.help} type="question-circle"/>
       </a>
+      <Tour
+        steps={tourSteps}
+        startAt={0}
+        isOpen={isTourOpen}
+        onRequestClose={closeTour}
+      />
     </Layout.Header>
   )
 }
