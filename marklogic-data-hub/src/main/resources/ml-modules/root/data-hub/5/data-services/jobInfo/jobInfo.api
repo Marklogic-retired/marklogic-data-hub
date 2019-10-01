@@ -1,8 +1,8 @@
 {
-    "functionName": "latestJobInfo",
+    "functionName": "getLatestJobData",
     "params": [
         {
-            "name": "model",
+            "name": "entityCollection",
             "datatype": "string"
         }
     ],

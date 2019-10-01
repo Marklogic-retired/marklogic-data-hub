@@ -15,26 +15,26 @@
 */
 'use strict';
 
-var model;
+var entityCollection;
 
 let res = {
-  "modelName": model,
-  "jobId": null,
-  "jobTime": null
+  "entityCollection": entityCollection,
+  "latestJobId": null,
+  "latestJobDateTime": null
 };
 
-let query = [cts.collectionQuery(model), cts.fieldRangeQuery("datahubCreatedOn", "<=", fn.currentDateTime(), "score-function=reciprocal")];
+let query = [cts.collectionQuery(entityCollection), cts.fieldRangeQuery("datahubCreatedOn", "<=", fn.currentDateTime(), "score-function=reciprocal")];
 let seq = fn.subsequence(cts.search(cts.andQuery(query)), 1, 1);
 
 if (fn.count(seq) > 0) {
   let docUri = xdmp.nodeUri(seq);
 
-  res.jobTime = xdmp.documentGetMetadataValue(docUri, "datahubCreatedOn");
+  res.latestJobDateTime = xdmp.documentGetMetadataValue(docUri, "datahubCreatedOn");
 
   let jobIds = xdmp.documentGetMetadataValue(docUri, "datahubCreatedByJob");
   if (jobIds) {
     jobIds = jobIds.split(" ");
-    res.jobId = jobIds[jobIds.length - 1];
+    res.latestJobId = jobIds[jobIds.length - 1];
   }
 }
 
