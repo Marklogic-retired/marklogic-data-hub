@@ -6,16 +6,22 @@ package com.marklogic.hub.explorer.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.fasterxml.jackson.annotation.JsonRawValue;
 
 @XmlRootElement(name = "Document")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Document {
 
   @JsonRawValue
-  private final String content;
-  private final Map<String, String> metaData;
+  private String content;
+  private Map<String, String> metaData;
+
+  public Document() {
+  }
 
   public Document(String content, Map<String, String> metaData) {
     this.content = content;
