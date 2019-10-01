@@ -90,13 +90,11 @@ function buildMapProperties(mapping, entityModel) {
       }
       let mapProperty = mapProperties[prop];
       let sourcedFrom = escapeXML(mapProperty.sourcedFrom);
-      let externalMappingRef = mapProperty.externalMapping;
       let isInternalMapping = mapProperty.targetEntityType && mapProperty.properties;
-      if (externalMappingRef || isInternalMapping || isArray) {
+      if (isInternalMapping || isArray) {
         let propLine;
-        if (externalMappingRef || isInternalMapping) {
-          let subMapping = (isInternalMapping) ? mapProperty : mappingLib.getMappingWithVersion(externalMappingRef.externalName, externalMappingRef.externalVersion).toObject();
-          let subEntityName = getEntityName(subMapping.targetEntityType);
+        if (isInternalMapping) {
+          let subEntityName = getEntityName(mapProperty.targetEntityType);
           propLine = `<${prop} ${isArray? 'datatype="array"':''}><m:call-template name="${subEntityName}"/></${prop}>`;
         } else {
           propLine = `<${prop} datatype="array" xsi:type="xs:${dataType}"><m:val>.</m:val></${prop}>`;
@@ -117,26 +115,13 @@ function buildMapProperties(mapping, entityModel) {
 }
 
 function getRelatedMappings(mapping, related = [mapping]) {
-  // get references to external mappings
+  // get references to sub mappings
   if (dhMappingTraceIsEnabled) {
     xdmp.trace(dhMappingTrace, `Getting related mappings for '${xdmp.describe(mapping)}'`);
   }
   let internalMappings = mapping.xpath('/properties//object-node()[exists(targetEntityType) and exists(properties)]');
   for (let internalMapping of internalMappings) {
     related.push(internalMapping);
-  }
-  let externalReferences = mapping.xpath('/properties/*/externalMapping');
-  for (let mappingRef of externalReferences) {
-    let name = mappingRef.externalName;
-    let version = mappingRef.externalVersion;
-    if (dhMappingTraceIsEnabled) {
-      xdmp.trace(dhMappingTrace, `Found external mapping name '${name}', version '${version}'`);
-    }
-    if (!related.includes((mapping) => mapping.root.name === name && mapping.root.version === version)) {
-      let externalMapping = mappingLib.getMappingWithVersion(name, version);
-      related.push(externalMapping);
-      related = getRelatedMappings(externalMapping, related);
-    }
   }
   return related;
 }
