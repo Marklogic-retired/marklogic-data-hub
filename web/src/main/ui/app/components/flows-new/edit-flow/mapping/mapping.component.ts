@@ -22,6 +22,7 @@ import { Flow } from "../../models/flow.model";
       [conns]="this.conns"
       [sampleDocSrcProps]="this.sampleDocSrcProps"
       [docUris]="this.docUris"
+      [sampleDocNestedProps]="this.sampleDocNestedProps"
       [step]="this.step"
       [editURIVal]="this.editURIVal"
       [functionLst]="functionLst"
@@ -54,6 +55,7 @@ export class MappingComponent implements OnInit {
   private sampleDocSrc: any = null;
   public sampleDocSrcProps: Array<any> = [];
   public docUris: Array<any> = [];
+  public sampleDocNestedProps:  Array<any> = [];
 
   // Connections
   public conns: object = {};
@@ -149,7 +151,6 @@ export class MappingComponent implements OnInit {
   loadSampleDoc() {
     let self = this;
     this.searchService.getResultsByQuery(this.step.options.sourceDatabase, this.step.options.sourceQuery, 100).subscribe(response => {
-      console.log("response is ", response);
         if (self.targetEntity) {
           self.targetEntity.hasDocs = (response.length > 0);
           // Can only load sample doc if docs exist
@@ -201,13 +202,15 @@ export class MappingComponent implements OnInit {
       _.forEach(startRoot, function (val, key) {
           let prop = {
             key: key,
-            val: String(val),
+            val: typeof(val) === "object" && ['Object','Array'].includes(val.constructor.name) ? val : String(val),
             type: self.getType(val)
           };
           self.sampleDocSrcProps.push(prop);
         });
+        console.log("self.sampleDocProps",self.sampleDocSrcProps);
       this.sampleDocURI = uri;
       this.mapping.sourceURI = uri;
+      self.sampleDocNestedProps = this.updateNestedDataSource(self.sampleDocSrcProps);
       if (save) {
         this.saveMap();
         console.log('map saved');
@@ -356,6 +359,65 @@ export class MappingComponent implements OnInit {
       });
     });
     this.entitiesService.getEntities();
+  }
+
+  updateNestedDataSource(sourcePropsDoc): Array<any> {
+    var nestedDoc = [];
+    let self = this;
+    sourcePropsDoc.forEach(obj => {
+
+      if (obj.val.constructor.name === "Object" && obj.val != null) {
+        //Pushing the entry for base object before the nested fields
+        let propty = {
+          key: obj.key,
+          val: "",
+          type: self.getType(obj.type)
+        };
+        nestedDoc.push(propty);
+
+
+        //Pushing nested entires
+        let keys = Object.keys(obj.val)
+        _.forEach(obj.val, function (val, key) {
+          let prop = {
+            key: "-- " + key,
+            val: String(val),
+            type: self.getType(val)
+          };
+          nestedDoc.push(prop);
+        });
+
+        console.log("Object loop called");
+
+      } else if (obj.val.constructor.name === "Array" && obj.val != null) {
+        //Pushing the entry for base object before the nested fields
+        let propty = {
+          key: obj.key,
+          val: "",
+          type: self.getType(obj.type)
+        };
+        nestedDoc.push(propty);
+
+        obj.val.forEach(nestObj => {
+          _.forEach(nestObj, function (val, key) {
+            let prop = {
+              key: "-- " + key,
+              val: String(val),
+              type: self.getType(val)
+            };
+            nestedDoc.push(prop);
+          });
+
+        });
+        console.log("Array loop called");
+      } else {
+        console.log("Else loop called");
+        nestedDoc.push(obj);
+      }
+    });
+
+    return nestedDoc;
+
   }
   
 

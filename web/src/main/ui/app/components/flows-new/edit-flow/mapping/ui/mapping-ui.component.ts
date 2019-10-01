@@ -32,6 +32,7 @@ export class MappingUiComponent implements OnChanges {
   @Input() targetEntity: Entity = null;
   @Input() conns: object = {};
   @Input() sampleDocSrcProps: Array<any>;
+  @Input() sampleDocNestedProps: Array<any>;
   @Input() docUris: Array<any>;
   @Input() editURIVal: string = '';
   @Input() step: Step;
@@ -90,8 +91,8 @@ export class MappingUiComponent implements OnChanges {
 
   ngOnInit(){
     if (!this.dataSource){
-      
-   this.dataSource = new MatTableDataSource<any>(this.sampleDocSrcProps);
+   this.dataSource = new MatTableDataSource<any>(this.sampleDocNestedProps);
+
     }
   if(_.isEmpty(this.mapExpresions)) {
     this.mapExpresions = this.conns;
@@ -105,9 +106,9 @@ export class MappingUiComponent implements OnChanges {
   }
   updateDataSource() {
     if (!this.dataSource){
-      this.dataSource = new MatTableDataSource<any>(this.sampleDocSrcProps);
+      this.dataSource = new MatTableDataSource<any>(this.sampleDocNestedProps);
        }
-    this.dataSource.data = this.sampleDocSrcProps;
+    this.dataSource.data = this.sampleDocNestedProps;
   }
 
   renderRows(): void {
@@ -116,7 +117,7 @@ export class MappingUiComponent implements OnChanges {
       this.mapExpresions = this.conns;
     }
   }
-
+  
   onNestEntity(entProp){
     if (this.nestedEntityStatus) {
       this.nestedEntityStatus = false;
