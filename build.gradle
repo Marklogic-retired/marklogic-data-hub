@@ -78,7 +78,7 @@ dependencies {
 }
 
 task generateJobInfo(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask) {
-    serviceDeclarationFile = 'src/main/resources/ml-modules/jobInfo/service.json'
+    serviceDeclarationFile = 'src/main/resources/ml-modules/data-services/jobInfo/service.json'
 }
 
 configurations.all {
