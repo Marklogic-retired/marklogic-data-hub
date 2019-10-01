@@ -17,10 +17,11 @@ import com.fasterxml.jackson.annotation.JsonRawValue;
 public class Document {
 
   @JsonRawValue
-  private String content;
-  private Map<String, String> metaData;
+  private final String content;
+  private final Map<String, String> metaData;
 
-  public Document() {
+  private Document() {
+    this("", null);
   }
 
   public Document(String content, Map<String, String> metaData) {
