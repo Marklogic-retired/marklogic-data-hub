@@ -1,4 +1,4 @@
-/* Copyright 2019 MarkLogic Corporation. All rights reserved. */
+/** Copyright 2019 MarkLogic Corporation. All rights reserved. */
 'use strict';
 
 var entityCollection;
