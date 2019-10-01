@@ -33,6 +33,8 @@ import * as SemVer from 'semver';
       [hubUpdateFailed]="this.hubUpdateFailed"
       [hubUpdating]="this.hubUpdating"
       [hubUpdateLink]="this.hubUpdateLink"
+      [preinstallCheck]="this.preinstallCheck"
+      [runningPreinstallCheck]="this.runningPreinstallCheck"
 
       (onInstall)="this.install()"
       (onUninstall)="this.unInstall()"
