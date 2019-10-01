@@ -15,7 +15,7 @@
         <collectionProp name="Arguments.arguments">
           <elementProp name="host" elementType="Argument">
             <stringProp name="Argument.name">host</stringProp>
-            <stringProp name="Argument.value">${__P(host)}</stringProp>
+            <stringProp name="Argument.value">${__P(host,localhost)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="scheme" elementType="Argument">
@@ -25,7 +25,7 @@
           </elementProp>
           <elementProp name="port" elementType="Argument">
             <stringProp name="Argument.name">port</stringProp>
-            <stringProp name="Argument.value">${__P(port)}</stringProp>
+            <stringProp name="Argument.value">${__P(port,3000)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="path" elementType="Argument">
@@ -66,10 +66,10 @@
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
-          <stringProp name="LoopController.loops">${__P(count)}</stringProp>
+          <stringProp name="LoopController.loops">${__P(count,1)}</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">${__P(threads)}</stringProp>
-        <stringProp name="ThreadGroup.ramp_time">${__P(rumpup)}</stringProp>
+        <stringProp name="ThreadGroup.num_threads">${__P(threads,10)}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">${__P(rumpup,1)}</stringProp>
         <longProp name="ThreadGroup.start_time">1370726934000</longProp>
         <longProp name="ThreadGroup.end_time">1370726934000</longProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
@@ -273,24 +273,17 @@
             </ResponseAssertion>
             <hashTree/>
           </hashTree>
-          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Document details" enabled="false">
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Document details" enabled="true">
             <stringProp name="TestPlan.comments">document details</stringProp>
             <boolProp name="TransactionController.parent">true</boolProp>
           </TransactionController>
           <hashTree>
-            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="/v1/documents" enabled="true">
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="/detail" enabled="true">
               <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
                 <collectionProp name="Arguments.arguments">
-                  <elementProp name="database" elementType="HTTPArgument">
+                  <elementProp name="docUri" elementType="HTTPArgument">
                     <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                    <stringProp name="Argument.name">database</stringProp>
-                    <stringProp name="Argument.value">data-hub-FINAL</stringProp>
-                    <stringProp name="Argument.metadata">=</stringProp>
-                    <boolProp name="HTTPArgument.use_equals">true</boolProp>
-                  </elementProp>
-                  <elementProp name="uri" elementType="HTTPArgument">
-                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                    <stringProp name="Argument.name">uri</stringProp>
+                    <stringProp name="Argument.name">docUri</stringProp>
                     <stringProp name="Argument.value">/C/dev/fork/marklogic-data-hub/web/e2e/qa-project/input/advantage/cust154.json</stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                     <boolProp name="HTTPArgument.use_equals">true</boolProp>
@@ -301,7 +294,7 @@
               <stringProp name="HTTPSampler.port"></stringProp>
               <stringProp name="HTTPSampler.protocol"></stringProp>
               <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-              <stringProp name="HTTPSampler.path">/v1/documents</stringProp>
+              <stringProp name="HTTPSampler.path">${path}/search</stringProp>
               <stringProp name="HTTPSampler.method">GET</stringProp>
               <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
               <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -441,7 +434,7 @@
               <stringProp name="HTTPSampler.port"></stringProp>
               <stringProp name="HTTPSampler.protocol"></stringProp>
               <stringProp name="HTTPSampler.contentEncoding">utf-8</stringProp>
-              <stringProp name="HTTPSampler.path">${path}/search?format=json&amp;database=data-hub-FINAL</stringProp>
+              <stringProp name="HTTPSampler.path">${path}/search</stringProp>
               <stringProp name="HTTPSampler.method">POST</stringProp>
               <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
               <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -484,7 +477,7 @@
               </HeaderManager>
               <hashTree/>
               <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="JSON Assertion" enabled="true">
-                <stringProp name="JSON_PATH">$.results[0].extracted.content[0].Customer.firstName</stringProp>
+                <stringProp name="JSON_PATH">$.results[0].matches[0].match-text[0].highlight</stringProp>
                 <stringProp name="EXPECTED_VALUE">Ashlee</stringProp>
                 <boolProp name="JSONVALIDATION">true</boolProp>
                 <boolProp name="EXPECT_NULL">false</boolProp>
@@ -504,24 +497,17 @@
             </ResponseAssertion>
             <hashTree/>
           </hashTree>
-          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Document details" enabled="false">
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Document details" enabled="true">
             <stringProp name="TestPlan.comments">document details</stringProp>
             <boolProp name="TransactionController.parent">true</boolProp>
           </TransactionController>
           <hashTree>
-            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="/v1/documents" enabled="true">
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="/detail" enabled="true">
               <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
                 <collectionProp name="Arguments.arguments">
-                  <elementProp name="database" elementType="HTTPArgument">
-                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                    <stringProp name="Argument.name">database</stringProp>
-                    <stringProp name="Argument.value">data-hub-FINAL</stringProp>
-                    <stringProp name="Argument.metadata">=</stringProp>
-                    <boolProp name="HTTPArgument.use_equals">true</boolProp>
-                  </elementProp>
-                  <elementProp name="uri" elementType="HTTPArgument">
+                  <elementProp name="docUri" elementType="HTTPArgument">
                     <boolProp name="HTTPArgument.always_encode">true</boolProp>
-                    <stringProp name="Argument.name">uri</stringProp>
+                    <stringProp name="Argument.name">docUri</stringProp>
                     <stringProp name="Argument.value">/C/dev/fork/marklogic-data-hub/web/e2e/qa-project/input/advantage/cust154.json</stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                     <boolProp name="HTTPArgument.use_equals">true</boolProp>
@@ -532,7 +518,7 @@
               <stringProp name="HTTPSampler.port"></stringProp>
               <stringProp name="HTTPSampler.protocol"></stringProp>
               <stringProp name="HTTPSampler.contentEncoding">utf-8</stringProp>
-              <stringProp name="HTTPSampler.path">/v1/documents</stringProp>
+              <stringProp name="HTTPSampler.path">${path}/search</stringProp>
               <stringProp name="HTTPSampler.method">GET</stringProp>
               <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
               <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
