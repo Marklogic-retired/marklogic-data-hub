@@ -64,7 +64,13 @@ public interface EntityManager {
 
     HubEntity getEntityFromProject(String entityName, String version);
 
+    HubEntity getEntityFromProject(String entityName, Boolean extendSubEntities);
+
+    HubEntity getEntityFromProject(String entityName, String version, Boolean extendSubEntities);
+
     List<HubEntity> getEntities();
+
+    List<HubEntity> getEntities(Boolean extendSubEntities);
 
     HubEntity saveEntity(HubEntity entity, Boolean rename) throws IOException;
 

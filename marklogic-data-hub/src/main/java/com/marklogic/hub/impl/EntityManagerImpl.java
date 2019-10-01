@@ -35,8 +35,7 @@ import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
-import com.marklogic.hub.entity.HubEntity;
-import com.marklogic.hub.entity.InfoType;
+import com.marklogic.hub.entity.*;
 import com.marklogic.hub.error.EntityServicesGenerationException;
 import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;
@@ -321,15 +320,46 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
     }
 
     public HubEntity getEntityFromProject(String entityName) {
-        return getEntityFromProject(entityName, null);
+        return getEntityFromProject(entityName, (String)null, Boolean.FALSE);
     }
 
     public HubEntity getEntityFromProject(String entityName, String version) {
+        return getEntityFromProject(entityName, version, Boolean.FALSE);
+    }
+
+    @Override
+    public HubEntity getEntityFromProject(String entityName, Boolean extendSubEntities) {
+        return getEntityFromProject(entityName, (String)null, extendSubEntities);
+    }
+
+    @Override
+    public HubEntity getEntityFromProject(String entityName, String version, Boolean extendSubEntities) {
         HubEntity entity = null;
         for (HubEntity e: getEntities()) {
             InfoType info = e.getInfo();
             if (info.getTitle().equals(entityName) && (version == null || info.getVersion().equals(version))) {
                 entity = e;
+                if (extendSubEntities) {
+                    Map<String, DefinitionType> definitions = entity.getDefinitions().getDefinitions();
+                    for (String definitionName:definitions.keySet()) {
+                        DefinitionType definition = definitions.get(definitionName);
+                        for (PropertyType property: definition.getProperties()) {
+                            String ref = property.getRef();
+                            ItemType items = property.getItems();
+                            if ((ref == null || "".equals(ref)) && items != null) {
+                                ref = items.getRef();
+                            }
+                            if (!(ref == null || "".equals(ref))) {
+                                String subEntityName = ref.substring(ref.lastIndexOf('/') + 1);
+                                HubEntity subEntity = getEntityFromProject(subEntityName, true);
+                                if (subEntity != null) {
+                                    DefinitionType subDefinition = subEntity.getDefinitions().getDefinitions().get(subEntityName);
+                                    property.setSubProperties(subDefinition.getProperties());
+                                }
+                            }
+                        }
+                    }
+                }
                 break;
             }
         }
@@ -337,6 +367,11 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
     }
 
     public List<HubEntity> getEntities() {
+        return getEntities(Boolean.FALSE);
+    }
+
+    @Override
+    public List<HubEntity> getEntities(Boolean extendSubEntities) {
         List<HubEntity> entities = new ArrayList<>();
         Path entitiesPath = hubConfig.getHubEntitiesDir();
         ObjectMapper objectMapper = new ObjectMapper();
