@@ -35,7 +35,7 @@ export class SearchService {
     let data = {
       database: database,
       sourceQuery: ctsQuery,
-      count: 1
+      count: count
     }
     return this.post(`/api/search/sjsSearch`, data);
   }
