@@ -99,17 +99,8 @@ public class EntityManagerService {
 
         for (HubEntity entity : entityList) {
             EntityModel entityModel = EntityModel.fromJson(entity.getFilename(), entity.toJson());
-            if (entityModel != null) {
-                HubUIData data = hubUiData.get(entityModel.getInfo().getTitle());
-                if (data == null) {
-                    data = new HubUIData();
-                }
-                entityModel.setHubUi(data);
-                entityModel.inputFlows = legacyFlowManagerService.getFlows(entity.getInfo().getTitle(), FlowType.INPUT);
-                entityModel.harmonizeFlows = legacyFlowManagerService.getFlows(entity.getInfo().getTitle(), FlowType.HARMONIZE);
-
-                entities.add(entityModel);
-            }
+            initializeEntityModelForUI(entityModel);
+            entities.add(entityModel);
         }
 
         return entities;
@@ -239,7 +230,25 @@ public class EntityManagerService {
         if (hubEntity == null) {
             throw new DataHubProjectException("Entity not found in project: " + entityName);
         }
-        return EntityModel.fromJson(hubEntity.getFilename(),hubEntity.toJson());
+        EntityModel em  = EntityModel.fromJson(hubEntity.getFilename(),hubEntity.toJson());
+        initializeEntityModelForUI(em);
+        return em;
+    }
+
+    private void initializeEntityModelForUI(EntityModel entityModel) throws IOException {
+        HubUIData data = getHubUIDataForEntity(entityModel.getInfo().getTitle());
+        entityModel.setHubUi(data);
+        entityModel.inputFlows = legacyFlowManagerService.getFlows(entityModel.getInfo().getTitle(), FlowType.INPUT);
+        entityModel.harmonizeFlows = legacyFlowManagerService.getFlows(entityModel.getInfo().getTitle(), FlowType.HARMONIZE);
+    }
+
+    private HubUIData getHubUIDataForEntity(String entityTitle) throws IOException {
+        Map<String, HubUIData> hubUiData = getUiData();
+        HubUIData data = hubUiData.get(entityTitle);
+        if (data == null) {
+            data = new HubUIData();
+        }
+        return data;
     }
 
     public FlowModel getFlow(String entityName, FlowType flowType, String flowName) throws IOException {
@@ -252,13 +261,11 @@ public class EntityManagerService {
         else {
             flows = entity.harmonizeFlows;
         }
-
         for (FlowModel flow : flows) {
-            if (flow.flowName.equals(flowName)) {
+            if (flow.flowName != null && flow.flowName.equals(flowName)) {
                 return flow;
             }
         }
-
         throw new DataHubProjectException("Flow not found: " + entityName + " / " + flowName);
     }
 

@@ -23,30 +23,18 @@ let customerMapping = fn.head(xdmp.unquote(`{
     "sourcedFrom": "parseDateTime('DD/MM/YYYY-hh:mm:ss', date)"
   },
   "Orders": {
+    "targetEntityType": "Order-0.0.1/Order",
     "sourcedFrom": "orders/order",
-      "externalMapping": {
-        "externalName": "OrderXML-CustomerXMLMapping",
-        "externalVersion": 0
+    "properties" : {
+      "OrderID": {
+        "sourcedFrom": "@id"
+      }
     }
   }
 }
 }`));
-let orderMapping = fn.head(xdmp.unquote(`{
-  "lang" : "zxx",
-  "name" : "OrderXML-CustomerXMLMapping",
-  "description" : "",
-  "version" : 0,
-  "targetEntityType" : "Order-0.0.1/Order",
-  "sourceContext" : "/",
-  "sourceURI" : "",
-  "properties" : {
-    "OrderID": {
-      "sourcedFrom": "@id"
-    }
-  }
-}`));
+
 defaultMappingLib.cachedMappingByNameAndVersion['CustomerXML-CustomerXMLMapping:0'] = customerMapping;
-defaultMappingLib.cachedMappingByNameAndVersion['OrderXML-CustomerXMLMapping:0'] = orderMapping;
 
 let customerEntity = fn.head(xdmp.unquote(`{
   "info": {
