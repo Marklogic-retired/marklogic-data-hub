@@ -15,6 +15,7 @@
  */
 package com.marklogic.hub.impl;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
@@ -44,6 +45,8 @@ public class MasteringManagerImpl implements MasteringManager {
 
     protected MergeResource mergeResource = null;
 
+    protected MatchResource matchResource = null;
+
     @Override
     public UnmergeResponse unmerge(String mergeURI, Boolean retainAuditTrail, Boolean blockFutureMerges) {
         return getMergeResource().unmerge(mergeURI, retainAuditTrail, blockFutureMerges);
@@ -54,11 +57,23 @@ public class MasteringManagerImpl implements MasteringManager {
         return getMergeResource().merge(mergeURIs, flowName, stepNumber, preview, options);
     }
 
+    @Override
+    public MatchResponse match(String matchURI, String flowName, String stepNumber, Boolean includeMatchDetails, JsonNode options) {
+        return getMatchResource().match(matchURI, flowName, stepNumber, includeMatchDetails, options);
+    }
+
     private MergeResource getMergeResource() {
         if (mergeResource == null) {
             mergeResource = new MergeResource(getSrcClient(), hubConfig.getDbName(DatabaseKind.FINAL));
         }
         return mergeResource;
+    }
+
+    private MatchResource getMatchResource() {
+        if (matchResource == null) {
+            matchResource = new MatchResource(getSrcClient(), hubConfig.getDbName(DatabaseKind.FINAL));
+        }
+        return matchResource;
     }
 
     private DatabaseClient getSrcClient() {
@@ -74,7 +89,7 @@ public class MasteringManagerImpl implements MasteringManager {
         public MergeResource(DatabaseClient srcClient, String targetDatabase) {
             super();
             this.targetDatabase = targetDatabase;
-            srcClient.init("ml:smMerge" , this);
+            srcClient.init("mlSmMerge" , this);
         }
 
         public UnmergeResponse unmerge(String mergeURI, Boolean retainAuditTrail, Boolean blockFutureMerges) {
@@ -90,6 +105,7 @@ public class MasteringManagerImpl implements MasteringManager {
             this.getServices().delete(params, handle);
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
                 resp = objectMapper.readValue(handle.get(), UnmergeResponse.class);
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -116,7 +132,51 @@ public class MasteringManagerImpl implements MasteringManager {
                     ResourceServices.ServiceResult res = resultItr.next();
                     StringHandle handle = new StringHandle();
                     ObjectMapper objectMapper = new ObjectMapper();
+                    objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
                     resp = objectMapper.readValue(res.getContent(handle).get(), MergeResponse.class);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            } finally {
+                if (resultItr != null) {
+                    resultItr.close();
+                }
+            }
+            return resp;
+        }
+    }
+
+    static class MatchResource extends ResourceManager {
+        private String targetDatabase;
+
+        public MatchResource(DatabaseClient srcClient, String targetDatabase) {
+            super();
+            this.targetDatabase = targetDatabase;
+            srcClient.init("mlSmMatch" , this);
+        }
+
+        public MatchResponse match(String matchURI, String flowName, String stepNumber, Boolean includeMatchDetails, JsonNode options) {
+            MatchResponse resp;
+
+            RequestParameters params = new RequestParameters();
+            params.put("uri", matchURI);
+            params.put("includeMatchDetails", includeMatchDetails.toString());
+            params.put("flowName", flowName);
+            params.put("step", stepNumber);
+            params.put("targetDatabase", targetDatabase);
+            params.put("sourceDatabase", targetDatabase);
+            JacksonHandle jsonOptions = new JacksonHandle().with(options);
+            ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, jsonOptions);
+            try {
+                if (resultItr == null || !resultItr.hasNext()) {
+                    resp = null;
+                } else {
+                    ResourceServices.ServiceResult res = resultItr.next();
+                    StringHandle handle = new StringHandle();
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+                    objectMapper.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);
+                    resp = objectMapper.readValue(res.getContent(handle).get(), MatchResponse.class);
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);

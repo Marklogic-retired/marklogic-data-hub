@@ -1,6 +1,6 @@
 xquery version "1.0-ml";
 
-module namespace resource = "http://marklogic.com/rest-api/resource/mlSm-history-properties";
+module namespace resource = "http://marklogic.com/rest-api/resource/mlSmHistoryProperties";
 
 import module namespace history = "http://marklogic.com/smart-mastering/auditing/history"
   at "/com.marklogic.smart-mastering/auditing/history.xqy";

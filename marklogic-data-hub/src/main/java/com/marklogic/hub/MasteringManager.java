@@ -15,6 +15,7 @@
  */
 package com.marklogic.hub;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.List;
@@ -46,6 +47,17 @@ public interface MasteringManager {
     public MergeResponse merge(List<String> mergeURIs, String flowName, String stepNumber, Boolean preview, JsonNode options);
 
     /**
+     * Returns potential candidates for merging with a document
+     * @param matchURI - URI of the document to find matches for
+     * @param flowName - The name of the flow that has the mastering settings
+     * @param stepNumber - The number of the mastering step with settings
+     * @param includeMatchDetails - determines if the results should also return details of how matches occurred
+     * @param options - Overrides any options for the step
+     * @return - a MergeResponse
+     */
+    public MatchResponse match(String matchURI, String flowName, String stepNumber, Boolean includeMatchDetails, JsonNode options);
+
+    /**
      * Holds the response information from an unmerge request
      */
     class UnmergeResponse {
@@ -72,4 +84,35 @@ public interface MasteringManager {
             return String.format("{success: %b, errors: %s, mergedURIs: %s, mergeDocument: %s}", success, errors, mergedURIs, mergedDocument);
         }
     }
+
+    /**
+     * Holds the response information from an match request
+     */
+    @JsonRootName("results")
+    class MatchResponse {
+        public Integer total;
+        public Integer pageLength;
+        public Integer start;
+        public List<EntityMatch> result;
+
+        public String toString() {
+            return String.format("{total: %d, pageLength: %d, start: %d, results: %s}", total, pageLength, start, result);
+        }
+    }
+
+    /**
+     * Holds the response information from an match request
+     */
+    class EntityMatch {
+        public String uri;
+        public Integer index;
+        public Integer score;
+        public String threshold;
+        public String action;
+
+        public String toString() {
+            return String.format("{uri: %s, index: %d, score: %d, threshold: %s, action: %s}", uri, index, score, threshold, action);
+        }
+    }
+
 }

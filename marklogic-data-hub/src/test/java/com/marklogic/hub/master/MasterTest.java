@@ -12,10 +12,7 @@ import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -65,6 +62,20 @@ public class MasterTest extends HubTestBase {
         clearDatabases(HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
 
+    @BeforeEach
+    public void beforeEach() throws IOException {
+        installProject();
+
+        getDataHub().clearDatabase(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME);
+        assertEquals(0, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, "http://marklogic.com/xdmp/tde"));
+
+        getDataHub().clearDatabase(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME);
+        assertEquals(0, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, "http://marklogic.com/xdmp/tde"));
+
+        installHubArtifacts(getDataHubAdminConfig(), true);
+        installUserModules(getDataHubAdminConfig(), true);
+    }
+
     private void installProject() throws IOException {
         LoadTestModules.loadTestModules(host, finalPort, secUser, secPassword, HubConfig.DEFAULT_MODULES_DB_NAME);
         String[] directoriesToCopy = new String[]{"input", "flows", "step-definitions", "entities", "mappings"};
@@ -97,18 +108,20 @@ public class MasterTest extends HubTestBase {
     }
 
     @Test
+    public void testMatchEndpoint() throws Exception {
+        Flow flow = flowManager.getFlow("myNewFlow");
+        if (flow == null) {
+            throw new Exception("myNewFlow Not Found");
+        }
+        RunFlowResponse flowResponse = flowRunner.runFlow("myNewFlow", Arrays.asList("1","2"));
+        flowRunner.awaitCompletion();
+        MasteringManager.MatchResponse matchResp = masteringManager.match("/person-1.json", "myNewFlow","3", Boolean.TRUE, new ObjectMapper().createObjectNode());
+        assertEquals(7, matchResp.total.intValue(),"There should 7 match results");
+        assertEquals(7, matchResp.result.size(),"There should 7 match results");
+    }
+
+    @Test
     public void testMasterStep() throws Exception {
-        installProject();
-
-        getDataHub().clearDatabase(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME);
-        assertEquals(0, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, "http://marklogic.com/xdmp/tde"));
-
-        getDataHub().clearDatabase(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME);
-        assertEquals(0, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, "http://marklogic.com/xdmp/tde"));
-
-        installHubArtifacts(getDataHubAdminConfig(), true);
-        installUserModules(getDataHubAdminConfig(), true);
-
         Flow flow = flowManager.getFlow("myNewFlow");
         if (flow == null) {
             throw new Exception("myNewFlow Not Found");
@@ -135,17 +148,6 @@ public class MasterTest extends HubTestBase {
 
     @Test
     public void testManualMerge() throws Exception {
-        installProject();
-
-        getDataHub().clearDatabase(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME);
-        assertEquals(0, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, "http://marklogic.com/xdmp/tde"));
-
-        getDataHub().clearDatabase(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME);
-        assertEquals(0, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, "http://marklogic.com/xdmp/tde"));
-
-        installHubArtifacts(getDataHubAdminConfig(), true);
-        installUserModules(getDataHubAdminConfig(), true);
-
         Flow flow = flowManager.getFlow("myNewFlow");
         if (flow == null) {
             throw new Exception("myNewFlow Not Found");
