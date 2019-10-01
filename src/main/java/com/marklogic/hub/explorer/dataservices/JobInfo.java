@@ -1,4 +1,4 @@
-package com.marklogic.hub.explorer.job;
+package com.marklogic.hub.explorer.dataservices;
 
 // IMPORTANT: Do not edit. This file is generated.
 
@@ -32,13 +32,13 @@ public interface JobInfo {
             }
 
             @Override
-            public com.fasterxml.jackson.databind.JsonNode latestJobInfo(String model) {
+            public com.fasterxml.jackson.databind.JsonNode getLatestJobData(String entityCollection) {
               return BaseProxy.JsonDocumentType.toJsonNode(
                 baseProxy
                 .request("jobInfo.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC)
                 .withSession()
                 .withParams(
-                    BaseProxy.atomicParam("model", false, BaseProxy.StringType.fromString(model)))
+                    BaseProxy.atomicParam("entityCollection", false, BaseProxy.StringType.fromString(entityCollection)))
                 .withMethod("POST")
                 .responseSingle(false, Format.JSON)
                 );
@@ -50,11 +50,11 @@ public interface JobInfo {
     }
 
   /**
-   * Invokes the latestJobInfo operation on the database server
+   * Invokes the getLatestJobData operation on the database server
    *
-   * @param model	provides input
+   * @param entityCollection	provides input
    * @return	as output
    */
-    com.fasterxml.jackson.databind.JsonNode latestJobInfo(String model);
+    com.fasterxml.jackson.databind.JsonNode getLatestJobData(String entityCollection);
 
 }

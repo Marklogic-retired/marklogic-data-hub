@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.hub.explorer.job.JobInfo;
+import com.marklogic.hub.explorer.dataservices.JobInfo;
 import com.marklogic.hub.explorer.util.DatabaseClientHolder;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -50,6 +50,6 @@ public class JobsService {
   }
 
   JsonNode getJobInfoFromDB(DatabaseClient dbClient, String modelName) {
-    return JobInfo.on(dbClient).latestJobInfo(modelName);
+    return JobInfo.on(dbClient).getLatestJobData(modelName);
   }
 }
