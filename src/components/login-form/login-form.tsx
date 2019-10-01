@@ -88,10 +88,10 @@ const LoginForm: React.FC = () => {
         />
       </Form.Item>
       <Form.Item>
-        <a className={styles.forgot} href="">
+        <a className={styles.forgot} href="" data-cy="forgot">
           Forgot password?
         </a>
-        <Button type="primary" disabled={isLoading} htmlType="submit" className={styles.loginButton}>
+        <Button id="submit" type="primary" disabled={isLoading} htmlType="submit" className={styles.loginButton}>
           Submit
         </Button>
         {isLoading && <Spin  style={{ marginLeft: '7px' }} />}
