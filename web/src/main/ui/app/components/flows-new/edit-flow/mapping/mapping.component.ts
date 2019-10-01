@@ -21,6 +21,7 @@ import { Flow } from "../../models/flow.model";
       [targetEntity]="this.targetEntity"
       [conns]="this.conns"
       [sampleDocSrcProps]="this.sampleDocSrcProps"
+      [docUris]="this.docUris"
       [step]="this.step"
       [editURIVal]="this.editURIVal"
       [functionLst]="functionLst"
@@ -52,6 +53,7 @@ export class MappingComponent implements OnInit {
   public sampleDocURI: string = null;
   private sampleDocSrc: any = null;
   public sampleDocSrcProps: Array<any> = [];
+  public docUris: Array<any> = [];
 
   // Connections
   public conns: object = {};
@@ -146,11 +148,15 @@ export class MappingComponent implements OnInit {
 
   loadSampleDoc() {
     let self = this;
-    this.searchService.getResultsByQuery(this.step.options.sourceDatabase, this.step.options.sourceQuery, 1).subscribe(response => {
+    this.searchService.getResultsByQuery(this.step.options.sourceDatabase, this.step.options.sourceQuery, 100).subscribe(response => {
+      console.log("response is ", response);
         if (self.targetEntity) {
           self.targetEntity.hasDocs = (response.length > 0);
           // Can only load sample doc if docs exist
           if (self.targetEntity.hasDocs) {
+             response.forEach(doc => {
+              self.docUris.push(doc.uri);
+            })
             if (!this.mapping.sourceURI) {
               this.sampleDocURI = response[0].uri;
               this.editURIVal = this.sampleDocURI;
