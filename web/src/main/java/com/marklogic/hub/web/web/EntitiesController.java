@@ -103,8 +103,9 @@ class EntitiesController {
 
     @RequestMapping(value = "/entities/{entityName}", method = RequestMethod.GET)
     @ResponseBody
-    public EntityModel getEntity(@PathVariable String entityName) throws ClassNotFoundException, IOException {
-        return entityManagerService.getEntity(entityName);
+    public EntityModel getEntity(@PathVariable String entityName, @RequestParam(required = false)Boolean extendSubEntities) throws ClassNotFoundException, IOException {
+        boolean extSubEntities = (extendSubEntities != null) && extendSubEntities;
+        return entityManagerService.getEntity(entityName, extSubEntities);
     }
 
     @RequestMapping(value = "/entities/{entityName}", method = RequestMethod.DELETE)

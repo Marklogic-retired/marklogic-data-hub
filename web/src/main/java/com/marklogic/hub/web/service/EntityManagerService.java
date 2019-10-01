@@ -231,14 +231,15 @@ public class EntityManagerService {
     }
 
     public EntityModel getEntity(String entityName) throws IOException {
-        List<EntityModel> entities = getEntities();
+        return getEntity(entityName, Boolean.FALSE);
+    }
 
-        for (EntityModel entity : entities) {
-            if (entity.getName().equals(entityName)) {
-                return entity;
-            }
+    public EntityModel getEntity(String entityName, Boolean extendSubEntities) throws IOException {
+        HubEntity hubEntity = em.getEntityFromProject(entityName, extendSubEntities);
+        if (hubEntity == null) {
+            throw new DataHubProjectException("Entity not found in project: " + entityName);
         }
-        throw new DataHubProjectException("Entity not found in project: " + entityName);
+        return EntityModel.fromJson(hubEntity.getFilename(),hubEntity.toJson());
     }
 
     public FlowModel getFlow(String entityName, FlowType flowType, String flowName) throws IOException {
