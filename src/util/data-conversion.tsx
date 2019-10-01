@@ -21,10 +21,7 @@ export const entityFromJSON = (data: any) => {
     collation: string
   }
 
-  let entityArray: EntityModel[] = [];
-
-  data.map( raw => {
-    const item = JSON.parse(raw);
+  let entityArray: EntityModel[] = data.map( item => {
     // TODO check uri and baseUri diff with server
     let entityModel: EntityModel = {
       uri: item['uri'],
@@ -70,7 +67,7 @@ export const entityFromJSON = (data: any) => {
       }
       entityModel.definitions.push(entityDefinition);
     }
-    entityArray.push(entityModel);
+    return entityModel;
   });
   return entityArray;
 }
@@ -82,9 +79,22 @@ export const entityParser = (data : any) => {
     if (entityDefinition) {
       parsedEntity = {
         name: entityDefinition['name'],
-        primaryKey: entityDefinition.hasOwnProperty('primaryKey') ? entityDefinition['primaryKey'] : ''
+        primaryKey: entityDefinition.hasOwnProperty('primaryKey') ? entityDefinition['primaryKey'] : '',
+        elementRangeIndex: entityDefinition['elementRangeIndex'].length ? entityDefinition['elementRangeIndex'] : []
       }
     }
     return parsedEntity
   }); 
+}
+
+export const facetParser = (facets: any) => {
+  let facetArray: any[] = [];
+  for (let facet in facets) {
+    let parsedFacet = {
+      facetName: facet,
+      ...facets[facet]
+    }
+    facetArray.push(parsedFacet);
+  }
+  return facetArray;
 }

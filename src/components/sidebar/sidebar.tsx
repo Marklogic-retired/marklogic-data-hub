@@ -1,48 +1,45 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Facets from '../facets/facets';
+import { facetParser } from '../../util/data-conversion';
 import hubPropertiesConfig from '../../config/hub-properties.config';
 import styles from './sidebar.module.scss';
 
 const Sidebar = (props) => {
+  const [entityFacets, setEntityFacets] = useState<any[]>([]);
+  const [hubFacets, setHubFacets] = useState<any[]>([]);
 
-  const handleFacetClick = (constraint, vals) => {
-    props.onFacetClick(constraint, vals);
-  }
+  useEffect(() => {
+    if (props.facets) {
+      const parsedFacets = facetParser(props.facets);
+      const filteredHubFacets = hubPropertiesConfig.map( hubFacet => {
+        let hubFacetValues = parsedFacets.find(facet => facet.facetName === hubFacet.facetName);
+        return hubFacetValues && {...hubFacet, ...hubFacetValues}
+      });
+      setHubFacets(filteredHubFacets);
 
-  let hubFacets = {};
-  let sortedHubFacets = {};
-  let entityFacets = {};
-
-  if (props.facets) {
-    // If not hub facet, then entity facet
-    Object.keys(props.facets).forEach(prop => {
-      if (hubPropertiesConfig[prop]) {
-        hubFacets[prop] = props.facets[prop];
-      } else {
-        entityFacets[prop] = props.facets[prop];
+      if (props.selectedEntities.length) {
+        const entityDef = props.entityDefArray.find(entity => entity.name === props.selectedEntities[0]);
+        const filteredEntityFacets = entityDef.elementRangeIndex.length && entityDef.elementRangeIndex.map( elementRangeIndex => {
+          let entityFacetValues = parsedFacets.find(facet => facet.facetName === elementRangeIndex);
+          return {...entityFacetValues}
+        });
+        setEntityFacets(filteredEntityFacets);
       }
-    })
-    // Sort hub facets in config order
-    Object.keys(hubPropertiesConfig).forEach(prop => {
-      if (hubFacets[prop]) {
-        sortedHubFacets[prop] = hubFacets[prop];
-      }
-    })
-  }
+    }
+  }, [props.selectedEntities, props.facets]);
+  
 
   return (
     <div className={styles.sidebarContainer}>
       {props.selectedEntities.length === 0 ? <></> :
         <Facets 
           title="Entity Properties"
-          data={entityFacets}
-          onFacetClick={handleFacetClick}
+          facets={entityFacets}
         />
       }
       <Facets 
         title="Hub Properties"
-        data={sortedHubFacets}
-        onFacetClick={handleFacetClick}
+        facets={hubFacets}
       />
     </div>
   );

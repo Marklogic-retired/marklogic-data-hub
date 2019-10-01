@@ -1,32 +1,12 @@
 import React, { useState } from 'react';
 import { Icon } from 'antd';
 import Facet from '../facet/facet';
-import hubPropertiesConfig from '../../config/hub-properties.config';
 import styles from './facets.module.scss';
 
 const Facets = (props) => {
-
   const handleFacetClick = (constraint, vals) => {
     props.onFacetClick(constraint, vals);
   }
-
-  let facets: any = [];
-
-  if (props.data) {
-    facets = Object.keys(props.data).map((k, i) => {
-      let name = hubPropertiesConfig[k] ? hubPropertiesConfig[k].name : k;
-      return (
-        <Facet
-          constraint={k}
-          name={name}
-          data={props.data[k]}
-          key={i}
-          onFacetClick={handleFacetClick}
-        />
-      )
-    });
-  }
-
   const [show, toggleShow] = useState(true);
 
   return (
@@ -38,7 +18,16 @@ const Facets = (props) => {
         </div>
       </div>
       <div style={{display: (show) ? 'block' : 'none'}}>
-        {facets}
+      { props.facets.length && props.facets.map((facet, index) => {
+        return facet && (
+          <Facet
+            name={facet.hasOwnProperty('displayName') ? facet.displayName : facet.facetName}
+            constraint={facet.facetName}
+            facetValues={facet.facetValues}
+            key={facet.facetName}
+          />
+          )
+         })}
       </div>
     </div>
   )

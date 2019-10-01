@@ -96,17 +96,13 @@ const Browse: React.FC<Props> = ({location}) => {
     setPageLength(current, pageSize);
   }
 
-  const handleFacetClick = (constraint, vals) => {
-    setSearchFacets(constraint, vals);
-  }
-
   return (
     <Layout>
       <Sider width={300} style={{ background: '#f3f3f3' }}>
         <Sidebar 
           facets={facets} 
           selectedEntities={searchOptions.entityNames}
-          onFacetClick={handleFacetClick}
+          entityDefArray={entityDefArray} 
         />
       </Sider>
       <Content style={{ background: '#fff', padding: '24px' }}>
