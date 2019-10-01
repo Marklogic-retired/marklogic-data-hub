@@ -557,6 +557,7 @@ declare function match-impl:_results-json-config()
       ("name","localname", "namespace", "function", "weight",
       "at", "property-name", "weight", "above", "label","algorithm-ref")
     ),
+    map:put($config, "camel-case", fn:true()),
     $config
   )
 };
