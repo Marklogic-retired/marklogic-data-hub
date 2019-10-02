@@ -91,7 +91,7 @@ export class MappingUiComponent implements OnChanges {
 
   ngOnInit(){
     if (!this.dataSource){
-   this.dataSource = new MatTableDataSource<any>(this.sampleDocNestedProps);
+   this.dataSource = new MatTableDataSource<any>(this.sampleDocSrcProps);
 
     }
   if(_.isEmpty(this.mapExpresions)) {
@@ -106,9 +106,9 @@ export class MappingUiComponent implements OnChanges {
   }
   updateDataSource() {
     if (!this.dataSource){
-      this.dataSource = new MatTableDataSource<any>(this.sampleDocNestedProps);
+      this.dataSource = new MatTableDataSource<any>(this.sampleDocSrcProps);
        }
-    this.dataSource.data = this.sampleDocNestedProps;
+    this.dataSource.data = this.sampleDocSrcProps;
   }
 
   renderRows(): void {
