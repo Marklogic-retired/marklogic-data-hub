@@ -48,17 +48,17 @@ public class MasteringManagerImpl implements MasteringManager {
     protected MatchResource matchResource = null;
 
     @Override
-    public UnmergeResponse unmerge(String mergeURI, Boolean retainAuditTrail, Boolean blockFutureMerges) {
+    public JsonNode unmerge(String mergeURI, Boolean retainAuditTrail, Boolean blockFutureMerges) {
         return getMergeResource().unmerge(mergeURI, retainAuditTrail, blockFutureMerges);
     }
 
     @Override
-    public MergeResponse merge(List<String> mergeURIs, String flowName, String stepNumber, Boolean preview, JsonNode options) {
+    public JsonNode merge(List<String> mergeURIs, String flowName, String stepNumber, Boolean preview, JsonNode options) {
         return getMergeResource().merge(mergeURIs, flowName, stepNumber, preview, options);
     }
 
     @Override
-    public MatchResponse match(String matchURI, String flowName, String stepNumber, Boolean includeMatchDetails, JsonNode options) {
+    public JsonNode match(String matchURI, String flowName, String stepNumber, Boolean includeMatchDetails, JsonNode options) {
         return getMatchResource().match(matchURI, flowName, stepNumber, includeMatchDetails, options);
     }
 
@@ -92,8 +92,8 @@ public class MasteringManagerImpl implements MasteringManager {
             srcClient.init("mlSmMerge" , this);
         }
 
-        public UnmergeResponse unmerge(String mergeURI, Boolean retainAuditTrail, Boolean blockFutureMerges) {
-            UnmergeResponse resp;
+        public JsonNode unmerge(String mergeURI, Boolean retainAuditTrail, Boolean blockFutureMerges) {
+            JsonNode resp;
 
             RequestParameters params = new RequestParameters();
             params.add("mergeURI", mergeURI);
@@ -101,20 +101,18 @@ public class MasteringManagerImpl implements MasteringManager {
             params.put("blockFutureMerges", blockFutureMerges.toString());
             params.put("targetDatabase", targetDatabase);
             params.put("sourceDatabase", targetDatabase);
-            StringHandle handle = new StringHandle();
+            JacksonHandle handle = new JacksonHandle();
             this.getServices().delete(params, handle);
             try {
-                ObjectMapper objectMapper = new ObjectMapper();
-                objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-                resp = objectMapper.readValue(handle.get(), UnmergeResponse.class);
+                resp = handle.get();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
             return resp;
         }
 
-        public MergeResponse merge(List<String> mergeURIs, String flowName, String stepNumber, Boolean preview, JsonNode options) {
-            MergeResponse resp;
+        public JsonNode merge(List<String> mergeURIs, String flowName, String stepNumber, Boolean preview, JsonNode options) {
+            JsonNode resp;
 
             RequestParameters params = new RequestParameters();
             params.put("uri", mergeURIs);
@@ -130,10 +128,8 @@ public class MasteringManagerImpl implements MasteringManager {
                     resp = null;
                 } else {
                     ResourceServices.ServiceResult res = resultItr.next();
-                    StringHandle handle = new StringHandle();
-                    ObjectMapper objectMapper = new ObjectMapper();
-                    objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-                    resp = objectMapper.readValue(res.getContent(handle).get(), MergeResponse.class);
+                    JacksonHandle handle = new JacksonHandle();
+                    resp = res.getContent(handle).get();
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -155,8 +151,8 @@ public class MasteringManagerImpl implements MasteringManager {
             srcClient.init("mlSmMatch" , this);
         }
 
-        public MatchResponse match(String matchURI, String flowName, String stepNumber, Boolean includeMatchDetails, JsonNode options) {
-            MatchResponse resp;
+        public JsonNode match(String matchURI, String flowName, String stepNumber, Boolean includeMatchDetails, JsonNode options) {
+            JsonNode resp;
 
             RequestParameters params = new RequestParameters();
             params.put("uri", matchURI);
@@ -172,11 +168,8 @@ public class MasteringManagerImpl implements MasteringManager {
                     resp = null;
                 } else {
                     ResourceServices.ServiceResult res = resultItr.next();
-                    StringHandle handle = new StringHandle();
-                    ObjectMapper objectMapper = new ObjectMapper();
-                    objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-                    objectMapper.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);
-                    resp = objectMapper.readValue(res.getContent(handle).get(), MatchResponse.class);
+                    JacksonHandle handle = new JacksonHandle();
+                    resp = res.getContent(handle).get();
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);

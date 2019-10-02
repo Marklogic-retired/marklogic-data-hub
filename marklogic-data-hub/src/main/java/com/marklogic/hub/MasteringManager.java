@@ -15,11 +15,9 @@
  */
 package com.marklogic.hub;
 
-import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Handles the calls to the Mastering endpoints.
@@ -31,9 +29,9 @@ public interface MasteringManager {
      * @param mergeURI - URI of the merged document that is being reversed
      * @param retainAuditTrail - determines if provenance for the merge/unmerge is kept
      * @param blockFutureMerges - ensures that the documents won't be merged together in the next mastering run, if true
-     * @return - an UnmergeResponse
+     * @return - a JsonNode for the unmerge response
      */
-    public UnmergeResponse unmerge(String mergeURI, Boolean retainAuditTrail, Boolean blockFutureMerges);
+    public JsonNode unmerge(String mergeURI, Boolean retainAuditTrail, Boolean blockFutureMerges);
 
     /**
      * Manually merges a set of documents
@@ -42,9 +40,9 @@ public interface MasteringManager {
      * @param stepNumber - The number of the mastering step with settings
      * @param preview - determines if the changes should be written to the database
      * @param options - Overrides any options for the step
-     * @return - a MergeResponse
+     * @return - a JsonNode for the merge response
      */
-    public MergeResponse merge(List<String> mergeURIs, String flowName, String stepNumber, Boolean preview, JsonNode options);
+    public JsonNode merge(List<String> mergeURIs, String flowName, String stepNumber, Boolean preview, JsonNode options);
 
     /**
      * Returns potential candidates for merging with a document
@@ -53,66 +51,8 @@ public interface MasteringManager {
      * @param stepNumber - The number of the mastering step with settings
      * @param includeMatchDetails - determines if the results should also return details of how matches occurred
      * @param options - Overrides any options for the step
-     * @return - a MergeResponse
+     * @return - a JsonNode for the merge response
      */
-    public MatchResponse match(String matchURI, String flowName, String stepNumber, Boolean includeMatchDetails, JsonNode options);
-
-    /**
-     * Holds the response information from an unmerge request
-     */
-    class UnmergeResponse {
-        public List<String> mergeURIs;
-        public boolean success;
-        public List<Map<String,Object>> errors;
-        public List<String> documentsRestored;
-
-        public String toString() {
-            return String.format("{success: %b, errors: %s, mergeURIs: %s, documentsRestored: %s}", success, errors, mergeURIs, documentsRestored);
-        }
-    }
-
-    /**
-     * Holds the response information from an manual merge request
-     */
-    class MergeResponse {
-        public List<String> mergedURIs;
-        public boolean success;
-        public List<Map<String,Object>> errors;
-        public Map<String,Object> mergedDocument;
-
-        public String toString() {
-            return String.format("{success: %b, errors: %s, mergedURIs: %s, mergeDocument: %s}", success, errors, mergedURIs, mergedDocument);
-        }
-    }
-
-    /**
-     * Holds the response information from an match request
-     */
-    @JsonRootName("results")
-    class MatchResponse {
-        public Integer total;
-        public Integer pageLength;
-        public Integer start;
-        public List<EntityMatch> result;
-
-        public String toString() {
-            return String.format("{total: %d, pageLength: %d, start: %d, results: %s}", total, pageLength, start, result);
-        }
-    }
-
-    /**
-     * Holds the response information from an match request
-     */
-    class EntityMatch {
-        public String uri;
-        public Integer index;
-        public Integer score;
-        public String threshold;
-        public String action;
-
-        public String toString() {
-            return String.format("{uri: %s, index: %d, score: %d, threshold: %s, action: %s}", uri, index, score, threshold, action);
-        }
-    }
+    public JsonNode match(String matchURI, String flowName, String stepNumber, Boolean includeMatchDetails, JsonNode options);
 
 }
