@@ -202,7 +202,7 @@ export class MappingComponent implements OnInit {
       _.forEach(startRoot, function (val, key) {
           let prop = {
             key: key,
-            val: typeof(val) === "object" && ['Object','Array'].includes(val.constructor.name) ? val : String(val),
+            val: String(val),
             type: self.getType(val)
           };
           self.sampleDocSrcProps.push(prop);

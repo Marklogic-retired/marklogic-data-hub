@@ -66,7 +66,7 @@
    <br>
     </div>
     <p class="target-entity-title" ng-class="title-entity-model">{{ targetEntity?.info.title }} </p>
-    <span class="btn-icons">
+    <!-- <span class="btn-icons">
         <button id="Test-btn" mat-raised-button color="primary">
             Test
           </button>
@@ -75,8 +75,9 @@
           </button>
           &nbsp;<mat-icon id="lookup-icon"><i class="fa fa-book fa-sm"></i></mat-icon>
       <mat-icon id="filter-icon"><i class="fa fa-columns"></i></mat-icon>
-    </span>
- 
+    </span> -->
+ <br>
+ <br>
     <mat-table id="source-new-table-entities" 
               [dataSource]="targetEntity?.definition.properties" 
               class="Entity-props" 
@@ -85,7 +86,7 @@
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
         <mat-cell *matCellDef="let entProp; let i = index">{{entProp.name}}
-          &nbsp;<mat-icon 
+          <!-- &nbsp;<mat-icon 
           id="expand-nested-rows-close" 
           class="list-icon" 
           *ngIf="(entProp.$ref !== null || !this.checkEmptyObject(entProp.items)) && !nestedEntityStatus" 
@@ -94,7 +95,7 @@
           id="expand-nested-rows-open" 
           class="list-icon" 
           *ngIf="(entProp.$ref !== null || !this.checkEmptyObject(entProp.items)) && nestedEntityStatus" 
-          (click)="onNestEntity(entProp)"><i class="fa fa-angle-down fa-sm"></i></mat-icon>
+          (click)="onNestEntity(entProp)"><i class="fa fa-angle-down fa-sm"></i></mat-icon> -->
         </mat-cell>
 
       </ng-container>
@@ -115,10 +116,7 @@
              #fieldName [(ngModel)]="mapExpresions[entProp.name]" (change)="handleSelection(entProp.name, mapExpresions[entProp.name])" type="text" class="map-expr"
               ></textarea>
             </div>
-              
-              <!--cdkAutosizeMinRows="1"
-              cdkAutosizeMaxRows="2"></textarea> -->
-              <!-- <span class="edit-save" [matMenuTriggerFor]="menu">f(x)</span> -->
+
               &nbsp;&nbsp;<mat-icon id="fields-list" *ngIf="entProp.$ref == null && this.checkEmptyObject(entProp.items)" class="list-icon" [matMenuTriggerFor]="fieldListMenu" [matMenuTriggerData]="{indx: i}"><i class="fa fa-list fa-xs"></i></mat-icon>
               &nbsp;&nbsp;<button id="function-list" *ngIf="entProp.$ref == null && this.checkEmptyObject(entProp.items)" class="function-icon" [matMenuTriggerFor]="menu" [matMenuTriggerData]="{ind: entProp.name,indx: i}">f(x)</button>
               &nbsp;&nbsp;
@@ -130,7 +128,7 @@
           </mat-cell>
         </ng-container>
         <!-- Expandable rows -->
-        <ng-container matColumnDef="expandedDetail">
+        <!-- <ng-container matColumnDef="expandedDetail">
           <mat-cell *matCellDef="let detail" [attr.colspan]="4">
         
             <div class="example-element-detail">
@@ -166,9 +164,8 @@
                         class="map-expr"></textarea>
                     </div>
         
-                    <!--cdkAutosizeMinRows="1"
-                        cdkAutosizeMaxRows="2"></textarea> -->
-                    <!-- <span class="edit-save" [matMenuTriggerFor]="menu">f(x)</span> -->
+                    
+                    
                     &nbsp;&nbsp;<mat-icon id="fields-list" *ngIf="entProp2.$ref == null && this.checkEmptyObject(entProp2.items)"
                       class="list-icon" [matMenuTriggerFor]="fieldListMenu" [matMenuTriggerData]="{indx: k}"><i
                         class="fa fa-list fa-xs"></i>
@@ -185,7 +182,7 @@
                 </ng-container>
         
                 <!-- <mat-header-row *matHeaderRowDef="displayedEntityColumns2; sticky:true"></mat-header-row> -->
-                <mat-row *matRowDef="let row2; columns: displayedEntityColumns2;"></mat-row>
+               <!-- <mat-row *matRowDef="let row2; columns: displayedEntityColumns2;"></mat-row>
         
               </mat-table>
         
@@ -194,7 +191,7 @@
 
 
           </mat-cell>
-        </ng-container>
+        </ng-container> -->
         <!-- <ng-container matColumnDef="value">
             <mat-header-cell *matHeaderCellDef mat-sort-header>Value</mat-header-cell>
             <mat-cell *matCellDef="let entProp; let i = index">
@@ -204,13 +201,15 @@
       
       <mat-header-row *matHeaderRowDef="displayedEntityColumns; sticky:true"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedEntityColumns;"
+            ></mat-row>
+      <!-- <mat-row *matRowDef="let row; columns: displayedEntityColumns;"
             class="element-row" 
             [class.expanded]="expandedElement === row"
             (click)="expandedElement = row"></mat-row>
       <mat-row *matRowDef="let row; columns: ['expandedDetail']; when: nestedEntityStatus == true"
       [@detailExpand]="row == expandedElement && nestedEntityStatus == true ? 'expanded' : 'collapsed'"
             style="overflow: hidden"> 
-    </mat-row> 
+    </mat-row>  -->
       <!-- <mat-row *matRowDef="let row; columns: displayedEntityColumns; when: isExpansionDetailRow"
             [@detailExpand]="row.element == expandedElement ? 'expanded' : 'collapsed'"
             style="overflow: hidden"> 
