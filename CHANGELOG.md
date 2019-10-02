@@ -1,5 +1,24 @@
 # Change Log
 
+## [v5.0.3](https://github.com/marklogic/marklogic-data-hub/releases/tag/v5.0.3) (2019-10-02)
+
+**Fixed Bugs:**
+- [DHFPROD-2817] - Smart Mastering - Standard Merge performs poorly
+- [DHFPROD-2875] - DHF is depending on SSLContext objects that use SSLv3
+- [DHFPROD-2896] - disableJobOutput flag is not taking effect
+- [DHFPROD-2928] - Flows errs out in QS when "flows" directory does not exist
+- [DHFPROD-2959] - /v1/resources/ml:sjsFlow returns HTTP 200 even when a plugin error occurs [\#2855](https://github.com/marklogic/marklogic-data-hub/issues/2855)
+- [DHFPROD-2961] - Step declaration json has some unnecessary fields 
+- [DHFPROD-2976] - entities .xml files do not have permissions set [\#2869](https://github.com/marklogic/marklogic-data-hub/issues/2869)
+- [DHFPROD-3041] - Step definition properties created via gradle, that are assigned null, end up in QS as "null" string
+- [DHFPROD-3056] - Differences in gradle vs QS step definition artifact for custom ingest
+- [DHFPROD-3195] - Windows cluster tests failing in 5.x-develop with MODNOTFOUND
+- [DHFPROD-3223] - DHF installer is not setting URL rewriter properly
+
+**Story:**
+- [DHFPROD-3193] - Change from language to lang for artifacts
+- [DHFPROD-3206] - Correct critical/high security fixes for the trace-ui
+
 ## [v5.0.2](https://github.com/marklogic/marklogic-data-hub/releases/tag/v5.0.2) (2019-07-25)
 
 **Fixed Bugs:**
