@@ -3,6 +3,7 @@ package com.marklogic.hub.step.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.job.JobDocManager;
 import com.marklogic.hub.job.JobStatus;
@@ -56,4 +57,15 @@ public class StepRunnerUtil {
         }
     }
 
+    protected static String objectToString(Object obj) {
+        String objStr = null;
+        if (obj instanceof String) {
+            objStr = (String) obj;
+        } else if (obj instanceof TextNode) {
+            objStr = ((TextNode) obj).textValue();
+        } else if (obj != null){
+            objStr = obj.toString();
+        }
+        return objStr;
+    }
 }

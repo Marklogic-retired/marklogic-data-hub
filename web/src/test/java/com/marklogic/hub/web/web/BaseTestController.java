@@ -27,6 +27,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 
 public class BaseTestController extends HubTestBase {
@@ -42,6 +43,13 @@ public class BaseTestController extends HubTestBase {
         ConnectionAuthenticationToken authenticationToken = new ConnectionAuthenticationToken("admin", "admin", adminHubConfig.getHost(), 1, "local");
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
+
+    @PostConstruct
+    public void setUpModules() {
+        setEnvConfig();
+        installHubModules();
+    }
+
 
     @BeforeEach
     public void baseSetUp() throws IOException {

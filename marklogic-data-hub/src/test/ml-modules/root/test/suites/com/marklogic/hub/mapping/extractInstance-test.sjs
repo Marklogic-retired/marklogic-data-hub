@@ -28,7 +28,7 @@ function extractInstanceDefaultSrcCntxtJson() {
     "info": {"title": "Order", "version": "0.0.1", "baseUri": "http://marklogic.com/", "description": "An Order entity"}
   };
   const mapping = {
-    "language": "zxx",
+    "lang": "zxx",
     "name": "OrderMappingJson",
     "description": "Default description",
     "version": 1,
@@ -86,7 +86,7 @@ function extractInstanceCustomSrcCntxtJson() {
     "info": {"title": "Order", "version": "0.0.1", "baseUri": "http://marklogic.com/", "description": "An Order entity"}
   };
   const mapping = {
-    "language": "zxx",
+    "lang": "zxx",
     "name": "OrderMappingJson",
     "description": "Default description",
     "version": 1,
@@ -143,7 +143,7 @@ function extractInstanceDefaultSrcCntxtXml() {
     "info": {"title": "Order", "version": "0.0.1", "baseUri": "http://marklogic.com/", "description": "An Order entity"}
   };
   const mapping = {
-    "language": "zxx",
+    "lang": "zxx",
     "name": "OrderMappingJson",
     "description": "Default description",
     "version": 1,
@@ -205,7 +205,7 @@ function extractInstanceCustomSrcCntxtXml() {
     "info": {"title": "Order", "version": "0.0.1", "baseUri": "http://marklogic.com/", "description": "An Order entity"}
   };
   const mapping = {
-    "language": "zxx",
+    "lang": "zxx",
     "name": "OrderMappingJson",
     "description": "Default description",
     "version": 1,

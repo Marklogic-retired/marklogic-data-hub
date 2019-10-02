@@ -1,0 +1,32 @@
+<envelope xmlns="http://marklogic.com/entity-services">
+  <headers>
+    <smart-mastering:id xmlns:smart-mastering="http://marklogic.com/smart-mastering">87c2f600-7488-429a-862c-0b2a5f6c6e1e</smart-mastering:id>
+    <smart-mastering:id xmlns:smart-mastering="http://marklogic.com/smart-mastering">f57e1093-4c68-46d7-910c-150825ab2edc</smart-mastering:id>
+    <smart-mastering:sources xmlns:smart-mastering="http://marklogic.com/smart-mastering">
+      <smart-mastering:source>
+        <smart-mastering:name>SOURCE4</smart-mastering:name>
+        <smart-mastering:import-id>mdm-import-b96735af-f7c3-4f95-9ea1-f344bc395e0f</smart-mastering:import-id>
+        <smart-mastering:user>admin</smart-mastering:user>
+        <smart-mastering:dateTime>2018-04-26T16:40:16.760311Z</smart-mastering:dateTime>
+      </smart-mastering:source>
+    </smart-mastering:sources>
+  </headers>
+  <triples/>
+  <instance>
+    <MDM xmlns="">
+      <Person>
+        <PersonType>
+          <Address>
+            <AddressType>
+              <LocationState>PA</LocationState>
+            </AddressType>
+            <AddressType>
+              <LocationState>PA</LocationState>
+            </AddressType>
+          </Address>
+        </PersonType>
+      </Person>
+    </MDM>
+  </instance>
+  <attachments/>
+</envelope>

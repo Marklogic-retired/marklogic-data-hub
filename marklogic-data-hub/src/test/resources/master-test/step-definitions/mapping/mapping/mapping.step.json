@@ -13,6 +13,6 @@
     "sourceQuery" : "cts.collectionQuery('default-ingestion')"
   },
   "customHook" : { },
-  "language" : "zxx",
+  "lang" : "zxx",
   "modulePath" : "/data-hub/5/builtins/steps/mapping/default/main.sjs"
 }

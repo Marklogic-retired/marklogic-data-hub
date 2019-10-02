@@ -20,7 +20,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.ext.file.PermissionsDocumentFileProcessor;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.client.ext.modulesloader.impl.AssetFileLoader;
 import com.marklogic.client.ext.modulesloader.impl.DefaultModulesLoader;
@@ -123,10 +125,12 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         modulesLoader.setModulesManager(propsManager);
         modulesLoader.setShutdownTaskExecutorAfterLoadingModules(false);
 
+        AppConfig appConfig = hubConfig.getAppConfig();
         Path dir = hubProject.getEntityConfigDir();
         File stagingFile = Paths.get(dir.toString(), filename).toFile();
         if (stagingFile.exists()) {
             modulesLoader.setDatabaseClient(client);
+            modulesLoader.getAssetFileLoader().addDocumentFileProcessor(new PermissionsDocumentFileProcessor(appConfig.getModulePermissions()));
             Resource r = modulesLoader.installQueryOptions(new FileSystemResource(stagingFile));
             if (r != null) {
                 isLoaded = true;

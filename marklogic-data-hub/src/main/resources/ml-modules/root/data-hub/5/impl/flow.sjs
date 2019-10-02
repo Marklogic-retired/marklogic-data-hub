@@ -66,6 +66,7 @@ class Flow {
         this.globalContext[key] = Object.create(this.globalContext[key]);
       }
     }
+    this.writeQueue = [];
   }
 
   getFlowNames() {
@@ -154,9 +155,9 @@ class Flow {
       }
       //set the jobid in the context based on the jobdoc response
       this.globalContext.jobId = jobDoc.jobId;
+      this.globalContext.lastCompletedStep = jobDoc.lastCompletedStep;
+      this.globalContext.lastAttemptedStep = jobDoc.lastAttemptedStep;
     }
-    this.globalContext.lastCompletedStep = jobDoc.lastCompletedStep;
-    this.globalContext.lastAttemptedStep = jobDoc.lastAttemptedStep;
 
     //grab the step, or the first if its null/not set
     if(!stepNumber) {
@@ -348,6 +349,7 @@ class Flow {
           flowInstance.globalContext.failedItems.push(flowInstance.globalContext.uri);
           flowInstance.datahub.debug.log({message: `Error running step: ${e.toString()}. ${e.stack}`, type: 'error'});
         }
+        flowInstance.globalContext.uri = null;
       }
     }
     flowInstance.globalContext.uri = null;

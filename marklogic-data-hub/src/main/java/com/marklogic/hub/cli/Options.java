@@ -38,6 +38,12 @@ public class Options {
     )
     private String password;
 
+    @Parameter(
+        names = {"--disableSsl"},
+        description = "Set to true to disable SSL usage when connecting to MarkLogic"
+    )
+    private boolean disableSsl;
+
     @DynamicParameter(
         names = "-P",
         description = "Use this argument to include any property supported by DHF; e.g. -PmlHost=somehost"
@@ -82,5 +88,13 @@ public class Options {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public boolean isDisableSsl() {
+        return disableSsl;
+    }
+
+    public void setDisableSsl(boolean disableSsl) {
+        this.disableSsl = disableSsl;
     }
 }

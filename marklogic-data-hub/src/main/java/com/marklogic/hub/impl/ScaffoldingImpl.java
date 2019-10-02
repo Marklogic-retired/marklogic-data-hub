@@ -166,9 +166,9 @@ public class ScaffoldingImpl implements Scaffolding {
                         fileContents = fileContents.replace(key, value);
                     }
                 }
-                FileWriter writer = new FileWriter(flowFile);
-                writer.write(fileContents);
-                writer.close();
+                try (FileWriter writer = new FileWriter(flowFile)) {
+                    writer.write(fileContents);
+                }
             }
             catch (IOException e) {
                 throw new RuntimeException(e);
@@ -241,8 +241,7 @@ public class ScaffoldingImpl implements Scaffolding {
     }
 
     private Document readLegacyFlowXml(File file) {
-        try {
-            FileInputStream is = new FileInputStream(file);
+        try (FileInputStream is = new FileInputStream(file)) {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);
             DocumentBuilder builder = factory.newDocumentBuilder();

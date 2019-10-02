@@ -7,6 +7,6 @@
     "collections" : [ "myTestMappingStep" ]
   },
   "customHook" : { },
-  "language" : "zxx",
+  "lang" : "zxx",
   "modulePath" : "/path/to/your/step/module/main.sjs"
 }

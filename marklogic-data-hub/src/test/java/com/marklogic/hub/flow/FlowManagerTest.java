@@ -69,6 +69,15 @@ class FlowManagerTest extends HubTestBase {
     }
 
     @Test
+    void missingFlowsDirectory() {
+        runAfterAll();
+
+        List<String> names = fm.getFlowNames();
+        Assertions.assertEquals(0, names.size(), "When the flows directory doesn't exist (in this case, the entire " +
+            "project directory is missing), an error shouldn't be thrown - should just get back an empty list");
+    }
+
+    @Test
     void getFlow() {
         Flow flow = fm.getFlow("test-flow");
         Assertions.assertNotNull(flow);

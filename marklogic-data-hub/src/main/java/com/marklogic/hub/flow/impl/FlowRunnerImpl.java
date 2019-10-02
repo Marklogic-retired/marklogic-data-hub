@@ -60,6 +60,7 @@ public class FlowRunnerImpl implements FlowRunner{
 
     private ThreadPoolExecutor threadPool;
     private JobDocManager jobDocManager;
+    private boolean disableJobOutput = false;
 
     @Override
     public FlowRunner onStatusChanged(FlowStatusListener listener) {
@@ -92,6 +93,11 @@ public class FlowRunnerImpl implements FlowRunner{
     }
 
     public RunFlowResponse runFlow(String flowName, List<String> stepNums, String jobId, Map<String, Object> options, Map<String, Object> stepConfig) {
+        if (options != null && options.containsKey("disableJobOutput")) {
+            disableJobOutput = Boolean.parseBoolean(options.get("disableJobOutput").toString());
+        } else {
+            disableJobOutput = false;
+        }
 
         Flow flow = flowManager.getFlow(flowName);
 
@@ -147,7 +153,7 @@ public class FlowRunnerImpl implements FlowRunner{
         jobStoppedOnError.set(false);
         runningJobId = jobId;
         runningFlow = flowMap.get(runningJobId);
-        if(jobDocManager == null) {
+        if(jobDocManager == null && !disableJobOutput) {
             jobDocManager = new JobDocManager(hubConfig.newJobDbClient());
         }
         if(threadPool == null || threadPool.isTerminated()) {
@@ -278,11 +284,12 @@ public class FlowRunnerImpl implements FlowRunner{
                     else{
                         stepResp.withStatus(JobStatus.FAILED_PREFIX + stepNum);
                     }
-                    try {
-                        jobDocManager.postJobs(jobId, JobStatus.FAILED_PREFIX + stepNum, stepNum, null, stepResp);
-                    }
-                    catch (Exception ex) {
-                        logger.error(ex.getMessage());
+                    if (!disableJobOutput) {
+                        try {
+                            jobDocManager.postJobs(jobId, JobStatus.FAILED_PREFIX + stepNum, stepNum, null, stepResp);
+                        } catch (Exception ex) {
+                            logger.error(ex.getMessage());
+                        }
                     }
                     RunStepResponse finalStepResp = stepResp;
                     try {
@@ -334,18 +341,21 @@ public class FlowRunnerImpl implements FlowRunner{
             }
             resp.setJobStatus(jobStatus.toString());
             try {
-                jobDocManager.updateJobStatus(jobId, jobStatus);
+                if (!disableJobOutput) {
+                    jobDocManager.updateJobStatus(jobId, jobStatus);
+                }
             }
             catch (Exception e) {
                 logger.error(e.getMessage());
             }
             finally {
                 JsonNode jobNode = null;
-                try {
-                    jobNode = jobDocManager.getJobDocument(jobId);
-                }
-                catch (Exception e) {
-                    logger.error(e.getMessage());
+                if (!disableJobOutput) {
+                    try {
+                        jobNode = jobDocManager.getJobDocument(jobId);
+                    } catch (Exception e) {
+                        logger.error(e.getMessage());
+                    }
                 }
                 if(jobNode != null) {
                     ObjectMapper objectMapper = new ObjectMapper();

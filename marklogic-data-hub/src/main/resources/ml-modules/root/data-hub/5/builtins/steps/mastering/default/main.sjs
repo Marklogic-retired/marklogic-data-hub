@@ -1,4 +1,5 @@
 const mastering = require("/com.marklogic.smart-mastering/process-records.xqy");
+const mergeImpl = require("/com.marklogic.smart-mastering/survivorship/merging/base.xqy");
 const masteringCollections = require("/com.marklogic.smart-mastering/impl/collections.xqy");
 const masteringConsts = require("/com.marklogic.smart-mastering/constants.xqy");
 const requiredOptionProperties = ['matchOptions', 'mergeOptions'];
@@ -11,7 +12,11 @@ function main(content, options) {
   let matchOptions = new NodeBuilder().addNode({ options: options.matchOptions }).toNode();
   // Data Hub will persist the results for us.
   let persistResults = false;
-  return mastering.processMatchAndMergeWithOptions(Sequence.from(filteredContent), mergeOptions, matchOptions, cts.trueQuery(), persistResults);
+  if (filteredContent.length) {
+    return mastering.processMatchAndMergeWithOptions(Sequence.from(filteredContent), mergeOptions, matchOptions, cts.trueQuery(), persistResults);
+  } else {
+    return emptySequence;
+  }
 }
 
 function checkOptions(content, options, filteredContent = []) {
@@ -35,10 +40,12 @@ function checkOptions(content, options, filteredContent = []) {
   const archivedCollection = fn.head(masteringCollections.getCollections(Sequence.from(options.mergeOptions.collections.archived), masteringConsts['ARCHIVED-COLL']));
   let contentHasExpectedContentCollection = true;
   let contentHasTargetEntityCollection = true;
+  let unlockedURIs = mergeImpl.filterOutLockedUris(Sequence.from(content.toArray().map((item) => item.uri))).toArray();
   for (const item of content) {
-    let docCollections = xdmp.nodeCollections(item.value);
-    if (!docCollections.includes(archivedCollection)) {
-      xdmp.lockForUpdate(item.uri);
+    let docCollections = item.context.originalCollections || [];
+    if (!docCollections.includes(archivedCollection) && unlockedURIs.includes(item.uri)) {
+      mergeImpl.lockForUpdate(item.uri);
+      item.context.collections = Sequence.from(docCollections);
       filteredContent.push(item);
       contentHasExpectedContentCollection = contentHasExpectedContentCollection && docCollections.includes(contentCollection);
       contentHasTargetEntityCollection = contentHasTargetEntityCollection && docCollections.includes(options.targetEntity);

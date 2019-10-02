@@ -34,7 +34,10 @@ import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.ext.SecurityContextType;
+import com.marklogic.client.ext.file.JarDocumentFileReader;
 import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager;
+import com.marklogic.client.ext.tokenreplacer.DefaultTokenReplacer;
+import com.marklogic.client.ext.tokenreplacer.TokenReplacer;
 import com.marklogic.client.io.*;
 import com.marklogic.hub.deploy.commands.LoadHubArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
@@ -151,6 +154,8 @@ public class HubTestBase {
     @Autowired
     protected JobMonitorImpl jobMonitor;
 
+    protected JarDocumentFileReader jarDocumentFileReader = null;
+
     // to speedup dev cycle, you can create a hub and set this to true.
     // for true setup/teardown, must be 'false'
     private static boolean isInstalled = false;
@@ -202,7 +207,7 @@ public class HubTestBase {
     public  GenericDocumentManager modMgr;
     public  String bootStrapHost = null;
     static TrustManagerFactory tmf;
-    
+
     static {
         try {
             installCARootCertIntoStore(getResourceFile("ssl/ca-cert.crt"));
@@ -231,26 +236,31 @@ public class HubTestBase {
             adminHubConfig.initHubProject();
         }
         // note the app config loads dhf defaults from classpath
+        InputStream p2 = null;
         try {
             Properties p = new Properties();
-            InputStream p2 = new FileInputStream("gradle.properties");
+            p2 = new FileInputStream("gradle.properties");
             p.load(p2);
             properties.putAll(p);
-            p2.close();
         }
         catch (IOException e) {
             System.err.println("Properties file not loaded.");
+        } finally {
+            IOUtils.closeQuietly(p2);
         }
 
         // try to load the local environment overrides file
+        InputStream is = null;
         try {
             Properties p = new Properties();
-            InputStream is = new FileInputStream("gradle-local.properties");
+            is = new FileInputStream("gradle-local.properties");
             p.load(is);
             properties.putAll(p);
         }
         catch (IOException e) {
             System.err.println("gradle-local.properties file not loaded.");
+        } finally {
+            IOUtils.closeQuietly(is);
         }
         boolean sslStaging = Boolean.parseBoolean(properties.getProperty("mlStagingSimpleSsl"));
         boolean sslJob = Boolean.parseBoolean(properties.getProperty("mlJobSimpleSsl"));
@@ -304,7 +314,7 @@ public class HubTestBase {
         && stagingAuthMethod.equals(Authentication.CERTIFICATE)) {
             setCertAuth(true);
         }
-               
+
         try {
             stagingClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_NAME, user, password, stagingAuthMethod);
             flowRunnerClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_NAME, flowRunnerUser, flowRunnerPassword, stagingAuthMethod);
@@ -445,7 +455,7 @@ public class HubTestBase {
             adminHubConfig.setSslContext(DatabaseKind.JOB,flowOperatorcertContext);
             manageConfig.setSslContext(flowOperatorcertContext);
             adminConfig.setSslContext(flowOperatorcertContext);
-                     
+
             appConfig.setAppServicesCertPassword("abcd");
             appConfig.setAppServicesTrustManager((X509TrustManager) tmf.getTrustManagers()[0]);
             appConfig.setAppServicesSslHostnameVerifier(SSLHostnameVerifier.ANY);
@@ -457,7 +467,7 @@ public class HubTestBase {
 
             adminHubConfig.setTrustManager(DatabaseKind.FINAL, (X509TrustManager) tmf.getTrustManagers()[0]);
             adminHubConfig.setCertPass(DatabaseKind.FINAL, "abcd");
-            
+
             //manageConfig.setConfigureSimpleSsl(false);
             manageConfig.setSecuritySslContext(certContext);
             manageConfig.setPassword(null);
@@ -489,9 +499,9 @@ public class HubTestBase {
         try {
             File projectDir = new File(projectDirName);
             if (!projectDir.isDirectory() || !projectDir.exists()) {
-                projectDir.mkdirs();                
+                projectDir.mkdirs();
             }
-                    
+
             // force module loads for new test runs.
             File timestampDirectory = new File(projectDir + "/.tmp");
             if ( timestampDirectory.exists() ) {
@@ -515,25 +525,25 @@ public class HubTestBase {
     private void certInit() {
         adminHubConfig.setMlUsername(user);
         adminHubConfig.setMlPassword(password);
-                
+
         appConfig = adminHubConfig.getAppConfig();
         manageConfig = ((HubConfigImpl)adminHubConfig).getManageConfig();
         manageClient = ((HubConfigImpl)adminHubConfig).getManageClient();
         adminConfig = ((HubConfigImpl)adminHubConfig).getAdminConfig();
 
         if(isCertAuth()) {
-            
+
             adminHubConfig.setSslHostnameVerifier(DatabaseKind.STAGING,SSLHostnameVerifier.ANY);
             adminHubConfig.setSslHostnameVerifier(DatabaseKind.FINAL,SSLHostnameVerifier.ANY);
             adminHubConfig.setSslHostnameVerifier(DatabaseKind.JOB,SSLHostnameVerifier.ANY);
-            
+
             appConfig.setAppServicesCertFile("src/test/resources/ssl/client-flow-developer.p12");
             adminHubConfig.setCertFile(DatabaseKind.STAGING, "src/test/resources/ssl/client-flow-developer.p12");
             adminHubConfig.setCertFile(DatabaseKind.FINAL, "src/test/resources/ssl/client-flow-developer.p12");
             adminHubConfig.setSslContext(DatabaseKind.JOB, flowDevelopercertContext);
             manageConfig.setSslContext(flowDevelopercertContext);
             adminConfig.setSslContext(flowDevelopercertContext);
-            
+
             appConfig.setAppServicesCertPassword("abcd");
             appConfig.setAppServicesTrustManager((X509TrustManager) tmf.getTrustManagers()[0]);
             appConfig.setAppServicesSslHostnameVerifier(SSLHostnameVerifier.ANY);
@@ -563,11 +573,12 @@ public class HubTestBase {
         ((HubConfigImpl)adminHubConfig).setAdminConfig(adminConfig);
         wireClients();
     }
-    
+
     public void deleteProjectDir() {
-        if (new File(PROJECT_PATH).exists()) {
+        File projectPath = new File(PROJECT_PATH);
+        if (projectPath.exists()) {
             try {
-                FileUtils.forceDelete(new File(PROJECT_PATH));
+                FileUtils.forceDelete(projectPath);
             } catch (IOException e) {
                 logger.warn("Unable to delete the project directory", e);
             }
@@ -582,13 +593,18 @@ public class HubTestBase {
     }
 
     protected String getResource(String resourceName) {
+        InputStream inputStream = null;
+        String output = null;
         try {
-            InputStream inputStream = getResourceStream(resourceName);
-            return IOUtils.toString(inputStream);
+            inputStream = getResourceStream(resourceName);
+            output = IOUtils.toString(inputStream);
         }
         catch(IOException e) {
             throw new RuntimeException(e);
+        } finally {
+            IOUtils.closeQuietly(inputStream);
         }
+        return output;
     }
 
     protected String getModulesFile(String uri) {
@@ -615,16 +631,20 @@ public class HubTestBase {
     }
 
     protected Document getXmlFromInputStream(InputStream inputStream) {
+        Document output = null;
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setIgnoringElementContentWhitespace(true);
             factory.setNamespaceAware(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
 
-            return builder.parse(inputStream);
+            output = builder.parse(inputStream);
         } catch (IOException | SAXException | ParserConfigurationException e) {
             throw new RuntimeException(e);
+        } finally {
+            IOUtils.closeQuietly(inputStream);
         }
+        return output;
     }
 
     protected JsonNode getJsonFromResource(String resourceName) {
@@ -767,6 +787,7 @@ public class HubTestBase {
             writeSet.add(path, permissions, handle);
         });
         modMgr.write(writeSet);
+        writeSet.parallelStream().forEach((writeOp) -> { IOUtils.closeQuietly((InputStreamHandle) writeOp.getContent());});
         clearFlowCache();
     }
 
@@ -787,6 +808,7 @@ public class HubTestBase {
         }
         modMgr.write(path, permissions, handle);
         clearFlowCache();
+        handle.close();
     }
 
     protected void clearFlowCache() {
@@ -809,31 +831,7 @@ public class HubTestBase {
     }
 
     protected EvalResultIterator runInDatabase(String query, String databaseName) {
-        ServerEvaluationCall eval;
-        switch(databaseName) {
-            case HubConfig.DEFAULT_STAGING_NAME:
-                eval = stagingClient.newServerEval();
-                break;
-            case HubConfig.DEFAULT_FINAL_NAME:
-                eval = finalClient.newServerEval();
-                break;
-            case HubConfig.DEFAULT_MODULES_DB_NAME:
-                eval = stagingModulesClient.newServerEval();
-                break;
-
-            case HubConfig.DEFAULT_JOB_NAME:
-                eval = jobClient.newServerEval();
-                break;
-            case HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME:
-                eval = finalSchemasClient.newServerEval();
-                break;
-            case HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME:
-                eval = stagingSchemasClient.newServerEval();
-                break;
-            default:
-                eval = stagingClient.newServerEval();
-                break;
-        }
+        ServerEvaluationCall eval = getClientByName(databaseName).newServerEval();
         try {
             return eval.xquery(query).eval();
         }
@@ -841,6 +839,23 @@ public class HubTestBase {
             logger.error("Failed run code: " + query, e);
             e.printStackTrace();
             throw e;
+        }
+    }
+
+    protected DatabaseClient getClientByName(String databaseName) {
+        switch(databaseName) {
+            case HubConfig.DEFAULT_FINAL_NAME:
+                return finalClient;
+            case HubConfig.DEFAULT_MODULES_DB_NAME:
+                return stagingModulesClient;
+            case HubConfig.DEFAULT_JOB_NAME:
+                return jobClient;
+            case HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME:
+                return finalSchemasClient;
+            case HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME:
+                return stagingSchemasClient;
+            default:
+                return stagingClient;
         }
     }
 
@@ -931,15 +946,29 @@ public class HubTestBase {
         loadUserModulesCommand.setForceLoad(force);
         commands.add(loadUserModulesCommand);
 
-        LoadModulesCommand loadModulesCommand = new LoadModulesCommand();
-        commands.add(loadModulesCommand);
-
         loadUserArtifactsCommand.setForceLoad(force);
         commands.add(loadUserArtifactsCommand);
+
+        LoadModulesCommand loadModulesCommand = new LoadModulesCommand();
+        commands.add(loadModulesCommand);
 
         SimpleAppDeployer deployer = new SimpleAppDeployer(((HubConfigImpl)hubConfig).getManageClient(), ((HubConfigImpl)hubConfig).getAdminManager());
         deployer.setCommands(commands);
         deployer.deploy(hubConfig.getAppConfig());
+    }
+
+    private TokenReplacer buildModuleTokenReplacer(AppConfig appConfig) {
+        DefaultTokenReplacer r = new DefaultTokenReplacer();
+        final Map<String, String> customTokens = appConfig.getCustomTokens();
+        if (customTokens != null && !customTokens.isEmpty()) {
+            r.addPropertiesSource(() -> {
+                Properties p = new Properties();
+                p.putAll(customTokens);
+                return p;
+            });
+        }
+
+        return r;
     }
 
     protected void installHubArtifacts(HubConfig hubConfig, boolean force) {
@@ -1020,7 +1049,7 @@ public class HubTestBase {
             e.printStackTrace();
         }
         return sslContext;
-                
+
     }
 
     private static void installCARootCertIntoStore(File caRootCert) {
@@ -1092,9 +1121,9 @@ public class HubTestBase {
             throw new RuntimeException(e);
         }
     }
-    
-    
-    public void wireClients() {        
+
+
+    public void wireClients() {
         fm.setupClient();
         dataHub.wireClient();
         versions.setupClient();
@@ -1104,13 +1133,13 @@ public class HubTestBase {
     //Use this method sparingly as it slows down the test
     public void resetProperties() {
         Field[] fields = HubConfigImpl.class.getDeclaredFields();
-        Set<String> s =  Stream.of("hubProject", "environment", "flowManager", 
+        Set<String> s =  Stream.of("hubProject", "environment", "flowManager",
                 "dataHub", "versions", "logger", "objmapper", "projectProperties", "jobMonitor").collect(Collectors.toSet());
 
         for(Field f : fields){
             if(! s.contains(f.getName())) {
                 ReflectionUtils.makeAccessible(f);
-                ReflectionUtils.setField(f, adminHubConfig, null);                
+                ReflectionUtils.setField(f, adminHubConfig, null);
             }
         }
     }

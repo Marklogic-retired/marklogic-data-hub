@@ -1,0 +1,27 @@
+<options xmlns="http://marklogic.com/smart-mastering/merging">
+  <match-options>custom-xqy-action-match-options</match-options>
+  <property-defs>
+    <property namespace="" localname="IdentificationID" name="ssn"/>
+    <property namespace="" localname="PersonName" name="name"/>
+    <property namespace="" localname="Address" name="address"/>
+  </property-defs>
+  <merging>
+    <merge property-name="ssn">
+      <source-ref document-uri="docA" />
+    </merge>
+    <merge property-name="name"  max-values="1">
+      <double-metaphone>
+        <distance-threshold>50</distance-threshold>
+      </double-metaphone>
+      <synonyms-support>true</synonyms-support>
+      <thesaurus>/mdm/config/thesauri/first-name-synonyms.xml</thesaurus>
+      <length weight="8" />
+    </merge>
+    <merge property-name="address" max-values="1">
+      <length weight="8" />
+      <double-metaphone>
+        <distance-threshold>50</distance-threshold>
+      </double-metaphone>
+    </merge>
+  </merging>
+</options>

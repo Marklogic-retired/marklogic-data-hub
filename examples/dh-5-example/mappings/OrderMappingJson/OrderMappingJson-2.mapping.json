@@ -1,5 +1,5 @@
 {
-  "language" : "zxx",
+  "lang" : "zxx",
   "name" : "OrderMappingJson",
   "description" : "Default description",
   "version" : 2,

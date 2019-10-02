@@ -30,23 +30,63 @@ declare function blocks-impl:get-blocks($uri as xs:string?)
 {
   array-node {
     if (fn:exists($uri)) then
-      let $solution :=
-        sem:sparql(
-          "select distinct(?uri as ?blocked) where { ?uri ?isBlocked ?target }",
-          map:new((
-            map:entry("target", sem:iri($uri)),
-            map:entry("isBlocked", $const:PRED-MATCH-BLOCK)
-          )),
-          "map",
-          cts:or-query((
-            cts:element-value-query(xs:QName("sem:object"), $uri, "exact"),
-            cts:json-property-value-query("object", $uri, "exact")
-          ))
-        )
-      return
-        $solution ! fn:string(map:get(., "blocked"))
+      if (map:contains($cached-blocks-by-uri, $uri)) then
+        map:get($cached-blocks-by-uri, $uri)[. ne ""]
+      else
+        blocks-impl:get-blocks-of-uris($uri)
     else ()
   }
+};
+
+declare variable $cached-blocks-by-uri as map:map := map:map();
+
+declare function blocks-impl:get-blocks-of-uris($uris as xs:string*)
+  as xs:string*
+{
+    if (fn:exists($uris)) then (
+      let $solution :=
+        sem:sparql(
+          "select distinct ?targetURI (?uri as ?blocked) where {
+            {
+              ?uri ?isBlocked ?target.
+              ?target ?isBlocked ?targetURI.
+            } UNION {
+              ?target ?isBlocked ?uri.
+              ?uri ?isBlocked ?targetURI.
+            }
+            FILTER (?uri != ?targetURI)
+          }",
+          map:new((
+            map:entry("target", $uris ! sem:iri(.)),
+            map:entry("isBlocked", $const:PRED-MATCH-BLOCK)
+          )),
+          ("map","optimize=0"),
+          cts:or-query((
+            cts:element-value-query((xs:QName("sem:subject"),xs:QName("sem:object")), $uris, "exact"),
+            cts:json-property-value-query(("subject","object"), $uris, "exact")
+          ))
+        )
+      let $values :=
+        fn:distinct-values(
+          for $triple in $solution
+          let $value := fn:string(map:get($triple, "blocked"))
+          let $target := fn:string(map:get($triple, "targetURI"))
+          let $current-for-target := map:get($cached-blocks-by-uri, $target)
+          let $current-for-value := map:get($cached-blocks-by-uri, $value)
+          return
+            (
+              map:put($cached-blocks-by-uri, $target, fn:distinct-values(($current-for-target,$value))),
+              map:put($cached-blocks-by-uri, $value, fn:distinct-values(($current-for-value,$target))),
+              $value
+            )
+        )
+      let $_populate-empty :=
+        for $uri in $uris
+        where fn:not(map:contains($cached-blocks-by-uri, $uri))
+        return
+          map:put($cached-blocks-by-uri, $uri, "")
+      return $values
+    ) else ()
 };
 
 (:

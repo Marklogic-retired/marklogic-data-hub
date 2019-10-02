@@ -201,17 +201,15 @@ public interface HubConfig {
     void setTrustManager(DatabaseKind kind, X509TrustManager trustManager);
 
     /**
-     * Returns the SSL Scheme as string for the DatabaseKind in the hub config
-     * @param kind - DatabaseKind enum, eg: STAGING or JOB
-     * @return The SSL Scheme for the DatabaseKind in hubconfig
+     * Deprecated, as scheme was never usable when constructing a DatabaseClient.
      */
+    @Deprecated
     String getScheme(DatabaseKind kind);
 
     /**
-     * Sets the SSL Scheme for the DatabaseKind in the config
-     * @param kind - DatabaseKind enum, eg: STAGING or JOB
-     * @param scheme - The SSL Scheme for the database connection
+     * Deprecated, as scheme was never usable when constructing a DatabaseClient.
      */
+    @Deprecated
     void setScheme(DatabaseKind kind, String scheme);
 
     /**
@@ -592,7 +590,7 @@ public interface HubConfig {
     /**
      * In a non-Gradle environment, a client can use this to load properties from a "gradle-(environment).properties"
      * file, similar to how the Gradle properties plugin would process such a file in a Gradle context.
-     * 
+     *
      * @param environment - The name of the environment to use (local,dev,qa,prod,...)
      * @return A HubConfig
      */

@@ -1,0 +1,34 @@
+{
+  "options": {
+    "propertyDefs": {
+      "properties": [
+        { "namespace": "", "localname": "LocationPostalCode", "name": "zip" }
+      ]
+    },
+    "algorithms": [
+      { "name": "zip-code", "function": "zip-match" }
+    ],
+    "actions": [],
+    "scoring": {
+      "add": [
+        { "propertyName": "zip", "weight": "5" }
+      ],
+      "expand": [
+        {
+          "propertyName": "zip",
+          "algorithmRef": "zip-code",
+          "zip": [
+            { "origin": "5", "weight": "3" },
+            { "origin": "9", "weight": "2" }
+          ]
+        }
+      ]
+    },
+    "thresholds": [
+      { "above": "30", "label": "Possible Match" },
+      { "above": "50", "label": "Likely Match", "action": "notify" },
+      { "above": "68", "label": "Definitive Match", "action": "merge" }
+    ],
+    "tuning": { "maxScan": "200" }
+  }
+}

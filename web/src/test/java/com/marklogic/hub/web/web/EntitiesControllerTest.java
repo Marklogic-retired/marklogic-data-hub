@@ -30,6 +30,7 @@ import com.marklogic.hub.legacy.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.web.WebApplication;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -41,6 +42,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -83,8 +85,9 @@ class EntitiesControllerTest extends BaseTestController {
             CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
 
         Path harmonizeDir = projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize");
-        FileUtil.copy(getResourceStream("legacy-flow-manager/sjs-harmonize-flow/headers.sjs"), harmonizeDir.resolve("sjs-json-harmonization-flow/headers.sjs").toFile());
-
+        InputStream inputStream = getResourceStream("legacy-flow-manager/sjs-harmonize-flow/headers.sjs");
+        FileUtil.copy(inputStream, harmonizeDir.resolve("sjs-json-harmonization-flow/headers.sjs").toFile());
+        IOUtils.closeQuietly(inputStream);
         installUserModules(getDataHubAdminConfig(), true);
 
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
@@ -123,7 +126,9 @@ class EntitiesControllerTest extends BaseTestController {
             CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
 
         Path harmonizeDir = projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize");
-        FileUtil.copy(getResourceStream("legacy-flow-manager/sjs-harmonize-flow/headers.sjs"), harmonizeDir.resolve("sjs-json-harmonization-flow/headers.sjs").toFile());
+        InputStream inputStream = getResourceStream("legacy-flow-manager/sjs-harmonize-flow/headers.sjs");
+        FileUtil.copy(inputStream, harmonizeDir.resolve("sjs-json-harmonization-flow/headers.sjs").toFile());
+        IOUtils.closeQuietly(inputStream);
 
         installUserModules(getDataHubAdminConfig(), true);
 

@@ -8,7 +8,7 @@ import module namespace json="http://marklogic.com/xdmp/json"
     at "/MarkLogic/json/json.xqy";
 
 import module namespace dbut = "http://marklogic.com/rest-api/lib/db-util"
-    at "../lib/db-util.xqy";
+    at "/MarkLogic/rest-api/lib/db-util.xqy";
 
 import module namespace extut = "http://marklogic.com/rest-api/lib/extensions-util"
     at "../lib/extensions-util.xqy";
@@ -146,7 +146,7 @@ declare function tformod:get(
         then error((),"RESTAPI-NOTFOUND",concat("transform does not exist: ",$transform-name))
         else (
             if (empty($responder)) then ()
-            else 
+            else
                 let $source-format := head($found)
                 return $responder($tformod:TRANSFORM_RETRIEVED,
                     $transform-name,

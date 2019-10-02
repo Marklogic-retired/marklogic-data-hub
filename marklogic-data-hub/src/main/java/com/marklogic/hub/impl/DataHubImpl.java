@@ -346,13 +346,13 @@ public class DataHubImpl implements DataHub {
             }
 
             HashSet<String> services = new HashSet<>();
-            for (Resource r : resolver.getResources("classpath*:/ml-modules/services/*.xqy")) {
-                services.add(r.getFilename().replaceAll("\\.(xqy|sjs)", ""));
+            for (Resource r : resolver.getResources("classpath*:/ml-modules/services/*")) {
+                services.add(r.getFilename().replaceAll("\\.(sjs|xqy)$",""));
             }
 
             HashSet<String> transforms = new HashSet<>();
             for (Resource r : resolver.getResources("classpath*:/ml-modules/transforms/*")) {
-                transforms.add(r.getFilename().replaceAll("\\.(xqy|sjs)", ""));
+                transforms.add(r.getFilename().replaceAll("\\.(sjs|xqy)$",""));
             }
 
             ServerConfigurationManager configMgr = hubConfig.newStagingClient().newServerConfigManager();
@@ -388,7 +388,7 @@ public class DataHubImpl implements DataHub {
             JsonNode transformsList = transformExtensionsManager.listTransforms(new JacksonHandle()).get();
             transformsList.findValuesAsText("name").forEach(
                 x -> {
-                    if (!transforms.contains(x)) {
+                    if (!(transforms.contains(x) || x.startsWith("ml"))) {
                         transformExtensionsManager.deleteTransform(x);
                     }
                 }
@@ -399,7 +399,7 @@ public class DataHubImpl implements DataHub {
             JsonNode resourceExtensions = resourceExtensionsManager.listServices(new JacksonHandle()).get();
             resourceExtensions.findValuesAsText("name").forEach(
                 x -> {
-                    if (!services.contains(x)) {
+                    if (!(services.contains(x) || x.startsWith("ml"))) {
                         resourceExtensionsManager.deleteServices(x);
                     }
                 }
@@ -409,8 +409,7 @@ public class DataHubImpl implements DataHub {
                 "cts:uris((),(),cts:not-query(cts:collection-query('hub-core-module')))[\n" +
                     "  fn:not(\n" +
                     "    fn:matches(., \"^.+options/(" + String.join("|", options) + ").xml$\") or\n" +
-                    "    fn:matches(., \"/marklogic.rest.resource/(" + String.join("|", services) + ")/assets/(metadata\\.xml|resource\\.(xqy|sjs))\") or\n" +
-                    "    fn:matches(., \"/marklogic.rest.transform/(" + String.join("|", transforms) + ")/assets/(metadata\\.xml|transform\\.(xqy|sjs))\")\n" +
+                    "    fn:starts-with(., \"/marklogic.rest.\")\n" +
                     "  )\n" +
                     "] ! xdmp:document-delete(.)\n";
             runInDatabase(query, hubConfig.getDbName(DatabaseKind.MODULES));
@@ -586,6 +585,8 @@ public class DataHubImpl implements DataHub {
     }
 
     protected void prepareAppConfigForInstallingIntoDhs(HubConfig hubConfig) {
+        setKnownValuesForDhsInstall(hubConfig);
+
         AppConfig appConfig = hubConfig.getAppConfig();
 
         appConfig.setModuleTimestampsPath(null);
@@ -607,6 +608,47 @@ public class DataHubImpl implements DataHub {
         if (authMethod != null) {
             logger.info("Setting security context type for App-Services to: " + authMethod);
             appConfig.setAppServicesSecurityContextType(SecurityContextType.valueOf(authMethod.toUpperCase()));
+        }
+    }
+
+    /**
+     * Per DHFPROD-2897, these are known values in a DHS installation that can be set so that they override any changes
+     * the user may have made for their on-premise installation.
+     *
+     * @param hubConfig
+     */
+    protected void setKnownValuesForDhsInstall(HubConfig hubConfig) {
+        hubConfig.setHttpName(DatabaseKind.STAGING, HubConfig.DEFAULT_STAGING_NAME);
+        hubConfig.setHttpName(DatabaseKind.FINAL, HubConfig.DEFAULT_FINAL_NAME);
+        hubConfig.setHttpName(DatabaseKind.JOB, HubConfig.DEFAULT_JOB_NAME);
+        hubConfig.setDbName(DatabaseKind.STAGING, HubConfig.DEFAULT_STAGING_NAME);
+        hubConfig.setDbName(DatabaseKind.FINAL, HubConfig.DEFAULT_FINAL_NAME);
+        hubConfig.setDbName(DatabaseKind.JOB, HubConfig.DEFAULT_JOB_NAME);
+        hubConfig.setDbName(DatabaseKind.MODULES, HubConfig.DEFAULT_MODULES_DB_NAME);
+        hubConfig.setDbName(DatabaseKind.STAGING_TRIGGERS, HubConfig.DEFAULT_STAGING_TRIGGERS_DB_NAME);
+        hubConfig.setDbName(DatabaseKind.STAGING_SCHEMAS, HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME);
+        hubConfig.setDbName(DatabaseKind.FINAL_TRIGGERS, HubConfig.DEFAULT_FINAL_TRIGGERS_DB_NAME);
+        hubConfig.setDbName(DatabaseKind.FINAL_SCHEMAS, HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME);
+
+        AppConfig appConfig = hubConfig.getAppConfig();
+        if (appConfig != null) {
+            appConfig.setContentDatabaseName(hubConfig.getDbName(DatabaseKind.FINAL));
+            appConfig.setTriggersDatabaseName(hubConfig.getDbName(DatabaseKind.FINAL_TRIGGERS));
+            appConfig.setSchemasDatabaseName(hubConfig.getDbName(DatabaseKind.FINAL_SCHEMAS));
+            appConfig.setModulesDatabaseName(hubConfig.getDbName(DatabaseKind.MODULES));
+
+            Map<String, String> customTokens = appConfig.getCustomTokens();
+            customTokens.put("%%mlStagingDbName%%", hubConfig.getDbName(DatabaseKind.STAGING));
+            customTokens.put("%%mlFinalDbName%%", hubConfig.getDbName(DatabaseKind.FINAL));
+            customTokens.put("%%mlJobDbName%%", hubConfig.getDbName(DatabaseKind.JOB));
+            customTokens.put("%%mlModulesDbName%%", hubConfig.getDbName(DatabaseKind.MODULES));
+            customTokens.put("%%mlStagingAppserverName%%", hubConfig.getDbName(DatabaseKind.STAGING));
+            customTokens.put("%%mlFinalAppserverName%%", hubConfig.getDbName(DatabaseKind.FINAL));
+            customTokens.put("%%mlJobAppserverName%%", hubConfig.getDbName(DatabaseKind.JOB));
+            customTokens.put("%%mlStagingTriggersDbName%%", hubConfig.getDbName(DatabaseKind.STAGING_TRIGGERS));
+            customTokens.put("%%mlStagingSchemasDbName%%", hubConfig.getDbName(DatabaseKind.STAGING_SCHEMAS));
+            customTokens.put("%%mlFinalTriggersDbName%%", hubConfig.getDbName(DatabaseKind.FINAL_TRIGGERS));
+            customTokens.put("%%mlFinalSchemasDbName%%", hubConfig.getDbName(DatabaseKind.FINAL_SCHEMAS));
         }
     }
 
@@ -763,7 +805,7 @@ public class DataHubImpl implements DataHub {
              * Replace ml-gradle's DeployOtherServersCommand with a subclass that has DHF-specific functionality
              */
             if (c instanceof DeployOtherServersCommand) {
-                newCommands.add(new DeployHubOtherServersCommand());
+                newCommands.add(new DeployHubOtherServersCommand(this));
             }
             else {
                 newCommands.add(c);
@@ -926,6 +968,9 @@ public class DataHubImpl implements DataHub {
 
     @Override
     public String getServerVersion() {
+        if(serverVersion == null) {
+            serverVersion = versions.getMarkLogicVersion();
+        }
         return serverVersion;
     }
 

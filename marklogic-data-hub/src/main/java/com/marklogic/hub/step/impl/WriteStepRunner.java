@@ -39,6 +39,7 @@ import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.*;
 import com.marklogic.hub.util.json.JSONObject;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
@@ -241,9 +242,12 @@ public class WriteStepRunner implements StepRunner {
 
     @Override
     public RunStepResponse run() {
+        boolean disableJobOutput = false;
+        if (options != null && options.containsKey("disableJobOutput")) {
+            disableJobOutput = Boolean.parseBoolean(options.get("disableJobOutput").toString());
+        }
         runningThread = null;
         RunStepResponse runStepResponse = StepRunnerUtil.createStepResponse(flow, step, jobId);
-        jobDocManager = new JobDocManager(hubConfig.newJobDbClient());
         loadStepRunnerParameters();
         if("csv".equalsIgnoreCase(inputFileType)){
             options.put("inputFileType", "csv");
@@ -251,12 +255,12 @@ public class WriteStepRunner implements StepRunner {
         options.put("flow", this.flow.getName());
 
         Collection<String> uris = null;
-        //If current step is the first run step, a job doc is created
-        try {
+        //If current step is the first run step job output isn't disabled, a job doc is created
+        if (!disableJobOutput) {
+            jobDocManager = new JobDocManager(hubConfig.newJobDbClient());
             StepRunnerUtil.initializeStepRun(jobDocManager, runStepResponse, flow, step, jobId);
-        }
-        catch (Exception e){
-            throw e;
+        } else {
+            jobDocManager = null;
         }
 
         try {
@@ -267,21 +271,21 @@ public class WriteStepRunner implements StepRunner {
             StringWriter errors = new StringWriter();
             e.printStackTrace(new PrintWriter(errors));
             runStepResponse.withStepOutput(errors.toString());
-            JsonNode jobDoc = null;
-            try {
-                jobDoc = jobDocManager.postJobs(jobId, JobStatus.FAILED_PREFIX + step, step, null, runStepResponse);
+            if (!disableJobOutput) {
+                JsonNode jobDoc = null;
+                try {
+                    jobDoc = jobDocManager.postJobs(jobId, JobStatus.FAILED_PREFIX + step, step, null, runStepResponse);
+                }
+                catch (Exception ex) {
+                    throw ex;
+                }
+                //If not able to read the step resp from the job doc, send the in-memory resp without start/end time
+                try {
+                    return StepRunnerUtil.getResponse(jobDoc, step);
+                }
+                catch (Exception ignored) {}
             }
-            catch (Exception ex) {
-                throw ex;
-            }
-            //If not able to read the step resp from the job doc, send the in-memory resp without start/end time
-            try {
-                return StepRunnerUtil.getResponse(jobDoc, step);
-            }
-            catch (Exception ex)
-            {
-                return runStepResponse;
-            }
+            return runStepResponse;
         }
         return this.runIngester(runStepResponse,uris);
     }
@@ -655,40 +659,41 @@ public class WriteStepRunner implements StepRunner {
     }
 
     private void addToBatcher(File file, Format fileFormat) throws  IOException{
+        // This docStream must not be closed, or use try-resource due to WriteBatcher needing the stream open
         FileInputStream docStream = new FileInputStream(file);
         //note these ORs are for forward compatibility if we swap out the filecollector for another lib
-        if(inputFileType.equalsIgnoreCase("csv") || inputFileType.equalsIgnoreCase("tsv") || inputFileType.equalsIgnoreCase("psv")) {
+        if (inputFileType.equalsIgnoreCase("csv") || inputFileType.equalsIgnoreCase("tsv") || inputFileType.equalsIgnoreCase("psv")) {
             CsvSchema schema = CsvSchema.emptySchema()
                 .withHeader()
                 .withColumnSeparator(separator.charAt(0));
             JacksonCSVSplitter splitter = new JacksonCSVSplitter().withCsvSchema(schema);
             try {
-                if(! writeBatcher.isStopped()) {
+                if (!writeBatcher.isStopped()) {
                     Stream<JacksonHandle> contentStream = splitter.split(docStream);
                     contentStream.forEach(jacksonHandle -> this.processCsv(jacksonHandle, file));
                 }
             } catch (Exception e) {
-               throw new RuntimeException(e);
+                IOUtils.closeQuietly(docStream);
+                throw new RuntimeException(e);
             }
-        }
-        else {
+        } else {
             InputStreamHandle handle = new InputStreamHandle(docStream);
-            handle.setFormat(fileFormat);
             try {
-                if(! writeBatcher.isStopped()) {
+                handle.setFormat(fileFormat);
+                if (!writeBatcher.isStopped()) {
                     try {
                         String uri = file.getAbsolutePath();
                         //In case of Windows, C:\\Documents\\abc.json will be converted to /c/Documents/abc.json
-                        if(SystemUtils.OS_NAME.toLowerCase().contains("windows")){
+                        if (SystemUtils.OS_NAME.toLowerCase().contains("windows")) {
                             uri = "/" + FilenameUtils.separatorsToUnix(StringUtils.replaceOnce(uri, ":", ""));
                         }
                         writeBatcher.add(generateAndEncodeURI(outputURIReplace(uri)), handle);
-                    }
-                    catch (IllegalStateException e) {
+                    } catch (IllegalStateException e) {
                         logger.error("WriteBatcher has been stopped");
                     }
                 }
             } catch (URISyntaxException e) {
+                IOUtils.closeQuietly(handle);
                 throw new RuntimeException(e);
             }
         }

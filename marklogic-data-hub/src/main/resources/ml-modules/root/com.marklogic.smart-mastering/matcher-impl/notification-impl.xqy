@@ -101,6 +101,7 @@ declare function notify-impl:build-match-notification(
     else
       "/com.marklogic.smart-mastering/matcher/notifications/" || xdmp:md5(fn:string-join(($threshold-label, $doc-uris ! fn:string(.)), "|")) || ".xml"
   let $notification-operated-on := $_notifications-inserted => map:contains($notification-uri)
+  let $_lock-for-update := xdmp:lock-for-update($notification-uri)
   return (
     $_notifications-inserted => map:put($notification-uri, fn:true()),
     map:new((
@@ -177,16 +178,22 @@ declare function notify-impl:get-existing-match-notification(
       if (fn:exists($threshold-label)) then
         cts:element-value-query(
           xs:QName("sm:threshold-label"),
-          $threshold-label
+          $threshold-label,
+          "exact",
+          0
         )
       else (),
       if (fn:exists($uris)) then
         cts:element-value-query(
           xs:QName("sm:document-uri"),
-          $uris
+          $uris,
+          "exact",
+          0
         )
       else ()
-    ))
+    )),
+    ("unfiltered","score-random"),
+    0
   )
 };
 

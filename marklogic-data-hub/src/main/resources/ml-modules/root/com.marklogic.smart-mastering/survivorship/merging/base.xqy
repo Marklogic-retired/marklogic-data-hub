@@ -137,10 +137,8 @@ declare function merge-impl:build-merging-map(
  :)
 declare function merge-impl:all-merged($uris as xs:string*) as xs:boolean
 {
-  let $locks := xdmp:transaction-locks()/host:write/fn:string()
-  return
-    every $uri in $uris
-    satisfies $uri = $locks
+  every $uri in $uris
+  satisfies merge-impl:is-uri-locked($uri)
 };
 
 declare function merge-impl:build-merge-uri($id as xs:string, $format as xs:string)
@@ -247,42 +245,49 @@ declare function merge-impl:construct-type($name as xs:QName, $path as xs:string
  :)
 declare function merge-impl:generate-audit-attachments(
   $merge-uri as xs:string,
-  $final-properties
+  $provenance-details as map:map
 ) as item()*
 {
   let $generated-entity-id := $auditing:sm-prefix ||$merge-uri
+  let $generated-entity-xml :=
+    element prov:generatedEntity {
+      attribute prov:ref { $generated-entity-id }
+    }
+  let $agent-ids-map := map:map()
   let $property-related-prov :=
-    for $prop in $final-properties,
-      $value in map:get($prop, "values")
+    for $source in map:keys($provenance-details)
+    let $source-info := map:get($provenance-details, $source)
+    for $property in map:keys($source-info)
+    let $prop-info := map:get($source-info, $property)
+    let $algorithm-info := map:get($prop-info, "algorithm")
+    let $algorithm-agent := "algorithm:"||$algorithm-info/name||";options:"||$algorithm-info/optionsReference
+    let $_add-agent-id := map:put($agent-ids-map, $algorithm-agent, fn:true())
+    let $influencer-xml := element prov:influencer { attribute prov:ref { $algorithm-agent }}
+    let $entity-nodes := (
+      element prov:type {$property},
+      element prov:label {$source || ":" || $property},
+      element prov:location {$source})
+    for $value in json:array-values(map:get($prop-info, "value"))
     (: Due to how JSON is constructed, we can't rely on the node having a node name.
         Pull the node name from the name entry of the property map.
     :)
-    let $type := merge-impl:construct-type(map:get($prop, "name"), map:get($prop, "path"), map:get($prop, "nsMap"))
-    let $value-text := history:normalize-value-for-tracing($value)
-    let $hash := xdmp:sha512($value-text)
-    let $algorithm-info := map:get($prop, "algorithm")
-    let $algorithm-agent := "algorithm:"||$algorithm-info/name||";options:"||$algorithm-info/optionsReference
-    for $source in map:get($prop, "sources")
-    let $used-entity-id := $auditing:sm-prefix || $source/documentUri || $type || $hash
+    let $hash := xdmp:sha512($value)
+    let $used-entity-id := $auditing:sm-prefix || $source || $property || $hash
     return (
       element prov:entity {
         attribute prov:id {$used-entity-id},
-        element prov:type {$type},
-        element prov:label {$source/name || ":" || $type},
-        element prov:location {fn:string($source/documentUri)},
-        element prov:value { $value-text }
+        $entity-nodes,
+        element prov:value { $value }
       },
       element prov:wasDerivedFrom {
-        element prov:generatedEntity {
-          attribute prov:ref { $generated-entity-id }
-        },
+        $generated-entity-xml,
         element prov:usedEntity {
           attribute prov:ref { $used-entity-id }
         }
       },
       element prov:wasInfluencedBy {
         element prov:influencee { attribute prov:ref { $used-entity-id }},
-        element prov:influencer { attribute prov:ref { $algorithm-agent }}
+        $influencer-xml
       }
     )
   let $prop-prov-entities := $property-related-prov[. instance of element(prov:entity)]
@@ -293,12 +298,7 @@ declare function merge-impl:generate-audit-attachments(
       $prop-prov-entities
     },
     $other-prop-prov,
-    for $agent-id in
-      fn:distinct-values(
-        $other-prop-prov[. instance of element(prov:wasInfluencedBy)]/
-          prov:influencer/
-          @prov:ref ! fn:string(.)
-      )
+    for $agent-id in map:keys($agent-ids-map)
     return element prov:softwareAgent {
       attribute prov:id {$agent-id},
       element prov:label {fn:substring-before(fn:substring-after($agent-id,"algorithm:"), ";")},
@@ -317,12 +317,18 @@ declare function merge-impl:generate-provenance-details(
 ) as item()*
 {
   map:new((
-    for $source in fn:distinct-values(($final-properties ! map:get(., "sources")/documentUri))
+    let $properties-by-doc-uri := map:map()
+    let $_populate-map :=
+      for $final-prop in $final-properties,
+        $doc-uri in map:get($final-prop, "sources")/documentUri
+      return
+        map:put($properties-by-doc-uri, $doc-uri, (map:get($properties-by-doc-uri, $doc-uri),$final-prop))
+    for $source in map:keys($properties-by-doc-uri)
     return
       map:entry(
         $source,
         map:new(
-          for $prop in $final-properties[map:get(., "sources")/documentUri = $source]
+          for $prop in map:get($properties-by-doc-uri, $source)
           (: Due to how JSON is constructed, we can't rely on the node having a node name.
               Pull the node name from the name entry of the property map.
           :)
@@ -337,7 +343,8 @@ declare function merge-impl:generate-provenance-details(
                   return $value-text
                 )
               ),
-              map:entry("destination", $type)
+              map:entry("destination", $type),
+              map:entry("algorithm", map:get($prop, "algorithm"))
           ))
         )
       )
@@ -522,6 +529,9 @@ declare function merge-impl:build-merge-models-by-uri(
                 else
                   $const:FORMAT-JSON
   let $merge-uri := merge-impl:build-merge-uri($id, $format)
+  let $provenance-details := merge-impl:generate-provenance-details(
+    $final-properties
+  )
   return (
     map:map()
       => map:with("previousUri", $uris)
@@ -531,17 +541,10 @@ declare function merge-impl:build-merge-models-by-uri(
           $const:MERGE-ACTION,
           $uris,
           $merge-uri,
-          merge-impl:generate-audit-attachments(
-            $merge-uri,
-            $final-properties
-          )
+          merge-impl:generate-audit-attachments($merge-uri, $provenance-details)
         )
       )
-      => map:with("provenance",
-          merge-impl:generate-provenance-details(
-            $final-properties
-          )
-        )
+      => map:with("provenance", $provenance-details)
       => map:with("value",
           merge-impl:build-merge-models-by-final-properties(
             $id,
@@ -778,7 +781,7 @@ declare function merge-impl:build-headers(
             merge-impl:distinct-node-values($docs/envelope/headers/sources)
           }),
           map:entry("merge-options", object-node {
-            "language": "zxx",
+            "lang": "zxx",
             "value": (
               if (fn:exists($merge-options-uri))
               then
@@ -1095,11 +1098,9 @@ declare function merge-impl:build-instance-body-by-final-properties(
 {
   if ($format eq $const:FORMAT-JSON) then (
     xdmp:to-json(
+      let $props-to-retain-array := map:map()
       (: TODO - consider using XSLT. I'd be able to specify a path rather than tracking through recursive descent :)
-      let $merged-props := fn:fold-left(
-        function($child-object, $parent-name) {
-          map:entry(fn:string($parent-name), $child-object)
-        },
+      let $merged-props-body :=
         (: consolidate $final-properties into a single map of names (keys) and values :)
         fn:fold-left(
           function($map-a, $map-b) {
@@ -1108,29 +1109,31 @@ declare function merge-impl:build-instance-body-by-final-properties(
           map:map(),
           let $non-path-properties := $final-properties[fn:not(map:contains(., "path"))]
           let $_trace := if (xdmp:trace-enabled($const:TRACE-MERGE-RESULTS)) then
-              xdmp:trace($const:TRACE-MERGE-RESULTS, xdmp:describe(("Building instance from non-path properties", $non-path-properties),(),()))
-            else ()
+            xdmp:trace($const:TRACE-MERGE-RESULTS, xdmp:describe(("Building instance from non-path properties", $non-path-properties),(),()))
+          else ()
           for $prop at $pos in $non-path-properties
           let $prop-name := fn:string($prop => map:get("name"))
           let $prop-values := $prop => map:get("values")
-          let $other-values-for-props := $non-path-properties
-            [fn:not(fn:position() = $pos)]
-            [fn:string(map:get(.,"name")) = $prop-name]
-            [fn:exists(map:get(.,"values"))]
-            [fn:not(merge-impl:multi-node-equals(map:get(.,"values"), $prop-values))]
-          return
+          let $retain-array := (($prop => map:get("retainArray"))[. castable as xs:boolean] ! xs:boolean(.)) = fn:true()
+          return (
+            if ($retain-array and fn:not(map:contains($props-to-retain-array, $prop-name))) then
+              map:put($props-to-retain-array, $prop-name, $retain-array)
+            else (),
             map:entry(
               $prop-name,
-              if (
-                fn:empty($other-values-for-props)
-                  and
-                (($prop => map:get("retainArray"))[. castable as xs:boolean] ! xs:boolean(.)) = fn:true()
-              ) then
-                array-node {$prop-values}
-              else
-                $prop-values
-            )
-        ),
+              $prop-values
+            )))
+      let $_convert-to-arrays :=
+        for $prop-name in map:keys($props-to-retain-array)
+        let $values := map:get($merged-props-body, $prop-name)
+        where fn:count($values) le 1
+        return
+          map:put($merged-props-body, $prop-name, array-node{$values})
+      let $merged-props := fn:fold-left(
+        function($child-object, $parent-name) {
+          map:entry(fn:string($parent-name), $child-object)
+        },
+        $merged-props-body,
         $wrapper-qnames
       )
       (: Convert from maps to json:object notation, needed for XSLT :)
@@ -1357,9 +1360,9 @@ declare function merge-impl:parse-final-properties-for-merge(
     for $uri in $uris
     return
       fn:doc($uri)
-  let $instances := merge-impl:get-instances($docs)
   let $first-doc := fn:head($docs)
-  let $first-instance := $instances[fn:root(.) is $first-doc]
+  let $first-instance := merge-impl:get-instances($first-doc)
+  let $instances := ($first-instance,merge-impl:get-instances(fn:tail($docs)))
   let $wrapper-qnames :=
     fn:reverse(
       ($first-instance/ancestor-or-self::*
@@ -1367,13 +1370,6 @@ declare function merge-impl:parse-final-properties-for-merge(
       $first-doc/(es:envelope|object-node("envelope"))/(es:instance|object-node("instance"))/ancestor-or-self::*)
       ! fn:node-name(.)
     )
-  let $prop-history-info := ()
-      (:for $doc-uri in fn:distinct-values($docs/(es:envelope|object-node("envelope"))
-            /(es:headers|object-node("headers"))
-            /(sm:merges|array-node("merges"))
-            /(sm:document-uri|documentUri))
-      return
-        history:property-history($doc-uri, ()) ! xdmp:to-json(.)/object-node():)
   let $sources := merge-impl:get-sources($docs, $merge-options)
   let $final-properties := merge-impl:build-final-properties(
     $merge-options,
@@ -1809,37 +1805,22 @@ declare function merge-impl:build-final-properties(
         "name": fn:head(($algorithm-name[fn:exists($algorithm)], "standard")),
         "optionsReference": $merge-options-ref
       }
-    let $instance-props := merge-impl:get-instance-props-by-path($instances, $path-prop, $ns-map)
+    let $instance-props-by-root-id := map:map()
+    let $instance-props :=
+      for $instance in $instances
+      let $instance-properties := merge-impl:get-instance-props-by-path($instance, $path-prop, $ns-map)
+      return (
+        map:put($instance-props-by-root-id, fn:generate-id(fn:root($instance)), $instance-properties),
+        $instance-properties
+      )
     let $prop-qname := fn:head($instance-props)
-    let $instance-props := fn:tail($instance-props)
     let $wrapped-properties :=
       for $doc at $pos in $docs
-      let $props-for-instance :=
-        for $prop-val in $instance-props[fn:root(.) is $doc]
-        return
-          (: Properly extract values from arrays :)
-          (: TODO: consider array case
-          if ($prop-val instance of array-node()) then
-            let $children := $prop-val/node()
-            return
-              if (fn:exists($children/*[fn:node-name(.) eq $prop])) then
-                $children/*[fn:node-name(.) eq $prop]
-              else
-                $children
-          else
-          :)
-            $prop-val
-      for $prop-value in $props-for-instance
-      (:let $normalized-value := history:normalize-value-for-tracing($prop-value)
-        let $source-details := $prop-history-info//object-node(fn:string($prop))/object-node($normalized-value)/sourceDetails
-        :)
-      let $lineage-uris :=
-        (:if (fn:exists($source-details)) then
-            $source-details/sourceLocation
-          else:)
-        merge-impl:node-uri($doc)
+      let $generate-id := fn:generate-id($doc)
+      let $prop-qname := fn:head(map:get($instance-props-by-root-id, $generate-id))
+      for $prop-value in fn:tail(map:get($instance-props-by-root-id, $generate-id))
+      let $lineage-uris := merge-impl:node-uri($doc)
       let $prop-sources := $lineage-uris ! map:get($sources-by-document-uri, .)
-      where fn:exists($props-for-instance)
       return
         merge-impl:wrap-revision-info($prop-qname, $prop-value, $prop-sources, $path-prop/@path, $ns-map)
           => prop-def:with-algorithm-info($algorithm-info)
@@ -1868,9 +1849,16 @@ declare function merge-impl:build-final-properties(
     let $property-title := merge-impl:NCName-compatible-reverse(fn:local-name-from-QName($prop))
     let $property-details := es-helper:get-entity-def-property($entity-definition, $property-title)
     let $prop-entity-ref := fn:head($property-details/(itemsRef|ref)[. ne ''])
+    let $instance-props-by-root-id := map:map()
     let $instance-props :=
-          for $instance-prop in $instances/*[fn:node-name(.) = $prop]
-          return ($instance-prop/self::array-node()/*, $instance-prop except $instance-prop/self::array-node())
+      for $instance in $instances
+      let $instance-properties :=
+        for $instance-prop in $instance/*[fn:node-name(.) = $prop]
+        return ($instance-prop/self::array-node()/*, $instance-prop except $instance-prop/self::array-node())
+      return (
+        map:put($instance-props-by-root-id, fn:generate-id(fn:root($instance)), $instance-properties),
+        $instance-properties
+      )
     let $merge-spec :=
           if (fn:exists($property-details)) then
             merge-impl:get-entity-property-merge-spec($merge-options, $entity-definition/entityTitle, $property-title)
@@ -2001,8 +1989,9 @@ declare function merge-impl:build-final-properties(
               map:entry('retainArray', $props-for-instance-in-array)
             ))
           for $doc at $pos in $docs
+          let $generate-id := fn:generate-id($doc)
           let $props-for-instance :=
-            for $prop-val in $instance-props[fn:root(.) is $doc]
+            for $prop-val in map:get($instance-props-by-root-id, $generate-id)
             return
               (: Properly extract values from arrays :)
               if ($prop-val instance of array-node()) then
@@ -2015,14 +2004,7 @@ declare function merge-impl:build-final-properties(
               else
                 $prop-val
           for $prop-value in $props-for-instance
-          (:let $normalized-value := history:normalize-value-for-tracing($prop-value)
-            let $source-details := $prop-history-info//object-node(fn:string($prop))/object-node($normalized-value)/sourceDetails
-            :)
-          let $lineage-uris :=
-            (:if (fn:exists($source-details)) then
-                $source-details/sourceLocation
-              else:)
-            merge-impl:node-uri($doc)
+          let $lineage-uris := merge-impl:node-uri($doc)
           let $prop-sources := $lineage-uris ! map:get($sources-by-document-uri, .)
           let $_trace :=
             if (xdmp:trace-enabled($const:TRACE-MERGE-RESULTS)) then
@@ -2257,7 +2239,7 @@ declare function merge-impl:normalize-json-to-nodes(
 declare variable $documents-archived-in-transaction := map:map();
 declare function merge-impl:archive-document($uri as xs:string, $merge-options as element(merging:options)?)
 {
-  xdmp:lock-for-update($uri),
+  merge-impl:lock-for-update($uri),
   if (map:contains($documents-archived-in-transaction, $uri)) then ()
   else
     map:put(
@@ -2296,4 +2278,50 @@ declare function merge-impl:NCName-compatible-reverse($value as xs:string)
       map:put($_to-decoded-NCName, $value, $decoded-value),
       $decoded-value
     )
+};
+
+(: Prefix for locking to identify the task being done on the URI :)
+declare variable $lock-task-prefix as xs:string := "sm-merging:";
+declare variable $locked-uris-map as map:map := map:map();
+
+declare function merge-impl:locked-uris() {
+  if (map:contains($locked-uris-map, "runAlready")) then
+    map:get($locked-uris-map, "lockedURIs")
+  else
+    let $locked-uris := (
+      map:get($locked-uris-map, "lockedURIs"),
+      for $host-status in xdmp:host-status(xdmp:hosts())
+      let $host-id := $host-status/host:host-id
+      for $transaction-id in $host-status/host:transactions/host:transaction/host:transaction-id
+      return
+        (: Surround in try/catch since transaction could have closed since status or call to other host could timeout :)
+        try {
+          (: We only care about locks by mastering. We'll still need to wait on outside transactions. :)
+          xdmp:transaction-locks($host-id, $transaction-id)/host:write[fn:starts-with(., $lock-task-prefix)]/fn:substring-after(., $lock-task-prefix)
+        } catch ($e) {()}
+    )
+    return (
+      map:put($locked-uris-map, "runAlready", fn:true()),
+      map:put($locked-uris-map, "lockedURIs", $locked-uris),
+      $locked-uris
+    )
+};
+
+declare function merge-impl:filter-out-locked-uris($uris) {
+  let $locked-uris := merge-impl:locked-uris()
+  return $uris[fn:not(. = $locked-uris)]
+};
+
+declare function merge-impl:is-uri-locked($uri as xs:string) as xs:boolean {
+  $uri = merge-impl:locked-uris()
+};
+
+declare function merge-impl:lock-for-update($uri as xs:string) {
+  if (fn:not(map:get($locked-uris-map, "lockedURIs") = $uri)) then
+    map:put($locked-uris-map, "lockedURIs", (map:get($locked-uris-map, "lockedURIs"),$uri))
+  else (),
+  (: This is to tell transactions outside mastering we are working with this document :)
+  xdmp:lock-for-update($uri),
+  (: Below is to identify locks specific to mastering  :)
+  xdmp:lock-for-update($lock-task-prefix || $uri)
 };

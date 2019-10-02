@@ -377,7 +377,7 @@ declare function hent:json-schema-generate($entity-title as xs:string, $uber-mod
   let $uber-model := map:new((
   (: Ensure we're not change a map for anyone else :)
   map:map(document{$uber-model}/*),
-  map:entry("language", "zxx"),
+  map:entry("lang", "zxx"),
   map:entry("$schema", "http://json-schema.org/draft-07/schema#")
   ))
   let $definitions := $uber-model => map:get("definitions")

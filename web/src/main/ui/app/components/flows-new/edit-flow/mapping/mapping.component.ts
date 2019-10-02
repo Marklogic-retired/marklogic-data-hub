@@ -57,7 +57,7 @@ export class MappingComponent implements OnInit {
   public flowName: string;
 
   public mapping: any = new Mapping();
-
+  private isSourceURIInvalid: boolean = false;
   public editURIVal: string;
 
   updateURI(event) {
@@ -141,12 +141,19 @@ export class MappingComponent implements OnInit {
           if (self.targetEntity.hasDocs) {
             if (!this.mapping.sourceURI) {
               this.sampleDocURI = response[0].uri;
+              this.editURIVal = this.sampleDocURI;
+              if (this.isSourceURIInvalid && this.sampleDocURI){
+                this.isSourceURIInvalid = false;
+                this.loadSampleDocByURI(this.sampleDocURI, '', {}, true);
+              }
+              else {
+                this.loadSampleDocByURI(this.sampleDocURI, '', {}, false);
+              }
             } else {
               this.sampleDocURI = this.mapping.sourceURI;
+              this.editURIVal = this.sampleDocURI;
+              this.loadSampleDocByURI(this.sampleDocURI, '', {}, false);
             }
-            this.editURIVal = this.sampleDocURI;
-            this.loadSampleDocByURI(this.sampleDocURI, '', {}, false);
-
           }
         }
       },
@@ -189,10 +196,17 @@ export class MappingComponent implements OnInit {
       }
     },
       (err) => {
-        this.conns = connsOrig;
-        self.mappingUI.uriNotFound(uri);
+        if ( !this.isSourceURIInvalid) {
+          this.isSourceURIInvalid = true;
+          this.mapping.sourceURI = null;
+          this.loadSampleDoc();
         }
-      );
+        else {
+          this.conns = connsOrig;
+          self.mappingUI.uriNotFound(uri);
+        }
+      }
+    );
   }
 
   normalizeToJSON(input: any): any {
@@ -227,7 +241,7 @@ export class MappingComponent implements OnInit {
         targetEntityType =  baseUri + this.targetEntity.name + '-' +
           this.targetEntity.info.version + '/' + this.targetEntity.name,
         mapObj = {
-          language:         this.mapping.language || 'zxx',
+          lang:         this.mapping.lang || 'zxx',
           name:             this.mapName,
           description:      this.mapping.description || '',
           version:          this.mapping.version || '0',
