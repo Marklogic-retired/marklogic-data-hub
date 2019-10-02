@@ -39,7 +39,6 @@ const Header:React.FC<Props> = ({ location }) => {
 
   useEffect(() => {
     let path = location.pathname.split('/');
-    console.log('path', path);
     switch(path[1]) {
       case 'view':
         setSelectedMenu([location.pathname]);
