@@ -1,5 +1,7 @@
 import { IngestionOptions } from './ingestions-options.model';
 import { MappingOptions } from './mapping-options.model';
+import { MatchingOptions } from './matching-options.model';
+import { MergingOptions } from './merging-options.model';
 import { MasteringOptions } from './mastering-options.model';
 import { CustomOptions } from './custom-options.model';
 import stepConfig from '../../../../../../../e2e/test-objects/stepConfig';
@@ -8,6 +10,8 @@ import {isNumber} from "util";
 export enum StepType {
   INGESTION = 'INGESTION',
   MAPPING = 'MAPPING',
+  MATCHING = 'MATCHING',
+  MERGING = 'MERGING',
   MASTERING = 'MASTERING',
   CUSTOM = 'CUSTOM'
 }
@@ -72,6 +76,34 @@ export class Step {
   static createMappingStep(): Step {
     const step = new Step();
     step.options = new MappingOptions();
+    step.options.outputFormat = 'json';
+    step.customHook = {"module" : "",
+    "parameters" : {},
+    "user" : "",
+    "runBefore" : false
+  };
+    step.batchSize = 100;
+    step.threadCount = 4;
+    return step;
+  }
+
+  static createMatchingStep(): Step {
+    const step = new Step();
+    step.options = new MatchingOptions();
+    step.options.outputFormat = 'json';
+    step.customHook = {"module" : "",
+    "parameters" : {},
+    "user" : "",
+    "runBefore" : false
+  };
+    step.batchSize = 100;
+    step.threadCount = 4;
+    return step;
+  }
+
+  static createMergingStep(): Step {
+    const step = new Step();
+    step.options = new MergingOptions();
     step.options.outputFormat = 'json';
     step.customHook = {"module" : "",
     "parameters" : {},
@@ -190,6 +222,16 @@ export class Step {
       if (json.stepDefinitionType === StepType.MAPPING && (json.stepDefinitionName === 'default-mapping' || json.stepDefinitionName === 'entity-services-mapping')) {
         newStep.options = new MappingOptions();
         newStep.options.sourceDatabase = databases.staging;
+        newStep.options.targetDatabase = databases.final;
+      }
+      if (json.stepDefinitionType === StepType.MATCHING && json.stepDefinitionName === 'default-mastering') {
+        newStep.options = new MatchingOptions();
+        newStep.options.sourceDatabase = databases.final;
+        newStep.options.targetDatabase = databases.final;
+      }
+      if (json.stepDefinitionType === StepType.MERGING && json.stepDefinitionName === 'default-mastering') {
+        newStep.options = new MergingOptions();
+        newStep.options.sourceDatabase = databases.final;
         newStep.options.targetDatabase = databases.final;
       }
       if (json.stepDefinitionType === StepType.MASTERING && json.stepDefinitionName === 'default-mastering') {
