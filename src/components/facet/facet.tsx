@@ -2,6 +2,9 @@ import React, { useState, useContext } from 'react';
 import { Checkbox, Icon } from 'antd';
 import { SearchContext } from '../../util/search-context';
 import styles from './facet.module.scss';
+import { dateConverter } from '../../util/date-conversion';
+
+var moment = require('moment');
 
 const Facet = (props) => {
   const { setSearchFacets } = useContext(SearchContext);
@@ -42,7 +45,7 @@ const Facet = (props) => {
           onChange={(e) => handleClick(e)}
           checked={checked.indexOf(f.value) > -1}
         >
-          <div title={f.value} className={styles.value}>{f.value}</div>
+          <div title={f.value} className={styles.value}>{moment(f.value).isValid() ? dateConverter(f.value) : f.value}</div>
         </Checkbox>
       </div>
       <div className={styles.count}>{f.count}</div>
