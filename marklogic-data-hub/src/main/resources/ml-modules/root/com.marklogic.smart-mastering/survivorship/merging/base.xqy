@@ -2317,12 +2317,15 @@ declare function merge-impl:is-uri-locked($uri as xs:string) as xs:boolean {
   $uri = merge-impl:locked-uris()
 };
 
+(: Don't want to trigger static analysis for our sepatate read-only operations :)
+declare variable $lock-for-update-fun := fn:function-lookup(xs:QName('xdmp:lock-for-update'), 1);
+
 declare function merge-impl:lock-for-update($uri as xs:string) {
   if (fn:not(map:get($locked-uris-map, "lockedURIs") = $uri)) then
     map:put($locked-uris-map, "lockedURIs", (map:get($locked-uris-map, "lockedURIs"),$uri))
   else (),
   (: This is to tell transactions outside mastering we are working with this document :)
-  xdmp:lock-for-update($uri),
+  $lock-for-update-fun($uri),
   (: Below is to identify locks specific to mastering  :)
-  xdmp:lock-for-update($lock-task-prefix || $uri)
+  $lock-for-update-fun($lock-task-prefix || $uri)
 };

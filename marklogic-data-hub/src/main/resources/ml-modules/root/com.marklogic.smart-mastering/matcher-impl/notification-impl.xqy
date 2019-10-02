@@ -78,35 +78,34 @@ declare function notify-impl:build-match-notification(
 {
   let $existing-notification :=
     notify-impl:get-existing-match-notification($threshold-label, $uris)
-  let $old-doc-uris as xs:string* := $existing-notification/sm:document-uris/sm:document-uri
   let $doc-uris :=
-      for $uri in notify-impl:find-notify-uris($uris, $existing-notification)
-      order by $uri
-      return $uri
-  let $new-notification :=
-    element sm:notification {
-      element sm:meta {
-        element sm:dateTime {fn:current-dateTime()},
-        element sm:user {xdmp:get-current-user()},
-        element sm:status { $const:STATUS-UNREAD }
-      },
-      element sm:threshold-label {$threshold-label},
-      element sm:document-uris {
-        $doc-uris
-      }
-    }
+    for $uri in notify-impl:find-notify-uris($uris, $existing-notification)
+    order by $uri
+    return $uri
   let $notification-uri :=
     if (fn:exists($existing-notification)) then
       xdmp:node-uri(fn:head($existing-notification))
     else
       "/com.marklogic.smart-mastering/matcher/notifications/" || xdmp:md5(fn:string-join(($threshold-label, $doc-uris ! fn:string(.)), "|")) || ".xml"
   let $notification-operated-on := $_notifications-inserted => map:contains($notification-uri)
-  let $_lock-for-update := xdmp:lock-for-update($notification-uri)
+  where fn:not($notification-operated-on)
   return (
     $_notifications-inserted => map:put($notification-uri, fn:true()),
     map:new((
       map:entry("uri", $notification-uri),
-      map:entry("value", $new-notification),
+      map:entry("value",
+          element sm:notification {
+            element sm:meta {
+              element sm:dateTime {fn:current-dateTime()},
+              element sm:user {xdmp:get-current-user()},
+              element sm:status { $const:STATUS-UNREAD }
+            },
+            element sm:threshold-label {$threshold-label},
+            element sm:document-uris {
+              $doc-uris
+            }
+          }
+        ),
       map:entry("context",
         map:new((
           map:entry("permissions", xdmp:default-permissions($notification-uri, "objects")),
