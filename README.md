@@ -9,7 +9,7 @@ MarkLogic Data Hub is a data integration platform and toolset that helps you qui
 
 For Data Hub version 5.0, you need:
 
-  - MarkLogic 9.0-7 or later
+  - MarkLogic 9.0-10 or later
   - Gradle 4.6 or later
   - Java JDK 8 or later
 
