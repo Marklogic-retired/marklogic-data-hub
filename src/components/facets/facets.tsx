@@ -4,9 +4,6 @@ import Facet from '../facet/facet';
 import styles from './facets.module.scss';
 
 const Facets = (props) => {
-  const handleFacetClick = (constraint, vals) => {
-    props.onFacetClick(constraint, vals);
-  }
   const [show, toggleShow] = useState(true);
 
   return (
