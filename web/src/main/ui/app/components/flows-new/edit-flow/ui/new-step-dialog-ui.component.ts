@@ -61,6 +61,8 @@ export class NewStepDialogUiComponent implements OnInit {
   type: string = null;
   isIngestion: boolean = false;
   isMapping: boolean = false;
+  isMatching: boolean = false;
+  isMerging: boolean = false;
   isMastering: boolean = false;
   isCustom: boolean = false;
   sourceRequired: boolean = false;
@@ -208,6 +210,22 @@ export class NewStepDialogUiComponent implements OnInit {
       this.tooltips = FlowsTooltips.mapping;
       this.newStep = Step.createMappingStep();
     }
+    if (type === StepType.MATCHING) {
+      this.newStepForm.patchValue({
+        sourceDatabase: this.databaseObject.final,
+        targetDatabase: this.databaseObject.final
+      });
+      this.tooltips = FlowsTooltips.mastering;
+      this.newStep = Step.createMatchingStep();
+    }
+    if (type === StepType.MERGING) {
+      this.newStepForm.patchValue({
+        sourceDatabase: this.databaseObject.final,
+        targetDatabase: this.databaseObject.final
+      });
+      this.tooltips = FlowsTooltips.mastering;
+      this.newStep = Step.createMergingStep();
+    }
     if (type === StepType.MASTERING) {
       this.newStepForm.patchValue({
         sourceDatabase: this.databaseObject.final,
@@ -243,9 +261,13 @@ export class NewStepDialogUiComponent implements OnInit {
     this.isIngestion = type === StepType.INGESTION;
     this.isCustom = type === StepType.CUSTOM;
     this.isMapping = type === StepType.MAPPING;
+    this.isMatching = type === StepType.MATCHING;
+    this.isMerging = type === StepType.MERGING;
     this.isMastering = type === StepType.MASTERING;
-    this.sourceRequired = this.isMapping || this.isMastering;
-    this.entityRequired = this.isMapping || this.isMastering;
+    this.sourceRequired = this.isMapping || this.isMatching || 
+      this.isMerging || this.isMastering;
+    this.entityRequired = this.isMapping || this.isMatching || 
+      this.isMerging || this.isMastering;
 
     if (this.isCustom) {
       this.outputFormatOptions = this.outputFormats;

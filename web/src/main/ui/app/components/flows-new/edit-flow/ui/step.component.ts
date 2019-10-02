@@ -38,7 +38,9 @@ export class StepComponent implements OnChanges {
     // workaround for: https://github.com/angular/material2/issues/7006
     if (changes &&
       changes.selectedStepId &&
-      this.createStepHeader(this.step) === this.stepType.MASTERING &&
+      ( this.createStepHeader(this.step) === this.stepType.MATCHING ||
+        this.createStepHeader(this.step) === this.stepType.MERGING ||
+        this.createStepHeader(this.step) === this.stepType.MASTERING ) &&
       this.step.id === changes.selectedStepId.currentValue) {
       setTimeout(() => {
         this.masteringTabGroup.realignInkBar();
@@ -103,6 +105,22 @@ export class StepComponent implements OnChanges {
     else if (step.stepDefinitionType === this.stepType.MAPPING){
       if(step.stepDefinitionName === 'default-mapping' || step.stepDefinitionName === 'entity-services-mapping'){
         return 'MAPPING';
+      }
+      else{
+        return 'CUSTOM';
+      }
+    }
+    else if (step.stepDefinitionType === this.stepType.MATCHING){
+      if(step.stepDefinitionName === 'default-matching'){
+        return 'MATCHING';
+      }
+      else{
+        return 'CUSTOM';
+      }
+    }
+    else if (step.stepDefinitionType === this.stepType.MERGING){
+      if(step.stepDefinitionName === 'default-merging'){
+        return 'MERGING';
       }
       else{
         return 'CUSTOM';

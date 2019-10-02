@@ -87,7 +87,7 @@
                   {{stepsArray[i].options.targetEntity | truncate : 23}}
                 </div>
               </div>
-              <div class="summary" *ngIf="createStepHeader(stepsArray[i]) === stepType.MASTERING">
+              <div class="summary" *ngIf="createStepHeader(stepsArray[i]) === stepType.MATCHING || createStepHeader(stepsArray[i]) === stepType.MERGING || createStepHeader(stepsArray[i]) === stepType.MASTERING">
                 <div class="summary-label">Target Entity</div>
                 <div class="summary-content" *ngIf="stepsArray[i].options.targetEntity">
                   {{stepsArray[i].options.targetEntity | truncate : 23}}
