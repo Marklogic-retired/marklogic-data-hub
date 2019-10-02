@@ -1,5 +1,6 @@
 package com.marklogic.hub.master;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.bootstrap.Installer;
 import com.marklogic.client.eval.EvalResult;
@@ -115,9 +116,9 @@ public class MasterTest extends HubTestBase {
         }
         RunFlowResponse flowResponse = flowRunner.runFlow("myNewFlow", Arrays.asList("1","2"));
         flowRunner.awaitCompletion();
-        MasteringManager.MatchResponse matchResp = masteringManager.match("/person-1.json", "myNewFlow","3", Boolean.TRUE, new ObjectMapper().createObjectNode());
-        assertEquals(7, matchResp.total.intValue(),"There should 7 match results");
-        assertEquals(7, matchResp.result.size(),"There should 7 match results");
+        JsonNode matchResp = masteringManager.match("/person-1.json", "myNewFlow","3", Boolean.TRUE, new ObjectMapper().createObjectNode()).get("results");
+        assertEquals(7, matchResp.get("total").asInt(),"There should 7 match results");
+        assertEquals(7, matchResp.get("result").size(),"There should 7 match results");
     }
 
     @Test
@@ -169,7 +170,7 @@ public class MasterTest extends HubTestBase {
             "cts:document-query('" + singleMergedURI + "')" +
             "))";
         assertTrue(existsByQuery(queryText, HubConfig.DEFAULT_FINAL_NAME), "Merged doc doesn't have the expected collections");
-        MasteringManager.UnmergeResponse unmergeResp = masteringManager.unmerge(singleMergedURI, Boolean.TRUE, Boolean.TRUE);
+        JsonNode unmergeResp = masteringManager.unmerge(singleMergedURI, Boolean.TRUE, Boolean.TRUE);
         assertFalse(existsByQuery(queryText, HubConfig.DEFAULT_FINAL_NAME), "Document didn't get unmerged: " + unmergeResp.toString());
     }
 
