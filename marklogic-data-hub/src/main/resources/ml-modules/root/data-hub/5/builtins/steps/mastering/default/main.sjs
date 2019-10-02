@@ -43,11 +43,13 @@ function main(content, options) {
   }
 }
 
-function checkOptions(content, options, filteredContent = []) {
-  let hasRequiredOptions = requiredOptionProperties.every((propName) => !!options[propName]);
+function checkOptions(content, options, filteredContent = [], reqOptProperties = requiredOptionProperties) {
+  let hasRequiredOptions = reqOptProperties.every((propName) => !!options[propName]);
   if (!hasRequiredOptions) {
     throw new Error(`Missing the following required mastering options: ${xdmp.describe(requiredOptionProperties.filter((propName) => !options[propName]), emptySequence, emptySequence)}`);
   }
+  options.matchOptions = options.matchOptions || {};
+  options.mergeOptions = options.mergeOptions || {};
   // set the target entity based off of the step options
   options.mergeOptions.targetEntity = options.targetEntity;
   options.matchOptions.targetEntity = options.targetEntity;
@@ -80,7 +82,7 @@ function checkOptions(content, options, filteredContent = []) {
       }
     }
   }
-  if (!contentHasExpectedContentCollection) {
+  if (content && !contentHasExpectedContentCollection) {
     if (contentHasTargetEntityCollection) {
       xdmp.log(`Expected collection "${contentCollection}" not found on content. Using entity collection "${options.targetEntity}" instead. \
       You may need to review your match/merge options`, 'notice');

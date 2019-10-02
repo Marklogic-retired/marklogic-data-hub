@@ -148,6 +148,37 @@ public class MasterTest extends HubTestBase {
     }
 
     @Test
+    public void testMatchMergeSteps() throws Exception {
+        installProject();
+
+        getDataHub().clearDatabase(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME);
+        assertEquals(0, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, "http://marklogic.com/xdmp/tde"));
+
+        getDataHub().clearDatabase(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME);
+        assertEquals(0, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, "http://marklogic.com/xdmp/tde"));
+
+        installHubArtifacts(getDataHubAdminConfig(), true);
+        installUserModules(getDataHubAdminConfig(), true);
+
+        Flow flow = flowManager.getFlow("myMatchMergeFlow");
+        if (flow == null) {
+            throw new Exception("myMatchMergeFlow Not Found");
+        }
+        RunFlowResponse flowResponse = flowRunner.runFlow("myMatchMergeFlow", Arrays.asList("1","2","3"));
+        flowRunner.awaitCompletion();
+        RunStepResponse matchJob = flowResponse.getStepResponses().get("3");
+        assertTrue(matchJob.isSuccess(), "Matching job failed!");
+        assertTrue(getFinalDocCount("datahubMasteringMatchSummary") == 3,"3 match summaries should be created!");
+        // Check for datahubMasteringMatchSummary for matching with correct count
+        String summaryQueryText = "cts:and-query((" +
+            "cts:collection-query('datahubMasteringMatchSummary')," +
+            "cts:json-property-value-query('URIsToActOn', '/person-41.json')" +
+            "))";
+        assertTrue(existsByQuery(summaryQueryText, HubConfig.DEFAULT_FINAL_NAME), "Missing valid matching summary document!");
+        // TODO add merge step assertions in merge step PR
+    }
+
+    @Test
     public void testManualMerge() throws Exception {
         Flow flow = flowManager.getFlow("myNewFlow");
         if (flow == null) {

@@ -1,0 +1,20 @@
+{
+  "lang": "zxx",
+  "name": "matching-mastering",
+  "type": "mastering",
+  "version": 1,
+  "modulePath": "/data-hub/5/builtins/steps/mastering/default/matching.sjs",
+  "retryLimit" : 0,
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "options": {
+    "acceptsBatch": true,
+    "stepUpdate": false,
+    "sourceDatabase": "data-hub-FINAL",
+    "targetDatabase": "data-hub-FINAL",
+    "sourceQuery": "cts.collectionQuery('default-mapping')",
+    "collections": [
+      "mastering-summary"
+    ]
+  }
+}

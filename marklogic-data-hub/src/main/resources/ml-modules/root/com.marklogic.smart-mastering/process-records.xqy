@@ -109,3 +109,28 @@ declare function process:process-match-and-merge-with-options(
   else
     proc-impl:process-match-and-merge-with-options($input, $merge-options, $match-options, $filter-query, $fine-grain-provenance)
 };
+
+(:
+ : Build out summary documents that will describe the actions that mastering will take
+ :
+ : @param $input  URIs of the target documents or map:map objects that contain the document in the value entry
+ : @param $match-options  the JSON or XML representing the match options
+ : @param $filter-query  a cts:query used to restrict matches to a set, such as a specific entity type or collection
+ : @param $fine-grain-provenance a boolean to determine if fine grain provenance should be tracked
+ : @return merged docs, if any, otherwise any notification documents
+ :)
+declare function process:build-match-summary(
+  $input as item()*,
+  $match-options as item(),
+  $filter-query as cts:query,
+  $fine-grain-provenance as xs:boolean
+) as json:object {
+  proc-impl:build-match-summary(
+    $input,
+    $match-options,
+    $filter-query,
+    $fine-grain-provenance,
+    (: Don't lock for update when called via the external function :)
+    fn:false()
+  )
+};

@@ -177,6 +177,10 @@ declare function collection-impl:default-collection-handler(
         switch ($event-name)
           case $const:ON-ARCHIVE-EVENT return
             coll:content-collections($content-collection-options)
+          case $const:ON-MERGE-EVENT return
+            coll:archived-collections($merge-options)
+          case $const:ON-NO-MATCH return
+            coll:archived-collections($merge-options)
           default return
             ()
       ))
