@@ -11,10 +11,10 @@ const SearchBar = ({ entities }) => {
     entities = ['All Entities', ...entities];
 
     const options = entities.map((e, i) => 
-        <Option value={e} key={i}>{e}</Option>
+        <Option value={e} key={i} data-cy="entity-option">{e}</Option>
     );
     const entityMenu = (
-        <Select style={{ width: 180 }} value={searchOptions.entityNames[0] || 'All Entities'} onChange={value => handleOptionSelect(value)}>
+        <Select style={{ width: 180 }} value={searchOptions.entityNames[0] || 'All Entities'} onChange={value => handleOptionSelect(value)} id="entity-select" data-cy={searchOptions.entityNames[0] || 'All Entities'}>
             {options}
         </Select>
     );
@@ -49,6 +49,7 @@ const SearchBar = ({ entities }) => {
                     size="large"
                     allowClear
                     onSearch={value => handleSearch(value)}
+                    data-cy="search-bar"
                 />
             </div>
         </div>

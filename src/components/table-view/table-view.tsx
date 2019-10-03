@@ -54,6 +54,7 @@ const TableView = (props) => {
       dataSource={data}
       columns={columns}
       pagination={false}
+      data-cy="document-table"
     />
   );
 }

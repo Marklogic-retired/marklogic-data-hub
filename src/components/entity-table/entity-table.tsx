@@ -67,7 +67,7 @@ const EntityTable:React.FC<Props> = (props) => {
         <Link to={{
           pathname: "/browse", 
           state: { entity: text} }}
-        >
+          data-cy={text}>
           {text}
         </Link>
       )},  

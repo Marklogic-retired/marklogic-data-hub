@@ -58,7 +58,7 @@ const View: React.FC = () => {
       <Content>
         {isLoading ? <Spin tip="Loading..." style={{ margin: '100px auto', width: '100%'}} /> :
           <>
-            <div className={styles.statsContainer}>
+            <div className={styles.statsContainer} data-cy="total-container">
               <Statistic className={styles.statistic} title="Total Entities" value={entities.length} />
               <Statistic className={styles.statistic} title="Total Documents" value={totalDocs} />
             </div>

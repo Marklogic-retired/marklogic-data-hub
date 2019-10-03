@@ -90,7 +90,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
     <Layout>
       <Content style={{ background: '#fff', padding: '18px 36px' }}>
         <div id='back-button'>
-          <PageHeader style={{ padding: '0px', marginBottom: '20px' }} onBack={() => history.push('/browse')} title={<Link to={{ pathname: "/browse" }}>Back</Link>} />
+          <PageHeader style={{ padding: '0px', marginBottom: '20px' }} onBack={() => history.push('/browse')} title={<Link to={{ pathname: "/browse" }} data-cy="back-button">Back</Link>} />
         </div>
         <div className={styles.header}>
           <div className={styles.heading}>
@@ -98,10 +98,10 @@ const Detail: React.FC<Props> = ({ history, location }) => {
           </div>
           <div id='menu' className={styles.menu}>
             <Menu onClick={(event) => handleClick(event)} mode="horizontal" selectedKeys={[selected]}>
-              <Menu.Item key="instance" id='instance'>
+              <Menu.Item key="instance" id='instance' data-cy="instance-view">
                 Instance
              </Menu.Item>
-              <Menu.Item key="full" id='full'>
+              <Menu.Item key="full" id='full' data-cy="source-view">
                 Source
              </Menu.Item>
             </Menu>

@@ -16,7 +16,7 @@ const SearchResults:React.FC<Props> = (props) => {
                 itemLayout="horizontal"
                 dataSource={props.data}
                 renderItem={item => (
-                    <List.Item>
+                    <List.Item data-cy='document-list-item'>
                         <SearchResult
                             item={item}
                             entityDefArray={props.entityDefArray}
