@@ -19,11 +19,14 @@ package com.marklogic.hub.step;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.StepDefinitionManager;
+import com.marklogic.hub.impl.Versions;
 import com.marklogic.hub.util.FileUtil;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -40,6 +43,9 @@ public class StepDefinitionManagerTest extends HubTestBase {
     private String ingestStepName = "myTestIngestStep";
     private String customStepName = "myTestCustomStep";
 
+    @Autowired
+    private Versions versions;
+
 
     @BeforeEach
     public void setup() {
@@ -55,6 +61,12 @@ public class StepDefinitionManagerTest extends HubTestBase {
     @Test
     void saveStep() {
         StepDefinition stepDefinition = StepDefinition.create(mappingStepName, StepDefinition.StepDefinitionType.MAPPING);
+        if(versions.isVersionCompatibleWithES()){
+            Assertions.assertEquals("/data-hub/5/builtins/steps/mapping/entity-services/main.sjs", stepDefinition.getModulePath());
+        }
+        else {
+            Assertions.assertEquals("/data-hub/5/builtins/steps/mapping/default/main.sjs", stepDefinition.getModulePath());
+        }
         stepDefinitionManager.saveStepDefinition(stepDefinition);
 
         String stepFileName = mappingStepName + StepDefinitionManager.STEP_DEFINITION_FILE_EXTENSION;

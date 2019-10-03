@@ -16,20 +16,16 @@
 
 package com.marklogic.hub.step.impl;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.impl.Versions;
 import com.marklogic.hub.step.AbstractStepDefinition;
-import com.marklogic.hub.util.BeanUtil;
+import com.marklogic.hub.util.ApplicationContextReference;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class MappingStepDefinitionImpl extends AbstractStepDefinition {
-
-    @JsonIgnore
-    Versions versions = BeanUtil.getBean(Versions.class);
 
     public MappingStepDefinitionImpl(String name) {
         setName(name);
@@ -46,7 +42,8 @@ public class MappingStepDefinitionImpl extends AbstractStepDefinition {
 
         options.put("sourceDatabase", HubConfig.DEFAULT_STAGING_NAME);
         options.put("targetDatabase", HubConfig.DEFAULT_FINAL_NAME);
-        if(versions.isVersionCompatibleWithES()){
+        Versions versions = ApplicationContextReference.getBean(Versions.class);
+        if (versions == null || versions.isVersionCompatibleWithES()){
             setModulePath("/data-hub/5/builtins/steps/mapping/entity-services/main.sjs");
         }
         else {
