@@ -23,7 +23,7 @@
         <p *ngIf="editingURI" class="edit-uri">
           <span class="uri-label" tooltip="The URI of the source document from which QuickStart generates the list of source property names." container="body">URI:</span>
           <input type="text" class="edit-uri-val" [(ngModel)]="editURIVal" (keypress)="keyPressURI($event)" />
-          <span class="edit-save" (click)="onUpdateURI();"><i class="fa fa-check"></i></span>
+          <span class="edit-save" (click)="onUpdateURINewUI();"><i class="fa fa-check"></i></span>
           <span class="edit-cancel" (click)="cancelEditURI()"><i class="fa fa-remove"></i></span>
         </p>
         <span class="navigate_source_uris">
