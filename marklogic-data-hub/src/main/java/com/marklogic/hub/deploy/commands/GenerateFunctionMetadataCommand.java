@@ -33,15 +33,19 @@ public class GenerateFunctionMetadataCommand extends AbstractCommand {
         setExecuteSortOrder(SortOrderConstants.LOAD_MODULES + 1);
     }
 
-    public GenerateFunctionMetadataCommand(DatabaseClient modulesClient) {
+    public GenerateFunctionMetadataCommand(DatabaseClient modulesClient, Versions versions) {
         this();
         this.modulesClient = modulesClient;
+        this.versions = versions;
     }
 
     @Override
     public void execute(CommandContext context) {
-        if(versions.isVersionCompatibleWithES()){
+        if (versions != null && versions.isVersionCompatibleWithES()) {
             if (modulesClient == null) {
+                if (hubConfig == null) {
+                    throw new IllegalStateException("Unable to create a DatabaseClient for the modules database because hubConfig is null");
+                }
                 modulesClient = hubConfig.newStagingClient(hubConfig.getDbName(DatabaseKind.MODULES));
             }
 
@@ -49,8 +53,8 @@ public class GenerateFunctionMetadataCommand extends AbstractCommand {
 
             StructuredQueryBuilder sb = modulesClient.newQueryManager().newStructuredQueryBuilder();
 
-        // This transform needs to be the camelcase prefix instead of the ml: prefix since it is run as part of modules load.
-        ServerTransform serverTransform = new ServerTransform("mlGenerateFunctionMetadata");
+            // This transform needs to be the camelcase prefix instead of the ml: prefix since it is run as part of modules load.
+            ServerTransform serverTransform = new ServerTransform("mlGenerateFunctionMetadata");
 
             ApplyTransformListener transformListener = new ApplyTransformListener()
                 .withTransform(serverTransform)
@@ -63,11 +67,9 @@ public class GenerateFunctionMetadataCommand extends AbstractCommand {
                     }
                 });
 
-        /*
-        Query for uris "/data-hub/5/mapping-functions/" and "/custom-modules/mapping-functions/" which are reserved for mapping functions
-         */
+            // Query for uris "/data-hub/5/mapping-functions/" and "/custom-modules/mapping-functions/" which are reserved for mapping functions
             QueryBatcher queryBatcher = dataMovementManager.newQueryBatcher(
-                new StructuredQueryBuilder().or(sb.directory(true, "/data-hub/5/mapping-functions/"),sb.directory(true, "/custom-modules/mapping-functions/")))
+                new StructuredQueryBuilder().or(sb.directory(true, "/data-hub/5/mapping-functions/"), sb.directory(true, "/custom-modules/mapping-functions/")))
                 .withBatchSize(1)
                 .withThreadCount(4)
                 .onUrisReady(transformListener);
@@ -84,12 +86,8 @@ public class GenerateFunctionMetadataCommand extends AbstractCommand {
             if (caughtException != null) {
                 throw new RuntimeException(caughtException);
             }
-        }
-        else {
+        } else {
             logger.warn("GenerateFunctionMetadataCommand is not supported on this MarkLogic server version ");
         }
     }
-
-
-
 }
