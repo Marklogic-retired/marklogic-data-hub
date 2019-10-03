@@ -139,42 +139,6 @@ export class MappingUiComponent implements OnChanges {
   }
   }
 
-  // populateDataSource(entityProp) {
-  //   entityProp.forEach(obj => {
-  //     this.dataSourceEntity.push(obj);
-
-  //     if (obj.$ref || (obj.items && obj.items.$ref)) {
-  //       if (obj.$ref) {
-  //         this.entName = obj.$ref.split('/').pop();
-  //       }
-  //       else {
-  //         this.entName = obj.items.$ref.split('/').pop();
-  //       }
-
-  //       //get nested Entity Name;
-  //       this.nestEntity.emit({
-  //         nestEnt: this.nestEnt,
-  //         entName: this.entName
-  //       });
-
-  //       this.nestEnt.definition.properties.forEach(obj2 => {
-  //         let tempObj = obj2;
-  //         tempObj.name = obj.name + "." + obj2.name;
-  //         this.dataSourceEntity.push(tempObj);
-  //       });
-
-  //     } else {
-  //       return
-  //     }
-  //     //identify CH2
-  //     //this.populateDataSource(this.nestEnt.definition.properties);
-     
-
-  //   });
-  //   //console.log("entity",this.dataSourceEntity);
-
-  //   return this.dataSourceEntity
-  // }
   onNavigateURIList(index) {
     if (index < 0 || index > this.docUris.length) {
       this.uriIndex = index;
@@ -189,15 +153,35 @@ export class MappingUiComponent implements OnChanges {
       this.disableURINavLeft = false;
       this.disableURINavRight = false;
 
-      //console.log("else part ", this.docsArray[index]);
       this.uriIndex = index;
       this.editURIVal = this.docUris[index];
 
-      this.onUpdateURI();
-
+      this.onUpdateURINewUI();
     }
 
   }
+  onUpdateURINewUI(){
+    if (Object.keys(this.conns).length > 0) {
+      this.editingURI = false;
+      this.updateURI.emit({
+        uri: this.editURIVal,
+        uriOrig: this.mapping.sourceURI,
+        conns: this.conns,
+        connsOrig: this.connsOrig,
+        save: true
+      });
+    } else {
+      this.editingURI = false;
+      this.updateURI.emit({
+        uri: this.editURIVal,
+        uriOrig: this.mapping.sourceURI,
+        conns: this.conns,
+        connsOrig: {},
+        save: true
+      });
+    }
+  }
+
   onUpdateURI() {
     if (Object.keys(this.conns).length > 0) {
       let result = this.dialogService.confirm(

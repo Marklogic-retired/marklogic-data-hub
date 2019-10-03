@@ -207,7 +207,6 @@ export class MappingComponent implements OnInit {
           };
           self.sampleDocSrcProps.push(prop);
         });
-        console.log("self.sampleDocProps",self.sampleDocSrcProps);
       this.sampleDocURI = uri;
       this.mapping.sourceURI = uri;
       self.sampleDocNestedProps = this.updateNestedDataSource(self.sampleDocSrcProps);
@@ -346,8 +345,6 @@ export class MappingComponent implements OnInit {
   getFunctionList (){
     this.manageFlowsService.getFunctions().subscribe( resp => {
       this.functionLst = resp;
-      console.log("resp",resp);
-      console.log("functionLst",this.functionLst);
     });
   }
 
@@ -387,8 +384,6 @@ export class MappingComponent implements OnInit {
           nestedDoc.push(prop);
         });
 
-        console.log("Object loop called");
-
       } else if (obj.val.constructor.name === "Array" && obj.val != null) {
         //Pushing the entry for base object before the nested fields
         let propty = {
@@ -409,9 +404,7 @@ export class MappingComponent implements OnInit {
           });
 
         });
-        console.log("Array loop called");
       } else {
-        console.log("Else loop called");
         nestedDoc.push(obj);
       }
     });
