@@ -488,15 +488,17 @@ public class HubProjectImpl implements HubProject {
     }
 
     protected void upgradeFlows() {
-        flowManager.getFlows().forEach(flow ->{
-            flow.getSteps().values().forEach((step) -> {
-                if((step.getStepDefinitionType().equals(StepDefinition.StepDefinitionType.MAPPING)) &&
-                    versions.isVersionCompatibleWithES() && step.getStepDefinitionName().equalsIgnoreCase("default-mapping")){
-                    step.setStepDefinitionName("entity-services-mapping");
-                }
+        if(versions.isVersionCompatibleWithES()){
+            flowManager.getFlows().forEach(flow ->{
+                flow.getSteps().values().forEach((step) -> {
+                    if((step.getStepDefinitionType().equals(StepDefinition.StepDefinitionType.MAPPING)) &&
+                        step.getStepDefinitionName().equalsIgnoreCase("default-mapping")){
+                        step.setStepDefinitionName("entity-services-mapping");
+                    }
+                });
+                flowManager.saveFlow(flow);
             });
-            flowManager.saveFlow(flow);
-        });
+        }
     }
 
     @Override  public String getHubModulesDeployTimestampFile() {

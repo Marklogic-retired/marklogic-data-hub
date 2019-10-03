@@ -205,7 +205,8 @@ export class EditFlowComponent implements OnInit, OnDestroy {
         this.flow = Flow.fromJSON(resp);
         this.disableSelect = false;
       });
-      if (stepObject.step.stepDefinitionType === this.stepType.MAPPING && stepObject.step.stepDefinitionName === 'default-mapping') {
+      if (stepObject.step.stepDefinitionType === this.stepType.MAPPING && (stepObject.step.stepDefinitionName === 'default-mapping'
+      || stepObject.step.stepDefinitionName === 'entity-services-mapping')) {
         this.createMapping(resp);
       }
     });
