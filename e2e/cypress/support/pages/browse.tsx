@@ -1,28 +1,111 @@
 class BrowsePage {
 
-    getPrivacyLink() {
-        return cy.get('[data-cy=privacy]');
+    getSelectedEntity() {
+        return cy.get('.ant-select-selection').invoke('attr', 'data-cy');
     }
 
-    getTermsLink() {
-        return cy.get('[data-cy=terms]');
+    selectEntity(entity: string) {
+        cy.get('#entity-select').click();
+        return cy.get('[data-cy=entity-option]').each(function (item) {
+            if (item.text() === entity) {
+                return item.click();
+            }
+        });
     }
 
-    getforgotPasswordLink() {
-        return cy.get('[data-cy=forgot]');    
+    getTotalDocuments() {
+        return cy.get('[data-cy=total-documents]').eq(0).then(function (value) {
+            return parseInt(value.text());
+        });
     }
 
-    getUsername() {
-        return cy.get('#username'); 
+    getDocuments() {
+        return cy.get('[data-cy=document-list-item]');
     }
 
-    getPassword() {
-        return cy.get('#password');  
+    getDocument(index: number) {
+        return this.getDocuments().eq(index);
     }
 
-    getSubmitButton() {
-        return cy.get('#submit'); 
+    getDocumentEntityName(index: number) {
+        return this.getDocument(index).find('[data-cy=entity-name]').invoke('text');
     }
+
+    getDocumentId(index: number) {
+        return this.getDocument(index).find('[data-cy=primary-key]').invoke('text');
+    }
+
+    getDocumentSnippet(index: number) {
+        return this.getDocument(index).find('[data-cy=snipped]').invoke('text');
+    }
+
+    getDocumentCreatedOn(index: number) {
+        return this.getDocument(index).find('[data-cy=created-on]').invoke('text');
+    }
+
+    getDocumentSources(index: number) {
+        return this.getDocument(index).find('[data-cy=sources]').invoke('text');
+    }
+
+    getDocumentFileType(index: number) {
+        return this.getDocument(index).find('[data-cy=file-type]').invoke('text');
+    }
+
+    getDocumentById(index: number) {
+        return this.getDocument(index).find('[data-cy=primary-key]');
+    }
+
+
+    /**
+     * facet search
+     * available facets are 'collection', 'created-on', 'job-id', 'flow', 'step'
+    */
+
+    getFacet(facet: string) {
+        return cy.get('[data-cy=' + facet + '-facet]');
+    }
+
+    getFacetItems(facet: string) {
+        return cy.get('[data-cy=' + facet + '-facet-item]');
+    }
+
+    getFacetItem(facet: string, str: string) {
+        return this.getFacetItems(facet).then(($el) => {
+            for (let i = 0; i < $el.length; i++) {
+                let $element = Cypress.$($el[i]);
+                if ($element.find('[data-cy=' + facet + '-facet-item-value]').text().trim() === str) {
+                    return cy.wrap($element);
+                }
+            }
+        });
+    }
+
+    getFacetItemCheckbox(facet: string, str: string) {
+        return this.getFacetItem(facet, str).find('[data-cy=' + facet + '-facet-item-checkbox]');
+    }
+
+    getFacetValue(facet: string, str: string) {
+        return this.getFacetItem(facet, str).find('[data-cy=' + facet + '-facet-item-value]');
+    }
+
+    getFacetItemCount(facet: string, str: string) {
+        return this.getFacetItem(facet, str).find('[data-cy=' + facet + '-facet-item-count]');
+    }
+
+    clearFacetSearchSelection(facet: string) {
+        return cy.get('[data-cy=' + facet + '-clear]').click();
+    }
+
+    getFacetSearchSelectionCount(facet: string) {
+        return cy.get('[data-cy=' + facet + '-selected-count]').invoke('text');
+    }
+
+    //search bar
+    search(str: string) {
+        cy.get('[data-cy=search-bar]').type(str);
+        cy.get('.ant-input-search-button').click();
+    }
+
 }
 
 export default BrowsePage;

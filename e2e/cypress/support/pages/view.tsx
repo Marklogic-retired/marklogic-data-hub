@@ -1,28 +1,41 @@
 class ViewPage {
 
-    getPrivacyLink() {
-        return cy.get('[data-cy=privacy]');
+    getTotalEntities() {
+        return cy.get('[data-cy=total-container] > div:first-child .ant-statistic-content-value-int').then(function(value){
+            return parseInt(value.text());
+        }); 
     }
 
-    getTermsLink() {
-        return cy.get('[data-cy=terms]');
+    getTotalDocuments() {
+        return cy.get('[data-cy=total-container] > div:last-child .ant-statistic-content-value-int').then(function(value){
+            return parseInt(value.text().replace(',',''));
+        }); 
     }
 
-    getforgotPasswordLink() {
-        return cy.get('[data-cy=forgot]');    
+    expandEntityRow(name:string) {
+        return cy.get('.ant-table-tbody tr[data-row-key=' + name + '] .ant-table-row-expand-icon-cell').click();    
     }
 
-    getUsername() {
-        return cy.get('#username'); 
+    getEntityRow(property:string) {
+        return cy.get('tr[data-row-key=' + property + ']');
     }
 
-    getPassword() {
-        return cy.get('#password');  
+    getEntityProperty(property:string) {
+        return this.getEntityRow('id').find('td').eq(0).invoke('text');
     }
 
-    getSubmitButton() {
-        return cy.get('#submit'); 
+    getEntityDataType(property:string) {
+        return this.getEntityRow('id').find('td').eq(1).invoke('text');
     }
+
+    getEntityIndexSettings(property:string) {
+        return this.getEntityRow('id').find('td').eq(2).invoke('text');
+    }
+
+    getEntity(entity:string) {
+        return cy.get('[data-cy=' + entity +  ']');
+    }
+
 }
 
 export default ViewPage;

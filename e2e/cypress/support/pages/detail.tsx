@@ -1,28 +1,41 @@
 class DetailPage {
 
-    getPrivacyLink() {
-        return cy.get('[data-cy=privacy]');
+    getInstanceView() {
+        return cy.get('[data-cy="instance-view"]');
     }
 
-    getTermsLink() {
-        return cy.get('[data-cy=terms]');
+    getSourceView() {
+        return cy.get('[data-cy="source-view"]');
     }
 
-    getforgotPasswordLink() {
-        return cy.get('[data-cy=forgot]');    
+    getDocumentEntity() {
+        return cy.get('[data-cy=document-title]');
     }
 
-    getUsername() {
-        return cy.get('#username'); 
+    getDocumentID() {
+        return cy.get('[data-cy=document-id]');
     }
 
-    getPassword() {
-        return cy.get('#password');  
+    getDocumentTimestamp() {
+        return cy.get('[data-cy=document-timestamp]');
     }
 
-    getSubmitButton() {
-        return cy.get('#submit'); 
+    getDocumentSource() {
+        return cy.get('[data-cy=document-source]');
     }
+
+    getDocumentFileType() {
+        return cy.get('[data-cy=document-filetype]');
+    }
+
+    getDocumentTable() {
+        return cy.get('[data-cy=document-table]');
+    }
+
+    getDocumentJSON() {
+        return cy.get('.pretty-json-container');
+    }
+
 }
 
 export default DetailPage;

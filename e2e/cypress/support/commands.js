@@ -34,4 +34,18 @@ Cypress.Commands.add("login", (email, password) => {
     loginPage.getSubmitButton().click();
 })
 
+// Cypress.Commands.add('login', () => {
+//     cy.request({
+//         method: 'POST',
+//         url: 'http://localhost:3000/datahub/v2/login',
+//         body: {
+//                 username: 'admin',
+//                 password: 'admin'
+//         }
+//     })
+//     .then((resp) => {
+//         window.localStorage.setItem('adm', resp.body.user.token)
+//     })
+// })
+
 
