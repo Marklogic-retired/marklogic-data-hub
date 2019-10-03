@@ -1,11 +1,10 @@
 const mappingFunctions = require('/marklogic.rest.resource/mlMappingFunctions/assets/resource.sjs');
 const test = require("/test/test-helper.xqy");
 
-function testMappingFunctions() {
-return [
-    test.assertEqual(129, Object.keys(mappingFunctions.getXpathFunctions()).length, "As of 10.0-2 server, there are 129 xpath functions"),
-    test.assertEqual(4, Object.keys(mappingFunctions.getMarkLogicFunctions()).length, "There are 4 OOTB mapping functions that are being shipped with DHF")
-  ];
-}
-
-[].concat(testMappingFunctions());
+[
+  test.assertTrue(Object.keys(mappingFunctions.getXpathFunctions()).length >= 129,
+    "As of 10.0-2 server, there are 129 xpath functions; there may be more in a future version, but we expect at least that many to exist"),
+  
+  test.assertTrue(Object.keys(mappingFunctions.getMarkLogicFunctions()).length >= 4,
+    "There are 4 OOTB mapping functions that are being shipped with DHF; there may be more from other tests in the suite, but we expect at least those 4 to exist")
+];

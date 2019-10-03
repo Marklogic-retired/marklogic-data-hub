@@ -189,8 +189,9 @@ public class Versions extends ResourceManager {
 
     }
 
-    public boolean isVersionCompatibleWithES(){
-        return  isVersionCompatibleWithESNightly(getMLVersion()) || isVersionCompatibleWithESServer(getMLVersion());
+    public boolean isVersionCompatibleWithES() {
+        final MarkLogicVersion mlVersion = getMLVersion();
+        return isVersionCompatibleWithESNightly(mlVersion) || isVersionCompatibleWithESServer(mlVersion);
     }
 
     private boolean isVersionCompatibleWithESNightly(Versions.MarkLogicVersion serverVersion) {
