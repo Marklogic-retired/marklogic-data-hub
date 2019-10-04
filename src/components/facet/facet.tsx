@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Checkbox, Icon } from 'antd';
 import { SearchContext } from '../../util/search-context';
 import styles from './facet.module.scss';
@@ -9,11 +9,24 @@ import { stringConverter } from '../../util/string-conversion';
 var moment = require('moment');
 
 const Facet = (props) => {
-  const { setSearchFacets } = useContext(SearchContext);
-  const limit = 3;
+  const SHOW_MINIMUM = 3;
+  const { setSearchFacets, searchOptions } = useContext(SearchContext);
+  const [showFacets, setShowFacets] = useState(SHOW_MINIMUM);
   const [show, toggleShow] = useState(true);
-  const [more, toggleMore] = useState(props.facetValues.length > limit);
+  const [more, toggleMore] = useState(false);
   const [checked, setChecked] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (Object.entries(searchOptions.searchFacets).length !== 0) {
+      for (let facet in searchOptions.searchFacets ) {
+        if (facet === props.constraint) {
+          setChecked([...searchOptions.searchFacets[facet]]);
+        }
+      }
+    } else {
+      setChecked([]);
+    }
+  }, [searchOptions]);
 
   const handleClick = (e) => {
     let index = checked.indexOf(e.target.value)
@@ -36,22 +49,27 @@ const Facet = (props) => {
     setSearchFacets(props.constraint, []);
   }
 
-  const numToShow = (props.facetValues.length > limit && more) ? 
-    limit : props.facetValues.length;
-
-  const values = props.facetValues.slice(0, numToShow).map((f, i) =>
-    <div key={i} data-cy={stringConverter(props.name) + "-facet-item"}>
-      <div className={styles.checkContainer}>
-        <Checkbox 
-          value={f.value}
-          onChange={(e) => handleClick(e)}
-          checked={checked.indexOf(f.value) > -1}
-          data-cy={stringConverter(props.name) + "-facet-item-checkbox"}
-        >
-          <div title={f.value} className={styles.value} data-cy={stringConverter(props.name) + "-facet-item-value"}>{moment(f.value).isValid() ? dateConverter(f.value) : f.value}</div>
-        </Checkbox>
-      </div>
-      <div className={styles.count} data-cy={stringConverter(props.name) + "-facet-item-count"}>{f.count}</div>
+  const showMore = () => {
+    let toggle = !more;
+    let showNumber = SHOW_MINIMUM;
+    if (toggle && props.facetValues.length > SHOW_MINIMUM) {
+      showNumber = props.facetValues.length
+    }
+    toggleMore(!more);
+    setShowFacets(showNumber);
+  }
+  const values = props.facetValues.slice(0, showFacets).map((facet, index) =>
+    <div className={styles.checkContainer} key={index}>
+      <Checkbox 
+        value={facet.value}
+        onChange={(e) => handleClick(e)}
+        checked={checked.includes(facet.value)}
+        className={styles.value}
+        data-cy={stringConverter(props.name) + "-facet-item-checkbox"}
+      >
+        {moment(facet.value).isValid() ? dateConverter(facet.value) : facet.value}
+      </Checkbox>
+      <div className={styles.count} data-cy={stringConverter(props.name) + "-facet-item-count"}>{facet.count}</div>
     </div>
   );
 
@@ -67,7 +85,7 @@ const Facet = (props) => {
             data-cy={stringConverter(props.name) + "-clear"}
           >Clear</div>
           <div className={styles.toggle} onClick={() => toggleShow(!show)}>
-            <Icon style={{fontSize: '12px'}} type={(show) ? 'up' : 'down'} />
+            <Icon style={{fontSize: '12px'}} type='down' rotate={ show ? 180 : undefined } />
           </div>
         </div>
       </div>
@@ -75,9 +93,9 @@ const Facet = (props) => {
         {values}
         <div 
           className={styles.more}
-          style={{display: (props.facetValues.length > limit) ? 'block' : 'none'}}
-          onClick={() => toggleMore(!more)}
-        >{(more) ? 'more >>' : '<< less'}</div>
+          style={{display: (props.facetValues.length > SHOW_MINIMUM) ? 'block' : 'none'}}
+          onClick={() => showMore()}
+        >{(more) ? '<< less' : 'more >>'}</div>
       </div>
     </div>
   )

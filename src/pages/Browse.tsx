@@ -21,7 +21,6 @@ const Browse: React.FC<Props> = ({location}) => {
     searchOptions,
     setPage,
     setPageLength,
-    setSearchFacets,
     setEntityClearQuery,
   } = useContext(SearchContext);
 

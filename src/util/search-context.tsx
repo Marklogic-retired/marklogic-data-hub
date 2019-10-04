@@ -71,11 +71,11 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
 
   const setEntity = (option: string) => {
     console.log('Selected Option is ' + option);
-    setSearchOptions({ ...searchOptions, entityNames: [option]});
+    setSearchOptions({ ...searchOptions, searchFacets: {}, entityNames: [option]});
   }
 
   const clearEntity = () => {
-    setSearchOptions({ ...searchOptions, entityNames: []});
+    setSearchOptions({ ...searchOptions, searchFacets: {}, entityNames: []});
   }
 
   const setEntityClearQuery = (option: string) => {

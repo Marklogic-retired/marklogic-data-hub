@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import Facets from '../facets/facets';
+import { Collapse, Icon } from 'antd';
+import Facet from '../facet/facet';
 import { facetParser } from '../../util/data-conversion';
 import hubPropertiesConfig from '../../config/hub-properties.config';
 import styles from './sidebar.module.scss';
+
+const { Panel } = Collapse;
 
 const Sidebar = (props) => {
   const [entityFacets, setEntityFacets] = useState<any[]>([]);
@@ -27,21 +30,42 @@ const Sidebar = (props) => {
       }
     }
   }, [props.selectedEntities, props.facets]);
-  
 
   return (
-    <div className={styles.sidebarContainer}>
-      {props.selectedEntities.length === 0 ? <></> :
-        <Facets 
-          title="Entity Properties"
-          facets={entityFacets}
-        />
-      }
-      <Facets 
-        title="Hub Properties"
-        facets={hubFacets}
-      />
-    </div>
+    <Collapse 
+      className={styles.sidebarContainer}
+      defaultActiveKey={['entityProperties', 'hubProperties']} 
+      expandIcon={panelProps => <Icon type="up" rotate={panelProps.isActive ? 180 : undefined} />}
+      expandIconPosition="right"
+      bordered={false}
+    >
+      { props.selectedEntities.length !== 0 && (
+        <Panel id="entity-properties" header={<div className={styles.title}>Entity Properties</div>} key="entityProperties" style={{borderBottom: 'none'}}>
+          { entityFacets.map(facet => {
+            return facet && (
+              <Facet
+                name={facet.hasOwnProperty('displayName') ? facet.displayName : facet.facetName}
+                constraint={facet.facetName}
+                facetValues={facet.facetValues}
+                key={facet.facetName}
+              />
+            )
+          })}
+        </Panel>
+      )}
+      <Panel id="hub-properties" header={<div className={styles.title}>Hub Properties</div>} key="hubProperties" style={{borderBottom: 'none'}}>
+      { hubFacets.map(facet => {
+            return facet && (
+              <Facet
+                name={facet.hasOwnProperty('displayName') ? facet.displayName : facet.facetName}
+                constraint={facet.facetName}
+                facetValues={facet.facetValues}
+                key={facet.facetName}
+              />
+            )
+          })}
+      </Panel>
+  </Collapse>
   );
 }
 
