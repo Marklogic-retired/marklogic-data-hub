@@ -94,6 +94,19 @@
 
 </div> <!-- isVersionCompatibleWithES -->
 <!-- END NEW MAPPING VIEW -->
+</div>
+
+<mat-menu class="mat-menu-list" #menu="matMenu">
+  <ng-template matMenuContent let-indx="indx">
+    <div class="mat-menu-list-btn" mat-menu-item *ngFor="let func of functionLst | keyvalue" (click)="insertFunction(func.key,indx)">{{func.key}}</div>
+  </ng-template>
+</mat-menu>
+   
+<mat-menu class="mat-menu-list" #fieldListMenu="matMenu">
+  <ng-template matMenuContent let-indx="indx">
+    <div class="mat-menu-list-btn" mat-menu-item *ngFor="let srcProp of this.sampleDocNestedProps" (click)="insertField(srcProp.key,indx) ">{{srcProp.key}}</div>
+  </ng-template>
+</mat-menu>
 
 <!-- START LEGACY MAPPING VIEW -->
 <div *ngIf="!isVersionCompatibleWithES" layout-padding layout="column" class="map-page">

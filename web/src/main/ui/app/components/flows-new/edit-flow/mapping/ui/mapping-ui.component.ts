@@ -87,7 +87,8 @@ export class MappingUiComponent implements OnChanges {
 
   ngOnInit(){
     if (!this.dataSource){
-    this.dataSource = new MatTableDataSource<any>(this.sampleDocSrcProps);
+   this.dataSource = new MatTableDataSource<any>(this.sampleDocNestedProps);
+
     }
     if(_.isEmpty(this.mapExpresions)) {
       this.mapExpresions = this.conns;
@@ -101,9 +102,9 @@ export class MappingUiComponent implements OnChanges {
   }
   updateDataSource() {
     if (!this.dataSource){
-      this.dataSource = new MatTableDataSource<any>(this.sampleDocSrcProps);
+      this.dataSource = new MatTableDataSource<any>(this.sampleDocNestedProps);
        }
-    this.dataSource.data = this.sampleDocSrcProps;
+    this.dataSource.data = this.sampleDocNestedProps;
   }
 
   renderRows(): void {
@@ -284,7 +285,7 @@ export class MappingUiComponent implements OnChanges {
     if (this.conns[entityPropName])
       delete this.conns[entityPropName];
     if (!_.isEqual(this.conns, this.connsOrig)) {
-      this.onSaveMap();
+      this.onSaveMap(false);
     }
     this.editingURI = false; // close edit box if open
     event.stopPropagation();
