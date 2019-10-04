@@ -56,6 +56,7 @@ export class MappingComponent implements OnInit {
   public sampleDocSrcProps: Array<any> = [];
   public docUris: Array<any> = [];
   public sampleDocNestedProps:  Array<any> = [];
+  public nestedDoc: Array<any> = [];
 
   // Connections
   public conns: object = {};
@@ -209,14 +210,16 @@ export class MappingComponent implements OnInit {
       _.forEach(startRoot, function (val, key) {
           let prop = {
             key: key,
-            val: String(val),
+            val: typeof(val) === "object" && ['Object','Array'].includes(val.constructor.name) ? val : String(val),
             type: self.getType(val)
           };
           self.sampleDocSrcProps.push(prop);
         });
       this.sampleDocURI = uri;
       this.mapping.sourceURI = uri;
-      self.sampleDocNestedProps = this.updateNestedDataSource(self.sampleDocSrcProps);
+      self.nestedDoc = [];
+      self.sampleDocNestedProps = this.updateNestedDataSourceNew(startRoot);
+
       if (save) {
         this.saveMap();
         console.log('map saved');
@@ -362,59 +365,50 @@ export class MappingComponent implements OnInit {
     });
   }
 
-  updateNestedDataSource(sourcePropsDoc): Array<any> {
-    var nestedDoc = [];
+  updateNestedDataSourceNew(sourcePropDoc): Array<any> {
     let self = this;
-    sourcePropsDoc.forEach(obj => {
-
-      if (obj.val.constructor.name === "Object" && obj.val != null) {
-        //Pushing the entry for base object before the nested fields
-        let propty = {
-          key: obj.key,
-          val: "",
-          type: self.getType(obj.type)
-        };
-        nestedDoc.push(propty);
-
-
-        //Pushing nested entires
-        let keys = Object.keys(obj.val)
-        _.forEach(obj.val, function (val, key) {
-          let prop = {
-            key: "-- " + key,
-            val: String(val),
-            type: self.getType(val)
-          };
-          nestedDoc.push(prop);
-        });
-
-      } else if (obj.val.constructor.name === "Array" && obj.val != null) {
-        //Pushing the entry for base object before the nested fields
-        let propty = {
-          key: obj.key,
-          val: "",
-          type: self.getType(obj.type)
-        };
-        nestedDoc.push(propty);
-
-        obj.val.forEach(nestObj => {
-          _.forEach(nestObj, function (val, key) {
-            let prop = {
-              key: "-- " + key,
+    
+    _.forEach(sourcePropDoc,function (val, key) {
+        if (val != null) {
+          if (val.constructor.name === "Object") {
+            let propty = {
+              key: key,
+              val: "",
+              type: self.getType(val)
+            };
+            self.nestedDoc.push(propty);
+            self.updateNestedDataSourceNew(val);
+          } else if (val.constructor.name === "Array") {
+            let propty = {
+              key: key,
+              val: "",
+              type: self.getType(val)
+            };
+            self.nestedDoc.push(propty);
+            val.forEach(obj => {
+              self.updateNestedDataSourceNew(obj);
+            });
+          } else {
+            let propty = {
+              key: "\t"+key,
               val: String(val),
               type: self.getType(val)
             };
-            nestedDoc.push(prop);
-          });
+            self.nestedDoc.push(propty);
+          }
+        } else {
+          let propty = {
+            key: key,
+            val: "",
+            type: self.getType(val)
+          };
+          self.nestedDoc.push(propty);
+        }
 
-        });
-      } else {
-        nestedDoc.push(obj);
-      }
     });
 
-    return nestedDoc;
 
+    return this.nestedDoc;
   }
   
 
