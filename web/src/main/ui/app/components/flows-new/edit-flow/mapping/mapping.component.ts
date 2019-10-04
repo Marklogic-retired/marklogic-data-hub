@@ -27,6 +27,7 @@ import { Flow } from "../../models/flow.model";
       [editURIVal]="this.editURIVal"
       [functionLst]="functionLst"
       [nestEnt] = "nestEnt"
+      [entityNested] = "entityNested"
       (updateURI)="this.updateURI($event)"
       (updateMap)="this.updateMap($event)"
       (nestEntity)="this.getEntity($event)"
@@ -43,6 +44,7 @@ export class MappingComponent implements OnInit {
   // Entity Model
   public targetEntity: Entity;
   public nestEnt: Entity;
+  public entityNested: Entity;
   public dataSourceEntity: {};
 
   // Source Document
@@ -125,6 +127,11 @@ export class MappingComponent implements OnInit {
       });
     });
     this.entitiesService.getEntities();
+    // Get entity in full nested form
+    this.entitiesService.getEntityNested(this.entityName)
+      .subscribe(result => {
+        this.entityNested = result;
+      });
   }
 
   loadMap() {
