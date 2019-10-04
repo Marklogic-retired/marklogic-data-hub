@@ -6,6 +6,8 @@ import * as _ from 'lodash';
 import * as moment from 'moment';
 import { Mapping } from "../../../../mappings/mapping.model";
 import { EnvironmentService } from '../../../../../services/environment';
+import { EntityTableUiComponent } from './entity-table-ui.component';
+
 import {MatDialog, MatPaginator, MatSort, MatTable, MatTableDataSource} from "@angular/material";
 import { Step } from '../../../models/step.model';
 import {animate, state, style, transition, trigger} from '@angular/animations';
@@ -38,6 +40,8 @@ export class MappingUiComponent implements OnChanges {
   @Input() step: Step;
   @Input() functionLst: object;
   @Input() nestEnt: Entity;
+  @Input() entityNested: Entity;
+  @Input() entityProps: any;
   @Output() updateURI = new EventEmitter();
   @Output() updateMap = new EventEmitter();
   @Output() nestEntity = new EventEmitter();
@@ -91,13 +95,12 @@ export class MappingUiComponent implements OnChanges {
 
   ngOnInit(){
     if (!this.dataSource){
-   this.dataSource = new MatTableDataSource<any>(this.sampleDocSrcProps);
-
+    this.dataSource = new MatTableDataSource<any>(this.sampleDocSrcProps);
     }
-  if(_.isEmpty(this.mapExpresions)) {
-    this.mapExpresions = this.conns;
-  }
-  this.isVersionCompatibleWithES = this.envService.settings.isVersionCompatibleWithES;
+    if(_.isEmpty(this.mapExpresions)) {
+      this.mapExpresions = this.conns;
+    }
+    this.isVersionCompatibleWithES = this.envService.settings.isVersionCompatibleWithES;
   }
 
   ngAfterViewInit() {
@@ -274,19 +277,23 @@ export class MappingUiComponent implements OnChanges {
     }
     if (changes.sampleDocSrcProps){
       this.renderRows();
-       } 
+    } 
+    if (changes.entityNested && changes.entityNested.currentValue){
+      // Get props from target entity for passing to child
+      this.entityProps = 
+        this.entityNested.definitions[this.targetEntity.info.title].properties;
+    } 
   }
 
-  /**
-   * Handle property selection from source menu
-   * @param entityPropName Entity property name of selection
-   * @param srcPropName Source property name of selection
-   */
-  handleSelection(entityPropName, srcPropName): void {
-    this.conns[entityPropName] = srcPropName;
+  handleSelection(name, expr): void {
+    this.conns[name] = expr;
     if (!_.isEqual(this.conns, this.connsOrig)) {
       this.onSaveMap();
     }
+  }
+
+  onHandleSelection(event): void {
+    this.handleSelection(event.name, event.expr);
   }
 
   /**

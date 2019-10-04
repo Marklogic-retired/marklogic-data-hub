@@ -60,6 +60,15 @@ export class EntitiesService {
     }));
   }
 
+  getEntityNested(entityName: string) {
+    return this.http
+      .get(this.url(`/entities/${entityName}?extendSubEntities=true`))
+      .pipe(map((res: Response) => { 
+        return res.json(); 
+      }
+    ));
+  }
+
   // getEntity(entityName: string) {
   //   return this.get(this.url(`/entities/${entityName}`));
   // }

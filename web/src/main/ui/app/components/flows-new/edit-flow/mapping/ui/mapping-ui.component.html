@@ -66,7 +66,7 @@
    <br>
     </div>
     <p class="target-entity-title" ng-class="title-entity-model">{{ targetEntity?.info.title }} </p>
-    <!-- <span class="btn-icons">
+    <span class="btn-icons">
         <button id="Test-btn" mat-raised-button color="primary">
             Test
           </button>
@@ -75,9 +75,19 @@
           </button>
           &nbsp;<mat-icon id="lookup-icon"><i class="fa fa-book fa-sm"></i></mat-icon>
       <mat-icon id="filter-icon"><i class="fa fa-columns"></i></mat-icon>
-    </span> -->
- <br>
- <br>
+    </span>
+
+    <div id="entity-table-container">
+      <app-entity-table-ui
+        [entityProps]="this.entityProps"
+        [showHeader]="true"
+        [nestedLevel]="0"
+        [srcProps]="this.sampleDocSrcProps"
+        [functionLst]="this.functionLst"
+        (handleSelection)="this.onHandleSelection($event)"
+      ></app-entity-table-ui>
+    </div>
+ 
     <mat-table id="source-new-table-entities" 
               [dataSource]="targetEntity?.definition.properties" 
               class="Entity-props" 
