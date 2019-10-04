@@ -6,7 +6,7 @@
    "DateTimeFormat2": "1996/07/04-14:25:55",
    "DateTimeFormat3": "04/07/1996 14:25:55",
    "DateTimeFormat4": "04/07/1996-14:25:55",
-   "DateTimeFormat5": "19960704142555",
+   "DateTimeFormat5": "19960704T142555",
    "RequiredDate1": "08/01/1996",
    "RequiredDate2": "08-01-1996",
    "RequiredDate3": "01.08.1996",
