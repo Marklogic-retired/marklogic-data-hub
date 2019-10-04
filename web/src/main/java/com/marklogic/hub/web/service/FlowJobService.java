@@ -75,7 +75,7 @@ public class FlowJobService {
      * Get all the jobs for a list of flows
      * @param flows a list of flows
      * @param parentSpan parent span
-     * @return a map (k,v) => (flowname, flowjobs)
+     * @return a map (k,v) as (flowname, flowjobs)
      */
     public Map<String, FlowJobs> getFlowJobs(List<Flow> flows, Span parentSpan) {
         Span span = JaegerConfig.buildSpanFromMethod(new Object() {}, parentSpan)
