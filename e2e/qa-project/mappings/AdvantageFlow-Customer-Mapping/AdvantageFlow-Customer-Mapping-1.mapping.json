@@ -1,0 +1,14 @@
+{
+  "lang" : "zxx",
+  "name" : "AdvantageFlow-Customer-Mapping",
+  "description" : "Default description",
+  "version" : 1,
+  "targetEntityType" : "http://example.org/Customer-0.0.1/Customer",
+  "sourceContext" : "/",
+  "sourceURI" : "/C/dev/fork/marklogic-data-hub/web/e2e/qa-project/input/advantage/cust154.json",
+  "properties" : {
+    "id" : {
+      "sourcedFrom" : "customerID"
+    }
+  }
+}

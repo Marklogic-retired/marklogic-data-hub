@@ -3,6 +3,8 @@ import { Checkbox, Icon } from 'antd';
 import { SearchContext } from '../../util/search-context';
 import styles from './facet.module.scss';
 import { dateConverter } from '../../util/date-conversion';
+import { stringConverter } from '../../util/string-conversion';
+
 
 var moment = require('moment');
 
@@ -38,36 +40,38 @@ const Facet = (props) => {
     limit : props.facetValues.length;
 
   const values = props.facetValues.slice(0, numToShow).map((f, i) =>
-    <div key={i}>
+    <div key={i} data-cy={stringConverter(props.name) + "-facet-item"}>
       <div className={styles.checkContainer}>
         <Checkbox 
           value={f.value}
           onChange={(e) => handleClick(e)}
           checked={checked.indexOf(f.value) > -1}
+          data-cy={stringConverter(props.name) + "-facet-item-checkbox"}
         >
-          <div title={f.value} className={styles.value}>{moment(f.value).isValid() ? dateConverter(f.value) : f.value}</div>
+          <div title={f.value} className={styles.value} data-cy={stringConverter(props.name) + "-facet-item-value"}>{moment(f.value).isValid() ? dateConverter(f.value) : f.value}</div>
         </Checkbox>
       </div>
-      <div className={styles.count}>{f.count}</div>
+      <div className={styles.count} data-cy={stringConverter(props.name) + "-facet-item-count"}>{f.count}</div>
     </div>
   );
 
   return (
-    <div className={styles.facetContainer}>
+    <div className={styles.facetContainer} data-cy="facet-block">
       <div className={styles.header}>
-        <div className={styles.name}>{props.name}</div>
+        <div className={styles.name} data-cy={stringConverter(props.name) + "-facet"}>{props.name}</div>
         <div className={styles.summary}>
-          <div className={styles.selected}>{checked.length} selected</div>
+          <div className={styles.selected} data-cy={stringConverter(props.name) + "-selected-count"}>{checked.length} selected</div>
           <div 
             className={(checked.length > 0 ? styles.clearActive : styles.clearInactive)} 
             onClick={() => handleClear()}
+            data-cy={stringConverter(props.name) + "-clear"}
           >Clear</div>
           <div className={styles.toggle} onClick={() => toggleShow(!show)}>
             <Icon style={{fontSize: '12px'}} type={(show) ? 'up' : 'down'} />
           </div>
         </div>
       </div>
-      <div style={{display: (show) ? 'block' : 'none'}}>
+      <div style={{display: (show) ? 'block' : 'none'}} >
         {values}
         <div 
           className={styles.more}

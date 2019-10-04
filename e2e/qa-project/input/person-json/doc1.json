@@ -1,0 +1,21 @@
+{
+  "id": 0,
+  "fname": "Bill",
+  "lname": "Hopkins",
+  "description": "This is Bill Hopkins",
+  "age": 35,
+  "gender": "male",
+  "eyeColor": "brown",
+  "company": "MITROC",
+  "email": "dorthyblackburn@mitroc.com",
+  "phone": "+1 (988) 597-3702",
+  "street": "577 Ditmas Avenue",
+  "city": "Vaughn",
+  "state": "Utah",
+  "zip": "76336",
+  "isActive": false,
+  "balance": "$2,511.70",
+  "registered": "2014-10-29T06:15:24 +07:00",
+  "favoriteFruit": "banana",
+  "synonym": "game"
+}

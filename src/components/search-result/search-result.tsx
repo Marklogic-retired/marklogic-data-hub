@@ -44,18 +44,17 @@ const SearchResult: React.FC<Props> = (props) => {
         
     return (
         <div>
-            <div className={styles.title}>
-                <span className={styles.entityName}>{itemEntityName}</span>
+            <div className={styles.title} >
+                <span className={styles.entityName} data-cy='entity-name'>{itemEntityName}</span>
                 {entityDef.primaryKey && <span className={styles.primaryKey}>{entityDef.primaryKey}:</span>}
                 <Link to={{
                     pathname: `/detail/${props.item.uri.startsWith('/') && props.item.uri.substring(1)}`,
                     state: { uri: props.item.uri, database: "data-hub-FINAL" }
-                }}
-                >
+                }} data-cy='primary-key'>
                     {entityDef.primaryKey ? primaryKeyValue : props.item.uri}
                 </Link>
             </div>
-            <div className={styles.snippet}>
+            <div className={styles.snippet} data-cy='snipped'>
                 {props.item.matches.length === 1
                     ?
                     props.item.matches[0]['match-text'][0].length > 1 && props.item.matches[0]['match-text'][0]
@@ -66,15 +65,15 @@ const SearchResult: React.FC<Props> = (props) => {
             <div className={styles.metadata}>
                 <div className={styles.metaItem}>
                     <span className={styles.metaLabel}>Created On</span>
-                    <span className={styles.metaValue}>{dateConverter(createdOnVal)}</span>
+                    <span className={styles.metaValue} data-cy='created-on'>{dateConverter(createdOnVal)}</span>
                 </div>
                 <div className={styles.metaItem}>
                     <span className={styles.metaLabel}>Sources</span>
-                    <span className={styles.metaValue}>{sourcesVal}</span>
+                    <span className={styles.metaValue} data-cy='sources'>{sourcesVal}</span>
                 </div>
                 <div className={styles.metaItem}>
                     <span className={styles.metaLabel}>File Type</span>
-                    <span className={styles.format}>{fileTypeVal}</span>
+                    <span className={styles.format} data-cy='file-type'>{fileTypeVal}</span>
                 </div>
             </div>
         </div>

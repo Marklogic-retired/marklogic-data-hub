@@ -1,0 +1,20 @@
+<root>
+<age>22</age>
+<balance>$3,707.20</balance>
+<city>Vicksburg</city>
+<company>ETERNIS</company>
+<email>caseymurphy@eternis.com</email>
+<eyeColor>brown</eyeColor>
+<favoriteFruit>banana</favoriteFruit>
+<fname>Palma</fname>
+<gender>female</gender>
+<id>3</id>
+<isActive>false</isActive>
+<lname>Murphy</lname>
+<phone>+1 (819) 531-2294</phone>
+<registered>2016-05-21T03:33:06 +07:00</registered>
+<state>Mississippi</state>
+<street>683 Reed Street</street>
+<synonym>sport</synonym>
+<zip>86288</zip>
+</root>

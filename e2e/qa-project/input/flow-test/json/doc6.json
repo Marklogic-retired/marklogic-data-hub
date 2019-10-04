@@ -1,0 +1,20 @@
+{
+  "id": 6,
+  "fname": "Hurst",
+  "lname": "Lara",
+  "age": 38,
+  "gender": "male",
+  "eyeColor": "blue",
+  "company": "PLAYCE",
+  "email": "hurstlara@playce.com",
+  "phone": "+1 (830) 497-3371",
+  "street": "463 Fair Street",
+  "city": "Clay",
+  "state": "Texas",
+  "zip": "12425",
+  "isActive": false,
+  "balance": "$3,116.77",
+  "registered": "2017-05-10T11:54:14 +07:00",
+  "favoriteFruit": "banana",
+  "synonym": "race"
+}

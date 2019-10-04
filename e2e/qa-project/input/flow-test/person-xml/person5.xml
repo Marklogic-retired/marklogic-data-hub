@@ -1,0 +1,20 @@
+<root>
+<age>31</age>
+<balance>$1,817.14</balance>
+<city>Richville</city>
+<company>BISBA</company>
+<email>garrisonstevenson@bisba.com</email>
+<eyeColor>blue</eyeColor>
+<favoriteFruit>strawberry</favoriteFruit>
+<fname>Garrison</fname>
+<gender>male</gender>
+<id>4</id>
+<isActive>true</isActive>
+<lname>Stevenson</lname>
+<phone>+1 (857) 482-3202</phone>
+<registered>2018-06-28T06:18:31 +07:00</registered>
+<state>Nevada</state>
+<street>677 Estate Road</street>
+<synonym>test</synonym>
+<zip>32830</zip>
+</root>

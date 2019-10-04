@@ -1,0 +1,77 @@
+{
+  "name" : "AdvantageFlow",
+  "description" : "",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stopOnError" : false,
+  "options" : { },
+  "version" : 0,
+  "steps" : {
+    "1" : {
+      "name" : "Customer-Ingest",
+      "description" : "",
+      "options" : {
+        "additionalCollections" : [ ],
+        "headers" : {
+          "sources" : [ {
+            "name" : "AdvantageFlow"
+          } ],
+          "createdOn" : "currentDateTime",
+          "createdBy" : "currentUser"
+        },
+        "sourceQuery" : "cts.collectionQuery([\"\"])",
+        "collections" : [ "Customer-Ingest" ],
+        "permissions" : "rest-reader,read,rest-writer,update",
+        "outputFormat" : "json",
+        "targetDatabase" : "data-hub-STAGING"
+      },
+      "customHook" : {
+        "module" : "",
+        "parameters" : { },
+        "user" : "",
+        "runBefore" : false
+      },
+      "retryLimit" : 0,
+      "batchSize" : 100,
+      "threadCount" : 4,
+      "stepDefinitionName" : "default-ingestion",
+      "stepDefinitionType" : "INGESTION",
+      "fileLocations" : {
+        "inputFilePath" : "C:\\dev\\fork\\marklogic-data-hub\\web\\e2e\\qa-project\\input\\advantage",
+        "inputFileType" : "json",
+        "outputURIReplacement" : "",
+        "separator" : ""
+      }
+    },
+    "2" : {
+      "name" : "Customer-Mapping",
+      "description" : "",
+      "options" : {
+        "additionalCollections" : [ ],
+        "sourceQuery" : "cts.collectionQuery([\"Customer-Ingest\"])",
+        "mapping" : {
+          "name" : "AdvantageFlow-Customer-Mapping",
+          "version" : 2
+        },
+        "targetEntity" : "Customer",
+        "sourceDatabase" : "data-hub-STAGING",
+        "collections" : [ "Customer-Mapping", "Customer" ],
+        "validateEntity" : false,
+        "sourceCollection" : "Customer-Ingest",
+        "outputFormat" : "json",
+        "targetDatabase" : "data-hub-FINAL"
+      },
+      "customHook" : {
+        "module" : "",
+        "parameters" : { },
+        "user" : "",
+        "runBefore" : false
+      },
+      "retryLimit" : null,
+      "batchSize" : 100,
+      "threadCount" : 4,
+      "stepDefinitionName" : "default-mapping",
+      "stepDefinitionType" : "MAPPING"
+    }
+  }
+}

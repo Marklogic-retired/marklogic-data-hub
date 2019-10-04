@@ -29,18 +29,18 @@ const Header = (props) => {
         <>
             <div id='header'>
                 <div id='title' className={styles.title}>
-                    <Text>{title} </Text>
+                    <Text data-cy="document-title">{title} </Text>
                     <Icon style={{ fontSize: '12px' }} type="right" />
                     <Text type="secondary"> id: </Text>
-                    <Text>{id}</Text>
+                    <Text data-cy="document-id">{id}</Text>
                 </div>
                 <div id='summary' className={styles.summary}>
                     <Text type="secondary">Created: </Text>
-                    <Text>{timestamp}</Text>
+                    <Text data-cy="document-timestamp">{timestamp}</Text>
                     <Text type="secondary">&nbsp; &nbsp; Sources: </Text>
-                    <Text>{sources}</Text>
+                    <Text data-cy="document-source">{sources}</Text>
                     <Text type="secondary">&nbsp; &nbsp; File Type: </Text>
-                    <Text>{fileType}</Text>
+                    <Text data-cy="document-filetype">{fileType}</Text>
                 </div>
             </div>
         </>

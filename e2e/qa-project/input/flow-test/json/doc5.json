@@ -1,0 +1,20 @@
+{
+  "id": 4,
+  "fname": "Garrison",
+  "lname": "Stevenson",
+  "age": 31,
+  "gender": "male",
+  "eyeColor": "blue",
+  "company": "BISBA",
+  "email": "garrisonstevenson@bisba.com",
+  "phone": "+1 (857) 482-3202",
+  "street": "677 Estate Road",
+  "city": "Richville",
+  "state": "Nevada",
+  "zip": "32830",
+  "isActive": true,
+  "balance": "$1,817.14",
+  "registered": "2018-06-28T06:18:31 +07:00",
+  "favoriteFruit": "strawberry",
+  "synonym": "test"
+}
