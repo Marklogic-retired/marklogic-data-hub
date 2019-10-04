@@ -442,6 +442,9 @@ p.target-entity-title {
   min-width: 50% !important;
 
 > #source-new-table-entities {
+  /* TURN OFF OLD TABLE */
+  display: none;
+  /* TURN OFF OLD TABLE */
   width: auto !important;
   overflow: auto;
   border: 1px solid rgba(0, 0, 0, 0.961); 
@@ -729,6 +732,6 @@ left: 71%;
 }
 
 
-
-
-
+#entity-table-container {
+  width: 800px;
+}
