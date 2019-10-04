@@ -1,5 +1,30 @@
 .sidebarContainer {
 	background-color: rgb(245, 245, 245);
-	width: 300px;
-	padding: 24px 0 0 22px;
+  width: 100%;
+  height: 100%;
+  padding: 5px 0 0 5px;
+}
+
+.title {
+  font-size: 15px;
+  color: #999;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.facet {
+  font-weight: bold;
+}
+.test {
+  display: flex;
+}
+
+.facetContainer {
+  background-color: rgb(245, 245, 245);
+}
+.clear {
+  padding: 0 5px;
+}
+.clear:hover {
+  text-decoration: underline;
 }

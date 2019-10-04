@@ -1,57 +1,39 @@
 .facetContainer {
-	width: 252px;
-	padding: 0 0 5px 0;
+  margin-bottom: 16px;
 
 	.header {
-		width: 252px;
-		padding: 0 0 3px 0;
+    display: flex;
+    padding: 0 0 3px 0;
+    justify-content: space-between;
 	}
 
 	.name {
-		display: inline-block;
-		width: 115px;
-		position: relative;
-		top: 5px;
 		font-size: 15px;
 		font-weight: bold;
-		padding: 5px 0 0 5px;
-		white-space: nowrap;
-    	overflow: hidden;
-    	text-overflow: ellipsis;
 	}
 
 	.summary {
-		display: inline-block;
-		width: 135px;
-		text-align: right;
-		padding: 0;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 4px;
 		font-size: 12px;
 
 		.selected {
-			display: inline-block;
-			width: 70px;
-			padding: 0 5px 0 0;
-			color: #666;
+      color: #666;
+      margin: 0 3px;
 		}
 
-		.clearInactive {
-			display: inline-block;
-			width: 40px;
-			text-align: right;
-			padding: 0 6px 0 0;
-			color: #ccc;
+		.clearInactive, .clearActive {
+      color: #ccc;
+      margin: 0 5px;
 		}
 
 		.clearActive {
-			display: inline-block;
-			width: 40px;
-			text-align: right;
-			padding: 0 6px 0 0;
 			color: #666;
-			text-decoration: underline;
+		  text-decoration: underline;
 			cursor: pointer;
-		}
-
+    }
+    
 		.toggle {
 			display: inline-block;
 			position: relative;
@@ -63,25 +45,19 @@
 	}
 
 	.checkContainer {
-		display: inline-block;
-		width: 200px;
-		padding: 0 0 0 5px;
+    display: flex;
+    justify-content: space-between;
 	}
 
 	.value {
-		display: inline-block;
-		position: relative;
-		top: 5px;
-		width: 162px;
+    width: 180px;
+    padding: 1px 0;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
 
 	.count {
-		display: inline-block;
-		width: 50px;
-		text-align: right;
 		padding: 0 5px 0 0;
 		color: #999;
 	}
