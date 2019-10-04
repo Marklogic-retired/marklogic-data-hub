@@ -1,0 +1,1804 @@
+@prefix demor: <http://demo/resource#>.
+@prefix demov: <http://demo/verb#>.
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#>.
+ 
+
+##company 1
+demor:COMPANY001 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Industrial Goods";
+        demov:sales 12000000;
+	demov:employees	10500;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "Director of IT";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Mary Hodges";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "USA";
+        vcard:locality "San Jose";
+	vcard:region "Texas";
+        vcard:postal-code "33333";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 2
+demor:COMPANY002 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Business/Consumer Service";
+        demov:sales 100000000;
+	demov:employees	12;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "President";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Mary Hodges";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Japan";
+        vcard:locality "San Jose";
+	vcard:region "New York";
+        vcard:postal-code "77777";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 3
+demor:COMPANY003 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Healthcare/Life Sciences";
+        demov:sales 1000000000;
+	demov:employees	12;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "Director of IT";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Germany";
+        vcard:locality "San Jose";
+	vcard:region "Arizona";
+        vcard:postal-code "77777";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 4
+demor:COMPANY004 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Healthcare/Life Sciences";
+        demov:sales 8;
+	demov:employees	9450;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "President";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Mary Hodges";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Japan";
+        vcard:locality "Menlo Park";
+	vcard:region "Arizona";
+        vcard:postal-code "44444";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 5
+demor:COMPANY005 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Business/Consumer Service";
+        demov:sales 347852766;
+	demov:employees	12;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CTO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Germany";
+        vcard:locality "Menlo Park";
+	vcard:region "Texas";
+        vcard:postal-code "33333";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 6
+demor:COMPANY006 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Other";
+        demov:sales 2300450;
+	demov:employees	10500;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CFO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Mary Hodges";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "China";
+        vcard:locality "San Jose";
+	vcard:region "North Dakota";
+        vcard:postal-code "66666";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 7
+demor:COMPANY007 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Business/Consumer Service";
+        demov:sales 8;
+	demov:employees	22647;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CEO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Mary Hodges";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "China";
+        vcard:locality "Menlo Park";
+	vcard:region "Nevada";
+        vcard:postal-code "99999";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 8
+demor:COMPANY008 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Business/Consumer Service";
+        demov:sales 347852766;
+	demov:employees	256;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CFO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Mary Hodges";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "India";
+        vcard:locality "Redwood City";
+	vcard:region "North Carolina";
+        vcard:postal-code "44444";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 9
+demor:COMPANY009 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Industrial Goods";
+        demov:sales 300000000;
+	demov:employees	10500;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "Director of IT";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Germany";
+        vcard:locality "Atherton";
+	vcard:region "Texas";
+        vcard:postal-code "66666";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 10
+demor:COMPANY010 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Business/Consumer Service";
+        demov:sales 15000000;
+	demov:employees	12;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CTO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Joe Brown";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "China";
+        vcard:locality "Menlo Park";
+	vcard:region "New York";
+        vcard:postal-code "88888";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 11
+demor:COMPANY011 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Financial Services";
+        demov:sales 1000000000;
+	demov:employees	10500;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CFO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "UK";
+        vcard:locality "San Jose";
+	vcard:region "Arizona";
+        vcard:postal-code "88888";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 12
+demor:COMPANY012 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Other";
+        demov:sales 347852766;
+	demov:employees	256;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CTO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "France";
+        vcard:locality "Atherton";
+	vcard:region "North Carolina";
+        vcard:postal-code "55555";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 13
+demor:COMPANY013 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Healthcare/Life Sciences";
+        demov:sales 1000000000;
+	demov:employees	12;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CEO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Japan";
+        vcard:locality "Redwood City";
+	vcard:region "North Carolina";
+        vcard:postal-code "11111";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 14
+demor:COMPANY014 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Retail/Wholesale";
+        demov:sales 347852766;
+	demov:employees	22647;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CFO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "France";
+        vcard:locality "Menlo Park";
+	vcard:region "North Dakota";
+        vcard:postal-code "11111";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 15
+demor:COMPANY015 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Business/Consumer Service";
+        demov:sales 12000000;
+	demov:employees	9450;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "Director of IT";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Italy";
+        vcard:locality "Menlo Park";
+	vcard:region "North Dakota";
+        vcard:postal-code "66666";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 16
+demor:COMPANY016 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Retail/Wholesale";
+        demov:sales 15000000;
+	demov:employees	12;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "President";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Italy";
+        vcard:locality "San Jose";
+	vcard:region "Texas";
+        vcard:postal-code "77777";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 17
+demor:COMPANY017 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Healthcare/Life Sciences";
+        demov:sales 100000000;
+	demov:employees	256;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "President";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Mary Hodges";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "China";
+        vcard:locality "Redwood City";
+	vcard:region "Texas";
+        vcard:postal-code "11111";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 18
+demor:COMPANY018 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Financial Services";
+        demov:sales 1000000000;
+	demov:employees	22647;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "Director of IT";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "India";
+        vcard:locality "Redwood City";
+	vcard:region "North Dakota";
+        vcard:postal-code "44444";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 19
+demor:COMPANY019 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Healthcare/Life Sciences";
+        demov:sales 12000000;
+	demov:employees	256;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CTO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "UK";
+        vcard:locality "San Jose";
+	vcard:region "Arizona";
+        vcard:postal-code "33333";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 20
+demor:COMPANY020 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Retail/Wholesale";
+        demov:sales 10000000;
+	demov:employees	12;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CFO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Japan";
+        vcard:locality "Atherton";
+	vcard:region "Arizona";
+        vcard:postal-code "33333";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 21
+demor:COMPANY021 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Retail/Wholesale";
+        demov:sales 15000000;
+	demov:employees	9450;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "Director of IT";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Joe Brown";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "USA";
+        vcard:locality "Redwood City";
+	vcard:region "New York";
+        vcard:postal-code "22222";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 22
+demor:COMPANY022 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Business/Consumer Service";
+        demov:sales 100000000;
+	demov:employees	256;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CEO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Joe Brown";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "France";
+        vcard:locality "Atherton";
+	vcard:region "North Dakota";
+        vcard:postal-code "55555";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 23
+demor:COMPANY023 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Healthcare/Life Sciences";
+        demov:sales 15000000;
+	demov:employees	9450;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CTO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Mary Hodges";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "UK";
+        vcard:locality "Menlo Park";
+	vcard:region "Arizona";
+        vcard:postal-code "66666";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 24
+demor:COMPANY024 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Financial Services";
+        demov:sales 12000000;
+	demov:employees	12;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CFO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Joe Brown";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "USA";
+        vcard:locality "Menlo Park";
+	vcard:region "North Dakota";
+        vcard:postal-code "99999";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 25
+demor:COMPANY025 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Industrial Goods";
+        demov:sales 8;
+	demov:employees	22647;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CEO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Joe Brown";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "China";
+        vcard:locality "San Jose";
+	vcard:region "Arizona";
+        vcard:postal-code "77777";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 26
+demor:COMPANY026 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Industrial Goods";
+        demov:sales 10000000;
+	demov:employees	22647;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CTO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "France";
+        vcard:locality "San Jose";
+	vcard:region "North Carolina";
+        vcard:postal-code "22222";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 27
+demor:COMPANY027 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Retail/Wholesale";
+        demov:sales 15000000;
+	demov:employees	22647;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CFO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Joe Brown";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "UK";
+        vcard:locality "Atherton";
+	vcard:region "North Carolina";
+        vcard:postal-code "66666";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 28
+demor:COMPANY028 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Retail/Wholesale";
+        demov:sales 2300450;
+	demov:employees	256;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "President";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "India";
+        vcard:locality "Atherton";
+	vcard:region "Arizona";
+        vcard:postal-code "33333";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 29
+demor:COMPANY029 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Healthcare/Life Sciences";
+        demov:sales 347852766;
+	demov:employees	12;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "President";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Joe Brown";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Japan";
+        vcard:locality "Atherton";
+	vcard:region "Nevada";
+        vcard:postal-code "33333";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 30
+demor:COMPANY030 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Industrial Goods";
+        demov:sales 15000000;
+	demov:employees	12;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CTO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "USA";
+        vcard:locality "Menlo Park";
+	vcard:region "California";
+        vcard:postal-code "77777";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 31
+demor:COMPANY031 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Business/Consumer Service";
+        demov:sales 100000000;
+	demov:employees	256;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CTO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Japan";
+        vcard:locality "Redwood City";
+	vcard:region "Arizona";
+        vcard:postal-code "99999";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 32
+demor:COMPANY032 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Business/Consumer Service";
+        demov:sales 347852766;
+	demov:employees	12;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "Director of IT";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Joe Brown";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "UK";
+        vcard:locality "Menlo Park";
+	vcard:region "California";
+        vcard:postal-code "77777";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 33
+demor:COMPANY033 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Healthcare/Life Sciences";
+        demov:sales 8;
+	demov:employees	9450;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CFO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Joe Brown";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Japan";
+        vcard:locality "Redwood City";
+	vcard:region "Arizona";
+        vcard:postal-code "33333";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 34
+demor:COMPANY034 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Financial Services";
+        demov:sales 15000000;
+	demov:employees	10500;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "Director of IT";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Mary Hodges";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Japan";
+        vcard:locality "Redwood City";
+	vcard:region "Nevada";
+        vcard:postal-code "11111";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 35
+demor:COMPANY035 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Financial Services";
+        demov:sales 10000000;
+	demov:employees	256;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CEO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Japan";
+        vcard:locality "Menlo Park";
+	vcard:region "Nevada";
+        vcard:postal-code "66666";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 36
+demor:COMPANY036 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Business/Consumer Service";
+        demov:sales 300000000;
+	demov:employees	9450;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "President";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Mary Hodges";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "China";
+        vcard:locality "San Jose";
+	vcard:region "Arizona";
+        vcard:postal-code "88888";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 37
+demor:COMPANY037 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Retail/Wholesale";
+        demov:sales 10000000;
+	demov:employees	10500;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CEO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Joe Brown";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "India";
+        vcard:locality "Atherton";
+	vcard:region "Arizona";
+        vcard:postal-code "99999";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 38
+demor:COMPANY038 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Other";
+        demov:sales 300000000;
+	demov:employees	22647;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CEO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Mary Hodges";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Italy";
+        vcard:locality "Atherton";
+	vcard:region "Texas";
+        vcard:postal-code "44444";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 39
+demor:COMPANY039 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Business/Consumer Service";
+        demov:sales 100000000;
+	demov:employees	9450;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "President";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Joe Brown";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "India";
+        vcard:locality "Redwood City";
+	vcard:region "Nevada";
+        vcard:postal-code "55555";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 40
+demor:COMPANY040 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Healthcare/Life Sciences";
+        demov:sales 15000000;
+	demov:employees	22647;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CTO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Mary Hodges";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "China";
+        vcard:locality "Menlo Park";
+	vcard:region "California";
+        vcard:postal-code "11111";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 41
+demor:COMPANY041 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Healthcare/Life Sciences";
+        demov:sales 300000000;
+	demov:employees	22647;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CFO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "France";
+        vcard:locality "Menlo Park";
+	vcard:region "New York";
+        vcard:postal-code "99999";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 42
+demor:COMPANY042 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Financial Services";
+        demov:sales 10000000;
+	demov:employees	9450;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CTO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Mary Hodges";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "USA";
+        vcard:locality "Atherton";
+	vcard:region "Nevada";
+        vcard:postal-code "11111";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 43
+demor:COMPANY043 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Healthcare/Life Sciences";
+        demov:sales 1000000000;
+	demov:employees	22647;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CEO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Italy";
+        vcard:locality "San Jose";
+	vcard:region "California";
+        vcard:postal-code "11111";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 44
+demor:COMPANY044 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Financial Services";
+        demov:sales 10000000;
+	demov:employees	256;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CFO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Mary Hodges";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "USA";
+        vcard:locality "Menlo Park";
+	vcard:region "North Dakota";
+        vcard:postal-code "11111";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 45
+demor:COMPANY045 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Healthcare/Life Sciences";
+        demov:sales 15000000;
+	demov:employees	9450;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CFO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Italy";
+        vcard:locality "Redwood City";
+	vcard:region "Arizona";
+        vcard:postal-code "88888";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 46
+demor:COMPANY046 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Financial Services";
+        demov:sales 300000000;
+	demov:employees	12;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CEO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Italy";
+        vcard:locality "Atherton";
+	vcard:region "California";
+        vcard:postal-code "77777";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 47
+demor:COMPANY047 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Retail/Wholesale";
+        demov:sales 100000000;
+	demov:employees	256;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CFO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Italy";
+        vcard:locality "Redwood City";
+	vcard:region "New York";
+        vcard:postal-code "66666";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 48
+demor:COMPANY048 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Industrial Goods";
+        demov:sales 100000000;
+	demov:employees	12;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CEO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Germany";
+        vcard:locality "San Jose";
+	vcard:region "Arizona";
+        vcard:postal-code "66666";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 49
+demor:COMPANY049 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Other";
+        demov:sales 347852766;
+	demov:employees	10500;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CFO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Joe Brown";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "UK";
+        vcard:locality "Redwood City";
+	vcard:region "North Carolina";
+        vcard:postal-code "66666";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 50
+demor:COMPANY050 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Retail/Wholesale";
+        demov:sales 347852766;
+	demov:employees	10500;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CTO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "India";
+        vcard:locality "San Jose";
+	vcard:region "Texas";
+        vcard:postal-code "22222";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 51
+demor:COMPANY051 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Business/Consumer Service";
+        demov:sales 100000000;
+	demov:employees	9450;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "Director of IT";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "UK";
+        vcard:locality "Menlo Park";
+	vcard:region "Texas";
+        vcard:postal-code "44444";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 52
+demor:COMPANY052 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Business/Consumer Service";
+        demov:sales 12000000;
+	demov:employees	22647;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CEO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Germany";
+        vcard:locality "Menlo Park";
+	vcard:region "Arizona";
+        vcard:postal-code "99999";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 53
+demor:COMPANY053 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Financial Services";
+        demov:sales 347852766;
+	demov:employees	9450;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CEO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Joe Brown";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "USA";
+        vcard:locality "Redwood City";
+	vcard:region "North Dakota";
+        vcard:postal-code "44444";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 54
+demor:COMPANY054 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Industrial Goods";
+        demov:sales 10000000;
+	demov:employees	9450;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CEO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "India";
+        vcard:locality "Redwood City";
+	vcard:region "North Dakota";
+        vcard:postal-code "55555";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 55
+demor:COMPANY055 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Industrial Goods";
+        demov:sales 15000000;
+	demov:employees	10500;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CEO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Joe Brown";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "France";
+        vcard:locality "Menlo Park";
+	vcard:region "North Dakota";
+        vcard:postal-code "66666";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 56
+demor:COMPANY056 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Other";
+        demov:sales 347852766;
+	demov:employees	256;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "President";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "USA";
+        vcard:locality "Menlo Park";
+	vcard:region "New York";
+        vcard:postal-code "22222";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 57
+demor:COMPANY057 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Business/Consumer Service";
+        demov:sales 10000000;
+	demov:employees	9450;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "Director of IT";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Mary Hodges";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Japan";
+        vcard:locality "San Jose";
+	vcard:region "Texas";
+        vcard:postal-code "22222";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 58
+demor:COMPANY058 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Financial Services";
+        demov:sales 1000000000;
+	demov:employees	22647;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CEO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Germany";
+        vcard:locality "Redwood City";
+	vcard:region "New York";
+        vcard:postal-code "88888";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 59
+demor:COMPANY059 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Healthcare/Life Sciences";
+        demov:sales 15000000;
+	demov:employees	12;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CEO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Japan";
+        vcard:locality "San Jose";
+	vcard:region "California";
+        vcard:postal-code "11111";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 60
+demor:COMPANY060 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Industrial Goods";
+        demov:sales 100000000;
+	demov:employees	9450;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CEO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Mary Hodges";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Italy";
+        vcard:locality "Redwood City";
+	vcard:region "New York";
+        vcard:postal-code "66666";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 61
+demor:COMPANY061 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Other";
+        demov:sales 10000000;
+	demov:employees	9450;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CFO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Mary Hodges";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "India";
+        vcard:locality "Redwood City";
+	vcard:region "Texas";
+        vcard:postal-code "55555";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 62
+demor:COMPANY062 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Other";
+        demov:sales 15000000;
+	demov:employees	10500;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CEO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Joe Brown";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "India";
+        vcard:locality "Redwood City";
+	vcard:region "Nevada";
+        vcard:postal-code "22222";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 63
+demor:COMPANY063 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Healthcare/Life Sciences";
+        demov:sales 100000000;
+	demov:employees	12;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "President";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Joe Brown";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "France";
+        vcard:locality "Menlo Park";
+	vcard:region "New York";
+        vcard:postal-code "44444";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 64
+demor:COMPANY064 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Industrial Goods";
+        demov:sales 12000000;
+	demov:employees	9450;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "Director of IT";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Mary Hodges";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "UK";
+        vcard:locality "San Jose";
+	vcard:region "North Dakota";
+        vcard:postal-code "22222";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 65
+demor:COMPANY065 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Other";
+        demov:sales 2300450;
+	demov:employees	9450;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CFO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Mary Hodges";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "UK";
+        vcard:locality "Atherton";
+	vcard:region "North Carolina";
+        vcard:postal-code "66666";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 66
+demor:COMPANY066 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Other";
+        demov:sales 10000000;
+	demov:employees	9450;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "Director of IT";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "India";
+        vcard:locality "Atherton";
+	vcard:region "Nevada";
+        vcard:postal-code "33333";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 67
+demor:COMPANY067 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Financial Services";
+        demov:sales 8;
+	demov:employees	22647;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "Director of IT";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Mary Hodges";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "China";
+        vcard:locality "Redwood City";
+	vcard:region "North Dakota";
+        vcard:postal-code "88888";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 68
+demor:COMPANY068 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Other";
+        demov:sales 300000000;
+	demov:employees	22647;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CFO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "India";
+        vcard:locality "Atherton";
+	vcard:region "Texas";
+        vcard:postal-code "77777";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 69
+demor:COMPANY069 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Industrial Goods";
+        demov:sales 12000000;
+	demov:employees	256;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "President";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Joe Brown";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Germany";
+        vcard:locality "Redwood City";
+	vcard:region "Arizona";
+        vcard:postal-code "55555";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 70
+demor:COMPANY070 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Other";
+        demov:sales 2300450;
+	demov:employees	22647;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CTO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Mary Hodges";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "China";
+        vcard:locality "Menlo Park";
+	vcard:region "New York";
+        vcard:postal-code "11111";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 71
+demor:COMPANY071 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Industrial Goods";
+        demov:sales 8;
+	demov:employees	22647;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CFO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Joe Brown";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Japan";
+        vcard:locality "Redwood City";
+	vcard:region "North Dakota";
+        vcard:postal-code "11111";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 72
+demor:COMPANY072 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Business/Consumer Service";
+        demov:sales 1000000000;
+	demov:employees	256;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "President";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Joe Brown";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Japan";
+        vcard:locality "Menlo Park";
+	vcard:region "California";
+        vcard:postal-code "11111";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 73
+demor:COMPANY073 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Healthcare/Life Sciences";
+        demov:sales 1000000000;
+	demov:employees	22647;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "President";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Joe Brown";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Japan";
+        vcard:locality "Redwood City";
+	vcard:region "Texas";
+        vcard:postal-code "22222";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 74
+demor:COMPANY074 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Retail/Wholesale";
+        demov:sales 15000000;
+	demov:employees	22647;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CTO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Joe Brown";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "France";
+        vcard:locality "Menlo Park";
+	vcard:region "California";
+        vcard:postal-code "44444";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 75
+demor:COMPANY075 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Financial Services";
+        demov:sales 10000000;
+	demov:employees	12;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "President";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "France";
+        vcard:locality "Menlo Park";
+	vcard:region "Nevada";
+        vcard:postal-code "99999";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 76
+demor:COMPANY076 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Industrial Goods";
+        demov:sales 300000000;
+	demov:employees	256;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CEO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Germany";
+        vcard:locality "Atherton";
+	vcard:region "New York";
+        vcard:postal-code "33333";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 77
+demor:COMPANY077 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Other";
+        demov:sales 12000000;
+	demov:employees	12;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "President";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Mary Hodges";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Japan";
+        vcard:locality "Redwood City";
+	vcard:region "Nevada";
+        vcard:postal-code "33333";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 78
+demor:COMPANY078 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Retail/Wholesale";
+        demov:sales 8;
+	demov:employees	9450;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CTO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Mary Hodges";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Germany";
+        vcard:locality "San Jose";
+	vcard:region "Arizona";
+        vcard:postal-code "66666";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 79
+demor:COMPANY079 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Other";
+        demov:sales 1000000000;
+	demov:employees	22647;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "Director of IT";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "USA";
+        vcard:locality "San Jose";
+	vcard:region "Texas";
+        vcard:postal-code "88888";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 80
+demor:COMPANY080 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Financial Services";
+        demov:sales 15000000;
+	demov:employees	256;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "President";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Joe Brown";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "USA";
+        vcard:locality "Redwood City";
+	vcard:region "California";
+        vcard:postal-code "22222";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 81
+demor:COMPANY081 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Financial Services";
+        demov:sales 347852766;
+	demov:employees	256;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "Director of IT";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Joe Brown";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "China";
+        vcard:locality "Menlo Park";
+	vcard:region "Arizona";
+        vcard:postal-code "66666";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 82
+demor:COMPANY082 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Retail/Wholesale";
+        demov:sales 15000000;
+	demov:employees	10500;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CEO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Italy";
+        vcard:locality "San Jose";
+	vcard:region "Texas";
+        vcard:postal-code "66666";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 83
+demor:COMPANY083 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Business/Consumer Service";
+        demov:sales 100000000;
+	demov:employees	9450;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "Director of IT";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Joe Brown";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "UK";
+        vcard:locality "Menlo Park";
+	vcard:region "California";
+        vcard:postal-code "55555";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 84
+demor:COMPANY084 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Business/Consumer Service";
+        demov:sales 100000000;
+	demov:employees	9450;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CEO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Mary Hodges";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "India";
+        vcard:locality "San Jose";
+	vcard:region "California";
+        vcard:postal-code "88888";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 85
+demor:COMPANY085 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Retail/Wholesale";
+        demov:sales 347852766;
+	demov:employees	256;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CTO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Mary Hodges";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Germany";
+        vcard:locality "Atherton";
+	vcard:region "Texas";
+        vcard:postal-code "44444";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 86
+demor:COMPANY086 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Healthcare/Life Sciences";
+        demov:sales 1000000000;
+	demov:employees	22647;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CEO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Joe Brown";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "France";
+        vcard:locality "San Jose";
+	vcard:region "New York";
+        vcard:postal-code "44444";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 87
+demor:COMPANY087 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Healthcare/Life Sciences";
+        demov:sales 10000000;
+	demov:employees	9450;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "Director of IT";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Mary Hodges";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "India";
+        vcard:locality "Atherton";
+	vcard:region "California";
+        vcard:postal-code "33333";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 88
+demor:COMPANY088 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Healthcare/Life Sciences";
+        demov:sales 100000000;
+	demov:employees	22647;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "Director of IT";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Mary Hodges";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "France";
+        vcard:locality "Menlo Park";
+	vcard:region "California";
+        vcard:postal-code "88888";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 89
+demor:COMPANY089 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Healthcare/Life Sciences";
+        demov:sales 100000000;
+	demov:employees	12;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CTO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Joe Brown";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Italy";
+        vcard:locality "Redwood City";
+	vcard:region "New York";
+        vcard:postal-code "33333";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 90
+demor:COMPANY090 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Business/Consumer Service";
+        demov:sales 10000000;
+	demov:employees	10500;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CTO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Mary Hodges";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Italy";
+        vcard:locality "San Jose";
+	vcard:region "Arizona";
+        vcard:postal-code "88888";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 91
+demor:COMPANY091 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Business/Consumer Service";
+        demov:sales 10000000;
+	demov:employees	10500;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CEO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Joe Brown";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Italy";
+        vcard:locality "Menlo Park";
+	vcard:region "North Carolina";
+        vcard:postal-code "11111";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 92
+demor:COMPANY092 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Industrial Goods";
+        demov:sales 100000000;
+	demov:employees	9450;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "President";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Mary Hodges";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "India";
+        vcard:locality "Redwood City";
+	vcard:region "New York";
+        vcard:postal-code "99999";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 93
+demor:COMPANY093 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Retail/Wholesale";
+        demov:sales 12000000;
+	demov:employees	10500;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CEO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "Germany";
+        vcard:locality "Menlo Park";
+	vcard:region "North Carolina";
+        vcard:postal-code "55555";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 94
+demor:COMPANY094 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Financial Services";
+        demov:sales 8;
+	demov:employees	12;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "Director of IT";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Mary Hodges";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "UK";
+        vcard:locality "Menlo Park";
+	vcard:region "California";
+        vcard:postal-code "44444";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 95
+demor:COMPANY095 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Healthcare/Life Sciences";
+        demov:sales 12000000;
+	demov:employees	9450;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CEO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Joe Brown";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "USA";
+        vcard:locality "Menlo Park";
+	vcard:region "Nevada";
+        vcard:postal-code "55555";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 96
+demor:COMPANY096 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Business/Consumer Service";
+        demov:sales 100000000;
+	demov:employees	256;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CFO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "France";
+        vcard:locality "Redwood City";
+	vcard:region "North Dakota";
+        vcard:postal-code "99999";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 97
+demor:COMPANY097 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Industrial Goods";
+        demov:sales 347852766;
+	demov:employees	22647;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CEO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "India";
+        vcard:locality "Redwood City";
+	vcard:region "Nevada";
+        vcard:postal-code "99999";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 98
+demor:COMPANY098 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Other";
+        demov:sales 300000000;
+	demov:employees	9450;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CFO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "USA";
+        vcard:locality "Menlo Park";
+	vcard:region "Arizona";
+        vcard:postal-code "11111";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 99
+demor:COMPANY099 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Business/Consumer Service";
+        demov:sales 300000000;
+	demov:employees	22647;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "CEO";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "Joe Brown";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "USA";
+        vcard:locality "Atherton";
+	vcard:region "Arizona";
+        vcard:postal-code "77777";
+        vcard:street-address "1 Infinite Loop" ].
+
+##company 100
+demor:COMPANY100 a vcard:Organization;
+        demov:listed "true";
+        demov:industry "Retail/Wholesale";
+        demov:sales 2300450;
+	demov:employees	9450;
+        demov:hasExecutive [ a vcard:Individual;
+           vcard:hasTitle "Director of IT";
+           vcard:hasEmail <mailto:tim@apple.com>;
+           vcard:fn "John Smith";
+        ];
+        vcard:hasAddress [ 
+        vcard:country-name "France";
+        vcard:locality "Atherton";
+	vcard:region "New York";
+        vcard:postal-code "99999";
+        vcard:street-address "1 Infinite Loop" ].

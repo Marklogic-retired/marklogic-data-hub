@@ -1,0 +1,20 @@
+{
+  "lang" : "zxx",
+  "name" : "PersonFlow-Person-Mapping",
+  "description" : "",
+  "version" : 1,
+  "targetEntityType" : "http://example.org/Person-0.0.1/Person",
+  "sourceContext" : "/",
+  "sourceURI" : "/C/dev/fork/marklogic-data-hub/web/e2e/qa-project/input/person-json/doc6.json",
+  "properties" : {
+    "fname" : {
+      "sourcedFrom" : "fname"
+    },
+    "lname" : {
+      "sourcedFrom" : "lname"
+    },
+    "id" : {
+      "sourcedFrom" : "id"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "Customer" : {
+    "x" : 263,
+    "y" : 100,
+    "width" : 516,
+    "height" : 272,
+    "vertices" : { }
+  },
+  "Person" : {
+    "x" : 30,
+    "y" : 145,
+    "width" : 350,
+    "height" : 166,
+    "vertices" : { }
+  }
+}
