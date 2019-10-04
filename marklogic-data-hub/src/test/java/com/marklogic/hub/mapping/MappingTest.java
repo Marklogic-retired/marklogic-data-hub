@@ -118,7 +118,7 @@ public class MappingTest extends HubTestBase {
         RunFlowResponse flowResponse = flowRunner.runFlow("CustomerXML", Arrays.asList("1","2"));
         flowRunner.awaitCompletion();
         RunStepResponse mappingJob = flowResponse.getStepResponses().get("2");
-        assertTrue(mappingJob.isSuccess(), "Mapping job failed");
+        assertTrue(mappingJob.isSuccess(), "Mapping job failed: "+mappingJob.stepOutput);
         assertTrue(getFinalDocCount("CustomerXMLMapping") == 1,"There should be one doc in CustomerXMLMapping collection");
         assertTrue(getDocCountByQuery(HubConfig.DEFAULT_FINAL_NAME, "cts:and-query((cts:json-property-value-query('id', 'ALFKI', 'exact'), cts:collection-query('CustomerXMLMapping')))") == 1, "Attribute properly mapped");
     }
@@ -135,7 +135,7 @@ public class MappingTest extends HubTestBase {
         runInDatabase("xdmp:document-insert('/lookupDictionary/validDictionary.json', object-node"+getJsonFromResource("mapping-test/lookupDictionary/validDictionary.json")+")", HubConfig.DEFAULT_STAGING_NAME);
 
         RunStepResponse mappingJob = runFlowResp("OrderJSON", "1","2").getStepResponses().get("2");
-        assertTrue(mappingJob.isSuccess(), "Mapping job failed");
+        assertTrue(mappingJob.isSuccess(), "Mapping job failed: "+mappingJob.stepOutput);
         String jsonString = "{" +
             "\"MemoryLookup\": \"Non-Binary\", " +
             "\"DocumentLookup\": \"Extra Terrestrial\", " +
@@ -232,7 +232,7 @@ public class MappingTest extends HubTestBase {
         installUserModules(getDataHubAdminConfig(), true);
 
         RunStepResponse mappingJob = runFlowResp("OrderJSON", "1","2").getStepResponses().get("2");
-        assertTrue(mappingJob.isSuccess(), "Mapping job failed");
+        assertTrue(mappingJob.isSuccess(), "Mapping job failed: "+mappingJob.stepOutput);
         String jsonString = "{" +
             "\"DateTimeFormat4\": \"1996-07-04T14:25:55-07:00\", " +
             "\"DateTimeFormat5\": \"1996-07-04T14:25:55-07:00\", " +
@@ -370,7 +370,7 @@ public class MappingTest extends HubTestBase {
         installUserModules(getDataHubAdminConfig(), true);
 
         RunStepResponse mappingJob = runFlowResp("OrderJSON", "1","2").getStepResponses().get("2");
-        assertTrue(mappingJob.isSuccess(), "Mapping job failed");
+        assertTrue(mappingJob.isSuccess(), "Mapping job failed: "+mappingJob.stepOutput);
         String jsonString = "{" +
             "\"DateTimeFormat5\": \"1996-07-04T14:25:55-07:00\", " +
             "\"CustomerID\": \"VINET\", " +
@@ -389,7 +389,7 @@ public class MappingTest extends HubTestBase {
         installUserModules(getDataHubAdminConfig(), true);
 
         RunStepResponse mappingJob = runFlowResp("OrderJSON", "1","2").getStepResponses().get("2");
-        assertTrue(mappingJob.isSuccess(), "Mapping job failed");
+        assertTrue(mappingJob.isSuccess(), "Mapping job failed: "+mappingJob.stepOutput);
         String jsonString = "{" +
             "\"StringJoin\": \"VINET Cratchit\", " +
             "\"StringRemove\": \"LINET\", " +
