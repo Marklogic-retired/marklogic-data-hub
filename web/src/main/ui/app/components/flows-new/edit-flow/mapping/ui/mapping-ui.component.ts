@@ -69,7 +69,6 @@ export class MappingUiComponent implements OnChanges {
     disableURINavRight: boolean = false;
     uriIndex = 0;
 
-
   @ViewChild(MatTable)
   table: MatTable<any>;
 
@@ -472,6 +471,25 @@ export class MappingUiComponent implements OnChanges {
     );
     result.subscribe();
 
+  }
+
+  //Indenting the nested levels
+  IndentCondition(prop) {
+    let count = prop.split('/').length - 1;
+    let indentSize = 20*count;
+  
+    let style = {'text-indent': indentSize+'px'}
+  return style
+  }
+
+  // Removing duplicate entries in the source dataset
+  uniqueSourceFields(source) {
+    let uniqueSrcFields = [];
+    source.forEach(obj => {
+      uniqueSrcFields.push(obj.key);
+    });
+    
+    return uniqueSrcFields.filter((item, index) => uniqueSrcFields.indexOf(item) === index);
   }
 
 }
