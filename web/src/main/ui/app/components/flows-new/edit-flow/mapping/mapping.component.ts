@@ -218,8 +218,22 @@ export class MappingComponent implements OnInit {
       this.sampleDocURI = uri;
       this.mapping.sourceURI = uri;
       self.nestedDoc = [];
-      self.sampleDocNestedProps = this.updateNestedDataSourceNew(startRoot);
-
+      let ParentKeyValuePair = [];
+      _.forEach(startRoot, function (val, key) {
+        if(val != null){
+          if(val.constructor.name === "Object" || val.constructor.name === "Array"){
+            ParentKeyValuePair.push(key+JSON.stringify(val));
+          } else {
+            ParentKeyValuePair.push(key+val);
+          }
+          
+        } else {
+          ParentKeyValuePair.push(key);
+        }
+        
+      });
+      self.sampleDocNestedProps = this.updateNestedDataSourceNew(startRoot,ParentKeyValuePair);
+    
       if (save) {
         this.saveMap();
         console.log('map saved');
@@ -365,45 +379,66 @@ export class MappingComponent implements OnInit {
     });
   }
 
-  updateNestedDataSourceNew(sourcePropDoc): Array<any> {
+  // Recursive logic to flatten the nested source data
+
+  updateNestedDataSourceNew(sourcePropDoc, ParentKeyValuePair: Array<any>, parentKey: String = ""): Array<any> {
     let self = this;
-    
-    _.forEach(sourcePropDoc,function (val, key) {
-        if (val != null) {
-          if (val.constructor.name === "Object") {
-            let propty = {
-              key: key,
-              val: "",
-              type: self.getType(val)
-            };
-            self.nestedDoc.push(propty);
-            self.updateNestedDataSourceNew(val);
-          } else if (val.constructor.name === "Array") {
-            let propty = {
-              key: key,
-              val: "",
-              type: self.getType(val)
-            };
-            self.nestedDoc.push(propty);
-            val.forEach(obj => {
-              self.updateNestedDataSourceNew(obj);
-            });
+
+    _.forEach(sourcePropDoc, function (val, key) {
+      if (val != null) {
+        if (val.constructor.name === "Object") {
+
+          if (ParentKeyValuePair.includes(key + JSON.stringify(val))) {
+            parentKey = key;
           } else {
-            let propty = {
-              key: "\t"+key,
-              val: String(val),
-              type: self.getType(val)
-            };
-            self.nestedDoc.push(propty);
+            if (parentKey === "") {
+              parentKey = key;
+            } else {
+              parentKey = parentKey + "/" + key;
+            }
           }
-        } else {
+          let propty = {
+            key: parentKey,
+            val: "",
+            type: self.getType(val)
+          };
+          self.nestedDoc.push(propty);
+          self.updateNestedDataSourceNew(val, ParentKeyValuePair, parentKey);
+        } else if (val.constructor.name === "Array") {
           let propty = {
             key: key,
             val: "",
             type: self.getType(val)
           };
           self.nestedDoc.push(propty);
+          if (ParentKeyValuePair.includes(key + JSON.stringify(val))) {
+            parentKey = key;
+          } else {
+            if (parentKey === "") {
+              parentKey = key;
+            } else {
+              parentKey = parentKey + "/" + key;
+            }
+          }
+          val.forEach(obj => {
+            self.updateNestedDataSourceNew(obj, ParentKeyValuePair, parentKey);
+          });
+        } else {
+          let propty = {
+            key: parentKey === "" ? key : parentKey + "/" + key,
+            val: String(val),
+            type: self.getType(val)
+          };
+          self.nestedDoc.push(propty);
         }
+      } else {
+        let propty = {
+          key: key,
+          val: "",
+          type: self.getType(val)
+        };
+        self.nestedDoc.push(propty);
+      }
 
     });
 
