@@ -33,24 +33,30 @@
           [disabled]="this.disableURINavRight"><i class="fa fa-angle-right fa-2x"></i></button>
       </span>
 
-      <mat-table id="source-new-table" 
-        [dataSource]="dataSource"
-        #table class="source-props" 
-        matSort>
-        <ng-container matColumnDef="key">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
-          <mat-cell *matCellDef="let srcProp">{{srcProp.key}}</mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="val">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>Value</mat-header-cell>
-          <!-- <mat-cell *matCellDef="let srcProp">{{srcProp.val}}</mat-cell>  -->
-          <mat-cell *matCellDef="let srcProp">{{ isQuoted(srcProp.type) ? '"' : '' }}{{ srcProp.val | slice:0:valMaxLen }}{{ srcProp.val.length > valMaxLen ? '...' : '' }}{{ isQuoted(srcProp.type) ? '"' : '' }}</mat-cell>
-        </ng-container>
-        <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-      </mat-table>   
 
-    </div> <!-- Source_Tbl -->
+  <mat-table id="source-new-table" 
+             [dataSource]="dataSource"
+             #table class="source-props" 
+             matSort>
+    <ng-container matColumnDef="key">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
+      <mat-cell *matCellDef="let srcProp" [ngStyle]="IndentCondition(srcProp.key)">{{srcProp.key.split('/').pop()}}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="val">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>Value</mat-header-cell>
+      <!-- <mat-cell *matCellDef="let srcProp">{{srcProp.val}}</mat-cell>  -->
+      <mat-cell *matCellDef="let srcProp">{{ isQuoted(srcProp.type) ? '"' : '' }}{{ srcProp.val | slice:0:valMaxLen }}{{ srcProp.val.length > valMaxLen ? '...' : '' }}{{ isQuoted(srcProp.type) ? '"' : '' }}</mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>      
+</div>
+
+
+
+
+
+ <!-- Source_Tbl -->
     <mat-divider [vertical]="true"></mat-divider>
 
     <div class="Entities_Tbl">
@@ -104,7 +110,7 @@
    
 <mat-menu class="mat-menu-list" #fieldListMenu="matMenu">
   <ng-template matMenuContent let-indx="indx">
-    <div class="mat-menu-list-btn" mat-menu-item *ngFor="let srcProp of this.sampleDocNestedProps" (click)="insertField(srcProp.key,indx) ">{{srcProp.key}}</div>
+    <div class="mat-menu-list-btn" mat-menu-item *ngFor="let srcProp of uniqueSourceFields(this.sampleDocNestedProps)" [ngStyle]="IndentCondition(srcProp)" (click)="insertField(srcProp,indx) ">{{srcProp.split('/').pop()}}</div>
   </ng-template>
 </mat-menu>
 
