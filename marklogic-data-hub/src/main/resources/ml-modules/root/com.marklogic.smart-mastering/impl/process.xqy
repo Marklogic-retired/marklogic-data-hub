@@ -535,16 +535,26 @@ declare function proc-impl:build-match-summary(
             => map:with("function", fn:string($action-xml/@function))
             => map:with("namespace", fn:string($action-xml/@namespace))
             => map:with("at", fn:string($action-xml/@at))
-            => map:with("customActionXML", xdmp:quote($action-xml))
         )
     ))
   let $custom-action-details :=
     map:new(
       for $uri in map:keys($all-matches)
-      for $custom-action-match in map:get($all-matches, $uri)/result[fn:not(./@action = $const:NOTIFY-ACTION or ./@action = $const:MERGE-ACTION)]
-      let $action := fn:string($custom-action-match/@action)
+      let $custom-actions := map:get($all-matches, $uri)/result[fn:not(./@action = $const:NOTIFY-ACTION or ./@action = $const:MERGE-ACTION)]
+      where fn:exists($custom-actions)
       return
-        map:entry($uri, map:get($action-map, $action))
+        map:entry($uri, map:new((
+          map:entry("action", "customActions"),
+          map:entry("actions", json:to-array(
+            let $distinct-actions := fn:distinct-values($custom-actions/@action)
+            for $custom-action in $distinct-actions
+            return map:new((
+              map:entry("action", $custom-action),
+              map:get($action-map, $custom-action),
+              map:entry("matchResults", proc-impl:matches-to-json($custom-actions[@action = $custom-action]))
+            ))
+          ))
+        )))
     )
   let $action-details :=
     map:new((
@@ -637,7 +647,6 @@ declare function proc-impl:build-content-objects-from-match-summary(
   let $uris := $match-summary-root => map:get("URIsToActOn") => json:array-values()
   let $all-action-details := $match-summary-root => map:get("actionDetails")
   let $custom-action-function-map := map:map()
-  let $custom-action-options-map := map:map()
   let $results-array := json:to-array(
     for $uri in $uris
     let $action-details := $all-action-details => map:get($uri)
@@ -734,14 +743,17 @@ declare function proc-impl:build-content-objects-from-match-summary(
                 let $match-write-object := matcher:build-match-notification($threshold, $uris, $merge-options)
                 return $match-write-object
               default return
+                let $custom-actions := $action-details => map:get("actions") => json:array-values()
+                for $custom-action in $custom-actions
+                let $action := $custom-action => map:get("action")
                 let $action-func :=
                   if (map:contains($custom-action-function-map, $action)) then
                     $custom-action-function-map => map:get($action)
                   else
                     let $action-func := fun-ext:function-lookup(
-                                  $action-details => map:get("function"),
-                                  $action-details => map:get("namespace"),
-                                  $action-details => map:get("at"),
+                                  $custom-action => map:get("function"),
+                                  $custom-action => map:get("namespace"),
+                                  $custom-action => map:get("at"),
                                   ()
                                 )
                     return (
@@ -752,27 +764,22 @@ declare function proc-impl:build-content-objects-from-match-summary(
                       fn:error(xs:QName("SM-CONFIGURATION"), "Threshold action is not configured or not found", ($action, $action-details))
                     else ()
                   let $custom-action-options :=
-                    if (map:contains($custom-action-options-map, $action)) then
-                      map:get($custom-action-options-map, $action)
-                    else
-                      let $custom-action-xml := xdmp:unquote($action-details => map:get("customActionXML"))
-                      let $custom-action-options := map:new(
-                          if (fn:ends-with(xdmp:function-module($action-func), "js")) then (
-                            map:entry("action-options",proc-impl:matches-to-json($custom-action-xml)),
-                            map:entry("merge-options",merge-impl:options-to-json($merge-options))
-                          ) else (
-                            map:entry("action-options",$custom-action-xml),
-                            map:entry("merge-options",$merge-options)
-                          )
-                      )
-                      return (
-                        map:put($custom-action-options-map, $action, $custom-action-options)
-                      )
+                    let $match-results := $custom-action => map:get("matchResults")
+                    let $custom-action-options := map:new(
+                        if (fn:ends-with(xdmp:function-module($action-func), "js")) then (
+                          map:entry("match-results",$match-results),
+                          map:entry("merge-options",merge-impl:options-to-json($merge-options))
+                        ) else (
+                          map:entry("match-results",proc-impl:matches-to-xml($match-results)),
+                          map:entry("merge-options",$merge-options)
+                        )
+                    )
+                    return $custom-action-options
                   return
                       xdmp:apply(
                         $action-func,
                         $uri,
-                        $custom-action-options => map:get("action-options"),
+                        $custom-action-options => map:get("match-results"),
                         $custom-action-options => map:get("merge-options")
                       )
 
@@ -860,6 +867,16 @@ declare function proc-impl:matches-to-json($filtered-matches as element(result)*
       "score": $match/@score/fn:data(),
       "threshold": $match/@threshold/fn:string()
     }
+  }
+};
+
+declare function proc-impl:matches-to-xml($filtered-matches as array-node()?)
+{
+  for $match in $filtered-matches/object-node()
+  return element result {
+    attribute uri { $match/uri/fn:string()},
+    attribute score { $match/@score/fn:data()},
+    attribute threshold { $match/@threshold/fn:string()}
   }
 };
 
