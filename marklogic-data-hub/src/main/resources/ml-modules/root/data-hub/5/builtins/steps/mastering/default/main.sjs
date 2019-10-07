@@ -34,7 +34,7 @@ function main(content, options) {
       Sequence.from(filteredContent),
       mergeOptions,
       matchOptions,
-      cts.trueQuery(),
+      options.filterQuery ? cts.query(options.filterQuery) : cts.trueQuery(),
       persistResults,
       datahub.prov.granularityLevel() === datahub.prov.FINE_LEVEL
     );
@@ -95,9 +95,9 @@ function checkOptions(content, options, filteredContent = [], reqOptProperties =
   return { archivedCollection, contentCollection, mergedCollection, notificationCollection, auditingCollection };
 }
 
-function jobReport(jobID, stepResponse, options) {
-  let collectionsInformation = checkOptions(null, options);
-  let jobQuery = cts.fieldValueQuery('datahubCreatedByJob', jobID);
+function jobReport(jobID, stepResponse, options, reqOptProperties = requiredOptionProperties) {
+  let collectionsInformation = checkOptions(null, options, null, reqOptProperties);
+  let jobQuery = cts.fieldWordQuery('datahubCreatedByJob', jobID);
   let mergedQuery = cts.andQuery([
       jobQuery,
       cts.collectionQuery(collectionsInformation.mergedCollection),
@@ -141,7 +141,7 @@ function jobReport(jobID, stepResponse, options) {
     const masteringLib = require('/data-hub/5/builtins/steps/mastering/default/lib.sjs'); 
     
     let mergedQuery = cts.andQuery([
-      cts.fieldValueQuery('datahubCreatedByJob', '${jobID}'),
+      cts.fieldWordQuery('datahubCreatedByJob', '${jobID}'),
       cts.collectionQuery('${collectionsInformation.mergedCollection}'),
       cts.collectionQuery('${collectionsInformation.contentCollection}')
     ]);

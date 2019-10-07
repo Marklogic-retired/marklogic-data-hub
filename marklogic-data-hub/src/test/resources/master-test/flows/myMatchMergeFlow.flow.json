@@ -112,6 +112,61 @@
           }
         }
       }
+    },
+    "4": {
+      "stepDefinitionName": "default-merging",
+      "stepDefinitionType": "MASTERING",
+      "options": {
+        "targetEntity": "person",
+        "provenanceGranularityLevel": "fine",
+        "sourceDatabase": "data-hub-FINAL",
+        "targetDatabase": "data-hub-FINAL",
+        "mergeOptions": {
+          "propertyDefs": {
+            "properties": [
+              {
+                "namespace": "",
+                "localname": "id",
+                "name": "id"
+              },
+              {
+                "namespace": "",
+                "localname": "firstName",
+                "name": "firstName"
+              },
+              {
+                "namespace": "",
+                "localname": "lastName",
+                "name": "lastName"
+              },
+              {
+                "namespace": "",
+                "localname": "Address",
+                "name": "address"
+              }
+            ]
+          },
+          "algorithms": {
+            "stdAlgorithm": {
+              "timestamp": {
+                "path": "/envelope/headers/ingestDateTime"
+              }
+            }
+          },
+          "merging": [
+            {
+              "default": "true",
+              "maxSources": "1",
+              "sourceWeights": [{
+                "source": {
+                  "name": "A",
+                  "weight": "10"
+                }
+              }]
+            }
+          ]
+        }
+      }
     }
   }
 }

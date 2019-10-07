@@ -62,23 +62,33 @@ class HubUtils {
     for (let content of writeQueue) {
       let context = (content.context||{});
       let permissions = (basePermissions || []).concat((context.permissions||[]));
+      let existingCollections = xdmp.documentGetCollections(content.uri);
       let collections = fn.distinctValues(Sequence.from(baseCollections.concat((context.collections||[])))).toArray();
       let metadata = context.metadata;
-      let temporalCollection = collections.find((col) => temporalCollections[col]);
-      if (temporalCollection) {
-        // temporalDocURI is managed by the temporal package and must not be carried forward.
-        if (metadata) {
-          delete metadata.temporalDocURI;
+      let temporalCollection = collections.concat(existingCollections).find((col) => temporalCollections[col]);
+      let isDeleteOp = !!content['$delete'];
+      if (isDeleteOp) {
+        if (temporalCollection) {
+          temporal.documentDelete(temporalCollection, content.uri);
+        } else {
+          xdmp.documentDelete(content.uri);
         }
-        temporal.documentInsert(temporalCollection, content.uri, content.value, 
-          {
-            permissions, 
-            collections: collections.filter((col) => !temporalCollections[col]), 
-            metadata
-          }
-         );
       } else {
-        xdmp.documentInsert(content.uri, content.value, {permissions, collections, metadata});
+        if (temporalCollection) {
+          // temporalDocURI is managed by the temporal package and must not be carried forward.
+          if (metadata) {
+            delete metadata.temporalDocURI;
+          }
+          temporal.documentInsert(temporalCollection, content.uri, content.value, 
+            {
+              permissions, 
+              collections: collections.filter((col) => !temporalCollections[col]), 
+              metadata
+            }
+           );
+        } else {
+          xdmp.documentInsert(content.uri, content.value, {permissions, collections, metadata});
+        }
       }
     }
     let writeInfo = {
