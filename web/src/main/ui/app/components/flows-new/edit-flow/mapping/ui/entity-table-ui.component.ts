@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Input, Output, OnChanges, 
-  SimpleChanges, ViewChild, ViewChildren, ViewEncapsulation } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges, 
+  ViewChild, ViewChildren, QueryList, ViewEncapsulation } from '@angular/core';
 import { MatTable, MatTableDataSource} from "@angular/material";
 
 @Component({
@@ -84,27 +84,24 @@ export class EntityTableUiComponent implements OnChanges {
     return this.functionLst[funcName].signature
   }
 
-  insertFunction(fname, index) {
-
-    var startPos = this.fieldName.toArray()[index].nativeElement.selectionStart;
-    this.fieldName.toArray()[index].nativeElement.focus();
-    this.fieldName.toArray()[index].nativeElement.value = this.fieldName.toArray()[index].nativeElement.value.substr(0, this.fieldName.toArray()[index].nativeElement.selectionStart) + this.functionsDef(fname) + this.fieldName.toArray()[index].nativeElement.value.substr(this.fieldName.toArray()[index].nativeElement.selectionStart, this.fieldName.toArray()[index].nativeElement.value.length);
-
-    this.fieldName.toArray()[index].nativeElement.selectionStart = startPos;
-    this.fieldName.toArray()[index].nativeElement.selectionEnd = startPos + this.functionsDef(fname).length;
-    this.fieldName.toArray()[index].nativeElement.focus();
-  }
-
-  insertField(fname, index, propName) {
+  insertContent(content, index, propName) {
     const f = this.fieldName.toArray()[index].nativeElement;
     const startPos = f.selectionStart;
     f.focus();
-    f.value = f.value.substr(0, f.selectionStart) + fname + 
+    f.value = f.value.substr(0, f.selectionStart) + content + 
       f.value.substr(f.selectionStart, f.value.length);
     f.selectionStart = startPos;
-    f.selectionEnd = startPos + fname.length;
+    f.selectionEnd = startPos + content.length;
     f.focus();
     this.onHandleSelection({name: propName, expr: f.value});
+  }
+
+  insertFunction(functionName, index, propName) {
+    this.insertContent(this.functionsDef(functionName), index, propName);
+  }
+
+  insertField(fieldName, index, propName) {
+    this.insertContent(fieldName, index, propName)
   }
 
 }

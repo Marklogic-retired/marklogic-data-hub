@@ -71,7 +71,7 @@
         <button 
           id="function-list" 
           [matMenuTriggerFor]="functionMenu" 
-          [matMenuTriggerData]="{ind: prop.name,indx: k}"
+          [matMenuTriggerData]="{ind: prop.name,indx: i}"
         >f(x)</button>
       </span>
     </mat-cell>
@@ -133,19 +133,19 @@
       mat-menu-item 
       class="mat-menu-list-btn" 
       *ngFor="let srcProp of this.srcProps" 
-      (click)="insertField(srcProp.key,indx,prop) "
+      (click)="insertField(srcProp.key, indx, prop) "
     >{{srcProp.key}}</div>
   </ng-template>
 </mat-menu>
 
 <!-- FUNCTIONS MENU -->
 <mat-menu class="mat-menu-list" #functionMenu="matMenu">
-  <ng-template matMenuContent let-indx="indx">
+  <ng-template matMenuContent let-indx="indx" let-prop="propName">
     <div 
       mat-menu-item
       class="mat-menu-list-btn"  
-      *ngFor="let func of functionLst | keyvalue" 
-      (click)="insertFunction(func.key,indx)"
-    >{{func.key}}</div>
+      *ngFor="let function of functionLst | keyvalue" 
+      (click)="insertFunction(function.key, indx, propName)"
+    >{{function.key}}</div>
   </ng-template>
 </mat-menu>
