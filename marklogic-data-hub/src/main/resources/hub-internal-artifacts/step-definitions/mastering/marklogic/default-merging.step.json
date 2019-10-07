@@ -1,6 +1,6 @@
 {
   "lang": "zxx",
-  "name": "merging-mastering",
+  "name": "default-merging",
   "type": "mastering",
   "version": 1,
   "modulePath": "/data-hub/5/builtins/steps/mastering/default/merging.sjs",
@@ -14,7 +14,7 @@
     "targetDatabase": "data-hub-FINAL",
     "sourceQuery": "cts.collectionQuery('mastering-summary')",
     "collections": [
-      "merging-mastering","mastered"
+      "default-merging","mastered"
     ]
   }
 }

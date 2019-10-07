@@ -30,7 +30,7 @@
       }
     },
     "3": {
-      "stepDefinitionName": "matching-mastering",
+      "stepDefinitionName": "default-matching",
       "stepDefinitionType": "MASTERING",
       "options": {
         "targetEntity": "person",
