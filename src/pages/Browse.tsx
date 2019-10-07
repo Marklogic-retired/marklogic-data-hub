@@ -51,7 +51,6 @@ const Browse: React.FC<Props> = ({location}) => {
   const getSearchResults = async () => {
     try {
       setIsLoading(true);
-      console.log('search options', searchOptions)
       const response = await axios({
         method: searchUrl.method,
         url: searchUrl.url,

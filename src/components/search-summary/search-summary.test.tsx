@@ -3,21 +3,20 @@ import { shallow } from 'enzyme';
 import SearchSummary from './search-summary';
 
 describe("Search Summary component", () => {
+  let wrapper;
 
-    let wrapper;
+  beforeAll(() => {
+    wrapper = shallow(
+      <SearchSummary 
+        total={100}
+        start={1}
+        length={1}
+      />);
+    });
 
-    beforeAll(() => {
-        wrapper = shallow(
-          <SearchSummary 
-            total={100}
-            start={1}
-            length={1}
-          />);
-      });
-
-    test("renders", () => {
-        expect(wrapper.exists()).toBe(true);
-        const totalDocs = wrapper.find('[data-cy="total-documents"]').text();
-        expect(totalDocs).toEqual("100");
-    }); 
+  test("renders", () => {
+    expect(wrapper.exists()).toBe(true);
+    const totalDocs = wrapper.find('[data-cy="total-documents"]').text();
+    expect(totalDocs).toEqual("100");
+  }); 
 })
