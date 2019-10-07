@@ -26,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,6 +47,8 @@ public class MasterTest extends HubTestBase {
     @Autowired
     private FlowRunner flowRunner;
 
+    private boolean isSetup = false;
+
     @BeforeAll
     public static void setup() {
         XMLUnit.setIgnoreWhitespace(true);
@@ -59,14 +62,15 @@ public class MasterTest extends HubTestBase {
 
     @AfterEach
     public void afterEach() {
-        this.deleteProjectDir();
         clearDatabases(HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
 
     @BeforeEach
     public void beforeEach() throws IOException {
-        installProject();
-
+        if (!isSetup) {
+            installProject();
+            isSetup = true;
+        }
         getDataHub().clearDatabase(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME);
         assertEquals(0, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, "http://marklogic.com/xdmp/tde"));
 
@@ -96,9 +100,12 @@ public class MasterTest extends HubTestBase {
                 Path subResourcePath = resourcePath.resolve(childFile.getName());
                 copyFileStructure(subResourcePath, subProjectPath);
             } else {
-                InputStream inputStream = getResourceStream(resourcePath.resolve(childFile.getName()).toString().replaceAll("\\\\","/"));
-                Files.copy(inputStream, projectPath.resolve(childFile.getName()));
-                IOUtils.closeQuietly(inputStream);
+                Path projectFilePath = projectPath.resolve(childFile.getName());
+                if (!projectFilePath.toFile().exists()) {
+                    InputStream inputStream = getResourceStream(resourcePath.resolve(childFile.getName()).toString().replaceAll("\\\\", "/"));
+                    Files.copy(inputStream, projectFilePath);
+                    IOUtils.closeQuietly(inputStream);
+                }
             }
         }
     }
@@ -143,23 +150,11 @@ public class MasterTest extends HubTestBase {
             "cts:json-property-value-query('count', 209)" +
             "))";
         assertTrue(existsByQuery(reportQueryText, HubConfig.DEFAULT_JOB_NAME), "Missing valid mastering job report!");
-        assertTrue(getFinalDocCount("mdm-notification") >= 40, "Not enough notifications are created");
         testUnmerge();
     }
 
     @Test
     public void testMatchMergeSteps() throws Exception {
-        installProject();
-
-        getDataHub().clearDatabase(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME);
-        assertEquals(0, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, "http://marklogic.com/xdmp/tde"));
-
-        getDataHub().clearDatabase(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME);
-        assertEquals(0, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, "http://marklogic.com/xdmp/tde"));
-
-        installHubArtifacts(getDataHubAdminConfig(), true);
-        installUserModules(getDataHubAdminConfig(), true);
-
         Flow flow = flowManager.getFlow("myMatchMergeFlow");
         if (flow == null) {
             throw new Exception("myMatchMergeFlow Not Found");
@@ -175,7 +170,21 @@ public class MasterTest extends HubTestBase {
             "cts:json-property-value-query('URIsToActOn', '/person-41.json')" +
             "))";
         assertTrue(existsByQuery(summaryQueryText, HubConfig.DEFAULT_FINAL_NAME), "Missing valid matching summary document!");
-        // TODO add merge step assertions in merge step PR
+        RunFlowResponse flowMergeResponse = flowRunner.runFlow("myMatchMergeFlow", Collections.singletonList("4"));
+        flowRunner.awaitCompletion();
+        RunStepResponse mergeJob = flowMergeResponse.getStepResponses().get("4");
+        assertTrue(mergeJob.isSuccess(), "Merging job failed!");
+        assertTrue(getFinalDocCount("mdm-merged") >= 10,"At least 10 merges occur");
+        assertEquals(209, getFinalDocCount("mdm-content"), "We end with the correct amount of final docs");
+        // Setting this to 40 or greater as occasionally we get 41 in the pipeline. See bug https://project.marklogic.com/jira/browse/DHFPROD-3178
+        assertTrue(getFinalDocCount("mdm-notification") >= 40, "Not enough notifications are created");
+        // Check for JobReport for mastering with correct count
+        String reportQueryText = "cts:and-query((" +
+            "cts:collection-query('JobReport')," +
+            "cts:json-property-value-query('jobID', '"+ mergeJob.getJobId() +"')," +
+            "cts:json-property-value-query('count', 10)" +
+            "))";
+        assertTrue(existsByQuery(reportQueryText, HubConfig.DEFAULT_JOB_NAME), "Missing valid merging job report!");
     }
 
     @Test

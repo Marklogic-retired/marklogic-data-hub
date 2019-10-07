@@ -616,8 +616,10 @@ declare function proc-impl:process-match-and-merge-with-options(
       merge-impl:options-from-json($merge-options)
     else
       $merge-options
+  let $uris-to-act-on := $match-summary => map:get("matchSummary") => map:get("URIsToActOn") => json:array-values()
   return (
     proc-impl:build-content-objects-from-match-summary(
+      $uris-to-act-on,
       $match-summary,
       $write-objects-by-uri,
       $merge-options,
@@ -628,7 +630,13 @@ declare function proc-impl:process-match-and-merge-with-options(
     else ()
   )
 };
+
+(:
+ : Take the information from a match summary document and create the content objects necessary to
+ : perform the actions.
+ :)
 declare function proc-impl:build-content-objects-from-match-summary(
+    $uris as xs:string*,
     $match-summary as json:object,
     $write-objects-by-uri as map:map,
     $merge-options as item(),
@@ -636,6 +644,11 @@ declare function proc-impl:build-content-objects-from-match-summary(
 ) as json:array
 {
   let $start-elapsed := xdmp:elapsed-time()
+  let $merge-options :=
+    if ($merge-options instance of object-node()) then
+      merge-impl:options-from-json($merge-options)
+    else
+      $merge-options
   let $target-entity := $merge-options/merging:target-entity ! fn:string()
   (: get info on how collections should be applied to documents :)
   let $on-no-match := $merge-options/merging:algorithms/merging:collections/merging:on-no-match
@@ -644,7 +657,6 @@ declare function proc-impl:build-content-objects-from-match-summary(
   let $on-archive-fun := coll-impl:on-archive(?, $on-archive)
   let $on-merge := $merge-options/merging:algorithms/merging:collections/merging:on-merge
   let $match-summary-root := $match-summary => map:get("matchSummary")
-  let $uris := $match-summary-root => map:get("URIsToActOn") => json:array-values()
   let $all-action-details := $match-summary-root => map:get("actionDetails")
   let $custom-action-function-map := map:map()
   let $results-array := json:to-array(
@@ -888,7 +900,7 @@ declare function proc-impl:build-write-object-for-doc($doc as document-node())
     map:entry("value", $doc),
     map:entry("context", map:new((
       map:entry("collections", xdmp:node-collections($doc)),
-      map:entry("metadata", xdmp:node-metadata($doc)),
+      map:entry("metadata", xdmp:document-get-metadata(xdmp:node-uri($doc))),
       map:entry("permissions", xdmp:node-permissions($doc, "objects"))
     )))
   ))

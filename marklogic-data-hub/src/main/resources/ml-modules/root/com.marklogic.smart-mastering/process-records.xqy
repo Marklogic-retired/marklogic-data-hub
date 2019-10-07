@@ -134,3 +134,24 @@ declare function process:build-match-summary(
     fn:false()
   )
 };
+
+(:
+ : Take the information from a match summary document and create the content objects necessary to
+ : perform the actions.
+ :)
+declare function process:build-content-objects-from-match-summary(
+  $uris-to-act-on as xs:string*,
+  $match-summary as json:object,
+  $write-objects-by-uri as map:map,
+  $merge-options as item(),
+  $fine-grain-provenance as xs:boolean
+) as json:array
+{
+  proc-impl:build-content-objects-from-match-summary(
+    $uris-to-act-on,
+    $match-summary,
+    $write-objects-by-uri,
+    $merge-options,
+    $fine-grain-provenance
+  )
+};

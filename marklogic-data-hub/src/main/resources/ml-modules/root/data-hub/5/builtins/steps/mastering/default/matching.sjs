@@ -29,11 +29,15 @@ function main(content, options) {
     options.filterQuery ? cts.query(options.filterQuery) : cts.trueQuery(),
     datahub.prov.granularityLevel() === datahub.prov.FINE_LEVEL
   );
+  let collections = ['datahubMasteringMatchSummary'];
+  if (options.targetEntity) {
+    collections.push(`datahubMasteringMatchSummary-${options.targetEntity}`);
+  }
   return {
     uri: `/datahub/5/mastering/match-summary/${sem.uuidString()}.json`,
     value: matchSummaryJson,
     context: {
-      collections: ['datahubMasteringMatchSummary']
+      collections
     }
   };
 }
