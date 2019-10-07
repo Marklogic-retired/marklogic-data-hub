@@ -6,6 +6,7 @@ import module namespace merge-impl = "http://marklogic.com/smart-mastering/survi
 import module namespace test = "http://marklogic.com/test" at "/test/test-helper.xqy";
 
 declare option xdmp:mapping "false";
+declare option xdmp:transaction-mode "update";
 
 merge-impl:lock-for-update("/uri1"),
 merge-impl:lock-for-update("/uri2"),
