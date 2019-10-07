@@ -1,6 +1,7 @@
 buildscript {
   repositories {
     maven {url 'http://developer.marklogic.com/maven2/'}
+    maven {url 'http://distro.marklogic.com/nexus/repository/maven-snapshots/'}
   }
 }
 
