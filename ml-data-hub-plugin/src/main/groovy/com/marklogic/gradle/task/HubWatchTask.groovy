@@ -17,8 +17,13 @@
 
 package com.marklogic.gradle.task
 
+
 import com.marklogic.gradle.task.client.WatchTask
+import com.marklogic.hub.HubConfig
+import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand
+import com.marklogic.hub.deploy.util.ModuleWatchingConsumer
+import com.marklogic.hub.impl.Versions
 
 /**
  * Extends ml-gradle's WatchTask so that after WatchTask loads modules, this task can invoke the custom DHF command for
@@ -29,6 +34,13 @@ import com.marklogic.hub.deploy.commands.LoadUserModulesCommand
 class HubWatchTask extends WatchTask {
 
     LoadUserModulesCommand command
+
+    HubWatchTask() {
+        HubConfig hubConfig = getProject().property("hubConfig")
+        Versions versions = getProject().property("dataHubApplicationContext").getBean(Versions.class)
+        GenerateFunctionMetadataCommand command = new GenerateFunctionMetadataCommand(hubConfig.newModulesDbClient(), versions)
+        onModulesLoaded = new ModuleWatchingConsumer(getCommandContext(), command)
+    }
 
     @Override
     void afterModulesLoaded() {

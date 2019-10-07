@@ -176,7 +176,6 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
         Path userModulesPath = hubConfig.getHubPluginsDir();
         String baseDir = userModulesPath.normalize().toAbsolutePath().toString();
         Path startPath = userModulesPath.resolve("entities");
-        Path mappingPath = userModulesPath.resolve("mappings");
 
         // load any user files under plugins/* int the modules database.
         // this will ignore REST folders under entities
@@ -212,7 +211,7 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
                 //first let's do the entities and flows + extensions
                 Files.walkFileTree(startPath, new SimpleFileVisitor<Path>() {
                     @Override
-                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
                         String currentDir = dir.normalize().toAbsolutePath().toString();
 
                         // for REST dirs we need to deploy all the REST stuff (transforms, options, services, etc)
@@ -231,9 +230,7 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
                     }
 
                     @Override
-                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
-                        throws IOException
-                    {
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
                         if (isFlowPropertiesFile(file) && modulesManager.hasFileBeenModifiedSinceLastLoaded(file.toFile())) {
                             LegacyFlow flow = flowManager.getFlowFromProperties(file);
                             StringHandle handle = new StringHandle(flow.serialize());

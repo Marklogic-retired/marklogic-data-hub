@@ -2,7 +2,6 @@ package com.marklogic.hub.deploy.commands;
 
 import com.marklogic.appdeployer.command.AbstractCommand;
 import com.marklogic.appdeployer.command.CommandContext;
-import com.marklogic.appdeployer.command.SortOrderConstants;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.datamovement.ApplyTransformListener;
 import com.marklogic.client.datamovement.DataMovementManager;
@@ -29,8 +28,10 @@ public class GenerateFunctionMetadataCommand extends AbstractCommand {
 
     public GenerateFunctionMetadataCommand() {
         super();
-        // This command has to be executed after modules are loaded
-        setExecuteSortOrder(SortOrderConstants.LOAD_MODULES + 1);
+
+        // Per DHFPROD-3146, need this to run after modules are loaded. LoadUserModulesCommand is configured
+        // to run after amps are deployed, so need this to run after user modules are loaded.
+        setExecuteSortOrder(new LoadUserModulesCommand().getExecuteSortOrder() + 1);
     }
 
     public GenerateFunctionMetadataCommand(DatabaseClient modulesClient, Versions versions) {

@@ -22,6 +22,7 @@ import java.io.IOException;
 
 import static com.marklogic.client.io.DocumentMetadataHandle.Capability.READ;
 import static com.marklogic.client.io.DocumentMetadataHandle.Capability.UPDATE;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ApplicationConfig.class)
@@ -66,6 +67,14 @@ public class GenerateFunctionMetadataCommandTest extends HubTestBase {
     @AfterAll
     public static void cleanUp() {
         new Installer().deleteProjectDir();
+    }
+
+    @Test
+    public void sortOrder() {
+        int metadataOrder = generateFunctionMetadataCommand.getExecuteSortOrder();
+        int userModulesOrder = loadUserModulesCommand.getExecuteSortOrder();
+        assertTrue(metadataOrder > userModulesOrder,
+            "Function metadata should be generated after user modules are loaded");
     }
 
     @Test

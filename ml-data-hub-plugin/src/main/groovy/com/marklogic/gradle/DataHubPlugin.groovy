@@ -214,6 +214,8 @@ class DataHubPlugin implements Plugin<Project> {
         entityManager = ctx.getBean(EntityManagerImpl.class)
         generatePiiCommand = ctx.getBean(GeneratePiiCommand.class)
 
+        project.extensions.add("dataHubApplicationContext", ctx)
+
         initializeProjectExtensions(project)
     }
 
