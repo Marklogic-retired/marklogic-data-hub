@@ -15,14 +15,10 @@
  */
 package com.marklogic.hub.impl;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.extensions.ResourceManager;
-import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.JacksonHandle;
-import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
@@ -102,12 +98,7 @@ public class MasteringManagerImpl implements MasteringManager {
             params.put("targetDatabase", targetDatabase);
             params.put("sourceDatabase", targetDatabase);
             JacksonHandle handle = new JacksonHandle();
-            this.getServices().delete(params, handle);
-            try {
-                resp = handle.get();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            resp = this.getServices().delete(params, handle).get();
             return resp;
         }
 
@@ -122,22 +113,7 @@ public class MasteringManagerImpl implements MasteringManager {
             params.put("targetDatabase", targetDatabase);
             params.put("sourceDatabase", targetDatabase);
             JacksonHandle jsonOptions = new JacksonHandle().with(options);
-            ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, jsonOptions);
-            try {
-                if (resultItr == null || !resultItr.hasNext()) {
-                    resp = null;
-                } else {
-                    ResourceServices.ServiceResult res = resultItr.next();
-                    JacksonHandle handle = new JacksonHandle();
-                    resp = res.getContent(handle).get();
-                }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            } finally {
-                if (resultItr != null) {
-                    resultItr.close();
-                }
-            }
+            resp = this.getServices().post(params, jsonOptions, new JacksonHandle()).get();
             return resp;
         }
     }
@@ -162,22 +138,7 @@ public class MasteringManagerImpl implements MasteringManager {
             params.put("targetDatabase", targetDatabase);
             params.put("sourceDatabase", targetDatabase);
             JacksonHandle jsonOptions = new JacksonHandle().with(options);
-            ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, jsonOptions);
-            try {
-                if (resultItr == null || !resultItr.hasNext()) {
-                    resp = null;
-                } else {
-                    ResourceServices.ServiceResult res = resultItr.next();
-                    JacksonHandle handle = new JacksonHandle();
-                    resp = res.getContent(handle).get();
-                }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            } finally {
-                if (resultItr != null) {
-                    resultItr.close();
-                }
-            }
+            resp = this.getServices().post(params, jsonOptions, new JacksonHandle()).get();
             return resp;
         }
     }
