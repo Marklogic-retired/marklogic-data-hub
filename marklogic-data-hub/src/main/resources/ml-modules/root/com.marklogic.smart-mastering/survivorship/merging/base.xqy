@@ -2317,7 +2317,7 @@ declare function merge-impl:is-uri-locked($uri as xs:string) as xs:boolean {
   $uri = merge-impl:locked-uris()
 };
 
-(: Don't want to trigger static analysis for our sepatate read-only operations :)
+(: Don't want to trigger static analysis for our separate read-only operations :)
 declare variable $lock-for-update-fun := fn:function-lookup(xs:QName('xdmp:lock-for-update'), 1);
 
 declare function merge-impl:lock-for-update($uri as xs:string) {
