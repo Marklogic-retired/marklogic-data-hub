@@ -39,6 +39,7 @@ let $actual := proc:consolidate-merges($matches,
   500,
   79,
   cts:true-query(),
+  fn:false(),
   ()
 )
 let $assertions := (
@@ -73,6 +74,7 @@ let $actual := proc:consolidate-merges($matches,
   500,
   79,
   cts:true-query(),
+  fn:false(),
   ()
 )
 
