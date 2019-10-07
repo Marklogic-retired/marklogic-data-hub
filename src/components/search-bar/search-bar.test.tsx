@@ -1,21 +1,22 @@
 import React from 'react';
-import { shallow, mount } from 'enzyme';
-import Search from './search-bar';
+import { mount } from 'enzyme';
+import SearchBar from './search-bar';
+import { entityFromJSON } from '../../util/data-conversion';
+import modelResponse from '../../assets/mock-data/model-response';
 
 describe("Search Bar component", () => {
-
-    /*let wrapper;
+    let wrapper;
+    const entities = [ ...entityFromJSON(modelResponse).map(entity => entity.info.title)]
 
     beforeAll(() => {
-        wrapper = mount(<Search />);
-      });*/
+        wrapper = mount(<SearchBar entities={entities} />);
+      });
 
     test("renders", () => {
-        //expect(wrapper.exists()).toBe(true);
-        expect(true).toBe(true);
+        expect(wrapper.exists()).toBe(true);
     }); 
 
-    /*test("search bar input renders", () => {
+    test("search bar input renders", () => {
         expect(wrapper.find('.ant-input-search input')).toHaveLength(1);
     });
     
@@ -31,5 +32,5 @@ describe("Search Bar component", () => {
 
     test("click on search button", () => {
         wrapper.find('.ant-input-search button').simulate('click');
-    });*/
+    });
 })

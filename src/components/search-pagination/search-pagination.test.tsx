@@ -1,37 +1,36 @@
 import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
-import { shallow, mount } from 'enzyme';
-import Pagination from './search-pagination';
+import { mount } from 'enzyme';
+import SearchPagination from './search-pagination';
 
 describe("Search Pagination component", () => {
 
     let wrapper;
+    const pageChangeFn = jest.fn();
+    const pageLengthChangeFn = jest.fn();
 
     beforeAll(() => {
         wrapper = mount(
-        <Router>
-          <Pagination 
+          <SearchPagination 
             total={10}
             pageLength={1}
             currentPage={1}
-            OnPageChange={jest.fn()}
-            onPageLengthChange={jest.fn()}
-          />
-        </Router>);
+            onPageChange={pageChangeFn}
+            onPageLengthChange={pageLengthChangeFn} 
+          />);
       });
 
     test("renders", () => {
         expect(wrapper.exists()).toBe(true);
     }); 
 
-    test("search pagination page renders", () => {
+    test("search pagination component renders", () => {
         expect(wrapper.find('.ant-pagination-prev')).toHaveLength(1);
-        //expect(wrapper.find('.ant-pagination-item-3')).toHaveLength(1);
+        expect(wrapper.find('.ant-pagination-item-3')).toHaveLength(1);
         expect(wrapper.find('.ant-pagination-next')).toHaveLength(1);
     });
 
-    /*test("click on search page", () => {
+    test("click on page number", () => {
         wrapper.find('.ant-pagination-item-3').simulate('click');
-        expect(wrapper.find('.ant-pagination-item-active a').text()).toEqual("3");
-    });*/
+        expect(pageChangeFn).toHaveBeenCalled();
+    });
 })

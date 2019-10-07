@@ -3,14 +3,14 @@ import { Select, Input } from 'antd';
 import styles from './search-bar.module.scss';
 import { SearchContext } from '../../util/search-context';
 
-const SearchBar = ({ entities }) => {
+const SearchBar = props => {
     const { Search } = Input;
     const { Option } = Select;
     const { searchOptions, setQuery, clearEntity, setEntity } = useContext(SearchContext);
     const [ searchString, setSearchString] = useState(searchOptions.query);
-    entities = ['All Entities', ...entities];
+    const dropdownOptions = ['All Entities', ...props.entities];
 
-    const options = entities.map((e, i) => 
+    const options = dropdownOptions.map((e, i) => 
         <Option value={e} key={i} data-cy="entity-option">{e}</Option>
     );
     const entityMenu = (
