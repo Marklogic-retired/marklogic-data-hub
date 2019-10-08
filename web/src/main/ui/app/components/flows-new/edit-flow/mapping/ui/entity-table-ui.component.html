@@ -67,14 +67,14 @@
         id="fields-list"
         class="list-icon" 
         [matMenuTriggerFor]="fieldMenu" 
-        [matMenuTriggerData]="{propName: prop.name, indx: i}"
+        [matMenuTriggerData]="{prop: prop, indx: i}"
       ><i class="fa fa-list fa-xs"></i>
       </mat-icon>
       <span class="function-icon">
         <button 
           id="function-list" 
           [matMenuTriggerFor]="functionMenu" 
-          [matMenuTriggerData]="{propName: prop.name, indx: i}"
+          [matMenuTriggerData]="{prop: prop, indx: i}"
         >f(x)</button>
       </span>
     </mat-cell>
@@ -134,7 +134,7 @@
 
 <!-- PROPERTIES MENU -->
 <mat-menu class="mat-menu-list" #fieldMenu="matMenu">
-  <ng-template matMenuContent let-indx="indx" let-prop="propName">
+  <ng-template matMenuContent let-indx="indx" let-prop="prop">
     <div 
       mat-menu-item 
       class="mat-menu-list-btn" 
@@ -146,7 +146,7 @@
 
 <!-- FUNCTIONS MENU -->
 <mat-menu class="mat-menu-list" #functionMenu="matMenu">
-  <ng-template matMenuContent let-indx="indx" let-prop="propName">
+  <ng-template matMenuContent let-indx="indx" let-prop="prop">
     <div 
       mat-menu-item
       class="mat-menu-list-btn"  

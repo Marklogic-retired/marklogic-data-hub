@@ -98,7 +98,7 @@ export class EntityTableUiComponent implements OnChanges {
     return this.functionLst[funcName].signature
   }
 
-  insertContent(content, index, propName) {
+  insertContent(content, index, prop) {
     const f = this.fieldName.toArray()[index].nativeElement;
     const startPos = f.selectionStart;
     f.focus();
@@ -107,15 +107,18 @@ export class EntityTableUiComponent implements OnChanges {
     f.selectionStart = startPos;
     f.selectionEnd = startPos + content.length;
     f.focus();
-    this.onHandleSelection({name: propName, expr: f.value});
+    this.onHandleSelection({
+      name: prop.name, expr: f.value, 
+      ref: prop.$ref, nested: this.isNested(prop)
+    });
   }
 
-  insertFunction(functionName, index, propName) {
-    this.insertContent(this.functionsDef(functionName), index, propName);
+  insertFunction(functionName, index, prop) {
+    this.insertContent(this.functionsDef(functionName), index, prop);
   }
 
-  insertField(fieldName, index, propName) {
-    this.insertContent(fieldName, index, propName)
+  insertField(fieldName, index, prop) {
+    this.insertContent(fieldName, index, prop)
   }
 
 }
