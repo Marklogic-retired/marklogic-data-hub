@@ -40,7 +40,7 @@
              matSort>
     <ng-container matColumnDef="key">
       <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
-      <mat-cell *matCellDef="let srcProp" [ngStyle]="IndentCondition(srcProp.key)">{{srcProp.key.split('/').pop()}}</mat-cell>
+      <mat-cell *matCellDef="let srcProp" [ngStyle]="IndentCondition(srcProp.key)">{{displaySourceField(srcProp.key)}}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="val">
       <mat-header-cell *matHeaderCellDef mat-sort-header>Value</mat-header-cell>
@@ -110,7 +110,7 @@
    
 <mat-menu class="mat-menu-list" #fieldListMenu="matMenu">
   <ng-template matMenuContent let-indx="indx">
-    <div class="mat-menu-list-btn" mat-menu-item *ngFor="let srcProp of uniqueSourceFields(this.sampleDocNestedProps)" [ngStyle]="IndentCondition(srcProp)" (click)="insertField(srcProp,indx) ">{{srcProp.split('/').pop()}}</div>
+    <div class="mat-menu-list-btn" mat-menu-item *ngFor="let srcProp of uniqueSourceFields(this.sampleDocNestedProps)" [ngStyle]="IndentCondition(srcProp)" (click)="insertField(srcProp,indx) ">{{displaySourceField(srcProp)}}</div>
   </ng-template>
 </mat-menu>
 
