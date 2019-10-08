@@ -10,6 +10,7 @@ import { MatTable, MatTableDataSource} from "@angular/material";
 })
 export class EntityTableUiComponent implements OnChanges {
 
+  @Input() entityName: any;
   @Input() entityProps: any;
   @Input() showHeader: boolean;
   @Input() nestedLevel: number;
@@ -21,6 +22,7 @@ export class EntityTableUiComponent implements OnChanges {
 
   columnsToDisplay = ['name', 'datatype', 'expression', 'value'];
   mapExpressions = {};
+  mapData = {};
   showProp = {};
   showPropInit = false;
 
@@ -59,8 +61,17 @@ export class EntityTableUiComponent implements OnChanges {
   }
 
   onHandleSelection(obj): void {
-    console.log('handleSelection', obj);
-    this.handleSelection.emit(obj);
+    if (this.mapData[obj.name] === undefined) {
+      this.mapData[obj.name] = {};
+    }
+    if (typeof obj.expr === 'string') {
+      this.mapExpressions[obj.name] = obj.expr;
+      this.mapData[obj.name]['sourcedFrom'] = obj.expr;
+    } else {
+      this.mapData[obj.name]['properties'] = obj.expr;
+    }
+    let newObj = {name: this.entityName, expr: this.mapData};
+    this.handleSelection.emit(newObj);
   }
 
   toggleProp(name) {

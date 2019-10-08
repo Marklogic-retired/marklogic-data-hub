@@ -26,11 +26,10 @@ import { Flow } from "../../models/flow.model";
       [step]="this.step"
       [editURIVal]="this.editURIVal"
       [functionLst]="functionLst"
-      [nestEnt] = "nestEnt"
+      [entityName]="this.entityName"
       [entityNested] = "entityNested"
       (updateURI)="this.updateURI($event)"
       (updateMap)="this.updateMap($event)"
-      (nestEntity)="this.getEntity($event)"
     ></app-mapping-ui>
   `
 })
@@ -43,7 +42,6 @@ export class MappingComponent implements OnInit {
 
   // Entity Model
   public targetEntity: Entity;
-  public nestEnt: Entity;
   public entityNested: Entity;
   public dataSourceEntity: {};
 
@@ -61,6 +59,7 @@ export class MappingComponent implements OnInit {
 
   // Connections
   public conns: object = {};
+  public connsNested: boolean = false;
   public connsOrig: object = {};
   private mapPrefix: string = 'dhf-map-';
 
@@ -81,8 +80,9 @@ export class MappingComponent implements OnInit {
   /**
    * Update the mapping based on new connections submitted.
    */
-  updateMap(conns) {
-    this.conns = conns;
+  updateMap(obj) {
+    this.conns = obj.conns;
+    this.connsNested = obj.nested;
     this.saveMap();
   }
 
@@ -259,11 +259,18 @@ export class MappingComponent implements OnInit {
   }
 
   saveMap(): void {
+    console.log('saveMap conns', this.conns);
     let formattedConns = {};
-    _.forEach(this.conns, function(srcPropName, entityPropName) {
-      if (srcPropName)
-        formattedConns[entityPropName] = { "sourcedFrom" : srcPropName };
-    });
+    // Nested and legacy data structures differ
+    if (this.connsNested) {
+      // TODO handle targetEntityType for objects, arrays
+      formattedConns = this.conns;
+    } else {
+      _.forEach(this.conns, function(srcPropName, entityPropName) {
+        if (srcPropName)
+          formattedConns[entityPropName] = { "sourcedFrom" : srcPropName };
+      });
+    }
     let baseUri = (this.targetEntity.info.baseUri) ? this.targetEntity.info.baseUri : '',
         targetEntityType =  baseUri + this.targetEntity.name + '-' +
           this.targetEntity.info.version + '/' + this.targetEntity.name,
@@ -353,16 +360,6 @@ export class MappingComponent implements OnInit {
     this.manageFlowsService.getFunctions().subscribe( resp => {
       this.functionLst = resp;
     });
-  }
-
-   
-  getEntity(event): void {
-    this.entitiesService.entitiesChange.subscribe(entities => {
-      this.nestEnt = _.find(entities, (e: Entity) => {
-        return e.name === event.entName;
-      });
-    });
-    this.entitiesService.getEntities();
   }
 
   updateNestedDataSource(sourcePropsDoc): Array<any> {
