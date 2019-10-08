@@ -1,10 +1,9 @@
-<!-- layout-padding -->
-<!-- New Source Design for mapping expression -->
+<!-- START NEW MAPPING VIEW -->
 <div *ngIf="isVersionCompatibleWithES" class="source-prop-container-map-exp">
 
-    <span>
+  <span>
   
-   <div class="Source_Tbl">
+    <div class="Source_Tbl">
       <div class="item-title">
       <div class="item-type">Source Data</div>
       <!-- <span class="help-icon">
@@ -16,221 +15,87 @@
           <span class="edit-source-query" (click)="this.OpenFullSourceQuery()" tooltip="{{ this.step.options.sourceQuery }}" container="body">{{ getInitialChars(this.step.options.sourceQuery, 30, '...') }}</span>
       </p>
       <p *ngIf="!editingURI" class="item-identifying-info">
-          <span class="uri-label" tooltip="The URI of the source document from which QuickStart generates the list of source property names." container="body">URI: </span>
-          <span (click)="editingURI=true" ng-class="sample-doc-uri" class="sample-doc-uri" tooltip="{{ getURITooltip(mapping.sourceURI, 45) }}" container="body">{{ getLastChars(mapping.sourceURI, 45, '...') }}</span>
-          <span class="fa fa-pencil edit-item" (click)="editingURI=true">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-        </p>
-        <p *ngIf="editingURI" class="edit-uri">
-          <span class="uri-label" tooltip="The URI of the source document from which QuickStart generates the list of source property names." container="body">URI:</span>
-          <input type="text" class="edit-uri-val" [(ngModel)]="editURIVal" (keypress)="keyPressURI($event)" />
-          <span class="edit-save" (click)="onUpdateURINewUI();"><i class="fa fa-check"></i></span>
-          <span class="edit-cancel" (click)="cancelEditURI()"><i class="fa fa-remove"></i></span>
-        </p>
-        <span class="navigate_source_uris">
-          <button class="navigate_uris_left" (click)="onNavigateURIList(uriIndex-1)" [disabled]="this.disableURINavLeft"><i
-              class="fa fa-angle-left fa-2x"></i></button>
-          &nbsp;&nbsp;<input type="text" class="URI_Index" [(ngModel)]="uriIndex" [disabled]="true" />
-          &nbsp;&nbsp;<button class="navigate_uris_right" (click)="onNavigateURIList(uriIndex+1)"
-            [disabled]="this.disableURINavRight"><i class="fa fa-angle-right fa-2x"></i></button>
-        </span>
+        <span class="uri-label" tooltip="The URI of the source document from which QuickStart generates the list of source property names." container="body">URI: </span>
+        <span (click)="editingURI=true" ng-class="sample-doc-uri" class="sample-doc-uri" tooltip="{{ getURITooltip(mapping.sourceURI, 45) }}" container="body">{{ getLastChars(mapping.sourceURI, 45, '...') }}</span>
+        <span class="fa fa-pencil edit-item" (click)="editingURI=true">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      </p>
+      <p *ngIf="editingURI" class="edit-uri">
+        <span class="uri-label" tooltip="The URI of the source document from which QuickStart generates the list of source property names." container="body">URI:</span>
+        <input type="text" class="edit-uri-val" [(ngModel)]="editURIVal" (keypress)="keyPressURI($event)" />
+        <span class="edit-save" (click)="onUpdateURINewUI();"><i class="fa fa-check"></i></span>
+        <span class="edit-cancel" (click)="cancelEditURI()"><i class="fa fa-remove"></i></span>
+      </p>
+      <span class="navigate_source_uris">
+        <button class="navigate_uris_left" (click)="onNavigateURIList(uriIndex-1)" [disabled]="this.disableURINavLeft"><i
+            class="fa fa-angle-left fa-2x"></i></button>
+        &nbsp;&nbsp;<input type="text" class="URI_Index" [(ngModel)]="uriIndex" [disabled]="true" />
+        &nbsp;&nbsp;<button class="navigate_uris_right" (click)="onNavigateURIList(uriIndex+1)"
+          [disabled]="this.disableURINavRight"><i class="fa fa-angle-right fa-2x"></i></button>
+      </span>
 
-  <mat-table id="source-new-table" 
-             [dataSource]="dataSource"
-             #table class="source-props" 
-             matSort>
-    <ng-container matColumnDef="key">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
-      <mat-cell *matCellDef="let srcProp">{{srcProp.key}}</mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="val">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>Value</mat-header-cell>
-      <!-- <mat-cell *matCellDef="let srcProp">{{srcProp.val}}</mat-cell>  -->
-      <mat-cell *matCellDef="let srcProp">{{ isQuoted(srcProp.type) ? '"' : '' }}{{ srcProp.val | slice:0:valMaxLen }}{{ srcProp.val.length > valMaxLen ? '...' : '' }}{{ isQuoted(srcProp.type) ? '"' : '' }}</mat-cell>
-    </ng-container>
-    <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-  </mat-table>      
-</div>
+      <mat-table id="source-new-table" 
+        [dataSource]="dataSource"
+        #table class="source-props" 
+        matSort>
+        <ng-container matColumnDef="key">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
+          <mat-cell *matCellDef="let srcProp">{{srcProp.key}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="val">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Value</mat-header-cell>
+          <!-- <mat-cell *matCellDef="let srcProp">{{srcProp.val}}</mat-cell>  -->
+          <mat-cell *matCellDef="let srcProp">{{ isQuoted(srcProp.type) ? '"' : '' }}{{ srcProp.val | slice:0:valMaxLen }}{{ srcProp.val.length > valMaxLen ? '...' : '' }}{{ isQuoted(srcProp.type) ? '"' : '' }}</mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>   
 
-<mat-divider [vertical]="true"></mat-divider>
+    </div> <!-- Source_Tbl -->
+    <mat-divider [vertical]="true"></mat-divider>
 
-
-
-  <div class="Entities_Tbl">
+    <div class="Entities_Tbl">
       <div class="item-title"> 
-    <div class="item-type">Entity</div>
-    <!-- <span class="help-icon">
-        <a href="https://marklogic.github.io/marklogic-data-hub/refs/index-settings/" target="_blank"><i class="fa fa-question-circle fa-lg"></i></a>
-    </span> -->
-    <br>
-   <br>
-    </div>
-    <p class="target-entity-title" ng-class="title-entity-model">{{ targetEntity?.info.title }} </p>
-    <!-- <span class="btn-icons">
+        <div class="item-type">Entity</div>
+        <!-- <span class="help-icon">
+            <a href="https://marklogic.github.io/marklogic-data-hub/refs/index-settings/" target="_blank"><i class="fa fa-question-circle fa-lg"></i></a>
+        </span> -->
+        <br>
+        <br>
+      </div>
+      <p class="target-entity-title" ng-class="title-entity-model">{{ targetEntity?.info.title }} </p>
+      <span class="btn-icons">
         <button id="Test-btn" mat-raised-button color="primary">
-            Test
-          </button>
-          <button id="Clear-btn" [disabled]="true" mat-raised-button color="primary">
-            Clear
-          </button>
-          &nbsp;<mat-icon id="lookup-icon"><i class="fa fa-book fa-sm"></i></mat-icon>
-      <mat-icon id="filter-icon"><i class="fa fa-columns"></i></mat-icon>
-    </span> -->
- <br>
- <br>
-    <mat-table id="source-new-table-entities" 
-              [dataSource]="targetEntity?.definition.properties" 
-              class="Entity-props" 
-              matSort>
-      <ng-container matColumnDef="name">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
-        <mat-cell *matCellDef="let entProp; let i = index">{{entProp.name}}
-          <!-- &nbsp;<mat-icon 
-          id="expand-nested-rows-close" 
-          class="list-icon" 
-          *ngIf="(entProp.$ref !== null || !this.checkEmptyObject(entProp.items)) && !nestedEntityStatus" 
-          (click)="onNestEntity(entProp)"><i class="fa fa-angle-right fa-sm"></i></mat-icon>
-          <mat-icon 
-          id="expand-nested-rows-open" 
-          class="list-icon" 
-          *ngIf="(entProp.$ref !== null || !this.checkEmptyObject(entProp.items)) && nestedEntityStatus" 
-          (click)="onNestEntity(entProp)"><i class="fa fa-angle-down fa-sm"></i></mat-icon> -->
-        </mat-cell>
+          Test
+        </button>
+        <button id="Clear-btn" [disabled]="true" mat-raised-button color="primary">
+          Clear
+        </button>
+        &nbsp;<mat-icon id="lookup-icon">
+          <i class="fa fa-book fa-sm"></i>
+        </mat-icon>
+        <mat-icon id="filter-icon"><i class="fa fa-columns"></i></mat-icon>
+      </span>
 
-      </ng-container>
-      <ng-container matColumnDef="datatype">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>Type</mat-header-cell>
-        <mat-cell *matCellDef="let entProp">{{entProp.$ref == null && this.checkEmptyObject(entProp.items) ? entProp.datatype : "Entity"}}
-        </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="expression">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>Expression</mat-header-cell>
-          <mat-cell *matCellDef="let entProp; let i = index">
-            <div class="textField" *ngIf="entProp.$ref == null && this.checkEmptyObject(entProp.items)">
-            <textarea
-              id="edit-expression"
-              matInput
-              cdkTextareaAutosize
-              #autosize="cdkTextareaAutosize"
-             #fieldName [(ngModel)]="mapExpresions[entProp.name]" (change)="handleSelection(entProp.name, mapExpresions[entProp.name])" type="text" class="map-expr"
-              ></textarea>
-            </div>
+      <div id="entity-table-container">
+        <app-entity-table-ui
+          [entityName]="this.entityName"
+          [entityProps]="this.entityProps"
+          [showHeader]="true"
+          [nestedLevel]="0"
+          [srcProps]="this.sampleDocSrcProps"
+          [functionLst]="this.functionLst"
+          (handleSelection)="this.onHandleSelection($event)"
+        ></app-entity-table-ui>
+      </div>
+ 
+    </div> <!-- Entities_Tbl -->
 
-              &nbsp;&nbsp;<mat-icon id="fields-list" *ngIf="entProp.$ref == null && this.checkEmptyObject(entProp.items)" class="list-icon" [matMenuTriggerFor]="fieldListMenu" [matMenuTriggerData]="{indx: i}"><i class="fa fa-list fa-xs"></i></mat-icon>
-              &nbsp;&nbsp;<button id="function-list" *ngIf="entProp.$ref == null && this.checkEmptyObject(entProp.items)" class="function-icon" [matMenuTriggerFor]="menu" [matMenuTriggerData]="{ind: entProp.name,indx: i}">f(x)</button>
-              &nbsp;&nbsp;
-          </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="value">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>&nbsp;&nbsp;Value</mat-header-cell>
-          <mat-cell *matCellDef="let entProp">
-          </mat-cell>
-        </ng-container>
-        <!-- Expandable rows -->
-        <!-- <ng-container matColumnDef="expandedDetail">
-          <mat-cell *matCellDef="let detail" [attr.colspan]="4">
-        
-            <div class="example-element-detail">
-              <mat-table id="source-new-table-entities2" [dataSource]="nestEnt?.definition.properties" class="Entity-props"
-                 matSort>
-                <ng-container matColumnDef="name">
-                  <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
-                  <mat-cell *matCellDef="let entProp2">{{entProp2.name}}
-                    &nbsp;<mat-icon id="expand-nested-rows-close" class="list-icon"
-                      *ngIf="(entProp2.$ref !== null || !this.checkEmptyObject(entProp2.items)) && !nestedEntityStatus"
-                      (click)="nestedEntityStatus ? nestedEntityStatus = false : nestedEntityStatus = true"><i
-                        class="fa fa-angle-right fa-sm"></i></mat-icon>
-                    <mat-icon id="expand-nested-rows-open" class="list-icon"
-                      *ngIf="(entProp2.$ref !== null || !this.checkEmptyObject(entProp2.items)) && nestedEntityStatus"
-                      (click)="nestedEntityStatus == true ? nestedEntityStatus = false : nestedEntityStatus = true"><i
-                        class="fa fa-angle-down fa-sm"></i></mat-icon>
-                  </mat-cell>
-        
-                </ng-container>
-                <ng-container matColumnDef="datatype">
-                  <mat-header-cell *matHeaderCellDef mat-sort-header>Type</mat-header-cell>
-                  <mat-cell *matCellDef="let entProp2">
-                    {{entProp2.$ref == null && this.checkEmptyObject(entProp2.items) ? entProp2.datatype : "Entity"}}
-                  </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="expression">
-                  <mat-header-cell *matHeaderCellDef mat-sort-header>Expression</mat-header-cell>
-                  <mat-cell *matCellDef="let entProp2; let k = index">
-                    <div class="textField" *ngIf="entProp2.$ref == null && this.checkEmptyObject(entProp2.items)">
-                      <textarea id="edit-expression" matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize" #fieldName
-                        [(ngModel)]="mapExpresions[entProp2.name]"
-                        (change)="handleSelection(entProp2.name, mapExpresions[entProp2.name])" type="text"
-                        class="map-expr"></textarea>
-                    </div>
-        
-                    
-                    
-                    &nbsp;&nbsp;<mat-icon id="fields-list" *ngIf="entProp2.$ref == null && this.checkEmptyObject(entProp2.items)"
-                      class="list-icon" [matMenuTriggerFor]="fieldListMenu" [matMenuTriggerData]="{indx: k}"><i
-                        class="fa fa-list fa-xs"></i>
-                    </mat-icon>
-                    &nbsp;&nbsp;<button id="function-list" *ngIf="entProp2.$ref == null && this.checkEmptyObject(entProp2.items)"
-                      class="function-icon" [matMenuTriggerFor]="menu" [matMenuTriggerData]="{ind: entProp2.name,indx: k}">f(x)</button>
-                    &nbsp;&nbsp;
-                    </mat-cell>
-                    </ng-container>
-                <ng-container matColumnDef="value">
-                  <mat-header-cell *matHeaderCellDef mat-sort-header>&nbsp;&nbsp;Value</mat-header-cell>
-                  <mat-cell *matCellDef="let entProp2">
-                  </mat-cell>
-                </ng-container>
-        
-                <!-- <mat-header-row *matHeaderRowDef="displayedEntityColumns2; sticky:true"></mat-header-row> -->
-               <!-- <mat-row *matRowDef="let row2; columns: displayedEntityColumns2;"></mat-row>
-        
-              </mat-table>
-        
-            </div>
-
-
-
-          </mat-cell>
-        </ng-container> -->
-        <!-- <ng-container matColumnDef="value">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>Value</mat-header-cell>
-            <mat-cell *matCellDef="let entProp; let i = index">
-                <input type="text" class="map-expr-val" [(ngModel)]="mapExpValue[i]" />
-            </mat-cell>
-          </ng-container> -->
-      
-      <mat-header-row *matHeaderRowDef="displayedEntityColumns; sticky:true"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedEntityColumns;"
-            ></mat-row>
-      <!-- <mat-row *matRowDef="let row; columns: displayedEntityColumns;"
-            class="element-row" 
-            [class.expanded]="expandedElement === row"
-            (click)="expandedElement = row"></mat-row>
-      <mat-row *matRowDef="let row; columns: ['expandedDetail']; when: nestedEntityStatus == true"
-      [@detailExpand]="row == expandedElement && nestedEntityStatus == true ? 'expanded' : 'collapsed'"
-            style="overflow: hidden"> 
-    </mat-row>  -->
-      <!-- <mat-row *matRowDef="let row; columns: displayedEntityColumns; when: isExpansionDetailRow"
-            [@detailExpand]="row.element == expandedElement ? 'expanded' : 'collapsed'"
-            style="overflow: hidden"> 
-    </mat-row> -->
-    </mat-table>
-  </div>
   </span>
 
-</div>
+</div> <!-- isVersionCompatibleWithES -->
+<!-- END NEW MAPPING VIEW -->
 
-<mat-menu class="mat-menu-list" #menu="matMenu">
-  <ng-template matMenuContent let-indx="indx">
-    <div class="mat-menu-list-btn" mat-menu-item *ngFor="let func of functionLst | keyvalue" (click)="insertFunction(func.key,indx)">{{func.key}}</div>
-  </ng-template>
-</mat-menu>
-   
-<mat-menu class="mat-menu-list" #fieldListMenu="matMenu">
-  <ng-template matMenuContent let-indx="indx">
-    <div class="mat-menu-list-btn" mat-menu-item *ngFor="let srcProp of this.sampleDocSrcProps" (click)="insertField(srcProp.key,indx) ">{{srcProp.key}}</div>
-  </ng-template>
-</mat-menu>
-
+<!-- START LEGACY MAPPING VIEW -->
 <div *ngIf="!isVersionCompatibleWithES" layout-padding layout="column" class="map-page">
 
   <div *ngIf="!targetEntity" class="map-container">
@@ -351,5 +216,5 @@
 
   </div><!-- map-container -->
 
-</div><!-- layout-padding -->
-
+</div><!-- !isVersionCompatibleWithES -->
+<!-- END LEGACY MAPPING VIEW -->

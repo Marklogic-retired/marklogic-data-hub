@@ -6,6 +6,8 @@ import * as _ from 'lodash';
 import * as moment from 'moment';
 import { Mapping } from "../../../../mappings/mapping.model";
 import { EnvironmentService } from '../../../../../services/environment';
+import { EntityTableUiComponent } from './entity-table-ui.component';
+
 import {MatDialog, MatPaginator, MatSort, MatTable, MatTableDataSource} from "@angular/material";
 import { Step } from '../../../models/step.model';
 import {animate, state, style, transition, trigger} from '@angular/animations';
@@ -16,15 +18,7 @@ import {animate, state, style, transition, trigger} from '@angular/animations';
   selector: 'app-mapping-ui',
   templateUrl: './mapping-ui.component.html',
   styleUrls: ['./mapping-ui.component.scss'],
-  encapsulation: ViewEncapsulation.None,
-  animations: [
-    trigger('detailExpand', [
-      state('collapsed', style({ height: '0px', minHeight: '0', visibility: 'hidden' })),
-      state('expanded', style({ height: '*', visibility: 'visible' })),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-    ]),
-  ],
-  
+  encapsulation: ViewEncapsulation.None
 })
 export class MappingUiComponent implements OnChanges {
 
@@ -37,10 +31,12 @@ export class MappingUiComponent implements OnChanges {
   @Input() editURIVal: string = '';
   @Input() step: Step;
   @Input() functionLst: object;
-  @Input() nestEnt: Entity;
+  @Input() entityName: string;
+  @Input() entityNested: Entity;
+
+  @Input() entityProps: any;
   @Output() updateURI = new EventEmitter();
   @Output() updateMap = new EventEmitter();
-  @Output() nestEntity = new EventEmitter();
 
   private uriOrig: string = '';
   private connsOrig: object = {};
@@ -91,13 +87,12 @@ export class MappingUiComponent implements OnChanges {
 
   ngOnInit(){
     if (!this.dataSource){
-   this.dataSource = new MatTableDataSource<any>(this.sampleDocSrcProps);
-
+    this.dataSource = new MatTableDataSource<any>(this.sampleDocSrcProps);
     }
-  if(_.isEmpty(this.mapExpresions)) {
-    this.mapExpresions = this.conns;
-  }
-  this.isVersionCompatibleWithES = this.envService.settings.isVersionCompatibleWithES;
+    if(_.isEmpty(this.mapExpresions)) {
+      this.mapExpresions = this.conns;
+    }
+    this.isVersionCompatibleWithES = this.envService.settings.isVersionCompatibleWithES;
   }
 
   ngAfterViewInit() {
@@ -116,27 +111,6 @@ export class MappingUiComponent implements OnChanges {
     if(_.isEmpty(this.mapExpresions)) {
       this.mapExpresions = this.conns;
     }
-  }
-  
-  onNestEntity(entProp){
-    if (this.nestedEntityStatus) {
-      this.nestedEntityStatus = false;
-    } else {
-    if(entProp.$ref || (entProp.items && entProp.items.$ref)) {
-      if (entProp.$ref) {
-        this.entName = entProp.$ref.split('/').pop();
-      }
-      else {
-        this.entName = entProp.items.$ref.split('/').pop();
-      }
-    }
-    //this.entName = 'ItemType';
-    this.nestEntity.emit({
-      nestEnt: this.nestEnt,
-      entName: this.entName
-    });
-    this.nestedEntityStatus = true
-  }
   }
 
   onNavigateURIList(index) {
@@ -274,19 +248,31 @@ export class MappingUiComponent implements OnChanges {
     }
     if (changes.sampleDocSrcProps){
       this.renderRows();
-       } 
+    } 
+    if (changes.entityNested && changes.entityNested.currentValue){
+      // Get props from target entity for passing to child
+      this.entityProps = 
+        this.entityNested.definitions[this.targetEntity.info.title].properties;
+    } 
   }
 
-  /**
-   * Handle property selection from source menu
-   * @param entityPropName Entity property name of selection
-   * @param srcPropName Source property name of selection
-   */
-  handleSelection(entityPropName, srcPropName): void {
-    this.conns[entityPropName] = srcPropName;
-    if (!_.isEqual(this.conns, this.connsOrig)) {
-      this.onSaveMap();
+  handleSelection(name, expr, nested): void {
+    console.log('mapping-ui handleSelection', name, expr, nested);
+    if (nested === true) {
+      // New nested version 
+      this.conns = expr;
+    } else {
+      // Legacy flat version
+      this.conns[name] = expr;
     }
+    if (!_.isEqual(this.conns, this.connsOrig)) {
+      this.onSaveMap(nested);
+    }
+  }
+
+  onHandleSelection(event): void {
+    console.log('mapping-ui onHandleSelection', event);
+    this.handleSelection(event.name, event.expr, true);
   }
 
   /**
@@ -327,8 +313,11 @@ export class MappingUiComponent implements OnChanges {
   /**
    * Handle save event by emitting connection object.
    */
-  onSaveMap() {
-    this.updateMap.emit(this.conns);
+  onSaveMap(nested) {
+    this.updateMap.emit({
+      conns: this.conns,
+      nested: nested
+    });
     this.connsOrig = _.cloneDeep(this.conns);
   }
 
@@ -475,15 +464,6 @@ export class MappingUiComponent implements OnChanges {
     return _.includes(this.targetEntity.definition.primaryKey, name);
   }
 
-  executeFunctions(funcName, propName) {
-    this.mapExpresions[propName] = this.mapExpresions[propName] + " " + this.functionsDef(funcName);
-    console.log(funcName, propName, this.mapExpresions[propName])
-  }
-
-  functionsDef(funcName) {
-    return this.functionLst[funcName].signature
-  }
-
   OpenFullSourceQuery() {
     let result = this.dialogService.alert(
       this.step.options.sourceQuery,
@@ -491,31 +471,6 @@ export class MappingUiComponent implements OnChanges {
     );
     result.subscribe();
 
-  }
-
-  insertFunction(fname, index) {
-
-    var startPos = this.fieldName.toArray()[index].nativeElement.selectionStart;
-    this.fieldName.toArray()[index].nativeElement.focus();
-    this.fieldName.toArray()[index].nativeElement.value = this.fieldName.toArray()[index].nativeElement.value.substr(0, this.fieldName.toArray()[index].nativeElement.selectionStart) + this.functionsDef(fname) + this.fieldName.toArray()[index].nativeElement.value.substr(this.fieldName.toArray()[index].nativeElement.selectionStart, this.fieldName.toArray()[index].nativeElement.value.length);
-
-    this.fieldName.toArray()[index].nativeElement.selectionStart = startPos;
-    this.fieldName.toArray()[index].nativeElement.selectionEnd = startPos + this.functionsDef(fname).length;
-    this.fieldName.toArray()[index].nativeElement.focus();
-  }
-
-  insertField(fname, index) {
-
-    var startPos = this.fieldName.toArray()[index].nativeElement.selectionStart;
-    this.fieldName.toArray()[index].nativeElement.focus();
-    this.fieldName.toArray()[index].nativeElement.value = this.fieldName.toArray()[index].nativeElement.value.substr(0, this.fieldName.toArray()[index].nativeElement.selectionStart) + fname + this.fieldName.toArray()[index].nativeElement.value.substr(this.fieldName.toArray()[index].nativeElement.selectionStart, this.fieldName.toArray()[index].nativeElement.value.length);
-
-    this.fieldName.toArray()[index].nativeElement.selectionStart = startPos;
-    this.fieldName.toArray()[index].nativeElement.selectionEnd = startPos + fname.length;
-    this.fieldName.toArray()[index].nativeElement.focus();
-  }
-  checkEmptyObject(objName){
-    return JSON.stringify(objName) === JSON.stringify({})
   }
 
 }
