@@ -362,7 +362,7 @@ pipeline{
                   }
                   }
 		}
-		stage('rh7_cluster_9.0-Nightly''){
+		stage('rh7_cluster_9.0-Nightly'){
 			agent { label 'dhfLinuxAgent'}
 			steps{
 			script{
