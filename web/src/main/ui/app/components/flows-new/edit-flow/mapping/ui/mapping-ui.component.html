@@ -88,7 +88,7 @@
           [entityProps]="this.entityProps"
           [showHeader]="true"
           [nestedLevel]="0"
-          [srcProps]="this.sampleDocSrcProps"
+          [srcProps]="this.sampleDocNestedProps"
           [functionLst]="this.functionLst"
           (handleSelection)="this.onHandleSelection($event)"
         ></app-entity-table-ui>
@@ -100,7 +100,7 @@
 
 </div> <!-- isVersionCompatibleWithES -->
 <!-- END NEW MAPPING VIEW -->
-</div>
+<!-- 
 
 <mat-menu class="mat-menu-list" #menu="matMenu">
   <ng-template matMenuContent let-indx="indx">
@@ -112,7 +112,7 @@
   <ng-template matMenuContent let-indx="indx">
     <div class="mat-menu-list-btn" mat-menu-item *ngFor="let srcProp of uniqueSourceFields(this.sampleDocNestedProps)" [ngStyle]="IndentCondition(srcProp)" (click)="insertField(srcProp,indx) ">{{displaySourceField(srcProp)}}</div>
   </ng-template>
-</mat-menu>
+</mat-menu> -->
 
 <!-- START LEGACY MAPPING VIEW -->
 <div *ngIf="!isVersionCompatibleWithES" layout-padding layout="column" class="map-page">
