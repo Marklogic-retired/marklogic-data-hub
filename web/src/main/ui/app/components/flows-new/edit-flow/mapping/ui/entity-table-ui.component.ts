@@ -16,6 +16,7 @@ export class EntityTableUiComponent implements OnChanges {
   @Input() nestedLevel: number;
   @Input() srcProps: any;
   @Input() functionLst: object;
+  @Input() nmspace: object;
   @Output() handleSelection = new EventEmitter();
   
   dataSource: MatTableDataSource<any>;
@@ -117,6 +118,37 @@ export class EntityTableUiComponent implements OnChanges {
 
   insertField(fieldName, index, prop) {
     this.insertContent(fieldName, index, prop)
+  }
+
+  //Indenting the nested levels
+  IndentCondition(prop) {
+    let count = prop.split('/').length - 1;
+    let indentSize = 20*count;
+  
+    let style = {'text-indent': indentSize+'px'}
+  return style
+  }
+
+  // Removing duplicate entries in the source dataset
+  uniqueSourceFields(source) {
+    let uniqueSrcFields = [];
+    source.forEach(obj => {
+      uniqueSrcFields.push(obj.key);
+    });
+    
+    return uniqueSrcFields.filter((item, index) => uniqueSrcFields.indexOf(item) === index);
+  }
+
+  // Attach namespace, if the source is an xml document
+  displaySourceField(field): string {
+    let fieldValue = "";
+    if(this.nmspace && field in this.nmspace) {
+      fieldValue = this.nmspace[field] + ":"+ field.split('/').pop();
+    }
+    else {
+      fieldValue = field.split('/').pop();
+    }
+    return fieldValue;
   }
 
 }
