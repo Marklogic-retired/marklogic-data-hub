@@ -7,6 +7,14 @@ def prResponse="";
 def prNumber;
 def props;
 def githubAPIUrl="https://api.github.com/repos/marklogic/marklogic-data-hub"
+def loadProperties() {
+    node {
+        checkout scm
+        properties = new Properties()
+        props.load(propertiesFile.newDataInputStream())
+        echo "Immediate one ${properties.repo}"
+    }
+}
 pipeline{
 	agent none;
 	options {
@@ -58,8 +66,8 @@ pipeline{
 		agent { label 'dhfLinuxAgent'}
 			steps{
 			script{
-			props = readProperties file:'data-hub/pipeline.properties';
-				copyRPM 'Latest','10.0'
+			 props = readProperties file:'data-hub/pipeline.properties';
+				 copyRPM 'Release','10.0-2'
 				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
 				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;set +e;./gradlew clean;./gradlew marklogic-data-hub:test || true;sleep 10s;./gradlew ml-data-hub:test || true;./gradlew web:test || true;'
 				junit '**/TEST-*.xml'
@@ -289,6 +297,7 @@ pipeline{
                 }
              withCredentials([usernameColonPassword(credentialsId: '550650ab-ee92-4d31-a3f4-91a11d5388a3', variable: 'Credentials')]) {
              script{
+              props = readProperties file:'data-hub/pipeline.properties';
              sh "curl -o - -s -w \"\n%{http_code}\n\" -X PUT -d '{\"commit_title\": \"$JIRA_ID: Merge pull request\", \"merge_method\": \"rebase\"}' -u $Credentials  "+githubAPIUrl+"/pulls/${prNumber}/merge | tail -2 > mergeResult.txt"
     					def mergeResult = readFile('mergeResult.txt').trim()
     					if(mergeResult=="200"){
@@ -317,12 +326,12 @@ pipeline{
   			beforeAgent true
 		}
 		parallel{
-		stage('rh7_cluster_9.0-9'){
+		stage('rh7_cluster_10.0-Nightly'){
 			agent { label 'dhfLinuxAgent'}
 			steps{
 			    script{
 			    props = readProperties file:'data-hub/pipeline.properties';
-				copyRPM 'Release','9.0-9'
+				 copyRPM 'Latest','10.0'
 				def dockerhost=setupMLDockerCluster 3
 				sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test || true;sleep 10s;./gradlew ml-data-hub:test || true;sleep 10s;./gradlew web:test || true;sleep 10s;./gradlew marklogic-data-hub:testBootstrap || true;sleep 10s;./gradlew ml-data-hub:testFullCycle || true;"'
 				}
@@ -335,7 +344,7 @@ pipeline{
 				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
 				JIRA_ID=JIRA_ID.split(" ")[0];
 				commitMessage=null;
-				//jiraAddComment comment: 'Jenkins rh7_cluster_9.0-9 Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+				//jiraAddComment comment: 'Jenkins rh7_cluster__10.0-Nightly Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
 				}
 			}
 			post{
@@ -343,22 +352,22 @@ pipeline{
 				  	sh 'rm -rf $WORKSPACE/xdmp'
 				  }
                   success {
-                    println("rh7_cluster_9.0-9 Tests Completed")
-                    sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on rh7 cluster 9.0-9 of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'rh7_cluster_9.0-9 Tests $BRANCH_NAME Passed'
+                    println("rh7_cluster_10.0-Nightly Tests Completed")
+                    sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on rh7 cluster 10.0-Nightly of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'rh7_cluster_10.0-Nightly Tests $BRANCH_NAME Passed'
                     // sh './gradlew publish'
                    }
                    unsuccessful {
-                      println("rh7_cluster_9.0-9 Tests Failed")
-                      sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on 9.0-9 rh7 cluster failed. Please fix the tests and create a PR or create a bug for the failures.',false,'rh7_cluster_9.0-9 Tests for $BRANCH_NAME Failed'
+                      println("rh7_cluster_10.0-Nightly Tests Failed")
+                      sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on 10.0-Nightly rh7 cluster failed. Please fix the tests and create a PR or create a bug for the failures.',false,'rh7_cluster_10.0-Nightly Tests for $BRANCH_NAME Failed'
                   }
                   }
 		}
-		stage('rh7_cluster_9.0-7'){
+		stage('rh7_cluster_9.0-Nightly''){
 			agent { label 'dhfLinuxAgent'}
 			steps{
 			script{
 			    props = readProperties file:'data-hub/pipeline.properties';
-				copyRPM 'Release','9.0-7'
+				copyRPM 'Latest','9.0'
 				def dockerhost=setupMLDockerCluster 3
 				sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test || true;sleep 10s;./gradlew ml-data-hub:test || true;sleep 10s;./gradlew web:test || true;sleep 10s;./gradlew marklogic-data-hub:testBootstrap || true;sleep 10s;./gradlew ml-data-hub:testFullCycle || true;"'
 				}
@@ -371,7 +380,7 @@ pipeline{
 				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
 				JIRA_ID=JIRA_ID.split(" ")[0];
 				commitMessage=null;
-				//jiraAddComment comment: 'Jenkins rh7_cluster_9.0-7 Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+				//jiraAddComment comment: 'Jenkins rh7_cluster_9.0-Nightly Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
 				}
 			}
 			post{
@@ -379,21 +388,19 @@ pipeline{
 				  	sh 'rm -rf $WORKSPACE/xdmp'
 				  }
                   success {
-                    println("rh7_cluster_9.0-7 Completed")
-                    sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on rh7 cluster 9.0-7 of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'rh7_cluster_9.0-7 Tests for $BRANCH_NAME Passed'
+                    println("rh7_cluster_9.0-Nightly Completed")
+                    sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on rh7 cluster 9.0-Nightly of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'rh7_cluster_9.0-Nightly Tests for $BRANCH_NAME Passed'
                    }
                    unsuccessful {
-                      println("rh7_cluster_9.0-7 Failed")
-                      sh 'mkdir -p MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/MLLogs/'
-                      archiveArtifacts artifacts: 'MLLogs/**/*'
-                      sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on 9.0-7 rh7 cluster failed. Please fix the tests and create a PR or create a bug for the failures.',false,'rh7_cluster_9.0-7 Tests for $BRANCH_NAME Failed'
+                      println("rh7_cluster_9.0-Nightly Failed")
+                      sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on 9.0-Nightly rh7 cluster failed. Please fix the tests and create a PR or create a bug for the failures.',false,'rh7_cluster_9.0-Nightly Tests for $BRANCH_NAME Failed'
                   }
                   }
 		}
-		stage('rh7_cluster_9.0-8'){
+		stage('rh7_cluster_9.0-10'){
 			agent { label 'dhfLinuxAgent'}
 			steps{ 
-				copyRPM 'Release','9.0-8'
+				copyRPM 'Release','9.0-10'
 				script{
 				props = readProperties file:'data-hub/pipeline.properties';
 				def dockerhost=setupMLDockerCluster 3
@@ -408,7 +415,7 @@ pipeline{
 				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
 				JIRA_ID=JIRA_ID.split(" ")[0];
 				commitMessage=null;
-				//jiraAddComment comment: 'Jenkins rh7_cluster_9.0-8 Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+				//jiraAddComment comment: 'Jenkins rh7_cluster_9.0-10 Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
 				}
 			}
 			post{
@@ -416,59 +423,90 @@ pipeline{
 				  	sh 'rm -rf $WORKSPACE/xdmp'
 				  }
                   success {
-                    println("rh7_cluster_9.0-8 Tests Completed")
-                    sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on rh7 cluster 9.0-8 of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'rh7_cluster_9.0-8 Tests for $BRANCH_NAME Passed'
+                    println("rh7_cluster_9.0-10 Tests Completed")
+                    sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on rh7 cluster 9.0-10 of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'rh7_cluster_9.0-10 Tests for $BRANCH_NAME Passed'
                    }
                    unsuccessful {
-                      println("rh7_cluster_9.0-8 Tests Failed")
-                      sh 'mkdir -p MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/MLLogs/'
-                      archiveArtifacts artifacts: 'MLLogs/**/*'
-                      sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on 9.0-8 rh7 cluster failed. Please fix the tests and create a PR or create a bug for the failures.',false,'rh7_cluster_9.0-8 Tests for $BRANCH_NAME Failed'
+                      println("rh7_cluster_9.0-10 Tests Failed")
+                      sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on 9.0-10 rh7 cluster failed. Please fix the tests and create a PR or create a bug for the failures.',false,'rh7_cluster_9.0-10 Tests for $BRANCH_NAME Failed'
                   }
                   }
 		}
     stage('rh7_cluster_10.0-1'){
-      agent { label 'dhfLinuxAgent'}
-      steps{ 
-        copyRPM 'Release','10.0-1'
-        script{
-        props = readProperties file:'data-hub/pipeline.properties';
-        def dockerhost=setupMLDockerCluster 3
-        sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test || true;sleep 10s;./gradlew ml-data-hub:test || true;sleep 10s;./gradlew web:test || true;sleep 10s;./gradlew marklogic-data-hub:testBootstrap || true;sleep 10s;./gradlew ml-data-hub:testFullCycle || true;"'
-        }
-        junit '**/TEST-*.xml'
-          script{
-         commitMessage = sh (returnStdout: true, script:'''
-      curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
-      def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
-        def commit=slurper.message.toString().trim();
-        JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
-        JIRA_ID=JIRA_ID.split(" ")[0];
-        commitMessage=null;
-        //jiraAddComment comment: 'Jenkins rh7_cluster_10.0-1 Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
-        }
-      }
-      post{
-        always{
-            sh 'rm -rf $WORKSPACE/xdmp'
-          }
-                  success {
-                    println("rh7_cluster_10.0-1 Tests Completed")
-                    sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on rh7 cluster 10.0-1 of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'rh7_cluster_10.0-1 Tests for $BRANCH_NAME Passed'
+           agent { label 'dhfLinuxAgent'}
+           steps{
+             copyRPM 'Release','10.0-1'
+             script{
+             props = readProperties file:'data-hub/pipeline.properties';
+             def dockerhost=setupMLDockerCluster 3
+             sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test || true;sleep 10s;./gradlew ml-data-hub:test || true;sleep 10s;./gradlew web:test || true;sleep 10s;./gradlew marklogic-data-hub:testBootstrap || true;sleep 10s;./gradlew ml-data-hub:testFullCycle || true;"'
+             }
+             junit '**/TEST-*.xml'
+               script{
+              commitMessage = sh (returnStdout: true, script:'''
+           curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
+           def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
+             def commit=slurper.message.toString().trim();
+             JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
+             JIRA_ID=JIRA_ID.split(" ")[0];
+             commitMessage=null;
+             //jiraAddComment comment: 'Jenkins rh7_cluster_10.0-1 Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+             }
+           }
+           post{
+             always{
+                 sh 'rm -rf $WORKSPACE/xdmp'
+               }
+                       success {
+                         println("rh7_cluster_10.0-1 Tests Completed")
+                         sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on rh7 cluster 10.0-1 of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'rh7_cluster_10.0-1 Tests for $BRANCH_NAME Passed'
+                        }
+                        unsuccessful {
+                           println("rh7_cluster_10.0-1 Tests Failed")
+                           sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on 10.0-1 rh7 cluster failed. Please fix the tests and create a PR or create a bug for the failures.',false,'rh7_cluster_10.0-1 Tests for $BRANCH_NAME Failed'
+                       }
+                       }
+         }
+         stage('rh7_cluster_10.0-2'){
+               agent { label 'dhfLinuxAgent'}
+               steps{
+                 copyRPM 'Release','10.0-2'
+                 script{
+                 props = readProperties file:'data-hub/pipeline.properties';
+                 def dockerhost=setupMLDockerCluster 3
+                 sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test || true;sleep 10s;./gradlew ml-data-hub:test || true;sleep 10s;./gradlew web:test || true;sleep 10s;./gradlew marklogic-data-hub:testBootstrap || true;sleep 10s;./gradlew ml-data-hub:testFullCycle || true;"'
+                 }
+                 junit '**/TEST-*.xml'
+                   script{
+                  commitMessage = sh (returnStdout: true, script:'''
+               curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
+               def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
+                 def commit=slurper.message.toString().trim();
+                 JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
+                 JIRA_ID=JIRA_ID.split(" ")[0];
+                 commitMessage=null;
+                 //jiraAddComment comment: 'Jenkins rh7_cluster_10.0-2 Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+                 }
+               }
+               post{
+                 always{
+                     sh 'rm -rf $WORKSPACE/xdmp'
                    }
-                   unsuccessful {
-                      println("rh7_cluster_10.0-1 Tests Failed")
-                      sh 'mkdir -p MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/MLLogs/'
-                      archiveArtifacts artifacts: 'MLLogs/**/*'
-                      sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on 10.0-1 rh7 cluster failed. Please fix the tests and create a PR or create a bug for the failures.',false,'rh7_cluster_10.0-1 Tests for $BRANCH_NAME Failed'
-                  }
-                  }
-    }
-		stage('w12_cluster_9.0-8'){
+                           success {
+                             println("rh7_cluster_10.0-2 Tests Completed")
+                             sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on rh7 cluster 10.0-2 of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'rh7_cluster_10.0-2 Tests for $BRANCH_NAME Passed'
+                            }
+                            unsuccessful {
+                               println("rh7_cluster_10.0-1 Tests Failed")
+                               sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on 10.0-2 rh7 cluster failed. Please fix the tests and create a PR or create a bug for the failures.',false,'rh7_cluster_10.0-2 Tests for $BRANCH_NAME Failed'
+                           }
+                           }
+             }
+		stage('w12_cluster_10.0-2'){
 			agent { label 'master'}
 			steps{ 
 					script{
-           def Returnresult=build job: '/5.x/dhf-core-develop-winserver2012-cluster_9.0-8', propagate: false
+           def Returnresult=build job: '/5.x/dhf-core-develop-winserver2012-cluster_10.0-2', propagate: false
                currentBuild.result=Returnresult.result;
 				 commitMessage = sh (returnStdout: true, script:'''
 			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
@@ -477,7 +515,7 @@ pipeline{
 				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
 				JIRA_ID=JIRA_ID.split(" ")[0];
 				commitMessage=null;
-				//jiraAddComment comment: 'Jenkins w12_cluster_9.0-8 Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+				//jiraAddComment comment: 'Jenkins w12_cluster_10.0-2 Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
 				}
 			}
 			post{
@@ -485,20 +523,20 @@ pipeline{
 				  	sh 'rm -rf $WORKSPACE/xdmp'
 				  }
                   success {
-                    println("w12_cluster_9.0-8 Tests Completed")
-                    sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on W2k12 cluster 9.0-8 of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'w12_cluster_9.0-8 Tests for $BRANCH_NAME Passed'
+                    println("w12_cluster_10.0-2 Tests Completed")
+                    sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on W2k12 cluster 10.0-2 of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'w12_cluster_10.0-2 Tests for $BRANCH_NAME Passed'
                    }
                    unsuccessful {
-                      println("w12_cluster_9.0-8 Tests Failed")
-                      sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on 9.0-8 w2k12 cluster failed. Please fix the tests and create a PR or create a bug for the failures.',false,'w12_cluster_9.0-8 Tests for $BRANCH_NAME Failed'
+                      println("w12_cluster_10.0-2Tests Failed")
+                      sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on 10.0-2 w2k12 cluster failed. Please fix the tests and create a PR or create a bug for the failures.',false,'w12_cluster_10.0-2s Tests for $BRANCH_NAME Failed'
                   }
                   }
 		}
-		stage('w12_cluster_9.0-7'){
+		stage('w12_cluster_9.0-10'){
 			agent { label 'master'}
 			steps{ 
 					script{
-          def Returnresult=build job: '/5.x/dhf-core-develop-winserver2012-cluster_9.0-7', propagate: false
+          def Returnresult=build job: '/5.x/dhf-core-develop-winserver2012-cluster_9.0-10', propagate: false
                currentBuild.result=Returnresult.result;
 				 commitMessage = sh (returnStdout: true, script:'''
 			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
@@ -507,7 +545,7 @@ pipeline{
 				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
 				JIRA_ID=JIRA_ID.split(" ")[0];
 				commitMessage=null;
-				//jiraAddComment comment: 'Jenkins w12_cluster_9.0-7 Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+				//jiraAddComment comment: 'Jenkins w12_cluster_9.0-10 Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
 				}
 			}
 			post{
@@ -515,12 +553,12 @@ pipeline{
 				  	sh 'rm -rf $WORKSPACE/xdmp'
 				  }
                   success {
-                    println("w12_cluster_9.0-7 Tests Completed")
-                    sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on W2k12 cluster 9.0-7 of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'w12_cluster_9.0-7 Tests for $BRANCH_NAME Passed'
+                    println("w12_cluster_9.0-10 Tests Completed")
+                    sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on W2k12 cluster 9.0-10 of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'w12_cluster_9.0-10 Tests for $BRANCH_NAME Passed'
                    }
                    unsuccessful {
-                      println("w12_cluster_9.0-7 Tests Failed")
-                      sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on 9.0-7 w2k12 cluster failed. Please fix the tests and create a PR or create a bug for the failures.',false,'w12_cluster_9.0-7 Tests for $BRANCH_NAME Failed'
+                      println("w12_cluster_9.0-10 Tests Failed")
+                      sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on 9.0-10 w2k12 cluster failed. Please fix the tests and create a PR or create a bug for the failures.',false,'w12_cluster_9.0-10 Tests for $BRANCH_NAME Failed'
                   }
                   }
 		}
@@ -554,7 +592,7 @@ pipeline{
                   }
                   }
 		}
-		stage('qs_rh7_singlenode'){
+		stage('qs_rh7_90-nightly'){
 			agent { label 'master'}
 			steps{ 
 					script{
@@ -567,21 +605,107 @@ pipeline{
 				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
 				JIRA_ID=JIRA_ID.split(" ")[0];
 				commitMessage=null;
-				//jiraAddComment comment: 'Jenkins qs_rh7_singlenode Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+				//jiraAddComment comment: 'Jenkins qs_rh7_90-nightly Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
 				}
 			}
 			post{
 				
                   success {
-                    println("qs_rh7_singlenode Tests Completed")
-                    sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End quick start tests on Rh7 single node of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'qs_rh7_singlenode Tests for $BRANCH_NAME Passed'
+                    println("qs_rh7_90-nightly Tests Completed")
+                    sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End quick start tests on Rh7 90-nightly of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'qs_rh7_90-nightly Tests for $BRANCH_NAME Passed'
                    }
                    unsuccessful {
-                      println("qs_rh7_singlenode.0-8 Tests Failed")
-                      sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End  quick start tests of the branch $BRANCH_NAME on rh7 failed. Please fix the tests and create a PR or create a bug for the failures.',false,'qs_rh7_singlenode Tests for $BRANCH_NAME Failed'
+                      println("qs_rh7_90-nightly Tests Failed")
+                      sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End  quick start 90-nightly tests of the branch $BRANCH_NAME on rh7 failed. Please fix the tests and create a PR or create a bug for the failures.',false,'qs_rh7_90-nightly Tests for $BRANCH_NAME Failed'
                   }
                   }
 		}
+		stage('qs_rh7_10-nightly'){
+        			agent { label 'master'}
+        			steps{
+        					script{
+                  def Returnresult=build job: '/5.x/NO_CI_dhf-qs-develop-rh7_ML10', propagate: false
+                       currentBuild.result=Returnresult.result;
+        				 commitMessage = sh (returnStdout: true, script:'''
+        			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
+        			def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
+        				def commit=slurper.message.toString().trim();
+        				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
+        				JIRA_ID=JIRA_ID.split(" ")[0];
+        				commitMessage=null;
+        				//jiraAddComment comment: 'Jenkins qs_rh7_10-nightly Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+        				}
+        			}
+        			post{
+
+                          success {
+                            println("qs_rh7_10-nightly Tests Completed")
+                            sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End quick start tests on Rh7 10-nightly of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'qs_rh7_10-nightly Tests for $BRANCH_NAME Passed'
+                           }
+                           unsuccessful {
+                              println("qs_rh7_10-nightly Tests Failed")
+                              sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End  quick start 10-nightly tests of the branch $BRANCH_NAME on rh7 failed. Please fix the tests and create a PR or create a bug for the failures.',false,'qs_rh7_10-nightly Tests for $BRANCH_NAME Failed'
+                          }
+                          }
+        		}
+        stage('qs_rh7_90-release'){
+        			agent { label 'master'}
+        			steps{
+        					script{
+                  def Returnresult=build job: '/5.x/NO_CI_dhf-qs-develop-rh7_90_ReleaseBuild', propagate: false
+                       currentBuild.result=Returnresult.result;
+        				 commitMessage = sh (returnStdout: true, script:'''
+        			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
+        			def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
+        				def commit=slurper.message.toString().trim();
+        				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
+        				JIRA_ID=JIRA_ID.split(" ")[0];
+        				commitMessage=null;
+        				//jiraAddComment comment: 'Jenkins qs_rh7_90-release Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+        				}
+        			}
+        			post{
+
+                          success {
+                            println("qs_rh7_90-release Tests Completed")
+                            sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End quick start tests on Rh7 90-nightly of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'qs_rh7_90-release Tests for $BRANCH_NAME Passed'
+                           }
+                           unsuccessful {
+                              println("qs_rh7_90-release Tests Failed")
+                              sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End  quick start 90-nightly tests of the branch $BRANCH_NAME on rh7 failed. Please fix the tests and create a PR or create a bug for the failures.',false,'qs_rh7_90-release Tests for $BRANCH_NAME Failed'
+                          }
+                          }
+        		}
+        		stage('qs_rh7_10-release'){
+                			agent { label 'master'}
+                			steps{
+                					script{
+                          def Returnresult=build job: '/5.x/NO_CI_dhf-qs-develop-rh7_10_ReleaseBuild', propagate: false
+                               currentBuild.result=Returnresult.result;
+                				 commitMessage = sh (returnStdout: true, script:'''
+                			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
+                			def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
+                				def commit=slurper.message.toString().trim();
+                				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
+                				JIRA_ID=JIRA_ID.split(" ")[0];
+                				commitMessage=null;
+                				//jiraAddComment comment: 'Jenkins qs_rh7_10-release Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+                				}
+                			}
+                			post{
+
+                                  success {
+                                    println("qs_rh7_10-release Tests Completed")
+                                    sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End quick start tests on Rh7 10-release of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'qs_rh7_10-release Tests for $BRANCH_NAME Passed'
+                                   }
+                                   unsuccessful {
+                                      println("qs_rh7_10-release Tests Failed")
+                                      sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End  quick start 10-release tests of the branch $BRANCH_NAME on rh7 failed. Please fix the tests and create a PR or create a bug for the failures.',false,'qs_rh7_10-release Tests for $BRANCH_NAME Failed'
+                                  }
+                                  }
+                		}
+
+
 		}
 		post{
 			success{
@@ -645,7 +769,7 @@ pipeline{
 			steps{
 			script{
 			    props = readProperties file:'data-hub/pipeline.properties';
-				copyRPM 'Release','9.0-10'
+				copyRPM 'Release','10.0-2'
 				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
 				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;./gradlew clean;./gradlew marklogic-data-hub:test || true;sleep 10s;./gradlew ml-data-hub:test || true;sleep 10s;./gradlew web:test || true;'
 				junit '**/TEST-*.xml'
