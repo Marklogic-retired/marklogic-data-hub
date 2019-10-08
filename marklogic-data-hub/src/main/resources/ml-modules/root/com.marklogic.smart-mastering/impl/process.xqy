@@ -197,7 +197,7 @@ declare function proc-impl:expand-uris-for-merge(
           )[result/@action = $const:MERGE-ACTION]
         where fn:exists($results)
         return
-          let $merge-items := $results/result[@action=$const:MERGE-ACTION]
+          let $merge-items := $results/result[@action]
           let $merge-item-uris := $merge-items/@uri ! fn:string(.)
           return (
             map:put($matches, $merge-uri, $results),
@@ -244,6 +244,7 @@ declare function proc-impl:record-match-provenance(
             return map:entry(
               fn:string($merge-item/@uri),
               map:new((
+                map:entry("$action", fn:string($merge-item/@action)),
                  for $match in $merge-item/matches/match
                  let $node-name := fn:string($match/nodeName)
                  let $weight := fn:number($match/@weight)
@@ -424,15 +425,24 @@ declare function proc-impl:build-match-summary(
         return (
           map:put($merges-in-transaction, $new-uri, fn:true()),
           let $distinct-uris := fn:distinct-values(map:get($consolidated-merges, $new-uri))
+          let $merge-doc := fn:doc(fn:head($distinct-uris))
+          let $merge-uri :=  merge-impl:build-merge-uri(
+            $new-uri,
+            if ($merge-doc instance of element() or
+              $merge-doc instance of document-node(element())) then
+              $const:FORMAT-XML
+            else
+              $const:FORMAT-JSON
+          )
           let $_lock := if ($lock-for-update) then ($distinct-uris ! merge-impl:lock-for-update(.)) else ()
           let $prov-entry := if ($fine-grain-provenance) then (
             map:entry(
               "provenance",
               map:entry(
-                $new-uri,
+                $merge-uri,
                 let $related-prov-maps := $distinct-uris ! map:get($provenance-map, .)
                 let $match-information := map:new((
-                  map:entry("destination", $new-uri),
+                  map:entry("destination", $merge-uri),
                   map:entry("type", "matchInformation"),
                   map:entry("matchedDocuments", proc-impl:combine-maps(map:map(), $related-prov-maps))
                 ))
@@ -475,13 +485,35 @@ declare function proc-impl:build-match-summary(
         let $parts := fn:tokenize($notification, $STRING-TOKEN)
         let $threshold := fn:head($parts)
         let $uris := fn:tail($parts)
+        let $prov-entry := if ($fine-grain-provenance) then (
+          map:entry(
+            "provenance",
+            map:entry(
+              $notification,
+              let $related-prov-maps := $uris ! map:get($provenance-map, .)
+              let $match-information := map:new((
+                map:entry("destination", $notification),
+                map:entry("type", "matchInformation"),
+                map:entry("matchedDocuments", proc-impl:combine-maps(map:map(), $related-prov-maps))
+              ))
+              return
+                map:entry(
+                  "matchInformation",
+                  $match-information
+                )
+            )
+          )
+        ) else ()
         return
           map:entry(
             $notification,
-            map:map()
-            => map:with("action", "notify")
-            => map:with("threshold", $threshold)
-            => map:with("uris", json:to-array($uris))
+            map:new((
+              map:map()
+                => map:with("action", "notify")
+                => map:with("threshold", $threshold)
+                => map:with("uris", json:to-array($uris)),
+              $prov-entry
+            ))
           )
       ))
     return (
@@ -752,8 +784,27 @@ declare function proc-impl:build-content-objects-from-match-summary(
               case "notify" return
                 let $uris := $action-details => map:get("uris") => json:array-values()
                 let $threshold := $action-details => map:get("threshold")
+                let $provenance := $action-details => map:get("provenance")
                 let $match-write-object := matcher:build-match-notification($threshold, $uris, $merge-options)
-                return $match-write-object
+                where fn:exists($match-write-object)
+                return
+                  if (fn:exists($provenance)) then
+                    map:new((
+                      $match-write-object,
+                      map:entry("provenance",
+                        map:entry(
+                          $match-write-object => map:get("uri"),
+                          map:entry(
+                            "matchInformation",
+                            $provenance => map:get($uri)
+                              => map:get("matchInformation")
+                              => map:with("destination", $match-write-object => map:get("uri"))
+                          )
+                        )
+                      )
+                    ))
+                  else
+                    $match-write-object
               default return
                 let $custom-actions := $action-details => map:get("actions") => json:array-values()
                 for $custom-action in $custom-actions

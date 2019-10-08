@@ -34,7 +34,8 @@ function matchDetailsByMergedQuery(mergedQuery) {
           attributes: {'destination': '?', 'matchedDocuments': '?'}
         };
         let kvPattern = ps.opTriplePattern(match, out);
-        output[docURI] = xdmp.unquote(op.fromTriples(kvPattern).result().toArray()[0].matchedDocuments);
+        let result = op.fromTriples(kvPattern).result().toArray()[0];
+        output[docURI] = result && result.matchedDocuments  ? xdmp.unquote(result.matchedDocuments) : null;
       }
     },
     datahub.config.JOBDATABASE
