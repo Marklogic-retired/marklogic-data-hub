@@ -55,10 +55,8 @@
           #fieldName
           [(ngModel)]="mapExpressions[prop.name]"
           (change)="onHandleSelection({
-            name: prop.name, 
-            expr: mapExpressions[prop.name],
-            ref: prop.$ref,
-            nested: this.isNested(prop)
+            prop: prop, 
+            expr: mapExpressions[prop.name]
           })" type="text"
           class="map-expr"
         ></textarea>
