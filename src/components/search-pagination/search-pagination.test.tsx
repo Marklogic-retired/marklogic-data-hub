@@ -1,37 +1,35 @@
 import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
-import { shallow, mount } from 'enzyme';
-import Pagination from './search-pagination';
+import { mount } from 'enzyme';
+import SearchPagination from './search-pagination';
 
 describe("Search Pagination component", () => {
+  let wrapper;
+  const pageChangeFn = jest.fn();
+  const pageLengthChangeFn = jest.fn();
 
-    let wrapper;
-
-    beforeAll(() => {
-        wrapper = mount(
-        <Router>
-          <Pagination 
-            total={10}
-            pageLength={1}
-            currentPage={1}
-            OnPageChange={jest.fn()}
-            onPageLengthChange={jest.fn()}
-          />
-        </Router>);
-      });
-
-    test("renders", () => {
-        expect(wrapper.exists()).toBe(true);
-    }); 
-
-    test("search pagination page renders", () => {
-        expect(wrapper.find('.ant-pagination-prev')).toHaveLength(1);
-        //expect(wrapper.find('.ant-pagination-item-3')).toHaveLength(1);
-        expect(wrapper.find('.ant-pagination-next')).toHaveLength(1);
+  beforeAll(() => {
+    wrapper = mount(
+      <SearchPagination 
+        total={10}
+        pageLength={1}
+        currentPage={1}
+        onPageChange={pageChangeFn}
+        onPageLengthChange={pageLengthChangeFn} 
+      />);
     });
 
-    /*test("click on search page", () => {
-        wrapper.find('.ant-pagination-item-3').simulate('click');
-        expect(wrapper.find('.ant-pagination-item-active a').text()).toEqual("3");
-    });*/
+    test("renders", () => {
+      expect(wrapper.exists()).toBe(true);
+    }); 
+
+    test("search pagination component renders", () => {
+      expect(wrapper.find('.ant-pagination-prev')).toHaveLength(1);
+      expect(wrapper.find('.ant-pagination-item-3')).toHaveLength(1);
+      expect(wrapper.find('.ant-pagination-next')).toHaveLength(1);
+    });
+
+    test("click on page number works", () => {
+      wrapper.find('.ant-pagination-item-3').simulate('click');
+      expect(pageChangeFn).toHaveBeenCalled();
+    });
 })
