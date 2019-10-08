@@ -207,13 +207,12 @@ export class MappingComponent implements OnInit {
     this.searchService.getDoc(this.sourceDbType, uri).subscribe(doc => {
       this.sampleDocSrcProps = [];
       this.sampleDocSrc = this.normalizeToJSON(doc);
-      console.log("this.sampleDocSrc",this.sampleDocSrc)
       let startRoot = this.sampleDocSrc['envelope'] ? this.sampleDocSrc['envelope']['instance'] : this.sampleDocSrc;
       const rootKeys = Object.keys(startRoot);
       if (rootKeys.length === 1 && startRoot[rootKeys[0]] instanceof Object) {
         startRoot = startRoot[rootKeys[0]];
       }
-      //console.log("startRoot",startRoot)
+      
       _.forEach(startRoot, function (val, key) {
           let prop = {
             key: key,
@@ -267,24 +266,31 @@ export class MappingComponent implements OnInit {
       const object = {};
       self.nmspace = {};
       
+      var attrList = {};
+
       const nodeToJSON = function (obj, node) {
         if(node.namespaceURI) {
           self.nmspace[node.nodeName] = node.namespaceURI;
         }
-
-        // Extracting the attributes from the source xml doc.
-        node.childNodes.forEach((childNode) => {
-          if(childNode.attributes) {
-            for( let i= 0; i<childNode.attributes.length;i++){
-              if(childNode.attributes.item(i).name !== 'xmlns'){
-                obj["@"+childNode.attributes.item(i).name] = childNode.attributes.item(i).value;
-              }
+        
+        if(node.attributes) {
+          for( let i= 0; i<node.attributes.length;i++){
+            if(node.attributes.item(i).name !== 'xmlns'){
+              obj["@"+node.attributes.item(i).name] = node.attributes.item(i).value;
+              attrList[node.nodeName+"/"+"@"+node.attributes.item(i).name] = node.attributes.item(i).value;
               
             }
+            
           }
+        }
+        // Extracting the attributes from the source xml doc.
+        node.childNodes.forEach((childNode) => {
+          
+          
           if (childNode.childNodes.length === 0 ||  (childNode.childNodes.length === 1 && childNode.firstChild.nodeType === Node.TEXT_NODE)) {
             if (childNode.nodeName !== '#text') {
               obj[childNode.nodeName] = childNode.textContent;
+              
             }
           } else {
             obj[childNode.nodeName] = {};
@@ -293,7 +299,9 @@ export class MappingComponent implements OnInit {
         });
       };
       nodeToJSON(object, parsedXML);
+      //console.log("object",object);
       return object;
+      
     }
     return input;
   }
