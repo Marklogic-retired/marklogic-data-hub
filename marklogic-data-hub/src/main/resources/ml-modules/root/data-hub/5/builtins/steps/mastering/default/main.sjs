@@ -140,12 +140,17 @@ function jobReport(jobID, stepResponse, options, reqOptProperties = requiredOpti
     matchProvenanceQuery: `// Run this against the '${options.targetDatabase || datahub.config.FINALDATABASE}' database with the 'data-hub-admin-role' or other privileged user
     const masteringLib = require('/data-hub/5/builtins/steps/mastering/default/lib.sjs'); 
     
-    let mergedQuery = cts.andQuery([
+    let mergedAndNotifiedQuery = cts.andQuery([
       cts.fieldWordQuery('datahubCreatedByJob', '${jobID}'),
-      cts.collectionQuery('${collectionsInformation.mergedCollection}'),
-      cts.collectionQuery('${collectionsInformation.contentCollection}')
+      cts.orQuery([
+        cts.andQuery([
+          cts.collectionQuery('${collectionsInformation.mergedCollection}'),
+          cts.collectionQuery('${collectionsInformation.contentCollection}')
+        ]),
+        cts.collectionQuery('${collectionsInformation.notificationCollection}')
+      ])
     ]);
-    masteringLib.matchDetailsByMergedQuery(mergedQuery);
+    masteringLib.matchDetailsByMergedQuery(mergedAndNotifiedQuery);
     `
   };
 }

@@ -132,7 +132,11 @@ class Flow {
   }
 
   addToWriteQueue(content) {
+    if (content.uri) {
       this.writeQueue.push(content);
+    } else {
+      this.datahub.debug.log({ type: 'error', message: `Couldn't add '${xdmp.toJsonString(content)}' to the write queue due to missing uri.`});
+    }
   }
 
   runFlow(flowName, jobId, content = [], options, stepNumber) {
