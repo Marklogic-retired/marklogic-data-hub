@@ -117,9 +117,8 @@ class CreateHarmonizeFlowTaskTest extends BaseTest {
 
         myMappingDir.toFile().mkdirs()
         FileUtils.copyFile(new File("src/test/resources/my-new-mapping-1.mapping.json"), myMappingDir.resolve('my-new-mapping-1.mapping.json').toFile())
-		runTask("hubDeployUserModules")
 		entitiesDir.toFile().mkdirs();
-		FileUtils.copyFile(new File("src/test/resources/employee.entity.json"), entitiesDir.resolve('Employee.entity.json').toFile())
+		FileUtils.copyFile(new File("src/test/resources/employee.entity.json"), entitiesDir.resolve('employee.entity.json').toFile())
 		runTask("hubDeployUserModules")
 
 		when:
