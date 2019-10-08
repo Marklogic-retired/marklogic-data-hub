@@ -31,7 +31,7 @@ const LoginForm: React.FC = () => {
         userAuthenticated(username);
       } 
     } catch (error) {
-      console.log('error', error.response); 
+      setIsLoading(false);
       setErrorResponse(error.response.data.message);
     }
   }
