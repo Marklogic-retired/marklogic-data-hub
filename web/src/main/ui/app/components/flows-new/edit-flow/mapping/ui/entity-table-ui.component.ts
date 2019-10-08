@@ -12,6 +12,7 @@ export class EntityTableUiComponent implements OnChanges {
 
   @Input() entityName: any;
   @Input() entityProps: any;
+  @Input() mapProps: any;
   @Input() showHeader: boolean;
   @Input() nestedLevel: number;
   @Input() srcProps: any;
@@ -42,6 +43,12 @@ export class EntityTableUiComponent implements OnChanges {
     console.log('ngOnChanges', changes);
     if (changes.entityProps && changes.entityProps.currentValue){
       this.dataSource = new MatTableDataSource<any>(changes.entityProps.currentValue);
+    }
+    if (changes.mapProps && changes.mapProps.currentValue){
+      Object.keys(this.mapProps).forEach(p => {
+        this.mapExpressions[p] = this.mapProps[p]['sourcedFrom'];
+      })
+      this.mapData = this.mapProps;
     }
   }
 
