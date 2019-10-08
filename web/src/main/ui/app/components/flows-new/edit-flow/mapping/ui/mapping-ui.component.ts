@@ -488,16 +488,6 @@ export class MappingUiComponent implements OnChanges {
   return style
   }
 
-  // Removing duplicate entries in the source dataset
-  uniqueSourceFields(source) {
-    let uniqueSrcFields = [];
-    source.forEach(obj => {
-      uniqueSrcFields.push(obj.key);
-    });
-    
-    return uniqueSrcFields.filter((item, index) => uniqueSrcFields.indexOf(item) === index);
-  }
-
   // Attach namespace, if the source is an xml document
   displaySourceField(field): string {
     let fieldValue = "";
@@ -508,7 +498,7 @@ export class MappingUiComponent implements OnChanges {
       fieldValue = field.split('/').pop();
     }
     return fieldValue;
-  } 
+  }
 
   // Handle selection in entity table column menu
   colToggle(id) {
