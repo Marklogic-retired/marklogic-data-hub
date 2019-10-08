@@ -35,6 +35,7 @@ export class MappingUiComponent implements OnChanges {
   @Input() entityNested: Entity;
 
   @Input() entityProps: any;
+  @Input() nmspace: object;
   @Output() updateURI = new EventEmitter();
   @Output() updateMap = new EventEmitter();
 
@@ -491,5 +492,17 @@ export class MappingUiComponent implements OnChanges {
     
     return uniqueSrcFields.filter((item, index) => uniqueSrcFields.indexOf(item) === index);
   }
+
+  // Attach namespace, if the source is an xml document
+  displaySourceField(field): string {
+    let fieldValue = "";
+    if(this.nmspace && field in this.nmspace) {
+      fieldValue = this.nmspace[field] + ":"+ field.split('/').pop();
+    }
+    else {
+      fieldValue = field.split('/').pop();
+    }
+    return fieldValue;
+  } 
 
 }

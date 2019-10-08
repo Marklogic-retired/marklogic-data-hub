@@ -28,6 +28,7 @@ import { Flow } from "../../models/flow.model";
       [functionLst]="functionLst"
       [entityName]="this.entityName"
       [entityNested] = "entityNested"
+      [nmspace] = "nmspace"
       (updateURI)="this.updateURI($event)"
       (updateMap)="this.updateMap($event)"
     ></app-mapping-ui>
@@ -72,6 +73,10 @@ export class MappingComponent implements OnInit {
   private isSourceURIInvalid: boolean = false;
   public editURIVal: string;
   public functionLst: object = {};
+
+  //Helper
+
+  public nmspace: object = {};
 
   updateURI(event) {
     this.conns = event.conns;
@@ -202,11 +207,13 @@ export class MappingComponent implements OnInit {
     this.searchService.getDoc(this.sourceDbType, uri).subscribe(doc => {
       this.sampleDocSrcProps = [];
       this.sampleDocSrc = this.normalizeToJSON(doc);
+      console.log("this.sampleDocSrc",this.sampleDocSrc)
       let startRoot = this.sampleDocSrc['envelope'] ? this.sampleDocSrc['envelope']['instance'] : this.sampleDocSrc;
       const rootKeys = Object.keys(startRoot);
       if (rootKeys.length === 1 && startRoot[rootKeys[0]] instanceof Object) {
         startRoot = startRoot[rootKeys[0]];
       }
+      //console.log("startRoot",startRoot)
       _.forEach(startRoot, function (val, key) {
           let prop = {
             key: key,
@@ -233,7 +240,7 @@ export class MappingComponent implements OnInit {
         
       });
       self.sampleDocNestedProps = this.updateNestedDataSourceNew(startRoot,ParentKeyValuePair);
-    
+
       if (save) {
         this.saveMap();
         console.log('map saved');
@@ -254,11 +261,27 @@ export class MappingComponent implements OnInit {
   }
 
   normalizeToJSON(input: any): any {
+    let self = this;
     if (typeof input === 'string') {
       const parsedXML = new DOMParser().parseFromString(input, 'application/xml');
       const object = {};
+      self.nmspace = {};
+      
       const nodeToJSON = function (obj, node) {
+        if(node.namespaceURI) {
+          self.nmspace[node.nodeName] = node.namespaceURI;
+        }
+
+        // Extracting the attributes from the source xml doc.
         node.childNodes.forEach((childNode) => {
+          if(childNode.attributes) {
+            for( let i= 0; i<childNode.attributes.length;i++){
+              if(childNode.attributes.item(i).name !== 'xmlns'){
+                obj["@"+childNode.attributes.item(i).name] = childNode.attributes.item(i).value;
+              }
+              
+            }
+          }
           if (childNode.childNodes.length === 0 ||  (childNode.childNodes.length === 1 && childNode.firstChild.nodeType === Node.TEXT_NODE)) {
             if (childNode.nodeName !== '#text') {
               obj[childNode.nodeName] = childNode.textContent;
@@ -424,8 +447,18 @@ export class MappingComponent implements OnInit {
             self.updateNestedDataSourceNew(obj, ParentKeyValuePair, parentKey);
           });
         } else {
+          let currKey = "";
+          if (ParentKeyValuePair.includes(key + val)) {
+            currKey = key;
+          } else {
+            if (parentKey === "") {
+              currKey = key;
+            } else {
+              currKey = parentKey + "/" + key;
+            }
+          }
           let propty = {
-            key: parentKey === "" ? key : parentKey + "/" + key,
+            key: currKey,
             val: String(val),
             type: self.getType(val)
           };
