@@ -57,6 +57,7 @@
           (change)="onHandleSelection({
             name: prop.name, 
             expr: mapExpressions[prop.name],
+            ref: prop.$ref,
             nested: this.isNested(prop)
           })" type="text"
           class="map-expr"

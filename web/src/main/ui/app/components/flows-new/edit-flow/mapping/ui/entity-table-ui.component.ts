@@ -67,6 +67,9 @@ export class EntityTableUiComponent implements OnChanges {
     if (typeof obj.expr === 'string') {
       this.mapExpressions[obj.name] = obj.expr;
       this.mapData[obj.name]['sourcedFrom'] = obj.expr;
+      if (obj.ref) {
+        this.mapData[obj.name]['targetEntityType'] = obj.ref;
+      }
     } else {
       this.mapData[obj.name]['properties'] = obj.expr;
     }
