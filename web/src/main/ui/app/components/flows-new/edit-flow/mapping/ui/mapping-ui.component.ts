@@ -35,6 +35,7 @@ export class MappingUiComponent implements OnChanges {
   @Input() entityNested: Entity;
 
   @Input() entityProps: any;
+  @Input() nmspace: object;
   @Output() updateURI = new EventEmitter();
   @Output() updateMap = new EventEmitter();
 
@@ -69,7 +70,6 @@ export class MappingUiComponent implements OnChanges {
     disableURINavRight: boolean = false;
     uriIndex = 0;
 
-
   @ViewChild(MatTable)
   table: MatTable<any>;
 
@@ -87,7 +87,8 @@ export class MappingUiComponent implements OnChanges {
 
   ngOnInit(){
     if (!this.dataSource){
-    this.dataSource = new MatTableDataSource<any>(this.sampleDocSrcProps);
+   this.dataSource = new MatTableDataSource<any>(this.sampleDocNestedProps);
+
     }
     if(_.isEmpty(this.mapExpresions)) {
       this.mapExpresions = this.conns;
@@ -101,9 +102,9 @@ export class MappingUiComponent implements OnChanges {
   }
   updateDataSource() {
     if (!this.dataSource){
-      this.dataSource = new MatTableDataSource<any>(this.sampleDocSrcProps);
+      this.dataSource = new MatTableDataSource<any>(this.sampleDocNestedProps);
        }
-    this.dataSource.data = this.sampleDocSrcProps;
+    this.dataSource.data = this.sampleDocNestedProps;
   }
 
   renderRows(): void {
@@ -284,7 +285,7 @@ export class MappingUiComponent implements OnChanges {
     if (this.conns[entityPropName])
       delete this.conns[entityPropName];
     if (!_.isEqual(this.conns, this.connsOrig)) {
-      this.onSaveMap();
+      this.onSaveMap(false);
     }
     this.editingURI = false; // close edit box if open
     event.stopPropagation();
@@ -472,5 +473,36 @@ export class MappingUiComponent implements OnChanges {
     result.subscribe();
 
   }
+
+  //Indenting the nested levels
+  IndentCondition(prop) {
+    let count = prop.split('/').length - 1;
+    let indentSize = 20*count;
+  
+    let style = {'text-indent': indentSize+'px'}
+  return style
+  }
+
+  // Removing duplicate entries in the source dataset
+  uniqueSourceFields(source) {
+    let uniqueSrcFields = [];
+    source.forEach(obj => {
+      uniqueSrcFields.push(obj.key);
+    });
+    
+    return uniqueSrcFields.filter((item, index) => uniqueSrcFields.indexOf(item) === index);
+  }
+
+  // Attach namespace, if the source is an xml document
+  displaySourceField(field): string {
+    let fieldValue = "";
+    if(this.nmspace && field in this.nmspace) {
+      fieldValue = this.nmspace[field] + ":"+ field.split('/').pop();
+    }
+    else {
+      fieldValue = field.split('/').pop();
+    }
+    return fieldValue;
+  } 
 
 }

@@ -137,9 +137,10 @@
     <div 
       mat-menu-item 
       class="mat-menu-list-btn" 
-      *ngFor="let srcProp of this.srcProps" 
-      (click)="insertField(srcProp.key, indx, prop) "
-    >{{srcProp.key}}</div>
+      *ngFor="let srcProp of uniqueSourceFields(this.srcProps)" 
+      [ngStyle]="IndentCondition(srcProp)"
+      (click)="insertField(srcProp, indx, prop) "
+    >{{displaySourceField(srcProp)}}</div>
   </ng-template>
 </mat-menu>
 
