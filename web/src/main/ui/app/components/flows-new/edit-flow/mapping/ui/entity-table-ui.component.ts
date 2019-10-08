@@ -61,21 +61,20 @@ export class EntityTableUiComponent implements OnChanges {
   }
 
   onHandleSelection(obj): void {
-    let propName = obj.prop.name,
-        propRef = obj.prop.$ref || obj.prop.items.$ref;
-    if (this.mapData[propName] === undefined) {
-      this.mapData[propName] = {};
+    let propRef = obj.prop.$ref || (obj.prop.items && obj.prop.items.$ref) || null;
+    if (this.mapData[obj.name] === undefined) {
+      this.mapData[obj.name] = {};
     }
     if (typeof obj.expr === 'string') {
-      this.mapExpressions[propName] = obj.expr;
-      this.mapData[propName]['sourcedFrom'] = obj.expr;
+      this.mapExpressions[obj.name] = obj.expr;
+      this.mapData[obj.name]['sourcedFrom'] = obj.expr;
       if (propRef) {
-        this.mapData[propName]['targetEntityType'] = propRef;
+        this.mapData[obj.name]['targetEntityType'] = propRef;
       }
     } else {
-      this.mapData[propName]['properties'] = obj.expr;
+      this.mapData[obj.name]['properties'] = obj.expr;
     }
-    let newObj = {name: this.entityName, expr: this.mapData};
+    let newObj = {name: this.entityName, expr: this.mapData, prop: obj.prop};
     this.handleSelection.emit(newObj);
   }
 
@@ -109,7 +108,7 @@ export class EntityTableUiComponent implements OnChanges {
     f.selectionStart = startPos;
     f.selectionEnd = startPos + content.length;
     f.focus();
-    this.onHandleSelection({ prop: prop, expr: f.value });
+    this.onHandleSelection({ name: prop.name, expr: f.value, prop: prop });
   }
 
   insertFunction(functionName, index, prop) {
