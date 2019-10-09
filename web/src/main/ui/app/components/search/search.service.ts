@@ -37,7 +37,7 @@ export class SearchService {
       sourceQuery: ctsQuery,
       count: count
     }
-    return this.post(`/api/search/sjsSearch`, data);
+    return this.post(`/api/search/getSourceDataDocument`, data);
   }
 
   getDoc(database: string, docUri: string) {

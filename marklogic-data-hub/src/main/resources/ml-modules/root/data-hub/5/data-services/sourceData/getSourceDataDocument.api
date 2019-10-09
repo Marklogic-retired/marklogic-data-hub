@@ -1,0 +1,17 @@
+{
+    "functionName": "getSourceDataDocument",
+    "params": [
+        {
+            "name": "sourceQuery",
+            "datatype": "string"
+        },
+        {
+            "name": "index",
+            "datatype": "long"
+        }
+    ],
+    "return": {
+        "datatype": "jsonDocument",
+        "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
+}

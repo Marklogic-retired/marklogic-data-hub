@@ -18,6 +18,7 @@ package com.marklogic.hub.web.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.hub.dataservices.SourceDataService;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.web.model.SJSSearchQuery;
 import com.marklogic.hub.web.model.SearchQuery;
@@ -55,10 +56,12 @@ public class SearchController {
         return searchService.search(searchQuery).get();
     }
 
-    @RequestMapping(value = "/sjsSearch", method = RequestMethod.POST)
+    @RequestMapping(value = "/getSourceDataDocument", method = RequestMethod.POST)
     @ResponseBody
-    public JsonNode sjsSearch(@RequestBody SJSSearchQuery SJSSearchQuery) {
-        return searchService.sjsSearch(SJSSearchQuery);
+    public JsonNode getSourceDataDocument(@RequestBody SJSSearchQuery query) {
+        // TODO Change the "count" to an "index" - i.e. the number showing in the GUI
+        return SourceDataService.on(hubConfig.newStagingClient(query.database))
+            .getSourceDataDocument(query.sourceQuery, query.count);
     }
 
     @RequestMapping(value = "/doc", method = RequestMethod.GET)

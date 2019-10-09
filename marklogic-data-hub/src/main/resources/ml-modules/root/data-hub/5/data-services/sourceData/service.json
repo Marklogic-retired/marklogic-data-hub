@@ -1,0 +1,4 @@
+{
+  "endpointDirectory": "/data-hub/5/data-services/sourceData/",
+  "$javaClass": "com.marklogic.hub.dataservices.SourceDataService"
+}
