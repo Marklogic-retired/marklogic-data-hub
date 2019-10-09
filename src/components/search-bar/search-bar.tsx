@@ -3,7 +3,11 @@ import { Select, Input } from 'antd';
 import styles from './search-bar.module.scss';
 import { SearchContext } from '../../util/search-context';
 
-const SearchBar = props => {
+interface Props {
+  entities: any;
+}
+
+const SearchBar: React.FC<Props> = props => {
     const { Search } = Input;
     const { Option } = Select;
     const { searchOptions, setQuery, clearEntity, setEntity } = useContext(SearchContext);
@@ -11,12 +15,12 @@ const SearchBar = props => {
     const dropdownOptions = ['All Entities', ...props.entities];
 
     const options = dropdownOptions.map((e, i) => 
-        <Option value={e} key={i} data-cy="entity-option">{e}</Option>
+      <Option value={e} key={i} data-cy="entity-option">{e}</Option>
     );
     const entityMenu = (
-        <Select style={{ width: 180 }} value={searchOptions.entityNames[0] || 'All Entities'} onChange={value => handleOptionSelect(value)} id="entity-select" data-cy={searchOptions.entityNames[0] || 'All Entities'}>
-            {options}
-        </Select>
+      <Select style={{ width: 180 }} value={searchOptions.entityNames[0] || 'All Entities'} onChange={value => handleOptionSelect(value)} id="entity-select" data-cy={searchOptions.entityNames[0] || 'All Entities'}>
+        {options}
+      </Select>
     );
 
     const handleOptionSelect = (option: any) => {

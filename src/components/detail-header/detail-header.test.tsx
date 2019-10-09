@@ -1,31 +1,29 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import DetailHeader from './detail-header';
-import MockDocument from '../../assets/mock-data/example';
-
-
+import jsonDocPayload from '../../assets/mock-data/json-document-payload';
 
 describe("Detail component", () => {
+  let wrapper;
 
-    /*let wrapper;
+  describe('Using JSON document payload', () => {
+    beforeEach(() => {
+      wrapper = mount(<DetailHeader document={jsonDocPayload.content} contentType="json"/>)
+    });
 
-    beforeAll(() => {
-        wrapper = mount(<DetailHeader document={MockDocument}/>)
-    });*/
-
-    test("renders", () => {
-        expect(true).toBe(true);
-    })
-
-    /*test("header renders", () => {
-        expect(wrapper.find('#header')).toHaveLength(1);
-    })
-
-    test("title renders", () => {
-        expect(wrapper.find('#title')).toHaveLength(1);
-    })
-
-    test("summary renders", () => {
-        expect(wrapper.find('#summary')).toHaveLength(1);
-    })*/
-})
+    test("component renders", () => {
+      expect(true).toBe(true);
+      expect(wrapper.exists('#header')).toBe(true);
+      expect(wrapper.exists('#title')).toBe(true);
+      expect(wrapper.exists('#summary')).toBe(true);
+    });
+  
+    test("data renders", () => {
+      expect(wrapper.exists('[data-cy="document-title"]')).toBe(true);
+      expect(wrapper.exists('[data-cy="document-timestamp"]')).toBe(true);
+      expect(wrapper.exists('[data-cy="document-source"]')).toBe(true);
+      expect(wrapper.exists('[data-cy="document-filetype"]')).toBe(true);
+    });
+  });
+  // TODO add test case for XML data
+});

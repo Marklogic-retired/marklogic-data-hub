@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useContext, Component } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
 import { AuthContext } from '../util/auth-context';
 import styles from './Detail.module.scss';
 import TableView from '../components/table-view/table-view';
 import JsonView from '../components/json-view/json-view';
-import DocumentHeader from '../components/detail-header/detail-header';
+import DetailHeader from '../components/detail-header/detail-header';
 import { Layout, Menu, PageHeader, Spin } from 'antd';
 import XmlView from '../components/xml-view/xml-view';
 
@@ -21,16 +21,14 @@ const Detail: React.FC<Props> = ({ history, location }) => {
   const [contentType, setContentType] = useState();
   const [xml, setXml] = useState();
 
-  // let database = location.state.database;
-
   useEffect(() => {
     setIsLoading(true);
     const fetchData = async () => {
       try {
         const result = await axios(`/datahub/v2/search?docUri=${query}`);
-
         const content = result.headers['content-type'];
 
+        // TODO handle exception if document type is json -> XML
         if (content.indexOf("application/json") !== -1) {
           setContentType('json');
           setData(result.data.content);
@@ -94,7 +92,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
         </div>
         <div className={styles.header}>
           <div className={styles.heading}>
-            {data && <DocumentHeader document={data} contentType={contentType} />}
+            {data && <DetailHeader document={data} contentType={contentType} />}
           </div>
           <div id='menu' className={styles.menu}>
             <Menu onClick={(event) => handleClick(event)} mode="horizontal" selectedKeys={[selected]}>

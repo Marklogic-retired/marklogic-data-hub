@@ -1,20 +1,33 @@
 import React, { useState } from 'react';
 import { Table } from 'antd';
 
-const TableView = (props) => {
+interface Props {
+  document: any;
+  contentType: string;
+};
+
+const TableView: React.FC<Props> = (props) => {
   const [expanded, setExpanded] = useState(false);
 
   let data = new Array();
 
   if (props.contentType === 'json') {
-    var document = Object.keys(props.document.envelope.instance)[0];
-    Object.keys(props.document.envelope.instance[document]).forEach(function (key) {
-      data.push({ property: key, value: props.document.envelope.instance[document][key] });
+    Object.keys(props.document.envelope.instance).forEach( instance => {
+      if (instance !== 'info'){
+        // TODO handle nested instance types (objects and arrays)
+        Object.keys(props.document.envelope.instance[instance]).forEach(function (key) {
+          data.push({ property: key, value: props.document.envelope.instance[instance][key] });
+        });
+      }
     });
   } else if (props.contentType === 'xml') {
-    document = Object.keys(props.document.content.envelope.instance)[1];
-    Object.keys(props.document.content.envelope.instance[document]).forEach(function (key) {
-      data.push({ property: key, value: props.document.content.envelope.instance[document][key] });
+    Object.keys(props.document.content.envelope.instance).forEach( instance => {
+      if (instance !== 'info'){
+        // TODO handle nested instance types (objects and arrays)
+        Object.keys(props.document.content.envelope.instance[instance]).forEach(function (key) {
+          data.push({ property: key, value: props.document.content.envelope.instance[instance][key] });
+        });
+      }
     });
   }
 

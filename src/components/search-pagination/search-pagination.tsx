@@ -2,7 +2,16 @@ import React from 'react';
 import { Pagination } from 'antd';
 import styles from './search-pagination.module.scss';
 
-const SearchPagination = (props) => {
+interface Props {
+  total: number;
+  currentPage: number;
+  pageLength: number;
+  onPageChange(pageNumber): any;
+  onPageLengthChange(current, pageSize): any;
+};
+
+
+const SearchPagination: React.FC<Props> = (props) => {
 
   const onPageChange = (pageNumber) => {
     props.onPageChange(pageNumber);

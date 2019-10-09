@@ -2,7 +2,13 @@ import React from 'react';
 import { Typography } from 'antd';
 import styles from './search-summary.module.scss';
 
-const SearchSummary = (props) => {
+interface Props {
+  total: number;
+  start: number;
+  length: number;
+};
+
+const SearchSummary: React.FC<Props> = (props) => {
   const { Text } = Typography;
 
   const isEndOfPage = () => {
@@ -14,7 +20,7 @@ const SearchSummary = (props) => {
   }
 
   const isNoDocuments = () => {
-    if(props.total == 0) {
+    if(props.total === 0) {
       return true;
     } else {
       return false;
