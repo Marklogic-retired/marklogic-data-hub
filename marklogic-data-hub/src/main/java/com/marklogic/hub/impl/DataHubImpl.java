@@ -648,7 +648,11 @@ public class DataHubImpl implements DataHub {
 
         // Then deploy databases, utilizing a pattern for filenames when in a provisioned environment
         SimpleAppDeployer deployer = new SimpleAppDeployer(getManageClient(), getAdminManager());
-        deployer.setCommands(buildCommandMap().get("mlDatabaseCommands"));
+        Map<String, List<Command>> commandMap = buildCommandMap();
+        List<Command> indexRelatedCommands = new ArrayList<>();
+        indexRelatedCommands.addAll(commandMap.get("mlDatabaseCommands"));
+        indexRelatedCommands.addAll(commandMap.get("mlDatabaseField"));
+        deployer.setCommands(indexRelatedCommands);
         final boolean originalCreateForests = appConfig.isCreateForests();
         final Pattern originalIncludePattern = appConfig.getResourceFilenamesIncludePattern();
         try {
