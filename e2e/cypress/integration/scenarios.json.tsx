@@ -75,7 +75,7 @@ describe('json scenario on browse documents page', () => {
         })
     });
 
-    xit('select Person entity and verify entity, docs, hub/entity properties', () => {
+    it('select Person entity and verify entity, docs, hub/entity properties', () => {
         browsePage.selectEntity('Person');
         browsePage.getSelectedEntity().should('contain', 'Person');
         cy.wait(500);

@@ -59,7 +59,7 @@ const Facet = (props) => {
     setShowFacets(showNumber);
   }
   const values = props.facetValues.slice(0, showFacets).map((facet, index) =>
-    <div className={styles.checkContainer} key={index}>
+    <div className={styles.checkContainer} key={index} data-cy={stringConverter(props.name) + "-facet-item"}>
       <Checkbox 
         value={facet.value}
         onChange={(e) => handleClick(e)}
