@@ -70,6 +70,7 @@ function buildMapProperties(mapping, entityModel) {
   if (dhMappingTraceIsEnabled) {
     xdmp.trace(dhMappingTrace, `Using entity definition: ${entityDefinition}`);
   }
+  let namespacePrefix = entityDefinition.namespacePrefix ? `${entityDefinition.namespacePrefix}:` : '';
   let requiredProps = entityDefinition.required || [entityModel.primaryKey];
   if (!requiredProps.includes(entityModel.primaryKey)) {
     requiredProps.push(entityModel.primaryKey);
@@ -89,21 +90,22 @@ function buildMapProperties(mapping, entityModel) {
         dataType = entityProperties[prop].items.datatype;
       }
       let mapProperty = mapProperties[prop];
+      let propTag = namespacePrefix + prop;
       let sourcedFrom = escapeXML(mapProperty.sourcedFrom);
       let isInternalMapping = mapProperty.targetEntityType && mapProperty.properties;
       if (isInternalMapping || isArray) {
         let propLine;
         if (isInternalMapping) {
           let subEntityName = getEntityName(mapProperty.targetEntityType);
-          propLine = `<${prop} ${isArray? 'datatype="array"':''}><m:call-template name="${subEntityName}"/></${prop}>`;
+          propLine = `<${propTag} ${isArray? 'datatype="array"':''}><m:call-template name="${subEntityName}"/></${propTag}>`;
         } else {
-          propLine = `<${prop} datatype="array" xsi:type="xs:${dataType}"><m:val>.</m:val></${prop}>`;
+          propLine = `<${propTag} datatype="array" xsi:type="xs:${dataType}"><m:val>.</m:val></${propTag}>`;
         }
         propertyLines.push(`<m:for-each><m:select>${sourcedFrom}</m:select>
             ${propLine}
           </m:for-each>`);
       } else {
-        let propLine = `<${prop} xsi:type="xs:${dataType}"><m:val>${sourcedFrom}</m:val></${prop}>`;
+        let propLine = `<${propTag} xsi:type="xs:${dataType}"><m:val>${sourcedFrom}</m:val></${propTag}>`;
         // If a property is required but not marked as optional, it will always be added, and then entity validation
         // will not fail because the property exists with an empty string as the value.
         propLine = `<m:optional>${propLine}</m:optional>`
@@ -157,11 +159,16 @@ function retrieveFunctionImports() {
 
 function buildEntityMappingXML(mapping, entity) {
   let entityTitle = entity.info.title;
+  let entityName = getEntityName(mapping.targetEntityType);
+  let entityDefinition = entity.definitions[entityName];
+  let namespacePrefix = entityDefinition.namespacePrefix;
+  let entityTag = namespacePrefix ? `${namespacePrefix}:${entityName}`: entityName;
+  let namespaceNode = `xmlns${namespacePrefix ? `:${namespacePrefix}`: ''}="${entityDefinition.namespace || ''}"`;
   return `
       <m:entity name="${entityTitle}" xmlns:m="http://marklogic.com/entity-services/mapping">
-        <${entityTitle} xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <${entityTag} ${namespaceNode} xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           ${buildMapProperties(mapping, entity)}
-        </${entityTitle}>
+        </${entityTag}>
       </m:entity>`;
 }
 
