@@ -37,7 +37,7 @@
       "stepDefinitionName" : "default-ingestion",
       "stepDefinitionType" : "INGESTION",
       "fileLocations" : {
-        "inputFilePath" : ".\\input\\advantage",
+        "inputFilePath" : "./input/advantage",
         "inputFileType" : "json",
         "outputURIReplacement" : "",
         "separator" : ""

@@ -37,7 +37,7 @@
       "stepDefinitionName" : "default-ingestion",
       "stepDefinitionType" : "INGESTION",
       "fileLocations" : {
-        "inputFilePath" : ".\\input\\person-json",
+        "inputFilePath" : "./input/person-json",
         "inputFileType" : "json",
         "outputURIReplacement" : "",
         "separator" : ""
