@@ -73,7 +73,7 @@ class BrowsePage {
         return this.getFacetItems(facet).then(($el) => {
             for (let i = 0; i < $el.length; i++) {
                 let $element = Cypress.$($el[i]);
-                if ($element.find('[data-cy=' + facet + '-facet-item-value]').text().trim() === str) {
+                if ($element.find("label > span:last-child").text().trim() === str) {
                     return cy.wrap($element);
                 }
             }
