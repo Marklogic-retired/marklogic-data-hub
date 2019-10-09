@@ -78,7 +78,7 @@ export class MappingUiComponent implements OnChanges {
 
     disableURINavLeft: boolean = false;
     disableURINavRight: boolean = false;
-    uriIndex = 0;
+    uriIndex = 1;
 
   @ViewChild(MatTable)
   table: MatTable<any>;
@@ -120,9 +120,8 @@ export class MappingUiComponent implements OnChanges {
   }
 
   onNavigateURIList(index) {
-    if (index < 0 || index > this.docUris.length) {
-      this.uriIndex = index;
-      if (index < 0) {
+    if (index < 1 || index > this.docUris.length) {
+      if (index < 1) {
         this.disableURINavLeft = true;
       } else {
         this.disableURINavRight = true;
