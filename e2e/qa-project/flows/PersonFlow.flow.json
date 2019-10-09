@@ -37,7 +37,7 @@
       "stepDefinitionName" : "default-ingestion",
       "stepDefinitionType" : "INGESTION",
       "fileLocations" : {
-        "inputFilePath" : "C:\\dev\\fork\\marklogic-data-hub\\web\\e2e\\qa-project\\input\\person-json",
+        "inputFilePath" : ".\\input\\person-json",
         "inputFileType" : "json",
         "outputURIReplacement" : "",
         "separator" : ""
