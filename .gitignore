@@ -10,8 +10,6 @@
 # testing
 /coverage
 /e2e/cypress/screenshots
-/e2e/results
-/e2e/results/*
 
 # production
 /build
