@@ -100,7 +100,7 @@
         <app-entity-table-ui
           [entityName] = "prop.name"
           [entityProps] = "prop.subProperties"
-          [mapProps] = "this.mapProps[prop.name].properties"
+          [mapProps] = "this.getProps(prop.name)"
           [showHeader] = "false"
           [nestedLevel] = "this.nestedLevel + 1"
           [srcProps]= "this.srcProps"

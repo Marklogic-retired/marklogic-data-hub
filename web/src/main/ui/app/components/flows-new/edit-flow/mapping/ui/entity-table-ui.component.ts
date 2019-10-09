@@ -13,8 +13,8 @@ export class EntityTableUiComponent implements OnChanges {
   @Input() entityName: any;
   @Input() entityProps: any;
   @Input() mapProps: any;
-  @Input() showHeader: boolean;
-  @Input() nestedLevel: number;
+  @Input() showHeader: boolean; // Hide table header for nested
+  @Input() nestedLevel: number; // For indenting
   @Input() srcProps: any;
   @Input() functionLst: object;
   @Input() nmspace: object;
@@ -23,8 +23,12 @@ export class EntityTableUiComponent implements OnChanges {
   dataSource: MatTableDataSource<any>;
 
   columnsToDisplay = ['name', 'datatype', 'expression', 'value'];
-  mapExpressions = {};
-  mapData = {};
+
+  // Mapping data
+  mapExpressions = {}; // for UI
+  mapData = {}; // for saved artifact
+
+  // Show/hide nested property table
   showProp = {};
   showPropInit = false;
 
@@ -36,11 +40,10 @@ export class EntityTableUiComponent implements OnChanges {
   constructor() {}
 
   ngOnInit(){
-    console.log('ngOnInit');
+  
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log('ngOnChanges', changes);
     if (changes.entityProps && changes.entityProps.currentValue){
       this.dataSource = new MatTableDataSource<any>(changes.entityProps.currentValue);
     }
@@ -62,6 +65,11 @@ export class EntityTableUiComponent implements OnChanges {
     } else {
       return prop.datatype;
     }
+  }
+
+  getProps(propName) {
+    return (this.mapProps[propName] && this.mapProps[propName].properties) ?
+      this.mapProps[propName].properties : null;
   }
 
   isNested(prop) {
