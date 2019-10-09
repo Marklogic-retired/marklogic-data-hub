@@ -5,6 +5,8 @@ import styles from './detail-header.module.scss';
 interface Props {
   document: any;
   contentType: string;
+  primaryKey: string;
+  uri: string
 };
 
 const DetailHeader: React.FC<Props> = (props) => {
@@ -12,22 +14,32 @@ const DetailHeader: React.FC<Props> = (props) => {
     const fileType = props.contentType.toUpperCase();
     let envelope: any = {};
     let title: string = '';
+    let primaryKey: string = '';
     let id: string = '';
     let timestamp: string = '';
     let sources: string = '';
-    let user: string = '';
     let document: any = {};
-
-    //TODO add primaryKey or Uri functionality
 
     if (fileType === 'JSON') {
         envelope = props.document.envelope;
         document = Object.keys(envelope.instance)[0];
         title = envelope.instance.info.title;
-        id = envelope.instance[document].id
         timestamp = envelope.headers.createdOn;
         sources = envelope.headers.sources[0].name;
-        // user = envelope.headers.createdBy;
+        if (props.primaryKey) {
+          Object.keys(props.document.envelope.instance).forEach( instance => {
+            if (instance !== 'info'){
+              Object.keys(props.document.envelope.instance[instance]).forEach(function (key) {
+                if (props.primaryKey === props.document.envelope.instance[instance][key]) {
+                  primaryKey = key;
+                  id = props.document.envelope.instance[instance][key]
+                }
+              });
+            }
+          });
+        } else {
+          id = props.uri;
+        }
     } else if (fileType === 'XML') {
         envelope = props.document.content.envelope;
         document = Object.keys(envelope.instance)[1];
@@ -35,7 +47,7 @@ const DetailHeader: React.FC<Props> = (props) => {
         id = envelope.instance[document].id
         timestamp = props.document.metaData.entry.find(x => x.key === 'datahubCreatedOn').value;
         sources = props.document.metaData.entry.find(x => x.key === 'datahubCreatedInFlow').value;
-        // user = props.document.metaData.entry.find(x => x.key === 'datahubCreatedBy').value;
+        //TODO add primaryKey or Uri functionality
     }
 
     return (
@@ -43,8 +55,17 @@ const DetailHeader: React.FC<Props> = (props) => {
         <div id='title' className={styles.title}>
           <Text data-cy="document-title">{title} </Text>
           <Icon style={{ fontSize: '12px' }} type="right" />
-          <Text type="secondary"> id: </Text>
-          <Text data-cy="document-id">{id}</Text>
+          {props.primaryKey ? (
+            <>
+              <Text type="secondary"> {primaryKey}: </Text>
+              <Text data-cy="document-id">{id}</Text>
+            </>
+          ): (
+            <>
+              <Text type="secondary"> uri: </Text>
+              <Text data-cy="document-uri">{id}</Text>
+            </>
+          )}
         </div>
         <div id='summary' className={styles.summary}>
           <Text type="secondary">Created: </Text>
