@@ -6,6 +6,7 @@ import { Table } from 'antd';
 type Props = {
   entities: any[];
   facetValues: any[];
+  lastHarmonized:any[];
 }
 
 const EntityTable:React.FC<Props> = (props) => {
@@ -85,10 +86,17 @@ const EntityTable:React.FC<Props> = (props) => {
       sorter: (a, b) => { return a.created.localeCompare(b.created) }
     }
   ];
-  
+
+
   const realData = props.entities.map((entity, index) => {
     const entityDefinition = entity.definitions.find(definition => definition.name === entity.info.title);
-    // TODO add created date
+
+    let latestJobDate;
+    const collectionDetails = props.lastHarmonized.find(detail => detail.entityCollection === entity.info.title)
+    if(collectionDetails){
+      latestJobDate = collectionDetails.latestJobDateTime;
+    }
+
     let documentCount = 0;
 
     if (props.facetValues.length) {
@@ -99,10 +107,11 @@ const EntityTable:React.FC<Props> = (props) => {
       }
     }
 
+
     let parsedEntity = {
       name: entity.info.title,
       documents: documentCount, 
-      created: '2019-07-30T16:08:30',
+      created: latestJobDate,
       definition: entityDefinition
     }
     return parsedEntity
