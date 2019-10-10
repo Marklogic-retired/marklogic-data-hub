@@ -28,6 +28,7 @@
 		align-self: stretch;
 		font-size: 13px !important;
 	}
+	}	
 
 	.mat-column-name {
 		width: 20% !important;
@@ -98,7 +99,6 @@
 		margin-right: 4px;
 	}
 
-}
 
 #entity-table-nested-container {
 	width: 600%;
@@ -115,4 +115,24 @@
 
 .hide {
 	display: none;
+}
+
+.textField {
+	display: flex;
+	flex-direction: column;
+  }
+  
+  .textField > * {
+	//width: 100%;
+	flex-grow:2;
+  /* And hide the input's outline, so the form looks like the outline */
+  border:none;
+  }
+#edit-expression {
+	padding: 0px;
+}
+
+#textFieldValidation{
+	display: flex;
+	flex-direction: row;
 }

@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges, 
   ViewChild, ViewChildren, QueryList, ViewEncapsulation } from '@angular/core';
 import { MatTable, MatTableDataSource} from "@angular/material";
+import { FormBuilder, FormGroup, Validators, FormArray, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-entity-table-ui',
@@ -21,6 +22,7 @@ export class EntityTableUiComponent implements OnChanges {
   @Input() nmspace: object;
   @Input() mapResults: any;
   @Input() currEntity:string;
+  @Input() mapValidationResult: object;
   @Output() handleSelection = new EventEmitter();
   
   dataSource: MatTableDataSource<any>;
@@ -28,10 +30,13 @@ export class EntityTableUiComponent implements OnChanges {
   // Mapping data
   mapExpressions = {}; // for UI
   mapData = {}; // for saved artifact
-
+  mapExp = new FormControl('');
   // Show/hide nested property table
   showProp = {};
   showPropInit = false;
+  displayErrors = false;
+  errorsAvailable = false;
+  
 
   @ViewChild(MatTable)
   table: MatTable<any>;
@@ -55,7 +60,63 @@ export class EntityTableUiComponent implements OnChanges {
     if (changes.colsShown && changes.colsShown.currentValue){
       this.colsShown = changes.colsShown.currentValue;
     }
+    console.log("mapExpressions",this.mapExp);
   }
+
+//  validateMapping(fc: FormControl) {
+//     let EMAIL_REGEXP = ...
+  
+//     return EMAIL_REGEXP.test(c.value) ? null : {
+//       validateEmail: {
+//         valid: false
+//       }
+//     };
+//   }
+
+  showError(){
+    if (this.displayErrors == true ) {
+      this.displayErrors = false
+    }
+    else {
+      if (this.errorsAvailable == true){
+        this.displayErrors = true;
+      }
+    }
+    
+  }
+  getErrorMessage(propName) { 
+    //this.mapExp.markAsTouched();
+    if(this.errorsAvailable == true) {
+      this.errorsAvailable = false;
+    }
+    else {
+      let field = this.mapValidationResult["properties"]
+    console.log("this is being called",field[propName], this.mapExpressions[propName])
+    if (field[propName] && field[propName]["errorMessage"]) {
+      //console.log("field[this.mapExpressions[propName]]",field[this.mapExpressions[propName]])
+      this.errorsAvailable = true;
+    }
+  } 
+      
+    // } else {
+    //   this.displayErrors = false;
+    // }
+    // return this.mapExp.hasError('required') ? 'You must enter a value' :
+    //     this.mapExp.hasError('email') ? 'Not a valid email' :
+    //         '';
+  
+}
+
+  displayErrorMessage(propName) { 
+    
+    let field = this.mapValidationResult["properties"]
+    if (field[propName] && field[propName]["errorMessage"]) {
+      return field[propName]["errorMessage"]
+    // return this.mapExp.hasError('required') ? 'You must enter a value' :
+    //     this.mapExp.hasError('email') ? 'Not a valid email' :
+    //         '';
+  }
+}
 
   getDatatype(prop) {
     if (prop.datatype === 'array') {
