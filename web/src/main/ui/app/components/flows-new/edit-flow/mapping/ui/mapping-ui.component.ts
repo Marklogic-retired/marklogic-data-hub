@@ -52,8 +52,17 @@ export class MappingUiComponent implements OnChanges {
   public editingSourceContext: boolean = false;
   
   displayedColumns = ['key', 'val'];
-  displayedEntityColumns = ['name','datatype','expression','value'];
-  displayedEntityColumns2 = ['name','datatype','expression','value'];
+
+  // Entity table column menu
+  entityTblCols: any = [
+    { id: 'name', label: 'Name', shown: true },
+    { id: 'datatype', label: 'Type', shown: true },
+    { id: 'expression', label: 'Expression', shown: true },
+    { id: 'value', label: 'Value', shown: true }
+  ];
+  colsShown: Array<string> = this.entityTblCols.map(c => {
+    if (c.shown) return c.id;
+  });
 
   dataSource: MatTableDataSource<any>;
   mapExpresions = {};
@@ -81,14 +90,9 @@ export class MappingUiComponent implements OnChanges {
 
   @ViewChildren('fieldName') fieldName:QueryList<any>;
 
-  /**
-   * Update the sample document based on a URI.
-   */
-
   ngOnInit(){
     if (!this.dataSource){
-   this.dataSource = new MatTableDataSource<any>(this.sampleDocNestedProps);
-
+      this.dataSource = new MatTableDataSource<any>(this.sampleDocNestedProps);
     }
     if(_.isEmpty(this.mapExpresions)) {
       this.mapExpresions = this.conns;
@@ -504,5 +508,20 @@ export class MappingUiComponent implements OnChanges {
     }
     return fieldValue;
   } 
+
+  // Handle selection in entity table column menu
+  colToggle(id) {
+    let i = this.entityTblCols.findIndex(col => {
+      return col.id == id;
+    })
+    this.entityTblCols[i].shown = !this.entityTblCols[i].shown;
+    let newColsShown = [];
+    this.entityTblCols.map(c => {
+      if (c.shown) {
+        newColsShown.push(c.id);
+      }
+    });
+    this.colsShown = newColsShown;
+  }
 
 }
