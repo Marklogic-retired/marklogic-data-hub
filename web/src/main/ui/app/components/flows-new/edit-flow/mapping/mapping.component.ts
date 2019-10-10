@@ -65,7 +65,7 @@ export class MappingComponent implements OnInit {
   public connsOrig: object = {};
   private mapPrefix: string = 'dhf-map-';
 
-  private entityName: string;
+  public entityName: string;
   public mapName: string;
   public flowName: string;
 
