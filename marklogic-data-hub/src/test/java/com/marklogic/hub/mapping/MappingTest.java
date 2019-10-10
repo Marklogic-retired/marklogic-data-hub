@@ -6,6 +6,7 @@ import com.marklogic.hub.*;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.RunFlowResponse;
+import com.marklogic.hub.impl.Versions;
 import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.util.HubModuleManager;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -125,6 +126,7 @@ public class MappingTest extends HubTestBase {
 
     @Test
     public void testValidLookupFunction() throws Exception{
+        Assumptions.assumeTrue(versions.isVersionCompatibleWithES());
         installProject();
         createMappingFromConfig("testLookupFunction.json");
 
@@ -184,6 +186,7 @@ public class MappingTest extends HubTestBase {
 
     @Test
     public void testLookupInvalidURI() throws Exception{
+        Assumptions.assumeTrue(versions.isVersionCompatibleWithES());
         installProject();
         createMappingFromConfig("testLookupFunction.json");
 
@@ -203,6 +206,7 @@ public class MappingTest extends HubTestBase {
 
     @Test
     public void testLookupInvalidDocument() throws Exception{
+        Assumptions.assumeTrue(versions.isVersionCompatibleWithES());
         installProject();
         createMappingFromConfig("testLookupInvalidDocument.json");
 
@@ -225,6 +229,7 @@ public class MappingTest extends HubTestBase {
 
     @Test
     public void testDateANDDateTime() throws Exception{
+        Assumptions.assumeTrue(versions.isVersionCompatibleWithES());
         installProject();
         createMappingFromConfig("testDateANDDateTime.json");
 
@@ -258,6 +263,7 @@ public class MappingTest extends HubTestBase {
 
     @Test
     public void testInvalidDatePattern() throws Exception{
+        Assumptions.assumeTrue(versions.isVersionCompatibleWithES());
         installProject();
         createMappingFromConfig("testInvalidDatePattern.json");
 
@@ -275,6 +281,7 @@ public class MappingTest extends HubTestBase {
 
     @Test
     public void testInvalidStandardFormats() throws Exception{
+        Assumptions.assumeTrue(versions.isVersionCompatibleWithES());
         installProject();
         createMappingFromConfig("testInvalidStandardFormat.json");
 
@@ -292,6 +299,7 @@ public class MappingTest extends HubTestBase {
 
     @Test
     public void testInvalidDateTimePattern() throws Exception{
+        Assumptions.assumeTrue(versions.isVersionCompatibleWithES());
         installProject();
         createMappingFromConfig("testInvalidDateTimePattern.json");
 
@@ -309,6 +317,7 @@ public class MappingTest extends HubTestBase {
 
     @Test
     public void testInvalidDateTimeFormat() throws Exception{
+        Assumptions.assumeTrue(versions.isVersionCompatibleWithES());
         installProject();
         createMappingFromConfig("testInvalidDateTimeFormat.json");
 
@@ -326,6 +335,7 @@ public class MappingTest extends HubTestBase {
 
     @Test
     public void testCustomFunction() throws Exception{
+        Assumptions.assumeTrue(versions.isVersionCompatibleWithES());
         installProject();
         createMappingFromConfig("testCustomFunction1.json");
 
@@ -345,6 +355,7 @@ public class MappingTest extends HubTestBase {
 
     @Test
     public void testXPathFunctions() throws Exception{
+        Assumptions.assumeTrue(versions.isVersionCompatibleWithES());
         installProject();
         createMappingFromConfig("testXPathFunctions.json");
 
