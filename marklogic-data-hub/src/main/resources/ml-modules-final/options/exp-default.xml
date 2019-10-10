@@ -3,18 +3,13 @@
     <collection/>
   </constraint>
   <constraint name="createdByJob">
-    <value>
+    <range facet="false">
       <field name="datahubCreatedByJob"/>
-    </value>
+    </range>
   </constraint>
   <constraint name="createdByStep">
-    <value>
-      <field name="datahubCreatedByStep"/>
-    </value>
-  </constraint>
-  <constraint name="createdByJobRange">
     <range>
-      <field name="datahubCreatedByJob"/>
+      <field name="datahubCreatedByStep"/>
       <facet-option>limit=25</facet-option>
     </range>
   </constraint>
@@ -22,12 +17,6 @@
     <word>
       <field name="datahubCreatedByJob"/>
     </word>
-  </constraint>
-  <constraint name="createdByStepRange">
-    <range>
-      <field name="datahubCreatedByStep"/>
-      <facet-option>limit=25</facet-option>
-    </range>
   </constraint>
   <constraint name="createdOnRange">
     <range facet="false">
