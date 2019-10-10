@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ApplicationConfig.class)
-public class DhsInstallTest extends HubTestBase {
+public class DeployToDhsTest extends HubTestBase {
 
     private AppConfig originalAppConfig;
 
@@ -48,7 +48,7 @@ public class DhsInstallTest extends HubTestBase {
 
         adminHubConfig.setAppConfig(appConfig);
 
-        new DataHubImpl().prepareAppConfigForInstallingIntoDhs(adminHubConfig);
+        new DataHubImpl().prepareAppConfigForDeployingToDhs(adminHubConfig);
 
         assertEquals(adminHubConfig.getPort(DatabaseKind.STAGING), appConfig.getAppServicesPort(),
             "DHS does not allow access to the default App-Services port - 8000 - so it's set to the staging port instead so " +
@@ -97,7 +97,7 @@ public class DhsInstallTest extends HubTestBase {
         appConfig.setSchemasDatabaseName("my-final-schemas");
         appConfig.setModulesDatabaseName("my-modules");
 
-        new DataHubImpl().setKnownValuesForDhsInstall(hubConfig);
+        new DataHubImpl().setKnownValuesForDhsDeployment(hubConfig);
 
         assertEquals(HubConfig.DEFAULT_STAGING_NAME, hubConfig.getHttpName(DatabaseKind.STAGING));
         assertEquals(HubConfig.DEFAULT_FINAL_NAME, hubConfig.getHttpName(DatabaseKind.FINAL));
@@ -145,7 +145,7 @@ public class DhsInstallTest extends HubTestBase {
             adminHubConfig.setAuthMethod(DatabaseKind.STAGING, "basic");
             adminHubConfig.setSimpleSsl(DatabaseKind.STAGING, true);
 
-            new DataHubImpl().prepareAppConfigForInstallingIntoDhs(adminHubConfig);
+            new DataHubImpl().prepareAppConfigForDeployingToDhs(adminHubConfig);
 
             assertNotNull(appConfig.getAppServicesSslContext());
             assertEquals(SecurityContextType.BASIC, appConfig.getAppServicesSecurityContextType());
@@ -157,7 +157,7 @@ public class DhsInstallTest extends HubTestBase {
 
     @Test
     public void buildCommandList() {
-        List<Command> commands = dataHub.buildCommandListForInstallingIntoDhs();
+        List<Command> commands = dataHub.buildCommandListForDeployingToDhs();
         assertTrue(commands.get(0) instanceof DeployOtherDatabasesCommand);
         assertTrue(commands.get(1) instanceof LoadUserArtifactsCommand);
         assertTrue(commands.get(2) instanceof LoadUserModulesCommand);

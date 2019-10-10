@@ -7,6 +7,6 @@ class DhsDeployTask extends HubTask {
 
     @TaskAction
     void deployToDhs() {
-        getDataHub().dhsInstall(null)
+        getDataHub().deployToDhs(null)
     }
 }
