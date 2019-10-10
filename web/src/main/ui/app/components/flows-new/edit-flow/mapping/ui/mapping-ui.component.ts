@@ -54,15 +54,16 @@ export class MappingUiComponent implements OnChanges {
   displayedColumns = ['key', 'val'];
 
   // Entity table column menu
-  entityTblCols: any = [
-    { id: 'name', label: 'Name', shown: true },
-    { id: 'datatype', label: 'Type', shown: true },
-    { id: 'expression', label: 'Expression', shown: true },
-    { id: 'value', label: 'Value', shown: true }
-  ];
-  colsShown: Array<string> = this.entityTblCols.map(c => {
-    if (c.shown) return c.id;
-  });
+  entityTblCols: any = {
+    name: { label: 'Name', shown: true },
+    datatype: { label: 'Type', shown: true },
+    expression: { label: 'Expression', shown: true },
+    value: { label: 'Value', shown: true }
+  }
+  // Convenience for template
+  colIds: Array<string> = Object.keys(this.entityTblCols);
+  // Show all by default
+  colsShown: Array<string> = Object.keys(this.entityTblCols);
 
   dataSource: MatTableDataSource<any>;
   mapExpresions = {};
@@ -511,17 +512,10 @@ export class MappingUiComponent implements OnChanges {
 
   // Handle selection in entity table column menu
   colToggle(id) {
-    let i = this.entityTblCols.findIndex(col => {
-      return col.id == id;
-    })
-    this.entityTblCols[i].shown = !this.entityTblCols[i].shown;
-    let newColsShown = [];
-    this.entityTblCols.map(c => {
-      if (c.shown) {
-        newColsShown.push(c.id);
-      }
+    this.entityTblCols[id].shown = !this.entityTblCols[id].shown;
+    this.colsShown = this.colIds.filter(id => {
+      return this.entityTblCols[id].shown;
     });
-    this.colsShown = newColsShown;
   }
 
 }

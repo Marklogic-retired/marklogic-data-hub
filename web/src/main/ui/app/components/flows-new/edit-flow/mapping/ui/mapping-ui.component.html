@@ -104,15 +104,15 @@
       <div 
         mat-menu-item
         class="mat-menu-list-btn"  
-        *ngFor="let col of entityTblCols" 
-        (click)="colToggle(col.id)"
+        *ngFor="let id of this.colIds"
+        (click)="colToggle(id)"
       >
         <mat-icon class="col-selected">
           <i 
             class="fa fa-check"
-            *ngIf="col.shown"
+            *ngIf="entityTblCols[id].shown"
           ></i>
-        </mat-icon>{{col.label}}
+        </mat-icon>{{entityTblCols[id].label}}
       </div>
     </ng-template>
   </mat-menu>
