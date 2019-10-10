@@ -1,0 +1,43 @@
+<options xmlns="http://marklogic.com/appservices/search">
+  <constraint name="Collection">
+    <collection/>
+  </constraint>
+  <constraint name="createdByJob">
+    <value>
+      <field name="datahubCreatedByJob"/>
+    </value>
+  </constraint>
+  <constraint name="createdByStep">
+    <value>
+      <field name="datahubCreatedByStep"/>
+    </value>
+  </constraint>
+  <constraint name="createdByJobRange">
+    <range>
+      <field name="datahubCreatedByJob"/>
+      <facet-option>limit=25</facet-option>
+    </range>
+  </constraint>
+  <constraint name="createdByJobWord">
+    <word>
+      <field name="datahubCreatedByJob"/>
+    </word>
+  </constraint>
+  <constraint name="createdByStepRange">
+    <range>
+      <field name="datahubCreatedByStep"/>
+      <facet-option>limit=25</facet-option>
+    </range>
+  </constraint>
+  <constraint name="createdOnRange">
+    <range facet="false">
+      <field name="datahubCreatedOn"/>
+    </range>
+  </constraint>
+  <constraint name="createdInFlowRange">
+    <range>
+      <field name="datahubCreatedInFlow"/>
+      <facet-option>limit=25</facet-option>
+    </range>
+  </constraint>
+</options>
