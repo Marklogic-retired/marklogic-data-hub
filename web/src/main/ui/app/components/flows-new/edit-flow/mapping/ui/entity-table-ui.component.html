@@ -101,6 +101,7 @@
           [entityName] = "prop.name"
           [entityProps] = "prop.subProperties"
           [mapProps] = "this.getProps(prop.name)"
+          [colsShown]="this.colsShown"
           [showHeader] = "false"
           [nestedLevel] = "this.nestedLevel + 1"
           [srcProps]= "this.srcProps"
@@ -114,13 +115,13 @@
 
   <!-- HEADER ROW -->
   <mat-header-row 
-    *matHeaderRowDef="columnsToDisplay"
+    *matHeaderRowDef="colsShown"
     [hidden]="!this.showHeader"
   ></mat-header-row>
 
   <!-- NORMAL ROW -->
   <mat-row 
-    *matRowDef="let prop; columns: columnsToDisplay"
+    *matRowDef="let prop; columns: colsShown"
   ></mat-row> 
 
   <!-- NESTED ENTITY ROW -->
