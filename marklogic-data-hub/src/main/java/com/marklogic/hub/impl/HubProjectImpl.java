@@ -23,6 +23,7 @@ import com.marklogic.hub.HubProject;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.util.FileUtil;
+import com.marklogic.mgmt.util.ObjectMapperFactory;
 import com.marklogic.rest.util.JsonNodeUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -261,10 +262,6 @@ public class HubProjectImpl implements HubProject {
         writeResourceFile("hub-internal-config/servers/staging-server.json", hubServersDir.resolve("staging-server.json"), true);
         writeResourceFile("hub-internal-config/servers/job-server.json", hubServersDir.resolve("job-server.json"), true);
 
-        Path userServersDir = getUserServersDir();
-        userServersDir.toFile().mkdirs();
-        writeResourceFile("ml-config/servers/final-server.json", userServersDir.resolve("final-server.json"), true);
-
         Path hubDatabaseDir = getHubDatabaseDir();
         hubDatabaseDir.toFile().mkdirs();
         writeResourceFile("hub-internal-config/databases/staging-database.json", hubDatabaseDir.resolve("staging-database.json"), true);
@@ -272,12 +269,22 @@ public class HubProjectImpl implements HubProject {
         writeResourceFile("hub-internal-config/databases/staging-schemas-database.json", hubDatabaseDir.resolve("staging-schemas-database.json"), true);
         writeResourceFile("hub-internal-config/databases/staging-triggers-database.json", hubDatabaseDir.resolve("staging-triggers-database.json"), true);
 
+        // Per DHFPROD-3159, we no longer overwrite user config (ml-config) files. These are rarely updated by DHF,
+        // while users may update them at any time. If DHF ever needs to update one of these files in the future, it
+        // should do so via a method in this class that makes the update directly to the file without losing any
+        // changes made by the user.
+        final boolean overwriteUserConfigFiles = false;
+
+        Path userServersDir = getUserServersDir();
+        userServersDir.toFile().mkdirs();
+        writeResourceFile("ml-config/servers/final-server.json", userServersDir.resolve("final-server.json"), overwriteUserConfigFiles);
+
         Path userDatabaseDir = getUserDatabaseDir();
         userDatabaseDir.toFile().mkdirs();
-        writeResourceFile("ml-config/databases/final-database.json", userDatabaseDir.resolve("final-database.json"), true);
-        writeResourceFile("ml-config/databases/modules-database.json", userDatabaseDir.resolve("modules-database.json"), true);
-        writeResourceFile("ml-config/databases/final-schemas-database.json", userDatabaseDir.resolve("final-schemas-database.json"), true);
-        writeResourceFile("ml-config/databases/final-triggers-database.json", userDatabaseDir.resolve("final-triggers-database.json"), true);
+        writeResourceFile("ml-config/databases/final-database.json", userDatabaseDir.resolve("final-database.json"), overwriteUserConfigFiles);
+        writeResourceFile("ml-config/databases/modules-database.json", userDatabaseDir.resolve("modules-database.json"), overwriteUserConfigFiles);
+        writeResourceFile("ml-config/databases/final-schemas-database.json", userDatabaseDir.resolve("final-schemas-database.json"), overwriteUserConfigFiles);
+        writeResourceFile("ml-config/databases/final-triggers-database.json", userDatabaseDir.resolve("final-triggers-database.json"), overwriteUserConfigFiles);
 
         // the following config has to do with ordering of initialization.
         // users and roles must be present to install the hub.
@@ -325,7 +332,7 @@ public class HubProjectImpl implements HubProject {
 
         writeResourceFile("hub-internal-config/security/users/flow-developer-user.json", usersDir.resolve("flow-developer-user.json"), true);
         writeResourceFile("hub-internal-config/security/users/flow-operator-user.json", usersDir.resolve("flow-operator-user.json"), true);
-        
+
         writeResourceFile("hub-internal-config/security/privileges/dhf-internal-data-hub.json", privilegesDir.resolve("dhf-internal-data-hub.json"), true);
         writeResourceFile("hub-internal-config/security/privileges/dhf-internal-entities.json", privilegesDir.resolve("dhf-internal-entities.json"), true);
         writeResourceFile("hub-internal-config/security/privileges/dhf-internal-mappings.json", privilegesDir.resolve("dhf-internal-mappings.json"), true);
@@ -485,6 +492,8 @@ public class HubProjectImpl implements HubProject {
             }
         }
         upgradeFlows();
+
+        removeEmptyRangeElementIndexArrayFromFinalDatabaseFile();
     }
 
     protected void upgradeFlows() {
@@ -499,6 +508,40 @@ public class HubProjectImpl implements HubProject {
                 flowManager.saveFlow(flow);
             });
         }
+    }
+
+    /**
+     * This method uses warn-level log messages to ensure they appear when upgrading a project via Gradle.
+     */
+    protected void removeEmptyRangeElementIndexArrayFromFinalDatabaseFile() {
+        File dbFile = getUserConfigDir().resolve("databases").resolve("final-database.json").toFile();
+        if (dbFile != null && dbFile.exists()) {
+            try {
+                ObjectNode db = (ObjectNode)ObjectMapperFactory.getObjectMapper().readTree(dbFile);
+                if (hasEmptyRangeElementIndexArray(db)) {
+                    logger.warn("Removing empty range-element-index array from final-database.json to avoid " +
+                        "unnecessary reindexing");
+                    db.remove("range-element-index");
+                    ObjectMapperFactory.getObjectMapper().writeValue(dbFile, db);
+                }
+            } catch (Exception ex) {
+                logger.warn("Unable to determine if final-database.json file has a range-element-index field with an " +
+                    "empty array as its value; if it does, please remove this to avoid unnecessary reindexing; exception: " + ex.getMessage());
+            }
+        }
+    }
+
+    protected boolean hasEmptyRangeElementIndexArray(ObjectNode db) {
+        if (db.has("range-element-index")) {
+            JsonNode node = db.get("range-element-index");
+            if (node instanceof ArrayNode) {
+                ArrayNode indexes = (ArrayNode)node;
+                if (indexes.size() == 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override  public String getHubModulesDeployTimestampFile() {

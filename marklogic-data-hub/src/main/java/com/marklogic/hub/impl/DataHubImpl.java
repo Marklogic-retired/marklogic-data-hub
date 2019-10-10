@@ -18,7 +18,6 @@ package com.marklogic.hub.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.Command;
-import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.CommandMapBuilder;
 import com.marklogic.appdeployer.command.appservers.DeployOtherServersCommand;
 import com.marklogic.appdeployer.command.appservers.UpdateRestApiServersCommand;
@@ -64,9 +63,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 
 import javax.annotation.PostConstruct;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -480,20 +477,6 @@ public class DataHubImpl implements DataHub {
         return response;
     }
 
-    /*
-     * just installs the hub modules, for more granular management of upgrade
-     */
-    private void hubInstallModules() {
-        loadHubModulesCommand.execute(new CommandContext(hubConfig.getAppConfig(), null, null));
-    }
-
-    /*
-     * just installs the user modules, for more granular management of upgrade
-     */
-    private void loadUserModules() {
-        loadUserModulesCommand.execute(new CommandContext(hubConfig.getAppConfig(), null, null));
-    }
-
     /**
      * Installs the data hub configuration and server-side config files into MarkLogic
      */
@@ -549,16 +532,16 @@ public class DataHubImpl implements DataHub {
         appConfig.getCmaConfig().setDeployUsers(false);
     }
 
-    public void dhsInstall(HubDeployStatusListener listener) {
-        prepareAppConfigForInstallingIntoDhs(hubConfig);
+    public void deployToDhs(HubDeployStatusListener listener) {
+        prepareAppConfigForDeployingToDhs(hubConfig);
 
         HubAppDeployer dhsDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
-        dhsDeployer.setCommands(buildCommandListForInstallingIntoDhs());
+        dhsDeployer.setCommands(buildCommandListForDeployingToDhs());
         dhsDeployer.deploy(hubConfig.getAppConfig());
     }
 
-    protected void prepareAppConfigForInstallingIntoDhs(HubConfig hubConfig) {
-        setKnownValuesForDhsInstall(hubConfig);
+    protected void prepareAppConfigForDeployingToDhs(HubConfig hubConfig) {
+        setKnownValuesForDhsDeployment(hubConfig);
 
         AppConfig appConfig = hubConfig.getAppConfig();
 
@@ -590,7 +573,7 @@ public class DataHubImpl implements DataHub {
      *
      * @param hubConfig
      */
-    protected void setKnownValuesForDhsInstall(HubConfig hubConfig) {
+    protected void setKnownValuesForDhsDeployment(HubConfig hubConfig) {
         hubConfig.setHttpName(DatabaseKind.STAGING, HubConfig.DEFAULT_STAGING_NAME);
         hubConfig.setHttpName(DatabaseKind.FINAL, HubConfig.DEFAULT_FINAL_NAME);
         hubConfig.setHttpName(DatabaseKind.JOB, HubConfig.DEFAULT_JOB_NAME);
@@ -625,7 +608,7 @@ public class DataHubImpl implements DataHub {
         }
     }
 
-    protected List<Command> buildCommandListForInstallingIntoDhs() {
+    protected List<Command> buildCommandListForDeployingToDhs() {
         List<Command> commands = new ArrayList<>();
         commands.addAll(buildCommandMap().get("mlDatabaseCommands"));
         commands.add(loadUserArtifactsCommand);
@@ -962,11 +945,6 @@ public class DataHubImpl implements DataHub {
 
     @Override
     public boolean upgradeHub() throws CantUpgradeException {
-        return upgradeHub(null);
-    }
-
-    @Override
-    public boolean upgradeHub(List<String> updatedFlows) throws CantUpgradeException {
         boolean isHubInstalled;
         try {
             isHubInstalled = this.isInstalled().isInstalled();
@@ -990,50 +968,30 @@ public class DataHubImpl implements DataHub {
                 throw new CantUpgradeException(versions.getDHFVersion(), MIN_UPGRADE_VERSION);
             }
         }
+
         boolean result = false;
-        boolean alreadyInitialized = project.isInitialized();
+
         try {
-            /*Ideally this should move to HubProject.upgradeProject() method
-             * But since it requires 'hubConfig' and 'versions', for now
-             * leaving it here
-             */
-            if(alreadyInitialized) {
-                // The version provided in "mlDHFVersion" property in gradle.properties.
-                String gradleVersion = versions.getDHFVersion();
-                File buildGradle = Paths.get(project.getProjectDirString(), "build.gradle").toFile();
-
-                // Back up the hub-internal-config and user-config directories in versions > 4.0
-                FileUtils.copyDirectory(project.getHubConfigDir().toFile(), project.getProjectDir().resolve(HubProject.HUB_CONFIG_DIR+"-"+gradleVersion).toFile());
-                FileUtils.copyDirectory(project.getUserConfigDir().toFile(), project.getProjectDir().resolve(HubProject.USER_CONFIG_DIR+"-"+gradleVersion).toFile());
-
-                // Gradle plugin uses a logging framework that is different from java api. Hence writing it to stdout as it is done in gradle plugin.
-                System.out.println("The "+ gradleVersion + " "+ HubProject.HUB_CONFIG_DIR +" is now moved to "+ HubProject.HUB_CONFIG_DIR+"-"+gradleVersion);
-                System.out.println("The "+ gradleVersion + " "+ HubProject.USER_CONFIG_DIR +" is now moved to "+ HubProject.USER_CONFIG_DIR+"-"+gradleVersion);
-                System.out.println("Please copy the custom database, server configuration files from " + HubProject.HUB_CONFIG_DIR+"-"+gradleVersion
-                    + " and "+ HubProject.USER_CONFIG_DIR+"-"+gradleVersion + " to their respective locations in  "+HubProject.HUB_CONFIG_DIR +" and "
-                    + HubProject.USER_CONFIG_DIR);
-
-                // replace the hub version in build.gradle
-                String text = FileUtils.readFileToString(buildGradle);
-                String version = hubConfig.getJarVersion();
-                text = Pattern.compile("^(\\s*)id\\s+['\"]com.marklogic.ml-data-hub['\"]\\s+version.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1id 'com.marklogic.ml-data-hub' version '" + version + "'");
-                text = Pattern.compile("^(\\s*)compile.+marklogic-data-hub.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1compile 'com.marklogic:marklogic-data-hub:" + version + "'");
-                FileUtils.writeStringToFile(buildGradle, text);
+            if (project.isInitialized()) {
+                prepareProjectBeforeUpgrading(this.project, versions.getDHFVersion());
                 hubConfig.getHubSecurityDir().resolve("roles").resolve("flow-operator.json").toFile().delete();
             }
 
             hubConfig.initHubProject();
-
-            //now let's try to upgrade the directory structure
             hubConfig.getHubProject().upgradeProject();
 
-            //if none of this has thrown an exception, we're clear and can set the result to true
             result = true;
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Unable to upgrade project, cause: " + e.getMessage(), e);
         }
 
         return result;
+    }
+
+    protected void prepareProjectBeforeUpgrading(HubProject hubProject, String newDhfVersion) throws IOException {
+        final String backupPath = HubProject.HUB_CONFIG_DIR + "-pre-" + newDhfVersion;
+        FileUtils.copyDirectory(hubProject.getHubConfigDir().toFile(), hubProject.getProjectDir().resolve(backupPath).toFile());
+        logger.warn("The " + HubProject.HUB_CONFIG_DIR + " directory has been moved to " + backupPath + " so that it can be re-initialized using the new version of Data Hub");
     }
 
     // only used in test
