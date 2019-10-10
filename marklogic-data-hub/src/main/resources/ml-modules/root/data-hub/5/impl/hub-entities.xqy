@@ -158,18 +158,13 @@ declare %private function hent:fix-options-exp($nodes as node()*)
             <search:collection/>
           </search:constraint>,
           <search:constraint name="createdByJob">
-            <search:value>
+            <search:range facet="false">
               <search:field name="datahubCreatedByJob"/>
-            </search:value>
+            </search:range>
           </search:constraint>,
           <search:constraint name="createdByStep">
-            <search:value>
-              <search:field name="datahubCreatedByStep"/>
-            </search:value>
-          </search:constraint>,
-          <search:constraint name="createdByJobRange">
             <search:range>
-              <search:field name="datahubCreatedByJob"/>
+              <search:field name="datahubCreatedByStep"/>
               <search:facet-option>limit=25</search:facet-option>
             </search:range>
           </search:constraint>,
@@ -177,12 +172,6 @@ declare %private function hent:fix-options-exp($nodes as node()*)
             <search:word>
               <search:field name="datahubCreatedByJob"/>
             </search:word>
-          </search:constraint>,
-          <search:constraint name="createdByStepRange">
-            <search:range>
-              <search:field name="datahubCreatedByStep"/>
-              <search:facet-option>limit=25</search:facet-option>
-            </search:range>
           </search:constraint>,
           <search:constraint name="createdOnRange">
             <search:range facet="false">
