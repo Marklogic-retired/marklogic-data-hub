@@ -7,6 +7,7 @@ plugins {
     id 'com.moowork.node' version '1.1.1'
     id 'org.springframework.boot' version '2.1.3.RELEASE'
     id "io.spring.dependency-management" version "1.0.7.RELEASE"
+    id 'com.marklogic.ml-development-tools' version '4.2.0'
 }
 
 repositories {
@@ -148,6 +149,22 @@ processResources {
     // Includes installer-specific files into the jar produced by bootJar
     from ("src/installer") {
         into "."
+    }
+}
+
+ext {
+    dataServicesGroup = "Data Services"
+    dataServicesPath = "src/main/resources/ml-modules/root/data-hub/5/data-services"
+}
+
+task generateSourceDataInterface(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask, group: dataServicesGroup) {
+    serviceDeclarationFile = dataServicesPath + "/mastering/service.json"
+}
+
+task generateDataServiceInterfaces {
+    description = "Generate Java interfaces for all Data Services. Must run this from the ./marklogic-data-hub directory"
+    dependsOn {
+        tasks.findAll { task -> dataServicesGroup.equals(task.group)}
     }
 }
 
