@@ -83,8 +83,17 @@ function documentLookup(input, inputDictionaryPath) {
 // BEGIN date/dateTime functions
 function parseDate(picture, value) {
   let standardFormats = ["MM/DD/YYYY", "DD/MM/YYYY", "MM-DD-YYYY", "MM.DD.YYYY", "DD.MM.YYYY", "YYYYMMDD", "YYYY/MM/DD"];
-  let nonStandardFormats = ["Mon DD, YYYY", "DD Mon YYYY", "DD-Mon-YYYY" ];
+  let nonStandardFormats = ["Mon DD,YYYY", "DD Mon YYYY", "DD-Mon-YYYY" ];
   let response;
+
+  // Normalize both the picture and value a bit per DHFPROD-3121
+  if (picture != null) {
+    picture = picture.toString().replace(", ", ",");
+  }
+  if (value != null) {
+    value = value.toString().replace(", ", ",");
+  }
+
   if(standardFormats.includes(picture.trim())){
     try{
       let standardizedDate = xdmp.parseYymmdd(picture.replace("YYYY", "yyyy").replace("DD","dd"), value).toString().split("T")[0];
@@ -96,9 +105,10 @@ function parseDate(picture, value) {
   }
   else if (nonStandardFormats.includes(picture.trim())) {
     picture = picture.trim();
+
     let pattern;
     if(picture === nonStandardFormats[0]) {
-      pattern = "^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) ([0-9]|[0-2][0-9]|[3][0-1])\, ([0-9]{4})$";
+      pattern = "^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) ([0-9]|[0-2][0-9]|[3][0-1])\,([0-9]{4})$";
     }
     else if(picture === nonStandardFormats[1]) {
       pattern = "^([0-9]|[0-2][0-9]|[3][0-1]) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) ([0-9]{4})$";
@@ -106,9 +116,10 @@ function parseDate(picture, value) {
     else {
       pattern = "^([0-9]|[0-2][0-9]|[3][0-1])\-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\-([0-9]{4})$";
     }
+
     let match = new RegExp(pattern, 'i').exec(value);
     if (match === null) {
-      fn.error(null, "Given value doesn't match with the specified pattern (" + picture + "," + value + ") for parsing date string.");
+      response = null;
     }
     else {
       let date = new Date(value);

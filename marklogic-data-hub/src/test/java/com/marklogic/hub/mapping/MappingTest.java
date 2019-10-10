@@ -290,43 +290,6 @@ public class MappingTest extends HubTestBase {
         assertTrue(output.contains(expected),"Expected "+expected+" to be a substring of "+output);
     }
 
-
-    @Test
-    public void testInvalidNonStandardFormats() throws Exception{
-        installProject();
-        createMappingFromConfig("testInvalidNonStandardFormat.json");
-
-        installHubArtifacts(getDataHubAdminConfig(), true);
-        installUserModules(getDataHubAdminConfig(), true);
-
-        RunStepResponse mappingJob = runFlowResp("OrderJSON", "1","2").getStepResponses().get("2");
-
-        String output = outputToJson(mappingJob.stepOutput, 0, "message").toString();
-        String expected = "Given value doesn't match with the specified pattern (Mon DD, YYYY,08.01.1996) for parsing date string.";
-
-        assertFalse(mappingJob.isSuccess(), "Mapping job should fail for invalid non standard formats");
-        assertTrue(output.contains(expected),"Expected "+expected+" to be a substring of "+output);
-    }
-
-    @Disabled
-    @Test
-    //Ignored because it is difficult to generate this scenario to test
-    public void testInvalidDateStringValue() throws Exception{
-        installProject();
-        createMappingFromConfig("testInvalidDateStringValue.json");
-
-        installHubArtifacts(getDataHubAdminConfig(), true);
-        installUserModules(getDataHubAdminConfig(), true);
-
-        RunStepResponse mappingJob = runFlowResp("OrderJSON", "1","2").getStepResponses().get("2");
-
-        String output = outputToJson(mappingJob.stepOutput, 0, "message").toString();
-        String expected = "Given value 51100 for date string is invalid.";
-
-        assertFalse(mappingJob.isSuccess(), "Mapping job should fail for invalid date string value");
-        assertTrue(output.contains(expected),"Expected "+expected+" to be a substring of "+output);
-    }
-
     @Test
     public void testInvalidDateTimePattern() throws Exception{
         installProject();
