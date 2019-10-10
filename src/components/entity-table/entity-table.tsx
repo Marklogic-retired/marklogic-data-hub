@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 // import styles from './entity-table.module.scss';
 import { Table } from 'antd';
-import { dateConverter } from '../../util/date-conversion';
+import { relativeTimeConverter } from '../../util/relative-time-conversion';
 
 type Props = {
   entities: any[];
@@ -120,7 +120,7 @@ const EntityTable:React.FC<Props> = (props) => {
     let parsedEntity = {
       name: entity.info.title,
       documents: documentCount, 
-      created: dateConverter(latestJobDate),
+      created: relativeTimeConverter(latestJobDate),
       definition: entityDefinition
     }
     return parsedEntity
