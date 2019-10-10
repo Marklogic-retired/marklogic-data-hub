@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 // import styles from './entity-table.module.scss';
 import { Table } from 'antd';
+import { dateConverter } from '../../util/date-conversion';
 
 type Props = {
   entities: any[];
@@ -83,7 +84,15 @@ const EntityTable:React.FC<Props> = (props) => {
     { 
       title: 'Last Harmonized', 
       dataIndex: 'created',
-      sorter: (a, b) => { return a.created.localeCompare(b.created) }
+        render: text => { return (
+            <Link to={{
+                pathname: "/browse",
+                state: { entity: text} }}
+                  data-cy={text}>
+                {text}
+            </Link>
+        )},
+        sorter: (a, b) => { return a.created.localeCompare(b.created) }
     }
   ];
 
@@ -111,7 +120,7 @@ const EntityTable:React.FC<Props> = (props) => {
     let parsedEntity = {
       name: entity.info.title,
       documents: documentCount, 
-      created: latestJobDate,
+      created: dateConverter(latestJobDate),
       definition: entityDefinition
     }
     return parsedEntity
