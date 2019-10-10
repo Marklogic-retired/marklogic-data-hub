@@ -29,6 +29,7 @@ import { Flow } from "../../models/flow.model";
       [entityName]="this.entityName"
       [entityNested] = "entityNested"
       [nmspace] = "nmspace"
+      [mapValidationResult]="this.mapValidationResult"
       (updateURI)="this.updateURI($event)"
       (updateMap)="this.updateMap($event)"
     ></app-mapping-ui>
@@ -77,6 +78,19 @@ export class MappingComponent implements OnInit {
   //Helper
 
   public nmspace: object = {};
+  public mapValidationResult: object = {
+    "targetEntityType": "http://example.org/Order-0.0.1/Order",
+    "properties":
+    {
+    "name":
+    
+    { "sourcedFrom": "Region"}
+    ,
+    "id":
+    {
+    "sourcedFrom": "Order ID",
+    "errorMessage": "Invalid XPath expression: Order ID"}}
+    };
 
   updateURI(event) {
     this.conns = event.conns;

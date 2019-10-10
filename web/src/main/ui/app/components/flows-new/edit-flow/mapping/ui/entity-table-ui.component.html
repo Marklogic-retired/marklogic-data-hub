@@ -47,6 +47,7 @@
     </mat-header-cell>
     <mat-cell *matCellDef="let prop; let i = dataIndex">
       <div class="textField">
+          <span id="textFieldValidation">
         <textarea 
           matInput
           id="edit-expression" 
@@ -60,8 +61,12 @@
             prop: prop
           })" type="text"
           class="map-expr"
+          [ngStyle]="{'background-color': (displayErrors ? '#FAD3D3' : '')}"
         ></textarea>
+        <mat-icon *ngIf="errorsAvailable" (click)="showError()"><i class="fa fa-times-circle" style="color: red;"></i></mat-icon></span>
+        <mat-hint *ngIf="displayErrors" style="font-size: 10px;color: red">{{displayErrorMessage(prop.name)}}</mat-hint>
       </div>
+      <mat-icon (click)="getErrorMessage(prop.name)">more_vert</mat-icon>
       <mat-icon 
         id="fields-list"
         class="list-icon" 
