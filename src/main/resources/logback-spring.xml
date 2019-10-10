@@ -5,7 +5,9 @@
 <configuration>
   <include resource="org/springframework/boot/logging/logback/base.xml"/>
 
-  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+  <property name="LOGS" value="./logs" />
+
+  <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
     <!-- encoders are assigned the type
          ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
     <encoder>
@@ -13,12 +15,35 @@
     </encoder>
   </appender>
 
+  <appender name="RollingFile"
+    class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${LOGS}/explorer.log</file>
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+      <Pattern>%d %p %C{1.} [%t] %m%n</Pattern>
+    </encoder>
+
+    <rollingPolicy
+      class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <!-- rollover daily and when the file reaches 10 MegaBytes -->
+      <fileNamePattern>${LOGS}/archived/explorer-%d{yyyy-MM-dd}.%i.log
+      </fileNamePattern>
+      <timeBasedFileNamingAndTriggeringPolicy
+        class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+        <maxFileSize>10MB</maxFileSize>
+      </timeBasedFileNamingAndTriggeringPolicy>
+    </rollingPolicy>
+  </appender>
+
+  <!-- LOG everything at INFO level -->
+  <root level="INFO">
+    <appender-ref ref="RollingFile" />
+    <appender-ref ref="Console" />
+  </root>
+
+  <logger name="com.marklogic.hub.explorer" level="INFO" />
   <logger name="org.springframework" level="WARN"/>
   <logger name="org.apache.http" level="WARN"/>
-
-  <logger name="com.marklogic.client.impl.DocumentManagerImpl" level="WARN"/>
-  <logger name="com.marklogic.client.impl.DatabaseClientImpl" level="WARN"/>
-  <logger name="com.marklogic.hub" level="INFO"/>
+  <logger name="com.marklogic.client.impl" level="WARN"/>
   <logger name="org.apache.catalina.webresources.Cache" level="ERROR"/>
   <logger name="java.util.prefs" level="OFF"/>
 </configuration>
