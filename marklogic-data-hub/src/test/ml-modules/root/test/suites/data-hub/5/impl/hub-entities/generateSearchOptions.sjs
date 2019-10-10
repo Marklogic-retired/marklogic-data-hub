@@ -28,11 +28,20 @@ const expParams = true;
 const expOtions = hent.dumpSearchOptions(input, expParams);
 assertions.concat([
   test.assertEqual("limit=25", xs.string(fn.head(expOtions.xpath("/*:constraint[@name = 'title']/*:range/*:facet-option/text()"))),
-    "To avoid displaying large numbers of values in facets in QuickStart, range constraints default to a max of 25 values"
+    "To avoid displaying large numbers of values in facets in Explorer, range constraints default to a max of 25 values"
+  ),
+  test.assertEqual("limit=25", xs.string(fn.head(expOtions.xpath("/*:constraint[@name = 'createdByJobRange']/*:range/*:facet-option/text()"))),
+    "To avoid displaying large numbers of values in facets in Explorer, range constraints default to a max of 25 values"
+  ),
+  test.assertEqual("limit=25", xs.string(fn.head(expOtions.xpath("/*:constraint[@name = 'createdByStepRange']/*:range/*:facet-option/text()"))),
+    "To avoid displaying large numbers of values in facets in Explorer, range constraints default to a max of 25 values"
+  ),
+  test.assertEqual("limit=25", xs.string(fn.head(expOtions.xpath("/*:constraint[@name = 'createdInFlowRange']/*:range/*:facet-option/text()"))),
+    "To avoid displaying large numbers of values in facets in Explorer, range constraints default to a max of 25 values"
   ),
   test.assertExists(expOtions.xpath("/*:constraint[@name = 'createdByJobRange']")),
   test.assertExists(expOtions.xpath("/*:constraint[@name = 'createdByJobWord']")),
-  test.assertExists(expOtions.xpath("/*:constraint[@name = 'createdOnRange']")),
+  test.assertExists(expOtions.xpath("/*:constraint[@name = 'createdOnRange', @facet = 'false']")),
   test.assertExists(expOtions.xpath("/*:values[@name = 'Book']/*:range/*:element[@name = 'title']")),
   test.assertNotExists(expOtions.xpath("/*:values[@name = 'Book']/*:range/*:facet-option"),
     "A facet option does not need to be set on the values element"),
