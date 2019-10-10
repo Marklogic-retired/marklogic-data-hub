@@ -71,7 +71,13 @@
         &nbsp;<mat-icon id="lookup-icon">
           <i class="fa fa-book fa-sm"></i>
         </mat-icon>
-        <mat-icon id="filter-icon"><i class="fa fa-columns"></i></mat-icon>
+        <mat-icon 
+          id="filter-icon"
+          [matMenuTriggerFor]="columnsMenu" 
+          [matMenuTriggerData]="{indx: i}"
+        >
+          <i class="fa fa-columns"></i>
+        </mat-icon>
       </span>
 
       <div id="entity-table-container">
@@ -79,6 +85,7 @@
           [entityName]="this.entityName"
           [entityProps]="this.entityProps"
           [mapProps]="this.mapping.properties"
+          [colsShown]="this.colsShown"
           [showHeader]="true"
           [nestedLevel]="0"
           [srcProps]="this.sampleDocNestedProps"
@@ -90,6 +97,25 @@
     </div> <!-- Entities_Tbl -->
 
   </span>
+
+  <!-- COLUMNS MENU -->
+  <mat-menu class="mat-menu-list" #columnsMenu="matMenu">
+    <ng-template matMenuContent let-indx="indx" let-prop="prop">
+      <div 
+        mat-menu-item
+        class="mat-menu-list-btn"  
+        *ngFor="let id of this.colIds"
+        (click)="colToggle(id)"
+      >
+        <mat-icon class="col-selected">
+          <i 
+            class="fa fa-check"
+            *ngIf="entityTblCols[id].shown"
+          ></i>
+        </mat-icon>{{entityTblCols[id].label}}
+      </div>
+    </ng-template>
+  </mat-menu>
 
 </div> <!-- isVersionCompatibleWithES -->
 <!-- END NEW MAPPING VIEW -->

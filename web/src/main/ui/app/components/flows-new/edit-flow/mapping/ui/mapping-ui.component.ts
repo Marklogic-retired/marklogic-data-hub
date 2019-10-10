@@ -52,8 +52,18 @@ export class MappingUiComponent implements OnChanges {
   public editingSourceContext: boolean = false;
   
   displayedColumns = ['key', 'val'];
-  displayedEntityColumns = ['name','datatype','expression','value'];
-  displayedEntityColumns2 = ['name','datatype','expression','value'];
+
+  // Entity table column menu
+  entityTblCols: any = {
+    name: { label: 'Name', shown: true },
+    datatype: { label: 'Type', shown: true },
+    expression: { label: 'Expression', shown: true },
+    value: { label: 'Value', shown: true }
+  }
+  // Convenience for template
+  colIds: Array<string> = Object.keys(this.entityTblCols);
+  // Show all by default
+  colsShown: Array<string> = Object.keys(this.entityTblCols);
 
   dataSource: MatTableDataSource<any>;
   mapExpresions = {};
@@ -81,14 +91,9 @@ export class MappingUiComponent implements OnChanges {
 
   @ViewChildren('fieldName') fieldName:QueryList<any>;
 
-  /**
-   * Update the sample document based on a URI.
-   */
-
   ngOnInit(){
     if (!this.dataSource){
-   this.dataSource = new MatTableDataSource<any>(this.sampleDocNestedProps);
-
+      this.dataSource = new MatTableDataSource<any>(this.sampleDocNestedProps);
     }
     if(_.isEmpty(this.mapExpresions)) {
       this.mapExpresions = this.conns;
@@ -504,5 +509,13 @@ export class MappingUiComponent implements OnChanges {
     }
     return fieldValue;
   } 
+
+  // Handle selection in entity table column menu
+  colToggle(id) {
+    this.entityTblCols[id].shown = !this.entityTblCols[id].shown;
+    this.colsShown = this.colIds.filter(id => {
+      return this.entityTblCols[id].shown;
+    });
+  }
 
 }

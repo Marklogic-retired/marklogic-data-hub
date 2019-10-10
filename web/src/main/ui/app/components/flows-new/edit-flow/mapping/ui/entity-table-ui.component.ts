@@ -13,6 +13,7 @@ export class EntityTableUiComponent implements OnChanges {
   @Input() entityName: any;
   @Input() entityProps: any;
   @Input() mapProps: any;
+  @Input() colsShown: Array<string>;
   @Input() showHeader: boolean; // Hide table header for nested
   @Input() nestedLevel: number; // For indenting
   @Input() srcProps: any;
@@ -21,8 +22,6 @@ export class EntityTableUiComponent implements OnChanges {
   @Output() handleSelection = new EventEmitter();
   
   dataSource: MatTableDataSource<any>;
-
-  columnsToDisplay = ['name', 'datatype', 'expression', 'value'];
 
   // Mapping data
   mapExpressions = {}; // for UI
@@ -39,9 +38,7 @@ export class EntityTableUiComponent implements OnChanges {
 
   constructor() {}
 
-  ngOnInit(){
-  
-  }
+  ngOnInit() {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.entityProps && changes.entityProps.currentValue){
@@ -52,6 +49,9 @@ export class EntityTableUiComponent implements OnChanges {
         this.mapExpressions[p] = this.mapProps[p]['sourcedFrom'];
       })
       this.mapData = this.mapProps;
+    }
+    if (changes.colsShown && changes.colsShown.currentValue){
+      this.colsShown = changes.colsShown.currentValue;
     }
   }
 
