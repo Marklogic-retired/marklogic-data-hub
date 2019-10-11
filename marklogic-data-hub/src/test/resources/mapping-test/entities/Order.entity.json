@@ -30,6 +30,8 @@
         "RequiredDate3": { "datatype": "date" },
         "RequiredDate4": { "datatype": "date" },
         "RequiredDate5": { "datatype": "date" },
+        "InvalidInputDate": { "datatype": "date" },
+        "InputNotDate": { "datatype": "date" },
         "MemoryLookup": { "datatype":  "string"},
         "DocumentLookup": { "datatype":  "string"},
         "TotalCost": { "datatype": "double" },

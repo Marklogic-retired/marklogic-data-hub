@@ -57,6 +57,8 @@
     },
     "RequiredDate5": {
       "sourcedFrom": "parseDate('DD Mon YYYY',RequiredDate5)"
-    }
+    },
+    "InvalidInputDate": { "sourcedFrom": "parseDate('DD Mon YYYY', '07.16.1996')" },
+    "InputNotDate": { "sourcedFrom": "parseDate('DD Mon YYYY', ShipCity)" }
   }
 }
