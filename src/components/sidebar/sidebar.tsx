@@ -41,7 +41,7 @@ const Sidebar = (props) => {
     >
       { props.selectedEntities.length !== 0 && (
         <Panel id="entity-properties" header={<div className={styles.title}>Entity Properties</div>} key="entityProperties" style={{borderBottom: 'none'}}>
-          { entityFacets.map(facet => {
+          { entityFacets.length ? entityFacets.map(facet => {
             return facet && (
               <Facet
                 name={facet.hasOwnProperty('displayName') ? facet.displayName : facet.facetName}
@@ -50,7 +50,9 @@ const Sidebar = (props) => {
                 key={facet.facetName}
               />
             )
-          })}
+          }) :
+          <div>No Facets</div>
+          }
         </Panel>
       )}
       <Panel id="hub-properties" header={<div className={styles.title}>Hub Properties</div>} key="hubProperties" style={{borderBottom: 'none'}}>

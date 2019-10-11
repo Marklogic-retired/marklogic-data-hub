@@ -23,7 +23,7 @@ const SearchResult: React.FC<Props> = (props) => {
     itemEntityName = Object.keys(props.item.extracted.content[1]);
     itemEntityProperties = Object.values<any>(props.item.extracted.content[1]);
     entityDef = props.entityDefArray.length && props.entityDefArray.find(entity => entity.name === itemEntityName[0]);
-    primaryKeyValue = entityDef.primaryKey ? itemEntityProperties[0][entityDef.primaryKey] : '';
+    primaryKeyValue = entityDef.primaryKey ? itemEntityProperties[0][entityDef.primaryKey] : '-';
     // TODO format createdOnVal using momentjs
     createdOnVal = props.item.extracted.content[0].headers.createdOn.toString().substring(0, 19);
     sourcesVal = props.item.extracted.content[0].headers.sources.map(src => {
@@ -35,7 +35,7 @@ const SearchResult: React.FC<Props> = (props) => {
     itemEntityName = Object.keys(parsedContent[1]);
     itemEntityProperties = Object.values<any>(parsedContent[1]);
     entityDef = props.entityDefArray.length && props.entityDefArray.find(entity => entity.name === itemEntityName[0]);
-    primaryKeyValue = entityDef.primaryKey ? itemEntityProperties[0][entityDef.primaryKey] : '';
+    primaryKeyValue = entityDef.primaryKey ? itemEntityProperties[0][entityDef.primaryKey] : '-';
     // TODO format createdOnVal using momentjs
     // TODO add createdOn and sourcesVal for XML files
     // createdOnVal = parsedContent[0].headers.createdOn.toString().substring(0, 19);
@@ -80,7 +80,7 @@ const SearchResult: React.FC<Props> = (props) => {
           ?
           props.item.matches[0]['match-text'][0].length > 1 && props.item.matches[0]['match-text'][0]
           :
-          {snippet}
+          snippet
         }
       </div>
       <div className={styles.metadata}>
