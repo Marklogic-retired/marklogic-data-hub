@@ -8,6 +8,4 @@ COPY ./qa-project ./qa-project
 COPY ./cypress.json ./cypress.json
 COPY ./tsconfig.json ./tsconfig.json
 
-# RUN npm run cypress:run
-
 CMD ["npm", "run", "cypress:run"]
