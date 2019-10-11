@@ -1,6 +1,5 @@
 const mapping = require("/data-hub/5/builtins/steps/mapping/entity-services/main.sjs");
 const mappingLib = require("/data-hub/5/builtins/steps/mapping/entity-services/lib.sjs");
-const mappingTest = require("/marklogic.rest.resource/mlMappingTest/assets/resource.sjs");
 const test = require("/test/test-helper.xqy");
 
 let assertions = [];
@@ -27,15 +26,18 @@ function runMapping () {
   }
 }
 
+function invokeService(docURI, mappingName, mappingVersion ) {
+  return fn.head(xdmp.invoke(
+    "/data-hub/5/data-services/mapping/testMapping.sjs",
+    {"docURI": docURI, "mappingName":mappingName, "mappingVersion":mappingVersion}
+  ));
+}
+
 function testMapping() {
-  let params ={};
-  params.docURI="/mapTest.json";
-  params.mappingName="OrdersMapping";
-  params.mappingVersion="1";
-  let instance = mappingTest.GET({},params);
-  assertions.concat([
-        test.assertEqual('2019-12-07', fn.string(instance.OrderType.purchaseDate)),
-        test.assertEqual(165.05, fn.number(instance.OrderType.orderCost))]);
+    let instance = invokeService("/content/mapTest.json", "OrdersMapping" , "1");
+    assertions.concat([
+          test.assertEqual('2019-12-07', fn.string(instance.OrderType.purchaseDate)),
+          test.assertEqual(165.05, fn.number(instance.OrderType.orderCost))]);
 }
 
 if (mappingLib.versionIsCompatibleWithES()) {
