@@ -25,13 +25,14 @@
         <span class="edit-save" (click)="onUpdateURINewUI();"><i class="fa fa-check"></i></span>
         <span class="edit-cancel" (click)="cancelEditURI()"><i class="fa fa-remove"></i></span>
       </p>
-      <span class="navigate_source_uris">
-        <button class="navigate_uris_left" (click)="onNavigateURIList(uriIndex-1)" [disabled]="this.disableURINavLeft"><i
-            class="fa fa-angle-left fa-2x"></i></button>
-        &nbsp;&nbsp;<input type="text" class="URI_Index" [(ngModel)]="uriIndex" [disabled]="true" />
-        &nbsp;&nbsp;<button class="navigate_uris_right" (click)="onNavigateURIList(uriIndex+1)"
-          [disabled]="this.disableURINavRight"><i class="fa fa-angle-right fa-2x"></i></button>
-      </span>
+      
+        <span class="navigate_source_uris">
+            <button class="navigate_uris_left" (click)="onNavigateURIList(uriIndex-1)" [disabled]="this.disableURINavLeft"><i
+              class="fa fa-angle-left fa-2x"></i></button>
+          &nbsp;&nbsp;<div class="URI_Index"><p>{{uriIndex+1}}</p></div>
+          &nbsp;&nbsp;<button class="navigate_uris_right" (click)="onNavigateURIList(uriIndex+1)"
+            [disabled]="this.disableURINavRight"><i class="fa fa-angle-right fa-2x"></i></button>
+        </span>
 
 
       <mat-table id="source-new-table" 

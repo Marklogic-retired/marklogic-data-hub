@@ -163,6 +163,7 @@ export class MappingComponent implements OnInit {
 
   loadSampleDoc() {
     let self = this;
+    self.docUris = [];
     this.searchService.getResultsByQuery(this.step.options.sourceDatabase, this.step.options.sourceQuery, 20).subscribe(response => {
         if (self.targetEntity) {
           self.targetEntity.hasDocs = (response.length > 0);
