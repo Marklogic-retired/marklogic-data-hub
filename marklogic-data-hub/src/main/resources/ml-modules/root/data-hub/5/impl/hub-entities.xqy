@@ -437,7 +437,7 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
 };
 
 declare variable $number-types as xs:string+ := ("byte","decimal","double","float","int","integer","long","negativeInteger","nonNegativeInteger","nonPositiveInteger","positiveInteger","short","unsignedLong","unsignedInt","unsignedShort","unsignedByte");
-declare variable $string-types as xs:string+ := "dateTime";
+declare variable $string-types as xs:string+ := ("dateTime","date");
 
 declare function hent:json-schema-generate($entity-title as xs:string, $uber-model as map:map)
 {

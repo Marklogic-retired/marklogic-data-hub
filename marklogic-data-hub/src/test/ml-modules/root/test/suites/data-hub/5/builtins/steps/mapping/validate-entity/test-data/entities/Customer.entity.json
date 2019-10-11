@@ -27,6 +27,12 @@
         "Email": {
           "datatype": "string",
           "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "DOB": {
+          "datatype": "date"
+        },
+        "DateTime": {
+          "datatype": "dateTime"
         }
       }
     }
