@@ -44,28 +44,47 @@ declare variable $event-names as xs:QName+ := (
     xs:QName('merging:'|| $const:ON-NOTIFICATION-EVENT),
     xs:QName('merging:'|| $const:ON-ARCHIVE-EVENT)
   );
+declare variable $event-name-to-json-QName as map:map := map:new(
+  for $event-name in $event-names
+  let $local-name := fn:local-name-from-QName($event-name)
+  let $camelcase :=
+    let $parts := fn:tokenize($local-name , "-")
+    return
+      fn:string-join(
+        (
+          fn:head($parts),
+          for $part in fn:tail($parts)
+          return fn:upper-case(fn:substring($part, 1, 1)) || fn:substring($part, 2)
+        ),
+        ""
+      )
+  return map:entry($local-name, xs:QName($camelcase))
+);
 
 declare function collection-impl:build-collection-algorithm-map(
-  $merging-xml as element(merging:options)?
+  $merging-options as node()?
 ) as map:map
 {
-  let $cache-id := fn:string($merging-xml ! fn:generate-id(.))
+  let $cache-id := fn:string($merging-options ! fn:generate-id(.))
   return
     if (map:contains($_collection-algorithm-cache, $cache-id)) then
       map:get($_collection-algorithm-cache, $cache-id)
     else
       let $algorithm-map :=
         map:new((
+          let $is-json := $merging-options instance of object-node()
+          let $collection-algorithms := $merging-options/*:algorithms/*:collections
           for $event-name in $event-names
           let $local-name := fn:local-name-from-QName($event-name)
-          let $algorithm-xml := $merging-xml/merging:algorithms/merging:collections/*[fn:node-name(.) eq $event-name]
+          let $algorithm-qname := if ($is-json) then $event-name-to-json-QName => map:get($local-name) else $event-name
+          let $algorithm-node := $collection-algorithms/*[fn:node-name(.) eq $algorithm-qname]
           return
             map:entry(
               $local-name,
               fun-ext:function-lookup(
-                fn:string($algorithm-xml/@function),
-                fn:string($algorithm-xml/@namespace),
-                fn:string($algorithm-xml/@at),
+                fn:string($algorithm-node/(@function|function)),
+                fn:string($algorithm-node/(@namespace|namespace)),
+                fn:string($algorithm-node/(@at|at)),
                 collection-impl:default-function-lookup(?, 3)
               )
             )
@@ -193,8 +212,8 @@ declare function collection-impl:default-collection-handler(
 };
 
 declare function collection-impl:get-options-root(
-  $event-options as element()?
-) as element(merging:options)? {
+  $event-options as node()?
+) as node()? {
   if (fn:exists($event-options)) then
     fn:root($event-options)/(self::*:options|*:options)
   else

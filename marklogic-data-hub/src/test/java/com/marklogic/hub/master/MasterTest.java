@@ -138,11 +138,11 @@ public class MasterTest extends HubTestBase {
         flowRunner.awaitCompletion();
         RunStepResponse masterJob = flowResponse.getStepResponses().get("3");
         assertTrue(masterJob.isSuccess(), "Mastering job failed!");
-        assertTrue(getFinalDocCount("mdm-merged") >= 10,"At least 10 merges occur");
+        assertTrue(getFinalDocCount("sm-person-merged") >= 10,"At least 10 merges occur");
         assertTrue(getFinalDocCount("master") > 0, "Documents didn't receive master collection");
-        assertEquals(209, getFinalDocCount("mdm-content"), "We end with the correct amount of final docs");
+        assertEquals(209, getFinalDocCount("sm-person-mastered"), "We end with the correct amount of final docs");
         // Setting this to 40 or greater as occasionally we get 41 in the pipeline. See bug https://project.marklogic.com/jira/browse/DHFPROD-3178
-        assertTrue(getFinalDocCount("mdm-notification") >= 40, "Not enough notifications are created");
+        assertTrue(getFinalDocCount("sm-person-notification") >= 40, "Not enough notifications are created");
         // Check for JobReport for mastering with correct count
         String reportQueryText = "cts:and-query((" +
             "cts:collection-query('JobReport')," +
@@ -174,10 +174,10 @@ public class MasterTest extends HubTestBase {
         flowRunner.awaitCompletion();
         RunStepResponse mergeJob = flowMergeResponse.getStepResponses().get("4");
         assertTrue(mergeJob.isSuccess(), "Merging job failed!");
-        assertTrue(getFinalDocCount("mdm-merged") >= 10,"At least 10 merges occur");
-        assertEquals(209, getFinalDocCount("mdm-content"), "We end with the correct amount of final docs");
+        assertTrue(getFinalDocCount("sm-person-merged") >= 10,"At least 10 merges occur");
+        assertEquals(209, getFinalDocCount("sm-person-mastered"), "We end with the correct amount of final docs");
         // Setting this to 40 or greater as occasionally we get 41 in the pipeline. See bug https://project.marklogic.com/jira/browse/DHFPROD-3178
-        assertTrue(getFinalDocCount("mdm-notification") >= 40, "Not enough notifications are created");
+        assertTrue(getFinalDocCount("sm-person-notification") >= 40, "Not enough notifications are created");
         // Check for JobReport for mastering with correct count
         String reportQueryText = "cts:and-query((" +
             "cts:collection-query('JobReport')," +
@@ -197,16 +197,16 @@ public class MasterTest extends HubTestBase {
         flowRunner.awaitCompletion();
         List<String> docsToMerge = Arrays.asList("/person-1.json","/person-1-1.json","/person-1-2.json","/person-1-3.json");
         masteringManager.merge(docsToMerge, "myNewFlow","3", Boolean.FALSE, new ObjectMapper().createObjectNode());
-        assertEquals(1, getFinalDocCount("mdm-merged"),"One merge should have occurred");
+        assertEquals(1, getFinalDocCount("sm-person-merged"),"One merge should have occurred");
         assertEquals(1, getFinalDocCount("mdm-auditing"),"One auditing document should have been created");
-        assertEquals(docsToMerge.size(), getFinalDocCount("mdm-archived"),docsToMerge.size() + " documents should have been archived");
+        assertEquals(docsToMerge.size(), getFinalDocCount("sm-person-archived"),docsToMerge.size() + " documents should have been archived");
     }
 
     private void testUnmerge() {
-        String singleMergedURI = getUriByQuery("cts:and-query((cts:collection-query('mdm-merged'),cts:collection-query('mdm-content')))", HubConfig.DEFAULT_FINAL_NAME);
+        String singleMergedURI = getUriByQuery("cts:and-query((cts:collection-query('sm-person-merged'),cts:collection-query('sm-person-mastered')))", HubConfig.DEFAULT_FINAL_NAME);
         String queryText = "cts:and-query((" +
-            "cts:collection-query('mdm-merged')," +
-            "cts:collection-query('mdm-content')," +
+            "cts:collection-query('sm-person-merged')," +
+            "cts:collection-query('sm-person-mastered')," +
             "cts:document-query('" + singleMergedURI + "')" +
             "))";
         assertTrue(existsByQuery(queryText, HubConfig.DEFAULT_FINAL_NAME), "Merged doc doesn't have the expected collections");

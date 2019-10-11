@@ -47,6 +47,8 @@ import module namespace sem = "http://marklogic.com/semantics"
   at "/MarkLogic/semantics.xqy";
 import module namespace tel = "http://marklogic.com/smart-mastering/telemetry"
   at "/com.marklogic.smart-mastering/telemetry.xqy";
+import module namespace util-impl = "http://marklogic.com/smart-mastering/util-impl"
+  at "/com.marklogic.smart-mastering/impl/util.xqy";
 import module namespace mem = "http://maxdewpoint.blogspot.com/memory-operations/functional"
   at "/mlpm_modules/XQuery-XML-Memory-Operations/memory-operations-functional.xqy";
 import module namespace es-helper = "http://marklogic.com/smart-mastering/entity-services" at "/com.marklogic.smart-mastering/sm-entity-services.xqy";
@@ -464,7 +466,20 @@ declare function merge-impl:source-of-other-merged-doc($uri, $merge-uri)
   ))
 };
 
-
+declare function merge-impl:expanded-uris($uris as xs:string*) {
+  fn:distinct-values(
+    let $expanded-uris :=
+      for $uri in $uris
+      return
+        if (fn:starts-with($uri, $merge-impl:MERGED-DIR)) then
+          fn:doc($uri)/*:envelope/*:headers/*:merges/*:document-uri[fn:not(fn:starts-with(., $MERGED-DIR))] ! fn:string(.)
+        else
+          $uri
+    for $uri in $expanded-uris
+    order by $uri
+    return $uri
+  )
+};
 (:~
  : Construct a merged document from the given URIs, but do not update the
  : database.
@@ -476,14 +491,18 @@ declare function merge-impl:build-merge-models-by-uri(
   $uris as xs:string*,
   $merge-options as item()?
 ) {
-  merge-impl:build-merge-models-by-uri(
-    $uris,
-    $merge-options,
-    fn:head((
-      $uris[fn:starts-with(., $MERGED-DIR)] ! fn:replace(fn:substring-after(., $MERGED-DIR),"\.(json|xml)", ""),
-      xdmp:md5(fn:string-join(for $uri in $uris order by $uri return $uri, "##"))
-    ))
-  )
+  let $sorted-uris := for $uri in $uris order by $uri return $uri
+  let $expanded-uris := merge-impl:expanded-uris($uris)
+  return
+    merge-impl:build-merge-models-by-uri(
+      $uris,
+      $merge-options,
+      fn:head((
+        $sorted-uris[fn:starts-with(., $MERGED-DIR)] ! fn:replace(fn:substring-after(., $MERGED-DIR),"\.(json|xml)", ""),
+        xdmp:md5(fn:string-join($expanded-uris, "##"))
+      )),
+      $expanded-uris
+    )
 };
 
 (:~
@@ -491,6 +510,7 @@ declare function merge-impl:build-merge-models-by-uri(
  : database.
  : @param $uris  URIs of the source documents that will be merged
  : @param $merge-options  specification of how options are to be merged
+ : @param $id  id to be used for merge document
  : @return in-memory copy of the merge result
  :)
 declare function merge-impl:build-merge-models-by-uri(
@@ -499,21 +519,37 @@ declare function merge-impl:build-merge-models-by-uri(
   $id as xs:string
 )
 {
+  merge-impl:build-merge-models-by-uri(
+    $uris,
+    $merge-options,
+    $id,
+    merge-impl:expanded-uris($uris)
+  )
+};
+(:~
+ : Construct a merged document from the given URIs, but do not update the
+ : database.
+ : @param $uris  URIs of the source documents that will be merged
+ : @param $merge-options  specification of how options are to be merged
+ : @param $id  id to be used for merge document
+ : @param $expanded-uris  all URIs, including merged URIs that contribute the merged document
+ : @return in-memory copy of the merge result
+ :)
+declare function merge-impl:build-merge-models-by-uri(
+  $uris as xs:string*,
+  $merge-options as item()?,
+  $id as xs:string,
+  $expanded-uris as xs:string*
+)
+{
   let $start-elapsed := xdmp:elapsed-time()
-  let $expanded-uris :=
-    fn:distinct-values(
-      for $uri in $uris
-      return
-        if (fn:starts-with($uri, $merge-impl:MERGED-DIR)) then
-          fn:doc($uri)/*:envelope/*:headers/*:merges/*:document-uri ! fn:string(.)
-        else
-          $uri
-    )
   let $merge-options :=
     if ($merge-options instance of object-node()) then
       merge-impl:options-from-json($merge-options)
     else
       $merge-options
+  let $target-entity := $merge-options/*:target-entity ! fn:string(.)
+  let $on-merge := $merge-options/merging:algorithms/merging:collections/merging:on-merge
   let $parsed-properties :=
       merge-impl:parse-final-properties-for-merge(
         $expanded-uris,
@@ -558,10 +594,44 @@ declare function merge-impl:build-merge-models-by-uri(
             $headers-ns-map,
             $merge-options
           )
-        ),
-        if (xdmp:trace-enabled($const:TRACE-PERFORMANCE)) then
-          xdmp:trace($const:TRACE-PERFORMANCE, "merge-impl:build-merge-models-by-uri: " || (xdmp:elapsed-time() - $start-elapsed))
-        else ()
+        )
+      => map:with("context",
+        map:new((
+          map:entry("collections",
+            (
+              coll-impl:on-merge(
+                map:new((
+                  for $uri in $uris
+                  let $write-object := util-impl:retrieve-write-object($uri)
+                  return
+                    map:entry(
+                      $uri,
+                      $write-object
+                      => map:get("context")
+                      => map:get("collections")
+                    )
+                )),
+                $on-merge
+              ),
+              $target-entity
+            )
+          ),
+          map:entry("permissions",
+            (
+              xdmp:default-permissions($merge-uri, "objects"),
+              for $uri in $uris
+              let $write-object := util-impl:retrieve-write-object($uri)
+              return
+                $write-object
+                => map:get("context")
+                => map:get("permissions")
+            )
+          )
+        ))
+      ),
+      if (xdmp:trace-enabled($const:TRACE-PERFORMANCE)) then
+        xdmp:trace($const:TRACE-PERFORMANCE, "merge-impl:build-merge-models-by-uri: " || (xdmp:elapsed-time() - $start-elapsed))
+      else ()
     )
 };
 

@@ -100,7 +100,8 @@ declare function match-impl:compile-match-options(
         else
           (64 idiv $max-property-score)
     let $algorithms := algorithms:build-algorithms-map($options/matcher:algorithms)
-    let $target-entity-def := es-helper:get-entity-def($options/matcher:target-entity)
+    let $target-entity := $options/matcher:target-entity ! fn:string(.)
+    let $target-entity-def := es-helper:get-entity-def($target-entity)
     let $queries := (
         for $score in $scoring/(matcher:add|matcher:expand)
         let $type := fn:local-name($score)
@@ -157,6 +158,7 @@ declare function match-impl:compile-match-options(
         match-impl:minimum-threshold-combinations($queries[fn:not(. => map:get("type") = "reduce")], $minimum-threshold)
     let $compiled-match-options := map:new((
         map:entry("options", $options),
+        map:entry("targetEntity", $target-entity),
         map:entry("scoreRatio", $score-ratio),
         map:entry("algorithms", $algorithms),
         map:entry("queries", $queries),
@@ -166,7 +168,25 @@ declare function match-impl:compile-match-options(
           return $threshold
         ),
         map:entry("minimumThresholdCombinations", $minimum-threshold-combinations),
-        map:entry("collectionQuery", match-impl:build-collection-query(coll:content-collections($options)))
+        map:entry("baseContentQuery",
+          if (fn:exists($target-entity)) then
+            instance-query-wrapper(
+              if ($document-is-json) then
+                cts:json-property-scope-query(
+                  "info",
+                  cts:json-property-value-query("title", fn:string($target-entity-def/entityTitle), (), 0)
+                )
+              else
+                cts:element-query(
+                  xs:QName("es:info"),
+                  cts:element-value-query(xs:QName("es:title"), fn:string($target-entity-def/entityTitle), (), 0)
+                )
+              ,
+              $document-is-json
+            )
+          else
+            match-impl:build-collection-query(coll:content-collections($options))
+        )
       ))
     return (
       map:put(
@@ -259,7 +279,7 @@ declare function match-impl:find-document-matches-by-options(
       blocks-impl:get-blocks(fn:base-uri($document))/node()
     )
     let $match-base-query := cts:and-query((
-          $compiled-options => map:get("collectionQuery"),
+          $compiled-options => map:get("baseContentQuery"),
           $minimum-threshold-combinations-query
         ))
     let $match-query :=
@@ -527,15 +547,6 @@ declare function match-impl:search(
         }
       else ()
     }
-};
-
-(:
- : score-simple gives 8pts per matching term and multiplies the results by 256 (MarkLogic documentation)
- : this reduces the magnitude of the score
- : @see http://docs.marklogic.com/guide/search-dev/relevance#id_37592
- :)
-declare function match-impl:simple-score($item) {
-  cts:score($item) div (256 * 8)
 };
 
 (: Configuration used to convert XML match results to JSON. :)
