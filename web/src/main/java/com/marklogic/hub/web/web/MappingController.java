@@ -79,6 +79,12 @@ public class MappingController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/mappings/{mapName}/validation", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonNode validateMapping(@PathVariable String mapName, @RequestBody JsonNode mapping) throws IOException {
+        return mappingManagerService.validateMapping(mapping.toString());
+    }
+
     @RequestMapping(value = "/mappings/{mapName}", method = RequestMethod.DELETE)
     @ResponseBody
     public ResponseEntity<?> deleteMapping(
@@ -92,5 +98,11 @@ public class MappingController {
     public JsonNode getMappingFunctions() {
         MappingFunctions mappingFunctions = new MappingFunctions(hubConfig.newStagingClient());
         return mappingFunctions.getMappingFunctions();
+    }
+
+    @RequestMapping(value = "/mappings/{mappingName}/test", method = RequestMethod.GET)
+    @ResponseBody
+    public JsonNode testMapping(@PathVariable String mappingName, @RequestParam  String mappingVersion, @RequestParam  String docURI) {
+        return mappingManagerService.testMapping(mappingName, mappingVersion, docURI);
     }
 }
