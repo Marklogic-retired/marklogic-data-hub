@@ -19,6 +19,8 @@ export class EntityTableUiComponent implements OnChanges {
   @Input() srcProps: any;
   @Input() functionLst: object;
   @Input() nmspace: object;
+  @Input() mapResults: any;
+  @Input() currEntity:string;
   @Output() handleSelection = new EventEmitter();
   
   dataSource: MatTableDataSource<any>;
@@ -66,6 +68,22 @@ export class EntityTableUiComponent implements OnChanges {
       return prop.datatype;
     }
   }
+  getValue(prop) {
+    if (this.mapResults) {
+      if (! ((prop.$ref || (prop.items && prop.items.$ref)))) {
+      let parseRes = this.mapResults;
+      if (Array.isArray(this.mapResults)) {
+        parseRes = parseRes[0];
+
+      }
+      if (this.currEntity) {
+        const entity = this.currEntity.slice(this.currEntity.lastIndexOf('/') + 1);
+        parseRes = parseRes[entity];
+      }
+      return parseRes[prop.name];
+    }
+  }
+}
 
   getProps(propName) {
     return (this.mapProps[propName] && this.mapProps[propName].properties) ?
