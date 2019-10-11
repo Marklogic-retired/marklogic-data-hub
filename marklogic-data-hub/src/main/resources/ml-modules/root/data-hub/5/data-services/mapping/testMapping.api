@@ -1,0 +1,21 @@
+{
+    "functionName": "testMapping",
+    "params": [
+        {
+            "name": "docURI",
+            "datatype": "string"
+        },
+        {
+            "name": "mappingName",
+            "datatype": "string"
+        },
+        {
+            "name": "mappingVersion",
+            "datatype": "string"
+        }
+    ],
+    "return": {
+        "datatype": "jsonDocument",
+        "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
+}

@@ -17,6 +17,7 @@
 package com.marklogic.hub.web.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.hub.dataservices.MappingService;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.mapping.Mapping;
 import com.marklogic.hub.mapping.MappingFunctions;
@@ -103,6 +104,6 @@ public class MappingController {
     @RequestMapping(value = "/mappings/{mappingName}/test", method = RequestMethod.GET)
     @ResponseBody
     public JsonNode testMapping(@PathVariable String mappingName, @RequestParam  String mappingVersion, @RequestParam  String docURI) {
-        return mappingManagerService.testMapping(mappingName, mappingVersion, docURI);
+        return MappingService.on(hubConfig.newStagingClient(null)).testMapping(docURI, mappingName, mappingVersion);
     }
 }
