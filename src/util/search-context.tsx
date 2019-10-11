@@ -25,6 +25,7 @@ interface ISearchContextInterface {
   setEntity: (option: string) => void;
   clearEntity: () => void;
   setEntityClearQuery: (option: string) => void;
+  setQueryClearEntity : (option: string) => void;
 }
 
 export const SearchContext = React.createContext<ISearchContextInterface>({
@@ -35,7 +36,8 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setSearchFacets: () => {},
   setEntity: () => {},
   clearEntity: () => {},
-  setEntityClearQuery: () => {}
+  setEntityClearQuery: () => {},
+  setQueryClearEntity : () =>{}
 });
 
 const SearchProvider: React.FC<{ children: any }> = ({children}) => {
@@ -83,8 +85,13 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     setSearchOptions({ ...searchOptions, query: '', entityNames: [option]});
   }
 
+  const setQueryClearEntity = (searchString: string) => {
+    console.log('The user typed string is ' + searchString);
+    setSearchOptions({...searchOptions, start: 1, query: searchString});
+  }
+
   return (
-    <SearchContext.Provider value={{ searchOptions, setQuery, setPage, setPageLength, setSearchFacets, setEntity, clearEntity, setEntityClearQuery }}>
+    <SearchContext.Provider value={{ searchOptions, setQuery, setPage, setPageLength, setSearchFacets, setEntity, clearEntity, setEntityClearQuery,setQueryClearEntity }}>
       {children}
     </SearchContext.Provider>
   )

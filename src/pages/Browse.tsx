@@ -22,6 +22,8 @@ const Browse: React.FC<Props> = ({location}) => {
     setPage,
     setPageLength,
     setEntityClearQuery,
+    setQuery,
+    setQueryClearEntity,
   } = useContext(SearchContext);
 
   const [data, setData] = useState();
@@ -78,6 +80,10 @@ const Browse: React.FC<Props> = ({location}) => {
     if(location.state && location.state.entity){
       setEntityClearQuery(location.state.entity);
     }
+    if(location.state && location.state.jobId){
+      setQueryClearEntity(location.state.jobId);
+    }
+
     getEntityModel();
   }, []);
 
