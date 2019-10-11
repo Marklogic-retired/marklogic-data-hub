@@ -366,13 +366,9 @@ p.target-entity-title {
   .navigate_source_uris{
     width: 100%;
     display: flex;
-    //flex: 0 1 auto;
-    //overflow: auto;
-    padding-bottom: 8px;
-       align-content: center ; 
-    // align-items:  center ;
-    // align-self: center;
-    //border: 1px solid rgba(0, 0, 0, 0.12);
+    padding-bottom: 5px;
+    align-content: center ; 
+    vertical-align: middle;
     text-align: center;
     margin: 0px auto;
     white-space: nowrap;
@@ -381,28 +377,25 @@ p.target-entity-title {
     position: relative;
     user-select: none;
     cursor: pointer;
-      //padding-bottom: 4px;
-     // padding-right: 4px;
-      display: block;
-      text-align: center;
-      background:none;
-      border:none;
-      outline: none !important;
-     //  align-content: center ; 
-    // align-items:  center ;
-    // align-self: center;
+    display: block;
+    text-align: center;  
+    background:none;
+    border:none;
+    outline: none !important;  
     top: 50%;
-    left: 40%;
+    left: 33%;
   }
   .URI_Index{
     display: inline-block;
     position: relative;
-    padding-left: 3px;
     align-content: center ; 
+    justify-content: center;
+    background:white;
+    border: 1px solid rgba(0, 0, 0, 0.961); 
     align-items:  center ;
     align-self: center;
     top: 50%;
-    left: 45%;
+    left: 38%;
     width: 25px; 
     height: 25px
   }
@@ -414,15 +407,16 @@ p.target-entity-title {
     background:none;
     border:none;
     outline: none !important;
-      display: block;
-      text-align: center;
-      outline: none;
-       align-content: center ; 
-    // align-items:  center ;
-    // align-self: center;
+    display: block;
+    text-align: center;
+    outline: none;
+    align-content: center ; 
     top: 50%;
-    left: 50%;
-    padding: 0px;
+    left: 42%;
+  }
+
+  #browse-buttons{
+    border: 1px solid rgba(0, 0, 0, 0.961); 
   }
 }
 

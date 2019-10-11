@@ -78,7 +78,7 @@ export class MappingUiComponent implements OnChanges {
 
     disableURINavLeft: boolean = false;
     disableURINavRight: boolean = false;
-    uriIndex = 1;
+    uriIndex = 0;
 
   @ViewChild(MatTable)
   table: MatTable<any>;
@@ -120,24 +120,33 @@ export class MappingUiComponent implements OnChanges {
   }
 
   onNavigateURIList(index) {
-    if (index < 1 || index > this.docUris.length) {
-      if (index < 1) {
+    if (index > 0 && index < this.docUris.length - 1) {
+      this.disableURINavLeft = false;
+      this.disableURINavRight = false;
+      this.uriIndex = index;
+      this.editURIVal = this.docUris[index];
+      this.onUpdateURINewUI();
+
+    } else if (index == 0 || index == this.docUris.length - 1) {
+
+      if (index == 0) {
+        this.disableURINavLeft = true;
+        this.uriIndex = index;
+        this.editURIVal = this.docUris[index];
+        this.onUpdateURINewUI();
+      } else {
+        this.disableURINavRight = true;
+        this.uriIndex = index;
+        this.editURIVal = this.docUris[index];
+        this.onUpdateURINewUI();
+      }
+    } else {
+      if (index < 0) {
         this.disableURINavLeft = true;
       } else {
         this.disableURINavRight = true;
       }
-
-
-    } else {
-      this.disableURINavLeft = false;
-      this.disableURINavRight = false;
-
-      this.uriIndex = index;
-      this.editURIVal = this.docUris[index];
-
-      this.onUpdateURINewUI();
     }
-
   }
   onUpdateURINewUI(){
     if (Object.keys(this.conns).length > 0) {
