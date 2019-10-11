@@ -23,7 +23,6 @@ import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.mapping.Mapping;
 import com.marklogic.hub.mapping.MappingValidator;
-import com.marklogic.hub.mapping.TestMapping;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.web.model.MappingModel;
 import org.apache.commons.io.FileUtils;
@@ -38,10 +37,6 @@ import java.util.ArrayList;
 
 @Service
 public class MappingManagerService {
-
-    private static final String PLUGINS_DIR = "plugins";
-    private static final String MAPPINGS_DIR = "mappings";
-    public static final String MAPPING_FILE_EXTENSION = ".mapping.json";
 
     private static Logger logger = LoggerFactory.getLogger(MappingManagerService.class);
 
@@ -61,8 +56,6 @@ public class MappingManagerService {
     HubConfigImpl hubConfig;
 
     MappingValidator mappingValidator;
-
-    TestMapping testMapping;
 
     public ArrayList<Mapping> getMappings() {
         ArrayList<Mapping> mappings = mappingManager.getMappings();
@@ -110,12 +103,5 @@ public class MappingManagerService {
             mappingValidator = new MappingValidator(hubConfig.newStagingClient());
         }
         return mappingValidator.validateJsonMapping(jsonMapping);
-    }
-
-    public JsonNode testMapping(String mappingName, String mappingVersion, String docURI) {
-        if (testMapping == null) {
-            testMapping = new TestMapping(hubConfig.newStagingClient());
-        }
-        return testMapping.getMappingTestResponse(mappingName, mappingVersion, docURI);
     }
 }
