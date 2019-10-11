@@ -18,6 +18,12 @@
     },
     "Email": {
       "sourcedFrom": "emailAddress"
+    },
+    "DOB": {
+      "sourcedFrom": "dob"
+    },
+    "DateTime": {
+      "sourcedFrom": "datetime"
     }
   }
 }
