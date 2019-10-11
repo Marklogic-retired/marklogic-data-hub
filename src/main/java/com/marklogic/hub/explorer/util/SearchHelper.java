@@ -3,6 +3,8 @@
  */
 package com.marklogic.hub.explorer.util;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +19,7 @@ import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
+import com.marklogic.client.query.StructuredQueryBuilder.Operator;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.hub.explorer.model.Document;
 import com.marklogic.hub.explorer.model.SearchQuery;
@@ -32,10 +35,15 @@ import org.springframework.util.CollectionUtils;
 public class SearchHelper {
 
   private static final String QUERY_OPTIONS = "exp-final-entity-options";
-  
+
   private static final String COLLECTION_CONSTRAINT_NAME = "Collection";
+  private static final String CREATED_ON_CONSTRAINT_NAME = "createdOnRange";
   private static final String JOB_WORD_CONSTRAINT_NAME = "createdByJobWord";
-  private static final String JOB_RANGE_CONSTRAINT_NAME = "createdByJobRange";
+  private static final String JOB_RANGE_CONSTRAINT_NAME = "createdByJob";
+
+  private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+  private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter
+      .ofPattern("yyyy-MM-dd HH:mm:ss.S");
 
   private static final Logger logger = LoggerFactory.getLogger(SearchHelper.class);
 
@@ -67,6 +75,19 @@ public class SearchHelper {
       } else if (facetType.equals(JOB_RANGE_CONSTRAINT_NAME)) {
         facetDef = queryBuilder
             .wordConstraint(JOB_WORD_CONSTRAINT_NAME, facetValues.toArray(new String[0]));
+      } else if (facetType.equals(CREATED_ON_CONSTRAINT_NAME)) {
+        // Converting the date in string format from yyyy-MM-dd format to yyyy-MM-dd HH:mm:ss format
+        LocalDate startDate = LocalDate.parse(facetValues.get(0), DATE_FORMAT);
+        String startDateTime = startDate.atStartOfDay().format(DATE_TIME_FORMAT);
+
+        // Converting the date in string format from yyyy-MM-dd format to yyyy-MM-dd HH:mm:ss format
+        // Adding 1 day to end date to get docs harmonized on the end date as well.
+        LocalDate endDate = LocalDate.parse(facetValues.get(1), DATE_FORMAT).plusDays(1);
+        String endDateTime = endDate.atStartOfDay().format(DATE_TIME_FORMAT);
+
+        facetDef = queryBuilder
+            .and(queryBuilder.rangeConstraint(facetType, Operator.GE, startDateTime),
+                queryBuilder.rangeConstraint(facetType, Operator.LT, endDateTime));
       } else {
         facetDef = queryBuilder.rangeConstraint(facetType, StructuredQueryBuilder.Operator.EQ,
             facetValues.toArray(new String[0]));
@@ -107,7 +128,7 @@ public class SearchHelper {
     } catch (ResourceNotFoundException rnfe) {
       logger.error("The requested document " + docUri + " do not exist");
       logger.error(rnfe.getMessage());
-      return Optional.ofNullable(null);
+      return Optional.empty();
     }
   }
 }
