@@ -29,9 +29,9 @@ const SearchSummary: React.FC<Props> = (props) => {
 
   return (
     <div className={styles.searchSummaryContainer}>
-      <Text>Showing</Text>
+      <Text>Showing </Text>
       <span className={styles.summaryValue}>{isNoDocuments() ? 0 : (props.start-1) * props.length + 1}-{isEndOfPage() ? props.total : props.start * props.length}</span> <Text>of</Text> <span className={styles.summaryValue} data-cy='total-documents'>{props.total}</span>
-      <Text>documents</Text>
+      <Text> documents</Text>
     </div>
   );
 }

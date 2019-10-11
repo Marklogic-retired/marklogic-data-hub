@@ -1,6 +1,5 @@
 {
-    "video": false,
-    "baseUrl": "http://localhost:3000",
+    "video": true,
     "reporter": "junit",
     "reporterOptions": {
       "mochaFile": "results/cypress-report.xml",
