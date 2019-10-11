@@ -28,6 +28,8 @@ import module namespace merging = "http://marklogic.com/smart-mastering/merging"
 import module namespace merge-impl = "http://marklogic.com/smart-mastering/survivorship/merging"
   at "/com.marklogic.smart-mastering/survivorship/merging/base.xqy",
     "/com.marklogic.smart-mastering/survivorship/merging/options.xqy";
+import module namespace util-impl = "http://marklogic.com/smart-mastering/util-impl"
+  at "/com.marklogic.smart-mastering/impl/util.xqy";
 import module namespace coll-impl = "http://marklogic.com/smart-mastering/survivorship/collections"
   at "/com.marklogic.smart-mastering/survivorship/merging/collections.xqy";
 import module namespace coll = "http://marklogic.com/smart-mastering/collections"
@@ -343,7 +345,7 @@ declare function proc-impl:build-match-summary(
     if ($input instance of xs:string*) then
       for $doc in cts:search(fn:doc(), cts:and-not-query(cts:document-query($input), cts:collection-query($archived-collection)), "unfiltered")
       return
-        proc-impl:build-write-object-for-doc($doc)
+        util-impl:build-write-object-for-doc($doc)
     else if ($input instance of map:map*) then
       $input
     else ()
@@ -444,7 +446,7 @@ declare function proc-impl:build-match-summary(
                 let $match-information := map:new((
                   map:entry("destination", $merge-uri),
                   map:entry("type", "matchInformation"),
-                  map:entry("matchedDocuments", proc-impl:combine-maps(map:map(), $related-prov-maps))
+                  map:entry("matchedDocuments", util-impl:combine-maps(map:map(), $related-prov-maps))
                 ))
                 return
                   map:entry(
@@ -494,7 +496,7 @@ declare function proc-impl:build-match-summary(
               let $match-information := map:new((
                 map:entry("destination", $notification),
                 map:entry("type", "matchInformation"),
-                map:entry("matchedDocuments", proc-impl:combine-maps(map:map(), $related-prov-maps))
+                map:entry("matchedDocuments", util-impl:combine-maps(map:map(), $related-prov-maps))
               ))
               return
                 map:entry(
@@ -526,28 +528,7 @@ declare function proc-impl:build-match-summary(
   let $no-matches-uris :=
     (: Process collections on no matches :)
     let $start-elapsed := xdmp:elapsed-time()
-    let $no-matches :=
-      for $uri in $uris[fn:not(. = $uris-that-were-merged)]
-      let $has-merges :=
-        if (map:contains($all-matches, $uri)) then
-          fn:number(map:get($all-matches, $uri)/@total) gt 0
-        else
-          fn:number(
-            match-impl:find-document-matches-by-options(
-              fn:doc($uri),
-              $matching-options,
-              1,
-              1,
-              $merge-threshold,
-              (: don't include detailed match information :)
-              fn:false(),
-              $filter-query,
-              (: don't return results. we just want the estimate. :)
-              fn:false()
-            )/@total
-          ) gt 0
-      where fn:not($has-merges)
-      return $uri
+    let $no-matches := $uris[fn:not(. = $uris-that-were-merged)]
     return (
       $no-matches,
       if (xdmp:trace-enabled($const:TRACE-PERFORMANCE)) then
@@ -637,11 +618,11 @@ declare function proc-impl:process-match-and-merge-with-options(
     if ($input instance of xs:string*) then
       for $doc in cts:search(fn:doc(), cts:and-not-query(cts:document-query($input), cts:collection-query($archived-collection)), "unfiltered")
       return
-        proc-impl:build-write-object-for-doc($doc)
+        util-impl:build-write-object-for-doc($doc)
     else if ($input instance of map:map*) then
       $input
     else ()
-  let $write-objects-by-uri := fn:fold-left(function($ac, $write-object) { $ac + map:entry($write-object => map:get("uri"), $write-object)}, map:map(), $normalized-input)
+  let $write-objects-by-uri := util-impl:add-all-write-objects($normalized-input)
   let $match-summary := proc-impl:build-match-summary($normalized-input, $matching-options, $filter-query, $fine-grain-provenance, fn:true())
   let $merge-options :=
     if ($merge-options instance of object-node()) then
@@ -653,7 +634,6 @@ declare function proc-impl:process-match-and-merge-with-options(
     proc-impl:build-content-objects-from-match-summary(
       $uris-to-act-on,
       $match-summary,
-      $write-objects-by-uri,
       $merge-options,
       $fine-grain-provenance
     ),
@@ -670,7 +650,6 @@ declare function proc-impl:process-match-and-merge-with-options(
 declare function proc-impl:build-content-objects-from-match-summary(
     $uris as xs:string*,
     $match-summary as json:object,
-    $write-objects-by-uri as map:map,
     $merge-options as item(),
     $fine-grain-provenance as xs:boolean
 ) as json:array
@@ -696,8 +675,7 @@ declare function proc-impl:build-content-objects-from-match-summary(
     let $action-details := $all-action-details => map:get($uri)
     return
       if (fn:empty($action-details)) then
-        proc-impl:adjust-collections-on-document(
-          $write-objects-by-uri,
+        util-impl:adjust-collections-on-document(
           $uri,
           $on-no-match-fun
         )
@@ -731,8 +709,7 @@ declare function proc-impl:build-content-objects-from-match-summary(
                 return (
                   (: Archive documents :)
                   for $merged-uri in $uris-that-were-merged[fn:not(map:contains($all-action-details, .) or . = $merge-uri)]
-                  return proc-impl:adjust-collections-on-document(
-                    $write-objects-by-uri,
+                  return util-impl:adjust-collections-on-document(
                     $merged-uri,
                     $on-archive-fun
                   ),
@@ -740,45 +717,8 @@ declare function proc-impl:build-content-objects-from-match-summary(
                     => map:get("audit-trace")
                     => map:with("hidden", fn:true()),
                   map:new((
-                    map:entry("uri", $merge-uri),
-                    map:entry("value",
-                      $merged-doc
-                    ),
-                    $prov-entry,
-                    map:entry("context",
-                      map:new((
-                        map:entry("collections",
-                          (
-                            coll-impl:on-merge(
-                              map:new((
-                                for $uri in $uris-that-were-merged
-                                let $write-object := proc-impl:retrieve-write-object($write-objects-by-uri, $uri)
-                                return
-                                  map:entry(
-                                    $uri,
-                                    $write-object
-                                    => map:get("context")
-                                    => map:get("collections")
-                                  )
-                              )),
-                              $on-merge
-                            ),
-                            $target-entity
-                          )
-                        ),
-                        map:entry("permissions",
-                          (
-                            xdmp:default-permissions($merge-uri, "objects"),
-                            for $uri in $uris-that-were-merged
-                            let $write-object := proc-impl:retrieve-write-object($write-objects-by-uri, $uri)
-                            return
-                              $write-object
-                              => map:get("context")
-                              => map:get("permissions")
-                          )
-                        )
-                      ))
-                    )
+                    $merged-doc-def,
+                    $prov-entry
                   ))
                 )
               case "notify" return
@@ -857,24 +797,6 @@ declare function proc-impl:build-content-objects-from-match-summary(
     else ())
 };
 
-declare function proc-impl:adjust-collections-on-document(
-  $write-objects-by-uri as map:map,
-  $uri as xs:string,
-  $collection-function as function(map:map) as xs:string*
-) {
-  let $write-object := proc-impl:retrieve-write-object($write-objects-by-uri, $uri)
-  let $write-context := $write-object => map:get("context")
-  let $current-collections := $write-context => map:get("collections")
-  let $new-collections := $collection-function(map:entry($uri, $current-collections))
-  let $_set-collections := $write-context => map:put("collections", $new-collections)
-  return (
-    if (xdmp:trace-enabled($const:TRACE-MERGE-RESULTS)) then
-      xdmp:trace($const:TRACE-MERGE-RESULTS, "Setting collections to URI '"|| $uri ||"': " || fn:string-join($new-collections, ","))
-    else (),
-    $write-object
-  )
-};
-
 (:
  : The workhorse function.
  :)
@@ -941,40 +863,4 @@ declare function proc-impl:matches-to-xml($filtered-matches as array-node()?)
     attribute score { $match/@score/fn:data()},
     attribute threshold { $match/@threshold/fn:string()}
   }
-};
-
-declare function proc-impl:build-write-object-for-doc($doc as document-node())
-  as map:map
-{
-  map:new((
-    map:entry("uri", xdmp:node-uri($doc)),
-    map:entry("value", $doc),
-    map:entry("context", map:new((
-      map:entry("collections", xdmp:node-collections($doc)),
-      map:entry("metadata", xdmp:document-get-metadata(xdmp:node-uri($doc))),
-      map:entry("permissions", xdmp:node-permissions($doc, "objects"))
-    )))
-  ))
-};
-
-declare function proc-impl:retrieve-write-object(
-  $write-objects-by-uri as map:map,
-  $uri as xs:string
-) as map:map?
-{
-  if (map:contains($write-objects-by-uri, $uri)) then
-    $write-objects-by-uri
-    => map:get($uri)
-  else
-    let $write-obj := proc-impl:build-write-object-for-doc(fn:doc($uri))
-    return (
-      map:put($write-objects-by-uri, $uri, $write-obj),
-      $write-obj
-    )
-};
-
-declare function proc-impl:combine-maps($base-map as map:map, $maps as map:map*) {
-  fn:fold-left(function($map1,$map2) {
-    $map1 + $map2
-  }, $base-map, $maps)
 };

@@ -16,12 +16,11 @@
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const datahub = DataHubSingleton.instance();
 const mastering = require("/com.marklogic.smart-mastering/process-records.xqy");
-const masteringMainStep = require("/data-hub/5/builtins/steps/mastering/default/main.sjs");
+const masteringStepLib = require("/data-hub/5/builtins/steps/mastering/default/lib.sjs");
 const requiredOptionProperties = ['matchOptions'];
-const emptySequence = Sequence.from([]);
 
 function main(content, options) {
-  masteringMainStep.checkOptions(null, options, null, requiredOptionProperties);
+  masteringStepLib.checkOptions(null, options, null, requiredOptionProperties);
   let matchOptions = new NodeBuilder().addNode({ options: options.matchOptions }).toNode();
   let matchSummaryJson = mastering.buildMatchSummary(
     content,

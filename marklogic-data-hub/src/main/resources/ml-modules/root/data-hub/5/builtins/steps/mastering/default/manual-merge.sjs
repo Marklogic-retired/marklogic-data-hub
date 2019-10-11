@@ -1,9 +1,10 @@
 const merging = require('/com.marklogic.smart-mastering/merging.xqy');
-const masteringMain = require('/data-hub/5/builtins/steps/mastering/default/main.sjs');
+const masteringStepLib = require('/data-hub/5/builtins/steps/mastering/default/lib.sjs');
 const collImpl = require('/com.marklogic.smart-mastering/survivorship/merging/collections.xqy');
+const requiredOptionProperties = ['mergeOptions'];
 
 function main(content, options) {
-  masteringMain.checkOptions(content, options);
+  masteringStepLib.checkOptions(content, options, null, requiredOptionProperties);
   let uris = [];
   let mergeOptions = new NodeBuilder().addNode({ options: options.mergeOptions }).toNode();
   for (const item of content) {
@@ -13,13 +14,6 @@ function main(content, options) {
   let mergedDocument = fn.head(merging.buildMergeModelsByUri(uris, mergeOptions));
   let contentArray = content.toArray();
   contentArray.push(mergedDocument['audit-trace']);
-  mergedDocument.context = mergedDocument.context || {
-    permissions: Sequence.from(contentArray.map((item) => item.context.permissions))
-  };
-  mergedDocument.context.collections = collImpl.onMerge(contentArray.reduce((prev, item) => {
-    prev[item.uri] = Sequence.from(item.context.originalCollections);
-    return prev;
-  },{}), mergeOptions.xpath('options/algorithms/collections/onMerge'));
   let filteredContent = contentArray.filter((item) => item.uri !== mergedDocument.uri);
   return Sequence.from(filteredContent.concat([mergedDocument]));
 }

@@ -197,7 +197,7 @@ let $assertions := (
     "IdentificationID":"393225353"
     }
     },
-    "CustomThing": array-node { "3","1","2" },
+    "CustomThing": array-node { "1","2","3" },
     "ArrayOfVariousThings": array-node {
       "string",
       42,
@@ -224,15 +224,16 @@ let $assertions := (
     "CaseStartDate":"20110406",
     "Revenues": array-node {object-node {
     "RevenuesType": object-node {
-    "Revenue":"4332"
-    }
-    },object-node {
-    "RevenuesType": object-node {
     "Revenue":""
+    }
+    },
+    object-node {
+    "RevenuesType": object-node {
+    "Revenue":"4332"
     }
     }},
     "CaseAmount": 1287.9,
-    "id": array-node {"3270654369","6986792174","6270654339"}
+    "id": array-node {"6986792174","6270654339","3270654369"}
     }
     }
     }

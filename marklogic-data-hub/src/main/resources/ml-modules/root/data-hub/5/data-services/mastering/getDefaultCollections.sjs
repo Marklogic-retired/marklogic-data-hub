@@ -17,14 +17,8 @@
 
 var entityType;
 
-let res = {
-  "onMerge": [
-    "sm-" + entityType + "-mastered",
-    "sm-" + entityType + "-merged"
-  ],
-  "onNoMatch": ["sm-" + entityType + "-mastered"],
-  "onArchive": ["sm-" + entityType + "-archived"],
-  "onNotification": ["sm-" + entityType + "-notification"]
-};
+const masteringStepLib = require("/data-hub/5/builtins/steps/mastering/default/lib.sjs");
+
+let res = masteringStepLib.expectedCollectionEvents(entityType);
 
 res;

@@ -16,9 +16,8 @@
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const datahub = DataHubSingleton.instance();
 const mastering = require("/com.marklogic.smart-mastering/process-records.xqy");
-const masteringMainStep = require("/data-hub/5/builtins/steps/mastering/default/main.sjs");
+const masteringStepLib = require("/data-hub/5/builtins/steps/mastering/default/lib.sjs");
 const requiredOptionProperties = ['mergeOptions'];
-const emptySequence = Sequence.from([]);
 const processedURIs = [];
 
 function main(content, options) {
@@ -27,7 +26,7 @@ function main(content, options) {
   const urisPathReference = cts.pathReference('/matchSummary/URIsToActOn', ['type=string','collation=http://marklogic.com/collation/']);
   const datahubCreatedOnRef = cts.fieldReference('datahubCreatedOn', ['type=dateTime']);
   let uriToTakeActionOn = content.uri;
-  masteringMainStep.checkOptions(null, options, null, requiredOptionProperties);
+  masteringStepLib.checkOptions(null, options, null, requiredOptionProperties);
   let mergeOptions = new NodeBuilder().addNode({ options: options.mergeOptions }).toNode();
   let matchSummaryCollection = `datahubMasteringMatchSummary${options.targetEntity ? `-${options.targetEntity}`:''}`;
   let relatedMatchSummaries = cts.search(
@@ -41,7 +40,6 @@ function main(content, options) {
   let results = mastering.buildContentObjectsFromMatchSummary(
     uriToTakeActionOn,
     matchSummaryJson,
-    {},
     mergeOptions,
     datahub.prov.granularityLevel() === datahub.prov.FINE_LEVEL
   );
@@ -63,7 +61,7 @@ function main(content, options) {
 }
 
 function jobReport(jobID, stepResponse, options) {
-  return masteringMainStep.jobReport(jobID, stepResponse, options, requiredOptionProperties);
+  return masteringStepLib.jobReport(jobID, stepResponse, options, requiredOptionProperties);
 }
 
 module.exports = {

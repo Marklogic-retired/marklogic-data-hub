@@ -166,16 +166,16 @@ let $assertions := xdmp:eager(
             </Address>
             <IncidentCategoryCodeDate/>
             <id>6986792174</id>
-            <id>3270654369</id>
             <id>6270654339</id>
+            <id>3270654369</id>
             <PersonBirthDate>19801001</PersonBirthDate>
             <CaseAmount>1287.9</CaseAmount>
             <CustomThing>1</CustomThing>
-            <CustomThing>3</CustomThing>
             <CustomThing>2</CustomThing>
+            <CustomThing>3</CustomThing>
             <OnlyOne>1</OnlyOne>
-            <OnlyOne>3</OnlyOne>
             <OnlyOne>2</OnlyOne>
+            <OnlyOne>3</OnlyOne>
             <PersonSSNIdentification>
               <PersonSSNIdentificationType>
                 <IdentificationID>393225353</IdentificationID>
