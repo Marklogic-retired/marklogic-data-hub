@@ -34,9 +34,9 @@
       </span>
 
 
-      <mat-table id="source-new-table" 
+      <mat-table id="source-new-table"
                  [dataSource]="dataSource"
-                 #table class="source-props" 
+                 #table class="source-props"
                  matSort>
           <ng-container matColumnDef="key">
             <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
@@ -49,7 +49,7 @@
           </ng-container>
           <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
           <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-        </mat-table>      
+        </mat-table>
       </div>
 
     <mat-divider [vertical]="true"></mat-divider>
@@ -62,10 +62,10 @@
       </div>
       <p class="target-entity-title" ng-class="title-entity-model">{{ targetEntity?.info.title }} </p>
       <span class="btn-icons">
-        <button id="Test-btn" mat-raised-button color="primary">
+        <button id="Test-btn" mat-raised-button color="primary" (click)="getMapResults()">
           Test
         </button>
-        <button id="Clear-btn" [disabled]="true" mat-raised-button color="primary">
+        <button id="Clear-btn" mat-raised-button color="primary" (click)="onClear()">
           Clear
         </button>
         &nbsp;<mat-icon id="lookup-icon">
@@ -90,10 +90,11 @@
           [nestedLevel]="0"
           [srcProps]="this.sampleDocNestedProps"
           [functionLst]="this.functionLst"
+          [mapResults] = "this.mapResults"
           (handleSelection)="this.onHandleSelection($event)"
         ></app-entity-table-ui>
       </div>
- 
+
     </div> <!-- Entities_Tbl -->
 
   </span>

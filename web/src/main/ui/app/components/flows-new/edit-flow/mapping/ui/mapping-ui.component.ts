@@ -12,7 +12,7 @@ import {MatDialog, MatPaginator, MatSort, MatTable, MatTableDataSource} from "@a
 import { Step } from '../../../models/step.model';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 
-//import { ManageFlowsService } from "../../../services/manage-flows.service";
+import { ManageFlowsService } from "../../../services/manage-flows.service";
 
 @Component({
   selector: 'app-mapping-ui',
@@ -50,7 +50,8 @@ export class MappingUiComponent implements OnChanges {
 
   public editingURI: boolean = false;
   public editingSourceContext: boolean = false;
-  
+  public isTestClicked: boolean = false;
+
   displayedColumns = ['key', 'val'];
 
   // Entity table column menu
@@ -79,6 +80,7 @@ export class MappingUiComponent implements OnChanges {
     disableURINavLeft: boolean = false;
     disableURINavRight: boolean = false;
     uriIndex = 0;
+    currEntity:string;
 
   @ViewChild(MatTable)
   table: MatTable<any>;
@@ -90,6 +92,7 @@ export class MappingUiComponent implements OnChanges {
   sort: MatSort;
 
   @ViewChildren('fieldName') fieldName:QueryList<any>;
+  public mapResults:any = {} ;
 
   ngOnInit(){
     if (!this.dataSource){
@@ -118,7 +121,29 @@ export class MappingUiComponent implements OnChanges {
       this.mapExpresions = this.conns;
     }
   }
+  getMapResults(sourceURI?: string){
+    this.isTestClicked = true;
+    this.manageFlowsService.getMap(this.mapping.name).subscribe((map: any) => {
+      let uri;
+      if(sourceURI){
+        uri = sourceURI;
+      }
+      else {
+        uri = map.sourceURI;
+      }
+    this.manageFlowsService.testMap(map.name, String(map.version), uri).subscribe(resp => {
+      this.mapResults = resp;
+      delete this.mapResults["info"];
+      this.mapResults = this.mapResults[this.entityName];
+      console.log(this.mapResults);
+      });
+    });
+  }
 
+  onClear(){
+    this.mapResults = {};
+    this.isTestClicked = false;
+  }
   onNavigateURIList(index) {
     if (index < 0 || index > this.docUris.length) {
       this.uriIndex = index;
@@ -156,9 +181,14 @@ export class MappingUiComponent implements OnChanges {
         uri: this.editURIVal,
         uriOrig: this.mapping.sourceURI,
         conns: this.conns,
+        isTestClicked:this.isTestClicked,
         connsOrig: {},
         save: true
       });
+    }
+    console.log(this.editURIVal);
+    if(this.isTestClicked) {
+      this.getMapResults(this.editURIVal);
     }
   }
 
@@ -237,6 +267,7 @@ export class MappingUiComponent implements OnChanges {
   constructor(
     private dialogService: MdlDialogService,
     private envService: EnvironmentService,
+    private manageFlowsService: ManageFlowsService,
     public dialog: MatDialog
   ) {}
 
@@ -265,7 +296,7 @@ export class MappingUiComponent implements OnChanges {
   handleSelection(name, expr, nested): void {
     console.log('mapping-ui handleSelection', name, expr, nested);
     if (nested === true) {
-      // New nested version 
+      // New nested version
       this.conns = expr;
     } else {
       // Legacy flat version
