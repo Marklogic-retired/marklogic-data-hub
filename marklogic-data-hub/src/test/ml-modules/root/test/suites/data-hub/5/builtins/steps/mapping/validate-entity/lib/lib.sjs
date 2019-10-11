@@ -18,8 +18,10 @@ function mapInstance(uri, validateEntity, outputFormat) {
 }
 
 function canTestJsonSchemaValidation() {
-  if (xdmp.version().startsWith("10.0-2019") || xdmp.version().startsWith("10.0-2")) {
-    console.log("Not running test due to bug https://bugtrack.marklogic.com/53122");
+  let version = xdmp.version();
+  if (version.startsWith("10.0-2") && !version.startsWith("10.0-2019")) {
+    console.log("Not running test due to bug https://bugtrack.marklogic.com/53122; " +
+      "it's now fixed on trunk nightly, but still impacts 10.0-2");
     return false;
   }
   return true;
