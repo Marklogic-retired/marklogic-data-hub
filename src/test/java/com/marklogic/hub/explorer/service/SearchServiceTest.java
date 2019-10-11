@@ -74,6 +74,18 @@ public class SearchServiceTest {
   }
 
   @Test
+  public void testSearchWithDates() {
+    List<String> jobFacetValues = Arrays.asList("2019-09-15", "2019-10-10");
+    mockQuery.getFacets().put("createdOnRange", jobFacetValues);
+
+    StringHandle mockHandle = new StringHandle("This is some sample search data with in date "
+        + "range");
+    when(mockSearchHelper.search(mockQuery)).thenReturn(mockHandle);
+    StringHandle resultHandle = searchServiceMock.search(mockQuery);
+    assertTrue(resultHandle.get().equals(mockHandle.get()));
+  }
+
+  @Test
   public void testSearchWithEmptyFacets() {
     // Setting facets to be empty map
     mockQuery.setFacets(new HashMap<>());
