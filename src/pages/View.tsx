@@ -49,11 +49,11 @@ const View: React.FC = () => {
     }
   }
 
+
   const getEntityCollectionDetails = async () => {
     try {
       const response = await axios(`/datahub/v2/jobs/models`);
       setLastHarmonized(response.data);
-      //console.log('model response', response.data);
     } catch (error) {
       // console.log('error', error.response);
     }

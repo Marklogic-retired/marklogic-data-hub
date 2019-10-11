@@ -13,10 +13,10 @@ describe("Entity Table component", () => {
         let entites = entityFromJSON(MockEntities);
         wrapper = mount(
           <Router>
-            <EntityTable 
+            <EntityTable
               entities={entites} 
               facetValues={EntityProperties.Collection.facetValues}
-            />
+             />
           </Router>
         )
     });

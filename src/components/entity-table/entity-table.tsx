@@ -86,7 +86,6 @@ const EntityTable:React.FC<Props> = (props) => {
       dataIndex: 'created',
         render: text => {
         let parseText = text.split(',');
-        //console.log(jobId)
         return (
             <Link to={{
                 pathname: "/browse",

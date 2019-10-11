@@ -23,7 +23,7 @@ const Browse: React.FC<Props> = ({location}) => {
     setPageLength,
     setEntityClearQuery,
     setQuery,
-    setQueryClearEntity,
+    setLatestJobFacet,
   } = useContext(SearchContext);
 
   const [data, setData] = useState();
@@ -61,7 +61,7 @@ const Browse: React.FC<Props> = ({location}) => {
           entityNames: searchOptions.entityNames,
           start: searchOptions.start,
           pageLength: searchOptions.pageLength,
-          facets: searchOptions.searchFacets
+          facets: searchOptions.searchFacets,
         }
       });
       console.log('response.data', response.data);
@@ -76,12 +76,13 @@ const Browse: React.FC<Props> = ({location}) => {
       }
     }
   }
+
   useEffect(() => {
     if(location.state && location.state.entity){
       setEntityClearQuery(location.state.entity);
     }
     if(location.state && location.state.jobId){
-      setQueryClearEntity(location.state.jobId);
+      setLatestJobFacet(location.state.jobId);
     }
 
     getEntityModel();
