@@ -95,6 +95,9 @@ ManageFlowsService {
   deleteMap(mapName) {
     return this.http.delete('api/current-project/mappings/' + mapName);
   }
+  testMap(mapName: string, version: string, sampleDocURI: string) {
+    return this.http.get(`api/current-project/mappings/${mapName}/test?mappingVersion=${version}&docURI=${sampleDocURI}`);
+  }
 
   getFunctions() {
     console.log('GET api/current-project/mappings/functions');

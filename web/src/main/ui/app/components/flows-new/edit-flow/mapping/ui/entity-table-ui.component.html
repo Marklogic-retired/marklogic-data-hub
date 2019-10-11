@@ -1,4 +1,4 @@
-<mat-table 
+<mat-table
   id="entity-table" 
   [dataSource]="dataSource"
   multiTemplateDataRows
@@ -35,8 +35,8 @@
     <mat-header-cell *matHeaderCellDef mat-sort-header> 
       Type 
     </mat-header-cell>
-    <mat-cell *matCellDef="let prop"> 
-      {{this.getDatatype(prop)}} 
+    <mat-cell *matCellDef="let prop">
+      {{this.getDatatype(prop)}}
     </mat-cell>
   </ng-container>
 
@@ -81,11 +81,11 @@
 
   <!-- VALUE COLUMN -->
   <ng-container matColumnDef="value">
-    <mat-header-cell *matHeaderCellDef mat-sort-header> 
+    <mat-header-cell *matHeaderCellDef mat-sort-header>
       Value 
     </mat-header-cell>
-    <mat-cell *matCellDef="let prop"> 
-    
+    <mat-cell *matCellDef="let prop">
+      {{this.getValue(prop)}}
     </mat-cell>
   </ng-container>
   
@@ -93,7 +93,7 @@
   <ng-container matColumnDef="nested">
     <mat-cell class="nested-cell" *matCellDef="let prop">
       <div 
-        *ngIf="prop.subProperties" 
+        *ngIf="prop.subProperties"
         id="entity-table-nested-container" 
         [ngClass]="{'hide': !showProp[prop.name]}">
 
@@ -106,6 +106,8 @@
           [nestedLevel] = "this.nestedLevel + 1"
           [srcProps]= "this.srcProps"
           [functionLst]= "this.functionLst"
+          [mapResults]= "this.mapResults[prop.name]"
+          [currEntity] = "prop.$ref || prop.items.$ref"
           (handleSelection)="this.onHandleSelection($event)"
         ></app-entity-table-ui>
 
