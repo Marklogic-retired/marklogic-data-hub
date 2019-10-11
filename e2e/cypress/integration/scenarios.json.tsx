@@ -53,6 +53,7 @@ describe('json scenario on browse documents page', () => {
         cy.fixture('users').then(user => {
             cy.login(user.username, user.password);
         })
+        cy.wait(500);
         cy.visit('/browse');
     });
 
@@ -127,7 +128,7 @@ describe('json scenario on browse documents page', () => {
         detailPage.getInstanceView().should('exist');
         detailPage.getDocumentEntity().should('contain', 'Person');
         detailPage.getDocumentID().should('contain', '0');
-        detailPage.getDocumentTimestamp().should('contain', '2019-10-02T10:59:01.8611056-07:00');
+        detailPage.getDocumentTimestamp().should('exist');
         detailPage.getDocumentSource().should('contain', 'PersonFlow');
         detailPage.getDocumentFileType().should('contain', 'JSON');
         detailPage.getDocumentTable().should('exist');

@@ -11,6 +11,8 @@
 /coverage
 /e2e/cypress/screenshots
 /e2e/results/*
+/e2e/videos/*
+/e2e/image_histor
 
 # production
 /build

@@ -21,11 +21,14 @@ interface ISearchContextInterface {
   setQuery: (searchString: string) => void;
   setPage: (pageNumber: number) => void;
   setPageLength: (current: number, pageSize: number) => void;
-  setSearchFacets: (constraint, vals) => void;
+  setSearchFacets: (constraint: string, vals: string[]) => void;
   setEntity: (option: string) => void;
   clearEntity: () => void;
   setEntityClearQuery: (option: string) => void;
   setLatestJobFacet : (option: string) => void;
+  clearFacet: (constraint:string, val:string) => void;
+  clearAllFacets: () => void;
+
 }
 
 export const SearchContext = React.createContext<ISearchContextInterface>({
@@ -37,7 +40,9 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setEntity: () => {},
   clearEntity: () => {},
   setEntityClearQuery: () => {},
-  setLatestJobFacet : () =>{}
+  setLatestJobFacet : () =>{},
+  clearFacet: () => {},
+  clearAllFacets: () => {}
 });
 
 const SearchProvider: React.FC<{ children: any }> = ({children}) => {
@@ -59,7 +64,7 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     setSearchOptions({ ...searchOptions, pageLength: pageSize, start: 1});
   }
 
-  const setSearchFacets = (constraint, vals) => {
+  const setSearchFacets = (constraint: string, vals: string[]) => {
     console.log('Updated a facet ' + constraint + ': ' + vals);
     let facets = {};
     if (vals.length > 0) {
@@ -85,14 +90,41 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     setSearchOptions({ ...searchOptions, query: '', entityNames: [option]});
   }
 
+
   const setLatestJobFacet = (vals) => {
     let facets = {};
       facets = {['createdByJobRange']: [vals]};
     setSearchOptions({ ...searchOptions, start: 1, searchFacets: facets,entityNames: []});
   }
 
+
+  const clearFacet = (constraint: string, val: string) => {
+    let facets = searchOptions.searchFacets;
+    if (facets[constraint].length > 1) {
+      facets[constraint] = facets[constraint].filter( option => option !== val );
+    } else {
+      delete facets[constraint]
+    }
+    setSearchOptions({ ...searchOptions, searchFacets: facets })
+  }
+
+  const clearAllFacets = () => {
+    setSearchOptions({ ...searchOptions, searchFacets: {} });
+  }
+
   return (
-    <SearchContext.Provider value={{ searchOptions, setQuery, setPage, setPageLength, setSearchFacets, setEntity, clearEntity, setEntityClearQuery,setLatestJobFacet }}>
+    <SearchContext.Provider value={{ 
+      searchOptions,
+      setQuery,
+      setPage,
+      setPageLength,
+      setSearchFacets,
+      setEntity,
+      clearEntity,
+      setEntityClearQuery,
+      clearFacet,
+      clearAllFacets,
+      setLatestJobFacet}}>
       {children}
     </SearchContext.Provider>
   )
