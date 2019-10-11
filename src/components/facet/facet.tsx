@@ -17,7 +17,7 @@ const Facet = (props) => {
   const [checked, setChecked] = useState<string[]>([]);
 
   useEffect(() => {
-    if (Object.entries(searchOptions.searchFacets).length !== 0) {
+    if (Object.entries(searchOptions.searchFacets).length !== 0 && searchOptions.searchFacets.hasOwnProperty(props.constraint)) {
       for (let facet in searchOptions.searchFacets ) {
         if (facet === props.constraint) {
           setChecked([...searchOptions.searchFacets[facet]]);
@@ -67,6 +67,7 @@ const Facet = (props) => {
         className={styles.value}
         data-cy={stringConverter(props.name) + "-facet-item-checkbox"}
       >
+        {/*  TODO handle facet vales that are numbers, but are not dates */}
         {moment(facet.value).isValid() ? dateConverter(facet.value) : facet.value}
       </Checkbox>
       <div className={styles.count} data-cy={stringConverter(props.name) + "-facet-item-count"}>{facet.count}</div>
