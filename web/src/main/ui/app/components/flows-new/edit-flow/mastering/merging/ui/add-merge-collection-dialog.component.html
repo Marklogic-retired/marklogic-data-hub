@@ -1,13 +1,9 @@
-<h1 mat-dialog-title>{{getDialogTitle()}}</h1>
+<h1 mat-dialog-title>Edit Additional Collections</h1>
 <div id="merge-collection-dialog" mat-dialog-content [formGroup]="form" class="content">
 
   <mat-form-field layout-fill>
-    <mat-select id="merge-collection-event" placeholder="Event" formControlName="event" [(value)]="selectedEvent">
-      <mat-option id="merge-collection-event-onmerge" value="onMerge">onMerge</mat-option>
-      <mat-option id="merge-collection-event-onnomatch" value="onNoMatch">onNoMatch</mat-option>
-      <mat-option id="merge-collection-event-onnotification" value="onNotification">onNotification</mat-option>
-      <mat-option id="merge-collection-event-onarchive" value="onArchive">onArchive</mat-option>
-    </mat-select>
+    <mat-label>Event</mat-label>
+    <input id="event-name" matInput readonly formControlName="event" />
   </mat-form-field>
 
   <div id="merge-collection-add-container">
@@ -16,7 +12,7 @@
     matTooltipPosition="left"
     matTooltipShowDelay="500"
     matTooltipHideDelay="500" 
-    >Collections to Add</mat-label>
+    >Additional Collections</mat-label>
     <button id="merge-collection-add-add-btn" mat-icon-button (click)="onAddColl('add')">
       <mat-icon>add_circle</mat-icon>
     </button>
@@ -36,60 +32,8 @@
     </div>
   </div>
 
-  <div id="merge-collection-remove-container">
-    <mat-label
-    [matTooltip]="tooltips.merging.collectionsRemove"
-    matTooltipPosition="left"
-    matTooltipShowDelay="500"
-    matTooltipHideDelay="500" 
-    >Collections to Remove</mat-label>
-    <button id="merge-collection-add-remove-btn" mat-icon-button (click)="onAddColl('remove')">
-      <mat-icon>add_circle</mat-icon>
-    </button>
-    <div
-      class="collections-remove-wrapper"
-      formArrayName="remove"
-      *ngFor="let r of this.remove.controls; let i = index;">
-      <div [formGroupName]="i" class="remove-group">
-        <mat-form-field layout-fill>
-          <mat-label>Collection Name</mat-label>
-          <input [class]="'remove-key-' + i" matInput formControlName="coll"/>
-        </mat-form-field>
-        <button class="remove-remove-collection-btn" mat-icon-button (click)="onRemoveColl('remove', i)">
-          <mat-icon>remove_circle</mat-icon>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <div id="merge-collection-set-container">
-    <mat-label
-    [matTooltip]="tooltips.merging.collectionsSet"
-    matTooltipPosition="left"
-    matTooltipShowDelay="500"
-    matTooltipHideDelay="500" 
-    >Collections to Set</mat-label>
-    <button id="merge-collection-add-set-btn" mat-icon-button (click)="onAddColl('set')">
-      <mat-icon>add_circle</mat-icon>
-    </button>
-    <div
-      class="collections-set-wrapper"
-      formArrayName="set"
-      *ngFor="let s of this.set.controls; let i = index;">
-      <div [formGroupName]="i" class="set-group">
-        <mat-form-field layout-fill>
-          <mat-label>Collection Name</mat-label>
-          <input [class]="'set-key-' + i" matInput formControlName="coll"/>
-        </mat-form-field>
-        <button class="set-remove-collection-btn" mat-icon-button (click)="onRemoveColl('set', i)">
-          <mat-icon>remove_circle</mat-icon>
-        </button>
-      </div>
-    </div>
-  </div>
-
 </div>
 <mat-dialog-actions align="end" class="bottom">
   <button mat-raised-button color="primary" id="merge-collection-cancel-btn" mat-button (click)="onCancel()">CANCEL</button>
-  <button mat-raised-button color="primary" id="merge-collection-save-btn" mat-button (click)="onSave()">{{getSubmitButtonTitle()}}</button>
+  <button mat-raised-button color="primary" id="merge-collection-save-btn" mat-button (click)="onSave()">SAVE</button>
 </mat-dialog-actions>

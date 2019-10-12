@@ -1,5 +1,6 @@
 import { Component, Input, Output, OnInit, EventEmitter, ViewChild } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
+import { ManageFlowsService } from '../../../services/manage-flows.service';
 import { MergeOptionsUiComponent } from "./ui/merge-options-ui.component";
 import { MergeStrategiesUiComponent } from "./ui/merge-strategies-ui.component";
 import { MergeCollectionsUiComponent } from "./ui/merge-collections-ui.component";
@@ -33,9 +34,8 @@ import * as _ from "lodash";
   ></app-merge-strategies-ui>
   <app-merge-collections-ui
     [mergeCollections]="mergeCollections"
-    (createCollection)="this.onCreateCollection($event)"
-    (updateCollection)="this.onUpdateCollection($event)"
-    (deleteCollection)="this.onDeleteCollection($event)"
+    [defaultCollections]="defaultCollections"
+    (editCollection)="this.onEditCollection($event)"
   ></app-merge-collections-ui>
 `
 })
@@ -54,10 +54,12 @@ export class MergingComponent implements OnInit {
   public mergeCollections: MergeCollections;
   public targetEntity: any;
   public mergeTimestamp: string;
+  public defaultCollections: any;
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private entitiesService: EntitiesService
+    private entitiesService: EntitiesService,
+    private manageFlowsService: ManageFlowsService
   ) { }
 
   ngOnInit() {
@@ -79,6 +81,7 @@ export class MergingComponent implements OnInit {
     console.log('this.mergeCollections', this.mergeCollections);
 
     this.getEntity(this.step.options.targetEntity);
+    this.getDefaultCollections(this.step.options.targetEntity);
 
   }
 
@@ -93,6 +96,14 @@ export class MergingComponent implements OnInit {
       });
     });
     this.entitiesService.getEntities();
+  }
+
+  getDefaultCollections(entityName): any {
+    this.manageFlowsService.getDefaultCollections(entityName)
+      .subscribe( resp => {
+        console.log('getDefaultCollections resp', resp);
+        this.defaultCollections = resp;
+      });
   }
 
   onCreateOption(event): void {
@@ -134,20 +145,8 @@ export class MergingComponent implements OnInit {
     this.onSaveStep();
   }
 
-  onCreateCollection(event): void {
-    this.mergeCollections.addCollection(event.coll);
-    this.mergeCollectionsUi.renderRows();
-    this.onSaveStep();
-  }
-
-  onUpdateCollection(event): void {
-    this.mergeCollections.updateCollection(event.coll, event.index);
-    this.mergeCollectionsUi.renderRows();
-    this.onSaveStep();
-  }
-
-  onDeleteCollection(event): void {
-    this.mergeCollections.deleteCollection(event);
+  onEditCollection(event): void {
+    this.mergeCollections.editCollection(event.coll);
     this.mergeCollectionsUi.renderRows();
     this.onSaveStep();
   }
