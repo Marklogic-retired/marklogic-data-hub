@@ -1,6 +1,6 @@
-import { Component, Input, Output, EventEmitter, OnInit, AfterViewInit, ViewChild, HostListener } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, AfterViewInit, OnChanges, SimpleChanges, ViewChild, HostListener } from '@angular/core';
 import { MatDialog, MatPaginator, MatSort, MatTable, MatTableDataSource} from "@angular/material";
-import { MergeCollection } from "../merge-collections.model";
+import { MergeCollection, Event } from "../merge-collections.model";
 import { AddMergeCollectionDialogComponent } from './add-merge-collection-dialog.component';
 import { ConfirmationDialogComponent } from "../../../../../common";
 
@@ -15,13 +15,12 @@ export class MergeCollectionsUiComponent {
   @ViewChild(MatSort) sort: MatSort;
 
   @Input() mergeCollections: any;
+  @Input() defaultCollections: any;
 
-  @Output() createCollection = new EventEmitter();
-  @Output() updateCollection = new EventEmitter();
-  @Output() deleteCollection = new EventEmitter();
+  @Output() editCollection = new EventEmitter();
 
-  public displayedColumns = ['event', 'add', 'remove', 'set', 'actions'];
-  public dataSource: MatTableDataSource<MergeCollection>;
+  public displayedColumns = ['event', 'defaults', 'add', 'actions'];
+  public dataSource: MatTableDataSource<any>;
 
   public weightFocus: object = {};
 
@@ -31,7 +30,8 @@ export class MergeCollectionsUiComponent {
 
   ngOnInit() {
     console.log('ngOnInit this.mergeCollections', this.mergeCollections);
-    this.dataSource = new MatTableDataSource<MergeCollection>(this.mergeCollections.collections);
+    // Set up table with empty source, then wait for changes
+    this.dataSource = new MatTableDataSource<any>([]);
   }
 
   ngAfterViewInit() {
@@ -39,39 +39,69 @@ export class MergeCollectionsUiComponent {
     this.dataSource.sort = this.sort;
   }
 
-  openMergeCollectionDialog(collectionToEdit: MergeCollection, index: number): void {
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.mergeCollections && changes.mergeCollections.currentValue) {
+      this.mergeCollections = changes.mergeCollections.currentValue;
+    }
+    if (changes.defaultCollections && changes.defaultCollections.currentValue) {
+      this.defaultCollections = changes.defaultCollections.currentValue;
+    }
+    // If both have loaded, update table
+    if (this.defaultCollections && this.mergeCollections) {
+      this.renderRows();
+    }
+  }
+
+  openMergeCollectionDialog(collectionToEdit: MergeCollection): void {
     const dialogRef = this.dialog.open(AddMergeCollectionDialogComponent, {
       width: '500px',
-      data: { collection: collectionToEdit, index: index }
+      data: { collection: collectionToEdit }
     });
     dialogRef.afterClosed().subscribe(result => {
       if (!!result) {
-        if (collectionToEdit) {
-          console.log('updateCollection');
-          this.updateCollection.emit(result);
-        }else{
-          console.log('createCollection');
-          this.createCollection.emit(result);
-        }
-      }
-    });
-  }
-
-  openConfirmDialog(coll): void {
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-      width: '350px',
-      data: {title: 'Delete Collection Event', confirmationMessage: `Delete the event?`}
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if(!!result){
-        this.deleteCollection.emit(coll);
+        console.log('editCollection');
+        this.editCollection.emit(result);
       }
     });
   }
 
   renderRows(): void {
-    this.dataSource.data = this.mergeCollections.collections;
+    this.dataSource.data = this.transformCollections(this.mergeCollections.collections);
     this.table.renderRows();
+  }
+
+  transformCollections(colls) {
+    let result = [
+      { 
+        event: Event.ONMERGE,
+        defaults: this.defaultCollections[Event.ONMERGE],
+        add: []
+      },
+      { 
+        event: Event.ONNOMATCH,
+        defaults: this.defaultCollections[Event.ONNOMATCH],
+        add: []
+      },
+      { 
+        event: Event.ONARCHIVE,
+        defaults: this.defaultCollections[Event.ONARCHIVE],
+        add: []
+      },
+      { 
+        event: Event.ONNOTIFICATION,
+        defaults: this.defaultCollections[Event.ONNOTIFICATION],
+        add: []
+      }
+    ];
+    colls.forEach(c => {
+      let found = result.find(r => {
+        return r.event === c.event;
+      })
+      if (found) {
+        found.add = found.add.concat(c.add);
+      }
+    })
+    return result;
   }
 
 }

@@ -100,4 +100,10 @@ ManageFlowsService {
     console.log('GET api/current-project/mappings/functions');
     return this.http.get('api/current-project/mappings/functions');
   }
+
+  getDefaultCollections(entityName) {
+    console.log('GET api/mastering/defaultCollections/' + entityName);
+    return this.http.get('api/mastering/defaultCollections/' + entityName);
+  }
+
 }
