@@ -22,6 +22,8 @@ export class EntityTableUiComponent implements OnChanges {
   @Input() nmspace: object;
   @Input() mapResults: any;
   @Input() currEntity:string;
+  @Input() displayErrors: boolean;
+  @Input() errorsAvailable: boolean;
   @Input() mapValidationResult: object;
   @Output() handleSelection = new EventEmitter();
   
@@ -34,9 +36,8 @@ export class EntityTableUiComponent implements OnChanges {
   // Show/hide nested property table
   showProp = {};
   showPropInit = false;
-  displayErrors = false;
-  errorsAvailable = false;
-  
+  // displayErrors = false;
+  // errorsAvailable = false;
 
   @ViewChild(MatTable)
   table: MatTable<any>;

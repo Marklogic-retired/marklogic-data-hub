@@ -61,10 +61,10 @@
             prop: prop
           })" type="text"
           class="map-expr"
-          [ngStyle]="{'background-color': (displayErrors ? '#FAD3D3' : '')}"
+          [ngStyle]="{'background-color': (displayErrors && (this.mapValidationResult['properties'][prop.name] && this.mapValidationResult['properties'][prop.name]['errorMessage'])? '#FAD3D3' : '')}"
         ></textarea>
-        <mat-icon *ngIf="errorsAvailable" (click)="showError()"><i class="fa fa-times-circle" style="color: red;"></i></mat-icon></span>
-        <mat-hint *ngIf="displayErrors" style="font-size: 10px;color: red">{{displayErrorMessage(prop.name)}}</mat-hint>
+        <mat-icon *ngIf="errorsAvailable && (this.mapValidationResult['properties'][prop.name] && this.mapValidationResult['properties'][prop.name]['errorMessage'])" (click)="showError()"><i class="fa fa-times-circle" style="color: red;"></i></mat-icon></span>
+        <mat-hint *ngIf="displayErrors && (this.mapValidationResult['properties'][prop.name] && this.mapValidationResult['properties'][prop.name]['errorMessage'])" style="font-size: 10px;color: red">{{displayErrorMessage(prop.name)}}</mat-hint>
       </div>
       <mat-icon (click)="getErrorMessage(prop.name)">more_vert</mat-icon>
       <mat-icon 
@@ -113,6 +113,9 @@
           [functionLst]= "this.functionLst"
           [mapResults]= "this.mapResults[prop.name]"
           [currEntity] = "prop.$ref || prop.items.$ref"
+          [errorsAvailable]="this.errorsAvailable"
+          [displayErrors]="displayErrors"
+          [mapValidationResult]="this.mapValidationResult['properties'][prop.name]"
           (handleSelection)="this.onHandleSelection($event)"
         ></app-entity-table-ui>
 
