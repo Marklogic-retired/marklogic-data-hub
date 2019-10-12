@@ -82,15 +82,48 @@ export class MappingComponent implements OnInit {
     "targetEntityType": "http://example.org/Order-0.0.1/Order",
     "properties":
     {
-    "name":
-    
-    { "sourcedFrom": "Region"}
-    ,
-    "id":
-    {
-    "sourcedFrom": "Order ID",
-    "errorMessage": "Invalid XPath expression: Order ID"}}
-    };
+      "name": {
+        "sourcedFrom": "Region",
+        "errorMessage": "Invalid XPath expression: Region"
+      },
+      "id":
+      {
+        "sourcedFrom": "Order ID",
+        "errorMessage": "Invalid XPath expression: Order ID"
+      },
+      "items" : {
+        "targetEntityType": "http://example.org/Order-0.0.1/ItemType",
+        "sourcedFrom" : "sdggggg",
+        "properties" : {
+          "name" : {
+            "sourcedFrom" : "Marklogic",
+            "errorMessage": "Invalid XPath expression: ItemName"
+          },
+          "quantity" : {
+            "sourcedFrom" : "1"
+          },
+          "price" : {
+            "sourcedFrom" : "10000"
+          }
+        }
+      },
+      "customer": {
+        "targetEntityType": "http://example.org/Order-0.0.1/CustomerType",
+        "properties": {
+          "firstname": {
+            "sourcedFrom": "Nikhil"
+          },
+          "lastname": {
+            "sourcedFrom": "Shrivastava",
+            "errorMessage": "Invalid XPath expression: lastname"
+          },
+          "gender": {
+            "sourcedFrom": "Male"
+          }
+        }
+      }
+    }
+  };
 
   updateURI(event) {
     this.conns = event.conns;
