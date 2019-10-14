@@ -86,6 +86,9 @@ const EntityTable:React.FC<Props> = (props) => {
       dataIndex: 'created',
         render: text => {
         let parseText = text.split(',');
+        if(parseText[0]==='Invalid date'){
+          return 'Never been run'
+        }
         return (
             <Link to={{
                 pathname: "/browse",
