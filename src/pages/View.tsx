@@ -11,6 +11,7 @@ const { Content } = Layout;
 const View: React.FC = () => {
   const { userNotAuthenticated } = useContext(AuthContext);
   const [entities, setEntites] = useState<any[]>([]);
+  const [lastHarmonized, setLastHarmonized] = useState<any[]>([]);
   const [facetValues, setFacetValues] = useState<any[]>([]);
   const [totalDocs, setTotalDocs] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -44,13 +45,25 @@ const View: React.FC = () => {
       setFacetValues(response.data.facets.Collection.facetValues);
       setIsLoading(false);
     } catch (error) {
-      // console.log('error', error.response);
+       console.log('error', error.response);
+    }
+  }
+
+
+  const getEntityCollectionDetails = async () => {
+    try {
+      const response = await axios(`/datahub/v2/jobs/models`);
+      setLastHarmonized(response.data);
+      //console.log(response.data)
+    } catch (error) {
+       console.log('error', error.response);
     }
   }
 
   useEffect(() => {
     getEntityModel();
     getSearchResults();
+    getEntityCollectionDetails();
   }, []);
 
   return (
@@ -62,7 +75,8 @@ const View: React.FC = () => {
               <Statistic className={styles.statistic} title="Total Entities" value={entities.length} />
               <Statistic className={styles.statistic} title="Total Documents" value={totalDocs} />
             </div>
-            <EntityTable entities={entities} facetValues={facetValues}/>
+            <EntityTable entities={entities} facetValues={facetValues} lastHarmonized={lastHarmonized}/>
+
           </>}
       </Content>
     </Layout>

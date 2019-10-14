@@ -5,6 +5,7 @@ import EntityTable from './entity-table';
 import { entityFromJSON } from '../../util/data-conversion';
 import MockEntities from '../../assets/mock-data/model-response';
 import EntityProperties from '../../assets/mock-data/entity-properties';
+import latestJobs from  '../../assets/mock-data/jobs';
 
 describe("Entity Table component", () => {
     let wrapper;
@@ -13,10 +14,11 @@ describe("Entity Table component", () => {
         let entites = entityFromJSON(MockEntities);
         wrapper = mount(
           <Router>
-            <EntityTable 
+            <EntityTable
               entities={entites} 
               facetValues={EntityProperties.Collection.facetValues}
-            />
+              lastHarmonized={latestJobs}
+             />
           </Router>
         )
     });
