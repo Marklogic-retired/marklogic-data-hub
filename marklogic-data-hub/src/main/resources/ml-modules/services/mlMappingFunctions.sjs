@@ -59,7 +59,7 @@ function getXpathFunctions() {
       let signature = xdmp.functionSignature(xpathFunctions[i]).replace("function", xdmp.functionName(xpathFunctions[i]));
       signature = signature.match(/fn:(.*?) as.*?/)[1];
       xpathFunction["signature"] = signature;
-      response[xdmp.functionName(xpathFunctions[i])] = xpathFunction;
+      response[String(xdmp.functionName(xpathFunctions[i])).replace("fn:","")] = xpathFunction;
     }
   }
   return response;
