@@ -45,7 +45,7 @@ const View: React.FC = () => {
       setFacetValues(response.data.facets.Collection.facetValues);
       setIsLoading(false);
     } catch (error) {
-      // console.log('error', error.response);
+       console.log('error', error.response);
     }
   }
 
@@ -55,7 +55,7 @@ const View: React.FC = () => {
       const response = await axios(`/datahub/v2/jobs/models`);
       setLastHarmonized(response.data);
     } catch (error) {
-      // console.log('error', error.response);
+       console.log('error', error.response);
     }
   }
 
