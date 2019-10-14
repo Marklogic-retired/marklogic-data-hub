@@ -22,6 +22,7 @@ const Browse: React.FC<Props> = ({location}) => {
     setPage,
     setPageLength,
     setEntityClearQuery,
+    setAllEntities,
   } = useContext(SearchContext);
 
   const [data, setData] = useState();
@@ -37,9 +38,13 @@ const Browse: React.FC<Props> = ({location}) => {
     try {
       const response = await axios(`/datahub/v2/models`);
       const parsedModelData = entityFromJSON(response.data);
-      setEntites([ ...entityFromJSON(response.data).map(entity => entity.info.title)]);
+      let entityArray = [ ...entityFromJSON(response.data).map(entity => entity.info.title)];
+      setEntites(entityArray);
       setEntityDefArray(entityParser(parsedModelData));
       setEntitiesLoaded(true);
+      if (searchOptions.entityNames.length === 0 ) {
+        setAllEntities(entityArray)
+      }
     } catch (error) {
       // console.log('error', error.response);
       if (error.response.status === 401) {
