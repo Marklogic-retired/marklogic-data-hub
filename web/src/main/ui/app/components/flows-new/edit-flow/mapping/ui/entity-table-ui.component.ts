@@ -163,8 +163,8 @@ checkFieldInErrors(field){
     f.focus();
     f.value = f.value.substr(0, f.selectionStart) + content + 
       f.value.substr(f.selectionStart, f.value.length);
-    f.selectionStart = startPos;
-    f.selectionEnd = startPos + content.length;
+    //f.selectionStart = startPos;
+    //f.selectionEnd = startPos+content.length;
     f.focus();
     this.onHandleSelection({ name: prop.name, expr: f.value, prop: prop });
   }
@@ -202,11 +202,12 @@ checkFieldInErrors(field){
   // Attach namespace, if the source is an xml document
   displaySourceField(field): string {
     let fieldValue = "";
-    if(this.nmspace && field in this.nmspace) {
-      fieldValue = this.nmspace[field] + ":"+ field.split('/').pop();
+    let truncField = field.slice(field.lastIndexOf('/')+1);
+    if(this.nmspace && truncField in this.nmspace) {
+      fieldValue = this.nmspace[truncField].slice(this.nmspace[truncField].lastIndexOf('/')+1) + ": "+ truncField;
     }
     else {
-      fieldValue = field.split('/').pop();
+      fieldValue = truncField;
     }
     return fieldValue;
   }

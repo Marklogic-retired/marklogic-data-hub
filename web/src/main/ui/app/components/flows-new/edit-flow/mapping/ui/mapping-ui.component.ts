@@ -42,7 +42,7 @@ export class MappingUiComponent implements OnChanges {
   private uriOrig: string = '';
   private connsOrig: object = {};
 
-  public valMaxLen: number = 15;
+  public valMaxLen: number = 25;
   public isVersionCompatibleWithES: boolean = false;
 
   public filterFocus: object = {};
@@ -615,11 +615,13 @@ export class MappingUiComponent implements OnChanges {
   // Attach namespace, if the source is an xml document
   displaySourceField(field): string {
     let fieldValue = "";
-    if(this.nmspace && field in this.nmspace) {
-      fieldValue = this.nmspace[field] + ":"+ field.split('/').pop();
+    let truncField = field.slice(field.lastIndexOf('/')+1);
+    if(this.nmspace && truncField in this.nmspace) {
+      fieldValue = this.nmspace[truncField].slice(this.nmspace[truncField].lastIndexOf('/')+1) + ": "+ truncField;
     }
     else {
-      fieldValue = field.split('/').pop();
+      
+      fieldValue = truncField;
     }
     return fieldValue;
   }
