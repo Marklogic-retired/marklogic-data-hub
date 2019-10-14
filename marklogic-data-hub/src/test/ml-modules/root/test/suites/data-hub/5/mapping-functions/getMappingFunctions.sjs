@@ -3,8 +3,12 @@ const esMappingLib = require("/data-hub/5/builtins/steps/mapping/entity-services
 const test = require("/test/test-helper.xqy");
 
 if (esMappingLib.versionIsCompatibleWithES()) {
-  [
-    test.assertTrue(Object.keys(mappingFunctions.getXpathFunctions()).length >= 129,
+  let mapFuncs = mappingFunctions.getXpathFunctions();
+ [
+    test.assertTrue(mapFuncs["sum"] !== null),
+    test.assertTrue(mapFuncs["sum"]["signature"].includes("sum")),
+    test.assertFalse(mapFuncs["fn:sum"] === null ,"'fn:' has been stripped from the function name and signature"),
+    test.assertTrue(Object.keys(mapFuncs).length >= 129,
       "As of 10.0-2 server, there are 129 xpath functions; there may be more in a future version, but we expect at least that many to exist"),
 
     test.assertTrue(Object.keys(mappingFunctions.getMarkLogicFunctions()).length >= 4,
