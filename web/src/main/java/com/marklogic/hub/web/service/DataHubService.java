@@ -21,6 +21,7 @@ import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand;
 import com.marklogic.hub.deploy.commands.LoadHubArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
@@ -64,6 +65,9 @@ public class DataHubService {
 
     @Autowired
     private LoadHubArtifactsCommand loadHubArtifactsCommand;
+
+    @Autowired
+    private GenerateFunctionMetadataCommand generateFunctionMetadataCommand;
 
     public boolean install(HubConfig config, HubDeployStatusListener listener) throws DataHubException {
         logger.info("Installing Data Hub");
@@ -198,6 +202,7 @@ public class DataHubService {
         loadHubArtifactsCommand.setHubConfig(hubConfig);
         loadHubArtifactsCommand.setForceLoad(forceLoad);
 
+        commands.add(generateFunctionMetadataCommand);
         commands.add(loadUserModulesCommand);
         commands.add(loadUserArtifactsCommand);
         commands.add(loadHubArtifactsCommand);
