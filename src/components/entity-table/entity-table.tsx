@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 // import styles from './entity-table.module.scss';
 import { Table } from 'antd';
-import { relativeTimeConverter } from '../../util/relative-time-conversion';
+import { relativeTimeConverter } from '../../util/date-conversion';
 
 type Props = {
   entities: any[];
