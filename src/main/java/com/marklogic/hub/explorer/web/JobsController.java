@@ -3,6 +3,7 @@
  */
 package com.marklogic.hub.explorer.web;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.marklogic.client.FailedRequestException;
@@ -33,7 +34,7 @@ public class JobsController {
   @RequestMapping(value = "/models", method = RequestMethod.GET)
   @ResponseBody
   public ResponseEntity<?> getLatestJobInfoForAllModels() {
-    List<JsonNode> modelList = null;
+    List<JsonNode> modelList = new ArrayList<>();
     try {
       modelList = jobsService.getLatestJobInfoForAllModels();
     } catch (FailedRequestException e) {
