@@ -4,6 +4,7 @@
 package com.marklogic.hub.explorer.util;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,7 @@ public class SearchHelper {
 
   private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
   private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter
-      .ofPattern("yyyy-MM-dd HH:mm:ss.S");
+      .ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
   private static final Logger logger = LoggerFactory.getLogger(SearchHelper.class);
 
@@ -78,12 +79,13 @@ public class SearchHelper {
       } else if (facetType.equals(CREATED_ON_CONSTRAINT_NAME)) {
         // Converting the date in string format from yyyy-MM-dd format to yyyy-MM-dd HH:mm:ss format
         LocalDate startDate = LocalDate.parse(facetValues.get(0), DATE_FORMAT);
-        String startDateTime = startDate.atStartOfDay().format(DATE_TIME_FORMAT);
+        String startDateTime = startDate.atStartOfDay(ZoneId.systemDefault())
+            .format(DATE_TIME_FORMAT);
 
         // Converting the date in string format from yyyy-MM-dd format to yyyy-MM-dd HH:mm:ss format
         // Adding 1 day to end date to get docs harmonized on the end date as well.
         LocalDate endDate = LocalDate.parse(facetValues.get(1), DATE_FORMAT).plusDays(1);
-        String endDateTime = endDate.atStartOfDay().format(DATE_TIME_FORMAT);
+        String endDateTime = endDate.atStartOfDay(ZoneId.systemDefault()).format(DATE_TIME_FORMAT);
 
         facetDef = queryBuilder
             .and(queryBuilder.rangeConstraint(facetType, Operator.GE, startDateTime),
