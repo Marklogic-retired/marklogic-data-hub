@@ -23,11 +23,16 @@ let res = {
   "latestJobDateTime": null
 };
 
-let query = [cts.collectionQuery(entityCollection), cts.fieldRangeQuery("datahubCreatedOn", "<=", fn.currentDateTime(), "score-function=reciprocal")];
-let seq = fn.subsequence(cts.search(cts.andQuery(query)), 1, 1);
+let latestJob = fn.subsequence(
+  cts.search(
+    cts.collectionQuery(entityCollection),
+    [cts.indexOrder(cts.fieldReference("datahubCreatedOn"), "descending")]
+  ),
+  1, 1
+);
 
-if (fn.count(seq) > 0) {
-  let docUri = xdmp.nodeUri(seq);
+if (fn.count(latestJob) > 0) {
+  let docUri = xdmp.nodeUri(latestJob);
 
   res.latestJobDateTime = xdmp.documentGetMetadataValue(docUri, "datahubCreatedOn");
 
