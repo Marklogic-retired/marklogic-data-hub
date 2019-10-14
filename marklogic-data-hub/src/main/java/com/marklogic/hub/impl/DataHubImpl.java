@@ -988,8 +988,17 @@ public class DataHubImpl implements DataHub {
         return result;
     }
 
-    protected void prepareProjectBeforeUpgrading(HubProject hubProject, String newDhfVersion) throws IOException {
-        final String backupPath = HubProject.HUB_CONFIG_DIR + "-pre-" + newDhfVersion;
+    /**
+     * The expectation is that a user has upgraded build.gradle to use a newer version of DHF but has not yet updated
+     * mlDHFVersion in gradle.properties. Thus, the value of mlDHFVersion is expected to be passed in here so that the
+     * backup path of hub-internal-config has the current version of DHF in its name.
+     *
+     * @param hubProject
+     * @param currentDhfVersion
+     * @throws IOException
+     */
+    protected void prepareProjectBeforeUpgrading(HubProject hubProject, String currentDhfVersion) throws IOException {
+        final String backupPath = HubProject.HUB_CONFIG_DIR + "-" + currentDhfVersion;
         FileUtils.copyDirectory(hubProject.getHubConfigDir().toFile(), hubProject.getProjectDir().resolve(backupPath).toFile());
         logger.warn("The " + HubProject.HUB_CONFIG_DIR + " directory has been moved to " + backupPath + " so that it can be re-initialized using the new version of Data Hub");
     }

@@ -60,7 +60,7 @@ public class UpgradeProjectTest extends HubTestBase {
 
         // This test is a little awkward because it's not clear if dataHub.upgradeProject can just be called in the
         // context of this test. So instead, some of the methods called by that method are called directly here.
-        dataHub.prepareProjectBeforeUpgrading(hubProject, "5.1.0");
+        dataHub.prepareProjectBeforeUpgrading(hubProject, "5.0.3");
         hubProject.init(createMap());
         hubProject.upgradeProject();
 
@@ -77,12 +77,12 @@ public class UpgradeProjectTest extends HubTestBase {
         assertEquals("Parent", db.get("range-element-attribute-index").get(0).get("parent-localname").asText(),
             "Other existing indexes should have been retained though; only range-element-index should have been removed");
 
-        File internalConfigBackupDir = hubProject.getProjectDir().resolve("src").resolve("main").resolve("hub-internal-config-pre-5.1.0").toFile();
+        File internalConfigBackupDir = hubProject.getProjectDir().resolve("src").resolve("main").resolve("hub-internal-config-5.0.3").toFile();
         assertTrue(internalConfigBackupDir.exists(), "The prepareProjectBeforeUpgrading method should backup the " +
             "hub-internal-config directory in the rare event that a user has made changes to this directory and doesn't want to " +
             "lose them (though a user really shouldn't be doing that)");
 
-        File mlConfigBackupDir = hubProject.getProjectDir().resolve("src").resolve("main").resolve("ml-config-pre-5.1.0").toFile();
+        File mlConfigBackupDir = hubProject.getProjectDir().resolve("src").resolve("main").resolve("ml-config-5.0.3").toFile();
         assertFalse(mlConfigBackupDir.exists(), "As of DHFPROD-3159, ml-config should no longer be backed up. DHF rarely needs to " +
             "change the files in this directory, and when it does need to, it'll make changes directly to the files so as to not " +
             "lose changes made by users.");
