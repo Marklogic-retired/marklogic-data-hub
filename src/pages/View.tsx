@@ -54,6 +54,7 @@ const View: React.FC = () => {
     try {
       const response = await axios(`/datahub/v2/jobs/models`);
       setLastHarmonized(response.data);
+      //console.log(response.data)
     } catch (error) {
        console.log('error', error.response);
     }

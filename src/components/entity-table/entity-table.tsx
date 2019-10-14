@@ -104,11 +104,12 @@ const EntityTable:React.FC<Props> = (props) => {
 
     let latestJobDate;
     let latestJobId;
-    const collectionDetails = props.lastHarmonized.find(detail => detail.entityCollection === entity.info.title)
+    const collectionDetails = props.lastHarmonized.find(detail => detail.entityCollection === entity.info.title);
     if(collectionDetails){
-      latestJobDate = collectionDetails.latestJobDateTime;
-      latestJobId = collectionDetails.latestJobId;
+        latestJobDate = collectionDetails.latestJobDateTime;
+        latestJobId = collectionDetails.latestJobId;
     }
+
 
     let documentCount = 0;
 
@@ -124,7 +125,7 @@ const EntityTable:React.FC<Props> = (props) => {
     let parsedEntity = {
       name: entity.info.title,
       documents: documentCount, 
-      created: relativeTimeConverter(latestJobDate) + ','+latestJobId ,
+      created: relativeTimeConverter(latestJobDate) + ','+latestJobId,
       definition: entityDefinition
     }
     return parsedEntity
