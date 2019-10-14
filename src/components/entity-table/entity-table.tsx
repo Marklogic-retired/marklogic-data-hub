@@ -2,10 +2,12 @@ import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 // import styles from './entity-table.module.scss';
 import { Table } from 'antd';
+import { relativeTimeConverter } from '../../util/date-conversion';
 
 type Props = {
   entities: any[];
   facetValues: any[];
+  lastHarmonized:any[];
 }
 
 const EntityTable:React.FC<Props> = (props) => {
@@ -82,13 +84,36 @@ const EntityTable:React.FC<Props> = (props) => {
     { 
       title: 'Last Harmonized', 
       dataIndex: 'created',
-      sorter: (a, b) => { return a.created.localeCompare(b.created) }
+        render: text => {
+        let parseText = text.split(',');
+        if(parseText[0]==='Invalid date'){
+          return 'Never been run'
+        }
+        return (
+            <Link to={{
+                pathname: "/browse",
+                state: { jobId: parseText[1]} }}
+                  data-cy={parseText[0]}>
+                {parseText[0]}
+            </Link>
+        )},
+        sorter: (a, b) => { return a.created.localeCompare(b.created) }
     }
   ];
-  
+
+
   const realData = props.entities.map((entity, index) => {
     const entityDefinition = entity.definitions.find(definition => definition.name === entity.info.title);
-    // TODO add created date
+
+    let latestJobDate;
+    let latestJobId;
+    const collectionDetails = props.lastHarmonized.find(detail => detail.entityCollection === entity.info.title);
+    if(collectionDetails){
+        latestJobDate = collectionDetails.latestJobDateTime;
+        latestJobId = collectionDetails.latestJobId;
+    }
+
+
     let documentCount = 0;
 
     if (props.facetValues.length) {
@@ -99,10 +124,11 @@ const EntityTable:React.FC<Props> = (props) => {
       }
     }
 
+
     let parsedEntity = {
       name: entity.info.title,
       documents: documentCount, 
-      created: '2019-07-30T16:08:30',
+      created: relativeTimeConverter(latestJobDate) + ','+latestJobId,
       definition: entityDefinition
     }
     return parsedEntity

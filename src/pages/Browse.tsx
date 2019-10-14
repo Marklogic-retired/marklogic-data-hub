@@ -23,6 +23,8 @@ const Browse: React.FC<Props> = ({location}) => {
     setPageLength,
     setEntityClearQuery,
     setAllEntities,
+    setQuery,
+    setLatestJobFacet,
   } = useContext(SearchContext);
 
   const [data, setData] = useState();
@@ -64,7 +66,7 @@ const Browse: React.FC<Props> = ({location}) => {
           entityNames: searchOptions.entityNames,
           start: searchOptions.start,
           pageLength: searchOptions.pageLength,
-          facets: searchOptions.searchFacets
+          facets: searchOptions.searchFacets,
         }
       });
       console.log('response.data', response.data);
@@ -73,16 +75,21 @@ const Browse: React.FC<Props> = ({location}) => {
       setTotalDocuments(response.data.total);
       setIsLoading(false);
     } catch (error) {
-      // console.log('error', error.response);
+      console.log('error', error.response);
       if (error.response.status === 401) {
         userNotAuthenticated();
       }
     }
   }
+
   useEffect(() => {
     if(location.state && location.state.entity){
       setEntityClearQuery(location.state.entity);
     }
+    if(location.state && location.state.jobId){
+      setLatestJobFacet(location.state.jobId);
+    }
+
     getEntityModel();
   }, []);
 

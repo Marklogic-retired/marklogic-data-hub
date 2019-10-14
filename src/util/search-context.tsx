@@ -25,8 +25,10 @@ interface ISearchContextInterface {
   setEntity: (option: string) => void;
   setAllEntities: (entities: string[]) => void;
   setEntityClearQuery: (option: string) => void;
+  setLatestJobFacet : (option: string) => void;
   clearFacet: (constraint:string, val:string) => void;
   clearAllFacets: () => void;
+
 }
 
 export const SearchContext = React.createContext<ISearchContextInterface>({
@@ -38,6 +40,7 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setEntity: () => {},
   setAllEntities: () => {},
   setEntityClearQuery: () => {},
+  setLatestJobFacet : () =>{},
   clearFacet: () => {},
   clearAllFacets: () => {}
 });
@@ -87,6 +90,14 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     setSearchOptions({ ...searchOptions, query: '', entityNames: [option]});
   }
 
+
+  const setLatestJobFacet = (vals) => {
+    let facets = {};
+      facets = {['createdByJobRange']: [vals]};
+    setSearchOptions({ ...searchOptions, start: 1, searchFacets: facets,entityNames: []});
+  }
+
+
   const clearFacet = (constraint: string, val: string) => {
     let facets = searchOptions.searchFacets;
     if (facets[constraint].length > 1) {
@@ -112,7 +123,8 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       setAllEntities,
       setEntityClearQuery,
       clearFacet,
-      clearAllFacets }}>
+      clearAllFacets,
+      setLatestJobFacet}}>
       {children}
     </SearchContext.Provider>
   )
