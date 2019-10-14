@@ -43,7 +43,11 @@
                  matSort>
           <ng-container matColumnDef="key">
             <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
-            <mat-cell *matCellDef="let srcProp" [ngStyle]="IndentCondition(srcProp.key)">{{displaySourceField(srcProp.key)}}</mat-cell>
+            <mat-cell *matCellDef="let srcProp" [ngStyle]="IndentCondition(srcProp.key)">
+              <div id="source-field-container">
+                <span class="namespace" tooltip="{{this.nmspace && this.nmspace[srcProp.key.slice(srcProp.key.lastIndexOf('/')+1)] ? this.nmspace[srcProp.key.slice(srcProp.key.lastIndexOf('/')+1)] : ''}}">{{displaySourceField(srcProp.key).indexOf(':') != -1 ? displaySourceField(srcProp.key).slice(0,displaySourceField(srcProp.key).indexOf(':')) : ''}}</span><span class="field-no-namespace">{{displaySourceField(srcProp.key).indexOf(':') != -1 ? displaySourceField(srcProp.key).slice(displaySourceField(srcProp.key).indexOf(':')) : displaySourceField(srcProp.key)}}</span>
+              </div>
+          </mat-cell>
           </ng-container>
           <ng-container matColumnDef="val">
             <mat-header-cell *matHeaderCellDef mat-sort-header>Value</mat-header-cell>
@@ -52,6 +56,7 @@
               <span *ngIf="srcProp.type !== 'array' && srcProp.type !== 'object'">{{ isQuoted(srcProp.type) ? '"' : '' }}{{ srcProp.val | slice:0:valMaxLen }}{{ srcProp.val.length > valMaxLen ? '...' : '' }}{{ isQuoted(srcProp.type) ? '"' : '' }}</span>
               <span *ngIf="srcProp.type === 'array' || srcProp.type === 'object'" class="val-object">{{ srcProp.type }}</span>
             </mat-cell>
+            <mat-cell *matCellDef="let srcProp">{{ isQuoted(srcProp.type) ? '"' : '' }}{{ srcProp.val | slice:0:valMaxLen }}{{ srcProp.val.length > valMaxLen ? '...' : '' }}{{ isQuoted(srcProp.type) ? '"' : '' }}</mat-cell>
           </ng-container>
           <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
           <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
@@ -101,6 +106,7 @@
           [mapResults]="this.mapResults"
           [mapErrors]="this.mapErrors"
           [containErrors]="this.containErrors"
+          [nmspace]="this.nmspace"
           (handleSelection)="this.onHandleSelection($event)"
         ></app-entity-table-ui>
       </div>

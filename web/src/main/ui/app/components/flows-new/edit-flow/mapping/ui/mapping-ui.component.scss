@@ -334,7 +334,10 @@ div.target-entity-title {
     }
 
     .mat-column-val {
-      padding-left: 2%
+      flex: 0 1 40% !important;
+      min-width: 25% !important;
+      padding-left: 2%;
+      padding-right: 2px;
     }
     
   }
@@ -506,15 +509,14 @@ span.btn-icons{
   //overflow: auto;
   padding-bottom: 6px;
      align-content: flex-end ; 
-  // align-items:  center ;
-  // align-self: center;
-  //border: 1px solid rgba(0, 0, 0, 0.12);
   text-align: center;
   margin: 0px auto;
   white-space: nowrap;
 }
 #Test-btn {
   position: relative;
+
+    padding-right: 4px;
     display: block;
     text-align: center;
     outline: none;
@@ -541,7 +543,6 @@ span.btn-icons{
   //top: 50%;
   left: 75%;
   padding-right: 2px;
-  //transform: translate(-50%, -50%);
 }
 
 #filter-icon {
@@ -560,3 +561,25 @@ span.btn-icons{
 #entity-table-container {
   width: 800px;
 }
+
+#source-field-container{
+  display:inline-block;
+  margin: 0;
+  padding: 0;
+  width: auto;
+
+> .namespace {
+    display:inline;
+    margin: 0;  
+    padding: 0;
+    color: rgb(88, 155, 228);
+    text-decoration: underline;
+  }
+> .field-no-namespace{
+      display:inline;
+      margin: 0;  
+      padding: 0;
+
+    }
+}
+
