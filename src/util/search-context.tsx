@@ -87,7 +87,7 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
 
   const setEntityClearQuery = (option: string) => {
     console.log('Selected Option is ' + option);
-    setSearchOptions({ ...searchOptions, query: '', entityNames: [option]});
+    setSearchOptions({ ...searchOptions, query: '',searchFacets:{},entityNames: [option]});
   }
 
 
