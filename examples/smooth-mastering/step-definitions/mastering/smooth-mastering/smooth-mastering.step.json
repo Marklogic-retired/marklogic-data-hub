@@ -1,0 +1,27 @@
+{
+  "lang" : "zxx",
+  "name" : "smooth-mastering",
+  "description" : "Merge items always to a new URI and discard null values",
+  "type" : "MASTERING",
+  "version" : 1,
+  "options" : {
+    "stepUpdate" : true,
+    "sourceQuery" : "cts.collectionQuery('default-mapping')",
+    "acceptsBatch" : true,
+    "sourceDatabase" : "data-hub-FINAL",
+    "collections" : [ "smooth-mastering" ],
+    "mergeOptions" : {
+      "mapper" : null
+    },
+    "matchOptions" : {
+      "mapper" : null
+    },
+    "outputFormat" : "json",
+    "targetDatabase" : "data-hub-FINAL"
+  },
+  "customHook" : { },
+  "modulePath" : "/custom-modules/mastering/smooth-mastering/main.sjs",
+  "retryLimit" : 0,
+  "batchSize" : 100,
+  "threadCount" : 4
+}

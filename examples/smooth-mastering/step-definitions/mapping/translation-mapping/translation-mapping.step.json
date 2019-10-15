@@ -1,0 +1,21 @@
+{
+  "lang" : "zxx",
+  "name" : "translation-mapping",
+  "description" : "Call the default mapping but generate a new URI for the result",
+  "type" : "MAPPING",
+  "version" : 1,
+  "options" : {
+    "collections" : [ "translation-mapping" ],
+    "outputFormat" : "json",
+    "primaryKey" : "id",
+    "primaryKeyPrefix" : "",
+    "sourceDatabase" : "data-hub-STAGING",
+    "sourceQuery" : "cts.collectionQuery('default-ingestion')",
+    "targetDatabase" : "data-hub-FINAL"
+  },
+  "customHook" : { },
+  "modulePath" : "/custom-modules/mapping/translation-mapping/main.sjs",
+  "retryLimit" : 0,
+  "batchSize" : 100,
+  "threadCount" : 4
+}

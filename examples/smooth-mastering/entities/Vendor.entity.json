@@ -1,0 +1,30 @@
+{
+  "info" : {
+    "title" : "Vendor",
+    "version" : "1.0.0",
+    "baseUri" : "http://example.com/entities/"
+  },
+  "definitions" : {
+    "Vendor" : {
+      "properties" : {
+        "id" : { "datatype" : "int" },
+        "name" : { "datatype" : "string" },
+        "fein" : { "datatype" : "string" },
+        "type" : { "datatype" : "string" },
+        "address" : { "datatype" : "string" },
+        "city" : { "datatype" : "string" },
+        "state" : { "datatype" : "string" },
+        "zip" : { "datatype" : "string" },
+        "country" : { "datatype" : "string" },
+        "phoneNumber" : { "datatype" : "string" },
+        "website" : { "datatype" : "string" },
+        "acctId" : { "datatype" : "int" },
+        "lastPayment" : { "datatype" : "date" }
+      },
+      "required" : [],
+      "rangeIndex" : [],
+      "wordLexicon" : [],
+      "pii" : []
+    }
+  }
+}
