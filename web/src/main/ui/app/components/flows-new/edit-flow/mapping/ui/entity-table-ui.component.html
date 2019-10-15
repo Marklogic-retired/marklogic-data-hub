@@ -113,6 +113,7 @@
           [currEntity] = "prop.$ref || prop.items.$ref"
           [containErrors]="containErrors"
           [mapErrors]="this.mapErrors['properties'] ? this.mapErrors['properties'][prop.name] : {}"
+          [nmspace]="this.nmspace"
           (handleSelection)="this.onHandleSelection($event)"
         ></app-entity-table-ui>
 
