@@ -135,18 +135,6 @@ public class DataHubService {
         dataHub.deleteDocument(uri, databaseKind);
     }
 
-    @Async
-    public void uninstallUserModules(HubConfig config) {
-        long startTime = PerformanceLogger.monitorTimeInsideMethod();
-
-        try {
-            dataHub.clearUserModules();
-        } catch(Throwable e) {
-            throw new DataHubException(e.getMessage(), e);
-        }
-        PerformanceLogger.logTimeInsideMethod(startTime, "DataHubService.uninstallUserModules");
-    }
-
     public HashMap preInstallCheck(HubConfig config) {
         return dataHub.runPreInstallCheck();
     }

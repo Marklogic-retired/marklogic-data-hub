@@ -205,35 +205,12 @@
 
       <div id="RequiresUpdateUpdateTab" class="tab-content" [hidden]="!tabs.RequiresUpdate">
         <section layout="row" layout-align="center center">
-          <section flex layout="column" layout-align="center center" *ngIf="hubUpdating">
-            <h3>Updating Your Project...</h3>
-            <div class="center-text">
-              <mdl-spinner single-color active></mdl-spinner>
-            </div>
-          </section>
-          <section flex layout="column" layout-align="center center" *ngIf="!hubUpdateFailed && !hubUpdating">
+          <section flex layout="column" layout-align="center center">
             <h3 *ngIf="currentEnvironment">Congratulations on updating to version<br>{{currentEnvironment.runningVersion}}</h3>
-            <span *ngIf="currentEnvironment && currentEnvironment.runningVersion !== currentEnvironment.dhfversion">
-              <p>But...your project doesn't seem to match this version of DHF!</p>
-              <p>Please update your project before proceeding onward! <a target="_blank" href="{{hubUpdateLink}}">How to update a Hub Project</a></p>
+            <span *ngIf="currentEnvironment">
+              <p>However, the version of the Data Hub you logged into is older than the version of QuickStart that you are running.</p>
+              <p>Please refer to <a target="_blank" href="{{hubUpdateLink}}">these instructions</a> for upgrading the instance of Data Hub that you logged into.</p>
             </span>
-            <span *ngIf="currentEnvironment && currentEnvironment.runningVersion === currentEnvironment.dhfversion">
-              <button mdl-button mdl-button-type="raised" mdl-colored="primary" mdl-ripple (click)="onUpdateProject.emit()">Update It</button>
-              <div class="manual">
-                <p>Curious about what that button does? Prefer to do it yourself?</p>
-                <p>We have a wiki page that describes the changes necessary. You can poke the button for an automatic update or you can do it yourself.</p>
-                <a target="_blank" href="{{hubUpdateLink}}">How to update a Hub Project</a>
-              </div>
-            </span>
-          </section>
-          <section flex layout="column" layout-align="center center" *ngIf="hubUpdateFailed && !hubUpdating">
-            <h3>Automatic Hub Update Failed!</h3>
-            <p *ngIf="currentEnvironment" class="error">
-              Sorry. We failed to update you to version <span class="version">{{currentEnvironment.runningVersion}}</span>.
-              <span>{{hubUpdateError}}.</span>
-            </p>
-            <p>Go read the documentation page that describes the changes necessary and try them manually.</p>
-            <a target="_blank" href="{{hubUpdateLink}}">How to update a Hub Project</a>
           </section>
         </section>
       </div>
