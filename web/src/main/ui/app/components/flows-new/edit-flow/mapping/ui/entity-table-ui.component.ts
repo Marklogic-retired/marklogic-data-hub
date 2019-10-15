@@ -150,6 +150,9 @@ export class EntityTableUiComponent implements OnChanges {
   }
 
   insertField(fieldName, index, prop) {
+    if(String(fieldName).includes(" ")){
+      fieldName = "*[local-name(.)='" + fieldName + "']";
+    }
     this.insertContent(fieldName, index, prop)
   }
 
