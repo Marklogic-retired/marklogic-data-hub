@@ -67,7 +67,7 @@ pipeline{
 			steps{
 			script{
 			 props = readProperties file:'data-hub/pipeline.properties';
-				 copyRPM 'Release','10.0-2'
+				 copyRPM 'Release','10.0-2.1'
 				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
 				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;set +e;./gradlew clean;./gradlew marklogic-data-hub:test || true;sleep 10s;./gradlew ml-data-hub:test || true;./gradlew web:test || true;'
 				junit '**/TEST-*.xml'
@@ -242,7 +242,7 @@ pipeline{
 			steps{
 			 script{
                 props = readProperties file:'data-hub/pipeline.properties';
-				copyRPM 'Release','9.0-10'
+				copyRPM 'Release','9.0-10.4'
 				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
 				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test -Dorg.gradle.jvmargs=-Xmx1g || true;sleep 10s;./gradlew ml-data-hub:test || true;sleep 10s;./gradlew web:test || true;sleep 10s;./gradlew marklogic-data-hub:testBootstrap || true;sleep 10s;./gradlew ml-data-hub:testFullCycle || true;'
 				junit '**/TEST-*.xml'
@@ -400,7 +400,7 @@ pipeline{
 		stage('rh7_cluster_9.0-10'){
 			agent { label 'dhfLinuxAgent'}
 			steps{ 
-				copyRPM 'Release','9.0-10'
+				copyRPM 'Release','9.0-10.4'
 				script{
 				props = readProperties file:'data-hub/pipeline.properties';
 				def dockerhost=setupMLDockerCluster 3
@@ -470,7 +470,7 @@ pipeline{
          stage('rh7_cluster_10.0-2'){
                agent { label 'dhfLinuxAgent'}
                steps{
-                 copyRPM 'Release','10.0-2'
+                 copyRPM 'Release','10.0-2.1'
                  script{
                  props = readProperties file:'data-hub/pipeline.properties';
                  def dockerhost=setupMLDockerCluster 3
@@ -769,7 +769,7 @@ pipeline{
 			steps{
 			script{
 			    props = readProperties file:'data-hub/pipeline.properties';
-				copyRPM 'Release','10.0-2'
+				copyRPM 'Release','10.0-2.1'
 				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
 				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;./gradlew clean;./gradlew marklogic-data-hub:test || true;sleep 10s;./gradlew ml-data-hub:test || true;sleep 10s;./gradlew web:test || true;'
 				junit '**/TEST-*.xml'
