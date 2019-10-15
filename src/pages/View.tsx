@@ -21,20 +21,22 @@ const View: React.FC = () => {
       const response = await axios(`/datahub/v2/models`);
       // console.log('model response', response.data);
       setEntites(entityFromJSON(response.data));
+      let entityArray = [ ...entityFromJSON(response.data).map(entity => entity.info.title)];
+      getSearchResults(entityArray);
     } catch (error) {
       if (error.response.status === 401) {
         userNotAuthenticated();
       }
     }
   }
-  const getSearchResults = async () => {
+  const getSearchResults = async (entityArray) => {
     try {
       const response = await axios({
         method: 'POST',
         url: `/datahub/v2/search`,
         data: {
           query: '',
-          entityNames: [],
+          entityNames: entityArray,
           start: 1,
           pageLength: 10,
           facets: {}
@@ -62,7 +64,6 @@ const View: React.FC = () => {
 
   useEffect(() => {
     getEntityModel();
-    getSearchResults();
     getEntityCollectionDetails();
   }, []);
 

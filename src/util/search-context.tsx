@@ -25,10 +25,11 @@ interface ISearchContextInterface {
   setEntity: (option: string) => void;
   setAllEntities: (entities: string[]) => void;
   setEntityClearQuery: (option: string) => void;
-  setLatestJobFacet : (option: string) => void;
+  setLatestJobFacet : (vals: string) => void;
   clearFacet: (constraint:string, val:string) => void;
   clearAllFacets: () => void;
-
+  setDateFacet: (dates: string[]) => void;
+  clearDateFacet: () => void;
 }
 
 export const SearchContext = React.createContext<ISearchContextInterface>({
@@ -42,7 +43,9 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setEntityClearQuery: () => {},
   setLatestJobFacet : () =>{},
   clearFacet: () => {},
-  clearAllFacets: () => {}
+  clearAllFacets: () => {},
+  setDateFacet: () => {},
+  clearDateFacet: () => {}
 });
 
 const SearchProvider: React.FC<{ children: any }> = ({children}) => {
@@ -90,13 +93,11 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     setSearchOptions({ ...searchOptions, query: '',searchFacets:{},entityNames: [option]});
   }
 
-
-  const setLatestJobFacet = (vals) => {
+  const setLatestJobFacet = (vals: string) => {
     let facets = {};
-      facets = {['createdByJobRange']: [vals]};
+      facets = { createdByJobRange: [vals] };
     setSearchOptions({ ...searchOptions, start: 1, searchFacets: facets,entityNames: []});
   }
-
 
   const clearFacet = (constraint: string, val: string) => {
     let facets = searchOptions.searchFacets;
@@ -112,6 +113,19 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     setSearchOptions({ ...searchOptions, searchFacets: {} });
   }
 
+  const setDateFacet = (dates: string[]) => {
+    setSearchOptions({ ...searchOptions, searchFacets: {...searchOptions.searchFacets, createdOnRange: dates} });
+  }
+
+  const clearDateFacet = () => {
+    let facets = searchOptions.searchFacets;
+    if (facets.hasOwnProperty('createdOnRange')){
+      delete facets.createdOnRange;
+      setSearchOptions({ ...searchOptions, searchFacets: facets });
+    }
+  }
+
+
   return (
     <SearchContext.Provider value={{ 
       searchOptions,
@@ -124,7 +138,10 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       setEntityClearQuery,
       clearFacet,
       clearAllFacets,
-      setLatestJobFacet}}>
+      setLatestJobFacet,
+      setDateFacet,
+      clearDateFacet
+      }}>
       {children}
     </SearchContext.Provider>
   )
