@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Collapse, Icon, Button, Tag } from 'antd';
+import { Collapse, Icon, Button, DatePicker } from 'antd';
+import moment from 'moment';
 import { SearchContext } from '../../util/search-context';
 import Facet from '../facet/facet';
 import { facetParser } from '../../util/data-conversion';
@@ -7,12 +8,20 @@ import hubPropertiesConfig from '../../config/hub-properties.config';
 import styles from './sidebar.module.scss';
 
 const { Panel } = Collapse;
+const { RangePicker } = DatePicker;
 
 const Sidebar = (props) => {
-  const { clearAllFacets, clearFacet, searchOptions } = useContext(SearchContext);
+  const { 
+    clearAllFacets,
+    clearFacet,
+    searchOptions,
+    setDateFacet,
+    clearDateFacet
+   } = useContext(SearchContext);
   const [entityFacets, setEntityFacets] = useState<any[]>([]);
   const [hubFacets, setHubFacets] = useState<any[]>([]);
   const [selectedFacets, setSelectedFacets] = useState<any[]>([]);
+  const [datePickerValue, setDatePickerValue] = useState<any[]>([null, null]);
 
   useEffect(() => {
     if (props.facets) {
@@ -34,16 +43,31 @@ const Sidebar = (props) => {
       if (Object.entries(searchOptions.searchFacets).length !== 0) {
         let selectedFacets: any[] = [];
         for( let constraint in searchOptions.searchFacets) {
-          searchOptions.searchFacets[constraint].map(facet => {
-            selectedFacets.push({ constraint, facet });
-          });
+          if (constraint === 'createdOnRange') {
+            selectedFacets.push({ constraint, facet: searchOptions.searchFacets[constraint] })
+          } else {
+            searchOptions.searchFacets[constraint].map(facet => {
+              selectedFacets.push({ constraint, facet });
+            });
+          }
           setSelectedFacets(selectedFacets);
         }
       } else {
         setSelectedFacets([]);
+        setDatePickerValue([null, null]);
       }
     }
   }, [props.selectedEntities, props.facets]);
+
+  const onDateChange = (dateVal, dateArray) => {
+    if (dateVal.length > 1) {
+      setDateFacet(dateArray);
+      setDatePickerValue([moment(dateArray[0]), moment(dateArray[1])]);
+    } else {
+      clearDateFacet();
+      setDatePickerValue([null, null]);
+    }
+  }
 
   return (
     <>
@@ -60,6 +84,19 @@ const Sidebar = (props) => {
           Clear All
         </Button>
           { selectedFacets.map((item, index) => {
+            if (item.constraint === 'createdOnRange') {
+              return (
+                <Button 
+                  size="small"
+                  className={styles.dateFacet} 
+                  key={index}
+                  onClick={()=> clearDateFacet()}
+                >
+                  <Icon type='close'/>
+                  {item.facet.join(' ~ ')}
+                </Button>
+              )
+            }
             return (
               <Button 
                 size="small"
@@ -97,16 +134,22 @@ const Sidebar = (props) => {
           </Panel>
         )}
         <Panel id="hub-properties" header={<div className={styles.title}>Hub Properties</div>} key="hubProperties" style={{borderBottom: 'none'}}>
-        { hubFacets.map(facet => {
-              return facet && (
-                <Facet
-                  name={facet.hasOwnProperty('displayName') ? facet.displayName : facet.facetName}
-                  constraint={facet.facetName}
-                  facetValues={facet.facetValues}
-                  key={facet.facetName}
-                />
-              )
-            })}
+          <div className={styles.facetName}>Created On</div>
+          <RangePicker 
+            className={styles.datePicker} 
+            onChange={onDateChange} 
+            value={datePickerValue}
+          />
+          { hubFacets.map(facet => {
+            return facet && (
+              <Facet
+                name={facet.hasOwnProperty('displayName') ? facet.displayName : facet.facetName}
+                constraint={facet.facetName}
+                facetValues={facet.facetValues}
+                key={facet.facetName}
+              />
+            )
+              })}
         </Panel>
     </Collapse>
   </>
