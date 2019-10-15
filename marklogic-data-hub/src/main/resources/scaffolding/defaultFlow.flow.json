@@ -35,7 +35,7 @@
     "2": {
       "name": "mapping-step",
       "description": "This is the default mapping step",
-      "stepDefinitionName": "default-mapping",
+      "stepDefinitionName": "entity-services-mapping",
       "stepDefinitionType": "MAPPING",
       "options": {
         "sourceDatabase": "%%mlStagingDbName%%",
