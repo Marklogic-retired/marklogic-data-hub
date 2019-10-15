@@ -23,7 +23,7 @@ interface ISearchContextInterface {
   setPageLength: (current: number, pageSize: number) => void;
   setSearchFacets: (constraint: string, vals: string[]) => void;
   setEntity: (option: string) => void;
-  clearEntity: () => void;
+  setAllEntities: (entities: string[]) => void;
   setEntityClearQuery: (option: string) => void;
   setLatestJobFacet : (option: string) => void;
   clearFacet: (constraint:string, val:string) => void;
@@ -38,7 +38,7 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setPageLength: () => {},
   setSearchFacets: () => {},
   setEntity: () => {},
-  clearEntity: () => {},
+  setAllEntities: () => {},
   setEntityClearQuery: () => {},
   setLatestJobFacet : () =>{},
   clearFacet: () => {},
@@ -81,8 +81,8 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     setSearchOptions({ ...searchOptions, searchFacets: {}, entityNames: [option]});
   }
 
-  const clearEntity = () => {
-    setSearchOptions({ ...searchOptions, searchFacets: {}, entityNames: []});
+  const setAllEntities = (entities: any[]) => {
+    setSearchOptions({ ...searchOptions, searchFacets: {}, entityNames: entities});
   }
 
   const setEntityClearQuery = (option: string) => {
@@ -120,7 +120,7 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       setPageLength,
       setSearchFacets,
       setEntity,
-      clearEntity,
+      setAllEntities,
       setEntityClearQuery,
       clearFacet,
       clearAllFacets,

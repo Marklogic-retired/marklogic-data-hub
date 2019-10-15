@@ -31,7 +31,7 @@ const View: React.FC = () => {
     try {
       const response = await axios({
         method: 'POST',
-        url: `/datahub/v2/search?format=json&database=data-hub-FINAL`,
+        url: `/datahub/v2/search`,
         data: {
           query: '',
           entityNames: [],

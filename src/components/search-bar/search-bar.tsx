@@ -10,21 +10,22 @@ interface Props {
 const SearchBar: React.FC<Props> = props => {
     const { Search } = Input;
     const { Option } = Select;
-    const { searchOptions, setQuery, clearEntity, setEntity } = useContext(SearchContext);
+    const { searchOptions, setQuery, setAllEntities, setEntity } = useContext(SearchContext);
     const [ searchString, setSearchString] = useState(searchOptions.query);
+    const [dropDownValue, setDropdownValue] = useState('All Entities');
     const dropdownOptions = ['All Entities', ...props.entities];
 
-    const options = dropdownOptions.map((e, i) => 
-      <Option value={e} key={i} data-cy="entity-option">{e}</Option>
+    const options = dropdownOptions.map((entity, index) => 
+      <Option value={entity} key={index} data-cy="entity-option">{entity}</Option>
     );
     const entityMenu = (
-      <Select style={{ width: 180 }} value={searchOptions.entityNames[0] || 'All Entities'} onChange={value => handleOptionSelect(value)} id="entity-select" data-cy={searchOptions.entityNames[0] || 'All Entities'}>
+      <Select style={{ width: 180 }} value={dropDownValue} onChange={value => handleOptionSelect(value)} id="entity-select" data-cy={searchOptions.entityNames[0] || 'All Entities'}>
         {options}
       </Select>
     );
 
     const handleOptionSelect = (option: any) => {
-      option === 'All Entities' ?  clearEntity() :  setEntity(option);
+      option === 'All Entities' ?  setAllEntities(props.entities) :  setEntity(option);
     }
 
     const handleSearch = (searchString: string) => {
@@ -39,7 +40,14 @@ const SearchBar: React.FC<Props> = props => {
       if (searchString !== searchOptions.query) {
         setSearchString(searchOptions.query);
       }
-    }, [searchOptions.query]);
+      if( searchOptions.entityNames.length === 1) {
+        if (dropDownValue !== searchOptions.entityNames[0]){
+          setDropdownValue(searchOptions.entityNames[0]);
+        }
+      } else {
+        setDropdownValue('All Entities');
+      }
+    }, [searchOptions]);
 
     return (
         <div className={styles.searchBar}>
