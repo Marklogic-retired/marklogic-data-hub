@@ -23,7 +23,6 @@ import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.InstallInfo;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
-import com.marklogic.hub.error.CantUpgradeException;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.impl.HubProjectImpl;
 import com.marklogic.hub.legacy.LegacyTracing;
@@ -173,15 +172,6 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
         return "{}";
     }
 
-    @RequestMapping(value = "/uninstall-user-modules", method = RequestMethod.DELETE)
-    @ResponseBody
-    public ResponseEntity<?> unInstallUserModules() {
-        // uninstall the hub
-        dataHubService.uninstallUserModules(hubConfig);
-
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
     @RequestMapping(value = "/stats", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
     public String getProjectStats() {
@@ -205,20 +195,6 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
         }
 
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/update-hub", method = RequestMethod.POST)
-    public ResponseEntity<?> updateHub() throws IOException, CantUpgradeException {
-        try {
-            if (dataHubService.updateHub(hubConfig)) {
-                installUserModules(hubConfig, true);
-                startProjectWatcher();
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-        } catch (CantUpgradeException e) {
-            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @RequestMapping(value = "/preinstall-check", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})

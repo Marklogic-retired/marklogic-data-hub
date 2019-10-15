@@ -30,8 +30,6 @@ import * as SemVer from 'semver';
       [loginError]="this.loginError"
       [loginInfo]="this.loginInfo"
       [initSettings]="this.initSettings"
-      [hubUpdateFailed]="this.hubUpdateFailed"
-      [hubUpdating]="this.hubUpdating"
       [hubUpdateLink]="this.hubUpdateLink"
       [preinstallCheck]="this.preinstallCheck"
       [runningPreinstallCheck]="this.runningPreinstallCheck"
@@ -46,7 +44,6 @@ import * as SemVer from 'semver';
       (onHubNameChanged)="this.hubNameChanged()"
       (onGotEnvironment)="this.gotEnvironment($event)"
       (onHubUpdateUrl)="this.hubUpdateUrl()"
-      (onUpdateProject)="this.updateProject()"
       (onProjectSelected)="this.project = $event"
       (onRemoveProject)="this.removeProject($event)"
       (onInitProject)="this.initProject()"
@@ -71,10 +68,6 @@ export class LoginComponent implements OnInit {
   initSettings: HubSettings = new HubSettings();
   showInitAdvanced: boolean = false;
 
-  hubVersions: any;
-  hubUpdating: boolean = false;
-  hubUpdateFailed: boolean = false;
-  hubUpdateError: string = '';
   hubUpdateLink: string = 'https://docs.marklogic.com/datahub/upgrade.html';
 
   loginError: string = null;
@@ -325,20 +318,6 @@ export class LoginComponent implements OnInit {
       this.loginInfo.projectId = project.id;
       this.loginUi.gotoTab('PostInit');
     });
-  }
-
-  updateProject() {
-    this.hubUpdating = true;
-    this.projectService.updateProject().subscribe(() => {
-        this.hubUpdating = false;
-        this.hubUpdateError = '';
-        this.loginNext();
-      },
-      error => {
-        this.hubUpdating = false;
-        this.hubUpdateFailed = true;
-        this.hubUpdateError = error.json().message;
-      });
   }
 
   postInitNext() {
