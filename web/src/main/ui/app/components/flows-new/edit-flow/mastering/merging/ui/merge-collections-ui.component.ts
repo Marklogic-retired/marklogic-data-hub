@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnInit, AfterViewInit, OnChanges, SimpleChanges, ViewChild, HostListener } from '@angular/core';
-import { MatDialog, MatPaginator, MatSort, MatTable, MatTableDataSource} from "@angular/material";
+import { MatDialog, MatSort, MatTable, MatTableDataSource} from "@angular/material";
 import { MergeCollection, Event } from "../merge-collections.model";
 import { AddMergeCollectionDialogComponent } from './add-merge-collection-dialog.component';
 import { ConfirmationDialogComponent } from "../../../../../common";
@@ -11,7 +11,6 @@ import { ConfirmationDialogComponent } from "../../../../../common";
 })
 export class MergeCollectionsUiComponent {
   @ViewChild(MatTable) table: MatTable<any>;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
   @Input() mergeCollections: any;
@@ -35,7 +34,6 @@ export class MergeCollectionsUiComponent {
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
