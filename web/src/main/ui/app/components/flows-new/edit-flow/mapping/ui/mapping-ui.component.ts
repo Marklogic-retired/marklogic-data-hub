@@ -109,9 +109,9 @@ export class MappingUiComponent implements OnChanges {
     this.dataSource.sort = this.sort;
   }
   updateDataSource() {
-    if (!this.dataSource){
+    if (!this.dataSource) {
       this.dataSource = new MatTableDataSource<any>(this.sampleDocNestedProps);
-       }
+    }
     this.dataSource.data = this.sampleDocNestedProps;
   }
 

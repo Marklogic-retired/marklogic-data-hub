@@ -12,6 +12,8 @@
 }
 
 div.item-title {
+  margin: 0;
+  height: 36px;
   div.item-type {
     display: inline-block;
     margin: 5px 10px 10px 0;
@@ -39,19 +41,17 @@ a {
   color: #2a4356;
 }
 
-p.item-identifying-info {
-  font-weight: bold;
-  margin: 0 0 5px 2px;
-  font-size: 15px;
-  //padding: 3px;
+div.item-identifying-info {
+  margin: 4px 0 5px 0;
+  font-size: 14px;
   .sample-doc-uri {
     padding-right: 7px;
   }
 }
 
-p.target-entity-title {
+div.target-entity-title {
   font-weight: normal;
-  margin: 0 0 14px 2px;
+  margin: 2px 0 29px 0;
   font-size: 20px;
 }
 
@@ -247,13 +247,14 @@ p.target-entity-title {
   p.edit-uri {
     margin: 0 0 6px 2px;
   }
-  span.uri-label {
+  div.uri-label {
+    display: inline-block;
     font-weight: bold;
     margin: 0 4px 0 0;
-    font-size: 15px;
+    font-size: 13px;
   }
   .edit-uri-val {
-    width: 376px;
+    width: 281px;
     padding: 3px 1px;
     height: 28px;
   }
@@ -274,7 +275,7 @@ p.target-entity-title {
 }
 
 .source-prop-container-map-exp {
-  padding: 20px 40px 320px 40px;
+  padding: 20px 28px 320px 28px;
   //height: auto;
 
   overflow: auto;
@@ -284,22 +285,24 @@ p.target-entity-title {
 
 .Source_Tbl { 
   float: left;
-  padding-right: 20px;
+  padding-right: 35px;
   word-break: break-all;
 
   > #source-new-table {
     width: 100% !important;
     overflow: auto;
-    border: 1px solid rgba(0, 0, 0, 0.961); 
+    /* border: 1px solid rgba(0, 0, 0, 0.961); */
+    border: 1px solid rgba(117, 74, 74, 0.12) !important;
+    margin-bottom: 20px;
     //border-radius: 15px;
     -webkit-overflow-scrolling: touch;
   
     mat-header-row {
       min-height: 30px;
-      //border: 1px solid rgba(0, 0, 0, .12) !important;
+      /* border: 1px solid rgba(0, 0, 0, .12) !important; */
       display: flex !important;
       justify-content: flex-end !important;
-      background-color: #D3D3D3;
+      background-color: #e2e2e2;
     }
     mat-row {
       min-height: auto;
@@ -307,30 +310,39 @@ p.target-entity-title {
       justify-content: flex-end !important;
     }
     mat-row:nth-child(odd){
-      background-color: #efefef;
-      }
+      /* background-color: #f6f6f6; */
+    }
     mat-header-cell{
-      border: 1px solid rgba(0, 0, 0, .12) !important;
+      /* border: 1px solid rgba(0, 0, 0, .12) !important; */
+      border-right: 1px solid rgba(0, 0, 0, 0.12);
       align-items: center;
       cursor: pointer;
     }
   
     mat-cell {
       min-width: 0;
-      border: 1px solid rgba(0, 0, 0, .12) !important;
+      /* border: 1px solid rgba(0, 0, 0, .12) !important; */
+      border-right: 1px solid rgba(0, 0, 0, 0.12);
       display: flex;
       align-items: center;
-      
+      min-height: 30px;
+      font-size: 13px;
     }
 
     .mat-column-key {
-      padding-left: 2%
+      padding-left: 4%
     }
 
     .mat-column-val {
       padding-left: 2%
     }
     
+  }
+
+  .val-object {
+    color: #999;
+    font-style: italic;
+    text-transform: capitalize;
   }
 
   .edit-item {
@@ -350,18 +362,22 @@ p.target-entity-title {
   .edit-cancel {
     color: red;
   }
-  p.edit-uri {
+  div.edit-uri {
     margin: 0 0 6px 2px;
   }
-  span.uri-label {
-    font-weight: normal;
+  div.uri-label {
+    display: inline-block;
+    width: 38px;
+    font-weight: 400;
     margin: 0 4px 0 0;
-    font-size: 15px;
+    font-size: 12px;
+    color: #777;
   }
   .edit-uri-val {
-    width: 376px;
+    width: 281px;
     padding: 3px 1px;
-    height: 28px;
+    height: 26px;
+    font-size: 14px;
   }
   .navigate_source_uris{
     width: 100%;
@@ -383,7 +399,8 @@ p.target-entity-title {
     border:none;
     outline: none !important;  
     top: 50%;
-    left: 33%;
+    left: 33.3%;
+    color: #666;
   }
   .URI_Index{
     display: inline-block;
@@ -391,7 +408,7 @@ p.target-entity-title {
     align-content: center ; 
     justify-content: center;
     background:white;
-    border: 1px solid rgba(0, 0, 0, 0.961); 
+    border: 1px solid rgba(0, 0, 0, 0.461); 
     align-items:  center ;
     align-self: center;
     top: 50%;
@@ -413,6 +430,7 @@ p.target-entity-title {
     align-content: center ; 
     top: 50%;
     left: 42%;
+    color: #666;
   }
 
   #browse-buttons{
@@ -427,100 +445,16 @@ p.target-entity-title {
     font-weight: 200;
 }
 
-
-
 .Entities_Tbl {
   float: left;
   word-break: break-all;
   width: auto !important;
   min-width: 50% !important;
-
-> #source-new-table-entities {
-  /* TURN OFF OLD TABLE */
-  display: none;
-  /* TURN OFF OLD TABLE */
-  width: auto !important;
-  overflow: auto;
-  border: 1px solid rgba(0, 0, 0, 0.961); 
-  //border-radius: 15px;
-  mat-header-cell{
-    border-right: 1px solid rgba(0, 0, 0, .12) !important;
-    align-items: center;
-  }
-  mat-header-row {
-        min-height: 30px;
-        width: 100%;
-        display: flex !important;
-        justify-content: flex-end !important;
-        background-color: #D3D3D3;
-        
-      }
-  mat-row {
-        min-height: 25px;
-        height: auto;
-        padding: 2px;
-        width: 100%;
-        display: flex !important;
-        justify-content: flex-start !important;
-        align-items: flex-start;
-
-  }
-  mat-row:nth-child(odd){
-    background-color: #efefef;
-    }
-  mat-cell {
-    display: -ms-flexbox;
-    display: -webkit-flex;
-    display: flex;
-    -webkit-align-self: stretch;
-    -ms-flex-item-align: stretch;
-    align-self: stretch;
-        min-width: 0;
-        border-right: 1px solid rgba(0, 0, 0, 0.12);
-        //display: flex;
-        align-items: flex-start;
-        text-align: left;
-          }
-  .mat-column-name {
-          flex: 0 1 70% !important;
-          min-width: 25% !important;
-          padding-left: 1%;
-          text-align: start;
-          //border-right: 1px solid rgba(0, 0, 0, .12);
-        }    
-  .mat-column-datatype {
-          flex: 0 1 45% !important;
-          min-width: 10% !important;
-          padding-left: 1%;
-        } 
-  .mat-column-expression {
-          flex: 0 1 100% !important;
-          min-width: 50% !important;
-          padding-left: 1%;
-        }   
-  .mat-column-value {
-          flex: 0 1 80% !important;
-
-        }  
-}
-
 }
 
 mat-icon {
   user-select: none;
   cursor: pointer;
-}
-
-.list-icon{
-  padding-top:2px;
-  user-select: none;
-  cursor: pointer;
-  //vertical-align:stretch;
-  display: flex;
-  // align-self: flex-start;
-  // align-items: flex-start;
-  //border: 1px solid rgba(0, 0, 0, 0.591);
-  //size: 100%;
 }
 
 #function-list {
@@ -538,31 +472,11 @@ mat-icon {
   font-style: italic;
 }
 
-.textField {
-padding-top: 3px;
-padding-bottom: 4px;  
-margin: 0px;
-display: flex;
-min-width: auto;
-width: 100%;
-border: 1px solid rgba(0, 0, 0, 0.591)
-}
-
-#edit-expression{
-  min-width: auto;
-  min-height: 22px;
-  overflow: hidden;
-  padding-left: 2px;
-  padding-right: 2px;
-  padding-bottom: 3px;
-  //vertical-align: center;
-  overflow-x: hidden
-}
-
 .edit-source-query{
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+  font-size: 14px;
 }
 
 .mat-menu-list {
@@ -585,92 +499,12 @@ border: 1px solid rgba(0, 0, 0, 0.591)
   align-self: center;
 }
 
-.example-element-detail {
-  //overflow: hidden;
-  display: flex;
-  
-  padding: 0px;
-  margin: 0px;
-  width: 150% !important;
-  justify-content: stretch !important;
-  border: 1px solid rgba(117, 74, 74, 0.12) !important;
-  align-items: stretch;
-  align-self: stretch;
-
-  > #source-new-table-entities2 {
-    width: 100% !important;
-    //align-self: stretch;
-    table-layout: auto;
-    //overflow: auto;
-    //display: table;
-    mat-header-cell{
-      border-right: 1px solid rgba(0, 0, 0, .12) !important;
-      align-items: center;
-      
-    }
-    mat-header-row {
-          min-height: 30px;
-          width: 100%;
-          display: flex !important;
-          justify-content: flex-end !important;
-          background-color: #D3D3D3;
-          
-        }
-    mat-row {
-          min-height: 25px;
-          height: auto;
-          padding: 2px;
-          width: 100%;
-          display: flex !important;
-          justify-content: flex-start !important;
-          align-items: flex-start;
-  
-    }
-    mat-row:nth-child(odd){
-      background-color: #efefef;
-      }
-    mat-cell {
-      display: -ms-flexbox;
-      display: -webkit-flex;
-      display: flex;
-      -webkit-align-self: stretch;
-      -ms-flex-item-align: stretch;
-      align-self: stretch;
-          min-width: 0;
-          border-right: 1px solid rgba(0, 0, 0, 0.12);
-          //display: flex;
-          align-items: flex-start;
-          text-align: left;
-            }
-    .mat-column-name {
-            flex: 0 1 70% !important;
-            min-width: 25% !important;
-            padding-left: 1%;
-            text-align: start;
-            //border-right: 1px solid rgba(0, 0, 0, .12);
-          }    
-    .mat-column-datatype {
-            flex: 0 1 45% !important;
-            min-width: 10% !important;
-            padding-left: 1%;
-          } 
-    .mat-column-expression {
-            flex: 0 1 100% !important;
-            min-width: 50% !important;
-            padding-left: 1%;
-          }   
-    .mat-column-value {
-            flex: 0 1 80% !important;
-  
-          }
-  }
-}
 span.btn-icons{
   width: 100%;
   display: flex;
   flex: 0 1 auto;
   //overflow: auto;
-  padding-bottom: 4px;
+  padding-bottom: 6px;
      align-content: flex-end ; 
   // align-items:  center ;
   // align-self: center;
@@ -685,7 +519,7 @@ span.btn-icons{
     text-align: center;
     outline: none;
     top: 50%;
-    left: 70%;
+    left: 72%;
 }
 #Clear-btn{
   position: relative;
@@ -693,7 +527,7 @@ span.btn-icons{
   align-items:  center ;
   align-self: center;
   top: 50%;
-  left: 71%;
+  left: 73%;
 }
 
 #lookup-icon {
@@ -705,7 +539,7 @@ span.btn-icons{
 //   align-items:  center ;
 //   align-self: center;
   //top: 50%;
-  left: 72%;
+  left: 75%;
   padding-right: 2px;
   //transform: translate(-50%, -50%);
 }
@@ -713,7 +547,7 @@ span.btn-icons{
 #filter-icon {
   display: inline-block;
   position: relative;
-  left: 73%;
+  left: 76%;
   padding-right: 2px;
 }
 
@@ -724,5 +558,5 @@ span.btn-icons{
 }
 
 #entity-table-container {
-  width: 750px;
+  width: 800px;
 }

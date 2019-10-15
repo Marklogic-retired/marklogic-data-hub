@@ -1,7 +1,7 @@
 <!-- START NEW MAPPING VIEW -->
 <div *ngIf="isVersionCompatibleWithES" class="source-prop-container-map-exp">
 
-  <span>
+  <div>
   
     <div class="Source_Tbl">
       <div class="item-title">
@@ -10,28 +10,30 @@
           <a href="https://marklogic.github.io/marklogic-data-hub/harmonize/mapping/#changing-the-mapping-source-document" target="_blank"><i class="fa fa-question-circle fa-lg"></i></a>
         </span> -->
       </div>
-      <p class="item-identifying-info">
-          <span class="uri-label" tooltip="The Query of the source document from which QuickStart generates the list of source property names." container="body">Query: </span>
-          <span class="edit-source-query" (click)="this.OpenFullSourceQuery()" tooltip="{{ this.step.options.sourceQuery }}" container="body">{{ getInitialChars(this.step.options.sourceQuery, 30, '...') }}</span>
-      </p>
-      <p *ngIf="!editingURI" class="item-identifying-info">
-        <span class="uri-label" tooltip="The URI of the source document from which QuickStart generates the list of source property names." container="body">URI: </span>
-        <span (click)="editingURI=true" ng-class="sample-doc-uri" class="sample-doc-uri" tooltip="{{ getURITooltip(mapping.sourceURI, 45) }}" container="body">{{ getLastChars(mapping.sourceURI, 45, '...') }}</span>
+      <div class="item-identifying-info">
+          <div class="uri-label" tooltip="The Query of the source document from which QuickStart generates the list of source property names." container="body">Query</div>
+          <span class="edit-source-query" (click)="this.OpenFullSourceQuery()" tooltip="{{ this.step.options.sourceQuery }}" container="body">{{ getInitialChars(this.step.options.sourceQuery, 40, '...') }}</span>
+      </div>
+      <div *ngIf="!editingURI" class="item-identifying-info">
+        <div class="uri-label" tooltip="The URI of the source document from which QuickStart generates the list of source property names." container="body">URI</div>
+        <span (click)="editingURI=true" ng-class="sample-doc-uri" class="sample-doc-uri" tooltip="{{ getURITooltip(mapping.sourceURI, 42) }}" container="body">{{ getLastChars(mapping.sourceURI, 42, '...') }}</span>
         <span class="fa fa-pencil edit-item" (click)="editingURI=true">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-      </p>
-      <p *ngIf="editingURI" class="edit-uri">
-        <span class="uri-label" tooltip="The URI of the source document from which QuickStart generates the list of source property names." container="body">URI:</span>
+      </div>
+      <div *ngIf="editingURI" class="edit-uri">
+        <div class="uri-label" tooltip="The URI of the source document from which QuickStart generates the list of source property names." container="body">URI</div>
         <input type="text" class="edit-uri-val" [(ngModel)]="editURIVal" (keypress)="keyPressURI($event)" />
         <span class="edit-save" (click)="onUpdateURINewUI();"><i class="fa fa-check"></i></span>
         <span class="edit-cancel" (click)="cancelEditURI()"><i class="fa fa-remove"></i></span>
-      </p>
+      </div>
       
         <span class="navigate_source_uris">
-            <button class="navigate_uris_left" (click)="onNavigateURIList(uriIndex-1)" [disabled]="this.disableURINavLeft"><i
-              class="fa fa-angle-left fa-2x"></i></button>
-          &nbsp;&nbsp;<div class="URI_Index"><p>{{uriIndex+1}}</p></div>
-          &nbsp;&nbsp;<button class="navigate_uris_right" (click)="onNavigateURIList(uriIndex+1)"
-            [disabled]="this.disableURINavRight"><i class="fa fa-angle-right fa-2x"></i></button>
+          <button class="navigate_uris_left" (click)="onNavigateURIList(uriIndex-1)" [disabled]="this.disableURINavLeft">
+            <i class="fa fa-angle-left fa-2x"></i>
+          </button>
+          <div class="URI_Index"><p>{{uriIndex+1}}</p></div>
+          <button class="navigate_uris_right" (click)="onNavigateURIList(uriIndex+1)" [disabled]="this.disableURINavRight">
+            <i class="fa fa-angle-right fa-2x"></i>
+          </button>
         </span>
 
 
@@ -46,7 +48,10 @@
           <ng-container matColumnDef="val">
             <mat-header-cell *matHeaderCellDef mat-sort-header>Value</mat-header-cell>
             <!-- <mat-cell *matCellDef="let srcProp">{{srcProp.val}}</mat-cell>  -->
-            <mat-cell *matCellDef="let srcProp">{{ isQuoted(srcProp.type) ? '"' : '' }}{{ srcProp.val | slice:0:valMaxLen }}{{ srcProp.val.length > valMaxLen ? '...' : '' }}{{ isQuoted(srcProp.type) ? '"' : '' }}</mat-cell>
+            <mat-cell *matCellDef="let srcProp">
+              <span *ngIf="srcProp.type !== 'array' && srcProp.type !== 'object'">{{ isQuoted(srcProp.type) ? '"' : '' }}{{ srcProp.val | slice:0:valMaxLen }}{{ srcProp.val.length > valMaxLen ? '...' : '' }}{{ isQuoted(srcProp.type) ? '"' : '' }}</span>
+              <span *ngIf="srcProp.type === 'array' || srcProp.type === 'object'" class="val-object">{{ srcProp.type }}</span>
+            </mat-cell>
           </ng-container>
           <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
           <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
@@ -58,10 +63,10 @@
     <div class="Entities_Tbl">
       <div class="item-title"> 
         <div class="item-type">Entity</div>
-        <br>
-        <br>
       </div>
-      <p class="target-entity-title" ng-class="title-entity-model">{{ targetEntity?.info.title }} </p>
+      <div class="target-entity-title" ng-class="title-entity-model">
+        {{ targetEntity?.info.title }}
+      </div>
       <span class="btn-icons">
         <button id="Test-btn" mat-raised-button color="primary" (click)="getMapResults()">
           Test
@@ -98,7 +103,7 @@
 
     </div> <!-- Entities_Tbl -->
 
-  </span>
+  </div>
 
   <!-- COLUMNS MENU -->
   <mat-menu class="mat-menu-list" #columnsMenu="matMenu">
