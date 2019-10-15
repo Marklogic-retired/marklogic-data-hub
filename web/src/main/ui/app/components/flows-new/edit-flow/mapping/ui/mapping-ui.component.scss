@@ -410,14 +410,15 @@ div.target-entity-title {
     position: relative;
     align-content: center ; 
     justify-content: center;
-    background:white;
-    border: 1px solid rgba(0, 0, 0, 0.461); 
     align-items:  center ;
     align-self: center;
     top: 50%;
     left: 38%;
     width: 25px; 
-    height: 25px
+    height: 25px;
+    > p {
+    font-size: 20px;
+    }
   }
   
   .navigate_uris_right {
