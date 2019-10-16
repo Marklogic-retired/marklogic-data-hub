@@ -1,0 +1,7 @@
+{
+  "role-name": "explorer-user",
+  "description": "A role that can access entity models and instances.",
+  "role": [
+    "rest-reader", "entity-model-reader"
+  ]
+}

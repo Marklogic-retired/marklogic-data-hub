@@ -1,0 +1,14 @@
+{
+  "role-name": "explorer-architect",
+  "description": "A role that can access entity models.",
+  "role": [
+    "entity-model-reader"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "rest-reader",
+      "action": "http://marklogic.com/xdmp/privileges/rest-reader",
+      "kind": "execute"
+    }
+  ]
+}
