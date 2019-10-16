@@ -1,0 +1,13 @@
+{
+  "Contact": {
+    "id": 2,
+    "name": "Pinnacle Temps",
+    "address": "13 South St.",
+    "city": "Bloomfield",
+    "stateProvince": "NZ",
+    "postalCode": "99975",
+    "countryCode": "US",
+    "phone": "997-555-9876",
+    "website": "example.org"
+  }
+}

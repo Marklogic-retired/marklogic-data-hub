@@ -41,7 +41,11 @@ deploy the application.
 
 To install via Gradle, first initialize the project:
 
-    ./gradlew -i hubInit
+    gradle -i hubInit
+
+Then install Gradle wrapper:
+
+    gradle wrapper
 
 Then modify the `gradle-local.properties` file and either un-comment
 the `mlUsername` and `mlPassword` properties and set the password for
@@ -57,4 +61,7 @@ to QuickStart.
 
 ## How to run the flow
 
-TK
+Using QuickStart or Gradle, run the `vendor-harmonization` flow.
+
+Note the use of `transformation-mapping` and `smooth-mastering` as the
+`stepDefinitionName` in the mapping and mastering steps.

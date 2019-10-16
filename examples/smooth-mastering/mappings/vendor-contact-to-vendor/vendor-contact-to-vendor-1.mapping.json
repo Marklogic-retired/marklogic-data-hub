@@ -1,0 +1,38 @@
+{
+  "lang" : "zxx",
+  "name" : "vendor-contact-to-vendor",
+  "description" : "Map vendor contact info to Vendor entity instances",
+  "version" : 1,
+  "targetEntityType" : "http://example.com/entities/Vendor-1.0.0/Vendor",
+  "sourceContext" : "/",
+  "sourceURI" : "",
+  "properties" : {
+    "id" : {
+      "sourcedFrom" : "id"
+    },
+    "name" : {
+      "sourcedFrom" : "name"
+    },
+    "address" : {
+      "sourcedFrom" : "address"
+    },
+    "city" : {
+      "sourcedFrom" : "city"
+    },
+    "state" : {
+      "sourcedFrom" : "stateProvince"
+    },
+    "zip" : {
+      "sourcedFrom" : "postalCode"
+    },
+    "country" : {
+      "sourcedFrom" : "countryCode"
+    },
+    "phoneNumber" : {
+      "sourcedFrom" : "phone"
+    },
+    "website" : {
+      "sourcedFrom" : "website"
+    }
+  }
+}

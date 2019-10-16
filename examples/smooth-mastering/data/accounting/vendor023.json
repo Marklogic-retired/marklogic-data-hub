@@ -1,0 +1,10 @@
+{
+  "Vendor": {
+    "id": 23,
+    "name": "Pinnacle Temps",
+    "contactId": 2,
+    "type": "labor",
+    "fein": "99-9999996",
+    "lastPayment": "2019-08-31"
+  }
+}

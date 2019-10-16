@@ -1,0 +1,10 @@
+{
+  "Vendor": {
+    "id": 17,
+    "name": "Acme Widgets",
+    "contactId": 1,
+    "type": "parts",
+    "fein": "99-9999997",
+    "lastPayment": "2019-06-30"
+  }
+}

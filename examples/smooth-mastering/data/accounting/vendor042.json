@@ -1,0 +1,10 @@
+{
+  "Vendor": {
+    "id": 42,
+    "name": "Peak Engineering",
+    "contactId": 3,
+    "type": "services",
+    "fein": "99-9999998",
+    "lastPayment": null
+  }
+}

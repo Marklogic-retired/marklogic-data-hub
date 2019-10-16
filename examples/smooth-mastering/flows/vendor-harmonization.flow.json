@@ -1,0 +1,139 @@
+{
+  "name" : "vendor-harmonization",
+  "description" : "An example of smooth mastering, harmonizing vendor records from two disparate sources.",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stopOnError" : false,
+  "options" : { },
+  "version" : 0,
+  "steps" : {
+    "1" : {
+      "name" : "ingest-vendors-from-contacts",
+      "description" : "Ingest detailed contact info for each vendor from the company address book.",
+      "options" : {
+        "additionalCollections" : [ ],
+        "headers" : {
+          "sources" : [ {
+            "name" : "vendor-harmonization"
+          } ],
+          "createdOn" : "currentDateTime",
+          "createdBy" : "currentUser"
+        },
+        "sourceQuery" : "cts.collectionQuery([])",
+        "collections" : [ "ingest-vendors-from-contacts" ],
+        "permissions" : "rest-reader,read,rest-writer,update",
+        "outputFormat" : "json",
+        "targetDatabase" : "data-hub-STAGING"
+      },
+      "customHook" : { },
+      "retryLimit" : 0,
+      "batchSize" : 0,
+      "threadCount" : 0,
+      "stepDefinitionName" : "default-ingestion",
+      "stepDefinitionType" : "INGESTION",
+      "fileLocations" : {
+        "inputFilePath" : "/home/cmaden/src/marklogic-data-hub/examples/smooth-mastering/data/contacts",
+        "inputFileType" : "json",
+        "outputURIReplacement" : "",
+        "separator" : ","
+      },
+      "mappingStep" : false,
+      "customStep" : false,
+      "mappingName" : null
+    },
+    "2" : {
+      "name" : "ingest-vendors-from-accounting",
+      "description" : "Ingest vendor information from the company accounting system.",
+      "options" : {
+        "additionalCollections" : [ ],
+        "headers" : {
+          "sources" : [ {
+            "name" : "vendor-harmonization"
+          } ],
+          "createdOn" : "currentDateTime",
+          "createdBy" : "currentUser"
+        },
+        "sourceQuery" : "cts.collectionQuery([])",
+        "collections" : [ "ingest-vendors-from-accounting" ],
+        "permissions" : "rest-reader,read,rest-writer,update",
+        "outputFormat" : "json",
+        "targetDatabase" : "data-hub-STAGING"
+      },
+      "customHook" : { },
+      "retryLimit" : 0,
+      "batchSize" : 0,
+      "threadCount" : 0,
+      "stepDefinitionName" : "default-ingestion",
+      "stepDefinitionType" : "INGESTION",
+      "fileLocations" : {
+        "inputFilePath" : "/home/cmaden/src/marklogic-data-hub/examples/smooth-mastering/data/accounting",
+        "inputFileType" : "json",
+        "outputURIReplacement" : "",
+        "separator" : ","
+      },
+      "mappingStep" : false,
+      "customStep" : false,
+      "mappingName" : null
+    },
+    "3" : {
+      "name" : "vendor-contact-mapping",
+      "description" : "Create vendor stubs from contact records",
+      "options" : {
+        "additionalCollections" : [ ],
+        "sourceQuery" : "cts.andQuery([cts.collectionQuery('ingest-vendors-from-contacts'),cts.fieldRangeQuery('datahubCreatedOn','>',fn.currentDateTime().subtract(xs.dayTimeDuration('PT24H')))])",
+        "mapping" : {
+          "name" : "vendor-contact-to-vendor",
+          "version" : 1
+        },
+        "targetEntity" : "Vendor",
+        "sourceDatabase" : "data-hub-STAGING",
+        "collections" : [ "vendors-from-contacts", "Vendor" ],
+        "uriPrefix" : "/smooth-mastering",
+        "primaryKeyPrefix" : "C",
+        "sourceCollection" : "",
+        "outputFormat" : "json",
+        "targetDatabase" : "data-hub-STAGING",
+        "primaryKey" : "id"
+      },
+      "customHook" : { },
+      "retryLimit" : null,
+      "batchSize" : null,
+      "threadCount" : null,
+      "stepDefinitionName" : "translation-mapping",
+      "stepDefinitionType" : "MAPPING",
+      "mappingStep" : true,
+      "customStep" : false,
+      "mappingName" : "vendor-contact-to-vendor"
+    },
+    "4" : {
+      "name" : "vendor-accounting-mapping",
+      "description" : "Create vendor stubs from accounting records",
+      "options" : {
+        "additionalCollections" : [ ],
+        "sourceQuery" : "cts.andQuery([cts.collectionQuery('ingest-vendors-from-accounting'),cts.fieldRangeQuery('datahubCreatedOn','>',fn.currentDateTime().subtract(xs.dayTimeDuration('PT24H')))])",
+        "mapping" : {
+          "name" : "vendor-accounting-to-vendor",
+          "version" : 1
+        },
+        "targetEntity" : "Vendor",
+        "sourceDatabase" : "data-hub-STAGING",
+        "collections" : [ "vendors-from-accounting", "Vendor" ],
+	"uriPrefix" : "/smooth-mastering",
+	"primaryKeyPrefix": "A",
+        "sourceCollection" : "",
+        "outputFormat" : "json",
+        "targetDatabase" : "data-hub-STAGING",
+	"primaryKey" : "id"
+      },
+      "customHook" : { },
+      "retryLimit" : null,
+      "batchSize" : null,
+      "threadCount" : null,
+      "stepDefinitionName" : "translation-mapping",
+      "stepDefinitionType" : "MAPPING",
+      "mappingStep" : true,
+      "customStep" : false,
+      "mappingName" : "vendor-accounting-to-vendor"
+    }
+  }
+}

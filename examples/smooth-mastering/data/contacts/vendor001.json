@@ -1,0 +1,13 @@
+{
+  "Contact": {
+    "id": 1,
+    "name": "Acme Widgets, Inc.",
+    "address": "1 Main St.",
+    "city": "Springfield",
+    "stateProvince": "YZ",
+    "postalCode": "99972",
+    "countryCode": "US",
+    "phone": "997-555-1234",
+    "website": "example.com"
+  }
+}

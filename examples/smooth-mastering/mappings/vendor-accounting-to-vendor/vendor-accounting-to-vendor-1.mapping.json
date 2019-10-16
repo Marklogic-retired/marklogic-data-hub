@@ -1,0 +1,29 @@
+{
+  "lang" : "zxx",
+  "name" : "vendor-accounting-to-vendor",
+  "description" : "Map vendor accounting info to Vendor entity instances",
+  "version" : 1,
+  "targetEntityType" : "http://example.com/entities/Vendor-1.0.0/Vendor",
+  "sourceContext" : "/",
+  "sourceURI" : "",
+  "properties" : {
+    "name" : {
+      "sourcedFrom" : "name"
+    },
+    "acctId" : {
+      "sourcedFrom" : "id"
+    },
+    "lastPayment" : {
+      "sourcedFrom" : "lastPayment"
+    },
+    "id" : {
+      "sourcedFrom" : "contactId"
+    },
+    "fein" : {
+      "sourcedFrom" : "fein"
+    },
+    "type" : {
+      "sourcedFrom" : "type"
+    }
+  }
+}
