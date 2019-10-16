@@ -35,7 +35,7 @@
         "inputFilePath" : "/home/cmaden/src/marklogic-data-hub/examples/smooth-mastering/data/contacts",
         "inputFileType" : "json",
         "outputURIReplacement" : "",
-        "separator" : ","
+        "separator" : ""
       }
     },
     "2" : {
@@ -57,7 +57,7 @@
         "targetDatabase" : "data-hub-STAGING"
       },
       "customHook" : { },
-      "retryLimit" : 0,
+      "retryLimit" : null,
       "batchSize" : 0,
       "threadCount" : 0,
       "stepDefinitionName" : "default-ingestion",
@@ -66,7 +66,7 @@
         "inputFilePath" : "/home/cmaden/src/marklogic-data-hub/examples/smooth-mastering/data/accounting",
         "inputFileType" : "json",
         "outputURIReplacement" : "",
-        "separator" : ","
+        "separator" : ""
       }
     },
     "3" : {
