@@ -32,7 +32,7 @@
       "stepDefinitionName" : "default-ingestion",
       "stepDefinitionType" : "INGESTION",
       "fileLocations" : {
-        "inputFilePath" : "/home/cmaden/src/marklogic-data-hub/examples/smooth-mastering/data/contacts",
+        "inputFilePath" : "data/contacts",
         "inputFileType" : "json",
         "outputURIReplacement" : "",
         "separator" : ""
@@ -63,7 +63,7 @@
       "stepDefinitionName" : "default-ingestion",
       "stepDefinitionType" : "INGESTION",
       "fileLocations" : {
-        "inputFilePath" : "/home/cmaden/src/marklogic-data-hub/examples/smooth-mastering/data/accounting",
+        "inputFilePath" : "data/accounting",
         "inputFileType" : "json",
         "outputURIReplacement" : "",
         "separator" : ""
