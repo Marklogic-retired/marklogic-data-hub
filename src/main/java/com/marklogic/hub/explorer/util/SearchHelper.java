@@ -66,7 +66,8 @@ public class SearchHelper {
     if (!CollectionUtils.isEmpty(searchQuery.getEntityNames())) {
       // Collections to search
       String[] collections = searchQuery.getEntityNames().toArray(new String[0]);
-      // Collections to be excluded from search
+      // Collections that have the mastering audit and notification docs. Excluding docs from
+      // these collection in search results
       String[] excludedCollections = getExcludedCollections(searchQuery.getEntityNames());
 
       StructuredQueryDefinition finalCollQuery = queryBuilder
