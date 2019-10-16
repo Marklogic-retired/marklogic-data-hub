@@ -61,7 +61,7 @@ const LoginForm: React.FC = () => {
   }
 
   return (
-    <Form onSubmit={handleSubmit} className={styles.login}>
+    <Form onSubmit={handleSubmit} className={styles.login} data-cy='login'>
       <Form.Item 
         hasFeedback 
         validateStatus={(username || !isUsernameTouched) ? '' : 'error'}
@@ -95,7 +95,7 @@ const LoginForm: React.FC = () => {
           Submit
         </Button>
         {isLoading && <Spin  style={{ marginLeft: '7px' }} />}
-        <Text type="danger">{errorResponse}</Text>
+        <Text type="danger" data-cy="invalid-credentials">{errorResponse}</Text>
       </Form.Item>
     </Form>
   );
