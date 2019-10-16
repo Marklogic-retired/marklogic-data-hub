@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 import LoginForm from './login-form';
 
 
-describe('JSON result with Primary Key', () => {
+describe('Login page', () => {
   let wrapper;
 
   beforeEach(() => {
