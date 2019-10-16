@@ -1,8 +1,8 @@
 const test = require("/test/test-helper.xqy");
-const mapping = require("/data-hub/5/builtins/steps/mapping/entity-services/main.sjs");
+const entityValidationLib = require("/data-hub/5/builtins/steps/mapping/entity-services/entity-validation-lib.sjs");
 
 function shouldValidate(validateEntityValue) {
-  return mapping.shouldValidateEntity({
+  return entityValidationLib.shouldValidateEntity({
     validateEntity: validateEntityValue
   });
 }

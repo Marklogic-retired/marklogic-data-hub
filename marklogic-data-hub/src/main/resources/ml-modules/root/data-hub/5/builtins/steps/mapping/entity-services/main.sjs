@@ -3,6 +3,7 @@ const datahub = DataHubSingleton.instance();
 const defaultLib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
 const lib = require('/data-hub/5/builtins/steps/mapping/entity-services/lib.sjs');
 const es = require('/MarkLogic/entity-services/entity-services');
+const entityValidationLib = require('entity-validation-lib.sjs');
 
 // caching mappings in key to object since tests can have multiple mappings run in same transaction
 var mappings = {};
@@ -71,95 +72,15 @@ function main(content, options) {
   }
 
   // Must validate before building an envelope so that validaton errors can be added to the headers
-  validateEntity(newInstance, options, entity.info);
+  entityValidationLib.validateEntity(newInstance, options, entity.info);
 
   content.value = buildEnvelope(entity.info, doc, newInstance, outputFormat, options);
 
-  if (options.headers != null && options.headers != undefined) {
-    // Must delete this so it doesn't impact other items in the batch
-    delete options.headers.validationErrors;
-  }
+  // Must remove these so that they're not carried over to another item in a batch
+  entityValidationLib.removeValidationErrorsFromHeaders(options);
 
   content.provenance = { [content.uri]: provenance };
   return content;
-}
-
-function validateEntity(newInstance, options, entityInfo) {
-  let validateEntity = options.validateEntity;
-  if (shouldValidateEntity(options)) {
-    let value = fn.string(options.validateEntity).toLowerCase();
-    if ("xml" == options.outputFormat) {
-      validateXmlEntity(newInstance, options, value);
-    } else {
-      validateJsonEntity(newInstance, options, value, entityInfo);
-    }
-  }
-}
-
-function shouldValidateEntity(options) {
-  let value = options.validateEntity;
-  if (value != null && value != undefined) {
-    value = fn.string(value).toLowerCase();
-    return value == "accept" || value == "reject";
-  }
-  return false;
-}
-
-function validateJsonEntity(newInstance, options, validateEntityValue, entityInfo) {
-  // As of 5.1.0, this is safe to do. But eventually, we'll want to find a schema by querying the schema database, or,
-  // better yet, via some API function call that does the work for us.
-  const entitySchemaUri = "/entities/" + entityInfo.title + ".entity.schema.json";
-  try {
-    xdmp.jsonValidate(newInstance, entitySchemaUri, ["full"]);
-  } catch (e) {
-    if ("accept" == validateEntityValue) {
-      if (options.headers == null) {
-        options.headers = {};
-      }
-
-      // Tossing information about the errors in the headers so that they're added to the envelope.
-      // Note that regardless of the number of errors, xdmp.jsonValidate will return all of them in a "data" array, with
-      // each array item being a string.
-      options.headers.validationErrors = {
-        "name": e.name,
-        "data": e.data,
-        "message": e.message
-      }
-    } else if ("reject" == validateEntityValue) {
-      throw Error(e);
-    }
-  }
-}
-
-function validateXmlEntity(newInstance, options, validateEntityValue) {
-  const result = fn.head(xdmp.xqueryEval(
-    'declare variable $newInstance external; xdmp:validate($newInstance, "strict")',
-    {newInstance: newInstance}
-  ));
-
-  if (result != null) {
-    let errorCount = result.xpath("count(/*:error)");
-    if (errorCount > 0) {
-      if ("accept" == validateEntityValue) {
-        if (options.headers == null) {
-          options.headers = {};
-        }
-        options.headers.validationErrors = [];
-        for (error of result.xpath("/*:error")) {
-          options.headers.validationErrors.push({
-            error : {
-              code: error.xpath("./*:code/text()"),
-              name: error.xpath("./*:name/text()"),
-              message: error.xpath("./*:message/text()"),
-              formatString: error.xpath("./*:format-string/text()")
-            }
-          });
-        }
-      } else if ("reject" == validateEntityValue) {
-        throw Error(result);
-      }
-    }
-  }
 }
 
 // Extracted for unit testing purposes
@@ -276,6 +197,5 @@ function buildEnvelope(entityInfo, doc, instance, outputFormat, options) {
 
 module.exports = {
   main: main,
-  buildEnvelope: buildEnvelope,
-  shouldValidateEntity: shouldValidateEntity
+  buildEnvelope: buildEnvelope
 };
