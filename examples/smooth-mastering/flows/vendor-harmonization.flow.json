@@ -36,10 +36,7 @@
         "inputFileType" : "json",
         "outputURIReplacement" : "",
         "separator" : ","
-      },
-      "mappingStep" : false,
-      "customStep" : false,
-      "mappingName" : null
+      }
     },
     "2" : {
       "name" : "ingest-vendors-from-accounting",
@@ -70,10 +67,7 @@
         "inputFileType" : "json",
         "outputURIReplacement" : "",
         "separator" : ","
-      },
-      "mappingStep" : false,
-      "customStep" : false,
-      "mappingName" : null
+      }
     },
     "3" : {
       "name" : "vendor-contact-mapping",
@@ -100,10 +94,7 @@
       "batchSize" : 0,
       "threadCount" : 0,
       "stepDefinitionName" : "translation-mapping",
-      "stepDefinitionType" : "MAPPING",
-      "mappingStep" : true,
-      "customStep" : false,
-      "mappingName" : "vendor-contact-to-vendor"
+      "stepDefinitionType" : "MAPPING"
     },
     "4" : {
       "name" : "vendor-accounting-mapping",
@@ -130,10 +121,7 @@
       "batchSize" : 0,
       "threadCount" : 0,
       "stepDefinitionName" : "translation-mapping",
-      "stepDefinitionType" : "MAPPING",
-      "mappingStep" : true,
-      "customStep" : false,
-      "mappingName" : "vendor-accounting-to-vendor"
+      "stepDefinitionType" : "MAPPING"
     },
     "5" : {
       "name" : "merge-vendors",
@@ -141,59 +129,50 @@
       "options" : {
         "stepUpdate" : true,
         "additionalCollections" : [ ],
-        "filterQuery": "cts.collectionQuery(['vendors-from-accounting','vendors-from-contacts'])",
         "sourceQuery" : "cts.andQuery([cts.collectionQuery(['vendors-from-accounting','vendors-from-contacts']),cts.fieldRangeQuery('datahubCreatedOn','>',fn.currentDateTime().subtract(xs.dayTimeDuration('PT24H')))])",
         "acceptsBatch" : true,
         "targetEntity" : "Vendor",
+        "uriPrefix" : "/smooth-mastering",
+        "sourceCollection" : "",
+        "targetDatabase" : "data-hub-FINAL",
         "sourceDatabase" : "data-hub-STAGING",
         "collections" : [ "merged-vendors", "Vendor" ],
-        "mergeOptions" : {},
+        "mergeOptions" : { },
         "matchOptions" : {
           "dataFormat" : "json",
           "algorithms" : {
             "algorithm" : [ ]
           },
-          "propertyDefs": {
-            "property": [
-              {
-                "localname": "id",
-                "name": "id"
-              }
-            ]
+          "propertyDefs" : {
+            "property" : [ {
+              "localname" : "id",
+              "name" : "id"
+            } ]
           },
           "scoring" : {
-            "add" : [
-              {
-                "propertyName": "id",
-                "weight": 50
-              }
-            ]
+            "add" : [ {
+              "propertyName" : "id",
+              "weight" : 50
+            } ]
           },
           "thresholds" : {
-            "threshold" : [
-              {
-                "above": 20,
-                "label": "Definitive Match",
-                "action": "merge"
-              }
-            ]
+            "threshold" : [ {
+              "above" : 20,
+              "label" : "Definitive Match",
+              "action" : "merge"
+            } ]
           }
         },
-        "sourceCollection" : "",
-        "primaryKey": "id",
-        "uriPrefix": "/smooth-mastering",
         "outputFormat" : "json",
-        "targetDatabase" : "data-hub-FINAL"
+        "filterQuery" : "cts.collectionQuery(['vendors-from-accounting','vendors-from-contacts'])",
+        "primaryKey" : "id"
       },
       "customHook" : { },
-      "retryLimit" : null,
-      "batchSize" : null,
-      "threadCount" : null,
+      "retryLimit" : 0,
+      "batchSize" : 0,
+      "threadCount" : 0,
       "stepDefinitionName" : "smooth-mastering",
-      "stepDefinitionType" : "MASTERING",
-      "mappingStep" : false,
-      "customStep" : false,
-      "mappingName" : null
+      "stepDefinitionType" : "MASTERING"
     }
   }
 }

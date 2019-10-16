@@ -54,8 +54,8 @@ function main(content, options) {
     mergeOptions,
     matchOptions,
     filterQuery,
-    persistResults//,
-    //datahub.prov.granularityLevel() === datahub.prov.FINE_LEVEL
+    persistResults,
+    datahub.prov.granularityLevel() === datahub.prov.FINE_LEVEL
   );
 
   // Scan through the merge results.  Any items which matched will be
