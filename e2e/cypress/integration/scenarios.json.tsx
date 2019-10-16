@@ -22,7 +22,7 @@ describe('json scenario on view entities page', () => {
 
     it('has total entities and documents', () => {
         viewPage.getTotalEntities().should('be.equal', 2);
-        viewPage.getTotalDocuments().should('be.greaterThan', 1010);
+        viewPage.getTotalDocuments().should('be.greaterThan', 1008);
     });
 
     it('has Person entity with properties and attributes', () => {
@@ -60,7 +60,7 @@ describe('json scenario on browse documents page', () => {
     it('select "all entities" verify docs, hub/entity properties', () => {
         browsePage.getSelectedEntity().should('contain', 'All Entities');
         cy.wait(500);
-        browsePage.getTotalDocuments().should('be.greaterThan', '1010')
+        browsePage.getTotalDocuments().should('be.greaterThan', '1008')
         browsePage.getDocuments().each(function (item, i) {
             browsePage.getDocumentEntityName(i).should('exist');
             browsePage.getDocumentId(i).should('exist');
@@ -100,7 +100,7 @@ describe('json scenario on browse documents page', () => {
         browsePage.selectEntity('All Entities');
         browsePage.getSelectedEntity().should('contain', 'All Entities');
         cy.wait(500);
-        browsePage.getTotalDocuments().should('be.greaterThan', '1010');
+        browsePage.getTotalDocuments().should('be.greaterThan', '1008');
         browsePage.getFacetItemCheckbox('collection', 'Person').click();
         browsePage.getTotalDocuments().should('be.equal', 6);
         browsePage.getFacetSearchSelectionCount('collection').should('contain', '1');
