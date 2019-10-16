@@ -67,8 +67,7 @@ const Facet = (props) => {
         className={styles.value}
         data-cy={stringConverter(props.name) + "-facet-item-checkbox"}
       >
-        {/*  TODO handle facet vales that are numbers, but are not dates */}
-        {moment(facet.value).isValid() ? dateConverter(facet.value) : facet.value}
+        {facet.value}
       </Checkbox>
       <div className={styles.count} data-cy={stringConverter(props.name) + "-facet-item-count"}>{facet.count}</div>
     </div>
