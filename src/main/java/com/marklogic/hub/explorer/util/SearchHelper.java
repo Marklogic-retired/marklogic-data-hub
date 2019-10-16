@@ -41,6 +41,7 @@ public class SearchHelper {
   private static final String CREATED_ON_CONSTRAINT_NAME = "createdOnRange";
   private static final String JOB_WORD_CONSTRAINT_NAME = "createdByJobWord";
   private static final String JOB_RANGE_CONSTRAINT_NAME = "createdByJob";
+  private static final String MASTERING_AUDIT_COLLECTION_NAME = "mdm-auditing";
 
   private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
   private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter
@@ -63,8 +64,16 @@ public class SearchHelper {
 
     // Filtering search results for docs related to an entity
     if (!CollectionUtils.isEmpty(searchQuery.getEntityNames())) {
+      // Collections to search
       String[] collections = searchQuery.getEntityNames().toArray(new String[0]);
-      queries.add(queryBuilder.collection(collections));
+      // Collections to be excluded from search
+      String[] excludedCollections = getExcludedCollections(searchQuery.getEntityNames());
+
+      StructuredQueryDefinition finalCollQuery = queryBuilder
+          .andNot(queryBuilder.collection(collections),
+              queryBuilder.collection(excludedCollections));
+
+      queries.add(finalCollQuery);
     }
 
     // Filtering by facets
@@ -132,5 +141,13 @@ public class SearchHelper {
       logger.error(rnfe.getMessage());
       return Optional.empty();
     }
+  }
+
+  private String[] getExcludedCollections(List<String> entityModels) {
+    entityModels.forEach(collection -> {
+      entityModels.set(entityModels.indexOf(collection), "sm-" + collection + "-notification");
+    });
+    entityModels.add(MASTERING_AUDIT_COLLECTION_NAME);
+    return entityModels.toArray(new String[0]);
   }
 }
