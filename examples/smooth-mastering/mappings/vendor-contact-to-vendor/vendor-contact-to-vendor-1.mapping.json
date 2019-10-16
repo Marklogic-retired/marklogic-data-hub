@@ -4,7 +4,7 @@
   "description" : "Map vendor contact info to Vendor entity instances",
   "version" : 1,
   "targetEntityType" : "http://example.com/entities/Vendor-1.0.0/Vendor",
-  "sourceContext" : "/",
+  "sourceContext" : "/Contact",
   "sourceURI" : "",
   "properties" : {
     "id" : {

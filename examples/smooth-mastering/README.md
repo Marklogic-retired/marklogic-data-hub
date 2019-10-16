@@ -65,3 +65,14 @@ Using QuickStart or Gradle, run the `vendor-harmonization` flow.
 
 Note the use of `transformation-mapping` and `smooth-mastering` as the
 `stepDefinitionName` in the mapping and mastering steps.
+
+Note that documents are never overwritten, but new documents are
+created with deterministic URIs.  Repeatedly running this flow will
+result in the same documents being created with the same data.
+
+Note also the time-windowing in the source queries; only
+newly-ingested documents will contribute to downstream changes.
+
+Note that after merging, disparate values are kept (as in the `name`
+property), but `null` values are dropped except when all known values
+are `null`.

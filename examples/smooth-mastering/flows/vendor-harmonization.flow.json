@@ -96,9 +96,9 @@
         "primaryKey" : "id"
       },
       "customHook" : { },
-      "retryLimit" : null,
-      "batchSize" : null,
-      "threadCount" : null,
+      "retryLimit" : 0,
+      "batchSize" : 0,
+      "threadCount" : 0,
       "stepDefinitionName" : "translation-mapping",
       "stepDefinitionType" : "MAPPING",
       "mappingStep" : true,
@@ -118,22 +118,82 @@
         "targetEntity" : "Vendor",
         "sourceDatabase" : "data-hub-STAGING",
         "collections" : [ "vendors-from-accounting", "Vendor" ],
-	"uriPrefix" : "/smooth-mastering",
-	"primaryKeyPrefix": "A",
+        "uriPrefix" : "/smooth-mastering",
+        "primaryKeyPrefix" : "A",
         "sourceCollection" : "",
         "outputFormat" : "json",
         "targetDatabase" : "data-hub-STAGING",
-	"primaryKey" : "id"
+        "primaryKey" : "id"
       },
       "customHook" : { },
-      "retryLimit" : null,
-      "batchSize" : null,
-      "threadCount" : null,
+      "retryLimit" : 0,
+      "batchSize" : 0,
+      "threadCount" : 0,
       "stepDefinitionName" : "translation-mapping",
       "stepDefinitionType" : "MAPPING",
       "mappingStep" : true,
       "customStep" : false,
       "mappingName" : "vendor-accounting-to-vendor"
+    },
+    "5" : {
+      "name" : "merge-vendors",
+      "description" : "Merge vendor information from contact and accounting systems.",
+      "options" : {
+        "stepUpdate" : true,
+        "additionalCollections" : [ ],
+        "filterQuery": "cts.collectionQuery(['vendors-from-accounting','vendors-from-contacts'])",
+        "sourceQuery" : "cts.andQuery([cts.collectionQuery(['vendors-from-accounting','vendors-from-contacts']),cts.fieldRangeQuery('datahubCreatedOn','>',fn.currentDateTime().subtract(xs.dayTimeDuration('PT24H')))])",
+        "acceptsBatch" : true,
+        "targetEntity" : "Vendor",
+        "sourceDatabase" : "data-hub-STAGING",
+        "collections" : [ "merged-vendors", "Vendor" ],
+        "mergeOptions" : {},
+        "matchOptions" : {
+          "dataFormat" : "json",
+          "algorithms" : {
+            "algorithm" : [ ]
+          },
+          "propertyDefs": {
+            "property": [
+              {
+                "localname": "id",
+                "name": "id"
+              }
+            ]
+          },
+          "scoring" : {
+            "add" : [
+              {
+                "propertyName": "id",
+                "weight": 50
+              }
+            ]
+          },
+          "thresholds" : {
+            "threshold" : [
+              {
+                "above": 20,
+                "label": "Definitive Match",
+                "action": "merge"
+              }
+            ]
+          }
+        },
+        "sourceCollection" : "",
+        "primaryKey": "id",
+        "uriPrefix": "/smooth-mastering",
+        "outputFormat" : "json",
+        "targetDatabase" : "data-hub-FINAL"
+      },
+      "customHook" : { },
+      "retryLimit" : null,
+      "batchSize" : null,
+      "threadCount" : null,
+      "stepDefinitionName" : "smooth-mastering",
+      "stepDefinitionType" : "MASTERING",
+      "mappingStep" : false,
+      "customStep" : false,
+      "mappingName" : null
     }
   }
 }

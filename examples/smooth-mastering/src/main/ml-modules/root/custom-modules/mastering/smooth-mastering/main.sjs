@@ -14,15 +14,16 @@
   limitations under the License.
 */
 
-const DataHub = require("/data-hub/5/datahub.sjs");
-const datahub = new DataHub();
+const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
+const datahub = DataHubSingleton.instance();
 
 const mastering = require("/com.marklogic.smart-mastering/process-records.xqy");
 const masteringCollections = require("/com.marklogic.smart-mastering/impl/collections.xqy");
 const masteringConsts = require("/com.marklogic.smart-mastering/constants.xqy");
+const masteringStepLib = require("/data-hub/5/builtins/steps/mastering/default/lib.sjs");
 const targetUri = require("/utility/target-uri.sjs");
 
-const requiredOptionProperties = ['matchOptions', 'mergeOptions'];
+const reqOptProperties = ['matchOptions', 'mergeOptions'];
 const emptySequence = Sequence.from([]);
 
 function main(content, options) {
@@ -53,7 +54,8 @@ function main(content, options) {
     mergeOptions,
     matchOptions,
     filterQuery,
-    persistResults
+    persistResults//,
+    //datahub.prov.granularityLevel() === datahub.prov.FINE_LEVEL
   );
 
   // Scan through the merge results.  Any items which matched will be
@@ -225,16 +227,14 @@ function main(content, options) {
 // Copied from default mastering step, except we do not lock our
 // candidates for update.
 function checkOptions(content, options, filteredContent = []) {
-  let hasRequiredOptions = requiredOptionProperties.every((propName) => !!options[propName]);
+  let hasRequiredOptions = reqOptProperties.every((propName) => !!options[propName]);
   if (!hasRequiredOptions) {
-    throw new Error(`Missing the following required mastering options: ${xdmp.describe(requiredOptionProperties.filter((propName) => !options[propName]), emptySequence, emptySequence)}`);
+    throw new Error(`Missing the following required mastering options: ${xdmp.describe(reqOptProperties.filter((propName) => !options[propName]), emptySequence, emptySequence)}`);
   }
-  // set the target entity based off of the step options
-  let entityType = options.targetEntity;
-  options.mergeOptions.targetEntity = entityType;
-  options.matchOptions.targetEntity = entityType;
+  options.matchOptions = options.matchOptions || {};
+  options.mergeOptions = options.mergeOptions || {};
   // provide default empty array values for collections to simplify later logic
-  options.mergeOptions.collections = Object.assign({"content": [], "archived": []},options.mergeOptions.collections);
+  options.mergeOptions.collections = Object.assign({"content": [], "archived": [], "merged": [], "notification": [], "auditing": []},options.mergeOptions.collections);
   options.matchOptions.collections = Object.assign({"content": []},options.matchOptions.collections);
   // sanity check the collections set for the match/merge options
   if (options.matchOptions.collections.content.length) {
@@ -242,31 +242,92 @@ function checkOptions(content, options, filteredContent = []) {
   } else if (options.mergeOptions.collections.content.length) {
     options.matchOptions.collections.content = options.mergeOptions.collections.content;
   }
+
+  if (options.targetEntity) {
+    // set the target entity based off of the step options
+    options.mergeOptions.targetEntity = options.targetEntity;
+    options.matchOptions.targetEntity = options.targetEntity;
+    // Set default collections be entity type
+    options.mergeOptions.collections = getCollectionSettings(options.mergeOptions.collections, options.targetEntity);
+  }
+
+  if (reqOptProperties.includes('mergeOptions')) {
+    options.mergeOptions.algorithms = options.mergeOptions.algorithms || {};
+    options.mergeOptions.algorithms.collections = options.mergeOptions.algorithms.collections || {};
+    ['onMerge', 'onNoMatch', 'onArchive', 'onNotification'].forEach((eventName) => {
+      options.mergeOptions.algorithms.collections[eventName] = options.mergeOptions.algorithms.collections[eventName] || {};
+    });
+  }
+
   const contentCollection = fn.head(masteringCollections.getCollections(Sequence.from(options.mergeOptions.collections.content), masteringConsts['CONTENT-COLL']));
   const archivedCollection = fn.head(masteringCollections.getCollections(Sequence.from(options.mergeOptions.collections.archived), masteringConsts['ARCHIVED-COLL']));
+  const mergedCollection = fn.head(masteringCollections.getCollections(Sequence.from(options.mergeOptions.collections.merged), masteringConsts['MERGED-COLL']));
+  const notificationCollection = fn.head(masteringCollections.getCollections(Sequence.from(options.mergeOptions.collections.notification), masteringConsts['NOTIFICATION-COLL']));
+  const auditingCollection = fn.head(masteringCollections.getCollections(Sequence.from(options.mergeOptions.collections.auditing), masteringConsts['AUDITING-COLL']));
   let contentHasExpectedContentCollection = true;
   let contentHasTargetEntityCollection = true;
-  for (const item of content) {
-    let docCollections = xdmp.nodeCollections(item.value);
-    if (!docCollections.includes(archivedCollection)) {
-      filteredContent.push(item);
-      contentHasExpectedContentCollection = contentHasExpectedContentCollection && docCollections.includes(contentCollection);
-      contentHasTargetEntityCollection = contentHasTargetEntityCollection && docCollections.includes(entityType);
+  if (content) {
+    for (const item of content) {
+      let docCollections = item.context.originalCollections || [];
+      if (!docCollections.includes(archivedCollection)) {
+        item.context.collections = Sequence.from(docCollections);
+        if (filteredContent) {
+          filteredContent.push(item);
+        }
+        contentHasExpectedContentCollection = contentHasExpectedContentCollection && docCollections.includes(contentCollection);
+        contentHasTargetEntityCollection = contentHasTargetEntityCollection && docCollections.includes(options.targetEntity);
+      }
     }
   }
-  if (!contentHasExpectedContentCollection) {
-    if (contentHasTargetEntityCollection) {
-      xdmp.log(`Expected collection "${contentCollection}" not found on content. Using entity collection "${entityType}" instead. \
-      You may need to review your match/merge options`, 'notice');
-      options.matchOptions.collections.content.push(entityType);
-      options.mergeOptions.collections.content.push(entityType);
-    } else {
-      xdmp.log(`Expected collection "${contentCollection}" not found on content. You may need to review your match/merge options`, 'warning');
+  // If target entity is set, we match on documents containing an entity instead of a content collection
+  if (!options.targetEntity) {
+    if (content && !contentHasExpectedContentCollection) {
+      if (contentHasTargetEntityCollection) {
+        xdmp.log(`Expected collection "${contentCollection}" not found on content. Using entity collection "${options.targetEntity}" instead. \
+        You may need to review your match/merge options`, 'notice');
+        options.matchOptions.collections.content.push(options.targetEntity);
+        options.mergeOptions.collections.content.push(options.targetEntity);
+      } else {
+        xdmp.log(`Expected collection "${contentCollection}" not found on content. You may need to review your match/merge options`, 'warning');
+      }
     }
   }
-  return { archivedCollection, contentCollection };
+  return { archivedCollection, contentCollection, mergedCollection, notificationCollection, auditingCollection };
+}
+
+// Copied from default mastering step because lib.sjs doesn’t export
+// it.
+function getCollectionSettings(collectionsSettings, entityType) {
+  let content = getCollectionSetting(collectionsSettings, "content", ["sm-" + entityType + "-mastered"]);
+  let merged = getCollectionSetting(collectionsSettings, "merged", ["sm-" + entityType + "-merged"]);
+  let archived = getCollectionSetting(collectionsSettings, "archived", ["sm-" + entityType + "-archived"]);
+  let notification = getCollectionSetting(collectionsSettings, "notification", ["sm-" + entityType + "-notification"]);
+  return {
+    content,
+    merged,
+    archived,
+    notification
+  };
+}
+
+// Copied from default mastering step because lib.sjs doesn’t export
+// it.
+function getCollectionSetting(collectionsSettings, collectionType, defaultCollections) {
+  let currentSettings = collectionsSettings && collectionsSettings[collectionType];
+  return currentSettings && currentSettings.length ? currentSettings : defaultCollections;
+}
+
+// Copied from default mastering step.
+function jobReport(jobID, stepResponse, options) {
+  return masteringStepLib.jobReport(
+    jobID,
+    stepResponse,
+    options,
+    reqOptProperties
+  );
 }
 
 module.exports = {
-  main: main
+  main,
+  jobReport
 };
