@@ -63,7 +63,7 @@
           class="map-expr"
         
         ></textarea>
-        <mat-icon *ngIf="containErrors && checkFieldInErrors(prop.name)" ><i class="fa fa-times-circle" style="color: red; padding:0px; margin-top:-10px"></i></mat-icon></span>
+        <mat-icon id="field-with-error"*ngIf="containErrors && checkFieldInErrors(prop.name)" ><i class="fa fa-times-circle fa-xs" ></i></mat-icon></span>
         <mat-hint *ngIf="containErrors && checkFieldInErrors(prop.name)" style="font-size: 10px;color: red">{{displayErrorMessage(prop.name)}}</mat-hint>
       </div>
       <mat-icon 

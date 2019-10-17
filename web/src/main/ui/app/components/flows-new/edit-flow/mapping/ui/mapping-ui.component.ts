@@ -147,10 +147,19 @@ export class MappingUiComponent implements OnChanges {
     this.isTestClicked = true;
     this.manageFlowsService.getMap(this.mapping.name).subscribe((map: any) => {
       this.manageFlowsService.getMappingErrors(map.name,map).subscribe(resp => {
-        this.mapErrors = resp;
-        
+        if(resp.hasOwnProperty('error')){
+          if(resp['error']['code'] == 500){
+            let result = this.dialogService.alert(
+              'Please retry in a few seconds. Thanks for your patience.',
+              'OK'
+            );
+            result.subscribe();
+          }
+        } else {
+          this.mapErrors = resp;
+        }
       });
-     
+    if(JSON.stringify(this.mapErrors) != JSON.stringify({})) {
     this.checkKeyinObject(this.mapErrors,"errorMessage");
     
     if(!this.containErrors){
@@ -168,6 +177,7 @@ export class MappingUiComponent implements OnChanges {
       console.log(this.mapResults);
     });
     }
+  }
     });
  console.log("mapErrors",this.mapErrors)
   }

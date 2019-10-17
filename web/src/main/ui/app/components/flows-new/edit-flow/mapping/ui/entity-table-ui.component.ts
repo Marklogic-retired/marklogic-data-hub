@@ -49,7 +49,6 @@ export class EntityTableUiComponent implements OnChanges {
   constructor() {}
 
   ngOnInit() {
-    console.log("containErrors",this.containErrors)
   }
 
   ngOnChanges(changes: SimpleChanges) {
