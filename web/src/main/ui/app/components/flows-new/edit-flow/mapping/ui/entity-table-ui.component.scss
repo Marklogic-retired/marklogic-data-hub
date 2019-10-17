@@ -135,4 +135,16 @@
 #textFieldValidation{
 	display: flex;
 	flex-direction: row;
+	padding-bottom: 2px;
+}
+
+#field-with-error{
+  position: relative;
+    display: block;
+    text-align: center;
+    outline: none;
+		top: 0%;
+		color: red; 
+		padding:0px; 
+		margin-top: -5px;
 }
