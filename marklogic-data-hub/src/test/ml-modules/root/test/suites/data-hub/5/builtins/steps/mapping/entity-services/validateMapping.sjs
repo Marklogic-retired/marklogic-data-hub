@@ -1,4 +1,3 @@
-const es = require('/MarkLogic/entity-services/entity-services');
 const esMappingLib = require("/data-hub/5/builtins/steps/mapping/entity-services/lib.sjs");
 const test = require("/test/test-helper.xqy");
 

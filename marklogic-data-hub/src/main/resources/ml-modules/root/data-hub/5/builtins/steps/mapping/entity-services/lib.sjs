@@ -165,7 +165,7 @@ function buildEntityMappingXML(mapping, entity) {
   let entityTag = namespacePrefix ? `${namespacePrefix}:${entityName}`: entityName;
   let namespaceNode = `xmlns${namespacePrefix ? `:${namespacePrefix}`: ''}="${entityDefinition.namespace || ''}"`;
   return `
-      <m:entity name="${entityTitle}" xmlns:m="http://marklogic.com/entity-services/mapping">
+      <m:entity name="${entityName}" xmlns:m="http://marklogic.com/entity-services/mapping">
         <${entityTag} ${namespaceNode} xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
           ${buildMapProperties(mapping, entity)}
         </${entityTag}>
@@ -216,9 +216,17 @@ function validateMapping(mapping) {
   };
 
   Object.keys(mapping.properties).forEach(propertyName => {
-    let sourcedFrom = mapping.properties[propertyName].sourcedFrom;
-    let result = validatePropertyMapping(mapping.targetEntityType, propertyName, sourcedFrom);
-    validatedMapping.properties[propertyName] = result;
+    let mappedProperty = mapping.properties[propertyName];
+    let sourcedFrom = mappedProperty.sourcedFrom;
+    if (mappedProperty.hasOwnProperty("targetEntityType")) {
+      let nestedMapping = validateMapping(mappedProperty);
+      nestedMapping.sourcedFrom = sourcedFrom;
+      validatedMapping.properties[propertyName] = nestedMapping;
+    }
+    else {
+      let result = validatePropertyMapping(mapping.targetEntityType, propertyName, sourcedFrom);
+      validatedMapping.properties[propertyName] = result;
+    }
   });
 
   return validatedMapping;
