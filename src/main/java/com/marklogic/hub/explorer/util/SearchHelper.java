@@ -12,11 +12,13 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.ResourceNotFoundException;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
+import com.marklogic.client.io.SearchHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
@@ -35,6 +37,7 @@ import org.springframework.util.CollectionUtils;
 @Component
 public class SearchHelper {
 
+  private static final String DEFAULT_OPTIONS = "exp-default";
   private static final String QUERY_OPTIONS = "exp-final-entity-options";
 
   private static final String COLLECTION_CONSTRAINT_NAME = "Collection";
@@ -55,9 +58,36 @@ public class SearchHelper {
   public StringHandle search(SearchQuery searchQuery) {
     DatabaseClient client = databaseClientHolder.getDatabaseClient();
     QueryManager queryMgr = client.newQueryManager();
-    queryMgr.setPageLength(searchQuery.getPageLength());
+    StructuredQueryDefinition finalQueryDef = buildQuery(queryMgr, searchQuery);
 
-    StructuredQueryBuilder queryBuilder = queryMgr.newStructuredQueryBuilder(QUERY_OPTIONS);
+    // Setting criteria and searching
+    StringHandle resultHandle = new StringHandle();
+    resultHandle.setFormat(Format.JSON);
+    return queryMgr.search(finalQueryDef, resultHandle, searchQuery.getStart());
+  }
+
+  public Optional<Document> getDocument(String docUri) {
+    DatabaseClient client = databaseClientHolder.getDatabaseClient();
+
+    GenericDocumentManager docMgr = client.newDocumentManager();
+    DocumentMetadataHandle documentMetadataReadHandle = new DocumentMetadataHandle();
+
+    // Fetching document content and meta-data
+    try {
+      String content = docMgr.readAs(docUri, documentMetadataReadHandle, String.class,
+          new ServerTransform("mlPrettifyXML"));
+      Map<String, String> metadata = documentMetadataReadHandle.getMetadataValues();
+      return Optional.ofNullable(new Document(content, metadata));
+    } catch (ResourceNotFoundException rnfe) {
+      logger.error("The requested document " + docUri + " do not exist");
+      logger.error(rnfe.getMessage());
+      return Optional.empty();
+    }
+  }
+
+  private StructuredQueryDefinition buildQuery(QueryManager queryMgr, SearchQuery searchQuery) {
+    queryMgr.setPageLength(searchQuery.getPageLength());
+    StructuredQueryBuilder queryBuilder = getQueryBuilder(queryMgr);
 
     // Creating queries object
     List<StructuredQueryDefinition> queries = new ArrayList<>();
@@ -118,29 +148,19 @@ public class SearchHelper {
     if (StringUtils.isNotEmpty(searchQuery.getQuery())) {
       finalQueryDef.setCriteria(searchQuery.getQuery());
     }
-
-    // Setting criteria and searching
-    StringHandle resultHandle = new StringHandle();
-    resultHandle.setFormat(Format.JSON);
-    return queryMgr.search(finalQueryDef, resultHandle, searchQuery.getStart());
+    return finalQueryDef;
   }
 
-  public Optional<Document> getDocument(String docUri) {
-    DatabaseClient client = databaseClientHolder.getDatabaseClient();
-
-    GenericDocumentManager docMgr = client.newDocumentManager();
-    DocumentMetadataHandle documentMetadataReadHandle = new DocumentMetadataHandle();
-
-    // Fetching document content and meta-data
+  private StructuredQueryBuilder getQueryBuilder(QueryManager queryMgr) {
     try {
-      String content = docMgr.readAs(docUri, documentMetadataReadHandle, String.class,
-          new ServerTransform("mlPrettifyXML"));
-      Map<String, String> metadata = documentMetadataReadHandle.getMetadataValues();
-      return Optional.ofNullable(new Document(content, metadata));
-    } catch (ResourceNotFoundException rnfe) {
-      logger.error("The requested document " + docUri + " do not exist");
-      logger.error(rnfe.getMessage());
-      return Optional.empty();
+      // Testing if the QUERY_OPTIONS File exists in the modules database
+      queryMgr.search(queryMgr.newStructuredQueryBuilder(QUERY_OPTIONS).and(), new SearchHandle());
+      // Creating query builder with the QUERY_OPTIONS file if it exists
+      return queryMgr.newStructuredQueryBuilder(QUERY_OPTIONS);
+    } catch (FailedRequestException fre) {
+      logger.error(fre.getServerMessage());
+      // QUERY_OPTIONS doesn't exist. So, using DEFAULT_OPTIONS query options file
+      return queryMgr.newStructuredQueryBuilder(DEFAULT_OPTIONS);
     }
   }
 
