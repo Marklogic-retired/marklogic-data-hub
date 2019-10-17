@@ -26,7 +26,7 @@
         "targetDatabase" : "data-hub-STAGING"
       },
       "customHook" : { },
-      "retryLimit" : 0,
+      "retryLimit" : null,
       "batchSize" : 0,
       "threadCount" : 0,
       "stepDefinitionName" : "default-ingestion",
@@ -90,7 +90,7 @@
         "primaryKey" : "id"
       },
       "customHook" : { },
-      "retryLimit" : 0,
+      "retryLimit" : null,
       "batchSize" : 0,
       "threadCount" : 0,
       "stepDefinitionName" : "translation-mapping",
@@ -117,7 +117,7 @@
         "primaryKey" : "id"
       },
       "customHook" : { },
-      "retryLimit" : 0,
+      "retryLimit" : null,
       "batchSize" : 0,
       "threadCount" : 0,
       "stepDefinitionName" : "translation-mapping",
@@ -136,7 +136,7 @@
         "sourceCollection" : "",
         "targetDatabase" : "data-hub-FINAL",
         "sourceDatabase" : "data-hub-STAGING",
-        "collections" : [ "merged-vendors", "Vendor" ],
+        "collections" : [ "merged-vendors" ],
         "mergeOptions" : { },
         "matchOptions" : {
           "dataFormat" : "json",
@@ -164,11 +164,15 @@
           }
         },
         "outputFormat" : "json",
-        "filterQuery" : "cts.collectionQuery(['vendors-from-accounting','vendors-from-contacts'])",
+        "filterQuery" : {
+          "collectionQuery" : {
+            "uris" : [ "vendors-from-accounting", "vendors-from-contacts" ]
+          }
+        },
         "primaryKey" : "id"
       },
       "customHook" : { },
-      "retryLimit" : 0,
+      "retryLimit" : null,
       "batchSize" : 0,
       "threadCount" : 0,
       "stepDefinitionName" : "smooth-mastering",
