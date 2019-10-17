@@ -99,6 +99,11 @@ ManageFlowsService {
     return this.http.get(`api/current-project/mappings/${mapName}/test?mappingVersion=${version}&docURI=${sampleDocURI}`);
   }
 
+  getMappingErrors(mapName: string, map) {
+    console.log(`POST api/current-project/mappings/${mapName}/validation`);
+    return this.http.post(`api/current-project/mappings/${mapName}/validation`, map);
+  }
+
   getFunctions() {
     console.log('GET api/current-project/mappings/functions');
     return this.http.get('api/current-project/mappings/functions');

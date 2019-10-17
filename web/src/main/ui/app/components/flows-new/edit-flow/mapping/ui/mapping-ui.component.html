@@ -68,7 +68,7 @@
         {{ targetEntity?.info.title }}
       </div>
       <span class="btn-icons">
-        <button id="Test-btn" mat-raised-button color="primary" (click)="getMapResults()">
+        <button id="Test-btn" mat-raised-button color="primary" (click)="getMapValidationErrors()">
           Test
         </button>
         <button id="Clear-btn" mat-raised-button color="primary" (click)="onClear()">
@@ -98,8 +98,10 @@
           [nestedLevel]="0"
           [srcProps]="this.sampleDocNestedProps"
           [functionLst]="this.functionLst"
-          [mapResults] = "this.mapResults"
+          [mapResults]="this.mapResults"
+          [mapErrors]="this.mapErrors"
           [mapValidationResult]="this.mapValidationResult"
+          [containErrors]="this.containErrors"
           (handleSelection)="this.onHandleSelection($event)"
         ></app-entity-table-ui>
       </div>
