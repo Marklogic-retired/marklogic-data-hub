@@ -30,7 +30,6 @@ const Browse: React.FC<Props> = ({location}) => {
   const [entityDefArray, setEntityDefArray] = useState<any[]>([]);
   const [facets, setFacets] = useState();
   const [isLoading, setIsLoading] = useState(false);
-  const [entitiesLoaded, setEntitiesLoaded] = useState(false);
   const [totalDocuments, setTotalDocuments] = useState();
 
   const getEntityModel = async () => {
@@ -40,7 +39,6 @@ const Browse: React.FC<Props> = ({location}) => {
       let entityArray = [ ...entityFromJSON(response.data).map(entity => entity.info.title)];
       setEntites(entityArray);
       setEntityDefArray(entityParser(parsedModelData));
-      setEntitiesLoaded(true);
     } catch (error) {
       // console.log('error', error.response);
       if (error.response.status === 401) {
@@ -88,10 +86,10 @@ const Browse: React.FC<Props> = ({location}) => {
   }, []);
 
   useEffect(() => {
-    if (entitiesLoaded && entities.length) {
+    if (entities.length) {
       getSearchResults(entities);
     }
-  }, [searchOptions, entitiesLoaded]);
+  }, [searchOptions, entities]);
   
   const handlePageChange = (pageNumber: number) => {
     setPage(pageNumber);

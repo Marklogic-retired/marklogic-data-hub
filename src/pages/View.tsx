@@ -29,14 +29,14 @@ const View: React.FC = () => {
       }
     }
   }
-  const getSearchResults = async (entityArray) => {
+  const getSearchResults = async (allEntities: string[]) => {
     try {
       const response = await axios({
         method: 'POST',
         url: `/datahub/v2/search`,
         data: {
           query: '',
-          entityNames: entityArray,
+          entityNames: allEntities,
           start: 1,
           pageLength: 10,
           facets: {}
