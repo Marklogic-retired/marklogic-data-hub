@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { AuthContext } from '../util/auth-context';
 import { SearchContext } from '../util/search-context';
 import Sidebar from '../components/sidebar/sidebar';
@@ -22,8 +22,6 @@ const Browse: React.FC<Props> = ({location}) => {
     setPage,
     setPageLength,
     setEntityClearQuery,
-    setAllEntities,
-    setQuery,
     setLatestJobFacet,
   } = useContext(SearchContext);
 
@@ -31,7 +29,6 @@ const Browse: React.FC<Props> = ({location}) => {
   const [entities, setEntites] = useState<any[]>([]);
   const [entityDefArray, setEntityDefArray] = useState<any[]>([]);
   const [facets, setFacets] = useState();
-  const [searchUrl, setSearchUrl] = useState<any>({ url: `/datahub/v2/search`, method: 'post' });
   const [isLoading, setIsLoading] = useState(false);
   const [entitiesLoaded, setEntitiesLoaded] = useState(false);
   const [totalDocuments, setTotalDocuments] = useState();
@@ -44,9 +41,6 @@ const Browse: React.FC<Props> = ({location}) => {
       setEntites(entityArray);
       setEntityDefArray(entityParser(parsedModelData));
       setEntitiesLoaded(true);
-      if (searchOptions.entityNames.length === 0 ) {
-        setAllEntities(entityArray)
-      }
     } catch (error) {
       // console.log('error', error.response);
       if (error.response.status === 401) {
@@ -55,15 +49,15 @@ const Browse: React.FC<Props> = ({location}) => {
     }
   }
 
-  const getSearchResults = async () => {
+  const getSearchResults = async (allEntities: string[]) => {
     try {
       setIsLoading(true);
       const response = await axios({
-        method: searchUrl.method,
-        url: searchUrl.url,
+        method: 'POST',
+        url: `/datahub/v2/search`,
         data: {
           query: searchOptions.query,
-          entityNames: searchOptions.entityNames,
+          entityNames: searchOptions.entityNames.length ? searchOptions.entityNames : allEntities,
           start: searchOptions.start,
           pageLength: searchOptions.pageLength,
           facets: searchOptions.searchFacets,
@@ -94,8 +88,8 @@ const Browse: React.FC<Props> = ({location}) => {
   }, []);
 
   useEffect(() => {
-    if (entitiesLoaded) {
-      getSearchResults();
+    if (entitiesLoaded && entities.length) {
+      getSearchResults(entities);
     }
   }, [searchOptions, entitiesLoaded]);
   
