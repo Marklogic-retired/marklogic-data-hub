@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges, 
+import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges,
   ViewChild, ViewChildren, QueryList, ViewEncapsulation } from '@angular/core';
 import { MatTable, MatTableDataSource} from "@angular/material";
 import { FormBuilder, FormGroup, Validators, FormArray, FormControl } from '@angular/forms';
@@ -25,7 +25,7 @@ export class EntityTableUiComponent implements OnChanges {
   @Input() mapErrors: any;
   @Input() containErrors: boolean;
   @Output() handleSelection = new EventEmitter();
-  
+
   dataSource: MatTableDataSource<any>;
 
   // Mapping data
@@ -115,7 +115,21 @@ checkFieldInErrors(field){
   }
 
   isNested(prop) {
-    return prop.datatype === 'array' || prop.$ref !== null;
+    const propRef = prop.$ref  || (prop.items && prop.items.$ref);
+    return propRef && this.isInternalRef(propRef);
+  }
+
+  isInternalRef(propRef) {
+    return propRef && propRef.startsWith('#/definitions/');
+  }
+
+  hasExternalRef(prop) {
+    const propRef = prop.$ref || (prop.items && prop.items.$ref) || null;
+    return propRef && this.isExternalRef(propRef);
+  }
+
+  isExternalRef(propRef) {
+    return propRef && !propRef.startsWith('#/definitions/');
   }
 
   onHandleSelection(obj): void {
@@ -161,7 +175,7 @@ checkFieldInErrors(field){
     const f = this.fieldName.toArray()[index].nativeElement;
     const startPos = f.selectionStart;
     f.focus();
-    f.value = f.value.substr(0, f.selectionStart) + content + 
+    f.value = f.value.substr(0, f.selectionStart) + content +
       f.value.substr(f.selectionStart, f.value.length);
     f.selectionStart = startPos;
     f.selectionEnd = startPos + content.length;
@@ -184,7 +198,7 @@ checkFieldInErrors(field){
   IndentCondition(prop) {
     let count = prop.split('/').length - 1;
     let indentSize = 20*count;
-  
+
     let style = {'text-indent': indentSize+'px'}
   return style
   }
@@ -195,7 +209,7 @@ checkFieldInErrors(field){
     source.forEach(obj => {
       uniqueSrcFields.push(obj.key);
     });
-    
+
     return uniqueSrcFields.filter((item, index) => uniqueSrcFields.indexOf(item) === index);
   }
 
