@@ -1,0 +1,45 @@
+{
+  "info": {
+    "title": "Person",
+    "version": "1.0.0",
+    "baseUri": "http://marklogic.com/data-hub/example/"
+  },
+  "definitions": {
+    "FirstName": {
+      "properties": {
+        "value": {
+          "datatype": "string"
+        },
+        "prefix": {
+          "datatype": "string"
+        }
+      }
+    },
+    "Name": {
+      "properties": {
+        "first": {
+          "$ref": "#/definitions/FirstName"
+        },
+        "middle": {
+          "datatype": "string"
+        },
+        "last": {
+          "datatype": "string"
+        }
+      }
+    },
+    "Person": {
+      "properties": {
+        "id": {
+          "datatype": "int"
+        },
+        "name": {
+          "$ref": "#/definitions/Name"
+        },
+        "nickname": {
+          "datatype": "string"
+        }
+      }
+    }
+  }
+}
