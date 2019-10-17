@@ -438,10 +438,10 @@ declare function match-impl:values-by-qname(
 {
   map:new(
     for $qname in fn:distinct-values((map:get($compiled-options, "queries") ! map:get(.,"qname")))
-    let $values := fn:distinct-values($document/(self::*:envelope|*:envelope)/*:instance//*[fn:node-name(.) eq $qname] ! fn:normalize-space(fn:string(.))[.])
+    let $values := fn:distinct-values($document/(self::*:envelope|*:envelope)/*:instance//*[fn:node-name(.) eq $qname][fn:normalize-space(fn:string(.))]/fn:data(.))
     where fn:exists($values)
     return
-        map:entry(xdmp:key-from-QName($qname), $values)
+      map:entry(xdmp:key-from-QName($qname), $values)
   )
 };
 
