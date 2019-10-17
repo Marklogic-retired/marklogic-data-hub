@@ -29,7 +29,7 @@ const emptySequence = Sequence.from([]);
 function main(content, options) {
   // Copied from the default mastering step.
   const filteredContent = [];
-  checkOptions(content, options, filteredContent);
+  let checkedOptions = checkOptions(content, options, filteredContent);
   let mergeOptions = new NodeBuilder().addNode({ options: options.mergeOptions }).toNode();
   let matchOptions = new NodeBuilder().addNode({ options: options.matchOptions }).toNode();
   // Data Hub will persist the results for us.
@@ -42,18 +42,12 @@ function main(content, options) {
     singletonStash[contentCandidate.uri] = contentCandidate;
   }
 
-  // Now read a filter query from the options.  Possible security
-  // problem, with a code-injection possibility.  Don’t let strangers
-  // edit your flow configuration files.
-  let filterQueryString = options.filterQuery || "cts.trueQuery()";
-  let filterQuery = xdmp.eval(filterQueryString);
-
-  // Call the default mastering process, but with a filter query.
+  // Call the default mastering process.
   content = mastering.processMatchAndMergeWithOptions(
     Sequence.from(filteredContent),
     mergeOptions,
     matchOptions,
-    filterQuery,
+    options.filterQuery ? cts.query(options.filterQuery) : cts.trueQuery(),
     persistResults,
     datahub.prov.granularityLevel() === datahub.prov.FINE_LEVEL
   );
@@ -113,7 +107,7 @@ function main(content, options) {
     }
 
     // If this is a move to mark a predecessor as archived, skip it.
-    if (collections.includes("mdm-archived")) {
+    if (collections.includes(checkedOptions.archivedCollection)) {
       continue;
     }
 
