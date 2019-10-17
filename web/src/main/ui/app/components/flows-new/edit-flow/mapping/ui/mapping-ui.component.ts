@@ -82,6 +82,7 @@ export class MappingUiComponent implements OnChanges {
     disableURINavRight: boolean = false;
     uriIndex = 0;
     currEntity:string;
+    containErrors: boolean = false;
 
   @ViewChild(MatTable)
   table: MatTable<any>;
@@ -94,6 +95,7 @@ export class MappingUiComponent implements OnChanges {
 
   @ViewChildren('fieldName') fieldName:QueryList<any>;
   public mapResults:any = {} ;
+  public mapErrors: any = {};
 
   ngOnInit(){
     if (!this.dataSource){
@@ -141,9 +143,64 @@ export class MappingUiComponent implements OnChanges {
     });
   }
 
+  getMapValidationErrors(sourceURI?: string) {
+    this.isTestClicked = true;
+    this.manageFlowsService.getMap(this.mapping.name).subscribe((map: any) => {
+      this.manageFlowsService.getMappingErrors(map.name,map).subscribe(resp => {
+        this.mapErrors = resp;
+        
+      });
+     
+    this.checkKeyinObject(this.mapErrors,"errorMessage");
+    
+    if(!this.containErrors){
+      let uri;
+      if(sourceURI){
+        uri = sourceURI;
+      }
+      else {
+        uri = map.sourceURI;
+      }
+    this.manageFlowsService.testMap(map.name, String(map.version), uri).subscribe(resp => {
+      this.mapResults = resp;
+      delete this.mapResults["info"];
+      this.mapResults = this.mapResults[this.entityName];
+      console.log(this.mapResults);
+    });
+    }
+    });
+ console.log("mapErrors",this.mapErrors)
+  }
+
+  // Checks if the key exists in an infinitely nested object
+  checkKeyinObject(obj, keyName) {
+
+    let self = this;
+    if (obj.hasOwnProperty(keyName)) {
+      self.containErrors = true;
+    }
+    else {
+      _.forEach(obj, function (val, key) {
+
+        if (val.constructor.name === "Object") {
+          self.checkKeyinObject(val, keyName)
+        }
+        else if (val.constructor.name === "Array") {
+
+          val.forEach(obj => {
+            if (obj.constructor.name === "object") {
+              self.checkKeyinObject(obj, keyName);
+            }
+          });
+        }
+      });
+    }
+  }
+
   onClear(){
     this.mapResults = {};
     this.isTestClicked = false;
+    this.containErrors = false;
   }
   onNavigateURIList(index) {
     if (index > 0 && index < this.docUris.length - 1) {
@@ -197,7 +254,7 @@ export class MappingUiComponent implements OnChanges {
     }
     console.log(this.editURIVal);
     if(this.isTestClicked) {
-      this.getMapResults(this.editURIVal);
+      this.getMapValidationErrors(this.editURIVal); //this.getMapResults(this.editURIVal);
     }
   }
 

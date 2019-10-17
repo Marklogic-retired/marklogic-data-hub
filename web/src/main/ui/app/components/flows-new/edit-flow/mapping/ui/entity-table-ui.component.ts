@@ -25,6 +25,8 @@ export class EntityTableUiComponent implements OnChanges {
   @Input() displayErrors: boolean;
   @Input() errorsAvailable: boolean;
   @Input() mapValidationResult: object;
+  @Input() mapErrors: any;
+  @Input() containErrors: boolean;
   @Output() handleSelection = new EventEmitter();
   
   dataSource: MatTableDataSource<any>;
@@ -46,7 +48,9 @@ export class EntityTableUiComponent implements OnChanges {
 
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    console.log("containErrors",this.containErrors)
+  }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.entityProps && changes.entityProps.currentValue){
@@ -61,18 +65,7 @@ export class EntityTableUiComponent implements OnChanges {
     if (changes.colsShown && changes.colsShown.currentValue){
       this.colsShown = changes.colsShown.currentValue;
     }
-    console.log("mapExpressions",this.mapExp);
   }
-
-//  validateMapping(fc: FormControl) {
-//     let EMAIL_REGEXP = ...
-  
-//     return EMAIL_REGEXP.test(c.value) ? null : {
-//       validateEmail: {
-//         valid: false
-//       }
-//     };
-//   }
 
   showError(){
     if (this.displayErrors == true ) {
@@ -110,13 +103,26 @@ export class EntityTableUiComponent implements OnChanges {
 
   displayErrorMessage(propName) { 
     
-    let field = this.mapValidationResult["properties"]
+    let field = this.mapErrors["properties"]
     if (field[propName] && field[propName]["errorMessage"]) {
       return field[propName]["errorMessage"]
     // return this.mapExp.hasError('required') ? 'You must enter a value' :
     //     this.mapExp.hasError('email') ? 'Not a valid email' :
     //         '';
   }
+}
+
+checkFieldInErrors(field){
+  if(this.mapErrors && this.mapErrors['properties']){
+    if(this.mapErrors['properties'][field] && this.mapErrors['properties'][field]['errorMessage']) {
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
+  
 }
 
   getDatatype(prop) {

@@ -82,18 +82,14 @@ export class MappingComponent implements OnInit {
     "targetEntityType": "http://example.org/Order-0.0.1/Order",
     "properties":
     {
-      "name": {
-        "sourcedFrom": "Region",
-        "errorMessage": "Invalid XPath expression: Region"
-      },
       "id":
       {
-        "sourcedFrom": "Order ID",
+        "sourcedFrom": "id/",
         "errorMessage": "Invalid XPath expression: Order ID"
       },
       "items" : {
         "targetEntityType": "http://example.org/Order-0.0.1/ItemType",
-        "sourcedFrom" : "sdggggg",
+        "sourcedFrom" : "items",
         "properties" : {
           "name" : {
             "sourcedFrom" : "Marklogic",
