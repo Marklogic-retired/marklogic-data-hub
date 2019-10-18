@@ -75,7 +75,7 @@ public class MappingManagerService {
         MappingModel existingMapping= getMapping(mapName, false);
         if (existingMapping == null || existingMapping != null && !existingMapping.isEqual(mapping)) {
             mappingManager.saveMapping(mappingManager.createMappingFromJSON(mapping.toJson()),  existingMapping == null ? false : true);
-            dataHubService.reinstallUserModules(hubConfig, null, null);
+            dataHubService.installUserModules(hubConfig, true, null, null);
         }
         return mapping;
     }

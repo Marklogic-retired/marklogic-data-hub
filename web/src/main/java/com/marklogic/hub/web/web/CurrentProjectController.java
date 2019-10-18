@@ -157,8 +157,7 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
     }
 
     @RequestMapping(value = "/reinstall-user-modules", method = RequestMethod.POST)
-    public ResponseEntity<?> reinstallUserModules() throws IOException {
-        // reinstall the user modules
+    public ResponseEntity<?> reinstallUserModules() {
         dataHubService.reinstallUserModules(hubConfig, this, this);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
