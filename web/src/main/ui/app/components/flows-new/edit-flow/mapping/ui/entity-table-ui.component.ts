@@ -22,9 +22,6 @@ export class EntityTableUiComponent implements OnChanges {
   @Input() nmspace: object;
   @Input() mapResults: any;
   @Input() currEntity:string;
-  @Input() displayErrors: boolean;
-  @Input() errorsAvailable: boolean;
-  @Input() mapValidationResult: object;
   @Input() mapErrors: any;
   @Input() containErrors: boolean;
   @Output() handleSelection = new EventEmitter();
@@ -38,8 +35,6 @@ export class EntityTableUiComponent implements OnChanges {
   // Show/hide nested property table
   showProp = {};
   showPropInit = false;
-  // displayErrors = false;
-  // errorsAvailable = false;
 
   @ViewChild(MatTable)
   table: MatTable<any>;
@@ -66,48 +61,10 @@ export class EntityTableUiComponent implements OnChanges {
     }
   }
 
-  showError(){
-    if (this.displayErrors == true ) {
-      this.displayErrors = false
-    }
-    else {
-      if (this.errorsAvailable == true){
-        this.displayErrors = true;
-      }
-    }
-    
-  }
-  getErrorMessage(propName) { 
-    //this.mapExp.markAsTouched();
-    if(this.errorsAvailable == true) {
-      this.errorsAvailable = false;
-    }
-    else {
-      let field = this.mapValidationResult["properties"]
-    console.log("this is being called",field[propName], this.mapExpressions[propName])
-    if (field[propName] && field[propName]["errorMessage"]) {
-      //console.log("field[this.mapExpressions[propName]]",field[this.mapExpressions[propName]])
-      this.errorsAvailable = true;
-    }
-  } 
-      
-    // } else {
-    //   this.displayErrors = false;
-    // }
-    // return this.mapExp.hasError('required') ? 'You must enter a value' :
-    //     this.mapExp.hasError('email') ? 'Not a valid email' :
-    //         '';
-  
-}
-
   displayErrorMessage(propName) { 
-    
     let field = this.mapErrors["properties"]
     if (field[propName] && field[propName]["errorMessage"]) {
-      return field[propName]["errorMessage"]
-    // return this.mapExp.hasError('required') ? 'You must enter a value' :
-    //     this.mapExp.hasError('email') ? 'Not a valid email' :
-    //         '';
+      return field[propName]["errorMessage"];
   }
 }
 

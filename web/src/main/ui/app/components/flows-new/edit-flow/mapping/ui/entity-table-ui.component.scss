@@ -129,7 +129,7 @@
   border:none;
   }
 #edit-expression {
-	padding: 0px;
+	padding-left: 3px;
 }
 
 #textFieldValidation{
@@ -147,4 +147,9 @@
 		color: red; 
 		padding:0px; 
 		margin-top: -5px;
+}
+#error-description{
+		font-size: 10px;
+		color: red; 
+		padding-left:4px
 }
