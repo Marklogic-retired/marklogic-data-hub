@@ -21,6 +21,7 @@ function get(context, params) {
   let resp;
   let database = params.database ? params.database.trim() : null;
   let sourceQuery = params.sourceQuery ? params.sourceQuery.trim() : null;
+  let urisOnly = params.urisOnly ? params.urisOnly.trim() : null;
   let limit = params.count || 1;
 
   try {
@@ -31,10 +32,19 @@ function get(context, params) {
       docs = docs.toArray();
       let i;
       for (i in docs) {
-        let obj = {
-          "uri": xdmp.nodeUri(docs[i]),
-          "docs": docs[i]
-        };
+        let obj;
+        if(urisOnly === 'true') {
+          obj = {
+            "uri": xdmp.nodeUri(docs[i])
+          };
+        }
+        else {
+          obj = {
+            "uri": xdmp.nodeUri(docs[i]),
+            "docs": docs[i]
+          };
+        }
+
         resp.push(obj);
       }
     } else {
