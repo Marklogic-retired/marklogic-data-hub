@@ -15,9 +15,9 @@ const { Content } = Layout;
 
 const Detail: React.FC<Props> = ({ history, location }) => {
   const { userNotAuthenticated } = useContext(AuthContext);
-  const uriSplit = location.pathname.replace('/detail/','');
-  const uri = "/"+ uriSplit.substring(uriSplit.indexOf('/')+1);
-  const pkValue = uriSplit.split('/')[0] === '-' ? '' : uriSplit.split('/')[0];
+  const uriSplit = location.pathname.replace('/detail/',''); 
+  const pkValue = uriSplit.split('/')[0] === '-' ? '' : decodeURIComponent(uriSplit.split('/')[0]);
+  const uri = decodeURIComponent(uriSplit.split('/')[1]);
   const [selected, setSelected] = useState('instance');
   const [data, setData] = useState();
   const [isLoading, setIsLoading] = useState(false);
