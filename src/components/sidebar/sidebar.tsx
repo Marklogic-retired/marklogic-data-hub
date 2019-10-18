@@ -113,7 +113,7 @@ const Sidebar = (props) => {
       <Collapse 
         className={styles.sidebarContainer}
         defaultActiveKey={['entityProperties', 'hubProperties']} 
-        expandIcon={panelProps => <Icon type="up" rotate={panelProps.isActive ? 180 : undefined} />}
+        expandIcon={panelProps => <Icon type="up" rotate={panelProps.isActive ? 0 : 180} />}
         expandIconPosition="right"
         bordered={false}
       >
