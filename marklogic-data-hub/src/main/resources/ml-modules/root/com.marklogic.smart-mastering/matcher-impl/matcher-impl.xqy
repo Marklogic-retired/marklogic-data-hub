@@ -415,23 +415,6 @@ declare function match-impl:query-map-to-query(
 };
 
 (:
- : Expand values to include other types when castable
- : @param $values  sequence of values
- : @return  sequence of values expanded to include casts to other types
- :)
-declare function match-impl:expand-values-by-type(
-  $values as item()*
-) as item()*
-{
-  for $value in $values
-  return (
-    $value,
-    $value ! fn:number(.)[fn:string(.) ne "NaN"],
-    $value[. castable as xs:boolean] ! xs:boolean(.)
-  )
-};
-
-(:
  : Organize values by QName
  : @param $document  document with property values
  : @param $compiled-options  map:map with compiled details about match options
@@ -444,10 +427,8 @@ declare function match-impl:values-by-qname(
 {
   map:new(
     for $qname in fn:distinct-values((map:get($compiled-options, "queries") ! map:get(.,"qname")))
-    let $values := match-impl:expand-values-by-type(
-      fn:distinct-values(
-        $document//*[fn:node-name(.) eq $qname] !
-          fn:normalize-space(fn:string(.))[.]
+    let $values := fn:distinct-values(
+      $document//*[fn:node-name(.) eq $qname][fn:normalize-space(fn:string(.))]/fn:data(.)
       )
     )
     where fn:exists($values)

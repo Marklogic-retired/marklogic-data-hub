@@ -5,47 +5,98 @@ import module namespace match-impl = "http://marklogic.com/smart-mastering/match
 
 import module namespace test = "http://marklogic.com/test" at "/test/test-helper.xqy";
 
-declare variable $STRING-ONLY := "this is not castable to other types";
-declare variable $STRING-INT := "23";
-declare variable $STRING-INT-EXPANDED := ( "23", 23 );
-declare variable $STRING-NUMBER := "17.42";
-declare variable $STRING-NUMBER-EXPANDED := ( "17.42", 17.42 );
-declare variable $STRING-TRUE := "true";
-declare variable $STRING-TRUE-EXPANDED := ( "true", fn:true() );
-declare variable $STRING-FALSE := "false";
-declare variable $STRING-FALSE-EXPANDED := ( "false", fn:false() );
-declare variable $STRING-INT-TRUE := "1";
-declare variable $STRING-INT-TRUE-EXPANDED := ( "1", 1, fn:true() );
-declare variable $STRING-INT-FALSE := "0";
-declare variable $STRING-INT-FALSE-EXPANDED := ( "0", 0, fn:false() );
+declare variable $DOCUMENT := document{
+  xdmp:unquote(
+    '{
+      "Object": {
+        "intProperty": 12,
+        "strProperty": "Hello",
+        "boolProperty": true,
+        "dateProperty": "1987-03-17",
+        "dateTimeProperty": "1956-12-09T03:55:14",
+        "decimalProperty": 123.456
+      }
+    }'
+  )
+};
 
-(
-  test:assert-equal(
-    match-impl:expand-values-by-type($STRING-ONLY),
-    $STRING-ONLY
+declare variable $COMPILED-OPTIONS := map:new((
+  map:entry(
+    "queries",
+    (
+      map:new((
+        map:entry(
+          "qname",
+          xs:QName("intProperty")
+        )
+      )),
+      map:new((
+        map:entry(
+          "qname",
+          xs:QName("strProperty")
+        )
+      )),
+      map:new((
+        map:entry(
+          "qname",
+          xs:QName("boolProperty")
+        )
+      )),
+      map:new((
+        map:entry(
+          "qname",
+          xs:QName("dateProperty")
+        )
+      )),
+      map:new((
+        map:entry(
+          "qname",
+          xs:QName("dateTimeProperty")
+        )
+      )),
+      map:new((
+        map:entry(
+          "qname",
+          xs:QName("decimalProperty")
+        )
+      ))
+    )
+  )
+));
+
+declare variable $EXPECTED-VALUES := map:new((
+  map:entry(
+    "boolProperty",
+    fn:true()
   ),
-  test:assert-equal(
-    match-impl:expand-values-by-type($STRING-INT),
-    $STRING-INT-EXPANDED
+  map:entry(
+    "decimalProperty",
+    xs:double(123.456)
   ),
-  test:assert-equal(
-    match-impl:expand-values-by-type($STRING-NUMBER),
-    $STRING-NUMBER-EXPANDED
+  map:entry(
+    "dateProperty",
+    "1987-03-17"
   ),
-  test:assert-equal(
-    match-impl:expand-values-by-type($STRING-TRUE),
-    $STRING-TRUE-EXPANDED
+  map:entry(
+    "dateTimeProperty",
+    "1956-12-09T03:55:14"
   ),
-  test:assert-equal(
-    match-impl:expand-values-by-type($STRING-FALSE),
-    $STRING-FALSE-EXPANDED
+  map:entry(
+    "intProperty",
+    xs:double(12)
   ),
-  test:assert-equal(
-    match-impl:expand-values-by-type($STRING-INT-TRUE),
-    $STRING-INT-TRUE-EXPANDED
-  ),
-  test:assert-equal(
-    match-impl:expand-values-by-type($STRING-INT-FALSE),
-    $STRING-INT-FALSE-EXPANDED
+  map:entry(
+    "strProperty",
+    "Hello"
+  )
+));
+
+test:assert-true(
+  fn:deep-equal(
+    <x>{match-impl:values-by-qname(
+      $DOCUMENT,
+      $COMPILED-OPTIONS
+    )}</x>,
+    <x>{$EXPECTED-VALUES}</x>
   )
 )
