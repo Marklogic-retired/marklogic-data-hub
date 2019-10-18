@@ -118,6 +118,12 @@ public class HubProjectImpl implements HubProject {
                 case MASTERING:
                     path = this.stepDefinitionsDir.resolve("mastering");
                     break;
+                case MATCHING:
+                    path = this.stepDefinitionsDir.resolve("matching");
+                    break;
+                case MERGING:
+                    path = this.stepDefinitionsDir.resolve("merging");
+                    break;
                 default:
                     throw new DataHubProjectException("Invalid Step type");
             }
