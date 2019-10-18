@@ -17,38 +17,45 @@ const SearchResult: React.FC<Props> = (props) => {
   let primaryKeyValue: string = '';
   let createdOnVal: string = '';
   let sourcesVal: string = '';
-  let fileTypeVal: string = '';
+  let fileTypeVal: string = props.item.format;
   let uri = encodeURIComponent(props.item.uri);
 
   if (props.item.format === 'json') {
-    itemEntityName = Object.keys(props.item.extracted.content[1]);
-    itemEntityProperties = Object.values<any>(props.item.extracted.content[1]);
-    entityDef = props.entityDefArray.length && props.entityDefArray.find(entity => entity.name === itemEntityName[0]);
-    primaryKeyValue = entityDef.primaryKey ? itemEntityProperties[0][entityDef.primaryKey] : '-';
-    // TODO format createdOnVal using momentjs
-    createdOnVal = props.item.extracted.content[0].headers.hasOwnProperty('createdOn') && props.item.extracted.content[0].headers.createdOn.toString().substring(0, 19);
-    sourcesVal = props.item.extracted.content[0].headers.hasOwnProperty('sources') && props.item.extracted.content[0].headers.sources.map(src => {
-        return src.name;
-    }).join(', ');
-    fileTypeVal = props.item.format;
+    props.item.extracted.content.forEach( contentObject => {
+      if (Object.keys(contentObject)[0] === 'headers'){
+        const headerValues = Object.values<any>(contentObject);
+        createdOnVal = headerValues[0].hasOwnProperty('createdOn') && headerValues[0].createdOn.toString().substring(0, 19);
+        sourcesVal = headerValues[0].hasOwnProperty('sources') && headerValues[0].sources.map(src => {
+            return src.name;
+        }).join(', ');
+      } else {
+        itemEntityName = Object.keys(contentObject);
+        itemEntityProperties = Object.values<any>(contentObject);
+      }
+    });
   } else if (props.item.format === 'xml'){
+    // TODO check if XML docs have exceptions
     let parsedContent = JSON.parse(props.item.extracted.content[0]);
-    itemEntityName = Object.keys(parsedContent[1]);
-    itemEntityProperties = Object.values<any>(parsedContent[1]);
-    entityDef = props.entityDefArray.length && props.entityDefArray.find(entity => entity.name === itemEntityName[0]);
-    primaryKeyValue = entityDef.primaryKey ? encodeURIComponent(itemEntityProperties[0][entityDef.primaryKey]) : '-';
-    // TODO format createdOnVal using momentjs
-    // TODO add createdOn and sourcesVal for XML files
-    // createdOnVal = parsedContent[0].headers.createdOn.toString().substring(0, 19);
-    // sourcesVal = parsedContent[0].headers.sources.map(src => {
-    //     return src.name;
-    // }).join(', ');
+    parsedContent.forEach( contentObject => {
+      if (Object.keys(contentObject)[0] === 'headers'){
+        const headerValues = Object.values<any>(contentObject);
+        createdOnVal = headerValues[0].hasOwnProperty('createdOn') && headerValues[0].createdOn.toString().substring(0, 19);
+        sourcesVal = headerValues[0].hasOwnProperty('sources') && headerValues[0].sources.map(src => {
+            return src.name;
+        }).join(', ');
+      } else {
+        itemEntityName = Object.keys(contentObject);
+        itemEntityProperties = Object.values<any>(contentObject);
+      }
+    });
   }
-  fileTypeVal = props.item.format;
+  // Parameters for both JSON and XML
+  entityDef = props.entityDefArray.length && props.entityDefArray.find(entity => entity.name === itemEntityName[0]);
+  primaryKeyValue = entityDef.primaryKey ? encodeURIComponent(itemEntityProperties[0][entityDef.primaryKey]) : '-';
 
   function getSnippet() {
     let str = '';
-    props.item.matches.map(item => {
+    props.item.matches.forEach(item => {
         item['match-text'].forEach(element => {
           if (typeof element === 'object') {
             str = str.concat('<b>').concat(element.highlight).concat('</b>')
