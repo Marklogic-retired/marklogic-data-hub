@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Collapse, Icon, Button, DatePicker } from 'antd';
 import moment from 'moment';
-import { SearchContext } from '../../util/search-context';
 import Facet from '../facet/facet';
+import SelectedFacets from '../selected-facets/selected-facets';
+import { SearchContext } from '../../util/search-context';
 import { facetParser } from '../../util/data-conversion';
 import hubPropertiesConfig from '../../config/hub-properties.config';
 import styles from './sidebar.module.scss';
@@ -12,8 +13,6 @@ const { RangePicker } = DatePicker;
 
 const Sidebar = (props) => {
   const { 
-    clearAllFacets,
-    clearFacet,
     searchOptions,
     setDateFacet,
     clearDateFacet
@@ -71,45 +70,7 @@ const Sidebar = (props) => {
 
   return (
     <>
-      <div
-        className={styles.clearContainer}
-        style={ Object.entries(searchOptions.searchFacets).length === 0 ? {'visibility': 'hidden'} : {'visibility': 'visible'}}
-      >
-        <Button 
-          size="small"
-          className={styles.clearAllBtn}
-          onClick={()=> clearAllFacets()}
-        >
-          <Icon type='close'/>
-          Clear All
-        </Button>
-          { selectedFacets.map((item, index) => {
-            if (item.constraint === 'createdOnRange') {
-              return (
-                <Button 
-                  size="small"
-                  className={styles.dateFacet} 
-                  key={index}
-                  onClick={()=> clearDateFacet()}
-                >
-                  <Icon type='close'/>
-                  {item.facet.join(' ~ ')}
-                </Button>
-              )
-            }
-            return (
-              <Button 
-                size="small"
-                className={styles.facetButton} 
-                key={index}
-                onClick={()=> clearFacet(item.constraint, item.facet)}
-              >
-                <Icon type='close'/>
-                {item.facet}
-              </Button>
-            )
-          })}
-      </div>
+      <SelectedFacets selectedFacets={selectedFacets}/>
       <Collapse 
         className={styles.sidebarContainer}
         defaultActiveKey={['entityProperties', 'hubProperties']} 
