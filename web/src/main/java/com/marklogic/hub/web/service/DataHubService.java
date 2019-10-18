@@ -190,7 +190,6 @@ public class DataHubService {
         loadHubArtifactsCommand.setHubConfig(hubConfig);
         loadHubArtifactsCommand.setForceLoad(forceLoad);
 
-        commands.add(generateFunctionMetadataCommand);
         commands.add(loadUserModulesCommand);
         commands.add(loadUserArtifactsCommand);
         commands.add(loadHubArtifactsCommand);

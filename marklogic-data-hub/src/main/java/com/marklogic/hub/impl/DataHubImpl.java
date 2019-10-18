@@ -376,7 +376,8 @@ public class DataHubImpl implements DataHub {
             );
 
             String query =
-                "cts:uris((),(),cts:not-query(cts:collection-query('hub-core-module')))[\n" +
+                "cts:uris((),(),cts:not-query(cts:collection-query(('hub-core-module','http://marklogic.com/entity-services/mapping'" +
+                    ",'http://marklogic.com/entity-services/function-metadata'))))[\n" +
                     "  fn:not(\n" +
                     "    fn:matches(., \"^.+options/(" + String.join("|", options) + ").xml$\") or\n" +
                     "    fn:starts-with(., \"/marklogic.rest.\")\n" +
