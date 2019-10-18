@@ -78,48 +78,6 @@ export class MappingComponent implements OnInit {
   //Helper
 
   public nmspace: object = {};
-  public mapValidationResult: object = {
-    "targetEntityType": "http://example.org/Order-0.0.1/Order",
-    "properties":
-    {
-      "id":
-      {
-        "sourcedFrom": "id/",
-        "errorMessage": "Invalid XPath expression: Order ID"
-      },
-      "items" : {
-        "targetEntityType": "http://example.org/Order-0.0.1/ItemType",
-        "sourcedFrom" : "items",
-        "properties" : {
-          "name" : {
-            "sourcedFrom" : "Marklogic",
-            "errorMessage": "Invalid XPath expression: ItemName"
-          },
-          "quantity" : {
-            "sourcedFrom" : "1"
-          },
-          "price" : {
-            "sourcedFrom" : "10000"
-          }
-        }
-      },
-      "customer": {
-        "targetEntityType": "http://example.org/Order-0.0.1/CustomerType",
-        "properties": {
-          "firstname": {
-            "sourcedFrom": "Nikhil"
-          },
-          "lastname": {
-            "sourcedFrom": "Shrivastava",
-            "errorMessage": "Invalid XPath expression: lastname"
-          },
-          "gender": {
-            "sourcedFrom": "Male"
-          }
-        }
-      }
-    }
-  };
 
   updateURI(event) {
     this.conns = event.conns;
