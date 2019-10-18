@@ -13,7 +13,7 @@ declare variable $STRING-NUMBER-EXPANDED := ( "17.42", 17.42 );
 declare variable $STRING-TRUE := "true";
 declare variable $STRING-TRUE-EXPANDED := ( "true", fn:true() );
 declare variable $STRING-FALSE := "false";
-declare variable $STRING-FALSE-EXPANDED := ( "false", fn:false() )
+declare variable $STRING-FALSE-EXPANDED := ( "false", fn:false() );
 declare variable $STRING-INT-TRUE := "1";
 declare variable $STRING-INT-TRUE-EXPANDED := ( "1", 1, fn:true() );
 declare variable $STRING-INT-FALSE := "0";
@@ -47,5 +47,5 @@ declare variable $STRING-INT-FALSE-EXPANDED := ( "0", 0, fn:false() );
   test:assert-equal(
     match-impl:expand-values-by-type($STRING-INT-FALSE),
     $STRING-INT-FALSE-EXPANDED
-  ),
+  )
 )
