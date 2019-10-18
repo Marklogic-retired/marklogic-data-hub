@@ -30,7 +30,7 @@ const Browse: React.FC<Props> = ({location}) => {
   const [entityDefArray, setEntityDefArray] = useState<any[]>([]);
   const [facets, setFacets] = useState();
   const [isLoading, setIsLoading] = useState(false);
-  const [totalDocuments, setTotalDocuments] = useState();
+  const [totalDocuments, setTotalDocuments] = useState(0);
 
   const getEntityModel = async () => {
     try {

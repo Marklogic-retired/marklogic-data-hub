@@ -48,7 +48,6 @@ const SearchResult: React.FC<Props> = (props) => {
   function getSnippet() {
     let str = '';
     props.item.matches.map(item => {
-      if (!item.path.includes('attachments')) {
         item['match-text'].forEach(element => {
           if (typeof element === 'object') {
             str = str.concat('<b>').concat(element.highlight).concat('</b>')
@@ -57,7 +56,6 @@ const SearchResult: React.FC<Props> = (props) => {
           }
         });
         str = str.concat('...')
-      }
     })
     return <p>{ ReactHtmlParser(str) }</p>;
   } 
@@ -76,12 +74,7 @@ const SearchResult: React.FC<Props> = (props) => {
         </Link>
       </div>
       <div className={styles.snippet} data-cy='snipped'>
-        {props.item.matches.length === 1
-          ?
-          props.item.matches[0]['match-text'][0].length > 1 && props.item.matches[0]['match-text'][0]
-          :
-          snippet
-        }
+        {props.item.matches.length >= 1 && snippet}
       </div>
       <div className={styles.metadata}>
         <div className={styles.metaItem}>
