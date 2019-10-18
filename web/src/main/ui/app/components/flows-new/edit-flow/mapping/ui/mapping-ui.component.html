@@ -73,6 +73,7 @@
       <div class="target-entity-title" ng-class="title-entity-model">
         {{ targetEntity?.info.title }}
       </div>
+      <div id="table-and-buttons">
       <span class="btn-icons">
         <button id="Test-btn" mat-raised-button color="primary" (click)="getMapValidationErrors()">
           Test
@@ -111,7 +112,7 @@
           (handleSelection)="this.onHandleSelection($event)"
         ></app-entity-table-ui>
       </div>
-
+    </div>
     </div> <!-- Entities_Tbl -->
 
   </div>
