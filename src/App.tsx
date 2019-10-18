@@ -48,7 +48,7 @@ const App: React.FC<Props> = ({history, location}) => {
           <Route path="/" exact render={() => <Home/>}/>
           <PrivateRoute path="/view" exact component={View} />
           <PrivateRoute path="/browse" exact component={Browse}/>
-          <PrivateRoute path="/detail/:pk/:id" component={Detail}/>
+          <PrivateRoute path="/detail/:pk/:uri" component={Detail}/>
         </Switch>
       </SearchProvider>
     </>
