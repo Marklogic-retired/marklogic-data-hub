@@ -176,42 +176,44 @@ declare function proc-impl:expand-uris-for-merge(
 ) (: as xs:string* ~leaving off for tail recursion~ :)
 {
   let $additional-uris :=
-    for $merge-uri in $current-uris
-    return
-      if (map:contains($matches,$merge-uri)) then
-        map:get($matches, $merge-uri)/result[@action=$const:MERGE-ACTION]/@uri ! fn:string(.)
-      else
-        let $results :=
-          match-impl:find-document-matches-by-options(
-            fn:doc($merge-uri),
-            $matching-options,
-            1,
-            $max-scan,
-            $merge-threshold,
-            (: don't include detailed match information :)
-            fn:false(),
-            if ($filter-query instance of cts:true-query) then
-              cts:not-query(cts:document-query($accumlated-uris))
-            else
-              cts:and-not-query($filter-query, cts:document-query($accumlated-uris)),
-            (: return results :)
-            fn:true()
-          )[result/@action = $const:MERGE-ACTION]
-        where fn:exists($results)
-        return
-          let $merge-items := $results/result[@action]
-          let $merge-item-uris := $merge-items/@uri ! fn:string(.)
-          return (
-            map:put($matches, $merge-uri, $results),
-            $merge-item-uris  ! fn:string(.),
-            if (fn:exists($provenance-map)) then
-              proc-impl:record-match-provenance(
-                $provenance-map,
-                $merge-uri,
-                $merge-items
-              )
-            else ()
-          )
+    fn:distinct-values(
+      for $merge-uri in $current-uris
+      return
+        if (map:contains($matches,$merge-uri)) then
+          map:get($matches, $merge-uri)/result[@action=$const:MERGE-ACTION]/@uri ! fn:string(.)
+        else
+          let $results :=
+            match-impl:find-document-matches-by-options(
+              fn:doc($merge-uri),
+              $matching-options,
+              1,
+              $max-scan,
+              $merge-threshold,
+              (: don't include detailed match information :)
+              fn:false(),
+              if ($filter-query instance of cts:true-query) then
+                cts:not-query(cts:document-query($accumlated-uris))
+              else
+                cts:and-not-query($filter-query, cts:document-query($accumlated-uris)),
+              (: return results :)
+              fn:true()
+            )[result/@action = $const:MERGE-ACTION]
+          where fn:exists($results)
+          return
+            let $merge-items := $results/result[@action]
+            let $merge-item-uris := $merge-items/@uri ! fn:string(.)
+            return (
+              map:put($matches, $merge-uri, $results),
+              $merge-item-uris  ! fn:string(.),
+              if (fn:exists($provenance-map)) then
+                proc-impl:record-match-provenance(
+                  $provenance-map,
+                  $merge-uri,
+                  $merge-items
+                )
+              else ()
+            )
+    )
   let $new-uris := $additional-uris[fn:not(. = $accumlated-uris)]
   let $_lock-for-update := if ($lock-for-update) then ($new-uris ! merge-impl:lock-for-update(.)) else ()
   return
