@@ -124,7 +124,7 @@ public class SearchService extends SearchableService {
         }
 
         Collections collections = new Collections(hubConfig.newStagingClient());
-        return collections.getCollections(SJSSearchQuery.sourceQuery, String.valueOf(SJSSearchQuery.count), SJSSearchQuery.database);
+        return collections.getCollections(SJSSearchQuery.sourceQuery, String.valueOf(SJSSearchQuery.count), SJSSearchQuery.database, String.valueOf(SJSSearchQuery.urisOnly));
     }
 
     public String getDoc(String database, String docUri) {
@@ -149,10 +149,11 @@ public class SearchService extends SearchableService {
             params = new RequestParameters();
         }
 
-        public JsonNode getCollections(String sourceQuery, String count, String databaseName) {
+        public JsonNode getCollections(String sourceQuery, String count, String databaseName, String urisOnly) {
             params.add("sourceQuery", sourceQuery);
             params.add("count", count);
             params.add("database", databaseName);
+            params.add("urisOnly", urisOnly);
 
             ResourceServices.ServiceResultIterator resultItr = this.getServices().get(params);
             if (resultItr == null || !resultItr.hasNext()) {
