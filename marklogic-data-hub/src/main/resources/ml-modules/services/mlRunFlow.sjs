@@ -50,7 +50,7 @@ function post(context, params, input) {
       query = sourceQuery ? cts.query(sourceQuery) : null;
     }
     let content;
-    if (stepDetails.name === 'default-merging' && stepDetails.type === 'mastering' && uris) {
+    if (stepDetails.name === 'default-merging' && stepDetails.type === 'merging' && uris) {
       content = uris.map((uri) => { return { uri }; });
     } else if (!query && input && fn.count(input) === uris.length) {
       content = datahub.hubUtils.normalizeToArray(input).map((inputDoc, i) => { return { uri: uris[i],  value: inputDoc }; });

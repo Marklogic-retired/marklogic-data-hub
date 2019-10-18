@@ -59,7 +59,7 @@ if(!combinedOptions.sourceQuery && flowDoc.sourceQuery) {
   combinedOptions.sourceQuery = flowDoc.sourceQuery;
 }
 let query = combinedOptions.sourceQuery;
-let isMergingStep = baseStep.name === 'default-merging' && baseStep.type === 'mastering';
+let isMergingStep = baseStep.name === 'default-merging' && baseStep.type === 'merging';
 if (!(query || isMergingStep)) {
   datahub.debug.log("The collector query was empty");
   fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([404, "Not Found", "The collector query was empty"]));
