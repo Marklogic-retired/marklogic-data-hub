@@ -47,7 +47,6 @@ const SearchResult: React.FC<Props> = (props) => {
 
   function getSnippet() {
     let str = '';
-    console.log(props.item.matches)
     props.item.matches.map(item => {
         item['match-text'].forEach(element => {
           if (typeof element === 'object') {
