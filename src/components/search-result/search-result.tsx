@@ -25,8 +25,8 @@ const SearchResult: React.FC<Props> = (props) => {
     entityDef = props.entityDefArray.length && props.entityDefArray.find(entity => entity.name === itemEntityName[0]);
     primaryKeyValue = entityDef.primaryKey ? itemEntityProperties[0][entityDef.primaryKey] : '-';
     // TODO format createdOnVal using momentjs
-    createdOnVal = props.item.extracted.content[0].headers.createdOn.toString().substring(0, 19);
-    sourcesVal = props.item.extracted.content[0].headers.sources.map(src => {
+    createdOnVal = props.item.extracted.content[0].headers.hasOwnProperty('createdOn') && props.item.extracted.content[0].headers.createdOn.toString().substring(0, 19);
+    sourcesVal = props.item.extracted.content[0].headers.hasOwnProperty('sources') && props.item.extracted.content[0].headers.sources.map(src => {
         return src.name;
     }).join(', ');
     fileTypeVal = props.item.format;
