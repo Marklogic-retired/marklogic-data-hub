@@ -61,10 +61,9 @@
             prop: prop
           })" type="text"
           class="map-expr"
-        
         ></textarea>
-        <mat-icon id="field-with-error"*ngIf="containErrors && checkFieldInErrors(prop.name)" ><i class="fa fa-times-circle fa-xs" ></i></mat-icon></span>
-        <mat-hint *ngIf="containErrors && checkFieldInErrors(prop.name)" style="font-size: 10px;color: red">{{displayErrorMessage(prop.name)}}</mat-hint>
+        <mat-icon id="field-with-error" *ngIf="containErrors && checkFieldInErrors(prop.name)"><i class="fa fa-times-circle fa-xs" ></i></mat-icon></span>
+        <mat-hint id="error-description" *ngIf="containErrors && checkFieldInErrors(prop.name)">{{displayErrorMessage(prop.name)}}</mat-hint>
       </div>
       <mat-icon 
         id="fields-list"
@@ -112,10 +111,7 @@
           [functionLst]= "this.functionLst"
           [mapResults]= "this.mapResults[prop.name]"
           [currEntity] = "prop.$ref || prop.items.$ref"
-          [errorsAvailable]="this.errorsAvailable"
-          [displayErrors]="displayErrors"
           [containErrors]="containErrors"
-          [mapValidationResult]="this.mapValidationResult['properties'][prop.name]"
           [mapErrors]="this.mapErrors['properties'] ? this.mapErrors['properties'][prop.name] : {}"
           (handleSelection)="this.onHandleSelection($event)"
         ></app-entity-table-ui>
