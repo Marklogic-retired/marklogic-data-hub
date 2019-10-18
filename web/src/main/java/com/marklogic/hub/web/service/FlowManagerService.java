@@ -125,7 +125,7 @@ public class FlowManagerService {
             watcherService.watch(dir.toString());
         }
         if (checkExists) { //a new flow
-            dataHubService.reinstallUserModules(hubConfig, null, null);
+            dataHubService.installUserModules(hubConfig, true, null, null);
         }
 
         return fsm;

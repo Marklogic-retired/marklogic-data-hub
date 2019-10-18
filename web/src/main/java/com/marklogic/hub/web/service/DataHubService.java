@@ -102,11 +102,13 @@ public class DataHubService {
 
     @Async
     public void installUserModules(HubConfig config, boolean forceLoad, DeployUserModulesListener deployListener, ValidateListener validateListener) {
+        logger.info("Installing user modules");
         long startTime = PerformanceLogger.monitorTimeInsideMethod();
-
         try {
             installUserModules(config, forceLoad, deployListener);
-            validateUserModules(config, validateListener);
+            if (validateListener != null) {
+                validateUserModules(config, validateListener);
+            }
         } catch (Throwable e) {
             throw new DataHubException(e.getMessage(), e);
         }
@@ -115,19 +117,15 @@ public class DataHubService {
 
     @Async
     public void reinstallUserModules(HubConfig config, DeployUserModulesListener deployListener, ValidateListener validateListener) {
+        logger.info("Reinstalling user modules");
         long startTime = PerformanceLogger.monitorTimeInsideMethod();
-
         try {
             dataHub.clearUserModules();
-            installUserModules(config, true, deployListener);
-            if(validateListener != null) {
-                validateUserModules(config, validateListener);
-            }
+            installUserModules(config, true, deployListener, validateListener);
         } catch(Throwable e) {
             throw new DataHubException(e.getMessage(), e);
         }
         PerformanceLogger.logTimeInsideMethod(startTime, "DataHubService.reinstallUserModules");
-
     }
 
     @Async
@@ -143,7 +141,6 @@ public class DataHubService {
     public void validateUserModules(HubConfig hubConfig, ValidateListener validateListener) {
         EntitiesValidator ev = EntitiesValidator.create(hubConfig.newStagingClient());
         validateListener.onValidate(ev.validateAll());
-
     }
 
     public void uninstall(HubConfig config, HubDeployStatusListener listener) throws DataHubException {
@@ -187,6 +184,7 @@ public class DataHubService {
         loadUserArtifactsCommand.setHubConfig(hubConfig);
         loadUserArtifactsCommand.setForceLoad(forceLoad);
 
+        // TODO Why load hub artifacts when this method is for loading user modules/artifacts?
         loadHubArtifactsCommand.setHubConfig(hubConfig);
         loadHubArtifactsCommand.setForceLoad(forceLoad);
 
