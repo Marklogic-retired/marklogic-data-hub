@@ -6,7 +6,7 @@ import styles from './Detail.module.scss';
 import TableView from '../components/table-view/table-view';
 import JsonView from '../components/json-view/json-view';
 import DetailHeader from '../components/detail-header/detail-header';
-import { Layout, Menu, PageHeader, Spin } from 'antd';
+import {Alert, Layout, Menu, PageHeader, Spin} from 'antd';
 import XmlView from '../components/xml-view/xml-view';
 
 interface Props extends RouteComponentProps<any> { }
@@ -23,6 +23,8 @@ const Detail: React.FC<Props> = ({ history, location }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [contentType, setContentType] = useState();
   const [xml, setXml] = useState();
+  const [showBanner, toggleBanner]= useState(false);
+  const [is400Error, set400Error] = useState('');
 
   useEffect(() => {
     setIsLoading(true);
@@ -46,12 +48,17 @@ const Detail: React.FC<Props> = ({ history, location }) => {
         setIsLoading(false);
 
       } catch (error) {
-        console.log('error', error.response);
-        if (error.response.status === 401) {
-          userNotAuthenticated();
-        }
-        if(error.response.status===500) {
-          setErrorMessage({title:error.response.data.error,message:error.response.data.message})
+        switch (error.response.status) {
+          case 401:
+            userNotAuthenticated();
+            break;
+          case 500:
+            setErrorMessage({title: error.response.data.error, message: error.response.data.message});
+            break;
+          case 400:
+            toggleBanner(true);
+            set400Error(error.response.data.message);
+            break;
         }
       }
     };
@@ -62,6 +69,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
   const handleClick = (event) => {
     setSelected(event.key);
   }
+
 
   const convertXmlToJson = (xmlData) => {
     var parser = require('fast-xml-parser');
@@ -91,8 +99,13 @@ const Detail: React.FC<Props> = ({ history, location }) => {
     return he.decode(xml);
   }
 
+  const onClose = e => {
+    console.log(e, 'I was closed.');
+  };
+
   return (
     <Layout>
+      {showBanner ? <Alert style={{textAlign:"center"}} message={is400Error}  type="error" closable onClose={onClose}/> : null}
       <Content style={{ background: '#fff', padding: '18px 36px' }}>
         <div id='back-button'>
           <PageHeader style={{ padding: '0px', marginBottom: '20px' }} onBack={() => history.push('/browse')} title={<Link to={{ pathname: "/browse" }} data-cy="back-button">Back</Link>} />

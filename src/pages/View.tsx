@@ -1,6 +1,6 @@
 import React, { useState, useEffect,useContext } from 'react';
 import axios from 'axios';
-import { Layout, Statistic, Spin } from 'antd';
+import {Layout, Statistic, Spin, Alert} from 'antd';
 import { AuthContext } from '../util/auth-context';
 import EntityTable from '../components/entity-table/entity-table';
 import { entityFromJSON } from '../util/data-conversion';
@@ -15,6 +15,8 @@ const View: React.FC = () => {
   const [facetValues, setFacetValues] = useState<any[]>([]);
   const [totalDocs, setTotalDocs] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [showBanner, toggleBanner]= useState(false);
+  const [is400Error, set400Error] = useState('');
 
   const getEntityModel = async () => {
     try {
@@ -24,11 +26,17 @@ const View: React.FC = () => {
       let entityArray = [ ...entityFromJSON(response.data).map(entity => entity.info.title)];
       getSearchResults(entityArray);
     } catch (error) {
-      if (error.response.status === 401) {
-        userNotAuthenticated();
-      }
-      if(error.response.status===500) {
-        setErrorMessage({title:error.response.data.error,message:error.response.data.message})
+      switch (error.response.status) {
+        case 401:
+          userNotAuthenticated();
+          break;
+        case 500:
+          setErrorMessage({title: error.response.data.error, message: error.response.data.message});
+          break;
+        case 400:
+          toggleBanner(true);
+          set400Error(error.response.data.message);
+          break;
       }
     }
   }
@@ -50,7 +58,18 @@ const View: React.FC = () => {
       setFacetValues(response.data.facets.Collection.facetValues);
       setIsLoading(false);
     } catch (error) {
-       console.log('error', error.response);
+      switch (error.response.status) {
+        case 401:
+          userNotAuthenticated();
+          break;
+        case 500:
+          setErrorMessage({title: error.response.data.error, message: error.response.data.message});
+          break;
+        case 400:
+          toggleBanner(true);
+          set400Error(error.response.data.message);
+          break;
+      }
     }
   }
 
@@ -61,9 +80,24 @@ const View: React.FC = () => {
       setLastHarmonized(response.data);
       //console.log(response.data)
     } catch (error) {
-       console.log('error', error.response);
+      switch (error.response.status) {
+        case 401:
+          userNotAuthenticated();
+          break;
+        case 500:
+          setErrorMessage({title: error.response.data.error, message: error.response.data.message});
+          break;
+        case 400:
+          toggleBanner(true);
+          set400Error(error.response.data.message);
+          break;
+      }
     }
   }
+
+  const onClose = e => {
+    console.log(e, 'I was closed.');
+  };
 
   useEffect(() => {
     getEntityModel();
@@ -73,6 +107,7 @@ const View: React.FC = () => {
   return (
     <Layout className={styles.container}>
       <Content>
+        {showBanner ? <Alert style={{textAlign:"center"}} message={is400Error}  type="error" closable onClose={onClose}/> : null}
         {isLoading ? <Spin tip="Loading..." style={{ margin: '100px auto', width: '100%'}} /> :
           <>
             <div className={styles.statsContainer} data-cy="total-container">

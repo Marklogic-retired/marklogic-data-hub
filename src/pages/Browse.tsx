@@ -42,25 +42,25 @@ const Browse: React.FC<Props> = ({location}) => {
     try {
       const response = await axios(`/datahub/v2/models`);
       const parsedModelData = entityFromJSON(response.data);
-      let entityArray = [ ...entityFromJSON(response.data).map(entity => entity.info.title)];
+      let entityArray = [...entityFromJSON(response.data).map(entity => entity.info.title)];
       setEntites(entityArray);
       setEntityDefArray(entityParser(parsedModelData));
       setEntitiesLoaded(true);
-      //setIsVisible(false);
-      if (searchOptions.entityNames.length === 0 ) {
+      if (searchOptions.entityNames.length === 0) {
         setAllEntities(entityArray)
       }
     } catch (error) {
-      // console.log('error', error.response);
-      if (error.response.status === 401) {
-        userNotAuthenticated();
-      }
-      if(error.response.status===500) {
-        setErrorMessage({title:error.response.data.error,message:error.response.data.message})
-      }
-      if(error.response.status===400){
-        toggleBanner(true);
-        set400Error(error.response.data.message)
+      switch (error.response.status) {
+        case 401:
+          userNotAuthenticated();
+          break;
+        case 500:
+          setErrorMessage({title: error.response.data.error, message: error.response.data.message});
+          break;
+        case 400:
+          toggleBanner(true);
+          set400Error(error.response.data.message);
+          break;
       }
     }
   }
@@ -79,22 +79,22 @@ const Browse: React.FC<Props> = ({location}) => {
           facets: searchOptions.searchFacets,
         }
       });
-      console.log('response.data', response.data);
       setData(response.data.results);
       setFacets(response.data.facets);
       setTotalDocuments(response.data.total);
       setIsLoading(false);
     } catch (error) {
-      console.log('error', error.response);
-      if (error.response.status === 401) {
-        userNotAuthenticated();
-      }
-      if(error.response.status===500) {
-        setErrorMessage({title:error.response.data.error,message:error.response.data.message})
-      }
-      if(error.response.status===400){
-        toggleBanner(true);
-        //set400Error(error.response.data.message)
+      switch (error.response.status) {
+        case 401:
+          userNotAuthenticated();
+          break;
+        case 500:
+          setErrorMessage({title: error.response.data.error, message: error.response.data.message});
+          break;
+        case 400:
+          toggleBanner(true);
+          set400Error(error.response.data.message);
+          break;
       }
     }
   }
@@ -125,11 +125,13 @@ const Browse: React.FC<Props> = ({location}) => {
     setPageLength(current, pageSize);
   }
 
+  const onClose = e => {
+      console.log(e, 'I was closed.');
+    };
+
 
   return (
-
       <>
-        {/*<Alert message={} type="Error" />*/}
     <Layout>
       <Sider width={300} style={{ background: '#f3f3f3' }}>
         <Sidebar 
@@ -139,6 +141,7 @@ const Browse: React.FC<Props> = ({location}) => {
         />
       </Sider>
       <Content style={{ background: '#fff', padding: '24px' }}>
+        {showBanner ? <Alert style={{textAlign:"center"}} message={is400Error}  type="error" closable onClose={onClose}/> : null}
       <SearchBar entities={entities}/>
         {isLoading ? 
           <Spin tip="Loading..." style={{ margin: '100px auto', width: '100%'}} />
