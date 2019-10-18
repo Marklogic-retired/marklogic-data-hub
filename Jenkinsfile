@@ -119,7 +119,7 @@ pipeline{
   }
   			beforeAgent true
 		}
-		agent {label 'master'};
+		agent {label 'dhmaster'};
 		steps{
 		script{
 		    props = readProperties file:'data-hub/pipeline.properties';
@@ -158,7 +158,7 @@ pipeline{
   			changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'develop', title: '', url: ''
   			beforeAgent true
 		}
-		agent {label 'master'};
+		agent {label 'dhmaster'};
 			steps{
 			retry(5){
 				withCredentials([usernameColonPassword(credentialsId: '550650ab-ee92-4d31-a3f4-91a11d5388a3', variable: 'Credentials')]) {
@@ -278,7 +278,7 @@ pipeline{
   			branch 'FeatureBranch'
   			beforeAgent true
 		}
-		agent {label 'master'}
+		agent {label 'dhmaster'}
 		steps{
 		withCredentials([usernameColonPassword(credentialsId: '550650ab-ee92-4d31-a3f4-91a11d5388a3', variable: 'Credentials')]) {
 		script{
@@ -503,7 +503,7 @@ pipeline{
                            }
              }
 		stage('w12_cluster_10.0-2'){
-			agent { label 'master'}
+			agent { label 'dhmaster'}
 			steps{ 
 					script{
            def Returnresult=build job: '/5.x/dhf-core-develop-winserver2012-cluster_10.0-2', propagate: false
@@ -533,7 +533,7 @@ pipeline{
                   }
 		}
 		stage('w12_cluster_9.0-10'){
-			agent { label 'master'}
+			agent { label 'dhmaster'}
 			steps{ 
 					script{
           def Returnresult=build job: '/5.x/dhf-core-develop-winserver2012-cluster_9.0-10', propagate: false
@@ -563,7 +563,7 @@ pipeline{
                   }
 		}
 		stage('w12_cluster'){
-			agent { label 'master'}
+			agent { label 'dhmaster'}
 			steps{ 
 					script{
           def Returnresult=build job: '/5.x/dhf-core-develop-winserver2012-cluster', propagate: false
@@ -593,7 +593,7 @@ pipeline{
                   }
 		}
 		stage('qs_rh7_90-nightly'){
-			agent { label 'master'}
+			agent { label 'dhmaster'}
 			steps{ 
 					script{
           def Returnresult=build job: '/5.x/NO_CI_dhf-qs-develop-rh7', propagate: false
@@ -621,7 +621,7 @@ pipeline{
                   }
 		}
 		stage('qs_rh7_10-nightly'){
-        			agent { label 'master'}
+        			agent { label 'dhmaster'}
         			steps{
         					script{
                   def Returnresult=build job: '/5.x/NO_CI_dhf-qs-develop-rh7_ML10', propagate: false
@@ -649,7 +649,7 @@ pipeline{
                           }
         		}
         stage('qs_rh7_90-release'){
-        			agent { label 'master'}
+        			agent { label 'dhmaster'}
         			steps{
         					script{
                   def Returnresult=build job: '/5.x/NO_CI_dhf-qs-develop-rh7_90_ReleaseBuild', propagate: false
@@ -677,7 +677,7 @@ pipeline{
                           }
         		}
         		stage('qs_rh7_10-release'){
-                			agent { label 'master'}
+                			agent { label 'dhmaster'}
                 			steps{
                 					script{
                           def Returnresult=build job: '/5.x/NO_CI_dhf-qs-develop-rh7_10_ReleaseBuild', propagate: false
@@ -720,7 +720,7 @@ pipeline{
   			branch 'develop'
   			beforeAgent true
 		}
-		agent {label 'master'}
+		agent {label 'dhmaster'}
 		steps{
 		withCredentials([usernameColonPassword(credentialsId: '550650ab-ee92-4d31-a3f4-91a11d5388a3', variable: 'Credentials')]) {
 		script{
