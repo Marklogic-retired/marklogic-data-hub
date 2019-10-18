@@ -432,7 +432,7 @@ declare function match-impl:values-by-qname(
     )
     where fn:exists($values)
     return
-        map:entry(xdmp:key-from-QName($qname), $values)
+      map:entry(xdmp:key-from-QName($qname), $values)
   )
 };
 

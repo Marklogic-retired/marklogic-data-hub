@@ -71,7 +71,7 @@ declare variable $EXPECTED-VALUES := map:new((
   ),
   map:entry(
     "decimalProperty",
-    xs:double(123.456)
+    xs:decimal(123.456)
   ),
   map:entry(
     "dateProperty",
@@ -83,7 +83,7 @@ declare variable $EXPECTED-VALUES := map:new((
   ),
   map:entry(
     "intProperty",
-    xs:double(12)
+    xs:integer(12)
   ),
   map:entry(
     "strProperty",
