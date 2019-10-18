@@ -429,7 +429,6 @@ declare function match-impl:values-by-qname(
     for $qname in fn:distinct-values((map:get($compiled-options, "queries") ! map:get(.,"qname")))
     let $values := fn:distinct-values(
       $document//*[fn:node-name(.) eq $qname][fn:normalize-space(fn:string(.))]/fn:data(.)
-      )
     )
     where fn:exists($values)
     return
