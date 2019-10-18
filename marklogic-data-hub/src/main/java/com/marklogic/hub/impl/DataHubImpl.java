@@ -276,10 +276,15 @@ public class DataHubImpl implements DataHub {
                     }
                 }
             }
-            //5.1.0 supports server versions 9.x >= 9.0-10 and 10.x >= 10.0.1
+            //5.1.0 supports server versions 9.x >= 9.0-10 and 10.x >= 10.0.2
             else {
                 if(serverVersion.getMajor() == 9){
                     if(serverVersion.getMinor() < 1000) {
+                        return false;
+                    }
+                }
+                if(serverVersion.getMajor() == 10){
+                    if(serverVersion.getMinor() < 200) {
                         return false;
                     }
                 }
