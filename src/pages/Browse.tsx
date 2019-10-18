@@ -6,7 +6,7 @@ import { SearchContext } from '../util/search-context';
 import Sidebar from '../components/sidebar/sidebar';
 import SearchBar from '../components/search-bar/search-bar';
 import SearchPagination from '../components/search-pagination/search-pagination';
-import { Layout, Spin } from 'antd';
+import { Layout, Spin,Alert } from 'antd';
 import SearchSummary from '../components/search-summary/search-summary';
 import SearchResults from '../components/search-results/search-results';
 import { entityFromJSON, entityParser } from '../util/data-conversion';
@@ -16,7 +16,7 @@ interface Props extends RouteComponentProps<any> { }
 const Browse: React.FC<Props> = ({location}) => {
   const { Content, Sider } = Layout;
 
-  const { userNotAuthenticated } = useContext(AuthContext);
+  const { userNotAuthenticated, setErrorMessage } = useContext(AuthContext);
   const { 
     searchOptions,
     setPage,
@@ -35,6 +35,8 @@ const Browse: React.FC<Props> = ({location}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [entitiesLoaded, setEntitiesLoaded] = useState(false);
   const [totalDocuments, setTotalDocuments] = useState();
+  const [showBanner, toggleBanner]= useState(false);
+  const [is400Error, set400Error] = useState('');
 
   const getEntityModel = async () => {
     try {
@@ -44,6 +46,7 @@ const Browse: React.FC<Props> = ({location}) => {
       setEntites(entityArray);
       setEntityDefArray(entityParser(parsedModelData));
       setEntitiesLoaded(true);
+      //setIsVisible(false);
       if (searchOptions.entityNames.length === 0 ) {
         setAllEntities(entityArray)
       }
@@ -51,6 +54,13 @@ const Browse: React.FC<Props> = ({location}) => {
       // console.log('error', error.response);
       if (error.response.status === 401) {
         userNotAuthenticated();
+      }
+      if(error.response.status===500) {
+        setErrorMessage({title:error.response.data.error,message:error.response.data.message})
+      }
+      if(error.response.status===400){
+        toggleBanner(true);
+        set400Error(error.response.data.message)
       }
     }
   }
@@ -79,6 +89,13 @@ const Browse: React.FC<Props> = ({location}) => {
       if (error.response.status === 401) {
         userNotAuthenticated();
       }
+      if(error.response.status===500) {
+        setErrorMessage({title:error.response.data.error,message:error.response.data.message})
+      }
+      if(error.response.status===400){
+        toggleBanner(true);
+        //set400Error(error.response.data.message)
+      }
     }
   }
 
@@ -89,15 +106,16 @@ const Browse: React.FC<Props> = ({location}) => {
     if(location.state && location.state.jobId){
       setLatestJobFacet(location.state.jobId);
     }
-
     getEntityModel();
   }, []);
+
 
   useEffect(() => {
     if (entitiesLoaded) {
       getSearchResults();
     }
   }, [searchOptions, entitiesLoaded]);
+
   
   const handlePageChange = (pageNumber: number) => {
     setPage(pageNumber);
@@ -107,7 +125,11 @@ const Browse: React.FC<Props> = ({location}) => {
     setPageLength(current, pageSize);
   }
 
+
   return (
+
+      <>
+        {/*<Alert message={} type="Error" />*/}
     <Layout>
       <Sider width={300} style={{ background: '#f3f3f3' }}>
         <Sidebar 
@@ -146,6 +168,7 @@ const Browse: React.FC<Props> = ({location}) => {
         }
       </Content>
     </Layout>
+        </>
   );
 }
 

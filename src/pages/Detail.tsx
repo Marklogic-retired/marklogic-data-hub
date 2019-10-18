@@ -14,7 +14,7 @@ interface Props extends RouteComponentProps<any> { }
 const { Content } = Layout;
 
 const Detail: React.FC<Props> = ({ history, location }) => {
-  const { userNotAuthenticated } = useContext(AuthContext);
+  const { userNotAuthenticated,setErrorMessage } = useContext(AuthContext);
   const uriSplit = location.pathname.replace('/detail/','');
   const uri = "/"+ uriSplit.substring(uriSplit.indexOf('/')+1);
   const pkValue = uriSplit.split('/')[0] === '-' ? '' : uriSplit.split('/')[0];
@@ -49,6 +49,9 @@ const Detail: React.FC<Props> = ({ history, location }) => {
         console.log('error', error.response);
         if (error.response.status === 401) {
           userNotAuthenticated();
+        }
+        if(error.response.status===500) {
+          setErrorMessage({title:error.response.data.error,message:error.response.data.message})
         }
       }
     };

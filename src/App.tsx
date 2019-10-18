@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect,useState } from 'react';
 import { Switch } from 'react-router';
 import { Route, Redirect, RouteComponentProps, withRouter } from 'react-router-dom';
 import { AuthContext } from './util/auth-context';
@@ -8,6 +8,7 @@ import Home from './pages/Home';
 import View from './pages/View';
 import Browse from './pages/Browse';
 import Detail from './pages/Detail';
+import { Modal } from 'antd';
 import './App.scss';
 
 interface Props extends RouteComponentProps<any> {}
@@ -15,8 +16,8 @@ interface Props extends RouteComponentProps<any> {}
 const App: React.FC<Props> = ({history, location}) => {
   const { user } = useContext(AuthContext);
 
-  document.title = 'Explorer'
-
+  document.title = 'Explorer';
+  const [visible,setIsVisible] = useState(false)
   const PrivateRoute = ({ component: Component, ...rest }) => (
     <Route {...rest} render={ props => (
       user.authenticated === true ? (
@@ -38,10 +39,14 @@ const App: React.FC<Props> = ({history, location}) => {
         history.push('/view');
       }
     }
+    if(user.error.title){
+        setIsVisible(true)
+    }
   }, [user]);
 
   return (
     <>
+
       <Header/>
       <SearchProvider>
         <Switch>
@@ -50,6 +55,10 @@ const App: React.FC<Props> = ({history, location}) => {
           <PrivateRoute path="/browse" exact component={Browse}/>
           <PrivateRoute path="/detail/:pk/:id" component={Detail}/>
         </Switch>
+          <Modal visible={visible}  title={user.error.title} onCancel={()=>setIsVisible(false)} onOk={()=>setIsVisible(false)}>
+              <p> {user.error.message}</p>
+
+          </Modal>
       </SearchProvider>
     </>
   );

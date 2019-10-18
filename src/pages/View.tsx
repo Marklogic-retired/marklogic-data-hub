@@ -9,7 +9,7 @@ import styles from './View.module.scss';
 const { Content } = Layout;
 
 const View: React.FC = () => {
-  const { userNotAuthenticated } = useContext(AuthContext);
+  const { userNotAuthenticated,setErrorMessage } = useContext(AuthContext);
   const [entities, setEntites] = useState<any[]>([]);
   const [lastHarmonized, setLastHarmonized] = useState<any[]>([]);
   const [facetValues, setFacetValues] = useState<any[]>([]);
@@ -26,6 +26,9 @@ const View: React.FC = () => {
     } catch (error) {
       if (error.response.status === 401) {
         userNotAuthenticated();
+      }
+      if(error.response.status===500) {
+        setErrorMessage({title:error.response.data.error,message:error.response.data.message})
       }
     }
   }
