@@ -68,7 +68,7 @@ pipeline{
 			steps{
 			script{
 			    props = readProperties file:'data-hub/pipeline.properties';
-				copyRPM 'Release','10.0-2'
+				copyRPM 'Release','10.0-2.1'
 				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
 				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;set +e;./gradlew clean;./gradlew marklogic-data-hub:test || true;sleep 10s;./gradlew ml-data-hub:test || true;./gradlew web:test || true;'
 				junit '**/TEST-*.xml'
@@ -119,7 +119,7 @@ pipeline{
   }
   			beforeAgent true
 		}
-		agent {label 'master'};
+		agent {label 'dhmaster'};
 		steps{
 		script{
 			if(env.CHANGE_TITLE.split(':')[1].contains("Automated PR")){
@@ -158,7 +158,7 @@ pipeline{
   			changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: '5.x-develop', title: '', url: ''
   			beforeAgent true
 		}
-		agent {label 'master'};
+		agent {label 'dhmaster'};
 			steps{
 			retry(5){
 				withCredentials([usernameColonPassword(credentialsId: '550650ab-ee92-4d31-a3f4-91a11d5388a3', variable: 'Credentials')]) {
@@ -242,7 +242,7 @@ pipeline{
 			steps{
 			script{
                 props = readProperties file:'data-hub/pipeline.properties';
-				copyRPM 'Release','9.0-10'
+				copyRPM 'Release','9.0-10.4'
 				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
 				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test -Dorg.gradle.jvmargs=-Xmx1g;sleep 10s;./gradlew ml-data-hub:test;sleep 10s;./gradlew web:test;sleep 10s;./gradlew marklogic-data-hub:testBootstrap;sleep 10s;./gradlew ml-data-hub:testFullCycle;'
 				junit '**/TEST-*.xml'
@@ -278,7 +278,7 @@ pipeline{
   			branch 'FeatureBranch'
   			beforeAgent true
 		}
-		agent {label 'master'}
+		agent {label 'dhmaster'}
 		steps{
 		withCredentials([usernameColonPassword(credentialsId: '550650ab-ee92-4d31-a3f4-91a11d5388a3', variable: 'Credentials')]) {
 		script{
@@ -401,7 +401,7 @@ pipeline{
 			steps{
 			script{
                 props = readProperties file:'data-hub/pipeline.properties';
-				copyRPM 'Release','9.0-9'
+				copyRPM 'Release','9.0-9.5'
 				def dockerhost=setupMLDockerCluster 3
 				sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test;sleep 10s;./gradlew ml-data-hub:test;sleep 10s;./gradlew web:test;sleep 10s;./gradlew marklogic-data-hub:testBootstrap;sleep 10s;./gradlew ml-data-hub:testFullCycle;"'
 				}
@@ -435,7 +435,7 @@ pipeline{
 		stage('rh7_cluster_9.0-10'){
 			agent { label 'dhfLinuxAgent'}
 			steps{ 
-				copyRPM 'Release','9.0-10'
+				copyRPM 'Release','9.0-10.4'
 				script{
 				def dockerhost=setupMLDockerCluster 3
 				sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test;sleep 10s;./gradlew ml-data-hub:test;sleep 10s;./gradlew web:test;sleep 10s;./gradlew marklogic-data-hub:testBootstrap;sleep 10s;./gradlew ml-data-hub:testFullCycle;"'
@@ -469,7 +469,7 @@ pipeline{
 		stage('rh7_cluster_10.0-2'){
 			agent { label 'dhfLinuxAgent'}
 			steps{ 
-				copyRPM 'Release','10.0-2'
+				copyRPM 'Release','10.0-2.1'
 				script{
 				def dockerhost=setupMLDockerCluster 3
 				sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test;sleep 10s;./gradlew ml-data-hub:test;sleep 10s;./gradlew web:test;sleep 10s;./gradlew marklogic-data-hub:testBootstrap;sleep 10s;./gradlew ml-data-hub:testFullCycle;"'
@@ -535,7 +535,7 @@ pipeline{
                   }
     }
 		stage('w12_cluster_10.0-2'){
-			agent { label 'master'}
+			agent { label 'dhmaster'}
 			steps{ 
 					script{
            def Returnresult=build job: '/5.x/dhf-core-5.x-develop-winserver2012-cluster_10.0-2', propagate: false
@@ -565,7 +565,7 @@ pipeline{
                   }
 		}
 		stage('w12_cluster_9.0-10'){
-			agent { label 'master'}
+			agent { label 'dhmaster'}
 			steps{ 
 					script{
           def Returnresult=build job: '/5.x/dhf-core-5.x-develop-winserver2012-cluster_9.0-10', propagate: false
@@ -595,7 +595,7 @@ pipeline{
                   }
 		}
 		stage('w12_cluster'){
-			agent { label 'master'}
+			agent { label 'dhmaster'}
 			steps{ 
 					script{
           def Returnresult=build job: '/5.x/dhf-core-5.x-develop-winserver2012-cluster', propagate: false
@@ -625,7 +625,7 @@ pipeline{
                   }
 		}
 		stage('qs_rh7_singlenode'){
-			agent { label 'master'}
+			agent { label 'dhmaster'}
 			steps{ 
 					script{
           def Returnresult=build job: '/5.x/NO_CI_dhf-qs-5.x-develop-rh7', propagate: false
@@ -666,7 +666,7 @@ pipeline{
   			branch '5.x-develop'
   			beforeAgent true
 		}
-		agent {label 'master'}
+		agent {label 'dhmaster'}
 		steps{
 		withCredentials([usernameColonPassword(credentialsId: '550650ab-ee92-4d31-a3f4-91a11d5388a3', variable: 'Credentials')]) {
 		script{
@@ -713,7 +713,7 @@ pipeline{
 		}
 			agent { label 'dhfLinuxAgent'}
 			steps{
-				copyRPM 'Release','9.0-10'
+				copyRPM 'Release','9.0-10.4'
 				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
 				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;./gradlew clean;./gradlew marklogic-data-hub:test;sleep 10s;./gradlew ml-data-hub:test;sleep 10s;./gradlew web:test;'
 				junit '**/TEST-*.xml'
