@@ -224,12 +224,12 @@ export class Step {
         newStep.options.sourceDatabase = databases.staging;
         newStep.options.targetDatabase = databases.final;
       }
-      if (json.stepDefinitionType === StepType.MATCHING && json.stepDefinitionName === 'default-mastering') {
+      if (json.stepDefinitionType === StepType.MATCHING && json.stepDefinitionName === 'default-matching') {
         newStep.options = new MatchingOptions();
         newStep.options.sourceDatabase = databases.final;
         newStep.options.targetDatabase = databases.final;
       }
-      if (json.stepDefinitionType === StepType.MERGING && json.stepDefinitionName === 'default-mastering') {
+      if (json.stepDefinitionType === StepType.MERGING && json.stepDefinitionName === 'default-merging') {
         newStep.options = new MergingOptions();
         newStep.options.sourceDatabase = databases.final;
         newStep.options.targetDatabase = databases.final;
