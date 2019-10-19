@@ -74,8 +74,7 @@ public class SearchHelper {
 
     // Fetching document content and meta-data
     try {
-      String content = docMgr.readAs(docUri, documentMetadataReadHandle, String.class,
-          new ServerTransform("mlPrettifyXML"));
+      String content = docMgr.readAs(docUri, documentMetadataReadHandle, String.class);
       Map<String, String> metadata = documentMetadataReadHandle.getMetadataValues();
       return Optional.ofNullable(new Document(content, metadata));
     } catch (ResourceNotFoundException rnfe) {
