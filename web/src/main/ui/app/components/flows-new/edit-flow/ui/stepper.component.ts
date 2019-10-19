@@ -132,6 +132,22 @@ export class StepperComponent extends CdkStepper implements OnChanges, AfterCont
         return 'CUSTOM';
       }
     }
+    else if (step.stepDefinitionType === this.stepType.MATCHING){
+      if(step.stepDefinitionName === 'default-matching'){
+        return 'MATCHING';
+      }
+      else{
+        return 'CUSTOM';
+      }
+    }
+    else if (step.stepDefinitionType === this.stepType.MERGING){
+      if(step.stepDefinitionName === 'default-merging'){
+        return 'MERGING';
+      }
+      else{
+        return 'CUSTOM';
+      }
+    }
     else if (step.stepDefinitionType === this.stepType.MASTERING){
       if(step.stepDefinitionName === 'default-mastering'){
         return 'MASTERING';
