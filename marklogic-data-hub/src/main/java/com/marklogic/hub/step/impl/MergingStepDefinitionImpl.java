@@ -28,7 +28,7 @@ public class MergingStepDefinitionImpl extends AbstractStepDefinition {
 
     public MergingStepDefinitionImpl(String name) {
         setName(name);
-        setType(StepDefinitionType.MASTERING);
+        setType(StepDefinitionType.MERGING);
 
         Map<String, Object> options = getOptions();
         setSourceQuery("cts.collectionQuery('default-mapping')");
