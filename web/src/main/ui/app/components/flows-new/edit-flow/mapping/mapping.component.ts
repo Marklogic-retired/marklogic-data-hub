@@ -29,7 +29,6 @@ import { Flow } from "../../models/flow.model";
       [entityName]="this.entityName"
       [entityNested] = "entityNested"
       [nmspace] = "nmspace"
-      [mapValidationResult]="this.mapValidationResult"
       (updateURI)="this.updateURI($event)"
       (updateMap)="this.updateMap($event)"
     ></app-mapping-ui>
