@@ -210,23 +210,32 @@ function escapeXML(input = '') {
  * @return {{targetEntityType: *, properties: {}}}
  */
 function validateMapping(mapping) {
-  let validatedMapping = {
-    targetEntityType : mapping.targetEntityType,
-    properties : {}
-  };
+  // Rebuild the mapping without its "properties"
+  // Those will be rebuilt next, but with each property mapping validated
+  let validatedMapping = {};
+  Object.keys(mapping).forEach(key => {
+    if (key != "properties") {
+      validatedMapping[key] = mapping[key];
+    }
+  });
+  validatedMapping.properties = {};
 
   Object.keys(mapping.properties).forEach(propertyName => {
     let mappedProperty = mapping.properties[propertyName];
-    let sourcedFrom = mappedProperty.sourcedFrom;
+
+    // If this is a nested property, validate its child properties first
     if (mappedProperty.hasOwnProperty("targetEntityType")) {
-      let nestedMapping = validateMapping(mappedProperty);
-      nestedMapping.sourcedFrom = sourcedFrom;
-      validatedMapping.properties[propertyName] = nestedMapping;
+      mappedProperty = validateMapping(mappedProperty);
     }
-    else {
-      let result = validatePropertyMapping(mapping.targetEntityType, propertyName, sourcedFrom);
-      validatedMapping.properties[propertyName] = result;
+
+    // Validate the mapping expression, and if an error occurs, add it to the mapped property object
+    let sourcedFrom = mappedProperty.sourcedFrom;
+    let errorMessage = validatePropertyMapping(mapping.targetEntityType, propertyName, sourcedFrom);
+    if (errorMessage != null) {
+      mappedProperty.errorMessage = errorMessage;
     }
+
+    validatedMapping.properties[propertyName] = mappedProperty;
   });
 
   return validatedMapping;
@@ -238,7 +247,7 @@ function validateMapping(mapping) {
  * @param targetEntityType
  * @param propertyName
  * @param sourcedFrom
- * @return {{sourcedFrom: *, errorMessage: *}|{sourcedFrom: *}}
+ * @return an error message if the mapping validation fails
  */
 function validatePropertyMapping(targetEntityType, propertyName, sourcedFrom) {
   let mapping = {
@@ -252,27 +261,18 @@ function validatePropertyMapping(targetEntityType, propertyName, sourcedFrom) {
 
   try {
     let xmlMapping = buildMappingXML(fn.head(xdmp.unquote(xdmp.quote(mapping))));
-
     // As of trunk 10.0-20190916, mappings are being validated against entity schemas in the schema database.
     // This doesn't seem expected, as the validation will almost always fail.
     // Thus, this is not using es.mappingCompile, which does validation, and just invokes the transform instead.
     let stylesheet = xdmp.xsltInvoke("/MarkLogic/entity-services/mapping-compile.xsl", xmlMapping)
-
     xdmp.xsltEval(stylesheet, [], {staticCheck: true});
-    // In the future, we'll capture a value here that results from applying the successfully validated mapping against a document
-    return {
-      sourcedFrom: sourcedFrom
-    };
   } catch (e) {
     // TODO Move this into a separate function for easier testing?
     let errorMessage = e.message;
     if (e.data != null && e.data.length > 0) {
       errorMessage += ": " + e.data[0];
     }
-    return {
-      sourcedFrom : sourcedFrom,
-      errorMessage : errorMessage
-    }
+    return errorMessage;
   }
 }
 
