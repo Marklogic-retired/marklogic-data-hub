@@ -36,7 +36,6 @@ export class MappingUiComponent implements OnChanges {
 
   @Input() entityProps: any;
   @Input() nmspace: object;
-  @Input() mapValidationResult: object;
   @Output() updateURI = new EventEmitter();
   @Output() updateMap = new EventEmitter();
 
