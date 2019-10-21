@@ -14,11 +14,11 @@ const SearchResult: React.FC<Props> = (props) => {
   let itemEntityName: string[] = [];
   let itemEntityProperties: any[] = [];
   let entityDef: any = {};
-  let primaryKeyValue: string = '';
+  let primaryKeyValue: string = '-';
   let createdOnVal: string = '';
   let sourcesVal: string = '';
   let fileTypeVal: string = props.item.format;
-  let uri = encodeURIComponent(props.item.uri);
+  let uri: string = encodeURIComponent(props.item.uri);
 
   if (props.item.format === 'json') {
     props.item.extracted.content.forEach( contentObject => {
@@ -50,8 +50,12 @@ const SearchResult: React.FC<Props> = (props) => {
     });
   }
   // Parameters for both JSON and XML
-  entityDef = props.entityDefArray.length && props.entityDefArray.find(entity => entity.name === itemEntityName[0]);
-  primaryKeyValue = entityDef.primaryKey ? encodeURIComponent(itemEntityProperties[0][entityDef.primaryKey]) : '-';
+  if (itemEntityName.length && props.entityDefArray.length) {
+    entityDef = props.entityDefArray.find(entity => entity.name === itemEntityName[0]);
+  }
+  if (itemEntityProperties.length && entityDef.primaryKey) {
+    primaryKeyValue = encodeURIComponent(itemEntityProperties[0][entityDef.primaryKey]);
+  }
 
   function getSnippet() {
     let str = '';
