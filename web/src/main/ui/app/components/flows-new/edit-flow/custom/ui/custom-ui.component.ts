@@ -213,6 +213,22 @@ export class CustomUiComponent implements OnInit{
         return 'CUSTOM';
       }
     }
+    else if (step.stepDefinitionType === 'MATCHING'){
+      if(step.stepDefinitionName === 'default-matching'){
+        return 'MATCHING';
+      }
+      else{
+        return 'CUSTOM';
+      }
+    }
+    else if (step.stepDefinitionType === 'MERGING'){
+      if(step.stepDefinitionName === 'default-merging'){
+        return 'MERGING';
+      }
+      else{
+        return 'CUSTOM';
+      }
+    }
     else {
         return 'CUSTOM';
     }
