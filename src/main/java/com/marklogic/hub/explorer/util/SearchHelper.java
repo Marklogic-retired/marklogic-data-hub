@@ -15,7 +15,6 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.ResourceNotFoundException;
 import com.marklogic.client.document.GenericDocumentManager;
-import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.SearchHandle;
@@ -78,8 +77,7 @@ public class SearchHelper {
       Map<String, String> metadata = documentMetadataReadHandle.getMetadataValues();
       return Optional.ofNullable(new Document(content, metadata));
     } catch (ResourceNotFoundException rnfe) {
-      logger.error("The requested document " + docUri + " do not exist");
-      logger.error(rnfe.getMessage());
+      logger.warn(rnfe.getMessage());
       return Optional.empty();
     }
   }
@@ -153,9 +151,10 @@ public class SearchHelper {
   private StructuredQueryBuilder getQueryBuilder(QueryManager queryMgr) {
     try {
       // Testing if the QUERY_OPTIONS File exists in the modules database
-      queryMgr.search(queryMgr.newStructuredQueryBuilder(QUERY_OPTIONS).and(), new SearchHandle());
+      StructuredQueryBuilder queryBuilder = queryMgr.newStructuredQueryBuilder(QUERY_OPTIONS);
+      queryMgr.search(queryBuilder.and(), new SearchHandle());
       // Creating query builder with the QUERY_OPTIONS file if it exists
-      return queryMgr.newStructuredQueryBuilder(QUERY_OPTIONS);
+      return queryBuilder;
     } catch (FailedRequestException fre) {
       logger.error(fre.getServerMessage());
       // QUERY_OPTIONS doesn't exist. So, using DEFAULT_OPTIONS query options file
