@@ -1731,11 +1731,14 @@ declare function merge-impl:get-merge-spec(
   $prop as xs:QName*
 ) as element(merging:merge)*
 {
-  let $property-namespace := fn:namespace-uri-from-QName($prop)
+  let $property-namespace := fn:namespace-uri-from-QName($prop)[fn:not(. = "")]
   let $property-local-name := fn:local-name-from-QName($prop)
   let $property-name :=
     $options/merging:property-defs
-      /merging:property[@namespace = $property-namespace and @localname = $property-local-name]/@name
+      /merging:property[
+        if ($property-namespace) then @namespace = $property-namespace
+        else fn:true()
+        and @localname = $property-local-name]/@name
   return
     merge-impl:expand-merge-spec(
       $options,
