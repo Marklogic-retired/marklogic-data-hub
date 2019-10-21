@@ -18,6 +18,7 @@ const SearchResult: React.FC<Props> = (props) => {
   let createdOnVal: string = '';
   let sourcesVal: string = '';
   let fileTypeVal: string = '';
+  let uri = encodeURIComponent(props.item.uri);
 
   if (props.item.format === 'json') {
     itemEntityName = Object.keys(props.item.extracted.content[1]);
@@ -25,8 +26,8 @@ const SearchResult: React.FC<Props> = (props) => {
     entityDef = props.entityDefArray.length && props.entityDefArray.find(entity => entity.name === itemEntityName[0]);
     primaryKeyValue = entityDef.primaryKey ? itemEntityProperties[0][entityDef.primaryKey] : '-';
     // TODO format createdOnVal using momentjs
-    createdOnVal = props.item.extracted.content[0].headers.createdOn.toString().substring(0, 19);
-    sourcesVal = props.item.extracted.content[0].headers.sources.map(src => {
+    createdOnVal = props.item.extracted.content[0].headers.hasOwnProperty('createdOn') && props.item.extracted.content[0].headers.createdOn.toString().substring(0, 19);
+    sourcesVal = props.item.extracted.content[0].headers.hasOwnProperty('sources') && props.item.extracted.content[0].headers.sources.map(src => {
         return src.name;
     }).join(', ');
     fileTypeVal = props.item.format;
@@ -35,7 +36,7 @@ const SearchResult: React.FC<Props> = (props) => {
     itemEntityName = Object.keys(parsedContent[1]);
     itemEntityProperties = Object.values<any>(parsedContent[1]);
     entityDef = props.entityDefArray.length && props.entityDefArray.find(entity => entity.name === itemEntityName[0]);
-    primaryKeyValue = entityDef.primaryKey ? itemEntityProperties[0][entityDef.primaryKey] : '-';
+    primaryKeyValue = entityDef.primaryKey ? encodeURIComponent(itemEntityProperties[0][entityDef.primaryKey]) : '-';
     // TODO format createdOnVal using momentjs
     // TODO add createdOn and sourcesVal for XML files
     // createdOnVal = parsedContent[0].headers.createdOn.toString().substring(0, 19);
@@ -48,7 +49,6 @@ const SearchResult: React.FC<Props> = (props) => {
   function getSnippet() {
     let str = '';
     props.item.matches.map(item => {
-      if (!item.path.includes('attachments')) {
         item['match-text'].forEach(element => {
           if (typeof element === 'object') {
             str = str.concat('<b>').concat(element.highlight).concat('</b>')
@@ -57,7 +57,6 @@ const SearchResult: React.FC<Props> = (props) => {
           }
         });
         str = str.concat('...')
-      }
     })
     return <p>{ ReactHtmlParser(str) }</p>;
   } 
@@ -69,19 +68,12 @@ const SearchResult: React.FC<Props> = (props) => {
       <div className={styles.title} >
         <span className={styles.entityName} data-cy='entity-name'>{itemEntityName}</span>
         {entityDef.primaryKey && <span className={styles.primaryKey}>{entityDef.primaryKey}:</span>}
-        <Link to={{
-            pathname: `/detail/${primaryKeyValue}/${props.item.uri.startsWith('/') && props.item.uri.substring(1)}`
-            }} data-cy='primary-key'>
+        <Link to={{ pathname: `/detail/${primaryKeyValue}/${uri}`}} data-cy='primary-key'>
             {entityDef.primaryKey ? primaryKeyValue : props.item.uri}
         </Link>
       </div>
       <div className={styles.snippet} data-cy='snipped'>
-        {props.item.matches.length === 1
-          ?
-          props.item.matches[0]['match-text'][0].length > 1 && props.item.matches[0]['match-text'][0]
-          :
-          snippet
-        }
+        {props.item.matches.length >= 1 && snippet}
       </div>
       <div className={styles.metadata}>
         <div className={styles.metaItem}>

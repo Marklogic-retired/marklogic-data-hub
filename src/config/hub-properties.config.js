@@ -6,23 +6,15 @@ const hubPropertiesConfig = [
     displayName: "Collection"
   },
   {
-    facetName: "createdByRange",
-    displayName: "Created By"
-  },
-  {
     facetName: "createdOnRange",
     displayName: "Created On"
-  },
-  {
-    facetName: "createdByJobRange",
-    displayName: "Job ID"
   },
   {
     facetName: "createdInFlowRange",
     displayName: "Flow"
   },
   {
-    facetName: "createdByStepRange",
+    facetName: "createdByStep",
     displayName: "Step"
   },
 ]

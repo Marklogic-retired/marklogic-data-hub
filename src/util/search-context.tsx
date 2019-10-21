@@ -23,9 +23,8 @@ interface ISearchContextInterface {
   setPageLength: (current: number, pageSize: number) => void;
   setSearchFacets: (constraint: string, vals: string[]) => void;
   setEntity: (option: string) => void;
-  setAllEntities: (entities: string[]) => void;
   setEntityClearQuery: (option: string) => void;
-  setLatestJobFacet : (vals: string) => void;
+  setLatestJobFacet: (vals: string) => void;
   clearFacet: (constraint:string, val:string) => void;
   clearAllFacets: () => void;
   setDateFacet: (dates: string[]) => void;
@@ -39,7 +38,6 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setPageLength: () => {},
   setSearchFacets: () => {},
   setEntity: () => {},
-  setAllEntities: () => {},
   setEntityClearQuery: () => {},
   setLatestJobFacet : () =>{},
   clearFacet: () => {},
@@ -81,22 +79,22 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
 
   const setEntity = (option: string) => {
     console.log('Selected Option is ' + option);
-    setSearchOptions({ ...searchOptions, searchFacets: {}, entityNames: [option]});
-  }
-
-  const setAllEntities = (entities: any[]) => {
-    setSearchOptions({ ...searchOptions, searchFacets: {}, entityNames: entities});
+    if (option) {
+      setSearchOptions({ ...searchOptions, searchFacets: {}, entityNames: [option]});
+    } else {
+      setSearchOptions({ ...searchOptions, searchFacets: {}, entityNames: []});
+    }
   }
 
   const setEntityClearQuery = (option: string) => {
     console.log('Selected Option is ' + option);
-    setSearchOptions({ ...searchOptions, query: '',searchFacets:{},entityNames: [option]});
+    setSearchOptions({ ...searchOptions, query: '', searchFacets:{}, entityNames: [option]});
   }
 
   const setLatestJobFacet = (vals: string) => {
     let facets = {};
       facets = { createdByJob: [vals] };
-    setSearchOptions({ ...searchOptions, start: 1, searchFacets: facets,entityNames: []});
+    setSearchOptions({ ...searchOptions, start: 1, searchFacets: facets, entityNames: []});
   }
 
   const clearFacet = (constraint: string, val: string) => {
@@ -134,7 +132,6 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       setPageLength,
       setSearchFacets,
       setEntity,
-      setAllEntities,
       setEntityClearQuery,
       clearFacet,
       clearAllFacets,

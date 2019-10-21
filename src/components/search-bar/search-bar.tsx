@@ -10,7 +10,7 @@ interface Props {
 const SearchBar: React.FC<Props> = props => {
     const { Search } = Input;
     const { Option } = Select;
-    const { searchOptions, setQuery, setAllEntities, setEntity } = useContext(SearchContext);
+    const { searchOptions, setQuery, setEntity } = useContext(SearchContext);
     const [ searchString, setSearchString] = useState(searchOptions.query);
     const [dropDownValue, setDropdownValue] = useState('All Entities');
     const dropdownOptions = ['All Entities', ...props.entities];
@@ -25,7 +25,7 @@ const SearchBar: React.FC<Props> = props => {
     );
 
     const handleOptionSelect = (option: any) => {
-      option === 'All Entities' ?  setAllEntities(props.entities) :  setEntity(option);
+      option === 'All Entities' ?  setEntity('') :  setEntity(option);
     }
 
     const handleSearch = (searchString: string) => {

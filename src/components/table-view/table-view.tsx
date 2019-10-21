@@ -10,19 +10,30 @@ const TableView: React.FC<Props> = (props) => {
   const [expanded, setExpanded] = useState(false);
 
   let data = new Array();
+  let counter = 0;
+
+  const parseJson = (obj:Object) => {
+    let parsedData = new Array();
+    for (var i in obj) {
+      if (obj[i] !== null && typeof (obj[i]) === "object") {
+        parsedData.push({ key: counter++, property: i, children: parseJson(obj[i]) });
+      } else {
+        parsedData.push({ key: counter++, property: i, value: obj[i] });
+      }
+    }
+    return parsedData;
+  }
 
   if (props.contentType === 'json') {
-    Object.keys(props.document.envelope.instance).forEach( instance => {
-      if (instance !== 'info'){
+    Object.keys(props.document.envelope.instance).forEach(instance => {
+      if (instance !== 'info') {
         // TODO handle nested instance types (objects and arrays)
-        Object.keys(props.document.envelope.instance[instance]).forEach(function (key) {
-          data.push({ property: key, value: props.document.envelope.instance[instance][key] });
-        });
+        data = parseJson(props.document.envelope.instance[instance]);
       }
     });
   } else if (props.contentType === 'xml') {
-    Object.keys(props.document.content.envelope.instance).forEach( instance => {
-      if (instance !== 'info'){
+    Object.keys(props.document.content.envelope.instance).forEach(instance => {
+      if (instance !== 'info') {
         // TODO handle nested instance types (objects and arrays)
         Object.keys(props.document.content.envelope.instance[instance]).forEach(function (key) {
           data.push({ property: key, value: props.document.content.envelope.instance[instance][key] });
@@ -63,7 +74,7 @@ const TableView: React.FC<Props> = (props) => {
   return (
     <Table
       className="document-table-demo"
-      rowKey="property"
+      rowKey="key"
       dataSource={data}
       columns={columns}
       pagination={false}
