@@ -1442,15 +1442,16 @@ declare function merge-impl:parse-final-properties-for-merge(
       ! fn:node-name(.)
     )
   let $sources := merge-impl:get-sources($docs, $merge-options)
+  let $sources-by-document-uri := util-impl:combine-maps(map:map(),for $doc-uri in $sources/documentUri return map:entry($doc-uri, $doc-uri/..))
   let $final-properties := merge-impl:build-final-properties(
     $merge-options,
     $instances,
     $docs,
-    $sources)
+    $sources-by-document-uri)
   let $final-headers := merge-impl:build-final-headers(
     $merge-options,
     $docs,
-    $sources
+    $sources-by-document-uri
   )
   let $final-triples := merge-impl:build-final-triples(
     $merge-options,
@@ -1483,7 +1484,7 @@ declare function merge-impl:parse-final-properties-for-merge(
 declare function merge-impl:build-final-headers(
   $merge-options as element(merging:options),
   $docs,
-  $sources
+  $sources-by-document-uri
 ) as map:map*
 {
   let $property-defs := $merge-options/merging:property-defs/merging:property[fn:matches(@path, "^/[\w]*:?envelope/[\w]*:?headers")]
@@ -1517,7 +1518,7 @@ declare function merge-impl:build-final-headers(
     let $raw-values :=
       for $prop-value in $properties
       let $curr-uri := xdmp:node-uri($prop-value)
-      let $prop-sources := $sources[documentUri = $curr-uri]
+      let $prop-sources := map:get($sources-by-document-uri, $curr-uri)
       return
           merge-impl:wrap-revision-info(
             $top-level-property,
@@ -1562,7 +1563,7 @@ declare function merge-impl:build-final-headers(
         "name": fn:head(($algorithm-name[fn:exists($algorithm)], "standard")),
         "optionsReference": $merge-options-ref
       }
-    let $raw-values := merge-impl:get-raw-values($docs, $property, $sources, $ns-map)
+    let $raw-values := merge-impl:get-raw-values($docs, $property, $sources-by-document-uri, $ns-map)
     return
       if (fn:exists($raw-values)) then
         prop-def:new()
@@ -1647,7 +1648,7 @@ declare function merge-impl:build-final-triples(
 declare function merge-impl:get-raw-values(
   $docs,
   $property as element(merging:property),
-  $sources,
+  $sources-by-document-uri,
   $ns-map as map:map?
 ) as map:map*
 {
@@ -1662,7 +1663,7 @@ declare function merge-impl:get-raw-values(
   for $doc in $docs
   let $values := xdmp:unpath($path, $ns-map, $doc)
   let $curr-uri := xdmp:node-uri($doc)
-  let $prop-sources := $sources[documentUri = $curr-uri]
+  let $prop-sources := map:get($sources-by-document-uri, $curr-uri)
   let $res :=
     if (fn:exists($values)) then
       merge-impl:wrap-revision-info(
@@ -1808,14 +1809,14 @@ declare function merge-impl:build-final-properties(
   $merge-options,
   $instances,
   $docs,
-  $sources
+  $sources-by-document-uri
 ) as map:map*
 {
   merge-impl:build-final-properties(
     $merge-options,
     $instances,
     $docs,
-    $sources,
+    $sources-by-document-uri,
     fn:exists($docs/(object-node()|array-node())),
     $merge-options/merging:target-entity
   )
@@ -1832,16 +1833,12 @@ declare function merge-impl:build-final-properties(
   $merge-options,
   $instances,
   $docs,
-  $sources,
+  $sources-by-document-uri,
   $is-json,
   $target-entity
 ) as map:map*
 {
-  let $sources-by-document-uri :=
-    map:new(
-      for $doc-uri in $sources/documentUri
-      return map:entry($doc-uri, $doc-uri/..)
-    )
+  let $source-doc-uris := map:keys($sources-by-document-uri)
   let $entity-definition := es-helper:get-entity-def($target-entity)
   let $entity-def-namespace := $entity-definition/namespaceUri
   let $top-level-properties :=
@@ -1997,7 +1994,7 @@ declare function merge-impl:build-final-properties(
               $prop-entity-instances ! fn:root(.),
               for $prop-entity-instance in $prop-entity-instances
               let $instance-node-uri := merge-impl:node-uri($prop-entity-instance)
-              let $instance-source := fn:head($sources[fn:contains($instance-node-uri,documentUri)])
+              let $instance-source := map:get($sources-by-document-uri, fn:head($source-doc-uris[fn:contains($instance-node-uri,.)]))
               return
                 object-node {
                   "name": $instance-source/name,
@@ -2021,7 +2018,7 @@ declare function merge-impl:build-final-properties(
               $prop-entity-instances ! fn:root(.),
               for $prop-entity-instance in $prop-entity-instances
               let $instance-node-uri := merge-impl:node-uri($prop-entity-instance)
-              let $instance-source := fn:head($sources[fn:contains($instance-node-uri,documentUri)])
+              let $instance-source := map:get($sources-by-document-uri, fn:head($source-doc-uris[fn:contains($instance-node-uri,.)]))
               return
                 object-node {
                   "name": $instance-source/name,
@@ -2355,47 +2352,65 @@ declare function merge-impl:NCName-compatible-reverse($value as xs:string)
 declare variable $lock-task-prefix as xs:string := "sm-merging:";
 declare variable $locked-uris-map as map:map := map:map();
 
+(:
+ : This attempts to view URIs have been locked by other mastering processes.
+ : Only one attempt is made and the results are cached to avoid too much network noise in a cluster.
+ :)
 declare function merge-impl:locked-uris() {
   if (map:contains($locked-uris-map, "runAlready")) then
-    map:get($locked-uris-map, "lockedURIs")
+    $locked-uris-map
   else
-    let $locked-uris := (
-      map:get($locked-uris-map, "lockedURIs"),
-      for $host-status in xdmp:host-status(xdmp:hosts())
-      let $host-id := $host-status/host:host-id
-      for $transaction-id in $host-status/host:transactions/host:transaction/host:transaction-id
-      return
-        (: Surround in try/catch since transaction could have closed since status or call to other host could timeout :)
-        try {
-          (: We only care about locks by mastering. We'll still need to wait on outside transactions. :)
-          xdmp:transaction-locks($host-id, $transaction-id)/host:write[fn:starts-with(., $lock-task-prefix)]/fn:substring-after(., $lock-task-prefix)
-        } catch ($e) {()}
-    )
+    let $transaction-id := xdmp:transaction()
+    let $locked-uris := fn:distinct-values(
+                        for $host-id in xdmp:hosts()
+                        let $check-transactions := xdmp:host-status($host-id)/host:transactions/host:transaction[host:transaction-mode = "update"]/host:transaction-id[. ne $transaction-id]
+                        for $check-transaction in $check-transactions
+                        (: Invoking to another transaction in query mode to avoid deadlocking :)
+                        return xdmp:invoke-function(function() {merge-impl:locked-uris($host-id, $check-transaction)}, map:map() => map:with("update","false"))
+                      )
     return (
       map:put($locked-uris-map, "runAlready", fn:true()),
-      map:put($locked-uris-map, "lockedURIs", $locked-uris),
-      $locked-uris
+      $locked-uris ! map:put($locked-uris-map, ., fn:true()),
+      $locked-uris-map
     )
+};
+
+(:
+ : This returns the write/waiting locks that were created by mastering for a given host/transaction pair.
+ : This is a separate overloaded function to retain the amp privileges after an invoke.
+ : @param $host-id ID of host we're looking at transaction locks of
+ : @param $transaction-id ID of transaction we're looking at transaction locks of
+ :)
+declare function merge-impl:locked-uris($host-id, $transaction-id) {
+  fn:distinct-values(
+    xdmp:transaction-locks($host-id, $transaction-id)/(host:waiting|host:write)[fn:starts-with(., $lock-task-prefix)]/fn:substring-after(., $lock-task-prefix)
+  )
 };
 
 declare function merge-impl:filter-out-locked-uris($uris) {
   let $locked-uris := merge-impl:locked-uris()
-  return $uris[fn:not(. = $locked-uris)]
+  let $filtered-uris := $uris[fn:not(map:contains($locked-uris, .))]
+  return $filtered-uris
 };
 
 declare function merge-impl:is-uri-locked($uri as xs:string) as xs:boolean {
-  $uri = merge-impl:locked-uris()
+  map:contains(merge-impl:locked-uris(), $uri)
 };
 
 (: Don't want to trigger static analysis for our separate read-only operations :)
 declare variable $lock-for-update-fun := fn:function-lookup(xs:QName('xdmp:lock-for-update'), 1);
 
+declare variable $locked-in-this-transaction as map:map := map:map();
+
 declare function merge-impl:lock-for-update($uri as xs:string) {
-  if (fn:not(map:get($locked-uris-map, "lockedURIs") = $uri)) then
-    map:put($locked-uris-map, "lockedURIs", (map:get($locked-uris-map, "lockedURIs"),$uri))
-  else (),
-  (: This is to tell transactions outside mastering we are working with this document :)
-  $lock-for-update-fun($uri),
-  (: Below is to identify locks specific to mastering  :)
-  $lock-for-update-fun($lock-task-prefix || $uri)
+  if (fn:not(map:contains($locked-in-this-transaction, $uri))) then (
+    map:put($locked-in-this-transaction, $uri, fn:true()),
+    if (fn:not(merge-impl:is-uri-locked($uri))) then
+      map:put(merge-impl:locked-uris(), $uri, fn:true())
+    else (),
+    (: This is to tell transactions outside mastering we are working with this document :)
+    $lock-for-update-fun($uri),
+    (: Below is to identify locks specific to mastering  :)
+    $lock-for-update-fun($lock-task-prefix || $uri)
+  ) else ()
 };

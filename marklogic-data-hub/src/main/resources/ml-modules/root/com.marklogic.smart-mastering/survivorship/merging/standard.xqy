@@ -62,12 +62,8 @@ declare function merging:standard(
   )
   let $selected-sources := fn:subsequence(
     for $source in ($condensed-properties ! . => map:get("sources")) union ()
-    let $source-score := fn:head((
-      $property-spec/*:source-weights/*:source[@name = $source/name]/@weight,
-      $property-spec/*:source-weights/*:source[*:name = $source/name]/*:weight,
-      0
-    ))
-    let $source-dateTime := fn:max($source/dateTime[. castable as xs:dateTime] ! xs:dateTime(.))
+    let $source-score := fn:number(fn:head(($property-spec/*:source-weights/*:source[(@name|*:name ) = $source/name]/(@weight|*:weight), 0)))
+    let $source-dateTime := fn:max($source/dateTime[. ne ""] ! xs:dateTime(.))
     order by $source-score descending, $source-dateTime descending
     return $source,
     1,
@@ -96,7 +92,7 @@ declare function merging:standard(
             ()
         let $prop-value := map:get($property, "values")
         let $sources := map:get($property,"sources")
-        let $source-dateTime := fn:max($sources/dateTime[. castable as xs:dateTime] ! xs:dateTime(.))
+        let $source-dateTime := fn:max($sources/dateTime[. ne ""] ! xs:dateTime(.))
         let $length-score :=
           if ($length-weight gt 0) then
             if (fn:string-length(fn:string-join($prop-value/descendant-or-self::text()," ")) eq $max-length) then
@@ -107,10 +103,7 @@ declare function merging:standard(
           for $source in $sources
           return
           (: See MDM-529 for why the below is needed :)
-            fn:head((
-              $property-spec/*:source-weights/*:source[@name = $source/name]/@weight,
-              $property-spec/*:source-weights/*:source[*:name = $source/name]/*:weight
-            ))
+            fn:head($property-spec/*:source-weights/*:source[(@name|*:name ) = $source/name]/(@weight|*:weight))
         ))
         let $weight := fn:max(($length-score, $source-score))
         where fn:exists($sources[fn:exists(. intersect $selected-sources)])

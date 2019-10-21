@@ -69,7 +69,7 @@ declare function helper-impl:property-name-to-query($options as element(), $full
             return function($val, $weight) {
               let $cast-values := $val ! fn:data(element val { attribute xsi:type {"xs:"||$scalar-type}, fn:string(.)})
               return
-                $scope-query(cts:range-query($references, "=", $cast-values, (), $weight))
+                $scope-query(cts:range-query($references, "=", $cast-values, ("score-function=linear"), $weight))
             }
           else if ($is-json) then
               function($val, $weight) {
@@ -136,4 +136,54 @@ declare function helper-impl:property-name-to-qname($options as element(), $full
         map:put($_cached-property-name-to-qnames, $key, $qname),
         $qname
       )
+};
+
+declare variable $string-token as xs:string := "####";
+
+(:
+ : Group queries by into the same property/elelment scope. This improves the performance of our queries.
+ : @param $queries cts:query* to be grouped by scope
+ : @param $grouping-query-fun function for grouping queries in a scope. (e.g., cts:and-query#1, cts:or-query#1)
+ :)
+declare function helper-impl:group-queries-by-scope($queries as cts:query*, $grouping-query-fun as function(cts:query*) as cts:query??) {
+  if (fn:count($queries) le 1) then
+    $queries
+  else
+    let $queries-by-scope := map:map()
+    let $_group-by :=
+      for $query in $queries
+      let $is-json-prop-scope := $query instance of cts:json-property-scope-query
+      let $is-element-scope := $query instance of cts:element-query
+      let $key :=
+        if ($is-json-prop-scope) then
+          "json-prop:" || fn:string-join(
+            for $prop in cts:json-property-scope-query-property-name($query) order by $prop return $prop,
+            $string-token
+          )
+        else if ($is-element-scope) then
+          "element:"|| fn:string-join(
+            for $qn in cts:element-query-element-name($query) order by $qn return xdmp:key-from-QName($qn),
+            $string-token
+          )
+        else
+          "_other"
+      let $values :=
+        if ($is-json-prop-scope) then
+          cts:json-property-scope-query-query($query)
+        else if ($is-element-scope) then
+          cts:element-query-query($query)
+        else
+          $query
+      return
+        map:put($queries-by-scope, $key, (map:get($queries-by-scope, $key),$values))
+    for $key in map:keys($queries-by-scope)
+    let $grouped-queries := map:get($queries-by-scope, $key)
+    let $grouped-queries := if (fn:exists($grouping-query-fun) and fn:count($grouped-queries) gt 1) then $grouping-query-fun($grouped-queries) else $grouped-queries
+    return
+      if (fn:starts-with($key, "json-prop:")) then
+        cts:json-property-scope-query(fn:tokenize(fn:substring-after($key, "json-prop:"), $string-token), $grouped-queries)
+      else if (fn:starts-with($key, "element:")) then
+        cts:element-query(fn:tokenize(fn:substring-after($key, "element:"), $string-token) ! xdmp:QName-from-key(.), $grouped-queries)
+      else
+        $grouped-queries
 };

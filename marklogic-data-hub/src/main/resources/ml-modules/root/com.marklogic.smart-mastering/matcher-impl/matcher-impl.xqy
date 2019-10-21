@@ -258,22 +258,23 @@ declare function match-impl:find-document-matches-by-options(
           map:map()
         else ()
     let $cached-queries := map:map()
+    let $minimum-threshold-combinations-queries :=
+      for $query-set in $compiled-options => map:get("minimumThresholdCombinations")
+      let $query-maps := $query-set => map:get("queries")
+      let $queries :=
+        for $query-map in $query-maps
+        return match-impl:query-map-to-query($query-map, $values-by-qname, $cached-queries, $query-prov)
+      where fn:exists($queries)
+      return
+        if (fn:count($queries) gt 1) then
+          helper-impl:group-queries-by-scope($queries, cts:and-query#1)
+        else
+          $queries
     let $minimum-threshold-combinations-query :=
-      cts:or-query(
-        for $query-set in $compiled-options => map:get("minimumThresholdCombinations")
-        let $query-maps := $query-set => map:get("queries")
-        let $queries :=
-            for $query-map in $query-maps
-            return match-impl:query-map-to-query($query-map, $values-by-qname, $cached-queries, $query-prov)
-        where fn:exists($queries)
-        return
-          if (fn:count($queries) gt 1) then
-            cts:and-query(
-              $queries
-            )
-          else
-            $queries
-      )
+      if (fn:exists($minimum-threshold-combinations-queries)) then
+        helper-impl:group-queries-by-scope($minimum-threshold-combinations-queries, cts:or-query#1)
+      else
+        cts:false-query()
     let $excluded-uris := (
       xdmp:node-uri($document),
       blocks-impl:get-blocks(fn:base-uri($document))/node()
@@ -427,7 +428,7 @@ declare function match-impl:values-by-qname(
 {
   map:new(
     for $qname in fn:distinct-values((map:get($compiled-options, "queries") ! map:get(.,"qname")))
-    let $values := fn:distinct-values($document//*[fn:node-name(.) eq $qname] ! fn:normalize-space(fn:string(.))[.])
+    let $values := fn:distinct-values($document/(self::*:envelope|*:envelope)/*:instance//*[fn:node-name(.) eq $qname] ! fn:normalize-space(fn:string(.))[.])
     where fn:exists($values)
     return
         map:entry(xdmp:key-from-QName($qname), $values)

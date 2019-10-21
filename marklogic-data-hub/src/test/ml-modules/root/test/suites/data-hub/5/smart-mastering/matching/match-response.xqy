@@ -150,6 +150,7 @@ return (
   (: test no results :)
   let $doc := fn:doc($lib:URI7)
   let $actual := matcher:find-document-matches-by-options($doc, $options, 5, 2, fn:true(), cts:true-query())
+  let $_log := xdmp:log(xdmp:describe(("$actual",$actual),(),()))
   return (
     test:assert-true($actual instance of element(results)),
     test:assert-equal(2, $actual/@page-length/xs:int(.)),
