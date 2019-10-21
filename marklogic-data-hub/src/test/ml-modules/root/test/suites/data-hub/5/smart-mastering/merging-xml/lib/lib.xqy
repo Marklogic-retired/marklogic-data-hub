@@ -5,6 +5,7 @@ module namespace lib = "http://marklogic.com/smart-mastering/test";
 declare variable $INVOKE_OPTIONS :=
   <options xmlns="xdmp:eval">
     <isolation>different-transaction</isolation>
+    <update>true</update>
   </options>;
 
 declare variable $TEST-DATA :=

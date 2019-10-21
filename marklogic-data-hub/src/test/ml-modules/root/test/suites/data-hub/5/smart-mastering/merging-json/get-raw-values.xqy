@@ -13,6 +13,8 @@ import module namespace merging = "http://marklogic.com/smart-mastering/merging"
   at "/com.marklogic.smart-mastering/merging.xqy";
 
 import module namespace test = "http://marklogic.com/test" at "/test/test-helper.xqy";
+import module namespace util-impl = "http://marklogic.com/smart-mastering/util-impl"
+  at "/com.marklogic.smart-mastering/impl/util.xqy";
 import module namespace lib = "http://marklogic.com/smart-mastering/test" at "lib/lib.xqy";
 
 declare namespace es = "http://marklogic.com/entity-services";
@@ -30,11 +32,13 @@ let $docs := map:keys($lib:TEST-DATA) ! fn:doc(.)
 
 let $sources := merge-impl:get-sources($docs, $options)
 
+let $sources-by-document-uri := util-impl:combine-maps(map:map(),for $doc-uri in $sources/documentUri return map:entry($doc-uri, $doc-uri/..))
+
 let $actual :=
   merge-impl:get-raw-values(
     $docs,
     $shallow-prop,
-    $sources,
+    $sources-by-document-uri,
     ()
   )
 (:
@@ -78,7 +82,7 @@ let $actual :=
   merge-impl:get-raw-values(
     $docs,
     $deep-prop,
-    $sources,
+    $sources-by-document-uri,
     map:new((
       map:entry("es", "http://marklogic.com/entity-services"),
       map:entry("has", "has")
