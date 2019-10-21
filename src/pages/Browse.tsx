@@ -57,7 +57,7 @@ const Browse: React.FC<Props> = ({location}) => {
           query: searchOptions.query,
           entityNames: searchOptions.entityNames.length ? searchOptions.entityNames : allEntities,
           start: searchOptions.start,
-          pageLength: searchOptions.pageLength,
+          pageLength: getPageLength(),
           facets: searchOptions.searchFacets,
         }
       });
@@ -97,6 +97,10 @@ const Browse: React.FC<Props> = ({location}) => {
 
   const handlePageLengthChange = (current: number, pageSize: number) => {
     setPageLength(current, pageSize);
+  }
+  
+  const getPageLength = () => {
+    return (totalDocuments - ((searchOptions.start -1) * searchOptions.pageLength) < searchOptions.pageLength) ? (totalDocuments - ((searchOptions.start -1) * searchOptions.pageLength)) : searchOptions.pageLength;
   }
 
   return (
