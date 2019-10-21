@@ -16,7 +16,8 @@ const View: React.FC = () => {
   const [totalDocs, setTotalDocs] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [showBanner, toggleBanner]= useState(false);
-  const [is400Error, set400Error] = useState('');
+  const [errorTitle, setErrorTitle] = useState('');
+  const [errorDescription, setErrorDescription]=useState('');
 
   const getEntityModel = async () => {
     try {
@@ -31,11 +32,32 @@ const View: React.FC = () => {
           userNotAuthenticated();
           break;
         case 500:
-          setErrorMessage({title: error.response.data.error, message: error.response.data.message});
+        case 501:
+        case 502:
+        case 503:
+        case 504:
+        case 505:
+        case 511:
+          if(error.response.data.message){
+            setErrorMessage({title: error.response.data.error, message: error.response.data.message});
+          }
+          else{
+            setErrorMessage({title: '', message: 'Internal server error'});
+          }
           break;
         case 400:
+        case 403:
+        case 405:
+        case 408:
+        case 414:
           toggleBanner(true);
-          set400Error(error.response.data.message);
+          setErrorTitle(error.response.data.error);
+          if(error.response.data.message){
+            setErrorDescription(error.response.data.message);
+          }
+          else{
+            setErrorDescription('Bad request');
+          }
           break;
       }
     }
@@ -63,11 +85,32 @@ const View: React.FC = () => {
           userNotAuthenticated();
           break;
         case 500:
-          setErrorMessage({title: error.response.data.error, message: error.response.data.message});
+        case 501:
+        case 502:
+        case 503:
+        case 504:
+        case 505:
+        case 511:
+          if(error.response.data.message){
+            setErrorMessage({title: error.response.data.error, message: error.response.data.message});
+          }
+          else{
+            setErrorMessage({title: '', message: 'Internal server error'});
+          }
           break;
         case 400:
+        case 403:
+        case 405:
+        case 408:
+        case 414:
           toggleBanner(true);
-          set400Error(error.response.data.message);
+          setErrorTitle(error.response.data.error);
+          if(error.response.data.message){
+            setErrorDescription(error.response.data.message);
+          }
+          else{
+            setErrorDescription('Bad request');
+          }
           break;
       }
     }
@@ -89,7 +132,8 @@ const View: React.FC = () => {
           break;
         case 400:
           toggleBanner(true);
-          set400Error(error.response.data.message);
+          setErrorTitle(error.response.data.error);
+          setErrorDescription(error.response.data.message);
           break;
       }
     }
@@ -107,7 +151,7 @@ const View: React.FC = () => {
   return (
     <Layout className={styles.container}>
       <Content>
-        {showBanner ? <Alert style={{textAlign:"center"}} message={is400Error}  type="error" closable onClose={onClose}/> : null}
+        {showBanner ? <Alert style={{textAlign:"center"}} message={setErrorTitle}  description={setErrorMessage} type="error" closable onClose={onClose}/> : null}
         {isLoading ? <Spin tip="Loading..." style={{ margin: '100px auto', width: '100%'}} /> :
           <>
             <div className={styles.statsContainer} data-cy="total-container">

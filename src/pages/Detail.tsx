@@ -25,7 +25,8 @@ const Detail: React.FC<Props> = ({ history, location }) => {
   const [contentType, setContentType] = useState();
   const [xml, setXml] = useState();
   const [showBanner, toggleBanner]= useState(false);
-  const [is400Error, set400Error] = useState('');
+  const [errorTitle, setErrorTitle] = useState('');
+  const [errorDescription, setErrorDescription]=useState('');
 
   useEffect(() => {
     setIsLoading(true);
@@ -54,11 +55,32 @@ const Detail: React.FC<Props> = ({ history, location }) => {
             userNotAuthenticated();
             break;
           case 500:
-            setErrorMessage({title: error.response.data.error, message: error.response.data.message});
+          case 501:
+          case 502:
+          case 503:
+          case 504:
+          case 505:
+          case 511:
+            if(error.response.data.message){
+              setErrorMessage({title: error.response.data.error, message: error.response.data.message});
+            }
+            else{
+              setErrorMessage({title: '', message: 'Internal server error'});
+            }
             break;
           case 400:
+          case 403:
+          case 405:
+          case 408:
+          case 414:
             toggleBanner(true);
-            set400Error(error.response.data.message);
+            setErrorTitle(error.response.data.error);
+            if(error.response.data.message){
+              setErrorDescription(error.response.data.message);
+            }
+            else{
+              setErrorDescription('Bad request');
+            }
             break;
         }
       }
@@ -106,7 +128,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
 
   return (
     <Layout>
-      {showBanner ? <Alert style={{textAlign:"center"}} message={is400Error}  type="error" closable onClose={onClose}/> : null}
+      {showBanner ? <Alert style={{textAlign:"center"}} message={setErrorTitle}  description={setErrorMessage} type="error" closable onClose={onClose}/> : null}
       <Content style={{ background: '#fff', padding: '18px 36px' }}>
         <div id='back-button'>
           <PageHeader style={{ padding: '0px', marginBottom: '20px' }} onBack={() => history.push('/browse')} title={<Link to={{ pathname: "/browse" }} data-cy="back-button">Back</Link>} />
