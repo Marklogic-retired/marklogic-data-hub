@@ -82,13 +82,13 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     if (option) {
       setSearchOptions({ ...searchOptions, searchFacets: {}, entityNames: [option]});
     } else {
-      setSearchOptions({ ...searchOptions, searchFacets: {}, entityNames: []});
+      setSearchOptions({ ...searchOptions, start: 1, searchFacets: {}, entityNames: []});
     }
   }
 
   const setEntityClearQuery = (option: string) => {
     console.log('Selected Option is ' + option);
-    setSearchOptions({ ...searchOptions, query: '', searchFacets:{}, entityNames: [option]});
+    setSearchOptions({ ...searchOptions, query: '', start: 1, searchFacets:{}, entityNames: [option]});
   }
 
   const setLatestJobFacet = (vals: string) => {
