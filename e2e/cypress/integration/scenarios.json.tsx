@@ -44,7 +44,7 @@ describe('json scenario on view entities page', () => {
 
 describe('json scenario on browse documents page', () => {
 
-    var facets: string[] = ['collection', 'created-on', 'job-id', 'flow', 'step'];
+    var facets: string[] = ['collection', 'created-on', 'flow', 'step'];
 
     //login with valid account and go to /browse page
     beforeEach(() => {
