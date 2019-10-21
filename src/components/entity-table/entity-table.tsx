@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 // import styles from './entity-table.module.scss';
 import { Table } from 'antd';
 import { relativeTimeConverter } from '../../util/date-conversion';
+import { numberConverter } from '../../util/number-conversion';
 
 type Props = {
   entities: any[];
@@ -117,7 +118,6 @@ const EntityTable:React.FC<Props> = (props) => {
     let documentCount = 0;
 
     if (props.facetValues.length) {
-      // const name = entity.info.title.toLowerCase();
       const collectionObject = props.facetValues.find(collection => collection.name === entity.info.title);
       if (collectionObject) {
         documentCount = collectionObject.count;
@@ -127,7 +127,7 @@ const EntityTable:React.FC<Props> = (props) => {
 
     let parsedEntity = {
       name: entity.info.title,
-      documents: documentCount, 
+      documents: numberConverter(documentCount), 
       created: relativeTimeConverter(latestJobDate) + ','+latestJobId,
       definition: entityDefinition
     }

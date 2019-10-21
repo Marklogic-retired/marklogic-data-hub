@@ -80,7 +80,7 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
   const setEntity = (option: string) => {
     console.log('Selected Option is ' + option);
     if (option) {
-      setSearchOptions({ ...searchOptions, searchFacets: {}, entityNames: [option]});
+      setSearchOptions({ ...searchOptions, start: 1, searchFacets: {}, entityNames: [option]});
     } else {
       setSearchOptions({ ...searchOptions, start: 1, searchFacets: {}, entityNames: []});
     }
