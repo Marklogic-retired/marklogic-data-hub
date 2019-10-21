@@ -74,13 +74,15 @@
         <button id="Clear-btn" mat-raised-button color="primary" (click)="onClear()">
           Clear
         </button>
-        &nbsp;<mat-icon id="lookup-icon">
+        &nbsp;
+        <!-- <mat-icon id="lookup-icon">
           <i class="fa fa-book fa-sm"></i>
-        </mat-icon>
+        </mat-icon> -->
         <mat-icon 
           id="filter-icon"
           [matMenuTriggerFor]="columnsMenu" 
           [matMenuTriggerData]="{indx: i}"
+          title="Show/Hide Columns"
         >
           <i class="fa fa-columns"></i>
         </mat-icon>
