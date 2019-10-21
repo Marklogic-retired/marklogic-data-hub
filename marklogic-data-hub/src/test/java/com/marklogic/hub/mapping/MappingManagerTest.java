@@ -154,6 +154,7 @@ public class MappingManagerTest extends HubTestBase {
 
         //now let's check the in memory instance
         assertTrue(testMap.getVersion() == 2);
+        assertFalse(testMap.serialize().contains("language"));
         assertTrue(testMap.getDescription().equalsIgnoreCase(newDesc));
         assertTrue(testMap.getProperties().size() == 3);
         assertTrue(testMap.getSourceContext().equalsIgnoreCase(newContext));
