@@ -157,6 +157,11 @@ public class SearchHelper {
       return queryBuilder;
     } catch (FailedRequestException fre) {
       logger.error(fre.getServerMessage());
+      logger.error("If this a configuration issue, fix the configuration issues as shown in"
+          + " the logs for enabling faceted search on the entity properties." + "\n"
+          + "If the exp-final-entity-options search is missing, please look into documentation "
+          + "for creating the exp-final-entity-options file. This file is required to enable "
+          + "various search features");
       // QUERY_OPTIONS doesn't exist. So, using DEFAULT_OPTIONS query options file
       return queryMgr.newStructuredQueryBuilder(DEFAULT_OPTIONS);
     }
