@@ -6,7 +6,8 @@ import styles from './Detail.module.scss';
 import TableView from '../components/table-view/table-view';
 import JsonView from '../components/json-view/json-view';
 import DetailHeader from '../components/detail-header/detail-header';
-import {Alert, Layout, Menu, PageHeader, Spin} from 'antd';
+import AsyncLoader from '../components/async-loader/async-loader';
+import { Layout, Menu, PageHeader } from 'antd';
 import XmlView from '../components/xml-view/xml-view';
 
 interface Props extends RouteComponentProps<any> { }
@@ -14,8 +15,8 @@ interface Props extends RouteComponentProps<any> { }
 const { Content } = Layout;
 
 const Detail: React.FC<Props> = ({ history, location }) => {
-  const { userNotAuthenticated } = useContext(AuthContext);
-  const uriSplit = location.pathname.replace('/detail/', '');
+  const { user, handleError } = useContext(AuthContext);
+  const uriSplit = location.pathname.replace('/detail/','');
   const pkValue = uriSplit.split('/')[0] === '-' ? '' : decodeURIComponent(uriSplit.split('/')[0]);
   const uri = decodeURIComponent(uriSplit.split('/')[1]);
   const [selected, setSelected] = useState('instance');
@@ -23,9 +24,6 @@ const Detail: React.FC<Props> = ({ history, location }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [contentType, setContentType] = useState();
   const [xml, setXml] = useState();
-  const [showBanner, toggleBanner]= useState(false);
-  const [errorTitle, setErrorTitle] = useState('');
-  const [errorDescription, setErrorDescription]=useState('');
 
   const componentIsMounted = useRef(true);
 
@@ -54,39 +52,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
         }
 
       } catch (error) {
-        switch (error.response.status) {
-          case 401:
-            userNotAuthenticated();
-            break;
-          case 500:
-          case 501:
-          case 502:
-          case 503:
-          case 504:
-          case 505:
-          case 511:
-            if(error.response.data.message){
-              setErrorMessage({title: error.response.data.error, message: error.response.data.message});
-            }
-            else{
-              setErrorMessage({title: '', message: 'Internal server error'});
-            }
-            break;
-          case 400:
-          case 403:
-          case 405:
-          case 408:
-          case 414:
-            toggleBanner(true);
-            setErrorTitle(error.response.data.error);
-            if(error.response.data.message){
-              setErrorDescription(error.response.data.message);
-            }
-            else{
-              setErrorDescription('Bad request');
-            }
-            break;
-        }
+        handleError(error);
       }
     };
 
@@ -131,13 +97,8 @@ const Detail: React.FC<Props> = ({ history, location }) => {
     return he.decode(xml);
   }
 
-  const onClose = e => {
-    console.log(e, 'I was closed.');
-  };
-
   return (
     <Layout>
-      {showBanner ? <Alert style={{textAlign:"center"}} message={setErrorTitle}  description={setErrorMessage} type="error" closable onClose={onClose}/> : null}
       <Content style={{ background: '#fff', padding: '18px 36px' }}>
         <div id='back-button'>
           <PageHeader style={{ padding: '0px', marginBottom: '20px' }} onBack={() => history.push('/browse')} title={<Link to={{ pathname: "/browse" }} data-cy="back-button">Back</Link>} />
@@ -159,7 +120,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
         </div>
         <div>
           {
-            isLoading ? <Spin tip="Loading..." style={{ margin: '100px auto', width: '100%' }} />
+            isLoading || user.error.type === 'ALERT' ? <AsyncLoader/>
               :
               contentType === 'json' ?
                 selected === 'instance' ? (data && <TableView document={data} contentType={contentType} />) : (data && <JsonView document={data} />)

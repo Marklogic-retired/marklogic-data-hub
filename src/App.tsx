@@ -14,7 +14,7 @@ import './App.scss';
 interface Props extends RouteComponentProps<any> {}
 
 const App: React.FC<Props> = ({history, location}) => {
-  const { user, clearErrorMessage } = useContext(AuthContext);
+  const { user, clearErrorMessage, clearRedirect } = useContext(AuthContext);
 
   document.title = 'Explorer';
   const [visible, setIsVisible] = useState(false);
@@ -32,31 +32,33 @@ const App: React.FC<Props> = ({history, location}) => {
   )
 
   useEffect(() => {
-      console.log('app user', user)
-    if (user.authenticated) {
-      if (location.state) {
-          console.log(location.state)
+    if (user.authenticated && location.pathname === '/'){
+      history.push('/view');
+    }
+
+    if (user.authenticated && user.redirect) {
+      clearRedirect();
+      if (location.state ) {
         history.push(location.state.from.pathname);
       } else {
         history.push('/view');
       }
     }
-    if(user.error.title){
-        console.log('set visible', user)
-        setIsVisible(true);
+
+    if (user.error.type === 'MODAL') {
+      setIsVisible(true);
+    } else {
+      setIsVisible(false);
     }
   }, [user]);
 
-  const destroyModal = ()=>{
-      clearErrorMessage();
-      setIsVisible(false);
-
-    }
-
+  const destroyModal = () => {
+    clearErrorMessage();
+    setIsVisible(false);
+  }
 
   return (
     <>
-
       <Header/>
       <SearchProvider>
         <Switch>
@@ -65,10 +67,9 @@ const App: React.FC<Props> = ({history, location}) => {
           <PrivateRoute path="/browse" exact component={Browse}/>
           <PrivateRoute path="/detail/:pk/:uri" component={Detail}/>
         </Switch>
-          <Modal visible={visible}  title={user.error.title}  onCancel={()=>destroyModal()} onOk={()=>destroyModal()}>
-              <p> {user.error.message}</p>
-
-          </Modal>
+        <Modal visible={visible} title={user.error.title} onCancel={() => destroyModal()} onOk={() => destroyModal()}>
+          <p>{user.error.message}</p>
+        </Modal>
       </SearchProvider>
     </>
   );
