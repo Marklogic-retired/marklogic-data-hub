@@ -261,7 +261,7 @@ div.target-entity-title {
 }
 
 /* Fix bug showing double tooltip arrows */
-/deep/ .tooltip .arrow::before {
+.tooltip .arrow::before {
   visibility: hidden;
 }
 
