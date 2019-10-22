@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import axios from 'axios';
 import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
 import { AuthContext } from '../util/auth-context';
@@ -15,7 +15,7 @@ const { Content } = Layout;
 
 const Detail: React.FC<Props> = ({ history, location }) => {
   const { userNotAuthenticated } = useContext(AuthContext);
-  const uriSplit = location.pathname.replace('/detail/',''); 
+  const uriSplit = location.pathname.replace('/detail/', '');
   const pkValue = uriSplit.split('/')[0] === '-' ? '' : decodeURIComponent(uriSplit.split('/')[0]);
   const uri = decodeURIComponent(uriSplit.split('/')[1]);
   const [selected, setSelected] = useState('instance');
@@ -24,26 +24,31 @@ const Detail: React.FC<Props> = ({ history, location }) => {
   const [contentType, setContentType] = useState();
   const [xml, setXml] = useState();
 
+  const componentIsMounted = useRef(true);
+
   useEffect(() => {
     setIsLoading(true);
 
     const fetchData = async () => {
       try {
         const result = await axios(`/datahub/v2/search?docUri=${uri}`);
-        const content = result.headers['content-type'];
 
-        // TODO handle exception if document type is json -> XML
-        if (content.indexOf("application/json") !== -1) {
-          setContentType('json');
-          setData(result.data.content);
-        } else if (content.indexOf("application/xml") !== -1) {
-          setContentType('xml');
-          let decodedXml = decodeXml(result.data);
-          setData(convertXmlToJson(decodedXml));
-          setXml(decodeXml(decodedXml));
+        if (componentIsMounted.current) {
+          const content = result.headers['content-type'];
+
+          // TODO handle exception if document type is json -> XML
+          if (content.indexOf("application/json") !== -1) {
+            setContentType('json');
+            setData(result.data.content);
+          } else if (content.indexOf("application/xml") !== -1) {
+            setContentType('xml');
+            let decodedXml = decodeXml(result.data);
+            setData(convertXmlToJson(decodedXml));
+            setXml(decodeXml(decodedXml));
+          }
+
+          setIsLoading(false);
         }
-
-        setIsLoading(false);
 
       } catch (error) {
         console.log('error', error.response);
@@ -54,6 +59,11 @@ const Detail: React.FC<Props> = ({ history, location }) => {
     };
 
     fetchData();
+
+    return () => {
+      componentIsMounted.current = false;
+    }
+
   }, []);
 
   const handleClick = (event) => {
@@ -96,7 +106,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
         </div>
         <div className={styles.header}>
           <div className={styles.heading}>
-            {data && <DetailHeader document={data} contentType={contentType} uri={uri} primaryKey={pkValue}/>}
+            {data && <DetailHeader document={data} contentType={contentType} uri={uri} primaryKey={pkValue} />}
           </div>
           <div id='menu' className={styles.menu}>
             <Menu onClick={(event) => handleClick(event)} mode="horizontal" selectedKeys={[selected]}>
