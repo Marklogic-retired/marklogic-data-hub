@@ -40,8 +40,10 @@ function buildMappingXML(mappingJSON) {
   }
   let entityName = getEntityName(mappingJSON.root.targetEntityType);
   // compose the final template
+  // Importing the "map" namespace fixes an issue when testing a mapping from QuickStart that hasn't been reproduced
+  // yet in a unit test; it ensures that the map:* calls in the XSLT resolve to map functions.
   let finalTemplate = `
-      <m:mapping xmlns:m="http://marklogic.com/entity-services/mapping">
+      <m:mapping xmlns:m="http://marklogic.com/entity-services/mapping" xmlns:map="http://marklogic.com/xdmp/map">
       ${retrieveFunctionImports()}
       ${entityTemplates.join('\n')}
       <!-- Default entity is ${entityName} -->
@@ -83,15 +85,22 @@ function buildMapProperties(mapping, entityModel) {
         // TODO Can pass in a JSON object instead of a string message, but not able to reference the properties on it
         throw Error("The property '" + prop + "' is not defined by the entity model");
       }
+
+      let mapProperty = mapProperties[prop];
+      let sourcedFrom = escapeXML(mapProperty.sourcedFrom);
+      if (sourcedFrom == null || sourcedFrom == undefined || sourcedFrom == "") {
+        datahub.debug.log({message: 'sourcedFrom not specified for mapping property with name "' + prop + '"; will not map', type: 'warn'});
+        continue;
+      }
+
       let dataType = entityProperties[prop].datatype;
       let isArray = false;
       if (dataType === 'array') {
         isArray = true;
         dataType = entityProperties[prop].items.datatype;
       }
-      let mapProperty = mapProperties[prop];
       let propTag = namespacePrefix + prop;
-      let sourcedFrom = escapeXML(mapProperty.sourcedFrom);
+
       let isInternalMapping = mapProperty.targetEntityType && mapProperty.properties;
       if (isInternalMapping || isArray) {
         let propLine;

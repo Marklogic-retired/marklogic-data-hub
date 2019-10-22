@@ -1,0 +1,16 @@
+{
+  "lang": "zxx",
+  "name": "PersonMapping",
+  "description": "This intentionally has an empty expression for nickname",
+  "version": 2,
+  "sourceContext": "/",
+  "targetEntityType": "http://marklogic.com/data-hub/example/Person-1.0.0/Person",
+  "properties": {
+    "id": {
+      "sourcedFrom": "personId"
+    },
+    "nickname": {
+      "sourcedFrom": ""
+    }
+  }
+}
