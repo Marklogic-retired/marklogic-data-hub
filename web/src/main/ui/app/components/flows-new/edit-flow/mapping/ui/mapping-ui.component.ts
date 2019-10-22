@@ -169,11 +169,11 @@ export class MappingUiComponent implements OnChanges {
                 console.log(self.mapResults);
               },
                 err => {
-                  if (err.hasOwnProperty('error') && String(err['error']['message']).indexOf("Could not find mapping") >= 0) {
+                  if (err.hasOwnProperty('error')) {
                     console.log("found error");
-                    if (err['error']['code'] == 500) {
+                    if (err['error']['code'] == 500 && String(err['error']['message']).indexOf("Could not find mapping") >= 0) {
                       let result = self.dialogService.alert(
-                        'QuickStart hasn't finished loading the updated mapping. Please try again.',
+                        'QuickStart has not finished loading the updated mapping. Please try again.',
                         'OK'
                       );
                       result.subscribe();
@@ -188,7 +188,7 @@ export class MappingUiComponent implements OnChanges {
               console.log("found error");
               if (err['error']['code'] == 500 && String(err['error']['message']).indexOf("Could not find mapping") >= 0) {
                 let result = self.dialogService.alert(
-                  'QuickStart hasn't finished loading the updated mapping. Please try again.',
+                  'QuickStart has not finished loading the updated mapping. Please try again.',
                   'OK'
                 );
                 result.subscribe();
