@@ -44,7 +44,7 @@ describe('json scenario on view entities page', () => {
 
 describe('json scenario on browse documents page', () => {
 
-    var facets: string[] = ['collection', 'created-on', 'flow', 'step'];
+    var facets: string[] = ['collection', 'created-on', 'flow', 'createdByStep'];
 
     //login with valid account and go to /browse page
     beforeEach(() => {
@@ -59,7 +59,7 @@ describe('json scenario on browse documents page', () => {
 
     it('select "all entities" verify docs, hub/entity properties', () => {
         browsePage.getSelectedEntity().should('contain', 'All Entities');
-        cy.wait(500);
+        cy.wait(2000);
         browsePage.getTotalDocuments().should('be.greaterThan', '1008')
         browsePage.getDocuments().each(function (item, i) {
             browsePage.getDocumentEntityName(i).should('exist');
@@ -79,7 +79,7 @@ describe('json scenario on browse documents page', () => {
     it('select Person entity and verify entity, docs, hub/entity properties', () => {
         browsePage.selectEntity('Person');
         browsePage.getSelectedEntity().should('contain', 'Person');
-        cy.wait(500);
+        cy.wait(2000);
         browsePage.getTotalDocuments().should('be.greaterThan', '5')
         browsePage.getDocuments().each(function (item, i) {
             browsePage.getDocumentEntityName(i).should('exist');
