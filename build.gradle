@@ -28,7 +28,6 @@ plugins {
 apply plugin: 'io.spring.dependency-management'
 
 repositories {
-    maven {url 'http://distro.marklogic.com/nexus/repository/maven-snapshots/'}
     jcenter()
     maven { url 'http://repo.spring.io/milestone' }
     maven { url 'https://developer.marklogic.com/maven2/' }
@@ -59,7 +58,7 @@ dependencies {
     // Optional Boot library - see https://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-devtools.html
     compile("org.springframework.boot:spring-boot-devtools")
 
-    compile 'com.marklogic:marklogic-client-api:5.0-SNAPSHOT'
+    compile 'com.marklogic:marklogic-client-api:5.0.1'
     compile 'com.marklogic:ml-javaclient-util:3.13.3'
 
     runtimeOnly 'org.springframework.boot:spring-boot-devtools'
@@ -85,7 +84,7 @@ task generateJobInfo(type: com.marklogic.client.tools.gradle.EndpointProxiesGenT
 configurations.all {
     exclude group: 'org.slf4j', module: 'slf4j-log4j12'
     resolutionStrategy {
-        force 'com.marklogic:marklogic-client-api:5.0-SNAPSHOT'
+        force 'com.marklogic:marklogic-client-api:5.0.1'
     }
 }
 
