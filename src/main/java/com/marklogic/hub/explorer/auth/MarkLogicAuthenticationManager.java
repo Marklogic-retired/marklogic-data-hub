@@ -14,8 +14,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
@@ -64,13 +64,19 @@ public class MarkLogicAuthenticationManager implements AuthenticationProvider,
     DatabaseClient databaseClient =
         new DefaultConfiguredDatabaseClientFactory().newDatabaseClient(clientConfig);
 
-    DatabaseClient.ConnectionResult connectionResult = databaseClient.checkConnection();
+    // Attempt connection
+    DatabaseClient.ConnectionResult connectionResult;
+    try {
+      connectionResult = databaseClient.checkConnection();
+    } catch (Exception e) {
+      throw new InternalAuthenticationServiceException(e.getMessage());
+    }
 
-    if (!connectionResult.isConnected()) {
+    if (connectionResult != null && !connectionResult.isConnected()) {
       if (connectionResult.getStatusCode() != null && connectionResult.getStatusCode() == 401) {
         throw new BadCredentialsException(connectionResult.getErrorMessage());
       } else {
-        throw new AuthenticationServiceException(connectionResult.getErrorMessage());
+        throw new InternalAuthenticationServiceException(connectionResult.getErrorMessage());
       }
     }
 
