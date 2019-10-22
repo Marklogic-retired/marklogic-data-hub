@@ -134,10 +134,7 @@ public class EntityManagerService {
         else {
             HubEntity renamedEntity = em.saveEntity(hubEntity, true);
             entity.setFilename(renamedEntity.getFilename());
-            dataHubService.installUserModules(hubConfig, true, null, null);
         }
-
-
         return entity;
     }
 
