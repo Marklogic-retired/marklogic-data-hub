@@ -145,58 +145,58 @@ export class MappingUiComponent implements OnChanges {
   getMapValidationErrors(sourceURI?: string) {
     let self = this;
     self.isTestClicked = true;
-    self.manageFlowsService.getMap(self.mapping.name).subscribe((map: any) => {
-
-      self.manageFlowsService.getMappingErrors(map.name, map).subscribe(resp => {
-
-        self.mapErrors = resp;
-        if (JSON.stringify(self.mapErrors) != JSON.stringify({})) {
-          //checking if the response contains any error
-          self.checkKeyinObject(self.mapErrors, "errorMessage");
-
-          if (!self.containErrors) {
-            let uri;
-            if (sourceURI) {
-              uri = sourceURI;
-            }
-            else {
-              uri = map.sourceURI;
-            }
-            this.manageFlowsService.testMap(map.name, String(map.version), uri).subscribe(resp => {
-              console.log("testMap called");
-              this.mapResults = resp;
-              delete this.mapResults["info"];
-              this.mapResults = this.mapResults[this.entityName];
-              console.log(this.mapResults);
-            },
-              err => {
-                if (err.hasOwnProperty('error')) {
-                  console.log("found error");
-                  if (err['error']['code'] == 500) {
-                    let result = self.dialogService.alert(
-                      'Please try again in a few seconds. Thanks for your patience.',
-                      'OK'
-                    );
-                    result.subscribe();
+    setTimeout(function(){ 
+      self.manageFlowsService.getMap(self.mapping.name).subscribe((map: any) => {
+        self.manageFlowsService.getMappingErrors(map.name, map).subscribe(resp => {
+          self.mapErrors = resp;
+          if (JSON.stringify(self.mapErrors) != JSON.stringify({})) {
+            //checking if the response contains any error
+            self.checkKeyinObject(self.mapErrors, "errorMessage");
+  
+            if (!self.containErrors) {
+              let uri;
+              if (sourceURI) {
+                uri = sourceURI;
+              }
+              else {
+                uri = map.sourceURI;
+              }
+              self.manageFlowsService.testMap(map.name, String(map.version), uri).subscribe(resp => {
+                console.log("testMap called");
+                self.mapResults = resp;
+                delete self.mapResults["info"];
+                self.mapResults = self.mapResults[self.entityName];
+                console.log(self.mapResults);
+              },
+                err => {
+                  if (err.hasOwnProperty('error') && String(err['error']['message']).indexOf("Could not find mapping") >= 0) {
+                    console.log("found error");
+                    if (err['error']['code'] == 500) {
+                      let result = self.dialogService.alert(
+                        'QuickStart hasn't finished loading the updated mapping. Please try again.',
+                        'OK'
+                      );
+                      result.subscribe();
+                    }
                   }
-                }
-              });
-          }
-        }
-      },
-        err => {
-          if (err.hasOwnProperty('error')) {
-            console.log("found error");
-            if (err['error']['code'] == 500) {
-              let result = self.dialogService.alert(
-                'Please try again in a few seconds. Thanks for your patience.',
-                'OK'
-              );
-              result.subscribe();
+                });
             }
           }
-        });
-    });
+        },
+          err => {
+            if (err.hasOwnProperty('error')) {
+              console.log("found error");
+              if (err['error']['code'] == 500 && String(err['error']['message']).indexOf("Could not find mapping") >= 0) {
+                let result = self.dialogService.alert(
+                  'QuickStart hasn't finished loading the updated mapping. Please try again.',
+                  'OK'
+                );
+                result.subscribe();
+              }
+            }
+          });
+      });
+    }, 750);
   }
 
   // Checks if the key exists in an infinitely nested object
