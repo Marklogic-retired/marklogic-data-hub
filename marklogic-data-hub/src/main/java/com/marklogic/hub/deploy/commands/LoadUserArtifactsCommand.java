@@ -18,7 +18,6 @@ package com.marklogic.hub.deploy.commands;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.AbstractCommand;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.SortOrderConstants;
@@ -32,10 +31,8 @@ import com.marklogic.client.ext.util.DefaultDocumentPermissionsParser;
 import com.marklogic.client.ext.util.DocumentPermissionsParser;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
-import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
@@ -101,7 +98,9 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                 }
             }
         }
-
+        //Initializing the 'PropertiesModuleManager' instance so that timestamp file (local-user-modules-deploy-timestamps.properties)
+        // is read and only the modified files are deployed to server
+        pmm.initialize();
         return pmm;
     }
 

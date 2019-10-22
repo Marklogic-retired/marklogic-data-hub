@@ -45,7 +45,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.util.*;
 
 @Service
@@ -119,15 +118,6 @@ public class FlowManagerService {
         flowManager.saveFlow(flow);
 
         FlowStepModel fsm = FlowStepModel.transformFromFlow(flow);
-
-        Path dir = hubConfig.getFlowsDir();
-        if (dir.toFile().exists()) {
-            watcherService.watch(dir.toString());
-        }
-        if (checkExists) { //a new flow
-            dataHubService.installUserModules(hubConfig, true, null, null);
-        }
-
         return fsm;
     }
 
