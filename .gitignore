@@ -6,7 +6,7 @@
 .gradletasknamecache
 build/
 out/
-logs/
+logs*/
 releases/
 .classpath
 .project
