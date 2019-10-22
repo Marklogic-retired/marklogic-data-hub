@@ -30,6 +30,7 @@
 		min-width: 0;
 		border-right: 1px solid rgba(0, 0, 0, 0.12);
 		padding-left: 1%;
+		padding-top: 10px;
 		align-self: stretch;
 		align-items: flex-start;
 		font-size: 13px !important;
@@ -72,7 +73,7 @@
 
 	.textField {
 		padding: 1px 3px 2px 3px;  
-		margin: 3px 0;
+		margin: -3px 0 3px 0;
 		display: flex;
 		flex-direction: column;
 		min-width: auto;
@@ -83,12 +84,35 @@
 	.list-icon {
 		display: inline-block;
 		position: relative;
-		top: -2px;
+		top: -4px;
 		margin: 0 8px;
 	}
 
 	.function-icon {
 		margin-right: 4px;
+	}
+
+	.contextField {
+		width: 255px;
+	}
+
+	.context-label {
+		.context-text {
+			display: inline-block;
+			font-size: 12px;
+			font-weight: 400;
+			margin-right: 6px;
+			color: #777;
+		}
+		mat-icon.context-icon {
+			display: inline-block;
+			font-size: 14px;
+			margin-right: 0;
+			position: relative;
+			top: 1px;
+			width: 19px;
+			color: #3B73AF;
+		}
 	}
 
 }	
@@ -132,4 +156,9 @@
 		font-size: 10px;
 		color: red; 
 		padding-left:4px
+}
+
+/* Fix bug showing double tooltip arrows */
+.tooltip .arrow::before {
+  visibility: hidden !important;
 }

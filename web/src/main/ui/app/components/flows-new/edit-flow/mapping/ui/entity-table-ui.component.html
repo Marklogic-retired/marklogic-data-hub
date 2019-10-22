@@ -46,7 +46,16 @@
       Expression
     </mat-header-cell>
     <mat-cell *matCellDef="let prop; let i = dataIndex">
-      <div class="textField">
+      <div *ngIf="isNested(prop)" class="context-label">
+        <span class="context-text">Context</span>
+        <mat-icon 
+          class="context-icon" 
+          container="body"
+          tooltip="An element in the source data from which to derive the values of this entity property's children. Both the source data element and the entity property must be of the same type (Object or an array of Object instances).">
+          <i class="fa fa-info-circle"></i>
+        </mat-icon>
+      </div>
+      <div class="textField" [class.contextField]="isNested(prop)">
           <span id="textFieldValidation" [ngStyle]="{'background-color': checkFieldInErrors(prop.name)? '#FAD3D3' : ''}">
         <textarea
           matInput
