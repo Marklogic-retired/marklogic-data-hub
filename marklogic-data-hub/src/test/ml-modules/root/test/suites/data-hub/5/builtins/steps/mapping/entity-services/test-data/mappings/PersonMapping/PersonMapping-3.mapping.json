@@ -1,0 +1,37 @@
+{
+  "lang": "zxx",
+  "name": "PersonMapping",
+  "description": "TBD",
+  "version": 3,
+  "sourceContext": "/",
+  "targetEntityType": "http://marklogic.com/data-hub/example/Person-1.0.0/Person",
+  "properties": {
+    "id": {
+      "sourcedFrom": "personId"
+    },
+    "name": {
+      "sourcedFrom": "theName",
+      "targetEntityType": "http://marklogic.com/data-hub/example/Person-1.0.0/Name",
+      "properties": {
+        "middle" : {
+          "sourcedFrom": "middleName"
+        },
+        "last" : {
+          "sourcedFrom": "lastName"
+        },
+        "first": {
+          "sourcedFrom": "firstName",
+          "targetEntityType": "http://marklogic.com/data-hub/example/Person-1.0.0/FirstName",
+          "properties": {
+            "value": {
+              "sourcedFrom": "theValue"
+            },
+            "prefix": {
+              "sourcedFrom": "thePrefix"
+            }
+          }
+        }
+      }
+    }
+  }
+}
