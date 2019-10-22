@@ -264,33 +264,38 @@ public class DataHubImpl implements DataHub {
                 return false;
             }
             boolean isNightly = versionString.matches("[^-]+-(\\d{4})(\\d{2})(\\d{2})");
-            //Support any 9.0 version > 9.0-7 and all 10.0 versions.
+            //Support 9.0 versions >= 9.0-10 and 10.0 versions >=10.0-2.
+            int minor = 0;
+
+            //Extract minor version in cases where versions is of type 9.0-6 or 9.0-6.2
+            if(versionString.matches("^.*-(.+)\\..*")) {
+                minor = Integer.parseInt(versionString.replaceAll("^.*-(.+)\\..*", "$1"));
+            }
+            else if(versionString.matches("^.*-(.+)$")){
+                minor = Integer.parseInt(versionString.replaceAll("^.*-(.+)$", "$1"));
+            }
+            //left pad minor version with 0 if it is < 10
+            String modifiedMinor = minor < 10 ? StringUtils.leftPad(String.valueOf(minor), 2, "0"):String.valueOf(minor) ;
+
+            int hotFixNum = 0;
+
+            //Extract hotfix in cases where versions is of type 9.0-6.2, if not it will be 0
+            if(versionString.matches("^.*-(.+)\\.(.*)")) {
+                hotFixNum = Integer.parseInt(versionString.replaceAll("^.*-(.+)\\.(.*)", "$2"));
+            }
+            //left pad minor version with 0 if it is < 10
+            String modifiedHotFixNum = hotFixNum < 10 ? StringUtils.leftPad(String.valueOf(hotFixNum), 2, "0"):String.valueOf(hotFixNum) ;
+            String alteredString = StringUtils.join(modifiedMinor, modifiedHotFixNum);
+            int ver = Integer.parseInt(alteredString);
             if (major == 9) {
-                int minor = 0;
-
-                //Extract minor version in cases where versions is of type 9.0-6 or 9.0-6.2
-                if(versionString.matches("^.*-(.+)\\..*")) {
-                    minor = Integer.parseInt(versionString.replaceAll("^.*-(.+)\\..*", "$1"));
+                //ver >= 1000 => 9.0-10 and above is supported
+                if (!isNightly && ver < 1000) {
+                    return false;
                 }
-                else if(versionString.matches("^.*-(.+)$")){
-                    minor = Integer.parseInt(versionString.replaceAll("^.*-(.+)$", "$1"));
-                }
-                //left pad minor version with 0 if it is < 10
-                String modifiedMinor = minor < 10 ? StringUtils.leftPad(String.valueOf(minor), 2, "0"):String.valueOf(minor) ;
-
-                int hotFixNum = 0;
-
-                //Extract hotfix in cases where versions is of type 9.0-6.2, if not it will be 0
-                if(versionString.matches("^.*-(.+)\\.(.*)")) {
-                    hotFixNum = Integer.parseInt(versionString.replaceAll("^.*-(.+)\\.(.*)", "$2"));
-                }
-                //left pad minor version with 0 if it is < 10
-                String modifiedHotFixNum = hotFixNum < 10 ? StringUtils.leftPad(String.valueOf(hotFixNum), 2, "0"):String.valueOf(hotFixNum) ;
-                String alteredString = StringUtils.join(modifiedMinor, modifiedHotFixNum);
-                int ver = Integer.parseInt(alteredString);
-
-                //ver >= 700 => 9.0-7 and above is supported
-                if (!isNightly && ver < 700) {
+            }
+            if (major == 10) {
+                //ver >= 200 => 10.0-2 and above is supported
+                if (!isNightly && ver < 200) {
                     return false;
                 }
             }
@@ -298,7 +303,7 @@ public class DataHubImpl implements DataHub {
                 String dateString = versionString.replaceAll("[^-]+-(\\d{4})(\\d{2})(\\d{2})", "$1-$2-$3");
                 //Support all 9.0-nightly on or after 11/5/2018
                 if(major == 9) {
-                    Date minDate = new GregorianCalendar(2018, Calendar.NOVEMBER, 5).getTime();
+                    Date minDate = new GregorianCalendar(2019, Calendar.SEPTEMBER, 16).getTime();
                     Date date = new SimpleDateFormat("y-M-d").parse(dateString);
                     if (date.before(minDate)) {
                         return false;
@@ -306,7 +311,7 @@ public class DataHubImpl implements DataHub {
                 }
                 //Support all 10.0-nightly on or after 6/11/2019
                 if(major == 10) {
-                    Date minDate = new GregorianCalendar(2019, Calendar.JUNE, 1).getTime();
+                    Date minDate = new GregorianCalendar(2019, Calendar.SEPTEMBER, 26).getTime();
                     Date date = new SimpleDateFormat("y-M-d").parse(dateString);
                     if (date.before(minDate)) {
                         return false;
