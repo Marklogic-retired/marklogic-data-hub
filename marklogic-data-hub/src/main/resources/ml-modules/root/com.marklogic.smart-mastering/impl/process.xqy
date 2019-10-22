@@ -152,33 +152,35 @@ declare function proc-impl:expand-uris-for-merge(
 ) (: as xs:string* ~leaving off for tail recursion~ :)
 {
   let $additional-uris :=
-    for $merge-uri in $current-uris
-    return
-      if (map:contains($matches,$merge-uri)) then
-        map:get($matches, $merge-uri)/result[@action=$const:MERGE-ACTION]/@uri ! fn:string(.)
-      else
-        let $_lock-for-update := merge-impl:lock-for-update($merge-uri)
-        let $results :=
-          match-impl:find-document-matches-by-options(
-            fn:doc($merge-uri),
-            $matching-options,
-            1,
-            $max-scan,
-            $merge-threshold,
-            (: don't include detailed match information :)
-            fn:false(),
-            if ($filter-query instance of cts:true-query) then
-              cts:not-query(cts:document-query($accumlated-uris))
-            else
-              cts:and-not-query($filter-query, cts:document-query($accumlated-uris)),
-            (: return results :)
-            fn:true()
-          )[result/@action = $const:MERGE-ACTION]
-        where fn:exists($results)
-        return (
-          map:put($matches, $merge-uri, $results),
-          $results/result[@action=$const:MERGE-ACTION]/@uri ! fn:string(.)
-        )
+    fn:distinct-values(
+      for $merge-uri in $current-uris
+      return
+        if (map:contains($matches, $merge-uri)) then
+          map:get($matches, $merge-uri)/result[@action = $const:MERGE-ACTION]/@uri ! fn:string(.)
+        else
+          let $_lock-for-update := merge-impl:lock-for-update($merge-uri)
+          let $results :=
+            match-impl:find-document-matches-by-options(
+              fn:doc($merge-uri),
+              $matching-options,
+              1,
+              $max-scan,
+              $merge-threshold,
+              (: don't include detailed match information :)
+              fn:false(),
+              if ($filter-query instance of cts:true-query) then
+                cts:not-query(cts:document-query($accumlated-uris))
+              else
+                cts:and-not-query($filter-query, cts:document-query($accumlated-uris)),
+              (: return results :)
+              fn:true()
+            )[result/@action = $const:MERGE-ACTION]
+          where fn:exists($results)
+          return (
+            map:put($matches, $merge-uri, $results),
+            $results/result[@action = $const:MERGE-ACTION]/@uri ! fn:string(.)
+          )
+    )
   let $new-uris := $additional-uris[fn:not(. = $accumlated-uris)]
   return
     if (fn:empty($new-uris)) then
