@@ -20,8 +20,6 @@ const Browse: React.FC<Props> = ({ location }) => {
   const { user, handleError } = useContext(AuthContext);
   const {
     searchOptions,
-    setPage,
-    setPageLength,
     setEntityClearQuery,
     setLatestJobFacet,
   } = useContext(SearchContext);
@@ -91,25 +89,11 @@ const Browse: React.FC<Props> = ({ location }) => {
 
   }, []);
 
-
   useEffect(() => {
     if (entities.length && !user.error.type) {
       getSearchResults(entities);
     }
   }, [searchOptions, entities, user.error.type]);
-
-  // const handlePageChange = (pageNumber: number) => {
-  //   setPage(pageNumber, totalDocuments);
-  // }
-
-  // const handlePageLengthChange = (current: number, pageSize: number) => {
-  //   setPageLength(current, pageSize);
-  // }
-
-  // const getPageLength = () => {
-  //   return null
-  //    //return (totalDocuments - ((searchOptions.start - 1) * searchOptions.pageLength) < searchOptions.pageLength) ? (totalDocuments - ((searchOptions.start - 1) * searchOptions.pageLength)) : searchOptions.pageLength;
-  // }
 
   return (
     <>
