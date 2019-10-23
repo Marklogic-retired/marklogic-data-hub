@@ -54,7 +54,6 @@ const SearchResult: React.FC<Props> = (props) => {
     }
 
     if (props.item.extracted.content[1]) {
-      //handle xml mappings
       let parsedContent = xmlParsing(props.item.extracted.content[1]);
       itemEntityName = Object.keys(parsedContent);
       itemEntityProperties = Object.values<any>(parsedContent);
