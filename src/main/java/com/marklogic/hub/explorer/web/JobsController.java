@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.marklogic.client.FailedRequestException;
+import com.marklogic.client.MarkLogicServerException;
 import com.marklogic.hub.explorer.service.JobsService;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -37,7 +38,7 @@ public class JobsController {
     List<JsonNode> modelList = new ArrayList<>();
     try {
       modelList = jobsService.getLatestJobInfoForAllModels();
-    } catch (FailedRequestException e) {
+    } catch (MarkLogicServerException e) {
       /*
        * As MarkLogic server throws a FailedRequestException for both data-service module not found
        * and if the user is unauthorized to access the module; we need to fail silently and log the
@@ -54,7 +55,7 @@ public class JobsController {
     JsonNode json = null;
     try {
       json = jobsService.getLatestJobInfo(modelName);
-    } catch (FailedRequestException e) {
+    } catch (MarkLogicServerException e) {
       /*
        * As MarkLogic server throws a FailedRequestException for both data-service module not found
        * and if the user is unauthorized to access the module; we need to fail silently and log the

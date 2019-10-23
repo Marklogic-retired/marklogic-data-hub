@@ -12,7 +12,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.FailedRequestException;
+import com.marklogic.client.ForbiddenUserException;
+import com.marklogic.client.MarkLogicServerException;
 import com.marklogic.client.ResourceNotFoundException;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
@@ -23,6 +24,7 @@ import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryBuilder.Operator;
 import com.marklogic.client.query.StructuredQueryDefinition;
+import com.marklogic.hub.explorer.exception.ExplorerException;
 import com.marklogic.hub.explorer.model.Document;
 import com.marklogic.hub.explorer.model.SearchQuery;
 
@@ -57,12 +59,24 @@ public class SearchHelper {
   public StringHandle search(SearchQuery searchQuery) {
     DatabaseClient client = databaseClientHolder.getDatabaseClient();
     QueryManager queryMgr = client.newQueryManager();
-    StructuredQueryDefinition finalQueryDef = buildQuery(queryMgr, searchQuery);
 
     // Setting criteria and searching
     StringHandle resultHandle = new StringHandle();
     resultHandle.setFormat(Format.JSON);
-    return queryMgr.search(finalQueryDef, resultHandle, searchQuery.getStart());
+    try {
+      //buildQuery includes datetime conversion which could cause DateTimeException or DateTimeParseException
+      StructuredQueryDefinition finalQueryDef = buildQuery(queryMgr, searchQuery);
+      return queryMgr.search(finalQueryDef, resultHandle, searchQuery.getStart());
+    } catch (MarkLogicServerException e) {
+      if (e instanceof ResourceNotFoundException || e instanceof ForbiddenUserException) {
+        logger.warn(e.getLocalizedMessage());
+      } else { //FailedRequestException || ResourceNotResendableException
+        logger.error(e.getLocalizedMessage());
+      }
+      throw new ExplorerException(e.getServerStatusCode(), e.getServerMessageCode(), e.getServerMessage(), e);
+    } catch (Exception e) { //other runtime exceptions
+      throw new ExplorerException(e.getLocalizedMessage(), e);
+    }
   }
 
   public Optional<Document> getDocument(String docUri) {
@@ -76,9 +90,15 @@ public class SearchHelper {
       String content = docMgr.readAs(docUri, documentMetadataReadHandle, String.class);
       Map<String, String> metadata = documentMetadataReadHandle.getMetadataValues();
       return Optional.ofNullable(new Document(content, metadata));
-    } catch (ResourceNotFoundException rnfe) {
-      logger.warn(rnfe.getMessage());
-      return Optional.empty();
+    } catch (MarkLogicServerException e) {
+      if (e instanceof ResourceNotFoundException || e instanceof ForbiddenUserException) {
+        logger.warn(e.getLocalizedMessage());
+      } else { //FailedRequestException || ResourceNotResendableException
+        logger.error(e.getLocalizedMessage());
+      }
+      throw new ExplorerException(e.getServerStatusCode(), e.getServerMessageCode(), e.getServerMessage(), e);
+    } catch (Exception e) { //other runtime exceptions
+      throw new ExplorerException(e.getLocalizedMessage(), e);
     }
   }
 
@@ -155,8 +175,8 @@ public class SearchHelper {
       queryMgr.search(queryBuilder.and(), new SearchHandle());
       // Creating query builder with the QUERY_OPTIONS file if it exists
       return queryBuilder;
-    } catch (FailedRequestException fre) {
-      logger.error(fre.getServerMessage());
+    } catch (MarkLogicServerException e) {
+      logger.error(e.getServerMessage());
       logger.error("If this a configuration issue, fix the configuration issues as shown in"
           + " the logs for enabling faceted search on the entity properties." + "\n"
           + "If the exp-final-entity-options search is missing, please look into documentation "

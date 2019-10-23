@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.ForbiddenUserException;
+import com.marklogic.client.MarkLogicServerException;
+import com.marklogic.client.ResourceNotFoundException;
 import com.marklogic.client.document.DocumentRecord;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.io.Format;
@@ -16,12 +19,15 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
+import com.marklogic.hub.explorer.exception.ExplorerException;
 import com.marklogic.hub.explorer.util.DatabaseClientHolder;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +39,8 @@ public class ModelService {
 
   public static final String ENTITY_MODEL_COLLECTION_NAME =
       "http://marklogic.com/entity-services/models";
+
+  private static final Logger logger = LoggerFactory.getLogger("ModelService");
 
   /**
    * Get all the entities
@@ -49,13 +57,24 @@ public class ModelService {
 
     GenericDocumentManager docMgr = dbClient.newDocumentManager();
     JacksonHandle handle = new JacksonHandle();
-    docMgr
-        .search(sb.collection(ENTITY_MODEL_COLLECTION_NAME), 0)
-        .forEach(
-            documentRecord -> {
-              documentRecord.getContent(handle);
-              jsonRes.add(handle.get());
-            });
+    try {
+      docMgr
+          .search(sb.collection(ENTITY_MODEL_COLLECTION_NAME), 0)
+          .forEach(
+              documentRecord -> {
+                documentRecord.getContent(handle);
+                jsonRes.add(handle.get());
+              });
+    } catch (MarkLogicServerException e) {
+      if (e instanceof ResourceNotFoundException || e instanceof ForbiddenUserException) {
+        logger.warn(e.getLocalizedMessage());
+      } else { //FailedRequestException || ResourceNotResendableException || other runtime exceptions
+        logger.error(e.getLocalizedMessage());
+      }
+      throw new ExplorerException(e.getServerStatusCode(), e.getServerMessageCode(), e.getServerMessage(), e);
+    } catch (Exception e) {
+      throw new ExplorerException(e.getLocalizedMessage(), e);
+    }
 
     return jsonRes;
   }
@@ -98,7 +117,18 @@ public class ModelService {
 
     GenericDocumentManager docMgr = dbClient.newDocumentManager();
     List<DocumentRecord> documentRecords = new ArrayList<>();
-    docMgr.search(sbd, 0, sh).forEach(documentRecords::add);
+    try {
+      docMgr.search(sbd, 0, sh).forEach(documentRecords::add);
+    } catch (MarkLogicServerException e) {
+      if (e instanceof ResourceNotFoundException || e instanceof ForbiddenUserException) {
+        logger.warn(e.getLocalizedMessage());
+      } else { //FailedRequestException || ResourceNotResendableException || other runtime exceptions
+        logger.error(e.getLocalizedMessage());
+      }
+      throw new ExplorerException(e.getServerStatusCode(), e.getServerMessageCode(), e.getServerMessage(), e);
+    } catch (Exception e) {
+      throw new ExplorerException(e.getLocalizedMessage(), e);
+    }
 
     JacksonHandle handle = new JacksonHandle();
     if (!documentRecords.isEmpty()) {

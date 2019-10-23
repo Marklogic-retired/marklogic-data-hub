@@ -11,6 +11,8 @@ import com.marklogic.hub.explorer.util.DatabaseClientHolder;
 import com.marklogic.hub.explorer.util.ExplorerConfig;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -34,6 +36,8 @@ public class MarkLogicAuthenticationManager implements AuthenticationProvider,
 
   @Autowired
   ExplorerConfig explorerConfig;
+
+  private static final Logger logger = LoggerFactory.getLogger(MarkLogicAuthenticationManager.class);
 
   public MarkLogicAuthenticationManager() {
   }
@@ -101,8 +105,8 @@ public class MarkLogicAuthenticationManager implements AuthenticationProvider,
     DatabaseClientConfig clientConfig = new DatabaseClientConfig(explorerConfig.getHostname(),
         explorerConfig.getFinalPort(), username, password);
     clientConfig.setDatabase(explorerConfig.getFinalDbName());
-    clientConfig.setSecurityContextType(
-        SecurityContextType.valueOf(explorerConfig.getFinalAuthMethod().toUpperCase()));
+    clientConfig.setSecurityContextType(SecurityContextType.valueOf(
+        explorerConfig.getFinalAuthMethod().toUpperCase()));
     clientConfig.setSslHostnameVerifier(explorerConfig.getFinalSslHostnameVerifier());
     clientConfig.setSslContext(explorerConfig.getFinalSslContext());
     clientConfig.setCertFile(explorerConfig.getFinalCertFile());
