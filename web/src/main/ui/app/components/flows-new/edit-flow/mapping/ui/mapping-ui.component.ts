@@ -42,7 +42,7 @@ export class MappingUiComponent implements OnChanges {
   private uriOrig: string = '';
   private connsOrig: object = {};
 
-  public valMaxLen: number = 15;
+  public valMaxLen: number = 25;
   public isVersionCompatibleWithES: boolean = false;
 
   public filterFocus: object = {};
@@ -81,6 +81,7 @@ export class MappingUiComponent implements OnChanges {
     disableURINavRight: boolean = false;
     uriIndex = 0;
     currEntity:string;
+    containErrors: boolean = false;
 
   @ViewChild(MatTable)
   table: MatTable<any>;
@@ -93,6 +94,7 @@ export class MappingUiComponent implements OnChanges {
 
   @ViewChildren('fieldName') fieldName:QueryList<any>;
   public mapResults:any = {} ;
+  public mapErrors: any = {};
 
   ngOnInit(){
     if (!this.dataSource){
@@ -140,9 +142,92 @@ export class MappingUiComponent implements OnChanges {
     });
   }
 
+  getMapValidationErrors(sourceURI?: string) {
+    let self = this;
+    self.isTestClicked = true;
+    setTimeout(function(){ 
+      self.manageFlowsService.getMap(self.mapping.name).subscribe((map: any) => {
+        self.manageFlowsService.getMappingErrors(map.name, map).subscribe(resp => {
+          self.mapErrors = resp;
+          if (JSON.stringify(self.mapErrors) != JSON.stringify({})) {
+            //checking if the response contains any error
+            self.checkKeyinObject(self.mapErrors, "errorMessage");
+  
+            if (!self.containErrors) {
+              let uri;
+              if (sourceURI) {
+                uri = sourceURI;
+              }
+              else {
+                uri = map.sourceURI;
+              }
+              self.manageFlowsService.testMap(map.name, String(map.version), uri).subscribe(resp => {
+                console.log("testMap called");
+                self.mapResults = resp;
+                delete self.mapResults["info"];
+                self.mapResults = self.mapResults[self.entityName];
+                console.log(self.mapResults);
+              },
+                err => {
+                  if (err.hasOwnProperty('error')) {
+                    console.log("found error");
+                    if (err['error']['code'] == 500 && String(err['error']['message']).indexOf("Could not find mapping") >= 0) {
+                      let result = self.dialogService.alert(
+                        'QuickStart has not finished loading the updated mapping. Please try again.',
+                        'OK'
+                      );
+                      result.subscribe();
+                    }
+                  }
+                });
+            }
+          }
+        },
+          err => {
+            if (err.hasOwnProperty('error')) {
+              console.log("found error");
+              if (err['error']['code'] == 500 && String(err['error']['message']).indexOf("Could not find mapping") >= 0) {
+                let result = self.dialogService.alert(
+                  'QuickStart has not finished loading the updated mapping. Please try again.',
+                  'OK'
+                );
+                result.subscribe();
+              }
+            }
+          });
+      });
+    }, 750);
+  }
+
+  // Checks if the key exists in an infinitely nested object
+  checkKeyinObject(obj, keyName) {
+
+    let self = this;
+    if (obj.hasOwnProperty(keyName)) {
+      self.containErrors = true;
+    }
+    else {
+      _.forEach(obj, function (val, key) {
+
+        if (val.constructor.name === "Object") {
+          self.checkKeyinObject(val, keyName)
+        }
+        else if (val.constructor.name === "Array") {
+
+          val.forEach(obj => {
+            if (obj.constructor.name === "object") {
+              self.checkKeyinObject(obj, keyName);
+            }
+          });
+        }
+      });
+    }
+  }
+
   onClear(){
     this.mapResults = {};
     this.isTestClicked = false;
+    this.containErrors = false;
   }
   onNavigateURIList(index) {
     if (index > 0 && index < this.docUris.length - 1) {
@@ -196,7 +281,7 @@ export class MappingUiComponent implements OnChanges {
     }
     console.log(this.editURIVal);
     if(this.isTestClicked) {
-      this.getMapResults(this.editURIVal);
+      this.getMapValidationErrors(this.editURIVal); //this.getMapResults(this.editURIVal);
     }
   }
 
@@ -530,11 +615,13 @@ export class MappingUiComponent implements OnChanges {
   // Attach namespace, if the source is an xml document
   displaySourceField(field): string {
     let fieldValue = "";
-    if(this.nmspace && field in this.nmspace) {
-      fieldValue = this.nmspace[field] + ":"+ field.split('/').pop();
+    let truncField = field.slice(field.lastIndexOf('/')+1);
+    if(this.nmspace && truncField in this.nmspace) {
+      fieldValue = this.nmspace[truncField].slice(this.nmspace[truncField].lastIndexOf('/')+1) + ": "+ truncField;
     }
     else {
-      fieldValue = field.split('/').pop();
+      
+      fieldValue = truncField;
     }
     return fieldValue;
   }

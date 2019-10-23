@@ -25,7 +25,19 @@
           (saveStep)="saveStep($event)"
         ></app-mapping>
       </div>
-      <div id="step-type-mastering-container" *ngIf="createStepHeader(step) === stepType.MASTERING">
+      <div id="step-type-matching-container" *ngIf="createStepHeader(step) === stepType.MATCHING">
+        <app-matching
+          [step]="step"
+          (saveStep)="saveStep($event)"
+        ></app-matching>
+      </div>
+      <div id="step-type-merging-container" *ngIf="createStepHeader(step) === stepType.MERGING">
+        <app-merging
+          [step]="step"
+          (saveStep)="saveStep($event)"
+        ></app-merging>
+      </div>
+      <div id="step-type-mastering-container" *ngIf=" createStepHeader(step) === stepType.MASTERING">
         <mat-tab-group #masteringTabGroup [selectedIndex]="masteringTabIndex">
           <mat-tab label="Matching">
             <app-matching

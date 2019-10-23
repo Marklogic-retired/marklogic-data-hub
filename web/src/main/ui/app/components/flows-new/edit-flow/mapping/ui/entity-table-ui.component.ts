@@ -1,6 +1,7 @@
-import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges, 
+import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges,
   ViewChild, ViewChildren, QueryList, ViewEncapsulation } from '@angular/core';
 import { MatTable, MatTableDataSource} from "@angular/material";
+import { FormBuilder, FormGroup, Validators, FormArray, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-entity-table-ui',
@@ -21,14 +22,16 @@ export class EntityTableUiComponent implements OnChanges {
   @Input() nmspace: object;
   @Input() mapResults: any;
   @Input() currEntity:string;
+  @Input() mapErrors: any;
+  @Input() containErrors: boolean;
   @Output() handleSelection = new EventEmitter();
-  
+
   dataSource: MatTableDataSource<any>;
 
   // Mapping data
   mapExpressions = {}; // for UI
   mapData = {}; // for saved artifact
-
+  mapExp = new FormControl('');
   // Show/hide nested property table
   showProp = {};
   showPropInit = false;
@@ -40,7 +43,8 @@ export class EntityTableUiComponent implements OnChanges {
 
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit() {
+  }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.entityProps && changes.entityProps.currentValue){
@@ -56,6 +60,26 @@ export class EntityTableUiComponent implements OnChanges {
       this.colsShown = changes.colsShown.currentValue;
     }
   }
+
+  displayErrorMessage(propName) { 
+    let field = this.mapErrors["properties"]
+    if (field[propName] && field[propName]["errorMessage"]) {
+      return field[propName]["errorMessage"];
+  }
+}
+
+checkFieldInErrors(field){
+  if(this.mapErrors && this.mapErrors['properties']){
+    if(this.mapErrors['properties'][field] && this.mapErrors['properties'][field]['errorMessage']) {
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
+  
+}
 
   getDatatype(prop) {
     if (prop.datatype === 'array') {
@@ -91,7 +115,21 @@ export class EntityTableUiComponent implements OnChanges {
   }
 
   isNested(prop) {
-    return prop.datatype === 'array' || prop.$ref !== null;
+    const propRef = prop.$ref  || (prop.items && prop.items.$ref);
+    return propRef && this.isInternalRef(propRef);
+  }
+
+  isInternalRef(propRef) {
+    return propRef && propRef.startsWith('#/definitions/');
+  }
+
+  hasExternalRef(prop) {
+    const propRef = prop.$ref || (prop.items && prop.items.$ref) || null;
+    return propRef && this.isExternalRef(propRef);
+  }
+
+  isExternalRef(propRef) {
+    return propRef && !propRef.startsWith('#/definitions/');
   }
 
   onHandleSelection(obj): void {
@@ -137,10 +175,10 @@ export class EntityTableUiComponent implements OnChanges {
     const f = this.fieldName.toArray()[index].nativeElement;
     const startPos = f.selectionStart;
     f.focus();
-    f.value = f.value.substr(0, f.selectionStart) + content + 
+    f.value = f.value.substr(0, f.selectionStart) + content +
       f.value.substr(f.selectionStart, f.value.length);
-    f.selectionStart = startPos;
-    f.selectionEnd = startPos + content.length;
+    //f.selectionStart = startPos;
+    //f.selectionEnd = startPos+content.length;
     f.focus();
     this.onHandleSelection({ name: prop.name, expr: f.value, prop: prop });
   }
@@ -160,7 +198,7 @@ export class EntityTableUiComponent implements OnChanges {
   IndentCondition(prop) {
     let count = prop.split('/').length - 1;
     let indentSize = 20*count;
-  
+
     let style = {'text-indent': indentSize+'px'}
   return style
   }
@@ -171,18 +209,19 @@ export class EntityTableUiComponent implements OnChanges {
     source.forEach(obj => {
       uniqueSrcFields.push(obj.key);
     });
-    
+
     return uniqueSrcFields.filter((item, index) => uniqueSrcFields.indexOf(item) === index);
   }
 
   // Attach namespace, if the source is an xml document
   displaySourceField(field): string {
     let fieldValue = "";
-    if(this.nmspace && field in this.nmspace) {
-      fieldValue = this.nmspace[field] + ":"+ field.split('/').pop();
+    let truncField = field.slice(field.lastIndexOf('/')+1);
+    if(this.nmspace && truncField in this.nmspace) {
+      fieldValue = this.nmspace[truncField].slice(this.nmspace[truncField].lastIndexOf('/')+1) + ": "+ truncField;
     }
     else {
-      fieldValue = field.split('/').pop();
+      fieldValue = truncField;
     }
     return fieldValue;
   }

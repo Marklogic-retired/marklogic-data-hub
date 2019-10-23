@@ -16,6 +16,7 @@
 
 package com.marklogic.hub.mapping;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -49,7 +50,6 @@ public class MappingImpl implements Mapping {
         this.sourceContext = "/";
         this.sourceURI = "";
         this.properties = new HashMap<>();
-        properties.put("id", createProperty("sourcedFrom", "id"));
         this.targetEntityType = "http://example.org/modelName-version/entityType";
     }
 
@@ -196,6 +196,7 @@ public class MappingImpl implements Mapping {
     }
 
     @Override
+    @JsonIgnore
     @Deprecated
     public String getLanguage() {
         return lang;

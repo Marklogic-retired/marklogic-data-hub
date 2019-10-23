@@ -9,7 +9,7 @@ function invalidProperty() {
         sourcedFrom: "concat(id,"
       },
       name: {
-        sourcedFrom: "someName",
+        sourcedFrom: "concat(someName,",
         targetEntityType: "http://marklogic.com/data-hub/example/Person-1.0.0/Name",
         properties: {
           first: {
@@ -39,7 +39,6 @@ function invalidProperty() {
   };
 
   let result = esMappingLib.validateMapping(mapping);
-  //console.log("result", xdmp.describe(result));
 
   return [
     test.assertEqual("http://marklogic.com/data-hub/example/Person-1.0.0/Person", result.targetEntityType),
@@ -48,7 +47,10 @@ function invalidProperty() {
     test.assertEqual("Invalid XPath expression: concat(id,", result.properties.id.errorMessage),
     test.assertFalse(result.properties.nickname.hasOwnProperty("errorMessage"), "The nickname expression is valid"),
 
+    test.assertEqual("concat(someName,", result.properties.name.sourcedFrom),
+    test.assertEqual("Invalid XPath expression: concat(someName,", result.properties.name.errorMessage),
     test.assertEqual("http://marklogic.com/data-hub/example/Person-1.0.0/Name", result.properties.name.targetEntityType),
+
     test.assertEqual("Invalid XPath expression: concat(lastName, ", result.properties.name.properties.last.errorMessage),
     test.assertFalse(result.properties.name.properties.middle.hasOwnProperty("errorMessage"), "The name/middle expression is valid"),
 

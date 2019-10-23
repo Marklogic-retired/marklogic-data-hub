@@ -134,12 +134,7 @@ public class EntityManagerService {
         else {
             HubEntity renamedEntity = em.saveEntity(hubEntity, true);
             entity.setFilename(renamedEntity.getFilename());
-
-            // Redeploy the flows
-            dataHubService.reinstallUserModules(hubConfig, null, null);
         }
-
-
         return entity;
     }
 

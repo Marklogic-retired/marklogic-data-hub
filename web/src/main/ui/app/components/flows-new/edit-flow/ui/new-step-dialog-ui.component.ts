@@ -29,7 +29,7 @@ export class NewStepDialogUiComponent implements OnInit {
   @Output() getCollections = new EventEmitter();
   @Output() cancelClicked = new EventEmitter();
   @Output() saveClicked = new EventEmitter();
-  
+
   public newStep: Step;
   readonly stepOptions = Object.keys(StepType);
 
@@ -61,6 +61,8 @@ export class NewStepDialogUiComponent implements OnInit {
   type: string = null;
   isIngestion: boolean = false;
   isMapping: boolean = false;
+  isMatching: boolean = false;
+  isMerging: boolean = false;
   isMastering: boolean = false;
   isCustom: boolean = false;
   sourceRequired: boolean = false;
@@ -93,7 +95,7 @@ export class NewStepDialogUiComponent implements OnInit {
     this.tooltips = FlowsTooltips.ingest;
     let selectedSource;
     this.databases = Object.values(this.databaseObject).slice(0, -1);
-    
+
     if(this.step){
       this.step.stepDefType = this.createStepInitials(this.step);
     }
@@ -111,7 +113,7 @@ export class NewStepDialogUiComponent implements OnInit {
       this.newStep = this.step;
     }
 
-    
+
     if (this.step && this.step.selectedSource)
       selectedSource = this.step.selectedSource;
     else {
@@ -152,7 +154,7 @@ export class NewStepDialogUiComponent implements OnInit {
     this.additionalCollections = this.newStepForm.get('additionalCollections') as FormArray;
     this.newStepForm.setControl('options', this.createOptions());
     this.options = this.newStepForm.get('options') as FormArray;
- 
+
     if (this.step && this.step.options && this.step.options.sourceDatabase)
       this.getCollections.emit(this.step.options.sourceDatabase);
 
@@ -170,7 +172,7 @@ export class NewStepDialogUiComponent implements OnInit {
       if (this.newStep.options.hasOwnProperty('additionalCollections')) {
         this.newStep.options.collections = this.newStep.options.collections.filter(val => !this.newStep.options.additionalCollections.includes(val));
       }
-      
+
       if (this.newStep.stepDefinitionType === StepType.MAPPING || this.newStep.stepDefinitionType === StepType.MASTERING || this.newStep.stepDefinitionType === StepType.CUSTOM ) {
         if (this.newStep.options.targetEntity) {
           this.newStep.options.collections = this.newStep.options.collections.filter(val => val !== this.newStep.options.targetEntity);
@@ -208,6 +210,22 @@ export class NewStepDialogUiComponent implements OnInit {
       this.tooltips = FlowsTooltips.mapping;
       this.newStep = Step.createMappingStep();
     }
+    if (type === StepType.MATCHING) {
+      this.newStepForm.patchValue({
+        sourceDatabase: this.databaseObject.final,
+        targetDatabase: this.databaseObject.final
+      });
+      this.tooltips = FlowsTooltips.mastering;
+      this.newStep = Step.createMatchingStep();
+    }
+    if (type === StepType.MERGING) {
+      this.newStepForm.patchValue({
+        sourceDatabase: this.databaseObject.final,
+        targetDatabase: this.databaseObject.final
+      });
+      this.tooltips = FlowsTooltips.mastering;
+      this.newStep = Step.createMergingStep();
+    }
     if (type === StepType.MASTERING) {
       this.newStepForm.patchValue({
         sourceDatabase: this.databaseObject.final,
@@ -243,9 +261,13 @@ export class NewStepDialogUiComponent implements OnInit {
     this.isIngestion = type === StepType.INGESTION;
     this.isCustom = type === StepType.CUSTOM;
     this.isMapping = type === StepType.MAPPING;
+    this.isMatching = type === StepType.MATCHING;
+    this.isMerging = type === StepType.MERGING;
     this.isMastering = type === StepType.MASTERING;
-    this.sourceRequired = this.isMapping || this.isMastering;
-    this.entityRequired = this.isMapping || this.isMastering;
+    this.sourceRequired = this.isMapping || this.isMatching ||
+      this.isMerging || this.isMastering;
+    this.entityRequired = this.isMapping || this.isMatching ||
+      this.isMerging || this.isMastering;
 
     if (this.isCustom) {
       this.outputFormatOptions = this.outputFormats;
@@ -254,7 +276,7 @@ export class NewStepDialogUiComponent implements OnInit {
       this.outputFormatOptions = this.outputFormats.slice(0, 2);
     }
   }
-  
+
   setStepPurpose(){
     const type = this.newStepForm.value.stepPurpose;
     this.customStepType = type;
@@ -296,7 +318,7 @@ export class NewStepDialogUiComponent implements OnInit {
       }
     } else {
       this.newStep.name = this.newStepForm.value.name;
-      
+
       if(this.isCustom){
       this.newStep.stepDefinitionType = this.getStepDefValue(this.newStepForm.value.stepDefinitionType,this.newStepForm.value.stepPurpose);
       this.customStepType = this.newStepForm.value.stepPurpose;
@@ -304,12 +326,12 @@ export class NewStepDialogUiComponent implements OnInit {
         this.newStep.stepDefinitionType = this.newStepForm.value.stepDefinitionType;
       }
       this.newStep.stepDefType = this.newStepForm.value.stepDefinitionType;
-    
+
     }
 
     if (this.newStep.stepDefType === StepType.CUSTOM) {
       this.newStep.stepDefinitionName = this.newStep.name;
-   
+
     } else {
       if(this.newStep.stepDefType === StepType.MAPPING && this.envService.settings.isVersionCompatibleWithES){
         this.newStep.stepDefinitionName = 'entity-services-' + (this.newStep.stepDefType || '').toLowerCase();
@@ -318,13 +340,13 @@ export class NewStepDialogUiComponent implements OnInit {
         this.newStep.stepDefinitionName = 'default-' + (this.newStep.stepDefType || '').toLowerCase();
       }
     }
-  
+
     this.newStep.description = this.newStepForm.value.description;
     this.newStep.selectedSource = this.newStepForm.value.selectedSource;
     if (this.newStep.selectedSource === 'query') {
       // Accept empty source query for custom step
       if (this.newStepForm.value.sourceQuery === '' && this.newStep.stepDefType === StepType.CUSTOM) {
-        this.newStep.options.sourceQuery = 'cts.collectionQuery([])'; 
+        this.newStep.options.sourceQuery = 'cts.collectionQuery([])';
       } else {
         this.newStep.options.sourceQuery = this.newStepForm.value.sourceQuery;
       }
@@ -350,7 +372,7 @@ export class NewStepDialogUiComponent implements OnInit {
     this.setCollections();
 
     // Saving the new fields
-   
+
     this.newStep.customHook = {"module": this.newStepForm.value.cHmodule,
                               "parameters": JSON.parse(this.newStepForm.value.cHparameters),
                               "user": this.newStepForm.value.cHuser,
@@ -358,10 +380,10 @@ export class NewStepDialogUiComponent implements OnInit {
 
     this.newStep.batchSize = parseInt(this.newStepForm.value.batchSize);
     this.newStep.threadCount = parseInt(this.newStepForm.value.threadCount);
-    
+
     if (this.isCustom) {
       const newOptions = this.newStepForm.value.options ? this.updateOptions(this.newStepForm.value.options) : [];
-      
+
       let tempOptions = {};
       for (var key in this.newStep.options) {
         if (this.newStep.options.hasOwnProperty(key) && this.defaultOptions.includes(key)) {
@@ -503,36 +525,52 @@ export class NewStepDialogUiComponent implements OnInit {
         return 'CUSTOM';
       }
     }
+    else if (step.stepDefinitionType === StepType.MATCHING){
+      if(step.stepDefinitionName === 'default-matching'){
+        return 'MATCHING';
+      }
+      else{
+        return 'CUSTOM';
+      }
+    }
+    else if (step.stepDefinitionType === StepType.MERGING){
+      if(step.stepDefinitionName === 'default-merging'){
+        return 'MERGING';
+      }
+      else{
+        return 'CUSTOM';
+      }
+    }
     else {
         return 'CUSTOM';
     }
   }
 
   getStepDefValue(stepDefType: StepType,CustomStepType: any): any{
-    
+
     if(stepDefType === StepType.CUSTOM){
 
       switch(CustomStepType) {
-        case StepType.INGESTION: 
+        case StepType.INGESTION:
                 return StepType.INGESTION;
                 break;
-        case StepType.MAPPING: 
+        case StepType.MAPPING:
                 return StepType.MAPPING;
                 break;
-        case StepType.MASTERING: 
+        case StepType.MASTERING:
                 return StepType.MASTERING;
                 break;
         default:
                 return StepType.CUSTOM;
                 break;
       }
-    
+
     }
     else {
       return stepDefType;
     }
   }
-  
+
   updateOptions(options: { key: string, value: string }[]) {
     const result = {};
     _.forEach(options, option => {

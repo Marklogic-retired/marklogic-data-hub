@@ -276,10 +276,15 @@ public class DataHubImpl implements DataHub {
                     }
                 }
             }
-            //5.1.0 supports server versions 9.x >= 9.0-10 and 10.x >= 10.0.1
+            //5.1.0 supports server versions 9.x >= 9.0-10 and 10.x >= 10.0.2
             else {
                 if(serverVersion.getMajor() == 9){
                     if(serverVersion.getMinor() < 1000) {
+                        return false;
+                    }
+                }
+                if(serverVersion.getMajor() == 10){
+                    if(serverVersion.getMinor() < 200) {
                         return false;
                     }
                 }
@@ -299,6 +304,7 @@ public class DataHubImpl implements DataHub {
 
     @Override
     public void clearUserModules() {
+        logger.info("Clearing user modules");
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(DataHub.class.getClassLoader());
         try {
             HashSet<String> options = new HashSet<>();
@@ -383,11 +389,10 @@ public class DataHubImpl implements DataHub {
                     "  )\n" +
                     "] ! xdmp:document-delete(.)\n";
             runInDatabase(query, hubConfig.getDbName(DatabaseKind.MODULES));
-        } catch (FailedRequestException e) {
-            logger.error("Failed to clear user modules");
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            logger.error("Failed to clear user modules, cause: " + e.getMessage(), e);
         }
+        logger.info("Finished clearing user modules");
     }
 
     public void deleteDocument(String uri, DatabaseKind databaseKind) {

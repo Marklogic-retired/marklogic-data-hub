@@ -31,7 +31,7 @@
     },
     "3": {
       "stepDefinitionName": "default-matching",
-      "stepDefinitionType": "MASTERING",
+      "stepDefinitionType": "MATCHING",
       "options": {
         "targetEntity": "person",
         "sourceQuery": "cts.collectionQuery('mapping')",
@@ -115,7 +115,7 @@
     },
     "4": {
       "stepDefinitionName": "default-merging",
-      "stepDefinitionType": "MASTERING",
+      "stepDefinitionType": "MERGING",
       "options": {
         "targetEntity": "person",
         "provenanceGranularityLevel": "fine",

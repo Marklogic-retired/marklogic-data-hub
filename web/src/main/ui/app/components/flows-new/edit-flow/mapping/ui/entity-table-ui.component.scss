@@ -21,12 +21,22 @@
       	/* background-color: #fff !important; */
     }
 
+	mat-row.nested-row {
+		min-height: 0;
+		border-bottom: 0 solid;
+	}
+
 	mat-cell {
 		min-width: 0;
 		border-right: 1px solid rgba(0, 0, 0, 0.12);
 		padding-left: 1%;
 		align-self: stretch;
 		font-size: 13px !important;
+	}
+
+	mat-cell.nested-cell {
+		padding: 0;
+		border: 0;
 	}
 
 	.mat-column-name {
@@ -47,23 +57,6 @@
 	    min-width: 15% !important;
 	}
 
-	.nested-cell:first-of-type {
-		padding-left: 0;
-	}
-
-	.nested-cell:last-of-type {
-		padding-right: 0;
-	}
-
-	.nested-cell {
-		border: 0;
-	}
-
-	.nested-row {
-		min-height: 0;
-		border-bottom: 0 solid !important;
-	}
-
 	.prop-toggle {
 		padding-left: 8px;
 	}
@@ -72,15 +65,15 @@
 		min-width: auto;
 		min-height: 22px;
 		overflow: hidden;
-		padding: 4px 1px;
-		//vertical-align: center;
+		padding: 2px 1px;
 		overflow-x: hidden;
 	}
 
 	.textField {
-		padding: 0 3px 5px 3px;  
+		padding: 1px 3px 2px 3px;  
 		margin: 3px 0;
 		display: flex;
+		flex-direction: column;
 		min-width: auto;
 		width: 100%;
 		border: 1px solid rgba(0, 0, 0, 0.591);
@@ -90,15 +83,14 @@
 		display: inline-block;
 		position: relative;
 		top: -2px;
-		margin-left: 8px;
-		margin-right: 8px;
+		margin: 0 8px;
 	}
 
 	.function-icon {
 		margin-right: 4px;
 	}
 
-}
+}	
 
 #entity-table-nested-container {
 	width: 600%;
@@ -115,4 +107,26 @@
 
 .hide {
 	display: none;
+}
+
+#textFieldValidation{
+	display: flex;
+	flex-direction: row;
+	padding-bottom: 2px;
+}
+
+#field-with-error{
+  position: relative;
+    display: block;
+    text-align: center;
+    outline: none;
+		top: 0%;
+		color: red; 
+		padding:0px; 
+		margin-top: -5px;
+}
+#error-description{
+		font-size: 10px;
+		color: red; 
+		padding-left:4px
 }

@@ -185,11 +185,6 @@ class DataHubPlugin implements Plugin<Project> {
             description: "Deploy project resources and modules into a DHS instance"
         )
 
-        String nifiGroup = "MarkLogic Data Hub and NiFi Integration"
-        project.task("hubGenerateNifiTemplate", group: nifiGroup, type: GenerateNifiTemplateTask,
-            description: "Generate a NiFi template based on a flow. Use -PflowUri to specify the URI of the flow and " +
-            "-PtemplatePath to specify the file path to write the template to.")
-
         logger.info("Finished initializing ml-data-hub\n")
     }
 

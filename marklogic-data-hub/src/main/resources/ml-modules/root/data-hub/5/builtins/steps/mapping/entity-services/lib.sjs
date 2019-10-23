@@ -40,8 +40,10 @@ function buildMappingXML(mappingJSON) {
   }
   let entityName = getEntityName(mappingJSON.root.targetEntityType);
   // compose the final template
+  // Importing the "map" namespace fixes an issue when testing a mapping from QuickStart that hasn't been reproduced
+  // yet in a unit test; it ensures that the map:* calls in the XSLT resolve to map functions.
   let finalTemplate = `
-      <m:mapping xmlns:m="http://marklogic.com/entity-services/mapping">
+      <m:mapping xmlns:m="http://marklogic.com/entity-services/mapping" xmlns:map="http://marklogic.com/xdmp/map">
       ${retrieveFunctionImports()}
       ${entityTemplates.join('\n')}
       <!-- Default entity is ${entityName} -->
@@ -83,15 +85,22 @@ function buildMapProperties(mapping, entityModel) {
         // TODO Can pass in a JSON object instead of a string message, but not able to reference the properties on it
         throw Error("The property '" + prop + "' is not defined by the entity model");
       }
+
+      let mapProperty = mapProperties[prop];
+      let sourcedFrom = escapeXML(mapProperty.sourcedFrom);
+      if (sourcedFrom == null || sourcedFrom == undefined || sourcedFrom == "") {
+        datahub.debug.log({message: 'sourcedFrom not specified for mapping property with name "' + prop + '"; will not map', type: 'warn'});
+        continue;
+      }
+
       let dataType = entityProperties[prop].datatype;
       let isArray = false;
       if (dataType === 'array') {
         isArray = true;
         dataType = entityProperties[prop].items.datatype;
       }
-      let mapProperty = mapProperties[prop];
       let propTag = namespacePrefix + prop;
-      let sourcedFrom = escapeXML(mapProperty.sourcedFrom);
+
       let isInternalMapping = mapProperty.targetEntityType && mapProperty.properties;
       if (isInternalMapping || isArray) {
         let propLine;
@@ -210,23 +219,32 @@ function escapeXML(input = '') {
  * @return {{targetEntityType: *, properties: {}}}
  */
 function validateMapping(mapping) {
-  let validatedMapping = {
-    targetEntityType : mapping.targetEntityType,
-    properties : {}
-  };
+  // Rebuild the mapping without its "properties"
+  // Those will be rebuilt next, but with each property mapping validated
+  let validatedMapping = {};
+  Object.keys(mapping).forEach(key => {
+    if (key != "properties") {
+      validatedMapping[key] = mapping[key];
+    }
+  });
+  validatedMapping.properties = {};
 
   Object.keys(mapping.properties).forEach(propertyName => {
     let mappedProperty = mapping.properties[propertyName];
-    let sourcedFrom = mappedProperty.sourcedFrom;
+
+    // If this is a nested property, validate its child properties first
     if (mappedProperty.hasOwnProperty("targetEntityType")) {
-      let nestedMapping = validateMapping(mappedProperty);
-      nestedMapping.sourcedFrom = sourcedFrom;
-      validatedMapping.properties[propertyName] = nestedMapping;
+      mappedProperty = validateMapping(mappedProperty);
     }
-    else {
-      let result = validatePropertyMapping(mapping.targetEntityType, propertyName, sourcedFrom);
-      validatedMapping.properties[propertyName] = result;
+
+    // Validate the mapping expression, and if an error occurs, add it to the mapped property object
+    let sourcedFrom = mappedProperty.sourcedFrom;
+    let errorMessage = validatePropertyMapping(mapping.targetEntityType, propertyName, sourcedFrom);
+    if (errorMessage != null) {
+      mappedProperty.errorMessage = errorMessage;
     }
+
+    validatedMapping.properties[propertyName] = mappedProperty;
   });
 
   return validatedMapping;
@@ -238,7 +256,7 @@ function validateMapping(mapping) {
  * @param targetEntityType
  * @param propertyName
  * @param sourcedFrom
- * @return {{sourcedFrom: *, errorMessage: *}|{sourcedFrom: *}}
+ * @return an error message if the mapping validation fails
  */
 function validatePropertyMapping(targetEntityType, propertyName, sourcedFrom) {
   let mapping = {
@@ -252,27 +270,18 @@ function validatePropertyMapping(targetEntityType, propertyName, sourcedFrom) {
 
   try {
     let xmlMapping = buildMappingXML(fn.head(xdmp.unquote(xdmp.quote(mapping))));
-
     // As of trunk 10.0-20190916, mappings are being validated against entity schemas in the schema database.
     // This doesn't seem expected, as the validation will almost always fail.
     // Thus, this is not using es.mappingCompile, which does validation, and just invokes the transform instead.
     let stylesheet = xdmp.xsltInvoke("/MarkLogic/entity-services/mapping-compile.xsl", xmlMapping)
-
     xdmp.xsltEval(stylesheet, [], {staticCheck: true});
-    // In the future, we'll capture a value here that results from applying the successfully validated mapping against a document
-    return {
-      sourcedFrom: sourcedFrom
-    };
   } catch (e) {
     // TODO Move this into a separate function for easier testing?
     let errorMessage = e.message;
     if (e.data != null && e.data.length > 0) {
       errorMessage += ": " + e.data[0];
     }
-    return {
-      sourcedFrom : sourcedFrom,
-      errorMessage : errorMessage
-    }
+    return errorMessage;
   }
 }
 

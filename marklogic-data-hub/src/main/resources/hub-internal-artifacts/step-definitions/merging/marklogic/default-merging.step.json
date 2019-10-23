@@ -1,7 +1,7 @@
 {
   "lang": "zxx",
   "name": "default-merging",
-  "type": "mastering",
+  "type": "merging",
   "version": 1,
   "modulePath": "/data-hub/5/builtins/steps/mastering/default/merging.sjs",
   "retryLimit" : 0,

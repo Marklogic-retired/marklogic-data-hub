@@ -40,7 +40,7 @@ public class HubErrorController extends BasicErrorController {
         HttpStatus status = getStatus(request);
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("code", body.get("status"));
-        map.put("messasge", body.get("message"));
+        map.put("message", body.get("message"));
         map.put("timestamp", body.get("timestamp"));
 
         return new ResponseEntity<Map<String, Object>>(map, status);

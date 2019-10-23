@@ -1,7 +1,7 @@
 {
   "lang": "zxx",
   "name": "default-matching",
-  "type": "mastering",
+  "type": "matching",
   "version": 1,
   "modulePath": "/data-hub/5/builtins/steps/mastering/default/matching.sjs",
   "retryLimit" : 0,
