@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import axios from 'axios';
+import { Layout } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { AuthContext } from '../util/auth-context';
 import { SearchContext } from '../util/search-context';
+import AsyncLoader from '../components/async-loader/async-loader';
 import Sidebar from '../components/sidebar/sidebar';
 import SearchBar from '../components/search-bar/search-bar';
 import SearchPagination from '../components/search-pagination/search-pagination';
-import { Layout, Spin } from 'antd';
 import SearchSummary from '../components/search-summary/search-summary';
 import SearchResults from '../components/search-results/search-results';
 import { entityFromJSON, entityParser } from '../util/data-conversion';
@@ -16,9 +17,7 @@ interface Props extends RouteComponentProps<any> { }
 const Browse: React.FC<Props> = ({ location }) => {
   const { Content, Sider } = Layout;
   const componentIsMounted = useRef(true);
-
-
-  const { userNotAuthenticated } = useContext(AuthContext);
+  const { user, handleError } = useContext(AuthContext);
   const {
     searchOptions,
     setPage,
@@ -31,7 +30,7 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [entities, setEntites] = useState<any[]>([]);
   const [entityDefArray, setEntityDefArray] = useState<any[]>([]);
   const [facets, setFacets] = useState();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [totalDocuments, setTotalDocuments] = useState(0);
 
   const getEntityModel = async () => {
@@ -44,10 +43,9 @@ const Browse: React.FC<Props> = ({ location }) => {
         setEntityDefArray(entityParser(parsedModelData));
       }
     } catch (error) {
-      // console.log('error', error.response);
-      if (error.response.status === 401) {
-        userNotAuthenticated();
-      }
+      handleError(error);
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -70,13 +68,11 @@ const Browse: React.FC<Props> = ({ location }) => {
         setData(response.data.results);
         setFacets(response.data.facets);
         setTotalDocuments(response.data.total);
-        setIsLoading(false);
       }
     } catch (error) {
-      console.log('error', error.response);
-      if (error.response.status === 401) {
-        userNotAuthenticated();
-      }
+      handleError(error);
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -87,7 +83,6 @@ const Browse: React.FC<Props> = ({ location }) => {
     if (location.state && location.state.jobId) {
       setLatestJobFacet(location.state.jobId);
     }
-
     getEntityModel();
 
     return () => {
@@ -96,11 +91,12 @@ const Browse: React.FC<Props> = ({ location }) => {
 
   }, []);
 
+
   useEffect(() => {
-    if (entities.length) {
+    if (entities.length && !user.error.type) {
       getSearchResults(entities);
     }
-  }, [searchOptions, entities]);
+  }, [searchOptions, entities, user.error.type]);
 
   const handlePageChange = (pageNumber: number) => {
     setPage(pageNumber);
@@ -115,44 +111,46 @@ const Browse: React.FC<Props> = ({ location }) => {
   }
 
   return (
-    <Layout>
-      <Sider width={300} style={{ background: '#f3f3f3' }}>
-        <Sidebar
-          facets={facets}
-          selectedEntities={searchOptions.entityNames}
-          entityDefArray={entityDefArray}
-        />
-      </Sider>
-      <Content style={{ background: '#fff', padding: '24px' }}>
-        <SearchBar entities={entities} />
-        {isLoading ?
-          <Spin tip="Loading..." style={{ margin: '100px auto', width: '100%' }} />
-          :
-          <>
-            <SearchSummary total={totalDocuments} start={searchOptions.start} length={searchOptions.pageLength} />
-            <SearchPagination
-              total={totalDocuments}
-              onPageChange={handlePageChange}
-              onPageLengthChange={handlePageLengthChange}
-              currentPage={searchOptions.start}
-              pageLength={searchOptions.pageLength}
-            />
-            <br />
-            <br />
-            <SearchResults data={data} entityDefArray={entityDefArray} />
-            <br />
-            <SearchSummary total={totalDocuments} start={searchOptions.start} length={searchOptions.pageLength} />
-            <SearchPagination
-              total={totalDocuments}
-              onPageChange={handlePageChange}
-              onPageLengthChange={handlePageLengthChange}
-              currentPage={searchOptions.start}
-              pageLength={searchOptions.pageLength}
-            />
-          </>
-        }
-      </Content>
-    </Layout>
+    <>
+      <Layout>
+        <Sider width={300} style={{ background: '#f3f3f3' }}>
+          <Sidebar
+            facets={facets}
+            selectedEntities={searchOptions.entityNames}
+            entityDefArray={entityDefArray}
+          />
+        </Sider>
+        <Content style={{ background: '#fff', padding: '24px' }}>
+          <SearchBar entities={entities} />
+          {isLoading || user.error.type === 'ALERT' ?
+            <AsyncLoader/>
+            :
+            <>
+              <SearchSummary total={totalDocuments} start={searchOptions.start} length={searchOptions.pageLength} />
+              <SearchPagination
+                total={totalDocuments}
+                onPageChange={handlePageChange}
+                onPageLengthChange={handlePageLengthChange}
+                currentPage={searchOptions.start}
+                pageLength={searchOptions.pageLength}
+              />
+              <br />
+              <br />
+              <SearchResults data={data} entityDefArray={entityDefArray} />
+              <br />
+              <SearchSummary total={totalDocuments} start={searchOptions.start} length={searchOptions.pageLength} />
+              <SearchPagination
+                total={totalDocuments}
+                onPageChange={handlePageChange}
+                onPageLengthChange={handlePageLengthChange}
+                currentPage={searchOptions.start}
+                pageLength={searchOptions.pageLength}
+              />
+            </>
+          }
+        </Content>
+      </Layout>
+    </>
   );
 }
 

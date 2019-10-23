@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import axios from 'axios';
-import { Layout, Statistic, Spin } from 'antd';
+import { Layout, Statistic } from 'antd';
 import { AuthContext } from '../util/auth-context';
 import EntityTable from '../components/entity-table/entity-table';
+import AsyncLoader from '../components/async-loader/async-loader';
 import { entityFromJSON } from '../util/data-conversion';
 import styles from './View.module.scss';
 
 const { Content } = Layout;
 
 const View: React.FC = () => {
-  const { userNotAuthenticated } = useContext(AuthContext);
+  const { user, handleError } = useContext(AuthContext);
   const [entities, setEntites] = useState<any[]>([]);
   const [lastHarmonized, setLastHarmonized] = useState<any[]>([]);
   const [facetValues, setFacetValues] = useState<any[]>([]);
@@ -26,11 +27,10 @@ const View: React.FC = () => {
         setEntites(entityFromJSON(response.data));
         let entityArray = [...entityFromJSON(response.data).map(entity => entity.info.title)];
         getSearchResults(entityArray);
+        getEntityCollectionDetails();
       }
     } catch (error) {
-      if (error.response.status === 401) {
-        userNotAuthenticated();
-      }
+      handleError(error);
     }
   }
 
@@ -54,7 +54,7 @@ const View: React.FC = () => {
         setIsLoading(false);
       }
     } catch (error) {
-      console.log('error', error.response);
+      handleError(error);
     }
   }
 
@@ -67,13 +67,12 @@ const View: React.FC = () => {
       }
       //console.log(response.data)
     } catch (error) {
-      console.log('error', error.response);
+      handleError(error);
     }
   }
 
   useEffect(() => {
     getEntityModel();
-    getEntityCollectionDetails();
 
     return () => {
       componentIsMounted.current = false
@@ -83,7 +82,9 @@ const View: React.FC = () => {
   return (
     <Layout className={styles.container}>
       <Content>
-        {isLoading ? <Spin tip="Loading..." style={{ margin: '100px auto', width: '100%' }} /> :
+        {isLoading || user.error.type === 'ALERT'  ? 
+          <AsyncLoader/> 
+          :
           <>
             <div className={styles.statsContainer} data-cy="total-container">
               <Statistic className={styles.statistic} title="Total Entities" value={entities.length} />

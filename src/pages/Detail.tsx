@@ -6,7 +6,8 @@ import styles from './Detail.module.scss';
 import TableView from '../components/table-view/table-view';
 import JsonView from '../components/json-view/json-view';
 import DetailHeader from '../components/detail-header/detail-header';
-import { Layout, Menu, PageHeader, Spin } from 'antd';
+import AsyncLoader from '../components/async-loader/async-loader';
+import { Layout, Menu, PageHeader } from 'antd';
 import XmlView from '../components/xml-view/xml-view';
 
 interface Props extends RouteComponentProps<any> { }
@@ -14,8 +15,8 @@ interface Props extends RouteComponentProps<any> { }
 const { Content } = Layout;
 
 const Detail: React.FC<Props> = ({ history, location }) => {
-  const { userNotAuthenticated } = useContext(AuthContext);
-  const uriSplit = location.pathname.replace('/detail/', '');
+  const { user, handleError } = useContext(AuthContext);
+  const uriSplit = location.pathname.replace('/detail/','');
   const pkValue = uriSplit.split('/')[0] === '-' ? '' : decodeURIComponent(uriSplit.split('/')[0]);
   const uri = decodeURIComponent(uriSplit.split('/')[1]);
   const [selected, setSelected] = useState('instance');
@@ -51,10 +52,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
         }
 
       } catch (error) {
-        console.log('error', error.response);
-        if (error.response.status === 401) {
-          userNotAuthenticated();
-        }
+        handleError(error);
       }
     };
 
@@ -69,6 +67,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
   const handleClick = (event) => {
     setSelected(event.key);
   }
+
 
   const convertXmlToJson = (xmlData) => {
     var parser = require('fast-xml-parser');
@@ -121,7 +120,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
         </div>
         <div>
           {
-            isLoading ? <Spin tip="Loading..." style={{ margin: '100px auto', width: '100%' }} />
+            isLoading || user.error.type === 'ALERT' ? <AsyncLoader/>
               :
               contentType === 'json' ?
                 selected === 'instance' ? (data && <TableView document={data} contentType={contentType} />) : (data && <JsonView document={data} />)

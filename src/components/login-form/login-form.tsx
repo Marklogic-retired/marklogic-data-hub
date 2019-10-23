@@ -9,7 +9,7 @@ const { Text } = Typography;
 
 const LoginForm: React.FC = () => {
 
-  const { userAuthenticated } = useContext(AuthContext);
+  const { loginAuthenticated } = useContext(AuthContext);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -28,7 +28,7 @@ const LoginForm: React.FC = () => {
       if (response.status === 200) {
         setErrorResponse('');
         setIsLoading(false);
-        userAuthenticated(username);
+        loginAuthenticated(username);
       } 
     } catch (error) {
       setIsLoading(false);

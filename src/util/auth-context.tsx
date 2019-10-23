@@ -3,25 +3,41 @@ import React, { useState, useEffect } from 'react';
 type UserContextInterface = {
   name: string,
   // email: string,
-  authenticated: boolean
+  authenticated: boolean,
+  redirect: boolean,
+  error : any
 }
 
 const defaultUserData = {
   name: '',
   // email: '',
-  authenticated: false
+  authenticated: false,
+  redirect: false,
+  error : { 
+    title: '', 
+    message: '',
+    type: ''
+  }
 }
 
 interface IAuthContextInterface {
   user: UserContextInterface;
-  userAuthenticated: (username: string) => void;
+  loginAuthenticated: (username: string) => void;
+  sessionAuthenticated: (username: string) => void;
   userNotAuthenticated: () => void;
+  handleError: (error:any) => void;
+  clearErrorMessage: () => void;
+  clearRedirect: () => void;
 }
 
 export const AuthContext = React.createContext<IAuthContextInterface>({
   user: defaultUserData,
-  userAuthenticated: () => {},
-  userNotAuthenticated: () => {}
+  loginAuthenticated: () => {},
+  sessionAuthenticated: () => {},
+  userNotAuthenticated: () => {},
+  handleError: () => {},
+  clearErrorMessage: () => {},
+  clearRedirect: () => {}
 });
 
 const AuthProvider: React.FC<{ children: any }> = ({children}) => {
@@ -29,24 +45,98 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
   const [user, setUser] = useState(defaultUserData);
   const sessionUser = sessionStorage.getItem('dataHubExplorerUser');
 
-  const userAuthenticated = (username: string) => {
+  const loginAuthenticated = (username: string) => {
     sessionStorage.setItem('dataHubExplorerUser', username);
-    setUser({ name: username, authenticated: true });
+    setUser({ ...user,name: username, authenticated: true, redirect: true });
+  };
+
+  const sessionAuthenticated = (username: string) => {
+    sessionStorage.setItem('dataHubExplorerUser', username);
+    setUser({ ...user,name: username, authenticated: true, redirect: false });
   };
 
   const userNotAuthenticated = () => {
     sessionStorage.setItem('dataHubExplorerUser', '');
-    setUser({ name: '', authenticated: false });
+    setUser({ ...user,name: '', authenticated: false });
   };
+
+  const handleError = (error) => {
+    const DEFAULT_MESSAGE = 'Internal Server Error';
+  
+    switch (error.response.status) {
+      case 401:
+        sessionStorage.setItem('dataHubExplorerUser', '');
+        setUser({ ...user, name: '', authenticated: false, redirect: true });
+        break;
+      case 400:
+      case 403:
+      case 405:
+      case 408:
+      case 414:
+        setUser({ 
+          ...user,
+          redirect: false, 
+          error: {
+            title: error.response.data.error,
+            message: error.response.data.message || DEFAULT_MESSAGE,
+            type: 'ALERT'
+        }});
+        break;
+      case 500:
+      case 501:
+      case 502:
+      case 503:
+      case 504:
+      case 505:
+      case 511:
+        let title = '';
+        let message = '';
+  
+        if (error.response.data.hasOwnProperty('message')) {
+          title = error.response.data.error;
+          message = error.response.data.message;
+        } else {
+          title = error.response.status + ' ' + error.response.statusText;
+          message = error.response.data || DEFAULT_MESSAGE;
+        }
+        setUser({ 
+          ...user, 
+          redirect: false,
+          error: {
+            title,
+            message,
+            type: 'MODAL'
+        }});
+        break;
+      default:
+        break;
+    }
+  }
+
+  const clearErrorMessage = () => {
+    setUser({ ...user, error : { title:'', message: '', type: '' }});
+  }
+
+  const clearRedirect = () => {
+    setUser({ ...user, redirect: false });
+  }
 
   useEffect(() => {
     if (sessionUser) {
-      userAuthenticated(sessionUser);
+      sessionAuthenticated(sessionUser);
     }
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, userAuthenticated, userNotAuthenticated}}>
+    <AuthContext.Provider value={{ 
+      user,
+      loginAuthenticated,
+      sessionAuthenticated,
+      userNotAuthenticated,
+      handleError, 
+      clearErrorMessage,
+      clearRedirect
+    }}>
       {children}
     </AuthContext.Provider>
   )
