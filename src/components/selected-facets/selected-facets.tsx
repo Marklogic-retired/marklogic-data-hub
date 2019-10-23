@@ -15,8 +15,10 @@ const SelectedFacets: React.FC<Props> = (props) => {
     clearDateFacet
    } = useContext(SearchContext);
 
+
+
   return (
-    <div
+    <div id='selected-facets' data-cy='selected-facet-block'
       className={styles.clearContainer}
       style={ Object.entries(searchOptions.searchFacets).length === 0 ? {'visibility': 'hidden'} : {'visibility': 'visible'}}
     >
@@ -24,10 +26,12 @@ const SelectedFacets: React.FC<Props> = (props) => {
         size="small"
         className={styles.clearAllBtn}
         onClick={()=> clearAllFacets()}
+        data-cy='clear-all-button'
       >
         <Icon type='close'/>
         Clear All
       </Button>
+      {console.log(props.selectedFacets)}
         { props.selectedFacets.map((item, index) => {
           if (item.constraint === 'createdOnRange') {
             return (
@@ -36,6 +40,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
                 className={styles.dateFacet} 
                 key={index}
                 onClick={()=> clearDateFacet()}
+                data-cy='clear-date-facet'
               >
                 <Icon type='close'/>
                 {item.facet.join(' ~ ')}
@@ -48,6 +53,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
               className={styles.facetButton} 
               key={index}
               onClick={()=> clearFacet(item.constraint, item.facet)}
+              data-cy={`clear-${item.facet}`}
             >
               <Icon type='close'/>
               {item.facet}
