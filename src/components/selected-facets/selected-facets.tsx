@@ -34,6 +34,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
       {console.log(props.selectedFacets)}
         { props.selectedFacets.map((item, index) => {
           if (item.constraint === 'createdOnRange') {
+            {console.log(item)}
             return (
               <Button 
                 size="small"

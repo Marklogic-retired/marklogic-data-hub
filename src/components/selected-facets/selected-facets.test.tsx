@@ -37,8 +37,9 @@ describe("Selected Facets", () => {
 
     })
 
+
     describe('If date facets are selected', () => {
-        const dateFacets = [{constraint: 'Collection', facet: 'productMapping'}];
+        const dateFacets = [{constraint: 'createdOnRange', facet: ['2019-10-15', '2019-11-10']}];
         beforeEach(() => {
             wrapper = shallow(
                 <SelectedFacets
@@ -46,12 +47,11 @@ describe("Selected Facets", () => {
                 />);
         });
 
-        it('should show the selected facets panel', () => {
+        it('should show selected date facet', () => {
             expect(wrapper.exists('[data-cy="clear-all-button"]')).toBe(true);
             expect(wrapper.exists('[data-cy="clear-date-facet"]')).toBe(true);
         })
 
     })
-
 
 })
