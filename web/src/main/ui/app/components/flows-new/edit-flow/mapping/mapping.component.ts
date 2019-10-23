@@ -226,6 +226,7 @@ export class MappingComponent implements OnInit {
       this.mapping.sourceURI = uri;
       self.nestedDoc = [];
       let ParentKeyValuePair = [];
+      console.log("startRoot",startRoot)
       _.forEach(startRoot, function (val, key) {
         if(val != null){
           if(val.constructor.name === "Object" || val.constructor.name === "Array"){
@@ -240,7 +241,7 @@ export class MappingComponent implements OnInit {
         
       });
       self.sampleDocNestedProps = this.updateNestedDataSourceNew(startRoot,ParentKeyValuePair);
-
+      //console.log("self.sampleDocNestedProps",self.sampleDocNestedProps)
       if (save) {
         this.saveMap();
         console.log('map saved');
@@ -479,12 +480,7 @@ export class MappingComponent implements OnInit {
           self.nestedDoc.push(propty);
           self.updateNestedDataSourceNew(val, ParentKeyValuePair, parentKey);
         } else if (val.constructor.name === "Array") {
-          let propty = {
-            key: key,
-            val: "",
-            type: self.getType(val)
-          };
-          self.nestedDoc.push(propty);
+          
           if (ParentKeyValuePair.includes(key + JSON.stringify(val))) {
             parentKey = key;
           } else {
@@ -494,8 +490,23 @@ export class MappingComponent implements OnInit {
               parentKey = parentKey + "/" + key;
             }
           }
+          let propty = {
+            key: parentKey,
+            val: "",
+            type: self.getType(val)
+          };
+          self.nestedDoc.push(propty);
           val.forEach(obj => {
-            self.updateNestedDataSourceNew(obj, ParentKeyValuePair, parentKey);
+            if(obj.constructor.name == "String"){
+              let propty = {
+                key: parentKey.indexOf('/') != -1 ? parentKey+ "/" + parentKey.split('/').pop() : parentKey+ "/" + parentKey,
+                val: obj,
+                type: self.getType(obj)
+              };
+              self.nestedDoc.push(propty);
+            } else {
+              self.updateNestedDataSourceNew(obj, ParentKeyValuePair, parentKey);
+            }
           });
         } else {
           let currKey = "";
