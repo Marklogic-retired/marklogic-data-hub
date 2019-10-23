@@ -103,8 +103,7 @@ declare function hent:dump-search-options($entities as json:array)
 {
   let $uber-model := hent:uber-model(json:array-values($entities) ! xdmp:to-json(.)/object-node())
   return
-    (: call fix-options because of https://github.com/marklogic/entity-services/issues/359 :)
-    hent:fix-options(es:search-options-generate($uber-model))
+    es:search-options-generate($uber-model)
 };
 
 declare function hent:dump-indexes($entities as json:array)
