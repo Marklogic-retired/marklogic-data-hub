@@ -9,6 +9,7 @@ import DetailHeader from '../components/detail-header/detail-header';
 import AsyncLoader from '../components/async-loader/async-loader';
 import { Layout, Menu, PageHeader } from 'antd';
 import XmlView from '../components/xml-view/xml-view';
+import { xmlParser, xmlDecoder } from '../util/xml-parser';
 
 interface Props extends RouteComponentProps<any> { }
 
@@ -43,9 +44,9 @@ const Detail: React.FC<Props> = ({ history, location }) => {
             setData(result.data.content);
           } else if (content.indexOf("application/xml") !== -1) {
             setContentType('xml');
-            let decodedXml = decodeXml(result.data);
-            setData(convertXmlToJson(decodedXml));
-            setXml(decodeXml(decodedXml));
+            let decodedXml = xmlDecoder(result.data);
+            setData(xmlParser(decodedXml).Document);
+            setXml(xmlDecoder(decodedXml));
           }
 
           setIsLoading(false);
@@ -66,35 +67,6 @@ const Detail: React.FC<Props> = ({ history, location }) => {
 
   const handleClick = (event) => {
     setSelected(event.key);
-  }
-
-
-  const convertXmlToJson = (xmlData) => {
-    var parser = require('fast-xml-parser');
-    var options = {
-      attributeNamePrefix: "",
-      attrNodeName: false, //default is 'false'
-      textNodeName: "#text",
-      ignoreAttributes: true,
-      ignoreNameSpace: false,
-      allowBooleanAttributes: false,
-      parseNodeValue: true,
-      parseAttributeValue: false,
-      trimValues: true,
-      cdataTagName: "__cdata", //default is 'false'
-      cdataPositionChar: "\\c",
-      localeRange: "", //To support non english character in tag/attribute values.
-      parseTrueNumberOnly: false
-    };
-
-    if (parser.validate(xmlData) === true) {
-      return parser.parse(xmlData, options).Document;
-    }
-  }
-
-  const decodeXml = (xml) => {
-    var he = require('he');
-    return he.decode(xml);
   }
 
   return (
