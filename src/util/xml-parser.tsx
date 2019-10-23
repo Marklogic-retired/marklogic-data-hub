@@ -1,4 +1,4 @@
-export const xmlParsing = (xmlData) => {
+export const xmlParser = (xmlData) => {
   var parser = require('fast-xml-parser');
   var options = {
     attributeNamePrefix: "",

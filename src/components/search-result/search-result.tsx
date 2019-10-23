@@ -3,7 +3,7 @@ import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import styles from './search-result.module.scss';
 import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
 import { dateConverter } from '../../util/date-conversion';
-import { xmlParsing } from '../../util/xml-parser';
+import { xmlParser } from '../../util/xml-parser';
 
 interface Props extends RouteComponentProps {
   item: any;
@@ -54,7 +54,7 @@ const SearchResult: React.FC<Props> = (props) => {
     }
 
     if (props.item.extracted.content[1]) {
-      let parsedContent = xmlParsing(props.item.extracted.content[1]);
+      let parsedContent = xmlParser(props.item.extracted.content[1]);
       itemEntityName = Object.keys(parsedContent);
       itemEntityProperties = Object.values<any>(parsedContent);
     }

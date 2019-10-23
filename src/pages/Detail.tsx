@@ -9,7 +9,7 @@ import DetailHeader from '../components/detail-header/detail-header';
 import AsyncLoader from '../components/async-loader/async-loader';
 import { Layout, Menu, PageHeader } from 'antd';
 import XmlView from '../components/xml-view/xml-view';
-import { xmlParsing, xmlDecoder } from '../util/xml-parser';
+import { xmlParser, xmlDecoder } from '../util/xml-parser';
 
 interface Props extends RouteComponentProps<any> { }
 
@@ -45,7 +45,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
           } else if (content.indexOf("application/xml") !== -1) {
             setContentType('xml');
             let decodedXml = xmlDecoder(result.data);
-            setData(xmlParsing(decodedXml).Document);
+            setData(xmlParser(decodedXml).Document);
             setXml(xmlDecoder(decodedXml));
           }
 
