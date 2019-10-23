@@ -27,17 +27,13 @@ const TableView: React.FC<Props> = (props) => {
   if (props.contentType === 'json') {
     Object.keys(props.document.envelope.instance).forEach(instance => {
       if (instance !== 'info') {
-        // TODO handle nested instance types (objects and arrays)
         data = parseJson(props.document.envelope.instance[instance]);
       }
     });
   } else if (props.contentType === 'xml') {
     Object.keys(props.document.content.envelope.instance).forEach(instance => {
       if (instance !== 'info') {
-        // TODO handle nested instance types (objects and arrays)
-        Object.keys(props.document.content.envelope.instance[instance]).forEach(function (key) {
-          data.push({ key: counter++, property: key, value: props.document.content.envelope.instance[instance][key] });
-        });
+        data = parseJson(props.document.content.envelope.instance[instance]);
       }
     });
   }

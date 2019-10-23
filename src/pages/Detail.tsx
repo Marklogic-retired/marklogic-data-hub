@@ -17,7 +17,7 @@ const { Content } = Layout;
 
 const Detail: React.FC<Props> = ({ history, location }) => {
   const { user, handleError } = useContext(AuthContext);
-  const uriSplit = location.pathname.replace('/detail/','');
+  const uriSplit = location.pathname.replace('/detail/', '');
   const pkValue = uriSplit.split('/')[0] === '-' ? '' : decodeURIComponent(uriSplit.split('/')[0]);
   const uri = decodeURIComponent(uriSplit.split('/')[1]);
   const [selected, setSelected] = useState('instance');
@@ -92,7 +92,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
         </div>
         <div>
           {
-            isLoading || user.error.type === 'ALERT' ? <AsyncLoader/>
+            isLoading || user.error.type === 'ALERT' ? <AsyncLoader />
               :
               contentType === 'json' ?
                 selected === 'instance' ? (data && <TableView document={data} contentType={contentType} />) : (data && <JsonView document={data} />)
