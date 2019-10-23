@@ -13,13 +13,13 @@ const defaultSearchOptions = {
   entityNames: [],
   start: 1,
   pageLength: 10,
-  searchFacets: {} 
+  searchFacets: {}
 }
 
 interface ISearchContextInterface {
   searchOptions: SearchContextInterface;
   setQuery: (searchString: string) => void;
-  setPage: (pageNumber: number) => void;
+  setPage: (pageNumber: number, totalDocuments: number) => void;
   setPageLength: (current: number, pageSize: number) => void;
   setSearchFacets: (constraint: string, vals: string[]) => void;
   setEntity: (option: string) => void;
@@ -55,9 +55,10 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     setSearchOptions({...searchOptions, start: 1, query: searchString});
   }
 
-  const setPage = (pageNumber: number) => {
+  const setPage = (pageNumber: number, totalDocuments: number) => {
     console.log('The user selected page ' + pageNumber);
-    setSearchOptions({...searchOptions, start: pageNumber});
+    let pageSize = (totalDocuments - ((searchOptions.start - 1) * searchOptions.pageLength) < searchOptions.pageLength) ? (totalDocuments - ((searchOptions.start - 1) * searchOptions.pageLength)) : searchOptions.pageLength;
+    setSearchOptions({...searchOptions, start: pageNumber, pageLength: pageSize});
   }
 
   const setPageLength = (current: number, pageSize: number) => {

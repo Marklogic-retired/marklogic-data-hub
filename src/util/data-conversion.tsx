@@ -77,10 +77,11 @@ export const entityParser = (data : any) => {
     const entityDefinition = entity.definitions.find(definition => definition.name === entity.info.title);
     let parsedEntity = {}
     if (entityDefinition) {
+      const rangeIndex = entityDefinition['elementRangeIndex'].concat(entityDefinition['rangeIndex'])
       parsedEntity = {
         name: entityDefinition['name'],
         primaryKey: entityDefinition.hasOwnProperty('primaryKey') ? entityDefinition['primaryKey'] : '',
-        elementRangeIndex: entityDefinition['elementRangeIndex'].length ? entityDefinition['elementRangeIndex'] : []
+        rangeIndex: rangeIndex.length ? rangeIndex : []
       }
     }
     return parsedEntity

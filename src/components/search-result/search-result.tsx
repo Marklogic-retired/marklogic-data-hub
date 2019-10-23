@@ -21,7 +21,7 @@ const SearchResult: React.FC<Props> = (props) => {
   let fileTypeVal: string = props.item.format;
   let uri: string = encodeURIComponent(props.item.uri);
 
-  if (props.item.format === 'json') {
+  if (props.item.format === 'json' && props.item.hasOwnProperty('extracted')) {
     props.item.extracted.content.forEach(contentObject => {
       if (Object.keys(contentObject)[0] === 'headers') {
         const headerValues = Object.values<any>(contentObject);
@@ -34,7 +34,7 @@ const SearchResult: React.FC<Props> = (props) => {
         itemEntityProperties = Object.values<any>(contentObject);
       }
     });
-  } else if (props.item.format === 'xml') {
+  } else if (props.item.format === 'xml' && props.item.hasOwnProperty('extracted')) {
     // TODO check if XML docs have exceptions
     if (props.item.extracted.content[0].headers) {
       //TODO handle xml header.

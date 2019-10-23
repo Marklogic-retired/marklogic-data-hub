@@ -59,7 +59,7 @@ const Browse: React.FC<Props> = ({ location }) => {
           query: searchOptions.query,
           entityNames: searchOptions.entityNames.length ? searchOptions.entityNames : allEntities,
           start: searchOptions.start,
-          pageLength: getPageLength(),
+          pageLength: searchOptions.pageLength,
           facets: searchOptions.searchFacets,
         }
       });
@@ -98,17 +98,18 @@ const Browse: React.FC<Props> = ({ location }) => {
     }
   }, [searchOptions, entities, user.error.type]);
 
-  const handlePageChange = (pageNumber: number) => {
-    setPage(pageNumber);
-  }
+  // const handlePageChange = (pageNumber: number) => {
+  //   setPage(pageNumber, totalDocuments);
+  // }
 
-  const handlePageLengthChange = (current: number, pageSize: number) => {
-    setPageLength(current, pageSize);
-  }
+  // const handlePageLengthChange = (current: number, pageSize: number) => {
+  //   setPageLength(current, pageSize);
+  // }
 
-  const getPageLength = () => {
-    return (totalDocuments - ((searchOptions.start - 1) * searchOptions.pageLength) < searchOptions.pageLength) ? (totalDocuments - ((searchOptions.start - 1) * searchOptions.pageLength)) : searchOptions.pageLength;
-  }
+  // const getPageLength = () => {
+  //   return null
+  //    //return (totalDocuments - ((searchOptions.start - 1) * searchOptions.pageLength) < searchOptions.pageLength) ? (totalDocuments - ((searchOptions.start - 1) * searchOptions.pageLength)) : searchOptions.pageLength;
+  // }
 
   return (
     <>
@@ -129,8 +130,6 @@ const Browse: React.FC<Props> = ({ location }) => {
               <SearchSummary total={totalDocuments} start={searchOptions.start} length={searchOptions.pageLength} />
               <SearchPagination
                 total={totalDocuments}
-                onPageChange={handlePageChange}
-                onPageLengthChange={handlePageLengthChange}
                 currentPage={searchOptions.start}
                 pageLength={searchOptions.pageLength}
               />
@@ -141,8 +140,6 @@ const Browse: React.FC<Props> = ({ location }) => {
               <SearchSummary total={totalDocuments} start={searchOptions.start} length={searchOptions.pageLength} />
               <SearchPagination
                 total={totalDocuments}
-                onPageChange={handlePageChange}
-                onPageLengthChange={handlePageLengthChange}
                 currentPage={searchOptions.start}
                 pageLength={searchOptions.pageLength}
               />

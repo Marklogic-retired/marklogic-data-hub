@@ -2,11 +2,8 @@ import React, { useState, useContext, useEffect } from 'react';
 import { Checkbox, Icon, Tooltip} from 'antd';
 import { SearchContext } from '../../util/search-context';
 import styles from './facet.module.scss';
-import { dateConverter } from '../../util/date-conversion';
+import { numberConverter } from '../../util/number-conversion';
 import { stringConverter } from '../../util/string-conversion';
-
-
-var moment = require('moment');
 
 const Facet = (props) => {
   const SHOW_MINIMUM = 3;
@@ -69,7 +66,7 @@ const Facet = (props) => {
       >
         <Tooltip title={facet.value}>{facet.value}</Tooltip>
       </Checkbox>
-      <div className={styles.count} data-cy={stringConverter(props.name) + "-facet-item-count"}>{facet.count}</div>
+      <div className={styles.count} data-cy={stringConverter(props.name) + "-facet-item-count"}>{numberConverter(facet.count)}</div>
     </div>
   );
 

@@ -1,24 +1,24 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Pagination } from 'antd';
+import { SearchContext } from '../../util/search-context';
 import styles from './search-pagination.module.scss';
 
 interface Props {
   total: number;
   currentPage: number;
   pageLength: number;
-  onPageChange(pageNumber): any;
-  onPageLengthChange(current, pageSize): any;
 };
 
 
 const SearchPagination: React.FC<Props> = (props) => {
+  const { setPage, setPageLength } = useContext(SearchContext)
 
   const onPageChange = (pageNumber) => {
-    props.onPageChange(pageNumber);
+    setPage(pageNumber, props.total);
   }
 
   const onPageSizeChange = (current, pageSize) => {
-    props.onPageLengthChange(current, pageSize);
+    setPageLength(current, pageSize);
   }
 
   return (
