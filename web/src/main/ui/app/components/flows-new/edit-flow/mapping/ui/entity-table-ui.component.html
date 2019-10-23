@@ -109,7 +109,7 @@
           [nestedLevel] = "this.nestedLevel + 1"
           [srcProps]= "this.srcProps"
           [functionLst]= "this.functionLst"
-          [mapResults]= "this.mapResults[prop.name]"
+          [mapResults]= "this.getResults(prop.name)"
           [currEntity] = "prop.$ref || prop.items.$ref"
           [containErrors]="containErrors"
           [mapErrors]="this.mapErrors['properties'] ? this.mapErrors['properties'][prop.name] : {}"

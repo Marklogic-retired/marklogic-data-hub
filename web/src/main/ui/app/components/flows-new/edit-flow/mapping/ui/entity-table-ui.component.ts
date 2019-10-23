@@ -104,14 +104,19 @@ checkFieldInErrors(field){
         const entity = this.currEntity.slice(this.currEntity.lastIndexOf('/') + 1);
         parseRes = parseRes[entity];
       }
-      return parseRes[prop.name];
+      return parseRes ? parseRes[prop.name] : null;
     }
   }
 }
 
   getProps(propName) {
-    return (this.mapProps[propName] && this.mapProps[propName].properties) ?
+    return (this.mapProps && this.mapProps[propName] && this.mapProps[propName].properties) ?
       this.mapProps[propName].properties : null;
+  }
+
+  getResults(propName) {
+    return (this.mapResults && this.mapProps[propName]) ?
+      this.mapProps[propName] : null;
   }
 
   isNested(prop) {
