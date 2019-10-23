@@ -1,34 +1,39 @@
-import React, { useState, useEffect,useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import axios from 'axios';
-import { Layout, Statistic, Spin } from 'antd';
+import { Layout, Statistic } from 'antd';
 import { AuthContext } from '../util/auth-context';
 import EntityTable from '../components/entity-table/entity-table';
+import AsyncLoader from '../components/async-loader/async-loader';
 import { entityFromJSON } from '../util/data-conversion';
 import styles from './View.module.scss';
 
 const { Content } = Layout;
 
 const View: React.FC = () => {
-  const { userNotAuthenticated } = useContext(AuthContext);
+  const { user, handleError } = useContext(AuthContext);
   const [entities, setEntites] = useState<any[]>([]);
   const [lastHarmonized, setLastHarmonized] = useState<any[]>([]);
   const [facetValues, setFacetValues] = useState<any[]>([]);
   const [totalDocs, setTotalDocs] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
+  const componentIsMounted = useRef(true);
+
   const getEntityModel = async () => {
     try {
       const response = await axios(`/datahub/v2/models`);
       // console.log('model response', response.data);
-      setEntites(entityFromJSON(response.data));
-      let entityArray = [ ...entityFromJSON(response.data).map(entity => entity.info.title)];
-      getSearchResults(entityArray);
-    } catch (error) {
-      if (error.response.status === 401) {
-        userNotAuthenticated();
+      if (componentIsMounted.current) {
+        setEntites(entityFromJSON(response.data));
+        let entityArray = [...entityFromJSON(response.data).map(entity => entity.info.title)];
+        getSearchResults(entityArray);
+        getEntityCollectionDetails();
       }
+    } catch (error) {
+      handleError(error);
     }
   }
+
   const getSearchResults = async (allEntities: string[]) => {
     try {
       const response = await axios({
@@ -43,11 +48,13 @@ const View: React.FC = () => {
         }
       });
       // console.log('search results', response.data);
-      setTotalDocs(response.data.total);
-      setFacetValues(response.data.facets.Collection.facetValues);
-      setIsLoading(false);
+      if (componentIsMounted.current) {
+        setTotalDocs(response.data.total);
+        setFacetValues(response.data.facets.Collection.facetValues);
+        setIsLoading(false);
+      }
     } catch (error) {
-       console.log('error', error.response);
+      handleError(error);
     }
   }
 
@@ -55,28 +62,35 @@ const View: React.FC = () => {
   const getEntityCollectionDetails = async () => {
     try {
       const response = await axios(`/datahub/v2/jobs/models`);
-      setLastHarmonized(response.data);
+      if (componentIsMounted.current) {
+        setLastHarmonized(response.data);
+      }
       //console.log(response.data)
     } catch (error) {
-       console.log('error', error.response);
+      handleError(error);
     }
   }
 
   useEffect(() => {
     getEntityModel();
-    getEntityCollectionDetails();
+
+    return () => {
+      componentIsMounted.current = false
+    }
   }, []);
 
   return (
     <Layout className={styles.container}>
       <Content>
-        {isLoading ? <Spin tip="Loading..." style={{ margin: '100px auto', width: '100%'}} /> :
+        {isLoading || user.error.type === 'ALERT'  ? 
+          <AsyncLoader/> 
+          :
           <>
             <div className={styles.statsContainer} data-cy="total-container">
               <Statistic className={styles.statistic} title="Total Entities" value={entities.length} />
               <Statistic className={styles.statistic} title="Total Documents" value={totalDocs} />
             </div>
-            <EntityTable entities={entities} facetValues={facetValues} lastHarmonized={lastHarmonized}/>
+            <EntityTable entities={entities} facetValues={facetValues} lastHarmonized={lastHarmonized} />
 
           </>}
       </Content>

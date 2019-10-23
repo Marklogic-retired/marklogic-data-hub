@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import axios from 'axios';
 import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
 import { AuthContext } from '../util/auth-context';
@@ -6,16 +6,18 @@ import styles from './Detail.module.scss';
 import TableView from '../components/table-view/table-view';
 import JsonView from '../components/json-view/json-view';
 import DetailHeader from '../components/detail-header/detail-header';
-import { Layout, Menu, PageHeader, Spin } from 'antd';
+import AsyncLoader from '../components/async-loader/async-loader';
+import { Layout, Menu, PageHeader } from 'antd';
 import XmlView from '../components/xml-view/xml-view';
+import { xmlParser, xmlDecoder } from '../util/xml-parser';
 
 interface Props extends RouteComponentProps<any> { }
 
 const { Content } = Layout;
 
 const Detail: React.FC<Props> = ({ history, location }) => {
-  const { userNotAuthenticated } = useContext(AuthContext);
-  const uriSplit = location.pathname.replace('/detail/',''); 
+  const { user, handleError } = useContext(AuthContext);
+  const uriSplit = location.pathname.replace('/detail/','');
   const pkValue = uriSplit.split('/')[0] === '-' ? '' : decodeURIComponent(uriSplit.split('/')[0]);
   const uri = decodeURIComponent(uriSplit.split('/')[1]);
   const [selected, setSelected] = useState('instance');
@@ -24,68 +26,47 @@ const Detail: React.FC<Props> = ({ history, location }) => {
   const [contentType, setContentType] = useState();
   const [xml, setXml] = useState();
 
+  const componentIsMounted = useRef(true);
+
   useEffect(() => {
     setIsLoading(true);
 
     const fetchData = async () => {
       try {
         const result = await axios(`/datahub/v2/search?docUri=${uri}`);
-        const content = result.headers['content-type'];
 
-        // TODO handle exception if document type is json -> XML
-        if (content.indexOf("application/json") !== -1) {
-          setContentType('json');
-          setData(result.data.content);
-        } else if (content.indexOf("application/xml") !== -1) {
-          setContentType('xml');
-          let decodedXml = decodeXml(result.data);
-          setData(convertXmlToJson(decodedXml));
-          setXml(decodeXml(decodedXml));
+        if (componentIsMounted.current) {
+          const content = result.headers['content-type'];
+
+          // TODO handle exception if document type is json -> XML
+          if (content.indexOf("application/json") !== -1) {
+            setContentType('json');
+            setData(result.data.content);
+          } else if (content.indexOf("application/xml") !== -1) {
+            setContentType('xml');
+            let decodedXml = xmlDecoder(result.data);
+            setData(xmlParser(decodedXml).Document);
+            setXml(xmlDecoder(decodedXml));
+          }
+
+          setIsLoading(false);
         }
-
-        setIsLoading(false);
 
       } catch (error) {
-        console.log('error', error.response);
-        if (error.response.status === 401) {
-          userNotAuthenticated();
-        }
+        handleError(error);
       }
     };
 
     fetchData();
+
+    return () => {
+      componentIsMounted.current = false;
+    }
+
   }, []);
 
   const handleClick = (event) => {
     setSelected(event.key);
-  }
-
-  const convertXmlToJson = (xmlData) => {
-    var parser = require('fast-xml-parser');
-    var options = {
-      attributeNamePrefix: "",
-      attrNodeName: false, //default is 'false'
-      textNodeName: "#text",
-      ignoreAttributes: true,
-      ignoreNameSpace: false,
-      allowBooleanAttributes: false,
-      parseNodeValue: true,
-      parseAttributeValue: false,
-      trimValues: true,
-      cdataTagName: "__cdata", //default is 'false'
-      cdataPositionChar: "\\c",
-      localeRange: "", //To support non english character in tag/attribute values.
-      parseTrueNumberOnly: false
-    };
-
-    if (parser.validate(xmlData) === true) {
-      return parser.parse(xmlData, options).Document;
-    }
-  }
-
-  const decodeXml = (xml) => {
-    var he = require('he');
-    return he.decode(xml);
   }
 
   return (
@@ -96,7 +77,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
         </div>
         <div className={styles.header}>
           <div className={styles.heading}>
-            {data && <DetailHeader document={data} contentType={contentType} uri={uri} primaryKey={pkValue}/>}
+            {data && <DetailHeader document={data} contentType={contentType} uri={uri} primaryKey={pkValue} />}
           </div>
           <div id='menu' className={styles.menu}>
             <Menu onClick={(event) => handleClick(event)} mode="horizontal" selectedKeys={[selected]}>
@@ -111,7 +92,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
         </div>
         <div>
           {
-            isLoading ? <Spin tip="Loading..." style={{ margin: '100px auto', width: '100%' }} />
+            isLoading || user.error.type === 'ALERT' ? <AsyncLoader/>
               :
               contentType === 'json' ?
                 selected === 'instance' ? (data && <TableView document={data} contentType={contentType} />) : (data && <JsonView document={data} />)

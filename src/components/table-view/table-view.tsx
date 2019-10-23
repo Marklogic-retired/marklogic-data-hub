@@ -12,7 +12,7 @@ const TableView: React.FC<Props> = (props) => {
   let data = new Array();
   let counter = 0;
 
-  const parseJson = (obj:Object) => {
+  const parseJson = (obj: Object) => {
     let parsedData = new Array();
     for (var i in obj) {
       if (obj[i] !== null && typeof (obj[i]) === "object") {
@@ -36,7 +36,7 @@ const TableView: React.FC<Props> = (props) => {
       if (instance !== 'info') {
         // TODO handle nested instance types (objects and arrays)
         Object.keys(props.document.content.envelope.instance[instance]).forEach(function (key) {
-          data.push({ property: key, value: props.document.content.envelope.instance[instance][key] });
+          data.push({ key: counter++, property: key, value: props.document.content.envelope.instance[instance][key] });
         });
       }
     });
