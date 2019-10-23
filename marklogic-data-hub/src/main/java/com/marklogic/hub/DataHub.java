@@ -183,8 +183,8 @@ public class DataHub {
             }
             if (isNightly) {
                 String dateString = versionString.replaceAll("[^-]+-(\\d{4})(\\d{2})(\\d{2})", "$1-$2-$3");
-                //Support all 9.0-nightly on or after 5/5/2018
-                Date minDate = new GregorianCalendar(2018, Calendar.MAY, 5).getTime();
+                //Support all 9.0-nightly on or after May 5th, 2017
+                Date minDate = new GregorianCalendar(2017, Calendar.MAY, 5).getTime();
                 Date date = new SimpleDateFormat("y-M-d").parse(dateString);
                 if (date.before(minDate)) {
                     return false;
