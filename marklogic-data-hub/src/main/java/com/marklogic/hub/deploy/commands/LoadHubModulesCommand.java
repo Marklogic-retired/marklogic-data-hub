@@ -66,7 +66,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
         assetFileLoader.setDocumentFileReader(jarDocumentFileReader);
 
         DefaultModulesLoader modulesLoader = new DefaultModulesLoader(assetFileLoader);
-        modulesLoader.addFailureListener(throwable -> {
+        modulesLoader.addFailureListener((throwable, client) -> {
             // ensure we throw the first exception
             if (caughtException == null) {
                 caughtException = throwable;

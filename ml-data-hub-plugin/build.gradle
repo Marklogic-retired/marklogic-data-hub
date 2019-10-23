@@ -30,7 +30,7 @@ repositories {
 dependencies {
     compile gradleApi()
     compile project(':marklogic-data-hub')
-    compile ('com.marklogic:ml-gradle:3.4.0')
+    compile ('com.marklogic:ml-gradle:3.10.1')
     testCompile localGroovy()
     testCompile gradleTestKit()
     testCompile 'xmlunit:xmlunit:1.3'
