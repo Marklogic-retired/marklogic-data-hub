@@ -427,16 +427,12 @@ declare function match-impl:values-by-qname(
 {
   map:new(
     for $qname in fn:distinct-values((map:get($compiled-options, "queries") ! map:get(.,"qname")))
-    let $values :=
-      for $value in fn:distinct-values($document//*[fn:node-name(.) eq $qname] ! fn:normalize-space(fn:string(.))[.])
-      return (
-        $value,
-        $value ! fn:number(.)[fn:string(.) ne "NaN"],
-        $value[. castable as xs:boolean] ! xs:boolean(.)
-      )
+    let $values := fn:distinct-values(
+      $document//*[fn:node-name(.) eq $qname][fn:normalize-space(fn:string(.))]/fn:data(.)
+    )
     where fn:exists($values)
     return
-        map:entry(xdmp:key-from-QName($qname), $values)
+      map:entry(xdmp:key-from-QName($qname), $values)
   )
 };
 
