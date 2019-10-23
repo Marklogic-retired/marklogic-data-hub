@@ -266,43 +266,86 @@ export class MappingComponent implements OnInit {
       const parsedXML = new DOMParser().parseFromString(input, 'application/xml');
       const object = {};
       self.nmspace = {};
-      
-      var attrList = {};
+
+      var attrList = [];
 
       const nodeToJSON = function (obj, node) {
-        if(node.namespaceURI) {
+        if (node.namespaceURI) {
           self.nmspace[node.nodeName] = node.namespaceURI;
         }
-        
-        if(node.attributes) {
-          for( let i= 0; i<node.attributes.length;i++){
-            if(node.attributes.item(i).name !== 'xmlns'){
-              obj["@"+node.attributes.item(i).name] = node.attributes.item(i).value;
-              attrList[node.nodeName+"/"+"@"+node.attributes.item(i).name] = node.attributes.item(i).value;
-              
+        if (!node.childNodes) {
+          if (node.attributes) {
+
+            for (let i = 0; i < node.attributes.length; i++) {
+
+              if (node.attributes.item(i).name !== 'xmlns') {
+                obj["@" + node.attributes.item(i).name] = node.attributes.item(i).value;
+                attrList.push(node.nodeName + "/" + "@" + node.attributes.item(i).name + node.attributes.item(i).value);
+
+              }
+
             }
-            
           }
         }
+
+
         // Extracting the attributes from the source xml doc.
         node.childNodes.forEach((childNode) => {
-          
-          
-          if (childNode.childNodes.length === 0 ||  (childNode.childNodes.length === 1 && childNode.firstChild.nodeType === Node.TEXT_NODE)) {
+
+
+          if (childNode.childNodes.length === 0 || (childNode.childNodes.length === 1 && childNode.firstChild.nodeType === Node.TEXT_NODE)) {
             if (childNode.nodeName !== '#text') {
+
+
               obj[childNode.nodeName] = childNode.textContent;
-              
+
+              if (childNode.attributes) {
+
+                for (let i = 0; i < childNode.attributes.length; i++) {
+
+                  if (childNode.attributes.item(i).name !== 'xmlns') {
+                    if (!attrList.includes(childNode.nodeName + "/" + "@" + childNode.attributes.item(i).name + childNode.attributes.item(i).value)) {
+                      obj[childNode.nodeName + "/" + "@" + childNode.attributes.item(i).name] = childNode.attributes.item(i).value;
+                      attrList.push(childNode.nodeName + "/" + "@" + childNode.attributes.item(i).name + childNode.attributes.item(i).value);
+
+                    }
+
+                  }
+
+                }
+              }
             }
           } else {
-            obj[childNode.nodeName] = {};
-            nodeToJSON(obj[childNode.nodeName], childNode);
+            
+              obj[childNode.nodeName] = {};
+              if (childNode.attributes) {
+
+                for (let i = 0; i < childNode.attributes.length; i++) {
+
+                  if (childNode.attributes.item(i).name !== 'xmlns') {
+                    if (!attrList[childNode.nodeName + "/" + "@" + childNode.attributes.item(i).name] || attrList[childNode.nodeName + "/" + "@" + childNode.attributes.item(i).name] != childNode.attributes.item(i).value) {
+                      //console.log("node.attributes.item(i).name", childNode.nodeName, childNode.attributes.item(i).name, childNode.attributes.item(i).value)
+                      obj[childNode.nodeName + "/" + "@" + childNode.attributes.item(i).name] = childNode.attributes.item(i).value;
+                      attrList[childNode.nodeName + "/" + "@" + childNode.attributes.item(i).name] = childNode.attributes.item(i).value;
+
+                    }
+
+                  }
+
+                }
+              }
+          
+              nodeToJSON(obj[childNode.nodeName], childNode);
+
+            
+
           }
         });
       };
       nodeToJSON(object, parsedXML);
-      //console.log("object",object);
+      console.log('object', object);
       return object;
-      
+
     }
     return input;
   }
@@ -417,9 +460,8 @@ export class MappingComponent implements OnInit {
     let self = this;
 
     _.forEach(sourcePropDoc, function (val, key) {
-      if (val != null) {
+      if (val != null && val!= "") {
         if (val.constructor.name === "Object") {
-
           if (ParentKeyValuePair.includes(key + JSON.stringify(val))) {
             parentKey = key;
           } else {
@@ -474,16 +516,28 @@ export class MappingComponent implements OnInit {
           self.nestedDoc.push(propty);
         }
       } else {
+        let currKey = "";
+          if (ParentKeyValuePair.includes(key + val)) {
+            currKey = key;
+          } else {
+            if (parentKey === "") {
+              currKey = key;
+            } else {
+              currKey = parentKey + "/" + key;
+            }
+          }
         let propty = {
-          key: key,
+          key: currKey,
           val: "",
           type: self.getType(val)
         };
         self.nestedDoc.push(propty);
+
       }
-
+      if(parentKey.split('/').pop() in sourcePropDoc) {
+        parentKey = parentKey.slice(0,parentKey.lastIndexOf('/'));
+      }
     });
-
 
     return this.nestedDoc;
   }
