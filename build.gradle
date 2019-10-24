@@ -25,6 +25,7 @@ plugins {
     id 'maven-publish'
     id 'com.marklogic.ml-development-tools' version '4.2.0'
     id 'jacoco'
+    id 'application'
 }
 apply plugin: 'io.spring.dependency-management'
 
