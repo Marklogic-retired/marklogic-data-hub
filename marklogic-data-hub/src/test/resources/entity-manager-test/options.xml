@@ -3,6 +3,11 @@
   <search:constraint name="Collection">
     <search:collection/>
   </search:constraint>
+  <search:constraint name="createdByJob">
+    <search:value>
+      <search:field name="datahubCreatedByJob"/>
+    </search:value>
+  </search:constraint>
   <search:constraint name="entity-type">
     <search:value>
       <search:element ns="http://marklogic.com/entity-services" name="title"/>
@@ -15,20 +20,22 @@
   </search:constraint>
   <search:constraint name="name">
     <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
-      <search:path-index>//*:instance/Employee/name</search:path-index>
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">//*:instance/Employee/name</search:path-index>
+      <search:facet-option>limit=25</search:facet-option>
     </search:range>
   </search:constraint>
   <search:constraint name="salary">
     <search:range type="xs:decimal" facet="true">
-      <search:element ns="" name="salary"/>
+      <search:element ns="" name="salary" xmlns:es="http://marklogic.com/entity-services"/>
+      <search:facet-option>limit=25</search:facet-option>
     </search:range>
   </search:constraint>
   <search:tuples name="Employee">
     <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
-      <search:path-index>//*:instance/Employee/name</search:path-index>
+      <search:path-index xmlns:es="http://marklogic.com/entity-services">//*:instance/Employee/name</search:path-index>
     </search:range>
     <search:range type="xs:decimal" facet="true">
-      <search:element ns="" name="salary"/>
+      <search:element ns="" name="salary" xmlns:es="http://marklogic.com/entity-services"/>
     </search:range>
   </search:tuples>
   <!--Uncomment to return no results for a blank search, rather than the default of all results
@@ -43,7 +50,7 @@
   <search:search-option>unfiltered</search:search-option>
   <!--Modify document extraction to change results returned-->
   <search:extract-document-data selected="include">
-    <search:extract-path>//*:instance/(Employee)</search:extract-path>
+    <search:extract-path xmlns:es="http://marklogic.com/entity-services">//*:instance/(Employee)</search:extract-path>
   </search:extract-document-data>
   <!--Change or remove this additional-query to broaden search beyond entity instance documents-->
   <!--To return facets, change this option to 'true' and edit constraints-->

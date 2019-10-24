@@ -1,6 +1,6 @@
 {
   "name": "trace-ui",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "license": "APACHE",
   "homepage": "https://github.com/marklogic/marklogic-data-hub",
   "scripts": {
