@@ -40,8 +40,16 @@
 
 .helpContain {
   top: 0;
-  right: 30px;
+  right: 15px;
   position: absolute;
   color:white;
   z-index: 3000;
 }
+
+.route {
+  top:-5px;
+  right: 44px;
+  position: absolute;
+  color: rgba(255, 255, 255, 0.65);;
+}
+

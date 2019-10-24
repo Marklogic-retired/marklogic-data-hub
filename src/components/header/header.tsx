@@ -2,6 +2,8 @@ import React, { useContext, useState, useEffect } from 'react';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import axios from 'axios';
 import { Layout, Menu, Icon } from 'antd';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faRoute } from '@fortawesome/free-solid-svg-icons'
 import Tour from 'reactour';
 import styles from './header.module.scss';
 import DatahubIcon from '../datahub-icon/datahub-icon';
@@ -18,6 +20,7 @@ const Header:React.FC<Props> = ({ location }) => {
   const [selectedMenu, setSelectedMenu] = useState<string[]>([]);
   const [tourSteps, setTourSteps] = useState<any[]>([]);
   const [isTourOpen, setIsTourOpen] = useState(false);
+
 
   const closeTour = () => {
     setIsTourOpen(false);
@@ -88,17 +91,24 @@ const Header:React.FC<Props> = ({ location }) => {
           <DatahubIcon size={65} fill='silver' view='0 0 100 100'/>
         </div>
       </div>
-      <div id="title" className={styles.title}>Data Hub Explorer</div>
-      {showMenu}
-      <a id="help-icon" className={styles.helpContain} onClick={showTour}>
-        <Icon className={styles.help} type="question-circle"/>
+      <div id="title" className={styles.title}>Data Hub Explorer</div>{showMenu}
+      <div>
+      <a  id="help-icon" onClick={showTour} className={styles.route}>
+        <FontAwesomeIcon className={styles.help} icon={faRoute} size="lg" />
       </a>
       <Tour
-        steps={tourSteps}
-        startAt={0}
-        isOpen={isTourOpen}
-        onRequestClose={closeTour}
+          steps={tourSteps}
+          startAt={0}
+          isOpen={isTourOpen}
+          onRequestClose={closeTour}
       />
+      </div>
+      <div>
+      <a id="help-icon" className={styles.helpContain} href={'https://docs.marklogic.com/datahub/'}>
+      <Icon className={styles.help} type="question-circle"/>
+      </a>
+      </div>
+
     </Layout.Header>
   )
 }
