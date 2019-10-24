@@ -226,7 +226,6 @@ export class MappingComponent implements OnInit {
       this.mapping.sourceURI = uri;
       self.nestedDoc = [];
       let ParentKeyValuePair = [];
-      console.log("startRoot",startRoot)
       _.forEach(startRoot, function (val, key) {
         if(val != null){
           if(val.constructor.name === "Object" || val.constructor.name === "Array"){
@@ -499,7 +498,7 @@ export class MappingComponent implements OnInit {
           val.forEach(obj => {
             if(obj.constructor.name == "String"){
               let propty = {
-                key: parentKey.indexOf('/') != -1 ? parentKey+ "/" + parentKey.split('/').pop() : parentKey+ "/" + parentKey,
+                key: parentKey+ "/",
                 val: obj,
                 type: self.getType(obj)
               };

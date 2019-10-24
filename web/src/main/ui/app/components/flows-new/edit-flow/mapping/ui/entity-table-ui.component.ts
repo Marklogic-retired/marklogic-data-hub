@@ -212,7 +212,9 @@ checkFieldInErrors(field){
   uniqueSourceFields(source) {
     let uniqueSrcFields = [];
     source.forEach(obj => {
-      uniqueSrcFields.push(obj.key);
+      if(obj.key.slice(obj.key.lastIndexOf('/')+1) != ""){
+        uniqueSrcFields.push(obj.key);
+      }
     });
 
     return uniqueSrcFields.filter((item, index) => uniqueSrcFields.indexOf(item) === index);
