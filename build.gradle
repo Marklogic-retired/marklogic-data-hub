@@ -24,6 +24,7 @@ plugins {
     id 'org.springframework.boot' version '2.1.7.RELEASE'
     id 'maven-publish'
     id 'com.marklogic.ml-development-tools' version '4.2.0'
+    id 'jacoco'
 }
 apply plugin: 'io.spring.dependency-management'
 
@@ -104,6 +105,7 @@ test {
         events 'started', 'passed', 'skipped', 'failed'
         exceptionFormat 'full'
     }
+    finalizedBy jacocoTestReport
 }
 
 wrapper {
@@ -157,6 +159,15 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from javadoc.destinationDir
+}
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
+}
+task applicationCodeCoverageReport(type:JacocoReport) {
+    executionData run
+    sourceSets sourceSets.main
 }
 publishing {
     publications {
