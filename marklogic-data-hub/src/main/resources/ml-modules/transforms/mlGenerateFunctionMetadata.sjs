@@ -11,7 +11,8 @@ function mlGenerateFunctionMetadata(context, params, content) {
     let match = new RegExp(pattern).exec(uri);
     if (match !== null) {
       let uriVal = match[1];
-      let metaDataXml = es.functionMetadataValidate(es.functionMetadataGenerate(uri));
+      let metadataXml = es.functionMetadataValidate(es.functionMetadataGenerate(uri));
+      metadataXml = addMapNamespaceToMetadata(metadataXml);
       let collection = 'http://marklogic.com/entity-services/function-metadata';
       let permissionsExpression = `xdmp.defaultPermissions().concat([
       xdmp.permission('${datahub.config.FLOWOPERATORROLE}','execute'),
@@ -20,7 +21,7 @@ function mlGenerateFunctionMetadata(context, params, content) {
       xdmp.permission('${datahub.config.FLOWOPERATORROLE}','read'),
       xdmp.permission('${datahub.config.FLOWDEVELOPERROLE}','read')
       ])`;
-      let writeInfo = datahub.hubUtils.writeDocument(uriVal + ".xml", metaDataXml, permissionsExpression, [collection], datahub.config.MODULESDATABASE);
+      let writeInfo = datahub.hubUtils.writeDocument(uriVal + ".xml", metadataXml, permissionsExpression, [collection], datahub.config.MODULESDATABASE);
       if (writeInfo && fn.exists(writeInfo.transaction)) {
         // try/catch workaround to avoid XSLT-UNBPRFX error. See https://bugtrack.marklogic.com/52870
         try {
@@ -38,9 +39,35 @@ function mlGenerateFunctionMetadata(context, params, content) {
       }
     }
   } else {
-    datahub.debug.log({message: `Uploading declarative mapping library (${content.uri}) to incompatible MarkLogic version (${xdmp.version()}).`, type: 'notice'});
+    datahub.debug.log({
+      message: `Uploading declarative mapping library (${content.uri}) to incompatible MarkLogic version (${xdmp.version()}).`,
+      type: 'notice'
+    });
   }
   return content;
 }
 
+/**
+ * Ensures that the map namespace is declared in the XML mapping document. This ensures that it is carried over to the
+ * XSL stylesheet that is generated via es.mappingPut. And that ensures that the map:* references in the stylesheet
+ * generated for DHF's core.sjs module are resolved correctly, no matter the context.
+ */
+function addMapNamespaceToMetadata(xml) {
+  let metadata = xml;
+  try {
+    let query = xdmp.quote(xml).replace('<?xml version="1.0" encoding="UTF-8"?>', '');
+    query = "let $xml := xdmp:unquote('" + xml + "')/node() return element {fn:node-name($xml)} {$xml/@*,namespace {'map'} {'http://marklogic.com/xdmp/map'},$xml/node()}";
+    metadata = xdmp.xqueryEval(query);
+  } catch (e) {
+    datahub.debug.log({
+      message: "Unable to add the map namespace prefix to the metadata document, which is intended to carryover to the " +
+        "compiled stylesheet. The compiled stylesheet may still function correctly if it does not reference any map:* functions.",
+      type: 'error',
+      stack: e.stack
+    });
+  }
+  return metadata;
+}
+
 exports.transform = mlGenerateFunctionMetadata;
+exports.addMapNamespaceToMetadata = addMapNamespaceToMetadata;
