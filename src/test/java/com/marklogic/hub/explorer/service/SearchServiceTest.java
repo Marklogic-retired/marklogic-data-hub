@@ -101,10 +101,11 @@ public class SearchServiceTest {
     // Setting entities list to be empty
     mockQuery.setEntityNames(new ArrayList<>());
 
-    StringHandle mockHandle = new StringHandle("This is some sample search data");
+    StringHandle mockHandle = new StringHandle();
     when(mockSearchHelper.search(mockQuery)).thenReturn(mockHandle);
     StringHandle resultHandle = searchServiceMock.search(mockQuery);
-    assertTrue(resultHandle.get().equals(mockHandle.get()));
+    assertTrue(resultHandle.get() == mockHandle.get());
+    assertTrue(resultHandle.get() == null);
   }
 
   @Test

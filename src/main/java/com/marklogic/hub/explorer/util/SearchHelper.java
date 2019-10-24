@@ -122,6 +122,9 @@ public class SearchHelper {
               queryBuilder.collection(excludedCollections));
 
       queries.add(finalCollQuery);
+    } else { // If entity-model collections are empty, don't return any documents
+      StructuredQueryDefinition finalCollQuery = queryBuilder.and(queryBuilder.collection());
+      queries.add(finalCollQuery);
     }
 
     // Filtering by facets
