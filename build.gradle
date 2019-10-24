@@ -26,6 +26,7 @@ plugins {
     id 'com.marklogic.ml-development-tools' version '4.2.0'
     id 'jacoco'
     id 'application'
+    id "org.sonarqube" version "2.8"
 }
 apply plugin: 'io.spring.dependency-management'
 
@@ -169,6 +170,15 @@ jacocoTestReport {
 task applicationCodeCoverageReport(type:JacocoReport) {
     executionData run
     sourceSets sourceSets.main
+}
+sonarqube {
+    properties {
+        property "sonar.sourceEncoding", "UTF-8"
+        property 'sonar.jacoco.reportPath', "${buildDir}/customJacocoReportDir/*"
+        property 'sonar.junit.reportsPath', "${buildDir}/test-results/*"
+
+    }
+
 }
 publishing {
     publications {
