@@ -49,5 +49,7 @@ public class MappingStepDefinitionImpl extends AbstractStepDefinition {
         else {
             setModulePath("/data-hub/5/builtins/steps/mapping/default/main.sjs");
         }
+
+        options.put("validateEntity", false);
     }
 }

@@ -259,13 +259,18 @@ public class FlowManagerService {
         return transformStepToWebModel(step);
     }
 
+    protected Step mergeDefaultStepDefinitionIntoStep(StepModel stepModel, Step step) {
+        String stepType = step.getStepDefinitionType().toString().toLowerCase();
+        StepDefinition defaultStepDefinition = getDefaultStepDefinitionFromResources("hub-internal-artifacts/step-definitions/" + stepType + "/marklogic/"+ step.getStepDefinitionName() +".step.json", step.getStepDefinitionType());
+        Step defaultStep = defaultStepDefinition.transformToStep(step.getName(), defaultStepDefinition, new Step());
+        return StepModel.mergeFields(stepModel, defaultStep, step);
+    }
+
     protected Step upsertStepDefinition(StepModel stepModel, Step step) {
         if (stepDefinitionManagerService.getStepDefinition(step.getStepDefinitionName(), step.getStepDefinitionType()) != null) {
             String stepType = step.getStepDefinitionType().toString().toLowerCase();
             if(step.getStepDefinitionName().equalsIgnoreCase("default-" + stepType) || "entity-services-mapping".equalsIgnoreCase(step.getStepDefinitionName())) {
-                StepDefinition defaultStepDefinition = getDefaultStepDefinitionFromResources("hub-internal-artifacts/step-definitions/" + stepType + "/marklogic/"+ step.getStepDefinitionName() +".step.json", step.getStepDefinitionType());
-                Step defaultStep = defaultStepDefinition.transformToStep(step.getName(), defaultStepDefinition, new Step());
-                step = StepModel.mergeFields(stepModel, defaultStep, step);
+                step = mergeDefaultStepDefinitionIntoStep(stepModel, step);
             }
             else {
                 StepDefinition oldStepDefinition = stepDefinitionManagerService.getStepDefinition(step.getStepDefinitionName(), step.getStepDefinitionType());
