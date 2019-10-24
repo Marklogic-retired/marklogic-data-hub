@@ -2383,7 +2383,10 @@ declare function merge-impl:locked-uris() {
  :)
 declare function merge-impl:locked-uris($host-id, $transaction-id) {
   fn:distinct-values(
-    xdmp:transaction-locks($host-id, $transaction-id)/(host:waiting|host:write)[fn:starts-with(., $lock-task-prefix)]/fn:substring-after(., $lock-task-prefix)
+    (: transaction may have closed between getting it from the host status and now looking for locks :)
+    try {
+      xdmp:transaction-locks($host-id, $transaction-id)/(host:waiting|host:write)[fn:starts-with(., $lock-task-prefix)]/fn:substring-after(., $lock-task-prefix)
+    } catch * {()}
   )
 };
 
