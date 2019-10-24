@@ -73,14 +73,9 @@ function buildMapProperties(mapping, entityModel) {
     xdmp.trace(dhMappingTrace, `Using entity definition: ${entityDefinition}`);
   }
   let namespacePrefix = entityDefinition.namespacePrefix ? `${entityDefinition.namespacePrefix}:` : '';
-  let requiredProps = entityDefinition.required || [entityModel.primaryKey];
-  if (!requiredProps.includes(entityModel.primaryKey)) {
-    requiredProps.push(entityModel.primaryKey);
-  }
   let entityProperties = entityDefinition.properties;
   for (let prop in mapProperties) {
     if (mapProperties.hasOwnProperty(prop)) {
-      let isRequired = requiredProps.includes(prop);
       if (!entityProperties.hasOwnProperty(prop)) {
         // TODO Can pass in a JSON object instead of a string message, but not able to reference the properties on it
         throw Error("The property '" + prop + "' is not defined by the entity model");
