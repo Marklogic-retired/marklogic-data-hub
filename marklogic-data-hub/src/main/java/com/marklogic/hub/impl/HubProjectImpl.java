@@ -334,7 +334,6 @@ public class HubProjectImpl implements HubProject {
         writeRoleFile(rolesDir, "data-hub-admin-role.json");
         writeRoleFile(rolesDir, "entity-model-reader.json");
         writeRoleFile(rolesDir, "explorer-architect.json");
-        writeRoleFile(rolesDir, "explorer-user.json");
         writeRoleFile(rolesDir, "flow-developer-role.json");
         writeRoleFile(rolesDir, "flow-operator-role.json");
 
