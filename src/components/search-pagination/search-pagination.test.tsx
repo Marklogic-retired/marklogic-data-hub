@@ -4,32 +4,25 @@ import SearchPagination from './search-pagination';
 
 describe("Search Pagination component", () => {
   let wrapper;
-  const pageChangeFn = jest.fn();
-  const pageLengthChangeFn = jest.fn();
 
-  beforeAll(() => {
-    wrapper = mount(
-      <SearchPagination 
-        total={10}
-        pageLength={1}
-        currentPage={1}
-        onPageChange={pageChangeFn}
-        onPageLengthChange={pageLengthChangeFn} 
-      />);
+  describe("change current page", () => {
+    beforeEach(() => {
+      wrapper = mount(
+        <SearchPagination 
+          total={10}
+          pageSize={10}
+          currentPage={1}
+        />);
     });
-
     test("renders", () => {
-      expect(wrapper.exists()).toBe(true);
+      expect(wrapper.find('.ant-pagination')).toHaveLength(1);
+      const pageSize = wrapper.find('.ant-select-selection-selected-value').text();
+      expect(pageSize).toEqual('10 / page');
     }); 
+  });
+      // TODO add click simulation
+    // test("click on page number works", () => {
+    //   wrapper.find('.ant-pagination-item-3').simulate('click');
+    // });
 
-    test("search pagination component renders", () => {
-      expect(wrapper.find('.ant-pagination-prev')).toHaveLength(1);
-      expect(wrapper.find('.ant-pagination-item-3')).toHaveLength(1);
-      expect(wrapper.find('.ant-pagination-next')).toHaveLength(1);
-    });
-
-    test("click on page number works", () => {
-      wrapper.find('.ant-pagination-item-3').simulate('click');
-      expect(pageChangeFn).toHaveBeenCalled();
-    });
-})
+  });

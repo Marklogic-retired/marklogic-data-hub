@@ -10,7 +10,8 @@ describe("Search Summary component", () => {
       <SearchSummary 
         total={100}
         start={1}
-        length={1}
+        length={10}
+        pageSize={10}
       />);
     });
 
