@@ -30,6 +30,9 @@ assertions.concat([
   test.assertEqual("limit=25", xs.string(fn.head(expOtions.xpath("/*:constraint[@name = 'title']/*:range/*:facet-option/text()"))),
     "To avoid displaying large numbers of values in facets in Explorer, range constraints default to a max of 25 values"
   ),
+  test.assertEqual("limit=25", xs.string(fn.head(expOtions.xpath("/*:constraint[@name = 'Collection']/*:collection/*:facet-option/text()"))),
+    "To avoid displaying large numbers of values in facets in Explorer, collection constraints default to a max of 25 values"
+  ),
   test.assertEqual("limit=25", xs.string(fn.head(expOtions.xpath("/*:constraint[@name = 'createdByStep']/*:range/*:facet-option/text()"))),
     "To avoid displaying large numbers of values in facets in Explorer, range constraints default to a max of 25 values"
   ),

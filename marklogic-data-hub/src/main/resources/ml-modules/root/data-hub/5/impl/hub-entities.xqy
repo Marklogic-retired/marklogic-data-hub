@@ -155,7 +155,9 @@ declare %private function hent:fix-options-exp($nodes as node()*)
           $n/namespace::node(),
           $n/@*,
           <search:constraint name="Collection">
-            <search:collection/>
+            <search:collection>
+              <search:facet-option>limit=25</search:facet-option>
+            </search:collection>
           </search:constraint>,
           <search:constraint name="createdByJob">
             <search:range facet="false">
