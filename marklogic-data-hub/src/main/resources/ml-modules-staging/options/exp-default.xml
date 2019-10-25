@@ -1,6 +1,8 @@
 <options xmlns="http://marklogic.com/appservices/search">
   <constraint name="Collection">
-    <collection/>
+    <collection>
+      <facet-option>limit=25</facet-option>
+    </collection>
   </constraint>
   <constraint name="createdByJob">
     <range facet="false">
