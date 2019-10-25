@@ -5,6 +5,7 @@ type SearchContextInterface = {
   entityNames: string[],
   start: number,
   pageLength: number,
+  pageSize: number,
   searchFacets: any
 }
 
@@ -13,6 +14,7 @@ const defaultSearchOptions = {
   entityNames: [],
   start: 1,
   pageLength: 10,
+  pageSize: 10,
   searchFacets: {}
 }
 
@@ -56,14 +58,17 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
   }
 
   const setPage = (pageNumber: number, totalDocuments: number) => {
-    console.log('The user selected page ' + pageNumber);
-    let pageSize = (totalDocuments - ((searchOptions.start - 1) * searchOptions.pageLength) < searchOptions.pageLength) ? (totalDocuments - ((searchOptions.start - 1) * searchOptions.pageLength)) : searchOptions.pageLength;
-    setSearchOptions({...searchOptions, start: pageNumber, pageLength: pageSize});
+    let pageLength = searchOptions.pageSize;
+  
+    if ( (totalDocuments - ((pageNumber - 1) * searchOptions.pageSize)) < searchOptions.pageSize ) {
+      pageLength = (totalDocuments - ((pageNumber - 1) * searchOptions.pageLength))
+    }
+    setSearchOptions({...searchOptions, start: pageNumber, pageLength});
   }
 
   const setPageLength = (current: number, pageSize: number) => {
     console.log('The user changed page length ' + pageSize);
-    setSearchOptions({ ...searchOptions, pageLength: pageSize, start: 1});
+    setSearchOptions({ ...searchOptions, pageLength: pageSize, pageSize, start: 1});
   }
 
   const setSearchFacets = (constraint: string, vals: string[]) => {
@@ -81,9 +86,21 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
   const setEntity = (option: string) => {
     console.log('Selected Option is ' + option);
     if (option) {
-      setSearchOptions({ ...searchOptions, start: 1, searchFacets: {}, entityNames: [option]});
+      setSearchOptions({ 
+        ...searchOptions,
+        start: 1,
+        searchFacets: {},
+        entityNames: [option],
+        pageLength: searchOptions.pageSize
+      });
     } else {
-      setSearchOptions({ ...searchOptions, start: 1, searchFacets: {}, entityNames: []});
+      setSearchOptions({
+        ...searchOptions,
+        start: 1,
+        searchFacets: {},
+        entityNames: [],
+        pageLength: searchOptions.pageSize
+      });
     }
   }
 
@@ -95,7 +112,13 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
   const setLatestJobFacet = (vals: string) => {
     let facets = {};
       facets = { createdByJob: [vals] };
-    setSearchOptions({ ...searchOptions, start: 1, searchFacets: facets, entityNames: []});
+    setSearchOptions({ 
+      ...searchOptions,
+      start: 1,
+      searchFacets: facets,
+      entityNames: [],
+      pageLength: searchOptions.pageSize
+    });
   }
 
   const clearFacet = (constraint: string, val: string) => {

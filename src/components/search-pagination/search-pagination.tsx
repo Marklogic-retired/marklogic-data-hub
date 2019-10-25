@@ -6,12 +6,12 @@ import styles from './search-pagination.module.scss';
 interface Props {
   total: number;
   currentPage: number;
-  pageLength: number;
+  pageSize: number;
 };
 
 
 const SearchPagination: React.FC<Props> = (props) => {
-  const { setPage, setPageLength } = useContext(SearchContext)
+  const { setPage, setPageLength } = useContext(SearchContext);
 
   const onPageChange = (pageNumber) => {
     setPage(pageNumber, props.total);
@@ -26,14 +26,15 @@ const SearchPagination: React.FC<Props> = (props) => {
           <Pagination 
             size="small" 
             defaultCurrent={1} 
+            defaultPageSize={10}
             total={props.total} 
             showSizeChanger
             onChange={onPageChange}
             onShowSizeChange={onPageSizeChange}
             current={props.currentPage}
-            pageSize={props.pageLength}
+            pageSize={props.pageSize}
           />
-      </div>
+      </div>  
   )
 }
 

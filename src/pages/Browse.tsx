@@ -111,21 +111,21 @@ const Browse: React.FC<Props> = ({ location }) => {
             <AsyncLoader/>
             :
             <>
-              <SearchSummary total={totalDocuments} start={searchOptions.start} length={searchOptions.pageLength} />
+              <SearchSummary total={totalDocuments} start={searchOptions.start} length={searchOptions.pageLength} pageSize={searchOptions.pageSize} />
               <SearchPagination
                 total={totalDocuments}
                 currentPage={searchOptions.start}
-                pageLength={searchOptions.pageLength}
+                pageSize={searchOptions.pageSize}
               />
               <br />
               <br />
               <SearchResults data={data} entityDefArray={entityDefArray} />
               <br />
-              <SearchSummary total={totalDocuments} start={searchOptions.start} length={searchOptions.pageLength} />
+              <SearchSummary total={totalDocuments} start={searchOptions.start} length={searchOptions.pageLength} pageSize={searchOptions.pageSize} />
               <SearchPagination
                 total={totalDocuments}
                 currentPage={searchOptions.start}
-                pageLength={searchOptions.pageLength}
+                pageSize={searchOptions.pageSize}
               />
             </>
           }
