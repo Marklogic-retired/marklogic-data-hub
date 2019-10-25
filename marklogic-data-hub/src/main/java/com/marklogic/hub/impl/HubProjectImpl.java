@@ -23,6 +23,7 @@ import com.marklogic.hub.HubProject;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.util.FileUtil;
+import com.marklogic.hub.util.HubModuleManager;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
 import com.marklogic.rest.util.JsonNodeUtil;
 import org.apache.commons.io.FileUtils;
@@ -68,6 +69,9 @@ public class HubProjectImpl implements HubProject {
 
     @Autowired @Lazy
     private FlowManagerImpl flowManager;
+
+    @Autowired @Lazy
+    private EntityManagerImpl entityManager;
 
     @Autowired @Lazy
     private Versions versions;
@@ -499,8 +503,8 @@ public class HubProjectImpl implements HubProject {
             }
         }
         upgradeFlows();
-
         removeEmptyRangeElementIndexArrayFromFinalDatabaseFile();
+        generateSearchOptionsForExplorer();
     }
 
     protected void upgradeFlows() {
@@ -549,6 +553,13 @@ public class HubProjectImpl implements HubProject {
             }
         }
         return false;
+    }
+
+    protected void generateSearchOptionsForExplorer() {
+        String timestampFile = getUserModulesDeployTimestampFile();
+        HubModuleManager propertiesModuleManager = new HubModuleManager(timestampFile);
+        propertiesModuleManager.deletePropertiesFile();
+        entityManager.saveQueryOptions();
     }
 
     @Override  public String getHubModulesDeployTimestampFile() {
