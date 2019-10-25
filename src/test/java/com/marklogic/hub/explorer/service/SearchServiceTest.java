@@ -25,6 +25,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
 @RunWith(JUnitPlatform.class)
@@ -105,7 +106,7 @@ public class SearchServiceTest {
     when(mockSearchHelper.search(mockQuery)).thenReturn(mockHandle);
     StringHandle resultHandle = searchServiceMock.search(mockQuery);
     assertTrue(resultHandle.get() == mockHandle.get());
-    assertTrue(resultHandle.get() == null);
+    assertNull(resultHandle.get());
   }
 
   @Test
