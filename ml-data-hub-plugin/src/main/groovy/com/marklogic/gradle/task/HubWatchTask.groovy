@@ -35,11 +35,14 @@ class HubWatchTask extends WatchTask {
 
     LoadUserModulesCommand command
 
-    HubWatchTask() {
+    @Override
+    void watchModules() {
         HubConfig hubConfig = getProject().property("hubConfig")
         Versions versions = getProject().property("dataHubApplicationContext").getBean(Versions.class)
         GenerateFunctionMetadataCommand command = new GenerateFunctionMetadataCommand(hubConfig.newModulesDbClient(), versions)
         onModulesLoaded = new ModuleWatchingConsumer(getCommandContext(), command)
+
+        super.watchModules()
     }
 
     @Override
