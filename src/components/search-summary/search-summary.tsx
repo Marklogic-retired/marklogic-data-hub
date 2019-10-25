@@ -7,13 +7,14 @@ interface Props {
   total: number;
   start: number;
   length: number;
+  pageSize: number;
 };
 
 const SearchSummary: React.FC<Props> = (props) => {
   const { Text } = Typography;
 
   const isEndOfPage = () => {
-    if(props.start * props.length > props.total) {
+    if (props.length !== props.pageSize || props.length > props.total) {
       return true;
     } else {
       return false;
@@ -31,7 +32,7 @@ const SearchSummary: React.FC<Props> = (props) => {
   return (
     <div className={styles.searchSummaryContainer}>
       <Text>Showing </Text>
-      <span className={styles.summaryValue}>{isNoDocuments() ? 0 : numberConverter((props.start-1) * props.length + 1)}-{isEndOfPage() ? numberConverter(props.total) : numberConverter(props.start * props.length)}</span> <Text>of</Text> <span className={styles.summaryValue} data-cy='total-documents'>{numberConverter(props.total)}</span>
+      <span className={styles.summaryValue}>{isNoDocuments() ? 0 : numberConverter((props.start-1) * props.pageSize + 1)}-{isEndOfPage() ? numberConverter(props.total) : numberConverter(props.start * props.length)}</span> <Text>of</Text> <span className={styles.summaryValue} data-cy='total-documents'>{numberConverter(props.total)}</span>
       <Text> documents</Text>
     </div>
   );

@@ -33,8 +33,8 @@ const Sidebar = (props) => {
 
       if (props.selectedEntities.length) {
         const entityDef = props.entityDefArray.find(entity => entity.name === props.selectedEntities[0]);
-        const filteredEntityFacets = entityDef.elementRangeIndex.length && entityDef.elementRangeIndex.map( elementRangeIndex => {
-          let entityFacetValues = parsedFacets.find(facet => facet.facetName === elementRangeIndex);
+        const filteredEntityFacets = entityDef.rangeIndex.length && entityDef.rangeIndex.map( rangeIndex => {
+          let entityFacetValues = parsedFacets.find(facet => facet.facetName === rangeIndex);
           return {...entityFacetValues}
         });
         setEntityFacets(filteredEntityFacets);

@@ -15,8 +15,8 @@ describe("Facet component", () => {
       beforeEach(() => {
         const entityDef = entityDefArray.find(entity => entity.name === 'Customer');
 
-        const filteredEntityFacets = entityDef.elementRangeIndex.length && entityDef.elementRangeIndex.map( elementRangeIndex => {
-          let entityFacetValues = parsedFacets.find(facet => facet.facetName === elementRangeIndex);
+        const filteredEntityFacets = entityDef.rangeIndex.length && entityDef.rangeIndex.map( rangeIndex => {
+          let entityFacetValues = parsedFacets.find(facet => facet.facetName === rangeIndex);
           return {...entityFacetValues}
         });
         wrapper = shallow(

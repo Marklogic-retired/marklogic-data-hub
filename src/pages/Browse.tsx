@@ -20,8 +20,6 @@ const Browse: React.FC<Props> = ({ location }) => {
   const { user, handleError } = useContext(AuthContext);
   const {
     searchOptions,
-    setPage,
-    setPageLength,
     setEntityClearQuery,
     setLatestJobFacet,
   } = useContext(SearchContext);
@@ -59,7 +57,7 @@ const Browse: React.FC<Props> = ({ location }) => {
           query: searchOptions.query,
           entityNames: searchOptions.entityNames.length ? searchOptions.entityNames : allEntities,
           start: searchOptions.start,
-          pageLength: getPageLength(),
+          pageLength: searchOptions.pageLength,
           facets: searchOptions.searchFacets,
         }
       });
@@ -91,24 +89,11 @@ const Browse: React.FC<Props> = ({ location }) => {
 
   }, []);
 
-
   useEffect(() => {
     if (entities.length && !user.error.type) {
       getSearchResults(entities);
     }
   }, [searchOptions, entities, user.error.type]);
-
-  const handlePageChange = (pageNumber: number) => {
-    setPage(pageNumber);
-  }
-
-  const handlePageLengthChange = (current: number, pageSize: number) => {
-    setPageLength(current, pageSize);
-  }
-
-  const getPageLength = () => {
-    return (totalDocuments - ((searchOptions.start - 1) * searchOptions.pageLength) < searchOptions.pageLength) ? (totalDocuments - ((searchOptions.start - 1) * searchOptions.pageLength)) : searchOptions.pageLength;
-  }
 
   return (
     <>
@@ -126,25 +111,21 @@ const Browse: React.FC<Props> = ({ location }) => {
             <AsyncLoader/>
             :
             <>
-              <SearchSummary total={totalDocuments} start={searchOptions.start} length={searchOptions.pageLength} />
+              <SearchSummary total={totalDocuments} start={searchOptions.start} length={searchOptions.pageLength} pageSize={searchOptions.pageSize} />
               <SearchPagination
                 total={totalDocuments}
-                onPageChange={handlePageChange}
-                onPageLengthChange={handlePageLengthChange}
                 currentPage={searchOptions.start}
-                pageLength={searchOptions.pageLength}
+                pageSize={searchOptions.pageSize}
               />
               <br />
               <br />
               <SearchResults data={data} entityDefArray={entityDefArray} />
               <br />
-              <SearchSummary total={totalDocuments} start={searchOptions.start} length={searchOptions.pageLength} />
+              <SearchSummary total={totalDocuments} start={searchOptions.start} length={searchOptions.pageLength} pageSize={searchOptions.pageSize} />
               <SearchPagination
                 total={totalDocuments}
-                onPageChange={handlePageChange}
-                onPageLengthChange={handlePageLengthChange}
                 currentPage={searchOptions.start}
-                pageLength={searchOptions.pageLength}
+                pageSize={searchOptions.pageSize}
               />
             </>
           }
