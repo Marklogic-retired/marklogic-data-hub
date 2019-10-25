@@ -54,7 +54,12 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
 
   const setQuery = (searchString: string) => {
     console.log('The user typed string is ' + searchString);
-    setSearchOptions({...searchOptions, start: 1, query: searchString});
+    setSearchOptions({
+      ...searchOptions,
+      start: 1,
+      query: searchString,
+      pageLength: searchOptions.pageSize
+    });
   }
 
   const setPage = (pageNumber: number, totalDocuments: number) => {
@@ -80,7 +85,7 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       facets = { ...searchOptions.searchFacets };
       delete facets[constraint];
     }
-    setSearchOptions({ ...searchOptions, start: 1, searchFacets: facets });
+    setSearchOptions({ ...searchOptions, start: 1, searchFacets: facets, pageLength: searchOptions.pageSize });
   }
 
   const setEntity = (option: string) => {
@@ -106,7 +111,14 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
 
   const setEntityClearQuery = (option: string) => {
     console.log('Selected Option is ' + option);
-    setSearchOptions({ ...searchOptions, query: '', start: 1, searchFacets:{}, entityNames: [option]});
+    setSearchOptions({ 
+      ...searchOptions,
+      query: '',
+      start: 1,
+      searchFacets:{},
+      entityNames: [option],
+      pageLength: searchOptions.pageSize,
+    });
   }
 
   const setLatestJobFacet = (vals: string) => {
@@ -132,7 +144,7 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
   }
 
   const clearAllFacets = () => {
-    setSearchOptions({ ...searchOptions, searchFacets: {} });
+    setSearchOptions({ ...searchOptions, searchFacets: {}, start: 1, pageLength: searchOptions.pageSize });
   }
 
   const setDateFacet = (dates: string[]) => {
