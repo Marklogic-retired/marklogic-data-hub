@@ -253,7 +253,7 @@ declare function flow:run-flow(
   $options as map:map)
 {
   (: assert that we are in query mode :)
-  let $_must_run_in_query_mode as xs:unsignedLong := xdmp:request-timestamp()
+  (: )let $_must_run_in_query_mode as xs:unsignedLong := xdmp:request-timestamp() :)
 
   (: configure the run context :)
   let $_ := (

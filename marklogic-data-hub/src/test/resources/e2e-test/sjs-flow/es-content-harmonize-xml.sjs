@@ -61,9 +61,9 @@ function extractInstanceE2eentity(source) {
   // the original source documents
   let attachments = source;
 
-  let id = xs.string(source.xpath('id/text()'));
-  let name = xs.string(source.xpath('name/text()'));
-  let salary = xs.decimal(source.xpath('salary/text()'));
+  let id = xs.string(fn.head(source.xpath('id/string()')));
+  let name = xs.string(fn.head(source.xpath('name/string()')));
+  let salary = xs.decimal(fn.head(source.xpath('salary/string()')));
 
   // return the instance object
   return {

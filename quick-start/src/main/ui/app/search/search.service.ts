@@ -31,7 +31,7 @@ export class SearchService {
   }
 
   getDoc(database: string, docUri: string) {
-    return this.get(`/api/search/doc?database=${database}&docUri=${docUri}`);
+    return this.get(`/api/search/doc?database=${database}&docUri=${encodeURIComponent(docUri)}`);
   }
 
   private extractData = (res: Response) => {

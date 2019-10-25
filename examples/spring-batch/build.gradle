@@ -3,7 +3,7 @@ plugins {
     id 'application'
     id 'idea'
     id 'net.saliman.properties' version '1.4.6'
-    id 'com.marklogic.ml-data-hub' version '2.0.6'
+    id 'com.marklogic.ml-data-hub' version '2.0.7'
 }
 
 repositories {
@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.marklogic:marklogic-data-hub:2.0.6'
+    compile 'com.marklogic:marklogic-data-hub:2.0.7'
     compile "com.marklogic:marklogic-spring-batch-core:1.0.1"
 
     testCompile "com.h2database:h2:1.4.193"

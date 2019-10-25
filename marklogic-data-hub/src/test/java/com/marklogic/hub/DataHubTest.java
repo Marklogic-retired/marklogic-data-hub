@@ -105,11 +105,6 @@ public class DataHubTest extends HubTestBase {
     }
 
     @Test
-    public void testValidateServerBeyond804WithDot() {
-        assertFalse(dh.isServerVersionValid("8.0-5.2"));
-    }
-
-    @Test
     public void testValidateServer8nightly() {
         assertFalse(dh.isServerVersionValid("8.0-20160719"));
     }
@@ -117,11 +112,6 @@ public class DataHubTest extends HubTestBase {
     @Test
     public void testValidateServer9nightly() {
         assertTrue(dh.isServerVersionValid("9.0-20170701"));
-    }
-
-    @Test
-    public void testValidateServer9nightlyagain() {
-        assertTrue(dh.isServerVersionValid("9.0-20170702"));
     }
 
     @Test
@@ -135,11 +125,6 @@ public class DataHubTest extends HubTestBase {
     }
 
     @Test
-    public void testValidateServer8nightlyInValid() {
-        assertFalse(dh.isServerVersionValid("8.0-20170630"));
-    }
-
-    @Test
     public void testInvalidServer9nightly() {
         assertFalse(dh.isServerVersionValid("9.0-20160719"));
     }
@@ -150,23 +135,23 @@ public class DataHubTest extends HubTestBase {
     }
 
     @Test
-    public void testValidateServer9011() {
-        assertTrue(dh.isServerVersionValid("9.0-1.1"));
+    public void testValidateServer90102() {
+        assertTrue(dh.isServerVersionValid("9.0-10.2"));
     }
 
     @Test
     public void testValidateServerBeyond9() {
-        assertTrue(dh.isServerVersionValid("9.0-2"));
+        assertTrue(dh.isServerVersionValid("9.0-20190719"));
     }
 
     @Test
     public void testValidateServerBeyond10() {
-        assertTrue(dh.isServerVersionValid("10.0-1"));
+        assertFalse(dh.isServerVersionValid("10.0-1"));
     }
 
     @Test
     public void testValidateServer10Nightly() {
-        assertTrue(dh.isServerVersionValid("10.0-20170801"));
+        assertFalse(dh.isServerVersionValid("10.0-20170801"));
     }
 
     @Test
@@ -244,7 +229,7 @@ public class DataHubTest extends HubTestBase {
         expect(serverManager.getPropertiesAsXml("port-stealer")).andReturn(new ResourcesFragment(new Fragment("<http-server-properties xmlns=\"http://marklogic.com/manage\"> <server-name>port-stealer</server-name> <group-name>Default</group-name> <server-type>http</server-type> <enabled>true</enabled> <root>/</root> <port>8010</port> <webDAV>false</webDAV> <execute>true</execute> <display-last-login>false</display-last-login> <address>0.0.0.0</address> <backlog>512</backlog> <threads>32</threads> <request-timeout>30</request-timeout> <keep-alive-timeout>5</keep-alive-timeout> <session-timeout>3600</session-timeout> <max-time-limit>3600</max-time-limit> <default-time-limit>600</default-time-limit> <max-inference-size>500</max-inference-size> <default-inference-size>100</default-inference-size> <static-expires>3600</static-expires> <pre-commit-trigger-depth>1000</pre-commit-trigger-depth> <pre-commit-trigger-limit>10000</pre-commit-trigger-limit> <collation>http://marklogic.com/collation/</collation> <authentication>digest</authentication> <internal-security>true</internal-security> <concurrent-request-limit>0</concurrent-request-limit> <compute-content-length>true</compute-content-length> <log-errors>true</log-errors> <debug-allow>true</debug-allow> <profile-allow>true</profile-allow> <default-xquery-version>1.0-ml</default-xquery-version> <multi-version-concurrency-control>contemporaneous</multi-version-concurrency-control> <distribute-timestamps>fast</distribute-timestamps> <output-sgml-character-entities>none</output-sgml-character-entities> <output-encoding>UTF-8</output-encoding> <output-method>default</output-method> <output-byte-order-mark>default</output-byte-order-mark> <output-cdata-section-namespace-uri/> <output-cdata-section-localname/> <output-doctype-public/> <output-doctype-system/> <output-escape-uri-attributes>default</output-escape-uri-attributes> <output-include-content-type>default</output-include-content-type> <output-indent>default</output-indent> <output-indent-untyped>default</output-indent-untyped> <output-indent-tabs>default</output-indent-tabs> <output-media-type/> <output-normalization-form>none</output-normalization-form> <output-omit-xml-declaration>default</output-omit-xml-declaration> <output-standalone>omit</output-standalone> <output-undeclare-prefixes>default</output-undeclare-prefixes> <output-version/> <output-include-default-attributes>default</output-include-default-attributes> <default-error-format>json</default-error-format> <error-handler>/MarkLogic/rest-api/error-handler.xqy</error-handler> <schemas/> <namespaces/> <module-locations/> <request-blackouts/> <url-rewriter>/MarkLogic/rest-api/rewriter.xml</url-rewriter> <rewrite-resolves-globally>true</rewrite-resolves-globally> <ssl-allow-sslv3>true</ssl-allow-sslv3> <ssl-allow-tls>true</ssl-allow-tls> <ssl-disable-sslv3>false</ssl-disable-sslv3> <ssl-disable-tlsv1>false</ssl-disable-tlsv1> <ssl-disable-tlsv1-1>false</ssl-disable-tlsv1-1> <ssl-disable-tlsv1-2>false</ssl-disable-tlsv1-2> <ssl-hostname/> <ssl-ciphers>ALL:!LOW:@STRENGTH</ssl-ciphers> <ssl-require-client-certificate>true</ssl-require-client-certificate> <content-database>data-hub-FINAL</content-database> <modules-database>data-hub-MODULES</modules-database> <default-user>nobody</default-user> </http-server-properties>", list.toArray(new Namespace[] {}))));
         expect(serverManager.getPropertiesAsXml("HealthCheck")).andReturn(new ResourcesFragment(new Fragment("<http-server-properties xmlns=\"http://marklogic.com/manage\"> <server-name>HealthCheck</server-name> <group-name>Default</group-name> <server-type>http</server-type> <enabled>true</enabled> <root>HealthCheck/</root> <authentication>application-level</authentication> <port>7997</port> <webDAV>false</webDAV> <execute>true</execute> <display-last-login>false</display-last-login> <address>0.0.0.0</address> <backlog>512</backlog> <threads>2</threads> <request-timeout>30</request-timeout> <keep-alive-timeout>5</keep-alive-timeout> <session-timeout>3600</session-timeout> <max-time-limit>3600</max-time-limit> <default-time-limit>600</default-time-limit> <max-inference-size>500</max-inference-size> <default-inference-size>100</default-inference-size> <static-expires>3600</static-expires> <pre-commit-trigger-depth>1000</pre-commit-trigger-depth> <pre-commit-trigger-limit>10000</pre-commit-trigger-limit> <collation>http://marklogic.com/collation/</collation> <internal-security>true</internal-security> <concurrent-request-limit>0</concurrent-request-limit> <compute-content-length>true</compute-content-length> <log-errors>false</log-errors> <debug-allow>true</debug-allow> <profile-allow>true</profile-allow> <default-xquery-version>1.0-ml</default-xquery-version> <multi-version-concurrency-control>contemporaneous</multi-version-concurrency-control> <distribute-timestamps>fast</distribute-timestamps> <output-sgml-character-entities>none</output-sgml-character-entities> <output-encoding>UTF-8</output-encoding> <output-method>default</output-method> <output-byte-order-mark>default</output-byte-order-mark> <output-cdata-section-namespace-uri/> <output-cdata-section-localname/> <output-doctype-public/> <output-doctype-system/> <output-escape-uri-attributes>default</output-escape-uri-attributes> <output-include-content-type>default</output-include-content-type> <output-indent>default</output-indent> <output-indent-untyped>default</output-indent-untyped> <output-indent-tabs>default</output-indent-tabs> <output-media-type/> <output-normalization-form>none</output-normalization-form> <output-omit-xml-declaration>default</output-omit-xml-declaration> <output-standalone>omit</output-standalone> <output-undeclare-prefixes>default</output-undeclare-prefixes> <output-version/> <output-include-default-attributes>default</output-include-default-attributes> <default-error-format>compatible</default-error-format> <error-handler/> <schemas/> <namespaces/> <module-locations/> <request-blackouts/> <url-rewriter/> <rewrite-resolves-globally>false</rewrite-resolves-globally> <ssl-allow-sslv3>true</ssl-allow-sslv3> <ssl-allow-tls>true</ssl-allow-tls> <ssl-disable-sslv3>false</ssl-disable-sslv3> <ssl-disable-tlsv1>false</ssl-disable-tlsv1> <ssl-disable-tlsv1-1>false</ssl-disable-tlsv1-1> <ssl-disable-tlsv1-2>false</ssl-disable-tlsv1-2> <ssl-hostname/> <ssl-ciphers>ALL:!LOW:@STRENGTH</ssl-ciphers> <ssl-require-client-certificate>true</ssl-require-client-certificate> <content-database>App-Services</content-database> <default-user>healthcheck</default-user> </http-server-properties>", list.toArray(new Namespace[] {}))));
         expect(serverManager.getPropertiesAsXml("Manage")).andReturn(new ResourcesFragment(new Fragment("<http-server-properties xmlns=\"http://marklogic.com/manage\"> <server-name>Manage</server-name> <group-name>Default</group-name> <server-type>http</server-type> <enabled>true</enabled> <root>Apps/</root> <authentication>digest</authentication> <port>8002</port> <webDAV>false</webDAV> <execute>true</execute> <display-last-login>false</display-last-login> <address>0.0.0.0</address> <backlog>512</backlog> <threads>32</threads> <request-timeout>30</request-timeout> <keep-alive-timeout>5</keep-alive-timeout> <session-timeout>3600</session-timeout> <max-time-limit>3600</max-time-limit> <default-time-limit>600</default-time-limit> <max-inference-size>500</max-inference-size> <default-inference-size>100</default-inference-size> <static-expires>3600</static-expires> <pre-commit-trigger-depth>1000</pre-commit-trigger-depth> <pre-commit-trigger-limit>10000</pre-commit-trigger-limit> <collation>http://marklogic.com/collation/</collation> <internal-security>true</internal-security> <concurrent-request-limit>0</concurrent-request-limit> <compute-content-length>true</compute-content-length> <log-errors>false</log-errors> <debug-allow>true</debug-allow> <profile-allow>true</profile-allow> <default-xquery-version>1.0-ml</default-xquery-version> <multi-version-concurrency-control>contemporaneous</multi-version-concurrency-control> <distribute-timestamps>fast</distribute-timestamps> <output-sgml-character-entities>none</output-sgml-character-entities> <output-encoding>UTF-8</output-encoding> <output-method>default</output-method> <output-byte-order-mark>default</output-byte-order-mark> <output-cdata-section-namespace-uri/> <output-cdata-section-localname/> <output-doctype-public/> <output-doctype-system/> <output-escape-uri-attributes>default</output-escape-uri-attributes> <output-include-content-type>default</output-include-content-type> <output-indent>default</output-indent> <output-indent-untyped>default</output-indent-untyped> <output-indent-tabs>default</output-indent-tabs> <output-media-type/> <output-normalization-form>none</output-normalization-form> <output-omit-xml-declaration>default</output-omit-xml-declaration> <output-standalone>omit</output-standalone> <output-undeclare-prefixes>default</output-undeclare-prefixes> <output-version/> <output-include-default-attributes>default</output-include-default-attributes> <default-error-format>compatible</default-error-format> <error-handler>manage/error-handler.xqy</error-handler> <schemas/> <namespaces/> <module-locations/> <request-blackouts/> <url-rewriter>manage/rewriter.xqy</url-rewriter> <rewrite-resolves-globally>false</rewrite-resolves-globally> <ssl-allow-sslv3>true</ssl-allow-sslv3> <ssl-allow-tls>true</ssl-allow-tls> <ssl-disable-sslv3>false</ssl-disable-sslv3> <ssl-disable-tlsv1>false</ssl-disable-tlsv1> <ssl-disable-tlsv1-1>false</ssl-disable-tlsv1-1> <ssl-disable-tlsv1-2>false</ssl-disable-tlsv1-2> <ssl-hostname/> <ssl-ciphers>ALL:!LOW:@STRENGTH</ssl-ciphers> <ssl-require-client-certificate>true</ssl-require-client-certificate> <content-database>App-Services</content-database> <default-user>nobody</default-user> <privilege>http://marklogic.com/xdmp/privileges/manage</privilege> </http-server-properties>", list.toArray(new Namespace[] {}))));
-        expect(versions.getMarkLogicVersion()).andReturn("9.0-1");
+        expect(versions.getMarkLogicVersion()).andReturn("9.0");
         replay(dh, versions, serverManager);
 
         PreInstallCheck check = dh.runPreInstallCheck(versions);
