@@ -13,7 +13,7 @@ function validateEntity(newInstance, options = {}, entityInfo) {
   if (shouldValidateEntity(options)) {
     let value = fn.string(options.validateEntity).toLowerCase();
     if ("xml" == options.outputFormat) {
-      validateXmlEntity(newInstance, options, value);
+      validateXmlEntity(newInstance, options, value, entityInfo);
     } else {
       validateJsonEntity(newInstance, options, value, entityInfo);
     }
@@ -29,7 +29,7 @@ function shouldValidateEntity(options = {}) {
   return false;
 }
 
-function validateJsonEntity(newInstance, options = {}, validateEntityValue, entityInfo) {
+function validateJsonEntity(newInstance, options = {}, validateEntityValue, entityInfo = {}) {
   // As of 5.1.0, this is safe to do. But eventually, we'll want to find a schema by querying the schema database, or,
   // better yet, via some API function call that does the work for us.
   const entitySchemaUri = "/entities/" + entityInfo.title + ".entity.schema.json";
@@ -92,7 +92,9 @@ function formatErrorMessageForJson(errorMessage) {
   return formattedErrorMessage;
 }
 
-function validateXmlEntity(newInstance, options = {}, validateEntityValue) {
+function validateXmlEntity(newInstance, options = {}, validateEntityValue, entityInfo = {}) {
+  newInstance = addSchemaLocationToXmlInstance(newInstance, entityInfo);
+
   const result = fn.head(xdmp.xqueryEval(
     'declare variable $newInstance external; xdmp:validate($newInstance, "strict")',
     {newInstance: newInstance}
@@ -128,6 +130,47 @@ function validateXmlEntity(newInstance, options = {}, validateEntityValue) {
     }
   }
 }
+
+/**
+ * Per the documentation at https://docs.marklogic.com/guide/app-dev/loading_schemas#id_70282 , it is possible for
+ * the wrong schema to be used by xdmp.validate when there are multiple XML schemas in the same namespace (or with no
+ * namespace). Thus, in an attempt to trigger rule "a" in that list of rules for how a schema is determined, both
+ * xsi:schemaLocation and xsi:noNamespaceSchemaLocation are added to the XML instance, with each pointing to the
+ * presumed location of the entity-specific schema.
+ *
+ * @param newInstance
+ * @param entityInfo
+ * @return {*}
+ */
+function addSchemaLocationToXmlInstance(newInstance, entityInfo = {}) {
+  if (entityInfo.hasOwnProperty("title")) {
+    // As of 5.1.0, this is safe to do. But eventually, we'll want to find a schema by querying the schema database, or,
+    // better yet, via some API function call that does the work for us.
+    const entityTitle = entityInfo.title;
+
+    const entitySchemaUri = "/entities/" + entityTitle + ".entity.xsd";
+
+    let stylesheet = xdmp.unquote('<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.0">\n' +
+      '  <xsl:template match="' + entityTitle + '">\n' +
+      '    <xsl:copy>\n' +
+      '      <xsl:copy-of select="@*"/>\n' +
+      '      <xsl:attribute name="xsi:schemaLocation"><xsl:value-of select="\'' + entitySchemaUri + '\'"/></xsl:attribute>\n' +
+      '      <xsl:attribute name="xsi:noNamespaceSchemaLocation"><xsl:value-of select="\'' + entitySchemaUri + '\'"/></xsl:attribute>\n' +
+      '      <xsl:apply-templates select="node()"/>\n' +
+      '    </xsl:copy>\n' +
+      '  </xsl:template>\n' +
+      '  <xsl:template match="@*|node()">\n' +
+      '    <xsl:copy>\n' +
+      '      <xsl:apply-templates select="@*|node()"/>\n' +
+      '    </xsl:copy>\n' +
+      '  </xsl:template>\n' +
+      '</xsl:stylesheet>');
+    return fn.head(xdmp.xsltEval(stylesheet, newInstance));
+  }
+
+  return newInstance;
+}
+
 
 function addFormattedMessagesForXml(validationError) {
   if (validationError.error.code == "XDMP-VALIDATEMISSINGELT") {
@@ -221,7 +264,8 @@ function removeValidationErrorsFromHeaders(options = {}) {
 }
 
 module.exports = {
+  addSchemaLocationToXmlInstance, // exported for unit testing
   removeValidationErrorsFromHeaders,
-  shouldValidateEntity,
+  shouldValidateEntity, // exported for unit testing
   validateEntity
 };

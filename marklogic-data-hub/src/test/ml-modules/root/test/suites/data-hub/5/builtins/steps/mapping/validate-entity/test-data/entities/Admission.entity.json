@@ -1,0 +1,25 @@
+{
+  "info": {
+    "title": "Admission",
+    "version": "0.0.1",
+    "description": "This is included so that the XML validation tests will fail unless DHF includes an xsi:noNamespaceSchemaLocation when valiating an XML instance",
+    "baseUri": "http://www.marklogic.com/"
+  },
+  "definitions": {
+    "Admission": {
+      "required": [
+        "PatientName"
+      ],
+      "properties": {
+        "PatientName": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Email": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}
