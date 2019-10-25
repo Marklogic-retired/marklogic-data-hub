@@ -10,7 +10,7 @@ plugins {
 repositories {
     jcenter()
     maven { url 'http://repo.spring.io/milestone' }
-    maven { url 'https://developer.marklogic.com/maven2/' }
+    maven { url 'http://developer.marklogic.com/maven2/' }
 }
 
 group = 'com.marklogic'
