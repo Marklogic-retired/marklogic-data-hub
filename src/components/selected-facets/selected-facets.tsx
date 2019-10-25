@@ -31,10 +31,8 @@ const SelectedFacets: React.FC<Props> = (props) => {
         <Icon type='close'/>
         Clear All
       </Button>
-      {console.log(props.selectedFacets)}
         { props.selectedFacets.map((item, index) => {
           if (item.constraint === 'createdOnRange') {
-            {console.log(item)}
             return (
               <Button 
                 size="small"
