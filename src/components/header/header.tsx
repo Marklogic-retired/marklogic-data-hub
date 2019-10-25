@@ -104,7 +104,7 @@ const Header:React.FC<Props> = ({ location }) => {
       />
       </div>
       <div>
-      <a id="help-icon" className={styles.helpContain} href={'https://docs.marklogic.com/datahub/'}>
+      <a id="help-icon" className={styles.helpContain} href={'https://docs.marklogic.com/datahub/'} target={"_blank"}>
       <Icon className={styles.help} type="question-circle"/>
       </a>
       </div>
