@@ -11,7 +11,7 @@ describe("Search Pagination component", () => {
         <SearchPagination 
           total={10}
           pageSize={10}
-          currentPage={1}
+          pageNumber={1}
         />);
     });
     test("renders", () => {

@@ -4,6 +4,7 @@ type SearchContextInterface = {
   query: string,
   entityNames: string[],
   start: number,
+  pageNumber: number,
   pageLength: number,
   pageSize: number,
   searchFacets: any
@@ -13,6 +14,7 @@ const defaultSearchOptions = {
   query: '', 
   entityNames: [],
   start: 1,
+  pageNumber: 1,
   pageLength: 10,
   pageSize: 10,
   searchFacets: {}
@@ -31,6 +33,7 @@ interface ISearchContextInterface {
   clearAllFacets: () => void;
   setDateFacet: (dates: string[]) => void;
   clearDateFacet: () => void;
+  resetSearchOptions: () => void;
 }
 
 export const SearchContext = React.createContext<ISearchContextInterface>({
@@ -45,7 +48,8 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   clearFacet: () => {},
   clearAllFacets: () => {},
   setDateFacet: () => {},
-  clearDateFacet: () => {}
+  clearDateFacet: () => {},
+  resetSearchOptions: () => {}
 });
 
 const SearchProvider: React.FC<{ children: any }> = ({children}) => {
@@ -58,22 +62,35 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       ...searchOptions,
       start: 1,
       query: searchString,
+      pageNumber: 1,
       pageLength: searchOptions.pageSize
     });
   }
 
   const setPage = (pageNumber: number, totalDocuments: number) => {
     let pageLength = searchOptions.pageSize;
-  
+    let start = pageNumber === 1 ?  1 : (pageNumber -1) * searchOptions.pageSize + 1;
+
     if ( (totalDocuments - ((pageNumber - 1) * searchOptions.pageSize)) < searchOptions.pageSize ) {
       pageLength = (totalDocuments - ((pageNumber - 1) * searchOptions.pageLength))
     }
-    setSearchOptions({...searchOptions, start: pageNumber, pageLength});
+    setSearchOptions({
+      ...searchOptions,
+      start,
+      pageNumber,
+      pageLength
+    });
   }
 
   const setPageLength = (current: number, pageSize: number) => {
     console.log('The user changed page length ' + pageSize);
-    setSearchOptions({ ...searchOptions, pageLength: pageSize, pageSize, start: 1});
+    setSearchOptions({ 
+      ...searchOptions,
+      start: 1,
+      pageNumber: 1,
+      pageLength: pageSize,
+      pageSize
+    });
   }
 
   const setSearchFacets = (constraint: string, vals: string[]) => {
@@ -85,7 +102,13 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       facets = { ...searchOptions.searchFacets };
       delete facets[constraint];
     }
-    setSearchOptions({ ...searchOptions, start: 1, searchFacets: facets, pageLength: searchOptions.pageSize });
+    setSearchOptions({ 
+      ...searchOptions,
+      start: 1,
+      searchFacets: facets,
+      pageNumber: 1,
+      pageLength: searchOptions.pageSize
+    });
   }
 
   const setEntity = (option: string) => {
@@ -104,6 +127,7 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
         start: 1,
         searchFacets: {},
         entityNames: [],
+        pageNumber: 1,
         pageLength: searchOptions.pageSize
       });
     }
@@ -117,6 +141,7 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       start: 1,
       searchFacets:{},
       entityNames: [option],
+      pageNumber: 1,
       pageLength: searchOptions.pageSize,
     });
   }
@@ -129,6 +154,7 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       start: 1,
       searchFacets: facets,
       entityNames: [],
+      pageNumber: 1,
       pageLength: searchOptions.pageSize
     });
   }
@@ -144,19 +170,44 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
   }
 
   const clearAllFacets = () => {
-    setSearchOptions({ ...searchOptions, searchFacets: {}, start: 1, pageLength: searchOptions.pageSize });
+    setSearchOptions({ 
+      ...searchOptions,
+      searchFacets: {},
+      start: 1,
+      pageNumber: 1,
+      pageLength: searchOptions.pageSize 
+    });
   }
 
   const setDateFacet = (dates: string[]) => {
-    setSearchOptions({ ...searchOptions, searchFacets: {...searchOptions.searchFacets, createdOnRange: dates} });
+    setSearchOptions({ 
+      ...searchOptions,
+      searchFacets: {
+        ...searchOptions.searchFacets,
+        createdOnRange: dates,
+        start: 1,
+        pageNumber: 1,
+        pageLength: searchOptions.pageSize
+      }
+    });
   }
 
   const clearDateFacet = () => {
     let facets = searchOptions.searchFacets;
     if (facets.hasOwnProperty('createdOnRange')){
       delete facets.createdOnRange;
-      setSearchOptions({ ...searchOptions, searchFacets: facets });
+      setSearchOptions({ 
+        ...searchOptions,
+        searchFacets: facets,
+        start: 1,
+        pageNumber: 1,
+        pageLength: searchOptions.pageSize
+      });
     }
+  }
+
+  const resetSearchOptions = () => {
+    setSearchOptions({ ...defaultSearchOptions});
   }
 
 
@@ -173,7 +224,8 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       clearAllFacets,
       setLatestJobFacet,
       setDateFacet,
-      clearDateFacet
+      clearDateFacet,
+      resetSearchOptions
       }}>
       {children}
     </SearchContext.Provider>

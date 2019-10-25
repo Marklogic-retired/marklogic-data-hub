@@ -15,8 +15,6 @@ const SelectedFacets: React.FC<Props> = (props) => {
     clearDateFacet
    } = useContext(SearchContext);
 
-
-
   return (
     <div id='selected-facets' data-cy='selected-facet-block'
       className={styles.clearContainer}
@@ -31,10 +29,8 @@ const SelectedFacets: React.FC<Props> = (props) => {
         <Icon type='close'/>
         Clear All
       </Button>
-      {console.log(props.selectedFacets)}
         { props.selectedFacets.map((item, index) => {
           if (item.constraint === 'createdOnRange') {
-            {console.log(item)}
             return (
               <Button 
                 size="small"
