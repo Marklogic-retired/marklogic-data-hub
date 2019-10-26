@@ -65,49 +65,52 @@ export class EntityTableUiComponent implements OnChanges {
     let field = this.mapErrors["properties"]
     if (field[propName] && field[propName]["errorMessage"]) {
       return field[propName]["errorMessage"];
+    }
   }
-}
 
-checkFieldInErrors(field){
-  if(this.mapErrors && this.mapErrors['properties']){
-    if(this.mapErrors['properties'][field] && this.mapErrors['properties'][field]['errorMessage']) {
-      return true;
+  checkFieldInErrors(field){
+    if(this.mapErrors && this.mapErrors['properties']){
+      if(this.mapErrors['properties'][field] && this.mapErrors['properties'][field]['errorMessage']) {
+        return true;
+      } else {
+        return false;
+      }
     } else {
       return false;
     }
-  } else {
-    return false;
   }
-  
-}
 
   getDatatype(prop) {
     if (prop.datatype === 'array') {
-      let s = prop.items.$ref.split('/');
-      return s.slice(-1).pop() + '[]';
+      if (prop.items && prop.items.$ref) {
+        let s = prop.items.$ref.split('/');
+        return s.slice(-1).pop() + '[]';
+      } else if (prop.items && prop.items.datatype) {
+        return prop.items.datatype + '[]';
+      }
     } else if (prop.$ref !== null) {
       let s = prop.$ref.split('/');
       return s.slice(-1).pop();
     } else {
       return prop.datatype;
     }
+    return null;
   }
   getValue(prop) {
     if (this.mapResults) {
       if (! ((prop.$ref || (prop.items && prop.items.$ref)))) {
-      let parseRes = this.mapResults;
-      if (Array.isArray(this.mapResults)) {
-        parseRes = parseRes[0];
-
+        let parseRes = this.mapResults;
+        if (Array.isArray(this.mapResults)) {
+          parseRes = parseRes[0];
+        }
+        if (this.currEntity) {
+          const entity = this.currEntity.slice(this.currEntity.lastIndexOf('/') + 1);
+          parseRes = parseRes[entity];
+        }
+        return parseRes ? parseRes[prop.name] : null;
       }
-      if (this.currEntity) {
-        const entity = this.currEntity.slice(this.currEntity.lastIndexOf('/') + 1);
-        parseRes = parseRes[entity];
-      }
-      return parseRes ? parseRes[prop.name] : null;
     }
   }
-}
 
   getProps(propName) {
     return (this.mapProps && this.mapProps[propName] && this.mapProps[propName].properties) ?
@@ -115,8 +118,8 @@ checkFieldInErrors(field){
   }
 
   getResults(propName) {
-    return (this.mapResults && this.mapProps[propName]) ?
-      this.mapProps[propName] : null;
+    return (this.mapResults && this.mapResults[propName]) ?
+      this.mapResults[propName] : null;
   }
 
   isNested(prop) {
