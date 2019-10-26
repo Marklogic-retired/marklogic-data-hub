@@ -328,8 +328,7 @@ export class MappingUiComponent implements OnChanges {
     }
   }
 
-  onHandleSelection(event): void {
-    console.log('mapping-ui onHandleSelection', event);
+  onHandleInput(event): void {
     this.handleSelection(event.name, event.expr, true);
   }
 

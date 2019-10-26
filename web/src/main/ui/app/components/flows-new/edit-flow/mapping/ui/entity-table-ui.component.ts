@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges,
-  ViewChild, ViewChildren, QueryList, ViewEncapsulation } from '@angular/core';
+  ViewChild, ViewChildren, QueryList, ViewEncapsulation, ChangeDetectorRef } from '@angular/core';
 import { MatTable, MatTableDataSource} from "@angular/material";
 import { FormBuilder, FormGroup, Validators, FormArray, FormControl } from '@angular/forms';
 
@@ -14,6 +14,7 @@ export class EntityTableUiComponent implements OnChanges {
   @Input() entityName: any;
   @Input() entityProps: any;
   @Input() mapProps: any;
+  @Input() context: string;
   @Input() colsShown: Array<string>;
   @Input() showHeader: boolean; // Hide table header for nested
   @Input() nestedLevel: number; // For indenting
@@ -22,7 +23,7 @@ export class EntityTableUiComponent implements OnChanges {
   @Input() nmspace: object;
   @Input() currEntity:string;
   @Input() mapResp: any;
-  @Output() handleSelection = new EventEmitter();
+  @Output() handleInput = new EventEmitter();
 
   dataSource: MatTableDataSource<any>;
 
@@ -39,7 +40,9 @@ export class EntityTableUiComponent implements OnChanges {
 
   @ViewChildren('fieldName') fieldName:QueryList<any>;
 
-  constructor() {}
+  constructor(
+    private cd: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
   }
@@ -106,6 +109,23 @@ export class EntityTableUiComponent implements OnChanges {
   }
 
 
+  getContext(propName) {
+    let result = null;
+    if (this.mapExpressions && this.mapExpressions[propName]) {
+      result = '';
+      // Concat to current context from parent if present
+      if (this.context) {
+        result = this.context;
+        // Add trailing '/' if not already there
+        if (this.context[this.context.length-1] !== '/') {
+          result = result + '/';
+        }
+      }
+      result = result + this.mapExpressions[propName];
+    }
+    return result;
+  }
+
   isNested(prop) {
     const propRef = prop.$ref  || (prop.items && prop.items.$ref);
     return propRef && this.isInternalRef(propRef);
@@ -124,7 +144,7 @@ export class EntityTableUiComponent implements OnChanges {
     return propRef && !propRef.startsWith('#/definitions/');
   }
 
-  onHandleSelection(obj): void {
+  onHandleInput(obj): void {
     let propRef = obj.prop.$ref || (obj.prop.items && obj.prop.items.$ref) || null;
     if (this.mapData[obj.name] === undefined) {
       this.mapData[obj.name] = {};
@@ -135,11 +155,12 @@ export class EntityTableUiComponent implements OnChanges {
       if (propRef) {
         this.mapData[obj.name]['targetEntityType'] = propRef;
       }
+      this.cd.detectChanges(); // Required for context updates
     } else {
       this.mapData[obj.name]['properties'] = obj.expr;
     }
     let newObj = {name: this.entityName, expr: this.mapData, prop: obj.prop};
-    this.handleSelection.emit(newObj);
+    this.handleInput.emit(newObj);
   }
 
   toggleProp(name) {
@@ -172,7 +193,11 @@ export class EntityTableUiComponent implements OnChanges {
     //f.selectionStart = startPos;
     //f.selectionEnd = startPos+content.length;
     f.focus();
-    this.onHandleSelection({ name: prop.name, expr: f.value, prop: prop });
+    this.onHandleInput({ 
+      name: prop.name, 
+      expr: f.value, 
+      prop: prop
+    });
   }
 
   insertFunction(functionName, index, prop) {
@@ -182,6 +207,13 @@ export class EntityTableUiComponent implements OnChanges {
   insertField(fieldName, index, prop) {
     if(String(fieldName).includes(" ")){
       fieldName = "*[local-name(.)='" + fieldName + "']";
+    }
+    // Trim context from beginning of fieldName if needed
+    if (this.context) {
+      let len = this.context.length;
+      if (fieldName.substring(0, len+1) === this.context + '/') {
+        fieldName = fieldName.slice(len+1);
+      }
     }
     this.insertContent(fieldName, index, prop)
   }
