@@ -100,6 +100,7 @@
           [entityName]="this.entityName"
           [entityProps]="this.entityProps"
           [mapProps]="this.mapping.properties"
+          [context]=""
           [colsShown]="this.colsShown"
           [showHeader]="true"
           [nestedLevel]="0"
@@ -109,7 +110,7 @@
           [mapErrors]="this.mapErrors"
           [containErrors]="this.containErrors"
           [nmspace]="this.nmspace"
-          (handleSelection)="this.onHandleSelection($event)"
+          (handleInput)="this.onHandleInput($event)"
         ></app-entity-table-ui>
       </div>
     </div>
