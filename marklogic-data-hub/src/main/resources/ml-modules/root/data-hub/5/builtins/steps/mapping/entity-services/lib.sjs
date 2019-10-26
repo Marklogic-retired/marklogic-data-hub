@@ -27,11 +27,12 @@ function buildMappingXML(mappingJSON) {
   }
   // for each mapping build out the mapping XML
   const entityTemplates = [];
+  const parentEntity = getTargetEntity(fn.string(mappingJSON.root.targetEntityType));
   for (let mapping of relatedMappings) {
     if (dhMappingTraceIsEnabled) {
       xdmp.trace(dhMappingTrace, `Generating template for ${mapping.targetEntityType}`);
     }
-    let entity = getTargetEntity(mapping.targetEntityType);
+    let entity = (mapping.targetEntityType.startsWith("#/definitions/")) ? parentEntity : getTargetEntity(mapping.targetEntityType);
     let entityTemplate = buildEntityMappingXML(mapping, entity);
     if (dhMappingTraceIsEnabled) {
       xdmp.trace(dhMappingTrace, `Generated template: ${entityTemplate}`);
@@ -306,6 +307,8 @@ module.exports = {
   buildEntityMappingXML,
   getEntityName,
   getTargetEntity,
+  // Exporting retrieveFunctionImports for unit test
+  retrieveFunctionImports,
   versionIsCompatibleWithES,
   validateMapping
 };
