@@ -235,6 +235,11 @@ function validateMapping(mapping) {
 
     // If this is a nested property, validate its child properties first
     if (mappedProperty.hasOwnProperty("targetEntityType")) {
+      if (mappedProperty.targetEntityType.startsWith('#/definitions/')) {
+        const definitionName = mappedProperty.targetEntityType.substring(mappedProperty.targetEntityType.lastIndexOf('/') + 1);
+        const fullTargetEntity = mapping.targetEntityType.substring(0, mapping.targetEntityType.lastIndexOf('/') + 1) + definitionName;
+        mappedProperty.targetEntityType = fullTargetEntity;
+      }
       mappedProperty = validateMapping(mappedProperty);
     }
 
