@@ -18,7 +18,8 @@
 const esMappingLib = require("/data-hub/5/builtins/steps/mapping/entity-services/lib.sjs");
 
 function post(context, params, input) {
-  return esMappingLib.validateMapping(input.toObject());
+  let uri = params["uri"];
+  return esMappingLib.validateAndRunMapping(input.toObject(), uri);
 }
 
 exports.POST = post;

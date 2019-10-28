@@ -97,10 +97,10 @@ public class MappingManagerService {
         }
     }
 
-    public JsonNode validateMapping(String jsonMapping) {
+    public JsonNode validateMapping(String jsonMapping, String uri) {
         if (mappingValidator == null) {
             mappingValidator = new MappingValidator(hubConfig.newStagingClient());
         }
-        return mappingValidator.validateJsonMapping(jsonMapping);
+        return mappingValidator.validateJsonMapping(jsonMapping, uri);
     }
 }
