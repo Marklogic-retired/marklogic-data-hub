@@ -9,11 +9,12 @@ const NoMatchRedirect = ({history}) => {
     const {user} = useContext(AuthContext);
 
     const backToHomePage = () => {
-        console.log(user);
         if (user.authenticated) {
             history.push('/view');
         }
-        history.push('/');
+        else{
+            history.push('/');
+        }
     }
     return (
         <Result
