@@ -33,6 +33,7 @@ export class MappingUiComponent implements OnChanges {
   @Input() functionLst: object;
   @Input() entityName: string;
   @Input() entityNested: Entity;
+  @Input() xmlSource: boolean;
 
   @Input() entityProps: any;
   @Input() nmspace: object;

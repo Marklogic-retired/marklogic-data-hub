@@ -29,6 +29,7 @@ import { Flow } from "../../models/flow.model";
       [entityName]="this.entityName"
       [entityNested] = "entityNested"
       [nmspace] = "nmspace"
+      [xmlSource]="xmlSource"
       (updateURI)="this.updateURI($event)"
       (updateMap)="this.updateMap($event)"
     ></app-mapping-ui>
@@ -58,6 +59,7 @@ export class MappingComponent implements OnInit {
   public docUris: Array<any> = [];
   public sampleDocNestedProps:  Array<any> = [];
   public nestedDoc: Array<any> = [];
+  public xmlSource: boolean = false;
 
   // Connections
   public conns: object = {};
@@ -266,88 +268,135 @@ export class MappingComponent implements OnInit {
       const parsedXML = new DOMParser().parseFromString(input, 'application/xml');
       const object = {};
       self.nmspace = {};
-
-      var attrList = [];
+      self.xmlSource = true;
 
       const nodeToJSON = function (obj, node) {
         if (node.namespaceURI) {
           self.nmspace[node.nodeName] = node.namespaceURI;
         }
+
+        //loading attributes for parent node
         if (!node.childNodes) {
-          if (node.attributes) {
-
-            for (let i = 0; i < node.attributes.length; i++) {
-
-              if (node.attributes.item(i).name !== 'xmlns') {
-                obj["@" + node.attributes.item(i).name] = node.attributes.item(i).value;
-                attrList.push(node.nodeName + "/" + "@" + node.attributes.item(i).name + node.attributes.item(i).value);
-
-              }
-
-            }
-          }
+          self.loadAttributes(node, obj, 'parentNode');
         }
+        let countNodes = self.countChildNodes(node);
 
-
-        // Extracting the attributes from the source xml doc.
         node.childNodes.forEach((childNode) => {
+          if (countNodes && childNode.nodeName in countNodes && countNodes[childNode.nodeName] > 1) {
 
+            if (childNode.childNodes.length === 0 || (childNode.childNodes.length === 1 && childNode.firstChild.nodeType === Node.TEXT_NODE)) {
+              if (childNode.nodeName !== '#text') {
 
-          if (childNode.childNodes.length === 0 || (childNode.childNodes.length === 1 && childNode.firstChild.nodeType === Node.TEXT_NODE)) {
-            if (childNode.nodeName !== '#text') {
+                let tempObj = {};
+                tempObj["/" + childNode.nodeName] = childNode.textContent;
 
-
-              obj[childNode.nodeName] = childNode.textContent;
-
-              if (childNode.attributes) {
-
-                for (let i = 0; i < childNode.attributes.length; i++) {
-
-                  if (childNode.attributes.item(i).name !== 'xmlns') {
-                    if (!attrList.includes(childNode.nodeName + "/" + "@" + childNode.attributes.item(i).name + childNode.attributes.item(i).value)) {
-                      obj[childNode.nodeName + "/" + "@" + childNode.attributes.item(i).name] = childNode.attributes.item(i).value;
-                      attrList.push(childNode.nodeName + "/" + "@" + childNode.attributes.item(i).name + childNode.attributes.item(i).value);
-
-                    }
-
+                if (!obj[childNode.nodeName+"/"]) {
+                  if (childNode.nodeName !== '#text') {
+                    obj[childNode.nodeName+"/"] = [];
                   }
+                };
 
+                if (obj[childNode.nodeName+"/"].constructor.name === 'Array') {
+                  obj[childNode.nodeName+"/"].push(tempObj);
                 }
+
+                //loading attributes for parent node
+                self.loadAttributes(childNode, obj, 'multipleNodes');
+              }
+            } else {
+              let tempObj = {};
+
+              if (!obj[childNode.nodeName]) {
+                if (childNode.nodeName !== '#text') {
+                  obj[childNode.nodeName] = [];
+                }
+              };
+
+              //loading attributes
+              self.loadAttributes(childNode, obj, 'singleNode');
+
+              nodeToJSON(tempObj, childNode);
+              if (obj[childNode.nodeName].constructor.name === 'Array') {
+                obj[childNode.nodeName].push(tempObj);
               }
             }
           } else {
-            
-              obj[childNode.nodeName] = {};
-              if (childNode.attributes) {
 
-                for (let i = 0; i < childNode.attributes.length; i++) {
+            if (childNode.childNodes.length === 0 || (childNode.childNodes.length === 1 && childNode.firstChild.nodeType === Node.TEXT_NODE)) {
+              if (childNode.nodeName !== '#text') {
+                obj[childNode.nodeName] = childNode.textContent;
 
-                  if (childNode.attributes.item(i).name !== 'xmlns') {
-                    if (!attrList[childNode.nodeName + "/" + "@" + childNode.attributes.item(i).name] || attrList[childNode.nodeName + "/" + "@" + childNode.attributes.item(i).name] != childNode.attributes.item(i).value) {
-                      //console.log("node.attributes.item(i).name", childNode.nodeName, childNode.attributes.item(i).name, childNode.attributes.item(i).value)
-                      obj[childNode.nodeName + "/" + "@" + childNode.attributes.item(i).name] = childNode.attributes.item(i).value;
-                      attrList[childNode.nodeName + "/" + "@" + childNode.attributes.item(i).name] = childNode.attributes.item(i).value;
-
-                    }
-
-                  }
-
-                }
+                //loading attributes
+                self.loadAttributes(childNode, obj, 'singleNode');
               }
-          
+            }
+            else {
+              obj[childNode.nodeName] = {};
+              //loading attributes
+              self.loadAttributes(childNode, obj, 'singleNode');
+
               nodeToJSON(obj[childNode.nodeName], childNode);
-
-            
-
+            }
           }
         });
       };
       nodeToJSON(object, parsedXML);
-      console.log('object', object);
       return object;
 
     }
     return input;
+  }
+
+  countChildNodes(node): object {
+    let nodeCounter = {};
+    if (node.childNodes.length !== 0) {
+        
+      node.childNodes.forEach((childNode) => {
+        if(childNode.nodeName in nodeCounter){
+          nodeCounter[childNode.nodeName] = nodeCounter[childNode.nodeName] + 1;
+        } else {
+          nodeCounter[childNode.nodeName] = 1;
+        }
+      });
+  
+    }
+    return nodeCounter;
+  }
+
+  //load attributes for an xml node
+  loadAttributes(node, obj, type: string): void {
+    if (type === 'singleNode') {
+      //Nodes having single instance at any level
+      if (node.attributes) {
+        for (let i = 0; i < node.attributes.length; i++) {
+          if (node.attributes.item(i).name !== 'xmlns') {
+            obj[node.nodeName + "/" + "@" + node.attributes.item(i).name] = node.attributes.item(i).value;
+          }
+        }
+      }
+    } else if (type === 'multipleNodes') {
+      //Nodes having multiple instances at any level
+      if (node.attributes) {
+        for (let i = 0; i < node.attributes.length; i++) {
+          if (node.attributes.item(i).name !== 'xmlns') {
+            let tempObjAttr = {};
+            tempObjAttr["/" + node.nodeName + "/" + "@" + node.attributes.item(i).name] = node.attributes.item(i).value;
+            if (obj[node.nodeName+"/"].constructor.name === 'Array') {
+              obj[node.nodeName+"/"].push(tempObjAttr);
+            }
+          }
+        }
+      }
+    } else {
+      //parent Node
+      if (node.attributes) {
+        for (let i = 0; i < node.attributes.length; i++) {
+          if (node.attributes.item(i).name !== 'xmlns') {
+            obj["@" + node.attributes.item(i).name] = node.attributes.item(i).value;
+          }
+        }
+      }
+    }
   }
 
   saveMap(): void {
@@ -479,7 +528,7 @@ export class MappingComponent implements OnInit {
           self.nestedDoc.push(propty);
           self.updateNestedDataSourceNew(val, ParentKeyValuePair, parentKey);
         } else if (val.constructor.name === "Array") {
-          
+          if(key.lastIndexOf('/') !== key.length-1){
           if (ParentKeyValuePair.includes(key + JSON.stringify(val))) {
             parentKey = key;
           } else {
@@ -489,12 +538,14 @@ export class MappingComponent implements OnInit {
               parentKey = parentKey + "/" + key;
             }
           }
-          let propty = {
-            key: parentKey,
-            val: "",
-            type: self.getType(val)
-          };
-          self.nestedDoc.push(propty);
+            let propty = {
+              key: parentKey,
+              val: "",
+              type: self.getType(val)
+            };
+            self.nestedDoc.push(propty);
+          }
+          
           val.forEach(obj => {
             if(obj.constructor.name == "String"){
               let propty = {
@@ -519,7 +570,7 @@ export class MappingComponent implements OnInit {
             }
           }
           let propty = {
-            key: currKey,
+            key: currKey.replace(/\/\//g, '/'),
             val: String(val),
             type: self.getType(val)
           };
@@ -537,7 +588,7 @@ export class MappingComponent implements OnInit {
             }
           }
         let propty = {
-          key: currKey,
+          key: currKey.replace(/\/\//g, '/'),
           val: "",
           type: self.getType(val)
         };
