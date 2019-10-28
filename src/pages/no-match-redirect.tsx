@@ -6,15 +6,10 @@ import { AuthContext } from '../util/auth-context';
 
 const NoMatchRedirect = ({history}) => {
 
-    const {user} = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
 
     const backToHomePage = () => {
-        if (user.authenticated) {
-            history.push('/view');
-        }
-        else{
-            history.push('/');
-        }
+        return user.authenticated ? history.push('/view') : history.push('/');
     }
     return (
         <Result

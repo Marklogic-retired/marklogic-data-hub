@@ -64,11 +64,11 @@ const App: React.FC<Props> = ({history, location}) => {
       <Header/>
       <SearchProvider>
         <Switch>
-          <Route path="/" exact render={() => <Home/>}/>
+          <Route path="/" exact component={Home}/>
           <PrivateRoute path="/view" exact component={View} />
           <PrivateRoute path="/browse" exact component={Browse}/>
           <PrivateRoute path="/detail/:pk/:uri" component={Detail}/>
-          <Route render={() => <NoMatchRedirect/>} />
+          <Route component={NoMatchRedirect}/>
         </Switch>
         <Modal visible={visible} title={user.error.title} onCancel={() => destroyModal()} onOk={() => destroyModal()}>
           <p>{user.error.message}</p>
