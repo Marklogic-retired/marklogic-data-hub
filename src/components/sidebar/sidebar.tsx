@@ -11,7 +11,13 @@ import styles from './sidebar.module.scss';
 const { Panel } = Collapse;
 const { RangePicker } = DatePicker;
 
-const Sidebar = (props) => {
+interface Props {
+  facets: any;
+  selectedEntities: string[];
+  entityDefArray: any[];
+};
+
+const Sidebar:React.FC<Props> = (props) => {
   const { 
     searchOptions,
     setDateFacet,

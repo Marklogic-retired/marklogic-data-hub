@@ -5,7 +5,13 @@ import styles from './facet.module.scss';
 import { numberConverter } from '../../util/number-conversion';
 import { stringConverter } from '../../util/string-conversion';
 
-const Facet = (props) => {
+interface Props {
+  name: string;
+  constraint: string;
+  facetValues: any[];
+};
+
+const Facet: React.FC<Props> = (props) => {
   const SHOW_MINIMUM = 3;
   const { setSearchFacets, searchOptions } = useContext(SearchContext);
   const [showFacets, setShowFacets] = useState(SHOW_MINIMUM);
@@ -55,7 +61,7 @@ const Facet = (props) => {
     toggleMore(!more);
     setShowFacets(showNumber);
   }
-  const values = props.facetValues.slice(0, showFacets).map((facet, index) =>
+  const values = props.facetValues.length && props.facetValues.slice(0, showFacets).map((facet, index) =>
     <div className={styles.checkContainer} key={index} data-cy={stringConverter(props.name) + "-facet-item"}>
       <Checkbox 
         value={facet.value}

@@ -1,9 +1,16 @@
 import React, { useContext } from 'react';
 import { Alert, Spin } from 'antd';
 import { AuthContext } from '../../util/auth-context';
+import { SearchContext } from '../../util/search-context';
 
 const AsyncLoader: React.FC = () => {
   const { user, clearErrorMessage } = useContext(AuthContext);
+  const { resetSearchOptions } = useContext(SearchContext);
+
+  const onClose = () => {
+    clearErrorMessage();
+    resetSearchOptions();
+  }
 
   return (
     <>
@@ -14,7 +21,7 @@ const AsyncLoader: React.FC = () => {
         description={user.error.message} 
         type="error" 
         closable 
-        onClose={() => clearErrorMessage()}
+        onClose={onClose}
       /> 
       :
       <Spin tip="Loading..." style={{ margin: '100px auto', width: '100%'}} />

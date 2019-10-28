@@ -5,7 +5,7 @@ import styles from './search-pagination.module.scss';
 
 interface Props {
   total: number;
-  currentPage: number;
+  pageNumber: number;
   pageSize: number;
 };
 
@@ -31,7 +31,7 @@ const SearchPagination: React.FC<Props> = (props) => {
             showSizeChanger
             onChange={onPageChange}
             onShowSizeChange={onPageSizeChange}
-            current={props.currentPage}
+            current={props.pageNumber}
             pageSize={props.pageSize}
           />
       </div>  
