@@ -2,9 +2,11 @@ package com.marklogic.hub.cli.command;
 
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.Command;
+import com.marklogic.appdeployer.command.ResourceFilenameFilter;
 import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
 import com.marklogic.appdeployer.command.security.DeployAmpsCommand;
 import com.marklogic.appdeployer.command.security.DeployPrivilegesCommand;
+import com.marklogic.appdeployer.command.security.DeployRolesCommand;
 import com.marklogic.appdeployer.command.triggers.DeployTriggersCommand;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubTestBase;
@@ -18,6 +20,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -81,20 +84,30 @@ public class InstallIntoDhsCommandTest extends HubTestBase {
         command.dataHub = super.dataHub;
 
         List<Command> commands = command.buildCommandsForDhs();
-        assertEquals(11, commands.size());
+        assertEquals(12, commands.size());
         Collections.sort(commands, (c1, c2) -> c1.getExecuteSortOrder().compareTo(c2.getExecuteSortOrder()));
 
-        assertTrue(commands.get(0) instanceof DeployPrivilegesCommand);
-        assertTrue(commands.get(1) instanceof DeployOtherDatabasesCommand);
-        assertTrue(commands.get(2) instanceof DeployDatabaseFieldCommand);
-        assertTrue(commands.get(3) instanceof DhsDeployServersCommand);
-        assertTrue(commands.get(4) instanceof LoadHubModulesCommand);
-        assertTrue(commands.get(5) instanceof DeployAmpsCommand);
-        assertTrue(commands.get(6) instanceof LoadUserModulesCommand);
-        assertTrue(commands.get(7) instanceof CopyQueryOptionsCommand);
-        assertTrue(commands.get(8) instanceof DeployTriggersCommand);
-        assertTrue(commands.get(9) instanceof DeployHubTriggersCommand);
-        assertTrue(commands.get(10) instanceof LoadHubArtifactsCommand);
+        int index = 0;
+        assertTrue(commands.get(index++) instanceof DeployPrivilegesCommand);
+        assertTrue(commands.get(index++) instanceof DeployRolesCommand);
+        assertTrue(commands.get(index++) instanceof DeployOtherDatabasesCommand);
+        assertTrue(commands.get(index++) instanceof DeployDatabaseFieldCommand);
+        assertTrue(commands.get(index++) instanceof DhsDeployServersCommand);
+        assertTrue(commands.get(index++) instanceof LoadHubModulesCommand);
+        assertTrue(commands.get(index++) instanceof DeployAmpsCommand);
+        assertTrue(commands.get(index++) instanceof LoadUserModulesCommand);
+        assertTrue(commands.get(index++) instanceof CopyQueryOptionsCommand);
+        assertTrue(commands.get(index++) instanceof DeployTriggersCommand);
+        assertTrue(commands.get(index++) instanceof DeployHubTriggersCommand);
+        assertTrue(commands.get(index++) instanceof LoadHubArtifactsCommand);
+
+        DeployRolesCommand deployRolesCommand = (DeployRolesCommand) commands.get(1);
+        ResourceFilenameFilter filter = (ResourceFilenameFilter) deployRolesCommand.getResourceFilenameFilter();
+        File dir = new File(PROJECT_PATH); // the directory doesn't matter, only the filename
+        assertTrue(filter.accept(dir, "entity-model-reader.json"));
+        assertTrue(filter.accept(dir, "explorer-architect.json"));
+        assertFalse(filter.accept(dir, "flow-developer-role.json"),
+            "As of 5.1.0, the installer should only deploy entity-model-reader and explorer-architect");
     }
 
     private void verifyDefaultProperties(Properties props) {
