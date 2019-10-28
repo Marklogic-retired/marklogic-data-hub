@@ -5,6 +5,7 @@ import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
 import com.marklogic.appdeployer.command.security.DeployAmpsCommand;
 import com.marklogic.appdeployer.command.security.DeployPrivilegesCommand;
+import com.marklogic.appdeployer.command.security.DeployRolesCommand;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.cli.Options;
 import com.marklogic.hub.cli.deploy.CopyQueryOptionsCommand;
@@ -14,6 +15,7 @@ import com.marklogic.hub.deploy.commands.*;
 import org.springframework.context.ApplicationContext;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 @Parameters(commandDescription = "Install or upgrade DHF into a DHS environment")
 public class InstallIntoDhsCommand extends AbstractInstallerCommand {
@@ -71,6 +73,12 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
         }
 
         commands.add(new CopyQueryOptionsCommand(hubConfig));
+
+        DeployRolesCommand deployRolesCommand = new DeployRolesCommand();
+        deployRolesCommand.setResourceFilenamesIncludePattern(
+            Pattern.compile("(entity-model-reader|explorer-architect).*")
+        );
+        commands.add(deployRolesCommand);
 
         return commands;
     }
