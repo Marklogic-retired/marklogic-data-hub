@@ -5,6 +5,6 @@ export const dateConverter = (date:string) => {
 }
 
 export const relativeTimeConverter = (date:string) => {
-  return moment(date).startOf('hour').fromNow();
+  return moment(date).fromNow();
 }
 
