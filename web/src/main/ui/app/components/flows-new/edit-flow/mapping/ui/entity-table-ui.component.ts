@@ -20,10 +20,8 @@ export class EntityTableUiComponent implements OnChanges {
   @Input() srcProps: any;
   @Input() functionLst: object;
   @Input() nmspace: object;
-  @Input() mapResults: any;
   @Input() currEntity:string;
-  @Input() mapErrors: any;
-  @Input() containErrors: boolean;
+  @Input() mapResp: any;
   @Output() handleSelection = new EventEmitter();
 
   dataSource: MatTableDataSource<any>;
@@ -61,16 +59,21 @@ export class EntityTableUiComponent implements OnChanges {
     }
   }
 
-  displayErrorMessage(propName) { 
-    let field = this.mapErrors["properties"]
-    if (field[propName] && field[propName]["errorMessage"]) {
-      return field[propName]["errorMessage"];
+  displayResp(propName) {
+    if(this.mapResp && this.mapResp["properties"]){
+      let field = this.mapResp["properties"]
+      if (field[propName] && field[propName]["errorMessage"]) {
+        return field[propName]["errorMessage"];
+      }
+      else if (field[propName] && field[propName]["output"]) {
+        return field[propName]["output"];
+      }
     }
   }
 
-  checkFieldInErrors(field){
-    if(this.mapErrors && this.mapErrors['properties']){
-      if(this.mapErrors['properties'][field] && this.mapErrors['properties'][field]['errorMessage']) {
+  checkFieldInErrors(field) {
+    if (this.mapResp && this.mapResp['properties']){
+      if (this.mapResp['properties'][field] && this.mapResp['properties'][field]['errorMessage']) {
         return true;
       } else {
         return false;
@@ -96,31 +99,12 @@ export class EntityTableUiComponent implements OnChanges {
     }
     return null;
   }
-  getValue(prop) {
-    if (this.mapResults) {
-      if (! ((prop.$ref || (prop.items && prop.items.$ref)))) {
-        let parseRes = this.mapResults;
-        if (Array.isArray(this.mapResults)) {
-          parseRes = parseRes[0];
-        }
-        if (this.currEntity) {
-          const entity = this.currEntity.slice(this.currEntity.lastIndexOf('/') + 1);
-          parseRes = parseRes[entity];
-        }
-        return parseRes ? parseRes[prop.name] : null;
-      }
-    }
-  }
 
   getProps(propName) {
     return (this.mapProps && this.mapProps[propName] && this.mapProps[propName].properties) ?
       this.mapProps[propName].properties : null;
   }
 
-  getResults(propName) {
-    return (this.mapResults && this.mapResults[propName]) ?
-      this.mapResults[propName] : null;
-  }
 
   isNested(prop) {
     const propRef = prop.$ref  || (prop.items && prop.items.$ref);

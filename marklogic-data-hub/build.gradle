@@ -157,10 +157,6 @@ ext {
     dataServicesPath = "src/main/resources/ml-modules/root/data-hub/5/data-services"
 }
 
-task generateMappingInterface(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask, group: dataServicesGroup) {
-    serviceDeclarationFile = dataServicesPath + "/mapping/service.json"
-}
-
 task generateSourceDataInterface(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask, group: dataServicesGroup) {
     serviceDeclarationFile = dataServicesPath + "/mastering/service.json"
 }

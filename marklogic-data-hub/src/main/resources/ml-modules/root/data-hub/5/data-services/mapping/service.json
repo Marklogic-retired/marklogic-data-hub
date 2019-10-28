@@ -1,4 +1,0 @@
-{
-  "endpointDirectory": "/data-hub/5/data-services/mapping/",
-  "$javaClass": "com.marklogic.hub.dataservices.MappingService"
-}
