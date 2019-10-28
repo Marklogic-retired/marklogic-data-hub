@@ -24,9 +24,9 @@ const DetailHeader: React.FC<Props> = (props) => {
   if (fileType === 'JSON') {
     envelope = props.document.envelope;
     document = Object.keys(envelope.instance)[0];
-    title = envelope.instance.info.title;
-    timestamp = envelope.headers.createdOn;
-    sources = envelope.headers.sources[0].name;
+    title = envelope.instance.info.hasOwnProperty('title') && envelope.instance.info.title;
+    timestamp = envelope.headers.hasOwnProperty('createdOn') && envelope.headers.createdOn;
+    sources = envelope.headers.hasOwnProperty('sources') && envelope.headers.sources[0].name;
     if (props.primaryKey) {
       Object.keys(props.document.envelope.instance).forEach(instance => {
         if (instance !== 'info') {
@@ -44,10 +44,22 @@ const DetailHeader: React.FC<Props> = (props) => {
   } else if (fileType === 'XML') {
     envelope = props.document.content.envelope;
     document = Object.keys(envelope.instance)[1];
-    title = envelope.instance.info.title;
-    id = envelope.instance[document].id
-    timestamp = props.document.metaData.entry.find(x => x.key === 'datahubCreatedOn').value;
-    sources = props.document.metaData.entry.find(x => x.key === 'datahubCreatedInFlow').value;
+    title = envelope.instance.info.hasOwnProperty('title') && envelope.instance.info.title;
+    if (props.primaryKey) {
+      Object.keys(props.document.content.envelope.instance).forEach(instance => {
+        if (instance !== 'info') {
+          Object.keys(props.document.content.envelope.instance[instance]).forEach(function (key) {
+            if (props.primaryKey == props.document.content.envelope.instance[instance][key]) {
+              primaryKey = key;
+              id = props.document.content.envelope.instance[instance][key];
+            }
+          });
+        }
+      });
+    } else {
+      id = props.uri;
+    }
+
     //TODO add primaryKey or Uri functionality
   }
 
