@@ -43,20 +43,20 @@ export const AuthContext = React.createContext<IAuthContextInterface>({
 const AuthProvider: React.FC<{ children: any }> = ({children}) => {
   
   const [user, setUser] = useState(defaultUserData);
-  const sessionUser = sessionStorage.getItem('dataHubExplorerUser');
+  const sessionUser = localStorage.getItem('dataHubExplorerUser');
 
   const loginAuthenticated = (username: string) => {
-    sessionStorage.setItem('dataHubExplorerUser', username);
+    localStorage.setItem('dataHubExplorerUser', username);
     setUser({ ...user,name: username, authenticated: true, redirect: true });
   };
 
   const sessionAuthenticated = (username: string) => {
-    sessionStorage.setItem('dataHubExplorerUser', username);
+    localStorage.setItem('dataHubExplorerUser', username);
     setUser({ ...user,name: username, authenticated: true, redirect: false });
   };
 
   const userNotAuthenticated = () => {
-    sessionStorage.setItem('dataHubExplorerUser', '');
+    localStorage.setItem('dataHubExplorerUser', '');
     setUser({ ...user,name: '', authenticated: false });
   };
 
@@ -65,7 +65,7 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
   
     switch (error.response.status) {
       case 401:
-        sessionStorage.setItem('dataHubExplorerUser', '');
+        localStorage.setItem('dataHubExplorerUser', '');
         setUser({ ...user, name: '', authenticated: false, redirect: true });
         break;
       case 400:
