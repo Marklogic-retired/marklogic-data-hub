@@ -236,7 +236,7 @@ export class MappingComponent implements OnInit {
         
       });
       self.sampleDocNestedProps = this.updateNestedDataSourceNew(startRoot,ParentKeyValuePair);
-      //console.log("self.sampleDocNestedProps",self.sampleDocNestedProps)
+
       if (save) {
         this.saveMap();
         console.log('map saved');
@@ -300,9 +300,9 @@ export class MappingComponent implements OnInit {
             } else {
               let tempObj = {};
 
-              if (!obj[childNode.nodeName]) {
+              if (!obj[childNode.nodeName+"/"]) {
                 if (childNode.nodeName !== '#text') {
-                  obj[childNode.nodeName] = [];
+                  obj[childNode.nodeName+"/"] = [];
                 }
               };
 
@@ -310,8 +310,10 @@ export class MappingComponent implements OnInit {
               self.loadAttributes(childNode, obj, 'singleNode');
 
               nodeToJSON(tempObj, childNode);
-              if (obj[childNode.nodeName].constructor.name === 'Array') {
-                obj[childNode.nodeName].push(tempObj);
+              let ob = {[`${childNode.nodeName}`] : tempObj}
+              if (obj[childNode.nodeName+"/"].constructor.name === 'Array') {
+                
+                obj[childNode.nodeName+"/"].push(ob);
               }
             }
           } else {
