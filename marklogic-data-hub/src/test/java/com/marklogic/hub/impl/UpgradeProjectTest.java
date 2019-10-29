@@ -86,10 +86,6 @@ public class UpgradeProjectTest extends HubTestBase {
         assertFalse(mlConfigBackupDir.exists(), "As of DHFPROD-3159, ml-config should no longer be backed up. DHF rarely needs to " +
             "change the files in this directory, and when it does need to, it'll make changes directly to the files so as to not " +
             "lose changes made by users.");
-
-        File finalDbQueryOptionsFile = hubProject.getEntityConfigDir().resolve("exp-final-entity-options.xml").toFile();
-        assertTrue(finalDbQueryOptionsFile.exists(), "As of DHFPROD-3465, the hubUpdate task should generate the " +
-            "query options file for explorer.");
     }
 
     @Test
