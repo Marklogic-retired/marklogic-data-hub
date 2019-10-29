@@ -258,6 +258,7 @@ export class MappingComponent implements OnInit {
 
   normalizeToJSON(input: any): any {
     let self = this;
+    self.xmlSource = false;
     if (typeof input === 'string') {
       const parsedXML = new DOMParser().parseFromString(input, 'application/xml');
       const object = {};
