@@ -119,26 +119,20 @@ export class MappingComponent implements OnInit {
         this.step.options.collections = [`${this.step.name}`, 'mdm-content', this.entityName];
       }
       this.loadEntity();
-      this.loadMap();
-      this.getFunctionList();
     }
   }
 
-  loadEntityDataSource() {
-      this.targetEntity
-  }
-
   loadEntity(): void {
-    this.entitiesService.entitiesChange.subscribe(entities => {
-      this.targetEntity = _.find(entities, (e: Entity) => {
-        return e.name === this.entityName;
-      });
-    });
-    this.entitiesService.getEntities();
-    // Get entity in full nested form
-    this.entitiesService.getEntityNested(this.entityName)
+    this.entitiesService.getEntity(this.entityName)
       .subscribe(result => {
-        this.entityNested = result;
+        this.targetEntity = result;
+        // Get entity in full nested form
+        this.entitiesService.getEntityNested(this.entityName)
+          .subscribe(result => {
+            this.entityNested = result;
+            this.loadMap();
+            this.getFunctionList();
+          });
       });
   }
 
@@ -454,7 +448,6 @@ export class MappingComponent implements OnInit {
         this.sourceDbType = 'FINAL';
       }
       this.loadEntity();
-      this.loadMap();
     }
   }
 

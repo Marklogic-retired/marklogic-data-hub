@@ -60,6 +60,16 @@ export class EntitiesService {
     }));
   }
 
+  getEntity(entityName: string) {
+    return this.http
+      .get(this.url(`/entities/${entityName}`))
+      .pipe(map((res: Response) => { 
+        let result = new Entity().fromJSON(res.json());
+        return result; 
+      }
+    ));
+  }
+
   getEntityNested(entityName: string) {
     return this.http
       .get(this.url(`/entities/${entityName}?extendSubEntities=true`))
@@ -68,10 +78,6 @@ export class EntitiesService {
       }
     ));
   }
-
-  // getEntity(entityName: string) {
-  //   return this.get(this.url(`/entities/${entityName}`));
-  // }
 
   createEntity(entity: Entity) {
     return this.http.post(this.url('/entities/create'), entity).pipe(map((res: Response) => {
