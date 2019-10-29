@@ -18,7 +18,8 @@ const TableView: React.FC<Props> = (props) => {
       if (obj[i] !== null && typeof (obj[i]) === "object") {
         parsedData.push({ key: counter++, property: i, children: parseJson(obj[i]) });
       } else {
-        parsedData.push({ key: counter++, property: i, value: obj[i] });
+        parsedData.push({ key: counter++, property: i, value: obj[i].toString() });
+        console.log(obj[i].toString())
       }
     }
     return parsedData;
