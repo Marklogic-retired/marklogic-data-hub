@@ -119,11 +119,11 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         return deployQueryOptions(hubConfig.newStagingClient(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE);
     }
 
-    public boolean deployExpFinalQueryOptions() {
+    private boolean deployExpFinalQueryOptions() {
         return deployQueryOptions(hubConfig.newFinalClient(), HubConfig.EXP_FINAL_ENTITY_QUERY_OPTIONS_FILE);
     }
 
-    public boolean deployExpStagingQueryOptions() {
+    private boolean deployExpStagingQueryOptions() {
         return deployQueryOptions(hubConfig.newStagingClient(), HubConfig.EXP_STAGING_ENTITY_QUERY_OPTIONS_FILE);
     }
 
@@ -194,8 +194,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
 
     private HubModuleManager getPropsMgr() {
         String timestampFile = hubProject.getUserModulesDeployTimestampFile();
-        HubModuleManager propertiesModuleManager = new HubModuleManager(timestampFile);
-        return propertiesModuleManager;
+        return new HubModuleManager(timestampFile);
     }
 
     private List<JsonNode> getAllEntities() {
@@ -320,7 +319,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
     }
 
     public HubEntity getEntityFromProject(String entityName) {
-        return getEntityFromProject(entityName, (String)null, Boolean.FALSE);
+        return getEntityFromProject(entityName, null, Boolean.FALSE);
     }
 
     public HubEntity getEntityFromProject(String entityName, String version) {
@@ -329,7 +328,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
 
     @Override
     public HubEntity getEntityFromProject(String entityName, Boolean extendSubEntities) {
-        return getEntityFromProject(entityName, (String)null, extendSubEntities);
+        return getEntityFromProject(entityName, null, extendSubEntities);
     }
 
     @Override
@@ -429,6 +428,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
             fullpath = Paths.get(dir.toString(), title + ENTITY_FILE_EXTENSION).toString();
         }
 
+        removeCollationFromEntityReferenceProperties(node);
 
         String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(node);
         FileUtils.writeStringToFile(new File(fullpath), json);
@@ -436,7 +436,33 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         return entity;
     }
 
-    public void deleteEntity(String entity) throws IOException {
+    /**
+     * Per DHFPROD-3472, when a property in QS is changed to an entity reference, a collation is still defined for it.
+     * This method removes the collation for any property that is an entity reference.
+     *
+     * @param node
+     */
+    protected void removeCollationFromEntityReferenceProperties(JsonNode node) {
+        if (node != null && node.has("definitions")) {
+            JsonNode definitions = node.get("definitions");
+            Iterator<String> fieldNames = definitions.fieldNames();
+            while (fieldNames.hasNext()) {
+                JsonNode entity = definitions.get(fieldNames.next());
+                if (entity.has("properties")) {
+                    JsonNode properties = entity.get("properties");
+                    Iterator<String> propertyNames = properties.fieldNames();
+                    while (propertyNames.hasNext()) {
+                        JsonNode property = properties.get(propertyNames.next());
+                        if (property.has("$ref") && property.has("collation")) {
+                            ((ObjectNode) property).remove("collation");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void deleteEntity(String entity) {
         Path entityPath = hubConfig.getHubEntitiesDir().resolve(entity + ENTITY_FILE_EXTENSION);
         if (entityPath.toFile().exists()) {
             entityPath.toFile().delete();

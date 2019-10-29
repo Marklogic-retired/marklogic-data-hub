@@ -75,7 +75,7 @@
       </div>
       <div id="table-and-buttons">
       <span class="btn-icons">
-        <button id="Test-btn" mat-raised-button color="primary" (click)="getMapValidationErrors()">
+        <button id="Test-btn" mat-raised-button color="primary" (click)="getMapValidationResp()">
           Test
         </button>
         <button id="Clear-btn" mat-raised-button color="primary" (click)="onClear()">
@@ -106,9 +106,7 @@
           [nestedLevel]="0"
           [srcProps]="this.sampleDocNestedProps"
           [functionLst]="this.functionLst"
-          [mapResults]="this.mapResults"
-          [mapErrors]="this.mapErrors"
-          [containErrors]="this.containErrors"
+          [mapResp]="this.mapResp"
           [nmspace]="this.nmspace"
           (handleInput)="this.onHandleInput($event)"
         ></app-entity-table-ui>

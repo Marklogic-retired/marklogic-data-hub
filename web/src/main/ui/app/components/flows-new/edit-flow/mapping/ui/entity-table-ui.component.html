@@ -47,7 +47,7 @@
     </mat-header-cell>
     <mat-cell *matCellDef="let prop; let i = dataIndex">
       <div class="textField">
-          <span id="textFieldValidation" [ngStyle]="{'background-color': (containErrors && checkFieldInErrors(prop.name)? '#FAD3D3' : '')}">
+          <span id="textFieldValidation" [ngStyle]="{'background-color': checkFieldInErrors(prop.name)? '#FAD3D3' : ''}">
         <textarea
           matInput
           id="edit-expression"
@@ -62,8 +62,8 @@
           })" type="text"
           class="map-expr"
         ></textarea>
-        <mat-icon id="field-with-error" *ngIf="containErrors && checkFieldInErrors(prop.name)"><i class="fa fa-times-circle fa-xs" ></i></mat-icon></span>
-        <mat-hint id="error-description" *ngIf="containErrors && checkFieldInErrors(prop.name)">{{displayErrorMessage(prop.name)}}</mat-hint>
+        <mat-icon id="field-with-error" *ngIf=" checkFieldInErrors(prop.name)"><i class="fa fa-times-circle fa-xs" ></i></mat-icon></span>
+        <mat-hint id="error-description" *ngIf=" checkFieldInErrors(prop.name)">{{displayResp(prop.name)}}</mat-hint>
       </div>
       <mat-icon
         id="fields-list"
@@ -87,8 +87,8 @@
     <mat-header-cell *matHeaderCellDef mat-sort-header>
       Value
     </mat-header-cell>
-    <mat-cell *matCellDef="let prop">
-      {{this.getValue(prop)}}
+    <mat-cell  *matCellDef="let prop"  >
+      <div *ngIf="!checkFieldInErrors(prop.name)">{{displayResp(prop.name)}}</div>
     </mat-cell>
   </ng-container>
 
@@ -110,10 +110,8 @@
           [nestedLevel] = "this.nestedLevel + 1"
           [srcProps]= "this.srcProps"
           [functionLst]= "this.functionLst"
-          [mapResults]= "this.getResults(prop.name)"
           [currEntity] = "prop.$ref || prop.items.$ref"
-          [containErrors]="containErrors"
-          [mapErrors]="this.mapErrors['properties'] ? this.mapErrors['properties'][prop.name] : {}"
+          [mapResp]="this.mapResp['properties'] ? this.mapResp['properties'][prop.name] : {}"
           [nmspace]="this.nmspace"
           (handleInput)="this.onHandleInput($event)"
         ></app-entity-table-ui>

@@ -17,7 +17,6 @@
 package com.marklogic.hub.web.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.marklogic.hub.dataservices.MappingService;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.mapping.Mapping;
 import com.marklogic.hub.mapping.MappingFunctions;
@@ -82,8 +81,8 @@ public class MappingController {
 
     @RequestMapping(value = "/mappings/{mapName}/validation", method = RequestMethod.POST)
     @ResponseBody
-    public JsonNode validateMapping(@PathVariable String mapName, @RequestBody JsonNode mapping) throws IOException {
-        return mappingManagerService.validateMapping(mapping.toString());
+    public JsonNode validateMapping(@PathVariable String mapName, @RequestBody JsonNode mapping, @RequestParam(value = "uri", required = true) String uri) throws IOException {
+        return mappingManagerService.validateMapping(mapping.toString(), uri);
     }
 
     @RequestMapping(value = "/mappings/{mapName}", method = RequestMethod.DELETE)
@@ -99,11 +98,5 @@ public class MappingController {
     public JsonNode getMappingFunctions() {
         MappingFunctions mappingFunctions = new MappingFunctions(hubConfig.newStagingClient());
         return mappingFunctions.getMappingFunctions();
-    }
-
-    @RequestMapping(value = "/mappings/{mappingName}/test", method = RequestMethod.GET)
-    @ResponseBody
-    public JsonNode testMapping(@PathVariable String mappingName, @RequestParam  String mappingVersion, @RequestParam  String docURI) {
-        return MappingService.on(hubConfig.newStagingClient(null)).testMapping(docURI, mappingName, mappingVersion);
     }
 }
