@@ -55,7 +55,7 @@
           #autosize="cdkTextareaAutosize"
           #fieldName
           [(ngModel)]="mapExpressions[prop.name]"
-          (change)="onHandleSelection({
+          (change)="onHandleInput({
             name: prop.name,
             expr: mapExpressions[prop.name],
             prop: prop
@@ -104,6 +104,7 @@
           [entityName] = "prop.name"
           [entityProps] = "prop.subProperties"
           [mapProps] = "this.getProps(prop.name)"
+          [context] = "this.getContext(prop.name)"
           [colsShown]="this.colsShown"
           [showHeader] = "false"
           [nestedLevel] = "this.nestedLevel + 1"
@@ -112,7 +113,7 @@
           [currEntity] = "prop.$ref || prop.items.$ref"
           [mapResp]="this.mapResp['properties'] ? this.mapResp['properties'][prop.name] : {}"
           [nmspace]="this.nmspace"
-          (handleSelection)="this.onHandleSelection($event)"
+          (handleInput)="this.onHandleInput($event)"
         ></app-entity-table-ui>
 
       </div>
