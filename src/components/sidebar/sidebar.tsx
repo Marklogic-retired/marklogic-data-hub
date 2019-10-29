@@ -87,7 +87,7 @@ const Sidebar:React.FC<Props> = (props) => {
         { props.selectedEntities.length === 1 && (
           <Panel id="entity-properties" header={<div className={styles.title}>Entity Properties</div>} key="entityProperties" style={{borderBottom: 'none'}}>
             { entityFacets.length ? entityFacets.map(facet => {
-              return facet && (
+              return Object.entries(facet).length !== 0 && (
                 <Facet
                   name={facet.hasOwnProperty('displayName') ? facet.displayName : facet.facetName}
                   constraint={facet.facetName}
