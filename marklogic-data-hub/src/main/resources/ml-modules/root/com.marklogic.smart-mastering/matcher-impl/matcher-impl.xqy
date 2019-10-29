@@ -291,6 +291,17 @@ declare function match-impl:find-document-matches-by-options(
         )
       else
         $match-base-query
+    let $match-query :=
+      match-impl:instance-query-wrapper(
+        if (fn:not($filter-query instance of cts:true-query)) then
+          cts:and-query((
+            $filter-query,
+            $match-query
+          ))
+        else
+          $match-query,
+        $is-json
+      )
     let $serialized-match-query :=
       element match-query {
         $match-query
@@ -308,7 +319,6 @@ declare function match-impl:find-document-matches-by-options(
               match-impl:search(
                 $match-query,
                 $boost-query,
-                $filter-query,
                 $minimum-threshold,
                 $start,
                 $page-length,
@@ -454,7 +464,6 @@ declare function match-impl:values-by-qname(
 declare function match-impl:search(
   $match-query,
   $boosting-query,
-  $filter-query as cts:query,
   $min-threshold as xs:double,
   $start as xs:int,
   $page-length as xs:int,
@@ -464,17 +473,6 @@ declare function match-impl:search(
   $query-prov as map:map?
 ) {
   let $range := $start to ($start + $page-length - 1)
-  let $query :=
-    match-impl:instance-query-wrapper(
-      if (fn:not($filter-query instance of cts:true-query)) then
-        cts:and-query((
-          $filter-query,
-          $match-query
-        ))
-      else
-        $match-query,
-      $is-json
-    )
   let $cts-walk-query :=
     if ($include-matches) then
       match-impl:instance-query-wrapper(
@@ -483,14 +481,15 @@ declare function match-impl:search(
       )
     else ()
   let $thresholds := $compiled-options => map:get("orderedThresholds")
+  let $individual-matching-queries := cts:or-query-queries($boosting-query)
   for $result at $pos in cts:search(
     fn:collection(),
-    $query,
+    $match-query,
     ("unfiltered", "score-simple"),
     0
   )[fn:position() = $range]
   let $uri := xdmp:node-uri($result)
-  let $matching-queries := cts:or-query-queries($boosting-query)[cts:contains($result, .)]
+  let $matching-queries := $individual-matching-queries[cts:contains($result, .)]
   let $matching-weights-map := map:entry("values", ())
   let $_accumulate-scores :=
     cts:element-walk(document{$matching-queries}, $QUERIES_WITH_WEIGHT,
