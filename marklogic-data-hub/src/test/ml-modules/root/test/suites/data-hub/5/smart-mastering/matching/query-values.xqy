@@ -8,13 +8,17 @@ import module namespace test = "http://marklogic.com/test" at "/test/test-helper
 declare variable $DOCUMENT := document{
   xdmp:unquote(
     '{
-      "Object": {
-        "intProperty": 12,
-        "strProperty": "Hello",
-        "boolProperty": true,
-        "dateProperty": "1987-03-17",
-        "dateTimeProperty": "1956-12-09T03:55:14",
-        "decimalProperty": 123.456
+    "envelope": {
+      "instance":{
+          "Object": {
+            "intProperty": 12,
+            "strProperty": "Hello",
+            "boolProperty": true,
+            "dateProperty": "1987-03-17",
+            "dateTimeProperty": "1956-12-09T03:55:14",
+            "decimalProperty": 123.456
+          }
+        }
       }
     }'
   )
@@ -93,10 +97,10 @@ declare variable $EXPECTED-VALUES := map:new((
 
 test:assert-true(
   fn:deep-equal(
-    <x>{match-impl:values-by-qname(
+    xdmp:to-json(match-impl:values-by-qname(
       $DOCUMENT,
       $COMPILED-OPTIONS
-    )}</x>,
-    <x>{$EXPECTED-VALUES}</x>
+    )),
+    xdmp:to-json($EXPECTED-VALUES)
   )
 )
