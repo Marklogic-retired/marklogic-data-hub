@@ -15,12 +15,10 @@ import './App.scss';
 interface Props extends RouteComponentProps<any> {}
 
 const App: React.FC<Props> = ({history, location}) => {
-
-  const { user, clearErrorMessage } = useContext(AuthContext);
- // const { resetSearchOptions } = useContext(SearchContext);
-
   document.title = 'Explorer';
+  const { user, clearErrorMessage, clearRedirect } = useContext(AuthContext);
   const [asyncError, setAsyncError] = useState(false);
+
   const PrivateRoute = ({ component: Component, ...rest }) => (
     <Route {...rest} render={ props => (
       user.authenticated === true ? (
@@ -35,8 +33,12 @@ const App: React.FC<Props> = ({history, location}) => {
   )
 
   useEffect(() => {
-    if (user.authenticated && location.pathname === '/'){
+    if (user.authenticated && user.redirect ){
+      clearRedirect();
       history.push('/view');
+    }
+    if (user.authenticated && location.state && !user.redirect) {
+      history.push(location.state.from.pathname)
     }
     if (user.error.type === 'MODAL') {
       setAsyncError(true);

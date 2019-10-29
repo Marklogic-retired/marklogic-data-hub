@@ -59,12 +59,10 @@ const DetailHeader: React.FC<Props> = (props) => {
     } else {
       id = props.uri;
     }
-
-    //TODO add primaryKey or Uri functionality
   }
 
   return (
-    <div id='header'>
+    <div id='header' className={styles.container}>
       <div id='title' className={styles.title}>
         <Text data-cy="document-title">{title} </Text>
         <Icon style={{ fontSize: '12px' }} type="right" />
@@ -81,12 +79,15 @@ const DetailHeader: React.FC<Props> = (props) => {
           )}
       </div>
       <div id='summary' className={styles.summary}>
-        <Text type="secondary">Created: </Text>
-        <Text data-cy="document-timestamp">{dateConverter(timestamp)}</Text>
-        <Text type="secondary">&nbsp; &nbsp; Sources: </Text>
-        <Text data-cy="document-source">{sources}</Text>
-        <Text type="secondary">&nbsp; &nbsp; File Type: </Text>
-        <Text data-cy="document-filetype">{fileType}</Text>
+        { timestamp &&
+          <Text data-cy="document-timestamp"><Text type="secondary">Created: </Text>{dateConverter(timestamp)}</Text>
+        }
+        { sources && 
+          <Text data-cy="document-source"><Text type="secondary">Sources: </Text>{sources}</Text>
+        }
+        { fileType &&
+          <Text data-cy="document-filetype"><Text type="secondary">File Type: </Text>{fileType}</Text>
+        }
       </div>
     </div>
   )
