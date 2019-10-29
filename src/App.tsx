@@ -2,7 +2,7 @@ import React, { useContext, useEffect,useState } from 'react';
 import { Switch } from 'react-router';
 import { Route, Redirect, RouteComponentProps, withRouter } from 'react-router-dom';
 import { AuthContext } from './util/auth-context';
-import { SearchContext } from './util/search-context';
+import SearchProvider from './util/search-context';
 import Header from './components/header/header';
 import Home from './pages/Home';
 import View from './pages/View';
@@ -17,7 +17,7 @@ interface Props extends RouteComponentProps<any> {}
 const App: React.FC<Props> = ({history, location}) => {
 
   const { user, clearErrorMessage } = useContext(AuthContext);
-  const { resetSearchOptions } = useContext(SearchContext);
+ // const { resetSearchOptions } = useContext(SearchContext);
 
   document.title = 'Explorer';
   const [asyncError, setAsyncError] = useState(false);
@@ -38,10 +38,6 @@ const App: React.FC<Props> = ({history, location}) => {
     if (user.authenticated && location.pathname === '/'){
       history.push('/view');
     }
-    if (!user.authenticated) {
-      resetSearchOptions();
-    }
-
     if (user.error.type === 'MODAL') {
       setAsyncError(true);
     } else {
@@ -57,6 +53,7 @@ const App: React.FC<Props> = ({history, location}) => {
   return (
     <>
       <Header/>
+      <SearchProvider>
       { !asyncError && (
         <Switch>
           <Route path="/" exact component={Home}/>
@@ -66,6 +63,7 @@ const App: React.FC<Props> = ({history, location}) => {
           <Route component={NoMatchRedirect}/>
         </Switch> 
       )}
+      </SearchProvider>
       <Modal visible={asyncError} title={user.error.title} onCancel={() => destroyModal()} onOk={() => destroyModal()}>
         <p>{user.error.message}</p>
       </Modal>

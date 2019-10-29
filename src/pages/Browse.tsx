@@ -86,7 +86,7 @@ const Browse: React.FC<Props> = ({ location }) => {
     return () => {
       componentIsMounted.current = false
     }
-
+    
   }, []);
 
   useEffect(() => {
