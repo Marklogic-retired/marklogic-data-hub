@@ -109,6 +109,29 @@ const EntityTable: React.FC<Props> = (props) => {
     }
   ];
 
+  const archColumns =  [
+    {
+      title: 'Entity Name',
+      dataIndex: 'name',
+      width: 200,
+      render: text => { return (
+          <Link to={{
+            pathname: "/browse",
+            state: { entity: text} }}
+                data-cy={text}>
+            {text}
+          </Link>
+      )},
+      sorter: (a, b) => { return a.name.localeCompare(b.name) }
+    },
+    {
+      title: 'Documents',
+      dataIndex: 'documents',
+      width: 200 ,
+      sorter: (a, b) => { return a.documents - b.documents }
+    }
+  ];
+
 
   const realData = props.entities.map((entity, index) => {
     const entityDefinition = entity.definitions.find(definition => definition.name === entity.info.title);
@@ -140,17 +163,30 @@ const EntityTable: React.FC<Props> = (props) => {
     }
     return parsedEntity
   });
-
-  return (
-    <Table
-      rowKey="name"
-      className="entity-table"
-      columns={columns}
-      expandedRowRender={expandedRowRender}
-      dataSource={realData}
-      pagination={{ defaultPageSize: 20, size: 'small' }}
-    />
-  );
+  if (props.lastHarmonized.length > 0) {
+    return (
+        <Table
+            rowKey="name"
+            className="entity-table"
+            columns={columns}
+            expandedRowRender={expandedRowRender}
+            dataSource={realData}
+            pagination={{defaultPageSize: 20, size: 'small'}}
+        />
+    );
+  }
+  else {
+    return (
+        <Table
+            rowKey="name"
+            className="entity-table"
+            columns={archColumns}
+            expandedRowRender={expandedRowRender}
+            dataSource={realData}
+            pagination={{defaultPageSize: 20, size: 'small'}}
+        />
+    );
+  }
 }
 
 export default EntityTable;
