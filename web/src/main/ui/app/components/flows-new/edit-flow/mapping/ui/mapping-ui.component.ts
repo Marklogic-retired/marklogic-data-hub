@@ -188,25 +188,14 @@ export class MappingUiComponent implements OnChanges {
     }
   }
   onUpdateURINewUI(){
-    if (Object.keys(this.conns).length > 0) {
-      this.editingURI = false;
-      this.updateURI.emit({
-        uri: this.editURIVal,
-        uriOrig: this.mapping.sourceURI,
-        conns: this.conns,
-        connsOrig: this.connsOrig,
-        save: true
-      });
-    } else {
-      this.editingURI = false;
-      this.updateURI.emit({
-        uri: this.editURIVal,
-        uriOrig: this.mapping.sourceURI,
-        conns: this.conns,
-        connsOrig: {},
-        save: true
-      });
-    }
+    this.editingURI = false;
+    this.updateURI.emit({
+      uri: this.editURIVal,
+      uriOrig: this.mapping.sourceURI,
+      conns: this.conns,
+      connsOrig: this.connsOrig,
+      save: true
+    });
     console.log(this.editURIVal);
     if(this.isTestClicked) {
       this.getMapValidationResp(this.editURIVal);
@@ -260,7 +249,12 @@ export class MappingUiComponent implements OnChanges {
    */
   keyPressURI(event) {
     if (event.key === 'Enter') {
-      this.onUpdateURI();
+      if(this.isVersionCompatibleWithES) {
+        this.onUpdateURINewUI();
+      }
+      else {
+        this.onUpdateURI();
+      }
     }
   }
 

@@ -150,18 +150,30 @@ export class MappingComponent implements OnInit {
         this.sampleDocURI = map.sourceURI;
         this.editURIVal = this.sampleDocURI;
       }
-      this.loadSampleDoc()
+      this.loadSampleDoc();
       if (map && map.properties) {
+        this.isNestedMap();
+        console.log("isNested: " + this.connsNested);
         self.conns = {};
-        _.forEach(map.properties, function(srcObj, entityPropName) {
-          self.conns[entityPropName] = srcObj.sourcedFrom;
-        });
+        if(!self.connsNested ) {
+          _.forEach(map.properties, function(srcObj, entityPropName) {
+            self.conns[entityPropName] = srcObj.sourcedFrom;
+          });
+        }
+        else {
+          self.conns = map.properties;
+        }
         self.connsOrig = _.clone(self.conns);
       }
     },
     () => {},
     () => {});
   }
+
+  isNestedMap() {
+    this.connsNested = Object.keys(this.mapping.properties).findIndex(key => this.mapping.properties[key].hasOwnProperty("targetEntityType")) > -1 ;
+  }
+
 
   loadSampleDoc() {
     let self = this;
@@ -461,7 +473,6 @@ export class MappingComponent implements OnInit {
   // Parent component can trigger mapping reset if source changes
   sourceChanged(): void {
     this.sampleDocURI = '';
-    this.conns = {};
     this.saveMap();
   }
 
