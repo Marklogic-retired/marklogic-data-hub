@@ -57,7 +57,6 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
   const [searchOptions, setSearchOptions] = useState<SearchContextInterface>(defaultSearchOptions);
 
   const setQuery = (searchString: string) => {
-    console.log('The user typed string is ' + searchString);
     setSearchOptions({
       ...searchOptions,
       start: 1,
@@ -83,7 +82,6 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
   }
 
   const setPageLength = (current: number, pageSize: number) => {
-    console.log('The user changed page length ' + pageSize);
     setSearchOptions({ 
       ...searchOptions,
       start: 1,
@@ -94,7 +92,6 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
   }
 
   const setSearchFacets = (constraint: string, vals: string[]) => {
-    console.log('Updated a facet ' + constraint + ': ' + vals);
     let facets = {};
     if (vals.length > 0) {
       facets = {...searchOptions.searchFacets, [constraint]: vals};
@@ -112,7 +109,6 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
   }
 
   const setEntity = (option: string) => {
-    console.log('Selected Option is ' + option);
     if (option) {
       setSearchOptions({ 
         ...searchOptions,
@@ -134,7 +130,6 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
   }
 
   const setEntityClearQuery = (option: string) => {
-    console.log('Selected Option is ' + option);
     setSearchOptions({ 
       ...searchOptions,
       query: '',
