@@ -2,7 +2,7 @@ import React, { useContext, useEffect,useState } from 'react';
 import { Switch } from 'react-router';
 import { Route, Redirect, RouteComponentProps, withRouter } from 'react-router-dom';
 import { AuthContext } from './util/auth-context';
-import SearchProvider from './util/search-context';
+import { SearchContext } from './util/search-context';
 import Header from './components/header/header';
 import Home from './pages/Home';
 import View from './pages/View';
@@ -16,7 +16,8 @@ interface Props extends RouteComponentProps<any> {}
 
 const App: React.FC<Props> = ({history, location}) => {
 
-  const { user, clearErrorMessage, clearRedirect } = useContext(AuthContext);
+  const { user, clearErrorMessage } = useContext(AuthContext);
+  const { resetSearchOptions } = useContext(SearchContext);
 
   document.title = 'Explorer';
   const [asyncError, setAsyncError] = useState(false);
@@ -25,7 +26,7 @@ const App: React.FC<Props> = ({history, location}) => {
       user.authenticated === true ? (
         <Component {...props}/>
       ) : (
-        <Redirect to={{
+        <Redirect push={true} to={{
           pathname: '/',
           state: { from: props.location }
         }}/>
@@ -37,14 +38,8 @@ const App: React.FC<Props> = ({history, location}) => {
     if (user.authenticated && location.pathname === '/'){
       history.push('/view');
     }
-
-    if (user.authenticated && user.redirect) {
-      clearRedirect();
-      if (location.state ) {
-        history.push(location.state.from.pathname);
-      } else {
-        history.push('/view');
-      }
+    if (!user.authenticated) {
+      resetSearchOptions();
     }
 
     if (user.error.type === 'MODAL') {
@@ -62,7 +57,6 @@ const App: React.FC<Props> = ({history, location}) => {
   return (
     <>
       <Header/>
-      <SearchProvider>
       { !asyncError && (
         <Switch>
           <Route path="/" exact component={Home}/>
@@ -71,11 +65,10 @@ const App: React.FC<Props> = ({history, location}) => {
           <PrivateRoute path="/detail/:pk/:uri" component={Detail}/>
           <Route component={NoMatchRedirect}/>
         </Switch> 
-        )}
-        <Modal visible={asyncError} title={user.error.title} onCancel={() => destroyModal()} onOk={() => destroyModal()}>
-          <p>{user.error.message}</p>
-        </Modal>
-      </SearchProvider>
+      )}
+      <Modal visible={asyncError} title={user.error.title} onCancel={() => destroyModal()} onOk={() => destroyModal()}>
+        <p>{user.error.message}</p>
+      </Modal>
     </>
   );
 }
