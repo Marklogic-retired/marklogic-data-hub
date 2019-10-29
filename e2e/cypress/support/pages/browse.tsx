@@ -15,7 +15,7 @@ class BrowsePage {
 
     getTotalDocuments() {
         return cy.get('[data-cy=total-documents]').eq(0).then(function (value) {
-            return parseInt(value.text());
+            return parseInt(value.text().replace(/,/g, ""));
         });
     }
 

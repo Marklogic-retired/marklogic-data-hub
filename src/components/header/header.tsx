@@ -16,7 +16,7 @@ interface Props extends RouteComponentProps<any> {}
 const { SubMenu } = Menu;
 
 const Header:React.FC<Props> = ({ location }) => {
-  const { user, userNotAuthenticated } = useContext(AuthContext);
+  const { user, userNotAuthenticated, handleError } = useContext(AuthContext);
   const [selectedMenu, setSelectedMenu] = useState<string[]>([]);
   const [tourSteps, setTourSteps] = useState<any[]>([]);
   const [isTourOpen, setIsTourOpen] = useState(false);
@@ -37,7 +37,7 @@ const Header:React.FC<Props> = ({ location }) => {
         userNotAuthenticated();
       }
     } catch (error) {
-      // console.log(error.response);
+      handleError(error);
     }
   };
 

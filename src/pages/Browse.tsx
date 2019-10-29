@@ -62,7 +62,6 @@ const Browse: React.FC<Props> = ({ location }) => {
         }
       });
       if (componentIsMounted.current) {
-        console.log('response.data', response.data);
         setData(response.data.results);
         setFacets(response.data.facets);
         setTotalDocuments(response.data.total);
@@ -86,7 +85,7 @@ const Browse: React.FC<Props> = ({ location }) => {
     return () => {
       componentIsMounted.current = false
     }
-
+    
   }, []);
 
   useEffect(() => {

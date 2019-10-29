@@ -22,7 +22,6 @@ const View: React.FC = () => {
   const getEntityModel = async () => {
     try {
       const response = await axios(`/datahub/v2/models`);
-      // console.log('model response', response.data);
       if (componentIsMounted.current) {
         setEntites(entityFromJSON(response.data));
         let entityArray = [...entityFromJSON(response.data).map(entity => entity.info.title)];
@@ -47,7 +46,6 @@ const View: React.FC = () => {
           facets: {}
         }
       });
-      // console.log('search results', response.data);
       if (componentIsMounted.current) {
         setTotalDocs(response.data.total);
         setFacetValues(response.data.facets.Collection.facetValues);
@@ -65,7 +63,6 @@ const View: React.FC = () => {
       if (componentIsMounted.current) {
         setLastHarmonized(response.data);
       }
-      //console.log(response.data)
     } catch (error) {
       handleError(error);
     }

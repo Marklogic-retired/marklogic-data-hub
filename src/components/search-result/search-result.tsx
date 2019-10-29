@@ -35,24 +35,6 @@ const SearchResult: React.FC<Props> = (props) => {
       }
     });
   } else if (props.item.format === 'xml' && props.item.hasOwnProperty('extracted')) {
-    // TODO check if XML docs have exceptions
-    if (props.item.extracted.content[0].headers) {
-      //TODO handle xml header.
-
-      // parsedContent.forEach( contentObject => {
-      //   if (Object.keys(contentObject)[0] === 'headers'){
-      //     const headerValues = Object.values<any>(contentObject);
-      //     createdOnVal = headerValues[0].hasOwnProperty('createdOn') && headerValues[0].createdOn.toString().substring(0, 19);
-      //     sourcesVal = headerValues[0].hasOwnProperty('sources') && headerValues[0].sources.map(src => {
-      //         return src.name;
-      //     }).join(', ');
-      //   } else {
-      //     itemEntityName = Object.keys(contentObject);
-      //     itemEntityProperties = Object.values<any>(contentObject);
-      //   }
-      // });
-    }
-
     if (props.item.extracted.content[1]) {
       let parsedContent = xmlParser(props.item.extracted.content[1]);
       itemEntityName = Object.keys(parsedContent);
@@ -99,18 +81,24 @@ const SearchResult: React.FC<Props> = (props) => {
         {props.item.matches.length >= 1 && snippet}
       </div>
       <div className={styles.metadata}>
-        <div className={styles.metaItem}>
-          <span className={styles.metaLabel}>Created On</span>
-          <span className={styles.metaValue} data-cy='created-on'>{dateConverter(createdOnVal)}</span>
-        </div>
-        <div className={styles.metaItem}>
-          <span className={styles.metaLabel}>Sources</span>
-          <span className={styles.metaValue} data-cy='sources'>{sourcesVal}</span>
-        </div>
-        <div className={styles.metaItem}>
-          <span className={styles.metaLabel}>File Type</span>
-          <span className={styles.format} data-cy='file-type'>{fileTypeVal}</span>
-        </div>
+        { createdOnVal && (
+          <div className={styles.metaItem}>
+            <span className={styles.metaLabel}>Created On</span>
+            <span className={styles.metaValue} data-cy='created-on'>{dateConverter(createdOnVal)}</span>
+          </div>
+        )}
+        { sourcesVal && (
+          <div className={styles.metaItem}>
+            <span className={styles.metaLabel}>Sources</span>
+            <span className={styles.metaValue} data-cy='sources'>{sourcesVal}</span>
+          </div>
+        )}
+        { fileTypeVal && (
+          <div className={styles.metaItem}>
+            <span className={styles.metaLabel}>File Type</span>
+            <span className={styles.format} data-cy='file-type'>{fileTypeVal}</span>
+          </div>
+        )}
       </div>
     </div>
   )

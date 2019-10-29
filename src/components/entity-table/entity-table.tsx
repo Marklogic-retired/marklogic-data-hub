@@ -8,10 +8,10 @@ import { numberConverter } from '../../util/number-conversion';
 type Props = {
   entities: any[];
   facetValues: any[];
-  lastHarmonized:any[];
+  lastHarmonized: any[];
 }
 
-const EntityTable:React.FC<Props> = (props) => {
+const EntityTable: React.FC<Props> = (props) => {
 
   const expandedRowRender = (entity) => {
     const columns = [
@@ -22,25 +22,25 @@ const EntityTable:React.FC<Props> = (props) => {
 
     let properties = entity.definition.properties.map(property => {
       let indexes: string[] = [];
-      if (entity.definition.hasOwnProperty('primaryKey') && entity.definition.primaryKey.includes(property.name)){
+      if (entity.definition.hasOwnProperty('primaryKey') && entity.definition.primaryKey.includes(property.name)) {
         indexes.push('Primary Key');
       }
-      if (entity.definition.elementRangeIndex.includes(property.name)){
+      if (entity.definition.elementRangeIndex.includes(property.name)) {
         indexes.push('Element Range Index');
       }
-      if (entity.definition.pii.includes(property.name)){
+      if (entity.definition.pii.includes(property.name)) {
         indexes.push('pii');
       }
-      if (entity.definition.rangeIndex.includes(property.name)){
+      if (entity.definition.rangeIndex.includes(property.name)) {
         indexes.push('Range Index');
       }
-      if (entity.definition.required.includes(property.name)){
+      if (entity.definition.required.includes(property.name)) {
         indexes.push('Required');
       }
-      if (entity.definition.wordLexicon.includes(property.name)){
+      if (entity.definition.wordLexicon.includes(property.name)) {
         indexes.push('Word Lexicon');
       }
-      if(indexes.length === 0) {
+      if (indexes.length === 0) {
         indexes.push('None');
       }
       let data = {
@@ -51,54 +51,61 @@ const EntityTable:React.FC<Props> = (props) => {
       return data
     });
 
-    return <Table 
-              rowKey="property"
-              className="property-table"
-              columns={columns} 
-              dataSource={properties} 
-              pagination={false} 
-            />;
+    return <Table
+      rowKey="property"
+      className="property-table"
+      columns={columns}
+      dataSource={properties}
+      pagination={false}
+    />;
   };
 
 
   const columns = [
-    { 
-      title: 'Entity Name', 
-      dataIndex: 'name', 
+    {
+      title: 'Entity Name',
+      dataIndex: 'name',
       width: 200,
-      render: text => { return (
-        <Link to={{
-          pathname: "/browse", 
-          state: { entity: text} }}
-          data-cy={text}>
-          {text}
-        </Link>
-      )},  
+      render: text => {
+        return (
+          <Link to={{
+            pathname: "/browse",
+            state: { entity: text }
+          }}
+            data-cy={text}>
+            {text}
+          </Link>
+        )
+      },
       sorter: (a, b) => { return a.name.localeCompare(b.name) }
     },
-    { 
-      title: 'Documents', 
-      dataIndex: 'documents', 
-      width: 200 ,
-      sorter: (a, b) => { return a.documents - b.documents }
+    {
+      title: 'Documents',
+      dataIndex: 'documents',
+      width: 200,
+      sorter: (a, b) => {
+        return parseInt(a.documents.replace(/,/g, "")) - parseInt(b.documents.replace(/,/g, ""));
+      }
     },
-    { 
-      title: 'Last Harmonized', 
+    {
+      title: 'Last Harmonized',
       dataIndex: 'created',
-        render: text => {
+      render: text => {
         let parseText = text.split(',');
-        if(parseText[0]==='Invalid date'){
+        if (parseText[0] === 'Invalid date') {
           return 'Never been run'
         }
         return (
-            <Link to={{
-                pathname: "/browse",
-                state: { jobId: parseText[1]} }}
-                  data-cy={parseText[0]}>
-                {parseText[0]}
-            </Link>
-        )},
-        sorter: (a, b) => { return a.created.localeCompare(b.created) }
+          <Link to={{
+            pathname: "/browse",
+            state: { jobId: parseText[1] }
+          }}
+            data-cy={parseText[0]}>
+            {parseText[0]}
+          </Link>
+        )
+      },
+      sorter: (a, b) => { return a.created.localeCompare(b.created) }
     }
   ];
 
@@ -132,9 +139,9 @@ const EntityTable:React.FC<Props> = (props) => {
     let latestJobDate;
     let latestJobId;
     const collectionDetails = props.lastHarmonized.find(detail => detail.entityCollection === entity.info.title);
-    if(collectionDetails){
-        latestJobDate = collectionDetails.latestJobDateTime;
-        latestJobId = collectionDetails.latestJobId;
+    if (collectionDetails) {
+      latestJobDate = collectionDetails.latestJobDateTime;
+      latestJobId = collectionDetails.latestJobId;
     }
 
 
@@ -150,8 +157,8 @@ const EntityTable:React.FC<Props> = (props) => {
 
     let parsedEntity = {
       name: entity.info.title,
-      documents: numberConverter(documentCount), 
-      created: relativeTimeConverter(latestJobDate) + ','+latestJobId,
+      documents: numberConverter(documentCount),
+      created: relativeTimeConverter(latestJobDate) + ',' + latestJobId,
       definition: entityDefinition
     }
     return parsedEntity

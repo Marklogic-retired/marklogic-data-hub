@@ -3,15 +3,13 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
 import App from './App';
 import AuthProvider from './util/auth-context';
-import SearchProvider from './util/search-context';
+
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
   <Router>   
     <AuthProvider>  
-      <SearchProvider>
-        <App/>
-      </SearchProvider>
+      <App/>
     </AuthProvider>
   </Router>, document.getElementById('root'));
 

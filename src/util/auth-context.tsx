@@ -4,6 +4,7 @@ type UserContextInterface = {
   name: string,
   // email: string,
   authenticated: boolean,
+  redirect: boolean,
   error : any
 }
 
@@ -11,6 +12,7 @@ const defaultUserData = {
   name: '',
   // email: '',
   authenticated: false,
+  redirect: false,
   error : { 
     title: '', 
     message: '',
@@ -25,6 +27,7 @@ interface IAuthContextInterface {
   userNotAuthenticated: () => void;
   handleError: (error:any) => void;
   clearErrorMessage: () => void;
+  clearRedirect: () => void;
 }
 
 export const AuthContext = React.createContext<IAuthContextInterface>({
@@ -33,7 +36,8 @@ export const AuthContext = React.createContext<IAuthContextInterface>({
   sessionAuthenticated: () => {},
   userNotAuthenticated: () => {},
   handleError: () => {},
-  clearErrorMessage: () => {}
+  clearErrorMessage: () => {},
+  clearRedirect: () => {}
 });
 
 const AuthProvider: React.FC<{ children: any }> = ({children}) => {
@@ -43,7 +47,7 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
 
   const loginAuthenticated = (username: string) => {
     localStorage.setItem('dataHubExplorerUser', username);
-    setUser({ ...user,name: username, authenticated: true });
+    setUser({ ...user,name: username, authenticated: true, redirect: true });
   };
 
   const sessionAuthenticated = (username: string) => {
@@ -112,6 +116,9 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
   const clearErrorMessage = () => {
     setUser({ ...user, error : { title:'', message: '', type: '' }});
   }
+  const clearRedirect = () => {
+    setUser({ ...user, redirect: false });
+  }
 
   useEffect(() => {
     if (sessionUser) {
@@ -126,7 +133,8 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
       sessionAuthenticated,
       userNotAuthenticated,
       handleError, 
-      clearErrorMessage
+      clearErrorMessage,
+      clearRedirect
     }}>
       {children}
     </AuthContext.Provider>

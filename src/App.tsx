@@ -2,7 +2,7 @@ import React, { useContext, useEffect,useState } from 'react';
 import { Switch } from 'react-router';
 import { Route, Redirect, RouteComponentProps, withRouter } from 'react-router-dom';
 import { AuthContext } from './util/auth-context';
-import { SearchContext } from './util/search-context';
+import SearchProvider from './util/search-context';
 import Header from './components/header/header';
 import Home from './pages/Home';
 import View from './pages/View';
@@ -15,12 +15,10 @@ import './App.scss';
 interface Props extends RouteComponentProps<any> {}
 
 const App: React.FC<Props> = ({history, location}) => {
-
-  const { user, clearErrorMessage } = useContext(AuthContext);
-  const { resetSearchOptions } = useContext(SearchContext);
-
   document.title = 'Explorer';
+  const { user, clearErrorMessage, clearRedirect } = useContext(AuthContext);
   const [asyncError, setAsyncError] = useState(false);
+
   const PrivateRoute = ({ component: Component, ...rest }) => (
     <Route {...rest} render={ props => (
       user.authenticated === true ? (
@@ -35,13 +33,13 @@ const App: React.FC<Props> = ({history, location}) => {
   )
 
   useEffect(() => {
-    if (user.authenticated && location.pathname === '/'){
+    if (user.authenticated && user.redirect ){
+      clearRedirect();
       history.push('/view');
     }
-    if (!user.authenticated) {
-      resetSearchOptions();
+    if (user.authenticated && location.state && !user.redirect) {
+      history.push(location.state.from.pathname)
     }
-
     if (user.error.type === 'MODAL') {
       setAsyncError(true);
     } else {
@@ -57,6 +55,7 @@ const App: React.FC<Props> = ({history, location}) => {
   return (
     <>
       <Header/>
+      <SearchProvider>
       { !asyncError && (
         <Switch>
           <Route path="/" exact component={Home}/>
@@ -66,6 +65,7 @@ const App: React.FC<Props> = ({history, location}) => {
           <Route component={NoMatchRedirect}/>
         </Switch> 
       )}
+      </SearchProvider>
       <Modal visible={asyncError} title={user.error.title} onCancel={() => destroyModal()} onOk={() => destroyModal()}>
         <p>{user.error.message}</p>
       </Modal>
