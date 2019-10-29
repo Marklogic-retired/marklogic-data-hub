@@ -5,8 +5,6 @@
 <configuration>
   <include resource="org/springframework/boot/logging/logback/base.xml"/>
 
-  <property name="LOGS" value="./logs" />
-
   <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
     <!-- encoders are assigned the type
          ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
@@ -17,7 +15,7 @@
 
   <appender name="RollingFile"
     class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>${LOGS}/explorer.log</file>
+    <file>${LOGS_DIR:-.}/explorer.log</file>
     <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
       <Pattern>%d %p %C{1.} [%t] %m%n</Pattern>
     </encoder>
@@ -25,7 +23,7 @@
     <rollingPolicy
       class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
       <!-- rollover daily and when the file reaches 10 MegaBytes -->
-      <fileNamePattern>${LOGS}/archived/explorer-%d{yyyy-MM-dd}.%i.log
+      <fileNamePattern>${LOGS_DIR:-.}/archived/explorer-%d{yyyy-MM-dd}.%i.log
       </fileNamePattern>
       <timeBasedFileNamingAndTriggeringPolicy
         class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
