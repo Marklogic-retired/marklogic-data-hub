@@ -80,13 +80,13 @@ const DetailHeader: React.FC<Props> = (props) => {
       </div>
       <div id='summary' className={styles.summary}>
         { timestamp &&
-          <Text data-cy="document-timestamp"><Text type="secondary">Created: </Text>{dateConverter(timestamp)}</Text>
+          <Text className={styles.meta} data-cy="document-timestamp"><Text type="secondary">Created: </Text>{dateConverter(timestamp)}</Text>
         }
         { sources && 
-          <Text data-cy="document-source"><Text type="secondary">Sources: </Text>{sources}</Text>
+          <Text className={styles.meta} data-cy="document-source"><Text type="secondary">Sources: </Text>{sources}</Text>
         }
         { fileType &&
-          <Text data-cy="document-filetype"><Text type="secondary">File Type: </Text>{fileType}</Text>
+          <Text className={styles.meta} data-cy="document-filetype"><Text type="secondary">File Type: </Text>{fileType}</Text>
         }
       </div>
     </div>
