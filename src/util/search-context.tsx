@@ -182,12 +182,12 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
   const setDateFacet = (dates: string[]) => {
     setSearchOptions({ 
       ...searchOptions,
+      start: 1,
+      pageNumber: 1,
+      pageLength: searchOptions.pageSize,
       searchFacets: {
         ...searchOptions.searchFacets,
-        createdOnRange: dates,
-        start: 1,
-        pageNumber: 1,
-        pageLength: searchOptions.pageSize
+        createdOnRange: dates
       }
     });
   }

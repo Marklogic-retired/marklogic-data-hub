@@ -33,8 +33,9 @@ const Header:React.FC<Props> = ({ location }) => {
   const handleLogout = async () => {
     try {
       let response = await axios(`/datahub/v2/logout`);
-      console.log('response', response);
-      userNotAuthenticated();
+      if (response.status === 200 ) {
+        userNotAuthenticated();
+      }
     } catch (error) {
       // console.log(error.response);
     }

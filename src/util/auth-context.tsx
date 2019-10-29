@@ -4,7 +4,6 @@ type UserContextInterface = {
   name: string,
   // email: string,
   authenticated: boolean,
-  redirect: boolean,
   error : any
 }
 
@@ -12,7 +11,6 @@ const defaultUserData = {
   name: '',
   // email: '',
   authenticated: false,
-  redirect: false,
   error : { 
     title: '', 
     message: '',
@@ -27,7 +25,6 @@ interface IAuthContextInterface {
   userNotAuthenticated: () => void;
   handleError: (error:any) => void;
   clearErrorMessage: () => void;
-  clearRedirect: () => void;
 }
 
 export const AuthContext = React.createContext<IAuthContextInterface>({
@@ -36,8 +33,7 @@ export const AuthContext = React.createContext<IAuthContextInterface>({
   sessionAuthenticated: () => {},
   userNotAuthenticated: () => {},
   handleError: () => {},
-  clearErrorMessage: () => {},
-  clearRedirect: () => {}
+  clearErrorMessage: () => {}
 });
 
 const AuthProvider: React.FC<{ children: any }> = ({children}) => {
@@ -47,12 +43,12 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
 
   const loginAuthenticated = (username: string) => {
     localStorage.setItem('dataHubExplorerUser', username);
-    setUser({ ...user,name: username, authenticated: true, redirect: true });
+    setUser({ ...user,name: username, authenticated: true });
   };
 
   const sessionAuthenticated = (username: string) => {
     localStorage.setItem('dataHubExplorerUser', username);
-    setUser({ ...user,name: username, authenticated: true, redirect: false });
+    setUser({ ...user,name: username, authenticated: true });
   };
 
   const userNotAuthenticated = () => {
@@ -66,7 +62,7 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
     switch (error.response.status) {
       case 401:
         localStorage.setItem('dataHubExplorerUser', '');
-        setUser({ ...user, name: '', authenticated: false, redirect: true });
+        setUser({ ...user, name: '', authenticated: false });
         break;
       case 400:
       case 403:
@@ -75,12 +71,12 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
       case 414:
         setUser({ 
           ...user,
-          redirect: false, 
           error: {
             title: error.response.data.error,
             message: error.response.data.message || DEFAULT_MESSAGE,
             type: 'ALERT'
-        }});
+          }
+        });
         break;
       case 500:
       case 501:
@@ -100,13 +96,13 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
           message = error.response.data || DEFAULT_MESSAGE;
         }
         setUser({ 
-          ...user, 
-          redirect: false,
+          ...user,
           error: {
             title,
             message,
             type: 'MODAL'
-        }});
+          }
+        });
         break;
       default:
         break;
@@ -115,10 +111,6 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
 
   const clearErrorMessage = () => {
     setUser({ ...user, error : { title:'', message: '', type: '' }});
-  }
-
-  const clearRedirect = () => {
-    setUser({ ...user, redirect: false });
   }
 
   useEffect(() => {
@@ -134,8 +126,7 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
       sessionAuthenticated,
       userNotAuthenticated,
       handleError, 
-      clearErrorMessage,
-      clearRedirect
+      clearErrorMessage
     }}>
       {children}
     </AuthContext.Provider>

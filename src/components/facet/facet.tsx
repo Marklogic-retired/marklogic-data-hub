@@ -93,7 +93,7 @@ const Facet: React.FC<Props> = (props) => {
         </div>
       </div>
       <div style={{display: (show) ? 'block' : 'none'}} >
-        {values}
+        {values !== 0 && values}
         <div 
           className={styles.more}
           style={{display: (props.facetValues.length > SHOW_MINIMUM) ? 'block' : 'none'}}
