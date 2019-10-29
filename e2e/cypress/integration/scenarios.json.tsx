@@ -44,7 +44,7 @@ describe('json scenario on view entities page', () => {
 
 describe('json scenario on browse documents page', () => {
 
-    var facets: string[] = ['collection', 'created-on', 'flow', 'createdByStep'];
+    var facets: string[] = ['collection', 'created-on', 'flow'];
 
     //login with valid account and go to /browse page
     beforeEach(() => {
@@ -54,7 +54,9 @@ describe('json scenario on browse documents page', () => {
             cy.login(user.username, user.password);
         })
         cy.wait(500);
-        cy.visit('/browse');
+        // cy.visit('/browse');
+        cy.get('.ant-menu-item').contains('Browse Documents').click();
+        cy.wait(1000);
     });
 
     it('select "all entities" verify docs, hub/entity properties', () => {
