@@ -102,6 +102,7 @@ class DataHubPlugin implements Plugin<Project> {
         project.task("hubCreateInputFlow", group: scaffoldGroup, type: CreateInputLegacyFlowTask)
         project.task("hubGenerateExplorerOptions", group: scaffoldGroup, type: GenerateExplorerQueryOptions,
             description: "Generates the query options files required for Explorer application")
+            .finalizedBy(["hubDeployUserModules"])
         project.task("hubGeneratePii", group: scaffoldGroup, type: GeneratePiiTask,
             description: "Generates Security Configuration for all Entity Properties marked 'pii'")
         project.task("hubGenerateTDETemplates", group: scaffoldGroup, type: GenerateTDETemplateFromEntityTask,
