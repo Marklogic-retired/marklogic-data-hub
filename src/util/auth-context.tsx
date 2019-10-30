@@ -62,7 +62,6 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
 
   const handleError = (error) => {
     const DEFAULT_MESSAGE = 'Internal Server Error';
-    console.log('error', error);
   
     switch (error.response.status) {
       case 401:
