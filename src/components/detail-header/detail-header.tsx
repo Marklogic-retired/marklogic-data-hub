@@ -24,9 +24,13 @@ const DetailHeader: React.FC<Props> = (props) => {
   if (fileType === 'JSON') {
     envelope = props.document.envelope;
     document = Object.keys(envelope.instance)[0];
-    title = envelope.instance.info.hasOwnProperty('title') && envelope.instance.info.title;
-    timestamp = envelope.headers.hasOwnProperty('createdOn') && envelope.headers.createdOn;
-    sources = envelope.headers.hasOwnProperty('sources') && envelope.headers.sources[0].name;
+    if (envelope.instance.hasOwnProperty('info')) {
+      title = envelope.instance.info.hasOwnProperty('title') && envelope.instance.info.title;
+    }
+    if (envelope.hasOwnProperty('headers')) {
+      timestamp = envelope.headers.hasOwnProperty('createdOn') && envelope.headers.createdOn;
+      sources = envelope.headers.hasOwnProperty('sources') && envelope.headers.sources[0].name;
+    }
     if (props.primaryKey) {
       Object.keys(props.document.envelope.instance).forEach(instance => {
         if (instance !== 'info') {
@@ -44,7 +48,9 @@ const DetailHeader: React.FC<Props> = (props) => {
   } else if (fileType === 'XML') {
     envelope = props.document.content.envelope;
     document = Object.keys(envelope.instance)[1];
-    title = envelope.instance.info.hasOwnProperty('title') && envelope.instance.info.title;
+    if (envelope.instance.hasOwnProperty('info')) {
+      title = envelope.instance.info.hasOwnProperty('title') && envelope.instance.info.title;
+    }
     if (props.primaryKey) {
       Object.keys(props.document.content.envelope.instance).forEach(instance => {
         if (instance !== 'info') {
