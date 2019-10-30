@@ -6,9 +6,10 @@ import { AuthContext } from '../util/auth-context';
 
 const NoMatchRedirect = ({history}) => {
 
-  const { user } = useContext(AuthContext);
+  const { user, clearErrorMessage } = useContext(AuthContext);
 
   const backToHomePage = () => {
+    clearErrorMessage();
     return user.authenticated ? history.push('/view') : history.push('/');
   }
   return (
