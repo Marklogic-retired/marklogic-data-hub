@@ -61,7 +61,9 @@ const Detail: React.FC<Props> = ({ history, location }) => {
       }
     };
 
-    fetchData();
+    if (!user.error.type) {
+      fetchData();
+    }
 
     return () => {
       componentIsMounted.current = false;

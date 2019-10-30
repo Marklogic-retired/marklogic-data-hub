@@ -1,4 +1,4 @@
-import React, { useContext, useEffect,useState } from 'react';
+import React, { useContext, useEffect,useState, useReducer } from 'react';
 import { Switch } from 'react-router';
 import { Route, Redirect, RouteComponentProps, withRouter } from 'react-router-dom';
 import { AuthContext } from './util/auth-context';
@@ -42,6 +42,10 @@ const App: React.FC<Props> = ({history, location}) => {
     }
     if (user.authenticated && location.state && !user.redirect) {
       history.push(location.state.from.pathname)
+    }
+    if (user.redirect && user.error.type !== '') {
+      clearRedirect();
+      history.push('/error');
     }
     if (user.error.type === 'MODAL') {
       setAsyncError(true);
