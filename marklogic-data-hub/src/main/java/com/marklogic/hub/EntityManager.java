@@ -35,6 +35,11 @@ public interface EntityManager {
     boolean saveQueryOptions();
 
     /**
+     * Updates the explorer query options to the file system
+     */
+    void generateExplorerQueryOptions();
+
+    /**
      * Deploys the query option
      *
      * @return hashmap - ENUM DatabaseKind of what database and boolean if the deploy was successful or not.
