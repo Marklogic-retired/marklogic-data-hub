@@ -158,36 +158,48 @@ export class MappingUiComponent implements OnChanges {
     this.mapResp = {};
     this.isTestClicked = false;
   }
+
   onNavigateURIList(index) {
-    if (index > 0 && index < this.docUris.length - 1) {
+    const end = this.docUris.length - 1;
+    // Not at beginning or end of range
+    if (index > 0 && index < end) {
       this.disableURINavLeft = false;
       this.disableURINavRight = false;
       this.uriIndex = index;
       this.editURIVal = this.docUris[index];
       this.onUpdateURINewUI();
 
-    } else if (index == 0 || index == this.docUris.length - 1) {
-
-      if (index == 0) {
-        this.disableURINavLeft = true;
-        this.uriIndex = index;
-        this.editURIVal = this.docUris[index];
-        this.onUpdateURINewUI();
-      } else {
-        this.disableURINavRight = true;
-        this.uriIndex = index;
-        this.editURIVal = this.docUris[index];
-        this.onUpdateURINewUI();
+    } // At beginning of range 
+    else if (index === 0) {
+      this.disableURINavLeft = true;
+      if (end > 0) {
+        this.disableURINavRight = false;
       }
+      this.uriIndex = index;
+      this.editURIVal = this.docUris[index];
+      this.onUpdateURINewUI();
+    } // At end of range
+    else if (index === end) {
+      if (end > 0) {
+        this.disableURINavLeft = false;
+      }
+      this.disableURINavRight = true;
+      this.uriIndex = index;
+      this.editURIVal = this.docUris[index];
+      this.onUpdateURINewUI();
     } else {
+      // Before beginning of range
       if (index < 0) {
         this.disableURINavLeft = true;
-      } else {
+      } 
+      // After end of range
+      else {
         this.disableURINavRight = true;
       }
     }
   }
-  onUpdateURINewUI(){
+
+  onUpdateURINewUI (){
     this.editingURI = false;
     this.updateURI.emit({
       uri: this.editURIVal,
