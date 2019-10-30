@@ -333,6 +333,7 @@ public class HubProjectImpl implements HubProject {
 
         writeRoleFile(rolesDir, "data-hub-admin-role.json");
         writeRoleFile(rolesDir, "entity-model-reader.json");
+        writeRoleFile(rolesDir, "explorer-architect.json");
         writeRoleFile(rolesDir, "flow-developer-role.json");
         writeRoleFile(rolesDir, "flow-operator-role.json");
 
@@ -498,7 +499,6 @@ public class HubProjectImpl implements HubProject {
             }
         }
         upgradeFlows();
-
         removeEmptyRangeElementIndexArrayFromFinalDatabaseFile();
     }
 

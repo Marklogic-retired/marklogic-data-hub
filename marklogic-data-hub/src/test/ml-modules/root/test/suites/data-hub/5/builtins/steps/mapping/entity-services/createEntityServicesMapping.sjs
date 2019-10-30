@@ -24,6 +24,18 @@ const baseCustomerMapping = xdmp.toJSON({
           "sourcedFrom": "@id"
         }
       }
+    },
+    "Name": {
+      "targetEntityType": "#/definitions/Name",
+      "sourcedFrom": "customerName",
+      "properties" : {
+        "FirstName": {
+          "sourcedFrom": "givenName"
+        },
+        "LastName": {
+          "sourcedFrom": "surName"
+        }
+      }
     }
   }
 });
@@ -41,10 +53,20 @@ const baseCustomerEntityModel = {
       "properties": {
         "ID": { "datatype": "string" },
         "Date": { "datatype": "dateTime" },
+        "Name": {
+          "$ref": "#definitions/Name"
+        },
         "Orders": {
           "datatype": "array",
           "items": { "$ref": "#definitions/Order" }
         }
+      }
+    },
+    "Name": {
+      "required": [],
+      "properties": {
+        "FirstName": { "datatype": "string" },
+        "LastName": { "datatype": "string" }
       }
     }
   }
@@ -75,17 +97,16 @@ function tidyXML(xmlStr) {
 }
 
 function applyDefOverrides(definitionName, baseModel, defOverrides) {
-  return xdmp.toJSON(Object.assign({},baseModel,
-    {
-      "definitions": {
+  return xdmp.toJSON(Object.assign({},baseModel, {
+      "definitions": Object.assign({}, baseModel.definitions,{
         [definitionName]: Object.assign({}, baseModel.definitions[definitionName],defOverrides)
-      }
-    }));
+      })}));
 /*
   // This can only be used in ML 10. :(
   return xdmp.toJSON({
     ...baseModel,
     "definitions": {
+      ...baseModel.definitions,
       [definitionName]: {
         ...baseModel.definitions[definitionName],
         ...defOverrides
@@ -95,12 +116,25 @@ function applyDefOverrides(definitionName, baseModel, defOverrides) {
  */
 }
 
-function constructTemplateWithOverrides(customerDefOverrides, orderDefOverrides) {
+function applyDefOverridesAndSetCache(customerDefOverrides, orderDefOverrides) {
   let customerEntity = applyDefOverrides("Customer", baseCustomerEntityModel, customerDefOverrides);
   let orderEntity = applyDefOverrides("Order", baseOrderEntityModel, orderDefOverrides);
   defaultMappingLib.cachedEntityByTitleAndVersion['Customer:0.0.1'] = customerEntity;
   defaultMappingLib.cachedEntityByTitleAndVersion['Order:0.0.1'] = orderEntity;
-  return tidyXML(mappingLib.buildEntityMappingXML(baseCustomerMapping.toObject(), customerEntity.toObject()));
+  return {
+    customerEntity,
+    orderEntity
+  };
+}
+
+function constructSingleTemplateWithOverrides(customerDefOverrides, orderDefOverrides) {
+  const updatedEntities = applyDefOverridesAndSetCache(customerDefOverrides, orderDefOverrides);
+  return tidyXML(mappingLib.buildEntityMappingXML(baseCustomerMapping.toObject(), updatedEntities.customerEntity.toObject()));
+}
+
+function constructEntireNestedTemplateWithOverrides(customerDefOverrides, orderDefOverrides) {
+  const updatedEntities = applyDefOverridesAndSetCache(customerDefOverrides, orderDefOverrides);
+  return tidyXML(xdmp.quote(mappingLib.buildMappingXML(baseCustomerMapping)));
 }
 
 /*
@@ -118,10 +152,15 @@ let expectedTemplate = tidyXML(`
           <m:call-template name="Order"/>
         </Orders>
       </m:for-each>      
+        <m:for-each><m:select>customerName</m:select>
+          <Name>
+            <m:call-template name="Name"/>
+          </Name>
+        </m:for-each>
     </Customer>
   </m:entity>
 `);
-let template = constructTemplateWithOverrides({}, {});
+let template = constructSingleTemplateWithOverrides({}, {});
 assertions.push(
   test.assertTrue(fn.deepEqual(expectedTemplate, template),
     `Entity template should build: ${describe(expectedTemplate)} got: ${describe(template)}`)
@@ -137,11 +176,16 @@ expectedTemplate = tidyXML(`
         <Orders datatype='array'>
           <m:call-template name="Order"/>
         </Orders>
-      </m:for-each>      
+      </m:for-each>
+      <m:for-each><m:select>customerName</m:select>
+        <Name>
+          <m:call-template name="Name"/>
+        </Name>
+      </m:for-each>
     </Customer>
   </m:entity>
 `);
-template = constructTemplateWithOverrides({"namespace": "http://my-test-namespace", "namespacePrefix": ""}, {});
+template = constructSingleTemplateWithOverrides({"namespace": "http://my-test-namespace", "namespacePrefix": ""}, {});
 assertions.push(
   test.assertTrue(fn.deepEqual(expectedTemplate, template),
     `Entity template should build: ${describe(expectedTemplate)} got: ${describe(template)}`)
@@ -158,12 +202,63 @@ expectedTemplate = tidyXML(`
           <m:call-template name="Order"/>
         </myPrefix:Orders>
       </m:for-each>      
+      <m:for-each><m:select>customerName</m:select>
+        <myPrefix:Name>
+          <m:call-template name="Name"/>
+        </myPrefix:Name>
+      </m:for-each>      
     </myPrefix:Customer>
   </m:entity>
 `);
-template = constructTemplateWithOverrides({"namespace": "http://my-test-namespace", "namespacePrefix": "myPrefix"}, {});
+template = constructSingleTemplateWithOverrides({"namespace": "http://my-test-namespace", "namespacePrefix": "myPrefix"}, {});
 assertions.push(
   test.assertTrue(fn.deepEqual(expectedTemplate, template),
     `Entity template should build: ${describe(expectedTemplate)} got: ${describe(template)}`)
+);
+
+// Test entire build
+expectedTemplate = tidyXML(`
+  <m:mapping xmlns:m="http://marklogic.com/entity-services/mapping" xmlns:map="http://marklogic.com/xdmp/map">
+    ${mappingLib.retrieveFunctionImports()}
+    <m:entity name="Customer" xmlns:m="http://marklogic.com/entity-services/mapping">
+      <Customer xmlns="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <m:optional><ID xsi:type="xs:string"><m:val>string(@CustomerID)</m:val></ID></m:optional>
+        <m:optional><Date xsi:type="xs:dateTime"><m:val>parseDateTime('DD/MM/YYYY-hh:mm:ss', date)</m:val></Date></m:optional>
+        <m:for-each><m:select>orders/order</m:select>
+          <Orders datatype='array'>
+            <m:call-template name="Order"/>
+          </Orders>
+        </m:for-each>
+        <m:for-each><m:select>customerName</m:select>
+          <Name>
+            <m:call-template name="Name"/>
+          </Name>
+        </m:for-each>      
+      </Customer>
+    </m:entity>
+    <m:entity name="Order" xmlns:m="http://marklogic.com/entity-services/mapping">
+      <Order xmlns="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <m:optional><OrderID xsi:type="xs:string"><m:val>@id</m:val></OrderID></m:optional>
+      </Order>
+    </m:entity>
+    <m:entity name="Name" xmlns:m="http://marklogic.com/entity-services/mapping">
+      <Name xmlns="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <m:optional><FirstName xsi:type="xs:string"><m:val>givenName</m:val></FirstName></m:optional>
+        <m:optional><LastName xsi:type="xs:string"><m:val>surName</m:val></LastName></m:optional>
+      </Name>
+    </m:entity>
+      <!-- Default entity is Customer -->
+      <m:output>
+        <m:for-each><m:select>./(element()|object-node()|array-node())</m:select>
+            <m:call-template name="Customer" />
+        </m:for-each>
+      </m:output>
+    </m:mapping>
+`);
+
+template = constructEntireNestedTemplateWithOverrides({}, {});
+assertions.push(
+  test.assertTrue(fn.deepEqual(expectedTemplate, template),
+    `Full template should build: ${describe(expectedTemplate)} got: ${describe(template)}`)
 );
 assertions;

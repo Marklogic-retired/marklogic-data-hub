@@ -21,4 +21,5 @@ declare variable $MERGE-OPTIONS-NAME := "merge-test";
 declare variable $INVOKE_OPTIONS :=
   <options xmlns="xdmp:eval">
     <isolation>different-transaction</isolation>
+    <update>true</update>
   </options>;

@@ -106,7 +106,10 @@ declare function proc-impl:consolidate-merges(
     let $merges :=
       fn:distinct-values(
         for $key in map:keys($matches)
-        let $merge-items as element()* := map:get($matches, $key)/result[@action=$const:MERGE-ACTION]
+        let $match-results := map:get($matches, $key)
+        (: If $max-scan is less than the total results for a URI, up max scan to avoid large nuber of recursive searches for additional URIs :)
+        let $max-scan := fn:max(($match-results/@total ! xs:integer(.), $max-scan))
+        let $merge-items as element()* := $match-results/result[@action=$const:MERGE-ACTION]
         let $merge-uris as xs:string* := $merge-items/@uri
         let $_lock-for-update := if ($lock-for-update) then ($merge-uris ! merge-impl:lock-for-update(.)) else ()
         where fn:exists($merge-uris)
@@ -121,7 +124,7 @@ declare function proc-impl:consolidate-merges(
           let $additional-uris :=
             proc-impl:expand-uris-for-merge(
               $merge-uris,
-              $merge-uris,
+              (),
               $matches,
               $matching-options,
               $max-scan,
@@ -153,7 +156,7 @@ declare function proc-impl:consolidate-merges(
 (:
  : This expands out searches to find any documents that may exist
  : @param $current-uris - xs:string* URIs that we just discovered with the last search
- : @param accumlated-uris - xs:string* URIs that we've discovered so far
+ : @param accumulated-uris - xs:string* URIs that we've discovered so far
  : @param $matches - map:map stores search results by URI
  : @param $match-options - the match options for the query
  : @param $max-scan - max number of search results to return
@@ -165,7 +168,7 @@ declare function proc-impl:consolidate-merges(
  :)
 declare function proc-impl:expand-uris-for-merge(
   $current-uris as xs:string*,
-  $accumlated-uris as xs:string*,
+  $accumulated-uris as xs:string*,
   $matches as map:map,
   $matching-options,
   $max-scan,
@@ -175,13 +178,28 @@ declare function proc-impl:expand-uris-for-merge(
   $provenance-map as map:map?
 ) (: as xs:string* ~leaving off for tail recursion~ :)
 {
+  let $accumulated-uris := fn:distinct-values(($current-uris, $accumulated-uris))
   let $additional-uris :=
     fn:distinct-values(
+      (: We already know at this point that the $accumlated-uris and $current-uris will be merged :)
+      let $docs-to-exclude-map := map:entry("docsToExclude", $accumulated-uris)
+      let $sub-filter-query-fun := if ($filter-query instance of cts:true-query) then
+          function($docs-to-exclude) {
+            cts:not-query(cts:document-query($docs-to-exclude))
+          }
+        else
+          function($docs-to-exclude) {
+            cts:and-not-query($filter-query, cts:document-query($docs-to-exclude))
+          }
+      (: This is an optimization to reduce the number of SPARQL calls :)
+      let $_prime-blocks-cache := blocks-impl:get-blocks-of-uris($current-uris[fn:not(map:contains($matches,.))])
       for $merge-uri in $current-uris
       return
         if (map:contains($matches,$merge-uri)) then
-          map:get($matches, $merge-uri)/result[@action=$const:MERGE-ACTION]/@uri ! fn:string(.)
+          map:get($matches, $merge-uri)/result[@action=$const:MERGE-ACTION]/@uri[fn:not(. = $accumulated-uris)] ! fn:string(.)
         else
+          let $docs-to-exclude := map:get($docs-to-exclude-map, "docsToExclude")
+          let $sub-filter-query := $sub-filter-query-fun($docs-to-exclude)
           let $results :=
             match-impl:find-document-matches-by-options(
               fn:doc($merge-uri),
@@ -191,20 +209,18 @@ declare function proc-impl:expand-uris-for-merge(
               $merge-threshold,
               (: don't include detailed match information :)
               fn:false(),
-              if ($filter-query instance of cts:true-query) then
-                cts:not-query(cts:document-query($accumlated-uris))
-              else
-                cts:and-not-query($filter-query, cts:document-query($accumlated-uris)),
+              $sub-filter-query,
               (: return results :)
               fn:true()
             )[result/@action = $const:MERGE-ACTION]
           where fn:exists($results)
           return
-            let $merge-items := $results/result[@action]
+            let $merge-items := $results/result[@action = $const:MERGE-ACTION]
             let $merge-item-uris := $merge-items/@uri ! fn:string(.)
             return (
+              map:put($docs-to-exclude-map, "docsToExclude", ($merge-item-uris, map:get($docs-to-exclude-map, "docsToExclude"))),
               map:put($matches, $merge-uri, $results),
-              $merge-item-uris  ! fn:string(.),
+              $merge-item-uris,
               if (fn:exists($provenance-map)) then
                 proc-impl:record-match-provenance(
                   $provenance-map,
@@ -214,15 +230,14 @@ declare function proc-impl:expand-uris-for-merge(
               else ()
             )
     )
-  let $new-uris := $additional-uris[fn:not(. = $accumlated-uris)]
-  let $_lock-for-update := if ($lock-for-update) then ($new-uris ! merge-impl:lock-for-update(.)) else ()
+  let $_lock-for-update := if ($lock-for-update) then ($additional-uris ! merge-impl:lock-for-update(.)) else ()
   return
-    if (fn:empty($new-uris)) then
-      $accumlated-uris
+    if (fn:empty($additional-uris)) then
+      $accumulated-uris
     else
       proc-impl:expand-uris-for-merge(
-        $new-uris,
-        fn:distinct-values(($new-uris,$accumlated-uris)),
+        $additional-uris,
+        $accumulated-uris,
         $matches,
         $matching-options,
         $max-scan,
@@ -555,7 +570,7 @@ declare function proc-impl:build-match-summary(
   let $custom-action-details :=
     map:new(
       for $uri in map:keys($all-matches)
-      let $custom-actions := map:get($all-matches, $uri)/result[fn:not(./@action = $const:NOTIFY-ACTION or ./@action = $const:MERGE-ACTION)]
+      let $custom-actions := map:get($all-matches, $uri)/result[fn:not(./@action = ($const:NOTIFY-ACTION, $const:MERGE-ACTION))]
       where fn:exists($custom-actions)
       return
         map:entry($uri, map:new((

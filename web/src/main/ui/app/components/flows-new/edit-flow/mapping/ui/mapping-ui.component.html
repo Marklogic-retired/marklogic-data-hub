@@ -55,7 +55,7 @@
             <!-- <mat-cell *matCellDef="let srcProp">{{srcProp.val}}</mat-cell>  -->
             <mat-cell *matCellDef="let srcProp">
               <span *ngIf="srcProp.type !== 'array' && srcProp.type !== 'object'">{{ isQuoted(srcProp.type) ? '"' : '' }}{{ srcProp.val | slice:0:valMaxLen }}{{ srcProp.val.length > valMaxLen ? '...' : '' }}{{ isQuoted(srcProp.type) ? '"' : '' }}</span>
-              <span *ngIf="srcProp.type === 'array' || srcProp.type === 'object'" class="val-object">{{ srcProp.type }}</span>
+              <span *ngIf="!xmlSource && (srcProp.type === 'array' || srcProp.type === 'object')" class="val-object">{{ srcProp.type }}</span>
             </mat-cell>
             <mat-cell *matCellDef="let srcProp">{{ isQuoted(srcProp.type) ? '"' : '' }}{{ srcProp.val | slice:0:valMaxLen }}{{ srcProp.val.length > valMaxLen ? '...' : '' }}{{ isQuoted(srcProp.type) ? '"' : '' }}</mat-cell>
           </ng-container>
@@ -75,7 +75,7 @@
       </div>
       <div id="table-and-buttons">
       <span class="btn-icons">
-        <button id="Test-btn" mat-raised-button color="primary" (click)="getMapValidationErrors()">
+        <button id="Test-btn" mat-raised-button color="primary" (click)="getMapValidationResp()">
           Test
         </button>
         <button id="Clear-btn" mat-raised-button color="primary" (click)="onClear()">
@@ -100,16 +100,15 @@
           [entityName]="this.entityName"
           [entityProps]="this.entityProps"
           [mapProps]="this.mapping.properties"
+          [context]=""
           [colsShown]="this.colsShown"
           [showHeader]="true"
           [nestedLevel]="0"
           [srcProps]="this.sampleDocNestedProps"
           [functionLst]="this.functionLst"
-          [mapResults]="this.mapResults"
-          [mapErrors]="this.mapErrors"
-          [containErrors]="this.containErrors"
+          [mapResp]="this.mapResp"
           [nmspace]="this.nmspace"
-          (handleSelection)="this.onHandleSelection($event)"
+          (handleInput)="this.onHandleInput($event)"
         ></app-entity-table-ui>
       </div>
     </div>

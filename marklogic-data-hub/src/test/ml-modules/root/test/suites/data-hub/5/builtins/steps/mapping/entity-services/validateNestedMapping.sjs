@@ -10,11 +10,11 @@ function invalidProperty() {
       },
       name: {
         sourcedFrom: "concat(someName,",
-        targetEntityType: "http://marklogic.com/data-hub/example/Person-1.0.0/Name",
+        targetEntityType: "#/definitions/Name",
         properties: {
           first: {
             sourcedFrom: "theFirstName",
-            targetEntityType: "http://marklogic.com/data-hub/example/Person-1.0.0/FirstName",
+            targetEntityType: "#/definitions/FirstName",
             properties: {
               value: {
                 sourcedFrom: "concat(theValue"

@@ -33,6 +33,7 @@ export class MappingUiComponent implements OnChanges {
   @Input() functionLst: object;
   @Input() entityName: string;
   @Input() entityNested: Entity;
+  @Input() xmlSource: boolean;
 
   @Input() entityProps: any;
   @Input() nmspace: object;
@@ -81,7 +82,6 @@ export class MappingUiComponent implements OnChanges {
     disableURINavRight: boolean = false;
     uriIndex = 0;
     currEntity:string;
-    containErrors: boolean = false;
 
   @ViewChild(MatTable)
   table: MatTable<any>;
@@ -93,8 +93,7 @@ export class MappingUiComponent implements OnChanges {
   sort: MatSort;
 
   @ViewChildren('fieldName') fieldName:QueryList<any>;
-  public mapResults:any = {} ;
-  public mapErrors: any = {};
+  public mapResp: any = {};
 
   ngOnInit(){
     if (!this.dataSource){
@@ -123,111 +122,41 @@ export class MappingUiComponent implements OnChanges {
       this.mapExpresions = this.conns;
     }
   }
-  getMapResults(sourceURI?: string){
-    this.isTestClicked = true;
-    this.manageFlowsService.getMap(this.mapping.name).subscribe((map: any) => {
-      let uri;
-      if(sourceURI){
+
+  getMapValidationResp(sourceURI?: string) {
+    let self = this;
+    self.isTestClicked = true;
+    let uri;
+
+    self.manageFlowsService.getMap(self.mapping.name).subscribe((map: any) => {
+      if (sourceURI) {
         uri = sourceURI;
       }
       else {
         uri = map.sourceURI;
       }
-    this.manageFlowsService.testMap(map.name, String(map.version), uri).subscribe(resp => {
-      this.mapResults = resp;
-      delete this.mapResults["info"];
-      this.mapResults = this.mapResults[this.entityName];
-      console.log(this.mapResults);
-      });
+      self.manageFlowsService.getMappingValidationResp(map.name, map, uri).subscribe(resp => {
+        self.mapResp = resp;
+      },
+        err => {
+          if (err.hasOwnProperty('error')) {
+            console.log("found error");
+            if (err['error']['code'] == 500 && String(err['error']['message']).indexOf("Could not find mapping") >= 0) {
+              let result = self.dialogService.alert(
+                'QuickStart has not finished loading the updated mapping. Please try again.',
+                'OK'
+              );
+              result.subscribe();
+            }
+          }
+        });
     });
   }
 
-  getMapValidationErrors(sourceURI?: string) {
-    let self = this;
-    self.isTestClicked = true;
-    setTimeout(function(){ 
-      self.manageFlowsService.getMap(self.mapping.name).subscribe((map: any) => {
-        self.manageFlowsService.getMappingErrors(map.name, map).subscribe(resp => {
-          self.mapErrors = resp;
-          if (JSON.stringify(self.mapErrors) != JSON.stringify({})) {
-            //checking if the response contains any error
-            self.checkKeyinObject(self.mapErrors, "errorMessage");
-  
-            if (!self.containErrors) {
-              let uri;
-              if (sourceURI) {
-                uri = sourceURI;
-              }
-              else {
-                uri = map.sourceURI;
-              }
-              self.manageFlowsService.testMap(map.name, String(map.version), uri).subscribe(resp => {
-                console.log("testMap called");
-                self.mapResults = resp;
-                delete self.mapResults["info"];
-                self.mapResults = self.mapResults[self.entityName];
-                console.log(self.mapResults);
-              },
-                err => {
-                  if (err.hasOwnProperty('error')) {
-                    console.log("found error");
-                    if (err['error']['code'] == 500 && String(err['error']['message']).indexOf("Could not find mapping") >= 0) {
-                      let result = self.dialogService.alert(
-                        'QuickStart has not finished loading the updated mapping. Please try again.',
-                        'OK'
-                      );
-                      result.subscribe();
-                    }
-                  }
-                });
-            }
-          }
-        },
-          err => {
-            if (err.hasOwnProperty('error')) {
-              console.log("found error");
-              if (err['error']['code'] == 500 && String(err['error']['message']).indexOf("Could not find mapping") >= 0) {
-                let result = self.dialogService.alert(
-                  'QuickStart has not finished loading the updated mapping. Please try again.',
-                  'OK'
-                );
-                result.subscribe();
-              }
-            }
-          });
-      });
-    }, 750);
-  }
-
-  // Checks if the key exists in an infinitely nested object
-  checkKeyinObject(obj, keyName) {
-
-    let self = this;
-    if (obj.hasOwnProperty(keyName)) {
-      self.containErrors = true;
-    }
-    else {
-      _.forEach(obj, function (val, key) {
-
-        if (val.constructor.name === "Object") {
-          self.checkKeyinObject(val, keyName)
-        }
-        else if (val.constructor.name === "Array") {
-
-          val.forEach(obj => {
-            if (obj.constructor.name === "object") {
-              self.checkKeyinObject(obj, keyName);
-            }
-          });
-        }
-      });
-    }
-  }
 
   onClear(){
-    this.mapResults = {};
+    this.mapResp = {};
     this.isTestClicked = false;
-    this.containErrors = false;
   }
   onNavigateURIList(index) {
     if (index > 0 && index < this.docUris.length - 1) {
@@ -259,29 +188,17 @@ export class MappingUiComponent implements OnChanges {
     }
   }
   onUpdateURINewUI(){
-    if (Object.keys(this.conns).length > 0) {
-      this.editingURI = false;
-      this.updateURI.emit({
-        uri: this.editURIVal,
-        uriOrig: this.mapping.sourceURI,
-        conns: this.conns,
-        connsOrig: this.connsOrig,
-        save: true
-      });
-    } else {
-      this.editingURI = false;
-      this.updateURI.emit({
-        uri: this.editURIVal,
-        uriOrig: this.mapping.sourceURI,
-        conns: this.conns,
-        isTestClicked:this.isTestClicked,
-        connsOrig: {},
-        save: true
-      });
-    }
+    this.editingURI = false;
+    this.updateURI.emit({
+      uri: this.editURIVal,
+      uriOrig: this.mapping.sourceURI,
+      conns: this.conns,
+      connsOrig: this.connsOrig,
+      save: true
+    });
     console.log(this.editURIVal);
     if(this.isTestClicked) {
-      this.getMapValidationErrors(this.editURIVal); //this.getMapResults(this.editURIVal);
+      this.getMapValidationResp(this.editURIVal);
     }
   }
 
@@ -332,7 +249,12 @@ export class MappingUiComponent implements OnChanges {
    */
   keyPressURI(event) {
     if (event.key === 'Enter') {
-      this.onUpdateURI();
+      if(this.isVersionCompatibleWithES) {
+        this.onUpdateURINewUI();
+      }
+      else {
+        this.onUpdateURI();
+      }
     }
   }
 
@@ -400,8 +322,7 @@ export class MappingUiComponent implements OnChanges {
     }
   }
 
-  onHandleSelection(event): void {
-    console.log('mapping-ui onHandleSelection', event);
+  onHandleInput(event): void {
     this.handleSelection(event.name, event.expr, true);
   }
 

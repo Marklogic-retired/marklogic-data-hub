@@ -3,10 +3,10 @@ const test = require("/test/test-helper.xqy");
 const emptySequence = Sequence.from([]);
 
 let assertions = [];
-let errorCount = 0;
 
 xdmp.invokeFunction(
   function() {
+    let errorCount = 0;
     try {
       lib.checkOptions(emptySequence, {});
     } catch (exc) {

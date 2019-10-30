@@ -14,8 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ApplicationConfig.class)
@@ -41,7 +40,15 @@ public class ValidateMappingTest extends HubTestBase {
         "    }\n" +
         "  }\n" +
         "}\n";
-
+    private final static String CUSTOMER_DOC = "{\n" +
+        "\t\"envelope\": {\n" +
+        "\t\t\"instance\": {\n" +
+        "\t\t\t\"id\": \"10260\",\n" +
+        "\t\t\t\"Order\": \"123\"\n" +
+        "\t\t},\n" +
+        "\t\t\"attachments\": null\n" +
+        "\t}\n" +
+        "}";
     private final static String CUSTOMER_URI = "/entities/CustomerType.entity.json";
 
     private DatabaseClient client;
@@ -55,6 +62,10 @@ public class ValidateMappingTest extends HubTestBase {
             new DocumentMetadataHandle().withCollections("http://marklogic.com/entity-services/models"),
             new StringHandle(CUSTOMER_MODEL).withFormat(Format.JSON)
         );
+        client.newJSONDocumentManager().write(
+            "/validate/test.json",
+            new StringHandle(CUSTOMER_DOC).withFormat(Format.JSON)
+        );
 
         mgr = new MappingValidator(client);
     }
@@ -62,6 +73,7 @@ public class ValidateMappingTest extends HubTestBase {
     @AfterEach
     public void teardown() {
         client.newJSONDocumentManager().delete(CUSTOMER_URI);
+        client.newJSONDocumentManager().delete("/validate/test.json");
         client.release();
     }
 
@@ -75,10 +87,12 @@ public class ValidateMappingTest extends HubTestBase {
                 "      \"sourcedFrom\": \"id\"\n" +
                 "    }\n" +
                 "  }\n" +
-                "}");
+                "}", "/validate/test.json");
 
             assertNull(response.get("properties").get("id").get("errorMessage"),
                 "The mapping is valid, and thus there shouldn't be an errorMessage property");
+            System.out.println(response);
+            assertTrue(response.get("properties").get("id").get("output").textValue().equals("10260"));
         }
     }
 
@@ -92,7 +106,7 @@ public class ValidateMappingTest extends HubTestBase {
                 "      \"sourcedFrom\": \"concat(id, ')\"\n" +
                 "    }\n" +
                 "  }\n" +
-                "}");
+                "}", "/validate/test.json");
 
             assertEquals("Invalid XPath expression: concat(id, ')", response.get("properties").get("id").get("errorMessage").asText(),
                 "The id mapping expression has an error, and thus it should be reported");

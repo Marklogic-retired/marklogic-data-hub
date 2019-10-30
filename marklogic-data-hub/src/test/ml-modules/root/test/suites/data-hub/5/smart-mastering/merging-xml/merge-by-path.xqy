@@ -18,8 +18,7 @@ declare namespace es = "http://marklogic.com/entity-services";
 declare namespace sm = "http://marklogic.com/smart-mastering";
 declare namespace has = "has";
 
-(: Force update mode :)
-declare option xdmp:update "true";
+declare option xdmp:update "false";
 
 declare option xdmp:mapping "false";
 

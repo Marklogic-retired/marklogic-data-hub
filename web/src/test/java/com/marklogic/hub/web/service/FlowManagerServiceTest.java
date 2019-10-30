@@ -30,6 +30,7 @@ import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.web.WebApplication;
 import com.marklogic.hub.web.model.MappingModel;
+import com.marklogic.hub.web.model.StepModel;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -272,6 +273,19 @@ class FlowManagerServiceTest extends AbstractServiceTest {
 
         assertNull(stagingDocumentManager.exists(expectedStepUri));
         assertNull(finalDocumentManager.exists(expectedStepUri));
+    }
+
+    @Test
+    void mergeEntityServicesMappingDefinition() {
+        StepModel stepModel = new StepModel();
+        Step step = new Step();
+        step.setName("testing");
+        step.setStepDefinitionType(StepDefinition.StepDefinitionType.MAPPING);
+        step.setStepDefinitionName("entity-services-mapping");
+        step = flowManagerService.mergeDefaultStepDefinitionIntoStep(stepModel, step);
+
+        assertEquals(false, Boolean.parseBoolean(step.getOptions().get("validateEntity").toString()),
+            "A new entity-services-mapping step should default to validateEntity=false");
     }
 
     @Test

@@ -17,8 +17,7 @@ import module namespace lib = "http://marklogic.com/smart-mastering/test" at "li
 declare namespace es = "http://marklogic.com/entity-services";
 declare namespace sm = "http://marklogic.com/smart-mastering";
 
-(: Force update mode :)
-declare option xdmp:update "true";
+declare option xdmp:update "false";
 
 declare option xdmp:mapping "false";
 

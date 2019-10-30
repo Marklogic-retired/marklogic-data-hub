@@ -23,8 +23,7 @@ import module namespace lib = "http://marklogic.com/smart-mastering/test" at "/t
 declare namespace es = "http://marklogic.com/entity-services";
 declare namespace sm = "http://marklogic.com/smart-mastering";
 
-(: Force update mode :)
-declare option xdmp:update "true";
+declare option xdmp:update "false";
 
 declare option xdmp:mapping "false";
 
@@ -56,7 +55,10 @@ let $_ :=
     $lib:INVOKE_OPTIONS
   )
 
-let $merged-uri := (cts:uris((), (), cts:collection-query($const:MERGED-COLL)))[1]
+let $merged-uri := xdmp:invoke-function(
+  function() {(cts:uris((), (), cts:collection-query($const:MERGED-COLL)))[1]},
+  $lib:INVOKE_OPTIONS
+)
 let $second-merge-uris := ("/source/3/doc3.xml", $merged-uri)
 let $merged-doc :=
   xdmp:invoke-function(
@@ -247,7 +249,10 @@ let $_ := map:clear($blocks-impl:cached-blocks-by-uri)
 (: And now there should be blocks :)
 let $assertions := (
   $assertions,
-  $second-merge-uris ! test:assert-exists(matcher:get-blocks(.)/node())
+  xdmp:invoke-function(
+    function() {$second-merge-uris ! test:assert-exists(matcher:get-blocks(.)/node())},
+    $lib:INVOKE_OPTIONS
+  )
 )
 
 return $assertions

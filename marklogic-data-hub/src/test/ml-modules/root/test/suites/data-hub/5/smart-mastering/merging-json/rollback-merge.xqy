@@ -20,8 +20,7 @@ import module namespace lib = "http://marklogic.com/smart-mastering/test" at "li
 declare namespace es = "http://marklogic.com/entity-services";
 declare namespace sm = "http://marklogic.com/smart-mastering";
 
-(: Force update mode :)
-declare option xdmp:update "true";
+declare option xdmp:update "false";
 
 declare option xdmp:mapping "false";
 
@@ -205,8 +204,9 @@ let $merged-id := $merged-doc/*:envelope/*:headers/*:id
 let $merged-uri := merge-impl:build-merge-uri($merged-id, "json")
 
 (: At this point, there should be no blocks :)
-let $assertions := ( $assertions, xdmp:eager(
-  map:keys($lib:TEST-DATA) ! test:assert-not-exists(matcher:get-blocks(.)/node())
+let $assertions := ( $assertions, xdmp:invoke-function(
+  function() {xdmp:eager(map:keys($lib:TEST-DATA) ! test:assert-not-exists(matcher:get-blocks(.)/node()))},
+  $lib:INVOKE_OPTIONS
 ))
 
 let $unmerge :=
@@ -220,6 +220,9 @@ let $_ := map:clear($blocks-impl:cached-blocks-by-uri)
 (: And now there should be blocks :)
 let $assertions := (
   $assertions,
-  map:keys($lib:TEST-DATA) ! test:assert-exists(matcher:get-blocks(.)/node())
+  xdmp:invoke-function(
+    function() {map:keys($lib:TEST-DATA) ! test:assert-exists(matcher:get-blocks(.)/node())},
+    $lib:INVOKE_OPTIONS
+  )
 )
 return $assertions

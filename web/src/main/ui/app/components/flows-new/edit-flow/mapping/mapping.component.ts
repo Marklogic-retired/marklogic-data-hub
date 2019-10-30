@@ -29,6 +29,7 @@ import { Flow } from "../../models/flow.model";
       [entityName]="this.entityName"
       [entityNested] = "entityNested"
       [nmspace] = "nmspace"
+      [xmlSource]="xmlSource"
       (updateURI)="this.updateURI($event)"
       (updateMap)="this.updateMap($event)"
     ></app-mapping-ui>
@@ -58,6 +59,7 @@ export class MappingComponent implements OnInit {
   public docUris: Array<any> = [];
   public sampleDocNestedProps:  Array<any> = [];
   public nestedDoc: Array<any> = [];
+  public xmlSource: boolean = false;
 
   // Connections
   public conns: object = {};
@@ -117,26 +119,20 @@ export class MappingComponent implements OnInit {
         this.step.options.collections = [`${this.step.name}`, 'mdm-content', this.entityName];
       }
       this.loadEntity();
-      this.loadMap();
-      this.getFunctionList();
     }
   }
 
-  loadEntityDataSource() {
-      this.targetEntity
-  }
-
   loadEntity(): void {
-    this.entitiesService.entitiesChange.subscribe(entities => {
-      this.targetEntity = _.find(entities, (e: Entity) => {
-        return e.name === this.entityName;
-      });
-    });
-    this.entitiesService.getEntities();
-    // Get entity in full nested form
-    this.entitiesService.getEntityNested(this.entityName)
+    this.entitiesService.getEntity(this.entityName)
       .subscribe(result => {
-        this.entityNested = result;
+        this.targetEntity = result;
+        // Get entity in full nested form
+        this.entitiesService.getEntityNested(this.entityName)
+          .subscribe(result => {
+            this.entityNested = result;
+            this.loadMap();
+            this.getFunctionList();
+          });
       });
   }
 
@@ -148,18 +144,30 @@ export class MappingComponent implements OnInit {
         this.sampleDocURI = map.sourceURI;
         this.editURIVal = this.sampleDocURI;
       }
-      this.loadSampleDoc()
+      this.loadSampleDoc();
       if (map && map.properties) {
+        this.isNestedMap();
+        console.log("isNested: " + this.connsNested);
         self.conns = {};
-        _.forEach(map.properties, function(srcObj, entityPropName) {
-          self.conns[entityPropName] = srcObj.sourcedFrom;
-        });
+        if(!self.connsNested ) {
+          _.forEach(map.properties, function(srcObj, entityPropName) {
+            self.conns[entityPropName] = srcObj.sourcedFrom;
+          });
+        }
+        else {
+          self.conns = map.properties;
+        }
         self.connsOrig = _.clone(self.conns);
       }
     },
     () => {},
     () => {});
   }
+
+  isNestedMap() {
+    this.connsNested = Object.keys(this.mapping.properties).findIndex(key => this.mapping.properties[key].hasOwnProperty("targetEntityType")) > -1 ;
+  }
+
 
   loadSampleDoc() {
     let self = this;
@@ -217,7 +225,7 @@ export class MappingComponent implements OnInit {
       _.forEach(startRoot, function (val, key) {
           let prop = {
             key: key,
-            val: typeof(val) === "object" && ['Object','Array'].includes(val.constructor.name) ? val : String(val),
+            val: ((val === null) || (typeof(val) === "object" && ['Object','Array'].includes(val.constructor.name))) ? val : String(val),
             type: self.getType(val)
           };
           self.sampleDocSrcProps.push(prop);
@@ -262,49 +270,142 @@ export class MappingComponent implements OnInit {
 
   normalizeToJSON(input: any): any {
     let self = this;
+    self.xmlSource = false;
     if (typeof input === 'string') {
       const parsedXML = new DOMParser().parseFromString(input, 'application/xml');
       const object = {};
       self.nmspace = {};
-      
-      var attrList = {};
+      self.xmlSource = true;
 
       const nodeToJSON = function (obj, node) {
-        if(node.namespaceURI) {
+        if (node.namespaceURI) {
           self.nmspace[node.nodeName] = node.namespaceURI;
         }
-        
-        if(node.attributes) {
-          for( let i= 0; i<node.attributes.length;i++){
-            if(node.attributes.item(i).name !== 'xmlns'){
-              obj["@"+node.attributes.item(i).name] = node.attributes.item(i).value;
-              attrList[node.nodeName+"/"+"@"+node.attributes.item(i).name] = node.attributes.item(i).value;
-              
-            }
-            
-          }
+
+        //loading attributes for parent node
+        if (!node.childNodes) {
+          self.loadAttributes(node, obj, 'parentNode');
         }
-        // Extracting the attributes from the source xml doc.
+        let countNodes = self.countChildNodes(node);
+
         node.childNodes.forEach((childNode) => {
-          
-          
-          if (childNode.childNodes.length === 0 ||  (childNode.childNodes.length === 1 && childNode.firstChild.nodeType === Node.TEXT_NODE)) {
-            if (childNode.nodeName !== '#text') {
-              obj[childNode.nodeName] = childNode.textContent;
-              
+          if (countNodes && childNode.nodeName in countNodes && countNodes[childNode.nodeName] > 1) {
+
+            if (childNode.childNodes.length === 0 || (childNode.childNodes.length === 1 && childNode.firstChild.nodeType === Node.TEXT_NODE)) {
+              if (childNode.nodeName !== '#text') {
+
+                let tempObj = {};
+                tempObj["/" + childNode.nodeName] = childNode.textContent;
+
+                if (!obj[childNode.nodeName+"/"]) {
+                  if (childNode.nodeName !== '#text') {
+                    obj[childNode.nodeName+"/"] = [];
+                  }
+                };
+
+                if (obj[childNode.nodeName+"/"].constructor.name === 'Array') {
+                  obj[childNode.nodeName+"/"].push(tempObj);
+                }
+
+                //loading attributes for parent node
+                self.loadAttributes(childNode, obj, 'multipleNodes');
+              }
+            } else {
+              let tempObj = {};
+
+              if (!obj[childNode.nodeName+"/"]) {
+                if (childNode.nodeName !== '#text') {
+                  obj[childNode.nodeName+"/"] = [];
+                }
+              };
+
+              //loading attributes
+              self.loadAttributes(childNode, obj, 'singleNode');
+
+              nodeToJSON(tempObj, childNode);
+              let ob = {[`${childNode.nodeName}`] : tempObj}
+              if (obj[childNode.nodeName+"/"].constructor.name === 'Array') {
+                
+                obj[childNode.nodeName+"/"].push(ob);
+              }
             }
           } else {
-            obj[childNode.nodeName] = {};
-            nodeToJSON(obj[childNode.nodeName], childNode);
+
+            if (childNode.childNodes.length === 0 || (childNode.childNodes.length === 1 && childNode.firstChild.nodeType === Node.TEXT_NODE)) {
+              if (childNode.nodeName !== '#text') {
+                obj[childNode.nodeName] = childNode.textContent;
+
+                //loading attributes
+                self.loadAttributes(childNode, obj, 'singleNode');
+              }
+            }
+            else {
+              obj[childNode.nodeName] = {};
+              //loading attributes
+              self.loadAttributes(childNode, obj, 'singleNode');
+
+              nodeToJSON(obj[childNode.nodeName], childNode);
+            }
           }
         });
       };
       nodeToJSON(object, parsedXML);
-      //console.log("object",object);
       return object;
-      
+
     }
     return input;
+  }
+
+  countChildNodes(node): object {
+    let nodeCounter = {};
+    if (node.childNodes.length !== 0) {
+        
+      node.childNodes.forEach((childNode) => {
+        if(childNode.nodeName in nodeCounter){
+          nodeCounter[childNode.nodeName] = nodeCounter[childNode.nodeName] + 1;
+        } else {
+          nodeCounter[childNode.nodeName] = 1;
+        }
+      });
+  
+    }
+    return nodeCounter;
+  }
+
+  //load attributes for an xml node
+  loadAttributes(node, obj, type: string): void {
+    if (type === 'singleNode') {
+      //Nodes having single instance at any level
+      if (node.attributes) {
+        for (let i = 0; i < node.attributes.length; i++) {
+          if (node.attributes.item(i).name !== 'xmlns') {
+            obj[node.nodeName + "/" + "@" + node.attributes.item(i).name] = node.attributes.item(i).value;
+          }
+        }
+      }
+    } else if (type === 'multipleNodes') {
+      //Nodes having multiple instances at any level
+      if (node.attributes) {
+        for (let i = 0; i < node.attributes.length; i++) {
+          if (node.attributes.item(i).name !== 'xmlns') {
+            let tempObjAttr = {};
+            tempObjAttr["/" + node.nodeName + "/" + "@" + node.attributes.item(i).name] = node.attributes.item(i).value;
+            if (obj[node.nodeName+"/"].constructor.name === 'Array') {
+              obj[node.nodeName+"/"].push(tempObjAttr);
+            }
+          }
+        }
+      }
+    } else {
+      //parent Node
+      if (node.attributes) {
+        for (let i = 0; i < node.attributes.length; i++) {
+          if (node.attributes.item(i).name !== 'xmlns') {
+            obj["@" + node.attributes.item(i).name] = node.attributes.item(i).value;
+          }
+        }
+      }
+    }
   }
 
   saveMap(): void {
@@ -362,14 +463,12 @@ export class MappingComponent implements OnInit {
         this.sourceDbType = 'FINAL';
       }
       this.loadEntity();
-      this.loadMap();
     }
   }
 
   // Parent component can trigger mapping reset if source changes
   sourceChanged(): void {
     this.sampleDocURI = '';
-    this.conns = {};
     this.saveMap();
   }
 
@@ -417,9 +516,8 @@ export class MappingComponent implements OnInit {
     let self = this;
 
     _.forEach(sourcePropDoc, function (val, key) {
-      if (val != null) {
+      if (val != null && val!= "") {
         if (val.constructor.name === "Object") {
-
           if (ParentKeyValuePair.includes(key + JSON.stringify(val))) {
             parentKey = key;
           } else {
@@ -437,12 +535,7 @@ export class MappingComponent implements OnInit {
           self.nestedDoc.push(propty);
           self.updateNestedDataSourceNew(val, ParentKeyValuePair, parentKey);
         } else if (val.constructor.name === "Array") {
-          let propty = {
-            key: key,
-            val: "",
-            type: self.getType(val)
-          };
-          self.nestedDoc.push(propty);
+          if(key.lastIndexOf('/') !== key.length-1){
           if (ParentKeyValuePair.includes(key + JSON.stringify(val))) {
             parentKey = key;
           } else {
@@ -452,8 +545,25 @@ export class MappingComponent implements OnInit {
               parentKey = parentKey + "/" + key;
             }
           }
+            let propty = {
+              key: parentKey,
+              val: "",
+              type: self.getType(val)
+            };
+            self.nestedDoc.push(propty);
+          }
+          
           val.forEach(obj => {
-            self.updateNestedDataSourceNew(obj, ParentKeyValuePair, parentKey);
+            if(obj.constructor.name == "String"){
+              let propty = {
+                key: parentKey+ "/",
+                val: obj,
+                type: self.getType(obj)
+              };
+              self.nestedDoc.push(propty);
+            } else {
+              self.updateNestedDataSourceNew(obj, ParentKeyValuePair, parentKey);
+            }
           });
         } else {
           let currKey = "";
@@ -467,23 +577,35 @@ export class MappingComponent implements OnInit {
             }
           }
           let propty = {
-            key: currKey,
+            key: currKey.replace(/\/\//g, '/'),
             val: String(val),
             type: self.getType(val)
           };
           self.nestedDoc.push(propty);
         }
       } else {
+        let currKey = "";
+          if (ParentKeyValuePair.includes(key + val)) {
+            currKey = key;
+          } else {
+            if (parentKey === "") {
+              currKey = key;
+            } else {
+              currKey = parentKey + "/" + key;
+            }
+          }
         let propty = {
-          key: key,
+          key: currKey.replace(/\/\//g, '/'),
           val: "",
           type: self.getType(val)
         };
         self.nestedDoc.push(propty);
+
       }
-
+      if(parentKey.split('/').pop() in sourcePropDoc) {
+        parentKey = parentKey.slice(0,parentKey.lastIndexOf('/'));
+      }
     });
-
 
     return this.nestedDoc;
   }

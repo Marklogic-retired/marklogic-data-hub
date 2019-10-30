@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges,
-  ViewChild, ViewChildren, QueryList, ViewEncapsulation } from '@angular/core';
+  ViewChild, ViewChildren, QueryList, ViewEncapsulation, ChangeDetectorRef } from '@angular/core';
 import { MatTable, MatTableDataSource} from "@angular/material";
 import { FormBuilder, FormGroup, Validators, FormArray, FormControl } from '@angular/forms';
 
@@ -14,17 +14,16 @@ export class EntityTableUiComponent implements OnChanges {
   @Input() entityName: any;
   @Input() entityProps: any;
   @Input() mapProps: any;
+  @Input() context: string;
   @Input() colsShown: Array<string>;
   @Input() showHeader: boolean; // Hide table header for nested
   @Input() nestedLevel: number; // For indenting
   @Input() srcProps: any;
   @Input() functionLst: object;
   @Input() nmspace: object;
-  @Input() mapResults: any;
   @Input() currEntity:string;
-  @Input() mapErrors: any;
-  @Input() containErrors: boolean;
-  @Output() handleSelection = new EventEmitter();
+  @Input() mapResp: any;
+  @Output() handleInput = new EventEmitter();
 
   dataSource: MatTableDataSource<any>;
 
@@ -41,7 +40,9 @@ export class EntityTableUiComponent implements OnChanges {
 
   @ViewChildren('fieldName') fieldName:QueryList<any>;
 
-  constructor() {}
+  constructor(
+    private cd: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
   }
@@ -61,57 +62,68 @@ export class EntityTableUiComponent implements OnChanges {
     }
   }
 
-  displayErrorMessage(propName) { 
-    let field = this.mapErrors["properties"]
-    if (field[propName] && field[propName]["errorMessage"]) {
-      return field[propName]["errorMessage"];
+  displayResp(propName) {
+    if(this.mapResp && this.mapResp["properties"]){
+      let field = this.mapResp["properties"]
+      if (field[propName] && field[propName]["errorMessage"]) {
+        return field[propName]["errorMessage"];
+      }
+      else if (field[propName] && field[propName]["output"]) {
+        return field[propName]["output"];
+      }
+    }
   }
-}
 
-checkFieldInErrors(field){
-  if(this.mapErrors && this.mapErrors['properties']){
-    if(this.mapErrors['properties'][field] && this.mapErrors['properties'][field]['errorMessage']) {
-      return true;
+  checkFieldInErrors(field) {
+    if (this.mapResp && this.mapResp['properties']){
+      if (this.mapResp['properties'][field] && this.mapResp['properties'][field]['errorMessage']) {
+        return true;
+      } else {
+        return false;
+      }
     } else {
       return false;
     }
-  } else {
-    return false;
   }
-  
-}
 
   getDatatype(prop) {
     if (prop.datatype === 'array') {
-      let s = prop.items.$ref.split('/');
-      return s.slice(-1).pop() + '[]';
+      if (prop.items && prop.items.$ref) {
+        let s = prop.items.$ref.split('/');
+        return s.slice(-1).pop() + '[]';
+      } else if (prop.items && prop.items.datatype) {
+        return prop.items.datatype + '[]';
+      }
     } else if (prop.$ref !== null) {
       let s = prop.$ref.split('/');
       return s.slice(-1).pop();
     } else {
       return prop.datatype;
     }
+    return null;
   }
-  getValue(prop) {
-    if (this.mapResults) {
-      if (! ((prop.$ref || (prop.items && prop.items.$ref)))) {
-      let parseRes = this.mapResults;
-      if (Array.isArray(this.mapResults)) {
-        parseRes = parseRes[0];
-
-      }
-      if (this.currEntity) {
-        const entity = this.currEntity.slice(this.currEntity.lastIndexOf('/') + 1);
-        parseRes = parseRes[entity];
-      }
-      return parseRes[prop.name];
-    }
-  }
-}
 
   getProps(propName) {
-    return (this.mapProps[propName] && this.mapProps[propName].properties) ?
+    return (this.mapProps && this.mapProps[propName] && this.mapProps[propName].properties) ?
       this.mapProps[propName].properties : null;
+  }
+
+
+  getContext(propName) {
+    let result = null;
+    if (this.mapExpressions && this.mapExpressions[propName]) {
+      result = '';
+      // Concat to current context from parent if present
+      if (this.context) {
+        result = this.context;
+        // Add trailing '/' if not already there
+        if (this.context[this.context.length-1] !== '/') {
+          result = result + '/';
+        }
+      }
+      result = result + this.mapExpressions[propName];
+    }
+    return result;
   }
 
   isNested(prop) {
@@ -132,7 +144,7 @@ checkFieldInErrors(field){
     return propRef && !propRef.startsWith('#/definitions/');
   }
 
-  onHandleSelection(obj): void {
+  onHandleInput(obj): void {
     let propRef = obj.prop.$ref || (obj.prop.items && obj.prop.items.$ref) || null;
     if (this.mapData[obj.name] === undefined) {
       this.mapData[obj.name] = {};
@@ -143,11 +155,12 @@ checkFieldInErrors(field){
       if (propRef) {
         this.mapData[obj.name]['targetEntityType'] = propRef;
       }
+      this.cd.detectChanges(); // Required for context updates
     } else {
       this.mapData[obj.name]['properties'] = obj.expr;
     }
     let newObj = {name: this.entityName, expr: this.mapData, prop: obj.prop};
-    this.handleSelection.emit(newObj);
+    this.handleInput.emit(newObj);
   }
 
   toggleProp(name) {
@@ -180,7 +193,11 @@ checkFieldInErrors(field){
     //f.selectionStart = startPos;
     //f.selectionEnd = startPos+content.length;
     f.focus();
-    this.onHandleSelection({ name: prop.name, expr: f.value, prop: prop });
+    this.onHandleInput({ 
+      name: prop.name, 
+      expr: f.value, 
+      prop: prop
+    });
   }
 
   insertFunction(functionName, index, prop) {
@@ -190,6 +207,13 @@ checkFieldInErrors(field){
   insertField(fieldName, index, prop) {
     if(String(fieldName).includes(" ")){
       fieldName = "*[local-name(.)='" + fieldName + "']";
+    }
+    // Trim context from beginning of fieldName if needed
+    if (this.context) {
+      let len = this.context.length;
+      if (fieldName.substring(0, len+1) === this.context + '/') {
+        fieldName = fieldName.slice(len+1);
+      }
     }
     this.insertContent(fieldName, index, prop)
   }
@@ -207,7 +231,9 @@ checkFieldInErrors(field){
   uniqueSourceFields(source) {
     let uniqueSrcFields = [];
     source.forEach(obj => {
-      uniqueSrcFields.push(obj.key);
+      if(obj.key.slice(obj.key.lastIndexOf('/')+1) != ""){
+        uniqueSrcFields.push(obj.key);
+      }
     });
 
     return uniqueSrcFields.filter((item, index) => uniqueSrcFields.indexOf(item) === index);

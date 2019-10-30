@@ -38,9 +38,7 @@ export class StepComponent implements OnChanges {
     // workaround for: https://github.com/angular/material2/issues/7006
     if (changes &&
       changes.selectedStepId &&
-      ( this.createStepHeader(this.step) === this.stepType.MATCHING ||
-        this.createStepHeader(this.step) === this.stepType.MERGING ||
-        this.createStepHeader(this.step) === this.stepType.MASTERING ) &&
+      this.createStepHeader(this.step) === this.stepType.MASTERING &&
       this.step.id === changes.selectedStepId.currentValue) {
       setTimeout(() => {
         this.masteringTabGroup.realignInkBar();
