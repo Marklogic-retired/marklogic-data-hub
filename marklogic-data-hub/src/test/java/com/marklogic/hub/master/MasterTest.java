@@ -82,7 +82,7 @@ public class MasterTest extends HubTestBase {
     }
 
     private void installProject() throws IOException {
-        LoadTestModules.loadTestModules(host, finalPort, secUser, secPassword, HubConfig.DEFAULT_MODULES_DB_NAME);
+        LoadTestModules.loadTestModules(host, finalPort, secUser, secPassword, HubConfig.DEFAULT_MODULES_DB_NAME, hubConfig.getModulePermissions());
         String[] directoriesToCopy = new String[]{"input", "flows", "step-definitions", "entities", "mappings"};
         for (final String subDirectory : directoriesToCopy) {
             final Path subProjectPath = projectPath.resolve(subDirectory);

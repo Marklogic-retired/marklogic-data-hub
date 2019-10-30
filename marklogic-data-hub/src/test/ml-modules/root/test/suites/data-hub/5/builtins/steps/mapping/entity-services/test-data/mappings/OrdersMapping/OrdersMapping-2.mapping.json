@@ -1,0 +1,20 @@
+{
+  "lang" : "zxx",
+  "name" : "OrdersMapping",
+  "description" : "Default description",
+  "version" : 2,
+  "targetEntityType" : "http://marklogic.com/data-hub/example/OrderType-0.0.1/OrderType",
+  "sourceContext" : "/",
+  "sourceURI" : "",
+  "properties" : {
+    "id" : {
+      "sourcedFrom" : "add-function(id, 10)"
+    },
+    "purchaseDate" : {
+      "sourcedFrom" : "parseDate('MM/DD/YYYY', transactionDate)"
+    },
+    "orderCost": {
+      "sourcedFrom" : "sum(items ! (quantity * price))"
+    }
+  }
+}
