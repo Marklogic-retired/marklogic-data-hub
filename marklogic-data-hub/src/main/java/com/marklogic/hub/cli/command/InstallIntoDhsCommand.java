@@ -61,16 +61,9 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
         // Gets the DHF-specific command for loading triggers into the staging triggers database
         commands.addAll(commandMap.get("mlTriggerCommands"));
 
-        for (Command c : commandMap.get("mlModuleCommands")) {
-            if (c instanceof LoadHubModulesCommand || c instanceof LoadHubArtifactsCommand) {
-                commands.add(c);
-            }
-
-            // Need this to pick up what's in ml-modules-final
-            else if (c instanceof LoadUserModulesCommand) {
-                commands.add(c);
-            }
-        }
+        // Can include all of the module commands. No user modules/artifacts will exist in the project that's
+        // created by the installer, so it's safe to include commands for user/modules artifacts.
+        commands.addAll(commandMap.get("mlModuleCommands"));
 
         commands.add(new CopyQueryOptionsCommand(hubConfig));
 
