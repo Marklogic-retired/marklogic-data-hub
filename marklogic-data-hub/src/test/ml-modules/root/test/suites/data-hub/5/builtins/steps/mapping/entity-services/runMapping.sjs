@@ -28,9 +28,10 @@ function runMapping () {
 }
 
 function testMapping() {
-    let instance = lib.invokeTestMapping("/content/mapTest.json", "OrdersMapping" , "1");
+    let instance = lib.invokeTestMapping("/content/mapTest.json", "OrdersMapping" , "2");
     assertions.concat([
           test.assertEqual('2019-12-07', fn.string(instance.OrderType.purchaseDate)),
+          test.assertEqual(11,fn.number(instance.OrderType.id)),
           test.assertEqual(165.05, fn.number(instance.OrderType.orderCost))]);
 }
 

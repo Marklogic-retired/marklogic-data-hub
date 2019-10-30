@@ -17,7 +17,7 @@ import java.util.Properties;
  */
 public class LoadTestModules {
 
-    public static void loadTestModules(String host, int finalPort, String username, String password, String modulesDatabaseName) {
+    public static void loadTestModules(String host, int finalPort, String username, String password, String modulesDatabaseName, String modulePermissions) {
         Properties props = new Properties();
         props.setProperty("mlUsername", username);
         props.setProperty("mlPassword", password);
@@ -27,6 +27,7 @@ public class LoadTestModules {
         AppConfig config = new DefaultAppConfigFactory(new SimplePropertySource(props)).newAppConfig();
         config.setModuleTimestampsPath(null);
         config.setModulesDatabaseName(modulesDatabaseName);
+        config.setModulePermissions(modulePermissions);
         config.setAppServicesPort(8010);
 
         /**

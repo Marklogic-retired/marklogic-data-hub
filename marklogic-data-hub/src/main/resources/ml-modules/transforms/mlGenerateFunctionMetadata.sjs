@@ -9,9 +9,16 @@ function mlGenerateFunctionMetadata(context, params, content) {
     let uri = context.uri;
     let pattern = '^(.*)\.(sjs|mjs|xqy)$';
     let match = new RegExp(pattern).exec(uri);
+    let metadataXml;
     if (match !== null) {
       let uriVal = match[1];
-      let metadataXml = es.functionMetadataValidate(es.functionMetadataGenerate(uri));
+      // The namespace for custom xqy functions should be "http://marklogic.com/mapping-functions/custom"
+      if(uri.includes("/custom-modules/mapping-functions/") && uri.endsWith('.xqy')){
+        metadataXml = es.functionMetadataValidate(es.functionMetadataGenerate("http://marklogic.com/mapping-functions/custom", uri));
+      }
+      else {
+        metadataXml = es.functionMetadataValidate(es.functionMetadataGenerate(uri));
+      }
       metadataXml = addMapNamespaceToMetadata(metadataXml);
       let collection = 'http://marklogic.com/entity-services/function-metadata';
       let permissionsExpression = `xdmp.defaultPermissions().concat([
