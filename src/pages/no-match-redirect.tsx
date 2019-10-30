@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Result, Button } from 'antd';
 import { withRouter } from 'react-router-dom';
 import { AuthContext } from '../util/auth-context';
@@ -8,8 +8,11 @@ const NoMatchRedirect = ({history}) => {
 
   const { user, clearErrorMessage } = useContext(AuthContext);
 
-  const backToHomePage = () => {
+  useEffect(() => {
     clearErrorMessage();
+  }, []);
+
+  const backToHomePage = () => {
     return user.authenticated ? history.push('/view') : history.push('/');
   }
   return (
