@@ -100,6 +100,8 @@ class DataHubPlugin implements Plugin<Project> {
         project.task("hubCreateFlow", group: scaffoldGroup, type: CreateFlowTask)
         project.task("hubCreateHarmonizeFlow", group: scaffoldGroup, type: CreateHarmonizeLegacyFlowTask)
         project.task("hubCreateInputFlow", group: scaffoldGroup, type: CreateInputLegacyFlowTask)
+        project.task("hubGenerateExplorerOptions", group: scaffoldGroup, type: GenerateExplorerQueryOptions,
+            description: "Generates the query options files required for Explorer application")
         project.task("hubGeneratePii", group: scaffoldGroup, type: GeneratePiiTask,
             description: "Generates Security Configuration for all Entity Properties marked 'pii'")
         project.task("hubGenerateTDETemplates", group: scaffoldGroup, type: GenerateTDETemplateFromEntityTask,
@@ -107,6 +109,8 @@ class DataHubPlugin implements Plugin<Project> {
                 " for specific entities by setting the (comma separated) project property 'entityNames'. E.g. -PentityNames=Entity1,Entity2")
         project.task("hubSaveIndexes", group: scaffoldGroup, type: SaveIndexes,
             description: "Saves the indexes defined in {entity-name}.entity.json file to staging and final entity config in src/main/entity-config/databases directory")
+
+        project.tasks.mlPostDeploy.getDependsOn().add("hubGenerateExplorerOptions")
 
         // Hub Mastering tasks
         String masteringGroup = "MarkLogic Data Hub Mastering Tasks"
@@ -183,7 +187,7 @@ class DataHubPlugin implements Plugin<Project> {
         String dhsGroup = "DHS"
         project.task("dhsDeploy", group: dhsGroup, type: DhsDeployTask,
             description: "Deploy project resources and modules into a DHS instance"
-        )
+        ).finalizedBy(["hubGenerateExplorerOptions"])
 
         logger.info("Finished initializing ml-data-hub\n")
     }

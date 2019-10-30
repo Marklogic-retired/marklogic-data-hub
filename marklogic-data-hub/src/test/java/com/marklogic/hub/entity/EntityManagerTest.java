@@ -259,4 +259,61 @@ public class EntityManagerTest extends HubTestBase {
 
 
     }
+
+    @Test
+    public void generateExplorerOptions() {
+        installEntities();
+        File finalDbOptions = project.getEntityConfigDir().resolve("exp-final-entity-options.xml").toFile();
+        File stagingDbOptions = project.getEntityConfigDir().resolve("exp-staging-entity-options.xml").toFile();
+
+        entityManager.generateExplorerQueryOptions();
+
+        assertTrue(finalDbOptions.exists());
+        assertTrue(stagingDbOptions.exists());
+    }
+
+    @Test
+    public void generateExplorerOptionsWithNoEntities() {
+        File finalDbOptions = project.getEntityConfigDir().resolve("exp-final-entity-options.xml").toFile();
+        File stagingDbOptions = project.getEntityConfigDir().resolve("exp-staging-entity-options.xml").toFile();
+
+        entityManager.generateExplorerQueryOptions();
+
+        assertFalse(finalDbOptions.exists());
+        assertFalse(stagingDbOptions.exists());
+    }
+
+    @Test
+    public void overrideExistingExplorerOptions() {
+        installEntities();
+        copyTestEntityOptionsIntoProject();
+        File finalDbOptions = project.getEntityConfigDir().resolve("exp-final-entity-options.xml").toFile();
+        File stagingDbOptions = project.getEntityConfigDir().resolve("exp-staging-entity-options.xml").toFile();
+
+        long oldFinalOptionsTimeStamp = finalDbOptions.lastModified();
+        long oldStagingOptionsTimeStamp = stagingDbOptions.lastModified();
+
+        entityManager.generateExplorerQueryOptions();
+
+        long newFinalOptionsTimeStamp = finalDbOptions.lastModified();
+        long newStagingOptionsTimeStamp = stagingDbOptions.lastModified();
+
+        assertTrue(newFinalOptionsTimeStamp > oldFinalOptionsTimeStamp);
+        assertTrue(newStagingOptionsTimeStamp > oldStagingOptionsTimeStamp);
+    }
+
+    private void copyTestEntityOptionsIntoProject() {
+        try {
+            FileUtils.copyFile(
+                getResourceFile("entity-manager-test/options.xml"),
+                project.getEntityConfigDir().resolve("exp-final-entity-options.xml").toFile()
+            );
+            FileUtils.copyFile(
+                getResourceFile("entity-manager-test/options2.xml"),
+                project.getEntityConfigDir().resolve("exp-staging-entity-options.xml").toFile()
+            );
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

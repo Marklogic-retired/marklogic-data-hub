@@ -100,6 +100,27 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
     }
 
     @Override
+    public void generateExplorerQueryOptions() {
+        QueryOptionsGenerator generator = new QueryOptionsGenerator(hubConfig.newStagingClient());
+        try {
+            Path dir = hubProject.getEntityConfigDir();
+            if (!dir.toFile().exists()) {
+                dir.toFile().mkdirs();
+            }
+            List<JsonNode> entities = getAllEntities();
+            File expStagingFile = Paths.get(dir.toString(), HubConfig.EXP_STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile();
+            File expFinalFile = Paths.get(dir.toString(), HubConfig.EXP_FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile();
+            if (entities.size() > 0) {
+                String options = generator.generateOptions(entities, true);
+                FileUtils.writeStringToFile(expStagingFile, options);
+                FileUtils.writeStringToFile(expFinalFile, options);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public HashMap<Enum, Boolean> deployQueryOptions() {
         // save them first
         saveQueryOptions();
