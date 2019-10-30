@@ -37,6 +37,9 @@ const App: React.FC<Props> = ({history, location}) => {
       clearRedirect();
       history.push('/view');
     }
+    if (user.authenticated && location.pathname === '/' ){
+      history.push('/view');
+    }
     if (user.authenticated && location.state && !user.redirect) {
       history.push(location.state.from.pathname)
     }

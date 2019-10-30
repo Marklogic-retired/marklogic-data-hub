@@ -70,6 +70,7 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
         break;
       case 400:
       case 403:
+      case 404:
       case 405:
       case 408:
       case 414:

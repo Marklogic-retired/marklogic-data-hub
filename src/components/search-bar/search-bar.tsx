@@ -34,6 +34,9 @@ const SearchBar: React.FC<Props> = props => {
 
     const onChange = (e) => {
       setSearchString(e.target.value);
+      if (searchOptions.query !== '' && e.target.value === '') {
+        setQuery(e.target.value);
+      }
     }
 
     useEffect(() => {

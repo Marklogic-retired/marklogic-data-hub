@@ -35,6 +35,10 @@ const Detail: React.FC<Props> = ({ history, location }) => {
       try {
         const result = await axios(`/datahub/v2/search?docUri=${uri}`);
 
+        if (!result.data) {
+          history.push('/error');
+        }
+
         if (componentIsMounted.current) {
           const content = result.headers['content-type'];
 
