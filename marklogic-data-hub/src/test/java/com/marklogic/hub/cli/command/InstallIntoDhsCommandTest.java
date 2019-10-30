@@ -4,6 +4,7 @@ import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.ResourceFilenameFilter;
 import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
+import com.marklogic.appdeployer.command.modules.DeleteTestModulesCommand;
 import com.marklogic.appdeployer.command.security.DeployAmpsCommand;
 import com.marklogic.appdeployer.command.security.DeployPrivilegesCommand;
 import com.marklogic.appdeployer.command.security.DeployRolesCommand;
@@ -84,7 +85,7 @@ public class InstallIntoDhsCommandTest extends HubTestBase {
         command.dataHub = super.dataHub;
 
         List<Command> commands = command.buildCommandsForDhs();
-        assertEquals(12, commands.size());
+        assertEquals(15, commands.size());
         Collections.sort(commands, (c1, c2) -> c1.getExecuteSortOrder().compareTo(c2.getExecuteSortOrder()));
 
         int index = 0;
@@ -96,9 +97,12 @@ public class InstallIntoDhsCommandTest extends HubTestBase {
         assertTrue(commands.get(index++) instanceof LoadHubModulesCommand);
         assertTrue(commands.get(index++) instanceof DeployAmpsCommand);
         assertTrue(commands.get(index++) instanceof LoadUserModulesCommand);
+        assertTrue(commands.get(index++) instanceof GenerateFunctionMetadataCommand);
+        assertTrue(commands.get(index++) instanceof DeleteTestModulesCommand);
         assertTrue(commands.get(index++) instanceof CopyQueryOptionsCommand);
         assertTrue(commands.get(index++) instanceof DeployTriggersCommand);
         assertTrue(commands.get(index++) instanceof DeployHubTriggersCommand);
+        assertTrue(commands.get(index++) instanceof LoadUserArtifactsCommand);
         assertTrue(commands.get(index++) instanceof LoadHubArtifactsCommand);
 
         DeployRolesCommand deployRolesCommand = (DeployRolesCommand) commands.get(1);
