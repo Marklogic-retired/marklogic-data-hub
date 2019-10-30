@@ -70,7 +70,6 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
         break;
       case 400:
       case 403:
-      case 404:
       case 405:
       case 408:
       case 414:
@@ -82,6 +81,17 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
             type: 'ALERT'
           }
         });
+        break;
+      case 404:
+          setUser({ 
+            ...user,
+            redirect: true,
+            error: {
+              title: error.response.data.error,
+              message: error.response.data.message || DEFAULT_MESSAGE,
+              type: 'ALERT'
+            }
+          });
         break;
       case 500:
       case 501:
