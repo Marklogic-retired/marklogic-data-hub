@@ -11,6 +11,9 @@
   font-size: 14px;
   font-weight: bold;
   display: flex;
-  width: 33%;
-  justify-content: space-between;
+  justify-content: flex-start;
+}
+
+.meta {
+  padding-right: 15px;
 }
