@@ -211,6 +211,8 @@ declare function proc-impl:expand-uris-for-merge(
               fn:false(),
               $sub-filter-query,
               (: return results :)
+              fn:true(),
+              (: short-circuit redundant searches :)
               fn:true()
             )[result/@action = $const:MERGE-ACTION]
           where fn:exists($results)

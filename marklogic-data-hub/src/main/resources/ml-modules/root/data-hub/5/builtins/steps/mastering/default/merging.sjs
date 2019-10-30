@@ -16,6 +16,8 @@
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const datahub = DataHubSingleton.instance();
 const mastering = require("/com.marklogic.smart-mastering/process-records.xqy");
+const mergingImpl = require("/com.marklogic.smart-mastering/survivorship/merging/base.xqy");
+const notifyImpl = require('/com.marklogic.smart-mastering/matcher-impl/notification-impl.xqy');
 const masteringStepLib = require("/data-hub/5/builtins/steps/mastering/default/lib.sjs");
 const requiredOptionProperties = ['mergeOptions'];
 const processedURIs = [];
@@ -45,9 +47,10 @@ function main(content, options) {
   );
   processedURIs.push(uriToTakeActionOn);
   for (let matchSummary of relatedMatchSummaries) {
-    let URIsToActOn = matchSummary.toObject().matchSummary.URIsToActOn;
+    let matchSummaryObj = matchSummary.toObject().matchSummary;
+    let URIsToActOn = matchSummaryObj.URIsToActOn;
     let allURIsProcessed = URIsToActOn.every((uri) => processedURIs.includes(uri) || cts.exists(cts.andQuery([
-      cts.documentQuery(uri),
+      cts.documentQuery(buildURI(uri, matchSummaryObj)),
       cts.fieldWordQuery('datahubCreatedByJob', jobID)
     ])));
     if (allURIsProcessed) {
@@ -58,6 +61,20 @@ function main(content, options) {
     }
   }
   return results;
+}
+
+function buildURI(uri, matchSummaryObj) {
+  const actionDetails = matchSummaryObj.actionDetails[uri];
+  if (actionDetails) {
+    if (actionDetails.action === 'merge') {
+      const firstMergedUri = actionDetails.uris[0];
+      const format = firstMergedUri.substring(firstMergedUri.lastIndexOf('.') + 1);
+      uri = mergingImpl.buildMergeUri(uri, format);
+    } else if (actionDetails.action === 'notify') {
+      uri = notifyImpl.buildNotificationUri(actionDetails.threshold, Sequence.from(actionDetails.uris));
+    }
+  }
+  return uri;
 }
 
 function jobReport(jobID, stepResponse, options) {
