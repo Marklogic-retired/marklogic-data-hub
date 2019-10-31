@@ -31,6 +31,7 @@
 		border-right: 1px solid rgba(0, 0, 0, 0.12);
 		padding-left: 1%;
 		align-self: stretch;
+		align-items: flex-start;
 		font-size: 13px !important;
 	}
 
@@ -124,6 +125,8 @@
 		color: red; 
 		padding:0px; 
 		margin-top: -5px;
+		user-select: none;
+    cursor: default;
 }
 #error-description{
 		font-size: 10px;
