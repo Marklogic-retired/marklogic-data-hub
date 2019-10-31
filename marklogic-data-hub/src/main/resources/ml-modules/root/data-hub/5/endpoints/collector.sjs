@@ -66,7 +66,7 @@ if (!(query || isMergingStep)) {
 }
 if (isMergingStep) {
   query = fn.normalizeSpace(`cts.values(
-    cts.pathReference('/matchSummary/URIsToActOn', ['type=string','collation=http://marklogic.com/collation/']),
+    cts.pathReference('/matchSummary/URIsToProcess', ['type=string','collation=http://marklogic.com/collation/']),
     null,
     null,
     cts.collectionQuery('datahubMasteringMatchSummary${options.targetEntity ? `-${options.targetEntity}` : ''}')
