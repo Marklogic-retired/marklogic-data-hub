@@ -241,15 +241,8 @@ export class EntityTableUiComponent implements OnChanges {
 
   // Attach namespace, if the source is an xml document
   displaySourceField(field): string {
-    let fieldValue = "";
-    let truncField = field.slice(field.lastIndexOf('/')+1);
-    if(this.nmspace && truncField in this.nmspace) {
-      fieldValue = this.nmspace[truncField].slice(this.nmspace[truncField].lastIndexOf('/')+1) + ": "+ truncField;
-    }
-    else {
-      fieldValue = truncField;
-    }
-    return fieldValue;
+    let truncField = field.slice(field.lastIndexOf('/')+1).split(':').join(': ');
+    return truncField;
   }
 
 }

@@ -216,12 +216,16 @@ export class MappingComponent implements OnInit {
     this.searchService.getDoc(this.sourceDbType, uri).subscribe(doc => {
       this.sampleDocSrcProps = [];
       this.sampleDocSrc = this.normalizeToJSON(doc);
+      //legacy UI code
       let startRoot = this.sampleDocSrc['envelope'] ? this.sampleDocSrc['envelope']['instance'] : this.sampleDocSrc;
       const rootKeys = Object.keys(startRoot);
       if (rootKeys.length === 1 && startRoot[rootKeys[0]] instanceof Object) {
         startRoot = startRoot[rootKeys[0]];
       }
       
+      //New mapping code
+      let startRootNew = this.sampleDocSrc['envelope'] ? this.sampleDocSrc['envelope']['instance'] : this.sampleDocSrc;
+
       _.forEach(startRoot, function (val, key) {
           let prop = {
             key: key,
@@ -234,7 +238,7 @@ export class MappingComponent implements OnInit {
       this.mapping.sourceURI = uri;
       self.nestedDoc = [];
       let ParentKeyValuePair = [];
-      _.forEach(startRoot, function (val, key) {
+      _.forEach(startRootNew, function (val, key) {
         if(val != null){
           if(val.constructor.name === "Object" || val.constructor.name === "Array"){
             ParentKeyValuePair.push(key+JSON.stringify(val));
@@ -247,8 +251,10 @@ export class MappingComponent implements OnInit {
         }
         
       });
-      self.sampleDocNestedProps = this.updateNestedDataSourceNew(startRoot,ParentKeyValuePair);
-
+      self.sampleDocNestedProps = this.updateNestedDataSourceNew(startRootNew,ParentKeyValuePair);
+      console.log("this.sampleDocSrc",this.sampleDocSrc['envelope'])
+      console.log("startRoot",startRoot)
+      console.log("self.sampleDocNestedProps",self.sampleDocNestedProps)
       if (save) {
         this.saveMap();
         console.log('map saved');
@@ -278,9 +284,6 @@ export class MappingComponent implements OnInit {
       self.xmlSource = true;
 
       const nodeToJSON = function (obj, node) {
-        if (node.namespaceURI) {
-          self.nmspace[node.nodeName] = node.namespaceURI;
-        }
 
         //loading attributes for parent node
         if (!node.childNodes) {
@@ -294,17 +297,24 @@ export class MappingComponent implements OnInit {
             if (childNode.childNodes.length === 0 || (childNode.childNodes.length === 1 && childNode.firstChild.nodeType === Node.TEXT_NODE)) {
               if (childNode.nodeName !== '#text') {
 
-                let tempObj = {};
-                tempObj["/" + childNode.nodeName] = childNode.textContent;
+                //loading namespaces
+                let nodeWithAttr = '';
+                if (childNode.attributes) {
+                  nodeWithAttr = self.loadNamespace(childNode);
+                }
 
-                if (!obj[childNode.nodeName+"/"]) {
+                let tempObj = {};
+
+                tempObj[nodeWithAttr == '' ? "/" + childNode.nodeName : "/" + nodeWithAttr] = childNode.textContent;
+
+                if (!obj[childNode.nodeName + "/"]) {
                   if (childNode.nodeName !== '#text') {
-                    obj[childNode.nodeName+"/"] = [];
+                    obj[childNode.nodeName + "/"] = [];
                   }
                 };
 
-                if (obj[childNode.nodeName+"/"].constructor.name === 'Array') {
-                  obj[childNode.nodeName+"/"].push(tempObj);
+                if (obj[childNode.nodeName + "/"].constructor.name === 'Array') {
+                  obj[childNode.nodeName + "/"].push(tempObj);
                 }
 
                 //loading attributes for parent node
@@ -313,38 +323,57 @@ export class MappingComponent implements OnInit {
             } else {
               let tempObj = {};
 
-              if (!obj[childNode.nodeName+"/"]) {
+              if (!obj[childNode.nodeName + "/"]) {
                 if (childNode.nodeName !== '#text') {
-                  obj[childNode.nodeName+"/"] = [];
+                  obj[childNode.nodeName + "/"] = [];
                 }
               };
 
               //loading attributes
+
               self.loadAttributes(childNode, obj, 'singleNode');
 
               nodeToJSON(tempObj, childNode);
-              let ob = {[`${childNode.nodeName}`] : tempObj}
-              if (obj[childNode.nodeName+"/"].constructor.name === 'Array') {
-                
-                obj[childNode.nodeName+"/"].push(ob);
+
+              //Loading namespaces
+              let nodeWithAttr = '';
+              if (childNode.attributes) {
+                nodeWithAttr = self.loadNamespace(childNode);
+              }
+
+              let ob = { [`${nodeWithAttr == '' ? childNode.nodeName : nodeWithAttr}`]: tempObj }
+              if (obj[childNode.nodeName + "/"].constructor.name === 'Array') {
+                obj[childNode.nodeName + "/"].push(ob);
               }
             }
           } else {
 
             if (childNode.childNodes.length === 0 || (childNode.childNodes.length === 1 && childNode.firstChild.nodeType === Node.TEXT_NODE)) {
               if (childNode.nodeName !== '#text') {
-                obj[childNode.nodeName] = childNode.textContent;
+                //loading namespaces
+                let nodeWithAttr = '';
+                if (childNode.attributes) {
+                  nodeWithAttr = self.loadNamespace(childNode);
+                }
+                obj[nodeWithAttr == '' ? childNode.nodeName : nodeWithAttr] = childNode.textContent;
 
                 //loading attributes
                 self.loadAttributes(childNode, obj, 'singleNode');
               }
             }
             else {
-              obj[childNode.nodeName] = {};
+              let nodeWithAttr = '';
+              if (!['envelope', 'headers', 'instance', 'triples', 'attachments'].includes(childNode.nodeName)) {
+                if (childNode.attributes) {
+                  //loading namespaces
+                  nodeWithAttr = self.loadNamespace(childNode);
+                }
+              }
+              obj[nodeWithAttr == '' ? childNode.nodeName : nodeWithAttr] = {};
               //loading attributes
               self.loadAttributes(childNode, obj, 'singleNode');
 
-              nodeToJSON(obj[childNode.nodeName], childNode);
+              nodeToJSON(obj[nodeWithAttr == '' ? childNode.nodeName : nodeWithAttr], childNode);
             }
           }
         });
@@ -372,14 +401,28 @@ export class MappingComponent implements OnInit {
     return nodeCounter;
   }
 
+  //Load namespace for any node which is passed.
+  loadNamespace(node): string {
+    let self = this;
+    let nodeWithAttr = '';
+    for (let name of node.getAttributeNames()) {
+      if (name.startsWith('xmlns')) {
+        let indCheck = node.getAttribute(name).lastIndexOf('/');
+        let ind = indCheck != -1 ? indCheck + 1 : 0;
+        nodeWithAttr = node.getAttribute(name).slice(ind) + ':' + node.nodeName;
+        self.nmspace[node.getAttribute(name).slice(ind)] = node.getAttribute(name);
+      };
+    }
+    return nodeWithAttr;
+  }
   //load attributes for an xml node
   loadAttributes(node, obj, type: string): void {
     if (type === 'singleNode') {
       //Nodes having single instance at any level
       if (node.attributes) {
-        for (let i = 0; i < node.attributes.length; i++) {
-          if (node.attributes.item(i).name !== 'xmlns') {
-            obj[node.nodeName + "/" + "@" + node.attributes.item(i).name] = node.attributes.item(i).value;
+        for (let name of node.getAttributeNames()) {
+          if (!name.startsWith('xmlns')) {
+            obj[node.nodeName + "/" + "@" + name] = node.getAttribute(name);
           }
         }
       }
@@ -387,21 +430,23 @@ export class MappingComponent implements OnInit {
       //Nodes having multiple instances at any level
       if (node.attributes) {
         for (let i = 0; i < node.attributes.length; i++) {
-          if (node.attributes.item(i).name !== 'xmlns') {
+          if (!node.attributes.item(i).name.startsWith('xmlns')) {
             let tempObjAttr = {};
             tempObjAttr["/" + node.nodeName + "/" + "@" + node.attributes.item(i).name] = node.attributes.item(i).value;
             if (obj[node.nodeName+"/"].constructor.name === 'Array') {
               obj[node.nodeName+"/"].push(tempObjAttr);
             }
-          }
+          } 
         }
       }
     } else {
       //parent Node
       if (node.attributes) {
         for (let i = 0; i < node.attributes.length; i++) {
-          if (node.attributes.item(i).name !== 'xmlns') {
+          if (!node.attributes.item(i).name.startsWith('xmlns')) {
             obj["@" + node.attributes.item(i).name] = node.attributes.item(i).value;
+          } else {
+            this.nmspace[node.nodeName]= node.attributes.item(i).value;
           }
         }
       }
@@ -527,15 +572,16 @@ export class MappingComponent implements OnInit {
               parentKey = parentKey + "/" + key;
             }
           }
+          let currKey = parentKey.replace(/[^\/]+\/\/\//g, '').replace(/[^\/]+\/\//g, '');
           let propty = {
-            key: parentKey,
+            key: currKey,
             val: "",
             type: self.getType(val)
           };
           self.nestedDoc.push(propty);
           self.updateNestedDataSourceNew(val, ParentKeyValuePair, parentKey);
         } else if (val.constructor.name === "Array") {
-          if(key.lastIndexOf('/') !== key.length-1){
+          if(key.lastIndexOf('/') !== key.length-1 || (key.lastIndexOf('/') === key.length-1 && key.split('/').length <= 2)){
           if (ParentKeyValuePair.includes(key + JSON.stringify(val))) {
             parentKey = key;
           } else {
@@ -545,12 +591,15 @@ export class MappingComponent implements OnInit {
               parentKey = parentKey + "/" + key;
             }
           }
+          if(key.lastIndexOf('/') !== key.length-1){
             let propty = {
               key: parentKey,
               val: "",
               type: self.getType(val)
             };
             self.nestedDoc.push(propty);
+          }
+            
           }
           
           val.forEach(obj => {
@@ -577,7 +626,7 @@ export class MappingComponent implements OnInit {
             }
           }
           let propty = {
-            key: currKey.replace(/\/\//g, '/'),
+            key: currKey.replace(/[^\/]+\/\/\//g, '').replace(/[^\/]+\/\//g, ''),
             val: String(val),
             type: self.getType(val)
           };
@@ -595,7 +644,7 @@ export class MappingComponent implements OnInit {
             }
           }
         let propty = {
-          key: currKey.replace(/\/\//g, '/'),
+          key: currKey.replace(/[^\/]+\/\/\//g, '').replace(/[^\/]+\/\//g, ''),
           val: "",
           type: self.getType(val)
         };
