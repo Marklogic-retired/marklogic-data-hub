@@ -44,6 +44,7 @@ declare function blocks-impl:get-blocks-of-uris($uris as xs:string*)
   as xs:string*
 {
     if (fn:exists($uris)) then (
+      let $iris := $uris ! sem:iri(.)
       let $solution :=
         sem:sparql(
           "select distinct ?targetURI (?uri as ?blocked) where {
@@ -57,14 +58,11 @@ declare function blocks-impl:get-blocks-of-uris($uris as xs:string*)
             FILTER (?uri != ?targetURI)
           }",
           map:new((
-            map:entry("target", $uris ! sem:iri(.)),
+            map:entry("target", $iris),
             map:entry("isBlocked", $const:PRED-MATCH-BLOCK)
           )),
           ("map","optimize=0"),
-          cts:or-query((
-            cts:element-value-query((xs:QName("sem:subject"),xs:QName("sem:object")), $uris, "exact"),
-            cts:json-property-value-query(("subject","object"), $uris, "exact")
-          ))
+          cts:triple-range-query((),(), $iris, "=")
         )
       let $values :=
         fn:distinct-values(
