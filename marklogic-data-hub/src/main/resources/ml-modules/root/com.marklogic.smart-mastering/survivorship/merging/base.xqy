@@ -444,7 +444,7 @@ declare function merge-impl:rollback-merge(
       )
     ),
     if ($retain-rollback-info) then (
-      $latest-auditing-receipt-for-doc ! auditing:audit-trace-rollback(.)
+      $latest-auditing-receipt-for-doc ! auditing:audit-trace-rollback(., $merge-options)
     ) else (
       $latest-auditing-receipt-for-doc ! xdmp:document-delete(xdmp:node-uri(.))
     )
@@ -578,6 +578,7 @@ declare function merge-impl:build-merge-models-by-uri(
           $const:MERGE-ACTION,
           $uris,
           $merge-uri,
+          $merge-options,
           merge-impl:generate-audit-attachments($merge-uri, $provenance-details)
         )
       )

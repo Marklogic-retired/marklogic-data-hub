@@ -14,5 +14,6 @@ let response = invokeService("Order");
   test.assertEqual("sm-Order-merged", response.onMerge[1]),
   test.assertEqual("sm-Order-mastered", response.onNoMatch[0]),
   test.assertEqual("sm-Order-archived", response.onArchive[0]),
-  test.assertEqual("sm-Order-notification", response.onNotification[0])
+  test.assertEqual("sm-Order-notification", response.onNotification[0]),
+  test.assertEqual("sm-Order-auditing", response.onAuditing[0])
 ];
