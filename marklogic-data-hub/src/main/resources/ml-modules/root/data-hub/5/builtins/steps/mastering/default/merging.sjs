@@ -50,7 +50,7 @@ function main(content, options) {
     let matchSummaryObj = matchSummary.toObject().matchSummary;
     let URIsToProcess = matchSummaryObj.URIsToProcess;
     let allURIsProcessed = URIsToProcess.every((uri) => processedURIs.includes(uri) || cts.exists(cts.andQuery([
-      cts.documentQuery(buildURI(uri, matchSummaryObj)),
+      cts.documentQuery(uri),
       cts.fieldWordQuery('datahubCreatedByJob', jobID)
     ])));
     if (allURIsProcessed) {
@@ -61,20 +61,6 @@ function main(content, options) {
     }
   }
   return results;
-}
-
-function buildURI(uri, matchSummaryObj) {
-  const actionDetails = matchSummaryObj.actionDetails[uri];
-  if (actionDetails) {
-    if (actionDetails.action === 'merge') {
-      const firstMergedUri = actionDetails.uris[0];
-      const format = firstMergedUri.substring(firstMergedUri.lastIndexOf('.') + 1);
-      uri = mergingImpl.buildMergeUri(uri, format);
-    } else if (actionDetails.action === 'notify') {
-      uri = notifyImpl.buildNotificationUri(actionDetails.threshold, Sequence.from(actionDetails.uris));
-    }
-  }
-  return uri;
 }
 
 function jobReport(jobID, stepResponse, options) {
