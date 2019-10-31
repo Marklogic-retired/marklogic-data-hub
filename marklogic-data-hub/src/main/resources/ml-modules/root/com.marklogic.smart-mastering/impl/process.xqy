@@ -28,6 +28,8 @@ import module namespace merging = "http://marklogic.com/smart-mastering/merging"
 import module namespace merge-impl = "http://marklogic.com/smart-mastering/survivorship/merging"
   at "/com.marklogic.smart-mastering/survivorship/merging/base.xqy",
     "/com.marklogic.smart-mastering/survivorship/merging/options.xqy";
+import module namespace notify-impl = "http://marklogic.com/smart-mastering/notification-impl"
+  at "/com.marklogic.smart-mastering/matcher-impl/notification-impl.xqy";
 import module namespace util-impl = "http://marklogic.com/smart-mastering/util-impl"
   at "/com.marklogic.smart-mastering/impl/util.xqy";
 import module namespace coll-impl = "http://marklogic.com/smart-mastering/survivorship/collections"
@@ -446,7 +448,9 @@ declare function proc-impl:build-match-summary(
         return (
           map:put($merges-in-transaction, $new-uri, fn:true()),
           let $distinct-uris := fn:distinct-values(map:get($consolidated-merges, $new-uri))
-          let $merge-doc := fn:doc(fn:head($distinct-uris))
+          let $first-merge-item := fn:head($distinct-uris)
+          let $threshold := fn:distinct-values(map:get($all-matches, $first-merge-item)/result[@action = $const:MERGE-ACTION]/@threshold)
+          let $merge-doc := fn:doc($first-merge-item)
           let $merge-uri :=  merge-impl:build-merge-uri(
             $new-uri,
             if ($merge-doc instance of element() or
@@ -478,9 +482,10 @@ declare function proc-impl:build-match-summary(
           return (
             $distinct-uris ! map:put($merged-into, ., $new-uri),
             map:entry(
-              $new-uri,
+              $merge-uri,
               map:new((
                 map:map()
+                  => map:with("threshold", $threshold)
                   => map:with("action", "merge")
                   => map:with("uris", json:to-array($distinct-uris)),
                 $prov-entry
@@ -506,14 +511,15 @@ declare function proc-impl:build-match-summary(
         let $parts := fn:tokenize($notification, $STRING-TOKEN)
         let $threshold := fn:head($parts)
         let $uris := fn:tail($parts)
+        let $notification-uri := notify-impl:build-notification-uri($threshold, $uris)
         let $prov-entry := if ($fine-grain-provenance) then (
           map:entry(
             "provenance",
             map:entry(
-              $notification,
+              $notification-uri,
               let $related-prov-maps := $uris ! map:get($provenance-map, .)
               let $match-information := map:new((
-                map:entry("destination", $notification),
+                map:entry("destination", $notification-uri),
                 map:entry("type", "matchInformation"),
                 map:entry("matchedDocuments", util-impl:combine-maps(map:map(), $related-prov-maps))
               ))
@@ -527,7 +533,7 @@ declare function proc-impl:build-match-summary(
         ) else ()
         return
           map:entry(
-            $notification,
+            $notification-uri,
             map:new((
               map:map()
                 => map:with("action", "notify")
