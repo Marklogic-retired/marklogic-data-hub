@@ -113,7 +113,7 @@ public class LoadUserArtifactsCommandTest extends HubTestBase {
     @Test
     public void defaultEntityModelPermissions() {
         DocumentMetadataHandle.DocumentPermissions perms = loadUserArtifactsCommand.buildMetadataForEntityModels(adminHubConfig).getPermissions();
-        assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("entity-model-reader").iterator().next());
+        assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("data-hub-entity-model-reader").iterator().next());
     }
 
     @Test
@@ -135,6 +135,6 @@ public class LoadUserArtifactsCommandTest extends HubTestBase {
         final String message = "When entity model permissions are null, the command should use module permissions instead";
         assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("rest-reader").iterator().next(), message);
         assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("rest-writer").iterator().next(), message);
-        assertNull(perms.get("entity-model-reader"));
+        assertNull(perms.get("data-hub-entity-model-reader"));
     }
 }

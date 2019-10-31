@@ -2,7 +2,7 @@
   "role-name": "explorer-architect",
   "description": "A role that can access entity models.",
   "role": [
-    "entity-model-reader"
+    "data-hub-entity-model-reader"
   ],
   "privilege": [
     {
