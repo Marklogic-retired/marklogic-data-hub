@@ -252,9 +252,6 @@ export class MappingComponent implements OnInit {
         
       });
       self.sampleDocNestedProps = this.updateNestedDataSourceNew(startRootNew,ParentKeyValuePair);
-      console.log("this.sampleDocSrc",this.sampleDocSrc['envelope'])
-      console.log("startRoot",startRoot)
-      console.log("self.sampleDocNestedProps",self.sampleDocNestedProps)
       if (save) {
         this.saveMap();
         console.log('map saved');
