@@ -35,6 +35,7 @@
       "options": {
         "targetEntity": "person",
         "sourceQuery": "cts.collectionQuery('mapping')",
+        "collections": ["myMatchingCollection"],
         "provenanceGranularityLevel": "fine",
         "sourceDatabase": "data-hub-FINAL",
         "targetDatabase": "data-hub-FINAL",
@@ -119,6 +120,7 @@
       "options": {
         "targetEntity": "person",
         "provenanceGranularityLevel": "fine",
+        "sourceQuery": "cts.collectionQuery('myMatchingCollection')",
         "sourceDatabase": "data-hub-FINAL",
         "targetDatabase": "data-hub-FINAL",
         "mergeOptions": {
