@@ -60,7 +60,7 @@ if(!combinedOptions.sourceQuery && flowDoc.sourceQuery) {
 }
 let query = combinedOptions.sourceQuery;
 let isMergingStep = baseStep.name === 'default-merging' && baseStep.type === 'merging';
-if (!(query || isMergingStep)) {
+if (!query) {
   datahub.debug.log("The collector query was empty");
   fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([404, "Not Found", "The collector query was empty"]));
 }
@@ -69,7 +69,7 @@ if (isMergingStep) {
     cts.pathReference('/matchSummary/URIsToProcess', ['type=string','collation=http://marklogic.com/collation/']),
     null,
     null,
-    cts.collectionQuery('datahubMasteringMatchSummary${options.targetEntity ? `-${options.targetEntity}` : ''}')
+    ${query}
   )`);
 }
 try {
