@@ -1,4 +1,4 @@
 {
-  "role-name": "entity-model-reader",
+  "role-name": "data-hub-entity-model-reader",
   "description": "Data Hub role for permissions that grant read access to entity models"
 }

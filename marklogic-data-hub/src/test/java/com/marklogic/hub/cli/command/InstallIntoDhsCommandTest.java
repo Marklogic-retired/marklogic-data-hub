@@ -108,10 +108,10 @@ public class InstallIntoDhsCommandTest extends HubTestBase {
         DeployRolesCommand deployRolesCommand = (DeployRolesCommand) commands.get(1);
         ResourceFilenameFilter filter = (ResourceFilenameFilter) deployRolesCommand.getResourceFilenameFilter();
         File dir = new File(PROJECT_PATH); // the directory doesn't matter, only the filename
-        assertTrue(filter.accept(dir, "entity-model-reader.json"));
+        assertTrue(filter.accept(dir, "data-hub-entity-model-reader.json"));
         assertTrue(filter.accept(dir, "explorer-architect.json"));
         assertFalse(filter.accept(dir, "flow-developer-role.json"),
-            "As of 5.1.0, the installer should only deploy entity-model-reader and explorer-architect");
+            "As of 5.1.0, the installer should only deploy data-hub-entity-model-reader and explorer-architect");
     }
 
     private void verifyDefaultProperties(Properties props) {
