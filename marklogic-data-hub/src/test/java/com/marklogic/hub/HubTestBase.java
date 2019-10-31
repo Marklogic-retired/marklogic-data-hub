@@ -731,6 +731,15 @@ public class HubTestBase {
         return ((JacksonHandle)res).get();
     }
 
+    protected List<String> getQueryResultsAsSequence(String query, String database) {
+        List data = new ArrayList<>();
+        EvalResultIterator res = runInDatabase(query, database);
+        while (res.hasNext()) {
+            data.add(res.next().getString());
+        }
+        return data;
+    }
+
     protected int getTelemetryInstallCount(){
         int count = 0;
         EvalResultIterator resultItr = runInDatabase("xdmp:feature-metric-status()/*:feature-metrics/*:features/*:feature[@name=\"datahub.core.install.count\"]/data()", stagingClient.getDatabase());

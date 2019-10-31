@@ -39,6 +39,10 @@ function post(context, params, input) {
     let stepDetailsOptions = stepDetails.options || {};
     // build combined options
     let combinedOptions = Object.assign({}, stepDetailsOptions, flowOptions, stepRefOptions, options);
+    let collections = combinedOptions.collections;
+    if(combinedOptions.targetEntity && !collections.includes(combinedOptions.targetEntity)) {
+      combinedOptions.collections.push(combinedOptions.targetEntity);
+    }
     let sourceDatabase = combinedOptions.sourceDatabase || datahub.flow.globalContext.sourceDatabase;
     let query = null;
     let uris = null;

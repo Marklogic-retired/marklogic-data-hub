@@ -1,0 +1,239 @@
+{
+  "name": "collectionTestFlow",
+  "options": {
+    "collections": ["collectionTestFlow"]
+  },
+  "description": "flow description",
+  "steps": {
+    "1": {
+      "stepDefinitionName": "ingest",
+      "stepDefinitionType": "INGESTION",
+      "fileLocations": {
+        "inputFilePath": "input",
+        "inputFileType": "json",
+        "outputURIReplacement": ".*/input,''"
+      },
+      "options": {
+        "sourceDatabase": "data-hub-STAGING",
+        "targetDatabase": "data-hub-STAGING",
+        "sourceQuery": null,
+        "outputFormat": "json",
+        "collections": ["default-ingestion"]
+      }
+    },
+    "2": {
+      "stepDefinitionName": "mapping",
+      "stepDefinitionType": "MAPPING",
+      "options": {
+        "sourceDatabase": "data-hub-STAGING",
+        "targetDatabase": "data-hub-FINAL"
+      }
+    },
+    "3": {
+      "stepDefinitionName": "default-matching",
+      "stepDefinitionType": "MATCHING",
+      "options": {
+        "targetEntity": "person",
+        "sourceQuery": "cts.collectionQuery('mapping')",
+        "provenanceGranularityLevel": "fine",
+        "sourceDatabase": "data-hub-FINAL",
+        "targetDatabase": "data-hub-FINAL",
+        "matchOptions": {
+          "dataFormat": "json",
+          "propertyDefs": {
+            "property": [
+              {
+                "namespace": "",
+                "localname": "firstName",
+                "name": "firstName"
+              },
+              {
+                "namespace": "",
+                "localname": "lastName",
+                "name": "lastName"
+              },
+              {
+                "namespace": "",
+                "localname": "email",
+                "name": "email"
+              },
+              {
+                "namespace": "",
+                "localname": "gender",
+                "name": "gender"
+              }
+            ]
+          },
+          "algorithms": {
+            "algorithm": []
+          },
+          "scoring": {
+            "add": [
+              {
+                "propertyName": "email",
+                "weight": "50"
+              },
+              {
+                "propertyName": "lastName",
+                "weight": "12"
+              },
+              {
+                "propertyName": "firstName",
+                "weight": "6"
+              },
+              {
+                "propertyName": "gender",
+                "weight": "3"
+              }
+            ],
+            "expand": [],
+            "reduce": []
+          },
+          "thresholds": {
+            "threshold": [
+              {
+                "above": "30",
+                "label": "Possible Match"
+              },
+              {
+                "above": "50",
+                "label": "Likely Match",
+                "action": "notify"
+              },
+              {
+                "above": "68",
+                "label": "Definitive Match",
+                "action": "merge"
+              }
+            ]
+          },
+          "tuning": {
+            "maxScan": "200"
+          }
+        }
+      }
+    },
+    "4": {
+      "stepDefinitionName": "default-merging",
+      "stepDefinitionType": "MERGING",
+      "options": {
+        "targetEntity": "person",
+        "provenanceGranularityLevel": "fine",
+        "sourceDatabase": "data-hub-FINAL",
+        "targetDatabase": "data-hub-FINAL",
+        "mergeOptions": {
+          "propertyDefs": {
+            "properties": [
+              {
+                "namespace": "",
+                "localname": "id",
+                "name": "id"
+              },
+              {
+                "namespace": "",
+                "localname": "firstName",
+                "name": "firstName"
+              },
+              {
+                "namespace": "",
+                "localname": "lastName",
+                "name": "lastName"
+              },
+              {
+                "namespace": "",
+                "localname": "Address",
+                "name": "address"
+              }
+            ]
+          },
+          "algorithms": {
+            "stdAlgorithm": {
+              "timestamp": {
+                "path": "/envelope/headers/ingestDateTime"
+              }
+            }
+          },
+          "merging": [
+            {
+              "default": "true",
+              "maxSources": "1",
+              "sourceWeights": [{
+                "source": {
+                  "name": "A",
+                  "weight": "10"
+                }
+              }]
+            }
+          ]
+        }
+      }
+    },
+    "5": {
+      "name": "entity-services-mapping-step",
+      "description": "This is the default mapping step",
+      "stepDefinitionName": "entity-services-mapping",
+      "stepDefinitionType": "MAPPING",
+      "options": {
+        "sourceDatabase": "data-hub-STAGING",
+        "targetDatabase": "data-hub-FINAL",
+        "sourceQuery": "cts.collectionQuery('default-ingestion')",
+        "outputFormat": "json",
+        "collections": [
+          "default-mapping",
+          "mdm-content"
+        ],
+        "targetEntity": "person",
+        "mapping": {
+          "name": "person",
+          "version": 1
+        },
+        "validateEntity": false
+      }
+    },
+    "6": {
+      "name": "default-mapping-step",
+      "description": "This is the default mapping step",
+      "stepDefinitionName": "default-mapping",
+      "stepDefinitionType": "MAPPING",
+      "options": {
+        "sourceDatabase": "data-hub-STAGING",
+        "targetDatabase": "data-hub-FINAL",
+        "sourceQuery": "cts.collectionQuery('default-ingestion')",
+        "outputFormat": "json",
+        "collections": [
+          "default-mapping",
+          "mdm-content"
+        ],
+        "targetEntity": "person",
+        "mapping": {
+          "name": "person",
+          "version": 1
+        },
+        "validateEntity": false
+      }
+    },
+    "7": {
+      "name": "default-mapping-step",
+      "description": "This is the default mapping step",
+      "stepDefinitionName": "default-mapping",
+      "stepDefinitionType": "MAPPING",
+      "options": {
+        "sourceDatabase": "data-hub-STAGING",
+        "targetDatabase": "data-hub-FINAL",
+        "sourceQuery": "cts.collectionQuery('default-ingestion')",
+        "outputFormat": "json",
+        "collections": [
+          "default-mapping",
+          "mdm-content",
+          "person"
+        ],
+        "targetEntity": "person",
+        "mapping": {
+          "name": "person",
+          "version": 1
+        },
+        "validateEntity": false
+      }
+    }
+  }
+}
