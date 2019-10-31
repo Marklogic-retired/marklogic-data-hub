@@ -125,7 +125,8 @@ function expectedCollectionEvents(entityType, existingMergeOptions) {
     "onMerge": collectionSettings.content.concat(collectionSettings.merged),
     "onNoMatch": collectionSettings.content,
     "onArchive": collectionSettings.archived,
-    "onNotification": collectionSettings.notification
+    "onNotification": collectionSettings.notification,
+    "onAuditing": collectionSettings.auditing
   };
 }
 
@@ -134,11 +135,13 @@ function getCollectionSettings(collectionsSettings, entityType) {
   let merged = getCollectionSetting(collectionsSettings, "merged", ["sm-" + entityType + "-merged"]);
   let archived = getCollectionSetting(collectionsSettings, "archived", ["sm-" + entityType + "-archived"]);
   let notification = getCollectionSetting(collectionsSettings, "notification", ["sm-" + entityType + "-notification"]);
+  let auditing = getCollectionSetting(collectionsSettings, "auditing", ["sm-" + entityType + "-auditing"]);
   return {
     content,
     merged,
     archived,
-    notification
+    notification,
+    auditing
   };
 }
 
