@@ -25,7 +25,7 @@ const processedURIs = [];
 function main(content, options) {
   // These index references can't be out this function scope or the jobReport will error, since they don't exist for the jobs DB
   const jobID = datahub.flow.globalContext.jobId;
-  const urisPathReference = cts.pathReference('/matchSummary/URIsToActOn', ['type=string','collation=http://marklogic.com/collation/']);
+  const urisPathReference = cts.pathReference('/matchSummary/URIsToProcess', ['type=string','collation=http://marklogic.com/collation/']);
   const datahubCreatedOnRef = cts.fieldReference('datahubCreatedOn', ['type=dateTime']);
   let uriToTakeActionOn = content.uri;
   masteringStepLib.checkOptions(null, options, null, requiredOptionProperties);
@@ -48,8 +48,8 @@ function main(content, options) {
   processedURIs.push(uriToTakeActionOn);
   for (let matchSummary of relatedMatchSummaries) {
     let matchSummaryObj = matchSummary.toObject().matchSummary;
-    let URIsToActOn = matchSummaryObj.URIsToActOn;
-    let allURIsProcessed = URIsToActOn.every((uri) => processedURIs.includes(uri) || cts.exists(cts.andQuery([
+    let URIsToProcess = matchSummaryObj.URIsToProcess;
+    let allURIsProcessed = URIsToProcess.every((uri) => processedURIs.includes(uri) || cts.exists(cts.andQuery([
       cts.documentQuery(buildURI(uri, matchSummaryObj)),
       cts.fieldWordQuery('datahubCreatedByJob', jobID)
     ])));

@@ -169,7 +169,7 @@ public class MasterTest extends HubTestBase {
         // Check for datahubMasteringMatchSummary for matching with correct count
         String summaryQueryText = "cts:and-query((" +
             "cts:collection-query('datahubMasteringMatchSummary')," +
-            "cts:json-property-value-query('URIsToActOn', '/person-41.json')" +
+            "cts:json-property-value-query('URIsToProcess', '/person-41.json')" +
             "))";
         assertTrue(existsByQuery(summaryQueryText, HubConfig.DEFAULT_FINAL_NAME), "Missing valid matching summary document!");
         RunFlowResponse flowMergeResponse = flowRunner.runFlow("myMatchMergeFlow", Collections.singletonList("4"));

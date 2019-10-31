@@ -598,7 +598,7 @@ declare function proc-impl:build-match-summary(
       => map:with(
         "matchSummary",
         map:map()
-        => map:with("URIsToActOn",
+        => map:with("URIsToProcess",
           json:to-array(fn:distinct-values(($no-matches-uris,map:keys($action-details)))))
         => map:with("actionDetails", $action-details)
       )
@@ -648,10 +648,10 @@ declare function proc-impl:process-match-and-merge-with-options(
       merge-impl:options-from-json($merge-options)
     else
       $merge-options
-  let $uris-to-act-on := $match-summary => map:get("matchSummary") => map:get("URIsToActOn") => json:array-values()
+  let $uris-to-process := $match-summary => map:get("matchSummary") => map:get("URIsToProcess") => json:array-values()
   return (
     proc-impl:build-content-objects-from-match-summary(
-      $uris-to-act-on,
+      $uris-to-process,
       $match-summary,
       $merge-options,
       $fine-grain-provenance
