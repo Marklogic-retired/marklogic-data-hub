@@ -101,7 +101,7 @@ const Sidebar:React.FC<Props> = (props) => {
           </Panel>
         )}
         <Panel id="hub-properties" header={<div className={styles.title}>Hub Properties</div>} key="hubProperties" style={{borderBottom: 'none'}}>
-          <div className={styles.facetName}>Created On</div>
+          <div className={styles.facetName} data-cy='created-on-facet'>Created On</div>
           <RangePicker 
             className={styles.datePicker} 
             onChange={onDateChange} 
