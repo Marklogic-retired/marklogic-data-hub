@@ -262,11 +262,11 @@ export class EditFlowComponent implements OnInit, OnDestroy {
   }
   setStepDefaults(step): void {
     const defaultCollections = [`${step.name}`];
-    if (step.stepDefinitionType === StepType.MAPPING && (step.stepDefinitionName === 'default-mapping' || step.stepDefinitionName === 'entity-services-mapping')) {
-      defaultCollections.push('mdm-content');
-    }
     if (step.options && step.options.targetEntity) {
       defaultCollections.push(step.options.targetEntity);
+    }
+    if (step.options.collections && step.options.collections.length === 0) {
+      delete step.options.collections;
     }
     step.options = Object.assign({ 'collections': defaultCollections }, step.options);
   }
