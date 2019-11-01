@@ -50,9 +50,7 @@ function buildMappingXML(mappingJSON) {
       ${entityTemplates.join('\n')}
       <!-- Default entity is ${entityName} -->
       <m:output>
-        <m:for-each><m:select>./(element()|object-node()|array-node())</m:select>
-            <m:call-template name="${entityName}" />
-        </m:for-each>
+        <m:call-template name="${entityName}" />
       </m:output>
     </m:mapping>
   `;
@@ -323,7 +321,7 @@ function getCanonicalInstance(mapping, uri, propertyName) {
   let resp = {};
   let xmlMapping = buildMappingXML(fn.head(xdmp.unquote(xdmp.quote(mapping))));
   let doc = cts.doc(uri);
-  let instance = doc.xpath('head((/*:envelope/(*:instance[count(* except *:info) gt 1]|*:instance/(* except *:info)),./object-node(),./*))');
+  let instance = doc.xpath('head((/*:envelope/(object-node("instance")|*:instance/(element() except *:info)),./object-node(),./*))');
   let mappingXslt =  xdmp.invokeFunction(function () {
       const es = require('/MarkLogic/entity-services/entity-services');
       return es.mappingCompile(xmlMapping);

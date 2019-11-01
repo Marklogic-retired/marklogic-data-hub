@@ -8,22 +8,22 @@
   "sourceURI" : "",
   "properties" : {
     "Id": {
-      "sourcedFrom": "customerId"
+      "sourcedFrom": "Customer/customerId"
     },
     "FirstName": {
-      "sourcedFrom": "firstName"
+      "sourcedFrom": "Customer/firstName"
     },
     "LastName": {
-      "sourcedFrom": "lastName"
+      "sourcedFrom": "Customer/lastName"
     },
     "Email": {
-      "sourcedFrom": "emailAddress"
+      "sourcedFrom": "Customer/emailAddress"
     },
     "DOB": {
-      "sourcedFrom": "dob"
+      "sourcedFrom": "Customer/dob"
     },
     "DateTime": {
-      "sourcedFrom": "datetime"
+      "sourcedFrom": "Customer/datetime"
     }
   }
 }

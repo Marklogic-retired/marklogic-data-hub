@@ -249,9 +249,7 @@ expectedTemplate = tidyXML(`
     </m:entity>
       <!-- Default entity is Customer -->
       <m:output>
-        <m:for-each><m:select>./(element()|object-node()|array-node())</m:select>
-            <m:call-template name="Customer" />
-        </m:for-each>
+        <m:call-template name="Customer" />
       </m:output>
     </m:mapping>
 `);
