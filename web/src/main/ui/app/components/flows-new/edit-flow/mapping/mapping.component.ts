@@ -402,12 +402,16 @@ export class MappingComponent implements OnInit {
   loadNamespace(node): string {
     let self = this;
     let nodeWithAttr = '';
+    let count = 0;
     for (let name of node.getAttributeNames()) {
-      if (name.startsWith('xmlns')) {
-        let indCheck = node.getAttribute(name).lastIndexOf('/');
-        let ind = indCheck != -1 ? indCheck + 1 : 0;
-        nodeWithAttr = node.getAttribute(name).slice(ind) + ':' + node.nodeName;
-        self.nmspace[node.getAttribute(name).slice(ind)] = node.getAttribute(name);
+      if (name.startsWith('xmlns') && node.getAttribute(name) != '') {
+        if(count == 0){
+          let indCheck = node.getAttribute(name).lastIndexOf('/');
+          let ind = indCheck != -1 ? indCheck + 1 : 0;
+          nodeWithAttr = node.getAttribute(name).slice(ind) + ':' + node.nodeName;
+          self.nmspace[node.getAttribute(name).slice(ind)] = node.getAttribute(name);
+          count = count + 1;
+        }
       };
     }
     return nodeWithAttr;
@@ -442,8 +446,6 @@ export class MappingComponent implements OnInit {
         for (let i = 0; i < node.attributes.length; i++) {
           if (!node.attributes.item(i).name.startsWith('xmlns')) {
             obj["@" + node.attributes.item(i).name] = node.attributes.item(i).value;
-          } else {
-            this.nmspace[node.nodeName]= node.attributes.item(i).value;
           }
         }
       }
