@@ -205,17 +205,18 @@ export class EntityTableUiComponent implements OnChanges {
   }
 
   insertField(fieldName, index, prop) {
-    if(String(fieldName).includes(" ")){
-      fieldName = "*[local-name(.)='" + fieldName + "']";
+    let field = fieldName.replace(/[^\/]+\:/g, '');
+    if(String(field).includes(" ")){
+      field = "*[local-name(.)='" + field + "']";
     }
     // Trim context from beginning of fieldName if needed
     if (this.context) {
       let len = this.context.length;
-      if (fieldName.substring(0, len+1) === this.context + '/') {
-        fieldName = fieldName.slice(len+1);
+      if (field.substring(0, len+1) === this.context + '/') {
+        field = field.slice(len+1);
       }
     }
-    this.insertContent(fieldName, index, prop)
+    this.insertContent(field, index, prop)
   }
 
   //Indenting the nested levels
