@@ -1,8 +1,10 @@
 {
   "envelope": {
     "instance": {
-      "customerId": "222",
-      "emailAddress": "missing.names@example.org"
+      "Customer": {
+        "customerId": "222",
+        "emailAddress": "missing.names@example.org"
+      }
     }
   }
 }

@@ -8,13 +8,13 @@
   "sourceURI" : "",
   "properties" : {
     "id": {
-      "sourcedFrom": "@CustomerID"
+      "sourcedFrom": "Customer/@CustomerID"
     },
     "firstname": {
-      "sourcedFrom": "property[@name = 'name']/@value"
+      "sourcedFrom": "Customer/property[@name = 'name']/@value"
     },
     "interests": {
-      "sourcedFrom": "property[@name = 'interest']/@value"
+      "sourcedFrom": "Customer/property[@name = 'interest']/@value"
     }
   }
 }
