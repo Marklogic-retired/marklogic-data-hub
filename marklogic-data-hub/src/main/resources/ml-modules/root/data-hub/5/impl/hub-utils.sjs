@@ -50,7 +50,7 @@ class HubUtils {
     }));
   }
 
-  writeDocuments(writeQueue, permissions = 'xdmp.defaultPermissions()', collections, database){
+  writeDocuments(writeQueue, permissions = 'xdmp.defaultPermissions()', collections = [], database = xdmp.databaseName(xdmp.database())){
     return fn.head(xdmp.eval(`
     const temporal = require("/MarkLogic/temporal.xqy");
 

@@ -64,6 +64,19 @@ function main(content, options) {
 }
 
 function jobReport(jobID, stepResponse, options) {
+  if (stepResponse.success) {
+    const hubUtils = datahub.hubUtils;
+    const query = options.sourceQuery;
+    let urisEval;
+    if (/^\s*cts\.(uris|values)\(.*\)\s*$/.test(query)) {
+      urisEval = query;
+    } else {
+      urisEval = "cts.uris(null, null, " + query + ")";
+    }
+    const matchSummaryURIs = hubUtils.normalizeToArray(xdmp.eval(urisEval, {options: options}));
+    const summariesToDelete = matchSummaryURIs.map((uri) => ({uri, '$delete': true}));
+    hubUtils.writeDocuments(summariesToDelete);
+  }
   return masteringStepLib.jobReport(jobID, stepResponse, options, requiredOptionProperties);
 }
 
