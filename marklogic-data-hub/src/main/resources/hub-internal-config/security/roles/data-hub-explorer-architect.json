@@ -1,5 +1,5 @@
 {
-  "role-name": "explorer-architect",
+  "role-name": "data-hub-explorer-architect",
   "description": "A role that can access entity models.",
   "role": [
     "data-hub-entity-model-reader"

@@ -69,7 +69,7 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
 
         DeployRolesCommand deployRolesCommand = new DeployRolesCommand();
         deployRolesCommand.setResourceFilenamesIncludePattern(
-            Pattern.compile("(data-hub-entity-model-reader|explorer-architect).*")
+            Pattern.compile("(data-hub-entity-model-reader|data-hub-explorer-architect).*")
         );
         commands.add(deployRolesCommand);
 
