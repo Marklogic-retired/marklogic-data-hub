@@ -85,7 +85,30 @@ export class EntitiesService {
     }));
   }
 
+  //Saving any entity should also save all the entities where the given entity is referred in recursively
   saveEntity(entity: Entity) {
+    const resp = this.saveSingleEntity(entity);
+    let references = this.findAllReferences(entity);
+    references.forEach((ent:Entity) => {
+      this.saveSingleEntity(ent);
+    });
+    return resp;
+  }
+
+  //Return all the entities the given entity is being referred to recursively
+  findAllReferences(entity: Entity, references = []) {
+    this.entities.forEach((ent: Entity) => {
+      this.entityReferencesInEntity(ent).forEach((prop: PropertyType) => {
+        if ( !references.includes(ent) && ((prop.$ref && prop.$ref.endsWith(entity.name)) || (prop.items && prop.items.$ref && prop.items.$ref.endsWith(entity.name)))) {
+          references.push(ent);
+          this.findAllReferences(ent, references);
+        }
+      });
+    });
+    return references;
+  }
+
+  saveSingleEntity(entity: Entity) {
     const expandedEntity = this.expandEntity(entity);
     const resp = this.http.put(this.url(`/entities/${expandedEntity.name}`), expandedEntity).pipe(map((res: Response) => {
       return new Entity().fromJSON(res.json());
