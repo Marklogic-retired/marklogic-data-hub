@@ -98,7 +98,7 @@ const EntityTable: React.FC<Props> = (props) => {
         return (
           <Link to={{
             pathname: "/browse",
-            state: { jobId: parseText[1] }
+            state: { jobId: parseText[1], entityName: parseText[2] }
           }}
             data-cy={parseText[0]}>
             {parseText[0]}
@@ -138,10 +138,12 @@ const EntityTable: React.FC<Props> = (props) => {
 
     let latestJobDate;
     let latestJobId;
+    let entityName;
     const collectionDetails = props.lastHarmonized.find(detail => detail.entityCollection === entity.info.title);
     if (collectionDetails) {
       latestJobDate = collectionDetails.latestJobDateTime;
       latestJobId = collectionDetails.latestJobId;
+      entityName = collectionDetails.entityCollection;
     }
 
 
@@ -158,7 +160,7 @@ const EntityTable: React.FC<Props> = (props) => {
     let parsedEntity = {
       name: entity.info.title,
       documents: numberConverter(documentCount),
-      created: relativeTimeConverter(latestJobDate) + ',' + latestJobId,
+      created: relativeTimeConverter(latestJobDate) + ',' + latestJobId + ',' + entityName,
       definition: entityDefinition
     }
     return parsedEntity

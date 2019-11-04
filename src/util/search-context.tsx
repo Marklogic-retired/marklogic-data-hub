@@ -28,7 +28,7 @@ interface ISearchContextInterface {
   setSearchFacets: (constraint: string, vals: string[]) => void;
   setEntity: (option: string) => void;
   setEntityClearQuery: (option: string) => void;
-  setLatestJobFacet: (vals: string) => void;
+  setLatestJobFacet: (vals: string, option: string) => void;
   clearFacet: (constraint:string, val:string) => void;
   clearAllFacets: () => void;
   setDateFacet: (dates: string[]) => void;
@@ -141,14 +141,14 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     });
   }
 
-  const setLatestJobFacet = (vals: string) => {
+  const setLatestJobFacet = (vals: string, option: string) => {
     let facets = {};
       facets = { createdByJob: [vals] };
     setSearchOptions({ 
       ...searchOptions,
       start: 1,
       searchFacets: facets,
-      entityNames: [],
+      entityNames: [option],
       pageNumber: 1,
       pageLength: searchOptions.pageSize
     });
