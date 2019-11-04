@@ -104,6 +104,11 @@ class BrowsePage {
     search(str: string) {
         cy.get('[data-cy=search-bar]').type(str);
         cy.get('.ant-input-search-button').click();
+        cy.wait(500);
+    }
+
+    getShowMoreLink() {
+        return cy.get('div[data-cy="show-more"][style="display: block;"]');
     }
 
 }

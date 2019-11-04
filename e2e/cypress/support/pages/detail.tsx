@@ -36,6 +36,10 @@ class DetailPage {
         return cy.get('.pretty-json-container');
     }
 
+    getDocumentXML() {
+        return cy.get('[data-cy=xml-document]');
+    }
+
 }
 
 export default DetailPage;

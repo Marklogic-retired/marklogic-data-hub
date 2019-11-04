@@ -98,6 +98,7 @@ const Facet: React.FC<Props> = (props) => {
           className={styles.more}
           style={{display: (props.facetValues.length > SHOW_MINIMUM) ? 'block' : 'none'}}
           onClick={() => showMore()}
+          data-cy="show-more"
         >{(more) ? '<< less' : 'more >>'}</div>
       </div>
     </div>
