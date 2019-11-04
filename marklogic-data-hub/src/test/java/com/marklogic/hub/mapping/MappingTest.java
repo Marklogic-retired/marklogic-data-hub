@@ -2,15 +2,23 @@ package com.marklogic.hub.mapping;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.bootstrap.Installer;
-import com.marklogic.hub.*;
+import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubProject;
+import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.RunFlowResponse;
-import com.marklogic.hub.impl.Versions;
 import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.util.HubModuleManager;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -236,13 +244,14 @@ public class MappingTest extends HubTestBase {
         installHubArtifacts(getDataHubAdminConfig(), true);
         installUserModules(getDataHubAdminConfig(), true);
 
+        String timezoneStr = getTimezoneString();
         RunStepResponse mappingJob = runFlowResp("OrderJSON", "1","2").getStepResponses().get("2");
         assertTrue(mappingJob.isSuccess(), "Mapping job failed: "+mappingJob.stepOutput);
         String jsonString = "{" +
-            "\"DateTimeFormat4\": \"1996-07-04T14:25:55-07:00\", " +
-            "\"DateTimeFormat5\": \"1996-07-04T14:25:55-07:00\", " +
-            "\"DateTimeFormat2\": \"1996-07-04T14:25:55-07:00\", " +
-            "\"DateTimeFormat3\": \"1996-07-04T14:25:55-07:00\", " +
+            "\"DateTimeFormat4\": \"1996-07-04T14:25:55"+ timezoneStr + "\", " +
+            "\"DateTimeFormat5\": \"1996-07-04T14:25:55"+ timezoneStr + "\", " +
+            "\"DateTimeFormat2\": \"1996-07-04T14:25:55"+ timezoneStr + "\", " +
+            "\"DateTimeFormat3\": \"1996-07-04T14:25:55"+ timezoneStr + "\", " +
             "\"RequiredDate5\": \"1996-08-01\", " +
             "\"ShippedDate3\": \"1996-07-16\", " +
             "\"RequiredDate4\": \"1996-08-01\", " +
@@ -255,7 +264,7 @@ public class MappingTest extends HubTestBase {
             "\"RequiredDate1\": \"1996-08-01\", " +
             "\"OrderID\": \"10249\", " +
             "\"ShippedDate5\": \"1996-08-01\", " +
-            "\"DateTimeFormat1\": \"1996-07-04T14:25:55-07:00\"" +
+            "\"DateTimeFormat1\": \"1996-07-04T14:25:55"+ timezoneStr + "\"" +
         "}";
         JsonNode actual = getQueryResults("cts:search(fn:doc('/input/json/order1.json')/envelope/instance/Order, cts:collection-query('OrderJSONMapping'))", HubConfig.DEFAULT_FINAL_NAME);
         assertJsonEqual(jsonString, actual.toString(), true);
@@ -344,8 +353,9 @@ public class MappingTest extends HubTestBase {
 
         RunStepResponse mappingJob = runFlowResp("OrderJSON", "1","2").getStepResponses().get("2");
         assertTrue(mappingJob.isSuccess(), "Mapping job failed: "+mappingJob.stepOutput);
+        String timezoneStr = getTimezoneString();
         String jsonString = "{" +
-            "\"DateTimeFormat5\": \"1996-07-04T14:25:55-07:00\", " +
+            "\"DateTimeFormat5\": \"1996-07-04T14:25:55" + timezoneStr + "\", " +
             "\"CustomerID\": \"VINET\", " +
             "\"OrderID\": \"10249\" " +
             "}";

@@ -1196,4 +1196,10 @@ public class HubTestBase {
             throw new RuntimeException(e);
         }
     }
+
+    protected String getTimezoneString() {
+        StringHandle strHandle = new StringHandle();
+        runInDatabase("sem:timezone-string(fn:current-dateTime())", HubConfig.DEFAULT_FINAL_NAME, strHandle);
+        return strHandle.get();
+    }
 }
