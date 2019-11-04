@@ -78,7 +78,7 @@ const Browse: React.FC<Props> = ({ location }) => {
       setEntityClearQuery(location.state.entity);
     }
     if (location.state && location.state.jobId) {
-      setLatestJobFacet(location.state.jobId);
+      setLatestJobFacet(location.state.jobId, location.state.entityName);
     }
     getEntityModel();
 
