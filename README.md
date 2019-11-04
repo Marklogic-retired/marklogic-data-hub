@@ -1,19 +1,21 @@
 # MarkLogic Data Hub Explorer Back-end
 
-Data-hub Explorer back-end provides web-tier services in order to quickly explore data from MarkLogic Server/Database.
+Datahub Explorer is a REACT-driven system that provides viewing capabilities for end users. This release is for DHS environments only.
+This project is the web service that serves content to explorer-ui.
 
-# Version of major components
+# Version Support
 
-  - MarkLogic Server 10.0-2 or above
-  - Marklogic-client-api 5.0.1 or above
-  - Ml-javaclient-util 3.13.3 or above
-  - DHF 5.1 or above
-  - Java JDK 11 or above
-  - Spring boot 2.1.7.RELEASE or above
-  - Spring Framework 5.1.5.RELEASE or above
-  - Gradle 5.4 or above
+  - MarkLogic Server 10.0-2 and later
+  - Data Hub 5.1.x and later
 
-# how to build
+# Getting Started
+Explorer is distributed as a group of three Docker containers, one of which contains the UI environment, one of which contains the backed, 
+and the third contains MarkLogic and is only packaged as a convenience and is only intended for demo use.
+
+The customer is expected to use a complete MarkLogic installation, as supported by Data Hub Services rather than the containerized version. 
+That version is not supported for any purpose other than demonstration.
+
+# How to build
 
 ./gradlew build
 
@@ -43,5 +45,15 @@ https://project.marklogic.com/repo/projects/PROD/repos/explorer-ui/browse/README
 
 ## Run explore BE and FE using docker-compose
 https://wiki.marklogic.com/display/ENGINEERING/Run+Explorer+via+Docker#RunExplorerviaDocker-SetupMLRegistry
+
+# Contribute
+Explorer is a closed-source project. You can contribute to its success by reporting errors you encounter and 
+suggesting improvement or additional features to Product Management.
+
+# Support
+The MarkLogic Data Hub is designed, written, and maintained by [MarkLogic][marklogic] Engineering.
+
+The reason we want to do so is that since it's a closed source project, we should give no indication of any of the internal technology we use. 
+Internally, we know what we need from the pom -- um build.properties -- and we can change it without changing the readme.
 
 
