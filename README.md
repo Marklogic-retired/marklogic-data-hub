@@ -1,48 +1,47 @@
-# MarkLogic Data Hub
+# MarkLogic Data Hub Explorer Back-end
 
-Go from nothing to an Operational Data Hub in a matter of minutes.
+Data-hub Explorer back-end provides web-tier services in order to quickly explore data from MarkLogic Server/Database.
 
-MarkLogic Data Hub is a data integration platform and toolset that helps you quickly and efficiently integrate data from many sources into a single MarkLogic database and then expose that data.
+# Version of major components
+
+  - MarkLogic Server 10.0-2 or above
+  - Marklogic-client-api 5.0.1 or above
+  - Ml-javaclient-util 3.13.3 or above
+  - DHF 5.1 or above
+  - Java JDK 11 or above
+  - Spring boot 2.1.7.RELEASE or above
+  - Spring Framework 5.1.5.RELEASE or above
+  - Gradle 5.4 or above
+
+# how to build
+
+./gradlew build
+
+if you want to skip running test cases,
+
+./gradlew build -x test
+
+# How to run 
+
+## Build and run BE Docker Container
+
+```
+Build Docker image
+    docker build -t explorer .
+
+Run Docker container via adding command line args:
+    docker run -p 8080:8080 explorer --mlHost=host.docker.internal
+
+Run Docker container via setting env. variables:
+    docker run -e "mlHost=host.docker.internal" -p 8080:8080 explorer
+```
+see more details:
+https://wiki.marklogic.com/display/ENGINEERING/Run+Explorer+via+Docker#f520f246cb4a42cb9035ba4f62231ada
+
+## Build and run FE Docker Container
+https://project.marklogic.com/repo/projects/PROD/repos/explorer-ui/browse/README.md?at=refs%2Fheads%2Fdevelop
+
+## Run explore BE and FE using docker-compose
+https://wiki.marklogic.com/display/ENGINEERING/Run+Explorer+via+Docker#RunExplorerviaDocker-SetupMLRegistry
 
 
-# Version Support
-
-For Data Hub version 5.0, you need:
-
-  - MarkLogic 9.0-7 or later
-  - Gradle 4.6 or later
-  - Java JDK 8 or later
-
-
-# Getting Started
-Grab the [latest release](https://github.com/marklogic/marklogic-data-hub/releases). Visit our [Data Hub website](https://docs.marklogic.com/datahub/) to get started.
-
-
-## Advanced Hub Usage
-You can also go beyond the QuickStart app and start using Data Hub in your own Java or Gradle project. Visit our [Data Hub website](https://docs.marklogic.com/datahub/) for more information.
-
-
-## Contribute
-You do not need to download the code in the repository to use MarkLogic Data Hub.
-
-If you would like to plan to actively contribute changes to the Data Hub.
-
-If you really do want to contribute, see our [Contributing Guide](https://github.com/marklogic/marklogic-data-hub/blob/master/CONTRIBUTING.md) to get started.
-
-
-# Support
-The MarkLogic Data Hub is maintained by [MarkLogic][marklogic] Engineering and is made available under the [Apache License 2.0][apache].
-
-_The Data Hub core Java libraries and Gradle commands are supported software for production use with MarkLogic Server. QuickStart is designed for use in a development environment and is not currently supported for production use._
-
-Everyone is encouraged to file bug reports, feature requests, and pull requests through [GitHub][issues]. This input is critical and will be carefully considered. However, we cannot promise a specific resolution or timeframe for any request.
-
-In addition, MarkLogic provides technical support for [release tags][releases] of MarkLogic Data Hub to licensed customers under the terms outlined in the [MarkLogic Technical Support Handbook][handbook]. Customers with an active maintenance contract can sign up for MarkLogic Technical Support on our [support portal][support].
-
-
-[marklogic]: https://www.marklogic.com/
-[apache]: https://www.apache.org/licenses/LICENSE-2.0
-[issues]: https://github.com/marklogic/marklogic-data-hub/issues
-[releases]: https://github.com/marklogic/marklogic-data-hub/releases
-[handbook]: http://www.marklogic.com/files/Mark_Logic_Support_Handbook.pdf
-[support]: https://help.marklogic.com/
