@@ -1,0 +1,16 @@
+<envelope>
+  <instance>
+    <person>
+      <personId>222</personId>
+      <theNickname>Nicky</theNickname>
+      <theName>
+        <middleName>Middle</middleName>
+        <lastName>Last</lastName>
+        <firstName>
+          <theValue>First</theValue>
+          <thePrefix>SomePrefix</thePrefix>
+        </firstName>
+      </theName>
+    </person>
+  </instance>
+</envelope>

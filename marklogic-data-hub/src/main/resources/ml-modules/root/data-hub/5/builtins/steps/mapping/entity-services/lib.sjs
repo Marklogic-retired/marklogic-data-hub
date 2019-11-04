@@ -50,7 +50,9 @@ function buildMappingXML(mappingJSON) {
       ${entityTemplates.join('\n')}
       <!-- Default entity is ${entityName} -->
       <m:output>
-        <m:call-template name="${entityName}" />
+        <m:for-each><m:select>/</m:select>
+            <m:call-template name="${entityName}" />
+        </m:for-each>
       </m:output>
     </m:mapping>
   `;
