@@ -1,4 +1,9 @@
 # Change Log
+## [v5.0.4](https://github.com/marklogic/marklogic-data-hub/releases/tag/v5.0.4) (2019-10-22)
+
+**Fixed Bugs:**
+- [DHFPROD-3400] - Don’t check the same URIs repeatedly for additional merges
+
 
 ## [v5.0.3](https://github.com/marklogic/marklogic-data-hub/releases/tag/v5.0.3) (2019-10-02)
 
