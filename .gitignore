@@ -31,3 +31,4 @@ yarn-error.log*
 /.idea
 
 /junit.xml
+/coverage-final.json
