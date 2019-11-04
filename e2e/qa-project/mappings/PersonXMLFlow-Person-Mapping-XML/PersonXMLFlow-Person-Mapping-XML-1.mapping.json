@@ -1,0 +1,20 @@
+{
+  "lang" : "zxx",
+  "name" : "PersonXMLFlow-Person-Mapping-XML",
+  "description" : "",
+  "version" : 1,
+  "targetEntityType" : "http://example.org/PersonXML-0.0.1/PersonXML",
+  "sourceContext" : "/",
+  "sourceURI" : "/C/dev/fork/marklogic-data-hub/web/e2e/qa-project/input/person-xml/person1.xml",
+  "properties" : {
+    "fname" : {
+      "sourcedFrom" : "fname"
+    },
+    "lname" : {
+      "sourcedFrom" : "lname"
+    },
+    "id" : {
+      "sourcedFrom" : "id"
+    }
+  }
+}
