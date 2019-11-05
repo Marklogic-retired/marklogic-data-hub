@@ -262,7 +262,7 @@ declare function merge-impl:generate-audit-attachments(
     for $property in map:keys($source-info)
     let $prop-info := map:get($source-info, $property)
     let $algorithm-info := map:get($prop-info, "algorithm")
-    let $algorithm-agent := "algorithm:"||$algorithm-info/name||";options:"||$algorithm-info/optionsReference
+    let $algorithm-agent := fn:distinct-values($algorithm-info ! ("algorithm:"||./name||";options:"||./optionsReference))
     let $_add-agent-id := map:put($agent-ids-map, $algorithm-agent, fn:true())
     let $influencer-xml := element prov:influencer { attribute prov:ref { $algorithm-agent }}
     let $entity-nodes := (
@@ -346,7 +346,7 @@ declare function merge-impl:generate-provenance-details(
                 )
               ),
               map:entry("destination", $type),
-              map:entry("algorithm", map:get($prop, "algorithm"))
+              map:entry("algorithm", map:get($prop, "algorithm") union ())
           ))
         )
       )
@@ -1443,7 +1443,7 @@ declare function merge-impl:parse-final-properties-for-merge(
       ! fn:node-name(.)
     )
   let $sources := merge-impl:get-sources($docs, $merge-options)
-  let $sources-by-document-uri := util-impl:combine-maps(map:map(),for $doc-uri in $sources/documentUri return map:entry($doc-uri, $doc-uri/..))
+  let $sources-by-document-uri as map:map := util-impl:combine-maps(map:map(),for $doc-uri in $sources/documentUri return map:entry($doc-uri, $doc-uri/..))
   let $final-properties := merge-impl:build-final-properties(
     $merge-options,
     $instances,
@@ -1485,7 +1485,7 @@ declare function merge-impl:parse-final-properties-for-merge(
 declare function merge-impl:build-final-headers(
   $merge-options as element(merging:options),
   $docs,
-  $sources-by-document-uri
+  $sources-by-document-uri as map:map
 ) as map:map*
 {
   let $property-defs := $merge-options/merging:property-defs/merging:property[fn:matches(@path, "^/[\w]*:?envelope/[\w]*:?headers")]
@@ -1649,7 +1649,7 @@ declare function merge-impl:build-final-triples(
 declare function merge-impl:get-raw-values(
   $docs,
   $property as element(merging:property),
-  $sources-by-document-uri,
+  $sources-by-document-uri as map:map,
   $ns-map as map:map?
 ) as map:map*
 {
@@ -1810,7 +1810,7 @@ declare function merge-impl:build-final-properties(
   $merge-options,
   $instances,
   $docs,
-  $sources-by-document-uri
+  $sources-by-document-uri as map:map
 ) as map:map*
 {
   merge-impl:build-final-properties(
@@ -1834,7 +1834,7 @@ declare function merge-impl:build-final-properties(
   $merge-options,
   $instances,
   $docs,
-  $sources-by-document-uri,
+  $sources-by-document-uri as map:map,
   $is-json,
   $target-entity
 ) as map:map*
@@ -1993,15 +1993,20 @@ declare function merge-impl:build-final-properties(
               else
                 $prop-entity-instances[*[fn:local-name(.) eq $primary-key-local-name] = $primary-key-value],
               $prop-entity-instances ! fn:root(.),
-              for $prop-entity-instance in $prop-entity-instances
-              let $instance-node-uri := merge-impl:node-uri($prop-entity-instance)
-              let $instance-source := map:get($sources-by-document-uri, fn:head($source-doc-uris[fn:contains($instance-node-uri,.)]))
-              return
-                object-node {
-                  "name": $instance-source/name,
-                  "dateTime": $instance-source/dateTime,
-                  "documentUri": $instance-node-uri
-                },
+              util-impl:combine-maps(map:map(),
+                for $prop-entity-instance in $prop-entity-instances
+                let $instance-node-uri := merge-impl:node-uri($prop-entity-instance)
+                let $instance-source := map:get($sources-by-document-uri, fn:head($source-doc-uris[fn:contains($instance-node-uri,.)]))
+                return
+                  map:entry(
+                    $instance-node-uri,
+                    object-node {
+                      "name": $instance-source/name,
+                      "dateTime": $instance-source/dateTime,
+                      "documentUri": $instance-node-uri
+                    }
+                  )
+              ),
               $is-json,
               $prop-entity-ref
             )
@@ -2017,15 +2022,20 @@ declare function merge-impl:build-final-properties(
               $merge-options,
               $prop-entity-instances,
               $prop-entity-instances ! fn:root(.),
-              for $prop-entity-instance in $prop-entity-instances
-              let $instance-node-uri := merge-impl:node-uri($prop-entity-instance)
-              let $instance-source := map:get($sources-by-document-uri, fn:head($source-doc-uris[fn:contains($instance-node-uri,.)]))
-              return
-                object-node {
-                  "name": $instance-source/name,
-                  "dateTime": $instance-source/dateTime,
-                  "documentUri": $instance-node-uri
-                },
+              util-impl:combine-maps(map:map(),
+                for $prop-entity-instance in $prop-entity-instances
+                let $instance-node-uri := merge-impl:node-uri($prop-entity-instance)
+                let $instance-source := map:get($sources-by-document-uri, fn:head($source-doc-uris[fn:contains($instance-node-uri,.)]))
+                return
+                  map:entry(
+                    $instance-node-uri,
+                    object-node {
+                    "name": $instance-source/name,
+                    "dateTime": $instance-source/dateTime,
+                    "documentUri": $instance-node-uri
+                    }
+                  )
+              ),
               $is-json,
               $prop-entity-ref
             )
