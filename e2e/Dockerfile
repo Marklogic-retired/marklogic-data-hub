@@ -6,4 +6,4 @@ COPY ./qa-project ./qa-project
 COPY ./cypress.json ./cypress.json
 COPY ./tsconfig.json ./tsconfig.json
 
-CMD npm i && npm run cypress:runs
+CMD npm i && npm run cypress:run
