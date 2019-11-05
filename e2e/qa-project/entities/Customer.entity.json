@@ -6,7 +6,6 @@
   },
   "definitions" : {
     "Customer" : {
-      "primaryKey" : "id",
       "required" : [ ],
       "pii" : [ ],
       "elementRangeIndex" : [ ],

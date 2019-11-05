@@ -23,13 +23,6 @@
       <search:element ns="" name="id"/>
     </search:value>
   </search:constraint>
-  <!--The name of this constraint is a duplicate in the generated XML. It is within a comment so that the XML may be valid, but you may need to edit for your use case.
- <search:constraint name="id" xmlns:search="http://marklogic.com/appservices/search">
-  <search:value>
-    <search:element ns="" name="id"/>
-  </search:value>
-</search:constraint> 
--->
   <search:constraint name="fname">
     <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
       <search:element ns="" name="fname" xmlns:es="http://marklogic.com/entity-services"/>
@@ -42,13 +35,6 @@
       <search:facet-option>limit=25</search:facet-option>
     </search:range>
   </search:constraint>
-  <!--The name of this constraint is a duplicate in the generated XML. It is within a comment so that the XML may be valid, but you may need to edit for your use case.
- <search:constraint name="id" xmlns:search="http://marklogic.com/appservices/search">
-  <search:value>
-    <search:element ns="" name="id"/>
-  </search:value>
-</search:constraint> 
--->
   <search:tuples name="PersonXML">
     <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
       <search:element ns="" name="fname" xmlns:es="http://marklogic.com/entity-services"/>
