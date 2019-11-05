@@ -79,25 +79,30 @@ pipeline{
              }
 		}
 		stage('Integration-Tests'){
+		    when {
+                   branch 'develop'
+            }
 		    agent { label 'explorerLinux'}
 		    steps{
 		        sh 'cd $WORKSPACE/explorer-ui;docker-compose pull || true;dhvolume="$WORKSPACE/explorer-ui/e2e/qa-project/" mlusername="admin" mlpassword="mlusername" docker-compose up --build -d; cd e2e;docker-compose up --build -d'
+		        archiveArtifacts artifacts: '**/e2e/results/*.xml', onlyIfSuccessful: true
+		        junit '**/e2e/results/*.xml'
+
 		    }
 		    post{
-
+		        always{
+		         sh 'docker rm -f ${docker ps -a -q}'
+		        }
+                success {
+                    node('explorerLinux'){
+                        sh 'docker rmi mlregistry.marklogic.com/explorer/explorer-ui:5.1-snapshot || true;docker tag  explorer-ui  mlregistry.marklogic.com/explorer/explorer-ui:5.1-snapshot;delete_image.py explorer-ui 5.1-snapshot explorer|| true;docker push   mlregistry.marklogic.com/explorer/explorer-ui:5.1-snapshot'
+                    }
+                }
+                unsuccessful{
+                    sendMail email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Explorer-UI_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the  Integration Tests Failed on  $BRANCH_NAME. Please look into the issues and fix it.',false,'Integration Tests for $BRANCH_NAME Failed'
+                }
 		    }
 		}
-		stage('publish'){
-        		when {
-                  		branch 'develop'
-                	 }
-        		agent { label 'explorerLinux'}
-        		steps{
-        	        sh 'cd $WORKSPACE/explorer-ui;docker rmi mlregistry.marklogic.com/explorer/explorer-ui:5.1-snapshot || true; docker build . -t  mlregistry.marklogic.com/explorer/explorer-ui:5.1-snapshot;docker push   mlregistry.marklogic.com/explorer/explorer-ui:5.1-snapshot'
-        		}
-
-
-        		}
 
 	}
 }
