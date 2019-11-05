@@ -59,9 +59,6 @@ Run Docker container via setting env. variables:
 see more details:
 https://wiki.marklogic.com/display/ENGINEERING/Run+Explorer+via+Docker#f520f246cb4a42cb9035ba4f62231ada
 
-## Run explore BE and FE using docker-compose
-https://wiki.marklogic.com/display/ENGINEERING/Run+Explorer+via+Docker#RunExplorerviaDocker-SetupMLRegistry
-
 # Contribute
 Explorer is a closed-source project. You can contribute to its success by reporting errors you encounter and 
 suggesting improvement or additional features to Product Management.
