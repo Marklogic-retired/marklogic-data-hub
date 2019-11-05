@@ -94,9 +94,7 @@ pipeline{
 		         sh 'docker rm -f ${docker ps -a -q}'
 		        }
                 success {
-                    node('explorerLinux'){
                         sh 'docker rmi mlregistry.marklogic.com/explorer/explorer-ui:5.1-snapshot || true;docker tag  explorer-ui  mlregistry.marklogic.com/explorer/explorer-ui:5.1-snapshot;delete_image.py explorer-ui 5.1-snapshot explorer|| true;docker push   mlregistry.marklogic.com/explorer/explorer-ui:5.1-snapshot'
-                    }
                 }
                 unsuccessful{
                     sendMail email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Explorer-UI_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the  Integration Tests Failed on  $BRANCH_NAME. Please look into the issues and fix it.',false,'Integration Tests for $BRANCH_NAME Failed'
