@@ -56,9 +56,6 @@ Run Docker container via setting env. variables:
 see more details:
 https://wiki.marklogic.com/display/ENGINEERING/Run+Explorer+via+Docker#f520f246cb4a42cb9035ba4f62231ada
 
-## Build and run FE Docker Container
-https://project.marklogic.com/repo/projects/PROD/repos/explorer-ui/browse/README.md?at=refs%2Fheads%2Fdevelop
-
 ## Run explore BE and FE using docker-compose
 https://wiki.marklogic.com/display/ENGINEERING/Run+Explorer+via+Docker#RunExplorerviaDocker-SetupMLRegistry
 
@@ -68,3 +65,6 @@ suggesting improvement or additional features to Product Management.
 
 # Support
 The MarkLogic Data Hub is designed, written, and maintained by [MarkLogic][marklogic] Engineering.
+
+Notes: if you want to run BE and FE together using docker-compose, just follow the instruction:
+https://wiki.marklogic.com/display/ENGINEERING/Run+Explorer+via+Docker#RunExplorerviaDocker-SetupMLRegistry
