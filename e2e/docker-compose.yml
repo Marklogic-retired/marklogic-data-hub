@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile
     image: "e2e"
     environment:
-      - CYPRESS_baseUrl=http://localhost:80
+      - CYPRESS_baseUrl=http://${HOSTNAME}:80
     working_dir: /e2e
     volumes:
       - ./:/e2e
