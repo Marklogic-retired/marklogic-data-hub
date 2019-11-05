@@ -23,6 +23,18 @@
       <search:element ns="" name="id"/>
     </search:value>
   </search:constraint>
+  <search:constraint name="fname">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:element ns="" name="fname" xmlns:es="http://marklogic.com/entity-services"/>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="lname">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:element ns="" name="lname" xmlns:es="http://marklogic.com/entity-services"/>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
   <!--The name of this constraint is a duplicate in the generated XML. It is within a comment so that the XML may be valid, but you may need to edit for your use case.
  <search:constraint name="id" xmlns:search="http://marklogic.com/appservices/search">
   <search:value>
@@ -30,6 +42,14 @@
   </search:value>
 </search:constraint> 
 -->
+  <search:tuples name="PersonXML">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:element ns="" name="fname" xmlns:es="http://marklogic.com/entity-services"/>
+    </search:range>
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:element ns="" name="lname" xmlns:es="http://marklogic.com/entity-services"/>
+    </search:range>
+  </search:tuples>
   <!--Uncomment to return no results for a blank search, rather than the default of all results
  <search:term xmlns:search="http://marklogic.com/appservices/search">
   <search:empty apply="no-results"/>
@@ -42,7 +62,7 @@
   <search:search-option>unfiltered</search:search-option>
   <!--Modify document extraction to change results returned-->
   <search:extract-document-data selected="include">
-    <search:extract-path xmlns:es="http://marklogic.com/entity-services">//*:instance/(Customer|Person)</search:extract-path>
+    <search:extract-path xmlns:es="http://marklogic.com/entity-services">//*:instance/(Customer|PersonXML|Person)</search:extract-path>
   </search:extract-document-data>
   <!--Change or remove this additional-query to broaden search beyond entity instance documents-->
   <!--To return facets, change this option to 'true' and edit constraints-->

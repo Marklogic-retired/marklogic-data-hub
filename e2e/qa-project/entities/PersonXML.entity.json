@@ -1,14 +1,15 @@
 {
   "info" : {
-    "title" : "Customer",
+    "title" : "PersonXML",
     "version" : "0.0.1",
     "baseUri" : "http://example.org/"
   },
   "definitions" : {
-    "Customer" : {
+    "PersonXML" : {
+      "primaryKey" : "id",
       "required" : [ ],
       "pii" : [ ],
-      "elementRangeIndex" : [ ],
+      "elementRangeIndex" : [ "fname", "lname" ],
       "rangeIndex" : [ ],
       "wordLexicon" : [ ],
       "properties" : {
@@ -16,19 +17,11 @@
           "datatype" : "string",
           "collation" : "http://marklogic.com/collation/codepoint"
         },
-        "firstname" : {
+        "fname" : {
           "datatype" : "string",
           "collation" : "http://marklogic.com/collation/codepoint"
         },
-        "lastname" : {
-          "datatype" : "string",
-          "collation" : "http://marklogic.com/collation/codepoint"
-        },
-        "email" : {
-          "datatype" : "string",
-          "collation" : "http://marklogic.com/collation/codepoint"
-        },
-        "zip" : {
+        "lname" : {
           "datatype" : "string",
           "collation" : "http://marklogic.com/collation/codepoint"
         }

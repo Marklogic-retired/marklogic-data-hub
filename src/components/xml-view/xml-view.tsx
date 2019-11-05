@@ -8,7 +8,7 @@ interface Props {
 const XmlView: React.FC<Props> = (props) => {
 
     return (
-      <div> 
+      <div data-cy='xml-document'> 
         <XMLViewer xml={props.document} />
       </div>
     );

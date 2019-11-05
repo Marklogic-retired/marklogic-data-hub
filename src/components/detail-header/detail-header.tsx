@@ -12,7 +12,7 @@ interface Props {
 
 const DetailHeader: React.FC<Props> = (props) => {
   const { Text } = Typography;
-  const fileType = props.contentType.toUpperCase();
+  const fileType = props.contentType;
   let envelope: any = {};
   let title: string = '';
   let primaryKey: string = '';
@@ -21,7 +21,7 @@ const DetailHeader: React.FC<Props> = (props) => {
   let sources: string = '';
   let document: any = {};
 
-  if (fileType === 'JSON') {
+  if (fileType === 'json') {
     envelope = props.document.envelope;
     document = Object.keys(envelope.instance)[0];
     if (envelope.instance.hasOwnProperty('info')) {
@@ -45,7 +45,7 @@ const DetailHeader: React.FC<Props> = (props) => {
     } else {
       id = props.uri;
     }
-  } else if (fileType === 'XML') {
+  } else if (fileType === 'xml') {
     envelope = props.document.content.envelope;
     document = Object.keys(envelope.instance)[1];
     if (envelope.instance.hasOwnProperty('info')) {
@@ -85,14 +85,17 @@ const DetailHeader: React.FC<Props> = (props) => {
           )}
       </div>
       <div id='summary' className={styles.summary}>
-        { timestamp &&
+        {timestamp &&
           <Text className={styles.meta} data-cy="document-timestamp"><Text type="secondary">Created: </Text>{dateConverter(timestamp)}</Text>
         }
-        { sources && 
+        {sources &&
           <Text className={styles.meta} data-cy="document-source"><Text type="secondary">Sources: </Text>{sources}</Text>
         }
-        { fileType &&
-          <Text className={styles.meta} data-cy="document-filetype"><Text type="secondary">File Type: </Text>{fileType}</Text>
+        {fileType &&
+          <Text className={styles.meta}>
+            <Text type="secondary">File Type: </Text>
+            <Text className={styles.type} data-cy="document-filetype">{fileType}</Text>
+          </Text>
         }
       </div>
     </div>

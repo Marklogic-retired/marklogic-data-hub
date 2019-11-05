@@ -9,7 +9,7 @@ const viewPage = new ViewPage();
 const browsePage = new BrowsePage();
 const detailPage = new DetailPage();
 
-describe('json scenario on view entities page', () => {
+describe('xml scenario on view entities page', () => {
 
     //login with valid account
     beforeEach(() => {
@@ -26,23 +26,23 @@ describe('json scenario on view entities page', () => {
     });
 
     it('has Person entity with properties and attributes', () => {
-        viewPage.expandEntityRow('Person');
+        viewPage.expandEntityRow('PersonXML');
         viewPage.getEntityProperty('id').should('contains', 'id');
         viewPage.getEntityDataType('id').should('contains', 'string');
         viewPage.getEntityIndexSettings('id').should('contains', 'Primary Key');
     });
 
     it('navigates to /browse on entity name click', () => {
-        viewPage.getEntity('Person')
+        viewPage.getEntity('PersonXML')
             .click()
             .url()
             .should('include', '/browse');
-        browsePage.getSelectedEntity().should('contain', 'Person')
+        browsePage.getSelectedEntity().should('contain', 'PersonXML')
     });
 
 });
 
-describe('json scenario on browse documents page', () => {
+describe('xml scenario on browse documents page', () => {
 
     var facets: string[] = ['collection', 'flow'];
 
@@ -78,17 +78,17 @@ describe('json scenario on browse documents page', () => {
         })
     });
 
-    it('select Person entity and verify entity, docs, hub/entity properties', () => {
-        browsePage.selectEntity('Person');
-        browsePage.getSelectedEntity().should('contain', 'Person');
+    it('select PersonXML entity and verify entity, docs, hub/entity properties', () => {
+        browsePage.selectEntity('PersonXML');
+        browsePage.getSelectedEntity().should('contain', 'PersonXML');
         cy.wait(2000);
         browsePage.getTotalDocuments().should('be.greaterThan', '5')
         browsePage.getDocuments().each(function (item, i) {
             browsePage.getDocumentEntityName(i).should('exist');
             browsePage.getDocumentId(i).should('exist');
             browsePage.getDocumentSnippet(i).should('exist');
-            browsePage.getDocumentCreatedOn(i).should('exist');
-            browsePage.getDocumentSources(i).should('exist');
+            // browsePage.getDocumentCreatedOn(i).should('exist');
+            // browsePage.getDocumentSources(i).should('exist');
             browsePage.getDocumentFileType(i).should('exist');
         })
 
@@ -102,8 +102,9 @@ describe('json scenario on browse documents page', () => {
         browsePage.selectEntity('All Entities');
         browsePage.getSelectedEntity().should('contain', 'All Entities');
         cy.wait(500);
+        browsePage.getShowMoreLink().click();
         browsePage.getTotalDocuments().should('be.greaterThan', '1008');
-        browsePage.getFacetItemCheckbox('collection', 'Person').click();
+        browsePage.getFacetItemCheckbox('collection', 'PersonXML').click();
         cy.wait(500);
         browsePage.getTotalDocuments().should('be.equal', 6);
         browsePage.getFacetSearchSelectionCount('collection').should('contain', '1');
@@ -113,37 +114,39 @@ describe('json scenario on browse documents page', () => {
 
     it('search for a simple text/query and verify content', () => {
         cy.wait(500);
-        browsePage.search('Bill');
+        browsePage.search('Alex');
+        cy.wait(500);
         browsePage.getTotalDocuments().should('be.equal', 1);
         browsePage.getDocumentEntityName(0).should('exist');
         browsePage.getDocumentId(0).should('exist');
         browsePage.getDocumentSnippet(0).should('exist');
-        browsePage.getDocumentCreatedOn(0).should('exist');
-        browsePage.getDocumentSources(0).should('exist');
+        // browsePage.getDocumentCreatedOn(0).should('exist');
+        // browsePage.getDocumentSources(0).should('exist');
         browsePage.getDocumentFileType(0).should('exist')
+        browsePage.getDocumentFileType(0).should('be.equal', 'xml')
     });
 
     it('verify instance view of the document', () => {
         cy.wait(500);
-        browsePage.search('Bill');
+        browsePage.search('Alex');
         browsePage.getTotalDocuments().should('be.equal', 1);
         browsePage.getDocumentById(0).click();
         detailPage.getInstanceView().should('exist');
         detailPage.getDocumentEntity().should('contain', 'Person');
         detailPage.getDocumentID().should('contain', '0');
-        detailPage.getDocumentTimestamp().should('exist');
-        detailPage.getDocumentSource().should('contain', 'PersonFlow');
-        detailPage.getDocumentFileType().should('contain', 'json');
+        // detailPage.getDocumentTimestamp().should('exist');
+        // detailPage.getDocumentSource().should('contain', 'PersonXMLFlow');
+        detailPage.getDocumentFileType().should('contain', 'xml');
         detailPage.getDocumentTable().should('exist');
     });
 
     it('verify source view of the document', () => {
         cy.wait(500);
-        browsePage.search('Bill');
+        browsePage.search('Alex');
         browsePage.getTotalDocuments().should('be.equal', 1);
         browsePage.getDocumentById(0).click();
         detailPage.getSourceView().click();
-        detailPage.getDocumentJSON().should('exist');
+        detailPage.getDocumentXML().should('exist');
     });
 
 });
