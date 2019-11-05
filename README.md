@@ -15,6 +15,9 @@ and the third contains MarkLogic and is only packaged as a convenience and is on
 The customer is expected to use a complete MarkLogic installation, as supported by Data Hub Services rather than the containerized version. 
 That version is not supported for any purpose other than demonstration.
 
+# Where is the BE source
+git clone https://project.marklogic.com/repo/scm/prod/datahubenterprise.git
+
 # How to build
 
 ./gradlew build
