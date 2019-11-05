@@ -25,6 +25,22 @@ if you want to skip running test cases,
 
 # How to run 
 
+## Run BE locally from command line
+
+BE provides some configurable properties. for example,
+mlHost - What MarkLogic server you are connecting, if not specified, mlHost defined in explorer-default.properties will be used as default. 
+```
+java -jar ${path-to-jar}/explorer.jar --mlHost=MLServerHost
+```
+
+server.port - the default BE port is 8080, we can change it to 9090.
+```
+java -jar ${path-to-jar}/explorer.jar --server.port=9090
+```
+
+In order to understand more about configurable properties, check those files (explorer-default.properties, 
+application.properties, application-production.properties).
+
 ## Build and run BE Docker Container
 
 ```
