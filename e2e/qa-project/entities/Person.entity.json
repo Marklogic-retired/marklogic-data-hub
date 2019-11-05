@@ -6,6 +6,7 @@
   },
   "definitions" : {
     "Person" : {
+      "primaryKey" : "id",
       "required" : [ ],
       "pii" : [ ],
       "elementRangeIndex" : [ ],
