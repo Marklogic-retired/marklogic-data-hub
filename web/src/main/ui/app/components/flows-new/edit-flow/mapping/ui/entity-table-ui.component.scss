@@ -101,16 +101,22 @@
 			display: inline-block;
 			font-size: 12px;
 			font-weight: 400;
-			margin-right: 6px;
+			margin-right: 7px;
 			color: #777;
+			white-space: nowrap;
 		}
+	}
+
+	.context-help {
+		padding-left: 6px;
+		padding-right: 1px;
 		mat-icon.context-icon {
 			display: inline-block;
 			font-size: 14px;
 			margin-right: 0;
 			position: relative;
 			top: 1px;
-			width: 19px;
+			width: 12px;
 			color: #3B73AF;
 		}
 	}
