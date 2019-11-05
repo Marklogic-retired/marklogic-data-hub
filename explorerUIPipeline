@@ -92,7 +92,7 @@ pipeline{
 		    }
 		    post{
 		        always{
-		         sh 'docker rm -f ${docker ps -a -q}'
+		         sh 'docker rm -f $(docker ps -a -q)'
 		        }
                 success {
                         sh 'docker rmi mlregistry.marklogic.com/explorer/explorer-ui:5.1-snapshot || true;docker tag  explorer-ui  mlregistry.marklogic.com/explorer/explorer-ui:5.1-snapshot;delete_image.py explorer-ui 5.1-snapshot explorer|| true;docker push   mlregistry.marklogic.com/explorer/explorer-ui:5.1-snapshot'
