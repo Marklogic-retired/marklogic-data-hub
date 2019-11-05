@@ -5,7 +5,7 @@ This project is the web service that serves content to explorer-ui.
 
 # Version Support
 
-  - MarkLogic Server 10.0-2 and later
+  - MarkLogic Server 10.0-2.1 and later
   - Data Hub 5.1.x and later
 
 # Getting Started
@@ -52,8 +52,3 @@ suggesting improvement or additional features to Product Management.
 
 # Support
 The MarkLogic Data Hub is designed, written, and maintained by [MarkLogic][marklogic] Engineering.
-
-The reason we want to do so is that since it's a closed source project, we should give no indication of any of the internal technology we use. 
-Internally, we know what we need from the pom -- um build.properties -- and we can change it without changing the readme.
-
-
