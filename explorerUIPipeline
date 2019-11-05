@@ -10,7 +10,7 @@ pipeline{
     DMC_PASSWORD= credentials('MLBUILD_PASSWORD')
 	}
 	parameters{
-	string(name: 'Email', defaultValue: 'stadikon@marklogic.com,ban@marklogic.com,ayuwono@marklogic.com,mwooldri@marklogic.com,tisangul@marklogic.com', description: 'Who should I say send the email to?')
+	string(name: 'Email', defaultValue: 'stadikon@marklogic.com,ban@marklogic.com,mwooldri@marklogic.com,tisangul@marklogic.com,zumrani@marklogic.com,svishaka@marklogic.com', description: 'Who should I say send the email to?')
 	}
 	stages{
 		stage('Build-explorer-ui'){
