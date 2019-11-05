@@ -36,7 +36,7 @@
       "enzyme-to-json/serializer"
     ],
     "coverageReporters": [
-      "text", "JSON"
+      "text", "json"
     ],
     "collectCoverageFrom": [
       "src/**/*.{ts,tsx}"
