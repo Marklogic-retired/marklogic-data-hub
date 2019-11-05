@@ -84,6 +84,7 @@ pipeline{
             }
 		    agent { label 'explorerLinux'}
 		    steps{
+		        sh 'sudo mladmin stop;docker rm -f $(docker ps -a -q) || true;'
 		        sh 'cd $WORKSPACE/explorer-ui;docker-compose pull || true;dhvolume="$WORKSPACE/explorer-ui/e2e/qa-project/" mlusername="admin" mlpassword="mlusername" docker-compose up --build -d; cd e2e;docker-compose up --build -d'
 		        archiveArtifacts artifacts: '**/e2e/results/*.xml', onlyIfSuccessful: true
 		        junit '**/e2e/results/*.xml'
@@ -91,7 +92,7 @@ pipeline{
 		    }
 		    post{
 		        always{
-		         sh 'docker rm -f ${docker ps -a -q}'
+		         sh 'docker rm -f $(docker ps -a -q)'
 		        }
                 success {
                         sh 'docker rmi mlregistry.marklogic.com/explorer/explorer-ui:5.1-snapshot || true;docker tag  explorer-ui  mlregistry.marklogic.com/explorer/explorer-ui:5.1-snapshot;delete_image.py explorer-ui 5.1-snapshot explorer|| true;docker push   mlregistry.marklogic.com/explorer/explorer-ui:5.1-snapshot'
