@@ -39,9 +39,14 @@ const SearchResult: React.FC<Props> = (props) => {
       let parsedContent = xmlParser(props.item.extracted.content[1]);
       itemEntityName = Object.keys(parsedContent);
       itemEntityProperties = Object.values<any>(parsedContent);
+    } else if (props.item.extracted.content[0]) {
+      let parsedContent = JSON.parse(props.item.extracted.content[0]);
+      //TODO handle XML headers at this line. 
+      itemEntityName = Object.keys(parsedContent[1]);
+      itemEntityProperties = Object.values<any>(parsedContent[1]);
     }
-
   }
+
   // Parameters for both JSON and XML
   if (itemEntityName.length && props.entityDefArray.length) {
     entityDef = props.entityDefArray.find(entity => entity.name === itemEntityName[0]);
@@ -66,6 +71,7 @@ const SearchResult: React.FC<Props> = (props) => {
     return <p>{ReactHtmlParser(str)}</p>;
   }
 
+
   const snippet = getSnippet();
 
   return (
@@ -81,19 +87,19 @@ const SearchResult: React.FC<Props> = (props) => {
         {props.item.matches.length >= 1 && snippet}
       </div>
       <div className={styles.metadata}>
-        { createdOnVal && (
+        {createdOnVal && (
           <div className={styles.metaItem}>
             <span className={styles.metaLabel}>Created On</span>
             <span className={styles.metaValue} data-cy='created-on'>{dateConverter(createdOnVal)}</span>
           </div>
         )}
-        { sourcesVal && (
+        {sourcesVal && (
           <div className={styles.metaItem}>
             <span className={styles.metaLabel}>Sources</span>
             <span className={styles.metaValue} data-cy='sources'>{sourcesVal}</span>
           </div>
         )}
-        { fileTypeVal && (
+        {fileTypeVal && (
           <div className={styles.metaItem}>
             <span className={styles.metaLabel}>File Type</span>
             <span className={styles.format} data-cy='file-type'>{fileTypeVal}</span>
