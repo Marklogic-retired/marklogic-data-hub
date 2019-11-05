@@ -100,7 +100,7 @@ const EntityTable: React.FC<Props> = (props) => {
             pathname: "/browse",
             state: { jobId: parseText[1], entityName: parseText[2] }
           }}
-            data-cy={parseText[0]}>
+            data-cy= 'last-harmonized'>
             {parseText[0]}
           </Link>
         )

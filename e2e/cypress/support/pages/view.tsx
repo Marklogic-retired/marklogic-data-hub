@@ -36,6 +36,22 @@ class ViewPage {
         return cy.get('[data-cy=' + entity +  ']');
     }
 
+    getLastharmonized(entityName: string) {
+        return cy.get('[data-row-key= ' + entityName + '] [data-cy="last-harmonized"]').invoke('text');
+    }
+
+    getEachEntityCount(entityName: string) {
+        return cy.get('[data-row-key=' + entityName + '] td:nth-child(3)').invoke('text');
+    }
+
+    getEntityRowClicked(entityName: string) {
+        return cy.get('[data-row-key= ' + entityName + '] .ant-table-row-expand-icon-cell').click();
+    }
+
+    getEntityProperties(property: string, entityName: string) {
+        return cy.get('[data-row-key=' + entityName + '-extra-row] .ant-table-tbody [data-row-key=' + property + '] td:nth-child(3)').invoke('text');
+    }
+
 }
 
 export default ViewPage;
