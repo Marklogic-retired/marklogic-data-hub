@@ -57,6 +57,3 @@ suggesting improvement or additional features to Product Management.
 
 # Support
 The MarkLogic Data Hub is designed, written, and maintained by [MarkLogic][marklogic] Engineering.
-
-Notes: if you want to run BE and FE together using docker-compose, just follow the instruction:
-https://wiki.marklogic.com/display/ENGINEERING/Run+Explorer+via+Docker#RunExplorerviaDocker-SetupMLRegistry
