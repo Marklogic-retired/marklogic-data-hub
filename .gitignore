@@ -13,7 +13,7 @@
 /e2e/results/*
 /e2e/videos/*
 /e2e/image_histor
-
+/e2e/cypress/videos
 # production
 /build
 
