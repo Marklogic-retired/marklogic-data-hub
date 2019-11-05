@@ -48,31 +48,36 @@
     <mat-cell *matCellDef="let prop; let i = dataIndex">
       <div *ngIf="isNested(prop)" class="context-label">
         <span class="context-text">Context</span>
+      </div>
+      <div class="textField" [class.contextField]="isNested(prop)">
+        <span id="textFieldValidation" [ngStyle]="{'background-color': checkFieldInErrors(prop.name)? '#FAD3D3' : ''}">
+          <textarea
+            matInput
+            id="edit-expression"
+            cdkTextareaAutosize
+            #autosize="cdkTextareaAutosize"
+            #fieldName
+            [(ngModel)]="mapExpressions[prop.name]"
+            (change)="onHandleInput({
+              name: prop.name,
+              expr: mapExpressions[prop.name],
+              prop: prop
+            })" type="text"
+            class="map-expr"
+          ></textarea>
+          <mat-icon id="field-with-error" *ngIf=" checkFieldInErrors(prop.name)">
+            <i class="fa fa-times-circle fa-xs" ></i>
+          </mat-icon>
+        </span>
+        <mat-hint id="error-description" *ngIf=" checkFieldInErrors(prop.name)">{{displayResp(prop.name)}}</mat-hint>
+      </div>
+      <div *ngIf="isNested(prop)" class="context-help">
         <mat-icon 
           class="context-icon" 
           container="body"
           tooltip="An element in the source data from which to derive the values of this entity property's children. Both the source data element and the entity property must be of the same type (Object or an array of Object instances).">
           <i class="fa fa-info-circle"></i>
         </mat-icon>
-      </div>
-      <div class="textField" [class.contextField]="isNested(prop)">
-          <span id="textFieldValidation" [ngStyle]="{'background-color': checkFieldInErrors(prop.name)? '#FAD3D3' : ''}">
-        <textarea
-          matInput
-          id="edit-expression"
-          cdkTextareaAutosize
-          #autosize="cdkTextareaAutosize"
-          #fieldName
-          [(ngModel)]="mapExpressions[prop.name]"
-          (change)="onHandleInput({
-            name: prop.name,
-            expr: mapExpressions[prop.name],
-            prop: prop
-          })" type="text"
-          class="map-expr"
-        ></textarea>
-        <mat-icon id="field-with-error" *ngIf=" checkFieldInErrors(prop.name)"><i class="fa fa-times-circle fa-xs" ></i></mat-icon></span>
-        <mat-hint id="error-description" *ngIf=" checkFieldInErrors(prop.name)">{{displayResp(prop.name)}}</mat-hint>
       </div>
       <mat-icon
         id="fields-list"
