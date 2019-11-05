@@ -31,8 +31,9 @@ const LoginForm: React.FC = () => {
         loginAuthenticated(username);
       } 
     } catch (error) {
+      let message = error.response.data ? error.response.data.message : 'Unauthorized';
       setIsLoading(false);
-      setErrorResponse(error.response.data.message);
+      setErrorResponse(message);
     }
   }
 

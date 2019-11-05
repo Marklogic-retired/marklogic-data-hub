@@ -62,7 +62,6 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
 
   const handleError = (error) => {
     const DEFAULT_MESSAGE = 'Internal Server Error';
-  
     switch (error.response.status) {
       case 401:
         localStorage.setItem('dataHubExplorerUser', '');
@@ -100,6 +99,7 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
       case 504:
       case 505:
       case 511:
+        console.log('HTTP ERROR ', error.response);
         let title = '';
         let message = '';
   
@@ -108,7 +108,7 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
           message = error.response.data.message;
         } else {
           title = error.response.status + ' ' + error.response.statusText;
-          message = error.response.data || DEFAULT_MESSAGE;
+          message = DEFAULT_MESSAGE;
         }
         setUser({ 
           ...user,
@@ -120,6 +120,16 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
         });
         break;
       default:
+        console.log('HTTP ERROR ', error.response);
+
+        setUser({ 
+          ...user,
+          error: {
+            title: DEFAULT_MESSAGE,
+            message: 'Please check the console for more information',
+            type: 'MODAL'
+          }
+        });
         break;
     }
   }
