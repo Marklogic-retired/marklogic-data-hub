@@ -78,6 +78,15 @@ pipeline{
                   }
              }
 		}
+		stage('Integration-Tests'){
+		    agent { label 'explorerLinux'}
+		    steps{
+		        sh 'docker-compose pull;cd $WORKSPACE/explorer-ui;dhvolume="$WORKSPACE/explorer-ui/e2e/qa-project/" mlusername="admin" mlpassword="mlusername" docker-compose up --build -d; cd e2e;docker-compose up --build -d'
+		    }
+		    post{
+
+		    }
+		}
 		stage('publish'){
         		when {
                   		branch 'develop'
