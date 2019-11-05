@@ -79,7 +79,7 @@ const Sidebar:React.FC<Props> = (props) => {
       <SelectedFacets selectedFacets={selectedFacets}/>
       <Collapse 
         className={styles.sidebarContainer}
-        defaultActiveKey={['entityProperties', 'hubProperties']} 
+        defaultActiveKey={['entityProperties']}
         expandIcon={panelProps => <Icon type="up" rotate={panelProps.isActive ? 0 : 180} />}
         expandIconPosition="right"
         bordered={false}
