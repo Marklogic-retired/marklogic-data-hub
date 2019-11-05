@@ -1,0 +1,34 @@
+version: "3.7"
+services:
+  explorer-ui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: "explorer-ui"
+    container_name: "explorerui"
+    ports:
+      - "80:80"
+    environment:
+      - API_URL=explorer:8080
+    depends_on:
+      - explorer
+  explorer:
+    image: mlregistry.marklogic.com/explorer/explorer:5.1-snapshot
+    container_name: "explorer"
+    ports:
+      - "8080:8080"
+    environment:
+      - mlHost=mldhf
+    depends_on:
+      - mldhf
+  mldhf:
+    image: mlregistry.marklogic.com/explorerdeps/datahub-on-10.0-2:5.1-snapshot
+    container_name: "mldhf"
+    ports:
+      - "8000-8020:8000-8020"
+    volumes:
+      - ${dhvolume}:/projects
+    environment:
+      - MARKLOGIC_INIT=true
+      - MARKLOGIC_ADMIN_USERNAME=${mlusername}
+      - MARKLOGIC_ADMIN_PASSWORD=${mlpassword}
