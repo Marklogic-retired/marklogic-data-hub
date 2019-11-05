@@ -86,7 +86,7 @@ pipeline{
 		    steps{
 		        sh 'sudo mladmin stop;docker rm -f $(docker ps -a -q) || true;'
 		        sh 'cd $WORKSPACE/explorer-ui;docker-compose pull || true;dhvolume="$WORKSPACE/explorer-ui/e2e/qa-project/" mlusername="admin" mlpassword="mlusername" docker-compose up --build -d; cd e2e;docker-compose up --build -d'
-		        archiveArtifacts artifacts: '**/e2e/results/*.xml', onlyIfSuccessful: true
+		        archiveArtifacts artifacts: 'explorer-ui/e2e/results/*.xml', onlyIfSuccessful: true
 		        junit '**/e2e/results/*.xml'
 
 		    }
