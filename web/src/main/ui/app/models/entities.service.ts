@@ -85,7 +85,7 @@ export class EntitiesService {
     }));
   }
 
-  //Saving any entity should also save all the entities where the given entity is referred in recursively
+  // Saving any entity should also save all the entities where the given entity is referred in recursively
   saveEntity(entity: Entity) {
     const resp = this.saveSingleEntity(entity);
     let references = this.findAllReferences(entity);
@@ -95,7 +95,7 @@ export class EntitiesService {
     return resp;
   }
 
-  //Return all the entities the given entity is being referred to recursively
+  // Return all the entities the given entity is being referred to recursively
   findAllReferences(entity: Entity, references = []) {
     this.entities.forEach((ent: Entity) => {
       this.entityReferencesInEntity(ent).forEach((prop: PropertyType) => {
@@ -205,24 +205,22 @@ export class EntitiesService {
 
   deleteEntity(entityToDelete: Entity) {
     // remove references to this entity
-    this.entities.forEach((entity: Entity) => {
-      this.entityReferencesInEntity(entity).forEach((prop: PropertyType) => {
-        if (prop.$ref && prop.$ref.endsWith(entityToDelete.name)) {
-          prop.$ref = null;
-        } else if (prop.items && prop.items.$ref && prop.items.$ref.endsWith(entityToDelete.name)) {
-          prop.items.$ref = null;
-        }
+    const references = this.findAllReferences(entityToDelete);
+    _.remove(this.entities, {'name': entityToDelete.name});
+    this.http.delete(this.url(`/entities/${entityToDelete.name}`)).subscribe(() => {
+    });
+    references.forEach((entity: Entity) => {
+      const props = entity.definition.properties;
+      props.forEach(prop => {
+        if ((prop.$ref && prop.$ref.endsWith(entityToDelete.name)) ||  (prop.items && prop.items.$ref && prop.items.$ref.endsWith(entityToDelete.name))) {
+          _.remove(props, prop);
+        } 
       });
-
       const connectionName = `${entity.name}-${entityToDelete.name}`;
       if (entity.hubUi && entity.hubUi.vertices && entity.hubUi.vertices[connectionName]) {
         delete entity.hubUi.vertices[connectionName];
       }
-    });
-
-    _.remove(this.entities, {'name': entityToDelete.name});
-    this.saveEntities(this.entities);
-    this.http.delete(this.url(`/entities/${entityToDelete.name}`)).subscribe(() => {
+      this.saveSingleEntity(entity);
     });
     return this.entities;
   }
