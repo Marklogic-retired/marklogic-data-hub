@@ -35,16 +35,25 @@ const SearchResult: React.FC<Props> = (props) => {
       }
     });
   } else if (props.item.format === 'xml' && props.item.hasOwnProperty('extracted')) {
-    if (props.item.extracted.content[1]) {
-      let parsedContent = xmlParser(props.item.extracted.content[1]);
-      itemEntityName = Object.keys(parsedContent);
-      itemEntityProperties = Object.values<any>(parsedContent);
-    } else if (props.item.extracted.content[0]) {
-      let parsedContent = JSON.parse(props.item.extracted.content[0]);
-      //TODO handle XML headers at this line. 
-      itemEntityName = Object.keys(parsedContent[1]);
-      itemEntityProperties = Object.values<any>(parsedContent[1]);
-    }
+    props.item.extracted.content.forEach(contentObject => {
+      let obj = xmlParser(contentObject);
+      if (obj.hasOwnProperty('headers')) {
+        const headerValues = Object.values<any>(obj);
+        createdOnVal = headerValues[0].hasOwnProperty('createdOn') && headerValues[0].createdOn.toString().substring(0, 19);
+        if (headerValues[0].hasOwnProperty('sources')) {
+          if (Array.isArray(headerValues[0].sources)) {
+            sourcesVal = headerValues[0].sources.map(src => {
+              return src.name;
+            }).join(', ');
+          } else {
+            sourcesVal = headerValues[0].sources.name;
+          }
+        }
+      } else {
+        itemEntityName = Object.keys(obj);
+        itemEntityProperties = Object.values<any>(obj);
+      }
+    });
   }
 
   // Parameters for both JSON and XML
