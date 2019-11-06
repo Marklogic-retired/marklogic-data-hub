@@ -565,7 +565,7 @@ declare function merge-impl:build-merge-models-by-uri(
                   $const:FORMAT-XML
                 else
                   $const:FORMAT-JSON
-  let $merge-uri := merge-impl:build-merge-uri($id, $format)
+  let $merge-uri := if (fn:starts-with($id, $MERGED-DIR)) then $id else merge-impl:build-merge-uri($id, $format)
   let $provenance-details := merge-impl:generate-provenance-details(
     $final-properties
   )

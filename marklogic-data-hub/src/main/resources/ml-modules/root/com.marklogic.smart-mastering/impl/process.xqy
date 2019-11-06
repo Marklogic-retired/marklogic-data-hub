@@ -712,14 +712,7 @@ declare function proc-impl:build-content-objects-from-match-summary(
                 let $uris-to-merge := $action-details => map:get("uris") => json:array-values()
                 let $merged-doc-def := merge-impl:build-merge-models-by-uri($uris-to-merge, $merge-options, $uri)
                 let $merged-doc := $merged-doc-def => map:get("value")
-                let $merge-uri := merge-impl:build-merge-uri(
-                  $uri,
-                  if ($merged-doc instance of element() or
-                    $merged-doc instance of document-node(element())) then
-                    $const:FORMAT-XML
-                  else
-                    $const:FORMAT-JSON
-                )
+                let $merge-uri := $uri
                 let $prov-entry :=
                       let $merge-provenance-info as map:map? := if ($fine-grain-provenance) then $merged-doc-def => map:get("provenance") else ()
                       let $match-provenance-info as map:map? := $action-details => map:get("provenance")
