@@ -354,36 +354,111 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
 
     @Override
     public HubEntity getEntityFromProject(String entityName, String version, Boolean extendSubEntities) {
+        return getEntityFromProject(entityName, getEntities(), version, extendSubEntities);
+    }
+
+    /**
+     * Extracted for unit testing so that it doesn't depend on entity model files existing within a project directory structure.
+     * This method also "flattens" the entity models that are passed into it. Currently, the entity title and version
+     * number are used to uniquely reference an entity definition - unless version is null, in which case only the entity title
+     * is used to reference an entity definition.
+     *
+     * @param entityName
+     * @param modelFilesInProject
+     * @param version
+     * @param extendSubEntities
+     * @return
+     */
+    protected HubEntity getEntityFromProject(String entityName, List<HubEntity> modelFilesInProject, String version, Boolean extendSubEntities) {
+        List<HubEntity> entityDefinitions = convertModelFilesToEntityDefinitions(modelFilesInProject);
+        return getEntityFromEntityDefinitions(entityName, entityDefinitions, version, extendSubEntities);
+    }
+
+    /**
+     * @param entityName
+     * @param entityDefinitions each HubEntity in this list is expected to have a single definition in it. In addition, the
+     *                          order of these definitions matters in case the version parameter is null.
+     * @param version
+     * @param extendSubEntities
+     * @return
+     */
+    protected HubEntity getEntityFromEntityDefinitions(String entityName, List<HubEntity> entityDefinitions, String version, Boolean extendSubEntities) {
         HubEntity entity = null;
-        for (HubEntity e: getEntities()) {
+        for (HubEntity e : entityDefinitions) {
             InfoType info = e.getInfo();
-            if (info.getTitle().equals(entityName) && (version == null || info.getVersion().equals(version))) {
+            if (entityName.equals(info.getTitle()) && (version == null || version.equals(info.getVersion()))) {
                 entity = e;
                 if (extendSubEntities) {
-                    Map<String, DefinitionType> definitions = entity.getDefinitions().getDefinitions();
-                    for (String definitionName:definitions.keySet()) {
-                        DefinitionType definition = definitions.get(definitionName);
-                        for (PropertyType property: definition.getProperties()) {
-                            String ref = property.getRef();
-                            ItemType items = property.getItems();
-                            if ((ref == null || "".equals(ref)) && items != null) {
-                                ref = items.getRef();
-                            }
-                            if (!(ref == null || "".equals(ref))) {
-                                String subEntityName = ref.substring(ref.lastIndexOf('/') + 1);
-                                HubEntity subEntity = getEntityFromProject(subEntityName, true);
-                                if (subEntity != null) {
-                                    DefinitionType subDefinition = subEntity.getDefinitions().getDefinitions().get(subEntityName);
-                                    property.setSubProperties(subDefinition.getProperties());
-                                }
-                            }
-                        }
-                    }
+                    addSubProperties(entity, entityDefinitions, version);
                 }
                 break;
             }
         }
         return entity;
+    }
+
+    /**
+     * An entity model file can contain one to many entity definitions. This method then produces a list of HubEntity
+     * instances, where each instance has a single entity definition. The filename is preserved on each HubEntity, but
+     * the InfoType/Title property is modified to match that of the single entity definition that the HubEntity contains.
+     *
+     * @param modelFilesInProject
+     * @return
+     */
+    protected List<HubEntity> convertModelFilesToEntityDefinitions(List<HubEntity> modelFilesInProject) {
+        List<HubEntity> flattenedModels = new ArrayList<>();
+        for (HubEntity model : modelFilesInProject) {
+            Map<String, DefinitionType> map = model.getDefinitions().getDefinitions();
+            for (String entityTitle : map.keySet()) {
+                InfoType newInfo = new InfoType();
+                newInfo.setBaseUri(model.getInfo().getBaseUri());
+                newInfo.setDescription(model.getInfo().getDescription());
+                newInfo.setTitle(entityTitle);
+                newInfo.setVersion(model.getInfo().getVersion());
+
+                DefinitionsType definitionsType = new DefinitionsType();
+                definitionsType.addDefinition(entityTitle, map.get(entityTitle));
+
+                HubEntity newModel = new HubEntity();
+                newModel.setFilename(model.getFilename());
+                newModel.setInfo(newInfo);
+                newModel.setDefinitions(definitionsType);
+                flattenedModels.add(newModel);
+            }
+        }
+        return flattenedModels;
+    }
+
+    /**
+     * Adds "sub" properties - i.e. each complex property type is expanded so that it contains all of the properties
+     * from the referenced entity definition type. This is a recursive method, thus ensuring that properties are added
+     * at any depth of nested entities.
+     *
+     * @param entity
+     * @param entityDefinitions
+     * @param version
+     */
+    protected void addSubProperties(HubEntity entity, List<HubEntity> entityDefinitions, String version) {
+        Map<String, DefinitionType> definitions = entity.getDefinitions().getDefinitions();
+        for (String definitionName : definitions.keySet()) {
+            DefinitionType definition = definitions.get(definitionName);
+            for (PropertyType property : definition.getProperties()) {
+                String ref = property.getRef();
+                ItemType items = property.getItems();
+                if ((ref == null || "".equals(ref)) && items != null) {
+                    ref = items.getRef();
+                }
+                if (!(ref == null || "".equals(ref))) {
+                    String subEntityName = ref.substring(ref.lastIndexOf('/') + 1);
+                    HubEntity subEntity = getEntityFromEntityDefinitions(subEntityName, entityDefinitions, version, true);
+                    if (subEntity != null) {
+                        DefinitionType subDefinition = subEntity.getDefinitions().getDefinitions().get(subEntityName);
+                        property.setSubProperties(subDefinition.getProperties());
+                    }
+                }
+            }
+        }
+
     }
 
     public List<HubEntity> getEntities() {
