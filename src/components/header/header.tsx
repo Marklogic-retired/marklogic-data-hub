@@ -109,8 +109,8 @@ const Header:React.FC<Props> = ({ location }) => {
       <Icon className={styles.help} type="question-circle"/>
       </a>
       </div>
-
     </Layout.Header>
+
   )
 }
 

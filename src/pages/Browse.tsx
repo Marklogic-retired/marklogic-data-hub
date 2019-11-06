@@ -97,14 +97,15 @@ const Browse: React.FC<Props> = ({ location }) => {
   return (
     <>
       <Layout>
-        <Sider width={300} style={{ background: '#f3f3f3' }}>
+        <Sider width={300} style={{ background: '#f3f3f3', position : 'fixed' }}>
           <Sidebar
             facets={facets}
             selectedEntities={searchOptions.entityNames}
             entityDefArray={entityDefArray}
           />
         </Sider>
-        <Content style={{ background: '#fff', padding: '24px' }}>
+
+        <Content style={{ background: '#fff', padding: '24px', marginLeft: '300px' }}>
           <SearchBar entities={entities} />
           {isLoading || user.error.type === 'ALERT' ?
             <AsyncLoader/>
