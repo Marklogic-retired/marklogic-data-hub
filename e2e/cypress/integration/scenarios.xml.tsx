@@ -62,6 +62,7 @@ describe('xml scenario on browse documents page', () => {
     it('select "all entities" verify docs, hub/entity properties', () => {
         browsePage.getSelectedEntity().should('contain', 'All Entities');
         cy.wait(2000);
+        browsePage.getHubPropertiesExpanded();
         browsePage.getTotalDocuments().should('be.greaterThan', '1008')
         browsePage.getDocuments().each(function (item, i) {
             browsePage.getDocumentEntityName(i).should('exist');
@@ -82,6 +83,7 @@ describe('xml scenario on browse documents page', () => {
         browsePage.selectEntity('PersonXML');
         browsePage.getSelectedEntity().should('contain', 'PersonXML');
         cy.wait(2000);
+        browsePage.getHubPropertiesExpanded();
         browsePage.getTotalDocuments().should('be.greaterThan', '5')
         browsePage.getDocuments().each(function (item, i) {
             browsePage.getDocumentEntityName(i).should('exist');
@@ -102,6 +104,7 @@ describe('xml scenario on browse documents page', () => {
         browsePage.selectEntity('All Entities');
         browsePage.getSelectedEntity().should('contain', 'All Entities');
         cy.wait(500);
+        browsePage.getHubPropertiesExpanded();
         browsePage.getShowMoreLink().click();
         browsePage.getTotalDocuments().should('be.greaterThan', '1008');
         browsePage.getFacetItemCheckbox('collection', 'PersonXML').click();

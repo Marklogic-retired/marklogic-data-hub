@@ -111,6 +111,10 @@ class BrowsePage {
         return cy.get('div[data-cy="show-more"][style="display: block;"]');
     }
 
+    getHubPropertiesExpanded() {
+        return cy.get("#hub-properties > div > i").click();
+    }
+
 }
 
 export default BrowsePage;
