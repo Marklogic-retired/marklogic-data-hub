@@ -32,3 +32,4 @@ yarn-error.log*
 
 /junit.xml
 /coverage-final.json
+/e2e/qa-project/.tmp
