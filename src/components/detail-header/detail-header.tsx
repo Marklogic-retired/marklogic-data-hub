@@ -29,7 +29,13 @@ const DetailHeader: React.FC<Props> = (props) => {
     }
     if (envelope.hasOwnProperty('headers')) {
       timestamp = envelope.headers.hasOwnProperty('createdOn') && envelope.headers.createdOn;
-      sources = envelope.headers.hasOwnProperty('sources') && envelope.headers.sources[0].name;
+      if (envelope.headers.hasOwnProperty('sources')) {
+        if (Array.isArray(envelope.headers.sources) && envelope.headers.sources[0].hasOwnProperty('name')) {
+          sources = envelope.headers.sources[0].name
+        } else if (!Array.isArray(envelope.headers.sources) && envelope.headers.sources.hasOwnProperty('name')) {
+          sources = envelope.headers.sources.name
+        }
+      }
     }
     if (props.primaryKey) {
       Object.keys(props.document.envelope.instance).forEach(instance => {
@@ -47,6 +53,10 @@ const DetailHeader: React.FC<Props> = (props) => {
     }
   } else if (fileType === 'xml') {
     envelope = props.document.content.envelope;
+    if (envelope.hasOwnProperty('headers')) {
+      timestamp = envelope.headers.hasOwnProperty('createdOn') && envelope.headers.createdOn;
+      sources = envelope.headers.hasOwnProperty('sources') && envelope.headers.sources.name;
+    }
     document = Object.keys(envelope.instance)[1];
     if (envelope.instance.hasOwnProperty('info')) {
       title = envelope.instance.info.hasOwnProperty('title') && envelope.instance.info.title;
