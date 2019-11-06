@@ -23,8 +23,12 @@ Below are the commands to start the Data Hub Explorer UI
 # Install dependencies
 npm install
 
-# Start the development environment
+# Start the UI development environment
 npm start
+
+# Setup the backend development environment
+Follow the README instructions to build and run the server locally from command line
+https://project.marklogic.com/repo/projects/PROD/repos/datahubenterprise/browse?at=refs%2Fheads%2Fdevelop
 ```
 
 ## Build Docker Container
@@ -38,6 +42,10 @@ docker build -t explorer-ui .
 # Run Docker container
 Replace API_URL with server IP
 docker run -e API_URL=172.0.1.0:8080 -p 80:80 explorer-ui
+
+# Build and Run the backend Docker container
+Follow the README instructions in the server repo
+https://project.marklogic.com/repo/projects/PROD/repos/datahubenterprise/browse?at=refs%2Fheads%2Fdevelop
 ```
 see more details:
 https://wiki.marklogic.com/display/ENGINEERING/Run+Explorer+via+Docker#f520f246cb4a42cb9035ba4f62231ada
