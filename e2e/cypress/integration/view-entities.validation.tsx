@@ -34,11 +34,9 @@ describe('view page validation', () => {
     viewPage.getEntityRowClicked('Customer');
     let customerPropertyName = ['id', 'firstname', 'lastname', 'email', 'zip'];
     let customerPropertyValues = ['Primary Key', 'Element Range Index', 'Element Range Index', 'Element Range Index', 'None'];
-    for (let i = 0; i < customerPropertyName.length && i < customerPropertyName.length; i++) {
+    for (let i = 0; i < customerPropertyName.length; i++) {
       viewPage.getEntityProperties(customerPropertyName[i], 'Customer').should('be.equal', customerPropertyValues[i]);
     }
-    //viewPage.getEntityRowClicked('Person');
-    // viewPage.getEntityProperties('id', 'Person').should('be.equal', 'Primary Key, Element Range Index' );
   });
 
 
