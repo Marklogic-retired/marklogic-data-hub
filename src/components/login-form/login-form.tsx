@@ -31,7 +31,8 @@ const LoginForm: React.FC = () => {
         loginAuthenticated(username);
       } 
     } catch (error) {
-      let message = error.response.data ? error.response.data.message : 'Unauthorized';
+      let message = error.response.data.message === 'Unauthorized' ? error.response.data.message : 'Internal Server Error';
+      console.log('LOGIN ERROR', error.response);
       setIsLoading(false);
       setErrorResponse(message);
     }

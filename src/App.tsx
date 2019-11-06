@@ -40,8 +40,10 @@ const App: React.FC<Props> = ({history, location}) => {
     if (user.authenticated && location.pathname === '/' ){
       history.push('/view');
     }
-    if (user.authenticated && location.state && !user.redirect) {
-      history.push(location.state.from.pathname)
+    if (user.authenticated && location.state && !user.redirect && user.error.type === '') {
+      if (location.state.hasOwnProperty('from')) {
+        history.push(location.state.from.pathname);
+      }
     }
     if (user.redirect && user.error.type !== '') {
       clearRedirect();
@@ -54,9 +56,13 @@ const App: React.FC<Props> = ({history, location}) => {
     }
   }, [user]);
 
-  const destroyModal = () => {
+  const onOk = () => {
     clearErrorMessage();
     setAsyncError(false);
+  }
+  const onCancel = () => {
+    setAsyncError(false);
+    history.push('/error');
   }
 
   return (
@@ -73,7 +79,7 @@ const App: React.FC<Props> = ({history, location}) => {
         </Switch> 
       )}
       </SearchProvider>
-      <Modal visible={asyncError} title={user.error.title} onCancel={() => destroyModal()} onOk={() => destroyModal()}>
+      <Modal visible={asyncError} title={user.error.title} onCancel={() => onCancel()} onOk={() => onOk()}>
         <p>{user.error.message}</p>
       </Modal>
     </>

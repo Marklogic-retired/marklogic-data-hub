@@ -63,53 +63,59 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
   const handleError = (error) => {
     const DEFAULT_MESSAGE = 'Internal Server Error';
     switch (error.response.status) {
-      case 401:
+      case 401: {
         localStorage.setItem('dataHubExplorerUser', '');
         setUser({ ...user, name: '', authenticated: false });
         break;
+      }
       case 400:
       case 403:
       case 405:
       case 408:
-      case 414:
+      case 414: {
+        console.log('HTTP ERROR', error.resonse);
+        let title = error.response.status + ' ' + error.response.statusText;
+        let message = DEFAULT_MESSAGE;
+  
+        if (error.response.data.hasOwnProperty('message')) {
+          message = error.response.data.message;
+        } 
         setUser({ 
           ...user,
+          error: {
+            title: title,
+            message: message,
+            type: 'ALERT'
+          }
+        });
+        break;
+      }
+      case 404: {
+        setUser({ 
+          ...user,
+          redirect: true,
           error: {
             title: error.response.data.error,
             message: error.response.data.message || DEFAULT_MESSAGE,
             type: 'ALERT'
           }
         });
-        break;
-      case 404:
-          setUser({ 
-            ...user,
-            redirect: true,
-            error: {
-              title: error.response.data.error,
-              message: error.response.data.message || DEFAULT_MESSAGE,
-              type: 'ALERT'
-            }
-          });
-        break;
+      break;
+      }
       case 500:
       case 501:
       case 502:
       case 503:
       case 504:
       case 505:
-      case 511:
+      case 511: {
         console.log('HTTP ERROR ', error.response);
-        let title = '';
-        let message = '';
-  
+        let title = error.response.status + ' ' + error.response.statusText;
+        let message = DEFAULT_MESSAGE;
+
         if (error.response.data.hasOwnProperty('message')) {
-          title = error.response.data.error;
           message = error.response.data.message;
-        } else {
-          title = error.response.status + ' ' + error.response.statusText;
-          message = DEFAULT_MESSAGE;
-        }
+        } 
         setUser({ 
           ...user,
           error: {
@@ -119,7 +125,8 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
           }
         });
         break;
-      default:
+      }
+      default: {
         console.log('HTTP ERROR ', error.response);
 
         setUser({ 
@@ -131,6 +138,7 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
           }
         });
         break;
+      }
     }
   }
 
