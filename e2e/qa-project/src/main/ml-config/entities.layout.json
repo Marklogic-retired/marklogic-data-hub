@@ -1,16 +1,23 @@
 {
   "Customer" : {
-    "x" : 263,
-    "y" : 100,
+    "x" : 76,
+    "y" : 36,
     "width" : 516,
     "height" : 272,
     "vertices" : { }
   },
   "Person" : {
-    "x" : 30,
-    "y" : 145,
+    "x" : 349,
+    "y" : 328,
+    "width" : 494,
+    "height" : 321,
+    "vertices" : { }
+  },
+  "PersonXML" : {
+    "x" : 1062,
+    "y" : 105,
     "width" : 350,
-    "height" : 166,
+    "height" : 348,
     "vertices" : { }
   }
 }

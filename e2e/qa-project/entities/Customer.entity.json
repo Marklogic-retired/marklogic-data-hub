@@ -6,9 +6,10 @@
   },
   "definitions" : {
     "Customer" : {
+      "primaryKey" : "id",
       "required" : [ ],
       "pii" : [ ],
-      "elementRangeIndex" : [ ],
+      "elementRangeIndex" : [ "firstname", "lastname", "email" ],
       "rangeIndex" : [ ],
       "wordLexicon" : [ ],
       "properties" : {
