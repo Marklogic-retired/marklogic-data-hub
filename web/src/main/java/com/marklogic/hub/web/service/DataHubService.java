@@ -188,7 +188,13 @@ public class DataHubService {
         loadHubArtifactsCommand.setHubConfig(hubConfig);
         loadHubArtifactsCommand.setForceLoad(forceLoad);
 
-        commands.add(generateFunctionMetadataCommand);
+        // Generating function metadata xslt causes running existing mapping (xslts) step to fail with undefined function
+        // for any mappings that use these functions. So, we have to generate function metadata xslt only when 'forceLoad'
+        // is set to true which would ensure that mappings are inserted and compiled to xslts as well.
+        // Added as a temporary fix for DHFPROD-3606.
+        if(forceLoad){
+            commands.add(generateFunctionMetadataCommand);
+        }
         commands.add(loadUserModulesCommand);
         commands.add(loadUserArtifactsCommand);
         commands.add(loadHubArtifactsCommand);
