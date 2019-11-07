@@ -142,7 +142,7 @@ public class MasterTest extends HubTestBase {
         assertTrue(getFinalDocCount("master") > 0, "Documents didn't receive master collection");
         // Setting this to 208 or greater as occasionally we get 209 in the pipeline.
         int masteredCount = getFinalDocCount("sm-person-mastered");
-        assertTrue(masteredCount >= 208, "We end with the correct amount of final docs");
+        assertTrue(masteredCount >= 208, "We end with the correct amount of final docs: "+masteredCount);
         // Setting this to 40 or greater as occasionally we get 41 in the pipeline. See bug https://project.marklogic.com/jira/browse/DHFPROD-3178
         assertTrue(getFinalDocCount("sm-person-notification") >= 40, "Not enough notifications are created");
         // Check for JobReport for mastering with correct count
