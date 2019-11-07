@@ -1,7 +1,9 @@
 <!-- START NEW MAPPING VIEW -->
 <div *ngIf="isVersionCompatibleWithES" class="source-prop-container-map-exp">
-
-  <div>
+  <div *ngIf="targetEntity && !targetEntity.hasDocs">
+    <em>Unable to find documents that match your query.</em>
+  </div>
+  <div [ngClass]="{ hidden: !(targetEntity && targetEntity.hasDocs)}">
   
     <div class="Source_Tbl">
       <div class="item-title">
