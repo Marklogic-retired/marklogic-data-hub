@@ -1,25 +1,25 @@
-import React, {useState, useEffect, useContext, useRef} from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import axios from 'axios';
-import {Layout} from 'antd';
-import {RouteComponentProps, withRouter} from 'react-router-dom';
-import {AuthContext} from '../util/auth-context';
-import {SearchContext} from '../util/search-context';
+import { Layout } from 'antd';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
+import { AuthContext } from '../util/auth-context';
+import { SearchContext } from '../util/search-context';
 import AsyncLoader from '../components/async-loader/async-loader';
 import Sidebar from '../components/sidebar/sidebar';
 import SearchBar from '../components/search-bar/search-bar';
 import SearchPagination from '../components/search-pagination/search-pagination';
 import SearchSummary from '../components/search-summary/search-summary';
 import SearchResults from '../components/search-results/search-results';
-import {entityFromJSON, entityParser} from '../util/data-conversion';
+import { entityFromJSON, entityParser } from '../util/data-conversion';
 import styles from './Browse.module.scss';
 
 interface Props extends RouteComponentProps<any> {
 }
 
 const Browse: React.FC<Props> = ({location}) => {
-  const {Content, Sider} = Layout;
+  const { Content, Sider } = Layout;
   const componentIsMounted = useRef(true);
-  const {user, handleError} = useContext(AuthContext);
+  const { user, handleError } = useContext(AuthContext);
   const {
     searchOptions,
     setEntityClearQuery,
