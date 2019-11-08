@@ -1,15 +1,17 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Collapse, Icon, Button, DatePicker } from 'antd';
+import { Collapse, Icon, Button, DatePicker, Tooltip } from 'antd';
 import moment from 'moment';
 import Facet from '../facet/facet';
 import SelectedFacets from '../selected-facets/selected-facets';
 import { SearchContext } from '../../util/search-context';
 import { facetParser } from '../../util/data-conversion';
 import hubPropertiesConfig from '../../config/hub-properties.config';
+import tooltipsConfig from '../../config/tooltips.config';
 import styles from './sidebar.module.scss';
 
 const { Panel } = Collapse;
 const { RangePicker } = DatePicker;
+const tooltips = tooltipsConfig.browseDocuments;
 
 interface Props {
   facets: any;
@@ -93,6 +95,7 @@ const Sidebar:React.FC<Props> = (props) => {
                   constraint={facet.facetName}
                   facetValues={facet.facetValues}
                   key={facet.facetName}
+                  tooltip=""
                 />
               )
             }) :
@@ -101,7 +104,9 @@ const Sidebar:React.FC<Props> = (props) => {
           </Panel>
         )}
         <Panel id="hub-properties" header={<div className={styles.title}>Hub Properties</div>} key="hubProperties" style={{borderBottom: 'none'}}>
-          <div className={styles.facetName} data-cy='created-on-facet'>Created On</div>
+          <Tooltip title={tooltips.createdOn} placement="topLeft">
+            <div className={styles.facetName} data-cy='created-on-facet'>Created On</div>
+          </Tooltip>
           <RangePicker 
             className={styles.datePicker} 
             onChange={onDateChange} 
@@ -114,6 +119,7 @@ const Sidebar:React.FC<Props> = (props) => {
                 constraint={facet.facetName}
                 facetValues={facet.facetValues}
                 key={facet.facetName}
+                tooltip={facet.tooltip}
               />
             )
               })}

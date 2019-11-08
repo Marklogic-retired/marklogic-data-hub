@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import axios from 'axios';
-import { Layout, Statistic } from 'antd';
+import { Layout, Statistic, Tooltip } from 'antd';
 import { AuthContext } from '../util/auth-context';
 import EntityTable from '../components/entity-table/entity-table';
 import AsyncLoader from '../components/async-loader/async-loader';
 import { entityFromJSON } from '../util/data-conversion';
+import tooltipsConfig from '../config/tooltips.config';
 import styles from './View.module.scss';
 
 const { Content } = Layout;
+const tooltips = tooltipsConfig.viewEntities;
 
 const View: React.FC = () => {
   const { user, handleError } = useContext(AuthContext);
@@ -84,11 +86,18 @@ const View: React.FC = () => {
           :
           <>
             <div className={styles.statsContainer} data-cy="total-container">
-              <Statistic className={styles.statistic} title="Total Entities" value={entities.length} />
-              <Statistic className={styles.statistic} title="Total Documents" value={totalDocs} />
+              <Tooltip title={tooltips.entities}>
+                <div className={styles.statistic}>
+                  <Statistic title="Total Entities" value={entities.length} />
+                </div>
+              </Tooltip>
+              <Tooltip title={tooltips.documents}>
+                <div className={styles.statistic}>
+                  <Statistic title="Total Documents" value={totalDocs} />
+                </div>
+              </Tooltip>
             </div>
             <EntityTable entities={entities} facetValues={facetValues} lastHarmonized={lastHarmonized} />
-
           </>}
       </Content>
     </Layout>
