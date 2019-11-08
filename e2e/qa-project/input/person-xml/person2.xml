@@ -1,21 +1,24 @@
-<root>
-<age>45</age>
-<balance>$3,614.67</balance>
-<city>Wyoming</city>
-<company>COMVENE</company>
-<email>janethopkins@comvene.com</email>
-<eyeColor>green</eyeColor>
-<favoriteFruit>apple</favoriteFruit>
-<fname>John</fname>
-<gender>male</gender>
-<id>0</id>
-<isActive>true</isActive>
-<lastname>Hopkins</lastname>
-<lname>Hopkins</lname>
-<phone>+1 (988) 597-3702</phone>
-<registered>2014-08-10T02:46:25 +07:00</registered>
-<state>District Of Columbia</state>
-<street>428 Aster Court</street>
-<synonym>large</synonym>
-<zip>90644-0000</zip>
-</root>
+<?xml version="1.0" encoding="UTF-8"?>
+	<root>
+	   <person>
+			<age>45</age>
+			<balance>$3,614.67</balance>
+			<city>Wyoming</city>
+			<company>COMVENE</company>
+			<email>janethopkins@comvene.com</email>
+			<eyeColor>green</eyeColor>
+			<favoriteFruit>apple</favoriteFruit>
+			<fname>John</fname>
+			<gender>male</gender>
+			<id>0</id>
+			<isActive>true</isActive>
+			<lastname>Hopkins</lastname>
+			<lname>Hopkins</lname>
+			<phone>+1 (988) 597-3702</phone>
+			<registered>2014-08-10T02:46:25 +07:00</registered>
+			<state>District Of Columbia</state>
+			<street>428 Aster Court</street>
+			<synonym>large</synonym>
+			<zip>90644-0000</zip>
+	   </person>
+	</root>

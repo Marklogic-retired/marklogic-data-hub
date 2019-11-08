@@ -5,16 +5,16 @@
   "version" : 1,
   "targetEntityType" : "http://example.org/PersonXML-0.0.1/PersonXML",
   "sourceContext" : "/",
-  "sourceURI" : "/C/dev/fork/marklogic-data-hub/web/e2e/qa-project/input/person-xml/person1.xml",
+  "sourceURI" : "/C/dev/fork/explorer-ui/e2e/qa-project/input/person-xml/person2.xml",
   "properties" : {
     "fname" : {
-      "sourcedFrom" : "fname"
+      "sourcedFrom" : "person/fname"
     },
     "lname" : {
-      "sourcedFrom" : "lname"
+      "sourcedFrom" : "person/lname"
     },
     "id" : {
-      "sourcedFrom" : "id"
+      "sourcedFrom" : "person/id"
     }
   }
 }

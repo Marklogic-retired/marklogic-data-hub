@@ -1,20 +1,23 @@
-<root>
-<age>35</age>
-<balance>$2,882.72</balance>
-<city>Caberfae</city>
-<company>BIZMATIC</company>
-<email>almadaniel@bizmatic.com</email>
-<eyeColor>blue</eyeColor>
-<favoriteFruit>strawberry</favoriteFruit>
-<fname>Linda</fname>
-<gender>female</gender>
-<id>2</id>
-<isActive>true</isActive>
-<lname>Daniel</lname>
-<phone>+1 (812) 472-2940</phone>
-<registered>2015-04-06T07:32:03 +07:00</registered>
-<state>Maryland</state>
-<street>889 Hendrix Street</street>
-<synonym>match</synonym>
-<zip>68155</zip>
-</root>
+<?xml version="1.0" encoding="UTF-8"?>
+	<root>
+	   <person>
+			<age>35</age>
+			<balance>$2,882.72</balance>
+			<city>Caberfae</city>
+			<company>BIZMATIC</company>
+			<email>almadaniel@bizmatic.com</email>
+			<eyeColor>blue</eyeColor>
+			<favoriteFruit>strawberry</favoriteFruit>
+			<fname>Linda</fname>
+			<gender>female</gender>
+			<id>2</id>
+			<isActive>true</isActive>
+			<lname>Daniel</lname>
+			<phone>+1 (812) 472-2940</phone>
+			<registered>2015-04-06T07:32:03 +07:00</registered>
+			<state>Maryland</state>
+			<street>889 Hendrix Street</street>
+			<synonym>match</synonym>
+			<zip>68155</zip>
+	   </person>
+	</root>
