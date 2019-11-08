@@ -1,0 +1,28 @@
+.content {
+  background: #fff;
+  padding: 24px;
+  margin-left: 300px;
+  margin-top: 50px;
+}
+
+.sideBarFacets {
+  background: #f3f3f3;
+  position: fixed;
+  margin-top: 61px;
+}
+
+.sideBarFacets > div {
+  overflow-y: auto;
+  position: fixed;
+  width: 300px;
+  height: 100%;
+  max-height: 94vh;
+  background-color: whitesmoke;
+}
+
+.searchBar {
+  position: fixed;
+  width: 74%;
+  z-index: 1;
+}
+

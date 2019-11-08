@@ -76,9 +76,9 @@ const Detail: React.FC<Props> = ({ history, location }) => {
 
   return (
     <Layout>
-      <Content style={{ background: '#fff', padding: '18px 36px' }}>
+      <Content className= {styles.detailContent}>
         <div id='back-button'>
-          <PageHeader style={{ padding: '0px', marginBottom: '20px' }} onBack={() => history.push('/browse')} title={<Link to={{ pathname: "/browse" }} data-cy="back-button">Back</Link>} />
+          <PageHeader onBack={() => history.push('/browse')} title={<Link to={{ pathname: "/browse" }} data-cy="back-button">Back</Link>} />
         </div>
         <div className={styles.header}>
           <div className={styles.heading}>

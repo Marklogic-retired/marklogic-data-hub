@@ -86,7 +86,7 @@ const Header:React.FC<Props> = ({ location }) => {
     </Menu>
   )
   return (
-    <Layout.Header>
+    <Layout.Header className={styles.navBar}>
       <div className={styles.iconContain}>
         <div id="logo" className={styles.icon}>
           <DatahubIcon size={65} fill='silver' view='0 0 100 100'/>
