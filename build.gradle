@@ -54,6 +54,7 @@ dependencies {
     compile group: 'org.springframework', name: 'spring-web', version: '5.1.5.RELEASE'
     compile group: 'org.springframework', name: 'spring-webmvc', version: '5.1.5.RELEASE'
     compile group: 'org.springframework', name: 'spring-websocket', version: '5.1.5.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '2.2.0.RELEASE'
     compile("org.springframework.boot:spring-boot-starter-websocket")
     compile("org.springframework.boot:spring-boot-starter-thymeleaf")
 
