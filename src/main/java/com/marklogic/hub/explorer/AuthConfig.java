@@ -99,7 +99,7 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
         "/*.eot",
         "/*.css",
         "/index.html",
-        "/explorer/login",
+        "/actuator/**",
         "/404",
         "/assets/**",
         "/static/**",
