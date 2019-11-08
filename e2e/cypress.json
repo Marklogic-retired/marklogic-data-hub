@@ -3,7 +3,7 @@
     "video": true,
     "reporter": "junit",
     "reporterOptions": {
-      "mochaFile": "results/cypress-report.xml",
+      "mochaFile": "results/cypress-report[hash].xml",
       "toConsole": true
     }
 }
