@@ -97,7 +97,9 @@ const Detail: React.FC<Props> = ({ history, location }) => {
         </div>
         <div>
           {
-            isLoading || user.error.type === 'ALERT' ? <AsyncLoader />
+            isLoading || user.error.type === 'ALERT' ?  <div style={{marginTop : '40px'}}>
+                  <AsyncLoader/>
+                </div>
               :
               contentType === 'json' ?
                 selected === 'instance' ? (data && <TableView document={data} contentType={contentType} />) : (data && <JsonView document={data} />)

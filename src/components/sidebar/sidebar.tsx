@@ -77,7 +77,7 @@ const Sidebar:React.FC<Props> = (props) => {
   }
 
   return (
-    <>
+    <div className={styles.sideBarFacets}>
       <SelectedFacets selectedFacets={selectedFacets}/>
       <Collapse 
         className={styles.sidebarContainer}
@@ -125,7 +125,7 @@ const Sidebar:React.FC<Props> = (props) => {
               })}
         </Panel>
     </Collapse>
-  </>
+  </div>
   );
 }
 

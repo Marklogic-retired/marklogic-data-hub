@@ -126,17 +126,21 @@ const Browse: React.FC<Props> = ({location}) => {
                       pageSize={searchOptions.pageSize}
                   />
                   <SearchResults data={data} entityDefArray={entityDefArray}/>
+                  <div style= {{marginTop: '-44px'}}>
                   <SearchSummary
                       total={totalDocuments}
                       start={searchOptions.start}
                       length={searchOptions.pageLength}
                       pageSize={searchOptions.pageSize}
                   />
+                  <div style = {{marginTop: '-42px'}}>
                   <SearchPagination
                       total={totalDocuments}
                       pageNumber={searchOptions.pageNumber}
                       pageSize={searchOptions.pageSize}
                   />
+                  </div>
+                  </div>
                 </>
             }
           </Content>
