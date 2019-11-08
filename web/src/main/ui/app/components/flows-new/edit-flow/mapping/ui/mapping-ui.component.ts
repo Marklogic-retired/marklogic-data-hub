@@ -34,6 +34,8 @@ export class MappingUiComponent implements OnChanges {
   @Input() entityName: string;
   @Input() entityNested: Entity;
   @Input() xmlSource: boolean;
+  @Input() disableURINavLeft: boolean;
+  @Input() disableURINavRight: boolean;
 
   @Input() entityProps: any;
   @Input() nmspace: object;
@@ -78,8 +80,6 @@ export class MappingUiComponent implements OnChanges {
   public fncLst: Object;
   dataSourceEntity: Array<any> = [];
 
-    disableURINavLeft: boolean = false;
-    disableURINavRight: boolean = false;
     uriIndex = 0;
     currEntity:string;
 

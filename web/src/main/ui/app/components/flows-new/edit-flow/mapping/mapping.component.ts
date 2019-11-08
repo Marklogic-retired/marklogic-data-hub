@@ -30,6 +30,8 @@ import { Flow } from "../../models/flow.model";
       [entityNested] = "entityNested"
       [nmspace] = "nmspace"
       [xmlSource]="xmlSource"
+      [disableURINavLeft]="disableURINavLeft"
+      [disableURINavRight]="disableURINavRight"
       (updateURI)="this.updateURI($event)"
       (updateMap)="this.updateMap($event)"
     ></app-mapping-ui>
@@ -60,6 +62,8 @@ export class MappingComponent implements OnInit {
   public sampleDocNestedProps:  Array<any> = [];
   public nestedDoc: Array<any> = [];
   public xmlSource: boolean = false;
+  public disableURINavLeft: boolean = true;
+  public disableURINavRight: boolean = false;
 
   // Connections
   public conns: object = {};
@@ -175,6 +179,7 @@ export class MappingComponent implements OnInit {
     this.searchService.getResultsByQuery(this.step.options.sourceDatabase, this.step.options.sourceQuery, 20, true).subscribe(response => {
         if (self.targetEntity) {
           self.targetEntity.hasDocs = (response.length > 0);
+          self.disableURINavRight = response.length > 1 ? false : true;
           // Can only load sample doc if docs exist
           if (self.targetEntity.hasDocs) {
              response.forEach(doc => {
