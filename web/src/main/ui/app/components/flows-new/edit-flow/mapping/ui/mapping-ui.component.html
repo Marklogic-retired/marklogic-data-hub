@@ -1,7 +1,9 @@
 <!-- START NEW MAPPING VIEW -->
 <div *ngIf="isVersionCompatibleWithES" class="source-prop-container-map-exp">
   <div *ngIf="targetEntity && !targetEntity.hasDocs">
-    <em>Unable to find documents that match your query.</em>
+    <em>Unable to find source documents using the specified collection or query.</em>
+    <br><br>
+    <em>Ingest some data that mapping can use as reference and/or edit the step settings to use a source collection or query that will return some results.</em>
   </div>
   <div [ngClass]="{ hidden: !(targetEntity && targetEntity.hasDocs)}">
   
