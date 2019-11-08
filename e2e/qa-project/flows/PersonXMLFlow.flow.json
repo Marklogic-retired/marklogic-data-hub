@@ -37,7 +37,7 @@
       "stepDefinitionName" : "default-ingestion",
       "stepDefinitionType" : "INGESTION",
       "fileLocations" : {
-        "inputFilePath" : "C:\\dev\\fork\\explorer-ui\\e2e\\qa-project\\input\\person-xml",
+        "inputFilePath" : "./input/person-xml",
         "inputFileType" : "xml",
         "outputURIReplacement" : "",
         "separator" : ""
