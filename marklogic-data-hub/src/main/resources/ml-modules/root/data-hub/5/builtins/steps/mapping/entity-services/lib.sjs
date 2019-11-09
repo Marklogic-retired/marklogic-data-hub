@@ -20,6 +20,8 @@ const xsltPermissions = [
   xdmp.permission(datahub.config.FLOWDEVELOPERROLE,'read')
 ];
 
+const reservedNamespaces = ['m', 'map'];
+
 function buildMappingXML(mappingJSON) {
   // Obtain all linked JSON mappings
   const relatedMappings = getRelatedMappings(mappingJSON).map((mappingDoc) => mappingDoc.toObject());
@@ -28,7 +30,8 @@ function buildMappingXML(mappingJSON) {
   }
   // for each mapping build out the mapping XML
   const entityTemplates = [];
-  const parentEntity = getTargetEntity(fn.string(mappingJSON.root.targetEntityType));
+  const mappingJsonObj = mappingJSON.toObject();
+  const parentEntity = getTargetEntity(fn.string(mappingJsonObj.targetEntityType));
   for (let mapping of relatedMappings) {
     if (dhMappingTraceIsEnabled) {
       xdmp.trace(dhMappingTrace, `Generating template for ${mapping.targetEntityType}`);
@@ -41,11 +44,22 @@ function buildMappingXML(mappingJSON) {
     entityTemplates.push(entityTemplate);
   }
   let entityName = getEntityName(mappingJSON.root.targetEntityType);
+  const namespaces = [];
+  if (mappingJsonObj.namespaces) {
+    for (const prefix of Object.keys(mappingJsonObj.namespaces).sort()) {
+      if (mappingJsonObj.namespaces.hasOwnProperty(prefix)) {
+        if (reservedNamespaces.includes(prefix)) {
+          throw new Error(`'${prefix}' is a reserved namespace.`);
+        }
+        namespaces.push(`xmlns:${prefix}="${mappingJsonObj.namespaces[prefix]}"`);
+      }
+    }
+  }
   // compose the final template
   // Importing the "map" namespace fixes an issue when testing a mapping from QuickStart that hasn't been reproduced
   // yet in a unit test; it ensures that the map:* calls in the XSLT resolve to map functions.
   let finalTemplate = `
-      <m:mapping xmlns:m="http://marklogic.com/entity-services/mapping" xmlns:map="http://marklogic.com/xdmp/map">
+      <m:mapping xmlns:m="http://marklogic.com/entity-services/mapping" xmlns:map="http://marklogic.com/xdmp/map" ${namespaces.join(' ')}>
       ${retrieveFunctionImports()}
       ${entityTemplates.join('\n')}
       <!-- Default entity is ${entityName} -->
