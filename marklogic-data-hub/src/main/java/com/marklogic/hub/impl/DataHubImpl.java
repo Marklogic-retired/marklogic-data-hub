@@ -27,7 +27,6 @@ import com.marklogic.appdeployer.command.modules.DeleteTestModulesCommand;
 import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
 import com.marklogic.appdeployer.command.security.*;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
-import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.admin.QueryOptionsManager;
 import com.marklogic.client.admin.ResourceExtensionsManager;
 import com.marklogic.client.admin.ServerConfigurationManager;
@@ -380,12 +379,13 @@ public class DataHubImpl implements DataHub {
                     }
                 }
             );
-
+            //The custom mapping functions, ootb rest extensions and search options are not deleted by this method
             String query =
                 "cts:uris((),(),cts:not-query(cts:collection-query('hub-core-module')))[\n" +
                     "  fn:not(\n" +
                     "    fn:matches(., \"^.+options/(" + String.join("|", options) + ").xml$\") or\n" +
-                    "    fn:starts-with(., \"/marklogic.rest.\")\n" +
+                    "    fn:starts-with(., \"/marklogic.rest.\") or\n" +
+                    "    fn:matches(.,\"^/custom-modules/mapping-functions/.*.(sjs|mjs|xqy)$\") "+
                     "  )\n" +
                     "] ! xdmp:document-delete(.)\n";
             runInDatabase(query, hubConfig.getDbName(DatabaseKind.MODULES));

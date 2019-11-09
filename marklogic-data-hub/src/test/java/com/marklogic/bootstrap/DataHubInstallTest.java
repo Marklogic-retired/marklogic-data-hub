@@ -122,6 +122,16 @@ public class DataHubInstallTest extends HubTestBase
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+            //copy mapping functions to project
+            project.getCustomModulesDir().resolve("mapping-functions").toFile().mkdirs();
+            try {
+                FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/mapping-functions/custom-javascript-functions.sjs"), project.getCustomModulesDir().resolve("mapping-functions").toFile());
+                FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/mapping-functions/custom-javascript-module.mjs"), project.getCustomModulesDir().resolve("mapping-functions").toFile());
+                FileUtils.copyFileToDirectory(getResourceFile("data-hub-test/mapping-functions/custom-xquery-functions.xqy"), project.getCustomModulesDir().resolve("mapping-functions").toFile());
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             getDataHub().install(null);
             getDataHubAdminConfig().refreshProject();
             setupDone = true;
@@ -354,6 +364,17 @@ public class DataHubInstallTest extends HubTestBase
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
         createProjectDir(path);
         dataHub.clearUserModules();
+        // Confirms that the modules are not deleted
+        assertEquals(
+            getResource("data-hub-test/mapping-functions/custom-xquery-functions.xqy"),
+            getModulesFile("/custom-modules/mapping-functions/custom-xquery-functions.xqy"),"this mapping function should not be deleted");
+        assertEquals(
+            getResource("data-hub-test/mapping-functions/custom-javascript-functions.sjs"),
+            getModulesFile("/custom-modules/mapping-functions/custom-javascript-functions.sjs"), "this mapping function should not be deleted");
+        assertEquals(
+            getResource("data-hub-test/mapping-functions/custom-javascript-module.mjs"),
+            getModulesFile("/custom-modules/mapping-functions/custom-javascript-module.mjs"), "this mapping function should not be deleted");
+
         installUserModules(adminHubConfig, true);
 
         // removed counts assertions which were so brittle as to be just an impediment to life.
