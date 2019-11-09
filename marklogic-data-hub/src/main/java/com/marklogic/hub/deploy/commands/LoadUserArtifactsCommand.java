@@ -100,7 +100,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         }
         //Initializing the 'PropertiesModuleManager' instance so that timestamp file (local-user-modules-deploy-timestamps.properties)
         // is read and only the modified files are deployed to server
-        pmm.initialize();
+        //pmm.initialize();
         return pmm;
     }
 
