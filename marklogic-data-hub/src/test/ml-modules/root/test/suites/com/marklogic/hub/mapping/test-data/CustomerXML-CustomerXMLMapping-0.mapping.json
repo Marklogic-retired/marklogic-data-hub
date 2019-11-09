@@ -6,15 +6,19 @@
   "targetEntityType" : "Customer-0.0.1/Customer",
   "sourceContext" : "/",
   "sourceURI" : "",
+  "namespaces": {
+    "ns2": "http://ns2",
+    "ns1": "http://ns1"
+  },
   "properties" : {
     "id": {
-      "sourcedFrom": "Customer/@CustomerID"
+      "sourcedFrom": "ns1:Customer/@CustomerID"
     },
     "firstname": {
-      "sourcedFrom": "Customer/property[@name = 'name']/@value"
+      "sourcedFrom": "ns1:Customer/ns2:property[@name = 'name']/@value"
     },
     "interests": {
-      "sourcedFrom": "Customer/property[@name = 'interest']/@value"
+      "sourcedFrom": "ns1:Customer/ns2:property[@name = 'interest']/@value"
     }
   }
 }
