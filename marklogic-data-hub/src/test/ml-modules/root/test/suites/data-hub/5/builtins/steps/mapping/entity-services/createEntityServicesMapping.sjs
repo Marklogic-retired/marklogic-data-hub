@@ -9,6 +9,10 @@ const baseCustomerMapping = xdmp.toJSON({
   "targetEntityType" : "Customer-0.0.1/Customer",
   "sourceContext" : "/",
   "sourceURI" : "",
+  "namespaces": {
+    "ns2": "http://ns2",
+    "ns1": "http://ns1"
+  },
   "properties" : {
     "ID": {
       "sourcedFrom": "string(@CustomerID)"
@@ -30,10 +34,10 @@ const baseCustomerMapping = xdmp.toJSON({
       "sourcedFrom": "customerName",
       "properties" : {
         "FirstName": {
-          "sourcedFrom": "givenName"
+          "sourcedFrom": "ns1:givenName"
         },
         "LastName": {
-          "sourcedFrom": "surName"
+          "sourcedFrom": "ns2:surName"
         }
       }
     }
@@ -218,7 +222,7 @@ assertions.push(
 
 // Test entire build
 expectedTemplate = tidyXML(`
-  <m:mapping xmlns:m="http://marklogic.com/entity-services/mapping" xmlns:map="http://marklogic.com/xdmp/map">
+  <m:mapping xmlns:m="http://marklogic.com/entity-services/mapping" xmlns:map="http://marklogic.com/xdmp/map" xmlns:ns1="http://ns1" xmlns:ns2="http://ns2">
     ${mappingLib.retrieveFunctionImports()}
     <m:entity name="Customer" xmlns:m="http://marklogic.com/entity-services/mapping">
       <Customer xmlns="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -243,8 +247,8 @@ expectedTemplate = tidyXML(`
     </m:entity>
     <m:entity name="Name" xmlns:m="http://marklogic.com/entity-services/mapping">
       <Name xmlns="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-        <m:optional><FirstName xsi:type="xs:string"><m:val>givenName</m:val></FirstName></m:optional>
-        <m:optional><LastName xsi:type="xs:string"><m:val>surName</m:val></LastName></m:optional>
+        <m:optional><FirstName xsi:type="xs:string"><m:val>ns1:givenName</m:val></FirstName></m:optional>
+        <m:optional><LastName xsi:type="xs:string"><m:val>ns2:surName</m:val></LastName></m:optional>
       </Name>
     </m:entity>
       <!-- Default entity is Customer -->
