@@ -98,7 +98,7 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
                 }
             }
         }
-
+        pmm.initialize();
         return pmm;
     }
 
@@ -164,9 +164,6 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
 
     @Override
     public void execute(CommandContext context) {
-        if (loadAllModules) {
-            loadModulesFromStandardMlGradleLocations(context);
-        }
 
         AppConfig config = context.getAppConfig();
 
@@ -180,6 +177,11 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
         // load any user files under plugins/* int the modules database.
         // this will ignore REST folders under entities
         DefaultModulesLoader modulesLoader = getStagingModulesLoader(config);
+        // Load modules from standard ml-gradle location after 'PropertiesModuleManager' is initialized. This will ensure
+        // that in case of 'forceLoad', the ml-javaclient-utils timestamp file is deleted first.
+        if (loadAllModules) {
+            loadModulesFromStandardMlGradleLocations(context);
+        }
         modulesLoader.loadModules(baseDir, new UserModulesFinder(), stagingClient);
 
         // Don't load these while "watching" modules (i.e. mlWatch is being run), as users can't change these
