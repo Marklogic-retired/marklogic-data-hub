@@ -77,7 +77,7 @@ const Sidebar:React.FC<Props> = (props) => {
   }
 
   return (
-    <div className={styles.sidebarContainer}>
+    <div className={styles.sideBarContainer}>
       <SelectedFacets selectedFacets={selectedFacets}/>
       <Collapse 
         className={styles.sideBarFacets}
