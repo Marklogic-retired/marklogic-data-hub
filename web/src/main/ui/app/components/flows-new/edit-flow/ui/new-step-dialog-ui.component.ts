@@ -205,7 +205,8 @@ export class NewStepDialogUiComponent implements OnInit {
     if (type === StepType.MAPPING) {
       this.newStepForm.patchValue({
         sourceDatabase: this.databaseObject.staging,
-        targetDatabase: this.databaseObject.final
+        targetDatabase: this.databaseObject.final,
+        threadCount: this.flow.threadCount || 4
       });
       this.tooltips = FlowsTooltips.mapping;
       this.newStep = Step.createMappingStep();
@@ -213,7 +214,8 @@ export class NewStepDialogUiComponent implements OnInit {
     if (type === StepType.MATCHING) {
       this.newStepForm.patchValue({
         sourceDatabase: this.databaseObject.final,
-        targetDatabase: this.databaseObject.final
+        targetDatabase: this.databaseObject.final,
+        threadCount: this.flow.threadCount || 4
       });
       this.tooltips = FlowsTooltips.mastering;
       this.newStep = Step.createMatchingStep();
@@ -221,7 +223,8 @@ export class NewStepDialogUiComponent implements OnInit {
     if (type === StepType.MERGING) {
       this.newStepForm.patchValue({
         sourceDatabase: this.databaseObject.final,
-        targetDatabase: this.databaseObject.final
+        targetDatabase: this.databaseObject.final,
+        threadCount: this.flow.threadCount || 4
       });
       this.tooltips = FlowsTooltips.mastering;
       this.newStep = Step.createMergingStep();
@@ -229,7 +232,8 @@ export class NewStepDialogUiComponent implements OnInit {
     if (type === StepType.MASTERING) {
       this.newStepForm.patchValue({
         sourceDatabase: this.databaseObject.final,
-        targetDatabase: this.databaseObject.final
+        targetDatabase: this.databaseObject.final,
+        threadCount: 1
       });
       this.tooltips = FlowsTooltips.mastering;
       this.newStep = Step.createMasteringStep();
@@ -237,7 +241,8 @@ export class NewStepDialogUiComponent implements OnInit {
     if (type === StepType.CUSTOM) {
       this.newStepForm.patchValue({
         sourceDatabase: this.databaseObject.staging,
-        targetDatabase: this.databaseObject.final
+        targetDatabase: this.databaseObject.final,
+        threadCount: this.flow.threadCount || 4
       });
       this.tooltips = FlowsTooltips.custom;
       this.newStep = Step.createCustomStep();
@@ -245,7 +250,8 @@ export class NewStepDialogUiComponent implements OnInit {
     if (type === StepType.INGESTION) {
       this.newStepForm.patchValue({
         sourceDatabase: '',
-        targetDatabase: this.databaseObject.staging
+        targetDatabase: this.databaseObject.staging,
+        threadCount: this.flow.threadCount || 4
       });
       this.newStep = Step.createIngestionStep(this.projectDirectory);
       this.tooltips = FlowsTooltips.ingest;
