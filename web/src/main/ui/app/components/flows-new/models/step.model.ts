@@ -125,7 +125,7 @@ export class Step {
     "runBefore" : false
   };
     step.batchSize = 100;
-    step.threadCount = 4;
+    step.threadCount = 1;
     return step;
   }
 
