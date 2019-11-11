@@ -36,12 +36,13 @@
       "enzyme-to-json/serializer"
     ],
     "coverageReporters": [
-      "text", "json"
+      "text",
+      "cobertura"
     ],
     "collectCoverageFrom": [
       "src/**/*.{ts,tsx}"
     ],
-    "coverageDirectory": "./",  
+    "coverageDirectory": "./",
     "reporters": [
       "default",
       "jest-junit"
