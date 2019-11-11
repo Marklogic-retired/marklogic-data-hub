@@ -79,8 +79,10 @@ export class SearchComponent implements OnDestroy, OnInit {
   }
 
   currentDatabaseChanged(db: string) {
-    this.currentDatabase = db;
-    this.doSearch();
+    if(db !== this.currentDatabase) {
+      this.currentDatabase = db;
+      this.doSearch();
+    }
   }
 
   entitiesOnlyChanged(val: boolean) {
