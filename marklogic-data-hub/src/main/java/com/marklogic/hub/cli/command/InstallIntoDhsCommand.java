@@ -73,6 +73,8 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
         );
         commands.add(deployRolesCommand);
 
+        commands.add(new CreateGranularPrivilegesCommand(hubConfig));
+
         return commands;
     }
 

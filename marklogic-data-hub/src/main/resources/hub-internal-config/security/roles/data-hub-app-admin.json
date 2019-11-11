@@ -1,0 +1,23 @@
+{
+  "role-name": "data-hub-app-admin",
+  "description": "Data Hub role for a user that can administer a Data Hub application but not fully manage its resources",
+  "role": [
+    "data-hub-user",
+    "manage-user",
+    "ps-user",
+    "rest-admin",
+    "tde-admin"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "protect-path",
+      "action": "http://marklogic.com/xdmp/privileges/protect-path",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "get-system-logs",
+      "action": "http://marklogic.com/xdmp/privileges/logs/system",
+      "kind": "execute"
+    }
+  ]
+}

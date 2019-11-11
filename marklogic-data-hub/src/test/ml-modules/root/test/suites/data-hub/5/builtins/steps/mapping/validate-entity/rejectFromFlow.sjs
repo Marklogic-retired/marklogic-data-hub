@@ -23,16 +23,27 @@ if (lib.canTestJsonSchemaValidation() && esMappingLib.versionIsCompatibleWithES(
     )
   ];
 
-  let batch = fn.head(xdmp.invokeFunction(function () {
-    return fn.collection("Batch").toArray()[0];
-  }, {database: xdmp.database(config.JOBDATABASE)})).toObject();
+  let batchData = fn.head(xdmp.invokeFunction(function () {
+    let uri = cts.uris(null, ["limit=1"], cts.collectionQuery("Batch"));
+    return {
+      "uri" : uri,
+      "doc": cts.doc(uri).toObject(),
+      "perms": xdmp.documentGetPermissions(uri)
+    };
+  }, {database: xdmp.database(config.JOBDATABASE)}));
 
   assertions.push(
-    test.assertTrue(batch.batch.error != null,
+    test.assertTrue(batchData.doc.batch.error != null,
       "The error message should have been stored on the Batch document"),
-    test.assertTrue(batch.batch.errorStack != null,
+    test.assertTrue(batchData.doc.batch.errorStack != null,
       "The error stacktrace should have been stored on the Batch document")
   );
+
+  // Per DHFPROD-3108, verifying that the new data-hub-job-reader/data-hub-job-internal permissions are set as well
+  let jobReaderPerm = batchData.perms.find(perm => xdmp.roleName(perm.roleId) == "data-hub-job-reader");
+  assertions.push(test.assertEqual("read", jobReaderPerm.capability));
+  let jobInternalPerm = batchData.perms.find(perm => xdmp.roleName(perm.roleId) == "data-hub-job-internal");
+  assertions.push(test.assertEqual("update", jobInternalPerm.capability));
 
   assertions;
 }

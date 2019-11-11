@@ -1,0 +1,4 @@
+{
+  "role-name": "data-hub-job-reader",
+  "description": "Data Hub role for permissions that grant read access to job documents"
+}

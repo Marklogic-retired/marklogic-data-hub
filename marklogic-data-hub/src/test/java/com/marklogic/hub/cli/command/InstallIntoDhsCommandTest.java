@@ -85,7 +85,7 @@ public class InstallIntoDhsCommandTest extends HubTestBase {
         command.dataHub = super.dataHub;
 
         List<Command> commands = command.buildCommandsForDhs();
-        assertEquals(15, commands.size());
+        assertEquals(16, commands.size());
         Collections.sort(commands, (c1, c2) -> c1.getExecuteSortOrder().compareTo(c2.getExecuteSortOrder()));
 
         int index = 0;
@@ -104,6 +104,7 @@ public class InstallIntoDhsCommandTest extends HubTestBase {
         assertTrue(commands.get(index++) instanceof DeployHubTriggersCommand);
         assertTrue(commands.get(index++) instanceof LoadUserArtifactsCommand);
         assertTrue(commands.get(index++) instanceof LoadHubArtifactsCommand);
+        assertTrue(commands.get(index++) instanceof CreateGranularPrivilegesCommand);
 
         DeployRolesCommand deployRolesCommand = (DeployRolesCommand) commands.get(1);
         ResourceFilenameFilter filter = (ResourceFilenameFilter) deployRolesCommand.getResourceFilenameFilter();

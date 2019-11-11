@@ -1,0 +1,7 @@
+{
+  "role-name": "data-hub-admin",
+  "description": "Data Hub role for users that can administer a Data Hub application and perform a few other administrative tasks as well",
+  "role": [
+    "data-hub-app-admin"
+  ]
+}

@@ -174,6 +174,7 @@ public class HubConfigImpl implements HubConfig
     protected String modulePermissions;
 
     private String entityModelPermissions;
+    private String jobPermissions;
 
     private ManageConfig manageConfig;
     private ManageClient manageClient;
@@ -854,6 +855,15 @@ public class HubConfigImpl implements HubConfig
         return entityModelPermissions;
     }
 
+    public String getJobPermissions() {
+        return jobPermissions;
+    }
+
+    public void setJobPermissions(String jobPermissions) {
+        this.jobPermissions = jobPermissions;
+    }
+
+
     @Override
     @Deprecated
     public String getProjectDir() {
@@ -944,11 +954,6 @@ public class HubConfigImpl implements HubConfig
                 isHostLoadBalancer = false;
             }
         }
-    }
-
-
-    public void loadConfigurationFromProperties(){
-        loadConfigurationFromProperties(null, true);
     }
 
     public void loadConfigurationFromProperties(Properties properties, boolean loadGradleProperties) {
@@ -1304,6 +1309,13 @@ public class HubConfigImpl implements HubConfig
         }
         else {
             projectProperties.setProperty("mlEntityModelPermissions", entityModelPermissions);
+        }
+
+        if (jobPermissions == null) {
+            jobPermissions = getEnvPropString(projectProperties, "mlJobPermissions", environment.getProperty("mlJobPermissions"));
+        }
+        else {
+            projectProperties.setProperty("mlJobPermissions", jobPermissions);
         }
 
         DHFVersion = getEnvPropString(projectProperties, "mlDHFVersion", environment.getProperty("mlDHFVersion"));
@@ -1710,6 +1722,8 @@ public class HubConfigImpl implements HubConfig
         // and another random password for hub Admin User
         customTokens.put("%%mlFlowDeveloperPassword%%", randomStringGenerator.generate(20));
 
+        customTokens.put("%%mlJobPermissions%%", jobPermissions == null ? environment.getProperty("mlJobPermissions") : jobPermissions);
+
         customTokens.put("%%mlCustomForestPath%%", customForestPath == null ? environment.getProperty("mlCustomForestPath") : customForestPath);
 
         //version of DHF the user INTENDS to use
@@ -1725,17 +1739,6 @@ public class HubConfigImpl implements HubConfig
         if (projectProperties.containsKey("mlFlowDeveloperPassword")) {
             customTokens.put("%%mlFlowDeveloperPassword%%", projectProperties.getProperty("mlFlowDeveloperPassword"));
         }
-        /* can't iterate through env properties, so rely on custom tokens itself?
-        if (environment != null) {
-            Enumeration keyEnum = environment.propertyNames();
-            while (keyEnum.hasMoreElements()) {
-                String key = (String) keyEnum.nextElement();
-                if (key.matches("^ml[A-Z].+") && !customTokens.containsKey(key)) {
-                    customTokens.put("%%" + key + "%%", (String) environmentProperties.get(key));
-                }
-            }
-        }
-        */
     }
 
     /**
@@ -2045,6 +2048,7 @@ public class HubConfigImpl implements HubConfig
         customForestPath = null;
         modulePermissions = null;
         entityModelPermissions = null;
+        jobPermissions = null;
         hubLogLevel = null;
         loadBalancerHost = null;
         isHostLoadBalancer = null;

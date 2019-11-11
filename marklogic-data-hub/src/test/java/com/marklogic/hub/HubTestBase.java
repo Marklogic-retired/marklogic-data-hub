@@ -54,6 +54,7 @@ import com.marklogic.hub.legacy.flow.DataFormat;
 import com.marklogic.hub.legacy.flow.FlowType;
 import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
+import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.util.ComboListener;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
@@ -446,12 +447,16 @@ public class HubTestBase {
     }
 
     protected HubConfigImpl getHubFlowRunnerConfig() {
-        adminHubConfig.setMlUsername(flowRunnerUser);
-        adminHubConfig.setMlPassword(flowRunnerPassword);
+        return getHubFlowRunnerConfig(flowRunnerUser, flowRunnerPassword);
+    }
+
+    protected HubConfigImpl getHubFlowRunnerConfig(String mlUsername, String mlPassword) {
+        adminHubConfig.setMlUsername(mlUsername);
+        adminHubConfig.setMlPassword(mlPassword);
         appConfig = adminHubConfig.getAppConfig();
-        manageConfig = ((HubConfigImpl)adminHubConfig).getManageConfig();
-        manageClient = ((HubConfigImpl)adminHubConfig).getManageClient();
-        adminConfig = ((HubConfigImpl)adminHubConfig).getAdminConfig();
+        manageConfig = adminHubConfig.getManageConfig();
+        manageClient = adminHubConfig.getManageClient();
+        adminConfig = adminHubConfig.getAdminConfig();
         if(isCertAuth()) {
             appConfig.setAppServicesCertFile("src/test/resources/ssl/client-flow-operator.p12");
             adminHubConfig.setCertFile(DatabaseKind.STAGING, "src/test/resources/ssl/client-flow-operator.p12");
@@ -481,10 +486,10 @@ public class HubTestBase {
             adminConfig.setPassword(null);
         }
         adminHubConfig.setAppConfig(appConfig);
-        ((HubConfigImpl)adminHubConfig).setManageConfig(manageConfig);
+        adminHubConfig.setManageConfig(manageConfig);
         manageClient.setManageConfig(manageConfig);
-        ((HubConfigImpl)adminHubConfig).setManageClient(manageClient);
-        ((HubConfigImpl)adminHubConfig).setAdminConfig(adminConfig);
+        adminHubConfig.setManageClient(manageClient);
+        adminHubConfig.setAdminConfig(adminConfig);
         wireClients();
         return adminHubConfig;
     }
@@ -999,20 +1004,6 @@ public class HubTestBase {
         deployer.deploy(hubConfig.getAppConfig());
     }
 
-    private TokenReplacer buildModuleTokenReplacer(AppConfig appConfig) {
-        DefaultTokenReplacer r = new DefaultTokenReplacer();
-        final Map<String, String> customTokens = appConfig.getCustomTokens();
-        if (customTokens != null && !customTokens.isEmpty()) {
-            r.addPropertiesSource(() -> {
-                Properties p = new Properties();
-                p.putAll(customTokens);
-                return p;
-            });
-        }
-
-        return r;
-    }
-
     protected void installHubArtifacts(HubConfig hubConfig, boolean force) {
         logger.debug("Installing hub artifacts into MarkLogic");
         List<Command> commands = new ArrayList<>();
@@ -1201,5 +1192,31 @@ public class HubTestBase {
         StringHandle strHandle = new StringHandle();
         runInDatabase("sem:timezone-string(fn:current-dateTime())", HubConfig.DEFAULT_FINAL_NAME, strHandle);
         return strHandle.get();
+    }
+
+    protected void setupProjectForRunningTestFlow() {
+        basicSetup();
+        getDataHubAdminConfig();
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
+
+        try {
+            FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/entities/e2eentity.entity.json"),
+                adminHubConfig.getHubEntitiesDir().toFile());
+            installUserModules(getDataHubAdminConfig(), true);
+            FileUtils.copyDirectory(getResourceFile("flow-runner-test/flows"), adminHubConfig.getFlowsDir().toFile());
+            FileUtils.copyDirectory(getResourceFile("flow-runner-test/input"),
+                adminHubConfig.getHubProjectDir().resolve("input").toFile());
+            FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/step-definitions/json-ingestion.step.json"),
+                adminHubConfig.getStepsDirByType(StepDefinition.StepDefinitionType.INGESTION).resolve("json-ingestion").toFile());
+            FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/step-definitions/json-mapping.step.json"),
+                adminHubConfig.getStepsDirByType(StepDefinition.StepDefinitionType.MAPPING).resolve("json-mapping").toFile());
+            FileUtils.copyDirectory(getResourceFile("flow-runner-test/mappings"),
+                adminHubConfig.getHubMappingsDir().resolve("e2e-mapping").toFile());
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+
+        installUserModules(getDataHubAdminConfig(), true);
+        installHubArtifacts(getDataHubAdminConfig(), true);
     }
 }
