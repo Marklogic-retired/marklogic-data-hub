@@ -14,7 +14,7 @@ Which Operating System are you using?
 
 Which version of MarkLogic are you using?
 
-Which version of the Data Hub Framework are you using?
+Which version of the Data Hub are you using?
 
 Is this a QuickStart UI bug? If so, which browser are you using?
 

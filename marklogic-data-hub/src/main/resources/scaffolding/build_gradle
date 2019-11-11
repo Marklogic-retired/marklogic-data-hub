@@ -18,8 +18,8 @@ plugins {
     id 'net.saliman.properties' version '1.4.6'
 
     // This gradle plugin extends the ml-gradle plugin with
-    // commands that make the Data Hub Framework do its magic
-    id 'com.marklogic.ml-data-hub' version '5.2-SNAPSHOT'
+    // commands that make the Data Hub do its magic
+    id 'com.marklogic.ml-data-hub' version '5.1-SNAPSHOT'
 }
 
 repositories {
@@ -29,8 +29,8 @@ repositories {
 
 dependencies {
     // this allows you to write custom java code that depends
-    // on the Data Hub Framework library
-    compile 'com.marklogic:marklogic-data-hub:5.2-SNAPSHOT'
+    // on the Data Hub library
+    compile 'com.marklogic:marklogic-data-hub:5.1-SNAPSHOT'
     compile 'com.marklogic:marklogic-xcc:9.0.7'
 }
 
