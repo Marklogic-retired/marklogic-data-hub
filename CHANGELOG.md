@@ -93,7 +93,7 @@
 </li>
 <li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2340'>DHFPROD-2340</a>] -         Add outputFormat option to all steps (backend and Quickstart)
 </li>
-<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2517'>DHFPROD-2517</a>] -         Handle temporal docs natively in data hub
+<li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2517'>DHFPROD-2517</a>] -         Handle temporal docs natively in Data Hub
 </li>
 <li>[<a href='https://project.marklogic.com/jira/browse/DHFPROD-2561'>DHFPROD-2561</a>] -         Add Collections field to all steps (Quickstart)
 </li>
@@ -631,7 +631,7 @@ Story
     [DHFPROD-1234] - Create roles and test DHF with hardened RBAC model for DHaaS
     [DHFPROD-1240] - Release DHaaS-related work as 4.0.1
     [DHFPROD-1251] - Integrated Testing for DHaaS in a 'real' environment
-    [DHFPROD-1261] - Document differences in managing a data hub on-prem. vs in DHaaS
+    [DHFPROD-1261] - Document differences in managing Data Hub on-prem. vs in DHaaS
     [DHFPROD-1310] - Refactor DHF to use a single modules database (again)
     [DHFPROD-1335] - Deprecate mlLoadBalancerHosts with error checking
 
@@ -743,7 +743,7 @@ Story
     [DHFPROD-341] - Mapping experience for long lists of attributes
     [DHFPROD-346] - API Service Developer can generate a Java proxy with payloads
     [DHFPROD-350] - API Service Developer can generate a class from a bundle
-    [DHFPROD-351] - PII Configuration artifacts get deployed to data hub
+    [DHFPROD-351] - PII Configuration artifacts get deployed to Data Hub
     [DHFPROD-583] - Default document permissions (read) for harmonized entities
     [DHFPROD-606] - Default document permissions (update) for harmonized entities
     [DHFPROD-607] - API Service Developer can generate a Java database function with multipart payloads
@@ -772,7 +772,7 @@ Story
 
 - Update Spring Batch example to version 1.4.0 [\#622](https://github.com/marklogic/marklogic-data-hub/issues/622)
 - Update writers to be batched vs individualized - delete/dupe [\#617](https://github.com/marklogic/marklogic-data-hub/issues/617)
-- Quickstart data hub job status/error popup needs word wrap [\#582](https://github.com/marklogic/marklogic-data-hub/issues/582)
+- Quickstart Data Hub job status/error popup needs word wrap [\#582](https://github.com/marklogic/marklogic-data-hub/issues/582)
 - Export traces [\#571](https://github.com/marklogic/marklogic-data-hub/issues/571)
 - Create gradle command to generate a TDE Template [\#551](https://github.com/marklogic/marklogic-data-hub/issues/551)
 - Allow specifying flow options for harmonization flows run from quickstart [\#504](https://github.com/marklogic/marklogic-data-hub/issues/504)
@@ -816,7 +816,7 @@ Story
 - Collector's disk queue is filling up [\#601](https://github.com/marklogic/marklogic-data-hub/issues/601)
 - QuickStart Project Initialize does not recognize change to hostname [\#585](https://github.com/marklogic/marklogic-data-hub/issues/585)
 - Object type changed after upgrade to Hub 2.0 so fields are missing or undefined [\#583](https://github.com/marklogic/marklogic-data-hub/issues/583)
-- The mlUndeploy task does not completely remove a data hub [\#580](https://github.com/marklogic/marklogic-data-hub/issues/580)
+- The mlUndeploy task does not completely remove Data Hub [\#580](https://github.com/marklogic/marklogic-data-hub/issues/580)
 - MLCP failing on INPUT FLOW after upgrade [\#579](https://github.com/marklogic/marklogic-data-hub/issues/579)
 - info block for JSON [\#577](https://github.com/marklogic/marklogic-data-hub/issues/577)
 - QuickStart - Browse Data does not display content for certain URIs [\#557](https://github.com/marklogic/marklogic-data-hub/issues/557)
@@ -831,7 +831,7 @@ Story
 - Some broken links on docs-3.0 DHF Tutorial [\#930](https://github.com/marklogic/marklogic-data-hub/issues/930)
 - Data Hub website links still refer to old marklogic-community address [\#899](https://github.com/marklogic/marklogic-data-hub/issues/899)
 - Error when harmonising literal in triple [\#878](https://github.com/marklogic/marklogic-data-hub/issues/878)
-- One of the links to the data hub website on readme.md is broken [\#864](https://github.com/marklogic/marklogic-data-hub/issues/864)
+- One of the links to the Data Hub website on readme.md is broken [\#864](https://github.com/marklogic/marklogic-data-hub/issues/864)
 - Tutorial: need a goal [\#854](https://github.com/marklogic/marklogic-data-hub/issues/854)
 - Clean up inconsistencies in content/instance in documentation [\#848](https://github.com/marklogic/marklogic-data-hub/issues/848)
 - Error when trying to run mlDeploy from online store example on development branch [\#835](https://github.com/marklogic/marklogic-data-hub/issues/835)
@@ -1261,7 +1261,7 @@ Story
 - Saving the changes in a flow code never finishes \*sometimes\* [\#462](https://github.com/marklogic/marklogic-data-hub/issues/462)
 - Sometimes a trace for a failed Harmonize job is not available/not existing [\#461](https://github.com/marklogic/marklogic-data-hub/issues/461)
 - Unable to ingest image \(.png\) documents using DHF Quick-Start application [\#420](https://github.com/marklogic/marklogic-data-hub/issues/420)
-- Load files into the data hub schemas database [\#288](https://github.com/marklogic/marklogic-data-hub/issues/288)
+- Load files into the Data Hub schemas database [\#288](https://github.com/marklogic/marklogic-data-hub/issues/288)
 - Ability to override uri for input flows [\#182](https://github.com/marklogic/marklogic-data-hub/issues/182)
 - Create concept of a domain [\#82](https://github.com/marklogic/marklogic-data-hub/issues/82)
 
@@ -1286,7 +1286,7 @@ Story
 
 - MlcpRunner is being started improperly [\#452](https://github.com/marklogic/marklogic-data-hub/issues/452)
 - Code deploy fails when An entity is deleted [\#451](https://github.com/marklogic/marklogic-data-hub/issues/451)
-- error during data hub workshop [\#437](https://github.com/marklogic/marklogic-data-hub/issues/437)
+- error during Data Hub workshop [\#437](https://github.com/marklogic/marklogic-data-hub/issues/437)
 - when scaffolding code for an array, have it be empty list \[\] rather than null [\#432](https://github.com/marklogic/marklogic-data-hub/issues/432)
 - gradlew is generated without execute permission [\#428](https://github.com/marklogic/marklogic-data-hub/issues/428)
 - RunFlowTask using dyslexic string for hub key [\#419](https://github.com/marklogic/marklogic-data-hub/issues/419)
@@ -1317,7 +1317,7 @@ Story
 - Control what runs in update mode to minimize locking [\#300](https://github.com/marklogic/marklogic-data-hub/issues/300)
 - Library Modules not being autodeployed [\#299](https://github.com/marklogic/marklogic-data-hub/issues/299)
 - Uninstall doesn't always finish on the UI [\#266](https://github.com/marklogic/marklogic-data-hub/issues/266)
-- Consider name and description for data hub and tooling [\#175](https://github.com/marklogic/marklogic-data-hub/issues/175)
+- Consider name and description for Data Hub and tooling [\#175](https://github.com/marklogic/marklogic-data-hub/issues/175)
 
 ## [v2.0.0-beta.1](https://github.com/marklogic/marklogic-data-hub/tree/v2.0.0-beta.1) (2017-05-31)
 
@@ -1958,7 +1958,7 @@ Story
 - Uninstall now working. [\#31](https://github.com/marklogic/marklogic-data-hub/pull/31) ([paxtonhare](https://github.com/paxtonhare))
 - adding support for input and canonical in the dir tree [\#29](https://github.com/marklogic/marklogic-data-hub/pull/29) ([paxtonhare](https://github.com/paxtonhare))
 - Quick start domains and flows [\#28](https://github.com/marklogic/marklogic-data-hub/pull/28) ([maeisabelle](https://github.com/maeisabelle))
-- Added user plugin directory in setting up the Data Hub [\#27](https://github.com/marklogic/marklogic-data-hub/pull/27) ([maeisabelle](https://github.com/maeisabelle))
+- Added user plugin directory in setting up Data Hub [\#27](https://github.com/marklogic/marklogic-data-hub/pull/27) ([maeisabelle](https://github.com/maeisabelle))
 - Quick Start UI and configuration changes [\#26](https://github.com/marklogic/marklogic-data-hub/pull/26) ([maeisabelle](https://github.com/maeisabelle))
 - \#24 - adding the backend code to support deploying a user's modules [\#25](https://github.com/marklogic/marklogic-data-hub/pull/25) ([paxtonhare](https://github.com/paxtonhare))
 - Quick-start Flows and Collectors backend changes and minimal main page changes [\#19](https://github.com/marklogic/marklogic-data-hub/pull/19) ([maeisabelle](https://github.com/maeisabelle))
