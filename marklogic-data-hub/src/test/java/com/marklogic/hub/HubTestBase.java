@@ -969,7 +969,7 @@ public class HubTestBase {
 
     //installHubModules(), installUserModules() and clearUserModules() must be run as 'flow-developer'.
     protected void installHubModules() {
-        logger.debug("Installing Data Hub Framework modules into MarkLogic");
+        logger.debug("Installing Data Hub modules into MarkLogic");
         List<Command> commands = new ArrayList<>();
         commands.add(loadHubModulesCommand);
 
