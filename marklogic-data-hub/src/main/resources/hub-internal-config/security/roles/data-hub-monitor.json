@@ -1,0 +1,15 @@
+{
+  "role-name": "data-hub-monitor",
+  "description": "Data Hub role for a user that can monitor Data Hub activity",
+  "role": [
+    "manage-user",
+    "data-hub-job-reader"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "get-system-logs",
+      "action": "http://marklogic.com/xdmp/privileges/logs/system",
+      "kind": "execute"
+    }
+  ]
+}

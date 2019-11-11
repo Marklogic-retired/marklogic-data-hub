@@ -1,0 +1,19 @@
+{
+  "role-name": "data-hub-security-admin",
+  "description": "Data Hub role for a user that can perform some security tasks for a Data Hub application",
+  "role": [
+    "manage"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "role-set-external-names",
+      "action": "http://marklogic.com/xdmp/privileges/role-set-external-names",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "create-data-role",
+      "action": "http://marklogic.com/xdmp/privileges/create-data-role",
+      "kind": "execute"
+    }
+  ]
+}

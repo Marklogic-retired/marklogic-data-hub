@@ -7,5 +7,6 @@ module.exports = {
   HUBVERSION: "%%mlHubVersion%%",
   HUBLOGLEVEL: "%%mlHubLogLevel%%",
   FLOWOPERATORROLE: "%%mlFlowOperatorRole%%",
-  FLOWDEVELOPERROLE: "%%mlFlowDeveloperRole%%"
+  FLOWDEVELOPERROLE: "%%mlFlowDeveloperRole%%",
+  JOBPERMISSIONS: "%%mlJobPermissions%%"
 };

@@ -331,9 +331,23 @@ public class HubProjectImpl implements HubProject {
             IOUtils.closeQuietly(is);
         }
 
-        writeRoleFile(rolesDir, "data-hub-admin-role.json");
+        // New 5.2.0 roles
+        writeRoleFile(rolesDir, "data-hub-admin.json");
+        writeRoleFile(rolesDir, "data-hub-app-admin.json");
+        writeRoleFile(rolesDir, "data-hub-environment-manager.json");
+        writeRoleFile(rolesDir, "data-hub-job-internal.json");
+        writeRoleFile(rolesDir, "data-hub-job-reader.json");
+        writeRoleFile(rolesDir, "data-hub-monitor.json");
+        writeRoleFile(rolesDir, "data-hub-portal-security-admin.json");
+        writeRoleFile(rolesDir, "data-hub-security-admin.json");
+        writeRoleFile(rolesDir, "data-hub-user.json");
+
+        // New 5.1.0 roles
         writeRoleFile(rolesDir, "data-hub-entity-model-reader.json");
         writeRoleFile(rolesDir, "data-hub-explorer-architect.json");
+
+        // Legacy roles
+        writeRoleFile(rolesDir, "data-hub-admin-role.json");
         writeRoleFile(rolesDir, "flow-developer-role.json");
         writeRoleFile(rolesDir, "flow-operator-role.json");
 

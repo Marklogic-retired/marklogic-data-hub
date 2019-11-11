@@ -27,7 +27,6 @@ import com.marklogic.appdeployer.command.modules.DeleteTestModulesCommand;
 import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
 import com.marklogic.appdeployer.command.security.*;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
-import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.admin.QueryOptionsManager;
 import com.marklogic.client.admin.ResourceExtensionsManager;
 import com.marklogic.client.admin.ServerConfigurationManager;
@@ -723,6 +722,10 @@ public class DataHubImpl implements DataHub {
         List<Command> forestCommands = commandMap.get("mlForestCommands");
         DeployCustomForestsCommand deployCustomForestsCommand = (DeployCustomForestsCommand) forestCommands.get(0);
         deployCustomForestsCommand.setCustomForestsPath(hubConfig.getCustomForestPath());
+
+        List<Command> granularPrivilegeCommands = new ArrayList<>();
+        granularPrivilegeCommands.add(new CreateGranularPrivilegesCommand(hubConfig));
+        commandMap.put("hubGranularPrivilegeCommands", granularPrivilegeCommands);
 
         return commandMap;
     }

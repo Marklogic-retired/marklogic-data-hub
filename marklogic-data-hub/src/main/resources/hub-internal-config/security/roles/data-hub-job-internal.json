@@ -1,0 +1,4 @@
+{
+  "role-name": "data-hub-job-internal",
+  "description": "Data Hub role for permissions that grant update access to job documents"
+}

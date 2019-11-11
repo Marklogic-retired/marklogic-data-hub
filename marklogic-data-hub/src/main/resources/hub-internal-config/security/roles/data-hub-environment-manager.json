@@ -1,0 +1,8 @@
+{
+  "role-name": "data-hub-environment-manager",
+  "description": "Data Hub role a user that can install a Data Hub application",
+  "role": [
+    "manage-admin",
+    "security"
+  ]
+}
