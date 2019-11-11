@@ -1,4 +1,12 @@
-.sidebarContainer {
+.sideBarContainer {
+  overflow-y: auto;
+  position: fixed;
+  width: 300px;
+  max-height: 93vh;
+  background-color: whitesmoke;
+}
+
+.sideBarFacets {
   background-color: rgb(245, 245, 245);
   width: 100%;
   height: 100%;
@@ -58,10 +66,3 @@
   margin: 2px 2px 2px 0;
 }
 
-.sideBarFacets {
-  overflow-y: auto;
-  position: fixed;
-  width: 300px;
-  max-height: 93vh;
-  background-color: whitesmoke;
-}

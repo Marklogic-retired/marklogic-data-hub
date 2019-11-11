@@ -2,7 +2,8 @@
   background: #fff;
   padding: 24px;
   margin-left: 300px;
-  margin-top: 50px;
+  margin-top: 26px;
+  width: 100%
 }
 
 .sideBarFacets {
@@ -13,7 +14,8 @@
 
 .searchBar {
   position: fixed;
-  width: 74%;
   z-index: 1;
+  left: 324px;
+  right: 20px;
 }
 
