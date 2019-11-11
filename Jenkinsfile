@@ -115,7 +115,7 @@ pipeline{
 		stage('code-review'){
 		when {
   			 allOf {
-    changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'develop', title: '', url: ''
+    changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: '5.1-develop', title: '', url: ''
   }
   			beforeAgent true
 		}
@@ -155,7 +155,7 @@ pipeline{
 		}
 		stage('PR'){
 		when {
-  			changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'develop', title: '', url: ''
+  			changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: '5.1-develop', title: '', url: ''
   			beforeAgent true
 		}
 		agent {label 'dhmaster'};
@@ -236,7 +236,7 @@ pipeline{
 		}
 		stage('rh7-singlenode'){
 		when {
-  			branch 'develop'
+  			branch '5.1-develop'
 			}
 			agent { label 'dhfLinuxAgent'}
 			steps{
@@ -471,7 +471,7 @@ pipeline{
 			agent { label 'dhmaster'}
 			steps{ 
 					script{
-           def Returnresult=build job: '/5.x/dhf-core-develop-winserver2012-cluster_10.0-2', propagate: false
+           def Returnresult=build job: '/5.x/dhf-core-5.1-develop-winserver2012-cluster_10.0-2', propagate: false
                currentBuild.result=Returnresult.result;
 				 commitMessage = sh (returnStdout: true, script:'''
 			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
@@ -501,7 +501,7 @@ pipeline{
 			agent { label 'dhmaster'}
 			steps{ 
 					script{
-          def Returnresult=build job: '/5.x/dhf-core-develop-winserver2012-cluster_9.0-10', propagate: false
+          def Returnresult=build job: '/5.x/dhf-core-5.1-develop-winserver2012-cluster_9.0-10', propagate: false
                currentBuild.result=Returnresult.result;
 				 commitMessage = sh (returnStdout: true, script:'''
 			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
@@ -531,7 +531,7 @@ pipeline{
 			agent { label 'dhmaster'}
 			steps{ 
 					script{
-          def Returnresult=build job: '/5.x/dhf-core-develop-winserver2012-cluster', propagate: false
+          def Returnresult=build job: '/5.x/dhf-core-5.1-develop-winserver2012-cluster', propagate: false
                currentBuild.result=Returnresult.result;
 				 commitMessage = sh (returnStdout: true, script:'''
 			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
@@ -561,7 +561,7 @@ pipeline{
 			agent { label 'dhmaster'}
 			steps{ 
 					script{
-          def Returnresult=build job: '/5.x/NO_CI_dhf-qs-develop-rh7', propagate: false
+          def Returnresult=build job: '/5.x/NO_CI_dhf-qs-5.1-develop-rh7', propagate: false
                currentBuild.result=Returnresult.result;
 				 commitMessage = sh (returnStdout: true, script:'''
 			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
@@ -589,7 +589,7 @@ pipeline{
         			agent { label 'dhmaster'}
         			steps{
         					script{
-                  def Returnresult=build job: '/5.x/NO_CI_dhf-qs-develop-rh7_ML10', propagate: false
+                  def Returnresult=build job: '/5.x/NO_CI_dhf-qs-5.1-develop-rh7_ML10', propagate: false
                        currentBuild.result=Returnresult.result;
         				 commitMessage = sh (returnStdout: true, script:'''
         			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
@@ -617,7 +617,7 @@ pipeline{
         			agent { label 'dhmaster'}
         			steps{
         					script{
-                  def Returnresult=build job: '/5.x/NO_CI_dhf-qs-develop-rh7_90_ReleaseBuild', propagate: false
+                  def Returnresult=build job: '/5.x/NO_CI_dhf-qs-5.1-develop-rh7_90_ReleaseBuild', propagate: false
                        currentBuild.result=Returnresult.result;
         				 commitMessage = sh (returnStdout: true, script:'''
         			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
@@ -645,7 +645,7 @@ pipeline{
                 			agent { label 'dhmaster'}
                 			steps{
                 					script{
-                          def Returnresult=build job: '/5.x/NO_CI_dhf-qs-develop-rh7_10_ReleaseBuild', propagate: false
+                          def Returnresult=build job: '/5.x/NO_CI_dhf-qs-5.1-develop-rh7_10_ReleaseBuild', propagate: false
                                currentBuild.result=Returnresult.result;
                 				 commitMessage = sh (returnStdout: true, script:'''
                 			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
@@ -682,7 +682,7 @@ pipeline{
 		}
 		stage('Merge PR to Release Branch'){
 		when {
-  			branch 'develop'
+  			branch '5.1-develop'
   			beforeAgent true
 		}
 		agent {label 'dhmaster'}
@@ -691,7 +691,7 @@ pipeline{
 		script{
 			//JIRA_ID=env.CHANGE_TITLE.split(':')[0]
 			prResponse = sh (returnStdout: true, script:'''
-			curl -u $Credentials  -X POST -H 'Content-Type:application/json' -d '{\"title\": \"Automated PR for Release Branch\" , \"head\": \"develop\" , \"base\": \"'''+props['ReleaseBranch']+'''\" }' '''+githubAPIUrl+'''/pulls ''')
+			curl -u $Credentials  -X POST -H 'Content-Type:application/json' -d '{\"title\": \"Automated PR for Release Branch\" , \"head\": \"5.1-develop\" , \"base\": \"'''+props['ReleaseBranch']+'''\" }' '''+githubAPIUrl+'''/pulls ''')
 			println(prResponse)
 			def slurper = new JsonSlurper().parseText(prResponse)
 			println(slurper.number)
