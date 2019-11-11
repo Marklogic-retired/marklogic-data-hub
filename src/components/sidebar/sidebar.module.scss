@@ -1,5 +1,13 @@
-.sidebarContainer {
-	background-color: rgb(245, 245, 245);
+.sideBarContainer {
+  overflow-y: auto;
+  position: fixed;
+  width: 300px;
+  max-height: 93vh;
+  background-color: whitesmoke;
+}
+
+.sideBarFacets {
+  background-color: rgb(245, 245, 245);
   width: 100%;
   height: 100%;
   padding: 0 0 0 5px;
@@ -57,3 +65,4 @@
   width: 225px;
   margin: 2px 2px 2px 0;
 }
+

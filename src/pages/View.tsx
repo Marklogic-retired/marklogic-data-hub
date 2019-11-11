@@ -81,8 +81,10 @@ const View: React.FC = () => {
   return (
     <Layout className={styles.container}>
       <Content>
-        {isLoading || user.error.type === 'ALERT'  ? 
-          <AsyncLoader/> 
+        {isLoading || user.error.type === 'ALERT'  ?
+            <div style={{marginTop : '40px'}}>
+          <AsyncLoader/>
+            </div>
           :
           <>
             <div className={styles.statsContainer} data-cy="total-container">

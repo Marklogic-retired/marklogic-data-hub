@@ -76,9 +76,9 @@ const Detail: React.FC<Props> = ({ history, location }) => {
 
   return (
     <Layout>
-      <Content style={{ background: '#fff', padding: '18px 36px' }}>
+      <Content className= {styles.detailContent}>
         <div id='back-button'>
-          <PageHeader style={{ padding: '0px', marginBottom: '20px' }} onBack={() => history.push('/browse')} title={<Link to={{ pathname: "/browse" }} data-cy="back-button">Back</Link>} />
+          <PageHeader onBack={() => history.push('/browse')} title={<Link to={{ pathname: "/browse" }} data-cy="back-button">Back</Link>} />
         </div>
         <div className={styles.header}>
           <div className={styles.heading}>
@@ -97,7 +97,9 @@ const Detail: React.FC<Props> = ({ history, location }) => {
         </div>
         <div>
           {
-            isLoading || user.error.type === 'ALERT' ? <AsyncLoader />
+            isLoading || user.error.type === 'ALERT' ?  <div style={{marginTop : '40px'}}>
+                  <AsyncLoader/>
+                </div>
               :
               contentType === 'json' ?
                 selected === 'instance' ? (data && <TableView document={data} contentType={contentType} />) : (data && <JsonView document={data} />)
