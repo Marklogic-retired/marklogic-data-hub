@@ -16,7 +16,7 @@
 package com.marklogic.hub.error;
 
 /**
- * An exception to wrap issues found while configuring the Data Hub Framework
+ * An exception to wrap issues found while configuring the Data Hub
  */
 public class DataHubConfigurationException extends RuntimeException {
     public DataHubConfigurationException() {

@@ -277,7 +277,7 @@
 **Fixed bugs:**
 - empty collector result should be finished instead of failed job [\#1715](https://github.com/marklogic/marklogic-data-hub/issues/1715)
 - gradle hubRunFlow options does not lose dhf prefix [\#1536](https://github.com/marklogic/marklogic-data-hub/issues/1536)
-- [DHFPROD-1930] Data Hub Framework URI handling with diacritics
+- [DHFPROD-1930] Data Hub URI handling with diacritics
 - [DHFPROD-1929] Triggers dont get deployed to staging-triggers
 # [v4.2.1](https://github.com/marklogic/marklogic-data-hub/tree/v4.2.1) (2019-02-27)
 
@@ -784,7 +784,7 @@ Story
 - gradlew quick-start:e2eLaunch could not find or load main class com.marklogic.quickstart.Application [\#877](https://github.com/marklogic/marklogic-data-hub/issues/877)
 - Tutorial: version numbers don't match [\#852](https://github.com/marklogic/marklogic-data-hub/issues/852)
 - Example in documentation is incorrect [\#845](https://github.com/marklogic/marklogic-data-hub/issues/845)
-- README.md link to "Data Hub Framework website" in "Advanced Hub Usage" is broken [\#837](https://github.com/marklogic/marklogic-data-hub/issues/837)
+- README.md link to "Data Hub website" in "Advanced Hub Usage" is broken [\#837](https://github.com/marklogic/marklogic-data-hub/issues/837)
 - defaults are missing on hub init tab [\#833](https://github.com/marklogic/marklogic-data-hub/issues/833)
 - Getting Started Tutorial: More issues [\#818](https://github.com/marklogic/marklogic-data-hub/issues/818)
 - Running input flow produces error "MISSING\_CURRENT\_TRACE" and the documents are not loaded [\#814](https://github.com/marklogic/marklogic-data-hub/issues/814)
@@ -829,9 +829,9 @@ Story
 **Closed issues:**
 
 - Some broken links on docs-3.0 DHF Tutorial [\#930](https://github.com/marklogic/marklogic-data-hub/issues/930)
-- Data Hub Framework website links still refer to old marklogic-community address [\#899](https://github.com/marklogic/marklogic-data-hub/issues/899)
+- Data Hub website links still refer to old marklogic-community address [\#899](https://github.com/marklogic/marklogic-data-hub/issues/899)
 - Error when harmonising literal in triple [\#878](https://github.com/marklogic/marklogic-data-hub/issues/878)
-- One of the links to the data hub framework website on readme.md is broken [\#864](https://github.com/marklogic/marklogic-data-hub/issues/864)
+- One of the links to the data hub website on readme.md is broken [\#864](https://github.com/marklogic/marklogic-data-hub/issues/864)
 - Tutorial: need a goal [\#854](https://github.com/marklogic/marklogic-data-hub/issues/854)
 - Clean up inconsistencies in content/instance in documentation [\#848](https://github.com/marklogic/marklogic-data-hub/issues/848)
 - Error when trying to run mlDeploy from online store example on development branch [\#835](https://github.com/marklogic/marklogic-data-hub/issues/835)
@@ -1317,7 +1317,7 @@ Story
 - Control what runs in update mode to minimize locking [\#300](https://github.com/marklogic/marklogic-data-hub/issues/300)
 - Library Modules not being autodeployed [\#299](https://github.com/marklogic/marklogic-data-hub/issues/299)
 - Uninstall doesn't always finish on the UI [\#266](https://github.com/marklogic/marklogic-data-hub/issues/266)
-- Consider name and description for data hub framework and tooling [\#175](https://github.com/marklogic/marklogic-data-hub/issues/175)
+- Consider name and description for data hub and tooling [\#175](https://github.com/marklogic/marklogic-data-hub/issues/175)
 
 ## [v2.0.0-beta.1](https://github.com/marklogic/marklogic-data-hub/tree/v2.0.0-beta.1) (2017-05-31)
 

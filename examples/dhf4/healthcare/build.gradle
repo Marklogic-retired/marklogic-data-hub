@@ -3,9 +3,9 @@ plugins {
     // for multiple environments... like dev, qa, prod
     id 'net.saliman.properties' version '1.4.6'
 
-    // this is the data hub framework gradle plugin
+    // this is the Data Hub gradle plugin
     // it includes ml-gradle. This plugin is what lets you
-    // run DHF (Data Hub Framework) tasks from the
+    // run DHF (Data Hub) tasks from the
     // command line
     id 'com.marklogic.ml-data-hub' version '4.1.0'
 }
