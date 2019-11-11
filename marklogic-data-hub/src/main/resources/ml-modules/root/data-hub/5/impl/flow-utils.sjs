@@ -111,7 +111,7 @@ class FlowUtils {
       }
     } else if (inputFormat === dataFormat) {
       if(content instanceof Element &&  content.nodeName.toLowerCase() === 'root' && content.namespaceURI.toLowerCase() === ""){
-        instance = Sequence.from(content.xpath('/root/node()'));
+        instance = Sequence.from(content.xpath('node()'));
       } else {
         if(content['$attachments']) {
           attachments = content['$attachments'];
@@ -119,10 +119,9 @@ class FlowUtils {
         }
         instance = content;
       }
-    } else if (dataFormat === this.consts.XML && inputFormat === this.consts.JSON) {
-      instance = this.jsonToXml(content);
-    } else if (dataFormat === this.consts.JSON && inputFormat === this.consts.XML) {
-      instance = this.xmlToJson(content);
+    } else {
+      // cleanData has already changed the content body to the expected output
+      instance = content;
     }
 
     if (dataFormat === this.consts.JSON) {
@@ -249,7 +248,8 @@ class FlowUtils {
       if (resp instanceof Object && resp.hasOwnProperty('$type')) {
         return resp;
       } else if (dataFormat === this.consts.XML) {
-        return json.transformFromJson(resp, json.config("custom"));
+        const xmlResp = this.jsonToXml(resp);
+        return xmlResp;
       } else {
         return resp;
       }
@@ -481,23 +481,26 @@ class FlowUtils {
 
   jsonToXmlNodeBuilder(content, nb = new NodeBuilder()) {
     if (this.isNonStringIterable(content)) {
-      for (let subContent of content) {
+      for (const subContent of content) {
         this.jsonToXmlNodeBuilder(subContent, nb);
       }
+    } else if (content instanceof xs.anyAtomicType) {
+      nb.addText(fn.string(content));
     } else if (content instanceof Object) {
-      for (let propName in content) {
+      for (const propName in content) {
         if (content.hasOwnProperty(propName)) {
-          let propValues = content[propName];
+          const propValues = content[propName];
+          const elementName = (!xdmp.castableAs("http://www.w3.org/2001/XMLSchema", "QName", propName)) ? xdmp.encodeForNCName(propName) : propName;
           if (propValues instanceof Array) {
             for (let propValueIndex in propValues) {
               if (propValues.hasOwnProperty(propValueIndex)) {
-                nb.startElement(propName);
+                nb.startElement(elementName);
                 this.jsonToXmlNodeBuilder(propValues[propValueIndex], nb);
                 nb.endElement();
               }
             }
           } else {
-            nb.startElement(propName);
+            nb.startElement(elementName);
             this.jsonToXmlNodeBuilder(propValues, nb);
             nb.endElement();
           }
