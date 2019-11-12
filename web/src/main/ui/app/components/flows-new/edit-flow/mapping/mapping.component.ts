@@ -430,15 +430,26 @@ export class MappingComponent implements OnInit {
           } else {
             self.nmspace[node.getAttribute(name).slice(ind)] = node.getAttribute(name);
           }
-          if(node.nodeName.split(':').length > 1){
-            nodeWithAttr = node.getAttribute(name).slice(ind) + ':' + node.nodeName.split(':')[1];
-          } else {
-            nodeWithAttr = node.getAttribute(name).slice(ind) + ':' + node.nodeName;
+          if(name === 'xmlns'){
+            if(node.nodeName.split(':').length > 1){
+              nodeWithAttr = node.getAttribute(name).slice(ind) + ':' + node.nodeName.split(':')[1];
+            } else {
+              nodeWithAttr = node.getAttribute(name).slice(ind) + ':' + node.nodeName;
+            }
           }
-          
           count = count + 1;
         }
       }
+    }
+    //grabbing the default namespace for an element, if no xmlns property is provided explicitely.
+    if(nodeWithAttr === '' && node.namespaceURI){
+      let indCheck = node.namespaceURI.lastIndexOf('/');
+          let ind = indCheck != -1 ? indCheck + 1 : 0;
+          if(node.nodeName.split(':').length > 1){
+            nodeWithAttr = node.namespaceURI.slice(ind) + ':' + node.nodeName.split(':')[1];
+          } else {
+            nodeWithAttr = node.namespaceURI.slice(ind) + ':' + node.nodeName;
+          }
     }
     return nodeWithAttr;
   }
@@ -512,6 +523,7 @@ export class MappingComponent implements OnInit {
           targetEntityType: targetEntityType,
           sourceContext:    this.mapping.sourceContext || '/',
           sourceURI:        this.sampleDocURI || '',
+          namespaces:       this.nmspace || {},
           properties:       formattedConns
         };
     console.log('save mapping', mapObj);
