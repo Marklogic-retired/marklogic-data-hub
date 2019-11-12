@@ -1,0 +1,88 @@
+{
+  "info" : {
+    "title" : "Person",
+    "version" : "0.0.1",
+    "baseUri" : "http://example.org/"
+  },
+  "definitions" : {
+    "Address" : {
+      "required" : [ ],
+      "pii" : [ ],
+      "elementRangeIndex" : [ ],
+      "rangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "street" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "state" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "zip" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        }
+      }
+    },
+    "Person" : {
+      "required" : [ ],
+      "pii" : [ ],
+      "elementRangeIndex" : [ ],
+      "rangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "ssn" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "names" : {
+          "datatype" : "array",
+          "description" : "Modified",
+          "items" : {
+            "$ref" : "#/definitions/Name"
+          }
+        },
+        "educationLevel" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "dateOfBirth" : {
+          "datatype" : "date"
+        },
+        "lastUpdated" : {
+          "datatype" : "dateTime"
+        },
+        "address" : {
+          "$ref" : "#/definitions/Address"
+        }
+      }
+    },
+    "Name" : {
+      "required" : [ ],
+      "pii" : [ ],
+      "elementRangeIndex" : [ ],
+      "rangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "prefix" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "first" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "middle" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "last" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}

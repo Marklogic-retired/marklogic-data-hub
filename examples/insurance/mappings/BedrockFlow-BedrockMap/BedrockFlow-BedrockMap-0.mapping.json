@@ -3,8 +3,29 @@
   "name" : "BedrockFlow-BedrockMap",
   "description" : "",
   "version" : 0,
-  "targetEntityType" : "Customer-0.0.1/Customer",
+  "targetEntityType" : "http://example.org/Customer-0.0.1/Customer",
   "sourceContext" : "/",
-  "sourceURI" : "",
-  "properties" : { }
+  "properties" : {
+    "firstname" : {
+      "sourcedFrom" : "first_name"
+    },
+    "pin" : {
+      "sourcedFrom" : "pin"
+    },
+    "id" : {
+      "sourcedFrom" : "id"
+    },
+    "postal" : {
+      "sourcedFrom" : "zip"
+    },
+    "updated" : {
+      "sourcedFrom" : "last_updated"
+    },
+    "email" : {
+      "sourcedFrom" : "email"
+    },
+    "lastname" : {
+      "sourcedFrom" : "last_name"
+    }
+  }
 }
