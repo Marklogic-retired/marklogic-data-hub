@@ -31,5 +31,6 @@ yarn-error.log*
 /.idea
 
 /junit.xml
+/cobertura-coverage.xml
 /coverage-final.json
 /e2e/qa-project/.tmp

@@ -38,7 +38,7 @@ pipeline{
 		agent { label 'explorerLinux'}
 			steps{
 				sh 'cd $WORKSPACE/explorer-ui;npm install; CI=true npm run test | true'
-				junit '**/*.xml'
+				junit 'explorer-ui/junit.xml'
 				script{
 				if(env.CHANGE_TITLE){
 				JIRA_ID=env.CHANGE_TITLE.split(':')[0]
