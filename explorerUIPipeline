@@ -39,6 +39,7 @@ pipeline{
 			steps{
 				sh 'cd $WORKSPACE/explorer-ui;npm install; CI=true npm run test | true'
 				junit 'explorer-ui/junit.xml'
+				cobertura coberturaReportFile: 'explorer-ui/cobertura-coverage.xml'
 				script{
 				if(env.CHANGE_TITLE){
 				JIRA_ID=env.CHANGE_TITLE.split(':')[0]
