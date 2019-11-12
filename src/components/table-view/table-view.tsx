@@ -24,18 +24,20 @@ const TableView: React.FC<Props> = (props) => {
     return parsedData;
   }
 
-  if (props.contentType === 'json') {
-    Object.keys(props.document.envelope.instance).forEach(instance => {
-      if (instance !== 'info') {
-        data = parseJson(props.document.envelope.instance[instance]);
-      }
-    });
-  } else if (props.contentType === 'xml') {
-    Object.keys(props.document.content.envelope.instance).forEach(instance => {
-      if (instance !== 'info') {
-        data = parseJson(props.document.content.envelope.instance[instance]);
-      }
-    });
+  if (props.document.envelope || props.document.content.envelope) {
+    if (props.contentType === 'json') {
+      Object.keys(props.document.envelope.instance).forEach(instance => {
+        if (instance !== 'info') {
+          data = parseJson(props.document.envelope.instance[instance]);
+        }
+      });
+    } else if (props.contentType === 'xml') {
+      Object.keys(props.document.content.envelope.instance).forEach(instance => {
+        if (instance !== 'info') {
+          data = parseJson(props.document.content.envelope.instance[instance]);
+        }
+      });
+    }
   }
 
   const handleClick = () => {
