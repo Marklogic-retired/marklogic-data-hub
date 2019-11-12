@@ -62,7 +62,12 @@ const SearchResult: React.FC<Props> = (props) => {
   }
 
   if (itemEntityProperties.length && entityDef.primaryKey) {
-    primaryKeyValue = encodeURIComponent(itemEntityProperties[0][entityDef.primaryKey]);
+    if(Array.isArray(itemEntityProperties[0]) && itemEntityProperties[0].length){
+      primaryKeyValue = encodeURIComponent(props.item.uri);
+    }
+    else{
+      primaryKeyValue = encodeURIComponent(itemEntityProperties[0][entityDef.primaryKey]);
+    }
   }
 
   function getSnippet() {
