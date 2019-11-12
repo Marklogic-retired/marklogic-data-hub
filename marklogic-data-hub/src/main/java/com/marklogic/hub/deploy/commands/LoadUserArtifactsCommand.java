@@ -37,7 +37,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileVisitResult;
@@ -87,16 +86,6 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
 
         if (forceLoad) {
             pmm.deletePropertiesFile();
-
-            // Need to delete ml-javaclient-utils timestamp file as well as modules present in the standard gradle locations are now
-            // loaded by the modules loader in the parent class which adds these entries to the ml-javaclient-utils timestamp file
-            String filePath = hubConfig.getAppConfig().getModuleTimestampsPath();
-            if (filePath != null) {
-                File defaultTimestampFile = new File(filePath);
-                if (defaultTimestampFile.exists()) {
-                    defaultTimestampFile.delete();
-                }
-            }
         }
         return pmm;
     }
