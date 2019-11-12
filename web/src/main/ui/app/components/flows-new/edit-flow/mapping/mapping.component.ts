@@ -257,6 +257,8 @@ export class MappingComponent implements OnInit {
         
       });
       self.sampleDocNestedProps = this.updateNestedDataSourceNew(startRootNew,ParentKeyValuePair);
+      console.log("startRootNew",startRootNew);
+      console.log("self.sampleDocNestedProps",self.sampleDocNestedProps)
       if (save) {
         this.saveMap();
         console.log('map saved');
@@ -304,6 +306,9 @@ export class MappingComponent implements OnInit {
                 if (childNode.attributes) {
                   nodeWithAttr = self.loadNamespace(childNode);
                 }
+                if(nodeWithAttr == ''){
+                  nodeWithAttr = self.checkNamespacePrefix(childNode);
+                }
 
                 let tempObj = {};
 
@@ -342,6 +347,9 @@ export class MappingComponent implements OnInit {
               if (childNode.attributes) {
                 nodeWithAttr = self.loadNamespace(childNode);
               }
+              if(nodeWithAttr == ''){
+                nodeWithAttr = self.checkNamespacePrefix(childNode);
+              }
 
               let ob = { [`${nodeWithAttr == '' ? childNode.nodeName : nodeWithAttr}`]: tempObj }
               if (obj[childNode.nodeName + "/"].constructor.name === 'Array') {
@@ -357,6 +365,13 @@ export class MappingComponent implements OnInit {
                 if (childNode.attributes) {
                   nodeWithAttr = self.loadNamespace(childNode);
                 }
+                if(nodeWithAttr == '' && childNode.nodeName.split(':').length > 1){
+                  let name = childNode.nodeName.split(':')[0];
+                  console.log("called outside namspace",name,name == 'r',self.nmspace.hasOwnProperty('r') ,self.nmspace,self.checkNamespacePrefix(childNode))
+                }
+                if(nodeWithAttr == ''){
+                  nodeWithAttr = self.checkNamespacePrefix(childNode);
+                }
                 obj[nodeWithAttr == '' ? childNode.nodeName : nodeWithAttr] = childNode.textContent;
 
                 //loading attributes
@@ -369,6 +384,9 @@ export class MappingComponent implements OnInit {
                 if (childNode.attributes) {
                   //loading namespaces
                   nodeWithAttr = self.loadNamespace(childNode);
+                }
+                if(nodeWithAttr == ''){
+                  nodeWithAttr = self.checkNamespacePrefix(childNode);
                 }
               }
               obj[nodeWithAttr == '' ? childNode.nodeName : nodeWithAttr] = {};
@@ -413,13 +431,36 @@ export class MappingComponent implements OnInit {
         if(count == 0){
           let indCheck = node.getAttribute(name).lastIndexOf('/');
           let ind = indCheck != -1 ? indCheck + 1 : 0;
-          nodeWithAttr = node.getAttribute(name).slice(ind) + ':' + node.nodeName;
-          self.nmspace[node.getAttribute(name).slice(ind)] = node.getAttribute(name);
+          
+          //self.nmspace[node.getAttribute(name).slice(ind)] = node.getAttribute(name);
+          if(name.split(':').length > 1){
+            self.nmspace[name.split(':')[1]] = node.getAttribute(name);
+            self.nmspace[node.getAttribute(name).slice(ind)] = node.getAttribute(name);
+          } else {
+            self.nmspace[node.getAttribute(name).slice(ind)] = node.getAttribute(name);
+          }
+          if(node.nodeName.split(':').length > 1){
+            nodeWithAttr = node.getAttribute(name).slice(ind) + ':' + node.nodeName.split(':')[1];
+          } else {
+            nodeWithAttr = node.getAttribute(name).slice(ind) + ':' + node.nodeName;
+          }
+          
           count = count + 1;
         }
-      };
+      }
     }
     return nodeWithAttr;
+  }
+
+  checkNamespacePrefix(node): string {
+    let newNode = '';
+    if(node.nodeName.split(':').length > 1 && node.nodeName.split(':')[0] in this.nmspace) {
+      console.log("called nmspace", node.nodeName)
+      let indCheck = this.nmspace[node.nodeName.split(':')[0]].lastIndexOf('/');
+      let ind = indCheck != -1 ? indCheck + 1 : 0;
+      newNode = this.nmspace[node.nodeName.split(':')[0]].slice(ind) + ':' + node.nodeName.split(':')[1];
+    }
+    return newNode;
   }
   //load attributes for an xml node
   loadAttributes(node, obj, type: string): void {
