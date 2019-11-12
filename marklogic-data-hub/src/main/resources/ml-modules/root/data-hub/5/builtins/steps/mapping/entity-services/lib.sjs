@@ -254,12 +254,13 @@ function validateMapping(mapping) {
         const fullTargetEntity = mapping.targetEntityType.substring(0, mapping.targetEntityType.lastIndexOf('/') + 1) + definitionName;
         mappedProperty.targetEntityType = fullTargetEntity;
       }
+      mappedProperty.namespaces = mapping.namespaces;
       mappedProperty = validateMapping(mappedProperty);
     }
 
     // Validate the mapping expression, and if an error occurs, add it to the mapped property object
     let sourcedFrom = mappedProperty.sourcedFrom;
-    let errorMessage = validatePropertyMapping(mapping.targetEntityType, propertyName, sourcedFrom);
+    let errorMessage = validatePropertyMapping(mapping, propertyName, sourcedFrom);
     if (errorMessage != null) {
       mappedProperty.errorMessage = errorMessage;
     }
@@ -273,14 +274,15 @@ function validateMapping(mapping) {
 /**
  * Validate a single property mapping by constructing a mapping consisting of just the given property mapping.
  *
- * @param targetEntityType
+ * @param fullMapping
  * @param propertyName
  * @param sourcedFrom
  * @return an error message if the mapping validation fails
  */
-function validatePropertyMapping(targetEntityType, propertyName, sourcedFrom) {
+function validatePropertyMapping(fullMapping, propertyName, sourcedFrom) {
   let mapping = {
-    "targetEntityType": targetEntityType,
+    "namespaces": fullMapping.namespaces,
+    "targetEntityType": fullMapping.targetEntityType,
     "properties": {}
   };
 
@@ -293,7 +295,7 @@ function validatePropertyMapping(targetEntityType, propertyName, sourcedFrom) {
     // As of trunk 10.0-20190916, mappings are being validated against entity schemas in the schema database.
     // This doesn't seem expected, as the validation will almost always fail.
     // Thus, this is not using es.mappingCompile, which does validation, and just invokes the transform instead.
-    let stylesheet = xdmp.xsltInvoke("/MarkLogic/entity-services/mapping-compile.xsl", xmlMapping)
+    let stylesheet = xdmp.xsltInvoke("/MarkLogic/entity-services/mapping-compile.xsl", xmlMapping);
     xdmp.xsltEval(stylesheet, [], {staticCheck: true});
   } catch (e) {
     // TODO Move this into a separate function for easier testing?
@@ -301,14 +303,14 @@ function validatePropertyMapping(targetEntityType, propertyName, sourcedFrom) {
   }
 }
 
-function runMapping(mapping, uri, propMapping={"targetEntityType":mapping.targetEntityType,"properties": {}}, paths=['properties']) {
+function runMapping(mapping, uri, propMapping={"targetEntityType":mapping.targetEntityType, "namespaces": mapping.namespaces,"properties": {}}, paths=['properties']) {
   Object.keys(mapping.properties).forEach(propertyName => {
     let mappedProperty = mapping.properties[propertyName];
     let sourcedFrom = mappedProperty.sourcedFrom;
     paths.push(propertyName);
     if(!mappedProperty.errorMessage){
       if (mappedProperty.hasOwnProperty("targetEntityType")) {
-        propMapping = addNode(propMapping, paths, mappedProperty,  true)
+        propMapping = addNode(propMapping, paths, mappedProperty, true);
         paths.push("properties");
         mappedProperty = runMapping(mappedProperty, uri, propMapping, paths);
         paths.pop();
@@ -354,12 +356,13 @@ function getCanonicalInstance(mapping, uri, propertyName) {
 }
 
 function addNode(obj, paths, mappedProperty, isNested ) {
-  var res=obj;
-  for (var i=0;i<paths.length -1;i++) {
+  let res=obj;
+  const namespaces = res.namespaces;
+  for (let i=0;i<paths.length -1;i++) {
     obj=obj[paths[i]];
   }
   if(isNested){
-    obj[paths[paths.length -1]] = {"targetEntityType" : mappedProperty.targetEntityType,"sourcedFrom": mappedProperty.sourcedFrom,"properties": {}};
+    obj[paths[paths.length -1]] = {"targetEntityType" : mappedProperty.targetEntityType, namespaces,"sourcedFrom": mappedProperty.sourcedFrom,"properties": {}};
   }
   else {
    obj[paths[paths.length -1]] = {"sourcedFrom": mappedProperty.sourcedFrom};
