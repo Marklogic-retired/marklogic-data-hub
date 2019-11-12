@@ -23,7 +23,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.web.WebApplication;
 import com.marklogic.hub.web.model.MappingModel;
-import java.io.IOException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,6 +30,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -134,5 +135,29 @@ public class MappingManagerServiceTest extends AbstractServiceTest {
         JsonNode jsonNode = objectMapper.readTree(jsonString);
 
         assertNotNull(mappingManagerService.saveMapping(mappingName, jsonNode));
+    }
+
+    @Test
+    public void testMappingWithNamespaces() throws IOException {
+        String mappingName = "test namespace mapping";
+        String jsonString = "{" +
+            "   \"lang\":\"zxx\"," +
+            "   \"name\":\"" + mappingName + "\"," +
+            "   \"description\":\"\"," +
+            "   \"version\":\"0\"," +
+            "   \"targetEntityType\":\"http://example.org/" + ENTITY + "-0.0.1/" + ENTITY + "\"," +
+            "   \"sourceContext\":\"\"," +
+            "   \"sourceURI\":\"\"," +
+            "   \"namespaces\":{ \"ns1\": \"http://marklogic.com/ns1\"}," +
+            "   \"properties\":{}" +
+            "}";
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(jsonString);
+
+        assertNotNull(mappingManagerService.saveMapping(mappingName, jsonNode));
+
+        MappingModel mappingModel = mappingManagerService.getMapping(mappingName, false);
+        assertEquals("http://marklogic.com/ns1", mappingModel.getNamespaces().get("ns1").asText());
     }
 }
