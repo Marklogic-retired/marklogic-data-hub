@@ -50,7 +50,7 @@ const DetailHeader: React.FC<Props> = (props) => {
   } else if (fileType === 'xml') {
     if (props.document.content.envelope) {
       envelope = props.document.content.envelope;
-      if (envelope !== 'undefined' && envelope.hasOwnProperty('headers')) {
+      if (envelope.hasOwnProperty('headers')) {
         timestamp = envelope.headers.hasOwnProperty('createdOn') && envelope.headers.createdOn;
         sources = envelope.headers.hasOwnProperty('sources') && envelope.headers.sources.name;
       }
