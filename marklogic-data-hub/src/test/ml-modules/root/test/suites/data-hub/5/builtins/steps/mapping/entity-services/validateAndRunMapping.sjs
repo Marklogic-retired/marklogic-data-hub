@@ -53,16 +53,15 @@ function incorrectNumberOfFunctionArguments() {
   ];
 }
 
-function testValidateAndRunMapping() {
-  let map = cts.doc("/mappings/PersonMapping/PersonMapping-3.mapping.json").toObject();
-  let uri = "/content/person2.json";
+function testValidateAndRunMapping(mapURI = "/mappings/PersonMapping/PersonMapping-3.mapping.json", uri = "/content/person2.json") {
+  let map = cts.doc(mapURI).toObject();
   let result = esMappingLib.validateAndRunMapping(map, uri);
   return [
-    test.assertEqual(222, fn.number(result.properties.id.output)),
-    test.assertEqual("Middle", result.properties.name.properties.middle.output),
-    test.assertEqual("Last", result.properties.name.properties.last.output),
-    test.assertEqual("First", result.properties.name.properties.first.properties.value.output),
-    test.assertEqual("SomePrefix", result.properties.name.properties.first.properties.prefix.output)
+    test.assertEqual(222, fn.number(result.properties.id.output), `Expected output '222', got '${xdmp.describe(result.properties.id)}'`),
+    test.assertEqual("Middle", result.properties.name.properties.middle.output, `Expected output 'Middle', got '${xdmp.describe(result.properties.name.properties.middle)}'`),
+    test.assertEqual("Last", result.properties.name.properties.last.output, `Expected output 'Last', got '${xdmp.describe(result.properties.name.properties.last)}'`),
+    test.assertEqual("First", result.properties.name.properties.first.properties.value.output, `Expected output 'First', got '${xdmp.describe(result.properties.name.properties.first.properties.value)}'`),
+    test.assertEqual("SomePrefix", result.properties.name.properties.first.properties.prefix.output, `Expected output 'SomePrefix', got '${xdmp.describe(result.properties.name.properties.first.properties.prefix)}'`)
   ];
 }
 
@@ -87,6 +86,7 @@ if (esMappingLib.versionIsCompatibleWithES()) {
     .concat(missingFunctionReference())
     .concat(incorrectNumberOfFunctionArguments())
     .concat(testValidateAndRunMapping())
+    .concat(testValidateAndRunMapping("/mappings/PersonNsMapping/PersonNsMapping-1.mapping.json", "/content/person-ns.xml"))
     .concat(testValidateAndRunMappingWithErrors())
   ;
 }

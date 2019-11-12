@@ -1,0 +1,16 @@
+<envelope xmlns="">
+  <instance>
+    <person xmlns="http://marklogic.com/ns1">
+      <personId>222</personId>
+      <theNickname>Nicky</theNickname>
+      <theName xmlns="http://marklogic.com/ns2">
+        <middleName>Middle</middleName>
+        <lastName>Last</lastName>
+        <firstName xmlns="http://marklogic.com/ns3">
+          <theValue>First</theValue>
+          <thePrefix>SomePrefix</thePrefix>
+        </firstName>
+      </theName>
+    </person>
+  </instance>
+</envelope>
