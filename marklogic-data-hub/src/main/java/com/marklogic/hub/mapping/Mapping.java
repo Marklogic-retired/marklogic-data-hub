@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.entity.HubEntity;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public interface Mapping {
 
@@ -38,6 +39,18 @@ public interface Mapping {
      * @param version - a whole integer representing the version of the mapping
      */
     void setVersion(int version);
+
+    /**
+     * Gets the map of the namespaces for mapping
+     * @return a map of all the namespace prefixes and their full URIs
+     */
+    Map<String, String> getNamespaces();
+
+    /**
+     * Sets the namespaces map for the mapping
+     * @param namespaces - map of namespace prefixes and their full URIs for the mapping
+     */
+    void setNamespaces(Map<String, String> namespaces);
 
     /**
      * Gets the hashmap of the properties mapping
