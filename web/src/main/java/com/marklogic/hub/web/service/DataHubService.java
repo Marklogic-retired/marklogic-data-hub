@@ -176,7 +176,7 @@ public class DataHubService {
         dataHub.clearDatabase(database);
     }
 
-    private void installUserModules(HubConfig hubConfig, boolean forceLoad, DeployUserModulesListener deployListener) {
+    protected void installUserModules(HubConfig hubConfig, boolean forceLoad, DeployUserModulesListener deployListener) {
         List<Command> commands = new ArrayList<>();
         loadUserModulesCommand.setHubConfig(hubConfig);
         loadUserModulesCommand.setForceLoad(forceLoad);
