@@ -173,7 +173,7 @@
       <div id="LoginTab" class="tab-content" [hidden]="!tabs.Login">
         <section layout="row" layout-align="center center">
           <section class="login-box" flex layout="column" layout-align="center center">
-            <h3>Login to the Data Hub</h3>
+            <h3>Login to Data Hub</h3>
             <form class="loginForm" (submit)="onLogin.emit()">
               <div flex layout-fill layout-padding layout="column">
                 <div class="center-text" [hidden]="!loggingIn">
@@ -208,7 +208,7 @@
           <section flex layout="column" layout-align="center center">
             <h3 *ngIf="currentEnvironment">Congratulations on updating to version<br>{{currentEnvironment.runningVersion}}</h3>
             <span *ngIf="currentEnvironment">
-              <p>However, the version of the Data Hub you logged into is older than the version of QuickStart that you are running.</p>
+              <p>However, the version of Data Hub you logged into is older than the version of QuickStart that you are running.</p>
               <p>Please refer to <a target="_blank" href="{{hubUpdateLink}}">these instructions</a> for upgrading the instance of Data Hub that you logged into.</p>
             </span>
           </section>
@@ -230,7 +230,7 @@
                 <mdl-list-item-primary-content>
                   <mdl-icon mdl-list-item-avatar>error</mdl-icon>
                   <span>Incompatible MarkLogic Server Version</span>
-                  <mdl-list-item-text-body>The Data Hub is not compatible with MarkLogic <strong>{{preinstallCheck.serverVersion}}</strong>.</mdl-list-item-text-body>
+                  <mdl-list-item-text-body>Data Hub is not compatible with MarkLogic <strong>{{preinstallCheck.serverVersion}}</strong>.</mdl-list-item-text-body>
                   <mdl-list-item-text-body class="fix">
                     <strong class="solution">SOLUTION:</strong> Upgrade your MarkLogic installation to a compatible version.
                   </mdl-list-item-text-body>
@@ -260,9 +260,7 @@
           <div [hidden]="uninstalling || installing || currentEnvironment.installInfo.installed" layout="column" layout-align="center center">
             <div style="width: 100%" *ngIf="!currentEnvironment.installInfo.partiallyInstalled && currentEnvironment.runningVersion === currentEnvironment.dhfversion">
               <h3>Installation Needed</h3>
-              <p>In order to continue you must install the Data Hub into
-              MarkLogic server.
-              </p>
+              <p>In order to continue you must install Data Hub into MarkLogic server.</p>
               <div class="center-text">
                 <button type="button" id="installer-button" mdl-button mdl-button-type="raised" (click)="onInstall.emit()">Install</button>
               </div>
