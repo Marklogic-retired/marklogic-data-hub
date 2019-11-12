@@ -52,13 +52,13 @@ You can finish configuring the flows and run the steps to complete the integrati
 
 ## How to Integrate the Customer Data
 
-1. View the `AdvantageFlow` flow. Configure the `AdvantageIngest` step by setting the Source Directory Path to the `datasets/advantage` directory (exact path will depend on your filesystem).
+1. View the `AdvantageFlow` flow.
 1. Ingest the Advantage dataset by running the `AdvantageIngest` step. This ingests 100 Advantage customer documents into the staging database. You can view the documents in the Browse Data view.
-1. With the Advantage customer data ingested, configure the `AdvantageMap` step in the `AdvantageFlow` flow.
+1. With the Advantage customer data ingested, view the `AdvantageMap` step to see the mapping expressions that have been configured.
 1. Run the `AdvantageMap` step in the `AdvantageFlow` flow. This harmonizes the 100 Advantage customer documents into the final database. You can view the documents in the Browse Data view.
-1. View the `BedrockFlow` flow. Configure the `BedrockIngest` step by setting the Source Directory Path to the `datasets/bedrock` directory (exact path will depend on your filesystem).
+1. View the `BedrockFlow` flow.
 1. Ingest the Bedrock dataset by running the `BedrockIngest` step. This ingests 100 Bedrock customer documents into the staging database. You can view the documents in the Browse Data view.
-1. With the Bedrock customer data ingested, configure the `BedrockMap` step in the `BedrockFlow` flow.
+1. With the Bedrock customer data ingested, view the `BedrockMap` step to see the mapping expressions that have been configured.
 1. Run the `BedrockMap` step in the `BedrockFlow` flow. This harmonizes the 100 Bedrock customer documents into the final database. You can view the documents in the Browse Data view.
 1. Run the `CustomerMaster` flow to master the Advantage and Bedrock customer data. This merges documents for two matching customers in the final database. You can view the results in the Browse Data view.
 
