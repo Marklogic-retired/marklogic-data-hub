@@ -1,0 +1,25 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        maven { url "https://plugins.gradle.org/m2/" }
+        jcenter()
+    }
+
+    dependencies {
+        classpath "net.saliman:gradle-properties-plugin:1.5.1"
+        if (project.hasProperty("testing")) {
+            classpath "com.marklogic:ml-data-hub:5.2-SNAPSHOT"
+        } else {
+            classpath "gradle.plugin.com.marklogic:ml-data-hub:5.1.0"
+        }
+    }
+}
+
+apply plugin: "net.saliman.properties"
+apply plugin: "com.marklogic.ml-data-hub"
+
+ext {
+    // Configuration for loading the reference data documents under src/main/ml-data
+    mlAppConfig.dataConfig.databaseName = "data-hub-STAGING"
+    mlAppConfig.dataConfig.permissions = "flow-operator-role,read,flow-developer-role,update"
+}

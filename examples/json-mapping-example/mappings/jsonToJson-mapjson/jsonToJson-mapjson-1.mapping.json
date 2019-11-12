@@ -1,0 +1,55 @@
+{
+  "lang" : "zxx",
+  "name" : "jsonToJson-mapjson",
+  "description" : "",
+  "version" : 1,
+  "targetEntityType" : "http://example.org/Person-0.0.1/Person",
+  "sourceContext" : "/",
+  "properties" : {
+    "lastUpdated" : {
+      "sourcedFrom" : "parseDateTime('DD/MM/YYYY hh:mm:ss', lastUpdated)"
+    },
+    "address" : {
+      "sourcedFrom" : "address",
+      "targetEntityType" : "#/definitions/Address",
+      "properties" : {
+        "street" : {
+          "sourcedFrom" : "string-join((number, street), ' ')"
+        },
+        "state" : {
+          "sourcedFrom" : "documentLookup(state, '/referenceData/countryCodes.json')"
+        },
+        "zip" : {
+          "sourcedFrom" : "substring(zipCode, 1, 5)"
+        }
+      }
+    },
+    "educationLevel" : {
+      "sourcedFrom" : "memoryLookup(biographicData/education, '{\"C\":\"College\", \"H\": \"High School\", \"M\": \"Masters\"}')"
+    },
+    "names" : {
+      "properties" : {
+        "prefix" : {
+          "sourcedFrom" : "cleanPrefix(prefix)"
+        },
+        "first" : {
+          "sourcedFrom" : "replace(firstName, \"VALUE:\", \"\")"
+        },
+        "middle" : {
+          "sourcedFrom" : "removeCommas(middleName)"
+        },
+        "last" : {
+          "sourcedFrom" : "lastName"
+        }
+      },
+      "sourcedFrom" : "biographicData/names",
+      "targetEntityType" : "#/definitions/Name"
+    },
+    "dateOfBirth" : {
+      "sourcedFrom" : "parseDate('MM/DD/YYYY', biographicData/dob)"
+    },
+    "ssn" : {
+      "sourcedFrom" : "remove-hyphens(social)"
+    }
+  }
+}

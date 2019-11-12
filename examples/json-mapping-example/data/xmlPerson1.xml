@@ -1,0 +1,14 @@
+<person xmlns="http://example.org">
+  <socialSecurityNumber>111-22-3333</socialSecurityNumber>
+  <names>
+    <name>
+      <FirstName prefix="Mrs">Jane</FirstName>
+      <middle>Joan</middle>
+      <last>Smith</last>
+    </name>
+    <name>
+      <FirstName>Janet</FirstName>
+      <last>Smyth</last>
+    </name>
+  </names>
+</person>

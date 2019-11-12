@@ -1,0 +1,32 @@
+{
+  "lang" : "zxx",
+  "name" : "xmlToJson-mapxml",
+  "description" : "",
+  "version" : 1,
+  "targetEntityType" : "http://example.org/Person-0.0.1/Person",
+  "sourceContext" : "/",
+  "sourceURI" : "/Users/rrudin/dev/workspace/marklogic-data-hub/examples/json-mapping-example/data/xmlPerson1.xml",
+  "properties" : {
+    "names" : {
+      "sourcedFrom" : "*:person/*:names/*:name",
+      "targetEntityType" : "#/definitions/Name",
+      "properties" : {
+        "prefix" : {
+          "sourcedFrom" : "*:FirstName/@prefix"
+        },
+        "first" : {
+          "sourcedFrom" : "*:FirstName"
+        },
+        "middle" : {
+          "sourcedFrom" : "*:middle"
+        },
+        "last" : {
+          "sourcedFrom" : "*:last"
+        }
+      }
+    },
+    "ssn" : {
+      "sourcedFrom" : "*:person/*:socialSecurityNumber"
+    }
+  }
+}
