@@ -11,6 +11,7 @@
       "name" : "BedrockIngest",
       "description" : "",
       "options" : {
+        "additionalCollections" : [ ],
         "headers" : {
           "sources" : [ {
             "name" : "BedrockFlow"
@@ -25,7 +26,7 @@
         "targetDatabase" : "data-hub-STAGING"
       },
       "customHook" : { },
-      "retryLimit" : 0,
+      "retryLimit" : null,
       "batchSize" : 0,
       "threadCount" : 0,
       "stepDefinitionName" : "default-ingestion",
@@ -33,13 +34,15 @@
       "fileLocations" : {
         "inputFilePath" : "datasets/bedrock",
         "inputFileType" : "csv",
-        "outputURIReplacement" : ""
+        "outputURIReplacement" : "",
+        "separator" : ","
       }
     },
     "2" : {
       "name" : "BedrockMap",
       "description" : "",
       "options" : {
+        "additionalCollections" : [ ],
         "sourceQuery" : "cts.collectionQuery([\"BedrockIngest\"])",
         "mapping" : {
           "name" : "BedrockFlow-BedrockMap",
@@ -47,7 +50,8 @@
         },
         "targetEntity" : "Customer",
         "sourceDatabase" : "data-hub-STAGING",
-        "collections" : [ ],
+        "collections" : [ "BedrockMap", "mdm-content", "Customer" ],
+        "validateEntity" : false,
         "sourceCollection" : "BedrockIngest",
         "targetDatabase" : "data-hub-FINAL"
       },

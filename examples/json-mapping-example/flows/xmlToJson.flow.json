@@ -1,5 +1,5 @@
 {
-  "name" : "AdvantageFlow",
+  "name" : "xmlToJson",
   "description" : "",
   "batchSize" : 100,
   "threadCount" : 4,
@@ -8,58 +8,69 @@
   "version" : 0,
   "steps" : {
     "1" : {
-      "name" : "AdvantageIngest",
+      "name" : "ingestxml",
       "description" : "",
       "options" : {
         "additionalCollections" : [ ],
         "headers" : {
           "sources" : [ {
-            "name" : "AdvantageFlow"
+            "name" : "xmlToJson"
           } ],
           "createdOn" : "currentDateTime",
           "createdBy" : "currentUser"
         },
         "sourceQuery" : "cts.collectionQuery([])",
-        "collections" : [ "AdvantageIngest" ],
+        "collections" : [ "ingestxml" ],
         "permissions" : "rest-reader,read,rest-writer,update",
-        "outputFormat" : "json",
+        "outputFormat" : "xml",
         "targetDatabase" : "data-hub-STAGING"
       },
-      "customHook" : { },
+      "customHook" : {
+        "module" : "",
+        "parameters" : { },
+        "user" : "",
+        "runBefore" : false
+      },
       "retryLimit" : 0,
-      "batchSize" : 0,
-      "threadCount" : 0,
+      "batchSize" : 100,
+      "threadCount" : 4,
       "stepDefinitionName" : "default-ingestion",
       "stepDefinitionType" : "INGESTION",
       "fileLocations" : {
-        "inputFilePath" : "datasets/advantage",
-        "inputFileType" : "json",
+        "inputFilePath" : "data",
+        "inputFileType" : "xml",
         "outputURIReplacement" : "",
         "separator" : ""
       }
     },
     "2" : {
-      "name" : "AdvantageMap",
+      "name" : "mapxml",
       "description" : "",
       "options" : {
         "additionalCollections" : [ ],
-        "sourceQuery" : "cts.collectionQuery([\"AdvantageIngest\"])",
+        "sourceQuery" : "cts.collectionQuery([\"ingestxml\"])",
         "mapping" : {
-          "name" : "AdvantageFlow-AdvantageMap",
-          "version" : 0
+          "name" : "xmlToJson-mapxml",
+          "version" : 1
         },
-        "targetEntity" : "Customer",
+        "targetEntity" : "Person",
         "sourceDatabase" : "data-hub-STAGING",
-        "collections" : [ "AdvantageMap", "mdm-content", "Customer" ],
+        "collections" : [ "mapxml", "Person" ],
         "validateEntity" : false,
-        "sourceCollection" : "AdvantageIngest",
+        "sourceCollection" : "ingestxml",
+        "outputFormat" : "json",
         "targetDatabase" : "data-hub-FINAL"
       },
-      "customHook" : { },
+      "customHook" : {
+        "module" : "",
+        "parameters" : { },
+        "user" : "",
+        "runBefore" : false
+      },
       "retryLimit" : null,
-      "batchSize" : 0,
-      "threadCount" : 0,
-      "stepDefinitionName" : "default-mapping",
+      "batchSize" : 100,
+      "threadCount" : 4,
+      "stepDefinitionName" : "entity-services-mapping",
       "stepDefinitionType" : "MAPPING"
     }
   }

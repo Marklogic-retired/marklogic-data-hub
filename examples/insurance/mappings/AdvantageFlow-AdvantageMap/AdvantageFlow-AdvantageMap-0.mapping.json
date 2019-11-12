@@ -3,8 +3,32 @@
   "name" : "AdvantageFlow-AdvantageMap",
   "description" : "",
   "version" : 0,
-  "targetEntityType" : "Customer-0.0.1/Customer",
+  "targetEntityType" : "http://example.org/Customer-0.0.1/Customer",
   "sourceContext" : "/",
-  "sourceURI" : "",
-  "properties" : { }
+  "properties" : {
+    "firstname" : {
+      "sourcedFrom" : "FirstName"
+    },
+    "pin" : {
+      "sourcedFrom" : "PIN"
+    },
+    "phone" : {
+      "sourcedFrom" : "Phone"
+    },
+    "id" : {
+      "sourcedFrom" : "ObjectID/node()[local-name(.) = \"$oid\"]"
+    },
+    "postal" : {
+      "sourcedFrom" : "Postal"
+    },
+    "updated" : {
+      "sourcedFrom" : "Updated"
+    },
+    "email" : {
+      "sourcedFrom" : "Email"
+    },
+    "lastname" : {
+      "sourcedFrom" : "LastName"
+    }
+  }
 }
