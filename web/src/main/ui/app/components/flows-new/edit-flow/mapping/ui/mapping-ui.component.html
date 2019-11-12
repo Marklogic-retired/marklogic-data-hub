@@ -1,4 +1,5 @@
 <!-- START NEW MAPPING VIEW -->
+{{this.nmspace | json}}
 <div *ngIf="isVersionCompatibleWithES" class="source-prop-container-map-exp">
   <div *ngIf="targetEntity && !targetEntity.hasDocs">
     <em>Unable to find source documents using the specified collection or query.</em>
