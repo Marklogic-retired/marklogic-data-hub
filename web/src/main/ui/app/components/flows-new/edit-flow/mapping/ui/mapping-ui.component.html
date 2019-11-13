@@ -50,7 +50,7 @@
             <mat-cell *matCellDef="let srcProp" [ngStyle]="IndentCondition(srcProp.key)">
               <div id="source-field-container">
                 <span class="namespace" tooltip="{{this.nmspace && this.nmspace[displaySourceField(srcProp.key).split(':')[0]] ? this.nmspace[displaySourceField(srcProp.key).split(':')[0]] : ''}}"
-                container="body">{{displaySourceField(srcProp.key).indexOf(':') != -1 ? displaySourceField(srcProp.key).slice(0,displaySourceField(srcProp.key).indexOf(':')) : ''}}</span><span class="field-no-namespace">{{displaySourceField(srcProp.key).indexOf(':') != -1 ? displaySourceField(srcProp.key).slice(displaySourceField(srcProp.key).indexOf(':')) : displaySourceField(srcProp.key)}}</span>
+                container="body">{{displaySourceField(srcProp.key).indexOf(':') != -1 ? '('+displaySourceField(srcProp.key).slice(0,displaySourceField(srcProp.key).indexOf(':'))+')' : ''}}</span><span class="field-no-namespace">{{displaySourceField(srcProp.key).indexOf(':') != -1 ? displaySourceField(srcProp.key).slice(displaySourceField(srcProp.key).indexOf(':')) : displaySourceField(srcProp.key)}}</span>
               </div>
           </mat-cell>
           </ng-container>
