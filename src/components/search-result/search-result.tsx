@@ -15,7 +15,7 @@ const SearchResult: React.FC<Props> = (props) => {
   let itemEntityName: string[] = [];
   let itemEntityProperties: any[] = [];
   let entityDef: any = {};
-  let primaryKeyValue: string = '-';
+  let primaryKeyValue: any;
   let createdOnVal: string = '';
   let sourcesVal: string = '';
   let fileTypeVal: string = props.item.format;
@@ -32,6 +32,17 @@ const SearchResult: React.FC<Props> = (props) => {
       } else {
         itemEntityName = Object.keys(contentObject);
         itemEntityProperties = Object.values<any>(contentObject);
+        if (itemEntityName.length && props.entityDefArray.length) {
+          entityDef = props.entityDefArray.find(entity => entity.name === itemEntityName[0]);
+        }
+        if (itemEntityProperties.length && entityDef.primaryKey) {
+          if(Array.isArray(itemEntityProperties[0]) && itemEntityProperties[0].length){
+            primaryKeyValue = encodeURIComponent(props.item.uri);
+          }
+          else{
+            primaryKeyValue = itemEntityProperties[0][entityDef.primaryKey];
+          }
+        }
       }
     });
   } else if (props.item.format === 'xml' && props.item.hasOwnProperty('extracted')) {
@@ -52,22 +63,19 @@ const SearchResult: React.FC<Props> = (props) => {
       } else {
         itemEntityName = Object.keys(obj);
         itemEntityProperties = Object.values<any>(obj);
+        if (itemEntityName.length && props.entityDefArray.length) {
+          entityDef = props.entityDefArray.find(entity => entity.name === itemEntityName[0]);
+        }
+        if(itemEntityProperties.length && itemEntityProperties[0].hasOwnProperty(entityDef.primaryKey)){
+          if(Array.isArray(itemEntityProperties[0]) && itemEntityProperties[0].length){
+            primaryKeyValue = encodeURIComponent(props.item.uri);
+          }
+          else{
+            primaryKeyValue = itemEntityProperties[0][entityDef.primaryKey];
+          }
+        }
       }
     });
-  }
-
-  // Parameters for both JSON and XML
-  if (itemEntityName.length && props.entityDefArray.length) {
-    entityDef = props.entityDefArray.find(entity => entity.name === itemEntityName[0]);
-  }
-
-  if (itemEntityProperties.length && entityDef.primaryKey) {
-    if(Array.isArray(itemEntityProperties[0]) && itemEntityProperties[0].length){
-      primaryKeyValue = encodeURIComponent(props.item.uri);
-    }
-    else{
-      primaryKeyValue = encodeURIComponent(itemEntityProperties[0][entityDef.primaryKey]);
-    }
   }
 
   function getSnippet() {
