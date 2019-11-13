@@ -48,7 +48,7 @@ const SearchResult: React.FC<Props> = (props) => {
   } else if (props.item.format === 'xml' && props.item.hasOwnProperty('extracted')) {
     props.item.extracted.content.forEach(contentObject => {
       let obj = xmlParser(contentObject);
-      if (obj.hasOwnProperty('headers')) {
+      if (obj.hasOwnProperty('headers') || obj.hasOwnProperty('es:headers')) {
         const headerValues = Object.values<any>(obj);
         createdOnVal = headerValues[0].hasOwnProperty('createdOn') && headerValues[0].createdOn.toString().substring(0, 19);
         if (headerValues[0].hasOwnProperty('sources')) {
