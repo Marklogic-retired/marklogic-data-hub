@@ -18,17 +18,24 @@
 package com.marklogic.gradle
 
 import com.marklogic.appdeployer.command.Command
+import com.marklogic.appdeployer.command.CommandContext
 import com.marklogic.appdeployer.impl.SimpleAppDeployer
 import com.marklogic.gradle.task.*
+import com.marklogic.gradle.task.client.WatchTask
+import com.marklogic.gradle.task.command.HubUpdateIndexesCommand
+import com.marklogic.gradle.task.databases.ClearModulesDatabaseTask
+import com.marklogic.gradle.task.databases.UpdateIndexesTask
 import com.marklogic.gradle.task.dhs.DhsDeployTask
-import com.marklogic.gradle.task.nifi.GenerateNifiTemplateTask
 import com.marklogic.hub.ApplicationConfig
 import com.marklogic.hub.cli.command.InstallIntoDhsCommand
+import com.marklogic.hub.deploy.commands.ClearDHFModulesCommand
+import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand
 import com.marklogic.hub.deploy.commands.GeneratePiiCommand
 import com.marklogic.hub.deploy.commands.LoadHubArtifactsCommand
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand
+import com.marklogic.hub.deploy.util.ModuleWatchingConsumer
 import com.marklogic.hub.impl.*
 import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl
 import org.gradle.api.GradleException
@@ -37,6 +44,7 @@ import org.gradle.api.Project
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 @EnableAutoConfiguration
@@ -127,16 +135,15 @@ class DataHubPlugin implements Plugin<Project> {
                 "-Ppreview=<true|false> – optional; if true, the merge doc is returned in the response body and not committed to the database; if false, the merged document will be saved. Defaults to false.\n" +
                 "-Poptions=<stepOptionOverrides> – optional; Any overrides to the mastering step options. Defaults to {}.")
 
-        /**
-         * In order to guarantee that Gradle and the QS app perform this function in the same way, this task is being
-         * overridden so that it can call DataHub.updateIndexes. It doesn't behave the same as in ml-gradle, which
-         * strips out all "non-index" properties from the payload. But it's not certain that that behavior is desirable
-         * here - within the context of DHF, this is really used as a way to say "I need to update each of the databases".
-         */
-        project.tasks.replace("mlUpdateIndexes", HubUpdateIndexesTask);
+        ((UpdateIndexesTask)project.tasks.getByName("mlUpdateIndexes")).command = new HubUpdateIndexesCommand(dataHub)
 
-        // DHF has custom logic for clearing the modules database
-        project.tasks.replace("mlClearModulesDatabase", ClearDHFModulesTask)
+        WatchTask watchTask = project.tasks.getByName("mlWatch")
+        CommandContext commandContext = new CommandContext(hubConfig.getAppConfig(), hubConfig.getManageClient(), hubConfig.getAdminManager())
+        Versions versions = ((ApplicationContext)project.property("dataHubApplicationContext")).getBean(Versions.class)
+        watchTask.onModulesLoaded = new ModuleWatchingConsumer(commandContext, new GenerateFunctionMetadataCommand(hubConfig.newModulesDbClient(), versions))
+        watchTask.afterModulesLoadedCallback = new AfterModulesLoadedCallback(loadUserModulesCommand, commandContext)
+
+        ((ClearModulesDatabaseTask)project.tasks.getByName("mlClearModulesDatabase")).command = new ClearDHFModulesCommand(hubConfig, dataHub)
         project.tasks.mlClearModulesDatabase.getDependsOn().add("mlDeleteModuleTimestampsFile")
 
         /*
@@ -159,9 +166,6 @@ class DataHubPlugin implements Plugin<Project> {
 
         project.task("hubDeployUserArtifacts", group: deployGroup, type: DeployUserArtifactsTask,
             description: "Installs user artifacts such as entities and mappings.")
-
-        // HubWatchTask extends ml-gradle's WatchTask to ensure that modules are loaded from the hub-specific locations.
-        project.tasks.replace("mlWatch", HubWatchTask)
 
         // DHF uses an additional timestamps file needs to be deleted when the ml-gradle one is deleted
         project.task("hubDeleteModuleTimestampsFile", type: DeleteHubModuleTimestampsFileTask, group: deployGroup)
