@@ -24,7 +24,7 @@ plugins {
     id 'com.moowork.node' version '1.2.0'
     id 'org.springframework.boot' version '2.1.3.RELEASE'
 }
-
+apply plugin: 'maven-publish'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'war'
 
@@ -202,6 +202,27 @@ if (!(
 )
 ) {
   processResources.dependsOn copyIndexHtml
+}
+publishing {
+  publications {
+    mavenWeb(MavenPublication) {
+      group = "com.marklogic"
+      version = "${version}"
+      from components.web
+
+    }
+  }
+  repositories {
+    maven {
+      if(project.hasProperty("mavenUser")) {
+        credentials {
+          username mavenUser
+          password mavenPassword
+        }
+      }
+      url publishUrl
+    }
+  }
 }
 
 //removing test dependency on e2e tests
