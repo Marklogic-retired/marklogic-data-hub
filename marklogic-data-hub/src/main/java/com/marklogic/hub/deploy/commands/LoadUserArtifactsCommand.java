@@ -87,6 +87,9 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         if (forceLoad) {
             pmm.deletePropertiesFile();
         }
+        //Initializing the 'PropertiesModuleManager' instance so that timestamp file (local-user-modules-deploy-timestamps.properties)
+        // is read and only the modified files are deployed to server
+        pmm.initialize();
         return pmm;
     }
 
