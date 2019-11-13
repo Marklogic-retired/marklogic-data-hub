@@ -18,7 +18,6 @@ package com.marklogic.hub.web.service;
 
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.impl.HubConfigImpl;
-import com.sun.nio.file.SensitivityWatchEventModifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -26,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.file.*;
 import java.nio.file.WatchEvent.Kind;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -93,7 +93,12 @@ public class FileSystemWatcherService implements DisposableBean {
      * Register the given directory with the WatchService
      */
     private void register(Path dir) throws IOException {
-        WatchKey key = dir.register(watcher(), new Kind[]{StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY}, SensitivityWatchEventModifier.HIGH);
+        WatchKey key = dir.register(
+            watcher(),
+            new Kind[]{StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY},
+            getHighSensitivityModifier()
+        );
+
         if (logger.isInfoEnabled()) {
             Path prev = keys.get(key);
             if (prev == null) {
@@ -104,10 +109,11 @@ public class FileSystemWatcherService implements DisposableBean {
                 }
             }
         }
+
         keys.putIfAbsent(key, dir);
     }
 
-    private void unregister(Path dir) throws IOException {
+    private void unregister(Path dir) {
         Iterator<Map.Entry<WatchKey, Path>> it = keys.entrySet().iterator();
         while(it.hasNext()) {
             Map.Entry<WatchKey, Path> entry = it.next();
@@ -141,9 +147,7 @@ public class FileSystemWatcherService implements DisposableBean {
         // register directory and sub-directories
         Files.walkFileTree(start, new SimpleFileVisitor<Path>() {
             @Override
-            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
-                throws IOException
-            {
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
                 unregister(dir);
                 return FileVisitResult.CONTINUE;
             }
@@ -240,6 +244,24 @@ public class FileSystemWatcherService implements DisposableBean {
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * This class is only available in the Oracle JDK. This code is copied from
+     * https://github.com/HotswapProjects/HotswapAgent/issues/41.
+     */
+    private WatchEvent.Modifier getHighSensitivityModifier() {
+        final String className = "com.sun.nio.file.SensitivityWatchEventModifier";
+        try {
+            Class<?> c = Class.forName(className);
+            Field f = c.getField("HIGH");
+            return (WatchEvent.Modifier) f.get(c);
+        } catch (Exception e) {
+            logger.warn("Unable to instantiate class: " + className +
+                "; this is likely because Oracle's JDK is not being used. Impact is that file changes may not be " +
+                    "detected as quickly when running QuickStart.");
+            return null;
         }
     }
 }
