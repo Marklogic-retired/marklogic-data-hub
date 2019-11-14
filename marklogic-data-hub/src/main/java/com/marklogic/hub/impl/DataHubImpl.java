@@ -25,9 +25,17 @@ import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
 import com.marklogic.appdeployer.command.forests.DeployCustomForestsCommand;
 import com.marklogic.appdeployer.command.modules.DeleteTestModulesCommand;
 import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
-import com.marklogic.appdeployer.command.security.*;
+import com.marklogic.appdeployer.command.security.DeployCertificateAuthoritiesCommand;
+import com.marklogic.appdeployer.command.security.DeployCertificateTemplatesCommand;
+import com.marklogic.appdeployer.command.security.DeployExternalSecurityCommand;
+import com.marklogic.appdeployer.command.security.DeployPrivilegesCommand;
+import com.marklogic.appdeployer.command.security.DeployProtectedCollectionsCommand;
+import com.marklogic.appdeployer.command.security.DeployProtectedPathsCommand;
+import com.marklogic.appdeployer.command.security.DeployQueryRolesetsCommand;
+import com.marklogic.appdeployer.command.security.DeployRolesCommand;
+import com.marklogic.appdeployer.command.security.DeployUsersCommand;
+import com.marklogic.appdeployer.command.security.InsertCertificateHostsTemplateCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
-import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.admin.QueryOptionsManager;
 import com.marklogic.client.admin.ResourceExtensionsManager;
 import com.marklogic.client.admin.ServerConfigurationManager;
@@ -36,11 +44,28 @@ import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.QueryOptionsListHandle;
-import com.marklogic.hub.*;
+import com.marklogic.hub.DataHub;
+import com.marklogic.hub.DatabaseKind;
+import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubProject;
+import com.marklogic.hub.InstallInfo;
 import com.marklogic.hub.deploy.HubAppDeployer;
-import com.marklogic.hub.deploy.commands.*;
+import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
+import com.marklogic.hub.deploy.commands.DeployHubOtherServersCommand;
+import com.marklogic.hub.deploy.commands.DeployHubTriggersCommand;
+import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand;
+import com.marklogic.hub.deploy.commands.HubDeployDatabaseCommandFactory;
+import com.marklogic.hub.deploy.commands.LoadHubArtifactsCommand;
+import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
+import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
+import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
-import com.marklogic.hub.error.*;
+import com.marklogic.hub.error.CantUpgradeException;
+import com.marklogic.hub.error.DataHubConfigurationException;
+import com.marklogic.hub.error.DataHubSecurityNotInstalledException;
+import com.marklogic.hub.error.InvalidDBOperationError;
+import com.marklogic.hub.error.ServerValidationException;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl;
 import com.marklogic.mgmt.ManageClient;
@@ -65,7 +90,15 @@ import org.springframework.web.client.ResourceAccessException;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 @Component
@@ -700,7 +733,7 @@ public class DataHubImpl implements DataHub {
                 "  <database>{xdmp:database(\"" + databaseName + "\")}</database>" +
                 "  <transaction-mode>update-auto-commit</transaction-mode>" +
                 "</options>)";
-        eval.xquery(xqy).eval();
+        eval.xquery(xqy).eval().close();
     }
 
     public Map<String, List<Command>> buildCommandMap() {

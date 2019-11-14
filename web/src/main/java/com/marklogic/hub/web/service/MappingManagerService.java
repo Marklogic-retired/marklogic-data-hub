@@ -55,7 +55,7 @@ public class MappingManagerService {
     @Autowired
     HubConfigImpl hubConfig;
 
-    MappingValidator mappingValidator;
+    private MappingValidator mappingValidator = null;
 
     public ArrayList<Mapping> getMappings() {
         ArrayList<Mapping> mappings = mappingManager.getMappings();
@@ -98,9 +98,13 @@ public class MappingManagerService {
     }
 
     public JsonNode validateMapping(String jsonMapping, String uri) {
+        return getMappingValidator().validateJsonMapping(jsonMapping, uri);
+    }
+
+    private synchronized MappingValidator getMappingValidator() {
         if (mappingValidator == null) {
             mappingValidator = new MappingValidator(hubConfig.newStagingClient());
         }
-        return mappingValidator.validateJsonMapping(jsonMapping, uri);
+        return mappingValidator;
     }
 }
