@@ -164,7 +164,10 @@
       *ngFor="let srcProp of uniqueSourceFields(this.srcProps)"
       [ngStyle]="IndentCondition(srcProp)"
       (click)="insertField(srcProp, indx, prop) "
-    ><span id="namespace">{{displaySourceField(srcProp).indexOf(':') != -1 ? '('+displaySourceField(srcProp).slice(0,displaySourceField(srcProp).indexOf(':'))+')' : ''}}</span><span id="field-no-namespace">{{displaySourceField(srcProp).indexOf(':') != -1 ? displaySourceField(srcProp).slice(displaySourceField(srcProp).indexOf(':')) : displaySourceField(srcProp)}}</span></div>
+    >
+    <span id="namespace">{{displaySourceField(srcProp).indexOf(':') != -1 ? '('+displaySourceField(srcProp).slice(0,displaySourceField(srcProp).indexOf(':'))+')' : ''}}</span>
+    <span id="field-no-namespace">{{displaySourceField(srcProp).indexOf(':') != -1 ? displaySourceField(srcProp).slice(displaySourceField(srcProp).indexOf(':')) : displaySourceField(srcProp)}}</span>
+  </div>
   </ng-template>
 </mat-menu>
 
