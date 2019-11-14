@@ -4,6 +4,8 @@ import { StepType } from '../../models/step.model';
 import {NewStepDialogComponent} from './new-step-dialog.component';
 import {IngestComponent} from "../ingest/ingest.component";
 import {MappingComponent} from "../mapping/mapping.component";
+import {MatchingComponent} from "../mastering/matching/matching.component";
+import {MergingComponent} from "../mastering/merging/merging.component";
 
 @Component({
   selector: 'app-step',
@@ -20,10 +22,13 @@ export class StepComponent implements OnChanges {
   @Input() selectedStepId: string;
   @Input() flowEnded: string;
   @Input() sourceQuery: string;
+  @Input() targetEntityName: string;
   @Output() updateStep = new EventEmitter();
 
   @ViewChild(IngestComponent) ingestionStep: IngestComponent;
   @ViewChild(MappingComponent) mappingStep: MappingComponent;
+  @ViewChild(MatchingComponent) matchingStep: MatchingComponent;
+  @ViewChild(MergingComponent) mergingStep: MatchingComponent;
   @ViewChild('masteringTabGroup') masteringTabGroup;
 
   public masteringTabIndex: number = 0;
@@ -53,6 +58,13 @@ export class StepComponent implements OnChanges {
       // reset source doc URI on source change
       if (this.mappingStep)
         this.mappingStep.sourceChanged();
+    }
+    if (changes.targetEntityName) {
+      // reload matching/merging in case of new target entity
+      if (this.matchingStep)
+        this.matchingStep.getEntity(this.targetEntityName);
+      if (this.matchingStep)
+        this.mergingStep.getEntity(this.targetEntityName);
     }
   }
 
