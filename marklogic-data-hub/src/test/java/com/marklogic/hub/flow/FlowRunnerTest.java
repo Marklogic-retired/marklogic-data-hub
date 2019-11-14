@@ -17,6 +17,7 @@
 package com.marklogic.hub.flow;
 
 import com.marklogic.bootstrap.Installer;
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.io.StringHandle;
@@ -28,8 +29,6 @@ import com.marklogic.hub.impl.FlowManagerImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.RunStepResponse;
-import com.marklogic.hub.step.StepDefinition;
-import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,7 +36,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.io.IOException;
 import java.util.*;
 
 
@@ -100,7 +98,13 @@ public class FlowRunnerTest extends HubTestBase {
     }
 
     @Test
-    public void testIngestCSVasXML(){
+    public void testIngestCSVasXML() throws Exception {
+        //prov docs cannot be read by "flow-developer-user", so creating a client using 'secUser' which is 'admin'
+        DatabaseClient client = getClient(host,jobPort, HubConfig.DEFAULT_JOB_NAME, secUser, secPassword, jobAuthMethod);
+        //don't have 'admin' certs, so excluding from cert-auth tests
+        if(! isCertAuth() ) {
+            client.newServerEval().xquery("cts:uris() ! xdmp:document-delete(.)").eval();
+        }
         Map<String,Object> opts = new HashMap<>();
         opts.put("outputFormat","xml");
 
@@ -117,7 +121,16 @@ public class FlowRunnerTest extends HubTestBase {
         EvalResult res = resultItr.next();
         long count = Math.toIntExact((long) res.getNumber());
         Assertions.assertEquals(count, 25);
-    }
+        if(! isCertAuth() ) {
+           EvalResultIterator itr = client.newServerEval().xquery("xdmp:estimate(fn:collection('http://marklogic.com/provenance-services/record'))").eval();
+           if(itr != null && itr.hasNext()) {
+               Assertions.assertEquals(25, itr.next().getNumber().intValue());
+           }
+           else {
+               Assertions.fail("Server response was null or empty");
+           }
+        }
+     }
 
     @Test
     public void testIngestCSVasXMLCustomDelimiter(){

@@ -36,8 +36,6 @@ import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.client.ext.file.JarDocumentFileReader;
 import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager;
-import com.marklogic.client.ext.tokenreplacer.DefaultTokenReplacer;
-import com.marklogic.client.ext.tokenreplacer.TokenReplacer;
 import com.marklogic.client.io.*;
 import com.marklogic.client.io.marker.AbstractReadHandle;
 import com.marklogic.hub.deploy.commands.*;
@@ -182,7 +180,7 @@ public class HubTestBase {
     public static String flowRunnerUser;
     public static String flowRunnerPassword;
     protected  Authentication stagingAuthMethod;
-    private  Authentication jobAuthMethod;
+    protected   Authentication jobAuthMethod;
     protected  Authentication finalAuthMethod;
     public  DatabaseClient stagingClient = null;
     public  DatabaseClient flowRunnerClient = null;
