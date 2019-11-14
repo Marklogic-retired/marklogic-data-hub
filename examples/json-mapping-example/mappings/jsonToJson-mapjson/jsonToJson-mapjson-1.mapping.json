@@ -5,6 +5,7 @@
   "version" : 1,
   "targetEntityType" : "http://example.org/Person-0.0.1/Person",
   "sourceContext" : "/",
+  "sourceURI" : "/person/jsonPerson1.json",
   "properties" : {
     "lastUpdated" : {
       "sourcedFrom" : "parseDateTime('DD/MM/YYYY hh:mm:ss', lastUpdated)"
@@ -24,9 +25,6 @@
         }
       }
     },
-    "educationLevel" : {
-      "sourcedFrom" : "memoryLookup(biographicData/education, '{\"C\":\"College\", \"H\": \"High School\", \"M\": \"Masters\"}')"
-    },
     "names" : {
       "properties" : {
         "prefix" : {
@@ -45,11 +43,15 @@
       "sourcedFrom" : "biographicData/names",
       "targetEntityType" : "#/definitions/Name"
     },
+    "educationLevel" : {
+      "sourcedFrom" : "memoryLookup(biographicData/education, '{\"C\":\"College\", \"H\": \"High School\", \"M\": \"Masters\"}')"
+    },
     "dateOfBirth" : {
       "sourcedFrom" : "parseDate('MM/DD/YYYY', biographicData/dob)"
     },
     "ssn" : {
       "sourcedFrom" : "remove-hyphens(social)"
     }
-  }
+  },
+  "namespaces" : { }
 }
