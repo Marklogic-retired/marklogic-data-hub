@@ -46,7 +46,7 @@ The project has flows predefined for integrating the customer data.
 
 There is also a flow to enrich data
 
-- **customEnrichment**: Has steps for ingestion and a custom step to enrich customer data
+- **AdvantageEnrichment**: Has an ingestion step and a custom step to enrich customer data
 
 You can finish configuring the flows and run the steps to complete the integration.
 
