@@ -1,6 +1,16 @@
 server {
   listen 80;
+
   server_name localhost;
+  return 301 https://localhost$request_uri;
+}
+
+server {
+  listen 443 ssl;
+  listen [::]:443 ssl;
+
+  ssl_certificate     /etc/nginx/www.explorer.com.cert.pem;
+  ssl_certificate_key /etc/nginx/www.explorer.com.key.pem;  
 
   location / {
     # server_name www.example.com
@@ -10,12 +20,12 @@ server {
   }
 
   location /datahub/ {
-    proxy_pass        http://${API_URL};
+    proxy_pass        https://${API_URL};
     proxy_redirect off;
     proxy_set_header X-Real-IP $remote_addr;
-		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-		proxy_set_header Host $http_host;
-		proxy_set_header X-NginX-Proxy true;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host $http_host;
+    proxy_set_header X-NginX-Proxy true;
   }
 
   error_page   500 502 503 504  /50x.html;

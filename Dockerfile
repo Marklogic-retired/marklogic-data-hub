@@ -14,6 +14,8 @@ RUN npm run build
 # Stage 1
 # Production build based on Nginx with artifacts from Stage 0
 FROM nginx:1.15.9-alpine
+COPY config/ca/intermediate/certs/www.explorer.com.cert.pem /etc/nginx/www.explorer.com.cert.pem
+COPY config/ca/intermediate/private/www.explorer.com.key.pem /etc/nginx/www.explorer.com.key.pem
 COPY config/nginx.conf.template /etc/nginx/conf.d/default.conf.template
 COPY config/docker-entrypoint.sh /
 ENTRYPOINT ["sh", "/docker-entrypoint.sh"]
