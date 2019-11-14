@@ -164,13 +164,15 @@ public class ScaffoldingImpl implements Scaffolding {
 
     protected String buildFlowFromDefaultFlow(Map<String, String> customTokens) throws IOException {
         String flowSrcFile = "scaffolding/defaultFlow.flow.json";
-        InputStream inputStream = ScaffoldingImpl.class.getClassLoader().getResourceAsStream(flowSrcFile);
-
-        String fileContents = IOUtils.toString(inputStream);
-        for (String key : customTokens.keySet()) {
-            String value = customTokens.get(key);
-            if (value != null) {
-                fileContents = fileContents.replace(key, value);
+        String fileContents = null;
+        try (InputStream inputStream = ScaffoldingImpl.class.getClassLoader().getResourceAsStream(flowSrcFile)) {
+            assert inputStream != null;
+            fileContents = IOUtils.toString(inputStream);
+            for (String key : customTokens.keySet()) {
+                String value = customTokens.get(key);
+                if (value != null) {
+                    fileContents = fileContents.replace(key, value);
+                }
             }
         }
         return fileContents;

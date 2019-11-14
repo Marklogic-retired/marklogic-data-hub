@@ -1636,8 +1636,7 @@ public class HubConfigImpl implements HubConfig
 
     @Override public String getJarVersion() {
         Properties properties = new Properties();
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("version.properties");
-        try {
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("version.properties")) {
             properties.load(inputStream);
         } catch (IOException e)
         {

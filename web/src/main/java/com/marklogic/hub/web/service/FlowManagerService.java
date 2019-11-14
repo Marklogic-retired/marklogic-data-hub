@@ -77,7 +77,7 @@ public class FlowManagerService {
     @Autowired
     private AsyncFlowService asyncFlowService;
 
-    private CustomStepValidator customStepValidator;
+    private CustomStepValidator customStepValidator = null;
 
     public List<FlowStepModel> getFlows() {
         return asyncFlowService.getFlows(true);
@@ -140,8 +140,7 @@ public class FlowManagerService {
             throw new NotFoundException("Could not find a flow with a name of " + flowName);
         }
         String stepNum = getStepKeyInStepMap(flow, stepId);
-        customStepValidator = new CustomStepValidator(hubConfig.newStagingClient());
-        return customStepValidator.validate(flowName, stepNum);
+        return getCustomStepValidator().validate(flowName, stepNum);
     }
 
     public void deleteFlow(String flowName) {
@@ -390,5 +389,12 @@ public class FlowManagerService {
         catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private synchronized CustomStepValidator getCustomStepValidator() {
+        if (customStepValidator == null) {
+            customStepValidator = new CustomStepValidator(hubConfig.newStagingClient());
+        }
+        return customStepValidator;
     }
 }
