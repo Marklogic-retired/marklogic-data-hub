@@ -5,7 +5,7 @@
   "version" : 1,
   "targetEntityType" : "http://example.org/Person-0.0.1/Person",
   "sourceContext" : "/",
-  "sourceURI" : "/Users/rrudin/dev/workspace/marklogic-data-hub/examples/json-mapping-example/data/xmlPerson1.xml",
+  "sourceURI" : "/person/xmlPerson1.xml",
   "properties" : {
     "names" : {
       "sourcedFrom" : "*:person/*:names/*:name",
@@ -28,5 +28,6 @@
     "ssn" : {
       "sourcedFrom" : "*:person/*:socialSecurityNumber"
     }
-  }
+  },
+  "namespaces" : { }
 }
