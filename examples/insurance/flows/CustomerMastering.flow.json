@@ -8,69 +8,14 @@
   "version" : 0,
   "steps" : {
     "1" : {
-      "name" : "CustomerMaster",
+      "name" : "CustomerMatching",
       "description" : "",
       "options" : {
-        "stepUpdate" : true,
         "sourceQuery" : "cts.collectionQuery([\"AdvantageMap\", \"BedrockMap\"])",
         "acceptsBatch" : true,
         "targetEntity" : "Customer",
         "sourceDatabase" : "data-hub-FINAL",
-        "collections" : [ "CustomerMaster", "Customer" ],
-        "mergeOptions" : {
-          "matchOptions" : "",
-          "propertyDefs" : {
-            "properties" : [ {
-              "localname" : "postal",
-              "name" : "postal"
-            }, {
-              "localname" : "id",
-              "name" : "id"
-            }, {
-              "localname" : "updated",
-              "name" : "updated"
-            } ],
-            "namespaces" : { }
-          },
-          "algorithms" : {
-            "stdAlgorithm" : {
-              "timestamp" : {
-                "path" : "/envelope/instance/Customer/updated"
-              }
-            },
-            "custom" : [ ],
-            "collections" : {
-              "onMerge" : {
-                "add" : {
-                  "collection" : [ "customer-merge" ]
-                },
-                "remove" : {
-                  "collection" : [ "" ]
-                },
-                "set" : {
-                  "collection" : [ "" ]
-                }
-              }
-            }
-          },
-          "mergeStrategies" : [ ],
-          "merging" : [ {
-            "propertyName" : "postal",
-            "maxValues" : "1",
-            "length" : {
-              "weight" : "10"
-            },
-            "sourceWeights" : [ ]
-          }, {
-            "propertyName" : "id",
-            "maxValues" : "1",
-            "sourceWeights" : [ ]
-          }, {
-            "propertyName" : "updated",
-            "maxValues" : "1",
-            "sourceWeights" : [ ]
-          } ]
-        },
+        "collections" : [ "CustomerMatching" ],
         "matchOptions" : {
           "dataFormat" : "json",
           "propertyDefs" : {
@@ -144,8 +89,80 @@
       "retryLimit" : null,
       "batchSize" : null,
       "threadCount" : null,
-      "stepDefinitionName" : "default-mastering",
-      "stepDefinitionType" : "MASTERING"
+      "stepDefinitionName" : "default-matching",
+      "stepDefinitionType" : "MATCHING"
+    },
+    "2" : {
+      "name" : "CustomerMerging",
+      "description" : "",
+      "options" : {
+        "sourceQuery" : "cts.collectionQuery([\"CustomerMatching\"])",
+        "targetEntity" : "Customer",
+        "sourceDatabase" : "data-hub-FINAL",
+        "collections" : [ "CustomerMaster", "Customer" ],
+        "mergeOptions" : {
+          "matchOptions" : "",
+          "propertyDefs" : {
+            "properties" : [ {
+              "localname" : "postal",
+              "name" : "postal"
+            }, {
+              "localname" : "id",
+              "name" : "id"
+            }, {
+              "localname" : "updated",
+              "name" : "updated"
+            } ],
+            "namespaces" : { }
+          },
+          "algorithms" : {
+            "stdAlgorithm" : {
+              "timestamp" : {
+                "path" : "/envelope/instance/Customer/updated"
+              }
+            },
+            "custom" : [ ],
+            "collections" : {
+              "onMerge" : {
+                "add" : {
+                  "collection" : [ "customer-merge" ]
+                },
+                "remove" : {
+                  "collection" : [ "" ]
+                },
+                "set" : {
+                  "collection" : [ "" ]
+                }
+              }
+            }
+          },
+          "mergeStrategies" : [ ],
+          "merging" : [ {
+            "propertyName" : "postal",
+            "maxValues" : "1",
+            "length" : {
+              "weight" : "10"
+            },
+            "sourceWeights" : [ ]
+          }, {
+            "propertyName" : "id",
+            "maxValues" : "1",
+            "sourceWeights" : [ ]
+          }, {
+            "propertyName" : "updated",
+            "maxValues" : "1",
+            "sourceWeights" : [ ]
+          } ]
+        },
+        "sourceCollection" : "",
+        "targetDatabase" : "data-hub-FINAL"
+      },
+      "customHook" : { },
+      "retryLimit" : null,
+      "batchSize" : null,
+      "threadCount" : null,
+      "stepDefinitionName" : "default-merging",
+      "stepDefinitionType" : "MERGING"
     }
   }
 }
