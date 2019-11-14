@@ -1,4 +1,4 @@
 plugins {
     id 'net.saliman.properties' version '1.4.6'
-    id 'com.marklogic.ml-data-hub' version '5.0.1'
+    id 'com.marklogic.ml-data-hub' version '5.2.0'
 }
