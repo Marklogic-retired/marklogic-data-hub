@@ -205,11 +205,13 @@ if (!(
 }
 publishing {
   publications {
-    mavenWeb(MavenPublication) {
-      group = "com.marklogic"
-      version = "${version}"
-      from components.web
+    if(!project.hasProperty('skipWeb')) {
+      mavenWeb(MavenPublication) {
+        group = "com.marklogic"
+        version = "${version}"
+        from components.web
 
+      }
     }
   }
   repositories {
