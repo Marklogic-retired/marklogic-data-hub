@@ -39,7 +39,7 @@ public class ProjectManagerService {
 
     public ProjectManagerService() {}
 
-    public Map<Integer, ProjectInfo> getProjects() {
+    public synchronized Map<Integer, ProjectInfo> getProjects() {
         Map<Integer, ProjectInfo> projects;
         byte[] bytes = prefs.getByteArray("projects", null);
         if (bytes != null) {
@@ -86,7 +86,7 @@ public class ProjectManagerService {
         return getProject(pi.id);
     }
 
-    public Project getProject(int id) {
+    public synchronized Project getProject(int id) {
         Map<Integer, ProjectInfo> projects = getProjects();
         ProjectInfo pi = projects.get(id);
         if (pi != null) {
@@ -113,13 +113,13 @@ public class ProjectManagerService {
         save(projects);
     }
 
-    public void reset() {
+    public synchronized void reset() {
         prefs.remove("projects");
         prefs.remove("lastProject");
         maxId = 0;
     }
 
-    private void save(Map<Integer, ProjectInfo> projects) {
+    private synchronized void save(Map<Integer, ProjectInfo> projects) {
         try {
             prefs.putByteArray("projects", object2Bytes(projects));
         }
