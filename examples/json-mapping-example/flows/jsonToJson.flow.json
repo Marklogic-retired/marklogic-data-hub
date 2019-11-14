@@ -39,7 +39,7 @@
       "fileLocations" : {
         "inputFilePath" : "data",
         "inputFileType" : "json",
-        "outputURIReplacement" : "",
+        "outputURIReplacement" : ".*data,'/person'",
         "separator" : ""
       }
     },
