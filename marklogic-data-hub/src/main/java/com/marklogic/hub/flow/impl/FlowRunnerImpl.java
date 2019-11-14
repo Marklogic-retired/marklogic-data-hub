@@ -51,7 +51,7 @@ public class FlowRunnerImpl implements FlowRunner{
 
     private StepRunner stepRunner;
 
-    private Map<String, Queue<String>> stepsMap = new ConcurrentHashMap<>();
+    private final Map<String, Queue<String>> stepsMap = new ConcurrentHashMap<>();
     private Map<String, Flow> flowMap = new ConcurrentHashMap<>();
     private Map<String, RunFlowResponse> flowResp = new ConcurrentHashMap<>();
     private Queue<String> jobQueue = new ConcurrentLinkedQueue<>();
@@ -164,13 +164,15 @@ public class FlowRunnerImpl implements FlowRunner{
     }
 
     public void stopJob(String jobId) {
-        if(stepsMap.get(jobId) != null){
-            stepsMap.get(jobId).clear();
-            stepsMap.remove(jobId);
-            isJobCancelled.set(true);
-        }
-        else {
-            throw new RuntimeException("Job not running");
+        synchronized (stepsMap) {
+            if(stepsMap.get(jobId) != null){
+                stepsMap.get(jobId).clear();
+                stepsMap.remove(jobId);
+                isJobCancelled.set(true);
+            }
+            else {
+                throw new RuntimeException("Job not running");
+            }
         }
         if (jobId.equals(runningJobId)) {
             if(stepRunner != null){

@@ -128,12 +128,12 @@ public class Versions extends ResourceManager {
         // this call specifically needs to access marklogic without a known database
         ServerEvaluationCall eval = appConfig.newAppServicesDatabaseClient(null).newServerEval();
         String xqy = "xdmp:version()";
-        EvalResultIterator result = eval.xquery(xqy).eval();
-        if (result.hasNext()) {
-            return result.next().getString();
-        }
-        else {
-            throw new RuntimeException("Couldn't determine MarkLogic Version");
+        try (EvalResultIterator result = eval.xquery(xqy).eval()) {
+            if (result.hasNext()) {
+                return result.next().getString();
+            } else {
+                throw new RuntimeException("Couldn't determine MarkLogic Version");
+            }
         }
     }
 
