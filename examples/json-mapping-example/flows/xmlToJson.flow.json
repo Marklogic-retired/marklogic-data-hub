@@ -39,7 +39,7 @@
       "fileLocations" : {
         "inputFilePath" : "data",
         "inputFileType" : "xml",
-        "outputURIReplacement" : "",
+        "outputURIReplacement" : ".*data,'/person'",
         "separator" : ""
       }
     },
