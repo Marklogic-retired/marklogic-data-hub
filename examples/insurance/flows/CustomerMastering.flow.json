@@ -42,13 +42,13 @@
             "collections" : {
               "onMerge" : {
                 "add" : {
-                  "collection" : [ "" ]
+                  "collection" : [ "customer-merge" ]
                 },
                 "remove" : {
                   "collection" : [ "" ]
                 },
                 "set" : {
-                  "collection" : [ "customer-merge" ]
+                  "collection" : [ "" ]
                 }
               }
             }
