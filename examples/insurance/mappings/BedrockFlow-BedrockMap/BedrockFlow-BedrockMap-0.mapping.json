@@ -7,10 +7,10 @@
   "sourceContext" : "/",
   "properties" : {
     "firstname" : {
-      "sourcedFrom" : "first_name"
+      "sourcedFrom" : "upper-case(first_name)"
     },
     "pin" : {
-      "sourcedFrom" : "pin"
+      "sourcedFrom" : "number(pin)"
     },
     "id" : {
       "sourcedFrom" : "id"
@@ -25,7 +25,7 @@
       "sourcedFrom" : "email"
     },
     "lastname" : {
-      "sourcedFrom" : "last_name"
+      "sourcedFrom" : "upper-case(last_name)"
     }
   }
 }
