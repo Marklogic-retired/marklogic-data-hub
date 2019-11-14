@@ -50,7 +50,7 @@
         },
         "targetEntity" : "Customer",
         "sourceDatabase" : "data-hub-STAGING",
-        "collections" : [ "BedrockMap", "mdm-content", "Customer" ],
+        "collections" : [ "BedrockMap", "Customer" ],
         "validateEntity" : false,
         "sourceCollection" : "BedrockIngest",
         "targetDatabase" : "data-hub-FINAL"
@@ -59,7 +59,7 @@
       "retryLimit" : 0,
       "batchSize" : 0,
       "threadCount" : 0,
-      "stepDefinitionName" : "default-mapping",
+      "stepDefinitionName" : "entity-services-mapping",
       "stepDefinitionType" : "MAPPING"
     }
   }

@@ -1,37 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <search:options xml:lang="zxx" xmlns:search="http://marklogic.com/appservices/search">
   <search:constraint name="Collection">
-    <search:collection/>
+    <search:collection>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:collection>
   </search:constraint>
   <search:constraint name="createdByJob">
-    <search:value>
+    <search:range facet="false">
       <search:field name="datahubCreatedByJob"/>
-    </search:value>
+    </search:range>
   </search:constraint>
   <search:constraint name="createdByStep">
-    <search:value>
+    <search:range>
       <search:field name="datahubCreatedByStep"/>
-    </search:value>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="createdByJobWord">
+    <search:word>
+      <search:field name="datahubCreatedByJob"/>
+    </search:word>
+  </search:constraint>
+  <search:constraint name="createdOnRange">
+    <search:range facet="false">
+      <search:field name="datahubCreatedOn"/>
+    </search:range>
+  </search:constraint>
+  <search:constraint name="createdInFlowRange">
+    <search:range>
+      <search:field name="datahubCreatedInFlow"/>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>
   </search:constraint>
   <search:constraint name="entity-type">
     <search:value>
       <search:element ns="http://marklogic.com/entity-services" name="title"/>
     </search:value>
   </search:constraint>
-  <search:constraint name="id">
-    <search:value>
-      <search:element ns="" name="id"/>
-    </search:value>
-  </search:constraint>
-  <search:constraint name="updated">
-    <search:range type="xs:dateTime" facet="true">
-      <search:element ns="" name="updated" xmlns:es="http://marklogic.com/entity-services"/>
+  <search:constraint name="FirstName">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:element ns="" name="FirstName" xmlns:es="http://marklogic.com/entity-services"/>
       <search:facet-option>limit=25</search:facet-option>
     </search:range>
   </search:constraint>
-  <search:values name="Customer">
-    <search:range type="xs:dateTime" facet="true">
-      <search:element ns="" name="updated" xmlns:es="http://marklogic.com/entity-services"/>
+  <search:values name="Person">
+    <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
+      <search:element ns="" name="FirstName" xmlns:es="http://marklogic.com/entity-services"/>
     </search:range>
   </search:values>
   <!--Uncomment to return no results for a blank search, rather than the default of all results
@@ -46,11 +60,12 @@
   <search:search-option>unfiltered</search:search-option>
   <!--Modify document extraction to change results returned-->
   <search:extract-document-data selected="include">
-    <search:extract-path xmlns:es="http://marklogic.com/entity-services">//*:instance/(Customer)</search:extract-path>
+    <search:extract-path xmlns:es="http://marklogic.com/entity-services">//*:instance/(Person)</search:extract-path>
+    <search:extract-path xmlns:es="http://marklogic.com/entity-services">/*:envelope/*:headers</search:extract-path>
   </search:extract-document-data>
   <!--Change or remove this additional-query to broaden search beyond entity instance documents-->
   <!--To return facets, change this option to 'true' and edit constraints-->
   <search:return-facets>true</search:return-facets>
   <!--To return snippets, comment out or remove this option-->
-  <search:transform-results apply="empty-snippet"/>
+  <!--<search:transform-results apply="empty-snippet"></search:transform-results>-->
 </search:options>
