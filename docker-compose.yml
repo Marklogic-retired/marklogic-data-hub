@@ -8,8 +8,11 @@ services:
     container_name: "explorerui"
     ports:
       - "80:80"
+      - "443:443"
     environment:
       - API_URL=explorer:8080
+      - SSL_CERT=/etc/nginx/www.explorer.com.cert.pem
+      - SSL_KEY=/etc/nginx/www.explorer.com.key.pem
     depends_on:
       - explorer
   explorer:
