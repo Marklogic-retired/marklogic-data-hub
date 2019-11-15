@@ -249,6 +249,9 @@ class Flow {
         }
       }
     }
+    if (prov.granularityLevel() !== prov.OFF_LEVEL) {
+      this.datahub.prov.commit();
+    }
     if (!combinedOptions.noBatchWrite) {
       let batchStatus = "finished";
       if (this.globalContext.failedItems.length) {
@@ -260,9 +263,6 @@ class Flow {
       }
       if (!combinedOptions.disableJobOutput) {
         this.datahub.jobs.updateBatch(this.globalContext.jobId, this.globalContext.batchId, batchStatus, uris, writeTransactionInfo, this.globalContext.batchErrors[0]);
-      }
-      if (prov.granularityLevel() !== prov.OFF_LEVEL) {
-        this.datahub.prov.commit();
       }
     }
 
