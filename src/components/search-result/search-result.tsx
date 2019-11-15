@@ -4,6 +4,9 @@ import styles from './search-result.module.scss';
 import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
 import { dateConverter } from '../../util/date-conversion';
 import { xmlParser } from '../../util/xml-parser';
+import ExpandableView from "../expandable-view/expandable-view";
+import { faAngleRight } from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 interface Props extends RouteComponentProps {
   item: any;
@@ -99,6 +102,7 @@ const SearchResult: React.FC<Props> = (props) => {
   return (
     <div>
       <div className={styles.title} >
+        <FontAwesomeIcon className={styles.help} icon={faAngleRight} size="sm" />
         <span className={styles.entityName} data-cy='entity-name'>{itemEntityName}</span>
         {entityDef.primaryKey && <span className={styles.primaryKey}>{entityDef.primaryKey}:</span>}
         <Link to={{ pathname: `/detail/${primaryKeyValue}/${uri}` }} data-cy='primary-key'>
@@ -127,6 +131,9 @@ const SearchResult: React.FC<Props> = (props) => {
             <span className={styles.format} data-cy='file-type'>{fileTypeVal}</span>
           </div>
         )}
+      </div>
+      <div>
+        <ExpandableView item={props.item}/>
       </div>
     </div>
   )
