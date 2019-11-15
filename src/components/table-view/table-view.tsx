@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Table } from 'antd';
+import {parseJson} from "../../util/parse-json";
 
 interface Props {
   document: any;
@@ -10,19 +11,6 @@ const TableView: React.FC<Props> = (props) => {
   const [expanded, setExpanded] = useState(false);
 
   let data = new Array();
-  let counter = 0;
-
-  const parseJson = (obj: Object) => {
-    let parsedData = new Array();
-    for (var i in obj) {
-      if (obj[i] !== null && typeof (obj[i]) === "object") {
-        parsedData.push({ key: counter++, property: i, children: parseJson(obj[i]) });
-      } else {
-        parsedData.push({ key: counter++, property: i, value: typeof obj[i] === 'boolean' ? obj[i].toString() : obj[i] });
-      }
-    }
-    return parsedData;
-  }
 
   if (props.document.envelope || props.document.content.envelope) {
     if (props.contentType === 'json') {
