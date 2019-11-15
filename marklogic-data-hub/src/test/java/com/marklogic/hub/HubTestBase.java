@@ -181,7 +181,7 @@ public class HubTestBase {
     public static String flowRunnerUser;
     public static String flowRunnerPassword;
     protected  Authentication stagingAuthMethod;
-    private  Authentication jobAuthMethod;
+    protected   Authentication jobAuthMethod;
     protected  Authentication finalAuthMethod;
     public  DatabaseClient stagingClient = null;
     public  DatabaseClient flowRunnerClient = null;
