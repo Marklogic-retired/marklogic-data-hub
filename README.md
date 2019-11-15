@@ -41,7 +41,7 @@ docker build -t explorer-ui .
 
 # Run Docker container
 Replace API_URL with server IP
-docker run -e API_URL=172.0.1.0:8080 -p 80:80 -p 443:443 explorer-ui
+docker run -e API_URL=172.0.1.0:8080 -e SSL_CERT=/etc/nginx/www.explorer.com.cert.pem -e SSL_KEY=/etc/nginx/www.explorer.com.key.pem -p 80:80 -p 443:443 explorer-ui
 
 # Build and Run the backend Docker container
 Follow the README instructions in the server repo
