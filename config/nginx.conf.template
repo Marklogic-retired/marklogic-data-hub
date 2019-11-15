@@ -9,8 +9,8 @@ server {
   listen 443 ssl;
   listen [::]:443 ssl;
 
-  ssl_certificate     /etc/nginx/www.explorer.com.cert.pem;
-  ssl_certificate_key /etc/nginx/www.explorer.com.key.pem;  
+  ssl_certificate     ${SSL_CERT};
+  ssl_certificate_key ${SSL_KEY};  
 
   location / {
     # server_name www.example.com
