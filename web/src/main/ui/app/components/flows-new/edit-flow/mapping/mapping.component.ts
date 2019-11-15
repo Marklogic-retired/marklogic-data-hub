@@ -470,7 +470,19 @@ export class MappingComponent implements OnInit {
       if (node.attributes) {
         for (let name of node.getAttributeNames()) {
           if (!name.startsWith('xmlns')) {
-            obj[node.nodeName + "/" + "@" + name] = node.getAttribute(name);
+            let nodeWithAttr = '';
+            if(node.namespaceURI){
+              let indCheck = node.namespaceURI.lastIndexOf('/');
+                  let ind = indCheck != -1 ? indCheck + 1 : 0;
+                  if(node.nodeName.split(':').length > 1){
+                    nodeWithAttr = node.namespaceURI.slice(ind) + ':' + node.nodeName.split(':')[1];
+                  } else {
+                    nodeWithAttr = node.namespaceURI.slice(ind) + ':' + node.nodeName;
+                  }
+              obj[nodeWithAttr + "/" + "@" + name] = node.getAttribute(name);
+            } else {
+              obj[node.nodeName + "/" + "@" + name] = node.getAttribute(name);
+            }
           }
         }
       }
@@ -480,7 +492,20 @@ export class MappingComponent implements OnInit {
         for (let i = 0; i < node.attributes.length; i++) {
           if (!node.attributes.item(i).name.startsWith('xmlns')) {
             let tempObjAttr = {};
-            tempObjAttr["/" + node.nodeName + "/" + "@" + node.attributes.item(i).name] = node.attributes.item(i).value;
+            let nodeWithAttr = '';
+            if(node.namespaceURI){
+              let indCheck = node.namespaceURI.lastIndexOf('/');
+                  let ind = indCheck != -1 ? indCheck + 1 : 0;
+                  if(node.nodeName.split(':').length > 1){
+                    nodeWithAttr = node.namespaceURI.slice(ind) + ':' + node.nodeName.split(':')[1];
+                  } else {
+                    nodeWithAttr = node.namespaceURI.slice(ind) + ':' + node.nodeName;
+                  }
+                  tempObjAttr["/" + nodeWithAttr + "/" + "@" + node.attributes.item(i).name] = node.attributes.item(i).value;
+            } else {
+              tempObjAttr["/" + node.nodeName + "/" + "@" + node.attributes.item(i).name] = node.attributes.item(i).value;
+            }
+            
             if (obj[node.nodeName+"/"].constructor.name === 'Array') {
               obj[node.nodeName+"/"].push(tempObjAttr);
             }
