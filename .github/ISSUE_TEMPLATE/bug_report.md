@@ -37,7 +37,7 @@ Is this a QuickStart UI bug? If so, which browser are you using?
 If possible, rerun the command with -d for debugging output and attach the output:
 
   **for quickstart:**  
-  `java -jar quickstart.war -debug > myoutput.txt`
+  `java -jar marklogic-datahub-<version>.war  --debug  > myoutput.txt`
 
   **for gradle:**  
   `gradle mlYourCommand -debug > myoutput.txt`
