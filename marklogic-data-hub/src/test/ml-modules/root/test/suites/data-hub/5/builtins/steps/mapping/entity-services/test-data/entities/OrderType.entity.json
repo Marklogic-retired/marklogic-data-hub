@@ -2,7 +2,7 @@
   "info" : {
     "title" : "OrderType",
     "version" : "0.0.1",
-    "baseUri": "http://marklogic.com/data-hub/example/"
+    "baseUri" : "http://marklogic.com/data-hub/example/"
   },
   "definitions" : {
     "OrderType" : {
@@ -16,20 +16,81 @@
           "datatype" : "string",
           "collation" : "http://marklogic.com/collation/codepoint"
         },
-        "purchaseDate": {
-          "datatype": "date"
+        "purchaseDate" : {
+          "datatype" : "date"
         },
-        "orderCost": {
-          "datatype": "decimal"
+        "orderCost" : {
+          "datatype" : "decimal"
         },
         "items" : {
           "datatype" : "array",
           "items" : {
-            "$ref": "http://marklogic.com/data-hub/example/ItemType-0.0.1/ItemType"
+            "$ref" : "#/definitions/ItemType"
           }
         },
         "customer" : {
-          "$ref": "http://marklogic.com/data-hub/example/CustomerType-0.0.1/CustomerType"
+          "$ref" : "#/definitions/CustomerType"
+        }
+      }
+    },
+    "ItemType" : {
+      "required" : [ ],
+      "pii" : [ ],
+      "elementRangeIndex" : [ ],
+      "rangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "name" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "quantity" : {
+          "datatype" : "integer"
+        },
+        "price" : {
+          "datatype" : "decimal"
+        }
+      }
+    },
+    "CustomerType" : {
+      "primaryKey" : "id",
+      "required" : [ ],
+      "pii" : [ ],
+      "elementRangeIndex" : [ ],
+      "rangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "id" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "firstname" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "lastname" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "gender" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "postal" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "phone" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "email" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "updated" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
         }
       }
     }
