@@ -347,7 +347,18 @@ function getCanonicalInstance(mapping, uri, propertyName) {
 
   try {
     let outputDoc = inst.canonicalJson(xdmp.xsltEval(mappingXslt, fn.head(xdmp.unquote(String(instance)))));
-    resp.output = String(fn.head(outputDoc.xpath("//" + propertyName)));
+    let output = outputDoc.xpath("//" + propertyName);
+    let arr = output.toArray();
+    if(arr.length === 1) {
+      resp.output = String(fn.head(output));
+    }
+    else {
+      let respString = String(arr[0] + ", "+ arr[1] );
+      if (arr.length > 2) {
+        respString = respString + ", ... (" + String(arr.length - 2) + " more)";
+      }
+      resp.output = respString;
+    }
   }
   catch(e){
     resp.errorMessage = getErrorMessage(e);

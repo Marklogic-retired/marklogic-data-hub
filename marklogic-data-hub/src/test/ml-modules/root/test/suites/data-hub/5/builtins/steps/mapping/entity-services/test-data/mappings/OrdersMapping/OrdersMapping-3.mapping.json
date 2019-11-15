@@ -1,0 +1,51 @@
+{
+  "lang" : "zxx",
+  "name" : "OrdersMapping",
+  "description" : "",
+  "version" : 3,
+  "targetEntityType" : "http://marklogic.com/data-hub/example/OrderType-0.0.1/OrderType",
+  "sourceContext" : "/",
+  "sourceURI" : "/Users/ssambasu/Downloads/5.1_json-mapping-example/data/nestedPerson1.json",
+  "properties" : {
+    "purchaseDate" : {
+      "sourcedFrom" : "parseDate('MM/DD/YYYY', transactionDate)"
+    },
+    "id" : {
+      "sourcedFrom" : "id"
+    },
+    "items" : {
+      "sourcedFrom" : "items",
+      "targetEntityType" : "#/definitions/ItemType",
+      "properties" : {
+        "name" : {
+          "sourcedFrom" : "name"
+        },
+        "quantity" : {
+          "sourcedFrom" : "quantity"
+        },
+        "price" : {
+          "sourcedFrom" : "price"
+        }
+      }
+    },
+    "customer" : {
+      "sourcedFrom" : "customer",
+      "targetEntityType" : "#/definitions/CustomerType",
+      "properties" : {
+        "id" : {
+          "sourcedFrom" : "../id"
+        },
+        "firstname" : {
+          "sourcedFrom" : "firstName"
+        },
+        "lastname" : {
+          "sourcedFrom" : "lastName"
+        },
+        "gender" : {
+          "sourcedFrom" : "gender"
+        }
+      }
+    }
+  },
+  "namespaces" : { }
+}

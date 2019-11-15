@@ -66,6 +66,17 @@ function testValidateAndRunMapping(mapURI = "/mappings/PersonMapping/PersonMappi
   ];
 }
 
+function testValidateAndRunMappingArrayValues(mapURI = "/mappings/OrdersMapping/OrdersMapping-3.mapping.json", uri = "/content/orderTest.json") {
+  let map = cts.doc(mapURI).toObject();
+  let result = esMappingLib.validateAndRunMapping(map, uri);
+  return [
+    test.assertEqual(1, fn.number(result.properties.id.output), `Expected output '1', got '${xdmp.describe(result.properties.id)}'`),
+    test.assertEqual("Voltsillam, Latlux, ... (3 more)", result.properties.items.properties.name.output, `Expected output 'Voltsillam, Latlux, ... (3 more)', got '${xdmp.describe(result.properties.items.properties.name)}'`),
+    test.assertEqual("7, 10, ... (3 more)", result.properties.items.properties.quantity.output, `Expected output '7, 10, ... (3 more)', got '${xdmp.describe(result.properties.items.properties.quantity)}'`),
+    test.assertEqual("2, 7.17, ... (3 more)", result.properties.items.properties.price.output, `Expected output '2, 7.17, ... (3 more)', got '${xdmp.describe(result.properties.items.properties.price)}'`),
+  ];
+}
+
 function testValidateAndRunMappingWithErrors() {
   let map = {
               "targetEntityType": "http://marklogic.com/data-hub/example/Person-1.0.0/Person",
@@ -87,6 +98,7 @@ if (esMappingLib.versionIsCompatibleWithES()) {
     .concat(missingFunctionReference())
     .concat(incorrectNumberOfFunctionArguments())
     .concat(testValidateAndRunMapping())
+    .concat(testValidateAndRunMappingArrayValues())
     .concat(testValidateAndRunMapping("/mappings/PersonNsMapping/PersonNsMapping-1.mapping.json", "/content/person-ns.xml"))
     .concat(testValidateAndRunMappingWithErrors())
   ;
