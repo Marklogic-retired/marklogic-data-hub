@@ -104,3 +104,29 @@ declare function delete-artifacts(
     xdmp:document-delete($artifact-uri)
   )
 };
+
+(:
+Typically used to make it easy to make assertions against the contents of the jobs database
+after a test is run.
+:)
+declare function clear-jobs-database()
+{
+  xdmp:invoke-function(function() {
+    xdmp:collection-delete("Jobs")
+  },
+    <options xmlns="xdmp:eval">
+      <database>{xdmp:database("data-hub-JOBS")}</database>
+    </options>
+  )
+};
+
+declare function get-first-batch-document()
+{
+  xdmp:invoke-function(function() {
+    collection("Batch")[1]
+  },
+    <options xmlns="xdmp:eval">
+      <database>{xdmp:database("data-hub-JOBS")}</database>
+    </options>
+  )
+};
