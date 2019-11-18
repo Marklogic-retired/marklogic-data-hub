@@ -10,7 +10,7 @@ services:
       - "80:80"
       - "443:443"
     environment:
-      - API_URL=explorer:8080
+      - API_URL=explorer:8443
       - SSL_CERT=/etc/nginx/www.explorer.com.cert.pem
       - SSL_KEY=/etc/nginx/www.explorer.com.key.pem
     depends_on:
@@ -20,8 +20,10 @@ services:
     container_name: "explorer"
     ports:
       - "8080:8080"
+      - "8443:8443"
     environment:
       - mlHost=mldhf
+      - server.port=8443
     depends_on:
       - mldhf
   mldhf:
