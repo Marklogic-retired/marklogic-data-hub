@@ -156,9 +156,10 @@
 </mat-table>
 
 <!-- PROPERTIES MENU -->
-<mat-menu class="mat-menu-list" #fieldMenu="matMenu">
+<mat-menu id="list-menu-dialog" class="mat-menu-list" #fieldMenu="matMenu">
   <ng-template matMenuContent let-indx="indx" let-prop="prop">
     <div
+      id="list-menu-btn"
       mat-menu-item
       class="mat-menu-list-btn"
       *ngFor="let srcProp of uniqueSourceFields(this.srcProps)"
@@ -172,9 +173,10 @@
 </mat-menu>
 
 <!-- FUNCTIONS MENU -->
-<mat-menu class="mat-menu-list" #functionMenu="matMenu">
+<mat-menu id="function-menu-dialog" class="mat-menu-list" #functionMenu="matMenu">
   <ng-template matMenuContent let-indx="indx" let-prop="prop">
     <div
+      id="function-menu-btn"
       mat-menu-item
       class="mat-menu-list-btn"
       *ngFor="let function of functionLst | keyvalue"
