@@ -20,8 +20,10 @@ services:
     container_name: "explorer"
     ports:
       - "8080:8080"
+      - "8443:8443"
     environment:
       - mlHost=mldhf
+      - server.port=8443
     depends_on:
       - mldhf
   mldhf:
