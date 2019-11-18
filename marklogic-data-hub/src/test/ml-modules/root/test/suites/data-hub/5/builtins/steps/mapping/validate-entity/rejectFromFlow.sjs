@@ -1,6 +1,7 @@
 const config = require("/com.marklogic.hub/config.sjs");
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const esMappingLib = require("/data-hub/5/builtins/steps/mapping/entity-services/lib.sjs");
+const hubTest = require("/test/data-hub-test-helper.xqy");
 const lib = require("lib/lib.sjs");
 const test = require("/test/test-helper.xqy");
 
@@ -23,9 +24,7 @@ if (lib.canTestJsonSchemaValidation() && esMappingLib.versionIsCompatibleWithES(
     )
   ];
 
-  let batch = fn.head(xdmp.invokeFunction(function () {
-    return fn.collection("Batch").toArray()[0];
-  }, {database: xdmp.database(config.JOBDATABASE)})).toObject();
+  let batch = hubTest.getFirstBatchDocument().toObject();
 
   assertions.push(
     test.assertTrue(batch.batch.error != null,

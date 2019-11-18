@@ -301,6 +301,9 @@ class Jobs {
         docObj.batch.errorStack = error.stack;
       }
       docObj.batch.error = `${error.name || error.code}: ${error.message}`;
+      // Include the complete error so that this module doesn't have to have knowledge of everything that a step or flow
+      // may add to the error, such as the URI of the failed document
+      docObj.batch.completeError = error;
     }
     docObj.batch.writeTrnxID = writeTransactionInfo.transaction;
     docObj.batch.writeTimeStamp = writeTransactionInfo.dateTime;
