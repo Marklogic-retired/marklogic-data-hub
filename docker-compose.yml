@@ -23,7 +23,7 @@ services:
       - "8443:8443"
     environment:
       - mlHost=mldhf
-      - server.port=8443
+      - spring.profiles.active=production
     depends_on:
       - mldhf
   mldhf:

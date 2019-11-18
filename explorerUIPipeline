@@ -8,6 +8,7 @@ pipeline{
 	environment{
 	DMC_USER     = credentials('MLBUILD_USER')
     DMC_PASSWORD= credentials('MLBUILD_PASSWORD')
+    BUILDER_PASS=credentials('BUILDER_PASS')
 	}
 	parameters{
 	string(name: 'Email', defaultValue: 'stadikon@marklogic.com,ban@marklogic.com,mwooldri@marklogic.com,tisangul@marklogic.com,zumrani@marklogic.com,svishaka@marklogic.com', description: 'Who should I say send the email to?')
