@@ -104,7 +104,7 @@ const SearchResult: React.FC<Props> = (props) => {
   return (
       <div>
         <div className={styles.title} onClick={() => showTableEntityProperties()}>
-          <Icon style={{fontSize: '12px', marginRight: '5px'}} type='right' rotate={show ? 90 : undefined}/>
+          <Icon style={{fontSize: '15px', marginRight: '5px'}} type='right' rotate={show ? 90 : undefined}/>
           <span className={styles.entityName} data-cy='entity-name'>{itemEntityName}</span>
           {entityDef.primaryKey && <span className={styles.primaryKey}>{entityDef.primaryKey}:</span>}
           <Link to={{pathname: `/detail/${primaryKeyValue}/${uri}`}} data-cy='primary-key'>

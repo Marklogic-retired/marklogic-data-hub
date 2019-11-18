@@ -25,9 +25,8 @@ const ExpandableTableView: React.FC<Props> = (props) => {
           data = parseJson(item);
         })
       }
-    });
+    })
   }
-
 
   const columns = [
     {
@@ -48,7 +47,7 @@ const ExpandableTableView: React.FC<Props> = (props) => {
           dataSource={data}
           columns={columns}
           pagination={false}
-          data-cy="document-table"
+          data-cy="expandable-table-view"
       />
   );
 }
