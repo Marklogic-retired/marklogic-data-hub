@@ -143,7 +143,9 @@
   <!-- NORMAL ROW -->
   <mat-row
     *matRowDef="let prop; columns: colsShown"
+    class="entity-row-{{entityName}}-{{prop.name}}"
     [hidden]="this.hasExternalRef(prop)"
+    [attr.name]="prop.name"
   ></mat-row>
 
   <!-- NESTED ENTITY ROW -->

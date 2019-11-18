@@ -134,6 +134,10 @@ export class EditFlow extends AppPage {
     return await button.click();
   }
 
+  async selectStepByName(stepName: string) {
+    return await element(by.cssContainingText(".step h3.step-name",stepName)).click;
+  }
+
   flowMenuOptions(option: string) {
     return element(by.id(`flow-menu-${option}-btn`));
   }
