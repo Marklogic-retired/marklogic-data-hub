@@ -93,8 +93,8 @@ function buildMapProperties(mapping, entityModel) {
   for (let prop in mapProperties) {
     if (mapProperties.hasOwnProperty(prop)) {
       if (!entityProperties.hasOwnProperty(prop)) {
-        // TODO Can pass in a JSON object instead of a string message, but not able to reference the properties on it
-        throw Error("The property '" + prop + "' is not defined by the entity model");
+        datahub.debug.log({message: "The property '" + prop + "' is not defined by the entity model", type: "warn"});
+        continue;
       }
 
       let mapProperty = mapProperties[prop];
