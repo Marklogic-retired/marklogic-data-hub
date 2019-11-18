@@ -24,15 +24,16 @@ function validMapping() {
   ];
 }
 
-function invalidProperty() {
-  let result = esMappingLib.validateMapping({
+function unrecognizedProperty() {
+  let result = esMappingLib.validateAndRunMapping({
     targetEntityType: entityType,
     properties: {
       genderr: {sourcedFrom: "gender"}
     }
-  });
+  }, "/content/mapTest.json");
   return [
-    test.assertEqual("The property 'genderr' is not defined by the entity model", result.properties.genderr.errorMessage)
+    test.assertEqual(null, result.properties.genderr.errorMessage,
+      "Per DHFPROD-3627, an error shouldn't be thrown for an unrecognized property")
   ];
 }
 
@@ -104,7 +105,7 @@ function invalidUseOfCustomFunction() {
 if (esMappingLib.versionIsCompatibleWithES()) {
   []
     .concat(validMapping())
-    .concat(invalidProperty())
+    .concat(unrecognizedProperty())
     .concat(missingFunctionReference())
     .concat(incorrectNumberOfFunctionArguments())
     .concat(functionSyntaxError())
