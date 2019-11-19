@@ -200,6 +200,15 @@ export class NewStepDialogUiComponent implements OnInit {
     this.hasSelectedCollection = event.value === 'collection';
     this.hasSelectedQuery = event.value === 'query';
   }
+
+  //Update the source collection list as soon as the sourceDatabase value is changed.
+  stepDatabaseChange() {
+    this.getCollections.emit(this.newStepForm.value.sourceDatabase);
+    this.newStepForm.patchValue({
+      sourceCollection: ''
+    });
+  }
+
   stepTypeChange() {
     const type = this.newStepForm.value.stepDefinitionType;
     if (type === StepType.MAPPING) {
