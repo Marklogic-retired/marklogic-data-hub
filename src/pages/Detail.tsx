@@ -19,8 +19,8 @@ const Detail: React.FC<Props> = ({ history, location }) => {
   const { user, handleError } = useContext(AuthContext);
   const uriSplit = location.pathname.replace('/detail/', '');
   const pkValue = uriSplit.split('/')[0] === '-' ? '' : decodeURIComponent(uriSplit.split('/')[0]);
-  const uri = decodeURIComponent(uriSplit.split('/')[1]).replace(/ /g,"%2520");
-  const docUri = uri.replace(/%25/g,"%");
+  const uri = decodeURIComponent(uriSplit.split('/')[1]).replace(/ /g, "%2520");
+  const docUri = uri.replace(/%25/g, "%");
   const [selected, setSelected] = useState('instance');
   const [data, setData] = useState();
   const [isLoading, setIsLoading] = useState(false);
@@ -77,8 +77,13 @@ const Detail: React.FC<Props> = ({ history, location }) => {
 
   return (
     <Layout>
+<<<<<<< HEAD
       <Content className= {styles.detailContent}>
         <div id='back-button' style= {{marginLeft: '-23px'}}>
+=======
+      <Content className={styles.detailContent}>
+        <div id='back-button'>
+>>>>>>> tabular view for the search
           <PageHeader onBack={() => history.push('/browse')} title={<Link to={{ pathname: "/browse" }} data-cy="back-button">Back</Link>} />
         </div>
         <div className={styles.header}>
@@ -98,9 +103,9 @@ const Detail: React.FC<Props> = ({ history, location }) => {
         </div>
         <div>
           {
-            isLoading || user.error.type === 'ALERT' ?  <div style={{marginTop : '40px'}}>
-                  <AsyncLoader/>
-                </div>
+            isLoading || user.error.type === 'ALERT' ? <div style={{ marginTop: '40px' }}>
+              <AsyncLoader />
+            </div>
               :
               contentType === 'json' ?
                 selected === 'instance' ? (data && <TableView document={data} contentType={contentType} />) : (data && <JsonView document={data} />)
