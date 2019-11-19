@@ -159,6 +159,7 @@
 <mat-menu class="mat-menu-list" #fieldMenu="matMenu">
   <ng-template matMenuContent let-indx="indx" let-prop="prop">
     <div
+      id="field-value-{{srcProp.lastIndexOf('/') != -1 ? srcProp.slice(srcProp.lastIndexOf('/')+1) : srcProp}}"
       mat-menu-item
       class="mat-menu-list-btn"
       *ngFor="let srcProp of uniqueSourceFields(this.srcProps)"
