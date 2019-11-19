@@ -77,13 +77,8 @@ const Detail: React.FC<Props> = ({ history, location }) => {
 
   return (
     <Layout>
-<<<<<<< HEAD
       <Content className= {styles.detailContent}>
         <div id='back-button' style= {{marginLeft: '-23px'}}>
-=======
-      <Content className={styles.detailContent}>
-        <div id='back-button'>
->>>>>>> tabular view for the search
           <PageHeader onBack={() => history.push('/browse')} title={<Link to={{ pathname: "/browse" }} data-cy="back-button">Back</Link>} />
         </div>
         <div className={styles.header}>
