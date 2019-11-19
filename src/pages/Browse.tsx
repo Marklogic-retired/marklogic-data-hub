@@ -10,13 +10,16 @@ import SearchBar from '../components/search-bar/search-bar';
 import SearchPagination from '../components/search-pagination/search-pagination';
 import SearchSummary from '../components/search-summary/search-summary';
 import SearchResults from '../components/search-results/search-results';
+import ResultTable from '../components/result-table/result-table';
 import { entityFromJSON, entityParser } from '../util/data-conversion';
 import styles from './Browse.module.scss';
+import { Button } from 'antd';
+
 
 interface Props extends RouteComponentProps<any> {
 }
 
-const Browse: React.FC<Props> = ({location}) => {
+const Browse: React.FC<Props> = ({ location }) => {
   const { Content, Sider } = Layout;
   const componentIsMounted = useRef(true);
   const { user, handleError } = useContext(AuthContext);
@@ -32,6 +35,7 @@ const Browse: React.FC<Props> = ({location}) => {
   const [facets, setFacets] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [totalDocuments, setTotalDocuments] = useState(0);
+
 
   const getEntityModel = async () => {
     try {
@@ -96,56 +100,76 @@ const Browse: React.FC<Props> = ({location}) => {
     }
   }, [searchOptions, entities, user.error.type]);
 
+
+  // const tableSwitch = (e) => table ? setTable(false) : setTable(true);
+
+
   return (
-      <>
-        <Layout>
-          <Sider className={styles.sideBarFacets} width={300}>
-            <Sidebar
-                facets={facets}
-                selectedEntities={searchOptions.entityNames}
-                entityDefArray={entityDefArray}
-            />
-          </Sider>
-          <Content className={styles.content}>
-            {isLoading || user.error.type === 'ALERT' ?
-                <AsyncLoader/>
+    <>
+      <Layout>
+        <Sider className={styles.sideBarFacets} width={300}>
+          <Sidebar
+            facets={facets}
+            selectedEntities={searchOptions.entityNames}
+            entityDefArray={entityDefArray}
+          />
+        </Sider>
+        <Content className={styles.content}>
+
+          {/* <Button onClick={(e) => tableSwitch(e)}>Default</Button> */}
+
+          {isLoading || user.error.type === 'ALERT' ?
+            <AsyncLoader />
+            :
+            <>
+              <div className={styles.searchBar}>
+                <SearchBar entities={entities} />
+                <SearchPagination
+                  total={totalDocuments}
+                  pageNumber={searchOptions.pageNumber}
+                  pageSize={searchOptions.pageSize}
+                />
+              </div>
+              <SearchSummary
+                total={totalDocuments}
+                start={searchOptions.start}
+                length={searchOptions.pageLength}
+                pageSize={searchOptions.pageSize}
+              />
+
+              {/* Search table */}
+              {/* {table ?
+                <>
+                  <ResultTable data={data} entity={searchOptions.entityNames} entityDefArray={entityDefArray} />
+                </>
                 :
                 <>
-                  <div className={styles.searchBar}>
-                    <SearchBar entities={entities}/>
-                    <SearchPagination
-                        total={totalDocuments}
-                        pageNumber={searchOptions.pageNumber}
-                        pageSize={searchOptions.pageSize}
-                    />
-                  </div>
-                  <SearchSummary
-                      total={totalDocuments}
-                      start={searchOptions.start}
-                      length={searchOptions.pageLength}
-                      pageSize={searchOptions.pageSize}
-                  />
-                  <SearchResults data={data} entityDefArray={entityDefArray}/>
-                  <div style= {{marginTop: '-82px'}}>
-                  <SearchSummary
-                      total={totalDocuments}
-                      start={searchOptions.start}
-                      length={searchOptions.pageLength}
-                      pageSize={searchOptions.pageSize}
-                  />
-                  <div style = {{marginTop: '-42px'}}>
-                  <SearchPagination
-                      total={totalDocuments}
-                      pageNumber={searchOptions.pageNumber}
-                      pageSize={searchOptions.pageSize}
-                  />
-                  </div>
-                  </div>
+                  <SearchResults data={data} entityDefArray={entityDefArray} />
                 </>
-            }
-          </Content>
-        </Layout>
-      </>
+
+              } */}
+
+              <SearchResults data={data} entityDefArray={entityDefArray} />
+              <div style={{ marginTop: '-82px' }}>
+                <SearchSummary
+                  total={totalDocuments}
+                  start={searchOptions.start}
+                  length={searchOptions.pageLength}
+                  pageSize={searchOptions.pageSize}
+                />
+                <div style={{ marginTop: '-32px' }}>
+                  <SearchPagination
+                    total={totalDocuments}
+                    pageNumber={searchOptions.pageNumber}
+                    pageSize={searchOptions.pageSize}
+                  />
+                </div>
+              </div>
+            </>
+          }
+        </Content>
+      </Layout>
+    </>
   );
 }
 
