@@ -33,6 +33,10 @@ pipeline{
 	}
 	stages{
 	    stage(){
+	    when {
+          			changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'develop', title: '', url: ''
+          			beforeAgent true
+        }
 	    agent { label 'dhfLinuxAgent'}
 	    steps{
 	    script{
