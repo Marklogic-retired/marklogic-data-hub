@@ -22,11 +22,11 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DataHubAppAdminTest extends AbstractSecurityTest {
+public class DataHubDeveloperTest extends AbstractSecurityTest {
 
     @Override
     protected String getRoleName() {
-        return "data-hub-app-admin";
+        return "data-hub-developer";
     }
 
     @Test

@@ -57,7 +57,7 @@ public class CreateGranularPrivilegesCommand implements Command {
 
         p.setPrivilegeName("admin-database-index-" + finalDbName);
         p.setAction("http://marklogic.com/xdmp/privileges/admin/database/index/" + finalDbId);
-        p.setRole(Arrays.asList("data-hub-app-admin"));
+        p.setRole(Arrays.asList("data-hub-developer"));
         mgr.save(p.getJson());
 
         p.setPrivilegeName("admin-database-index-" + stagingDbName);
