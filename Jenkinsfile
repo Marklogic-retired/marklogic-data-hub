@@ -34,7 +34,7 @@ pipeline{
 	stages{
 	    stage('Pre-Build-Check'){
 	    when {
-          			changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'develop', title: '', url: ''
+          			changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: '5.1-develop', title: '', url: ''
           			beforeAgent true
         }
 	    agent { label 'dhfLinuxAgent'}
