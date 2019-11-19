@@ -1,5 +1,5 @@
 {
-  "role-name": "data-hub-user",
+  "role-name": "data-hub-operator",
   "description": "Data Hub role for users that can run flows and view job details; it is intended to replace flow-operator-role, and thus it inherits all of the privileges that flow-operator-role does",
   "role": [
     "rest-extension-user",

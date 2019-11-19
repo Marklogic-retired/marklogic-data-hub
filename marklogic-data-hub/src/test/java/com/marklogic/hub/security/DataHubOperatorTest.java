@@ -18,14 +18,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <p>
  * XDBC privileges are retained to support mlcp usage when ingesting data.
  */
-public class DataHubUserTest extends AbstractSecurityTest {
+public class DataHubOperatorTest extends AbstractSecurityTest {
 
     @Autowired
     FlowRunnerImpl flowRunner;
 
     @Override
     protected String getRoleName() {
-        return "data-hub-user";
+        return "data-hub-operator";
     }
 
     @BeforeAll
@@ -55,7 +55,7 @@ public class DataHubUserTest extends AbstractSecurityTest {
             assertEquals(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "json-map"), 1);
             assertEquals(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map"), 1);
             assertEquals(getDocCount(HubConfig.DEFAULT_JOB_NAME, "Jobs"), 3,
-                "For task 32, data-hub-user should be able to see documents in the Jobs collection via the " +
+                "For task 32, data-hub-operator should be able to see documents in the Jobs collection via the " +
                     "data-hub-job-reader role, and there should be 3 documents - 2 in Batch, and 1 in Job");
         } finally {
             adminHubConfig.setMlUsername(super.user);

@@ -1,8 +1,8 @@
 {
-  "role-name": "data-hub-app-admin",
+  "role-name": "data-hub-developer",
   "description": "Data Hub role for a user that can administer a Data Hub application but not fully manage its resources",
   "role": [
-    "data-hub-user",
+    "data-hub-operator",
     "manage-user",
     "ps-user",
     "rest-admin",
