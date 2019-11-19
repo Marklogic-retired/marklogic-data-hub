@@ -72,25 +72,32 @@ export class MappingStep extends AppPage {
     return element(by.cssContainingText(this.dialogComponentActions, 'OK'));
   }
 
-  sourcePropertyContainer(entityProperty: string) {
-    return element(by.css(`#source .source-prop-container .prop-entity-${entityProperty}`));
+  sourcePropertyContainer(entityName,entityProperty: string) {
+    return this.entityPropertyContainer(entityName,entityProperty).element(by.id("fields-list"));
   }
 
-  async clickSourcePropertyContainer(entityProperty: string) {
-    let sourceProperty = this.sourcePropertyContainer(entityProperty);
+  async clickSourcePropertyContainer(entityName,entityProperty: string) {
+    let sourceProperty = this.sourcePropertyContainer(entityName,entityProperty);
     return await sourceProperty.click();
   }
 
   propertySelectMenu(entityProperty: string) {
-    return element(by.css(`#source .source-prop-container .prop-select-menu-${entityProperty}`));
+    return element(by.css(`#field-value-${entityProperty}`));
   }
 
-  undoPropertyMapping(entityProperty: string) {
-    return this.sourcePropertyContainer(entityProperty).element(by.css('.fa-remove'));
+  async clickPropertySelectMenu(entityProperty: string) {
+    return await this.propertySelectMenu(entityProperty).click();
+  }
+  verifyExpressionText(entityName,entityProperty: string, expression: string) {
+    return element(by.cssContainingText(`#entity-table .entity-row-${entityName}-${entityProperty} #edit-expression`, expression));
   }
 
-  sourcePropertyDropDown(entityProperty: string) {
-    return this.sourcePropertyContainer(entityProperty).element(by.css('.fa-caret-down'));
+  undoPropertyMapping(entityName,entityProperty: string) {
+    return this.sourcePropertyContainer(entityName,entityProperty).element(by.css('.fa-remove'));
+  }
+
+  sourcePropertyDropDown(entityName,entityProperty: string) {
+    return this.sourcePropertyContainer(entityName,entityProperty).element(by.css('.fa-caret-down'));
   }
 
   sourceTypeAheadInput(entityProperty: string) {
@@ -106,20 +113,20 @@ export class MappingStep extends AppPage {
     return await mapSourceProperty.click();
   }
 
-  entityPropertyContainer(entityProperty: string) {
-    return element(by.css(`#target .entity-prop-container-${entityProperty}`));
+  entityPropertyContainer(entityName: string, entityProperty: string) {
+   return element(by.css(`#entity-table .entity-row-${entityName}-${entityProperty}`));
+ }
+
+  entityPropertyName(entityName,entityProperty: string) {
+    return this.entityPropertyContainer(entityName,entityProperty).element(by.css('.prop-name'));
   }
 
-  entityPropertyName(entityProperty: string) {
-    return this.entityPropertyContainer(entityProperty).element(by.css('.prop-name'));
+  entityPropertyType(entityName,entityProperty: string) {
+    return this.entityPropertyContainer(entityName,entityProperty).element(by.css('.prop-type'));
   }
 
-  entityPropertyType(entityProperty: string) {
-    return this.entityPropertyContainer(entityProperty).element(by.css('.prop-type'));
-  }
-
-  entityPropertyIcon(entityProperty: string, iconClass: string) {
-    return this.entityPropertyContainer(entityProperty).element(by.css(`.entity-icon .fa-${iconClass}`));
+  entityPropertyIcon(entityName,entityProperty: string, iconClass: string) {
+    return this.entityPropertyContainer(entityName,entityProperty).element(by.css(`.entity-icon .fa-${iconClass}`));
   }
 
   verifySourcePropertyName(propertyName: string) {
@@ -140,6 +147,14 @@ export class MappingStep extends AppPage {
 
   verifyDropdownPropertyType(entityProperty: string, propertyType: string) {
     return element(by.cssContainingText(`.prop-select-menu-${entityProperty} .prop-type`, propertyType));
+  }
+
+  testButton() {
+    return element(by.css('#table-and-buttons #Test-btn'));
+  }
+
+  async clickTestButton() {
+    return await this.testButton().click();
   }
 
   verifySourcePropertyValue(propertyValue: string) {
