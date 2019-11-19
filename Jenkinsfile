@@ -32,7 +32,7 @@ pipeline{
 	string(name: 'Email', defaultValue: 'stadikon@marklogic.com,kkanthet@marklogic.com,sbalasub@marklogic.com,nshrivas@marklogic.com,ssambasu@marklogic.com,rrudin@marklogic.com,rdew@marklogic.com,aebadira@marklogic.com,mwooldri@marklogic.com', description: 'Who should I say send the email to?')
 	}
 	stages{
-	    stage(){
+	    stage('Pre-Build-Check'){
 	    when {
           			changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'develop', title: '', url: ''
           			beforeAgent true
