@@ -35,7 +35,7 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [facets, setFacets] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [totalDocuments, setTotalDocuments] = useState(0);
-  const [table, setTable] = useState();
+
 
   const getEntityModel = async () => {
     try {
@@ -100,7 +100,7 @@ const Browse: React.FC<Props> = ({ location }) => {
     }
   }, [searchOptions, entities, user.error.type]);
 
-  // console.log('e',searchOptions.entityNames)
+
   // const tableSwitch = (e) => table ? setTable(false) : setTable(true);
 
 
@@ -149,7 +149,7 @@ const Browse: React.FC<Props> = ({ location }) => {
 
               } */}
 
-              <SearchResults data={data} entityDefArray={entityDefArray}/>
+              <SearchResults data={data} entityDefArray={entityDefArray} />
               <div style={{ marginTop: '-82px' }}>
                 <SearchSummary
                   total={totalDocuments}
