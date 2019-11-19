@@ -87,7 +87,7 @@ pipeline{
 		    agent { label 'explorerLinux'}
 		    steps{
 		        sh 'sudo mladmin stop;docker rm -f $(docker ps -a -q) || true;'
-		        sh 'cd $WORKSPACE/explorer-ui;docker-compose pull || true;dhvolume="$WORKSPACE/explorer-ui/e2e/qa-project/"  docker-compose up --build -d;sleep 45s;docker exec -i mldhf bash -c "sudo chmod -R 777 /projects; cd /projects;rm -rf .gradle;set +e;(./setup.sh || true);sudo  rm -rf build .gradle"; cd e2e; HOSTNAME=$(HOST=`hostname`;echo $HOST |cut -d"." -f1) docker-compose up --build'
+		        sh 'rm -rf $WORKSPACE/explorer-ui/e2e/results || true;cd $WORKSPACE/explorer-ui;docker-compose pull || true;dhvolume="$WORKSPACE/explorer-ui/e2e/qa-project/"  docker-compose up --build -d;sleep 45s;docker exec -i mldhf bash -c "sudo chmod -R 777 /projects; cd /projects;rm -rf .gradle;set +e;(./setup.sh || true);sudo  rm -rf build .gradle"; cd e2e; HOSTNAME=$(HOST=`hostname`;echo $HOST |cut -d"." -f1) docker-compose up --build'
 		        archiveArtifacts artifacts: 'explorer-ui/e2e/results/*.xml,explorer-ui/e2e/cypress/videos/*,explorer-ui/e2e/cypress/screenshots/**/*', onlyIfSuccessful: true
 		        junit '**/e2e/results/*.xml'
 
