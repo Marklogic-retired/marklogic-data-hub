@@ -10,13 +10,16 @@ import SearchBar from '../components/search-bar/search-bar';
 import SearchPagination from '../components/search-pagination/search-pagination';
 import SearchSummary from '../components/search-summary/search-summary';
 import SearchResults from '../components/search-results/search-results';
+import ResultTable from '../components/result-table/result-table';
 import { entityFromJSON, entityParser } from '../util/data-conversion';
 import styles from './Browse.module.scss';
+import { Button } from 'antd';
+
 
 interface Props extends RouteComponentProps<any> {
 }
 
-const Browse: React.FC<Props> = ({location}) => {
+const Browse: React.FC<Props> = ({ location }) => {
   const { Content, Sider } = Layout;
   const componentIsMounted = useRef(true);
   const { user, handleError } = useContext(AuthContext);
@@ -96,6 +99,10 @@ const Browse: React.FC<Props> = ({location}) => {
     }
   }, [searchOptions, entities, user.error.type]);
 
+
+  // const tableSwitch = (e) => table ? setTable(false) : setTable(true);
+
+
   return (
       <>
         <Layout>
@@ -107,6 +114,8 @@ const Browse: React.FC<Props> = ({location}) => {
             />
           </Sider>
           <Content className={styles.content}>
+            {/* <Button onClick={(e) => tableSwitch(e)}>Default</Button> */}
+
             {isLoading || user.error.type === 'ALERT' ?
                 <AsyncLoader/>
                 :
@@ -125,6 +134,17 @@ const Browse: React.FC<Props> = ({location}) => {
                         pageSize={searchOptions.pageSize}
                     />
                   </div>
+                  {/* Search table */}
+                  {/* {table ?
+                <>
+                  <ResultTable data={data} entity={searchOptions.entityNames} entityDefArray={entityDefArray} />
+                </>
+                :
+                <>
+                  <SearchResults data={data} entityDefArray={entityDefArray} />
+                </>
+
+              } */}
                   <SearchResults data={data} entityDefArray={entityDefArray}/>
                   <div>
                   <SearchSummary
