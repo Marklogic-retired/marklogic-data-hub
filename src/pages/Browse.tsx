@@ -10,7 +10,7 @@ import SearchBar from '../components/search-bar/search-bar';
 import SearchPagination from '../components/search-pagination/search-pagination';
 import SearchSummary from '../components/search-summary/search-summary';
 import SearchResults from '../components/search-results/search-results';
-import Table from '../components/table/table';
+import ResultTable from '../components/result-table/result-table';
 import { entityFromJSON, entityParser } from '../util/data-conversion';
 import styles from './Browse.module.scss';
 import { Button } from 'antd';
@@ -140,7 +140,7 @@ const Browse: React.FC<Props> = ({ location }) => {
               {/* Search table */}
               {/* {table ?
                 <>
-                  <Table data={data} entity={searchOptions.entityNames} entityDefArray={entityDefArray} />
+                  <ResultTable data={data} entity={searchOptions.entityNames} entityDefArray={entityDefArray} />
                 </>
                 :
                 <>

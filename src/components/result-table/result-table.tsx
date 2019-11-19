@@ -11,7 +11,7 @@ interface Props {
   entity: any;
 };
 
-const TableRow: React.FC<Props> = (props) => {
+const ResultTable: React.FC<Props> = (props) => {
   let title: string[] = [];
   let entityTitle: string[] = [];
   let data = new Array();
@@ -140,4 +140,4 @@ const TableRow: React.FC<Props> = (props) => {
   );
 }
 
-export default TableRow;
+export default ResultTable;
