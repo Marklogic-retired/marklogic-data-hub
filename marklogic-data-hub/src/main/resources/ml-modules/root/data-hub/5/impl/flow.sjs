@@ -1,18 +1,18 @@
 /**
-  Copyright 2012-2019 MarkLogic Corporation
+ Copyright 2012-2019 MarkLogic Corporation
 
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
 
-     http://www.apache.org/licenses/LICENSE-2.0
+ http://www.apache.org/licenses/LICENSE-2.0
 
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-*/
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 'use strict';
 const FlowUtils = require("/data-hub/5/impl/flow-utils.sjs");
 const Step = require("/data-hub/5/impl/step.sjs");
@@ -348,7 +348,8 @@ class Flow {
             "message": e.message,
             "name": e.name,
             "retryable": e.retryable,
-            "stackFrames": e.stackFrames
+            "stackFrames": e.stackFrames,
+            "uri": flowInstance.globalContext.uri
           });
           flowInstance.globalContext.failedItems.push(flowInstance.globalContext.uri);
           flowInstance.datahub.debug.log({message: `Error running step: ${e.toString()}. ${e.stack}`, type: 'error'});

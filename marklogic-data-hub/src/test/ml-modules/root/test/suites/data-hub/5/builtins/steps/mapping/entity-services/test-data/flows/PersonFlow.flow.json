@@ -1,0 +1,18 @@
+{
+  "name": "PersonFlow",
+  "steps": {
+    "1": {
+      "stepDefinitionName": "entity-services-mapping",
+      "stepDefinitionType": "MAPPING",
+      "options": {
+        "sourceDatabase": "data-hub-FINAL",
+        "targetDatabase": "data-hub-FINAL",
+        "mapping" : {
+          "name" : "PersonMapping",
+          "version" : 5
+        },
+        "outputFormat": "json"
+      }
+    }
+  }
+}
