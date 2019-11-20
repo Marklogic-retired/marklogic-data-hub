@@ -135,7 +135,7 @@ export class MappingUiComponent implements OnChanges {
       else {
         uri = map.sourceURI;
       }
-      self.manageFlowsService.getMappingValidationResp(map.name, map, uri).subscribe(resp => {
+      self.manageFlowsService.getMappingValidationResp(map.name, map, uri, this.step.options.sourceDatabase).subscribe(resp => {
         self.mapResp = resp;
       },
         err => {

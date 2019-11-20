@@ -99,9 +99,9 @@ ManageFlowsService {
     return this.http.get(`api/current-project/mappings/${mapName}/test?mappingVersion=${version}&docURI=${sampleDocURI}`);
   }
 
-  getMappingValidationResp(mapName: string, map, uri:string) {
+  getMappingValidationResp(mapName: string, map, uri:string, dbName:string) {
     console.log(`POST api/current-project/mappings/${mapName}/validation`);
-    return this.http.post(`api/current-project/mappings/${mapName}/validation?uri=${uri}`, map);
+    return this.http.post(`api/current-project/mappings/${mapName}/validation?uri=${uri}&db=${dbName}`, map);
   }
 
   getFunctions() {

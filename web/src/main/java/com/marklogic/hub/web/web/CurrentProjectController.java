@@ -68,6 +68,9 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
     EntityManagerService entityManagerService;
 
     @Autowired
+    MappingManagerService mappingManagerService;
+
+    @Autowired
     private FileSystemWatcherService watcherService;
 
     @Autowired
@@ -291,5 +294,6 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
             watcherService.unwatch(hubConfig.getFlowsDir().toString());
             watcherService.removeListener(this);
         }
+        mappingManagerService.unsetMappingValidators();
     }
 }
