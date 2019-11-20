@@ -106,12 +106,12 @@ const SearchResult: React.FC<Props> = (props) => {
   return (
       <div style={{width: '100%'}}>
         <div className={styles.title} onClick={() => showTableEntityProperties()}>
-          <Icon style={{fontSize: '15px', marginRight: '5px'}} type='right' rotate={show ? 90 : undefined}/>
+          <Icon className={styles.expandableIcon} type='right' rotate={show ? 90 : undefined}/>
           <div className={styles.redirectIcons}>
-            <Link to={{pathname: `/detail/${primaryKeyValue}/${uri}`}} data-cy='primary-key'>
+            <Link to={{pathname: `/detail/${primaryKeyValue}/${uri}`,state: {selectedValue:'instance'}}} data-cy='primary-key'>
               <FontAwesomeIcon  icon={faExternalLinkAlt} size="sm" />
             </Link>
-            <Link to={{pathname: `/detail/${primaryKeyValue}/${uri}`}} data-cy='primary-key'>
+            <Link to={{pathname: `/detail/${primaryKeyValue}/${uri}`,state: {selectedValue:'source'}}} data-cy='primary-key'>
               <FontAwesomeIcon  icon={faCode} size="sm" />
             </Link>
           </div>

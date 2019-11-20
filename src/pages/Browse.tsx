@@ -20,6 +20,7 @@ interface Props extends RouteComponentProps<any> {
 }
 
 const Browse: React.FC<Props> = ({ location }) => {
+
   const { Content, Sider } = Layout;
   const componentIsMounted = useRef(true);
   const { user, handleError } = useContext(AuthContext);
