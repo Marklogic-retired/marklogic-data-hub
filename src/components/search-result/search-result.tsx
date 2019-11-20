@@ -18,7 +18,7 @@ const SearchResult: React.FC<Props> = (props) => {
   let itemEntityName: string[] = [];
   let itemEntityProperties: any[] = [];
   let entityDef: any = {};
-  let primaryKeyValue: any;
+  let primaryKeyValue: any = '-';
   let createdOnVal: string = '';
   let sourcesVal: string = '';
   let fileTypeVal: string = props.item.format;
