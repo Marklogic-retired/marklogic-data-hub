@@ -157,6 +157,8 @@ declare %private function hent:fix-options-exp($nodes as node()*)
           <search:constraint name="Collection">
             <search:collection>
               <search:facet-option>limit=25</search:facet-option>
+              <search:facet-option>frequency-order</search:facet-option>
+              <search:facet-option>descending</search:facet-option>
             </search:collection>
           </search:constraint>,
           <search:constraint name="createdByJob">
@@ -168,6 +170,8 @@ declare %private function hent:fix-options-exp($nodes as node()*)
             <search:range>
               <search:field name="datahubCreatedByStep"/>
               <search:facet-option>limit=25</search:facet-option>
+              <search:facet-option>frequency-order</search:facet-option>
+              <search:facet-option>descending</search:facet-option>
             </search:range>
           </search:constraint>,
           <search:constraint name="createdByJobWord">
@@ -184,6 +188,8 @@ declare %private function hent:fix-options-exp($nodes as node()*)
             <search:range>
               <search:field name="datahubCreatedInFlow"/>
               <search:facet-option>limit=25</search:facet-option>
+              <search:facet-option>frequency-order</search:facet-option>
+              <search:facet-option>descending</search:facet-option>
             </search:range>
           </search:constraint>,
           hent:fix-options-exp($n/node())
@@ -205,7 +211,10 @@ declare %private function hent:fix-options-exp($nodes as node()*)
 
           let $is-range-constraint := $n[self::search:range] and $n/..[self::search:constraint]
           where $is-range-constraint and fn:not($n/search:facet-option[starts-with(., "limit=")])
-          return <search:facet-option>limit=25</search:facet-option>
+          return (
+            <search:facet-option>limit=25</search:facet-option>,
+            <search:facet-option>frequency-order</search:facet-option>,
+            <search:facet-option>descending</search:facet-option>)
         }
       case text() return
         fn:replace($n, "es:", "*:")
