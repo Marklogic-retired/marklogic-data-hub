@@ -6,6 +6,7 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubTestBase;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,7 +57,7 @@ public class ValidateMappingTest extends HubTestBase {
 
     @BeforeEach
     public void setup() {
-        client = adminHubConfig.newStagingClient();
+        client = adminHubConfig.newStagingClient(adminHubConfig.getDbName(DatabaseKind.FINAL));
         client.newJSONDocumentManager().write(
             CUSTOMER_URI,
             new DocumentMetadataHandle().withCollections("http://marklogic.com/entity-services/models"),

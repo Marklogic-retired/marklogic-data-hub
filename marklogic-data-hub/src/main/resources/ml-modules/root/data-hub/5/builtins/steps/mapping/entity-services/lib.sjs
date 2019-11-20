@@ -308,7 +308,8 @@ function runMapping(mapping, uri, propMapping={"targetEntityType":mapping.target
     let mappedProperty = mapping.properties[propertyName];
     let sourcedFrom = mappedProperty.sourcedFrom;
     paths.push(propertyName);
-    if(!mappedProperty.errorMessage){
+    //Don't run mapping if the property is unset (sourcedFrom.length==0) or if the validation returns errors
+    if(!mappedProperty.errorMessage && sourcedFrom.length > 0){
       if (mappedProperty.hasOwnProperty("targetEntityType")) {
         propMapping = addNode(propMapping, paths, mappedProperty, true);
         paths.push("properties");
@@ -319,7 +320,7 @@ function runMapping(mapping, uri, propMapping={"targetEntityType":mapping.target
          propMapping = addNode(propMapping, paths, mappedProperty,  false);
       }
     }
-    if(mappedProperty && !mappedProperty.errorMessage && ! mappedProperty.hasOwnProperty("targetEntityType")){
+    if(mappedProperty && !mappedProperty.errorMessage && ! mappedProperty.hasOwnProperty("targetEntityType") && sourcedFrom.length > 0){
       let resp = getCanonicalInstance(propMapping, uri, propertyName);
       if(resp && resp.output) {
         mappedProperty["output"] = resp.output;
