@@ -36,7 +36,6 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [totalDocuments, setTotalDocuments] = useState(0);
 
-
   const getEntityModel = async () => {
     try {
       const response = await axios(`/datahub/v2/models`);
@@ -105,40 +104,38 @@ const Browse: React.FC<Props> = ({ location }) => {
 
 
   return (
-    <>
-      <Layout>
-        <Sider className={styles.sideBarFacets} width={300}>
-          <Sidebar
-            facets={facets}
-            selectedEntities={searchOptions.entityNames}
-            entityDefArray={entityDefArray}
-          />
-        </Sider>
-        <Content className={styles.content}>
+      <>
+        <Layout>
+          <Sider className={styles.sideBarFacets} width={300}>
+            <Sidebar
+                facets={facets}
+                selectedEntities={searchOptions.entityNames}
+                entityDefArray={entityDefArray}
+            />
+          </Sider>
+          <Content className={styles.content}>
+            {/* <Button onClick={(e) => tableSwitch(e)}>Default</Button> */}
 
-          {/* <Button onClick={(e) => tableSwitch(e)}>Default</Button> */}
-
-          {isLoading || user.error.type === 'ALERT' ?
-            <AsyncLoader />
-            :
-            <>
-              <div className={styles.searchBar}>
-                <SearchBar entities={entities} />
-                <SearchPagination
-                  total={totalDocuments}
-                  pageNumber={searchOptions.pageNumber}
-                  pageSize={searchOptions.pageSize}
-                />
-              </div>
-              <SearchSummary
-                total={totalDocuments}
-                start={searchOptions.start}
-                length={searchOptions.pageLength}
-                pageSize={searchOptions.pageSize}
-              />
-
-              {/* Search table */}
-              {/* {table ?
+            {isLoading || user.error.type === 'ALERT' ?
+                <AsyncLoader/>
+                :
+                <>
+                  <div className={styles.searchBar}>
+                    <SearchBar entities={entities}/>
+                    <SearchSummary
+                        total={totalDocuments}
+                        start={searchOptions.start}
+                        length={searchOptions.pageLength}
+                        pageSize={searchOptions.pageSize}
+                    />
+                    <SearchPagination
+                        total={totalDocuments}
+                        pageNumber={searchOptions.pageNumber}
+                        pageSize={searchOptions.pageSize}
+                    />
+                  </div>
+                  {/* Search table */}
+                  {/* {table ?
                 <>
                   <ResultTable data={data} entity={searchOptions.entityNames} entityDefArray={entityDefArray} />
                 </>
@@ -148,28 +145,25 @@ const Browse: React.FC<Props> = ({ location }) => {
                 </>
 
               } */}
-
-              <SearchResults data={data} entityDefArray={entityDefArray} />
-              <div style={{ marginTop: '-82px' }}>
-                <SearchSummary
-                  total={totalDocuments}
-                  start={searchOptions.start}
-                  length={searchOptions.pageLength}
-                  pageSize={searchOptions.pageSize}
-                />
-                <div style={{ marginTop: '-32px' }}>
-                  <SearchPagination
-                    total={totalDocuments}
-                    pageNumber={searchOptions.pageNumber}
-                    pageSize={searchOptions.pageSize}
+                  <SearchResults data={data} entityDefArray={entityDefArray}/>
+                  <div>
+                  <SearchSummary
+                      total={totalDocuments}
+                      start={searchOptions.start}
+                      length={searchOptions.pageLength}
+                      pageSize={searchOptions.pageSize}
                   />
-                </div>
-              </div>
-            </>
-          }
-        </Content>
-      </Layout>
-    </>
+                  <SearchPagination
+                      total={totalDocuments}
+                      pageNumber={searchOptions.pageNumber}
+                      pageSize={searchOptions.pageSize}
+                  />
+                  </div>
+                </>
+            }
+          </Content>
+        </Layout>
+      </>
   );
 }
 

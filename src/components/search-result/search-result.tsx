@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import styles from './search-result.module.scss';
-import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
+import ReactHtmlParser from 'react-html-parser';
 import { dateConverter } from '../../util/date-conversion';
 import { xmlParser } from '../../util/xml-parser';
+import ExpandableTableView from "../expandable-table-view/expandable-table-view";
+import { Icon } from "antd";
 
 interface Props extends RouteComponentProps {
   item: any;
@@ -11,6 +13,7 @@ interface Props extends RouteComponentProps {
 };
 
 const SearchResult: React.FC<Props> = (props) => {
+  const [show, toggleShow] = useState(false);
 
   let itemEntityName: string[] = [];
   let itemEntityProperties: any[] = [];
@@ -36,10 +39,9 @@ const SearchResult: React.FC<Props> = (props) => {
           entityDef = props.entityDefArray.find(entity => entity.name === itemEntityName[0]);
         }
         if (itemEntityProperties.length && entityDef.primaryKey) {
-          if(Array.isArray(itemEntityProperties[0]) && itemEntityProperties[0].length){
+          if (Array.isArray(itemEntityProperties[0]) && itemEntityProperties[0].length) {
             primaryKeyValue = encodeURIComponent(props.item.uri);
-          }
-          else{
+          } else {
             primaryKeyValue = itemEntityProperties[0][entityDef.primaryKey];
           }
         }
@@ -66,11 +68,10 @@ const SearchResult: React.FC<Props> = (props) => {
         if (itemEntityName.length && props.entityDefArray.length) {
           entityDef = props.entityDefArray.find(entity => entity.name === itemEntityName[0]);
         }
-        if(itemEntityProperties.length && itemEntityProperties[0].hasOwnProperty(entityDef.primaryKey)){
-          if(Array.isArray(itemEntityProperties[0]) && itemEntityProperties[0].length){
+        if (itemEntityProperties.length && itemEntityProperties[0].hasOwnProperty(entityDef.primaryKey)) {
+          if (Array.isArray(itemEntityProperties[0]) && itemEntityProperties[0].length) {
             primaryKeyValue = encodeURIComponent(props.item.uri);
-          }
-          else{
+          } else {
             primaryKeyValue = itemEntityProperties[0][entityDef.primaryKey];
           }
         }
@@ -96,39 +97,47 @@ const SearchResult: React.FC<Props> = (props) => {
 
   const snippet = getSnippet();
 
+  function showTableEntityProperties() {
+    toggleShow(!show);
+  }
+
   return (
-    <div>
-      <div className={styles.title} >
-        <span className={styles.entityName} data-cy='entity-name'>{itemEntityName}</span>
-        {entityDef.primaryKey && <span className={styles.primaryKey}>{entityDef.primaryKey}:</span>}
-        <Link to={{ pathname: `/detail/${primaryKeyValue}/${uri}` }} data-cy='primary-key'>
-          {entityDef.primaryKey ? primaryKeyValue : props.item.uri}
-        </Link>
+      <div>
+        <div className={styles.title} onClick={() => showTableEntityProperties()}>
+          <Icon style={{fontSize: '15px', marginRight: '5px'}} type='right' rotate={show ? 90 : undefined}/>
+          <span className={styles.entityName} data-cy='entity-name'>{itemEntityName}</span>
+          {entityDef.primaryKey && <span className={styles.primaryKey}>{entityDef.primaryKey}:</span>}
+          <Link to={{pathname: `/detail/${primaryKeyValue}/${uri}`}} data-cy='primary-key'>
+            {entityDef.primaryKey ? primaryKeyValue : props.item.uri}
+          </Link>
+        </div>
+        <div className={styles.snippet} data-cy='snipped'>
+          {props.item.matches.length >= 1 && snippet}
+        </div>
+        <div className={styles.metadata}>
+          {createdOnVal && (
+              <div className={styles.metaItem}>
+                <span className={styles.metaLabel}>Created On</span>
+                <span className={styles.metaValue} data-cy='created-on'>{dateConverter(createdOnVal)}</span>
+              </div>
+          )}
+          {sourcesVal && (
+              <div className={styles.metaItem}>
+                <span className={styles.metaLabel}>Sources</span>
+                <span className={styles.metaValue} data-cy='sources'>{sourcesVal}</span>
+              </div>
+          )}
+          {fileTypeVal && (
+              <div className={styles.metaItem}>
+                <span className={styles.metaLabel}>File Type</span>
+                <span className={styles.format} data-cy='file-type'>{fileTypeVal}</span>
+              </div>
+          )}
+        </div>
+        <div style={{display: (show) ? 'block' : 'none'}}>
+          <ExpandableTableView item={props.item}/>
+        </div>
       </div>
-      <div className={styles.snippet} data-cy='snipped'>
-        {props.item.matches.length >= 1 && snippet}
-      </div>
-      <div className={styles.metadata}>
-        {createdOnVal && (
-          <div className={styles.metaItem}>
-            <span className={styles.metaLabel}>Created On</span>
-            <span className={styles.metaValue} data-cy='created-on'>{dateConverter(createdOnVal)}</span>
-          </div>
-        )}
-        {sourcesVal && (
-          <div className={styles.metaItem}>
-            <span className={styles.metaLabel}>Sources</span>
-            <span className={styles.metaValue} data-cy='sources'>{sourcesVal}</span>
-          </div>
-        )}
-        {fileTypeVal && (
-          <div className={styles.metaItem}>
-            <span className={styles.metaLabel}>File Type</span>
-            <span className={styles.format} data-cy='file-type'>{fileTypeVal}</span>
-          </div>
-        )}
-      </div>
-    </div>
   )
 }
 

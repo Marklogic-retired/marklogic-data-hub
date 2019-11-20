@@ -11,7 +11,6 @@ const TableView: React.FC<Props> = (props) => {
 
   let data = new Array();
   let counter = 0;
-
   const parseJson = (obj: Object) => {
     let parsedData = new Array();
     for (var i in obj) {
