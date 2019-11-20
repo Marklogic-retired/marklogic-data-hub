@@ -16,6 +16,7 @@ interface Props extends RouteComponentProps<any> { }
 const { Content } = Layout;
 
 const Detail: React.FC<Props> = ({ history, location }) => {
+  //console.log(history)
   const { user, handleError } = useContext(AuthContext);
   const uriSplit = location.pathname.replace('/detail/', '');
   const pkValue = uriSplit.split('/')[0] === '-' ? '' : decodeURIComponent(uriSplit.split('/')[0]);

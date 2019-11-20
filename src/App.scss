@@ -1,0 +1,6 @@
+.ant-table-row-collapsed::after {
+  content: '>';
+}
+.ant-table-row-expanded::after {
+  content: '\22C1';
+}
