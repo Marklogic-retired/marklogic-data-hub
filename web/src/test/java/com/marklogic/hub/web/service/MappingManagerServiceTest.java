@@ -114,7 +114,9 @@ public class MappingManagerServiceTest extends AbstractServiceTest {
         ((ObjectNode) jsonNode).put("description", "someinfo");
         mappingManagerService.saveMapping(mappingName, jsonNode);
         mappingModel = mappingManagerService.getMapping(mappingName, false);
-        assertEquals(1, mappingModel.getVersion());
+        assertEquals(0, mappingModel.getVersion(),
+            "Per DHFPROD-3730, the mapping version is no longer auto-incremented. The expectation is that a user will " +
+                "choose when to change the mapping version. Thus, the version number should still be zero.");
     }
 
     @Test

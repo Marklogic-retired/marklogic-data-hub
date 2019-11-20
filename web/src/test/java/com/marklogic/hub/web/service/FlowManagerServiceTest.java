@@ -210,25 +210,16 @@ class FlowManagerServiceTest extends AbstractServiceTest {
         // Verify the mappings exist
         GenericDocumentManager stagingDocumentManager = stagingClient.newDocumentManager();
         GenericDocumentManager finalDocumentManager = finalClient.newDocumentManager();
-        final String[] expectedMappingUris = new String[]{
-            "/mappings/testMapping/testMapping-1.mapping.json",
-            "/mappings/testMapping/testMapping-2.mapping.json"
-        };
-        for (String uri : expectedMappingUris) {
-            assertNotNull(stagingDocumentManager.exists(uri));
-            assertNotNull(finalDocumentManager.exists(uri));
-        }
-
+        final String expectedMappingUri = "/mappings/testMapping/testMapping-1.mapping.json";
+        assertNotNull(stagingDocumentManager.exists(expectedMappingUri));
+        assertNotNull(finalDocumentManager.exists(expectedMappingUri));
 
         final String stepId = mappingName + "-" + step.getStepDefinitionType();
         flowManagerService.deleteStep(FLOW, stepId);
 
         assertEquals(0, mappingManagerService.getMappings().size(),
             "The mapping should have been deleted because no flows refer to it now");
-        for (String uri : expectedMappingUris) {
-            assertNull(stagingDocumentManager.exists(uri));
-            assertNull(finalDocumentManager.exists(uri));
-        }
+        assertNull(stagingDocumentManager.exists(expectedMappingUri));
     }
 
     @Test
