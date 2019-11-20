@@ -60,7 +60,7 @@ function main(content, options) {
   }
   let entityName = lib.getEntityName(targetEntityType);
   let entity = lib.getTargetEntity(targetEntityType);
-  let instance = doc.xpath('head((/*:envelope/(object-node("instance")|*:instance/(element() except *:info)),./object-node(),./*))');
+  let instance = lib.extractInstance(doc);
   let provenance = {};
   //Then we obtain the newInstance and process it from the source context
   let newInstance;
