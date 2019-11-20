@@ -27,17 +27,32 @@ let assertions = [
 const expParams = true;
 const expOtions = hent.dumpSearchOptions(input, expParams);
 assertions.concat([
-  test.assertEqual("limit=25", xs.string(fn.head(expOtions.xpath("/*:constraint[@name = 'title']/*:range/*:facet-option/text()"))),
+  test.assertEqual("limit=25", xs.string(fn.head(expOtions.xpath("/*:constraint[@name = 'title']/*:range/*:facet-option[1]/text()"))),
     "To avoid displaying large numbers of values in facets in Explorer, range constraints default to a max of 25 values"
   ),
-  test.assertEqual("limit=25", xs.string(fn.head(expOtions.xpath("/*:constraint[@name = 'Collection']/*:collection/*:facet-option/text()"))),
-    "To avoid displaying large numbers of values in facets in Explorer, collection constraints default to a max of 25 values"
+  test.assertEqual("frequency-order", xs.string(fn.head(expOtions.xpath("/*:constraint[@name = 'title']/*:range/*:facet-option[2]/text()"))),
+    "To sort the facets based on frequency order"
   ),
-  test.assertEqual("limit=25", xs.string(fn.head(expOtions.xpath("/*:constraint[@name = 'createdByStep']/*:range/*:facet-option/text()"))),
+  test.assertEqual("descending", xs.string(fn.head(expOtions.xpath("/*:constraint[@name = 'Collection']/*:collection/*:facet-option[3]/text()"))),
+    "To sort the facets in decreasing order of frequency on search"
+  ),
+  test.assertEqual("limit=25", xs.string(fn.head(expOtions.xpath("/*:constraint[@name = 'createdByStep']/*:range/*:facet-option[1]/text()"))),
     "To avoid displaying large numbers of values in facets in Explorer, range constraints default to a max of 25 values"
   ),
-  test.assertEqual("limit=25", xs.string(fn.head(expOtions.xpath("/*:constraint[@name = 'createdInFlowRange']/*:range/*:facet-option/text()"))),
+  test.assertEqual("frequency-order", xs.string(fn.head(expOtions.xpath("/*:constraint[@name = 'createdByStep']/*:range/*:facet-option[2]/text()"))),
+    "To sort the facets based on frequency order"
+  ),
+  test.assertEqual("descending", xs.string(fn.head(expOtions.xpath("/*:constraint[@name = 'createdByStep']/*:range/*:facet-option[3]/text()"))),
+    "To sort the facets in decreasing order of frequency on search"
+  ),
+  test.assertEqual("limit=25", xs.string(fn.head(expOtions.xpath("/*:constraint[@name = 'createdInFlowRange']/*:range/*:facet-option[1]/text()"))),
     "To avoid displaying large numbers of values in facets in Explorer, range constraints default to a max of 25 values"
+  ),
+  test.assertEqual("frequency-order", xs.string(fn.head(expOtions.xpath("/*:constraint[@name = 'createdInFlowRange']/*:range/*:facet-option[2]/text()"))),
+    "To sort the facets based on frequency order"
+  ),
+  test.assertEqual("descending", xs.string(fn.head(expOtions.xpath("/*:constraint[@name = 'createdInFlowRange']/*:range/*:facet-option[3]/text()"))),
+    "To sort the facets in decreasing order of frequency on search"
   ),
   test.assertExists(expOtions.xpath("/*:constraint[@name = 'createdByJob', @facet = 'false']")),
   test.assertExists(expOtions.xpath("/*:constraint[@name = 'createdByJobWord']")),

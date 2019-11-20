@@ -2,6 +2,8 @@
   <constraint name="Collection">
     <collection>
       <facet-option>limit=25</facet-option>
+      <facet-option>frequency-order</facet-option>
+      <facet-option>decreasing</facet-option>
     </collection>
   </constraint>
   <constraint name="createdByJob">
@@ -13,6 +15,8 @@
     <range>
       <field name="datahubCreatedByStep"/>
       <facet-option>limit=25</facet-option>
+      <facet-option>frequency-order</facet-option>
+      <facet-option>decreasing</facet-option>
     </range>
   </constraint>
   <constraint name="createdByJobWord">
@@ -29,6 +33,8 @@
     <range>
       <field name="datahubCreatedInFlow"/>
       <facet-option>limit=25</facet-option>
+      <facet-option>frequency-order</facet-option>
+      <facet-option>decreasing</facet-option>
     </range>
   </constraint>
 </options>
