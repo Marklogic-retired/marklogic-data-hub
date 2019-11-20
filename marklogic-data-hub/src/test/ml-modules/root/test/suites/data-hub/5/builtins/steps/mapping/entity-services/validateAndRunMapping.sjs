@@ -100,6 +100,8 @@ if (esMappingLib.versionIsCompatibleWithES()) {
     .concat(testValidateAndRunMapping())
     .concat(testValidateAndRunMappingArrayValues())
     .concat(testValidateAndRunMapping("/mappings/PersonNsMapping/PersonNsMapping-1.mapping.json", "/content/person-ns.xml"))
+    // Test JSON to XML scenario
+    .concat(testValidateAndRunMapping("/mappings/PersonMapping/PersonMapping-3.mapping.json", "/content/json-to-xml.xml"))
     .concat(testValidateAndRunMappingWithErrors())
   ;
 }

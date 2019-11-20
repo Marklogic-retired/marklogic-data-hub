@@ -9,6 +9,7 @@ const sem = require("/MarkLogic/semantics.xqy");
 const semPrefixes = {es: 'http://marklogic.com/entity-services#'};
 const dhMappingTrace = 'DH-MAPPING';
 const dhMappingTraceIsEnabled = xdmp.traceEnabled(dhMappingTrace);
+let xqueryLib = null;
 
 const xmlMappingCollections = ['http://marklogic.com/entity-services/mapping', 'http://marklogic.com/data-hub/mappings/xml'];
 const entitiesByTargetType = {};
@@ -339,14 +340,18 @@ function getCanonicalInstance(mapping, uri, propertyName) {
   let resp = {};
   let xmlMapping = buildMappingXML(fn.head(xdmp.unquote(xdmp.quote(mapping))));
   let doc = cts.doc(uri);
-  let instance = doc.xpath('head((/*:envelope/(object-node("instance")|*:instance/(element() except *:info)),./object-node(),./*))');
+  let instance = extractInstance(doc);
   let mappingXslt =  xdmp.invokeFunction(function () {
       const es = require('/MarkLogic/entity-services/entity-services');
       return es.mappingCompile(xmlMapping);
      }, {database: xdmp.modulesDatabase()});
 
   try {
-    let outputDoc = inst.canonicalJson(xdmp.xsltEval(mappingXslt, fn.head(xdmp.unquote(String(instance)))));
+    let inputDoc = instance;
+    if (!(inputDoc instanceof Document)) {
+      inputDoc = fn.head(xdmp.unquote(String(instance)));
+    }
+    let outputDoc = inst.canonicalJson(xdmp.xsltEval(mappingXslt, inputDoc));
     let output = outputDoc.xpath("//" + propertyName);
     let arr = output.toArray();
     if(arr.length === 1) {
@@ -408,11 +413,30 @@ function versionIsCompatibleWithES(version = xdmp.version()) {
   return false;
 }
 
+function extractInstance(docNode) {
+  let instance = docNode.xpath('/*:envelope/(object-node("instance")|*:instance/(element() except *:info))');
+  if (fn.empty(instance)) {
+    instance = docNode;
+  } else if (fn.count(instance) > 1) {
+    // can't use node builder here as it won't allow multiple root nodes
+    instance = fn.head(getXQueryLib().documentWithNodes(instance));
+  }
+  return fn.head(instance);
+}
+
+function getXQueryLib() {
+  if (!xqueryLib) {
+    xqueryLib = require('/data-hub/5/builtins/steps/mapping/entity-services/xquery-lib.xqy');
+  }
+  return xqueryLib;
+}
+
 module.exports = {
   xsltPermissions,
   xmlMappingCollections,
   buildMappingXML,
   buildEntityMappingXML,
+  extractInstance,
   getEntityName,
   getTargetEntity,
   // Exporting retrieveFunctionImports for unit test
