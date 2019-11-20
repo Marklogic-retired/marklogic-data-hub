@@ -81,8 +81,8 @@ public class MappingController {
 
     @RequestMapping(value = "/mappings/{mapName}/validation", method = RequestMethod.POST)
     @ResponseBody
-    public JsonNode validateMapping(@PathVariable String mapName, @RequestBody JsonNode mapping, @RequestParam(value = "uri", required = true) String uri) throws IOException {
-        return mappingManagerService.validateMapping(mapping.toString(), uri);
+    public JsonNode validateMapping(@PathVariable String mapName, @RequestBody JsonNode mapping, @RequestParam(value = "uri", required = true) String uri, @RequestParam(value = "db", required = true) String db) throws IOException {
+        return mappingManagerService.validateMapping(mapping.toString(), uri, db);
     }
 
     @RequestMapping(value = "/mappings/{mapName}", method = RequestMethod.DELETE)
