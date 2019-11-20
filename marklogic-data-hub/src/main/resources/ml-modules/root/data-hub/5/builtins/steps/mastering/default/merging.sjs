@@ -49,10 +49,13 @@ function main(content, options) {
   for (let matchSummary of relatedMatchSummaries) {
     let matchSummaryObj = matchSummary.toObject().matchSummary;
     let URIsToProcess = matchSummaryObj.URIsToProcess;
-    let allURIsProcessed = URIsToProcess.every((uri) => processedURIs.includes(uri) || cts.exists(cts.andQuery([
-      cts.documentQuery(uri),
+    // use one cts.uris call per match summary to reduce list cache hits
+    let URIsProcessed =  cts.uris(null, null, cts.andQuery([
+      cts.documentQuery(URIsToProcess),
       cts.fieldWordQuery('datahubCreatedByJob', jobID)
-    ])));
+    ])).toArray();
+    let processedInBatch = processedURIs.filter((uri) => URIsToProcess.includes(uri));
+    let allURIsProcessed = URIsProcessed.concat(processedInBatch).length === URIsToProcess.length;
     if (allURIsProcessed) {
       results.push({
         uri: xdmp.nodeUri(matchSummary),
