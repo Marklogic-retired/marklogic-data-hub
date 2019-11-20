@@ -74,7 +74,8 @@ public class MappingManagerService {
         MappingModel mapping = objectMapper.readValue(jsonMapping.toString(), MappingModel.class);
         MappingModel existingMapping= getMapping(mapName, false);
         if (existingMapping == null || existingMapping != null && !existingMapping.isEqual(mapping)) {
-            mappingManager.saveMapping(mappingManager.createMappingFromJSON(mapping.toJson()),  existingMapping == null ? false : true);
+            // Per DHFPROD-3730, preserve the existing version number. Users are expected to bump this up when they so desire.
+            mappingManager.saveMapping(mappingManager.createMappingFromJSON(mapping.toJson()), false);
         }
         return mapping;
     }
