@@ -14,6 +14,8 @@ import ResultTable from '../components/result-table/result-table';
 import { entityFromJSON, entityParser } from '../util/data-conversion';
 import styles from './Browse.module.scss';
 import { Button } from 'antd';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {faRoute, faStream, faTable} from '@fortawesome/free-solid-svg-icons'
 
 
 interface Props extends RouteComponentProps<any> {
@@ -36,6 +38,7 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [facets, setFacets] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [totalDocuments, setTotalDocuments] = useState(0);
+  const [table, setTable] = useState();
 
   const getEntityModel = async () => {
     try {
@@ -101,7 +104,8 @@ const Browse: React.FC<Props> = ({ location }) => {
   }, [searchOptions, entities, user.error.type]);
 
 
-  // const tableSwitch = (e) => table ? setTable(false) : setTable(true);
+   const tableSwitch = () => { console.log(1);
+     table ? setTable(false) : setTable(true)};
 
 
   return (
@@ -115,8 +119,6 @@ const Browse: React.FC<Props> = ({ location }) => {
             />
           </Sider>
           <Content className={styles.content}>
-            {/* <Button onClick={(e) => tableSwitch(e)}>Default</Button> */}
-
             {isLoading || user.error.type === 'ALERT' ?
                 <AsyncLoader/>
                 :
@@ -135,8 +137,15 @@ const Browse: React.FC<Props> = ({ location }) => {
                         pageSize={searchOptions.pageSize}
                     />
                   </div>
-                  {/* Search table */}
-                  {/* {table ?
+                  <div className={styles.toggleView}>
+                    <a onClick={() => tableSwitch()}>
+                    <FontAwesomeIcon icon={faStream}  size="lg" />
+                    </a>
+                    <a>
+                    <FontAwesomeIcon style={{marginLeft:'10px'}} icon={faTable} size="lg" />
+                    </a>
+                  </div>
+                   {table ?
                 <>
                   <ResultTable data={data} entity={searchOptions.entityNames} entityDefArray={entityDefArray} />
                 </>
@@ -145,7 +154,7 @@ const Browse: React.FC<Props> = ({ location }) => {
                   <SearchResults data={data} entityDefArray={entityDefArray} />
                 </>
 
-              } */}
+              }
                   <SearchResults data={data} entityDefArray={entityDefArray}/>
                   <div>
                   <SearchSummary
