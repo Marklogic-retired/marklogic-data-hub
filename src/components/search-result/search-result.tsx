@@ -5,7 +5,7 @@ import ReactHtmlParser from 'react-html-parser';
 import { dateConverter } from '../../util/date-conversion';
 import { xmlParser } from '../../util/xml-parser';
 import ExpandableTableView from "../expandable-table-view/expandable-table-view";
-import { Icon } from "antd";
+import { Icon, Tooltip } from "antd";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faExternalLinkAlt, faCode } from '@fortawesome/free-solid-svg-icons'
 
@@ -109,10 +109,10 @@ const SearchResult: React.FC<Props> = (props) => {
           <Icon className={styles.expandableIcon} type='right' rotate={show ? 90 : undefined}/>
           <div className={styles.redirectIcons}>
             <Link to={{pathname: `/detail/${primaryKeyValue}/${uri}`,state: {selectedValue:'instance'}}} data-cy='primary-key'>
-              <FontAwesomeIcon  icon={faExternalLinkAlt} size="sm" />
+            <Tooltip title={'Instance'}><FontAwesomeIcon  icon={faExternalLinkAlt} size="sm" /></Tooltip>
             </Link>
             <Link to={{pathname: `/detail/${primaryKeyValue}/${uri}`,state: {selectedValue:'source'}}} data-cy='primary-key'>
-              <FontAwesomeIcon  icon={faCode} size="sm" />
+            <Tooltip title={'Source'}><FontAwesomeIcon  icon={faCode} size="sm" /></Tooltip>
             </Link>
           </div>
           <span className={styles.entityName} data-cy='entity-name'>{itemEntityName}</span>
