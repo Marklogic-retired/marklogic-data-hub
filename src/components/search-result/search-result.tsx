@@ -6,6 +6,8 @@ import { dateConverter } from '../../util/date-conversion';
 import { xmlParser } from '../../util/xml-parser';
 import ExpandableTableView from "../expandable-table-view/expandable-table-view";
 import { Icon } from "antd";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faExternalLinkAlt, faCode } from '@fortawesome/free-solid-svg-icons'
 
 interface Props extends RouteComponentProps {
   item: any;
@@ -102,14 +104,20 @@ const SearchResult: React.FC<Props> = (props) => {
   }
 
   return (
-      <div>
+      <div style={{width: '100%'}}>
         <div className={styles.title} onClick={() => showTableEntityProperties()}>
-          <Icon style={{fontSize: '15px', marginRight: '5px'}} type='right' rotate={show ? 90 : undefined}/>
+          <Icon className={styles.expandableIcon} type='right' rotate={show ? 90 : undefined}/>
+          <div className={styles.redirectIcons}>
+            <Link to={{pathname: `/detail/${primaryKeyValue}/${uri}`,state: {selectedValue:'instance'}}} data-cy='primary-key'>
+              <FontAwesomeIcon  icon={faExternalLinkAlt} size="sm" />
+            </Link>
+            <Link to={{pathname: `/detail/${primaryKeyValue}/${uri}`,state: {selectedValue:'source'}}} data-cy='primary-key'>
+              <FontAwesomeIcon  icon={faCode} size="sm" />
+            </Link>
+          </div>
           <span className={styles.entityName} data-cy='entity-name'>{itemEntityName}</span>
           {entityDef.primaryKey && <span className={styles.primaryKey}>{entityDef.primaryKey}:</span>}
-          <Link to={{pathname: `/detail/${primaryKeyValue}/${uri}`}} data-cy='primary-key'>
             {entityDef.primaryKey ? primaryKeyValue : props.item.uri}
-          </Link>
         </div>
         <div className={styles.snippet} data-cy='snipped'>
           {props.item.matches.length >= 1 && snippet}

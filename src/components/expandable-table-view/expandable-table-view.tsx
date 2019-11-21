@@ -39,6 +39,7 @@ const ExpandableTableView: React.FC<Props> = (props) => {
     })
   }
 
+
   const columns = [
     {
       title: 'Property',

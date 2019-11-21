@@ -43,3 +43,18 @@
     text-transform: uppercase;
   }
 }
+
+.expandableIcon {
+	font-size: 15px;
+	margin-right: 5px;
+	cursor: pointer
+}
+
+.redirectIcons {
+	float: right;
+}
+
+.redirectIcons a {
+	padding: 8px;
+	color: #666;
+}
