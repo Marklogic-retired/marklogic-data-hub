@@ -303,10 +303,8 @@ public class QueryStepRunner implements StepRunner {
         return this.batchSize;
     }
 
-    private Collection<String> runCollector() throws Exception {
-        Collector c = new CollectorImpl(this.flow);
-        c.setHubConfig(hubConfig);
-        c.setClient(stagingClient);
+    private Collection<String> runCollector() {
+        Collector c = new CollectorImpl(hubConfig, stagingClient);
 
         stepStatusListeners.forEach((StepStatusListener listener) -> {
             listener.onStatusChange(this.jobId, 0, JobStatus.RUNNING_PREFIX + step, 0, 0,  "running collector");

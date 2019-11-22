@@ -616,4 +616,8 @@ public interface HubConfig {
      * and then call this method.
      */
     void refreshProject();
+
+    String getMlUsername();
+
+    String getMlPassword();
 }

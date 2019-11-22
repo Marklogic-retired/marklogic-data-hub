@@ -534,7 +534,7 @@ public class WriteStepRunner implements StepRunner {
         metadataValues.add("datahubCreatedByStep", flow.getStep(step).getStepDefinitionName());
         // TODO createdOn/createdBy data may not be accurate enough. Unfortunately REST transforms don't allow for writing metadata
         metadataValues.add("datahubCreatedOn", DATE_TIME_FORMAT.format(new Date()));
-        metadataValues.add("datahubCreatedBy", ((HubConfigImpl) hubConfig).getMlUsername());
+        metadataValues.add("datahubCreatedBy", hubConfig.getMlUsername());
         writeBatcher.withDefaultMetadata(metadataHandle);
         Format format = null;
         switch (inputFileType.toLowerCase()) {

@@ -115,7 +115,7 @@ public class LegacyCollectorImpl implements LegacyCollector {
             // https://github.com/marklogic/marklogic-data-hub/issues/633
             //
 
-            RestTemplate template = newRestTemplate(  ((HubConfigImpl) hubConfig).getMlUsername(), ( (HubConfigImpl) hubConfig).getMlPassword());
+            RestTemplate template = newRestTemplate(hubConfig.getMlUsername(), hubConfig.getMlPassword());
             String uriString = String.format(
                 "%s://%s:%d%s?job-id=%s&entity-name=%s&flow-name=%s&database=%s",
                 client.getSecurityContext().getSSLContext() != null ? "https" : "http",
@@ -192,7 +192,7 @@ public class LegacyCollectorImpl implements LegacyCollector {
                     @Override
                     public void verify(String host, String[] cns, String[] subjectAlts) throws SSLException {}
                 };
-                
+
             } else if (verifier == SSLHostnameVerifier.COMMON) {
                 hostnameVerifier = null;
             } else if (verifier == SSLHostnameVerifier.STRICT) {
@@ -216,7 +216,7 @@ public class LegacyCollectorImpl implements LegacyCollector {
         protected HostnameVerifierAdapter(DatabaseClientFactory.SSLHostnameVerifier verifier) {
           this.verifier = verifier;
         }
-        
+
         public void verify(String hostname, X509Certificate cert) throws SSLException {
           ArrayList<String> cnArray = new ArrayList<>();
           try {
@@ -254,12 +254,12 @@ public class LegacyCollectorImpl implements LegacyCollector {
         @Override
         public void verify(String hostname, SSLSocket ssl) throws IOException {
             Certificate[] certificates = ssl.getSession().getPeerCertificates();
-            verify(hostname, (X509Certificate) certificates[0]);             
+            verify(hostname, (X509Certificate) certificates[0]);
         }
 
         @Override
         public void verify(String hostname, String[] cns, String[] subjectAlts) throws SSLException {
-            verifier.verify(hostname, cns, subjectAlts);            
+            verifier.verify(hostname, cns, subjectAlts);
         }
 
         @Override
@@ -268,7 +268,7 @@ public class LegacyCollectorImpl implements LegacyCollector {
               Certificate[] certificates = session.getPeerCertificates();
               verify(hostname, (X509Certificate) certificates[0]);
               return true;
-              } 
+              }
             catch(SSLException e) {
               return false;
             }
