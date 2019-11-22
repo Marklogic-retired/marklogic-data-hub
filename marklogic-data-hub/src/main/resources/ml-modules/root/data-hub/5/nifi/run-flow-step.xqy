@@ -93,7 +93,7 @@ declare function build-run-flow-step($params as map:map)
         </entry>
         <entry>
           <key>Extension Name</key>
-          <value>ml:runFlow</value>
+          <value>mlRunFlow</value>
         </entry>
         <entry>
           <key>Requires Input</key>

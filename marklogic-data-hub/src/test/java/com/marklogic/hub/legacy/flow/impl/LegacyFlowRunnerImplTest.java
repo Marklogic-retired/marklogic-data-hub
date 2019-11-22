@@ -23,7 +23,7 @@ class LegacyFlowRunnerImplTest  {
             "}");
         req.setStatusString("Plugin error");
 
-        resp = fr.handleFlowRunnerException(new FailedRequestException("failed to apply resource at resources/ml:flow: Plugin error", req));
+        resp = fr.handleFlowRunnerException(new FailedRequestException("failed to apply resource at resources/mlFlow: Plugin error", req));
         Assertions.assertEquals(3, resp.errorCount);
         Assertions.assertEquals(3, resp.totalCount);
     }

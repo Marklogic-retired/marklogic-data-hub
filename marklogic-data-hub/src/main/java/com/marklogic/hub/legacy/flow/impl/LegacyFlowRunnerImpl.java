@@ -367,7 +367,7 @@ public class LegacyFlowRunnerImpl implements LegacyFlowRunner {
             this.flow = flow;
             this.srcClient = srcClient;
             this.targetDatabase = targetDatabase;
-            this.srcClient.init(flow.getCodeFormat().equals(CodeFormat.JAVASCRIPT) ? "ml:sjsFlow" : "ml:flow", this);
+            this.srcClient.init(flow.getCodeFormat().equals(CodeFormat.JAVASCRIPT) ? "mlSjsFlow" : "mlFlow", this);
         }
 
         public RunFlowResponse run(String jobId, String[] items) {

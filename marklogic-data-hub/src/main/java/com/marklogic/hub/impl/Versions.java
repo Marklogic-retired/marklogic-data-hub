@@ -36,7 +36,7 @@ import java.util.GregorianCalendar;
 
 @Component
 public class Versions extends ResourceManager {
-    private static final String NAME = "ml:hubversion";
+    private static final String NAME = "mlHubversion";
 
     DatabaseClient stagingClient;
     private AppConfig appConfig;

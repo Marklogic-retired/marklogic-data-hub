@@ -10,7 +10,7 @@ import com.marklogic.client.util.RequestParameters;
 
 public class CustomStepValidator extends ResourceManager  {
 
-    private static final String NAME = "ml:stepValidate";
+    private static final String NAME = "mlStepValidate";
 
     public CustomStepValidator(DatabaseClient client) {
         super();

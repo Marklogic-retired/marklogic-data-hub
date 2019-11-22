@@ -566,7 +566,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
     }
 
     private class PiiGenerator extends ResourceManager {
-        private static final String NAME = "ml:piiGenerator";
+        private static final String NAME = "mlPiiGenerator";
         private RequestParameters params = new RequestParameters();
 
         PiiGenerator(DatabaseClient client) {
@@ -588,7 +588,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
     }
 
     private class QueryOptionsGenerator extends ResourceManager {
-        private static final String NAME = "ml:searchOptionsGenerator";
+        private static final String NAME = "mlSearchOptionsGenerator";
 
         QueryOptionsGenerator(DatabaseClient client) {
             super();

@@ -461,7 +461,7 @@ public class WriteStepRunner implements StepRunner {
         double uriSize = uris.size();
         Map<String,Object> fullResponse = new HashMap<>();
 
-        ServerTransform serverTransform = new ServerTransform("ml:runIngest");
+        ServerTransform serverTransform = new ServerTransform("mlRunIngest");
         serverTransform.addParameter("job-id", jobId);
         serverTransform.addParameter("step", step);
         serverTransform.addParameter("flow-name", flow.getName());
