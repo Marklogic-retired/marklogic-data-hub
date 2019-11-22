@@ -11,7 +11,7 @@ declare namespace http="xdmp:http";
 declare namespace hub = "http://marklogic.com/data-hub";
 declare namespace es = "http://marklogic.com/entity-services";
 
-declare variable $FLOW-URL as xs:string :=  "/v1/resources/ml:flow?";
+declare variable $FLOW-URL as xs:string :=  "/v1/resources/mlFlow?";
 declare variable $RUN-COLLECTOR-URL as xs:string :=  "/v1/internal/hubcollector?";
 
 declare variable $HTTP-OK as xs:integer := 200;
@@ -128,7 +128,7 @@ declare function make-input-flow-url(
     return
         fn:concat("http://",$host,":",$port,"/v1/documents?uri=",
             $uri,
-            "&amp;transform=ml:inputFlow",
+            "&amp;transform=mlInputFlow",
             "&amp;trans:flow-name=",
             $flow-name,
             "&amp;trans:entity-name=",
