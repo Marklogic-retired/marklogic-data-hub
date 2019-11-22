@@ -46,7 +46,7 @@ import java.util.regex.Pattern;
 @Component
 public class LegacyFlowManagerImpl extends ResourceManager implements LegacyFlowManager {
 
-    private static final String NAME = "ml:flow";
+    private static final String NAME = "mlFlow";
 
     private DatabaseClient stagingClient;
 
@@ -139,8 +139,8 @@ public class LegacyFlowManagerImpl extends ResourceManager implements LegacyFlow
         /* Extract flowName and entityName from ..../plugins/entities/<entityName>/
          * input|harmonize/<flowName>/flowName.properties
          */
-        String floweRegex = ".+" + "plugins" + quotedSeparator + "entities" + quotedSeparator + "(.+)"+ quotedSeparator 
-                +"(input|harmonize)" + quotedSeparator + "(.+)" + quotedSeparator + ".+";        
+        String floweRegex = ".+" + "plugins" + quotedSeparator + "entities" + quotedSeparator + "(.+)"+ quotedSeparator
+                +"(input|harmonize)" + quotedSeparator + "(.+)" + quotedSeparator + ".+";
         FlowType flowType = propertiesFile.toString().replaceAll(floweRegex, "$2").equals("input")
                 ? FlowType.INPUT : FlowType.HARMONIZE;
 

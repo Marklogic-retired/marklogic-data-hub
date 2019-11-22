@@ -237,7 +237,7 @@ public class LegacyJobManagerImpl implements LegacyJobManager {
     }
 
     public class JobDeleteResource extends ResourceManager {
-        private static final String DELETE_SERVICE = "ml:deleteJobs";
+        private static final String DELETE_SERVICE = "mlDeleteJobs";
 
         private DatabaseClient srcClient;
 

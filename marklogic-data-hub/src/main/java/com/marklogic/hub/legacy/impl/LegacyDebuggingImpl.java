@@ -26,7 +26,7 @@ import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.legacy.LegacyDebugging;
 
 public class LegacyDebuggingImpl extends ResourceManager implements LegacyDebugging {
-    private static final String NAME = "ml:debug";
+    private static final String NAME = "mlDebug";
 
     public LegacyDebuggingImpl(DatabaseClient client) {
         super();

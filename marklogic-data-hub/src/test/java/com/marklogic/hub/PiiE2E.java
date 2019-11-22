@@ -322,7 +322,7 @@ public class PiiE2E extends HubTestBase
         int stagingCount = getStagingDocCount();
         int finalCount = getFinalDocCount();
 
-        ServerTransform runFlow = new ServerTransform("ml:inputFlow");
+        ServerTransform runFlow = new ServerTransform("mlInputFlow");
         runFlow.addParameter("entity-name", "SupportCall");
         runFlow.addParameter("flow-name", "test-data");
         runFlow.addParameter("job-id", UUID.randomUUID().toString());

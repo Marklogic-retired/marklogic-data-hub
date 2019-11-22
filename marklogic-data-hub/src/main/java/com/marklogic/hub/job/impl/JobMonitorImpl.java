@@ -123,7 +123,7 @@ public class JobMonitorImpl implements JobMonitor {
     }
 
     public class Batches extends ResourceManager {
-        private static final String NAME = "ml:batches";
+        private static final String NAME = "mlBatches";
 
         private RequestParameters params;
 

@@ -539,7 +539,7 @@ public class QueryStepRunner implements StepRunner {
             this.flow = flow;
             this.srcClient = srcClient;
             this.targetDatabase = targetDatabase;
-            this.srcClient.init("ml:runFlow" , this);
+            this.srcClient.init("mlRunFlow" , this);
         }
 
 

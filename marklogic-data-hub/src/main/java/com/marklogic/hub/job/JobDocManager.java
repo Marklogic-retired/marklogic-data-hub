@@ -16,7 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 public class JobDocManager extends ResourceManager {
-    private static final String NAME = "ml:jobs";
+    private static final String NAME = "mlJobs";
 
     public JobDocManager(DatabaseClient client) {
         super();
