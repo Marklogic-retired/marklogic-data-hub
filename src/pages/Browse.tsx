@@ -37,7 +37,7 @@ const Browse: React.FC<Props> = ({location}) => {
   const [facets, setFacets] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [totalDocuments, setTotalDocuments] = useState(0);
-  const [defaultView , setIsDefaultView] = useState(true);
+  const [defaultView, setDefaultView] = useState(true);
   const [active, setIsActive] = useState(false);
   const [snippetActive, setIsSnippetActive] = useState(false);
 
@@ -106,13 +106,13 @@ const Browse: React.FC<Props> = ({location}) => {
 
 
   const tableSwitch = () => {
-    setIsDefaultView(true);
+    setDefaultView(true);
     setIsActive(true);
     setIsSnippetActive(false);
   };
 
   const snippetSwitch = () => {
-    setIsDefaultView(false);
+    setDefaultView(false);
     setIsActive(false);
     setIsSnippetActive(true);
   };
