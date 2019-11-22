@@ -37,9 +37,8 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [facets, setFacets] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [totalDocuments, setTotalDocuments] = useState(0);
-  const [defaultView, setDefaultView] = useState(true);
-  const [active, setIsActive] = useState(false);
-  const [snippetActive, setIsSnippetActive] = useState(false);
+  const [active, setIsActive] = useState(user.tableView);
+  const [snippetActive, setIsSnippetActive] = useState(!user.tableView);
 
   const getEntityModel = async () => {
     try {
@@ -161,7 +160,8 @@ const Browse: React.FC<Props> = ({ location }) => {
               </div>
               {user.tableView ?
                 <div style={{ marginTop: '150px' }}><ResultTable data={data} entity={searchOptions.entityNames}
-                  entityDefArray={entityDefArray} /></div>
+                  entityDefArray={entityDefArray} />
+                  </div>
                 : <SearchResults data={data} entityDefArray={entityDefArray} />
               }
               <br />
