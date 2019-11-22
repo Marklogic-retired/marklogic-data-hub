@@ -308,16 +308,23 @@ public class FlowManagerService {
         }
     }
 
-    public FlowStepModel runFlow(String flowName, List<String> steps) {
-        RunFlowResponse resp = null;
+    /**
+     * This is synchronized because Coverity is reporting that flowManagerService is being modified without proper
+     * synchronization when it's invoked by FlowController.
+     *
+     * @param flowName
+     * @param steps
+     * @return
+     */
+    public synchronized FlowStepModel runFlow(String flowName, List<String> steps) {
         if (steps == null || steps.size() == 0) {
-            resp = flowRunner.runFlow(flowName);
+            flowRunner.runFlow(flowName);
         }
         else {
             Flow flow = flowManager.getFlow(flowName);
             List<String> restrictedSteps = new ArrayList<>();
             steps.forEach((step) -> restrictedSteps.add(this.getStepKeyInStepMap(flow, step)));
-            resp = flowRunner.runFlow(flowName, restrictedSteps);
+            flowRunner.runFlow(flowName, restrictedSteps);
         }
         return getFlow(flowName, true);
     }
@@ -378,12 +385,10 @@ public class FlowManagerService {
     }
 
     private StepDefinition getDefaultStepDefinitionFromResources(String resourcePath, StepDefinition.StepDefinitionType stepDefinitionType) {
-        try {
-            InputStream in = FlowManagerService.class.getClassLoader().getResourceAsStream(resourcePath);
+        try (InputStream in = FlowManagerService.class.getClassLoader().getResourceAsStream(resourcePath)) {
             JSONObject jsonObject = new JSONObject(IOUtils.toString(in));
             StepDefinition defaultStep = StepDefinition.create(stepDefinitionType.toString(), stepDefinitionType);
             defaultStep.deserialize(jsonObject.jsonNode());
-
             return defaultStep;
         }
         catch (IOException e) {

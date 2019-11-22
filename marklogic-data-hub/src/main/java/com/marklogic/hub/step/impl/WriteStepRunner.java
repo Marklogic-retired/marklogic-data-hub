@@ -658,7 +658,10 @@ public class WriteStepRunner implements StepRunner {
         }
     }
 
-    private void addToBatcher(File file, Format fileFormat) throws  IOException{
+    private void addToBatcher(File file, Format fileFormat) throws IOException {
+        // Coverity is saying that the docStream is a resource leak, but the comment below this indicates that it must
+        // not be closed. Because this is for DHFPROD-3695 and we're close to releasing 5.1.0, leaving this as-is for now.
+        
         // This docStream must not be closed, or use try-resource due to WriteBatcher needing the stream open
         FileInputStream docStream = new FileInputStream(file);
         //note these ORs are for forward compatibility if we swap out the filecollector for another lib
