@@ -8,7 +8,7 @@ export class TraceService {
 
   getTraces(query: string, activeFacets: any, page: number, pageLength: number) {
     let start: number = (page - 1) * pageLength + 1;
-    const url = `/v1/search?options=traces&format=json&transform=ml:traceSearchResults&start=${start}&pageLength=${pageLength}`;
+    const url = `/v1/search?options=traces&format=json&transform=mlTraceSearchResults&start=${start}&pageLength=${pageLength}`;
     let queries = [];
     if (query && query !== '') {
       queries.push({

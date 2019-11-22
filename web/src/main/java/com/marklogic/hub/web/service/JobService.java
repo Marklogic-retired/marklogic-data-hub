@@ -86,7 +86,7 @@ public class JobService extends SearchableService {
         String searchXml = sqd.serialize();
 
         RawCombinedQueryDefinition querydef = queryMgr.newRawCombinedQueryDefinition(new StringHandle(searchXml), SEARCH_OPTIONS_NAME);
-        querydef.setResponseTransform(new ServerTransform("ml:jobSearchResults"));
+        querydef.setResponseTransform(new ServerTransform("mlJobSearchResults"));
         StringHandle sh = new StringHandle();
         sh.setFormat(Format.JSON);
         return queryMgr.search(querydef, sh, jobQuery.start);
