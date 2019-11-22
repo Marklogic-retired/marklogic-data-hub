@@ -14,7 +14,7 @@
       "sourcedFrom": "CustomerID"
     },
     "ShippedDate1": {
-      "sourcedFrom": "parseDate('YYYYMMDD',ShippedDate1)"
+      "sourcedFrom": "parseDate(ShippedDate1, 'YYYYMMDD')"
     }
   }
 }

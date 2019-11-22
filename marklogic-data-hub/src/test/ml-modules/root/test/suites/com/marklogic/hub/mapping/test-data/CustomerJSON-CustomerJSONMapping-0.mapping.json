@@ -56,10 +56,10 @@
       "sourcedFrom": "translate(CustomerID, '4', '')"
     },
     "currentDateTime" : {
-      "sourcedFrom" : "parseDateTime('DD/MM/YYYY-hh:mm:ss',CurrentDateTime)"
+      "sourcedFrom" : "parseDateTime(CurrentDateTime, 'DD/MM/YYYY-hh:mm:ss')"
     },
     "currentDate" : {
-      "sourcedFrom" : "parseDate('Mon DD, YYYY',CurrentDate)"
+      "sourcedFrom" : "parseDate(CurrentDate, 'Mon DD, YYYY')"
     }
   }
 }
