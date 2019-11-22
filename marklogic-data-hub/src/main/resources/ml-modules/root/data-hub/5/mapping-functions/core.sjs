@@ -81,36 +81,36 @@ function documentLookup(input, inputDictionaryPath) {
 // END value lookup functions
 
 // BEGIN date/dateTime functions
-function parseDate(picture, value) {
+function parseDate(value, pattern) {
   let standardFormats = ["MM/DD/YYYY", "DD/MM/YYYY", "MM-DD-YYYY", "MM.DD.YYYY", "DD.MM.YYYY", "YYYYMMDD", "YYYY/MM/DD"];
   let nonStandardFormats = ["Mon DD,YYYY", "DD Mon YYYY", "DD-Mon-YYYY" ];
   let response;
 
   // Normalize both the picture and value a bit per DHFPROD-3121
-  if (picture != null) {
-    picture = picture.toString().replace(", ", ",");
+  if (pattern != null) {
+    pattern = pattern.toString().replace(", ", ",");
   }
   if (value != null) {
     value = value.toString().replace(", ", ",");
   }
 
-  if(standardFormats.includes(picture.trim())){
+  if(standardFormats.includes(pattern.trim())){
     try{
-      let standardizedDate = xdmp.parseYymmdd(picture.replace("YYYY", "yyyy").replace("DD","dd"), value).toString().split("T")[0];
+      let standardizedDate = xdmp.parseYymmdd(pattern.replace("YYYY", "yyyy").replace("DD","dd"), value).toString().split("T")[0];
       response = xs.date(standardizedDate);
     }
     catch (ex) {
-      fn.error(null, "Given value doesn't match with the specified pattern (" + picture + "," + value + ") for parsing date string.");
+      fn.error(null, "Given value doesn't match with the specified pattern (" + pattern + "," + value + ") for parsing date string.");
     }
   }
-  else if (nonStandardFormats.includes(picture.trim())) {
-    picture = picture.trim();
+  else if (nonStandardFormats.includes(pattern.trim())) {
+    pattern = pattern.trim();
 
     let pattern;
-    if(picture === nonStandardFormats[0]) {
+    if(pattern === nonStandardFormats[0]) {
       pattern = "^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) ([0-9]|[0-2][0-9]|[3][0-1])\,([0-9]{4})$";
     }
-    else if(picture === nonStandardFormats[1]) {
+    else if(pattern === nonStandardFormats[1]) {
       pattern = "^([0-9]|[0-2][0-9]|[3][0-1]) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) ([0-9]{4})$";
     }
     else {
@@ -137,24 +137,24 @@ function parseDate(picture, value) {
     }
   }
   else {
-    fn.error(null, "The given date pattern (" + picture + ") is not supported.");
+    fn.error(null, "The given date pattern (" + pattern + ") is not supported.");
   }
   return response;
 }
 
-function parseDateTime(picture, value) {
+function parseDateTime(value, pattern) {
   let supportedFormats = ["YYYYMMDDThhmmss", "DD/MM/YYYY-hh:mm:ss", "DD/MM/YYYY hh:mm:ss", "YYYY/MM/DD-hh:mm:ss" , "YYYY/MM/DD hh:mm:ss"];
   let response;
-  if(supportedFormats.includes(picture.trim())){
+  if(supportedFormats.includes(pattern.trim())){
     try {
-      response = xdmp.parseYymmdd(picture.replace("YYYY","yyyy").replace("DD","dd"), value);
+      response = xdmp.parseYymmdd(pattern.replace("YYYY","yyyy").replace("DD","dd"), value);
     }
     catch(ex){
       fn.error(null, ex.message);
     }
   }
   else{
-    fn.error(null, "The given dateTime pattern (" + picture + ") is not supported.");
+    fn.error(null, "The given dateTime pattern (" + pattern + ") is not supported.");
   }
   return response;
 }
