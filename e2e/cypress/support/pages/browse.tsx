@@ -19,6 +19,14 @@ class BrowsePage {
         });
     }
 
+    getInstanceViewIcon(){
+        return cy.get('[data-cy=instance]');
+    }
+
+    getSourceViewIcon(){
+        return cy.get('[data-cy=source]');
+    }
+
     getDocuments() {
         return cy.get('[data-cy=document-list-item]');
     }
@@ -54,6 +62,7 @@ class BrowsePage {
     getDocumentById(index: number) {
         return this.getDocument(index).find('[data-cy=primary-key]');
     }
+
 
 
     /**
@@ -113,6 +122,10 @@ class BrowsePage {
 
     getHubPropertiesExpanded() {
         return cy.get("#hub-properties > div > i").click();
+    }
+
+    getExpandableSnippetView() {
+        return cy.get('[data-cy="expandable-icon"]').click({ multiple: true });
     }
 
 }

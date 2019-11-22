@@ -38,7 +38,7 @@ const Browse: React.FC<Props> = ({location}) => {
   const [isLoading, setIsLoading] = useState(true);
   const [totalDocuments, setTotalDocuments] = useState(0);
   const [defaultView, setDefaultView] = useState(true);
-  const [active, setIsActive] = useState(false);
+  const [active, setIsActive] = useState(true);
   const [snippetActive, setIsSnippetActive] = useState(false);
 
   const getEntityModel = async () => {

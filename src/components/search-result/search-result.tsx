@@ -106,18 +106,18 @@ const SearchResult: React.FC<Props> = (props) => {
   return (
       <div style={{width: '100%'}}>
         <div className={styles.title} onClick={() => showTableEntityProperties()}>
-          <Icon className={styles.expandableIcon} type='right' rotate={show ? 90 : undefined}/>
+          <Icon className={styles.expandableIcon} data-cy='expandable-icon' type='right' rotate={show ? 90 : undefined}/>
           <div className={styles.redirectIcons}>
-            <Link to={{pathname: `/detail/${primaryKeyValue}/${uri}`,state: {selectedValue:'instance'}}} data-cy='primary-key'>
-            <Tooltip title={'Instance'}><FontAwesomeIcon  icon={faExternalLinkAlt} size="sm" /></Tooltip>
+            <Link to={{pathname: `/detail/${primaryKeyValue}/${uri}`,state: {selectedValue:'instance'}}} data-cy='instance'>
+            <Tooltip title={'Show detail on a separate page'}><FontAwesomeIcon  icon={faExternalLinkAlt} size="sm" /></Tooltip>
             </Link>
-            <Link to={{pathname: `/detail/${primaryKeyValue}/${uri}`,state: {selectedValue:'source'}}} data-cy='primary-key'>
-            <Tooltip title={'Source'}><FontAwesomeIcon  icon={faCode} size="sm" /></Tooltip>
+            <Link to={{pathname: `/detail/${primaryKeyValue}/${uri}`,state: {selectedValue:'source'}}} data-cy='source'>
+            <Tooltip title={'Show source on a separate page'}><FontAwesomeIcon  icon={faCode} size="sm" /></Tooltip>
             </Link>
           </div>
           <span className={styles.entityName} data-cy='entity-name'>{itemEntityName}</span>
           {entityDef.primaryKey && <span className={styles.primaryKey}>{entityDef.primaryKey}:</span>}
-            {entityDef.primaryKey ? primaryKeyValue : props.item.uri}
+          <span data-cy='primary-key'> {entityDef.primaryKey ? primaryKeyValue : props.item.uri}</span>
         </div>
         <div className={styles.snippet} data-cy='snipped'>
           {props.item.matches.length >= 1 && snippet}
@@ -142,7 +142,7 @@ const SearchResult: React.FC<Props> = (props) => {
               </div>
           )}
         </div>
-        <div style={{display: (show) ? 'block' : 'none'}}>
+        <div style={{display: (show) ? 'block' : 'none'}} data-cy='expandable-view'>
           <ExpandableTableView item={props.item}/>
         </div>
       </div>
