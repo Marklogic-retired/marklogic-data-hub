@@ -4,7 +4,7 @@ const hubPropertiesConfig = [
   {
     facetName: "Collection",
     displayName: "Collection",
-    tooltip: "A name defining a group of documents in Data Hub."
+    tooltip: "A name defining a group of documents."
   },
   /* {
     facetName: "createdOnRange",
@@ -14,12 +14,12 @@ const hubPropertiesConfig = [
   {
     facetName: "createdInFlowRange",
     displayName: "Flow",
-    tooltip: "A sequence of one or more steps that processes or enhances documents."
+    tooltip: "A sequence of one or more steps that processes or enhances the data."
   },
   {
     facetName: "createdByStep",
     displayName: "Step",
-    tooltip: "A module of code that processes or enhances documents."
+    tooltip: "Code that processes or enhances the data."
   },
 ]
 

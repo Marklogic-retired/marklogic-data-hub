@@ -1,10 +1,10 @@
 const tooltipsConfig = {
   viewEntities: {
-    entities: "Representations of a high-level business object in your enterprise.",
-    documents: "Instantiations of entities stored as JSON or XML."
+    entities: "Representations of high-level business objects in your enterprise.",
+    documents: ""
   },
   browseDocuments: {
-    createdOn: "The date when a document was harmonized."
+    createdOn: "The date when similar data was unified and merged into a document, also known as harmonization."
     // Tooltips for other hub properties in hub-properties.config.js
   }
 }
