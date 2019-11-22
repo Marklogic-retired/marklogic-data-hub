@@ -16,8 +16,6 @@
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const datahub = DataHubSingleton.instance();
 const mastering = require("/com.marklogic.smart-mastering/process-records.xqy");
-const mergingImpl = require("/com.marklogic.smart-mastering/survivorship/merging/base.xqy");
-const notifyImpl = require('/com.marklogic.smart-mastering/matcher-impl/notification-impl.xqy');
 const masteringStepLib = require("/data-hub/5/builtins/steps/mastering/default/lib.sjs");
 const requiredOptionProperties = ['mergeOptions'];
 const processedURIs = [];
@@ -67,18 +65,22 @@ function main(content, options) {
 }
 
 function jobReport(jobID, stepResponse, options) {
-  if (stepResponse.success) {
+  if (stepResponse.success && stepResponse.successfulEvents) {
     const hubUtils = datahub.hubUtils;
     const query = options.sourceQuery;
     let urisEval;
-    if (/^\s*cts\.(uris|values)\(.*\)\s*$/.test(query)) {
-      urisEval = query;
+    if (!query || /^\s*cts\.(uris|values)\(.*\)\s*$/.test(query)) {
+      urisEval = null;
+      datahub.debug.log({type: 'notice', message: `Cannot safely parse sourceQuery for match summary cleanup (JobID: ${jobID})`});
     } else {
-      urisEval = "cts.uris(null, null, " + query + ")";
+      // Restrict the query to only cover match summary documents in the query
+      urisEval = `cts.uris(null, null, cts.andQuery([cts.collectionQuery('datahubMasteringMatchSummary${options.targetEntity ? '-' + options.targetEntity : ''}'),${query}]))`;
     }
-    const matchSummaryURIs = hubUtils.normalizeToArray(xdmp.eval(urisEval, {options: options}));
-    const summariesToDelete = matchSummaryURIs.map((uri) => ({uri, '$delete': true}));
-    hubUtils.writeDocuments(summariesToDelete);
+    if (urisEval) {
+      const matchSummaryURIs = hubUtils.normalizeToArray(xdmp.eval(urisEval, {options: options}));
+      const summariesToDelete = matchSummaryURIs.map((uri) => ({uri, '$delete': true}));
+      hubUtils.writeDocuments(summariesToDelete);
+    }
   }
   return masteringStepLib.jobReport(jobID, stepResponse, options, requiredOptionProperties);
 }
