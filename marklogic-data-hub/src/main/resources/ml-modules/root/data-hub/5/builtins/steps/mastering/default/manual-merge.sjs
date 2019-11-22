@@ -4,7 +4,7 @@ const collImpl = require('/com.marklogic.smart-mastering/survivorship/merging/co
 const requiredOptionProperties = ['mergeOptions'];
 
 function main(content, options) {
-  masteringStepLib.checkOptions(content, options, null, requiredOptionProperties);
+  masteringStepLib.checkOptions(null, options, null, requiredOptionProperties);
   let uris = [];
   let mergeOptions = new NodeBuilder().addNode({ options: options.mergeOptions }).toNode();
   for (const item of content) {
