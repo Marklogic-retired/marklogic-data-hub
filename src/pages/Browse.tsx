@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext, useRef} from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import axios from 'axios';
 import { Layout, Tooltip } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
@@ -20,11 +20,11 @@ import { faStream, faTable } from '@fortawesome/free-solid-svg-icons'
 interface Props extends RouteComponentProps<any> {
 }
 
-const Browse: React.FC<Props> = ({location}) => {
+const Browse: React.FC<Props> = ({ location }) => {
 
-  const {Content, Sider} = Layout;
+  const { Content, Sider } = Layout;
   const componentIsMounted = useRef(true);
-  const {user, handleError} = useContext(AuthContext);
+  const { user, handleError, setTableView } = useContext(AuthContext);
   const {
     searchOptions,
     setEntityClearQuery,
@@ -108,81 +108,81 @@ const Browse: React.FC<Props> = ({location}) => {
 
 
   const tableSwitch = () => {
-    setDefaultView(true);
     setIsActive(true);
     setIsSnippetActive(false);
+    setTableView(true)
   };
 
   const snippetSwitch = () => {
-    setDefaultView(false);
     setIsActive(false);
     setIsSnippetActive(true);
+    setTableView(false)
   };
 
   return (
-      <>
-        <Layout>
-          <Sider className={styles.sideBarFacets} width={300}>
-            <Sidebar
-                facets={facets}
-                selectedEntities={searchOptions.entityNames}
-                entityDefArray={entityDefArray}
-            />
-          </Sider>
-          <Content className={styles.content}>
-            {isLoading || user.error.type === 'ALERT' ?
-                <AsyncLoader/>
-                :
-                <>
-                  <div className={styles.searchBar}>
-                    <SearchBar entities={entities}/>
-                    <SearchSummary
-                        total={totalDocuments}
-                        start={searchOptions.start}
-                        length={searchOptions.pageLength}
-                        pageSize={searchOptions.pageSize}
-                    />
-                    <SearchPagination
-                        total={totalDocuments}
-                        pageNumber={searchOptions.pageNumber}
-                        pageSize={searchOptions.pageSize}
-                    />
-                    <br/>
-                    <br/>
-                    <div style={{marginRight: '12px'}}>
-                      <div className={active ? styles.toggled : styles.toggleView} onClick={() => tableSwitch()}>
-                        <Tooltip title={'Table View'}><FontAwesomeIcon icon={faTable} size="lg"/></Tooltip>
-                      </div>
-                      <div className={snippetActive ? styles.toggled : styles.toggleView}
-                           onClick={() => snippetSwitch()}>
-                        <Tooltip title={'Snippet View'}><FontAwesomeIcon icon={faStream} size="lg"/></Tooltip>
-                      </div>
-                    </div>
+    <>
+      <Layout>
+        <Sider className={styles.sideBarFacets} width={300}>
+          <Sidebar
+            facets={facets}
+            selectedEntities={searchOptions.entityNames}
+            entityDefArray={entityDefArray}
+          />
+        </Sider>
+        <Content className={styles.content}>
+          {isLoading || user.error.type === 'ALERT' ?
+            <AsyncLoader />
+            :
+            <>
+              <div className={styles.searchBar}>
+                <SearchBar entities={entities} />
+                <SearchSummary
+                  total={totalDocuments}
+                  start={searchOptions.start}
+                  length={searchOptions.pageLength}
+                  pageSize={searchOptions.pageSize}
+                />
+                <SearchPagination
+                  total={totalDocuments}
+                  pageNumber={searchOptions.pageNumber}
+                  pageSize={searchOptions.pageSize}
+                />
+                <br />
+                <br />
+                <div style={{ marginRight: '12px' }}>
+                  <div className={active ? styles.toggled : styles.toggleView} onClick={() => tableSwitch()}>
+                    <Tooltip title={'Table View'}><FontAwesomeIcon icon={faTable} size="lg" /></Tooltip>
                   </div>
-                  {defaultView ?
-                      <div style={{marginTop: '150px'}}><ResultTable data={data} entity={searchOptions.entityNames}
-                                                                     entityDefArray={entityDefArray}/></div>
-                      : <SearchResults data={data} entityDefArray={entityDefArray}/>
-                  }
-                  <br/>
-                  <div>
-                    <SearchSummary
-                        total={totalDocuments}
-                        start={searchOptions.start}
-                        length={searchOptions.pageLength}
-                        pageSize={searchOptions.pageSize}
-                    />
-                    <SearchPagination
-                        total={totalDocuments}
-                        pageNumber={searchOptions.pageNumber}
-                        pageSize={searchOptions.pageSize}
-                    />
+                  <div className={snippetActive ? styles.toggled : styles.toggleView}
+                    onClick={() => snippetSwitch()}>
+                    <Tooltip title={'Snippet View'}><FontAwesomeIcon icon={faStream} size="lg" /></Tooltip>
                   </div>
-                </>
-            }
-          </Content>
-        </Layout>
-      </>
+                </div>
+              </div>
+              {user.tableView ?
+                <div style={{ marginTop: '150px' }}><ResultTable data={data} entity={searchOptions.entityNames}
+                  entityDefArray={entityDefArray} /></div>
+                : <SearchResults data={data} entityDefArray={entityDefArray} />
+              }
+              <br />
+              <div>
+                <SearchSummary
+                  total={totalDocuments}
+                  start={searchOptions.start}
+                  length={searchOptions.pageLength}
+                  pageSize={searchOptions.pageSize}
+                />
+                <SearchPagination
+                  total={totalDocuments}
+                  pageNumber={searchOptions.pageNumber}
+                  pageSize={searchOptions.pageSize}
+                />
+              </div>
+            </>
+          }
+        </Content>
+      </Layout>
+    </>
   );
 }
 

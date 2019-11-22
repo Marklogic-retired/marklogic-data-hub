@@ -5,7 +5,8 @@ type UserContextInterface = {
   // email: string,
   authenticated: boolean,
   redirect: boolean,
-  error : any
+  error : any,
+  tableView: boolean
 }
 
 const defaultUserData = {
@@ -17,7 +18,8 @@ const defaultUserData = {
     title: '', 
     message: '',
     type: ''
-  }
+  },
+  tableView: true
 }
 
 interface IAuthContextInterface {
@@ -28,6 +30,7 @@ interface IAuthContextInterface {
   handleError: (error:any) => void;
   clearErrorMessage: () => void;
   clearRedirect: () => void;
+  setTableView: (viewType: boolean) => void;
 }
 
 export const AuthContext = React.createContext<IAuthContextInterface>({
@@ -37,7 +40,8 @@ export const AuthContext = React.createContext<IAuthContextInterface>({
   userNotAuthenticated: () => {},
   handleError: () => {},
   clearErrorMessage: () => {},
-  clearRedirect: () => {}
+  clearRedirect: () => {},
+  setTableView: () => {}
 });
 
 const AuthProvider: React.FC<{ children: any }> = ({children}) => {
@@ -149,6 +153,10 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
     setUser({ ...user, redirect: false });
   }
 
+  const setTableView = (view) => {
+    setUser({...user, tableView: view });
+  }
+
   useEffect(() => {
     if (sessionUser) {
       sessionAuthenticated(sessionUser);
@@ -163,7 +171,8 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
       userNotAuthenticated,
       handleError, 
       clearErrorMessage,
-      clearRedirect
+      clearRedirect,
+      setTableView,
     }}>
       {children}
     </AuthContext.Provider>
