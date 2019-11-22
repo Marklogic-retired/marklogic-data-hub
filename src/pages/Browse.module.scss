@@ -20,12 +20,21 @@
   background-color: white;
 }
 
-.toggleView {
-  margin-top: 100px;
+.toggleView{
   float: right;
   padding: 8px;
-  border: 1px solid black;
-  margin-right: 7px;
+  border: 1px solid #666;
+  cursor: pointer;
 }
+
+.toggled{
+  background-color: #2f92ad;
+  float: right;
+  padding: 8px;
+  border: 1px solid #666;
+  cursor: pointer;
+  color: white;
+}
+
 
 

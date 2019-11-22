@@ -132,12 +132,12 @@ const ResultTable: React.FC<Props> = (props) => {
 
   return (
     <Table
-      className="search-tablular"
+      className="search-tabular"
       rowKey="key"
       dataSource={data}
       columns={columns}
       pagination={false}
-      data-cy="search-tablular"
+      data-cy="search-tabular"
     />
   );
 }

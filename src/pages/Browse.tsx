@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, {useState, useEffect, useContext, useRef} from 'react';
 import axios from 'axios';
-import { Layout } from 'antd';
+import { Layout, Tooltip } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { AuthContext } from '../util/auth-context';
 import { SearchContext } from '../util/search-context';
@@ -13,19 +13,18 @@ import SearchResults from '../components/search-results/search-results';
 import ResultTable from '../components/result-table/result-table';
 import { entityFromJSON, entityParser } from '../util/data-conversion';
 import styles from './Browse.module.scss';
-import { Button } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {faRoute, faStream, faTable} from '@fortawesome/free-solid-svg-icons'
+import { faStream, faTable } from '@fortawesome/free-solid-svg-icons'
 
 
 interface Props extends RouteComponentProps<any> {
 }
 
-const Browse: React.FC<Props> = ({ location }) => {
+const Browse: React.FC<Props> = ({location}) => {
 
-  const { Content, Sider } = Layout;
+  const {Content, Sider} = Layout;
   const componentIsMounted = useRef(true);
-  const { user, handleError } = useContext(AuthContext);
+  const {user, handleError} = useContext(AuthContext);
   const {
     searchOptions,
     setEntityClearQuery,
@@ -38,7 +37,10 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [facets, setFacets] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [totalDocuments, setTotalDocuments] = useState(0);
-  const [table, setTable] = useState();
+  const [table, setTable] = useState(true);
+  const [snippetView, setSnippetView] = useState(false);
+  const [active, setIsActive] = useState(false);
+  const [snippetActive, setIsSnippetActive] = useState(false);
 
   const getEntityModel = async () => {
     try {
@@ -104,9 +106,19 @@ const Browse: React.FC<Props> = ({ location }) => {
   }, [searchOptions, entities, user.error.type]);
 
 
-   const tableSwitch = () => { console.log(1);
-     table ? setTable(false) : setTable(true)};
+  const tableSwitch = () => {
+    setTable(true);
+    setSnippetView(false);
+    setIsActive(true);
+    setIsSnippetActive(false);
+  };
 
+  const snippetSwitch = () => {
+    setTable(false);
+    setSnippetView(true);
+    setIsActive(false);
+    setIsSnippetActive(true);
+  };
 
   return (
       <>
@@ -136,38 +148,36 @@ const Browse: React.FC<Props> = ({ location }) => {
                         pageNumber={searchOptions.pageNumber}
                         pageSize={searchOptions.pageSize}
                     />
+                    <br/>
+                    <br/>
+                    <div style={{marginRight: '12px'}}>
+                      <div className={active ? styles.toggled : styles.toggleView} onClick={() => tableSwitch()}>
+                        <Tooltip title={'Table View'}><FontAwesomeIcon icon={faTable} size="lg"/></Tooltip>
+                      </div>
+                      <div className={snippetActive ? styles.toggled : styles.toggleView}
+                           onClick={() => snippetSwitch()}>
+                        <Tooltip title={'Snippet View'}><FontAwesomeIcon icon={faStream} size="lg"/></Tooltip>
+                      </div>
+                    </div>
                   </div>
-                  <div className={styles.toggleView}>
-                    <a onClick={() => tableSwitch()}>
-                    <FontAwesomeIcon icon={faStream}  size="lg" />
-                    </a>
-                    <a>
-                    <FontAwesomeIcon style={{marginLeft:'10px'}} icon={faTable} size="lg" />
-                    </a>
-                  </div>
-                   {table ?
-                <>
-                  <ResultTable data={data} entity={searchOptions.entityNames} entityDefArray={entityDefArray} />
-                </>
-                :
-                <>
-                  <SearchResults data={data} entityDefArray={entityDefArray} />
-                </>
-
-              }
-                  <SearchResults data={data} entityDefArray={entityDefArray}/>
+                  {table ?
+                      <div style={{marginTop: '150px'}}><ResultTable data={data} entity={searchOptions.entityNames}
+                                                                     entityDefArray={entityDefArray}/></div>
+                      : <SearchResults data={data} entityDefArray={entityDefArray}/>
+                  }
+                  <br/>
                   <div>
-                  <SearchSummary
-                      total={totalDocuments}
-                      start={searchOptions.start}
-                      length={searchOptions.pageLength}
-                      pageSize={searchOptions.pageSize}
-                  />
-                  <SearchPagination
-                      total={totalDocuments}
-                      pageNumber={searchOptions.pageNumber}
-                      pageSize={searchOptions.pageSize}
-                  />
+                    <SearchSummary
+                        total={totalDocuments}
+                        start={searchOptions.start}
+                        length={searchOptions.pageLength}
+                        pageSize={searchOptions.pageSize}
+                    />
+                    <SearchPagination
+                        total={totalDocuments}
+                        pageNumber={searchOptions.pageNumber}
+                        pageSize={searchOptions.pageSize}
+                    />
                   </div>
                 </>
             }
