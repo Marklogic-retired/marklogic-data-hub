@@ -11,7 +11,7 @@
       "sourcedFrom" : "id"
     },
     "purchaseDate" : {
-      "sourcedFrom" : "parseDate('MM/DD/YYYY', transactionDate)"
+      "sourcedFrom" : "parseDate(transactionDate, 'MM/DD/YYYY')"
     },
     "orderCost": {
       "sourcedFrom" : "sum(items ! (quantity * price))"

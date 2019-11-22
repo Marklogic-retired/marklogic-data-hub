@@ -8,7 +8,7 @@
   "sourceURI" : "/Users/ssambasu/Downloads/5.1_json-mapping-example/data/nestedPerson1.json",
   "properties" : {
     "purchaseDate" : {
-      "sourcedFrom" : "parseDate('MM/DD/YYYY', transactionDate)"
+      "sourcedFrom" : "parseDate(transactionDate,'MM/DD/YYYY')"
     },
     "id" : {
       "sourcedFrom" : "id"
