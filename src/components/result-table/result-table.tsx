@@ -39,7 +39,9 @@ const ResultTable: React.FC<Props> = (props) => {
     if (item.format === 'xml' && item.hasOwnProperty('extracted')) {
       let header = xmlParser(item.extracted.content[0]);
       let entity = xmlParser(item.extracted.content[1]);
-      createdOn = header.headers.createdOn;
+      if(item.hasOwnProperty('headers')){
+        createdOn = header.headers.createdOn;
+      }
 
       if (header && entity) {
         itemEntityName = Object.keys(entity);
@@ -130,12 +132,12 @@ const ResultTable: React.FC<Props> = (props) => {
 
   return (
     <Table
-      className="search-tablular"
+      className="search-tabular"
       rowKey="key"
       dataSource={data}
       columns={columns}
       pagination={false}
-      data-cy="search-tablular"
+      data-cy="search-tabular"
     />
   );
 }
