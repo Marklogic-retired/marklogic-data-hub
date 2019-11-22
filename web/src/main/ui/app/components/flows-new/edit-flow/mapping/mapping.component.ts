@@ -425,8 +425,13 @@ export class MappingComponent implements OnInit {
           let indCheck = node.getAttribute(name).lastIndexOf('/');
           let ind = indCheck != -1 ? indCheck + 1 : 0;
           if(name.split(':').length > 1){
-            self.nmspace[name.split(':')[1]] = node.getAttribute(name);
-            self.nmspace[node.getAttribute(name).slice(ind)] = node.getAttribute(name);
+            if(!(name.split(':')[1] in self.nmspace)){
+              self.nmspace[name.split(':')[1]] = node.getAttribute(name);
+            }
+            if(!(node.getAttribute(name).slice(ind) in self.nmspace)){
+              self.nmspace[node.getAttribute(name).slice(ind)] = node.getAttribute(name);
+            }
+
           } else {
             self.nmspace[node.getAttribute(name).slice(ind)] = node.getAttribute(name);
           }
@@ -445,10 +450,11 @@ export class MappingComponent implements OnInit {
     if(nodeWithAttr === '' && node.namespaceURI){
       let indCheck = node.namespaceURI.lastIndexOf('/');
           let ind = indCheck != -1 ? indCheck + 1 : 0;
+          let nodeprefix = node.namespaceURI.slice(ind) in self.nmspace ? self.nmspace[node.namespaceURI.slice(ind)] : node.namespaceURI.slice(ind);
           if(node.nodeName.split(':').length > 1){
-            nodeWithAttr = node.namespaceURI.slice(ind) + ':' + node.nodeName.split(':')[1];
+            nodeWithAttr = nodeprefix + ':' + node.nodeName.split(':')[1];
           } else {
-            nodeWithAttr = node.namespaceURI.slice(ind) + ':' + node.nodeName;
+            nodeWithAttr = nodeprefix + ':' + node.nodeName;
           }
     }
     return nodeWithAttr;
