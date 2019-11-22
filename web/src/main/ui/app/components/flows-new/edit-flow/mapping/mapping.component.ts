@@ -450,7 +450,7 @@ export class MappingComponent implements OnInit {
     if(nodeWithAttr === '' && node.namespaceURI){
       let indCheck = node.namespaceURI.lastIndexOf('/');
           let ind = indCheck != -1 ? indCheck + 1 : 0;
-          let nodeprefix = node.namespaceURI.slice(ind) in self.nmspace ? self.nmspace[node.namespaceURI.slice(ind)] : node.namespaceURI.slice(ind);
+          let nodeprefix = self.nmspace.hasOwnProperty(node.namespaceURI) ? self.nmspace[node.namespaceURI] : node.namespaceURI.slice(ind);
           if(node.nodeName.split(':').length > 1){
             nodeWithAttr = nodeprefix + ':' + node.nodeName.split(':')[1];
           } else {
