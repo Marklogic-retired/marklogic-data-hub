@@ -204,9 +204,11 @@ export class NewStepDialogUiComponent implements OnInit {
   //Update the source collection list as soon as the sourceDatabase value is changed.
   stepDatabaseChange() {
     this.getCollections.emit(this.newStepForm.value.sourceDatabase);
-    this.newStepForm.controls['sourceCollection'].reset();
-    this.newStepForm.get('sourceCollection').setValidators([Validators.required]);
-    this.newStepForm.get('sourceCollection').updateValueAndValidity();
+    if (this.newStepForm.value.selectedSource === 'collection'){
+      this.newStepForm.controls['sourceCollection'].reset();
+      this.newStepForm.get('sourceCollection').setValidators([Validators.required]);
+      this.newStepForm.get('sourceCollection').updateValueAndValidity();
+    }
   }
 
   stepTypeChange() {
