@@ -50,16 +50,20 @@ function getMarkLogicFunctions() {
 }
 
 function getXpathFunctions() {
-  let xpathFunctions= xdmp.functions().toObject()
+  let xpathFunctions= xdmp.functions().toObject();
+  let excludeFunctions = ["base-uri", "document-uri"];
   let response ={};
   for(let i =0; i < xpathFunctions.length;i++){
-    if (String(xpathFunctions[i]).includes("fn:")){
-      let xpathFunction ={};
-      xpathFunction["category"] = "xpath";
+    if (String(xpathFunctions[i]).includes("fn:") ){
       let signature = xdmp.functionSignature(xpathFunctions[i]).replace("function", xdmp.functionName(xpathFunctions[i]));
       signature = signature.match(/fn:(.*?) as.*?/)[1];
-      xpathFunction["signature"] = signature;
-      response[String(xdmp.functionName(xpathFunctions[i])).replace("fn:","")] = xpathFunction;
+      let fn = String(xdmp.functionName(xpathFunctions[i])).replace("fn:","")
+      if(!excludeFunctions.includes(fn)) {
+         let xpathFunction ={};
+         xpathFunction["category"] = "xpath";
+         xpathFunction["signature"] = signature;
+         response[fn] = xpathFunction;
+      }
     }
   }
   return response;
