@@ -62,7 +62,7 @@ public class ProjectManagerService {
         return projects;
     }
 
-    public Project addProject(String path) {
+    public synchronized Project addProject(String path) {
 
         // we have a problem if the path doesn't exist
         File f = new File(path);
