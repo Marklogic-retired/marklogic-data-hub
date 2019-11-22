@@ -37,8 +37,7 @@ const Browse: React.FC<Props> = ({location}) => {
   const [facets, setFacets] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [totalDocuments, setTotalDocuments] = useState(0);
-  const [table, setTable] = useState(true);
-  const [snippetView, setSnippetView] = useState(false);
+  const [defaultView , setIsDefaultView] = useState(true);
   const [active, setIsActive] = useState(false);
   const [snippetActive, setIsSnippetActive] = useState(false);
 
@@ -107,15 +106,13 @@ const Browse: React.FC<Props> = ({location}) => {
 
 
   const tableSwitch = () => {
-    setTable(true);
-    setSnippetView(false);
+    setIsDefaultView(true);
     setIsActive(true);
     setIsSnippetActive(false);
   };
 
   const snippetSwitch = () => {
-    setTable(false);
-    setSnippetView(true);
+    setIsDefaultView(false);
     setIsActive(false);
     setIsSnippetActive(true);
   };
@@ -160,7 +157,7 @@ const Browse: React.FC<Props> = ({location}) => {
                       </div>
                     </div>
                   </div>
-                  {table ?
+                  {defaultView ?
                       <div style={{marginTop: '150px'}}><ResultTable data={data} entity={searchOptions.entityNames}
                                                                      entityDefArray={entityDefArray}/></div>
                       : <SearchResults data={data} entityDefArray={entityDefArray}/>
