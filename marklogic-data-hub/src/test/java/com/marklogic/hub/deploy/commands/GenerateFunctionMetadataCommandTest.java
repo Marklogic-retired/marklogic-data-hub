@@ -50,8 +50,8 @@ public class GenerateFunctionMetadataCommandTest extends HubTestBase {
         DocumentWriteSet writeSet = modMgr.newWriteSet();
         StringHandle handle = new StringHandle("'use strict';\n" +
             "\n" +
-            "function testModule(value, pattern) {\n" +
-            "  return xdmp.parseDateTime(value, pattern);\n" +
+            "function testModule(pattern, value) {\n" +
+            "  return xdmp.parseDateTime(pattern, value);\n" +
             "}\n" +
             "\n" +
             "module.exports = {\n" +
