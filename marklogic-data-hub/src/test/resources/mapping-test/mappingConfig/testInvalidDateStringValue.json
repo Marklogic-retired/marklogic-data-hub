@@ -14,7 +14,7 @@
       "sourcedFrom": "CustomerID"
     },
     "RequiredDate5": {
-      "sourcedFrom": "parseDate('DD Mon YYYY',ShipPostalCode)"
+      "sourcedFrom": "parseDate(ShipPostalCode, 'DD Mon YYYY')"
     }
   }
 }

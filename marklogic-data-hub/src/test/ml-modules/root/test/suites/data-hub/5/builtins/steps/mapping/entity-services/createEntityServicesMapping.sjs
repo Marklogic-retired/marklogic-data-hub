@@ -18,7 +18,7 @@ const baseCustomerMapping = xdmp.toJSON({
       "sourcedFrom": "string(@CustomerID)"
     },
     "Date": {
-      "sourcedFrom": "parseDateTime('DD/MM/YYYY-hh:mm:ss', date)"
+      "sourcedFrom": "parseDateTime(date, 'DD/MM/YYYY-hh:mm:ss')"
     },
     "Orders": {
       "targetEntityType": "Order-0.0.1/Order",

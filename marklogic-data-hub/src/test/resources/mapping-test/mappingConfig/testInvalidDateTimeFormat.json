@@ -14,7 +14,7 @@
       "sourcedFrom": "CustomerID"
     },
     "DateTimeFormat4": {
-      "sourcedFrom": "parseDateTime('YYYYMMDDThhmmss',DateTimeFormat4)"
+      "sourcedFrom": "parseDateTime(DateTimeFormat4, 'YYYYMMDDThhmmss')"
     }
   }
 }
