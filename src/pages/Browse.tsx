@@ -85,7 +85,9 @@ const Browse: React.FC<Props> = ({ location }) => {
     if (location.state && location.state.jobId) {
       setLatestJobFacet(location.state.jobId, location.state.entityName);
     }
-    getEntityModel();
+    if (!user.error.type) {
+      getEntityModel();
+    }
 
     return () => {
       componentIsMounted.current = false

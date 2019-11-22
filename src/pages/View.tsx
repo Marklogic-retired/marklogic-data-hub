@@ -71,7 +71,9 @@ const View: React.FC = () => {
   }
 
   useEffect(() => {
-    getEntityModel();
+    if (!user.error.type) {
+      getEntityModel();
+    }
 
     return () => {
       componentIsMounted.current = false
