@@ -1,23 +1,22 @@
 <!-- START NEW MAPPING VIEW -->
-<div *ngIf="isVersionCompatibleWithES" class="source-prop-container-map-exp">
-  <div *ngIf="targetEntity && !targetEntity.hasDocs">
-    <em>Unable to find source documents using the specified collection or query.</em>
-    <br><br>
-    <em>Ingest some data that mapping can use as reference and/or edit the step settings to use a source collection or query that will return some results.</em>
-  </div>
-  <div [ngClass]="{ hidden: !(targetEntity && targetEntity.hasDocs)}">
-  
+<div *ngIf="isVersionCompatibleWithES" class="source-prop-container-map-exp">  
     <div class="Source_Tbl">
       <div class="item-title">
       <div class="item-type">Source Data</div>
-      <!-- <span class="help-icon">
-          <a href="https://marklogic.github.io/marklogic-data-hub/harmonize/mapping/#changing-the-mapping-source-document" target="_blank"><i class="fa fa-question-circle fa-lg"></i></a>
-        </span> -->
       </div>
       <div class="item-identifying-info">
           <div class="uri-label" tooltip="The Query of the source document from which QuickStart generates the list of source property names." container="body">Query</div>
           <span class="edit-source-query" (click)="this.OpenFullSourceQuery()" tooltip="{{ this.step.options.sourceQuery }}" container="body">{{ getInitialChars(this.step.options.sourceQuery, 40, '...') }}</span>
       </div>
+      <div *ngIf="targetEntity && !targetEntity.hasDocs">
+          <br><br><br>
+          <em>Unable to find source documents using the specified collection or query.</em>
+          <br><br>
+          <em>Ingest some data that mapping can use as reference and/or the step settings</em>
+          <br>
+          <em>to use a source collection or query that will return some results.</em>
+        </div>
+    <div id="hideShowTable" [ngClass]="{ hidden: !(targetEntity && targetEntity.hasDocs)}">
       <div *ngIf="!editingURI" class="item-identifying-info">
         <div class="uri-label" tooltip="The URI of the source document from which QuickStart generates the list of source property names." container="body">URI</div>
         <span (click)="editingURI=true" ng-class="sample-doc-uri" class="sample-doc-uri" tooltip="{{ getURITooltip(mapping.sourceURI, 42) }}" container="body">{{ getLastChars(mapping.sourceURI, 42, '...') }}</span>
@@ -66,6 +65,7 @@
           <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
           <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
         </mat-table>
+        </div>
       </div>
 
     <mat-divider [vertical]="true"></mat-divider>
@@ -118,7 +118,7 @@
     </div>
     </div> <!-- Entities_Tbl -->
 
-  </div>
+  <!-- </div> -->
 
   <!-- COLUMNS MENU -->
   <mat-menu class="mat-menu-list" #columnsMenu="matMenu">
