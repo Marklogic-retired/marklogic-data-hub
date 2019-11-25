@@ -5,7 +5,7 @@ function testParseDate() {
   return [
     test.assertTrue(xs.date("2014-01-06").eq(core.parseDate("01/06/2014", "MM/DD/YYYY"))),
     test.assertTrue(xs.date("2014-01-06").eq(core.parseDate("06/01/2014","DD/MM/YYYY"))),
-    test.assertTrue(xs.date("2014-01-06").eq(core.parseDate("01.06.2014","MM.DD.YYYY", ))),
+    test.assertTrue(xs.date("2014-01-06").eq(core.parseDate("01.06.2014","MM.DD.YYYY"))),
     test.assertTrue(xs.date("2014-01-06").eq(core.parseDate("06.01.2014", "DD.MM.YYYY"))),
     test.assertTrue(xs.date("2014-01-06").eq(core.parseDate("20140106", "YYYYMMDD"))),
     test.assertTrue(xs.date("2014-01-06").eq(core.parseDate("Jan 06, 2014", "Mon DD, YYYY")))
