@@ -150,7 +150,7 @@ let expectedTemplate = tidyXML(`
   <m:entity name="Customer" xmlns:m="http://marklogic.com/entity-services/mapping">
     <Customer xmlns="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       <m:optional><ID xsi:type="xs:string"><m:val>string(@CustomerID)</m:val></ID></m:optional>
-      <m:optional><Date xsi:type="xs:dateTime"><m:val>parseDateTime('DD/MM/YYYY-hh:mm:ss', date)</m:val></Date></m:optional>
+      <m:optional><Date xsi:type="xs:dateTime"><m:val>parseDateTime(date, 'DD/MM/YYYY-hh:mm:ss')</m:val></Date></m:optional>
       <m:for-each><m:select>orders/order</m:select>
         <Orders datatype='array'>
           <m:call-template name="Order"/>
@@ -175,7 +175,7 @@ expectedTemplate = tidyXML(`
   <m:entity name="Customer" xmlns:m="http://marklogic.com/entity-services/mapping">
     <Customer xmlns="http://my-test-namespace" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       <m:optional><ID xsi:type="xs:string"><m:val>string(@CustomerID)</m:val></ID></m:optional>
-      <m:optional><Date xsi:type="xs:dateTime"><m:val>parseDateTime('DD/MM/YYYY-hh:mm:ss', date)</m:val></Date></m:optional>
+      <m:optional><Date xsi:type="xs:dateTime"><m:val>parseDateTime(date, 'DD/MM/YYYY-hh:mm:ss')</m:val></Date></m:optional>
       <m:for-each><m:select>orders/order</m:select>
         <Orders datatype='array'>
           <m:call-template name="Order"/>
@@ -200,7 +200,7 @@ expectedTemplate = tidyXML(`
   <m:entity name="Customer" xmlns:m="http://marklogic.com/entity-services/mapping">
     <myPrefix:Customer xmlns:myPrefix="http://my-test-namespace" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       <m:optional><myPrefix:ID xsi:type="xs:string"><m:val>string(@CustomerID)</m:val></myPrefix:ID></m:optional>
-      <m:optional><myPrefix:Date xsi:type="xs:dateTime"><m:val>parseDateTime('DD/MM/YYYY-hh:mm:ss', date)</m:val></myPrefix:Date></m:optional>
+      <m:optional><myPrefix:Date xsi:type="xs:dateTime"><m:val>parseDateTime(date, 'DD/MM/YYYY-hh:mm:ss')</m:val></myPrefix:Date></m:optional>
       <m:for-each><m:select>orders/order</m:select>
         <myPrefix:Orders datatype='array'>
           <m:call-template name="Order"/>
@@ -227,7 +227,7 @@ expectedTemplate = tidyXML(`
     <m:entity name="Customer" xmlns:m="http://marklogic.com/entity-services/mapping">
       <Customer xmlns="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <m:optional><ID xsi:type="xs:string"><m:val>string(@CustomerID)</m:val></ID></m:optional>
-        <m:optional><Date xsi:type="xs:dateTime"><m:val>parseDateTime('DD/MM/YYYY-hh:mm:ss', date)</m:val></Date></m:optional>
+        <m:optional><Date xsi:type="xs:dateTime"><m:val>parseDateTime(date, 'DD/MM/YYYY-hh:mm:ss')</m:val></Date></m:optional>
         <m:for-each><m:select>orders/order</m:select>
           <Orders datatype='array'>
             <m:call-template name="Order"/>
