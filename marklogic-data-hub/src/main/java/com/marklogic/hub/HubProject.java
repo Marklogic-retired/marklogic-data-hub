@@ -220,6 +220,11 @@ public interface HubProject {
     Path getCustomModulesDir();
 
     /**
+     * @return the path of the directory for the user to store mapping function library modules
+     */
+    Path getCustomMappingFunctionsDir();
+
+    /**
      * Checks if the project has been initialized or not
      *
      * @return true if initialized, false if not
