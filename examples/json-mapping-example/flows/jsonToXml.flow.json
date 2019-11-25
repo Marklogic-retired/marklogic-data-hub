@@ -1,0 +1,77 @@
+{
+  "name" : "jsonToXml",
+  "description" : "",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stopOnError" : false,
+  "options" : { },
+  "version" : 0,
+  "steps" : {
+    "1" : {
+      "name" : "jsonIngest",
+      "description" : "",
+      "options" : {
+        "additionalCollections" : [ ],
+        "headers" : {
+          "sources" : [ {
+            "name" : "jsonToXml"
+          } ],
+          "createdOn" : "currentDateTime",
+          "createdBy" : "currentUser"
+        },
+        "sourceQuery" : "cts.collectionQuery([])",
+        "collections" : [ "jsonIngest" ],
+        "permissions" : "rest-reader,read,rest-writer,update",
+        "outputFormat" : "json",
+        "targetDatabase" : "data-hub-STAGING"
+      },
+      "customHook" : {
+        "module" : "",
+        "parameters" : { },
+        "user" : "",
+        "runBefore" : false
+      },
+      "retryLimit" : 0,
+      "batchSize" : 100,
+      "threadCount" : 4,
+      "stepDefinitionName" : "default-ingestion",
+      "stepDefinitionType" : "INGESTION",
+      "fileLocations" : {
+        "inputFilePath" : "data",
+        "inputFileType" : "json",
+        "outputURIReplacement" : ".*data,'/xmlExample'",
+        "separator" : ""
+      }
+    },
+    "2" : {
+      "name" : "mapJsonToXml",
+      "description" : "",
+      "options" : {
+        "additionalCollections" : [ ],
+        "sourceQuery" : "cts.collectionQuery([\"jsonIngest\"])",
+        "mapping" : {
+          "name" : "jsonToXml-mapJsonToXml",
+          "version" : 1
+        },
+        "targetEntity" : "Person",
+        "sourceDatabase" : "data-hub-STAGING",
+        "collections" : [ "mapJsonToXml" ],
+        "validateEntity" : false,
+        "sourceCollection" : "jsonIngest",
+        "outputFormat" : "xml",
+        "targetDatabase" : "data-hub-FINAL"
+      },
+      "customHook" : {
+        "module" : "",
+        "parameters" : { },
+        "user" : "",
+        "runBefore" : false
+      },
+      "retryLimit" : null,
+      "batchSize" : 100,
+      "threadCount" : 4,
+      "stepDefinitionName" : "entity-services-mapping",
+      "stepDefinitionType" : "MAPPING"
+    }
+  }
+}
