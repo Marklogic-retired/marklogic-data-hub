@@ -23,19 +23,25 @@ describe("Search Result component", () => {
       )
     });
 
-    it('should render entity name', () => {
+    it('should render entity name,primary key,snippet info', () => {
       expect(wrapper.exists('[data-cy="entity-name"]')).toBe(true);
-    });
-    it('should render primary key', () => {
       expect(wrapper.exists('[data-cy="primary-key"]')).toBe(true);
-    });
-    it('should render snippet info', () => {
       expect(wrapper.exists('[data-cy="snipped"]')).toBe(true);
     });
     it('should render meta data', () => {
       expect(wrapper.exists('[data-cy="created-on"]')).toBe(true);
       expect(wrapper.exists('[data-cy="sources"]')).toBe(true);
       expect(wrapper.exists('[data-cy="file-type"]')).toBe(true);
+    });
+    it('should render expandable snippet view icon', () => {
+      expect(wrapper.exists('[data-cy="expandable-icon"]')).toBe(true);
+    });
+    it('should render redirect icons to detail page', () => {
+      expect(wrapper.exists('[data-cy="instance"]')).toBe(true);
+      expect(wrapper.exists('[data-cy="source"]')).toBe(true);
+    });
+    it('should render expandable snippet view', () => {
+      expect(wrapper.exists('[data-cy="expandable-view"]')).toBe(true);
     });
   });
 

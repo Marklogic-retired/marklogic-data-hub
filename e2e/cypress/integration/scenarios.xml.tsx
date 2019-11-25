@@ -133,7 +133,7 @@ describe('xml scenario on browse documents page', () => {
         cy.wait(500);
         browsePage.search('Alex');
         browsePage.getTotalDocuments().should('be.equal', 1);
-        browsePage.getDocumentById(0).click();
+        browsePage.getInstanceViewIcon().click();
         detailPage.getInstanceView().should('exist');
         detailPage.getDocumentEntity().should('contain', 'Person');
         detailPage.getDocumentID().should('contain', '0');
@@ -147,7 +147,7 @@ describe('xml scenario on browse documents page', () => {
         cy.wait(500);
         browsePage.search('Alex');
         browsePage.getTotalDocuments().should('be.equal', 1);
-        browsePage.getDocumentById(0).click();
+        browsePage.getSourceViewIcon().click();
         detailPage.getSourceView().click();
         detailPage.getDocumentXML().should('exist');
     });
