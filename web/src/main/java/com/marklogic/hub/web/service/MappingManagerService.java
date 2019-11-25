@@ -105,7 +105,8 @@ public class MappingManagerService {
         return getMappingValidator(db).validateJsonMapping(jsonMapping, uri);
     }
 
-    private MappingValidator getMappingValidator(String db) {
+    // This is synchronized since this class is managed as a singleton by Spring
+    private synchronized MappingValidator getMappingValidator(String db) {
         if(mappingValidators == null) {
             mappingValidators = new HashMap<>();
         }
