@@ -217,6 +217,11 @@ public class HubProjectImpl implements HubProject {
         return getModulesDir().resolve("root").resolve("custom-modules");
     }
 
+    @Override
+    public Path getCustomMappingFunctionsDir() {
+        return getCustomModulesDir().resolve("mapping-functions");
+    }
+
     @Override public boolean isInitialized() {
         File buildGradle = this.projectDir.resolve("build.gradle").toFile();
         File gradleProperties = this.projectDir.resolve("gradle.properties").toFile();
@@ -252,6 +257,8 @@ public class HubProjectImpl implements HubProject {
 
         Path customModulesDir = getCustomModulesDir();
         customModulesDir.toFile().mkdirs();
+        getCustomMappingFunctionsDir().toFile().mkdirs();
+
         //scaffold custom mapping|ingestion|mastering dirs.
         for (StepDefinition.StepDefinitionType stepType : StepDefinition.StepDefinitionType.values()) {
             customModulesDir.resolve(stepType.toString().toLowerCase()).toFile().mkdirs();
@@ -882,22 +889,6 @@ public class HubProjectImpl implements HubProject {
                 f.delete();
             }
         }
-    }
-
-    private void deleteObsoleteDirsFromHubInternalConfig() {
-        File dir = getHubConfigDir().resolve("schemas").toFile();
-        if (dir.exists()) {
-            if (logger.isInfoEnabled()) {
-                logger.info("Deleting hub-internal-config/schemas dir because it is no longer used");
-            }
-            try {
-                FileUtils.deleteDirectory(dir);
-            } catch (IOException e) {
-                logger.error("Unable to delete "+ dir.getAbsolutePath());
-                throw new RuntimeException(e);
-            }
-        }
-
     }
 
     @Override

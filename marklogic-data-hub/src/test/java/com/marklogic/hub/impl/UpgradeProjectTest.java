@@ -86,6 +86,10 @@ public class UpgradeProjectTest extends HubTestBase {
         assertFalse(mlConfigBackupDir.exists(), "As of DHFPROD-3159, ml-config should no longer be backed up. DHF rarely needs to " +
             "change the files in this directory, and when it does need to, it'll make changes directly to the files so as to not " +
             "lose changes made by users.");
+
+        File mappingFunctionsDir = hubProject.getCustomMappingFunctionsDir().toFile();
+        assertTrue(mappingFunctionsDir.exists(), "The initialization process should stub out the directory for " +
+            "mapping functions so that the user has more of a clue as to where they go");
     }
 
     @Test
