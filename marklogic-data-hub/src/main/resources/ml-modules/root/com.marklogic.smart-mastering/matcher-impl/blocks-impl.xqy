@@ -40,14 +40,27 @@ declare function blocks-impl:get-blocks($uri as xs:string?)
 
 declare variable $cached-blocks-by-uri as map:map := map:map();
 
-declare function blocks-impl:get-blocks-of-uris($uris as xs:string*)
-  as xs:string*
+declare function blocks-impl:get-values(
+  $map as map:map,
+  $key as xs:string
+)
 {
-    if (fn:exists($uris)) then (
-      let $iris := $uris ! sem:iri(.)
-      let $solution :=
-        sem:sparql(
-          "select distinct ?targetURI (?uri as ?blocked) where {
+  let $values := map:get($map, $key)
+  return
+    if (fn:exists($values))
+    then $values
+    else let $n :=  map:map()
+    return (map:put($map, $key, $n), $n)
+};
+
+declare function blocks-impl:get-blocks-of-uris($uris as xs:string*)
+as xs:string*{
+  if (fn:exists($uris)) then (
+    let $iris := $uris ! sem:iri(.)
+    let $elapsed := xdmp:elapsed-time()
+    let $solution :=
+      sem:sparql(
+        "select distinct ?targetURI (?uri as ?blocked) where {
             {
               ?uri ?isBlocked ?target.
               ?target ?isBlocked ?targetURI.
@@ -57,35 +70,48 @@ declare function blocks-impl:get-blocks-of-uris($uris as xs:string*)
             }
             FILTER (?uri != ?targetURI)
           }",
-          map:new((
-            map:entry("target", $iris),
-            map:entry("isBlocked", $const:PRED-MATCH-BLOCK)
-          )),
-          ("map","optimize=0"),
-          cts:triple-range-query((),(), $iris, "=")
+        map:new((
+          map:entry("target", $iris),
+          map:entry("isBlocked", $const:PRED-MATCH-BLOCK)
+        )),
+        ("map","optimize=0"),
+        cts:triple-range-query((),(), $iris, "=")
+      )
+
+    let $elapsed := xs:integer((xdmp:elapsed-time() - $elapsed) div xs:dayTimeDuration("PT0.001S"))
+    let $_ := if (xdmp:trace-enabled($const:TRACE-MATCH-RESULTS)) then
+                xdmp:trace($const:TRACE-MATCH-RESULTS, "get-blocks-of-uris," || xdmp:request() || ",sparql," || $elapsed ||  ",uris," || fn:string-join($uris, ";"))
+              else ()
+    let $elapsed := xdmp:elapsed-time()
+    let $tmp := map:map()
+    let $values :=
+      for $triple in $solution
+      let $value := fn:string(map:get($triple, "blocked"))
+      let $target := fn:string(map:get($triple, "targetURI"))
+      let $current-for-target := blocks-impl:get-values ($tmp, $target)
+      let $current-for-value := blocks-impl:get-values($tmp, $value)
+      return
+        (
+          map:put($current-for-target,$value, fn:true()),
+          map:put($current-for-value,$target, fn:true()),
+          $value
         )
-      let $values :=
-        fn:distinct-values(
-          for $triple in $solution
-          let $value := fn:string(map:get($triple, "blocked"))
-          let $target := fn:string(map:get($triple, "targetURI"))
-          let $current-for-target := map:get($cached-blocks-by-uri, $target)
-          let $current-for-value := map:get($cached-blocks-by-uri, $value)
-          return
-            (
-              map:put($cached-blocks-by-uri, $target, fn:distinct-values(($current-for-target,$value))),
-              map:put($cached-blocks-by-uri, $value, fn:distinct-values(($current-for-value,$target))),
-              $value
-            )
-        )
-      let $_populate-empty :=
-        for $uri in $uris
-        where fn:not(map:contains($cached-blocks-by-uri, $uri))
-        return
-          map:put($cached-blocks-by-uri, $uri, "")
-      return $values
-    ) else ()
+    let $_ := for $k in map:keys($tmp)
+    return map:put($cached-blocks-by-uri, $k,
+      fn:distinct-values((map:get($cached-blocks-by-uri, $k), map:keys(map:get($tmp, $k))))  )
+    let $_populate-empty :=
+      for $uri in $uris
+      where fn:not(map:contains($cached-blocks-by-uri, $uri))
+      return
+        map:put($cached-blocks-by-uri, $uri, "")
+    let $elapsed := xs:integer((xdmp:elapsed-time() - $elapsed) div xs:dayTimeDuration("PT0.001S"))
+    let $_ := if (xdmp:trace-enabled($const:TRACE-MATCH-RESULTS)) then
+                xdmp:trace($const:TRACE-MATCH-RESULTS, "get-blocks-of-uris," || xdmp:request() || ",map," || $elapsed)
+              else ()
+    return fn:distinct-values($values)
+  ) else ()
 };
+
 
 (:
  : Block all pairs of URIs from matching. This function will start with URI #1
