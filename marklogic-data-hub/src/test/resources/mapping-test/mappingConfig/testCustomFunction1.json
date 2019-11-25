@@ -14,7 +14,7 @@
       "sourcedFrom": "CustomerID"
     },
     "DateTimeFormat5": {
-      "sourcedFrom": "customDateTime('YYYYMMDDThhmmss',DateTimeFormat5)"
+      "sourcedFrom": "customDateTime(DateTimeFormat5, 'YYYYMMDDThhmmss')"
     }
   }
 }
