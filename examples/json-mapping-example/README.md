@@ -21,15 +21,17 @@ Next, start up QuickStart and browse to this project folder and login to QuickSt
 
 ## How to test the flows
 
-This project has two flows:
+This project has four flows:
 
 1. The jsonToJson flow ingests and maps a single JSON document to a JSON entity instance
+1. The jsonToXml flow ingests and maps a single JSON document to an XML entity instance
 1. The xmlToJson flow ingests and maps a single XML document to a JSON entity instance
+1. The xmlToXml flow ingests and maps a single XML document to an XML entity instance
 
-The jsonToJson flow demonstrates a wide array of mapping features, while the xmlToJson flow is more focused on a few 
-features specific to XML.
+The jsonToJson and jsonToXml flows demonstrate a wide array of mapping features, while the xmlToJson and xmlToXml flows are more focused on a few
+features specific to XML like attributes and namespaces.
 
-Both flows can be run from the "Flows" page in QuickStart. Each will ingest one document into the staging database and then
+All the flows can be run from the "Flows" page in QuickStart. Each will ingest one document into the staging database and then
 write one entity instance - a Person - to the final database. The Person entity definition contains two nested entity 
 properties to demonstrate mapping data from a source document to nested entities:
 
@@ -87,3 +89,19 @@ occur multiple times under "*:/person/*:names".
 1. As shown in the "prefix" mapping, XML attributes can be referenced via the "@" symbol. 
 
 Otherwise, all of the features used in the jsonToJsonFlow can be used in this mapping as well. 
+
+### Mapping features in the jsonToXml flow
+
+From the "Flows" view in QuickStart, open the jsonToXml flow and select the mapping step. QuickStart will display the
+JSON document in staging in the "Source Data" panel and the mapping in the "Entity" panel. The mapping displays all of
+the properties of the Person entity along with its nested Name and Address entities. Each row in the mapping is similar to the jsonToJson flows
+
+### Mapping features in the xmlToXml flow
+
+From the "Flows" view in QuickStart, open the xmlToXml flow and select the mapping step. QuickStart will display the XML
+document in staging in the "Source Data" panel and the mapping in the "Entity" panel.
+The xmlToXml mapping is intended to highlight usage of namespace and namespace prefix in the mapping
+
+1. The properties in the expression have the namespace defined for "person" element. The mapping also shows usage of namespace prefix. The source document has namespace prefix and the same is reflected in the source table and element selector.
+1. The "state" property demonstrates usage of the "if then else" expression.
+1. The "email" property is an array of string and can hold multiple values. Click on the "Test" button to verify multiple values returned with an ellipsis showing how many more such elements were extracted
