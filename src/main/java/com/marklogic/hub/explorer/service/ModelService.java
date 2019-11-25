@@ -51,7 +51,7 @@ public class ModelService {
     DatabaseClient dbClient = dbClientHolder.getDatabaseClient();
     QueryManager queryMgr = dbClient.newQueryManager();
     queryMgr.setPageLength(Integer.MAX_VALUE);
-    StructuredQueryBuilder sb = queryMgr.newStructuredQueryBuilder("default");
+    StructuredQueryBuilder sb = queryMgr.newStructuredQueryBuilder("");
 
     ArrayNode jsonRes = JsonNodeFactory.instance.arrayNode();
 
