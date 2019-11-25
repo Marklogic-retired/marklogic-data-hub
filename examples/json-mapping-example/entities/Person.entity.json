@@ -56,6 +56,13 @@
         },
         "address" : {
           "$ref" : "#/definitions/Address"
+        },
+        "emails" : {
+          "datatype" : "array",
+          "items" : {
+            "datatype" : "string",
+            "collation" : "http://marklogic.com/collation/codepoint"
+          }
         }
       }
     },
