@@ -125,7 +125,7 @@ class BrowsePage {
     }
 
     getExpandableSnippetView() {
-        return cy.get('[data-cy="expandable-icon"]').click({ multiple: true });
+        return cy.get('.ant-list-items li:first-child [data-cy = expandable-icon]').click();
     }
 
 }

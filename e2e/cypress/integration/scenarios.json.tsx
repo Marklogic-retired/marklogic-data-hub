@@ -105,8 +105,8 @@ describe('json scenario on browse documents page', () => {
         browsePage.getSelectedEntity().should('contain', 'All Entities');
         cy.wait(500);
         browsePage.getHubPropertiesExpanded();
-        cy.wait(500);
         browsePage.getExpandableSnippetView();
+        cy.wait(500);
         browsePage.getTotalDocuments().should('be.greaterThan', '1008');
         browsePage.getFacetItemCheckbox('collection', 'Person').click();
         cy.wait(500);
