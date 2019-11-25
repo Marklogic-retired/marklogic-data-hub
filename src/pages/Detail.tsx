@@ -53,12 +53,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
             setData(xmlParser(decodedXml).Document);
             setXml(xmlDecoder(decodedXml));
           }
-          if(location.state.selectedValue === 'instance') {
-            setSelected('instance')
-          }
-          else{
-            setSelected('full')
-          }
+
           setIsLoading(false);
         }
 
@@ -77,6 +72,11 @@ const Detail: React.FC<Props> = ({ history, location }) => {
 
   }, []);
 
+  useEffect(() => {
+    location.state && location.state.hasOwnProperty('selectedValue') && location.state.selectedValue === 'source' ?
+      setSelected('full') : setSelected('instance');
+  }, []);
+
 
   const handleClick = (event) => {
     setSelected(event.key);
@@ -84,8 +84,8 @@ const Detail: React.FC<Props> = ({ history, location }) => {
 
   return (
     <Layout>
-      <Content className= {styles.detailContent}>
-        <div id='back-button' style= {{marginLeft: '-23px'}}>
+      <Content className={styles.detailContent}>
+        <div id='back-button' style={{ marginLeft: '-23px' }}>
           <PageHeader onBack={() => history.push('/browse')} title={<Link to={{ pathname: "/browse" }} data-cy="back-button">Back</Link>} />
         </div>
         <div className={styles.header}>
@@ -105,11 +105,11 @@ const Detail: React.FC<Props> = ({ history, location }) => {
         </div>
         <div>
           {
-          isLoading || user.error.type === 'ALERT' ? <div style={{ marginTop: '40px' }}>
+            isLoading || user.error.type === 'ALERT' ? <div style={{ marginTop: '40px' }}>
               <AsyncLoader />
             </div>
               :
-                contentType === 'json'  ?
+              contentType === 'json' ?
                 selected === 'instance' ? (data && <TableView document={data} contentType={contentType} />) : (data && <JsonView document={data} />)
                 :
                 selected === 'instance' ? (data && <TableView document={data} contentType={contentType} />) : (data && <XmlView document={xml} />)
