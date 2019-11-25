@@ -106,18 +106,18 @@ function parseDate(value, pattern) {
   else if (nonStandardFormats.includes(pattern.trim())) {
     pattern = pattern.trim();
 
-    let pattern;
+    let datePattern;
     if(pattern === nonStandardFormats[0]) {
-      pattern = "^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) ([0-9]|[0-2][0-9]|[3][0-1])\,([0-9]{4})$";
+      datePattern = "^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) ([0-9]|[0-2][0-9]|[3][0-1])\,([0-9]{4})$";
     }
     else if(pattern === nonStandardFormats[1]) {
-      pattern = "^([0-9]|[0-2][0-9]|[3][0-1]) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) ([0-9]{4})$";
+      datePattern = "^([0-9]|[0-2][0-9]|[3][0-1]) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) ([0-9]{4})$";
     }
     else {
-      pattern = "^([0-9]|[0-2][0-9]|[3][0-1])\-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\-([0-9]{4})$";
+      datePattern = "^([0-9]|[0-2][0-9]|[3][0-1])\-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\-([0-9]{4})$";
     }
 
-    let match = new RegExp(pattern, 'i').exec(value);
+    let match = new RegExp(datePattern, 'i').exec(value);
     if (match === null) {
       response = null;
     }
