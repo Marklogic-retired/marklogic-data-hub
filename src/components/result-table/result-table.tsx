@@ -1,9 +1,30 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Resizable } from 'react-resizable'
 import { Table, Tooltip } from 'antd';
 import { dateConverter } from '../../util/date-conversion';
 import { xmlParser } from '../../util/xml-parser';
+import styles from './result-table.module.scss';
 
+
+const ResizeableTitle = props => {
+  const { onResize, width, ...restProps } = props;
+
+  if (!width) {
+    return <th {...restProps} />;
+  }
+
+  return (
+    <Resizable
+      width={width}
+      height={0}
+      onResize={onResize}
+      draggableOpts={{ enableUserSelectHack: false }}
+    >
+      <th {...restProps} />
+    </Resizable>
+  );
+};
 
 interface Props {
   data: any;
@@ -12,11 +33,11 @@ interface Props {
 };
 
 const ResultTable: React.FC<Props> = (props) => {
-  let title: string[] = [];
+  let title = new Array();
   let entityTitle: string[] = [];
   let data = new Array();
   let consdata = new Array();
-  let columns = new Array();
+  let col = new Array();
   let itemEntityName: string[] = [];
   let itemEntityProperties: any[] = [];
   let entityDef: any = {};
@@ -24,6 +45,7 @@ const ResultTable: React.FC<Props> = (props) => {
   let primaryKeyValue: string = '';
   let counter = 0;
   let createdOn = '';
+  const [columns, setColumns] = useState<any[]>([]);
 
 
   //Iterate over each element in the payload and construct an array.
@@ -39,7 +61,7 @@ const ResultTable: React.FC<Props> = (props) => {
     if (item.format === 'xml' && item.hasOwnProperty('extracted')) {
       let header = xmlParser(item.extracted.content[0]);
       let entity = xmlParser(item.extracted.content[1]);
-      if(header && header.hasOwnProperty('headers')){
+      if (header && header.hasOwnProperty('headers')) {
         createdOn = header.headers.createdOn;
       }
 
@@ -76,18 +98,32 @@ const ResultTable: React.FC<Props> = (props) => {
     })
   });
 
-  //Construct title array for "All Entities" or an Entity.
-  props.entity.length === 0 ? title = [...['Identifier', 'Entity', 'File Type', 'Created']] : title = [...entityTitle, 'Created'];
+  useEffect(() => {
+    //Construct title array for "All Entities" or an Entity.
+    props.entity.length === 0 ? title = [...['Identifier', 'Entity', 'File Type', 'Created']] : entityTitle.length === 0 ? title = [] : title = [...entityTitle, 'Created'];
 
-  //Construct table title.
-  title.forEach(item => {
-    columns.push(
-      {
-        title: item,
-        dataIndex: item.replace(/ /g, '').toLowerCase(),
-      }
-    )
-  });
+    //Construct table title.
+    title.forEach((item, index) => {
+      col.push(
+        {
+          title: item,
+          dataIndex: item.replace(/ /g, '').toLowerCase(),
+          width: 300,
+          onHeaderCell: column => ({
+            width: column.width,
+            onResize: handleResize(index),
+          }),
+        }
+      )
+    });
+    setColumns(col);
+  }, []);
+
+  const components = {
+    header: {
+      cell: ResizeableTitle,
+    },
+  };
 
   //Construct table data
   consdata.forEach((item) => {
@@ -130,12 +166,37 @@ const ResultTable: React.FC<Props> = (props) => {
     data.push(row)
   });
 
+  const handleResize = index => (e, { size }) => {
+
+    setColumns(columns => {
+      const nextColumns = [...columns];
+      nextColumns[index] = {
+        ...nextColumns[index],
+        width: size.width,
+      };
+      return nextColumns
+    })
+  };
+
+  const renderColumns = () => {
+    let col = columns.map((item, index) => {
+      return {
+        ...item,
+        OnHeaderCell: column => ({
+          width: column.width,
+          OnResize: handleResize(index)
+        })
+      }
+    })
+    return col;
+  }
+
   return (
-    <Table
+    <Table bordered components={components}
       className="search-tabular"
       rowKey="key"
       dataSource={data}
-      columns={columns}
+      columns={renderColumns()}
       pagination={false}
       data-cy="search-tabular"
     />
