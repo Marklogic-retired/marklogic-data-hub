@@ -1,0 +1,103 @@
+{
+  "lang" : "zxx",
+  "name" : "AdmissionsMDM",
+  "description" : "",
+  "type" : "MASTERING",
+  "version" : 1,
+  "options" : {
+    "additionalCollections" : [ ],
+    "sourceQuery" : "cts.collectionQuery([\"CompletedAdmissions\"])",
+    "targetEntity" : "Admissions",
+    "collections" : [ "AdmissionsMDM", "Admissions" ],
+    "sourceDatabase" : "data-hub-FINAL",
+    "permissions" : "rest-reader,read,rest-writer,update",
+    "sourceCollection" : "CompletedAdmissions",
+    "outputFormat" : "json",
+    "targetDatabase" : "data-hub-FINAL",
+    "mergeOptions" : {
+      "matchOptions" : "",
+      "propertyDefs" : {
+        "properties" : [ {
+          "localname" : "AdmissionID",
+          "name" : "AdmissionID"
+        } ],
+        "namespaces" : { }
+      },
+      "algorithms" : {
+        "stdAlgorithm" : {
+          "timestamp" : { }
+        },
+        "custom" : [ ],
+        "collections" : { }
+      },
+      "mergeStrategies" : [ ],
+      "merging" : [ {
+        "propertyName" : "AdmissionID",
+        "sourceWeights" : [ ]
+      } ]
+    },
+    "matchOptions" : {
+      "propertyDefs" : {
+        "property" : [ {
+          "localname" : "AdmissionID",
+          "name" : "AdmissionID"
+        } ]
+      },
+      "algorithms" : {
+        "algorithm" : [ {
+          "name" : "double-metaphone",
+          "function" : "double-metaphone",
+          "namespace" : "http://marklogic.com/smart-mastering/algorithms",
+          "at" : "/com.marklogic.smart-mastering/algorithms/double-metaphone.xqy"
+        }, {
+          "name" : "thesaurus",
+          "function" : "thesaurus",
+          "namespace" : "http://marklogic.com/smart-mastering/algorithms",
+          "at" : "/com.marklogic.smart-mastering/algorithms/thesaurus.xqy"
+        }, {
+          "name" : "zip-match",
+          "function" : "zip-match",
+          "namespace" : "http://marklogic.com/smart-mastering/algorithms",
+          "at" : "/com.marklogic.smart-mastering/algorithms/zip.xqy"
+        }, {
+          "name" : "standard-reduction",
+          "function" : "standard-reduction"
+        } ]
+      },
+      "collections" : {
+        "content" : [ ]
+      },
+      "scoring" : {
+        "add" : [ {
+          "propertyName" : "AdmissionID",
+          "weight" : "30"
+        } ],
+        "expand" : [ ],
+        "reduce" : [ ]
+      },
+      "actions" : {
+        "action" : [ ]
+      },
+      "thresholds" : {
+        "threshold" : [ {
+          "above" : "30",
+          "label" : "AdmissionID",
+          "action" : "merge"
+        } ]
+      },
+      "tuning" : {
+        "maxScan" : 200
+      }
+    }
+  },
+  "customHook" : {
+    "module" : "",
+    "parameters" : { },
+    "user" : "",
+    "runBefore" : false
+  },
+  "modulePath" : "/custom-modules/mastering/AdmissionsMDM/main.sjs",
+  "retryLimit" : 0,
+  "batchSize" : 100,
+  "threadCount" : 1
+}
