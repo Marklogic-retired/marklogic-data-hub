@@ -60,10 +60,10 @@ class BrowsePage {
     }
 
     getDocumentById(index: number) {
-        return this.getDocument(index).find('[data-cy=primary-key-instance]');
+        return this.getDocument(index).find('[data-cy=instance]');
     }
 
-
+    
 
     /**
      * facet search
