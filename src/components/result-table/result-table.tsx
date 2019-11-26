@@ -48,6 +48,7 @@ const ResultTable: React.FC<Props> = (props) => {
   const [columns, setColumns] = useState<any[]>([]);
 
 
+
   //Iterate over each element in the payload and construct an array.
   props.data && props.data.forEach(item => {
     if (item.format === 'json' && item.hasOwnProperty('extracted')) {
@@ -117,7 +118,7 @@ const ResultTable: React.FC<Props> = (props) => {
       )
     });
     setColumns(col);
-  }, []);
+  },[props.data]);
 
   const components = {
     header: {
