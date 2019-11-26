@@ -57,6 +57,7 @@ describe('xml scenario on browse documents page', () => {
         // cy.visit('/browse');
         cy.get('.ant-menu-item').contains('Browse Documents').click();
         cy.wait(1000);
+        browsePage.getFacetView();
     });
 
     it('select "all entities" verify docs, hub/entity properties', () => {
@@ -66,7 +67,7 @@ describe('xml scenario on browse documents page', () => {
         browsePage.getTotalDocuments().should('be.greaterThan', '1008')
         browsePage.getDocuments().each(function (item, i) {
             browsePage.getDocumentEntityName(i).should('exist');
-            browsePage.getDocumentId(i).should('exist');
+            //browsePage.getDocumentId(i).should('exist');
             browsePage.getDocumentSnippet(i).should('exist');
             browsePage.getDocumentCreatedOn(i).should('exist');
             browsePage.getDocumentSources(i).should('exist');
@@ -87,10 +88,10 @@ describe('xml scenario on browse documents page', () => {
         browsePage.getTotalDocuments().should('be.greaterThan', '5')
         browsePage.getDocuments().each(function (item, i) {
             browsePage.getDocumentEntityName(i).should('exist');
-            browsePage.getDocumentId(i).should('exist');
+            //browsePage.getDocumentId(i).should('exist');
             browsePage.getDocumentSnippet(i).should('exist');
-            // browsePage.getDocumentCreatedOn(i).should('exist');
-            // browsePage.getDocumentSources(i).should('exist');
+            browsePage.getDocumentCreatedOn(i).should('exist');
+            browsePage.getDocumentSources(i).should('exist');
             browsePage.getDocumentFileType(i).should('exist');
         })
 
@@ -121,10 +122,10 @@ describe('xml scenario on browse documents page', () => {
         cy.wait(500);
         browsePage.getTotalDocuments().should('be.equal', 1);
         browsePage.getDocumentEntityName(0).should('exist');
-        browsePage.getDocumentId(0).should('exist');
+        //browsePage.getDocumentId(0).should('exist');
         browsePage.getDocumentSnippet(0).should('exist');
-        // browsePage.getDocumentCreatedOn(0).should('exist');
-        // browsePage.getDocumentSources(0).should('exist');
+        browsePage.getDocumentCreatedOn(0).should('exist');
+        browsePage.getDocumentSources(0).should('exist');
         browsePage.getDocumentFileType(0).should('exist')
         browsePage.getDocumentFileType(0).should('be.equal', 'xml')
     });
@@ -137,8 +138,8 @@ describe('xml scenario on browse documents page', () => {
         detailPage.getInstanceView().should('exist');
         detailPage.getDocumentEntity().should('contain', 'Person');
         detailPage.getDocumentID().should('contain', '0');
-        // detailPage.getDocumentTimestamp().should('exist');
-        // detailPage.getDocumentSource().should('contain', 'PersonXMLFlow');
+        detailPage.getDocumentTimestamp().should('exist');
+        detailPage.getDocumentSource().should('contain', 'PersonXMLFlow');
         detailPage.getDocumentFileType().should('contain', 'xml');
         detailPage.getDocumentTable().should('exist');
     });

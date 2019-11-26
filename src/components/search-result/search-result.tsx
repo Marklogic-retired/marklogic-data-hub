@@ -108,11 +108,12 @@ const SearchResult: React.FC<Props> = (props) => {
         <div className={styles.title} onClick={() => showTableEntityProperties()}>
           <Icon className={styles.expandableIcon} data-cy='expandable-icon' type='right' rotate={show ? 90 : undefined}/>
           <div className={styles.redirectIcons}>
-            <Link to={{pathname: `/detail/${primaryKeyValue}/${uri}`,state: {selectedValue:'instance'}}} data-cy='instance'>
+            <Link to={{pathname: `/detail/${primaryKeyValue}/${uri}`,state: {selectedValue:'instance'}}} data-cy='primary-key-instance'>
             <Tooltip title={'Show detail on a separate page'}><FontAwesomeIcon  icon={faExternalLinkAlt} size="sm" /></Tooltip>
             </Link>
-            <Link to={{pathname: `/detail/${primaryKeyValue}/${uri}`,state: {selectedValue:'source'}}} data-cy='source'>
+            <Link to={{pathname: `/detail/${primaryKeyValue}/${uri}`,state: {selectedValue:'source'}}} data-cy='primary-key-source'>
             <Tooltip title={'Show source on a separate page'}><FontAwesomeIcon  icon={faCode} size="sm" /></Tooltip>
+
             </Link>
           </div>
           <span className={styles.entityName} data-cy='entity-name'>{itemEntityName}</span>

@@ -149,10 +149,13 @@ const Browse: React.FC<Props> = ({ location }) => {
                 <br />
                 <br />
                 <div style={{ marginRight: '12px' }}>
-                  <div className={active ? styles.toggled : styles.toggleView} onClick={() => tableSwitch()}>
+                  <div className={active ? styles.toggled : styles.toggleView}
+                    data-cy="table-view"
+                    onClick={() => tableSwitch()}>
                     <Tooltip title={'Table View'}><FontAwesomeIcon icon={faTable} size="lg" /></Tooltip>
                   </div>
                   <div className={snippetActive ? styles.toggled : styles.toggleView}
+                    data-cy="facet-view"
                     onClick={() => snippetSwitch()}>
                     <Tooltip title={'Snippet View'}><FontAwesomeIcon icon={faStream} size="lg" /></Tooltip>
                   </div>
@@ -161,7 +164,7 @@ const Browse: React.FC<Props> = ({ location }) => {
               {user.tableView ?
                 <div style={{ marginTop: '150px' }}><ResultTable data={data} entity={searchOptions.entityNames}
                   entityDefArray={entityDefArray} />
-                  </div>
+                </div>
                 : <SearchResults data={data} entityDefArray={entityDefArray} />
               }
               <br />
