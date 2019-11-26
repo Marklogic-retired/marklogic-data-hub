@@ -1,16 +1,9 @@
 package com.marklogic.explorer.integral.support;
 
-import static com.marklogic.explorer.integral.ValidationCriteria.Operator.*;
 import static com.marklogic.explorer.integral.support.JsonUtils.toJson;
-import static java.lang.System.out;
-import static java.net.URI.create;
 import static java.net.http.HttpRequest.newBuilder;
-import static java.net.http.HttpResponse.BodyHandlers.ofString;
 import static java.time.temporal.ChronoUnit.SECONDS;
 
-import com.marklogic.explorer.integral.ValidationCriteria;
-import com.marklogic.explorer.integral.data.SearchQuery;
-import com.marklogic.explorer.integral.tests.Level0Test;
 import java.net.Authenticator;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
@@ -22,10 +15,9 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.Optional;
-import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.net.ssl.SSLContext;
 
 /**

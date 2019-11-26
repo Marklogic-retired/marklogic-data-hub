@@ -11,14 +11,15 @@ package com.marklogic.explorer.integral;
 
 import static java.lang.System.out;
 
-import com.marklogic.explorer.integral.suites.BasicTestSuite;
-import com.marklogic.explorer.integral.tests.Level0Test;
-import com.marklogic.explorer.integral.tests.Level1Test;
-import com.marklogic.explorer.integral.tests.Level2Test;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Stream;
+
+import com.marklogic.explorer.integral.suites.BasicTestSuite;
+import com.marklogic.explorer.integral.tests.Level0Test;
+import com.marklogic.explorer.integral.tests.Level1Test;
+import com.marklogic.explorer.integral.tests.Level2Test;
 
 /**
  * IntegralApp is the main program for the testing system

@@ -1,10 +1,11 @@
 package com.marklogic.explorer.integral;
 
-import com.marklogic.explorer.integral.support.ExplorerAccess;
 import java.net.http.HttpClient;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import com.marklogic.explorer.integral.support.ExplorerAccess;
 
 public class Test {
 

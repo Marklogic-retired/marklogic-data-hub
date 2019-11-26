@@ -11,6 +11,9 @@ package com.marklogic.explorer.integral.support;
  * Note:  At present, there are some limitations of use, particularly with some types
  * such as enums and Optional.  Fixing this is a a "to-do" -- but not in this class.
  */
+
+import java.io.IOException;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -19,10 +22,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import java.io.IOException;
 
+@SuppressWarnings("deprecation")
 public class JsonUtils {
-  private static final ObjectMapper MAPPER = new ObjectMapper();
+   private static final ObjectMapper MAPPER = new ObjectMapper();
   private static final ObjectWriter WRITER = MAPPER.writer();
 
   static {

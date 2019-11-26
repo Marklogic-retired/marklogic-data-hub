@@ -1,10 +1,11 @@
 package com.marklogic.explorer.integral;
 
+import java.net.http.HttpClient;
+import java.util.Optional;
+
 import com.marklogic.explorer.integral.ValidationCriteria.Operator;
 import com.marklogic.explorer.integral.support.ExplorerAccess;
 import com.marklogic.explorer.integral.support.ExplorerAccess.Protocol;
-import java.net.http.HttpClient;
-import java.util.Optional;
 
 /**
  * Step.java
@@ -48,6 +49,7 @@ public class Step extends AbstractStep {
    * run runs the step and writes its results using the writer specified in results..
    * The return code is 0 if no error detected and non-zero otherwise.
    */
+  @SuppressWarnings("unchecked")
   StepResult run(Optional<HttpClient> clientOption, ExplorerAccess net, StringBuilder results) {
     results.append("\n\nStep: ").append(name).append("\n").append(definition).append("\n");
     var client = clientOption.isPresent()
@@ -63,7 +65,7 @@ public class Step extends AbstractStep {
                 payload == null ? "" : payload);
     var criteria = statusOnly
         ? new ValidationCriteria(op, (Comparable)desiredResult, (Comparable)response.statusCode())
-        : new ValidationCriteria<>(op, (Comparable) desiredResult, (Comparable) (response.body()));
+        : new ValidationCriteria<>(op, (Comparable)desiredResult, (Comparable)(response.body()));
     if (criteria.satisfies()) {
       results.append(" PASS ");
       return new StepResult(client, 0, results);

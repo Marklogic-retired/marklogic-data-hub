@@ -4,6 +4,8 @@ import static com.marklogic.explorer.integral.ValidationCriteria.Operator.EQ;
 import static com.marklogic.explorer.integral.ValidationCriteria.Operator.IN;
 import static com.marklogic.explorer.integral.support.JsonUtils.toJson;
 
+import java.util.Arrays;
+
 import com.marklogic.explorer.integral.AbstractStep.Access;
 import com.marklogic.explorer.integral.AppConfig;
 import com.marklogic.explorer.integral.Step;
@@ -11,7 +13,6 @@ import com.marklogic.explorer.integral.Test;
 import com.marklogic.explorer.integral.data.SearchQuery;
 import com.marklogic.explorer.integral.support.ExplorerAccess;
 import com.marklogic.explorer.integral.support.ExplorerAccess.Protocol;
-import java.util.Arrays;
 
 /**
  * Level2Test tests document access
