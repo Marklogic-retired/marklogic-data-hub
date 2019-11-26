@@ -39,7 +39,7 @@ properties to demonstrate mapping data from a source document to nested entities
 - The "address" property is an Address entity (it is likely that this Address entity could be used by other entity 
 definitions and is thus worth defining as its own entity instead of as a set of properties on a Person)
 
-Each of the mapping expressions is then described below. 
+Each of the mapping expressions is then described below. Please run each of the flows first to ensure that the mapping step in each flow can be tested.
 
 ### Mapping features in the jsonToJson flow
 
@@ -94,14 +94,14 @@ Otherwise, all of the features used in the jsonToJsonFlow can be used in this ma
 
 From the "Flows" view in QuickStart, open the jsonToXml flow and select the mapping step. QuickStart will display the
 JSON document in staging in the "Source Data" panel and the mapping in the "Entity" panel. The mapping displays all of
-the properties of the Person entity along with its nested Name and Address entities. Each row in the mapping is similar to the jsonToJson flows
+the properties of the Person entity along with its nested Name and Address entities. Each row in the mapping is similar to the jsonToJson flow.
 
 ### Mapping features in the xmlToXml flow
 
 From the "Flows" view in QuickStart, open the xmlToXml flow and select the mapping step. QuickStart will display the XML
 document in staging in the "Source Data" panel and the mapping in the "Entity" panel.
-The xmlToXml mapping is intended to highlight usage of namespace and namespace prefix in the mapping
+The xmlToXml mapping is intended to highlight usage of namespace and namespace prefix in the mapping.
 
-1. The properties in the expression have the namespace defined for "person" element. The mapping also shows usage of namespace prefix. The source document has namespace prefix and the same is reflected in the source table and element selector.
-1. The "state" property demonstrates usage of the "if then else" expression.
-1. The "email" property is an array of string and can hold multiple values. Click on the "Test" button to verify multiple values returned with an ellipsis showing how many more such elements were extracted
+1. The properties in the expression have a namespace defined for the "person" element. The mapping also shows usage of a namespace prefix. The source document has a namespace prefix and the same is reflected in the source table and element selector.
+1. The "state" property demonstrates usage of an "if then else" expression.
+1. The "email" property is an array of strings and can hold multiple values. Click on the "Test" button to verify multiple values are returned with an ellipsis showing how many more such elements were extracted.
