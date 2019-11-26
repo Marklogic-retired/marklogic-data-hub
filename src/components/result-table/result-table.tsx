@@ -46,7 +46,7 @@ const ResultTable: React.FC<Props> = (props) => {
   let counter = 0;
   let createdOn = '';
   const [columns, setColumns] = useState<any[]>([]);
-  const [expanded, setExpanded] = useState(false);
+
 
 
   //Iterate over each element in the payload and construct an array.
@@ -190,10 +190,6 @@ const ResultTable: React.FC<Props> = (props) => {
       }
     })
     return col;
-  }
-
-  const handleClick = () => {
-    expanded === false ? setExpanded(true) : setExpanded(false)
   }
 
   return (
