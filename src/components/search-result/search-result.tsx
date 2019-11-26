@@ -113,6 +113,7 @@ const SearchResult: React.FC<Props> = (props) => {
             </Link>
             <Link to={{pathname: `/detail/${primaryKeyValue}/${uri}`,state: {selectedValue:'source'}}} data-cy='source'>
             <Tooltip title={'Show source on a separate page'}><FontAwesomeIcon  icon={faCode} size="sm" /></Tooltip>
+
             </Link>
           </div>
           <span className={styles.entityName} data-cy='entity-name'>{itemEntityName}</span>

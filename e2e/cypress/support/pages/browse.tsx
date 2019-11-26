@@ -60,10 +60,10 @@ class BrowsePage {
     }
 
     getDocumentById(index: number) {
-        return this.getDocument(index).find('[data-cy=primary-key]');
+        return this.getDocument(index).find('[data-cy=instance]');
     }
 
-
+    
 
     /**
      * facet search
@@ -126,6 +126,11 @@ class BrowsePage {
 
     getExpandableSnippetView() {
         return cy.get('.ant-list-items li:first-child [data-cy = expandable-icon]').click();
+    }
+    
+    //table, facet view
+    getFacetView() {
+        return cy.get('[data-cy=facet-view]').click();
     }
 
 }
