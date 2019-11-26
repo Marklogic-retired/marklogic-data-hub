@@ -117,7 +117,7 @@ const ResultTable: React.FC<Props> = (props) => {
       )
     });
     setColumns(col);
-  }, []);
+  });
 
   const components = {
     header: {
