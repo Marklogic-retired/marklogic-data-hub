@@ -24,7 +24,6 @@ export class StatusDialogComponent implements OnInit {
     try {
       this.parsed = JSON.parse(this.data.statusDetails);
     } catch (error) {
-      console.log('no parsed')
     }
   }
 
