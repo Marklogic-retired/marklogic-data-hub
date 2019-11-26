@@ -182,10 +182,8 @@ export class ManageJobsUiComponent implements OnInit, AfterViewInit {
   getOutput(job) {
     let output = '';
     job.steps.forEach( step => {
-      console.log('step.stepOutput', step.stepOutput);
       output = output + ((step.stepOutput) ? step.stepOutput[0] + '\n' : ' ');
     })
-    console.log('output', output);
     return output;
   }
 
