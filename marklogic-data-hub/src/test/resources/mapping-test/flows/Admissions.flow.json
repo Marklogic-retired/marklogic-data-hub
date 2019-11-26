@@ -1,0 +1,157 @@
+{
+  "name" : "Admissions",
+  "description" : "",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stopOnError" : false,
+  "options" : { },
+  "version" : 0,
+  "steps" : {
+    "1" : {
+      "name" : "DiagnosesCore",
+      "description" : "",
+      "options" : {
+        "additionalCollections" : [ ],
+        "headers" : {
+          "sources" : [ {
+            "name" : "Diagnoses"
+          } ],
+          "createdOn" : "currentDateTime",
+          "createdBy" : "currentUser"
+        },
+        "sourceQuery" : "cts.collectionQuery([])",
+        "collections" : [ "DiagnosesCore" ],
+        "permissions" : "rest-reader,read,rest-writer,update",
+        "outputFormat" : "json",
+        "targetDatabase" : "data-hub-STAGING"
+      },
+      "customHook" : { },
+      "retryLimit" : null,
+      "batchSize" : null,
+      "threadCount" : null,
+      "stepDefinitionName" : "default-ingestion",
+      "stepDefinitionType" : "INGESTION",
+      "fileLocations" : {
+        "inputFilePath" : "input/diagnoses-core",
+        "inputFileType" : "csv",
+        "outputURIReplacement" : ".*input,'/datasets'",
+        "separator" : "\\t"
+      }
+    },
+    "2" : {
+      "name" : "LabsCore",
+      "description" : "",
+      "options" : {
+        "additionalCollections" : [ ],
+        "headers" : {
+          "sources" : [ {
+            "name" : "Labs"
+          } ],
+          "createdOn" : "currentDateTime",
+          "createdBy" : "currentUser"
+        },
+        "sourceQuery" : "cts.collectionQuery([])",
+        "collections" : [ "LabsCore" ],
+        "permissions" : "rest-reader,read,rest-writer,update",
+        "outputFormat" : "json",
+        "targetDatabase" : "data-hub-STAGING"
+      },
+      "customHook" : { },
+      "retryLimit" : null,
+      "batchSize" : null,
+      "threadCount" : null,
+      "stepDefinitionName" : "default-ingestion",
+      "stepDefinitionType" : "INGESTION",
+      "fileLocations" : {
+        "inputFilePath" : "input/labs-core",
+        "inputFileType" : "csv",
+        "outputURIReplacement" : ".*input,'/datasets'",
+        "separator" : "\\t"
+      }
+    },
+    "3" : {
+      "name" : "AdmissionsCore",
+      "description" : "",
+      "options" : {
+        "additionalCollections" : [ ],
+        "headers" : {
+          "sources" : [ {
+            "name" : "Admissions"
+          } ],
+          "createdOn" : "currentDateTime",
+          "createdBy" : "currentUser"
+        },
+        "sourceQuery" : "cts.collectionQuery([])",
+        "collections" : [ "AdmissionsCore" ],
+        "permissions" : "rest-reader,read,rest-writer,update",
+        "outputFormat" : "json",
+        "targetDatabase" : "data-hub-STAGING"
+      },
+      "customHook" : { },
+      "retryLimit" : 0,
+      "batchSize" : 0,
+      "threadCount" : 0,
+      "stepDefinitionName" : "default-ingestion",
+      "stepDefinitionType" : "INGESTION",
+      "fileLocations" : {
+        "inputFilePath" : "input/admissions-core",
+        "inputFileType" : "csv",
+        "outputURIReplacement" : ".*input,'/datasets'",
+        "separator" : "\\t"
+      }
+    },
+    "4" : {
+      "name" : "BuildAdmissions",
+      "description" : "",
+      "options" : {
+        "sourceQuery" : "cts.collectionQuery([\"AdmissionsCore\"])",
+        "targetEntity" : "Admissions",
+        "collections" : [ "BuildAdmissions", "CompletedAdmissions" ],
+        "sourceDatabase" : "data-hub-STAGING",
+        "permissions" : "rest-reader,read,rest-writer,update",
+        "sourceCollection" : "AdmissionsCore",
+        "outputFormat" : "json",
+        "targetDatabase" : "data-hub-FINAL"
+      },
+      "customHook" : {
+        "module" : "",
+        "parameters" : { },
+        "user" : "",
+        "runBefore" : false
+      },
+      "retryLimit" : 0,
+      "batchSize" : 100,
+      "threadCount" : 4,
+      "stepDefinitionName" : "BuildAdmissions",
+      "stepDefinitionType" : "MAPPING"
+    },
+    "5" : {
+      "name" : "AdmissionsMDM",
+      "description" : "",
+      "options" : {
+        "stepUpdate" : true,
+        "acceptsBatch" : true,
+        "additionalCollections" : [ ],
+        "sourceQuery" : "cts.collectionQuery([\"CompletedAdmissions\"])",
+        "targetEntity" : "Admissions",
+        "collections" : [ "AdmissionsMDM", "Admissions" ],
+        "sourceDatabase" : "data-hub-FINAL",
+        "permissions" : "rest-reader,read,rest-writer,update",
+        "sourceCollection" : "CompletedAdmissions",
+        "outputFormat" : "json",
+        "targetDatabase" : "data-hub-FINAL"
+      },
+      "customHook" : {
+        "module" : "",
+        "parameters" : { },
+        "user" : "",
+        "runBefore" : false
+      },
+      "retryLimit" : null,
+      "batchSize" : 100,
+      "threadCount" : 1,
+      "stepDefinitionName" : "AdmissionsMDM",
+      "stepDefinitionType" : "MASTERING"
+    }
+  }
+}

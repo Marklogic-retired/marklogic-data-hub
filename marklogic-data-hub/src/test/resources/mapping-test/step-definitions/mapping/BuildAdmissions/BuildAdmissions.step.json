@@ -1,0 +1,28 @@
+{
+  "lang" : "zxx",
+  "name" : "BuildAdmissions",
+  "description" : "",
+  "type" : "MAPPING",
+  "version" : 1,
+  "options" : {
+    "additionalCollections" : [ ],
+    "sourceQuery" : "cts.collectionQuery([\"AdmissionsCore\"])",
+    "targetEntity" : "Admissions",
+    "collections" : [ "BuildAdmissions", "CompletedAdmissions" ],
+    "sourceDatabase" : "data-hub-STAGING",
+    "permissions" : "rest-reader,read,rest-writer,update",
+    "sourceCollection" : "AdmissionsCore",
+    "outputFormat" : "json",
+    "targetDatabase" : "data-hub-FINAL"
+  },
+  "customHook" : {
+    "module" : "",
+    "parameters" : { },
+    "user" : "",
+    "runBefore" : false
+  },
+  "modulePath" : "/custom-modules/mapping/BuildAdmissions/main.sjs",
+  "retryLimit" : 0,
+  "batchSize" : 100,
+  "threadCount" : 4
+}
