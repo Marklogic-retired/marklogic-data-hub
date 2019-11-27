@@ -1,13 +1,23 @@
 import React from 'react';
-import { Table, Icon } from 'antd';
+import { Table, Tooltip } from 'antd';
 import { xmlParser } from "../../util/xml-parser";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
 
 interface Props {
   item: any;
+  entityDefArray: any[];
 };
 
 
 const ExpandableTableView: React.FC<Props> = (props) => {
+
+  let itemEntityName: string[] = [];
+  let itemEntityProperties: any[] = [];
+  let entityDef: any = {};
+  let primaryKeyValue: any = '-';
+  let uri: string = encodeURIComponent(props.item.uri);
 
   let data = new Array();
   let counter = 0;
@@ -15,65 +25,63 @@ const ExpandableTableView: React.FC<Props> = (props) => {
     let parsedData = new Array();
     for (var i in obj) {
       if (obj[i] !== null && typeof (obj[i]) === "object") {
-        parsedData.push({key: counter++, property: i, children: obj[i]});
+        parsedData.push({
+          key: counter++,
+          property: i,
+          children: parseJson(obj[i]),
+          view: <Link to={{pathname: `/detail/${primaryKeyValue}/${uri}`}} data-cy='nested-instance'>
+            <Tooltip title={'Show detail on a separate page'}><FontAwesomeIcon icon={faExternalLinkAlt}
+                                                                               size="sm"/></Tooltip>
+          </Link>
+        });
       } else {
-        parsedData.push({key: counter++, property: i, value: typeof obj[i] === 'boolean' ? obj[i].toString() : obj[i]});
+        parsedData.push({
+          key: counter++,
+          property: i,
+          value: typeof obj[i] === 'boolean' ? obj[i].toString() : obj[i],
+          view: null
+        });
       }
     }
     return parsedData;
   }
 
   if (props.item.format === 'json' && props.item.hasOwnProperty('extracted')) {
-    Object.values(props.item.extracted.content[1]).forEach((content: any) => {
-      data = parseJson(content);
-    });
+    (props.item.extracted.content).forEach(contentObject => {
+      itemEntityName = Object.keys(contentObject);
+      itemEntityProperties = Object.values<any>(contentObject);
+      if (itemEntityName.length && props.entityDefArray.length && !itemEntityName[0].includes('headers')) {
+        entityDef = props.entityDefArray.find(entity => entity.name === itemEntityName[0]);
+        if (itemEntityProperties.length && entityDef.primaryKey) {
+          primaryKeyValue = itemEntityProperties[0][entityDef.primaryKey];
+        } else {
+          primaryKeyValue = encodeURIComponent(props.item.uri);
+        }
+      }
+      itemEntityProperties.forEach((content: any) => {
+        data = parseJson(content);
+      });
+    })
   } else if (props.item.format === 'xml' && props.item.hasOwnProperty('extracted')) {
-    Object.values(props.item.extracted.content).forEach(contentObject => {
+    (props.item.extracted.content).forEach(contentObject => {
       let obj = xmlParser(contentObject);
-      if (!obj.hasOwnProperty('headers')) {
-        const propertyValues = Object.values<any>(obj);
+      itemEntityName = Object.keys(obj);
+      itemEntityProperties = Object.values<any>(obj);
+      if (itemEntityName.length && props.entityDefArray.length && !itemEntityName[0].includes('headers')) {
+        entityDef = props.entityDefArray.find(entity => entity.name === itemEntityName[0]);
+        if (itemEntityProperties.length && itemEntityProperties[0].hasOwnProperty(entityDef.primaryKey)) {
+          primaryKeyValue = itemEntityProperties[0][entityDef.primaryKey];
+        } else {
+          primaryKeyValue = encodeURIComponent(props.item.uri);
+        }
+      }
+      if (!obj.hasOwnProperty('headers') && !obj.hasOwnProperty('es:headers') && itemEntityProperties[0].hasOwnProperty(entityDef.primaryKey)) {
+        const propertyValues = itemEntityProperties;
         propertyValues.forEach((item: Object) => {
           data = parseJson(item);
         })
       }
     })
-  }
-
-  function expandIcon({expanded, expandable, record, onExpand}) {
-    if (!expandable || record.hasOwnProperty('children') === false) return null;
-
-    return (
-        <a style={{color:'black'}} onClick={e => onExpand(record, e)}>
-          {expanded ? <Icon type="down"/> : <Icon type="right"/>}
-        </a>
-    );
-  }
-
-  const expandedRowRender = (propertyValues) => {
-    let data: any[] = [];
-    const columns = [
-      {title: 'Property', dataIndex: 'property', width: '20%'},
-      {title: 'Value', dataIndex: 'value', width: '40%'},
-      {title: 'View', dataIndex: 'view', width: '40%'}
-    ];
-
-    for (let obj in propertyValues.children) {
-      for (let i in propertyValues.children[obj]) {
-        let property = {
-          property: i,
-          value: propertyValues.children[obj][i],
-          view: null
-        }
-        data.push(property)
-      }
-    }
-
-    return <Table
-        rowKey="property"
-        columns={columns}
-        dataSource={data}
-        pagination={false}
-    />;
   }
 
 
@@ -86,23 +94,20 @@ const ExpandableTableView: React.FC<Props> = (props) => {
     {
       title: 'Value',
       dataIndex: 'value',
-      width: '40%',
+      width: '20%',
     },
     {
       title: 'View',
       dataIndex: 'view',
-      width: '40%',
+      width: '20%',
     }
-
   ];
 
   return (
       <Table
           rowKey="key"
           dataSource={data}
-          expandIcon={expandIcon}
           columns={columns}
-          expandedRowRender={expandedRowRender}
           pagination={false}
           data-cy="expandable-table-view"
       />
