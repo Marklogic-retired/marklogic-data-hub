@@ -8,6 +8,7 @@ npm-debug.log
 marklogic-data-hub/bin/
 marklogic-data-hub/src/main/resources/ml-modules/root/trace-ui
 web/bin/
+ml-data-hub-plugin/bin
 build/
 out/
 releases/
