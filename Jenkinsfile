@@ -572,19 +572,37 @@ pipeline{
                   }
 		}
 		stage('qs_rh7_90-nightly'){
-			agent { label 'dhmaster'}
+			agent { label 'lnx-dhf-jenkins-slave-2'}
 			steps{ 
-					script{
-          def Returnresult=build job: '/5.x/NO_CI_dhf-qs-develop-rh7', propagate: false
-               currentBuild.result=Returnresult.result;
-				 commitMessage = sh (returnStdout: true, script:'''
-			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
-			def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
-				def commit=slurper.message.toString().trim();
-				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
-				JIRA_ID=JIRA_ID.split(" ")[0];
-				commitMessage=null;
-				//jiraAddComment comment: 'Jenkins qs_rh7_90-nightly Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+				script{
+                    copyRPM 'Latest','9.0'
+               	    setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
+               	    sh(script:'''#!/bin/bash
+                     	export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;
+                     	export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;
+                     	export M2_HOME=$MAVEN_HOME/bin;
+                     	export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;
+                     	cd $WORKSPACE/data-hub;
+                     	rm -rf $GRADLE_USER_HOME/caches;
+                     	./gradlew clean;
+                     	./gradlew build -x test;
+                     	nohup ./gradlew bootRun >> $WORKSPACE/bootRun.out &
+                     	sleep 60s;
+                     	nohup ./gradlew runUI >> $WORKSPACE/runUI.out &
+                     	sleep 120s;
+                     	cd web;
+                     	./node_modules/.bin/ng e2e --devServerTarget="" --suite all --base-url http://localhost:4200 || true;
+                     ''')
+                    junit '**/web/e2e/reports/*.xml'
+                    archiveArtifacts artifacts: 'data-hub/web/e2e/reports/*.html, data-hub/web/e2e/reports/*.xml, data-hub/web/e2e/reports/screenshots/*.png, data-hub/web/e2e/screenshoter-plugin/**/*, nohup.out'
+				    commitMessage = sh (returnStdout: true, script:'''
+			        curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
+			        def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
+			    	def commit=slurper.message.toString().trim();
+				    JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
+				    JIRA_ID=JIRA_ID.split(" ")[0];
+				    commitMessage=null;
+				    //jiraAddComment comment: 'Jenkins qs_rh7_90-nightly Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
 				}
 			}
 			post{
@@ -600,20 +618,38 @@ pipeline{
                   }
 		}
 		stage('qs_rh7_10-nightly'){
-        			agent { label 'dhmaster'}
+        			agent { label 'lnx-dhf-jenkins-slave-2'}
         			steps{
         					script{
-                  def Returnresult=build job: '/5.x/NO_CI_dhf-qs-develop-rh7_ML10', propagate: false
-                       currentBuild.result=Returnresult.result;
-        				 commitMessage = sh (returnStdout: true, script:'''
-        			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
-        			def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
-        				def commit=slurper.message.toString().trim();
-        				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
-        				JIRA_ID=JIRA_ID.split(" ")[0];
-        				commitMessage=null;
-        				//jiraAddComment comment: 'Jenkins qs_rh7_10-nightly Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
-        				}
+                                copyRPM 'Latest','10.0'
+                                setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
+                                sh(script:'''#!/bin/bash
+                                export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;
+                                export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;
+                                export M2_HOME=$MAVEN_HOME/bin;
+                                export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;
+                                cd $WORKSPACE/data-hub;
+                                rm -rf $GRADLE_USER_HOME/caches;
+                                ./gradlew clean;
+                                ./gradlew build -x test;
+                                nohup ./gradlew bootRun >> $WORKSPACE/bootRun.out &
+                                sleep 60s;
+                                nohup ./gradlew runUI >> $WORKSPACE/runUI.out &
+                                sleep 120s;
+                                cd web;
+                                ./node_modules/.bin/ng e2e --devServerTarget="" --suite all --base-url http://localhost:4200 || true;
+                                ''')
+                                junit '**/web/e2e/reports/*.xml'
+                                archiveArtifacts artifacts: 'data-hub/web/e2e/reports/*.html, data-hub/web/e2e/reports/*.xml, data-hub/web/e2e/reports/screenshots/*.png, data-hub/web/e2e/screenshoter-plugin/**/*, nohup.out'
+        				        commitMessage = sh (returnStdout: true, script:'''
+        			            curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
+        			            def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
+        				        def commit=slurper.message.toString().trim();
+        				        JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
+        				        JIRA_ID=JIRA_ID.split(" ")[0];
+        				        commitMessage=null;
+        				        //jiraAddComment comment: 'Jenkins qs_rh7_10-nightly Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+        				   }
         			}
         			post{
 
@@ -628,14 +664,32 @@ pipeline{
                           }
         		}
         stage('qs_rh7_90-release'){
-        			agent { label 'dhmaster'}
+        			agent { label 'lnx-dhf-jenkins-slave-2'}
         			steps{
-        					script{
-                  def Returnresult=build job: '/5.x/NO_CI_dhf-qs-develop-rh7_90_ReleaseBuild', propagate: false
-                       currentBuild.result=Returnresult.result;
-        				 commitMessage = sh (returnStdout: true, script:'''
-        			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
-        			def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
+        			  script{
+                        copyRPM 'Release','9.0-11'
+                	    setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
+                	    sh(script:'''#!/bin/bash
+                      	export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;
+                      	export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;
+                      	export M2_HOME=$MAVEN_HOME/bin;
+                      	export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;
+                      	cd $WORKSPACE/data-hub;
+                      	rm -rf $GRADLE_USER_HOME/caches;
+                      	./gradlew clean;
+                      	./gradlew build -x test;
+                      	nohup ./gradlew bootRun >> $WORKSPACE/bootRun.out &
+                      	sleep 60s;
+                      	nohup ./gradlew runUI >> $WORKSPACE/runUI.out &
+                      	sleep 120s;
+                      	cd web;
+                      	./node_modules/.bin/ng e2e --devServerTarget="" --suite all --base-url http://localhost:4200 || true;
+                      ''')
+                        junit '**/web/e2e/reports/*.xml'
+                        archiveArtifacts artifacts: 'data-hub/web/e2e/reports/*.html, data-hub/web/e2e/reports/*.xml, data-hub/web/e2e/reports/screenshots/*.png, data-hub/web/e2e/screenshoter-plugin/**/*, nohup.out'
+                         commitMessage = sh (returnStdout: true, script:'''
+        			    curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
+        			    def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
         				def commit=slurper.message.toString().trim();
         				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
         				JIRA_ID=JIRA_ID.split(" ")[0];
@@ -656,19 +710,37 @@ pipeline{
                           }
         		}
         		stage('qs_rh7_10-release'){
-                			agent { label 'dhmaster'}
+                			agent { label 'lnx-dhf-jenkins-slave-2'}
                 			steps{
-                					script{
-                          def Returnresult=build job: '/5.x/NO_CI_dhf-qs-develop-rh7_10_ReleaseBuild', propagate: false
-                               currentBuild.result=Returnresult.result;
-                				 commitMessage = sh (returnStdout: true, script:'''
-                			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
-                			def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
-                				def commit=slurper.message.toString().trim();
-                				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
-                				JIRA_ID=JIRA_ID.split(" ")[0];
-                				commitMessage=null;
-                				//jiraAddComment comment: 'Jenkins qs_rh7_10-release Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+                			    script{
+                         copyRPM 'Release','10.0-2.1'
+                	    setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
+                	    sh(script:'''#!/bin/bash
+                      	export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;
+                      	export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;
+                      	export M2_HOME=$MAVEN_HOME/bin;
+                      	export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;
+                      	cd $WORKSPACE/data-hub;
+                      	rm -rf $GRADLE_USER_HOME/caches;
+                      	./gradlew clean;
+                      	./gradlew build -x test;
+                      	nohup ./gradlew bootRun >> $WORKSPACE/bootRun.out &
+                      	sleep 60s;
+                      	nohup ./gradlew runUI >> $WORKSPACE/runUI.out &
+                      	sleep 120s;
+                      	cd web;
+                      	./node_modules/.bin/ng e2e --devServerTarget="" --suite all --base-url http://localhost:4200 || true;
+                      ''')
+                        junit '**/web/e2e/reports/*.xml'
+                        archiveArtifacts artifacts: 'data-hub/web/e2e/reports/*.html, data-hub/web/e2e/reports/*.xml, data-hub/web/e2e/reports/screenshots/*.png, data-hub/web/e2e/screenshoter-plugin/**/*, nohup.out'
+                	    commitMessage = sh (returnStdout: true, script:'''
+                		curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
+                		def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
+                		def commit=slurper.message.toString().trim();
+                		JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
+                		JIRA_ID=JIRA_ID.split(" ")[0];
+                		commitMessage=null;
+                		//jiraAddComment comment: 'Jenkins qs_rh7_10-release Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
                 				}
                 			}
                 			post{
