@@ -679,6 +679,14 @@ class FlowUtils {
     }
     return typeof obj[Symbol.iterator] === 'function';
   }
+
+  properExtensionURI(uri, outputFormat) {
+    // fix the document URI if the format changes
+    if (uri && !uri.endsWith(outputFormat.toLowerCase())) {
+      uri = `${uri.replace(/\.(json|xml)$/gi, '')}.${outputFormat}`;
+    }
+    return uri;
+  }
 }
 
 module.exports = FlowUtils;
