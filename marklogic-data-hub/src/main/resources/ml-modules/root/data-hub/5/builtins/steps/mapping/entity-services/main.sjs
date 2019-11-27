@@ -70,6 +70,8 @@ function main(content, options) {
     datahub.debug.log({message: e, type: 'error'});
     throw Error(e);
   }
+  // fix the document URI if the format changes
+  content.uri = datahub.flow.flowUtils.properExtensionURI(content.uri, outputFormat);
 
   // Must validate before building an envelope so that validaton errors can be added to the headers
   entityValidationLib.validateEntity(newInstance, options, entity.info);
@@ -164,7 +166,14 @@ function buildEnvelope(entityInfo, doc, instance, outputFormat, options) {
       if (attachments instanceof Document && attachments.documentFormat === 'JSON') {
         nb.addText(xdmp.quote(attachments));
       } else {
-        nb.addNode(attachments);
+        // can get sequence of nodes in JSON to XML scenario
+        if (flowUtils.isNonStringIterable(attachments)) {
+          for (let attachment of attachments) {
+            nb.addNode(attachment);
+          }
+        } else if (attachments) {
+          nb.addNode(attachments);
+        }
       }
       nb.endElement();
     } else {

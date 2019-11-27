@@ -87,6 +87,8 @@ function main(content, options) {
 
   //now let's make our attachments, if it's xml, it'll be passed as string
   instance['$attachments'] = doc;
+  // fix the document URI if the format changes
+  content.uri = datahub.flow.flowUtils.properExtensionURI(content.uri, outputFormat);
 
   content.value = buildEnvelope(doc, instance, outputFormat, options);
   content.provenance = { [content.uri]: provenance };
