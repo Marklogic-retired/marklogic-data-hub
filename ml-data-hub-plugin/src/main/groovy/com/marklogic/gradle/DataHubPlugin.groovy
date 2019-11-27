@@ -140,7 +140,7 @@ class DataHubPlugin implements Plugin<Project> {
         WatchTask watchTask = project.tasks.getByName("mlWatch")
         CommandContext commandContext = new CommandContext(hubConfig.getAppConfig(), hubConfig.getManageClient(), hubConfig.getAdminManager())
         Versions versions = ((ApplicationContext)project.property("dataHubApplicationContext")).getBean(Versions.class)
-        watchTask.onModulesLoaded = new ModuleWatchingConsumer(commandContext, new GenerateFunctionMetadataCommand(hubConfig.newModulesDbClient(), versions))
+        watchTask.onModulesLoaded = new ModuleWatchingConsumer(commandContext, hubConfig, versions)
         watchTask.afterModulesLoadedCallback = new AfterModulesLoadedCallback(loadUserModulesCommand, commandContext)
 
         ((ClearModulesDatabaseTask)project.tasks.getByName("mlClearModulesDatabase")).command = new ClearDHFModulesCommand(hubConfig, dataHub)
