@@ -4,8 +4,6 @@ import { Resizable } from 'react-resizable'
 import { Table, Tooltip } from 'antd';
 import { dateConverter } from '../../util/date-conversion';
 import { xmlParser } from '../../util/xml-parser';
-import styles from './result-table.module.scss';
-
 
 const ResizeableTitle = props => {
   const { onResize, width, ...restProps } = props;
@@ -46,7 +44,6 @@ const ResultTable: React.FC<Props> = (props) => {
   let counter = 0;
   let createdOn = '';
   const [columns, setColumns] = useState<any[]>([]);
-
 
 
   //Iterate over each element in the payload and construct an array.
@@ -109,16 +106,29 @@ const ResultTable: React.FC<Props> = (props) => {
         {
           title: item,
           dataIndex: item.replace(/ /g, '').toLowerCase(),
-          width: 300,
+          width: 150,
           onHeaderCell: column => ({
             width: column.width,
             onResize: handleResize(index),
           }),
+          onCell: () => {
+            return {
+              style: {
+                whiteSpace: 'nowrap',
+                maxWidth: 150,
+              }
+            }
+          },
+          render: (text) => (
+            <Tooltip title={text && text.length > 50 && text.substring(0, 301).concat('...\n\n(View document details to see all of this text.)')}>
+              <div style={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>{text}</div>
+            </Tooltip>
+          )
         }
       )
     });
     setColumns(col);
-  },[props.data]);
+  }, [props.data]);
 
   const components = {
     header: {
@@ -168,7 +178,6 @@ const ResultTable: React.FC<Props> = (props) => {
   });
 
   const handleResize = index => (e, { size }) => {
-
     setColumns(columns => {
       const nextColumns = [...columns];
       nextColumns[index] = {
@@ -179,25 +188,12 @@ const ResultTable: React.FC<Props> = (props) => {
     })
   };
 
-  const renderColumns = () => {
-    let col = columns.map((item, index) => {
-      return {
-        ...item,
-        OnHeaderCell: column => ({
-          width: column.width,
-          OnResize: handleResize(index)
-        })
-      }
-    })
-    return col;
-  }
-
   return (
     <Table bordered components={components}
       className="search-tabular"
       rowKey="key"
       dataSource={data}
-      columns={renderColumns()}
+      columns={columns}
       pagination={false}
       data-cy="search-tabular"
     />
