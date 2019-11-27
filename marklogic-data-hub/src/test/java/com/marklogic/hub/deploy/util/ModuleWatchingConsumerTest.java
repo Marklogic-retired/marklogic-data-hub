@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ModuleWatchingConsumerTest {
 
-    private ModuleWatchingConsumer consumer = new ModuleWatchingConsumer(null, null, null);
+    private ModuleWatchingConsumer consumer = new ModuleWatchingConsumer(null, null);
 
     @Test
     public void shouldGenerateFunctionMetadata() {
