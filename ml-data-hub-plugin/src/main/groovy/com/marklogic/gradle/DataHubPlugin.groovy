@@ -44,7 +44,6 @@ import org.gradle.api.Project
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
-import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 @EnableAutoConfiguration
@@ -65,6 +64,7 @@ class DataHubPlugin implements Plugin<Project> {
     private LegacyFlowManagerImpl legacyFlowManager
     private EntityManagerImpl entityManager
     private GeneratePiiCommand generatePiiCommand
+    private GenerateFunctionMetadataCommand generateFunctionMetadataCommand
 
     Logger logger = LoggerFactory.getLogger(getClass())
 
@@ -139,8 +139,7 @@ class DataHubPlugin implements Plugin<Project> {
 
         WatchTask watchTask = project.tasks.getByName("mlWatch")
         CommandContext commandContext = new CommandContext(hubConfig.getAppConfig(), hubConfig.getManageClient(), hubConfig.getAdminManager())
-        Versions versions = ((ApplicationContext)project.property("dataHubApplicationContext")).getBean(Versions.class)
-        watchTask.onModulesLoaded = new ModuleWatchingConsumer(commandContext, hubConfig, versions)
+        watchTask.onModulesLoaded = new ModuleWatchingConsumer(commandContext, generateFunctionMetadataCommand)
         watchTask.afterModulesLoadedCallback = new AfterModulesLoadedCallback(loadUserModulesCommand, commandContext)
 
         ((ClearModulesDatabaseTask)project.tasks.getByName("mlClearModulesDatabase")).command = new ClearDHFModulesCommand(hubConfig, dataHub)
@@ -217,6 +216,7 @@ class DataHubPlugin implements Plugin<Project> {
         legacyFlowManager = ctx.getBean(LegacyFlowManagerImpl.class)
         entityManager = ctx.getBean(EntityManagerImpl.class)
         generatePiiCommand = ctx.getBean(GeneratePiiCommand.class)
+        generateFunctionMetadataCommand = ctx.getBean(GenerateFunctionMetadataCommand.class)
 
         project.extensions.add("dataHubApplicationContext", ctx)
 
