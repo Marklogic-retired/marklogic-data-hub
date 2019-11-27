@@ -33,20 +33,57 @@ const Sidebar:React.FC<Props> = (props) => {
   useEffect(() => {
     if (props.facets) {
       const parsedFacets = facetParser(props.facets);
-      const filteredHubFacets = hubPropertiesConfig.map( hubFacet => {
-        let hubFacetValues = parsedFacets.find(facet => facet.facetName === hubFacet.facetName);
-        return hubFacetValues && {...hubFacet, ...hubFacetValues}
-      });
-      setHubFacets(filteredHubFacets);
+      if (Object.entries(searchOptions.searchFacets).length === 0) {
+        const filteredHubFacets = hubPropertiesConfig.map( hubFacet => {
+          let hubFacetValues = parsedFacets.find(facet => facet.facetName === hubFacet.facetName);
+          return hubFacetValues && {...hubFacet, ...hubFacetValues}
+        });
+        setHubFacets(filteredHubFacets);
+      } else {
+        // TODO check if hub filters need updates
+      }
 
-      if (props.selectedEntities.length) {
+      if (props.selectedEntities.length && Object.entries(searchOptions.searchFacets).length === 0) {
         const entityDef = props.entityDefArray.find(entity => entity.name === props.selectedEntities[0]);
         const filteredEntityFacets = entityDef.rangeIndex.length && entityDef.rangeIndex.map( rangeIndex => {
           let entityFacetValues = parsedFacets.find(facet => facet.facetName === rangeIndex);
           return {...entityFacetValues}
         });
+
         setEntityFacets(filteredEntityFacets);
+      } else {
+        // update counts for the entity facets by setting all facet counts to 0 initially
+        let updatedEntityFacetCounts: any[] = entityFacets.map( facet => {
+          facet.facetValues.forEach( facetValue => {
+            facetValue.count = 0;
+          });
+          return facet;
+        });
+        entityFacets.forEach( entityFacet => {
+         // console.log('entity facet', entityFacet)
+          let updatedFacet = parsedFacets.find(facet => facet.facetName === entityFacet.facetName);
+          if (updatedFacet.facetValues.length) {
+            updatedFacet.facetValues.forEach( facetValue => {
+              let currentFacet = entityFacet.facetValues.find( entFacet => entFacet.name === facetValue.name);
+              if (currentFacet) {
+                // update facet counts
+                currentFacet.count = facetValue.count;
+                let index = updatedEntityFacetCounts.findIndex(facet => {
+                  return facet.facetName === entityFacet.facetName
+                });
+                // find facetValue index and update it to current facet
+                let facet = updatedEntityFacetCounts[index];
+                let updateIndex = facet.facetValues.findIndex( facVal => facVal.name === currentFacet.name);
+                facet.facetValues[updateIndex] = currentFacet;
+                // sort count after updating the count
+                facet.facetValues.sort((a, b) => (a.count < b.count) ? 1 : -1)
+              }
+            });
+          }
+        });
+        setEntityFacets(updatedEntityFacetCounts);
       }
+
       if (Object.entries(searchOptions.searchFacets).length !== 0) {
         let selectedFacets: any[] = [];
         for( let constraint in searchOptions.searchFacets) {
