@@ -3,6 +3,9 @@ package com.marklogic.hub.deploy.util;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.client.ext.helper.LoggingObject;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand;
+import com.marklogic.hub.impl.Versions;
 import org.springframework.core.io.Resource;
 
 import java.util.Set;
@@ -15,6 +18,9 @@ import java.util.function.Consumer;
 public class ModuleWatchingConsumer extends LoggingObject implements Consumer<Set<Resource>> {
 
     private CommandContext commandContext;
+    private HubConfig hubConfig;
+    private Versions versions;
+
     private Command generateFunctionMetadataCommand;
 
     public ModuleWatchingConsumer(CommandContext commandContext, Command generateFunctionMetadataCommand) {
@@ -22,8 +28,26 @@ public class ModuleWatchingConsumer extends LoggingObject implements Consumer<Se
         this.generateFunctionMetadataCommand = generateFunctionMetadataCommand;
     }
 
+    /**
+     * This constructor is needed for when a user invokes "hubInit" when using the DH Gradle plugin, as the plugin
+     * won't be able to create a modules DatabaseClient yet as no username/password have been defined.
+     *
+     * @param commandContext
+     * @param hubConfig
+     * @param versions
+     */
+    public ModuleWatchingConsumer(CommandContext commandContext, HubConfig hubConfig, Versions versions) {
+        this.commandContext = commandContext;
+        this.hubConfig = hubConfig;
+        this.versions = versions;
+    }
+
     @Override
     public void accept(Set<Resource> resources) {
+        if (generateFunctionMetadataCommand == null && hubConfig != null && versions != null) {
+            generateFunctionMetadataCommand = new GenerateFunctionMetadataCommand(hubConfig.newModulesDbClient(), versions);
+        }
+
         if (generateFunctionMetadataCommand != null && commandContext != null && shouldFunctionMetadataBeGenerated(resources)) {
             try {
                 logger.info("Generating function metadata for modules containing mapping functions");
