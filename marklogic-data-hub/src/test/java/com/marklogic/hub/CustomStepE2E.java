@@ -6,14 +6,9 @@ import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.step.RunStepResponse;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -67,6 +62,8 @@ public class CustomStepE2E extends HubTestBase{
             Path subResourcePath = Paths.get("mapping-test", subDirectory);
             copyFileStructure(subResourcePath, subProjectPath);
         }
+        em.saveDbIndexes();
+        dataHub.updateIndexes();
 
     }
 
@@ -100,17 +97,13 @@ public class CustomStepE2E extends HubTestBase{
         flowRunner.awaitCompletion();
         RunStepResponse ingestionJob = flowResponse.getStepResponses().get("3");
         assertTrue(ingestionJob.isSuccess(), "Custom ingestion job failed: "+ingestionJob.stepOutput);
-        assertTrue(getStagingDocCount("LabsCore") == 806,"There should be one doc in LabsCore collection, found: " + getStagingDocCount("LabsCore"));
+        assertTrue(getStagingDocCount("LabsCore") == 806,"There should be 806 doc in LabsCore collection, found: " + getStagingDocCount("LabsCore"));
     }
 
     @Test
     @Order(2)
     public void testCustomMappingStep() throws Exception{
         installUserModules(getDataHubAdminConfig(), true);
-
-        em.saveDbIndexes();
-        dataHub.updateIndexes();
-
 
         Flow flow = flowManager.getFlow("Admissions");
         if (flow == null) {
@@ -121,7 +114,7 @@ public class CustomStepE2E extends HubTestBase{
         flowRunner.awaitCompletion();
         RunStepResponse mappingJob = flowResponse.getStepResponses().get("4");
         assertTrue(mappingJob.isSuccess(), "Custom mapping job failed: "+mappingJob.stepOutput);
-        assertTrue(getFinalDocCount("CompletedAdmissions") == 372,"There should be one doc in CompletedAdmissions collection, found: " + getFinalDocCount("CompletedAdmissions"));
+        assertTrue(getFinalDocCount("CompletedAdmissions") == 372,"There should be 372 doc in CompletedAdmissions collection, found: " + getFinalDocCount("CompletedAdmissions"));
     }
 
     @Test
@@ -138,6 +131,6 @@ public class CustomStepE2E extends HubTestBase{
         flowRunner.awaitCompletion();
         RunStepResponse masteringJob = flowResponse.getStepResponses().get("5");
         assertTrue(masteringJob.isSuccess(), "Custom mastering job failed: "+masteringJob.stepOutput);
-        assertTrue(getFinalDocCount("mdm-content") == 372,"There should be one doc in mdm-content collection, found: " + getFinalDocCount("mdm-content"));
+        assertTrue(getFinalDocCount("mdm-content") == 372,"There should be 372 doc in mdm-content collection, found: " + getFinalDocCount("mdm-content"));
     }
 }
