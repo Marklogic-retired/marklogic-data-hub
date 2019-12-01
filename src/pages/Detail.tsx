@@ -73,10 +73,11 @@ const Detail: React.FC<Props> = ({ history, location }) => {
   }, []);
 
   useEffect(() => {
-    console.log(location.state);
-
     location.state && location.state.hasOwnProperty('selectedValue') && location.state.selectedValue === 'source' ?
       setSelected('full') : setSelected('instance');
+    if(location.state === undefined){
+      location.state = {};
+    }
   }, []);
 
 

@@ -4,39 +4,32 @@ import { Table } from 'antd';
 interface Props {
   document: any;
   contentType: string;
-  location:{};
+  location: {};
 };
 
 const TableView: React.FC<Props> = (props) => {
-  //console.log(typeof(props.location))
   const [expanded, setExpanded] = useState(false);
 
   let data = new Array();
-  //let deleteKey = 0;
   let counter = 0;
-  let expandCounter = 0;
-  let expandRow = 0;
+  let expandRow: number[] = [];
+  let currRow: number[] = [];
+
+
   const parseJson = (obj: Object) => {
     let parsedData = new Array();
     for (var i in obj) {
-      console.log("received:",i)
-      console.log("sent:",props.location)
-      if(props.location && props.location === i){
-        console.log("inside - you can delete this")
-        expandRow = expandCounter
-        //deleteKey = counter-1;
-        //console.log(deleteKey)
+      if (props.location && JSON.stringify(props.location) === JSON.stringify(obj[i])) {
+        expandRow = currRow.concat(expandRow);
+        expandRow.push(counter);
       }
-      expandCounter++
-
       if (obj[i] !== null && typeof (obj[i]) === "object") {
-        parsedData.push({ key: counter++, property: i, children: parseJson(obj[i]) });
+        currRow.push(counter);
+        parsedData.push({key: counter++, property: i, children: parseJson(obj[i])});
+        currRow.pop();
       } else {
-        parsedData.push({ key: counter++, property: i, value: typeof obj[i] === 'boolean' ? obj[i].toString() : obj[i] });
+        parsedData.push({key: counter++, property: i, value: typeof obj[i] === 'boolean' ? obj[i].toString() : obj[i]});
       }
-     // console.log(i)
-      //console.log(props.location)
-
     }
     return parsedData;
   }
@@ -58,11 +51,10 @@ const TableView: React.FC<Props> = (props) => {
   }
 
 
-
-
   const handleClick = () => {
     expanded === false ? setExpanded(true) : setExpanded(false)
   }
+
 
   const columns = [
     {
@@ -89,17 +81,17 @@ const TableView: React.FC<Props> = (props) => {
     }
   ];
 
+
   return (
-        <Table
-            className="document-table-demo"
-            rowKey="key"
-            dataSource={data}
-            columns={columns}
-            pagination={false}
-            data-cy="document-table"
-            //defaultExpandAllRows={props.location && (props.location === 'nested-instance')}
-            defaultExpandedRowKeys = {[expandRow]}
-        />
+      <Table
+          className="document-table-demo"
+          rowKey="key"
+          dataSource={data}
+          columns={columns}
+          pagination={false}
+          data-cy="document-table"
+          defaultExpandedRowKeys={expandRow}
+      />
   )
 }
 

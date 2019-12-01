@@ -29,8 +29,8 @@ const ExpandableTableView: React.FC<Props> = (props) => {
           key: counter++,
           property: i,
           children: parseJson(obj[i]),
-          view: <Link to={{pathname: `/detail/${primaryKeyValue}/${uri}`,state: {selectedValue:'nested-instance', id:i}}} data-cy='nested-instance'>
-            <Tooltip title={'Show detail on a separate page'}><FontAwesomeIcon icon={faExternalLinkAlt}
+          view: <Link to={{pathname: `/detail/${primaryKeyValue}/${uri}`,state: {id:obj[i]}}} data-cy='nested-instance'>
+            <Tooltip title={'Show nested detail on a separate page'}><FontAwesomeIcon icon={faExternalLinkAlt}
                                                                                size="sm"/></Tooltip>
           </Link>
         });
