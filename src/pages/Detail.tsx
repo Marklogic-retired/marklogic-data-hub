@@ -7,9 +7,11 @@ import TableView from '../components/table-view/table-view';
 import JsonView from '../components/json-view/json-view';
 import DetailHeader from '../components/detail-header/detail-header';
 import AsyncLoader from '../components/async-loader/async-loader';
-import { Layout, Menu, PageHeader } from 'antd';
+import {Layout, Menu, PageHeader, Tooltip} from 'antd';
 import XmlView from '../components/xml-view/xml-view';
 import { xmlParser, xmlDecoder } from '../util/xml-parser';
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faThList, faCode} from "@fortawesome/free-solid-svg-icons";
 
 interface Props extends RouteComponentProps<any> { }
 
@@ -95,10 +97,11 @@ const Detail: React.FC<Props> = ({ history, location }) => {
           <div id='menu' className={styles.menu}>
             <Menu onClick={(event) => handleClick(event)} mode="horizontal" selectedKeys={[selected]}>
               <Menu.Item key="instance" id='instance' data-cy="instance-view">
-                Instance
+              <FontAwesomeIcon  icon={faThList} size="lg" /><span className={styles.subMenu}>Instance</span>
              </Menu.Item>
               <Menu.Item key="full" id='full' data-cy="source-view">
-                Source
+                <FontAwesomeIcon  icon={faCode} size="lg" />
+                <span className={styles.subMenu}>Source</span>
              </Menu.Item>
             </Menu>
           </div>
