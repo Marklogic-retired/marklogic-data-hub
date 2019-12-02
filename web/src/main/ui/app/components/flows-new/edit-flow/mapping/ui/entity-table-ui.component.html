@@ -2,12 +2,11 @@
   id="entity-table"
   [dataSource]="dataSource"
   multiTemplateDataRows
-  matSort
 >
 
   <!-- NAME COLUMN -->
   <ng-container matColumnDef="name">
-    <mat-header-cell *matHeaderCellDef mat-sort-header>
+    <mat-header-cell *matHeaderCellDef>
       Name
     </mat-header-cell>
     <mat-cell *matCellDef="let prop">
@@ -32,7 +31,7 @@
 
   <!-- TYPE COLUMN -->
   <ng-container matColumnDef="datatype">
-    <mat-header-cell *matHeaderCellDef mat-sort-header>
+    <mat-header-cell *matHeaderCellDef>
       Type
     </mat-header-cell>
     <mat-cell *matCellDef="let prop">
@@ -42,7 +41,7 @@
 
   <!-- EXPRESSION COLUMN -->
   <ng-container matColumnDef="expression">
-    <mat-header-cell *matHeaderCellDef mat-sort-header>
+    <mat-header-cell *matHeaderCellDef>
       XPath Expression
     </mat-header-cell>
     <mat-cell *matCellDef="let prop; let i = dataIndex">
@@ -98,7 +97,7 @@
 
   <!-- VALUE COLUMN -->
   <ng-container matColumnDef="value">
-    <mat-header-cell *matHeaderCellDef mat-sort-header>
+    <mat-header-cell *matHeaderCellDef>
       Value
     </mat-header-cell>
     <mat-cell  *matCellDef="let prop"  >
