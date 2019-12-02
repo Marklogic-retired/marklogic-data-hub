@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import com.marklogic.explorer.integral.ValidationCriteria.Operator;
 import com.marklogic.explorer.integral.support.ExplorerAccess;
-import com.marklogic.explorer.integral.support.ExplorerAccess.Protocol;
+import com.marklogic.explorer.integral.support.IExplorerAccess.Protocol;
 
 /**
  * Step.java
@@ -52,6 +52,7 @@ public class Step extends AbstractStep {
   @SuppressWarnings("unchecked")
   StepResult run(Optional<HttpClient> clientOption, ExplorerAccess net, StringBuilder results) {
     results.append("\n\nStep: ").append(name).append("\n").append(definition).append("\n");
+    var server = composeServer(AppConfig.server, AppConfig.port);
     var client = clientOption.isPresent()
         ? clientOption.get()
         : needsAuth
@@ -59,9 +60,9 @@ public class Step extends AbstractStep {
            : net.simpleClient();
     var response =
         access == Access.GET
-            ? net.get(client, net.composeAddress(protocol, AppConfig.server, endpoint))
+            ? net.get(client, net.composeAddress(protocol, server, endpoint))
             : net.post(client,
-                net.composeAddress(protocol, AppConfig.server, endpoint),
+                net.composeAddress(protocol, server, endpoint),
                 payload == null ? "" : payload);
     var criteria = statusOnly
         ? new ValidationCriteria(op, (Comparable)desiredResult, (Comparable)response.statusCode())

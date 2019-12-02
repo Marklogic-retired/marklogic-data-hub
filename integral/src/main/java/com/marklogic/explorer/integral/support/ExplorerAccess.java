@@ -31,24 +31,11 @@ import javax.net.ssl.SSLContext;
  *         should make the code better.  There is, however, a learning curve...
  *
  */
-public class ExplorerAccess {
+public class ExplorerAccess implements IExplorerAccess {
 
   private static Logger logger = Logger.getGlobal();
 
-  public enum Protocol {
-    HTTP("http"), HTTPS("https");
-
-    private String protocol;
-
-    public String getProtocol() {
-      return this.protocol;
-    }
-
-    Protocol(String protocol) {
-      this.protocol = protocol;
-    }
-  };
-
+  @Override
   public String composeAddress(Protocol protocol, String server, String endpoint) {
     return protocol.getProtocol()+"://"+server+"/"+endpoint;
   }
@@ -58,6 +45,7 @@ public class ExplorerAccess {
    *  Note that any exception is fatal, so the code does nothing special other than throw a
    * RuntimeException
    */
+  @Override
   public HttpResponse get(HttpClient client, String endpoint) {
     try {
       var request = newBuilder(new URI(endpoint)).GET()
@@ -74,6 +62,7 @@ public class ExplorerAccess {
    * caller.  Note that any exception is fatal so we don't do anything special other than make 'em
    * RuntimeException and handle them higher.
    */
+  @Override
   public HttpResponse post(HttpClient client, String endpoint, String body) {
     try {
       HttpRequest request = newBuilder(new URI(endpoint))
@@ -90,6 +79,7 @@ public class ExplorerAccess {
   /**
    * simpleClient creates a client suitable for unauthenticated access over http
    */
+  @Override
   public HttpClient simpleClient() {
     return  HttpClient.newHttpClient();
   }
@@ -98,6 +88,7 @@ public class ExplorerAccess {
    * secureClient creates a client suitable for authenticated access over http
    * or https connections
    */
+  @Override
   public HttpClient secureClient(String user, String password) {
     final var clientOption = sslClient(user, password);
     if (clientOption.isEmpty()) {
@@ -124,22 +115,5 @@ public class ExplorerAccess {
     } catch (Exception e) {
       return Optional.empty();
     }
-  }
-
-  /*
-   * create a json representation of a valid login payload
-   */
-  public static String loginPayload(String user, String password) {
-    class Payload {
-
-      private final String username, password;
-
-      Payload(String user, String pw) {
-        username = user;
-        password = pw;
-      }
-    }
-    Payload p1 = new Payload(user, password);
-    return toJson(p1);
   }
 }

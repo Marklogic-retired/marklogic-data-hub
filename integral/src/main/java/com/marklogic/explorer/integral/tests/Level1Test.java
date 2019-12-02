@@ -7,8 +7,8 @@ import com.marklogic.explorer.integral.AbstractStep.Access;
 import com.marklogic.explorer.integral.AppConfig;
 import com.marklogic.explorer.integral.Step;
 import com.marklogic.explorer.integral.Test;
-import com.marklogic.explorer.integral.support.ExplorerAccess;
-import com.marklogic.explorer.integral.support.ExplorerAccess.Protocol;
+import com.marklogic.explorer.integral.support.IExplorerAccess;
+import com.marklogic.explorer.integral.support.IExplorerAccess.Protocol;
 
 /**
  * Level1 tests entity access
@@ -21,8 +21,8 @@ import com.marklogic.explorer.integral.support.ExplorerAccess.Protocol;
 public class Level1Test extends Test {
 
   public Level1Test() {
-    final var architectPayload = ExplorerAccess.loginPayload(AppConfig.arch, AppConfig.architectPassword);
-    final var analystPayload = ExplorerAccess.loginPayload(AppConfig.analyst, AppConfig.analystPassword);
+    final var architectPayload = IExplorerAccess.loginPayload(AppConfig.arch, AppConfig.architectPassword);
+    final var analystPayload = IExplorerAccess.loginPayload(AppConfig.analyst, AppConfig.analystPassword);
     // this test needs to preserve client state
     steps.add(new Step("analyst login", "verify an analyst can login",true, "", "", Protocol.HTTP,
         "datahub/v2/login", Access.POST, analystPayload, 200, EQ, true));

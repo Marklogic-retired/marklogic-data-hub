@@ -11,8 +11,8 @@ import com.marklogic.explorer.integral.AppConfig;
 import com.marklogic.explorer.integral.Step;
 import com.marklogic.explorer.integral.Test;
 import com.marklogic.explorer.integral.data.SearchQuery;
-import com.marklogic.explorer.integral.support.ExplorerAccess;
-import com.marklogic.explorer.integral.support.ExplorerAccess.Protocol;
+import com.marklogic.explorer.integral.support.IExplorerAccess;
+import com.marklogic.explorer.integral.support.IExplorerAccess.Protocol;
 
 /**
  * Level2Test tests document access
@@ -24,8 +24,8 @@ public class Level2Test extends Test {
 
 
   public Level2Test() {
-    final var architectPayload = ExplorerAccess.loginPayload(AppConfig.arch, AppConfig.architectPassword);
-    final var analystPayload = ExplorerAccess.loginPayload(AppConfig.analyst, AppConfig.analystPassword);
+    final var architectPayload = IExplorerAccess.loginPayload(AppConfig.arch, AppConfig.architectPassword);
+    final var analystPayload = IExplorerAccess.loginPayload(AppConfig.analyst, AppConfig.analystPassword);
 
     final var query = new SearchQuery();
     query.setQuery("alpakka");

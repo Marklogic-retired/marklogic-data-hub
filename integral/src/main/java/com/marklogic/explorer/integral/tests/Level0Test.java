@@ -5,8 +5,8 @@ import static com.marklogic.explorer.integral.ValidationCriteria.Operator.*;
 import com.marklogic.explorer.integral.AbstractStep.Access;
 import com.marklogic.explorer.integral.Step;
 import com.marklogic.explorer.integral.Test;
-import com.marklogic.explorer.integral.support.ExplorerAccess;
-import com.marklogic.explorer.integral.support.ExplorerAccess.Protocol;
+import com.marklogic.explorer.integral.support.IExplorerAccess;
+import com.marklogic.explorer.integral.support.IExplorerAccess.*;
 
 /**
  * Level0 tests the simplest use --
@@ -17,8 +17,8 @@ import com.marklogic.explorer.integral.support.ExplorerAccess.Protocol;
 public class Level0Test extends Test {
 
   public Level0Test() {
-    final var invalidUserPayload = ExplorerAccess.loginPayload("Gina", "Gins");
-    final var validUserPayload = ExplorerAccess.loginPayload("ladida", "ladida");
+    final var invalidUserPayload = IExplorerAccess.loginPayload("Gina", "Gins");
+    final var validUserPayload = IExplorerAccess.loginPayload("ladida", "ladida");
 
     steps.add(new Step("baby step", "the first thing",false,  "", "", Protocol.HTTP,
        "datahub/actuator/health", Access.GET,"", "UP", IN, false));

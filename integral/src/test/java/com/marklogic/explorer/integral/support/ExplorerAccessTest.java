@@ -1,9 +1,6 @@
 package com.marklogic.explorer.integral.support;
 
 import static com.marklogic.explorer.integral.support.ExplorerAccess.*;
-import static com.marklogic.explorer.integral.AppConfig.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -13,7 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 @DisplayName("ExplorerAccess Test")
-public class ExplorerAccessTest {
+class ExplorerAccessTest {
 
   @Test
   void testProtocol() {
@@ -28,7 +25,7 @@ public class ExplorerAccessTest {
 
   @Test
   void testLoginPayload() {
-    var payload = ExplorerAccess.loginPayload("jane", "not_a_chimp");
+    var payload = IExplorerAccess.loginPayload("jane", "not_a_chimp");
     assertTrue(payload.equals("{\"username\":\"jane\",\"password\":\"not_a_chimp\"}"));
   }
 
