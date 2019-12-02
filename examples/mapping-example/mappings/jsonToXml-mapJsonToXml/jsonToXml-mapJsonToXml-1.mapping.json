@@ -8,7 +8,7 @@
   "sourceURI" : "/xmlExample/jsonPerson1.json",
   "properties" : {
     "lastUpdated" : {
-      "sourcedFrom" : "parseDateTime('DD/MM/YYYY hh:mm:ss', lastUpdated)"
+      "sourcedFrom" : "parseDateTime(lastUpdated, 'DD/MM/YYYY hh:mm:ss')"
     },
     "names" : {
       "sourcedFrom" : "biographicData/names",
@@ -47,7 +47,7 @@
       "sourcedFrom" : "memoryLookup(biographicData/education, '{\"C\":\"College\", \"H\": \"High School\", \"M\": \"Masters\"}')"
     },
     "dateOfBirth" : {
-      "sourcedFrom" : "parseDate('MM/DD/YYYY', biographicData/dob)"
+      "sourcedFrom" : "parseDate(biographicData/dob, 'MM/DD/YYYY')"
     },
     "ssn" : {
       "sourcedFrom" : "remove-hyphens(social)"
