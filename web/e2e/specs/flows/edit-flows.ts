@@ -24,7 +24,7 @@ export default function (qaProjectDir) {
       await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
     });
 
-    it('Should add a flow', async function () {
+    xit('Should add a flow', async function () {
       await appPage.clickFlowTab();
       await browser.wait(EC.visibilityOf(manageFlowPage.newFlowButton));
       await manageFlowPage.createFlow(flow1);

@@ -1,6 +1,6 @@
 import { AppPage } from "../appPage";
 import { pages } from '../page';
-import { $, by, element } from "protractor";
+import {$, browser, by, element} from "protractor";
 
 export class MappingStep extends AppPage {
   
@@ -78,7 +78,8 @@ export class MappingStep extends AppPage {
 
   async clickSourcePropertyContainer(entityName,entityProperty: string) {
     let sourceProperty = this.sourcePropertyContainer(entityName,entityProperty);
-    return await sourceProperty.click();
+    await sourceProperty.click();
+    return await browser.sleep(3000);
   }
 
   propertySelectMenu(entityProperty: string) {
@@ -88,29 +89,13 @@ export class MappingStep extends AppPage {
   async clickPropertySelectMenu(entityProperty: string) {
     return await this.propertySelectMenu(entityProperty).click();
   }
-  verifyExpressionText(entityName,entityProperty: string, expression: string) {
-    return element(by.cssContainingText(`#entity-table .entity-row-${entityName}-${entityProperty} #edit-expression`, expression));
+
+  clearExpressionText(entityName, entityProperty: string) {
+    return element(by.css(`#entity-table .entity-row-${entityName}-${entityProperty} #edit-expression`)).clear();
   }
 
-  undoPropertyMapping(entityName,entityProperty: string) {
-    return this.sourcePropertyContainer(entityName,entityProperty).element(by.css('.fa-remove'));
-  }
-
-  sourcePropertyDropDown(entityName,entityProperty: string) {
-    return this.sourcePropertyContainer(entityName,entityProperty).element(by.css('.fa-caret-down'));
-  }
-
-  sourceTypeAheadInput(entityProperty: string) {
-    return element(by.css(`#source .source-prop-container .dropdown-filter-${entityProperty} input`));
-  }
-
-  mapSourceProperty(sourceProperty: string, entityProperty: string) {
-    return this.propertySelectMenu(entityProperty).element(by.css(`.dropdown-item-${sourceProperty}`));
-  }
-
-  async clickMapSourceProperty(sourceProperty: string, entityProperty: string) {
-    let mapSourceProperty = this.mapSourceProperty(sourceProperty, entityProperty);
-    return await mapSourceProperty.click();
+  verifyExpressionText(entityName,entityProperty: string) {
+    return element(by.css(`#entity-table .entity-row-${entityName}-${entityProperty} #edit-expression`));
   }
 
   entityPropertyContainer(entityName: string, entityProperty: string) {
@@ -118,35 +103,11 @@ export class MappingStep extends AppPage {
  }
 
   entityPropertyName(entityName,entityProperty: string) {
-    return this.entityPropertyContainer(entityName,entityProperty).element(by.css('.prop-name'));
+    return element(by.css(`#entity-table .entity-row-${entityName}-${entityProperty} .mat-column-name`)).getText();
   }
 
   entityPropertyType(entityName,entityProperty: string) {
-    return this.entityPropertyContainer(entityName,entityProperty).element(by.css('.prop-type'));
-  }
-
-  entityPropertyIcon(entityName,entityProperty: string, iconClass: string) {
-    return this.entityPropertyContainer(entityName,entityProperty).element(by.css(`.entity-icon .fa-${iconClass}`));
-  }
-
-  verifySourcePropertyName(propertyName: string) {
-    return element(by.cssContainingText('.prop-select-content .prop-name', propertyName));
-  }
-
-  verifyDropdownPropertyName(entityProperty: string, propertyName: string) {
-    return element(by.cssContainingText(`.prop-select-menu-${entityProperty} .prop-name`, propertyName));
-  }
-
-  verifySourcePropertyType(propertyType: string) {
-    return element(by.cssContainingText('.prop-select-content .prop-type', propertyType));
-  }
-
-  verifySourcePropertyTypeByName(propertyName: string, propertyType: string) {
-    return element(by.cssContainingText(`.prop-entity-${propertyName} .prop-select-content .prop-type`, propertyType));
-  }
-
-  verifyDropdownPropertyType(entityProperty: string, propertyType: string) {
-    return element(by.cssContainingText(`.prop-select-menu-${entityProperty} .prop-type`, propertyType));
+    return element(by.css(`#entity-table .entity-row-${entityName}-${entityProperty} .mat-column-datatype`)).getText();
   }
 
   testButton() {
@@ -155,14 +116,6 @@ export class MappingStep extends AppPage {
 
   async clickTestButton() {
     return await this.testButton().click();
-  }
-
-  verifySourcePropertyValue(propertyValue: string) {
-    return element(by.cssContainingText('.prop-select-content .prop-val', propertyValue));
-  }
-
-  verifyDropdownPropertyValue(entityProperty: string, propertyValue: string) {
-    return element(by.cssContainingText(`.prop-select-menu-${entityProperty} .prop-val`, propertyValue));
   }
 
   get sourceHelpLink() {

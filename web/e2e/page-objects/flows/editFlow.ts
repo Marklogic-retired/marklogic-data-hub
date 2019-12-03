@@ -69,6 +69,10 @@ export class EditFlow extends AppPage {
     return await element(by.cssContainingText("span.mat-checkbox-label", step)).click();
   }
 
+  stepDeleteButton() {
+    return element(by.css);
+  }
+
   /**
    * clickButtonRunCancel
    * @param option = [cancel/flow]
@@ -104,7 +108,7 @@ export class EditFlow extends AppPage {
   }
 
   get jobStartedTimestamp() {
-    return element(by.id("job-started-timestamp"));
+    return element(by.css("#job-started-timestamp span"));
   }
 
   get viewJobsButton() {
@@ -226,6 +230,10 @@ export class EditFlow extends AppPage {
       //await stepsPage.stepSelectContainer(step.stepName).click();
       await expect(stepsPage.stepDetailsName.getText()).toEqual(step.stepName);
     }
+  }
+
+  async deleteStep(flow, step) {
+
   }
 
   async verifyFlow() {

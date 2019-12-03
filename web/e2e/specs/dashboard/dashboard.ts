@@ -1,4 +1,4 @@
-import { browser } from 'protractor';
+import {browser, ExpectedConditions as EC} from 'protractor';
 import appPage from '../../page-objects/appPage';
 import manageFlowPage from "../../page-objects/flows/manageFlows";
 import dashboardPage from "../../page-objects/dashboard/dashboard";
@@ -30,6 +30,7 @@ export default function(qaProjectDir) {
 
     it('should check default documents after redeploy', async function () {
       await appPage.clickFlowTab();
+      await browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleFlow")));
       await manageFlowPage.redeploy();
       await appPage.clickDashboardTab();
       await expect(dashboardPage.stagingCount().getText()).toBeGreaterThan(0);
