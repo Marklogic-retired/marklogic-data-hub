@@ -1,0 +1,18 @@
+{
+  "matchSummary": {
+    "URIsToProcess": [
+      "/com.marklogic.smart-mastering/merged/76595a4e4815fce65fc8fee52dd843bc.json"
+    ],
+    "actionDetails": {
+      "/com.marklogic.smart-mastering/merged/76595a4e4815fce65fc8fee52dd843bc.json": {
+        "action": "merge",
+        "threshold": "Definitive Match",
+        "uris": [
+          "/source/1/doc1.xml",
+          "/source/2/doc2.xml",
+          "/source/3/doc3.xml"
+        ]
+      }
+    }
+  }
+}

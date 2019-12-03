@@ -668,6 +668,7 @@ declare function proc-impl:process-match-and-merge-with-options(
   )
 };
 
+declare variable $archived-in-transaction as map:map := map:map();
 (:
  : Take the information from a match summary document and create the content objects necessary to
  : perform the actions.
@@ -727,9 +728,13 @@ declare function proc-impl:build-content-objects-from-match-summary(
                 return (
                   (: Archive documents :)
                   for $merged-uri in $uris-that-were-merged[fn:not(map:contains($all-action-details, .) or . = $merge-uri)]
-                  return util-impl:adjust-collections-on-document(
-                    $merged-uri,
-                    $on-archive-fun
+                  where fn:not(map:contains($archived-in-transaction, $merged-uri))
+                  return (
+                    util-impl:adjust-collections-on-document(
+                      $merged-uri,
+                      $on-archive-fun
+                    ),
+                    map:put($archived-in-transaction, $merged-uri, fn:true())
                   ),
                   $merged-doc-def
                     => map:get("audit-trace")
