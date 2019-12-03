@@ -106,7 +106,7 @@ export default function (qaProjectDir) {
       await browser.sleep(3000);
       await browser.wait(EC.visibilityOf(manageFlowPage.redeployDialog));
       await manageFlowPage.clickRedeployConfirmationButton("YES");
-      await browser.sleep(10000);
+      await browser.sleep(15000);
     });
 
     it('Should ingest JSON', async function () {
@@ -117,8 +117,9 @@ export default function (qaProjectDir) {
       await browser.sleep(3000);
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await editFlowPage.clickButtonRunCancel("flow");
-      await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
-      await browser.sleep(2000);
+      await browser.wait(EC.visibilityOf(editFlowPage.jobStartedTimestamp));
+      //await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
+      //await browser.sleep(2000);
       await console.log('finished latest job status appeared');
       //verify on edit flow view
       await editFlowPage.verifyFlow();
@@ -136,8 +137,9 @@ export default function (qaProjectDir) {
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await editFlowPage.clickButtonRunCancel("flow");
-      await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
-      await browser.sleep(2000);
+      await browser.wait(EC.visibilityOf(editFlowPage.jobStartedTimestamp));
+      //await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
+      //await browser.sleep(2000);
       //verify on edit flow view
       await editFlowPage.verifyFlow();
       // //verify on manage flows view
@@ -157,8 +159,9 @@ export default function (qaProjectDir) {
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await editFlowPage.clickButtonRunCancel("flow");
-      await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
-      await browser.sleep(2000);
+      await browser.wait(EC.visibilityOf(editFlowPage.jobStartedTimestamp));
+      //await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
+      //await browser.sleep(2000);
       //verify on edit flow view
       await editFlowPage.verifyFlow();
       //verify on manage flows view
@@ -177,8 +180,9 @@ export default function (qaProjectDir) {
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await editFlowPage.clickButtonRunCancel("flow");
-      await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
-      await browser.sleep(2000);
+      await browser.wait(EC.visibilityOf(editFlowPage.jobStartedTimestamp));
+      //await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
+      //await browser.sleep(2000);
       //verify on edit flow view
       await editFlowPage.verifyFlow();
       //verify on manage flows view
@@ -197,8 +201,9 @@ export default function (qaProjectDir) {
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await editFlowPage.clickButtonRunCancel("flow");
-      await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
-      await browser.sleep(2000);
+      await browser.wait(EC.visibilityOf(editFlowPage.jobStartedTimestamp));
+      //await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
+      //await browser.sleep(2000);
       //verify on edit flow view
       await editFlowPage.verifyFlow();
       //verify on manage flows view
@@ -217,8 +222,9 @@ export default function (qaProjectDir) {
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await editFlowPage.clickButtonRunCancel("flow");
-      await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
-      await browser.sleep(2000);
+      await browser.wait(EC.visibilityOf(editFlowPage.jobStartedTimestamp));
+      //await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
+      //await browser.sleep(2000);
       //verify on edit flow view
       await editFlowPage.verifyFlow();
       //verify on manage flows view
@@ -237,8 +243,9 @@ export default function (qaProjectDir) {
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await editFlowPage.clickButtonRunCancel("flow");
-      await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
-      await browser.sleep(2000);
+      await browser.wait(EC.visibilityOf(editFlowPage.jobStartedTimestamp));
+      //await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
+      //await browser.sleep(2000);
       await console.log('verify flow');
       await manageFlowPage.verifyFlow(flowData.flow4, "Finished", 1, 1, 0);
       await console.log('remove flow');
@@ -252,8 +259,9 @@ export default function (qaProjectDir) {
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await editFlowPage.clickButtonRunCancel("flow");
-      await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
-      await browser.sleep(2000);
+      await browser.wait(EC.visibilityOf(editFlowPage.jobStartedTimestamp));
+      //await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
+      //await browser.sleep(2000);
       //verify on edit flow view
       await editFlowPage.verifyFlow();
       //verify on manage flows view
@@ -264,8 +272,8 @@ export default function (qaProjectDir) {
     });
 
     it('Should verify ingest target format', async function () {
-      await manageFlowPage.createFlow(flowData.flow1);
-      await editFlowPage.addStep(flowData.flow1, json);
+      await manageFlowPage.createFlow(flowData.flow6);
+      await editFlowPage.addStep(flowData.flow6, json);
       await browser.sleep(5000);
       await expect(ingestStepPage.mlcpCommand.getText()).toContain("-document_type \"json\"");
       await ingestStepPage.setTargetFileType("XML");
@@ -293,10 +301,11 @@ export default function (qaProjectDir) {
 
     it('Should verify uri preview', async function () {
       await ingestStepPage.targetUriReplace.clear();
-      await ingestStepPage.targetUriReplace.sendKeys("/C/dev/fork/marklogic-data-hub/web/e2e/qa-project/input/flow-test/json/, '/web/e2e/qa-directory/'");
+      await ingestStepPage.targetUriReplace.sendKeys(".*web/e2e/qa-project/input/flow-test/json/,'/web/e2e/qa-directory/'");
       await expect(ingestStepPage.mlcpCommand.getText()).toContain("qa-directory");
       await ingestStepPage.targetUriReplace.clear();
-      await manageFlowPage.removeFlow(flowData.flow1);
+      await console.log('remove flow');
+      await manageFlowPage.removeFlow(flowData.flow6);
     });
 
     xit('Should logout', async function () {

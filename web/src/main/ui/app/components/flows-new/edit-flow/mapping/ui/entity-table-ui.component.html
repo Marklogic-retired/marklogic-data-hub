@@ -142,9 +142,8 @@
   <!-- NORMAL ROW -->
   <mat-row
     *matRowDef="let prop; columns: colsShown"
-    class="entity-row-{{entityName}}-{{prop.name}}"
     [hidden]="this.hasExternalRef(prop)"
-    [attr.name]="prop.name"
+    class="entity-row-{{entityName}}-{{prop.name}}"
   ></mat-row>
 
   <!-- NESTED ENTITY ROW -->
@@ -157,7 +156,7 @@
 </mat-table>
 
 <!-- PROPERTIES MENU -->
-<mat-menu id="list-menu-dialog" class="mat-menu-list" #fieldMenu="matMenu">
+<mat-menu class="mat-menu-list" #fieldMenu="matMenu">
   <ng-template matMenuContent let-indx="indx" let-prop="prop">
     <div
       id="field-value-{{srcProp.lastIndexOf('/') != -1 ? srcProp.slice(srcProp.lastIndexOf('/')+1) : srcProp}}"
