@@ -169,30 +169,30 @@ export default function(qaProjectDir) {
             browser.sleep(3000);
             // Mapping the source to entity
             // Map customerID to id
-            browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer("id")));
-            await mappingStepPage.clickSourcePropertyContainer("id");
+            browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer('Customer','id')));
+            await mappingStepPage.clickSourcePropertyContainer('Customer','id');
             browser.wait(EC.visibilityOf(mappingStepPage.propertySelectMenu("id")));
-            await mappingStepPage.clickMapSourceProperty("customerID", "id");
+            await mappingStepPage.clickPropertySelectMenu("customerID");
             // Map FirstName to firstname
-            browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer("firstname")));
-            await mappingStepPage.clickSourcePropertyContainer("firstname");
+            browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer('Customer', 'firstname')));
+            await mappingStepPage.clickSourcePropertyContainer('Customer', 'firstname');
             browser.wait(EC.visibilityOf(mappingStepPage.propertySelectMenu("firstname")));
-            await mappingStepPage.clickMapSourceProperty("FirstName", "firstname");
+            await mappingStepPage.clickPropertySelectMenu("FirstName");
             // Map LastName to lastname
-            browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer("lastname")));
-            await mappingStepPage.clickSourcePropertyContainer("lastname");
+            browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer('Customer', 'lastname')));
+            await mappingStepPage.clickSourcePropertyContainer('Customer', 'lastname');
             browser.wait(EC.visibilityOf(mappingStepPage.propertySelectMenu("lastname")));
-            await mappingStepPage.clickMapSourceProperty("LastName", "lastname");
+            await mappingStepPage.clickPropertySelectMenu("LastName");
             // Map Email to email
-            browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer("email")));
-            await mappingStepPage.clickSourcePropertyContainer("email");
+            browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer('Customer', 'email')));
+            await mappingStepPage.clickSourcePropertyContainer('Customer', 'email');
             browser.wait(EC.visibilityOf(mappingStepPage.propertySelectMenu("email")));
-            await mappingStepPage.clickMapSourceProperty("Email", "email");
+            await mappingStepPage.clickPropertySelectMenu("Email");
             // Map Postal to zip
-            browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer("zip")));
-            await mappingStepPage.clickSourcePropertyContainer("zip");
+            browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer('Customer', 'zip')));
+            await mappingStepPage.clickSourcePropertyContainer('Customer', 'zip');
             browser.wait(EC.visibilityOf(mappingStepPage.propertySelectMenu("zip")));
-            await mappingStepPage.clickMapSourceProperty("Postal", "zip");
+            await mappingStepPage.clickPropertySelectMenu("Postal");
             browser.sleep(10000);
             // Redeploy
             await appPage.flowsTab.click();
@@ -331,30 +331,30 @@ export default function(qaProjectDir) {
             browser.sleep(3000);
             // Mapping the source to entity
             // Map insurance_id to id
-            browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer("id")));
-            await mappingStepPage.clickSourcePropertyContainer("id");
+            browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer('Cutomer', 'id')));
+            await mappingStepPage.clickSourcePropertyContainer('Cutomer','id');
             browser.wait(EC.visibilityOf(mappingStepPage.propertySelectMenu("id")));
-            await mappingStepPage.clickMapSourceProperty("insurance_id", "id");
+            await mappingStepPage.clickPropertySelectMenu("insurance_id");
             // Map first_name to firstname
-            browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer("firstname")));
-            await mappingStepPage.clickSourcePropertyContainer("firstname");
+            browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer('Cutomer','firstname')));
+            await mappingStepPage.clickSourcePropertyContainer('Cutomer','firstname');
             browser.wait(EC.visibilityOf(mappingStepPage.propertySelectMenu("firstname")));
-            await mappingStepPage.clickMapSourceProperty("first_name", "firstname");
+            await mappingStepPage.clickPropertySelectMenu("first_name");
             // Map last_name to lastname
-            browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer("lastname")));
-            await mappingStepPage.clickSourcePropertyContainer("lastname");
+            browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer('Cutomer','lastname')));
+            await mappingStepPage.clickSourcePropertyContainer('Cutomer','lastname');
             browser.wait(EC.visibilityOf(mappingStepPage.propertySelectMenu("lastname")));
-            await mappingStepPage.clickMapSourceProperty("last_name", "lastname");
+            await mappingStepPage.clickPropertySelectMenu("last_name");
             // Map email to email
-            browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer("email")));
-            await mappingStepPage.clickSourcePropertyContainer("email");
+            browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer('Cutomer','email')));
+            await mappingStepPage.clickSourcePropertyContainer('Cutomer','email');
             browser.wait(EC.visibilityOf(mappingStepPage.propertySelectMenu("email")));
-            await mappingStepPage.clickMapSourceProperty("email", "email");
+            await mappingStepPage.clickPropertySelectMenu("email");
             // Map zip to zip
-            browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer("zip")));
-            await mappingStepPage.clickSourcePropertyContainer("zip");
+            browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer('Cutomer','zip')));
+            await mappingStepPage.clickSourcePropertyContainer('Cutomer','zip');
             browser.wait(EC.visibilityOf(mappingStepPage.propertySelectMenu("zip")));
-            await mappingStepPage.clickMapSourceProperty("zip", "zip");
+            await mappingStepPage.clickPropertySelectMenu("zip");
             browser.sleep(10000);
             // Redeploy
             await appPage.flowsTab.click();
@@ -497,30 +497,30 @@ export default function(qaProjectDir) {
             browser.sleep(3000);
             // Mapping the source to entity
             // Map insurance_id to id
-            browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer("id")));
-            await mappingStepPage.clickSourcePropertyContainer("id");
+            browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer('Customer','id')));
+            await mappingStepPage.clickSourcePropertyContainer('Customer','id');
             browser.wait(EC.visibilityOf(mappingStepPage.propertySelectMenu("id")));
-            await mappingStepPage.clickMapSourceProperty("insurance_id", "id");
+            await mappingStepPage.clickPropertySelectMenu("insurance_id");
             // Map first_name to firstname
-            browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer("firstname")));
-            await mappingStepPage.clickSourcePropertyContainer("firstname");
+            browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer('Customer','firstname')));
+            await mappingStepPage.clickSourcePropertyContainer('Customer','firstname');
             browser.wait(EC.visibilityOf(mappingStepPage.propertySelectMenu("firstname")));
-            await mappingStepPage.clickMapSourceProperty("first_name", "firstname");
+            await mappingStepPage.clickPropertySelectMenu("first_name");
             // Map last_name to lastname
-            browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer("lastname")));
-            await mappingStepPage.clickSourcePropertyContainer("lastname");
+            browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer('Customer','lastname')));
+            await mappingStepPage.clickSourcePropertyContainer('Customer','lastname');
             browser.wait(EC.visibilityOf(mappingStepPage.propertySelectMenu("lastname")));
-            await mappingStepPage.clickMapSourceProperty("last_name", "lastname");
+            await mappingStepPage.clickPropertySelectMenu("last_name");
             // Map email to email
-            browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer("email")));
-            await mappingStepPage.clickSourcePropertyContainer("email");
+            browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer('Customer','email')));
+            await mappingStepPage.clickSourcePropertyContainer('Customer','email');
             browser.wait(EC.visibilityOf(mappingStepPage.propertySelectMenu("email")));
-            await mappingStepPage.clickMapSourceProperty("email_addr", "email");
+            await mappingStepPage.clickPropertySelectMenu("email_addr");
             // Map zip to zip
-            browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer("zip")));
-            await mappingStepPage.clickSourcePropertyContainer("zip");
+            browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer('Customer','zip')));
+            await mappingStepPage.clickSourcePropertyContainer('Customer','zip');
             browser.wait(EC.visibilityOf(mappingStepPage.propertySelectMenu("zip")));
-            await mappingStepPage.clickMapSourceProperty("zip_code", "zip");
+            await mappingStepPage.clickPropertySelectMenu("zip_code");
             browser.sleep(10000);
             // Redeploy
             await appPage.flowsTab.click();
@@ -690,7 +690,7 @@ export default function(qaProjectDir) {
             await browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
             await browser.sleep(3000);
             // Add onMerge Collection
-            await masteringStepPage.clickMergeCollectionsAddButton();
+            await masteringStepPage.clickMergeCollectionsAction('onMerge');
             await browser.wait(EC.visibilityOf(masteringStepPage.mergeCollectionDialog));
             await masteringStepPage.clickMergeCollectionDialogEventMenu();
             await browser.wait(EC.elementToBeClickable(masteringStepPage.mergeCollectionDialogEventOptions("onMerge")));
@@ -700,7 +700,7 @@ export default function(qaProjectDir) {
             await browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
             await browser.sleep(3000);
             // Add onNotification Collection
-            await masteringStepPage.clickMergeCollectionsAddButton();
+            await masteringStepPage.clickMergeCollectionsAction('onMerge');
             await browser.wait(EC.visibilityOf(masteringStepPage.mergeCollectionDialog));
             await masteringStepPage.clickMergeCollectionDialogEventMenu();
             await browser.wait(EC.elementToBeClickable(masteringStepPage.mergeCollectionDialogEventOptions("onNotification")));
