@@ -58,7 +58,7 @@ const ExpandableTableView: React.FC<Props> = (props) => {
           primaryKeyValue = encodeURIComponent(props.item.uri);
         }
       }
-      itemEntityProperties.forEach((content: any) => {
+      Object.values(props.item.extracted.content[1]).forEach((content: any) => {
         data = parseJson(content);
       });
     })
