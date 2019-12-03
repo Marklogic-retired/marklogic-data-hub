@@ -25,18 +25,51 @@ function main(content, options) {
   const jobID = datahub.flow.globalContext.jobId;
   const urisPathReference = cts.pathReference('/matchSummary/URIsToProcess', ['type=string','collation=http://marklogic.com/collation/']);
   const datahubCreatedOnRef = cts.fieldReference('datahubCreatedOn', ['type=dateTime']);
-  let uriToTakeActionOn = content.uri;
+  const uriToTakeActionOn = content.uri;
   masteringStepLib.checkOptions(null, options, null, requiredOptionProperties);
-  let mergeOptions = new NodeBuilder().addNode({ options: options.mergeOptions }).toNode();
-  let matchSummaryCollection = `datahubMasteringMatchSummary${options.targetEntity ? `-${options.targetEntity}`:''}`;
+  const mergeOptions = new NodeBuilder().addNode({ options: options.mergeOptions }).toNode();
+  const matchSummaryCollection = `datahubMasteringMatchSummary${options.targetEntity ? `-${options.targetEntity}`:''}`;
+  const collectionQuery = cts.collectionQuery(matchSummaryCollection);
+  const uriRangeQuery = cts.rangeQuery(urisPathReference, '=', uriToTakeActionOn);
   let relatedMatchSummaries = cts.search(
     cts.andQuery([
-      cts.rangeQuery(urisPathReference, '=', uriToTakeActionOn),
-      cts.collectionQuery(matchSummaryCollection)
+      uriRangeQuery,
+      collectionQuery
     ]),
-    [cts.indexOrder(datahubCreatedOnRef, 'descending')]
+    ['unfiltered',cts.indexOrder(datahubCreatedOnRef, 'descending')]
   );
-  let matchSummaryJson = fn.head(relatedMatchSummaries).toObject();
+  let mostRecentMatchSummary = fn.head(relatedMatchSummaries);
+  let matchSummaryJson = mostRecentMatchSummary.toObject();
+  let uriActionDetails = matchSummaryJson.matchSummary.actionDetails[uriToTakeActionOn];
+  // If the action is merge, ensure we create the merge with the most URIs
+  if (uriActionDetails && uriActionDetails.action === 'merge') {
+    const urisQuery = cts.jsonPropertyValueQuery('uris', uriActionDetails.uris)
+    const postiveQuery = [
+      cts.jsonPropertyValueQuery('action', 'merge'),
+      urisQuery,
+      collectionQuery
+    ];
+    const otherMergesForURI = cts.search(
+        cts.andNotQuery(
+          cts.andQuery(postiveQuery),
+          uriRangeQuery
+        ),
+        ['unfiltered',cts.indexOrder(datahubCreatedOnRef, 'descending')]
+      ).toArray().map(
+        (result) => result.xpath(`/matchSummary/actionDetails/*[action = 'merge']`).toArray()
+          .filter((actionNode) => cts.contains(actionNode, urisQuery))[0].toObject()
+    );
+    if (otherMergesForURI.some((otherMerge) => otherMerge.uris.length > uriActionDetails.uris.length)) {
+      return Sequence.from([]);
+    }
+    otherMergesForURI.forEach((actionDetails) => actionDetails.uris.forEach(
+      (uri) => {
+        if (!uriActionDetails.uris.includes(uri)) {
+          uriActionDetails.uris.push(uri);
+        }
+      }
+    ));
+  }
   let results = mastering.buildContentObjectsFromMatchSummary(
     uriToTakeActionOn,
     matchSummaryJson,
