@@ -75,6 +75,9 @@ const Detail: React.FC<Props> = ({ history, location }) => {
   useEffect(() => {
     location.state && location.state.hasOwnProperty('selectedValue') && location.state.selectedValue === 'source' ?
       setSelected('full') : setSelected('instance');
+    if(location.state === undefined){
+      location.state = {};
+    }
   }, []);
 
 
@@ -103,6 +106,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
             </Menu>
           </div>
         </div>
+
         <div>
           {
             isLoading || user.error.type === 'ALERT' ? <div style={{ marginTop: '40px' }}>
@@ -110,9 +114,9 @@ const Detail: React.FC<Props> = ({ history, location }) => {
             </div>
               :
               contentType === 'json' ?
-                selected === 'instance' ? (data && <TableView document={data} contentType={contentType} />) : (data && <JsonView document={data} />)
+                selected === 'instance' ? (data && <TableView document={data} contentType={contentType} location={location.state.id} />) : (data && <JsonView document={data} />)
                 :
-                selected === 'instance' ? (data && <TableView document={data} contentType={contentType} />) : (data && <XmlView document={xml} />)
+                selected === 'instance' ? (data && <TableView document={data} contentType={contentType} location={location.state.id}/>) : (data && <XmlView document={xml} />)
           }
         </div>
       </Content>

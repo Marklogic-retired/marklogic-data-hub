@@ -144,7 +144,7 @@ const SearchResult: React.FC<Props> = (props) => {
           )}
         </div>
         <div style={{display: (show) ? 'block' : 'none'}} data-cy='expandable-view'>
-          <ExpandableTableView item={props.item}/>
+          <ExpandableTableView item={props.item} entityDefArray={props.entityDefArray} />
         </div>
       </div>
   )

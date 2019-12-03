@@ -4,6 +4,7 @@ import { Table } from 'antd';
 interface Props {
   document: any;
   contentType: string;
+  location: {};
 };
 
 const TableView: React.FC<Props> = (props) => {
@@ -11,13 +12,23 @@ const TableView: React.FC<Props> = (props) => {
 
   let data = new Array();
   let counter = 0;
+  let expandRow: number[] = [];
+  let currRow: number[] = [];
+
+
   const parseJson = (obj: Object) => {
     let parsedData = new Array();
     for (var i in obj) {
+      if (props.location && JSON.stringify(props.location) === JSON.stringify(obj[i])) {
+        expandRow = currRow.concat(expandRow);
+        expandRow.push(counter);
+      }
       if (obj[i] !== null && typeof (obj[i]) === "object") {
-        parsedData.push({ key: counter++, property: i, children: parseJson(obj[i]) });
+        currRow.push(counter);
+        parsedData.push({key: counter++, property: i, children: parseJson(obj[i])});
+        currRow.pop();
       } else {
-        parsedData.push({ key: counter++, property: i, value: typeof obj[i] === 'boolean' ? obj[i].toString() : obj[i] });
+        parsedData.push({key: counter++, property: i, value: typeof obj[i] === 'boolean' ? obj[i].toString() : obj[i]});
       }
     }
     return parsedData;
@@ -39,9 +50,11 @@ const TableView: React.FC<Props> = (props) => {
     }
   }
 
+
   const handleClick = () => {
     expanded === false ? setExpanded(true) : setExpanded(false)
   }
+
 
   const columns = [
     {
@@ -68,16 +81,18 @@ const TableView: React.FC<Props> = (props) => {
     }
   ];
 
+
   return (
-    <Table
-      className="document-table-demo"
-      rowKey="key"
-      dataSource={data}
-      columns={columns}
-      pagination={false}
-      data-cy="document-table"
-    />
-  );
+      <Table
+          className="document-table-demo"
+          rowKey="key"
+          dataSource={data}
+          columns={columns}
+          pagination={false}
+          data-cy="document-table"
+          defaultExpandedRowKeys={expandRow}
+      />
+  )
 }
 
 export default TableView;

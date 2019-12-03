@@ -165,30 +165,17 @@ const EntityTable: React.FC<Props> = (props) => {
     }
     return parsedEntity
   });
-  if (props.lastHarmonized.length > 0) {
+
     return (
         <Table
             rowKey="name"
             className="entity-table"
-            columns={columns}
+            columns={props.lastHarmonized.length > 0 ? columns : archColumns}
             expandedRowRender={expandedRowRender}
             dataSource={realData}
             pagination={{defaultPageSize: 20, size: 'small'}}
         />
     );
-  }
-  else {
-    return (
-        <Table
-            rowKey="name"
-            className="entity-table"
-            columns={archColumns}
-            expandedRowRender={expandedRowRender}
-            dataSource={realData}
-            pagination={{defaultPageSize: 20, size: 'small'}}
-        />
-    );
-  }
 }
 
 export default EntityTable;
