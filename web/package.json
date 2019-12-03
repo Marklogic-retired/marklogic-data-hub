@@ -119,6 +119,6 @@
     "tmp": "0.0.33",
     "ts-node": "~4.1.0",
     "tslint": "^5.20.1",
-    "typescript": "^3.7.2"
+    "typescript": "^3.2.2"
   }
 }
