@@ -30,4 +30,13 @@ return
     $doc,
     xdmp:default-permissions(),
     $const:CONTENT-COLL
+  ),
+for $match-summary-uri in ($lib:MATCH-SUMMARY-URI-1, $lib:MATCH-SUMMARY-URI-2)
+let $doc := test:get-test-file($match-summary-uri)
+return
+  xdmp:document-insert(
+    "/" || $match-summary-uri,
+    $doc,
+    xdmp:default-permissions(),
+    "datahubMasteringMatchSummary"
   )
