@@ -48,8 +48,11 @@ const ExpandableTableView: React.FC<Props> = (props) => {
 
   if (props.item.format === 'json' && props.item.hasOwnProperty('extracted')) {
     (props.item.extracted.content).forEach(contentObject => {
+      console.log(props.item.extracted.content);
       itemEntityName = Object.keys(contentObject);
+      console.log(itemEntityName);
       itemEntityProperties = Object.values<any>(contentObject);
+
       if (itemEntityName.length && props.entityDefArray.length && !itemEntityName[0].includes('headers')) {
         entityDef = props.entityDefArray.find(entity => entity.name === itemEntityName[0]);
         if (itemEntityProperties.length && entityDef.primaryKey) {
@@ -58,7 +61,7 @@ const ExpandableTableView: React.FC<Props> = (props) => {
           primaryKeyValue = encodeURIComponent(props.item.uri);
         }
       }
-      itemEntityProperties.forEach((content: any) => {
+      Object.values(props.item.extracted.content[1]).forEach((content: any) => {
         data = parseJson(content);
       });
     })
