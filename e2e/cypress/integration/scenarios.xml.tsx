@@ -154,3 +154,52 @@ describe('xml scenario on browse documents page', () => {
     });
 
 });
+
+describe('xml scenario for table on browse documents page', () => {
+
+    //login with valid account and go to /browse page
+    beforeEach(() => {
+        cy.visit('/');
+        cy.contains('Sign In');
+        cy.fixture('users').then(user => {
+            cy.login(user.username, user.password);
+        })
+        cy.wait(500);
+        // cy.visit('/browse');
+        cy.get('.ant-menu-item').contains('Browse Documents').click();
+        cy.wait(1000);
+        browsePage.getTableView();
+    });
+
+    it('select PersonXML entity and verify table', () => {
+        browsePage.selectEntity('PersonXML');
+        browsePage.getSelectedEntity().should('contain', 'PersonXML');
+        cy.wait(2000);
+        browsePage.getHubPropertiesExpanded();
+        browsePage.getTotalDocuments().should('be.greaterThan', '5')
+        //check table rows
+        browsePage.getTableRows().should('have.length', 6);
+        //check table columns
+        browsePage.getTableColumns().should('have.length', 4);
+        //check cells data
+        for (let i = 1; i <= 6; i++) {
+            for (let j = 2; j <= 4; j++) {
+                browsePage.getTableCell(i, j).should('not.be.empty')
+            }
+        }
+        for (let i = 1; i <= 6; i++) {
+            browsePage.getTablePkCell(i).should('not.be.empty')
+        }
+    });
+
+    it('search for a simple text/query and verify content', () => {
+        cy.wait(500);
+        browsePage.selectEntity('PersonXML');
+        browsePage.getSelectedEntity().should('contain', 'PersonXML');
+        cy.wait(2000);
+        browsePage.search('Hopkins');
+        browsePage.getTotalDocuments().should('be.equal', 2);
+        browsePage.getTableRows().should('have.length', 2);
+    });
+
+});
