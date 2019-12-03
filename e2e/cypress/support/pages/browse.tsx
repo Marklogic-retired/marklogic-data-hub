@@ -133,6 +133,37 @@ class BrowsePage {
         return cy.get('[data-cy=facet-view]').click();
     }
 
+    getTableView() {
+        return cy.get('[data-cy=table-view]').click();
+    }
+
+    //table 
+    getColumnTitle(index:number) {
+        return cy.get(`.ant-table-thead th:nth-child(${index}) .ant-table-column-title`).invoke('text');
+    }
+
+    getTableRows() {
+        return cy.get('.ant-table-row');
+    }
+
+    getTableColumns(){
+        return cy.get('.react-resizable');
+    }
+
+    getTableCell(rowIndex:number, columnIndex:number) {    
+        return cy.get(`.ant-table-row:nth-child(${rowIndex}) td:nth-child(${columnIndex}) div`).invoke('text')
+    }
+
+    getTableUriCell(rowIndex:number) {    
+        return cy.get(`.ant-table-row:nth-child(${rowIndex}) td:nth-child(1) div span`).invoke('text')
+    }
+
+    getTablePkCell(rowIndex:number) {    
+        return cy.get(`.ant-table-row:nth-child(${rowIndex}) td:nth-child(1) div a`).invoke('text')
+    }
+
+
+
 }
 
 export default BrowsePage;

@@ -155,3 +155,88 @@ describe('json scenario on browse documents page', () => {
     });
 
 });
+
+
+describe('json scenario for table on browse documents page', () => {
+
+    var facets: string[] = ['collection', 'flow'];
+
+    //login with valid account and go to /browse page
+    beforeEach(() => {
+        cy.visit('/');
+        cy.contains('Sign In');
+        cy.fixture('users').then(user => {
+            cy.login(user.username, user.password);
+        })
+        cy.wait(500);
+        // cy.visit('/browse');
+        cy.get('.ant-menu-item').contains('Browse Documents').click();
+        cy.wait(1000);
+        browsePage.getTableView();
+    });
+
+    it('select "all entities" and verify table default columns', () => {
+        browsePage.getSelectedEntity().should('contain', 'All Entities');
+        cy.wait(2000);
+        browsePage.getHubPropertiesExpanded();
+        browsePage.getTotalDocuments().should('be.greaterThan', '1008')
+        browsePage.getColumnTitle(1).should('contain', 'Identifier');
+        browsePage.getColumnTitle(2).should('contain', 'Entity');
+        browsePage.getColumnTitle(3).should('contain', 'File Type');
+        browsePage.getColumnTitle(4).should('contain', 'Created');
+
+        facets.forEach(function (item) {
+            browsePage.getFacet(item).should('exist');
+            browsePage.getFacetItems(item).should('exist');
+        })
+    });
+
+    it('select "all entities" and verify table', () => {
+        browsePage.getSelectedEntity().should('contain', 'All Entities');
+        cy.wait(2000);
+        browsePage.getHubPropertiesExpanded();
+        browsePage.getTotalDocuments().should('be.greaterThan', '1008')
+        //check table rows
+        browsePage.getTableRows().should('have.length', 10);
+        //check table columns
+        browsePage.getTableColumns().should('have.length', 4);
+        //check cells data
+        for (let i = 1; i <= 10; i++) {
+            for (let j = 2; j <= 4; j++) {
+                browsePage.getTableCell(i, j).should('not.be.empty')
+            }
+        }
+        for (let i = 1; i <= 10; i++) {
+            browsePage.getTableUriCell(i).should('not.be.empty')
+        }
+    });
+
+    it('select Person entity and verify table', () => {
+        browsePage.selectEntity('Person');
+        browsePage.getSelectedEntity().should('contain', 'Person');
+        cy.wait(2000);
+        browsePage.getHubPropertiesExpanded();
+        browsePage.getTotalDocuments().should('be.greaterThan', '5')
+        //check table rows
+        browsePage.getTableRows().should('have.length', 6);
+        //check table columns
+        browsePage.getTableColumns().should('have.length', 5);
+        //check cells data
+        for (let i = 1; i <= 6; i++) {
+            for (let j = 2; j <= 5; j++) {
+                browsePage.getTableCell(i, j).should('not.be.empty')
+            }
+        }
+        for (let i = 1; i <= 6; i++) {
+            browsePage.getTablePkCell(i).should('not.be.empty')
+        }
+    });
+
+    it('search for a simple text/query and verify content', () => {
+        cy.wait(500);
+        browsePage.search('Bill');
+        browsePage.getTotalDocuments().should('be.equal', 1);
+        browsePage.getTableRows().should('have.length', 1);
+    });
+
+});
