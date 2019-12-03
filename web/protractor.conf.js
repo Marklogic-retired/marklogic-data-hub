@@ -19,6 +19,7 @@ exports.config = {
       args: ["--headless", "--disable-gpu", "--window-size=1920x1080"]
     }
   },
+  //chromeDriver: './e2e/chromeDriver/chromedriver_75_lnx',
   directConnect: true,
   baseUrl: 'http://localhost:4200/',
   framework: 'jasmine2',

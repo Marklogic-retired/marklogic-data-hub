@@ -6,7 +6,6 @@ import browseData from './browse';
 import dashboard from './dashboard';
 import jobs from './jobs';
 import uninstall from './uninstall';
-import scenarios from './scenarios';
 
 import CUSTOM_MATCHERS from '../matchers'
 
@@ -48,9 +47,8 @@ describe('DataHub', function () {
   auth(qaProjectDirectory);
   entity(qaProjectDirectory);
   flows(qaProjectDirectory);
-  scenarios(qaProjectDirectory);
-  browseData(qaProjectDirectory);
   jobs(qaProjectDirectory);
+  browseData(qaProjectDirectory);
   dashboard(qaProjectDirectory);
   uninstall(qaProjectDirectory);
 });
