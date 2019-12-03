@@ -61,49 +61,49 @@ export default function (qaProjectDir) {
       await entityPage.getPropertyName(lastProperty).sendKeys('lastname');
       await entityPage.getPropertyType(lastProperty).element(by.cssContainingText('option', 'string')).click();
       await entityPage.saveEntity.click();
-      browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
+      await browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
       await entityPage.confirmDialogYesButton.click();
-      browser.wait(EC.visibilityOf(entityPage.getEntityBox('Jobs')));
+      await browser.wait(EC.visibilityOf(entityPage.getEntityBox('Jobs')));
       await entityPage.toolsButton.click();
     });
 
     it('should create json flow', async function () {
       await appPage.flowsTab.click();
       await manageFlowPage.clickNewFlowButton();
-      browser.wait(EC.visibilityOf(manageFlowPage.flowDialogBoxHeader("New Flow")));
+      await browser.wait(EC.visibilityOf(manageFlowPage.flowDialogBoxHeader("New Flow")));
       await manageFlowPage.setFlowForm("name", "SimpleFlow");
       await manageFlowPage.clickFlowCancelSave("save");
-      browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleFlow")));
+      await browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleFlow")));
       await expect(manageFlowPage.flowName("SimpleFlow").getText()).toEqual("SimpleFlow");
     });
 
     it('should create ingestion step and run the flow', async function () {
       await appPage.flowsTab.click();
-      browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleFlow")));
+      await browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleFlow")));
       await manageFlowPage.clickFlowname("SimpleFlow");
-      browser.sleep(5000);
-      browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
+      await browser.sleep(10000);
+      await browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
       await editFlowPage.clickNewStepButton();
-      browser.wait(EC.visibilityOf(stepsPage.stepDialogBoxHeader("New Step")));
+      await browser.wait(EC.visibilityOf(stepsPage.stepDialogBoxHeader("New Step")));
       await stepsPage.clickStepTypeDropDown();
-      browser.wait(EC.visibilityOf(stepsPage.stepTypeOptions("Ingestion")));
+      await browser.wait(EC.visibilityOf(stepsPage.stepTypeOptions("Ingestion")));
       await stepsPage.clickStepTypeOption("Ingestion");
-      browser.wait(EC.visibilityOf(stepsPage.stepName));
+      await browser.wait(EC.visibilityOf(stepsPage.stepName));
       await stepsPage.setStepName("SimpleJSONIngest");
       await stepsPage.setStepDescription("Ingest SimpleJSON docs");
       await stepsPage.clickStepCancelSave("save");
-      browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
-      browser.sleep(3000);
+      await browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
+      await browser.sleep(3000);
       await expect(stepsPage.stepDetailsName.getText()).toEqual("SimpleJSONIngest");
-      await ingestStepPage.setInputFilePath(qaProjectDir + "/input/mastering-data");
-      browser.sleep(3000);
+      await ingestStepPage.setInputFilePath(qaProjectDir + "/input/flow-test/json");
+      await browser.sleep(6000);
       await editFlowPage.clickRunFlowButton();
-      browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
+      await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await editFlowPage.clickButtonRunCancel("flow");
       await browser.sleep(5000);
       await browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
       // Verify on Job Detail page
-      await appPage.flowsTab.click()
+      await appPage.flowsTab.click();
       await browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleFlow")));
       await manageFlowPage.clickLastJobFinished("SimpleFlow");
       await browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
@@ -116,61 +116,61 @@ export default function (qaProjectDir) {
       await expect(jobDetailsPage.stepCommitted("SimpleJSONIngest").getText()).toEqual("6");
       await jobDetailsPage.clickStepCommitted("SimpleJSONIngest");
       // Verify on Browse Data page
-      browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
-      browser.sleep(5000);
-      expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 6 of 6');
+      await browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
+      await browser.sleep(5000);
+      await expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 6 of 6');
       await expect(browsePage.facetName("SimpleJSONIngest").getText()).toEqual("SimpleJSONIngest");
       // Verify on Manage Flows page
-      await appPage.flowsTab.click()
-      browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleFlow")));
+      await appPage.flowsTab.click();
+      await browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleFlow")));
       await expect(manageFlowPage.status("SimpleFlow").getText()).toEqual("Finished");
       await expect(manageFlowPage.docsCommitted("SimpleFlow").getText()).toEqual("6");
     });
 
     it('should create mapping step and run the flow', async function () {
       await appPage.flowsTab.click();
-      browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleFlow")));
+      await browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleFlow")));
       await manageFlowPage.clickFlowname("SimpleFlow");
-      browser.sleep(5000);
-      browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
+      await browser.sleep(5000);
+      await browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
       await editFlowPage.clickNewStepButton();
-      browser.wait(EC.visibilityOf(stepsPage.stepDialogBoxHeader("New Step")));
+      await browser.wait(EC.visibilityOf(stepsPage.stepDialogBoxHeader("New Step")));
       await stepsPage.clickStepTypeDropDown();
-      browser.wait(EC.visibilityOf(stepsPage.stepTypeOptions("Mapping")));
+      await browser.wait(EC.visibilityOf(stepsPage.stepTypeOptions("Mapping")));
       await stepsPage.clickStepTypeOption("Mapping");
-      browser.wait(EC.visibilityOf(stepsPage.stepName));
+      await browser.wait(EC.visibilityOf(stepsPage.stepName));
       await stepsPage.setStepName("SimpleJSONMapping");
       await stepsPage.setStepDescription("Mapping SimpleJSON docs");
       await stepsPage.clickSourceTypeRadioButton("collection");
-      browser.wait(EC.elementToBeClickable(stepsPage.stepSourceCollectionDropDown));
+      await browser.wait(EC.elementToBeClickable(stepsPage.stepSourceCollectionDropDown));
       await stepsPage.clickStepSourceCollectionDropDown();
-      browser.wait(EC.elementToBeClickable(stepsPage.stepSourceCollectionOptions("SimpleJSONIngest")));
+      await browser.wait(EC.elementToBeClickable(stepsPage.stepSourceCollectionOptions("SimpleJSONIngest")));
       await stepsPage.clickStepSourceCollectionOption("SimpleJSONIngest");
       await stepsPage.clickStepTargetEntityDropDown();
-      browser.wait(EC.elementToBeClickable(stepsPage.stepTargetEntityOptions("Jobs")));
-      browser.sleep(5000);
+      await browser.wait(EC.elementToBeClickable(stepsPage.stepTargetEntityOptions("Jobs")));
+      await browser.sleep(5000);
       await stepsPage.clickStepTargetEntityOption("Jobs");
       await stepsPage.clickStepCancelSave("save");
-      browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
-      browser.sleep(3000);
+      await browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
+      await browser.sleep(3000);
       // Mapping the source to entity
       // Map prop1 to id
-      browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer("id")));
-      await mappingStepPage.clickSourcePropertyContainer("id");
-      browser.wait(EC.visibilityOf(mappingStepPage.propertySelectMenu("id")));
-      await mappingStepPage.clickMapSourceProperty("prop1", "id");
+      await browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer('Jobs','id')));
+      await mappingStepPage.clickSourcePropertyContainer('Jobs','id');
+      await browser.wait(EC.visibilityOf(mappingStepPage.propertySelectMenu("id")));
+      await mappingStepPage.clickPropertySelectMenu("id");
       // Map prop2 to firstname
-      browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer("firstname")));
-      await mappingStepPage.clickSourcePropertyContainer("firstname");
-      browser.wait(EC.visibilityOf(mappingStepPage.propertySelectMenu("firstname")));
-      await mappingStepPage.clickMapSourceProperty("prop2", "firstname");
+      await browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer('Jobs','firstname')));
+      await mappingStepPage.clickSourcePropertyContainer('Jobs','firstname');
+      await browser.wait(EC.visibilityOf(mappingStepPage.propertySelectMenu("fname")));
+      await mappingStepPage.clickPropertySelectMenu("fname");
       // Map prop3 to lastname
-      browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer("lastname")));
-      await mappingStepPage.clickSourcePropertyContainer("lastname");
-      browser.wait(EC.visibilityOf(mappingStepPage.propertySelectMenu("lastname")));
-      await mappingStepPage.clickMapSourceProperty("prop3", "lastname");
-      browser.sleep(10000);
-      // Redeploy
+      await browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer('Jobs','lastname')));
+      await mappingStepPage.clickSourcePropertyContainer('Jobs','lastname');
+      await browser.wait(EC.visibilityOf(mappingStepPage.propertySelectMenu("lname")));
+      await mappingStepPage.clickPropertySelectMenu("lname");
+      await browser.sleep(5000);
+      /* Redeploy
       await appPage.flowsTab.click();
       browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleFlow")));
       await manageFlowPage.clickRedeployButton();
@@ -180,9 +180,9 @@ export default function (qaProjectDir) {
       browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleFlow")));
       await manageFlowPage.clickFlowname("SimpleFlow");
       browser.sleep(5000);
-      browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
+      browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));*/
       await editFlowPage.clickRunFlowButton();
-      browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
+      await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       // unselect run all
       await editFlowPage.selectRunAll();
       await editFlowPage.selectStepToRun("SimpleJSONMapping");
@@ -203,13 +203,13 @@ export default function (qaProjectDir) {
       await expect(jobDetailsPage.stepCommitted("SimpleJSONMapping").getText()).toEqual("6");
       await jobDetailsPage.clickStepCommitted("SimpleJSONMapping");
       // Verify on Browse Data page
-      browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
-      browser.sleep(5000);
+      await browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
+      await browser.sleep(5000);
       expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 6 of 6');
       await expect(browsePage.facetName("SimpleJSONMapping").getText()).toEqual("SimpleJSONMapping");
       // Verify on Manage Flows page
       await appPage.flowsTab.click();
-      browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleFlow")));
+      await browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleFlow")));
       await expect(manageFlowPage.status("SimpleFlow").getText()).toEqual("Finished");
       await expect(manageFlowPage.docsCommitted("SimpleFlow").getText()).toEqual("6");
     });
@@ -262,8 +262,8 @@ export default function (qaProjectDir) {
       await masteringStepPage.clickMatchThresholdDialogActionOptions("Merge");
       await masteringStepPage.clickMatchThresholdCancelSaveButton("save");
       await browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
-      await browser.sleep(3000);
-      // Redeploy
+      await browser.sleep(5000);
+      /* Redeploy
       await appPage.flowsTab.click();
       await browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleFlow")));
       await manageFlowPage.clickRedeployButton();
@@ -273,7 +273,7 @@ export default function (qaProjectDir) {
       await browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleFlow")));
       await manageFlowPage.clickFlowname("SimpleFlow");
       await browser.sleep(5000);
-      await browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
+      await browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));*/
       await editFlowPage.clickRunFlowButton();
       await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       // unselect run all
@@ -283,7 +283,7 @@ export default function (qaProjectDir) {
       await browser.sleep(10000);
       await browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
       // Verify on Job Detail page
-      await appPage.flowsTab.click()
+      await appPage.flowsTab.click();
       await browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleFlow")));
       await manageFlowPage.clickLastJobFinished("SimpleFlow");
       await browser.wait(EC.visibilityOf(jobDetailsPage.jobDetailsPageHeader));
@@ -304,38 +304,38 @@ export default function (qaProjectDir) {
     it('should create xml flow', async function () {
       await appPage.flowsTab.click();
       await manageFlowPage.clickNewFlowButton();
-      browser.wait(EC.visibilityOf(manageFlowPage.flowDialogBoxHeader("New Flow")));
+      await browser.wait(EC.visibilityOf(manageFlowPage.flowDialogBoxHeader("New Flow")));
       await manageFlowPage.setFlowForm("name", "xmlFlow");
       await manageFlowPage.clickFlowCancelSave("save");
-      browser.wait(EC.visibilityOf(manageFlowPage.flowName("xmlFlow")));
+      await browser.wait(EC.visibilityOf(manageFlowPage.flowName("xmlFlow")));
       await expect(manageFlowPage.flowName("xmlFlow").getText()).toEqual("xmlFlow");
     });
 
     it('should create ingestion step and run the flow', async function () {
       await appPage.flowsTab.click();
-      browser.wait(EC.visibilityOf(manageFlowPage.flowName("xmlFlow")));
+      await browser.wait(EC.visibilityOf(manageFlowPage.flowName("xmlFlow")));
       await manageFlowPage.clickFlowname("xmlFlow");
-      browser.sleep(5000);
-      browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
+      await browser.sleep(5000);
+      await browser.wait(EC.elementToBeClickable(editFlowPage.newStepButton));
       await editFlowPage.clickNewStepButton();
-      browser.wait(EC.visibilityOf(stepsPage.stepDialogBoxHeader("New Step")));
+      await browser.wait(EC.visibilityOf(stepsPage.stepDialogBoxHeader("New Step")));
       await stepsPage.clickStepTypeDropDown();
-      browser.wait(EC.visibilityOf(stepsPage.stepTypeOptions("Ingestion")));
+      await browser.wait(EC.visibilityOf(stepsPage.stepTypeOptions("Ingestion")));
       await stepsPage.clickStepTypeOption("Ingestion");
-      browser.wait(EC.visibilityOf(stepsPage.stepName));
+      await browser.wait(EC.visibilityOf(stepsPage.stepName));
       await stepsPage.setStepName("xmlIngest");
       await stepsPage.setStepDescription("Ingest xml docs");
       await stepsPage.clickStepCancelSave("save");
-      browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
-      browser.sleep(3000);
+      await browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
+      await browser.sleep(3000);
       await expect(stepsPage.stepDetailsName.getText()).toEqual("xmlIngest");
       await ingestStepPage.setInputFilePath(qaProjectDir + "/input/flow-test/xml");
-      browser.sleep(3000);
+      await browser.sleep(6000);
       await ingestStepPage.clickSourceFileTypeDropDown();
       await browser.wait(EC.elementToBeClickable(ingestStepPage.sourceFileTypeOptions("XML")));
       await ingestStepPage.clickSourceFileTypeOption("XML");
       await editFlowPage.clickRunFlowButton();
-      browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
+      await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
       await editFlowPage.clickButtonRunCancel("flow");
       await browser.sleep(5000);
       await browser.wait(EC.elementToBeClickable(editFlowPage.finishedLatestJobStatus));
@@ -353,13 +353,13 @@ export default function (qaProjectDir) {
       await expect(jobDetailsPage.stepCommitted("xmlIngest").getText()).toEqual("1");
       await jobDetailsPage.clickStepCommitted("xmlIngest");
       // Verify on Browse Data page
-      browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
-      browser.sleep(5000);
-      expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 1 of 1');
+      await browser.wait(EC.visibilityOf(browsePage.resultsPagination()));
+      await browser.sleep(5000);
+      await expect(browsePage.resultsPagination().getText()).toContain('Showing Results 1 to 1 of 1');
       await expect(browsePage.facetName("xmlIngest").getText()).toEqual("xmlIngest");
       // Verify on Manage Flows page
       await appPage.flowsTab.click();
-      browser.wait(EC.visibilityOf(manageFlowPage.flowName("xmlFlow")));
+      await browser.wait(EC.visibilityOf(manageFlowPage.flowName("xmlFlow")));
       await expect(manageFlowPage.status("xmlFlow").getText()).toEqual("Finished");
       await expect(manageFlowPage.docsCommitted("xmlFlow").getText()).toEqual("1");
     });
@@ -473,43 +473,6 @@ export default function (qaProjectDir) {
       await appPage.clickJobsTab();
       await jobsPage.clickViewFlowButton(flowData.xmlFlow.flowName);
       await expect(editFlowPage.flowName.getText()).toBe(flowData.xmlFlow.flowName);
-    });
-
-    // Cleanup
-    it('should delete json flow', async function () {
-      await appPage.flowsTab.click();
-      browser.wait(EC.visibilityOf(manageFlowPage.flowName(flowData.simpleFlow.flowName)));
-      await manageFlowPage.clickFlowMenu(flowData.simpleFlow.flowName);
-      browser.wait(EC.visibilityOf(manageFlowPage.flowMenuPanel));
-      browser.wait(EC.elementToBeClickable(manageFlowPage.flowMenuOptions("delete")));
-      await manageFlowPage.clickFlowMenuOption("delete");
-      browser.wait(EC.visibilityOf(manageFlowPage.deleteFlowHeader));
-      await manageFlowPage.clickDeleteConfirmationButton("YES");
-      browser.wait(EC.invisibilityOf(manageFlowPage.deleteFlowHeader));
-      browser.wait(EC.invisibilityOf(manageFlowPage.flowName(flowData.simpleFlow.flowName)));
-    });
-
-    it('should delete xml Flow', async function () {
-      await appPage.flowsTab.click();
-      browser.wait(EC.visibilityOf(manageFlowPage.flowName(flowData.xmlFlow.flowName)));
-      await manageFlowPage.clickFlowMenu(flowData.xmlFlow.flowName);
-      browser.wait(EC.visibilityOf(manageFlowPage.flowMenuPanel));
-      browser.wait(EC.elementToBeClickable(manageFlowPage.flowMenuOptions("delete")));
-      await manageFlowPage.clickFlowMenuOption("delete");
-      browser.wait(EC.visibilityOf(manageFlowPage.deleteFlowHeader));
-      await manageFlowPage.clickDeleteConfirmationButton("YES");
-      browser.wait(EC.invisibilityOf(manageFlowPage.deleteFlowHeader));
-      browser.wait(EC.invisibilityOf(manageFlowPage.flowName(flowData.xmlFlow.flowName)));
-    });
-
-    it('should delete jobs entity', async function () {
-      await appPage.entitiesTab.click();
-      await browser.wait(EC.visibilityOf(entityPage.toolsButton));
-      await entityPage.clickDeleteEntity('Jobs');
-      await browser.sleep(5000);
-      await browser.wait(EC.elementToBeClickable(entityPage.confirmDialogYesButton));
-      await entityPage.confirmDialogYesButton.click();
-      await browser.sleep(1000);
     });
   });
 }

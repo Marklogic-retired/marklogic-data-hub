@@ -26,7 +26,7 @@ export class DashboardPage extends AppPage {
     await browser.wait(EC.elementToBeClickable(dashboardPage.clearButton));
     await dashboardPage.clearButton.click();
     await browser.wait(EC.textToBePresentInElement(this.jobCount(), '0'));
-    await browser.sleep(1000);
+    await browser.sleep(5000);
   }
 
   async clearJobDatabase() {

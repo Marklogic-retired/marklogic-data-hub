@@ -261,29 +261,30 @@ export default function (qaProjectDir) {
     it('validate mapping', async function () {
       // Mapping the source to entity
       // Map prop1 to id
-      await browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer("id")));
-      await mappingStepPage.clickSourcePropertyContainer("id");
-      await browser.wait(EC.visibilityOf(mappingStepPage.propertySelectMenu("id")));
-      await mappingStepPage.clickMapSourceProperty("prop1", "id");
+      await browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer('SimpleJSON','id')));
+      await expect(mappingStepPage.sourcePropertyContainer('SimpleJSON', 'id').isDisplayed).toBeTruthy();
+      await mappingStepPage.clickSourcePropertyContainer('SimpleJSON','id');
+      await browser.wait(EC.visibilityOf(mappingStepPage.propertySelectMenu("prop1")));
+      await expect(mappingStepPage.propertySelectMenu('prop1').isDisplayed).toBeTruthy();
+      await mappingStepPage.clickPropertySelectMenu('prop1');
       // Map prop2 to firstname
-      await browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer("firstname")));
-      await mappingStepPage.clickSourcePropertyContainer("firstname");
-      await browser.wait(EC.visibilityOf(mappingStepPage.propertySelectMenu("firstname")));
-      await mappingStepPage.clickMapSourceProperty("prop2", "firstname");
+      await browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer('SimpleJSON', 'firstname')));
+      await expect(mappingStepPage.sourcePropertyContainer('SimpleJSON', 'firstname').isDisplayed).toBeTruthy();
+      await mappingStepPage.clickSourcePropertyContainer('SimpleJSON','firstname');
+      await browser.wait(EC.visibilityOf(mappingStepPage.propertySelectMenu("prop2")));
+      await expect(mappingStepPage.propertySelectMenu('prop2').isDisplayed).toBeTruthy();
+      await mappingStepPage.clickPropertySelectMenu('prop2');
       // Map prop3 to lastname
-      await browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer("lastname")));
-      await mappingStepPage.clickSourcePropertyContainer("lastname");
-      await browser.wait(EC.visibilityOf(mappingStepPage.propertySelectMenu("lastname")));
-      await mappingStepPage.clickMapSourceProperty("prop3", "lastname");
-      await browser.sleep(10000);
-      await expect(mappingStepPage.source.isDisplayed()).toBe(true);
-      await expect(mappingStepPage.entity.isDisplayed()).toBe(true);
-      await expect(mappingStepPage.sourceHelpLink)
-        .toEqual("https://marklogic.github.io/marklogic-data-hub/harmonize/mapping/#changing-the-mapping-source-document");
-      await expect(mappingStepPage.targetSourceLink)
-        .toEqual("https://marklogic.github.io/marklogic-data-hub/refs/index-settings/");
-      await expect(mappingStepPage.entityPropertyName("id").getText()).toEqual("id");
-      await expect(mappingStepPage.entityPropertyType("id").getText()).toEqual("string");
+      await browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer('SimpleJSON', 'lastname')));
+      await expect(mappingStepPage.sourcePropertyContainer('SimpleJSON', 'lastname').isDisplayed).toBeTruthy();
+      await mappingStepPage.clickSourcePropertyContainer('SimpleJSON','lastname');
+      await browser.wait(EC.visibilityOf(mappingStepPage.propertySelectMenu("prop3")));
+      await expect(mappingStepPage.propertySelectMenu('prop3').isDisplayed).toBeTruthy();
+      await mappingStepPage.clickPropertySelectMenu('prop3');
+      await browser.sleep(3000);
+      //await expect(mappingStepPage.source.isDisplayed()).toBe(true);
+      //await expect(mappingStepPage.entity.isDisplayed()).toBe(true);
+      await expect(mappingStepPage.verifyExpressionText('SimpleJSON', 'id').getAttribute("value")).toEqual('id');
     });
 
     it('validate run mapping step', async function () {
@@ -431,16 +432,14 @@ export default function (qaProjectDir) {
     it('validate add merge collections fields', async function () {
       await masteringStepPage.clickMasteringTab('Merging');
       await browser.sleep(2000);
-      await browser.wait(EC.elementToBeClickable(masteringStepPage.mergeCollectionsAddButton));
-      await masteringStepPage.clickMergeCollectionsAddButton();
+      await browser.wait(EC.elementToBeClickable(masteringStepPage.mergeCollectionsAction('onMerge')));
+      await masteringStepPage.clickMergeCollectionsAction('onMerge');
+      await expect(masteringStepPage.editMergeCollection.isDisplayed).toBeTruthy();
+      await masteringStepPage.clickEditMergeCollection();
       await browser.sleep(1000);
-      await expect(masteringStepPage.mergeCollectionEventField.isDisplayed()).toBe(true);
-      await expect(masteringStepPage.mergeCollectionsToAddButton.isDisplayed()).toBe(true);
-      await expect(masteringStepPage.mergeCollectionsToAddRemoveButton.isDisplayed()).toBe(true);
-      await expect(masteringStepPage.mergeCollectionsToRemoveAddButton.isDisplayed()).toBe(true);
-      await expect(masteringStepPage.mergeCollectionsToRemoveRemoveButton.isDisplayed()).toBe(true);
-      await expect(masteringStepPage.mergeCollectionsToSetAddButton.isDisplayed()).toBe(true);
-      await expect(masteringStepPage.mergeCollectionsToSetRemoveButton.isDisplayed()).toBe(true);
+      await expect(masteringStepPage.editMergeCollectionEventField.isDisplayed()).toBe(true);
+      await expect(masteringStepPage.mergeCollectionsAddButton.isDisplayed()).toBe(true);
+      await expect(masteringStepPage.mergeCollectionsRemoveButton.isDisplayed()).toBe(true)
       await masteringStepPage.clickMergeCollectionCancelSaveButton("save");
     });
 
