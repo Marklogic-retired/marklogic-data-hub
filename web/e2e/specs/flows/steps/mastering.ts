@@ -8,6 +8,7 @@ import masteringStepPage from "../../../page-objects/steps/masteringStep";
 import entityPage from "../../../page-objects/entities/entities";
 import flowData from "../../../test-objects/flowConfig";
 import stepsData from "../../../test-objects/stepConfig";
+var shell = require('shelljs');
 
 export default function (qaProjectDir) {
   describe('Verify mastering step test', () => {
@@ -576,9 +577,10 @@ export default function (qaProjectDir) {
       await stepsPage.clickStepCancelSave("cancel");
     });
 
-     it('should remove flow', async function () {
+     it('should remove flow and any mappings', async function () {
       await appPage.flowsTab.click();
       await manageFlowPage.removeFlow(flow);
+      shell.rm('-rf', qaProjectDir+'/mappings/*')
     });
 
     it('should remove Person entity', async function () {

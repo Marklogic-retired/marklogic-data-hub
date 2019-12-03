@@ -1174,29 +1174,41 @@ export class MasteringStep extends AppPage {
 
   // Merge Collections
 
-  get mergeCollectionsAddButton() {
-    return element(by.css("#merge-collections button.new-collection-button"));
+  /**
+   * @param event = [onMerge/onNoMatch/onArchive/onNotification]
+   */
+  mergeCollectionsAction(event: string) {
+    event = event.toLowerCase();
+    return element(by.css(`.merge-collections-${event} .merge-collection-menu`));
   }
 
-  async clickMergeCollectionsAddButton() {
-    let button = this.mergeCollectionsAddButton;
+  async clickMergeCollectionsAction(event: string) {
+    let button = this.mergeCollectionsAction(event);
     await browser.wait(EC.elementToBeClickable(button));
     return await button.click();
+  }
+
+  get editMergeCollection() {
+    return element(by.css('.merge-collection-menu-edit-btn'));
+  }
+
+  async clickEditMergeCollection() {
+    return await this.editMergeCollection.click();
   }
 
   get mergeCollectionsTable() {
     return element(by.id("merge-collections-table"));
   }
 
-  get mergeCollectionEventField() {
-    return element(by.id("merge-collection-event"))
+  get editMergeCollectionEventField() {
+    return element(by.id("event-name"))
   }
 
-  get mergeCollectionsToAddButton() {
+  get mergeCollectionsAddButton() {
     return element(by.id("merge-collection-add-add-btn"))
   }
 
-  get mergeCollectionsToAddRemoveButton() {
+  get mergeCollectionsRemoveButton() {
     return element(by.css(".add-remove-collection-btn"))
   }
 

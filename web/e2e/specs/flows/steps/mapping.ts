@@ -44,17 +44,19 @@ export default function (qaProjectDir) {
 
     it('should create and run ingest step', async function () {
       await editFlowPage.addStep(flow1, ingestion);
+      await browser.sleep(5000);
       await editFlowPage.clickRunFlowButton();
-      await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader));
+      await browser.wait(EC.visibilityOf(editFlowPage.runFlowHeader), 2000);
       await editFlowPage.clickButtonRunCancel("flow");
       await browser.wait(EC.visibilityOf(editFlowPage.finishedLatestJobStatus));
     });
 
     it('should create mapping step with name, description and target entity', async function () {
+      await appPage.clickFlowTab();
       await editFlowPage.addStep(flow1, mapping);
     });
 
-    it('should verify source and entity help links', async function () {
+    xit('should verify source and entity help links', async function () {
       await stepsPage.stepSelectContainer(mapping.stepName).click();
       await expect(mappingStepPage.sourceHelpLink)
         .toEqual("https://marklogic.github.io/marklogic-data-hub/harmonize/mapping/#changing-the-mapping-source-document");
@@ -77,56 +79,58 @@ export default function (qaProjectDir) {
     it('should create mappings', async function () {
       //create mappings for the properties
       await console.log('checking if entity properties are displaying correctly');
-      await expect(mappingStepPage.entityPropertyName('id').isDisplayed).toBeTruthy();
+      await expect(mappingStepPage.entityPropertyContainer('Person','id').isDisplayed).toBeTruthy();
       await console.log('add mapping for id property');
-      await browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer('id')));
-      await mappingStepPage.clickSourcePropertyContainer('id');
+      await expect(mappingStepPage.sourcePropertyContainer('Person', 'id').isDisplayed).toBeTruthy();
+      await mappingStepPage.clickSourcePropertyContainer('Person','id');
       await browser.wait(EC.visibilityOf(mappingStepPage.propertySelectMenu('id')));
-      await mappingStepPage.clickMapSourceProperty('id', 'id');
-      await expect(mappingStepPage.verifySourcePropertyName('id').getText()).toEqual('id');
-      await expect(mappingStepPage.verifySourcePropertyTypeByName('id', 'number').getText()).toEqual('number');
+      await expect(mappingStepPage.propertySelectMenu('id').isDisplayed).toBeTruthy();
+      await mappingStepPage.clickPropertySelectMenu('id');
+      await expect(mappingStepPage.verifyExpressionText('Person','id').getAttribute("value")).toEqual('id');
 
       await console.log('checking if entity properties are displaying correctly');
-      await expect(mappingStepPage.entityPropertyName('fname').isDisplayed).toBeTruthy();
-      await console.log('add mapping for id property');
-      await browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer('fname')));
-      await mappingStepPage.clickSourcePropertyContainer('fname');
+      await expect(mappingStepPage.entityPropertyContainer('Person','fname').isDisplayed).toBeTruthy();
+      await console.log('add mapping for fname property');
+      await expect(mappingStepPage.sourcePropertyContainer('Person', 'fname').isDisplayed).toBeTruthy();
+      await mappingStepPage.clickSourcePropertyContainer('Person','fname');
       await browser.wait(EC.visibilityOf(mappingStepPage.propertySelectMenu('fname')));
-      await mappingStepPage.clickMapSourceProperty('fname', 'fname');
-      await expect(mappingStepPage.verifySourcePropertyName('fname').getText()).toEqual('fname');
-      await expect(mappingStepPage.verifySourcePropertyTypeByName('fname', 'string').getText()).toEqual('string');
+      await expect(mappingStepPage.propertySelectMenu('fname').isDisplayed).toBeTruthy();
+      await mappingStepPage.clickPropertySelectMenu('fname');
+      await expect(mappingStepPage.verifyExpressionText('Person','fname').getAttribute("value")).toEqual('fname');
 
       await console.log('checking if entity properties are displaying correctly');
-      await expect(mappingStepPage.entityPropertyName('lname').isDisplayed).toBeTruthy();
-      await console.log('add mapping for id property');
-      await browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer('lname')));
-      await mappingStepPage.clickSourcePropertyContainer('lname');
+      await expect(mappingStepPage.entityPropertyContainer('Person','lname').isDisplayed).toBeTruthy();
+      await console.log('add mapping for lname property');
+      await expect(mappingStepPage.sourcePropertyContainer('Person', 'lname').isDisplayed).toBeTruthy();
+      await mappingStepPage.clickSourcePropertyContainer('Person','lname');
       await browser.wait(EC.visibilityOf(mappingStepPage.propertySelectMenu('lname')));
-      await mappingStepPage.clickMapSourceProperty('lname', 'lname');
-      await expect(mappingStepPage.verifySourcePropertyName('lname').getText()).toEqual('lname');
-      await expect(mappingStepPage.verifySourcePropertyTypeByName('lname', 'string').getText()).toEqual('string');
+      await expect(mappingStepPage.propertySelectMenu('lname').isDisplayed).toBeTruthy();
+      await mappingStepPage.clickPropertySelectMenu('lname');
+      await expect(mappingStepPage.verifyExpressionText('Person','lname').getAttribute("value")).toEqual('lname');
     });
 
     it('should modify mappings after saving', async function () {
       //modify mappings
-      await expect(mappingStepPage.entityPropertyName('id').isDisplayed).toBeTruthy();
-      await console.log('modifying first mapping');
-      await browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer('id')));
-      await mappingStepPage.clickSourcePropertyContainer('id');
-      await browser.wait(EC.visibilityOf(mappingStepPage.propertySelectMenu('id')));
-      await mappingStepPage.clickMapSourceProperty('fname', 'id');
-      await expect(mappingStepPage.verifySourcePropertyName('fname').getText()).toEqual('fname');
-      await expect(mappingStepPage.verifySourcePropertyTypeByName('fname', 'string').getText()).toEqual('string');
+      await expect(mappingStepPage.entityPropertyContainer('Person','id').isDisplayed).toBeTruthy();
+      await mappingStepPage.clearExpressionText('Person','id');
+      await console.log('modifying mapping to fname');
+      await expect(mappingStepPage.sourcePropertyContainer('Person', 'id').isDisplayed).toBeTruthy();
+      await mappingStepPage.clickSourcePropertyContainer('Person','id');
+      await browser.wait(EC.visibilityOf(mappingStepPage.propertySelectMenu('fname')));
+      await expect(mappingStepPage.propertySelectMenu('fname').isDisplayed).toBeTruthy();
+      await mappingStepPage.clickPropertySelectMenu('fname');
+      await expect(mappingStepPage.verifyExpressionText('Person','id').getAttribute("value")).toEqual('fname');
+      await mappingStepPage.clearExpressionText('Person','id');
 
       //change mapping back
-      await expect(mappingStepPage.entityPropertyName('id').isDisplayed).toBeTruthy();
-      await console.log('modifying first mapping');
-      await browser.wait(EC.visibilityOf(mappingStepPage.sourcePropertyContainer('id')));
-      await mappingStepPage.clickSourcePropertyContainer('id');
+      await expect(mappingStepPage.entityPropertyContainer('Person','id').isDisplayed).toBeTruthy();
+      await console.log('modifying mapping back again to id');
+      await expect(mappingStepPage.sourcePropertyContainer('Person', 'id').isDisplayed).toBeTruthy();
+      await mappingStepPage.clickSourcePropertyContainer('Person','id');
       await browser.wait(EC.visibilityOf(mappingStepPage.propertySelectMenu('id')));
-      await mappingStepPage.clickMapSourceProperty('id', 'id');
-      await expect(mappingStepPage.verifySourcePropertyName('id').getText()).toEqual('id');
-      await expect(mappingStepPage.verifySourcePropertyTypeByName('id', 'number').getText()).toEqual('number');
+      await expect(mappingStepPage.propertySelectMenu('id').isDisplayed).toBeTruthy();
+      await mappingStepPage.clickPropertySelectMenu('id');
+      await expect(mappingStepPage.verifyExpressionText('Person','id').getAttribute("value")).toEqual('id');
     });
 
     it('should verify mapping persist after logout/login', async function () {
@@ -148,12 +152,12 @@ export default function (qaProjectDir) {
       await browser.sleep(5000);
       await stepsPage.stepSelectContainer(mapping.stepName).click();
       //verify mappings
-      await expect(mappingStepPage.verifySourcePropertyName('id')).toBeTruthy();
-      await expect(mappingStepPage.verifySourcePropertyTypeByName('id', 'number')).toBeTruthy();
-      await expect(mappingStepPage.verifySourcePropertyName('fname')).toBeTruthy();
-      await expect(mappingStepPage.verifySourcePropertyTypeByName('fname', 'string')).toBeTruthy();
-      await expect(mappingStepPage.verifySourcePropertyName('lname')).toBeTruthy();
-      await expect(mappingStepPage.verifySourcePropertyTypeByName('lname', 'string')).toBeTruthy();
+      await expect(mappingStepPage.entityPropertyName('Person','id')).toEqual('id');
+      await expect(mappingStepPage.entityPropertyType('Person','id')).toEqual('string');
+      await expect(mappingStepPage.entityPropertyName('Person','fname')).toEqual('fname');
+      await expect(mappingStepPage.entityPropertyType('Person','fname')).toEqual('string');
+      await expect(mappingStepPage.entityPropertyName('Person','lname')).toEqual('lname');
+      await expect(mappingStepPage.entityPropertyType('Person','lname')).toEqual('string');
     });
 
     it('should run mapping step and verify result', async function () {
