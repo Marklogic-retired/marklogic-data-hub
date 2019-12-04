@@ -4,6 +4,8 @@ import {Resizable} from 'react-resizable'
 import {Table, Tooltip} from 'antd';
 import {dateConverter} from '../../util/date-conversion';
 import {xmlParser} from '../../util/xml-parser';
+import styles from './result-table.module.scss';
+
 
 
 const ResizeableTitle = props => {
@@ -247,6 +249,7 @@ const ResultTable: React.FC<Props> = (props) => {
         columns={columns}
         dataSource={nestedData}
         pagination={false}
+        className= {styles.nestedTable}
     />;
   }
 
