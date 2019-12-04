@@ -232,14 +232,10 @@ const ResultTable: React.FC<Props> = (props) => {
 
       });
     } else if (props.data[rowId.key].format === 'xml' && props.data[rowId.key].hasOwnProperty('extracted')) {
-      Object.values(props.data[rowId.key].extracted.content).forEach(contentObject => {
-        let obj = xmlParser(contentObject);
-        if (!obj.hasOwnProperty('headers')) {
-          const propertyValues = Object.values<any>(obj);
-          propertyValues.forEach((item: Object) => {
-            nestedData = parseJson(item);
-          })
-        }
+      let mappedObj = xmlParser(Object.values(props.data[rowId.key].extracted.content)[1]);
+      let propertyValues = Object.values<any>(mappedObj);
+      propertyValues.forEach((item: Object) => {
+        nestedData = parseJson(item);
       })
     }
 
