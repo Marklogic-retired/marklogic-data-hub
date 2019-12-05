@@ -223,34 +223,44 @@ class Flow {
     let writeTransactionInfo = {};
     //let's update our jobdoc now
     if (!combinedOptions.noWrite) {
-      writeTransactionInfo = this.datahub.hubUtils.writeDocuments(this.writeQueue, 'xdmp.defaultPermissions()', collections, this.globalContext.targetDatabase);
+      try {
+        writeTransactionInfo = this.datahub.hubUtils.writeDocuments(this.writeQueue, 'xdmp.defaultPermissions()', collections, this.globalContext.targetDatabase);
+      } catch (e) {
+        this.handleWriteError(this, e);
+      }
     }
     let stepDefTypeLowerCase = (stepDetails.type) ? stepDetails.type.toLowerCase(): stepDetails.type;
     let stepName = stepRef.name || stepRef.stepDefinitionName;
-    let prov = this.datahub.prov;
-    for (let content of this.writeQueue) {
-      let previousUris = this.datahub.hubUtils.normalizeToArray(content.previousUri || content.uri);
-      let info = {
-        derivedFrom: previousUris,
-        influencedBy: stepName,
-        status: (stepDefTypeLowerCase === 'ingestion') ? 'created' : 'updated',
-        metadata: {}
-      };
-      // We may want to hide some documents from provenance. e.g., we don't need provenance of mastering PROV documents
-      if (content.provenance !== false) {
-        let provResult;
-        if (prov.granularityLevel() === prov.FINE_LEVEL && content.provenance) {
-          provResult = this.buildFineProvenanceData(jobId, flowName, stepName, stepRef.stepDefinitionName, stepDefTypeLowerCase, content, info);
-        } else {
-          provResult = prov.createStepRecord(jobId, flowName, stepName, stepRef.stepDefinitionName, stepDefTypeLowerCase, content.uri, info);
-        }
-        if (provResult instanceof Error) {
-          flowInstance.datahub.debug.log({message: provResult.message, type: 'error'});
+    /* Failure to write may have caused there to be nothing written, so checking the completed items length.
+    This approach, rather than clearing the writeQueue on a write error, will allow fullOutput to still return what
+    was attempted to be written to the database. This could be helpful in the future for debugging.
+     */
+    if (this.globalContext.completedItems.length) {
+      let prov = this.datahub.prov;
+      for (let content of this.writeQueue) {
+        let previousUris = this.datahub.hubUtils.normalizeToArray(content.previousUri || content.uri);
+        let info = {
+          derivedFrom: previousUris,
+          influencedBy: stepName,
+          status: (stepDefTypeLowerCase === 'ingestion') ? 'created' : 'updated',
+          metadata: {}
+        };
+        // We may want to hide some documents from provenance. e.g., we don't need provenance of mastering PROV documents
+        if (content.provenance !== false) {
+          let provResult;
+          if (prov.granularityLevel() === prov.FINE_LEVEL && content.provenance) {
+            provResult = this.buildFineProvenanceData(jobId, flowName, stepName, stepRef.stepDefinitionName, stepDefTypeLowerCase, content, info);
+          } else {
+            provResult = prov.createStepRecord(jobId, flowName, stepName, stepRef.stepDefinitionName, stepDefTypeLowerCase, content.uri, info);
+          }
+          if (provResult instanceof Error) {
+            flowInstance.datahub.debug.log({message: provResult.message, type: 'error'});
+          }
         }
       }
-    }
-    if (prov.granularityLevel() !== prov.OFF_LEVEL) {
-      this.datahub.prov.commit();
+      if (prov.granularityLevel() !== prov.OFF_LEVEL) {
+        this.datahub.prov.commit();
+      }
     }
     if (!combinedOptions.noBatchWrite) {
       let batchStatus = "finished";
@@ -268,7 +278,8 @@ class Flow {
 
     let resp = {
       "jobId": this.globalContext.jobId,
-      "totalCount": uris.length,
+      // using failed/completed items length instead of content length since a step can create more or less documents than were passed to the step
+      "totalCount": this.globalContext.failedItems.length + this.globalContext.completedItems.length,
       "errorCount": this.globalContext.failedItems.length,
       "completedItems": this.globalContext.completedItems,
       "failedItems": this.globalContext.failedItems,
@@ -321,17 +332,7 @@ class Flow {
         flowInstance.processResults(results, options, flowName, step);
         flowInstance.globalContext.completedItems = flowInstance.globalContext.completedItems.concat(uris);
       } catch (e) {
-        flowInstance.globalContext.batchErrors.push({
-          "stack": e.stack,
-          "code": e.code,
-          "data": e.data,
-          "message": e.message,
-          "name": e.name,
-          "retryable": e.retryable,
-          "stackFrames": e.stackFrames
-        });
-        flowInstance.globalContext.failedItems = flowInstance.globalContext.failedItems.concat(uris);
-        flowInstance.datahub.debug.log({message: `Error running step: ${e.toString()}. ${e.stack}`, type: 'error'});
+        this.handleStepError(flowInstance, e, uris);
       }
     } else {
       for (let contentItem of content) {
@@ -341,18 +342,7 @@ class Flow {
           flowInstance.processResults(results, options, flowName, step);
           flowInstance.globalContext.completedItems.push(flowInstance.globalContext.uri);
         } catch (e) {
-          flowInstance.globalContext.batchErrors.push({
-            "stack": e.stack,
-            "code": e.code,
-            "data": e.data,
-            "message": e.message,
-            "name": e.name,
-            "retryable": e.retryable,
-            "stackFrames": e.stackFrames,
-            "uri": flowInstance.globalContext.uri
-          });
-          flowInstance.globalContext.failedItems.push(flowInstance.globalContext.uri);
-          flowInstance.datahub.debug.log({message: `Error running step: ${e.toString()}. ${e.stack}`, type: 'error'});
+          this.handleStepError(flowInstance, e);
         }
         flowInstance.globalContext.uri = null;
       }
@@ -361,6 +351,41 @@ class Flow {
     if (hook && !hook.runBefore) {
       hookOperation();
     }
+  }
+
+  handleStepError(flowInstance, error, uris) {
+    flowInstance.addBatchError(flowInstance, error, flowInstance.globalContext.uri);
+    if (!flowInstance.globalContext.uri && uris) {
+      flowInstance.globalContext.failedItems = flowInstance.globalContext.failedItems.concat(uris);
+    } else if (flowInstance.globalContext.uri) {
+      flowInstance.globalContext.failedItems.push(flowInstance.globalContext.uri);
+    }
+    flowInstance.datahub.debug.log({message: `Error running step: ${error.toString()}. ${error.stack}`, type: 'error'});
+  }
+
+  handleWriteError(flowInstance, error) {
+    flowInstance.globalContext.completedItems = [];
+    flowInstance.globalContext.failedItems = flowInstance.writeQueue.map((contentObj) => contentObj.uri);
+    const operation = error.stackFrames && error.stackFrames[0] && error.stackFrames[0].operation;
+    let uri;
+    // see if we can determine a uri based off the operation in the stackFrames
+    if (operation) {
+      uri = flowInstance.globalContext.failedItems.find((uri) => operation.includes(`"${uri}"`));
+    }
+    flowInstance.addBatchError(flowInstance, error, uri);
+  }
+
+  addBatchError(flowInstance, error, uri = flowInstance.globalContext.uri) {
+    flowInstance.globalContext.batchErrors.push({
+      "stack": error.stack,
+      "code": error.code,
+      "data": error.data,
+      "message": error.message,
+      "name": error.name,
+      "retryable": error.retryable,
+      "stackFrames": error.stackFrames,
+      "uri": uri
+    });
   }
 
   processResults(results, combinedOptions, flowName, step) {
