@@ -55,55 +55,55 @@ const ResultTable: React.FC<Props> = (props) => {
 
   //Iterate over each element in the payload and construct an array.
   props.data && props.data.forEach(item => {
-    if (item.format === 'json' && item.hasOwnProperty('extracted')) {
-      createdOn = item.extracted.content[0].headers.createdOn;
-      if (item.extracted.hasOwnProperty('content') && item.extracted.content[1]) {
-        itemEntityName = Object.keys(item.extracted.content[1]);
-        itemEntityProperties = Object.values<any>(item.extracted.content[1]);
+    if (item.hasOwnProperty('extracted')) {
+      if (item.format === 'json' && item.hasOwnProperty('extracted')) {
+        createdOn = item.extracted.content[0].headers.createdOn;
+        if (item.extracted.hasOwnProperty('content') && item.extracted.content[1]) {
+          itemEntityName = Object.keys(item.extracted.content[1]);
+          itemEntityProperties = Object.values<any>(item.extracted.content[1]);
+        };
+      };
+
+      if (item.format === 'xml' && item.hasOwnProperty('extracted')) {
+        let header = xmlParser(item.extracted.content[0]);
+        let entity = xmlParser(item.extracted.content[1]);
+        if (header && header.hasOwnProperty('headers')) {
+          createdOn = header.headers.createdOn;
+        }
+
+        if (header && entity) {
+          itemEntityName = Object.keys(entity);
+          itemEntityProperties = Object.values<any>(entity);
+        };
       }
-      ;
-    }
-    ;
 
-    if (item.format === 'xml' && item.hasOwnProperty('extracted')) {
-      let header = xmlParser(item.extracted.content[0]);
-      let entity = xmlParser(item.extracted.content[1]);
-      if (header && header.hasOwnProperty('headers')) {
-        createdOn = header.headers.createdOn;
+      // Parameters for both JSON and XML.
+      //Get entity definition.
+      if (itemEntityName.length && props.entityDefArray.length) {
+        entityDef = props.entityDefArray.find(entity => entity.name === itemEntityName[0]);
       }
 
-      if (header && entity) {
-        itemEntityName = Object.keys(entity);
-        itemEntityProperties = Object.values<any>(entity);
+      //Get primary key if exists or set it to undefined.
+      if (entityDef.primaryKey.length !== 0) {
+        primaryKeyValue = encodeURIComponent(itemEntityProperties[0][entityDef.primaryKey]);
+        primaryKeys.indexOf(entityDef.primaryKey) === -1 && primaryKeys.push(entityDef.primaryKey);
+      } else {
+        primaryKeyValue = 'uri';
       }
-      ;
-    }
 
-    // Parameters for both JSON and XML.
-    //Get entity definition.
-    if (itemEntityName.length && props.entityDefArray.length) {
-      entityDef = props.entityDefArray.find(entity => entity.name === itemEntityName[0]);
-    }
+      if (entityTitle.length === 0) {
+        primaryKeyValue === 'uri' ? entityTitle.push('Identifier') : entityTitle.push(entityDef.primaryKey);
+        Object.keys(itemEntityProperties[0]).forEach((key, i) => {
+          i < 5 && entityTitle.indexOf(key) === -1 && entityTitle.push(key);
+        })
+      }
 
-    //Get primary key if exists or set it to undefined.
-    if (entityDef.primaryKey.length !== 0) {
-      primaryKeyValue = encodeURIComponent(itemEntityProperties[0][entityDef.primaryKey]);
-      primaryKeys.indexOf(entityDef.primaryKey) === -1 && primaryKeys.push(entityDef.primaryKey);
-    } else {
-      primaryKeyValue = 'uri';
-    }
-
-    if (entityTitle.length === 0) {
-      primaryKeyValue === 'uri' ? entityTitle.push('Identifier') : entityTitle.push(entityDef.primaryKey);
-      Object.keys(itemEntityProperties[0]).forEach((key, i) => {
-        i < 5 && entityTitle.indexOf(key) === -1 && entityTitle.push(key);
+      consdata.push({
+        primaryKey: primaryKeyValue, itemEntityName: itemEntityName[0], itemEntityProperties: itemEntityProperties,
+        uri: item.uri, format: item.format, createdOn: createdOn
       })
     }
 
-    consdata.push({
-      primaryKey: primaryKeyValue, itemEntityName: itemEntityName[0], itemEntityProperties: itemEntityProperties,
-      uri: item.uri, format: item.format, createdOn: createdOn
-    })
   });
 
   useEffect(() => {
