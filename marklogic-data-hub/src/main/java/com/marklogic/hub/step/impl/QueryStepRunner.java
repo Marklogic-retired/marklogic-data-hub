@@ -460,6 +460,9 @@ public class QueryStepRunner implements StepRunner {
                     if (errorMessages.size() < MAX_ERROR_MESSAGES) {
                         errorMessages.add(e.toString());
                     }
+                    // if exception is thrown update the failed related metrics
+                    stepMetrics.getFailedBatches().addAndGet(1);
+                    stepMetrics.getFailedEvents().addAndGet(batchSize);
                 }
             })
             .onQueryFailure((QueryBatchException failure) -> {

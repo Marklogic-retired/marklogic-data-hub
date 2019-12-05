@@ -30,7 +30,7 @@ class HubUtils {
   }
 
   writeDocument(docUri, content, permissions, collections, database) {
-    return fn.head(xdmp.eval(`xdmp.documentInsert(docUri, content, {permissions: ${permissions}, collections }); 
+    return fn.head(xdmp.eval(`xdmp.documentInsert(docUri, content, {permissions: ${permissions}, collections });
      let writeInfo = {
       transaction: xdmp.transaction(),
       dateTime: fn.currentDateTime()
@@ -79,10 +79,10 @@ class HubUtils {
           if (metadata) {
             delete metadata.temporalDocURI;
           }
-          temporal.documentInsert(temporalCollection, content.uri, content.value, 
+          temporal.documentInsert(temporalCollection, content.uri, content.value,
             {
-              permissions, 
-              collections: collections.filter((col) => !temporalCollections[col]), 
+              permissions,
+              collections: collections.filter((col) => !temporalCollections[col]),
               metadata
             }
            );
