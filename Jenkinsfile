@@ -572,7 +572,7 @@ pipeline{
                   }
 		}
 		stage('qs_rh7_90-nightly'){
-			agent { label 'dhmaster'}
+			agent { label 'lnx-dhf-jenkins-slave-2'}
 			steps{ 
 				script{
                     copyRPM 'Latest','9.0'
@@ -618,7 +618,7 @@ pipeline{
                   }
 		}
 		stage('qs_rh7_10-nightly'){
-        			agent { label 'dhmaster'}
+        			agent { label 'lnx-dhf-jenkins-slave-2'}
         			steps{
         					script{
                                 copyRPM 'Latest','10.0'
@@ -664,7 +664,7 @@ pipeline{
                           }
         		}
         stage('qs_rh7_90-release'){
-        			agent { label 'dhmaster'}
+        			agent { label 'lnx-dhf-jenkins-slave-2'}
         			steps{
         			  script{
                         copyRPM 'Release','9.0-11'
@@ -710,7 +710,7 @@ pipeline{
                           }
         		}
         		stage('qs_rh7_10-release'){
-                			agent { label 'dhmaster'}
+                			agent { label 'lnx-dhf-jenkins-slave-2'}
                 			steps{
                 			    script{
                          copyRPM 'Release','10.0-2.1'
