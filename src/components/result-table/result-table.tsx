@@ -5,6 +5,8 @@ import {Table, Tooltip} from 'antd';
 import {dateConverter} from '../../util/date-conversion';
 import {xmlParser} from '../../util/xml-parser';
 import styles from './result-table.module.scss';
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faExternalLinkAlt} from "@fortawesome/free-solid-svg-icons";
 
 
 
@@ -156,7 +158,7 @@ const ResultTable: React.FC<Props> = (props) => {
     if (props.entity.length === 0) {
       row =
           {
-            key: counter++,
+            key: rowCounter++,
             identifier: <Link to={path}><Tooltip
                 title={isUri && item.uri}>{isUri ? '.../' + document : item.primaryKey}</Tooltip></Link>,
             entity: item.itemEntityName,
@@ -166,7 +168,7 @@ const ResultTable: React.FC<Props> = (props) => {
     } else {
       row =
           {
-            key: counter++,
+            key: rowCounter++,
             created: date
           }
 
@@ -207,18 +209,19 @@ const ResultTable: React.FC<Props> = (props) => {
     ];
 
     let nestedData: any[] = [];
-
     const parseJson = (obj: Object) => {
-
       let parsedData = new Array();
       for (var i in obj) {
         if (obj[i] !== null && typeof (obj[i]) === "object") {
-          parsedData.push({key: rowCounter++, property: i, children: parseJson(obj[i])});
+          parsedData.push({key: counter++, property: i, children: parseJson(obj[i]),view:<Link to={{pathname: rowId.identifier.props.to.pathname,state: {id:obj[i]}}} data-cy='nested-instance'>
+              <Tooltip title={'Show nested detail on a separate page'}><FontAwesomeIcon icon={faExternalLinkAlt} size="sm"/></Tooltip>
+            </Link>});
         } else {
           parsedData.push({
-            key: rowCounter++,
+            key: counter++,
             property: i,
-            value: typeof obj[i] === 'boolean' ? obj[i].toString() : obj[i]
+            value: typeof obj[i] === 'boolean' ? obj[i].toString() : obj[i],
+            view:null
           });
         }
       }
