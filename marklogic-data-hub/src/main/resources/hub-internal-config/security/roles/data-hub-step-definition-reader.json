@@ -1,0 +1,4 @@
+{
+  "role-name": "data-hub-step-definition-reader",
+  "description": "Data Hub role for permissions that grant read access to step definition documents"
+}

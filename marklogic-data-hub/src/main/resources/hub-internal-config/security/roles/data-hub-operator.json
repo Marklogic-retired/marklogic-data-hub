@@ -5,7 +5,11 @@
     "rest-extension-user",
     "rest-reader",
     "rest-writer",
-    "data-hub-job-reader"
+    "data-hub-job-reader",
+    "data-hub-flow-reader",
+    "data-hub-mapping-reader",
+    "data-hub-entity-model-reader",
+    "data-hub-step-definition-reader"
   ],
   "privilege": [
     {

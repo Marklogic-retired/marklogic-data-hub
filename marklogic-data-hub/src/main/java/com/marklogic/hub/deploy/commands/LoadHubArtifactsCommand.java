@@ -40,7 +40,7 @@ import java.io.InputStream;
 import java.util.Date;
 
 /**
- * Loads user artifacts like mappings and entities. This will be deployed after triggers
+ * Loads hub artifacts (ootb flows and step defs). This will be deployed after triggers
  */
 @Component
 public class LoadHubArtifactsCommand extends AbstractCommand {
@@ -100,7 +100,7 @@ public class LoadHubArtifactsCommand extends AbstractCommand {
                 InputStream inputStream = r.getInputStream();
                 StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
                 inputStream.close();
-                DocumentMetadataHandle meta = buildDocumentMetadata("http://marklogic.com/data-hub/flow");
+                DocumentMetadataHandle meta = buildMetadata(hubConfig.getFlowPermissions(), "http://marklogic.com/data-hub/flow");
 
                 if (forceLoad || propertiesModuleManager.hasFileBeenModifiedSinceLastLoaded(flowFile)) {
                     stagingFlowDocumentWriteSet.add("/flows/" + flowFile.getName(), meta, handle);
@@ -117,7 +117,7 @@ public class LoadHubArtifactsCommand extends AbstractCommand {
                 InputStream inputStream = r.getInputStream();
                 StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
                 inputStream.close();
-                DocumentMetadataHandle meta = buildDocumentMetadata("http://marklogic.com/data-hub/step-definition");
+                DocumentMetadataHandle meta = buildMetadata(hubConfig.getStepDefinitionPermissions(), "http://marklogic.com/data-hub/step-definition");
 
                 if (forceLoad || propertiesModuleManager.hasFileBeenModifiedSinceLastLoaded(flowFile)) {
                     stagingStepDocumentWriteSet.add("/step-definitions/" + flowFile.getParentFile().getParentFile().getName() + "/" + flowFile.getParentFile().getName() + "/" + flowFile.getName(), meta, handle);
@@ -142,17 +142,18 @@ public class LoadHubArtifactsCommand extends AbstractCommand {
     }
 
     /**
-     * Per DHFPROD-2772, module permissions are being assigned to hub artifacts, which matches what is done for user
-     * artifacts. This ensures that in ML 10, each hub artifact has some permissions on it and can thus be accessed by
-     * a non-admin user when DHF is installed by a user without any default permissions (e.g. the admin user).
+     * As of 5.2.0, artifact permissions are separate from module permissions. If artifact permissions
+     * are not defined, then it falls back to using default permissions.
      *
-     * @param collections
+     * @param permissions
+     * @param collection
      * @return
      */
-    protected DocumentMetadataHandle buildDocumentMetadata(String... collections) {
+    protected DocumentMetadataHandle buildMetadata(String permissions, String collection) {
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
-        meta.getCollections().addAll(collections);
-        documentPermissionsParser.parsePermissions(hubConfig.getModulePermissions(), meta.getPermissions());
+
+        meta.getCollections().add(collection);
+        documentPermissionsParser.parsePermissions(permissions, meta.getPermissions());
         return meta;
     }
 

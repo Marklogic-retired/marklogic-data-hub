@@ -173,6 +173,9 @@ public class HubConfigImpl implements HubConfig
 
     protected String modulePermissions;
 
+    private String mappingPermissions;
+    private String flowPermissions;
+    private String stepDefinitionPermissions;
     private String entityModelPermissions;
     private String jobPermissions;
 
@@ -855,6 +858,21 @@ public class HubConfigImpl implements HubConfig
         return entityModelPermissions;
     }
 
+    @Override
+    public String getFlowPermissions() {
+        return flowPermissions;
+    }
+
+    @Override
+    public String getMappingPermissions() {
+        return mappingPermissions;
+    }
+
+    @Override
+    public String getStepDefinitionPermissions() {
+        return stepDefinitionPermissions;
+    }
+
     public String getJobPermissions() {
         return jobPermissions;
     }
@@ -882,6 +900,18 @@ public class HubConfigImpl implements HubConfig
 
     public void setEntityModelPermissions(String entityModelPermissions) {
         this.entityModelPermissions = entityModelPermissions;
+    }
+
+    public void setFlowPermissions(String flowPermissions) {
+        this.flowPermissions = flowPermissions;
+    }
+
+    public void setMappingPermissions(String mappingPermissions) {
+        this.mappingPermissions = mappingPermissions;
+    }
+
+    public void setStepDefinitionPermissions(String stepDefinitionPermissions) {
+        this.stepDefinitionPermissions = stepDefinitionPermissions;
     }
 
     @JsonIgnore
@@ -1309,6 +1339,27 @@ public class HubConfigImpl implements HubConfig
         }
         else {
             projectProperties.setProperty("mlEntityModelPermissions", entityModelPermissions);
+        }
+
+        if (mappingPermissions == null) {
+            mappingPermissions = getEnvPropString(projectProperties, "mlMappingPermissions", environment.getProperty("mlMappingPermissions"));
+        }
+        else {
+            projectProperties.setProperty("mlMappingPermissions", mappingPermissions);
+        }
+
+        if (flowPermissions == null) {
+            flowPermissions = getEnvPropString(projectProperties, "mlFlowPermissions", environment.getProperty("mlFlowPermissions"));
+        }
+        else {
+            projectProperties.setProperty("mlFlowPermissions", flowPermissions);
+        }
+
+        if (stepDefinitionPermissions == null) {
+            stepDefinitionPermissions = getEnvPropString(projectProperties, "mlStepDefinitionPermissions", environment.getProperty("mlStepDefinitionPermissions"));
+        }
+        else {
+            projectProperties.setProperty("mlStepDefinitionPermissions", stepDefinitionPermissions);
         }
 
         if (jobPermissions == null) {
@@ -2047,6 +2098,9 @@ public class HubConfigImpl implements HubConfig
         customForestPath = null;
         modulePermissions = null;
         entityModelPermissions = null;
+        mappingPermissions = null;
+        stepDefinitionPermissions = null;
+        flowPermissions = null;
         jobPermissions = null;
         hubLogLevel = null;
         loadBalancerHost = null;

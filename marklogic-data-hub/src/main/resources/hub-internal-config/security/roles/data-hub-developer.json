@@ -6,7 +6,12 @@
     "manage-user",
     "ps-user",
     "rest-admin",
-    "tde-admin"
+    "tde-admin",
+    "data-hub-flow-writer",
+    "data-hub-mapping-writer",
+    "data-hub-step-definition-writer",
+    "data-hub-entity-model-writer"
+
   ],
   "privilege": [
     {
