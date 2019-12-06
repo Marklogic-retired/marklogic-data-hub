@@ -18,8 +18,10 @@ package com.marklogic.hub.flow;
 
 import com.marklogic.bootstrap.Installer;
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
+import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubConfig;
@@ -99,6 +101,11 @@ public class FlowRunnerTest extends HubTestBase {
         Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "json-map") == 1);
         Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map") == 1);
         Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
+        XMLDocumentManager docMgr = stagingClient.newXMLDocumentManager();
+        DocumentMetadataHandle metadataHandle = new DocumentMetadataHandle();
+        docMgr.readMetadata("/ingest-xml.xml", metadataHandle);
+        DocumentMetadataHandle.DocumentPermissions perms = metadataHandle.getPermissions();
+        Assertions.assertEquals(2, perms.get("flow-developer-role").size());
         Assertions.assertNotNull(resp.getUser());
         Assertions.assertNotNull(resp.getStartTime());
         Assertions.assertNotNull(resp.getEndTime());
