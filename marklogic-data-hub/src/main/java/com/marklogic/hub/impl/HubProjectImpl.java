@@ -282,6 +282,18 @@ public class HubProjectImpl implements HubProject {
         writeResourceFile("hub-internal-config/databases/staging-schemas-database.json", hubDatabaseDir.resolve("staging-schemas-database.json"), true);
         writeResourceFile("hub-internal-config/databases/staging-triggers-database.json", hubDatabaseDir.resolve("staging-triggers-database.json"), true);
 
+        Path hubDatabaseFieldsDir = getHubConfigDir().resolve("database-fields");
+        hubDatabaseFieldsDir.toFile().mkdirs();
+        writeResourceFile("hub-internal-config/database-fields/staging-database.xml",
+            hubDatabaseFieldsDir.resolve("staging-database.xml"), true);
+        writeResourceFile("hub-internal-config/database-fields/job-database.xml",
+            hubDatabaseFieldsDir.resolve("job-database.xml"), true);
+
+        Path userDatabaseFieldsDir = getUserConfigDir().resolve("database-fields");
+        userDatabaseFieldsDir.toFile().mkdirs();
+        writeResourceFile("ml-config/database-fields/final-database.xml",
+            userDatabaseFieldsDir.resolve("final-database.xml"), true);
+
         // Per DHFPROD-3159, we no longer overwrite user config (ml-config) files. These are rarely updated by DHF,
         // while users may update them at any time. If DHF ever needs to update one of these files in the future, it
         // should do so via a method in this class that makes the update directly to the file without losing any
