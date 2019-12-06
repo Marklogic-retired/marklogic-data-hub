@@ -1,4 +1,19 @@
 # Change Log
+## [v5.1.0](https://github.com/marklogic/marklogic-data-hub/releases/tag/v5.1.0) (2019-12-05)
+
+**Fixed Bugs:**
+- [DHFPROD-3096] - Default merge strategy never fires [\#2794](https://github.com/marklogic/marklogic-data-hub/issues/2794)
+- [DHFPROD-3127] - Flow defs and custom modules go missing after flow runs [\#2929](https://github.com/marklogic/marklogic-data-hub/issues/2929)
+- [DHFPROD-3176] - ResponseHolder MismatchedInputException when Full Output Enabled [\#2963](https://github.com/marklogic/marklogic-data-hub/issues/2963)
+- [DHFPROD-3176] - ResponseHolder MismatchedInputException when Full Output Enabled [\#2963](https://github.com/marklogic/marklogic-data-hub/issues/2963)
+- [DHFPROD-3274] - Include ml:runIngest in REST extensions [\#3032](https://github.com/marklogic/marklogic-data-hub/issues/3032)
+- [DHFPROD-3377] - Fix the doc with regards to ml:runFlow capability [\#3085](https://github.com/marklogic/marklogic-data-hub/issues/3085)
+- [DHFPROD-3411] - Incorrect selected sources sorting order [\#3100](https://github.com/marklogic/marklogic-data-hub/issues/3100)
+- [DHFPROD-3440] - Smart Mastering: match property values are all cast to strings [\#3088](https://github.com/marklogic/marklogic-data-hub/issues/3088)
+- [DHFPROD-3463] - Debug QuickStart logging [\#3143](https://github.com/marklogic/marklogic-data-hub/issues/3143)
+- [DHFPROD-3464] - QuickStart Jobs Commited "search" is being executed twice [\#3144](https://github.com/marklogic/marklogic-data-hub/issues/3144)
+- [DHFPROD-3505] - On-no-match action not firing as part of smart mastering options for merge [\#2820](https://github.com/marklogic/marklogic-data-hub/issues/2820)
+
 ## [v5.0.4](https://github.com/marklogic/marklogic-data-hub/releases/tag/v5.0.4) (2019-10-22)
 
 **Fixed Bugs:**
