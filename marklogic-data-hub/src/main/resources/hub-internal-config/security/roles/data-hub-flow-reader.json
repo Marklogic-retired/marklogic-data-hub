@@ -1,0 +1,4 @@
+{
+  "role-name": "data-hub-flow-reader",
+  "description": "Data Hub role for permissions that grant read access to flow documents"
+}

@@ -19,9 +19,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.mgmt.util.ObjectMapperFactory;
 import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.mgmt.util.ObjectMapperFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -112,29 +111,41 @@ public class LoadUserArtifactsCommandTest extends HubTestBase {
 
     @Test
     public void defaultEntityModelPermissions() {
-        DocumentMetadataHandle.DocumentPermissions perms = loadUserArtifactsCommand.buildMetadataForEntityModels(adminHubConfig).getPermissions();
-        assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("data-hub-entity-model-reader").iterator().next());
+        DocumentMetadataHandle.DocumentPermissions perms = loadUserArtifactsCommand.buildMetadata(adminHubConfig.getEntityModelPermissions(), "http://marklogic.com/entity-services/models").getPermissions();
+        assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("data-hub-entity-model-writer").iterator().next());
+
+        perms = loadUserArtifactsCommand.buildMetadata(adminHubConfig.getStepDefinitionPermissions(), "http://marklogic.com/data-hub/step-definition").getPermissions();
+        assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("data-hub-step-definition-writer").iterator().next());
+
+        perms = loadUserArtifactsCommand.buildMetadata(adminHubConfig.getFlowPermissions(), "http://marklogic.com/data-hub/flow").getPermissions();
+        assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("data-hub-flow-reader").iterator().next());
+
+        perms = loadUserArtifactsCommand.buildMetadata(adminHubConfig.getMappingPermissions(), "http://marklogic.com/data-hub/mappings").getPermissions();
+        assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("data-hub-mapping-reader").iterator().next());
     }
 
     @Test
     public void customEntityModelPermissions() {
         HubConfigImpl config = new HubConfigImpl();
         config.setEntityModelPermissions("manage-user,read,manage-admin,update");
-        DocumentMetadataHandle.DocumentPermissions perms = loadUserArtifactsCommand.buildMetadataForEntityModels(config).getPermissions();
+        config.setFlowPermissions("manage-user,read,manage-admin,update");
+        config.setMappingPermissions("manage-user,read,manage-admin,update");
+        config.setStepDefinitionPermissions("manage-user,read,manage-admin,update");
+        DocumentMetadataHandle.DocumentPermissions perms = loadUserArtifactsCommand.buildMetadata(config.getEntityModelPermissions(),"http://marklogic.com/entity-services/models").getPermissions();
         assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("manage-user").iterator().next());
         assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("manage-admin").iterator().next());
-    }
 
-    @Test
-    public void nullEntityModelPermissions() {
-        HubConfigImpl config = new HubConfigImpl();
-        config.setEntityModelPermissions(null);
-        config.setModulePermissions("rest-reader,read,rest-writer,update");
+        perms = loadUserArtifactsCommand.buildMetadata(config.getStepDefinitionPermissions(),"http://marklogic.com/data-hub/step-definition").getPermissions();
+        assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("manage-user").iterator().next());
+        assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("manage-admin").iterator().next());
 
-        DocumentMetadataHandle.DocumentPermissions perms = loadUserArtifactsCommand.buildMetadataForEntityModels(config).getPermissions();
-        final String message = "When entity model permissions are null, the command should use module permissions instead";
-        assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("rest-reader").iterator().next(), message);
-        assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("rest-writer").iterator().next(), message);
-        assertNull(perms.get("data-hub-entity-model-reader"));
+        perms = loadUserArtifactsCommand.buildMetadata(config.getFlowPermissions(),"http://marklogic.com/data-hub/flow").getPermissions();
+        assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("manage-user").iterator().next());
+        assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("manage-admin").iterator().next());
+
+        perms = loadUserArtifactsCommand.buildMetadata(config.getMappingPermissions(),"http://marklogic.com/data-hub/mappings").getPermissions();
+        assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("manage-user").iterator().next());
+        assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("manage-admin").iterator().next());
+
     }
 }

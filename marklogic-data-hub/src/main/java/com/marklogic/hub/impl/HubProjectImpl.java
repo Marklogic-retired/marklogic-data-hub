@@ -348,6 +348,14 @@ public class HubProjectImpl implements HubProject {
         writeRoleFile(rolesDir, "data-hub-operator.json");
         writeRoleFile(rolesDir, "data-hub-portal-security-admin.json");
         writeRoleFile(rolesDir, "data-hub-security-admin.json");
+        writeRoleFile(rolesDir, "data-hub-flow-reader.json");
+        writeRoleFile(rolesDir, "data-hub-flow-writer.json");
+        writeRoleFile(rolesDir, "data-hub-mapping-reader.json");
+        writeRoleFile(rolesDir, "data-hub-mapping-writer.json");
+        writeRoleFile(rolesDir, "data-hub-step-definition-reader.json");
+        writeRoleFile(rolesDir, "data-hub-step-definition-writer.json");
+        writeRoleFile(rolesDir, "data-hub-entity-model-writer.json");
+
 
         // New 5.1.0 roles
         writeRoleFile(rolesDir, "data-hub-entity-model-reader.json");

@@ -1,0 +1,4 @@
+{
+  "role-name": "data-hub-flow-writer",
+  "description": "Data Hub role for permissions that grant write access to flow documents"
+}
