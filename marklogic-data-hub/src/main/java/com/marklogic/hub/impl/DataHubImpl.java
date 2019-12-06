@@ -672,7 +672,6 @@ public class DataHubImpl implements DataHub {
         Map<String, List<Command>> commandMap = buildCommandMap();
         List<Command> indexRelatedCommands = new ArrayList<>();
         indexRelatedCommands.addAll(commandMap.get("mlDatabaseCommands"));
-        indexRelatedCommands.addAll(commandMap.get("mlDatabaseField"));
         deployer.setCommands(indexRelatedCommands);
         final boolean originalCreateForests = appConfig.isCreateForests();
         final Pattern originalIncludePattern = appConfig.getResourceFilenamesIncludePattern();
@@ -741,8 +740,6 @@ public class DataHubImpl implements DataHub {
 
         updateDatabaseCommandList(commandMap);
 
-        addDatabaseFieldCommand(commandMap);
-
         updateServerCommandList(commandMap);
 
         updateTriggersCommandList(commandMap);
@@ -775,17 +772,9 @@ public class DataHubImpl implements DataHub {
                 ((DeployOtherDatabasesCommand)c).setDeployDatabaseCommandFactory(new HubDeployDatabaseCommandFactory(hubConfig));
             }
         }
+        // This ensures that this command is run when mlDeployDatabases is run
+        dbCommands.add(new DeployDatabaseFieldCommand());
         commandMap.put("mlDatabaseCommands", dbCommands);
-    }
-
-    /*
-        Adding a custom command to deploy database field using an XML payload because of
-        a bug in the RMA for JSON payload which fails to set the field type as "metadata".
-     */
-    private void addDatabaseFieldCommand(Map<String, List<Command>> commandMap) {
-        List<Command> databaseFieldList = new ArrayList<>();
-        databaseFieldList.add(new DeployDatabaseFieldCommand());
-        commandMap.put("mlDatabaseField", databaseFieldList);
     }
 
     private void updateServerCommandList(Map<String, List<Command>> commandMap) {
