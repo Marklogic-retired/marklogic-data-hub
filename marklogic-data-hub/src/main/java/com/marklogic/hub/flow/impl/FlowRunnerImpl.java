@@ -181,6 +181,14 @@ public class FlowRunnerImpl implements FlowRunner{
         }
     }
 
+    protected void copyJobDataToResponse(RunFlowResponse response, RunFlowResponse jobDocument) {
+        response.setStartTime(jobDocument.getStartTime());
+        response.setEndTime(jobDocument.getEndTime());
+        response.setUser(jobDocument.getUser());
+        response.setLastAttemptedStep(jobDocument.getLastAttemptedStep());
+        response.setLastCompletedStep(jobDocument.getLastCompletedStep());
+    }
+
     private class FlowRunnerTask implements Runnable {
         private String jobId;
         private Flow flow;
@@ -256,7 +264,6 @@ public class FlowRunnerImpl implements FlowRunner{
                         });
                     //If step doc doesn't have batchnum and thread count specified, fallback to flow's values.
                     Map<String,Step> steps = runningFlow.getSteps();
-                    Step step = steps.get(stepNum);
 
                     //If property values are overriden in UI, use those values over any other.
                     if(flow.getOverrideStepConfig() != null) {
@@ -309,7 +316,7 @@ public class FlowRunnerImpl implements FlowRunner{
                 }
                 finally {
                     stepOutputs.put(stepNum, stepResp);
-                    if(! stepResp.isSuccess()) {
+                    if(stepResp != null && !stepResp.isSuccess()) {
                         isJobSuccess.set(false);
                     }
                 }
@@ -356,21 +363,16 @@ public class FlowRunnerImpl implements FlowRunner{
                     try {
                         jobNode = jobDocManager.getJobDocument(jobId);
                     } catch (Exception e) {
-                        logger.error(e.getMessage());
+                        logger.error("Unable to get job document with ID: " + jobId + ": cause: " + e.getMessage());
                     }
                 }
                 if(jobNode != null) {
-                    ObjectMapper objectMapper = new ObjectMapper();
                     try {
-                        RunFlowResponse jobDoc = objectMapper.treeToValue(jobNode.get("job"), RunFlowResponse.class);
-                        resp.setStartTime(jobDoc.getStartTime());
-                        resp.setEndTime(jobDoc.getEndTime());
-                        resp.setUser(jobDoc.getUser());
-                        resp.setLastAttemptedStep(jobDoc.getLastAttemptedStep());
-                        resp.setLastCompletedStep(jobDoc.getLastCompletedStep());
+                        RunFlowResponse jobDoc = new ObjectMapper().treeToValue(jobNode.get("job"), RunFlowResponse.class);
+                        copyJobDataToResponse(resp, jobDoc);
                     }
                     catch (Exception e) {
-                        logger.error(e.getMessage());
+                        logger.error("Unable to copy job data to RunFlowResponse, cause: " + e.getMessage());
                     }
                 }
 
