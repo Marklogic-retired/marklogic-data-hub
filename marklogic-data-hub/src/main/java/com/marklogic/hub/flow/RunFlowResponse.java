@@ -24,7 +24,7 @@ public class RunFlowResponse {
         this.jobId = jobId;
     }
 
-    RunFlowResponse() {}
+    public RunFlowResponse() {}
 
     @JsonProperty("flow")
     public String getFlowName() {
