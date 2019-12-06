@@ -18,6 +18,7 @@
       "threadCount" : null,
       "options": {
         "outputFormat": "xml",
+        "permissions": "flow-developer-role,read,flow-developer-role,update",
         "collections": ["xml-coll"]
       }
     },
