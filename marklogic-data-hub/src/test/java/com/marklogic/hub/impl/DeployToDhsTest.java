@@ -9,6 +9,7 @@ import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import org.junit.jupiter.api.AfterEach;
@@ -159,8 +160,9 @@ public class DeployToDhsTest extends HubTestBase {
     public void buildCommandList() {
         List<Command> commands = dataHub.buildCommandListForDeployingToDhs();
         assertTrue(commands.get(0) instanceof DeployOtherDatabasesCommand);
-        assertTrue(commands.get(1) instanceof LoadUserArtifactsCommand);
-        assertTrue(commands.get(2) instanceof LoadUserModulesCommand);
-        assertEquals(3, commands.size());
+        assertTrue(commands.get(1) instanceof DeployDatabaseFieldCommand);
+        assertTrue(commands.get(2) instanceof LoadUserArtifactsCommand);
+        assertTrue(commands.get(3) instanceof LoadUserModulesCommand);
+        assertEquals(4, commands.size());
     }
 }

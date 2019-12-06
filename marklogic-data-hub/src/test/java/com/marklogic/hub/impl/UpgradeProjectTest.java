@@ -90,6 +90,15 @@ public class UpgradeProjectTest extends HubTestBase {
         File mappingFunctionsDir = hubProject.getCustomMappingFunctionsDir().toFile();
         assertTrue(mappingFunctionsDir.exists(), "The initialization process should stub out the directory for " +
             "mapping functions so that the user has more of a clue as to where they go");
+
+        File finalFieldsFile = hubProject.getUserConfigDir().resolve("database-fields").resolve("final-database.xml").toFile();
+        assertTrue(finalFieldsFile.exists());
+
+        File stagingFieldsFile = hubProject.getHubConfigDir().resolve("database-fields").resolve("staging-database.xml").toFile();
+        assertTrue(stagingFieldsFile.exists());
+
+        File jobFieldsFile = hubProject.getHubConfigDir().resolve("database-fields").resolve("job-database.xml").toFile();
+        assertTrue(jobFieldsFile.exists());
     }
 
     @Test
