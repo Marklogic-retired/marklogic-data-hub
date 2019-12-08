@@ -163,13 +163,15 @@ const ResultTable: React.FC<Props> = (props) => {
                 title={isUri && item.uri}>{isUri ? '.../' + document : item.primaryKey}</Tooltip></Link>,
             entity: item.itemEntityName,
             filetype: item.format,
-            created: date
+            created: date,
+            primaryKeyPath: path
           }
     } else {
       row =
           {
             key: rowCounter++,
-            created: date
+            created: date,
+            primaryKeyPath: path
           }
 
       for (var propt in item.itemEntityProperties[0]) {
@@ -201,7 +203,6 @@ const ResultTable: React.FC<Props> = (props) => {
   };
 
   const expandedRowRender = (rowId) => {
-
     const columns = [
       {title: 'Property', dataIndex: 'property', width: '30%'},
       {title: 'Value', dataIndex: 'value', width: '30%'},
@@ -213,7 +214,7 @@ const ResultTable: React.FC<Props> = (props) => {
       let parsedData = new Array();
       for (var i in obj) {
         if (obj[i] !== null && typeof (obj[i]) === "object") {
-          parsedData.push({key: counter++, property: i, children: parseJson(obj[i]),view:<Link to={{pathname: rowId.identifier.props.to.pathname,state: {id:obj[i]}}} data-cy='nested-instance'>
+          parsedData.push({key: counter++, property: i, children: parseJson(obj[i]),view:<Link to={{pathname:`${rowId.primaryKeyPath.pathname}`,state: {id:obj[i]}}} data-cy='nested-instance'>
               <Tooltip title={'Show nested detail on a separate page'}><FontAwesomeIcon icon={faExternalLinkAlt} size="sm"/></Tooltip>
             </Link>});
         } else {
