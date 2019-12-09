@@ -96,20 +96,6 @@ class Jobs {
     }
   }
 
-  updateJob(jobId, lastAttemptedStep, lastCompletedStep, jobStatus) {
-    let docObj = this.getJobDocWithId(jobId);
-    if(!docObj) {
-      throw new Error("Unable to find job document: "+ jobId);
-    }
-    docObj.job.lastAttemptedStep = lastAttemptedStep;
-    docObj.job.lastCompletedStep = lastCompletedStep;
-    docObj.job.jobStatus = jobStatus;
-    if (jobStatus === "finished" || jobStatus === "finished_with_errors" || jobStatus === "failed"){
-      docObj.job.timeEnded = fn.currentDateTime();
-    }
-    this.hubutils.writeDocument("/jobs/"+ jobId +".json", docObj, this.jobPermissionsScript, ['Jobs','Job'], this.config.JOBDATABASE);
-  }
-
   getLastStepAttempted(jobId) {
     let doc =  this.getJobDocWithId(jobId);
     if (doc){
@@ -294,8 +280,90 @@ class Jobs {
     }, this.config.JOBDATABASE));
   }
 
-  updateBatch(jobId, batchId, batchStatus, uris, writeTransactionInfo, error) {
-    let docObj = this.getBatchDoc(jobId, batchId);
+  getBatchDoc(jobId, batchId) {
+    let cacheId = jobId + "-" + batchId;
+    if (!cachedBatchDocuments[cacheId]) {
+      let query = [cts.directoryQuery("/jobs/batches/"), cts.jsonPropertyValueQuery("jobId", jobId)
+        , cts.jsonPropertyValueQuery("batchId", batchId)];
+      cachedBatchDocuments[cacheId] = fn.head(this.hubutils.queryLatest(function () {
+        let uri = cts.uris("", null, cts.andQuery(query));
+        if (!fn.empty(uri)) {
+          return cts.doc(uri).toObject();
+        }
+      }, this.config.JOBDATABASE));
+    }
+    return cachedBatchDocuments[cacheId];
+  }
+}
+module.exports.updateJob = module.amp(
+  function updateJob(datahub, jobId, status, flow, step, lastCompleted, stepResponse) {
+    let jobDoc = datahub.jobs.getJobDocWithId(jobId);
+    let resp = null;
+    if(jobDoc) {
+     jobDoc.job.jobStatus = status;
+     //update job status at the end of flow run
+     if(status === "finished"|| status === "finished_with_errors" || status === "failed"|| status === "canceled"|| status === "stop-on-error") {
+       jobDoc.job.timeEnded = fn.currentDateTime();
+     }
+     //update job doc before and after step run
+     else {
+       jobDoc.job.lastAttemptedStep = step;
+       if(lastCompleted) {
+         jobDoc.job.lastCompletedStep = lastCompleted;
+       }
+       if(! jobDoc.job.stepResponses[step]){
+         jobDoc.job.stepResponses[step] = {};
+         jobDoc.job.stepResponses[step].stepStartTime = fn.currentDateTime();
+         jobDoc.job.stepResponses[step].status = "running step " + step;
+       }
+       else {
+         let tempTime = jobDoc.job.stepResponses[step].stepStartTime;
+         jobDoc.job.stepResponses[step]  = JSON.parse(stepResponse);
+         let stepResp = jobDoc.job.stepResponses[step];
+         stepResp.stepStartTime = tempTime;
+         stepResp.stepEndTime = fn.currentDateTime();
+         let stepDef = fn.head(datahub.hubUtils.queryLatest(function () {
+             return datahub.flow.step.getStepByNameAndType(stepResp.stepDefinitionName, stepResp.stepDefinitionType);
+           },
+           datahub.config.FINALDATABASE
+         ));
+         let jobsReportFun = datahub.flow.step.makeFunction(datahub.flow, 'jobReport', stepDef.modulePath);
+         if (jobsReportFun) {
+           let flowStep = fn.head(datahub.hubUtils.queryLatest(function () {
+               return datahub.flow.getFlow(stepResp.flowName).steps[step];
+             },
+             datahub.config.FINALDATABASE
+           ));
+           let options = Object.assign({}, stepDef.options, flowStep.options);
+           let jobReport = fn.head(datahub.hubUtils.queryLatest(function () {
+               return jobsReportFun(jobId, stepResp, options);
+             },
+             options.targetDatabase || datahub.config.FINALDATABASE
+           ));
+           if (jobReport) {
+             datahub.hubUtils.writeDocument(`/jobs/reports/${stepResp.flowName}/${step}/${jobId}.json`, jobReport, datahub.jobs.jobPermissionsScript, ['Jobs','JobReport'], datahub.config.JOBDATABASE);
+           }
+         }
+       }
+     }
+     //Update the job doc
+     datahub.hubUtils.writeDocument("/jobs/"+ jobId +".json", jobDoc, datahub.jobs.jobPermissionsScript, ['Jobs','Job'], datahub.config.JOBDATABASE);
+     resp = jobDoc;
+    }
+    else {
+      if(fn.exists(jobId) && fn.exists(flow)) {
+        datahub.jobs.createJob(flow, jobId);
+       }
+      else {
+        throw new Error("Cannot create job document. Incorrect options.");
+      }
+    }
+    return resp;
+  });
+
+module.exports.updateBatch = module.amp(
+  function updateBatch(datahub, jobId, batchId, batchStatus, uris, writeTransactionInfo, error) {
+    let docObj = datahub.jobs.getBatchDoc(jobId, batchId);
     if(!docObj) {
       throw new Error("Unable to find batch document: "+ batchId);
     }
@@ -323,24 +391,11 @@ class Jobs {
     docObj.batch.writeTimeStamp = writeTransactionInfo.dateTime;
     let cacheId = jobId + "-" + batchId;
     cachedBatchDocuments[cacheId] = docObj;
-    this.hubutils.writeDocument("/jobs/batches/"+ batchId +".json", docObj, this.jobPermissionsScript, ['Jobs','Batch'], this.config.JOBDATABASE);
+    datahub.hubUtils.writeDocument("/jobs/batches/"+ batchId +".json", docObj, datahub.jobs.jobPermissionsScript, ['Jobs','Batch'], datahub.config.JOBDATABASE);
 
-  }
+  });
+module.exports.Jobs = Jobs;
 
-  getBatchDoc(jobId, batchId) {
-    let cacheId = jobId + "-" + batchId;
-    if (!cachedBatchDocuments[cacheId]) {
-      let query = [cts.directoryQuery("/jobs/batches/"), cts.jsonPropertyValueQuery("jobId", jobId)
-        , cts.jsonPropertyValueQuery("batchId", batchId)];
-      cachedBatchDocuments[cacheId] = fn.head(this.hubutils.queryLatest(function () {
-        let uri = cts.uris("", null, cts.andQuery(query));
-        if (!fn.empty(uri)) {
-          return cts.doc(uri).toObject();
-        }
-      }, this.config.JOBDATABASE));
-    }
-    return cachedBatchDocuments[cacheId];
-  }
-}
 
-module.exports = Jobs;
+
+

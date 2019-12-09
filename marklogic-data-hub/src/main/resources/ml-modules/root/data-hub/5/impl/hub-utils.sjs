@@ -46,7 +46,7 @@ class HubUtils {
      database: xdmp.database(database),
      commit: 'auto',
      update: 'true',
-     ignoreAmps: true
+     ignoreAmps: false
     }));
   }
 
@@ -203,7 +203,7 @@ class HubUtils {
      return value;
    } else if (value === null || value === undefined) {
      return Sequence.from([]);
-   } else if (value.constructor === Array) {
+   } else if (value.constructor === Array || xdmp.nodeKind(value) === 'array') {
      return Sequence.from(value);
    } else {
      return Sequence.from([value]);

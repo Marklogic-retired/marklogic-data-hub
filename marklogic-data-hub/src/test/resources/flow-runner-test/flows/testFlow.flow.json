@@ -18,7 +18,7 @@
       "threadCount" : null,
       "options": {
         "outputFormat": "xml",
-        "permissions": "flow-developer-role,read,flow-developer-role,update",
+        "permissions": "flow-developer-role,read,flow-developer-role,update,data-hub-operator,read,data-hub-operator,update",
         "collections": ["xml-coll"]
       }
     },
@@ -27,7 +27,9 @@
       "name": "e2e-json",
       "stepDefinitionType": "INGESTION",
       "customHook": {},
-      "options": {}
+      "options": {
+        "permissions": "flow-developer-role,read,flow-developer-role,update,data-hub-operator,read,data-hub-operator,update"
+      }
     },
     "3": {
       "stepDefinitionName": "default-ingestion",
@@ -44,6 +46,7 @@
       },
       "options": {
         "outputFormat": "json",
+        "permissions": "flow-developer-role,read,flow-developer-role,update,data-hub-operator,read,data-hub-operator,update",
         "collections": ["csv-coll"]
       }
     },
@@ -70,6 +73,7 @@
           "createdBy" : "currentUser"
         },
         "outputFormat": "json",
+        "permissions": "flow-developer-role,read,flow-developer-role,update,data-hub-operator,read,data-hub-operator,update",
         "collections": ["csv-tab-coll"]
       }
     },
@@ -81,7 +85,7 @@
       "retryLimit" : null,
       "batchSize" : null,
       "threadCount" : null,
-      "options": {}
+      "options": {"permissions": "flow-developer-role,read,flow-developer-role,update,data-hub-operator,read,data-hub-operator,update"}
     },
     "6": {
       "stepDefinitionName": "default-mapping",
@@ -94,6 +98,7 @@
           "name": "e2e-mapping",
           "version": 1
         },
+        "permissions": "flow-developer-role,read,flow-developer-role,update,data-hub-operator,read,data-hub-operator,update",
         "sourceQuery": "cts.collectionQuery('xml-coll')"
       },
       "customHook": {},
