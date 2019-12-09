@@ -135,26 +135,4 @@ public class InstallIntoDhsCommandTest extends HubTestBase {
         assertEquals("basic", props.getProperty("mlJobAuth"));
         assertEquals("basic", props.getProperty("mlStagingAuth"));
     }
-
-    private void verifyDefaultProperties(Properties props) {
-        assertEquals("true", props.getProperty("mlIsHostLoadBalancer"), "This is needed to support running legacy flows");
-        assertEquals("true", props.getProperty("mlIsProvisionedEnvironment"));
-
-        // Verify role mappings
-        assertEquals("flowDeveloper", props.getProperty("mlFlowDeveloperRole"));
-        assertEquals("flowOperator", props.getProperty("mlFlowOperatorRole"));
-        assertEquals("flowDeveloper", props.getProperty("mlDataHubAdminRole"),
-            "As of 5.0.2, mlDataHubAdminRole is only used for setting permissions on triggers, so it's fine to map it to the flowDeveloper role");
-
-        assertEquals("flowDeveloper,read,flowDeveloper,execute,flowDeveloper,insert,flowOperator,read,flowOperator,execute,flowOperator,insert",
-            props.getProperty("mlModulePermissions"));
-
-        assertEquals("8010", props.getProperty("mlAppServicesPort"), "8000 is not available in DHS, so the staging port is used instead for " +
-            "loading non-REST modules");
-
-        assertEquals("basic", props.getProperty("mlAppServicesAuthentication"));
-        assertEquals("basic", props.getProperty("mlFinalAuth"));
-        assertEquals("basic", props.getProperty("mlJobAuth"));
-        assertEquals("basic", props.getProperty("mlStagingAuth"));
-    }
 }

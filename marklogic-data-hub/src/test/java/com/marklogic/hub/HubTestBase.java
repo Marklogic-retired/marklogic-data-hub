@@ -994,9 +994,6 @@ public class HubTestBase {
         loadUserArtifactsCommand.setForceLoad(force);
         commands.add(loadUserArtifactsCommand);
 
-        LoadModulesCommand loadModulesCommand = new LoadModulesCommand();
-        commands.add(loadModulesCommand);
-
         SimpleAppDeployer deployer = new SimpleAppDeployer(((HubConfigImpl)hubConfig).getManageClient(), ((HubConfigImpl)hubConfig).getAdminManager());
         deployer.setCommands(commands);
         deployer.deploy(hubConfig.getAppConfig());
