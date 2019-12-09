@@ -150,19 +150,17 @@ class BrowsePage {
         return cy.get('.react-resizable');
     }
 
-    getTableCell(rowIndex:number, columnIndex:number) {    
+    getTableCell(rowIndex:number, columnIndex:number) {
         return cy.get(`.ant-table-row:nth-child(${rowIndex}) td:nth-child(${columnIndex}) div`).invoke('text')
     }
 
     getTableUriCell(rowIndex:number) {    
-        return cy.get(`.ant-table-row:nth-child(${rowIndex}) td:nth-child(1) div span`).invoke('text')
+        return cy.get(`.ant-table-row:nth-child(${rowIndex}) td:nth-child(2) div span`).invoke('text')
     }
 
     getTablePkCell(rowIndex:number) {    
-        return cy.get(`.ant-table-row:nth-child(${rowIndex}) td:nth-child(1) div a`).invoke('text')
+        return cy.get(`.ant-table-row:nth-child(${rowIndex}) td:nth-child(2) div a`).invoke('text')
     }
-
-
 
 }
 

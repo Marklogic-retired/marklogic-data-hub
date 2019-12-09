@@ -1,26 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Resizable } from 'react-resizable'
-import { Table, Tooltip } from 'antd';
-import { dateConverter } from '../../util/date-conversion';
-import { xmlParser } from '../../util/xml-parser';
+import React, {useState, useEffect} from 'react';
+import {Link} from 'react-router-dom';
+import {Resizable} from 'react-resizable'
+import {Table, Tooltip} from 'antd';
+import {dateConverter} from '../../util/date-conversion';
+import {xmlParser} from '../../util/xml-parser';
+import styles from './result-table.module.scss';
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faExternalLinkAlt} from "@fortawesome/free-solid-svg-icons";
+
+
 
 const ResizeableTitle = props => {
-  const { onResize, width, ...restProps } = props;
+  const {onResize, width, ...restProps} = props;
 
   if (!width) {
     return <th {...restProps} />;
   }
 
   return (
-    <Resizable
-      width={width}
-      height={0}
-      onResize={onResize}
-      draggableOpts={{ enableUserSelectHack: false }}
-    >
-      <th {...restProps} />
-    </Resizable>
+      <Resizable
+          width={width}
+          height={0}
+          onResize={onResize}
+          draggableOpts={{enableUserSelectHack: false}}
+      >
+        <th {...restProps} />
+      </Resizable>
   );
 };
 
@@ -31,6 +36,7 @@ interface Props {
 };
 
 const ResultTable: React.FC<Props> = (props) => {
+
   let title = new Array();
   let entityTitle: string[] = [];
   let data = new Array();
@@ -42,6 +48,7 @@ const ResultTable: React.FC<Props> = (props) => {
   let primaryKeys: string[] = [];
   let primaryKeyValue: string = '';
   let counter = 0;
+  let rowCounter = 0;
   let createdOn = '';
   const [columns, setColumns] = useState<any[]>([]);
 
@@ -106,28 +113,29 @@ const ResultTable: React.FC<Props> = (props) => {
     //Construct table title.
     title.forEach((item, index) => {
       col.push(
-        {
-          title: item,
-          dataIndex: item.replace(/ /g, '').toLowerCase(),
-          width: 150,
-          onHeaderCell: column => ({
-            width: column.width,
-            onResize: handleResize(index),
-          }),
-          onCell: () => {
-            return {
-              style: {
-                whiteSpace: 'nowrap',
-                maxWidth: 150,
+          {
+            title: item,
+            dataIndex: item.replace(/ /g, '').toLowerCase(),
+            width: 150,
+            onHeaderCell: column => ({
+              width: column.width,
+              onResize: handleResize(index),
+            }),
+            onCell: () => {
+              return {
+                style: {
+                  whiteSpace: 'nowrap',
+                  maxWidth: 150,
+                }
               }
-            }
-          },
-          render: (text) => (
-            <Tooltip title={text && text.length > 50 && text.substring(0, 301).concat('...\n\n(View document details to see all of this text.)')}>
-              <div style={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>{text}</div>
-            </Tooltip>
-          )
-        }
+            },
+            render: (text) => (
+                <Tooltip
+                    title={text && text.length > 50 && text.substring(0, 301).concat('...\n\n(View document details to see all of this text.)')}>
+                  <div style={{textOverflow: 'ellipsis', overflow: 'hidden'}}>{text}</div>
+                </Tooltip>
+            )
+          }
       )
     });
     setColumns(col);
@@ -143,32 +151,35 @@ const ResultTable: React.FC<Props> = (props) => {
   consdata.forEach((item) => {
     let isUri = item.primaryKey === 'uri';
     let uri = encodeURIComponent(item.uri);
-    let path = { pathname: `/detail/${isUri ? '-' : item.primaryKey}/${uri}` };
+    let path = {pathname: `/detail/${isUri ? '-' : item.primaryKey}/${uri}`};
     let document = item.uri.split('/')[item.uri.split('/').length - 1];
     let date = dateConverter(item.createdOn);
     let row: any = {};
     if (props.entity.length === 0) {
       row =
-        {
-          key: counter++,
-          identifier: <Link to={path}><Tooltip title={isUri && item.uri}>{isUri ? '.../' + document : item.primaryKey}</Tooltip></Link>,
-          entity: item.itemEntityName,
-          filetype: item.format,
-          created: date
-        }
+          {
+            key: rowCounter++,
+            identifier: <Link to={path}><Tooltip
+                title={isUri && item.uri}>{isUri ? '.../' + document : item.primaryKey}</Tooltip></Link>,
+            entity: item.itemEntityName,
+            filetype: item.format,
+            created: date,
+            primaryKeyPath: path
+          }
     } else {
       row =
-        {
-          key: counter++,
-          created: date
-        }
+          {
+            key: rowCounter++,
+            created: date,
+            primaryKeyPath: path
+          }
 
       for (var propt in item.itemEntityProperties[0]) {
         if (isUri) {
           row.identifier =
-            <Link to={path}>
-              <Tooltip title={isUri ? item.uri : item.primaryKey}>{'.../' + document}</Tooltip>
-            </Link>
+              <Link to={path}>
+                <Tooltip title={isUri ? item.uri : item.primaryKey}>{'.../' + document}</Tooltip>
+              </Link>
         }
         if (primaryKeys.includes(propt)) {
           row[propt.toLowerCase()] = <Link to={path}>{item.itemEntityProperties[0][propt]}</Link>
@@ -180,7 +191,7 @@ const ResultTable: React.FC<Props> = (props) => {
     data.push(row)
   });
 
-  const handleResize = index => (e, { size }) => {
+  const handleResize = index => (e, {size}) => {
     setColumns(columns => {
       const nextColumns = [...columns];
       nextColumns[index] = {
@@ -191,16 +202,69 @@ const ResultTable: React.FC<Props> = (props) => {
     })
   };
 
+  const expandedRowRender = (rowId) => {
+    const columns = [
+      {title: 'Property', dataIndex: 'property', width: '30%'},
+      {title: 'Value', dataIndex: 'value', width: '30%'},
+      {title: 'View', dataIndex: 'view', width: '30%'},
+    ];
+
+    let nestedData: any[] = [];
+    const parseJson = (obj: Object) => {
+      let parsedData = new Array();
+      for (var i in obj) {
+        if (obj[i] !== null && typeof (obj[i]) === "object") {
+          parsedData.push({key: counter++, property: i, children: parseJson(obj[i]),view:<Link to={{pathname:`${rowId.primaryKeyPath.pathname}`,state: {id:obj[i]}}} data-cy='nested-instance'>
+              <Tooltip title={'Show nested detail on a separate page'}><FontAwesomeIcon icon={faExternalLinkAlt} size="sm"/></Tooltip>
+            </Link>});
+        } else {
+          parsedData.push({
+            key: counter++,
+            property: i,
+            value: typeof obj[i] === 'boolean' ? obj[i].toString() : obj[i],
+            view:null
+          });
+        }
+      }
+      return parsedData;
+    }
+
+
+    if (props.data[rowId.key].format === 'json' && props.data[rowId.key].hasOwnProperty('extracted')) {
+      Object.values(props.data[rowId.key].extracted.content[1]).forEach((content: any) => {
+        nestedData = parseJson(content);
+
+      });
+    } else if (props.data[rowId.key].format === 'xml' && props.data[rowId.key].hasOwnProperty('extracted')) {
+      let mappedObj = xmlParser(Object.values(props.data[rowId.key].extracted.content)[1]);
+      let propertyValues = Object.values<any>(mappedObj);
+      propertyValues.forEach((item: Object) => {
+        nestedData = parseJson(item);
+      })
+    }
+
+
+    return <Table
+        rowKey="key"
+        columns={columns}
+        dataSource={nestedData}
+        pagination={false}
+        className= {styles.nestedTable}
+    />;
+  }
+
+
   return (
-    <Table bordered components={components}
-      className="search-tabular"
-      rowKey="key"
-      dataSource={data}
-      columns={columns}
-      pagination={false}
-      data-cy="search-tabular"
-    />
+      <Table bordered components={components}
+             className="search-tabular"
+             rowKey="key"
+             dataSource={data}
+             columns={columns}
+             pagination={false}
+             expandedRowRender={expandedRowRender}
+             data-cy="search-tabular"
+      />
   );
 }
 
-export default ResultTable;
+export default ResultTable

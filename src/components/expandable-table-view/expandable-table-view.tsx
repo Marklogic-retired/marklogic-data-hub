@@ -75,12 +75,11 @@ const ExpandableTableView: React.FC<Props> = (props) => {
           primaryKeyValue = encodeURIComponent(props.item.uri);
         }
       }
-      if (!obj.hasOwnProperty('headers') && !obj.hasOwnProperty('es:headers') && itemEntityProperties[0].hasOwnProperty(entityDef.primaryKey)) {
-        const propertyValues = itemEntityProperties;
-        propertyValues.forEach((item: Object) => {
-          data = parseJson(item);
-        })
-      }
+      let mappedObj = xmlParser(Object.values(props.item.extracted.content)[1]);
+      let propertyValues = Object.values<any>(mappedObj);
+      propertyValues.forEach((item: Object) => {
+        data = parseJson(item);
+      })
     })
   }
 

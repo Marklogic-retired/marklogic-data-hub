@@ -29,7 +29,7 @@ describe("Result Table component", () => {
     });
 
     it('should render table for all entities', () => {
-      expect(wrapper.find('.ant-table-thead th')).toHaveLength(4);
+      expect(wrapper.find('.ant-table-thead th')).toHaveLength(5);
     });
 
     it('should render resizable', () => {
@@ -56,7 +56,7 @@ describe("Result Table component", () => {
     });
 
     it('should render table for the entity', () => {
-      expect(wrapper.find('.ant-table-thead th')).toHaveLength(6);
+      expect(wrapper.find('.ant-table-thead th')).toHaveLength(7);
     });
 
     it('should render resizable', () => {

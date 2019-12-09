@@ -180,10 +180,10 @@ describe('json scenario for table on browse documents page', () => {
         cy.wait(2000);
         browsePage.getHubPropertiesExpanded();
         browsePage.getTotalDocuments().should('be.greaterThan', '1008')
-        browsePage.getColumnTitle(1).should('contain', 'Identifier');
-        browsePage.getColumnTitle(2).should('contain', 'Entity');
-        browsePage.getColumnTitle(3).should('contain', 'File Type');
-        browsePage.getColumnTitle(4).should('contain', 'Created');
+        browsePage.getColumnTitle(2).should('contain', 'Identifier');
+        browsePage.getColumnTitle(3).should('contain', 'Entity');
+        browsePage.getColumnTitle(4).should('contain', 'File Type');
+        browsePage.getColumnTitle(5).should('contain', 'Created');
 
         facets.forEach(function (item) {
             browsePage.getFacet(item).should('exist');
@@ -201,7 +201,7 @@ describe('json scenario for table on browse documents page', () => {
         //check table columns
         browsePage.getTableColumns().should('have.length', 4);
         //check cells data
-        for (let i = 1; i <= 10; i++) {
+       for (let i = 2; i <= 10; i++) {
             for (let j = 2; j <= 4; j++) {
                 browsePage.getTableCell(i, j).should('not.be.empty')
             }

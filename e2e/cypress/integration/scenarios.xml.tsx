@@ -182,7 +182,7 @@ describe('xml scenario for table on browse documents page', () => {
         //check table columns
         browsePage.getTableColumns().should('have.length', 4);
         //check cells data
-        for (let i = 1; i <= 6; i++) {
+        for (let i = 2; i <= 6; i++) {
             for (let j = 2; j <= 4; j++) {
                 browsePage.getTableCell(i, j).should('not.be.empty')
             }
