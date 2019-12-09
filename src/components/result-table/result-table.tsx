@@ -161,8 +161,8 @@ const ResultTable: React.FC<Props> = (props) => {
       row =
           {
             key: rowCounter++,
-            identifier: <Link to={path}><Tooltip
-                title={isUri && item.uri}>{isUri ? '.../' + document : item.primaryKey}</Tooltip></Link>,
+            identifier: <Tooltip
+                title={isUri && item.uri}>{isUri ? '.../' + document : item.primaryKey}</Tooltip>,
             entity: item.itemEntityName,
             filetype: item.format,
             created: date,
@@ -195,12 +195,10 @@ const ResultTable: React.FC<Props> = (props) => {
       for (var propt in item.itemEntityProperties[0]) {
         if (isUri) {
           row.identifier =
-              <Link to={path}>
                 <Tooltip title={isUri ? item.uri : item.primaryKey}>{'.../' + document}</Tooltip>
-              </Link>
         }
         if (primaryKeys.includes(propt)) {
-          row[propt.toLowerCase()] = <Link to={path}>{item.itemEntityProperties[0][propt]}</Link>
+          row[propt.toLowerCase()] = item.itemEntityProperties[0][propt];
         } else {
           row[propt.toLowerCase()] = item.itemEntityProperties[0][propt];
         }
@@ -288,6 +286,7 @@ const ResultTable: React.FC<Props> = (props) => {
              pagination={false}
              expandedRowRender={expandedRowRender}
              data-cy="search-tabular"
+             scroll={{ x: 1000 }}
       />
   );
 }
