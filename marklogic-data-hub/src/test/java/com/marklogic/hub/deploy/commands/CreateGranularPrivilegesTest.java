@@ -1,5 +1,6 @@
 package com.marklogic.hub.deploy.commands;
 
+import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.mgmt.api.API;
@@ -14,7 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ApplicationConfig.class)
@@ -25,7 +26,7 @@ public class CreateGranularPrivilegesTest extends HubTestBase {
      * so this test just verifies the results of that command having been run.
      */
     @Test
-    public void verifyGranularPrivilegesExist() {
+    void verifyGranularPrivilegesExist() {
         PrivilegeManager mgr = new PrivilegeManager(adminHubConfig.getManageClient());
         ResourceMapper resourceMapper = new DefaultResourceMapper(new API(adminHubConfig.getManageClient()));
 
@@ -48,5 +49,31 @@ public class CreateGranularPrivilegesTest extends HubTestBase {
         p = resourceMapper.readResource(mgr.getAsJson("admin-database-index-data-hub-FINAL", "kind", "execute"), Privilege.class);
         assertEquals("http://marklogic.com/xdmp/privileges/admin/database/index/" + finalDbId, p.getAction());
         assertEquals("data-hub-developer", p.getRole().get(0));
+    }
+
+    @Test
+    void deletePrivilegesOnUndeploy() {
+        PrivilegeManager mgr = new PrivilegeManager(adminHubConfig.getManageClient());
+        ResourcesFragment privileges = mgr.getAsXml();
+        assertTrue(privileges.resourceExists("admin-database-clear-data-hub-STAGING"));
+        assertTrue(privileges.resourceExists("admin-database-clear-data-hub-FINAL"));
+        assertTrue(privileges.resourceExists("admin-database-index-data-hub-STAGING"));
+        assertTrue(privileges.resourceExists("admin-database-index-data-hub-FINAL"));
+
+        final CreateGranularPrivilegesCommand command = new CreateGranularPrivilegesCommand(adminHubConfig);
+        final CommandContext context = new CommandContext(adminHubConfig.getAppConfig(), adminHubConfig.getManageClient(), null);
+        try {
+            command.undo(context);
+
+            privileges = mgr.getAsXml();
+            assertFalse(privileges.resourceExists("admin-database-clear-data-hub-STAGING"));
+            assertFalse(privileges.resourceExists("admin-database-clear-data-hub-FINAL"));
+            assertFalse(privileges.resourceExists("admin-database-index-data-hub-STAGING"));
+            assertFalse(privileges.resourceExists("admin-database-index-data-hub-FINAL"));
+        } finally {
+            // Need to deploy these privileges back so the lack of them doesn't impact other tests
+            command.execute(context);
+            verifyGranularPrivilegesExist();
+        }
     }
 }
