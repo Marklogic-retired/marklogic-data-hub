@@ -27,5 +27,6 @@ task (runMain, dependsOn: 'classes', type: JavaExec) {
 
 dependencies {
     compile group: 'com.marklogic', name: 'marklogic-client-api', version:'4.1.1'
+    compile group: 'com.marklogic', name: 'ml-javaclient-util', version:'3.13.2'
     //testCompile group: 'junit', name: 'junit', version:'4.12'
 }

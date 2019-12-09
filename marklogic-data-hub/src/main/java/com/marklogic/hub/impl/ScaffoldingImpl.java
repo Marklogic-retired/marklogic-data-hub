@@ -34,12 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -55,6 +50,9 @@ public class ScaffoldingImpl implements Scaffolding {
 
     @Autowired
     HubConfig hubConfig;
+
+    @Autowired
+    Versions versions;
 
     @Autowired
     private ScaffoldingValidator validator;
@@ -119,11 +117,11 @@ public class ScaffoldingImpl implements Scaffolding {
             File libFile;
             String libScaffoldingSrcFile = null;
             if("sjs".equalsIgnoreCase(format)) {
-                moduleScaffoldingSrcFile = "scaffolding/custom-module/sjs/main.sjs";
+                moduleScaffoldingSrcFile = "scaffolding/custom-module/sjs/main-" + stepType.toLowerCase() + ".sjs";
             }
             else if("xqy".equalsIgnoreCase(format)) {
-                moduleScaffoldingSrcFile = "scaffolding/custom-module/xqy/main.sjs";
-                libScaffoldingSrcFile = "scaffolding/custom-module/xqy/lib.xqy";
+                moduleScaffoldingSrcFile = "scaffolding/custom-module/xqy/main-" + stepType.toLowerCase() + ".sjs";
+                libScaffoldingSrcFile = "scaffolding/custom-module/xqy/lib-" + stepType.toLowerCase() + ".xqy";
             }
             else {
                 throw new RuntimeException("Invalid code format. The allowed formats are 'xqy' or 'sjs'");
@@ -149,23 +147,16 @@ public class ScaffoldingImpl implements Scaffolding {
         flowsDir.toFile().mkdirs();
         File flowFile = flowsDir.resolve(flowName + ".flow.json").toFile();
 
-        Map<String, String> customTokens = new HashMap<>();
-        customTokens.put("%%mlStagingDbName%%", hubConfig.getDbName(DatabaseKind.STAGING));
-        customTokens.put("%%mlFinalDbName%%", hubConfig.getDbName(DatabaseKind.FINAL));
-        customTokens.put("%%mlFlowName%%", flowName);
-
         if (flowsDir.toFile().exists()) {
-            String flowSrcFile = "scaffolding/defaultFlow.flow.json";
-            InputStream inputStream = ScaffoldingImpl.class.getClassLoader().getResourceAsStream(flowSrcFile);
-            try {
-                String fileContents = IOUtils.toString(inputStream);
-                for (String key : customTokens.keySet()) {
+            Map<String, String> customTokens = new HashMap<>();
+            customTokens.put("%%mlStagingDbName%%", hubConfig.getDbName(DatabaseKind.STAGING));
+            customTokens.put("%%mlFinalDbName%%", hubConfig.getDbName(DatabaseKind.FINAL));
+            customTokens.put("%%mlFlowName%%", flowName);
 
-                    String value = customTokens.get(key);
-                    if (value != null) {
-                        fileContents = fileContents.replace(key, value);
-                    }
-                }
+            boolean supportsEntityServicesMapping = versions != null ? versions.isVersionCompatibleWithES() : false;
+
+            try {
+                String fileContents = buildFlowFromDefaultFlow(customTokens, supportsEntityServicesMapping);
                 try (FileWriter writer = new FileWriter(flowFile)) {
                     writer.write(fileContents);
                 }
@@ -174,6 +165,27 @@ public class ScaffoldingImpl implements Scaffolding {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    protected String buildFlowFromDefaultFlow(Map<String, String> customTokens, boolean supportsEntityServicesMapping) throws IOException {
+        String flowSrcFile = "scaffolding/defaultFlow.flow.json";
+        String fileContents = null;
+        try (InputStream inputStream = ScaffoldingImpl.class.getClassLoader().getResourceAsStream(flowSrcFile)) {
+            assert inputStream != null;
+            fileContents = IOUtils.toString(inputStream);
+            for (String key : customTokens.keySet()) {
+                String value = customTokens.get(key);
+                if (value != null) {
+                    fileContents = fileContents.replace(key, value);
+                }
+            }
+        }
+
+        if (!supportsEntityServicesMapping) {
+            fileContents = fileContents.replaceAll("entity-services-mapping", "default-mapping");
+        }
+
+        return fileContents;
     }
 
     @Override public void createLegacyFlow(String entityName, String flowName,
@@ -240,18 +252,6 @@ public class ScaffoldingImpl implements Scaffolding {
         }
     }
 
-    private Document readLegacyFlowXml(File file) {
-        try (FileInputStream is = new FileInputStream(file)) {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(true);
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            return builder.parse(is);
-        }
-        catch(IOException | ParserConfigurationException | SAXException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     @Override public void updateLegacyEntity(String entityName) {
         Path oldEntityDir = project.getEntityDir(entityName);
         Path newEntityDir = project.getHubEntitiesDir();
@@ -267,7 +267,7 @@ public class ScaffoldingImpl implements Scaffolding {
         logger.info("writing: " + srcFile + " => " + dstFile.toString());
         if (!dstFile.toFile().exists()) {
             InputStream inputStream = Scaffolding.class.getClassLoader()
-                    .getResourceAsStream(srcFile);
+                .getResourceAsStream(srcFile);
             FileUtil.copy(inputStream, dstFile.toFile());
         }
     }
@@ -281,7 +281,7 @@ public class ScaffoldingImpl implements Scaffolding {
     }
 
     @Override public void createRestExtension(String entityName, String extensionName,
-            FlowType flowType, CodeFormat codeFormat) throws ScaffoldingValidationException {
+                                              FlowType flowType, CodeFormat codeFormat) throws ScaffoldingValidationException {
         logger.info(extensionName);
 
         if(!validator.isUniqueRestServiceExtension(extensionName)) {
@@ -295,7 +295,7 @@ public class ScaffoldingImpl implements Scaffolding {
     }
 
     @Override public void createRestTransform(String entityName, String transformName,
-            FlowType flowType, CodeFormat codeFormat) throws ScaffoldingValidationException {
+                                              FlowType flowType, CodeFormat codeFormat) throws ScaffoldingValidationException {
         logger.info(transformName);
         if(!validator.isUniqueRestTransform(transformName)) {
             throw new ScaffoldingValidationException("A rest transform with the same name as " + transformName + " already exists.");
@@ -337,13 +337,13 @@ public class ScaffoldingImpl implements Scaffolding {
     }
 
     private File createEmptyRestExtensionFile(String entityName, String extensionName,
-            FlowType flowType, CodeFormat codeFormat) {
+                                              FlowType flowType, CodeFormat codeFormat) {
         Path restDir = getRestDirectory(entityName, flowType);
         return createEmptyFile(restDir, "services", extensionName + "." + codeFormat);
     }
 
     private File createEmptyRestTransformFile(String entityName, String transformName,
-            FlowType flowType, CodeFormat codeFormat) {
+                                              FlowType flowType, CodeFormat codeFormat) {
         Path restDir = getRestDirectory(entityName, flowType);
         return createEmptyFile(restDir, "transforms", transformName + "." + codeFormat);
     }
@@ -392,7 +392,7 @@ public class ScaffoldingImpl implements Scaffolding {
         BufferedReader rdr = null;
         try {
             inputStream = Scaffolding.class.getClassLoader()
-                    .getResourceAsStream(srcFile);
+                .getResourceAsStream(srcFile);
             rdr = new BufferedReader(new InputStreamReader(inputStream));
             String bufferedLine = null;
             while ((bufferedLine = rdr.readLine()) != null) {

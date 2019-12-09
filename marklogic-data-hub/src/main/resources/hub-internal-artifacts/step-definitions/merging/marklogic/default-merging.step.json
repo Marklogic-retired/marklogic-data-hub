@@ -1,0 +1,19 @@
+{
+  "lang": "zxx",
+  "name": "default-merging",
+  "type": "merging",
+  "version": 1,
+  "modulePath": "/data-hub/5/builtins/steps/mastering/default/merging.sjs",
+  "retryLimit" : 0,
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "options": {
+    "acceptsBatch": false,
+    "stepUpdate": false,
+    "sourceDatabase": "data-hub-FINAL",
+    "targetDatabase": "data-hub-FINAL",
+    "collections": [
+      "default-merging","mastered"
+    ]
+  }
+}

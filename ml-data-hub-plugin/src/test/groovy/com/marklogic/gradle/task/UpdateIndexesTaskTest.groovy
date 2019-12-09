@@ -68,8 +68,9 @@ class UpdateIndexesTaskTest extends BaseTest {
     @IgnoreIf({ System.getProperty('mlIsProvisionedEnvironment') })
 	def "test to deploy indexes to STAGING/FINAL/JOBS Database"() {
 		given:
-		int stagingIndexCount = getStagingRangePathIndexSize()
-		int finalIndexCount = getFinalRangePathIndexSize()
+        //existing staging and final indexes are from core tests and they get replaced when mlUpdateIndexes is run, so we dont need their count
+		//int stagingIndexCount = getStagingRangePathIndexSize()
+        //int finalIndexCount = getFinalRangePathIndexSize()
 		int jobIndexCount = getJobsRangePathIndexSize()
 
 		when:
@@ -79,8 +80,8 @@ class UpdateIndexesTaskTest extends BaseTest {
 		notThrown(UnexpectedBuildFailure)
 		result.task(":mlUpdateIndexes").outcome == SUCCESS
 
-		assert (getStagingRangePathIndexSize() == stagingIndexCount+1)
-		assert (getFinalRangePathIndexSize() == finalIndexCount+1)
+		assert (getStagingRangePathIndexSize() == 2)
+		assert (getFinalRangePathIndexSize() == 2)
 		assert (getJobsRangePathIndexSize() == jobIndexCount+1)
 	}
 }

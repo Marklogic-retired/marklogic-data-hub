@@ -1,5 +1,12 @@
 import { Merging } from "./merging.model";
 
+export enum Event {
+  ONMERGE = 'onMerge',
+  ONNOMATCH = 'onNoMatch',
+  ONARCHIVE = 'onArchive',
+  ONNOTIFICATION = 'onNotification'
+}
+
 /**
  * Represents a set of merge collections for UI display.
  */
@@ -29,11 +36,18 @@ export class MergeCollections {
   }
 
   /**
-   * Update a merge collection in the set.
+   * Edit a merge collection in the set.
    */
-  updateCollection(coll, index) {
-    let mColl = new MergeCollection(coll);
-    this.collections.splice(index, 1, mColl);
+  editCollection(coll) {
+    let found = this.collections.find(c => {
+      return c.event === coll.event;
+    })
+    if (found) {
+      found.add = coll.add;
+    } else {
+      let mColl = new MergeCollection(coll);
+      this.collections.push(mColl);
+    }
   }
 
   /**
@@ -54,7 +68,7 @@ export class MergeCollections {
  * Represents a merge collection for UI display.
  */
 export class MergeCollection {
-  public event: string;
+  public event: Event;
   public add: Array<any> = [];
   public remove: Array<any> = [];
   public set: Array<any> = [];

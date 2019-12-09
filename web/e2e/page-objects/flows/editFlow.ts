@@ -69,6 +69,10 @@ export class EditFlow extends AppPage {
     return await element(by.cssContainingText("span.mat-checkbox-label", step)).click();
   }
 
+  stepDeleteButton() {
+    return element(by.css);
+  }
+
   /**
    * clickButtonRunCancel
    * @param option = [cancel/flow]
@@ -104,7 +108,7 @@ export class EditFlow extends AppPage {
   }
 
   get jobStartedTimestamp() {
-    return element(by.id("job-started-timestamp"));
+    return element(by.css("#job-started-timestamp span"));
   }
 
   get viewJobsButton() {
@@ -132,6 +136,10 @@ export class EditFlow extends AppPage {
   async clickFlowExpandCollapseButton() {
     let button = this.flowExpandCollapseButton;
     return await button.click();
+  }
+
+  async selectStepByName(stepName: string) {
+    return await element(by.cssContainingText(".step h3.step-name",stepName)).click();
   }
 
   flowMenuOptions(option: string) {
@@ -217,13 +225,20 @@ export class EditFlow extends AppPage {
       await stepsPage.clickStepCancelSave("save");
       await browser.wait(EC.visibilityOf(stepsPage.stepDetailsName));
       await browser.sleep(5000);
-      await stepsPage.stepSelectContainer(step.stepName).click();
+      await browser.wait(EC.elementToBeClickable(stepsPage.stepSelectContainer(step.stepName)), 5000);
+      await browser.executeScript("arguments[0].click();", stepsPage.stepSelectContainer(step.stepName));
+      //await stepsPage.stepSelectContainer(step.stepName).click();
       await expect(stepsPage.stepDetailsName.getText()).toEqual(step.stepName);
     }
   }
 
+  async deleteStep(flow, step) {
+
+  }
+
   async verifyFlow() {
     await console.log('verify flow on edit flow page');
+    await browser.sleep(3000);
     await expect(editFlowPage.flowLatestJobStatus).toEqual("Finished");
     await expect(editFlowPage.jobStartedTimestamp.isDisplayed).toBeTruthy();
     await expect(editFlowPage.viewJobsButton.isEnabled).toBeTruthy();

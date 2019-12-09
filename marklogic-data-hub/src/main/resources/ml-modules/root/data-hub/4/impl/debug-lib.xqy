@@ -17,9 +17,6 @@ xquery version "1.0-ml";
 
 module namespace debug = "http://marklogic.com/data-hub/debug";
 
-import module namespace hul = "http://marklogic.com/data-hub/hub-utils-lib"
-  at "/data-hub/4/impl/hub-utils-lib.xqy";
-
 declare option xdmp:mapping "false";
 
 declare function debug:enable($enabled as xs:boolean)
@@ -28,11 +25,10 @@ declare function debug:enable($enabled as xs:boolean)
   then
       xdmp:eval('
         declare namespace debug = "http://marklogic.com/data-hub/debug";
-
         xdmp:document-insert(
           "/com.marklogic.hub/settings/__debug_enabled__.xml",
           element debug:is-debugging-enabled { 1 },
-          xdmp:default-permissions(),
+          (xdmp:permission("rest-reader", "read"), xdmp:permission("rest-writer", "update")),
           "hub-core-module")
         ',
         (),

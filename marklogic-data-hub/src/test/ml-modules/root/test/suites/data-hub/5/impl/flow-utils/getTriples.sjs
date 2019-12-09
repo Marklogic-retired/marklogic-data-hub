@@ -43,7 +43,7 @@ triples = flowUtils.getTriples(xdmp.toJSON({
       }
     ]
   }
-})).toArray();
+}));
 
 results.push(
   test.assertEqual("s1", xs.string(triples[0].triple.subject)),

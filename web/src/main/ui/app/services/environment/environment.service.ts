@@ -26,6 +26,7 @@ export class EnvironmentService {
       this.settings.dhfversion = json.dhfversion;
       this.settings.installedVersion = json.installedVersion;
       this.settings.marklogicVersion = json.marklogicVersion;
+      this.settings.isVersionCompatibleWithES = json.versionCompatibleWithES;
       this.marklogicVersion = json.marklogicVersion;
       if (json.runningVersion === '0.1.2' || json.runningVersion === '%%mlHubVersion%%' || json.installedVersion === '%%mlHubVersion%%') {
         return true;

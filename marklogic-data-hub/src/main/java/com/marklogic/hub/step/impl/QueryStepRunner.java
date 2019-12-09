@@ -402,8 +402,21 @@ public class QueryStepRunner implements StepRunner {
                             errorMessages.addAll(response.errors.stream().map(jsonNode -> StepRunnerUtil.jsonToString(jsonNode)).collect(Collectors.toList()));
                         }
                     }
-                    if(isFullOutput) {
-                        fullResponse.putAll(mapper.convertValue(response.documents, Map.class));
+
+                    if (isFullOutput && response.documents != null) {
+                        // Using a try/catch. As of DH 5.1, the "fullOutput" feature is undocumented and untested, and
+                        // the work for DHFPROD-3176 is to at least not throw an error if someone does set fullOutput=true.
+                        // Note that the output is also not visible in QuickStart, but it can be seen when running a flow
+                        // via Gradle.
+                        try {
+                            for (JsonNode node : response.documents) {
+                                if (node.has("uri")) {
+                                    fullResponse.put(node.get("uri").asText(), node.toString());
+                                }
+                            }
+                        } catch (Exception ex) {
+                            logger.warn("Unable to add written documents to fullResponse map in RunStepResponse; cause: " + ex.getMessage(), ex);
+                        }
                     }
 
                     if (response.errorCount < response.totalCount) {

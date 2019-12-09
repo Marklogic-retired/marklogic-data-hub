@@ -23,9 +23,10 @@ import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.InstallInfo;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
-import com.marklogic.hub.error.CantUpgradeException;
 import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.impl.HubProjectImpl;
 import com.marklogic.hub.legacy.LegacyTracing;
+import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.web.auth.ConnectionAuthenticationToken;
 import com.marklogic.hub.web.listeners.DeployUserModulesListener;
 import com.marklogic.hub.web.listeners.ValidateListener;
@@ -67,10 +68,16 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
     EntityManagerService entityManagerService;
 
     @Autowired
+    MappingManagerService mappingManagerService;
+
+    @Autowired
     private FileSystemWatcherService watcherService;
 
     @Autowired
     private HubConfigImpl hubConfig;
+
+    @Autowired
+    private HubProjectImpl hubProject;
 
     @Autowired
     private SimpMessagingTemplate template;
@@ -153,8 +160,7 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
     }
 
     @RequestMapping(value = "/reinstall-user-modules", method = RequestMethod.POST)
-    public ResponseEntity<?> reinstallUserModules() throws IOException {
-        // reinstall the user modules
+    public ResponseEntity<?> reinstallUserModules() {
         dataHubService.reinstallUserModules(hubConfig, this, this);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -166,15 +172,6 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
         dataHubService.validateUserModules(hubConfig, this);
 
         return "{}";
-    }
-
-    @RequestMapping(value = "/uninstall-user-modules", method = RequestMethod.DELETE)
-    @ResponseBody
-    public ResponseEntity<?> unInstallUserModules() {
-        // uninstall the hub
-        dataHubService.uninstallUserModules(hubConfig);
-
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/stats", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -202,20 +199,6 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/update-hub", method = RequestMethod.POST)
-    public ResponseEntity<?> updateHub() throws IOException, CantUpgradeException {
-        try {
-            if (dataHubService.updateHub(hubConfig)) {
-                installUserModules(hubConfig, true);
-                startProjectWatcher();
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-        } catch (CantUpgradeException e) {
-            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
-
     @RequestMapping(value = "/preinstall-check", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
     public String preInstallCheck() {
@@ -239,6 +222,10 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
             watcherService.watch(stepDefinitionsDir);
             watcherService.watch(entitiesDir);
             watcherService.watch(mappingsDir);
+            //watch ml-modules/root/custom-modules/ingestion|mapping|mastering dirs
+            for (StepDefinition.StepDefinitionType stepType : StepDefinition.StepDefinitionType.values()) {
+                watcherService.watch(hubProject.getCustomModulesDir().resolve(stepType.toString().toLowerCase()).toString());
+            }
             watcherService.addListener(this);
         }
     }
@@ -307,5 +294,6 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
             watcherService.unwatch(hubConfig.getFlowsDir().toString());
             watcherService.removeListener(this);
         }
+        mappingManagerService.unsetMappingValidators();
     }
 }

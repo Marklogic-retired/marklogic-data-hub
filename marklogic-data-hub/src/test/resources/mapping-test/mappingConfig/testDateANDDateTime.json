@@ -1,0 +1,64 @@
+{
+  "language": "zxx",
+  "name": "OrderJSON-OrderJSONMapping",
+  "description": "",
+  "version": 0,
+  "targetEntityType": "Order-0.0.1/Order",
+  "sourceContext": "/",
+  "sourceURI": "",
+  "properties": {
+    "OrderID": {
+      "sourcedFrom": "OrderID"
+    },
+    "CustomerID": {
+      "sourcedFrom": "CustomerID"
+    },
+    "DateTimeFormat1": {
+      "sourcedFrom": "parseDateTime(DateTimeFormat1, 'YYYY/MM/DD hh:mm:ss')"
+    },
+    "DateTimeFormat2": {
+      "sourcedFrom": "parseDateTime(DateTimeFormat2, 'YYYY/MM/DD-hh:mm:ss')"
+    },
+    "DateTimeFormat3": {
+      "sourcedFrom": "parseDateTime(DateTimeFormat3, 'DD/MM/YYYY hh:mm:ss')"
+    },
+    "DateTimeFormat4": {
+      "sourcedFrom": "parseDateTime(DateTimeFormat4, 'DD/MM/YYYY-hh:mm:ss')"
+    },
+    "DateTimeFormat5": {
+      "sourcedFrom": "parseDateTime(DateTimeFormat5, 'YYYYMMDDThhmmss')"
+    },
+    "ShippedDate1": {
+      "sourcedFrom": "parseDate(ShippedDate1, 'DD/MM/YYYY')"
+    },
+    "ShippedDate2": {
+      "sourcedFrom": "parseDate(ShippedDate2, 'MM.DD.YYYY')"
+    },
+    "ShippedDate3": {
+      "sourcedFrom": "parseDate(ShippedDate3, 'YYYYMMDD')"
+    },
+    "ShippedDate4": {
+      "sourcedFrom": "parseDate(ShippedDate4, 'Mon DD, YYYY')"
+    },
+    "ShippedDate5": {
+      "sourcedFrom": "parseDate(ShippedDate5, 'DD-Mon-YYYY')"
+    },
+    "RequiredDate1": {
+      "sourcedFrom": "parseDate(RequiredDate1, 'MM/DD/YYYY')"
+    },
+    "RequiredDate2": {
+      "sourcedFrom": "parseDate(RequiredDate2, 'MM-DD-YYYY')"
+    },
+    "RequiredDate3": {
+      "sourcedFrom": "parseDate(RequiredDate3, 'DD.MM.YYYY')"
+    },
+    "RequiredDate4": {
+      "sourcedFrom": "parseDate(RequiredDate4, 'YYYY/MM/DD')"
+    },
+    "RequiredDate5": {
+      "sourcedFrom": "parseDate(RequiredDate5, 'DD Mon YYYY')"
+    },
+    "InvalidInputDate": { "sourcedFrom": "parseDate('07.16.1996', 'DD Mon YYYY')" },
+    "InputNotDate": { "sourcedFrom": "parseDate(ShipCity, 'DD Mon YYYY')" }
+  }
+}

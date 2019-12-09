@@ -1,0 +1,48 @@
+{
+  "envelope": {
+    "headers": {
+      "sources": [{
+        "name": "jsonFlow"
+      }],
+      "createdOn": "2019-11-14T10:26:15.408322-08:00",
+      "createdBy": "admin"
+    },
+    "triples": [],
+    "instance": {
+      "id": 1,
+      "transactionDate": "12/7/2019",
+      "customer": {
+        "firstName": "Oralia",
+        "lastName": "Dinesen",
+        "gender": "F"
+      },
+      "items": [{
+        "name": "Voltsillam",
+        "price": 2,
+        "quantity": 7
+      },
+        {
+          "name": "Latlux",
+          "price": 7.17,
+          "quantity": 10
+        },
+        {
+          "name": "Biodex",
+          "price": 5.01,
+          "quantity": 2
+        },
+        {
+          "name": "Fixflex",
+          "price": 8.77,
+          "quantity": 6
+        },
+        {
+          "name": "Keylex",
+          "price": 5.57,
+          "quantity": 3
+        }
+      ]
+    },
+    "attachments": null
+  }
+}

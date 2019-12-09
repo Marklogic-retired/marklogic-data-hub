@@ -1,6 +1,7 @@
 xquery version "1.0-ml";
 
-import module namespace lib = "http://marklogic.com/datahub/test" at "lib/lib.xqy";
+import module namespace hub-test = "http://marklogic.com/data-hub/test" at "/test/data-hub-test-helper.xqy";
+import module namespace test = "http://marklogic.com/test" at "/test/test-helper.xqy";
 
 xdmp:invoke-function(function() {
   xdmp:document-delete(
@@ -9,9 +10,5 @@ xdmp:invoke-function(function() {
 },
   map:entry("database", xdmp:modules-database())
 ),
-(
-  map:keys($lib:TEST-DATA),
-  "/mappings/CustomerJSON-CustomerJSONMapping/CustomerJSON-CustomerJSONMapping-0.mapping.json",
-  "/flows/CustomerMapping.flow.json",
-  "/entities/Customer.entity.json"
-) ! xdmp:document-delete(.)
+
+hub-test:delete-artifacts($test:__CALLER_FILE__)

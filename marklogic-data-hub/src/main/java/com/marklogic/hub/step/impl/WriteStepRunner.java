@@ -23,6 +23,8 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.datamovement.*;
 import com.marklogic.client.document.ServerTransform;
+import com.marklogic.client.ext.util.DefaultDocumentPermissionsParser;
+import com.marklogic.client.ext.util.DocumentPermissionsParser;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.InputStreamHandle;
@@ -94,6 +96,7 @@ public class WriteStepRunner implements StepRunner {
     private AtomicBoolean isStopped = new AtomicBoolean(false);
     private IngestionStepDefinitionImpl stepDef;
     private Map<String, Object> stepConfig = new HashMap<>();
+    private DocumentPermissionsParser documentPermissionsParser = new DefaultDocumentPermissionsParser();
 
     public WriteStepRunner(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
@@ -513,7 +516,7 @@ public class WriteStepRunner implements StepRunner {
         //Apply permissions
         if(StringUtils.isNotEmpty(outputPermissions)) {
             try{
-                applyPermissions(outputPermissions, metadataHandle);
+                documentPermissionsParser.parsePermissions(outputPermissions, metadataHandle.getPermissions());
             }
             catch (Exception e){
                 throw e;
@@ -658,7 +661,10 @@ public class WriteStepRunner implements StepRunner {
         }
     }
 
-    private void addToBatcher(File file, Format fileFormat) throws  IOException{
+    private void addToBatcher(File file, Format fileFormat) throws IOException {
+        // Coverity is saying that the docStream is a resource leak, but the comment below this indicates that it must
+        // not be closed. Because this is for DHFPROD-3695 and we're close to releasing 5.1.0, leaving this as-is for now.
+
         // This docStream must not be closed, or use try-resource due to WriteBatcher needing the stream open
         FileInputStream docStream = new FileInputStream(file);
         //note these ORs are for forward compatibility if we swap out the filecollector for another lib
@@ -702,34 +708,6 @@ public class WriteStepRunner implements StepRunner {
     private String generateAndEncodeURI(String path) throws  URISyntaxException {
         URI uri = new URI(null, null, null, 0, path, null, null);
         return uri.toString();
-    }
-
-    private void applyPermissions(String permissions, DocumentMetadataHandle metadataHandle) {
-        String[] perms = permissions.split(",");
-        if (perms != null && perms.length > 0) {
-            if (perms.length % 2 != 0) {
-                throw new IllegalArgumentException(
-                    "Permissions are expected to be in <role, capability> pairs.");
-            }
-            int i = 0;
-            while (i + 1 < perms.length) {
-                String roleName = perms[i++];
-                if (roleName == null || roleName.isEmpty()) {
-                    throw new IllegalArgumentException(
-                        "Illegal role name: " + roleName);
-                }
-                String perm = perms[i].trim();
-                if (!DocumentMetadataHandle.Capability.READ.toString().equalsIgnoreCase(perm) &&
-                    !DocumentMetadataHandle.Capability.EXECUTE.toString().equalsIgnoreCase(perm) &&
-                    !DocumentMetadataHandle.Capability.INSERT.toString().equalsIgnoreCase(perm) &&
-                    !DocumentMetadataHandle.Capability.UPDATE.toString().equalsIgnoreCase(perm) &&
-                    !DocumentMetadataHandle.Capability.NODE_UPDATE.toString().equalsIgnoreCase(perm)) {
-                    throw new IllegalArgumentException("Illegal capability: " + perm);
-                }
-                metadataHandle.withPermission(roleName, DocumentMetadataHandle.Capability.getValueOf(perm));
-                i++;
-            }
-        }
     }
 
     private String outputURIReplace(String uri) {

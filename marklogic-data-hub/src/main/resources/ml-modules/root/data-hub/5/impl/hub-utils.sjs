@@ -50,7 +50,7 @@ class HubUtils {
     }));
   }
 
-  writeDocuments(writeQueue, permissions = 'xdmp.defaultPermissions()', collections, database){
+  writeDocuments(writeQueue, permissions = 'xdmp.defaultPermissions()', collections = [], database = xdmp.databaseName(xdmp.database())){
     return fn.head(xdmp.eval(`
     const temporal = require("/MarkLogic/temporal.xqy");
 
@@ -62,23 +62,33 @@ class HubUtils {
     for (let content of writeQueue) {
       let context = (content.context||{});
       let permissions = (basePermissions || []).concat((context.permissions||[]));
+      let existingCollections = xdmp.documentGetCollections(content.uri);
       let collections = fn.distinctValues(Sequence.from(baseCollections.concat((context.collections||[])))).toArray();
       let metadata = context.metadata;
-      let temporalCollection = collections.find((col) => temporalCollections[col]);
-      if (temporalCollection) {
-        // temporalDocURI is managed by the temporal package and must not be carried forward.
-        if (metadata) {
-          delete metadata.temporalDocURI;
+      let temporalCollection = collections.concat(existingCollections).find((col) => temporalCollections[col]);
+      let isDeleteOp = !!content['$delete'];
+      if (isDeleteOp) {
+        if (temporalCollection) {
+          temporal.documentDelete(temporalCollection, content.uri);
+        } else {
+          xdmp.documentDelete(content.uri);
         }
-        temporal.documentInsert(temporalCollection, content.uri, content.value, 
-          {
-            permissions, 
-            collections: collections.filter((col) => !temporalCollections[col]), 
-            metadata
-          }
-         );
       } else {
-        xdmp.documentInsert(content.uri, content.value, {permissions, collections, metadata});
+        if (temporalCollection) {
+          // temporalDocURI is managed by the temporal package and must not be carried forward.
+          if (metadata) {
+            delete metadata.temporalDocURI;
+          }
+          temporal.documentInsert(temporalCollection, content.uri, content.value, 
+            {
+              permissions, 
+              collections: collections.filter((col) => !temporalCollections[col]), 
+              metadata
+            }
+           );
+        } else {
+          xdmp.documentInsert(content.uri, content.value, {permissions, collections, metadata});
+        }
       }
     }
     let writeInfo = {
@@ -114,6 +124,27 @@ class HubUtils {
 
   queryLatest(queryFunction, database) {
     return xdmp.invokeFunction(queryFunction, { commit: 'auto', update: 'false', ignoreAmps: true, database: database ? xdmp.database(database): xdmp.database()})
+  }
+
+  queryToContentDescriptorArray(query, options = {}, database) {
+    let hubUtils = this;
+    let content = [];
+    this.queryLatest(function () {
+      let results = cts.search(query, cts.indexOrder(cts.uriReference()));
+      for (let doc of results) {
+        content.push({
+          uri: xdmp.nodeUri(doc),
+          value: doc,
+          context: {
+            permissions: options.permissions ? hubUtils.parsePermissions(options.permissions) : xdmp.nodePermissions(doc),
+            metadata: xdmp.nodeMetadata(doc),
+            // provide original collections, should a step like to read them
+            originalCollections: xdmp.nodeCollections(doc)
+          }
+        });
+      }
+    }, database);
+    return content;
   }
 
   invoke(moduleUri, parameters, user = null, database) {

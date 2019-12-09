@@ -1,0 +1,8 @@
+<envelope xmlns="http://marklogic.com/entity-services">
+  <instance>
+    <Customer xmlns="">
+      <customerId>999</customerId>
+      <firstName>first</firstName>
+    </Customer>
+  </instance>
+</envelope>

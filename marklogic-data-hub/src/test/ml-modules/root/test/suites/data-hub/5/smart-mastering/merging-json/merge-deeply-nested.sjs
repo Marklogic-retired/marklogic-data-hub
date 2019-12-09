@@ -1,5 +1,3 @@
-declareUpdate();
-
 const con = require("/com.marklogic.smart-mastering/constants.xqy");
 
 const test = require("/test/test-helper.xqy");
@@ -31,7 +29,8 @@ let mergedDoc =
       "options-name": "nested-options"
     },
     {
-      "isolation": "different-transaction"
+      "isolation": "different-transaction",
+      "update": "true"
     }
   ));
 

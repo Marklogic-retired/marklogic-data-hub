@@ -1,4 +1,4 @@
-import { browser, element, by, ElementFinder, Key } from 'protractor'
+import {browser, element, by, ElementFinder, Key, ExpectedConditions as EC} from 'protractor'
 import { AppPage } from '../appPage';
 import { pages } from '../page';
 
@@ -13,12 +13,30 @@ export class EntityPage extends AppPage {
     return element(by.css('app-entity-modeler .tools-toggler'));
   }
 
+  get scaleText() {
+    return element(by.css(".tools > span"));
+  }
+
+  get scaleSlider() {
+    return element(by.css(".mdl-slider__container"));
+  }
+
   get newEntityButton() {
     return element(by.css('#new-entity'));
   }
 
+  async clickNewEntityButton() {
+    await browser.wait(EC.visibilityOf(this.newEntityButton));
+    await this.newEntityButton.click();
+    await browser.wait(EC.visibilityOf(entityPage.entityHeader));
+  }
+
   get entityEditor() {
     return element(by.css('app-entity-editor'));
+  }
+
+  get entityHeader() {
+    return element(by.css(".selected-entity .mdl-dialog__title > div:first-child"));
   }
 
   async selectEntity(entityName: string) {
@@ -93,6 +111,14 @@ export class EntityPage extends AppPage {
     let inputField = this.entityURI;
     await inputField.clear();
     return await inputField.sendKeys(input);
+  }
+
+  get entityHelpIcon() {
+    return element(by.css(".help-icon"));
+  }
+
+  get entityHelpIconLink() {
+    return element(by.css(".help-icon > a")).getAttribute("href");
   }
 
   getEntityBox(entityName: string) {

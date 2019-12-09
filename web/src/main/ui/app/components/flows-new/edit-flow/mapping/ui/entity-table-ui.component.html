@@ -1,0 +1,185 @@
+<mat-table
+  id="entity-table"
+  [dataSource]="dataSource"
+  multiTemplateDataRows
+>
+
+  <!-- NAME COLUMN -->
+  <ng-container matColumnDef="name">
+    <mat-header-cell *matHeaderCellDef>
+      Name
+    </mat-header-cell>
+    <mat-cell *matCellDef="let prop">
+      <span *ngFor="let in of counter(this.nestedLevel) ;let i = dataIndex">
+        <span class="spacer"></span>
+      </span>
+      {{prop.name}}
+      <mat-icon
+        *ngIf="isNested(prop) && showProp[prop.name]"
+        class="prop-toggle prop-toggle-{{prop.name}}"
+        (click)="toggleProp(prop.name)"
+      ><i class="fa fa-angle-up fa-lg"></i>
+      </mat-icon>
+      <mat-icon
+        *ngIf="isNested(prop) && !showProp[prop.name]"
+        class="prop-toggle prop-toggle-{{prop.name}}"
+        (click)="toggleProp(prop.name)"
+      ><i class="fa fa-angle-down fa-lg"></i>
+      </mat-icon>
+    </mat-cell>
+  </ng-container>
+
+  <!-- TYPE COLUMN -->
+  <ng-container matColumnDef="datatype">
+    <mat-header-cell *matHeaderCellDef>
+      Type
+    </mat-header-cell>
+    <mat-cell *matCellDef="let prop">
+      {{this.getDatatype(prop)}}
+    </mat-cell>
+  </ng-container>
+
+  <!-- EXPRESSION COLUMN -->
+  <ng-container matColumnDef="expression">
+    <mat-header-cell *matHeaderCellDef>
+      XPath Expression
+    </mat-header-cell>
+    <mat-cell *matCellDef="let prop; let i = dataIndex">
+      <div *ngIf="isNested(prop)" class="context-label">
+        <span class="context-text">Context</span>
+      </div>
+      <div class="textField" [class.contextField]="isNested(prop)">
+        <span id="textFieldValidation" [ngStyle]="{'background-color': checkFieldInErrors(prop.name)? '#FAD3D3' : ''}">
+          <textarea
+            matInput
+            id="edit-expression"
+            cdkTextareaAutosize
+            #autosize="cdkTextareaAutosize"
+            #fieldName
+            [(ngModel)]="mapExpressions[prop.name]"
+            (change)="onHandleInput({
+              name: prop.name,
+              expr: mapExpressions[prop.name],
+              prop: prop
+            })" type="text"
+            class="map-expr"
+          ></textarea>
+          <mat-icon id="field-with-error" *ngIf=" checkFieldInErrors(prop.name)">
+            <i class="fa fa-times-circle fa-xs" ></i>
+          </mat-icon>
+        </span>
+        <mat-hint id="error-description" *ngIf=" checkFieldInErrors(prop.name)">{{displayResp(prop.name)}}</mat-hint>
+      </div>
+      <div *ngIf="isNested(prop)" class="context-help">
+        <mat-icon 
+          class="context-icon" 
+          container="body"
+          tooltip="An element in the source data from which to derive the values of this entity property's children. Both the source data element and the entity property must be of the same type (Object or an array of Object instances). Use a slash (&quot;/&quot;) if the source model is flat.">
+          <i class="fa fa-info-circle"></i>
+        </mat-icon>
+      </div>
+      <mat-icon
+        id="fields-list"
+        class="list-icon"
+        [matMenuTriggerFor]="fieldMenu"
+        [matMenuTriggerData]="{prop: prop, indx: i}"
+      ><i class="fa fa-list fa-xs"></i>
+      </mat-icon>
+      <span class="function-icon">
+        <button
+          id="function-list"
+          [matMenuTriggerFor]="functionMenu"
+          [matMenuTriggerData]="{prop: prop, indx: i}"
+        >f(x)</button>
+      </span>
+    </mat-cell>
+  </ng-container>
+
+  <!-- VALUE COLUMN -->
+  <ng-container matColumnDef="value">
+    <mat-header-cell *matHeaderCellDef>
+      Value
+    </mat-header-cell>
+    <mat-cell  *matCellDef="let prop"  >
+      <div *ngIf="!checkFieldInErrors(prop.name)">{{displayResp(prop.name)}}</div>
+    </mat-cell>
+  </ng-container>
+
+  <!-- NESTED ENTITY COLUMN -->
+  <ng-container matColumnDef="nested">
+    <mat-cell class="nested-cell" *matCellDef="let prop">
+      <div
+        *ngIf="prop.subProperties && this.isNested(prop)"
+        id="entity-table-nested-container"
+        [ngClass]="{'hide': !showProp[prop.name]}">
+
+        <app-entity-table-ui
+          [entityName] = "prop.name"
+          [entityProps] = "prop.subProperties"
+          [mapProps] = "this.getProps(prop.name)"
+          [context] = "this.getContext(prop.name)"
+          [colsShown]="this.colsShown"
+          [showHeader] = "false"
+          [nestedLevel] = "this.nestedLevel + 1"
+          [srcProps]= "this.srcProps"
+          [functionLst]= "this.functionLst"
+          [currEntity] = "prop.$ref || prop.items.$ref"
+          [mapResp]="this.mapResp['properties'] ? this.mapResp['properties'][prop.name] : {}"
+          [nmspace]="this.nmspace"
+          (handleInput)="this.onHandleInput($event)"
+        ></app-entity-table-ui>
+
+      </div>
+    </mat-cell>
+  </ng-container>
+
+  <!-- HEADER ROW -->
+  <mat-header-row
+    *matHeaderRowDef="colsShown"
+    [hidden]="!this.showHeader"
+  ></mat-header-row>
+
+  <!-- NORMAL ROW -->
+  <mat-row
+    *matRowDef="let prop; columns: colsShown"
+    [hidden]="this.hasExternalRef(prop)"
+    class="entity-row-{{entityName}}-{{prop.name}}"
+  ></mat-row>
+
+  <!-- NESTED ENTITY ROW -->
+  <mat-row
+    *matRowDef="let prop; columns: ['nested']"
+    class="nested-row"
+    [hidden]="!prop.subProperties"
+  ></mat-row>
+
+</mat-table>
+
+<!-- PROPERTIES MENU -->
+<mat-menu class="mat-menu-list" #fieldMenu="matMenu">
+  <ng-template matMenuContent let-indx="indx" let-prop="prop">
+    <div
+      id="field-value-{{srcProp.lastIndexOf('/') != -1 ? srcProp.slice(srcProp.lastIndexOf('/')+1) : srcProp}}"
+      mat-menu-item
+      class="mat-menu-list-btn"
+      *ngFor="let srcProp of uniqueSourceFields(this.srcProps)"
+      [ngStyle]="IndentCondition(srcProp)"
+      (click)="insertField(srcProp, indx, prop) "
+    >
+    <span id="namespace">{{displaySourceField(srcProp).indexOf(':') != -1 ? '('+displaySourceField(srcProp).slice(0,displaySourceField(srcProp).indexOf(':'))+')' : ''}}</span>
+    <span id="field-no-namespace">{{displaySourceField(srcProp).indexOf(':') != -1 ? displaySourceField(srcProp).slice(displaySourceField(srcProp).indexOf(':')) : displaySourceField(srcProp)}}</span>
+  </div>
+  </ng-template>
+</mat-menu>
+
+<!-- FUNCTIONS MENU -->
+<mat-menu class="mat-menu-list" #functionMenu="matMenu">
+  <ng-template matMenuContent let-indx="indx" let-prop="prop">
+    <div
+      mat-menu-item
+      class="mat-menu-list-btn"
+      *ngFor="let function of functionLst | keyvalue"
+      (click)="insertFunction(function.key, indx, prop)"
+    >{{function.key}}</div>
+  </ng-template>
+</mat-menu>

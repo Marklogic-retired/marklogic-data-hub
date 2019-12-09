@@ -41,7 +41,7 @@ abstract class HubTask extends DefaultTask {
     HubConfig getHubConfig() {
         getProject().property("hubConfig")
     }
-    
+
     @Internal
     HubProject getHubProject() {
         getProject().property("hubProject")
@@ -83,15 +83,20 @@ abstract class HubTask extends DefaultTask {
     }
 
     @Internal
+    MasteringManager getMasteringManager() {
+        getProject().property("masteringManager")
+    }
+
+    @Internal
     StepDefinitionManager getStepDefinitionManager() {
         getProject().property("stepManager")
     }
-    
+
     @Internal
     EntityManager getEntityManager() {
         getProject().property("entityManager")
     }
-    
+
     @Internal
     GeneratePiiCommand getGeneratePiiCommand() {
         getProject().property("generatePiiCommand")

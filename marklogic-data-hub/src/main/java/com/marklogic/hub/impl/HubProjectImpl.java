@@ -23,11 +23,14 @@ import com.marklogic.hub.HubProject;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.util.FileUtil;
+import com.marklogic.mgmt.util.ObjectMapperFactory;
 import com.marklogic.rest.util.JsonNodeUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
@@ -62,6 +65,12 @@ public class HubProjectImpl implements HubProject {
     private Path pluginsDir;
     private Path stepDefinitionsDir;
     private String userModulesDeployTimestampFile = USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES;
+
+    @Autowired @Lazy
+    private FlowManagerImpl flowManager;
+
+    @Autowired @Lazy
+    private Versions versions;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -108,6 +117,12 @@ public class HubProjectImpl implements HubProject {
                     break;
                 case MASTERING:
                     path = this.stepDefinitionsDir.resolve("mastering");
+                    break;
+                case MATCHING:
+                    path = this.stepDefinitionsDir.resolve("matching");
+                    break;
+                case MERGING:
+                    path = this.stepDefinitionsDir.resolve("merging");
                     break;
                 default:
                     throw new DataHubProjectException("Invalid Step type");
@@ -202,6 +217,11 @@ public class HubProjectImpl implements HubProject {
         return getModulesDir().resolve("root").resolve("custom-modules");
     }
 
+    @Override
+    public Path getCustomMappingFunctionsDir() {
+        return getCustomModulesDir().resolve("mapping-functions");
+    }
+
     @Override public boolean isInitialized() {
         File buildGradle = this.projectDir.resolve("build.gradle").toFile();
         File gradleProperties = this.projectDir.resolve("gradle.properties").toFile();
@@ -237,6 +257,12 @@ public class HubProjectImpl implements HubProject {
 
         Path customModulesDir = getCustomModulesDir();
         customModulesDir.toFile().mkdirs();
+        getCustomMappingFunctionsDir().toFile().mkdirs();
+
+        //scaffold custom mapping|ingestion|mastering dirs.
+        for (StepDefinition.StepDefinitionType stepType : StepDefinition.StepDefinitionType.values()) {
+            customModulesDir.resolve(stepType.toString().toLowerCase()).toFile().mkdirs();
+        }
 
         Path entitiesDir = getHubEntitiesDir();
         entitiesDir.toFile().mkdirs();
@@ -249,10 +275,6 @@ public class HubProjectImpl implements HubProject {
         writeResourceFile("hub-internal-config/servers/staging-server.json", hubServersDir.resolve("staging-server.json"), true);
         writeResourceFile("hub-internal-config/servers/job-server.json", hubServersDir.resolve("job-server.json"), true);
 
-        Path userServersDir = getUserServersDir();
-        userServersDir.toFile().mkdirs();
-        writeResourceFile("ml-config/servers/final-server.json", userServersDir.resolve("final-server.json"), true);
-
         Path hubDatabaseDir = getHubDatabaseDir();
         hubDatabaseDir.toFile().mkdirs();
         writeResourceFile("hub-internal-config/databases/staging-database.json", hubDatabaseDir.resolve("staging-database.json"), true);
@@ -260,12 +282,22 @@ public class HubProjectImpl implements HubProject {
         writeResourceFile("hub-internal-config/databases/staging-schemas-database.json", hubDatabaseDir.resolve("staging-schemas-database.json"), true);
         writeResourceFile("hub-internal-config/databases/staging-triggers-database.json", hubDatabaseDir.resolve("staging-triggers-database.json"), true);
 
+        // Per DHFPROD-3159, we no longer overwrite user config (ml-config) files. These are rarely updated by DHF,
+        // while users may update them at any time. If DHF ever needs to update one of these files in the future, it
+        // should do so via a method in this class that makes the update directly to the file without losing any
+        // changes made by the user.
+        final boolean overwriteUserConfigFiles = false;
+
+        Path userServersDir = getUserServersDir();
+        userServersDir.toFile().mkdirs();
+        writeResourceFile("ml-config/servers/final-server.json", userServersDir.resolve("final-server.json"), overwriteUserConfigFiles);
+
         Path userDatabaseDir = getUserDatabaseDir();
         userDatabaseDir.toFile().mkdirs();
-        writeResourceFile("ml-config/databases/final-database.json", userDatabaseDir.resolve("final-database.json"), true);
-        writeResourceFile("ml-config/databases/modules-database.json", userDatabaseDir.resolve("modules-database.json"), true);
-        writeResourceFile("ml-config/databases/final-schemas-database.json", userDatabaseDir.resolve("final-schemas-database.json"), true);
-        writeResourceFile("ml-config/databases/final-triggers-database.json", userDatabaseDir.resolve("final-triggers-database.json"), true);
+        writeResourceFile("ml-config/databases/final-database.json", userDatabaseDir.resolve("final-database.json"), overwriteUserConfigFiles);
+        writeResourceFile("ml-config/databases/modules-database.json", userDatabaseDir.resolve("modules-database.json"), overwriteUserConfigFiles);
+        writeResourceFile("ml-config/databases/final-schemas-database.json", userDatabaseDir.resolve("final-schemas-database.json"), overwriteUserConfigFiles);
+        writeResourceFile("ml-config/databases/final-triggers-database.json", userDatabaseDir.resolve("final-triggers-database.json"), overwriteUserConfigFiles);
 
         // the following config has to do with ordering of initialization.
         // users and roles must be present to install the hub.
@@ -306,11 +338,14 @@ public class HubProjectImpl implements HubProject {
             IOUtils.closeQuietly(is);
         }
 
-        writeResourceFile("hub-internal-config/security/roles/flow-operator-role.json", rolesDir.resolve("flow-operator-role.json"), true);
-        writeResourceFile("hub-internal-config/security/users/flow-operator-user.json", usersDir.resolve("flow-operator-user.json"), true);
-        writeResourceFile("hub-internal-config/security/roles/flow-developer-role.json", rolesDir.resolve("flow-developer-role.json"), true);
+        writeRoleFile(rolesDir, "data-hub-admin-role.json");
+        writeRoleFile(rolesDir, "data-hub-entity-model-reader.json");
+        writeRoleFile(rolesDir, "data-hub-explorer-architect.json");
+        writeRoleFile(rolesDir, "flow-developer-role.json");
+        writeRoleFile(rolesDir, "flow-operator-role.json");
+
         writeResourceFile("hub-internal-config/security/users/flow-developer-user.json", usersDir.resolve("flow-developer-user.json"), true);
-        writeResourceFile("hub-internal-config/security/roles/data-hub-admin-role.json", rolesDir.resolve("data-hub-admin-role.json"), true);
+        writeResourceFile("hub-internal-config/security/users/flow-operator-user.json", usersDir.resolve("flow-operator-user.json"), true);
 
         writeResourceFile("hub-internal-config/security/privileges/dhf-internal-data-hub.json", privilegesDir.resolve("dhf-internal-data-hub.json"), true);
         writeResourceFile("hub-internal-config/security/privileges/dhf-internal-entities.json", privilegesDir.resolve("dhf-internal-entities.json"), true);
@@ -336,6 +371,11 @@ public class HubProjectImpl implements HubProject {
         writeResourceFile("hub-internal-config/triggers/ml-dh-entity-modify.json", hubTriggersDir.resolve("ml-dh-entity-modify.json"), true);
         writeResourceFile("hub-internal-config/triggers/ml-dh-entity-delete.json", hubTriggersDir.resolve("ml-dh-entity-delete.json"), true);
 
+        // triggers for JSON mapping conversion to Entity Services mapping XML
+        writeResourceFile("hub-internal-config/triggers/ml-dh-json-mapping-create.json", hubTriggersDir.resolve("ml-dh-json-mapping-create.json"), true);
+        writeResourceFile("hub-internal-config/triggers/ml-dh-json-mapping-modify.json", hubTriggersDir.resolve("ml-dh-json-mapping-modify.json"), true);
+        writeResourceFile("hub-internal-config/triggers/ml-dh-json-mapping-delete.json", hubTriggersDir.resolve("ml-dh-json-mapping-delete.json"), true);
+
         Path gradlew = projectDir.resolve("gradlew");
         writeResourceFile("scaffolding/gradlew", gradlew);
         makeExecutable(gradlew);
@@ -353,6 +393,10 @@ public class HubProjectImpl implements HubProject {
         writeResourceFile("scaffolding/build_gradle", projectDir.resolve("build.gradle"));
         writeResourceFileWithReplace(customTokens, "scaffolding/gradle_properties", projectDir.resolve("gradle.properties"));
         writeResourceFile("scaffolding/gradle-local_properties", projectDir.resolve("gradle-local.properties"));
+    }
+
+    private void writeRoleFile(Path rolesDir, String filename) {
+        writeResourceFile("hub-internal-config/security/roles/" + filename, rolesDir.resolve(filename), true);
     }
 
     private void makeExecutable(Path file) {
@@ -461,6 +505,56 @@ public class HubProjectImpl implements HubProject {
                 }
             }
         }
+        upgradeFlows();
+        removeEmptyRangeElementIndexArrayFromFinalDatabaseFile();
+    }
+
+    protected void upgradeFlows() {
+        if(versions.isVersionCompatibleWithES()){
+            flowManager.getFlows().forEach(flow ->{
+                flow.getSteps().values().forEach((step) -> {
+                    if((step.getStepDefinitionType().equals(StepDefinition.StepDefinitionType.MAPPING)) &&
+                        step.getStepDefinitionName().equalsIgnoreCase("default-mapping")){
+                        step.setStepDefinitionName("entity-services-mapping");
+                    }
+                });
+                flowManager.saveFlow(flow);
+            });
+        }
+    }
+
+    /**
+     * This method uses warn-level log messages to ensure they appear when upgrading a project via Gradle.
+     */
+    protected void removeEmptyRangeElementIndexArrayFromFinalDatabaseFile() {
+        File dbFile = getUserConfigDir().resolve("databases").resolve("final-database.json").toFile();
+        if (dbFile != null && dbFile.exists()) {
+            try {
+                ObjectNode db = (ObjectNode)ObjectMapperFactory.getObjectMapper().readTree(dbFile);
+                if (hasEmptyRangeElementIndexArray(db)) {
+                    logger.warn("Removing empty range-element-index array from final-database.json to avoid " +
+                        "unnecessary reindexing");
+                    db.remove("range-element-index");
+                    ObjectMapperFactory.getObjectMapper().writeValue(dbFile, db);
+                }
+            } catch (Exception ex) {
+                logger.warn("Unable to determine if final-database.json file has a range-element-index field with an " +
+                    "empty array as its value; if it does, please remove this to avoid unnecessary reindexing; exception: " + ex.getMessage());
+            }
+        }
+    }
+
+    protected boolean hasEmptyRangeElementIndexArray(ObjectNode db) {
+        if (db.has("range-element-index")) {
+            JsonNode node = db.get("range-element-index");
+            if (node instanceof ArrayNode) {
+                ArrayNode indexes = (ArrayNode)node;
+                if (indexes.size() == 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override  public String getHubModulesDeployTimestampFile() {
@@ -781,22 +875,6 @@ public class HubProjectImpl implements HubProject {
                 f.delete();
             }
         }
-    }
-
-    private void deleteObsoleteDirsFromHubInternalConfig() {
-        File dir = getHubConfigDir().resolve("schemas").toFile();
-        if (dir.exists()) {
-            if (logger.isInfoEnabled()) {
-                logger.info("Deleting hub-internal-config/schemas dir because it is no longer used");
-            }
-            try {
-                FileUtils.deleteDirectory(dir);
-            } catch (IOException e) {
-                logger.error("Unable to delete "+ dir.getAbsolutePath());
-                throw new RuntimeException(e);
-            }
-        }
-
     }
 
     @Override

@@ -39,10 +39,8 @@ import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager;
 import com.marklogic.client.ext.tokenreplacer.DefaultTokenReplacer;
 import com.marklogic.client.ext.tokenreplacer.TokenReplacer;
 import com.marklogic.client.io.*;
-import com.marklogic.hub.deploy.commands.LoadHubArtifactsCommand;
-import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
-import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
-import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
+import com.marklogic.client.io.marker.AbstractReadHandle;
+import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.impl.DataHubImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
@@ -140,10 +138,16 @@ public class HubTestBase {
     protected LoadUserArtifactsCommand loadUserArtifactsCommand;
 
     @Autowired
+    protected GenerateFunctionMetadataCommand generateFunctionMetadataCommand;
+
+    @Autowired
     protected Scaffolding scaffolding;
 
     @Autowired
     protected MappingManager mappingManager;
+
+    @Autowired
+    protected MasteringManager masteringManager;
 
     @Autowired
     protected StepDefinitionManager stepDefinitionManager;
@@ -177,7 +181,7 @@ public class HubTestBase {
     public static String flowRunnerUser;
     public static String flowRunnerPassword;
     protected  Authentication stagingAuthMethod;
-    private  Authentication jobAuthMethod;
+    protected   Authentication jobAuthMethod;
     protected  Authentication finalAuthMethod;
     public  DatabaseClient stagingClient = null;
     public  DatabaseClient flowRunnerClient = null;
@@ -496,21 +500,31 @@ public class HubTestBase {
 
     // this method creates a project dir and copies the gradle.properties in.
     public void createProjectDir(String projectDirName) {
-        try {
-            File projectDir = new File(projectDirName);
-            if (!projectDir.isDirectory() || !projectDir.exists()) {
-                projectDir.mkdirs();
-            }
+        File projectDir = new File(projectDirName);
+        if (!projectDir.isDirectory() || !projectDir.exists()) {
+            projectDir.mkdirs();
+        }
 
-            // force module loads for new test runs.
-            File timestampDirectory = new File(projectDir + "/.tmp");
-            if ( timestampDirectory.exists() ) {
+        // force module loads for new test runs.
+        File timestampDirectory = new File(projectDir + "/.tmp");
+        if ( timestampDirectory.exists() ) {
+            try {
                 FileUtils.forceDelete(timestampDirectory);
+            } catch (Exception ex) {
+                logger.warn("Unable to delete .tmp directory: " + ex.getMessage());
             }
-            File finalTimestampDirectory = new File( "build/ml-javaclient-util");
-            if ( finalTimestampDirectory.exists() ) {
+        }
+
+        File finalTimestampDirectory = new File( "build/ml-javaclient-util");
+        if ( finalTimestampDirectory.exists() ) {
+            try {
                 FileUtils.forceDelete(finalTimestampDirectory);
+            } catch (Exception ex) {
+                logger.warn("Unable to delete build/ml-javaclient-util directory: " + ex.getMessage());
             }
+        }
+
+        try {
             Path devProperties = Paths.get(".").resolve("gradle.properties");
             Path projectProperties = projectDir.toPath().resolve("gradle.properties");
             Files.copy(devProperties, projectProperties, REPLACE_EXISTING);
@@ -712,6 +726,11 @@ public class HubTestBase {
         return count;
     }
 
+    protected JsonNode getQueryResults(String query, String database) {
+        AbstractReadHandle res = runInDatabase(query, database, new JacksonHandle());
+        return ((JacksonHandle)res).get();
+    }
+
     protected int getTelemetryInstallCount(){
         int count = 0;
         EvalResultIterator resultItr = runInDatabase("xdmp:feature-metric-status()/*:feature-metrics/*:features/*:feature[@name=\"datahub.core.install.count\"]/data()", stagingClient.getDatabase());
@@ -831,15 +850,29 @@ public class HubTestBase {
     }
 
     protected EvalResultIterator runInDatabase(String query, String databaseName) {
-        ServerEvaluationCall eval = getClientByName(databaseName).newServerEval();
         try {
-            return eval.xquery(query).eval();
+            return getServerEval(databaseName).xquery(query).eval();
         }
         catch(FailedRequestException e) {
             logger.error("Failed run code: " + query, e);
             e.printStackTrace();
             throw e;
         }
+    }
+
+    protected AbstractReadHandle runInDatabase(String query, String databaseName, AbstractReadHandle handle) {
+        try {
+            return getServerEval(databaseName).xquery(query).eval(handle);
+        }
+        catch(FailedRequestException e) {
+            logger.error("Failed run code: " + query, e);
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    private ServerEvaluationCall getServerEval(String databaseName) {
+        return getClientByName(databaseName).newServerEval();
     }
 
     protected DatabaseClient getClientByName(String databaseName) {
@@ -921,6 +954,11 @@ public class HubTestBase {
         }
     }
 
+    public JsonNode outputToJson(List<String> stepOutput, int index, String field) throws Exception{
+        JsonNode jsonOutput = new ObjectMapper().readTree(stepOutput.toString());
+        return jsonOutput.get(index).get(field);
+    }
+
     protected void assertJsonEqual(String expected, String actual, boolean strict) {
         try {
             JSONAssert.assertEquals(expected, actual, false);
@@ -931,7 +969,7 @@ public class HubTestBase {
 
     //installHubModules(), installUserModules() and clearUserModules() must be run as 'flow-developer'.
     protected void installHubModules() {
-        logger.debug("Installing Data Hub Framework modules into MarkLogic");
+        logger.debug("Installing Data Hub modules into MarkLogic");
         List<Command> commands = new ArrayList<>();
         commands.add(loadHubModulesCommand);
 
@@ -945,6 +983,13 @@ public class HubTestBase {
         List<Command> commands = new ArrayList<>();
         loadUserModulesCommand.setForceLoad(force);
         commands.add(loadUserModulesCommand);
+
+        LoadModulesCommand loadModulesCommand = new LoadModulesCommand();
+        commands.add(loadModulesCommand);
+        //'generateFunctionMetadataCommand' must be called before deploying mappings. If mapping is deployed first
+        // and it references custom functions, mapping xslt will not have reference to custom functions and tests
+        // would fail with XDMP-UNDFUN: (err:XPST0017) Undefined function customDateTime().
+        commands.add(generateFunctionMetadataCommand);
 
         loadUserArtifactsCommand.setForceLoad(force);
         commands.add(loadUserArtifactsCommand);
@@ -1153,5 +1198,11 @@ public class HubTestBase {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    protected String getTimezoneString() {
+        StringHandle strHandle = new StringHandle();
+        runInDatabase("sem:timezone-string(fn:current-dateTime())", HubConfig.DEFAULT_FINAL_NAME, strHandle);
+        return strHandle.get();
     }
 }

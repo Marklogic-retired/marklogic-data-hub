@@ -29,6 +29,8 @@ public interface StepDefinition {
         INGESTION("ingestion"),
         MAPPING("mapping"),
         MASTERING("mastering"),
+        MATCHING("matching"),
+        MERGING("merging"),
         CUSTOM("custom");
 
         private String type;
@@ -74,6 +76,12 @@ public interface StepDefinition {
                 break;
             case MASTERING:
                 stepDefinition = new MasteringStepDefinitionImpl(name);
+                break;
+            case MERGING:
+                stepDefinition = new MergingStepDefinitionImpl(name);
+                break;
+            case MATCHING:
+                stepDefinition = new MatchingStepDefinitionImpl(name);
                 break;
             case CUSTOM:
                 stepDefinition = new CustomStepDefinitionImpl(name);

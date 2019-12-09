@@ -24,12 +24,12 @@ public class DeployDatabaseFieldCommandTest extends HubTestBase {
 
     @Test
     public void test() {
-        givenTheFinalDatabaseHasACustomFieldAndIndex();
+        givenTheFinalDatabaseHasACustomFieldAndIndexes();
         whenTheDatabaseFieldCommandIsExecuted();
-        thenTheCustomFieldAndIndexStillExist();
+        thenTheCustomFieldAndIndexesStillExist();
     }
 
-    private void givenTheFinalDatabaseHasACustomFieldAndIndex() {
+    private void givenTheFinalDatabaseHasACustomFieldAndIndexes() {
         ObjectNode db = getFinalDatabaseProperties();
 
         ObjectNode newNode = ObjectMapperFactory.getObjectMapper().createObjectNode();
@@ -56,6 +56,20 @@ public class DeployDatabaseFieldCommandTest extends HubTestBase {
         index.put("range-value-positions", false);
         index.put("collation", "http://marklogic.com/collation/");
 
+        ArrayNode pathIndexes;
+        if (db.has("range-path-index")) {
+            pathIndexes = (ArrayNode) db.get("range-path-index");
+            newNode.set("range-path-index", pathIndexes);
+        } else {
+            pathIndexes = newNode.putArray("range-path-index");
+        }
+        ObjectNode pathIndex = pathIndexes.addObject();
+        pathIndex.put("scalar-type", "string");
+        pathIndex.put("path-expression", "/myPath");
+        pathIndex.put("invalid-values", "reject");
+        pathIndex.put("range-value-positions", false);
+        pathIndex.put("collation", "http://marklogic.com/collation/");
+
         new DatabaseManager(adminHubConfig.getManageClient()).save(newNode.toString());
     }
 
@@ -65,7 +79,7 @@ public class DeployDatabaseFieldCommandTest extends HubTestBase {
         new DeployDatabaseFieldCommand().execute(context);
     }
 
-    private void thenTheCustomFieldAndIndexStillExist() {
+    private void thenTheCustomFieldAndIndexesStillExist() {
         ObjectNode db = getFinalDatabaseProperties();
 
         ArrayNode fields = (ArrayNode) db.get("field");
@@ -90,6 +104,17 @@ public class DeployDatabaseFieldCommandTest extends HubTestBase {
             }
         }
         assertNotNull(myIndex, "Expected to find the myField range index that was added before executing the command");
+
+        ArrayNode pathIndexes = (ArrayNode) db.get("range-path-index");
+        JsonNode myPathIndex = null;
+        for (int i = 0; i < pathIndexes.size(); i++) {
+            JsonNode pathIndex = pathIndexes.get(i);
+            if ("/myPath".equals(pathIndex.get("path-expression").asText())) {
+                myPathIndex = pathIndex;
+                break;
+            }
+        }
+        assertNotNull(myPathIndex, "Expected to find the /myPath range index that was added before executing the command");
     }
 
     private ObjectNode getFinalDatabaseProperties() {
@@ -126,10 +151,20 @@ public class DeployDatabaseFieldCommandTest extends HubTestBase {
             }
         }
 
+        array = (ArrayNode) db.get("range-path-index");
+        for (int i = 0; i < array.size(); i++) {
+            JsonNode pathIndex = array.get(i);
+            if ("/myPath".equals(pathIndex.get("path-expression").asText())) {
+                array.remove(i);
+                break;
+            }
+        }
+
         ObjectNode newNode = ObjectMapperFactory.getObjectMapper().createObjectNode();
         newNode.set("database-name", db.get("database-name"));
         newNode.set("field", db.get("field"));
         newNode.set("range-field-index", db.get("range-field-index"));
+        newNode.set("range-path-index", db.get("range-path-index"));
 
         new DatabaseManager(adminHubConfig.getManageClient()).save(newNode.toString());
     }

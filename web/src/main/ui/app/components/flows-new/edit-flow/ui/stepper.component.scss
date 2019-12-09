@@ -114,6 +114,12 @@ header {
     .bar.mapping {
       background: $color-mapping;
     }
+    .bar.matching {
+      background: $color-mastering;
+    }
+    .bar.merging {
+      background: $color-mastering;
+    }
     .bar.mastering {
       background: $color-mastering;
     }
@@ -135,6 +141,12 @@ header {
     }
     .step-title.mapping {
       color: $color-mapping;
+    }
+    .step-title.matching {
+      color: $color-mastering;
+    }
+    .step-title.merging {
+      color: $color-mastering;
     }
     .step-title.mastering {
       color: $color-mastering;

@@ -1,0 +1,57 @@
+{
+  "lang" : "zxx",
+  "name" : "jsonToXml-mapJsonToXml",
+  "description" : "Default description",
+  "version" : 1,
+  "targetEntityType" : "http://example.org/Person-0.0.1/Person",
+  "sourceContext" : "/",
+  "sourceURI" : "/xmlExample/jsonPerson1.json",
+  "properties" : {
+    "lastUpdated" : {
+      "sourcedFrom" : "parseDateTime(lastUpdated, 'DD/MM/YYYY hh:mm:ss')"
+    },
+    "names" : {
+      "sourcedFrom" : "biographicData/names",
+      "targetEntityType" : "#/definitions/Name",
+      "properties" : {
+        "prefix" : {
+          "sourcedFrom" : "cleanPrefix(prefix)"
+        },
+        "first" : {
+          "sourcedFrom" : "replace(firstName, 'VALUE:', '')"
+        },
+        "middle" : {
+          "sourcedFrom" : "removeCommas(middleName)"
+        },
+        "last" : {
+          "sourcedFrom" : "lastName"
+        }
+      }
+    },
+    "address" : {
+      "sourcedFrom" : "address",
+      "targetEntityType" : "#/definitions/Address",
+      "properties" : {
+        "street" : {
+          "sourcedFrom" : "string-join((number, street), ' ')"
+        },
+        "state" : {
+          "sourcedFrom" : "documentLookup(state, '/referenceData/countryCodes.json')"
+        },
+        "zip" : {
+          "sourcedFrom" : "substring(zipCode, 1, 5)"
+        }
+      }
+    },
+    "educationLevel" : {
+      "sourcedFrom" : "memoryLookup(biographicData/education, '{\"C\":\"College\", \"H\": \"High School\", \"M\": \"Masters\"}')"
+    },
+    "dateOfBirth" : {
+      "sourcedFrom" : "parseDate(biographicData/dob, 'MM/DD/YYYY')"
+    },
+    "ssn" : {
+      "sourcedFrom" : "remove-hyphens(social)"
+    }
+  },
+  "namespaces" : { }
+}

@@ -1,0 +1,58 @@
+{
+  "lang" : "zxx",
+  "name" : "xmlToXml-mapXmlToXml",
+  "description" : "",
+  "version" : 1,
+  "targetEntityType" : "http://example.org/Person-0.0.1/Person",
+  "sourceContext" : "/",
+  "sourceURI" : "/xmlExample/xmlPerson1.xml",
+  "properties" : {
+    "emails" : {
+      "sourcedFrom" : "example.org:person/example.org:emails/example.org:email"
+    },
+    "names" : {
+      "sourcedFrom" : "example.org:person/example.org:names/name.example.org:name",
+      "targetEntityType" : "#/definitions/Name",
+      "properties" : {
+        "first" : {
+          "sourcedFrom" : "name.example.org:FirstName"
+        },
+        "prefix" : {
+          "sourcedFrom" : "name.example.org:FirstName/@prefix"
+        },
+        "middle" : {
+          "sourcedFrom" : "name.example.org:middle"
+        },
+        "last" : {
+          "sourcedFrom" : "name.example.org:last"
+        }
+      }
+    },
+    "address" : {
+      "sourcedFrom" : "example.org:person/example.org:address",
+      "targetEntityType" : "#/definitions/Address",
+      "properties" : {
+        "street" : {
+          "sourcedFrom" : "if (contains(example.org:street,'St.')) then replace(example.org:street,'St.','Street') else()"
+        },
+        "state" : {
+          "sourcedFrom" : "example.org:state"
+        },
+        "zip" : {
+          "sourcedFrom" : "example.org:zip"
+        }
+      }
+    },
+    "educationLevel" : {
+      "sourcedFrom" : "removeCommas('Masters, and Doctorate')"
+    },
+    "ssn" : {
+      "sourcedFrom" : "remove-hyphens(example.org:person/example.org:socialSecurityNumber)"
+    }
+  },
+  "namespaces" : {
+    "example.org" : "http://example.org",
+    "name.example.org" : "http://name.example.org",
+    "nm" : "http://name.example.org"
+  }
+}

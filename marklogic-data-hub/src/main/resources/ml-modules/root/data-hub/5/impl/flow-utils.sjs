@@ -16,6 +16,7 @@
 'use strict';
 const consts = require("/data-hub/5/impl/consts.sjs");
 const json = require('/MarkLogic/json/json.xqy');
+const sem = require("/MarkLogic/semantics.xqy");
 
 class FlowUtils {
   constructor(config = null) {
@@ -83,8 +84,8 @@ class FlowUtils {
 
   makeEnvelope(content, headers, triples, dataFormat) {
     content = this.cleanData(content, "content", dataFormat);
-    headers = this.cleanData(headers, "headers", dataFormat);
-    triples = this.cleanData(triples, "triples", dataFormat);
+    headers = this.cleanData(this.normalizeValuesInNode(headers), "headers", dataFormat);
+    triples = this.normalizeValuesInNode(triples);
     let instance = null;
     let attachments = null;
     let inputFormat = this.determineDocumentType(content);
@@ -110,7 +111,7 @@ class FlowUtils {
       }
     } else if (inputFormat === dataFormat) {
       if(content instanceof Element &&  content.nodeName.toLowerCase() === 'root' && content.namespaceURI.toLowerCase() === ""){
-        instance = Sequence.from(content.xpath('/root/node()'));
+        instance = Sequence.from(content.xpath('node()'));
       } else {
         if(content['$attachments']) {
           attachments = content['$attachments'];
@@ -118,20 +119,32 @@ class FlowUtils {
         }
         instance = content;
       }
-    } else if (dataFormat === this.consts.XML && inputFormat === this.consts.JSON) {
-      instance = this.jsonToXml(content);
-    } else if (dataFormat === this.consts.JSON && inputFormat === this.consts.XML) {
-      instance = this.xmlToJson(content);
+    } else {
+      // cleanData has already changed the content body to the expected output
+      instance = content;
     }
 
     if (dataFormat === this.consts.JSON) {
+      if (this.isNonStringIterable(triples)) {
+        let triplesAsArray = [];
+        for (let triple of triples) {
+          if (triple instanceof Sequence) {
+            triplesAsArray = triplesAsArray.concat(triple.toArray());
+          } else if (Array.isArray(triple)) {
+            triplesAsArray = triplesAsArray.concat(triple);
+          } else {
+            triplesAsArray.push(triple);
+          }
+        }
+        triples = triplesAsArray;
+      }
       if(instance && instance.root) {
         instance = instance.root;
       }
       return {
         envelope: {
           headers: headers,
-          triples: triples,
+          triples: triples.map((triple) => this.normalizeTriple(triple).toObject()),
           instance: instance,
           attachments: attachments
         }
@@ -141,7 +154,7 @@ class FlowUtils {
       nb.startDocument();
       nb.startElement("envelope", "http://marklogic.com/entity-services");
       nb.startElement("headers", "http://marklogic.com/entity-services");
-      if (headers && headers instanceof Sequence) {
+      if (this.isNonStringIterable(headers)) {
         for (let header of headers) {
           nb.addNode(header);
         }
@@ -151,27 +164,19 @@ class FlowUtils {
       nb.endElement();
 
       nb.startElement("triples", "http://marklogic.com/entity-services");
-      if (triples && triples instanceof Sequence) {
+      if (this.isNonStringIterable(triples)) {
         for (let triple of triples) {
-          if (triple instanceof sem.triple) {
-            nb.addNode(this.tripleToXml(triple));
-          } else {
-            nb.addNode(triple);
-          }
+          nb.addNode(this.tripleToXml(this.normalizeTriple(triple)));
         }
       } else if (triples) {
-        if (triples instanceof sem.triple) {
-          nb.addNode(this.tripleToXml(triples));
-        } else {
-          nb.addNode(triples);
-        }
+        nb.addNode(this.tripleToXml(this.normalizeTriple(triples)));
       }
       nb.endElement();
       if(instance.nodeName === 'instance') {
         nb.addNode(instance);
       } else {
         nb.startElement("instance", "http://marklogic.com/entity-services");
-        if (instance instanceof Sequence) {
+        if (this.isNonStringIterable(instance)) {
           for (let n of instance) {
             nb.addNode(n);
           }
@@ -243,13 +248,16 @@ class FlowUtils {
       if (resp instanceof Object && resp.hasOwnProperty('$type')) {
         return resp;
       } else if (dataFormat === this.consts.XML) {
-        return json.transformFromJson(resp, json.config("custom"));
+        const xmlResp = this.jsonToXml(resp);
+        return xmlResp;
       } else {
         return resp;
       }
     } else if (isXml && resp) {
       if ((resp instanceof ArrayNode || resp instanceof Array) && dataFormat === this.consts.XML) {
-        return json.arrayValues(resp);
+        return this.cleanData(json.arrayValues(resp), destination, dataFormat);
+      } else if (dataFormat === this.consts.JSON) {
+        return this.xmlToJson(resp);
       } else {
         return resp;
       }
@@ -278,8 +286,17 @@ class FlowUtils {
   }
 
   tripleToXml(triple) {
-    let n = json.transformFromJson({trip: triple}, json.config("custom"));
-    return fn.head(n).xpath('node()')
+    return sem.rdfSerialize(triple, 'triplexml').xpath('*');
+  }
+
+  normalizeTriple(triple) {
+    if (triple instanceof sem.triple) {
+      return triple;
+    } else if (triple instanceof ObjectNode) {
+      return sem.triple(triple.toObject());
+    } else {
+      return sem.triple(triple);
+    }
   }
 
   instanceToCanonicalJson(entityInstance) {
@@ -456,33 +473,43 @@ class FlowUtils {
       contentInput = content.toObject();
     }
     if(contentInput instanceof Sequence){
-      return contentInput;
+      contentInput = contentInput.toArray();
     }
-    return  this.jsonToXmlNodeBuilder(contentInput).toNode();
+    let nb = new NodeBuilder().startElement('root');
+    return  this.jsonToXmlNodeBuilder(contentInput, nb).endElement().toNode().xpath('node()');
   }
 
   jsonToXmlNodeBuilder(content, nb = new NodeBuilder()) {
-    if (content instanceof Object) {
-      for (let propName in content) {
+    if (this.isNonStringIterable(content)) {
+      for (const subContent of content) {
+        this.jsonToXmlNodeBuilder(subContent, nb);
+      }
+    } else if (content instanceof xs.anyAtomicType) {
+      nb.addText(fn.string(content));
+    } else if (content instanceof Object) {
+      for (const propName in content) {
         if (content.hasOwnProperty(propName)) {
-          let propValues = content[propName];
+          const propValues = content[propName];
+          const elementName = (!xdmp.castableAs("http://www.w3.org/2001/XMLSchema", "QName", propName)) ? xdmp.encodeForNCName(propName) : propName;
           if (propValues instanceof Array) {
             for (let propValueIndex in propValues) {
               if (propValues.hasOwnProperty(propValueIndex)) {
-                nb.startElement(propName);
-                this.jsonToXml(propValues[propValueIndex], nb);
+                nb.startElement(elementName);
+                this.jsonToXmlNodeBuilder(propValues[propValueIndex], nb);
                 nb.endElement();
               }
             }
           } else {
-            nb.startElement(propName);
-            this.jsonToXml(propValues, nb);
+            nb.startElement(elementName);
+            this.jsonToXmlNodeBuilder(propValues, nb);
             nb.endElement();
           }
         }
       }
+    } else if (content instanceof Node) {
+      nb.addNode(content);
     } else {
-      nb.addText(content);
+      nb.addText(fn.string(content));
     }
     return nb;
   }
@@ -519,6 +546,35 @@ class FlowUtils {
     return headers;
   }
 
+  mergeHeaders(headers, docHeaders, outputFormat) {
+    if (outputFormat === this.consts.XML) {
+      headers = this.cleanData(Sequence.from([
+        docHeaders,
+        this.jsonToXml(headers)
+      ]), "headers", outputFormat);
+    } else {
+      let docHeadersArray = [];
+      if (this.isNonStringIterable(docHeaders)) {
+        for (let header of docHeaders) {
+          if (header instanceof Element) {
+            docHeadersArray.push(this.xmlToJson(header));
+          } else {
+            docHeadersArray.push(header);
+          }
+        }
+      } else {
+        if (docHeaders instanceof Element) {
+          docHeadersArray.push(this.xmlToJson(docHeaders));
+        } else {
+          docHeadersArray.push(docHeaders);
+        }
+      }
+      docHeaders = docHeadersArray.reduce((acc, cur) => Object.assign(acc,cur), {});
+      headers = Object.assign({}, headers, docHeaders);
+    }
+    return headers;
+  }
+
   createMetadata(metaData = {}, flowName, stepName, jobId) {
     if (!metaData) {
       metaData = {};
@@ -532,6 +588,14 @@ class FlowUtils {
     return metaData;
   }
 
+  getInstanceAsObject(doc) {
+    let instance = this.getInstance(doc);
+    if(instance){
+      instance = instance.toObject();
+    }
+    return instance;
+  }
+
   getInstance(doc) {
     let instance = fn.head(doc.xpath('/*:envelope/*:instance'));
     if(fn.count(instance) === 0) {
@@ -540,26 +604,88 @@ class FlowUtils {
     return instance;
   }
 
+  getHeadersAsObject(doc) {
+    let headers = this.getHeaders(doc);
+    if(headers){
+      headers = headers.toObject();
+    }
+    return headers;
+  }
+
   getHeaders(doc) {
     let headers = fn.head(doc.xpath('/*:envelope/*:headers'));
     if (fn.count(headers) === 0) {
       headers = null;
-    }
-    else if (fn.count(fn.head(doc.xpath('/*:envelope/*:headers/*'))) == 0) {
+    } else if (fn.count(fn.head(doc.xpath('/*:envelope/*:headers/*'))) === 0) {
       headers = null;
     }
     return headers;
   }
 
+  normalizeValuesInNode(node) {
+    if (node instanceof ObjectNode || node instanceof ArrayNode) {
+      return node.toObject();
+    } else if (node instanceof Element) {
+      return node.xpath('*');
+    }
+    return node;
+  }
+
+  getTriplesAsObject(doc) {
+    let triples = this.getTriples(doc);
+    if(triples){
+      triples = triples.toObject();
+    }
+    return triples;
+  }
+
   getTriples(doc) {
-    let triples = doc.xpath('/*:envelope/*:triples');
+    let triples = fn.head(doc.xpath('/*:envelope/(*:triples[self::element()]|array-node("triples"))'));
     if (fn.count(triples) === 0) {
       triples = null;
     }
-    else if (fn.count(fn.head(doc.xpath('/*:envelope/*:triples/*'))) == 0) {
+    else if (fn.count(fn.head(doc.xpath('/*:envelope/*:triples/*'))) === 0) {
       triples = null;
     }
     return triples;
+  }
+
+  createContentAsObject() {
+    return {
+      triples : [],
+      headers: {},
+      instance: {}
+    };
+  }
+
+  parseText(text, outputFormat){
+    try {
+      let options = "format-json";
+      if(outputFormat === datahub.flow.consts.XML) {
+        options = "format-xml";
+      }
+      return fn.head(xdmp.unquote(instance, null, options));
+    }
+    catch (e) {
+      let errMsg = 'The input text document is not a valid ' + outputFormat + ' .';
+      datahub.debug.log({message: errMsg, type: 'error'});
+      throw Error(errMsg);
+    }
+  }
+
+  isNonStringIterable(obj) {
+    if (!obj || typeof obj === 'string') {
+      return false;
+    }
+    return typeof obj[Symbol.iterator] === 'function';
+  }
+
+  properExtensionURI(uri, outputFormat) {
+    // fix the document URI if the format changes
+    if (uri && !uri.endsWith(outputFormat.toLowerCase())) {
+      uri = `${uri.replace(/\.(json|xml)$/gi, '')}.${outputFormat}`;
+    }
+    return uri;
   }
 }
 

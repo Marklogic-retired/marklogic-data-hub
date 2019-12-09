@@ -8,6 +8,6 @@ const matcher = require('/com.marklogic.smart-mastering/matcher.xqy');
 let expected = test.getTestFile("match-options.json").root;
 
 let actual = matcher.getOptionsAsJson('match-options');
-xdmp.log(`expected: ${xdmp.describe(expected.toObject(), Sequence.from([]), Sequence.from([]))},actual: ${xdmp.describe(actual.toObject(), Sequence.from([]), Sequence.from([]))}`);
+//xdmp.log(`expected: ${xdmp.describe(expected.toObject(), Sequence.from([]), Sequence.from([]))},actual: ${xdmp.describe(actual.toObject(), Sequence.from([]), Sequence.from([]))}`);
 
 test.assertTrue(fn.deepEqual(expected, actual));

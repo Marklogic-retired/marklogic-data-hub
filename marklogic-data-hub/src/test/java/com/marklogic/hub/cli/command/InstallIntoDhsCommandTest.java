@@ -2,9 +2,12 @@ package com.marklogic.hub.cli.command;
 
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.Command;
+import com.marklogic.appdeployer.command.ResourceFilenameFilter;
 import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
+import com.marklogic.appdeployer.command.modules.DeleteTestModulesCommand;
 import com.marklogic.appdeployer.command.security.DeployAmpsCommand;
 import com.marklogic.appdeployer.command.security.DeployPrivilegesCommand;
+import com.marklogic.appdeployer.command.security.DeployRolesCommand;
 import com.marklogic.appdeployer.command.triggers.DeployTriggersCommand;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubTestBase;
@@ -18,6 +21,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -81,20 +85,55 @@ public class InstallIntoDhsCommandTest extends HubTestBase {
         command.dataHub = super.dataHub;
 
         List<Command> commands = command.buildCommandsForDhs();
-        assertEquals(11, commands.size());
+        assertEquals(15, commands.size());
         Collections.sort(commands, (c1, c2) -> c1.getExecuteSortOrder().compareTo(c2.getExecuteSortOrder()));
 
-        assertTrue(commands.get(0) instanceof DeployPrivilegesCommand);
-        assertTrue(commands.get(1) instanceof DeployOtherDatabasesCommand);
-        assertTrue(commands.get(2) instanceof DeployDatabaseFieldCommand);
-        assertTrue(commands.get(3) instanceof DhsDeployServersCommand);
-        assertTrue(commands.get(4) instanceof LoadHubModulesCommand);
-        assertTrue(commands.get(5) instanceof DeployAmpsCommand);
-        assertTrue(commands.get(6) instanceof LoadUserModulesCommand);
-        assertTrue(commands.get(7) instanceof CopyQueryOptionsCommand);
-        assertTrue(commands.get(8) instanceof DeployTriggersCommand);
-        assertTrue(commands.get(9) instanceof DeployHubTriggersCommand);
-        assertTrue(commands.get(10) instanceof LoadHubArtifactsCommand);
+        int index = 0;
+        assertTrue(commands.get(index++) instanceof DeployPrivilegesCommand);
+        assertTrue(commands.get(index++) instanceof DeployRolesCommand);
+        assertTrue(commands.get(index++) instanceof DeployOtherDatabasesCommand);
+        assertTrue(commands.get(index++) instanceof DeployDatabaseFieldCommand);
+        assertTrue(commands.get(index++) instanceof DhsDeployServersCommand);
+        assertTrue(commands.get(index++) instanceof LoadHubModulesCommand);
+        assertTrue(commands.get(index++) instanceof DeployAmpsCommand);
+        assertTrue(commands.get(index++) instanceof LoadUserModulesCommand);
+        assertTrue(commands.get(index++) instanceof GenerateFunctionMetadataCommand);
+        assertTrue(commands.get(index++) instanceof DeleteTestModulesCommand);
+        assertTrue(commands.get(index++) instanceof CopyQueryOptionsCommand);
+        assertTrue(commands.get(index++) instanceof DeployTriggersCommand);
+        assertTrue(commands.get(index++) instanceof DeployHubTriggersCommand);
+        assertTrue(commands.get(index++) instanceof LoadUserArtifactsCommand);
+        assertTrue(commands.get(index++) instanceof LoadHubArtifactsCommand);
+
+        DeployRolesCommand deployRolesCommand = (DeployRolesCommand) commands.get(1);
+        ResourceFilenameFilter filter = (ResourceFilenameFilter) deployRolesCommand.getResourceFilenameFilter();
+        File dir = new File(PROJECT_PATH); // the directory doesn't matter, only the filename
+        assertTrue(filter.accept(dir, "data-hub-entity-model-reader.json"));
+        assertTrue(filter.accept(dir, "data-hub-explorer-architect.json"));
+        assertFalse(filter.accept(dir, "flow-developer-role.json"),
+            "As of 5.1.0, the installer should only deploy data-hub-entity-model-reader and data-hub-explorer-architect");
+    }
+
+    private void verifyDefaultProperties(Properties props) {
+        assertEquals("true", props.getProperty("mlIsHostLoadBalancer"), "This is needed to support running legacy flows");
+        assertEquals("true", props.getProperty("mlIsProvisionedEnvironment"));
+
+        // Verify role mappings
+        assertEquals("flowDeveloper", props.getProperty("mlFlowDeveloperRole"));
+        assertEquals("flowOperator", props.getProperty("mlFlowOperatorRole"));
+        assertEquals("flowDeveloper", props.getProperty("mlDataHubAdminRole"),
+            "As of 5.0.2, mlDataHubAdminRole is only used for setting permissions on triggers, so it's fine to map it to the flowDeveloper role");
+
+        assertEquals("flowDeveloper,read,flowDeveloper,execute,flowDeveloper,insert,flowOperator,read,flowOperator,execute,flowOperator,insert",
+            props.getProperty("mlModulePermissions"));
+
+        assertEquals("8010", props.getProperty("mlAppServicesPort"), "8000 is not available in DHS, so the staging port is used instead for " +
+            "loading non-REST modules");
+
+        assertEquals("basic", props.getProperty("mlAppServicesAuthentication"));
+        assertEquals("basic", props.getProperty("mlFinalAuth"));
+        assertEquals("basic", props.getProperty("mlJobAuth"));
+        assertEquals("basic", props.getProperty("mlStagingAuth"));
     }
 
     private void verifyDefaultProperties(Properties props) {

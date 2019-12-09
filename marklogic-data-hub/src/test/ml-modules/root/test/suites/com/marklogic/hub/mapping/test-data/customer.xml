@@ -3,11 +3,11 @@
   <es:headers>
   </es:headers>
   <es:instance>
-    <Customer CustomerID="Customer-1234">
-      <property name="name" value="Bob" />
-      <property name="interest" value="baseball" />
-      <property name="interest" value="astronomy" />
-      <property name="interest" value="programming" />
-    </Customer>
+    <ns1:Customer xmlns:ns1="http://ns1" xmlns:ns2="http://ns2" CustomerID="Customer-1234">
+      <ns2:property name="name" value="Bob" />
+      <ns2:property name="interest" value="baseball" />
+      <ns2:property name="interest" value="astronomy" />
+      <ns2:property name="interest" value="programming" />
+    </ns1:Customer>
   </es:instance>
 </es:envelope>

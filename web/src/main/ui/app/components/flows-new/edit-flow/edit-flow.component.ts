@@ -205,7 +205,8 @@ export class EditFlowComponent implements OnInit, OnDestroy {
         this.flow = Flow.fromJSON(resp);
         this.disableSelect = false;
       });
-      if (stepObject.step.stepDefinitionType === this.stepType.MAPPING) {
+      if (stepObject.step.stepDefinitionType === this.stepType.MAPPING && (stepObject.step.stepDefinitionName === 'default-mapping'
+      || stepObject.step.stepDefinitionName === 'entity-services-mapping')) {
         this.createMapping(resp);
       }
     });
@@ -261,11 +262,11 @@ export class EditFlowComponent implements OnInit, OnDestroy {
   }
   setStepDefaults(step): void {
     const defaultCollections = [`${step.name}`];
-    if (step.stepDefinitionType === StepType.MAPPING) {
-      defaultCollections.push('mdm-content');
-    }
     if (step.options && step.options.targetEntity) {
       defaultCollections.push(step.options.targetEntity);
+    }
+    if (step.options.collections && step.options.collections.length === 0) {
+      delete step.options.collections;
     }
     step.options = Object.assign({ 'collections': defaultCollections }, step.options);
   }

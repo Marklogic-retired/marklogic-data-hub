@@ -12,6 +12,8 @@ import module namespace sem = "http://marklogic.com/semantics"
 
 import module namespace const = "http://marklogic.com/smart-mastering/constants"
   at "/com.marklogic.smart-mastering/constants.xqy";
+import module namespace coll = "http://marklogic.com/smart-mastering/collections"
+  at "/com.marklogic.smart-mastering/impl/collections.xqy";
 
 declare namespace prov = "http://www.w3.org/ns/prov#";
 declare namespace foaf = "http://xmlns.com/foaf/0.1/";
@@ -43,6 +45,7 @@ declare function auditing:audit-trace(
   $action as xs:string,
   $previous-uris as xs:string*,
   $new-uri as xs:string,
+  $options as node()?,
   $attachments as item()*
 ) as empty-sequence()
 {
@@ -50,6 +53,7 @@ declare function auditing:audit-trace(
         $action,
         $previous-uris,
         $new-uri,
+        $options,
         $attachments
       )
   return
@@ -70,6 +74,7 @@ declare function auditing:build-audit-trace(
   $action as xs:string,
   $previous-uris as xs:string*,
   $new-uri as xs:string,
+  $options as node()?,
   $attachments as item()*
 ) as map:map
 {
@@ -189,7 +194,7 @@ declare function auditing:build-audit-trace(
     map:map()
       => map:with("uri", "/com.marklogic.smart-mastering/auditing/"|| $action ||"/"||sem:uuid-string()||".xml")
       => map:with("value", $prov-xml)
-      => map:with("context", map:entry("collections",$const:AUDITING-COLL))
+      => map:with("context", map:entry("collections",coll:auditing-collections($options)))
 };
 
 (:
@@ -239,7 +244,7 @@ declare function auditing:auditing-receipts-for-doc-history($doc-uris as xs:stri
     $returned-docs
 };
 
-declare function auditing:audit-trace-rollback($prov-xml)
+declare function auditing:audit-trace-rollback($prov-xml, $merge-options as node()?)
 {
   let $merged-uri :=
     fn:string(
@@ -256,6 +261,7 @@ declare function auditing:audit-trace-rollback($prov-xml)
       $auditing:ROLLBACK-ACTION,
       $merged-uri,
       $orig-uri,
+      $merge-options,
       ()
     )
 };

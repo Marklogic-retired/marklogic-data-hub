@@ -17,16 +17,19 @@
 package com.marklogic.hub.web.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.mapping.Mapping;
+import com.marklogic.hub.mapping.MappingFunctions;
 import com.marklogic.hub.web.model.MappingModel;
 import com.marklogic.hub.web.service.MappingManagerService;
-import java.io.IOException;
-import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.util.ArrayList;
 
 @Controller
 @RequestMapping("/api/current-project")
@@ -34,6 +37,9 @@ public class MappingController {
 
     @Autowired
     private MappingManagerService mappingManagerService;
+
+    @Autowired
+    HubConfigImpl hubConfig;
 
     /*
      *GET /api/maps/{entityName} - Returns all maps for an entity
@@ -73,11 +79,24 @@ public class MappingController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/mappings/{mapName}/validation", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonNode validateMapping(@PathVariable String mapName, @RequestBody JsonNode mapping, @RequestParam(value = "uri", required = true) String uri, @RequestParam(value = "db", required = true) String db) throws IOException {
+        return mappingManagerService.validateMapping(mapping.toString(), uri, db);
+    }
+
     @RequestMapping(value = "/mappings/{mapName}", method = RequestMethod.DELETE)
     @ResponseBody
     public ResponseEntity<?> deleteMapping(
         @PathVariable String mapName) throws ClassNotFoundException, IOException {
         mappingManagerService.deleteMapping(mapName);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @RequestMapping(value = "/mappings/functions", method = RequestMethod.GET)
+    @ResponseBody
+    public JsonNode getMappingFunctions() {
+        MappingFunctions mappingFunctions = new MappingFunctions(hubConfig.newStagingClient());
+        return mappingFunctions.getMappingFunctions();
     }
 }

@@ -18,14 +18,6 @@ function main(content, options) {
     throw Error('The output format of type ' + outputFormat + ' is invalid. Valid options are ' + datahub.flow.consts.XML + ' or ' + datahub.flow.consts.JSON + '.');
   }
 
-  //let's see if our doc is in the cluster at update time
-  //if (!fn.docAvailable(id)) {
-  //  datahub.debug.log({message: 'The document with the uri: ' + id + ' could not be found.', type: 'error'});
-  //  throw Error('The document with the uri: ' + id + ' could not be found.')
-  //}
-
-  //grab the doc
-  // let doc = cts.doc(id);
   let doc = content.value;
 
   //then we grab our mapping
@@ -95,6 +87,8 @@ function main(content, options) {
 
   //now let's make our attachments, if it's xml, it'll be passed as string
   instance['$attachments'] = doc;
+  // fix the document URI if the format changes
+  content.uri = datahub.flow.flowUtils.properExtensionURI(content.uri, outputFormat);
 
   content.value = buildEnvelope(doc, instance, outputFormat, options);
   content.provenance = { [content.uri]: provenance };
@@ -103,8 +97,9 @@ function main(content, options) {
 
 // Extracted for unit testing purposes
 function buildEnvelope(doc, instance, outputFormat, options) {
+  let flowUtils = datahub.flow.flowUtils;
   let triples = [];
-  let headers = datahub.flow.flowUtils.createHeaders(options);
+  let headers = flowUtils.createHeaders(options);
 
   if (options.triples && Array.isArray(options.triples)) {
     for (let triple of options.triples) {
@@ -112,24 +107,11 @@ function buildEnvelope(doc, instance, outputFormat, options) {
     }
   }
 
-  let docHeaders = datahub.flow.flowUtils.getHeaders(doc);
-  let docTriples = datahub.flow.flowUtils.getTriples(doc);
-
-  if(docHeaders) {
-    docHeaders = docHeaders.toObject();
-  } else {
-    docHeaders = {};
-  }
-  if(docTriples){
-    docTriples = docTriples.toObject();
-  } else {
-    docTriples = [];
-  }
-
-  headers = Object.assign({}, headers, docHeaders);
+  let docHeaders = flowUtils.normalizeValuesInNode(flowUtils.getHeaders(doc)) || {};
+  let docTriples = flowUtils.normalizeValuesInNode(flowUtils.getTriples(doc)) || [];
+  headers = flowUtils.mergeHeaders(headers, docHeaders, outputFormat);
   triples = triples.concat(docTriples);
-
-  return datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
+  return flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
 }
 
 module.exports = {

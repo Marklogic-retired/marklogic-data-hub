@@ -59,13 +59,22 @@ if(!combinedOptions.sourceQuery && flowDoc.sourceQuery) {
   combinedOptions.sourceQuery = flowDoc.sourceQuery;
 }
 let query = combinedOptions.sourceQuery;
+let isMergingStep = baseStep.name === 'default-merging' && baseStep.type === 'merging';
 if (!query) {
   datahub.debug.log("The collector query was empty");
   fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([404, "Not Found", "The collector query was empty"]));
 }
+if (isMergingStep) {
+  query = fn.normalizeSpace(`cts.values(
+    cts.pathReference('/matchSummary/URIsToProcess', ['type=string','collation=http://marklogic.com/collation/']),
+    null,
+    null,
+    ${query}
+  )`);
+}
 try {
   let urisEval;
-  if (/^\s*cts\.uris\(.*\)\s*$/.test(query)) {
+  if (/^\s*cts\.(uris|values)\(.*\)\s*$/.test(query)) {
     urisEval = query;
   } else {
     urisEval = "cts.uris(null, null, " + query + ")";

@@ -34,7 +34,7 @@ import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.MlcpRunner;
-import com.marklogic.hub.validate.EntitiesValidator;
+import com.marklogic.hub.legacy.validate.EntitiesValidator;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -881,17 +881,19 @@ public class EndToEndFlowTests extends HubTestBase {
         }
         logger.error(mlcpRunner.getProcessOutput());
 
-        // wait for completion
-        Thread.sleep(2000);
+        for (int i = 0; i < 10; i++) {
+            Thread.sleep(1000);
+            if (getStagingDocCount() == finalCounts.stagingCount) {
+                break;
+            }
+        }
+
         int stagingCount = getStagingDocCount();
         int finalCount = getFinalDocCount();
-        int tracingCount = getTracingDocCount();
         int jobsCount = getJobDocCount();
 
         assertEquals(finalCounts.stagingCount, stagingCount);
         assertEquals(finalCounts.finalCount, finalCount);
-        // most currently failing tests are cause of trace.
-        // assertEquals(finalCounts.tracingCount, tracingCount);
         assertEquals(finalCounts.jobCount, jobsCount);
 
         if (databaseClient.getDatabase().equals(HubConfig.DEFAULT_STAGING_NAME) && finalCounts.stagingCount == 1) {
@@ -1196,16 +1198,19 @@ public class EndToEndFlowTests extends HubTestBase {
         tuple = runHarmonizeFlow(flowName, dataFormat, completed, failed, options, srcClient, destDb, useEs, waitForCompletion, testSize);
 
         if (waitForCompletion) {
-            // takes a little time to run.
-            Thread.sleep(2000);
+            for (int i = 0; i < 10; i++) {
+                Thread.sleep(1000);
+                if (getStagingDocCount() == finalCounts.stagingCount) {
+                    break;
+                }
+            }
+
             int stagingCount = getStagingDocCount();
             int finalCount = getFinalDocCount();
-            int tracingCount = getTracingDocCount();
             int jobsCount = getJobDocCount();
 
             assertEquals(finalCounts.stagingCount, stagingCount);
             assertEquals(finalCounts.finalCount, finalCount);
-            // assertEquals(finalCounts.tracingCount, tracingCount);
             assertEquals(finalCounts.jobCount, jobsCount);
 
             assertEquals(finalCounts.completedCount, completed.size());
@@ -1281,12 +1286,10 @@ public class EndToEndFlowTests extends HubTestBase {
 
         int stagingCount = getStagingDocCount();
         int finalCount = getFinalDocCount();
-        int tracingCount = getTracingDocCount();
         int jobsCount = getJobDocCount();
 
         assertEquals(finalCounts.stagingCount, stagingCount);
         assertEquals(finalCounts.finalCount, finalCount);
-        //assertEquals(finalCounts.tracingCount, tracingCount);
         assertEquals(finalCounts.jobCount, jobsCount);
 
         assertEquals(finalCounts.completedCount, completed.size());

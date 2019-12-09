@@ -253,6 +253,9 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
      *
      * So for a mapping - we need to get the name of the mapping and then see if any other flow references that mapping.
      *
+     * For custom Mapping/Ingestion/Mastering, the type is not Custom, so we need to check for such step definition types
+     * to delete the step definition artifacts
+     *
      * @param flow
      * @param removedStep
      */
@@ -261,10 +264,16 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
             return;
         }
 
-        if (removedStep.isMappingStep() && !mappingIsReferencedByAFlow(removedStep)) {
+        StepDefinition.StepDefinitionType stepTypeOfRemovedStep = StepDefinition.StepDefinitionType.getStepDefinitionType(
+                                                    removedStep.getStepDefinitionType().toString()
+                                                    );
+
+        if (removedStep.isMappingStep() && !mappingIsReferencedByAFlow(removedStep) && !isCustomMapping(removedStep)) {
             deleteMappingArtifacts(flow, removedStep);
+        } else if(!removedStep.isCustomStep() && !stepIsReferencedByAFlow(removedStep.getName(), stepTypeOfRemovedStep)) {
+            deleteStepDefinitionArtifacts(removedStep, stepTypeOfRemovedStep);
         } else if (removedStep.isCustomStep() && !stepIsReferencedByAFlow(removedStep.getName(), StepDefinition.StepDefinitionType.CUSTOM)) {
-            deleteStepDefinitionArtifacts(removedStep);
+            deleteStepDefinitionArtifacts(removedStep, stepTypeOfRemovedStep);
         }
     }
 
@@ -304,6 +313,11 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
         return false;
     }
 
+    protected boolean isCustomMapping(Step removedStep) {
+        String modulePath = "/custom-modules/mapping/"+removedStep.getStepDefinitionName()+"/main.sjs";
+        return stepDefinitionManager.getStepDefinition(removedStep.getStepDefinitionName(), StepDefinition.StepDefinitionType.MAPPING).getModulePath().equals(modulePath);
+    }
+
     protected void deleteMappingArtifacts(Flow flow, Step removedStep) {
         logger.info("Deleting mapping as it's no longer referenced by any flows: " + removedStep.getName());
         final String mappingName = removedStep.getMappingName();
@@ -311,10 +325,10 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
         deleteDocumentsInDirectory(format("/mappings/%s/", mappingName));
     }
 
-    protected void deleteStepDefinitionArtifacts(Step removedStep) {
+    protected void deleteStepDefinitionArtifacts(Step removedStep, StepDefinition.StepDefinitionType stepTypeOfRemovedStep) {
         logger.info("Deleting custom step as it's no longer referenced by any flows: " + removedStep.getName() +
             ". The module associated with this step will not be deleted in case other modules refer to it.");
-        StepDefinition stepDef = StepDefinition.create(removedStep.getName(), StepDefinition.StepDefinitionType.CUSTOM);
+        StepDefinition stepDef = StepDefinition.create(removedStep.getName(), stepTypeOfRemovedStep);
         stepDefinitionManager.deleteStepDefinition(stepDef);
         deleteDocumentsInDirectory(format("/step-definitions/%s/%s/", stepDef.getType().toString(), stepDef.getName()));
     }

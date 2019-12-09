@@ -16,7 +16,11 @@
         true,
         null,
         { "info":  "text"}
-      ]
+      ],
+      "Number": 10,
+      "AnotherNumber": 5,
+      "CurrentDateTime": "06/01/2014-18:13:50",
+      "CurrentDate": "Jan 06, 2014"
     }
   }
 }

@@ -18,10 +18,12 @@ package com.marklogic.hub.web.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.MappingManager;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.mapping.Mapping;
+import com.marklogic.hub.mapping.MappingValidator;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.web.model.MappingModel;
 import org.apache.commons.io.FileUtils;
@@ -33,13 +35,11 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class MappingManagerService {
-
-    private static final String PLUGINS_DIR = "plugins";
-    private static final String MAPPINGS_DIR = "mappings";
-    public static final String MAPPING_FILE_EXTENSION = ".mapping.json";
 
     private static Logger logger = LoggerFactory.getLogger(MappingManagerService.class);
 
@@ -58,6 +58,8 @@ public class MappingManagerService {
     @Autowired
     HubConfigImpl hubConfig;
 
+    private Map<String,MappingValidator> mappingValidators = null;
+
     public ArrayList<Mapping> getMappings() {
         ArrayList<Mapping> mappings = mappingManager.getMappings();
 
@@ -75,8 +77,8 @@ public class MappingManagerService {
         MappingModel mapping = objectMapper.readValue(jsonMapping.toString(), MappingModel.class);
         MappingModel existingMapping= getMapping(mapName, false);
         if (existingMapping == null || existingMapping != null && !existingMapping.isEqual(mapping)) {
-            mappingManager.saveMapping(mappingManager.createMappingFromJSON(mapping.toJson()),  existingMapping == null ? false : true);
-            dataHubService.reinstallUserModules(hubConfig, null, null);
+            // Per DHFPROD-3730, preserve the existing version number. Users are expected to bump this up when they so desire.
+            mappingManager.saveMapping(mappingManager.createMappingFromJSON(mapping.toJson()), false);
         }
         return mapping;
     }
@@ -99,4 +101,31 @@ public class MappingManagerService {
         }
     }
 
+    public JsonNode validateMapping(String jsonMapping, String uri, String db) {
+        return getMappingValidator(db).validateJsonMapping(jsonMapping, uri);
+    }
+
+    // This is synchronized since this class is managed as a singleton by Spring
+    private synchronized MappingValidator getMappingValidator(String db) {
+        if(mappingValidators == null) {
+            mappingValidators = new HashMap<>();
+        }
+        if(mappingValidators.get(db) == null) {
+            if (hubConfig.getDbName(DatabaseKind.STAGING).equals(db)) {
+                mappingValidators.putIfAbsent(db, new MappingValidator(hubConfig.newStagingClient()));
+            }
+            //Using hubConfig.newStagingClient(db) because "ml:mappingValidator" is not visible to hubConfig.newFinalClient()
+            else if(hubConfig.getDbName(DatabaseKind.FINAL).equals(db)) {
+                mappingValidators.putIfAbsent(db, new MappingValidator(hubConfig.newStagingClient(db)));
+            }
+            else{
+                throw new DataHubProjectException("The provided database name " + db + " is not a valid staging or final database");
+            }
+        }
+        return mappingValidators.get(db);
+    }
+
+    public void unsetMappingValidators() {
+        mappingValidators = null;
+    }
 }

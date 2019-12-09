@@ -21,7 +21,7 @@ const op = require('/MarkLogic/optic');
 class Provenance {
   /**
    * @desc Provenance Class constructor
-   * @param {Object} [config] 
+   * @param {Object} [config]
    * @param {string} [config.granularityLevel=coarse] - for setting the Prov object granularity level (currently unused)
    */
   constructor(config = null, datahub = null) {
@@ -52,10 +52,10 @@ class Provenance {
 
   /**
    * Get array of provTypes for a given step type for provenance record creation
-   * @param {string} stepDefinitionType - step definition type ['ingestion','mapping','mastering','custom']
+   * @param {string} stepDefinitionType - step definition type ['ingestion','mapping','mastering','matching','merging','custom']
    */
   _validStepDefinitionType(stepDefinitionType) {
-    return ['ingestion','mapping','mastering','custom'].includes(stepDefinitionType)
+    return ['ingestion','mapping','mastering','matching','merging','custom'].includes(stepDefinitionType)
   }
   /**
    * Validate that the info Object to ensure the metadata passed doesn't stomp on roles or location values
@@ -63,7 +63,7 @@ class Provenance {
    */
   _validProvInfoMetadata(info) {
     let protectedAttributeProps = ['roles', 'roleNames', 'location'];
-    let isValid = info && info.metdata ? 
+    let isValid = info && info.metdata ?
       info.metdata.every(val => !(protectedAttributeProps.includes(val))) :
       true;  // safe, because no metadata
     return isValid || Error(`The following metadata properties on "info" are not allowed: ${JSON.stringify(requiredInfoParams[stepType])}`);
@@ -75,10 +75,12 @@ class Provenance {
    * @param {Object} info - object representing the information required to create prov info
    */
   _validProvInfoForStepType(stepDefinitionType, info) {
-    let requiredInfoParams = { 
+    let requiredInfoParams = {
       'ingestion': ['derivedFrom'],  // the entity, file or document URI that this ingested document was derived from
       'mapping': ['derivedFrom','influencedBy'],
       'mastering': ['derivedFrom','influencedBy'],
+      'matching': ['derivedFrom','influencedBy'],
+      'merging': ['derivedFrom','influencedBy'],
       'custom': ['derivedFrom','influencedBy']
     };
     let provTypes = {
@@ -91,6 +93,12 @@ class Provenance {
       'mastering': function () {
         return requiredInfoParams['mastering'].every(val => Object.keys(info).includes(val));
       },
+      'matching': function () {
+        return requiredInfoParams['matching'].every(val => Object.keys(info).includes(val));
+      },
+      'merging': function () {
+        return requiredInfoParams['merging'].every(val => Object.keys(info).includes(val));
+      },
       'custom': function () {
         return requiredInfoParams['custom'].every(val => Object.keys(info).includes(val));
       }
@@ -101,15 +109,15 @@ class Provenance {
 
   /**
    * @desc Validate a provenance record params
-   * @param {string} [jobId] - the ID of the job being executed (unique), this will generate 
+   * @param {string} [jobId] - the ID of the job being executed (unique), this will generate
    * @param {string} flowId - the unique ID of the flow
    * @param {string} stepName - the name of the step within a flow
    * @param {string} stepDefinitionName - the name of step definition within a flow
    * @param {string} stepDefinitionType - the type of step definition within a flow ['ingestion','mapping','mastering','custom']
    * @param {string} [docURI] - the URI of the document being modified by this step
    * @param {Object} info
-   * @param {string} info.status - the status of the step: 
-   *                               ie. created/updated/deleted.  
+   * @param {string} info.status - the status of the step:
+   *                               ie. created/updated/deleted.
    *                               Value is passed through to "provTypes".
    * @param {string} [info.metadata] - key/value pairs to document with the provenance record
    */
@@ -127,7 +135,7 @@ class Provenance {
           isValid = true;
         } else {
           // return Error that relates to prov info object
-          isValid = (isProvInfoForStepTypeValid instanceof Error) ? isProvInfoForStepTypeValid : isProvInfoMetaValid;  
+          isValid = (isProvInfoForStepTypeValid instanceof Error) ? isProvInfoForStepTypeValid : isProvInfoMetaValid;
         }
       } else {
         isValid = new Error(`Step type ${stepDefinitionType} not defined.  Must be of type: 'ingestion','mapping','mastering','custom'.`);
@@ -144,10 +152,10 @@ class Provenance {
       isValid = new Error(`Function requires all params 'flowId', 'stepName', 'stepDefinitionName', 'stepDefinitionType' and 'info' to be defined. Missing: ${missingParams.join(', ')}`);
     }
     return isValid;
-  }  
+  }
 
   /**
-   * General create provenance record function that adds the same relations, 
+   * General create provenance record function that adds the same relations,
    * attributes, dateTime & namespaces info each record requires.
    * @param {string} id - the identifier of this provenance information
    * @param {Object} options - provenance record options (see individual type requirements below)
@@ -218,7 +226,7 @@ class Provenance {
 
   /**
    * @desc Create a provenance record when a document is run through an ingestion step
-   * @param {string} jobId - the ID of the job being executed (unique), this will generate 
+   * @param {string} jobId - the ID of the job being executed (unique), this will generate
    * @param {string} flowId - the unique ID of the flow
    * @param {string} stepName - the name of the step within a flow
    * @param {string} stepDefinitionName - the name of step definition within a flow
@@ -229,7 +237,7 @@ class Provenance {
    * @param {string} [info.metadata] - key/value pairs to document with the provenance record
    *   Ingest document from outside source
    *    provTypes: [ "ps:Flow", "ps:File" ],
-   *    relations: 
+   *    relations:
    *      - generatedBy (job id)
    *      - derivedFrom (file)
    *      - derivedFrom (uri)
@@ -254,8 +262,8 @@ class Provenance {
       attributes: { location: docURI }
     };
 
-    return (this.config.autoCommit) ? 
-      this._createRecord(provId, recordOpts, info.metadata) : 
+    return (this.config.autoCommit) ?
+      this._createRecord(provId, recordOpts, info.metadata) :
       this._queueForCommit(provId, recordOpts, info.metadata);
   }
 
@@ -299,8 +307,8 @@ class Provenance {
       attributes: { location: docURI }
     };
 
-    return (this.config.autoCommit) ? 
-      this._createRecord(provId, recordOpts, info.metadata) : 
+    return (this.config.autoCommit) ?
+      this._createRecord(provId, recordOpts, info.metadata) :
       this._queueForCommit(provId, recordOpts, info.metadata);
   }
 
@@ -344,8 +352,98 @@ class Provenance {
       attributes: { location: docURI }
     };
 
-    return (this.config.autoCommit) ? 
-      this._createRecord(provId, recordOpts, info.metadata) : 
+    return (this.config.autoCommit) ?
+      this._createRecord(provId, recordOpts, info.metadata) :
+      this._queueForCommit(provId, recordOpts, info.metadata);
+  }
+
+  /**
+   * @desc Create a provenance record when a document is run through a matching step
+   * @param {string} jobId - the ID of the job being executed (unique), this will generate
+   * @param {string} flowId - the unique ID of the flow
+   * @param {string} stepName - the name of the step within a flow
+   * @param {string} stepDefinitionName - the name of step definition within a flow
+   * @param {string} [docURI] - the URI of the document being modified by this step
+   * @param {Object} info
+   * @param {string} info.derivedFrom - the entity, file or document URI that this ingested document was derived from
+   * @param {string} info.influencedBy - the mastering step the document was modified by
+   * @param {string} [info.metadata] - key/value pairs to document with the provenance record
+   *   Master Source doc property to Entity Instance property
+   *    provTypes: [ "ps:Flow", "ps:EntityProperty", "dhf:Matching" ],
+   *    relations:
+   *      - generatedBy (job id)
+   *      - derivedFrom (uri)
+   *      - derivedFrom (array of uris)
+   *      - influencedBy (mastering)
+   *      - influencedBy (component [aka. custom code])
+   *      - associatedWith [flow id, step name, step definition name]
+   *    attributes:
+   *      - location (doc URI)
+   */
+  _createMatchingStepRecord(jobId, flowId, stepName, stepDefinitionName, docURI, info) {
+    let provId = `${jobId + flowId + 'matching' + docURI}`;
+    let provTypes = ['ps:Flow','ps:Entity','dhf:Entity','dhf:MatchingStep','dhf:MatchingStepEntity'];
+    if (info && info.status)
+      provTypes.push('dhf:Doc' + this.hubutils.capitalize(info.status));
+
+    let recordOpts = {
+      provTypes,
+      relations: {
+        associatedWith: [flowId, stepName, stepDefinitionName],
+        generatedBy: jobId,
+        derivedFrom: info && info.derivedFrom,
+        influencedBy: info && info.influencedBy,
+      },
+      attributes: { location: docURI }
+    };
+
+    return (this.config.autoCommit) ?
+      this._createRecord(provId, recordOpts, info.metadata) :
+      this._queueForCommit(provId, recordOpts, info.metadata);
+  }
+
+  /**
+   * @desc Create a provenance record when a document is run through a merging step
+   * @param {string} jobId - the ID of the job being executed (unique), this will generate
+   * @param {string} flowId - the unique ID of the flow
+   * @param {string} stepName - the name of the step within a flow
+   * @param {string} stepDefinitionName - the name of step definition within a flow
+   * @param {string} [docURI] - the URI of the document being modified by this step
+   * @param {Object} info
+   * @param {string} info.derivedFrom - the entity, file or document URI that this ingested document was derived from
+   * @param {string} info.influencedBy - the mastering step the document was modified by
+   * @param {string} [info.metadata] - key/value pairs to document with the provenance record
+   *   Master Source doc property to Entity Instance property
+   *    provTypes: [ "ps:Flow", "ps:EntityProperty", "dhf:Merging" ],
+   *    relations:
+   *      - generatedBy (job id)
+   *      - derivedFrom (uri)
+   *      - derivedFrom (array of uris)
+   *      - influencedBy (mastering)
+   *      - influencedBy (component [aka. custom code])
+   *      - associatedWith [flow id, step name, step definition name]
+   *    attributes:
+   *      - location (doc URI)
+   */
+  _createMergingStepRecord(jobId, flowId, stepName, stepDefinitionName, docURI, info) {
+    let provId = `${jobId + flowId + 'merging' + docURI}`;
+    let provTypes = ['ps:Flow','ps:Entity','dhf:Entity','dhf:MergingStep','dhf:MergingStepEntity'];
+    if (info && info.status)
+      provTypes.push('dhf:Doc' + this.hubutils.capitalize(info.status));
+
+    let recordOpts = {
+      provTypes,
+      relations: {
+        associatedWith: [flowId, stepName, stepDefinitionName],
+        generatedBy: jobId,
+        derivedFrom: info && info.derivedFrom,
+        influencedBy: info && info.influencedBy,
+      },
+      attributes: { location: docURI }
+    };
+
+    return (this.config.autoCommit) ?
+      this._createRecord(provId, recordOpts, info.metadata) :
       this._queueForCommit(provId, recordOpts, info.metadata);
   }
 
@@ -376,7 +474,7 @@ class Provenance {
     let provTypes = ['ps:Flow','ps:Entity','dhf:Entity','dhf:CustomStep','dhf:CustomStepEntity'];
     if (info && info.status)
       provTypes.push('dhf:Doc' + this.hubutils.capitalize(info.status));
-    
+
     let recordOpts = {
       provTypes,
       relations: {
@@ -388,22 +486,22 @@ class Provenance {
       attributes: { location: docURI }
     };
 
-    return (this.config.autoCommit) ? 
-      this._createRecord(provId, recordOpts, info.metadata) : 
+    return (this.config.autoCommit) ?
+      this._createRecord(provId, recordOpts, info.metadata) :
       this._queueForCommit(provId, recordOpts, info.metadata);
   }
 
   /**
    * @desc Create a provenance record when a document is run through a Flow step
-   * @param {string} [jobId] - the ID of the job being executed (unique), this will generate 
+   * @param {string} [jobId] - the ID of the job being executed (unique), this will generate
    * @param {string} flowId - the unique ID of the flow
    * @param {string} stepName - the name of the step within a flow
    * @param {string} stepDefinitionName - the name of step definition within a flow
    * @param {string} stepDefinitionType - the type of step definition within a flow ['ingestion','mapping','mastering','custom']
    * @param {string} [docURI] - the URI of the document being modified by this step
    * @param {Object} info
-   * @param {string} info.status - the status of the step: 
-   *                               ie. created/updated/deleted.  
+   * @param {string} info.status - the status of the step:
+   *                               ie. created/updated/deleted.
    *                               Value is passed through to "provTypes".
    * @param {string} [info.metadata] - key/value pairs to document with the provenance record
    */
@@ -421,7 +519,7 @@ class Provenance {
 
   /**
    * @desc Create a provenance record for a documents properties.  These records will be used to record property merges.
-   * @param {string} jobId - the ID of the job being executed (unique), this will generate 
+   * @param {string} jobId - the ID of the job being executed (unique), this will generate
    * @param {string} flowId - the unique ID of the flow
    * @param {string} stepName - the name of the step within a flow
    * @param {string} stepDefinitionName - the name of step definition within a flow
@@ -431,8 +529,8 @@ class Provenance {
    * @param {Array}  properties - the properties of the document being processed by this step
    * @param {Object} info
    * @param {string} info.influencedBy - the Step ID assoicated this record
-   * @return {Array} Document Prov ID, Document Prov IDs for properties as an Object of 
-   *                  key/value pairs mapping property names to their provenance IDs, 
+   * @return {Array} Document Prov ID, Document Prov IDs for properties as an Object of
+   *                  key/value pairs mapping property names to their provenance IDs,
    *                  for use with follow-up createStepPropertyMergeRecords() call
    */
   createStepPropertyRecords(jobId, flowId, stepName, stepDefinitionName, stepDefinitionType, docURI, properties, info) {
@@ -458,13 +556,13 @@ class Provenance {
               generatedBy: jobId,
               influencedBy: info && info.influencedBy,
             },
-            attributes: { location: docURI }        
+            attributes: { location: docURI }
           };
-          // append to return Object  
-          docPropertyProvIds[property] = docPropProvId; 
+          // append to return Object
+          docPropertyProvIds[property] = docPropProvId;
           docPropertyProvIdsArray.push(docPropProvId);
-          (this.config.autoCommit) ? 
-            this._createRecord(docPropProvId, docPropProvOptions, info.metadata) : 
+          (this.config.autoCommit) ?
+            this._createRecord(docPropProvId, docPropProvOptions, info.metadata) :
             this._queueForCommit(docPropProvId, docPropProvOptions, info.metadata);
         }
 
@@ -482,8 +580,8 @@ class Provenance {
           attributes: { location: docURI }
         };
 
-        (this.config.autoCommit) ? 
-          this._createRecord(docProvId, recordOpts, info.metadata) : 
+        (this.config.autoCommit) ?
+          this._createRecord(docProvId, recordOpts, info.metadata) :
           this._queueForCommit(docProvId, recordOpts, info.metadata);
 
         // construct response
@@ -495,11 +593,11 @@ class Provenance {
       resp = isValid
     }
     return resp;
-  }  
+  }
 
   /**
    * @desc Create a provenance for altered property record for multiple property records
-   * @param {string} jobId - the ID of the job being executed (unique), this will generate 
+   * @param {string} jobId - the ID of the job being executed (unique), this will generate
    * @param {string} flowId - the unique ID of the flow
    * @param {string} stepName - the name of the step within a flow
    * @param {string} stepDefinitionName - the name of step definition within a flow
@@ -509,7 +607,7 @@ class Provenance {
    * @param {Array}  propertyProvIds - the provenance record ids of the properties being merged by this step
    * @param {Object} info
    * @param {string} info.influencedBy - the Step ID assoicated this record
-   * @return {Object} key/value pairs mapping property names to their provenance IDs, 
+   * @return {Object} key/value pairs mapping property names to their provenance IDs,
    *                  for use with follow-up createStepPropertyAlterationRecords() call
    */
   createStepPropertyAlterationRecord(jobId, flowId, stepName, stepDefinitionName, stepDefinitionType, propertyName, docURIs, propertyProvIds, info) {
@@ -540,8 +638,8 @@ class Provenance {
             influencedBy: info && info.influencedBy,
           }
         };
-        (this.config.autoCommit) ? 
-          this._createRecord(provId, recordOpts, info.metadata) : 
+        (this.config.autoCommit) ?
+          this._createRecord(provId, recordOpts, info.metadata) :
           this._queueForCommit(provId, recordOpts, info.metadata);
 
         resp = provId;
@@ -556,7 +654,7 @@ class Provenance {
 
   /**
    * @desc Create a provenance alteration record for multiple property records
-   * @param {string} jobId - the ID of the job being executed (unique), this will generate 
+   * @param {string} jobId - the ID of the job being executed (unique), this will generate
    * @param {string} flowId - the unique ID of the flow
    * @param {string} stepName - the name of the step within a flow
    * @param {string} stepDefinitionName - the name of step definition within a flow
@@ -565,13 +663,13 @@ class Provenance {
    * @param {Array}  propertyProvIds - the provenance record ids of the properties being altered by this step
    * @param {Object} info
    * @param {string} info.influencedBy - the Step ID assoicated this record
-   * @return {Object} key/value pairs mapping property names to their provenance IDs, 
+   * @return {Object} key/value pairs mapping property names to their provenance IDs,
    *                  for use with follow-up createStepDocumentAlterationRecords() call
    */
   createStepDocumentAlterationRecord(jobId, flowId, stepName, stepDefinitionName, stepDefinitionType, newDocURI, documentProvIds, alteredPropertyProvIds, info) {
     let resp = [];
     let isValid = this._validateCreateStepParams(jobId, flowId, stepName, stepDefinitionName, stepDefinitionType, documentProvIds, info);
-    if (!(isValid instanceof Error)) { 
+    if (!(isValid instanceof Error)) {
       if (documentProvIds && documentProvIds.length > 0 &&
         alteredPropertyProvIds && alteredPropertyProvIds.length > 0) {
         let capitalizedStepType = this.hubutils.capitalize(stepDefinitionType);
@@ -588,8 +686,8 @@ class Provenance {
           },
           attributes: { location: newDocURI }
         };
-        (this.config.autoCommit) ? 
-          this._createRecord(provId, recordOpts, info.metadata) : 
+        (this.config.autoCommit) ?
+          this._createRecord(provId, recordOpts, info.metadata) :
           this._queueForCommit(provId, recordOpts, info.metadata);
         resp = provId;
       } else {
@@ -605,7 +703,7 @@ class Provenance {
    * @desc Commit all queued Provenance records.  Only works if config.autoCommit === false
    *       and records are being saved, rather than committed instantly.
    */
-  commit() { 
+  commit() {
     if (this.config.autoCommit === false && this.config.commitQueue.length > 0) {
       this._createRecords(this.config.commitQueue);
       this.config.commitQueue = [];
@@ -616,7 +714,7 @@ class Provenance {
    * @desc Discard all queued Provenance records.  Only works if config.autoCommit === false
    *       and records are being saved, rather than committed instantly.
    */
-  discard() { 
+  discard() {
     if (this.config.autoCommit === false && this.config.commitQueue.length > 0) {
       this.config.commitQueue = [];
     }
@@ -624,11 +722,11 @@ class Provenance {
 
   // /**
   //  * @desc Create a provenance record when a Job is created immediately executed
-  //  * @param {string} jobId - the ID of the job being executed (unique), this will generate 
+  //  * @param {string} jobId - the ID of the job being executed (unique), this will generate
   //  * @param {string} flowId - the unique ID of the flow
   //  * @param {Object} info
-  //  * @param {string} info.status - the status of the job: 
-  //  *                               ie. created/updated/deleted.  
+  //  * @param {string} info.status - the status of the job:
+  //  *                               ie. created/updated/deleted.
   //  *                               Value is passed through to "provTypes".
   //  * @param {string} [info.metadata] - key/value pairs to document with the provenance record
   //  */
@@ -648,7 +746,7 @@ class Provenance {
   //         "associatedWith": flowId
   //       }
   //     }
-      
+
   //     if (this.config.autoCommit)
   //       resp = this._createRecord(provId, recordOpts, info.metadata);
   //     else {
@@ -661,17 +759,17 @@ class Provenance {
 
   //   return resp;
   // }
-  
+
   // /**
   //  * @desc Create a provenance record when a Flow is created
   //  * @param flowId - the name of the flow (unique)
   //  * @param {Object} info
-  //  * @param {string} info.status - the status of the flow: 
-  //  *                               ie. created/updated/deleted.  
+  //  * @param {string} info.status - the status of the flow:
+  //  *                               ie. created/updated/deleted.
   //  *                               Value is passed through to "provTypes".
   //  * @param {string} [info.metadata] - key/value pairs to document with the provenance record
   //  */
-  // createFlowRecord(flowId, info) { 
+  // createFlowRecord(flowId, info) {
   //   let resp;
   //   let provId = this.hubutils.uuid();
   //   let isProvInfoMetaValid = this._validProvInfoMetadata(info);
@@ -703,7 +801,7 @@ class Provenance {
    * @param {Object} [info]
    * TODO: create more convenient ways to query
    */
-  queryDocRecords(docURI, info) { 
+  queryDocRecords(docURI, info) {
     let resp;
     if (docURI)
       resp = xdmp.eval(`
@@ -731,9 +829,9 @@ class Provenance {
           update: 'true',
           ignoreAmps: true
       })
-    else 
+    else
        resp = new Error(`Function requires param 'docURI' to be defined.`);
-    
+
     return resp;
   }
 
@@ -744,7 +842,7 @@ class Provenance {
    * @param {Object} [info]
    * TODO: create more convenient ways to query
    */
-  queryDocRecordsNoEval(docURI, info) { 
+  queryDocRecordsNoEval(docURI, info) {
     let resp;
     if (docURI) {
       var match = {
@@ -752,21 +850,21 @@ class Provenance {
           location: docURI
         }
       };
-      // TODO: change "out" so output for a single prov record is 
+      // TODO: change "out" so output for a single prov record is
       // combined into a single Object in the Array
       var out = {
         dateTime: '?',
-        provTypes: '?',  
+        provTypes: '?',
         attributes : {'location' : '?'}
       };
       let kvPattern = ps.opTriplePattern(match, out);
-      resp = op.fromTriples(kvPattern).result().toArray();  
+      resp = op.fromTriples(kvPattern).result().toArray();
     }
-    else 
+    else
        resp = new Error(`Function requires param 'docURI' to be defined.`);
-    
+
     return resp;
-  }  
+  }
 }
 
 module.exports = Provenance

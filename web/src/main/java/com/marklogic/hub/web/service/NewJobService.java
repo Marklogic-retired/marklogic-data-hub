@@ -29,7 +29,7 @@ public class NewJobService {
     private DatabaseClient client;
     private JobDocManager jobDocManager;
 
-    public void setupClient() {
+    public synchronized void setupClient() {
         this.client = hubConfig.newJobDbClient();
         this.jobDocManager = new JobDocManager(client);
     }

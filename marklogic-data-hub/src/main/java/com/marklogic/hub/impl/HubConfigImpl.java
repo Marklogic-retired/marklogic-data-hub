@@ -173,6 +173,8 @@ public class HubConfigImpl implements HubConfig
 
     protected String modulePermissions;
 
+    private String entityModelPermissions;
+
     private ManageConfig manageConfig;
     private ManageClient manageClient;
     private AdminConfig adminConfig;
@@ -848,6 +850,11 @@ public class HubConfigImpl implements HubConfig
     }
 
     @Override
+    public String getEntityModelPermissions() {
+        return entityModelPermissions;
+    }
+
+    @Override
     @Deprecated
     public String getProjectDir() {
         return hubProject.getProjectDirString();
@@ -861,6 +868,10 @@ public class HubConfigImpl implements HubConfig
 
     public void setModulePermissions(String modulePermissions) {
         this.modulePermissions = modulePermissions;
+    }
+
+    public void setEntityModelPermissions(String entityModelPermissions) {
+        this.entityModelPermissions = entityModelPermissions;
     }
 
     @JsonIgnore
@@ -1288,6 +1299,13 @@ public class HubConfigImpl implements HubConfig
             projectProperties.setProperty("mlModulePermissions", modulePermissions);
         }
 
+        if (entityModelPermissions == null) {
+            entityModelPermissions = getEnvPropString(projectProperties, "mlEntityModelPermissions", environment.getProperty("mlEntityModelPermissions"));
+        }
+        else {
+            projectProperties.setProperty("mlEntityModelPermissions", entityModelPermissions);
+        }
+
         DHFVersion = getEnvPropString(projectProperties, "mlDHFVersion", environment.getProperty("mlDHFVersion"));
 
         //make sure we include a log level here
@@ -1606,8 +1624,7 @@ public class HubConfigImpl implements HubConfig
 
     @Override public String getJarVersion() {
         Properties properties = new Properties();
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("version.properties");
-        try {
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("version.properties")) {
             properties.load(inputStream);
         } catch (IOException e)
         {
@@ -1617,7 +1634,7 @@ public class HubConfigImpl implements HubConfig
 
         // this lets debug builds work from an IDE
         if (version.equals("${project.version}")) {
-            version = "5.0.4";
+            version = "5.1.0";
         }
         return version;
     }
@@ -2026,6 +2043,7 @@ public class HubConfigImpl implements HubConfig
         dataHubAdminRoleName = null;
         customForestPath = null;
         modulePermissions = null;
+        entityModelPermissions = null;
         hubLogLevel = null;
         loadBalancerHost = null;
         isHostLoadBalancer = null;

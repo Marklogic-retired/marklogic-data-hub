@@ -3,10 +3,11 @@ plugins {
     id 'java'
     id 'maven-publish'
     id 'com.jfrog.bintray' version '1.7.2'
-    id 'com.marklogic.ml-gradle' version '3.15.2'
+    id 'com.marklogic.ml-gradle' version '3.16.2'
     id 'com.moowork.node' version '1.1.1'
     id 'org.springframework.boot' version '2.1.3.RELEASE'
     id "io.spring.dependency-management" version "1.0.7.RELEASE"
+    id 'com.marklogic.ml-development-tools' version '4.2.0'
 }
 
 repositories {
@@ -26,12 +27,12 @@ targetCompatibility = 1.8
 
 ext.junit4Version        = '4.12'
 ext.junitVintageVersion  = '4.12.0-RC3'
-ext.junitPlatformVersion = '1.3.1'
-ext.junitJupiterVersion  = '5.3.1'
+ext.junitPlatformVersion = '1.4.0'
+ext.junitJupiterVersion  = '5.4.0'
 
 dependencies {
     compile 'com.marklogic:marklogic-client-api:4.2.0'
-    compile('com.marklogic:ml-app-deployer:3.15.1'){
+    compile('com.marklogic:ml-app-deployer:3.16.3'){
         exclude group: 'org.springframework', module: 'http'
     }
     // Temporarily forcing a dependency on this version until a new version of ml-app-deployer depends on this as well
@@ -55,6 +56,8 @@ dependencies {
 
     // JUnit Jupiter API and TestEngine implementation
     testCompile "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
+    testCompile "org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}"
+    testCompile "org.junit.platform:junit-platform-commons:${junitPlatformVersion}"
     testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
 
     //testCompile "org.junit.platform:junit-platform-runner:${junitPlatformVersion}"
@@ -99,7 +102,7 @@ node {
   version = '8.10.0'
 
   // // Version of npm to use.
-  npmVersion = '6.8.0'
+  npmVersion = '6.13.1'
 
   download = true
 
@@ -148,6 +151,22 @@ processResources {
     // Includes installer-specific files into the jar produced by bootJar
     from ("src/installer") {
         into "."
+    }
+}
+
+ext {
+    dataServicesGroup = "Data Services"
+    dataServicesPath = "src/main/resources/ml-modules/root/data-hub/5/data-services"
+}
+
+task generateSourceDataInterface(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask, group: dataServicesGroup) {
+    serviceDeclarationFile = dataServicesPath + "/mastering/service.json"
+}
+
+task generateDataServiceInterfaces {
+    description = "Generate Java interfaces for all Data Services. Must run this from the ./marklogic-data-hub directory"
+    dependsOn {
+        tasks.findAll { task -> dataServicesGroup.equals(task.group)}
     }
 }
 

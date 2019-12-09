@@ -13,8 +13,7 @@ import module namespace lib = "http://marklogic.com/smart-mastering/test" at "li
 declare namespace es = "http://marklogic.com/entity-services";
 declare namespace nested = "nested";
 
-(: Force update mode :)
-declare option xdmp:update "true";
+declare option xdmp:update "false";
 
 declare option xdmp:mapping "false";
 
@@ -36,8 +35,14 @@ let $assertions := (
   test:assert-equal(123, $merged-doc/es:instance/TopProperty/EntityReference/PropValue/fn:data())
 )
 
-let $merged-uri := cts:uris((), "limit=1", cts:collection-query($const:MERGED-COLL))
-let $prop-history := history:property-history($merged-uri)
+let $merged-uri := xdmp:invoke-function(
+  function() {cts:uris((), "limit=1", cts:collection-query($const:MERGED-COLL))},
+  $lib:INVOKE_OPTIONS
+)
+let $prop-history := xdmp:invoke-function(
+  function() {history:property-history($merged-uri)},
+  $lib:INVOKE_OPTIONS
+)
 
 let $clark-path := "{http://marklogic.com/entity-services}envelope/{http://marklogic.com/entity-services}instance/TopProperty/{nested}LowerProperty1/EvenLowerProperty/LowestProperty1"
 

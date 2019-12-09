@@ -22,8 +22,6 @@ export class LoginUIComponent {
   @Input() loggingIn: boolean;
   @Input() loginError: string;
   @Input() loginInfo: LoginInfo;
-  @Input() hubUpdating: boolean;
-  @Input() hubUpdateFailed: boolean;
   @Input() runningPreinstallCheck: boolean;
   @Input() preinstallCheck: any;
   @Input() initSettings: HubSettings;
@@ -39,7 +37,6 @@ export class LoginUIComponent {
   @Output() onHubNameChanged: EventEmitter<any> = new EventEmitter<any>();
   @Output() onGotEnvironment: EventEmitter<any> = new EventEmitter<any>();
   @Output() onHubUpdateUrl: EventEmitter<any> = new EventEmitter<any>();
-  @Output() onUpdateProject: EventEmitter<any> = new EventEmitter<any>();
   @Output() onProjectSelected: EventEmitter<any> = new EventEmitter<any>();
   @Output() onRemoveProject: EventEmitter<any> = new EventEmitter<any>();
   @Output() onInitProject: EventEmitter<any> = new EventEmitter<any>();

@@ -44,28 +44,47 @@ declare variable $event-names as xs:QName+ := (
     xs:QName('merging:'|| $const:ON-NOTIFICATION-EVENT),
     xs:QName('merging:'|| $const:ON-ARCHIVE-EVENT)
   );
+declare variable $event-name-to-json-QName as map:map := map:new(
+  for $event-name in $event-names
+  let $local-name := fn:local-name-from-QName($event-name)
+  let $camelcase :=
+    let $parts := fn:tokenize($local-name , "-")
+    return
+      fn:string-join(
+        (
+          fn:head($parts),
+          for $part in fn:tail($parts)
+          return fn:upper-case(fn:substring($part, 1, 1)) || fn:substring($part, 2)
+        ),
+        ""
+      )
+  return map:entry($local-name, xs:QName($camelcase))
+);
 
 declare function collection-impl:build-collection-algorithm-map(
-  $merging-xml as element(merging:options)?
+  $merging-options as node()?
 ) as map:map
 {
-  let $cache-id := fn:string($merging-xml ! fn:generate-id(.))
+  let $cache-id := fn:string($merging-options ! fn:generate-id(.))
   return
     if (map:contains($_collection-algorithm-cache, $cache-id)) then
       map:get($_collection-algorithm-cache, $cache-id)
     else
       let $algorithm-map :=
         map:new((
+          let $is-json := $merging-options instance of object-node()
+          let $collection-algorithms := $merging-options/*:algorithms/*:collections
           for $event-name in $event-names
           let $local-name := fn:local-name-from-QName($event-name)
-          let $algorithm-xml := $merging-xml/merging:algorithms/merging:collections/*[fn:node-name(.) eq $event-name]
+          let $algorithm-qname := if ($is-json) then $event-name-to-json-QName => map:get($local-name) else $event-name
+          let $algorithm-node := $collection-algorithms/*[fn:node-name(.) eq $algorithm-qname]
           return
             map:entry(
               $local-name,
               fun-ext:function-lookup(
-                fn:string($algorithm-xml/@function),
-                fn:string($algorithm-xml/@namespace),
-                fn:string($algorithm-xml/@at),
+                fn:string($algorithm-node/(@function|function)),
+                fn:string($algorithm-node/(@namespace|namespace)),
+                fn:string($algorithm-node/(@at|at)),
                 collection-impl:default-function-lookup(?, 3)
               )
             )
@@ -86,7 +105,7 @@ declare function collection-impl:build-collection-algorithm-map(
 declare function collection-impl:execute-algorithm(
   $event-name as xs:string,
   $collections-by-uri as map:map,
-  $event-options as element()?
+  $event-options as node()?
 )
 {
   let $algorithm-map :=
@@ -115,7 +134,7 @@ declare function collection-impl:execute-algorithm(
       xdmp:apply($algorithm, $event-name, $collections-by-uri, $event-options)
 };
 
-declare function collection-impl:on-merge($collections-by-uri as map:map, $event-options as element()?) {
+declare function collection-impl:on-merge($collections-by-uri as map:map, $event-options as node()?) {
   collection-impl:execute-algorithm(
     "on-merge",
     $collections-by-uri,
@@ -123,7 +142,7 @@ declare function collection-impl:on-merge($collections-by-uri as map:map, $event
   )
 };
 
-declare function collection-impl:on-archive($collections-by-uri as map:map, $event-options as element()?) {
+declare function collection-impl:on-archive($collections-by-uri as map:map, $event-options as node()?) {
   collection-impl:execute-algorithm(
     "on-archive",
     $collections-by-uri,
@@ -131,7 +150,7 @@ declare function collection-impl:on-archive($collections-by-uri as map:map, $eve
   )
 };
 
-declare function collection-impl:on-no-match($collections-by-uri as map:map, $event-options as element()?) {
+declare function collection-impl:on-no-match($collections-by-uri as map:map, $event-options as node()?) {
   collection-impl:execute-algorithm(
     "on-no-match",
     $collections-by-uri,
@@ -139,7 +158,7 @@ declare function collection-impl:on-no-match($collections-by-uri as map:map, $ev
   )
 };
 
-declare function collection-impl:on-notification($collections-by-uri as map:map, $event-options as element()?) {
+declare function collection-impl:on-notification($collections-by-uri as map:map, $event-options as node()?) {
   collection-impl:execute-algorithm(
     "on-notification",
     $collections-by-uri,
@@ -150,13 +169,13 @@ declare function collection-impl:on-notification($collections-by-uri as map:map,
 declare function collection-impl:default-collection-handler(
   $event-name as xs:string,
   $collections-by-uri as map:map,
-  $event-options as element()?
+  $event-options as node()?
 ) {
-  if (fn:exists($event-options/merging:set/merging:collection[. ne ''])) then
-    $event-options/merging:set/merging:collection ! fn:string(.)
+  if (fn:exists($event-options/*:set/*:collection[. ne ''])) then
+    $event-options/*:set/*:collection ! fn:string(.)
   else (
     let $merge-options := collection-impl:get-options-root($event-options)
-    let $match-options := matcher:get-options($merge-options/merging:match-options, $const:FORMAT-XML)
+    let $match-options := matcher:get-options($merge-options/(merging:match-options|matchOptions), $const:FORMAT-XML)
     let $content-collection-options := fn:head(($match-options,$merge-options))
     let $all-collections := fn:distinct-values((
           map:keys(-$collections-by-uri),
@@ -173,26 +192,30 @@ declare function collection-impl:default-collection-handler(
               ()
         ))
     let $remove-collections := fn:distinct-values((
-        $event-options/merging:remove/merging:collection ! fn:string(.),
+        $event-options/*:remove/*:collection ! fn:string(.),
         switch ($event-name)
           case $const:ON-ARCHIVE-EVENT return
             coll:content-collections($content-collection-options)
+          case $const:ON-MERGE-EVENT return
+            coll:archived-collections($merge-options)
+          case $const:ON-NO-MATCH return
+            coll:archived-collections($merge-options)
           default return
             ()
       ))
     return
       (
         $all-collections[fn:not(. = $remove-collections)],
-        $event-options/merging:add/merging:collection ! fn:string(.)
+        $event-options/*:add/*:collection ! fn:string(.)
       )[. ne '']
   )
 };
 
 declare function collection-impl:get-options-root(
-  $event-options as element()?
-) as element(merging:options)? {
+  $event-options as node()?
+) as node()? {
   if (fn:exists($event-options)) then
-    fn:root($event-options)/(self::merging:options|merging:options)
+    fn:root($event-options)/(self::*:options|*:options)
   else
     ()
 };

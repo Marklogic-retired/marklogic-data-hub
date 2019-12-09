@@ -97,7 +97,7 @@ public interface DataHub {
      *
      * @param listener
      */
-    void dhsInstall(HubDeployStatusListener listener);
+    void deployToDhs(HubDeployStatusListener listener);
 
     /**
      * Updates the indexes in the database based on the project
@@ -177,16 +177,6 @@ public interface DataHub {
      * @throws CantUpgradeException - exception thrown when an upgrade can't happen
      */
     boolean upgradeHub() throws CantUpgradeException;
-
-    /**
-     * Upgrades the hub based on list of provided updated flows. All flows SHOULD be provided.
-     * The method without params will handle this automatically.
-     * Must be run as a user with sufficient privileges to install a data hub.
-     * @param updatedFlows - the list of the name of the flows you want to update
-     * @return boolean - false if upgrade fails for a reason other than an upgrade exception
-     * @throws CantUpgradeException - should the hub fail to upgrade for incompatibility reasons
-     */
-    boolean upgradeHub(List<String> updatedFlows) throws CantUpgradeException;
 
     /**
      * Creates and returns the FlowRunner object using the datahub's autowired hubconfig

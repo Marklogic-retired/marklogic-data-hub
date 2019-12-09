@@ -8,6 +8,13 @@ xdmp:collection-delete($const:OPTIONS-COLL),
 
 xdmp:collection-delete($const:ALGORITHM-COLL),
 
+for $uri in (
+  "/xqy-action-output/source/1/doc1.xml",
+  "/xqy-action-output/source/2/doc2.xml"
+)
+where doc-available($uri)
+return xdmp:document-delete($uri),
+
 xdmp:invoke-function(function() {
   xdmp:document-delete("/custom-merge-xqy.xqy"),
   xdmp:document-delete("/custom-merge-sjs.sjs"),

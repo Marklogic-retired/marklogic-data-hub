@@ -71,10 +71,6 @@ export class ProjectService {
     return this.http.post(`/api/current-project/clear-all`, '');
   }
 
-  updateProject() {
-    return this.http.post(`/api/current-project/update-hub`, '');
-  }
-
   private extractData(res: Response) {
     return res.json();
   }

@@ -1107,6 +1107,8 @@
             "INGESTION",
             "MAPPING",
             "MASTERING",
+            "MATCHING",
+            "MERGING",
             "CUSTOM"
           ]
         },
@@ -1117,7 +1119,7 @@
         "fileLocations": {
           "type": "object",
           "description": "INGESTION ONLY - [add description]",
-          "properties": { 
+          "properties": {
             "inputFilePath": {
               "type": "string",
               "description": ""
@@ -1148,14 +1150,14 @@
         "stepDefinitionName":"default-ingestion",
         "stepDefinitionType": "INGESTION",
         "isValid": true,
-        "fileLocations": { 
+        "fileLocations": {
           "inputFilePath":"",
           "outputURIReplacement":"",
           "inputFileType":""
         },
         "options": {
           "sourceQuery":null,
-          "collections":[ 
+          "collections":[
             "default-ingest",
             "Flow04IngestStep"
           ],

@@ -35,6 +35,7 @@ public class MappingModel extends JsonPojo {
     protected String lang;
     protected int version = 1;
     protected JsonNode properties;
+    protected JsonNode namespaces = JsonNodeFactory.instance.objectNode();
 
     @JsonIgnore
     public String getFilename() {
@@ -119,6 +120,10 @@ public class MappingModel extends JsonPojo {
 
     public void setProperties(JsonNode properties) {this.properties = properties;}
 
+    public JsonNode getNamespaces() {return namespaces;}
+
+    public void setNamespaces(JsonNode namespaces) {this.namespaces = namespaces;}
+
     public static MappingModel fromJson(JsonNode node) {
         MappingModel mapping = new MappingModel();
         mapping.setName(node.get("name").asText());
@@ -128,6 +133,7 @@ public class MappingModel extends JsonPojo {
         mapping.setTargetEntityType(node.get("targetEntityType").asText());
         mapping.setSourceContext(node.get("sourceContext").asText());
         mapping.setProperties(node.get("properties"));
+        mapping.setNamespaces(node.get("namespaces"));
         mapping.setLang("zxx");
 
         return mapping;
@@ -142,6 +148,7 @@ public class MappingModel extends JsonPojo {
         }
         node.put("name", getName());
         node.set("properties", getProperties());
+        node.set("namespaces", getNamespaces());
         if(getSourceContext() != null) {
             node.put("sourceContext", getSourceContext());
         }
@@ -184,6 +191,11 @@ public class MappingModel extends JsonPojo {
 
         if (properties == null && that.properties != null || properties != null && that.properties == null ||
             !properties.equals(that.properties)) {
+            return false;
+        }
+
+        if (namespaces == null && that.namespaces != null || namespaces != null && that.namespaces == null ||
+            !namespaces.equals(that.namespaces)) {
             return false;
         }
         return true;

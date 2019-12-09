@@ -1,18 +1,18 @@
 /**
-  Copyright 2012-2019 MarkLogic Corporation
+ Copyright 2012-2019 MarkLogic Corporation
 
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
 
-     http://www.apache.org/licenses/LICENSE-2.0
+ http://www.apache.org/licenses/LICENSE-2.0
 
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
-*/
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 'use strict';
 const FlowUtils = require("/data-hub/5/impl/flow-utils.sjs");
 const Step = require("/data-hub/5/impl/step.sjs");
@@ -132,7 +132,11 @@ class Flow {
   }
 
   addToWriteQueue(content) {
+    if (content.uri) {
       this.writeQueue.push(content);
+    } else {
+      this.datahub.debug.log({ type: 'error', message: `Couldn't add '${xdmp.toJsonString(content)}' to the write queue due to missing uri.`});
+    }
   }
 
   runFlow(flowName, jobId, content = [], options, stepNumber) {
@@ -245,6 +249,9 @@ class Flow {
         }
       }
     }
+    if (prov.granularityLevel() !== prov.OFF_LEVEL) {
+      this.datahub.prov.commit();
+    }
     if (!combinedOptions.noBatchWrite) {
       let batchStatus = "finished";
       if (this.globalContext.failedItems.length) {
@@ -256,9 +263,6 @@ class Flow {
       }
       if (!combinedOptions.disableJobOutput) {
         this.datahub.jobs.updateBatch(this.globalContext.jobId, this.globalContext.batchId, batchStatus, uris, writeTransactionInfo, this.globalContext.batchErrors[0]);
-      }
-      if (prov.granularityLevel() !== prov.OFF_LEVEL) {
-        this.datahub.prov.commit();
       }
     }
 
@@ -344,7 +348,8 @@ class Flow {
             "message": e.message,
             "name": e.name,
             "retryable": e.retryable,
-            "stackFrames": e.stackFrames
+            "stackFrames": e.stackFrames,
+            "uri": flowInstance.globalContext.uri
           });
           flowInstance.globalContext.failedItems.push(flowInstance.globalContext.uri);
           flowInstance.datahub.debug.log({message: `Error running step: ${e.toString()}. ${e.stack}`, type: 'error'});
@@ -384,32 +389,41 @@ class Flow {
   }
 
   buildFineProvenanceData(jobId, flowName, stepName, stepDefName, stepDefType, content, info) {
-    let previousUris = info.derivedFrom;
+    let previousUris = fn.distinctValues(Sequence.from([Sequence.from(Object.keys(content.provenance)),Sequence.from(info.derivedFrom)]));
     let prov = this.datahub.prov;
+    let hubUtils = this.datahub.hubUtils;
     let newDocURI = content.uri;
     let docProvIDs = [];
     // setup variables to group prov info by properties
     let docProvPropertyIDsByProperty = {};
-    let docProvPropertyValuesByProperty = {};
+    let docProvPropertyMetadataByProperty = {};
     let docProvDocumentIDsByProperty = {};
     for (let prevUri of previousUris) {
       let docProvenance = content.provenance[prevUri];
-      let docProperties = Object.keys(docProvenance);
-      let docPropRecords = prov.createStepPropertyRecords(jobId, flowName, stepName, stepDefName, stepDefType, prevUri, docProperties, info);
-      let docProvID = docPropRecords[0];
-      docProvIDs.push(docProvID);
-      let docProvPropertyIDKeyVals = docPropRecords[1];
-      // accumulating changes here, since merges can have multiple docs with input per property.
-      for (let origProp of Object.keys(docProvPropertyIDKeyVals)) {
-        let propDetails = docProvenance[origProp];
-        let prop = propDetails.destination;
+      if (docProvenance) {
+        let docProperties = Object.keys(docProvenance);
+        let docPropRecords = prov.createStepPropertyRecords(jobId, flowName, stepName, stepDefName, stepDefType, prevUri, docProperties, info);
+        let docProvID = docPropRecords[0];
+        docProvIDs.push(docProvID);
+        let docProvPropertyIDKeyVals = docPropRecords[1];
+        // accumulating changes here, since merges can have multiple docs with input per property.
+        for (let origProp of Object.keys(docProvPropertyIDKeyVals)) {
+          let propDetails = docProvenance[origProp];
+          let prop = propDetails.type || propDetails.destination;
 
-        docProvPropertyValuesByProperty[prop] = docProvPropertyValuesByProperty[prop] || [];
-        docProvPropertyValuesByProperty[prop].push(propDetails.value);
-        docProvPropertyIDsByProperty[prop] = docProvPropertyIDsByProperty[prop] || [];
-        docProvPropertyIDsByProperty[prop].push(docProvPropertyIDKeyVals[origProp]);
-        docProvDocumentIDsByProperty[prop] = docProvDocumentIDsByProperty[prop] || [];
-        docProvDocumentIDsByProperty[prop].push(docProvID);
+          docProvPropertyMetadataByProperty[prop] = docProvPropertyMetadataByProperty[prop] || {};
+          const propMetadata = docProvPropertyMetadataByProperty[prop];
+          for (const propDetailsKey of Object.keys(propDetails)) {
+            if (propDetails.hasOwnProperty(propDetailsKey) && propDetails[propDetailsKey]) {
+              propMetadata[propDetailsKey] = propMetadata[propDetailsKey] || [];
+              propMetadata[propDetailsKey] = propMetadata[propDetailsKey].concat(hubUtils.normalizeToArray(propDetails[propDetailsKey]));
+            }
+          }
+          docProvPropertyIDsByProperty[prop] = docProvPropertyIDsByProperty[prop] || [];
+          docProvPropertyIDsByProperty[prop].push(docProvPropertyIDKeyVals[origProp]);
+          docProvDocumentIDsByProperty[prop] = docProvDocumentIDsByProperty[prop] || [];
+          docProvDocumentIDsByProperty[prop].push(docProvID);
+        }
       }
     }
 
@@ -417,8 +431,17 @@ class Flow {
     for (let prop of Object.keys(docProvPropertyIDsByProperty)) {
       let docProvDocumentIDs = docProvDocumentIDsByProperty[prop];
       let docProvPropertyIDs = docProvPropertyIDsByProperty[prop];
-      let docProvPropertyValues = docProvPropertyValuesByProperty[prop];
-      let propInfo = Object.assign({}, info, { metadata: { value: docProvPropertyValues.join(',') } });
+      let docProvPropertyMetadata = docProvPropertyMetadataByProperty[prop];
+      for (const propDetailsKey of Object.keys(docProvPropertyMetadata)) {
+        if (docProvPropertyMetadata.hasOwnProperty(propDetailsKey)) {
+          let dedupedMeta = Sequence.from(docProvPropertyMetadata[propDetailsKey]);
+          docProvPropertyMetadata[propDetailsKey] = fn.count(dedupedMeta) <= 1 ? fn.string(fn.head(dedupedMeta)) : dedupedMeta.toArray();
+          if (!(typeof docProvPropertyMetadata[propDetailsKey] === 'string' || docProvPropertyMetadata[propDetailsKey] instanceof xs.string)) {
+            docProvPropertyMetadata[propDetailsKey] = xdmp.toJsonString(docProvPropertyMetadata[propDetailsKey]);
+          }
+        }
+      }
+      let propInfo = Object.assign({}, info, { metadata: docProvPropertyMetadata });
       let newPropertyProvID = prov.createStepPropertyAlterationRecord(jobId, flowName, stepName, stepDefName, stepDefType, prop, docProvDocumentIDs, docProvPropertyIDs, propInfo);
       newPropertyProvIDs.push(newPropertyProvID);
     }

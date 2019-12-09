@@ -45,7 +45,7 @@ public class CopyQueryOptionsCommand extends AbstractCommand {
 
         DatabaseClient client = hubConfig.newModulesDbClient();
         try {
-            client.newServerEval().javascript(script).eval();
+            client.newServerEval().javascript(script).eval().close();
         } finally {
             client.release();
         }

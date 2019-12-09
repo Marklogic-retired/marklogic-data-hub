@@ -114,4 +114,50 @@ export class StepperComponent extends CdkStepper implements OnChanges, AfterCont
   formatStatus(status):string {
     return _.capitalize(status.replace(/_/g,' ').replace(/-/g,' '));
   }
+
+  createStepHeader(step: any): string {
+    if (step.stepDefinitionType === this.stepType.INGESTION){
+      if(step.stepDefinitionName === 'default-ingestion'){
+        return 'INGESTION';
+      }
+      else{
+        return 'CUSTOM';
+      }
+    }
+    else if (step.stepDefinitionType === this.stepType.MAPPING){
+      if(step.stepDefinitionName === 'default-mapping' || step.stepDefinitionName === 'entity-services-mapping'){
+        return 'MAPPING';
+      }
+      else{
+        return 'CUSTOM';
+      }
+    }
+    else if (step.stepDefinitionType === this.stepType.MATCHING){
+      if(step.stepDefinitionName === 'default-matching'){
+        return 'MATCHING';
+      }
+      else{
+        return 'CUSTOM';
+      }
+    }
+    else if (step.stepDefinitionType === this.stepType.MERGING){
+      if(step.stepDefinitionName === 'default-merging'){
+        return 'MERGING';
+      }
+      else{
+        return 'CUSTOM';
+      }
+    }
+    else if (step.stepDefinitionType === this.stepType.MASTERING){
+      if(step.stepDefinitionName === 'default-mastering'){
+        return 'MASTERING';
+      }
+      else{
+        return 'CUSTOM';
+      }
+    }
+    else {
+        return 'CUSTOM';
+    }
+  }
 }

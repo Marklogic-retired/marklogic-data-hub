@@ -29,6 +29,7 @@ import {AddMergeStrategyDialogComponent} from './mastering/merging/ui/add-merge-
 import {AddMergeCollectionDialogComponent} from './mastering/merging/ui/add-merge-collection-dialog.component';
 import {MappingComponent} from './mapping/mapping.component';
 import {MappingUiComponent} from './mapping/ui/mapping-ui.component';
+import {EntityTableUiComponent} from './mapping/ui/entity-table-ui.component';
 
 import {BsDropdownModule, TooltipModule} from 'ngx-bootstrap';
 import {FocusElementDirective} from '../../../directives/focus-element/focus-element.directive';
@@ -68,6 +69,7 @@ import {ClipboardDirective} from '../../../directives/clipboard/clipboard.direct
     AddMergeCollectionDialogComponent,
     MappingComponent,
     MappingUiComponent,
+    EntityTableUiComponent,
     IngestComponent,
     IngestUiComponent,
     FocusElementDirective,

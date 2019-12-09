@@ -171,10 +171,11 @@ public class DataHubInstallTest extends HubTestBase
         actualXml = finalSchemasClient.newDocumentManager().read("/tde/tdedoc.xml").next().getContent(new DOMHandle()).get();
         assertXMLEqual(expectedXml, actualXml);
 
-        //checking if triggers are written
-        assertTrue(stagingTriggersClient.newServerEval().xquery("fn:count(fn:doc())").eval().next().getNumber().intValue() == 6);
-        //we write 5 triggers as part of installation
-        assertTrue(finalTriggersClient.newServerEval().xquery("fn:count(fn:doc())").eval().next().getNumber().intValue() == 6);
+        final String message = "For 5.1.0, 8 triggers are expected, and the test also adds 'my-trigger' for a count of 9";
+        int count = stagingTriggersClient.newServerEval().xquery("fn:count(fn:doc())").eval().next().getNumber().intValue();
+        assertEquals(9, count, message);
+        count = finalTriggersClient.newServerEval().xquery("fn:count(fn:doc())").eval().next().getNumber().intValue();
+        assertEquals(9, count, message);
 
     }
 

@@ -15,7 +15,13 @@ export class FlowsTooltips {
     targetPerms: 'The comma-separated roles required to access the ingested data.',
     targetURIReplace: "A comma-separated list of regular expression patterns and their replacement strings to customize the URIs of the ingested records. Example: /foo/bar,'/mydir'",
     targetURIPreview: 'An example of a URI of an ingested document based on the specified options. The actual URI will vary for each document.',
-    mlcp: 'Paste this command into the terminal to ingest files using MLCP. Note that the URIs created by MLCP and Quickstart are different for delimited files.'
+    mlcp: 'Paste this command into the terminal to ingest files using MLCP. Note that the URIs created by MLCP and Quickstart are different for delimited files.',
+    batchSize: 'The number of documents to process per batch. Default is 100.',
+    threadCount: 'The number of threads to use when running a step. Default is 4.',
+    cHmodule: 'The path to your custom hook module.',
+    cHparameters: 'Parameters, as key-value pairs, to pass to your custom hook module.',
+    cHuser: 'The user account to use to run the module. Default is the user running the flow; e.g., flow-operator.',
+    cHrunBefore: 'For a pre-step hook, set to true. For a post-step hook, set to false.'
   }
 
   static mapping: any = {
@@ -24,6 +30,12 @@ export class FlowsTooltips {
     targetEntity: 'The entity to map against the source data.',
     sourceDatabase: 'The database from which to take the input data. For mapping, choose the STAGING database where you ingested the data. Default is data-hub-STAGING.',
     targetDatabase: 'The database where to store the processed data. For mapping, choose the FINAL database where you want to store the mapped data. Default is data-hub-FINAL.',
+    batchSize: 'The number of documents to process per batch. Default is 100.',
+    threadCount: 'The number of threads to use when running a step. Default is 4.',
+    cHmodule: 'The path to your custom hook module.',
+    cHparameters: 'Parameters, as key-value pairs, to pass to your custom hook module.',
+    cHuser: 'The user account to use to run the module. Default is the user running the flow; e.g., flow-operator.',
+    cHrunBefore: 'For a pre-step hook, set to true. For a post-step hook, set to false.'
   }
 
   static mastering: any = {
@@ -33,6 +45,12 @@ export class FlowsTooltips {
     targetEntity: 'The entity to master against the source data.',
     sourceDatabase: 'The database from which to take the input data. For mastering, choose the FINAL database where you stored processed data. Default is data-hub-FINAL.',
     targetDatabase: 'The database where to store the processed data. For mastering, choose the FINAL database where you want to store mastered data. Default is data-hub-FINAL. IMPORTANT: For mastering, the source database and the target database must be the same. If you want the target database to be different, create a custom step with a custom module to override the default.',
+    batchSize: 'The number of documents to process per batch. Default is 100.',
+    threadCount: 'The number of threads to use when running a step. Default is 4.',
+    cHmodule: 'The path to your custom hook module.',
+    cHparameters: 'Parameters, as key-value pairs, to pass to your custom hook module.',
+    cHuser: 'The user account to use to run the module. Default is the user running the flow; e.g., flow-operator.',
+    cHrunBefore: 'For a pre-step hook, set to true. For a post-step hook, set to false.',
 
     matching: {
         weightOption: 'A factor signifying the relative importance of the rule.',
@@ -70,7 +88,17 @@ export class FlowsTooltips {
       sourceQuery: 'The CTS query to use to select the source data to process in this step.',
       targetEntity: 'The entity that represents the target data structure for your step.',
       modulesDatabase: 'The database where custom modules are stored. This value is read-only.',
-      customModuleURI: 'The path to your custom module, which is automatically generated and has scaffolding code.'
+      customModuleURI: 'The path to your custom module, which is automatically generated and has scaffolding code.',
+      batchSize: 'The number of documents to process per batch. Default is 100.',
+      threadCount: 'The number of threads to use when running a step. Default is 4.',
+      options: 'Key-value pairs to pass as parameters to custom steps in the flow.',
+      cHmodule: 'The path to your custom hook module.',
+      cHparameters: 'Parameters, as key-value pairs, to pass to your custom hook module.',
+      cHuser: 'The user account to use to run the module. Default is the user running the flow; e.g., flow-operator.',
+      cHrunBefore: 'For a pre-step hook, set to true. For a post-step hook, set to false.',
+      targetURIReplace: "A comma-separated list of regular expression patterns and their replacement strings to customize the URIs of the ingested records. Example: /foo/bar,'/mydir'",
+      targetURIPreview: 'An example of a URI of an ingested document based on the specified options. The actual URI will vary for each document.',
+      targetPerms: 'The comma-separated roles required to access the ingested data.'
   }
 
 }

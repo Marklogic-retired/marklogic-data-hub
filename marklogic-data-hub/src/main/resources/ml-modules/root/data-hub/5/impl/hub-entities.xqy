@@ -145,12 +145,90 @@ declare %private function hent:fix-options($nodes as node()*)
       default return $n
 };
 
-declare function hent:dump-search-options($entities as json:array)
+declare %private function hent:fix-options-exp($nodes as node()*)
+{
+  for $n in $nodes
+  return
+    typeswitch($n)
+      case element(search:options) return
+        element { fn:node-name($n) } {
+          $n/namespace::node(),
+          $n/@*,
+          <search:constraint name="Collection">
+            <search:collection>
+              <search:facet-option>limit=25</search:facet-option>
+              <search:facet-option>frequency-order</search:facet-option>
+              <search:facet-option>descending</search:facet-option>
+            </search:collection>
+          </search:constraint>,
+          <search:constraint name="createdByJob">
+            <search:range facet="false">
+              <search:field name="datahubCreatedByJob"/>
+            </search:range>
+          </search:constraint>,
+          <search:constraint name="createdByStep">
+            <search:range>
+              <search:field name="datahubCreatedByStep"/>
+              <search:facet-option>limit=25</search:facet-option>
+              <search:facet-option>frequency-order</search:facet-option>
+              <search:facet-option>descending</search:facet-option>
+            </search:range>
+          </search:constraint>,
+          <search:constraint name="createdByJobWord">
+            <search:word>
+              <search:field name="datahubCreatedByJob"/>
+            </search:word>
+          </search:constraint>,
+          <search:constraint name="createdOnRange">
+            <search:range facet="false">
+              <search:field name="datahubCreatedOn"/>
+            </search:range>
+          </search:constraint>,
+          <search:constraint name="createdInFlowRange">
+            <search:range>
+              <search:field name="datahubCreatedInFlow"/>
+              <search:facet-option>limit=25</search:facet-option>
+              <search:facet-option>frequency-order</search:facet-option>
+              <search:facet-option>descending</search:facet-option>
+            </search:range>
+          </search:constraint>,
+          hent:fix-options-exp($n/node())
+        }
+      case element(search:additional-query) return ()
+      case element(search:return-facets) return <search:return-facets>true</search:return-facets>
+      case element(search:extract-document-data) return
+        element { fn:node-name($n) } {
+         $n/namespace::node(),
+         $n/@*,
+         hent:fix-options-exp($n/node()),
+         <search:extract-path xmlns:es="http://marklogic.com/entity-services">/*:envelope/*:headers</search:extract-path>}
+      case element(search:transform-results) return <!--<search:transform-results apply="empty-snippet"></search:transform-results>-->
+      case element() return
+        element { fn:node-name($n) } {
+          $n/namespace::node(),
+          $n/@*,
+          hent:fix-options-exp($n/node()),
+
+          let $is-range-constraint := $n[self::search:range] and $n/..[self::search:constraint]
+          where $is-range-constraint and fn:not($n/search:facet-option[starts-with(., "limit=")])
+          return (
+            <search:facet-option>limit=25</search:facet-option>,
+            <search:facet-option>frequency-order</search:facet-option>,
+            <search:facet-option>descending</search:facet-option>)
+        }
+      case text() return
+        fn:replace($n, "es:", "*:")
+      default return $n
+};
+
+declare function hent:dump-search-options($entities as json:array, $for-explorer as xs:boolean?)
 {
   let $uber-model := hent:uber-model(json:array-values($entities) ! xdmp:to-json(.)/object-node())
-  return
-  (: call fix-options because of https://github.com/marklogic/entity-services/issues/359 :)
-    hent:fix-options(es:search-options-generate($uber-model))
+  return if ($for-explorer = fn:true())
+    then
+        hent:fix-options-exp(es:search-options-generate($uber-model))
+    else (
+        hent:fix-options(es:search-options-generate($uber-model)))
 };
 
 declare function hent:dump-pii($entities as json:array)
@@ -370,7 +448,7 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
 };
 
 declare variable $number-types as xs:string+ := ("byte","decimal","double","float","int","integer","long","negativeInteger","nonNegativeInteger","nonPositiveInteger","positiveInteger","short","unsignedLong","unsignedInt","unsignedShort","unsignedByte");
-declare variable $string-types as xs:string+ := "dateTime";
+declare variable $string-types as xs:string+ := ("dateTime","date");
 
 declare function hent:json-schema-generate($entity-title as xs:string, $uber-model as map:map)
 {

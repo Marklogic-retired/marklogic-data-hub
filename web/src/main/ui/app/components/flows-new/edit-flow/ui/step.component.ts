@@ -4,6 +4,8 @@ import { StepType } from '../../models/step.model';
 import {NewStepDialogComponent} from './new-step-dialog.component';
 import {IngestComponent} from "../ingest/ingest.component";
 import {MappingComponent} from "../mapping/mapping.component";
+import {MatchingComponent} from "../mastering/matching/matching.component";
+import {MergingComponent} from "../mastering/merging/merging.component";
 
 @Component({
   selector: 'app-step',
@@ -20,10 +22,13 @@ export class StepComponent implements OnChanges {
   @Input() selectedStepId: string;
   @Input() flowEnded: string;
   @Input() sourceQuery: string;
+  @Input() targetEntityName: string;
   @Output() updateStep = new EventEmitter();
 
   @ViewChild(IngestComponent) ingestionStep: IngestComponent;
   @ViewChild(MappingComponent) mappingStep: MappingComponent;
+  @ViewChild(MatchingComponent) matchingStep: MatchingComponent;
+  @ViewChild(MergingComponent) mergingStep: MatchingComponent;
   @ViewChild('masteringTabGroup') masteringTabGroup;
 
   public masteringTabIndex: number = 0;
@@ -38,7 +43,7 @@ export class StepComponent implements OnChanges {
     // workaround for: https://github.com/angular/material2/issues/7006
     if (changes &&
       changes.selectedStepId &&
-      this.step.stepDefinitionType === this.stepType.MASTERING &&
+      this.createStepHeader(this.step) === this.stepType.MASTERING &&
       this.step.id === changes.selectedStepId.currentValue) {
       setTimeout(() => {
         this.masteringTabGroup.realignInkBar();
@@ -53,6 +58,13 @@ export class StepComponent implements OnChanges {
       // reset source doc URI on source change
       if (this.mappingStep)
         this.mappingStep.sourceChanged();
+    }
+    if (changes.targetEntityName) {
+      // reload matching/merging in case of new target entity
+      if (this.matchingStep)
+        this.matchingStep.getEntity(this.targetEntityName);
+      if (this.matchingStep)
+        this.mergingStep.getEntity(this.targetEntityName);
     }
   }
 
@@ -89,6 +101,52 @@ export class StepComponent implements OnChanges {
       step = stepToSave;
     }
     this.updateStep.emit(step);
+  }
+
+  createStepHeader(step: any): string {
+    if (step.stepDefinitionType === this.stepType.INGESTION){
+      if(step.stepDefinitionName === 'default-ingestion'){
+        return 'INGESTION';
+      }
+      else{
+        return 'CUSTOM';
+      }
+    }
+    else if (step.stepDefinitionType === this.stepType.MAPPING){
+      if(step.stepDefinitionName === 'default-mapping' || step.stepDefinitionName === 'entity-services-mapping'){
+        return 'MAPPING';
+      }
+      else{
+        return 'CUSTOM';
+      }
+    }
+    else if (step.stepDefinitionType === this.stepType.MATCHING){
+      if(step.stepDefinitionName === 'default-matching'){
+        return 'MATCHING';
+      }
+      else{
+        return 'CUSTOM';
+      }
+    }
+    else if (step.stepDefinitionType === this.stepType.MERGING){
+      if(step.stepDefinitionName === 'default-merging'){
+        return 'MERGING';
+      }
+      else{
+        return 'CUSTOM';
+      }
+    }
+    else if (step.stepDefinitionType === this.stepType.MASTERING){
+      if(step.stepDefinitionName === 'default-mastering'){
+        return 'MASTERING';
+      }
+      else{
+        return 'CUSTOM';
+      }
+    }
+    else {
+        return 'CUSTOM';
+    }
   }
 
 }

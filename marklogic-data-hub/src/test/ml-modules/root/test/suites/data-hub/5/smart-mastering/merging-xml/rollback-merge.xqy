@@ -23,8 +23,7 @@ import module namespace tel = "http://marklogic.com/smart-mastering/telemetry"
 declare namespace es = "http://marklogic.com/entity-services";
 declare namespace sm = "http://marklogic.com/smart-mastering";
 
-(: Force update mode :)
-declare option xdmp:update "true";
+declare option xdmp:update "false";
 
 declare option xdmp:mapping "false";
 
@@ -193,7 +192,10 @@ let $_ := map:clear($blocks-impl:cached-blocks-by-uri)
 (: And now there should be blocks :)
 let $assertions := (
   $assertions,
-  map:keys($lib:TEST-DATA) ! test:assert-exists(matcher:get-blocks(.)/node())
+  xdmp:invoke-function(
+    function() {map:keys($lib:TEST-DATA) ! test:assert-exists(matcher:get-blocks(.)/node())},
+    $lib:INVOKE_OPTIONS
+  )
 )
 
 return $assertions

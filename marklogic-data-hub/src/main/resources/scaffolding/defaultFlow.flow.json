@@ -12,7 +12,14 @@
       "description": "This is the default ingestion step",
       "stepDefinitionName": "default-ingestion",
       "stepDefinitionType": "INGESTION",
-      "customHook": {},
+      "customHook" : {
+        "module" : "",
+        "parameters" : { },
+        "user" : "",
+        "runBefore" : false
+      },
+      "batchSize" : 100,
+      "threadCount" : 4,
       "fileLocations": {
         "inputFilePath": "path/to/folder",
         "outputURIReplacement": "output/URI,'substitute/URI'",
@@ -35,8 +42,16 @@
     "2": {
       "name": "mapping-step",
       "description": "This is the default mapping step",
-      "stepDefinitionName": "default-mapping",
+      "stepDefinitionName": "entity-services-mapping",
       "stepDefinitionType": "MAPPING",
+      "customHook" : {
+        "module" : "",
+        "parameters" : { },
+        "user" : "",
+        "runBefore" : false
+      },
+      "batchSize" : 100,
+      "threadCount" : 4,
       "options": {
         "sourceDatabase": "%%mlStagingDbName%%",
         "targetDatabase": "%%mlFinalDbName%%",
@@ -50,7 +65,8 @@
         "mapping": {
           "name": "mapping-name",
           "version": 1
-        }
+        },
+        "validateEntity": false
       }
     },
     "3": {
@@ -58,6 +74,14 @@
       "description": "This is the default mastering step",
       "stepDefinitionName": "default-mastering",
       "stepDefinitionType": "MASTERING",
+      "customHook" : {
+        "module" : "",
+        "parameters" : { },
+        "user" : "",
+        "runBefore" : false
+      },
+      "batchSize" : 100,
+      "threadCount" : 1,
       "options": {
         "sourceDatabase": "%%mlFinalDbName%%",
         "targetDatabase": "%%mlFinalDbName%%",

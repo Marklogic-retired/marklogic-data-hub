@@ -20,8 +20,7 @@ import module namespace lib = "http://marklogic.com/smart-mastering/test" at "li
 declare namespace es = "http://marklogic.com/entity-services";
 declare namespace sm = "http://marklogic.com/smart-mastering";
 
-(: Force update mode :)
-declare option xdmp:update "true";
+declare option xdmp:update "false";
 
 declare option xdmp:mapping "false";
 
@@ -53,7 +52,10 @@ let $_ :=
     $lib:INVOKE_OPTIONS
   )
 
-let $merged-uri := (cts:uris((), (), cts:collection-query($const:MERGED-COLL)))[1]
+let $merged-uri := xdmp:invoke-function(
+  function() {(cts:uris((), (), cts:collection-query($const:MERGED-COLL)))[1]},
+  $lib:INVOKE_OPTIONS
+)
 let $second-merge-uris := ("/source/3/doc3.json", $merged-uri)
 let $merged-doc :=
   xdmp:invoke-function(
@@ -197,7 +199,7 @@ let $assertions := (
     "IdentificationID":"393225353"
     }
     },
-    "CustomThing": array-node { "3","1","2" },
+    "CustomThing": array-node { "1","2","3" },
     "ArrayOfVariousThings": array-node {
       "string",
       42,
@@ -224,15 +226,16 @@ let $assertions := (
     "CaseStartDate":"20110406",
     "Revenues": array-node {object-node {
     "RevenuesType": object-node {
-    "Revenue":"4332"
-    }
-    },object-node {
-    "RevenuesType": object-node {
     "Revenue":""
+    }
+    },
+    object-node {
+    "RevenuesType": object-node {
+    "Revenue":"4332"
     }
     }},
     "CaseAmount": 1287.9,
-    "id": array-node {"3270654369","6986792174","6270654339"}
+    "id": array-node {"6986792174","6270654339","3270654369"}
     }
     }
     }
@@ -259,8 +262,9 @@ let $merged-id := $merged-doc/*:envelope/*:headers/*:id
 let $merged-uri := merge-impl:build-merge-uri($merged-id, $const:FORMAT-JSON)
 
 (: At this point, there should be no blocks :)
-let $assertions := ( $assertions, xdmp:eager(
-  map:keys($lib:TEST-DATA) ! test:assert-not-exists(matcher:get-blocks(.)/node())
+let $assertions := ( $assertions, xdmp:invoke-function(
+  function() {xdmp:eager(map:keys($lib:TEST-DATA) ! test:assert-not-exists(matcher:get-blocks(.)/node()))},
+  $lib:INVOKE_OPTIONS
 ))
 
 let $unmerge :=
@@ -274,6 +278,11 @@ let $_ := map:clear($blocks-impl:cached-blocks-by-uri)
 (: And now there should be blocks :)
 let $assertions := (
   $assertions,
-  $second-merge-uris ! test:assert-exists(matcher:get-blocks(.)/node())
+  xdmp:invoke-function(
+    function() {
+      $second-merge-uris ! test:assert-exists(matcher:get-blocks(.)/node())
+    },
+    $lib:INVOKE_OPTIONS
+  )
 )
 return $assertions

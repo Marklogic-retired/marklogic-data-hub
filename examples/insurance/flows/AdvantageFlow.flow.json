@@ -11,6 +11,7 @@
       "name" : "AdvantageIngest",
       "description" : "",
       "options" : {
+        "additionalCollections" : [ ],
         "headers" : {
           "sources" : [ {
             "name" : "AdvantageFlow"
@@ -25,21 +26,23 @@
         "targetDatabase" : "data-hub-STAGING"
       },
       "customHook" : { },
-      "retryLimit" : null,
-      "batchSize" : null,
-      "threadCount" : null,
+      "retryLimit" : 0,
+      "batchSize" : 0,
+      "threadCount" : 0,
       "stepDefinitionName" : "default-ingestion",
       "stepDefinitionType" : "INGESTION",
       "fileLocations" : {
         "inputFilePath" : "datasets/advantage",
         "inputFileType" : "json",
-        "outputURIReplacement" : ""
+        "outputURIReplacement" : "",
+        "separator" : ""
       }
     },
     "2" : {
       "name" : "AdvantageMap",
       "description" : "",
       "options" : {
+        "additionalCollections" : [ ],
         "sourceQuery" : "cts.collectionQuery([\"AdvantageIngest\"])",
         "mapping" : {
           "name" : "AdvantageFlow-AdvantageMap",
@@ -47,15 +50,16 @@
         },
         "targetEntity" : "Customer",
         "sourceDatabase" : "data-hub-STAGING",
-        "collections" : [ ],
+        "collections" : [ "AdvantageMap", "Customer" ],
+        "validateEntity" : false,
         "sourceCollection" : "AdvantageIngest",
         "targetDatabase" : "data-hub-FINAL"
       },
       "customHook" : { },
-      "retryLimit" : 0,
+      "retryLimit" : null,
       "batchSize" : 0,
       "threadCount" : 0,
-      "stepDefinitionName" : "default-mapping",
+      "stepDefinitionName" : "entity-services-mapping",
       "stepDefinitionType" : "MAPPING"
     }
   }

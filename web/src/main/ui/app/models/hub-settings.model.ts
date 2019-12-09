@@ -6,6 +6,7 @@ export class HubSettings {
   dhfversion: string = null;
   marklogicVersion: string = null;
   installedVersion: string = null;
+  isVersionCompatibleWithES: boolean = null;
 
   stagingDbName: string = null;
   stagingTriggersDbName: string = null;

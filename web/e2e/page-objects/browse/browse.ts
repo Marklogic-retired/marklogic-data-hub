@@ -169,6 +169,10 @@ export class BrowsePage extends AppPage {
     await browser.waitForAngular();
   }
 
+  copyUriIcon() {
+    return element(by.css(".mdl-cell--9-col > div > div:nth-child(1) .copy-uri"));
+  }
+
   async clickResultCopyUri(i: number) {
     await element(by.css(".mdl-cell--9-col > div > div:nth-child(" + i + ") .copy-uri")).click()
   }

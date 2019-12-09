@@ -7,11 +7,12 @@ import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.web.model.FlowJobModel.LatestJob;
-import java.util.HashMap;
-import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class FlowRunnerChecker {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -84,11 +85,9 @@ public class FlowRunnerChecker {
         });
     }
 
-    public static FlowRunnerChecker getInstance(FlowRunnerImpl flowRunner) {
+    public static synchronized FlowRunnerChecker getInstance(FlowRunnerImpl flowRunner) {
         if (instance == null) {
-            synchronized (FlowRunnerChecker.class) {
-                instance = new FlowRunnerChecker(flowRunner);
-            }
+            instance = new FlowRunnerChecker(flowRunner);
         }
         return instance;
     }

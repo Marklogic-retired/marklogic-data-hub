@@ -1,0 +1,42 @@
+{
+  "lang": "zxx",
+  "name": "PersonNsMapping",
+  "description": "TBD",
+  "version": 1,
+  "sourceContext": "/",
+  "targetEntityType": "http://marklogic.com/data-hub/example/Person-1.0.0/Person",
+  "namespaces": {
+    "ns1": "http://marklogic.com/ns1",
+    "ns2": "http://marklogic.com/ns2",
+    "ns3": "http://marklogic.com/ns3"
+  },
+  "properties": {
+    "id": {
+      "sourcedFrom": "ns1:person/ns1:personId"
+    },
+    "name": {
+      "sourcedFrom": "ns1:person/ns2:theName",
+      "targetEntityType": "http://marklogic.com/data-hub/example/Person-1.0.0/Name",
+      "properties": {
+        "middle" : {
+          "sourcedFrom": "ns2:middleName"
+        },
+        "last" : {
+          "sourcedFrom": "ns2:lastName"
+        },
+        "first": {
+          "sourcedFrom": "ns3:firstName",
+          "targetEntityType": "http://marklogic.com/data-hub/example/Person-1.0.0/FirstName",
+          "properties": {
+            "value": {
+              "sourcedFrom": "ns3:theValue"
+            },
+            "prefix": {
+              "sourcedFrom": "ns3:thePrefix"
+            }
+          }
+        }
+      }
+    }
+  }
+}

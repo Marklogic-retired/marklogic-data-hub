@@ -5,7 +5,8 @@ import { Step } from '../models/step.model';
 
 
 @Injectable()
-export class ManageFlowsService {
+export class 
+ManageFlowsService {
 
   constructor(
     private http: HttpClient,
@@ -65,6 +66,11 @@ export class ManageFlowsService {
     console.log(`DELETE api/flows/${flowId}/steps/${stepId}`);
     return this.http.delete(`api/flows/${flowId}/steps/${stepId}`);
   }
+
+  validateStep(flowId: string, stepId: string) {
+    console.log(`POST api/flows/${flowId}/steps/${stepId}/validate`);
+    return this.http.post(`api/flows/${flowId}/steps/${stepId}/validate`, null);
+  }
   getCollections(database: string) {
     console.log('GET api/collections/' + database);
     return this.http.get<Array<string>>('api/collections/' + database);
@@ -89,4 +95,23 @@ export class ManageFlowsService {
   deleteMap(mapName) {
     return this.http.delete('api/current-project/mappings/' + mapName);
   }
+  testMap(mapName: string, version: string, sampleDocURI: string) {
+    return this.http.get(`api/current-project/mappings/${mapName}/test?mappingVersion=${version}&docURI=${sampleDocURI}`);
+  }
+
+  getMappingValidationResp(mapName: string, map, uri:string, dbName:string) {
+    console.log(`POST api/current-project/mappings/${mapName}/validation`);
+    return this.http.post(`api/current-project/mappings/${mapName}/validation?uri=${uri}&db=${dbName}`, map);
+  }
+
+  getFunctions() {
+    console.log('GET api/current-project/mappings/functions');
+    return this.http.get('api/current-project/mappings/functions');
+  }
+
+  getDefaultCollections(entityName) {
+    console.log('GET api/mastering/defaultCollections/' + entityName);
+    return this.http.get('api/mastering/defaultCollections/' + entityName);
+  }
+
 }

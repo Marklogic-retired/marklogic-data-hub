@@ -63,7 +63,7 @@
       <div class="subheader error-sub" (click)="errorCollapsed = !errorCollapsed" *ngIf="currentPlugin.error">Error <i class="fa" [ngClass]="errorCollapsed ? 'fa-caret-left' : 'fa-caret-down'"></i></div>
       <app-ml-error *ngIf="!errorCollapsed && currentPlugin.error" [error]="currentPlugin.error"></app-ml-error>
       <div class="info" *ngIf="currentPluginType === 'writer'">
-        The Data Hub Framework can't capture output from a writer plugin.
+        The Data Hub can't capture output from a writer plugin.
       </div>
     </div>
   </div>

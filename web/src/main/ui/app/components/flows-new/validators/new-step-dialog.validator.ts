@@ -7,6 +7,18 @@ export function NewStepDialogValidator(group: FormGroup) {
 
   switch (group.value.stepDefinitionType) {
     case StepType.CUSTOM:
+      if(group.value.stepPurpose === StepType.MAPPING || group.value.stepPurpose === StepType.MASTERING){
+        if (!group.value.targetEntity) {
+          errors['noTargetEntity'] = true;
+        }
+        if (
+          (group.value.selectedSource === 'collection' && !group.value.sourceCollection) ||
+          (group.value.selectedSource === 'query' && !group.value.sourceQuery) ||
+          (group.value.selectedSource === '')
+        ) {
+          errors['noSource'] = true;
+        }
+      }
     case StepType.INGESTION:
       group.controls['targetEntity'].setErrors(null);
       break;

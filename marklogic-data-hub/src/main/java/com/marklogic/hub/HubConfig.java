@@ -48,6 +48,8 @@ public interface HubConfig {
     String ENTITY_CONFIG_DIR = PATH_PREFIX + "entity-config";
     String STAGING_ENTITY_QUERY_OPTIONS_FILE = "staging-entity-options.xml";
     String FINAL_ENTITY_QUERY_OPTIONS_FILE = "final-entity-options.xml";
+    String EXP_STAGING_ENTITY_QUERY_OPTIONS_FILE = "exp-staging-entity-options.xml";
+    String EXP_FINAL_ENTITY_QUERY_OPTIONS_FILE = "exp-final-entity-options.xml";
     String STAGING_ENTITY_DATABASE_FILE = "staging-database.json";
     String FINAL_ENTITY_DATABASE_FILE = "final-database.json";
 
@@ -344,9 +346,20 @@ public interface HubConfig {
 
     /**
      * Gets the permissions used to execute a module in string form
-     * @return a string reprsenting the marklogic permissions for a module
+     *
+     * @return a comma-delimited string of role1,capability1,role2,capability2 that defines the permissions to add to
+     * each module
      */
     String getModulePermissions();
+
+    /**
+     * Prior to 5.1.0, entities were assigned permissions returned by getModulePermissions. For 5.1.0 and later, this
+     * method should be used to know which permissions to assign to entity models.
+     *
+     * @return a comma-delimited string of role1,capability1,role2,capability2 that defines the permissions to add to
+     * each entity model
+     */
+    String getEntityModelPermissions();
 
     /**
      * Obtains the project directory as a string

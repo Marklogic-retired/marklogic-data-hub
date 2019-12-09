@@ -8,6 +8,8 @@ import module namespace merging-impl = "http://marklogic.com/smart-mastering/sur
   at "/com.marklogic.smart-mastering/survivorship/merging/base.xqy";
 import module namespace test = "http://marklogic.com/test" at "/test/test-helper.xqy";
 import module namespace test-ext = "http://marklogic.com/test/dh/ext" at "/test/additional-helper.xqy";
+import module namespace util-impl = "http://marklogic.com/smart-mastering/util-impl"
+  at "/com.marklogic.smart-mastering/impl/util.xqy";
 import module namespace lib = "http://marklogic.com/smart-mastering/test" at "lib/lib.xqy";
 
 declare namespace map = "http://marklogic.com/xdmp/map";
@@ -24,11 +26,12 @@ let $docs := $uris ! fn:doc(.)
 let $merge-options := merging:get-options($lib:OPTIONS-NAME, $const:FORMAT-XML)
 let $sources := merging-impl:get-sources($docs, $merge-options)
 let $instances := merging-impl:get-instances($docs)
+let $sources-by-document-uri := util-impl:combine-maps(map:map(),for $doc-uri in $sources/documentUri return map:entry($doc-uri, $doc-uri/..))
 let $actual := merging-impl:build-final-properties(
   $merge-options,
   $instances,
   $docs,
-  $sources
+  $sources-by-document-uri
 )
 
 let $personname-map :=

@@ -29,7 +29,7 @@ import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.legacy.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
-import com.marklogic.hub.validate.EntitiesValidator;
+import com.marklogic.hub.legacy.validate.EntitiesValidator;
 import com.marklogic.hub.web.model.FlowModel;
 import com.marklogic.hub.web.model.PluginModel;
 import com.marklogic.hub.web.model.entity_services.EntityModel;
@@ -99,17 +99,8 @@ public class EntityManagerService {
 
         for (HubEntity entity : entityList) {
             EntityModel entityModel = EntityModel.fromJson(entity.getFilename(), entity.toJson());
-            if (entityModel != null) {
-                HubUIData data = hubUiData.get(entityModel.getInfo().getTitle());
-                if (data == null) {
-                    data = new HubUIData();
-                }
-                entityModel.setHubUi(data);
-                entityModel.inputFlows = legacyFlowManagerService.getFlows(entity.getInfo().getTitle(), FlowType.INPUT);
-                entityModel.harmonizeFlows = legacyFlowManagerService.getFlows(entity.getInfo().getTitle(), FlowType.HARMONIZE);
-
-                entities.add(entityModel);
-            }
+            initializeEntityModelForUI(entityModel);
+            entities.add(entityModel);
         }
 
         return entities;
@@ -143,12 +134,7 @@ public class EntityManagerService {
         else {
             HubEntity renamedEntity = em.saveEntity(hubEntity, true);
             entity.setFilename(renamedEntity.getFilename());
-
-            // Redeploy the flows
-            dataHubService.reinstallUserModules(hubConfig, null, null);
         }
-
-
         return entity;
     }
 
@@ -231,14 +217,33 @@ public class EntityManagerService {
     }
 
     public EntityModel getEntity(String entityName) throws IOException {
-        List<EntityModel> entities = getEntities();
+        return getEntity(entityName, Boolean.FALSE);
+    }
 
-        for (EntityModel entity : entities) {
-            if (entity.getName().equals(entityName)) {
-                return entity;
-            }
+    public EntityModel getEntity(String entityName, Boolean extendSubEntities) throws IOException {
+        HubEntity hubEntity = em.getEntityFromProject(entityName, extendSubEntities);
+        if (hubEntity == null) {
+            throw new DataHubProjectException("Entity not found in project: " + entityName);
         }
-        throw new DataHubProjectException("Entity not found in project: " + entityName);
+        EntityModel em  = EntityModel.fromJson(hubEntity.getFilename(),hubEntity.toJson());
+        initializeEntityModelForUI(em);
+        return em;
+    }
+
+    private void initializeEntityModelForUI(EntityModel entityModel) throws IOException {
+        HubUIData data = getHubUIDataForEntity(entityModel.getInfo().getTitle());
+        entityModel.setHubUi(data);
+        entityModel.inputFlows = legacyFlowManagerService.getFlows(entityModel.getInfo().getTitle(), FlowType.INPUT);
+        entityModel.harmonizeFlows = legacyFlowManagerService.getFlows(entityModel.getInfo().getTitle(), FlowType.HARMONIZE);
+    }
+
+    private HubUIData getHubUIDataForEntity(String entityTitle) throws IOException {
+        Map<String, HubUIData> hubUiData = getUiData();
+        HubUIData data = hubUiData.get(entityTitle);
+        if (data == null) {
+            data = new HubUIData();
+        }
+        return data;
     }
 
     public FlowModel getFlow(String entityName, FlowType flowType, String flowName) throws IOException {
@@ -251,13 +256,11 @@ public class EntityManagerService {
         else {
             flows = entity.harmonizeFlows;
         }
-
         for (FlowModel flow : flows) {
-            if (flow.flowName.equals(flowName)) {
+            if (flow.flowName != null && flow.flowName.equals(flowName)) {
                 return flow;
             }
         }
-
         throw new DataHubProjectException("Flow not found: " + entityName + " / " + flowName);
     }
 

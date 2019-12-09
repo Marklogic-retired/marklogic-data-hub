@@ -21,6 +21,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 public class PropertyType extends JsonPojo {
 
     protected String name;
@@ -33,6 +37,8 @@ public class PropertyType extends JsonPojo {
     protected String collation;
 
     ItemType items;
+
+    List<PropertyType> subProperties;
 
     public String getName() {
         return name;
@@ -82,6 +88,14 @@ public class PropertyType extends JsonPojo {
         this.items = items;
     }
 
+    public List<PropertyType> getSubProperties() {
+        return subProperties;
+    }
+
+    public void setSubProperties(List<PropertyType> subProperties) {
+        this.subProperties = subProperties;
+    }
+
     public static PropertyType fromJson(String name, JsonNode defs) {
         PropertyType propertyType = new PropertyType();
         propertyType.name = name;
@@ -93,6 +107,20 @@ public class PropertyType extends JsonPojo {
         JsonNode itemsNode = defs.get("items");
         if (itemsNode != null) {
             propertyType.setItems(ItemType.fromJson(itemsNode));
+        }
+
+        JsonNode propertiesNode = defs.get("subProperties");
+        if (propertiesNode != null) {
+            List<PropertyType> subProperties = new ArrayList<>();
+            Iterator<String> fieldItr = propertiesNode.fieldNames();
+            while(fieldItr.hasNext()) {
+                String key = fieldItr.next();
+                JsonNode propertyNode = propertiesNode.get(key);
+                if (propertyNode != null) {
+                    subProperties.add(PropertyType.fromJson(key, propertyNode));
+                }
+            }
+            propertyType.setSubProperties(subProperties);
         }
         return propertyType;
     }
@@ -108,7 +136,14 @@ public class PropertyType extends JsonPojo {
         if (items != null && items.hasValues()) {
             node.set("items", items.toJson());
         }
+        if (subProperties != null && !subProperties.isEmpty()) {
+            ObjectNode propertiesObj = JsonNodeFactory.instance.objectNode();
 
+            for (PropertyType prop : subProperties) {
+                propertiesObj.set(prop.getName(), prop.toJson());
+            }
+            node.set("subProperties", propertiesObj);
+        }
         return node;
     }
 }

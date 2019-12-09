@@ -18,16 +18,24 @@
 package com.marklogic.gradle
 
 import com.marklogic.appdeployer.command.Command
+import com.marklogic.appdeployer.command.CommandContext
 import com.marklogic.appdeployer.impl.SimpleAppDeployer
 import com.marklogic.gradle.task.*
+import com.marklogic.gradle.task.client.WatchTask
+import com.marklogic.gradle.task.command.HubUpdateIndexesCommand
+import com.marklogic.gradle.task.databases.ClearModulesDatabaseTask
+import com.marklogic.gradle.task.databases.UpdateIndexesTask
 import com.marklogic.gradle.task.dhs.DhsDeployTask
 import com.marklogic.hub.ApplicationConfig
 import com.marklogic.hub.cli.command.InstallIntoDhsCommand
+import com.marklogic.hub.deploy.commands.ClearDHFModulesCommand
+import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand
 import com.marklogic.hub.deploy.commands.GeneratePiiCommand
 import com.marklogic.hub.deploy.commands.LoadHubArtifactsCommand
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand
+import com.marklogic.hub.deploy.util.ModuleWatchingConsumer
 import com.marklogic.hub.impl.*
 import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl
 import org.gradle.api.GradleException
@@ -50,11 +58,13 @@ class DataHubPlugin implements Plugin<Project> {
     private LoadUserModulesCommand loadUserModulesCommand
     private LoadUserArtifactsCommand loadUserArtifactsCommand
     private MappingManagerImpl mappingManager
+    private MasteringManagerImpl masteringManager
     private StepDefinitionManagerImpl stepManager
     private FlowManagerImpl flowManager
     private LegacyFlowManagerImpl legacyFlowManager
     private EntityManagerImpl entityManager
     private GeneratePiiCommand generatePiiCommand
+    private GenerateFunctionMetadataCommand generateFunctionMetadataCommand
 
     Logger logger = LoggerFactory.getLogger(getClass())
 
@@ -98,6 +108,9 @@ class DataHubPlugin implements Plugin<Project> {
         project.task("hubCreateFlow", group: scaffoldGroup, type: CreateFlowTask)
         project.task("hubCreateHarmonizeFlow", group: scaffoldGroup, type: CreateHarmonizeLegacyFlowTask)
         project.task("hubCreateInputFlow", group: scaffoldGroup, type: CreateInputLegacyFlowTask)
+        project.task("hubGenerateExplorerOptions", group: scaffoldGroup, type: GenerateExplorerQueryOptions,
+            description: "Generates the query options files required for Explorer application")
+            .finalizedBy(["hubDeployUserModules"])
         project.task("hubGeneratePii", group: scaffoldGroup, type: GeneratePiiTask,
             description: "Generates Security Configuration for all Entity Properties marked 'pii'")
         project.task("hubGenerateTDETemplates", group: scaffoldGroup, type: GenerateTDETemplateFromEntityTask,
@@ -106,16 +119,30 @@ class DataHubPlugin implements Plugin<Project> {
         project.task("hubSaveIndexes", group: scaffoldGroup, type: SaveIndexes,
             description: "Saves the indexes defined in {entity-name}.entity.json file to staging and final entity config in src/main/entity-config/databases directory")
 
-        /**
-         * In order to guarantee that Gradle and the QS app perform this function in the same way, this task is being
-         * overridden so that it can call DataHub.updateIndexes. It doesn't behave the same as in ml-gradle, which
-         * strips out all "non-index" properties from the payload. But it's not certain that that behavior is desirable
-         * here - within the context of DHF, this is really used as a way to say "I need to update each of the databases".
-         */
-        project.tasks.replace("mlUpdateIndexes", HubUpdateIndexesTask);
+        project.tasks.mlPostDeploy.getDependsOn().add("hubGenerateExplorerOptions")
 
-        // DHF has custom logic for clearing the modules database
-        project.tasks.replace("mlClearModulesDatabase", ClearDHFModulesTask)
+        // Hub Mastering tasks
+        String masteringGroup = "MarkLogic Data Hub Mastering Tasks"
+        project.task("hubUnmergeEntities", group: masteringGroup, type: UnmergeEntitiesTask,
+            description: "Reverses the last set of merges made into the given merge URI.\n -PmergeURI=URI. \n" +
+                "-PretainAuditTrail=<true|false> (default true) determines if provenance for the merge/unmerge is kept. \n" +
+                "-PblockFutureMerges=<true|false> (default true) ensures that the documents won't be merged together in the next mastering run.")
+
+        project.task("hubMergeEntities", group: masteringGroup, type: MergeEntitiesTask,
+            description: "Manually merge documents together given a set of options.\n -PmergeURIs=<URI1>,...,<URIn> –  the URIs of the documents to merge, separated by commas.\n" +
+                "-PflowName=<true|false> – optional; if true, the merged document will be moved to an archive collection; if false, the merged document will be deleted. Defaults to true.\n" +
+                "-Pstep=<masteringStepNumber> – optional; The number of the mastering step with settings. Defaults to 1.\n" +
+                "-Ppreview=<true|false> – optional; if true, the merge doc is returned in the response body and not committed to the database; if false, the merged document will be saved. Defaults to false.\n" +
+                "-Poptions=<stepOptionOverrides> – optional; Any overrides to the mastering step options. Defaults to {}.")
+
+        ((UpdateIndexesTask)project.tasks.getByName("mlUpdateIndexes")).command = new HubUpdateIndexesCommand(dataHub)
+
+        WatchTask watchTask = project.tasks.getByName("mlWatch")
+        CommandContext commandContext = new CommandContext(hubConfig.getAppConfig(), hubConfig.getManageClient(), hubConfig.getAdminManager())
+        watchTask.onModulesLoaded = new ModuleWatchingConsumer(commandContext, generateFunctionMetadataCommand)
+        watchTask.afterModulesLoadedCallback = new AfterModulesLoadedCallback(loadUserModulesCommand, commandContext)
+
+        ((ClearModulesDatabaseTask)project.tasks.getByName("mlClearModulesDatabase")).command = new ClearDHFModulesCommand(hubConfig, dataHub)
         project.tasks.mlClearModulesDatabase.getDependsOn().add("mlDeleteModuleTimestampsFile")
 
         /*
@@ -138,9 +165,6 @@ class DataHubPlugin implements Plugin<Project> {
 
         project.task("hubDeployUserArtifacts", group: deployGroup, type: DeployUserArtifactsTask,
             description: "Installs user artifacts such as entities and mappings.")
-
-        // HubWatchTask extends ml-gradle's WatchTask to ensure that modules are loaded from the hub-specific locations.
-        project.tasks.replace("mlWatch", HubWatchTask)
 
         // DHF uses an additional timestamps file needs to be deleted when the ml-gradle one is deleted
         project.task("hubDeleteModuleTimestampsFile", type: DeleteHubModuleTimestampsFileTask, group: deployGroup)
@@ -167,7 +191,7 @@ class DataHubPlugin implements Plugin<Project> {
         String dhsGroup = "DHS"
         project.task("dhsDeploy", group: dhsGroup, type: DhsDeployTask,
             description: "Deploy project resources and modules into a DHS instance"
-        )
+        ).finalizedBy(["hubGenerateExplorerOptions"])
 
         logger.info("Finished initializing ml-data-hub\n")
     }
@@ -186,11 +210,15 @@ class DataHubPlugin implements Plugin<Project> {
         loadUserModulesCommand = ctx.getBean(LoadUserModulesCommand.class)
         loadUserArtifactsCommand = ctx.getBean(LoadUserArtifactsCommand.class)
         mappingManager = ctx.getBean(MappingManagerImpl.class)
+        masteringManager = ctx.getBean(MasteringManagerImpl.class)
         stepManager = ctx.getBean(StepDefinitionManagerImpl.class)
         flowManager = ctx.getBean(FlowManagerImpl.class)
         legacyFlowManager = ctx.getBean(LegacyFlowManagerImpl.class)
         entityManager = ctx.getBean(EntityManagerImpl.class)
         generatePiiCommand = ctx.getBean(GeneratePiiCommand.class)
+        generateFunctionMetadataCommand = ctx.getBean(GenerateFunctionMetadataCommand.class)
+
+        project.extensions.add("dataHubApplicationContext", ctx)
 
         initializeProjectExtensions(project)
     }
@@ -212,7 +240,7 @@ class DataHubPlugin implements Plugin<Project> {
         else {
 
             // If the user called hubInit, only load the configuration. Refreshing the project will fail because
-            // gradle.properties doesn't exist yet. 
+            // gradle.properties doesn't exist yet.
             if (calledHubInit) {
                 hubConfig.loadConfigurationFromProperties(new ProjectPropertySource(project).getProperties(), false)
             }
@@ -251,6 +279,7 @@ class DataHubPlugin implements Plugin<Project> {
             project.extensions.add("loadUserModulesCommand", loadUserModulesCommand)
             project.extensions.add("loadUserArtifactsCommand", loadUserArtifactsCommand)
             project.extensions.add("mappingManager", mappingManager)
+            project.extensions.add("masteringManager", masteringManager)
             project.extensions.add("stepManager", stepManager)
             project.extensions.add("flowManager", flowManager)
             project.extensions.add("legacyFlowManager", legacyFlowManager)

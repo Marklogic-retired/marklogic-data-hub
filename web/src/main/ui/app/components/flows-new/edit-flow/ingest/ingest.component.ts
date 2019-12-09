@@ -55,7 +55,7 @@ export class IngestComponent implements OnInit {
       inputFilePath: inputFilePath || this.projectDirectory || '.',
       inputFileType: inputFileType || 'json',
       outputURIReplacement: outputURIReplacement || '',
-      separator: separator || ','
+      separator: inputFileType !== 'csv'? '' : (separator || ',')
     };
 
     const options = {

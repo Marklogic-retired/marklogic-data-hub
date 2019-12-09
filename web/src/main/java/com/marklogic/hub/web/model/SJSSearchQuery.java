@@ -20,4 +20,5 @@ public class SJSSearchQuery {
     public String sourceQuery;
     public long count;
     public String database;
+    public boolean urisOnly;
 }

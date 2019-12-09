@@ -34,7 +34,7 @@
     "2": {
       "name": "mapping-step-json",
       "description": "maps and harmonizes JSON docs to data-hub-FINAL",
-      "stepDefinitionName": "default-mapping",
+      "stepDefinitionName": "entity-services-mapping",
       "stepDefinitionType": "MAPPING",
       "options": {
         "sourceQuery": "cts.collectionQuery('mapping-flow-ingestion-json')",
@@ -81,7 +81,7 @@
     "4": {
       "name": "mapping-step-xml",
       "description": "maps and harmonizes XML docs to data-hub-FINAL",
-      "stepDefinitionName": "default-mapping",
+      "stepDefinitionName": "entity-services-mapping",
       "stepDefinitionType": "MAPPING",
       "options": {
         "sourceQuery": "cts.collectionQuery('mapping-flow-ingestion-xml')",

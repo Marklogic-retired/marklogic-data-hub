@@ -61,54 +61,54 @@ export default function (qaProjectDir) {
       await browsePage.closeCollection();
 
       await browsePage.clickFacetName('http://marklogic.com/data-hub/flow');
-      await expect(await browsePage.resultsUriCount()).toBeGreaterThan(3);
+      await expect(await browsePage.resultsUriCount()).toBeGreaterThan(7);
       await browsePage.closeCollection();
 
       await browsePage.clickFacetName('http://marklogic.com/data-hub/mappings');
-      await expect(await browsePage.resultsUriCount()).toBeGreaterThan(5);
+      await expect(await browsePage.resultsUriCount()).toBeGreaterThanOrEqual(1);
       await browsePage.closeCollection();
 
       await browsePage.clickFacetName('http://marklogic.com/data-hub/step-definition');
-      await expect(await browsePage.resultsUriCount()).toBe(3);
+      await expect(await browsePage.resultsUriCount()).toBe(8);
       await browsePage.closeCollection();
     });
 
     it('should verify collection documents for final database', async function () {
       await browsePage.setDatabase('FINAL');
 
-      await browsePage.clickFacetName('SimpleJSON');
-      //await expect(await browsePage.resultsUriCount()).toBe(8);
+      await browsePage.clickFacetName('Jobs');
+      await expect(await browsePage.resultsUriCount()).toBe(8);
       await browsePage.closeCollection();
 
       await browsePage.clickFacetName('SimpleJSONMastering');
-      //await expect(await browsePage.resultsUriCount()).toBe(8);
+      await expect(await browsePage.resultsUriCount()).toBe(8);
       await browsePage.closeCollection();
 
-      await browsePage.clickFacetName('mdm-archived');
-      await expect(await browsePage.resultsUriCount()).toBeGreaterThan(2);
+      await browsePage.clickFacetName('sm-Jobs-archived');
+      await expect(await browsePage.resultsUriCount()).toBeGreaterThanOrEqual(2);
       await browsePage.closeCollection();
 
-      await browsePage.clickFacetName('mdm-auditing');
+      await browsePage.clickFacetName('sm-Jobs-auditing');
       await expect(await browsePage.resultsUriCount()).toBeGreaterThan(0);
       await browsePage.closeCollection();
 
-      //await browsePage.clickFacetName('mdm-merged');
-      //await expect(await browsePage.resultsUriCount()).toBeGreaterThan(0);
-      //await browsePage.closeCollection();
+      await browsePage.clickFacetName('sm-Jobs-merged');
+      await expect(await browsePage.resultsUriCount()).toBeGreaterThan(0);
+      await browsePage.closeCollection();
     });
 
-    it('should verify collection count', async function () {
+    it('should verify collection count in facet', async function () {
       await browsePage.setDatabase('STAGING');
       await expect(browsePage.facetCount('SimpleJSONIngest').getText()).toBe('6');
       await browsePage.setDatabase('FINAL');
-      //await expect(browsePage.facetCount('SimpleJSON').getText()).toBe('8');
-      //await expect(browsePage.facetCount('SimpleJSONMastering').getText()).toBe('8');
+      await expect(browsePage.facetCount('Jobs').getText()).toBe('8');
+      await expect(browsePage.facetCount('SimpleJSONMastering').getText()).toBe('8');
 
     });
 
     it('should verify search for the document', async function () {
       await browsePage.setDatabase('STAGING');
-      await browsePage.searchKeyword('SimpleJSON');
+      await browsePage.searchKeyword('SimpleJSONIngest');
       await expect(await browsePage.resultsUriCount()).toBeGreaterThan(0);
 
       await browsePage.setDatabase('FINAL');
@@ -159,17 +159,19 @@ export default function (qaProjectDir) {
 
     it('should verify entities only checkbox without entities', async function () {
       await appPage.dashboardTab.click();
-      await browser.wait(EC.visibilityOf(dashboardPage.clearJobButton()));
-      await dashboardPage.clearAllDatabases();
+      //await browser.wait(EC.visibilityOf(dashboardPage.clearJobButton()));
+      //await dashboardPage.clearAllDatabases();
       await appPage.clickBrowseDataTab();
       await browsePage.setDatabase('STAGING');
       await expect(browsePage.entitiesOnlyChkBox().isDisplayed()).toBe(true);
       await browsePage.selectEntitiesOnlyChkBox();
+      await browsePage.searchKeyword('INVALID')
       await expect(browsePage.noDataText.isDisplayed()).toBe(true);
 
       await browsePage.setDatabase('FINAL');
       await expect(browsePage.entitiesOnlyChkBox().isDisplayed()).toBe(true);
       await browsePage.selectEntitiesOnlyChkBox();
+      await browsePage.searchKeyword('INVALID')
       await expect(browsePage.noDataText.isDisplayed()).toBe(true);
     });
   });

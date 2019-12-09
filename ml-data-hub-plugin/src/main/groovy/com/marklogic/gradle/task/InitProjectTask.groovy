@@ -26,7 +26,7 @@ class InitProjectTask extends HubTask {
         getDataHub().initProject()
 
         println("\n\n############################################")
-        println("# Your Data Hub Framework Project is ready.")
+        println("# Your Data Hub Project is ready.")
         println("############################################\n")
         println(" - Set username and password")
         println("     There are several ways to do this. The easiest is to set mlUsername and mlPassword in gradle.properties.")

@@ -4,6 +4,8 @@ import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.DefaultAppConfigFactory;
 import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
+import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand;
+import com.marklogic.hub.impl.Versions;
 import com.marklogic.mgmt.util.SimplePropertySource;
 
 import java.util.Properties;
@@ -15,7 +17,7 @@ import java.util.Properties;
  */
 public class LoadTestModules {
 
-    public static void loadTestModules(String host, int finalPort, String username, String password, String modulesDatabaseName) {
+    public static void loadTestModules(String host, int finalPort, String username, String password, String modulesDatabaseName, String modulePermissions) {
         Properties props = new Properties();
         props.setProperty("mlUsername", username);
         props.setProperty("mlPassword", password);
@@ -25,6 +27,8 @@ public class LoadTestModules {
         AppConfig config = new DefaultAppConfigFactory(new SimplePropertySource(props)).newAppConfig();
         config.setModuleTimestampsPath(null);
         config.setModulesDatabaseName(modulesDatabaseName);
+        config.setModulePermissions(modulePermissions);
+        config.setAppServicesPort(8010);
 
         /**
          * Setting this to a small number to fix some issues on Jenkins where jobs are picking up test modules
@@ -46,6 +50,11 @@ public class LoadTestModules {
         config.getModulePaths().add("../build/mlBundle/marklogic-unit-test-modules/ml-modules");
         config.getModulePaths().add("../src/test/ml-modules");
 
-        new SimpleAppDeployer(new LoadModulesCommand()).deploy(config);
+        // Need to run GenerateFunctionMetadataCommand as well so that function metadata is generated both for
+        // core mapping functions and custom functions under src/test/ml-modules/root/custom-modules.
+        new SimpleAppDeployer(
+            new LoadModulesCommand(),
+            new GenerateFunctionMetadataCommand(config.newAppServicesDatabaseClient("data-hub-MODULES"), new Versions(config))
+        ).deploy(config);
     }
 }

@@ -1,6 +1,6 @@
 import appPage, { AppPage } from "../appPage";
 import { pages } from '../page';
-import { browser, by, ExpectedConditions as EC, element, $$ } from "protractor";
+import {browser, by, ExpectedConditions as EC, element, $$, $} from "protractor";
 
 export class ManageFlows extends AppPage {
 
@@ -66,7 +66,6 @@ export class ManageFlows extends AppPage {
 
   async clickAdvSettingsExpandCollapse() {
     await browser.sleep(1000);
-    await console.log("CLicking advance settings");
     return await this.advSettingsExpandCollapse.click();
   }
 
@@ -84,6 +83,15 @@ export class ManageFlows extends AppPage {
     return await flowOption.getAttribute("value");
   }
 
+  get batchSize() {
+    return element(by.id("flow-batch-size"));
+  }
+
+  get threadCount() {
+    return element(by.id("flow-thread-count"));
+  }
+
+
   /**
    * flowOptions
    * @param rowNum is the row number for the options list
@@ -95,6 +103,10 @@ export class ManageFlows extends AppPage {
     return await flowOption.sendKeys(input);
   }
 
+  get removeOption() {
+    return element(by.xpath("//span[contains(mat-icon,'remove')]"));
+  }
+
   removeOptions(rowNum: number) {
     let list = element.all(by.xpath("//span[contains(mat-icon,'remove')]"));
     return list.get(rowNum);
@@ -104,17 +116,38 @@ export class ManageFlows extends AppPage {
     return element(by.id(`flow-${option}-btn`));
   }
 
+  //first row key/value
+  get key() {
+    return element(by.css(".flow-option-key-0"));
+  }
+
+  get value() {
+    return element(by.css(".flow-option-value-0"));
+  }
+
   /**
    * clickFlowCancelSave
    * @param option = [cancel/save]
    */
   async clickFlowCancelSave(option: string) {
     let button = this.flowCancelSaveButton(option);
-    return await button.click();
+    await browser.wait(EC.elementToBeClickable(button), 5000);
+    await button.click();
+    await browser.sleep(1000);
+    // this.flowDialogBox.isPresent().then(function(result) {
+    //   if(result) {
+    //     button.click();
+    //     browser.sleep(1000);
+    //   }
+    // });
+  }
+
+  get redeployButton() {
+    return element(by.id("flows-redeploy-btn"));
   }
 
   async clickRedeployButton() {
-    return await element(by.id("flows-redeploy-btn")).click();
+    return await this.redeployButton.click();
   }
 
   get redeployDialog() {
@@ -143,6 +176,13 @@ export class ManageFlows extends AppPage {
 
   // Cell values in the manage-flows table
 
+  flowNameField() {
+    return element(by.id("flow-name"));
+  }
+
+  flowDescField() {
+    return element(by.id("flow-desc"));
+  }
 
   flowName(flowName: string) {
     return element(by.css(`.flow-${flowName.toLowerCase()} .flow-name a`));

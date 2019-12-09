@@ -14,8 +14,7 @@ import module namespace merge-impl = "http://marklogic.com/smart-mastering/survi
 import module namespace test = "http://marklogic.com/test" at "/test/test-helper.xqy";
 import module namespace lib = "http://marklogic.com/smart-mastering/test" at "lib/lib.xqy";
 
-(: Force update mode :)
-declare option xdmp:update "true";
+declare option xdmp:update "false";
 
 declare option xdmp:mapping "false";
 
@@ -54,7 +53,12 @@ let $merged-doc :=
   }
 
  :)
-let $merged-uris := cts:uris((), (), cts:collection-query($const:MERGED-COLL))
+let $merged-uris := xdmp:invoke-function(
+  function() {
+    cts:uris((), (), cts:collection-query($const:MERGED-COLL))
+  },
+  $lib:INVOKE_OPTIONS
+)
 
 return (
   test:assert-exists($merged-doc/envelope/headers/id),

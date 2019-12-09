@@ -80,7 +80,7 @@ public class DeployDatabaseFieldCommand extends DeployDatabaseCommand {
 
         addExistingFields(newProps, existingProps);
         addExistingRangeFieldIndexes(newProps, existingProps);
-
+        addExistingRangePathIndexes(newProps, existingProps);
         return newProps.getPrettyXml();
     }
 
@@ -119,6 +119,26 @@ public class DeployDatabaseFieldCommand extends DeployDatabaseCommand {
                 String name = index.getChildText("field-name", MANAGE_NS);
                 if (StringUtils.isNotBlank(name) && !newIndexFieldNames.contains(name)) {
                     newRangeFieldIndexes.addContent(index.detach());
+                }
+            }
+        }
+    }
+
+    protected void addExistingRangePathIndexes(Fragment newProps, Fragment existingProps) {
+        Element newRangePathIndexes = newProps.getInternalDoc().getRootElement().getChild("range-path-indexes", MANAGE_NS);
+        if (newRangePathIndexes != null) {
+            List<String> newIndexPathExpressions = new ArrayList<>();
+            newProps.getElements("/m:database-properties/m:range-path-indexes/m:range-path-index").forEach(index -> {
+                String pathExpression = index.getChildText("path-expression", MANAGE_NS);
+                if (StringUtils.isNotBlank(pathExpression)) {
+                    newIndexPathExpressions.add(pathExpression);
+                }
+            });
+
+            for (Element index : existingProps.getElements("/m:database-properties/m:range-path-indexes/m:range-path-index")) {
+                String pathExpression = index.getChildText("path-expression", MANAGE_NS);
+                if (StringUtils.isNotBlank(pathExpression) && !newIndexPathExpressions.contains(pathExpression)) {
+                    newRangePathIndexes.addContent(index.detach());
                 }
             }
         }

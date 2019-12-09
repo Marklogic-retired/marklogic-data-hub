@@ -31,11 +31,12 @@ export class SearchService {
     return this.post(`/api/search`, data);
   }
 
-  getResultsByQuery(database: string, ctsQuery: string, count: number) {
+  getResultsByQuery(database: string, ctsQuery: string, count: number, urisOnly: boolean) {
     let data = {
       database: database,
       sourceQuery: ctsQuery,
-      count: 1
+      count: count,
+      urisOnly: urisOnly
     }
     return this.post(`/api/search/sjsSearch`, data);
   }

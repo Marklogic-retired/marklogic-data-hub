@@ -16,6 +16,7 @@
 
 package com.marklogic.hub.mapping;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -28,6 +29,7 @@ import com.marklogic.hub.entity.PropertyType;
 import com.marklogic.hub.error.DataHubProjectException;
 
 import java.util.HashMap;
+import java.util.Map;
 
 @JsonPropertyOrder({ "lang", "name", "description", "version",  "targetEntityType", "sourceContext", "sourceURI", "properties"})
 public class MappingImpl implements Mapping {
@@ -39,6 +41,7 @@ public class MappingImpl implements Mapping {
     private String lang;
     private int version;
     private String sourceURI;
+    private Map<String, String> namespaces;
     private HashMap<String, ObjectNode> properties;
 
     public MappingImpl(String name) {
@@ -49,7 +52,7 @@ public class MappingImpl implements Mapping {
         this.sourceContext = "/";
         this.sourceURI = "";
         this.properties = new HashMap<>();
-        properties.put("id", createProperty("sourcedFrom", "id"));
+        this.namespaces = new HashMap<>();
         this.targetEntityType = "http://example.org/modelName-version/entityType";
     }
 
@@ -80,6 +83,16 @@ public class MappingImpl implements Mapping {
             jsonProperties = mapper.treeToValue(json.get("properties"), HashMap.class);
         } catch (JsonProcessingException e) {
             throw new DataHubProjectException("Could not parse mapper properties");
+        }
+
+        if (json.has("namespaces") && !json.get("namespaces").isNull()) {
+            HashMap<String, String> jsonNamespaces;
+            try {
+                jsonNamespaces = mapper.treeToValue(json.get("namespaces"), HashMap.class);
+            } catch (JsonProcessingException e) {
+                throw new DataHubProjectException("Could not parse mapper namespaces");
+            }
+            setNamespaces(jsonNamespaces);
         }
 
         if(json.has("version")) {
@@ -116,6 +129,16 @@ public class MappingImpl implements Mapping {
         }
 
         return this;
+    }
+
+    @Override
+    public Map<String,String> getNamespaces() {
+        return this.namespaces;
+    }
+
+    @Override
+    public void setNamespaces(Map<String, String> namespaces) {
+        this.namespaces = namespaces;
     }
 
     private ObjectNode createProperty(String name, String value) {
@@ -196,6 +219,7 @@ public class MappingImpl implements Mapping {
     }
 
     @Override
+    @JsonIgnore
     @Deprecated
     public String getLanguage() {
         return lang;

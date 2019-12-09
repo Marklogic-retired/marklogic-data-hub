@@ -1,0 +1,26 @@
+{
+  "social": "111-11-1111",
+  "biographicData": {
+    "names": [
+      {
+        "prefix": "Ms.",
+        "firstName": "VALUE:Jane",
+        "middleName": "Joan",
+        "lastName": "Smith"
+      },
+      {
+        "firstName": "Janet",
+        "lastName": "Smyth"
+      }
+    ],
+    "dob": "02/01/1980",
+    "education": "C"
+  },
+  "address": {
+    "number": "123",
+    "street": "Main St",
+    "state": "VA",
+    "zipCode": "22102-1234"
+  },
+  "lastUpdated": "11/01/2019 12:34:56"
+}

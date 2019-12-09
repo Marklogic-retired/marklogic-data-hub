@@ -6,7 +6,6 @@ import { MatchThresholds, MatchThreshold } from "./match-thresholds.model";
  * @see https://marklogic-community.github.io/smart-mastering-core/docs/matching-options/
  */
 export class Matching {
-  public dataFormat: string = 'json';
   public propertyDefs: Object = { property: [] };
   public algorithms: Object = { algorithm: [] };
   public collections: Object = { content: [] };
@@ -25,9 +24,6 @@ export class Matching {
    */
   static fromConfig(config) {
     const result = new Matching();
-    if(config.dataFormat) {
-      result.dataFormat = config.dataFormat;
-    }
     if (config.propertyDefs && config.propertyDefs.property) {
       config.propertyDefs.property.forEach(p => {
         result.propertyDefs['property'].push(new Property(p));
@@ -136,7 +132,7 @@ export class Matching {
    */
   addOption(mOpt: MatchOption) {
     let opt;
-    
+
     if (mOpt.propertyName) {
       this.addProperty(mOpt.propertyName);
     }

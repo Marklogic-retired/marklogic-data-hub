@@ -27,9 +27,14 @@ public class ResponseHolder {
     public List<String> completedItems;
     public List<String> failedItems;
     public List<JsonNode> errors;
-    public Map<String, JsonNode> documents;
+    public List<JsonNode> documents;
 
     public String toString() {
-        return String.format("{jobId: %d, totalCount: %d, errorCount: %d, completedItems: %d, failedItems: %d, errors: %d, documents: %d}", jobId, totalCount, errorCount, completedItems.size(), failedItems.size(), errors.size(), documents.get("documents").size());
+        int completedSize = completedItems != null ? completedItems.size() : 0;
+        int failedSize = failedItems != null ? failedItems.size() : 0;
+        int errorSize = errors != null ? errors.size() : 0;
+        int documentsSize = documents != null ? documents.size() : 0;
+        return String.format("{jobId: %d, totalCount: %d, errorCount: %d, completedItems: %d, failedItems: %d, errors: %d, documents: %d}",
+            jobId, totalCount, errorCount, completedSize, failedSize, errorSize, documentsSize);
     }
 }

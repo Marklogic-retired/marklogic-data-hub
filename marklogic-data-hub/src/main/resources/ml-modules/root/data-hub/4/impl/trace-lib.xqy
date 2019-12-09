@@ -20,9 +20,6 @@ module namespace trace = "http://marklogic.com/data-hub/trace";
 import module namespace config = "http://marklogic.com/data-hub/config"
   at "/com.marklogic.hub/config.xqy";
 
-import module namespace consts = "http://marklogic.com/data-hub/consts"
-  at "/data-hub/4/impl/consts.xqy";
-
 import module namespace err = "http://marklogic.com/data-hub/err"
   at "/data-hub/4/impl/error-lib.xqy";
 
@@ -57,7 +54,7 @@ declare function trace:enable-tracing($enabled as xs:boolean)
     xdmp:document-insert(
       "/com.marklogic.hub/settings/__tracing_enabled__.xml",
       element trace:is-tracing-enabled { 1 },
-      xdmp:default-permissions(),
+      (xdmp:permission("rest-reader", "read"), xdmp:permission("rest-writer", "update")),
       "hub-core-module")
     ', (), map:new((map:entry("database", xdmp:modules-database()), map:entry("ignoreAmps", fn:true())))
   )

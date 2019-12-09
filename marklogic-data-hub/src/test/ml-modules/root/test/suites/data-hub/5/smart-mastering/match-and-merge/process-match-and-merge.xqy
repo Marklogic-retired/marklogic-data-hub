@@ -11,7 +11,7 @@ import module namespace test = "http://marklogic.com/test" at "/test/test-helper
 declare namespace es="http://marklogic.com/entity-services";
 declare namespace sm="http://marklogic.com/smart-mastering";
 
-declare option xdmp:update "true";
+declare option xdmp:update "false";
 
 declare option xdmp:mapping "false";
 
@@ -25,8 +25,14 @@ let $actual :=
     $lib:INVOKE_OPTIONS
   )
 
-let $merged-uri := cts:uris((), "limit=1", cts:collection-query($constants:MERGED-COLL))
-let $merged-doc := fn:doc($merged-uri)
+let $merged-doc := xdmp:invoke-function(
+  function() {
+    let $merged-uri := cts:uris((), "limit=1", cts:collection-query($constants:MERGED-COLL))
+    return
+      fn:doc($merged-uri)
+  },
+  $lib:INVOKE_OPTIONS
+)
 
 return (
   test:assert-same-values(($lib:URI2, $lib:URI3), $merged-doc/es:envelope/es:headers/sm:merges/sm:document-uri/fn:string()),

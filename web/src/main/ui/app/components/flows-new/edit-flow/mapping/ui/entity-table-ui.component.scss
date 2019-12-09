@@ -1,0 +1,184 @@
+#entity-table {
+
+	border: 1px solid rgba(117, 74, 74, 0.12) !important;
+
+	mat-header-row {
+		min-height: 30px;
+	 	background-color: #e2e2e2;
+	}
+
+	mat-header-cell {
+		min-width: 0;
+		border-right: 1px solid rgba(0, 0, 0, 0.12);
+		padding-left: 1%;
+	}
+
+	mat-row {
+		min-height: 38px;
+		/* background-color: #f6f6f6 !important; */
+	}
+	mat-row:nth-child(4n+2){
+      	/* background-color: #fff !important; */
+    }
+
+	mat-row.nested-row {
+		min-height: 0;
+		border-bottom: 0 solid;
+	}
+
+	mat-cell {
+		min-width: 0;
+		border-right: 1px solid rgba(0, 0, 0, 0.12);
+		padding-left: 1%;
+		padding-top: 10px;
+		align-self: stretch;
+		align-items: flex-start;
+		font-size: 13px !important;
+	}
+
+	mat-cell.nested-cell {
+		padding: 0;
+		border: 0;
+	}
+
+	.mat-column-name {
+		width: 20% !important;
+		min-width: 20% !important;
+		padding-left: 2%;
+	}    
+	.mat-column-datatype {
+		width: 15% !important;
+		min-width: 15% !important;
+	}
+	.mat-column-expression {
+	    width: 50% !important;
+	    min-width: 50% !important;
+	}   
+	.mat-column-value {
+	    width: 15% !important;
+	    min-width: 15% !important;
+	}
+
+	.prop-toggle {
+		padding-left: 8px;
+	}
+
+	#edit-expression{
+		min-width: auto;
+		min-height: 22px;
+		overflow: hidden;
+		padding: 2px 1px;
+		overflow-x: hidden;
+	}
+
+	.textField {
+		padding: 1px 3px 2px 3px;  
+		margin: -3px 0 3px 0;
+		display: flex;
+		flex-direction: column;
+		min-width: auto;
+		width: 100%;
+		border: 1px solid rgba(0, 0, 0, 0.591);
+	}
+
+	.list-icon {
+		display: inline-block;
+		position: relative;
+		top: -4px;
+		margin: 0 8px;
+	}
+
+	.function-icon {
+		margin-right: 4px;
+	}
+
+	.contextField {
+		width: 252px;
+	}
+
+	.context-label {
+		.context-text {
+			display: inline-block;
+			font-size: 12px;
+			font-weight: 400;
+			margin-right: 7px;
+			color: #777;
+			white-space: nowrap;
+		}
+	}
+
+	.context-help {
+		padding-left: 6px;
+		padding-right: 1px;
+		mat-icon.context-icon {
+			display: inline-block;
+			font-size: 14px;
+			margin-right: 0;
+			position: relative;
+			top: 1px;
+			width: 12px;
+			color: #3B73AF;
+		}
+	}
+
+}	
+
+#entity-table-nested-container {
+	width: 600%;
+}
+
+#entity-table-nested-container #entity-table {
+	border: 0 solid !important;
+}
+
+.spacer {
+	display: inline-block;
+	width: 20px;
+}
+
+.hide {
+	display: none;
+}
+
+#textFieldValidation{
+	display: flex;
+	flex-direction: row;
+	padding-bottom: 2px;
+}
+
+#field-with-error{
+  position: relative;
+    display: block;
+    text-align: center;
+    outline: none;
+		top: 0%;
+		color: red; 
+		padding:0px; 
+		margin-top: -5px;
+		user-select: none;
+    cursor: default;
+}
+#error-description{
+		font-size: 10px;
+		color: red; 
+		padding-left:4px
+}
+
+/* Fix bug showing double tooltip arrows */
+.tooltip .arrow::before {
+  visibility: hidden !important;
+}
+
+#namespace {
+    display:inline;
+    margin: 0;  
+    padding: 0;
+    font-size: 10px;
+}
+
+#field-no-namespace {
+      display:inline;
+      margin: 0;  
+      padding: 0;
+
+}

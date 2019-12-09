@@ -1,0 +1,24 @@
+<person xmlns="http://example.org">
+  <socialSecurityNumber>111-22-3333</socialSecurityNumber>
+  <names xmlns:nm="http://name.example.org">
+    <nm:name>
+      <nm:FirstName prefix="Mrs">Jane</nm:FirstName>
+      <nm:middle>Joan</nm:middle>
+      <nm:last>Smith</nm:last>
+    </nm:name>
+    <nm:name>
+      <nm:FirstName>Janet</nm:FirstName>
+      <nm:last>Smyth</nm:last>
+    </nm:name>
+  </names>
+  <address>
+    <street>234 Main St.</street>
+    <state>CA</state>
+    <zip>94080</zip>
+  </address>
+  <emails>
+    <email>jsmith@mail.com</email>
+    <email>jsmyth@mail.com</email>
+    <email>joans@mail.com</email>
+  </emails>
+</person>

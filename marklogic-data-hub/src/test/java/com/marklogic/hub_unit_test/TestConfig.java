@@ -40,13 +40,16 @@ public class TestConfig {
     @Value("${mlModulesDbName}")
     private String modulesDatabaseName;
 
+    @Value("${mlModulePermissions}")
+    private String modulePermissions;
+
     /**
      * This is needed because other tests in the DHF test suite will clear "user" modules, thus deleting the
      * marklogic-unit-test and test modules.
      */
     @PostConstruct
     public void loadTestModules() {
-        LoadTestModules.loadTestModules(host, finalPort, username, password, modulesDatabaseName);
+        LoadTestModules.loadTestModules(host, finalPort, username, password, modulesDatabaseName, modulePermissions);
     }
 
     /**

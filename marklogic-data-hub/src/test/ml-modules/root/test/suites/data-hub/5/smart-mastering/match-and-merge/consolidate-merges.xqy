@@ -38,7 +38,9 @@ let $actual := proc:consolidate-merges($matches,
   <options/>,
   500,
   79,
-  cts:true-query()
+  cts:true-query(),
+  fn:false(),
+  ()
 )
 let $assertions := (
   test:assert-equal(2, fn:count(map:keys($actual))),
@@ -71,7 +73,9 @@ let $actual := proc:consolidate-merges($matches,
   (),
   500,
   79,
-  cts:true-query()
+  cts:true-query(),
+  fn:false(),
+  ()
 )
 
 return (

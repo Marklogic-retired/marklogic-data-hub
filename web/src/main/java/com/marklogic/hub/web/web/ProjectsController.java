@@ -108,10 +108,10 @@ public class ProjectsController {
 
     @RequestMapping(value = "/{projectId}/defaults", method = RequestMethod.GET)
     @ResponseBody
-    public HubSettings getDefaults(@PathVariable int projectId) {
+    public synchronized HubSettings getDefaults(@PathVariable int projectId) {
         Project project = pm.getProject(projectId);
+        // This method is synchronized since it's modifying hubSettings
         hubSettings.setProjectDir(project.path);
-
         return hubSettings;
     }
 }

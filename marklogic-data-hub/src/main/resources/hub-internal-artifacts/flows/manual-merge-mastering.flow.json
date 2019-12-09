@@ -1,0 +1,17 @@
+{
+  "name": "manual-merge-mastering",
+  "description": "This is the merge flow for manually merging documents",
+  "options": {
+    "sourceQuery": "cts.collectionQuery('mdm-content')"
+  },
+  "steps": {
+    "1": {
+      "stepDefinitionType": "mastering",
+      "stepDefinitionName": "manual-merge-mastering",
+      "retryLimit": 0,
+      "options": {
+        "outputFormat": "json"
+      }
+    }
+  }
+}

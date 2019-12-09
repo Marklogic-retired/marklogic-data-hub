@@ -35,8 +35,7 @@ import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
-import com.marklogic.hub.entity.HubEntity;
-import com.marklogic.hub.entity.InfoType;
+import com.marklogic.hub.entity.*;
 import com.marklogic.hub.error.EntityServicesGenerationException;
 import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;
@@ -80,13 +79,18 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
 
             File stagingFile = Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile();
             File finalFile = Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile();
+            File expStagingFile = Paths.get(dir.toString(), HubConfig.EXP_STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile();
+            File expFinalFile = Paths.get(dir.toString(), HubConfig.EXP_FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile();
 
             long lastModified = Math.max(stagingFile.lastModified(), finalFile.lastModified());
             List<JsonNode> entities = getModifiedRawEntities(lastModified);
             if (entities.size() > 0) {
-                String options = generator.generateOptions(entities);
+                String options = generator.generateOptions(entities, false);
                 FileUtils.writeStringToFile(stagingFile, options);
                 FileUtils.writeStringToFile(finalFile, options);
+                String expOptions = generator.generateOptions(entities, true);
+                FileUtils.writeStringToFile(expStagingFile, expOptions);
+                FileUtils.writeStringToFile(expFinalFile, expOptions);
                 return true;
             }
         } catch (IOException e) {
@@ -96,13 +100,34 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
     }
 
     @Override
+    public void generateExplorerQueryOptions() {
+        QueryOptionsGenerator generator = new QueryOptionsGenerator(hubConfig.newStagingClient());
+        try {
+            Path dir = hubProject.getEntityConfigDir();
+            if (!dir.toFile().exists()) {
+                dir.toFile().mkdirs();
+            }
+            List<JsonNode> entities = getAllEntities();
+            if (entities.size() > 0) {
+                File expStagingFile = Paths.get(dir.toString(), HubConfig.EXP_STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile();
+                File expFinalFile = Paths.get(dir.toString(), HubConfig.EXP_FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile();
+                String options = generator.generateOptions(entities, true);
+                FileUtils.writeStringToFile(expStagingFile, options);
+                FileUtils.writeStringToFile(expFinalFile, options);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to generate query options; cause: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
     public HashMap<Enum, Boolean> deployQueryOptions() {
         // save them first
         saveQueryOptions();
 
         HashMap<Enum, Boolean> loadedResources = new HashMap<>();
-        if (deployFinalQueryOptions()) loadedResources.put(DatabaseKind.FINAL, true);
-        if (deployStagingQueryOptions()) loadedResources.put(DatabaseKind.STAGING, true);
+        if (deployFinalQueryOptions() && deployExpFinalQueryOptions()) loadedResources.put(DatabaseKind.FINAL, true);
+        if (deployStagingQueryOptions() && deployExpStagingQueryOptions()) loadedResources.put(DatabaseKind.STAGING, true);
         return loadedResources;
     }
 
@@ -113,6 +138,14 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
 
     public boolean deployStagingQueryOptions() {
         return deployQueryOptions(hubConfig.newStagingClient(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE);
+    }
+
+    private boolean deployExpFinalQueryOptions() {
+        return deployQueryOptions(hubConfig.newFinalClient(), HubConfig.EXP_FINAL_ENTITY_QUERY_OPTIONS_FILE);
+    }
+
+    private boolean deployExpStagingQueryOptions() {
+        return deployQueryOptions(hubConfig.newStagingClient(), HubConfig.EXP_STAGING_ENTITY_QUERY_OPTIONS_FILE);
     }
 
     private boolean deployQueryOptions(DatabaseClient client, String filename) {
@@ -182,8 +215,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
 
     private HubModuleManager getPropsMgr() {
         String timestampFile = hubProject.getUserModulesDeployTimestampFile();
-        HubModuleManager propertiesModuleManager = new HubModuleManager(timestampFile);
-        return propertiesModuleManager;
+        return new HubModuleManager(timestampFile);
     }
 
     private List<JsonNode> getAllEntities() {
@@ -308,22 +340,133 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
     }
 
     public HubEntity getEntityFromProject(String entityName) {
-        return getEntityFromProject(entityName, null);
+        return getEntityFromProject(entityName, null, Boolean.FALSE);
     }
 
     public HubEntity getEntityFromProject(String entityName, String version) {
+        return getEntityFromProject(entityName, version, Boolean.FALSE);
+    }
+
+    @Override
+    public HubEntity getEntityFromProject(String entityName, Boolean extendSubEntities) {
+        return getEntityFromProject(entityName, null, extendSubEntities);
+    }
+
+    @Override
+    public HubEntity getEntityFromProject(String entityName, String version, Boolean extendSubEntities) {
+        return getEntityFromProject(entityName, getEntities(), version, extendSubEntities);
+    }
+
+    /**
+     * Extracted for unit testing so that it doesn't depend on entity model files existing within a project directory structure.
+     * This method also "flattens" the entity models that are passed into it. Currently, the entity title and version
+     * number are used to uniquely reference an entity definition - unless version is null, in which case only the entity title
+     * is used to reference an entity definition.
+     *
+     * @param entityName
+     * @param modelFilesInProject
+     * @param version
+     * @param extendSubEntities
+     * @return
+     */
+    protected HubEntity getEntityFromProject(String entityName, List<HubEntity> modelFilesInProject, String version, Boolean extendSubEntities) {
+        List<HubEntity> entityDefinitions = convertModelFilesToEntityDefinitions(modelFilesInProject);
+        return getEntityFromEntityDefinitions(entityName, entityDefinitions, version, extendSubEntities);
+    }
+
+    /**
+     * @param entityName
+     * @param entityDefinitions each HubEntity in this list is expected to have a single definition in it. In addition, the
+     *                          order of these definitions matters in case the version parameter is null.
+     * @param version
+     * @param extendSubEntities
+     * @return
+     */
+    protected HubEntity getEntityFromEntityDefinitions(String entityName, List<HubEntity> entityDefinitions, String version, Boolean extendSubEntities) {
         HubEntity entity = null;
-        for (HubEntity e: getEntities()) {
+        for (HubEntity e : entityDefinitions) {
             InfoType info = e.getInfo();
-            if (info.getTitle().equals(entityName) && (version == null || info.getVersion().equals(version))) {
+            if (entityName.equals(info.getTitle()) && (version == null || version.equals(info.getVersion()))) {
                 entity = e;
+                if (extendSubEntities) {
+                    addSubProperties(entity, entityDefinitions, version);
+                }
                 break;
             }
         }
         return entity;
     }
 
+    /**
+     * An entity model file can contain one to many entity definitions. This method then produces a list of HubEntity
+     * instances, where each instance has a single entity definition. The filename is preserved on each HubEntity, but
+     * the InfoType/Title property is modified to match that of the single entity definition that the HubEntity contains.
+     *
+     * @param modelFilesInProject
+     * @return
+     */
+    protected List<HubEntity> convertModelFilesToEntityDefinitions(List<HubEntity> modelFilesInProject) {
+        List<HubEntity> flattenedModels = new ArrayList<>();
+        for (HubEntity model : modelFilesInProject) {
+            Map<String, DefinitionType> map = model.getDefinitions().getDefinitions();
+            for (String entityTitle : map.keySet()) {
+                InfoType newInfo = new InfoType();
+                newInfo.setBaseUri(model.getInfo().getBaseUri());
+                newInfo.setDescription(model.getInfo().getDescription());
+                newInfo.setTitle(entityTitle);
+                newInfo.setVersion(model.getInfo().getVersion());
+
+                DefinitionsType definitionsType = new DefinitionsType();
+                definitionsType.addDefinition(entityTitle, map.get(entityTitle));
+
+                HubEntity newModel = new HubEntity();
+                newModel.setFilename(model.getFilename());
+                newModel.setInfo(newInfo);
+                newModel.setDefinitions(definitionsType);
+                flattenedModels.add(newModel);
+            }
+        }
+        return flattenedModels;
+    }
+
+    /**
+     * Adds "sub" properties - i.e. each complex property type is expanded so that it contains all of the properties
+     * from the referenced entity definition type. This is a recursive method, thus ensuring that properties are added
+     * at any depth of nested entities.
+     *
+     * @param entity
+     * @param entityDefinitions
+     * @param version
+     */
+    protected void addSubProperties(HubEntity entity, List<HubEntity> entityDefinitions, String version) {
+        Map<String, DefinitionType> definitions = entity.getDefinitions().getDefinitions();
+        for (String definitionName : definitions.keySet()) {
+            DefinitionType definition = definitions.get(definitionName);
+            for (PropertyType property : definition.getProperties()) {
+                String ref = property.getRef();
+                ItemType items = property.getItems();
+                if ((ref == null || "".equals(ref)) && items != null) {
+                    ref = items.getRef();
+                }
+                if (!(ref == null || "".equals(ref))) {
+                    String subEntityName = ref.substring(ref.lastIndexOf('/') + 1);
+                    HubEntity subEntity = getEntityFromEntityDefinitions(subEntityName, entityDefinitions, version, true);
+                    if (subEntity != null) {
+                        DefinitionType subDefinition = subEntity.getDefinitions().getDefinitions().get(subEntityName);
+                        property.setSubProperties(subDefinition.getProperties());
+                    }
+                }
+            }
+        }
+
+    }
+
     public List<HubEntity> getEntities() {
+        return getEntities(Boolean.FALSE);
+    }
+
+    @Override
+    public List<HubEntity> getEntities(Boolean extendSubEntities) {
         List<HubEntity> entities = new ArrayList<>();
         Path entitiesPath = hubConfig.getHubEntitiesDir();
         ObjectMapper objectMapper = new ObjectMapper();
@@ -381,6 +524,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
             fullpath = Paths.get(dir.toString(), title + ENTITY_FILE_EXTENSION).toString();
         }
 
+        removeCollationFromEntityReferenceProperties(node);
 
         String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(node);
         FileUtils.writeStringToFile(new File(fullpath), json);
@@ -388,7 +532,33 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         return entity;
     }
 
-    public void deleteEntity(String entity) throws IOException {
+    /**
+     * Per DHFPROD-3472, when a property in QS is changed to an entity reference, a collation is still defined for it.
+     * This method removes the collation for any property that is an entity reference.
+     *
+     * @param node
+     */
+    protected void removeCollationFromEntityReferenceProperties(JsonNode node) {
+        if (node != null && node.has("definitions")) {
+            JsonNode definitions = node.get("definitions");
+            Iterator<String> fieldNames = definitions.fieldNames();
+            while (fieldNames.hasNext()) {
+                JsonNode entity = definitions.get(fieldNames.next());
+                if (entity.has("properties")) {
+                    JsonNode properties = entity.get("properties");
+                    Iterator<String> propertyNames = properties.fieldNames();
+                    while (propertyNames.hasNext()) {
+                        JsonNode property = properties.get(propertyNames.next());
+                        if (property.has("$ref") && property.has("collation")) {
+                            ((ObjectNode) property).remove("collation");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void deleteEntity(String entity) {
         Path entityPath = hubConfig.getHubEntitiesDir().resolve(entity + ENTITY_FILE_EXTENSION);
         if (entityPath.toFile().exists()) {
             entityPath.toFile().delete();
@@ -420,17 +590,18 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
     private class QueryOptionsGenerator extends ResourceManager {
         private static final String NAME = "ml:searchOptionsGenerator";
 
-        private RequestParameters params = new RequestParameters();
-
         QueryOptionsGenerator(DatabaseClient client) {
             super();
             client.init(NAME, this);
         }
 
-        String generateOptions(List<JsonNode> entities) {
+        String generateOptions(List<JsonNode> entities, boolean forExplorer) {
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode node = objectMapper.valueToTree(entities);
+                RequestParameters params = new RequestParameters();
+                params.put("forExplorer", Boolean.toString(forExplorer));
+
                 ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, new JacksonHandle(node));
                 if (resultItr == null || !resultItr.hasNext()) {
                     throw new IOException("Unable to generate query options");

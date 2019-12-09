@@ -18,7 +18,6 @@ package com.marklogic.hub.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.Command;
-import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.CommandMapBuilder;
 import com.marklogic.appdeployer.command.appservers.DeployOtherServersCommand;
 import com.marklogic.appdeployer.command.appservers.UpdateRestApiServersCommand;
@@ -26,9 +25,17 @@ import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
 import com.marklogic.appdeployer.command.forests.DeployCustomForestsCommand;
 import com.marklogic.appdeployer.command.modules.DeleteTestModulesCommand;
 import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
-import com.marklogic.appdeployer.command.security.*;
+import com.marklogic.appdeployer.command.security.DeployCertificateAuthoritiesCommand;
+import com.marklogic.appdeployer.command.security.DeployCertificateTemplatesCommand;
+import com.marklogic.appdeployer.command.security.DeployExternalSecurityCommand;
+import com.marklogic.appdeployer.command.security.DeployPrivilegesCommand;
+import com.marklogic.appdeployer.command.security.DeployProtectedCollectionsCommand;
+import com.marklogic.appdeployer.command.security.DeployProtectedPathsCommand;
+import com.marklogic.appdeployer.command.security.DeployQueryRolesetsCommand;
+import com.marklogic.appdeployer.command.security.DeployRolesCommand;
+import com.marklogic.appdeployer.command.security.DeployUsersCommand;
+import com.marklogic.appdeployer.command.security.InsertCertificateHostsTemplateCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
-import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.admin.QueryOptionsManager;
 import com.marklogic.client.admin.ResourceExtensionsManager;
 import com.marklogic.client.admin.ServerConfigurationManager;
@@ -37,11 +44,28 @@ import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.QueryOptionsListHandle;
-import com.marklogic.hub.*;
+import com.marklogic.hub.DataHub;
+import com.marklogic.hub.DatabaseKind;
+import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubProject;
+import com.marklogic.hub.InstallInfo;
 import com.marklogic.hub.deploy.HubAppDeployer;
-import com.marklogic.hub.deploy.commands.*;
+import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
+import com.marklogic.hub.deploy.commands.DeployHubOtherServersCommand;
+import com.marklogic.hub.deploy.commands.DeployHubTriggersCommand;
+import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand;
+import com.marklogic.hub.deploy.commands.HubDeployDatabaseCommandFactory;
+import com.marklogic.hub.deploy.commands.LoadHubArtifactsCommand;
+import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
+import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
+import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
-import com.marklogic.hub.error.*;
+import com.marklogic.hub.error.CantUpgradeException;
+import com.marklogic.hub.error.DataHubConfigurationException;
+import com.marklogic.hub.error.DataHubSecurityNotInstalledException;
+import com.marklogic.hub.error.InvalidDBOperationError;
+import com.marklogic.hub.error.ServerValidationException;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl;
 import com.marklogic.mgmt.ManageClient;
@@ -51,7 +75,6 @@ import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import com.marklogic.rest.util.Fragment;
 import com.marklogic.rest.util.ResourcesFragment;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,11 +88,17 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 
 import javax.annotation.PostConstruct;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 @Component
@@ -96,6 +125,9 @@ public class DataHubImpl implements DataHub {
 
     @Autowired
     private LoadHubArtifactsCommand loadHubArtifactsCommand;
+
+    @Autowired
+    private GenerateFunctionMetadataCommand generateFunctionMetadataCommand;
 
     @Autowired
     private Versions versions;
@@ -255,70 +287,41 @@ public class DataHubImpl implements DataHub {
 
     @Override
     public boolean isServerVersionValid(String versionString) {
-        try {
-            if (versionString == null) {
-                versionString = versions.getMarkLogicVersion();
-            }
-            int major = Integer.parseInt(versionString.replaceAll("([^.]+)\\..*", "$1"));
-            if (!(major == 9 || major == 10)) {
+        try{
+            Versions.MarkLogicVersion serverVersion = versions.getMLVersion(versionString);
+            if (!(serverVersion.getMajor() == 9 || serverVersion.getMajor() == 10)) {
                 return false;
             }
-            boolean isNightly = versionString.matches("[^-]+-(\\d{4})(\\d{2})(\\d{2})");
-            //Support 9.0 versions >= 9.0-10 and 10.0 versions >=10.0-2.
-            int minor = 0;
-
-            //Extract minor version in cases where versions is of type 9.0-6 or 9.0-6.2
-            if(versionString.matches("^.*-(.+)\\..*")) {
-                minor = Integer.parseInt(versionString.replaceAll("^.*-(.+)\\..*", "$1"));
-            }
-            else if(versionString.matches("^.*-(.+)$")){
-                minor = Integer.parseInt(versionString.replaceAll("^.*-(.+)$", "$1"));
-            }
-            //left pad minor version with 0 if it is < 10
-            String modifiedMinor = minor < 10 ? StringUtils.leftPad(String.valueOf(minor), 2, "0"):String.valueOf(minor) ;
-
-            int hotFixNum = 0;
-
-            //Extract hotfix in cases where versions is of type 9.0-6.2, if not it will be 0
-            if(versionString.matches("^.*-(.+)\\.(.*)")) {
-                hotFixNum = Integer.parseInt(versionString.replaceAll("^.*-(.+)\\.(.*)", "$2"));
-            }
-            //left pad minor version with 0 if it is < 10
-            String modifiedHotFixNum = hotFixNum < 10 ? StringUtils.leftPad(String.valueOf(hotFixNum), 2, "0"):String.valueOf(hotFixNum) ;
-            String alteredString = StringUtils.join(modifiedMinor, modifiedHotFixNum);
-            int ver = Integer.parseInt(alteredString);
-            if (major == 9) {
-                //ver >= 1000 => 9.0-10 and above is supported
-                if (!isNightly && ver < 1000) {
-                    return false;
-                }
-            }
-            if (major == 10) {
-                //ver >= 200 => 10.0-2 and above is supported
-                if (!isNightly && ver < 200) {
-                    return false;
-                }
-            }
-            if (isNightly) {
-                String dateString = versionString.replaceAll("[^-]+-(\\d{4})(\\d{2})(\\d{2})", "$1-$2-$3");
-                //Support all 9.0-nightly on or after 11/5/2018
-                if(major == 9) {
-                    Date minDate = new GregorianCalendar(2019, Calendar.SEPTEMBER, 16).getTime();
-                    Date date = new SimpleDateFormat("y-M-d").parse(dateString);
+            if(serverVersion.isNightly()){
+                //Support all 10.0-nightly on or after 6/20/2019 and 9.0-nightly on or after 7/25/2019
+                if(serverVersion.getMajor() == 9) {
+                    Date minDate = new GregorianCalendar(2019, Calendar.JULY, 25).getTime();
+                    Date date = new SimpleDateFormat("y-M-d").parse(serverVersion.getDateString());
                     if (date.before(minDate)) {
                         return false;
                     }
                 }
-                //Support all 10.0-nightly on or after 6/11/2019
-                if(major == 10) {
-                    Date minDate = new GregorianCalendar(2019, Calendar.SEPTEMBER, 26).getTime();
-                    Date date = new SimpleDateFormat("y-M-d").parse(dateString);
+                if(serverVersion.getMajor() == 10) {
+                    Date minDate = new GregorianCalendar(2019, Calendar.JUNE, 20).getTime();
+                    Date date = new SimpleDateFormat("y-M-d").parse(serverVersion.getDateString());
                     if (date.before(minDate)) {
                         return false;
                     }
                 }
             }
-
+            //5.1.0 supports server versions 9.x >= 9.0-10 and 10.x >= 10.0.2
+            else {
+                if(serverVersion.getMajor() == 9){
+                    if(serverVersion.getMinor() < 1000) {
+                        return false;
+                    }
+                }
+                if(serverVersion.getMajor() == 10){
+                    if(serverVersion.getMinor() < 200) {
+                        return false;
+                    }
+                }
+            }
         } catch (Exception e) {
             throw new ServerValidationException(e.toString());
         }
@@ -334,6 +337,7 @@ public class DataHubImpl implements DataHub {
 
     @Override
     public void clearUserModules() {
+        logger.info("Clearing user modules");
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(DataHub.class.getClassLoader());
         try {
             HashSet<String> options = new HashSet<>();
@@ -418,11 +422,10 @@ public class DataHubImpl implements DataHub {
                     "  )\n" +
                     "] ! xdmp:document-delete(.)\n";
             runInDatabase(query, hubConfig.getDbName(DatabaseKind.MODULES));
-        } catch (FailedRequestException e) {
-            logger.error("Failed to clear user modules");
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            logger.error("Failed to clear user modules, cause: " + e.getMessage(), e);
         }
+        logger.info("Finished clearing user modules");
     }
 
     public void deleteDocument(String uri, DatabaseKind databaseKind) {
@@ -512,20 +515,6 @@ public class DataHubImpl implements DataHub {
         return response;
     }
 
-    /*
-     * just installs the hub modules, for more granular management of upgrade
-     */
-    private void hubInstallModules() {
-        loadHubModulesCommand.execute(new CommandContext(hubConfig.getAppConfig(), null, null));
-    }
-
-    /*
-     * just installs the user modules, for more granular management of upgrade
-     */
-    private void loadUserModules() {
-        loadUserModulesCommand.execute(new CommandContext(hubConfig.getAppConfig(), null, null));
-    }
-
     /**
      * Installs the data hub configuration and server-side config files into MarkLogic
      */
@@ -581,16 +570,16 @@ public class DataHubImpl implements DataHub {
         appConfig.getCmaConfig().setDeployUsers(false);
     }
 
-    public void dhsInstall(HubDeployStatusListener listener) {
-        prepareAppConfigForInstallingIntoDhs(hubConfig);
+    public void deployToDhs(HubDeployStatusListener listener) {
+        prepareAppConfigForDeployingToDhs(hubConfig);
 
         HubAppDeployer dhsDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
-        dhsDeployer.setCommands(buildCommandListForInstallingIntoDhs());
+        dhsDeployer.setCommands(buildCommandListForDeployingToDhs());
         dhsDeployer.deploy(hubConfig.getAppConfig());
     }
 
-    protected void prepareAppConfigForInstallingIntoDhs(HubConfig hubConfig) {
-        setKnownValuesForDhsInstall(hubConfig);
+    protected void prepareAppConfigForDeployingToDhs(HubConfig hubConfig) {
+        setKnownValuesForDhsDeployment(hubConfig);
 
         AppConfig appConfig = hubConfig.getAppConfig();
 
@@ -622,7 +611,7 @@ public class DataHubImpl implements DataHub {
      *
      * @param hubConfig
      */
-    protected void setKnownValuesForDhsInstall(HubConfig hubConfig) {
+    protected void setKnownValuesForDhsDeployment(HubConfig hubConfig) {
         hubConfig.setHttpName(DatabaseKind.STAGING, HubConfig.DEFAULT_STAGING_NAME);
         hubConfig.setHttpName(DatabaseKind.FINAL, HubConfig.DEFAULT_FINAL_NAME);
         hubConfig.setHttpName(DatabaseKind.JOB, HubConfig.DEFAULT_JOB_NAME);
@@ -657,7 +646,7 @@ public class DataHubImpl implements DataHub {
         }
     }
 
-    protected List<Command> buildCommandListForInstallingIntoDhs() {
+    protected List<Command> buildCommandListForDeployingToDhs() {
         List<Command> commands = new ArrayList<>();
         commands.addAll(buildCommandMap().get("mlDatabaseCommands"));
         commands.add(loadUserArtifactsCommand);
@@ -680,7 +669,11 @@ public class DataHubImpl implements DataHub {
 
         // Then deploy databases, utilizing a pattern for filenames when in a provisioned environment
         SimpleAppDeployer deployer = new SimpleAppDeployer(getManageClient(), getAdminManager());
-        deployer.setCommands(buildCommandMap().get("mlDatabaseCommands"));
+        Map<String, List<Command>> commandMap = buildCommandMap();
+        List<Command> indexRelatedCommands = new ArrayList<>();
+        indexRelatedCommands.addAll(commandMap.get("mlDatabaseCommands"));
+        indexRelatedCommands.addAll(commandMap.get("mlDatabaseField"));
+        deployer.setCommands(indexRelatedCommands);
         final boolean originalCreateForests = appConfig.isCreateForests();
         final Pattern originalIncludePattern = appConfig.getResourceFilenamesIncludePattern();
         try {
@@ -740,7 +733,7 @@ public class DataHubImpl implements DataHub {
                 "  <database>{xdmp:database(\"" + databaseName + "\")}</database>" +
                 "  <transaction-mode>update-auto-commit</transaction-mode>" +
                 "</options>)";
-        eval.xquery(xqy).eval();
+        eval.xquery(xqy).eval().close();
     }
 
     public Map<String, List<Command>> buildCommandMap() {
@@ -842,6 +835,7 @@ public class DataHubImpl implements DataHub {
         commands.add(loadUserModulesCommand);
         commands.add(loadUserArtifactsCommand);
         commands.add(loadHubArtifactsCommand);
+        commands.add(generateFunctionMetadataCommand);
 
         for (Command c : commandsMap.get("mlModuleCommands")) {
             if (c instanceof LoadModulesCommand) {
@@ -989,11 +983,6 @@ public class DataHubImpl implements DataHub {
 
     @Override
     public boolean upgradeHub() throws CantUpgradeException {
-        return upgradeHub(null);
-    }
-
-    @Override
-    public boolean upgradeHub(List<String> updatedFlows) throws CantUpgradeException {
         boolean isHubInstalled;
         try {
             isHubInstalled = this.isInstalled().isInstalled();
@@ -1017,50 +1006,39 @@ public class DataHubImpl implements DataHub {
                 throw new CantUpgradeException(versions.getDHFVersion(), MIN_UPGRADE_VERSION);
             }
         }
+
         boolean result = false;
-        boolean alreadyInitialized = project.isInitialized();
+
         try {
-            /*Ideally this should move to HubProject.upgradeProject() method
-             * But since it requires 'hubConfig' and 'versions', for now
-             * leaving it here
-             */
-            if(alreadyInitialized) {
-                // The version provided in "mlDHFVersion" property in gradle.properties.
-                String gradleVersion = versions.getDHFVersion();
-                File buildGradle = Paths.get(project.getProjectDirString(), "build.gradle").toFile();
-
-                // Back up the hub-internal-config and user-config directories in versions > 4.0
-                FileUtils.copyDirectory(project.getHubConfigDir().toFile(), project.getProjectDir().resolve(HubProject.HUB_CONFIG_DIR+"-"+gradleVersion).toFile());
-                FileUtils.copyDirectory(project.getUserConfigDir().toFile(), project.getProjectDir().resolve(HubProject.USER_CONFIG_DIR+"-"+gradleVersion).toFile());
-
-                // Gradle plugin uses a logging framework that is different from java api. Hence writing it to stdout as it is done in gradle plugin.
-                System.out.println("The "+ gradleVersion + " "+ HubProject.HUB_CONFIG_DIR +" is now moved to "+ HubProject.HUB_CONFIG_DIR+"-"+gradleVersion);
-                System.out.println("The "+ gradleVersion + " "+ HubProject.USER_CONFIG_DIR +" is now moved to "+ HubProject.USER_CONFIG_DIR+"-"+gradleVersion);
-                System.out.println("Please copy the custom database, server configuration files from " + HubProject.HUB_CONFIG_DIR+"-"+gradleVersion
-                    + " and "+ HubProject.USER_CONFIG_DIR+"-"+gradleVersion + " to their respective locations in  "+HubProject.HUB_CONFIG_DIR +" and "
-                    + HubProject.USER_CONFIG_DIR);
-
-                // replace the hub version in build.gradle
-                String text = FileUtils.readFileToString(buildGradle);
-                String version = hubConfig.getJarVersion();
-                text = Pattern.compile("^(\\s*)id\\s+['\"]com.marklogic.ml-data-hub['\"]\\s+version.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1id 'com.marklogic.ml-data-hub' version '" + version + "'");
-                text = Pattern.compile("^(\\s*)compile.+marklogic-data-hub.+$", Pattern.MULTILINE).matcher(text).replaceAll("$1compile 'com.marklogic:marklogic-data-hub:" + version + "'");
-                FileUtils.writeStringToFile(buildGradle, text);
+            if (project.isInitialized()) {
+                prepareProjectBeforeUpgrading(this.project, versions.getDHFVersion());
                 hubConfig.getHubSecurityDir().resolve("roles").resolve("flow-operator.json").toFile().delete();
             }
 
             hubConfig.initHubProject();
-
-            //now let's try to upgrade the directory structure
             hubConfig.getHubProject().upgradeProject();
 
-            //if none of this has thrown an exception, we're clear and can set the result to true
             result = true;
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Unable to upgrade project, cause: " + e.getMessage(), e);
         }
 
         return result;
+    }
+
+    /**
+     * The expectation is that a user has upgraded build.gradle to use a newer version of DHF but has not yet updated
+     * mlDHFVersion in gradle.properties. Thus, the value of mlDHFVersion is expected to be passed in here so that the
+     * backup path of hub-internal-config has the current version of DHF in its name.
+     *
+     * @param hubProject
+     * @param currentDhfVersion
+     * @throws IOException
+     */
+    protected void prepareProjectBeforeUpgrading(HubProject hubProject, String currentDhfVersion) throws IOException {
+        final String backupPath = HubProject.HUB_CONFIG_DIR + "-" + currentDhfVersion;
+        FileUtils.copyDirectory(hubProject.getHubConfigDir().toFile(), hubProject.getProjectDir().resolve(backupPath).toFile());
+        logger.warn("The " + HubProject.HUB_CONFIG_DIR + " directory has been moved to " + backupPath + " so that it can be re-initialized using the new version of Data Hub");
     }
 
     // only used in test

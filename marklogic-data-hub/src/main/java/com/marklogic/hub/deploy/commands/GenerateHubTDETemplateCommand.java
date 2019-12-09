@@ -125,11 +125,12 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
         String xquery = "import module namespace hent = \"http://marklogic.com/data-hub/hub-entities\"\n" +
             "at \"/data-hub/5/impl/hub-entities.xqy\";\n" +
             String.format("hent:get-model(\"%s\")", extractEntityNameFromFilename(f.getName()).get());
-        EvalResultIterator resp = hubConfig.newStagingClient().newServerEval().xquery(xquery).eval();
-        if (resp.hasNext()) {
-            return resp.next().getString();
+        try (EvalResultIterator resp = hubConfig.newStagingClient().newServerEval().xquery(xquery).eval()) {
+            if (resp.hasNext()) {
+                return resp.next().getString();
+            }
         }
-        return null ;
+        return null;
     }
 
     public String getEntityNames() {
