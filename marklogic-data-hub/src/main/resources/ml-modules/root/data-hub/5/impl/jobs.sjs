@@ -49,9 +49,16 @@ class Jobs {
         stepResponses :{}
       }
     };
-
-    this.hubutils.writeDocument("/jobs/"+job.job.jobId+".json", job, this.jobPermissionsScript,  ['Jobs','Job'], this.config.JOBDATABASE);
+    this.writeJobDocument(job);
     return job;
+  }
+
+  writeJobDocument(job) {
+    this.hubutils.writeDocument("/jobs/" + job.job.jobId + ".json", job, this.jobPermissionsScript, ['Jobs', 'Job'], this.config.JOBDATABASE);
+  }
+
+  writeBatchDocument(batch) {
+    this.hubutils.writeDocument("/jobs/batches/" + batch.batch.batchId + ".json", batch , this.jobPermissionsScript, ['Jobs','Batch'], this.config.JOBDATABASE);
   }
 
   buildJobPermissionsScript(config) {
@@ -107,7 +114,7 @@ class Jobs {
     if (jobStatus === "finished" || jobStatus === "finished_with_errors" || jobStatus === "failed"){
       docObj.job.timeEnded = fn.currentDateTime();
     }
-    this.hubutils.writeDocument("/jobs/"+ jobId +".json", docObj, this.jobPermissionsScript, ['Jobs','Job'], this.config.JOBDATABASE);
+    this.writeJobDocument(docObj);
   }
 
   getLastStepAttempted(jobId) {
@@ -267,7 +274,7 @@ class Jobs {
       }
     };
 
-    this.hubutils.writeDocument("/jobs/batches/" + batch.batch.batchId + ".json", batch , this.jobPermissionsScript, ['Jobs','Batch'], this.config.JOBDATABASE);
+    this.writeBatchDocument(batch);
     return batch;
   }
 
@@ -323,8 +330,7 @@ class Jobs {
     docObj.batch.writeTimeStamp = writeTransactionInfo.dateTime;
     let cacheId = jobId + "-" + batchId;
     cachedBatchDocuments[cacheId] = docObj;
-    this.hubutils.writeDocument("/jobs/batches/"+ batchId +".json", docObj, this.jobPermissionsScript, ['Jobs','Batch'], this.config.JOBDATABASE);
-
+    this.writeBatchDocument(docObj);
   }
 
   getBatchDoc(jobId, batchId) {

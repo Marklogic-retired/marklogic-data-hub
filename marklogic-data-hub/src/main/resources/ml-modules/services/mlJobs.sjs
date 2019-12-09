@@ -104,14 +104,14 @@ function post(context, params, input) {
               options.targetDatabase || datahub.config.FINALDATABASE
             ));
             if (jobReport) {
-              datahub.hubUtils.writeDocument(`/jobs/reports/${stepResp.flowName}/${step}/${jobId}.json`, jobReport, datahub.jobs.jobsPermissions, ['Jobs','JobReport'], datahub.config.JOBDATABASE);
+              datahub.hubUtils.writeDocument(`/jobs/reports/${stepResp.flowName}/${step}/${jobId}.json`, jobReport, datahub.jobs.jobPermissionsScript, ['Jobs','JobReport'], datahub.config.JOBDATABASE);
             }
           }
         }
     }
 
     //Update the job doc
-    datahub.hubUtils.writeDocument("/jobs/"+ jobId +".json", jobDoc, datahub.jobs.jobsPermissions, ['Jobs','Job'], datahub.config.JOBDATABASE);
+    datahub.jobs.writeJobDocument(jobDoc);
     resp = jobDoc;
   }
   else {
