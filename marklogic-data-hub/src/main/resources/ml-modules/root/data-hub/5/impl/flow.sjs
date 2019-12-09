@@ -16,6 +16,7 @@
 'use strict';
 const FlowUtils = require("/data-hub/5/impl/flow-utils.sjs");
 const Step = require("/data-hub/5/impl/step.sjs");
+const jobsMod = require("/data-hub/5/impl/jobs.sjs");
 
 // define constants for caching expensive operations
 const cachedFlows = {};
@@ -262,7 +263,7 @@ class Flow {
         }
       }
       if (!combinedOptions.disableJobOutput) {
-        this.datahub.jobs.updateBatch(this.globalContext.jobId, this.globalContext.batchId, batchStatus, uris, writeTransactionInfo, this.globalContext.batchErrors[0]);
+        jobsMod.updateBatch(this.datahub,this.globalContext.jobId, this.globalContext.batchId, batchStatus, uris, writeTransactionInfo, this.globalContext.batchErrors[0]);
       }
     }
 

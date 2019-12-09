@@ -2,7 +2,7 @@ const config = require("/com.marklogic.hub/config.sjs");
 const test = require("/test/test-helper.xqy");
 const Jobs = require("/data-hub/5/impl/jobs.sjs");
 
-const result = new Jobs().buildJobPermissionsScript(config);
+const result = new Jobs.Jobs().buildJobPermissionsScript(config);
 [
   test.assertEqual("data-hub-job-reader,read,data-hub-job-internal,update", config.JOBPERMISSIONS,
     "The value of this is a token - %%mlJobPermissions%% - that should have been replaced when the config.sjs module was loaded"),
