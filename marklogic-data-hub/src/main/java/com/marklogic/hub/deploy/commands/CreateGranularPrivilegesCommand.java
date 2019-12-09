@@ -2,6 +2,8 @@ package com.marklogic.hub.deploy.commands;
 
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.CommandContext;
+import com.marklogic.appdeployer.command.SortOrderConstants;
+import com.marklogic.appdeployer.command.UndoableCommand;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.mgmt.api.security.Privilege;
@@ -14,7 +16,7 @@ import java.util.Arrays;
 /**
  * Command for creating granular privileges after the resources that these privileges depend on have been created.
  */
-public class CreateGranularPrivilegesCommand implements Command {
+public class CreateGranularPrivilegesCommand implements Command, UndoableCommand {
 
     private HubConfig hubConfig;
 
@@ -31,6 +33,11 @@ public class CreateGranularPrivilegesCommand implements Command {
     @Override
     public Integer getExecuteSortOrder() {
         return Integer.MAX_VALUE;
+    }
+
+    @Override
+    public Integer getUndoSortOrder() {
+        return SortOrderConstants.DELETE_PRIVILEGES;
     }
 
     @Override
@@ -63,6 +70,18 @@ public class CreateGranularPrivilegesCommand implements Command {
         p.setPrivilegeName("admin-database-index-" + stagingDbName);
         p.setAction("http://marklogic.com/xdmp/privileges/admin/database/index/" + stagingDbId);
         mgr.save(p.getJson());
+    }
+
+    @Override
+    public void undo(CommandContext context) {
+        final String finalDbName = hubConfig.getDbName(DatabaseKind.FINAL);
+        final String stagingDbName = hubConfig.getDbName(DatabaseKind.STAGING);
+
+        PrivilegeManager mgr = new PrivilegeManager(context.getManageClient());
+        mgr.deleteAtPath("/manage/v2/privileges/admin-database-clear-" + finalDbName + "?kind=execute");
+        mgr.deleteAtPath("/manage/v2/privileges/admin-database-clear-" + stagingDbName + "?kind=execute");
+        mgr.deleteAtPath("/manage/v2/privileges/admin-database-index-" + finalDbName + "?kind=execute");
+        mgr.deleteAtPath("/manage/v2/privileges/admin-database-index-" + stagingDbName + "?kind=execute");
     }
 
 }
