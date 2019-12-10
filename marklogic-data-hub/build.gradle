@@ -10,6 +10,7 @@ plugins {
     id 'com.marklogic.ml-development-tools' version '4.2.0'
 }
 
+mainClassName='com.marklogic.hub.ApplicationConfig'
 repositories {
     jcenter()
     maven { url 'http://repo.spring.io/milestone' }
