@@ -202,4 +202,27 @@ describe('xml scenario for table on browse documents page', () => {
         browsePage.getTableRows().should('have.length', 2);
     });
 
+    it('verify instance view of the document', () => {
+        cy.wait(500);
+        browsePage.search('Alex');
+        browsePage.getTotalDocuments().should('be.equal', 1);
+        browsePage.getTableViewInstanceIcon().click();
+        detailPage.getInstanceView().should('exist');
+        detailPage.getDocumentEntity().should('contain', 'Person');
+        detailPage.getDocumentID().should('contain', '0');
+        detailPage.getDocumentTimestamp().should('exist');
+        detailPage.getDocumentSource().should('contain', 'PersonXMLFlow');
+        detailPage.getDocumentFileType().should('contain', 'xml');
+        detailPage.getDocumentTable().should('exist');
+    });
+
+    it('verify source view of the document', () => {
+        cy.wait(500);
+        browsePage.search('Alex');
+        browsePage.getTotalDocuments().should('be.equal', 1);
+        browsePage.getTableViewSourceIcon().click();
+        detailPage.getSourceView().click();
+        detailPage.getDocumentXML().should('exist');
+    });
+
 });

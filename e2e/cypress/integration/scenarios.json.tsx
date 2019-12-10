@@ -179,6 +179,7 @@ describe('json scenario for table on browse documents page', () => {
         browsePage.getSelectedEntity().should('contain', 'All Entities');
         cy.wait(2000);
         browsePage.getHubPropertiesExpanded();
+        browsePage.getExpandableTableView();
         browsePage.getTotalDocuments().should('be.greaterThan', '1008')
         browsePage.getColumnTitle(2).should('contain', 'Identifier');
         browsePage.getColumnTitle(3).should('contain', 'Entity');
@@ -237,6 +238,30 @@ describe('json scenario for table on browse documents page', () => {
         browsePage.search('Bill');
         browsePage.getTotalDocuments().should('be.equal', 1);
         browsePage.getTableRows().should('have.length', 1);
+    });
+
+    it('verify instance view of the document', () => {
+        cy.wait(500);
+        browsePage.search('Bill');
+        browsePage.getTotalDocuments().should('be.equal', 1);
+        //browsePage.getDocumentById(0).click();
+        browsePage.getTableViewInstanceIcon().click();
+        detailPage.getInstanceView().should('exist');
+        detailPage.getDocumentEntity().should('contain', 'Person');
+        detailPage.getDocumentID().should('contain', '0');
+        detailPage.getDocumentTimestamp().should('exist');
+        detailPage.getDocumentSource().should('contain', 'PersonFlow');
+        detailPage.getDocumentFileType().should('contain', 'json');
+        detailPage.getDocumentTable().should('exist');
+    });
+
+    it('verify source view of the document', () => {
+        cy.wait(500);
+        browsePage.search('Bill');
+        browsePage.getTotalDocuments().should('be.equal', 1);
+        browsePage.getTableViewSourceIcon().click();
+        detailPage.getSourceView().click();
+        detailPage.getDocumentJSON().should('exist');
     });
 
 });

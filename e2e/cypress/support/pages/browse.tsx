@@ -146,6 +146,18 @@ class BrowsePage {
         return cy.get('.ant-table-row');
     }
 
+    getTableViewInstanceIcon(){
+        return cy.get('.ant-table-row:last-child [data-cy=instance]');
+    }
+
+    getTableViewSourceIcon(){
+        return cy.get('.ant-table-row:last-child [data-cy=source]');
+    }
+
+    getExpandableTableView() {
+        return cy.get('.ant-table-row:nth-child(1) .ant-table-row-expand-icon').click();
+    }
+
     getTableColumns(){
         return cy.get('.react-resizable');
     }
