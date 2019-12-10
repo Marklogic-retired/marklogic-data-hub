@@ -1,9 +1,0 @@
-{
-  "name": "smart-mastering",
-  "version": "0.0.1",
-  "description": "Smart Mastering Toolkit",
-  "repository": "",
-  "dependencies": {
-    "marklogic-xml-diff": "0.1.*"
-  }
-}

@@ -18,7 +18,11 @@ const xsltPermissions = [
   xdmp.permission(datahub.config.FLOWOPERATORROLE,'execute'),
   xdmp.permission(datahub.config.FLOWDEVELOPERROLE,'execute'),
   xdmp.permission(datahub.config.FLOWOPERATORROLE,'read'),
-  xdmp.permission(datahub.config.FLOWDEVELOPERROLE,'read')
+  xdmp.permission(datahub.config.FLOWDEVELOPERROLE,'read'),
+  xdmp.permission(datahub.consts.DATA_HUB_OPERATOR_ROLE,'execute'),
+  xdmp.permission(datahub.consts.DATA_HUB_DEVELOPER_ROLE,'execute'),
+  xdmp.permission(datahub.consts.DATA_HUB_OPERATOR_ROLE,'read'),
+  xdmp.permission(datahub.consts.DATA_HUB_DEVELOPER_ROLE,'read')
 ];
 
 const reservedNamespaces = ['m', 'map'];
@@ -78,7 +82,7 @@ function buildMapProperties(mapping, entityModel) {
   let mapProperties = mapping.properties;
   let propertyLines = [];
   if (dhMappingTraceIsEnabled) {
-    xdmp.trace(dhMappingTrace, `Building mapping properties for '${mapping.targetEntityType}' with 
+    xdmp.trace(dhMappingTrace, `Building mapping properties for '${mapping.targetEntityType}' with
     '${xdmp.describe(entityModel)}'`);
   }
   let entityName = getEntityName(mapping.targetEntityType);
