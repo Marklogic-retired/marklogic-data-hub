@@ -1,13 +1,12 @@
-import React, {useState, useEffect} from 'react';
-import {Link} from 'react-router-dom';
-import {Resizable} from 'react-resizable'
-import {Table, Tooltip} from 'antd';
-import {dateConverter} from '../../util/date-conversion';
-import {xmlParser} from '../../util/xml-parser';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { Resizable } from 'react-resizable'
+import { Table, Tooltip } from 'antd';
+import { dateConverter } from '../../util/date-conversion';
+import { xmlParser } from '../../util/xml-parser';
 import styles from './result-table.module.scss';
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faExternalLinkAlt} from "@fortawesome/free-solid-svg-icons";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCode, faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
 
 
 const ResizeableTitle = props => {
@@ -61,8 +60,10 @@ const ResultTable: React.FC<Props> = (props) => {
         if (item.extracted.hasOwnProperty('content') && item.extracted.content[1]) {
           itemEntityName = Object.keys(item.extracted.content[1]);
           itemEntityProperties = Object.values<any>(item.extracted.content[1]);
-        };
-      };
+        }
+        ;
+      }
+      ;
 
       if (item.format === 'xml' && item.hasOwnProperty('extracted')) {
         let header = xmlParser(item.extracted.content[0]);
@@ -74,7 +75,8 @@ const ResultTable: React.FC<Props> = (props) => {
         if (header && entity) {
           itemEntityName = Object.keys(entity);
           itemEntityProperties = Object.values<any>(entity);
-        };
+        }
+        ;
       }
 
       // Parameters for both JSON and XML.
@@ -108,7 +110,7 @@ const ResultTable: React.FC<Props> = (props) => {
 
   useEffect(() => {
     //Construct title array for "All Entities" or an Entity.
-    props.entity.length === 0 ? title = [...['Identifier', 'Entity', 'File Type', 'Created']] : entityTitle.length === 0 ? title = [] : title = [...entityTitle, 'Created'];
+    props.entity.length === 0 ? title = [...['Identifier', 'Entity', 'File Type', 'Created', 'Detail view']] : entityTitle.length === 0 ? title = [] : title = [...entityTitle, 'Created', 'Detail view'];
 
     //Construct table title.
     title.forEach((item, index) => {
@@ -159,36 +161,50 @@ const ResultTable: React.FC<Props> = (props) => {
       row =
           {
             key: rowCounter++,
-            identifier: <Link to={path}><Tooltip
-                title={isUri && item.uri}>{isUri ? '.../' + document : item.primaryKey}</Tooltip></Link>,
+            identifier: <Tooltip
+                title={isUri && item.uri}>{isUri ? '.../' + document : item.primaryKey}</Tooltip>,
             entity: item.itemEntityName,
             filetype: item.format,
             created: date,
-            primaryKeyPath: path
+            primaryKeyPath: path,
+            detailview: <div className={styles.redirectIcons}>
+              <Link to={{pathname: `${path.pathname}`, state: {selectedValue: 'instance'}}} data-cy='instance'>
+                <Tooltip title={'Show detail on a separate page'}><FontAwesomeIcon icon={faExternalLinkAlt} size="sm"/></Tooltip>
+              </Link>
+              <Link to={{pathname: `${path.pathname}`, state: {selectedValue: 'source'}}} data-cy='source'>
+                <Tooltip title={'Show source on a separate page'}><FontAwesomeIcon icon={faCode} size="sm"/></Tooltip>
+              </Link>
+            </div>
           }
     } else {
       row =
           {
             key: rowCounter++,
             created: date,
-            primaryKeyPath: path
+            primaryKeyPath: path,
+            detailview: <div className={styles.redirectIcons}>
+              <Link to={{pathname: `${path.pathname}`, state: {selectedValue: 'instance'}}} data-cy='instance'>
+                <Tooltip title={'Show detail on a separate page'}><FontAwesomeIcon icon={faExternalLinkAlt} size="sm"/></Tooltip>
+              </Link>
+              <Link to={{pathname: `${path.pathname}`, state: {selectedValue: 'source'}}} data-cy='source'>
+                <Tooltip title={'Show source on a separate page'}><FontAwesomeIcon icon={faCode} size="sm"/></Tooltip>
+              </Link>
+            </div>
           }
 
       for (var propt in item.itemEntityProperties[0]) {
         if (isUri) {
           row.identifier =
-              <Link to={path}>
                 <Tooltip title={isUri ? item.uri : item.primaryKey}>{'.../' + document}</Tooltip>
-              </Link>
         }
         if (primaryKeys.includes(propt)) {
-          row[propt.toLowerCase()] = <Link to={path}>{item.itemEntityProperties[0][propt]}</Link>
+          row[propt.toLowerCase()] = item.itemEntityProperties[0][propt];
         } else {
           row[propt.toLowerCase()] = item.itemEntityProperties[0][propt];
         }
       }
     }
-    data.push(row)
+    data.push(row);
   });
 
   const handleResize = index => (e, {size}) => {
@@ -203,7 +219,7 @@ const ResultTable: React.FC<Props> = (props) => {
   };
 
   const expandedRowRender = (rowId) => {
-    const columns = [
+    const nestedColumns = [
       {title: 'Property', dataIndex: 'property', width: '30%'},
       {title: 'Value', dataIndex: 'value', width: '30%'},
       {title: 'View', dataIndex: 'view', width: '30%'},
@@ -214,15 +230,22 @@ const ResultTable: React.FC<Props> = (props) => {
       let parsedData = new Array();
       for (var i in obj) {
         if (obj[i] !== null && typeof (obj[i]) === "object") {
-          parsedData.push({key: counter++, property: i, children: parseJson(obj[i]),view:<Link to={{pathname:`${rowId.primaryKeyPath.pathname}`,state: {id:obj[i]}}} data-cy='nested-instance'>
-              <Tooltip title={'Show nested detail on a separate page'}><FontAwesomeIcon icon={faExternalLinkAlt} size="sm"/></Tooltip>
-            </Link>});
+          parsedData.push({
+            key: counter++,
+            property: i,
+            children: parseJson(obj[i]),
+            view: <Link to={{pathname: `${rowId.primaryKeyPath.pathname}`, state: {id: obj[i]}}}
+                        data-cy='nested-instance'>
+              <Tooltip title={'Show nested detail on a separate page'}><FontAwesomeIcon icon={faExternalLinkAlt}
+                                                                                        size="sm"/></Tooltip>
+            </Link>
+          });
         } else {
           parsedData.push({
             key: counter++,
             property: i,
             value: typeof obj[i] === 'boolean' ? obj[i].toString() : obj[i],
-            view:null
+            view: null
           });
         }
       }
@@ -246,10 +269,10 @@ const ResultTable: React.FC<Props> = (props) => {
 
     return <Table
         rowKey="key"
-        columns={columns}
+        columns={nestedColumns}
         dataSource={nestedData}
         pagination={false}
-        className= {styles.nestedTable}
+        className={styles.nestedTable}
     />;
   }
 
@@ -263,6 +286,7 @@ const ResultTable: React.FC<Props> = (props) => {
              pagination={false}
              expandedRowRender={expandedRowRender}
              data-cy="search-tabular"
+             scroll={{ x: 1000 }}
       />
   );
 }
