@@ -17,7 +17,7 @@
 
 package com.marklogic.gradle.task
 
-import com.marklogic.hub.HubConfig
+
 import org.gradle.testkit.runner.UnexpectedBuildFailure
 import spock.lang.IgnoreIf
 
@@ -63,15 +63,26 @@ class UpdateIndexesTaskTest extends BaseTest {
 		File dstFile = Paths.get(dir.toString(), "databases", "job-database.json").toFile()
 		String entityConfigStream = new File("src/test/resources/update-indexes/job-database.json").getAbsolutePath();
 		Files.copy(new File(entityConfigStream).toPath(), dstFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+        File xmlJobsDatabaseFieldFile = Paths.get(dir.toString(),"database-fields", "job-database.xml").toFile();
+        String xmlJobsDBConfig = new File("src/test/resources/update-indexes/job-database.xml").getAbsolutePath();
+        Files.copy(new File(xmlJobsDBConfig).toPath(), xmlJobsDatabaseFieldFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+        File xmlStagingDatabaseFieldFile = Paths.get(dir.toString(),"database-fields", "staging-database.xml").toFile();
+        String xmlStagingDBConfig = new File("src/test/resources/update-indexes/staging-database.xml").getAbsolutePath();
+        Files.copy(new File(xmlStagingDBConfig).toPath(), xmlStagingDatabaseFieldFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+        File xmlFinalDatabaseFieldFile = Paths.get(hubConfig().getUserConfigDir().toString(),"database-fields", "final-database.xml").toFile();
+        String xmlFinalDBConfig = new File("src/test/resources/update-indexes/final-database.xml").getAbsolutePath();
+        Files.copy(new File(xmlFinalDBConfig).toPath(), xmlFinalDatabaseFieldFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
 	}
 
     @IgnoreIf({ System.getProperty('mlIsProvisionedEnvironment') })
 	def "test to deploy indexes to STAGING/FINAL/JOBS Database"() {
 		given:
         //existing staging and final indexes are from core tests and they get replaced when mlUpdateIndexes is run, so we dont need their count
-		//int stagingIndexCount = getStagingRangePathIndexSize()
-        //int finalIndexCount = getFinalRangePathIndexSize()
-		int jobIndexCount = getJobsRangePathIndexSize()
+		int jobIndexCount = getJobsIndexValuesSize('//m:range-path-index')
 
 		when:
 		def result = runTask('mlUpdateIndexes')
@@ -80,8 +91,14 @@ class UpdateIndexesTaskTest extends BaseTest {
 		notThrown(UnexpectedBuildFailure)
 		result.task(":mlUpdateIndexes").outcome == SUCCESS
 
-		assert (getStagingRangePathIndexSize() == 2)
-		assert (getFinalRangePathIndexSize() == 2)
-		assert (getJobsRangePathIndexSize() == jobIndexCount+1)
+        //Test to verify range-path-index for mlUpdateIndex
+		assert (getStagingIndexValuesSize('//m:range-path-index') == 2)
+		assert (getFinalIndexValuesSize('//m:range-path-index') == 2)
+		assert (getJobsIndexValuesSize('//m:range-path-index') == jobIndexCount+1)
+
+        //Test to verify xml DB index configs get updated per DHFPROD-3674
+        assert (getStagingIndexValuesSize('//m:field') == 6)
+        assert (getFinalIndexValuesSize('//m:field') == 6)
+        assert (getJobsIndexValuesSize('//m:field') == 3)
 	}
 }
