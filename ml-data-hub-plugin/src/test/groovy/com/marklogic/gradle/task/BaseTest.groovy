@@ -276,19 +276,19 @@ class BaseTest extends Specification {
         return _manageClient;
     }
 
-    public int getStagingRangePathIndexSize() {
+    int getStagingIndexValuesSize(def namespace) {
         Fragment databseFragment = getDatabaseManager().getPropertiesAsXml(_hubConfig.getDbName(DatabaseKind.STAGING));
-        return databseFragment.getElementValues("//m:range-path-index").size()
+        return databseFragment.getElementValues(namespace).size();
     }
 
-    public int getFinalRangePathIndexSize() {
+    int getFinalIndexValuesSize(def namespace) {
         Fragment databseFragment = getDatabaseManager().getPropertiesAsXml(_hubConfig.getDbName(DatabaseKind.FINAL));
-        return databseFragment.getElementValues("//m:range-path-index").size()
+        return databseFragment.getElementValues(namespace).size();
     }
 
-    public int getJobsRangePathIndexSize() {
+    int getJobsIndexValuesSize(def namespace) {
         Fragment databseFragment = getDatabaseManager().getPropertiesAsXml(_hubConfig.getDbName(DatabaseKind.JOB));
-        return databseFragment.getElementValues("//m:range-path-index").size()
+        return databseFragment.getElementValues(namespace).size();
     }
 
     //Use this method sparingly as it slows down the test
