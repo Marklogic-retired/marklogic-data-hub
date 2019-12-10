@@ -58,7 +58,7 @@ export class CustomComponent  implements OnInit {
     const options = {
       additionalCollections: this.step.options.additionalCollections || [],
       collections: this.step.options.collections || [`${this.step.name}`],
-      permissions: this.step.options.permissions || "rest-reader,read,rest-writer,update",
+      permissions: this.step.options.permissions || "data-hub-operator,read,data-hub-operator,update",
       outputFormat: this.step.options.outputFormat || 'json',
       sourceQuery: this.step.options.sourceQuery || '',
       targetDatabase: this.step.options.targetDatabase || '',

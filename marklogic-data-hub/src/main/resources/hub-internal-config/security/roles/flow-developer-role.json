@@ -3,10 +3,7 @@
   "description": "A role can deploy modules to a data hub instance.",
   "role": [
     "rest-admin","manage-admin","tde-admin",
-    "data-hub-flow-writer",
-    "data-hub-mapping-writer",
-    "data-hub-step-definition-writer",
-    "data-hub-entity-model-writer"
+    "data-hub-developer"
   ],
   "privilege": [
     {
