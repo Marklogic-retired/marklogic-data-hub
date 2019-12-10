@@ -61,7 +61,7 @@ export class IngestComponent implements OnInit {
     const options = {
       additionalCollections: additionalCollections || [],
       collections: collections || [`${this.step.name}`],
-      permissions: permissions || "rest-reader,read,rest-writer,update",
+      permissions: permissions || "data-hub-operator,read,data-hub-operator,update",
       outputFormat: outputFormat || 'json',
       sourceQuery: sourceQuery || '',
       targetDatabase: targetDatabase || '',

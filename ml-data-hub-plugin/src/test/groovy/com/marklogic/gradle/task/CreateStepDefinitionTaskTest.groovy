@@ -18,6 +18,7 @@
 package com.marklogic.gradle.task
 
 import com.marklogic.hub.HubConfig
+import groovy.json.JsonSlurper
 import org.gradle.testkit.runner.UnexpectedBuildFailure
 import org.gradle.testkit.runner.UnexpectedBuildSuccess
 
@@ -82,5 +83,8 @@ class CreateStepDefinitionTaskTest extends BaseTest {
 
         File stepDir = Paths.get(testProjectDir.root.toString(), "step-definitions", "mapping", "my-new-step").toFile()
         stepDir.isDirectory()
+        def jsonSlurper = new JsonSlurper()
+        def data = jsonSlurper.parse(Paths.get(testProjectDir.root.toString(), "step-definitions", "mapping", "my-new-step", "my-new-step.step.json").toFile());
+        data.options.permissions == "data-hub-operator,read,data-hub-operator,update";
     }
 }
