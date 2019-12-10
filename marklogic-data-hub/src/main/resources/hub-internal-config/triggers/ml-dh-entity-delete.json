@@ -30,6 +30,14 @@
     {
       "role-name": "%%mlFlowOperatorRole%%",
       "capability": "read"
+    },
+    {
+      "role-name": "data-hub-developer",
+      "capability": "update"
+    },
+    {
+      "role-name": "data-hub-operator",
+      "capability": "read"
     }
   ]
 }

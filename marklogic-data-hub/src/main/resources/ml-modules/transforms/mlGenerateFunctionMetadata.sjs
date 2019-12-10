@@ -26,7 +26,10 @@ function mlGenerateFunctionMetadata(context, params, content) {
       xdmp.permission('${datahub.config.FLOWDEVELOPERROLE}','execute'),
       xdmp.permission('${datahub.config.FLOWDEVELOPERROLE}','update'),
       xdmp.permission('${datahub.config.FLOWOPERATORROLE}','read'),
-      xdmp.permission('${datahub.config.FLOWDEVELOPERROLE}','read')
+      xdmp.permission('${datahub.config.FLOWDEVELOPERROLE}','read'),
+      xdmp.permission('${datahub.consts.DATA_HUB_DEVELOPER_ROLE}','execute'),
+      xdmp.permission('${datahub.consts.DATA_HUB_DEVELOPER_ROLE}','update'),
+      xdmp.permission('${datahub.consts.DATA_HUB_OPERATOR_ROLE}','read')
       ])`;
       let writeInfo = datahub.hubUtils.writeDocument(uriVal + ".xml", metadataXml, permissionsExpression, [collection], datahub.config.MODULESDATABASE);
       if (writeInfo && fn.exists(writeInfo.transaction)) {

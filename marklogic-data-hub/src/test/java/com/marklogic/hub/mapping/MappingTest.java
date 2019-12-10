@@ -2,6 +2,8 @@ package com.marklogic.hub.mapping;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.bootstrap.Installer;
+import com.marklogic.client.io.BytesHandle;
+import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
@@ -15,6 +17,7 @@ import com.marklogic.hub.util.HubModuleManager;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -91,10 +94,11 @@ public class MappingTest extends HubTestBase {
         }
     }
 
-    private void createMappingFromConfig(String mapping) throws IOException {
+    private Mapping createMappingFromConfig(String mapping) throws IOException {
         JsonNode jsonMap = getJsonFromResource("mapping-test/mappingConfig/"+mapping);
         Mapping testMap = mappingManager.createMappingFromJSON(jsonMap);
         mappingManager.saveMapping(testMap, false);
+        return testMap;
     }
 
     private HubModuleManager getPropsMgr() {
@@ -384,5 +388,26 @@ public class MappingTest extends HubTestBase {
             "}";
         JsonNode actual = getQueryResults("cts:search(fn:doc('/input/json/order1.json')/envelope/instance/Order, cts:collection-query('OrderJSONMapping'))", HubConfig.DEFAULT_FINAL_NAME);
         assertJsonEqual(jsonString, actual.toString(), false);
+    }
+
+    @Test
+    public void testMappingsPermissions() throws Exception {
+        Assumptions.assumeTrue(versions.isVersionCompatibleWithES());
+        installProject();
+        Mapping testMap = createMappingFromConfig("testXPathFunctions.json");
+
+        installHubArtifacts(getDataHubAdminConfig(), true);
+        installUserModules(getDataHubAdminConfig(), true);
+
+        // test map for permissions
+        String uri = "/mappings/" + testMap.getName() + "/" + testMap.getName() + "-" + testMap.getVersion() + ".mapping.xml.xslt";
+        DocumentMetadataHandle metadata = new DocumentMetadataHandle();
+        BytesHandle handle = modMgr.read(uri, metadata, new BytesHandle());
+        Assertions.assertNotEquals(0, handle.get().length);
+        DocumentMetadataHandle.DocumentPermissions permissions = metadata.getPermissions();
+        Assertions.assertTrue(permissions.get("data-hub-operator").contains(DocumentMetadataHandle.Capability.READ));
+        Assertions.assertTrue(permissions.get("data-hub-developer").contains(DocumentMetadataHandle.Capability.READ));
+        Assertions.assertTrue(permissions.get("data-hub-developer").contains(DocumentMetadataHandle.Capability.EXECUTE));
+        Assertions.assertTrue(permissions.get("data-hub-operator").contains(DocumentMetadataHandle.Capability.EXECUTE));
     }
 }

@@ -4,6 +4,7 @@ package com.marklogic.hub.deploy.commands;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.bootstrap.Installer;
 import com.marklogic.client.document.DocumentWriteSet;
+import com.marklogic.client.io.BytesHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
@@ -12,7 +13,11 @@ import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.impl.Versions;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -82,7 +87,13 @@ public class GenerateFunctionMetadataCommandTest extends HubTestBase {
         if (versions.isVersionCompatibleWithES()) {
             CommandContext context = new CommandContext(hubConfig.getAppConfig(), hubConfig.getManageClient(), hubConfig.getAdminManager());
             generateFunctionMetadataCommand.execute(context);
-            Assertions.assertFalse(getModulesFile("/custom-modules/mapping-functions/testModule.xml.xslt").isEmpty());
+            String uri = "/custom-modules/mapping-functions/testModule.xml.xslt";
+            DocumentMetadataHandle metadata = new DocumentMetadataHandle();
+            BytesHandle handle = modMgr.read(uri, metadata, new BytesHandle());
+            Assertions.assertNotEquals(0, handle.get().length);
+            DocumentMetadataHandle.DocumentPermissions permissions = metadata.getPermissions();
+            Assertions.assertTrue(permissions.get("data-hub-operator").contains(READ));
+            Assertions.assertTrue(permissions.get("data-hub-developer").contains(UPDATE));
         }
     }
 }
