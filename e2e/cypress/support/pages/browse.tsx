@@ -158,10 +158,6 @@ class BrowsePage {
         return cy.get(`.ant-table-row:nth-child(${rowIndex}) td:nth-child(2) div span`).invoke('text')
     }
 
-    getTablePkCell(rowIndex:number) {    
-        return cy.get(`.ant-table-row:nth-child(${rowIndex}) td:nth-child(2) div a`).invoke('text')
-    }
-
 }
 
 export default BrowsePage;

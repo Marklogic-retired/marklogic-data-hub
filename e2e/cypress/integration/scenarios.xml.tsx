@@ -180,16 +180,16 @@ describe('xml scenario for table on browse documents page', () => {
         //check table rows
         browsePage.getTableRows().should('have.length', 6);
         //check table columns
-        browsePage.getTableColumns().should('have.length', 4);
+        browsePage.getTableColumns().should('have.length', 5);
         //check cells data
         for (let i = 2; i <= 6; i++) {
             for (let j = 2; j <= 4; j++) {
                 browsePage.getTableCell(i, j).should('not.be.empty')
             }
         }
-        for (let i = 1; i <= 6; i++) {
+        /*for (let i = 1; i <= 6; i++) {
             browsePage.getTablePkCell(i).should('not.be.empty')
-        }
+        }*/
     });
 
     it('search for a simple text/query and verify content', () => {

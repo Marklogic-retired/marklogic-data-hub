@@ -29,12 +29,12 @@ describe("Result Table component", () => {
     });
 
     it('should render table for all entities', () => {
-      expect(wrapper.find('.ant-table-thead th')).toHaveLength(5);
+      expect(wrapper.find('.ant-table-thead th')).toHaveLength(6);
     });
 
     it('should render resizable', () => {
-      expect(wrapper.find('.react-resizable')).toHaveLength(4);
-      expect(wrapper.find('.react-resizable-handle')).toHaveLength(4);
+      expect(wrapper.find('.react-resizable')).toHaveLength(5);
+      expect(wrapper.find('.react-resizable-handle')).toHaveLength(5);
     });
   });
 
@@ -56,12 +56,12 @@ describe("Result Table component", () => {
     });
 
     it('should render table for the entity', () => {
-      expect(wrapper.find('.ant-table-thead th')).toHaveLength(7);
+      expect(wrapper.find('.ant-table-thead th')).toHaveLength(8);
     });
 
     it('should render resizable', () => {
-      expect(wrapper.find('.react-resizable')).toHaveLength(6);
-      expect(wrapper.find('.react-resizable-handle')).toHaveLength(6);
+      expect(wrapper.find('.react-resizable')).toHaveLength(7);
+      expect(wrapper.find('.react-resizable-handle')).toHaveLength(7);
     });
   });
 })
