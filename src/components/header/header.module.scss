@@ -40,8 +40,11 @@
   color: rgba(255, 255, 255, 0.65);
 }
 
-.help:hover {
+.help:hover::after {
   color: rgba(255, 255, 255, 0.98);
+  content: "Help";
+  font-size: 14px;
+  padding:2px;
 }
 
 .helpContain {
@@ -53,9 +56,13 @@
 }
 
 .route {
-  top:-5px;
-  right: 44px;
+  top:-3px;
+  right: 62px;
   position: absolute;
-  color: rgba(255, 255, 255, 0.65);;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.route span:hover{
+  color: rgba(255, 255, 255, 0.98);
 }
 

@@ -70,7 +70,7 @@ const Header:React.FC<Props> = ({ location }) => {
       mode="horizontal"
       theme="dark"
       selectedKeys={selectedMenu}
-      style={{ lineHeight: '64px' }}
+      style={{ lineHeight: '64px',width: '1093px' }}
     >
       <Menu.Item key="/view">
         View Entities
@@ -95,7 +95,7 @@ const Header:React.FC<Props> = ({ location }) => {
       <div id="title" className={styles.title}>Data Hub Explorer</div>{showMenu}
       <div>
       <a  id="help-icon" onClick={showTour} className={styles.route}>
-        <FontAwesomeIcon className={styles.help} icon={faRoute} size="lg" />
+        <FontAwesomeIcon className={styles.help} icon={faRoute} size="lg" /><span style={{padding: '8px'}}>Take a tour</span>
       </a>
       <Tour
           steps={tourSteps}
