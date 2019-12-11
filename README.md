@@ -4,7 +4,7 @@ Data Hub Explorer is a REACT-driven system that provides viewing capabilities fo
 This project is the web service that serves content to explorer-ui.
 
 # Version Support
-For Data Hub Explorer version 5.1, you need:
+For Data Hub Explorer, you need:
   - MarkLogic Server 10.0-2.1 and later
   - Data Hub 5.1.x and later
   - Java JDK 11 or later
