@@ -7,7 +7,7 @@ This project is the web service that serves content to explorer-ui.
 For Data Hub Explorer, you need:
   - MarkLogic Server 10.0-2.1 and later
   - Data Hub 5.1.x and later
-  - Java JDK 11 or later
+  - Java JDK 11
 
 # Where is the BE source
 git clone https://project.marklogic.com/repo/scm/prod/datahubenterprise.git
