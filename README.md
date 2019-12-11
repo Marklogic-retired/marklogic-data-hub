@@ -31,6 +31,20 @@ Follow the README instructions to build and run the server locally from command 
 https://project.marklogic.com/repo/projects/PROD/repos/datahubenterprise/browse?at=refs%2Fheads%2Fdevelop
 ```
 
+## Build and Deploy Explorer UI using Node
+
+```
+# Build Production App 
+npm run build
+
+# Install serve
+npm install -g serve
+
+# Serve the app. 3000 is the port
+serve -s build -l 3000
+
+```
+
 ## Build Docker Container
 
 Make sure you have docker installed on your local system.
