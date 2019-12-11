@@ -42,7 +42,7 @@ List of all major configurable properties:
 | mlFinalAuth                    | Sets authentication mechanism                              | digest                          |
 | mlFinalSimpleSsl               | Enables/disables SSL (set it as "true" if scheme is https) | false                           |
 | spring.profiles.active         | Set it as "production" if scheme is https                  | default                         |
-| log.path                       | Updates the log path                                       | ./logs                          |
+| log.path                       | Updates the log path (can be both absolute or relative)    | ./logs                          |
 | server.servlet.session.timeout | Sets session timeout                                       | 5 minutes                       |
 | server.ssl.key-store-type      | Sets the format used for the keystore                      | PKCS12                          |
 | server.ssl.key-store           | Sets the path to the keystore containing the certificate   | classpath:keystore/explorer.p12 |
