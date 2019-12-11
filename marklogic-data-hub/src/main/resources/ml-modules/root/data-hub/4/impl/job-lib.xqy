@@ -72,9 +72,9 @@ declare private function job:delete-jobs($job-ids as xs:string*) as map:map
   let $results := map:map()
   let $_ :=
     for $id in $job-ids
-    let $uri := cts:uris((), (), 
+    let $uri := cts:uris((), (),
                 cts:and-query(
-                    ( cts:directory-query("/jobs/"), cts:json-property-value-query("jobId", $id))))
+                    ( cts:directory-query("/jobs/", "infinity"), cts:json-property-value-query("jobId", $id))))
     return
       if (fn:doc-available($uri)) then (
         xdmp:document-delete($uri),
