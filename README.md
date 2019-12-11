@@ -1,7 +1,8 @@
-# MarkLogic Data Hub Explorer Back-end
+# MarkLogic Data Hub Explorer Backend
 
-Data Hub Explorer is a REACT-driven system that provides viewing capabilities for end users.
-This project is the web service that serves content to explorer-ui.
+Entity Models are created by Users in MarkLogic Database. After Data Hub Ingests and Curates, 
+harmonized data is loaded into MarkLogic Database for those Entities. 
+Explorer is the tool to analyze data stored in those Entities.
 
 # Version Support
 For Data Hub Explorer, you need:
@@ -9,7 +10,7 @@ For Data Hub Explorer, you need:
   - Data Hub 5.1.x and later
   - Java JDK 11
 
-# Where is the BE source
+# Where is the Backend source
 git clone https://project.marklogic.com/repo/scm/prod/datahubenterprise.git
 
 # How to build
@@ -24,13 +25,28 @@ If you want to skip running test cases use
 
 # How to run 
 
-## Run BE locally from command line
+## Run Backend locally from command line
 
-BE provides some configurable properties. for example,
-mlHost - What MarkLogic server you are connecting, if not specified, mlHost defined in explorer-default.properties will be used as default. 
+Backend provides some configurable properties. 
+For example:
+mlHost - What MarkLogic server you are connecting, if not specified, mlHost defined in 
+explorer-default.properties will be used as default.
+Configure using command line like this: 
 ```
 java -jar ${path-to-jar}/explorer.jar --mlHost=MLServerHost
 ```
+
+For external configuration file:
+Explorer application loads properties from `application.properties` files in the following locations
+* A `/config` subdirectory of the current directory
+* The current directory
+
+You can also load a custom file (file that's not named `application.properties`) using the 
+parameter `spring.config.additional-location` while running the app like this:
+```
+java -jar ${path-to-jar}/explorer.jar --spring.config.additional-location="file:/path/to/file/gradle.properties"
+```
+
 List of all major configurable properties:
 
 | Property                       | Description                                                | Default Value                   |
@@ -51,13 +67,3 @@ List of all major configurable properties:
 
 In order to understand more about configurable properties, check those files (explorer-default.properties, 
 application.properties, application-production.properties).
-
-# Contribute
-Explorer is a closed-source project. You can contribute to its success by reporting errors you encounter and 
-suggesting improvement or additional features to Product Management.
-
-# Support
-The MarkLogic Data Hub is designed, written, and maintained by [MarkLogic][marklogic] Engineering.
-
-Notes: if you want to run BE and FE together using docker-compose, just follow the instruction:
-https://wiki.marklogic.com/display/ENGINEERING/Run+Explorer+via+Docker#RunExplorerviaDocker-SetupMLRegistry
