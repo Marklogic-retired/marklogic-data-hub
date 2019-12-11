@@ -20,7 +20,11 @@ That version is not supported for any purpose other than demonstration.
 Below are the commands to start the Data Hub Explorer UI
 
 ```
+# Clone repo
+git clone https://project.marklogic.com/repo/scm/prod/explorer-ui.git
+
 # Install dependencies
+cd explorer-ui
 npm install
 
 # Start the UI development environment
@@ -34,6 +38,13 @@ https://project.marklogic.com/repo/projects/PROD/repos/datahubenterprise/browse?
 ## Build and Deploy Explorer UI using Node
 
 ```
+# Clone repo
+git clone https://project.marklogic.com/repo/scm/prod/explorer-ui.git
+
+# Install dependencies
+cd explorer-ui
+npm install
+
 # Build Production App 
 npm run build
 
