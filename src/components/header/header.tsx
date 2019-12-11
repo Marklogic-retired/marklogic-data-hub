@@ -70,7 +70,7 @@ const Header:React.FC<Props> = ({ location }) => {
       mode="horizontal"
       theme="dark"
       selectedKeys={selectedMenu}
-      style={{ lineHeight: '64px',width: '95%' }}
+      style={{ lineHeight: '64px'}}
     >
       <Menu.Item key="/view">
         View Entities
@@ -80,7 +80,7 @@ const Header:React.FC<Props> = ({ location }) => {
         Browse Documents
         <Link to="/browse"/>
       </Menu.Item>
-      <SubMenu className={styles.user} title={<span><Icon style={{fontSize: '18px',marginRight: '8px'}} type="user" /><span id="username">{user.name}</span></span>}>
+      <SubMenu className={styles.user} title={<span><Icon style={{fontSize: '18px'}} type="user" /><span id="username">{user.name}</span></span>}>
         <Menu.Item id="sign-out" onClick={handleLogout}>Sign Out</Menu.Item>
       </SubMenu>
     </Menu>
@@ -92,10 +92,11 @@ const Header:React.FC<Props> = ({ location }) => {
           <DatahubIcon size={65} fill='silver' view='0 0 100 100'/>
         </div>
       </div>
-      <div id="title" className={styles.title}>Data Hub Explorer</div>{showMenu}
+      <div id="title" className={styles.title}>Data Hub Explorer</div>
+      <div style={{width: '93%'}}>{showMenu}</div>
       <div>
       <a  id="help-icon" onClick={showTour} className={styles.route}>
-        <FontAwesomeIcon className={styles.help} icon={faRoute} size="lg" /><span style={{paddingLeft: '8px'}}>Take a tour</span>
+        <FontAwesomeIcon className={styles.help} icon={faRoute} size="lg" /><span style={{paddingLeft: '4px'}}>Take a tour</span>
       </a>
       <Tour
           steps={tourSteps}
