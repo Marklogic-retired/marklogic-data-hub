@@ -137,7 +137,7 @@ class BaseTest extends Specification {
             for $database in fn:tokenize($databases, ",")
              return
                xdmp:eval(
-                 'cts:uris() ! xdmp:document-delete(.)',
+                 'cts:uris((),(),cts:not-query(cts:collection-query(\"http://marklogic.com/provenance-services/record\"))) ! xdmp:document-delete(.)',
                  (),
                  map:entry("database", xdmp:database($database))
                )

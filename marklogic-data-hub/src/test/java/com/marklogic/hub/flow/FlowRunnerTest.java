@@ -87,7 +87,7 @@ public class FlowRunnerTest extends HubTestBase {
         DocumentMetadataHandle metadataHandle = new DocumentMetadataHandle();
         docMgr.readMetadata("/ingest-xml.xml", metadataHandle);
         DocumentMetadataHandle.DocumentPermissions perms = metadataHandle.getPermissions();
-        Assertions.assertEquals(2, perms.get("flow-developer-role").size());
+        Assertions.assertEquals(2, perms.get("data-hub-operator").size());
         RunStepResponse stepResp = resp.getStepResponses().get("1");
         Assertions.assertNotNull(stepResp.getStepStartTime());
         Assertions.assertNotNull(stepResp.getStepEndTime());
