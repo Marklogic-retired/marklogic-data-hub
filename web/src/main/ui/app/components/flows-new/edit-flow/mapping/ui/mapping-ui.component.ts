@@ -80,6 +80,12 @@ export class MappingUiComponent implements OnChanges {
   public fncLst: Object;
   dataSourceEntity: Array<any> = [];
 
+  htmlLinks = `<ul>
+  <li><a href="https://www.w3.org/TR/xpath/all/" target="_blank">XPath Expressions</a></li>
+  <li><a href="https://docs.marklogic.com/guide/app-dev/TDE#id_99178" target="_blank">Extraction Functions</a></li>
+  <li><a href="https://docs.marklogic.com/datahub/flows/dhf-mapping-functions.html" target="_blank">Mapping Functions</a></li>
+  </ul>`;
+
     uriIndex = 0;
     currEntity:string;
 
