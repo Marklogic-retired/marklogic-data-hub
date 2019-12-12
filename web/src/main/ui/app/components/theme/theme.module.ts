@@ -5,7 +5,7 @@ import {FormsModule} from '@angular/forms';
 import {MdlModule} from '@angular-mdl/core';
 import {MdlPopoverModule} from '@angular-mdl/popover';
 import {MdlSelectModule} from '@angular-mdl/select';
-import {BsDropdownModule} from 'ngx-bootstrap';
+import {BsDropdownModule, TooltipModule, PopoverModule} from 'ngx-bootstrap';
 import {MaterialModule} from './material.module';
 
 @NgModule({
@@ -16,6 +16,8 @@ import {MaterialModule} from './material.module';
         MdlPopoverModule,
         MdlSelectModule,
         BsDropdownModule.forRoot(),
+        TooltipModule.forRoot(),
+        PopoverModule.forRoot(),
         MaterialModule
     ],
     declarations: [ThemeComponent],
@@ -27,6 +29,8 @@ import {MaterialModule} from './material.module';
         MdlPopoverModule,
         MdlSelectModule,
         BsDropdownModule,
+        TooltipModule,
+        PopoverModule,
         MaterialModule
     ]
 })
