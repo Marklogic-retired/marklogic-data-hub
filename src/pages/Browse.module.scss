@@ -20,11 +20,19 @@
   background-color: white;
 }
 
+.switchViews{
+  margin-right: 12px;
+}
+
 .toggleView{
   float: right;
   padding: 8px;
   border: 1px solid #666;
   cursor: pointer;
+}
+
+.tableIcon{
+
 }
 
 .toggled{
@@ -35,6 +43,7 @@
   cursor: pointer;
   color: white;
 }
+
 
 
 

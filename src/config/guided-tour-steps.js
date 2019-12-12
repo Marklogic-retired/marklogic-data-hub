@@ -24,9 +24,18 @@ const browseSteps = [
     content: 'Here are the available faceted search options. Entity Properties are per selected entity. Hub Properties are per document.'
   },
   {
+    selector: '[class*="Browse_toggleView__2gYzU"]',
+    content: 'Use the buttons to switch between table and snippet view'
+  },
+  {
+    selector: '.ant-table-row',
+    content: 'Document results include entity name, primary key (or document URI), table information, and metadata'
+  },
+  {
     selector: '.ant-list-item',
-    content: 'Document results include entity name, primary key (or document URI), snippet information, and metadata. Click the primary key (or document URI) to view the document.'
+    content: 'Document results include entity name, primary key (or document URI), snippet information, and metadata'
   }
+
 ];
 
 const detailSteps = [

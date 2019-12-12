@@ -148,11 +148,11 @@ const Browse: React.FC<Props> = ({ location }) => {
                 />
                 <br />
                 <br />
-                <div style={{ marginRight: '12px' }}>
+                <div className={styles.switchViews}>
                   <div className={active ? styles.toggled : styles.toggleView}
                     data-cy="table-view"
                     onClick={() => tableSwitch()}>
-                    <Tooltip title={'Table View'}><FontAwesomeIcon icon={faTable} size="lg" /></Tooltip>
+                    <Tooltip title={'Table View'}><FontAwesomeIcon className={styles.tableIcon} icon={faTable} size="lg" /></Tooltip>
                   </div>
                   <div className={snippetActive ? styles.toggled : styles.toggleView}
                     data-cy="facet-view"
