@@ -1,5 +1,6 @@
 package com.marklogic.hub.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubConfig;
@@ -100,11 +101,12 @@ public class UpgradeProjectTest extends HubTestBase {
         File jobFieldsFile = hubProject.getHubConfigDir().resolve("database-fields").resolve("job-database.xml").toFile();
         assertTrue(jobFieldsFile.exists());
 
+        ObjectMapper mapper = new ObjectMapper();
         File flowOpRole = hubProject.getHubSecurityDir().resolve("roles").resolve("flow-operator-role.json").toFile();
-        assertTrue(flowOpRole.toString().contains("data-hub-operator"), "As of DHFPROD-3619, flow-operator-role should inherit data-hub-operator");
+        assertTrue(mapper.readTree(flowOpRole).get("role").toString().contains("data-hub-operator"), "As of DHFPROD-3619, flow-operator-role should inherit data-hub-operator");
 
         File flowDevRole = hubProject.getHubSecurityDir().resolve("roles").resolve("flow-developer-role.json").toFile();
-        assertTrue(flowDevRole.toString().contains("data-hub-developer"), "As of DHFPROD-3619, flow-developer-role should inherit data-hub-developer");
+        assertTrue(mapper.readTree(flowDevRole).get("role").toString().contains("data-hub-developer"), "As of DHFPROD-3619, flow-developer-role should inherit data-hub-developer");
 
     }
 

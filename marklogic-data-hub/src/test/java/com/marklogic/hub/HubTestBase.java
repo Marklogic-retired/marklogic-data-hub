@@ -752,7 +752,7 @@ public class HubTestBase {
     protected void clearStagingFinalAndJobDatabases() {
         clearDatabases(HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
-
+    //not getting uris of prov collection as they cannot be deleted by flow-developer
     public void clearDatabases(String... databases) {
         ServerEvaluationCall eval = stagingClient.newServerEval();
         String installer =
@@ -760,7 +760,7 @@ public class HubTestBase {
             "for $database in fn:tokenize($databases, \",\")\n" +
             "return\n" +
             "  xdmp:eval('\n" +
-            "    cts:uris() ! xdmp:document-delete(.)\n" +
+            "    cts:uris((),(),cts:not-query(cts:collection-query(\"http://marklogic.com/provenance-services/record\"))) ! xdmp:document-delete(.)\n" +
             "  ',\n" +
             "  (),\n" +
             "  map:entry(\"database\", xdmp:database($database))\n" +
