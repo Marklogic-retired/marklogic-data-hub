@@ -78,7 +78,7 @@ const Facet: React.FC<Props> = (props) => {
   );
 
   return (
-    <div className={styles.facetContainer} data-cy="facet-block">
+    <div className={styles.facetContainer} data-cy={stringConverter(props.name) +"-facet-block"}>
       <div className={styles.header}>
         <Tooltip title={props.tooltip} placement="topLeft">
           <div className={styles.name} data-cy={stringConverter(props.name) + "-facet"}>{props.name}</div>
