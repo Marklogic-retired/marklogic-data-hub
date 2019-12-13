@@ -1,7 +1,5 @@
 package com.marklogic.hub.core;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
@@ -174,16 +172,6 @@ public class HubProjectTest extends HubTestBase {
         assertNull(props.getProperty("mlMappingPermissions"));
         assertNull(props.getProperty("mlStepDefinitionPermissions"));
         assertNull(props.getProperty("mlJobPermissions"));
-
-        //per DHFPROD-3617,DHFPROD-3618 below roles will only be used for permissions so they will not have privileges or inherited any roles
-        ObjectMapper mapper = new ObjectMapper();
-        String[] roles = new String[]{"flow-reader", "flow-writer", "mapping-reader", "mapping-writer", "step-definition-reader", "step-definition-writer",
-            "entity-model-reader", "entity-model-writer", "job-internal", "job-reader"};
-        for (String role : roles ){
-            JsonNode roleArtifact = mapper.readTree(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-"+role+".json"));
-            assertNull(roleArtifact.get("role"));
-            assertNull(roleArtifact.get("privilege"));
-        };
 
         File gradleLocalProperties = new File(projectPath, "gradle-local.properties");
         assertTrue(gradleLocalProperties.exists());
