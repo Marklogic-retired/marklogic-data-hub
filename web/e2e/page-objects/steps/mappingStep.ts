@@ -118,16 +118,20 @@ export class MappingStep extends AppPage {
     return await this.testButton().click();
   }
 
-  get sourceHelpLink() {
-    return $("#source .help-icon > a").getAttribute("href");
+  async clickHelpLookupIcon() {
+    return await element(by.css('#lookup-icon .fa-question-circle')).click();
+  }
+
+  get helpLookupText() {
+    return element(by.cssContainingText('div #doc', 'Documentation:'));
   }
 
   get source() {
     return $("#source .item-type");
   }
 
-  get targetSourceLink() {
-    return $("#target .help-icon > a").getAttribute("href");
+  get helpLinks() {
+    return element.all(by.css("div #html-link a"));
   }
 
   get entity() {
