@@ -56,12 +56,15 @@ export default function (qaProjectDir) {
       await editFlowPage.addStep(flow1, mapping);
     });
 
-    xit('should verify source and entity help links', async function () {
+    it('should verify source and entity help links', async function () {
       await stepsPage.stepSelectContainer(mapping.stepName).click();
-      await expect(mappingStepPage.sourceHelpLink)
-        .toEqual("https://marklogic.github.io/marklogic-data-hub/harmonize/mapping/#changing-the-mapping-source-document");
-      await expect(mappingStepPage.targetSourceLink)
-        .toEqual("https://marklogic.github.io/marklogic-data-hub/refs/index-settings/");
+      await mappingStepPage.clickHelpLookupIcon();
+      await browser.wait(EC.visibilityOf(mappingStepPage.helpLookupText));
+      await expect(mappingStepPage.helpLookupText.getText()).toEqual("Documentation:");
+      await expect(mappingStepPage.helpLinks.count()).toEqual(3);
+      await expect(mappingStepPage.helpLinks.first().getAttribute('href')).toEqual('https://www.w3.org/TR/xpath/all/');
+      await expect(mappingStepPage.helpLinks.last().getAttribute('href')).toEqual('https://docs.marklogic.com/datahub/flows/dhf-mapping-functions.html');
+      await mappingStepPage.clickHelpLookupIcon();
     });
 
     xit('should select a different source doc', async function () {
