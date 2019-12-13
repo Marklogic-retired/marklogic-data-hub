@@ -23,6 +23,16 @@
       "privilege-name": "get-system-logs",
       "action": "http://marklogic.com/xdmp/privileges/logs/system",
       "kind": "execute"
+    },
+    {
+      "privilege-name": "create-trigger",
+      "action": "http://marklogic.com/xdmp/privileges/create-trigger",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "temporal-admin",
+      "action": "http://marklogic.com/xdmp/privileges/temporal-admin",
+      "kind": "execute"
     }
   ]
 }
