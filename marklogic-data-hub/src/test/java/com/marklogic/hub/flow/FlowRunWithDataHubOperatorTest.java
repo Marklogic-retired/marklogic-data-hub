@@ -129,9 +129,20 @@ public class FlowRunWithDataHubOperatorTest extends HubTestBase {
         docMgr.readMetadata("/jobs/" + resp.getJobId()+".json", metadataHandle);
         DocumentMetadataHandle.DocumentPermissions perms = metadataHandle.getPermissions();
         Assertions.assertEquals(1, perms.get("flow-developer-role").size());
+        Assertions.assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("flow-operator-role").iterator().next());
         Assertions.assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("flow-developer-role").iterator().next());
         Assertions.assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("data-hub-job-internal").iterator().next());
         Assertions.assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("data-hub-job-reader").iterator().next());
+
+        String docID = getStringQueryResults("fn:head(cts:uris((),(),cts:collection-query('Batch')))", HubConfig.DEFAULT_JOB_NAME);
+        docMgr.readMetadata(docID, metadataHandle);
+        perms = metadataHandle.getPermissions();
+        Assertions.assertEquals(1, perms.get("flow-developer-role").size());
+        Assertions.assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("flow-operator-role").iterator().next());
+        Assertions.assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("flow-developer-role").iterator().next());
+        Assertions.assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("data-hub-job-internal").iterator().next());
+        Assertions.assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("data-hub-job-reader").iterator().next());
+
         client.newServerEval().xquery("cts:uris() ! xdmp:document-delete(.)").eval();
 
         Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "xml-coll") == 1);

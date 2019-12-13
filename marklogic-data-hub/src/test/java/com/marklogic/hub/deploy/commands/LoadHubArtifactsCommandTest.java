@@ -12,6 +12,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ApplicationConfig.class)
@@ -50,6 +51,7 @@ public class LoadHubArtifactsCommandTest extends HubTestBase {
 
     @Test
     public void customPermissions() {
+        //ensuring that permissions are user configured as opposed to the defaults
         HubConfigImpl config = new HubConfigImpl();
 
         config.setFlowPermissions("manage-user,read,manage-admin,update");
@@ -58,10 +60,12 @@ public class LoadHubArtifactsCommandTest extends HubTestBase {
         DocumentMetadataHandle.DocumentPermissions perms = loadUserArtifactsCommand.buildMetadata(config.getStepDefinitionPermissions(),"http://marklogic.com/data-hub/step-definition").getPermissions();
         assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("manage-user").iterator().next());
         assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("manage-admin").iterator().next());
+        assertNull(perms.get("data-hub-step-definition-reader"));
 
         perms = loadUserArtifactsCommand.buildMetadata(config.getFlowPermissions(),"http://marklogic.com/data-hub/flow").getPermissions();
         assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("manage-user").iterator().next());
         assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("manage-admin").iterator().next());
+        assertNull(perms.get("data-hub-flow-writer"));
     }
 }
 

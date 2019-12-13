@@ -101,12 +101,33 @@ public class UpgradeProjectTest extends HubTestBase {
         File jobFieldsFile = hubProject.getHubConfigDir().resolve("database-fields").resolve("job-database.xml").toFile();
         assertTrue(jobFieldsFile.exists());
 
+        assertTrue(hubProject.getHubSecurityDir().resolve("roles").resolve("data-hub-job-reader.json").toFile().exists());
+        assertTrue(hubProject.getHubSecurityDir().resolve("roles").resolve("data-hub-job-internal.json").toFile().exists());
+        assertTrue(hubProject.getHubSecurityDir().resolve("roles").resolve("data-hub-flow-reader.json").toFile().exists());
+        assertTrue(hubProject.getHubSecurityDir().resolve("roles").resolve("data-hub-flow-writer.json").toFile().exists());
+        assertTrue(hubProject.getHubSecurityDir().resolve("roles").resolve("data-hub-mapping-reader.json").toFile().exists());
+        assertTrue(hubProject.getHubSecurityDir().resolve("roles").resolve("data-hub-mapping-writer.json").toFile().exists());
+        assertTrue(hubProject.getHubSecurityDir().resolve("roles").resolve("data-hub-step-definition-reader.json").toFile().exists());
+        assertTrue(hubProject.getHubSecurityDir().resolve("roles").resolve("data-hub-step-definition-writer.json").toFile().exists());
+        assertTrue(hubProject.getHubSecurityDir().resolve("roles").resolve("data-hub-entity-model-reader.json").toFile().exists());
+        assertTrue(hubProject.getHubSecurityDir().resolve("roles").resolve("data-hub-entity-model-writer.json").toFile().exists());
+        assertTrue(hubProject.getHubSecurityDir().resolve("amps").resolve("amps-dhf-update-batch.json").toFile().exists());
+        assertTrue(hubProject.getHubSecurityDir().resolve("amps").resolve("amps-dhf-update-job.json").toFile().exists());
+
         ObjectMapper mapper = new ObjectMapper();
         File flowOpRole = hubProject.getHubSecurityDir().resolve("roles").resolve("flow-operator-role.json").toFile();
         assertTrue(mapper.readTree(flowOpRole).get("role").toString().contains("data-hub-operator"), "As of DHFPROD-3619, flow-operator-role should inherit data-hub-operator");
 
         File flowDevRole = hubProject.getHubSecurityDir().resolve("roles").resolve("flow-developer-role.json").toFile();
         assertTrue(mapper.readTree(flowDevRole).get("role").toString().contains("data-hub-developer"), "As of DHFPROD-3619, flow-developer-role should inherit data-hub-developer");
+
+        //per DHFPROD-3617, following properties shouldn't be there in gradle.properties after hubInit is run. Users can adjust these if needed
+        String props = FileUtils.readFileToString(hubProject.getProjectDir().resolve("gradle.properties").toFile());
+        assertFalse(props.contains("mlEntityPermissions"));
+        assertFalse(props.contains("mlFlowPermissions"));
+        assertFalse(props.contains("mlMappingPermissions"));
+        assertFalse(props.contains("mlStepDefinitionPermissions"));
+        assertFalse(props.contains("mlJobPermissions"));
 
     }
 
