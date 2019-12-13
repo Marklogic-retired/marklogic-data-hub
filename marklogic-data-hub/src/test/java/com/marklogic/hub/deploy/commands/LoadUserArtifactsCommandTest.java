@@ -126,6 +126,7 @@ public class LoadUserArtifactsCommandTest extends HubTestBase {
 
     @Test
     public void customEntityModelPermissions() {
+        //ensuring that permissions are user configured as opposed to the defaults
         HubConfigImpl config = new HubConfigImpl();
         config.setEntityModelPermissions("manage-user,read,manage-admin,update");
         config.setFlowPermissions("manage-user,read,manage-admin,update");
@@ -134,18 +135,22 @@ public class LoadUserArtifactsCommandTest extends HubTestBase {
         DocumentMetadataHandle.DocumentPermissions perms = loadUserArtifactsCommand.buildMetadata(config.getEntityModelPermissions(),"http://marklogic.com/entity-services/models").getPermissions();
         assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("manage-user").iterator().next());
         assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("manage-admin").iterator().next());
+        assertNull(perms.get("data-hub-entity-model-writer"));
 
         perms = loadUserArtifactsCommand.buildMetadata(config.getStepDefinitionPermissions(),"http://marklogic.com/data-hub/step-definition").getPermissions();
         assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("manage-user").iterator().next());
         assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("manage-admin").iterator().next());
+        assertNull(perms.get("data-hub-step-definition-writer"));
 
         perms = loadUserArtifactsCommand.buildMetadata(config.getFlowPermissions(),"http://marklogic.com/data-hub/flow").getPermissions();
         assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("manage-user").iterator().next());
         assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("manage-admin").iterator().next());
+        assertNull(perms.get("data-hub-flow-reader"));
 
         perms = loadUserArtifactsCommand.buildMetadata(config.getMappingPermissions(),"http://marklogic.com/data-hub/mappings").getPermissions();
         assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("manage-user").iterator().next());
         assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("manage-admin").iterator().next());
+        assertNull(perms.get("data-hub-mapping-reader"));
 
     }
 }

@@ -1,5 +1,7 @@
 package com.marklogic.hub.core;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
@@ -19,8 +21,7 @@ import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.Properties;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ApplicationConfig.class)
@@ -82,6 +83,8 @@ public class HubProjectTest extends HubTestBase {
         assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/flow-developer-role.json").exists());
         assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/flow-operator-role.json").exists());
 
+        assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-job-reader.json").exists());
+        assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-job-internal.json").exists());
         assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-flow-reader.json").exists());
         assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-flow-writer.json").exists());
         assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-mapping-reader.json").exists());
@@ -90,6 +93,9 @@ public class HubProjectTest extends HubTestBase {
         assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-step-definition-writer.json").exists());
         assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-entity-model-reader.json").exists());
         assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-entity-model-writer.json").exists());
+
+        assertTrue(new File(projectPath,"src/main/hub-internal-config/security/amps/amps-dhf-update-batch.json").exists());
+        assertTrue(new File(projectPath,"src/main/hub-internal-config/security/amps/amps-dhf-update-job.json").exists());
 
         assertTrue(new File(projectPath, "src/main/ml-config/servers/final-server.json").exists());
         assertTrue(new File(projectPath, "src/main/ml-config/databases/final-database.json").exists());
@@ -161,6 +167,23 @@ public class HubProjectTest extends HubTestBase {
 
         assertEquals(config.getFlowOperatorRoleName(), props.getProperty("mlFlowOperatorRole"));
         assertEquals(config.getFlowOperatorUserName(), props.getProperty("mlFlowOperatorUserName"));
+
+        //per DHFPROD-3617,DHFPROD-3618 following properties shouldn't be there in gradle.properties after hubInit is run. Users can adjust these if needed
+        assertNull(props.getProperty("mlEntityPermissions"));
+        assertNull(props.getProperty("mlFlowPermissions"));
+        assertNull(props.getProperty("mlMappingPermissions"));
+        assertNull(props.getProperty("mlStepDefinitionPermissions"));
+        assertNull(props.getProperty("mlJobPermissions"));
+
+        //per DHFPROD-3617,DHFPROD-3618 below roles will only be used for permissions so they will not have privileges or inherited any roles
+        ObjectMapper mapper = new ObjectMapper();
+        String[] roles = new String[]{"flow-reader", "flow-writer", "mapping-reader", "mapping-writer", "step-definition-reader", "step-definition-writer",
+            "entity-model-reader", "entity-model-writer", "job-internal", "job-reader"};
+        for (String role : roles ){
+            JsonNode roleArtifact = mapper.readTree(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-"+role+".json"));
+            assertNull(roleArtifact.get("role"));
+            assertNull(roleArtifact.get("privilege"));
+        };
 
         File gradleLocalProperties = new File(projectPath, "gradle-local.properties");
         assertTrue(gradleLocalProperties.exists());
