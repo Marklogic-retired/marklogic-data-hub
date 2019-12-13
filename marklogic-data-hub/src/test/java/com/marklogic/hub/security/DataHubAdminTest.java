@@ -2,6 +2,7 @@ package com.marklogic.hub.security;
 
 import com.marklogic.mgmt.api.database.Database;
 import com.marklogic.mgmt.resource.databases.DatabaseManager;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -19,6 +20,7 @@ public class DataHubAdminTest extends AbstractSecurityTest {
 
     @Test
     public void task7ClearStagingDatabase() {
+        Assumptions.assumeTrue(isVersionCompatibleWithGranularPrivilege());
         try {
             new DatabaseManager(userWithRoleBeingTestedClient).clearDatabase(STAGING_DB, false);
             String count = adminHubConfig.newStagingClient().newServerEval().xquery("xdmp:estimate(fn:doc())").evalAs(String.class);
@@ -42,6 +44,7 @@ public class DataHubAdminTest extends AbstractSecurityTest {
 
     @Test
     public void task8ClearFinalDatabase() {
+        Assumptions.assumeTrue(isVersionCompatibleWithGranularPrivilege());
         try {
             new DatabaseManager(userWithRoleBeingTestedClient).clearDatabase(FINAL_DB, false);
             String count = adminHubConfig.newFinalClient().newServerEval().xquery("xdmp:estimate(fn:doc())").evalAs(String.class);

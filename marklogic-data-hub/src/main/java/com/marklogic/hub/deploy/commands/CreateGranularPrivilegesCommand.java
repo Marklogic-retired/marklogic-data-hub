@@ -7,9 +7,7 @@ import com.marklogic.appdeployer.command.UndoableCommand;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.mgmt.api.security.Privilege;
-import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import com.marklogic.mgmt.resource.security.PrivilegeManager;
-import com.marklogic.rest.util.ResourcesFragment;
 
 import java.util.Arrays;
 
@@ -44,31 +42,57 @@ public class CreateGranularPrivilegesCommand implements Command, UndoableCommand
     public void execute(CommandContext context) {
         final String finalDbName = hubConfig.getDbName(DatabaseKind.FINAL);
         final String stagingDbName = hubConfig.getDbName(DatabaseKind.STAGING);
-
-        // Once RMA supports pseudo functions - https://bugtrack.marklogic.com/53540 - then we won't need to get the
-        // resource IDs here and can use resource names instead.
-        ResourcesFragment databasesXml = new DatabaseManager(context.getManageClient()).getAsXml();
-        final String finalDbId = databasesXml.getIdForNameOrId(finalDbName);
-        final String stagingDbId = databasesXml.getIdForNameOrId(stagingDbName);
+        final String finalTriggersDbName = hubConfig.getDbName(DatabaseKind.FINAL_TRIGGERS);
+        final String stagingTriggersDbName = hubConfig.getDbName(DatabaseKind.STAGING_TRIGGERS);
 
         PrivilegeManager mgr = new PrivilegeManager(context.getManageClient());
         Privilege p = new Privilege(null, "admin-database-clear-" + finalDbName);
         p.setKind("execute");
-        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/clear/" + finalDbId);
+        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/clear/$$database-id(" + finalDbName+ ")");
         p.setRole(Arrays.asList("data-hub-admin"));
         mgr.save(p.getJson());
 
         p.setPrivilegeName("admin-database-clear-" + stagingDbName);
-        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/clear/" + stagingDbId);
+        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/clear/$$database-id(" + stagingDbName+ ")");
         mgr.save(p.getJson());
 
         p.setPrivilegeName("admin-database-index-" + finalDbName);
-        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/index/" + finalDbId);
+        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/index/$$database-id(" + finalDbName+ ")");
         p.setRole(Arrays.asList("data-hub-developer"));
         mgr.save(p.getJson());
 
         p.setPrivilegeName("admin-database-index-" + stagingDbName);
-        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/index/" + stagingDbId);
+        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/index/$$database-id(" + stagingDbName+ ")");
+        mgr.save(p.getJson());
+
+        p.setPrivilegeName("admin-database-triggers-" + stagingTriggersDbName);
+        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/triggers/$$database-id(" + stagingTriggersDbName+ ")");
+        mgr.save(p.getJson());
+
+        p.setPrivilegeName("admin-database-triggers-" + finalTriggersDbName);
+        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/triggers/$$database-id(" + finalTriggersDbName+ ")");
+        mgr.save(p.getJson());
+
+        p.setPrivilegeName("admin-database-temporal-" + stagingDbName);
+        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/temporal/$$database-id(" + stagingDbName+ ")");
+        mgr.save(p.getJson());
+
+        p.setPrivilegeName("admin-database-temporal-" + finalDbName);
+        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/temporal/$$database-id(" + finalDbName+ ")");
+        mgr.save(p.getJson());
+
+        p.setPrivilegeName("admin-database-alerts-" + stagingDbName);
+        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/alerts/$$database-id(" + stagingDbName+ ")");
+        mgr.save(p.getJson());
+
+        p.setPrivilegeName("admin-database-alerts-" + finalDbName);
+        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/alerts/$$database-id(" + finalDbName+ ")");
+        mgr.save(p.getJson());
+
+        String groupName = hubConfig.getAppConfig().getGroupName();
+
+        p.setPrivilegeName("admin-group-scheduled-task-"+groupName);
+        p.setAction("http://marklogic.com/xdmp/privileges/admin/group/scheduled-task/$$group-id("+ groupName + ")");
         mgr.save(p.getJson());
     }
 
@@ -76,12 +100,26 @@ public class CreateGranularPrivilegesCommand implements Command, UndoableCommand
     public void undo(CommandContext context) {
         final String finalDbName = hubConfig.getDbName(DatabaseKind.FINAL);
         final String stagingDbName = hubConfig.getDbName(DatabaseKind.STAGING);
+        final String finalTriggersDbName = hubConfig.getDbName(DatabaseKind.FINAL_TRIGGERS);
+        final String stagingTriggersDbName = hubConfig.getDbName(DatabaseKind.STAGING_TRIGGERS);
 
         PrivilegeManager mgr = new PrivilegeManager(context.getManageClient());
         mgr.deleteAtPath("/manage/v2/privileges/admin-database-clear-" + finalDbName + "?kind=execute");
         mgr.deleteAtPath("/manage/v2/privileges/admin-database-clear-" + stagingDbName + "?kind=execute");
         mgr.deleteAtPath("/manage/v2/privileges/admin-database-index-" + finalDbName + "?kind=execute");
         mgr.deleteAtPath("/manage/v2/privileges/admin-database-index-" + stagingDbName + "?kind=execute");
+
+        mgr.deleteAtPath("/manage/v2/privileges/admin-database-triggers-" + finalTriggersDbName + "?kind=execute");
+        mgr.deleteAtPath("/manage/v2/privileges/admin-database-triggers-" + stagingTriggersDbName + "?kind=execute");
+
+        mgr.deleteAtPath("/manage/v2/privileges/admin-database-temporal-" + finalDbName + "?kind=execute");
+        mgr.deleteAtPath("/manage/v2/privileges/admin-database-temporal-" + stagingDbName + "?kind=execute");
+
+        mgr.deleteAtPath("/manage/v2/privileges/admin-database-alerts-" + finalDbName + "?kind=execute");
+        mgr.deleteAtPath("/manage/v2/privileges/admin-database-alerts-" + stagingDbName + "?kind=execute");
+
+        String groupName = hubConfig.getAppConfig().getGroupName();
+        mgr.deleteAtPath("/manage/v2/privileges/admin-group-scheduled-task-"+ groupName + "?kind=execute");
     }
 
 }

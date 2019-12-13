@@ -2,18 +2,23 @@ package com.marklogic.hub.security;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.hub.HubConfig;
 import com.marklogic.mgmt.api.database.Database;
 import com.marklogic.mgmt.api.database.GeospatialElementIndex;
 import com.marklogic.mgmt.api.security.protectedpath.Permission;
 import com.marklogic.mgmt.api.security.protectedpath.ProtectedPath;
 import com.marklogic.mgmt.api.task.Task;
 import com.marklogic.mgmt.api.trigger.*;
+import com.marklogic.mgmt.resource.alert.AlertActionManager;
 import com.marklogic.mgmt.resource.alert.AlertConfigManager;
+import com.marklogic.mgmt.resource.alert.AlertRuleManager;
 import com.marklogic.mgmt.resource.security.ProtectedPathManager;
 import com.marklogic.mgmt.resource.tasks.TaskManager;
 import com.marklogic.mgmt.resource.temporal.TemporalAxesManager;
+import com.marklogic.mgmt.resource.temporal.TemporalCollectionManager;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -30,9 +35,8 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
     }
 
     @Test
-    @Disabled("This is not yet possible; a new granular privilege will be needed to only allow for temporal config to be " +
-        "added to a database while not being able to make any modification to the database")
     public void task9ConfigureBitemporal() throws IOException {
+        Assumptions.assumeTrue(isVersionCompatibleWithGranularPrivilege());
         final String temporalAxis = "{\n" +
             "  \"axis-name\": \"test-axis\",\n" +
             "  \"axis-start\": {\n" +
@@ -49,16 +53,32 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
             "  }\n" +
             "}";
 
-        new TemporalAxesManager(userWithRoleBeingTestedClient, FINAL_DB).save(temporalAxis);
+        TemporalAxesManager mgr = new TemporalAxesManager(userWithRoleBeingTestedClient, FINAL_DB);
+        mgr.save(temporalAxis);
 
-        // Verify and delete the axis as the admin user
-        TemporalAxesManager mgr = new TemporalAxesManager(adminUserClient, FINAL_DB);
+        TemporalCollectionManager collMgr = new TemporalCollectionManager(userWithRoleBeingTestedClient, FINAL_DB);
+        final String collPayLoad = "   {\n" +
+            "     \"collection-name\": \"mycollectionnameuri\",\n" +
+            "     \"system-axis\": \"test-axis\"\n" +
+            "   }";
+        collMgr.save(collPayLoad);
+
         try {
             JsonNode json = ObjectMapperFactory.getObjectMapper().readTree(mgr.getPropertiesAsJson("test-axis"));
             assertEquals("test-axis", json.get("axis-name").asText(),
                 "Sanity check that the axis was created; if it wasn't, an error should have been thrown already");
         } finally {
+            collMgr.delete(collPayLoad);
             mgr.delete(temporalAxis);
+        }
+
+        mgr = new TemporalAxesManager(userWithRoleBeingTestedClient, "Documents");
+        try{
+            mgr.save(temporalAxis);
+            Assertions.fail();
+        }
+        catch (Exception e) {
+            logger.info("Cannot create temporal axes in 'Documents' db");
         }
     }
 
@@ -92,8 +112,8 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
     }
 
     @Test
-    @Disabled("Seem to be missing the granularity to only allow configuring triggers on a database")
     public void task11CreateFinalTriggers() {
+        Assumptions.assumeTrue(isVersionCompatibleWithGranularPrivilege());
         Trigger trigger = new Trigger();
         trigger.setApi(userWithRoleBeingTestedApi);
         trigger.setName("test-trigger");
@@ -112,21 +132,50 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
         try {
             trigger.save();
         } finally {
-            trigger.setApi(adminUserApi);
             trigger.delete();
         }
+
+        try {
+            trigger.setModuleDb("Modules");
+            trigger.setDatabaseName("Triggers");
+            trigger.save();
+            Assertions.fail();
+        }
+        catch (Exception e){
+            logger.info("User doesn't have privilege to create triggers in 'Triggers' db");
+        }
+
     }
 
     @Test
-    @Disabled("Can't get this working without giving the user the manage-admin role; see https://bugtrack.marklogic.com/53319")
     public void task13ConfigureAlertsInFinal() {
+        Assumptions.assumeTrue(isVersionCompatibleWithGranularPrivilege());
         ObjectNode node = ObjectMapperFactory.getObjectMapper().createObjectNode();
         node.put("uri", "my-alert-config");
         node.put("name", "my alerting app");
         node.put("description", "my description");
+
+        ObjectNode alertActionNode = ObjectMapperFactory.getObjectMapper().createObjectNode();
+        alertActionNode.put("name", "log2");
+        alertActionNode.put("module", "/alert-action.xqy");
+        alertActionNode.put("description", "log to ErrorLog.txt1");
+        alertActionNode.put("module-db", HubConfig.DEFAULT_MODULES_DB_NAME);
+        alertActionNode.put("module-root", "/");
+
+        ObjectNode alertRuleNode = ObjectMapperFactory.getObjectMapper().createObjectNode();
+        ObjectNode ctsQuery = ObjectMapperFactory.getObjectMapper().createObjectNode();
+        ctsQuery.put("wordQuery", ObjectMapperFactory.getObjectMapper().createObjectNode().put("text", "MarkLogic"));
+        alertRuleNode.put("name", "my-rule");
+        alertRuleNode.put("query", ctsQuery);
+        alertRuleNode.put("description", "my-rule");
+
         try {
             new AlertConfigManager(userWithRoleBeingTestedClient, FINAL_DB).save(node.toString());
+            new AlertActionManager(userWithRoleBeingTestedClient, FINAL_DB, "my-alert-config").save(alertActionNode.toString());
+            new AlertRuleManager(userWithRoleBeingTestedClient, FINAL_DB, "my-alert-config", "log2").save(alertRuleNode.toString());
         } finally {
+            new AlertRuleManager(userWithRoleBeingTestedClient, FINAL_DB, "my-alert-config", "log2").delete(alertRuleNode.toString());
+            new AlertActionManager(adminUserClient, FINAL_DB, "my-alert-config").delete(alertActionNode.toString());
             new AlertConfigManager(adminUserClient, FINAL_DB).delete(node.toString());
         }
     }
@@ -152,8 +201,8 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
     }
 
     @Test
-    @Disabled("Seems to still require manage-admin at the RMA level")
     public void task17CreateScheduledTask() {
+        Assumptions.assumeTrue(isVersionCompatibleWithGranularPrivilege());
         Task task = new Task(userWithRoleBeingTestedApi, null);
         task.setTaskPath("/MarkLogic/flexrep/tasks/push-local-forests.xqy");
         task.setGroupName("Default");
@@ -167,6 +216,10 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
 
         try {
             task.save();
+            //Modify the task
+            task.setTaskRoot("newModules/");
+            task.setTaskPeriod(2);
+            task.save();
         } finally {
             new TaskManager(adminUserClient).deleteTaskWithPath(task.getTaskPath());
         }
@@ -174,12 +227,12 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
 
     @Test
     public void task18ConfigureFinalIndexes() {
+        Assumptions.assumeTrue(isVersionCompatibleWithGranularPrivilege());
         Database db = new Database(userWithRoleBeingTestedApi, FINAL_DB);
         db.setGeospatialElementIndex(Arrays.asList(buildGeoIndex()));
         try {
             db.save();
         } finally {
-            db.setApi(adminUserApi);
             db.setGeospatialElementIndex(Arrays.asList());
             db.save();
         }
@@ -187,12 +240,14 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
 
     @Test
     public void task18ConfigureStagingIndexes() {
+        //Creating granular privilege using pseudo function doesn't work on versions < 10.0-3, so this test will not run
+        //in those versions.
+        Assumptions.assumeTrue(isVersionCompatibleWithGranularPrivilege());
         Database db = new Database(userWithRoleBeingTestedApi, STAGING_DB);
         db.setGeospatialElementIndex(Arrays.asList(buildGeoIndex()));
         try {
             db.save();
         } finally {
-            db.setApi(adminUserApi);
             db.setGeospatialElementIndex(Arrays.asList());
             db.save();
         }
