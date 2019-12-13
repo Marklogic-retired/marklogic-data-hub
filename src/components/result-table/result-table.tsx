@@ -168,10 +168,10 @@ const ResultTable: React.FC<Props> = (props) => {
             created: date,
             primaryKeyPath: path,
             detailview: <div className={styles.redirectIcons}>
-              <Link to={{pathname: `${path.pathname}`, state: {selectedValue: 'instance'}}} data-cy='instance'>
+              <Link to={{pathname: `${path.pathname}`, state: {selectedValue: 'instance'}}} id={'instance'} data-cy='instance'>
                 <Tooltip title={'Show detail on a separate page'}><FontAwesomeIcon icon={faExternalLinkAlt} size="sm"/></Tooltip>
               </Link>
-              <Link to={{pathname: `${path.pathname}`, state: {selectedValue: 'source'}}} data-cy='source'>
+              <Link to={{pathname: `${path.pathname}`, state: {selectedValue: 'source'}}} id={'source'} data-cy='source'>
                 <Tooltip title={'Show source on a separate page'}><FontAwesomeIcon icon={faCode} size="sm"/></Tooltip>
               </Link>
             </div>
@@ -183,10 +183,10 @@ const ResultTable: React.FC<Props> = (props) => {
             created: date,
             primaryKeyPath: path,
             detailview: <div className={styles.redirectIcons}>
-              <Link to={{pathname: `${path.pathname}`, state: {selectedValue: 'instance'}}} data-cy='instance'>
+              <Link to={{pathname: `${path.pathname}`, state: {selectedValue: 'instance'}}} id={'instance'} data-cy='instance'>
                 <Tooltip title={'Show detail on a separate page'}><FontAwesomeIcon icon={faExternalLinkAlt} size="sm"/></Tooltip>
               </Link>
-              <Link to={{pathname: `${path.pathname}`, state: {selectedValue: 'source'}}} data-cy='source'>
+              <Link to={{pathname: `${path.pathname}`, state: {selectedValue: 'source'}}} id={'source'} data-cy='source'>
                 <Tooltip title={'Show source on a separate page'}><FontAwesomeIcon icon={faCode} size="sm"/></Tooltip>
               </Link>
             </div>

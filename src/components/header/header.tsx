@@ -8,7 +8,7 @@ import Tour from 'reactour';
 import styles from './header.module.scss';
 import DatahubIcon from '../datahub-icon/datahub-icon';
 import { AuthContext } from '../../util/auth-context';
-import { viewSteps, browseSteps, detailSteps, loginSteps } from '../../config/guided-tour-steps';
+import { viewSteps, browseSnippetViewSteps, browseTableViewSteps, detailSteps, loginSteps } from '../../config/guided-tour-steps';
 
 
 interface Props extends RouteComponentProps<any> {}
@@ -16,11 +16,10 @@ interface Props extends RouteComponentProps<any> {}
 const { SubMenu } = Menu;
 
 const Header:React.FC<Props> = ({ location }) => {
-  const { user, userNotAuthenticated, handleError } = useContext(AuthContext);
+  const { user, userNotAuthenticated, handleError, setTableView } = useContext(AuthContext);
   const [selectedMenu, setSelectedMenu] = useState<string[]>([]);
   const [tourSteps, setTourSteps] = useState<any[]>([]);
   const [isTourOpen, setIsTourOpen] = useState(false);
-
 
   const closeTour = () => {
     setIsTourOpen(false);
@@ -50,7 +49,7 @@ const Header:React.FC<Props> = ({ location }) => {
         break;
       case 'browse':
         setSelectedMenu([location.pathname]);
-        setTourSteps(browseSteps);
+        user.tableView ? setTourSteps(browseTableViewSteps): setTourSteps(browseSnippetViewSteps);
         break;
       case 'detail':
         setSelectedMenu(['/browse']);
@@ -62,7 +61,7 @@ const Header:React.FC<Props> = ({ location }) => {
       default:
         break;
     }
-  }, [location.pathname]);
+  }, [location.pathname,user.tableView]);
 
   const showMenu = user.authenticated && (
     <Menu
