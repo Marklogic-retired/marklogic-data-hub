@@ -1,6 +1,9 @@
 # MarkLogic Data Hub Explorer-UI
 
-Datahub Explorer is a React UI that provides viewing capabilities for data that is created and curated by MarkLogic DB and MarkLogic Data Hub. Entity Models are created by Users in MarkLogic DB. After Data Hub Ingests and Curates, harmonized data is loaded into MarkLogic DB for those Entities. Explorer is the tool to analyze data stored in those Entities.
+Datahub Explorer is a React UI that provides viewing capabilities for data that is created and curated by 
+MarkLogic DB and MarkLogic Data Hub. Entity Models are created by Users in MarkLogic DB. After Data Hub 
+Ingests and Curates, harmonized data is loaded into MarkLogic DB for those Entities. Explorer is the tool 
+to analyze data stored in those Entities.
 
 # Version Support
 
