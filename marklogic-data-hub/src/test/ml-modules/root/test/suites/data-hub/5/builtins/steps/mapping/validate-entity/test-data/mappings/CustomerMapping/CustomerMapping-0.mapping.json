@@ -24,6 +24,9 @@
     },
     "DateTime": {
       "sourcedFrom": "Customer/datetime"
+    },
+    "Notes": {
+      "sourcedFrom": "Customer/*[local-name(.) eq 'description &amp; notes']"
     }
   }
 }

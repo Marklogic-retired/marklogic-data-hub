@@ -311,7 +311,7 @@ function validatePropertyMapping(fullMapping, propertyName, sourcedFrom) {
 function runMapping(mapping, uri, propMapping={"targetEntityType":mapping.targetEntityType, "namespaces": mapping.namespaces,"properties": {}}, paths=['properties']) {
   Object.keys(mapping.properties).forEach(propertyName => {
     let mappedProperty = mapping.properties[propertyName];
-    let sourcedFrom = mappedProperty.sourcedFrom;
+    let sourcedFrom = escapeXML(mappedProperty.sourcedFrom);
     paths.push(propertyName);
     //Don't run mapping if the property is unset (sourcedFrom.length==0) or if the validation returns errors
     if(!mappedProperty.errorMessage && sourcedFrom.length > 0){
