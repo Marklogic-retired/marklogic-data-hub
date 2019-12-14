@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import axios from 'axios';
-import { Layout, Menu, Icon } from 'antd';
+import { Layout, Menu, Icon, Tooltip } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faRoute } from '@fortawesome/free-solid-svg-icons'
 import Tour from 'reactour';
@@ -70,7 +70,7 @@ const Header:React.FC<Props> = ({ location }) => {
       mode="horizontal"
       theme="dark"
       selectedKeys={selectedMenu}
-      style={{ lineHeight: '64px' }}
+      style={{ lineHeight: '64px'}}
     >
       <Menu.Item key="/view">
         View Entities
@@ -92,10 +92,11 @@ const Header:React.FC<Props> = ({ location }) => {
           <DatahubIcon size={65} fill='silver' view='0 0 100 100'/>
         </div>
       </div>
-      <div id="title" className={styles.title}>Data Hub Explorer</div>{showMenu}
+      <div id="title" className={styles.title}>Data Hub Explorer</div>
+      <div style={{width: '93%'}}>{showMenu}</div>
       <div>
       <a  id="help-icon" onClick={showTour} className={styles.route}>
-        <FontAwesomeIcon className={styles.help} icon={faRoute} size="lg" />
+        <FontAwesomeIcon className={styles.help} icon={faRoute} size="lg" /><span style={{paddingLeft: '4px'}}>Take a tour</span>
       </a>
       <Tour
           steps={tourSteps}
@@ -106,7 +107,7 @@ const Header:React.FC<Props> = ({ location }) => {
       </div>
       <div>
       <a id="help-icon" className={styles.helpContain} href={'https://docs.marklogic.com/datahub/'} target={"_blank"}>
-      <Icon className={styles.help} type="question-circle"/>
+        <Tooltip title={'Help'} placement="bottom"><Icon className={styles.help} type="question-circle"/></Tooltip>
       </a>
       </div>
     </Layout.Header>
