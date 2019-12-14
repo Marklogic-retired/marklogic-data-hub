@@ -33,6 +33,10 @@
         },
         "DateTime": {
           "datatype": "dateTime"
+        },
+        "Notes": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
         }
       }
     }
