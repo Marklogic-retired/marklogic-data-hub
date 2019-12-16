@@ -1,6 +1,10 @@
 package com.marklogic.hub.security;
 
+import com.marklogic.mgmt.api.security.Privilege;
 import com.marklogic.mgmt.api.security.Role;
+import com.marklogic.mgmt.api.security.RolePrivilege;
+import com.marklogic.mgmt.resource.security.PrivilegeManager;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -92,6 +96,122 @@ public class DataHubSecurityAdminTest extends AbstractSecurityTest {
         } catch (Exception ex) {
             logger.info("Caught expected exception: " + ex.getMessage());
         } finally {
+            new Role(adminUserApi, roleName).delete();
+        }
+    }
+
+    @Test
+    void task5CreateRoleInheritingPrivilegeThatDataHubSecurityAdminPossesses() {
+        Assumptions.assumeTrue(isVersionCompatibleWithGranularPrivilege());
+
+        final String roleName = "test-custom-role";
+        Role customRole = new Role(userWithRoleBeingTestedApi, roleName);
+        customRole.addPrivilege(new RolePrivilege("create-data-role", "http://marklogic.com/xdmp/privileges/create-data-role", "execute"));
+
+        try {
+            customRole.save();
+            customRole = getRole(roleName);
+            assertEquals(1, customRole.getPrivilege().size(),
+                "Since data-hub-security-admin has the grant-my-privileges privilege, a user with this role can assign privileges" +
+                    "that the user already inherits to new roles created by the user");
+            RolePrivilege privilege = customRole.getPrivilege().get(0);
+            assertEquals("create-data-role", privilege.getPrivilegeName());
+        } finally {
+            new Role(adminUserApi, roleName).delete();
+        }
+    }
+
+    @Test
+    void task5CreateRoleInheritingPrivilegeThatDataHubSecurityAdminDoesntPossess() {
+        Assumptions.assumeTrue(isVersionCompatibleWithGranularPrivilege());
+        final String roleName = "test-custom-role2";
+        Role customRole = new Role(userWithRoleBeingTestedApi, roleName);
+        customRole.addPrivilege(new RolePrivilege("add-query-rolesets", "http://marklogic.com/xdmp/privileges/add-query-rolesets", "execute"));
+
+        try {
+            customRole.save();
+            fail("The role creation should have failed because the role inherits a privilege that the user doesn't possess");
+        } catch (Exception ex) {
+            logger.info("Caught expected exception: " + ex.getMessage());
+        } finally {
+            new Role(adminUserApi, roleName).delete();
+        }
+    }
+
+    @Test
+    void task5CreateRoleWithCustomPrivilegeInDataHubNamespace() {
+        Assumptions.assumeTrue(isVersionCompatibleWithGranularPrivilege());
+        final String roleName = "aaa-custom-role";
+        final String customPrivilegeName = "aaa-my-privilege";
+        final String customPrivilegeAction = "http://datahub.marklogic.com/custom/my-privilege";
+
+        Privilege p = new Privilege(userWithRoleBeingTestedApi, customPrivilegeName);
+        p.setAction(customPrivilegeAction);
+        p.setKind("execute");
+        p.save();
+
+        Role customRole = new Role(userWithRoleBeingTestedApi, roleName);
+        customRole.addPrivilege(new RolePrivilege(customPrivilegeName, customPrivilegeAction, "execute"));
+
+        try {
+            customRole.save();
+            customRole = getRole(roleName);
+            assertEquals(1, customRole.getPrivilege().size(),
+                "Since data-hub-security-admin has the create-data-hub-privilege privilege, then a user with this role " +
+                    "can create any privilege with an action starting with http://datahub.marklogic.com/custom/");
+            RolePrivilege privilege = customRole.getPrivilege().get(0);
+            assertEquals(customPrivilegeName, privilege.getPrivilegeName());
+        } finally {
+            new PrivilegeManager(userWithRoleBeingTestedClient).delete(p.getJson());
+            new Role(userWithRoleBeingTestedApi, roleName).delete();
+        }
+    }
+
+    @Test
+    void task5CreateCustomPrivilegeInDisallowedNamespace() {
+        Assumptions.assumeTrue(isVersionCompatibleWithGranularPrivilege());
+        final String customPrivilegeName = "bbb-my-privilege";
+        final String customPrivilegeAction = "http://datahub.marklogic.com/somewhereElse/my-privilege";
+
+        Privilege p = new Privilege(userWithRoleBeingTestedApi, customPrivilegeName);
+        p.setAction(customPrivilegeAction);
+        p.setKind("execute");
+
+        try {
+            p.save();
+            fail("This should have failed because the privilege action does not start with http://datahub.marklogic.com/custom/");
+        } catch (Exception ex) {
+            logger.info("Caught expected exception: " + ex.getMessage());
+        } finally {
+            // Just in case it was created
+            new PrivilegeManager(adminUserClient).delete(p.getJson());
+        }
+    }
+
+    @Test
+    void task5CreateRoleWithCustomPrivilegeInDisallowedNamespace() {
+        Assumptions.assumeTrue(isVersionCompatibleWithGranularPrivilege());
+        final String roleName = "aaa-custom-role";
+        final String customPrivilegeName = "aaa-my-privilege";
+        final String customPrivilegeAction = "http://datahub.marklogic.com/disallowed/my-privilege";
+
+        // Create the privilege as an admin, as we know the userBeingTested can't create it
+        Privilege p = new Privilege(adminUserApi, customPrivilegeName);
+        p.setAction(customPrivilegeAction);
+        p.setKind("execute");
+        p.save();
+
+        Role customRole = new Role(userWithRoleBeingTestedApi, roleName);
+        customRole.addPrivilege(new RolePrivilege(customPrivilegeName, customPrivilegeAction, "execute"));
+
+        try {
+            customRole.save();
+            fail("This should have failed because the privilege action does not start with http://datahub.marklogic.com/custom/");
+        } catch (Exception ex) {
+            logger.info("Caught expected exception: " + ex.getMessage());
+        } finally {
+            new PrivilegeManager(adminUserClient).delete(p.getJson());
+            // Just in case the role was created
             new Role(adminUserApi, roleName).delete();
         }
     }

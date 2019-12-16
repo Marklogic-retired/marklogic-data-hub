@@ -1192,6 +1192,15 @@ public class HubTestBase {
         return strHandle.get();
     }
 
+    //Not checking the dates for nightly as we expect tests to run on latest nightly
+    protected boolean isVersionCompatibleWithGranularPrivilege() {
+        Versions.MarkLogicVersion serverVersion = versions.getMLVersion();
+        if(!serverVersion.isNightly()){
+            return (serverVersion.getMajor() == 10 && serverVersion.getMinor() >= 300) ;
+        }
+        return true;
+    }
+
     protected void setupProjectForRunningTestFlow() {
         basicSetup();
         getDataHubAdminConfig();
