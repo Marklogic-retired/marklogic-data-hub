@@ -77,7 +77,7 @@ const Header:React.FC<Props> = ({ location }) => {
       </Menu.Item>
       <Menu.Item key="/browse">
         Browse Documents
-        <Link to="/browse" data-cy="view-browse"/>
+        <Link to="/browse" data-cy="browse-link"/>
       </Menu.Item>
       <SubMenu className={styles.user} title={<span><Icon style={{fontSize: '18px'}} type="user" /><span id="username">{user.name}</span></span>}>
         <Menu.Item id="sign-out" onClick={handleLogout}>Sign Out</Menu.Item>
