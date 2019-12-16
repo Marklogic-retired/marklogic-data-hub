@@ -73,11 +73,11 @@ const Header:React.FC<Props> = ({ location }) => {
     >
       <Menu.Item key="/view">
         View Entities
-        <Link to="/view"/>
+        <Link to="/view" data-cy="view-link"/>
       </Menu.Item>
       <Menu.Item key="/browse">
         Browse Documents
-        <Link to="/browse"/>
+        <Link to="/browse" data-cy="view-browse"/>
       </Menu.Item>
       <SubMenu className={styles.user} title={<span><Icon style={{fontSize: '18px'}} type="user" /><span id="username">{user.name}</span></span>}>
         <Menu.Item id="sign-out" onClick={handleLogout}>Sign Out</Menu.Item>
@@ -94,7 +94,7 @@ const Header:React.FC<Props> = ({ location }) => {
       <div id="title" className={styles.title}>Data Hub Explorer</div>
       <div style={{width: '93%'}}>{showMenu}</div>
       <div>
-      <a  id="help-icon" onClick={showTour} className={styles.route}>
+      <a  id="tour-icon" onClick={showTour} className={styles.route}>
         <FontAwesomeIcon className={styles.help} icon={faRoute} size="lg" /><span style={{paddingLeft: '4px'}}>Take a tour</span>
       </a>
       <Tour

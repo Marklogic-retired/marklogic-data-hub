@@ -80,7 +80,7 @@ const App: React.FC<Props> = ({history, location}) => {
       )}
       </SearchProvider>
       <Modal visible={asyncError} title={user.error.title} onCancel={() => onCancel()} onOk={() => onOk()}>
-        <p>{user.error.message}</p>
+        <p data-cy="async-error-message">{user.error.message}</p>
       </Modal>
     </>
   );

@@ -20,6 +20,7 @@ const AsyncLoader: React.FC = () => {
         message={user.error.title}  
         description={user.error.message} 
         type="error" 
+        data-cy="alert-error-message"
         closable 
         onClose={onClose}
       /> 
