@@ -6,12 +6,13 @@ import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
 import com.marklogic.appdeployer.command.security.DeployAmpsCommand;
 import com.marklogic.appdeployer.command.security.DeployPrivilegesCommand;
 import com.marklogic.appdeployer.command.security.DeployRolesCommand;
-import com.marklogic.hub.DataHub;
 import com.marklogic.hub.cli.Options;
 import com.marklogic.hub.cli.deploy.CopyQueryOptionsCommand;
 import com.marklogic.hub.cli.deploy.DhsDeployServersCommand;
 import com.marklogic.hub.deploy.HubAppDeployer;
-import com.marklogic.hub.deploy.commands.*;
+import com.marklogic.hub.deploy.commands.CreateGranularPrivilegesCommand;
+import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
+import com.marklogic.hub.deploy.commands.HubDeployDatabaseCommandFactory;
 import org.springframework.context.ApplicationContext;
 
 import java.util.*;
@@ -119,8 +120,6 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
 
         props.setProperty("mlFlowDeveloperRole", "flowDeveloper");
         props.setProperty("mlFlowOperatorRole", "flowOperator");
-        // Mapping this to flowDeveloper for now,
-        props.setProperty("mlDataHubAdminRole", "flowDeveloper");
         props.setProperty("mlModulePermissions",
             "flowDeveloper,read,flowDeveloper,execute,flowDeveloper,insert,flowOperator,read,flowOperator,execute,flowOperator,insert");
 
