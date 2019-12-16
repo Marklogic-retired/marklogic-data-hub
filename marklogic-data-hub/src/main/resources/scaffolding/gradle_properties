@@ -110,9 +110,6 @@ mlFlowDeveloperRole=%%mlFlowDeveloperRole%%
 mlFlowDeveloperUserName=%%mlFlowDeveloperUserName%%
 mlFlowDeveloperPassword=%%mlFlowDeveloperPassword%%
 
-# The name of the role to create for hub deployment
-mlDataHubAdminRole=%%mlDataHubAdminRole%%
-
 # Deprecated property
 # If you are working with a load balancer please indicate so using
 # property "mlIsHostLoadBalancer"

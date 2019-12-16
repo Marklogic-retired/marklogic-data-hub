@@ -154,8 +154,6 @@ public class HubConfigImpl implements HubConfig
     private String flowDeveloperRoleName;
     private String flowDeveloperUserName;
 
-    private String dataHubAdminRoleName;
-
     private String DHFVersion;
 
     private String hubLogLevel;
@@ -1320,13 +1318,6 @@ public class HubConfigImpl implements HubConfig
             projectProperties.setProperty("mlFlowDeveloperUserName", flowDeveloperUserName);
         }
 
-        if (dataHubAdminRoleName == null) {
-            dataHubAdminRoleName = getEnvPropString(projectProperties, "mlDataHubAdminRole", environment.getProperty("mlDataHubAdminRole"));
-        }
-        else {
-            projectProperties.setProperty("mlDataHubAdminRole", dataHubAdminRoleName);
-        }
-
         if (modulePermissions == null) {
             modulePermissions = getEnvPropString(projectProperties, "mlModulePermissions", environment.getProperty("mlModulePermissions"));
         }
@@ -1764,7 +1755,6 @@ public class HubConfigImpl implements HubConfig
         customTokens.put("%%mlFlowDeveloperRole%%", flowDeveloperRoleName == null ? environment.getProperty("mlFlowDeveloperRole") : flowDeveloperRoleName);
         customTokens.put("%%mlFlowDeveloperUserName%%", flowDeveloperUserName == null ? environment.getProperty("mlFlowDeveloperUserName") : flowDeveloperUserName);
 
-        customTokens.put("%%mlDataHubAdminRole%%", dataHubAdminRoleName == null ? environment.getProperty("mlDataHubAdminRole") : dataHubAdminRoleName);
 
         // random password for hub user
         RandomStringGenerator randomStringGenerator = new RandomStringGenerator.Builder().withinRange(33, 126).filteredBy((CharacterPredicate) codePoint -> (codePoint != 92 && codePoint != 34)).build();
@@ -2093,8 +2083,6 @@ public class HubConfigImpl implements HubConfig
 
         flowDeveloperRoleName = null;
         flowDeveloperUserName = null;
-
-        dataHubAdminRoleName = null;
 
         customForestPath = null;
         modulePermissions = null;

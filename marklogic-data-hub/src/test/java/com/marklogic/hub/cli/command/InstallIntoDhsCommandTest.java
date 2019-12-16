@@ -122,8 +122,6 @@ public class InstallIntoDhsCommandTest extends HubTestBase {
         // Verify role mappings
         assertEquals("flowDeveloper", props.getProperty("mlFlowDeveloperRole"));
         assertEquals("flowOperator", props.getProperty("mlFlowOperatorRole"));
-        assertEquals("flowDeveloper", props.getProperty("mlDataHubAdminRole"),
-            "As of 5.0.2, mlDataHubAdminRole is only used for setting permissions on triggers, so it's fine to map it to the flowDeveloper role");
 
         assertEquals("flowDeveloper,read,flowDeveloper,execute,flowDeveloper,insert,flowOperator,read,flowOperator,execute,flowOperator,insert",
             props.getProperty("mlModulePermissions"));

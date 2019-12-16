@@ -67,7 +67,6 @@ public interface HubConfig {
     String DEFAULT_USER_NAME = "flow-operator";
     String DEFAULT_DEVELOPER_ROLE_NAME = "flow-developer-role";
     String DEFAULT_DEVELOPER_USER_NAME = "flow-developer";
-    String DEFAULT_ADMIN_ROLE_NAME = "data-hub-admin-role";
 
     Integer DEFAULT_STAGING_PORT = 8010;
     Integer DEFAULT_FINAL_PORT = 8011;
