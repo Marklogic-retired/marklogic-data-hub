@@ -7,7 +7,9 @@ type SearchContextInterface = {
   pageNumber: number,
   pageLength: number,
   pageSize: number,
-  searchFacets: any
+  searchFacets: any,
+  maxRowsPerPage: number,
+  defaultRows: number
 }
 
 const defaultSearchOptions = {
@@ -15,9 +17,11 @@ const defaultSearchOptions = {
   entityNames: [],
   start: 1,
   pageNumber: 1,
-  pageLength: 10,
-  pageSize: 10,
-  searchFacets: {}
+  pageLength: 20,
+  defaultRows: 20,
+  pageSize: 20,
+  searchFacets: {},
+  maxRowsPerPage: 100
 }
 
 interface ISearchContextInterface {
@@ -49,7 +53,7 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   clearAllFacets: () => {},
   setDateFacet: () => {},
   clearDateFacet: () => {},
-  resetSearchOptions: () => {}
+  resetSearchOptions: () => {},
 });
 
 const SearchProvider: React.FC<{ children: any }> = ({children}) => {
@@ -220,7 +224,7 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       setLatestJobFacet,
       setDateFacet,
       clearDateFacet,
-      resetSearchOptions
+      resetSearchOptions,
       }}>
       {children}
     </SearchContext.Provider>
