@@ -145,6 +145,7 @@ const Sidebar:React.FC<Props> = (props) => {
             <div className={styles.facetName} data-cy='created-on-facet'>Created On</div>
           </Tooltip>
           <RangePicker 
+            id="range-picker"
             className={styles.datePicker} 
             onChange={onDateChange} 
             value={datePickerValue}

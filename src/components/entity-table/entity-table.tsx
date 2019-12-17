@@ -54,6 +54,7 @@ const EntityTable: React.FC<Props> = (props) => {
     return <Table
       rowKey="property"
       className="property-table"
+      data-cy="property-table"
       columns={columns}
       dataSource={properties}
       pagination={false}
@@ -170,6 +171,7 @@ const EntityTable: React.FC<Props> = (props) => {
         <Table
             rowKey="name"
             className="entity-table"
+            data-cy="entity-table"
             columns={props.lastHarmonized.length > 0 ? columns : archColumns}
             expandedRowRender={expandedRowRender}
             dataSource={realData}
