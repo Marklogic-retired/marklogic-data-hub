@@ -61,6 +61,13 @@ public class DeployDatabaseFieldCommand extends AbstractResourceCommand {
         return addExistingFieldsAndRangeFieldIndexes(payload, new DatabaseManager(context.getManageClient()));
     }
 
+    @Override
+    public void undo(CommandContext context) {
+        //no-op as deleting database will delete all the fields and indexes associated with it.
+        logger.info("No action required on undeploy, as the command for deleting databases on undeploy will also delete " +
+            "the fields and indexes created by this command.");
+    }
+
     protected String addExistingFieldsAndRangeFieldIndexes(String payload, ResourceManager dbManager) {
         Fragment newProps = new Fragment(payload);
         Fragment existingProps = dbManager.getPropertiesAsXml(newProps.getElementValue("/node()/m:database-name"));
