@@ -17,13 +17,13 @@ const SearchPagination: React.FC<Props> = (props) => {
 
   const [pageSizeOptions, setPageSizeOptions] = useState<string[]>([]);
 
-  const setPerPageSelector = (defaultRows: number, maxLength: number) => {
+  const setPerPageSelector = (defaultRows: number, maxRowsPerPage: number) => {
     let pageOptionsDropdown: string[] = [];
     let n = 1;
     let pageSize = defaultRows / 2;
     pageOptionsDropdown.push(pageSize.toString());
     pageSize = defaultRows;
-    while (pageSize < maxLength) {
+    while (pageSize < maxRowsPerPage) {
       pageOptionsDropdown.push(pageSize.toString());
       pageSize = (1 << n) * defaultRows;
       n++;
