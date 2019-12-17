@@ -9,15 +9,18 @@ describe("Search Pagination component", () => {
     beforeEach(() => {
       wrapper = mount(
         <SearchPagination 
-          total={10}
-          pageSize={10}
+          total={20}
+          pageSize={20}
           pageNumber={1}
+          pageLength={1}
+          maxRowsPerPage={20}
+          defaultRows={10}
         />);
     });
     test("renders", () => {
       expect(wrapper.find('.ant-pagination')).toHaveLength(1);
       const pageSize = wrapper.find('.ant-select-selection-selected-value').text();
-      expect(pageSize).toEqual('10 / page');
+      expect(pageSize).toEqual("20");
     }); 
   });
       // TODO add click simulation
