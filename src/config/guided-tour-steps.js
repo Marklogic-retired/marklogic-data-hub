@@ -20,7 +20,7 @@ const browseTableViewSteps = [
     content: "Use the drop-down menu to select one entity or all entities. Use the search bar to search for text within your selection."
   },
   {
-    selector: '.ant-layout-sider',
+    selector: '[id*="sideBarContainer"]',
     content: 'Here are the available faceted search options. Entity Properties are per selected entity. Hub Properties are per document.'
   },
   {
@@ -52,7 +52,7 @@ const browseSnippetViewSteps = [
     content: "Use the drop-down menu to select one entity or all entities. Use the search bar to search for text within your selection."
   },
   {
-    selector: '.ant-layout-sider',
+    selector: '[id*="sideBarContainer"]',
     content: 'Here are the available faceted search options. Entity Properties are per selected entity. Hub Properties are per document.'
   },
   {

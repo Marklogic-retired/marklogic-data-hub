@@ -7,7 +7,8 @@ type SearchContextInterface = {
   pageNumber: number,
   pageLength: number,
   pageSize: number,
-  searchFacets: any
+  searchFacets: any,
+  maxRowsPerPage: number
 }
 
 const defaultSearchOptions = {
@@ -15,9 +16,10 @@ const defaultSearchOptions = {
   entityNames: [],
   start: 1,
   pageNumber: 1,
-  pageLength: 10,
-  pageSize: 10,
-  searchFacets: {}
+  pageLength: 20,
+  pageSize: 20,
+  searchFacets: {},
+  maxRowsPerPage: 100
 }
 
 interface ISearchContextInterface {

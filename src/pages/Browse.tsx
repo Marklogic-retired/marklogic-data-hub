@@ -145,6 +145,8 @@ const Browse: React.FC<Props> = ({ location }) => {
                   total={totalDocuments}
                   pageNumber={searchOptions.pageNumber}
                   pageSize={searchOptions.pageSize}
+                  pageLength={searchOptions.pageLength}
+                  maxRowsPerPage={searchOptions.maxRowsPerPage}
                 />
                 <br />
                 <br />
@@ -179,6 +181,8 @@ const Browse: React.FC<Props> = ({ location }) => {
                   total={totalDocuments}
                   pageNumber={searchOptions.pageNumber}
                   pageSize={searchOptions.pageSize}
+                  pageLength={searchOptions.pageLength}
+                  maxRowsPerPage={searchOptions.maxRowsPerPage}
                 />
               </div>
             </>
