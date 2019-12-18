@@ -79,7 +79,7 @@ public class FlowRunWithDataHubOperatorTest extends HubTestBase {
 
     @BeforeEach
     public void setupEach() throws IOException {
-        Assumptions.assumeTrue(!isCertAuth());
+        Assumptions.assumeTrue(!isCertAuth() && isVersionCompatibleWith520Roles());
         configDirs.addAll(adminHubConfig.getAppConfig().getConfigDirs());
         setupProjectForRunningTestFlow();
         String userString = "{\n" +

@@ -102,7 +102,7 @@ public class DataHubSecurityAdminTest extends AbstractSecurityTest {
 
     @Test
     void task5CreateRoleInheritingPrivilegeThatDataHubSecurityAdminPossesses() {
-        Assumptions.assumeTrue(isVersionCompatibleWithGranularPrivilege());
+        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
 
         final String roleName = "test-custom-role";
         Role customRole = new Role(userWithRoleBeingTestedApi, roleName);
@@ -123,7 +123,7 @@ public class DataHubSecurityAdminTest extends AbstractSecurityTest {
 
     @Test
     void task5CreateRoleInheritingPrivilegeThatDataHubSecurityAdminDoesntPossess() {
-        Assumptions.assumeTrue(isVersionCompatibleWithGranularPrivilege());
+        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
         final String roleName = "test-custom-role2";
         Role customRole = new Role(userWithRoleBeingTestedApi, roleName);
         customRole.addPrivilege(new RolePrivilege("add-query-rolesets", "http://marklogic.com/xdmp/privileges/add-query-rolesets", "execute"));
@@ -140,7 +140,7 @@ public class DataHubSecurityAdminTest extends AbstractSecurityTest {
 
     @Test
     void task5CreateRoleWithCustomPrivilegeInDataHubNamespace() {
-        Assumptions.assumeTrue(isVersionCompatibleWithGranularPrivilege());
+        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
         final String roleName = "aaa-custom-role";
         final String customPrivilegeName = "aaa-my-privilege";
         final String customPrivilegeAction = "http://datahub.marklogic.com/custom/my-privilege";
@@ -169,7 +169,7 @@ public class DataHubSecurityAdminTest extends AbstractSecurityTest {
 
     @Test
     void task5CreateCustomPrivilegeInDisallowedNamespace() {
-        Assumptions.assumeTrue(isVersionCompatibleWithGranularPrivilege());
+        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
         final String customPrivilegeName = "bbb-my-privilege";
         final String customPrivilegeAction = "http://datahub.marklogic.com/somewhereElse/my-privilege";
 
@@ -190,7 +190,7 @@ public class DataHubSecurityAdminTest extends AbstractSecurityTest {
 
     @Test
     void task5CreateRoleWithCustomPrivilegeInDisallowedNamespace() {
-        Assumptions.assumeTrue(isVersionCompatibleWithGranularPrivilege());
+        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
         final String roleName = "aaa-custom-role";
         final String customPrivilegeName = "aaa-my-privilege";
         final String customPrivilegeAction = "http://datahub.marklogic.com/disallowed/my-privilege";

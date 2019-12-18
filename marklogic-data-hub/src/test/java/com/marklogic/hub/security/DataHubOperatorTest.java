@@ -5,6 +5,7 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,7 @@ public class DataHubOperatorTest extends AbstractSecurityTest {
 
     @Test
     public void task30RunFlow() {
+        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
         setupProjectForRunningTestFlow();
 
         try {
