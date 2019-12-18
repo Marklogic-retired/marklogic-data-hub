@@ -31,7 +31,6 @@ const Sidebar:React.FC<Props> = (props) => {
   const [datePickerValue, setDatePickerValue] = useState<any[]>([null, null]);
 
   useEffect(() => {
-    console.log('sidebar props', props);
     if (props.facets) {
       const parsedFacets = facetParser(props.facets);
       if (Object.entries(searchOptions.searchFacets).length === 0) {
@@ -69,7 +68,6 @@ const Sidebar:React.FC<Props> = (props) => {
           return facet;
         });
         entityFacets.forEach( entityFacet => {
-         // console.log('entity facet', entityFacet)
           let updatedFacet = parsedFacets.find(facet => facet.facetName === entityFacet.facetName);
           if (updatedFacet.facetValues.length) {
             updatedFacet.facetValues.forEach( facetValue => {
