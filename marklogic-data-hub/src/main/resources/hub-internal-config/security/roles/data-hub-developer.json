@@ -15,8 +15,8 @@
   ],
   "privilege": [
     {
-      "privilege-name": "protect-path",
-      "action": "http://marklogic.com/xdmp/privileges/protect-path",
+      "privilege-name": "create-trigger",
+      "action": "http://marklogic.com/xdmp/privileges/create-trigger",
       "kind": "execute"
     },
     {
@@ -25,8 +25,13 @@
       "kind": "execute"
     },
     {
-      "privilege-name": "create-trigger",
-      "action": "http://marklogic.com/xdmp/privileges/create-trigger",
+      "privilege-name": "protect-path",
+      "action": "http://marklogic.com/xdmp/privileges/protect-path",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "remove-path",
+      "action": "http://marklogic.com/xdmp/privileges/remove-path",
       "kind": "execute"
     },
     {
