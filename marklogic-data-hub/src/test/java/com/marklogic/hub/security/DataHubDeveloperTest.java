@@ -22,10 +22,10 @@ import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DataHubDeveloperTest extends AbstractSecurityTest {
 
@@ -73,41 +73,40 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
         }
 
         mgr = new TemporalAxesManager(userWithRoleBeingTestedClient, "Documents");
-        try{
+        try {
             mgr.save(temporalAxis);
             Assertions.fail();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.info("Cannot create temporal axes in 'Documents' db");
         }
     }
 
-    /**
-     * Note that protect-path seems to allow both create and update, but neither protect-path nor unprotect-path allow
-     * for deleting a protected path.
-     */
     @Test
-    public void task10CreateProtectedPaths() {
+    public void task10CreateProtectedPaths() throws Exception {
         final String pathExpression = "/some/path";
         ProtectedPath path = new ProtectedPath(pathExpression);
         path.setPermission(Arrays.asList(new com.marklogic.mgmt.api.security.protectedpath.Permission("rest-reader", "read")));
         path.setApi(userWithRoleBeingTestedApi);
 
+        final ProtectedPathManager adminProtectedPathManager = new ProtectedPathManager(adminUserClient);
+
         try {
             path.save();
+            assertTrue(adminProtectedPathManager.exists(pathExpression));
 
             // And update it
             path.setPermission(Arrays.asList(new Permission("rest-writer", "read")));
             path.save();
 
             // Verify it as the admin user
-            ProtectedPath updatedPath = resourceMapper.readResource(new ProtectedPathManager(adminUserClient).getAsJson(pathExpression), ProtectedPath.class);
+            ProtectedPath updatedPath = resourceMapper.readResource(adminProtectedPathManager.getAsJson(pathExpression), ProtectedPath.class);
             assertEquals(1, updatedPath.getPermission().size());
             assertEquals("rest-writer", updatedPath.getPermission().get(0).getRoleName(), "The protect-path privilege should allow " +
                 "the user to both create and update protected paths");
         } finally {
-            path.setApi(adminUserApi);
-            path.delete();
+            userWithRoleBeingTestedClient.delete("/manage/v2/protected-paths/" + URLEncoder.encode(pathExpression, "UTF-8") + "?force=true");
+            assertFalse(adminProtectedPathManager.exists(pathExpression),
+                "The remove-path privilege should allow the user to delete a protected path");
         }
     }
 
@@ -140,8 +139,7 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
             trigger.setDatabaseName("Triggers");
             trigger.save();
             Assertions.fail();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             logger.info("User doesn't have privilege to create triggers in 'Triggers' db");
         }
 
