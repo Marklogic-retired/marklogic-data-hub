@@ -20,5 +20,5 @@ COPY config/nginx.conf.template /etc/nginx/conf.d/default.conf.template
 COPY config/docker-entrypoint.sh /
 ENTRYPOINT ["sh", "/docker-entrypoint.sh"]
 COPY --from=build-stage /usr/src/app/build /usr/share/nginx/html
-EXPOSE 80
+EXPOSE 80 443
 CMD ["nginx", "-g", "daemon off;"]
