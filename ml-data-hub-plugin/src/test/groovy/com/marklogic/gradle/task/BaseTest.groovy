@@ -25,10 +25,7 @@ import com.marklogic.client.document.DocumentManager
 import com.marklogic.client.eval.EvalResult
 import com.marklogic.client.eval.EvalResultIterator
 import com.marklogic.client.eval.ServerEvaluationCall
-import com.marklogic.client.io.DocumentMetadataHandle
-import com.marklogic.client.io.Format
-import com.marklogic.client.io.InputStreamHandle
-import com.marklogic.client.io.StringHandle
+import com.marklogic.client.io.*
 import com.marklogic.hub.ApplicationConfig
 import com.marklogic.hub.DatabaseKind
 import com.marklogic.hub.HubConfig
@@ -110,6 +107,10 @@ class BaseTest extends Specification {
         _hubConfig.newFinalClient().newDocumentManager().write(uri, meta, new StringHandle(doc))
     }
 
+    void installJobDoc(String uri, DocumentMetadataHandle meta, String doc) {
+        _hubConfig.newJobDbClient().newDocumentManager().write(uri, meta, new FileHandle(getResourceFile(doc)));
+    }
+
     void installModule(String path, String localPath) {
 
         InputStreamHandle handle = new InputStreamHandle(new File("src/test/resources/" + localPath).newInputStream())
@@ -162,6 +163,10 @@ class BaseTest extends Specification {
         } catch (IOException e) {
             e.printStackTrace()
         }
+    }
+
+    protected File getResourceFile(String resource) {
+        return new File("src/test/resources/" + resource);
     }
 
     static void copyResourceToFile(String resourceName, File dest) {
