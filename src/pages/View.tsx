@@ -7,6 +7,8 @@ import AsyncLoader from '../components/async-loader/async-loader';
 import { entityFromJSON } from '../util/data-conversion';
 import tooltipsConfig from '../config/tooltips.config';
 import styles from './View.module.scss';
+import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const { Content } = Layout;
 const tooltips = tooltipsConfig.viewEntities;
@@ -90,14 +92,16 @@ const View: React.FC = () => {
           :
           <>
             <div className={styles.statsContainer} data-cy="total-container">
-              <Tooltip title={tooltips.entities}>
                 <div className={styles.statistic}>
-                  <Statistic title="Total Entities" value={entities.length} />
+                  <Statistic title="Total Entities" value={entities.length}/>
                 </div>
-              </Tooltip>
+              <div style= {{marginLeft: '-50px'}}>
+                <Tooltip title={tooltips.entities}>
+                <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm"/></Tooltip>
+              </div>
               <Tooltip title={tooltips.documents}>
                 <div className={styles.statistic}>
-                  <Statistic title="Total Documents" value={totalDocs} />
+                  <Statistic title="Total Documents" value={totalDocs} style={{marginLeft: '56px'}}/>
                 </div>
               </Tooltip>
             </div>
