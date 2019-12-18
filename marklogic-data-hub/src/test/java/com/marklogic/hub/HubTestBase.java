@@ -1198,7 +1198,7 @@ public class HubTestBase {
     }
 
     //Not checking the dates for nightly as we expect tests to run on latest nightly
-    protected boolean isVersionCompatibleWithGranularPrivilege() {
+    protected boolean isVersionCompatibleWith520Roles() {
         Versions.MarkLogicVersion serverVersion = versions.getMLVersion();
         if(!serverVersion.isNightly()){
             return (serverVersion.getMajor() == 10 && serverVersion.getMinor() >= 300) ;

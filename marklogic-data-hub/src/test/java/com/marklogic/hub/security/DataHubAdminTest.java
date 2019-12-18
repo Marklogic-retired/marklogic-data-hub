@@ -20,7 +20,7 @@ public class DataHubAdminTest extends AbstractSecurityTest {
 
     @Test
     public void task7ClearStagingDatabase() {
-        Assumptions.assumeTrue(isVersionCompatibleWithGranularPrivilege());
+        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
         try {
             new DatabaseManager(userWithRoleBeingTestedClient).clearDatabase(STAGING_DB, false);
             String count = adminHubConfig.newStagingClient().newServerEval().xquery("xdmp:estimate(fn:doc())").evalAs(String.class);
@@ -44,7 +44,7 @@ public class DataHubAdminTest extends AbstractSecurityTest {
 
     @Test
     public void task8ClearFinalDatabase() {
-        Assumptions.assumeTrue(isVersionCompatibleWithGranularPrivilege());
+        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
         try {
             new DatabaseManager(userWithRoleBeingTestedClient).clearDatabase(FINAL_DB, false);
             String count = adminHubConfig.newFinalClient().newServerEval().xquery("xdmp:estimate(fn:doc())").evalAs(String.class);

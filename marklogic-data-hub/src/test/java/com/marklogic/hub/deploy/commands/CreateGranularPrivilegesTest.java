@@ -26,7 +26,7 @@ public class CreateGranularPrivilegesTest extends HubTestBase {
 
     @BeforeEach
     public void setUp(){
-        Assumptions.assumeTrue(isVersionCompatibleWithGranularPrivilege());
+        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
     }
 
     /**

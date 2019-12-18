@@ -36,7 +36,7 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
 
     @Test
     public void task9ConfigureBitemporal() throws IOException {
-        Assumptions.assumeTrue(isVersionCompatibleWithGranularPrivilege());
+        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
         final String temporalAxis = "{\n" +
             "  \"axis-name\": \"test-axis\",\n" +
             "  \"axis-start\": {\n" +
@@ -112,7 +112,7 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
 
     @Test
     public void task11CreateFinalTriggers() {
-        Assumptions.assumeTrue(isVersionCompatibleWithGranularPrivilege());
+        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
         Trigger trigger = new Trigger();
         trigger.setApi(userWithRoleBeingTestedApi);
         trigger.setName("test-trigger");
@@ -147,7 +147,7 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
 
     @Test
     public void task13ConfigureAlertsInFinal() {
-        Assumptions.assumeTrue(isVersionCompatibleWithGranularPrivilege());
+        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
         ObjectNode node = ObjectMapperFactory.getObjectMapper().createObjectNode();
         node.put("uri", "my-alert-config");
         node.put("name", "my alerting app");
@@ -200,7 +200,7 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
 
     @Test
     public void task17CreateScheduledTask() {
-        Assumptions.assumeTrue(isVersionCompatibleWithGranularPrivilege());
+        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
         Task task = new Task(userWithRoleBeingTestedApi, null);
         task.setTaskPath("/MarkLogic/flexrep/tasks/push-local-forests.xqy");
         task.setGroupName("Default");
@@ -225,7 +225,7 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
 
     @Test
     public void task18ConfigureFinalIndexes() {
-        Assumptions.assumeTrue(isVersionCompatibleWithGranularPrivilege());
+        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
         Database db = new Database(userWithRoleBeingTestedApi, FINAL_DB);
         db.setGeospatialElementIndex(Arrays.asList(buildGeoIndex()));
         try {
@@ -240,7 +240,7 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
     public void task18ConfigureStagingIndexes() {
         //Creating granular privilege using pseudo function doesn't work on versions < 10.0-3, so this test will not run
         //in those versions.
-        Assumptions.assumeTrue(isVersionCompatibleWithGranularPrivilege());
+        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
         Database db = new Database(userWithRoleBeingTestedApi, STAGING_DB);
         db.setGeospatialElementIndex(Arrays.asList(buildGeoIndex()));
         try {
