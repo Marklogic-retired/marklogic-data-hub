@@ -8,7 +8,6 @@ interface Props {
   pageNumber: number;
   pageSize: number;
   pageLength: number;
-  defaultRows: number;
   maxRowsPerPage: number;
 };
 
@@ -17,8 +16,11 @@ const SearchPagination: React.FC<Props> = (props) => {
 
   const [pageSizeOptions, setPageSizeOptions] = useState<string[]>([]);
 
-  const setPerPageSelector = (defaultRows: number, maxRowsPerPage: number) => {
+
+
+  const setPerPageSelector = (maxRowsPerPage: number) => {
     let pageOptionsDropdown: string[] = [];
+    const defaultRows: number = 20;
     let n = 1;
     let pageSize = defaultRows / 2;
     pageOptionsDropdown.push(pageSize.toString());
@@ -33,8 +35,8 @@ const SearchPagination: React.FC<Props> = (props) => {
 
 
    useEffect(() => {
-    setPerPageSelector(props.defaultRows, props.maxRowsPerPage);
-  }, [props.maxRowsPerPage, props.defaultRows]);
+    setPerPageSelector(props.maxRowsPerPage);
+  }, [props.maxRowsPerPage]);
 
   const onPageChange = (pageNumber) => {
     setPage(pageNumber, props.total);

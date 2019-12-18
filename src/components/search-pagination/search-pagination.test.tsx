@@ -14,7 +14,6 @@ describe("Search Pagination component", () => {
           pageNumber={1}
           pageLength={1}
           maxRowsPerPage={20}
-          defaultRows={10}
         />);
     });
     test("renders", () => {
