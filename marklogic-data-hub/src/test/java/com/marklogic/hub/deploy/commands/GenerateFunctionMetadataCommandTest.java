@@ -25,8 +25,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 
-import static com.marklogic.client.io.DocumentMetadataHandle.Capability.READ;
-import static com.marklogic.client.io.DocumentMetadataHandle.Capability.UPDATE;
+import static com.marklogic.client.io.DocumentMetadataHandle.Capability.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
@@ -93,6 +92,7 @@ public class GenerateFunctionMetadataCommandTest extends HubTestBase {
             Assertions.assertNotEquals(0, handle.get().length);
             DocumentMetadataHandle.DocumentPermissions permissions = metadata.getPermissions();
             Assertions.assertTrue(permissions.get("data-hub-operator").contains(READ));
+            Assertions.assertTrue(permissions.get("data-hub-operator").contains(EXECUTE));
             Assertions.assertTrue(permissions.get("data-hub-developer").contains(UPDATE));
         }
     }
