@@ -33,17 +33,21 @@ const Sidebar:React.FC<Props> = (props) => {
   useEffect(() => {
     if (props.facets) {
       const parsedFacets = facetParser(props.facets);
-      if (Object.entries(searchOptions.searchFacets).length === 0) {
-        const filteredHubFacets = hubPropertiesConfig.map( hubFacet => {
-          let hubFacetValues = parsedFacets.find(facet => facet.facetName === hubFacet.facetName);
-          return hubFacetValues && {...hubFacet, ...hubFacetValues}
-        });
-        setHubFacets(filteredHubFacets);
-      } else {
-        // TODO check if hub filters need updates
-      }
+      const filteredHubFacets = hubPropertiesConfig.map( hubFacet => {
+        let hubFacetValues = parsedFacets.find(facet => facet.facetName === hubFacet.facetName);
+        return hubFacetValues && {...hubFacet, ...hubFacetValues}
+      });
+      setHubFacets(filteredHubFacets);
 
       if (props.selectedEntities.length && Object.entries(searchOptions.searchFacets).length === 0) {
+        const entityDef = props.entityDefArray.find(entity => entity.name === props.selectedEntities[0]);
+        const filteredEntityFacets = entityDef.rangeIndex.length && entityDef.rangeIndex.map( rangeIndex => {
+          let entityFacetValues = parsedFacets.find(facet => facet.facetName === rangeIndex);
+          return {...entityFacetValues}
+        });
+
+        setEntityFacets(filteredEntityFacets);
+      } else if (props.selectedEntities.length && !entityFacets.length) {
         const entityDef = props.entityDefArray.find(entity => entity.name === props.selectedEntities[0]);
         const filteredEntityFacets = entityDef.rangeIndex.length && entityDef.rangeIndex.map( rangeIndex => {
           let entityFacetValues = parsedFacets.find(facet => facet.facetName === rangeIndex);
@@ -60,7 +64,6 @@ const Sidebar:React.FC<Props> = (props) => {
           return facet;
         });
         entityFacets.forEach( entityFacet => {
-         // console.log('entity facet', entityFacet)
           let updatedFacet = parsedFacets.find(facet => facet.facetName === entityFacet.facetName);
           if (updatedFacet.facetValues.length) {
             updatedFacet.facetValues.forEach( facetValue => {
