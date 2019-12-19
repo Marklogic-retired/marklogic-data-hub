@@ -4,6 +4,7 @@
 
 <configuration>
   <include resource="org/springframework/boot/logging/logback/base.xml"/>
+  <include file="log_include.xml"/>
   <springProperty scope="context" name="LOG_PATH" source="log.path"/>
 
   <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
@@ -33,13 +34,14 @@
     </rollingPolicy>
   </appender>
 
-  <!-- LOG everything at INFO level -->
-  <root level="INFO">
+  <!-- LOG everything at configured level or INFO by default -->
+  <root level="${root.level:-INFO}">
     <appender-ref ref="RollingFile" />
     <appender-ref ref="Console" />
   </root>
 
-  <logger name="com.marklogic.hub.explorer" level="INFO" />
+  <!-- We only want the application itself controlled by root.level -->
+  <logger name="com.marklogic.hub.explorer" level="${root.level:-INFO}"/>
   <logger name="org.springframework" level="ERROR"/>
   <logger name="org.apache.http" level="WARN"/>
   <logger name="com.marklogic.client.impl" level="WARN"/>

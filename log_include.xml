@@ -1,0 +1,6 @@
+<included>
+
+  <!-- override the default value; or comment out to leave it at default -->
+  <property name="root.level" value="INFO" />
+
+</included>
