@@ -27,7 +27,7 @@ function mlGenerateFunctionMetadata(context, params, content) {
       xdmp.permission('${datahub.config.FLOWDEVELOPERROLE}','update'),
       xdmp.permission('${datahub.config.FLOWOPERATORROLE}','read'),
       xdmp.permission('${datahub.config.FLOWDEVELOPERROLE}','read'),
-      xdmp.permission('${datahub.consts.DATA_HUB_DEVELOPER_ROLE}','execute'),
+      xdmp.permission('${datahub.consts.DATA_HUB_OPERATOR_ROLE}','execute'),
       xdmp.permission('${datahub.consts.DATA_HUB_DEVELOPER_ROLE}','update'),
       xdmp.permission('${datahub.consts.DATA_HUB_OPERATOR_ROLE}','read')
       ])`;
