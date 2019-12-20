@@ -85,7 +85,7 @@ const Facet: React.FC<Props> = (props) => {
         <div className={styles.name} data-cy={stringConverter(props.name) + "-facet"}>{props.name}<Tooltip title={props.tooltip} placement="topLeft">
           {props.tooltip ? <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm"/> : ''}</Tooltip></div>
         <div className={styles.summary}>
-          <div className={styles.selected} data-cy={stringConverter(props.name) + "-selected-count"}>{checked.length} selected</div>
+          {checked.length > 0 ? <div className={styles.selected} data-cy={stringConverter(props.name) + "-selected-count"}>{checked.length} selected</div> :''}
           <div 
             className={(checked.length > 0 ? styles.clearActive : styles.clearInactive)} 
             onClick={() => handleClear()}
