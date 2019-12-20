@@ -8,6 +8,9 @@ import { facetParser } from '../../util/data-conversion';
 import hubPropertiesConfig from '../../config/hub-properties.config';
 import tooltipsConfig from '../../config/tooltips.config';
 import styles from './sidebar.module.scss';
+import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 
 const { Panel } = Collapse;
 const { RangePicker } = DatePicker;
@@ -144,9 +147,8 @@ const Sidebar:React.FC<Props> = (props) => {
           </Panel>
         )}
         <Panel id="hub-properties" header={<div className={styles.title}>Hub Properties</div>} key="hubProperties" style={{borderBottom: 'none'}}>
-          <Tooltip title={tooltips.createdOn} placement="topLeft">
-            <div className={styles.facetName} data-cy='created-on-facet'>Created On</div>
-          </Tooltip>
+            <div className={styles.facetName} data-cy='created-on-facet'>Created On<Tooltip title={tooltips.createdOn} placement="topLeft">
+              <FontAwesomeIcon className={styles.infoIcon}  icon={faInfoCircle} size="sm" /></Tooltip></div>
           <RangePicker 
             id="range-picker"
             className={styles.datePicker} 
@@ -156,7 +158,7 @@ const Sidebar:React.FC<Props> = (props) => {
           { hubFacets.map(facet => {
             return facet && (
               <Facet
-                name={facet.hasOwnProperty('displayName') ? facet.displayName : facet.facetName}
+                name={facet.hasOwnProperty('displayName') ? facet.displayName : facet.facetName }
                 constraint={facet.facetName}
                 facetValues={facet.facetValues}
                 key={facet.facetName}
