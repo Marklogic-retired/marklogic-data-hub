@@ -29,6 +29,18 @@ plugins {
     id "org.sonarqube" version "2.8"
 }
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'war'
+
+war {
+    manifest {
+        attributes("Implementation-Title": "Web Services and UI")
+    }
+
+}
+
+bootWar {
+    baseName "marklogic-explorer"
+}
 
 repositories {
     jcenter()
