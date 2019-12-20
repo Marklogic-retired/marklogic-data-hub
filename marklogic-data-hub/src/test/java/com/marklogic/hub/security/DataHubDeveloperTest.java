@@ -203,7 +203,12 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
         Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
         Task task = new Task(userWithRoleBeingTestedApi, null);
         task.setTaskPath("/MarkLogic/flexrep/tasks/push-local-forests.xqy");
-        task.setGroupName("Default");
+        if(adminHubConfig.getIsProvisionedEnvironment()) {
+            task.setGroupName("Curator");
+        }
+        else {
+            task.setGroupName("Default");
+        }
         task.setTaskEnabled(false);
         task.setTaskDatabase(FINAL_DB);
         task.setTaskModules("");

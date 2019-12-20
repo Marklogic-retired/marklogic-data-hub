@@ -89,11 +89,30 @@ public class CreateGranularPrivilegesCommand implements Command, UndoableCommand
         p.setAction("http://marklogic.com/xdmp/privileges/admin/database/alerts/$$database-id(" + finalDbName+ ")");
         mgr.save(p.getJson());
 
-        String groupName = hubConfig.getAppConfig().getGroupName();
+        if(hubConfig.getIsProvisionedEnvironment()) {
+            p.setPrivilegeName("admin-group-scheduled-task-Analyzer");
+            p.setAction("http://marklogic.com/xdmp/privileges/admin/group/scheduled-task/$$group-id(Analyzer)");
+            mgr.save(p.getJson());
 
-        p.setPrivilegeName("admin-group-scheduled-task-"+groupName);
-        p.setAction("http://marklogic.com/xdmp/privileges/admin/group/scheduled-task/$$group-id("+ groupName + ")");
-        mgr.save(p.getJson());
+            p.setPrivilegeName("admin-group-scheduled-task-Curator");
+            p.setAction("http://marklogic.com/xdmp/privileges/admin/group/scheduled-task/$$group-id(Curator)");
+            mgr.save(p.getJson());
+
+            p.setPrivilegeName("admin-group-scheduled-task-Evaluator");
+            p.setAction("http://marklogic.com/xdmp/privileges/admin/group/scheduled-task/$$group-id(Evaluator)");
+            mgr.save(p.getJson());
+
+            p.setPrivilegeName("admin-group-scheduled-task-Operator");
+            p.setAction("http://marklogic.com/xdmp/privileges/admin/group/scheduled-task/$$group-id(Operator)");
+            mgr.save(p.getJson());
+        }
+        else {
+            String groupName = hubConfig.getAppConfig().getGroupName();
+
+            p.setPrivilegeName("admin-group-scheduled-task-"+groupName);
+            p.setAction("http://marklogic.com/xdmp/privileges/admin/group/scheduled-task/$$group-id("+ groupName + ")");
+            mgr.save(p.getJson());
+        }
     }
 
     @Override
@@ -118,8 +137,17 @@ public class CreateGranularPrivilegesCommand implements Command, UndoableCommand
         mgr.deleteAtPath("/manage/v2/privileges/admin-database-alerts-" + finalDbName + "?kind=execute");
         mgr.deleteAtPath("/manage/v2/privileges/admin-database-alerts-" + stagingDbName + "?kind=execute");
 
-        String groupName = hubConfig.getAppConfig().getGroupName();
-        mgr.deleteAtPath("/manage/v2/privileges/admin-group-scheduled-task-"+ groupName + "?kind=execute");
+        if(hubConfig.getIsProvisionedEnvironment()) {
+            mgr.deleteAtPath("/manage/v2/privileges/admin-group-scheduled-task-Analyzer" + "?kind=execute");
+            mgr.deleteAtPath("/manage/v2/privileges/admin-group-scheduled-task-Curator" + "?kind=execute");
+            mgr.deleteAtPath("/manage/v2/privileges/admin-group-scheduled-task-Evaluator" + "?kind=execute");
+            mgr.deleteAtPath("/manage/v2/privileges/admin-group-scheduled-task-Operator" + "?kind=execute");
+        }
+        else {
+            String groupName = hubConfig.getAppConfig().getGroupName();
+            mgr.deleteAtPath("/manage/v2/privileges/admin-group-scheduled-task-"+ groupName + "?kind=execute");
+
+        }
     }
 
 }
