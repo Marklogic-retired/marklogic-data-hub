@@ -4,7 +4,7 @@ COPY . /app/
 WORKDIR /app
 RUN gradle build -x test
 
-FROM azul/zulu-openjdk-alpine:11
+FROM azul/zulu-openjdk-alpine:11-jre
 RUN mkdir /app
 COPY --from=build-stage /app/build/libs/*.war /app/explorer.war
 WORKDIR /app
