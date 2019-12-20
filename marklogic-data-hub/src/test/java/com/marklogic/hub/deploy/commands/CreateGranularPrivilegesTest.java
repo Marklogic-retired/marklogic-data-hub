@@ -84,12 +84,36 @@ public class CreateGranularPrivilegesTest extends HubTestBase {
         assertEquals("http://marklogic.com/xdmp/privileges/admin/database/alerts/" + finalDbId, p.getAction());
         assertEquals("data-hub-developer", p.getRole().get(0));
 
-        String groupName = adminHubConfig.getAppConfig().getGroupName();
-        ResourcesFragment groupsXml = new GroupManager(adminHubConfig.getManageClient()).getAsXml();
-        final String groupId = groupsXml.getIdForNameOrId(groupName);
-        p = resourceMapper.readResource(mgr.getAsJson("admin-group-scheduled-task-"+groupName, "kind", "execute"), Privilege.class);
-        assertEquals("http://marklogic.com/xdmp/privileges/admin/group/scheduled-task/" + groupId, p.getAction());
-        assertEquals("data-hub-developer", p.getRole().get(0));
+        if(adminHubConfig.getIsProvisionedEnvironment()) {
+            ResourcesFragment groupsXml = new GroupManager(adminHubConfig.getManageClient()).getAsXml();
+            String groupId = groupsXml.getIdForNameOrId("Analyzer");
+            p = resourceMapper.readResource(mgr.getAsJson("admin-group-scheduled-task-Analyzer", "kind", "execute"), Privilege.class);
+            assertEquals("http://marklogic.com/xdmp/privileges/admin/group/scheduled-task/" + groupId, p.getAction());
+            assertEquals("data-hub-developer", p.getRole().get(0));
+
+            groupId = groupsXml.getIdForNameOrId("Curator");
+            p = resourceMapper.readResource(mgr.getAsJson("admin-group-scheduled-task-Curator", "kind", "execute"), Privilege.class);
+            assertEquals("http://marklogic.com/xdmp/privileges/admin/group/scheduled-task/" + groupId, p.getAction());
+            assertEquals("data-hub-developer", p.getRole().get(0));
+
+            groupId = groupsXml.getIdForNameOrId("Evaluator");
+            p = resourceMapper.readResource(mgr.getAsJson("admin-group-scheduled-task-Evaluator", "kind", "execute"), Privilege.class);
+            assertEquals("http://marklogic.com/xdmp/privileges/admin/group/scheduled-task/" + groupId, p.getAction());
+            assertEquals("data-hub-developer", p.getRole().get(0));
+
+            groupId = groupsXml.getIdForNameOrId("Operator");
+            p = resourceMapper.readResource(mgr.getAsJson("admin-group-scheduled-task-Operator", "kind", "execute"), Privilege.class);
+            assertEquals("http://marklogic.com/xdmp/privileges/admin/group/scheduled-task/" + groupId, p.getAction());
+            assertEquals("data-hub-developer", p.getRole().get(0));
+        }
+        else {
+            String groupName = adminHubConfig.getAppConfig().getGroupName();
+            ResourcesFragment groupsXml = new GroupManager(adminHubConfig.getManageClient()).getAsXml();
+            final String groupId = groupsXml.getIdForNameOrId(groupName);
+            p = resourceMapper.readResource(mgr.getAsJson("admin-group-scheduled-task-"+groupName, "kind", "execute"), Privilege.class);
+            assertEquals("http://marklogic.com/xdmp/privileges/admin/group/scheduled-task/" + groupId, p.getAction());
+            assertEquals("data-hub-developer", p.getRole().get(0));
+        }
     }
 
     @Test
@@ -106,9 +130,13 @@ public class CreateGranularPrivilegesTest extends HubTestBase {
         assertTrue(privileges.resourceExists("admin-database-temporal-data-hub-FINAL"));
         assertTrue(privileges.resourceExists("admin-database-alerts-data-hub-STAGING"));
         assertTrue(privileges.resourceExists("admin-database-alerts-data-hub-FINAL"));
-
         String groupName = adminHubConfig.getAppConfig().getGroupName();
-        assertTrue(privileges.resourceExists("admin-group-scheduled-task-"+groupName));
+        if(adminHubConfig.getIsProvisionedEnvironment()) {
+            assertTrue(privileges.resourceExists("admin-group-scheduled-task-Operator"));
+        }
+        else {
+            assertTrue(privileges.resourceExists("admin-group-scheduled-task-"+groupName));
+        }
 
         final CreateGranularPrivilegesCommand command = new CreateGranularPrivilegesCommand(adminHubConfig);
         final CommandContext context = new CommandContext(adminHubConfig.getAppConfig(), adminHubConfig.getManageClient(), null);
@@ -126,7 +154,12 @@ public class CreateGranularPrivilegesTest extends HubTestBase {
             assertFalse(privileges.resourceExists("admin-database-temporal-data-hub-FINAL"));
             assertFalse(privileges.resourceExists("admin-database-alerts-data-hub-STAGING"));
             assertFalse(privileges.resourceExists("admin-database-alerts-data-hub-FINAL"));
-            assertFalse(privileges.resourceExists("admin-group-scheduled-task-"+groupName));
+            if(adminHubConfig.getIsProvisionedEnvironment()) {
+                assertFalse(privileges.resourceExists("admin-group-scheduled-task-Operator"));
+            }
+            else {
+                assertFalse(privileges.resourceExists("admin-group-scheduled-task-"+groupName));
+            }
         } finally {
             // Need to deploy these privileges back so the lack of them doesn't impact other tests
             command.execute(context);
