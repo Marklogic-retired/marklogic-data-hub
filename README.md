@@ -33,7 +33,7 @@ mlHost - What MarkLogic server you are connecting, if not specified, mlHost defi
 explorer-default.properties will be used as default.
 Configure using command line like this: 
 ```
-java -jar ${path-to-jar}/explorer.jar --mlHost=MLServerHost
+java -jar ${path-to-war}/marklogic-explorer.war --mlHost=MLServerHost
 ```
 
 For external configuration file:
@@ -44,7 +44,7 @@ Explorer application loads properties from `application.properties` files in the
 You can also load a custom file (file that's not named `application.properties`) using the 
 parameter `spring.config.additional-location` while running the app like this:
 ```
-java -jar ${path-to-jar}/explorer.jar --spring.config.additional-location="file:/path/to/file/gradle.properties"
+java -jar ${path-to-war}/marklogic-explorer.war --spring.config.additional-location="file:/path/to/file/gradle.properties"
 ```
 
 List of all major configurable properties:
