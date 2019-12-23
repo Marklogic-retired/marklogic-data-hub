@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class AuthTest {
 
-  private static String BASE_URL = "/v2";
+  private static String BASE_URL = "/datahub/v2";
   private static String LOGIN_URL = BASE_URL + "/login";
   private static String LOGOUT_URL = BASE_URL + "/logout";
   private static String PAGE_URL = BASE_URL + "/models";
