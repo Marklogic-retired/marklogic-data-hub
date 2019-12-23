@@ -108,24 +108,25 @@ const ResultTable: React.FC<Props> = (props) => {
   }
 
   useEffect(() => {
-    let lastKey: string;
-      props.entity.length === 0 ? listOfColumns = setPrimaryKeyColumn(allEntitiesColumns) : listOfColumns = setPrimaryKeyColumn(headerParser(arrayOfTitles));
-      if (listOfColumns && listOfColumns.length > 0) {
-        listOfColumns.unshift({ title: 'Identifier', key: '0' });
-        lastKey = '0-' + String(Number(listOfColumns[listOfColumns.length - 1].key.split('-')[listOfColumns[listOfColumns.length - 1].key.split('-').length - 1]) + 1);
-        listOfColumns.push({ title: 'Created', key: lastKey })
-        previousColumns = [...tableHeader(listOfColumns)];
-      }
+    props.entity.length === 0 ? listOfColumns = setPrimaryKeyColumn(allEntitiesColumns) : listOfColumns = setPrimaryKeyColumn(headerParser(arrayOfTitles));
+    if (props.entity.length === 0 || (props.entity.length !== 0 && parsedPayload.primaryKeys.length === 0)) {
+      listOfColumns.unshift({ title: 'Identifier', key: '0-i' });
+    }
+    if (listOfColumns && listOfColumns.length > 0) {
+      listOfColumns.push({ title: 'Created', key: '0-c' })
+      listOfColumns.push({ title: 'Detail view', key: '0-d' });
+      previousColumns = [...tableHeader(listOfColumns)];
+    }
   })
 
   useEffect(() => {
     let header = tableHeader(listOfColumns);
     //set table data
-    setColumns(header.slice(0, 4))
+    setColumns(header.slice(0, 5))
     //set popover tree data
     setTreeColumns(previousColumns)
     //set popover tree selected checkboxes data
-    setCheckedColumns(header.slice(0, 4));
+    setCheckedColumns(header.slice(0, 5));
   }, [props.data]);
 
   const components = {
@@ -187,29 +188,6 @@ const ResultTable: React.FC<Props> = (props) => {
           row[propt.toLowerCase()] = item.itemEntityProperties[0][propt].toString();
         }
       }
-
-      // for (let propt in item.itemEntityProperties[0]) {
-      //   if (typeof item.itemEntityProperties[0][propt] !== 'object') {
-      //     if (isUri) {
-      //       row.identifier =
-      //         <Link to={path}>
-      //           <Tooltip title={isUri ? item.uri : item.primaryKey}>{'.../' + document}</Tooltip>
-      //         </Link>
-      //     }
-      //     if (parsedPayload.primaryKeys.includes(propt)) {
-      //       row[propt.toLowerCase()] = <Link to={path}>{item.itemEntityProperties[0][propt].toString()}</Link>
-      //     } else {
-      //       row[propt.toLowerCase()] = item.itemEntityProperties[0][propt].toString();
-      //     }
-      //   } else if (typeof item.itemEntityProperties[0][propt] === 'object') {
-      //     //handle nested objects in the table, most likely using antd rowSpan and colSpan options. TODO
-
-
-      //     // console.log('propt',propt)
-      //     // console.log('item.itemEntityProperties[0][propt] ', item.itemEntityProperties[0][propt] )
-      //     //  console.log(' row[propt.toLowerCase()] = item.itemEntityProperties[0][propt][0].toString();',  row[propt.toLowerCase()] = item.itemEntityProperties[0][propt][0].toString())
-      //   }
-      // }
     }
     data.push(row)
   });

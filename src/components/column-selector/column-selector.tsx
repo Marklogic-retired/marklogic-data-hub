@@ -28,11 +28,7 @@ const ColumnSelector: React.FC<Props> = (props) => {
   }, [props.tree])
 
   useEffect(() => {
-    // console.log('allKeys',allKeys)
-    // setCheckedKeys(allKeys.slice(0,4))
-
     setCheckedKeys([...[props.title.map(e => e.key)][0]])
-    // setCheckedKeys(getKeys(props.tree))
   }, [props.title])
 
   const onExpand = expandedKeys => {
@@ -95,9 +91,16 @@ const ColumnSelector: React.FC<Props> = (props) => {
       }
     }
 
-    let k = 
+    let col = new Array();
+    for(let i of checkedKeys) {
+      for(let j of allKeys) {
+        if(j.startsWith(i)) {
+          col.push(j)
+        }
+      }
+    }
 
-    props.headerRender(reconstructHeader(deepCopy(data), checkedKeys));
+    props.headerRender(reconstructHeader(deepCopy(data), col));
     setTree(data)
   };
 

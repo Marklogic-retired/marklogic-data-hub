@@ -164,7 +164,7 @@ export const tableParser = (props) => {
   return {
     data: consdata,
     primaryKeys: primaryKeys,
-    entityTitle: entityTitle
+    entityTitle: entityTitle,
   }
 }
 
