@@ -54,7 +54,7 @@ public class ConnectionAuthenticationFilter extends
   // ===================================================================================================
 
   public ConnectionAuthenticationFilter() throws IOException, ClassNotFoundException {
-    super(new AntPathRequestMatcher("/v2/login", "POST"));
+    super(new AntPathRequestMatcher("/datahub/v2/login", "POST"));
   }
 
   // ~ Methods

@@ -78,7 +78,7 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
         .antMatchers(getAlwaysPermittedPatterns()).permitAll().anyRequest().authenticated()
         .and()
         .logout()
-        .logoutUrl("/v2/logout")
+        .logoutUrl("/datahub/v2/logout")
         .logoutSuccessHandler(currentProjectController)
     ;
 

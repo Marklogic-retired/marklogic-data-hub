@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 @Controller
-@RequestMapping(value = "/v2/search")
+@RequestMapping(value = "/datahub/v2/search")
 public class SearchController {
 
   @Autowired

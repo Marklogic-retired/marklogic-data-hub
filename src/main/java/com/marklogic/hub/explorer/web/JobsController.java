@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping("/v2/jobs")
+@RequestMapping("/datahub/v2/jobs")
 public class JobsController {
 
   private static final Logger logger = LoggerFactory.getLogger(JobsController.class);
