@@ -20,4 +20,5 @@ assetInstallTime.properties
 *.db
 *.log
 archived/
-
+src/main/resources/static/
+src/main/resources/templates/
