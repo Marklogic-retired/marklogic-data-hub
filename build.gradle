@@ -139,6 +139,24 @@ task stopBootrun {
     }
 }
 
+task cleanUi(type: Delete) {
+    delete springBootUiPath + '/static', springBootUiPath + '/templates'
+}
+
+task copyUiAssets(type: Copy) {
+    from reactUiPath + '/build'
+    into springBootUiPath + '/static'
+    exclude '*.html'
+    dependsOn tasks.cleanUi
+}
+
+task copyUiFiles(type: Copy) {
+    from reactUiPath + '/build'
+    into springBootUiPath + '/templates'
+    include '*.html'
+    dependsOn tasks.copyUiAssets
+}
+
 javadoc {
     options.overview = 'src/main/resources/overview.html'
 }
@@ -224,3 +242,6 @@ publishing {
         }
     }
 }
+
+// Uncomment when 'reactUiPath' is fixed
+//build.dependsOn copyUiFiles
