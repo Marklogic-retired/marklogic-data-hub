@@ -15,7 +15,7 @@ pipeline{
     BUILDER_PASS=credentials('BUILDER_PASS')
 	}
 	parameters{
-	string(name: 'Email', defaultValue: 'data-hub-explorer@marklogic.com', description: 'Who should I say send the email to?')
+	string(name: 'Email', defaultValue: 'Akshay.Sonvane@marklogic.com,Bruce.An@marklogic.com,Diane.Brown@marklogic.com,Hao.Liu@marklogic.com,Mike.Wooldridge@marklogic.com,Rahul.Vudutala@marklogic.com,Sanjeevani.Vishaka@marklogic.comTimur.Isangulov@marklogic.com,stadikon@marklogic.com', description: 'Who should I say send the email to?')
 	}
 	stages{
 		stage('Build-explorer'){
