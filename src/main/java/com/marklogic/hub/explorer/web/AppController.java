@@ -1,3 +1,6 @@
+/*
+ * Copyright 2019 MarkLogic Corporation. All rights reserved.
+ */
 package com.marklogic.hub.explorer.web;
 
 import org.springframework.stereotype.Controller;
