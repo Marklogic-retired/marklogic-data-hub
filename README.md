@@ -23,6 +23,19 @@ If you want to skip running test cases use
 ./gradlew build -x test
 ```
 
+# How to build with UI
+
+```
+./gradlew copyUiFiles -PreactUiPath=/path/to/explorer-ui
+```
+```
+./gradlew build
+```
+If you want to skip running test cases use
+```
+./gradlew build -x test
+```
+
 # How to run 
 
 ## Run Backend locally from command line
