@@ -1,7 +1,7 @@
 # MarkLogic Data Hub Explorer Backend
 
-Entity Models are created by Users in MarkLogic Database. After Data Hub Ingests and Curates, 
-harmonized data is loaded into MarkLogic Database for those Entities. 
+Entity Models are created by Users in MarkLogic Database. After Data Hub Ingests and Curates,
+harmonized data is loaded into MarkLogic Database for those Entities.
 Explorer is the tool to analyze data stored in those Entities.
 
 # Version Support
@@ -36,15 +36,15 @@ If you want to skip running test cases use
 ./gradlew build -x test
 ```
 
-# How to run 
+# How to run
 
 ## Run Backend locally from command line
 
-Backend provides some configurable properties. 
+Backend provides some configurable properties.
 For example:
-mlHost - What MarkLogic server you are connecting, if not specified, mlHost defined in 
+mlHost - What MarkLogic server you are connecting, if not specified, mlHost defined in
 explorer-default.properties will be used as default.
-Configure using command line like this: 
+Configure using command line like this:
 ```
 java -jar ${path-to-war}/marklogic-explorer.war --mlHost=MLServerHost
 ```
@@ -54,7 +54,7 @@ Explorer application loads properties from `application.properties` files in the
 * A `/config` subdirectory of the current directory
 * The current directory
 
-You can also load a custom file (file that's not named `application.properties`) using the 
+You can also load a custom file (file that's not named `application.properties`) using the
 parameter `spring.config.additional-location` while running the app like this:
 ```
 java -jar ${path-to-war}/marklogic-explorer.war --spring.config.additional-location="file:/path/to/file/gradle.properties"
@@ -86,5 +86,57 @@ List of security related properties for Explorer app server:
 | server.ssl.key-store-password  | Sets the password used to generate the certificate         | explorer                        |
 | server.ssl.key-alias           | Sets the alias mapped to the certificate                   | explorer                        |
 
-In order to understand more about configurable properties, check those files (explorer-default.properties, 
+In order to understand more about configurable properties, check those files (explorer-default.properties,
 application.properties, application-production.properties).
+
+Configuration Strategy
+
+Although nearly everything can be done via the command line, there are options that you may want to
+consider, whether for security reasons such as concern about unauthorized persons viewing a command
+line (such as running "ps -aelf" on the same system that's running Explorer) or to ease the process
+of running multiple instances.  You will almost certainly want to take advantage of a mountable
+filesystem for logs, for example.  You will definitely want to use your own certificate mapping when
+running in a corporate environment, and you will need to ensure that MarkLogic is aware of the
+keystore.
+
+One way to go about this in a safe manner and to avoid inadvertently overwriting internal values is
+to take advantage of two things:
+  spring.config.additional-location="file://path_to_config_file_not_named_application.properties"
+  explicitly defining log.path in that file
+
+Such a file may look like this:
+```
+# the location of the log file
+log.path=/mountpoint/sharedlogs/logs
+
+# The format used for the keystore. It could be set to JKS in case it is a JKS file
+server.ssl.key-store-type=PKCS12
+# The path to the keystore containing the certificate
+server.ssl.key-store=classpath:keystore/explorer.p12
+# The password used to generate the certificate
+server.ssl.key-store-password=explorer
+# The alias mapped to the certificate
+server.ssl.key-alias=explorer
+```
+
+There is one other thing that you may want to do, but it must be set as a system property,
+namely define the root logging level.  (It defaults to "INFO" but in a production environment it's
+common to run in a less-verbose mode.)  You can also define this in the default include file for
+logback (our logging software) that we provide, namely, log_include.xml.
+
+```
+<included>
+
+  <!-- override the default value; or comment out to leave it at default -->
+  <property name="root.level" value="INFO" />
+
+</included>
+```
+
+Naturally, you can set this on the command line you use to start explorer:
+
+```
+  $ java -Droot.level=WARN -jar ...
+```
+as described above.
+
