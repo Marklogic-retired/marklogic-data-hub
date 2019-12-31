@@ -31,8 +31,6 @@ import com.marklogic.hub.impl.FlowManagerImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.RunStepResponse;
-import com.marklogic.hub.step.StepDefinition;
-import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -73,20 +71,7 @@ public class FlowRunnerTest extends HubTestBase {
         basicSetup();
         getDataHubAdminConfig();
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
-        FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/entities/e2eentity.entity.json"),
-            hubConfig.getHubEntitiesDir().toFile());
-        installUserModules(getDataHubAdminConfig(), true);
-        FileUtils.copyDirectory(getResourceFile("flow-runner-test/flows"), hubConfig.getFlowsDir().toFile());
-        FileUtils.copyDirectory(getResourceFile("flow-runner-test/input"),
-            hubConfig.getHubProjectDir().resolve("input").toFile());
-        FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/step-definitions/json-ingestion.step.json"),
-            hubConfig.getStepsDirByType(StepDefinition.StepDefinitionType.INGESTION).resolve("json-ingestion").toFile());
-        FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/step-definitions/json-mapping.step.json"),
-            hubConfig.getStepsDirByType(StepDefinition.StepDefinitionType.MAPPING).resolve("json-mapping").toFile());
-        FileUtils.copyDirectory(getResourceFile("flow-runner-test/mappings"),
-            hubConfig.getHubMappingsDir().resolve("e2e-mapping").toFile());
-        installUserModules(getDataHubAdminConfig(), true);
-        installHubArtifacts(getDataHubAdminConfig(), true);
+        setupProjectForRunningTestFlow();
         getHubFlowRunnerConfig();
     }
 
