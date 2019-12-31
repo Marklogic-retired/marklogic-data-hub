@@ -225,7 +225,7 @@ class Flow {
     //let's update our jobdoc now
     if (!combinedOptions.noWrite) {
       try {
-        writeTransactionInfo = this.datahub.hubUtils.writeDocuments(this.writeQueue, 'xdmp.defaultPermissions()', collections, this.globalContext.targetDatabase);
+        writeTransactionInfo = this.datahub.hubUtils.writeDocuments(this.writeQueue, xdmp.defaultPermissions(), collections, this.globalContext.targetDatabase);
       } catch (e) {
         this.handleWriteError(this, e);
       }
