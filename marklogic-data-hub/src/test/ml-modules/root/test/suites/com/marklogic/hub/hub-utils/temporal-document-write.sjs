@@ -10,10 +10,10 @@ let emptySequence = Sequence.from([]);
 let temporalCollection = 'temporalCollection';
 let temporalDoc = {uri: "/test.json", value: { systemStart: null, systemEnd: null, validStart: fn.currentDateTime(), validEnd: fn.currentDateTime().add(xs.yearMonthDuration('P1Y')) }};
 
-hubUtils.writeDocuments([temporalDoc], 'xdmp.defaultPermissions()', [temporalCollection], xdmp.databaseName(xdmp.database()));
+hubUtils.writeDocuments([temporalDoc], xdmp.defaultPermissions(), [temporalCollection], xdmp.databaseName(xdmp.database()));
 
 let readTemporalDoc = fn.head(xdmp.eval(`
- cts.doc('${temporalDoc.uri}'); 
+ cts.doc('${temporalDoc.uri}');
 `));
 [
   test.assertTrue(temporalCollections.filter((col) => fn.string(col) === temporalCollection).length === 1, `Temporal collections: ${xdmp.describe(temporalCollections, emptySequence, emptySequence)}`),
