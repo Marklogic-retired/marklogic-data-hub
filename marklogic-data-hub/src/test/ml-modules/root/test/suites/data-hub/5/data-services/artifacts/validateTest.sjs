@@ -2,7 +2,7 @@ const test = require("/test/test-helper.xqy");
 
 function invokeService(artifactType, artifactName, artifact) {
   return fn.head(xdmp.invoke(
-    "/data-hub/5/data-services/artifacts/validateArtifact.sjs",
+    "/data-hub/5/data-services/artifacts/validateArtifact.mjs",
     {artifactType, artifactName, artifact: xdmp.toJSON(artifact)}
   ));
 }
@@ -23,11 +23,10 @@ function invalidArtifact() {
   } catch (e) {
     let msg = e.data[2];
     return [
-      test.assertEqual(3, e.data.length, `Error doesn't have the expected validate information: "${JSON.stringify(e)}"`),
-      test.assertTrue(fn.contains(msg, 'required'), `Message: "${msg}" doesn't have "required"`),
-      test.assertTrue(fn.contains(msg, 'targetFormat'), `Message: "${msg}" doesn't have "targetFormat"`),
-      test.assertTrue(fn.contains(msg, 'sourceFormat'), `Message: "${msg}" doesn't have "sourceFormat"`),
-      test.assertFalse(fn.contains(msg, 'name'), `Message: "${msg}" has "name" when it shouldn't`)
+      test.assertTrue(fn.contains(msg, 'required')),
+      test.assertTrue(fn.contains(msg, 'targetFormat')),
+      test.assertTrue(fn.contains(msg, 'sourceFormat')),
+      test.assertFalse(fn.contains(msg, 'name'))
     ];
   }
 }
