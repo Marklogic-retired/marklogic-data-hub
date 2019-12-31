@@ -35,10 +35,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -46,6 +43,8 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import static com.marklogic.hub.HubConfig.HUB_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES;
 import static com.marklogic.hub.HubConfig.USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES;
@@ -519,6 +518,59 @@ public class HubProjectImpl implements HubProject {
         }
         upgradeFlows();
         removeEmptyRangeElementIndexArrayFromFinalDatabaseFile();
+    }
+
+    @Override
+    public void exportProject(File location) {
+        if(!location.getParentFile().exists()) {
+            location.getParentFile().mkdirs();
+        }
+        try (ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(location))){
+            List<String> whiteList = new ArrayList<>(Arrays.asList("entities", "flows", "src" + File.separator + "main",
+            "step-definitions", "gradle", "gradlew", "gradlew.bat", "build.gradle", "gradle.properties"));
+            whiteList.forEach(file ->{
+                File fileToZip = getProjectDir().resolve(file).toFile();
+                try {
+                    if (fileToZip.isDirectory()) {
+                        zout.putNextEntry(new ZipEntry(file + File.separator));
+                        zipSubDirectory(file + File.separator, fileToZip, zout);
+                    } else {
+                        zipSubDirectory("", fileToZip, zout);
+                    }
+                }
+                catch (Exception ex){
+                    throw new RuntimeException("Unable to export project, cause: " + ex.getMessage(), ex);
+                }
+            });
+        }
+        catch (Exception e){
+            throw new RuntimeException("Unable to export project, cause: " + e.getMessage(), e);
+        }
+    }
+
+    private void zipSubDirectory(String basePath, File fileToZip, ZipOutputStream zout) throws IOException {
+        File[] files = fileToZip.listFiles();
+        if(files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    String path = basePath + file.getName() + File.separator;
+                    zout.putNextEntry(new ZipEntry(path));
+                    zipSubDirectory(path, file, zout);
+                } else {
+                    addFileToZip(basePath, file, zout);
+                }
+            }
+        }
+        else {
+            addFileToZip(basePath, fileToZip, zout);
+        }
+    }
+
+    private void addFileToZip(String basePath, File fileToZip, ZipOutputStream zout) throws  IOException {
+        FileInputStream fin = new FileInputStream(fileToZip);
+        zout.putNextEntry(new ZipEntry(basePath + fileToZip.getName()));
+        IOUtils.copy(fin, zout);
+        IOUtils.closeQuietly(fin);
     }
 
     protected void upgradeFlows() {
