@@ -30,7 +30,7 @@ class HubUtils {
   }
 
   writeDocument(docUri, content, permissions, collections, database) {
-    return fn.head(xdmp.invoke('/data-hub/5/impl/hub-utils/invoke-single-write.sjs',
+    return fn.head(xdmp.invoke('/data-hub/5/impl/hub-utils/invoke-single-write.mjs',
     {
     content: content,
     docUri:docUri,
@@ -46,7 +46,7 @@ class HubUtils {
   }
 
   writeDocuments(writeQueue, permissions = xdmp.defaultPermissions(), collections = [], database = xdmp.databaseName(xdmp.database())){
-    return fn.head(xdmp.invoke('/data-hub/5/impl/hub-utils/invoke-queue-write.sjs',
+    return fn.head(xdmp.invoke('/data-hub/5/impl/hub-utils/invoke-queue-write.mjs',
       {
         writeQueue,
         permissions,
@@ -61,7 +61,7 @@ class HubUtils {
   }
 
   deleteDocument(docUri, database){
-    xdmp.invoke('/data-hub/5/impl/hub-utils/invoke-single-delete.sjs',
+    xdmp.invoke('/data-hub/5/impl/hub-utils/invoke-single-delete.mjs',
     {
       docUri
     },
