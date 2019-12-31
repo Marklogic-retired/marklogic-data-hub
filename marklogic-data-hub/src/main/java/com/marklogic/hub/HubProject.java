@@ -18,6 +18,7 @@ package com.marklogic.hub;
 
 import com.marklogic.hub.step.StepDefinition;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
@@ -246,6 +247,11 @@ public interface HubProject {
      * @throws IOException if problem happens with the on-disk project.
      */
     void upgradeProject() throws IOException;
+
+    /**
+     * Exports the project content to disk
+     */
+    void exportProject(File location);
 
     String getHubModulesDeployTimestampFile();
 

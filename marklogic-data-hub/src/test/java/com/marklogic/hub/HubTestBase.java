@@ -1214,11 +1214,15 @@ public class HubTestBase {
         basicSetup();
         getDataHubAdminConfig();
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
+        copyFlowArtifactsToProject();
+        installUserModules(getDataHubAdminConfig(), true);
+        installHubArtifacts(getDataHubAdminConfig(), true);
+    }
 
+    protected void copyFlowArtifactsToProject() {
         try {
             FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/entities/e2eentity.entity.json"),
                 adminHubConfig.getHubEntitiesDir().toFile());
-            installUserModules(getDataHubAdminConfig(), true);
             FileUtils.copyDirectory(getResourceFile("flow-runner-test/flows"), adminHubConfig.getFlowsDir().toFile());
             FileUtils.copyDirectory(getResourceFile("flow-runner-test/input"),
                 adminHubConfig.getHubProjectDir().resolve("input").toFile());
@@ -1231,8 +1235,5 @@ public class HubTestBase {
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
-
-        installUserModules(getDataHubAdminConfig(), true);
-        installHubArtifacts(getDataHubAdminConfig(), true);
     }
 }
