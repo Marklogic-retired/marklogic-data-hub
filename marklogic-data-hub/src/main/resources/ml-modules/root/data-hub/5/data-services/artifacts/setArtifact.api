@@ -1,0 +1,22 @@
+{
+    "functionName": "setArtifact",
+    "params": [
+        {
+            "name": "artifactType",
+            "datatype": "string"
+        },
+        {
+            "name": "artifactName",
+            "datatype": "string"
+        },
+        {
+         "name": "artifact",
+         "datatype": "jsonDocument",
+         "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+        }
+    ],
+    "return": {
+        "datatype": "jsonDocument",
+        "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
+}
