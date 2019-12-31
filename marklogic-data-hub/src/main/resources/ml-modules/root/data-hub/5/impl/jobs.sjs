@@ -21,7 +21,7 @@ class Jobs {
       config = require("/com.marklogic.hub/config.sjs");
     }
     this.config = config;
-    this.jobPermissionsScript = this.buildJobPermissionsScript(config);
+    this.jobPermissions = this.buildJobPermissions(config);
 
     if (datahub) {
       this.hubutils = datahub.hubUtils;
@@ -50,21 +50,20 @@ class Jobs {
       }
     };
 
-    this.hubutils.writeDocument("/jobs/"+job.job.jobId+".json", job, this.jobPermissionsScript,  ['Jobs','Job'], this.config.JOBDATABASE);
+    this.hubutils.writeDocument("/jobs/"+job.job.jobId+".json", job, this.jobPermissions,  ['Jobs','Job'], this.config.JOBDATABASE);
     return job;
   }
 
-  buildJobPermissionsScript(config) {
+  buildJobPermissions(config) {
     let permissionsString = config.JOBPERMISSIONS;
-    let script = `xdmp.defaultPermissions().concat([xdmp.permission('${config.FLOWDEVELOPERROLE}', 'update'), xdmp.permission('${config.FLOWOPERATORROLE}', 'update')`;
+    let permissions = xdmp.defaultPermissions().concat([xdmp.permission(config.FLOWDEVELOPERROLE, 'update'), xdmp.permission(config.FLOWOPERATORROLE, 'update')]);
     if (permissionsString != null && permissionsString.indexOf("mlJobPermissions") < 0) {
       let tokens = permissionsString.split(",");
       for (let i = 0; i < tokens.length; i += 2) {
-        script += `, xdmp.permission('${tokens[i]}', '${tokens[i + 1]}')`;
+        permissions.push(xdmp.permission(tokens[i], tokens[i + 1]));
       }
     }
-    script += "])";
-    return script;
+    return permissions;
   }
 
   getJobDocWithId(jobId) {
@@ -253,7 +252,7 @@ class Jobs {
       }
     };
 
-    this.hubutils.writeDocument("/jobs/batches/" + batch.batch.batchId + ".json", batch , this.jobPermissionsScript, ['Jobs','Batch'], this.config.JOBDATABASE);
+    this.hubutils.writeDocument("/jobs/batches/" + batch.batch.batchId + ".json", batch , this.jobPermissions, ['Jobs','Batch'], this.config.JOBDATABASE);
     return batch;
   }
 
@@ -341,13 +340,13 @@ module.exports.updateJob = module.amp(
              options.targetDatabase || datahub.config.FINALDATABASE
            ));
            if (jobReport) {
-             datahub.hubUtils.writeDocument(`/jobs/reports/${stepResp.flowName}/${step}/${jobId}.json`, jobReport, datahub.jobs.jobPermissionsScript, ['Jobs','JobReport'], datahub.config.JOBDATABASE);
+             datahub.hubUtils.writeDocument(`/jobs/reports/${stepResp.flowName}/${step}/${jobId}.json`, jobReport, datahub.jobs.jobPermissions, ['Jobs','JobReport'], datahub.config.JOBDATABASE);
            }
          }
        }
      }
      //Update the job doc
-     datahub.hubUtils.writeDocument("/jobs/"+ jobId +".json", jobDoc, datahub.jobs.jobPermissionsScript, ['Jobs','Job'], datahub.config.JOBDATABASE);
+     datahub.hubUtils.writeDocument("/jobs/"+ jobId +".json", jobDoc, datahub.jobs.jobPermissions, ['Jobs','Job'], datahub.config.JOBDATABASE);
      resp = jobDoc;
     }
     else {
@@ -391,7 +390,7 @@ module.exports.updateBatch = module.amp(
     docObj.batch.writeTimeStamp = writeTransactionInfo.dateTime;
     let cacheId = jobId + "-" + batchId;
     cachedBatchDocuments[cacheId] = docObj;
-    datahub.hubUtils.writeDocument("/jobs/batches/"+ batchId +".json", docObj, datahub.jobs.jobPermissionsScript, ['Jobs','Batch'], datahub.config.JOBDATABASE);
+    datahub.hubUtils.writeDocument("/jobs/batches/"+ batchId +".json", docObj, datahub.jobs.jobPermissions, ['Jobs','Batch'], datahub.config.JOBDATABASE);
 
   });
 module.exports.Jobs = Jobs;
