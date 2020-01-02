@@ -36,6 +36,8 @@ import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.client.ext.file.JarDocumentFileReader;
 import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager;
+import com.marklogic.client.ext.util.DefaultDocumentPermissionsParser;
+import com.marklogic.client.ext.util.DocumentPermissionsParser;
 import com.marklogic.client.io.*;
 import com.marklogic.client.io.marker.AbstractReadHandle;
 import com.marklogic.hub.deploy.commands.*;
@@ -809,9 +811,8 @@ public class HubTestBase {
                 default:
                     handle.setFormat(Format.TEXT);
             }
-            DocumentMetadataHandle permissions = new DocumentMetadataHandle()
-                .withPermission(getDataHubAdminConfig().getFlowOperatorRoleName(), DocumentMetadataHandle.Capability.EXECUTE, UPDATE, READ);
-            writeSet.add(path, permissions, handle);
+
+            writeSet.add(path, getPermissionsMetaDataHandle(), handle);
         });
         modMgr.write(writeSet);
         writeSet.parallelStream().forEach((writeOp) -> { IOUtils.closeQuietly((InputStreamHandle) writeOp.getContent());});
@@ -833,9 +834,16 @@ public class HubTestBase {
         default:
             handle.setFormat(Format.TEXT);
         }
-        modMgr.write(path, permissions, handle);
+        modMgr.write(path, getPermissionsMetaDataHandle(), handle);
         clearFlowCache();
         handle.close();
+    }
+
+    private DocumentMetadataHandle getPermissionsMetaDataHandle() {
+        DocumentMetadataHandle permissions = new DocumentMetadataHandle();
+        DocumentPermissionsParser documentPermissionsParser = new DefaultDocumentPermissionsParser();
+        documentPermissionsParser.parsePermissions(getDataHubAdminConfig().getModulePermissions(), permissions.getPermissions());
+        return permissions;
     }
 
     protected void clearFlowCache() {
@@ -1210,7 +1218,7 @@ public class HubTestBase {
         }
     }
 
-    protected void setupProjectForRunningTestFlow() {
+    protected void setupProjectForRunningTestFlow(HubConfig config) {
         basicSetup();
         getDataHubAdminConfig();
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);

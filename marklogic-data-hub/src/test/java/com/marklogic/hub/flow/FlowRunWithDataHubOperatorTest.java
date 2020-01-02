@@ -37,6 +37,7 @@ import com.marklogic.hub.impl.FlowManagerImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.RunStepResponse;
+import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.*;
@@ -45,7 +46,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,18 +78,33 @@ public class FlowRunWithDataHubOperatorTest extends HubTestBase {
     }
 
     @BeforeEach
-    public void setupEach() throws IOException {
+    public void setupEach() throws Exception {
         Assumptions.assumeTrue(!isCertAuth() && isVersionCompatibleWith520Roles());
+        new DatabaseManager(adminHubConfig.getManageClient()).clearDatabase(HubConfig.DEFAULT_MODULES_DB_NAME,true);
         configDirs.addAll(adminHubConfig.getAppConfig().getConfigDirs());
-        setupProjectForRunningTestFlow();
-        String userString = "{\n" +
+
+        String opString = "{\n" +
             "  \"user-name\": \"test-data-hub-operator\",\n" +
             "  \"password\": \"test-data-hub-operator\",\n" +
             "  \"role\": [\"data-hub-operator\"]\n" +
             "}";
+        String devString = "{\n" +
+            "  \"user-name\": \"test-data-hub-developer\",\n" +
+            "  \"password\": \"test-data-hub-developer\",\n" +
+            "  \"role\": [\"data-hub-developer\"]\n" +
+            "}";
         FileUtils.writeStringToFile(hubConfig.getUserSecurityDir().resolve("users").resolve("test-data-hub-operator.json").toFile(),
-           userString);
+            opString);
+        FileUtils.writeStringToFile(hubConfig.getUserSecurityDir().resolve("users").resolve("test-data-hub-developer.json").toFile(),
+            devString);
         setupUser(true);
+
+        //Load hub modules, rest extensions and artifacts as "data-hub-developer"
+        getHubFlowRunnerConfig("test-data-hub-developer", "test-data-hub-developer");
+        installHubModules();
+        setupProjectForRunningTestFlow(getHubFlowRunnerConfig("test-data-hub-developer", "test-data-hub-developer"));
+
+        //Run flow as "data-hub-operator"
         getHubFlowRunnerConfig("test-data-hub-operator", "test-data-hub-operator");
     }
 
@@ -97,6 +112,10 @@ public class FlowRunWithDataHubOperatorTest extends HubTestBase {
     public void tearDownEach() {
         getDataHubAdminConfig();
         setupUser(false);
+        new DatabaseManager(adminHubConfig.getManageClient()).clearDatabase(HubConfig.DEFAULT_MODULES_DB_NAME,true);
+
+        //Install hub modules again as "flow-developer"
+        installHubModules();
         adminHubConfig.getAppConfig().setConfigDirs(configDirs);
     }
 
