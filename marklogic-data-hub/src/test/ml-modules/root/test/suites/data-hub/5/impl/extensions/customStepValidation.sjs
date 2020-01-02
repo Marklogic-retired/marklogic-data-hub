@@ -3,14 +3,14 @@ const stepValidate = require("/marklogic.rest.resource/mlStepValidate/assets/res
 
 
 function checkPermissions() {
-  let operatorRole = xdmp.role("flow-operator-role").toString();
+  let operatorRole = xdmp.role("data-hub-module-reader").toString();
   let modPerms = fn.head(xdmp.eval('xdmp.documentGetPermissions("/data-hub/5/impl/flow.sjs")', null,
     {
       "database" : xdmp.database(xdmp.databaseName(xdmp.modulesDatabase()))
     }));
   return [
     test.assertEqual(true, stepValidate.checkPermissions(modPerms, operatorRole),
-      "This document should have right permissions for the role 'flow-operator-role'")
+      "This document should have right permissions for the role 'data-hub-module-reader'")
   ];
 }
 

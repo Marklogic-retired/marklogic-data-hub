@@ -282,17 +282,20 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
         assertTrue(roleBeingTested.getRole().contains("tde-admin"),
             "Task 19 and 24: tde-admin allows the user to insert TDE schemas into the TDE protected collection");
 
+        assertTrue(roleBeingTested.getRole().contains("data-hub-flow-writer"),
+            "Tasks 20 : data-hub-flow-writer is required for allowing the user to perform CRUD operations on flows");
+
         assertTrue(roleBeingTested.getRole().contains("rest-admin"),
-            "Tasks 20 and 22: rest-admin is sufficient for allowing the user to perform CRUD operations on flows and " +
-                "schemas, as these both default to being inserted with rest-reader/rest-writer permissions via " +
-                "mlModulePermissions");
+            "Tasks 22: rest-admin is sufficient for allowing the user to perform CRUD operations on  " +
+                "schemas, as it defaults to being inserted with rest-reader/rest-writer permissions via " +
+                "flow-developer/ data-hub-developer roles");
 
         assertTrue(roleBeingTested.getRole().contains("ps-user"),
             "Task 23: The ML provenance functions add ps-user/read and ps-internal/update permissions by default on " +
                 "provenance documents; thus, a user needs ps-user to read these documents");
 
         assertTrue(roleBeingTested.getRole().contains("rest-admin"),
-            "Tasks 26 and 27: Artifacts get rest-reader and rest-writer by default via mlModulePermissions and " +
+            "Tasks 26 and 27: Artifacts get rest-reader and rest-writer by default via " +
                 "mlEntityModelPermissions, and thus rest-admin provides access to reading these documents");
 
         assertTrue(roleBeingTested.getRole().contains("manage-user"),

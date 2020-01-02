@@ -7,6 +7,7 @@
     "ps-user",
     "rest-admin",
     "tde-admin",
+    "data-hub-module-writer",
     "data-hub-flow-writer",
     "data-hub-mapping-writer",
     "data-hub-step-definition-writer",
@@ -32,6 +33,11 @@
     {
       "privilege-name": "remove-path",
       "action": "http://marklogic.com/xdmp/privileges/remove-path",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "any-uri",
+      "action": "http://marklogic.com/xdmp/privileges/any-uri",
       "kind": "execute"
     },
     {

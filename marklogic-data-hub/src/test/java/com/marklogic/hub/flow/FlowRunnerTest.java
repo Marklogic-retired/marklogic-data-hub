@@ -67,7 +67,7 @@ public class FlowRunnerTest extends HubTestBase {
 
     @BeforeEach
     public void setupEach() {
-        setupProjectForRunningTestFlow();
+        setupProjectForRunningTestFlow(getDataHubAdminConfig());
         getHubFlowRunnerConfig();
     }
 

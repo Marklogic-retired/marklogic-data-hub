@@ -1,0 +1,4 @@
+{
+  "role-name": "data-hub-module-writer",
+  "description": "Data Hub role for permissions that grant write access to DHF modules"
+}
