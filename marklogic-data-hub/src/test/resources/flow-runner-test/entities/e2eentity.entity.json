@@ -22,7 +22,7 @@
           "collation" : "http://marklogic.com/collation/codepoint"
         },
         "salary": {
-          "datatype": "decimal"
+          "datatype": "integer"
         }
       }
     }
