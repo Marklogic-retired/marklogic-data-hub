@@ -24,6 +24,7 @@ if (esMappingLib.versionIsCompatibleWithES()) {
   xdmp.invokeFunction(function () {
       const es = require('/MarkLogic/entity-services/entity-services');
       es.mappingPut(xmlURI);
+      xdmp.nodeDelete(cts.doc(xmlURI+'.xslt').xpath('//xdmp:import-module[@href="/MarkLogic/entity-services/standard-library.xqy"]'));
     },
     {database: xdmp.modulesDatabase(), update: "true", commit: "auto"}
   );

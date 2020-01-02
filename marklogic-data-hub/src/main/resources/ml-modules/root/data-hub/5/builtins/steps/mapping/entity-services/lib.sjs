@@ -300,12 +300,18 @@ function validatePropertyMapping(fullMapping, propertyName, sourcedFrom) {
     // As of trunk 10.0-20190916, mappings are being validated against entity schemas in the schema database.
     // This doesn't seem expected, as the validation will almost always fail.
     // Thus, this is not using es.mappingCompile, which does validation, and just invokes the transform instead.
-    let stylesheet = xdmp.xsltInvoke("/MarkLogic/entity-services/mapping-compile.xsl", xmlMapping);
-    xdmp.xsltEval(stylesheet, [], {staticCheck: true});
+    let stylesheet = fn.head(xdmp.xsltInvoke("/MarkLogic/entity-services/mapping-compile.xsl", xmlMapping));
+    xdmp.xsltEval(removeStandardFunction(stylesheet), [], {staticCheck: true});
   } catch (e) {
     // TODO Move this into a separate function for easier testing?
     return getErrorMessage(e);
   }
+}
+
+//This function removes import of "standard-library.xqy" from mapping xslt. Server Bug 54051
+function removeStandardFunction(stylesheet) {
+  return fn.head(xdmp.xqueryEval(' declare variable $stylesheet external; let $node := $stylesheet/node() return element {fn:node-name($node)} {$node/namespace::*, $node/attribute(), $node/element()[fn:not(@href = "/MarkLogic/entity-services/standard-library.xqy")]}'
+  ,{stylesheet:stylesheet}, null));
 }
 
 function runMapping(mapping, uri, propMapping={"targetEntityType":mapping.targetEntityType, "namespaces": mapping.namespaces,"properties": {}}, paths=['properties']) {
@@ -346,10 +352,10 @@ function getCanonicalInstance(mapping, uri, propertyName) {
   let xmlMapping = buildMappingXML(fn.head(xdmp.unquote(xdmp.quote(mapping))));
   let doc = cts.doc(uri);
   let instance = extractInstance(doc);
-  let mappingXslt =  xdmp.invokeFunction(function () {
+  let mappingXslt = removeStandardFunction(xdmp.invokeFunction(function () {
       const es = require('/MarkLogic/entity-services/entity-services');
       return es.mappingCompile(xmlMapping);
-     }, {database: xdmp.modulesDatabase()});
+     }, {database: xdmp.modulesDatabase()}));
 
   try {
     let inputDoc = instance;
@@ -448,5 +454,6 @@ module.exports = {
   retrieveFunctionImports,
   versionIsCompatibleWithES,
   validateMapping,
-  validateAndRunMapping
+  validateAndRunMapping,
+  removeStandardFunction
 };

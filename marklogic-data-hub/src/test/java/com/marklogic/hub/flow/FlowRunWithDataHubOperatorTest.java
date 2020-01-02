@@ -102,6 +102,9 @@ public class FlowRunWithDataHubOperatorTest extends HubTestBase {
         //Load hub modules, rest extensions and artifacts as "data-hub-developer"
         getHubFlowRunnerConfig("test-data-hub-developer", "test-data-hub-developer");
         installHubModules();
+        //Copy mapping functions
+        FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/mapping-functions/add-function.xqy"),
+            adminHubConfig.getHubProject().getCustomMappingFunctionsDir().toFile());
         setupProjectForRunningTestFlow(getHubFlowRunnerConfig("test-data-hub-developer", "test-data-hub-developer"));
 
         //Run flow as "data-hub-operator"
@@ -139,6 +142,8 @@ public class FlowRunWithDataHubOperatorTest extends HubTestBase {
     @Test
     public void testRunFlow() throws Exception {
         RunFlowResponse resp = fr.runFlow("testFlow");
+        //This flow has a custom xqy mapping function
+        RunFlowResponse resp1 = fr.runFlow("runXqyFuncFlow");
         fr.awaitCompletion();
         getDataHubAdminConfig();
         //job docs cannot be read by "flow-developer-user", so creating a client using 'secUser' which is 'admin'
@@ -186,5 +191,9 @@ public class FlowRunWithDataHubOperatorTest extends HubTestBase {
         String file = sh.get();
         Assertions.assertNotNull(file);
         Assertions.assertTrue(file.contains("ingest.csv"));
+
+        Assertions.assertEquals(JobStatus.FINISHED.toString(), resp1.getJobStatus());
+        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "xml-xqy") == 1);
+        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xqy-map") == 1);
     }
 }
