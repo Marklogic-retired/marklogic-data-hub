@@ -220,7 +220,7 @@ public class HubConfigImpl implements HubConfig
     }
 
     /**
-     * Provides a minimally-configured instance of SimpleHubConfig based on DHF default properties, with no dependency
+     * Provides a minimally-configured instance of HubConfigImpl based on DHF default properties, with no dependency
      * on Spring or on project files.
      *
      * @param host
