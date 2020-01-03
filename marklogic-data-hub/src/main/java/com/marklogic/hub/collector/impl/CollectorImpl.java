@@ -23,7 +23,6 @@ import com.marklogic.client.MarkLogicIOException;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.collector.DiskQueue;
 import com.marklogic.hub.collector.Collector;
-import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.rest.util.MgmtResponseErrorHandler;
 import org.apache.http.auth.AuthScope;
@@ -32,8 +31,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -59,18 +56,16 @@ import java.security.cert.X509Certificate;
 import java.util.*;
 
 public class CollectorImpl implements Collector {
-    private DatabaseClient client = null;
-    private HubConfig hubConfig = null;
 
+    private DatabaseClient client;
+    private HubConfig hubConfig;
 
-    private Flow flow = null;
+    public CollectorImpl() {
+    }
 
-    private static Logger logger = LoggerFactory.getLogger(CollectorImpl.class);
-
-    public CollectorImpl() {}
-
-    public CollectorImpl(Flow flow) {
-        this.flow = flow;
+    public CollectorImpl(HubConfig hubConfig, DatabaseClient stagingClient) {
+        this.hubConfig = hubConfig;
+        this.client = stagingClient;
     }
 
     @Override
@@ -204,7 +199,7 @@ public class CollectorImpl implements Collector {
         protected HostnameVerifierAdapter(SSLHostnameVerifier verifier) {
           this.verifier = verifier;
         }
-        
+
         public void verify(String hostname, X509Certificate cert) throws SSLException {
           ArrayList<String> cnArray = new ArrayList<>();
           try {
@@ -242,12 +237,12 @@ public class CollectorImpl implements Collector {
         @Override
         public void verify(String hostname, SSLSocket ssl) throws IOException {
             Certificate[] certificates = ssl.getSession().getPeerCertificates();
-            verify(hostname, (X509Certificate) certificates[0]);             
+            verify(hostname, (X509Certificate) certificates[0]);
         }
 
         @Override
         public void verify(String hostname, String[] cns, String[] subjectAlts) throws SSLException {
-            verifier.verify(hostname, cns, subjectAlts);            
+            verifier.verify(hostname, cns, subjectAlts);
         }
 
         @Override
@@ -256,7 +251,7 @@ public class CollectorImpl implements Collector {
               Certificate[] certificates = session.getPeerCertificates();
               verify(hostname, (X509Certificate) certificates[0]);
               return true;
-              } 
+              }
             catch(SSLException e) {
               return false;
             }

@@ -46,7 +46,7 @@ public class JobDocManager extends ResourceManager {
         try {
             resultItr = this.getServices().post(params, new StringHandle("{}").withFormat(Format.JSON));
         } catch (Exception e) {
-            throw new RuntimeException("Unable to update the job document");
+            throw new RuntimeException("Unable to update the job document; cause: " + e.getMessage(), e);
         }
         if (resultItr == null || !resultItr.hasNext()) {
             return null;

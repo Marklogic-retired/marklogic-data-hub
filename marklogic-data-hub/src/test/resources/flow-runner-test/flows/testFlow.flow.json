@@ -29,6 +29,10 @@
       "customHook": {},
       "options": {
         "permissions": "data-hub-operator,read,data-hub-operator,update"
+      },
+      "fileLocations": {
+        "inputFilePath": "input",
+        "outputURIReplacement": ".*/input,''"
       }
     },
     "3": {

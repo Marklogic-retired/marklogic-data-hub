@@ -2,14 +2,14 @@ package com.marklogic.hub.flow.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.FlowManager;
-import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.flow.FlowRunner;
-import com.marklogic.hub.flow.FlowStatusListener;
-import com.marklogic.hub.flow.RunFlowResponse;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.flow.*;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.job.JobDocManager;
 import com.marklogic.hub.job.JobStatus;
+import com.marklogic.hub.step.MarkLogicStepDefinitionProvider;
 import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.step.StepRunner;
 import com.marklogic.hub.step.StepRunnerFactory;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 public class FlowRunnerImpl implements FlowRunner{
 
     @Autowired
-    private HubConfigImpl hubConfig;
+    private HubConfig hubConfig;
 
     @Autowired
     private FlowManager flowManager;
@@ -61,6 +61,38 @@ public class FlowRunnerImpl implements FlowRunner{
     private ThreadPoolExecutor threadPool;
     private JobDocManager jobDocManager;
     private boolean disableJobOutput = false;
+
+    public FlowRunnerImpl() {
+    }
+
+    /**
+     * Convenience constructor for running flows with no dependency on project files on the filesystem, and where a
+     * user can authenticate with just a username and a password.
+     *
+     * @param host the host of the Data Hub instance to connect to
+     * @param username the username of the MarkLogic user for running a flow
+     * @param password the password of the MarkLogic user for running a flow
+     */
+    public FlowRunnerImpl(String host, String username, String password) {
+        this(new HubConfigImpl(host, username, password));
+    }
+
+    /**
+     * Constructs a FlowRunnerImpl that can be used for running flows without any reference to project files on a
+     * filesystem - and thus, this constructor will not instantiate an instance of FlowManager, which is used for reading
+     * project files from the filesystem.
+     *
+     * This constructor handles ensuring that step definitions are retrieved from MarkLogic as opposed to from the
+     * filesystem. It is expected that the "runFlowWithoutProject" method will then be used, which ensures that flow
+     * artifacts are also retrieved from MarkLogic as opposed to from the filesystem.
+     *
+     * @param hubConfig
+     */
+    public FlowRunnerImpl(HubConfig hubConfig) {
+        this.hubConfig = hubConfig;
+        this.stepRunnerFactory = new StepRunnerFactory(this.hubConfig);
+        this.stepRunnerFactory.setStepDefinitionProvider(new MarkLogicStepDefinitionProvider(this.hubConfig.newStagingClient(null)));
+    }
 
     @Override
     public FlowRunner onStatusChanged(FlowStatusListener listener) {
@@ -93,21 +125,41 @@ public class FlowRunnerImpl implements FlowRunner{
     }
 
     public RunFlowResponse runFlow(String flowName, List<String> stepNums, String jobId, Map<String, Object> options, Map<String, Object> stepConfig) {
+        Flow flow = flowManager.getFlow(flowName);
+        if (flow == null) {
+            throw new RuntimeException("Flow " + flowName + " not found");
+        }
+        return runFlow(flow, stepNums, jobId, options, stepConfig);
+    }
+
+    /**
+     * Retrieves the given flow from the staging database in MarkLogic, and then proceeds with the normal execution of
+     * the flow.
+     *
+     * @param flowInputs
+     * @return
+     */
+    @Override
+    public RunFlowResponse runFlowWithoutProject(FlowInputs flowInputs) {
+        Flow flow;
+        try {
+            JsonNode jsonFlow = hubConfig.newStagingClient().newJSONDocumentManager().read("/flows/" + flowInputs.getFlowName() + ".flow.json", new JacksonHandle()).get();
+            flow = new FlowImpl().deserialize(jsonFlow);
+        } catch (Exception ex) {
+            throw new RuntimeException("Unable to retrieve flow with name: " + flowInputs.getFlowName(), ex);
+        }
+        return runFlow(flow, flowInputs.getSteps(), flowInputs.getJobId(), flowInputs.getOptions(), flowInputs.getStepConfig());
+    }
+
+    public RunFlowResponse runFlow(Flow flow, List<String> stepNums, String jobId, Map<String, Object> options, Map<String, Object> stepConfig) {
         if (options != null && options.containsKey("disableJobOutput")) {
             disableJobOutput = Boolean.parseBoolean(options.get("disableJobOutput").toString());
         } else {
             disableJobOutput = false;
         }
 
-        Flow flow = flowManager.getFlow(flowName);
-
-        //Validation of flow, provided steps
-        if (flow == null){
-            throw new RuntimeException("Flow " + flowName + " not found");
-        }
-
         if(stepNums == null) {
-            stepNums = new ArrayList<String>(flow.getSteps().keySet());
+            stepNums = new ArrayList<>(flow.getSteps().keySet());
         }
 
         if(stepConfig != null && !stepConfig.isEmpty()) {
@@ -262,8 +314,6 @@ public class FlowRunnerImpl implements FlowRunner{
                                 listener.onStatusChanged(jobId, runningStep, jobStatus, percentComplete, successfulEvents, failedEvents, runningStep.getName() + " : " + message);
                             });
                         });
-                    //If step doc doesn't have batchnum and thread count specified, fallback to flow's values.
-                    Map<String,Step> steps = runningFlow.getSteps();
 
                     //If property values are overriden in UI, use those values over any other.
                     if(flow.getOverrideStepConfig() != null) {
@@ -497,5 +547,21 @@ public class FlowRunnerImpl implements FlowRunner{
 
     public Flow getRunningFlow() {
         return this.runningFlow;
+    }
+
+    public void setHubConfig(HubConfig hubConfig) {
+        this.hubConfig = hubConfig;
+    }
+
+    public void setStepRunnerFactory(StepRunnerFactory stepRunnerFactory) {
+        this.stepRunnerFactory = stepRunnerFactory;
+    }
+
+    public void setFlowManager(FlowManager flowManager) {
+        this.flowManager = flowManager;
+    }
+
+    public HubConfig getHubConfig() {
+        return hubConfig;
     }
 }
