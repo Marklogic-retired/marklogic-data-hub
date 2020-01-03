@@ -92,9 +92,9 @@ const ColumnSelector: React.FC<Props> = (props) => {
     }
 
     let col = new Array();
-    for (let i of checkedKeys) {
-      for (let j of allKeys) {
-        if (j.startsWith(i)) {
+    for(let i of checkedKeys) {
+      for(let j of allKeys) {
+        if(i === j || j.startsWith(i+'-')) {
           col.push(j)
         }
       }

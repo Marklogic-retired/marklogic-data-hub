@@ -8,7 +8,10 @@ import styles from './result-table.module.scss';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCode, faExternalLinkAlt} from "@fortawesome/free-solid-svg-icons";
 import ColumnSelector from '../../components/column-selector/column-selector';
-import {tableParser, headerParser} from '../../util/data-conversion';
+import { type } from 'os';
+import { tableParser, headerParser, deepCopy, reconstructHeader, toStringArray } from '../../util/data-conversion';
+import { arrayExpression } from '@babel/types';
+import ReactDragListView from 'react-drag-listview'
 
 
 const ResizeableTitle = props => {
@@ -205,6 +208,24 @@ const ResultTable: React.FC<Props> = (props) => {
     })
   };
 
+  const dragProps = {
+    onDragEnd(fromIndex:number, toIndex:number) {
+        if (fromIndex > 0 && toIndex > 0) {
+          const header = deepCopy(columns);
+          const tree = deepCopy(treeColumns);
+          const colItem = header.splice(fromIndex-1, 1)[0];
+          const treeItem = tree.splice(fromIndex-1, 1)[0];
+          header.splice(toIndex-1, 0, colItem);
+          tree.splice(toIndex-1, 0, treeItem);
+          let updatedHeader = reconstructHeader(deepCopy(header), toStringArray(checkedColumns))  
+          setColumns(updatedHeader);
+          setTreeColumns(tree)
+        }
+    },
+    nodeSelector: "th",
+    handleSelector: 'span.ant-table-column-title',
+  };
+  
   const expandedRowRender = (rowId) => {
     const nestedColumns = [
       {title: 'Property', dataIndex: 'property', width: '30%'},
@@ -263,25 +284,28 @@ const ResultTable: React.FC<Props> = (props) => {
 
   const headerRender = (col) => {
     setColumns(col)
+    setCheckedColumns(col)
   }
 
   return (
-      <>
-        <div className={styles.columnSelector}>
-          <ColumnSelector title={checkedColumns} tree={treeColumns} headerRender={headerRender}/>
-        </div>
-        <div className={styles.tabular}>
-          <Table bordered components={components}
-                 className="search-tabular"
-                 rowKey="key"
-                 dataSource={data}
-                 columns={columns}
-                 pagination={false}
-                 expandedRowRender={expandedRowRender}
-                 data-cy="search-tabular"
-          />
-        </div>
-      </>
+    <>
+      <div className={styles.columnSelector} >
+        <ColumnSelector title={checkedColumns} tree={treeColumns} headerRender={headerRender} />
+      </div>
+      <ReactDragListView.DragColumn {...dragProps}>
+      <div className={styles.tabular}>
+        <Table bordered components={components}
+          className="search-tabular"
+          rowKey="key"
+          dataSource={data}
+          columns={columns}
+          pagination={false}
+          expandedRowRender={expandedRowRender}
+          data-cy="search-tabular"
+        />
+      </div>
+      </ReactDragListView.DragColumn>
+    </>
   );
 }
 
