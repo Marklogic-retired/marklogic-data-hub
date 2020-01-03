@@ -50,3 +50,26 @@ In addition, a subset of steps can be run when running a flow:
 
     ./gradlew hubRunFlow -PflowName=ingestion_only-flow -Psteps=1
     ./gradlew hubRunFlow -PflowName=ingestion_only-flow -Psteps=2,3
+
+## Running flows without depending on a project
+
+As of 5.2.0, this project includes examples of constructing a FlowRunnerImpl that does not depend on project files, nor
+on a Spring container, for running flows. See the "runFlowWithoutProject" Gradle task for more information.
+
+To author your own Java code that uses FlowRunnerImpl, you can start with the Gradle configuration below for depending 
+on the Data Hub Java API in your own project:
+
+```
+plugins {
+    id "java"
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    compile "com.marklogic:marklogic-data-hub:5.2.0"
+}
+```
