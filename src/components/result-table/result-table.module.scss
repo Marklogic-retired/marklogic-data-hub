@@ -11,12 +11,13 @@
 
 .columnSelector {
   padding: 8px;
-  margin-right: 5px;
+  margin-right: 20px;
   cursor: pointer;
   display: flex;
   justify-content: flex-end;
 }
 
 .tabular {
+  margin-top: 20px;
   overflow-x: auto;
 }

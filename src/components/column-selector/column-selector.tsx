@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Popover, Tooltip, Menu, Dropdown, Icon, Checkbox, Tree, Button } from 'antd';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
-import { faColumns } from '@fortawesome/free-solid-svg-icons'
+import React, {useState, useEffect} from 'react';
+import {Popover, Tree} from 'antd';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faColumns} from '@fortawesome/free-solid-svg-icons'
 import styles from './column-selector.module.scss';
-import { toStringArray, reconstructHeader, deepCopy, getKeys } from '../../util/data-conversion';
+import {reconstructHeader, deepCopy, getKeys} from '../../util/data-conversion';
 
 interface Props {
   title: any[];
@@ -13,7 +12,7 @@ interface Props {
 };
 
 const ColumnSelector: React.FC<Props> = (props) => {
-  const { TreeNode } = Tree;
+  const {TreeNode} = Tree;
   const [expandedKeys, setExpandedKeys] = useState<any[]>();
   const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
   const [checkedKeys, setCheckedKeys] = useState<any[]>([]);
@@ -42,16 +41,17 @@ const ColumnSelector: React.FC<Props> = (props) => {
   };
 
   const renderTreeNodes = data =>
-    data && data.map(item => {
-      if (item.children) {
-        return (
-          <TreeNode title={item.title} key={item.key} dataRef={item}>
-            {renderTreeNodes(item.children)}
-          </TreeNode>
-        );
-      }
-      return <TreeNode disabled={item.key === primaryKey} disableCheckbox={item.key === primaryKey} key={item.key} {...item} />;
-    });
+      data && data.map(item => {
+        if (item.children) {
+          return (
+              <TreeNode title={item.title} key={item.key} dataRef={item}>
+                {renderTreeNodes(item.children)}
+              </TreeNode>
+          );
+        }
+        return <TreeNode disabled={item.key === primaryKey} disableCheckbox={item.key === primaryKey}
+                         key={item.key} {...item} />;
+      });
 
   const onDrop = info => {
     const dropKey = info.node.props.eventKey;
@@ -92,9 +92,9 @@ const ColumnSelector: React.FC<Props> = (props) => {
     }
 
     let col = new Array();
-    for(let i of checkedKeys) {
-      for(let j of allKeys) {
-        if(j.startsWith(i)) {
+    for (let i of checkedKeys) {
+      for (let j of allKeys) {
+        if (j.startsWith(i)) {
           col.push(j)
         }
       }
@@ -105,31 +105,31 @@ const ColumnSelector: React.FC<Props> = (props) => {
   };
 
   const content = (
-    <>
       <div className={styles.popover}>
         <Tree
-          className="draggable-tree"
-          draggable
-          blockNode
-          onDrop={onDrop}
-          checkable
-          onExpand={onExpand}
-          expandedKeys={expandedKeys}
-          autoExpandParent={autoExpandParent}
-          onCheck={onCheck}
-          checkedKeys={checkedKeys}
-          selectedKeys={selectedKeys}
+            className="draggable-tree"
+            draggable
+            blockNode
+            onDrop={onDrop}
+            checkable
+            onExpand={onExpand}
+            expandedKeys={expandedKeys}
+            autoExpandParent={autoExpandParent}
+            onCheck={onCheck}
+            checkedKeys={checkedKeys}
+            selectedKeys={selectedKeys}
         >
           {renderTreeNodes(tree)}
         </Tree>
       </div>
-    </>
   )
 
   return (
-    <Popover placement="left" content={content} trigger="click">
-      <FontAwesomeIcon icon={faColumns} size="lg" />
-    </Popover>
+      <div className={styles.fixedPopup}>
+        <Popover placement="left" content={content} trigger="click" className={styles.fixedPopup}>
+          <FontAwesomeIcon icon={faColumns} size="lg"/>
+        </Popover>
+      </div>
   )
 }
 
