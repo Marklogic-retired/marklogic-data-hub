@@ -183,7 +183,6 @@ publishing {
         mavenWeb(MavenPublication) {
             group = "com.marklogic"
             version = "${version}"
-            artifactId = 'marklogic-explorer'
             from components.web
 
         }
