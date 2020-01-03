@@ -157,43 +157,9 @@ task copyUiFiles(type: Copy) {
     dependsOn tasks.copyUiAssets
 }
 
-javadoc {
-    options.overview = 'src/main/resources/overview.html'
-}
-
-Node pomCustomizations = new NodeBuilder().project {
-    name 'explorer'
-    packaging 'jar'
-    textdescription 'Library for Creating an Explorer on MarkLogic'
-    url 'https://project.marklogic.com/repo/scm/prod/datahubenterprise.git'
-
-    scm {
-        url 'git@project.marklogic.com:product/datahubenterprise.git'
-        connection 'scm:git@project.marklogic.com:product/datahubenterprise.git'
-        developerConnection 'scm:git@project.marklogic.com:product/datahubenterprise.git'
-    }
 
 
-    developers {
-        developer {
-            name 'MarkLogic'
-            email 'java-sig@marklogic.com'
-            organization 'MarkLogic'
-            organizationUrl 'https://www.marklogic.com'
-        }
 
-    }
-}
-
-
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-}
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
 jacocoTestReport {
     reports {
         xml.enabled true
