@@ -5,23 +5,13 @@ import com.marklogic.bootstrap.Installer;
 import com.marklogic.client.io.BytesHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubProject;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.step.RunStepResponse;
-import com.marklogic.hub.util.HubModuleManager;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Assumptions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -29,7 +19,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -41,18 +30,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ApplicationConfig.class)
 public class MappingTest extends HubTestBase {
+
     static Path projectPath = Paths.get(PROJECT_PATH).toAbsolutePath();
-    private static File projectDir = projectPath.toFile();
 
     @Autowired
-    HubProject project;
-
-    @Autowired
-    HubConfig hubConfig;
-    @Autowired
-    private FlowManager flowManager;
-    @Autowired
-    private FlowRunner flowRunner;
+    FlowRunner flowRunner;
 
     @BeforeAll
     public static void setup() {
@@ -70,7 +52,8 @@ public class MappingTest extends HubTestBase {
         this.deleteProjectDir();
         clearDatabases(HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
-    private void installProject() throws IOException, URISyntaxException {
+
+    private void installProject() throws IOException {
         String[] directoriesToCopy = new String[]{"input", "flows", "entities", "mappings", "src/main/ml-modules/root/custom-modules"};
         for (final String subDirectory: directoriesToCopy) {
             final Path subProjectPath = projectPath.resolve(subDirectory);
@@ -78,7 +61,6 @@ public class MappingTest extends HubTestBase {
             Path subResourcePath = Paths.get("mapping-test", subDirectory);
             copyFileStructure(subResourcePath, subProjectPath);
         }
-
     }
 
     private void copyFileStructure(Path resourcePath, Path projectPath) throws IOException {
@@ -101,19 +83,9 @@ public class MappingTest extends HubTestBase {
         return testMap;
     }
 
-    private HubModuleManager getPropsMgr() {
-        String timestampFile = getHubFlowRunnerConfig().getHubProject().getUserModulesDeployTimestampFile();
-        return new HubModuleManager(timestampFile);
-    }
-
-    private RunFlowResponse runFlowResp(String flowName, String... stepIds) throws Exception {
-        Flow flow = flowManager.getFlow(flowName);
-        if (flow == null) {
-            throw new Exception(flowName + " not found");
-        }
+    protected RunFlowResponse runFlow(String flowName, String... stepIds) {
         RunFlowResponse flowResponse = flowRunner.runFlow(flowName, Arrays.asList(stepIds));
         flowRunner.awaitCompletion();
-
         return flowResponse;
     }
 
@@ -124,12 +96,7 @@ public class MappingTest extends HubTestBase {
         installHubArtifacts(getDataHubAdminConfig(), true);
         installUserModules(getDataHubAdminConfig(), true);
 
-        Flow flow = flowManager.getFlow("CustomerXML");
-        if (flow == null) {
-            throw new Exception("CustomerXML Not Found");
-        }
-        RunFlowResponse flowResponse = flowRunner.runFlow("CustomerXML", Arrays.asList("1","2"));
-        flowRunner.awaitCompletion();
+        RunFlowResponse flowResponse = runFlow("CustomerXML", "1", "2");
         RunStepResponse mappingJob = flowResponse.getStepResponses().get("2");
         assertTrue(mappingJob.isSuccess(), "Mapping job failed: "+mappingJob.stepOutput);
         assertTrue(getFinalDocCount("CustomerXMLMapping") == 1,"There should be one doc in CustomerXMLMapping collection");
@@ -148,7 +115,7 @@ public class MappingTest extends HubTestBase {
         //Insert a valid dictionary for document lookup
         runInDatabase("xdmp:document-insert('/lookupDictionary/validDictionary.json', object-node"+getJsonFromResource("mapping-test/lookupDictionary/validDictionary.json")+")", HubConfig.DEFAULT_STAGING_NAME);
 
-        RunStepResponse mappingJob = runFlowResp("OrderJSON", "1","2").getStepResponses().get("2");
+        RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
         assertTrue(mappingJob.isSuccess(), "Mapping job failed: "+mappingJob.stepOutput);
         String jsonString = "{" +
             "\"MemoryLookup\": \"Non-Binary\", " +
@@ -170,7 +137,7 @@ public class MappingTest extends HubTestBase {
         installHubArtifacts(getDataHubAdminConfig(), true);
         installUserModules(getDataHubAdminConfig(), true);
 
-        RunStepResponse mappingJob = runFlowResp("OrderJSON", "1","2").getStepResponses().get("2");
+        RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
 
         String output = outputToJson(mappingJob.stepOutput, 0, "message").toString();
         String expected = "Expected JSON string or object.";
@@ -188,7 +155,7 @@ public class MappingTest extends HubTestBase {
         installHubArtifacts(getDataHubAdminConfig(), true);
         installUserModules(getDataHubAdminConfig(), true);
 
-        RunStepResponse mappingJob = runFlowResp("OrderJSON", "1","2").getStepResponses().get("2");
+        RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
 
         String output = outputToJson(mappingJob.stepOutput, 0, "message").toString();
         String expected = "Lookup value not found";
@@ -207,7 +174,7 @@ public class MappingTest extends HubTestBase {
 
         //Insert a dictionary with a URI different from the URI in mapping artifact
         runInDatabase("xdmp:document-insert('/lookupDictionary/invalidURI.json', object-node"+getJsonFromResource("mapping-test/lookupDictionary/validDictionary.json")+")", HubConfig.DEFAULT_STAGING_NAME);
-        RunStepResponse mappingJob = runFlowResp("OrderJSON", "1","2").getStepResponses().get("2");
+        RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
 
         String output = outputToJson(mappingJob.stepOutput, 0, "message").toString();
         String expected = "Dictionary not found at '/lookupDictionary/validDictionary.json'";
@@ -230,7 +197,7 @@ public class MappingTest extends HubTestBase {
             "  Invalid dictionary\n" +
             "</Dictionary>\n" +
             ")", HubConfig.DEFAULT_STAGING_NAME);
-        RunStepResponse mappingJob = runFlowResp("OrderJSON", "1","2").getStepResponses().get("2");
+        RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
 
         String output = outputToJson(mappingJob.stepOutput, 0, "message").toString();
         String expected = "Dictionary at '/lookupDictionary/invalidDictionary.xml' is not a JSON Object";
@@ -249,7 +216,7 @@ public class MappingTest extends HubTestBase {
         installUserModules(getDataHubAdminConfig(), true);
 
         String timezoneStr = getTimezoneString();
-        RunStepResponse mappingJob = runFlowResp("OrderJSON", "1","2").getStepResponses().get("2");
+        RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
         assertTrue(mappingJob.isSuccess(), "Mapping job failed: "+mappingJob.stepOutput);
         String jsonString = "{" +
             "\"DateTimeFormat4\": \"1996-07-04T14:25:55"+ timezoneStr + "\", " +
@@ -283,7 +250,7 @@ public class MappingTest extends HubTestBase {
         installHubArtifacts(getDataHubAdminConfig(), true);
         installUserModules(getDataHubAdminConfig(), true);
 
-        RunStepResponse mappingJob = runFlowResp("OrderJSON", "1","2").getStepResponses().get("2");
+        RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
 
         String output = outputToJson(mappingJob.stepOutput, 0, "message").toString();
         String expected = "The given date pattern (YYYY.MM.DD) is not supported.";
@@ -301,7 +268,7 @@ public class MappingTest extends HubTestBase {
         installHubArtifacts(getDataHubAdminConfig(), true);
         installUserModules(getDataHubAdminConfig(), true);
 
-        RunStepResponse mappingJob = runFlowResp("OrderJSON", "1","2").getStepResponses().get("2");
+        RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
 
         String output = outputToJson(mappingJob.stepOutput, 0, "message").toString();
         String expected = "Given value doesn't match with the specified pattern (YYYYMMDD,01/08/1996) for parsing date string.";
@@ -319,7 +286,7 @@ public class MappingTest extends HubTestBase {
         installHubArtifacts(getDataHubAdminConfig(), true);
         installUserModules(getDataHubAdminConfig(), true);
 
-        RunStepResponse mappingJob = runFlowResp("OrderJSON", "1","2").getStepResponses().get("2");
+        RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
 
         String output = outputToJson(mappingJob.stepOutput, 0, "message").toString();
         String expected = "The given dateTime pattern (YYYYMMDD Thhmmss) is not supported.";
@@ -337,7 +304,7 @@ public class MappingTest extends HubTestBase {
         installHubArtifacts(getDataHubAdminConfig(), true);
         installUserModules(getDataHubAdminConfig(), true);
 
-        RunStepResponse mappingJob = runFlowResp("OrderJSON", "1","2").getStepResponses().get("2");
+        RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
 
         String output = outputToJson(mappingJob.stepOutput, 0, "message").toString();
         String expected = "Given value doesn't match with the specified pattern for parsing dateTime string.";
@@ -355,7 +322,7 @@ public class MappingTest extends HubTestBase {
         installHubArtifacts(getDataHubAdminConfig(), true);
         installUserModules(getDataHubAdminConfig(), true);
 
-        RunStepResponse mappingJob = runFlowResp("OrderJSON", "1","2").getStepResponses().get("2");
+        RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
         assertTrue(mappingJob.isSuccess(), "Mapping job failed: "+mappingJob.stepOutput);
         String timezoneStr = getTimezoneString();
         String jsonString = "{" +
@@ -376,7 +343,7 @@ public class MappingTest extends HubTestBase {
         installHubArtifacts(getDataHubAdminConfig(), true);
         installUserModules(getDataHubAdminConfig(), true);
 
-        RunStepResponse mappingJob = runFlowResp("OrderJSON", "1","2").getStepResponses().get("2");
+        RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
         assertTrue(mappingJob.isSuccess(), "Mapping job failed: "+mappingJob.stepOutput);
         String jsonString = "{" +
             "\"StringJoin\": \"VINET Cratchit\", " +

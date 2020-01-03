@@ -18,6 +18,7 @@ package com.marklogic.hub;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
@@ -42,10 +43,7 @@ import com.marklogic.client.io.*;
 import com.marklogic.client.io.marker.AbstractReadHandle;
 import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.error.DataHubConfigurationException;
-import com.marklogic.hub.impl.DataHubImpl;
-import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.hub.impl.HubProjectImpl;
-import com.marklogic.hub.impl.Versions;
+import com.marklogic.hub.impl.*;
 import com.marklogic.hub.job.impl.JobMonitorImpl;
 import com.marklogic.hub.legacy.LegacyDebugging;
 import com.marklogic.hub.legacy.LegacyTracing;
@@ -59,6 +57,7 @@ import com.marklogic.hub.util.ComboListener;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
+import com.marklogic.mgmt.util.ObjectMapperFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -1243,5 +1242,46 @@ public class HubTestBase {
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    /**
+     * This is needed for running flows without a HubProject because if the paths are relative (which they are by
+     * default), then a HubProject is needed to resolve them into absolute paths.
+     */
+    protected void makeInputFilePathsAbsoluteInFlow(String flowName) {
+        final String flowFilename = flowName + ".flow.json";
+        try {
+            Path projectDir = adminHubConfig.getHubProject().getProjectDir();
+            final File flowFile = projectDir.resolve("flows").resolve(flowFilename).toFile();
+            ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
+            JsonNode flow = objectMapper.readTree(flowFile);
+            makeInputFilePathsAbsolute(flow, projectDir.toFile().getAbsolutePath());
+            ObjectMapperFactory.getObjectMapper().writeValue(flowFile, flow);
+
+            JSONDocumentManager mgr = stagingClient.newJSONDocumentManager();
+            final String uri = "/flows/" + flowFilename;
+            if (mgr.exists(uri) != null) {
+                DocumentMetadataHandle metadata = mgr.readMetadata("/flows/" + flowFilename, new DocumentMetadataHandle());
+                mgr.write("/flows/" + flowFilename, metadata, new JacksonHandle(flow));
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    protected void makeInputFilePathsAbsolute(JsonNode flow, String projectDir) {
+        JsonNode steps = flow.get("steps");
+        steps.fieldNames().forEachRemaining(name -> {
+            JsonNode step = steps.get(name);
+            if (step.has("fileLocations")) {
+                ObjectNode fileLocations = (ObjectNode) step.get("fileLocations");
+                if (fileLocations.has("inputFilePath")) {
+                    String currentPath = fileLocations.get("inputFilePath").asText();
+                    if (!Paths.get(currentPath).isAbsolute()) {
+                        fileLocations.put("inputFilePath", projectDir + "/" + currentPath);
+                    }
+                }
+            }
+        });
     }
 }

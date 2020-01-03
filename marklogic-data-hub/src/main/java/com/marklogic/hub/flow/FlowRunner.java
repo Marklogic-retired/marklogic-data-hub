@@ -8,6 +8,20 @@ import java.util.concurrent.TimeoutException;
 
 public interface FlowRunner {
 
+    /**
+     * Run a flow without any dependency on an underlying HubProject for either finding artifacts (flows and step
+     * definitions) or for resolving file paths for an ingestion step. If an ingestion step does have a relative
+     * file path, then the ingestion step will fail due to not being able to resolve the relative file path to an
+     * absolute file path.
+     *
+     * Aside from retrieving flows and step definitions from MarkLogic instead of from the filesystem, the behavior of
+     * this method - the output of each step and the returned RunFlowResponse - will be identical to that of every
+     * other "runFlow" method in this class.
+     *
+     * @param flowInputs
+     * @return
+     */
+    RunFlowResponse runFlowWithoutProject(FlowInputs flowInputs);
 
     /**
      * Runs the flow, with a specific set of steps, with all custom settings
