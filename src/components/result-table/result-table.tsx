@@ -123,11 +123,12 @@ const ResultTable: React.FC<Props> = (props) => {
   useEffect(() => {
     let header = tableHeader(listOfColumns);
     //set table data
-    setColumns(header.slice(0, 5))
+    let defaultColumnData = header.slice(0,5).concat(header[header.length-1]);
+    header.length <= 5 ? setColumns(header.slice(0, 5)) : setColumns(defaultColumnData);
     //set popover tree data
-    setTreeColumns(previousColumns)
+    setTreeColumns(previousColumns);
     //set popover tree selected checkboxes data
-    setCheckedColumns(header.slice(0, 5));
+    setCheckedColumns(header.slice(0, 5).concat(header[header.length-1]));
   }, [props.data]);
 
   const components = {
