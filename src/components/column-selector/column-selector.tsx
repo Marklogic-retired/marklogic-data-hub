@@ -3,7 +3,7 @@ import {Popover, Tree} from 'antd';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faColumns} from '@fortawesome/free-solid-svg-icons'
 import styles from './column-selector.module.scss';
-import {reconstructHeader, deepCopy, getKeys} from '../../util/data-conversion';
+import {reconstructHeader, deepCopy, getKeys, getChildKeys} from '../../util/data-conversion';
 
 interface Props {
   title: any[];
@@ -27,7 +27,7 @@ const ColumnSelector: React.FC<Props> = (props) => {
   }, [props.tree])
 
   useEffect(() => {
-    setCheckedKeys([...[props.title.map(e => e.key)][0]])
+    setCheckedKeys(getChildKeys(props.title))
   }, [props.title])
 
   const onExpand = expandedKeys => {

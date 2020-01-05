@@ -211,7 +211,7 @@ const ResultTable: React.FC<Props> = (props) => {
 
   const dragProps = {
     onDragEnd(fromIndex:number, toIndex:number) {
-        if (fromIndex > 0 && toIndex > 0) {
+        if (fromIndex > 0 && toIndex > 0 ) {
           const header = deepCopy(columns);
           const tree = deepCopy(treeColumns);
           const colItem = header.splice(fromIndex-1, 1)[0];
@@ -285,7 +285,7 @@ const ResultTable: React.FC<Props> = (props) => {
 
   const headerRender = (col) => {
     setColumns(col)
-    setCheckedColumns(col)
+    setCheckedColumns(deepCopy(col))
   }
 
   return (

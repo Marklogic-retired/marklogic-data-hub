@@ -224,6 +224,21 @@ export const getKeys = function (obj: Object) {
   return parser(obj)
 }
 
+export const getChildKeys = function (obj: Object) {
+  let keys = new Array();
+  const parser = (obj: Object) => {
+    for (let i in obj) {
+      if (obj[i].hasOwnProperty('children')) {
+        parser(obj[i].children)
+      } else {
+        keys.push(obj[i].key)
+      }
+    }
+    return keys;
+  }
+  return parser(obj)
+}
+
 export const getParentKey = (key, tree) => {
   let parentKey;
   for (let i = 0; i < tree.length; i++) {
