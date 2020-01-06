@@ -2,7 +2,7 @@ const puppeteer = require('puppeteer');
 const testPage = require('./' + process.argv.slice(2)[0]);
 
 (async () => {
-  const browser = await puppeteer.launch({headless: false, args: ['--no-sandbox', '--disable-setuid-sandbox']});
+  const browser = await puppeteer.launch({headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox']});
   const page = await browser.newPage()
 
   const navigationPromise = page.waitForNavigation()

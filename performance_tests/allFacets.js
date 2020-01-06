@@ -6,66 +6,90 @@ const numFlows = 1; //number of flow facets that will be selected
 const numSteps = 1; //number of flow facets that will be selected
 
 async function collections(page) {
-  const performanceTiming = JSON.parse(
-    await page.evaluate(() => JSON.stringify(window.performance.timing))
-  );
+    const performanceTiming = JSON.parse(
+        await page.evaluate(() => JSON.stringify(window.performance.timing))
+    );
 
-  await page.waitForSelector('#hub-properties > .ant-collapse-header')
-  await page.click('#hub-properties > .ant-collapse-header')
+    await page.waitForSelector('#hub-properties > .ant-collapse-header')
+    await page.click('#hub-properties > .ant-collapse-header')
 
     // COLLECTIONS
-  await page.waitForSelector('[data-cy=collection-facet-block] > div > [data-cy=collection-facet-item] > [class*=facet_value] > .ant-checkbox > [data-cy=collection-facet-item-checkbox]')
-  await page.click('[data-cy=collection-facet-block] > div > [data-cy=collection-facet-item] > [class*=facet_value] > .ant-checkbox > [data-cy=collection-facet-item-checkbox]')
-  await page.waitFor(1000);
+    await page.waitForSelector('[data-cy=collection-facet-block] > div > [data-cy=collection-facet-item] > [class*=facet_value] > .ant-checkbox > [data-cy=collection-facet-item-checkbox]')
+    await page.click('[data-cy=collection-facet-block] > div > [data-cy=collection-facet-item] > [class*=facet_value] > .ant-checkbox > [data-cy=collection-facet-item-checkbox]')
+    await page.waitFor(1000);
 
     if (numCollections > 1) {
         for (var i = 2; i <= numCollections; i++) {
-            await page.waitForSelector('div > [data-cy=collection-facet-item]:nth-child(' + i + ') > [class*=facet_value] > .ant-checkbox > [data-cy=collection-facet-item-checkbox]')
-          await page.click('div > [data-cy=collection-facet-item]:nth-child(' + i + ') > [class*=facet_value] > .ant-checkbox > [data-cy=collection-facet-item-checkbox]')
+            try{
+                await page.waitForSelector('div > [data-cy=collection-facet-item]:nth-child(' + i + ') > [class*=facet_value] > .ant-checkbox > [data-cy=collection-facet-item-checkbox]')
+            }
+            catch (error) {
+                console.log("Collection child element #" + i + " does not exist.")
+                return
+            }
+            await page.click('div > [data-cy=collection-facet-item]:nth-child(' + i + ') > [class*=facet_value] > .ant-checkbox > [data-cy=collection-facet-item-checkbox]')
         }
     }
 
     // FLOWS
 
-  await page.waitFor(1000);
-  await page.waitForSelector('[data-cy=flow-facet-block] > div > [data-cy=flow-facet-item] > [class*=facet_value] > .ant-checkbox > [data-cy=flow-facet-item-checkbox]')
-  await page.click('[data-cy=flow-facet-block] > div > [data-cy=flow-facet-item] > [class*=facet_value] > .ant-checkbox > [data-cy=flow-facet-item-checkbox]')
+    await page.waitFor(1000);
+    await page.waitForSelector('[data-cy=flow-facet-block] > div > [data-cy=flow-facet-item] > [class*=facet_value] > .ant-checkbox > [data-cy=flow-facet-item-checkbox]')
+    await page.click('[data-cy=flow-facet-block] > div > [data-cy=flow-facet-item] > [class*=facet_value] > .ant-checkbox > [data-cy=flow-facet-item-checkbox]')
 
     if (numFlows > 1) {
         for (var i = 2; i <= numFlows; i++) {
-            await page.waitForSelector('div > [data-cy=flow-facet-item]:nth-child(' + i + ') > [class*=facet_value > .ant-checkbox > [data-cy=flow-facet-item-checkbox]')
-          await page.click('div > [data-cy=flow-facet-item]:nth-child(' + i + ') > [class*=facet_value] > .ant-checkbox > [data-cy=flow-facet-item-checkbox]')
+            try {
+                await page.waitForSelector('div > [data-cy=flow-facet-item]:nth-child(' + i + ') > [class*=facet_value > .ant-checkbox > [data-cy=flow-facet-item-checkbox]')
+            }
+            catch (error) {
+                console.log("Flow child element #" + i + " does not exist.")
+                return
+            }
+            await page.click('div > [data-cy=flow-facet-item]:nth-child(' + i + ') > [class*=facet_value] > .ant-checkbox > [data-cy=flow-facet-item-checkbox]')
         }
     }
 
     //STEPS
 
-  await page.waitFor(1000);
-  await page.waitForSelector('[data-cy=step-facet-block] > div > [data-cy=step-facet-item] > [class*=facet_value] > .ant-checkbox > [data-cy=step-facet-item-checkbox]')
-  await page.click('[data-cy=step-facet-block] > div > [data-cy=step-facet-item] > [class*=facet_value] > .ant-checkbox > [data-cy=step-facet-item-checkbox]')
+    await page.waitFor(1000);
+    await page.waitForSelector('[data-cy=step-facet-block] > div > [data-cy=step-facet-item] > [class*=facet_value] > .ant-checkbox > [data-cy=step-facet-item-checkbox]')
+    await page.click('[data-cy=step-facet-block] > div > [data-cy=step-facet-item] > [class*=facet_value] > .ant-checkbox > [data-cy=step-facet-item-checkbox]')
     if (numSteps > 1) {
         for (var i = 2; i <= numSteps; i++) {
-            await page.waitForSelector('div > [data-cy=step-facet-item]:nth-child(' + i + ') > [class*=facet_value] > .ant-checkbox > [data-cy=step-facet-item-checkbox]')
-          await page.click('div > [data-cy=step-facet-item]:nth-child(' + i + ') > [class*=facet_value] > .ant-checkbox > [data-cy=step-facet-item-checkbox]')
+            try {
+                await page.waitForSelector('div > [data-cy=step-facet-item]:nth-child(' + i + ') > [class*=facet_value] > .ant-checkbox > [data-cy=step-facet-item-checkbox]')
+            }
+            catch (error) {
+                console.log("Step child element #" + i + " does not exist.")
+                return
+            }
+            await page.click('div > [data-cy=step-facet-item]:nth-child(' + i + ') > [class*=facet_value] > .ant-checkbox > [data-cy=step-facet-item-checkbox]')
         }
     }
 
     // BROWSE DOCS
     for (var i = 2; i <= numPages+1; i++) {
-      await page.waitFor(1000)
-      await page.waitForSelector('[class*=Browse_searchBar] > [class*=search-pagination_searchPaginationContainer]:nth-child(3) > .ant-pagination > .ant-pagination-item-' + i + ' > a')
-      await page.click('[class*=Browse_searchBar] > [class*=search-pagination_searchPaginationContainer]:nth-child(3) > .ant-pagination > .ant-pagination-item-' + i + ' > a')
+        await page.waitFor(1000)
+        try {
+            await page.waitForSelector('[class*=Browse_searchBar] > [class*=search-pagination_searchPaginationContainer]:nth-child(3) > .ant-pagination > .ant-pagination-item-' + i + ' > a')
+        }
+        catch (error){
+            console.log("Page child element #" + i + " does not exist.")
+            return
+        }
+        await page.click('[class*=Browse_searchBar] > [class*=search-pagination_searchPaginationContainer]:nth-child(3) > .ant-pagination > .ant-pagination-item-' + i + ' > a')
     }
 
 
-  return extractDataFromPerformanceTiming(
-    performanceTiming,
-    'responseEnd',
-    'domInteractive',
-    'domContentLoadedEventEnd',
-    'domComplete',
-    'loadEventEnd'
-  );
+    return extractDataFromPerformanceTiming(
+        performanceTiming,
+        'responseEnd',
+        'domInteractive',
+        'domContentLoadedEventEnd',
+        'domComplete',
+        'loadEventEnd'
+    );
 }
 
 module.exports = collections;
