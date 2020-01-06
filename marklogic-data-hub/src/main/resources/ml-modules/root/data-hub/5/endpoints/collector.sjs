@@ -15,6 +15,7 @@
  */
 'use strict';
 const parameters = require("/MarkLogic/rest-api/endpoints/parameters.xqy");
+const CollectorLib = require("/data-hub/5/endpoints/collectorLib.sjs");
 const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
 
@@ -45,33 +46,31 @@ let flowDoc= datahub.flow.getFlow(flowName);
 if (!fn.exists(flowDoc)) {
   fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([404, "Not Found", "The requested flow was not found"]));
 }
+
 let stepDoc = flowDoc.steps[step];
 if (!stepDoc) {
   fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([404, "Not Found", `The step number "${step}" of the flow was not found`]));
 }
-let baseStep = datahub.flow.step.getStepByNameAndType(stepDoc.stepDefinitionName, stepDoc.stepDefinitionType);
-if (!baseStep) {
+
+let stepDefinition = datahub.flow.step.getStepByNameAndType(stepDoc.stepDefinitionName, stepDoc.stepDefinitionType);
+if (!stepDefinition) {
   fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([404, "Not Found", `A step with name "${stepDoc.stepDefinitionName}" and type of "${stepDoc.stepDefinitionType}" was not found`]));
 }
-let combinedOptions = Object.assign({}, baseStep.options, flowDoc.options, stepDoc.options, options);
+
+let combinedOptions = Object.assign({}, stepDefinition.options, flowDoc.options, stepDoc.options, options);
 const database = combinedOptions.sourceDatabase || requestParams.database;
 if(!combinedOptions.sourceQuery && flowDoc.sourceQuery) {
   combinedOptions.sourceQuery = flowDoc.sourceQuery;
 }
+
 let query = combinedOptions.sourceQuery;
-let isMergingStep = baseStep.name === 'default-merging' && baseStep.type === 'merging';
 if (!query) {
   datahub.debug.log("The collector query was empty");
   fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([404, "Not Found", "The collector query was empty"]));
 }
-if (isMergingStep) {
-  query = fn.normalizeSpace(`cts.values(
-    cts.pathReference('/matchSummary/URIsToProcess', ['type=string','collation=http://marklogic.com/collation/']),
-    null,
-    null,
-    ${query}
-  )`);
-}
+
+query = new CollectorLib().prepareSourceQuery(combinedOptions, stepDefinition);
+
 try {
   let urisEval;
   if (/^\s*cts\.(uris|values)\(.*\)\s*$/.test(query)) {
