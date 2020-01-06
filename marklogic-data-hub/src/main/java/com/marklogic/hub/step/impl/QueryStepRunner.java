@@ -240,13 +240,19 @@ public class QueryStepRunner implements StepRunner {
                 isFullOutput = Boolean.parseBoolean(options.get("fullOutput").toString());
             }
         }
+
         if(options.get("sourceDatabase") != null) {
             this.stagingClient = hubConfig.newStagingClient(StepRunnerUtil.objectToString(options.get("sourceDatabase")));
         }
         if(options.get("targetDatabase") != null) {
             this.destinationDatabase = StepRunnerUtil.objectToString(options.get("targetDatabase"));
         }
+
         options.put("flow", this.flow.getName());
+
+        // Needed to support constrainSourceQueryToJob
+        options.put("jobId", jobId);
+
         Collection<String> uris = null;
         //If current step is the first run step job output isn't disabled, a job doc is created
         if (!disableJobOutput) {
