@@ -129,7 +129,7 @@ const ColumnSelector: React.FC<Props> = (props) => {
   return (
       <div className={styles.fixedPopup}>
         <Popover placement="left" content={content} trigger="click" className={styles.fixedPopup}>
-          <FontAwesomeIcon icon={faColumns} size="lg"/>
+          <FontAwesomeIcon className={styles.columnIcon} icon={faColumns} size="lg"/>
         </Popover>
       </div>
   )
