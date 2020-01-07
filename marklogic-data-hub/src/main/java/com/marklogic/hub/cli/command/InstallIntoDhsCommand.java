@@ -67,6 +67,7 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
         commands.addAll(commandMap.get("mlModuleCommands"));
 
         commands.add(new CopyQueryOptionsCommand(hubConfig));
+        commands.add(new UpdateDhsModulesPermissionsCommand(hubConfig));
 
         DeployRolesCommand deployRolesCommand = new DeployRolesCommand();
         deployRolesCommand.setResourceFilenamesIncludePattern(
@@ -121,7 +122,7 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
         props.setProperty("mlFlowDeveloperRole", "flowDeveloper");
         props.setProperty("mlFlowOperatorRole", "flowOperator");
         props.setProperty("mlModulePermissions",
-            "flowDeveloper,read,flowDeveloper,execute,flowDeveloper,insert,flowOperator,read,flowOperator,execute,flowOperator,insert");
+            "data-hub-module-reader,read,data-hub-module-reader,execute,data-hub-environment-manager,update,rest-extension-user,execute");
 
         props.setProperty("mlAppServicesAuthentication", "basic");
         props.setProperty("mlFinalAuth", "basic");

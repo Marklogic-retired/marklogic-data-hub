@@ -3,6 +3,8 @@
   "description": "Data Hub role a user that can install a Data Hub application",
   "role": [
     "manage-admin",
-    "security"
+    "security",
+    "data-hub-admin",
+    "rest-admin-internal"
   ]
 }
