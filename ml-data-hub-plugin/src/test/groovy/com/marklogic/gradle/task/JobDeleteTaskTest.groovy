@@ -21,6 +21,7 @@ import com.marklogic.client.eval.EvalResult
 import com.marklogic.client.eval.EvalResultIterator
 import com.marklogic.client.io.DocumentMetadataHandle
 import com.marklogic.hub.HubConfig
+import com.marklogic.mgmt.resource.databases.DatabaseManager
 import org.gradle.testkit.runner.UnexpectedBuildSuccess
 
 import static com.marklogic.client.io.DocumentMetadataHandle.Capability.*
@@ -33,8 +34,9 @@ class JobDeleteTaskTest extends BaseTest {
     def setupSpec() {
         createGradleFiles()
         runTask('hubInit')
-        //runTask('mlUndeploy', '-Pconfirm=true')
-        //println(runTask('mlDeploy', '-i').getOutput())
+        //Deleting prov documents as admin user since no other users have rights to do so and
+        // not deleting them messes up with count assertions in this test suite
+        new DatabaseManager(hubConfig().getManageClient()).clearDatabase(HubConfig.DEFAULT_JOB_NAME)
 
         println(runTask('hubCreateHarmonizeFlow', '-PentityName=test-entity', '-PflowName=test-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy', '-PuseES=false').getOutput())
         println(runTask('mlReLoadModules'))
