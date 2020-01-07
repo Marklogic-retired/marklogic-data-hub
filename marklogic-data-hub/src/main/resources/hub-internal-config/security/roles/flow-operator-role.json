@@ -1,6 +1,6 @@
 {
   "role-name": "%%mlFlowOperatorRole%%",
-  "description": "A role that allows the user to read and write from MarkLogic Data Hub databases",
+  "description": "Data Hub role for operating a Data Hub application; data-hub-operator is preferred over this role to ease migration of a Data Hub application to DHS",
   "role": [
     "rest-reader",
     "rest-extension-user",
