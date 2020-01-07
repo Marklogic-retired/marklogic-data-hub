@@ -2,6 +2,7 @@ package com.marklogic.hub.cli.command;
 
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.Command;
+import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.ResourceFilenameFilter;
 import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
 import com.marklogic.appdeployer.command.modules.DeleteTestModulesCommand;
@@ -9,13 +10,17 @@ import com.marklogic.appdeployer.command.security.DeployAmpsCommand;
 import com.marklogic.appdeployer.command.security.DeployPrivilegesCommand;
 import com.marklogic.appdeployer.command.security.DeployRolesCommand;
 import com.marklogic.appdeployer.command.triggers.DeployTriggersCommand;
+import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.cli.Options;
 import com.marklogic.hub.cli.deploy.CopyQueryOptionsCommand;
 import com.marklogic.hub.cli.deploy.DhsDeployServersCommand;
 import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.mgmt.resource.databases.DatabaseManager;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -85,7 +90,7 @@ public class InstallIntoDhsCommandTest extends HubTestBase {
         command.dataHub = super.dataHub;
 
         List<Command> commands = command.buildCommandsForDhs();
-        assertEquals(16, commands.size());
+        assertEquals(17, commands.size());
         Collections.sort(commands, (c1, c2) -> c1.getExecuteSortOrder().compareTo(c2.getExecuteSortOrder()));
 
         int index = 0;
@@ -95,6 +100,7 @@ public class InstallIntoDhsCommandTest extends HubTestBase {
         assertTrue(commands.get(index++) instanceof DeployDatabaseFieldCommand);
         assertTrue(commands.get(index++) instanceof DhsDeployServersCommand);
         assertTrue(commands.get(index++) instanceof LoadHubModulesCommand);
+        assertTrue(commands.get(index++) instanceof UpdateDhsModulesPermissionsCommand);
         assertTrue(commands.get(index++) instanceof DeployAmpsCommand);
         assertTrue(commands.get(index++) instanceof LoadUserModulesCommand);
         assertTrue(commands.get(index++) instanceof GenerateFunctionMetadataCommand);
@@ -123,7 +129,7 @@ public class InstallIntoDhsCommandTest extends HubTestBase {
         assertEquals("flowDeveloper", props.getProperty("mlFlowDeveloperRole"));
         assertEquals("flowOperator", props.getProperty("mlFlowOperatorRole"));
 
-        assertEquals("flowDeveloper,read,flowDeveloper,execute,flowDeveloper,insert,flowOperator,read,flowOperator,execute,flowOperator,insert",
+        assertEquals("data-hub-module-reader,read,data-hub-module-reader,execute,data-hub-environment-manager,update,rest-extension-user,execute",
             props.getProperty("mlModulePermissions"));
 
         assertEquals("8010", props.getProperty("mlAppServicesPort"), "8000 is not available in DHS, so the staging port is used instead for " +
@@ -133,5 +139,40 @@ public class InstallIntoDhsCommandTest extends HubTestBase {
         assertEquals("basic", props.getProperty("mlFinalAuth"));
         assertEquals("basic", props.getProperty("mlJobAuth"));
         assertEquals("basic", props.getProperty("mlStagingAuth"));
+    }
+
+    @Test
+    public void testUpdateDhsResourcePermissions() {
+        try {
+            HubConfigImpl adminConfig = getHubFlowRunnerConfig("admin", "admin");
+            new UpdateDhsModulesPermissionsCommand(adminConfig).execute(new CommandContext(adminConfig.getAppConfig(), adminConfig.getManageClient(), adminConfig.getAdminManager()));
+
+            DocumentMetadataHandle metadataHandle = new DocumentMetadataHandle();
+            modMgr.readMetadata("/marklogic.rest.resource/mlDbConfigs/assets/metadata.xml", metadataHandle);
+            DocumentMetadataHandle.DocumentPermissions perms = metadataHandle.getPermissions();
+
+            Assertions.assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("data-hub-environment-manager").iterator().next());
+            Assertions.assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("rest-extension-user").iterator().next());
+
+            DocumentMetadataHandle moduleMetadataHandle = new DocumentMetadataHandle();
+            modMgr.readMetadata("/marklogic.rest.resource/mlDbConfigs/assets/resource.xqy", moduleMetadataHandle);
+            DocumentMetadataHandle.DocumentPermissions modulePerms = moduleMetadataHandle.getPermissions();
+
+            Assertions.assertEquals(DocumentMetadataHandle.Capability.UPDATE, modulePerms.get("data-hub-environment-manager").iterator().next());
+            Assertions.assertNull(modulePerms.get("rest-admin-internal"));
+
+            moduleMetadataHandle = new DocumentMetadataHandle();
+            modMgr.readMetadata("/marklogic.rest.transform/mlExtractContent/assets/transform.xqy", moduleMetadataHandle);
+            modulePerms = moduleMetadataHandle.getPermissions();
+
+            Assertions.assertEquals(DocumentMetadataHandle.Capability.UPDATE, modulePerms.get("data-hub-environment-manager").iterator().next());
+            Assertions.assertNull(modulePerms.get("rest-admin-internal"));
+        }
+        finally {
+            new DatabaseManager(getDataHubAdminConfig().getManageClient()).clearDatabase(HubConfig.DEFAULT_MODULES_DB_NAME);
+            installHubModules();
+            installHubArtifacts(adminHubConfig, true);
+        }
+
     }
 }
