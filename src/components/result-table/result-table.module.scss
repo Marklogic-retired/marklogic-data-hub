@@ -8,3 +8,16 @@
   padding: 8px;
   color: #666;
 }
+
+.columnSelector {
+  margin-right: 26px;
+  height: 10px;
+  //  cursor: pointer;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.tabular {
+  margin-top: 20px;
+  overflow-x: auto;
+}

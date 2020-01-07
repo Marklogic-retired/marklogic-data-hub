@@ -114,7 +114,6 @@ describe('json scenario on browse documents page', () => {
     browsePage.getTotalDocuments().should('be.equal', 6);
     browsePage.getFacetSearchSelectionCount('collection').should('contain', '1');
     browsePage.clearFacetSearchSelection('collection');
-    browsePage.getFacetSearchSelectionCount('collection').should('contain', '0');
   });
 
   it('search for a simple text/query and verify content', () => {
@@ -198,7 +197,7 @@ describe('json scenario for table on browse documents page', () => {
     browsePage.getHubPropertiesExpanded();
     browsePage.getTotalDocuments().should('be.greaterThan', '1008')
     //check table rows
-    browsePage.getTableRows().should('have.length', 10);
+    browsePage.getTableRows().should('have.length', 20);
     //check table columns
     browsePage.getTableColumns().should('have.length', 5);
     //check cells data

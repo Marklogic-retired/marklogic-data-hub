@@ -8,6 +8,9 @@ import { facetParser } from '../../util/data-conversion';
 import hubPropertiesConfig from '../../config/hub-properties.config';
 import tooltipsConfig from '../../config/tooltips.config';
 import styles from './sidebar.module.scss';
+import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 
 const { Panel } = Collapse;
 const { RangePicker } = DatePicker;
@@ -33,17 +36,21 @@ const Sidebar:React.FC<Props> = (props) => {
   useEffect(() => {
     if (props.facets) {
       const parsedFacets = facetParser(props.facets);
-      if (Object.entries(searchOptions.searchFacets).length === 0) {
-        const filteredHubFacets = hubPropertiesConfig.map( hubFacet => {
-          let hubFacetValues = parsedFacets.find(facet => facet.facetName === hubFacet.facetName);
-          return hubFacetValues && {...hubFacet, ...hubFacetValues}
-        });
-        setHubFacets(filteredHubFacets);
-      } else {
-        // TODO check if hub filters need updates
-      }
+      const filteredHubFacets = hubPropertiesConfig.map( hubFacet => {
+        let hubFacetValues = parsedFacets.find(facet => facet.facetName === hubFacet.facetName);
+        return hubFacetValues && {...hubFacet, ...hubFacetValues}
+      });
+      setHubFacets(filteredHubFacets);
 
       if (props.selectedEntities.length && Object.entries(searchOptions.searchFacets).length === 0) {
+        const entityDef = props.entityDefArray.find(entity => entity.name === props.selectedEntities[0]);
+        const filteredEntityFacets = entityDef.rangeIndex.length && entityDef.rangeIndex.map( rangeIndex => {
+          let entityFacetValues = parsedFacets.find(facet => facet.facetName === rangeIndex);
+          return {...entityFacetValues}
+        });
+
+        setEntityFacets(filteredEntityFacets);
+      } else if (props.selectedEntities.length && !entityFacets.length) {
         const entityDef = props.entityDefArray.find(entity => entity.name === props.selectedEntities[0]);
         const filteredEntityFacets = entityDef.rangeIndex.length && entityDef.rangeIndex.map( rangeIndex => {
           let entityFacetValues = parsedFacets.find(facet => facet.facetName === rangeIndex);
@@ -60,7 +67,6 @@ const Sidebar:React.FC<Props> = (props) => {
           return facet;
         });
         entityFacets.forEach( entityFacet => {
-         // console.log('entity facet', entityFacet)
           let updatedFacet = parsedFacets.find(facet => facet.facetName === entityFacet.facetName);
           if (updatedFacet.facetValues.length) {
             updatedFacet.facetValues.forEach( facetValue => {
@@ -114,7 +120,7 @@ const Sidebar:React.FC<Props> = (props) => {
   }
 
   return (
-    <div className={styles.sideBarContainer}>
+    <div className={styles.sideBarContainer} id={'sideBarContainer'}>
       <SelectedFacets selectedFacets={selectedFacets}/>
       <Collapse 
         className={styles.sideBarFacets}
@@ -141,9 +147,8 @@ const Sidebar:React.FC<Props> = (props) => {
           </Panel>
         )}
         <Panel id="hub-properties" header={<div className={styles.title}>Hub Properties</div>} key="hubProperties" style={{borderBottom: 'none'}}>
-          <Tooltip title={tooltips.createdOn} placement="topLeft">
-            <div className={styles.facetName} data-cy='created-on-facet'>Created On</div>
-          </Tooltip>
+            <div className={styles.facetName} data-cy='created-on-facet'>Created On<Tooltip title={tooltips.createdOn} placement="topLeft">
+              <FontAwesomeIcon className={styles.infoIcon}  icon={faInfoCircle} size="sm" /></Tooltip></div>
           <RangePicker 
             id="range-picker"
             className={styles.datePicker} 
@@ -153,7 +158,7 @@ const Sidebar:React.FC<Props> = (props) => {
           { hubFacets.map(facet => {
             return facet && (
               <Facet
-                name={facet.hasOwnProperty('displayName') ? facet.displayName : facet.facetName}
+                name={facet.hasOwnProperty('displayName') ? facet.displayName : facet.facetName }
                 constraint={facet.facetName}
                 facetValues={facet.facetValues}
                 key={facet.facetName}

@@ -1,16 +1,17 @@
 .ant-table-row-collapsed::after {
   content: '>';
 }
+
 .ant-table-row-expanded::after {
   content: '\22C1';
 }
 
- .react-resizable {
+.react-resizable {
   position: relative;
   background-clip: padding-box;
 }
 
- .react-resizable-handle {
+.react-resizable-handle {
   position: absolute;
   width: 30px;
   height: 100%;
@@ -20,7 +21,15 @@
   z-index: 1;
 }
 
-.ant-tooltip  {
+.ant-tooltip {
   white-space: pre-wrap;
 }
 
+.ant-popover {
+  position: fixed;
+  z-index: 1;
+}
+
+.react-resizable > .ant-table-header-column {
+  cursor: move; 
+}

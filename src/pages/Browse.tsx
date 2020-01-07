@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import axios from 'axios';
-import { Layout, Tooltip } from 'antd';
+import { Layout, Tooltip, Spin } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { AuthContext } from '../util/auth-context';
 import { SearchContext } from '../util/search-context';
@@ -129,7 +129,7 @@ const Browse: React.FC<Props> = ({ location }) => {
           />
         </Sider>
         <Content className={styles.content}>
-          {isLoading || user.error.type === 'ALERT' ?
+          { user.error.type === 'ALERT' ?
             <AsyncLoader />
             :
             <>
@@ -145,10 +145,13 @@ const Browse: React.FC<Props> = ({ location }) => {
                   total={totalDocuments}
                   pageNumber={searchOptions.pageNumber}
                   pageSize={searchOptions.pageSize}
+                  pageLength={searchOptions.pageLength}
+                  maxRowsPerPage={searchOptions.maxRowsPerPage}
                 />
                 <br />
                 <br />
                 <div className={styles.switchViews}>
+                  { isLoading && <Spin style={{ marginLeft: '10px' }}/>}
                   <div className={active ? styles.toggled : styles.toggleView}
                     data-cy="table-view" id={'tableView'}
                     onClick={() => tableSwitch()}>
@@ -179,6 +182,8 @@ const Browse: React.FC<Props> = ({ location }) => {
                   total={totalDocuments}
                   pageNumber={searchOptions.pageNumber}
                   pageSize={searchOptions.pageSize}
+                  pageLength={searchOptions.pageLength}
+                  maxRowsPerPage={searchOptions.maxRowsPerPage}
                 />
               </div>
             </>
