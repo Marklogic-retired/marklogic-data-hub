@@ -1,11 +1,15 @@
 {
-  "name": "performance_tests",
-  "version": "1.0.0",
-  "description": "HOW TO DOWNLOAD PUPPETEER: 1. install node 2. install puppeteer by typing \"npm i puppeteer\"",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC"
+    "name": "performance_tests",
+    "version": "1.0.0",
+    "description": "HOW TO DOWNLOAD PUPPETEER: 1. install node 2. install puppeteer by typing \"npm i puppeteer\"",
+    "main": "index.js",
+    "dependencies": {
+        "puppeteer": "^2.0.0"
+    },
+    "devDependencies": {},
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1 "
+    },
+    "author": "",
+    "license": "ISC"
 }
