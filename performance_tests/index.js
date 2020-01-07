@@ -5,7 +5,8 @@ const testPage = require('./' + process.argv.slice(2)[0]);
   const browser = await puppeteer.launch({headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox']});
   const page = await browser.newPage()
 
-  const navigationPromise = page.waitForNavigation()
+  await page.setCacheEnabled(false)
+  const navigationPromise = page.waitForNavigation({})
 
   await page.goto('http://rh7-intel64-perf-4:3000');
   process.on('unhandledRejection', error => {
@@ -35,6 +36,7 @@ const testPage = require('./' + process.argv.slice(2)[0]);
   await page.waitForSelector('.ant-row #submit')
   await page.click('.ant-row #submit')
 
+  await page.waitFor(5000)
   await page.goto('http://rh7-intel64-perf-4:3000/browse')
   console.log(await testPage(page));
   await browser.close()
