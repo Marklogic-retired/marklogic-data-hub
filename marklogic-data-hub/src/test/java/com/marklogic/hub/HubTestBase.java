@@ -100,6 +100,7 @@ import java.util.stream.Stream;
 import static com.marklogic.client.io.DocumentMetadataHandle.Capability.READ;
 import static com.marklogic.client.io.DocumentMetadataHandle.Capability.UPDATE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 @SuppressWarnings("deprecation")
@@ -1283,5 +1284,17 @@ public class HubTestBase {
                 }
             }
         });
+    }
+
+    /**
+     * These assertions are made in several tests, so this method is in this class to avoid duplicating them.
+     */
+    protected void verifyCollectionCountsFromRunningTestFlow() {
+        assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "xml-coll"));
+        assertEquals(25, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "csv-coll"));
+        assertEquals(25, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "csv-tab-coll"));
+        assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "json-coll"));
+        assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "json-map"));
+        assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map"));
     }
 }

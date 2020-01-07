@@ -50,12 +50,7 @@ public class DataHubOperatorTest extends AbstractSecurityTest {
 
             flowRunner.runFlow("testFlow");
             flowRunner.awaitCompletion();
-            assertEquals(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "xml-coll"), 1);
-            assertEquals(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "csv-coll"), 25);
-            assertEquals(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "csv-tab-coll"), 25);
-            assertEquals(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "json-coll"), 1);
-            assertEquals(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "json-map"), 1);
-            assertEquals(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map"), 1);
+            verifyCollectionCountsFromRunningTestFlow();
             assertEquals(getDocCount(HubConfig.DEFAULT_JOB_NAME, "Jobs"), 3,
                 "For task 32, data-hub-operator should be able to see documents in the Jobs collection via the " +
                     "data-hub-job-reader role, and there should be 3 documents - 2 in Batch, and 1 in Job");

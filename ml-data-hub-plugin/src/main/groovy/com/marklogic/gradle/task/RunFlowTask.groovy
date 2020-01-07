@@ -17,15 +17,14 @@
 
 package com.marklogic.gradle.task
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
+
 import com.marklogic.gradle.exception.FlowNameRequiredException
-import com.marklogic.gradle.exception.FlowNotFoundException
 import com.marklogic.gradle.exception.HubNotInstalledException
-import com.marklogic.hub.FlowManager
-import com.marklogic.hub.flow.Flow
+import com.marklogic.hub.cli.client.CommandLineFlowInputs
+import com.marklogic.hub.flow.FlowInputs
+import com.marklogic.hub.flow.FlowRunner
 import com.marklogic.hub.flow.RunFlowResponse
-import groovy.json.JsonBuilder
+import org.apache.commons.lang3.tuple.Pair
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 
@@ -42,10 +41,10 @@ class RunFlowTask extends HubTask {
 
     @Input
     public String inputFilePath
-    
+
     @Input
     public String inputFileType
-    
+
     @Input
     public String outputURIReplacement
 
@@ -66,6 +65,7 @@ class RunFlowTask extends HubTask {
 
     @TaskAction
     void runFlow() {
+        CommandLineFlowInputs inputs = new CommandLineFlowInputs();
 
         if (flowName == null) {
             flowName = project.hasProperty("flowName") ? project.property("flowName") : null
@@ -73,143 +73,78 @@ class RunFlowTask extends HubTask {
         if (flowName == null) {
             throw new FlowNameRequiredException()
         }
-
-        def runFlowString = new StringBuffer("Running Flow: [" + flowName + "]")
+        inputs.setFlowName(flowName)
 
         if (jobId == null) {
             jobId = project.hasProperty("jobId") ? project.property("jobId") : null
         }
+        inputs.setJobId(jobId)
 
         if (batchSize == null) {
-            batchSize = project.hasProperty("batchSize") ?
-                Integer.parseInt(project.property("batchSize")) : null
+            batchSize = project.hasProperty("batchSize") ? Integer.parseInt(project.property("batchSize")) : null
         }
+        inputs.setBatchSize(batchSize)
 
         if (threadCount == null) {
-            threadCount = project.hasProperty("threadCount") ?
-                Integer.parseInt(project.property("threadCount")) : null
+            threadCount = project.hasProperty("threadCount") ? Integer.parseInt(project.property("threadCount")) : null
         }
+        inputs.setThreadCount(threadCount)
 
         if (inputFilePath == null) {
-            inputFilePath = project.hasProperty("inputFilePath") ?
-                project.property("inputFilePath") : null
+            inputFilePath = project.hasProperty("inputFilePath") ? project.property("inputFilePath") : null
         }
+        inputs.setInputFilePath(inputFilePath)
 
         if (inputFileType == null) {
-            inputFileType = project.hasProperty("inputFileType") ?
-                project.property("inputFileType") : null
+            inputFileType = project.hasProperty("inputFileType") ? project.property("inputFileType") : null
         }
+        inputs.setInputFileType(inputFileType)
 
         if (separator == null) {
-            separator = project.hasProperty("separator") ?
-                project.property("separator") : null
+            separator = project.hasProperty("separator") ? project.property("separator") : null
         }
+        inputs.setSeparator(separator)
 
         if (outputURIReplacement == null) {
-            outputURIReplacement = project.hasProperty("outputURIReplacement") ?
-                project.property("outputURIReplacement") : null
+            outputURIReplacement = project.hasProperty("outputURIReplacement") ? project.property("outputURIReplacement") : null
         }
+        inputs.setOutputURIReplacement(outputURIReplacement)
 
         if (showOptions == null) {
-            showOptions = project.hasProperty("showOptions") ?
-                Boolean.parseBoolean(project.property("showOptions")) : false
+            showOptions = project.hasProperty("showOptions") ? Boolean.parseBoolean(project.property("showOptions")) : false
         }
+        inputs.setShowOptions(showOptions)
 
         if (failHard == null) {
-            failHard = project.hasProperty("failHard") ?
-                Boolean.parseBoolean(project.property("failHard")) : false
+            failHard = project.hasProperty("failHard") ? Boolean.parseBoolean(project.property("failHard")) : false
         }
+        inputs.setFailHard(failHard)
 
         if (steps == null) {
-            steps = project.hasProperty("steps") ?
-                project.property("steps").toString().trim().tokenize(",") : null
+            steps = project.hasProperty("steps") ? project.property("steps").toString().trim().tokenize(",") : null
         }
+        inputs.setSteps(steps)
 
-        if(steps != null) {
-            runFlowString.append(", Steps: [" + steps.join(",") + "]")
+        if (project.ext.properties.containsKey("optionsFile")){
+            inputs.setOptionsFile(project.ext.options)
+        }
+        else if (project.ext.properties.containsKey("options")) {
+            inputs.setOptionsJSON(project.ext.options)
         }
 
         if (!isHubInstalled()) {
             throw new HubNotInstalledException()
         }
 
-        FlowManager fm = getFlowManager()
-        Flow flow = fm.getFlow(flowName)
-        if (flow == null) {
-            throw new FlowNotFoundException(flowName)
-        }
+        Pair<FlowInputs, String> pair = inputs.buildFlowInputs()
+        println(pair.getRight())
 
-        Map<String, Object> options = new HashMap<>()
-        def optionsString;
-        if(project.ext.properties.containsKey("optionsFile")){
-            def jsonFile = new File(project.ext.optionsFile.trim())
-            optionsString = jsonFile.text
-        }
-        else if(project.ext.properties.containsKey("options")) {
-            optionsString = String.valueOf(project.ext.options)
-        }
-        if (optionsString?.trim()) {
-            ObjectMapper mapper = new ObjectMapper();
-            options = mapper.readValue(optionsString,
-                new TypeReference<Map<String, Object>>() {
-                });
-        }
+        FlowInputs flowInputs = pair.getLeft()
+        FlowRunner flowRunner = dataHub.getFlowRunner()
+        RunFlowResponse runFlowResponse = flowRunner.runFlow(flowName, steps, jobId, flowInputs.getOptions(), flowInputs.getStepConfig())
+        flowRunner.awaitCompletion()
 
-        Map<String, Object> stepConfig = new HashMap<>()
-
-        if(batchSize != null){
-            runFlowString.append("\n\twith batch size: " + batchSize)
-            stepConfig.put("batchSize", batchSize)
-        }
-        if(threadCount != null){
-            runFlowString.append("\n\twith thread count: " + threadCount)
-            stepConfig.put("threadCount", threadCount)
-        }
-        if(Boolean.TRUE.equals(failHard)) {
-            runFlowString.append("\n\t\twith fail hard:" + failHard.toString())
-            stepConfig.put("stopOnFailure", failHard)
-        }
-
-        if(inputFileType != null || inputFilePath != null || outputURIReplacement != null || separator !=null){
-            runFlowString.append("\n\tWith File Locations Settings:")
-            Map<String, String> fileLocations = new HashMap<>()
-            if(inputFileType != null) {
-                runFlowString.append("\n\t\tInput File Type:" + inputFileType.toString())
-                fileLocations.put("inputFileType", inputFileType)
-            }
-            if(inputFilePath != null) {
-                runFlowString.append("\n\t\tInput File Path:" + inputFilePath.toString())
-                fileLocations.put("inputFilePath", inputFilePath)
-            }
-            if(outputURIReplacement != null) {
-                runFlowString.append("\n\t\tOutput URI Replacement:" + outputURIReplacement.toString())
-                fileLocations.put("outputURIReplacement", outputURIReplacement)
-            }
-            if(separator != null) {
-                if(inputFileType != null && !inputFileType.equalsIgnoreCase("csv")) {
-                    throw new IllegalArgumentException("Invalid argument for file type " + inputFileType + ". When specifying a separator, the file type must be 'csv'")
-                }
-                runFlowString.append("\n\t\tSeparator:" + separator.toString())
-                fileLocations.put("separator", separator)
-            }
-
-            stepConfig.put("fileLocations", fileLocations)
-        }
-        if (showOptions) {
-            runFlowString.append("\n\tand options:")
-            options.each { key, value ->
-                runFlowString.append("\n\t\t" + key + " = " + value)
-            }
-        }
-
-        // now we print out the string buffer
-        println(runFlowString.toString())
-
-        RunFlowResponse runFlowResponse = dataHub.getFlowRunner().runFlow(flow.getName(), steps, jobId, options, stepConfig)
-        dataHub.getFlowRunner().awaitCompletion()
-
-        JsonBuilder jobResp = new JsonBuilder(runFlowResponse)
-        println("\n\nOutput:")
-        println(jobResp.toPrettyString())
+        println("\nOutput:")
+        println runFlowResponse.toJson()
     }
 }
