@@ -72,20 +72,25 @@ export const entityFromJSON = (data: any) => {
   return entityArray;
 }
 
-export const entityParser = (data : any) => {
+export const entityParser = (data: any) => {
   return data.map((entity, index) => {
-    const entityDefinition = entity.definitions.find(definition => definition.name === entity.info.title);
-    let parsedEntity = {}
-    if (entityDefinition) {
-      const rangeIndex = entityDefinition['elementRangeIndex'].concat(entityDefinition['rangeIndex'])
-      parsedEntity = {
-        name: entityDefinition['name'],
-        primaryKey: entityDefinition.hasOwnProperty('primaryKey') ? entityDefinition['primaryKey'] : '',
-        rangeIndex: rangeIndex.length ? rangeIndex : []
+    let rangeIndex = [];
+    let nestedEntityDefinition;
+    let parsedEntity = {};
+    let entityDefinition = entity.definitions.find(definition => definition.name === entity.info.title);
+    for (var prop in entity.definitions) {
+      nestedEntityDefinition = entity.definitions[prop];
+      if (nestedEntityDefinition) {
+        rangeIndex = rangeIndex.concat(nestedEntityDefinition['elementRangeIndex']).concat(nestedEntityDefinition['rangeIndex']);
       }
     }
-    return parsedEntity
-  }); 
+    parsedEntity = {
+      name: entityDefinition['name'],
+      primaryKey: entityDefinition.hasOwnProperty('primaryKey') ? entityDefinition['primaryKey'] : '',
+      rangeIndex: rangeIndex.length ? rangeIndex : []
+    }
+    return parsedEntity;
+  });
 }
 
 export const facetParser = (facets: any) => {

@@ -36,12 +36,13 @@ const Sidebar:React.FC<Props> = (props) => {
   useEffect(() => {
     if (props.facets) {
       const parsedFacets = facetParser(props.facets);
+      //console.log(parsedFacets);
       const filteredHubFacets = hubPropertiesConfig.map( hubFacet => {
         let hubFacetValues = parsedFacets.find(facet => facet.facetName === hubFacet.facetName);
         return hubFacetValues && {...hubFacet, ...hubFacetValues}
       });
       setHubFacets(filteredHubFacets);
-
+       //console.log(props.entityDefArray)
       if (props.selectedEntities.length && Object.entries(searchOptions.searchFacets).length === 0) {
         const entityDef = props.entityDefArray.find(entity => entity.name === props.selectedEntities[0]);
         const filteredEntityFacets = entityDef.rangeIndex.length && entityDef.rangeIndex.map( rangeIndex => {
