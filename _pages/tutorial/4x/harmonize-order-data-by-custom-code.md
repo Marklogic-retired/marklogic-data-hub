@@ -208,7 +208,7 @@ To customize the content plugin code,
 
 1. Click the **CONTENT**{:.uilabel} tab.
 1. Replace the content plugin code with the following:
-      <div class="embed-git lang-js" href="//raw.githubusercontent.com/marklogic-community/marklogic-data-hub/develop/examples/online-store/plugins/entities/Order/harmonize/Harmonize Orders/content/content.sjs"></div>
+      <div class="embed-git lang-js" href="//raw.githubusercontent.com/marklogic/marklogic-data-hub/71db3957114fd69f9cb584c6bfd38ec564410806/examples/online-store/plugins/entities/Order/harmonize/Harmonize Orders/content/content.sjs"></div>
 1. Click **SAVE**{:.inline-button}.
 {:.ol-steps}
 
