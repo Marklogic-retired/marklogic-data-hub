@@ -14,6 +14,7 @@ import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.step.StepRunner;
 import com.marklogic.hub.step.StepRunnerFactory;
 import com.marklogic.hub.step.impl.Step;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -141,9 +142,13 @@ public class FlowRunnerImpl implements FlowRunner{
      */
     @Override
     public RunFlowResponse runFlowWithoutProject(FlowInputs flowInputs) {
+        final String flowName = flowInputs.getFlowName();
+        if (StringUtils.isEmpty(flowName)) {
+            throw new IllegalArgumentException("Cannot run flow; no flow name provided");
+        }
         Flow flow;
         try {
-            JsonNode jsonFlow = hubConfig.newStagingClient().newJSONDocumentManager().read("/flows/" + flowInputs.getFlowName() + ".flow.json", new JacksonHandle()).get();
+            JsonNode jsonFlow = hubConfig.newStagingClient().newJSONDocumentManager().read("/flows/" + flowName + ".flow.json", new JacksonHandle()).get();
             flow = new FlowImpl().deserialize(jsonFlow);
         } catch (Exception ex) {
             throw new RuntimeException("Unable to retrieve flow with name: " + flowInputs.getFlowName(), ex);
