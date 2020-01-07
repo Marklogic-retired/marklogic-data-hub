@@ -1,4 +1,4 @@
 {
   "role-name": "data-hub-module-reader",
-  "description": "Data Hub role for permissions that grant read access to DHF modules"
+  "description": "Permits reading module documents"
 }
