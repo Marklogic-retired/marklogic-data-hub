@@ -88,7 +88,7 @@ const Header:React.FC<Props> = ({ location }) => {
     <Layout.Header className={styles.navBar}>
       <div className={styles.iconContain}>
         <div id="logo" className={styles.icon}>
-          <DatahubIcon size={65} fill='silver' view='0 0 100 100'/>
+          <DatahubIcon size={50} fill='silver' view='0 0 75 75'/>
         </div>
       </div>
       <div id="title" className={styles.title}>Data Hub Explorer</div>
