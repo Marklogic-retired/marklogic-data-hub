@@ -302,7 +302,7 @@
                 <match-header name="range">
                   <dispatch>/data-hub/5/rest-api/endpoints/document-item-query.xqy</dispatch>
                 </match-header>
-                <dispatch>/data-hub/5/rest-api/endpoints/document-item-query-get.xqy</dispatch>
+                <dispatch>/MarkLogic/rest-api/endpoints/document-item-query-get.xqy</dispatch>
             </match-method>
             <match-method any-of="HEAD">
                 <match-query-param name="txid">
