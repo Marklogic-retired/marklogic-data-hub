@@ -52,6 +52,7 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
 
         List<Command> commands = new ArrayList<>();
         commands.add(new DeployPrivilegesCommand());
+        commands.add(new DeployRolesCommand());
         commands.add(new DeployAmpsCommand());
         commands.add(dbCommand);
         commands.add(new DhsDeployServersCommand(dataHub));
@@ -68,12 +69,6 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
 
         commands.add(new CopyQueryOptionsCommand(hubConfig));
         commands.add(new UpdateDhsModulesPermissionsCommand(hubConfig));
-
-        DeployRolesCommand deployRolesCommand = new DeployRolesCommand();
-        deployRolesCommand.setResourceFilenamesIncludePattern(
-            Pattern.compile("(data-hub-entity-model-reader|data-hub-explorer-architect).*")
-        );
-        commands.add(deployRolesCommand);
 
         commands.add(new CreateGranularPrivilegesCommand(hubConfig));
 
