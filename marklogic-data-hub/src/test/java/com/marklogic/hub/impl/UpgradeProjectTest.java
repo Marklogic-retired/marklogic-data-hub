@@ -9,6 +9,7 @@ import com.marklogic.mgmt.api.database.Database;
 import com.marklogic.mgmt.api.database.ElementIndex;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
 import org.apache.commons.io.FileUtils;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.w3c.dom.Document;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -128,6 +131,12 @@ public class UpgradeProjectTest extends HubTestBase {
         assertFalse(props.contains("mlMappingPermissions"));
         assertFalse(props.contains("mlStepDefinitionPermissions"));
         assertFalse(props.contains("mlJobPermissions"));
+
+        //Ensure the path index from DHFPROD-3911 is added to xml payload
+        XMLUnit.setIgnoreWhitespace(true);
+        Document expected = getXmlFromResource("upgrade-projects/dhf43x/key/final-database.xml" );
+        Document actual = getXmlFromInputStream(FileUtils.openInputStream(hubProject.getUserConfigDir().resolve("database-fields").resolve("final-database.xml").toFile()));
+        assertXMLEqual(expected, actual);
 
     }
 

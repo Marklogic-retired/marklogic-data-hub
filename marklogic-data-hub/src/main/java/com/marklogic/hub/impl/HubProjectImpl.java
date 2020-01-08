@@ -34,7 +34,21 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathFactory;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -288,10 +302,6 @@ public class HubProjectImpl implements HubProject {
         writeResourceFile("hub-internal-config/database-fields/job-database.xml",
             hubDatabaseFieldsDir.resolve("job-database.xml"), true);
 
-        Path userDatabaseFieldsDir = getUserConfigDir().resolve("database-fields");
-        userDatabaseFieldsDir.toFile().mkdirs();
-        writeResourceFile("ml-config/database-fields/final-database.xml",
-            userDatabaseFieldsDir.resolve("final-database.xml"), true);
 
         // Per DHFPROD-3159, we no longer overwrite user config (ml-config) files. These are rarely updated by DHF,
         // while users may update them at any time. If DHF ever needs to update one of these files in the future, it
@@ -310,6 +320,9 @@ public class HubProjectImpl implements HubProject {
         writeResourceFile("ml-config/databases/final-schemas-database.json", userDatabaseDir.resolve("final-schemas-database.json"), overwriteUserConfigFiles);
         writeResourceFile("ml-config/databases/final-triggers-database.json", userDatabaseDir.resolve("final-triggers-database.json"), overwriteUserConfigFiles);
 
+        Path userDatabaseFieldsDir = getUserConfigDir().resolve("database-fields");
+        userDatabaseFieldsDir.toFile().mkdirs();
+        writeResourceFile("ml-config/database-fields/final-database.xml", userDatabaseFieldsDir.resolve("final-database.xml"), overwriteUserConfigFiles);
         // the following config has to do with ordering of initialization.
         // users and roles must be present to install the hub.
         // amps cannot be installed until after staging modules db exists.
@@ -542,6 +555,68 @@ public class HubProjectImpl implements HubProject {
         }
         upgradeFlows();
         removeEmptyRangeElementIndexArrayFromFinalDatabaseFile();
+        addPathRangeIndexesToFinalDatabase();
+    }
+
+    private void addPathRangeIndexesToFinalDatabase() {
+        File finalDbFile = getUserConfigDir().resolve("database-fields").resolve("final-database.xml").toFile();
+        try {
+            FileInputStream fileInputStream = new FileInputStream(finalDbFile);
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+
+            Document document = documentBuilder.parse(fileInputStream);
+
+            XPathFactory xPathFactory = XPathFactory.newInstance();
+            XPath xPath = xPathFactory.newXPath();
+
+            XPathExpression expr = xPath.compile("//range-path-index/*[local-name()='path-expression']/text()='//actionDetails/*/uris'");
+
+            Boolean isNodePresent = Boolean.parseBoolean(expr.evaluate(document));
+
+            if(!isNodePresent) {
+                Node node = (Node) xPath
+                    .evaluate("//*[local-name()='range-path-indexes']", document.getDocumentElement(), XPathConstants.NODE);
+
+                Node newNode = node.appendChild(document.createElement("range-path-index"));
+
+                Element scalarType = document.createElement("scalar-type");
+                scalarType.setTextContent("string");
+
+                Element collation = document.createElement("scalar-type");
+                collation.setTextContent("http://marklogic.com/collation/");
+
+                Element pathExpression = document.createElement("path-expression");
+                pathExpression.setTextContent("//actionDetails/*/uris");
+
+                Element rangeValuePosition = document.createElement("range-value-positions");
+                rangeValuePosition.setTextContent("true");
+
+                Element invalidValues = document.createElement("invalid-values");
+                invalidValues.setTextContent("reject");
+
+                newNode.appendChild(scalarType);
+                newNode.appendChild(collation);
+                newNode.appendChild(pathExpression);
+                newNode.appendChild(rangeValuePosition);
+                newNode.appendChild(invalidValues);
+
+                TransformerFactory tf = TransformerFactory.newInstance();
+                Transformer transformer = tf.newTransformer();
+                transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+                transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+                transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+                transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+
+                transformer.transform(new DOMSource(document),
+                    new StreamResult(new OutputStreamWriter(new FileOutputStream(finalDbFile), "UTF-8")));
+            }
+        }
+        catch (Exception e) {
+            throw new DataHubProjectException("Error while upgrading project; was not able to add //actionDetails/*/uris " +
+                "path range index to final-database.xml file; cause: " + e.getMessage(), e);
+        }
+
     }
 
     @Override
