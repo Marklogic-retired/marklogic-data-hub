@@ -1217,7 +1217,7 @@ public class HubTestBase {
         }
     }
 
-    protected void setupProjectForRunningTestFlow(HubConfig config) {
+    protected void setupProjectForRunningTestFlow() {
         basicSetup();
         getDataHubAdminConfig();
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
