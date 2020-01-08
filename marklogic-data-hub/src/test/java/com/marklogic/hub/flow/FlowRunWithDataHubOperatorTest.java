@@ -105,7 +105,7 @@ public class FlowRunWithDataHubOperatorTest extends HubTestBase {
         //Copy mapping functions
         FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/mapping-functions/add-function.xqy"),
             adminHubConfig.getHubProject().getCustomMappingFunctionsDir().toFile());
-        setupProjectForRunningTestFlow(getHubFlowRunnerConfig("test-data-hub-developer", "test-data-hub-developer"));
+        setupProjectForRunningTestFlow();
 
         //Run flow as "data-hub-operator"
         getHubFlowRunnerConfig("test-data-hub-operator", "test-data-hub-operator");

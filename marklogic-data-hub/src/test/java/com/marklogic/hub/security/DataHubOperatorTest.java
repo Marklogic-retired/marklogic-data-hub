@@ -43,7 +43,7 @@ public class DataHubOperatorTest extends AbstractSecurityTest {
     @Test
     public void task30RunFlow() {
         Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
-        setupProjectForRunningTestFlow(getDataHubAdminConfig());
+        setupProjectForRunningTestFlow();
 
         try {
             getHubFlowRunnerConfig(userWithRoleBeingTested.getUserName(), userWithRoleBeingTested.getPassword());

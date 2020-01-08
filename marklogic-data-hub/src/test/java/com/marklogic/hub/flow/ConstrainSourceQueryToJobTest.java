@@ -6,10 +6,7 @@ import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.step.RunStepResponse;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -41,7 +38,7 @@ public class ConstrainSourceQueryToJobTest extends HubTestBase {
 
     @BeforeEach
     public void setupEach() {
-        setupProjectForRunningTestFlow(getDataHubAdminConfig());
+        setupProjectForRunningTestFlow();
         getHubFlowRunnerConfig();
     }
 
