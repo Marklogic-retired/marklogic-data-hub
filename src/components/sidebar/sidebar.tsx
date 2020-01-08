@@ -41,7 +41,6 @@ const Sidebar:React.FC<Props> = (props) => {
         return hubFacetValues && {...hubFacet, ...hubFacetValues}
       });
       setHubFacets(filteredHubFacets);
-
       if (props.selectedEntities.length && Object.entries(searchOptions.searchFacets).length === 0) {
         const entityDef = props.entityDefArray.find(entity => entity.name === props.selectedEntities[0]);
         const filteredEntityFacets = entityDef.rangeIndex.length && entityDef.rangeIndex.map( rangeIndex => {
