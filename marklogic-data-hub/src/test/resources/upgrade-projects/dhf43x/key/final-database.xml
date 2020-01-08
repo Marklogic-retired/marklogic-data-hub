@@ -94,6 +94,13 @@
     <range-field-index>
       <scalar-type>string</scalar-type>
       <collation>http://marklogic.com/collation/en</collation>
+      <field-name>someField</field-name>
+      <range-value-positions>true</range-value-positions>
+      <invalid-values>reject</invalid-values>
+    </range-field-index>
+    <range-field-index>
+      <scalar-type>string</scalar-type>
+      <collation>http://marklogic.com/collation/en</collation>
       <field-name>datahubCreatedByStep</field-name>
       <range-value-positions>true</range-value-positions>
       <invalid-values>reject</invalid-values>
@@ -117,6 +124,13 @@
     <range-path-index>
       <scalar-type>string</scalar-type>
       <collation>http://marklogic.com/collation/</collation>
+      <path-expression>/some/path</path-expression>
+      <range-value-positions>true</range-value-positions>
+      <invalid-values>reject</invalid-values>
+    </range-path-index>
+    <range-path-index>
+      <scalar-type>string</scalar-type>
+      <scalar-type>http://marklogic.com/collation/</scalar-type>
       <path-expression>//actionDetails/*/uris</path-expression>
       <range-value-positions>true</range-value-positions>
       <invalid-values>reject</invalid-values>

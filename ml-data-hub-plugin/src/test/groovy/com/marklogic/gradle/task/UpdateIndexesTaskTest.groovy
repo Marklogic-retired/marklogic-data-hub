@@ -92,8 +92,8 @@ class UpdateIndexesTaskTest extends BaseTest {
 		result.task(":mlUpdateIndexes").outcome == SUCCESS
 
         //Test to verify range-path-index for mlUpdateIndex
-		assert (getStagingIndexValuesSize('//m:range-path-index') == 2)
-		assert (getFinalIndexValuesSize('//m:range-path-index') == 2)
+		assert (getStagingIndexValuesSize('//m:range-path-index') == 3)
+		assert (getFinalIndexValuesSize('//m:range-path-index') == 3)
 		assert (getJobsIndexValuesSize('//m:range-path-index') == jobIndexCount+1)
 
         //Test to verify xml DB index configs get updated per DHFPROD-3674
