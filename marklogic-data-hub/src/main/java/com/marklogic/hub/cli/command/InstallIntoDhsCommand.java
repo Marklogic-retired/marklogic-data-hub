@@ -52,7 +52,13 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
 
         List<Command> commands = new ArrayList<>();
         commands.add(new DeployPrivilegesCommand());
-        commands.add(new DeployRolesCommand());
+
+        DeployRolesCommand deployRolesCommand = new DeployRolesCommand();
+        deployRolesCommand.setResourceFilenamesExcludePattern(
+            Pattern.compile("(flow-developer-role|flow-operator-role|data-hub-admin-role).*")
+        );
+        commands.add(deployRolesCommand);
+
         commands.add(new DeployAmpsCommand());
         commands.add(dbCommand);
         commands.add(new DhsDeployServersCommand(dataHub));
