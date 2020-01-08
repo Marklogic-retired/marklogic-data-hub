@@ -614,7 +614,7 @@ public class WriteStepRunner implements StepRunner {
                 jobDoc = jobDocManager.postJobs(jobId, stepStatus, step, stepStatus.equalsIgnoreCase(JobStatus.COMPLETED_PREFIX + step) ? step : null, runStepResponse);
             }
             catch (Exception e) {
-                logger.error(e.getMessage());
+                logger.error("Unable to update job document, cause: " + e.getMessage());
             }
             if(jobDoc != null) {
                 try {
@@ -622,9 +622,8 @@ public class WriteStepRunner implements StepRunner {
                     runStepResponse.setStepStartTime(tempResp.getStepStartTime());
                     runStepResponse.setStepEndTime(tempResp.getStepEndTime());
                 }
-                catch (Exception ex)
-                {
-                    logger.error(ex.getMessage());
+                catch (Exception ex) {
+                    logger.error("Unable to update step response, cause: " + ex.getMessage());
                 }
             }
         });
