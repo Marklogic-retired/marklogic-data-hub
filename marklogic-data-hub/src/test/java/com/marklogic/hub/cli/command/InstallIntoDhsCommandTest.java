@@ -111,6 +111,15 @@ public class InstallIntoDhsCommandTest extends HubTestBase {
         assertTrue(commands.get(index++) instanceof LoadUserArtifactsCommand);
         assertTrue(commands.get(index++) instanceof LoadHubArtifactsCommand);
         assertTrue(commands.get(index++) instanceof CreateGranularPrivilegesCommand);
+
+        DeployRolesCommand deployRolesCommand = (DeployRolesCommand) commands.get(1);
+        ResourceFilenameFilter filter = (ResourceFilenameFilter) deployRolesCommand.getResourceFilenameFilter();
+        File dir = new File(PROJECT_PATH); // the directory doesn't matter, only the filename
+        assertTrue(filter.accept(dir, "data-hub-entity-model-reader.json"));
+        assertTrue(filter.accept(dir, "data-hub-explorer-architect.json"));
+        assertFalse(filter.accept(dir, "flow-developer-role.json"), "The DHF 'legacy' roles should not be deployed as they grant too many privileges for a DHS user");
+        assertFalse(filter.accept(dir, "flow-operator-role.json"), "The DHF 'legacy' roles should not be deployed as they grant too many privileges for a DHS user");
+        assertFalse(filter.accept(dir, "data-hub-admin-role.json"), "The DHF 'legacy' roles should not be deployed as they grant too many privileges for a DHS user");
     }
 
     private void verifyDefaultProperties(Properties props) {

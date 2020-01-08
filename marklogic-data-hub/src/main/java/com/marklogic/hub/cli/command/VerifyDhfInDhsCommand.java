@@ -14,6 +14,7 @@ import org.springframework.context.ApplicationContext;
 
 import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Stream;
 
 @Parameters(commandDescription = "Verify a DHF installation in a DHS environment")
 public class VerifyDhfInDhsCommand extends AbstractVerifyCommand {
@@ -29,7 +30,7 @@ public class VerifyDhfInDhsCommand extends AbstractVerifyCommand {
 
         long start = System.currentTimeMillis();
 
-        verifyDhfRolesNotCreated();
+        verifyCertainDhfRolesNotCreated();
         verifyDhfUsersNotCreated();
         verifyPrivileges();
         verifyAmps();
@@ -57,11 +58,17 @@ public class VerifyDhfInDhsCommand extends AbstractVerifyCommand {
         }
     }
 
-    private void verifyDhfRolesNotCreated() {
+    private void verifyCertainDhfRolesNotCreated() {
         ResourcesFragment roles = new RoleManager(hubConfig.getManageClient()).getAsXml();
-        for (String role : getDhfRoleNames()) {
-            verify(!roles.resourceExists(role), "Expected DHF role to not be created since DHS provides its own roles: " + role);
-        }
+
+        Stream.of("flow-developer-role", "flow-operator-role", "data-hub-admin-role").forEach(role -> {
+            verify(!roles.resourceExists(role), "As of 5.2.0, the 3 'legacy' roles in DHF should not be deployed; found role: " + role);
+        });
+
+        // Spot check a few of the roles that should be there
+        Stream.of("data-hub-developer", "data-hub-operator", "data-hub-flow-reader").forEach(role -> {
+            verify(roles.resourceExists(role), "As of 5.2.0, each of the new DHF roles should be deployed to DHS; did not find role: " + role);
+        });
     }
 
     private void verifyStagingServers() {
@@ -92,16 +99,17 @@ public class VerifyDhfInDhsCommand extends AbstractVerifyCommand {
             DocumentMetadataHandle metadata = documentManager.readMetadata("/com.marklogic.hub/config.sjs", new DocumentMetadataHandle());
             DocumentMetadataHandle.DocumentPermissions perms = metadata.getPermissions();
 
-            Set<DocumentMetadataHandle.Capability> capabilities = perms.get("flowDeveloper");
-            verify(capabilities.contains(DocumentMetadataHandle.Capability.READ), "Flow developer should be able to read modules");
-            verify(capabilities.contains(DocumentMetadataHandle.Capability.INSERT), "Flow developer should be able to insert modules");
-            verify(capabilities.contains(DocumentMetadataHandle.Capability.EXECUTE), "Flow developer should be able to execute modules");
+            Set<DocumentMetadataHandle.Capability> capabilities = perms.get("data-hub-module-reader");
+            verify(capabilities.contains(DocumentMetadataHandle.Capability.READ), "Reader should be able to read modules");
+            verify(!capabilities.contains(DocumentMetadataHandle.Capability.INSERT), "Reader should not be able to insert modules");
+            verify(!capabilities.contains(DocumentMetadataHandle.Capability.UPDATE), "Reader should not be able to update modules");
+            verify(capabilities.contains(DocumentMetadataHandle.Capability.EXECUTE), "Reader should be able to execute modules");
 
-            capabilities = perms.get("flowOperator");
-            verify(capabilities.contains(DocumentMetadataHandle.Capability.READ), "Flow operator should be able to read modules");
-            verify(capabilities.contains(DocumentMetadataHandle.Capability.INSERT), "Flow operator should be able to insert modules");
-            verify(capabilities.contains(DocumentMetadataHandle.Capability.EXECUTE), "Flow operator should be able to execute modules");
+            capabilities = perms.get("data-hub-environment-manager");
+            verify(capabilities.contains(DocumentMetadataHandle.Capability.UPDATE), "Only data-hub-environment-manager should be able to update DHF core modules");
 
+            capabilities = perms.get("rest-extension-user");
+            verify(capabilities.contains(DocumentMetadataHandle.Capability.EXECUTE), "A rest-extension-user/execute permission is included for consistency with REST extensions");
 
             verifyOptionsExist(documentManager,
                 "/Evaluator/data-hub-JOBS/rest-api/options/jobs.xml",
