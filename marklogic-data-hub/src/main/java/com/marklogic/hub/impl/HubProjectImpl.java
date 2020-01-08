@@ -550,9 +550,8 @@ public class HubProjectImpl implements HubProject {
             location.getParentFile().mkdirs();
         }
         try (ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(location))){
-            List<String> whiteList = new ArrayList<>(Arrays.asList("entities", "flows", "src" + File.separator + "main",
-            "step-definitions", "gradle", "gradlew", "gradlew.bat", "build.gradle", "gradle.properties"));
-            whiteList.forEach(file ->{
+            Stream.of("entities", "flows", "src" + File.separator + "main", "mappings", "step-definitions", "gradle",
+                "gradlew", "gradlew.bat", "build.gradle", "gradle.properties").forEach(file ->{
                 File fileToZip = getProjectDir().resolve(file).toFile();
                 try {
                     if (fileToZip.isDirectory()) {
