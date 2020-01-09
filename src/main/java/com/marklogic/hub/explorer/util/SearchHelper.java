@@ -45,7 +45,7 @@ public class SearchHelper {
   private static final String CREATED_ON_CONSTRAINT_NAME = "createdOnRange";
   private static final String JOB_WORD_CONSTRAINT_NAME = "createdByJobWord";
   private static final String JOB_RANGE_CONSTRAINT_NAME = "createdByJob";
-  private static final String MASTERING_AUDIT_COLLECTION_NAME = "mdm-auditing";
+  private static final String[] IGNORED_SM_COLLECTION_SUFFIX = {"auditing", "archived", "notification"};
 
   private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
   private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter
@@ -190,11 +190,13 @@ public class SearchHelper {
     }
   }
 
-  private String[] getExcludedCollections(List<String> entityModels) {
-    entityModels.forEach(collection -> {
-      entityModels.set(entityModels.indexOf(collection), "sm-" + collection + "-auditing");
+  private String[] getExcludedCollections(List<String> entityNames) {
+    List<String> excludedCol = new ArrayList<>();
+    entityNames.forEach(name -> {
+      for (String suffix : IGNORED_SM_COLLECTION_SUFFIX) {
+        excludedCol.add(String.format("sm-%s-%s", name, suffix));
+      }
     });
-    entityModels.add(MASTERING_AUDIT_COLLECTION_NAME);
-    return entityModels.toArray(new String[0]);
+    return excludedCol.toArray(new String[0]);
   }
 }
