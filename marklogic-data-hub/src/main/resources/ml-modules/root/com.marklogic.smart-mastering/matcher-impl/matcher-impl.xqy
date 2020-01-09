@@ -170,20 +170,18 @@ declare function match-impl:compile-match-options(
         map:entry("minimumThresholdCombinations", $minimum-threshold-combinations),
         map:entry("baseContentQuery",
           if (fn:exists($target-entity)) then
-            instance-query-wrapper(
-              if ($document-is-json) then
-                cts:json-property-scope-query(
-                  "info",
-                  cts:json-property-value-query("title", fn:string($target-entity-def/entityTitle), (), 0)
-                )
-              else
-                cts:element-query(
-                  xs:QName("es:info"),
-                  cts:element-value-query(xs:QName("es:title"), fn:string($target-entity-def/entityTitle), (), 0)
-                )
-              ,
-              $document-is-json
-            )
+            if ($document-is-json) then
+              cts:json-property-scope-query(
+                "info",
+                cts:json-property-value-query("title", fn:string($target-entity-def/entityTitle), (), 0)
+              )
+            else
+              cts:element-query(
+                xs:QName("es:info"),
+                cts:element-value-query(xs:QName("es:title"), fn:string($target-entity-def/entityTitle), (), 0)
+              )
+            ,
+            $document-is-json
           else
             match-impl:build-collection-query(coll:content-collections($options))
         )
