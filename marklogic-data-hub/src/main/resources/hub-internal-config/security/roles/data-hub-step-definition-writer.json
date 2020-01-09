@@ -1,4 +1,4 @@
 {
   "role-name": "data-hub-step-definition-writer",
-  "description": "Data Hub role for permissions that grant write access to step definition documents"
+  "description": "Permits updating step definition documents"
 }

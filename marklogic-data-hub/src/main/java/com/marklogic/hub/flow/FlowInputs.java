@@ -1,9 +1,6 @@
 package com.marklogic.hub.flow;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class FlowInputs {
 
@@ -23,6 +20,24 @@ public class FlowInputs {
     public FlowInputs(String flowName, String... steps) {
         this.flowName = flowName;
         this.steps = Arrays.asList(steps);
+    }
+
+    /**
+     * A common step configuration to override at runtime is the inputFilePath for an ingestion step. This convenience
+     * method allows for doing that without modifying any existing step configuration.
+     *
+     * @param inputFilePath
+     */
+    public void setInputFilePath(String inputFilePath) {
+        if (stepConfig == null) {
+            stepConfig = new HashMap<>();
+        }
+        Map<String, Object> fileLocations = (Map<String, Object>)stepConfig.get("fileLocations");
+        if (fileLocations == null) {
+            fileLocations = new HashMap<>();
+            stepConfig.put("fileLocations", fileLocations);
+        }
+        fileLocations.put("inputFilePath", inputFilePath);
     }
 
     public String getFlowName() {

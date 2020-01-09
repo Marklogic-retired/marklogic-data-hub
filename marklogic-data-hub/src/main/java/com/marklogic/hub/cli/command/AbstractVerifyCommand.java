@@ -17,10 +17,6 @@ import org.springframework.util.Assert;
  */
 public abstract class AbstractVerifyCommand extends AbstractInstallerCommand {
 
-    protected String[] getDhfRoleNames() {
-        return new String[]{"flow-developer-role", "flow-operator-role", "data-hub-admin-role"};
-    }
-
     protected String[] getDhfUserNames() {
         return new String[]{"flow-developer", "flow-operator"};
     }

@@ -40,6 +40,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.*;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ApplicationConfig.class)
@@ -61,7 +63,7 @@ public class FlowRunnerTest extends HubTestBase {
 
     @BeforeEach
     public void setupEach() {
-        setupProjectForRunningTestFlow(getDataHubAdminConfig());
+        setupProjectForRunningTestFlow();
         getHubFlowRunnerConfig();
     }
 
@@ -388,11 +390,11 @@ public class FlowRunnerTest extends HubTestBase {
         RunFlowResponse resp = runFlow("testFlow", "2", UUID.randomUUID().toString(), opts, stepConfig);
         RunFlowResponse resp1 = runFlow("testFlow", "2", UUID.randomUUID().toString(), opts1, stepConfig1);
         flowRunner.awaitCompletion();
-        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "test-collection") == 1);
-        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "test-collection1") == 1);
-        System.out.println(resp.getJobStatus());
-        System.out.println(resp1.getJobStatus());
-        Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
-        Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp1.getJobStatus()));
+        assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "test-collection"));
+        assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "test-collection1"));
+        Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()),
+            "Expected job status of first response to be 'finished', but was: " + resp.getJobStatus());
+        Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp1.getJobStatus()),
+            "Expected job status of second response to be 'finished', but was: " + resp1.getJobStatus());
     }
 }

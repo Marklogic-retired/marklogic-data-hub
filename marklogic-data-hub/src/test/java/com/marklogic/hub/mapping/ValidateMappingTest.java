@@ -57,6 +57,9 @@ public class ValidateMappingTest extends HubTestBase {
 
     @BeforeEach
     public void setup() {
+        // Need to re-initialize adminHubConfig in case getHubFlowRunnerConfig was called before this test
+        // TODO Arguably HubTestBase should call this before every test??
+        getDataHubAdminConfig();
         client = adminHubConfig.newStagingClient(adminHubConfig.getDbName(DatabaseKind.FINAL));
         client.newJSONDocumentManager().write(
             CUSTOMER_URI,

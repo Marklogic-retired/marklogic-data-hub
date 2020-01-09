@@ -86,8 +86,15 @@
     </range-field-index>
     <range-field-index>
       <scalar-type>string</scalar-type>
-      <collation>http://marklogic.com/collation/</collation>
+      <collation>http://marklogic.com/collation/en</collation>
       <field-name>datahubCreatedByJob</field-name>
+      <range-value-positions>true</range-value-positions>
+      <invalid-values>reject</invalid-values>
+    </range-field-index>
+    <range-field-index>
+      <scalar-type>string</scalar-type>
+      <collation>http://marklogic.com/collation/en</collation>
+      <field-name>someField</field-name>
       <range-value-positions>true</range-value-positions>
       <invalid-values>reject</invalid-values>
     </range-field-index>
@@ -117,7 +124,7 @@
     <range-path-index>
       <scalar-type>string</scalar-type>
       <collation>http://marklogic.com/collation/</collation>
-      <path-expression>//actionDetails/*/uris</path-expression>
+      <path-expression>/some/path</path-expression>
       <range-value-positions>true</range-value-positions>
       <invalid-values>reject</invalid-values>
     </range-path-index>
