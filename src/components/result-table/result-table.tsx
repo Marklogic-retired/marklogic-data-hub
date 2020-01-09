@@ -1,35 +1,33 @@
-import React, {useState, useEffect} from 'react';
-import {Link} from 'react-router-dom';
-import {Resizable} from 'react-resizable'
-import {Table, Tooltip} from 'antd';
-import {dateConverter} from '../../util/date-conversion';
-import {xmlParser} from '../../util/xml-parser';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { Resizable } from 'react-resizable'
+import { Table, Tooltip } from 'antd';
+import { dateConverter } from '../../util/date-conversion';
+import { xmlParser } from '../../util/xml-parser';
 import styles from './result-table.module.scss';
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCode, faExternalLinkAlt} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCode, faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
 import ColumnSelector from '../../components/column-selector/column-selector';
-import { type } from 'os';
 import { tableParser, headerParser, deepCopy, reconstructHeader, toStringArray } from '../../util/data-conversion';
-import { arrayExpression } from '@babel/types';
 import ReactDragListView from 'react-drag-listview'
 
 
 const ResizeableTitle = props => {
-  const {onResize, width, ...restProps} = props;
+  const { onResize, width, ...restProps } = props;
 
   if (!width) {
     return <th {...restProps} />;
   }
 
   return (
-      <Resizable
-          width={width}
-          height={0}
-          onResize={onResize}
-          draggableOpts={{enableUserSelectHack: false}}
-      >
-        <th {...restProps} />
-      </Resizable>
+    <Resizable
+      width={width}
+      height={0}
+      onResize={onResize}
+      draggableOpts={{ enableUserSelectHack: false }}
+    >
+      <th {...restProps} />
+    </Resizable>
   );
 };
 
@@ -43,17 +41,134 @@ const ResultTable: React.FC<Props> = (props) => {
   let listOfColumns = new Array();
   let data = new Array();
   let counter = 0;
-  let rowCounter = 0;
   const [columns, setColumns] = useState<any[]>([]);
   const [checkedColumns, setCheckedColumns] = useState<any[]>([]);
   const [treeColumns, setTreeColumns] = useState<any[]>([]);
-  const allEntitiesColumns = [{title: 'Entity', key: '0-1'}, {title: 'File Type', key: '0-2'}];
+
+  const allEntitiesColumns = [{ title: 'Entity', key: '0-1' }, { title: 'File Type', key: '0-2' }];
   let previousColumns = new Array();
   let parsedPayload = tableParser(props);
   let arrayOfTitles = parsedPayload.data[0] && parsedPayload.data[0].itemEntityProperties[0];
+  let nestedColumns = new Set();
+
+  const getData = (payload: Array<Object>, isNested: boolean) => {
+    let rowCounter = 0;
+    let nested = [];
+    let nestedId = 0;
+
+    const parseData = (payload) => {
+      let data = new Array();
+      payload.forEach((item) => {
+        let isUri = item.primaryKey === 'uri';
+        let uri = encodeURIComponent(item.uri);
+        let path = { pathname: `/detail/${isUri ? '-' : item.primaryKey}/${uri}` };
+        let document = item.uri.split('/')[item.uri.split('/').length - 1];
+        let date = dateConverter(item.createdOn);
+        let row: any = {};
+        let detailView =
+          <div className={styles.redirectIcons}>
+            <Link to={{ pathname: `${path.pathname}`, state: { selectedValue: 'instance' } }} id={'instance'}
+              data-cy='instance'>
+              <Tooltip title={'Show detail on a separate page'}><FontAwesomeIcon icon={faExternalLinkAlt} size="sm" /></Tooltip>
+            </Link>
+            <Link to={{ pathname: `${path.pathname}`, state: { selectedValue: 'source' } }} id={'source'}
+              data-cy='source'>
+              <Tooltip title={'Show source on a separate page'}><FontAwesomeIcon icon={faCode} size="sm" /></Tooltip>
+            </Link>
+          </div>
+
+        if (props.entity.length === 0) {
+          row =
+          {
+            key: rowCounter++,
+            identifier: <Tooltip title={isUri && item.uri}>{isUri ? '.../' + document : item.primaryKey}</Tooltip>,
+            entity: item.itemEntityName,
+            filetype: item.format,
+            created: date,
+            primaryKeyPath: path,
+            detailview: detailView
+          }
+        } else {
+          row =
+          {
+            key: rowCounter++,
+            created: date,
+            primaryKeyPath: path,
+            detailview: detailView,
+            primaryKey: item.primaryKey
+          }
+
+          for (let propt in item.itemEntityProperties[0]) {
+            if (isUri) {
+              row.identifier = <Tooltip title={isUri ? item.uri : item.primaryKey}>{'.../' + document}</Tooltip>
+            }
+            if (parsedPayload.primaryKeys.includes(propt)) {
+              row[propt.toLowerCase()] = item.itemEntityProperties[0][propt].toString();
+            } else {
+              if (typeof item.itemEntityProperties[0][propt] === 'object') {
+                nested = item.itemEntityProperties[0][propt]
+              } else {
+                row[propt.toLowerCase()] = item.itemEntityProperties[0][propt].toString();
+              }
+            }
+          }
+        }
+
+        if (isNested) {
+          //if row has array of nested objects
+          if (nested && nested instanceof Array && nested.length > 0) {
+            nested.forEach((items, index) => {
+              let parentRow = { ...row };
+              let keys = Object.keys(items);
+              let values = new Array<String>();
+              if (typeof items === 'object' && keys.length === 1) {
+                values = Object.values(items);
+              }
+              for (let key of Object.keys(values[0])) {
+                parentRow[key.toLowerCase()] = values[0][key].toString();
+                nestedColumns.add(key);
+              }
+              parentRow.key = rowCounter++;
+              parentRow.nestedId = nestedId;
+              parentRow.nestedColumns = nestedColumns;
+              parentRow.nested = nested;
+              if (index === 0) {
+                parentRow.isNested = true;
+              }
+              data.push(parentRow)
+            })
+            nestedId++;
+            //if row has a nested object
+          } else if (nested && !(nested instanceof Array)) {
+            let parentRow = { ...row };
+            let keys = Object.keys(nested);
+            let values = [new Array<String>()];
+            if (typeof nested === 'object' && keys.length === 1) {
+              values = Object.values(nested);
+            }
+            for (let key of Object.keys(values[0])) {
+              parentRow[key.toLowerCase()] = values[0][key].toString();
+            }
+            parentRow.key = rowCounter++;
+            data.push(parentRow)
+            //if row doesn't have nested objects
+          } else {
+            data.push(row)
+          }
+        } else {
+          data.push(row)
+        }
+      });
+      return data;
+    }
+    return parseData(payload);
+  }
+
+  data = getData(parsedPayload.data, true);
 
   const tableHeader = (columns) => {
     let col = new Array();
+    let set = new Set();
     columns.forEach((item, index) => {
       if (item.hasOwnProperty('children')) {
         col.push({
@@ -63,30 +178,44 @@ const ResultTable: React.FC<Props> = (props) => {
         })
       } else {
         col.push(
-            {
-              title: item.title,
-              dataIndex: item.title.replace(/ /g, '').toLowerCase(),
-              key: item.key,
-              width: 150,
-              onHeaderCell: column => ({
-                width: column.width,
-                onResize: handleResize(index),
-              }),
-              onCell: () => {
-                return {
-                  style: {
-                    whiteSpace: 'nowrap',
-                    maxWidth: 150,
-                  }
+          {
+            title: item.title,
+            dataIndex: item.title.replace(/ /g, '').toLowerCase(),
+            key: item.key,
+            mergeAbove: true,
+            width: 150,
+            onHeaderCell: column => ({
+              width: column.width,
+              onResize: handleResize(index),
+            }),
+            onCell: () => {
+              return {
+                style: {
+                  whiteSpace: 'nowrap',
+                  maxWidth: 150,
                 }
-              },
-              render: (text) => (
+              }
+            },
+            render: (value, row, index) => {
+              const obj = {
+                children: (
                   <Tooltip
-                      title={text && text.length > 50 && text.substring(0, 301).concat('...\n\n(View document details to see all of this text.)')}>
-                    <div style={{textOverflow: 'ellipsis', overflow: 'hidden'}}>{text}</div>
+                    title={value && value.length > 50 && value.substring(0, 301).concat('...\n\n(View document details to see all of this text.)')}>
+                    <div style={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>{value}</div>
                   </Tooltip>
-              )
-            }
+                ),
+                props: {
+                  rowSpan: 1,
+                }
+              };
+
+              if (row.hasOwnProperty('nestedId') && !nestedColumns.has(item.title)) {
+                row.hasOwnProperty('isNested') && set.add(index);
+                set.has(index) ? obj.props.rowSpan = row.nested.length : obj.props.rowSpan = 0;
+              }
+              return obj;
+            },
+          }
         )
       }
     });
@@ -109,26 +238,26 @@ const ResultTable: React.FC<Props> = (props) => {
   }
 
   useEffect(() => {
+    console.log('useEfferct')
+
     props.entity.length === 0 ? listOfColumns = setPrimaryKeyColumn(allEntitiesColumns) : listOfColumns = setPrimaryKeyColumn(headerParser(arrayOfTitles));
     if (props.entity.length === 0 || (props.entity.length !== 0 && parsedPayload.primaryKeys.length === 0)) {
-      listOfColumns.unshift({title: 'Identifier', key: '0-i'});
+      listOfColumns.unshift({ title: 'Identifier', key: '0-i' });
     }
     if (listOfColumns && listOfColumns.length > 0) {
-      listOfColumns.push({title: 'Created', key: '0-c'})
-      listOfColumns.push({title: 'Detail view', key: '0-d'});
+      listOfColumns.push({ title: 'Created', key: '0-c' })
+      listOfColumns.push({ title: 'Detail view', key: '0-d' });
       previousColumns = [...tableHeader(listOfColumns)];
     }
-  })
 
-  useEffect(() => {
     let header = tableHeader(listOfColumns);
     //set table data
-    let defaultColumnData = header.slice(0,5).concat(header[header.length-1]);
+    let defaultColumnData = header.slice(0, 5).concat(header[header.length - 1]);
     header.length <= 5 ? setColumns(header.slice(0, 5)) : setColumns(defaultColumnData);
     //set popover tree data
     setTreeColumns(previousColumns);
     //set popover tree selected checkboxes data
-    setCheckedColumns(header.slice(0, 5).concat(header[header.length-1]));
+    setCheckedColumns(header.slice(0, 5).concat(header[header.length - 1]));
   }, [props.data]);
 
   const components = {
@@ -137,68 +266,16 @@ const ResultTable: React.FC<Props> = (props) => {
     },
   };
 
-  parsedPayload.data.forEach((item) => {
-    let isUri = item.primaryKey === 'uri';
-    let uri = encodeURIComponent(item.uri);
-    let path = {pathname: `/detail/${isUri ? '-' : item.primaryKey}/${uri}`};
-    let document = item.uri.split('/')[item.uri.split('/').length - 1];
-    let date = dateConverter(item.createdOn);
-    let row: any = {};
-    if (props.entity.length === 0) {
-      row =
-          {
-            key: rowCounter++,
-            identifier: <Tooltip
-                title={isUri && item.uri}>{isUri ? '.../' + document : item.primaryKey}</Tooltip>,
-            entity: item.itemEntityName,
-            filetype: item.format,
-            created: date,
-            primaryKeyPath: path,
-            detailview: <div className={styles.redirectIcons}>
-              <Link to={{pathname: `${path.pathname}`, state: {selectedValue: 'instance'}}} id={'instance'}
-                    data-cy='instance'>
-                <Tooltip title={'Show detail on a separate page'}><FontAwesomeIcon icon={faExternalLinkAlt} size="sm"/></Tooltip>
-              </Link>
-              <Link to={{pathname: `${path.pathname}`, state: {selectedValue: 'source'}}} id={'source'}
-                    data-cy='source'>
-                <Tooltip title={'Show source on a separate page'}><FontAwesomeIcon icon={faCode} size="sm"/></Tooltip>
-              </Link>
-            </div>
-          }
-    } else {
-      row =
-          {
-            key: rowCounter++,
-            created: date,
-            primaryKeyPath: path,
-            detailview: <div className={styles.redirectIcons}>
-              <Link to={{pathname: `${path.pathname}`, state: {selectedValue: 'instance'}}} id={'instance'}
-                    data-cy='instance'>
-                <Tooltip title={'Show detail on a separate page'}><FontAwesomeIcon icon={faExternalLinkAlt} size="sm"/></Tooltip>
-              </Link>
-              <Link to={{pathname: `${path.pathname}`, state: {selectedValue: 'source'}}} id={'source'}
-                    data-cy='source'>
-                <Tooltip title={'Show source on a separate page'}><FontAwesomeIcon icon={faCode} size="sm"/></Tooltip>
-              </Link>
-            </div>
-          }
+  const mergeRows = (header: Array<Object>) => {
+    let data: Array<Object>;
+    let hasNested: boolean = header.some((item: Object) => item.hasOwnProperty('children'));
+    data = hasNested ? getData(parsedPayload.data, true) : getData(parsedPayload.data, false);
+    return data;
+  }
 
-      for (var propt in item.itemEntityProperties[0]) {
-        if (isUri) {
-          row.identifier =
-              <Tooltip title={isUri ? item.uri : item.primaryKey}>{'.../' + document}</Tooltip>
-        }
-        if (parsedPayload.primaryKeys.includes(propt)) {
-          row[propt.toLowerCase()] = item.itemEntityProperties[0][propt].toString();
-        } else {
-          row[propt.toLowerCase()] = item.itemEntityProperties[0][propt].toString();
-        }
-      }
-    }
-    data.push(row)
-  });
+  data = mergeRows(columns)
 
-  const handleResize = index => (e, {size}) => {
+  const handleResize = index => (e, { size }) => {
     setColumns(columns => {
       const nextColumns = [...columns];
       nextColumns[index] = {
@@ -210,28 +287,28 @@ const ResultTable: React.FC<Props> = (props) => {
   };
 
   const dragProps = {
-    onDragEnd(fromIndex:number, toIndex:number) {
-        if (fromIndex > 0 && toIndex > 0 ) {
-          const header = deepCopy(columns);
-          const tree = deepCopy(treeColumns);
-          const colItem = header.splice(fromIndex-1, 1)[0];
-          const treeItem = tree.splice(fromIndex-1, 1)[0];
-          header.splice(toIndex-1, 0, colItem);
-          tree.splice(toIndex-1, 0, treeItem);
-          let updatedHeader = reconstructHeader(deepCopy(header), toStringArray(checkedColumns))  
-          setColumns(updatedHeader);
-          setTreeColumns(tree)
-        }
+    onDragEnd(fromIndex: number, toIndex: number) {
+      if (fromIndex > 0 && toIndex > 0) {
+        const header = deepCopy(columns);
+        const tree = deepCopy(treeColumns);
+        const colItem = header.splice(fromIndex - 1, 1)[0];
+        const treeItem = tree.splice(fromIndex - 1, 1)[0];
+        header.splice(toIndex - 1, 0, colItem);
+        tree.splice(toIndex - 1, 0, treeItem);
+        let updatedHeader = reconstructHeader(deepCopy(header), toStringArray(checkedColumns))
+        setColumns(updatedHeader);
+        setTreeColumns(tree)
+      }
     },
     nodeSelector: "th",
     handleSelector: 'span.ant-table-column-title',
   };
-  
+
   const expandedRowRender = (rowId) => {
     const nestedColumns = [
-      {title: 'Property', dataIndex: 'property', width: '30%'},
-      {title: 'Value', dataIndex: 'value', width: '30%'},
-      {title: 'View', dataIndex: 'view', width: '30%'},
+      { title: 'Property', dataIndex: 'property', width: '30%' },
+      { title: 'Value', dataIndex: 'value', width: '30%' },
+      { title: 'View', dataIndex: 'view', width: '30%' },
     ];
 
     let nestedData: any[] = [];
@@ -243,10 +320,10 @@ const ResultTable: React.FC<Props> = (props) => {
             key: counter++,
             property: i,
             children: parseJson(obj[i]),
-            view: <Link to={{pathname: `${rowId.primaryKeyPath.pathname}`, state: {id: obj[i]}}}
-                        data-cy='nested-instance'>
+            view: <Link to={{ pathname: `${rowId.primaryKeyPath.pathname}`, state: { id: obj[i] } }}
+              data-cy='nested-instance'>
               <Tooltip title={'Show nested detail on a separate page'}><FontAwesomeIcon icon={faExternalLinkAlt}
-                                                                                        size="sm"/></Tooltip>
+                size="sm" /></Tooltip>
             </Link>
           });
         } else {
@@ -275,11 +352,11 @@ const ResultTable: React.FC<Props> = (props) => {
     }
 
     return <Table
-        rowKey="key"
-        columns={nestedColumns}
-        dataSource={nestedData}
-        pagination={false}
-        className={styles.nestedTable}
+      rowKey="key"
+      columns={nestedColumns}
+      dataSource={nestedData}
+      pagination={false}
+      className={styles.nestedTable}
     />;
   }
 
@@ -294,17 +371,17 @@ const ResultTable: React.FC<Props> = (props) => {
         <ColumnSelector title={checkedColumns} tree={treeColumns} headerRender={headerRender} />
       </div>
       <ReactDragListView.DragColumn {...dragProps}>
-      <div className={styles.tabular}>
-        <Table bordered components={components}
-          className="search-tabular"
-          rowKey="key"
-          dataSource={data}
-          columns={columns}
-          pagination={false}
-          expandedRowRender={expandedRowRender}
-          data-cy="search-tabular"
-        />
-      </div>
+        <div className={styles.tabular}>
+          <Table bordered components={components}
+            className="search-tabular"
+            rowKey="key"
+            dataSource={data}
+            columns={columns}
+            pagination={false}
+            expandedRowRender={expandedRowRender}
+            data-cy="search-tabular"
+          />
+        </div>
       </ReactDragListView.DragColumn>
     </>
   );
