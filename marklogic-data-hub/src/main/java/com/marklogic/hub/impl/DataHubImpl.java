@@ -72,7 +72,7 @@ import java.util.regex.Pattern;
 public class DataHubImpl implements DataHub {
 
     @Autowired
-    private HubConfigImpl hubConfig;
+    private HubConfig hubConfig;
 
     @Autowired
     private HubProject project;
@@ -106,7 +106,7 @@ public class DataHubImpl implements DataHub {
      * @param hubConfig hubConfig object
      * @return constructed ServerManager object
      */
-    protected ServerManager constructServerManager(HubConfigImpl hubConfig) {
+    protected ServerManager constructServerManager(HubConfig hubConfig) {
         AppConfig appConfig = hubConfig.getAppConfig();
         return appConfig != null ?
             new ServerManager(hubConfig.getManageClient(), appConfig.getGroupName()) :
@@ -482,7 +482,7 @@ public class DataHubImpl implements DataHub {
         // in AWS setting this fails...
         // for now putting in try/catch
         try {
-            SimpleAppDeployer roleDeployer = new SimpleAppDeployer(getManageClient(), getAdminManager());
+            SimpleAppDeployer roleDeployer = new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager());
             roleDeployer.setCommands(getSecurityCommandList());
             roleDeployer.deploy(appConfig);
         } catch (HttpServerErrorException e) {
@@ -493,7 +493,7 @@ public class DataHubImpl implements DataHub {
             }
         }
 
-        HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
+        HubAppDeployer finalDeployer = new HubAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager(), listener, hubConfig.newStagingClient());
         finalDeployer.setCommands(buildListOfCommands());
         finalDeployer.deploy(appConfig);
     }
@@ -895,10 +895,31 @@ public class DataHubImpl implements DataHub {
     // only used in test
     public void setHubConfig(HubConfigImpl hubConfig) {
         this.hubConfig = hubConfig;
+        if (this.loadUserModulesCommand != null) {
+            this.loadUserModulesCommand.setHubConfig(hubConfig);
+        }
+        if (this.loadHubModulesCommand != null) {
+            this.loadHubModulesCommand.setHubConfig(hubConfig);
+        }
+        if (this.loadHubArtifactsCommand != null) {
+            this.loadHubArtifactsCommand.setHubConfig(hubConfig);
+        }
+        if (this.loadUserArtifactsCommand != null) {
+            this.loadUserArtifactsCommand.setHubConfig(hubConfig);
+        }
+        if (this.generateFunctionMetadataCommand != null) {
+            this.generateFunctionMetadataCommand.setHubConfig(hubConfig);
+        }
+    }
+
+    // only used in test
+    public HubConfig getHubConfig() {
+        return this.hubConfig;
     }
 
     // only used in test
     public void setVersions(Versions versions) {
         this.versions = versions;
     }
+
 }

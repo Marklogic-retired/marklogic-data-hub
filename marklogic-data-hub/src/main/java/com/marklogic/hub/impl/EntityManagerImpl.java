@@ -35,7 +35,12 @@ import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
-import com.marklogic.hub.entity.*;
+import com.marklogic.hub.entity.DefinitionType;
+import com.marklogic.hub.entity.DefinitionsType;
+import com.marklogic.hub.entity.HubEntity;
+import com.marklogic.hub.entity.InfoType;
+import com.marklogic.hub.entity.ItemType;
+import com.marklogic.hub.entity.PropertyType;
 import com.marklogic.hub.error.EntityServicesGenerationException;
 import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;
@@ -43,15 +48,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.SessionScope;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+@SessionScope
 @Component
 public class EntityManagerImpl extends LoggingObject implements EntityManager {
     private static final String ENTITY_FILE_EXTENSION = ".entity.json";
@@ -59,8 +72,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
     @Autowired
     private HubConfig hubConfig;
 
-    @Autowired
-    private HubProject hubProject;
+    private HubProject hubProject = null;
 
     private ObjectMapper mapper;
 
@@ -76,6 +88,13 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
     public EntityManagerImpl(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
         this.hubProject = hubConfig.getHubProject();
+    }
+
+    @PostConstruct
+    protected void postConstruct() {
+        if (this.hubProject == null && this.hubConfig != null) {
+            this.hubProject = this.hubConfig.getHubProject();
+        }
     }
 
     @Override
@@ -669,4 +688,8 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         return true;
     }
 
+    public void setHubConfig(HubConfig hubConfig) {
+        this.hubConfig = hubConfig;
+        this.hubProject = hubConfig.getHubProject();
+    }
 }

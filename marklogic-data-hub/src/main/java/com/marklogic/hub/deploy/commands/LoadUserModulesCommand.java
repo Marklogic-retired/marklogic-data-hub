@@ -61,7 +61,7 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
     private HubConfig hubConfig;
 
     @Autowired
-    private EntityManager entityManager;
+    protected EntityManager entityManager;
 
     @Autowired
     private LegacyFlowManager legacyFlowManager;
@@ -270,6 +270,12 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
 
     public void setHubConfig(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
+        if (this.entityManager == null) {
+            this.entityManager = new EntityManagerImpl();
+        }
+        if (this.entityManager instanceof EntityManagerImpl) {
+            ((EntityManagerImpl) this.entityManager).setHubConfig(hubConfig);
+        }
     }
 
     public void setWatchingModules(boolean watchingModules) {
