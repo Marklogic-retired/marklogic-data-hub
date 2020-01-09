@@ -192,7 +192,7 @@ public class SearchHelper {
 
   private String[] getExcludedCollections(List<String> entityModels) {
     entityModels.forEach(collection -> {
-      entityModels.set(entityModels.indexOf(collection), "sm-" + collection + "-notification");
+      entityModels.set(entityModels.indexOf(collection), "sm-" + collection + "-auditing");
     });
     entityModels.add(MASTERING_AUDIT_COLLECTION_NAME);
     return entityModels.toArray(new String[0]);
