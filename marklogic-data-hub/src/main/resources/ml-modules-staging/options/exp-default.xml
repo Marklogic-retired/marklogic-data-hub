@@ -7,7 +7,7 @@
     </collection>
   </constraint>
   <constraint name="createdByJob">
-    <range facet="false">
+    <range collation="http://marklogic.com/collation/en" facet="false">
       <field name="datahubCreatedByJob"/>
     </range>
   </constraint>

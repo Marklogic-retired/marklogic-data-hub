@@ -162,7 +162,7 @@ declare %private function hent:fix-options-exp($nodes as node()*)
             </search:collection>
           </search:constraint>,
           <search:constraint name="createdByJob">
-            <search:range facet="false">
+            <search:range collation="http://marklogic.com/collation/en" facet="false">
               <search:field name="datahubCreatedByJob"/>
             </search:range>
           </search:constraint>,
