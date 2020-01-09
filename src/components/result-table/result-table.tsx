@@ -182,7 +182,6 @@ const ResultTable: React.FC<Props> = (props) => {
             title: item.title,
             dataIndex: item.title.replace(/ /g, '').toLowerCase(),
             key: item.key,
-            mergeAbove: true,
             width: 150,
             onHeaderCell: column => ({
               width: column.width,
