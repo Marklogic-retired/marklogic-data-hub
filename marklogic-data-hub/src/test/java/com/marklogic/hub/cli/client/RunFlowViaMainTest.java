@@ -28,7 +28,7 @@ public class RunFlowViaMainTest extends HubTestBase {
 
     @Test
     public void testRunFlow() {
-        setupProjectForRunningTestFlow(adminHubConfig);
+        setupProjectForRunningTestFlow();
         getHubFlowRunnerConfig();
 
         final String flowName = "testFlow";
