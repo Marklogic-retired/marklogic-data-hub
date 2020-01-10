@@ -180,8 +180,6 @@ declare function match-impl:compile-match-options(
                 xs:QName("es:info"),
                 cts:element-value-query(xs:QName("es:title"), fn:string($target-entity-def/entityTitle), (), 0)
               )
-            ,
-            $document-is-json
           else
             match-impl:build-collection-query(coll:content-collections($options))
         )
