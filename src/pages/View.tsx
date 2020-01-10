@@ -85,25 +85,27 @@ const View: React.FC = () => {
   return (
     <Layout className={styles.container}>
       <Content>
-        {isLoading || user.error.type === 'ALERT'  ?
-            <div style={{marginTop : '40px'}}>
-          <AsyncLoader/>
-            </div>
+        {isLoading || user.error.type === 'ALERT' ?
+          <div style={{ marginTop: '40px' }}>
+            <AsyncLoader />
+          </div>
           :
           <>
             <div className={styles.statsContainer} data-cy="total-container">
-                <div className={styles.statistic}>
-                  <Statistic title="Total Entities" value={entities.length}/>
-                </div>
-              <div style= {{marginLeft: '-50px'}}>
-                <Tooltip title={tooltips.entities}>
-                <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm"/></Tooltip>
+              <div className={styles.statistic}>
+                <Statistic title="Total Entities" value={entities.length} />
               </div>
-              <Tooltip title={tooltips.documents}>
-                <div className={styles.statistic}>
-                  <Statistic title="Total Documents" value={totalDocs} style={{marginLeft: '56px'}}/>
-                </div>
-              </Tooltip>
+              <div style={{ marginLeft: '-50px' }}>
+                <Tooltip title={tooltips.entities}>
+                  <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" /></Tooltip>
+              </div>
+              <div className={styles.statistic}>
+                <Statistic title="Total Documents" value={totalDocs} style={{ marginLeft: '56px' }} />
+              </div>
+              <div style={{ marginLeft: '-50px' }}>
+                <Tooltip title={tooltips.documents}>
+                  <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" /></Tooltip>
+              </div>
             </div>
             <EntityTable entities={entities} facetValues={facetValues} lastHarmonized={lastHarmonized} />
           </>}
