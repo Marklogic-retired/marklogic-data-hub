@@ -124,9 +124,11 @@ const ResultTable: React.FC<Props> = (props) => {
               if (typeof items === 'object' && keys.length === 1) {
                 values = Object.values(items);
               }
-              for (let key of Object.keys(values[0])) {
-                parentRow[key.toLowerCase()] = values[0][key].toString();
-                nestedColumns.add(key);
+              if(values.length){
+                for (let key of Object.keys(values[0])) {
+                  parentRow[key.toLowerCase()] = values[0][key].toString();
+                  nestedColumns.add(key);
+                }
               }
               parentRow.key = rowCounter++;
               parentRow.nestedId = nestedId;
@@ -237,7 +239,6 @@ const ResultTable: React.FC<Props> = (props) => {
   }
 
   useEffect(() => {
-    console.log('useEfferct')
 
     props.entity.length === 0 ? listOfColumns = setPrimaryKeyColumn(allEntitiesColumns) : listOfColumns = setPrimaryKeyColumn(headerParser(arrayOfTitles));
     if (props.entity.length === 0 || (props.entity.length !== 0 && parsedPayload.primaryKeys.length === 0)) {
