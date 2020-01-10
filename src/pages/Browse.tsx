@@ -150,8 +150,9 @@ const Browse: React.FC<Props> = ({ location }) => {
                 />
                 <br />
                 <br />
-                <div className={styles.switchViews}>
+                <div className={styles.spinViews}>
                   { isLoading && <Spin style={{ marginLeft: '10px' }}/>}
+                  <div className={styles.switchViews}>
                   <div className={active ? styles.toggled : styles.toggleView}
                     data-cy="table-view" id={'tableView'}
                     onClick={() => tableSwitch()}>
@@ -161,6 +162,7 @@ const Browse: React.FC<Props> = ({ location }) => {
                     data-cy="facet-view" id={'snippetView'}
                     onClick={() => snippetSwitch()}>
                     <Tooltip title={'Snippet View'}><FontAwesomeIcon icon={faStream} size="lg" /></Tooltip>
+                  </div>
                   </div>
                 </div>
               </div>
