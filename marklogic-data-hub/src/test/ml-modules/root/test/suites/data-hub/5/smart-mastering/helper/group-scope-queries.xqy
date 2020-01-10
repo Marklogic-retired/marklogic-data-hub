@@ -15,10 +15,12 @@ let $original-set-of-queries := (
   cts:element-value-query(xs:QName("category"), "a")
 )
 let $grouped := helper:group-queries-by-scope($original-set-of-queries, cts:and-query#1)
-let $json-property-scope-query := cts:json-property-scope-query-query($grouped[. instance of cts:json-property-scope-query])
-let $element-scope-query := cts:element-query-query($grouped[. instance of cts:element-query])
+let $sub-queries := if ($grouped instance of cts:and-query) then cts:and-query-queries($grouped) else ()
+let $json-property-scope-query := cts:json-property-scope-query-query($sub-queries[. instance of cts:json-property-scope-query])
+let $element-scope-query := cts:element-query-query($sub-queries[. instance of cts:element-query])
 return (
-  test:assert-equal(3, fn:count($grouped), "Expected to be grouped into 3 queries"),
+  test:assert-true($grouped instance of cts:and-query, "Expected to wrapped in cts:and-query"),
+  test:assert-equal(3, fn:count($sub-queries), "Expected to be grouped into 3 queries"),
   test:assert-true($json-property-scope-query instance of cts:and-query, "JSON property scope query is cts:and-query"),
   test:assert-equal(2, fn:count(cts:and-query-queries($json-property-scope-query)), "Expected to be 2 queries in JSON property scope"),
   test:assert-true($element-scope-query instance of cts:and-query, "Element scope query is cts:and-query"),
