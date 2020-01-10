@@ -20,8 +20,14 @@
   background-color: white;
 }
 
-.switchViews{
+.spinViews{
   margin-right: 12px;
+}
+
+.switchViews{
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .toggleView{
