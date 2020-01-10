@@ -45,6 +45,8 @@ public class SearchHelper {
   private static final String CREATED_ON_CONSTRAINT_NAME = "createdOnRange";
   private static final String JOB_WORD_CONSTRAINT_NAME = "createdByJobWord";
   private static final String JOB_RANGE_CONSTRAINT_NAME = "createdByJob";
+
+  private static final String MASTERING_AUDIT_COLLECTION_NAME = "mdm-auditing";
   private static final String[] IGNORED_SM_COLLECTION_SUFFIX = {"auditing", "archived", "notification"};
 
   private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -197,6 +199,7 @@ public class SearchHelper {
         excludedCol.add(String.format("sm-%s-%s", name, suffix));
       }
     });
+    excludedCol.add(MASTERING_AUDIT_COLLECTION_NAME);
     return excludedCol.toArray(new String[0]);
   }
 }
