@@ -299,15 +299,26 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
     }
 
     @Override
-    public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+    public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)  {
         request.getSession().invalidate();
-        if (watcherService.hasListener(this)) {
-            watcherService.unwatch(hubConfig.getStepDefinitionsDir().toString());
-            watcherService.unwatch(hubConfig.getHubEntitiesDir().toString());
-            watcherService.unwatch(hubConfig.getHubMappingsDir().toString());
-            watcherService.unwatch(hubConfig.getFlowsDir().toString());
-            watcherService.removeListener(this);
-        }
+        disableWatcherService(hubConfig.getStepDefinitionsDir().toFile());
+        disableWatcherService(hubConfig.getHubEntitiesDir().toFile());
+        disableWatcherService(hubConfig.getHubMappingsDir().toFile());
+        disableWatcherService(hubConfig.getFlowsDir().toFile());
+        disableWatcherService(hubConfig.getStepDefinitionsDir().toFile());
+        disableWatcherService(hubProject.getCustomModulesDir().toFile());
+        watcherService.removeListener(this);
         mappingManagerService.unsetMappingValidators();
+    }
+
+    private void disableWatcherService(File dir) {
+        try{
+            if(dir != null && dir.exists()) {
+                watcherService.unwatch(dir.toString());
+            }
+        }
+        catch (IOException ex){
+            logger.warn("Unable to disable watcher server for directory: " + dir.toString() + "; cause: " + ex.getMessage());
+        }
     }
 }
