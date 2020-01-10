@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { Layout, Row, Col, Typography } from 'antd';
-import { AuthContext } from '../util/auth-context';
+import { UserContext } from '../util/user-context';
 import { SearchContext } from '../util/search-context';
 import LoginForm from '../components/login-form/login-form';
 import DatahubIcon from '../components/datahub-icon/datahub-icon';
@@ -10,7 +10,7 @@ const { Title, Text } = Typography;
 const { Content, Footer } = Layout;
 
 const Home: React.FC = () => {
-  const { user } = useContext(AuthContext);
+  const { user } = useContext(UserContext);
   const { resetSearchOptions } = useContext(SearchContext);
 
   useEffect(() => {

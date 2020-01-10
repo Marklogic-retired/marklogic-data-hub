@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext, useRef } from 'react';
 import axios from 'axios';
 import { Layout, Tooltip, Spin } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
-import { AuthContext } from '../util/auth-context';
+import { UserContext } from '../util/user-context';
 import { SearchContext } from '../util/search-context';
 import AsyncLoader from '../components/async-loader/async-loader';
 import Sidebar from '../components/sidebar/sidebar';
@@ -24,7 +24,7 @@ const Browse: React.FC<Props> = ({ location }) => {
 
   const { Content, Sider } = Layout;
   const componentIsMounted = useRef(true);
-  const { user, handleError, setTableView } = useContext(AuthContext);
+  const { user, handleError, setTableView } = useContext(UserContext);
   const {
     searchOptions,
     setEntityClearQuery,

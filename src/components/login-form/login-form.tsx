@@ -2,14 +2,14 @@ import React, { useContext, useState } from 'react';
 import { Form, Icon, Input, Button, Typography, Spin } from 'antd';
 import axios from 'axios';
 import styles from './login-form.module.scss';
-import { AuthContext } from '../../util/auth-context';
+import { UserContext } from '../../util/user-context';
 
 
 const { Text } = Typography;
 
 const LoginForm: React.FC = () => {
 
-  const { loginAuthenticated } = useContext(AuthContext);
+  const { loginAuthenticated } = useContext(UserContext);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);

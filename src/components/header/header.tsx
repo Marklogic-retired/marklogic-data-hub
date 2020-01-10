@@ -7,7 +7,7 @@ import { faRoute } from '@fortawesome/free-solid-svg-icons'
 import Tour from 'reactour';
 import styles from './header.module.scss';
 import DatahubIcon from '../datahub-icon/datahub-icon';
-import { AuthContext } from '../../util/auth-context';
+import { UserContext } from '../../util/user-context';
 import { viewSteps, browseSnippetViewSteps, browseTableViewSteps, detailSteps, loginSteps } from '../../config/guided-tour-steps';
 
 
@@ -16,7 +16,7 @@ interface Props extends RouteComponentProps<any> {}
 const { SubMenu } = Menu;
 
 const Header:React.FC<Props> = ({ location }) => {
-  const { user, userNotAuthenticated, handleError, setTableView } = useContext(AuthContext);
+  const { user, userNotAuthenticated, handleError, setTableView } = useContext(UserContext);
   const [selectedMenu, setSelectedMenu] = useState<string[]>([]);
   const [tourSteps, setTourSteps] = useState<any[]>([]);
   const [isTourOpen, setIsTourOpen] = useState(false);

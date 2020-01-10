@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import axios from 'axios';
 import { Layout, Statistic, Tooltip } from 'antd';
-import { AuthContext } from '../util/auth-context';
+import { UserContext } from '../util/user-context';
 import EntityTable from '../components/entity-table/entity-table';
 import AsyncLoader from '../components/async-loader/async-loader';
 import { entityFromJSON } from '../util/data-conversion';
@@ -14,7 +14,7 @@ const { Content } = Layout;
 const tooltips = tooltipsConfig.viewEntities;
 
 const View: React.FC = () => {
-  const { user, handleError } = useContext(AuthContext);
+  const { user, handleError } = useContext(UserContext);
   const [entities, setEntites] = useState<any[]>([]);
   const [lastHarmonized, setLastHarmonized] = useState<any[]>([]);
   const [facetValues, setFacetValues] = useState<any[]>([]);

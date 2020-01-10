@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createUserPreference, getUserPreferences, updateUIPreference } from '../services/user-preferences';
 
 type UserContextInterface = {
   name: string,
@@ -22,7 +23,7 @@ const defaultUserData = {
   tableView: true
 }
 
-interface IAuthContextInterface {
+interface IUserContextInterface {
   user: UserContextInterface;
   loginAuthenticated: (username: string) => void;
   sessionAuthenticated: (username: string) => void;
@@ -33,7 +34,7 @@ interface IAuthContextInterface {
   setTableView: (viewType: boolean) => void;
 }
 
-export const AuthContext = React.createContext<IAuthContextInterface>({
+export const UserContext = React.createContext<IUserContextInterface>({
   user: defaultUserData,
   loginAuthenticated: () => {},
   sessionAuthenticated: () => {},
@@ -44,13 +45,20 @@ export const AuthContext = React.createContext<IAuthContextInterface>({
   setTableView: () => {}
 });
 
-const AuthProvider: React.FC<{ children: any }> = ({children}) => {
+const UserProvider: React.FC<{ children: any }> = ({children}) => {
   
   const [user, setUser] = useState(defaultUserData);
   const sessionUser = localStorage.getItem('dataHubExplorerUser');
 
   const loginAuthenticated = (username: string) => {
     localStorage.setItem('dataHubExplorerUser', username);
+    if (getUserPreferences(username)) {
+      // set values based on user pref
+    } else {
+      // create user pref
+      createUserPreference(username);
+    }
+
     setUser({ ...user,name: username, authenticated: true, redirect: true });
   };
 
@@ -154,6 +162,7 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
   }
 
   const setTableView = (view) => {
+    updateUIPreference(user.name, {tableView:view});
     setUser({...user, tableView: view });
   }
 
@@ -164,7 +173,7 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ 
+    <UserContext.Provider value={{ 
       user,
       loginAuthenticated,
       sessionAuthenticated,
@@ -175,8 +184,8 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
       setTableView,
     }}>
       {children}
-    </AuthContext.Provider>
+    </UserContext.Provider>
   )
 }
 
-export default AuthProvider;
+export default UserProvider;
