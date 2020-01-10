@@ -108,6 +108,7 @@ public class UpgradeProjectTest extends HubTestBase {
         assertTrue(hubProject.getHubSecurityDir().resolve("roles").resolve("data-hub-job-internal.json").toFile().exists());
         assertTrue(hubProject.getHubSecurityDir().resolve("roles").resolve("data-hub-flow-reader.json").toFile().exists());
         assertTrue(hubProject.getHubSecurityDir().resolve("roles").resolve("data-hub-flow-writer.json").toFile().exists());
+        assertTrue(hubProject.getHubSecurityDir().resolve("roles").resolve("data-hub-module-writer.json").toFile().exists());
         assertTrue(hubProject.getHubSecurityDir().resolve("roles").resolve("data-hub-mapping-reader.json").toFile().exists());
         assertTrue(hubProject.getHubSecurityDir().resolve("roles").resolve("data-hub-mapping-writer.json").toFile().exists());
         assertTrue(hubProject.getHubSecurityDir().resolve("roles").resolve("data-hub-step-definition-reader.json").toFile().exists());
@@ -131,6 +132,7 @@ public class UpgradeProjectTest extends HubTestBase {
         assertFalse(props.contains("mlMappingPermissions"));
         assertFalse(props.contains("mlStepDefinitionPermissions"));
         assertFalse(props.contains("mlJobPermissions"));
+        assertFalse(props.contains("mlModulePermissions"));
 
         //Ensure the path index from DHFPROD-3911 is added to xml payload
         XMLUnit.setIgnoreWhitespace(true);

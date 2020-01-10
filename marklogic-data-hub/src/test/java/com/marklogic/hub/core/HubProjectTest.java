@@ -80,7 +80,8 @@ public class HubProjectTest extends HubTestBase {
         assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-entity-model-reader.json").exists());
         assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/flow-developer-role.json").exists());
         assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/flow-operator-role.json").exists());
-
+        assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-module-reader.json").exists());
+        assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-module-writer.json").exists());
         assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-job-reader.json").exists());
         assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-job-internal.json").exists());
         assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-flow-reader.json").exists());
@@ -109,6 +110,7 @@ public class HubProjectTest extends HubTestBase {
         Properties props = new Properties();
         FileInputStream propsStream = new FileInputStream(gradleProperties);
         String fileContents = IOUtils.toString(propsStream);
+        assertFalse(fileContents.contains("mlModulePermissions"));
         fileContents = fileContents.replace("mlUsername=", "mlUsername=twituser");
         fileContents = fileContents.replace("mlPassword=", "mlPassword=twitpassword");
         fileContents = fileContents.replace("# mlManageUsername=", "mlManageUsername=manage-user");
