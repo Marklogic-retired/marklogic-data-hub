@@ -3,9 +3,11 @@
  */
 package com.marklogic.hub.explorer.web;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.marklogic.hub.explorer.model.Document;
+import com.marklogic.hub.explorer.model.FacetSearchQuery;
 import com.marklogic.hub.explorer.model.SearchQuery;
 import com.marklogic.hub.explorer.service.SearchService;
 
@@ -42,12 +44,18 @@ public class SearchController {
     HttpHeaders headers = new HttpHeaders();
 
     return optionalContent.map(content -> {
-      if(content.getContent().startsWith("<")) {
+      if (content.getContent().startsWith("<")) {
         headers.setContentType(MediaType.APPLICATION_XML);
       } else {
         headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
       }
       return new ResponseEntity<>(content, headers, HttpStatus.OK);
     }).orElse(new ResponseEntity<>(HttpStatus.OK));
+  }
+
+  @RequestMapping(value = "/facetValues", method = RequestMethod.GET)
+  @ResponseBody
+  public List<String> getFacetValues(@RequestBody FacetSearchQuery fsQuery) {
+    return searchService.getFacetValues(fsQuery);
   }
 }
