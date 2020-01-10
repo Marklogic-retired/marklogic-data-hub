@@ -11,6 +11,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -47,6 +50,17 @@ public class LoadHubArtifactsCommandTest extends HubTestBase {
 
         perms = h.getPermissions();
         assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("data-hub-step-definition-reader").iterator().next());
+
+        h = loadHubArtifactsCommand.buildMetadata(adminHubConfig.getModulePermissions(), "hub-core-module");
+        perms = h.getPermissions();
+        List<DocumentMetadataHandle.Capability> dhModReader = new ArrayList<>();
+        dhModReader.add(perms.get("data-hub-module-reader").iterator().next());
+        dhModReader.add(perms.get("data-hub-module-reader").iterator().next());
+
+        dhModReader.contains(DocumentMetadataHandle.Capability.READ);
+        dhModReader.contains(DocumentMetadataHandle.Capability.EXECUTE);
+        assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("data-hub-module-writer").iterator().next());
+        assertEquals(DocumentMetadataHandle.Capability.EXECUTE, perms.get("rest-extension-user").iterator().next());
     }
 
     @Test
@@ -56,6 +70,7 @@ public class LoadHubArtifactsCommandTest extends HubTestBase {
 
         config.setFlowPermissions("manage-user,read,manage-admin,update");
         config.setStepDefinitionPermissions("manage-user,read,manage-admin,update");
+        config.setModulePermissions("manage-user,read,manage-admin,update");
 
         DocumentMetadataHandle.DocumentPermissions perms = loadUserArtifactsCommand.buildMetadata(config.getStepDefinitionPermissions(),"http://marklogic.com/data-hub/step-definition").getPermissions();
         assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("manage-user").iterator().next());
@@ -66,6 +81,11 @@ public class LoadHubArtifactsCommandTest extends HubTestBase {
         assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("manage-user").iterator().next());
         assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("manage-admin").iterator().next());
         assertNull(perms.get("data-hub-flow-writer"));
+
+        perms = loadUserArtifactsCommand.buildMetadata(config.getModulePermissions(), "hub-core-module").getPermissions();
+        assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("manage-user").iterator().next());
+        assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("manage-admin").iterator().next());
+        assertNull(perms.get("data-hub-module-writer"));
     }
 }
 
