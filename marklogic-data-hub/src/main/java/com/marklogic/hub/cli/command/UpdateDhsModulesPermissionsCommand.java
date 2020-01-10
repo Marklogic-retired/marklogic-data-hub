@@ -55,7 +55,7 @@ public class UpdateDhsModulesPermissionsCommand extends AbstractCommand {
             "  let partUri = '/marklogic.rest." + extensionType + "/' + fileNames[i] + '/assets/';\n" +
             "  xdmp.documentRemovePermissions(partUri + 'metadata.xml', xdmp.permission('rest-extension-user', 'update'));\n" +
             "  xdmp.documentAddPermissions(partUri + 'metadata.xml', xdmp.permission('data-hub-environment-manager', 'update'));\n" +
-            "  if (fn.docAvailable(partUri + 'transform.sjs')){ \n" +
+            "  if (fn.docAvailable(partUri + '" + extensionType + ".sjs')){ \n" +
             "    xdmp.documentRemovePermissions(partUri +'" + extensionType + ".sjs', xdmp.permission('rest-admin-internal', 'update'));\n" +
             "    xdmp.documentAddPermissions(partUri + '" + extensionType + ".sjs', xdmp.permission('data-hub-environment-manager', 'update')); \n" +
             "  } \n" +

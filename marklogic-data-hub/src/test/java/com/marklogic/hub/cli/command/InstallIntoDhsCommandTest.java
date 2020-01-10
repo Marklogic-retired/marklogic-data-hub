@@ -156,14 +156,28 @@ public class InstallIntoDhsCommandTest extends HubTestBase {
             Assertions.assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("rest-extension-user").iterator().next());
 
             DocumentMetadataHandle moduleMetadataHandle = new DocumentMetadataHandle();
-            modMgr.readMetadata("/marklogic.rest.resource/mlDbConfigs/assets/resource.xqy", moduleMetadataHandle);
+            modMgr.readMetadata("/marklogic.rest.resource/mlBatches/assets/resource.sjs", moduleMetadataHandle);
             DocumentMetadataHandle.DocumentPermissions modulePerms = moduleMetadataHandle.getPermissions();
 
             Assertions.assertEquals(DocumentMetadataHandle.Capability.UPDATE, modulePerms.get("data-hub-environment-manager").iterator().next());
             Assertions.assertNull(modulePerms.get("rest-admin-internal"));
 
             moduleMetadataHandle = new DocumentMetadataHandle();
-            modMgr.readMetadata("/marklogic.rest.transform/mlExtractContent/assets/transform.xqy", moduleMetadataHandle);
+            modMgr.readMetadata("/marklogic.rest.resource/mlBatches/assets/resource.xqy", moduleMetadataHandle);
+            modulePerms = moduleMetadataHandle.getPermissions();
+
+            Assertions.assertEquals(DocumentMetadataHandle.Capability.UPDATE, modulePerms.get("data-hub-environment-manager").iterator().next());
+            Assertions.assertNull(modulePerms.get("rest-admin-internal"));
+
+            moduleMetadataHandle = new DocumentMetadataHandle();
+            modMgr.readMetadata("/marklogic.rest.transform/mlGenerateFunctionMetadata/assets/transform.sjs", moduleMetadataHandle);
+            modulePerms = moduleMetadataHandle.getPermissions();
+
+            Assertions.assertEquals(DocumentMetadataHandle.Capability.UPDATE, modulePerms.get("data-hub-environment-manager").iterator().next());
+            Assertions.assertNull(modulePerms.get("rest-admin-internal"));
+
+            moduleMetadataHandle = new DocumentMetadataHandle();
+            modMgr.readMetadata("/marklogic.rest.transform/mlGenerateFunctionMetadata/assets/transform.xqy", moduleMetadataHandle);
             modulePerms = moduleMetadataHandle.getPermissions();
 
             Assertions.assertEquals(DocumentMetadataHandle.Capability.UPDATE, modulePerms.get("data-hub-environment-manager").iterator().next());
