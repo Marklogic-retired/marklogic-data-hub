@@ -32,8 +32,6 @@ import com.marklogic.hub.HubProject;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.error.InvalidDBOperationError;
-import com.marklogic.hub.job.impl.JobMonitorImpl;
-import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.mgmt.DefaultManageConfigFactory;
 import com.marklogic.mgmt.ManageClient;
@@ -79,16 +77,6 @@ public class HubConfigImpl implements HubConfig
 
     // a set of properties to use for legacy token replacement.
     Properties projectProperties = null;
-
-    @Autowired
-    LegacyFlowManagerImpl flowManager;
-    @Autowired
-    DataHubImpl dataHub;
-    @Autowired
-    Versions versions;
-    @Autowired
-    JobMonitorImpl jobMonitor;
-
 
     protected String host;
 
@@ -2081,11 +2069,6 @@ public class HubConfigImpl implements HubConfig
     @JsonIgnore
     public void refreshProject(Properties properties, boolean loadGradleProperties) {
         loadConfigurationFromProperties(properties, loadGradleProperties);
-
-        flowManager.setupClient();
-        dataHub.wireClient();
-        versions.setupClient();
-        jobMonitor.setupClient();
     }
 
     /**

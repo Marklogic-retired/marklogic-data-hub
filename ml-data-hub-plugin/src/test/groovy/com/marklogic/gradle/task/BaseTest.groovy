@@ -299,8 +299,7 @@ class BaseTest extends Specification {
     //Use this method sparingly as it slows down the test
     public void resetProperties() {
         Field[] fields = HubConfigImpl.class.getDeclaredFields();
-        Set<String> s =  Stream.of("hubProject", "environment", "flowManager",
-            "dataHub", "versions", "logger", "objmapper", "projectProperties", "jobMonitor").collect(Collectors.toSet());
+        Set<String> s =  Stream.of("hubProject", "environment", "logger", "objmapper", "projectProperties").collect(Collectors.toSet());
 
         for(Field f : fields){
             if(! s.contains(f.getName())) {

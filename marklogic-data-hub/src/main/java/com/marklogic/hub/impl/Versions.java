@@ -20,7 +20,6 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.extensions.ResourceManager;
-import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.HubConfig;
@@ -35,10 +34,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 @Component
-public class Versions extends ResourceManager {
-    private static final String NAME = "mlHubversion";
+public class Versions {
 
-    DatabaseClient stagingClient;
     private AppConfig appConfig;
 
     @Autowired
@@ -90,25 +87,15 @@ public class Versions extends ResourceManager {
         this.appConfig = appConfig;
     }
 
-    public void setupClient() {
-        this.stagingClient = hubConfig.newStagingClient();
-        this.stagingClient.init(NAME, this);
-    }
-
     public String getDHFVersion() {
         return (hubConfig != null) ? hubConfig.getDHFVersion() : null;
     }
 
     public String getHubVersion() {
         try {
-            ResourceServices.ServiceResultIterator resultItr = this.getServices().get(new RequestParameters());
-            if (resultItr == null || ! resultItr.hasNext()) {
-                return null;
-            }
-            ResourceServices.ServiceResult res = resultItr.next();
-            return res.getContent(new StringHandle()).get();
+            return new HubVersionManager(hubConfig.newStagingClient()).getHubVersion();
+        } catch (Exception e) {
         }
-        catch(Exception e) {}
 
         /* 2.0.0 is the version at which we started using this method. First we'll check the version gradle properties.
          * If the version isn't there, we'll assume 2.0.0
@@ -157,26 +144,24 @@ public class Versions extends ResourceManager {
                 String dateString = versionString.replaceAll("[^-]+-(\\d{4})(\\d{2})(\\d{2})", "$1-$2-$3");
                 markLogicVersion.dateString = dateString;
                 markLogicVersion.isNightly = true;
-            }
-            else {
+            } else {
                 //Extract minor version in cases where versions is of type 9.0-6 or 9.0-6.2
-                if(versionString.matches("^.*-(.+)\\..*")) {
+                if (versionString.matches("^.*-(.+)\\..*")) {
                     minor = Integer.parseInt(versionString.replaceAll("^.*-(.+)\\..*", "$1"));
-                }
-                else if(versionString.matches("^.*-(.+)$")){
+                } else if (versionString.matches("^.*-(.+)$")) {
                     minor = Integer.parseInt(versionString.replaceAll("^.*-(.+)$", "$1"));
                 }
                 //left pad minor version with 0 if it is < 10
-                String modifiedMinor = minor < 10 ? StringUtils.leftPad(String.valueOf(minor), 2, "0"):String.valueOf(minor) ;
+                String modifiedMinor = minor < 10 ? StringUtils.leftPad(String.valueOf(minor), 2, "0") : String.valueOf(minor);
 
                 int hotFixNum = 0;
 
                 //Extract hotfix in cases where versions is of type 9.0-6.2, if not it will be 0
-                if(versionString.matches("^.*-(.+)\\.(.*)")) {
+                if (versionString.matches("^.*-(.+)\\.(.*)")) {
                     hotFixNum = Integer.parseInt(versionString.replaceAll("^.*-(.+)\\.(.*)", "$2"));
                 }
                 //left pad minor version with 0 if it is < 10
-                String modifiedHotFixNum = hotFixNum < 10 ? StringUtils.leftPad(String.valueOf(hotFixNum), 2, "0"):String.valueOf(hotFixNum) ;
+                String modifiedHotFixNum = hotFixNum < 10 ? StringUtils.leftPad(String.valueOf(hotFixNum), 2, "0") : String.valueOf(hotFixNum);
                 String alteredString = StringUtils.join(modifiedMinor, modifiedHotFixNum);
                 int ver = Integer.parseInt(alteredString);
                 markLogicVersion.minor = ver;
@@ -221,7 +206,7 @@ public class Versions extends ResourceManager {
     }
 
     private boolean isVersionCompatibleWithESServer(Versions.MarkLogicVersion serverVersion) {
-        if(!serverVersion.isNightly()) {
+        if (!serverVersion.isNightly()) {
             return ((serverVersion.getMajor() == 10 && serverVersion.getMinor() >= 200) ||
                 (serverVersion.getMajor() == 9 && serverVersion.getMinor() >= 1100));
         }
@@ -229,24 +214,35 @@ public class Versions extends ResourceManager {
     }
 
     public static int compare(String v1, String v2) {
-        if(v1 == null || v2 == null) {
+        if (v1 == null || v2 == null) {
             return 1;
         }
         String[] v1Parts = v1.split("\\.");
         String[] v2Parts = v2.split("\\.");
         int length = Math.max(v1Parts.length, v2Parts.length);
-        for(int i = 0; i < length; i++) {
+        for (int i = 0; i < length; i++) {
             int v1Part = i < v1Parts.length ? Integer.parseInt(v1Parts[i]) : 0;
             int v2Part = i < v2Parts.length ? Integer.parseInt(v2Parts[i]) : 0;
 
-            if(v1Part < v2Part) {
+            if (v1Part < v2Part) {
                 return -1;
             }
 
-            if(v1Part > v2Part) {
+            if (v1Part > v2Part) {
                 return 1;
             }
         }
         return 0;
+    }
+}
+
+class HubVersionManager extends ResourceManager {
+
+    public HubVersionManager(DatabaseClient client) {
+        client.init("mlHubversion", this);
+    }
+
+    public String getHubVersion() {
+        return getServices().get(new RequestParameters(), new StringHandle()).get();
     }
 }

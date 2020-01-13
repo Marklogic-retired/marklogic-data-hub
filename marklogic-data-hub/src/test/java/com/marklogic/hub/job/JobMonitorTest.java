@@ -8,11 +8,9 @@ import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.job.impl.JobMonitorImpl;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.io.IOException;
 import java.util.*;
 
 import static com.marklogic.client.io.DocumentMetadataHandle.Capability.*;
@@ -21,7 +19,6 @@ import static com.marklogic.client.io.DocumentMetadataHandle.Capability.*;
 @ContextConfiguration(classes = ApplicationConfig.class)
 class JobMonitorTest extends HubTestBase {
 
-    @Autowired
     private JobMonitorImpl jobMonitor;
 
     @BeforeAll
@@ -30,11 +27,12 @@ class JobMonitorTest extends HubTestBase {
     }
 
     @BeforeEach
-    public void setup() throws IOException {
+    public void setup() {
         basicSetup();
         adminHubConfig.initHubProject();
         clearDatabases(HubConfig.DEFAULT_JOB_NAME);
         addJobDocs();
+        jobMonitor = new JobMonitorImpl(adminHubConfig.newJobDbClient());
     }
 
     @AfterAll
@@ -61,6 +59,7 @@ class JobMonitorTest extends HubTestBase {
     void getBatchStatus() {
         Assertions.assertEquals("started", jobMonitor.getBatchStatus("10584668255644629399", "11368953415268525918"));
     }
+
     @Test
     void getStepBatchStatus() {
         Map<String, String> resp = jobMonitor.getStepBatchStatus("10584668255644629399", "1");
@@ -72,16 +71,15 @@ class JobMonitorTest extends HubTestBase {
         expected.add("failed");
         expected.add("started");
 
-        Assertions.assertEquals(expected, str );
+        Assertions.assertEquals(expected, str);
 
     }
 
     @Test
     void getBatchStatus1() {
-        try{
+        try {
             jobMonitor.getBatchStatus("10584668255644629399", "1136895341526852591");
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             Assertions.assertTrue(e.getMessage().contains("No batch document found"));
         }
     }
