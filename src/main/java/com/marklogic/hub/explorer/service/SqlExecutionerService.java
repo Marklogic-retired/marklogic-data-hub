@@ -1,4 +1,4 @@
-package com.marklogic.hub.explorer.util;
+package com.marklogic.hub.explorer.service;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.ForbiddenUserException;
@@ -15,9 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SqlExecutioner {
+public class SqlExecutionerService {
 
-  private static final Logger logger = LoggerFactory.getLogger(SqlExecutioner.class);
+  private static final Logger logger = LoggerFactory.getLogger(SqlExecutionerService.class);
 
   public JacksonHandle executeSqlQuery(DatabaseClient client, String query) {
     try {

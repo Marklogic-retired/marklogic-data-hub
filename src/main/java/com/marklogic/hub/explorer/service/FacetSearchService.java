@@ -1,4 +1,4 @@
-package com.marklogic.hub.explorer.search;
+package com.marklogic.hub.explorer.service;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,10 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import javax.ws.rs.core.Response.Status;
+
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.hub.explorer.exception.ExplorerException;
 import com.marklogic.hub.explorer.model.FacetSearchQuery;
 import com.marklogic.hub.explorer.util.DatabaseClientHolder;
-import com.marklogic.hub.explorer.util.SqlExecutioner;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -19,20 +21,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class FacetSearchImpl implements Search {
+public class FacetSearchService {
 
   public static final String ANY_STRING = "%";
   public static final String ANY_CHAR = "_";
   public static final String DOT_CHAR = ".";
   public static final String STRING_IDENTIFIER = "'";
   private static final String QUERIES_FILE = "SqlQueries.properties";
-  private static final Logger logger = LoggerFactory.getLogger(FacetSearchImpl.class);
+  private static final Logger logger = LoggerFactory.getLogger(FacetSearchService.class);
 
   @Autowired
   DatabaseClientHolder databaseClientHolder;
   @Autowired
-  SqlExecutioner executioner;
-  
+  SqlExecutionerService executioner;
+
   private String entityName = null;
   private String facetName = null;
 
@@ -52,12 +54,13 @@ public class FacetSearchImpl implements Search {
     entityName = fsq.getSchemaName() + DOT_CHAR + fsq.getEntityName();
     facetName = entityName + DOT_CHAR + fsq.getFacetName();
     try {
-      InputStream input = FacetSearchImpl.class.getClassLoader().getResourceAsStream(QUERIES_FILE);
+      InputStream input = FacetSearchService.class.getClassLoader()
+          .getResourceAsStream(QUERIES_FILE);
       Properties prop = new Properties();
       prop.load(input);
       switch (fsq.getDataType()) {
         case "string":
-          query = prop.getProperty("stringQuery");
+          query = prop.getProperty("stringFacetValuesQuery");
           query = String.format(query, facetName, entityName, facetName,
               STRING_IDENTIFIER + fsq.getQueryParams().get(0) + ANY_STRING + STRING_IDENTIFIER,
               facetName,
@@ -69,8 +72,11 @@ public class FacetSearchImpl implements Search {
           break;
       }
       logger.debug(query);
-    } catch (IOException ioe) {
-      logger.error(ioe.getMessage());
+    } catch (IOException e) {
+      logger.error(e.getMessage());
+      throw new ExplorerException(Status.INTERNAL_SERVER_ERROR.getStatusCode(),
+          e.getLocalizedMessage(),
+          "Explorer Server Error: Couldn't load SqlQueries.Properties file", e);
     }
     return query;
   }

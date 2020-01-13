@@ -9,6 +9,7 @@ import java.util.Optional;
 import com.marklogic.hub.explorer.model.Document;
 import com.marklogic.hub.explorer.model.FacetSearchQuery;
 import com.marklogic.hub.explorer.model.SearchQuery;
+import com.marklogic.hub.explorer.service.FacetSearchService;
 import com.marklogic.hub.explorer.service.SearchService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,9 @@ public class SearchController {
 
   @Autowired
   private SearchService searchService;
+
+  @Autowired
+  private FacetSearchService facetSearchService;
 
   @RequestMapping(method = RequestMethod.POST)
   @ResponseBody
@@ -56,6 +60,6 @@ public class SearchController {
   @RequestMapping(value = "/facetValues", method = RequestMethod.GET)
   @ResponseBody
   public List<String> getFacetValues(@RequestBody FacetSearchQuery fsQuery) {
-    return searchService.getFacetValues(fsQuery);
+    return facetSearchService.getFacetValues(fsQuery);
   }
 }
