@@ -187,7 +187,7 @@ const ResultTable: React.FC<Props> = (props) => {
             width: 150,
             onHeaderCell: column => ({
               width: column.width,
-              onResize: handleResize(index),
+              onResize: handleResize(item.title),
             }),
             onCell: () => {
               return {
@@ -273,10 +273,17 @@ const ResultTable: React.FC<Props> = (props) => {
     return data;
   }
 
-  data = mergeRows(columns)
+  data = mergeRows(columns);
+  console.log(data)
 
-  const handleResize = index => (e, { size }) => {
+  const handleResize = title => (e, { size }) => {
+    let index = 0;
     setColumns(columns => {
+      console.log(columns)
+      for (let i = 0; i < columns.length; i++) {
+        if (title == columns[i].title)
+          index = i;
+      }
       const nextColumns = [...columns];
       nextColumns[index] = {
         ...nextColumns[index],
@@ -304,7 +311,9 @@ const ResultTable: React.FC<Props> = (props) => {
     handleSelector: 'span.ant-table-column-title',
   };
 
+
   const expandedRowRender = (rowId) => {
+    console.log(rowId)
     const nestedColumns = [
       { title: 'Property', dataIndex: 'property', width: '30%' },
       { title: 'Value', dataIndex: 'value', width: '30%' },
