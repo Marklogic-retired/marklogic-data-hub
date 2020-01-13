@@ -15,25 +15,25 @@ class FileCollectorTest {
         yes("test.xml");
         yes("test.xhtml");
         yes("test.html");
+        yes("test");
         no("test.json");
-        no("test");
     }
 
     @Test
     void jsonFormat() {
         collector = new FileCollector(null, "json");
         yes("test.json");
+        yes("test");
         no("test.xml");
-        no("test");
     }
 
     @Test
     void textFormat() {
         collector = new FileCollector(null, "text");
         yes("test.txt");
+        no("test");
         no("test.xml");
         no("test.json");
-        no("test");
     }
 
     @Test

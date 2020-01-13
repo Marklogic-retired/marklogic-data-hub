@@ -24,7 +24,7 @@ public class FileCollector {
 
     public FileCollector(String filePath, String inputFormat) {
         this.filePath = filePath;
-        this.inputFormat = inputFormat;
+        this.inputFormat = inputFormat.toLowerCase();
 
         fileFormats = new HashMap<>();
         fileFormats.put("text", textExts);
@@ -32,7 +32,7 @@ public class FileCollector {
         fileFormats.put("csv", csvExts);
         fileFormats.put("xml", xmlExts);
     }
-    
+
     public void setHubConfig(HubConfig config) {
         this.hubConfig = config;
     }
@@ -78,11 +78,15 @@ public class FileCollector {
 
         final String fileExtension = FilenameUtils.getExtension(filename).toLowerCase();
 
-        if (fileFormats.containsKey(inputFormat.toLowerCase()) && fileFormats.get(inputFormat.toLowerCase()).contains(fileExtension)) {
+        if (fileExtension.trim().length() == 0 && ("json".equals(inputFormat) || "xml".equals(inputFormat))) {
             return true;
         }
 
-        return "binary".equalsIgnoreCase(inputFormat)
+        if (fileFormats.containsKey(inputFormat) && fileFormats.get(inputFormat).contains(fileExtension)) {
+            return true;
+        }
+
+        return "binary".equals(inputFormat)
             && !csvExts.contains(fileExtension)
             && !jsonExts.contains(fileExtension)
             && !xmlExts.contains(fileExtension);
