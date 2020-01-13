@@ -39,6 +39,7 @@ import com.marklogic.hub.entity.*;
 import com.marklogic.hub.error.EntityServicesGenerationException;
 import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -62,10 +63,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
     @Autowired
     private HubProject hubProject;
 
-    private ObjectMapper mapper;
-
     public EntityManagerImpl() {
-        mapper = new ObjectMapper();
     }
 
     /**
@@ -96,11 +94,19 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
             List<JsonNode> entities = getModifiedRawEntities(lastModified);
             if (entities.size() > 0) {
                 String options = generator.generateOptions(entities, false);
-                FileUtils.writeStringToFile(stagingFile, options);
-                FileUtils.writeStringToFile(finalFile, options);
+                if (options != null) {
+                    FileUtils.writeStringToFile(stagingFile, options);
+                    logger.info("Wrote entity-specific search options to: " + stagingFile.getAbsolutePath());
+                    FileUtils.writeStringToFile(finalFile, options);
+                    logger.info("Wrote entity-specific search options to: " + finalFile.getAbsolutePath());
+                }
                 String expOptions = generator.generateOptions(entities, true);
-                FileUtils.writeStringToFile(expStagingFile, expOptions);
-                FileUtils.writeStringToFile(expFinalFile, expOptions);
+                if (expOptions != null) {
+                    FileUtils.writeStringToFile(expStagingFile, expOptions);
+                    logger.info("Wrote entity-specific search options for Explorer to: " + stagingFile.getAbsolutePath());
+                    FileUtils.writeStringToFile(expFinalFile, expOptions);
+                    logger.info("Wrote entity-specific search options for Explorer to: " + finalFile.getAbsolutePath());
+                }
                 return true;
             }
         } catch (IOException e) {
@@ -122,8 +128,12 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
                 File expStagingFile = Paths.get(dir.toString(), HubConfig.EXP_STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile();
                 File expFinalFile = Paths.get(dir.toString(), HubConfig.EXP_FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile();
                 String options = generator.generateOptions(entities, true);
-                FileUtils.writeStringToFile(expStagingFile, options);
-                FileUtils.writeStringToFile(expFinalFile, options);
+                if (options != null) {
+                    FileUtils.writeStringToFile(expStagingFile, options);
+                    logger.info("Wrote entity-specific search options for Explorer to: " + expStagingFile.getAbsolutePath());
+                    FileUtils.writeStringToFile(expFinalFile, options);
+                    logger.info("Wrote entity-specific search options for Explorer to: " + expFinalFile.getAbsolutePath());
+                }
             }
         } catch (IOException e) {
             throw new RuntimeException("Unable to generate query options; cause: " + e.getMessage(), e);
@@ -205,6 +215,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
 
                     // in order to make entity indexes ml-app-deployer compatible, add database-name keys.
                     // ml-app-deployer removes these keys upon sending to marklogic.
+                    ObjectMapper mapper = new ObjectMapper();
                     indexNode.put("database-name", "%%mlFinalDbName%%");
                     mapper.writerWithDefaultPrettyPrinter().writeValue(finalFile, indexNode);
                     indexNode.put("database-name", "%%mlStagingDbName%%");
@@ -598,30 +609,21 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
     }
 
     private class QueryOptionsGenerator extends ResourceManager {
-        private static final String NAME = "mlSearchOptionsGenerator";
-
         QueryOptionsGenerator(DatabaseClient client) {
             super();
-            client.init(NAME, this);
+            client.init("mlSearchOptionsGenerator", this);
         }
 
         String generateOptions(List<JsonNode> entities, boolean forExplorer) {
             try {
-                ObjectMapper objectMapper = new ObjectMapper();
-                JsonNode node = objectMapper.valueToTree(entities);
+                JsonNode node = new ObjectMapper().valueToTree(entities);
                 RequestParameters params = new RequestParameters();
                 params.put("forExplorer", Boolean.toString(forExplorer));
-
-                ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, new JacksonHandle(node));
-                if (resultItr == null || !resultItr.hasNext()) {
-                    throw new IOException("Unable to generate query options");
-                }
-                ResourceServices.ServiceResult res = resultItr.next();
-                return res.getContent(new StringHandle()).get();
+                return getServices().post(params, new JacksonHandle(node), new StringHandle()).get();
             } catch (Exception e) {
-                e.printStackTrace();
+                LoggerFactory.getLogger(getClass()).error("Unable to generate search options based on entity models", e);
+                return null;
             }
-            return "{}";
         }
     }
 
