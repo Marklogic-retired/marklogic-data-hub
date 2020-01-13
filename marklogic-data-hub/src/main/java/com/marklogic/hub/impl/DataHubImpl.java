@@ -46,7 +46,6 @@ import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.QueryOptionsListHandle;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.InstallInfo;
@@ -68,7 +67,6 @@ import com.marklogic.hub.error.DataHubSecurityNotInstalledException;
 import com.marklogic.hub.error.InvalidDBOperationError;
 import com.marklogic.hub.error.ServerValidationException;
 import com.marklogic.hub.flow.FlowRunner;
-import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.admin.AdminManager;
 import com.marklogic.mgmt.resource.appservers.ServerManager;
@@ -88,7 +86,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -104,10 +101,6 @@ import java.util.regex.Pattern;
 
 @Component
 public class DataHubImpl implements DataHub {
-
-    private ManageClient _manageClient;
-    private DatabaseManager _databaseManager;
-    private ServerManager _serverManager;
 
     @Autowired
     private HubConfigImpl hubConfig;
@@ -134,68 +127,38 @@ public class DataHubImpl implements DataHub {
     private Versions versions;
 
     @Autowired
-    private LegacyFlowManagerImpl legacyFlowManager;
-
-    @Autowired
-    private FlowManager flowManager;
-
-    @Autowired
     private FlowRunner flowRunner;
 
-    private AdminManager _adminManager;
-
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    @PostConstruct
-    public void wireClient() {
-        this._manageClient = hubConfig.getManageClient();
-        this._adminManager = hubConfig.getAdminManager();
-        this._databaseManager = new DatabaseManager(_manageClient);
-        this._serverManager = constructServerManager(_manageClient, hubConfig);
-    }
 
     /**
      * Need to account for the group name in case the user has overridden the name of the "Default" group.
      *
-     * @param manageClient manageClient object
      * @param hubConfig hubConfig object
      * @return constructed ServerManager object
      */
-    protected ServerManager constructServerManager(ManageClient manageClient, HubConfig hubConfig) {
+    protected ServerManager constructServerManager(HubConfigImpl hubConfig) {
         AppConfig appConfig = hubConfig.getAppConfig();
         return appConfig != null ?
-            new ServerManager(manageClient, appConfig.getGroupName()) :
-            new ServerManager(manageClient);
+            new ServerManager(hubConfig.getManageClient(), appConfig.getGroupName()) :
+            new ServerManager(hubConfig.getManageClient());
     }
 
     @Override
     public void clearDatabase(String database) {
-        DatabaseManager mgr = new DatabaseManager(_manageClient);
-        mgr.clearDatabase(database);
+        getDatabaseManager().clearDatabase(database);
     }
 
     private AdminManager getAdminManager() {
-        return this._adminManager;
-    }
-
-    void setAdminManager(AdminManager manager) {
-        this._adminManager = manager;
+        return hubConfig.getAdminManager();
     }
 
     private ManageClient getManageClient() {
-        return _manageClient;
+        return hubConfig.getManageClient();
     }
 
     private DatabaseManager getDatabaseManager() {
-        return this._databaseManager;
-    }
-
-    private ServerManager getServerManager() {
-        return this._serverManager;
-    }
-
-    public void setServerManager(ServerManager manager) {
-        this._serverManager = manager;
+        return new DatabaseManager(getManageClient());
     }
 
     @Override
@@ -213,7 +176,7 @@ public class DataHubImpl implements DataHub {
         } else {
             ResourcesFragment srf = null;
             try {
-                srf = getServerManager().getAsXml();
+                srf = constructServerManager(hubConfig).getAsXml();
             } catch (HttpClientErrorException e) {
                 if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
                     throw new DataHubSecurityNotInstalledException();
@@ -453,15 +416,22 @@ public class DataHubImpl implements DataHub {
         return commands;
     }
 
-
     @Override
     public HashMap<String, Boolean> runPreInstallCheck() {
+        return runPreInstallCheck(constructServerManager(hubConfig));
+    }
 
-
-        Map<Integer, String> portsInUse = null;
+    /**
+     * This overloaded version was added to facilitate mock testing - i.e. to be able to mock which ports are available.
+     *
+     * @param serverManager
+     * @return
+     */
+    protected HashMap<String, Boolean> runPreInstallCheck(ServerManager serverManager) {
+        Map<Integer, String> portsInUse;
 
         try {
-            portsInUse = getServerPortsInUse();
+            portsInUse = getServerPortsInUse(serverManager);
         } catch (HttpClientErrorException e) {
             logger.warn("Used non-existing user to verify data hub.  Usually this means a fresh system, ready to install.");
             HashMap response = new HashMap();
@@ -846,11 +816,11 @@ public class DataHubImpl implements DataHub {
         commandsMap.put("mlModuleCommands", commands);
     }
 
-    private Map<Integer, String> getServerPortsInUse() {
+    private Map<Integer, String> getServerPortsInUse(ServerManager serverManager) {
         Map<Integer, String> portsInUse = new HashMap<>();
-        ResourcesFragment srf = getServerManager().getAsXml();
+        ResourcesFragment srf = serverManager.getAsXml();
         srf.getListItemNameRefs().forEach(s -> {
-            Fragment fragment = getServerManager().getPropertiesAsXml(s);
+            Fragment fragment = serverManager.getPropertiesAsXml(s);
             int port = Integer.parseInt(fragment.getElementValue("//m:port"));
             portsInUse.put(port, s);
         });

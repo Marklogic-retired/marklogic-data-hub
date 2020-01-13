@@ -44,7 +44,6 @@ import com.marklogic.client.io.marker.AbstractReadHandle;
 import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.impl.*;
-import com.marklogic.hub.job.impl.JobMonitorImpl;
 import com.marklogic.hub.legacy.LegacyDebugging;
 import com.marklogic.hub.legacy.LegacyTracing;
 import com.marklogic.hub.legacy.flow.CodeFormat;
@@ -155,16 +154,6 @@ public class HubTestBase {
 
     @Autowired
     protected LegacyFlowManagerImpl fm;
-
-    @Autowired
-    protected JobMonitorImpl jobMonitor;
-
-    protected JarDocumentFileReader jarDocumentFileReader = null;
-
-    // to speedup dev cycle, you can create a hub and set this to true.
-    // for true setup/teardown, must be 'false'
-    private static boolean isInstalled = false;
-    private static int nInstalls = 0;
 
     static final protected Logger logger = LoggerFactory.getLogger(HubTestBase.class);
 
@@ -442,7 +431,6 @@ public class HubTestBase {
         adminHubConfig.getAppConfig().getCmaConfig().setDeployRoles(false);
         adminHubConfig.getAppConfig().getCmaConfig().setDeployUsers(false);
 
-        wireClients();
         return adminHubConfig;
     }
 
@@ -490,7 +478,6 @@ public class HubTestBase {
         manageClient.setManageConfig(manageConfig);
         adminHubConfig.setManageClient(manageClient);
         adminHubConfig.setAdminConfig(adminConfig);
-        wireClients();
         return adminHubConfig;
     }
 
@@ -590,7 +577,6 @@ public class HubTestBase {
         ((HubConfigImpl)adminHubConfig).setManageClient(manageClient);
 
         ((HubConfigImpl)adminHubConfig).setAdminConfig(adminConfig);
-        wireClients();
     }
 
     public void deleteProjectDir() {
@@ -1167,18 +1153,10 @@ public class HubTestBase {
     }
 
 
-    public void wireClients() {
-        fm.setupClient();
-        dataHub.wireClient();
-        versions.setupClient();
-        jobMonitor.setupClient();
-
-    }
     //Use this method sparingly as it slows down the test
     public void resetProperties() {
         Field[] fields = HubConfigImpl.class.getDeclaredFields();
-        Set<String> s =  Stream.of("hubProject", "environment", "flowManager",
-                "dataHub", "versions", "logger", "objmapper", "projectProperties", "jobMonitor").collect(Collectors.toSet());
+        Set<String> s =  Stream.of("hubProject", "environment", "logger", "objmapper", "projectProperties").collect(Collectors.toSet());
 
         for(Field f : fields){
             if(! s.contains(f.getName())) {

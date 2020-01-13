@@ -27,7 +27,6 @@ import com.marklogic.hub.legacy.collector.impl.LegacyCollectorImpl;
 import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.legacy.flow.impl.LegacyFlowRunnerImpl;
 import com.marklogic.hub.main.impl.MainPluginImpl;
-import com.marklogic.hub.scaffold.Scaffolding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
@@ -44,33 +43,17 @@ import java.util.Properties;
 import java.util.regex.Pattern;
 
 @Component
-public class LegacyFlowManagerImpl extends ResourceManager implements LegacyFlowManager {
-
-    private static final String NAME = "mlFlow";
-
-    private DatabaseClient stagingClient;
-
+public class LegacyFlowManagerImpl implements LegacyFlowManager {
 
     @Autowired
     private HubConfig hubConfig;
-
-    @Autowired
-    private Scaffolding scaffolding;
-
-    public LegacyFlowManagerImpl() {
-        super();
-    }
 
     public void setHubConfig(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
     }
 
-    public void setupClient() {
-        this.stagingClient = hubConfig.newStagingClient();
-        this.stagingClient.init(NAME, this);
-    }
-
-    @Override public List<LegacyFlow> getLocalFlows() {
+    @Override
+    public List<LegacyFlow> getLocalFlows() {
         List<LegacyFlow> flows = new ArrayList<>();
 
         Path entitiesDir = hubConfig.getHubProject().getLegacyHubEntitiesDir();
@@ -84,11 +67,13 @@ public class LegacyFlowManagerImpl extends ResourceManager implements LegacyFlow
         return flows;
     }
 
-    @Override public List<LegacyFlow> getLocalFlowsForEntity(String entityName) {
+    @Override
+    public List<LegacyFlow> getLocalFlowsForEntity(String entityName) {
         return getLocalFlowsForEntity(entityName, null);
     }
 
-    @Override public List<LegacyFlow> getLocalFlowsForEntity(String entityName, FlowType flowType) {
+    @Override
+    public List<LegacyFlow> getLocalFlowsForEntity(String entityName, FlowType flowType) {
 
         List<LegacyFlow> flows = new ArrayList<>();
         Path entitiesDir = hubConfig.getHubProject().getLegacyHubEntitiesDir();
@@ -99,11 +84,9 @@ public class LegacyFlowManagerImpl extends ResourceManager implements LegacyFlow
         boolean getHarmonizeFlows = false;
         if (flowType == null) {
             getInputFlows = getHarmonizeFlows = true;
-        }
-        else if (flowType.equals(FlowType.INPUT)) {
+        } else if (flowType.equals(FlowType.INPUT)) {
             getInputFlows = true;
-        }
-        else if (flowType.equals(FlowType.HARMONIZE)) {
+        } else if (flowType.equals(FlowType.HARMONIZE)) {
             getHarmonizeFlows = true;
         }
 
@@ -134,15 +117,16 @@ public class LegacyFlowManagerImpl extends ResourceManager implements LegacyFlow
         return flows;
     }
 
-    @Override public LegacyFlow getFlowFromProperties(Path propertiesFile) {
+    @Override
+    public LegacyFlow getFlowFromProperties(Path propertiesFile) {
         String quotedSeparator = Pattern.quote(File.separator);
         /* Extract flowName and entityName from ..../plugins/entities/<entityName>/
          * input|harmonize/<flowName>/flowName.properties
          */
-        String floweRegex = ".+" + "plugins" + quotedSeparator + "entities" + quotedSeparator + "(.+)"+ quotedSeparator
-                +"(input|harmonize)" + quotedSeparator + "(.+)" + quotedSeparator + ".+";
+        String floweRegex = ".+" + "plugins" + quotedSeparator + "entities" + quotedSeparator + "(.+)" + quotedSeparator
+            + "(input|harmonize)" + quotedSeparator + "(.+)" + quotedSeparator + ".+";
         FlowType flowType = propertiesFile.toString().replaceAll(floweRegex, "$2").equals("input")
-                ? FlowType.INPUT : FlowType.HARMONIZE;
+            ? FlowType.INPUT : FlowType.HARMONIZE;
 
         String entityName = propertiesFile.toString().replaceAll(floweRegex, "$1");
         return getLocalFlow(entityName, propertiesFile.getParent(), flowType);
@@ -158,7 +142,7 @@ public class LegacyFlowManagerImpl extends ResourceManager implements LegacyFlow
                 properties.load(fis);
 
                 // trim trailing whitespaces for properties.
-                for (String key : properties.stringPropertyNames()){
+                for (String key : properties.stringPropertyNames()) {
                     properties.put(key, properties.get(key).toString().trim());
                 }
                 fis.close();
@@ -177,18 +161,45 @@ public class LegacyFlowManagerImpl extends ResourceManager implements LegacyFlow
 
                 return flowBuilder.build();
             }
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    @Override public List<LegacyFlow> getFlows(String entityName) {
+    @Override
+    public List<LegacyFlow> getFlows(String entityName) {
+        return new FlowResource(hubConfig.newStagingClient()).getFlows(entityName);
+    }
+
+    @Override
+    public LegacyFlow getFlow(String entityName, String flowName) {
+        return getFlow(entityName, flowName, null);
+    }
+
+    @Override
+    public LegacyFlow getFlow(String entityName, String flowName, FlowType flowType) {
+        return new FlowResource(hubConfig.newStagingClient()).getFlow(entityName, flowName, flowType);
+    }
+
+    @Override
+    public LegacyFlowRunner newFlowRunner() {
+        return new LegacyFlowRunnerImpl(hubConfig);
+    }
+
+}
+
+class FlowResource extends ResourceManager {
+
+    public FlowResource(DatabaseClient client) {
+        client.init("mlFlow", this);
+    }
+
+    public List<LegacyFlow> getFlows(String entityName) {
         RequestParameters params = new RequestParameters();
         params.add("entity-name", entityName);
         ServiceResultIterator resultItr = this.getServices().get(params);
-        if (resultItr == null || ! resultItr.hasNext()) {
+        if (resultItr == null || !resultItr.hasNext()) {
             return null;
         }
         ServiceResult res = resultItr.next();
@@ -205,17 +216,13 @@ public class LegacyFlowManagerImpl extends ResourceManager implements LegacyFlow
         for (int i = 0; i < children.getLength(); i++) {
             node = children.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
-                flows.add(LegacyFlowManager.flowFromXml((Element)children.item(i)));
+                flows.add(LegacyFlowManager.flowFromXml((Element) children.item(i)));
             }
         }
         return flows;
     }
 
-    @Override public LegacyFlow getFlow(String entityName, String flowName) {
-        return getFlow(entityName, flowName, null);
-    }
-
-    @Override public LegacyFlow getFlow(String entityName, String flowName, FlowType flowType) {
+    public LegacyFlow getFlow(String entityName, String flowName, FlowType flowType) {
         RequestParameters params = new RequestParameters();
         params.add("entity-name", entityName);
         params.add("flow-name", flowName);
@@ -223,7 +230,7 @@ public class LegacyFlowManagerImpl extends ResourceManager implements LegacyFlow
             params.add("flow-type", flowType.toString());
         }
         ServiceResultIterator resultItr = this.getServices().get(params);
-        if (resultItr == null || ! resultItr.hasNext()) {
+        if (resultItr == null || !resultItr.hasNext()) {
             return null;
         }
         ServiceResult res = resultItr.next();
@@ -231,9 +238,4 @@ public class LegacyFlowManagerImpl extends ResourceManager implements LegacyFlow
         Document parent = res.getContent(handle).get();
         return LegacyFlowManager.flowFromXml(parent.getDocumentElement());
     }
-
-    @Override public LegacyFlowRunner newFlowRunner() {
-        return new LegacyFlowRunnerImpl(hubConfig);
-    }
-
 }
