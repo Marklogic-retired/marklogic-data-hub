@@ -68,6 +68,14 @@ public class FacetSearchService {
                   + STRING_IDENTIFIER, fsq.getLimit());
           break;
 
+        case "date":
+        case "dateTime":
+          query = prop.getProperty("rangeFacetValuesQuery");
+          query = String.format(query, facetName, entityName, facetName,
+              STRING_IDENTIFIER + fsq.getQueryParams().get(0) + STRING_IDENTIFIER,
+              STRING_IDENTIFIER + fsq.getQueryParams().get(1) + STRING_IDENTIFIER, fsq.getLimit());
+          break;
+
         default:
           break;
       }
