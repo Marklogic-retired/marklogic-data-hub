@@ -274,12 +274,10 @@ const ResultTable: React.FC<Props> = (props) => {
   }
 
   data = mergeRows(columns);
-  console.log(data)
 
   const handleResize = title => (e, { size }) => {
     let index = 0;
     setColumns(columns => {
-      console.log(columns)
       for (let i = 0; i < columns.length; i++) {
         if (title == columns[i].title)
           index = i;
@@ -313,7 +311,6 @@ const ResultTable: React.FC<Props> = (props) => {
 
 
   const expandedRowRender = (rowId) => {
-    console.log(rowId)
     const nestedColumns = [
       { title: 'Property', dataIndex: 'property', width: '30%' },
       { title: 'Value', dataIndex: 'value', width: '30%' },
