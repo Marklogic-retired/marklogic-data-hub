@@ -1,0 +1,18 @@
+{
+  "lang" : "zxx",
+  "name" : "application_member-applicationMemberMapping",
+  "description" : "",
+  "version" : 0,
+  "targetEntityType" : "http://example.org/Application_Member-0.0.1/Application_Member",
+  "sourceContext" : "/",
+  "sourceURI" : "/pharmaData/applicationMember/Application_Member.json",
+  "properties" : {
+    "medicaid_eventID" : {
+      "sourcedFrom" : "node(\"10000011028\")/calculation/Medicaid/eventIdentifier"
+    },
+    "medicaid_eventDate" : {
+      "sourcedFrom" : "node(\"10000011028\")/calculation/Medicaid/eventDateTime"
+    }
+  },
+  "namespaces" : { }
+}

@@ -1,0 +1,23 @@
+{
+  "lang" : "zxx",
+  "name" : "protein_sample-proteinSampleMapping",
+  "description" : "",
+  "version" : 0,
+  "targetEntityType" : "http://example.org/Protein_sample-0.0.1/Protein_Sample",
+  "sourceContext" : "/",
+  "sourceURI" : "/pharmaData/sampleProtein/SampleProtein.xml",
+  "properties" : {
+    "organism" : {
+      "sourcedFrom" : "uniprot:entry/uniprot:organism/uniprot:name"
+    },
+    "protein_name" : {
+      "sourcedFrom" : "uniprot:entry/uniprot:gene/uniprot:name"
+    },
+    "host_name" : {
+      "sourcedFrom" : "uniprot:entry/uniprot:organismHost/uniprot:name"
+    }
+  },
+  "namespaces" : {
+    "uniprot" : "http://uniprot.org/uniprot"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "info" : {
+    "title" : "Gene_Sample",
+    "version" : "0.0.1",
+    "baseUri" : "http://example.org/"
+  },
+  "definitions" : {
+    "Gene_Sample" : {
+      "required" : [ ],
+      "pii" : [ ],
+      "elementRangeIndex" : [ ],
+      "rangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "tax_id" : {
+          "datatype" : "integer",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "Gene_id" : {
+          "datatype" : "integer"
+        },
+        "chromosome" : {
+          "datatype" : "integer",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "gene_type" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}
