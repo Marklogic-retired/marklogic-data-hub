@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Checkbox, Icon, Tooltip} from 'antd';
+import { Button, Checkbox, Icon, Tooltip } from 'antd';
 import { SearchContext } from '../../util/search-context';
 import styles from './facet.module.scss';
 import { numberConverter } from '../../util/number-conversion';
@@ -18,14 +18,16 @@ const Facet: React.FC<Props> = (props) => {
   const SHOW_MINIMUM = 3;
   const { setSearchFacets, searchOptions } = useContext(SearchContext);
   const [showFacets, setShowFacets] = useState(SHOW_MINIMUM);
-  const [show, toggleShow] = useState(true);
+  const [show, toggleShow] = useState(true); 
   const [more, toggleMore] = useState(false);
+  const [showApply, toggleApply] = useState(false);
   const [checked, setChecked] = useState<string[]>([]);
 
   useEffect(() => {
     if (Object.entries(searchOptions.searchFacets).length !== 0 && searchOptions.searchFacets.hasOwnProperty(props.constraint)) {
       for (let facet in searchOptions.searchFacets ) {
         if (facet === props.constraint) {
+          console.log('checked facet', [...searchOptions.searchFacets[facet]])
           setChecked([...searchOptions.searchFacets[facet]]);
         }
       }
@@ -35,24 +37,31 @@ const Facet: React.FC<Props> = (props) => {
   }, [searchOptions]);
 
   const handleClick = (e) => {
+    console.log('click event', e);
+    console.log('checked', checked);
     let index = checked.indexOf(e.target.value)
+    console.log('click index', index);
     // Selection
     if (e.target.checked && index === -1) {
       setChecked([...checked, e.target.value]);
-      setSearchFacets(props.constraint, [...checked, e.target.value]);
+      //setSearchFacets(props.constraint, [...checked, e.target.value]);
     } 
     // Deselection
     else if (index !== -1){
       let newChecked = [...checked];
       newChecked.splice(index, 1);
       setChecked(newChecked);
-      setSearchFacets(props.constraint, newChecked);
+      //setSearchFacets(props.constraint, newChecked);
     }
   }
 
   const handleClear = () => {
     setChecked([]);
-    setSearchFacets(props.constraint, []);
+    //setSearchFacets(props.constraint, []);
+  }
+
+  const applyFacets = () => {
+    //setSearchFacets(props.constraint, []);
   }
 
   const showMore = () => {
@@ -98,13 +107,21 @@ const Facet: React.FC<Props> = (props) => {
       </div>
       <div style={{display: (show) ? 'block' : 'none'}} >
         {values !== 0 && values}
-        <div 
-          className={styles.more}
-          style={{display: (props.facetValues.length > SHOW_MINIMUM) ? 'block' : 'none'}}
-          onClick={() => showMore()}
-          data-cy="show-more"
-        >{(more) ? '<< less' : 'more >>'}</div>
+          <div 
+            className={styles.more}
+            style={{display: (props.facetValues.length > SHOW_MINIMUM) ? 'block' : 'none'}}
+            onClick={() => showMore()}
+            data-cy="show-more"
+          >{(more) ? '<< less' : 'more >>'}</div>
       </div>
+      <div className={styles.applyButtonContainer}>
+          <Button 
+            type="primary" 
+            size="small" 
+            data-cy={stringConverter(props.name) +"-facet-apply-button"}
+            onClick={()=> applyFacets()}
+          >Apply</Button>
+        </div>
     </div>
   )
 }
