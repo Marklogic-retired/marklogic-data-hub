@@ -48,6 +48,20 @@ public class LegacyFlowManagerImpl implements LegacyFlowManager {
     @Autowired
     private HubConfig hubConfig;
 
+    public LegacyFlowManagerImpl() {
+        super();
+    }
+
+    /**
+     * For use outside of a Spring container.
+     *
+     * @param hubConfig
+     */
+    public LegacyFlowManagerImpl(HubConfig hubConfig) {
+        this();
+        this.hubConfig = hubConfig;
+    }
+
     public void setHubConfig(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
     }

@@ -73,6 +73,16 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         setExecuteSortOrder(SortOrderConstants.DEPLOY_TRIGGERS + 1);
     }
 
+    /**
+     * For use outside of a Spring container.
+     *
+     * @param hubConfig
+     */
+    public LoadUserArtifactsCommand(HubConfig hubConfig) {
+        this();
+        this.hubConfig = hubConfig;
+    }
+
     boolean isArtifactDir(Path dir, Path startPath) {
         String dirStr = dir.toString();
         String startPathStr = Pattern.quote(startPath.toString());

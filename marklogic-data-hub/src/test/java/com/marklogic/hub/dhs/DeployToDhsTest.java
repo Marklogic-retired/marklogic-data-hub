@@ -1,9 +1,18 @@
-package com.marklogic.hub.impl;
+package com.marklogic.hub.dhs;
 
 import com.marklogic.appdeployer.AppConfig;
-import com.marklogic.appdeployer.CmaConfig;
+import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.appdeployer.command.Command;
+import com.marklogic.appdeployer.command.ResourceFilenameFilter;
+import com.marklogic.appdeployer.command.alert.DeployAlertActionsCommand;
+import com.marklogic.appdeployer.command.alert.DeployAlertConfigsCommand;
+import com.marklogic.appdeployer.command.alert.DeployAlertRulesCommand;
 import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
+import com.marklogic.appdeployer.command.schemas.LoadSchemasCommand;
+import com.marklogic.appdeployer.command.tasks.DeployScheduledTasksCommand;
+import com.marklogic.appdeployer.command.temporal.DeployTemporalAxesCommand;
+import com.marklogic.appdeployer.command.temporal.DeployTemporalCollectionsCommand;
+import com.marklogic.appdeployer.command.triggers.DeployTriggersCommand;
 import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.DatabaseKind;
@@ -12,14 +21,19 @@ import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
+import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.impl.HubProjectImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.mock.env.MockEnvironment;
+import org.springframework.core.env.StandardEnvironment;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.io.File;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -47,37 +61,33 @@ public class DeployToDhsTest extends HubTestBase {
         assertTrue(appConfig.isCreateForests(), "AppConfig should default to creating forests");
         assertNull(appConfig.getResourceFilenamesIncludePattern());
 
+        appConfig.getConfigDirs().add(new ConfigDir(new File("hub-internal-config")));
+        appConfig.getConfigDirs().add(new ConfigDir(new File("my-dhs-config")));
+        assertEquals(3, appConfig.getConfigDirs().size(), "Should have 3, including ml-config which is added by default");
+
         adminHubConfig.setAppConfig(appConfig);
 
-        new DataHubImpl().prepareAppConfigForDeployingToDhs(adminHubConfig);
+        new DhsDeployer().prepareAppConfigForDeployingToDhs(adminHubConfig);
 
         assertEquals(adminHubConfig.getPort(DatabaseKind.STAGING), appConfig.getAppServicesPort(),
             "DHS does not allow access to the default App-Services port - 8000 - so it's set to the staging port instead so " +
                 "that user modules can be loaded into the DHF modules database");
 
         assertFalse(appConfig.isCreateForests(), "DHS handles forest creation");
-        assertEquals("(staging|final|job)-database.json", appConfig.getResourceFilenamesIncludePattern().pattern(),
-            "As DHS is only updating databases, we can get away with specifying a global include pattern, as " +
-                "databases are the resources being updated. Once we start deploying other resources, we won't be able " +
-                "to use a global pattern. We'll instead need to do something similar to what " +
-                "DhsDeployServersCommand does.");
 
-        final String message = "CMA doesn't work for some resources prior to ML 9.0-9, so turning off CMA usage for those " +
-            "just to be safe for DHS";
-        CmaConfig cmaConfig = appConfig.getCmaConfig();
-        assertFalse(cmaConfig.isCombineRequests(), message);
-        assertFalse(cmaConfig.isDeployDatabases(), message);
-        assertFalse(cmaConfig.isDeployRoles(), message);
-        assertFalse(cmaConfig.isDeployUsers(), message);
+        assertEquals(2, appConfig.getConfigDirs().size(), "The hub-internal-config dir should have been removed");
+        assertEquals("ml-config", appConfig.getConfigDirs().get(0).getBaseDir().getName());
+        assertEquals("my-dhs-config", appConfig.getConfigDirs().get(1).getBaseDir().getName(), "A user is still " +
+            "permitted to deploy their own resources from multiple configuration directories");
     }
 
     @Test
     public void knownPropertyValuesShouldBeFixed() {
-        // Set these to custom values that a user may use on-premise
-        HubConfigImpl hubConfig = new HubConfigImpl(new MockEnvironment());
-        AppConfig appConfig = new AppConfig();
-        hubConfig.setAppConfig(appConfig, true);
+        HubProjectImpl project = new HubProjectImpl();
+        project.createProject(PROJECT_PATH);
+        HubConfigImpl hubConfig = new HubConfigImpl(project, new StandardEnvironment());
 
+        // Set these to custom values that a user may use on-premise
         hubConfig.setHttpName(DatabaseKind.STAGING, "my-staging-server");
         hubConfig.setHttpName(DatabaseKind.FINAL, "my-final-server");
         hubConfig.setHttpName(DatabaseKind.JOB, "my-job-server");
@@ -89,16 +99,16 @@ public class DeployToDhsTest extends HubTestBase {
         hubConfig.setDbName(DatabaseKind.STAGING_SCHEMAS, "my-staging-schemas");
         hubConfig.setDbName(DatabaseKind.FINAL_TRIGGERS, "my-final-triggers");
         hubConfig.setDbName(DatabaseKind.FINAL_SCHEMAS, "my-final-schemas");
-        // This will set all the tokens based on the custom values above
-        hubConfig.modifyCustomTokensMap(appConfig);
-        assertEquals("my-staging-db", appConfig.getCustomTokens().get("%%mlStagingDbName%%"));
+        AppConfig appConfig = new AppConfig();
+        // Force the AppConfig to be updated based on the values in HubConfig
+        hubConfig.setAppConfig(appConfig, false);
 
-        appConfig.setContentDatabaseName("my-final-db");
-        appConfig.setTriggersDatabaseName("my-final-triggers");
-        appConfig.setSchemasDatabaseName("my-final-schemas");
-        appConfig.setModulesDatabaseName("my-modules");
+        assertEquals("my-staging-db", appConfig.getCustomTokens().get("%%mlStagingDbName%%"), "Smoke test to verify that " +
+            "one of the custom tokens is based on the custom property values set above");
+        assertEquals("my-final-db", appConfig.getContentDatabaseName(), "Smoke test to verify that default names on AppConfig " +
+            "were updated based on custom property values set above");
 
-        new DataHubImpl().setKnownValuesForDhsDeployment(hubConfig);
+        new DhsDeployer().setKnownValuesForDhsDeployment(hubConfig);
 
         assertEquals(HubConfig.DEFAULT_STAGING_NAME, hubConfig.getHttpName(DatabaseKind.STAGING));
         assertEquals(HubConfig.DEFAULT_FINAL_NAME, hubConfig.getHttpName(DatabaseKind.FINAL));
@@ -146,7 +156,7 @@ public class DeployToDhsTest extends HubTestBase {
             adminHubConfig.setAuthMethod(DatabaseKind.STAGING, "basic");
             adminHubConfig.setSimpleSsl(DatabaseKind.STAGING, true);
 
-            new DataHubImpl().prepareAppConfigForDeployingToDhs(adminHubConfig);
+            new DhsDeployer().prepareAppConfigForDeployingToDhs(adminHubConfig);
 
             assertNotNull(appConfig.getAppServicesSslContext());
             assertEquals(SecurityContextType.BASIC, appConfig.getAppServicesSecurityContextType());
@@ -158,11 +168,28 @@ public class DeployToDhsTest extends HubTestBase {
 
     @Test
     public void buildCommandList() {
-        List<Command> commands = dataHub.buildCommandListForDeployingToDhs();
-        assertTrue(commands.get(0) instanceof DeployOtherDatabasesCommand);
-        assertTrue(commands.get(1) instanceof DeployDatabaseFieldCommand);
-        assertTrue(commands.get(2) instanceof LoadUserArtifactsCommand);
-        assertTrue(commands.get(3) instanceof LoadUserModulesCommand);
-        assertEquals(4, commands.size());
+        List<Command> commands = new DhsDeployer().buildCommandListForDeployingToDhs(adminHubConfig);
+        Collections.sort(commands, Comparator.comparing(Command::getExecuteSortOrder));
+        System.out.println(commands);
+        assertEquals(12, commands.size());
+        int index = 0;
+        assertTrue(commands.get(index++) instanceof DeployOtherDatabasesCommand);
+        assertTrue(commands.get(index++) instanceof DeployDatabaseFieldCommand);
+        assertTrue(commands.get(index++) instanceof LoadSchemasCommand);
+        assertTrue(commands.get(index++) instanceof LoadUserModulesCommand);
+        assertTrue(commands.get(index++) instanceof DeployTriggersCommand);
+        assertTrue(commands.get(index++) instanceof LoadUserArtifactsCommand);
+        assertTrue(commands.get(index++) instanceof DeployTemporalAxesCommand);
+        assertTrue(commands.get(index++) instanceof DeployTemporalCollectionsCommand);
+        assertTrue(commands.get(index++) instanceof DeployScheduledTasksCommand);
+        assertTrue(commands.get(index++) instanceof DeployAlertConfigsCommand);
+        assertTrue(commands.get(index++) instanceof DeployAlertActionsCommand);
+        assertTrue(commands.get(index++) instanceof DeployAlertRulesCommand);
+
+        DeployOtherDatabasesCommand dodc = (DeployOtherDatabasesCommand) commands.get(0);
+        ResourceFilenameFilter filter = (ResourceFilenameFilter) dodc.getResourceFilenameFilter();
+        assertEquals("(staging|final|job)-database.json", filter.getIncludePattern().pattern(),
+            "DHS users aren't allowed to create their own databases, so the command for deploying databases is restricted " +
+                "to only updating the 3 known databases");
     }
 }

@@ -189,8 +189,16 @@ public class HubConfigImpl implements HubConfig
         projectProperties = new Properties();
     }
 
-    public HubConfigImpl(Environment environment) {
+    /**
+     * Constructor for when using this object outside of a Spring container, but a HubProject and Spring Environment are
+     * still needed.
+     *
+     * @param hubProject
+     * @param environment
+     */
+    public HubConfigImpl(HubProject hubProject, Environment environment) {
         this();
+        this.hubProject = hubProject;
         this.environment = environment;
     }
 
@@ -1001,7 +1009,11 @@ public class HubConfigImpl implements HubConfig
     }
 
     @Override  public void initHubProject() {
-        this.requireHubProject().init(getCustomTokens());
+        if (appConfig == null) {
+            appConfig = new DefaultAppConfigFactory().newAppConfig();
+        }
+        addDhfPropertiesToCustomTokens(appConfig);
+        this.requireHubProject().init(appConfig.getCustomTokens());
     }
 
     @Override
@@ -1794,15 +1806,6 @@ public class HubConfigImpl implements HubConfig
         return this.hubLogLevel;
     }
 
-    private Map<String, String> getCustomTokens() {
-        AppConfig appConfig = getAppConfig();
-        if (appConfig == null) {
-            appConfig = new DefaultAppConfigFactory().newAppConfig();
-        }
-        modifyCustomTokensMap(appConfig);
-        return appConfig.getCustomTokens();
-    }
-
     /**
      * Populates the custom tokens map in the given AppConfig object. For each field, if its value is set, then that value
      * is stored in the custom tokens map. Else, an attempt is made to retrieve a value for the field from the Spring
@@ -1811,9 +1814,9 @@ public class HubConfigImpl implements HubConfig
      *
      * @param appConfig
      */
-    protected void modifyCustomTokensMap(AppConfig appConfig) {
+    protected void addDhfPropertiesToCustomTokens(AppConfig appConfig) {
         if (environment == null) {
-            throw new RuntimeException("Unable to modify custom tokens map, the Spring environment object is null");
+            throw new RuntimeException("Unable to add DHF properties to custom tokens map because the Spring environment object is null");
         }
 
         Map<String, String> customTokens = appConfig.getCustomTokens();
@@ -1932,7 +1935,7 @@ public class HubConfigImpl implements HubConfig
 
         config.setSchemasPath(getUserSchemasDir().toString());
 
-        modifyCustomTokensMap(config);
+        addDhfPropertiesToCustomTokens(config);
 
         String version = getJarVersion();
         config.getCustomTokens().put("%%mlHubVersion%%", version);

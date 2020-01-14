@@ -68,6 +68,16 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         mapper = new ObjectMapper();
     }
 
+    /**
+     * For use outside of a Spring container.
+     *
+     * @param hubConfig
+     */
+    public EntityManagerImpl(HubConfig hubConfig) {
+        this.hubConfig = hubConfig;
+        this.hubProject = hubConfig.getHubProject();
+    }
+
     @Override
     public boolean saveQueryOptions() {
         QueryOptionsGenerator generator = new QueryOptionsGenerator(hubConfig.newStagingClient());
