@@ -108,7 +108,7 @@ pipeline{
 	stages{
 	    stage('Pre-Build-Check'){
 	    when {
-          			changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'develop', title: '', url: ''
+          			changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: '', title: '', url: ''
           			beforeAgent true
         }
 	    agent { label 'dhfLinuxAgent'}
@@ -221,7 +221,7 @@ pipeline{
 		stage('code-review'){
 		when {
   			 allOf {
-    changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'develop', title: '', url: ''
+    changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'feature/5.3.0', title: '', url: ''
   }
   			beforeAgent true
 		}
@@ -261,7 +261,7 @@ pipeline{
 		}
 		stage('PR'){
 		when {
-  			changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'develop', title: '', url: ''
+  			changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'feature/5.3.0', title: '', url: ''
   			beforeAgent true
 		}
 		agent {label 'dhmaster'};
