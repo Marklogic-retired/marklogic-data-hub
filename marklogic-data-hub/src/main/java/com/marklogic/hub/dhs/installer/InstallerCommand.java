@@ -1,4 +1,4 @@
-package com.marklogic.hub.cli;
+package com.marklogic.hub.dhs.installer;
 
 import org.springframework.context.ApplicationContext;
 

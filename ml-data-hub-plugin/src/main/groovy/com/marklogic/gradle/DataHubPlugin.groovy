@@ -27,7 +27,7 @@ import com.marklogic.gradle.task.databases.ClearModulesDatabaseTask
 import com.marklogic.gradle.task.databases.UpdateIndexesTask
 import com.marklogic.gradle.task.dhs.DhsDeployTask
 import com.marklogic.hub.ApplicationConfig
-import com.marklogic.hub.cli.command.InstallIntoDhsCommand
+import com.marklogic.hub.dhs.installer.command.InstallIntoDhsCommand
 import com.marklogic.hub.deploy.commands.ClearDHFModulesCommand
 import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand
 import com.marklogic.hub.deploy.commands.GeneratePiiCommand

@@ -1,4 +1,4 @@
-package com.marklogic.hub.cli;
+package com.marklogic.hub.dhs.installer;
 
 import com.beust.jcommander.DynamicParameter;
 import com.beust.jcommander.Parameter;

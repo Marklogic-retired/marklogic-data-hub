@@ -1,9 +1,9 @@
-package com.marklogic.hub.cli.command;
+package com.marklogic.hub.dhs.installer.command;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.ext.helper.LoggingObject;
-import com.marklogic.hub.cli.InstallerCommand;
-import com.marklogic.hub.cli.Options;
+import com.marklogic.hub.dhs.installer.InstallerCommand;
+import com.marklogic.hub.dhs.installer.Options;
 import com.marklogic.hub.impl.DataHubImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.mgmt.util.ObjectMapperFactory;

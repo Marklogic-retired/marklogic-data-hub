@@ -1,4 +1,4 @@
-package com.marklogic.hub.cli.command;
+package com.marklogic.hub.dhs.installer.command;
 
 import com.beust.jcommander.Parameters;
 import com.marklogic.client.DatabaseClient;
@@ -6,7 +6,7 @@ import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.cli.Options;
+import com.marklogic.hub.dhs.installer.Options;
 import com.marklogic.mgmt.resource.security.RoleManager;
 import com.marklogic.mgmt.resource.security.UserManager;
 import com.marklogic.rest.util.ResourcesFragment;

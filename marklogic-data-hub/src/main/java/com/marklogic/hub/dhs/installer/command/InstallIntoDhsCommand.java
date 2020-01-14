@@ -1,4 +1,4 @@
-package com.marklogic.hub.cli.command;
+package com.marklogic.hub.dhs.installer.command;
 
 import com.beust.jcommander.Parameters;
 import com.marklogic.appdeployer.command.Command;
@@ -6,13 +6,14 @@ import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
 import com.marklogic.appdeployer.command.security.DeployAmpsCommand;
 import com.marklogic.appdeployer.command.security.DeployPrivilegesCommand;
 import com.marklogic.appdeployer.command.security.DeployRolesCommand;
-import com.marklogic.hub.cli.Options;
-import com.marklogic.hub.cli.deploy.CopyQueryOptionsCommand;
-import com.marklogic.hub.cli.deploy.DhsDeployServersCommand;
 import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.CreateGranularPrivilegesCommand;
 import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
 import com.marklogic.hub.deploy.commands.HubDeployDatabaseCommandFactory;
+import com.marklogic.hub.dhs.installer.Options;
+import com.marklogic.hub.dhs.installer.deploy.CopyQueryOptionsCommand;
+import com.marklogic.hub.dhs.installer.deploy.DhsDeployServersCommand;
+import com.marklogic.hub.dhs.installer.deploy.UpdateDhsModulesPermissionsCommand;
 import org.springframework.context.ApplicationContext;
 
 import java.util.*;

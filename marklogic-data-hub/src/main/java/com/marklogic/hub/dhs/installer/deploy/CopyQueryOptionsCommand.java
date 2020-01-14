@@ -1,4 +1,4 @@
-package com.marklogic.hub.cli.deploy;
+package com.marklogic.hub.dhs.installer.deploy;
 
 import com.marklogic.appdeployer.command.AbstractCommand;
 import com.marklogic.appdeployer.command.CommandContext;
