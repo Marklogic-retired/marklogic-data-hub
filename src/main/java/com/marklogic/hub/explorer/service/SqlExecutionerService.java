@@ -28,7 +28,7 @@ public class SqlExecutionerService {
       return rowMgr.resultDoc(plan, handle);
     } catch (MarkLogicServerException e) {
       if (e instanceof ResourceNotFoundException || e instanceof ForbiddenUserException) {
-        logger.warn(e.getLocalizedMessage());
+        logger.error(e.getLocalizedMessage());
       } else { //FailedRequestException || ResourceNotResendableException
         logger.error(e.getLocalizedMessage());
       }
