@@ -11,6 +11,7 @@ import Install from './pages/Install';
 import ProjectInfo from './pages/ProjectInfo';
 import LoadData from './pages/LoadData';
 import EntityTiles from './components/entities/entity-tiles';
+import Bench from './pages/Bench';
 import Reset from './pages/Reset';
 import NoMatchRedirect from './pages/noMatchRedirect';
 
@@ -103,6 +104,9 @@ const App: React.FC<Props> = ({history, location}) => {
         </PrivateRoute>
         <PrivateRoute path="/entity-tiles" exact>
           <EntityTiles/>
+        </PrivateRoute>
+        <PrivateRoute path="/bench" exact>
+          <Bench/>
         </PrivateRoute>
         <Route path="/reset" exact component={Reset}/>
         <Route component={NoMatchRedirect}/>
