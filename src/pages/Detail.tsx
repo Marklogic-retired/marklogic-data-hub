@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import axios from 'axios';
 import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
-import { AuthContext } from '../util/auth-context';
+import { UserContext } from '../util/user-context';
 import styles from './Detail.module.scss';
 import TableView from '../components/table-view/table-view';
 import JsonView from '../components/json-view/json-view';
@@ -19,7 +19,7 @@ const { Content } = Layout;
 
 const Detail: React.FC<Props> = ({ history, location }) => {
 
-  const { user, handleError } = useContext(AuthContext);
+  const { user, handleError } = useContext(UserContext);
   const uriSplit = location.pathname.replace('/detail/', '');
   const pkValue = uriSplit.split('/')[0] === '-' ? '' : decodeURIComponent(uriSplit.split('/')[0]);
   const uri = decodeURIComponent(uriSplit.split('/')[1]).replace(/ /g, "%2520");

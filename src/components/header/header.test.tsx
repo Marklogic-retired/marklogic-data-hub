@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { mount } from 'enzyme';
 import Header from './header';
-import { AuthContext } from '../../util/auth-context';
+import { UserContext } from '../../util/user-context';
 
 describe('Header component', () => {
   let wrapper;

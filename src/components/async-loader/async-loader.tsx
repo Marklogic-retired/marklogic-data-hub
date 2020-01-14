@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
 import { Alert, Spin } from 'antd';
-import { AuthContext } from '../../util/auth-context';
+import { UserContext } from '../../util/user-context';
 import { SearchContext } from '../../util/search-context';
 
 const AsyncLoader: React.FC = () => {
-  const { user, clearErrorMessage } = useContext(AuthContext);
+  const { user, clearErrorMessage } = useContext(UserContext);
   const { resetSearchOptions } = useContext(SearchContext);
 
   const onClose = () => {

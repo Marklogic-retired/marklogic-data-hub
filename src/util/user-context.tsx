@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createUserPreferences, getUserPreferences, updateUserPreferences } from '../services/user-preferences';
 
 type UserContextInterface = {
   name: string,
@@ -6,7 +7,9 @@ type UserContextInterface = {
   authenticated: boolean,
   redirect: boolean,
   error : any,
-  tableView: boolean
+  tableView: boolean,
+  pageRoute: string,
+  resultTableColumns: any[]
 }
 
 const defaultUserData = {
@@ -19,10 +22,12 @@ const defaultUserData = {
     message: '',
     type: ''
   },
-  tableView: true
+  tableView: true,
+  pageRoute: '/view',
+  resultTableColumns: []
 }
 
-interface IAuthContextInterface {
+interface IUserContextInterface {
   user: UserContextInterface;
   loginAuthenticated: (username: string) => void;
   sessionAuthenticated: (username: string) => void;
@@ -31,9 +36,11 @@ interface IAuthContextInterface {
   clearErrorMessage: () => void;
   clearRedirect: () => void;
   setTableView: (viewType: boolean) => void;
+  setPageRoute: (route: string) => void;
+  setResultTable: (tableColumns: any, entityName: string) => void;
 }
 
-export const AuthContext = React.createContext<IAuthContextInterface>({
+export const UserContext = React.createContext<IUserContextInterface>({
   user: defaultUserData,
   loginAuthenticated: () => {},
   sessionAuthenticated: () => {},
@@ -41,21 +48,39 @@ export const AuthContext = React.createContext<IAuthContextInterface>({
   handleError: () => {},
   clearErrorMessage: () => {},
   clearRedirect: () => {},
-  setTableView: () => {}
+  setTableView: () => {},
+  setPageRoute: () => {},
+  setResultTable: () => {}
 });
 
-const AuthProvider: React.FC<{ children: any }> = ({children}) => {
+const UserProvider: React.FC<{ children: any }> = ({children}) => {
   
-  const [user, setUser] = useState(defaultUserData);
+  const [user, setUser] = useState<UserContextInterface>(defaultUserData);
   const sessionUser = localStorage.getItem('dataHubExplorerUser');
 
   const loginAuthenticated = (username: string) => {
     localStorage.setItem('dataHubExplorerUser', username);
-    setUser({ ...user,name: username, authenticated: true, redirect: true });
+    let userPreferences = getUserPreferences(username);
+    if (userPreferences) {
+      let values = JSON.parse(userPreferences);
+      setUser({ ...user,name: username, authenticated: true, redirect: true, tableView: values.tableView, pageRoute: values.pageRoute });
+    } else {
+      createUserPreferences(username);
+      setUser({ ...user,name: username, authenticated: true, redirect: true });
+    }
   };
 
   const sessionAuthenticated = (username: string) => {
     localStorage.setItem('dataHubExplorerUser', username);
+    let userPreferences = getUserPreferences(username);
+    console.log('userPref', userPreferences);
+    if (userPreferences) {
+      let values = JSON.parse(userPreferences);
+      setUser({ ...user,name: username, authenticated: true, tableView: values.tableView, pageRoute: values.pageRoute });
+    } else {
+      createUserPreferences(username);
+      setUser({ ...user,name: username, authenticated: true });
+    }
     setUser({ ...user,name: username, authenticated: true });
   };
 
@@ -154,7 +179,40 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
   }
 
   const setTableView = (view) => {
+    updateUserPreferences(user.name, { tableView: view });
     setUser({...user, tableView: view });
+  }
+
+  const setPageRoute = (route: string) => {
+    updateUserPreferences(user.name, { pageRoute: route });
+    setUser({...user, pageRoute: route });
+  }
+
+  const setResultTable = (tableColumns: any, entityName: string) => {
+    let newResultTable = [...user.resultTableColumns];
+    let newTablePref = {
+      entity: entityName,
+      columns: tableColumns
+    }
+    let entityTablePref = user.resultTableColumns.find(item => item.entity === entityName);
+    
+    if (entityTablePref) {
+      let index = user.resultTableColumns.findIndex(item => item.entity === entityName);
+      if (newResultTable[index].columns.toString() !== tableColumns.toString()) {
+        newResultTable[index] = newTablePref;
+        //updateUserPreferences(user.name, { resultTableColumns: newResultTable });
+        setUser({...user, resultTableColumns: newResultTable });
+      }
+      
+    } else {
+      newResultTable.push(newTablePref);
+      //updateUserPreferences(user.name, { resultTableColumns: newResultTable });
+      setUser({...user, resultTableColumns: newResultTable });
+    }
+    console.log('table', newResultTable)
+
+     //
+    //setUser({...user, resultTableColumns: newResultTable });
   }
 
   useEffect(() => {
@@ -164,7 +222,7 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ 
+    <UserContext.Provider value={{ 
       user,
       loginAuthenticated,
       sessionAuthenticated,
@@ -173,10 +231,12 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
       clearErrorMessage,
       clearRedirect,
       setTableView,
+      setPageRoute,
+      setResultTable
     }}>
       {children}
-    </AuthContext.Provider>
+    </UserContext.Provider>
   )
 }
 
-export default AuthProvider;
+export default UserProvider;

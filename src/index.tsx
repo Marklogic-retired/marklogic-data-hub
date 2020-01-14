@@ -2,15 +2,15 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
 import App from './App';
-import AuthProvider from './util/auth-context';
+import UserProvider from './util/user-context';
 
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
   <Router>   
-    <AuthProvider>  
+    <UserProvider>  
       <App/>
-    </AuthProvider>
+    </UserProvider>
   </Router>, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change

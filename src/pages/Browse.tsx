@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext, useRef } from 'react';
 import axios from 'axios';
 import { Layout, Tooltip, Spin } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
-import { AuthContext } from '../util/auth-context';
+import { UserContext } from '../util/user-context';
 import { SearchContext } from '../util/search-context';
 import AsyncLoader from '../components/async-loader/async-loader';
 import Sidebar from '../components/sidebar/sidebar';
@@ -11,6 +11,7 @@ import SearchPagination from '../components/search-pagination/search-pagination'
 import SearchSummary from '../components/search-summary/search-summary';
 import SearchResults from '../components/search-results/search-results';
 import ResultTable from '../components/result-table/result-table';
+import { updateUserPreferences } from '../services/user-preferences';
 import { entityFromJSON, entityParser } from '../util/data-conversion';
 import styles from './Browse.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -24,7 +25,7 @@ const Browse: React.FC<Props> = ({ location }) => {
 
   const { Content, Sider } = Layout;
   const componentIsMounted = useRef(true);
-  const { user, handleError, setTableView } = useContext(AuthContext);
+  const { user, handleError, setTableView } = useContext(UserContext);
   const {
     searchOptions,
     setEntityClearQuery,
@@ -58,6 +59,13 @@ const Browse: React.FC<Props> = ({ location }) => {
 
   const getSearchResults = async (allEntities: string[]) => {
     try {
+      let preferencesObject = {
+        query: searchOptions.query,
+        entityNames: searchOptions.entityNames,
+        pageLength: searchOptions.pageLength,
+        facets: searchOptions.searchFacets
+      }
+      updateUserPreferences(user.name, preferencesObject);
       setIsLoading(true);
       const response = await axios({
         method: 'POST',
@@ -167,8 +175,12 @@ const Browse: React.FC<Props> = ({ location }) => {
                 </div>
               </div>
               {user.tableView ?
-                <div style={{ marginTop: '150px' }}><ResultTable data={data} entity={searchOptions.entityNames}
-                  entityDefArray={entityDefArray} />
+                <div style={{ marginTop: '150px' }}>
+                  <ResultTable 
+                    data={data} 
+                    entity={searchOptions.entityNames}
+                    entityDefArray={entityDefArray} 
+                  />
                 </div>
                 : <SearchResults data={data} entityDefArray={entityDefArray} />
               }

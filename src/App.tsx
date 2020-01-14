@@ -1,7 +1,7 @@
 import React, { useContext, useEffect,useState, useReducer } from 'react';
 import { Switch } from 'react-router';
 import { Route, Redirect, RouteComponentProps, withRouter } from 'react-router-dom';
-import { AuthContext } from './util/auth-context';
+import { UserContext } from './util/user-context';
 import SearchProvider from './util/search-context';
 import Header from './components/header/header';
 import Home from './pages/Home';
@@ -16,7 +16,7 @@ interface Props extends RouteComponentProps<any> {}
 
 const App: React.FC<Props> = ({history, location}) => {
   document.title = 'Explorer';
-  const { user, clearErrorMessage, clearRedirect } = useContext(AuthContext);
+  const { user, clearErrorMessage, clearRedirect } = useContext(UserContext);
   const [asyncError, setAsyncError] = useState(false);
 
   const PrivateRoute = ({ component: Component, ...rest }) => (
@@ -35,10 +35,10 @@ const App: React.FC<Props> = ({history, location}) => {
   useEffect(() => {
     if (user.authenticated && user.redirect ){
       clearRedirect();
-      history.push('/view');
+      history.push(user.pageRoute);
     }
     if (user.authenticated && location.pathname === '/' ){
-      history.push('/view');
+      history.push(user.pageRoute);
     }
     if (user.authenticated && location.state && !user.redirect && user.error.type === '') {
       if (location.state.hasOwnProperty('from')) {
