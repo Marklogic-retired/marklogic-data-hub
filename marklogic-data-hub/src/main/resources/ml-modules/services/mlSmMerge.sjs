@@ -59,7 +59,13 @@ function put(context, params, input) {
 function deleteFunction(context, params) {
   let flowName = 'unmerge-mastering';
   let stepNumber = 1;
-  let options = Object.assign({}, params);
+  let options = Object.assign({blockFutureMerges: true, retainAuditTrail: true}, params);
+  if (xdmp.castableAs('http://www.w3.org/2001/XMLSchema', 'boolean', options.blockFutureMerges)) {
+    options.blockFutureMerges = xs.boolean(options.blockFutureMerges);
+  }
+  if (xdmp.castableAs('http://www.w3.org/2001/XMLSchema', 'boolean', options.retainAuditTrail)) {
+    options.retainAuditTrail = xs.boolean(options.retainAuditTrail);
+  }
   options.fullOutput = true;
   options.noWrite = true;
   const datahub = DataHubSingleton.instance({
