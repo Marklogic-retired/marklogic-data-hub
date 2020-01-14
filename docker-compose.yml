@@ -27,7 +27,7 @@ services:
     depends_on:
       - mldhf
   mldhf:
-    image: mlregistry.marklogic.com/explorerdeps/datahub-on-10.0-2:5.1-snapshot
+    image: mlregistry.marklogic.com/explorerdeps/datahub-on-10.0-3:5.2-snapshot
     container_name: "mldhf"
     ports:
       - "8000-8020:8000-8020"
