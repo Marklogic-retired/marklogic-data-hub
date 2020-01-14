@@ -102,6 +102,18 @@ public class FacetSearchService {
         }
         break;
 
+      case "int":
+      case "integer":
+      case "decimal":
+      case "long":
+      case "float":
+      case "double":
+        query = prop.getProperty("rangeFacetValuesQuery");
+        query = String
+            .format(query, facetName, entityName, facetName, fsq.getQueryParams().get(0),
+                fsq.getQueryParams().get(1), fsq.getLimit());
+        break;
+
       default:
         break;
     }
