@@ -1,5 +1,4 @@
 const NewLoadTooltips = { 
-
     'name': 'The name of this data load configuration.', 
     'description': 'The description of this data load configuration.', 
     'files' : 'Click *Upload* to select the source files. The total size of the files must be 100MB or less.', 
@@ -27,9 +26,14 @@ const NewMapTooltips = {
     'description': 'The description of this mapping configuration.', 
     'sourceQuery' : 'The collection or CTS query that selects the source data to process in this configuration.',
 }
+const NewFlowTooltips = { 
+    'name': 'The name of this flow.', 
+    'description': 'The description of this flow.'
+}
 
 export {
     NewLoadTooltips,
     LoadDataSettings,
-    NewMapTooltips
+    NewMapTooltips,
+    NewFlowTooltips
 }
