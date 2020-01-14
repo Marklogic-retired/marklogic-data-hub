@@ -17,6 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class RunFlowRunnerTestsWithoutProjectTest extends FlowRunnerTest {
 
+    private FlowRunnerImpl myFlowRunner;
+
     @Override
     protected RunFlowResponse runFlow(String flowName, String commaDelimitedSteps, String jobId, Map<String, Object> options, Map<String, Object> stepConfig) {
         FlowInputs inputs = new FlowInputs(flowName);
@@ -27,7 +29,12 @@ public class RunFlowRunnerTestsWithoutProjectTest extends FlowRunnerTest {
         inputs.setOptions(options);
         inputs.setStepConfig(stepConfig);
 
-        flowRunner = new FlowRunnerImpl(host, flowRunnerUser, flowRunnerPassword);
+        // Need to avoid instantiating this twice for the benefit of the MultipleJobs test in the parent class
+        if (myFlowRunner == null) {
+            myFlowRunner = new FlowRunnerImpl(host, flowRunnerUser, flowRunnerPassword);
+        }
+        flowRunner = myFlowRunner;
+
         makeInputFilePathsAbsoluteInFlow(flowName);
         verifyStepDefinitionsCanBeFound(flowRunner);
 
