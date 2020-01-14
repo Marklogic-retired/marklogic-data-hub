@@ -15,6 +15,9 @@ const Home: React.FC = () => {
             <Link to="/load-data"><i><FontAwesomeIcon icon={faCubes} size="3x"/></i></Link>
           </button>
         </Tooltip>
+        <Tooltip title="Click to navigate to Tool Bench" placement="bottom">
+            <Link to="/bench" className={styles.bench}><Icon type="tool" /></Link>
+        </Tooltip>
         <Tooltip title="Click to reset host name and log out" placement="bottom">
             <Link to="/reset" className={styles.reset}><Icon type="rollback" /></Link>
         </Tooltip>

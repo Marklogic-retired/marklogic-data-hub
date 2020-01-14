@@ -1,5 +1,4 @@
 const NewLoadTooltips = { 
-
     'name': 'The name of this data load configuration.', 
     'description': 'The description of this data load configuration.', 
     'files' : 'Click *Upload* to select the source files. The total size of the files must be 100MB or less.', 
@@ -22,7 +21,13 @@ const LoadDataSettings = {
     'mlcpCommand': 'To ingest files using MLCP, copy and paste this complete command to a command-line prompt . Note: MLCP and QuickStart generate two different URIs for the same delimited file.'
 }
 
+const NewFlowTooltips = { 
+    'name': 'The name of this flow.', 
+    'description': 'The description of this flow.'
+}
+
 export {
     NewLoadTooltips,
-    LoadDataSettings
+    LoadDataSettings,
+    NewFlowTooltips
 }
