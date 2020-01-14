@@ -25,23 +25,13 @@ import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
 import com.marklogic.appdeployer.command.forests.DeployCustomForestsCommand;
 import com.marklogic.appdeployer.command.modules.DeleteTestModulesCommand;
 import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
-import com.marklogic.appdeployer.command.security.DeployCertificateAuthoritiesCommand;
-import com.marklogic.appdeployer.command.security.DeployCertificateTemplatesCommand;
-import com.marklogic.appdeployer.command.security.DeployExternalSecurityCommand;
-import com.marklogic.appdeployer.command.security.DeployPrivilegesCommand;
-import com.marklogic.appdeployer.command.security.DeployProtectedCollectionsCommand;
-import com.marklogic.appdeployer.command.security.DeployProtectedPathsCommand;
-import com.marklogic.appdeployer.command.security.DeployQueryRolesetsCommand;
-import com.marklogic.appdeployer.command.security.DeployRolesCommand;
-import com.marklogic.appdeployer.command.security.DeployUsersCommand;
-import com.marklogic.appdeployer.command.security.InsertCertificateHostsTemplateCommand;
+import com.marklogic.appdeployer.command.security.*;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.admin.QueryOptionsManager;
 import com.marklogic.client.admin.ResourceExtensionsManager;
 import com.marklogic.client.admin.ServerConfigurationManager;
 import com.marklogic.client.admin.TransformExtensionsManager;
 import com.marklogic.client.eval.ServerEvaluationCall;
-import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.QueryOptionsListHandle;
 import com.marklogic.hub.DataHub;
@@ -50,22 +40,9 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.InstallInfo;
 import com.marklogic.hub.deploy.HubAppDeployer;
-import com.marklogic.hub.deploy.commands.CreateGranularPrivilegesCommand;
-import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
-import com.marklogic.hub.deploy.commands.DeployHubOtherServersCommand;
-import com.marklogic.hub.deploy.commands.DeployHubTriggersCommand;
-import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand;
-import com.marklogic.hub.deploy.commands.HubDeployDatabaseCommandFactory;
-import com.marklogic.hub.deploy.commands.LoadHubArtifactsCommand;
-import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
-import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
-import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
+import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
-import com.marklogic.hub.error.CantUpgradeException;
-import com.marklogic.hub.error.DataHubConfigurationException;
-import com.marklogic.hub.error.DataHubSecurityNotInstalledException;
-import com.marklogic.hub.error.InvalidDBOperationError;
-import com.marklogic.hub.error.ServerValidationException;
+import com.marklogic.hub.error.*;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.admin.AdminManager;
@@ -88,15 +65,7 @@ import org.springframework.web.client.ResourceAccessException;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 @Component
@@ -539,90 +508,6 @@ public class DataHubImpl implements DataHub {
         appConfig.getCmaConfig().setDeployDatabases(false);
         appConfig.getCmaConfig().setDeployRoles(false);
         appConfig.getCmaConfig().setDeployUsers(false);
-    }
-
-    public void deployToDhs(HubDeployStatusListener listener) {
-        prepareAppConfigForDeployingToDhs(hubConfig);
-
-        HubAppDeployer dhsDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
-        dhsDeployer.setCommands(buildCommandListForDeployingToDhs());
-        dhsDeployer.deploy(hubConfig.getAppConfig());
-    }
-
-    protected void prepareAppConfigForDeployingToDhs(HubConfig hubConfig) {
-        setKnownValuesForDhsDeployment(hubConfig);
-
-        AppConfig appConfig = hubConfig.getAppConfig();
-
-        appConfig.setModuleTimestampsPath(null);
-        appConfig.setCreateForests(false);
-        appConfig.setResourceFilenamesIncludePattern(buildPatternForDatabasesToUpdateIndexesFor());
-        disableSomeCmaUsage(appConfig);
-
-        // 8000 is not available in DHS
-        int port = hubConfig.getPort(DatabaseKind.STAGING);
-        logger.info("Setting App-Services port to: " + port);
-        appConfig.setAppServicesPort(port);
-
-        if (hubConfig.getSimpleSsl(DatabaseKind.STAGING)) {
-            logger.info("Enabling simple SSL for App-Services");
-            appConfig.setAppServicesSimpleSslConfig();
-        }
-
-        String authMethod = hubConfig.getAuthMethod(DatabaseKind.STAGING);
-        if (authMethod != null) {
-            logger.info("Setting security context type for App-Services to: " + authMethod);
-            appConfig.setAppServicesSecurityContextType(SecurityContextType.valueOf(authMethod.toUpperCase()));
-        }
-    }
-
-    /**
-     * Per DHFPROD-2897, these are known values in a DHS installation that can be set so that they override any changes
-     * the user may have made for their on-premise installation.
-     *
-     * @param hubConfig
-     */
-    protected void setKnownValuesForDhsDeployment(HubConfig hubConfig) {
-        hubConfig.setHttpName(DatabaseKind.STAGING, HubConfig.DEFAULT_STAGING_NAME);
-        hubConfig.setHttpName(DatabaseKind.FINAL, HubConfig.DEFAULT_FINAL_NAME);
-        hubConfig.setHttpName(DatabaseKind.JOB, HubConfig.DEFAULT_JOB_NAME);
-        hubConfig.setDbName(DatabaseKind.STAGING, HubConfig.DEFAULT_STAGING_NAME);
-        hubConfig.setDbName(DatabaseKind.FINAL, HubConfig.DEFAULT_FINAL_NAME);
-        hubConfig.setDbName(DatabaseKind.JOB, HubConfig.DEFAULT_JOB_NAME);
-        hubConfig.setDbName(DatabaseKind.MODULES, HubConfig.DEFAULT_MODULES_DB_NAME);
-        hubConfig.setDbName(DatabaseKind.STAGING_TRIGGERS, HubConfig.DEFAULT_STAGING_TRIGGERS_DB_NAME);
-        hubConfig.setDbName(DatabaseKind.STAGING_SCHEMAS, HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME);
-        hubConfig.setDbName(DatabaseKind.FINAL_TRIGGERS, HubConfig.DEFAULT_FINAL_TRIGGERS_DB_NAME);
-        hubConfig.setDbName(DatabaseKind.FINAL_SCHEMAS, HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME);
-
-        AppConfig appConfig = hubConfig.getAppConfig();
-        if (appConfig != null) {
-            appConfig.setContentDatabaseName(hubConfig.getDbName(DatabaseKind.FINAL));
-            appConfig.setTriggersDatabaseName(hubConfig.getDbName(DatabaseKind.FINAL_TRIGGERS));
-            appConfig.setSchemasDatabaseName(hubConfig.getDbName(DatabaseKind.FINAL_SCHEMAS));
-            appConfig.setModulesDatabaseName(hubConfig.getDbName(DatabaseKind.MODULES));
-
-            Map<String, String> customTokens = appConfig.getCustomTokens();
-            customTokens.put("%%mlStagingDbName%%", hubConfig.getDbName(DatabaseKind.STAGING));
-            customTokens.put("%%mlFinalDbName%%", hubConfig.getDbName(DatabaseKind.FINAL));
-            customTokens.put("%%mlJobDbName%%", hubConfig.getDbName(DatabaseKind.JOB));
-            customTokens.put("%%mlModulesDbName%%", hubConfig.getDbName(DatabaseKind.MODULES));
-            customTokens.put("%%mlStagingAppserverName%%", hubConfig.getDbName(DatabaseKind.STAGING));
-            customTokens.put("%%mlFinalAppserverName%%", hubConfig.getDbName(DatabaseKind.FINAL));
-            customTokens.put("%%mlJobAppserverName%%", hubConfig.getDbName(DatabaseKind.JOB));
-            customTokens.put("%%mlStagingTriggersDbName%%", hubConfig.getDbName(DatabaseKind.STAGING_TRIGGERS));
-            customTokens.put("%%mlStagingSchemasDbName%%", hubConfig.getDbName(DatabaseKind.STAGING_SCHEMAS));
-            customTokens.put("%%mlFinalTriggersDbName%%", hubConfig.getDbName(DatabaseKind.FINAL_TRIGGERS));
-            customTokens.put("%%mlFinalSchemasDbName%%", hubConfig.getDbName(DatabaseKind.FINAL_SCHEMAS));
-        }
-    }
-
-    protected List<Command> buildCommandListForDeployingToDhs() {
-        List<Command> commands = new ArrayList<>();
-        commands.addAll(buildCommandMap().get("mlDatabaseCommands"));
-        commands.add(loadUserArtifactsCommand);
-        commands.add(loadUserModulesCommand);
-        return commands;
     }
 
     /**

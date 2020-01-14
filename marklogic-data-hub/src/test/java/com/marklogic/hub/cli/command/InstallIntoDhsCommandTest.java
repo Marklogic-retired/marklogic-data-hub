@@ -28,6 +28,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 
@@ -91,7 +92,7 @@ public class InstallIntoDhsCommandTest extends HubTestBase {
 
         List<Command> commands = command.buildCommandsForDhs();
         assertEquals(17, commands.size());
-        Collections.sort(commands, (c1, c2) -> c1.getExecuteSortOrder().compareTo(c2.getExecuteSortOrder()));
+        Collections.sort(commands, Comparator.comparing(Command::getExecuteSortOrder));
 
         int index = 0;
         assertTrue(commands.get(index++) instanceof DeployPrivilegesCommand);

@@ -33,8 +33,10 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.deploy.util.HubFileFilter;
+import com.marklogic.hub.impl.EntityManagerImpl;
 import com.marklogic.hub.legacy.LegacyFlowManager;
 import com.marklogic.hub.legacy.flow.LegacyFlow;
+import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
@@ -62,7 +64,7 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
     private EntityManager entityManager;
 
     @Autowired
-    private LegacyFlowManager flowManager;
+    private LegacyFlowManager legacyFlowManager;
 
     private DocumentPermissionsParser documentPermissionsParser = new DefaultDocumentPermissionsParser();
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
@@ -79,6 +81,18 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
     public LoadUserModulesCommand() {
         super();
         setExecuteSortOrder(460);
+    }
+
+    /**
+     * For use outside of a Spring container.
+     *
+     * @param hubConfig
+     */
+    public LoadUserModulesCommand(HubConfig hubConfig) {
+        this();
+        this.hubConfig = hubConfig;
+        this.entityManager = new EntityManagerImpl(hubConfig);
+        this.legacyFlowManager = new LegacyFlowManagerImpl(hubConfig);
     }
 
     private PropertiesModuleManager getModulesManager() {
@@ -234,7 +248,7 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
                         if (isFlowPropertiesFile(file) && modulesManager.hasFileBeenModifiedSinceLastLoaded(file.toFile())) {
-                            LegacyFlow flow = flowManager.getFlowFromProperties(file);
+                            LegacyFlow flow = legacyFlowManager.getFlowFromProperties(file);
                             StringHandle handle = new StringHandle(flow.serialize());
                             handle.setFormat(Format.XML);
                             documentWriteSet.add(flow.getFlowDbPath(), handle);
