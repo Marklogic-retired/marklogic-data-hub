@@ -46,7 +46,7 @@ pipeline{
 		stage('Unit-Tests'){
 		agent { label 'explorerLinux'}
 			steps{
-				copyRPM 'Release','10.0-2'
+				copyRPM 'Release','10.0-3'
 				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
 				gitCheckout 'marklogic-data-hub','https://github.com/marklogic/marklogic-data-hub.git','master'
 				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_8"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/marklogic-data-hub;./gradlew clean;./gradlew marklogic-data-hub:bootstrap -Pskipui=true;'
