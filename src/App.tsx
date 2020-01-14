@@ -35,10 +35,10 @@ const App: React.FC<Props> = ({history, location}) => {
   useEffect(() => {
     if (user.authenticated && user.redirect ){
       clearRedirect();
-      history.push('/view');
+      history.push(user.pageRoute);
     }
     if (user.authenticated && location.pathname === '/' ){
-      history.push('/view');
+      history.push(user.pageRoute);
     }
     if (user.authenticated && location.state && !user.redirect && user.error.type === '') {
       if (location.state.hasOwnProperty('from')) {

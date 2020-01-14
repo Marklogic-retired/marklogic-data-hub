@@ -5,12 +5,7 @@ interface UserPreferences {
   facets: any,
   tableView: boolean,
   pageRoute: string,
-  resultTableColumns: TableColumns[]
-}
-
-interface TableColumns {
-  entity: string,
-  columns: string[]
+  resultTableColumns: any[]
 }
 
 export const defaultUserPreferences = {
@@ -23,7 +18,7 @@ export const defaultUserPreferences = {
   resultTableColumns: []
 }
 
-export const createUserPreference = (username: string) => {
+export const createUserPreferences = (username: string) => {
   const newUserPreference: UserPreferences = defaultUserPreferences;
   localStorage.setItem(`dataHubExplorerUserPreferences-${username}`, JSON.stringify(newUserPreference));
   return;
@@ -33,16 +28,10 @@ export const getUserPreferences = (username: string) => {
   return localStorage.getItem(`dataHubExplorerUserPreferences-${username}`);
 }
 
-export const updateSearchPreference = (username :any, searchOptions: any) => {
-  const currentPreferences = localStorage.getItem(`dataHubExplorerUserPreferences-${username}`);
-  console.log('current pref', currentPreferences);
-  return;
-}
-
-export const updateUIPreference = (username :any, uiOption: any) => {
-  const currentPreferences = localStorage.getItem(`dataHubExplorerUserPreferences-${username}`);
-  console.log('current pref', currentPreferences);
-
-  console.log('ui option', uiOption);
+export const updateUserPreferences = (username: string, newPreferences: any) => {
+  let currentPreferences = localStorage.getItem(`dataHubExplorerUserPreferences-${username}`);
+  let parsedPreferences = JSON.parse(currentPreferences ? currentPreferences : '');
+  let updatedPreferences = {...parsedPreferences, ...newPreferences}
+  localStorage.setItem(`dataHubExplorerUserPreferences-${username}`, JSON.stringify(updatedPreferences));
   return;
 }

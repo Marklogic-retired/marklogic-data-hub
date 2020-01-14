@@ -11,6 +11,7 @@ import SearchPagination from '../components/search-pagination/search-pagination'
 import SearchSummary from '../components/search-summary/search-summary';
 import SearchResults from '../components/search-results/search-results';
 import ResultTable from '../components/result-table/result-table';
+import { updateUserPreferences } from '../services/user-preferences';
 import { entityFromJSON, entityParser } from '../util/data-conversion';
 import styles from './Browse.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -58,6 +59,13 @@ const Browse: React.FC<Props> = ({ location }) => {
 
   const getSearchResults = async (allEntities: string[]) => {
     try {
+      let preferencesObject = {
+        query: searchOptions.query,
+        entityNames: searchOptions.entityNames,
+        pageLength: searchOptions.pageLength,
+        facets: searchOptions.searchFacets
+      }
+      updateUserPreferences(user.name, preferencesObject);
       setIsLoading(true);
       const response = await axios({
         method: 'POST',
@@ -165,8 +173,12 @@ const Browse: React.FC<Props> = ({ location }) => {
                 </div>
               </div>
               {user.tableView ?
-                <div style={{ marginTop: '150px' }}><ResultTable data={data} entity={searchOptions.entityNames}
-                  entityDefArray={entityDefArray} />
+                <div style={{ marginTop: '150px' }}>
+                  <ResultTable 
+                    data={data} 
+                    entity={searchOptions.entityNames}
+                    entityDefArray={entityDefArray} 
+                  />
                 </div>
                 : <SearchResults data={data} entityDefArray={entityDefArray} />
               }

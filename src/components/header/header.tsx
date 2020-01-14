@@ -10,13 +10,12 @@ import DatahubIcon from '../datahub-icon/datahub-icon';
 import { UserContext } from '../../util/user-context';
 import { viewSteps, browseSnippetViewSteps, browseTableViewSteps, detailSteps, loginSteps } from '../../config/guided-tour-steps';
 
-
 interface Props extends RouteComponentProps<any> {}
 
 const { SubMenu } = Menu;
 
 const Header:React.FC<Props> = ({ location }) => {
-  const { user, userNotAuthenticated, handleError, setTableView } = useContext(UserContext);
+  const { user, userNotAuthenticated, handleError, setPageRoute } = useContext(UserContext);
   const [selectedMenu, setSelectedMenu] = useState<string[]>([]);
   const [tourSteps, setTourSteps] = useState<any[]>([]);
   const [isTourOpen, setIsTourOpen] = useState(false);
@@ -44,14 +43,23 @@ const Header:React.FC<Props> = ({ location }) => {
     let path = location.pathname.split('/');
     switch(path[1]) {
       case 'view':
+        if (user.pageRoute !== '/view' && user.name) {
+          setPageRoute('/view');
+        }
         setSelectedMenu([location.pathname]);
         setTourSteps(viewSteps);
         break;
-      case 'browse':
+      case 'browse':       
+        if (user.pageRoute !== '/browse' && user.name) {
+          setPageRoute('/browse');
+        }
         setSelectedMenu([location.pathname]);
         user.tableView ? setTourSteps(browseTableViewSteps): setTourSteps(browseSnippetViewSteps);
         break;
       case 'detail':
+        if (user.pageRoute !== '/browse' && user.name) {
+          setPageRoute('/browse');
+        }
         setSelectedMenu(['/browse']);
         setTourSteps(detailSteps);
         break;

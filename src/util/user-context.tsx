@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { createUserPreference, getUserPreferences, updateUIPreference } from '../services/user-preferences';
+import { createUserPreferences, getUserPreferences, updateUserPreferences } from '../services/user-preferences';
 
 type UserContextInterface = {
   name: string,
@@ -7,7 +7,9 @@ type UserContextInterface = {
   authenticated: boolean,
   redirect: boolean,
   error : any,
-  tableView: boolean
+  tableView: boolean,
+  pageRoute: string,
+  resultTableColumns: any[]
 }
 
 const defaultUserData = {
@@ -20,7 +22,9 @@ const defaultUserData = {
     message: '',
     type: ''
   },
-  tableView: true
+  tableView: true,
+  pageRoute: '/view',
+  resultTableColumns: []
 }
 
 interface IUserContextInterface {
@@ -32,6 +36,8 @@ interface IUserContextInterface {
   clearErrorMessage: () => void;
   clearRedirect: () => void;
   setTableView: (viewType: boolean) => void;
+  setPageRoute: (route: string) => void;
+  setResultTable: (tableColumns: any, entityName: string) => void;
 }
 
 export const UserContext = React.createContext<IUserContextInterface>({
@@ -42,28 +48,39 @@ export const UserContext = React.createContext<IUserContextInterface>({
   handleError: () => {},
   clearErrorMessage: () => {},
   clearRedirect: () => {},
-  setTableView: () => {}
+  setTableView: () => {},
+  setPageRoute: () => {},
+  setResultTable: () => {}
 });
 
 const UserProvider: React.FC<{ children: any }> = ({children}) => {
   
-  const [user, setUser] = useState(defaultUserData);
+  const [user, setUser] = useState<UserContextInterface>(defaultUserData);
   const sessionUser = localStorage.getItem('dataHubExplorerUser');
 
   const loginAuthenticated = (username: string) => {
     localStorage.setItem('dataHubExplorerUser', username);
-    if (getUserPreferences(username)) {
-      // set values based on user pref
+    let userPreferences = getUserPreferences(username);
+    if (userPreferences) {
+      let values = JSON.parse(userPreferences);
+      setUser({ ...user,name: username, authenticated: true, redirect: true, tableView: values.tableView, pageRoute: values.pageRoute });
     } else {
-      // create user pref
-      createUserPreference(username);
+      createUserPreferences(username);
+      setUser({ ...user,name: username, authenticated: true, redirect: true });
     }
-
-    setUser({ ...user,name: username, authenticated: true, redirect: true });
   };
 
   const sessionAuthenticated = (username: string) => {
     localStorage.setItem('dataHubExplorerUser', username);
+    let userPreferences = getUserPreferences(username);
+    console.log('userPref', userPreferences);
+    if (userPreferences) {
+      let values = JSON.parse(userPreferences);
+      setUser({ ...user,name: username, authenticated: true, tableView: values.tableView, pageRoute: values.pageRoute });
+    } else {
+      createUserPreferences(username);
+      setUser({ ...user,name: username, authenticated: true });
+    }
     setUser({ ...user,name: username, authenticated: true });
   };
 
@@ -162,8 +179,40 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
   }
 
   const setTableView = (view) => {
-    updateUIPreference(user.name, {tableView:view});
+    updateUserPreferences(user.name, { tableView: view });
     setUser({...user, tableView: view });
+  }
+
+  const setPageRoute = (route: string) => {
+    updateUserPreferences(user.name, { pageRoute: route });
+    setUser({...user, pageRoute: route });
+  }
+
+  const setResultTable = (tableColumns: any, entityName: string) => {
+    let newResultTable = [...user.resultTableColumns];
+    let newTablePref = {
+      entity: entityName,
+      columns: tableColumns
+    }
+    let entityTablePref = user.resultTableColumns.find(item => item.entity === entityName);
+    
+    if (entityTablePref) {
+      let index = user.resultTableColumns.findIndex(item => item.entity === entityName);
+      if (newResultTable[index].columns.toString() !== tableColumns.toString()) {
+        newResultTable[index] = newTablePref;
+        //updateUserPreferences(user.name, { resultTableColumns: newResultTable });
+        setUser({...user, resultTableColumns: newResultTable });
+      }
+      
+    } else {
+      newResultTable.push(newTablePref);
+      //updateUserPreferences(user.name, { resultTableColumns: newResultTable });
+      setUser({...user, resultTableColumns: newResultTable });
+    }
+    console.log('table', newResultTable)
+
+     //
+    //setUser({...user, resultTableColumns: newResultTable });
   }
 
   useEffect(() => {
@@ -182,6 +231,8 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
       clearErrorMessage,
       clearRedirect,
       setTableView,
+      setPageRoute,
+      setResultTable
     }}>
       {children}
     </UserContext.Provider>
