@@ -198,4 +198,18 @@ let $assertions := (
   )
 )
 
+(: Collections for $merged-doc should be ("mdm-archived", "mdm-merged"), must be sorted for comparison :)
+let $expected-merged-uri-collections := ("mdm-archived", "mdm-merged")
+let $assertions := (
+  $assertions,
+  xdmp:invoke-function(
+    function() {
+      (: Sort collections to ensure a match can occur :)
+      let $merged-uri-collections := for $col in xdmp:document-get-collections($merged-uri) order by $col return $col
+      return
+        test:assert-equal($expected-merged-uri-collections, $merged-uri-collections, "Unexpected collections on the archived merge document")
+    },
+    $lib:INVOKE_OPTIONS
+  )
+)
 return $assertions

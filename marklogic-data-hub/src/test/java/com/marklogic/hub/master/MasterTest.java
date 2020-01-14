@@ -2,6 +2,7 @@ package com.marklogic.hub.master;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.marklogic.bootstrap.Installer;
 import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
@@ -14,7 +15,11 @@ import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.step.RunStepResponse;
 import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -28,9 +33,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ApplicationConfig.class)
@@ -191,8 +199,23 @@ public class MasterTest extends HubTestBase {
             "cts:document-query('" + singleMergedURI + "')" +
             "))";
         assertTrue(existsByQuery(queryText, HubConfig.DEFAULT_FINAL_NAME), "Merged doc doesn't have the expected collections");
+        int auditingCountPreUnmerge = getFinalDocCount("sm-person-auditing");
         JsonNode unmergeResp = masteringManager.unmerge(singleMergedURI, Boolean.TRUE, Boolean.TRUE);
         assertFalse(existsByQuery(queryText, HubConfig.DEFAULT_FINAL_NAME), "Document didn't get unmerged: " + unmergeResp.toString());
+        List<String> documentsRestoredIRIs = new LinkedList<>();
+        ((ArrayNode) unmergeResp.get("documentsRestored")).elements().forEachRemaining((node) -> {
+            documentsRestoredIRIs.add("sem:iri('" + node.asText() + "')");
+        });
+        int auditingCountPostUnmerge = getFinalDocCount("sm-person-auditing");
+        // 4 documents are merged together, so auditing document exist for each rollback
+        assertEquals(auditingCountPreUnmerge + documentsRestoredIRIs.size(), auditingCountPostUnmerge,"One more auditing document should have been created after unmerge");
+        String documentsRestoredIRIsSequence = "(" + String.join(",", documentsRestoredIRIs) + ")";
+        String blockedMatchesQueryText = "cts:triple-range-query(" +
+            documentsRestoredIRIsSequence + "," +
+            "sem:iri('http://marklogic.com/smart-mastering/match-block')," +
+            documentsRestoredIRIsSequence + "," +
+            "'=')";
+        assertTrue(existsByQuery(blockedMatchesQueryText, HubConfig.DEFAULT_FINAL_NAME), "Unmerge should block future matches");
     }
 
     private String getUriByQuery(String query, String database) {
