@@ -1,0 +1,26 @@
+{
+  "lang" : "zxx",
+  "name" : "medical_journal-medicalJournalMapping",
+  "description" : "",
+  "version" : 0,
+  "targetEntityType" : "http://example.org/medical_journal-0.0.1/Medical_Journal",
+  "sourceContext" : "/",
+  "sourceURI" : "/pharmaData/medicalJournal/Medical_Journal.xml",
+  "properties" : {
+    "article_type" : {
+      "sourcedFrom" : "article/front/journal-meta/journal-id/@journal-id-type"
+    },
+    "publisher_name" : {
+      "sourcedFrom" : "article/front/journal-meta/publisher/publisher-name"
+    },
+    "title" : {
+      "sourcedFrom" : "article/front/journal-meta/journal-title-group/journal-title"
+    },
+    "authors" : {
+      "sourcedFrom" : "article/front/article-meta/contrib-group/contrib/name"
+    }
+  },
+  "namespaces" : {
+    "xlink" : "http://www.w3.org/1999/xlink"
+  }
+}
