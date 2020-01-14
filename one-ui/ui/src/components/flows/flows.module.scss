@@ -1,0 +1,113 @@
+.flowsContainer {
+    min-width: 800px;
+
+    .createContainer {
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+        .createButton {
+            width: 120px;
+            margin-bottom: 10px;
+        }
+    }
+
+    .deleteFlow {
+        color: #B32424;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .disabledDeleteIcon {
+        color: rgba(0, 0, 0, 0.65);
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .flowNameOuter {
+        display: inline-block;
+        position: relative;
+        top: 0;
+        left: 0;
+        height: 15px;
+        width: 500px;
+    }
+
+    .flowNameInner {
+        display: inline-block;
+        position: absolute;
+        top: -8px;
+        left: -6px;
+        height: 36px;
+        padding: 10px 6px;
+        line-height: 15px;
+        color: #3f4692;
+    }
+
+    .flowNameInner:hover {
+        border: solid 1px #ecf6fe;
+        top: -9px;
+        left: -7px;
+    }
+
+    .flowNameInnerDisabled:hover {
+        border: 0;
+    }
+
+    .editFlow {
+        position: relative;
+        right: -6px;
+        font-size: 15px;
+        cursor: pointer;
+        margin-left: 2px;
+        padding: 9px 12px;
+        background-color: #ecf6fe;
+    }
+
+    .panelContent {
+        width: 100%;
+        display: flex;
+        justify-content: flex-start;
+
+        .actions {
+            .run {
+                position: relative;
+                top: 1px;
+                display: inline-block;
+                padding-right: 10px;
+                color: #3b458f;
+                font-size: 20px;
+                cursor: pointer;
+            }
+            .delete {
+                display: inline-block;
+                color: #7f86b5;
+                font-size: 16px;
+                cursor: pointer;
+            }
+            .disabledDelete {
+                display: inline-block;
+                color: rgba(0, 0, 0, 0.65);
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+        }
+
+        .cardContent {
+            border: solid 1px #ddd;
+            padding: 10px;
+            .format {
+                display: inline-block;
+                margin-top: -3px;
+                margin-right: 10px;
+            }
+            .name {
+                display: inline-block;
+                margin-right: 10px;
+            }
+        }
+    }
+
+}
+
+
+
