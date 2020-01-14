@@ -109,7 +109,7 @@ pipeline{
 	DMC_USER     = credentials('MLBUILD_USER')
     DMC_PASSWORD= credentials('MLBUILD_PASSWORD')
 	}
-	parameters{ 
+	parameters{
 	string(name: 'Email', defaultValue: 'stadikon@marklogic.com,kkanthet@marklogic.com,sbalasub@marklogic.com,nshrivas@marklogic.com,ssambasu@marklogic.com,rrudin@marklogic.com,rdew@marklogic.com,aebadira@marklogic.com,mwooldri@marklogic.com', description: 'Who should I say send the email to?')
 	}
 	stages{
@@ -166,7 +166,7 @@ pipeline{
                       def email;
                     if(env.CHANGE_AUTHOR){
                     	def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
-                    	 email=getEmailFromGITUser author 
+                    	 email=getEmailFromGITUser author
                     }else{
                     email=Email
                     }
@@ -216,7 +216,7 @@ pipeline{
                       def email;
                     if(env.CHANGE_AUTHOR){
                     	def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
-                    	 email=getEmailFromGITUser author 
+                    	 email=getEmailFromGITUser author
                     }else{
                     email=Email
                     }
@@ -252,7 +252,7 @@ pipeline{
                         emailList+=email+',';
                     }
                       sendMail emailList,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n $BRANCH_NAME is waiting for the code-review to complete. Please click on proceed button if all the reviewers approved the code here. \n\n ${BUILD_URL}input ',false,'Waiting for code review $BRANCH_NAME '
-                     
+
                  }
 			}
 			try{
@@ -304,7 +304,7 @@ pipeline{
                         emailList+=email+',';
                     }
                       sendMail emailList,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n $BRANCH_NAME is waiting for the code-review to complete. Please click on proceed button if all the reviewers approved the code here. \n\n ${BUILD_URL}input ',false,'Waiting for code review $BRANCH_NAME '
-                     
+
                  }
     					sleep time: 30, unit: 'MINUTES'
     					throw new Exception("Waiting for all the status checks to pass");
@@ -333,7 +333,7 @@ pipeline{
                     println("Merge Successful")
                     script{
                     def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
-                    def email=getEmailFromGITUser author 
+                    def email=getEmailFromGITUser author
 					sendMail email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n $BRANCH_NAME is merged and it will run the end to end tests in the next stage',false,'  $BRANCH_NAME is Merged'
 					}
                    }
@@ -341,7 +341,7 @@ pipeline{
                       println("Retried 5times")
                       script{
                     def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
-                    def email=getEmailFromGITUser author 
+                    def email=getEmailFromGITUser author
                       sendMail email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n $BRANCH_NAME is not merged into the target branch. Please check the merge status of the PR if there are any merge conflicts or if the code is not reviewed. \n\n Click on the link Restart PR below to retry merge if the merge state is clean i.e., Code is reviewed and there are no merge conflicts with the target branch. \n\n ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID',false,' $BRANCH_NAME Cannot be Merged'
                       }
                   }
@@ -380,7 +380,7 @@ pipeline{
                   success {
                     println("End-End Tests Completed")
                     sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests of the branch $BRANCH_NAME passed and the next stage is to run all the end-end tests on multiple platforms in parallel',false,'rh7-singlenode Tests for $BRANCH_NAME Passed'
-                    
+
                    }
                    unstable {
                       println("End-End Tests Failed")
@@ -433,7 +433,7 @@ pipeline{
                    }
                    failure {
                       println("Creation of Automated PR Failed")
-                     
+
                   }
                   }
 		}
@@ -489,7 +489,7 @@ pipeline{
 		}
 		stage('rh7_cluster_9.0-11'){
 			agent { label 'dhfLinuxAgent'}
-			steps{ 
+			steps{
 		    dhflinuxTests("9.0-11","Release")
 			}
 			post{
@@ -937,7 +937,7 @@ pipeline{
 		post{
                   success {
                     println("Automated PR For Release branch created")
-           
+
                    }
                    failure {
                       println("Creation of Automated PR Failed")
