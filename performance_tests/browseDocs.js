@@ -1,6 +1,6 @@
 const { extractDataFromPerformanceTiming } = require('./perfHelper');
 
-const numPages = 30;
+const numPages = 10;
 
 async function browseDocs(page) {
     const performanceTiming = JSON.parse(
@@ -16,6 +16,10 @@ async function browseDocs(page) {
             return
         }
         await page.click('[class*=Browse_searchBar] > [class*=search-pagination_searchPaginationContainer]:nth-child(3) > .ant-pagination > .ant-pagination-item-' + i + ' > a')
+        console.log(extractDataFromPerformanceTiming(performanceTiming,
+            'responseEnd',
+            'domInteractive',
+            'loadEventEnd'))
         await page.waitFor(1000)
     }
 
@@ -23,8 +27,6 @@ async function browseDocs(page) {
         performanceTiming,
         'responseEnd',
         'domInteractive',
-        'domContentLoadedEventEnd',
-        'domComplete',
         'loadEventEnd'
     );
 }

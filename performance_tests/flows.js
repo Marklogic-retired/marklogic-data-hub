@@ -1,6 +1,6 @@
 const { extractDataFromPerformanceTiming } = require('./perfHelper');
 
-const numPages = 30; //number of pages the script will browse
+const numPages = 10; //number of pages the script will browse
 const numFlows = 1; //number of flow facets that will be selected
 
 async function collections(page) {
@@ -32,6 +32,10 @@ async function collections(page) {
         await page.waitFor(1000)
         await page.waitForSelector('[class*=Browse_searchBar] > [class*=search-pagination_searchPaginationContainer]:nth-child(3) > .ant-pagination > .ant-pagination-item-' + i + ' > a')
         await page.click('[class*=Browse_searchBar] > [class*=search-pagination_searchPaginationContainer]:nth-child(3) > .ant-pagination > .ant-pagination-item-' + i + ' > a')
+        console.log(extractDataFromPerformanceTiming(performanceTiming,
+            'responseEnd',
+            'domInteractive',
+            'loadEventEnd'))
     }
 
 
@@ -39,8 +43,6 @@ async function collections(page) {
         performanceTiming,
         'responseEnd',
         'domInteractive',
-        'domContentLoadedEventEnd',
-        'domComplete',
         'loadEventEnd'
     );
 }
