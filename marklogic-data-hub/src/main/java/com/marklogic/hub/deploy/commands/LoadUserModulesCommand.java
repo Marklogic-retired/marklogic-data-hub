@@ -24,7 +24,11 @@ import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.ext.file.CacheBusterDocumentFileProcessor;
 import com.marklogic.client.ext.modulesloader.ModulesManager;
-import com.marklogic.client.ext.modulesloader.impl.*;
+import com.marklogic.client.ext.modulesloader.impl.AssetFileLoader;
+import com.marklogic.client.ext.modulesloader.impl.DefaultModulesLoader;
+import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
+import com.marklogic.client.ext.modulesloader.impl.SearchOptionsFinder;
+import com.marklogic.client.ext.modulesloader.impl.UserModulesFinder;
 import com.marklogic.client.ext.util.DefaultDocumentPermissionsParser;
 import com.marklogic.client.ext.util.DocumentPermissionsParser;
 import com.marklogic.client.io.DocumentMetadataHandle;
@@ -43,7 +47,11 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Date;
 
@@ -61,7 +69,7 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
     private HubConfig hubConfig;
 
     @Autowired
-    private EntityManager entityManager;
+    protected EntityManager entityManager;
 
     @Autowired
     private LegacyFlowManager legacyFlowManager;
@@ -270,6 +278,9 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
 
     public void setHubConfig(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
+        if (this.entityManager == null) {
+            this.entityManager = new EntityManagerImpl(hubConfig);
+        }
     }
 
     public void setWatchingModules(boolean watchingModules) {
