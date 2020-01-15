@@ -99,7 +99,7 @@ const View: React.FC = () => {
                 <Tooltip title={tooltips.entities}>
                   <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" /></Tooltip>
               </div>
-              <div className={styles.statistic}>
+              <div className={styles.statistic} data-cy="total-documents">
                 <Statistic title="Total Documents" value={totalDocs} style={{ marginLeft: '56px' }} />
               </div>
               <div style={{ marginLeft: '-50px' }}>

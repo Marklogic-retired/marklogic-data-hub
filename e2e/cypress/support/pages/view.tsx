@@ -7,7 +7,7 @@ class ViewPage {
     }
 
     getTotalDocuments() {
-        return cy.get('[data-cy=total-container] > div:last-child .ant-statistic-content-value-int').then(function(value){
+        return cy.get('[data-cy=total-documents] .ant-statistic-content-value-int').then(function(value){
             return parseInt(value.text().replace(',',''));
         }); 
     }

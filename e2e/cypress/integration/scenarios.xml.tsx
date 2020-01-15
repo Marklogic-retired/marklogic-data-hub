@@ -176,6 +176,7 @@ describe('xml scenario for table on browse documents page', () => {
     cy.wait(2000);
     browsePage.getHubPropertiesExpanded();
     browsePage.getTotalDocuments().should('be.greaterThan', '5')
+    cy.wait(1000);
     //check table rows
     browsePage.getTableRows().should('have.length', 6);
     //check table columns

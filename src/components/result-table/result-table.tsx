@@ -373,7 +373,7 @@ const ResultTable: React.FC<Props> = (props) => {
 
   return (
     <>
-      <div className={styles.columnSelector} >
+      <div className={styles.columnSelector} data-cy="column-selector">
         <ColumnSelector title={checkedColumns} tree={treeColumns} headerRender={headerRender} />
       </div>
       <ReactDragListView.DragColumn {...dragProps}>
