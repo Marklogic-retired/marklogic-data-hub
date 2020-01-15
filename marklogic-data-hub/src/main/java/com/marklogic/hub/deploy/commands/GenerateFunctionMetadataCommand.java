@@ -91,4 +91,9 @@ public class GenerateFunctionMetadataCommand extends AbstractCommand {
             logger.warn("GenerateFunctionMetadataCommand is not supported on this MarkLogic server version ");
         }
     }
+
+    public void setHubConfig(HubConfig hubConfig) {
+        this.hubConfig = hubConfig;
+        this.versions = new Versions(hubConfig);
+    }
 }
