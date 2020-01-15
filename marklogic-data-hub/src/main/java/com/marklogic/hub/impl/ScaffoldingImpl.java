@@ -51,7 +51,6 @@ public class ScaffoldingImpl implements Scaffolding {
     @Autowired
     HubConfig hubConfig;
 
-    @Autowired
     Versions versions;
 
     @Autowired
@@ -153,7 +152,7 @@ public class ScaffoldingImpl implements Scaffolding {
             customTokens.put("%%mlFinalDbName%%", hubConfig.getDbName(DatabaseKind.FINAL));
             customTokens.put("%%mlFlowName%%", flowName);
 
-            boolean supportsEntityServicesMapping = versions != null ? versions.isVersionCompatibleWithES() : false;
+            boolean supportsEntityServicesMapping = getVersions().isVersionCompatibleWithES();
 
             try {
                 String fileContents = buildFlowFromDefaultFlow(customTokens, supportsEntityServicesMapping);
@@ -441,4 +440,10 @@ public class ScaffoldingImpl implements Scaffolding {
 
     }
 
+    private Versions getVersions() {
+        if (this.versions == null) {
+            this.versions = new Versions(this.hubConfig);
+        }
+        return this.versions;
+    }
 }
