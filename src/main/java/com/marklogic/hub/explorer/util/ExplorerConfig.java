@@ -3,6 +3,9 @@
  */
 package com.marklogic.hub.explorer.util;
 
+import java.io.IOException;
+import java.util.Properties;
+
 import javax.annotation.PostConstruct;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
@@ -11,6 +14,8 @@ import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager;
 
 import org.apache.commons.lang3.BooleanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
@@ -18,6 +23,10 @@ import org.springframework.stereotype.Component;
 @Component
 @PropertySource({"classpath:explorer-defaults.properties"})
 public class ExplorerConfig {
+
+  private static final String QUERIES_FILE = "SqlQueries.properties";
+  private static final Logger logger = LoggerFactory.getLogger(ExplorerConfig.class);
+  private Properties properties = null;
 
   @Value("${mlHost}")
   private String hostname;
@@ -29,20 +38,17 @@ public class ExplorerConfig {
   private String finalAuthMethod;
   @Value("${mlFinalScheme}")
   private String finalScheme;
-
   @Value("${mlFinalSimpleSsl}")
   private Boolean finalSimpleSsl;
   private SSLContext finalSslContext;
   private DatabaseClientFactory.SSLHostnameVerifier finalSslHostnameVerifier;
   private X509TrustManager finalTrustManager;
-
   @Value("${mlFinalCertFile:#{null}}")
   private String finalCertFile;
   @Value("${mlFinalCertPassword:#{null}}")
   private String finalCertPassword;
   @Value("${mlFinalExternalName:#{null}}")
   private String finalExternalName;
-
   @Value("${mlIsHostLoadBalancer}")
   private Boolean isHostLoadBalancer;
 
@@ -151,12 +157,25 @@ public class ExplorerConfig {
     isHostLoadBalancer = hostLoadBalancer;
   }
 
+  public Properties getProperties() {
+    return this.properties;
+  }
+
   @PostConstruct
   private void simpleSslSetup() {
     if (BooleanUtils.isTrue(finalSimpleSsl)) {
       finalSslContext = SimpleX509TrustManager.newSSLContext();
       finalSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
       finalTrustManager = new SimpleX509TrustManager();
+    }
+  }
+
+  @PostConstruct
+  public void getPropertiesFromClassPath() {
+    try {
+      this.properties = ExplorerUtil.getPropertiesFromClassPath(QUERIES_FILE);
+    } catch (IOException e) {
+      logger.error(e.getMessage());
     }
   }
 }

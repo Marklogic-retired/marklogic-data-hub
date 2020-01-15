@@ -1,17 +1,13 @@
 package com.marklogic.hub.explorer.service;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import javax.ws.rs.core.Response.Status;
-
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.hub.explorer.exception.ExplorerException;
 import com.marklogic.hub.explorer.model.FacetSearchQuery;
 import com.marklogic.hub.explorer.util.DatabaseClientHolder;
+import com.marklogic.hub.explorer.util.ExplorerConfig;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -34,6 +30,8 @@ public class FacetSearchService {
   DatabaseClientHolder databaseClientHolder;
   @Autowired
   SqlExecutionerService executioner;
+  @Autowired
+  ExplorerConfig explorerConfig;
 
   private String entityName = null;
   private String facetName = null;
@@ -53,39 +51,34 @@ public class FacetSearchService {
     String query = null;
     entityName = fsq.getSchemaName() + DOT_CHAR + fsq.getEntityName();
     facetName = entityName + DOT_CHAR + fsq.getFacetName();
-    try {
-      InputStream input = FacetSearchService.class.getClassLoader()
-          .getResourceAsStream(QUERIES_FILE);
-      Properties prop = new Properties();
-      prop.load(input);
-      switch (fsq.getDataType()) {
-        case "string":
-          query = prop.getProperty("stringFacetValuesQuery");
+    Properties prop = explorerConfig.getProperties();
+
+    switch (fsq.getDataType()) {
+      case "string":
+        query = prop.getProperty("stringFacetValuesQuery");
+        if (query != null) {
           query = String.format(query, facetName, entityName, facetName,
               STRING_IDENTIFIER + fsq.getQueryParams().get(0) + ANY_STRING + STRING_IDENTIFIER,
               facetName,
               STRING_IDENTIFIER + ANY_CHAR + ANY_STRING + fsq.getQueryParams().get(0) + ANY_STRING
                   + STRING_IDENTIFIER, fsq.getLimit());
-          break;
+        }
+        break;
 
-        case "date":
-        case "dateTime":
-          query = prop.getProperty("rangeFacetValuesQuery");
+      case "date":
+      case "dateTime":
+        query = prop.getProperty("rangeFacetValuesQuery");
+        if (query != null) {
           query = String.format(query, facetName, entityName, facetName,
               STRING_IDENTIFIER + fsq.getQueryParams().get(0) + STRING_IDENTIFIER,
               STRING_IDENTIFIER + fsq.getQueryParams().get(1) + STRING_IDENTIFIER, fsq.getLimit());
-          break;
+        }
+        break;
 
-        default:
-          break;
-      }
-      logger.debug(query);
-    } catch (IOException e) {
-      logger.error(e.getMessage());
-      throw new ExplorerException(Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-          e.getLocalizedMessage(),
-          "Explorer Server Error: Couldn't load SqlQueries.Properties file", e);
+      default:
+        break;
     }
+    logger.debug(query);
     return query;
   }
 
