@@ -26,7 +26,7 @@ public class ExplorerConfig {
 
   private static final String QUERIES_FILE = "SqlQueries.properties";
   private static final Logger logger = LoggerFactory.getLogger(ExplorerConfig.class);
-  private Properties properties = null;
+  private Properties queryProperties = null;
 
   @Value("${mlHost}")
   private String hostname;
@@ -157,8 +157,8 @@ public class ExplorerConfig {
     isHostLoadBalancer = hostLoadBalancer;
   }
 
-  public Properties getProperties() {
-    return this.properties;
+  public Properties getQueryProperties() {
+    return this.queryProperties;
   }
 
   @PostConstruct
@@ -173,7 +173,7 @@ public class ExplorerConfig {
   @PostConstruct
   public void getQueries() {
     try {
-      this.properties = ExplorerUtil.getPropertiesFromClassPath(QUERIES_FILE);
+      this.queryProperties = ExplorerUtil.getPropertiesFromClassPath(QUERIES_FILE);
     } catch (IOException e) {
       logger.error(e.getMessage());
     }

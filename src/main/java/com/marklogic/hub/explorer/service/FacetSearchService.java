@@ -51,7 +51,7 @@ public class FacetSearchService {
     String query = null;
     entityName = fsq.getSchemaName() + DOT_CHAR + fsq.getEntityName();
     facetName = entityName + DOT_CHAR + fsq.getFacetName();
-    Properties prop = explorerConfig.getProperties();
+    Properties prop = explorerConfig.getQueryProperties();
 
     switch (fsq.getDataType()) {
       case "string":
