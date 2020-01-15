@@ -23,6 +23,8 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.step.StepDefinition;
+import com.marklogic.mgmt.ManageClient;
+import com.marklogic.mgmt.admin.AdminManager;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
@@ -601,6 +603,10 @@ public interface HubConfig {
      */
     DatabaseClient newStagingClient(String dbName);
 
+    String getStagingTriggersDbName();
+
+    AdminManager getAdminManager();
+    ManageClient getManageClient();
     /**
      * Gets a new DatabaseClient that queries the Final database using the staging appserver.
      * @return A database client configured for fetching from final database, but using DHF's staging modules.
