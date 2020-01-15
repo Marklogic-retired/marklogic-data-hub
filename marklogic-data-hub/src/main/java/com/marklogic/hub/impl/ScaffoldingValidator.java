@@ -48,7 +48,7 @@ public class ScaffoldingValidator extends SimpleFileVisitor<Path> {
                        List<Resource> services = modulesFinder.findModules(dir.toString()).getServices();
                        for (int i = 0; i < services.size(); i++) {
                            Resource resource = services.get(i);
-                           if (resource.getFilename().matches(name + "\\.(sjs|xqy)")) {
+                           if (resource.getFilename().matches(name + "\\.(mjs|sjs|xqy)")) {
                                result.put(UNIQUE_KEY, false);
                                return FileVisitResult.TERMINATE;
                            }
@@ -77,7 +77,7 @@ public class ScaffoldingValidator extends SimpleFileVisitor<Path> {
                        List<Resource> transforms = modulesFinder.findModules(dir.toString()).getTransforms();
                        for (int i = 0; i < transforms.size(); i++) {
                            Resource resource = transforms.get(i);
-                           if (resource.getFilename().matches(name + "\\.(sjs|xqy)")) {
+                           if (resource.getFilename().matches(name + "\\.(mjs|sjs|xqy)")) {
                                result.put(UNIQUE_KEY, false);
                                return FileVisitResult.TERMINATE;
                            }

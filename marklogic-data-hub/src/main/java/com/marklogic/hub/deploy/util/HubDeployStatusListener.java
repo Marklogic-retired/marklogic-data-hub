@@ -26,5 +26,5 @@ public interface HubDeployStatusListener {
     /**
      * Method to execute when the listener throws an error
      */
-    void onError();
+    void onError(String commandName, Exception error);
 }
