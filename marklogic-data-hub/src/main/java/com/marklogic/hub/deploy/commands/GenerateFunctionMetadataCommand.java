@@ -21,7 +21,7 @@ public class GenerateFunctionMetadataCommand extends AbstractCommand {
 
     @Autowired
     private HubConfig hubConfig;
-    @Autowired
+
     private Versions versions;
     private Throwable caughtException;
     private DatabaseClient modulesClient;
@@ -52,9 +52,20 @@ public class GenerateFunctionMetadataCommand extends AbstractCommand {
         this.versions = versions;
     }
 
+    public GenerateFunctionMetadataCommand(HubConfig hubConfig, DatabaseClient modulesClient, Versions versions) {
+        this(modulesClient, versions);
+        this.hubConfig = hubConfig;
+    }
+
+    public GenerateFunctionMetadataCommand(HubConfig hubConfig) {
+        this();
+        this.hubConfig = hubConfig;
+        this.versions = new Versions(hubConfig);
+    }
+
     @Override
     public void execute(CommandContext context) {
-        if (isCompatibleWithES || (versions != null && versions.isVersionCompatibleWithES())) {
+        if (isCompatibleWithES || getVersions().isVersionCompatibleWithES()) {
             if (modulesClient == null) {
                 if (hubConfig == null) {
                     throw new IllegalStateException("Unable to create a DatabaseClient for the modules database because hubConfig is null");
@@ -102,5 +113,16 @@ public class GenerateFunctionMetadataCommand extends AbstractCommand {
         } else {
             logger.warn("GenerateFunctionMetadataCommand is not supported on this MarkLogic server version ");
         }
+    }
+
+    public void setHubConfig(HubConfig hubConfig) {
+        this.hubConfig = hubConfig;
+    }
+
+    private Versions getVersions() {
+        if (this.versions == null) {
+            this.versions = new Versions(this.hubConfig);
+        }
+        return this.versions;
     }
 }
