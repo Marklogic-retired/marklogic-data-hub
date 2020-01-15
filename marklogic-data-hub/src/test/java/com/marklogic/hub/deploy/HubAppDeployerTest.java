@@ -35,9 +35,9 @@ public class HubAppDeployerTest {
         // Verify correct status messages were passed to our listener
         System.out.println(testListener.getMessages());
         assertEquals("0:Installing...", testListener.getMessages().get(0));
-        assertEquals("0:[Step 1 of 3]  com.marklogic.hub.deploy.TestCommand", testListener.getMessages().get(1));
-        assertEquals("33:[Step 2 of 3]  com.marklogic.hub.deploy.TestCommand", testListener.getMessages().get(2));
-        assertEquals("66:[Step 3 of 3]  com.marklogic.hub.deploy.TestCommand", testListener.getMessages().get(3));
+        assertEquals("0:Running step 1 of 3 [TestCommand] ...", testListener.getMessages().get(1));
+        assertEquals("33:Running step 2 of 3 [TestCommand] ...", testListener.getMessages().get(2));
+        assertEquals("66:Running step 3 of 3 [TestCommand] ...", testListener.getMessages().get(3));
         assertEquals("100:Installation Complete", testListener.getMessages().get(4));
     }
 }
@@ -73,7 +73,7 @@ class TestListener implements HubDeployStatusListener {
     }
 
     @Override
-    public void onError() {
+    public void onError(String commandName, Exception exception) {
 
     }
 
