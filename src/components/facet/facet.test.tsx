@@ -25,6 +25,9 @@ describe("Facet component", () => {
             constraint={filteredEntityFacets[0].facetName}
             facetValues={filteredEntityFacets[0].facetValues}
             key={filteredEntityFacets[0].facetName}
+            tooltip=""
+            updateSelectedFacets={jest.fn()}
+            applyAllFacets={jest.fn()}
           />
         )
       });
