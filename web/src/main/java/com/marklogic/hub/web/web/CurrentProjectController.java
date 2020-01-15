@@ -31,7 +31,13 @@ import com.marklogic.hub.web.auth.ConnectionAuthenticationToken;
 import com.marklogic.hub.web.listeners.DeployUserModulesListener;
 import com.marklogic.hub.web.listeners.ValidateListener;
 import com.marklogic.hub.web.model.StatusMessage;
-import com.marklogic.hub.web.service.*;
+import com.marklogic.hub.web.service.DataHubService;
+import com.marklogic.hub.web.service.EntityManagerService;
+import com.marklogic.hub.web.service.EnvironmentConfig;
+import com.marklogic.hub.web.service.FileSystemEventListener;
+import com.marklogic.hub.web.service.FileSystemWatcherService;
+import com.marklogic.hub.web.service.HubStatsService;
+import com.marklogic.hub.web.service.MappingManagerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +64,7 @@ import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping(value = "/api/current-project")
@@ -90,6 +97,10 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
 
     private static final Logger logger = LoggerFactory.getLogger(CurrentProjectController.class);
 
+    static final Map<String, Object> stompHeaders = new HashMap<String, Object>(){{
+        put("content-type","application/json");
+    }};
+
     @RequestMapping(value = "/", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
     public String getEnvironment() throws JsonProcessingException {
@@ -104,11 +115,13 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
         dataHubService.install(hubConfig, new HubDeployStatusListener() {
             @Override
             public void onStatusChange(int percentComplete, String message) {
-                template.convertAndSend("/topic/install-status", new StatusMessage(percentComplete, message));
+                template.convertAndSend("/topic/install-status", new StatusMessage(percentComplete, message), stompHeaders);
             }
 
             @Override
-            public void onError() {}
+            public void onError(String commandName, Exception exception) {
+                template.convertAndSend("/topic/install-status", exception);
+            }
         });
 
         envConfig.checkIfInstalled();
@@ -135,11 +148,11 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
         dataHubService.uninstall(hubConfig, new HubDeployStatusListener() {
             @Override
             public void onStatusChange(int percentComplete, String message) {
-                template.convertAndSend("/topic/uninstall-status", new StatusMessage(percentComplete, message));
+                template.convertAndSend("/topic/uninstall-status", new StatusMessage(percentComplete, message), stompHeaders);
             }
 
             @Override
-            public void onError() {}
+            public void onError(String commandName, Exception exception) {}
         });
         envConfig.checkIfInstalled();
         envConfig.getInstallInfo().isInstalled();
