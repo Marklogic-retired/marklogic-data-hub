@@ -58,7 +58,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.function.Consumer;
 
 @JsonAutoDetect(
@@ -1015,6 +1019,10 @@ public class HubConfigImpl implements HubConfig
         return this.hubProject;
     }
 
+    public void setHubProject(HubProject hubProject) {
+        this.hubProject = hubProject;
+    }
+
     @Override  public void initHubProject() {
         if (appConfig == null) {
             appConfig = new DefaultAppConfigFactory().newAppConfig();
@@ -1769,7 +1777,6 @@ public class HubConfigImpl implements HubConfig
     @Override public AppConfig getAppConfig() {
         return appConfig;
     }
-
 
     @Override public void setAppConfig(AppConfig config) {
         setAppConfig(config, false);

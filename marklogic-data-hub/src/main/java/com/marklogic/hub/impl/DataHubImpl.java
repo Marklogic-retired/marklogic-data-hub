@@ -25,7 +25,16 @@ import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
 import com.marklogic.appdeployer.command.forests.DeployCustomForestsCommand;
 import com.marklogic.appdeployer.command.modules.DeleteTestModulesCommand;
 import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
-import com.marklogic.appdeployer.command.security.*;
+import com.marklogic.appdeployer.command.security.DeployCertificateAuthoritiesCommand;
+import com.marklogic.appdeployer.command.security.DeployCertificateTemplatesCommand;
+import com.marklogic.appdeployer.command.security.DeployExternalSecurityCommand;
+import com.marklogic.appdeployer.command.security.DeployPrivilegesCommand;
+import com.marklogic.appdeployer.command.security.DeployProtectedCollectionsCommand;
+import com.marklogic.appdeployer.command.security.DeployProtectedPathsCommand;
+import com.marklogic.appdeployer.command.security.DeployQueryRolesetsCommand;
+import com.marklogic.appdeployer.command.security.DeployRolesCommand;
+import com.marklogic.appdeployer.command.security.DeployUsersCommand;
+import com.marklogic.appdeployer.command.security.InsertCertificateHostsTemplateCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.admin.QueryOptionsManager;
 import com.marklogic.client.admin.ResourceExtensionsManager;
@@ -40,9 +49,22 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.InstallInfo;
 import com.marklogic.hub.deploy.HubAppDeployer;
-import com.marklogic.hub.deploy.commands.*;
+import com.marklogic.hub.deploy.commands.CreateGranularPrivilegesCommand;
+import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
+import com.marklogic.hub.deploy.commands.DeployHubOtherServersCommand;
+import com.marklogic.hub.deploy.commands.DeployHubTriggersCommand;
+import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand;
+import com.marklogic.hub.deploy.commands.HubDeployDatabaseCommandFactory;
+import com.marklogic.hub.deploy.commands.LoadHubArtifactsCommand;
+import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
+import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
+import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
-import com.marklogic.hub.error.*;
+import com.marklogic.hub.error.CantUpgradeException;
+import com.marklogic.hub.error.DataHubConfigurationException;
+import com.marklogic.hub.error.DataHubSecurityNotInstalledException;
+import com.marklogic.hub.error.InvalidDBOperationError;
+import com.marklogic.hub.error.ServerValidationException;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.admin.AdminManager;
@@ -63,36 +85,36 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 @Component
 public class DataHubImpl implements DataHub {
 
     @Autowired
-    private HubConfigImpl hubConfig;
+    private HubConfig hubConfig;
 
-    @Autowired
-    private HubProject project;
-
-    @Autowired
     private LoadHubModulesCommand loadHubModulesCommand;
 
-    @Autowired
     private LoadUserModulesCommand loadUserModulesCommand;
 
-    @Autowired
     private LoadUserArtifactsCommand loadUserArtifactsCommand;
 
-    @Autowired
     private LoadHubArtifactsCommand loadHubArtifactsCommand;
 
-    @Autowired
     private GenerateFunctionMetadataCommand generateFunctionMetadataCommand;
 
-    @Autowired
     private Versions versions;
 
     @Autowired
@@ -100,13 +122,33 @@ public class DataHubImpl implements DataHub {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    public DataHubImpl() {
+        super();
+    }
+
+    public DataHubImpl(HubConfig hubConfig) {
+        this();
+        this.hubConfig = hubConfig;
+        postConstruct();
+    }
+
+    @PostConstruct
+    protected void postConstruct() {
+        this.versions = new Versions(hubConfig);
+        this.generateFunctionMetadataCommand = new GenerateFunctionMetadataCommand(hubConfig);
+        this.loadHubModulesCommand = new LoadHubModulesCommand(hubConfig);
+        this.loadUserModulesCommand = new LoadUserModulesCommand(hubConfig);
+        this.loadUserArtifactsCommand = new LoadUserArtifactsCommand(hubConfig);
+        this.loadHubArtifactsCommand = new LoadHubArtifactsCommand(hubConfig);
+    }
+
     /**
      * Need to account for the group name in case the user has overridden the name of the "Default" group.
      *
      * @param hubConfig hubConfig object
      * @return constructed ServerManager object
      */
-    protected ServerManager constructServerManager(HubConfigImpl hubConfig) {
+    protected ServerManager constructServerManager(HubConfig hubConfig) {
         AppConfig appConfig = hubConfig.getAppConfig();
         return appConfig != null ?
             new ServerManager(hubConfig.getManageClient(), appConfig.getGroupName()) :
@@ -482,7 +524,7 @@ public class DataHubImpl implements DataHub {
         // in AWS setting this fails...
         // for now putting in try/catch
         try {
-            SimpleAppDeployer roleDeployer = new SimpleAppDeployer(getManageClient(), getAdminManager());
+            SimpleAppDeployer roleDeployer = new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager());
             roleDeployer.setCommands(getSecurityCommandList());
             roleDeployer.deploy(appConfig);
         } catch (HttpServerErrorException e) {
@@ -493,7 +535,7 @@ public class DataHubImpl implements DataHub {
             }
         }
 
-        HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
+        HubAppDeployer finalDeployer = new HubAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager(), listener, hubConfig.newStagingClient());
         finalDeployer.setCommands(buildListOfCommands());
         finalDeployer.deploy(appConfig);
     }
@@ -859,8 +901,8 @@ public class DataHubImpl implements DataHub {
         boolean result = false;
 
         try {
-            if (project.isInitialized()) {
-                prepareProjectBeforeUpgrading(this.project, versions.getDHFVersion());
+            if (hubConfig.getHubProject().isInitialized()) {
+                prepareProjectBeforeUpgrading(hubConfig.getHubProject(), versions.getDHFVersion());
                 hubConfig.getHubSecurityDir().resolve("roles").resolve("flow-operator.json").toFile().delete();
             }
 
@@ -895,10 +937,31 @@ public class DataHubImpl implements DataHub {
     // only used in test
     public void setHubConfig(HubConfigImpl hubConfig) {
         this.hubConfig = hubConfig;
+        if (this.loadUserModulesCommand != null) {
+            this.loadUserModulesCommand.setHubConfig(hubConfig);
+        }
+        if (this.loadHubModulesCommand != null) {
+            this.loadHubModulesCommand.setHubConfig(hubConfig);
+        }
+        if (this.loadHubArtifactsCommand != null) {
+            this.loadHubArtifactsCommand.setHubConfig(hubConfig);
+        }
+        if (this.loadUserArtifactsCommand != null) {
+            this.loadUserArtifactsCommand.setHubConfig(hubConfig);
+        }
+        if (this.generateFunctionMetadataCommand != null) {
+            this.generateFunctionMetadataCommand.setHubConfig(hubConfig);
+        }
+    }
+
+    // only used in test
+    public HubConfig getHubConfig() {
+        return this.hubConfig;
     }
 
     // only used in test
     public void setVersions(Versions versions) {
         this.versions = versions;
     }
+
 }
