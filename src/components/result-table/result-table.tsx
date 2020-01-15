@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Resizable } from 'react-resizable'
-import { Table, Tooltip } from 'antd';
+import { Table, Tooltip, Icon } from 'antd';
 import { dateConverter } from '../../util/date-conversion';
 import { xmlParser } from '../../util/xml-parser';
 import styles from './result-table.module.scss';
@@ -367,10 +367,27 @@ const ResultTable: React.FC<Props> = (props) => {
   }
 
   const headerRender = (col) => {
-    setColumns(col)
+    setColumns(col);
     setCheckedColumns(deepCopy(col))
   }
 
+  let icons: any = [];
+  let expIcons: any = [];
+  function expandIcon({expanded, expandable, record, onExpand}) {
+    if (expanded && record.nestedColumns) {
+      expIcons.push(record.primaryKey);
+    }
+    if (record.nestedColumns && icons.indexOf(record.primaryKey) != -1 && expIcons.indexOf(record.primaryKey) == -1) {
+      return null;
+    }
+    icons.push(record.primaryKey)
+    return (
+        <a style={{color: 'black'}} onClick={e => onExpand(record, e)}>
+          {expanded ? <Icon type="down"/> : <Icon type="right"/>}
+        </a>
+    );
+  }
+  
   return (
     <>
       <div className={styles.columnSelector} data-cy="column-selector">
@@ -385,6 +402,7 @@ const ResultTable: React.FC<Props> = (props) => {
             columns={columns}
             pagination={false}
             expandedRowRender={expandedRowRender}
+            expandIcon={expandIcon}
             data-cy="search-tabular"
           />
         </div>
