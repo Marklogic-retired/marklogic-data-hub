@@ -34,8 +34,12 @@ import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubProject;
-import com.marklogic.hub.entity.*;
+import com.marklogic.hub.entity.DefinitionType;
+import com.marklogic.hub.entity.DefinitionsType;
+import com.marklogic.hub.entity.HubEntity;
+import com.marklogic.hub.entity.InfoType;
+import com.marklogic.hub.entity.ItemType;
+import com.marklogic.hub.entity.PropertyType;
 import com.marklogic.hub.error.EntityServicesGenerationException;
 import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;
@@ -50,7 +54,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -60,8 +69,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
     @Autowired
     private HubConfig hubConfig;
 
-    @Autowired
-    private HubProject hubProject;
+    private ObjectMapper mapper;
 
     public EntityManagerImpl() {
     }
@@ -73,14 +81,13 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
      */
     public EntityManagerImpl(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
-        this.hubProject = hubConfig.getHubProject();
     }
 
     @Override
     public boolean saveQueryOptions() {
         QueryOptionsGenerator generator = new QueryOptionsGenerator(hubConfig.newStagingClient());
         try {
-            Path dir = hubProject.getEntityConfigDir();
+            Path dir = hubConfig.getHubProject().getEntityConfigDir();
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();
             }
@@ -119,7 +126,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
     public void generateExplorerQueryOptions() {
         QueryOptionsGenerator generator = new QueryOptionsGenerator(hubConfig.newStagingClient());
         try {
-            Path dir = hubProject.getEntityConfigDir();
+            Path dir = hubConfig.getHubProject().getEntityConfigDir();
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();
             }
@@ -179,7 +186,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         modulesLoader.setShutdownTaskExecutorAfterLoadingModules(false);
 
         AppConfig appConfig = hubConfig.getAppConfig();
-        Path dir = hubProject.getEntityConfigDir();
+        Path dir = hubConfig.getHubProject().getEntityConfigDir();
         File stagingFile = Paths.get(dir.toString(), filename).toFile();
         if (stagingFile.exists()) {
             modulesLoader.setDatabaseClient(client);
@@ -235,7 +242,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
 
 
     private HubModuleManager getPropsMgr() {
-        String timestampFile = hubProject.getUserModulesDeployTimestampFile();
+        String timestampFile = hubConfig.getHubProject().getUserModulesDeployTimestampFile();
         return new HubModuleManager(timestampFile);
     }
 
@@ -530,10 +537,11 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
                 }
                 fullpath = newFile.getAbsolutePath();
                 entity.setFilename(fullpath);
+                Path legacyEntitiesDir = hubConfig.getHubProject().getLegacyHubEntitiesDir();
                 // if legacy plugins dir exists, rename it as well
-                Path origLegacyEntityDir = hubProject.getLegacyHubEntitiesDir().resolve(entityFromFilename);
+                Path origLegacyEntityDir = legacyEntitiesDir.resolve(entityFromFilename);
                 if (origLegacyEntityDir.toFile().exists()) {
-                    Path newLegacyEntityDir = hubProject.getLegacyHubEntitiesDir().resolve(title);
+                    Path newLegacyEntityDir = legacyEntitiesDir.resolve(title);
                     FileUtils.moveDirectory(origLegacyEntityDir.toFile(), newLegacyEntityDir.toFile());
                 }
             }
@@ -670,5 +678,4 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         }
         return true;
     }
-
 }
