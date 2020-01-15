@@ -39,7 +39,7 @@ public class RunFlowViaMainTest extends HubTestBase {
             "-host", host,
             "-username", flowRunnerUser,
             "-password", flowRunnerPassword,
-            "-flow_name", flowName
+            "-flowName", flowName
         });
 
         verifyCollectionCountsFromRunningTestFlow();
