@@ -171,7 +171,7 @@ public class ExplorerConfig {
   }
 
   @PostConstruct
-  public void getPropertiesFromClassPath() {
+  public void getQueries() {
     try {
       this.properties = ExplorerUtil.getPropertiesFromClassPath(QUERIES_FILE);
     } catch (IOException e) {
