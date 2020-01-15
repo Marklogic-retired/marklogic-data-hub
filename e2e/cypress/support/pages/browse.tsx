@@ -158,6 +158,10 @@ class BrowsePage {
     return cy.get('.ant-table-row:nth-child(1) .ant-table-row-expand-icon').click();
   }
 
+  getExpandable() {
+    return cy.get('.ant-table-row-expand-icon');
+  }
+
   getTableColumns(){
     return cy.get('.react-resizable');
   }
@@ -169,6 +173,40 @@ class BrowsePage {
   getTableUriCell(rowIndex:number) {
     return cy.get(`.ant-table-row:nth-child(${rowIndex}) td:nth-child(2) div span`).invoke('text')
   }
+
+  getTableTitle(index:number) {
+    return cy.get(`.ant-table-thead tr th:nth-child(${index}) .ant-table-column-title`);
+  }
+
+  getColumnSelectorIcon(){
+    return cy.get('[data-cy=column-selector] > div > svg');
+  }
+
+
+  //popover
+  getColumnSelector(){
+    return cy.get('.ant-popover-inner');
+  }
+
+  getTreeItems(){
+    return cy.get('.ant-popover-inner ul > li');
+  }
+
+  getTreeItem(index:number){
+    return cy.get(`.ant-popover-inner ul > li:nth-child(${index})`);
+  }
+
+  getTreeItemTitle(index:number){
+    return cy.get(`.ant-popover-inner ul > li:nth-child(${index}) span:last-child`);
+  }
+  getTreeItemChecked(index:number){
+     cy.get(`.ant-popover-inner ul > li:nth-child(${index}) .ant-tree-checkbox`).should('not.have.class', 'ant-tree-checkbox-checked') ? cy.get(`.ant-popover-inner ul > li:nth-child(${index}) .ant-tree-checkbox`).click() : '';
+  }
+
+  getTreeItemUnchecked(index:number){
+    cy.get(`.ant-popover-inner ul > li:nth-child(${index}) .ant-tree-checkbox`).should('have.class', 'ant-tree-checkbox-checked') ? cy.get(`.ant-popover-inner ul > li:nth-child(${index}) .ant-tree-checkbox`).click() : '';
+  }
+
 
 }
 
