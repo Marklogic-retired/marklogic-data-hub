@@ -20,9 +20,9 @@ describe('Header component', () => {
     beforeEach(() => {
       wrapper = mount(
         <Router>
-          <AuthContext.Provider value={context}>
+          <UserContext.Provider value={context}>
             <Header/>
-          </AuthContext.Provider>
+          </UserContext.Provider>
         </Router>
       )
     });
@@ -49,9 +49,9 @@ describe('Header component', () => {
     beforeEach(() => {
       wrapper = mount(
         <Router>
-          <AuthContext.Provider value={context}>
+          <UserContext.Provider value={context}>
             <Header/>
-          </AuthContext.Provider>
+          </UserContext.Provider>
         </Router>
       )
     });
