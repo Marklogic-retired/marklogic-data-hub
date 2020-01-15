@@ -75,7 +75,6 @@ public class Versions {
      */
     public Versions(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
-        this.appConfig = hubConfig.getAppConfig();
     }
 
     /**
@@ -109,15 +108,12 @@ public class Versions {
     }
 
     public String getMarkLogicVersion() {
-        if (appConfig == null && hubConfig != null) {
-            appConfig = hubConfig.getAppConfig();
-        }
-        return getMarkLogicVersion(appConfig);
+        return getMarkLogicVersion(getAppConfig());
     }
 
     public String getMarkLogicVersion(AppConfig appConfig) {
         // this call specifically needs to access marklogic without a known database
-        ServerEvaluationCall eval = appConfig.newAppServicesDatabaseClient(null).newServerEval();
+        ServerEvaluationCall eval = getAppConfig().newAppServicesDatabaseClient(null).newServerEval();
         String xqy = "xdmp:version()";
         try (EvalResultIterator result = eval.xquery(xqy).eval()) {
             if (result.hasNext()) {
@@ -237,6 +233,13 @@ public class Versions {
             }
         }
         return 0;
+    }
+
+    private AppConfig getAppConfig() {
+        if (this.appConfig == null && this.hubConfig != null) {
+            this.appConfig = this.hubConfig.getAppConfig();
+        }
+        return this.appConfig;
     }
 }
 
