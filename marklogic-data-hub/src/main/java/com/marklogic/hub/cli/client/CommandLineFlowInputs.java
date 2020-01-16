@@ -42,22 +42,22 @@ public class CommandLineFlowInputs {
     @Parameter(names = "-separator", description = "The separator value to use when processing a file during an ingestion step")
     private String separator;
 
-    @Parameter(names = "-failHard", description = "If true, forces a job to stop once a batch fails")
+    @Parameter(names = "-failHard", description = "If included, forces a job to stop once a batch fails (no parameter value allowed)")
     private Boolean failHard = false;
 
-    @Parameter(names = "-steps", description = "Comma-delimited string of step numbers to run")
+    @Parameter(names = "-steps", description = "Comma-delimited string of step numbers to run; e.g. -steps 2,3,5")
     private List<String> steps;
 
     @Parameter(names = "-jobId", description = "A user-specified job ID")
     private String jobId;
 
-    @Parameter(names = "-optionsJson", description = "JSON object for overriding step options")
+    @Parameter(names = "-optionsJson", description = "JSON object for overriding step options; e.g. -optionsJson \"{\\\"sourceQuery\\\":\\\"cts.collectionQuery('test')\\\"}\"")
     private String optionsJSON;
 
     @Parameter(names = "-optionsFile", description = "Path to a file containing a JSON object for overriding step options")
     private String optionsFile;
 
-    @Parameter(names = "-showOptions", description = "If true, prints the options JSON object set via '-optionsJson' or '-optionsFile'")
+    @Parameter(names = "-showOptions", description = "If included, prints the options JSON object set via '-optionsJson' or '-optionsFile' (no parameter value allowed)")
     private Boolean showOptions = false;
 
     public Pair<FlowInputs, String> buildFlowInputs() {

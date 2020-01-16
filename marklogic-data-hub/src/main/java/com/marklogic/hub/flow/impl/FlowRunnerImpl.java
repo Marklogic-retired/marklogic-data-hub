@@ -151,7 +151,7 @@ public class FlowRunnerImpl implements FlowRunner{
             JsonNode jsonFlow = hubConfig.newStagingClient().newJSONDocumentManager().read("/flows/" + flowName + ".flow.json", new JacksonHandle()).get();
             flow = new FlowImpl().deserialize(jsonFlow);
         } catch (Exception ex) {
-            throw new RuntimeException("Unable to retrieve flow with name: " + flowInputs.getFlowName(), ex);
+            throw new RuntimeException("Unable to retrieve flow with name: " + flowInputs.getFlowName() + ": cause: " + ex.getMessage());
         }
         return runFlow(flow, flowInputs.getSteps(), flowInputs.getJobId(), flowInputs.getOptions(), flowInputs.getStepConfig());
     }
