@@ -214,7 +214,9 @@ public class FlowRunnerImpl implements FlowRunner{
             jobDocManager = new JobDocManager(hubConfig.newJobDbClient());
         }
         if(threadPool == null || threadPool.isTerminated()) {
-            threadPool = new CustomPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS
+            // thread pool size needs to be at least 2, so the current step thread can kick-off the next step thread
+            int maxPoolSize = Math.max(Runtime.getRuntime().availableProcessors()/2, 2);
+            threadPool = new CustomPoolExecutor(2, maxPoolSize, 0L, TimeUnit.MILLISECONDS
                 , new LinkedBlockingQueue<Runnable>());
         }
         threadPool.execute(new FlowRunnerTask(runningFlow, runningJobId));
