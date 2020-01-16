@@ -1,6 +1,5 @@
 package com.marklogic.hub.collector.impl;
 
-import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.collector.DiskQueue;
 import org.apache.commons.io.FilenameUtils;
 
@@ -8,22 +7,19 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Stream;
 
 public class FileCollector {
-    private String filePath;
+
     private String inputFormat;
-    private HubConfig hubConfig;
     private Set<String> textExts = new HashSet<>(Arrays.asList("txt"));
     private Set<String> jsonExts = new HashSet<>(Arrays.asList("json"));
     private Set<String> csvExts = new HashSet<>(Arrays.asList("txt", "csv", "tsv", "psv"));
     private Set<String> xmlExts = new HashSet<>(Arrays.asList("xml", "xhtml", "html"));
     private Map<String, Set<String>> fileFormats;
 
-    public FileCollector(String filePath, String inputFormat) {
-        this.filePath = filePath;
+    public FileCollector(String inputFormat) {
         this.inputFormat = inputFormat.toLowerCase();
 
         fileFormats = new HashMap<>();
@@ -33,28 +29,15 @@ public class FileCollector {
         fileFormats.put("xml", xmlExts);
     }
 
-    public void setHubConfig(HubConfig config) {
-        this.hubConfig = config;
-    }
+    public DiskQueue<String> run(Path dirPath) {
+        if (!(Files.exists(dirPath)) || !(Files.isDirectory(dirPath))) {
+            throw new RuntimeException("The path doesn't exist or is not a directory");
+        }
 
-    public HubConfig getHubConfig() {
-        return hubConfig;
-    }
-
-    public DiskQueue<String> run() {
         DiskQueue<String> results;
-
         try {
             results = new DiskQueue<>(10000);
-            Path dirPath = Paths.get(filePath);
-            if (!dirPath.isAbsolute()) {
-                File file = new File(hubConfig.getProjectDir(), dirPath.toString());
-                dirPath = file.toPath().toAbsolutePath();
-            }
 
-            if (!(Files.exists(dirPath)) || !(Files.isDirectory(dirPath))) {
-                throw new RuntimeException("The path doesn't exist or is not a directory");
-            }
             try (Stream<Path> files = Files.find(dirPath,
                 Integer.MAX_VALUE,
                 (filePath, fileAttr) -> fileAttr.isRegularFile())) {
