@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Resizable } from 'react-resizable'
-import { Table, Tooltip } from 'antd';
+import { Table, Tooltip, Icon } from 'antd';
 import { dateConverter } from '../../util/date-conversion';
 import { xmlParser } from '../../util/xml-parser';
 import styles from './result-table.module.scss';
@@ -86,7 +86,8 @@ const ResultTable: React.FC<Props> = (props) => {
             filetype: item.format,
             created: date,
             primaryKeyPath: path,
-            detailview: detailView
+            detailview: detailView,
+            primaryKey: item.primaryKey
           }
         } else {
           row =
@@ -344,18 +345,14 @@ const ResultTable: React.FC<Props> = (props) => {
       return parsedData;
     }
 
-    if (props.data[rowId.key].format === 'json' && props.data[rowId.key].hasOwnProperty('extracted')) {
-      Object.values(props.data[rowId.key].extracted.content[1]).forEach((content: any) => {
-        nestedData = parseJson(content);
-
-      });
-    } else if (props.data[rowId.key].format === 'xml' && props.data[rowId.key].hasOwnProperty('extracted')) {
-      let mappedObj = xmlParser(Object.values(props.data[rowId.key].extracted.content)[1]);
-      let propertyValues = Object.values<any>(mappedObj);
-      propertyValues.forEach((item: Object) => {
-        nestedData = parseJson(item);
-      })
+    let index:string = '';
+    for(let i in parsedPayload.data){
+      if(parsedPayload.data[i].primaryKey == rowId.primaryKey){
+        index = i;
+      }
     }
+
+    nestedData = parseJson(parsedPayload.data[index].itemEntityProperties[0]);
 
     return <Table
       rowKey="key"
@@ -367,10 +364,27 @@ const ResultTable: React.FC<Props> = (props) => {
   }
 
   const headerRender = (col) => {
-    setColumns(col)
+    setColumns(col);
     setCheckedColumns(deepCopy(col))
   }
 
+  let icons: any = [];
+  let expIcons: any = [];
+  function expandIcon({expanded, expandable, record, onExpand}) {
+    if (expanded && record.nestedColumns) {
+      expIcons.push(record.primaryKey);
+    }
+    if (record.nestedColumns && icons.indexOf(record.primaryKey) != -1 && expIcons.indexOf(record.primaryKey) == -1) {
+      return null;
+    }
+    icons.push(record.primaryKey);
+    return (
+        <a style={{color: 'black'}} onClick={e => onExpand(record, e)}>
+          {expanded ? <Icon type="down"/> : <Icon type="right"/>}
+        </a>
+    );
+  }
+  
   return (
     <>
       <div className={styles.columnSelector} data-cy="column-selector">
@@ -385,6 +399,7 @@ const ResultTable: React.FC<Props> = (props) => {
             columns={columns}
             pagination={false}
             expandedRowRender={expandedRowRender}
+            expandIcon={expandIcon}
             data-cy="search-tabular"
           />
         </div>

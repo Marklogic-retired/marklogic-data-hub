@@ -73,7 +73,6 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
   const sessionAuthenticated = (username: string) => {
     localStorage.setItem('dataHubExplorerUser', username);
     let userPreferences = getUserPreferences(username);
-    console.log('userPref', userPreferences);
     if (userPreferences) {
       let values = JSON.parse(userPreferences);
       setUser({ ...user,name: username, authenticated: true, tableView: values.tableView, pageRoute: values.pageRoute });
