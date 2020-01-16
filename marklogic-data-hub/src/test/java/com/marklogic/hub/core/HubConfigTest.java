@@ -22,9 +22,6 @@ import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-//import org.apache.htrace.fasterxml.jackson.databind.ObjectMapper;
-
-
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ApplicationConfig.class)
 public class HubConfigTest extends HubTestBase {
@@ -124,17 +121,17 @@ public class HubConfigTest extends HubTestBase {
         deleteProp("mlLoadBalancerHosts");
         resetProperties();
         adminHubConfig.refreshProject();
-        assertNull(getHubFlowRunnerConfig().getLoadBalancerHost());
+        assertNull(adminHubConfig.getLoadBalancerHost());
 
         writeProp("mlIsHostLoadBalancer", "true");
         resetProperties();
         adminHubConfig.refreshProject();
-        assertTrue(getHubFlowRunnerConfig().getIsHostLoadBalancer());
+        assertTrue(adminHubConfig.getIsHostLoadBalancer());
 
-        writeProp("mlLoadBalancerHosts", getHubFlowRunnerConfig().getHost());
+        writeProp("mlLoadBalancerHosts", adminHubConfig.getHost());
         resetProperties();
         adminHubConfig.refreshProject();
-        assertEquals(getHubFlowRunnerConfig().getHost(), getHubFlowRunnerConfig().getLoadBalancerHost());
+        assertEquals(adminHubConfig.getHost(), adminHubConfig.getLoadBalancerHost());
 
         try {
             writeProp("mlLoadBalancerHosts", "host1");
@@ -149,7 +146,7 @@ public class HubConfigTest extends HubTestBase {
         deleteProp("mlIsHostLoadBalancer");
         resetProperties();
         adminHubConfig.refreshProject();
-        assertFalse(getHubFlowRunnerConfig().getIsHostLoadBalancer());
+        assertFalse(adminHubConfig.getIsHostLoadBalancer());
     }
 
     @Test
@@ -171,7 +168,7 @@ public class HubConfigTest extends HubTestBase {
     @Test
     public void testHubInfo() {
 
-        HubConfig config = getHubFlowRunnerConfig();
+        HubConfig config = adminHubConfig;
         ObjectMapper objmapper = new ObjectMapper();
 
         try {

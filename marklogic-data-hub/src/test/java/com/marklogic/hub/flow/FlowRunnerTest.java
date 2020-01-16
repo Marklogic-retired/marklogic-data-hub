@@ -27,8 +27,6 @@ import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
-import com.marklogic.hub.impl.FlowManagerImpl;
-import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.RunStepResponse;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -64,13 +62,14 @@ public class FlowRunnerTest extends HubTestBase {
     @BeforeEach
     public void setupEach() {
         setupProjectForRunningTestFlow();
-        getHubFlowRunnerConfig();
+        runAsDataHubOperator();
     }
 
     @Test
     public void testRunFlow(){
         RunFlowResponse resp = runFlow("testFlow", null, null, null, null);
         flowRunner.awaitCompletion();
+
         System.out.println("Logging response to help with debugging this failure on Jenkins: " + resp);
         verifyCollectionCountsFromRunningTestFlow();
         Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
@@ -129,7 +128,7 @@ public class FlowRunnerTest extends HubTestBase {
 
      protected RunFlowResponse runFlow(String flowName, String commaDelimitedSteps, String jobId, Map<String,Object> options, Map<String, Object> stepConfig) {
         List<String> steps = commaDelimitedSteps != null ? Arrays.asList(commaDelimitedSteps.split(",")) : null;
-        return flowRunner.runFlow(flowName, steps, jobId, options, stepConfig);
+         return flowRunner.runFlow(flowName, steps, jobId, options, stepConfig);
      }
 
     @Test
@@ -213,7 +212,6 @@ public class FlowRunnerTest extends HubTestBase {
         coll.add("test-collection");
         opts.put("targetDatabase", HubConfig.DEFAULT_FINAL_NAME);
         opts.put("collections", coll);
-        opts.put("permissions", "rest-reader,read");
         opts.put("sourceQuery", "cts.collectionQuery('test-collection')");
         RunFlowResponse resp = runFlow("testFlow", "1,2", UUID.randomUUID().toString(), opts, null);
         flowRunner.awaitCompletion();
@@ -241,7 +239,6 @@ public class FlowRunnerTest extends HubTestBase {
         stepConfig.put("batchSize", "1");
         opts.put("targetDatabase", HubConfig.DEFAULT_FINAL_NAME);
         opts.put("collections", coll);
-        opts.put("permissions", "rest-reader,read");
 
         RunFlowResponse resp = runFlow("testFlow", "1,2", UUID.randomUUID().toString(), opts, stepConfig);
         flowRunner.awaitCompletion();
@@ -258,7 +255,6 @@ public class FlowRunnerTest extends HubTestBase {
         coll.add("test-collection");
         opts.put("targetDatabase", HubConfig.DEFAULT_FINAL_NAME);
         opts.put("collections", coll);
-        opts.put("permissions", "rest-reader,read");
         opts.put("sourceQuery", "cts.collectionQuery('test-collection')");
         opts.put("disableJobOutput", Boolean.TRUE);
 
@@ -300,7 +296,6 @@ public class FlowRunnerTest extends HubTestBase {
         stepConfig.put("batchSize", "1");
         opts.put("outputFormat", "binary");
         opts.put("collections", coll);
-        opts.put("permissions", "rest-reader,read");
         RunFlowResponse resp = runFlow("testFlow","1", UUID.randomUUID().toString(), opts, stepConfig);
         flowRunner.awaitCompletion();
 
@@ -333,7 +328,6 @@ public class FlowRunnerTest extends HubTestBase {
         stepConfig.put("batchSize", "1");
         opts.put("outputFormat", "Binary");
         opts.put("collections", coll);
-        opts.put("permissions", "rest-reader,read");
         RunFlowResponse resp = runFlow("testFlow","1", UUID.randomUUID().toString(), opts, stepConfig);
         flowRunner.awaitCompletion();
 

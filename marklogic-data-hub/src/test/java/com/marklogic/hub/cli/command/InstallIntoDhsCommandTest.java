@@ -146,7 +146,7 @@ public class InstallIntoDhsCommandTest extends HubTestBase {
     @Test
     public void testUpdateDhsResourcePermissions() {
         try {
-            HubConfigImpl adminConfig = getHubFlowRunnerConfig("admin", "admin");
+            HubConfigImpl adminConfig = runAsUser("admin", "admin");
             new UpdateDhsModulesPermissionsCommand(adminConfig).execute(new CommandContext(adminConfig.getAppConfig(), adminConfig.getManageClient(), adminConfig.getAdminManager()));
 
             DocumentMetadataHandle metadataHandle = new DocumentMetadataHandle();

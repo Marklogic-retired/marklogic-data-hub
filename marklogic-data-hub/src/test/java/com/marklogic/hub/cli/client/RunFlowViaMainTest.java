@@ -29,7 +29,7 @@ public class RunFlowViaMainTest extends HubTestBase {
     @Test
     public void testRunFlow() {
         setupProjectForRunningTestFlow();
-        getHubFlowRunnerConfig();
+        runAsDataHubOperator();
 
         final String flowName = "testFlow";
         makeInputFilePathsAbsoluteInFlow(flowName);

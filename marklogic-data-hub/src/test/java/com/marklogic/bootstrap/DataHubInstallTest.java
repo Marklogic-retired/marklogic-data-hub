@@ -31,9 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -63,7 +61,6 @@ public class DataHubInstallTest extends HubTestBase
     private static int afterTelemetryInstallCount = 0;
 
     static boolean setupDone = false;
-    static String projectDir = PROJECT_PATH;
 
     @Autowired
     public void setDataHub(DataHub dataHub){
@@ -236,7 +233,7 @@ public class DataHubInstallTest extends HubTestBase
     }
 
     @Test
-    public void testInstallHubModules() throws IOException
+    public void testInstallHubModules()
     {
         assertTrue(getDataHub().isInstalled().isInstalled());
 
@@ -261,15 +258,15 @@ public class DataHubInstallTest extends HubTestBase
     }
 
     @Test
-    public void getHubModulesVersion() throws IOException
+    public void getHubModulesVersion()
     {
-        String version = getHubFlowRunnerConfig().getJarVersion();
+        String version = adminHubConfig.getJarVersion();
         assertEquals(version, versions.getHubVersion());
         getDataHubAdminConfig();
     }
 
     @Test
-    public void testInstallUserModules() throws IOException, ParserConfigurationException, SAXException, URISyntaxException
+    public void testInstallUserModules() throws IOException, URISyntaxException
     {
         deleteProjectDir();
         Path src = Paths.get(DataHubInstallTest.class.getClassLoader().getResource("data-hub-test").toURI());

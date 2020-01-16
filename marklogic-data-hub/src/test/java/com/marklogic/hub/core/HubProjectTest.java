@@ -43,7 +43,7 @@ public class HubProjectTest extends HubTestBase {
 
     @Test
     public void testInit() throws IOException {
-        HubConfig config = getHubFlowRunnerConfig();
+        HubConfig config = adminHubConfig;
         config.createProject(PROJECT_PATH);
         config.setHttpName(DatabaseKind.STAGING, "my-crazy-test-staging");
         config.setDbName(DatabaseKind.STAGING, "my-crazy-test-staging");
