@@ -20,7 +20,9 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.SearchHandle;
 import com.marklogic.client.io.StringHandle;
+import com.marklogic.client.io.marker.StructureWriteHandle;
 import com.marklogic.client.query.QueryManager;
+import com.marklogic.client.query.RawCombinedQueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryBuilder.Operator;
 import com.marklogic.client.query.StructuredQueryDefinition;
@@ -58,6 +60,9 @@ public class SearchHelper {
   @Autowired
   DatabaseClientHolder databaseClientHolder;
 
+  @Autowired
+  SearchOptionBuilder soBuilder;
+
   public StringHandle search(SearchQuery searchQuery) {
     DatabaseClient client = databaseClientHolder.getDatabaseClient();
     QueryManager queryMgr = client.newQueryManager();
@@ -67,15 +72,25 @@ public class SearchHelper {
     resultHandle.setFormat(Format.JSON);
     try {
       //buildQuery includes datetime conversion which could cause DateTimeException or DateTimeParseException
-      StructuredQueryDefinition finalQueryDef = buildQuery(queryMgr, searchQuery);
-      return queryMgr.search(finalQueryDef, resultHandle, searchQuery.getStart());
+      StructuredQueryDefinition queryDef = buildQuery(queryMgr, searchQuery);
+
+      String query = queryDef.serialize();
+      StructureWriteHandle handle = new StringHandle(
+          soBuilder.buildSearchOptions(query, searchQuery)).withMimetype("application/xml");
+
+      RawCombinedQueryDefinition rcQueryDef = queryMgr
+          .newRawCombinedQueryDefinition(handle, queryDef.getOptionsName());
+
+      return queryMgr.search(rcQueryDef, resultHandle, searchQuery.getStart());
+
     } catch (MarkLogicServerException e) {
       if (e instanceof ResourceNotFoundException || e instanceof ForbiddenUserException) {
         logger.warn(e.getLocalizedMessage());
       } else { //FailedRequestException || ResourceNotResendableException
         logger.error(e.getLocalizedMessage());
       }
-      throw new ExplorerException(e.getServerStatusCode(), e.getServerMessageCode(), e.getServerMessage(), e);
+      throw new ExplorerException(e.getServerStatusCode(), e.getServerMessageCode(),
+          e.getServerMessage(), e);
     } catch (Exception e) { //other runtime exceptions
       throw new ExplorerException(e.getLocalizedMessage(), e);
     }
@@ -98,7 +113,8 @@ public class SearchHelper {
       } else { //FailedRequestException || ResourceNotResendableException
         logger.error(e.getLocalizedMessage());
       }
-      throw new ExplorerException(e.getServerStatusCode(), e.getServerMessageCode(), e.getServerMessage(), e);
+      throw new ExplorerException(e.getServerStatusCode(), e.getServerMessageCode(),
+          e.getServerMessage(), e);
     } catch (Exception e) { //other runtime exceptions
       throw new ExplorerException(e.getLocalizedMessage(), e);
     }
@@ -162,14 +178,15 @@ public class SearchHelper {
       }
     });
 
+    // Setting search string if provided by user
+    if (StringUtils.isNotEmpty(searchQuery.getQuery())) {
+      queries.add(queryBuilder.term(searchQuery.getQuery()));
+    }
+
     // And between all the queries
     StructuredQueryDefinition finalQueryDef = queryBuilder
         .and(queries.toArray(new StructuredQueryDefinition[0]));
 
-    // Setting search string if provided by user
-    if (StringUtils.isNotEmpty(searchQuery.getQuery())) {
-      finalQueryDef.setCriteria(searchQuery.getQuery());
-    }
     return finalQueryDef;
   }
 

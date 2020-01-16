@@ -7,14 +7,27 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SearchQuery {
+
+  public final static class SortOrder {
+
+    public String name;
+    public String dataType;
+    public boolean ascending;
+  }
 
   private String query;
   private List<String> entityNames;
   private long start;
   private long pageLength;
   private Map<String, List<String>> facets;
+
+  @JsonProperty("sortOrder")
+  private Optional<List<SortOrder>> sortOrder = Optional.empty();
 
   public String getQuery() {
     return query;
@@ -56,4 +69,11 @@ public class SearchQuery {
     this.facets = (facets != null) ? facets : new HashMap<>();
   }
 
+  public Optional<List<SortOrder>> getSortOrder() {
+    return sortOrder;
+  }
+
+  public void setSortOrder(Optional<List<SortOrder>> sortOrder) {
+    this.sortOrder = sortOrder;
+  }
 }
