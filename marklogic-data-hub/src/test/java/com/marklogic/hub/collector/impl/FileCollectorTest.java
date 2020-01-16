@@ -11,7 +11,7 @@ class FileCollectorTest {
 
     @Test
     void xmlFormat() {
-        collector = new FileCollector(null, "xml");
+        collector = new FileCollector("xml");
         yes("test.xml");
         yes("test.xhtml");
         yes("test.html");
@@ -21,7 +21,7 @@ class FileCollectorTest {
 
     @Test
     void jsonFormat() {
-        collector = new FileCollector(null, "json");
+        collector = new FileCollector("json");
         yes("test.json");
         yes("test");
         no("test.xml");
@@ -29,7 +29,7 @@ class FileCollectorTest {
 
     @Test
     void textFormat() {
-        collector = new FileCollector(null, "text");
+        collector = new FileCollector("text");
         yes("test.txt");
         no("test");
         no("test.xml");
@@ -38,7 +38,7 @@ class FileCollectorTest {
 
     @Test
     void csvFormat() {
-        collector = new FileCollector(null, "csv");
+        collector = new FileCollector("csv");
         yes("test.csv");
         yes("test.psv");
         yes("test.tsv");
@@ -50,7 +50,7 @@ class FileCollectorTest {
 
     @Test
     void binaryFormat() {
-        collector = new FileCollector(null, "binary");
+        collector = new FileCollector("binary");
         yes("test");
         no("test.xml");
         no("test.xhtml");
