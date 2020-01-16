@@ -35,7 +35,6 @@ import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.ext.SecurityContextType;
-import com.marklogic.client.ext.file.JarDocumentFileReader;
 import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager;
 import com.marklogic.client.ext.util.DefaultDocumentPermissionsParser;
 import com.marklogic.client.ext.util.DocumentPermissionsParser;
@@ -418,6 +417,12 @@ public class HubTestBase {
         LegacyTracing.create(stagingClient).disable();
     }
 
+    /**
+     * Returns a HubConfigImpl with a username/password that is flow-developer/password, unless mlUsername and mlPassword
+     * have been modified in the gradle.properties file for this project.
+     *
+     * @return
+     */
     protected HubConfigImpl getDataHubAdminConfig() {
         if (isSslRun() || isCertAuth()) {
             certInit();
@@ -434,11 +439,27 @@ public class HubTestBase {
         return adminHubConfig;
     }
 
-    protected HubConfigImpl getHubFlowRunnerConfig() {
-        return getHubFlowRunnerConfig(flowRunnerUser, flowRunnerPassword);
+    protected HubConfigImpl runAsFlowOperator() {
+        return runAsUser(flowRunnerUser, flowRunnerPassword);
     }
 
-    protected HubConfigImpl getHubFlowRunnerConfig(String mlUsername, String mlPassword) {
+    protected HubConfigImpl runAsDataHubDeveloper() {
+        if (isVersionCompatibleWith520Roles()) {
+            return runAsUser("test-data-hub-developer", "password");
+        }
+        logger.warn("ML version is not compatible with 5.2.0 roles, so will run as flow-developer instead of data-hub-developer");
+        return getDataHubAdminConfig();
+    }
+
+    protected HubConfigImpl runAsDataHubOperator() {
+        if (isVersionCompatibleWith520Roles()) {
+            return runAsUser("test-data-hub-operator", "password");
+        }
+        logger.warn("ML version is not compatible with 5.2.0 roles, so will run as flow-operator instead of data-hub-operator");
+        return runAsFlowOperator();
+    }
+
+    protected HubConfigImpl runAsUser(String mlUsername, String mlPassword) {
         adminHubConfig.setMlUsername(mlUsername);
         adminHubConfig.setMlPassword(mlPassword);
         appConfig = adminHubConfig.getAppConfig();
@@ -465,19 +486,14 @@ public class HubTestBase {
             adminHubConfig.setTrustManager(DatabaseKind.FINAL, (X509TrustManager) tmf.getTrustManagers()[0]);
             adminHubConfig.setCertPass(DatabaseKind.FINAL, "abcd");
 
-            //manageConfig.setConfigureSimpleSsl(false);
             manageConfig.setSecuritySslContext(certContext);
             manageConfig.setPassword(null);
             manageConfig.setSecurityPassword(null);
 
-            //adminConfig.setConfigureSimpleSsl(false);
             adminConfig.setPassword(null);
         }
-        adminHubConfig.setAppConfig(appConfig);
-        adminHubConfig.setManageConfig(manageConfig);
+        // Re-initializes the Manage API connection
         manageClient.setManageConfig(manageConfig);
-        adminHubConfig.setManageClient(manageClient);
-        adminHubConfig.setAdminConfig(adminConfig);
         return adminHubConfig;
     }
 

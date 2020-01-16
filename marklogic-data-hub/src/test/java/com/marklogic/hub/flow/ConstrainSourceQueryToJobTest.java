@@ -39,7 +39,7 @@ public class ConstrainSourceQueryToJobTest extends HubTestBase {
     @BeforeEach
     public void setupEach() {
         setupProjectForRunningTestFlow();
-        getHubFlowRunnerConfig();
+        runAsDataHubOperator();
     }
 
     @Test

@@ -2,9 +2,11 @@ package com.marklogic.bootstrap;
 
 
 import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.HubTestBase;
+import com.marklogic.mgmt.api.API;
+import com.marklogic.mgmt.api.security.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.marklogic.hub.HubTestBase;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -32,22 +34,26 @@ public class Installer extends HubTestBase {
 
         boolean isInstalled = false;
         try {
-        	isInstalled = dataHub.isInstalled().isInstalled();
+            isInstalled = dataHub.isInstalled().isInstalled();
+        } catch (Exception e) {
+            logger.info("Datahub is not installed");
         }
-        catch(Exception e) {
-        	logger.info("Datahub is not installed");
-        }
-        if(! isInstalled) {
-	        dataHub.install();
-	        try {
-	            //dataHub.upgradeHub();
-	            // this throws exception right now.
-	        } catch (Exception e) {
-	            logger.warn("Upgrade threw an exception during test bootstrapping");
 
-	        }
+        if (!isInstalled) {
+            dataHub.install();
+
+            User dataHubDeveloper = new User(new API(adminHubConfig.getManageClient()), "test-data-hub-developer");
+            dataHubDeveloper.setPassword("password");
+            dataHubDeveloper.addRole("data-hub-developer");
+            dataHubDeveloper.save();
+
+            User dataHubOperator = new User(new API(adminHubConfig.getManageClient()), "test-data-hub-operator");
+            dataHubOperator.setPassword("password");
+            dataHubOperator.addRole("data-hub-operator");
+            dataHubOperator.save();
         }
-        if(getDataHubAdminConfig().getIsProvisionedEnvironment()) {
+
+        if (getDataHubAdminConfig().getIsProvisionedEnvironment()) {
             installHubModules();
         }
     }

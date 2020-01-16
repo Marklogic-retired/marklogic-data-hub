@@ -42,6 +42,11 @@ public class MappingTest extends HubTestBase {
         new Installer().setupProject();
     }
 
+    @BeforeEach
+    public void setupTest() {
+        runAsDataHubOperator();
+    }
+
     @AfterAll
     public static void teardown() {
         new Installer().teardownProject();
@@ -51,42 +56,6 @@ public class MappingTest extends HubTestBase {
     public void clearProjectData() {
         this.deleteProjectDir();
         clearDatabases(HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_JOB_NAME);
-    }
-
-    private void installProject() throws IOException {
-        String[] directoriesToCopy = new String[]{"input", "flows", "entities", "mappings", "src/main/ml-modules/root/custom-modules"};
-        for (final String subDirectory: directoriesToCopy) {
-            final Path subProjectPath = projectPath.resolve(subDirectory);
-            subProjectPath.toFile().mkdir();
-            Path subResourcePath = Paths.get("mapping-test", subDirectory);
-            copyFileStructure(subResourcePath, subProjectPath);
-        }
-    }
-
-    private void copyFileStructure(Path resourcePath, Path projectPath) throws IOException {
-        for (File childFile: getResourceFile(resourcePath.toString().replaceAll("\\\\","/")).listFiles()) {
-            if (childFile.isDirectory()) {
-                Path subProjectPath = projectPath.resolve(childFile.getName());
-                subProjectPath.toFile().mkdir();
-                Path subResourcePath = resourcePath.resolve(childFile.getName());
-                copyFileStructure(subResourcePath, subProjectPath);
-            } else {
-                Files.copy(getResourceStream(resourcePath.resolve(childFile.getName()).toString().replaceAll("\\\\","/")), projectPath.resolve(childFile.getName()));
-            }
-        }
-    }
-
-    private Mapping createMappingFromConfig(String mapping) throws IOException {
-        JsonNode jsonMap = getJsonFromResource("mapping-test/mappingConfig/"+mapping);
-        Mapping testMap = mappingManager.createMappingFromJSON(jsonMap);
-        mappingManager.saveMapping(testMap, false);
-        return testMap;
-    }
-
-    protected RunFlowResponse runFlow(String flowName, String... stepIds) {
-        RunFlowResponse flowResponse = flowRunner.runFlow(flowName, Arrays.asList(stepIds));
-        flowRunner.awaitCompletion();
-        return flowResponse;
     }
 
     @Test
@@ -376,5 +345,41 @@ public class MappingTest extends HubTestBase {
         Assertions.assertTrue(permissions.get("data-hub-developer").contains(DocumentMetadataHandle.Capability.READ));
         Assertions.assertTrue(permissions.get("data-hub-developer").contains(DocumentMetadataHandle.Capability.EXECUTE));
         Assertions.assertTrue(permissions.get("data-hub-operator").contains(DocumentMetadataHandle.Capability.EXECUTE));
+    }
+
+    private void installProject() throws IOException {
+        String[] directoriesToCopy = new String[]{"input", "flows", "entities", "mappings", "src/main/ml-modules/root/custom-modules"};
+        for (final String subDirectory: directoriesToCopy) {
+            final Path subProjectPath = projectPath.resolve(subDirectory);
+            subProjectPath.toFile().mkdir();
+            Path subResourcePath = Paths.get("mapping-test", subDirectory);
+            copyFileStructure(subResourcePath, subProjectPath);
+        }
+    }
+
+    private void copyFileStructure(Path resourcePath, Path projectPath) throws IOException {
+        for (File childFile: getResourceFile(resourcePath.toString().replaceAll("\\\\","/")).listFiles()) {
+            if (childFile.isDirectory()) {
+                Path subProjectPath = projectPath.resolve(childFile.getName());
+                subProjectPath.toFile().mkdir();
+                Path subResourcePath = resourcePath.resolve(childFile.getName());
+                copyFileStructure(subResourcePath, subProjectPath);
+            } else {
+                Files.copy(getResourceStream(resourcePath.resolve(childFile.getName()).toString().replaceAll("\\\\","/")), projectPath.resolve(childFile.getName()));
+            }
+        }
+    }
+
+    private Mapping createMappingFromConfig(String mapping) throws IOException {
+        JsonNode jsonMap = getJsonFromResource("mapping-test/mappingConfig/"+mapping);
+        Mapping testMap = mappingManager.createMappingFromJSON(jsonMap);
+        mappingManager.saveMapping(testMap, false);
+        return testMap;
+    }
+
+    protected RunFlowResponse runFlow(String flowName, String... stepIds) {
+        RunFlowResponse flowResponse = flowRunner.runFlow(flowName, Arrays.asList(stepIds));
+        flowRunner.awaitCompletion();
+        return flowResponse;
     }
 }
