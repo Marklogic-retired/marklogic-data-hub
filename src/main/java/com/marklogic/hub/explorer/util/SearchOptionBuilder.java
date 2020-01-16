@@ -8,6 +8,7 @@ import java.util.Set;
 
 import com.marklogic.hub.explorer.model.SearchQuery;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -37,6 +38,7 @@ public class SearchOptionBuilder {
 
     sb.append(query);
     sb.append(SEARCH_TAIL);
+
     logger.debug(String.format("Search options: \n %s", sb.toString()));
     return sb.toString();
   }
@@ -49,7 +51,7 @@ public class SearchOptionBuilder {
       so.forEach( o -> {
         sb.append("<sort-order");
         if (!METADATA_FIELD_NAME.contains(o.name)) {
-          sb.append(String.format(" type=\"%s\"", "xs:" + o.dataType));
+          sb.append(String.format(" type=\"%s\"", "xs:" + StringEscapeUtils.escapeXml(o.dataType)));
         }
         if (!o.ascending) {
           sb.append(" direction=\"descending\">");
@@ -57,9 +59,9 @@ public class SearchOptionBuilder {
           sb.append(" direction=\"ascending\">");
         }
         if (!METADATA_FIELD_NAME.contains(o.name)) {
-          sb.append(String.format("<element ns=\"\" name=\"%s\"/>\n", o.name));
+          sb.append(String.format("<element ns=\"\" name=\"%s\"/>\n", StringEscapeUtils.escapeXml(o.name)));
         } else {
-          sb.append(String.format("<field name=\"%s\"/>\n", o.name));
+          sb.append(String.format("<field name=\"%s\"/>\n", StringEscapeUtils.escapeXml(o.name)));
         }
         sb.append("</sort-order>");
       });
