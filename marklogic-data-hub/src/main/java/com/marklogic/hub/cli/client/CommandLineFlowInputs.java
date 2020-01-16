@@ -21,43 +21,43 @@ import java.util.Map;
  */
 public class CommandLineFlowInputs {
 
-    @Parameter(names = "-flow_name", required = true, description = "The name of the flow to run")
+    @Parameter(names = "-flowName", required = true, description = "The name of the flow to run")
     private String flowName;
 
-    @Parameter(names = "-batch_size", description = "The number of items to process in each batch")
+    @Parameter(names = "-batchSize", description = "The number of items to process in each batch")
     private Integer batchSize;
 
-    @Parameter(names = "-thread_count", description = "The number of threads to process batches with")
+    @Parameter(names = "-threadCount", description = "The number of threads to process batches with")
     private Integer threadCount;
 
-    @Parameter(names = "-input_file_path", description = "The directory path for an ingestion step to read from")
+    @Parameter(names = "-inputFilePath", description = "The directory path for an ingestion step to read from")
     private String inputFilePath;
 
-    @Parameter(names = "-input_file_type", description = "The type of files for an ingestion step to process")
+    @Parameter(names = "-inputFileType", description = "The type of files for an ingestion step to process")
     private String inputFileType;
 
-    @Parameter(names = "-output_uri_replacement", description = "The pattern for replacing a portion of a file-based URI during an ingestion step")
+    @Parameter(names = "-outputURIReplacement", description = "The pattern for replacing a portion of a file-based URI during an ingestion step")
     private String outputURIReplacement;
 
     @Parameter(names = "-separator", description = "The separator value to use when processing a file during an ingestion step")
     private String separator;
 
-    @Parameter(names = "-fail_hard", description = "If true, forces a job to stop once a batch fails")
+    @Parameter(names = "-failHard", description = "If true, forces a job to stop once a batch fails")
     private Boolean failHard = false;
 
     @Parameter(names = "-steps", description = "Comma-delimited string of step numbers to run")
     private List<String> steps;
 
-    @Parameter(names = "-job_id", description = "A user-specified job ID")
+    @Parameter(names = "-jobId", description = "A user-specified job ID")
     private String jobId;
 
-    @Parameter(names = "-options_json", description = "JSON object for overriding step options")
+    @Parameter(names = "-optionsJson", description = "JSON object for overriding step options")
     private String optionsJSON;
 
-    @Parameter(names = "-options_file", description = "Path to a file containing a JSON object for overriding step options")
+    @Parameter(names = "-optionsFile", description = "Path to a file containing a JSON object for overriding step options")
     private String optionsFile;
 
-    @Parameter(names = "-show_options", description = "If true, prints the options JSON object set via '-options_json' or '-options_file'")
+    @Parameter(names = "-showOptions", description = "If true, prints the options JSON object set via '-optionsJson' or '-optionsFile'")
     private Boolean showOptions = false;
 
     public Pair<FlowInputs, String> buildFlowInputs() {
