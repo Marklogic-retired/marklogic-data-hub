@@ -97,7 +97,7 @@ const Browse: React.FC<Props> = ({ location }) => {
     if (location.state && location.state.jobId) {
       setLatestJobFacet(location.state.jobId, location.state.entityName);
     }
-    if (!user.error.type && entities.length === 0) {
+    if (!user.error.type) {
       getEntityModel();
     }
 
@@ -111,7 +111,7 @@ const Browse: React.FC<Props> = ({ location }) => {
     if (entities.length && !user.error.type) {
       getSearchResults(entities);
     }
-  }, [searchOptions, entities.length, user.error.type]);
+  }, [searchOptions, entities, user.error.type]);
 
 
   const tableSwitch = () => {
