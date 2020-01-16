@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Properties;
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.hub.explorer.model.FacetInfo;
 import com.marklogic.hub.explorer.model.FacetSearchQuery;
 import com.marklogic.hub.explorer.util.DatabaseClientHolder;
 import com.marklogic.hub.explorer.util.ExplorerConfig;
@@ -23,7 +24,6 @@ public class FacetSearchService {
   public static final String ANY_CHAR = "_";
   public static final String DOT_CHAR = ".";
   public static final String STRING_IDENTIFIER = "'";
-  private static final String QUERIES_FILE = "SqlQueries.properties";
   private static final Logger logger = LoggerFactory.getLogger(FacetSearchService.class);
 
   @Autowired
@@ -47,10 +47,37 @@ public class FacetSearchService {
     return facetValues;
   }
 
+  public List<String> getFacetValuesRange(FacetInfo facetInfo) {
+    List<String> facetValues = new ArrayList<>();
+    JsonNode queryResults = null;
+    DatabaseClient client = databaseClientHolder.getDatabaseClient();
+
+    Properties props = explorerConfig.getQueryProperties();
+    String sqlQuery = props.getProperty("minMaxFacetValuesQuery");
+
+    entityName = facetInfo.getSchemaName() + DOT_CHAR + facetInfo.getEntityName();
+    facetName = entityName + DOT_CHAR + facetInfo.getFacetName();
+    String minFacet = facetInfo.getFacetName() + "Min";
+    String maxFacet = facetInfo.getFacetName() + "Max";
+
+    sqlQuery = String.format(sqlQuery, facetName, minFacet, facetName, maxFacet, entityName);
+
+    if (sqlQuery != null) {
+      queryResults = executioner.executeSqlQuery(client, sqlQuery).get();
+    }
+
+    if (queryResults != null) {
+      queryResults = queryResults.path("rows").get(0);
+      facetValues.add(queryResults.get(minFacet).get("value").asText());
+      facetValues.add(queryResults.get(maxFacet).get("value").asText());
+    }
+    return facetValues;
+  }
+
   private String generateSqlQuery(FacetSearchQuery fsq) {
     String query = null;
-    entityName = fsq.getSchemaName() + DOT_CHAR + fsq.getEntityName();
-    facetName = entityName + DOT_CHAR + fsq.getFacetName();
+    entityName = fsq.getFacetInfo().getSchemaName() + DOT_CHAR + fsq.getFacetInfo().getEntityName();
+    facetName = entityName + DOT_CHAR + fsq.getFacetInfo().getFacetName();
     Properties prop = explorerConfig.getQueryProperties();
 
     switch (fsq.getDataType()) {

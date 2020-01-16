@@ -4,35 +4,17 @@ import java.util.List;
 
 public class FacetSearchQuery {
 
-  private String schemaName;
-  private String entityName;
-  private String facetName;
+  private FacetInfo facetInfo;
   private String dataType;
   private String limit;
   private List<String> queryParams;
 
-  public String getSchemaName() {
-    return schemaName;
+  public FacetInfo getFacetInfo() {
+    return facetInfo;
   }
 
-  public void setSchemaName(String schemaName) {
-    this.schemaName = schemaName;
-  }
-
-  public String getEntityName() {
-    return entityName;
-  }
-
-  public void setEntityName(String entityName) {
-    this.entityName = entityName;
-  }
-
-  public String getFacetName() {
-    return facetName;
-  }
-
-  public void setFacetName(String facetName) {
-    this.facetName = facetName;
+  public void setFacetInfo(FacetInfo facetInfo) {
+    this.facetInfo = facetInfo;
   }
 
   public String getDataType() {
