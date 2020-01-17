@@ -1,9 +1,9 @@
-import React, {useState, useEffect} from 'react';
-import {Popover, Tree, Input} from 'antd';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faColumns} from '@fortawesome/free-solid-svg-icons'
+import React, { useState, useEffect } from 'react';
+import { Popover, Tree, Input } from 'antd';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faColumns } from '@fortawesome/free-solid-svg-icons'
 import styles from './column-selector.module.scss';
-import {reconstructHeader, deepCopy, getKeys, getChildKeys, getParentKey} from '../../util/data-conversion';
+import { reconstructHeader, deepCopy, getKeys, getChildKeys, getParentKey } from '../../util/data-conversion';
 
 interface Props {
   title: any[];
@@ -12,7 +12,7 @@ interface Props {
 };
 
 const ColumnSelector: React.FC<Props> = (props) => {
-  const {TreeNode} = Tree;
+  const { TreeNode } = Tree;
   const { Search } = Input;
   const [expandedKeys, setExpandedKeys] = useState<any[]>();
   const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
@@ -23,7 +23,6 @@ const ColumnSelector: React.FC<Props> = (props) => {
   let primaryKey = props.tree[0] && props.tree[0].key && props.tree[0].key;
   let allKeys = getKeys(props.tree)
   const dataList = new Array();
-
 
 
   useEffect(() => {
@@ -44,6 +43,16 @@ const ColumnSelector: React.FC<Props> = (props) => {
     props.headerRender(reconstructHeader(deepCopy(tree), checkedKeys));
   };
 
+  const generateList = data => {
+    for (let i = 0; i < data.length; i++) {
+      dataList.push({ key: data[i].key, title: data[i].title });
+      if (data[i].children) {
+        generateList(data[i].children);
+      }
+    }
+  };
+  generateList(tree);
+
   const renderTreeNodes = data =>
     data.map(item => {
       const index = item.title.indexOf(searchValue);
@@ -59,16 +68,17 @@ const ColumnSelector: React.FC<Props> = (props) => {
         ) : (
             <span style={{ display: '' }}>{item.title}</span>
           );
+
       if (item.children) {
         if (title.props.style) {
           return (
-            <TreeNode style={{ display: 'none' }} key={item.key} title={title} dataRef={item} >
+            <TreeNode style={{ display: 'none' }} key={item.key} title={title}  >
               {renderTreeNodes(item.children)}
             </TreeNode>
           );
         } else {
           return (
-            <TreeNode key={item.key} title={title} dataRef={item} >
+            <TreeNode key={item.key} title={title} >
               {renderTreeNodes(item.children)}
             </TreeNode>
           );
@@ -81,12 +91,14 @@ const ColumnSelector: React.FC<Props> = (props) => {
           return <TreeNode style={{ display: 'none' }} title={title} disabled={item.key === primaryKey} disableCheckbox={item.key === primaryKey} key={item.key} />;
         }
       } else {
+        if (getParentKey(item.key, tree) !== undefined) {
+          console.log(data)
+        }
         return <TreeNode title={title} disabled={item.key === primaryKey} disableCheckbox={item.key === primaryKey} key={item.key} />;
       }
     });
 
-
-
+    
   const onDrop = info => {
     const dropKey = info.node.props.eventKey;
     const dragKey = info.dragNode.props.eventKey;
@@ -94,7 +106,7 @@ const ColumnSelector: React.FC<Props> = (props) => {
     const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]);
     let data = tree;
 
-    if(dragKey.length === dropKey.length){
+    if (dragKey.length === dropKey.length) {
       if (dropPosition !== 0) {
         const loop = (data, key, callback) => {
           data.forEach((item, index, arr) => {
@@ -106,13 +118,13 @@ const ColumnSelector: React.FC<Props> = (props) => {
             }
           });
         };
-  
+
         let dragObj;
         loop(data, dragKey, (item, index, arr) => {
           arr.splice(index, 1);
           dragObj = item;
         });
-  
+
         let ar;
         let i;
         loop(data, dropKey, (item, index, arr) => {
@@ -125,16 +137,16 @@ const ColumnSelector: React.FC<Props> = (props) => {
           ar.splice(i + 1, 0, dragObj);
         }
       }
-  
+
       let col = new Array();
-      for(let i of checkedKeys) {
-        for(let j of allKeys) {
-          if(i === j || j.startsWith(i+'-')) {
+      for (let i of checkedKeys) {
+        for (let j of allKeys) {
+          if (i === j || j.startsWith(i + '-')) {
             col.push(j)
           }
         }
       }
-  
+
       props.headerRender(reconstructHeader(deepCopy(data), col));
       setTree(data)
     }
@@ -153,36 +165,35 @@ const ColumnSelector: React.FC<Props> = (props) => {
     setExpandedKeys(expandedKeys);
     setSearchValue(value);
     setAutoExpandParent(true);
-
   };
 
   const content = (
-      <div className={styles.popover}>
-        <Search style={{ marginBottom: 8 }} placeholder="Search" onChange={onChange} />
-        <Tree
-            className="draggable-tree"
-            draggable
-            blockNode
-            onDrop={onDrop}
-            checkable
-            onExpand={onExpand}
-            expandedKeys={expandedKeys}
-            autoExpandParent={autoExpandParent}
-            onCheck={onCheck}
-            checkedKeys={checkedKeys}
-            selectedKeys={selectedKeys}
-        >
-          {renderTreeNodes(tree)}
-        </Tree>
-      </div>
+    <div className={styles.popover}>
+      <Search style={{ marginBottom: 8 }} placeholder="Search" onChange={onChange} />
+      <Tree
+        className="draggable-tree"
+        draggable
+        blockNode
+        onDrop={onDrop}
+        checkable
+        onExpand={onExpand}
+        expandedKeys={expandedKeys}
+        autoExpandParent={autoExpandParent}
+        onCheck={onCheck}
+        checkedKeys={checkedKeys}
+        selectedKeys={selectedKeys}
+      >
+        {renderTreeNodes(tree)}
+      </Tree>
+    </div>
   )
 
   return (
-      <div className={styles.fixedPopup}>
-        <Popover placement="leftTop" content={content} trigger="click" className={styles.fixedPopup}>
-          <FontAwesomeIcon className={styles.columnIcon} icon={faColumns} size="lg"/>
-        </Popover>
-      </div>
+    <div className={styles.fixedPopup}>
+      <Popover placement="leftTop" content={content} trigger="click" className={styles.fixedPopup}>
+        <FontAwesomeIcon className={styles.columnIcon} icon={faColumns} size="lg" />
+      </Popover>
+    </div>
   )
 }
 
