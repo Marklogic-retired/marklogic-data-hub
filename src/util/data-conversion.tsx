@@ -341,4 +341,19 @@ export const deepCopy = inObject => {
   return outObject
 }
 
+export const getTitles = (object:Array<Object>) => {
+  let arr = new Array();
+  const titles = (obj) => {
+    for (let i = 0; i < obj.length; i++) {
+      if (obj[i] !== null && (obj[i]).hasOwnProperty('children')) {
+        arr.indexOf(obj[i].title) === -1 && arr.push(obj[i].title)
+        titles(obj[i].children)
+      } else {
+        arr.indexOf(obj[i].title) === -1 && arr.push(obj[i].title)
+      }
+    }
+    return arr;
+  }
+  return titles(object);
+}
 

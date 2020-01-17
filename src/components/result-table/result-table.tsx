@@ -391,7 +391,7 @@ const ResultTable: React.FC<Props> = (props) => {
         <ColumnSelector title={checkedColumns} tree={treeColumns} headerRender={headerRender} />
       </div>
       <ReactDragListView.DragColumn {...dragProps}>
-        <div className={styles.tabular}>
+        <div className={styles.tabular}>        
           <Table bordered components={components}
             className="search-tabular"
             rowKey="key"
