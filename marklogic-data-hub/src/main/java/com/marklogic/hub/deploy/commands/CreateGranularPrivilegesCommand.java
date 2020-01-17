@@ -6,10 +6,16 @@ import com.marklogic.appdeployer.command.SortOrderConstants;
 import com.marklogic.appdeployer.command.UndoableCommand;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.mgmt.ManageClient;
+import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.security.Privilege;
+import com.marklogic.mgmt.mapper.DefaultResourceMapper;
+import com.marklogic.mgmt.mapper.ResourceMapper;
 import com.marklogic.mgmt.resource.security.PrivilegeManager;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Command for creating granular privileges after the resources that these privileges depend on have been created.
@@ -46,50 +52,44 @@ public class CreateGranularPrivilegesCommand implements Command, UndoableCommand
         final String stagingTriggersDbName = hubConfig.getDbName(DatabaseKind.STAGING_TRIGGERS);
 
         PrivilegeManager mgr = new PrivilegeManager(context.getManageClient());
-        Privilege p = new Privilege(null, "admin-database-clear-" + finalDbName);
+
+        buildClearDatabasePrivileges(context.getManageClient(), finalDbName, stagingDbName).forEach(p -> mgr.save(p.getJson()));
+
+        Privilege p = new Privilege(null, "admin-database-index-" + finalDbName);
         p.setKind("execute");
-        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/clear/$$database-id(" + finalDbName+ ")");
-        p.setRole(Arrays.asList("data-hub-admin"));
-        mgr.save(p.getJson());
-
-        p.setPrivilegeName("admin-database-clear-" + stagingDbName);
-        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/clear/$$database-id(" + stagingDbName+ ")");
-        mgr.save(p.getJson());
-
-        p.setPrivilegeName("admin-database-index-" + finalDbName);
-        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/index/$$database-id(" + finalDbName+ ")");
+        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/index/$$database-id(" + finalDbName + ")");
         p.setRole(Arrays.asList("data-hub-developer"));
         mgr.save(p.getJson());
 
         p.setPrivilegeName("admin-database-index-" + stagingDbName);
-        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/index/$$database-id(" + stagingDbName+ ")");
+        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/index/$$database-id(" + stagingDbName + ")");
         mgr.save(p.getJson());
 
         p.setPrivilegeName("admin-database-triggers-" + stagingTriggersDbName);
-        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/triggers/$$database-id(" + stagingTriggersDbName+ ")");
+        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/triggers/$$database-id(" + stagingTriggersDbName + ")");
         mgr.save(p.getJson());
 
         p.setPrivilegeName("admin-database-triggers-" + finalTriggersDbName);
-        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/triggers/$$database-id(" + finalTriggersDbName+ ")");
+        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/triggers/$$database-id(" + finalTriggersDbName + ")");
         mgr.save(p.getJson());
 
         p.setPrivilegeName("admin-database-temporal-" + stagingDbName);
-        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/temporal/$$database-id(" + stagingDbName+ ")");
+        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/temporal/$$database-id(" + stagingDbName + ")");
         mgr.save(p.getJson());
 
         p.setPrivilegeName("admin-database-temporal-" + finalDbName);
-        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/temporal/$$database-id(" + finalDbName+ ")");
+        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/temporal/$$database-id(" + finalDbName + ")");
         mgr.save(p.getJson());
 
         p.setPrivilegeName("admin-database-alerts-" + stagingDbName);
-        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/alerts/$$database-id(" + stagingDbName+ ")");
+        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/alerts/$$database-id(" + stagingDbName + ")");
         mgr.save(p.getJson());
 
         p.setPrivilegeName("admin-database-alerts-" + finalDbName);
-        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/alerts/$$database-id(" + finalDbName+ ")");
+        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/alerts/$$database-id(" + finalDbName + ")");
         mgr.save(p.getJson());
 
-        if(hubConfig.getIsProvisionedEnvironment()) {
+        if (hubConfig.getIsProvisionedEnvironment()) {
             p.setPrivilegeName("admin-group-scheduled-task-Analyzer");
             p.setAction("http://marklogic.com/xdmp/privileges/admin/group/scheduled-task/$$group-id(Analyzer)");
             mgr.save(p.getJson());
@@ -105,12 +105,11 @@ public class CreateGranularPrivilegesCommand implements Command, UndoableCommand
             p.setPrivilegeName("admin-group-scheduled-task-Operator");
             p.setAction("http://marklogic.com/xdmp/privileges/admin/group/scheduled-task/$$group-id(Operator)");
             mgr.save(p.getJson());
-        }
-        else {
+        } else {
             String groupName = hubConfig.getAppConfig().getGroupName();
 
-            p.setPrivilegeName("admin-group-scheduled-task-"+groupName);
-            p.setAction("http://marklogic.com/xdmp/privileges/admin/group/scheduled-task/$$group-id("+ groupName + ")");
+            p.setPrivilegeName("admin-group-scheduled-task-" + groupName);
+            p.setAction("http://marklogic.com/xdmp/privileges/admin/group/scheduled-task/$$group-id(" + groupName + ")");
             mgr.save(p.getJson());
         }
     }
@@ -137,17 +136,55 @@ public class CreateGranularPrivilegesCommand implements Command, UndoableCommand
         mgr.deleteAtPath("/manage/v2/privileges/admin-database-alerts-" + finalDbName + "?kind=execute");
         mgr.deleteAtPath("/manage/v2/privileges/admin-database-alerts-" + stagingDbName + "?kind=execute");
 
-        if(hubConfig.getIsProvisionedEnvironment()) {
+        if (hubConfig.getIsProvisionedEnvironment()) {
             mgr.deleteAtPath("/manage/v2/privileges/admin-group-scheduled-task-Analyzer" + "?kind=execute");
             mgr.deleteAtPath("/manage/v2/privileges/admin-group-scheduled-task-Curator" + "?kind=execute");
             mgr.deleteAtPath("/manage/v2/privileges/admin-group-scheduled-task-Evaluator" + "?kind=execute");
             mgr.deleteAtPath("/manage/v2/privileges/admin-group-scheduled-task-Operator" + "?kind=execute");
-        }
-        else {
+        } else {
             String groupName = hubConfig.getAppConfig().getGroupName();
-            mgr.deleteAtPath("/manage/v2/privileges/admin-group-scheduled-task-"+ groupName + "?kind=execute");
-
+            mgr.deleteAtPath("/manage/v2/privileges/admin-group-scheduled-task-" + groupName + "?kind=execute");
         }
     }
 
+    /**
+     * DHS creates privileges for clearing the final/staging databases. So if those exist, data-hub-admin is added to
+     * those as opposed to new privileges being created.
+     *
+     * @param client
+     * @param finalDbName
+     * @param stagingDbName
+     * @return
+     */
+    protected List<Privilege> buildClearDatabasePrivileges(ManageClient client, String finalDbName, String stagingDbName) {
+        List<Privilege> list = new ArrayList<>();
+
+        PrivilegeManager mgr = new PrivilegeManager(client);
+        final List<String> existingPrivilegeNames = mgr.getAsXml().getListItemNameRefs();
+        ResourceMapper resourceMapper = new DefaultResourceMapper(new API(client));
+
+        Privilege stagingPriv;
+        if (existingPrivilegeNames.contains("clear-data-hub-STAGING")) {
+            stagingPriv = resourceMapper.readResource(mgr.getAsJson("clear-data-hub-STAGING", "kind", "execute"), Privilege.class);
+        } else {
+            stagingPriv = new Privilege(null, "admin-database-clear-" + stagingDbName);
+            stagingPriv.setKind("execute");
+            stagingPriv.setAction("http://marklogic.com/xdmp/privileges/admin/database/clear/$$database-id(" + stagingDbName + ")");
+        }
+        stagingPriv.addRole("data-hub-admin");
+        list.add(stagingPriv);
+
+        Privilege finalPriv;
+        if (existingPrivilegeNames.contains("clear-data-hub-FINAL")) {
+            finalPriv = resourceMapper.readResource(mgr.getAsJson("clear-data-hub-FINAL", "kind", "execute"), Privilege.class);
+        } else {
+            finalPriv = new Privilege(null, "admin-database-clear-" + finalDbName);
+            finalPriv.setKind("execute");
+            finalPriv.setAction("http://marklogic.com/xdmp/privileges/admin/database/clear/$$database-id(" + finalDbName + ")");
+        }
+        finalPriv.addRole("data-hub-admin");
+        list.add(finalPriv);
+
+        return list;
+    }
 }
