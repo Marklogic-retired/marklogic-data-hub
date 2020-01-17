@@ -5,6 +5,7 @@ import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.security.Privilege;
+import com.marklogic.mgmt.api.security.Role;
 import com.marklogic.mgmt.mapper.DefaultResourceMapper;
 import com.marklogic.mgmt.mapper.ResourceMapper;
 import com.marklogic.mgmt.resource.databases.DatabaseManager;
@@ -18,6 +19,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
@@ -25,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CreateGranularPrivilegesTest extends HubTestBase {
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
     }
 
@@ -84,7 +87,7 @@ public class CreateGranularPrivilegesTest extends HubTestBase {
         assertEquals("http://marklogic.com/xdmp/privileges/admin/database/alerts/" + finalDbId, p.getAction());
         assertEquals("data-hub-developer", p.getRole().get(0));
 
-        if(adminHubConfig.getIsProvisionedEnvironment()) {
+        if (adminHubConfig.getIsProvisionedEnvironment()) {
             ResourcesFragment groupsXml = new GroupManager(adminHubConfig.getManageClient()).getAsXml();
             String groupId = groupsXml.getIdForNameOrId("Analyzer");
             p = resourceMapper.readResource(mgr.getAsJson("admin-group-scheduled-task-Analyzer", "kind", "execute"), Privilege.class);
@@ -105,12 +108,11 @@ public class CreateGranularPrivilegesTest extends HubTestBase {
             p = resourceMapper.readResource(mgr.getAsJson("admin-group-scheduled-task-Operator", "kind", "execute"), Privilege.class);
             assertEquals("http://marklogic.com/xdmp/privileges/admin/group/scheduled-task/" + groupId, p.getAction());
             assertEquals("data-hub-developer", p.getRole().get(0));
-        }
-        else {
+        } else {
             String groupName = adminHubConfig.getAppConfig().getGroupName();
             ResourcesFragment groupsXml = new GroupManager(adminHubConfig.getManageClient()).getAsXml();
             final String groupId = groupsXml.getIdForNameOrId(groupName);
-            p = resourceMapper.readResource(mgr.getAsJson("admin-group-scheduled-task-"+groupName, "kind", "execute"), Privilege.class);
+            p = resourceMapper.readResource(mgr.getAsJson("admin-group-scheduled-task-" + groupName, "kind", "execute"), Privilege.class);
             assertEquals("http://marklogic.com/xdmp/privileges/admin/group/scheduled-task/" + groupId, p.getAction());
             assertEquals("data-hub-developer", p.getRole().get(0));
         }
@@ -131,11 +133,10 @@ public class CreateGranularPrivilegesTest extends HubTestBase {
         assertTrue(privileges.resourceExists("admin-database-alerts-data-hub-STAGING"));
         assertTrue(privileges.resourceExists("admin-database-alerts-data-hub-FINAL"));
         String groupName = adminHubConfig.getAppConfig().getGroupName();
-        if(adminHubConfig.getIsProvisionedEnvironment()) {
+        if (adminHubConfig.getIsProvisionedEnvironment()) {
             assertTrue(privileges.resourceExists("admin-group-scheduled-task-Operator"));
-        }
-        else {
-            assertTrue(privileges.resourceExists("admin-group-scheduled-task-"+groupName));
+        } else {
+            assertTrue(privileges.resourceExists("admin-group-scheduled-task-" + groupName));
         }
 
         final CreateGranularPrivilegesCommand command = new CreateGranularPrivilegesCommand(adminHubConfig);
@@ -154,16 +155,58 @@ public class CreateGranularPrivilegesTest extends HubTestBase {
             assertFalse(privileges.resourceExists("admin-database-temporal-data-hub-FINAL"));
             assertFalse(privileges.resourceExists("admin-database-alerts-data-hub-STAGING"));
             assertFalse(privileges.resourceExists("admin-database-alerts-data-hub-FINAL"));
-            if(adminHubConfig.getIsProvisionedEnvironment()) {
+            if (adminHubConfig.getIsProvisionedEnvironment()) {
                 assertFalse(privileges.resourceExists("admin-group-scheduled-task-Operator"));
-            }
-            else {
-                assertFalse(privileges.resourceExists("admin-group-scheduled-task-"+groupName));
+            } else {
+                assertFalse(privileges.resourceExists("admin-group-scheduled-task-" + groupName));
             }
         } finally {
             // Need to deploy these privileges back so the lack of them doesn't impact other tests
             command.execute(context);
             verifyGranularPrivilegesExist();
+        }
+    }
+
+    /**
+     * Verifies that if the DHS privileges - clear-data-hub-FINAL and clear-data-hub-STAGING - already exist, then those
+     * are reused and the data-hub-admin role is added to them. This avoids errors in trying to create privileges with
+     * the same action.
+     */
+    @Test
+    void createClearDatabasePrivilegesInSimulatedDhsEnvironment() {
+        final API api = new API(adminHubConfig.getManageClient());
+        Role dhsDbaRole = new Role(api, "dba");
+
+        Privilege dhsFinalPriv = new Privilege(api, "clear-data-hub-FINAL");
+        dhsFinalPriv.setKind("execute");
+        dhsFinalPriv.setAction("not-the-real-privilege-final");
+        dhsFinalPriv.addRole("dba");
+
+        Privilege dhsStagingPriv = new Privilege(api, "clear-data-hub-STAGING");
+        dhsStagingPriv.setKind("execute");
+        dhsStagingPriv.setAction("not-the-real-privilege-staging");
+        dhsStagingPriv.addRole("dba");
+
+        try {
+            dhsDbaRole.save();
+            dhsStagingPriv.save();
+            dhsFinalPriv.save();
+
+            List<Privilege> list = new CreateGranularPrivilegesCommand(adminHubConfig).buildClearDatabasePrivileges(adminHubConfig.getManageClient(), "data-hub-FINAL", "data-hub-STAGING");
+            Privilege stagingPriv = list.get(0);
+            assertEquals("clear-data-hub-STAGING", stagingPriv.getPrivilegeName());
+            assertEquals("dba", stagingPriv.getRole().get(0));
+            assertEquals("data-hub-admin", stagingPriv.getRole().get(1));
+
+            Privilege finalPriv = list.get(1);
+            assertEquals("clear-data-hub-FINAL", finalPriv.getPrivilegeName());
+            assertEquals("dba", finalPriv.getRole().get(0));
+            assertEquals("data-hub-admin", finalPriv.getRole().get(1));
+        } finally {
+            dhsDbaRole.delete();
+            PrivilegeManager mgr = new PrivilegeManager(adminHubConfig.getManageClient());
+            mgr.deleteAtPath("/manage/v2/privileges/clear-data-hub-FINAL?kind=execute");
+            mgr.deleteAtPath("/manage/v2/privileges/clear-data-hub-STAGING?kind=execute");
         }
     }
 }
