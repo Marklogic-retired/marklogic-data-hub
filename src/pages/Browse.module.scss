@@ -3,7 +3,7 @@
   padding: 24px;
   margin-left: 300px;
   margin-top: 45px;
-  width: 100%
+  width: 100%;
 }
 
 .sideBarFacets {
@@ -20,24 +20,24 @@
   background-color: white;
 }
 
-.spinViews{
+.spinViews {
   margin-right: 12px;
 }
 
-.switchViews{
+.switchViews {
   width: 100%;
   display: flex;
   justify-content: flex-end;
 }
 
-.toggleView{
+.toggleView {
   float: right;
   padding: 8px;
   border: 1px solid #666;
   cursor: pointer;
 }
 
-.toggled{
+.toggled {
   background-color: #2f92ad;
   float: right;
   padding: 8px;
@@ -46,6 +46,11 @@
   color: white;
 }
 
-
-
-
+.overlay {
+  position: absolute;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  z-index: 999;
+}

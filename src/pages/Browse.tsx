@@ -159,7 +159,7 @@ const Browse: React.FC<Props> = ({ location }) => {
                 <br />
                 <br />
                 <div className={styles.spinViews}>
-                  { isLoading && <Spin style={{ marginLeft: '10px' }}/>}
+                  { isLoading && <Spin className={styles.overlay}/>}
                   <div className={styles.switchViews}>
                   <div className={active ? styles.toggled : styles.toggleView}
                     data-cy="table-view" id={'tableView'}
