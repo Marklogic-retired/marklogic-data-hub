@@ -80,7 +80,6 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
       createUserPreferences(username);
       setUser({ ...user,name: username, authenticated: true });
     }
-    setUser({ ...user,name: username, authenticated: true });
   };
 
   const userNotAuthenticated = () => {
