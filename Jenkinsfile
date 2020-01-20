@@ -490,6 +490,106 @@ pipeline{
 			}
 		}
 		}
+		stage('example projects parallel'){
+		when {
+                 branch props['ExecutionBranch']
+                 beforeAgent true
+              }
+            parallel{
+            stage('dh5-example'){
+                 agent { label 'dhfLinuxAgent'}
+                steps{
+                     copyRPM 'Release','10.0-3'
+                     script{
+                        props = readProperties file:'data-hub/pipeline.properties';
+                        def dockerhost=setupMLDockerCluster 3
+                        sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub/examples/dh-5-example;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew -i hubInit -Ptesting;./gradlew -i mlDeploy -Ptesting;./gradlew hubRunFlow -PflowName=ingestion_only-flow;./gradlew hubRunFlow -PflowName=ingestion_mapping-flow;./gradlew hubRunFlow -PflowName=ingestion_mapping_mastering-flow;"'
+                        }
+                 }
+                 post{
+                 always{
+                    sh 'rm -rf $WORKSPACE/xdmp';
+                 }
+                 success{
+                    sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n  dh5example ran successfully on the  branch $BRANCH_NAME  next stage is to merge it to run quickstart tests',false,' dh5-example for $BRANCH_NAME Passed'
+                 }
+                 unstable{
+                    sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n dh5example Failed on the  branch $BRANCH_NAME.',false,'dh5-example for $BRANCH_NAME Failed'
+                 }
+                 }
+            }
+            stage('dhf-customhook'){
+                 agent { label 'dhfLinuxAgent'}
+                steps{
+                     copyRPM 'Release','10.0-3'
+                     script{
+                        props = readProperties file:'data-hub/pipeline.properties';
+                        def dockerhost=setupMLDockerCluster 3
+                        sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub/examples/dhf5-customhook;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew -i hubInit -Ptesting;./gradlew -i mlDeploy -Ptesting;./gradlew hubRunFlow -PflowName=LoadOrders;./gradlew hubRunFlow -PflowName=LoadOrders;"'
+                        }
+                     }
+                 post{
+                 always{
+                    sh 'rm -rf $WORKSPACE/xdmp';
+                 }
+                 success{
+                    sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n  dh5-customhook ran successfully on the  branch $BRANCH_NAME  next stage is to merge it to run quickstart tests',false,' dh5-customhook for $BRANCH_NAME Passed'
+                 }
+                 unstable{
+                    sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n dh5-customhook Failed on the  branch $BRANCH_NAME.',false,'dh5-customhook for $BRANCH_NAME Failed'
+                 }
+                 }
+
+
+            }
+            stage('mapping-example'){
+                 agent { label 'dhfLinuxAgent'}
+                steps{
+                     copyRPM 'Release','10.0-3'
+                     script{
+                        props = readProperties file:'data-hub/pipeline.properties';
+                        def dockerhost=setupMLDockerCluster 3
+                        sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub/examples/mapping-example;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew -i hubInit -Ptesting;./gradlew -i mlDeploy -Ptesting;./gradlew hubRunFlow -PflowName=jsonToJson;./gradlew hubRunFlow -PflowName=jsonToXml;./gradlew hubRunFlow -PflowName=jsonToXml;./gradlew hubRunFlow -PflowName=xmlToXml;"'
+                        }
+                 }
+                 post{
+                 always{
+                    sh 'rm -rf $WORKSPACE/xdmp';
+                 }
+                 success{
+                    sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n  mapping-example ran successfully on the  branch $BRANCH_NAME  next stage is to merge it to run quickstart tests',false,' mapping-example for $BRANCH_NAME Passed'
+                 }
+                 unstable{
+                    sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n mapping-example Failed on the  branch $BRANCH_NAME.',false,'mapping-example for $BRANCH_NAME Failed'
+                 }
+                 }
+            }
+            stage('smart-mastering-complete'){
+                 agent { label 'dhfLinuxAgent'}
+                steps{
+                     copyRPM 'Release','10.0-3'
+                     script{
+                        props = readProperties file:'data-hub/pipeline.properties';
+                        def dockerhost=setupMLDockerCluster 3
+                        sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub/examples/smart-mastering-complete;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew -i hubInit -Ptesting;./gradlew -i mlDeploy -Ptesting;./gradlew hubRunFlow -PflowName=persons;"'
+                        }
+                 }
+                 post{
+                 always{
+                    sh 'rm -rf $WORKSPACE/xdmp';
+                 }
+                 success{
+                    sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n  smart-mastering-complete ran successfully on the  branch $BRANCH_NAME  next stage is to merge it to run quickstart tests',false,'smart-mastering-complete for $BRANCH_NAME Passed'
+                 }
+                 unstable{
+                    sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n smart-mastering-complete Failed on the  branch $BRANCH_NAME.',false,'smart-mastering-complete for $BRANCH_NAME Failed'
+                 }
+                 }
+            }
+            }
+
+
+		}
 		stage('quick start linux parallel'){
 		when {
           			branch props['ExecutionBranch']
