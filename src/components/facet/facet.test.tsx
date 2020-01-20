@@ -36,5 +36,9 @@ describe("Facet component", () => {
         expect(wrapper.exists('[data-cy="gender-facet"]')).toBe(true);
         expect(wrapper.exists('[data-cy="gender-facet-item-count"]')).toBe(true);
       });
+      it('should not render apply button', () => {
+        expect(wrapper.exists('[data-cy="gender-facet-apply-button"]')).toBe(false);
+
+      });
     });
 })

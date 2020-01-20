@@ -46,7 +46,7 @@ const Sidebar:React.FC<Props> = (props) => {
         const entityDef = props.entityDefArray.find(entity => entity.name === props.selectedEntities[0]);
         const filteredEntityFacets = entityDef.rangeIndex.length && entityDef.rangeIndex.map( rangeIndex => {
           let entityFacetValues = parsedFacets.find(facet => facet.facetName === rangeIndex);
-          return entityFacetValues ? {...entityFacetValues} : false
+          return entityFacetValues ? {...entityFacetValues} : false;
         });
 
         setEntityFacets(filteredEntityFacets.filter( item => item !== false));
