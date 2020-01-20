@@ -1,4 +1,4 @@
-package com.marklogic.hub.cli.command;
+package com.marklogic.hub.dhs.installer.command;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.GenericDocumentManager;

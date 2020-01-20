@@ -1,4 +1,4 @@
-package com.marklogic.hub.cli.command;
+package com.marklogic.hub.dhs.installer.command;
 
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.Command;
@@ -14,10 +14,11 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.cli.Options;
-import com.marklogic.hub.cli.deploy.CopyQueryOptionsCommand;
-import com.marklogic.hub.cli.deploy.DhsDeployServersCommand;
 import com.marklogic.hub.deploy.commands.*;
+import com.marklogic.hub.dhs.installer.Options;
+import com.marklogic.hub.dhs.installer.deploy.CopyQueryOptionsCommand;
+import com.marklogic.hub.dhs.installer.deploy.DhsDeployServersCommand;
+import com.marklogic.hub.dhs.installer.deploy.UpdateDhsModulesPermissionsCommand;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import org.junit.jupiter.api.Assertions;

@@ -1,9 +1,9 @@
-package com.marklogic.hub.cli;
+package com.marklogic.hub.dhs.installer;
 
 import com.beust.jcommander.JCommander;
 import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.cli.command.InstallIntoDhsCommand;
-import com.marklogic.hub.cli.command.VerifyDhfInDhsCommand;
+import com.marklogic.hub.dhs.installer.command.InstallIntoDhsCommand;
+import com.marklogic.hub.dhs.installer.command.VerifyDhfInDhsCommand;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -16,7 +16,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  * the installer is run. Properties will then be read from the gradle.properties and gradle-local.properties files that
  * are generated.
  */
-public class Installer {
+public class Main {
 
     public static void main(String[] args) {
         Options options = new Options();

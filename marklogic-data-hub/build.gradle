@@ -93,16 +93,18 @@ configurations.all {
 }
 
 // The Spring Boot bootJar task produces an executable jar with all dependencies that runs the DHF installer
+// This jar is only meant to be used by the DHS team for installing DHF into DHS
 bootJar {
     archiveClassifier = "installer"
-    mainClassName = "com.marklogic.hub.cli.Installer"
+    mainClassName = "com.marklogic.hub.dhs.installer.Main"
 }
 
 task clientJar(type: Jar) {
+    description = "Build an executable jar to be used by DHF clients; as of 5.2.0, this is just for running flows"
     manifest {
         attributes "Main-Class": "com.marklogic.hub.cli.client.Main"
     }
-    archiveBaseName = "marklogic-data-hub-client"
+    archiveClassifier = "client"
     from(configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {
         exclude "META-INF/*.SF"
         exclude "META-INF/*.DSA"
@@ -112,6 +114,7 @@ task clientJar(type: Jar) {
     exclude "*jaeger*.jar"
     with jar
 }
+build.dependsOn clientJar
 
 node {
   // Version of node to use.
@@ -263,7 +266,8 @@ publishing {
             from components.java
             artifact sourcesJar
             artifact javadocJar
-	    artifact bootJar
+            artifact bootJar
+            artifact clientJar
 
             pom.withXml {
                 asNode().appendNode('description', pomCustomizations.textdescription.text())
@@ -278,13 +282,13 @@ publishing {
     }
     repositories {
         maven {
-          if(project.hasProperty("mavenUser")) {
-            credentials {
-            username mavenUser
-            password mavenPassword
+            if (project.hasProperty("mavenUser")) {
+                credentials {
+                    username mavenUser
+                    password mavenPassword
+                }
             }
-          }
-          url publishUrl
+            url publishUrl
         }
     }
 }
