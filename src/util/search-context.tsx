@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { getUserPreferences } from '../services/user-preferences';
+import { UserContext } from './user-context';
 
 type SearchContextInterface = {
   query: string,
@@ -24,6 +26,7 @@ const defaultSearchOptions = {
 
 interface ISearchContextInterface {
   searchOptions: SearchContextInterface;
+  searchFromUserPref: (username: string) => void;
   setQuery: (searchString: string) => void;
   setPage: (pageNumber: number, totalDocuments: number) => void;
   setPageLength: (current: number, pageSize: number) => void;
@@ -41,6 +44,7 @@ interface ISearchContextInterface {
 
 export const SearchContext = React.createContext<ISearchContextInterface>({
   searchOptions: defaultSearchOptions,
+  searchFromUserPref: () => {},
   setQuery: () => {},
   setPage: () => {},
   setPageLength: () => {},
@@ -59,6 +63,23 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
 const SearchProvider: React.FC<{ children: any }> = ({children}) => {
   
   const [searchOptions, setSearchOptions] = useState<SearchContextInterface>(defaultSearchOptions);
+  const { user } = useContext(UserContext);
+
+ const searchFromUserPref = (username: string) => {
+  let userPreferences = getUserPreferences(username);
+  if (userPreferences) {
+    let values = JSON.parse(userPreferences);
+    setSearchOptions({
+      ...searchOptions,
+      start: 1,
+      pageNumber: 1,
+      query: values.query,
+      entityNames: values.entityNames,
+      searchFacets: values.facets,
+      pageLength: values.pageLength
+    });  
+  }
+ }
 
   const setQuery = (searchString: string) => {
     setSearchOptions({
@@ -218,10 +239,16 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       pageLength: searchOptions.pageSize
     });
   }
+  useEffect(() => {
+    if (user.authenticated){
+      searchFromUserPref(user.name);
+    }
+  }, [user.authenticated]);
 
   return (
     <SearchContext.Provider value={{ 
       searchOptions,
+      searchFromUserPref,
       setQuery,
       setPage,
       setPageLength,
