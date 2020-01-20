@@ -25,13 +25,14 @@ interface Props {
 const Sidebar:React.FC<Props> = (props) => {
   const { 
     searchOptions,
-    setDateFacet,
-    clearDateFacet
+    setAllSearchFacets
    } = useContext(SearchContext);
   const [entityFacets, setEntityFacets] = useState<any[]>([]);
   const [hubFacets, setHubFacets] = useState<any[]>([]);
   const [selectedFacets, setSelectedFacets] = useState<any[]>([]);
+  const [allSelectedFacets, setAllSelectedFacets] = useState<any>(searchOptions.searchFacets);
   const [datePickerValue, setDatePickerValue] = useState<any[]>([null, null]);
+  const [showApply, toggleApply] = useState(false);
 
   useEffect(() => {
     if (props.facets) {
@@ -101,21 +102,46 @@ const Sidebar:React.FC<Props> = (props) => {
           }
           setSelectedFacets(selectedFacets);
         }
+        if (!selectedFacets.some( item => item.constraint === 'createdOnRange')) {
+          setDatePickerValue([null, null]);
+          toggleApply(false)
+        }
       } else {
         setSelectedFacets([]);
+        setAllSelectedFacets({});
         setDatePickerValue([null, null]);
+        toggleApply(false);
       }
     }
   }, [props.selectedEntities, props.facets]);
 
   const onDateChange = (dateVal, dateArray) => {
+    let updateFacets = {...allSelectedFacets};
     if (dateVal.length > 1) {
-      setDateFacet(dateArray);
+      toggleApply(true);
+      updateFacets = { ...updateFacets, createdOnRange: dateArray } 
       setDatePickerValue([moment(dateArray[0]), moment(dateArray[1])]);
     } else {
-      clearDateFacet();
+      toggleApply(false);
+      delete updateFacets.createdOnRange
       setDatePickerValue([null, null]);
     }
+    setAllSelectedFacets(updateFacets);
+  }
+
+  const updateSelectedFacets = (constraint: string, vals: string[]) => {
+    let facets = {...allSelectedFacets};
+    if (vals.length > 0) {
+      facets = {...facets, [constraint]: vals};
+    } else {
+      //facets = { ...searchOptions.searchFacets };
+      delete facets[constraint];
+    }
+    setAllSelectedFacets(facets);
+  }
+
+  const applyAllFacets = () => {
+    setAllSearchFacets(allSelectedFacets);
   }
 
   return (
@@ -138,6 +164,8 @@ const Sidebar:React.FC<Props> = (props) => {
                   facetValues={facet.facetValues}
                   key={facet.facetName}
                   tooltip=""
+                  updateSelectedFacets={updateSelectedFacets}
+                  applyAllFacets={applyAllFacets}
                 />
               )
             }) :
@@ -154,6 +182,16 @@ const Sidebar:React.FC<Props> = (props) => {
             onChange={onDateChange} 
             value={datePickerValue}
           />
+          { showApply && (
+            <div className={styles.applyButtonContainer}>
+              <Button 
+                type="primary" 
+                size="small" 
+                data-cy={"datepicker-apply-button"}
+                onClick={()=> applyAllFacets()}
+              >Apply</Button>
+            </div>
+          )}
           { hubFacets.map(facet => {
             return facet && (
               <Facet
@@ -162,6 +200,8 @@ const Sidebar:React.FC<Props> = (props) => {
                 facetValues={facet.facetValues}
                 key={facet.facetName}
                 tooltip={facet.tooltip}
+                updateSelectedFacets={updateSelectedFacets}
+                applyAllFacets={applyAllFacets}
               />
             )
               })}

@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Checkbox, Icon, Tooltip} from 'antd';
+import { Button, Checkbox, Icon, Tooltip } from 'antd';
 import { SearchContext } from '../../util/search-context';
 import styles from './facet.module.scss';
 import { numberConverter } from '../../util/number-conversion';
@@ -12,25 +12,34 @@ interface Props {
   constraint: string;
   facetValues: any[];
   tooltip: string;
+  updateSelectedFacets: (constraint: string, vals: string[]) => void;
+  applyAllFacets: () => void;
 };
 
 const Facet: React.FC<Props> = (props) => {
   const SHOW_MINIMUM = 3;
-  const { setSearchFacets, searchOptions } = useContext(SearchContext);
+  const { searchOptions } = useContext(SearchContext);
   const [showFacets, setShowFacets] = useState(SHOW_MINIMUM);
-  const [show, toggleShow] = useState(true);
+  const [show, toggleShow] = useState(true); 
   const [more, toggleMore] = useState(false);
+  const [showApply, toggleApply] = useState(false);
   const [checked, setChecked] = useState<string[]>([]);
 
   useEffect(() => {
     if (Object.entries(searchOptions.searchFacets).length !== 0 && searchOptions.searchFacets.hasOwnProperty(props.constraint)) {
       for (let facet in searchOptions.searchFacets ) {
         if (facet === props.constraint) {
-          setChecked([...searchOptions.searchFacets[facet]]);
+          // checking if arrays are equivalent
+          if (JSON.stringify(checked) === JSON.stringify([...searchOptions.searchFacets[facet]])) {
+            toggleApply(false);
+          } else {
+            setChecked([...searchOptions.searchFacets[facet]]);
+          }
         }
       }
     } else {
       setChecked([]);
+      toggleApply(false);
     }
   }, [searchOptions]);
 
@@ -39,21 +48,33 @@ const Facet: React.FC<Props> = (props) => {
     // Selection
     if (e.target.checked && index === -1) {
       setChecked([...checked, e.target.value]);
-      setSearchFacets(props.constraint, [...checked, e.target.value]);
+      toggleApply(true);
+      props.updateSelectedFacets(props.constraint, [...checked, e.target.value]);
     } 
     // Deselection
     else if (index !== -1){
       let newChecked = [...checked];
       newChecked.splice(index, 1);
+      if (newChecked.length === 0 && !(props.constraint in searchOptions.searchFacets) ) {
+        toggleApply(false);
+      } else {
+        toggleApply(true);
+      }
       setChecked(newChecked);
-      setSearchFacets(props.constraint, newChecked);
+      props.updateSelectedFacets(props.constraint, newChecked);
     }
   }
 
   const handleClear = () => {
     setChecked([]);
-    setSearchFacets(props.constraint, []);
+    if (props.constraint in searchOptions.searchFacets) {
+      toggleApply(true);
+    } else {
+      toggleApply(false);
+    }
+    props.updateSelectedFacets(props.constraint, []);
   }
+
 
   const showMore = () => {
     let toggle = !more;
@@ -64,6 +85,7 @@ const Facet: React.FC<Props> = (props) => {
     toggleMore(!more);
     setShowFacets(showNumber);
   }
+
   const values = props.facetValues.length && props.facetValues.slice(0, showFacets).map((facet, index) =>
     <div className={styles.checkContainer} key={index} data-cy={stringConverter(props.name) + "-facet-item"}>
       <Checkbox 
@@ -98,13 +120,23 @@ const Facet: React.FC<Props> = (props) => {
       </div>
       <div style={{display: (show) ? 'block' : 'none'}} >
         {values !== 0 && values}
-        <div 
-          className={styles.more}
-          style={{display: (props.facetValues.length > SHOW_MINIMUM) ? 'block' : 'none'}}
-          onClick={() => showMore()}
-          data-cy="show-more"
-        >{(more) ? '<< less' : 'more >>'}</div>
+          <div 
+            className={styles.more}
+            style={{display: (props.facetValues.length > SHOW_MINIMUM) ? 'block' : 'none'}}
+            onClick={() => showMore()}
+            data-cy="show-more"
+          >{(more) ? '<< less' : 'more >>'}</div>
       </div>
+      { showApply && (
+        <div className={styles.applyButtonContainer}>
+          <Button 
+            type="primary" 
+            size="small" 
+            data-cy={stringConverter(props.name) +"-facet-apply-button"}
+            onClick={()=> props.applyAllFacets()}
+          >Apply</Button>
+        </div>
+      )}
     </div>
   )
 }
