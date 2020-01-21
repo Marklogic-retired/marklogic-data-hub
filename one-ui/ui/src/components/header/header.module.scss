@@ -1,0 +1,97 @@
+header.container {
+  div.logoContainer {
+    height: 0px;
+    width: 240px;
+    position: relative;
+    top: -1px;
+    left: -40px;
+    span.logo {
+      background: #fff;
+      img {
+        position: relative;
+        top: 10px;
+        left: 10px;
+        height: 28px;
+        width: 28px;
+      }
+    }
+  }
+  div.title {
+    font-family: 'HelveticaNeue-Light';
+    font-size: 28px;
+    font-weight: 400;
+    float: left;
+    margin: 0 60px 0 20px;
+    color: #fff;
+    text-align: right;
+  }
+}
+
+li.menuLink {
+  font-family: 'Helvetica Neue';
+  font-size: 16px;
+}
+
+div.iconsContainerAuth {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  i:hover {
+    cursor: pointer;
+    color: #fff;
+  }
+  .vertical { 
+    display: inline-block;
+    position: relative;
+    top: 3px;
+    border-left: dotted 1px rgba(255, 255, 255, 0.65);
+    height: 24px; 
+    margin: 0 26px;
+  } 
+}
+
+div.iconsContainer {
+  position: absolute;
+  top: 12px;
+  right: 0;
+  i:hover {
+    cursor: pointer;
+    color: #fff;
+  }
+}
+
+span.userDropdown {
+  i {
+    font-size: 24px;
+  }
+}
+
+div.userMenu {
+  position: relative;
+  top: 17px;
+  width: 200px;
+  background-color: white;
+  border: solid 1px #aaa;
+  color: black;
+  padding: 10px;
+  div.username {
+    width: 100%;
+    padding: 10px 0 10px 0;
+    font-weight: bold;
+    text-align: center;
+  }
+  div.logout {
+    width: 100%;
+    padding: 10px 0 20px 0;
+    text-align: center;
+    button {
+      color:#ffffff;
+      background-color: #44499C;
+      border: none;
+    }
+    button:hover {
+      background-color: #44499C;
+      border: transparent;
+    }
+  }
+}
