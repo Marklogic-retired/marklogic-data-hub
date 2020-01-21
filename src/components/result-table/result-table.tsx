@@ -177,6 +177,7 @@ const ResultTable: React.FC<Props> = (props) => {
         col.push({
           title: item.title,
           key: item.key,
+          visible: true,
           children: tableHeader(item.children),
         })
       } else {
@@ -185,6 +186,7 @@ const ResultTable: React.FC<Props> = (props) => {
             title: item.title,
             dataIndex: item.title.replace(/ /g, '').toLowerCase(),
             key: item.key,
+            visible: true,
             width: 150,
             onHeaderCell: column => ({
               width: column.width,

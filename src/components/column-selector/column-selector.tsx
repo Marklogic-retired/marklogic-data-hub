@@ -3,7 +3,7 @@ import { Popover, Tree, Input } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faColumns } from '@fortawesome/free-solid-svg-icons'
 import styles from './column-selector.module.scss';
-import { reconstructHeader, deepCopy, getKeys, getChildKeys, getParentKey } from '../../util/data-conversion';
+import { reconstructHeader, deepCopy, getKeys, getChildKeys, getParentKey, filterTree } from '../../util/data-conversion';
 
 interface Props {
   title: any[];
@@ -19,14 +19,18 @@ const ColumnSelector: React.FC<Props> = (props) => {
   const [checkedKeys, setCheckedKeys] = useState<any[]>([]);
   const [selectedKeys, setSelectedKeys] = useState<any[]>([]);
   const [tree, setTree] = useState<any[]>(props.tree);
+  const [vTree, setVtree] = useState<any[]>(props.tree);
+
   const [searchValue, setSearchValue] = useState("");
   let primaryKey = props.tree[0] && props.tree[0].key && props.tree[0].key;
   let allKeys = getKeys(props.tree)
   const dataList = new Array();
+  let prevTree = props.tree;
 
 
   useEffect(() => {
     setTree(props.tree)
+    setVtree(props.tree)
   }, [props.tree])
 
   useEffect(() => {
@@ -51,7 +55,7 @@ const ColumnSelector: React.FC<Props> = (props) => {
       }
     }
   };
-  generateList(tree);
+  
 
   const renderTreeNodes = data =>
     data.map(item => {
@@ -70,32 +74,47 @@ const ColumnSelector: React.FC<Props> = (props) => {
           );
 
       if (item.children) {
-        if (title.props.style) {
-          return (
-            <TreeNode style={{ display: 'none' }} key={item.key} title={title}  >
-              {renderTreeNodes(item.children)}
-            </TreeNode>
-          );
-        } else {
-          return (
-            <TreeNode key={item.key} title={title} >
-              {renderTreeNodes(item.children)}
-            </TreeNode>
-          );
+        // if (title.props.style) {
+        //   return (
+        //     <TreeNode style={{ display: 'none' }} key={item.key} title={title}  >
+        //       {renderTreeNodes(item.children)}
+        //     </TreeNode>
+        //   );
+        // } else {
+          if (item.visible === false) {
+            return (
+              <TreeNode style={{ display: 'none' }} key={item.key} title={title} >
+                {renderTreeNodes(item.children)}
+              </TreeNode>
+            );
+          } else {
+            return (
+              <TreeNode key={item.key} title={title} >
+                {renderTreeNodes(item.children)}
+              </TreeNode>
+            );
+          }
+          
+        // }
+      // }
+      // if (title.props.style) {
+      //   if (getParentKey(item.key, tree) !== undefined) {
+      //     return <TreeNode title={title} disabled={item.key === primaryKey} disableCheckbox={item.key === primaryKey} key={item.key} />;
+      //   } else {
+      //     return <TreeNode style={{ display: 'none' }} title={title} disabled={item.key === primaryKey} disableCheckbox={item.key === primaryKey} key={item.key} />;
+      //   }
+      // } else {
+      //   if (getParentKey(item.key, tree) !== undefined) {
+      //     console.log(data)
         }
-      }
-      if (title.props.style) {
-        if (getParentKey(item.key, tree) !== undefined) {
-          return <TreeNode title={title} disabled={item.key === primaryKey} disableCheckbox={item.key === primaryKey} key={item.key} />;
-        } else {
+        if (item.visible === false) {
           return <TreeNode style={{ display: 'none' }} title={title} disabled={item.key === primaryKey} disableCheckbox={item.key === primaryKey} key={item.key} />;
+
+        } else {
+          return <TreeNode title={title} disabled={item.key === primaryKey} disableCheckbox={item.key === primaryKey} key={item.key} />;
+
         }
-      } else {
-        if (getParentKey(item.key, tree) !== undefined) {
-          console.log(data)
-        }
-        return <TreeNode title={title} disabled={item.key === primaryKey} disableCheckbox={item.key === primaryKey} key={item.key} />;
-      }
+      // }
     });
 
     
@@ -154,6 +173,13 @@ const ColumnSelector: React.FC<Props> = (props) => {
 
   const onChange = e => {
     const { value } = e.target;
+    let filteredTree = filterTree(deepCopy(prevTree), value)
+    setTree(filteredTree)
+
+    
+    generateList(filteredTree);
+    console.log('dataList',dataList)
+
     const expandedKeys = dataList
       .map(item => {
         if (item.title.indexOf(value) > -1) {
@@ -165,7 +191,10 @@ const ColumnSelector: React.FC<Props> = (props) => {
     setExpandedKeys(expandedKeys);
     setSearchValue(value);
     setAutoExpandParent(true);
-  };
+    
+    
+      
+    };
 
   const content = (
     <div className={styles.popover}>

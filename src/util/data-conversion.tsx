@@ -357,3 +357,58 @@ export const getTitles = (object:Array<Object>) => {
   return titles(object);
 }
 
+
+// export const filterTree = (ob, str) => {
+
+//   // let ob = obj;
+
+//   const filter = (ob) => {
+//     console.log(ob)
+//     for (let i = 0; i < ob.length; i++) {
+//       if (ob[i] !== null && (ob[i]).hasOwnProperty('children')) {
+//         let n = filter(ob[i].children)
+//         if(n.length === 0 && !ob[i].title.toLowerCase().includes(str.toLowerCase())) {
+//           ob.splice(i, 1)
+//           i--;
+//         }
+//       } else {
+//         if(!ob[i].title.toLowerCase().includes(str.toLowerCase())) {
+
+//           ob.splice(i, 1)
+//           i--;
+//         }        
+//       }
+//     }
+//     return ob;
+//   }
+//   return filter(ob);
+// }
+
+export const filterTree = (ob, str) => {
+
+    // let ob = obj;
+  
+    const filter = (ob) => {
+      console.log(ob)
+      for (let i = 0; i < ob.length; i++) {
+        if (ob[i] !== null && (ob[i]).hasOwnProperty('children')) {
+          let n = filter(ob[i].children)
+          if(n.length === 0 && !ob[i].title.toLowerCase().includes(str.toLowerCase())) {
+            ob[i].visible = false;
+            // ob.splice(i, 1)
+            // i--;
+          }
+        } else {
+          if(!ob[i].title.toLowerCase().includes(str.toLowerCase())) {
+            ob[i].visible = false;
+            // ob.splice(i, 1)
+            // i--;
+          }        
+        }
+      }
+      return ob;
+    }
+    return filter(ob);
+  }
+
+
