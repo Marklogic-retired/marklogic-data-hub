@@ -78,7 +78,7 @@ const App: React.FC<Props> = ({history, location}) => {
           <PrivateRoute path="/home" exact component={Home} />
           <Route path="/install" exact component={Install}/>
           <Route path="/load-data" exact component={LoadData}/>
-        </Switch> 
+        </Switch>
       )}
       </main>
       <Footer pageTheme={pageTheme}/>
