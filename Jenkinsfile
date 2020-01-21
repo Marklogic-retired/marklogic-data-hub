@@ -392,7 +392,7 @@ pipeline{
 		stage('rh7_cluster_10.0-Nightly'){
 			agent { label 'dhfLinuxAgent'}
 			steps{
-			dhflinuxTests(10.0,Latest)
+			dhflinuxTests("10.0","Latest")
 			}
 			post{
 				 always{
@@ -412,7 +412,7 @@ pipeline{
 		stage('rh7_cluster_9.0-Nightly'){
 			agent { label 'dhfLinuxAgent'}
 			steps{
-	        dhflinuxTests(9.0,Latest)
+	        dhflinuxTests("9.0","Latest")
 			}
 			post{
 				always{
@@ -431,7 +431,7 @@ pipeline{
 		stage('rh7_cluster_9.0-11'){
 			agent { label 'dhfLinuxAgent'}
 			steps{ 
-		    dhflinuxTests(9.0-11,Release)
+		    dhflinuxTests("9.0-11","Release")
 			}
 			post{
 				always{
@@ -450,7 +450,7 @@ pipeline{
          stage('rh7_cluster_10.0-3'){
                agent { label 'dhfLinuxAgent'}
                steps{
-                    dhflinuxTests(10.0-3,Release);
+                    dhflinuxTests("10.0-3","Release");
                }
                post{
                  always{
@@ -584,7 +584,7 @@ pipeline{
 		stage('qs_rh7_90-nightly'){
 			agent { label 'lnx-dhf-jenkins-slave-2'}
 			steps{
-			    dhfqsLinuxTests(9.0,Latest)
+			    dhfqsLinuxTests("9.0","Latest")
 			}
 			post{
 
@@ -601,7 +601,7 @@ pipeline{
 		stage('qs_rh7_10-nightly'){
         			agent { label 'lnx-dhf-jenkins-slave-2'}
         			steps{
-        			 dhfqsLinuxTests(10.0,Latest)
+        			 dhfqsLinuxTests("10.0","Latest")
         			}
         			post{
 
@@ -618,7 +618,7 @@ pipeline{
         stage('qs_rh7_90-release'){
         			agent { label 'lnx-dhf-jenkins-slave-2'}
         			steps{
-                     dhfqsLinuxTests(9.0-11,Release)
+                     dhfqsLinuxTests("9.0-11","Release")
         			}
         			post{
 
@@ -635,7 +635,7 @@ pipeline{
         		stage('qs_rh7_10-release'){
                 			agent { label 'lnx-dhf-jenkins-slave-2'}
                 			steps{
-                                 dhfqsLinuxTests(10.0-3,Release)
+                                 dhfqsLinuxTests("10.0-3","Release")
                 			}
                 			post{
 
