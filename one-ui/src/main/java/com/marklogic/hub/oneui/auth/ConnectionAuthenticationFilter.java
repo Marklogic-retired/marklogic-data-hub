@@ -16,12 +16,10 @@
 package com.marklogic.hub.oneui.auth;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.oneui.models.EnvironmentInfo;
-import com.marklogic.hub.oneui.models.HubConfigSession;
 import com.marklogic.hub.oneui.services.EnvironmentService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
@@ -56,7 +54,6 @@ public class ConnectionAuthenticationFilter extends
     // ~ Static fields/initializers
     // =====================================================================================
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     public static final String SPRING_SECURITY_FORM_USERNAME_KEY = "username";
     public static final String SPRING_SECURITY_FORM_PASSWORD_KEY = "password";
     public static final String SPRING_SECURITY_FORM_HOST_KEY = "hostname";
@@ -70,9 +67,6 @@ public class ConnectionAuthenticationFilter extends
 
     @Autowired
     private EnvironmentService environmentService;
-
-    @Autowired
-    private HubConfigSession hubConfig;
 
     // ~ Constructors
     // ===================================================================================================
@@ -123,10 +117,10 @@ public class ConnectionAuthenticationFilter extends
         setDetails(request, authRequest);
         try {
             authAttempt = this.getAuthenticationManager().authenticate(authRequest);
-            request.getSession().setAttribute("projectName", hubConfig.getHubProject().getProjectName());
         } catch (Exception e) {
             environmentService.setEnvironment(originalEnvironmentInfo);
-            throw e;
+            e.printStackTrace();
+            throw new BadCredentialsException("Issue connecting to MarkLogic server");
         }
         return authAttempt;
     }

@@ -11,8 +11,7 @@ describe('Install page', () => {
   });
 
   test('login fields renders ', () => {
-    expect(wrapper.exists('.anticon-check-circle')).toBe(true);
-    expect(wrapper.find('#directory').length).toEqual(1);
+    expect(wrapper.find('#directory').length).toEqual(1)
   });
 
 });

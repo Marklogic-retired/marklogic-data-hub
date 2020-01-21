@@ -16,12 +16,14 @@
 package com.marklogic.hub.oneui.auth;
 
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.hub.oneui.exceptions.BadRequestException;
-import com.marklogic.hub.oneui.exceptions.ForbiddenException;
 import com.marklogic.hub.oneui.models.EnvironmentInfo;
 import com.marklogic.hub.oneui.models.HubConfigSession;
 import com.marklogic.hub.oneui.services.EnvironmentService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -90,7 +92,7 @@ public class MarkLogicAuthenticationManager implements AuthenticationProvider, A
             hasManagePrivileges = true;
         }
         catch(ResourceAccessException ex) {
-            throw new BadRequestException("Cannot connect to MarkLogic at " + environmentInfo.mlHost + ". Are you sure MarkLogic is running?", ex);
+            throw new BadCredentialsException("Cannot connect to MarkLogic at " + environmentInfo.mlHost + ". Are you sure MarkLogic is running?");
         }
         catch(HttpClientErrorException ex) {
             if (HttpStatus.UNAUTHORIZED.equals(ex.getStatusCode())) {
@@ -109,16 +111,41 @@ public class MarkLogicAuthenticationManager implements AuthenticationProvider, A
         boolean stagingServerAccessible = false;
         try {
             stagingServerAccessible = dataServicesClient.checkConnection().isConnected();
-        } catch (Exception ignored) {
-        }
-        if (!(hasManagePrivileges || stagingServerAccessible)) {
-            throw new ForbiddenException("User doesn't have the required roles to install or run the Data Hub");
+        } catch (Exception e) {
         }
         return new ConnectionAuthenticationToken(token.getPrincipal(), token.getCredentials(),
-                environmentInfo.mlHost, hasManagePrivileges, stagingServerAccessible, hubConfig, token.getAuthorities());
+                environmentInfo.mlHost, hasManagePrivileges, stagingServerAccessible, token.getAuthorities());
     }
 
     public void setPathToAuthenticateAgainst(String pathToAuthenticateAgainst) {
         this.pathToAuthenticateAgainst = pathToAuthenticateAgainst;
     }
+}
+
+/**
+ * Simple implementation that is good for one-time requests.
+ */
+class SimpleCredentialsProvider implements CredentialsProvider {
+
+    private String username;
+    private String password;
+
+    public SimpleCredentialsProvider(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    @Override
+    public void setCredentials(AuthScope authscope, Credentials credentials) {
+    }
+
+    @Override
+    public Credentials getCredentials(AuthScope authscope) {
+        return new UsernamePasswordCredentials(username, password);
+    }
+
+    @Override
+    public void clear() {
+    }
+
 }

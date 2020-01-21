@@ -19,29 +19,23 @@ import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
 import com.marklogic.mgmt.admin.AdminManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 
+import javax.annotation.PostConstruct;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @Component
 @Primary
 @SessionScope
-public class HubConfigSession implements HubConfig, InitializingBean, DisposableBean {
-    private static final Logger logger = LoggerFactory.getLogger(HubConfigSession.class);
-
+public class HubConfigSession implements HubConfig {
     private HubConfigImpl hubConfigImpl;
 
     @Autowired
@@ -53,6 +47,33 @@ public class HubConfigSession implements HubConfig, InitializingBean, Disposable
     private Map<DatabaseKind, Map<String, DatabaseClient>> clientsByKindAndDatabaseName  = new HashMap<>();
 
     private DataHub dataHub;
+
+    @PostConstruct
+    protected void postConstruct() {
+        hubConfigImpl = new HubConfigImpl(new HubProjectImpl(), environment);
+        if (hubConfigImpl.getManageConfig() == null) {
+            hubConfigImpl.setManageConfig(new ManageConfig());
+        }
+        if (hubConfigImpl.getManageClient() == null) {
+            hubConfigImpl.setManageClient(new ManageClient());
+        }
+        if (hubConfigImpl.getAdminConfig() == null) {
+            hubConfigImpl.setAdminConfig(new AdminConfig());
+        }
+        if (hubConfigImpl.getAdminManager() == null) {
+            hubConfigImpl.setAdminManager(new AdminManager());
+        }
+        if (hubConfigImpl.getAppConfig() == null) {
+            hubConfigImpl.setAppConfig(new AppConfig(), true);
+        }
+        hubConfigImpl.createProject(environmentService.getProjectDirectory());
+        hubConfigImpl.initHubProject();
+        hubConfigImpl.refreshProject();
+        // resetting app config to trigger updates to values
+        hubConfigImpl.setAppConfig(hubConfigImpl.getAppConfig(), false);
+        hubConfigImpl.hydrateConfigs();
+        this.dataHub = new DataHubImpl(this);
+    }
 
     public void setCredentials(EnvironmentInfo environmentInfo, String username, String password) {
         // customize hubConfig
@@ -93,8 +114,7 @@ public class HubConfigSession implements HubConfig, InitializingBean, Disposable
         manageConfig.setPassword(password);
         hubConfigImpl.getManageClient().setManageConfig(manageConfig);
 
-        hubConfigImpl.createProject(environmentService.getProjectDirectory());
-        hubConfigImpl.refreshProject();
+        hubConfigImpl.hydrateConfigs();
         // construct clients now, so we can clear our password fields
         eagerlyConstructClients();
 
@@ -476,9 +496,6 @@ public class HubConfigSession implements HubConfig, InitializingBean, Disposable
     public Boolean getIsProvisionedEnvironment() {
         return hubConfigImpl.getIsProvisionedEnvironment();
     }
-
-    @Override
-    public void setIsProvisionedEnvironment(boolean isProvisionedEnvironment) { hubConfigImpl.setIsProvisionedEnvironment(isProvisionedEnvironment);  }
 
     /**
      * Returns the path for the custom forests definition

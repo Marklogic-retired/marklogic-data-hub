@@ -47,11 +47,7 @@
                 {
                     "200":
                     {
-                        "description": "Successful Operation",
-                        "schema":
-                        {
-                          "$ref": "#/definitions/authenticationResponse"
-                        }
+                        "description": "Successful Operation"
                     },
                     "400":
                     {
@@ -3374,28 +3370,6 @@
             "description": "This is a temporary definition for any object until details can be fleshed out",
             "properties":
             {}
-        },
-        "authenticationResponse": {
-            "type": "object",
-            "description": "Response after login",
-            "properties": {
-              "isInstalled": {
-                "type": "boolean",
-                "description": "Whether or not the Data Hub has been installed"
-              },
-              "hasManagePrivileges": {
-                "type": "boolean",
-                "description": "Whether or not the user has the manage privileges necessary to install the Data Hub"
-              },
-              "roles": {
-                "type": "array",
-                "description": "Array of Data Hub related roles of the user",
-                "items":
-                {
-                  "type": "string"
-                }
-              }
-            }
         },
         "environmentConfig":
         {

@@ -11,11 +11,9 @@ module.exports = override(
    modifyVars: { 
     '@primary-color': '#44499C',
     '@menu-item-color': '#A8A8A8',
-    '@menu-highlight-color': '#7F86B5',
+    '@menu-highlight-color': '#44499C',
     '@background-color-light': '#ffffff',
     '@card-actions-background': '#f7f9fa',
-    '@table-row-hover-bg': '#E9F7FE',
-    '@item-hover-bg': '#E9F7FE'
     },
  }),
 );

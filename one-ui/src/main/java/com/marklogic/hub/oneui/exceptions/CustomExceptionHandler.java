@@ -17,9 +17,9 @@ package com.marklogic.hub.oneui.exceptions;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.FailedRequestException;
+import com.marklogic.client.impl.FailedRequest;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -37,13 +37,12 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(FailedRequestException.class)
     protected ResponseEntity<JsonNode> handleFailedRequestExceptionRequest(
         FailedRequestException failedRequestException) {
+        FailedRequest failedRequest = failedRequestException.getFailedRequest();
         ObjectNode errJson = mapper.createObjectNode();
-        errJson.put("code", failedRequestException.getServerStatusCode());
-        errJson.put("message", failedRequestException.getServerStatus());
-        HttpStatus httpStatus = HttpStatus.valueOf(failedRequestException.getServerStatusCode());
-        errJson.put("suggestion", httpStatusSuggestion(httpStatus));
-        errJson.put("details", failedRequestException.getServerMessage());
-        return new ResponseEntity<>(errJson, httpStatus);
+        errJson.put("code", failedRequest.getStatusCode());
+        errJson.put("message", failedRequest.getStatus());
+        errJson.put("details", failedRequest.getMessage());
+        return new ResponseEntity<>(errJson, HttpStatus.valueOf(failedRequest.getStatusCode()));
     }
 
     @ExceptionHandler(HttpClientErrorException.class)
@@ -52,22 +51,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         ObjectNode errJson = mapper.createObjectNode();
         errJson.put("code", httpClientErrorException.getRawStatusCode());
         errJson.put("message", httpClientErrorException.getMessage());
-        HttpStatus httpStatus = HttpStatus.valueOf(httpClientErrorException.getRawStatusCode());
-        errJson.put("suggestion", httpStatusSuggestion(httpStatus));
-        return new ResponseEntity<>(errJson, httpStatus);
-    }
-    @ExceptionHandler(ForbiddenException.class)
-    protected ResponseEntity<JsonNode> handleForbiddenExceptionRequest(
-        ForbiddenException exception) {
-        ObjectNode errJson = mapper.createObjectNode();
-        errJson.put("code", 403);
-        errJson.put("message", exception.getMessage());
-        errJson.put("suggestion", "Log in as a MarkLogic user with permissions to install or upgrade Data Hub.");
-        if (exception.getRequiredRoles() != null && exception.getRequiredRoles().size() > 0) {
-            ArrayNode requiredRolesArray = errJson.putArray("requiredRoles");
-            exception.getRequiredRoles().forEach(requiredRolesArray::add);
-        }
-        return new ResponseEntity<>(errJson, HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(errJson, HttpStatus.valueOf(httpClientErrorException.getRawStatusCode()));
     }
     @ExceptionHandler(ForbiddenException.class)
     protected ResponseEntity<JsonNode> handleForbiddenExceptionRequest(
@@ -89,28 +73,6 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         ObjectNode errJson = mapper.createObjectNode();
         errJson.put("code", 500);
         errJson.put("message", exception.getMessage());
-        errJson.put("suggestion", exceptionSuggestion(exception));
         return new ResponseEntity<>(errJson, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    private String httpStatusSuggestion(HttpStatus httpStatus) {
-        switch (httpStatus) {
-            case FORBIDDEN:
-                return "Ensure your MarkLogic user has the proper roles for this action.";
-            case BAD_REQUEST:
-                return "Resend the request in the correct format.";
-            case INTERNAL_SERVER_ERROR:
-                return "Contact your server administrator.";
-            default:
-                return null;
-        }
-    }
-
-    private String exceptionSuggestion(Exception exception) {
-        if (exception instanceof ProjectDirectoryException) {
-            return ((ProjectDirectoryException) exception).getSuggestion();
-        } else {
-            return "Contact your server administrator.";
-        }
     }
 }

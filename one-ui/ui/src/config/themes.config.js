@@ -1,38 +1,37 @@
-import Background from '../assets/Color_Large_Banner.jpg';
+import Background from '../components/assets/Color_Large_Banner.jpg';
 
 // Page themes
 let themes = {
-    image: {
+    image: { 
         background: {
             backgroundImage: `url("${Background}")`,
             width: '100%',
             height: '100%',
             backgroundPosition: 'center',
             backgroundSize: 'cover',
-            backgroundRepeat: 'no-repeat'
+            backgroundRepeat: 'no-repeat',
+            bottom: '0px' 
         },
         footer: {
             color: '#fff'
         },
         footerLink: {
             color: '#fff'
-        },
-        bodyBg: 'bgColorImage'
+        }
     },
-    white: {
+    white: { 
         background: {
             backgroundColor: '#fff',
             width: '100%',
             height: '100%',
-            bottom: '0px'
+            bottom: '0px' 
         },
         footer: {
             color: '#999'
         },
         footerLink: {
             color: '#44499c'
-        },
-        bodyBg: 'bgColorWhite'
+        }
     }
 }
 

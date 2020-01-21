@@ -23,12 +23,6 @@
 
 .addNewButton {
     float: right;
-    background-color: #394494;
-    border: none;
-}
-.addNewButton:hover{
-    background-color: #394494;
-    border: none;
 }
 
 .settingsIcon {
@@ -43,13 +37,6 @@
     cursor: pointer;
     padding-bottom: 2px;
 
-}
-
-.disabledDeleteIcon {
-    font-size: 21px;
-    opacity: 0.5;
-    pointer-events: none;
-    padding-bottom: 2px;
 }
 .sourceFormatFS{
     font-size: 12px;

@@ -18,20 +18,15 @@ package com.marklogic.hub.oneui.controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.appdeployer.AppConfig;
-import com.marklogic.hub.HubProject;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
-import com.marklogic.hub.oneui.exceptions.BadRequestException;
-import com.marklogic.hub.oneui.exceptions.ProjectDirectoryException;
+import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.oneui.models.HubConfigSession;
 import com.marklogic.hub.oneui.models.StatusMessage;
 import com.marklogic.hub.oneui.services.DataHubService;
 import com.marklogic.hub.oneui.services.EnvironmentService;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,12 +34,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -90,10 +80,16 @@ public class EnvironmentController {
 
     @RequestMapping(value = "/install", method = RequestMethod.POST)
     @ResponseBody
-    public JsonNode install(@RequestBody ObjectNode payload) throws Exception {
-        String originalDirectory = environmentService.getProjectDirectory();
-        final Exception[] dataHubConfigurationException = {null};
-        HubDeployStatusListener listener = new HubDeployStatusListener() {
+    public JsonNode install(@RequestBody ObjectNode payload, HttpSession session) {
+        environmentService.setProjectDirectory(payload.get("directory").asText(""));
+        String directory = environmentService.getProjectDirectory();
+        hubConfig.createProject(directory);
+        hubConfig.initHubProject();
+        // TODO do we need to allow a different environments for curation UI?
+        hubConfig.withPropertiesFromEnvironment("local");
+        hubConfig.refreshProject();
+        final DataHubConfigurationException[] dataHubConfigurationException = {null};
+        dataHubService.install(new HubDeployStatusListener() {
             int lastPercentageComplete = 0;
             @Override
             public void onStatusChange(int percentComplete, String message) {
@@ -109,52 +105,13 @@ public class EnvironmentController {
                 String message = "Error encountered running command: " + commandName;
                 template.convertAndSend("/topic/install-status", new StatusMessage(lastPercentageComplete, message));
                 logger.error(message, exception);
-                dataHubConfigurationException[0] = exception;
+                dataHubConfigurationException[0] = new DataHubConfigurationException(exception.getMessage());
             }
-        };
-        String directory = payload.get("directory").asText("");
-        // setting the project directory will resolve any relative paths
-        try {
-            Path directoryPath = Paths.get(directory);
-            if (StringUtils.isEmpty(directory)) {
-                throw new BadRequestException("Property 'directory', identifying project location, not specified");
-            } else if (!directoryPath.isAbsolute()) {
-                throw new ProjectDirectoryException("The Project Directory field requires an absolute path. You entered: " + directory, "Enter the absolute path to an existing local directory.");
-            } else if (!directoryPath.toFile().exists()) {
-                throw new ProjectDirectoryException("The specified directory does not exist: " + directory, "Create the directory and specify its absolute path.");
-            }
-            hubConfig.createProject(directory);
-            // Set the AppConfig with a new AppConfig with the new project directory to ensure it doesn't try to use the current directory
-            hubConfig.setAppConfig(new AppConfig(Paths.get(directory).toFile()));
-            hubConfig.initHubProject();
-            hubConfig.refreshProject();
-            dataHubService.install(listener);
-        } catch (Exception e) {
-            listener.onError("Initializing", e);
-        }
+        });
         if (dataHubConfigurationException[0] != null) {
-            Exception exception = dataHubConfigurationException[0];
-            Throwable rootCause = dataHubConfigurationException[0].getCause();
-            if (exception instanceof IOException || rootCause instanceof IOException) {
-                exception = new ProjectDirectoryException("Your user account does not have write permissions to the installation directory.", "Log in as a user with write permissions to the directory you specify, or provide the absolute path to another directory.", exception);
-            }
-            throw exception;
+            throw dataHubConfigurationException[0];
         }
-        environmentService.setProjectDirectory(directory);
         return payload;
-    }
-
-    @RequestMapping(value = "/project-download", produces = "application/zip")
-    public void downloadProject(HttpServletRequest request, HttpServletResponse response) {
-        HubProject project = hubConfig.getHubProject();
-        response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-        response.addHeader("Content-Disposition", "attachment; filename=datahub-project.zip");
-        try (OutputStream out = response.getOutputStream()) {
-            project.exportProject(out);
-            response.flushBuffer();
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to download project;cause: " + e.getMessage());
-        }
     }
 
     @RequestMapping(value = "/reset", method = RequestMethod.POST)
@@ -164,11 +121,5 @@ public class EnvironmentController {
         ObjectNode obj = mapper.createObjectNode();
         obj.put("reset", true);
         return obj;
-    }
-
-    @RequestMapping(value = "/project-info", method = RequestMethod.GET)
-    @ResponseBody
-    public JsonNode getProjectInfo() {
-        return environmentService.getProjectInfo();
     }
 }
