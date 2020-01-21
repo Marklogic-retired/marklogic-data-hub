@@ -11,10 +11,19 @@ describe('Header component', () => {
     const context = {
       user: {
         name: '',
-        authenticated: false
+        authenticated: false,
+        redirect: false,
+        error: jest.fn(),
+        tableView: false
       },
       userAuthenticated: jest.fn(),
-      userNotAuthenticated: jest.fn()
+      userNotAuthenticated: jest.fn(),
+      loginAuthenticated: jest.fn(),
+      sessionAuthenticated: jest.fn(),
+      handleError: jest.fn(),
+      clearErrorMessage: jest.fn(),
+      clearRedirect: jest.fn(),
+      setTableView: jest.fn()
     }
 
     beforeEach(() => {
@@ -29,6 +38,7 @@ describe('Header component', () => {
 
     it('should render correctly', () => {
       expect(wrapper.exists('#title')).toBe(true);
+      expect(wrapper.exists('.anticon-question-circle')).toBe(true);
       expect(wrapper.exists('.anticon-user')).toBe(false);
     });
   });
@@ -38,10 +48,19 @@ describe('Header component', () => {
     const context = {
       user: {
         name: 'admin',
-        authenticated: true
+        authenticated: true,
+        redirect: false,
+        error: jest.fn(),
+        tableView: false
       },
       userAuthenticated: jest.fn(),
-      userNotAuthenticated: jest.fn()
+      userNotAuthenticated: jest.fn(),
+      loginAuthenticated: jest.fn(),
+      sessionAuthenticated: jest.fn(),
+      handleError: jest.fn(),
+      clearErrorMessage: jest.fn(),
+      clearRedirect: jest.fn(),
+      setTableView: jest.fn()
     }
 
     beforeEach(() => {
@@ -56,6 +75,10 @@ describe('Header component', () => {
 
     it('should render correctly', () => {
       expect(wrapper.exists('#title')).toBe(true);
+      expect(wrapper.exists('.tour')).toBe(true);
+      expect(wrapper.exists('.anticon-search')).toBe(true);
+      expect(wrapper.exists('.anticon-question-circle')).toBe(true);
+      expect(wrapper.exists('.anticon-setting')).toBe(true);
       expect(wrapper.exists('.anticon-user')).toBe(true);
     });
   });

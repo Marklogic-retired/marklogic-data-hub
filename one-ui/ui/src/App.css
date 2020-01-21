@@ -5,36 +5,47 @@ body {
 	font-family: 'Helvetica Neue';
 }
 
-.ant-menu .ant-menu-item.ant-menu-item-selected {
-	background-color: #44499C;
-}
-
-.ant-layout-footer {
-    padding: 150px 60px 120px 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    width: 100%;
-    text-align: center;
+/* Ensure footer is pinned to bottom of browser or end of content */
+#root {
+    height: 100%;
     margin: 0;
-  	color: #999;
+}
+main {
+    flex: 1;
+}
+#background {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+.ant-layout-footer {
+    display: flex;
+    justify-content: center;
+    padding: 30px 0;
+    margin: 0;
     background-color: transparent;
 }
 
-.ant-menu .ant-menu-item.ant-menu-item-selected {
-    background-color: transparent;
+/* Handle any excess scroll space below background image */
+.bgColorImage {
+    background-color: #ac4c58;
+}
+.bgColorWhite {
+    background-color: #fff;
 }
 
-.ant-menu-item,
-.ant-dropdown-trigger {
+/* Customize icons in header */
+ul#global-icons.ant-menu .ant-menu-item.ant-menu-item-selected {
+    background-color: transparent;
+}
+ul#global-icons.ant-menu .ant-menu-item,
+ul#global-icons.ant-menu .ant-dropdown-trigger {
     padding: 0 15px;
 }
-
-.ant-menu-item .anticon.anticon-search,
-.ant-menu-item .anticon.anticon-question-circle,
-.ant-menu-item .anticon.anticon-setting,
-.ant-menu-item i.tour,
-.ant-dropdown-trigger .anticon.anticon-user {
+ul#global-icons.ant-menu .ant-menu-item .anticon.anticon-search,
+ul#global-icons.ant-menu .ant-menu-item .anticon.anticon-question-circle,
+ul#global-icons.ant-menu .ant-menu-item .anticon.anticon-setting,
+ul#global-icons.ant-menu .ant-menu-item i.tour,
+ul#global-icons.ant-menu .ant-dropdown-trigger .anticon.anticon-user {
     font-size: 24px;
 }
