@@ -55,9 +55,9 @@ const Header:React.FC<Props> = ({ location }) => {
 
   let globalIcons;
   if (user.authenticated) {
-    globalIcons = 
+    globalIcons =
     <div className={styles.iconsContainerAuth}>
-      <Menu 
+      <Menu
         id="global-icons"
         className={styles.globalIcons}
         mode="horizontal"
@@ -67,7 +67,7 @@ const Header:React.FC<Props> = ({ location }) => {
         <Menu.Item>
           <Tooltip title="Tour"><i className="tour"><FontAwesomeIcon icon={faRoute} /></i></Tooltip>
         </Menu.Item>
-        <div className={styles.vertical}></div> 
+        <div className={styles.vertical}></div>
         <Menu.Item>
           <Tooltip title="Search"><Icon type="search"/></Tooltip>
         </Menu.Item>
@@ -85,9 +85,9 @@ const Header:React.FC<Props> = ({ location }) => {
       </Menu>
     </div>;
   } else {
-    globalIcons = 
+    globalIcons =
     <div className={styles.iconsContainer}>
-      <Menu 
+      <Menu
         id="global-icons"
         className={styles.globalIcons}
         mode="horizontal"
