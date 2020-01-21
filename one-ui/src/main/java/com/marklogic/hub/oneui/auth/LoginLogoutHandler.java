@@ -15,17 +15,10 @@
  */
 package com.marklogic.hub.oneui.auth;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.client.FailedRequestException;
-import com.marklogic.hub.dataservices.RolesService;
-import org.apache.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -33,33 +26,15 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-@Component
 public class LoginLogoutHandler implements AuthenticationSuccessHandler, LogoutSuccessHandler {
-
-    ObjectMapper mapper = new ObjectMapper();
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         ConnectionAuthenticationToken authenticationToken = (ConnectionAuthenticationToken)authentication;
-        ObjectNode resp = mapper.createObjectNode();
-        boolean isInstalled = authenticationToken.stagingIsAccessible();
-        if (authenticationToken.stagingIsAccessible()) {
-            try {
-                RolesService rolesService = RolesService.on(authenticationToken.getHubConfigSession().newStagingClient());
-                resp.putArray("roles").addAll((ArrayNode) rolesService.getRoles());
-            } catch (FailedRequestException e) {
-                // If Roles Data Service isn't installed, the latest Data Hub isn't installed
-                if (e.getServerStatusCode() == HttpStatus.SC_NOT_FOUND) {
-                    isInstalled = false;
-                }
-            }
-        }
-        resp.put("isInstalled", isInstalled);
-        resp.put("hasManagePrivileges", authenticationToken.hasManagePrivileges());
-        resp.put("projectName", (String) request.getSession().getAttribute("projectName"));
+
         clearAuthenticationAttributes(request);
         response.setContentType("application/json");
-        response.getOutputStream().write(mapper.writeValueAsBytes(resp));
+        response.getOutputStream().write(("{\"isInstalled\": " + authenticationToken.stagingIsAccessible() + ", \"hasManagePrivileges\": " + authenticationToken.hasManagePrivileges() + " }").getBytes());
     }
 
     private void clearAuthenticationAttributes(HttpServletRequest request) {

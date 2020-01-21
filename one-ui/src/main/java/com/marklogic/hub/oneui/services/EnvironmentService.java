@@ -15,29 +15,20 @@
  */
 package com.marklogic.hub.oneui.services;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.marklogic.hub.impl.Versions;
 import com.marklogic.hub.oneui.models.EnvironmentInfo;
-import com.marklogic.hub.oneui.models.HubConfigSession;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.prefs.Preferences;
 
 @Service
 public class EnvironmentService {
-
-    @Autowired
-    private HubConfigSession hubConfig;
-
-    @Autowired
-    private Versions versions;
-
-    @Autowired
-    private EnvironmentConfig environmentConfig;
 
     private Preferences prefs = Preferences.userNodeForPackage(EnvironmentService.class);
 
@@ -62,8 +53,6 @@ public class EnvironmentService {
 
     public synchronized void reset() {
         prefs.remove("environment");
-        prefs.remove("projectDirectory");
-        hubConfig.createProject(getProjectDirectory());
     }
 
     public synchronized void setEnvironment(EnvironmentInfo environmentInfo) {
@@ -91,10 +80,5 @@ public class EnvironmentService {
     public void setProjectDirectory(String directory) {
         Path projectDirPath = Paths.get(System.getProperty("user.dir")).resolve(directory);
         prefs.put("projectDirectory", projectDirPath.toAbsolutePath().toString());
-    }
-
-    public JsonNode getProjectInfo() {
-        environmentConfig.setProjectInfo();
-        return environmentConfig.toJson();
     }
 }

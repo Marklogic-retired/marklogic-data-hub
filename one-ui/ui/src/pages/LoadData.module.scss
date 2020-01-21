@@ -1,17 +1,16 @@
 .content {
-    padding: 40px 90px 150px 40px;
+    padding: 40px 50px 150px 40px;
     border: 2px solid rgb(255, 255, 255);
     background-color: rgb(255, 255, 255);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    width: 100%;
+    width: 90%;
     text-align: center;
     margin-top: 100px;
-    margin-left: 40px;
+    margin-left: 100px;
     min-height: 500px;
-   // margin-right: 40px;
     align-items: center;
 }
 
@@ -24,8 +23,8 @@
 }
 
 .cardView {
-    //padding-left: 40px;
-    //padding-right: 40px;
+    padding-left: 75px;
+    padding-right: 70px;
     margin-top: 80px;
     background-color: rgb(255, 255, 255)
 }

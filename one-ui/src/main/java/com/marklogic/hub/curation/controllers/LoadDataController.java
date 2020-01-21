@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.oneui.services.EnvironmentService;
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,8 +31,8 @@ public class LoadDataController extends AbstractArtifactController {
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<ArrayNode> getArtifacts() {
-        ResponseEntity<ArrayNode> resp = super.getArtifacts();
+    public ResponseEntity<JsonNode> getArtifacts() {
+        ResponseEntity<JsonNode> resp = super.getArtifacts();
         ArrayNode arrayNode = (ArrayNode) resp.getBody();
         for (Iterator<JsonNode> it = arrayNode.elements(); it.hasNext();) {
             ObjectNode loadConfig = (ObjectNode) it.next();
@@ -44,7 +43,7 @@ public class LoadDataController extends AbstractArtifactController {
 
     @RequestMapping(value = "/{artifactName}", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<ObjectNode> updateArtifact(@PathVariable String artifactName, @RequestBody ObjectNode loadDataJson) throws IOException {
+    public ResponseEntity<JsonNode> updateArtifact(@PathVariable String artifactName, @RequestBody ObjectNode loadDataJson) {
         // scrub dynamic properties
         loadDataJson.remove("fileCount");
         loadDataJson.remove("filesNeedReuploaded");
@@ -53,54 +52,41 @@ public class LoadDataController extends AbstractArtifactController {
 
     @RequestMapping(value = "/{artifactName}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<ObjectNode> getArtifact(@PathVariable String artifactName) {
-        ResponseEntity<ObjectNode> resp = super.getArtifact(artifactName);
+    public ResponseEntity<JsonNode> getArtifact(@PathVariable String artifactName) {
+        ResponseEntity<JsonNode> resp = super.getArtifact(artifactName);
         enrichLoadData((ObjectNode) Objects.requireNonNull(resp.getBody()));
         return resp;
     }
 
     @RequestMapping(value = "/{artifactName}", method = RequestMethod.DELETE)
-    public void deleteArtifact(@PathVariable String artifactName) throws IOException {
-        super.deleteArtifact(artifactName);
-        deleteDataSetDirectory(artifactName);
+    @ResponseBody
+    public ResponseEntity<JsonNode> deleteLoadDataConfig(@PathVariable String artifactName) {
+        return super.deleteArtifact(artifactName);
     }
 
     @RequestMapping(value = "/{artifactName}/validate", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<ObjectNode> validateArtifact(@PathVariable String artifactName, @RequestBody JsonNode loadDataJson) {
+    public ResponseEntity<JsonNode> validateArtifact(@PathVariable String artifactName, @RequestBody JsonNode loadDataJson) {
         return super.validateArtifact(artifactName, loadDataJson);
     }
 
     @RequestMapping(value = "/{artifactName}/setData", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<ObjectNode> setData(@PathVariable String artifactName, @RequestParam("files") MultipartFile[] uploadedFiles) {
+    public ResponseEntity<JsonNode> setData(@PathVariable String artifactName, @RequestParam("files") MultipartFile[] uploadedFiles) throws IOException {
         ObjectNode loadDataJson = (ObjectNode) super.getArtifact(artifactName).getBody();
         Path dataSetDirectoryPath = Paths.get(environmentService.getProjectDirectory(), "data-sets", artifactName);
         assert loadDataJson != null;
         loadDataJson.put("inputFilePath", dataSetDirectoryPath.toString());
         File dataSetDirectory = dataSetDirectoryPath.toFile();
-        try {
-            if (dataSetDirectory.exists()) {
-                FileUtils.deleteDirectory(dataSetDirectoryPath.toFile());
-            }
-            dataSetDirectory.mkdirs();
-            for (MultipartFile file : uploadedFiles) {
-                Path newFilePath = Paths.get(dataSetDirectoryPath.toString(), file.getOriginalFilename());
-                file.transferTo(newFilePath);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (dataSetDirectory.exists()) {
+            dataSetDirectory.delete();
+        }
+        dataSetDirectory.mkdirs();
+        for (MultipartFile file:uploadedFiles) {
+            Path newFilePath = Paths.get(dataSetDirectoryPath.toString(), file.getOriginalFilename());
+            file.transferTo(newFilePath);
         }
         super.updateArtifact(artifactName, loadDataJson);
-        enrichLoadData(loadDataJson);
-        return new ResponseEntity<>(loadDataJson, HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/{artifactName}/setData", method = RequestMethod.DELETE)
-    public ResponseEntity<ObjectNode> deleteData(@PathVariable String artifactName) {
-        ObjectNode loadDataJson = (ObjectNode) super.getArtifact(artifactName).getBody();
-        assert loadDataJson != null;
-        deleteDataSetDirectory(artifactName);
         enrichLoadData(loadDataJson);
         return new ResponseEntity<>(loadDataJson, HttpStatus.OK);
     }
@@ -109,19 +95,7 @@ public class LoadDataController extends AbstractArtifactController {
         return "loadData";
     }
 
-    @RequestMapping(value = "/{artifactName}/settings", method = RequestMethod.GET)
-    @ResponseBody
-    public ResponseEntity<ObjectNode> getArtifactSettings(@PathVariable String artifactName) {
-        return super.getArtifactSettings(artifactName);
-    }
-
-    @RequestMapping(value = "/{artifactName}/settings", method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseEntity<ObjectNode> updateArtifactSettings(@PathVariable String artifactName, @RequestBody ObjectNode settings) {
-        return super.updateArtifactSettings(artifactName, settings);
-    }
-
-    protected void enrichLoadData(ObjectNode loadDataConfig) {
+    private void enrichLoadData(ObjectNode loadDataConfig) {
         int fileCount = 0;
         if (loadDataConfig.hasNonNull("inputFilePath")) {
             String inputFilePath = loadDataConfig.get("inputFilePath").asText();
@@ -132,20 +106,5 @@ public class LoadDataController extends AbstractArtifactController {
         }
         loadDataConfig.put("fileCount", fileCount);
         loadDataConfig.put("filesNeedReuploaded", fileCount == 0);
-    }
-
-    private void deleteDataSetDirectory(String artifactName) {
-        Path dataSetDirectoryPath = dataSetDirectory(artifactName);
-        if (dataSetDirectoryPath.toFile().exists()) {
-            try {
-                FileUtils.deleteDirectory(dataSetDirectoryPath.toFile());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
-    protected Path dataSetDirectory(String artifactName) {
-        return Paths.get(environmentService.getProjectDirectory(), "data-sets", artifactName);
     }
 }

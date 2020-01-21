@@ -14,12 +14,8 @@ targetCompatibility = "9"
 
 apply plugin: "java"
 apply plugin: "org.springframework.boot"
-apply plugin: 'maven-publish'
 apply plugin: "io.spring.dependency-management"
-apply plugin: 'war'
 apply plugin: "com.moowork.node"
-
-mainClassName = "com.marklogic.hub.oneui.Application"
 
 ext {
 	taskGroup = "Spring Boot UI"

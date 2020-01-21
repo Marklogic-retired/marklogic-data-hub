@@ -1,55 +1,40 @@
-/*@import '../node_modules/antd/dist/antd.css';*/
+@import '../node_modules/antd/dist/antd.css';
 @import '../node_modules/marklogic-ui-library/dist/styles.min.css';
 
 body {
 	font-family: 'Helvetica Neue';
 }
 
-.ant-layout-header {
-    background-color: #031529;
+.ant-menu .ant-menu-item.ant-menu-item-selected {
+	background-color: #44499C;
 }
 
-/* Ensure footer is pinned to bottom of browser or end of content */
-#root {
-    height: 100%;
-    margin: 0;
-}
-main {
-    flex: 1;
-}
-#background {
-    display: flex;
-    flex-direction: column;
-    min-height: 100%;
-}
 .ant-layout-footer {
+    padding: 150px 60px 120px 30px;
     display: flex;
+    align-items: center;
     justify-content: center;
-    padding: 30px 0;
+    flex-direction: column;
+    width: 100%;
+    text-align: center;
     margin: 0;
+  	color: #999;
     background-color: transparent;
 }
 
-/* Handle any excess scroll space below background image */
-.bgColorImage {
-    background-color: #ac4c58;
-}
-.bgColorWhite {
-    background-color: #fff;
-}
-
-/* Customize icons in header */
-ul#global-icons.ant-menu .ant-menu-item.ant-menu-item-selected {
+.ant-menu .ant-menu-item.ant-menu-item-selected {
     background-color: transparent;
 }
-ul#global-icons.ant-menu .ant-menu-item,
-ul#global-icons.ant-menu .ant-dropdown-trigger {
+
+.ant-menu-item,
+.ant-dropdown-trigger {
     padding: 0 15px;
 }
-ul#global-icons.ant-menu .ant-menu-item .anticon.anticon-search,
-ul#global-icons.ant-menu .ant-menu-item .anticon.anticon-question-circle,
-ul#global-icons.ant-menu .ant-menu-item .anticon.anticon-setting,
-ul#global-icons.ant-menu .ant-menu-item i.tour,
-ul#global-icons.ant-menu .ant-dropdown-trigger .anticon.anticon-user {
+
+.ant-menu-item .anticon.anticon-search,
+.ant-menu-item .anticon.anticon-question-circle,
+.ant-menu-item .anticon.anticon-setting,
+.ant-menu-item i.tour,
+.ant-dropdown-trigger .anticon.anticon-user {
     font-size: 24px;
 }

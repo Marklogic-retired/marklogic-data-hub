@@ -1,5 +1,5 @@
 import { Modal, Form, Input, Button, Tooltip, Icon, Progress, Upload, Select } from "antd";
-import React, { useState, useEffect, CSSProperties } from "react";
+import React, { useState, useEffect } from "react";
 import styles from './new-data-load-dialog.module.scss';
 import { srcOptions, tgtOptions, fieldSeparatorOptions } from '../../../config/formats.config';
 import {NewLoadTooltips} from '../../../config/tooltips.config';
@@ -9,31 +9,22 @@ const NewDataLoadDialog = (props) => {
 
   const [stepName, setStepName] = useState('');
   const [description, setDescription] = useState(props.stepData && props.stepData != {} ? props.stepData.description : '');
-  const [inputFilePath, setInputFilePath] = useState(props.stepData && props.stepData.inputFilePath ? props.stepData.inputFilePath : '');
   const [srcFormat, setSrcFormat] = useState(props.stepData && props.stepData != {} ? props.stepData.sourceFormat : 'json');
   const [tgtFormat, setTgtFormat] = useState(props.stepData && props.stepData != {} ? props.stepData.targetFormat : 'json');
   const [outUriReplacement, setOutUriReplacement] = useState(props.stepData && props.stepData != {} ? props.stepData.outputURIReplacement : '');
   const [fieldSeparator, setFieldSeparator] = useState(props.stepData && props.stepData != {} ? props.stepData.fieldSeparator : ',');
   const [otherSeparator, setOtherSeparator] = useState('');
   
-
-  
   const [isStepNameTouched, setStepNameTouched] = useState(false);
   const [isSrcFormatTouched, setSrcFormatTouched] = useState(false);
   const [isTgtFormatTouched, setTgtFormatTouched] = useState(false);
   const [isFieldSeparatorTouched, setFieldSeparatorTouched] = useState(false);
   const [isOtherSeparatorTouched, setOtherSeparatorTouched] = useState(false);
-  const [isValid, setIsValid] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [fileList, setFileList] = useState<any>([]);
   const [previewURI, setPreviewURI] = useState('');
   const [uploadPercent, setUploadPercent] = useState();
-  const [toDelete, setToDelete] = useState(false);
-  const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
-  const [tobeDisabled, setTobeDisabled] = useState(false);
-  const [displayUploadError, setDisplayUploadError] = useState(false);
 
-  //tooltip text for the upload button help icon
-  const uploadButtonTooltip = <p>Click <b>Upload</b> to select the source files. The total size of the files must be 100MB or less.</p>
 
   useEffect(() => {
     if (props.stepData && JSON.stringify(props.stepData) != JSON.stringify({}) && props.title === 'Edit Data Load') {
@@ -48,212 +39,73 @@ const NewDataLoadDialog = (props) => {
           setOtherSeparator(props.stepData.separator);
         }
       }
-
+      
       setTgtFormat(props.stepData.targetFormat);
       setOutUriReplacement(props.stepData.outputURIReplacement);
-      buildURIPreview(props.stepData);
+      buildURIPreview();
       setFileList([]);
-      setIsValid(true);
-      setTobeDisabled(true);
+      setIsLoading(true);
     } else {
       setStepName('');
       setStepNameTouched(false);
       setDescription('');
-      setSrcFormat('json');
+      setSrcFormat('JSON');
       setFieldSeparator(',');
       setOtherSeparator('');
-      setTgtFormat('json');
+      setTgtFormat('JSON');
       setOutUriReplacement('');
       setUploadPercent(0);
       setFileList([]);
-      setPreviewURI('');
-      setIsValid(false);
     }
 
     return (() => {
-
       setStepName('');
       setStepNameTouched(false);
       setDescription('');
-      setSrcFormat('json');
+      setSrcFormat('JSON');
       setFieldSeparator(',');
       setOtherSeparator('');
-      setTgtFormat('json');
+      setTgtFormat('JSON');
       setOutUriReplacement('');
       setUploadPercent(0);
       setFileList([]);
-      setPreviewURI('');
-      setInputFilePath('');
-      setTobeDisabled(false);
-      setDisplayUploadError(false);
     })
 
-  }, [props.stepData, props.title, props.newLoad]);
+  }, [props.stepData, props.title]);
 
   const onCancel = () => {
-
-    if(checkDeleteOpenEligibility()) {
-      setDeleteDialogVisible(true);
-    } else {
-      props.setNewLoad(false);
-    setFileList([]);
-    setUploadPercent(0);
-    }
-  }
-
-  const checkDeleteOpenEligibility = () => {
-    if (props.stepData && JSON.stringify(props.stepData) != JSON.stringify({}) && props.title === 'Edit Data Load'){
-      
-      if(stepName === props.stepData.name
-      && description === props.stepData.description
-      && srcFormat === props.stepData.sourceFormat
-      && tgtFormat === props.stepData.targetFormat
-      && outUriReplacement === props.stepData.outputURIReplacement
-      ) {
-        
-        if((props.stepData.separator && fieldSeparator === 'Other' && otherSeparator === props.stepData.separator) || 
-           (props.stepData.separator && fieldSeparator !== 'Other' && fieldSeparator === props.stepData.separator) ||
-           (!props.stepData.separator && fieldSeparator === ',' && otherSeparator === '')
-           ) {
-             if((props.stepData.inputFilePath && inputFilePath !== props.stepData.inputFilePath) ||
-                (inputFilePath === '')){
-                  
-              return false;
-             } else {
-              return true;
-             }
-            
-        } else {
-          return true;
-         }
-      } else {
-        return true
-      }
-    } else {
-      if(stepName === ''
-        && description === ''
-        && srcFormat === 'json'
-        && tgtFormat === 'json'
-        && outUriReplacement === ''
-        ) {
-          if(fieldSeparator === ',' && otherSeparator === '')
-              {
-               if(inputFilePath === '' || (props.stepData && props.stepData.inputFilePath && inputFilePath !== props.stepData.inputFilePath)){
-                return false;
-               } else {
-                return true;
-               }
-          } else {
-            return true;
-           }
-        } else {
-          return true;
-      }
-    }
+    props.setNewLoad(false);
   }
 
   const onOk = () => {
     props.setNewLoad(false);
-    setToDelete(false);
   }
-
-  const onDelOk = () => {
-    props.setNewLoad(false);
-    setFileList([]);
-    setUploadPercent(0);
-    if(toDelete){
-      deleteUnusedLoadArtifact(stepName);
-      deleteFilesFromDirectory(stepName);
-      setToDelete(false);
-    }
-    setDeleteDialogVisible(false)
-  }
-
-  const onDelCancel = () => {
-    setDeleteDialogVisible(false)
-  }
-
-  const deleteConfirmation = <Modal
-        visible={deleteDialogVisible}
-        bodyStyle={{textAlign: 'center'}}
-        width={250}
-        maskClosable={false}
-        closable={false}
-        footer={null}
-    >
-        <span className={styles.ConfirmationMessage}>Discard changes?</span>
-        <br/><br/>
-        <div >
-            <Button onClick={() => onDelCancel()}>No</Button>
-            &nbsp;&nbsp;
-            <Button type="primary" htmlType="submit" onClick={onDelOk}>Yes</Button>
-          </div>
-    </Modal>;
 
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
     if (event) event.preventDefault();
-
-    let dataPayload;
-    if(inputFilePath === ''){
-      if(props.stepData.inputFilePath){
-        dataPayload = {
-          name: stepName,
-          description: description,
-          sourceFormat: srcFormat,
-          separator: fieldSeparator === 'Other'? otherSeparator : fieldSeparator,
-          targetFormat: tgtFormat,
-          outputURIReplacement: outUriReplacement,
-          inputFilePath: props.stepData.inputFilePath
-        }
-      } else {
-        if(srcFormat === 'Delimited Text'){
-          dataPayload = {
-           name: stepName,
-           description: description,
-           sourceFormat: srcFormat,
-           separator: fieldSeparator === 'Other'? otherSeparator : fieldSeparator,
-           targetFormat: tgtFormat,
-           outputURIReplacement: outUriReplacement
-         }
-       } else {
-          dataPayload = {
-           name: stepName,
-           description: description,
-           sourceFormat: srcFormat,
-           targetFormat: tgtFormat,
-           outputURIReplacement: outUriReplacement
-         }
-       }
-      }
-      
-    } else {
-      if(srcFormat === 'Delimited Text'){
-        dataPayload = {
-         name: stepName,
-         description: description,
-         sourceFormat: srcFormat,
-         separator: fieldSeparator === 'Other'? otherSeparator : fieldSeparator,
-         targetFormat: tgtFormat,
-         outputURIReplacement: outUriReplacement,
-         inputFilePath: inputFilePath
-       }
-     } else {
-        dataPayload = {
-         name: stepName,
-         description: description,
-         sourceFormat: srcFormat,
-         targetFormat: tgtFormat,
-         outputURIReplacement: outUriReplacement,
-         inputFilePath: inputFilePath
-       }
-     }
-
-    }
     
-    setIsValid(true);
+    let dataPayload;
+    if(srcFormat === 'Delimited Text'){
+       dataPayload = {
+        name: stepName,
+        description: description,
+        sourceFormat: srcFormat,
+        separator: fieldSeparator === 'Other'? otherSeparator : fieldSeparator,
+        targetFormat: tgtFormat,
+        outputURIReplacement: outUriReplacement
+      }
+    } else {
+       dataPayload = {
+        name: stepName,
+        description: description,
+        sourceFormat: srcFormat,
+        targetFormat: tgtFormat,
+        outputURIReplacement: outUriReplacement
+      }
+    }
+    setIsLoading(true);
 
     //Call create data load artifact API function
- 
     props.createLoadDataArtifact(dataPayload);
 
     props.setNewLoad(false);
@@ -261,26 +113,14 @@ const NewDataLoadDialog = (props) => {
 
   const handleChange = (event) => {
     if (event.target.id === 'name') {
+      console.log('isStepNameTouched',isStepNameTouched,event.target.value.length)
+      
       if (event.target.value === ' ') {
         setStepNameTouched(false);
       }
       else {
         setStepNameTouched(true);
         setStepName(event.target.value);
-        let dataPayload = {
-          name: event.target.value,
-          description: description,
-          sourceFormat: srcFormat,
-          targetFormat: tgtFormat,
-          outputURIReplacement: outUriReplacement
-        };
-        buildURIPreview(dataPayload);
-
-        if (event.target.value.length == 0) {
-          setIsValid(false);
-        } else if (srcFormat && tgtFormat) {
-          setIsValid(true);
-        }
       }
     }
 
@@ -288,20 +128,17 @@ const NewDataLoadDialog = (props) => {
       setDescription(event.target.value)
     }
 
-  }
-
-  const handleOutURIReplacement = (event) => {
     if (event.target.id === 'outputUriReplacement') {
-      setOutUriReplacement(event.target.value);
-      let dataPayload = {
-        name: stepName,
-        description: description,
-        sourceFormat: srcFormat,
-        targetFormat: tgtFormat,
-        outputURIReplacement: event.target.value
-      };
-
-      buildURIPreview(dataPayload);
+      setOutUriReplacement(event.target.value)
+    }
+    if(srcFormat && tgtFormat && (event.target.id === 'name' && event.target.value.length > 0)) {
+      setIsLoading(true);
+    }
+    if(event.target.id === 'name' && event.target.value.length == 0){
+      setIsLoading(false);
+    }
+    if(stepName && srcFormat && tgtFormat && outUriReplacement) {
+      buildURIPreview();
     }
   }
 
@@ -317,22 +154,13 @@ const NewDataLoadDialog = (props) => {
       if(value === 'Delimited Text'){
         setFieldSeparator(',');
       }
-      let dataPayload = {
-        name: stepName,
-        description: description,
-        sourceFormat: value,
-        targetFormat: tgtFormat,
-        outputURIReplacement: outUriReplacement
-      }
-
-      buildURIPreview(dataPayload);
     }
   }
 
   const handleFieldSeparator = (value) => {
     if (value === ' ') {
       setFieldSeparatorTouched(false);
-    }
+    } 
     else {
       setFieldSeparatorTouched(true);
       setFieldSeparator(value);
@@ -361,132 +189,52 @@ const NewDataLoadDialog = (props) => {
     else {
       setTgtFormatTouched(true);
       setTgtFormat(value);
-
-      let dataPayload = {
-        name: stepName,
-        description: description,
-        sourceFormat: srcFormat,
-        targetFormat: value,
-        outputURIReplacement: outUriReplacement
-      }
-
-      buildURIPreview(dataPayload);
     }
   }
 
-  const deleteFilesFromDirectory = async (loadDataName) => {
-    try {
-      let response = await Axios.delete(`/api/artifacts/loadData/${loadDataName}/setData`);
-      
-      if (response.status === 200) {
-        console.log('DELETE API Called successfully!');
-      } 
-    } catch (error) {
-        let message = error.response.data.message;
-        console.log('Error while deleting load data artifact.', message);
-    }
-
+  const handleUpload = (info) => {
+    const url = `/api/artifacts/loadData/${stepName}/setData`;
+    const formData = new FormData();
+    fileList.forEach(file => {
+      formData.append('files[]', file);
+    });
   }
 
-  const deleteUnusedLoadArtifact = async (loadDataName) => {
-
-    try {
-      let response = await Axios.delete(`/api/artifacts/loadData/${loadDataName}`);
-      
-      if (response.status === 200) {
-        console.log('DELETE API Called successfully!');
-      } 
-    } catch (error) {
-        let message = error.response.data.message;
-        console.log('Error while deleting load data artifact.', message);
-    }
-  }
-  const createDefaultLoadDataArtifact = async (dataPayload) => {
-    try {
-      let response = await Axios.post(`/api/artifacts/loadData/${stepName}`, dataPayload);
-      if (response.status === 200) {
-        console.log('Create default LoadDataArtifact API Called successfully!')
-      }
-    }
-    catch (error) {
-      let message = error.response.data.message;
-      console.log('Error While creating the default Load Data artifact!', message)
-    }
-  }
-  const customRequest = async option => {
+  const customRequest = option => {
     const { onSuccess, onError, file, action, onProgress } = option;
-
-   try {
-    let response = await Axios.get(`/api/artifacts/loadData/${stepName}`);
-
-    if (response.status === 200) {
-      console.log('GET API Called in custom request!');
-    } 
-  } catch (error) {
-      let errorCode = error.response.data.code;
-      let message = error.response.data.message;
-      console.log('Error while fetching load data artifacts from custom request', message);
-
-      if(errorCode === 404){
-        setToDelete(true);
-        let dataPayload = {
-          name: stepName,
-          description: description,
-          sourceFormat: srcFormat,
-          targetFormat: tgtFormat,
-          outputURIReplacement: outUriReplacement
-        }
-        await createDefaultLoadDataArtifact(dataPayload);
-      }
-  }
-
+    const url = `/api/artifacts/loadData/${stepName}/setData`;
+  
+  
     let fl  = fileList;
     const formData = new FormData();
 
     fl.forEach(file => {
       formData.append('files', file);
-    });
+    }); 
 
+    console.log('fd',fl)
 
-    //API call for
-
-      const url = `/api/artifacts/loadData/${stepName}/setData`;
-
-      await Axios({
-        method: 'post',
-        url: url,
-        data: formData,
+    //API call for 
+    Axios.post(url, formData, {
         onUploadProgress: e => {
           onProgress({ percent: (e.loaded / e.total) * 100 });
-          let percent=(e.loaded / e.total) * 100;
-          percent = Math.round( percent * 100 + Number.EPSILON ) / 100;
+          let percent=(e.loaded / e.total) * 100
           setUploadPercent(percent);
         },
         headers: {
-          'Content-Type': 'multipart/form-data; boundary=${formData._boundary}',
-          crossorigin:true
-        }
-      }).then(resp => {
-        console.log('responses.status',resp);
-        if (resp.data && resp.data.message){
-          if(resp.data.message.startsWith('Maximum upload size exceeded') || resp.data.message.includes('Network Error')){
-            setDisplayUploadError(true);
-          }
-        }
-        if(resp.data && resp.data.inputFilePath){
-          setInputFilePath(resp.data.inputFilePath);
-        }
-        if(stepName && srcFormat && tgtFormat && resp.data.inputFilePath) {
-          buildURIPreview(resp.data);
-        }
-      }).catch(err => {
-        console.log('Error while uploading the files', err)
-      if (err.message && (err.message.startsWith('Maximum upload size exceeded') || err.message.includes('Network Error') || err.message.includes('Request failed with status code 500'))){
-        setDisplayUploadError(true);
-      }
-      /*......*/
-      onError(err);
+          'Content-Type': 'multipart/form-data; boundary=${fd._boundary}'
+        },
+      })
+      .then(respones => {
+        /*......*/
+        console.log('response',respones)
+        onSuccess(respones.status);
+      })
+      .catch(err => {
+        /*......*/
+        onError(err);
       });
+
 
   };
 
@@ -513,7 +261,7 @@ const NewDataLoadDialog = (props) => {
       sm: { span: 7 },
     },
     wrapperCol: {
-      xs: { span: 28 },
+      xs: { span: 24 },
       sm: { span: 15 },
     },
   };
@@ -522,16 +270,12 @@ const NewDataLoadDialog = (props) => {
   const fsoptions = Object.keys(fieldSeparatorOptions).map(d => <Select.Option key={fieldSeparatorOptions[d]}>{d}</Select.Option>);
   const toptions = Object.keys(tgtOptions).map(d => <Select.Option key={tgtOptions[d]}>{d}</Select.Option>);
 
-  const uploadButton: CSSProperties = displayUploadError ? {
-    border: '1px solid #DB4f59'
-  } : {}
-
-  const buildURIPreview = (stepData) => {
+  const buildURIPreview = () => {
     let uri;
-    let input_file_type = stepData.sourceFormat;
-    let document_type = stepData.targetFormat.toLowerCase();
-    let output_uri_replace = stepData.outputURIReplacement;
-    let loadDataName = stepData.name;
+    let input_file_path = props.stepData.inputFilePath;
+    let input_file_type = srcFormat;
+    let document_type = tgtFormat.toLowerCase();
+    let output_uri_replace = outUriReplacement;
     var formatMap = new Map();
 
     formatMap.set("xml", ".xml");
@@ -539,9 +283,15 @@ const NewDataLoadDialog = (props) => {
     formatMap.set("text", ".txt");
     formatMap.set("binary", ".pdf");
 
-    uri = "/" + loadDataName;
+    if(navigator.appVersion.indexOf('Win') !== -1){
+      uri = "/" + input_file_path.replace(":", "").replace(/\\/g,"/");
+      
+    }
+    else {
+      uri = input_file_path;
+    }
 
-    if(input_file_type !== "Delimited Text") {
+    if(input_file_type !== "csv") {
       uri = uri + "/example" + formatMap.get(document_type);
     }
 
@@ -549,15 +299,13 @@ const NewDataLoadDialog = (props) => {
       let replace = output_uri_replace.split(",");
       if (replace.length % 2 !== 0) {
         uri = "Error: Missing one (or more) replacement strings";
-        setPreviewURI(uri);
         return;
       }
       for (var i = 0; i < replace.length - 1; i++) {
         let replacement = replace[++i].trim();
         if (!replacement.startsWith("'") ||
-            !replacement.endsWith("'") || replacement.split("'").length % 2 === 0) {
+            !replacement.endsWith("'")) {
           uri = "Error: The replacement string must be enclosed in single quotes";
-          setPreviewURI(uri);
           return;
         }
       }
@@ -569,16 +317,14 @@ const NewDataLoadDialog = (props) => {
         }
         catch(ex) {
           uri = ex;
-          setPreviewURI(uri);
           return;
         }
       }
     }
-
-    if(input_file_type.toLowerCase() === "delimited text") {
-      uri = uri + "/" + uuid() + formatMap.get(document_type);
+    if(input_file_type.toLowerCase() === "csv") {
+      uri = uri + "/" + uuid + formatMap.get(document_type);
     }
-
+    uri = uri;
     setPreviewURI(uri);
   }
 
@@ -595,82 +341,72 @@ const NewDataLoadDialog = (props) => {
     return uuid;
   }
 
-  const resetUploadError = () => {
-    if(displayUploadError) {
-      setDisplayUploadError(false);
-      setUploadPercent(0);
-      setFileList([]);
-    }
-  }
-
   return (<Modal visible={props.newLoad}
     title={null}
-    width="55em"
+    width="700px"
     onCancel={() => onCancel()}
     onOk={() => onOk()}
     okText="Save"
     className={styles.modal}
-    footer={null}
-    maskClosable={false}>
+    footer={null}>
 
     <p className={styles.title}>{props.title}</p>
-    <br/>
+    <br />
     <div className={styles.newDataLoadForm}>
       <Form {...formItemLayout} onSubmit={handleSubmit} colon={false}>
         <Form.Item label={<span>
           Name:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
-              
+              <Tooltip title={NewLoadTooltips.name}>
+            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+          </Tooltip>
           &nbsp;
             </span>} labelAlign="left"
           validateStatus={(stepName || !isStepNameTouched) ? '' : 'error'}
-          help={(stepName || !isStepNameTouched) ? '' : 'Name is required'}
-          >
+          help={(stepName || !isStepNameTouched) ? '' : 'Name is required'}>
           <Input
             id="name"
             placeholder="Enter name"
             value={stepName}
             onChange={handleChange}
-            disabled={tobeDisabled}
-           className={styles.input}
-          />&nbsp;&nbsp;<Tooltip title={NewLoadTooltips.name}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
+          />
         </Form.Item>
         <Form.Item label={<span>
           Description:&nbsp;
+              <Tooltip title={NewLoadTooltips.description}>
+            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+          </Tooltip>
+          &nbsp;
             </span>} labelAlign="left">
           <Input
             id="description"
             placeholder="Enter description"
             value={description}
             onChange={handleChange}
-            disabled={props.canReadOnly && !props.canReadWrite}
-            className={styles.input}
-          />&nbsp;&nbsp;<Tooltip title={NewLoadTooltips.description}>
-          <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-        </Tooltip>
+          />
         </Form.Item>
         <Form.Item label={<span>
           Files:&nbsp;
+              <Tooltip title={NewLoadTooltips.files}>
+            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+          </Tooltip>
+          &nbsp;
             </span>} labelAlign="left">
-          <span className={styles.upload}><Upload
+          <span className={styles.upload}><Upload  
           {...uploadProps}
-          multiple={true}
-          disabled={!props.canReadWrite}
-          customRequest={customRequest}
-          //onChange={handleUpload}
+          multiple={true} 
+          customRequest={customRequest} 
+          //onChange={handleUpload} 
           >
-            <Button disabled={!props.canReadWrite} onClick={resetUploadError} style={uploadButton}>Upload</Button>
-          </Upload>&nbsp;&nbsp;<Tooltip title={uploadButtonTooltip}>
-          <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-        </Tooltip>&nbsp;&nbsp;
-                {props.canReadWrite && !displayUploadError ? (uploadPercent > 0 && uploadPercent < 100 ? <Progress type="circle" percent={uploadPercent} width={50} /> : '') : ''}
-                {props.canReadWrite && !displayUploadError ? (uploadPercent === 100 ? <span>{fileList.length} files uploaded</span> : '') : ''}
-                </span>
-                {displayUploadError ? <div className={styles.fileUploadErrorContainer}> The upload was unsuccessful. </div> : ''}
+            <Button>Upload</Button>
+          </Upload>&nbsp;&nbsp;
+                {uploadPercent != 100 ? <Progress type="circle" percent={uploadPercent} width={50} /> : <span>{fileList.length} files uploaded</span>}</span>
         </Form.Item>
         <Form.Item label={<span>
           Source Format:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
+              <Tooltip title={NewLoadTooltips.sourceFormat}>
+            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+          </Tooltip>
+          &nbsp;
             </span>} labelAlign="left">
           <Select
             id="sourceFormat"
@@ -679,17 +415,16 @@ const NewDataLoadDialog = (props) => {
             optionFilterProp="children"
             value={srcFormat}
             onChange={handleSrcFormat}
-            disabled={props.canReadOnly && !props.canReadWrite}
-            style={{width: '95%'}}
           >
             {soptions}
           </Select>
-          &nbsp;&nbsp;<Tooltip title={NewLoadTooltips.sourceFormat}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
         </Form.Item>
          {srcFormat === 'Delimited Text' ? <Form.Item label={<span>
           Field Separator:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
+              <Tooltip title={NewLoadTooltips.fieldSeparator}>
+            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+          </Tooltip>
+          &nbsp;
             </span>} labelAlign="left">
           <span><Select
             id="fieldSeparator"
@@ -699,77 +434,67 @@ const NewDataLoadDialog = (props) => {
             value={fieldSeparator}
             onChange={handleFieldSeparator}
             style={{width: 120}}
-            disabled={props.canReadOnly && !props.canReadWrite}
           >
             {fsoptions}
           </Select></span>
-          &nbsp;&nbsp; 
-          <span>{fieldSeparator === 'Other' ? <span><Input
+          &nbsp;&nbsp;
+          <span>{fieldSeparator === 'Other' ? <Input
             id="otherSeparator"
             value={otherSeparator}
             onChange={handleOtherSeparator}
             style={{width: 75}}
-            disabled={props.canReadOnly && !props.canReadWrite}
-          />&nbsp;&nbsp;<Tooltip title={NewLoadTooltips.fieldSeparator}>
-          <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-        </Tooltip></span> : <span>&nbsp;&nbsp;<Tooltip title={NewLoadTooltips.fieldSeparator}>
-          <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-        </Tooltip></span>}</span>
+          /> : ''}</span>
         </Form.Item> : ''}
         <Form.Item label={<span>
           Target Format:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
+              <Tooltip title={NewLoadTooltips.targetFormat}>
+            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+          </Tooltip>
+          &nbsp;
             </span>} labelAlign="left">
           <Select
             id="targetFormat"
             placeholder="Enter target format"
             value={tgtFormat}
-            onChange={handleTgtFormat}
-            disabled={props.canReadOnly && !props.canReadWrite}
-            style={{width: '95%'}}>
+            onChange={handleTgtFormat}>
             {toptions}
-          </Select>&nbsp;&nbsp;
-              <Tooltip title={NewLoadTooltips.targetFormat}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
+          </Select>
         </Form.Item>
         <Form.Item label={<span>
           Output URI Replacement:&nbsp;
+              <Tooltip title={NewLoadTooltips.outputURIReplacement}>
+            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+          </Tooltip>
+          &nbsp;
             </span>} labelAlign="left">
           <Input
             id="outputUriReplacement"
             placeholder="Enter comma-separated list of replacements"
             value={outUriReplacement}
-            onChange={handleOutURIReplacement}
-            disabled={props.canReadOnly && !props.canReadWrite}
-            className={styles.input}
-          />&nbsp;&nbsp;
-          <Tooltip title={NewLoadTooltips.outputURIReplacement}>
-        <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-      </Tooltip>
+            onChange={handleChange}
+          />
         </Form.Item>
         <Form.Item label={<span>
           Target URI Preview:&nbsp;
-              
-          <span className={styles.readOnlyLabel}>(Read-only)</span>
-          <br className={styles.lineBreak} />
-        </span>} labelAlign="left">
-          <span>{previewURI}</span>&nbsp;&nbsp;
-          <Tooltip title={NewLoadTooltips.targetURIPreview}>
+              <Tooltip title={NewLoadTooltips.targetURIPreview}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </Tooltip>
+          <span className={styles.readOnlyLabel}>(Read-only)</span>
+          <br style={{ lineHeight: '1px', width: '0px', marginBottom: '-20px' }} />
+        </span>} labelAlign="left">
+          <p>{previewURI}</p>
+
         </Form.Item>
         <Form.Item className={styles.submitButtonsForm}>
           <div className={styles.submitButtons}>
             <Button onClick={() => onCancel()}>Cancel</Button>
             &nbsp;&nbsp;
-            <Button type="primary" htmlType="submit" disabled={!isValid || !props.canReadWrite} onClick={handleSubmit}>Save</Button>
+            <Button type="primary" htmlType="submit" disabled={!isLoading} onClick={handleSubmit}>Save</Button>
           </div>
         </Form.Item>
       </Form>
     </div>
-    {deleteConfirmation}
   </Modal>)
 }
 
 export default NewDataLoadDialog;
-

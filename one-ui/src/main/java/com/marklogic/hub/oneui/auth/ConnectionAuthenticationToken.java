@@ -15,7 +15,6 @@
  */
 package com.marklogic.hub.oneui.auth;
 
-import com.marklogic.hub.oneui.models.HubConfigSession;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.SpringSecurityCoreVersion;
@@ -45,7 +44,6 @@ public class ConnectionAuthenticationToken extends AbstractAuthenticationToken {
     private boolean stagingIsAccessible = false;
     private Object credentials;
     private Object hostname;
-    private HubConfigSession hubConfigSession;
 
     // ~ Constructors
     // ===================================================================================================
@@ -74,11 +72,9 @@ public class ConnectionAuthenticationToken extends AbstractAuthenticationToken {
      * @param credentials
      * @param hostname
      * @param hasManagePrivileges
-     * @param hubConfigSession
      * @param authorities
      */
     public ConnectionAuthenticationToken(Object principal, Object credentials, Object hostname, boolean hasManagePrivileges, boolean stagingIsAccessible,
-                                         HubConfigSession hubConfigSession,
                                          Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
         this.principal = principal;
@@ -86,7 +82,6 @@ public class ConnectionAuthenticationToken extends AbstractAuthenticationToken {
         this.hostname = hostname;
         this.hasManagePrivileges = hasManagePrivileges;
         this.stagingIsAccessible = stagingIsAccessible;
-        this.hubConfigSession = hubConfigSession;
         super.setAuthenticated(true); // must use super, as we override
     }
 
@@ -112,8 +107,6 @@ public class ConnectionAuthenticationToken extends AbstractAuthenticationToken {
     public boolean stagingIsAccessible() {
         return this.stagingIsAccessible;
     }
-
-    public HubConfigSession getHubConfigSession() { return this.hubConfigSession; }
 
     public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
         if (isAuthenticated) {

@@ -23,58 +23,35 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.ArtifactManager;
-import com.marklogic.hub.impl.ArtifactManagerImpl;
 import com.marklogic.hub.oneui.Application;
 import com.marklogic.hub.oneui.TestHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.io.IOException;
-import java.nio.file.Path;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {Application.class, ApplicationConfig.class, LoadDataControllerTest.class})
 public class LoadDataControllerTest {
-    @Autowired
-    ArtifactManager artifactManager;
-
     @Autowired
     LoadDataController controller;
 
     @Autowired
     TestHelper testHelper;
 
-    ObjectNode validLoadDataConfig = (ObjectNode) new ObjectMapper().readTree("{ \"name\": \"validArtifact\", \"sourceFormat\": \"xml\", \"targetFormat\": \"json\"}");
-
-
-    static final String LOAD_DATA_SETTINGS = "{\n"
-        + "    \"artifactName\" : \"validArtifact\",\n"
-        + "    \"additionalCollections\" : [ \"Collection1\", \"Collection2\" ],\n"
-        + "    \"targetDatabase\" : \"data-hub-STAGING\",\n"
-        + "    \"permissions\" : \"rest-reader,read,rest-writer,update\",\n"
-        + "    \"customHook\" : {\n"
-        + "          \"module\" : \"\",\n"
-        + "          \"parameters\" : { },\n"
-        + "          \"user\" : \"\",\n"
-        + "          \"runBefore\" : false\n"
-        + "    }}";
+    JsonNode validLoadDataConfig = new ObjectMapper().readTree("{ \"name\": \"validArtifact\", \"sourceFormat\": \"xml\", \"targetFormat\": \"json\"}");
 
     public LoadDataControllerTest() throws JsonProcessingException {
     }
 
-    // TODO rework tests to avoid the current dependency on manually adding credentials
     @Test
-    void testLoadDataController() throws IOException {
+    void testLoadDataController() {
         testHelper.authenticateSession();
         controller.updateArtifact("validArtifact", validLoadDataConfig);
 
@@ -82,52 +59,21 @@ public class LoadDataControllerTest {
 
         assertEquals(1, resultList.size(), "List of load data artifacts should now be 1");
 
-        Path artifactProjectLocation = ((ArtifactManagerImpl)artifactManager).buildArtifactProjectLocation(controller.getArtifactType(), "validArtifact", null);
-        ObjectNode resultByName = controller.getArtifact("validArtifact").getBody();
+        ObjectNode resultByName = (ObjectNode) controller.getArtifact("validArtifact").getBody();
         assertEquals("validArtifact", resultByName.get("name").asText(), "Getting artifact by name should return object with expected properties");
         assertEquals("xml", resultByName.get("sourceFormat").asText(), "Getting artifact by name should return object with expected properties");
         assertEquals("json", resultByName.get("targetFormat").asText(), "Getting artifact by name should return object with expected properties");
-        assertTrue(artifactProjectLocation.toFile().exists(), "File should have been created in the project directory");
 
-        ObjectNode enrichedJson = controller.setData("validArtifact", new MockMultipartFile[]{ new MockMultipartFile("file", "orig", null, "docTest".getBytes())}).getBody();
-        assertEquals(1, enrichedJson.get("fileCount").asInt(), "File should be added to data set.");
+        ResponseEntity<JsonNode> deleteResp = controller.deleteArtifact("validArtifact");
 
-        controller.deleteArtifact("validArtifact");
-        assertFalse(artifactProjectLocation.toFile().exists(), "File should have been deleted from the project directory");
+        assertEquals(HttpStatus.OK, deleteResp.getStatusCode(), "Delete should have been successful");
 
         resultList = (ArrayNode) controller.getArtifacts().getBody();
 
         assertEquals(0, resultList.size(), "List of load data artifacts should now be 0 after deleting validArtifact");
-        assertFalse(controller.dataSetDirectory("validArtifact").toFile().exists(), "Data set directory for validArtifact should no longer exist");
 
         assertThrows(FailedRequestException.class, () -> controller.getArtifact("validArtifact"));
     }
 
-    @Test
-    public void testLoadDataSettings() throws IOException {
-        testHelper.authenticateSession();
-        controller.updateArtifact("validArtifact", validLoadDataConfig);
-
-        JsonNode result = controller.getArtifactSettings("validArtifact").getBody();
-        assertTrue(result.isEmpty(), "No load data settings yet!");
-
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode settings = mapper.readTree(LOAD_DATA_SETTINGS);
-
-        controller.updateArtifactSettings("validArtifact", settings);
-
-        result = controller.getArtifactSettings("validArtifact").getBody();
-        assertEquals("validArtifact", result.get("artifactName").asText());
-        assertEquals(2, result.get("additionalCollections").size());
-        assertEquals("Collection2", result.get("additionalCollections").get(1).asText());
-        assertEquals("data-hub-STAGING", result.get("targetDatabase").asText());
-        assertTrue(result.has("permissions"), "missing permissions");
-        assertTrue(result.has("customHook"), "missing customHook");
-
-        controller.deleteArtifact("validArtifact");
-
-        assertTrue(controller.getArtifactSettings("validArtifact").getBody().isEmpty());
-        assertThrows(FailedRequestException.class, () -> controller.getArtifact("validArtifact"));
-    }
 
 }

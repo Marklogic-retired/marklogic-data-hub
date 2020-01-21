@@ -1,10 +1,6 @@
-  .loginForm {
-    margin: 20px 0 20px;
-  }
-  
-  div.host, div.username, div.password {
-    width: 300px;
-  }
+.loginForm {
+  width: 300px;
+  background-color: rgb(252, 252, 252);
 
   .host div, .username div, .password div {
     text-align: left;
@@ -28,7 +24,7 @@
   .loginButton button {
     color:#ffffff;
     width: 100%;
-    background-color: #394494;
+    background-color: #44499C;
     border: none;
   }
   
@@ -61,9 +57,4 @@
     left: 4px;
     top: -6px;
   }
-
-
-.unauthorized {
-  text-align: center;
-  white-space: nowrap;
 }

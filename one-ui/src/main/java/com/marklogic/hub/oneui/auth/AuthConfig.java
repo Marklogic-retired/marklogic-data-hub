@@ -39,8 +39,7 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     EnvironmentService environmentService;
 
-    @Autowired
-    LoginLogoutHandler loginLogoutHandler;
+    private LoginLogoutHandler loginLogoutHandler = new LoginLogoutHandler();
 
     /**
      * @return a config class with ML connection properties
@@ -98,19 +97,19 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         http
-            .headers().frameOptions().disable()
-            .and()
-            .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
-            .csrf().disable()
-            .exceptionHandling()
-            .authenticationEntryPoint(restAuthenticationEntryPoint)
-            .and()
-            .authorizeRequests()
-            .antMatchers(getAlwaysPermittedPatterns()).permitAll().anyRequest().authenticated()
-            .and()
-            .logout()
-            .logoutUrl("/api/logout")
-            .logoutSuccessHandler(loginLogoutHandler)
+                .headers().frameOptions().disable()
+                .and()
+                .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
+                .csrf().disable()
+                .exceptionHandling()
+                .authenticationEntryPoint(restAuthenticationEntryPoint)
+                .and()
+                .authorizeRequests()
+                .antMatchers(getAlwaysPermittedPatterns()).permitAll().anyRequest().authenticated()
+                .and()
+                .logout()
+                .logoutUrl("/api/logout")
+                .logoutSuccessHandler(loginLogoutHandler)
         ;
 
     }
@@ -133,12 +132,9 @@ public class AuthConfig extends WebSecurityConfigurerAdapter {
                 "/*.woff2",
                 "/*.eot",
                 "/*.css",
-                "/*.png",
-                "/*.jpg",
-                "/*.jpeg",
                 "/index.html",
                 "/login",
-                "/error",
+                "/404",
                 "/assets/**",
                 "/static/**",
                 "/img/**",
