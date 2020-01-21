@@ -4,13 +4,12 @@ import com.marklogic.client.ext.DatabaseClientConfig;
 import com.marklogic.client.ext.helper.DatabaseClientProvider;
 import com.marklogic.client.ext.spring.SimpleDatabaseClientProvider;
 import com.marklogic.hub.LoadTestModules;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-
-import javax.annotation.PostConstruct;
 
 /**
  * Spring configuration class that defines a connection to the final REST server in the test project.
@@ -23,7 +22,7 @@ import javax.annotation.PostConstruct;
     value = {"file:gradle.properties", "file:gradle-local.properties"},
     ignoreResourceNotFound = true
 )
-public class TestConfig {
+public class TestConfig implements InitializingBean {
 
     @Value("${mlUsername}")
     private String username;
@@ -47,7 +46,6 @@ public class TestConfig {
      * This is needed because other tests in the DHF test suite will clear "user" modules, thus deleting the
      * marklogic-unit-test and test modules.
      */
-    @PostConstruct
     public void loadTestModules() {
         LoadTestModules.loadTestModules(host, finalPort, username, password, modulesDatabaseName, modulePermissions);
     }
@@ -72,5 +70,19 @@ public class TestConfig {
         return new SimpleDatabaseClientProvider(
             new DatabaseClientConfig(host, finalPort, username, password)
         );
+    }
+
+    /**
+     * Invoked by the containing {@code BeanFactory} after it has set all bean properties
+     * and satisfied {@link BeanFactoryAware}, {@code ApplicationContextAware} etc.
+     * <p>This method allows the bean instance to perform validation of its overall
+     * configuration and final initialization when all bean properties have been set.
+     *
+     * @throws Exception in the event of misconfiguration (such as failure to set an
+     *                   essential property) or if initialization fails for any other reason
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        loadTestModules();
     }
 }
