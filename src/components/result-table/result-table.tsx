@@ -242,7 +242,6 @@ const ResultTable: React.FC<Props> = (props) => {
   }
 
   useEffect(() => {
-
     props.entity.length === 0 ? listOfColumns = setPrimaryKeyColumn(allEntitiesColumns) : listOfColumns = setPrimaryKeyColumn(headerParser(arrayOfTitles));
     if (props.entity.length === 0 || (props.entity.length !== 0 && parsedPayload.primaryKeys.length === 0)) {
       listOfColumns.unshift({ title: 'Identifier', key: '0-i' });

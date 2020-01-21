@@ -357,117 +357,30 @@ export const getTitles = (object:Array<Object>) => {
   return titles(object);
 }
 
-
-// export const filterTree = (ob, str) => {
-
-//   // let ob = obj;
-
-//   const filter = (ob) => {
-//     console.log(ob)
-//     for (let i = 0; i < ob.length; i++) {
-//       if (ob[i] !== null && (ob[i]).hasOwnProperty('children')) {
-//         let n = filter(ob[i].children)
-//         if(n.length === 0 && !ob[i].title.toLowerCase().includes(str.toLowerCase())) {
-//           ob.splice(i, 1)
-//           i--;
-//         }
-//       } else {
-//         if(!ob[i].title.toLowerCase().includes(str.toLowerCase())) {
-
-//           ob.splice(i, 1)
-//           i--;
-//         }        
-//       }
-//     }
-//     return ob;
-//   }
-//   return filter(ob);
-// }
-
-// export const filterTree = (ob, str) => {
-
-//     // let ob = obj;
-  
-//     const filter = (ob) => {
-//       let e = false;
-//       for (let i = 0; i < ob.length; i++) {
-//         if (ob[i] !== null && (ob[i]).hasOwnProperty('children')) {
-//           let n = filter(ob[i].children)
-//           if(n.length === 0 && !ob[i].title.toLowerCase().includes(str.toLowerCase())) {
-//             console.log('n',n)
-//             console.log('ob[i',ob[i])
-
-//             ob[i].visible = false;
-//             // ob.splice(i, 1)
-//             // i--;
-//           }
-//         } else {
-//           if(!ob[i].title.toLowerCase().includes(str.toLowerCase())) {
-//             ob[i].visible = false;
-//             // ob.splice(i, 1)
-//             // i--;
-//           }        
-//         }
-//       }
-//       return ob;
-//     }
-//     return filter(ob);
-//   }
-
-// export const filterTree = (ob, str) => {
-//   const filter = (ob) => {
-//     let e;
-//     for (let i = 0; i < ob.length; i++) {
-//       if (ob[i] !== null && (ob[i]).hasOwnProperty('children')) {
-//         let n = filter(ob[i].children)
-//         console.log('n',n)
-//         if(n.e === false || n.e === undefined ) {
-//           console.log('ob[i',ob[i])
-//           ob[i].visible = false;
-//         }
-//          if (ob[i].title.toLowerCase().includes(str.toLowerCase())) {
-//           ob[i].visible = true;
-//         }   
-//       } else {
-//         if(!ob[i].title.toLowerCase().includes(str.toLowerCase())) {
-//           ob[i].visible = false;
-//         } else {
-//           e = true;
-//         }      
-//       }
-//     }
-//     return {ob, e};
-//   }
-//   return filter(ob);
-// }
-
-
-export const filterTree = (ob, str) => {
+export const setTreeVisibility = (ob, str) => {
   const filter = (ob) => {
-    let e;
+    let v;
     for (let i = 0; i < ob.length; i++) {
       if (ob[i] !== null && (ob[i]).hasOwnProperty('children')) {
         let n = filter(ob[i].children)
-        console.log('n',n)
-        if(n.e === false  || n.e === undefined) {
-          console.log('ob[i',ob[i])
+        if(n.v === false  || n.v === undefined) {
           ob[i].visible = false;
-        } else if (n.e === true){
-          e = true;
+        } else if (n.v === true){
+          v = true;
         }
          if (ob[i].title.toLowerCase().includes(str.toLowerCase())) {
           ob[i].visible = true;
-          e = true;
+          v = true;
         } 
       } else {
         if(!ob[i].title.toLowerCase().includes(str.toLowerCase())) {
           ob[i].visible = false;
         } else {
-          e = true;
+          v = true;
         }  
       }
     }
-    return {ob, e};
+    return {ob, v};
   }
   return filter(ob);
 }
