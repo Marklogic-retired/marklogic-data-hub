@@ -174,11 +174,11 @@ const ColumnSelector: React.FC<Props> = (props) => {
   const onChange = e => {
     const { value } = e.target;
     let filteredTree = filterTree(deepCopy(prevTree), value)
-    setTree(filteredTree)
+    console.log('filteredTree',filteredTree)
+    setTree(filteredTree.ob)
 
-    
-    generateList(filteredTree);
-    console.log('dataList',dataList)
+  
+    generateList(filteredTree.ob);
 
     const expandedKeys = dataList
       .map(item => {
@@ -191,9 +191,7 @@ const ColumnSelector: React.FC<Props> = (props) => {
     setExpandedKeys(expandedKeys);
     setSearchValue(value);
     setAutoExpandParent(true);
-    
-    
-      
+
     };
 
   const content = (
