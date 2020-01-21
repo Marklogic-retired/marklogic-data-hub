@@ -21,11 +21,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.StepDefinitionManager;
+import com.marklogic.hub.dataservices.ArtifactService;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.util.json.JSONStreamWriter;
+import com.marklogic.hub.util.json.JSONUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +70,7 @@ public class StepDefinitionManagerImpl extends LoggingObject implements StepDefi
         } catch (IOException e) {
             throw new DataHubProjectException("Could not write Step to disk for project.");
         }
+        getArtifactService().setArtifact("stepDefinitions", stepDefinition.getName(), JSONUtils.convertArtifactToJson(stepDefinition));
     }
 
     @Override
@@ -95,6 +98,7 @@ public class StepDefinitionManagerImpl extends LoggingObject implements StepDefi
         return stepList;
     }
 
+    //TODO: Should this look into db first ?
     @Override
     public StepDefinition getStepDefinition(String name, StepDefinition.StepDefinitionType type) {
         Path stepPath = resolvePath(hubConfig.getStepsDirByType(type), name);
@@ -165,5 +169,9 @@ public class StepDefinitionManagerImpl extends LoggingObject implements StepDefi
 
     private Path resolvePath(Path path, String more) {
         return path.resolve(more);
+    }
+
+    private ArtifactService getArtifactService() {
+        return ArtifactService.on(hubConfig.newStagingClient(null));
     }
 }
