@@ -178,7 +178,6 @@ const Browse: React.FC<Props> = ({ location }) => {
                 <div style={{ marginTop: '150px' }}>
                   <ResultTable 
                     data={data} 
-                    entity={searchOptions.entityNames}
                     entityDefArray={entityDefArray} 
                   />
                 </div>

@@ -18,7 +18,6 @@ describe("Result Table component", () => {
           <ResultTable
             data={searchPayloadResults}
             entityDefArray={entityDefArray}
-            entity={[]}
           />
         </Router>
       )
@@ -45,7 +44,6 @@ describe("Result Table component", () => {
           <ResultTable
             data={searchPayloadResults}
             entityDefArray={entityDefArray}
-            entity={['Order']}
           />
         </Router>
       )

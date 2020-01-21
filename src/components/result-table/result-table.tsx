@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Resizable } from 'react-resizable'
 import { Table, Tooltip, Icon } from 'antd';
+import { SearchContext } from '../../util/search-context';
 import { dateConverter } from '../../util/date-conversion';
 import { xmlParser } from '../../util/xml-parser';
 import styles from './result-table.module.scss';
@@ -34,24 +35,106 @@ const ResizeableTitle = props => {
 interface Props {
   data: any;
   entityDefArray: any[];
-  entity: any;
 };
 
+const DEFAULT_ALL_ENTITIES_HEADER = [
+  {
+    title: 'Identifier',
+    key: '0-i'
+  },
+  {
+    title: 'Entity',
+    key: '0-1'
+  },
+  {
+    title: 'File Type',
+    key: '0-2'
+  },
+  {
+    title: 'Created',
+    key: '0-c'
+  },
+  {
+    title: 'Detail View',
+    key: '0-d'
+  },
+];
+
 const ResultTable: React.FC<Props> = (props) => {
-  let listOfColumns = new Array();
-  let data = new Array();
-  let counter = 0;
-  const [columns, setColumns] = useState<any[]>([]);
+  const { searchOptions } = useContext(SearchContext);
+  const [defaultColumns, setDefaultColumns] = useState<any[]>([]);
+  const [renderColumns, setRenderColumns] = useState<any[]>([]);
+  const [renderTableData, setRenderTableData] = useState<any[]>([]);
   const [checkedColumns, setCheckedColumns] = useState<any[]>([]);
   const [treeColumns, setTreeColumns] = useState<any[]>([]);
-
-  const allEntitiesColumns = [{ title: 'Entity', key: '0-1' }, { title: 'File Type', key: '0-2' }];
-  let previousColumns = new Array();
+  let counter = 0;
   let parsedPayload = tableParser(props);
-  let arrayOfTitles = parsedPayload.data[0] && parsedPayload.data[0].itemEntityProperties[0];
   let nestedColumns = new Set();
 
-  const getData = (payload: Array<Object>, isNested: boolean) => {
+  useEffect(() => {
+    if (props.data) {
+      console.log('render cols', renderColumns);
+
+      if (searchOptions.entityNames.length === 0 ) {
+        // All Entities
+        let renderHeader = tableHeader(DEFAULT_ALL_ENTITIES_HEADER);
+        let newTableData = formatTableData(parsedPayload.data, true);
+        // set render DOM data
+        setRenderTableData(newTableData);
+        setRenderColumns(renderHeader);
+        //set popover tree data
+        setTreeColumns(renderHeader);
+        //set popover tree selected checkboxes data
+        setCheckedColumns(renderHeader);
+        // set default columns from payload
+        // TODO set from user pref if it exists. save without tableHeader transform
+        setDefaultColumns(DEFAULT_ALL_ENTITIES_HEADER);
+      } else {
+        // An Entity is selected
+        let newRenderColumns: any[] = [];
+        let parsedEntityDocObj = parsedPayload.data[0] && parsedPayload.data[0].itemEntityProperties[0];
+        let columns = setPrimaryKeyColumn(headerParser(parsedEntityDocObj));
+        
+        if (defaultColumns.length === 0 ) {
+          if (renderColumns.length === 0 ) {
+            if (columns.length > 5) {
+              // TODO Save user pref
+              newRenderColumns = columns.slice(0, 5);
+            } else {
+              newRenderColumns = columns;
+            }
+          }
+
+          let renderHeader = tableHeader(newRenderColumns);
+          setRenderColumns(renderHeader);
+          setRenderTableData(mergeRows(renderHeader));
+          setTreeColumns(tableHeader(columns));
+          setCheckedColumns(renderHeader);
+          setDefaultColumns(columns);
+        } else {
+          if (renderColumns.length > 0) {
+            let newRenderColumns: any[] = [];
+            if (JSON.stringify(columns) !== JSON.stringify(renderColumns)) {
+              if (columns.length > 5) {
+                // TODO Save user pref
+                newRenderColumns = columns.slice(0, 5);
+              } else {
+                newRenderColumns = columns;
+              }
+              let renderHeader = tableHeader(newRenderColumns);
+              setRenderColumns(renderHeader);
+              setRenderTableData(mergeRows(renderHeader));
+              setTreeColumns(tableHeader(columns));
+              setCheckedColumns(renderHeader);
+              setDefaultColumns(columns);
+            }
+          }
+        }
+      }
+    }
+  }, [props.data]);
+
+  const formatTableData = (payload: Array<Object>, isNested: boolean) => {
     let rowCounter = 0;
     let nested = [];
     let nestedId = 0;
@@ -77,7 +160,7 @@ const ResultTable: React.FC<Props> = (props) => {
             </Link>
           </div>
 
-        if (props.entity.length === 0) {
+        if (searchOptions.entityNames.length === 0) {
           row =
           {
             key: rowCounter++,
@@ -167,8 +250,6 @@ const ResultTable: React.FC<Props> = (props) => {
     return parseData(payload);
   }
 
-  data = getData(parsedPayload.data, true);
-
   const tableHeader = (columns) => {
     let col = new Array();
     let set = new Set();
@@ -239,28 +320,6 @@ const ResultTable: React.FC<Props> = (props) => {
     return a;
   }
 
-  useEffect(() => {
-
-    props.entity.length === 0 ? listOfColumns = setPrimaryKeyColumn(allEntitiesColumns) : listOfColumns = setPrimaryKeyColumn(headerParser(arrayOfTitles));
-    if (props.entity.length === 0 || (props.entity.length !== 0 && parsedPayload.primaryKeys.length === 0)) {
-      listOfColumns.unshift({ title: 'Identifier', key: '0-i' });
-    }
-    if (listOfColumns && listOfColumns.length > 0) {
-      listOfColumns.push({ title: 'Created', key: '0-c' })
-      listOfColumns.push({ title: 'Detail view', key: '0-d' });
-      previousColumns = [...tableHeader(listOfColumns)];
-    }
-
-    let header = tableHeader(listOfColumns);
-    //set table data
-    let defaultColumnData = header.slice(0, 5).concat(header[header.length - 1]);
-    header.length <= 5 ? setColumns(header.slice(0, 5)) : setColumns(defaultColumnData);
-    //set popover tree data
-    setTreeColumns(previousColumns);
-    //set popover tree selected checkboxes data
-    setCheckedColumns(header.slice(0, 5).concat(header[header.length - 1]));
-  }, [props.data]);
-
   const components = {
     header: {
       cell: ResizeableTitle,
@@ -270,15 +329,13 @@ const ResultTable: React.FC<Props> = (props) => {
   const mergeRows = (header: Array<Object>) => {
     let data: Array<Object>;
     let hasNested: boolean = header.some((item: Object) => item.hasOwnProperty('children'));
-    data = hasNested ? getData(parsedPayload.data, true) : getData(parsedPayload.data, false);
+    data = hasNested ? formatTableData(parsedPayload.data, true) : formatTableData(parsedPayload.data, false);
     return data;
   }
 
-  data = mergeRows(columns);
-
   const handleResize = title => (e, { size }) => {
     let index = 0;
-    setColumns(columns => {
+    setRenderColumns(columns => {
       for (let i = 0; i < columns.length; i++) {
         if (title == columns[i].title)
           index = i;
@@ -295,14 +352,14 @@ const ResultTable: React.FC<Props> = (props) => {
   const dragProps = {
     onDragEnd(fromIndex: number, toIndex: number) {
       if (fromIndex > 0 && toIndex > 0) {
-        const header = deepCopy(columns);
+        const header = deepCopy(renderColumns);
         const tree = deepCopy(treeColumns);
         const colItem = header.splice(fromIndex - 1, 1)[0];
         const treeItem = tree.splice(fromIndex - 1, 1)[0];
         header.splice(toIndex - 1, 0, colItem);
         tree.splice(toIndex - 1, 0, treeItem);
         let updatedHeader = reconstructHeader(deepCopy(header), toStringArray(checkedColumns))
-        setColumns(updatedHeader);
+        setRenderColumns(updatedHeader);
         setTreeColumns(tree)
       }
     },
@@ -364,7 +421,7 @@ const ResultTable: React.FC<Props> = (props) => {
   }
 
   const headerRender = (col) => {
-    setColumns(col);
+    setRenderColumns(col);
     setCheckedColumns(deepCopy(col))
   }
 
@@ -395,8 +452,8 @@ const ResultTable: React.FC<Props> = (props) => {
           <Table bordered components={components}
             className="search-tabular"
             rowKey="key"
-            dataSource={data}
-            columns={columns}
+            dataSource={renderTableData}
+            columns={renderColumns}
             pagination={false}
             expandedRowRender={expandedRowRender}
             expandIcon={expandIcon}
