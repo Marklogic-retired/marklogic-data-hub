@@ -75,6 +75,7 @@ import com.marklogic.rest.util.ResourcesFragment;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -85,7 +86,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -100,7 +100,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 @Component
-public class DataHubImpl implements DataHub {
+public class DataHubImpl implements DataHub, InitializingBean {
 
     @Autowired
     private HubConfig hubConfig;
@@ -129,11 +129,10 @@ public class DataHubImpl implements DataHub {
     public DataHubImpl(HubConfig hubConfig) {
         this();
         this.hubConfig = hubConfig;
-        postConstruct();
+        afterPropertiesSet();
     }
 
-    @PostConstruct
-    protected void postConstruct() {
+    public void afterPropertiesSet() {
         this.versions = new Versions(hubConfig);
         this.generateFunctionMetadataCommand = new GenerateFunctionMetadataCommand(hubConfig);
         this.loadHubModulesCommand = new LoadHubModulesCommand(hubConfig);

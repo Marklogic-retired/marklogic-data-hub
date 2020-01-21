@@ -38,11 +38,24 @@ import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager;
 import com.marklogic.client.ext.util.DefaultDocumentPermissionsParser;
 import com.marklogic.client.ext.util.DocumentPermissionsParser;
-import com.marklogic.client.io.*;
+import com.marklogic.client.io.DOMHandle;
+import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.client.io.FileHandle;
+import com.marklogic.client.io.Format;
+import com.marklogic.client.io.InputStreamHandle;
+import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.io.marker.AbstractReadHandle;
-import com.marklogic.hub.deploy.commands.*;
+import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand;
+import com.marklogic.hub.deploy.commands.LoadHubArtifactsCommand;
+import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
+import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
+import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.error.DataHubConfigurationException;
-import com.marklogic.hub.impl.*;
+import com.marklogic.hub.impl.DataHubImpl;
+import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.impl.HubProjectImpl;
+import com.marklogic.hub.impl.Versions;
 import com.marklogic.hub.legacy.LegacyDebugging;
 import com.marklogic.hub.legacy.LegacyTracing;
 import com.marklogic.hub.legacy.flow.CodeFormat;
@@ -64,6 +77,7 @@ import org.json.JSONException;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -71,8 +85,11 @@ import org.springframework.util.ReflectionUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import javax.annotation.PostConstruct;
-import javax.net.ssl.*;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -82,16 +99,32 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.*;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -103,7 +136,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SuppressWarnings("deprecation")
 @Component
-public class HubTestBase {
+public class HubTestBase implements InitializingBean {
 
     public static final String PROJECT_PATH = "ye-olde-project";
     @Autowired
@@ -220,7 +253,6 @@ public class HubTestBase {
         createProjectDir();
     }
 
-    @PostConstruct
     protected void init() {
         //dataHub.initProject();
         createProjectDir();
@@ -1290,5 +1322,19 @@ public class HubTestBase {
         assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "json-coll"));
         assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "json-map"));
         assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map"));
+    }
+
+    /**
+     * Invoked by the containing {@code BeanFactory} after it has set all bean properties
+     * and satisfied {@link BeanFactoryAware}, {@code ApplicationContextAware} etc.
+     * <p>This method allows the bean instance to perform validation of its overall
+     * configuration and final initialization when all bean properties have been set.
+     *
+     * @throws Exception in the event of misconfiguration (such as failure to set an
+     *                   essential property) or if initialization fails for any other reason
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        init();
     }
 }
