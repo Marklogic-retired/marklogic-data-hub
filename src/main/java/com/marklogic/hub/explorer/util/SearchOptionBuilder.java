@@ -52,7 +52,7 @@ public class SearchOptionBuilder {
       so.forEach(o -> {
         sb.append("<sort-order");
         if (!METADATA_FIELD_NAME.contains(o.getName())) {
-          sb.append(String.format(" type=\"%s\"", "xs:" + StringEscapeUtils.escapeXml(o.getDataType())));
+          sb.append(String.format(" type=\"xs:%s\"", StringEscapeUtils.escapeXml(o.getDataType())));
         }
         if (!o.isAscending()) {
           sb.append(" direction=\"descending\">");
