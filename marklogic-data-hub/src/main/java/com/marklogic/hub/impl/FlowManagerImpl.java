@@ -42,8 +42,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
-import java.nio.file.Path;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -100,18 +102,14 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
                 throw new DataHubProjectException(e.getMessage());
             }
         }
-        JsonNode node;
+        Flow flow;
         try {
-            node = JSONObject.readInput(inputStream);
-        } catch (IOException e) {
-            throw new DataHubProjectException("Unable to read flow: " + e.getMessage());
+            JsonNode jsonFlow = getArtifactService().getArtifact("flows", flowName);
+            flow = new FlowImpl().deserialize(jsonFlow);
+        } catch (Exception ex) {
+            throw new RuntimeException("Unable to retrieve flow with name: " + flowName, ex);
         }
-        Flow newFlow = createFlowFromJSON(node);
-        if (newFlow != null && newFlow.getName().length() > 0) {
-            return newFlow;
-        } else {
-            throw new DataHubProjectException(flowName + " is not a valid flow");
-        }
+        return flow;
     }
 
     @Override
@@ -248,6 +246,13 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
             throw new DataHubProjectException("Could not serialize flow.");
         } catch (IOException e) {
             throw new DataHubProjectException("Could not save flow to disk.");
+        }
+
+        try{
+            getArtifactService().setArtifact("flows", flow.getName(), JSONUtils.convertArtifactToJson(flow));
+        }
+        catch (Exception e){
+            throw new RuntimeException("Unable to create flow; cause: " + e.getMessage(), e);
         }
     }
 
