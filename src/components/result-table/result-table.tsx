@@ -177,6 +177,7 @@ const ResultTable: React.FC<Props> = (props) => {
         col.push({
           title: item.title,
           key: item.key,
+          visible: true,
           children: tableHeader(item.children),
         })
       } else {
@@ -185,6 +186,7 @@ const ResultTable: React.FC<Props> = (props) => {
             title: item.title,
             dataIndex: item.title.replace(/ /g, '').toLowerCase(),
             key: item.key,
+            visible: true,
             width: 150,
             onHeaderCell: column => ({
               width: column.width,
@@ -240,7 +242,6 @@ const ResultTable: React.FC<Props> = (props) => {
   }
 
   useEffect(() => {
-
     props.entity.length === 0 ? listOfColumns = setPrimaryKeyColumn(allEntitiesColumns) : listOfColumns = setPrimaryKeyColumn(headerParser(arrayOfTitles));
     if (props.entity.length === 0 || (props.entity.length !== 0 && parsedPayload.primaryKeys.length === 0)) {
       listOfColumns.unshift({ title: 'Identifier', key: '0-i' });
@@ -391,7 +392,7 @@ const ResultTable: React.FC<Props> = (props) => {
         <ColumnSelector title={checkedColumns} tree={treeColumns} headerRender={headerRender} />
       </div>
       <ReactDragListView.DragColumn {...dragProps}>
-        <div className={styles.tabular}>
+        <div className={styles.tabular}>        
           <Table bordered components={components}
             className="search-tabular"
             rowKey="key"

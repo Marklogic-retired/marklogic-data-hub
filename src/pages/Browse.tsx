@@ -159,17 +159,17 @@ const Browse: React.FC<Props> = ({ location }) => {
                 <br />
                 <br />
                 <div className={styles.spinViews}>
-                  { isLoading && <Spin style={{ marginLeft: '10px' }}/>}
+                  { isLoading && <Spin className={styles.overlay}/>}
                   <div className={styles.switchViews}>
-                  <div className={active ? styles.toggled : styles.toggleView}
-                    data-cy="table-view" id={'tableView'}
-                    onClick={() => tableSwitch()}>
-                    <Tooltip title={'Table View'}><FontAwesomeIcon className={styles.tableIcon} icon={faTable} size="lg" /></Tooltip>
-                  </div>
                   <div className={snippetActive ? styles.toggled : styles.toggleView}
                     data-cy="facet-view" id={'snippetView'}
                     onClick={() => snippetSwitch()}>
                     <Tooltip title={'Snippet View'}><FontAwesomeIcon icon={faStream} size="lg" /></Tooltip>
+                  </div>
+                  <div className={active ? styles.toggled : styles.toggleView}
+                    data-cy="table-view" id={'tableView'}
+                    onClick={() => tableSwitch()}>
+                    <Tooltip title={'Table View'}><FontAwesomeIcon className={styles.tableIcon} icon={faTable} size="lg" /></Tooltip>
                   </div>
                   </div>
                 </div>
