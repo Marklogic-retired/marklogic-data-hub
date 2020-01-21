@@ -65,7 +65,7 @@ const LoadDataList: React.FC<Props> = (props) => {
           title: 'Name',
           dataIndex: 'name',
           key: 'name',
-          render: (text: any,record: any) => ( 
+          render: (text: any,record: any) => (
               <span><span onClick={() => OpenEditStepDialog(record)} className={styles.editLoadConfig}>{text}</span> {record.filesNeedReuploaded ? (
                 <Popover
                 content={"Files must be reuploaded"}
@@ -116,7 +116,7 @@ const LoadDataList: React.FC<Props> = (props) => {
                     <Tooltip title={'Delete'} placement="bottom"><i><FontAwesomeIcon icon={faTrashAlt} onClick={() => {showDeleteConfirm(row.name)}} className={styles.deleteIcon} size="lg"/></i></Tooltip>
                 </span>
             ),
-            
+
         }
     ];
 
@@ -127,13 +127,13 @@ const LoadDataList: React.FC<Props> = (props) => {
         <Table
         pagination={{defaultPageSize: 5,showSizeChanger: true,pageSizeOptions: ['5', '10', '20','30']}}
         className={styles.loadTable}
-        columns={columns} 
+        columns={columns}
         dataSource={props.data}
         rowKey="name"
         />
         <NewDataLoadDialog newLoad={newDataLoad} title={title} setNewLoad={setNewDataLoad} createLoadDataArtifact={props.createLoadDataArtifact} stepData={stepData}/>
         {deleteConfirmation}
-        
+
     </div>
    );
 }
