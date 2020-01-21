@@ -32,3 +32,4 @@ ye-olde-project
 /bin/
 examples/dh-5-example/input
 installer.log
+.java-version
