@@ -14,8 +14,8 @@ subprojects {
     apply plugin: 'java'
     apply plugin: 'jacoco'
     apply plugin: 'application'
-    sourceCompatibility = "1.8"
-    targetCompatibility = "1.8"
+    sourceCompatibility = "9"
+    targetCompatibility = "9"
 
     repositories {
         mavenCentral()

@@ -22,7 +22,9 @@ header.container {
     font-weight: 400;
     float: left;
     margin: 0 60px 0 20px;
-    color: #fff;
+    a, a:hover {
+      color: #fff;
+    }
     text-align: right;
   }
 }
@@ -72,6 +74,7 @@ div.userMenu {
   width: 200px;
   background-color: white;
   border: solid 1px #aaa;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, .2);
   color: black;
   padding: 10px;
   div.username {
