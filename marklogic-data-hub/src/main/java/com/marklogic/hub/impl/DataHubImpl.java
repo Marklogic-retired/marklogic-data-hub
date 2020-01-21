@@ -86,7 +86,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -130,11 +129,10 @@ public class DataHubImpl implements DataHub, InitializingBean {
     public DataHubImpl(HubConfig hubConfig) {
         this();
         this.hubConfig = hubConfig;
-        postConstruct();
+        afterPropertiesSet();
     }
 
-    @PostConstruct
-    protected void postConstruct() {
+    public void afterPropertiesSet() {
         this.versions = new Versions(hubConfig);
         this.generateFunctionMetadataCommand = new GenerateFunctionMetadataCommand(hubConfig);
         this.loadHubModulesCommand = new LoadHubModulesCommand(hubConfig);
