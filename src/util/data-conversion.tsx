@@ -341,4 +341,46 @@ export const deepCopy = inObject => {
   return outObject
 }
 
+export const getTitles = (object:Array<Object>) => {
+  let arr = new Array();
+  const titles = (obj) => {
+    for (let i = 0; i < obj.length; i++) {
+      if (obj[i] !== null && (obj[i]).hasOwnProperty('children')) {
+        arr.indexOf(obj[i].title) === -1 && arr.push(obj[i].title)
+        titles(obj[i].children)
+      } else {
+        arr.indexOf(obj[i].title) === -1 && arr.push(obj[i].title)
+      }
+    }
+    return arr;
+  }
+  return titles(object);
+}
 
+export const setTreeVisibility = (ob, str) => {
+  const filter = (ob) => {
+    let v;
+    for (let i = 0; i < ob.length; i++) {
+      if (ob[i] !== null && (ob[i]).hasOwnProperty('children')) {
+        let n = filter(ob[i].children)
+        if(n.v === false  || n.v === undefined) {
+          ob[i].visible = false;
+        } else if (n.v === true){
+          v = true;
+        }
+         if (ob[i].title.toLowerCase().includes(str.toLowerCase())) {
+          ob[i].visible = true;
+          v = true;
+        } 
+      } else {
+        if(!ob[i].title.toLowerCase().includes(str.toLowerCase())) {
+          ob[i].visible = false;
+        } else {
+          v = true;
+        }  
+      }
+    }
+    return {ob, v};
+  }
+  return filter(ob);
+}

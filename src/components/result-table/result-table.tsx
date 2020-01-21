@@ -258,6 +258,7 @@ const ResultTable: React.FC<Props> = (props) => {
         col.push({
           title: item.title,
           key: item.key,
+          visible: true,
           children: tableHeader(item.children),
         })
       } else {
@@ -266,6 +267,7 @@ const ResultTable: React.FC<Props> = (props) => {
             title: item.title,
             dataIndex: item.title.replace(/ /g, '').toLowerCase(),
             key: item.key,
+            visible: true,
             width: 150,
             onHeaderCell: column => ({
               width: column.width,
@@ -448,7 +450,7 @@ const ResultTable: React.FC<Props> = (props) => {
         <ColumnSelector title={checkedColumns} tree={treeColumns} headerRender={headerRender} />
       </div>
       <ReactDragListView.DragColumn {...dragProps}>
-        <div className={styles.tabular}>
+        <div className={styles.tabular}>        
           <Table bordered components={components}
             className="search-tabular"
             rowKey="key"
