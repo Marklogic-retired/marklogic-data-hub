@@ -1,0 +1,30 @@
+.content {
+    padding: 40px 50px 150px 40px;
+    border: 2px solid rgb(255, 255, 255);
+    background-color: rgb(255, 255, 255);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 90%;
+    text-align: center;
+    margin-top: 100px;
+    margin-left: 100px;
+    min-height: 500px;
+    align-items: center;
+}
+
+.LoadDataStyles {
+    width: 100%;
+
+    > .switchview {
+        float: right;
+    }
+}
+
+.cardView {
+    padding-left: 75px;
+    padding-right: 70px;
+    margin-top: 80px;
+    background-color: rgb(255, 255, 255)
+}
