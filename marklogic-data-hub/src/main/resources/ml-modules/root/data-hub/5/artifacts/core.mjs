@@ -16,13 +16,17 @@
 'use strict';
 
 import * as LoadData from './loadData';
+import * as Flows from './flows';
+import * as StepDefs from './stepDefinitions'
 
 const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
 const dataHub = DataHubSingleton.instance();
 // define constants for caching expensive operations
 const cachedArtifacts = {};
 const registeredArtifactTypes = {
-    loadData: LoadData
+    loadData: LoadData,
+    flows: Flows,
+    stepDefinitions: StepDefs
 };
 
 export function getTypesInfo() {
@@ -90,7 +94,7 @@ export function setArtifact(artifactType, artifactName, artifact) {
     }
     const artifactLibrary =  getArtifactTypeLibrary(artifactType);
     const artifactDatabases = artifactLibrary.getStorageDatabases();
-    const artifactDirectory = getArtifactDirectory(artifactType, artifactName);
+    const artifactDirectory = getArtifactDirectory(artifactType, artifactName, artifact);
     const artifactFileExtension = getArtifactFileExtension(artifactType);
     const artifactPermissions = artifactLibrary.getPermissions();
     const artifactCollections = artifactLibrary.getCollections();
@@ -107,9 +111,9 @@ export function validateArtifact(artifactType, artifactName, artifact) {
     return artifactLibrary.validateArtifact(artifact, artifactName);
 }
 
-function getArtifactDirectory(artifactType, artifactName) {
+function getArtifactDirectory(artifactType, artifactName, artifact) {
     const artifactLibrary =  getArtifactTypeLibrary(artifactType);
-    return artifactLibrary.getDirectory ? artifactLibrary.getDirectory(artifactName): `/${artifactType}/`;
+    return artifactLibrary.getDirectory ? artifactLibrary.getDirectory(artifactName, artifact): `/${artifactType}/`;
 }
 
 function getArtifactFileExtension(artifactType) {
