@@ -42,7 +42,7 @@ const NewDataLoadDialog = (props) => {
       
       setTgtFormat(props.stepData.targetFormat);
       setOutUriReplacement(props.stepData.outputURIReplacement);
-      buildURIPreview();
+      buildURIPreview(props.stepData);
       setFileList([]);
       setIsLoading(true);
     } else {
@@ -75,6 +75,8 @@ const NewDataLoadDialog = (props) => {
 
   const onCancel = () => {
     props.setNewLoad(false);
+    setFileList([]);
+    setUploadPercent(0);
   }
 
   const onOk = () => {
@@ -113,7 +115,6 @@ const NewDataLoadDialog = (props) => {
 
   const handleChange = (event) => {
     if (event.target.id === 'name') {
-      console.log('isStepNameTouched',isStepNameTouched,event.target.value.length)
       
       if (event.target.value === ' ') {
         setStepNameTouched(false);
@@ -138,7 +139,7 @@ const NewDataLoadDialog = (props) => {
       setIsLoading(false);
     }
     if(stepName && srcFormat && tgtFormat && outUriReplacement) {
-      buildURIPreview();
+      buildURIPreview(props.stepData);
     }
   }
 
@@ -154,6 +155,15 @@ const NewDataLoadDialog = (props) => {
       if(value === 'Delimited Text'){
         setFieldSeparator(',');
       }
+      let dataPayload = {
+        name: stepName,
+        description: description,
+        sourceFormat: value,
+        targetFormat: tgtFormat,
+        outputURIReplacement: outUriReplacement
+      }
+
+      buildURIPreview(dataPayload);
     }
   }
 
@@ -189,16 +199,26 @@ const NewDataLoadDialog = (props) => {
     else {
       setTgtFormatTouched(true);
       setTgtFormat(value);
+
+      let dataPayload = {
+        name: stepName,
+        description: description,
+        sourceFormat: srcFormat,
+        targetFormat: value,
+        outputURIReplacement: outUriReplacement
+      }
+
+      buildURIPreview(dataPayload);
     }
   }
 
-  const handleUpload = (info) => {
-    const url = `/api/artifacts/loadData/${stepName}/setData`;
-    const formData = new FormData();
-    fileList.forEach(file => {
-      formData.append('files[]', file);
-    });
-  }
+  // const handleUpload = (info) => {
+  //   const url = `/api/artifacts/loadData/${stepName}/setData`;
+  //   const formData = new FormData();
+  //   fileList.forEach(file => {
+  //     formData.append('files[]', file);
+  //   });
+  // }
 
   const customRequest = option => {
     const { onSuccess, onError, file, action, onProgress } = option;
@@ -212,8 +232,6 @@ const NewDataLoadDialog = (props) => {
       formData.append('files', file);
     }); 
 
-    console.log('fd',fl)
-
     //API call for 
     Axios.post(url, formData, {
         onUploadProgress: e => {
@@ -225,10 +243,12 @@ const NewDataLoadDialog = (props) => {
           'Content-Type': 'multipart/form-data; boundary=${fd._boundary}'
         },
       })
-      .then(respones => {
+      .then(responses => {
         /*......*/
-        console.log('response',respones)
-        onSuccess(respones.status);
+        onSuccess(responses.status);
+        if(stepName && srcFormat && tgtFormat && responses.data.inputFilePath) {
+          buildURIPreview(responses.data);
+        }
       })
       .catch(err => {
         /*......*/
@@ -270,12 +290,12 @@ const NewDataLoadDialog = (props) => {
   const fsoptions = Object.keys(fieldSeparatorOptions).map(d => <Select.Option key={fieldSeparatorOptions[d]}>{d}</Select.Option>);
   const toptions = Object.keys(tgtOptions).map(d => <Select.Option key={tgtOptions[d]}>{d}</Select.Option>);
 
-  const buildURIPreview = () => {
+  const buildURIPreview = (stepData) => {
     let uri;
-    let input_file_path = props.stepData.inputFilePath;
-    let input_file_type = srcFormat;
-    let document_type = tgtFormat.toLowerCase();
-    let output_uri_replace = outUriReplacement;
+    let input_file_type = stepData.sourceFormat;
+    let document_type = stepData.targetFormat.toLowerCase();
+    let output_uri_replace = outUriReplacement || stepData.outputURIReplacement;
+    let loadDataName = stepData.name;
     var formatMap = new Map();
 
     formatMap.set("xml", ".xml");
@@ -283,15 +303,10 @@ const NewDataLoadDialog = (props) => {
     formatMap.set("text", ".txt");
     formatMap.set("binary", ".pdf");
 
-    if(navigator.appVersion.indexOf('Win') !== -1){
-      uri = "/" + input_file_path.replace(":", "").replace(/\\/g,"/");
-      
-    }
-    else {
-      uri = input_file_path;
-    }
+    uri = "/" + loadDataName;
+    
 
-    if(input_file_type !== "csv") {
+    if(input_file_type !== "Delimited Text") {
       uri = uri + "/example" + formatMap.get(document_type);
     }
 
@@ -321,10 +336,11 @@ const NewDataLoadDialog = (props) => {
         }
       }
     }
-    if(input_file_type.toLowerCase() === "csv") {
-      uri = uri + "/" + uuid + formatMap.get(document_type);
+    
+    if(input_file_type.toLowerCase() === "delimited text") {
+      uri = uri + "/" + uuid() + formatMap.get(document_type);
     }
-    uri = uri;
+
     setPreviewURI(uri);
   }
 

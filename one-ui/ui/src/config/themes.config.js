@@ -9,15 +9,15 @@ let themes = {
             height: '100%',
             backgroundPosition: 'center',
             backgroundSize: 'cover',
-            backgroundRepeat: 'no-repeat',
-            bottom: '0px' 
+            backgroundRepeat: 'no-repeat'
         },
         footer: {
             color: '#fff'
         },
         footerLink: {
             color: '#fff'
-        }
+        },
+        bodyBg: 'bgColorImage'
     },
     white: { 
         background: {
@@ -31,7 +31,8 @@ let themes = {
         },
         footerLink: {
             color: '#44499c'
-        }
+        },
+        bodyBg: 'bgColorWhite'
     }
 }
 

@@ -1,17 +1,17 @@
 package com.marklogic.bootstrap;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.util.CertificateTemplateManagerPlus;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.hub.ApplicationConfig;
-
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -20,10 +20,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import java.io.File;
 import java.io.IOException;
 
-import javax.annotation.PostConstruct;
-
 @EnableAutoConfiguration
-public class UnInstaller extends HubTestBase {
+public class UnInstaller extends HubTestBase implements InitializingBean {
 
     private static Logger logger = LoggerFactory.getLogger(UnInstaller.class);
 
@@ -33,8 +31,8 @@ public class UnInstaller extends HubTestBase {
         ConfigurableApplicationContext ctx = app.run(new String[] { "--hubProjectDir=" + PROJECT_PATH });
     }
 
-    @PostConstruct
-    public void teardownHub() {
+    @Override
+    public void afterPropertiesSet() {
         super.init();
         dataHub.initProject();
         dataHub.uninstall();
@@ -51,10 +49,10 @@ public class UnInstaller extends HubTestBase {
     					, FileUtils.readFileToString(new File(System.getProperty("java.io.tmpdir")+"/staging-server.json")));
 			} catch (IOException e1) {
 				throw new RuntimeException(e1);
-				
+
 			}
     		ManageConfig manageConfig = manageClient.getManageConfig();
-    		
+
     		manageConfig.setUsername(secUser);
     		manageConfig.setHost(host);
     		manageConfig.setSslContext(certContext);
@@ -83,7 +81,7 @@ public class UnInstaller extends HubTestBase {
     		}
     		catch(Exception e) {
     			e.printStackTrace();
-    		}    	    	
+    		}
         }
         try {
             deleteProjectDir();
@@ -91,7 +89,6 @@ public class UnInstaller extends HubTestBase {
         catch(Exception e) {
             logger.warn("Unable to delete the project directory", e);
         }
-  
-    }
 
+    }
 }

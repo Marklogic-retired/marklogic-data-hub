@@ -78,7 +78,9 @@ const Header:React.FC<Props> = ({ location }) => {
           <Tooltip title="Settings"><Icon type="setting"/></Tooltip>
         </Menu.Item>
         <Dropdown overlay={userMenu}>
-          <span className="userDropdown"><Icon type="user"/></span>
+          <span className="userDropdown">
+            <Tooltip title="User"><Icon type="user"/></Tooltip>
+          </span>
         </Dropdown>
       </Menu>
     </div>;
@@ -106,7 +108,7 @@ const Header:React.FC<Props> = ({ location }) => {
         </Link>
       </div>
       <div id="title" className={styles.title}>
-        MarkLogic Data Hub
+        <Link to="/home">MarkLogic Data Hub</Link>
       </div>
       {globalIcons}
     </Layout.Header>
