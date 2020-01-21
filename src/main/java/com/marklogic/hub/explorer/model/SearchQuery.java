@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class SearchQuery {
 
   public final static class SortOrder {
@@ -25,9 +23,7 @@ public class SearchQuery {
   private long start;
   private long pageLength;
   private Map<String, List<String>> facets;
-
-  @JsonProperty("sortOrder")
-  private Optional<List<SortOrder>> sortOrder = Optional.empty();
+  private List<SortOrder> sortOrder;
 
   public String getQuery() {
     return query;
@@ -70,10 +66,10 @@ public class SearchQuery {
   }
 
   public Optional<List<SortOrder>> getSortOrder() {
-    return sortOrder;
+    return Optional.ofNullable(sortOrder);
   }
 
-  public void setSortOrder(Optional<List<SortOrder>> sortOrder) {
+  public void setSortOrder(List<SortOrder> sortOrder) {
     this.sortOrder = sortOrder;
   }
 }
