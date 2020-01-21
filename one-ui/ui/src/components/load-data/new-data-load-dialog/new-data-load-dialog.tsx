@@ -304,7 +304,6 @@ const NewDataLoadDialog = (props) => {
 
     uri = "/" + loadDataName;
 
-
     if(input_file_type !== "Delimited Text") {
       uri = uri + "/example" + formatMap.get(document_type);
     }
