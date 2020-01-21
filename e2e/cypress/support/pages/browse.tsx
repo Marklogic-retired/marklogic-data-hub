@@ -109,6 +109,14 @@ class BrowsePage {
     return cy.get('[data-cy=' + facet + '-selected-count]').invoke('text');
   }
 
+  applyFacetSearchSelection(facet: string) {
+    return cy.get('[data-cy=' + facet + '-facet-apply-button]').click();
+  }
+
+  applyDatePickerSelection(facet: string) {
+    return cy.get('[data-cy=datepicker-facet-apply-button]').click();
+  }
+
   //search bar
   search(str: string) {
     cy.get('[data-cy=search-bar]').type(str);
