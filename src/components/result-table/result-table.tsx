@@ -73,8 +73,6 @@ const ResultTable: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (props.data) {
-      console.log('render cols', renderColumns);
-
       if (searchOptions.entityNames.length === 0 ) {
         // All Entities
         let renderHeader = tableHeader(DEFAULT_ALL_ENTITIES_HEADER);
