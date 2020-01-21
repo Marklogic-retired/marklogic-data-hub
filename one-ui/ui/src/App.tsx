@@ -66,10 +66,12 @@ const App: React.FC<Props> = ({history, location}) => {
 
   const path = location['pathname'];
   const pageTheme = (themeMap[path]) ? themes[themeMap[path]] : themes['default'];
+  document.body.classList.add(pageTheme['bodyBg']);
 
   return (
-    <div style={pageTheme['background']}>
+    <div id="background" style={pageTheme['background']}>
       <Header/>
+      <main>
       { !asyncError && (
         <Switch>
           <Route path="/" exact component={Login}/>
@@ -78,6 +80,7 @@ const App: React.FC<Props> = ({history, location}) => {
           <Route path="/load-data" exact component={LoadData}/>
         </Switch> 
       )}
+      </main>
       <Footer pageTheme={pageTheme}/>
     </div>
   );
