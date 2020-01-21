@@ -67,7 +67,7 @@ const ColumnSelector: React.FC<Props> = (props) => {
             {afterStr}
           </span>
         ) : (
-            <span style={{ display: '' }}>{item.title}</span>
+            <span>{item.title}</span>
           );
 
       if (item.children) {
