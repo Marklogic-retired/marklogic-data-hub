@@ -2,7 +2,7 @@ import Background from '../components/assets/Color_Large_Banner.jpg';
 
 // Page themes
 let themes = {
-    image: { 
+    image: {
         background: {
             backgroundImage: `url("${Background}")`,
             width: '100%',
@@ -19,12 +19,12 @@ let themes = {
         },
         bodyBg: 'bgColorImage'
     },
-    white: { 
+    white: {
         background: {
             backgroundColor: '#fff',
             width: '100%',
             height: '100%',
-            bottom: '0px' 
+            bottom: '0px'
         },
         footer: {
             color: '#999'
