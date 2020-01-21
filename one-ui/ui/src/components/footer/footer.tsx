@@ -11,9 +11,9 @@ const Footer = (props) => {
     <Layout.Footer>
       <div className={styles.content} style={footerStyle}>
         <span>Copyright @ 2019 MarkLogic Corporation. All Rights Reserved.</span>
-        | 
+        |
         <span className={styles.link} style={linkStyle}>Terms and Conditions</span>
-        | 
+        |
         <span className={styles.link} style={linkStyle}>Policies</span>
       </div>
     </Layout.Footer>
