@@ -59,6 +59,7 @@ task updateVersion {
                      "marklogic-data-hub/gradle.properties",
                      "ml-data-hub-plugin/gradle.properties",
                      "web/gradle.properties",
+                     "one-ui/gradle.properties",
                      "marklogic-data-hub/src/main/resources/scaffolding/build_gradle",
                      "marklogic-data-hub/src/main/java/com/marklogic/hub/impl/HubConfigImpl.java",
                      "examples/dh-5-example/build.gradle",
