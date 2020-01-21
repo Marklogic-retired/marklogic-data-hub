@@ -17,13 +17,12 @@
 package com.marklogic.hub.util.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.ArrayList;
 
 public class JSONUtils {
     /**
@@ -90,5 +89,10 @@ public class JSONUtils {
         else if (value.isObject()) {
             value.fields().forEachRemaining(e -> processJson(value, e.getKey(), e.getValue(), excludeFields));
         }
+    }
+
+    public static JsonNode convertArtifactToJson(Object artifact) {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.valueToTree(artifact);
     }
 }
