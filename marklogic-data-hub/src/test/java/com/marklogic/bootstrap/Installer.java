@@ -7,15 +7,14 @@ import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.security.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import javax.annotation.PostConstruct;
-
 @EnableAutoConfiguration
-public class Installer extends HubTestBase {
+public class Installer extends HubTestBase implements InitializingBean {
 
     private static Logger logger = LoggerFactory.getLogger(Installer.class);
 
@@ -27,7 +26,6 @@ public class Installer extends HubTestBase {
         deleteProjectDir();
     }
 
-    @PostConstruct
     public void bootstrapHub() {
         teardownProject();
         setupProject();
@@ -71,4 +69,18 @@ public class Installer extends HubTestBase {
         ConfigurableApplicationContext ctx = app.run();
     }
 
+    /**
+     * Invoked by the containing {@code BeanFactory} after it has set all bean properties
+     * and satisfied {@link BeanFactoryAware}, {@code ApplicationContextAware} etc.
+     * <p>This method allows the bean instance to perform validation of its overall
+     * configuration and final initialization when all bean properties have been set.
+     *
+     * @throws Exception in the event of misconfiguration (such as failure to set an
+     *                   essential property) or if initialization fails for any other reason
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        super.afterPropertiesSet();
+        bootstrapHub();
+    }
 }
