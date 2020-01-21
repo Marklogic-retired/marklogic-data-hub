@@ -14,7 +14,7 @@ const NewDataLoadDialog = (props) => {
   const [outUriReplacement, setOutUriReplacement] = useState(props.stepData && props.stepData != {} ? props.stepData.outputURIReplacement : '');
   const [fieldSeparator, setFieldSeparator] = useState(props.stepData && props.stepData != {} ? props.stepData.fieldSeparator : ',');
   const [otherSeparator, setOtherSeparator] = useState('');
-  
+
   const [isStepNameTouched, setStepNameTouched] = useState(false);
   const [isSrcFormatTouched, setSrcFormatTouched] = useState(false);
   const [isTgtFormatTouched, setTgtFormatTouched] = useState(false);
@@ -39,7 +39,7 @@ const NewDataLoadDialog = (props) => {
           setOtherSeparator(props.stepData.separator);
         }
       }
-      
+
       setTgtFormat(props.stepData.targetFormat);
       setOutUriReplacement(props.stepData.outputURIReplacement);
       buildURIPreview(props.stepData);
@@ -85,7 +85,7 @@ const NewDataLoadDialog = (props) => {
 
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
     if (event) event.preventDefault();
-    
+
     let dataPayload;
     if(srcFormat === 'Delimited Text'){
        dataPayload = {
@@ -115,7 +115,6 @@ const NewDataLoadDialog = (props) => {
 
   const handleChange = (event) => {
     if (event.target.id === 'name') {
-      
       if (event.target.value === ' ') {
         setStepNameTouched(false);
       }
@@ -170,7 +169,7 @@ const NewDataLoadDialog = (props) => {
   const handleFieldSeparator = (value) => {
     if (value === ' ') {
       setFieldSeparatorTouched(false);
-    } 
+    }
     else {
       setFieldSeparatorTouched(true);
       setFieldSeparator(value);
@@ -223,16 +222,16 @@ const NewDataLoadDialog = (props) => {
   const customRequest = option => {
     const { onSuccess, onError, file, action, onProgress } = option;
     const url = `/api/artifacts/loadData/${stepName}/setData`;
-  
-  
+
+
     let fl  = fileList;
     const formData = new FormData();
 
     fl.forEach(file => {
       formData.append('files', file);
-    }); 
+    });
 
-    //API call for 
+    //API call for
     Axios.post(url, formData, {
         onUploadProgress: e => {
           onProgress({ percent: (e.loaded / e.total) * 100 });
@@ -304,7 +303,7 @@ const NewDataLoadDialog = (props) => {
     formatMap.set("binary", ".pdf");
 
     uri = "/" + loadDataName;
-    
+
 
     if(input_file_type !== "Delimited Text") {
       uri = uri + "/example" + formatMap.get(document_type);
@@ -336,7 +335,7 @@ const NewDataLoadDialog = (props) => {
         }
       }
     }
-    
+
     if(input_file_type.toLowerCase() === "delimited text") {
       uri = uri + "/" + uuid() + formatMap.get(document_type);
     }
@@ -407,11 +406,11 @@ const NewDataLoadDialog = (props) => {
           </Tooltip>
           &nbsp;
             </span>} labelAlign="left">
-          <span className={styles.upload}><Upload  
+          <span className={styles.upload}><Upload
           {...uploadProps}
-          multiple={true} 
-          customRequest={customRequest} 
-          //onChange={handleUpload} 
+          multiple={true}
+          customRequest={customRequest}
+          //onChange={handleUpload}
           >
             <Button>Upload</Button>
           </Upload>&nbsp;&nbsp;
