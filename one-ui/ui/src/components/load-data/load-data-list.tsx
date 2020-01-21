@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
 import NewDataLoadDialog from './new-data-load-dialog/new-data-load-dialog';
+import { MlButton } from 'marklogic-ui-library';
 
 interface Props {
     data: any;
@@ -121,7 +122,7 @@ const LoadDataList: React.FC<Props> = (props) => {
 
    return (
     <div className={styles.loaddataContainer}>
-        <div><Button type="primary" className={styles.addNewButton} onClick={OpenAddNewDialog}>Add New</Button></div>
+        <div><MlButton type="primary" className={styles.addNewButton} onClick={OpenAddNewDialog}>Add New</MlButton></div>
         <br/><br/>
         <Table
         pagination={{defaultPageSize: 5,showSizeChanger: true,pageSizeOptions: ['5', '10', '20','30']}}
