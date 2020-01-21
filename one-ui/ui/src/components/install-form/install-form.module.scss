@@ -1,0 +1,38 @@
+.welcome {
+    font-size: 24px;
+    margin-bottom: 50px;
+
+    .welcomeIcon {
+        color: #569b30;
+        margin-right: 10px;
+        font-size: 32px;
+    }
+}
+
+.installForm {
+    width: 300px;
+    background-color: rgb(252, 252, 252);
+  
+    .directory div {
+      text-align: left;
+    }
+    
+    .installButton button {
+      color:#ffffff;
+      width: 100%;
+      background-color: #44499C;
+      border: none;
+    }
+    
+    .unauthorized {
+      text-align: center;
+      white-space: nowrap;
+    }
+    
+    .formLabel {
+      display: inline-block;
+      width: 300px;
+      text-align: left;
+    }
+  }
+  

@@ -1,0 +1,8 @@
+.gradle
+.classpath
+.project
+.settings
+bin
+build
+src/main/resources/static
+installer.log
