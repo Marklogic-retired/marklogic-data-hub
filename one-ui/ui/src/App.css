@@ -1,0 +1,40 @@
+@import '../node_modules/antd/dist/antd.css';
+@import '../node_modules/marklogic-ui-library/dist/styles.min.css';
+
+body {
+	font-family: 'Helvetica Neue';
+}
+
+.ant-menu .ant-menu-item.ant-menu-item-selected {
+	background-color: #44499C;
+}
+
+.ant-layout-footer {
+    padding: 150px 60px 120px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+    text-align: center;
+    margin: 0;
+  	color: #999;
+    background-color: transparent;
+}
+
+.ant-menu .ant-menu-item.ant-menu-item-selected {
+    background-color: transparent;
+}
+
+.ant-menu-item,
+.ant-dropdown-trigger {
+    padding: 0 15px;
+}
+
+.ant-menu-item .anticon.anticon-search,
+.ant-menu-item .anticon.anticon-question-circle,
+.ant-menu-item .anticon.anticon-setting,
+.ant-menu-item i.tour,
+.ant-dropdown-trigger .anticon.anticon-user {
+    font-size: 24px;
+}

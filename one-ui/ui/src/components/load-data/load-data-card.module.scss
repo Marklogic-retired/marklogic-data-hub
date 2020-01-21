@@ -1,0 +1,75 @@
+.loaddataContainer{
+    margin-top: 70px;
+}
+.cardStyle{
+    width: 300px;
+    margin-top: 16px;
+    text-align: left;
+    align-content: left;
+    padding-bottom: 2px;
+    border: 1px solid #d7d6d6;
+    margin-bottom: 10px;
+}
+
+.stepNameStyle{
+    font-size: 20px;
+    padding-bottom: 2px;
+}
+
+.lastUpdatedStyle{
+    font-size: 13px;
+    margin-bottom: 0px;
+}
+
+.formatFileContainer {
+    position:absolute;
+    width: 100%;
+    width: 273px
+}
+.files {
+    float: right;
+    text-align: right;
+    align-content: right;
+    margin-right: 0;
+    color: #808080;
+}
+.fileCount{
+    display: block;
+    text-align: right;
+    font-size: 24px;
+    padding: 0;
+    margin-bottom: 0px;
+    margin-right: 0px;
+}
+
+.popover {
+    color: #FF8C00;
+    align-items: flex-start;
+    cursor: pointer;
+}
+.addNewCard{
+    width: 300px;
+    margin-top: 16px;
+    border: 1px solid #d7d6d6;
+    align-items: center;
+    text-align: center;
+    align-content: center;
+}
+.plusIcon{
+    font-size: 80px;
+    margin-top: 16px;
+    color: #67749c;
+    margin-bottom: 0px;
+    cursor: pointer;
+}
+.addNewContent {
+    font-size: 20px;
+    color: #67749c;
+    margin-bottom: 6px;
+    margin-top: 0px;
+}
+
+.newDataLoad {
+    width: 700px;
+    text-align: left;
+}
