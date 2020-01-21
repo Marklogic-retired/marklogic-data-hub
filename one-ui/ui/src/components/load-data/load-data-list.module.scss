@@ -1,0 +1,44 @@
+.loaddataContainer{
+    margin-top: 70px;
+    background-color: rgb(253, 253, 253)
+}
+
+.loadTable {
+    & thead > tr > th {
+        color: #44499C;
+        background-color: #fafafa;
+      };
+}
+
+.editLoadConfig{
+    color: #44499C;
+    cursor: pointer;
+}
+
+.popover {
+    color: #FF8C00;
+    align-items: flex-start;
+    cursor: pointer;
+}
+
+.addNewButton {
+    float: right;
+}
+
+.settingsIcon {
+    color: #44499C;
+    font-size: 19px;
+}
+
+.deleteIcon {
+    color: #B32424;
+    font-size: 21px;
+    align-items: 'flex-start';
+    cursor: pointer;
+    padding-bottom: 2px;
+
+}
+.sourceFormatFS{
+    font-size: 12px;
+    color: #999;
+}
