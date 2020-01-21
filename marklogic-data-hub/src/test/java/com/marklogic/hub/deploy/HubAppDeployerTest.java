@@ -73,7 +73,7 @@ class TestListener implements HubDeployStatusListener {
     }
 
     @Override
-    public void onError(String commandName, Error error) {
+    public void onError(String commandName, Exception error) {
 
     }
 

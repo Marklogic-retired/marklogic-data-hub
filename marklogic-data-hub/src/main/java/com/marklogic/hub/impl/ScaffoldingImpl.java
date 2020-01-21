@@ -22,7 +22,6 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubProject;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.error.ScaffoldingValidationException;
 import com.marklogic.hub.legacy.flow.*;
@@ -44,10 +43,7 @@ import java.util.Map;
 
 @Component
 public class ScaffoldingImpl implements Scaffolding {
-
-    @Autowired
-    private HubProject project;
-
+    
     @Autowired
     HubConfig hubConfig;
 
@@ -69,14 +65,14 @@ public class ScaffoldingImpl implements Scaffolding {
     }
 
     @Override public Path getLegacyFlowDir(String entityName, String flowName, FlowType flowType) {
-        Path entityDir = project.getEntityDir(entityName);
+        Path entityDir = hubConfig.getHubProject().getEntityDir(entityName);
         Path typeDir = entityDir.resolve(flowType.toString());
         Path flowDir = typeDir.resolve(flowName);
         return flowDir;
     }
 
     @Override public void createEntity(String entityName) {
-        Path entityDir = project.getHubEntitiesDir();
+        Path entityDir = hubConfig.getHubProject().getHubEntitiesDir();
 
         File entityFile = entityDir.resolve(entityName + ".entity.json").toFile();
         if (entityFile.exists()) {
@@ -92,12 +88,12 @@ public class ScaffoldingImpl implements Scaffolding {
     }
 
     @Override public void createLegacyMappingDir(String mappingName) {
-        Path mappingDir = project.getLegacyMappingDir(mappingName);
+        Path mappingDir = hubConfig.getHubProject().getLegacyMappingDir(mappingName);
         mappingDir.toFile().mkdirs();
     }
 
     @Override public void createMappingDir(String mappingName) {
-        Path mappingDir = project.getMappingDir(mappingName);
+        Path mappingDir = hubConfig.getHubProject().getMappingDir(mappingName);
         mappingDir.toFile().mkdirs();
     }
 
@@ -108,7 +104,7 @@ public class ScaffoldingImpl implements Scaffolding {
 
     @Override
     public void createCustomModule(String stepName, String stepType, String format) {
-        Path customModuleDir = project.getCustomModuleDir(stepName, stepType.toLowerCase());
+        Path customModuleDir = hubConfig.getHubProject().getCustomModuleDir(stepName, stepType.toLowerCase());
         customModuleDir.toFile().mkdirs();
 
         if (customModuleDir.toFile().exists()) {
@@ -143,7 +139,7 @@ public class ScaffoldingImpl implements Scaffolding {
 
     @Override
     public void createDefaultFlow(String flowName) {
-        Path flowsDir = project.getFlowsDir();
+        Path flowsDir = hubConfig.getHubProject().getFlowsDir();
         flowsDir.toFile().mkdirs();
         File flowFile = flowsDir.resolve(flowName + ".flow.json").toFile();
 
@@ -253,8 +249,8 @@ public class ScaffoldingImpl implements Scaffolding {
     }
 
     @Override public void updateLegacyEntity(String entityName) {
-        Path oldEntityDir = project.getEntityDir(entityName);
-        Path newEntityDir = project.getHubEntitiesDir();
+        Path oldEntityDir = hubConfig.getHubProject().getEntityDir(entityName);
+        Path newEntityDir = hubConfig.getHubProject().getHubEntitiesDir();
         String entityFileName = entityName + "entity.json";
         try {
             Files.move(oldEntityDir.resolve(entityFileName), newEntityDir.resolve(entityFileName));
