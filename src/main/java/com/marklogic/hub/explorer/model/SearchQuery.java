@@ -13,9 +13,33 @@ public class SearchQuery {
 
   public final static class SortOrder {
 
-    public String name;
-    public String dataType;
-    public boolean ascending;
+    private String name;
+    private String dataType;
+    private boolean ascending;
+
+    public String getName() {
+      return name;
+    }
+
+    public void setName(String name) {
+      this.name = name;
+    }
+
+    public String getDataType() {
+      return dataType;
+    }
+
+    public void setDataType(String dataType) {
+      this.dataType = dataType;
+    }
+
+    public boolean isAscending() {
+      return ascending;
+    }
+
+    public void setAscending(boolean ascending) {
+      this.ascending = ascending;
+    }
   }
 
   private String query;
