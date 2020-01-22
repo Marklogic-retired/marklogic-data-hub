@@ -29,6 +29,7 @@ import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.hub.explorer.exception.ExplorerException;
 import com.marklogic.hub.explorer.model.Document;
 import com.marklogic.hub.explorer.model.SearchQuery;
+import com.marklogic.hub.explorer.model.SearchQuery.FacetData;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -62,6 +63,8 @@ public class SearchHelper {
 
   @Autowired
   SearchOptionBuilder soBuilder;
+
+  private StructuredQueryBuilder queryBuilder = new StructuredQueryBuilder();
 
   public StringHandle search(SearchQuery searchQuery) {
     DatabaseClient client = databaseClientHolder.getDatabaseClient();
@@ -122,7 +125,7 @@ public class SearchHelper {
 
   private StructuredQueryDefinition buildQuery(QueryManager queryMgr, SearchQuery searchQuery) {
     queryMgr.setPageLength(searchQuery.getPageLength());
-    StructuredQueryBuilder queryBuilder = getQueryBuilder(queryMgr);
+    queryBuilder = getQueryBuilder(queryMgr);
 
     // Creating queries object
     List<StructuredQueryDefinition> queries = new ArrayList<>();
@@ -146,31 +149,31 @@ public class SearchHelper {
     }
 
     // Filtering by facets
-    searchQuery.getFacets().forEach((facetType, facetValues) -> {
+    searchQuery.getFacets().forEach((facetType, data) -> {
       StructuredQueryDefinition facetDef = null;
 
       if (facetType.equals(COLLECTION_CONSTRAINT_NAME)) {
-        facetDef = queryBuilder.collectionConstraint(facetType, facetValues.toArray(new String[0]));
+        facetDef = queryBuilder
+            .collectionConstraint(facetType, data.getValues().toArray(new String[0]));
       } else if (facetType.equals(JOB_RANGE_CONSTRAINT_NAME)) {
         facetDef = queryBuilder
-            .wordConstraint(JOB_WORD_CONSTRAINT_NAME, facetValues.toArray(new String[0]));
+            .wordConstraint(JOB_WORD_CONSTRAINT_NAME, data.getValues().toArray(new String[0]));
       } else if (facetType.equals(CREATED_ON_CONSTRAINT_NAME)) {
         // Converting the date in string format from yyyy-MM-dd format to yyyy-MM-dd HH:mm:ss format
-        LocalDate startDate = LocalDate.parse(facetValues.get(0), DATE_FORMAT);
+        LocalDate startDate = LocalDate.parse(data.getValues().get(0), DATE_FORMAT);
         String startDateTime = startDate.atStartOfDay(ZoneId.systemDefault())
             .format(DATE_TIME_FORMAT);
 
         // Converting the date in string format from yyyy-MM-dd format to yyyy-MM-dd HH:mm:ss format
         // Adding 1 day to end date to get docs harmonized on the end date as well.
-        LocalDate endDate = LocalDate.parse(facetValues.get(1), DATE_FORMAT).plusDays(1);
+        LocalDate endDate = LocalDate.parse(data.getValues().get(1), DATE_FORMAT).plusDays(1);
         String endDateTime = endDate.atStartOfDay(ZoneId.systemDefault()).format(DATE_TIME_FORMAT);
 
         facetDef = queryBuilder
             .and(queryBuilder.rangeConstraint(facetType, Operator.GE, startDateTime),
                 queryBuilder.rangeConstraint(facetType, Operator.LT, endDateTime));
-      } else {
-        facetDef = queryBuilder.rangeConstraint(facetType, StructuredQueryBuilder.Operator.EQ,
-            facetValues.toArray(new String[0]));
+      } else { // If a property is not a Hub property, then it is an Entity Property
+        facetDef = getEntityPropertyConstraints(facetType, data);
       }
 
       if (facetDef != null) {
@@ -193,7 +196,7 @@ public class SearchHelper {
   private StructuredQueryBuilder getQueryBuilder(QueryManager queryMgr) {
     try {
       // Testing if the QUERY_OPTIONS File exists in the modules database
-      StructuredQueryBuilder queryBuilder = queryMgr.newStructuredQueryBuilder(QUERY_OPTIONS);
+      queryBuilder = queryMgr.newStructuredQueryBuilder(QUERY_OPTIONS);
       queryMgr.search(queryBuilder.and(), new SearchHandle());
       // Creating query builder with the QUERY_OPTIONS file if it exists
       return queryBuilder;
@@ -218,5 +221,28 @@ public class SearchHelper {
     });
     excludedCol.add(MASTERING_AUDIT_COLLECTION_NAME);
     return excludedCol.toArray(new String[0]);
+  }
+
+  private StructuredQueryDefinition getEntityPropertyConstraints(String facetType, FacetData data) {
+    StructuredQueryDefinition facetDef = null;
+    switch (data.getDataType()) {
+      case "int":
+      case "integer":
+      case "decimal":
+      case "long":
+      case "float":
+      case "double":
+      case "date":
+      case "dateTime":
+        facetDef = queryBuilder
+            .and(queryBuilder.rangeConstraint(facetType, Operator.GE, data.getValues().get(0)),
+                queryBuilder.rangeConstraint(facetType, Operator.LE, data.getValues().get(1)));
+        break;
+
+      default:
+        facetDef = queryBuilder.rangeConstraint(facetType, StructuredQueryBuilder.Operator.EQ,
+            data.getValues().toArray(new String[0]));
+    }
+    return facetDef;
   }
 }
