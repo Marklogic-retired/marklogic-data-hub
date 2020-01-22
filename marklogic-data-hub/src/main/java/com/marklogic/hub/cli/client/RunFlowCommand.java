@@ -8,6 +8,7 @@ import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.mgmt.util.SimplePropertySource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -66,8 +67,10 @@ public class RunFlowCommand extends CommandLineFlowInputs implements Runnable {
 
         if (params != null && !params.isEmpty()) {
             hubConfig.applyProperties(params::get);
+        } else {
+            hubConfig.applyProperties(new SimplePropertySource());
         }
-        
+
         return hubConfig;
     }
 
