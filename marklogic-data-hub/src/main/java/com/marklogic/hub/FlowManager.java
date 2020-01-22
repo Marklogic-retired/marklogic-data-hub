@@ -40,12 +40,20 @@ public interface FlowManager {
      */
     void setHubConfig(HubConfig hubConfig);
     /**
-     * Retrieves a named flow
+     * Retrieves a named flow on the MarkLogic server
      *
      * @param flowName - name of the flow
      * @return a flow object
      */
     Flow getFlow(String flowName);
+
+    /**
+     * Retrieves a named flow from the Data Hub project
+     *
+     * @param flowName - name of the flow
+     * @return a flow object from the local Data Hub project
+     */
+    Flow getLocalFlow(String flowName);
 
     /**
      * Returns a flow based on the provided name as JSON string
@@ -58,9 +66,16 @@ public interface FlowManager {
     /**
      * Retrieves a list of flows installed on the MarkLogic server
      *
-     * @return - a list of all flows
+     * @return - a list of all flows on the MarkLogic server
      */
     List<Flow> getFlows();
+
+    /**
+     * Retrieves a list of flows in a Data Hub project
+     *
+     * @return - a list of all flows in a project
+     */
+    List<Flow> getLocalFlows();
 
     /**
      * Retrieves a list of names of flows installed on the MarkLogic server
@@ -101,7 +116,14 @@ public interface FlowManager {
     void deleteFlow(String flowName);
 
     /**
-     * Saves a flow to disk
+     * Saves a flow to project structure
+     *
+     * @param flow - the flow object to be saved
+     */
+    void saveLocalFlow(Flow flow);
+
+    /**
+     * Saves a flow to project structure and MarkLogic instance
      *
      * @param flow - the flow object to be saved
      */

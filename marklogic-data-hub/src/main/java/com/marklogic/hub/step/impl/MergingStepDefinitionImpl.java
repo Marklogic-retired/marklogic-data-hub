@@ -35,7 +35,7 @@ public class MergingStepDefinitionImpl extends AbstractStepDefinition {
         options.put("sourceQuery", getSourceQuery());
         options.put("sourceDatabase", HubConfig.DEFAULT_FINAL_NAME);
         options.put("targetDatabase", HubConfig.DEFAULT_FINAL_NAME);
-        options.put("mergeOptions", new JSONObject());
+        options.put("mergeOptions", new JSONObject().jsonNode());
         options.put("stepUpdate", false);
         options.put("acceptsBatch", false);
         options.put("outputFormat", "json");
