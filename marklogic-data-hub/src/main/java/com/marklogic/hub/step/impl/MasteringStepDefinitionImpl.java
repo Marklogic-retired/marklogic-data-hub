@@ -35,8 +35,8 @@ public class MasteringStepDefinitionImpl extends AbstractStepDefinition {
         options.put("sourceQuery", getSourceQuery());
         options.put("sourceDatabase", HubConfig.DEFAULT_FINAL_NAME);
         options.put("targetDatabase", HubConfig.DEFAULT_FINAL_NAME);
-        options.put("mergeOptions", new JSONObject());
-        options.put("matchOptions", new JSONObject());
+        options.put("mergeOptions", new JSONObject().jsonNode());
+        options.put("matchOptions", new JSONObject().jsonNode());
         // Step update needed for lock-for-update in Smart Mastering
         options.put("stepUpdate", true);
         // Accepts batch needed for Smart Mastering to receive all batch documents at once
