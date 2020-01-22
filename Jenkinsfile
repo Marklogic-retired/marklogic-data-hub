@@ -64,12 +64,42 @@ def dhfqsLinuxTests(String mlVersion,String type){
 		 //jiraAddComment comment: 'Jenkins qs_rh7_90-nightly Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
 	}
 }
+def dhfWinTests(String mlVersion, String type){
+    script{
+        copyMSI type,mlVersion;
+        def pkgOutput=bat(returnStdout:true , script: '''
+	                    cd xdmp/src
+	                    for /f "delims=" %%a in ('dir /s /b *.msi') do set "name=%%~a"
+	                    echo %name%
+	                    ''').trim().split();
+	    def pkgLoc=pkgOutput[pkgOutput.size()-1]
+	    gitCheckout 'ml-builds','https://github.com/marklogic/MarkLogic-Builds','master'
+	    def bldOutput=bat(returnStdout:true , script: '''
+        	           cd ml-builds/scripts/lib/
+        	           CD
+        	        ''').trim().split();
+        def bldPath=bldOutput[bldOutput.size()-1]
+        setupMLWinCluster bldPath,pkgLoc
+        bat 'cd data-hub & gradlew.bat clean'
+        bat 'cd data-hub & gradlew.bat marklogic-data-hub:test  || exit /b 0'
+        bat 'cd data-hub & gradlew.bat ml-data-hub:test  || exit /b 0'
+        bat 'cd data-hub & gradlew.bat web:test || exit /b 0'
+        junit '**/TEST-*.xml'
+        commitMessage = sh (returnStdout: true, script:'''
+                            curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
+        def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
+        def commit=slurper.message.toString().trim();
+        JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
+        JIRA_ID=JIRA_ID.split(" ")[0];
+        commitMessage=null;
+         //jiraAddComment comment: 'Jenkins rh7_cluster_9.0-Nightly Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+    }
+}
 pipeline{
 	agent none;
 	options {
   	checkoutToSubdirectory 'data-hub'
   	skipStagesAfterUnstable()
-  	timestamps ()
   	buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '30', numToKeepStr: '')
 	}
 	environment{
@@ -677,81 +707,95 @@ pipeline{
           			beforeAgent true
         		}
 		    parallel{
-		stage('w12_cluster'){
-			agent { label 'dhmaster'}
+		stage('w12_SN_9.0-Nightly'){
+			agent { label 'dhfWinagent'}
 			steps{
-					script{
-          def Returnresult=build job: '/5.x/dhf-core-develop-winserver2012-cluster', propagate: false
-               currentBuild.result=Returnresult.result;
-				 commitMessage = sh (returnStdout: true, script:'''
-			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
-			def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
-				def commit=slurper.message.toString().trim();
-				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
-				JIRA_ID=JIRA_ID.split(" ")[0];
-				commitMessage=null;
-				//jiraAddComment comment: 'Jenkins w12_cluster Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
-				}
+			    dhfWinTests("9.0","Latest")
 			}
 			post{
 				always{
-				  	sh 'rm -rf $WORKSPACE/xdmp'
+				  	 bat 'RMDIR /S/Q xdmp'
 				  }
                   success {
-                    println("w12_cluster Tests Completed")
-                    sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on W2k12 cluster on latest server build of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'w12_cluster on latest server build Tests for $BRANCH_NAME Passed'
+                    println("w12_SN_9.0-nightly Tests Completed")
+                    sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on Windows SN on latest 90 nightly server build of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'w12_SN_90_nightly on latest server build Tests for $BRANCH_NAME Passed'
                    }
                    unstable {
-                      println("w12_cluster Tests Failed")
-                      sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on latest server build w2k12 cluster failed. Please fix the tests and create a PR or create a bug for the failures.',false,'w12_cluster Tests on latest server build for $BRANCH_NAME Failed'
+                      println("w12_SN_9.0-nightly Tests Failed")
+                      sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on Windows SN latest 90 nightly server build w2k12 cluster failed. Please fix the tests and create a PR or create a bug for the failures.',false,'w12_SN_90_nightly Tests on latest server build for $BRANCH_NAME Failed'
                   }
                   }
 		}
-		stage('w12_cluster_9.0-11'){
-			agent { label 'dhmaster'}
+        stage('w12_SN_10.0-Nightly'){
+			agent { label 'dhfWinagent'}
 			steps{
-					script{
-          def Returnresult=build job: '/5.x/dhf-core-develop-winserver2012-cluster_9.0-11', propagate: false
-               currentBuild.result=Returnresult.result;
-				 commitMessage = sh (returnStdout: true, script:'''
-			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
-			def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
-				def commit=slurper.message.toString().trim();
-				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
-				JIRA_ID=JIRA_ID.split(" ")[0];
-				commitMessage=null;
-				//jiraAddComment comment: 'Jenkins w12_cluster_9.0-11 Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
-				}
+			    dhfWinTests("10.0","Latest")
 			}
 			post{
 				always{
-				  	sh 'rm -rf $WORKSPACE/xdmp'
+				  	 bat 'RMDIR /S/Q xdmp'
 				  }
                   success {
-                    println("w12_cluster_9.0-11 Tests Completed")
-                    sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on W2k12 cluster 9.0-11 of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'w12_cluster_9.0-11 Tests for $BRANCH_NAME Passed'
+                    println("w12_SN_10.0-nightly Tests Completed")
+                    sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on Windows SN on latest 10 nightly server build of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'w12_SN_10_nightly on latest server build Tests for $BRANCH_NAME Passed'
                    }
                    unstable {
-                      println("w12_cluster_9.0-11 Tests Failed")
-                      sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on 9.0-11 w2k12 cluster failed. Please fix the tests and create a PR or create a bug for the failures.',false,'w12_cluster_9.0-11 Tests for $BRANCH_NAME Failed'
+                      println("w12_SN_10.0-nightly Tests Failed")
+                      sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on Windows SN latest 10 nightly server build w2k12 cluster failed. Please fix the tests and create a PR or create a bug for the failures.',false,'w12_SN_10_nightly Tests on latest server build for $BRANCH_NAME Failed'
+                  }
+                  }
+		}
+		stage('w12_SN_9.0-11'){
+			agent { label 'dhfWinagent'}
+			steps{
+                dhfWinTests("9.0-11","Release")
+			}
+			post{
+				always{
+                       bat 'RMDIR /S/Q xdmp'
+				  }
+                  success {
+                    println("w12_SN_9.0-11 Tests Completed")
+                    sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on W2k12 SN 9.0-11 of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'w12_SN_9.0-11 Tests for $BRANCH_NAME Passed'
+                   }
+                   unstable {
+                      println("w12_SN_9.0-11 Tests Failed")
+                      sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on 9.0-11 w2k12 SN failed. Please fix the tests and create a PR or create a bug for the failures.',false,'w12_SN_9.0-11 Tests for $BRANCH_NAME Failed'
                   }
                   }
 		}
 		stage('w12_cluster_10.0-3'){
-			agent { label 'dhmaster'}
+			agent { label 'dhfWinCluster'}
 			steps{
-					script{
-           def Returnresult=build job: '/5.x/dhf-core-develop-winserver2012-cluster_10.0-3', propagate: false
-               currentBuild.result=Returnresult.result;
-				 commitMessage = sh (returnStdout: true, script:'''
-			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
-			def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
-				def commit=slurper.message.toString().trim();
-				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
-				JIRA_ID=JIRA_ID.split(" ")[0];
-				commitMessage=null;
-				//jiraAddComment comment: 'Jenkins w12_cluster_10.0-3 Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
-				}
+                    script{
+                        copyMSI "Release","10.0-3";
+                        def pkgOutput=bat(returnStdout:true , script: '''
+                	                    cd xdmp/src
+                	                    for /f "delims=" %%a in ('dir /s /b *.msi') do set "name=%%~a"
+                	                    echo %name%
+                	                    ''').trim().split();
+                	    def pkgLoc=pkgOutput[pkgOutput.size()-1]
+                	    gitCheckout 'ml-builds','https://github.com/marklogic/MarkLogic-Builds','master'
+                	    def bldOutput=bat(returnStdout:true , script: '''
+                        	           cd ml-builds/scripts/lib/
+                        	           CD
+                        	        ''').trim().split();
+                        def bldPath=bldOutput[bldOutput.size()-1]
+                        setupMLWinCluster bldPath,pkgLoc,"w2k16-10-dhf-2,w2k16-10-dhf-3"
+                        bat 'cd data-hub & gradlew.bat clean'
+                        bat 'cd data-hub & gradlew.bat marklogic-data-hub:test  || exit /b 0'
+                        bat 'cd data-hub & gradlew.bat ml-data-hub:test  || exit /b 0'
+                        bat 'cd data-hub & gradlew.bat web:test || exit /b 0'
+                        junit '**/TEST-*.xml'
+                        commitMessage = sh (returnStdout: true, script:'''
+                                            curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
+                        def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
+                        def commit=slurper.message.toString().trim();
+                        JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
+                        JIRA_ID=JIRA_ID.split(" ")[0];
+                        commitMessage=null;
+                         //jiraAddComment comment: 'Jenkins rh7_cluster_9.0-Nightly Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+                    }
 			}
 			post{
 				always{
