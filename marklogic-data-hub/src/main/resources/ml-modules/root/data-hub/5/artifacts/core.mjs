@@ -68,7 +68,7 @@ export function deleteArtifact(artifactType, artifactName, artifactVersion = 'la
     const artifactKey = generateArtifactKey(artifactType, artifactName, artifactVersion);
     const artifactLibrary =  getArtifactTypeLibrary(artifactType);
     // Currently there is no versioning for loadData artifacts
-    const node = artifactLibrary.getArtifactNode(artifactName, artifactVersion);
+    const node = getArtifactNode(artifactType, artifactName, artifactVersion);
     for (const db of artifactLibrary.getStorageDatabases()) {
         dataHub.hubUtils.deleteDocument(xdmp.nodeUri(node), db);
     }
@@ -80,7 +80,7 @@ export function getArtifact(artifactType, artifactName, artifactVersion = 'lates
     const artifactKey = generateArtifactKey(artifactType, artifactName, artifactVersion);
     if (!cachedArtifacts[artifactKey]) {
         const artifactLibrary =  getArtifactTypeLibrary(artifactType);
-        const artifactNode = artifactLibrary.getArtifactNode(artifactName, artifactVersion);
+        const artifactNode = getArtifactNode(artifactType, artifactName, artifactVersion);
         cachedArtifacts[artifactKey] = artifactNode.toObject();
     }
     return cachedArtifacts[artifactKey];
@@ -108,7 +108,20 @@ export function setArtifact(artifactType, artifactName, artifact) {
 
 export function validateArtifact(artifactType, artifactName, artifact) {
     const artifactLibrary =  getArtifactTypeLibrary(artifactType);
-    return artifactLibrary.validateArtifact(artifact, artifactName);
+    const validatedArtifact = artifactLibrary.validateArtifact(artifact, artifactName);
+    if (validatedArtifact instanceof Error) {
+        returnErrToClient(400, 'BAD REQUEST', validatedArtifact.message);
+    }
+    return validatedArtifact;
+}
+
+function getArtifactNode(artifactType, artifactName, artifactVersion = 'latest') {
+    const artifactLibrary = getArtifactTypeLibrary(artifactType);
+    const node = artifactLibrary.getArtifactNode(artifactName, artifactVersion);
+    if (fn.empty(node)) {
+        returnErrToClient(404, 'Not found!');
+    }
+    return node;
 }
 
 function getArtifactDirectory(artifactType, artifactName, artifact) {
@@ -124,11 +137,17 @@ function getArtifactFileExtension(artifactType) {
 function getArtifactTypeLibrary(artifactType) {
     const artifactLibrary = registeredArtifactTypes[artifactType];
     if (!artifactLibrary) {
-        throw new Error(`Invalid artifact type: ${artifactType}. Valid types: ${JSON.stringify(Object.keys(registeredArtifactTypes))}`)
+        returnErrToClient(400, 'BAD REQUEST', `Invalid artifact type: ${artifactType}. Valid types: ${JSON.stringify(Object.keys(registeredArtifactTypes))}`)
     }
     return artifactLibrary;
 }
 
 function generateArtifactKey(artifactType, artifactName, artifactVersion = 'latest') {
     return `${artifactType}:${artifactName}:${artifactVersion}`;
+}
+
+function returnErrToClient(statusCode, statusMsg, body)
+{
+    fn.error(null, 'RESTAPI-SRVEXERR',
+        Sequence.from([statusCode, statusMsg, body]));
 }
