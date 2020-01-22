@@ -270,6 +270,8 @@ public class HubConfigImpl implements HubConfig
                 propertyConsumerMap.get(propertyName).accept(value);
             }
         }
+
+        hydrateConfigs();
     }
 
     protected HubProject requireHubProject() {
@@ -1028,7 +1030,10 @@ public class HubConfigImpl implements HubConfig
         return requireHubProject().getUserModulesDeployTimestampFile();
     }
 
-
+    /**
+     * After setting properties, this method must be invoked to instantiate SSL objects in case any of the SSL-related
+     * properties have been set to true.
+     */
     public void hydrateConfigs() {
         if (stagingSimpleSsl != null && stagingSimpleSsl) {
             stagingSslContext = SimpleX509TrustManager.newSSLContext();

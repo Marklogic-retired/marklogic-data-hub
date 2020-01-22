@@ -5,9 +5,10 @@ import com.marklogic.hub.impl.HubConfigImpl;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RunFlowCommandTest {
 
@@ -37,9 +38,29 @@ public class RunFlowCommandTest {
         command.setSsl(true);
 
         HubConfigImpl config = command.buildHubConfig();
-        assertTrue(config.getSimpleSsl(DatabaseKind.STAGING));
-        assertTrue(config.getSimpleSsl(DatabaseKind.FINAL));
-        assertTrue(config.getSimpleSsl(DatabaseKind.JOB));
+        Stream.of(DatabaseKind.STAGING, DatabaseKind.FINAL, DatabaseKind.JOB).forEach(kind -> {
+            assertTrue(config.getSimpleSsl(kind));
+            assertNotNull(config.getSslContext(kind));
+            assertNotNull(config.getSslHostnameVerifier(kind));
+            assertNotNull(config.getTrustManager(kind));
+        });
+    }
+
+    @Test
+    void sslWithDynamicParams() {
+        RunFlowCommand command = new RunFlowCommand();
+        command.setSsl(true);
+        Map<String, String> params = new HashMap<>();
+        params.put("mlFinalPort", "8012");
+        command.setParams(params);
+
+        HubConfigImpl config = command.buildHubConfig();
+        Stream.of(DatabaseKind.STAGING, DatabaseKind.FINAL, DatabaseKind.JOB).forEach(kind -> {
+            assertTrue(config.getSimpleSsl(kind));
+            assertNotNull(config.getSslContext(kind));
+            assertNotNull(config.getSslHostnameVerifier(kind));
+            assertNotNull(config.getTrustManager(kind));
+        });
     }
 
     @Test
@@ -48,13 +69,20 @@ public class RunFlowCommandTest {
         assertEquals("digest", config.getAuthMethod(DatabaseKind.STAGING));
         assertEquals("digest", config.getAuthMethod(DatabaseKind.FINAL));
         assertEquals("digest", config.getAuthMethod(DatabaseKind.JOB));
+
+        Stream.of(DatabaseKind.STAGING, DatabaseKind.FINAL, DatabaseKind.JOB).forEach(kind -> {
+            assertFalse(config.getSimpleSsl(kind));
+            assertNull(config.getSslContext(kind));
+            assertNull(config.getSslHostnameVerifier(kind));
+            assertNull(config.getTrustManager(kind));
+        });
     }
 
     @Test
     void basicAuth() {
         RunFlowCommand command = new RunFlowCommand();
         command.setAuth("basic");
-        
+
         HubConfigImpl config = command.buildHubConfig();
         assertEquals("basic", config.getAuthMethod(DatabaseKind.STAGING));
         assertEquals("basic", config.getAuthMethod(DatabaseKind.FINAL));
