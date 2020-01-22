@@ -19,11 +19,8 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.oneui.models.EnvironmentInfo;
 import com.marklogic.hub.oneui.models.HubConfigSession;
 import com.marklogic.hub.oneui.services.EnvironmentService;
+
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.Credentials;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -39,24 +36,22 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URI;
 
 /**
- * Implements Spring Security's AuthenticationManager interface so that it can authenticate users by making a simple
- * request to MarkLogic and checking for a 401. Also implements AuthenticationProvider so that it can be used with
- * Spring Security's ProviderManager.
+ * Implements Spring Security's AuthenticationManager interface so that it can authenticate users by
+ * making a simple request to MarkLogic and checking for a 401. Also implements
+ * AuthenticationProvider so that it can be used with Spring Security's ProviderManager.
  */
 @Component
-public class MarkLogicAuthenticationManager implements AuthenticationProvider, AuthenticationManager {
+public class MarkLogicAuthenticationManager
+    implements AuthenticationProvider, AuthenticationManager {
 
     private String pathToAuthenticateAgainst = "/v1/ping";
 
-
-    @Autowired
-    private EnvironmentService environmentService;
-    @Autowired
-    private HubConfigSession hubConfig;
+    @Autowired private EnvironmentService environmentService;
+    @Autowired private HubConfigSession hubConfig;
 
     /**
-     * A RestConfig instance is needed so a request can be made to MarkLogic to see if the user can successfully
-     * authenticate.
+     * A RestConfig instance is needed so a request can be made to MarkLogic to see if the user can
+     * successfully authenticate.
      */
     public MarkLogicAuthenticationManager() {}
 
@@ -69,7 +64,7 @@ public class MarkLogicAuthenticationManager implements AuthenticationProvider, A
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         if (!(authentication instanceof ConnectionAuthenticationToken)) {
             throw new IllegalArgumentException(
-                    getClass().getName() + " only supports " + ConnectionAuthenticationToken.class.getName());
+                getClass().getName() + " only supports " + ConnectionAuthenticationToken.class.getName());
         }
 
         ConnectionAuthenticationToken token = (ConnectionAuthenticationToken) authentication;
@@ -90,62 +85,41 @@ public class MarkLogicAuthenticationManager implements AuthenticationProvider, A
         try {
             restTemplate.getForObject(uri, String.class);
             hasManagePrivileges = true;
-        }
-        catch(ResourceAccessException ex) {
-            throw new BadCredentialsException("Cannot connect to MarkLogic at " + environmentInfo.mlHost + ". Are you sure MarkLogic is running?");
-        }
-        catch(HttpClientErrorException ex) {
+        } catch (ResourceAccessException ex) {
+            throw new BadCredentialsException(
+                "Cannot connect to MarkLogic at "
+                    + environmentInfo.mlHost
+                    + ". Are you sure MarkLogic is running?");
+        } catch (HttpClientErrorException ex) {
             if (HttpStatus.UNAUTHORIZED.equals(ex.getStatusCode())) {
                 throw new BadCredentialsException("Unauthorized");
-            } else if (!(HttpStatus.NOT_FOUND.equals(ex.getStatusCode()) ||
-               HttpStatus.FORBIDDEN.equals(ex.getStatusCode())
-            )){
-                /*
-                    throw error if not NOT_FOUND or FORBIDDEN, as those errors mean proper credentials,
-                    but no access to manage API
-                 */
+            } else if (!(HttpStatus.NOT_FOUND.equals(ex.getStatusCode())
+                || HttpStatus.FORBIDDEN.equals(ex.getStatusCode()))) {
+        /*
+           throw error if not NOT_FOUND or FORBIDDEN, as those errors mean proper credentials,
+           but no access to manage API
+        */
                 throw ex;
             }
         }
         DatabaseClient dataServicesClient = hubConfig.newStagingClient(null);
         boolean stagingServerAccessible = false;
         try {
-            stagingServerAccessible = dataServicesClient.checkConnection().isConnected();
+            stagingServerAccessible =
+                dataServicesClient.newServerConfigManager().getQueryValidation() != null;
+            stagingServerAccessible = true;
         } catch (Exception e) {
         }
-        return new ConnectionAuthenticationToken(token.getPrincipal(), token.getCredentials(),
-                environmentInfo.mlHost, hasManagePrivileges, stagingServerAccessible, token.getAuthorities());
+        return new ConnectionAuthenticationToken(
+            token.getPrincipal(),
+            token.getCredentials(),
+            environmentInfo.mlHost,
+            hasManagePrivileges,
+            stagingServerAccessible,
+            token.getAuthorities());
     }
 
     public void setPathToAuthenticateAgainst(String pathToAuthenticateAgainst) {
         this.pathToAuthenticateAgainst = pathToAuthenticateAgainst;
     }
-}
-
-/**
- * Simple implementation that is good for one-time requests.
- */
-class SimpleCredentialsProvider implements CredentialsProvider {
-
-    private String username;
-    private String password;
-
-    public SimpleCredentialsProvider(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
-
-    @Override
-    public void setCredentials(AuthScope authscope, Credentials credentials) {
-    }
-
-    @Override
-    public Credentials getCredentials(AuthScope authscope) {
-        return new UsernamePasswordCredentials(username, password);
-    }
-
-    @Override
-    public void clear() {
-    }
-
 }

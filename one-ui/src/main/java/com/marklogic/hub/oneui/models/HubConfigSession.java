@@ -1,6 +1,5 @@
 package com.marklogic.hub.oneui.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
@@ -19,6 +18,10 @@ import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
 import com.marklogic.mgmt.admin.AdminManager;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
@@ -26,16 +29,20 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Component
 @Primary
 @SessionScope
 public class HubConfigSession implements HubConfig {
+    private static final Logger logger = LoggerFactory.getLogger(HubConfigSession.class);
+
     private HubConfigImpl hubConfigImpl;
 
     @Autowired
@@ -73,6 +80,22 @@ public class HubConfigSession implements HubConfig {
         hubConfigImpl.setAppConfig(hubConfigImpl.getAppConfig(), false);
         hubConfigImpl.hydrateConfigs();
         this.dataHub = new DataHubImpl(this);
+    }
+
+    @PreDestroy
+    public void cleanUp() {
+        if (!clientsByKindAndDatabaseName.isEmpty()) {
+            clientsByKindAndDatabaseName.values().stream()
+                .flatMap(s -> s.values().stream().filter(Objects::nonNull))
+                .forEach(
+                    e -> {
+                        logger.debug(String.format("release %s (%s)", e.getDatabase(), e.toString()));
+                        e.release();
+                        e = null;
+                    });
+            clientsByKindAndDatabaseName.clear();
+            resetHubConfig();
+        }
     }
 
     public void setCredentials(EnvironmentInfo environmentInfo, String username, String password) {
@@ -117,16 +140,6 @@ public class HubConfigSession implements HubConfig {
         hubConfigImpl.hydrateConfigs();
         // construct clients now, so we can clear our password fields
         eagerlyConstructClients();
-
-        // TODO figure out a way to clear out passwords after client construction and support install
-/*
-        hubConfigImpl.setMlPassword(null);
-        appConfig.setAppServicesPassword(null);
-        appConfig.setRestAdminPassword(null);
-        adminConfig.setPassword(null);
-        manageConfig.setSecurityPassword(null);
-        manageConfig.setPassword(null);
-*/
     }
     /**
      * Gets the hostname of the AppConfig
@@ -961,6 +974,10 @@ public class HubConfigSession implements HubConfig {
         return hubConfigImpl.getManageConfig();
     }
 
+    public DataHub getDataHub() {
+        return this.dataHub;
+    }
+
     // Eagerly constructs clients with credentials to avoid storing password in our Java Objects
     private void eagerlyConstructClients() {
         // Only constructing what we need, as we discover we need it.
@@ -990,7 +1007,18 @@ public class HubConfigSession implements HubConfig {
         return client;
     }
 
-    public DataHub getDataHub() {
-        return this.dataHub;
+    /**
+     * reset hub configs, add more reset here if necessary
+     */
+    private void resetHubConfig() {
+        hubConfigImpl.setMlPassword(null);
+        AppConfig appConfig = hubConfigImpl.getAppConfig();
+        appConfig.setAppServicesPassword(null);
+        appConfig.setRestAdminPassword(null);
+        AdminConfig adminConfig = hubConfigImpl.getAdminConfig();
+        adminConfig.setPassword(null);
+        ManageConfig manageConfig = hubConfigImpl.getManageConfig();
+        manageConfig.setSecurityPassword(null);
+        manageConfig.setPassword(null);
     }
 }

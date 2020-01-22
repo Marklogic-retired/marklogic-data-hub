@@ -20,18 +20,22 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.ErrorPage;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
 
-@ComponentScan(basePackages = "com.marklogic.hub", excludeFilters = {@ComponentScan.Filter(
-		type = FilterType.REGEX,
-		pattern = "com\\.marklogic\\.hub\\.impl\\.HubConfigImpl")
-})
+@ComponentScan(
+		basePackages = "com.marklogic.hub",
+		excludeFilters = {
+				@ComponentScan.Filter(
+						type = FilterType.REGEX,
+						pattern = "com\\.marklogic\\.hub\\.impl\\.HubConfigImpl")
+		})
 @SpringBootApplication
-public class Application {
+public class Application extends SpringBootServletInitializer {
 
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
@@ -46,8 +50,8 @@ public class Application {
 	}
 
 	/**
-	 * Copied from https://karl.run/2018/05/07/kotlin-spring-boot-react/ - ensures that for a single page application,
-	 * any non-root route is routed back to "/".
+	 * Copied from https://karl.run/2018/05/07/kotlin-spring-boot-react/ - ensures that for a single
+	 * page application, any non-root route is routed back to "/".
 	 *
 	 * @return
 	 */
