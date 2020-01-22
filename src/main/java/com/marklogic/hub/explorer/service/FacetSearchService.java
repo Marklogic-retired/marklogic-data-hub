@@ -82,42 +82,15 @@ public class FacetSearchService {
     facetName = entityName + DOT_CHAR + fsq.getFacetInfo().getFacetName();
     Properties prop = explorerConfig.getQueryProperties();
 
-    switch (fsq.getDataType()) {
-      case "string":
-        query = prop.getProperty("stringFacetValuesQuery");
-        if (query != null) {
-          query = String.format(query, facetName, entityName, facetName,
-              STRING_IDENTIFIER + fsq.getQueryParams().get(0) + ANY_STRING + STRING_IDENTIFIER,
-              facetName,
-              STRING_IDENTIFIER + ANY_CHAR + ANY_STRING + fsq.getQueryParams().get(0) + ANY_STRING
-                  + STRING_IDENTIFIER, fsq.getLimit());
-        }
-        break;
-
-      case "date":
-      case "dateTime":
-        query = prop.getProperty("rangeFacetValuesQuery");
-        if (query != null) {
-          query = String.format(query, facetName, entityName, facetName,
-              STRING_IDENTIFIER + fsq.getQueryParams().get(0) + STRING_IDENTIFIER,
-              STRING_IDENTIFIER + fsq.getQueryParams().get(1) + STRING_IDENTIFIER, fsq.getLimit());
-        }
-        break;
-
-      case "int":
-      case "integer":
-      case "decimal":
-      case "long":
-      case "float":
-      case "double":
-        query = prop.getProperty("rangeFacetValuesQuery");
-        query = String
-            .format(query, facetName, entityName, facetName, fsq.getQueryParams().get(0),
-                fsq.getQueryParams().get(1), fsq.getLimit());
-        break;
-
-      default:
-        break;
+    if (fsq.getDataType().equals("string")) {
+      query = prop.getProperty("stringFacetValuesQuery");
+      if (query != null) {
+        query = String.format(query, facetName, entityName, facetName,
+            STRING_IDENTIFIER + fsq.getQueryParams().get(0) + ANY_STRING + STRING_IDENTIFIER,
+            facetName,
+            STRING_IDENTIFIER + ANY_CHAR + ANY_STRING + fsq.getQueryParams().get(0) + ANY_STRING
+                + STRING_IDENTIFIER, fsq.getLimit());
+      }
     }
     logger.debug(query);
     return query;
