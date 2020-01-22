@@ -4,6 +4,7 @@
 package com.marklogic.hub.explorer.web;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import com.marklogic.hub.explorer.model.Document;
@@ -66,7 +67,7 @@ public class SearchController {
 
   @RequestMapping(value = "/facet-values/range", method = RequestMethod.POST)
   @ResponseBody
-  public List<String> getFacetValuesRange(@RequestBody FacetInfo facetInfo) {
+  public Map<String, String> getFacetValuesRange(@RequestBody FacetInfo facetInfo) {
     return facetSearchService.getFacetValuesRange(facetInfo);
   }
 }

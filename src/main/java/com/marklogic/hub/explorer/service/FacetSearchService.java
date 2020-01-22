@@ -1,7 +1,9 @@
 package com.marklogic.hub.explorer.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import com.marklogic.client.DatabaseClient;
@@ -47,8 +49,8 @@ public class FacetSearchService {
     return facetValues;
   }
 
-  public List<String> getFacetValuesRange(FacetInfo facetInfo) {
-    List<String> facetValues = new ArrayList<>();
+  public Map<String, String> getFacetValuesRange(FacetInfo facetInfo) {
+    Map<String, String> facetValues = new HashMap<>();
     JsonNode queryResults = null;
     DatabaseClient client = databaseClientHolder.getDatabaseClient();
 
@@ -68,8 +70,8 @@ public class FacetSearchService {
 
     if (queryResults != null) {
       queryResults = queryResults.path("rows").get(0);
-      facetValues.add(queryResults.get(minFacet).get("value").asText());
-      facetValues.add(queryResults.get(maxFacet).get("value").asText());
+      facetValues.put("min", queryResults.get(minFacet).get("value").asText());
+      facetValues.put("max", queryResults.get(maxFacet).get("value").asText());
     }
     return facetValues;
   }
