@@ -35,7 +35,7 @@ public class MatchingStepDefinitionImpl extends AbstractStepDefinition {
         options.put("sourceQuery", getSourceQuery());
         options.put("sourceDatabase", HubConfig.DEFAULT_FINAL_NAME);
         options.put("targetDatabase", HubConfig.DEFAULT_FINAL_NAME);
-        options.put("matchOptions", new JSONObject());
+        options.put("matchOptions", new JSONObject().jsonNode());
         options.put("stepUpdate", false);
         // Accepts batch needed for Smart Mastering to receive all batch documents at once
         options.put("acceptsBatch", true);
