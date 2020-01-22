@@ -673,7 +673,7 @@ public class HubProjectImpl implements HubProject {
 
     protected void upgradeFlows() {
         if(versions.isVersionCompatibleWithES()){
-            flowManager.getFlows().forEach(flow ->{
+            flowManager.getLocalFlows().forEach(flow ->{
                 flow.getSteps().values().forEach((step) -> {
                     if((step.getStepDefinitionType().equals(StepDefinition.StepDefinitionType.MAPPING)) &&
                         step.getStepDefinitionName().equalsIgnoreCase("default-mapping")){

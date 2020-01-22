@@ -22,10 +22,10 @@ class CreateFlowTask extends HubTask {
         def emptySteps = project.hasProperty(propEmptySteps) ? Boolean.parseBoolean(project.property(propEmptySteps) as String) : false
 
         FlowManager flowManager = getFlowManager()
-        if (flowManager.getFlow(flowName.toString()) == null) {
+        if (flowManager.getLocalFlow(flowName.toString()) == null) {
             if (emptySteps) {
                 Flow flow = flowManager.createFlow(flowName.toString())
-                flowManager.saveFlow(flow)
+                flowManager.saveLocalFlow(flow)
             }
             else {
                 Scaffolding scaffolding = getScaffolding()

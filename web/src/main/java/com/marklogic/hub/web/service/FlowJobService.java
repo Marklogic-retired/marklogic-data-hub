@@ -20,18 +20,23 @@ import io.opentracing.Span;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PreDestroy;
 import javax.xml.bind.DatatypeConverter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static com.marklogic.hub.job.JobStatus.RUNNING_PREFIX;
 
 @Service
-public class FlowJobService {
+public class FlowJobService implements DisposableBean {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -65,7 +70,6 @@ public class FlowJobService {
         this.jobDocManager = new JobDocManager(client);
     }
 
-    @PreDestroy
     public void destroy() {
         logger.info("release the job database client.");
         this.release();
