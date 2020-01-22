@@ -6,13 +6,13 @@ package com.marklogic.hub.explorer.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.explorer.model.Document;
 import com.marklogic.hub.explorer.model.SearchQuery;
+import com.marklogic.hub.explorer.model.SearchQuery.FacetData;
 import com.marklogic.hub.explorer.util.SearchHelper;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -24,8 +24,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 @RunWith(JUnitPlatform.class)
@@ -45,9 +45,12 @@ public class SearchServiceTest {
   @BeforeEach
   public void setUpDocs() {
     // Create Facet Map
-    List<String> priceFacetValues = Arrays.asList("220", "350");
-    Map<String, List<String>> facets = new HashMap<>();
-    facets.put("Price", priceFacetValues);
+    FacetData priceFacetData = new FacetData();
+    priceFacetData.setDataType("int");
+    priceFacetData.setValues(Arrays.asList("220", "350"));
+
+    Map<String, FacetData> facets = new HashMap<>();
+    facets.put("Price", priceFacetData);
 
     // Create Search Query object
     mockQuery = new SearchQuery();
@@ -76,8 +79,12 @@ public class SearchServiceTest {
 
   @Test
   public void testSearchWithDates() {
-    List<String> jobFacetValues = Arrays.asList("2019-09-15", "2019-10-10");
-    mockQuery.getFacets().put("createdOnRange", jobFacetValues);
+    // Create Facet Map
+    FacetData dateFacetData = new FacetData();
+    dateFacetData.setDataType("date");
+    dateFacetData.setValues(Arrays.asList("2019-09-15", "2019-10-10"));
+
+    mockQuery.getFacets().put("createdOnRange", dateFacetData);
 
     StringHandle mockHandle = new StringHandle("This is some sample search data with in date "
         + "range");
@@ -133,8 +140,11 @@ public class SearchServiceTest {
 
   @Test
   public void testSearchWithSingleJobId() {
-    List<String> jobFacetValues = Arrays.asList("custom-job-id-1", "custom-job-id-2");
-    mockQuery.getFacets().put("createdByJobRange", jobFacetValues);
+    FacetData jobFacetData = new FacetData();
+    jobFacetData.setDataType("string");
+    jobFacetData.setValues(Arrays.asList("custom-job-id-1", "custom-job-id-2"));
+
+    mockQuery.getFacets().put("createdByJobRange", jobFacetData);
 
     StringHandle mockHandle = new StringHandle("This is some sample search data");
     when(mockSearchHelper.search(mockQuery)).thenReturn(mockHandle);
