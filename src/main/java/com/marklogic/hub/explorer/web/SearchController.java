@@ -58,13 +58,13 @@ public class SearchController {
     }).orElse(new ResponseEntity<>(HttpStatus.OK));
   }
 
-  @RequestMapping(value = "/facet-values", method = RequestMethod.GET)
+  @RequestMapping(value = "/facet-values", method = RequestMethod.POST)
   @ResponseBody
   public List<String> getFacetValues(@RequestBody FacetSearchQuery fsQuery) {
     return facetSearchService.getFacetValues(fsQuery);
   }
 
-  @RequestMapping(value = "/facet-values/range", method = RequestMethod.GET)
+  @RequestMapping(value = "/facet-values/range", method = RequestMethod.POST)
   @ResponseBody
   public List<String> getFacetValuesRange(@RequestBody FacetInfo facetInfo) {
     return facetSearchService.getFacetValuesRange(facetInfo);
