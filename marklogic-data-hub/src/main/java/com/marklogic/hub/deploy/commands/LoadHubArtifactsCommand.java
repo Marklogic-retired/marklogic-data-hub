@@ -63,6 +63,22 @@ public class LoadHubArtifactsCommand extends AbstractCommand {
         setExecuteSortOrder(SortOrderConstants.DEPLOY_TRIGGERS + 10);
     }
 
+    /**
+     * For use outside of a Spring container.
+     *
+     * @param hubConfig
+     */
+    public LoadHubArtifactsCommand(HubConfig hubConfig) {
+        this();
+        this.hubConfig = hubConfig;
+    }
+
+    public LoadHubArtifactsCommand(HubConfig hubConfig, boolean forceLoad) {
+        this(hubConfig);
+        this.hubConfig = hubConfig;
+        this.forceLoad = forceLoad;
+    }
+
     private PropertiesModuleManager getModulesManager() {
         String timestampFile = hubConfig.getHubProject().getHubModulesDeployTimestampFile();
         PropertiesModuleManager pmm = new PropertiesModuleManager(timestampFile);

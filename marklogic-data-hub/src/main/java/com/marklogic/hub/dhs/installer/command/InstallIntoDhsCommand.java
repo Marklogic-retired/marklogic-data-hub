@@ -6,17 +6,19 @@ import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
 import com.marklogic.appdeployer.command.security.DeployAmpsCommand;
 import com.marklogic.appdeployer.command.security.DeployPrivilegesCommand;
 import com.marklogic.appdeployer.command.security.DeployRolesCommand;
+import com.marklogic.appdeployer.command.triggers.DeployTriggersCommand;
 import com.marklogic.hub.deploy.HubAppDeployer;
-import com.marklogic.hub.deploy.commands.CreateGranularPrivilegesCommand;
-import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
-import com.marklogic.hub.deploy.commands.HubDeployDatabaseCommandFactory;
+import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.dhs.installer.Options;
 import com.marklogic.hub.dhs.installer.deploy.CopyQueryOptionsCommand;
 import com.marklogic.hub.dhs.installer.deploy.DhsDeployServersCommand;
 import com.marklogic.hub.dhs.installer.deploy.UpdateDhsModulesPermissionsCommand;
 import org.springframework.context.ApplicationContext;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
 import java.util.regex.Pattern;
 
 @Parameters(commandDescription = "Install or upgrade DHF into a DHS environment")
@@ -28,8 +30,7 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
 
         logger.info("Installing DHF version " + hubConfig.getJarVersion());
 
-        HubAppDeployer deployer = new HubAppDeployer(
-            hubConfig.getManageClient(), hubConfig.getAdminManager(), null, hubConfig.newStagingClient());
+        HubAppDeployer deployer = new HubAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager(), null, null);
 
         String groupName = "Evaluator";
         modifyHubConfigForDhs(groupName);
@@ -39,7 +40,9 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
         // Update the servers in the Curator group
         groupName = "Curator";
         modifyHubConfigForDhs(groupName);
-        deployer.setCommands(Arrays.asList(new DhsDeployServersCommand(dataHub)));
+        DhsDeployServersCommand dhsDeployServersCommand = new DhsDeployServersCommand();
+        dhsDeployServersCommand.setServerVersion(serverVersion);
+        deployer.setCommands(Arrays.asList(dhsDeployServersCommand));
         deployer.deploy(hubConfig.getAppConfig());
     }
 
@@ -62,17 +65,22 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
 
         commands.add(new DeployAmpsCommand());
         commands.add(dbCommand);
-        commands.add(new DhsDeployServersCommand(dataHub));
+
+        DhsDeployServersCommand ddsc = new DhsDeployServersCommand();
+        ddsc.setServerVersion(serverVersion);
+        commands.add(ddsc);
+
         commands.add(new DeployDatabaseFieldCommand());
 
-        Map<String, List<Command>> commandMap = dataHub.buildCommandMap();
+        commands.add(new DeployTriggersCommand());
+        commands.add(new DeployHubTriggersCommand(hubConfig.getStagingTriggersDbName()));
 
-        // Gets the DHF-specific command for loading triggers into the staging triggers database
-        commands.addAll(commandMap.get("mlTriggerCommands"));
+        commands.add(new LoadHubModulesCommand(hubConfig));
+        commands.add(new LoadHubArtifactsCommand(hubConfig, true));
 
-        // Can include all of the module commands. No user modules/artifacts will exist in the project that's
-        // created by the installer, so it's safe to include commands for user/modules artifacts.
-        commands.addAll(commandMap.get("mlModuleCommands"));
+        // DHS is known to be compatible with entity-services-based mapping. Setting this field avoids the need to make
+        // another DatabaseClient, which the Versions class will do.
+        commands.add(new GenerateFunctionMetadataCommand(hubConfig, true));
 
         commands.add(new CopyQueryOptionsCommand(hubConfig));
         commands.add(new UpdateDhsModulesPermissionsCommand(hubConfig));

@@ -15,6 +15,7 @@
  */
 package com.marklogic.hub.impl;
 
+import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.ApplicationConfig;
@@ -75,7 +76,7 @@ public class DataHubImplTest extends HubTestBase {
 
         versions = EasyMock.createMockBuilder(Versions.class)
             .withConstructor()
-            .addMockedMethod("getMarkLogicVersion")
+            .addMockedMethod("getMarkLogicVersion", AppConfig.class)
             .createMock();
         dh.setVersions(versions);
     }

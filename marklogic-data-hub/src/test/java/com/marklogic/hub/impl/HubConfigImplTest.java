@@ -1,7 +1,12 @@
 package com.marklogic.hub.impl;
 
 import com.marklogic.hub.DatabaseKind;
+import com.marklogic.hub.HubTestBase;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.mock.env.MockEnvironment;
+
+import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,6 +28,32 @@ public class HubConfigImplTest {
         assertEquals("someuser", config.getMlUsername());
         assertEquals("something", config.getMlPassword());
         verifyDefaultValues(config);
+    }
+
+    /**
+     * Verifies that when mlHost is processed when refreshing a HubConfigImpl, the underlying AppConfig object is
+     * updated as well.
+     *
+     * @throws Exception
+     */
+    @Test
+    void hostOnAppConfigShouldBeUpdated() throws Exception {
+        HubProjectImpl project = new HubProjectImpl();
+        project.createProject(HubTestBase.PROJECT_PATH);
+
+        // Construct a mock Environment based on the DHF default properties, but with a custom mlHost value
+        Properties props = new Properties();
+        props.load(new ClassPathResource("dhf-defaults.properties").getInputStream());
+        MockEnvironment env = new MockEnvironment();
+        for (Object key : props.keySet()) {
+            env.setProperty((String) key, (String) props.get(key));
+        }
+        env.setProperty("mlHost", "somehost");
+
+        HubConfigImpl config = new HubConfigImpl(project, env);
+        config.refreshProject(new Properties(), false);
+        assertEquals("somehost", config.getHost());
+        assertEquals("somehost", config.getAppConfig().getHost());
     }
 
     private void verifyDefaultValues(HubConfigImpl config) {

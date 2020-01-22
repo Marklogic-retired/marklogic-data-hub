@@ -34,6 +34,7 @@ public class Options {
     @Parameter(
         names = {"--password"},
         required = true,
+        password = true,
         description = "Password of the MarkLogic user that the installer users to connect"
     )
     private String password;
