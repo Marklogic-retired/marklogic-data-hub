@@ -43,11 +43,12 @@ export function getPermissions() {
     return permissions;
 }
 
+export function getFileExtension() {
+    return '.flow.json';
+}
+
 export function getArtifactNode(artifactName, artifactVersion) {
     const results = cts.search(cts.andQuery([cts.collectionQuery(collections[0]), cts.jsonPropertyValueQuery('name', artifactName)]));
-    if (fn.empty(results)) {
-        returnErrToClient(404, 'Flow ' + artifactName + ' not found!');
-    }
     return fn.head(results);
 }
 
