@@ -20,17 +20,16 @@ package com.marklogic.hub.web.web;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.web.auth.ConnectionAuthenticationToken;
-import com.marklogic.hub.web.service.EnvironmentConfig;
 import com.marklogic.hub.web.service.ProjectManagerService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 
-public class BaseTestController extends HubTestBase {
+public class BaseTestController extends HubTestBase implements InitializingBean {
 
     protected static final String PROJECT_PATH = "ye-olde-project";
     @Autowired
@@ -44,8 +43,8 @@ public class BaseTestController extends HubTestBase {
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
 
-    @PostConstruct
-    public void setUpModules() {
+    public void afterPropertiesSet() throws Exception {
+        super.afterPropertiesSet();
         setEnvConfig();
         installHubModules();
     }
