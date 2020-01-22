@@ -37,7 +37,7 @@ public class DhsDeployer extends LoggingObject {
     public void deployToDhs(HubConfigImpl hubConfig) {
         prepareAppConfigForDeployingToDhs(hubConfig);
 
-        HubAppDeployer dhsDeployer = new HubAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager(), null, hubConfig.newStagingClient());
+        HubAppDeployer dhsDeployer = new HubAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager(), null, null);
         dhsDeployer.setCommands(buildCommandListForDeployingToDhs(hubConfig));
         dhsDeployer.deploy(hubConfig.getAppConfig());
     }

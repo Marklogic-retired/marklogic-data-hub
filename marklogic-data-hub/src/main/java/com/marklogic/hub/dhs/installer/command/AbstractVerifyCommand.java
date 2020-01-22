@@ -2,7 +2,6 @@ package com.marklogic.hub.dhs.installer.command;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.GenericDocumentManager;
-import com.marklogic.mgmt.api.security.Amp;
 import com.marklogic.mgmt.resource.appservers.ServerManager;
 import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import com.marklogic.mgmt.resource.security.AmpManager;
@@ -11,6 +10,9 @@ import com.marklogic.mgmt.resource.triggers.TriggerManager;
 import com.marklogic.rest.util.Fragment;
 import com.marklogic.rest.util.ResourcesFragment;
 import org.springframework.util.Assert;
+
+import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Contains verifications that are common to either a local or DHS installation of DHF.
@@ -30,21 +32,12 @@ public abstract class AbstractVerifyCommand extends AbstractInstallerCommand {
     }
 
     protected void verifyAmps() {
-        // For amps - just spot-checking a couple of them
         AmpManager ampManager = new AmpManager(hubConfig.getManageClient());
-        Amp firstAmp = new Amp();
-        firstAmp.setLocalName("map-to-xml");
-        firstAmp.setModulesDatabase(hubConfig.getAppConfig().getModulesDatabaseName());
-        firstAmp.setDocumentUri("/com.marklogic.smart-mastering/survivorship/merging/base.xqy");
-        firstAmp.setNamespace("http://marklogic.com/smart-mastering/survivorship/merging");
-        Amp lastAmp = new Amp();
-        lastAmp.setLocalName("construct-type");
-        lastAmp.setDocumentUri("/com.marklogic.smart-mastering/survivorship/merging/base.xqy");
-        lastAmp.setModulesDatabase(hubConfig.getAppConfig().getModulesDatabaseName());
-        lastAmp.setNamespace("http://marklogic.com/smart-mastering/survivorship/merging");
-        for (Amp amp : new Amp[]{firstAmp, lastAmp}) {
-            verify(ampManager.ampExists(amp.getJson()), "Expected amp to have been created: " + amp.getJson());
-        }
+        List<String> ampNames = ampManager.getAsXml().getListItemNameRefs();
+        Stream.of("updateBatch", "updateJob", "map-to-xml", "construct-type", "locked-uris", "post-bulk-documents",
+            "do-refresh-extension-metadata", "xdmp-add-response-header", "xdmp-add-response-header").forEach(name -> {
+            verify(ampNames.contains(name), "Expected amp to have been created: " + name);
+        });
     }
 
     protected void verifyJobDatabase() {

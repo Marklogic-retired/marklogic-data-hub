@@ -1132,6 +1132,7 @@ public class HubConfigImpl implements HubConfig
         }
 
         if (host == null) {
+            // Can't call setHost here because the AppConfig needs to be "hydrated", which will happen later in this method
             host = getEnvPropString(projectProperties, "mlHost", environment.getProperty("mlHost"));
         }
         else {
@@ -1898,6 +1899,10 @@ public class HubConfigImpl implements HubConfig
      * @param config
      */
     private void updateAppConfig(AppConfig config) {
+        if (host != null) {
+            config.setHost(host);
+        }
+
         // If the user hasn't set the app name then override it to "DHF" instead of "my-app"
         if ("my-app".equals(config.getName())) {
             config.setName("DHF");

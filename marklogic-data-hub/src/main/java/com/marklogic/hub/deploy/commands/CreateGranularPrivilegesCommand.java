@@ -10,11 +10,9 @@ import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.security.Privilege;
 import com.marklogic.mgmt.mapper.DefaultResourceMapper;
-import com.marklogic.mgmt.mapper.ResourceMapper;
 import com.marklogic.mgmt.resource.security.PrivilegeManager;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -52,21 +50,12 @@ public class CreateGranularPrivilegesCommand implements Command, UndoableCommand
         final String stagingTriggersDbName = hubConfig.getDbName(DatabaseKind.STAGING_TRIGGERS);
 
         PrivilegeManager mgr = new PrivilegeManager(context.getManageClient());
+        buildPrivilegesThatDhsMayHaveCreated(context.getManageClient()).forEach(p -> mgr.save(p.getJson()));
 
-        buildClearDatabasePrivileges(context.getManageClient(), finalDbName, stagingDbName).forEach(p -> mgr.save(p.getJson()));
-
-        Privilege p = new Privilege(null, "admin-database-index-" + finalDbName);
+        Privilege p = new Privilege(null, "admin-database-triggers-" + stagingTriggersDbName);
         p.setKind("execute");
-        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/index/$$database-id(" + finalDbName + ")");
-        p.setRole(Arrays.asList("data-hub-developer"));
-        mgr.save(p.getJson());
-
-        p.setPrivilegeName("admin-database-index-" + stagingDbName);
-        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/index/$$database-id(" + stagingDbName + ")");
-        mgr.save(p.getJson());
-
-        p.setPrivilegeName("admin-database-triggers-" + stagingTriggersDbName);
         p.setAction("http://marklogic.com/xdmp/privileges/admin/database/triggers/$$database-id(" + stagingTriggersDbName + ")");
+        p.addRole("data-hub-developer");
         mgr.save(p.getJson());
 
         p.setPrivilegeName("admin-database-triggers-" + finalTriggersDbName);
@@ -148,43 +137,42 @@ public class CreateGranularPrivilegesCommand implements Command, UndoableCommand
     }
 
     /**
-     * DHS creates privileges for clearing the final/staging databases. So if those exist, data-hub-admin is added to
-     * those as opposed to new privileges being created.
+     * Some of the privileges that need to be created may already exist in DHS. If so, then a role is added to that
+     * privilege instead of creating a duplicate one with the same action, which ML does not allow.
      *
      * @param client
-     * @param finalDbName
-     * @param stagingDbName
      * @return
      */
-    protected List<Privilege> buildClearDatabasePrivileges(ManageClient client, String finalDbName, String stagingDbName) {
+    protected List<Privilege> buildPrivilegesThatDhsMayHaveCreated(ManageClient client) {
+        final List<String> existingPrivilegeNames = new PrivilegeManager(client).getAsXml().getListItemNameRefs();
+        final String stagingDbName = hubConfig.getDbName(DatabaseKind.STAGING);
+        final String finalDbName = hubConfig.getDbName(DatabaseKind.FINAL);
+
         List<Privilege> list = new ArrayList<>();
+        list.add(buildPrivilege(client, "admin-database-clear-" + stagingDbName, "http://marklogic.com/xdmp/privileges/admin/database/clear/$$database-id(" + stagingDbName + ")",
+            "clear-data-hub-STAGING", existingPrivilegeNames, "data-hub-admin"));
+        list.add(buildPrivilege(client, "admin-database-clear-" + finalDbName, "http://marklogic.com/xdmp/privileges/admin/database/clear/$$database-id(" + finalDbName + ")",
+            "clear-data-hub-FINAL", existingPrivilegeNames, "data-hub-admin"));
 
-        PrivilegeManager mgr = new PrivilegeManager(client);
-        final List<String> existingPrivilegeNames = mgr.getAsXml().getListItemNameRefs();
-        ResourceMapper resourceMapper = new DefaultResourceMapper(new API(client));
-
-        Privilege stagingPriv;
-        if (existingPrivilegeNames.contains("clear-data-hub-STAGING")) {
-            stagingPriv = resourceMapper.readResource(mgr.getAsJson("clear-data-hub-STAGING", "kind", "execute"), Privilege.class);
-        } else {
-            stagingPriv = new Privilege(null, "admin-database-clear-" + stagingDbName);
-            stagingPriv.setKind("execute");
-            stagingPriv.setAction("http://marklogic.com/xdmp/privileges/admin/database/clear/$$database-id(" + stagingDbName + ")");
-        }
-        stagingPriv.addRole("data-hub-admin");
-        list.add(stagingPriv);
-
-        Privilege finalPriv;
-        if (existingPrivilegeNames.contains("clear-data-hub-FINAL")) {
-            finalPriv = resourceMapper.readResource(mgr.getAsJson("clear-data-hub-FINAL", "kind", "execute"), Privilege.class);
-        } else {
-            finalPriv = new Privilege(null, "admin-database-clear-" + finalDbName);
-            finalPriv.setKind("execute");
-            finalPriv.setAction("http://marklogic.com/xdmp/privileges/admin/database/clear/$$database-id(" + finalDbName + ")");
-        }
-        finalPriv.addRole("data-hub-admin");
-        list.add(finalPriv);
+        list.add(buildPrivilege(client, "admin-database-index-" + stagingDbName, "http://marklogic.com/xdmp/privileges/admin/database/index/$$database-id(" + stagingDbName + ")",
+            "STAGING-index-editor", existingPrivilegeNames, "data-hub-developer"));
+        list.add(buildPrivilege(client, "admin-database-index-" + finalDbName, "http://marklogic.com/xdmp/privileges/admin/database/index/$$database-id(" + finalDbName + ")",
+            "FINAL-index-editor", existingPrivilegeNames, "data-hub-developer"));
 
         return list;
+    }
+
+    protected Privilege buildPrivilege(ManageClient client, String name, String action, String dhsName, List<String> existingPrivilegeNames, String role) {
+        Privilege p;
+        if (existingPrivilegeNames.contains(dhsName)) {
+            final String json = new PrivilegeManager(client).getAsJson(dhsName, "kind", "execute");
+            p = new DefaultResourceMapper(new API(client)).readResource(json, Privilege.class);
+        } else {
+            p = new Privilege(null, name);
+            p.setKind("execute");
+            p.setAction(action);
+        }
+        p.addRole(role);
+        return p;
     }
 }

@@ -173,7 +173,7 @@ public class CreateGranularPrivilegesTest extends HubTestBase {
      * the same action.
      */
     @Test
-    void createClearDatabasePrivilegesInSimulatedDhsEnvironment() {
+    void createDatabasePrivilegesInSimulatedDhsEnvironment() {
         final API api = new API(adminHubConfig.getManageClient());
         Role dhsDbaRole = new Role(api, "dba");
 
@@ -187,12 +187,24 @@ public class CreateGranularPrivilegesTest extends HubTestBase {
         dhsStagingPriv.setAction("not-the-real-privilege-staging");
         dhsStagingPriv.addRole("dba");
 
+        Privilege dhsStagingIndexPriv = new Privilege(api, "STAGING-index-editor");
+        dhsStagingIndexPriv.setKind("execute");
+        dhsStagingIndexPriv.setAction("not-the-real-index-staging");
+        dhsStagingIndexPriv.addRole("dba");
+
+        Privilege dhsFinalIndexPriv = new Privilege(api, "FINAL-index-editor");
+        dhsFinalIndexPriv.setKind("execute");
+        dhsFinalIndexPriv.setAction("not-the-real-index-final");
+        dhsFinalIndexPriv.addRole("dba");
+
         try {
             dhsDbaRole.save();
             dhsStagingPriv.save();
             dhsFinalPriv.save();
+            dhsStagingIndexPriv.save();
+            dhsFinalIndexPriv.save();
 
-            List<Privilege> list = new CreateGranularPrivilegesCommand(adminHubConfig).buildClearDatabasePrivileges(adminHubConfig.getManageClient(), "data-hub-FINAL", "data-hub-STAGING");
+            List<Privilege> list = new CreateGranularPrivilegesCommand(adminHubConfig).buildPrivilegesThatDhsMayHaveCreated(adminHubConfig.getManageClient());
             Privilege stagingPriv = list.get(0);
             assertEquals("clear-data-hub-STAGING", stagingPriv.getPrivilegeName());
             assertEquals("dba", stagingPriv.getRole().get(0));
@@ -202,11 +214,23 @@ public class CreateGranularPrivilegesTest extends HubTestBase {
             assertEquals("clear-data-hub-FINAL", finalPriv.getPrivilegeName());
             assertEquals("dba", finalPriv.getRole().get(0));
             assertEquals("data-hub-admin", finalPriv.getRole().get(1));
+
+            Privilege stagingIndexPriv = list.get(2);
+            assertEquals("STAGING-index-editor", stagingIndexPriv.getPrivilegeName());
+            assertEquals("dba", stagingIndexPriv.getRole().get(0));
+            assertEquals("data-hub-developer", stagingIndexPriv.getRole().get(1));
+
+            Privilege finalIndexPriv = list.get(3);
+            assertEquals("FINAL-index-editor", finalIndexPriv.getPrivilegeName());
+            assertEquals("dba", finalIndexPriv.getRole().get(0));
+            assertEquals("data-hub-developer", finalIndexPriv.getRole().get(1));
         } finally {
             dhsDbaRole.delete();
             PrivilegeManager mgr = new PrivilegeManager(adminHubConfig.getManageClient());
             mgr.deleteAtPath("/manage/v2/privileges/clear-data-hub-FINAL?kind=execute");
             mgr.deleteAtPath("/manage/v2/privileges/clear-data-hub-STAGING?kind=execute");
+            mgr.deleteAtPath("/manage/v2/privileges/FINAL-index-editor?kind=execute");
+            mgr.deleteAtPath("/manage/v2/privileges/STAGING-index-editor?kind=execute");
         }
     }
 }

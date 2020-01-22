@@ -109,9 +109,13 @@ public class Versions {
     }
 
     public String getMarkLogicVersion() {
-        if (this.appConfig == null) {
-            this.appConfig = hubConfig.getAppConfig();
+        if (appConfig == null && hubConfig != null) {
+            appConfig = hubConfig.getAppConfig();
         }
+        return getMarkLogicVersion(appConfig);
+    }
+
+    public String getMarkLogicVersion(AppConfig appConfig) {
         // this call specifically needs to access marklogic without a known database
         ServerEvaluationCall eval = appConfig.newAppServicesDatabaseClient(null).newServerEval();
         String xqy = "xdmp:version()";

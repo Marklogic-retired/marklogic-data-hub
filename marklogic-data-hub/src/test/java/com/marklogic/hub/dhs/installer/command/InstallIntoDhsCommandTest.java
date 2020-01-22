@@ -89,13 +89,13 @@ public class InstallIntoDhsCommandTest extends HubTestBase {
     @Test
     public void buildCommandList() {
         InstallIntoDhsCommand command = new InstallIntoDhsCommand();
-        command.dataHub = super.dataHub;
+        command.hubConfig = super.adminHubConfig;
 
         List<Command> commands = command.buildCommandsForDhs();
-        assertEquals(17, commands.size());
         Collections.sort(commands, Comparator.comparing(Command::getExecuteSortOrder));
 
         int index = 0;
+        System.out.println(commands);
         assertTrue(commands.get(index++) instanceof DeployPrivilegesCommand);
         assertTrue(commands.get(index++) instanceof DeployRolesCommand);
         assertTrue(commands.get(index++) instanceof DeployOtherDatabasesCommand);
@@ -104,15 +104,13 @@ public class InstallIntoDhsCommandTest extends HubTestBase {
         assertTrue(commands.get(index++) instanceof LoadHubModulesCommand);
         assertTrue(commands.get(index++) instanceof UpdateDhsModulesPermissionsCommand);
         assertTrue(commands.get(index++) instanceof DeployAmpsCommand);
-        assertTrue(commands.get(index++) instanceof LoadUserModulesCommand);
-        assertTrue(commands.get(index++) instanceof GenerateFunctionMetadataCommand);
-        assertTrue(commands.get(index++) instanceof DeleteTestModulesCommand);
         assertTrue(commands.get(index++) instanceof CopyQueryOptionsCommand);
         assertTrue(commands.get(index++) instanceof DeployTriggersCommand);
         assertTrue(commands.get(index++) instanceof DeployHubTriggersCommand);
-        assertTrue(commands.get(index++) instanceof LoadUserArtifactsCommand);
         assertTrue(commands.get(index++) instanceof LoadHubArtifactsCommand);
+        assertTrue(commands.get(index++) instanceof GenerateFunctionMetadataCommand);
         assertTrue(commands.get(index++) instanceof CreateGranularPrivilegesCommand);
+        assertEquals(14, commands.size());
 
         DeployRolesCommand deployRolesCommand = (DeployRolesCommand) commands.get(1);
         ResourceFilenameFilter filter = (ResourceFilenameFilter) deployRolesCommand.getResourceFilenameFilter();

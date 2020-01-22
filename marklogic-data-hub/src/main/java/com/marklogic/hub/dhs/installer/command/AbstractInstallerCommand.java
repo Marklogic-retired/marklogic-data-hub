@@ -20,6 +20,7 @@ public abstract class AbstractInstallerCommand extends LoggingObject implements 
     protected ApplicationContext context;
     protected HubConfigImpl hubConfig;
     protected DataHubImpl dataHub;
+    protected String serverVersion;
 
     /**
      * The intended use case is that an installer command can be run from any directory, which means we need to first
@@ -65,7 +66,8 @@ public abstract class AbstractInstallerCommand extends LoggingObject implements 
         try {
             String json = hubConfig.getManageClient().getJson("/manage/v2");
             JsonNode node = ObjectMapperFactory.getObjectMapper().readTree(json);
-            logger.info("Target MarkLogic instance has version: " + node.iterator().next().get("version").asText());
+            serverVersion = node.iterator().next().get("version").asText();
+            logger.info("Target MarkLogic instance has version: " + serverVersion);
         } catch (HttpClientErrorException e) {
             throw new RuntimeException("Unable to authenticate. Please verify that your inputs for '--username' and '--password " +
                 "correspond to a valid MarkLogic user that access the REST Management API.");
@@ -77,7 +79,6 @@ public abstract class AbstractInstallerCommand extends LoggingObject implements 
     // TODO Some duplication between this and the logic in DeployHubOtherServersCommand
     protected String getServerMajorVersion() {
         try {
-            String serverVersion = this.dataHub.getServerVersion();
             return serverVersion != null ? serverVersion.replaceAll("([^.]+)\\..*", "$1") : "9";
         } catch (Exception ex) {
             logger.warn("Unable to determine the server version; cause: " + ex.getMessage());
