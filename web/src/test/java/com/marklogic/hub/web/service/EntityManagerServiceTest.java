@@ -36,6 +36,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -53,7 +54,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = {WebApplication.class, ApplicationConfig.class, EntityManagerServiceTest.class})
-public class EntityManagerServiceTest extends AbstractServiceTest {
+public class EntityManagerServiceTest extends AbstractServiceTest implements InitializingBean {
 
     private static String ENTITY = "test-entity";
     private static String ENTITY2 = "test-entity2";
@@ -261,7 +262,9 @@ public class EntityManagerServiceTest extends AbstractServiceTest {
         //cleanup.
         entityMgrService.deleteEntity(RENAMED_ENTITY);
         entityMgrService.deleteEntity(ENTITY);
+    }
 
-
+    public void afterPropertiesSet() throws Exception {
+        super.afterPropertiesSet();
     }
 }
