@@ -69,6 +69,7 @@ pipeline{
 	options {
   	checkoutToSubdirectory 'data-hub'
   	skipStagesAfterUnstable()
+  	timestamps ()
   	buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '30', numToKeepStr: '')
 	}
 	environment{
@@ -90,9 +91,28 @@ pipeline{
 	    agent { label 'dhfLinuxAgent'}
 	    steps{
 	    script{
+	        if(!env.CHANGE_TITLE.startsWith("DHFPROD-")){
+	            sh 'exit 1'
+
+	        }
             def obj=new abortPrevBuilds();
             obj.abortPrevBuilds();
+
             }
+	    }
+	    post{
+	        failure{
+	            script{
+                    def email;
+                    if(env.CHANGE_AUTHOR){
+                    	def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
+                    	 email=getEmailFromGITUser author
+                    }else{
+                    email=Email
+                    }
+                    sendMail email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/${JOB_BASE_NAME}/${BUILD_ID}  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Pipeline Failed as there is no JIRA ID. Please add JIRA ID to the PR Title',false,'NO JIRA ID for $BRANCH_NAME | pipeline Failed '
+	            }
+	        }
 	    }
 	    }
 		stage('Build-datahub'){
