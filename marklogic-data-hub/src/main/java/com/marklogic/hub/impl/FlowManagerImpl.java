@@ -43,9 +43,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -272,7 +274,11 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
         } catch (IOException e) {
             throw new DataHubProjectException("Could not save flow to disk.");
         }
+    }
 
+    @Override
+    public void saveFlow(Flow flow) {
+        saveLocalFlow(flow);
         try{
             getArtifactService().setArtifact("flows", flow.getName(), JSONUtils.convertArtifactToJson(flow));
         }

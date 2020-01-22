@@ -48,22 +48,13 @@ export function getPermissions() {
 export function getArtifactNode(artifactName, artifactVersion) {
     // Currently there is no versioning for loadData artifacts
     const results = cts.search(cts.andQuery([cts.collectionQuery(collections[0]), cts.jsonPropertyValueQuery('name', artifactName)]));
-    if (fn.empty(results)) {
-        returnErrToClient(404, 'Not found!');
-    }
     return fn.head(results);
 }
 
 export function validateArtifact(artifact) {
     const missingProperties = requiredProperties.filter((propName) => !artifact[propName]);
     if (missingProperties.length) {
-        returnErrToClient(400, 'BAD REQUEST', `Missing the following required properties: ${JSON.stringify(missingProperties)}`);
+        return new Error(`Missing the following required properties: ${JSON.stringify(missingProperties)}`);
     }
     return artifact;
-}
-
-function returnErrToClient(statusCode, statusMsg, body)
-{
-    fn.error(null, 'RESTAPI-SRVEXERR',
-        Sequence.from([statusCode, statusMsg, body]));
 }
