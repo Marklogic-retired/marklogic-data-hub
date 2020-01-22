@@ -28,22 +28,28 @@ import io.opentracing.Span;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 @Service
 @PropertySource({"classpath:dhf-defaults.properties"})
-public class AsyncFlowService {
+public class AsyncFlowService implements InitializingBean, DisposableBean {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -68,7 +74,6 @@ public class AsyncFlowService {
     @Value("${JaegerServiceName}")
     private String jaegerServiceName;
 
-    @PostConstruct
     public void init() {
         //we could turn on/off jaeger to trace performance of any call stacks by
         //injecting customized span code along with tags, e.g. try (Scope scope = JaegerConfig.activate(span))
@@ -82,7 +87,6 @@ public class AsyncFlowService {
         logger.info(String.format("Initialized a fixed thread pool with pool size: %d", NTHREADS));
     }
 
-    @PreDestroy
     public void destroy() {
         executor.shutdown();
         try {
@@ -91,6 +95,20 @@ public class AsyncFlowService {
             logger.error(e.getMessage());
         }
         logger.info("shutdown the thread pool");
+    }
+
+    /**
+     * Invoked by the containing {@code BeanFactory} after it has set all bean properties
+     * and satisfied {@link BeanFactoryAware}, {@code ApplicationContextAware} etc.
+     * <p>This method allows the bean instance to perform validation of its overall
+     * configuration and final initialization when all bean properties have been set.
+     *
+     * @throws Exception in the event of misconfiguration (such as failure to set an
+     *                   essential property) or if initialization fails for any other reason
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        init();
     }
 
     class FlowStepsWithThreadInfo {

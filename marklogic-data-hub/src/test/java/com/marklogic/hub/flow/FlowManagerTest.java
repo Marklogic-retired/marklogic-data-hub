@@ -22,7 +22,6 @@ import com.marklogic.bootstrap.Installer;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.impl.FlowManagerImpl;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,10 +56,13 @@ class FlowManagerTest extends HubTestBase {
         "}\n";
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws IOException {
         basicSetup();
         getDataHubAdminConfig();
-        copyTestFlowIntoProject();
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode node = mapper.readTree(flowString);
+        Flow flow = fm.createFlowFromJSON(node);
+        fm.saveFlow(flow);
     }
 
     @AfterAll
