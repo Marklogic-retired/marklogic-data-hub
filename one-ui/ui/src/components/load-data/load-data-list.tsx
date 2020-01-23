@@ -6,6 +6,7 @@ import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
 import NewDataLoadDialog from './new-data-load-dialog/new-data-load-dialog';
 import { MlButton } from 'marklogic-ui-library';
+import { convertDateFromISO } from '../../config/conversionFunctions.config';
 
 interface Props {
     data: any;
@@ -105,6 +106,9 @@ const LoadDataList: React.FC<Props> = (props) => {
             title: 'Last Updated',
             dataIndex: 'lastUpdated',
             key: 'lastUpdated',
+            render: (text) => (
+                <div>{convertDateFromISO(text)}</div>
+            ),
             sorter: (a:any, b:any) => a.lastUpdated.length - b.lastUpdated.length,
         },
         {
@@ -127,7 +131,7 @@ const LoadDataList: React.FC<Props> = (props) => {
         <div><MlButton type="primary" size="default" className={styles.addNewButton} onClick={OpenAddNewDialog}>Add New</MlButton></div>
         <br/><br/>
         <Table
-        pagination={{defaultPageSize: 5,showSizeChanger: true,pageSizeOptions: ['5', '10', '20','30']}}
+        pagination={{showSizeChanger: true}}
         className={styles.loadTable}
         columns={columns}
         dataSource={props.data}
