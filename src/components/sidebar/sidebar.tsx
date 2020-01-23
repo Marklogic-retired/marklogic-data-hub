@@ -23,6 +23,7 @@ interface Props {
 };
 
 const Sidebar:React.FC<Props> = (props) => {
+
   const { 
     searchOptions,
     setAllSearchFacets
@@ -164,6 +165,8 @@ const Sidebar:React.FC<Props> = (props) => {
                   facetValues={facet.facetValues}
                   key={facet.facetName}
                   tooltip=""
+                  facetType={facet.type}
+                  selectedEntity={props.selectedEntities}
                   updateSelectedFacets={updateSelectedFacets}
                   applyAllFacets={applyAllFacets}
                 />
@@ -200,6 +203,8 @@ const Sidebar:React.FC<Props> = (props) => {
                 facetValues={facet.facetValues}
                 key={facet.facetName}
                 tooltip={facet.tooltip}
+                facetType={facet.type}
+                selectedEntity={props.selectedEntities}
                 updateSelectedFacets={updateSelectedFacets}
                 applyAllFacets={applyAllFacets}
               />
