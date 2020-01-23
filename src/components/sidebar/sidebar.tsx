@@ -48,8 +48,8 @@ const Sidebar:React.FC<Props> = (props) => {
           let entityFacetValues = parsedFacets.find(facet => facet.facetName === rangeIndex);
           return entityFacetValues ? {...entityFacetValues} : false;
         });
-
-        setEntityFacets(filteredEntityFacets.filter( item => item !== false));
+ 
+        setEntityFacets(filteredEntityFacets ? filteredEntityFacets.filter( item => item !== false) : []);
       } else if (props.selectedEntities.length && !entityFacets.length) {
         const entityDef = props.entityDefArray.find(entity => entity.name === props.selectedEntities[0]);
         const filteredEntityFacets = entityDef.rangeIndex.length && entityDef.rangeIndex.map( rangeIndex => {
