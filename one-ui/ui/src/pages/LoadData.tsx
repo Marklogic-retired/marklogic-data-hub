@@ -23,9 +23,6 @@ const LoadData: React.FC = () => {
   useEffect(() => {
       getLoadDataArtifacts();
       
-    return (() => {
-      setLoadDataArtifacts([]);
-    })
   }, [isLoading]);
 
   //CREATE/POST load data Artifact
@@ -33,7 +30,7 @@ const LoadData: React.FC = () => {
 
     try {
       setIsLoading(true);
-      //setRunGetAPI(false);
+
       let response = await axios.post(`/api/artifacts/loadData/${loadDataObj.name}`, loadDataObj);
       if (response.status === 200) {
         console.log('Create/Update LoadDataArtifact API Called successfully!')
@@ -54,7 +51,7 @@ const LoadData: React.FC = () => {
       let response = await axios.get('/api/artifacts/loadData');
       
       if (response.status === 200) {
-        setLoadDataArtifacts(prevData => [...prevData, ...response.data]);
+        setLoadDataArtifacts([...response.data]);
         console.log('GET Artifacts API Called successfully!');
       } 
     } catch (error) {

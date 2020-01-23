@@ -124,7 +124,7 @@ const LoadDataList: React.FC<Props> = (props) => {
 
    return (
     <div className={styles.loaddataContainer}>
-        <div><MlButton type="primary" className={styles.addNewButton} onClick={OpenAddNewDialog}>Add New</MlButton></div>
+        <div><MlButton type="primary" size="default" className={styles.addNewButton} onClick={OpenAddNewDialog}>Add New</MlButton></div>
         <br/><br/>
         <Table
         pagination={{defaultPageSize: 5,showSizeChanger: true,pageSizeOptions: ['5', '10', '20','30']}}
