@@ -1,0 +1,7 @@
+<alert-config-properties xmlns="http://marklogic.com/manage/alert-config/properties">
+  <uri>sample-alert-config</uri>
+  <name>Sample Alerting App</name>
+  <description>Alerting config for this sample application</description>
+  <triggers />
+  <options />
+</alert-config-properties>

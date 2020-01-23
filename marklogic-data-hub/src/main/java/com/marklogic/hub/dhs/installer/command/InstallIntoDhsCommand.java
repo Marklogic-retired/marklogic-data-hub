@@ -9,6 +9,7 @@ import com.marklogic.appdeployer.command.security.DeployRolesCommand;
 import com.marklogic.appdeployer.command.triggers.DeployTriggersCommand;
 import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.*;
+import com.marklogic.hub.dhs.DhsUtil;
 import com.marklogic.hub.dhs.installer.Options;
 import com.marklogic.hub.dhs.installer.deploy.CopyQueryOptionsCommand;
 import com.marklogic.hub.dhs.installer.deploy.DhsDeployServersCommand;
@@ -110,59 +111,8 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
             props.put(key, System.getProperties().getProperty(key));
         }
 
-        applyDhsSpecificProperties(props, options.isDisableSsl());
+        DhsUtil.addDhsSpecificProperties(props, options.isDisableSsl());
         return props;
     }
 
-    /**
-     * Public so that it can be reused by DHF Gradle plugin. Assumes that SSL should be used for connecting to
-     * MarkLogic.
-     *
-     * @param props
-     */
-    public void applyDhsSpecificProperties(Properties props) {
-        applyDhsSpecificProperties(props, false);
-    }
-
-    public void applyDhsSpecificProperties(Properties props, boolean disableSsl) {
-        props.setProperty("mlIsHostLoadBalancer", "true");
-        props.setProperty("mlIsProvisionedEnvironment", "true");
-        props.setProperty("mlAppServicesPort", "8010");
-
-        props.setProperty("mlFlowDeveloperRole", "flowDeveloper");
-        props.setProperty("mlFlowOperatorRole", "flowOperator");
-        props.setProperty("mlModulePermissions",
-            "data-hub-module-reader,read,data-hub-module-reader,execute,data-hub-environment-manager,update,rest-extension-user,execute");
-
-        props.setProperty("mlAppServicesAuthentication", "basic");
-        props.setProperty("mlFinalAuth", "basic");
-        props.setProperty("mlJobAuth", "basic");
-        props.setProperty("mlStagingAuth", "basic");
-
-        if (!disableSsl) {
-            setDefaultPropertiesForSecureConnections(props);
-        } else {
-            logger.info("Not setting default property values for secure connections to MarkLogic");
-        }
-    }
-
-    /**
-     * As of DHS 2.6.0, all connections to DHS require secure connections. This method then configures both
-     * ml-app-deployer and DHF properties to use secure connections. In addition, all DatabaseClient connections
-     * default to using basic security, again per DHF 2.6.0.
-     *
-     * @param props
-     */
-    protected void setDefaultPropertiesForSecureConnections(Properties props) {
-        props.setProperty("mlAdminScheme", "https");
-        props.setProperty("mlAdminSimpleSsl", "true");
-
-        props.setProperty("mlManageScheme", "https");
-        props.setProperty("mlManageSimpleSsl", "true");
-
-        props.setProperty("mlAppServicesSimpleSsl", "true");
-        props.setProperty("mlFinalSimpleSsl", "true");
-        props.setProperty("mlJobSimpleSsl", "true");
-        props.setProperty("mlStagingSimpleSsl", "true");
-    }
 }

@@ -1,8 +1,11 @@
 package com.marklogic.hub.impl;
 
+import com.marklogic.appdeployer.AppConfig;
+import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubTestBase;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.env.StandardEnvironment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.env.MockEnvironment;
 
@@ -11,6 +14,8 @@ import java.util.Properties;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class HubConfigImplTest {
+
+    MockEnvironment mockEnvironment;
 
     @Test
     void withDefaultValues() {
@@ -31,29 +36,72 @@ public class HubConfigImplTest {
     }
 
     /**
+     * The need for this arises when configuring HubConfigImpl in the DHF Gradle plugin when connecting to DHS. The user
+     * will define a number of properties in their gradle.properties file. But for DHS connection, the DHF Gradle plugin
+     * will define additional properties for known values - e.g. that the App-Services port is 8010. But by that point,
+     * ml-gradle has already configured an AppConfig instance based on the values in gradle.properties. So when
+     * HubConfigImpl configures itself, it needs to overrides these known properties on AppConfig that are set for DHS.
+     */
+    @Test
+    void appServicesPropertiesAreUpdatedOnAppConfig() {
+        HubConfigImpl config = newHubConfigWithMockEnvironment();
+
+        Properties props = new Properties();
+        config.loadConfigurationFromProperties(props, false);
+        AppConfig appConfig = config.getAppConfig();
+        // Verify default values
+        assertEquals(8000, appConfig.getAppServicesPort());
+        assertEquals(SecurityContextType.DIGEST, appConfig.getAppServicesSecurityContextType());
+        assertNull(appConfig.getAppServicesSslContext());
+        assertNull(appConfig.getAppServicesSslHostnameVerifier());
+        assertNull(appConfig.getAppServicesTrustManager());
+
+        props.setProperty("mlAppServicesPort", "8010");
+        props.setProperty("mlAppServicesAuthentication", "basic");
+        props.setProperty("mlAppServicesSimpleSsl", "true");
+        config.loadConfigurationFromProperties(props, false);
+
+        assertEquals(8010, appConfig.getAppServicesPort());
+        assertEquals(SecurityContextType.BASIC, appConfig.getAppServicesSecurityContextType());
+        assertNotNull(appConfig.getAppServicesSslContext());
+        assertNotNull(appConfig.getAppServicesSslHostnameVerifier());
+        assertNotNull(appConfig.getAppServicesTrustManager());
+    }
+
+    /**
      * Verifies that when mlHost is processed when refreshing a HubConfigImpl, the underlying AppConfig object is
      * updated as well.
      *
      * @throws Exception
      */
     @Test
-    void hostOnAppConfigShouldBeUpdated() throws Exception {
+    void hostOnAppConfigShouldBeUpdated() {
+        HubConfigImpl config = newHubConfigWithMockEnvironment();
+        mockEnvironment.setProperty("mlHost", "somehost");
+
+        config.loadConfigurationFromProperties(new Properties(), false);
+        assertEquals("somehost", config.getHost());
+        assertEquals("somehost", config.getAppConfig().getHost());
+    }
+
+    private HubConfigImpl newHubConfigWithMockEnvironment() {
         HubProjectImpl project = new HubProjectImpl();
         project.createProject(HubTestBase.PROJECT_PATH);
 
         // Construct a mock Environment based on the DHF default properties, but with a custom mlHost value
         Properties props = new Properties();
-        props.load(new ClassPathResource("dhf-defaults.properties").getInputStream());
-        MockEnvironment env = new MockEnvironment();
-        for (Object key : props.keySet()) {
-            env.setProperty((String) key, (String) props.get(key));
+        try {
+            props.load(new ClassPathResource("dhf-defaults.properties").getInputStream());
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
         }
-        env.setProperty("mlHost", "somehost");
 
-        HubConfigImpl config = new HubConfigImpl(project, env);
-        config.refreshProject(new Properties(), false);
-        assertEquals("somehost", config.getHost());
-        assertEquals("somehost", config.getAppConfig().getHost());
+        mockEnvironment = new MockEnvironment();
+        for (Object key : props.keySet()) {
+            mockEnvironment.setProperty((String) key, (String) props.get(key));
+        }
+
+        return new HubConfigImpl(project, mockEnvironment);
     }
 
     private void verifyDefaultValues(HubConfigImpl config) {

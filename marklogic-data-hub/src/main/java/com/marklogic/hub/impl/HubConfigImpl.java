@@ -50,6 +50,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
@@ -59,7 +60,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 @JsonAutoDetect(
     fieldVisibility = JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC,
@@ -1084,6 +1087,11 @@ public class HubConfigImpl implements HubConfig
         }
     }
 
+    @JsonIgnore
+    public void refreshProject() {
+        loadConfigurationFromProperties(null, true);
+    }
+
     /**
      * Expected to be used when an instance of this class is managed by a Spring container, as it depends on a Spring
      * environment object being set.
@@ -1522,47 +1530,56 @@ public class HubConfigImpl implements HubConfig
         else {
             projectProperties.setProperty("mlIsProvisionedEnvironment", isProvisionedEnvironment.toString());
         }
+
         // Need to do this first so that objects like the final SSL objects are set before hydrating AppConfig
         hydrateConfigs();
 
         hydrateAppConfigs(projectProperties);
     }
 
-    private void hydrateAppConfigs(Properties properties) {
+    protected void hydrateAppConfigs(Properties properties) {
         com.marklogic.mgmt.util.PropertySource propertySource = properties::getProperty;
+
         if (appConfig != null) {
+            // This may still need to be called since the setter also "updates" appConfig too
             setAppConfig(appConfig);
-        }
-        else {
+            overrideAppConfigWithDhsProperties(properties);
+        } else {
             setAppConfig(new DefaultAppConfigFactory(propertySource).newAppConfig());
         }
 
-        if (adminConfig != null) {
-            setAdminConfig(adminConfig);
-        }
-        else {
+        if (adminConfig == null) {
             setAdminConfig(new DefaultAdminConfigFactory(propertySource).newAdminConfig());
         }
-
-        if (adminManager != null) {
-            setAdminManager(adminManager);
-        }
-        else {
+        if (adminManager == null) {
             setAdminManager(new AdminManager(getAdminConfig()));
         }
-
-        if (manageConfig != null) {
-            setManageConfig(manageConfig);
-        }
-        else {
+        if (manageConfig == null) {
             setManageConfig(new DefaultManageConfigFactory(propertySource).newManageConfig());
         }
-
-        if (manageClient != null) {
-            setManageClient(manageClient);
-        }
-        else {
+        if (manageClient == null) {
             setManageClient(new ManageClient(getManageConfig()));
+        }
+    }
+
+    protected void overrideAppConfigWithDhsProperties(Properties properties) {
+        // These need to be handled for the Gradle dhs* tasks, as these properties are set after Gradle has loaded
+        // them and after ml-gradle has used them to instantiate an AppConfig.
+        // Note that mlModulePermissions isn't handled here because loadConfigurationFromProperties handles it
+        Properties overriddenDhsProps = new Properties();
+        Stream.of("mlAppServicesPort", "mlAppServicesAuthentication", "mlAppServicesSimpleSsl").forEach(prop -> {
+            if (properties.containsKey(prop)) {
+                overriddenDhsProps.setProperty(prop, properties.getProperty(prop));
+            }
+        });
+        if (!overriddenDhsProps.isEmpty()) {
+            Map<String, BiConsumer<AppConfig, String>> map = new DefaultAppConfigFactory(new SimplePropertySource(overriddenDhsProps)).getPropertyConsumerMap();
+            for (String propertyName : map.keySet()) {
+                String value = overriddenDhsProps.getProperty(propertyName);
+                if (StringUtils.hasText(value)) {
+                    map.get(propertyName).accept(appConfig, value);
+                }
+            }
         }
     }
 
@@ -2072,16 +2089,6 @@ public class HubConfigImpl implements HubConfig
 
         }
 
-    }
-
-    @JsonIgnore
-    public void refreshProject() {
-        refreshProject(null, true);
-    }
-
-    @JsonIgnore
-    public void refreshProject(Properties properties, boolean loadGradleProperties) {
-        loadConfigurationFromProperties(properties, loadGradleProperties);
     }
 
     /**

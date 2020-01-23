@@ -25,9 +25,10 @@ import com.marklogic.gradle.task.client.WatchTask
 import com.marklogic.gradle.task.command.HubUpdateIndexesCommand
 import com.marklogic.gradle.task.databases.ClearModulesDatabaseTask
 import com.marklogic.gradle.task.databases.UpdateIndexesTask
-import com.marklogic.gradle.task.dhs.DhsDeployTask
+import com.marklogic.gradle.task.dhs.DeployAsDeveloperTask
+import com.marklogic.gradle.task.dhs.DeployAsSecurityAdminTask
 import com.marklogic.hub.ApplicationConfig
-import com.marklogic.hub.dhs.installer.command.InstallIntoDhsCommand
+import com.marklogic.hub.dhs.DhsUtil
 import com.marklogic.hub.deploy.commands.ClearDHFModulesCommand
 import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand
 import com.marklogic.hub.deploy.commands.GeneratePiiCommand
@@ -38,6 +39,10 @@ import com.marklogic.hub.deploy.commands.LoadUserModulesCommand
 import com.marklogic.hub.deploy.util.ModuleWatchingConsumer
 import com.marklogic.hub.impl.*
 import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl
+import com.marklogic.mgmt.ManageClient
+import com.marklogic.mgmt.ManageConfig
+import com.marklogic.mgmt.admin.AdminConfig
+import com.marklogic.mgmt.admin.AdminManager
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -83,7 +88,7 @@ class DataHubPlugin implements Plugin<Project> {
 
         project.plugins.apply(MarkLogicPlugin.class)
 
-        logger.info("\nInitializing data-hub-gradle")
+        logger.info("\nInitializing ml-data-hub Gradle plugin")
         setupHub(project)
 
         String deployGroup = "MarkLogic Data Hub Setup"
@@ -190,10 +195,16 @@ class DataHubPlugin implements Plugin<Project> {
         String flowGroup = "MarkLogic Data Hub Flow Management"
         project.task("hubRunFlow", group: flowGroup, type: RunFlowTask)
 
-        String dhsGroup = "DHS"
-        project.task("dhsDeploy", group: dhsGroup, type: DhsDeployTask,
-            description: "Deploy project resources and modules into a DHS instance"
-        ).finalizedBy(["hubGenerateExplorerOptions"])
+        String dhsGroup = "MarkLogic Data Hub DHS"
+        project.task("dhsDeployAsSecurityAdmin", group: dhsGroup, type: DeployAsSecurityAdminTask,
+            description: "Deploy roles into a DHS instance as a user with the data-hub-security-admin role")
+
+        project.task("dhsDeployAsDeveloper", group: dhsGroup, type: DeployAsDeveloperTask,
+            description: "Deploy project configuration into a DHS instance as a user with the data-hub-developer role"
+        ).finalizedBy(["hubGenerateExplorerOptions"]).mustRunAfter("dhsDeployAsSecurityAdmin")
+
+        project.task("dhsDeploy", group: dhsGroup, dependsOn: ["dhsDeployAsDeveloper", "dhsDeployAsSecurityAdmin"],
+            description: "Deploy project configuration into a DHS instance as a user with the data-hub-security-admin and data-hub-developer role")
 
         logger.info("Finished initializing ml-data-hub\n")
     }
@@ -231,42 +242,60 @@ class DataHubPlugin implements Plugin<Project> {
 
         hubConfig.createProject(project.getProjectDir().getAbsolutePath())
 
-        boolean calledHubInit = this.userCalledTask(project, "hubinit")
-        boolean calledHubUpdate = this.userCalledTask(project, "hubupdate")
-        boolean calledHubInitOrUpdate = calledHubInit || calledHubUpdate
-
+        boolean calledHubInitOrUpdate = userCalledTask(project, "hubinit") || userCalledTask(project, "hubupdate")
         if (!calledHubInitOrUpdate && !hubProject.isInitialized()) {
             throw new GradleException("Please initialize your project first by running the 'hubInit' Gradle task, or update it by running the 'hubUpdate' Gradle task")
         }
 
         else {
 
-            // If the user called hubInit, only load the configuration. Refreshing the project will fail because
-            // gradle.properties doesn't exist yet.
-            if (calledHubInit) {
-                hubConfig.loadConfigurationFromProperties(new ProjectPropertySource(project).getProperties(), false)
-            }
-             else {
-                Properties props = new ProjectPropertySource(project).getProperties()
-
-                if (userCalledTask(project, "dhsdeploy")) {
-                    new InstallIntoDhsCommand().applyDhsSpecificProperties(props)
-                }
-
-                hubConfig.refreshProject(props, false)
-            }
-
             // By default, DHF uses gradle-local.properties for your local environment.
             def envNameProp = project.hasProperty("environmentName") ? project.property("environmentName") : "local"
             hubConfig.withPropertiesFromEnvironment(envNameProp.toString())
 
-            hubConfig.setAppConfig(extensions.getByName("mlAppConfig"))
-            hubConfig.setAdminConfig(extensions.getByName("mlAdminConfig"))
-            hubConfig.setAdminManager(extensions.getByName("mlAdminManager"))
-            hubConfig.setManageConfig(extensions.getByName("mlManageConfig"))
-            hubConfig.setManageClient(extensions.getByName("mlManageClient"))
+            // Assign the AppConfig created by ml-gradle to hubConfig so that it updates its instance of AppConfig, it's
+            // updating the instance that's used by all the ml-gradle tasks as well.
+            hubConfig.setAppConfig(extensions.getByName("mlAppConfig"), true)
+
+            // If the user called a task for deploying resources to DHS, then we need to add some DHS-specific
+            // properties before configuring hubConfig. And after that's been done, we need to update the admin and
+            // manage objects created by ml-gradle, as those likely need to be changed to use basic/ssl.
+            boolean dhsDeployTaskWasCalled = userCalledDhsDeployTask(project)
+
+            // Create a Properties object containing all of the properties loaded by Gradle
+            Properties projectProperties = new ProjectPropertySource(project).getProperties()
+            if (dhsDeployTaskWasCalled) {
+                println "Adding DHS-specific properties to those specified via Gradle"
+                DhsUtil.addDhsSpecificProperties(projectProperties)
+            }
+
+            // Populate hubConfig properties, telling hubConfig not to load from gradle.properties as that's already happened
+            hubConfig.loadConfigurationFromProperties(projectProperties, false)
+
+            AdminConfig adminConfig = extensions.getByName("mlAdminConfig")
+            AdminManager adminManager = extensions.getByName("mlAdminManager")
+            ManageConfig manageConfig = extensions.getByName("mlManageConfig")
+            ManageClient manageClient = extensions.getByName("mlManageClient")
+
+            if (dhsDeployTaskWasCalled) {
+                println "Updating Admin and Manage configurations for connecting to DHS"
+                DhsUtil.updateAdminConfig(adminConfig, projectProperties)
+                adminManager.setAdminConfig(adminConfig)
+                DhsUtil.updateManageConfig(manageConfig, projectProperties)
+                manageClient.setManageConfig(manageConfig)
+            }
+
+            // Ensure that hubConfig is using the same admin/manage objects that ml-gradle created. DHF doesn't have
+            // any additional properties for customizing these objects, so whatever was created by ml-gradle is what
+            // DHF should use as well.
+            hubConfig.setAdminConfig(adminConfig)
+            hubConfig.setAdminManager(adminManager)
+            hubConfig.setManageConfig(manageConfig)
+            hubConfig.setManageClient(manageClient)
 
             // Turning off CMA for resources that have bugs in ML 9.0-7/8
+            // TODO This can likely be removed now that DHF requires a version higher than those, but will need to test
+            // to confirm.
             hubConfig.getAppConfig().getCmaConfig().setCombineRequests(false);
             hubConfig.getAppConfig().getCmaConfig().setDeployDatabases(false);
             hubConfig.getAppConfig().getCmaConfig().setDeployRoles(false);
@@ -295,6 +324,15 @@ class DataHubPlugin implements Plugin<Project> {
     boolean userCalledTask(Project project, String lowerCaseTaskName) {
         for (String taskName : project.getGradle().getStartParameter().getTaskNames()) {
             if (taskName.toLowerCase().equals(lowerCaseTaskName)) {
+                return true
+            }
+        }
+        return false
+    }
+
+    boolean userCalledDhsDeployTask(Project project) {
+        for (String taskName : project.getGradle().getStartParameter().getTaskNames()) {
+            if (taskName.toLowerCase().startsWith("dhsdeploy")) {
                 return true
             }
         }
