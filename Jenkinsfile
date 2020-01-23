@@ -1,12 +1,12 @@
 @Library('shared-libraries') _
 import groovy.json.JsonSlurper
 import groovy.json.JsonSlurperClassic
-def JIRA_ID="";
-def commitMessage="";
+JIRA_ID="";
+commitMessage="";
 def prResponse="";
 def prNumber;
 def props;
-def githubAPIUrl="https://api.github.com/repos/marklogic/marklogic-data-hub"
+githubAPIUrl="https://api.github.com/repos/marklogic/marklogic-data-hub"
 def loadProperties() {
     node {
         checkout scm
