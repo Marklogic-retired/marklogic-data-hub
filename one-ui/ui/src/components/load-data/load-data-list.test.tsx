@@ -4,6 +4,7 @@ import LoadDataList from './load-data-list';
 
 describe('Load data component', () => {
   it('should render correctly', () => {
-    shallow(<LoadDataList data/>);
+    shallow(<LoadDataList data deleteLoadDataArtifact
+      createLoadDataArtifact/>);
   });
 });

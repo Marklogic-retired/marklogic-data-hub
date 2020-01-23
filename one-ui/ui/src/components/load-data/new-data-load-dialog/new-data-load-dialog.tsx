@@ -9,18 +9,20 @@ const NewDataLoadDialog = (props) => {
 
   const [stepName, setStepName] = useState('');
   const [description, setDescription] = useState(props.stepData && props.stepData != {} ? props.stepData.description : '');
+  const [inputFilePath, setInputFilePath] = useState(props.stepData && props.stepData.inputFilePath ? props.stepData.inputFilePath : '');
   const [srcFormat, setSrcFormat] = useState(props.stepData && props.stepData != {} ? props.stepData.sourceFormat : 'json');
   const [tgtFormat, setTgtFormat] = useState(props.stepData && props.stepData != {} ? props.stepData.targetFormat : 'json');
   const [outUriReplacement, setOutUriReplacement] = useState(props.stepData && props.stepData != {} ? props.stepData.outputURIReplacement : '');
   const [fieldSeparator, setFieldSeparator] = useState(props.stepData && props.stepData != {} ? props.stepData.fieldSeparator : ',');
   const [otherSeparator, setOtherSeparator] = useState('');
 
+  
   const [isStepNameTouched, setStepNameTouched] = useState(false);
   const [isSrcFormatTouched, setSrcFormatTouched] = useState(false);
   const [isTgtFormatTouched, setTgtFormatTouched] = useState(false);
   const [isFieldSeparatorTouched, setFieldSeparatorTouched] = useState(false);
   const [isOtherSeparatorTouched, setOtherSeparatorTouched] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isValid, setIsValid] = useState(false);
   const [fileList, setFileList] = useState<any>([]);
   const [previewURI, setPreviewURI] = useState('');
   const [uploadPercent, setUploadPercent] = useState();
@@ -44,15 +46,15 @@ const NewDataLoadDialog = (props) => {
       setOutUriReplacement(props.stepData.outputURIReplacement);
       buildURIPreview(props.stepData);
       setFileList([]);
-      setIsLoading(true);
+      setIsValid(true);
     } else {
       setStepName('');
       setStepNameTouched(false);
       setDescription('');
-      setSrcFormat('JSON');
+      setSrcFormat('json');
       setFieldSeparator(',');
       setOtherSeparator('');
-      setTgtFormat('JSON');
+      setTgtFormat('json');
       setOutUriReplacement('');
       setUploadPercent(0);
       setFileList([]);
@@ -62,10 +64,10 @@ const NewDataLoadDialog = (props) => {
       setStepName('');
       setStepNameTouched(false);
       setDescription('');
-      setSrcFormat('JSON');
+      setSrcFormat('json');
       setFieldSeparator(',');
       setOtherSeparator('');
-      setTgtFormat('JSON');
+      setTgtFormat('json');
       setOutUriReplacement('');
       setUploadPercent(0);
       setFileList([]);
@@ -87,27 +89,53 @@ const NewDataLoadDialog = (props) => {
     if (event) event.preventDefault();
 
     let dataPayload;
-    if(srcFormat === 'Delimited Text'){
-       dataPayload = {
-        name: stepName,
-        description: description,
-        sourceFormat: srcFormat,
-        separator: fieldSeparator === 'Other'? otherSeparator : fieldSeparator,
-        targetFormat: tgtFormat,
-        outputURIReplacement: outUriReplacement
-      }
+    if(inputFilePath === ''){
+      if(srcFormat === 'Delimited Text'){
+        dataPayload = {
+         name: stepName,
+         description: description,
+         sourceFormat: srcFormat,
+         separator: fieldSeparator === 'Other'? otherSeparator : fieldSeparator,
+         targetFormat: tgtFormat,
+         outputURIReplacement: outUriReplacement
+       }
+     } else {
+        dataPayload = {
+         name: stepName,
+         description: description,
+         sourceFormat: srcFormat,
+         targetFormat: tgtFormat,
+         outputURIReplacement: outUriReplacement
+       }
+     }
     } else {
-       dataPayload = {
-        name: stepName,
-        description: description,
-        sourceFormat: srcFormat,
-        targetFormat: tgtFormat,
-        outputURIReplacement: outUriReplacement
-      }
+      if(srcFormat === 'Delimited Text'){
+        dataPayload = {
+         name: stepName,
+         description: description,
+         sourceFormat: srcFormat,
+         separator: fieldSeparator === 'Other'? otherSeparator : fieldSeparator,
+         targetFormat: tgtFormat,
+         outputURIReplacement: outUriReplacement,
+         inputFilePath: inputFilePath
+       }
+     } else {
+        dataPayload = {
+         name: stepName,
+         description: description,
+         sourceFormat: srcFormat,
+         targetFormat: tgtFormat,
+         outputURIReplacement: outUriReplacement,
+         inputFilePath: inputFilePath
+       }
+     }
+
     }
-    setIsLoading(true);
+    
+    setIsValid(true);
 
     //Call create data load artifact API function
+    //console.log('final output', props.stepData);
     props.createLoadDataArtifact(dataPayload);
 
     props.setNewLoad(false);
@@ -132,10 +160,10 @@ const NewDataLoadDialog = (props) => {
       setOutUriReplacement(event.target.value)
     }
     if(srcFormat && tgtFormat && (event.target.id === 'name' && event.target.value.length > 0)) {
-      setIsLoading(true);
+      setIsValid(true);
     }
     if(event.target.id === 'name' && event.target.value.length == 0){
-      setIsLoading(false);
+      setIsValid(false);
     }
     if(stepName && srcFormat && tgtFormat && outUriReplacement) {
       buildURIPreview(props.stepData);
@@ -245,6 +273,9 @@ const NewDataLoadDialog = (props) => {
       .then(responses => {
         /*......*/
         onSuccess(responses.status);
+        if(responses.data && responses.data.inputFilePath){
+          setInputFilePath(responses.data.inputFilePath);
+        }
         if(stepName && srcFormat && tgtFormat && responses.data.inputFilePath) {
           buildURIPreview(responses.data);
         }
@@ -503,7 +534,7 @@ const NewDataLoadDialog = (props) => {
           <div className={styles.submitButtons}>
             <Button onClick={() => onCancel()}>Cancel</Button>
             &nbsp;&nbsp;
-            <Button type="primary" htmlType="submit" disabled={!isLoading} onClick={handleSubmit}>Save</Button>
+            <Button type="primary" htmlType="submit" disabled={!isValid} onClick={handleSubmit}>Save</Button>
           </div>
         </Form.Item>
       </Form>
