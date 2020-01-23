@@ -3,12 +3,13 @@ import { Popover, Tree, Input } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faColumns } from '@fortawesome/free-solid-svg-icons'
 import styles from './column-selector.module.scss';
-import { reconstructHeader, deepCopy, getKeys, getChildKeys, getParentKey, setTreeVisibility } from '../../util/data-conversion';
+import { updateHeader, reconstructHeader, deepCopy, getKeys, getChildKeys, getParentKey, setTreeVisibility } from '../../util/data-conversion';
 
 interface Props {
   title: any[];
   tree: any[];
   headerRender: (columns: any) => void;
+  updateTreeColumns: (columns: any) => void;
 };
 
 const ColumnSelector: React.FC<Props> = (props) => {
@@ -18,7 +19,7 @@ const ColumnSelector: React.FC<Props> = (props) => {
   const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
   const [checkedKeys, setCheckedKeys] = useState<any[]>([]);
   const [selectedKeys, setSelectedKeys] = useState<any[]>([]);
-  const [tree, setTree] = useState<any[]>(props.tree);
+  //const [tree, setTree] = useState<any[]>(props.tree);
   const [searchValue, setSearchValue] = useState("");
   let primaryKey = props.tree[0] && props.tree[0].key && props.tree[0].key;
   let allKeys = getKeys(props.tree)
@@ -26,9 +27,9 @@ const ColumnSelector: React.FC<Props> = (props) => {
   let prevTree = props.tree;
 
 
-  useEffect(() => {
-    setTree(props.tree)
-  }, [props.tree])
+  // useEffect(() => {
+  //   setTree(props.tree)
+  // }, [props.tree])
 
   useEffect(() => {
     setCheckedKeys(getChildKeys(props.title))
@@ -41,7 +42,7 @@ const ColumnSelector: React.FC<Props> = (props) => {
 
   const onCheck = checkedKeys => {
     setCheckedKeys(checkedKeys);
-    props.headerRender(reconstructHeader(deepCopy(tree), checkedKeys));
+    props.headerRender(updateHeader(props.tree, checkedKeys));
   };
 
   const generateList = data => {
@@ -100,7 +101,7 @@ const ColumnSelector: React.FC<Props> = (props) => {
     const dragKey = info.dragNode.props.eventKey;
     const dropPos = info.node.props.pos.split('-');
     const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]);
-    let data = tree;
+    let data = props.tree;
 
     if (dragKey.length === dropKey.length) {
       if (dropPosition !== 0) {
@@ -142,22 +143,24 @@ const ColumnSelector: React.FC<Props> = (props) => {
           }
         }
       }
-
-      props.headerRender(reconstructHeader(deepCopy(data), col));
-      setTree(data)
+      
+      props.headerRender(updateHeader(data, col));
+      //props.headerRender(reconstructHeader(deepCopy(data), col));
+      // Doesn't work
+      props.updateTreeColumns(data)
     }
   };
 
   const onChange = e => {
     const { value } = e.target;
     let filteredTree = setTreeVisibility(deepCopy(prevTree), value)
-    setTree(filteredTree.ob)
+    props.updateTreeColumns(filteredTree.ob)
     generateList(filteredTree.ob);
 
     const expandedKeys = dataList
       .map(item => {
         if (item.title.indexOf(value) > -1) {
-          return getParentKey(item.key, tree);
+          return getParentKey(item.key, props.tree);
         }
         return null;
       })
@@ -183,7 +186,7 @@ const ColumnSelector: React.FC<Props> = (props) => {
         checkedKeys={checkedKeys}
         selectedKeys={selectedKeys}
       >
-        {renderTreeNodes(tree)}
+        {renderTreeNodes(props.tree)}
       </Tree>
     </div>
   )

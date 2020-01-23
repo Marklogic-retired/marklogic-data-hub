@@ -341,6 +341,68 @@ export const deepCopy = inObject => {
   return outObject
 }
 
+export const updateHeader = (tree, keys) => {
+  let updatedHeader: any[] = []
+  let newtree: any[] = deepCopy(tree);
+  keys.forEach( (key, index) => {
+    let headerObj = newtree.find( obj => obj.key === key);
+    if (headerObj) {
+      if (headerObj.hasOwnProperty('children') ) {
+        if (Array.isArray(headerObj.children)) {
+          // remove children and add children back if key is found
+          headerObj.children = [];
+        } else if (typeof headerObj.children === 'object') {
+          headerObj.children = {};
+        }
+      }
+      if ( updatedHeader.find( obj => obj.key === headerObj.key)) {
+
+      } else {
+        updatedHeader.push(headerObj);
+      }
+      
+    } else {
+      // could not find column. must be child key
+      // TODO: keep parsing key until a parentObj is found?
+      let parseKey = key.split('-');
+      parseKey.pop();
+      let parentKey = parseKey.join('-');
+      
+      let parentObj = updatedHeader.find( obj => obj.key === parentKey);
+      let updateParentIndex = updatedHeader.findIndex( obj => obj.key === parentKey);
+      if (parentObj !== undefined && parentObj.hasOwnProperty('children')) {
+        // update parentObj's children by pushing new child obj
+        // check if childobj is already in parent obj
+
+        // adding child obj to update header
+        let index = tree.findIndex( obj => obj.key === parentKey);
+        let childObj = tree[index].hasOwnProperty('children') && tree[index].children.find( childObj => childObj.key === key);
+        if (childObj) {
+          if ( parentObj.children.find( child => child.key === childObj.key )) {
+            
+          } else {
+            parentObj.children.push(childObj);
+            updatedHeader[updateParentIndex] = parentObj;
+          }
+        }
+      } else {
+        // no parent object in updated header
+        // add parent object and child to updatedHeader
+        parentObj = newtree.find( obj => obj.key === parentKey);
+        if (parentObj && parentObj.hasOwnProperty('children')) {       
+          let childObj = parentObj.children.find( childObj => childObj.key === key);
+          if (childObj) {
+            //console.log('find child', parentObj.children.find( child => child.key === childObj.key))
+            parentObj.children = [childObj];
+            updatedHeader.push(parentObj);
+          }
+        }
+      }
+    }
+  });
+  return updatedHeader;
+}
+
 export const getTitles = (object:Array<Object>) => {
   let arr = new Array();
   const titles = (obj) => {

@@ -75,7 +75,7 @@ const ResultTable: React.FC<Props> = (props) => {
     if (props.data) {
       if (searchOptions.entityNames.length === 0 ) {
         // All Entities
-        let renderHeader = tableHeader(DEFAULT_ALL_ENTITIES_HEADER);
+        let renderHeader = tableHeader(DEFAULT_ALL_ENTITIES_HEADER, '');
         let newTableData = formatTableData(parsedPayload.data, true);
         // set render DOM data
         setRenderTableData(newTableData);
@@ -103,10 +103,10 @@ const ResultTable: React.FC<Props> = (props) => {
             }
           }
 
-          let renderHeader = tableHeader(newRenderColumns);
+          let renderHeader = tableHeader(newRenderColumns, '');
           setRenderColumns(renderHeader);
           setRenderTableData(mergeRows(renderHeader));
-          setTreeColumns(tableHeader(columns));
+          setTreeColumns(tableHeader(columns, ''));
           setCheckedColumns(renderHeader);
           setDefaultColumns(columns);
         } else {
@@ -119,10 +119,10 @@ const ResultTable: React.FC<Props> = (props) => {
               } else {
                 newRenderColumns = columns;
               }
-              let renderHeader = tableHeader(newRenderColumns);
+              let renderHeader = tableHeader(newRenderColumns, '');
               setRenderColumns(renderHeader);
               setRenderTableData(mergeRows(renderHeader));
-              setTreeColumns(tableHeader(columns));
+              setTreeColumns(tableHeader(columns, ''));
               setCheckedColumns(renderHeader);
               setDefaultColumns(columns);
             }
@@ -134,9 +134,8 @@ const ResultTable: React.FC<Props> = (props) => {
 
   const formatTableData = (payload: Array<Object>, isNested: boolean) => {
     let rowCounter = 0;
-    let nested = [];
+    let nested: any[] = [];
     let nestedId = 0;
-
     const parseData = (payload) => {
       let data = new Array();
       payload.forEach((item) => {
@@ -161,7 +160,7 @@ const ResultTable: React.FC<Props> = (props) => {
         if (searchOptions.entityNames.length === 0) {
           row =
           {
-            key: rowCounter++,
+            key: rowCounter,
             identifier: <Tooltip title={isUri && item.uri}>{isUri ? '.../' + document : item.primaryKey}</Tooltip>,
             entity: item.itemEntityName,
             filetype: item.format,
@@ -173,23 +172,48 @@ const ResultTable: React.FC<Props> = (props) => {
         } else {
           row =
           {
-            key: rowCounter++,
+            key: rowCounter,
             created: date,
             primaryKeyPath: path,
             detailview: detailView,
             primaryKey: item.primaryKey
           }
 
+
           for (let propt in item.itemEntityProperties[0]) {
+            //console.log('propt for in loop', item.itemEntityProperties[0][propt]);
             if (isUri) {
               row.identifier = <Tooltip title={isUri ? item.uri : item.primaryKey}>{'.../' + document}</Tooltip>
             }
             if (parsedPayload.primaryKeys.includes(propt)) {
               row[propt.toLowerCase()] = item.itemEntityProperties[0][propt].toString();
             } else {
-              if (typeof item.itemEntityProperties[0][propt] === 'object') {
-                nested = item.itemEntityProperties[0][propt]
-              } else {
+              if (Array.isArray(item.itemEntityProperties[0][propt])) {
+                // console.log('nested obj propt', propt);
+                // console.log('nested obj value', item.itemEntityProperties[0][propt]);
+                if (item.itemEntityProperties[0][propt].length > 0) {
+                  let objectKeys = Object.keys(item.itemEntityProperties[0][propt][0]);
+                  let objKeyMap = {}
+
+                  objectKeys.forEach( item => {
+                    objKeyMap[item] = propt + '_' + item;
+                  });
+                  nested = item.itemEntityProperties[0][propt].map( item => {
+                    return renameKeys(objKeyMap, item);
+                  });
+                }
+
+              } else if (typeof item.itemEntityProperties[0][propt] === 'object') {
+                let objectKeys = Object.keys(item.itemEntityProperties[0][propt]);
+                let objKeyMap = {}
+                objectKeys.forEach( item => {
+                  objKeyMap[item] = propt + '_' + item;
+                });
+                let reMappedObject = renameKeys(objKeyMap, item.itemEntityProperties[0][propt]);
+                //nested = item.itemEntityProperties[0][propt];
+                row = {...row, ...reMappedObject}
+
+              }  else {
                 row[propt.toLowerCase()] = item.itemEntityProperties[0][propt].toString();
               }
             }
@@ -198,48 +222,38 @@ const ResultTable: React.FC<Props> = (props) => {
 
         if (isNested) {
           //if row has array of nested objects
-          if (nested && nested instanceof Array && nested.length > 0) {
+          if (nested && nested.length > 0) {
             nested.forEach((items, index) => {
-              let parentRow = { ...row };
+              let duplicateRow = { ...row };
               let keys = Object.keys(items);
               let values = new Array<String>();
-              if (typeof items === 'object' && keys.length === 1) {
-                values = Object.values(items);
+              if (Array.isArray(items)) {
+
               }
+
               if(values.length){
                 for (let key of Object.keys(values[0])) {
-                  parentRow[key.toLowerCase()] = values[0][key].toString();
-                  nestedColumns.add(key);
+                  duplicateRow[key.toLowerCase()] = values[0][key].toString();
                 }
               }
-              parentRow.key = rowCounter++;
-              parentRow.nestedId = nestedId;
-              parentRow.nestedColumns = nestedColumns;
-              parentRow.nested = nested;
+              duplicateRow.key = rowCounter;
+              duplicateRow.nestedId = index;
+              duplicateRow.lastNestedIndex = nested.length -1
               if (index === 0) {
-                parentRow.isNested = true;
+                duplicateRow.isNested = true;
               }
-              data.push(parentRow)
+              data.push({...duplicateRow, ...nested[index] })
+              rowCounter++;
             })
-            nestedId++;
+            //nestedId++;
             //if row has a nested object
-          } else if (nested && !(nested instanceof Array)) {
-            let parentRow = { ...row };
-            let keys = Object.keys(nested);
-            let values = [new Array<String>()];
-            if (typeof nested === 'object' && keys.length === 1) {
-              values = Object.values(nested);
-            }
-            for (let key of Object.keys(values[0])) {
-              parentRow[key.toLowerCase()] = values[0][key].toString();
-            }
-            parentRow.key = rowCounter++;
-            data.push(parentRow)
-            //if row doesn't have nested objects
-          } else {
+          } 
+          else {
+            rowCounter++;
             data.push(row)
           }
         } else {
+          rowCounter++;
           data.push(row)
         }
       });
@@ -248,7 +262,16 @@ const ResultTable: React.FC<Props> = (props) => {
     return parseData(payload);
   }
 
-  const tableHeader = (columns) => {
+  const renameKeys = (keysMap, obj) => {
+    return Object
+    .keys(obj)
+    .reduce((acc, key) => ({
+        ...acc,
+        ...{ [keysMap[key] || key]: obj[key] }
+    }), {});
+  }
+  
+  const tableHeader = (columns, parent) => {
     let col = new Array();
     let set = new Set();
     columns.forEach((item, index) => {
@@ -257,13 +280,13 @@ const ResultTable: React.FC<Props> = (props) => {
           title: item.title,
           key: item.key,
           visible: true,
-          children: tableHeader(item.children),
+          children: tableHeader(item.children, item.title),
         })
       } else {
         col.push(
           {
             title: item.title,
-            dataIndex: item.title.replace(/ /g, '').toLowerCase(),
+            dataIndex: parent ? parent + '_' + item.title.replace(/ /g, '').toLowerCase() : item.title.replace(/ /g, '').toLowerCase(),
             key: item.key,
             visible: true,
             width: 150,
@@ -292,9 +315,15 @@ const ResultTable: React.FC<Props> = (props) => {
                 }
               };
 
-              if (row.hasOwnProperty('nestedId') && !nestedColumns.has(item.title)) {
-                row.hasOwnProperty('isNested') && set.add(index);
-                set.has(index) ? obj.props.rowSpan = row.nested.length : obj.props.rowSpan = 0;
+              
+              if (row.hasOwnProperty('nestedId')) {
+                // Works, but need to differentiate row cells that have
+                // nested array of objects
+                // if (row.nestedId === 0) {
+                //   obj.props.rowSpan = row.lastNestedIndex;
+                // } else {
+                //   obj.props.rowSpan = 0;
+                // }
               }
               return obj;
             },
@@ -421,8 +450,14 @@ const ResultTable: React.FC<Props> = (props) => {
   }
 
   const headerRender = (col) => {
+    console.log('updated header render', col)
     setRenderColumns(col);
-    setCheckedColumns(deepCopy(col))
+    setCheckedColumns(deepCopy(col));
+    setRenderTableData(mergeRows(col));
+  }
+
+  const updateTreeColumns = (columns) => {
+    setTreeColumns(columns);
   }
 
   let icons: any = [];
@@ -445,7 +480,7 @@ const ResultTable: React.FC<Props> = (props) => {
   return (
     <>
       <div className={styles.columnSelector} data-cy="column-selector">
-        <ColumnSelector title={checkedColumns} tree={treeColumns} headerRender={headerRender} />
+        <ColumnSelector title={checkedColumns} tree={treeColumns} headerRender={headerRender} updateTreeColumns={updateTreeColumns} />
       </div>
       <ReactDragListView.DragColumn {...dragProps}>
         <div className={styles.tabular}>        
