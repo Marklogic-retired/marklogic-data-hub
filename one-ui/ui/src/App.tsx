@@ -6,6 +6,7 @@ import Header from './components/header/header';
 import Footer from './components/footer/footer';
 import Login from './pages/Login';
 import Home from './pages/Home';
+import Reset from './pages/Reset';
 import './App.css';
 import { themes, themeMap } from './config/themes.config';
 import Install from './pages/Install';
@@ -78,6 +79,7 @@ const App: React.FC<Props> = ({history, location}) => {
           <PrivateRoute path="/home" exact component={Home} />
           <Route path="/install" exact component={Install}/>
           <Route path="/load-data" exact component={LoadData}/>
+          <Route path="/reset" exact component={Reset}/>
         </Switch> 
       )}
       </main>
