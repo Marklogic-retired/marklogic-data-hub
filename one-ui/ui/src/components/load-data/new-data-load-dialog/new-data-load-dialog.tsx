@@ -58,6 +58,7 @@ const NewDataLoadDialog = (props) => {
       setOutUriReplacement('');
       setUploadPercent(0);
       setFileList([]);
+      setPreviewURI('');
     }
 
     return (() => {
@@ -71,9 +72,10 @@ const NewDataLoadDialog = (props) => {
       setOutUriReplacement('');
       setUploadPercent(0);
       setFileList([]);
+      setPreviewURI('');
     })
 
-  }, [props.stepData, props.title]);
+  }, [props.stepData, props.title, props.newLoad]);
 
   const onCancel = () => {
     props.setNewLoad(false);

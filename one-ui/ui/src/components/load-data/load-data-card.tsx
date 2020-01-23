@@ -6,6 +6,8 @@ import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
 import sourceFormatOptions from '../../config/formats.config';
 import NewDataLoadDialog from './new-data-load-dialog/new-data-load-dialog';
+import { convertDateFromISO } from '../../config/conversionFunctions.config';
+
 
 interface Props {
     data: any;
@@ -16,7 +18,7 @@ interface Props {
 const LoadDataCard: React.FC<Props> = (props) => {
     const [newDataLoad, setNewDataLoad] = useState(false);
     const [title, setTitle] = useState('');
-    const [stepData,setStepData] = useState({});
+    const [stepData, setStepData] = useState({});
     const [dialogVisible, setDialogVisible] = useState(false);
     const [loadArtifactName, setLoadArtifactName] = useState('');
 
@@ -24,7 +26,7 @@ const LoadDataCard: React.FC<Props> = (props) => {
         setTitle('New Data Load');
         setNewDataLoad(true);
     }
- 
+
     const OpenEditStepDialog = (index) => {
         setTitle('Edit Data Load');
         setStepData(prevState => ({ ...prevState, ...props.data[index]}));
@@ -116,7 +118,7 @@ const LoadDataCard: React.FC<Props> = (props) => {
                         </div><br />
                         <div className={styles.fileCount}>{elem.fileCount}</div>
                         <span className={styles.stepNameStyle}>{getInitialChars(elem.name, 27, '...')}</span>
-                        <p className={styles.lastUpdatedStyle}>Last Updated: {elem.lastUpdated}</p>
+                        <p className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</p>
                     </Card></Col>
                 )) : <span></span> }</Row>
                 <NewDataLoadDialog newLoad={newDataLoad} title={title} setNewLoad={setNewDataLoad} createLoadDataArtifact={props.createLoadDataArtifact} stepData={stepData}/>
