@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.oneui.services.EnvironmentService;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -79,7 +80,7 @@ public class LoadDataController extends AbstractArtifactController {
         loadDataJson.put("inputFilePath", dataSetDirectoryPath.toString());
         File dataSetDirectory = dataSetDirectoryPath.toFile();
         if (dataSetDirectory.exists()) {
-            dataSetDirectory.delete();
+            FileUtils.deleteDirectory(dataSetDirectoryPath.toFile());
         }
         dataSetDirectory.mkdirs();
         for (MultipartFile file:uploadedFiles) {
@@ -87,6 +88,18 @@ public class LoadDataController extends AbstractArtifactController {
             file.transferTo(newFilePath);
         }
         super.updateArtifact(artifactName, loadDataJson);
+        enrichLoadData(loadDataJson);
+        return new ResponseEntity<>(loadDataJson, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/{artifactName}/setData", method = RequestMethod.DELETE)
+    public ResponseEntity<JsonNode> deleteData(@PathVariable String artifactName) throws IOException {
+        ObjectNode loadDataJson = (ObjectNode) super.getArtifact(artifactName).getBody();
+        Path dataSetDirectoryPath = Paths.get(environmentService.getProjectDirectory(), "data-sets", artifactName);
+        assert loadDataJson != null;
+        if (dataSetDirectoryPath.toFile().exists()) {
+            FileUtils.deleteDirectory(dataSetDirectoryPath.toFile());
+        }
         enrichLoadData(loadDataJson);
         return new ResponseEntity<>(loadDataJson, HttpStatus.OK);
     }
