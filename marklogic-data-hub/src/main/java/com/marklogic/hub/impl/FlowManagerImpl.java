@@ -115,8 +115,8 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
         }
         Flow newFlow = createFlowFromJSON(node);
         if (newFlow != null && newFlow.getName().length() > 0) {
-            return newFlow;
-        } else {
+             return newFlow;
+         } else {
             throw new DataHubProjectException(flowName + " is not a valid flow");
         }
     }
