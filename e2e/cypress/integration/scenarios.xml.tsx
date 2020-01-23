@@ -109,7 +109,8 @@ describe('xml scenario on browse documents page', () => {
     browsePage.getShowMoreLink().click();
     browsePage.getTotalDocuments().should('be.greaterThan', '1008');
     browsePage.getFacetItemCheckbox('collection', 'PersonXML').click();
-    browsePage.applyFacetSearchSelection('collection');
+    // browsePage.applyFacetSearchSelection('collection');
+    browsePage.getFacetApplyButton().click();
     cy.wait(500);
     browsePage.getTotalDocuments().should('be.equal', 6);
     browsePage.getFacetSearchSelectionCount('collection').should('contain', '1');
