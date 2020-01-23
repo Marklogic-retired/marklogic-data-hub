@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.StepDefinitionManager;
 import com.marklogic.hub.error.DataHubProjectException;
+import com.marklogic.hub.oneui.exceptions.DataHubException;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.impl.FlowImpl;
-import com.marklogic.hub.oneui.exceptions.DataHubException;
 import com.marklogic.hub.oneui.models.StepModel;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.step.StepDefinition;
@@ -23,7 +23,8 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Service
 public class FlowManagerService {
@@ -97,24 +98,6 @@ public class FlowManagerService {
 
     public void deleteFlow(String flowName) {
         flowManager.deleteFlow(flowName);
-    }
-
-    public List<Flow> getFlows() {
-        return flowManager.getFlows();
-    }
-
-    public List<StepModel> getSteps(String flowName) {
-        Flow flow = flowManager.getFlow(flowName);
-        Map<String, Step> stepMap = flow.getSteps();
-
-        List<StepModel> stepModelList = new ArrayList<>();
-        for (String key : stepMap.keySet()) {
-            Step step = stepMap.get(key);
-            StepModel stepModel = transformStepToWebModel(step);
-            stepModelList.add(stepModel);
-        }
-
-        return stepModelList;
     }
 
     public StepModel getStep(String flowName, String stepId) {
