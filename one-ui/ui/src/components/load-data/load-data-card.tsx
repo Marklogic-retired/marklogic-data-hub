@@ -84,8 +84,8 @@ const LoadDataCard: React.FC<Props> = (props) => {
 
     return (
         <div className={styles.loaddataContainer}>
-            <Row gutter={16}>
-                <Col span={6}>
+            <Row gutter={16} type="flex" >
+                <Col >
                     <Card
                         size="small"
                         className={styles.addNewCard}>
@@ -94,7 +94,7 @@ const LoadDataCard: React.FC<Props> = (props) => {
                         <p className={styles.addNewContent}>Add New</p>
                     </Card>
                 </Col>{props && props.data.length > 0 ? props.data.map((elem,index) => (
-                    <Col span={6} key={index}><Card
+                    <Col key={index}><Card
                         actions={[
                             <span>{elem.filesNeedReuploaded ? (
                                 <Popover
