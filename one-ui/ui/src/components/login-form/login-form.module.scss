@@ -28,7 +28,13 @@
   .loginButton button {
     color:#ffffff;
     width: 100%;
-    background-color: #44499C;
+    background-color: #394494;
+    border: none;
+  }
+  
+  .unauthorized {
+    text-align: center;
+    white-space: nowrap;
   }
   
   .hostIcon {
