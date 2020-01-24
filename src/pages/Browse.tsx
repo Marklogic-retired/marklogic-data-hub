@@ -130,7 +130,7 @@ const Browse: React.FC<Props> = ({ location }) => {
   };
 
   useLayoutEffect(() => {
-    if (endScroll && data.length) {
+    if (endScroll && data.length && !user.tableView) {
       if (searchBarRef.current) {
         searchBarRef.current['style']['boxShadow'] = '0px 8px 4px -4px #999'
       }
