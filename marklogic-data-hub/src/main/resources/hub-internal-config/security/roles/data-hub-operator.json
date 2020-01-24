@@ -9,7 +9,8 @@
     "data-hub-flow-reader",
     "data-hub-mapping-reader",
     "data-hub-entity-model-reader",
-    "data-hub-step-definition-reader"
+    "data-hub-step-definition-reader",
+    "tde-view"
   ],
   "privilege": [
     {

@@ -203,10 +203,9 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
         Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
         Task task = new Task(userWithRoleBeingTestedApi, null);
         task.setTaskPath("/MarkLogic/flexrep/tasks/push-local-forests.xqy");
-        if(adminHubConfig.getIsProvisionedEnvironment()) {
+        if (adminHubConfig.getIsProvisionedEnvironment()) {
             task.setGroupName("Curator");
-        }
-        else {
+        } else {
             task.setGroupName("Default");
         }
         task.setTaskEnabled(false);
@@ -276,8 +275,15 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
      */
     @Test
     public void tasks19And20And22And23And24And26And27And29And30And31And37And38() {
-        assertTrue(roleBeingTested.getRole().contains("rest-admin"),
-            "Task 19: rest-admin allows the user to insert documents via /v1/documents");
+        assertFalse(roleBeingTested.getRole().contains("rest-admin"),
+            "The role should have the rest-admin privilege, but not the rest-admin role; this prevents several " +
+                "default permissions from being added to the role which users may not want");
+        assertFalse(roleBeingTested.getRole().contains("rest-writer"),
+            "The role should not have the rest-writer role; this prevents several " +
+                "default permissions from being added to the role which users may not want");
+
+        assertTrue(roleBeingTested.getRole().contains("data-hub-operator"),
+            "Task 19: data-hub-operator inherits the rest-writer privilege, which allows the user to write documents via /v1/documents");
 
         assertTrue(roleBeingTested.getRole().contains("tde-admin"),
             "Task 19 and 24: tde-admin allows the user to insert TDE schemas into the TDE protected collection");
@@ -285,8 +291,8 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
         assertTrue(roleBeingTested.getRole().contains("data-hub-flow-writer"),
             "Tasks 20 : data-hub-flow-writer is required for allowing the user to perform CRUD operations on flows");
 
-        assertTrue(roleBeingTested.getRole().contains("rest-admin"),
-            "Tasks 22: rest-admin is sufficient for allowing the user to perform CRUD operations on  " +
+        assertTrue(roleBeingTested.getRole().contains("data-hub-operator"),
+            "Tasks 22: data-hub-operator has the rest-writer privilege, which is sufficient for allowing the user to perform CRUD operations on  " +
                 "schemas, as it defaults to being inserted with rest-reader/rest-writer permissions via " +
                 "flow-developer/ data-hub-developer roles");
 
@@ -294,9 +300,9 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
             "Task 23: The ML provenance functions add ps-user/read and ps-internal/update permissions by default on " +
                 "provenance documents; thus, a user needs ps-user to read these documents");
 
-        assertTrue(roleBeingTested.getRole().contains("rest-admin"),
+        assertTrue(roleBeingTested.getRole().contains("data-hub-operator"),
             "Tasks 26 and 27: Artifacts get rest-reader and rest-writer by default via " +
-                "mlEntityModelPermissions, and thus rest-admin provides access to reading these documents");
+                "mlEntityModelPermissions, and thus data-hub-operator, which inherits rest-reader, provides access to reading these documents");
 
         assertTrue(roleBeingTested.getRole().contains("manage-user"),
             "Tasks 29 and 30: manage-user grants access to app-server logs, but not system logs");
@@ -304,10 +310,8 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
         assertTrue(roleBeingTested.getRole().contains("manage-user"),
             "Task 31: manage-user grants read access to documents in the Meters database");
 
-        assertTrue(roleBeingTested.getRole().contains("rest-admin"),
-            "Tasks 37 and 38: these tasks are redundant with task 19; rest-admin allows a user to write these documents");
-
-
+        assertTrue(roleBeingTested.getRole().contains("data-hub-operator"),
+            "Tasks 37 and 38: these tasks are redundant with task 19; data-hub-operator allows a user to write these documents");
     }
 
     private GeospatialElementIndex buildGeoIndex() {
