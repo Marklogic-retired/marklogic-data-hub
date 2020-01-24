@@ -1,0 +1,8 @@
+<alert-action-properties xmlns="http://marklogic.com/manage/alert-action/properties">
+  <name>log-alert</name>
+  <description>log to ErrorLog.txt</description>
+  <module-db>%%MODULES_DATABASE%%</module-db>
+  <module-root>/</module-root>
+  <module>/ext/my-alert.xqy</module>
+  <options />
+</alert-action-properties>

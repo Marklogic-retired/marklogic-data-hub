@@ -8,6 +8,7 @@ import com.marklogic.appdeployer.command.alert.DeployAlertConfigsCommand;
 import com.marklogic.appdeployer.command.alert.DeployAlertRulesCommand;
 import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
 import com.marklogic.appdeployer.command.schemas.LoadSchemasCommand;
+import com.marklogic.appdeployer.command.security.DeployRolesCommand;
 import com.marklogic.appdeployer.command.tasks.DeployScheduledTasksCommand;
 import com.marklogic.appdeployer.command.temporal.DeployTemporalAxesCommand;
 import com.marklogic.appdeployer.command.temporal.DeployTemporalCollectionsCommand;
@@ -17,7 +18,6 @@ import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.deploy.HubAppDeployer;
-import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
 import com.marklogic.hub.deploy.commands.HubDeployDatabaseCommandFactory;
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
@@ -29,16 +29,23 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * Deploys resources, modules, and schemas to a DHS instance. Assumes that the user used to deploy these objects has
- * the "data-hub-developer" role.
+ * Handles deploying resources to DHS.
  */
 public class DhsDeployer extends LoggingObject {
 
-    public void deployToDhs(HubConfigImpl hubConfig) {
+    public void deployAsDeveloper(HubConfigImpl hubConfig) {
         prepareAppConfigForDeployingToDhs(hubConfig);
 
         HubAppDeployer dhsDeployer = new HubAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager(), null, null);
-        dhsDeployer.setCommands(buildCommandListForDeployingToDhs(hubConfig));
+        dhsDeployer.setCommands(buildCommandsForDeveloper(hubConfig));
+        dhsDeployer.deploy(hubConfig.getAppConfig());
+    }
+
+    public void deployAsSecurityAdmin(HubConfigImpl hubConfig) {
+        prepareAppConfigForDeployingToDhs(hubConfig);
+
+        HubAppDeployer dhsDeployer = new HubAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager(), null, null);
+        dhsDeployer.setCommands(buildCommandsForSecurityAdmin());
         dhsDeployer.deploy(hubConfig.getAppConfig());
     }
 
@@ -137,16 +144,15 @@ public class DhsDeployer extends LoggingObject {
         }
     }
 
-    /**
-     * This list of commands is based on what a user with the data-hub-developer role is permitted to deploy.
-     *
-     * @param hubConfig
-     * @return
-     */
-    protected List<Command> buildCommandListForDeployingToDhs(HubConfig hubConfig) {
+    protected List<Command> buildCommandsForSecurityAdmin() {
+        List<Command> commands = new ArrayList<>();
+        commands.add(new DeployRolesCommand());
+        return commands;
+    }
+
+    protected List<Command> buildCommandsForDeveloper(HubConfig hubConfig) {
         List<Command> commands = new ArrayList<>();
 
-        commands.add(new DeployDatabaseFieldCommand());
         DeployOtherDatabasesCommand deployOtherDatabasesCommand = new DeployOtherDatabasesCommand();
         deployOtherDatabasesCommand.setDeployDatabaseCommandFactory(new HubDeployDatabaseCommandFactory(hubConfig));
         deployOtherDatabasesCommand.setResourceFilenamesIncludePattern(buildPatternForDatabasesToUpdateIndexesFor());
@@ -157,7 +163,6 @@ public class DhsDeployer extends LoggingObject {
         commands.add(new DeployAlertRulesCommand());
 
         commands.add(new LoadUserArtifactsCommand(hubConfig));
-
         LoadUserModulesCommand loadUserModulesCommand = new LoadUserModulesCommand(hubConfig);
         loadUserModulesCommand.setForceLoad(true);
         commands.add(loadUserModulesCommand);

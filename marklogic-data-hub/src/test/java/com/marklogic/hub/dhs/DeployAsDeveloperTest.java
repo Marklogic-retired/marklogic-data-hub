@@ -18,7 +18,6 @@ import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.impl.HubConfigImpl;
@@ -41,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ApplicationConfig.class)
-public class DeployToDhsTest extends HubTestBase {
+public class DeployAsDeveloperTest extends HubTestBase {
 
     private AppConfig originalAppConfig;
 
@@ -168,13 +167,11 @@ public class DeployToDhsTest extends HubTestBase {
 
     @Test
     public void buildCommandList() {
-        List<Command> commands = new DhsDeployer().buildCommandListForDeployingToDhs(adminHubConfig);
+        List<Command> commands = new DhsDeployer().buildCommandsForDeveloper(adminHubConfig);
         Collections.sort(commands, Comparator.comparing(Command::getExecuteSortOrder));
         System.out.println(commands);
-        assertEquals(12, commands.size());
         int index = 0;
         assertTrue(commands.get(index++) instanceof DeployOtherDatabasesCommand);
-        assertTrue(commands.get(index++) instanceof DeployDatabaseFieldCommand);
         assertTrue(commands.get(index++) instanceof LoadSchemasCommand);
         assertTrue(commands.get(index++) instanceof LoadUserModulesCommand);
         assertTrue(commands.get(index++) instanceof DeployTriggersCommand);
@@ -185,6 +182,11 @@ public class DeployToDhsTest extends HubTestBase {
         assertTrue(commands.get(index++) instanceof DeployAlertConfigsCommand);
         assertTrue(commands.get(index++) instanceof DeployAlertActionsCommand);
         assertTrue(commands.get(index++) instanceof DeployAlertRulesCommand);
+        assertEquals(11, commands.size(),
+            "As of ML 10.0-3, the granular privilege for indexes doesn't seem to work with XML payloads. " +
+                "Bug https://bugtrack.marklogic.com/54231 has been created to track that. Thus, " +
+                "DeployDatabaseFieldCommand cannot be included and ml-config/database-fields/final-database.xml " +
+                "cannot be processed.");
 
         DeployOtherDatabasesCommand dodc = (DeployOtherDatabasesCommand) commands.get(0);
         ResourceFilenameFilter filter = (ResourceFilenameFilter) dodc.getResourceFilenameFilter();

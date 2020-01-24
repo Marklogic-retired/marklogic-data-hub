@@ -1,0 +1,21 @@
+{
+  "name": "sample-trigger",
+  "description": "sample trigger",
+  "event": {
+    "data-event": {
+      "collection-scope": {
+        "uri": "sample"
+      },
+      "document-content": {
+        "update-kind": "create"
+      },
+      "when": "post-commit"
+    }
+  },
+  "module": "ext/sample-trigger.xqy",
+  "module-db": "%%MODULES_DATABASE%%",
+  "module-root": "/",
+  "enabled": true,
+  "recursive": true,
+  "task-priority": "normal"
+}

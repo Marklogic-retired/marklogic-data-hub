@@ -11,6 +11,9 @@ in an example project directory.
 
 1. [dh5-custom-hook](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/dh5-custom-hook) - an example of a simple flow with one ingestion step that utilizes a custom hook
 
+1. [dhs-example](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/dhs-example) - demonstrates where to store 
+  resources that can be deployed to a DHS instance. 
+
 1. [mapping-example](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/mapping-example) - demonstrates the new mapping features in Data Hub 5.1.0
 
 1. [smart-mastering-complete](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/smart-mastering-complete) - demonstrates various features of the mastering step

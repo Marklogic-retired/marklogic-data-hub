@@ -1,0 +1,15 @@
+{
+	"axis-name": "system",
+	"axis-start": {
+		"element-reference": {
+			"namespace-uri": "",
+			"localname": "systemStart"
+		}
+	},
+	"axis-end": {
+		"element-reference": {
+			"namespace-uri": "",
+			"localname": "systemEnd"
+		}
+	}
+}

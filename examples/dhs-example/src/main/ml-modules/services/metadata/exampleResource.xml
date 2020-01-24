@@ -1,0 +1,14 @@
+<metadata>
+  <title>exampleResource</title>
+  <description>
+    <div>
+      Use HTML content to provide a description of this resource. The GET method shows an example of how to define the parameters for a method.
+    </div>
+  </description>
+  <method name="GET">
+    <param name="id" />
+  </method>
+  <method name="POST"/>
+  <method name="PUT"/>
+  <method name="DELETE"/>
+</metadata>

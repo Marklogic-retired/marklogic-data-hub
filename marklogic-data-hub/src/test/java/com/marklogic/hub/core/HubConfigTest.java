@@ -80,7 +80,7 @@ public class HubConfigTest extends HubTestBase {
         props.put("mlFinalSimpleSsl", "true");
 
         resetProperties();
-        adminHubConfig.refreshProject(props, true);
+        adminHubConfig.loadConfigurationFromProperties(props, true);
 
         config = adminHubConfig.getAppConfig();
 
