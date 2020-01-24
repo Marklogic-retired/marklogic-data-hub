@@ -15,15 +15,13 @@
  */
 package com.marklogic.hub.oneui.auth;
 
+import java.net.URI;
+
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.oneui.models.EnvironmentInfo;
 import com.marklogic.hub.oneui.models.HubConfigSession;
 import com.marklogic.hub.oneui.services.EnvironmentService;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.Credentials;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,8 +33,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
-
-import java.net.URI;
 
 /**
  * Implements Spring Security's AuthenticationManager interface so that it can authenticate users by making a simple
@@ -120,32 +116,4 @@ public class MarkLogicAuthenticationManager implements AuthenticationProvider, A
     public void setPathToAuthenticateAgainst(String pathToAuthenticateAgainst) {
         this.pathToAuthenticateAgainst = pathToAuthenticateAgainst;
     }
-}
-
-/**
- * Simple implementation that is good for one-time requests.
- */
-class SimpleCredentialsProvider implements CredentialsProvider {
-
-    private String username;
-    private String password;
-
-    public SimpleCredentialsProvider(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
-
-    @Override
-    public void setCredentials(AuthScope authscope, Credentials credentials) {
-    }
-
-    @Override
-    public Credentials getCredentials(AuthScope authscope) {
-        return new UsernamePasswordCredentials(username, password);
-    }
-
-    @Override
-    public void clear() {
-    }
-
 }
