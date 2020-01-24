@@ -138,7 +138,7 @@ const Facet: React.FC<Props> = (props) => {
               data-cy="show-more"
           >{(more) ? '<< less' : 'more >>'}</div>
           {props.facetType === 'xs:string' &&
-          <div className={styles.searchValues}><PopOverSearch name={props.name} selectedEntity={props.selectedEntity}/>
+          <div className={styles.searchValues}><PopOverSearch name={props.name} selectedEntity={props.selectedEntity[0]} facetValues={props.facetValues}/>
           </div>}
         </div>
         {showApply && (
