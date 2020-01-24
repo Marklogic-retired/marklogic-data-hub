@@ -32,6 +32,7 @@ public abstract class AbstractSecurityTest extends HubTestBase {
 
     protected static final String FINAL_DB = "data-hub-FINAL";
     protected static final String STAGING_DB = "data-hub-STAGING";
+    protected static final String JOBS_DB = "data-hub-JOBS";
 
     protected ManageClient adminUserClient;
     protected API adminUserApi;

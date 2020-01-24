@@ -243,10 +243,21 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
 
     @Test
     public void task18ConfigureStagingIndexes() {
-        //Creating granular privilege using pseudo function doesn't work on versions < 10.0-3, so this test will not run
-        //in those versions.
         Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
         Database db = new Database(userWithRoleBeingTestedApi, STAGING_DB);
+        db.setGeospatialElementIndex(Arrays.asList(buildGeoIndex()));
+        try {
+            db.save();
+        } finally {
+            db.setGeospatialElementIndex(Arrays.asList());
+            db.save();
+        }
+    }
+
+    @Test
+    public void task18ConfigureJobIndexes() {
+        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
+        Database db = new Database(userWithRoleBeingTestedApi, JOBS_DB);
         db.setGeospatialElementIndex(Arrays.asList(buildGeoIndex()));
         try {
             db.save();

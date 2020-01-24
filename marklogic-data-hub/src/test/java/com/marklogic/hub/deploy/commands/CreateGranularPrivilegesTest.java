@@ -44,6 +44,7 @@ public class CreateGranularPrivilegesTest extends HubTestBase {
         ResourcesFragment databasesXml = new DatabaseManager(adminHubConfig.getManageClient()).getAsXml();
         final String finalDbId = databasesXml.getIdForNameOrId("data-hub-FINAL");
         final String stagingDbId = databasesXml.getIdForNameOrId("data-hub-STAGING");
+        final String jobsDbId = databasesXml.getIdForNameOrId("data-hub-JOBS");
         final String finalTriggersDbId = databasesXml.getIdForNameOrId("data-hub-final-TRIGGERS");
         final String stagingTriggersDbId = databasesXml.getIdForNameOrId("data-hub-staging-TRIGGERS");
 
@@ -55,12 +56,20 @@ public class CreateGranularPrivilegesTest extends HubTestBase {
         assertEquals("http://marklogic.com/xdmp/privileges/admin/database/clear/" + finalDbId, p.getAction());
         assertEquals("data-hub-admin", p.getRole().get(0));
 
+        p = resourceMapper.readResource(mgr.getAsJson("admin-database-clear-data-hub-JOBS", "kind", "execute"), Privilege.class);
+        assertEquals("http://marklogic.com/xdmp/privileges/admin/database/clear/" + jobsDbId, p.getAction());
+        assertEquals("data-hub-admin", p.getRole().get(0));
+
         p = resourceMapper.readResource(mgr.getAsJson("admin-database-index-data-hub-STAGING", "kind", "execute"), Privilege.class);
         assertEquals("http://marklogic.com/xdmp/privileges/admin/database/index/" + stagingDbId, p.getAction());
         assertEquals("data-hub-developer", p.getRole().get(0));
 
         p = resourceMapper.readResource(mgr.getAsJson("admin-database-index-data-hub-FINAL", "kind", "execute"), Privilege.class);
         assertEquals("http://marklogic.com/xdmp/privileges/admin/database/index/" + finalDbId, p.getAction());
+        assertEquals("data-hub-developer", p.getRole().get(0));
+
+        p = resourceMapper.readResource(mgr.getAsJson("admin-database-index-data-hub-JOBS", "kind", "execute"), Privilege.class);
+        assertEquals("http://marklogic.com/xdmp/privileges/admin/database/index/" + jobsDbId, p.getAction());
         assertEquals("data-hub-developer", p.getRole().get(0));
 
         p = resourceMapper.readResource(mgr.getAsJson("admin-database-triggers-data-hub-staging-TRIGGERS", "kind", "execute"), Privilege.class);
@@ -124,8 +133,10 @@ public class CreateGranularPrivilegesTest extends HubTestBase {
         ResourcesFragment privileges = mgr.getAsXml();
         assertTrue(privileges.resourceExists("admin-database-clear-data-hub-STAGING"));
         assertTrue(privileges.resourceExists("admin-database-clear-data-hub-FINAL"));
+        assertTrue(privileges.resourceExists("admin-database-clear-data-hub-JOBS"));
         assertTrue(privileges.resourceExists("admin-database-index-data-hub-STAGING"));
         assertTrue(privileges.resourceExists("admin-database-index-data-hub-FINAL"));
+        assertTrue(privileges.resourceExists("admin-database-index-data-hub-JOBS"));
         assertTrue(privileges.resourceExists("admin-database-triggers-data-hub-staging-TRIGGERS"));
         assertTrue(privileges.resourceExists("admin-database-triggers-data-hub-final-TRIGGERS"));
         assertTrue(privileges.resourceExists("admin-database-temporal-data-hub-STAGING"));
@@ -147,8 +158,10 @@ public class CreateGranularPrivilegesTest extends HubTestBase {
             privileges = mgr.getAsXml();
             assertFalse(privileges.resourceExists("admin-database-clear-data-hub-STAGING"));
             assertFalse(privileges.resourceExists("admin-database-clear-data-hub-FINAL"));
+            assertFalse(privileges.resourceExists("admin-database-clear-data-hub-JOBS"));
             assertFalse(privileges.resourceExists("admin-database-index-data-hub-STAGING"));
             assertFalse(privileges.resourceExists("admin-database-index-data-hub-FINAL"));
+            assertFalse(privileges.resourceExists("admin-database-index-data-hub-JOBS"));
             assertFalse(privileges.resourceExists("admin-database-triggers-data-hub-staging-TRIGGERS"));
             assertFalse(privileges.resourceExists("admin-database-triggers-data-hub-final-TRIGGERS"));
             assertFalse(privileges.resourceExists("admin-database-temporal-data-hub-STAGING"));
@@ -187,6 +200,11 @@ public class CreateGranularPrivilegesTest extends HubTestBase {
         dhsStagingPriv.setAction("not-the-real-privilege-staging");
         dhsStagingPriv.addRole("dba");
 
+        Privilege dhsJobsPriv = new Privilege(api, "clear-data-hub-JOBS");
+        dhsJobsPriv.setKind("execute");
+        dhsJobsPriv.setAction("not-the-real-privilege-jobs");
+        dhsJobsPriv.addRole("dba");
+
         Privilege dhsStagingIndexPriv = new Privilege(api, "STAGING-index-editor");
         dhsStagingIndexPriv.setKind("execute");
         dhsStagingIndexPriv.setAction("not-the-real-index-staging");
@@ -197,12 +215,19 @@ public class CreateGranularPrivilegesTest extends HubTestBase {
         dhsFinalIndexPriv.setAction("not-the-real-index-final");
         dhsFinalIndexPriv.addRole("dba");
 
+        Privilege dhsJobsIndexPriv = new Privilege(api, "JOBS-index-editor");
+        dhsJobsIndexPriv.setKind("execute");
+        dhsJobsIndexPriv.setAction("not-the-real-index-jobs");
+        dhsJobsIndexPriv.addRole("dba");
+
         try {
             dhsDbaRole.save();
             dhsStagingPriv.save();
             dhsFinalPriv.save();
+            dhsJobsPriv.save();
             dhsStagingIndexPriv.save();
             dhsFinalIndexPriv.save();
+            dhsJobsIndexPriv.save();
 
             List<Privilege> list = new CreateGranularPrivilegesCommand(adminHubConfig).buildPrivilegesThatDhsMayHaveCreated(adminHubConfig.getManageClient());
             Privilege stagingPriv = list.get(0);
@@ -215,22 +240,34 @@ public class CreateGranularPrivilegesTest extends HubTestBase {
             assertEquals("dba", finalPriv.getRole().get(0));
             assertEquals("data-hub-admin", finalPriv.getRole().get(1));
 
-            Privilege stagingIndexPriv = list.get(2);
+            Privilege jobsPriv = list.get(2);
+            assertEquals("clear-data-hub-JOBS", jobsPriv.getPrivilegeName());
+            assertEquals("dba", jobsPriv.getRole().get(0));
+            assertEquals("data-hub-admin", jobsPriv.getRole().get(1));
+
+            Privilege stagingIndexPriv = list.get(3);
             assertEquals("STAGING-index-editor", stagingIndexPriv.getPrivilegeName());
             assertEquals("dba", stagingIndexPriv.getRole().get(0));
             assertEquals("data-hub-developer", stagingIndexPriv.getRole().get(1));
 
-            Privilege finalIndexPriv = list.get(3);
+            Privilege finalIndexPriv = list.get(4);
             assertEquals("FINAL-index-editor", finalIndexPriv.getPrivilegeName());
             assertEquals("dba", finalIndexPriv.getRole().get(0));
             assertEquals("data-hub-developer", finalIndexPriv.getRole().get(1));
+
+            Privilege finalJobsPriv = list.get(5);
+            assertEquals("JOBS-index-editor", finalJobsPriv.getPrivilegeName());
+            assertEquals("dba", finalJobsPriv.getRole().get(0));
+            assertEquals("data-hub-developer", finalJobsPriv.getRole().get(1));
         } finally {
             dhsDbaRole.delete();
             PrivilegeManager mgr = new PrivilegeManager(adminHubConfig.getManageClient());
             mgr.deleteAtPath("/manage/v2/privileges/clear-data-hub-FINAL?kind=execute");
             mgr.deleteAtPath("/manage/v2/privileges/clear-data-hub-STAGING?kind=execute");
+            mgr.deleteAtPath("/manage/v2/privileges/clear-data-hub-JOBS?kind=execute");
             mgr.deleteAtPath("/manage/v2/privileges/FINAL-index-editor?kind=execute");
             mgr.deleteAtPath("/manage/v2/privileges/STAGING-index-editor?kind=execute");
+            mgr.deleteAtPath("/manage/v2/privileges/JOBS-index-editor?kind=execute");
         }
     }
 }
