@@ -8,7 +8,6 @@ async function collections(page) {
         await page.evaluate(() => JSON.stringify(window.performance.timing))
     );
 
-    await page.waitFor(5000)
     await page.waitForSelector('#hub-properties')
     await page.click('#hub-properties')
 
@@ -28,6 +27,10 @@ async function collections(page) {
             await page.click('div > [data-cy=collection-facet-item]:nth-child(' + i + ') > [class*=facet_value] > .ant-checkbox > [data-cy=collection-facet-item-checkbox]')
         }
     }
+
+
+     await page.waitForSelector('.ant-collapse-content > .ant-collapse-content-box > [class*=facet_facetContainer] > [class*=facet_applyButtonContainer] > .ant-btn')
+     await page.click('.ant-collapse-content > .ant-collapse-content-box > [class*=facet_facetContainer] > [class*=facet_applyButtonContainer] > .ant-btn')
 
     for (var i = 2; i <= numPages+1; i++) {
         await page.waitFor(1000)
