@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, useContext, useRef, useLayoutEffect } from 'react';
 import axios from 'axios';
 import { Layout, Tooltip, Spin } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { UserContext } from '../util/user-context';
 import { SearchContext } from '../util/search-context';
+import { useScrollPosition } from '../hooks/use-scroll-position';
 import AsyncLoader from '../components/async-loader/async-loader';
 import Sidebar from '../components/sidebar/sidebar';
 import SearchBar from '../components/search-bar/search-bar';
@@ -31,8 +32,9 @@ const Browse: React.FC<Props> = ({ location }) => {
     setEntityClearQuery,
     setLatestJobFacet,
   } = useContext(SearchContext);
+  const searchBarRef = useRef<HTMLDivElement>(null);
 
-  const [data, setData] = useState();
+  const [data, setData] = useState<any[]>([]);
   const [entities, setEntites] = useState<any[]>([]);
   const [entityDefArray, setEntityDefArray] = useState<any[]>([]);
   const [facets, setFacets] = useState();
@@ -40,6 +42,7 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [totalDocuments, setTotalDocuments] = useState(0);
   const [active, setIsActive] = useState(user.tableView);
   const [snippetActive, setIsSnippetActive] = useState(!user.tableView);
+  const [endScroll, setEndScroll] = useState(false);
 
   const getEntityModel = async () => {
     try {
@@ -126,6 +129,30 @@ const Browse: React.FC<Props> = ({ location }) => {
     setTableView(false)
   };
 
+  useLayoutEffect(() => {
+    if (endScroll && data.length) {
+      if (searchBarRef.current) {
+        searchBarRef.current['style']['boxShadow'] = '0px 8px 4px -4px #999'
+      }
+    } else if (!endScroll) {
+      if (searchBarRef.current) {
+        searchBarRef.current['style']['boxShadow'] = 'none'
+      }
+    }
+  },[endScroll])
+
+  useScrollPosition(
+    ({ currPos }) => {
+      if (currPos.endOfScroll && !endScroll) {
+        setEndScroll(true);
+      } else if (!currPos.endOfScroll && endScroll) {
+        setEndScroll(false);
+      }
+    },
+    [endScroll],
+    null
+  )
+
   return (
     <>
       <Layout>
@@ -141,7 +168,7 @@ const Browse: React.FC<Props> = ({ location }) => {
             <AsyncLoader />
             :
             <>
-              <div className={styles.searchBar}>
+              <div className={styles.searchBar} ref={searchBarRef}>
                 <SearchBar entities={entities} />
                 <SearchSummary
                   total={totalDocuments}
@@ -156,8 +183,8 @@ const Browse: React.FC<Props> = ({ location }) => {
                   pageLength={searchOptions.pageLength}
                   maxRowsPerPage={searchOptions.maxRowsPerPage}
                 />
-                <br />
-                <br />
+                {/* <br />
+                <br /> */}
                 <div className={styles.spinViews}>
                   { isLoading && <Spin className={styles.overlay}/>}
                   <div className={styles.switchViews}>
