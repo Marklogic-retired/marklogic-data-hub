@@ -107,14 +107,17 @@ public class CreateGranularPrivilegesCommand implements Command, UndoableCommand
     public void undo(CommandContext context) {
         final String finalDbName = hubConfig.getDbName(DatabaseKind.FINAL);
         final String stagingDbName = hubConfig.getDbName(DatabaseKind.STAGING);
+        final String jobsDbName = hubConfig.getDbName(DatabaseKind.JOB);
         final String finalTriggersDbName = hubConfig.getDbName(DatabaseKind.FINAL_TRIGGERS);
         final String stagingTriggersDbName = hubConfig.getDbName(DatabaseKind.STAGING_TRIGGERS);
 
         PrivilegeManager mgr = new PrivilegeManager(context.getManageClient());
         mgr.deleteAtPath("/manage/v2/privileges/admin-database-clear-" + finalDbName + "?kind=execute");
         mgr.deleteAtPath("/manage/v2/privileges/admin-database-clear-" + stagingDbName + "?kind=execute");
+        mgr.deleteAtPath("/manage/v2/privileges/admin-database-clear-" + jobsDbName + "?kind=execute");
         mgr.deleteAtPath("/manage/v2/privileges/admin-database-index-" + finalDbName + "?kind=execute");
         mgr.deleteAtPath("/manage/v2/privileges/admin-database-index-" + stagingDbName + "?kind=execute");
+        mgr.deleteAtPath("/manage/v2/privileges/admin-database-index-" + jobsDbName + "?kind=execute");
 
         mgr.deleteAtPath("/manage/v2/privileges/admin-database-triggers-" + finalTriggersDbName + "?kind=execute");
         mgr.deleteAtPath("/manage/v2/privileges/admin-database-triggers-" + stagingTriggersDbName + "?kind=execute");
@@ -147,17 +150,22 @@ public class CreateGranularPrivilegesCommand implements Command, UndoableCommand
         final List<String> existingPrivilegeNames = new PrivilegeManager(client).getAsXml().getListItemNameRefs();
         final String stagingDbName = hubConfig.getDbName(DatabaseKind.STAGING);
         final String finalDbName = hubConfig.getDbName(DatabaseKind.FINAL);
+        final String jobsDbName = hubConfig.getDbName(DatabaseKind.JOB);
 
         List<Privilege> list = new ArrayList<>();
         list.add(buildPrivilege(client, "admin-database-clear-" + stagingDbName, "http://marklogic.com/xdmp/privileges/admin/database/clear/$$database-id(" + stagingDbName + ")",
             "clear-data-hub-STAGING", existingPrivilegeNames, "data-hub-admin"));
         list.add(buildPrivilege(client, "admin-database-clear-" + finalDbName, "http://marklogic.com/xdmp/privileges/admin/database/clear/$$database-id(" + finalDbName + ")",
             "clear-data-hub-FINAL", existingPrivilegeNames, "data-hub-admin"));
+        list.add(buildPrivilege(client, "admin-database-clear-" + jobsDbName, "http://marklogic.com/xdmp/privileges/admin/database/clear/$$database-id(" + jobsDbName + ")",
+            "clear-data-hub-JOBS", existingPrivilegeNames, "data-hub-admin"));
 
         list.add(buildPrivilege(client, "admin-database-index-" + stagingDbName, "http://marklogic.com/xdmp/privileges/admin/database/index/$$database-id(" + stagingDbName + ")",
             "STAGING-index-editor", existingPrivilegeNames, "data-hub-developer"));
         list.add(buildPrivilege(client, "admin-database-index-" + finalDbName, "http://marklogic.com/xdmp/privileges/admin/database/index/$$database-id(" + finalDbName + ")",
             "FINAL-index-editor", existingPrivilegeNames, "data-hub-developer"));
+        list.add(buildPrivilege(client, "admin-database-index-" + jobsDbName, "http://marklogic.com/xdmp/privileges/admin/database/index/$$database-id(" + jobsDbName + ")",
+            "JOBS-index-editor", existingPrivilegeNames, "data-hub-developer"));
 
         return list;
     }

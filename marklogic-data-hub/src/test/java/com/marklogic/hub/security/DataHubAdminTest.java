@@ -66,4 +66,23 @@ public class DataHubAdminTest extends AbstractSecurityTest {
         }
     }
 
+    @Test
+    public void clearJobsDatabase() {
+        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
+        new DatabaseManager(userWithRoleBeingTestedClient).clearDatabase(JOBS_DB, false);
+        String count = adminHubConfig.newJobDbClient().newServerEval().xquery("xdmp:estimate(fn:doc())").evalAs(String.class);
+        assertEquals(0, Integer.parseInt(count), "The database should have been cleared");
+    }
+
+    @Test
+    public void cannotOtherwiseUpdateJobsDatabase() {
+        try {
+            Database db = new Database(userWithRoleBeingTestedApi, JOBS_DB);
+            db.setRebalancerThrottle(3);
+            db.save();
+            fail("The user should only have the ability to clear the database and modify indexes");
+        } catch (Exception ex) {
+            logger.info("Caught expected exception: " + ex.getMessage());
+        }
+    }
 }
