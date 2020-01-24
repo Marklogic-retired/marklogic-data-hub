@@ -26,6 +26,7 @@ const NewDataLoadDialog = (props) => {
   const [fileList, setFileList] = useState<any>([]);
   const [previewURI, setPreviewURI] = useState('');
   const [uploadPercent, setUploadPercent] = useState();
+  const [toDelete, setToDelete] = useState(false);
 
 
   useEffect(() => {
@@ -81,10 +82,16 @@ const NewDataLoadDialog = (props) => {
     props.setNewLoad(false);
     setFileList([]);
     setUploadPercent(0);
+    if(toDelete){
+      deleteUnusedLoadArtifact(stepName);
+      deleteFilesFromDirectory(stepName);
+      setToDelete(false);
+    }
   }
 
   const onOk = () => {
     props.setNewLoad(false);
+    setToDelete(false);
   }
 
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
@@ -137,7 +144,7 @@ const NewDataLoadDialog = (props) => {
     setIsValid(true);
 
     //Call create data load artifact API function
-    //console.log('final output', props.stepData);
+ 
     props.createLoadDataArtifact(dataPayload);
 
     props.setNewLoad(false);
@@ -241,16 +248,73 @@ const NewDataLoadDialog = (props) => {
     }
   }
 
-  // const handleUpload = (info) => {
-  //   const url = `/api/artifacts/loadData/${stepName}/setData`;
-  //   const formData = new FormData();
-  //   fileList.forEach(file => {
-  //     formData.append('files[]', file);
-  //   });
-  // }
+  const deleteFilesFromDirectory = async (loadDataName) => {
+    try {
+      let response = await Axios.delete(`/api/artifacts/loadData/${loadDataName}/setData`);
+      
+      if (response.status === 200) {
+        console.log('DELETE API Called successfully!');
+      } 
+    } catch (error) {
+        let message = error.response.data.message;
+        console.log('Error while deleting load data artifact.', message);
+    }
 
-  const customRequest = option => {
+  }
+
+  const deleteUnusedLoadArtifact = async (loadDataName) => {
+
+    try {
+      let response = await Axios.delete(`/api/artifacts/loadData/${loadDataName}`);
+      
+      if (response.status === 200) {
+        console.log('DELETE API Called successfully!');
+      } 
+    } catch (error) {
+        let message = error.response.data.message;
+        console.log('Error while deleting load data artifact.', message);
+    }
+  }
+  const createDefaultLoadDataArtifact = async (dataPayload) => {
+    try {
+      let response = await Axios.post(`/api/artifacts/loadData/${stepName}`, dataPayload);
+      if (response.status === 200) {
+        console.log('Create default LoadDataArtifact API Called successfully!')
+      }
+    }
+    catch (error) {
+      let message = error.response.data.message;
+      console.log('Error While creating the default Load Data artifact!', message)
+    }
+  }
+  const customRequest = async option => {
     const { onSuccess, onError, file, action, onProgress } = option;
+
+   try {
+    let response = await Axios.get(`/api/artifacts/loadData/${stepName}`);
+    console.log('response.status',response.status)
+    if (response.status === 200) {
+      //setLoadDataArtifacts([...response.data]);
+      console.log('GET API Called in custom request!');
+    } 
+  } catch (error) {
+      let errorCode = error.response.data.code;
+      let message = error.response.data.message;
+      console.log('Error while fetching load data artifacts from custom request', message);
+
+      if(errorCode === 404){
+        setToDelete(true);
+        let dataPayload = {
+          name: stepName,
+          description: description,
+          sourceFormat: srcFormat,
+          targetFormat: tgtFormat,
+          outputURIReplacement: outUriReplacement
+        }
+        createDefaultLoadDataArtifact(dataPayload);
+      }
+  }
+
     const url = `/api/artifacts/loadData/${stepName}/setData`;
 
 
@@ -275,6 +339,7 @@ const NewDataLoadDialog = (props) => {
       .then(responses => {
         /*......*/
         onSuccess(responses.status);
+        console.log('responses.status',responses.status)
         if(responses.data && responses.data.inputFilePath){
           setInputFilePath(responses.data.inputFilePath);
         }
@@ -283,6 +348,7 @@ const NewDataLoadDialog = (props) => {
         }
       })
       .catch(err => {
+        
         /*......*/
         onError(err);
       });
