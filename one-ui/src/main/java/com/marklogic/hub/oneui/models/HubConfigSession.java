@@ -19,6 +19,9 @@ import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
 import com.marklogic.mgmt.admin.AdminManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -31,11 +34,14 @@ import javax.net.ssl.X509TrustManager;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Component
 @Primary
 @SessionScope
-public class HubConfigSession implements HubConfig, InitializingBean {
+public class HubConfigSession implements HubConfig, InitializingBean, DisposableBean {
+    private static final Logger logger = LoggerFactory.getLogger(HubConfigSession.class);
+
     private HubConfigImpl hubConfigImpl;
 
     @Autowired
@@ -1045,5 +1051,20 @@ public class HubConfigSession implements HubConfig, InitializingBean {
     //only for test purpose
     protected Map<DatabaseKind, Map<String, DatabaseClient>> getAllDatabaseClients() {
         return clientsByKindAndDatabaseName;
+    }
+
+    @Override
+    public void destroy() {
+        if (!clientsByKindAndDatabaseName.isEmpty()) {
+            clientsByKindAndDatabaseName.values().stream()
+                .flatMap(s -> s.values().stream().filter(Objects::nonNull))
+                .forEach(
+                    e -> {
+                        logger.debug(String.format("release %s (%s)", e.getDatabase(), e.toString()));
+                        e.release();
+                        e = null;
+                    });
+            clientsByKindAndDatabaseName.clear();
+        }
     }
 }
