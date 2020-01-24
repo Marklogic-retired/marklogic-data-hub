@@ -1030,4 +1030,19 @@ public class HubConfigSession implements HubConfig, InitializingBean, Disposable
     protected Map<DatabaseKind, Map<String, DatabaseClient>> getAllDatabaseClients() {
         return clientsByKindAndDatabaseName;
     }
+
+    @Override
+    public void destroy() {
+        if (!clientsByKindAndDatabaseName.isEmpty()) {
+            clientsByKindAndDatabaseName.values().stream()
+                .flatMap(s -> s.values().stream().filter(Objects::nonNull))
+                .forEach(
+                    e -> {
+                        logger.debug(String.format("release %s (%s)", e.getDatabase(), e.toString()));
+                        e.release();
+                        e = null;
+                    });
+            clientsByKindAndDatabaseName.clear();
+        }
+    }
 }
