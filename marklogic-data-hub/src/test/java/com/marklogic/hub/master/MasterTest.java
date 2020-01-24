@@ -88,7 +88,7 @@ public class MasterTest extends HubTestBase {
         installHubArtifacts(adminHubConfig, true);
         installUserModules(adminHubConfig, true);
 
-        runAsFlowOperator();
+        runAsDataHubOperator();
     }
 
 

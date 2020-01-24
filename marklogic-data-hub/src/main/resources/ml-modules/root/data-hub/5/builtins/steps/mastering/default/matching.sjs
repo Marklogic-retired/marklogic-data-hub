@@ -51,15 +51,27 @@ function main(content, options) {
     options.filterQuery ? cts.query(options.filterQuery) : cts.trueQuery(),
     datahub.prov.granularityLevel() === datahub.prov.FINE_LEVEL
   );
-  return {
+
+  return buildResult(matchSummaryJson, options, collections);
+}
+
+function buildResult(matchSummaryJson, options, collections) {
+  let result = {
     uri: `/datahub/5/mastering/match-summary/${sem.uuidString()}.json`,
     value: matchSummaryJson,
     context: {
       collections
     }
   };
+
+  if (options.permissions) {
+    result.context.permissions = datahub.hubUtils.parsePermissions(options.permissions);
+  }
+
+  return result;
 }
 
 module.exports = {
-  main
+  main,
+  buildResult
 };

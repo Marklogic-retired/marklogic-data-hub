@@ -33,6 +33,11 @@ declare variable $rdfs-prefix := fn:namespace-uri-from-QName(xs:QName("rdfs:docu
 declare variable $RDF-TYPE-IRI := sem:iri($rdf-prefix || "type");
 declare variable $RDFS-LABEL-IRI := sem:iri($rdfs-prefix || "label");
 
+declare private variable $AUDIT-PERMISSIONS := (
+  xdmp:permission("data-hub-operator", "read"),
+  xdmp:permission("data-hub-operator", "update")
+);
+
 declare private variable $ps-collection as xs:string :=
  "http://marklogic.com/provenance-services/record";
 
@@ -60,7 +65,7 @@ declare function auditing:audit-trace(
     xdmp:document-insert(
       $audit-trace-def => map:get("uri"),
       $audit-trace-def => map:get("value"),
-      xdmp:default-permissions(),
+      (xdmp:default-permissions(), $AUDIT-PERMISSIONS),
       $audit-trace-def => map:get("context") => map:get("collections")
     )
 };
@@ -194,7 +199,10 @@ declare function auditing:build-audit-trace(
     map:map()
       => map:with("uri", "/com.marklogic.smart-mastering/auditing/"|| $action ||"/"||sem:uuid-string()||".xml")
       => map:with("value", $prov-xml)
-      => map:with("context", map:entry("collections",coll:auditing-collections($options)))
+      => map:with("context", map:new((
+        map:entry("collections",coll:auditing-collections($options)),
+        map:entry("permissions", $AUDIT-PERMISSIONS)
+      )))
 };
 
 (:
