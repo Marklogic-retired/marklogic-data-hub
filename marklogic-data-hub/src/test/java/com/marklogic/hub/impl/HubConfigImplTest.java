@@ -51,7 +51,7 @@ public class HubConfigImplTest {
         env.setProperty("mlHost", "somehost");
 
         HubConfigImpl config = new HubConfigImpl(project, env);
-        config.refreshProject(new Properties(), false);
+        config.loadConfigurationFromProperties(new Properties(), false);
         assertEquals("somehost", config.getHost());
         assertEquals("somehost", config.getAppConfig().getHost());
     }

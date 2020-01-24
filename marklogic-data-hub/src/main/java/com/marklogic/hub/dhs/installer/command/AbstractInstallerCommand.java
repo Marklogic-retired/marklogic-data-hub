@@ -55,7 +55,7 @@ public abstract class AbstractInstallerCommand extends LoggingObject implements 
 
         logger.info(format("Will connect to host '%s' as user '%s'", options.getHost(), options.getUsername()));
 
-        hubConfig.refreshProject(props, true);
+        hubConfig.loadConfigurationFromProperties(props, true);
 
         verifyUserCanAuthenticate();
 

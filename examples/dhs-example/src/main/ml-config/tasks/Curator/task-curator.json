@@ -1,0 +1,12 @@
+{
+   "task-enabled": true,
+   "task-path": "/ext/sample-project/task/sample-task.xqy",
+   "task-root": "/",
+   "task-type": "weekly",
+   "task-period": 2,
+   "task-day": ["thursday"],
+   "task-start-time": "13:00:00",
+   "task-database": "%%DATABASE%%",
+   "task-modules": "%%MODULES_DATABASE%%",
+   "task-user": "nobody"
+}

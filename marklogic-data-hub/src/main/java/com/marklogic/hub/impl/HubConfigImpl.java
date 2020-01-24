@@ -1084,6 +1084,11 @@ public class HubConfigImpl implements HubConfig
         }
     }
 
+    @JsonIgnore
+    public void refreshProject() {
+        loadConfigurationFromProperties(null, true);
+    }
+
     /**
      * Expected to be used when an instance of this class is managed by a Spring container, as it depends on a Spring
      * environment object being set.
@@ -1522,46 +1527,33 @@ public class HubConfigImpl implements HubConfig
         else {
             projectProperties.setProperty("mlIsProvisionedEnvironment", isProvisionedEnvironment.toString());
         }
+
         // Need to do this first so that objects like the final SSL objects are set before hydrating AppConfig
         hydrateConfigs();
 
         hydrateAppConfigs(projectProperties);
     }
 
-    private void hydrateAppConfigs(Properties properties) {
+    protected void hydrateAppConfigs(Properties properties) {
         com.marklogic.mgmt.util.PropertySource propertySource = properties::getProperty;
+
         if (appConfig != null) {
+            // Still need to call this since the setter also "updates" appConfig with DHF-specific values
             setAppConfig(appConfig);
-        }
-        else {
+        } else {
             setAppConfig(new DefaultAppConfigFactory(propertySource).newAppConfig());
         }
 
-        if (adminConfig != null) {
-            setAdminConfig(adminConfig);
-        }
-        else {
+        if (adminConfig == null) {
             setAdminConfig(new DefaultAdminConfigFactory(propertySource).newAdminConfig());
         }
-
-        if (adminManager != null) {
-            setAdminManager(adminManager);
-        }
-        else {
+        if (adminManager == null) {
             setAdminManager(new AdminManager(getAdminConfig()));
         }
-
-        if (manageConfig != null) {
-            setManageConfig(manageConfig);
-        }
-        else {
+        if (manageConfig == null) {
             setManageConfig(new DefaultManageConfigFactory(propertySource).newManageConfig());
         }
-
-        if (manageClient != null) {
-            setManageClient(manageClient);
-        }
-        else {
+        if (manageClient == null) {
             setManageClient(new ManageClient(getManageConfig()));
         }
     }
@@ -2072,16 +2064,6 @@ public class HubConfigImpl implements HubConfig
 
         }
 
-    }
-
-    @JsonIgnore
-    public void refreshProject() {
-        refreshProject(null, true);
-    }
-
-    @JsonIgnore
-    public void refreshProject(Properties properties, boolean loadGradleProperties) {
-        loadConfigurationFromProperties(properties, loadGradleProperties);
     }
 
     /**

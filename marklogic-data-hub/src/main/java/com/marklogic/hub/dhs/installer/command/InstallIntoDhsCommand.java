@@ -110,21 +110,6 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
             props.put(key, System.getProperties().getProperty(key));
         }
 
-        applyDhsSpecificProperties(props, options.isDisableSsl());
-        return props;
-    }
-
-    /**
-     * Public so that it can be reused by DHF Gradle plugin. Assumes that SSL should be used for connecting to
-     * MarkLogic.
-     *
-     * @param props
-     */
-    public void applyDhsSpecificProperties(Properties props) {
-        applyDhsSpecificProperties(props, false);
-    }
-
-    public void applyDhsSpecificProperties(Properties props, boolean disableSsl) {
         props.setProperty("mlIsHostLoadBalancer", "true");
         props.setProperty("mlIsProvisionedEnvironment", "true");
         props.setProperty("mlAppServicesPort", "8010");
@@ -139,11 +124,13 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
         props.setProperty("mlJobAuth", "basic");
         props.setProperty("mlStagingAuth", "basic");
 
-        if (!disableSsl) {
-            setDefaultPropertiesForSecureConnections(props);
-        } else {
+        if (options.isDisableSsl()) {
             logger.info("Not setting default property values for secure connections to MarkLogic");
+        } else {
+            setDefaultPropertiesForSecureConnections(props);
         }
+
+        return props;
     }
 
     /**
