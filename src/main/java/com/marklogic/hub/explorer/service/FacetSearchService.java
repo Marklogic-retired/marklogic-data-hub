@@ -26,6 +26,7 @@ public class FacetSearchService {
   public static final String ANY_CHAR = "_";
   public static final String DOT_CHAR = ".";
   public static final String STRING_IDENTIFIER = "'";
+  public static final String STRING_DATATYPE = "string";
   private static final Logger logger = LoggerFactory.getLogger(FacetSearchService.class);
 
   @Autowired
@@ -82,7 +83,7 @@ public class FacetSearchService {
     facetName = entityName + DOT_CHAR + fsq.getFacetInfo().getFacetName();
     Properties prop = explorerConfig.getQueryProperties();
 
-    if (fsq.getDataType().equals("string")) {
+    if (fsq.getDataType().equals(STRING_DATATYPE)) {
       query = prop.getProperty("stringFacetValuesQuery");
       if (query != null) {
         query = String.format(query, facetName, entityName, facetName,
