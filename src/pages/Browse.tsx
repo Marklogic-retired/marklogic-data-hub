@@ -183,8 +183,6 @@ const Browse: React.FC<Props> = ({ location }) => {
                   pageLength={searchOptions.pageLength}
                   maxRowsPerPage={searchOptions.maxRowsPerPage}
                 />
-                {/* <br />
-                <br /> */}
                 <div className={styles.spinViews}>
                   { isLoading && <Spin className={styles.overlay}/>}
                   <div className={styles.switchViews}>
