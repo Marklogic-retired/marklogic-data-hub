@@ -1,9 +1,5 @@
 package com.marklogic.hub.security;
 
-import com.marklogic.bootstrap.Installer;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -23,20 +19,17 @@ public class DataHubOperatorTest extends AbstractSecurityTest {
         return "data-hub-operator";
     }
 
-    @BeforeAll
-    public static void setup() {
-        XMLUnit.setIgnoreWhitespace(true);
-        new Installer().deleteProjectDir();
-    }
-
-    @AfterAll
-    public static void cleanUp() {
-        new Installer().deleteProjectDir();
-    }
-
     @Test
     public void task32ReadJobDocuments() {
         assertTrue(roleBeingTested.getRole().contains("data-hub-job-reader"),
             "The data-hub-job-reader role grants access to Job and Batch documents in the jobs database");
+    }
+
+    @Test
+    void readSchemas() {
+        assertTrue(roleBeingTested.getRole().contains("tde-view"),
+            "The entity models and generated artifacts in the schema databases are known to have a tde-view/read " +
+                "permissions on them. Since they may have no other read permissions, the operator requires this so that " +
+                "it can read entity models.");
     }
 }

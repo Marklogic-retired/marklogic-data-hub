@@ -5,16 +5,19 @@
     "data-hub-operator",
     "manage-user",
     "ps-user",
-    "rest-admin",
     "tde-admin",
     "data-hub-module-writer",
     "data-hub-flow-writer",
     "data-hub-mapping-writer",
     "data-hub-step-definition-writer",
     "data-hub-entity-model-writer"
-
   ],
   "privilege": [
+    {
+      "privilege-name": "any-uri",
+      "action": "http://marklogic.com/xdmp/privileges/any-uri",
+      "kind": "execute"
+    },
     {
       "privilege-name": "create-trigger",
       "action": "http://marklogic.com/xdmp/privileges/create-trigger",
@@ -36,8 +39,8 @@
       "kind": "execute"
     },
     {
-      "privilege-name": "any-uri",
-      "action": "http://marklogic.com/xdmp/privileges/any-uri",
+      "privilege-name": "rest-admin",
+      "action": "http://marklogic.com/xdmp/privileges/rest-admin",
       "kind": "execute"
     },
     {

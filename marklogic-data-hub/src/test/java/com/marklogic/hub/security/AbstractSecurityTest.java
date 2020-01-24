@@ -42,8 +42,6 @@ public abstract class AbstractSecurityTest extends HubTestBase {
     protected ManageClient userWithRoleBeingTestedClient;
     protected API userWithRoleBeingTestedApi;
 
-    private List<String> customPrivilegeNames = new ArrayList<>();
-
     @BeforeEach
     public void setupFlowDeveloperApi() {
         // It's assumed that the "admin" user is the default user for talking to the Manage API
