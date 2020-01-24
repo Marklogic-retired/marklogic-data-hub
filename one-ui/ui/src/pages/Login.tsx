@@ -6,7 +6,7 @@ const Login: React.FC = () => {
   return (
     <div>
       <div className={styles.content}>
-        <div className={styles.loginForm}>
+        <div className={styles.loginContainer}>
           <LoginForm/>
         </div>
       </div>
