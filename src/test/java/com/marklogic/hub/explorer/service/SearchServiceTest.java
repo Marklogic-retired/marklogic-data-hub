@@ -10,9 +10,9 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.marklogic.client.io.StringHandle;
+import com.marklogic.hub.explorer.model.DocSearchQueryInfo.FacetData;
 import com.marklogic.hub.explorer.model.Document;
 import com.marklogic.hub.explorer.model.SearchQuery;
-import com.marklogic.hub.explorer.model.SearchQuery.FacetData;
 import com.marklogic.hub.explorer.util.SearchHelper;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -47,16 +47,16 @@ public class SearchServiceTest {
     // Create Facet Map
     FacetData priceFacetData = new FacetData();
     priceFacetData.setDataType("int");
-    priceFacetData.setValues(Arrays.asList("220", "350"));
+    priceFacetData.setStringValues(Arrays.asList("220", "350"));
 
     Map<String, FacetData> facets = new HashMap<>();
     facets.put("Price", priceFacetData);
 
     // Create Search Query object
     mockQuery = new SearchQuery();
-    mockQuery.setEntityNames(Arrays.asList("Order", "Product"));
-    mockQuery.setFacets(facets);
-    mockQuery.setQuery("Laptop");
+    mockQuery.getQuery().setEntityNames(Arrays.asList("Order", "Product"));
+    mockQuery.getQuery().setFacets(facets);
+    mockQuery.getQuery().setSearchStr("Laptop");
     mockQuery.setPageLength(10);
     mockQuery.setStart(1);
 
@@ -82,9 +82,9 @@ public class SearchServiceTest {
     // Create Facet Map
     FacetData dateFacetData = new FacetData();
     dateFacetData.setDataType("date");
-    dateFacetData.setValues(Arrays.asList("2019-09-15", "2019-10-10"));
+    dateFacetData.setStringValues(Arrays.asList("2019-09-15", "2019-10-10"));
 
-    mockQuery.getFacets().put("createdOnRange", dateFacetData);
+    mockQuery.getQuery().getFacets().put("createdOnRange", dateFacetData);
 
     StringHandle mockHandle = new StringHandle("This is some sample search data with in date "
         + "range");
@@ -96,7 +96,7 @@ public class SearchServiceTest {
   @Test
   public void testSearchWithEmptyFacets() {
     // Setting facets to be empty map
-    mockQuery.setFacets(new HashMap<>());
+    mockQuery.getQuery().setFacets(new HashMap<>());
 
     StringHandle mockHandle = new StringHandle("This is some sample search data");
     when(mockSearchHelper.search(mockQuery)).thenReturn(mockHandle);
@@ -107,7 +107,7 @@ public class SearchServiceTest {
   @Test
   public void testSearchWithEmptyEntities() {
     // Setting entities list to be empty
-    mockQuery.setEntityNames(new ArrayList<>());
+    mockQuery.getQuery().setEntityNames(new ArrayList<>());
 
     StringHandle mockHandle = new StringHandle();
     when(mockSearchHelper.search(mockQuery)).thenReturn(mockHandle);
@@ -119,7 +119,7 @@ public class SearchServiceTest {
   @Test
   public void testSearchWithNullFacets() {
     // Setting facets to be null
-    mockQuery.setFacets(null);
+    mockQuery.getQuery().setFacets(null);
 
     StringHandle mockHandle = new StringHandle("This is some sample search data");
     when(mockSearchHelper.search(mockQuery)).thenReturn(mockHandle);
@@ -130,7 +130,7 @@ public class SearchServiceTest {
   @Test
   public void testSearchWithNullEntities() {
     // Setting entities list to be null
-    mockQuery.setEntityNames(null);
+    mockQuery.getQuery().setEntityNames(null);
 
     StringHandle mockHandle = new StringHandle("This is some sample search data");
     when(mockSearchHelper.search(mockQuery)).thenReturn(mockHandle);
@@ -142,9 +142,9 @@ public class SearchServiceTest {
   public void testSearchWithSingleJobId() {
     FacetData jobFacetData = new FacetData();
     jobFacetData.setDataType("string");
-    jobFacetData.setValues(Arrays.asList("custom-job-id-1", "custom-job-id-2"));
+    jobFacetData.setStringValues(Arrays.asList("custom-job-id-1", "custom-job-id-2"));
 
-    mockQuery.getFacets().put("createdByJobRange", jobFacetData);
+    mockQuery.getQuery().getFacets().put("createdByJobRange", jobFacetData);
 
     StringHandle mockHandle = new StringHandle("This is some sample search data");
     when(mockSearchHelper.search(mockQuery)).thenReturn(mockHandle);

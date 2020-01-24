@@ -27,9 +27,9 @@ import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryBuilder.Operator;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.hub.explorer.exception.ExplorerException;
+import com.marklogic.hub.explorer.model.DocSearchQueryInfo.FacetData;
 import com.marklogic.hub.explorer.model.Document;
 import com.marklogic.hub.explorer.model.SearchQuery;
-import com.marklogic.hub.explorer.model.SearchQuery.FacetData;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -64,8 +64,6 @@ public class SearchHelper {
   @Autowired
   SearchOptionBuilder soBuilder;
 
-  private StructuredQueryBuilder queryBuilder = new StructuredQueryBuilder();
-
   public StringHandle search(SearchQuery searchQuery) {
     DatabaseClient client = databaseClientHolder.getDatabaseClient();
     QueryManager queryMgr = client.newQueryManager();
@@ -87,11 +85,7 @@ public class SearchHelper {
       return queryMgr.search(rcQueryDef, resultHandle, searchQuery.getStart());
 
     } catch (MarkLogicServerException e) {
-      if (e instanceof ResourceNotFoundException || e instanceof ForbiddenUserException) {
-        logger.error(e.getLocalizedMessage());
-      } else { //FailedRequestException || ResourceNotResendableException
-        logger.error(e.getLocalizedMessage());
-      }
+      logger.error(e.getLocalizedMessage());
       throw new ExplorerException(e.getServerStatusCode(), e.getServerMessageCode(),
           e.getServerMessage(), e);
     } catch (Exception e) { //other runtime exceptions
@@ -125,18 +119,19 @@ public class SearchHelper {
 
   private StructuredQueryDefinition buildQuery(QueryManager queryMgr, SearchQuery searchQuery) {
     queryMgr.setPageLength(searchQuery.getPageLength());
-    queryBuilder = getQueryBuilder(queryMgr);
+    StructuredQueryBuilder queryBuilder = getQueryBuilder(queryMgr);
 
     // Creating queries object
     List<StructuredQueryDefinition> queries = new ArrayList<>();
 
     // Filtering search results for docs related to an entity
-    if (!CollectionUtils.isEmpty(searchQuery.getEntityNames())) {
+    if (!CollectionUtils.isEmpty(searchQuery.getQuery().getEntityNames())) {
       // Collections to search
-      String[] collections = searchQuery.getEntityNames().toArray(new String[0]);
+      String[] collections = searchQuery.getQuery().getEntityNames().toArray(new String[0]);
       // Collections that have the mastering audit and notification docs. Excluding docs from
       // these collection in search results
-      String[] excludedCollections = getExcludedCollections(searchQuery.getEntityNames());
+      String[] excludedCollections = getExcludedCollections(
+          searchQuery.getQuery().getEntityNames());
 
       StructuredQueryDefinition finalCollQuery = queryBuilder
           .andNot(queryBuilder.collection(collections),
@@ -149,31 +144,33 @@ public class SearchHelper {
     }
 
     // Filtering by facets
-    searchQuery.getFacets().forEach((facetType, data) -> {
+    searchQuery.getQuery().getFacets().forEach((facetType, data) -> {
       StructuredQueryDefinition facetDef = null;
 
       if (facetType.equals(COLLECTION_CONSTRAINT_NAME)) {
         facetDef = queryBuilder
-            .collectionConstraint(facetType, data.getValues().toArray(new String[0]));
+            .collectionConstraint(facetType, data.getStringValues().toArray(new String[0]));
       } else if (facetType.equals(JOB_RANGE_CONSTRAINT_NAME)) {
         facetDef = queryBuilder
-            .wordConstraint(JOB_WORD_CONSTRAINT_NAME, data.getValues().toArray(new String[0]));
+            .wordConstraint(JOB_WORD_CONSTRAINT_NAME,
+                data.getStringValues().toArray(new String[0]));
       } else if (facetType.equals(CREATED_ON_CONSTRAINT_NAME)) {
         // Converting the date in string format from yyyy-MM-dd format to yyyy-MM-dd HH:mm:ss format
-        LocalDate startDate = LocalDate.parse(data.getValues().get(0), DATE_FORMAT);
+        LocalDate startDate = LocalDate.parse(data.getRangeValues().getLowerBound(), DATE_FORMAT);
         String startDateTime = startDate.atStartOfDay(ZoneId.systemDefault())
             .format(DATE_TIME_FORMAT);
 
         // Converting the date in string format from yyyy-MM-dd format to yyyy-MM-dd HH:mm:ss format
         // Adding 1 day to end date to get docs harmonized on the end date as well.
-        LocalDate endDate = LocalDate.parse(data.getValues().get(1), DATE_FORMAT).plusDays(1);
+        LocalDate endDate = LocalDate.parse(data.getRangeValues().getUpperBound(), DATE_FORMAT)
+            .plusDays(1);
         String endDateTime = endDate.atStartOfDay(ZoneId.systemDefault()).format(DATE_TIME_FORMAT);
 
         facetDef = queryBuilder
             .and(queryBuilder.rangeConstraint(facetType, Operator.GE, startDateTime),
                 queryBuilder.rangeConstraint(facetType, Operator.LT, endDateTime));
       } else { // If a property is not a Hub property, then it is an Entity Property
-        facetDef = getEntityPropertyConstraints(facetType, data);
+        facetDef = getEntityPropertyConstraints(facetType, data, queryBuilder);
       }
 
       if (facetDef != null) {
@@ -182,8 +179,8 @@ public class SearchHelper {
     });
 
     // Setting search string if provided by user
-    if (StringUtils.isNotEmpty(searchQuery.getQuery())) {
-      queries.add(queryBuilder.term(searchQuery.getQuery()));
+    if (StringUtils.isNotEmpty(searchQuery.getQuery().getSearchStr())) {
+      queries.add(queryBuilder.term(searchQuery.getQuery().getSearchStr()));
     }
 
     // And between all the queries
@@ -196,7 +193,7 @@ public class SearchHelper {
   private StructuredQueryBuilder getQueryBuilder(QueryManager queryMgr) {
     try {
       // Testing if the QUERY_OPTIONS File exists in the modules database
-      queryBuilder = queryMgr.newStructuredQueryBuilder(QUERY_OPTIONS);
+      StructuredQueryBuilder queryBuilder = queryMgr.newStructuredQueryBuilder(QUERY_OPTIONS);
       queryMgr.search(queryBuilder.and(), new SearchHandle());
       // Creating query builder with the QUERY_OPTIONS file if it exists
       return queryBuilder;
@@ -223,7 +220,8 @@ public class SearchHelper {
     return excludedCol.toArray(new String[0]);
   }
 
-  private StructuredQueryDefinition getEntityPropertyConstraints(String facetType, FacetData data) {
+  private StructuredQueryDefinition getEntityPropertyConstraints(String facetType, FacetData data,
+      StructuredQueryBuilder queryBuilder) {
     StructuredQueryDefinition facetDef = null;
     switch (data.getDataType()) {
       case "int":
@@ -234,14 +232,18 @@ public class SearchHelper {
       case "double":
       case "date":
       case "dateTime":
-        facetDef = queryBuilder
-            .and(queryBuilder.rangeConstraint(facetType, Operator.GE, data.getValues().get(0)),
-                queryBuilder.rangeConstraint(facetType, Operator.LE, data.getValues().get(1)));
+        String lowerBound = data.getRangeValues().getLowerBound();
+        String upperBound = data.getRangeValues().getUpperBound();
+        if (StringUtils.isNotEmpty(lowerBound) || StringUtils.isNotEmpty(upperBound)) {
+          facetDef = queryBuilder
+              .and(queryBuilder.rangeConstraint(facetType, Operator.GE, lowerBound),
+                  queryBuilder.rangeConstraint(facetType, Operator.LE, upperBound));
+        }
         break;
 
       default:
         facetDef = queryBuilder.rangeConstraint(facetType, StructuredQueryBuilder.Operator.EQ,
-            data.getValues().toArray(new String[0]));
+            data.getStringValues().toArray(new String[0]));
     }
     return facetDef;
   }

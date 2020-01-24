@@ -3,35 +3,26 @@
  */
 package com.marklogic.hub.explorer.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public class SearchQuery {
 
-  private String query;
-  private List<String> entityNames;
+  private DocSearchQueryInfo query;
   private long start;
   private long pageLength;
-  private Map<String, FacetData> facets;
   private List<SortOrder> sortOrder;
 
-  public String getQuery() {
-    return query;
+  public SearchQuery() {
+    this.query = new DocSearchQueryInfo();
   }
 
-  public void setQuery(String query) {
+  public DocSearchQueryInfo getQuery() {
+    return this.query;
+  }
+
+  public void setQuery(DocSearchQueryInfo query) {
     this.query = query;
-  }
-
-  public List<String> getEntityNames() {
-    return entityNames;
-  }
-
-  public void setEntityNames(List<String> entityNames) {
-    this.entityNames = (entityNames != null) ? entityNames : new ArrayList<>();
   }
 
   public long getStart() {
@@ -48,14 +39,6 @@ public class SearchQuery {
 
   public void setPageLength(long pageLength) {
     this.pageLength = pageLength;
-  }
-
-  public Map<String, FacetData> getFacets() {
-    return facets;
-  }
-
-  public void setFacets(Map<String, FacetData> facets) {
-    this.facets = (facets != null) ? facets : new HashMap<>();
   }
 
   public Optional<List<SortOrder>> getSortOrder() {
@@ -94,28 +77,6 @@ public class SearchQuery {
 
     public void setAscending(boolean ascending) {
       this.ascending = ascending;
-    }
-  }
-
-  public final static class FacetData {
-
-    private String dataType;
-    private List<String> values;
-
-    public String getDataType() {
-      return dataType;
-    }
-
-    public void setDataType(String dataType) {
-      this.dataType = dataType;
-    }
-
-    public List<String> getValues() {
-      return values;
-    }
-
-    public void setValues(List<String> values) {
-      this.values = values;
     }
   }
 }
