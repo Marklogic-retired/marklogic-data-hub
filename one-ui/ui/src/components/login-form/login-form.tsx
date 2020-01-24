@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { Form, Icon, Input, Button, Typography, Checkbox } from 'antd';
+import { Form, Icon, Input, Button, Checkbox, Alert } from 'antd';
 import axios from 'axios';
 import styles from './login-form.module.scss';
 import { AuthContext } from '../../util/auth-context';
@@ -7,8 +7,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 
 import { MlButton } from 'marklogic-ui-library';
-
-const { Text } = Typography;
 
 const LoginForm: React.FC = () => {
 
@@ -18,14 +16,14 @@ const LoginForm: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [errorResponse, setErrorResponse] = useState('');
   const [isHostTouched, setHostTouched] = useState(false);
   const [isUsernameTouched, setUsernameTouched] = useState(false);
   const [isPasswordTouched, setPasswordTouched] = useState(false);
+  const [message, setMessage] = useState({show: false, text: ''});
 
   useEffect(() => {
     axios.get('/api/environment/initialized')
-      .then(res => {
+      .then(res => {          
           setHostSet(res.data.isInitialized);
       })
       .catch(err => {
@@ -43,18 +41,18 @@ const LoginForm: React.FC = () => {
         password
       });
       if (response.status === 200) {
-        setErrorResponse('');
+        setMessage({show: false, text: ''});
         setIsLoading(false);
         console.log(response);
         loginAuthenticated(username, response.data);
       } 
     } catch (error) {
-      let message = error.response.data.message === 'Unauthorized' ? 
-        'Username/password combination not recognized' : 
+      let message = error.response.status === 401 ? 
+        'The username and password combination is not recognized by MarkLogic.' : 
         'Internal Server Error';
       console.log('LOGIN ERROR', error.response);
       setIsLoading(false);
-      setErrorResponse(message);
+      setMessage({show: true, text: message});
     }
   }
 
@@ -111,6 +109,7 @@ const LoginForm: React.FC = () => {
           placeholder="Enter host name"
           value={host}
           onChange={handleChange}
+          onBlur={handleChange}
         />
       </Form.Item>
       <label className={styles.formLabel}>
@@ -121,56 +120,69 @@ const LoginForm: React.FC = () => {
   }
 
   return (
-    <Form onSubmit={handleSubmit} className={styles.loginForm} data-cy='login'>
+    <>
+    <div className={styles.unauthorized} style={message.show ? {display: 'block'} : {display: 'none'}}>
+      <Alert message={message.text} type='error' showIcon />
+    </div>
 
-      {hostField}
+    <div className={styles.loginForm}>
+      <Form onSubmit={handleSubmit} className={styles.loginForm} data-cy='login'>
 
-      <Form.Item 
-        className={styles.username}
-        hasFeedback 
-        validateStatus={(username || !isUsernameTouched) ? '' : 'error'}
-        help={(username || !isUsernameTouched) ? '' : 'Username is required'}
-      >
-        <Input
-          id="username"
-          prefix={<Icon type="user" className={styles.usernameIcon} />}
-          placeholder="Enter username"
-          value={username}
-          onChange={handleChange}
-        />
-      </Form.Item>
-      <Form.Item 
-        className={styles.password}
-        hasFeedback 
-        validateStatus={(password || !isPasswordTouched) ? '' : 'error'}
-        help={(password || !isPasswordTouched) ? '' : 'Password is required'}
-      >
-        <Input
-          id="password"
-          prefix={<Icon type="lock" className={styles.passwordIcon} />}
-          placeholder="Enter password"
-          type="password"
-          value={password}
-          onChange={handleChange}
-        />
-      </Form.Item>
-        <div className={styles.help}>
-          <span className={styles.remember}>
-            <Checkbox className={styles.rememberCheck}>Remember me</Checkbox>
-          </span>
-          <a className={styles.forgot} href="" data-cy="forgot">
-            Forgot password?
-          </a>
-        </div>
-        <Form.Item className={styles.loginButton}>
-          <MlButton id="submit" type="primary" size="default" disabled={isLoading} htmlType="submit">
-            Log In
-          </MlButton>
-          <div className={styles.unauthorized}>
-            <Text type="danger" data-cy="invalid-credentials">{errorResponse}</Text>
+        {hostField}
+
+        <Form.Item 
+          className={styles.username}
+          hasFeedback 
+          validateStatus={(username || !isUsernameTouched) ? '' : 'error'}
+          help={(username || !isUsernameTouched) ? '' : 'Username is required'}
+        >
+          <Input
+            id="username"
+            prefix={<Icon type="user" className={styles.usernameIcon} />}
+            placeholder="Enter username"
+            value={username}
+            onChange={handleChange}
+            onBlur={handleChange}
+          />
+        </Form.Item>
+        <Form.Item 
+          className={styles.password}
+          hasFeedback 
+          validateStatus={(password || !isPasswordTouched) ? '' : 'error'}
+          help={(password || !isPasswordTouched) ? '' : 'Password is required'}
+        >
+          <Input
+            id="password"
+            prefix={<Icon type="lock" className={styles.passwordIcon} />}
+            placeholder="Enter password"
+            type="password"
+            value={password}
+            onChange={handleChange}
+            onBlur={handleChange}
+          />
+        </Form.Item>
+          <div className={styles.help}>
+            <span className={styles.remember}>
+              <Checkbox className={styles.rememberCheck}>Remember me</Checkbox>
+            </span>
+            <a className={styles.forgot} href="" data-cy="forgot">
+              Forgot password?
+            </a>
           </div>
-      </Form.Item>
-    </Form>
+          <Form.Item className={styles.loginButton}>
+            <MlButton 
+              id="submit" 
+              type="primary" 
+              size="default" 
+              disabled={(!host && !isHostSet) || !username || !password} 
+              htmlType="submit"
+            >
+              Log In
+            </MlButton>
+        </Form.Item>
+      </Form>
+    </div>
+    </>
   );
 }
 
