@@ -23,7 +23,7 @@ public class TestHelper {
     public String dataHubDeveloperPassword;
 
     @Autowired
-    private HubConfigSession hubConfig;
+    public HubConfigSession hubConfig;
 
     public void authenticateSession() {
        EnvironmentInfo environmentInfo = new EnvironmentInfo(mlHost, "DIGEST", 8000,"DIGEST", 8002,"DIGEST", 8010, "DIGEST", 8011);
