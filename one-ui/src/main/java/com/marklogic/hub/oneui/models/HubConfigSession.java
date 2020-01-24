@@ -1045,4 +1045,9 @@ public class HubConfigSession implements HubConfig, InitializingBean, Disposable
             clientsByKindAndDatabaseName.clear();
         }
     }
+
+    //only for test purpose
+    public Map<DatabaseKind, Map<String, DatabaseClient>> getAllDatabaseClients() {
+        return clientsByKindAndDatabaseName;
+    }
 }
