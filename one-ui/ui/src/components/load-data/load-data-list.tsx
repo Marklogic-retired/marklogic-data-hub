@@ -27,6 +27,8 @@ const LoadDataList: React.FC<Props> = (props) => {
 
     const pageSizeOptions = props.data.length > 40 ? ['10', '20', '30', '40', props.data.length] : ['10', '20', '30', '40'];
 
+    const pageSizeOptions = props.data.length > 40 ? ['10', '20', '30', '40', props.data.length] : ['10', '20', '30', '40'];
+
     const OpenAddNewDialog = () => {
         setNewDataLoad(true);
         setTitle('New Data Load');
