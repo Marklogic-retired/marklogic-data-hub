@@ -40,7 +40,6 @@ const LoadDataCard: React.FC<Props> = (props) => {
             backgroundColor: (sourceFmt.toUpperCase() === 'XML' ? sourceFormatOptions.xml.color : (sourceFmt.toUpperCase() === 'JSON' ? sourceFormatOptions.json.color : (sourceFmt.toUpperCase() === 'CSV' ? sourceFormatOptions.csv.color : sourceFormatOptions.default.color))),
             fontSize: '12px',
             borderRadius: '50%',
-            //width: 'min-content',
             textAlign: 'left',
             color: '#ffffff',
             padding: '5px'
@@ -75,11 +74,11 @@ const LoadDataCard: React.FC<Props> = (props) => {
     const deleteConfirmation = <Modal
         visible={dialogVisible}
         okText='Yes'
-        okType='danger'
         cancelText='No'
         onOk={() => onOk(loadArtifactName)}
         onCancel={() => onCancel()}
         width={350}
+        maskClosable={false}
         >
         <span style={{fontSize: '16px'}}>Are you sure you want to delete this?</span>
         </Modal>;

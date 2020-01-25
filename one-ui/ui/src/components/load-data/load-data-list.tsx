@@ -21,6 +21,8 @@ const LoadDataList: React.FC<Props> = (props) => {
     const [loadArtifactName, setLoadArtifactName] = useState('');
     const [stepData,setStepData] = useState({});
 
+    const pageSizeOptions = props.data.length > 40 ? ['10', '20', '30', '40', props.data.length] : ['10', '20', '30', '40'];
+
     const OpenAddNewDialog = () => {
         setNewDataLoad(true);
         setTitle('New Data Load');
@@ -53,6 +55,7 @@ const LoadDataList: React.FC<Props> = (props) => {
         onOk={() => onOk(loadArtifactName)}
         onCancel={() => onCancel()}
         width={350}
+        maskClosable={false}
     >
         <span style={{ fontSize: '16px' }}>Are you sure you want to delete this?</span>
     </Modal>;
@@ -129,7 +132,7 @@ const LoadDataList: React.FC<Props> = (props) => {
         <div><MlButton type="primary" size="default" className={styles.addNewButton} onClick={OpenAddNewDialog}>Add New</MlButton></div>
         <br/><br/>
         <Table
-        pagination={{showSizeChanger: true}}
+        pagination={{showSizeChanger: true, pageSizeOptions:pageSizeOptions}}
         className={styles.loadTable}
         columns={columns}
         dataSource={props.data}
