@@ -27,6 +27,7 @@ const NewDataLoadDialog = (props) => {
   const [previewURI, setPreviewURI] = useState('');
   const [uploadPercent, setUploadPercent] = useState();
   const [toDelete, setToDelete] = useState(false);
+  const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
 
 
   useEffect(() => {
@@ -79,6 +80,15 @@ const NewDataLoadDialog = (props) => {
   }, [props.stepData, props.title, props.newLoad]);
 
   const onCancel = () => {
+    setDeleteDialogVisible(true);
+  }
+
+  const onOk = () => {
+    props.setNewLoad(false);
+    setToDelete(false);
+  }
+
+  const onDelOk = () => {
     props.setNewLoad(false);
     setFileList([]);
     setUploadPercent(0);
@@ -87,12 +97,30 @@ const NewDataLoadDialog = (props) => {
       deleteFilesFromDirectory(stepName);
       setToDelete(false);
     }
+    setDeleteDialogVisible(false)
   }
 
-  const onOk = () => {
-    props.setNewLoad(false);
-    setToDelete(false);
+  const onDelCancel = () => {
+    setDeleteDialogVisible(false)
   }
+
+  const deleteConfirmation = <Modal
+        visible={deleteDialogVisible}
+        bodyStyle={{textAlign: 'center'}}
+        width={350}
+        maskClosable={false}
+        closable={false}
+        footer={null}
+    >
+        <span className={styles.ConfirmationMessage}>Are you sure you want to leave?</span><br/><br/>
+        <span className={styles.ConfirmationMessage}>Your changes will be lost.</span>
+        <br/><br/><br/>
+        <div >
+            <Button onClick={() => onDelCancel()}>Stay</Button>
+            &nbsp;&nbsp;
+            <Button type="primary" htmlType="submit" onClick={onDelOk}>Leave</Button>
+          </div>
+    </Modal>;
 
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
     if (event) event.preventDefault();
@@ -462,7 +490,8 @@ const NewDataLoadDialog = (props) => {
     onOk={() => onOk()}
     okText="Save"
     className={styles.modal}
-    footer={null}>
+    footer={null}
+    maskClosable={false}>
 
     <p className={styles.title}>{props.title}</p>
     <br />
@@ -608,7 +637,9 @@ const NewDataLoadDialog = (props) => {
         </Form.Item>
       </Form>
     </div>
+    {deleteConfirmation}
   </Modal>)
 }
 
 export default NewDataLoadDialog;
+
