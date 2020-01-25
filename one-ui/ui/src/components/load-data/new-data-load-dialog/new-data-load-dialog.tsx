@@ -578,6 +578,14 @@ const NewDataLoadDialog = (props) => {
   }
   
 
+  const resetUploadError = () => {
+    if(displayUploadError) {
+      setDisplayUploadError(false);
+      setUploadPercent(0);
+      setFileList([]);
+    }
+  }
+
   return (<Modal visible={props.newLoad}
     title={null}
     width="700px"
