@@ -594,6 +594,7 @@ const NewDataLoadDialog = (props) => {
     }
     return uuid;
   }
+  
 
   const resetUploadError = () => {
     if(displayUploadError) {
