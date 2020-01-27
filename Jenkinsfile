@@ -538,7 +538,7 @@ pipeline{
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
                         def dockerhost=setupMLDockerCluster 3
-                        sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub/examples/dh-5-example;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew -i hubInit -Ptesting;./gradlew -i mlDeploy -Ptesting;./gradlew hubRunFlow -PflowName=ingestion_only-flow;./gradlew hubRunFlow -PflowName=ingestion_mapping-flow;./gradlew hubRunFlow -PflowName=ingestion_mapping_mastering-flow;"'
+                        sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub/examples/dh-5-example;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew -i hubInit -Ptesting=true;./gradlew -i mlDeploy -Ptesting=true;./gradlew hubRunFlow -PflowName=ingestion_only-flow -Ptesting=true;./gradlew hubRunFlow -PflowName=ingestion_mapping-flow -Ptesting=true;./gradlew hubRunFlow -PflowName=ingestion_mapping_mastering-flow -Ptesting=true;"'
                         }
                  }
                  post{
@@ -560,7 +560,7 @@ pipeline{
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
                         def dockerhost=setupMLDockerCluster 3
-                        sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub/examples/dhf5-customhook;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew -i hubInit -Ptesting;./gradlew -i mlDeploy -Ptesting;./gradlew hubRunFlow -PflowName=LoadOrders;./gradlew hubRunFlow -PflowName=LoadOrders;"'
+                        sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub/examples/dhf5-custom-hook;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew -i hubInit -Ptesting=true;./gradlew -i mlDeploy -Ptesting=true;./gradlew hubRunFlow -PflowName=LoadOrders -Ptesting=true;./gradlew hubRunFlow -PflowName=LoadOrders -Ptesting=true;"'
                         }
                      }
                  post{
@@ -584,7 +584,7 @@ pipeline{
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
                         def dockerhost=setupMLDockerCluster 3
-                        sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub/examples/mapping-example;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew -i hubInit -Ptesting;./gradlew -i mlDeploy -Ptesting;./gradlew hubRunFlow -PflowName=jsonToJson;./gradlew hubRunFlow -PflowName=jsonToXml;./gradlew hubRunFlow -PflowName=jsonToXml;./gradlew hubRunFlow -PflowName=xmlToXml;"'
+                        sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub/examples/mapping-example;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew -i hubInit -Ptesting=true;./gradlew -i mlDeploy -Ptesting=true;./gradlew hubRunFlow -PflowName=jsonToJson -Ptesting=true;./gradlew hubRunFlow -PflowName=jsonToXml -Ptesting=true;./gradlew hubRunFlow -PflowName=xmlToJson -Ptesting=true;./gradlew hubRunFlow -PflowName=xmlToXml -Ptesting=true;"'
                         }
                  }
                  post{
@@ -606,7 +606,7 @@ pipeline{
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
                         def dockerhost=setupMLDockerCluster 3
-                        sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub/examples/smart-mastering-complete;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew -i hubInit -Ptesting;./gradlew -i mlDeploy -Ptesting;./gradlew hubRunFlow -PflowName=persons;"'
+                        sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub/examples/smart-mastering-complete;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew -i hubInit -Ptesting=true;./gradlew -i mlDeploy -Ptesting=true;./gradlew hubRunFlow -PflowName=persons -Ptesting=true;"'
                         }
                  }
                  post{
