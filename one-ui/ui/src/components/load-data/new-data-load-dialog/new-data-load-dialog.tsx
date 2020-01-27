@@ -75,12 +75,71 @@ const NewDataLoadDialog = (props) => {
       setUploadPercent(0);
       setFileList([]);
       setPreviewURI('');
+      setInputFilePath('');
     })
 
   }, [props.stepData, props.title, props.newLoad]);
 
   const onCancel = () => {
-    setDeleteDialogVisible(true);
+
+    if(checkDeleteOpenEligibility()) {
+      setDeleteDialogVisible(true);
+    } else {
+      props.setNewLoad(false);
+    setFileList([]);
+    setUploadPercent(0);
+    }
+  }
+
+  const checkDeleteOpenEligibility = () => {
+    if (props.stepData && JSON.stringify(props.stepData) != JSON.stringify({}) && props.title === 'Edit Data Load'){
+      
+      if(stepName === props.stepData.name
+      && description === props.stepData.description
+      && srcFormat === props.stepData.sourceFormat
+      && tgtFormat === props.stepData.targetFormat
+      && outUriReplacement === props.stepData.outputURIReplacement
+      ) {
+        
+        if((props.stepData.separator && fieldSeparator === 'Other' && otherSeparator === props.stepData.separator) || 
+           (props.stepData.separator && fieldSeparator !== 'Other' && fieldSeparator === props.stepData.separator) ||
+           (!props.stepData.separator && fieldSeparator === ',' && otherSeparator === '')
+           ) {
+             if((props.stepData.inputFilePath && inputFilePath !== props.stepData.inputFilePath) ||
+                (inputFilePath === '')){
+                  
+              return false;
+             } else {
+              return true;
+             }
+            
+        } else {
+          return true;
+         }
+      } else {
+        return true
+      }
+    } else {
+      if(stepName === ''
+        && description === ''
+        && srcFormat === 'json'
+        && tgtFormat === 'json'
+        && outUriReplacement === ''
+        ) {
+          if(fieldSeparator === ',' && otherSeparator === '')
+              {
+               if(inputFilePath === '' || (props.stepData && props.stepData.inputFilePath && inputFilePath !== props.stepData.inputFilePath)){
+                return false;
+               } else {
+                return true;
+               }
+          } else {
+            return true;
+           }
+        } else {
+          return true;
+      }
+    }
   }
 
   const onOk = () => {
