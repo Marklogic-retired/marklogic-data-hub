@@ -15,6 +15,8 @@
  */
 package com.marklogic.hub.oneui.auth;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -31,10 +33,15 @@ public class LoginLogoutHandler implements AuthenticationSuccessHandler, LogoutS
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         ConnectionAuthenticationToken authenticationToken = (ConnectionAuthenticationToken)authentication;
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode resp = mapper.createObjectNode();
+        resp.put("isInstalled", authenticationToken.stagingIsAccessible());
+        resp.put("hasManagePrivileges", authenticationToken.hasManagePrivileges());
+        resp.put("projectName", (String) request.getSession().getAttribute("projectName"));
 
         clearAuthenticationAttributes(request);
         response.setContentType("application/json");
-        response.getOutputStream().write(("{\"isInstalled\": " + authenticationToken.stagingIsAccessible() + ", \"hasManagePrivileges\": " + authenticationToken.hasManagePrivileges() + " }").getBytes());
+        response.getOutputStream().write(mapper.writeValueAsBytes(resp));
     }
 
     private void clearAuthenticationAttributes(HttpServletRequest request) {
