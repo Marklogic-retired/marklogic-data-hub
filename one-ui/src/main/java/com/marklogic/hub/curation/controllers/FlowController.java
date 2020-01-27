@@ -24,12 +24,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/api/flows")
 public class FlowController {
 
     @Autowired
     private FlowManagerService flowManagerService;
+
+    @RequestMapping(method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<?> getFlows() {
+        List<Flow> flows = flowManagerService.getFlows();
+        return new ResponseEntity<>(flows, HttpStatus.OK);
+    }
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
@@ -58,6 +67,13 @@ public class FlowController {
         flowManagerService.deleteFlow(flowName);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @RequestMapping(value = "/{flowName}/steps", method = RequestMethod.GET)
+    @ResponseBody
+    public List<StepModel> getSteps(@PathVariable String flowName) {
+        return flowManagerService.getSteps(flowName);
+    }
+
     @RequestMapping(value = "/{flowName}/steps/{stepId}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> getStep(@PathVariable String flowName, @PathVariable String stepId) {
