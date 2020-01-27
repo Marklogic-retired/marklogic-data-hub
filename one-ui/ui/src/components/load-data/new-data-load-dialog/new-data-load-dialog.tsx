@@ -15,6 +15,7 @@ const NewDataLoadDialog = (props) => {
   const [outUriReplacement, setOutUriReplacement] = useState(props.stepData && props.stepData != {} ? props.stepData.outputURIReplacement : '');
   const [fieldSeparator, setFieldSeparator] = useState(props.stepData && props.stepData != {} ? props.stepData.fieldSeparator : ',');
   const [otherSeparator, setOtherSeparator] = useState('');
+  
 
   
   const [isStepNameTouched, setStepNameTouched] = useState(false);
@@ -218,6 +219,7 @@ const NewDataLoadDialog = (props) => {
          }
        }
       }
+      
     } else {
       if(srcFormat === 'Delimited Text'){
         dataPayload = {
@@ -587,7 +589,8 @@ const NewDataLoadDialog = (props) => {
           &nbsp;
             </span>} labelAlign="left"
           validateStatus={(stepName || !isStepNameTouched) ? '' : 'error'}
-          help={(stepName || !isStepNameTouched) ? '' : 'Name is required'}>
+          help={(stepName || !isStepNameTouched) ? '' : 'Name is required'}
+          >
           <Input
             id="name"
             placeholder="Enter name"
