@@ -4,6 +4,7 @@ import { Route, Redirect, RouteComponentProps, withRouter } from 'react-router-d
 import { AuthContext } from './util/auth-context';
 
 import Header from './components/header/header';
+import ProjectInfoHeader from './components/project-info-header/project-info-header';
 import Footer from './components/footer/footer';
 import Login from './pages/Login';
 import Home from './pages/Home';
@@ -38,6 +39,10 @@ const App: React.FC<Props> = ({history, location}) => {
 
   useEffect(() => {
     if (user.authenticated){
+      if(localStorage.getItem('dhIsInstalled')==='true' && localStorage.getItem('projectName') != ''){
+        setShowProjectHeader(true);
+      }
+
       if (user.redirect) {
         clearRedirect();
       }
@@ -55,6 +60,9 @@ const App: React.FC<Props> = ({history, location}) => {
             history.push('/home');
         }
       }
+    }
+    else {
+      setShowProjectHeader(false);
     }
     if (user.redirect) {
       if (user.error.type !== '') {
