@@ -15,20 +15,28 @@
  */
 package com.marklogic.hub.oneui.services;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.hub.impl.Versions;
 import com.marklogic.hub.oneui.models.EnvironmentInfo;
+import com.marklogic.hub.oneui.models.HubConfigSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.prefs.Preferences;
 
 @Service
 public class EnvironmentService {
+
+    @Autowired
+    private HubConfigSession hubConfig;
+
+    @Autowired
+    private Versions versions;
 
     private Preferences prefs = Preferences.userNodeForPackage(EnvironmentService.class);
 
@@ -80,5 +88,15 @@ public class EnvironmentService {
     public void setProjectDirectory(String directory) {
         Path projectDirPath = Paths.get(System.getProperty("user.dir")).resolve(directory);
         prefs.put("projectDirectory", projectDirPath.toAbsolutePath().toString());
+    }
+
+    public JsonNode getProjectInfo() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode resp = objectMapper.createObjectNode();
+        resp.put("dhfVersion", versions.getHubVersion());
+        resp.put("projectName", hubConfig.getHubProject().getProjectName());
+        resp.put("projectDir", hubConfig.getHubProject().getProjectDir().toString());
+        resp.put("mlVersion", versions.getMarkLogicVersion());
+        return resp;
     }
 }
