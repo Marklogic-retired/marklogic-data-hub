@@ -255,11 +255,6 @@ public interface HubProject {
     void exportProject(File location);
 
     /**
-     * Exports the project content to output stream
-     */
-    void exportProject(OutputStream outputStream);
-
-    /**
      * Returns the name of the project
      */
     String getProjectName();

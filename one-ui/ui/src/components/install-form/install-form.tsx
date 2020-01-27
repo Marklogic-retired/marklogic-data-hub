@@ -35,6 +35,7 @@ const InstallForm: React.FC = () => {
         directory
       });
       if (response.status === 200) {
+        localStorage.setItem('dhIsInstalled', 'true');
         setErrorResponse('');
         setIsLoading(false);
         setRedirectToHome(true);
