@@ -53,6 +53,7 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
     localStorage.setItem('dataHubUser', username);
     localStorage.setItem('dhIsInstalled', authResponse.isInstalled);
     localStorage.setItem('dhUserHasManagePrivileges', authResponse.hasManagePrivileges);
+    localStorage.setItem('projectName', authResponse.projectName);
     setUser({ ...user,name: username, authenticated: true, redirect: true });
   };
 
@@ -65,6 +66,7 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
     localStorage.setItem('dataHubUser', '');
     localStorage.setItem('dhIsInstalled', '');
     localStorage.setItem('dhUserHasManagePrivileges', '');
+    localStorage.setItem('projectName', '');
     setUser({ ...user,name: '', authenticated: false, redirect: true });
   };
 
