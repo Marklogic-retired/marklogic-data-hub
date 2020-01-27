@@ -22,6 +22,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.List;
+
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {Application.class, ApplicationConfig.class, FlowControllerTest.class})
@@ -75,6 +77,14 @@ class FlowControllerTest {
             controller.createFlow(flowString);
             Assertions.assertNotNull(controller.getFlow("testFlow"));
 
+            //GET all flows
+            ResponseEntity<?> flows = controller.getFlows();
+            Assertions.assertEquals(1, ((List)flows.getBody()).size());
+
+            //GET all steps in a flow
+            List<StepModel> steps = controller.getSteps("testFlow");
+            Assertions.assertEquals(0, (steps.size()));
+
             ObjectMapper mapper = new ObjectMapper();
             Flow f1 = new FlowImpl();
             f1.deserialize(mapper.readTree(flowString));
@@ -92,6 +102,10 @@ class FlowControllerTest {
             Assertions.assertNotNull(stepModel);
             //update batch size
             stepModel.setBatchSize(100);
+
+            //GET all steps in a flow
+            steps = controller.getSteps("testFlow");
+            Assertions.assertEquals(1, (steps.size()));
 
             //PUT step
             controller.createStep("testFlow","e2e-xml-ingestion", mapper.writeValueAsString(stepModel));
