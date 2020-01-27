@@ -18,26 +18,28 @@ const PopOverSearch: React.FC<Props> = (props) => {
   const [popOverVisibility, setPopOverVisibilty] = useState(false);
 
   const getFacetValues = async (param) => {
-    try {
-      const response = await axios({
-        method: 'POST',
-        url: `/datahub/v2/search/facet-values`,
-        data: {
-          "facetInfo": {
-            "schemaName": props.selectedEntity,
-            "entityName": props.selectedEntity,
-            "facetName": props.name
-          },
-          "limit": 10,
-          "dataType": "string",
-          "queryParams": [
-            param.target.value
-          ]
-        }
-      });
-      setOptions(response.data);
-    } catch (error) {
-      console.log(error)
+    if(param.target.value.length >= 2){
+      try {
+        const response = await axios({
+          method: 'POST',
+          url: `/datahub/v2/search/facet-values`,
+          data: {
+            "facetInfo": {
+              "schemaName": props.selectedEntity,
+              "entityName": props.selectedEntity,
+              "facetName": props.name
+            },
+            "limit": 10,
+            "dataType": "string",
+            "queryParams": [
+              param.target.value
+            ]
+          }
+        });
+        setOptions(response.data);
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 
