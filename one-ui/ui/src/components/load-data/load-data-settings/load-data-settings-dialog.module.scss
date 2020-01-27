@@ -1,0 +1,55 @@
+
+.title {
+    font-size :23px;
+}
+
+.newDataLoadForm {
+    margin-left: 10px;
+}
+
+.questionCircle {
+    font-size: 12px;
+    vertical-align: top;
+    margin-top: 6px;
+    color: #ACB0CF;
+}
+
+.asterisk{
+    color: #DB4f59;
+}
+
+.submitButtonsForm{
+    text-align: right;
+    top: -15px;
+    margin-bottom: -15px;
+    margin-right: 5px;
+}
+
+.submitButtons{
+    text-align: right;
+    width: 162%;
+}
+
+span.readOnlyLabel {
+    display: inline-block;
+    font-size: 12px;
+    position: absolute;
+    top: 8px;
+    left: 0;
+    color: #999;
+}
+
+.accordianPanel {
+    border: 0px;
+    //border-bottom: 1px solid #ffffff;
+    overflow: hidden;
+    border-radius: 4px;
+    margin-bottom: 24px;
+    background-color: #f7f7f7;
+    //margin-left: -20px;
+}
+
+.accordian{
+    border: none;
+    margin: 0px;
+}

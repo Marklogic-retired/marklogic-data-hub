@@ -7,6 +7,7 @@ import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
 import NewDataLoadDialog from './new-data-load-dialog/new-data-load-dialog';
 import { MlButton } from 'marklogic-ui-library';
 import { convertDateFromISO } from '../../config/conversionFunctions.config';
+import LoadDataSettingsDialog from './load-data-settings/load-data-settings-dialog';
 
 interface Props {
     data: any;
@@ -22,6 +23,7 @@ const LoadDataList: React.FC<Props> = (props) => {
     const [dialogVisible, setDialogVisible] = useState(false);
     const [loadArtifactName, setLoadArtifactName] = useState('');
     const [stepData,setStepData] = useState({});
+    const [openLoadDataSettings, setOpenLoadDataSettings] = useState(false);
 
     const pageSizeOptions = props.data.length > 40 ? ['10', '20', '30', '40', props.data.length] : ['10', '20', '30', '40'];
 
@@ -34,6 +36,13 @@ const LoadDataList: React.FC<Props> = (props) => {
         setTitle('Edit Data Load');
         setStepData(prevState => ({ ...prevState, ...record}));
         setNewDataLoad(true);
+    }
+
+    const OpenLoadDataSettingsDialog = (index) => {
+        setStepData(prevState => ({ ...prevState, ...props.data[index]}));
+        //openLoadDataSettings = true;
+        setOpenLoadDataSettings(true);
+        console.log('Open settings', openLoadDataSettings)
     }
 
     const showDeleteConfirm = (name) => {
@@ -120,7 +129,7 @@ const LoadDataList: React.FC<Props> = (props) => {
             key: 'actions',
             render: (text, row) => (
                 <span>
-                    <Tooltip title={'Settings'} placement="bottom"><Icon type="setting" onClick={openSettingsDialog} className={styles.settingsIcon} /></Tooltip>
+                    <Tooltip title={'Settings'} placement="bottom"><Icon type="setting" onClick={() => OpenLoadDataSettingsDialog(row.name)} className={styles.settingsIcon} /></Tooltip>
                     &nbsp;&nbsp;
                     {props.canReadWrite ? <Tooltip title={'Delete'} placement="bottom"><i><FontAwesomeIcon icon={faTrashAlt} onClick={() => {showDeleteConfirm(row.name)}} className={styles.deleteIcon} size="lg"/></i></Tooltip> : 
                     <Tooltip title={'Delete'} placement="bottom"><i><FontAwesomeIcon icon={faTrashAlt} onClick={(event) => event.preventDefault()} className={styles.disabledDeleteIcon} size="lg"/></i></Tooltip> }
@@ -148,7 +157,8 @@ const LoadDataList: React.FC<Props> = (props) => {
         canReadWrite={props.canReadWrite}
         canReadOnly={props.canReadOnly}/>
         {deleteConfirmation}
-
+        <LoadDataSettingsDialog openLoadDataSettings={openLoadDataSettings} setOpenLoadDataSettings={setOpenLoadDataSettings}/>
+        
     </div>
    );
 }

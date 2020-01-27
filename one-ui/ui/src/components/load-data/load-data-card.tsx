@@ -7,6 +7,8 @@ import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
 import sourceFormatOptions from '../../config/formats.config';
 import NewDataLoadDialog from './new-data-load-dialog/new-data-load-dialog';
 import { convertDateFromISO } from '../../config/conversionFunctions.config';
+import LoadDataSettingsDialog from './load-data-settings/load-data-settings-dialog';
+
 
 interface Props {
     data: any;
@@ -23,6 +25,9 @@ const LoadDataCard: React.FC<Props> = (props) => {
     const [dialogVisible, setDialogVisible] = useState(false);
     const [loadArtifactName, setLoadArtifactName] = useState('');
 
+    const [openLoadDataSettings, setOpenLoadDataSettings] = useState(false);
+
+
     const OpenAddNewDialog = () => {
         setTitle('New Data Load');
         setNewDataLoad(true);
@@ -32,6 +37,13 @@ const LoadDataCard: React.FC<Props> = (props) => {
         setTitle('Edit Data Load');
         setStepData(prevState => ({ ...prevState, ...props.data[index]}));
         setNewDataLoad(true);
+    }
+
+    const OpenLoadDataSettingsDialog = (index) => {
+        setStepData(prevState => ({ ...prevState, ...props.data[index]}));
+        //openLoadDataSettings = true;
+        setOpenLoadDataSettings(true);
+        console.log('Open settings', openLoadDataSettings)
     }
 
     //Custom CSS for source Format
@@ -104,7 +116,7 @@ const LoadDataCard: React.FC<Props> = (props) => {
                                     trigger="click"
                                     placement="bottom"
                                 ><i><FontAwesomeIcon icon={faExclamationCircle} className={styles.popover} size="lg" /></i></Popover>) : ''}</span>,
-                            <Tooltip title={'Settings'} placement="bottom"><Icon type="setting" key="setting" /></Tooltip>,
+                            <Tooltip title={'Settings'} placement="bottom"><Icon type="setting" key="setting" onClick={() => OpenLoadDataSettingsDialog(index)}/></Tooltip>,
                             <Tooltip title={'Edit'} placement="bottom"><Icon type="edit" key="edit" onClick={() => OpenEditStepDialog(index)}/></Tooltip>,
                             props.canReadWrite ? <Tooltip title={'Delete'} placement="bottom"><i><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg" onClick={() => handleCardDelete(elem.name)}/></i></Tooltip> : <i><FontAwesomeIcon icon={faTrashAlt} onClick={(event) => event.preventDefault()} className={styles.disabledDeleteIcon} size="lg"/></i>,
                         ]}
@@ -130,6 +142,7 @@ const LoadDataCard: React.FC<Props> = (props) => {
                 canReadWrite={props.canReadWrite}
                 canReadOnly={props.canReadOnly}/>
                 {deleteConfirmation}
+                <LoadDataSettingsDialog openLoadDataSettings={openLoadDataSettings} setOpenLoadDataSettings={setOpenLoadDataSettings}/>
         </div>
     );
 
