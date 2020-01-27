@@ -1,0 +1,77 @@
+
+.pageTitle{
+  font-family: HelveticaNeue;
+  font-size: 20px;
+  font-weight: 500;
+  color: black;
+  border-color:#44499C;
+}
+.alignleft {
+  float: left;
+  font-family: HelveticaNeue;
+  font-size: 14px;
+  font-weight: 300;
+  color: black;
+}
+
+.aligncenter {
+  float: center;
+  font-family: HelveticaNeue;
+  font-size: 14px;
+  font-weight: 300;
+  background-color: #F8F8F8;
+  color: black;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.alignleftresults {
+  text-align: justify;
+  float: left;
+  font-family: HelveticaNeue;
+  font-size: 14px;
+  font-weight: 600;
+  color: black;
+}
+
+.addNewButton {
+  width: 20%;
+  font-family: HelveticaNeue;
+  font-weight: 500;
+  background-color: #1510A7;
+  align-items: center;
+  justify-content: center;
+  top: 40%;
+  left: 40%;
+}
+
+.addNewButton:hover {
+  background-color: #1510A7;
+}
+
+.smallCard {
+  background-color:#F8F8F8;
+  display: block;
+  height: 16em;
+  padding: 1px;
+}
+
+.bigCard{
+  background-color:#F8F8F8;
+  display: block;
+  height: 34em;
+  padding: 1px;
+}
+
+.bigCardHead {
+  background-color: #F6F8FF;
+  border-color: #44499C;
+}
+
+.projTitle{
+  font-size: 20;
+  font-family:HelveticaNeue;
+  float:left;
+  font-weight: 500;
+}
