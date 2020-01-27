@@ -19,6 +19,9 @@ public class HubConfigSessionTest {
     @Autowired
     private TestHelper testHelper;
 
+    @Autowired
+    private HubConfigSession hubConfig;
+
     @BeforeEach
     void before() {
         testHelper.authenticateSession();
@@ -26,19 +29,17 @@ public class HubConfigSessionTest {
 
     @Test
     public void databaseClientKindsTest() {
-        HubConfigSession hubConfig = testHelper.hubConfig;
         assertEquals(hubConfig.getAllDatabaseClients().size(), 2);
-        testHelper.hubConfig.destroy();
+        hubConfig.destroy();
         assertEquals(hubConfig.getAllDatabaseClients().size(), 0);
     }
 
     @Test
     public void databaseClientsTest() {
-        HubConfigSession hubConfig = testHelper.hubConfig;
         assertEquals(hubConfig.getAllDatabaseClients().values().stream()
             .flatMap(s -> s.values().stream().filter(
                 Objects::nonNull)).count(), 4);
-        testHelper.hubConfig.destroy();
+        hubConfig.destroy();
         assertEquals(hubConfig.getAllDatabaseClients().size(), 0);
     }
 }
