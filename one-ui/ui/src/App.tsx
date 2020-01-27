@@ -3,6 +3,7 @@ import { Switch } from 'react-router';
 import { Route, Redirect, RouteComponentProps, withRouter } from 'react-router-dom';
 import { AuthContext } from './util/auth-context';
 import Header from './components/header/header';
+import ProjectInfoHeader from './components/project-info-header/project-info-header';
 import Footer from './components/footer/footer';
 import Login from './pages/Login';
 import Home from './pages/Home';
@@ -11,6 +12,7 @@ import './App.css';
 import { themes, themeMap } from './config/themes.config';
 import Install from './pages/Install';
 import LoadData from './pages/LoadData';
+import ProjectInfo from './pages/ProjectInfo';
 
 interface Props extends RouteComponentProps<any> {}
 
@@ -18,6 +20,7 @@ const App: React.FC<Props> = ({history, location}) => {
   document.title = 'MarkLogic Data Hub';
   const { user, clearErrorMessage, clearRedirect } = useContext(AuthContext);
   const [asyncError, setAsyncError] = useState(false);
+  const [showProjectHeader, setShowProjectHeader] = useState(false);
 
   const PrivateRoute = ({ component: Component, ...rest }) => (
     <Route {...rest} render={ props => (
@@ -34,6 +37,10 @@ const App: React.FC<Props> = ({history, location}) => {
 
   useEffect(() => {
     if (user.authenticated){
+      if(localStorage.getItem('dhIsInstalled')==='true' && localStorage.getItem('projectName') != ''){
+        setShowProjectHeader(true);
+      }
+
       if (user.redirect) {
         clearRedirect();
       }
@@ -49,6 +56,9 @@ const App: React.FC<Props> = ({history, location}) => {
           history.push('/home');
         }
       }
+    }
+    else {
+      setShowProjectHeader(false);
     }
     if (user.redirect) {
       if (user.error.type !== '') {
@@ -73,12 +83,14 @@ const App: React.FC<Props> = ({history, location}) => {
     <div id="background" style={pageTheme['background']}>
       <Header/>
       <main>
+      {showProjectHeader &&(<ProjectInfoHeader/>)}
       { !asyncError && (
         <Switch>
           <Route path="/" exact component={Login}/>
           <PrivateRoute path="/home" exact component={Home} />
           <Route path="/install" exact component={Install}/>
           <Route path="/load-data" exact component={LoadData}/>
+          <Route path="/project-info" exact component={ProjectInfo}/>
           <Route path="/reset" exact component={Reset}/>
         </Switch>
       )}
