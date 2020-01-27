@@ -122,4 +122,10 @@ public class EnvironmentController {
         obj.put("reset", true);
         return obj;
     }
+
+    @RequestMapping(value = "/project-info", method = RequestMethod.GET)
+    @ResponseBody
+    public JsonNode getProjectInfo() {
+        return environmentService.getProjectInfo();
+    }
 }

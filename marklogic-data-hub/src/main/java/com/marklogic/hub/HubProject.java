@@ -253,6 +253,11 @@ public interface HubProject {
      */
     void exportProject(File location);
 
+    /**
+     * Returns the name of the project
+     */
+    String getProjectName();
+
     String getHubModulesDeployTimestampFile();
 
     String getUserModulesDeployTimestampFile();
