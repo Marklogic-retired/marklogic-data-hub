@@ -35,7 +35,7 @@ public class TestHelper {
     public Path tempProjectDirectory = Files.createTempDirectory("one-ui-hub-project");
 
     @Autowired
-    public HubConfigSession hubConfig;
+    private HubConfigSession hubConfig;
 
     @Autowired
     private EnvironmentService environmentService;
