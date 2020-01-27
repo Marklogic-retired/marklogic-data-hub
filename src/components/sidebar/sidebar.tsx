@@ -12,6 +12,7 @@ import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 
+
 const { Panel } = Collapse;
 const { RangePicker } = DatePicker;
 const tooltips = tooltipsConfig.browseDocuments;
@@ -130,6 +131,7 @@ const Sidebar:React.FC<Props> = (props) => {
     setAllSelectedFacets(updateFacets);
   }
 
+
   const updateSelectedFacets = (constraint: string, vals: string[]) => {
     let facets = {...allSelectedFacets};
     if (vals.length > 0) {
@@ -207,7 +209,7 @@ const Sidebar:React.FC<Props> = (props) => {
                 selectedEntity={props.selectedEntities}
                 updateSelectedFacets={updateSelectedFacets}
                 applyAllFacets={applyAllFacets}
-              />
+          />
             )
               })}
         </Panel>

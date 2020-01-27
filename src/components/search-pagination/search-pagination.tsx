@@ -16,8 +16,6 @@ const SearchPagination: React.FC<Props> = (props) => {
 
   const [pageSizeOptions, setPageSizeOptions] = useState<string[]>([]);
 
-
-
   const setPerPageSelector = (maxRowsPerPage: number) => {
     let pageOptionsDropdown: string[] = [];
     const defaultRows: number = 20;

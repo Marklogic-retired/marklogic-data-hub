@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useState } from 'react';
 import { Popover, Input, Checkbox, Icon} from 'antd';
 import styles from './pop-over-search.module.scss';
 import axios from "axios";
@@ -7,7 +7,7 @@ interface Props {
   name: string;
   selectedEntity: string;
   facetValues: any[];
-
+  checkFacetValues: (checkedValues: any[]) => void;
 };
 
 
@@ -15,7 +15,7 @@ const PopOverSearch: React.FC<Props> = (props) => {
 
   const [options, setOptions] = useState<any[]>([]);
   const [checkedValues, setCheckedValues] = useState<any[]>([]);
-  const [popOverVisibility, setPopOverVisibilty]= useState(false);
+  const [popOverVisibility, setPopOverVisibilty] = useState(false);
 
   const getFacetValues = async (param) => {
     try {
@@ -36,8 +36,7 @@ const PopOverSearch: React.FC<Props> = (props) => {
         }
       });
       setOptions(response.data);
-    }
-    catch (error) {
+    } catch (error) {
       console.log(error)
     }
   }
@@ -50,18 +49,21 @@ const PopOverSearch: React.FC<Props> = (props) => {
     return {name: item, count: 0, value: item}
   });
 
-  let found = false;
   const addFacetValues = () => {
-    for (let cFacet of checkedFacets) {
-      for (let facet of props.facetValues) {
-        if (JSON.stringify(cFacet) === JSON.stringify(facet))
+    let found = false;
+    for (let i = 0; i < checkedFacets.length; i++) {
+      for (let j = 0; j < props.facetValues.length; j++) {
+        if (JSON.stringify(checkedFacets[i]) === JSON.stringify(props.facetValues[j])) {
           found = true;
-        break;
+          break;
+        }
       }
-      if (found === false)
-        props.facetValues.unshift(cFacet)
+      if (!found) {
+        props.facetValues.unshift(checkedFacets[i]);
+      }
       found = false;
     }
+    props.checkFacetValues(checkedValues);
   }
 
   const searchPopover = () => {
@@ -72,24 +74,24 @@ const PopOverSearch: React.FC<Props> = (props) => {
     setPopOverVisibilty(false);
   }
 
-  const content =(
-      <div className={styles.popover}>
-        <Input placeholder="Search" allowClear={true} onChange={getFacetValues}/>
-        <div className={styles.scrollOptions}>
-          <Checkbox.Group options={options} onChange={onSelectCheckboxes}></Checkbox.Group>
-        </div>
-        <hr/>
-        <div className={styles.checkIcon}>
-          <Icon type="check-square-o" className={styles.popoverIcons} onClick={addFacetValues}/>
-          <Icon type="close-square-o" className={styles.popoverIcons} onClick={closePopover}/>
-        </div>
+  const content = (
+    <div className={styles.popover}>
+      <Input placeholder="Search" allowClear={true} onChange={getFacetValues}/>
+      <div className={styles.scrollOptions}>
+        <Checkbox.Group options={options} onChange={onSelectCheckboxes}></Checkbox.Group>
       </div>
+      <hr/>
+      <div className={styles.checkIcon}>
+        <Icon type="check-square-o" className={styles.popoverIcons} onClick={addFacetValues}/>
+        <Icon type="close-square-o" className={styles.popoverIcons} onClick={closePopover}/>
+      </div>
+    </div>
   )
 
   return (
-      <Popover placement="leftTop" content={content}  trigger="click" visible={popOverVisibility}>
-        <div className={styles.search} onClick={searchPopover}>Search</div>
-      </Popover>
+    <Popover placement="leftTop" content={content} trigger="click" visible={popOverVisibility}>
+      <div className={styles.search} onClick={searchPopover}>Search</div>
+    </Popover>
   )
 
 }
