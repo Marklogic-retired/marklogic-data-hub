@@ -646,6 +646,11 @@ public class HubProjectImpl implements HubProject {
         }
     }
 
+    @Override
+    public String getProjectName() {
+        return getProjectDir().toFile().getName();
+    }
+
     private void zipSubDirectory(String basePath, File fileToZip, ZipOutputStream zout) throws IOException {
         File[] files = fileToZip.listFiles();
         if(files != null) {

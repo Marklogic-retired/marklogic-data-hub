@@ -16,6 +16,7 @@
 package com.marklogic.hub.oneui.auth;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.oneui.models.EnvironmentInfo;
+import com.marklogic.hub.oneui.models.HubConfigSession;
 import com.marklogic.hub.oneui.services.EnvironmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -68,6 +69,9 @@ public class ConnectionAuthenticationFilter extends
     @Autowired
     private EnvironmentService environmentService;
 
+    @Autowired
+    private HubConfigSession hubConfig;
+
     // ~ Constructors
     // ===================================================================================================
 
@@ -117,6 +121,7 @@ public class ConnectionAuthenticationFilter extends
         setDetails(request, authRequest);
         try {
             authAttempt = this.getAuthenticationManager().authenticate(authRequest);
+            request.getSession().setAttribute("projectName", hubConfig.getHubProject().getProjectName());
         } catch (Exception e) {
             environmentService.setEnvironment(originalEnvironmentInfo);
             e.printStackTrace();
