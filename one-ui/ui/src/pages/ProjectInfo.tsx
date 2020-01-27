@@ -49,7 +49,7 @@ class ProjectInfo extends React.Component {
                   <p className={styles.alignleft}>Project name:</p>
                   </Col>
                   <Col  span={12}>
-                  <p className={styles.alignleftresults}>{this.state.projectDir}</p>
+                  <p className={styles.alignleftresults}>{this.state.projectName}</p>
                   </Col>
                 </Row>
                 <Row>
@@ -57,7 +57,7 @@ class ProjectInfo extends React.Component {
                   <p className={styles.alignleft}>Project directory:</p>
                   </Col>
                   <Col  span={12}>
-                  <p className={styles.alignleftresults}>{this.state.projectName}</p>
+                  <p className={styles.alignleftresults}>{this.state.projectDir}</p>
                   </Col>
                 </Row>
               </Card>
