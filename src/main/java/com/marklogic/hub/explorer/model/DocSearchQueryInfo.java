@@ -34,7 +34,7 @@ public class DocSearchQueryInfo {
   }
 
   public Map<String, FacetData> getFacets() {
-    return this.facets = (facets != null) ? facets : new HashMap<>();
+    return facets;
   }
 
   public void setFacets(Map<String, FacetData> facets) {
@@ -66,11 +66,11 @@ public class DocSearchQueryInfo {
     }
 
     public void setStringValues(List<String> stringValues) {
-      this.stringValues = (stringValues != null) ? stringValues : new ArrayList<>();
+      this.stringValues = stringValues;
     }
 
     public RangeValues getRangeValues() {
-      return this.rangeValues = (rangeValues != null) ? rangeValues : new RangeValues();
+      return rangeValues;
     }
 
     public void setRangeValues(RangeValues rangeValues) {
