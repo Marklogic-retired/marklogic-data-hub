@@ -1,8 +1,10 @@
-package com.marklogic.hub.oneui;
+package com.marklogic.hub.oneui.models;
 
 import java.util.Objects;
 
-import com.marklogic.hub.oneui.models.HubConfigSession;
+import com.marklogic.hub.oneui.Application;
+import com.marklogic.hub.oneui.TestHelper;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
