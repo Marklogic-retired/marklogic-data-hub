@@ -18,7 +18,7 @@ const PopOverSearch: React.FC<Props> = (props) => {
   const [popOverVisibility, setPopOverVisibilty] = useState(false);
 
   const getFacetValues = async (param) => {
-    if(param.target.value.length >= 2){
+    if(param.target.value.length >= 2 && param.target.value.toLowerCase()){
       try {
         const response = await axios({
           method: 'POST',
