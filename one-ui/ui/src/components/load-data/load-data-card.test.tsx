@@ -4,6 +4,7 @@ import LoadDataCard from './load-data-card';
 
 describe('Load data Card component', () => {
   it('should render correctly', () => {
-    shallow(<LoadDataCard data/>);
+    shallow(<LoadDataCard data deleteLoadDataArtifact
+      createLoadDataArtifact/>);
   });
 });
