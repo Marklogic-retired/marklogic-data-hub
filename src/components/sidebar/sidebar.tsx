@@ -12,7 +12,6 @@ import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 
-
 const { Panel } = Collapse;
 const { RangePicker } = DatePicker;
 const tooltips = tooltipsConfig.browseDocuments;
@@ -24,7 +23,6 @@ interface Props {
 };
 
 const Sidebar:React.FC<Props> = (props) => {
-
   const { 
     searchOptions,
     setAllSearchFacets

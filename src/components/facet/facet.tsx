@@ -1,6 +1,5 @@
 import React, { useState, useContext, useEffect} from 'react';
-import { Button, Checkbox, Icon, Tooltip, Input, Select} from 'antd';
-import axios from 'axios';
+import { Button, Checkbox, Icon, Tooltip } from 'antd';
 import {SearchContext} from '../../util/search-context';
 import styles from './facet.module.scss';
 import { numberConverter } from '../../util/number-conversion';
