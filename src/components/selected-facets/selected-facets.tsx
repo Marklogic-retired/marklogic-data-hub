@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
-import { Icon, Button } from 'antd';
+import { Icon } from 'antd';
+import { MlButton } from 'marklogic-ui-library';
 import { SearchContext } from '../../util/search-context';
 import styles from './selected-facets.module.scss';
 
@@ -21,7 +22,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
       style={ Object.entries(searchOptions.searchFacets).length === 0 ? {'visibility': 'hidden'} : {'visibility': 'visible'}}
     >
       { props.selectedFacets.length > 0 && 
-        <Button 
+        <MlButton
           size="small"
           className={styles.clearAllBtn}
           onClick={()=> clearAllFacets()}
@@ -29,12 +30,12 @@ const SelectedFacets: React.FC<Props> = (props) => {
         >
           <Icon type='close'/>
           Clear All
-        </Button>
+        </MlButton>
       }
       { props.selectedFacets.map((item, index) => {
         if (item.constraint === 'createdOnRange') {
           return (
-            <Button 
+            <MlButton
               size="small"
               className={styles.dateFacet} 
               key={index}
@@ -43,11 +44,11 @@ const SelectedFacets: React.FC<Props> = (props) => {
             >
               <Icon type='close'/>
               {item.facet.join(' ~ ')}
-            </Button>
+            </MlButton>
           )
         }
         return (
-          <Button 
+          <MlButton
             size="small"
             className={styles.facetButton} 
             key={index}
@@ -56,7 +57,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
           >
             <Icon type='close'/>
             {item.facet}
-          </Button>
+          </MlButton>
         )
       })}
     </div>

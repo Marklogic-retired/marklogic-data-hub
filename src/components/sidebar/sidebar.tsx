@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Collapse, Icon, Button, DatePicker, Tooltip } from 'antd';
+import { Collapse, Icon, DatePicker, Tooltip } from 'antd';
+import { MlButton } from 'marklogic-ui-library';
 import moment from 'moment';
 import Facet from '../facet/facet';
 import SelectedFacets from '../selected-facets/selected-facets';
@@ -184,12 +185,12 @@ const Sidebar:React.FC<Props> = (props) => {
           />
           { showApply && (
             <div className={styles.applyButtonContainer}>
-              <Button 
+              <MlButton
                 type="primary" 
                 size="small" 
                 data-cy={"datepicker-apply-button"}
                 onClick={()=> applyAllFacets()}
-              >Apply</Button>
+              >Apply</MlButton>
             </div>
           )}
           { hubFacets.map(facet => {
