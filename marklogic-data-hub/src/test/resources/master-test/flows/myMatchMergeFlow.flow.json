@@ -18,7 +18,8 @@
         "targetDatabase": "data-hub-STAGING",
         "sourceQuery": null,
         "outputFormat": "json",
-        "collections": ["default-ingestion"]
+        "collections": ["default-ingestion"],
+        "permissions": "data-hub-operator,read,data-hub-operator,update"
       }
     },
     "2": {
@@ -26,7 +27,8 @@
       "stepDefinitionType": "MAPPING",
       "options": {
         "sourceDatabase": "data-hub-STAGING",
-        "targetDatabase": "data-hub-FINAL"
+        "targetDatabase": "data-hub-FINAL",
+        "permissions": "data-hub-operator,read,data-hub-operator,update"
       }
     },
     "3": {
@@ -36,6 +38,7 @@
         "targetEntity": "person",
         "sourceQuery": "cts.collectionQuery('mapping')",
         "collections": ["myMatchingCollection"],
+        "permissions": "data-hub-operator,read,data-hub-operator,update",
         "provenanceGranularityLevel": "fine",
         "sourceDatabase": "data-hub-FINAL",
         "targetDatabase": "data-hub-FINAL",
@@ -123,6 +126,7 @@
         "sourceQuery": "cts.collectionQuery('myMatchingCollection')",
         "sourceDatabase": "data-hub-FINAL",
         "targetDatabase": "data-hub-FINAL",
+        "permissions": "data-hub-operator,read,data-hub-operator,update",
         "mergeOptions": {
           "propertyDefs": {
             "properties": [

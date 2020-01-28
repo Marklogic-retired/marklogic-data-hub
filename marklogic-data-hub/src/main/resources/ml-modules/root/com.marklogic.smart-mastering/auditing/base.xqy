@@ -14,6 +14,8 @@ import module namespace const = "http://marklogic.com/smart-mastering/constants"
   at "/com.marklogic.smart-mastering/constants.xqy";
 import module namespace coll = "http://marklogic.com/smart-mastering/collections"
   at "/com.marklogic.smart-mastering/impl/collections.xqy";
+import module namespace config = "http://marklogic.com/data-hub/config"
+  at "/com.marklogic.hub/config.xqy";
 
 declare namespace prov = "http://www.w3.org/ns/prov#";
 declare namespace foaf = "http://xmlns.com/foaf/0.1/";
@@ -60,7 +62,7 @@ declare function auditing:audit-trace(
     xdmp:document-insert(
       $audit-trace-def => map:get("uri"),
       $audit-trace-def => map:get("value"),
-      xdmp:default-permissions(),
+      $audit-trace-def => map:get("context") => map:get("permissions"),
       $audit-trace-def => map:get("context") => map:get("collections")
     )
 };
@@ -194,7 +196,10 @@ declare function auditing:build-audit-trace(
     map:map()
       => map:with("uri", "/com.marklogic.smart-mastering/auditing/"|| $action ||"/"||sem:uuid-string()||".xml")
       => map:with("value", $prov-xml)
-      => map:with("context", map:entry("collections",coll:auditing-collections($options)))
+      => map:with("context", map:new((
+        map:entry("collections",coll:auditing-collections($options)),
+        map:entry("permissions", config:get-default-data-hub-permissions())
+      )))
 };
 
 (:
@@ -428,7 +433,7 @@ declare function auditing:build-semantic-info($prov-xml as element(prov:document
       sem:graph-insert(
         sem:iri("mdm-auditing"),
         $auditing-managed-triples,
-        xdmp:default-permissions(),
+        config:get-default-data-hub-permissions(),
         $const:AUDITING-COLL
       )
     else (),

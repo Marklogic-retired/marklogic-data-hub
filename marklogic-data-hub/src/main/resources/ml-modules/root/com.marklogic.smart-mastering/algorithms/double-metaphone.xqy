@@ -11,6 +11,9 @@ import module namespace const = "http://marklogic.com/smart-mastering/constants"
 import module namespace helper-impl = "http://marklogic.com/smart-mastering/helper-impl"
   at "/com.marklogic.smart-mastering/matcher-impl/helper-impl.xqy";
 
+import module namespace config = "http://marklogic.com/data-hub/config"
+  at "/com.marklogic.hub/config.xqy";
+
 declare namespace match = "http://marklogic.com/smart-mastering/matcher";
 
 declare option xdmp:mapping "false";
@@ -94,7 +97,7 @@ declare function algorithms:setup-double-metaphone($expand-xml, $options-xml, $o
               xdmp:log("Caught an error while generating double-metaphone dictionary: " || xdmp:quote($e), "error")
             }
           ),
-          xdmp:default-permissions(),
+          config:get-default-data-hub-permissions(),
           ($const:OPTIONS-COLL, $const:DICTIONARY-COLL)
         )
   )

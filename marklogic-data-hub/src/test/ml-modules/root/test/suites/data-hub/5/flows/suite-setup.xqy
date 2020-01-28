@@ -25,7 +25,7 @@ xdmp:invoke-function(function() {
   xdmp:document-insert(
     "/test/custom-null-step/main.sjs",
     test:get-test-file("nullStep.sjs"),
-    (xdmp:default-permissions(), xdmp:permission("flow-operator-role", "execute"), xdmp:permission("flow-developer-role", "execute")),
+    (xdmp:default-permissions(), xdmp:permission("rest-extension-user", "execute"), xdmp:permission("data-hub-module-reader", "read"), xdmp:permission("data-hub-module-writer", "update")),
     ()
   )
 },

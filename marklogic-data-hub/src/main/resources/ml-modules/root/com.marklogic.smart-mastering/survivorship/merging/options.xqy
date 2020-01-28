@@ -7,6 +7,8 @@ xquery version "1.0-ml";
  :)
 module namespace merge-impl = "http://marklogic.com/smart-mastering/survivorship/merging";
 
+import module namespace config = "http://marklogic.com/data-hub/config"
+  at "/com.marklogic.hub/config.xqy";
 import module namespace const = "http://marklogic.com/smart-mastering/constants"
   at "/com.marklogic.smart-mastering/constants.xqy";
 import module namespace json="http://marklogic.com/xdmp/json"
@@ -80,7 +82,7 @@ declare function merge-impl:save-options(
     xdmp:document-insert(
       $MERGING-OPTIONS-DIR||$name||".xml",
       $options,
-      xdmp:default-permissions(),
+      config:get-default-data-hub-permissions(),
       ($const:OPTIONS-COLL, $const:MERGE-OPTIONS-COLL)
     )
 };

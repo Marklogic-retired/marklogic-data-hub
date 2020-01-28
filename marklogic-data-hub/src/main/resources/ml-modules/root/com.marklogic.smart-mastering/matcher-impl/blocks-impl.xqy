@@ -13,6 +13,8 @@ xquery version "1.0-ml";
 
 module namespace blocks-impl = "http://marklogic.com/smart-mastering/blocks-impl";
 
+import module namespace config = "http://marklogic.com/data-hub/config"
+  at "/com.marklogic.hub/config.xqy";
 import module namespace const = "http://marklogic.com/smart-mastering/constants"
   at "/com.marklogic.smart-mastering/constants.xqy";
 import module namespace sem = "http://marklogic.com/semantics"
@@ -108,7 +110,7 @@ declare function blocks-impl:block-matches($uris as xs:string*)
       $other-uri in (fn:subsequence($uris, 1, $pos - 1), fn:subsequence($uris, $pos + 1))
     return
       blocks-impl:block-match-triples($uri, $other-uri)
-  let $_ := sem:rdf-insert($triples)
+  let $_ := sem:rdf-insert($triples, (), config:get-default-data-hub-permissions())
   return ()
 };
 

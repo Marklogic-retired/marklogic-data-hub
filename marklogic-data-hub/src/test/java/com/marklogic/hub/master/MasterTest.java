@@ -88,7 +88,7 @@ public class MasterTest extends HubTestBase {
         installHubArtifacts(adminHubConfig, true);
         installUserModules(adminHubConfig, true);
 
-        runAsFlowOperator();
+        runAsDataHubOperator();
     }
 
 
@@ -159,13 +159,14 @@ public class MasterTest extends HubTestBase {
         flowRunner.awaitCompletion();
         RunStepResponse matchJob = flowResponse.getStepResponses().get("3");
         assertTrue(matchJob.isSuccess(), "Matching job failed!");
-        assertTrue(getFinalDocCount("datahubMasteringMatchSummary") == 3,"3 match summaries should be created!");
+        assertEquals(3, getFinalDocCount("datahubMasteringMatchSummary"), "3 match summaries should be created!");
         // Check for datahubMasteringMatchSummary for matching with correct count
         String summaryQueryText = "cts:and-query((" +
             "cts:collection-query('datahubMasteringMatchSummary')," +
             "cts:json-property-value-query('URIsToProcess', '/person-41.json')" +
             "))";
         assertTrue(existsByQuery(summaryQueryText, HubConfig.DEFAULT_FINAL_NAME), "Missing valid matching summary document!");
+
         RunFlowResponse flowMergeResponse = flowRunner.runFlow("myMatchMergeFlow", Collections.singletonList("4"));
         flowRunner.awaitCompletion();
         RunStepResponse mergeJob = flowMergeResponse.getStepResponses().get("4");
