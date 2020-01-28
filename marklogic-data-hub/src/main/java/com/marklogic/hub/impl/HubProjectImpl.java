@@ -624,7 +624,20 @@ public class HubProjectImpl implements HubProject {
         if(!location.getParentFile().exists()) {
             location.getParentFile().mkdirs();
         }
-        try (ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(location))){
+        try(FileOutputStream out = new FileOutputStream(location)) {
+            writeToStream(out);
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to export project, cause: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void exportProject(OutputStream outputStream) {
+        writeToStream(outputStream);
+    }
+
+    private void writeToStream(OutputStream out) {
+        try (ZipOutputStream zout = new ZipOutputStream(out)){
             Stream.of("entities", "flows", "src" + File.separator + "main", "mappings", "step-definitions", "gradle",
                 "gradlew", "gradlew.bat", "build.gradle", "gradle.properties").forEach(file ->{
                 File fileToZip = getProjectDir().resolve(file).toFile();
