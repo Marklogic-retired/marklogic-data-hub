@@ -379,9 +379,8 @@ const NewDataLoadDialog = (props) => {
 
    try {
     let response = await Axios.get(`/api/artifacts/loadData/${stepName}`);
-    console.log('response.status',response.status)
+
     if (response.status === 200) {
-      //setLoadDataArtifacts([...response.data]);
       console.log('GET API Called in custom request!');
     } 
   } catch (error) {
@@ -398,12 +397,9 @@ const NewDataLoadDialog = (props) => {
           targetFormat: tgtFormat,
           outputURIReplacement: outUriReplacement
         }
-        createDefaultLoadDataArtifact(dataPayload);
+        await createDefaultLoadDataArtifact(dataPayload);
       }
   }
-
-    const url = `/api/artifacts/loadData/${stepName}/setData`;
-
 
     let fl  = fileList;
     const formData = new FormData();
@@ -412,8 +408,11 @@ const NewDataLoadDialog = (props) => {
       formData.append('files', file);
     });
 
+
     //API call for
-    Axios.post(url, formData, {
+    try {
+      const url = `/api/artifacts/loadData/${stepName}/setData`;
+      let resp = await Axios.post(url, formData, {
         onUploadProgress: e => {
           onProgress({ percent: (e.loaded / e.total) * 100 });
           let percent=(e.loaded / e.total) * 100
@@ -423,22 +422,23 @@ const NewDataLoadDialog = (props) => {
           'Content-Type': 'multipart/form-data; boundary=${fd._boundary}'
         },
       })
-      .then(responses => {
-        /*......*/
-        onSuccess(responses.status);
-        console.log('responses.status',responses.status)
-        if(responses.data && responses.data.inputFilePath){
-          setInputFilePath(responses.data.inputFilePath);
+      if (resp.status == 200){
+        console.log('responses.status',resp)
+        if(resp.data && resp.data.inputFilePath){
+          setInputFilePath(resp.data.inputFilePath);
         }
-        if(stepName && srcFormat && tgtFormat && responses.data.inputFilePath) {
-          buildURIPreview(responses.data);
+        if(stepName && srcFormat && tgtFormat && resp.data.inputFilePath) {
+          buildURIPreview(resp.data);
         }
-      })
-      .catch(err => {
-        
+        onSuccess(resp.status);
+      }
+      
+    }
+    catch(err) {
+        console.log('Error while uploading the files', err)
         /*......*/
         onError(err);
-      });
+      }
 
 
   };
