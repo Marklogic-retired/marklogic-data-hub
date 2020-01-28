@@ -929,6 +929,11 @@ public class HubConfigImpl implements HubConfig
         return isProvisionedEnvironment;
     }
 
+    @Override
+    public void setIsProvisionedEnvironment(boolean isProvisionedEnvironment) {
+        this.isProvisionedEnvironment = isProvisionedEnvironment;
+    }
+
     public void setLoadBalancerHost(String loadBalancerHost) {
         this.loadBalancerHost = loadBalancerHost;
     }

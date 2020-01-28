@@ -14,7 +14,6 @@ import com.marklogic.appdeployer.command.temporal.DeployTemporalAxesCommand;
 import com.marklogic.appdeployer.command.temporal.DeployTemporalCollectionsCommand;
 import com.marklogic.appdeployer.command.triggers.DeployTriggersCommand;
 import com.marklogic.client.ext.SecurityContextType;
-import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
@@ -22,13 +21,10 @@ import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.impl.HubProjectImpl;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.core.env.StandardEnvironment;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.mock.env.MockEnvironment;
 
 import java.io.File;
 import java.util.Collections;
@@ -38,20 +34,16 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-public class DeployAsDeveloperTest extends HubTestBase {
+public class DeployAsDeveloperTest {
 
-    private AppConfig originalAppConfig;
+    private HubConfigImpl hubConfig;
 
     @BeforeEach
-    public void setup() {
-        originalAppConfig = adminHubConfig.getAppConfig();
-    }
-
-    @AfterEach
-    public void teardown() {
-        adminHubConfig.setAppConfig(originalAppConfig);
+    void setup() {
+        HubProjectImpl project = new HubProjectImpl();
+        project.createProject(HubTestBase.PROJECT_PATH);
+        hubConfig = new HubConfigImpl(project, new MockEnvironment());
+        hubConfig.applyDefaultProperties();
     }
 
     @Test
@@ -64,11 +56,19 @@ public class DeployAsDeveloperTest extends HubTestBase {
         appConfig.getConfigDirs().add(new ConfigDir(new File("my-dhs-config")));
         assertEquals(3, appConfig.getConfigDirs().size(), "Should have 3, including ml-config which is added by default");
 
-        adminHubConfig.setAppConfig(appConfig);
+        hubConfig.setAppConfig(appConfig);
 
-        new DhsDeployer().prepareAppConfigForDeployingToDhs(adminHubConfig);
+        assertFalse(hubConfig.getIsProvisionedEnvironment());
 
-        assertEquals(adminHubConfig.getPort(DatabaseKind.STAGING), appConfig.getAppServicesPort(),
+        new DhsDeployer().prepareAppConfigForDeployingToDhs(hubConfig);
+
+        assertTrue(hubConfig.getIsProvisionedEnvironment(), "When deploying to DHS, this property is assumed to be true, " +
+            "as it's defined in the DHS portal's gradle properties file. But if someone wants to test this on-premise, it " +
+            "likely won't be intuitive to set this to true. But it needs to be set to true so that DHF knows to e.g. " +
+            "remove the schema/trigger database properties from database payloads, as a data-hub-developer user is not " +
+            "permitted to set those.");
+
+        assertEquals(hubConfig.getPort(DatabaseKind.STAGING), appConfig.getAppServicesPort(),
             "DHS does not allow access to the default App-Services port - 8000 - so it's set to the staging port instead so " +
                 "that user modules can be loaded into the DHF modules database");
 
@@ -83,7 +83,7 @@ public class DeployAsDeveloperTest extends HubTestBase {
     @Test
     public void knownPropertyValuesShouldBeFixed() {
         HubProjectImpl project = new HubProjectImpl();
-        project.createProject(PROJECT_PATH);
+        project.createProject(HubTestBase.PROJECT_PATH);
         HubConfigImpl hubConfig = new HubConfigImpl(project, new StandardEnvironment());
 
         // Set these to custom values that a user may use on-premise
@@ -148,26 +148,26 @@ public class DeployAsDeveloperTest extends HubTestBase {
         assertNull(appConfig.getAppServicesSslContext(), "App-Services doesn't use SSL by default");
         assertEquals(SecurityContextType.DIGEST, appConfig.getAppServicesSecurityContextType(), "App-Services connection defaults to DIGEST");
 
-        final String originalAuthMethod = adminHubConfig.getAuthMethod(DatabaseKind.STAGING);
-        final boolean originalSimpleSsl = adminHubConfig.getSimpleSsl(DatabaseKind.STAGING);
+        final String originalAuthMethod = hubConfig.getAuthMethod(DatabaseKind.STAGING);
+        final boolean originalSimpleSsl = hubConfig.getSimpleSsl(DatabaseKind.STAGING);
         try {
-            adminHubConfig.setAppConfig(appConfig);
-            adminHubConfig.setAuthMethod(DatabaseKind.STAGING, "basic");
-            adminHubConfig.setSimpleSsl(DatabaseKind.STAGING, true);
+            hubConfig.setAppConfig(appConfig);
+            hubConfig.setAuthMethod(DatabaseKind.STAGING, "basic");
+            hubConfig.setSimpleSsl(DatabaseKind.STAGING, true);
 
-            new DhsDeployer().prepareAppConfigForDeployingToDhs(adminHubConfig);
+            new DhsDeployer().prepareAppConfigForDeployingToDhs(hubConfig);
 
             assertNotNull(appConfig.getAppServicesSslContext());
             assertEquals(SecurityContextType.BASIC, appConfig.getAppServicesSecurityContextType());
         } finally {
-            adminHubConfig.setAuthMethod(DatabaseKind.STAGING, originalAuthMethod);
-            adminHubConfig.setSimpleSsl(DatabaseKind.STAGING, originalSimpleSsl);
+            hubConfig.setAuthMethod(DatabaseKind.STAGING, originalAuthMethod);
+            hubConfig.setSimpleSsl(DatabaseKind.STAGING, originalSimpleSsl);
         }
     }
 
     @Test
     public void buildCommandList() {
-        List<Command> commands = new DhsDeployer().buildCommandsForDeveloper(adminHubConfig);
+        List<Command> commands = new DhsDeployer().buildCommandsForDeveloper(hubConfig);
         Collections.sort(commands, Comparator.comparing(Command::getExecuteSortOrder));
         System.out.println(commands);
         int index = 0;
