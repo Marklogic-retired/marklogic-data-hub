@@ -76,6 +76,7 @@ export class Step {
   static createMappingStep(): Step {
     const step = new Step();
     step.options = new MappingOptions();
+    step.options.permissions = 'data-hub-operator,read,data-hub-operator,update';
     step.options.outputFormat = 'json';
     step.customHook = {"module" : "",
     "parameters" : {},
@@ -90,6 +91,7 @@ export class Step {
   static createMatchingStep(): Step {
     const step = new Step();
     step.options = new MatchingOptions();
+    step.options.permissions = 'data-hub-operator,read,data-hub-operator,update';
     step.options.outputFormat = 'json';
     step.customHook = {"module" : "",
     "parameters" : {},
@@ -104,6 +106,7 @@ export class Step {
   static createMergingStep(): Step {
     const step = new Step();
     step.options = new MergingOptions();
+    step.options.permissions = 'data-hub-operator,read,data-hub-operator,update';
     step.options.outputFormat = 'json';
     step.customHook = {"module" : "",
     "parameters" : {},
@@ -118,6 +121,7 @@ export class Step {
   static createMasteringStep(): Step {
     const step = new Step();
     step.options = new MasteringOptions();
+    step.options.permissions = 'data-hub-operator,read,data-hub-operator,update';
     step.options.outputFormat = 'json';
     step.customHook = {"module" : "",
     "parameters" : {},

@@ -9,6 +9,7 @@ export class MasteringOptions {
   public sourceDatabase: string = '';
   public targetDatabase: string;
   public outputFormat: string;
+  public permissions: string;
   public matchOptions: Matching;
   public mergeOptions: Merging;
   constructor() {
