@@ -1,6 +1,6 @@
 const { extractDataFromPerformanceTiming } = require('./perfHelper');
 
-const numPages = 30; //number of pages the script will browse
+const numPages = 10; //number of pages the script will browse
 const numCollections = 2; //number of collection facets that will be selected
 const numFlows = 1; //number of flow facets that will be selected
 const numSteps = 1; //number of flow facets that will be selected
@@ -31,6 +31,8 @@ async function collections(page) {
         }
     }
 
+     await page.waitForSelector('.ant-collapse-content > .ant-collapse-content-box > [class*=facet_facetContainer] > [class*=facet_applyButtonContainer] > .ant-btn')
+     await page.click('.ant-collapse-content > .ant-collapse-content-box > [class*=facet_facetContainer] > [class*=facet_applyButtonContainer] > .ant-btn')
     // FLOWS
 
     await page.waitFor(1000);
@@ -50,8 +52,10 @@ async function collections(page) {
         }
     }
 
-    //STEPS
+     await page.waitForSelector('.ant-collapse-content > .ant-collapse-content-box > [class*=facet_facetContainer] > [class*=facet_applyButtonContainer] > .ant-btn')
+     await page.click('.ant-collapse-content > .ant-collapse-content-box > [class*=facet_facetContainer] > [class*=facet_applyButtonContainer] > .ant-btn')
 
+    //STEPS
     await page.waitFor(1000);
     await page.waitForSelector('[data-cy=step-facet-block] > div > [data-cy=step-facet-item] > [class*=facet_value] > .ant-checkbox > [data-cy=step-facet-item-checkbox]')
     await page.click('[data-cy=step-facet-block] > div > [data-cy=step-facet-item] > [class*=facet_value] > .ant-checkbox > [data-cy=step-facet-item-checkbox]')
@@ -68,6 +72,9 @@ async function collections(page) {
         }
     }
 
+     await page.waitForSelector('.ant-collapse-content > .ant-collapse-content-box > [class*=facet_facetContainer] > [class*=facet_applyButtonContainer] > .ant-btn')
+     await page.click('.ant-collapse-content > .ant-collapse-content-box > [class*=facet_facetContainer] > [class*=facet_applyButtonContainer] > .ant-btn')
+
     // BROWSE DOCS
     for (var i = 2; i <= numPages+1; i++) {
         await page.waitFor(1000)
@@ -79,6 +86,10 @@ async function collections(page) {
             return
         }
         await page.click('[class*=Browse_searchBar] > [class*=search-pagination_searchPaginationContainer]:nth-child(3) > .ant-pagination > .ant-pagination-item-' + i + ' > a')
+        console.log(extractDataFromPerformanceTiming(performanceTiming,
+            'responseEnd',
+            'domInteractive',
+            'loadEventEnd'))
     }
 
 
@@ -86,8 +97,6 @@ async function collections(page) {
         performanceTiming,
         'responseEnd',
         'domInteractive',
-        'domContentLoadedEventEnd',
-        'domComplete',
         'loadEventEnd'
     );
 }

@@ -116,6 +116,10 @@ class BrowsePage {
   applyDatePickerSelection(facet: string) {
     return cy.get('[data-cy=datepicker-facet-apply-button]').click();
   }
+  
+  getFacetApplyButton() {
+    return cy.get('[data-cy=collection-facet-apply-button]');
+  }
 
   //search bar
   search(str: string) {
@@ -163,11 +167,11 @@ class BrowsePage {
   }
 
   getExpandableTableView() {
-    return cy.get('.ant-table-row:nth-child(1) .ant-table-row-expand-icon').click();
+    return cy.get('.ant-table-row:nth-child(1) .ant-table-row-expand-icon-cell').click();
   }
 
   getExpandable() {
-    return cy.get('.ant-table-row-expand-icon');
+    return cy.get('.ant-table-row-expand-icon-cell');
   }
 
   getTableColumns(){
