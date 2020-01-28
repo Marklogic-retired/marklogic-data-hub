@@ -15,7 +15,23 @@ class ProjectInfo extends React.Component {
         this.setState(resp);
       })
   }
-  
+  download = () => {
+    axios({
+      url: '/api/environment/project-download',
+      method: 'GET',
+      responseType: 'blob'
+    })
+      .then(response => {
+        var result = String(response.headers["content-disposition"]).split(';')[1].trim().split('=')[1];
+        var filename =  result.replace(/"/g, '');
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+   });
+  }
   render(){
     return (
       <div style={this.divCss}>
@@ -69,7 +85,7 @@ class ProjectInfo extends React.Component {
                 <div>
                   <p className={styles.aligncenter}>Download project as .zip file</p>
                   <br/>
-                  <Button type="primary" className={styles.addNewButton} >Download</Button>
+                  <Button type="primary" className={styles.addNewButton} onClick = {this.download}>Download</Button>
                 </div>
               </Card>
               <br/>
