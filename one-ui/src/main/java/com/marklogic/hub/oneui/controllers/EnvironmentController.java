@@ -18,6 +18,7 @@ package com.marklogic.hub.oneui.controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.hub.HubProject;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.oneui.models.HubConfigSession;
@@ -27,6 +28,7 @@ import com.marklogic.hub.oneui.services.EnvironmentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,7 +36,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -112,6 +118,19 @@ public class EnvironmentController {
             throw dataHubConfigurationException[0];
         }
         return payload;
+    }
+
+    @RequestMapping(value = "/project-download", produces = "application/zip")
+    public void downloadProject(HttpServletRequest request, HttpServletResponse response) {
+        HubProject project = hubConfig.getHubProject();
+        response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+        response.addHeader("Content-Disposition", "attachment; filename=datahub-project.zip");
+        try (OutputStream out = response.getOutputStream()) {
+            project.exportProject(out);
+            response.flushBuffer();
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to download project;cause: " + e.getMessage());
+        }
     }
 
     @RequestMapping(value = "/reset", method = RequestMethod.POST)
