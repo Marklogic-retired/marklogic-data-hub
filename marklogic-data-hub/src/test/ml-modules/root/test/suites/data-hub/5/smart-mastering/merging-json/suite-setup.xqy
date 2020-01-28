@@ -14,13 +14,14 @@ xquery version "1.0-ml";
 
 import module namespace merging = "http://marklogic.com/smart-mastering/merging"
   at "/com.marklogic.smart-mastering/merging.xqy";
-import module namespace dhConfig = "http://marklogic.com/data-hub/config"
-  at "/com.marklogic.hub/config.xqy";
 
 import module namespace test = "http://marklogic.com/test" at "/test/test-helper.xqy";
 import module namespace lib = "http://marklogic.com/smart-mastering/test" at "lib/lib.xqy";
 
-declare variable $module-permissions := (xdmp:permission($dhConfig:FLOW-OPERATOR-ROLE, 'execute'),xdmp:default-permissions());
+declare variable $module-permissions := (
+  xdmp:permission("rest-extension-user", 'execute'), xdmp:default-permissions(),
+  xdmp:permission("data-hub-module-reader", "read"), xdmp:permission("data-hub-module-writer", "update")
+);
 
 declare option xdmp:mapping "false";
 merging:save-options($lib:OPTIONS-NAME-STRATEGIES, test:get-test-file("merge-options-with-strategies.xml")),

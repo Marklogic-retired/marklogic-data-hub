@@ -25,7 +25,13 @@ declare function local:should-write-tde($tde-uri as xs:string) {
 let $entity-def := fn:doc($trgr:uri)/object-node()
 (: Create map version so we can update $ref to external links if we have to :)
 let $entity-def-map as map:map := $entity-def
-let $default-permissions := xdmp:default-permissions()
+
+let $schema-permissions := (
+  xdmp:default-permissions(),
+  xdmp:permission("data-hub-developer", "update"),
+  xdmp:permission("data-hub-operator", "read")
+)
+
 let $entity-base-uri := $entity-def/info/baseUri
 let $entity-title := $entity-def/info/title
 let $entity-version := $entity-def/info/version
@@ -95,19 +101,19 @@ return (
       xdmp:document-insert(
         fn:replace($trgr:uri, "\.json$", ".xsd"),
         es:schema-generate($uber-model),
-        $default-permissions,
+        $schema-permissions,
         "ml-data-hub-xml-schema"
       ),
       xdmp:document-insert(
         fn:replace($trgr:uri, "\.json$", ".schema.json"),
         hent:json-schema-generate($entity-title, $uber-model),
-        $default-permissions,
+        $schema-permissions,
         "ml-data-hub-json-schema"
       ),
       xdmp:document-insert(
         $trgr:uri,
         $valid-entity-model,
-        $default-permissions,
+        $schema-permissions,
         $ENTITY-MODEL-COLLECTION
       )
     }, map:entry("database", xdmp:schema-database())
@@ -118,7 +124,7 @@ return (
       tde:template-insert(
         $tde-uri,
         hent:dump-tde(json:to-array($uber-model)),
-        $default-permissions,
+        $schema-permissions,
         ("ml-data-hub-tde")
       )
     } catch * {

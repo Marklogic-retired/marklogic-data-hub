@@ -28,6 +28,8 @@ import module namespace auditing = "http://marklogic.com/smart-mastering/auditin
   at "../../auditing/base.xqy";
 import module namespace coll-impl = "http://marklogic.com/smart-mastering/survivorship/collections"
   at "collections.xqy";
+import module namespace config = "http://marklogic.com/data-hub/config"
+  at "/com.marklogic.hub/config.xqy";
 import module namespace fun-ext = "http://marklogic.com/smart-mastering/function-extension"
   at "../../function-extension/base.xqy";
 import module namespace history = "http://marklogic.com/smart-mastering/auditing/history"
@@ -197,11 +199,8 @@ declare function merge-impl:save-merge-models-by-uri(
       xdmp:document-insert(
         $audit-trace => map:get("uri"),
         $audit-trace => map:get("value"),
-        (
-          xdmp:default-permissions()
-        ),
-        ($audit-trace => map:get("context"))
-          => map:get("collections")
+        $audit-trace => map:get("context") => map:get("permissions"),
+        $audit-trace => map:get("context") => map:get("collections")
       ),
       let $on-merge-options := $merge-options/merging:algorithms/merging:collections/merging:on-merge
       let $distinct-uris := fn:distinct-values(($uris, $uris))[fn:doc-available(.)][fn:not(. = $merge-uri)]
@@ -210,10 +209,11 @@ declare function merge-impl:save-merge-models-by-uri(
         xdmp:document-insert(
           $merge-uri,
           $merged-document,
-          (
+          let $perms := (
             xdmp:default-permissions(),
             fn:map(xdmp:document-get-permissions#1, $uris)
-          ),
+          )
+          return if (fn:exists($perms)) then $perms else config:get-default-data-hub-permissions(),
           coll-impl:on-merge(map:new((
             for $uri in $distinct-uris
             return map:entry($uri, xdmp:document-get-collections($uri)[fn:not(. = $const:ARCHIVED-COLL)])
@@ -619,15 +619,13 @@ declare function merge-impl:build-merge-models-by-uri(
             )
           ),
           map:entry("permissions",
-            (
+            let $perms := (
               xdmp:default-permissions($merge-uri, "objects"),
               for $uri in $uris
               let $write-object := util-impl:retrieve-write-object($uri)
-              return
-                $write-object
-                => map:get("context")
-                => map:get("permissions")
+              return $write-object => map:get("context") => map:get("permissions")
             )
+            return if (fn:exists($perms)) then $perms else config:get-default-data-hub-permissions()
           )
         ))
       ),

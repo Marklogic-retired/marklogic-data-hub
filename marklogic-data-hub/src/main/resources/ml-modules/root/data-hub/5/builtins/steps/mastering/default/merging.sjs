@@ -50,14 +50,14 @@ function main(content, options) {
       collectionQuery
     ];
     const otherMergesForURI = cts.search(
-        cts.andNotQuery(
-          cts.andQuery(postiveQuery),
-          uriRangeQuery
-        ),
-        ['unfiltered',cts.indexOrder(datahubCreatedOnRef, 'descending')]
-      ).toArray().map(
-        (result) => result.xpath(`/matchSummary/actionDetails/*[action = 'merge']`).toArray()
-          .filter((actionNode) => cts.contains(actionNode, urisQuery))[0].toObject()
+      cts.andNotQuery(
+        cts.andQuery(postiveQuery),
+        uriRangeQuery
+      ),
+      ['unfiltered',cts.indexOrder(datahubCreatedOnRef, 'descending')]
+    ).toArray().map(
+      (result) => result.xpath(`/matchSummary/actionDetails/*[action = 'merge']`).toArray()
+        .filter((actionNode) => cts.contains(actionNode, urisQuery))[0].toObject()
     );
     if (otherMergesForURI.some((otherMerge) => otherMerge.uris.length > uriActionDetails.uris.length)) {
       return Sequence.from([]);
@@ -94,7 +94,30 @@ function main(content, options) {
       });
     }
   }
+
+  applyPermissionsFromOptions(results, options);
+
   return results;
+}
+
+function applyPermissionsFromOptions(results, options) {
+  if (options.permissions) {
+    const parsedPermissions = datahub.hubUtils.parsePermissions(options.permissions);
+    for (var result of results) {
+      if (result['$delete'] == true) {
+        continue;
+      }
+      if (result.context) {
+        result.context.permissions = parsedPermissions;
+      } else {
+        result.context = {
+          permissions: parsedPermissions
+        };
+      }
+
+      result.context.permissions = result.context.permissions.concat(xdmp.defaultPermissions());
+    }
+  }
 }
 
 function jobReport(jobID, stepResponse, options) {
@@ -120,5 +143,6 @@ function jobReport(jobID, stepResponse, options) {
 
 module.exports = {
   main,
-  jobReport
+  jobReport,
+  applyPermissionsFromOptions
 };

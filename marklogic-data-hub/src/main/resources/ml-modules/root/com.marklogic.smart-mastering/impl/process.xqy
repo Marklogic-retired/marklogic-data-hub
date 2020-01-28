@@ -13,6 +13,8 @@ module namespace proc-impl = "http://marklogic.com/smart-mastering/process-recor
 
 import module namespace blocks-impl = "http://marklogic.com/smart-mastering/blocks-impl"
   at "/com.marklogic.smart-mastering/matcher-impl/blocks-impl.xqy";
+import module namespace config = "http://marklogic.com/data-hub/config"
+  at "/com.marklogic.hub/config.xqy";
 import module namespace const = "http://marklogic.com/smart-mastering/constants"
   at "/com.marklogic.smart-mastering/constants.xqy";
 import module namespace fun-ext = "http://marklogic.com/smart-mastering/function-extension"
@@ -852,7 +854,12 @@ declare function proc-impl:process-match-and-merge-with-options-save(
           $action => map:get("value"),
           map:new((
             map:entry("collections", $context => map:get("collections")),
-            map:entry("permissions", if (fn:exists($permissions)) then $permissions else xdmp:default-permissions($uri, "objects")),
+            map:entry("permissions",
+              if (fn:exists($permissions)) then $permissions
+              else
+                let $perms := xdmp:default-permissions($uri, "objects")
+                return if (fn:exists($perms)) then $perms else config:get-default-data-hub-permissions()
+            ),
             map:entry("metadata", $context => map:get("metadata"))
           ))
         )
