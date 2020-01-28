@@ -7,7 +7,6 @@ import { stringConverter } from '../../util/string-conversion';
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PopOverSearch from "../pop-over-search/pop-over-search";
-import {updateUserPreferences} from "../../services/user-preferences";
 
 interface Props {
   name: string;
@@ -16,8 +15,10 @@ interface Props {
   facetValues: any[];
   tooltip: string;
   selectedEntity: string[];
-  updateSelectedFacets: (constraint: string, vals: string[]) => void;
+  facetCategory: string;
+  updateSelectedFacets: (constraint: string, vals: string[], datatype: string) => void;
   applyAllFacets: () => void;
+  addFacetValues: (constraint: string, vals: string[], datatype: string, facetCategory: string) => void;
 };
 
 const Facet: React.FC<Props> = (props) => {
@@ -55,7 +56,8 @@ const Facet: React.FC<Props> = (props) => {
     }
     setChecked([...checked]);
     toggleApply(true);
-    props.updateSelectedFacets(props.constraint, [...checked]);
+    //props.addFacetValues(props.constraint, [...checked], props.facetType, props.facetCategory);
+    props.updateSelectedFacets(props.constraint, [...checked], props.facetType);
   }
 
   const handleClick = (e) => {
@@ -64,7 +66,7 @@ const Facet: React.FC<Props> = (props) => {
     if (e.target.checked && index === -1) {
       setChecked([...checked, e.target.value]);
       toggleApply(true);
-      props.updateSelectedFacets(props.constraint, [...checked, e.target.value]);
+      props.updateSelectedFacets(props.constraint, [...checked, e.target.value], props.facetType);
     }
     // Deselection
     else if (index !== -1) {
@@ -76,7 +78,7 @@ const Facet: React.FC<Props> = (props) => {
         toggleApply(true);
       }
       setChecked(newChecked);
-      props.updateSelectedFacets(props.constraint, newChecked);
+      props.updateSelectedFacets(props.constraint, newChecked, props.facetType);
     }
   }
 
@@ -87,7 +89,7 @@ const Facet: React.FC<Props> = (props) => {
     } else {
       toggleApply(false);
     }
-    props.updateSelectedFacets(props.constraint, []);
+    props.updateSelectedFacets(props.constraint, [], props.facetType);
   }
 
 

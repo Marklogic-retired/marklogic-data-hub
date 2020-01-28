@@ -67,15 +67,17 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
 
  const searchFromUserPref = (username: string) => {
   let userPreferences = getUserPreferences(username);
+  console.log('user pref', userPreferences);
   if (userPreferences) {
     let values = JSON.parse(userPreferences);
+    console.log('values', values)
     setSearchOptions({
       ...searchOptions,
       start: 1,
       pageNumber: 1,
-      query: values.query,
-      entityNames: values.entityNames,
-      searchFacets: values.facets,
+      query: values.query.searchStr,
+      entityNames: values.query.entityNames,
+      searchFacets: values.query.facets,
       pageLength: values.pageLength
     });  
   }
@@ -134,24 +136,14 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
   }
 
   const setEntity = (option: string) => {
-    if (option) {
-      setSearchOptions({ 
-        ...searchOptions,
-        start: 1,
-        searchFacets: {},
-        entityNames: [option],
-        pageLength: searchOptions.pageSize
-      });
-    } else {
-      setSearchOptions({
-        ...searchOptions,
-        start: 1,
-        searchFacets: {},
-        entityNames: [],
-        pageNumber: 1,
-        pageLength: searchOptions.pageSize
-      });
-    }
+    let entityOptions = option ? [option] : [];
+    setSearchOptions({ 
+      ...searchOptions,
+      start: 1,
+      searchFacets: {},
+      entityNames: entityOptions,
+      pageLength: searchOptions.pageSize
+    });
   }
 
   const setEntityClearQuery = (option: string) => {

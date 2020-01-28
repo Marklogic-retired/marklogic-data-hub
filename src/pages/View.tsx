@@ -43,11 +43,13 @@ const View: React.FC = () => {
         method: 'POST',
         url: `/datahub/v2/search`,
         data: {
-          query: '',
-          entityNames: allEntities,
+          query: {
+            searchStr: '',
+            entityNames: allEntities,
+            facets: {}
+          },
           start: 1,
-          pageLength: 10,
-          facets: {}
+          pageLength: 1,
         }
       });
       if (componentIsMounted.current) {
@@ -73,6 +75,8 @@ const View: React.FC = () => {
   }
 
   useEffect(() => {
+    console.log('view mounted user', user);
+    console.log('view mounted entities', entities);
     if (!user.error.type) {
       getEntityModel();
     }

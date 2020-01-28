@@ -1,18 +1,22 @@
 interface UserPreferences {
-  query: string,
-  entityNames: string[],
+  query: {
+    searchStr: string,
+    entityNames: string[],
+    facets: any
+  },
   pageLength: number,
-  facets: any,
   tableView: boolean,
   pageRoute: string,
   resultTableColumns: any[]
 }
 
 export const defaultUserPreferences = {
-  query: '',
-  entityNames: [],
+  query: {
+    searchStr: '',
+    entityNames: [],
+    facets: {}
+  },
   pageLength: 20,
-  facets: {},
   tableView: true,
   pageRoute: '/view',
   resultTableColumns: []

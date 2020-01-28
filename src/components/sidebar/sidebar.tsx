@@ -37,10 +37,12 @@ const Sidebar:React.FC<Props> = (props) => {
   useEffect(() => {
     if (props.facets) {
       const parsedFacets = facetParser(props.facets);
+      console.log('parsed Facets', parsedFacets)
       const filteredHubFacets = hubPropertiesConfig.map( hubFacet => {
         let hubFacetValues = parsedFacets.find(facet => facet.facetName === hubFacet.facetName);
         return hubFacetValues && {...hubFacet, ...hubFacetValues}
       });
+      console.log('filtered hub Facets', filteredHubFacets)
       setHubFacets(filteredHubFacets);
       if (props.selectedEntities.length && Object.entries(searchOptions.searchFacets).length === 0) {
         const entityDef = props.entityDefArray.find(entity => entity.name === props.selectedEntities[0]);
@@ -48,7 +50,7 @@ const Sidebar:React.FC<Props> = (props) => {
           let entityFacetValues = parsedFacets.find(facet => facet.facetName === rangeIndex);
           return entityFacetValues ? {...entityFacetValues} : false;
         });
- 
+        console.log('filtered entity Facets', filteredEntityFacets)
         setEntityFacets(filteredEntityFacets ? filteredEntityFacets.filter( item => item !== false) : []);
       } else if (props.selectedEntities.length && !entityFacets.length) {
         const entityDef = props.entityDefArray.find(entity => entity.name === props.selectedEntities[0]);
@@ -96,9 +98,15 @@ const Sidebar:React.FC<Props> = (props) => {
           if (constraint === 'createdOnRange') {
             selectedFacets.push({ constraint, facet: searchOptions.searchFacets[constraint] })
           } else {
-            searchOptions.searchFacets[constraint].map(facet => {
-              selectedFacets.push({ constraint, facet });
-            });
+            let datatype = searchOptions.searchFacets[constraint].dataType;
+            if (datatype === 'string') {
+              searchOptions.searchFacets[constraint]['stringValues'].map(facet => {
+                selectedFacets.push({ constraint, facet });
+              });
+            } else if (datatype === 'decimal') {
+              // TODO add support for other data types
+            }
+
           }
           setSelectedFacets(selectedFacets);
         }
@@ -130,12 +138,44 @@ const Sidebar:React.FC<Props> = (props) => {
   }
 
 
-  const updateSelectedFacets = (constraint: string, vals: string[]) => {
+  const updateSelectedFacets = (constraint: string, vals: string[], datatype: string) => {
     let facets = {...allSelectedFacets};
+    let type = '';
+    let valueKey = '';
+
+    // TODO add support for all data types
+    switch (datatype) {
+      case 'xs:string': 
+      case 'collection': {
+        type = 'string';
+        valueKey = 'stringValues';
+        break;
+      }
+      case 'xs:integer': {
+        type = 'integer';
+        valueKey = 'rangeValues';
+        // create data model for int
+        break;
+      }
+      case 'xs:decimal': {
+        type = 'decimal';
+        valueKey = 'rangeValues';
+        // create data model
+        break;
+      }
+      default: 
+      break;
+    }
+
     if (vals.length > 0) {
-      facets = {...facets, [constraint]: vals};
+      facets = {
+        ...facets, 
+        [constraint]: {
+          dataType: type,
+          [valueKey]: vals
+        } 
+      };
     } else {
-      //facets = { ...searchOptions.searchFacets };
       delete facets[constraint];
     }
     setAllSelectedFacets(facets);
@@ -143,6 +183,16 @@ const Sidebar:React.FC<Props> = (props) => {
 
   const applyAllFacets = () => {
     setAllSearchFacets(allSelectedFacets);
+  }
+
+  const addFacetValues = (constraint: string, vals: string[], datatype: string, facetCategory: string) => {
+    let facets = {...allSelectedFacets};
+
+    console.log('update constraint', constraint);
+    console.log('update vals', vals);
+    console.log('updated facets', facets);
+    console.log('datatype', datatype);
+    console.log('facetCategory', facetCategory);
   }
 
   return (
@@ -166,9 +216,11 @@ const Sidebar:React.FC<Props> = (props) => {
                   key={facet.facetName}
                   tooltip=""
                   facetType={facet.type}
+                  facetCategory="entity"
                   selectedEntity={props.selectedEntities}
                   updateSelectedFacets={updateSelectedFacets}
                   applyAllFacets={applyAllFacets}
+                  addFacetValues={addFacetValues}
                 />
               )
             }) :
@@ -204,10 +256,12 @@ const Sidebar:React.FC<Props> = (props) => {
                 key={facet.facetName}
                 tooltip={facet.tooltip}
                 facetType={facet.type}
+                facetCategory="hub"
                 selectedEntity={props.selectedEntities}
                 updateSelectedFacets={updateSelectedFacets}
                 applyAllFacets={applyAllFacets}
-          />
+                addFacetValues={addFacetValues}
+             />
             )
               })}
         </Panel>
