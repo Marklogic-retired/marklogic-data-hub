@@ -57,6 +57,14 @@ public class DhsDeployer extends LoggingObject {
      * @param hubConfig
      */
     protected void prepareAppConfigForDeployingToDhs(HubConfig hubConfig) {
+        /**
+         * It's likely the user has this set for deploying to DHS. But in case the user wants to test this on an
+         * on-premise installation, it may not seem intuitive to set it to true. But it needs to be set to true so that
+         * DHF knows to e.g. remove certain properties when updating databases to avoid privilege errors. The property
+         * should arguably be interpreted as "is the user restricted" as opposed to "is the environment provisioned".
+         */
+        hubConfig.setIsProvisionedEnvironment(true);
+
         setKnownValuesForDhsDeployment(hubConfig);
 
         AppConfig appConfig = hubConfig.getAppConfig();

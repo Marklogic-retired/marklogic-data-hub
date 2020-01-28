@@ -337,6 +337,8 @@ public interface HubConfig {
      */
     Boolean getIsProvisionedEnvironment();
 
+    void setIsProvisionedEnvironment(boolean isProvisionedEnvironment);
+
     /**
      * Returns the path for the custom forests definition
      * @return path where the custom forests are as string
