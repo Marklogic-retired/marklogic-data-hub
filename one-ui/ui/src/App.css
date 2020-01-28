@@ -5,6 +5,10 @@ body {
 	font-family: 'Helvetica Neue';
 }
 
+.ant-layout-header {
+    background-color: #031529;
+}
+
 /* Ensure footer is pinned to bottom of browser or end of content */
 #root {
     height: 100%;
