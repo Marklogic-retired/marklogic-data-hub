@@ -20,6 +20,7 @@ import com.marklogic.hub.step.StepDefinition;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Path;
 import java.util.Map;
 
@@ -252,6 +253,11 @@ public interface HubProject {
      * Exports the project content to disk
      */
     void exportProject(File location);
+
+    /**
+     * Exports the project content to output stream
+     */
+    void exportProject(OutputStream outputStream);
 
     /**
      * Returns the name of the project
