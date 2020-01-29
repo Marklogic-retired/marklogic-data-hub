@@ -218,15 +218,12 @@ const Sidebar: React.FC<Props> = (props) => {
   }
 
   const onNumberFacetChange = (datatype, facet, value) => {
-    console.log('onSliderChange')
     let updateFacets = { ...allSelectedFacets };
     if (value.length > 1) {
       updateFacets = { ...updateFacets, [facet]: { dataType: datatype, rangeValues: { lowerBound: value[0].toString(), upperBound: value[1].toString() } } }
-    }
+    } 
     setAllSelectedFacets(updateFacets);
     console.log('updateFacets',updateFacets)
-
-    // setAllSearchFacets(updateFacets);
   }
 
   return (

@@ -13,8 +13,11 @@ const SelectedFacets: React.FC<Props> = (props) => {
     clearAllFacets,
     clearFacet,
     searchOptions,
-    clearDateFacet
+    clearDateFacet,
+    clearRangeFacet
    } = useContext(SearchContext);
+
+   console.log('selectedFacets2',props.selectedFacets)
 
   return (
     <div id='selected-facets' data-cy='selected-facet-block'
@@ -33,6 +36,8 @@ const SelectedFacets: React.FC<Props> = (props) => {
         </MlButton>
       }
       { props.selectedFacets.map((item, index) => {
+                  {console.log('item',item)}
+
         if (item.constraint === 'createdOnRange') {
           return (
             <MlButton
@@ -45,6 +50,19 @@ const SelectedFacets: React.FC<Props> = (props) => {
               <Icon type='close'/>
               {item.facet.join(' ~ ')}
             </MlButton>
+          )
+        } else if (item.rangeValues) {
+          return (
+            <Button 
+              size="small"
+              // className={styles.dateFacet} 
+              key={index}
+              onClick={()=> clearRangeFacet(item.constraint)}
+              data-cy='clear-range-facet'
+            >
+              <Icon type='close'/>
+              {item.constraint + ' ' + item.rangeValues.lowerBound + ' - ' + item.rangeValues.upperBound}
+            </Button>
           )
         }
         return (
