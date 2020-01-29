@@ -44,11 +44,11 @@ const Sidebar:React.FC<Props> = (props) => {
       setHubFacets(filteredHubFacets);
       if (props.selectedEntities.length) {
         const entityDef = props.entityDefArray.find(entity => entity.name === props.selectedEntities[0]);
-        const filteredEntityFacets = entityDef.rangeIndex.length && entityDef.rangeIndex.map( rangeIndex => {
+        const newEntityFacets = entityDef.rangeIndex.length && entityDef.rangeIndex.map( rangeIndex => {
           let entityFacetValues = parsedFacets.find(facet => facet.facetName === rangeIndex);
           return entityFacetValues ? {...entityFacetValues} : false;
         });
-        setEntityFacets(filteredEntityFacets ? filteredEntityFacets.filter( item => item !== false) : []);
+        setEntityFacets(newEntityFacets ? newEntityFacets.filter( item => item !== false) : []);
       } 
       if (Object.entries(searchOptions.searchFacets).length !== 0) {
         let selectedFacets: any[] = [];
@@ -145,8 +145,7 @@ const Sidebar:React.FC<Props> = (props) => {
     let newAllSelectedfacets = {...allSelectedFacets};
     let valueKey = 'stringValues';
     // TODO add support for non string facets
-    if (dataType === 'string') {
-      console.log('data type', dataType);
+    if (dataType === 'xs:string') {
       valueKey = 'stringValues';
     }
 
@@ -203,7 +202,7 @@ const Sidebar:React.FC<Props> = (props) => {
           }
         }
       }
-      setEntityFacets(newHubFacets);
+      setHubFacets(newHubFacets);
     }
     setAllSelectedFacets(newAllSelectedfacets);
   }

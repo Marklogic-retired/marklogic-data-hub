@@ -31,6 +31,8 @@ const Facet: React.FC<Props> = (props) => {
   const [showApply, toggleApply] = useState(false);
   const [checked, setChecked] = useState<string[]>([]);
 
+  let checkedFacets: any[] = [];
+
   useEffect(() => {
     if (Object.entries(searchOptions.searchFacets).length !== 0 && searchOptions.searchFacets.hasOwnProperty(props.constraint)) {
       for (let facet in searchOptions.searchFacets) {
@@ -42,13 +44,12 @@ const Facet: React.FC<Props> = (props) => {
          
           // TODO add support for non string facets
           const checkedArray = searchOptions.searchFacets[facet][valueType];
-
           if (checkedArray && checkedArray.length) {
             // checking if arrays are equivalent
-            if (JSON.stringify(checked) === JSON.stringify([...checkedArray])) {
+            if (JSON.stringify(checked) === JSON.stringify(checkedArray)) {
               toggleApply(false);
             } else {
-              setChecked([...searchOptions.searchFacets[facet][valueType]]);
+              setChecked(checkedArray);
             }
           }
         }
@@ -110,7 +111,15 @@ const Facet: React.FC<Props> = (props) => {
     setShowFacets(showNumber);
   }
 
-  const values = props.facetValues.length && props.facetValues.slice(0, showFacets).map((facet, index) =>
+  if (props.facetValues.length === 0 && checked.length > 0 ) {
+      checkedFacets = checked.map(item => {
+      return {name: item, count: 0, value: item}
+    });
+  } else if (props.facetValues.length > 0) {
+    checkedFacets = props.facetValues;
+  }
+
+  const renderValues = checkedFacets.slice(0, showFacets).map((facet, index) =>
     <div className={styles.checkContainer} key={index} data-cy={stringConverter(props.name) + "-facet-item"}>
       <Checkbox
         value={facet.value}
@@ -122,9 +131,9 @@ const Facet: React.FC<Props> = (props) => {
         <Tooltip title={facet.value}>{facet.value}</Tooltip>
       </Checkbox>
       <div className={styles.count}
-           data-cy={stringConverter(props.name) + "-facet-item-count"}>{numberConverter(facet.count)}</div>
+          data-cy={stringConverter(props.name) + "-facet-item-count"}>{numberConverter(facet.count)}</div>
     </div>
-  );
+    );
 
   return (
     <div className={styles.facetContainer} data-cy={stringConverter(props.name) + "-facet-block"}>
@@ -148,7 +157,7 @@ const Facet: React.FC<Props> = (props) => {
         </div>
       </div>
       <div style={{display: (show) ? 'block' : 'none'}}>
-        {values !== 0 && values}
+        {renderValues}
         <div
           className={styles.more}
           style={{display: (props.facetValues.length > SHOW_MINIMUM) ? 'block' : 'none'}}
