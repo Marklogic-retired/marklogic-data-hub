@@ -107,7 +107,7 @@ export class MappingComponent implements OnInit {
   ) {}
 
   getMapName(): string {
-    return this.flow.name + '-' + this.step.name;
+    return this.step.options.mapping.name || this.flow.name + '-' + this.step.name;
   }
 
   ngOnInit() {
