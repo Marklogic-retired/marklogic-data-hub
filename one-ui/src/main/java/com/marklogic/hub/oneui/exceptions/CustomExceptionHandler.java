@@ -17,6 +17,7 @@ package com.marklogic.hub.oneui.exceptions;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.impl.FailedRequest;
@@ -52,6 +53,18 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         errJson.put("code", httpClientErrorException.getRawStatusCode());
         errJson.put("message", httpClientErrorException.getMessage());
         return new ResponseEntity<>(errJson, HttpStatus.valueOf(httpClientErrorException.getRawStatusCode()));
+    }
+    @ExceptionHandler(ForbiddenException.class)
+    protected ResponseEntity<JsonNode> handleForbiddenExceptionRequest(
+        ForbiddenException exception) {
+        ObjectNode errJson = mapper.createObjectNode();
+        errJson.put("code", 403);
+        errJson.put("message", exception.getMessage());
+        if (exception.getRequiredRoles() != null && exception.getRequiredRoles().size() > 0) {
+            ArrayNode requiredRolesArray = errJson.putArray("requiredRoles");
+            exception.getRequiredRoles().forEach(requiredRolesArray::add);
+        }
+        return new ResponseEntity<>(errJson, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(Exception.class)
