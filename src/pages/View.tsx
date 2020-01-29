@@ -43,11 +43,13 @@ const View: React.FC = () => {
         method: 'POST',
         url: `/datahub/v2/search`,
         data: {
-          query: '',
-          entityNames: allEntities,
+          query: {
+            searchStr: '',
+            entityNames: allEntities,
+            facets: {}
+          },
           start: 1,
-          pageLength: 10,
-          facets: {}
+          pageLength: 1,
         }
       });
       if (componentIsMounted.current) {
