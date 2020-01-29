@@ -1,8 +1,10 @@
-import { Modal, Form, Input, Button, Tooltip, Icon, Progress, Upload, Select, Collapse, Switch } from "antd";
+import { Modal, Form, Input, Button, Tooltip, Icon, Progress, Upload, Select, Collapse, Switch, message } from "antd";
 import React, { useState, useEffect } from "react";
 import styles from './load-data-settings-dialog.module.scss';
-import {NewLoadTooltips} from '../../../config/tooltips.config';
+import { NewLoadTooltips } from '../../../config/tooltips.config';
 import Axios from "axios";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCopy } from '@fortawesome/free-regular-svg-icons';
 
 import { RolesContext } from "../../../util/roles";
 
@@ -12,32 +14,123 @@ import { RolesContext } from "../../../util/roles";
 
 const LoadDataSettingsDialog = (props) => {
 
-    const [tgtDatabase, setgtDatabase] = useState(props.stepData && props.stepData != {} ? props.stepData.targetFormat : 'data-hub-STAGING');
-    const [isTgtDatabaseTouched, setTgtDatabaseTouched] = useState(false);
-    const [targetPermissions,setTargetPermissions] = useState('rest-reader,read,rest-writer,update');
-    
-    const tgtDatabaseOptions = {
-      'data-hub-STAGING': 'data-hub-STAGING',
-      'data-hub-FINAL': 'data-hub-FINAL'
+  const [tgtDatabase, setgtDatabase] = useState(props.stepData && props.stepData != {} ? 'data-hub-STAGING' : 'data-hub-STAGING');
+  const [isTgtDatabaseTouched, setTgtDatabaseTouched] = useState(false);
+  const [targetPermissions, setTargetPermissions] = useState('rest-reader,read,rest-writer,update');
+  const [provGranularity, setProvGranularity] = useState('coarse-grained');
+  const [module, setModule] = useState('');
+  const [cHparameters, setCHparameters] = useState(JSON.stringify({}, null, 4));
+  const [user, setUser] = useState('');
+  const [runBefore, setRunBefore] = useState(false);
+  const [mlcpCommand, setMLCPCommand] = useState('');
+  const [toExpand, setToExpand] = useState(false);
+  const tgtDatabaseOptions = {
+    'data-hub-STAGING': 'data-hub-STAGING',
+    'data-hub-FINAL': 'data-hub-FINAL'
   }
   const provGranOptions = ['coarse-grained', 'OFF'];
 
-    const onCancel = () => {
-        console.log('On cancel called') 
-        props.setOpenLoadDataSettings(false)
-    }
-    
-    const onOk = () => {
-        console.log('On Ok called')
-        props.setOpenLoadDataSettings(false)
+  let mlcp = {};
+
+  useEffect(() => {
+    return () => {
+      updateMlcpCommand();
+    };
+  })
+
+
+
+  const onCancel = () => {
+    console.log('On cancel called')
+    props.setOpenLoadDataSettings(false)
+  }
+
+  const onOk = () => {
+    console.log('On Ok called')
+    props.setOpenLoadDataSettings(false)
+  }
+
+  const handleSubmit = () => {
+    console.log('Save button called')
+    //props.setOpenLoadDataSettings(false)
+  }
+  const handleChange = (event) => {
+    if (event.target.id === 'name') {
+      if (event.target.value === ' ') {
+        //setStepNameTouched(false);
+      }
+      else {
+        //setStepNameTouched(true);
+        //setStepName(event.target.value);
+      }
     }
 
-    const handleSubmit = () => {
-        console.log('Save button called')
-        //props.setOpenLoadDataSettings(false)
+    if (event.target.id === 'targetPermissions') {
+      setTargetPermissions(event.target.value)
     }
 
-    const handleTgtDatabase = (value) => {
+    if (event.target.id === 'module') {
+      setModule(event.target.value)
+    }
+
+    if (event.target.id === 'cHparameters') {
+      setCHparameters(event.target.value)
+    }
+
+    if (event.target.id === 'user') {
+      setUser(event.target.value)
+    }
+
+  }
+
+
+  const handleTgtDatabase = (value) => {
+
+    if (value === ' ') {
+      setTgtDatabaseTouched(false);
+    }
+    else {
+      setTgtDatabaseTouched(true);
+      setgtDatabase(value);
+    }
+  }
+
+  const handleProvGranularity = (value) => {
+
+    if (value === ' ') {
+      //setTgtDatabaseTouched(false);
+    }
+    else {
+      //setTgtDatabaseTouched(true);
+      setProvGranularity(value);
+    }
+  }
+
+  const formItemLayout = {
+    labelCol: {
+      xs: { span: 24 },
+      sm: { span: 7 },
+    },
+    wrapperCol: {
+      xs: { span: 24 },
+      sm: { span: 15 },
+    },
+  };
+
+  const handleRunBefore = (checked, event) => {
+    if (checked) {
+      setRunBefore(true);
+    } else {
+      setRunBefore(false);
+    }
+  }
+
+  //Build MLCP Command from the existing fields
+  const buildMlcpOptions = () => {
+    const options: Array<any> = [];
+
+    addMlcpOption(options, 'import', null, false, false);
+    addMlcpOption(options, 'mode', 'local', false, true);
 
     if (event.target.id === 'user') {
       setUser(event.target.value);
@@ -116,163 +209,178 @@ const LoadDataSettingsDialog = (props) => {
     } else {
       setToExpand(false);
     }
+  }
 
-    const formItemLayout = {
-        labelCol: {
-          xs: { span: 24 },
-          sm: { span: 7 },
-        },
-        wrapperCol: {
-          xs: { span: 24 },
-          sm: { span: 15 },
-        },
-      };
+  const customHookProperties = <div><Form.Item label={<span className={styles.cHItemLabel}>
+    Module:&nbsp;
+  <Tooltip title={NewLoadTooltips.module}>
+      <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+    </Tooltip>
+    &nbsp;
+</span>} labelAlign="left"
+    className={styles.formItem}>
+    <Input
+      id="module"
+      placeholder="Enter module"
+      value={module}
+      onChange={handleChange}
+    />
+  </Form.Item>
+    <Form.Item label={<span className={styles.cHItemLabel}>
+      Parameters:&nbsp;
+  <Tooltip title={NewLoadTooltips.parameters}>
+        <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+      </Tooltip>
+      &nbsp;
+</span>} labelAlign="left"
+      className={styles.formItem}>
+      <Input
+        id="cHparameters"
+        placeholder="Enter parameters"
+        value={cHparameters}
+        onChange={handleChange}
+      />
+    </Form.Item>
+    <Form.Item label={<span className={styles.cHItemLabel}>
+      User:&nbsp;
+  <Tooltip title={NewLoadTooltips.user}>
+        <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+      </Tooltip>
+      &nbsp;
+</span>} labelAlign="left"
+      className={styles.formItem}>
+      <Input
+        id="user"
+        placeholder="Enter user information"
+        value={user}
+        onChange={handleChange}
+      />
+    </Form.Item>
+    <Form.Item label={<span className={styles.cHItemLabel}>
+      RunBefore:&nbsp;
+  <Tooltip title={NewLoadTooltips.runbefore}>
+        <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+      </Tooltip>
+      &nbsp;
+</span>} labelAlign="left"
+      className={styles.formItem}>
+      <Switch checkedChildren="ON" unCheckedChildren="OFF" onChange={handleRunBefore} />
+    </Form.Item></div>
 
 
-      const { Panel } = Collapse;
-      const tgtDbOptions = Object.keys(tgtDatabaseOptions).map(d => <Select.Option key={tgtDatabaseOptions[d]}>{d}</Select.Option>);
-    return (
-        <Modal
-        visible={props.openLoadDataSettings}
-        title={null}
-        width="700px"
-        onCancel={() => onCancel()}
-        onOk={() => onOk()}
-        okText="Save"
-        className={styles.SettingsModal}
-        footer={null}>
-        <p className={styles.title}>Load Data Settings</p>
-        <br />
-        <div className={styles.newDataLoadForm}>
-            <Form {...formItemLayout} onSubmit={handleSubmit} colon={false}>
-            <Form.Item label={<span>
-          Target Database:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
+  const { Panel } = Collapse;
+  const tgtDbOptions = Object.keys(tgtDatabaseOptions).map(d => <Select.Option key={tgtDatabaseOptions[d]}>{d}</Select.Option>);
+  const provGranOpt = provGranOptions.map(d => <Select.Option key={d}>{d}</Select.Option>);
+  return (
+    <Modal
+      visible={props.openLoadDataSettings}
+      title={null}
+      width="700px"
+      onCancel={() => onCancel()}
+      onOk={() => onOk()}
+      okText="Save"
+      className={styles.SettingsModal}
+      footer={null}>
+      <p className={styles.title}>Load Data Settings</p>
+      <br />
+      <div className={styles.newDataLoadForm}>
+        <Form {...formItemLayout} onSubmit={handleSubmit} colon={false}>
+          <Form.Item label={<span>
+            Target Database:&nbsp;&nbsp;
               <Tooltip title={NewLoadTooltips.targetDatabase}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
-          &nbsp;
-            </span>} labelAlign="left">
-          <Select
-            id="targetDatabase"
-            placeholder="Enter target database"
-            value={tgtDatabase}
-            onChange={handleTgtDatabase}
-            >
-            {tgtDbOptions}
-          </Select>
-        </Form.Item>
-        <Form.Item label={<span>
-          Additional Collections:&nbsp;
-              <Tooltip title={NewLoadTooltips.additonalCollections}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
-          &nbsp;
-            </span>} labelAlign="left">
+              <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+            </Tooltip>
+            &nbsp;
+            </span>} labelAlign="left"
+            className={styles.formItem}>
             <Select
-                mode="multiple"
-                style={{ width: '100%' }}
-                placeholder="Please select"
-                defaultValue={['Collection1', 'Collection2']}
-                // onChange={handleChange}
-                >
-            
+              id="targetDatabase"
+              placeholder="Enter target database"
+              value={tgtDatabase}
+              onChange={handleTgtDatabase}
+              className={styles.formItem}>
+              {tgtDbOptions}
             </Select>
-        </Form.Item>
-        <Form.Item label={<span>
-          Target Permissions:&nbsp;
+          </Form.Item>
+          <Form.Item label={<span>
+            Additional Collections:&nbsp;
+              <Tooltip title={NewLoadTooltips.additonalCollections}>
+              <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+            </Tooltip>
+            &nbsp;
+            </span>} labelAlign="left" className={styles.formItem}>
+            <Select
+              mode="tags"
+              style={{ width: '100%' }}
+              placeholder="Please select"
+              defaultValue={['Collection1', 'Collection2']}
+            // onChange={handleChange}
+            >
+
+            </Select>
+          </Form.Item>
+          <Form.Item label={<span>
+            Target Permissions:&nbsp;
               <Tooltip title={NewLoadTooltips.targetPermissions}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
-          &nbsp;
-            </span>} labelAlign="left">
-          <Input
-            id="targetPermissions"
-            placeholder="Enter targetPermissions"
-            value={targetPermissions}
-            // onChange={handleChange}
-          />
-        </Form.Item>
-        
-        <Collapse 
-        bordered={false}
-        defaultActiveKey={['1']} className={styles.accordian}>
-        <Panel header="Custom Hook" key="1" className={styles.accordianPanel}>
-        <Form.Item label={<span>
-          Module:&nbsp;
-              <Tooltip title={NewLoadTooltips.module}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
-          &nbsp;
-            </span>} labelAlign="left">
-          <Input
-            id="module"
-            placeholder="Enter module"
-            // value={description}
-            // onChange={handleChange}
-          />
-        </Form.Item>
-        <Form.Item label={<span>
-          Parameters:&nbsp;
-              <Tooltip title={NewLoadTooltips.parameters}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
-          &nbsp;
-            </span>} labelAlign="left">
-          <Input
-            id="parameters"
-            placeholder="Enter parameters"
-            // value={description}
-            // onChange={handleChange}
-          />
-        </Form.Item>
-        <Form.Item label={<span>
-          User:&nbsp;
-              <Tooltip title={NewLoadTooltips.user}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
-          &nbsp;
-            </span>} labelAlign="left">
-          <Input
-            id="user"
-            placeholder="Enter user information"
-            // value={description}
-            // onChange={handleChange}
-          />
-        </Form.Item>
-        <Form.Item label={<span>
-          RunBefore:&nbsp;
-              <Tooltip title={NewLoadTooltips.runbefore}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
-          &nbsp;
-            </span>} labelAlign="left">
-            <Switch checkedChildren="ON" unCheckedChildren="OFF"  />
-        </Form.Item>
-            </Panel>
-        </Collapse>
-        <Form.Item label={<span>
-          MLCP Command:&nbsp; 
+              <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+            </Tooltip>
+            &nbsp;
+            </span>} labelAlign="left"
+            className={styles.formItem}>
+            <Input
+              id="targetPermissions"
+              placeholder="Enter targetPermissions"
+              value={targetPermissions}
+              onChange={handleChange}
+            />
+          </Form.Item>
+          <Form.Item label={<span>
+            Provenance Granularity:&nbsp;&nbsp;
+              <Tooltip title={NewLoadTooltips.provGranularity}>
+              <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+            </Tooltip>
+            &nbsp;
+            </span>} labelAlign="left"
+            className={styles.formItem}>
+            <Select
+              id="provGranularity"
+              value={provGranularity}
+              onChange={handleProvGranularity}
+            >
+              {provGranOpt}
+            </Select>
+          </Form.Item>
+          <Form.Item label={<span>
+            <span className={styles.cHookLabel} onClick={toggleCustomHook}>Custom Hook</span>&nbsp;&nbsp;
+              <Icon type="right" className={styles.rightArrow} onClick={toggleCustomHook} rotate={toExpand ? 90 : 0} />
+          </span>} labelAlign="left"
+            className={styles.formItem}></Form.Item>
+          {toExpand ? customHookProperties : ''}
+
+          <Form.Item label={<span>
+            MLCP Command:&nbsp;
               <Tooltip title={NewLoadTooltips.mlcpcommand}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
-          <span className={styles.readOnlyLabel}>(Read-only)</span>
-          <br style={{ lineHeight: '1px', width: '0px', marginBottom: '-20px' }} />
-        </span>} labelAlign="left">
-          <p>Example mlcp command</p>
-
-        </Form.Item>
-        <Form.Item className={styles.submitButtonsForm}>
-          <div className={styles.submitButtons}>
-            <Button onClick={() => onCancel()}>Cancel</Button>
-            &nbsp;&nbsp;
-            <Button type="primary" htmlType="submit"  onClick={handleSubmit}>Save</Button>
-          </div>
-        </Form.Item>
+              <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+            </Tooltip>
+            <span className={styles.readOnlyLabel}>(Read-only)</span>
+            <br style={{ lineHeight: '1px', width: '0px', marginBottom: '-20px' }} />
+          </span>} labelAlign="left"
+            className={styles.formItem}>
+            <div className={styles.mlcpCmd}>
+              <p>{mlcpCommand}  <Tooltip title={'Click to copy to the clipboard'} placement="bottom"><i><FontAwesomeIcon icon={faCopy} className={styles.copyIcon} size="2x" onClick={copyToClipboard} /></i></Tooltip></p>
+            </div>
+          </Form.Item>
+          <Form.Item className={styles.submitButtonsForm}>
+            <div className={styles.submitButtons}>
+              <Button onClick={() => onCancel()}>Cancel</Button>
+              &nbsp;&nbsp;
+            <Button type="primary" htmlType="submit" onClick={handleSubmit}>Save</Button>
+            </div>
+          </Form.Item>
         </Form>
-    </div>
-        </Modal>
-
-    );
+      </div>
+    </Modal>
+  );
 }
 
 export default LoadDataSettingsDialog;
