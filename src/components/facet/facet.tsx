@@ -1,6 +1,7 @@
-import React, { useState, useContext, useEffect} from 'react';
-import { Button, Checkbox, Icon, Tooltip } from 'antd';
-import {SearchContext} from '../../util/search-context';
+import React, { useState, useContext, useEffect } from 'react';
+import { Checkbox, Icon, Tooltip } from 'antd';
+import { MlButton } from 'marklogic-ui-library';
+import { SearchContext } from '../../util/search-context';
 import styles from './facet.module.scss';
 import { numberConverter } from '../../util/number-conversion';
 import { stringConverter } from '../../util/string-conversion';
@@ -176,12 +177,12 @@ const Facet: React.FC<Props> = (props) => {
       </div>
       {showApply && (
         <div className={styles.applyButtonContainer}>
-          <Button
-            type="primary"
-            size="small"
-            data-cy={stringConverter(props.name) + "-facet-apply-button"}
-            onClick={() => props.applyAllFacets()}
-          >Apply</Button>
+          <MlButton
+            type="primary" 
+            size="small" 
+            data-cy={stringConverter(props.name) +"-facet-apply-button"}
+            onClick={()=> props.applyAllFacets()}
+          >Apply</MlButton>
         </div>
       )}
     </div>
