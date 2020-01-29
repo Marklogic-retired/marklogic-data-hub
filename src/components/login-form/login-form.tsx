@@ -1,5 +1,6 @@
 import React, { useContext, useState } from 'react';
-import { Form, Icon, Input, Button, Typography, Spin } from 'antd';
+import { Form, Icon, Input, Typography, Spin } from 'antd';
+import { MlButton } from 'marklogic-ui-library';
 import axios from 'axios';
 import styles from './login-form.module.scss';
 import { UserContext } from '../../util/user-context';
@@ -93,9 +94,9 @@ const LoginForm: React.FC = () => {
         <a className={styles.forgot} href="" data-cy="forgot">
           Forgot password?
         </a>
-        <Button id="submit" type="primary" disabled={isLoading} htmlType="submit" className={styles.loginButton}>
+        <MlButton id="submit" type="primary" disabled={isLoading} htmlType="submit" className={styles.loginButton}>
           Submit
-        </Button>
+        </MlButton>
         {isLoading && <Spin  style={{ marginLeft: '7px' }} />}
         <Text type="danger" data-cy="invalid-credentials">{errorResponse}</Text>
       </Form.Item>

@@ -73,9 +73,9 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       ...searchOptions,
       start: 1,
       pageNumber: 1,
-      query: values.query,
-      entityNames: values.entityNames,
-      searchFacets: values.facets,
+      query: values.query.searchStr,
+      entityNames: values.query.entityNames,
+      searchFacets: values.query.facets,
       pageLength: values.pageLength
     });  
   }
@@ -134,24 +134,14 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
   }
 
   const setEntity = (option: string) => {
-    if (option) {
-      setSearchOptions({ 
-        ...searchOptions,
-        start: 1,
-        searchFacets: {},
-        entityNames: [option],
-        pageLength: searchOptions.pageSize
-      });
-    } else {
-      setSearchOptions({
-        ...searchOptions,
-        start: 1,
-        searchFacets: {},
-        entityNames: [],
-        pageNumber: 1,
-        pageLength: searchOptions.pageSize
-      });
-    }
+    let entityOptions = option ? [option] : [];
+    setSearchOptions({ 
+      ...searchOptions,
+      start: 1,
+      searchFacets: {},
+      entityNames: entityOptions,
+      pageLength: searchOptions.pageSize
+    });
   }
 
   const setEntityClearQuery = (option: string) => {
@@ -181,8 +171,12 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
 
   const clearFacet = (constraint: string, val: string) => {
     let facets = searchOptions.searchFacets;
-    if (facets[constraint].length > 1) {
-      facets[constraint] = facets[constraint].filter( option => option !== val );
+    let valueKey = '';
+    if (facets[constraint].dataType === 'xs:string' || facets[constraint].dataType === 'string') {
+      valueKey = 'stringValues';
+    }
+    if (facets[constraint][valueKey].length > 1) {
+      facets[constraint][valueKey] = facets[constraint][valueKey].filter( option => option !== val );
     } else {
       delete facets[constraint]
     }

@@ -33,3 +33,9 @@
 .react-resizable > .ant-table-header-column {
   cursor: move; 
 }
+
+.ant-checkbox-group-item {
+  display: block;
+  margin-right: 0;
+  padding: 2px;
+}

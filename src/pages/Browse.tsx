@@ -63,22 +63,27 @@ const Browse: React.FC<Props> = ({ location }) => {
   const getSearchResults = async (allEntities: string[]) => {
     try {
       let preferencesObject = {
-        query: searchOptions.query,
-        entityNames: searchOptions.entityNames,
-        pageLength: searchOptions.pageLength,
-        facets: searchOptions.searchFacets
+        query: {
+          searchStr: searchOptions.query,
+          entityNames: searchOptions.entityNames,
+          facets: searchOptions.searchFacets
+        },
+        pageLength: searchOptions.pageLength
       }
+
       updateUserPreferences(user.name, preferencesObject);
       setIsLoading(true);
       const response = await axios({
         method: 'POST',
         url: `/datahub/v2/search`,
         data: {
-          query: searchOptions.query,
-          entityNames: searchOptions.entityNames.length ? searchOptions.entityNames : allEntities,
+          query: {
+            searchStr: searchOptions.query,
+            entityNames: searchOptions.entityNames.length ? searchOptions.entityNames : allEntities,
+            facets: searchOptions.searchFacets,
+          },
           start: searchOptions.start,
           pageLength: searchOptions.pageLength,
-          facets: searchOptions.searchFacets,
         }
       });
       if (componentIsMounted.current) {

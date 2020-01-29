@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Collapse, Icon, Button, DatePicker, Tooltip } from 'antd';
+import { Collapse, Icon, DatePicker, Tooltip } from 'antd';
+import { MlButton } from 'marklogic-ui-library';
 import moment from 'moment';
 import Facet from '../facet/facet';
 import SelectedFacets from '../selected-facets/selected-facets';
@@ -42,63 +43,30 @@ const Sidebar:React.FC<Props> = (props) => {
         return hubFacetValues && {...hubFacet, ...hubFacetValues}
       });
       setHubFacets(filteredHubFacets);
-      if (props.selectedEntities.length && Object.entries(searchOptions.searchFacets).length === 0) {
+      if (props.selectedEntities.length) {
         const entityDef = props.entityDefArray.find(entity => entity.name === props.selectedEntities[0]);
-        const filteredEntityFacets = entityDef.rangeIndex.length && entityDef.rangeIndex.map( rangeIndex => {
+        const newEntityFacets = entityDef.rangeIndex.length && entityDef.rangeIndex.map( rangeIndex => {
           let entityFacetValues = parsedFacets.find(facet => facet.facetName === rangeIndex);
           return entityFacetValues ? {...entityFacetValues} : false;
         });
- 
-        setEntityFacets(filteredEntityFacets ? filteredEntityFacets.filter( item => item !== false) : []);
-      } else if (props.selectedEntities.length && !entityFacets.length) {
-        const entityDef = props.entityDefArray.find(entity => entity.name === props.selectedEntities[0]);
-        const filteredEntityFacets = entityDef.rangeIndex.length && entityDef.rangeIndex.map( rangeIndex => {
-          let entityFacetValues = parsedFacets.find(facet => facet.facetName === rangeIndex);
-          return {...entityFacetValues}
-        });
-
-        setEntityFacets(filteredEntityFacets);
-      } else {
-        // update counts for the entity facets by setting all facet counts to 0 initially
-        let updatedEntityFacetCounts: any[] = entityFacets.map( facet => {
-          facet.facetValues.forEach( facetValue => {
-            facetValue.count = 0;
-          });
-          return facet;
-        });
-        entityFacets.forEach( entityFacet => {
-          let updatedFacet = parsedFacets.find(facet => facet.facetName === entityFacet.facetName);
-          if (updatedFacet.facetValues.length) {
-            updatedFacet.facetValues.forEach( facetValue => {
-              let currentFacet = entityFacet.facetValues.find( entFacet => entFacet.name === facetValue.name);
-              if (currentFacet) {
-                // update facet counts
-                currentFacet.count = facetValue.count;
-                let index = updatedEntityFacetCounts.findIndex(facet => {
-                  return facet.facetName === entityFacet.facetName
-                });
-                // find facetValue index and update it to current facet
-                let facet = updatedEntityFacetCounts[index];
-                let updateIndex = facet.facetValues.findIndex( facVal => facVal.name === currentFacet.name);
-                facet.facetValues[updateIndex] = currentFacet;
-                // sort count after updating the count
-                facet.facetValues.sort((a, b) => (a.count < b.count) ? 1 : -1)
-              }
-            });
-          }
-        });
-        setEntityFacets(updatedEntityFacetCounts);
-      }
-
+        setEntityFacets(newEntityFacets ? newEntityFacets.filter( item => item !== false) : []);
+      } 
       if (Object.entries(searchOptions.searchFacets).length !== 0) {
         let selectedFacets: any[] = [];
         for( let constraint in searchOptions.searchFacets) {
+          // TODO fix the date picker
           if (constraint === 'createdOnRange') {
-            selectedFacets.push({ constraint, facet: searchOptions.searchFacets[constraint] })
+            selectedFacets.push({ constraint, facet: searchOptions.searchFacets[constraint]['rangeValues'] })
           } else {
-            searchOptions.searchFacets[constraint].map(facet => {
-              selectedFacets.push({ constraint, facet });
-            });
+            let datatype = searchOptions.searchFacets[constraint].dataType;
+            if (datatype === 'xs:string') {
+              searchOptions.searchFacets[constraint]['stringValues'].map(facet => {
+                selectedFacets.push({ constraint, facet });
+              });
+            } else if (datatype === 'xs:decimal') {
+              // TODO add support for other data types
+            }
+
           }
           setSelectedFacets(selectedFacets);
         }
@@ -129,12 +97,42 @@ const Sidebar:React.FC<Props> = (props) => {
     setAllSelectedFacets(updateFacets);
   }
 
-  const updateSelectedFacets = (constraint: string, vals: string[]) => {
+
+  const updateSelectedFacets = (constraint: string, vals: string[], datatype: string) => {
     let facets = {...allSelectedFacets};
+    let type = '';
+    let valueKey = '';
+    // TODO add support for all data types
+    switch (datatype) {
+      case 'xs:string': 
+      case 'collection': {
+        type = 'xs:string';
+        valueKey = 'stringValues';
+        break;
+      }
+      case 'xs:integer': {
+        type = 'xs:integer';
+        valueKey = 'rangeValues';
+        break;
+      }
+      case 'xs:decimal': {
+        type = 'xs:decimal';
+        valueKey = 'rangeValues';
+        break;
+      }
+      default: 
+      break;
+    }
+
     if (vals.length > 0) {
-      facets = {...facets, [constraint]: vals};
+      facets = {
+        ...facets, 
+        [constraint]: {
+          dataType: type,
+          [valueKey]: vals
+        } 
+      };
     } else {
-      //facets = { ...searchOptions.searchFacets };
       delete facets[constraint];
     }
     setAllSelectedFacets(facets);
@@ -142,6 +140,72 @@ const Sidebar:React.FC<Props> = (props) => {
 
   const applyAllFacets = () => {
     setAllSearchFacets(allSelectedFacets);
+  }
+
+  const addFacetValues = (constraint: string, vals: string[], dataType: string, facetCategory: string) => {
+    let newAllSelectedfacets = {...allSelectedFacets};
+    let valueKey = 'stringValues';
+    // TODO add support for non string facets
+    if (dataType === 'xs:string') {
+      valueKey = 'stringValues';
+    }
+
+    if (facetCategory === 'entity') {
+      let newEntityFacets = [...entityFacets];
+      let index = newEntityFacets.findIndex(facet => facet.facetName === constraint);
+
+      if (index !== -1) {
+        // add item to facetValues
+        let additionalFacetVals = vals.map(item => {
+          return {name: item, count: 0, value: item}
+        });
+
+        if (!newAllSelectedfacets.hasOwnProperty(constraint)) {
+          // facet value doesn't exist
+          newAllSelectedfacets = {
+            ...newAllSelectedfacets,
+            [constraint]: {
+              dataType,
+              [valueKey]: vals
+            }
+          }
+          // TODO duplicate facet is added if additional facet vals contains
+          // existing value
+          newEntityFacets[index]['facetValues'].unshift(...additionalFacetVals);
+        } else {
+          // add facet vals to selected facet
+          newAllSelectedfacets[constraint][valueKey].push(...vals)
+        }
+        
+      }
+      setEntityFacets(newEntityFacets);
+    } else if (facetCategory === 'hub') {
+      let newHubFacets = [...hubFacets];
+      let index = newHubFacets.findIndex(facet => facet.facetName === constraint);
+
+      if (index !== -1) {
+        // add item to facetValues
+        let additionalFacetVals = vals.map(item => {
+          return {name: item, count: 0, value: item}
+        });
+        if (Object.entries(newAllSelectedfacets).length === 0) {
+          newAllSelectedfacets = {
+            ...newAllSelectedfacets,
+            [constraint]: {
+              dataType,
+              [valueKey]: vals
+            }
+          }
+          // selected facet constraint exists
+          if (!newAllSelectedfacets.hasOwnProperty(constraint)) {
+            // facet value doesn't exist
+            newHubFacets[index]['facetValues'].unshift(...additionalFacetVals)
+          }
+        }
+      }
+      setHubFacets(newHubFacets);
+    }
+    setAllSelectedFacets(newAllSelectedfacets);
   }
 
   return (
@@ -164,8 +228,12 @@ const Sidebar:React.FC<Props> = (props) => {
                   facetValues={facet.facetValues}
                   key={facet.facetName}
                   tooltip=""
+                  facetType={facet.type}
+                  facetCategory="entity"
+                  selectedEntity={props.selectedEntities}
                   updateSelectedFacets={updateSelectedFacets}
                   applyAllFacets={applyAllFacets}
+                  addFacetValues={addFacetValues}
                 />
               )
             }) :
@@ -184,12 +252,12 @@ const Sidebar:React.FC<Props> = (props) => {
           />
           { showApply && (
             <div className={styles.applyButtonContainer}>
-              <Button 
+              <MlButton
                 type="primary" 
                 size="small" 
                 data-cy={"datepicker-apply-button"}
                 onClick={()=> applyAllFacets()}
-              >Apply</Button>
+              >Apply</MlButton>
             </div>
           )}
           { hubFacets.map(facet => {
@@ -200,9 +268,13 @@ const Sidebar:React.FC<Props> = (props) => {
                 facetValues={facet.facetValues}
                 key={facet.facetName}
                 tooltip={facet.tooltip}
+                facetType={facet.type}
+                facetCategory="hub"
+                selectedEntity={props.selectedEntities}
                 updateSelectedFacets={updateSelectedFacets}
                 applyAllFacets={applyAllFacets}
-              />
+                addFacetValues={addFacetValues}
+             />
             )
               })}
         </Panel>
