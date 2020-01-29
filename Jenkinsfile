@@ -534,11 +534,25 @@ pipeline{
             stage('dh5-example'){
                  agent { label 'dhfLinuxAgent'}
                 steps{
+                     sh 'cd $WORKSPACE/data-hub/examples/dh-5-example;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
                      copyRPM 'Release','10.0-3'
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
                         def dockerhost=setupMLDockerCluster 3
-                        sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub/examples/dh-5-example;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew -i hubInit -Ptesting=true;./gradlew -i mlDeploy -Ptesting=true;./gradlew hubRunFlow -PflowName=ingestion_only-flow -Ptesting=true;./gradlew hubRunFlow -PflowName=ingestion_mapping-flow -Ptesting=true;./gradlew hubRunFlow -PflowName=ingestion_mapping_mastering-flow -Ptesting=true;"'
+                        sh '''
+                            docker exec -u builder -i '''+dockerhost+''' /bin/sh -c "export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;\
+                            export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR; \
+                            export M2_HOME=$MAVEN_HOME/bin; \
+                            export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin; \
+                            cd $WORKSPACE/data-hub/examples/dh-5-example; \
+                            rm -rf $GRADLE_USER_HOME/caches; \
+                            ./gradlew -i hubInit -Ptesting=true; \
+                            ./gradlew -i mlDeploy -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
+                            ./gradlew hubRunFlow -PflowName=ingestion_only-flow -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
+                            ./gradlew hubRunFlow -PflowName=ingestion_mapping-flow -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
+                            ./gradlew hubRunFlow -PflowName=ingestion_mapping_mastering-flow -Ptesting=true -PmlUsername=admin -PmlPassword=admin;
+                            "
+                        '''
                         }
                  }
                  post{
@@ -556,11 +570,24 @@ pipeline{
             stage('dhf-customhook'){
                  agent { label 'dhfLinuxAgent'}
                 steps{
+                      sh 'cd $WORKSPACE/data-hub/examples/dhf5-custom-hook;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
                      copyRPM 'Release','10.0-3'
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
                         def dockerhost=setupMLDockerCluster 3
-                        sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub/examples/dhf5-custom-hook;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew -i hubInit -Ptesting=true;./gradlew -i mlDeploy -Ptesting=true;./gradlew hubRunFlow -PflowName=LoadOrders -Ptesting=true;./gradlew hubRunFlow -PflowName=LoadOrders -Ptesting=true;"'
+                        sh '''
+                            docker exec -u builder -i '''+dockerhost+''' /bin/sh -c "export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;\
+                            export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR; \
+                            export M2_HOME=$MAVEN_HOME/bin; \
+                            export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin; \
+                            cd $WORKSPACE/data-hub/examples/dhf5-custom-hook; \
+                            rm -rf $GRADLE_USER_HOME/caches; \
+                            ./gradlew -i hubInit -Ptesting=true; \
+                            ./gradlew -i mlDeploy -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
+                            ./gradlew hubRunFlow -PflowName=LoadOrders -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
+                            ./gradlew hubRunFlow -PflowName=LoadOrders -Ptesting=true -PmlUsername=admin -PmlPassword=admin;
+                            "
+                        '''
                         }
                      }
                  post{
@@ -580,11 +607,26 @@ pipeline{
             stage('mapping-example'){
                  agent { label 'dhfLinuxAgent'}
                 steps{
+                     sh 'cd $WORKSPACE/data-hub/examples/mapping-example;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
                      copyRPM 'Release','10.0-3'
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
                         def dockerhost=setupMLDockerCluster 3
-                        sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub/examples/mapping-example;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew -i hubInit -Ptesting=true;./gradlew -i mlDeploy -Ptesting=true;./gradlew hubRunFlow -PflowName=jsonToJson -Ptesting=true;./gradlew hubRunFlow -PflowName=jsonToXml -Ptesting=true;./gradlew hubRunFlow -PflowName=xmlToJson -Ptesting=true;./gradlew hubRunFlow -PflowName=xmlToXml -Ptesting=true;"'
+                        sh '''
+                            docker exec -u builder -i '''+dockerhost+''' /bin/sh -c "export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;\
+                            export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR; \
+                            export M2_HOME=$MAVEN_HOME/bin; \
+                            export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin; \
+                            cd $WORKSPACE/data-hub/examples/mapping-example; \
+                            rm -rf $GRADLE_USER_HOME/caches; \
+                            ./gradlew -i hubInit -Ptesting=true; \
+                            ./gradlew -i mlDeploy -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
+                            ./gradlew hubRunFlow -PflowName=jsonToJson -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
+                            ./gradlew hubRunFlow -PflowName=jsonToXml -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
+                            ./gradlew hubRunFlow -PflowName=xmlToJson -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
+                            ./gradlew hubRunFlow -PflowName=xmlToXml -Ptesting=true -PmlUsername=admin -PmlPassword=admin;
+                            "
+                        '''
                         }
                  }
                  post{
@@ -602,11 +644,23 @@ pipeline{
             stage('smart-mastering-complete'){
                  agent { label 'dhfLinuxAgent'}
                 steps{
+                     sh 'cd $WORKSPACE/data-hub/examples/smart-mastering-complete;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
                      copyRPM 'Release','10.0-3'
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
                         def dockerhost=setupMLDockerCluster 3
-                        sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub/examples/smart-mastering-complete;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew -i hubInit -Ptesting=true;./gradlew -i mlDeploy -Ptesting=true;./gradlew hubRunFlow -PflowName=persons -Ptesting=true;"'
+                        sh '''
+                            docker exec -u builder -i '''+dockerhost+''' /bin/sh -c "export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;\
+                            export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR; \
+                            export M2_HOME=$MAVEN_HOME/bin; \
+                            export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin; \
+                            cd $WORKSPACE/data-hub/examples/smart-mastering-complete; \
+                            rm -rf $GRADLE_USER_HOME/caches; \
+                            ./gradlew -i hubInit -Ptesting=true; \
+                            ./gradlew -i mlDeploy -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
+                            ./gradlew hubRunFlow -PflowName=persons -Ptesting=true -PmlUsername=admin -PmlPassword=admin;
+                            "
+                        '''
                         }
                  }
                  post{
