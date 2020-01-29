@@ -53,3 +53,38 @@ span.readOnlyLabel {
     border: none;
     margin: 0px;
 }
+
+.mlcpCmd {
+  font-family: monospace;
+  margin-top: 10px;
+
+  p {
+    white-space: pre-wrap;
+    font-size: 13px;
+    word-wrap: normal;
+    line-height:20px;
+  }
+}
+
+.copyIcon {
+    color: #44499C;
+    cursor: pointer;
+    vertical-align: bottom;
+}
+
+.formItem { 
+    margin-bottom: 8px !important;
+}
+
+.cHookLabel{
+    color: #44499C;
+    cursor: pointer;
+}
+.cHItemLabel{
+    padding-left: 2vw;
+}
+.rightArrow{
+    font-size: 13px;
+    color: #44499C;
+    cursor: pointer;
+}
