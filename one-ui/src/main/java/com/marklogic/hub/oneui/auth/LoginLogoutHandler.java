@@ -16,13 +16,14 @@
 package com.marklogic.hub.oneui.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.hub.dataservices.RolesService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -33,16 +34,20 @@ import java.io.IOException;
 @Component
 public class LoginLogoutHandler implements AuthenticationSuccessHandler, LogoutSuccessHandler {
 
+    ObjectMapper mapper = new ObjectMapper();
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         ConnectionAuthenticationToken authenticationToken = (ConnectionAuthenticationToken)authentication;
-        ObjectMapper mapper = new ObjectMapper();
         ObjectNode resp = mapper.createObjectNode();
         resp.put("isInstalled", authenticationToken.stagingIsAccessible());
         resp.put("hasManagePrivileges", authenticationToken.hasManagePrivileges());
         resp.put("projectName", (String) request.getSession().getAttribute("projectName"));
-
         clearAuthenticationAttributes(request);
+        if (authenticationToken.stagingIsAccessible()) {
+            RolesService rolesService = RolesService.on(authenticationToken.getHubConfigSession().newStagingClient());
+            resp.putArray("roles").addAll((ArrayNode) rolesService.getRoles());
+        }
         response.setContentType("application/json");
         response.getOutputStream().write(mapper.writeValueAsBytes(resp));
     }
