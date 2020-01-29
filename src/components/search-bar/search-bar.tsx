@@ -19,7 +19,13 @@ const SearchBar: React.FC<Props> = props => {
       <Option value={entity} key={index} data-cy="entity-option">{entity}</Option>
     );
     const entityMenu = (
-      <Select style={{ width: 180 }} value={dropDownValue} onChange={value => handleOptionSelect(value)} id="entity-select" data-cy={searchOptions.entityNames[0] || 'All Entities'}>
+      <Select 
+        id="entity-select" 
+        data-cy={searchOptions.entityNames.length ? searchOptions.entityNames[0] : 'All Entities'}
+        style={{ width: 180 }} 
+        value={dropDownValue} 
+        onChange={value => handleOptionSelect(value)} 
+      >
         {options}
       </Select>
     );

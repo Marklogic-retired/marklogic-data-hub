@@ -19,10 +19,10 @@ const App: React.FC<Props> = ({history, location}) => {
   const { user, clearErrorMessage, clearRedirect } = useContext(UserContext);
   const [asyncError, setAsyncError] = useState(false);
 
-  const PrivateRoute = ({ component: Component, ...rest }) => (
+  const PrivateRoute = ({ children, ...rest }) => (
     <Route {...rest} render={ props => (
       user.authenticated === true ? (
-        <Component {...props}/>
+        children
       ) : (
         <Redirect push={true} to={{
           pathname: '/',
@@ -72,9 +72,15 @@ const App: React.FC<Props> = ({history, location}) => {
       { !asyncError && (
         <Switch>
           <Route path="/" exact component={Home}/>
-          <PrivateRoute path="/view" exact component={View} />
-          <PrivateRoute path="/browse" exact component={Browse}/>
-          <PrivateRoute path="/detail/:pk/:uri" component={Detail}/>
+          <PrivateRoute path="/view" exact>
+            <View/>
+          </PrivateRoute>
+          <PrivateRoute path="/browse" exact>
+            <Browse/>
+          </PrivateRoute>
+          <PrivateRoute path="/detail/:pk/:uri">
+            <Detail/>
+          </PrivateRoute>
           <Route component={NoMatchRedirect}/>
         </Switch> 
       )}
