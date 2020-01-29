@@ -23,6 +23,7 @@ const NumericFacet: React.FC<Props> = (props) => {
   const [rangeLimit, setRangeLimit] = useState<number[]>([]);
   const [selectedRange, setSelectedRange] = useState<number[]>([]);
   const [showApply, toggleApply] = useState(false);
+  let numbers = ['int', 'integer', 'short', 'long', 'decimal', 'double', 'float'];
 
   const getFacetRange = async () => {
     const response = await axios({
@@ -83,13 +84,20 @@ const NumericFacet: React.FC<Props> = (props) => {
     if (Object.entries(searchOptions.searchFacets).length !== 0 && searchOptions.searchFacets.hasOwnProperty(props.constraint)) {
       for (let facet in searchOptions.searchFacets) {
         if (facet === props.constraint) {
-          // checking if arrays are equivalent
-          console.log('searchOptions.searchFacets',searchOptions.searchFacets)
-          // if (JSON.stringify(changed) === JSON.stringify([...searchOptions.searchFacets[facet]])) {
-          //   toggleApply(false);
-          // } else {
-          //   setChanged([...searchOptions.searchFacets[facet]]);
-          // }
+          let valueType = '';
+          if (numbers.includes(searchOptions.searchFacets[facet].dataType)) {
+            valueType = 'rangeValues';
+          }
+          // TODO add support for non string facets
+          if (searchOptions.searchFacets[facet][valueType]) {
+            const checkedArray = Object.values(searchOptions.searchFacets[facet][valueType]).map(Number)
+            // checking if arrays are equivalent
+            if (JSON.stringify(selectedRange) === JSON.stringify(checkedArray)) {
+              toggleApply(false);
+            } else {
+              setSelectedRange(checkedArray);
+            }
+          }
         }
       }
     } else {

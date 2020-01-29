@@ -67,11 +67,16 @@ const Sidebar: React.FC<Props> = (props) => {
               searchOptions.searchFacets[constraint]['stringValues'].map(facet => {
                 selectedFacets.push({ constraint, facet });
               });
-            } else if (datatype === 'xs:decimal') {
-              // TODO add support for other data types
-            }
+            } else if (datatype === 'int') {
 
+              
+              // TODO add support for other data types
+              console.log('searchOptions',searchOptions)
+              let rangeValues = searchOptions.searchFacets[constraint].rangeValues
+              selectedFacets.push({ constraint, rangeValues });
+            }
           }
+          console.log('selectedFacets',selectedFacets)
           setSelectedFacets(selectedFacets);
         }
         if (!selectedFacets.some(item => item.constraint === 'createdOnRange')) {
