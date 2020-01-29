@@ -87,6 +87,9 @@ public class EnvironmentController {
     @RequestMapping(value = "/install", method = RequestMethod.POST)
     @ResponseBody
     public JsonNode install(@RequestBody ObjectNode payload, HttpSession session) {
+        // get original project directory value, so we can revert if failure occurs
+        String originalDirectory = environmentService.getProjectDirectory();
+        // setting the project directory will resolve any relative paths
         environmentService.setProjectDirectory(payload.get("directory").asText(""));
         String directory = environmentService.getProjectDirectory();
         hubConfig.createProject(directory);
@@ -112,6 +115,7 @@ public class EnvironmentController {
                 template.convertAndSend("/topic/install-status", new StatusMessage(lastPercentageComplete, message));
                 logger.error(message, exception);
                 dataHubConfigurationException[0] = new DataHubConfigurationException(exception.getMessage());
+                environmentService.setProjectDirectory(originalDirectory);
             }
         });
         if (dataHubConfigurationException[0] != null) {

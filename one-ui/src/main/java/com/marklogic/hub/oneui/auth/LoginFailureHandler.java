@@ -16,6 +16,8 @@
 package com.marklogic.hub.oneui.auth;
 
 import com.google.gson.Gson;
+import com.marklogic.hub.oneui.exceptions.BadRequestException;
+import com.marklogic.hub.oneui.exceptions.ForbiddenException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
@@ -40,7 +42,13 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
         String json = new Gson().toJson(output);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        if (exception instanceof BadRequestException) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        } else if (exception instanceof ForbiddenException) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        } else {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        }
         response.getWriter().write(json);
     }
 }
