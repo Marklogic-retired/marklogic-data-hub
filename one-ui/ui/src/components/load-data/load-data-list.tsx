@@ -157,7 +157,7 @@ const LoadDataList: React.FC<Props> = (props) => {
         canReadWrite={props.canReadWrite}
         canReadOnly={props.canReadOnly}/>
         {deleteConfirmation}
-        <LoadDataSettingsDialog openLoadDataSettings={openLoadDataSettings} setOpenLoadDataSettings={setOpenLoadDataSettings}/>
+        <LoadDataSettingsDialog openLoadDataSettings={openLoadDataSettings} setOpenLoadDataSettings={setOpenLoadDataSettings} stepData={stepData}/>
         
     </div>
    );
