@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useContext} from 'react';
+import { RolesContext } from './roles';
 
 type UserContextInterface = {
   name: string,
@@ -14,8 +15,8 @@ const defaultUserData = {
   // email: '',
   authenticated: false,
   redirect: false,
-  error : { 
-    title: '', 
+  error : {
+    title: '',
     message: '',
     type: ''
   },
@@ -45,15 +46,18 @@ export const AuthContext = React.createContext<IAuthContextInterface>({
 });
 
 const AuthProvider: React.FC<{ children: any }> = ({children}) => {
-  
+
   const [user, setUser] = useState(defaultUserData);
   const sessionUser = localStorage.getItem('dataHubUser');
+  const rolesService = useContext(RolesContext);
 
   const loginAuthenticated = (username: string, authResponse: any) => {
     localStorage.setItem('dataHubUser', username);
     localStorage.setItem('dhIsInstalled', authResponse.isInstalled);
     localStorage.setItem('dhUserHasManagePrivileges', authResponse.hasManagePrivileges);
     localStorage.setItem('projectName', authResponse.projectName);
+    const roles: string[] =  authResponse.roles || [];
+    rolesService.setRoles(roles);
     setUser({ ...user,name: username, authenticated: true, redirect: true });
   };
 
@@ -67,6 +71,7 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
     localStorage.setItem('dhIsInstalled', '');
     localStorage.setItem('dhUserHasManagePrivileges', '');
     localStorage.setItem('projectName', '');
+    rolesService.setRoles([]);
     setUser({ ...user,name: '', authenticated: false, redirect: true });
   };
 
@@ -74,8 +79,7 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
     const DEFAULT_MESSAGE = 'Internal Server Error';
     switch (error.response.status) {
       case 401: {
-        localStorage.setItem('dataHubExplorerUser', '');
-        setUser({ ...user, name: '', authenticated: false });
+        userNotAuthenticated();
         break;
       }
       case 400:
@@ -86,11 +90,11 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
         console.log('HTTP ERROR', error.resonse);
         let title = error.response.status + ' ' + error.response.statusText;
         let message = DEFAULT_MESSAGE;
-  
+
         if (error.response.data.hasOwnProperty('message')) {
           message = error.response.data.message;
-        } 
-        setUser({ 
+        }
+        setUser({
           ...user,
           error: {
             title: title,
@@ -101,7 +105,7 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
         break;
       }
       case 404: {
-        setUser({ 
+        setUser({
           ...user,
           redirect: true,
           error: {
@@ -125,8 +129,8 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
 
         if (error.response.data.hasOwnProperty('message')) {
           message = error.response.data.message;
-        } 
-        setUser({ 
+        }
+        setUser({
           ...user,
           error: {
             title,
@@ -139,7 +143,7 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
       default: {
         console.log('HTTP ERROR ', error.response);
 
-        setUser({ 
+        setUser({
           ...user,
           error: {
             title: DEFAULT_MESSAGE,
@@ -170,12 +174,12 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ 
+    <AuthContext.Provider value={{
       user,
       loginAuthenticated,
       sessionAuthenticated,
       userNotAuthenticated,
-      handleError, 
+      handleError,
       clearErrorMessage,
       clearRedirect,
       setTableView,
