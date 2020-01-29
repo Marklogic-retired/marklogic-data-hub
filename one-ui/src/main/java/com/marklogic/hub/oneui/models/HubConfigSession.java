@@ -476,6 +476,9 @@ public class HubConfigSession implements HubConfig, InitializingBean, Disposable
         return hubConfigImpl.getIsProvisionedEnvironment();
     }
 
+    @Override
+    public void setIsProvisionedEnvironment(boolean isProvisionedEnvironment) { hubConfigImpl.setIsProvisionedEnvironment(isProvisionedEnvironment);  }
+
     /**
      * Returns the path for the custom forests definition
      * @return path where the custom forests are as string
