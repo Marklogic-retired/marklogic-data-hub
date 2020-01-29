@@ -69,6 +69,18 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         }
         return new ResponseEntity<>(errJson, HttpStatus.FORBIDDEN);
     }
+    @ExceptionHandler(ForbiddenException.class)
+    protected ResponseEntity<JsonNode> handleForbiddenExceptionRequest(
+        ForbiddenException exception) {
+        ObjectNode errJson = mapper.createObjectNode();
+        errJson.put("code", 403);
+        errJson.put("message", exception.getMessage());
+        if (exception.getRequiredRoles() != null && exception.getRequiredRoles().size() > 0) {
+            ArrayNode requiredRolesArray = errJson.putArray("requiredRoles");
+            exception.getRequiredRoles().forEach(requiredRolesArray::add);
+        }
+        return new ResponseEntity<>(errJson, HttpStatus.FORBIDDEN);
+    }
 
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<JsonNode> handleExceptionRequest(
