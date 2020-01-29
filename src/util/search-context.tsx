@@ -67,10 +67,8 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
 
  const searchFromUserPref = (username: string) => {
   let userPreferences = getUserPreferences(username);
-  console.log('user pref', userPreferences);
   if (userPreferences) {
     let values = JSON.parse(userPreferences);
-    console.log('values', values)
     setSearchOptions({
       ...searchOptions,
       start: 1,
@@ -173,8 +171,12 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
 
   const clearFacet = (constraint: string, val: string) => {
     let facets = searchOptions.searchFacets;
-    if (facets[constraint].length > 1) {
-      facets[constraint] = facets[constraint].filter( option => option !== val );
+    let valueKey = '';
+    if (facets[constraint].dataType === 'xs:string' || facets[constraint].dataType === 'string') {
+      valueKey = 'stringValues';
+    }
+    if (facets[constraint][valueKey].length > 1) {
+      facets[constraint][valueKey] = facets[constraint][valueKey].filter( option => option !== val );
     } else {
       delete facets[constraint]
     }

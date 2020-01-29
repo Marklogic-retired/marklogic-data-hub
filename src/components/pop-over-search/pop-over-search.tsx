@@ -48,24 +48,6 @@ const PopOverSearch: React.FC<Props> = (props) => {
   }
 
   const addFacetValues = () => {
-    let checkedFacets = checkedValues.map(item => {
-      return {name: item, count: 0, value: item}
-    });
-    let found = false;
-    console.log('checked facets', checkedFacets);
-
-    for (let i = 0; i < checkedFacets.length; i++) {
-      for (let j = 0; j < props.facetValues.length; j++) {
-        if (JSON.stringify(checkedFacets[i]) === JSON.stringify(props.facetValues[j])) {
-          found = true;
-          break;
-        }
-      }
-      if (!found) {
-        props.facetValues.unshift(checkedFacets[i]);
-      }
-      found = false;
-    }
     props.checkFacetValues(checkedValues);
   }
 

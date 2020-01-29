@@ -75,8 +75,6 @@ const View: React.FC = () => {
   }
 
   useEffect(() => {
-    console.log('view mounted user', user);
-    console.log('view mounted entities', entities);
     if (!user.error.type) {
       getEntityModel();
     }
