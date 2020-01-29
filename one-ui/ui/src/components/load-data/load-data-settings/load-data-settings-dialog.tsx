@@ -3,6 +3,8 @@ import React, { useState, useEffect, useContext } from "react";
 import styles from './load-data-settings-dialog.module.scss';
 import { LoadDataSettings } from '../../../config/tooltips.config';
 import Axios from "axios";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCopy } from '@fortawesome/free-regular-svg-icons';
 
 import { RolesContext } from "../../../util/roles";
 
