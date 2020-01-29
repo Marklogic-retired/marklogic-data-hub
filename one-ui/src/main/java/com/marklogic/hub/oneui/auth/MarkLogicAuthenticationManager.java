@@ -15,8 +15,6 @@
  */
 package com.marklogic.hub.oneui.auth;
 
-import java.net.URI;
-
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.oneui.exceptions.BadRequestException;
 import com.marklogic.hub.oneui.exceptions.ForbiddenException;
@@ -35,6 +33,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
+
+import java.net.URI;
 
 /**
  * Implements Spring Security's AuthenticationManager interface so that it can authenticate users by making a simple
