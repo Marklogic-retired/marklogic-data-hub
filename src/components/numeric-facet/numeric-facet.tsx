@@ -10,7 +10,6 @@ interface Props {
   constraint: string;
   datatype: any
   onChange: (datatype: any, facetName: any, value: any[]) => void;
-  // updateSelectedSliderFacets: (constraint: string, vals: number[]) => void;
   applyAllFacets: () => void;
 };
 
@@ -21,7 +20,6 @@ const NumericFacet: React.FC<Props> = (props) => {
 
   const [range, setRange] = useState<number[]>([]);
   const [rangeLimit, setRangeLimit] = useState<number[]>([]);
-  const [selectedRange, setSelectedRange] = useState<number[]>([]);
   const [showApply, toggleApply] = useState(false);
   let numbers = ['int', 'integer', 'short', 'long', 'decimal', 'double', 'float'];
 
@@ -39,18 +37,33 @@ const NumericFacet: React.FC<Props> = (props) => {
     if (response.data) {
       let range = [...[response.data.min, response.data.max].map(Number)]
       setRangeLimit(range)
-      setRange(range)
+
+      if (Object.entries(searchOptions.searchFacets).length !== 0 && searchOptions.searchFacets.hasOwnProperty(props.constraint)) {
+        for (let facet in searchOptions.searchFacets) {
+          if (facet === props.constraint) {
+            let valueType = '';
+            if (numbers.includes(searchOptions.searchFacets[facet].dataType)) {
+              valueType = 'rangeValues';
+            }
+            if (searchOptions.searchFacets[facet][valueType]) {
+              const rangeArray = Object.values(searchOptions.searchFacets[facet][valueType]).map(Number)
+              if (rangeArray && rangeArray.length > 0) {
+                setRange(rangeArray)
+              }
+            }
+          }
+        }
+      } else {
+        setRange(range)
+      }
     }
   }
 
   const onChange = (e) => {
-      setRange(e);
-      toggleApply(true);
-      setSelectedRange(e);
-      // props.updateSelectedSliderFacets(props.constraint, selectedRange);
-      props.onChange(props.datatype, props.facet.facetName, e)
+    setRange(e);
+    toggleApply(true);
+    props.onChange(props.datatype, props.facet.facetName, e)
   }
-
 
   const onChangeMinInput = (e) => {
     if (e && typeof e === 'number') {
@@ -58,8 +71,6 @@ const NumericFacet: React.FC<Props> = (props) => {
       modifiedRange[0] = e;
       setRange(modifiedRange);
       toggleApply(true);
-      setSelectedRange(modifiedRange);
-      // props.updateSelectedSliderFacets(props.constraint, selectedRange);
       props.onChange(props.datatype, props.facet.facetName, modifiedRange)
     }
   }
@@ -70,10 +81,23 @@ const NumericFacet: React.FC<Props> = (props) => {
       modifiedRange[1] = e;
       setRange(modifiedRange);
       toggleApply(true);
-      setSelectedRange(modifiedRange);
-      // props.updateSelectedSliderFacets(props.constraint, selectedRange);
       props.onChange(props.datatype, props.facet.facetName, modifiedRange)
     }
+  }
+
+  const updateRange = () => {
+    let facets = searchOptions.searchFacets;
+    let constraints = Object.keys(facets)
+    let modifiedRange = [...range];
+    if (constraints && constraints.length > 1) {
+    constraints.forEach(facet => {
+      if (facets[facet].hasOwnProperty('rangeValues') && props.facet.facetName === facet) {
+        modifiedRange[0] = Number(facets[facet].rangeValues.lowerBound);
+        modifiedRange[1] = Number(facets[facet].rangeValues.upperBound);
+        setRange(modifiedRange)
+      }
+    });
+     }
   }
 
   useEffect(() => {
@@ -81,6 +105,11 @@ const NumericFacet: React.FC<Props> = (props) => {
   }, []);
 
   useEffect(() => {
+    let s = Object.keys(searchOptions.searchFacets);
+    if (!s.includes(props.facet.facetName)) {
+      setRange(rangeLimit)
+    }
+
     if (Object.entries(searchOptions.searchFacets).length !== 0 && searchOptions.searchFacets.hasOwnProperty(props.constraint)) {
       for (let facet in searchOptions.searchFacets) {
         if (facet === props.constraint) {
@@ -88,20 +117,17 @@ const NumericFacet: React.FC<Props> = (props) => {
           if (numbers.includes(searchOptions.searchFacets[facet].dataType)) {
             valueType = 'rangeValues';
           }
-          // TODO add support for non string facets
           if (searchOptions.searchFacets[facet][valueType]) {
-            const checkedArray = Object.values(searchOptions.searchFacets[facet][valueType]).map(Number)
-            // checking if arrays are equivalent
-            if (JSON.stringify(selectedRange) === JSON.stringify(checkedArray)) {
+            const rangeArray = Object.values(searchOptions.searchFacets[facet][valueType]).map(Number)
+            if (JSON.stringify(range) === JSON.stringify(rangeArray)) {
               toggleApply(false);
             } else {
-              setSelectedRange(checkedArray);
+              setRange(rangeArray)
             }
           }
         }
       }
     } else {
-      setSelectedRange([]);
       toggleApply(false);
     }
   }, [searchOptions]);
@@ -119,7 +145,6 @@ const NumericFacet: React.FC<Props> = (props) => {
           <Button
             type="primary"
             size="small"
-            // data-cy={stringConverter(props.name) +"-facet-apply-button"}
             onClick={() => props.applyAllFacets()}
           >Apply</Button>
         </div>

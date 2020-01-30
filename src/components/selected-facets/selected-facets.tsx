@@ -55,13 +55,13 @@ const SelectedFacets: React.FC<Props> = (props) => {
           return (
             <Button 
               size="small"
-              // className={styles.dateFacet} 
+              className={styles.facetButton} 
               key={index}
               onClick={()=> clearRangeFacet(item.constraint)}
               data-cy='clear-range-facet'
             >
               <Icon type='close'/>
-              {item.constraint + ' ' + item.rangeValues.lowerBound + ' - ' + item.rangeValues.upperBound}
+              {item.constraint + ': ' + item.rangeValues.lowerBound + ' - ' + item.rangeValues.upperBound}
             </Button>
           )
         }

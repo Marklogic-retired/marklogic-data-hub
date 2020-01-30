@@ -67,16 +67,12 @@ const Sidebar: React.FC<Props> = (props) => {
               searchOptions.searchFacets[constraint]['stringValues'].map(facet => {
                 selectedFacets.push({ constraint, facet });
               });
-            } else if (datatype === 'int') {
-
-              
+            } else if (integers.includes(datatype) || decimals.includes(datatype)) {
               // TODO add support for other data types
-              console.log('searchOptions',searchOptions)
               let rangeValues = searchOptions.searchFacets[constraint].rangeValues
               selectedFacets.push({ constraint, rangeValues });
             }
           }
-          console.log('selectedFacets',selectedFacets)
           setSelectedFacets(selectedFacets);
         }
         if (!selectedFacets.some(item => item.constraint === 'createdOnRange')) {
@@ -223,7 +219,6 @@ const Sidebar: React.FC<Props> = (props) => {
       updateFacets = { ...updateFacets, [facet]: { dataType: datatype, rangeValues: { lowerBound: value[0].toString(), upperBound: value[1].toString() } } }
     } 
     setAllSelectedFacets(updateFacets);
-    console.log('updateFacets',updateFacets)
   }
 
   return (
@@ -249,7 +244,6 @@ const Sidebar: React.FC<Props> = (props) => {
                       facet={facet} step={step}
                       datatype={datatype}
                       onChange={onNumberFacetChange}
-                      // updateSelectedSliderFacets={updateSelectedSliderFacets}
                       applyAllFacets={applyAllFacets}
                     />
                   </div>

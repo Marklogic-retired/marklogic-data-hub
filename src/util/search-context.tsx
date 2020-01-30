@@ -225,14 +225,12 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
   const clearRangeFacet = (range: string) => {
     let facets = searchOptions.searchFacets;
     let constraints = Object.keys(facets)
-    console.log('facets', facets[constraints[0]])
     constraints.forEach(facet => {
       if (facets[facet].hasOwnProperty('rangeValues') && facet === range) {
         delete facets[facet]
       }
-      
     });
-    
+
     setSearchOptions({
       ...searchOptions,
       searchFacets: facets,
