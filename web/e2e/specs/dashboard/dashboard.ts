@@ -28,7 +28,7 @@ export default function(qaProjectDir) {
       await expect(dashboardPage.jobCount().getText()).toBe('0');
     });
 
-    it('should check default documents after redeploy', async function () {
+    xit('should check default documents after redeploy', async function () {
       await appPage.clickFlowTab();
       await browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleFlow")));
       await manageFlowPage.redeploy();
@@ -38,7 +38,7 @@ export default function(qaProjectDir) {
       await expect(dashboardPage.jobCount().getText()).toBe('0');
     });
 
-    it('should remove all documents', async function () {
+    xit('should remove all documents', async function () {
       await appPage.clickDashboardTab();
       await dashboardPage.clearAllDatabases();
       await expect(dashboardPage.stagingCount().getText()).toBe('0');
