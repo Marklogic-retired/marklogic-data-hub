@@ -127,8 +127,12 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
     public List<Flow> getFlows() {
         List<String> flowNames = getFlowNames();
         List<Flow> flows = new ArrayList<>();
-        for (String flow : flowNames) {
-            flows.add(getFlow(flow));
+        for (String flowName : flowNames) {
+            Flow flow = getFlow(flowName);
+            if (flow == null) {
+                flow = getLocalFlow(flowName);
+            }
+            flows.add(flow);
         }
         Collections.sort(flows, (a, b) -> a.getName().compareTo(b.getName()));
         return flows;
