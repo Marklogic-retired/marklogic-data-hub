@@ -14,7 +14,7 @@ type SearchContextInterface = {
 }
 
 const defaultSearchOptions = {
-  query: '', 
+  query: '',
   entityNames: [],
   start: 1,
   pageNumber: 1,
@@ -34,52 +34,54 @@ interface ISearchContextInterface {
   setEntity: (option: string) => void;
   setEntityClearQuery: (option: string) => void;
   setLatestJobFacet: (vals: string, option: string) => void;
-  clearFacet: (constraint:string, val:string) => void;
+  clearFacet: (constraint: string, val: string) => void;
   clearAllFacets: () => void;
   setDateFacet: (dates: string[]) => void;
   clearDateFacet: () => void;
+  clearRangeFacet: (range: string) => void;
   resetSearchOptions: () => void;
   setAllSearchFacets: (facets: any) => void;
 }
 
 export const SearchContext = React.createContext<ISearchContextInterface>({
   searchOptions: defaultSearchOptions,
-  searchFromUserPref: () => {},
-  setQuery: () => {},
-  setPage: () => {},
-  setPageLength: () => {},
-  setSearchFacets: () => {},
-  setEntity: () => {},
-  setEntityClearQuery: () => {},
-  setLatestJobFacet : () =>{},
-  clearFacet: () => {},
-  clearAllFacets: () => {},
-  setDateFacet: () => {},
-  clearDateFacet: () => {},
-  resetSearchOptions: () => {},
-  setAllSearchFacets: () => {}
+  searchFromUserPref: () => { },
+  setQuery: () => { },
+  setPage: () => { },
+  setPageLength: () => { },
+  setSearchFacets: () => { },
+  setEntity: () => { },
+  setEntityClearQuery: () => { },
+  setLatestJobFacet: () => { },
+  clearFacet: () => { },
+  clearAllFacets: () => { },
+  setDateFacet: () => { },
+  clearDateFacet: () => { },
+  clearRangeFacet: () => { },
+  resetSearchOptions: () => { },
+  setAllSearchFacets: () => { }
 });
 
-const SearchProvider: React.FC<{ children: any }> = ({children}) => {
-  
+const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
+
   const [searchOptions, setSearchOptions] = useState<SearchContextInterface>(defaultSearchOptions);
   const { user } = useContext(UserContext);
 
- const searchFromUserPref = (username: string) => {
-  let userPreferences = getUserPreferences(username);
-  if (userPreferences) {
-    let values = JSON.parse(userPreferences);
-    setSearchOptions({
-      ...searchOptions,
-      start: 1,
-      pageNumber: 1,
-      query: values.query.searchStr,
-      entityNames: values.query.entityNames,
-      searchFacets: values.query.facets,
-      pageLength: values.pageLength
-    });  
+  const searchFromUserPref = (username: string) => {
+    let userPreferences = getUserPreferences(username);
+    if (userPreferences) {
+      let values = JSON.parse(userPreferences);
+      setSearchOptions({
+        ...searchOptions,
+        start: 1,
+        pageNumber: 1,
+        query: values.query.searchStr,
+        entityNames: values.query.entityNames,
+        searchFacets: values.query.facets,
+        pageLength: values.pageLength
+      });
+    }
   }
- }
 
   const setQuery = (searchString: string) => {
     setSearchOptions({
@@ -93,9 +95,9 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
 
   const setPage = (pageNumber: number, totalDocuments: number) => {
     let pageLength = searchOptions.pageSize;
-    let start = pageNumber === 1 ?  1 : (pageNumber -1) * searchOptions.pageSize + 1;
+    let start = pageNumber === 1 ? 1 : (pageNumber - 1) * searchOptions.pageSize + 1;
 
-    if ( (totalDocuments - ((pageNumber - 1) * searchOptions.pageSize)) < searchOptions.pageSize ) {
+    if ((totalDocuments - ((pageNumber - 1) * searchOptions.pageSize)) < searchOptions.pageSize) {
       pageLength = (totalDocuments - ((pageNumber - 1) * searchOptions.pageLength))
     }
     setSearchOptions({
@@ -107,7 +109,7 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
   }
 
   const setPageLength = (current: number, pageSize: number) => {
-    setSearchOptions({ 
+    setSearchOptions({
       ...searchOptions,
       start: 1,
       pageNumber: 1,
@@ -119,12 +121,12 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
   const setSearchFacets = (constraint: string, vals: string[]) => {
     let facets = {};
     if (vals.length > 0) {
-      facets = {...searchOptions.searchFacets, [constraint]: vals};
+      facets = { ...searchOptions.searchFacets, [constraint]: vals };
     } else {
       facets = { ...searchOptions.searchFacets };
       delete facets[constraint];
     }
-    setSearchOptions({ 
+    setSearchOptions({
       ...searchOptions,
       start: 1,
       searchFacets: facets,
@@ -135,7 +137,7 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
 
   const setEntity = (option: string) => {
     let entityOptions = option ? [option] : [];
-    setSearchOptions({ 
+    setSearchOptions({
       ...searchOptions,
       start: 1,
       searchFacets: {},
@@ -145,11 +147,11 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
   }
 
   const setEntityClearQuery = (option: string) => {
-    setSearchOptions({ 
+    setSearchOptions({
       ...searchOptions,
       query: '',
       start: 1,
-      searchFacets:{},
+      searchFacets: {},
       entityNames: [option],
       pageNumber: 1,
       pageLength: searchOptions.pageSize,
@@ -158,8 +160,8 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
 
   const setLatestJobFacet = (vals: string, option: string) => {
     let facets = {};
-      facets = { createdByJob: [vals] };
-    setSearchOptions({ 
+    facets = { createdByJob: [vals] };
+    setSearchOptions({
       ...searchOptions,
       start: 1,
       searchFacets: facets,
@@ -176,7 +178,7 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       valueKey = 'stringValues';
     }
     if (facets[constraint][valueKey].length > 1) {
-      facets[constraint][valueKey] = facets[constraint][valueKey].filter( option => option !== val );
+      facets[constraint][valueKey] = facets[constraint][valueKey].filter(option => option !== val);
     } else {
       delete facets[constraint]
     }
@@ -184,17 +186,17 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
   }
 
   const clearAllFacets = () => {
-    setSearchOptions({ 
+    setSearchOptions({
       ...searchOptions,
       searchFacets: {},
       start: 1,
       pageNumber: 1,
-      pageLength: searchOptions.pageSize 
+      pageLength: searchOptions.pageSize
     });
   }
 
   const setDateFacet = (dates: string[]) => {
-    setSearchOptions({ 
+    setSearchOptions({
       ...searchOptions,
       start: 1,
       pageNumber: 1,
@@ -208,9 +210,9 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
 
   const clearDateFacet = () => {
     let facets = searchOptions.searchFacets;
-    if (facets.hasOwnProperty('createdOnRange')){
+    if (facets.hasOwnProperty('createdOnRange')) {
       delete facets.createdOnRange;
-      setSearchOptions({ 
+      setSearchOptions({
         ...searchOptions,
         searchFacets: facets,
         start: 1,
@@ -220,12 +222,31 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     }
   }
 
+  const clearRangeFacet = (range: string) => {
+    let facets = searchOptions.searchFacets;
+    let constraints = Object.keys(facets)
+    constraints.forEach(facet => {
+      if (facets[facet].hasOwnProperty('rangeValues') && facet === range) {
+        delete facets[facet]
+      }
+    });
+
+    setSearchOptions({
+      ...searchOptions,
+      searchFacets: facets,
+      start: 1,
+      pageNumber: 1,
+      pageLength: searchOptions.pageSize
+    });
+  }
+
+
   const resetSearchOptions = () => {
-    setSearchOptions({ ...defaultSearchOptions});
+    setSearchOptions({ ...defaultSearchOptions });
   }
 
   const setAllSearchFacets = (facets: any) => {
-    setSearchOptions({ 
+    setSearchOptions({
       ...searchOptions,
       searchFacets: facets,
       start: 1,
@@ -234,13 +255,13 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     });
   }
   useEffect(() => {
-    if (user.authenticated){
+    if (user.authenticated) {
       searchFromUserPref(user.name);
     }
   }, [user.authenticated]);
 
   return (
-    <SearchContext.Provider value={{ 
+    <SearchContext.Provider value={{
       searchOptions,
       searchFromUserPref,
       setQuery,
@@ -254,9 +275,10 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       setLatestJobFacet,
       setDateFacet,
       clearDateFacet,
+      clearRangeFacet,
       resetSearchOptions,
       setAllSearchFacets
-      }}>
+    }}>
       {children}
     </SearchContext.Provider>
   )

@@ -13,7 +13,8 @@ const SelectedFacets: React.FC<Props> = (props) => {
     clearAllFacets,
     clearFacet,
     searchOptions,
-    clearDateFacet
+    clearDateFacet,
+    clearRangeFacet
    } = useContext(SearchContext);
 
   return (
@@ -44,6 +45,19 @@ const SelectedFacets: React.FC<Props> = (props) => {
             >
               <Icon type='close'/>
               {item.facet.join(' ~ ')}
+            </MlButton>
+          )
+        } else if (item.rangeValues) {
+          return (
+            <MlButton 
+              size="small"
+              className={styles.facetButton} 
+              key={index}
+              onClick={()=> clearRangeFacet(item.constraint)}
+              data-cy='clear-range-facet'
+            >
+              <Icon type='close'/>
+              {item.constraint + ': ' + item.rangeValues.lowerBound + ' - ' + item.rangeValues.upperBound}
             </MlButton>
           )
         }
