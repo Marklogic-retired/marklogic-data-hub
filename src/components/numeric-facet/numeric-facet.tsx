@@ -104,6 +104,9 @@ const NumericFacet: React.FC<Props> = (props) => {
             const rangeArray = Object.values(searchOptions.searchFacets[facet][valueType]).map(Number)
             if (JSON.stringify(range) === JSON.stringify(rangeArray)) {
               toggleApply(false);
+              if(rangeLimit[0] === rangeArray[0] && rangeLimit[1] === rangeArray[1]) {
+                delete searchOptions.searchFacets[facet]
+              }
             } else {
               setRange(rangeArray)
             }
