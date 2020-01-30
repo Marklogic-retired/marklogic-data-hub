@@ -21,10 +21,10 @@ public class DataHubService {
         try {
             hubConfigSession.getDataHub().install(listener);
             return true;
-        } catch(Throwable e) {
-            logger.info("Error encountered installing Data Hub...");
-            e.printStackTrace();
+        } catch(Exception e) {
+            logger.warn("Error encountered installing Data Hub...", e);
             listener.onStatusChange(-1, getStackTrace(e));
+            listener.onError("Init", e);
         }
         return false;
     }
