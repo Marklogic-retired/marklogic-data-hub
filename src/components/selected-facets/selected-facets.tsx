@@ -17,8 +17,6 @@ const SelectedFacets: React.FC<Props> = (props) => {
     clearRangeFacet
    } = useContext(SearchContext);
 
-   console.log('selectedFacets2',props.selectedFacets)
-
   return (
     <div id='selected-facets' data-cy='selected-facet-block'
       className={styles.clearContainer}
@@ -36,8 +34,6 @@ const SelectedFacets: React.FC<Props> = (props) => {
         </MlButton>
       }
       { props.selectedFacets.map((item, index) => {
-                  {console.log('item',item)}
-
         if (item.constraint === 'createdOnRange') {
           return (
             <MlButton

@@ -85,30 +85,12 @@ const NumericFacet: React.FC<Props> = (props) => {
     }
   }
 
-  const updateRange = () => {
-    let facets = searchOptions.searchFacets;
-    let constraints = Object.keys(facets)
-    let modifiedRange = [...range];
-    if (constraints && constraints.length > 1) {
-    constraints.forEach(facet => {
-      if (facets[facet].hasOwnProperty('rangeValues') && props.facet.facetName === facet) {
-        modifiedRange[0] = Number(facets[facet].rangeValues.lowerBound);
-        modifiedRange[1] = Number(facets[facet].rangeValues.upperBound);
-        setRange(modifiedRange)
-      }
-    });
-     }
-  }
-
   useEffect(() => {
     getFacetRange();
   }, []);
 
   useEffect(() => {
-    let s = Object.keys(searchOptions.searchFacets);
-    if (!s.includes(props.facet.facetName)) {
-      setRange(rangeLimit)
-    }
+    !Object.keys(searchOptions.searchFacets).includes(props.facet.facetName) && setRange(rangeLimit)
 
     if (Object.entries(searchOptions.searchFacets).length !== 0 && searchOptions.searchFacets.hasOwnProperty(props.constraint)) {
       for (let facet in searchOptions.searchFacets) {
