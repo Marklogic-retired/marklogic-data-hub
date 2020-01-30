@@ -47,9 +47,12 @@ const LoginForm: React.FC = () => {
         loginAuthenticated(username, response.data);
       } 
     } catch (error) {
-      let message = error.response.status === 401 ? 
-        'The username and password combination is not recognized by MarkLogic.' : 
-        'Internal Server Error';
+      let message = 'Internal Server Error'; // Default on error
+      if (error.response.status === 401) {
+        message = 'The username and password combination is not recognized by MarkLogic.'
+      } else if (error.response.status === 400) {
+        message = 'The host name "' + host + '" was not found.';
+      }
       console.log('LOGIN ERROR', error.response);
       setIsLoading(false);
       setMessage({show: true, text: message});
