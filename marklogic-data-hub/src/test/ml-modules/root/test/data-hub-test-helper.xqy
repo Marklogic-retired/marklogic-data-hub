@@ -15,6 +15,7 @@ declare variable $TYPE-TO-COLLECTION-MAP := map:new((
   map:entry("entities", "http://marklogic.com/entity-services/models"),
   map:entry("mappings", "http://marklogic.com/data-hub/mappings"),
   map:entry("step-definitions", "http://marklogic.com/data-hub/step-definition"),
+  map:entry("loadData", "http://marklogic.com/data-hub/load-data-artifact"),
   map:entry("content", "raw-content")
 ));
 

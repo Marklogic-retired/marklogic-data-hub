@@ -38,6 +38,10 @@ public class FlowManagerService {
     private Scaffolding scaffolding;
 
     public Flow updateFlow(String flowJson) {
+        return updateFlow(flowJson, false);
+    }
+
+    public Flow updateFlow(String flowJson, boolean onlyUpdateLocal) {
         //for PUT updating
         JSONObject jsonObject = processPayload(flowJson);
 
@@ -49,7 +53,11 @@ public class FlowManagerService {
                 "is made which is prohibited ");
         }
         flow.deserialize(jsonObject.jsonNode());
-        flowManager.saveFlow(flow);
+        if (onlyUpdateLocal) {
+            flowManager.saveLocalFlow(flow);
+        } else {
+            flowManager.saveFlow(flow);
+        }
         return flow;
     }
 

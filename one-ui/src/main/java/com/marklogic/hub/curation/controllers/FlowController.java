@@ -15,8 +15,12 @@
  */
 package com.marklogic.hub.curation.controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.curation.services.FlowManagerService;
+import com.marklogic.hub.dataservices.ArtifactService;
 import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.oneui.models.HubConfigSession;
 import com.marklogic.hub.oneui.models.StepModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,6 +34,8 @@ import java.util.List;
 @RequestMapping("/api/flows")
 public class FlowController {
 
+    @Autowired
+    HubConfigSession hubConfig;
     @Autowired
     private FlowManagerService flowManagerService;
 
@@ -102,4 +108,38 @@ public class FlowController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/{flowName}/steps/{stepId}/link/{artifactType}/{artifactName}", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<?> linkArtifact(@PathVariable String flowName, @PathVariable String stepId, @PathVariable String artifactType, @PathVariable String artifactName) {
+        return linkArtifact(flowName, stepId, artifactType, artifactName, null);
+    }
+
+    @RequestMapping(value = "/{flowName}/steps/{stepId}/link/{artifactType}/{artifactName}/{artifactVersion}", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<?> linkArtifact(@PathVariable String flowName, @PathVariable String stepId, @PathVariable String artifactType, @PathVariable String artifactName, @PathVariable String artifactVersion) {
+        JsonNode newFlow = getArtifactService().linkToStepOptions(flowName, stepId, artifactType, artifactName, artifactVersion);
+        // only updating local, since the artifact service updated the flow in MarkLogic
+        flowManagerService.updateFlow(newFlow.toString(), true);
+        return new ResponseEntity<>(newFlow, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/{flowName}/steps/{stepId}/link/{artifactType}/{artifactName}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public ResponseEntity<?> removeLinkToArtifact(@PathVariable String flowName, @PathVariable String stepId, @PathVariable String artifactType, @PathVariable String artifactName) {
+        return removeLinkToArtifact(flowName, stepId, artifactType, artifactName, null);
+    }
+
+    @RequestMapping(value = "/{flowName}/steps/{stepId}/link/{artifactType}/{artifactName}/{artifactVersion}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public ResponseEntity<?> removeLinkToArtifact(@PathVariable String flowName, @PathVariable String stepId, @PathVariable String artifactType, @PathVariable String artifactName, @PathVariable String artifactVersion) {
+        JsonNode newFlow = getArtifactService().removeLinkToStepOptions(flowName, stepId, artifactType, artifactName, artifactVersion);
+        // only updating local, since the artifact service updated the flow in MarkLogic
+        flowManagerService.updateFlow(newFlow.toString(), true);
+        return new ResponseEntity<>(newFlow, HttpStatus.OK);
+    }
+
+    protected ArtifactService getArtifactService() {
+        DatabaseClient dataServicesClient = hubConfig.newStagingClient(null);
+        return ArtifactService.on(dataServicesClient);
+    }
 }
