@@ -18,7 +18,6 @@ import com.marklogic.client.ResourceNotFoundException;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
-import com.marklogic.client.io.SearchHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.io.marker.StructureWriteHandle;
 import com.marklogic.client.query.QueryManager;
@@ -41,7 +40,6 @@ import org.springframework.util.CollectionUtils;
 @Component
 public class SearchHelper {
 
-  private static final String DEFAULT_OPTIONS = "exp-default";
   private static final String QUERY_OPTIONS = "exp-final-entity-options";
 
   private static final String COLLECTION_CONSTRAINT_NAME = "Collection";
@@ -86,6 +84,19 @@ public class SearchHelper {
 
     } catch (MarkLogicServerException e) {
       logger.error(e.getLocalizedMessage());
+
+      // Resorting to string contains check as there isn't any other discernible difference
+      if (e.getLocalizedMessage().contains(QUERY_OPTIONS)) {
+        logger.error("If this is a configuration issue, fix the configuration issues as shown in"
+            + " the logs for enabling faceted search on the entity properties."
+            + "\n"
+            + "If the " + QUERY_OPTIONS
+            + " search options file is missing, please look into documentation "
+            + "for creating the options file. If the database is indexing then it might take some "
+            + "time for the file to get generated. This file is required to enable "
+            + "various search features.");
+      }
+
       throw new ExplorerException(e.getServerStatusCode(), e.getServerMessageCode(),
           e.getServerMessage(), e);
     } catch (Exception e) { //other runtime exceptions
@@ -119,7 +130,7 @@ public class SearchHelper {
 
   private StructuredQueryDefinition buildQuery(QueryManager queryMgr, SearchQuery searchQuery) {
     queryMgr.setPageLength(searchQuery.getPageLength());
-    StructuredQueryBuilder queryBuilder = getQueryBuilder(queryMgr);
+    StructuredQueryBuilder queryBuilder = queryMgr.newStructuredQueryBuilder(QUERY_OPTIONS);
 
     // Creating queries object
     List<StructuredQueryDefinition> queries = new ArrayList<>();
@@ -188,25 +199,6 @@ public class SearchHelper {
         .and(queries.toArray(new StructuredQueryDefinition[0]));
 
     return finalQueryDef;
-  }
-
-  private StructuredQueryBuilder getQueryBuilder(QueryManager queryMgr) {
-    try {
-      // Testing if the QUERY_OPTIONS File exists in the modules database
-      StructuredQueryBuilder queryBuilder = queryMgr.newStructuredQueryBuilder(QUERY_OPTIONS);
-      queryMgr.search(queryBuilder.and(), new SearchHandle());
-      // Creating query builder with the QUERY_OPTIONS file if it exists
-      return queryBuilder;
-    } catch (MarkLogicServerException e) {
-      logger.error(e.getServerMessage());
-      logger.error("If this a configuration issue, fix the configuration issues as shown in"
-          + " the logs for enabling faceted search on the entity properties." + "\n"
-          + "If the exp-final-entity-options search is missing, please look into documentation "
-          + "for creating the exp-final-entity-options file. This file is required to enable "
-          + "various search features");
-      // QUERY_OPTIONS doesn't exist. So, using DEFAULT_OPTIONS query options file
-      return queryMgr.newStructuredQueryBuilder(DEFAULT_OPTIONS);
-    }
   }
 
   private String[] getExcludedCollections(List<String> entityNames) {
