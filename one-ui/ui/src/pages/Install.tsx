@@ -6,7 +6,7 @@ const Install: React.FC = () => {
   return (
     <div>
       <div className={styles.content}>
-        <div className={styles.installForm}>
+        <div className={styles.installContainer}>
           <InstallForm/>
         </div>
       </div>
