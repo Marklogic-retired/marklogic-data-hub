@@ -86,21 +86,21 @@
     </range-field-index>
     <range-field-index>
       <scalar-type>string</scalar-type>
-      <collation>http://marklogic.com/collation/en</collation>
+      <collation>http://marklogic.com/collation/</collation>
       <field-name>datahubCreatedByJob</field-name>
       <range-value-positions>true</range-value-positions>
       <invalid-values>reject</invalid-values>
     </range-field-index>
     <range-field-index>
       <scalar-type>string</scalar-type>
-      <collation>http://marklogic.com/collation/en</collation>
+      <collation>http://marklogic.com/collation/</collation>
       <field-name>datahubCreatedByStep</field-name>
       <range-value-positions>true</range-value-positions>
       <invalid-values>reject</invalid-values>
     </range-field-index>
     <range-field-index>
       <scalar-type>string</scalar-type>
-      <collation>http://marklogic.com/collation/en</collation>
+      <collation>http://marklogic.com/collation/</collation>
       <field-name>datahubCreatedInFlow</field-name>
       <range-value-positions>true</range-value-positions>
       <invalid-values>reject</invalid-values>
