@@ -234,8 +234,68 @@ const Sidebar: React.FC<Props> = (props) => {
         {props.selectedEntities.length === 1 && (
           <Panel id="entity-properties" header={<div className={styles.title}>Entity Properties</div>} key="entityProperties" style={{ borderBottom: 'none' }}>
             {entityFacets.length ? entityFacets.map((facet, index) => {
-              let datatype = facet.type.split(':')[1].toLowerCase();
-              let step = decimals.includes(datatype) ? 0.1 : integers.includes(datatype) ? 1 : null;
+              console.log('facet',facet)
+              let datatype = ''; 
+              let step;
+              switch (facet.type) {
+                case 'xs:string': {
+                  return Object.entries(facet).length !== 0 && (
+                    <Facet
+                      name={facet.hasOwnProperty('displayName') ? facet.displayName : facet.facetName}
+                      constraint={facet.facetName}
+                      facetValues={facet.facetValues}
+                      key={facet.facetName}
+                      tooltip=""
+                      facetType={facet.type}
+                      facetCategory="entity"
+                      selectedEntity={props.selectedEntities}
+                      updateSelectedFacets={updateSelectedFacets}
+                      applyAllFacets={applyAllFacets}
+                      addFacetValues={addFacetValues}
+                    />
+                  )
+                }
+                case 'xs:int': {
+                  datatype = 'int';
+                  step = 1;
+                  break;
+                }
+                case 'xs:integer': {
+                  datatype = 'integer';
+                  step = 1;
+                  break;
+                }
+                case 'xs:short': {
+                  datatype = 'short';
+                  step = 1;
+                  break;
+                }
+                case 'xs:long': {
+                  datatype = 'long';
+                  step = 1;
+                  break;
+                }
+                case 'xs:decimal': {
+                  datatype = 'decimal';
+                  step = 0.1;
+                  break;
+                }
+                case 'xs:double': {
+                  datatype = 'double';
+                  step = 0.1;
+                  break;
+                }
+                case 'xs:float': {
+                  datatype = 'float';
+                  step = 0.1;
+                  break;
+                }
+                //add date type cases
+
+                default:
+                  break;
+              }
+
               if (step && facet.facetValues.length) {
                 return (
                   <div key={index}>
@@ -248,23 +308,7 @@ const Sidebar: React.FC<Props> = (props) => {
                     />
                   </div>
                 )
-              } else {
-                return Object.entries(facet).length !== 0 && (
-                  <Facet
-                    name={facet.hasOwnProperty('displayName') ? facet.displayName : facet.facetName}
-                    constraint={facet.facetName}
-                    facetValues={facet.facetValues}
-                    key={facet.facetName}
-                    tooltip=""
-                    facetType={facet.type}
-                    facetCategory="entity"
-                    selectedEntity={props.selectedEntities}
-                    updateSelectedFacets={updateSelectedFacets}
-                    applyAllFacets={applyAllFacets}
-                    addFacetValues={addFacetValues}
-                  />
-                )
-              }
+              } 
             }) :
               <div>No Facets</div>
             }
