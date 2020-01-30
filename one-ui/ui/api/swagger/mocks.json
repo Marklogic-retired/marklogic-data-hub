@@ -974,6 +974,206 @@
                 "x-swagger-router-controller": "Steps"
             }
         },
+      "/flows/{flowId}/steps/{stepId}/link/{artifactType}/{artifactName}/{artifactVersion}":
+      {
+        "post":
+        {
+          "tags": [
+            "steps"
+          ],
+          "summary": "Link artifact to step",
+          "description": "",
+          "operationId": "linkFlowStepToArtifact",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "flowId",
+              "in": "path",
+              "description": "Id of flow to be updated",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "stepId",
+              "in": "path",
+              "description": "Id of step to be updated",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "artifactType",
+              "in": "path",
+              "description": "Type of artifact to link to step",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "artifactName",
+              "in": "path",
+              "description": "Name of artifact to link to step",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "artifactVersion",
+              "in": "path",
+              "description": "Optional version of artifact to link to step",
+              "required": false,
+              "type": "string"
+            }
+            ],
+          "responses":
+          {
+            "200":
+            {
+              "description": "Successful Operation",
+              "schema":
+              {
+                "$ref": "#/definitions/flow"
+              }
+            },
+            "400":
+            {
+              "description": "Bad Request",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "401":
+            {
+              "description": "Unauthorized",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "403":
+            {
+              "description": "Forbidden",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "404":
+            {
+              "description": "Not Found",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "500":
+            {
+              "description": "Internal Server Error",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            }
+          },
+          "x-swagger-router-controller": "Steps"
+        },
+        "delete":
+        {
+          "tags": [
+            "steps"
+          ],
+          "summary": "Delete step by Id",
+          "description": "",
+          "operationId": "removeArtifactLinkFromFlowStep",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "flowId",
+              "in": "path",
+              "description": "Id of flow to be fetched",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "stepId",
+              "in": "path",
+              "description": "Id of step to be fetched",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "artifactType",
+              "in": "path",
+              "description": "Type of artifact to link to step",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "artifactName",
+              "in": "path",
+              "description": "Name of artifact to link to step",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "artifactVersion",
+              "in": "path",
+              "description": "Optional version of artifact to link to step",
+              "required": false,
+              "type": "string"
+            }],
+          "responses":
+          {
+            "200":
+            {
+              "description": "Successful Operation"
+            },
+            "400":
+            {
+              "description": "Bad Request",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "401":
+            {
+              "description": "Unauthorized",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "403":
+            {
+              "description": "Forbidden",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "404":
+            {
+              "description": "Not Found",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "500":
+            {
+              "description": "Internal Server Error",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            }
+          },
+          "x-swagger-router-controller": "Steps"
+        }
+      },
         "/collections/{databaseId}":
         {
             "get":

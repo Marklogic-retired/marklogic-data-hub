@@ -1,0 +1,5 @@
+{
+  "name": "csvLoadData",
+  "sourceFormat": "csv",
+  "targetFormat": "json"
+}
