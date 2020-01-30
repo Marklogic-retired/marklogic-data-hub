@@ -27,6 +27,7 @@ import com.marklogic.hub.ArtifactManager;
 import com.marklogic.hub.impl.ArtifactManagerImpl;
 import com.marklogic.hub.oneui.Application;
 import com.marklogic.hub.oneui.TestHelper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,9 +73,13 @@ public class LoadDataControllerTest {
     }
 
     // TODO rework tests to avoid the current dependency on manually adding credentials
+    @BeforeEach
+    void before(){
+        testHelper.authenticateSession();
+    }
+
     @Test
     void testLoadDataController() throws IOException {
-        testHelper.authenticateSession();
         controller.updateArtifact("validArtifact", validLoadDataConfig);
 
         ArrayNode resultList = (ArrayNode) controller.getArtifacts().getBody();
@@ -98,9 +103,8 @@ public class LoadDataControllerTest {
         assertThrows(FailedRequestException.class, () -> controller.getArtifact("validArtifact"));
     }
 
-    //@Test
+    @Test
     public void testLoadDataSettings() throws IOException {
-        testHelper.authenticateSession();
         controller.updateArtifact("validArtifact", validLoadDataConfig);
 
         JsonNode result = controller.getArtifactSettings("validArtifact").getBody();
