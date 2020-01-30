@@ -38,6 +38,7 @@ describe("Result Table component", () => {
   });
 
   describe('Result Table for the entity', () => {
+    // TODO this test is the same as for all entities
     beforeEach(() => {
       wrapper = mount(
         <Router>
@@ -52,14 +53,14 @@ describe("Result Table component", () => {
     it('should render table', () => {
       expect(wrapper.exists()).toBe(true);
     });
-
+ 
     it('should render table for the entity', () => {
-      expect(wrapper.find('.ant-table-thead th')).toHaveLength(7);
+      expect(wrapper.find('.ant-table-thead th')).toHaveLength(6);
     });
 
     it('should render resizable', () => {
-      expect(wrapper.find('.react-resizable')).toHaveLength(6);
-      expect(wrapper.find('.react-resizable-handle')).toHaveLength(6);
+      expect(wrapper.find('.react-resizable')).toHaveLength(5);
+      expect(wrapper.find('.react-resizable-handle')).toHaveLength(5);
     });
   });
 })
