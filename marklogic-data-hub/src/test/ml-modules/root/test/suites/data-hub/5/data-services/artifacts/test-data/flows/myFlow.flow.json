@@ -1,0 +1,26 @@
+{
+  "name": "myFlow",
+  "options": {
+    "collections": ["myNewFlow"]
+  },
+  "description": "flow description",
+  "steps": {
+    "1": {
+      "name": "ingest-test",
+      "stepDefinitionName": "default-ingestion",
+      "stepDefinitionType": "INGESTION",
+      "options": {
+        "targetDatabase": "data-hub-STAGING"
+      }
+    },
+    "2": {
+      "name": "mapping-test",
+      "stepDefinitionName": "default-mapping",
+      "stepDefinitionType": "MAPPING",
+      "options": {
+        "sourceDatabase": "data-hub-STAGING",
+        "targetDatabase": "data-hub-FINAL"
+      }
+    }
+  }
+}
