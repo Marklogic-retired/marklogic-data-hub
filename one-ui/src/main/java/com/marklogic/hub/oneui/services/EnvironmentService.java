@@ -62,6 +62,8 @@ public class EnvironmentService {
 
     public synchronized void reset() {
         prefs.remove("environment");
+        prefs.remove("projectDirectory");
+        hubConfig.createProject(getProjectDirectory());
     }
 
     public synchronized void setEnvironment(EnvironmentInfo environmentInfo) {
