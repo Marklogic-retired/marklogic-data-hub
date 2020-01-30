@@ -1004,7 +1004,6 @@ public class HubConfigSession implements HubConfig, InitializingBean, Disposable
             hubConfigImpl.setAppConfig(new AppConfig(), true);
         }
         hubConfigImpl.createProject(environmentService.getProjectDirectory());
-        hubConfigImpl.initHubProject();
         hubConfigImpl.refreshProject();
         // resetting app config to trigger updates to values
         hubConfigImpl.setAppConfig(hubConfigImpl.getAppConfig(), false);
