@@ -44,7 +44,7 @@ public class LoadDataController extends AbstractArtifactController {
 
     @RequestMapping(value = "/{artifactName}", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<JsonNode> updateArtifact(@PathVariable String artifactName, @RequestBody ObjectNode loadDataJson) {
+    public ResponseEntity<JsonNode> updateArtifact(@PathVariable String artifactName, @RequestBody ObjectNode loadDataJson) throws IOException {
         // scrub dynamic properties
         loadDataJson.remove("fileCount");
         loadDataJson.remove("filesNeedReuploaded");
@@ -61,7 +61,7 @@ public class LoadDataController extends AbstractArtifactController {
 
     @RequestMapping(value = "/{artifactName}", method = RequestMethod.DELETE)
     @ResponseBody
-    public ResponseEntity<JsonNode> deleteLoadDataConfig(@PathVariable String artifactName) {
+    public ResponseEntity<JsonNode> deleteLoadDataConfig(@PathVariable String artifactName) throws IOException {
         return super.deleteArtifact(artifactName);
     }
 

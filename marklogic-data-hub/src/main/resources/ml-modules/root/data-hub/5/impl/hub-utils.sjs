@@ -18,11 +18,15 @@ const cachedModules = {};
 const consts = require("/data-hub/5/impl/consts.sjs");
 
 class HubUtils {
+
   constructor(config = null) {
     if(!config) {
       config = require("/com.marklogic.hub/config.sjs");
     }
     this.config = config;
+    this.ampersandRegex = new RegExp('&', 'g');
+    this.aposRegex = new RegExp('\'', 'g');
+    this.quoteRegex = new RegExp('"', 'g');
   }
 
   getConfig() {
@@ -51,6 +55,19 @@ class HubUtils {
         writeQueue,
         permissions,
         baseCollections: collections || []
+      },
+      {
+        database: xdmp.database(database),
+        commit: 'auto',
+        update: 'true',
+        ignoreAmps: true
+      }));
+  }
+
+  updateNodePath(docURI, xpath, newNode, database = xdmp.databaseName(xdmp.database())){
+    return fn.head(xdmp.invoke('/data-hub/5/impl/hub-utils/invoke-update-node-path.mjs',
+      {
+        docURI, xpath, newNode
       },
       {
         database: xdmp.database(database),
@@ -192,6 +209,22 @@ class HubUtils {
     return permissions;
   }
 
+  // this function can be used to create xquery/xpath templates that are safe from injection attacks
+  xquerySanitizer(strings, ...values) {
+    const parts = [];
+    let counter = 0;
+    for (const string of strings) {
+      parts.push(string);
+      if (values[counter] != undefined) {
+        parts.push(
+          String(values[counter++])
+            .replace(this.ampersandRegex, '&amp;')
+            .replace(this.aposRegex, '&apos;')
+            .replace(this.quoteRegex, '&quot;'));
+      }
+    }
+    return parts.join('');
+  };
 }
 
 module.exports = HubUtils;

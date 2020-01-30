@@ -1,0 +1,30 @@
+{
+    "functionName": "linkToStepOptions",
+    "params": [
+        {
+            "name": "flowName",
+            "datatype": "string"
+         },
+        {
+            "name": "stepID",
+            "datatype": "string"
+        },
+        {
+            "name": "artifactType",
+            "datatype": "string"
+        },
+        {
+            "name": "artifactName",
+            "datatype": "string"
+        },
+        {
+            "name": "artifactVersion",
+            "datatype": "string",
+            "nullable": true
+        }
+    ],
+    "return": {
+        "datatype": "jsonDocument",
+        "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
+}

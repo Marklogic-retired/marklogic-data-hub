@@ -115,11 +115,79 @@ export function validateArtifact(artifactType, artifactName, artifact) {
     return validatedArtifact;
 }
 
+export function linkToStepOptions(flowName, stepID, artifactType, artifactName, artifactVersion = 'latest') {
+    return linkToStepOptionsOperation('addLink', flowName, stepID, artifactType, artifactName, artifactVersion);
+}
+
+export function removeLinkToStepOptions(flowName, stepID, artifactType, artifactName, artifactVersion = 'latest') {
+    return linkToStepOptionsOperation('removeLink', flowName, stepID, artifactType, artifactName, artifactVersion);
+}
+
+function linkToStepOptionsOperation(operation, flowName, stepID, artifactType, artifactName, artifactVersion = 'latest') {
+    const artifactLibrary =  getArtifactTypeLibrary(artifactType);
+    // getting artifact object so 404 will be thrown if artifact isn't found
+    // also, we can have the extension library handle latest version logic, if necessary
+    const artifactObject = getArtifactNode(artifactType, artifactName, artifactVersion).toObject();
+    artifactVersion = artifactLibrary.getVersionProperty() ? artifactObject[artifactLibrary.getVersionProperty()] : artifactVersion;
+
+
+    const flowDatabases =  getArtifactTypeLibrary('flows').getStorageDatabases();
+    const flowNode = getArtifactNode('flows', flowName);
+    const stepName = stepID.substring(0, stepID.lastIndexOf('-'));
+    const stepType = stepID.substring(stepID.lastIndexOf('-') + 1).toLowerCase();
+    const stepOptionsXPath = dataHub.hubUtils.xquerySanitizer`/steps/*[name eq "${stepName}"][lower-case(stepDefinitionType) eq "${stepType}"]/options`;
+    const stepOptionsNode = fn.head(flowNode.xpath(stepOptionsXPath));
+    if (fn.empty(stepOptionsNode)) {
+        returnErrToClient(404, 'NOT FOUND', `Step "${stepID}" options of flow "${flowName}" not found!`);
+    }
+    let stepOptionsObject = stepOptionsNode.toObject();
+    if (operation === 'addLink') {
+        if (artifactLibrary.linkToOptions) {
+            stepOptionsObject = artifactLibrary.linkToOptions(stepOptionsObject, artifactName, artifactVersion);
+        } else {
+            stepOptionsObject = defaultArtifactLinkFunction(artifactType, stepOptionsObject, artifactName, artifactVersion);
+        }
+    } else if (operation === 'removeLink') {
+        if (artifactLibrary.removeLinkToOptions) {
+            stepOptionsObject = artifactLibrary.removeLinkToOptions(stepOptionsObject, artifactName, artifactVersion);
+        } else {
+            stepOptionsObject = defaultRemoveArtifactLinkFunction(artifactType, stepOptionsObject, artifactName, artifactVersion);
+        }
+    }
+    const flowURI = xdmp.nodeUri(flowNode);
+    for (const db of flowDatabases) {
+        dataHub.hubUtils.updateNodePath(flowURI, stepOptionsXPath, stepOptionsObject, db);
+    }
+    // returning the updated flow object so the file can be updated in the project directory
+    const flowObject = flowNode.toObject();
+    const stepNumber = fn.string(fn.nodeName(stepOptionsNode.xpath('..')));
+    flowObject.steps[stepNumber].options = stepOptionsObject;
+    return flowObject;
+}
+
+function defaultArtifactLinkFunction(artifactType, existingOptions, artifactName, artifactVersion) {
+    const artifactLibrary =  getArtifactTypeLibrary(artifactType);
+    const linkObject = {
+        [artifactLibrary.getNameProperty()]: artifactName
+    };
+    const versionProperty = artifactLibrary.getVersionProperty();
+    if (versionProperty)  {
+        linkObject[versionProperty] = artifactVersion;
+    }
+    existingOptions[artifactType] = linkObject;
+    return existingOptions;
+}
+
+function defaultRemoveArtifactLinkFunction(artifactType, existingOptions, artifactName, artifactVersion) {
+    delete existingOptions[artifactType];
+    return existingOptions;
+}
+
 function getArtifactNode(artifactType, artifactName, artifactVersion = 'latest') {
     const artifactLibrary = getArtifactTypeLibrary(artifactType);
     const node = artifactLibrary.getArtifactNode(artifactName, artifactVersion);
     if (fn.empty(node)) {
-        returnErrToClient(404, 'Not found!');
+        returnErrToClient(404, 'NOT FOUND');
     }
     return node;
 }

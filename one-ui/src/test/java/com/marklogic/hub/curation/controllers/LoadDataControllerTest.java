@@ -25,12 +25,16 @@ import com.marklogic.client.FailedRequestException;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.oneui.Application;
 import com.marklogic.hub.oneui.TestHelper;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -49,9 +53,13 @@ public class LoadDataControllerTest {
     public LoadDataControllerTest() throws JsonProcessingException {
     }
 
-    // TODO rework tests to avoid the current dependency on manually adding credentials
-    //@Test
-    void testLoadDataController() {
+    @BeforeEach
+    void before(){
+        testHelper.authenticateSession();
+    }
+
+    @Test
+    void testLoadDataController() throws IOException {
         testHelper.authenticateSession();
         controller.updateArtifact("validArtifact", validLoadDataConfig);
 
