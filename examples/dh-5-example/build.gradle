@@ -33,17 +33,19 @@ dependencies {
     }
 }
 
-task runFlowWithoutProject(type: JavaExec) {
-    description = "Run a flow without depending on project files. Because the first step is an ingestion step that defaults to having " +
-        "a relative file path value, the inputFilePath must be overridden by passing in an absolute path to that directory."
-    classpath = sourceSets.main.runtimeClasspath
-    main = "org.example.RunFlowWithoutProject"
-    args = [
-        mlHost,
-        mlUsername,
-        mlPassword,
-        new File("mastering-input").getAbsolutePath()
-    ]
+if (project.hasProperty("mlHost")) {
+    task runFlowWithoutProject(type: JavaExec) {
+        description = "Run a flow without depending on project files. Because the first step is an ingestion step that defaults to having " +
+            "a relative file path value, the inputFilePath must be overridden by passing in an absolute path to that directory."
+        classpath = sourceSets.main.runtimeClasspath
+        main = "org.example.RunFlowWithoutProject"
+        args = [
+            mlHost,
+            mlUsername,
+            mlPassword,
+            new File("mastering-input").getAbsolutePath()
+        ]
+    }
 }
 
 task extractZip(type: Copy) {
