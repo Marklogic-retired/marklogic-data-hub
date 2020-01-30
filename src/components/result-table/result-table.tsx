@@ -40,23 +40,33 @@ interface Props {
 const DEFAULT_ALL_ENTITIES_HEADER = [
   {
     title: 'Identifier',
-    key: '0-i'
+    key: '0-i',
+    visible: true,
+    width: 150
   },
   {
     title: 'Entity',
-    key: '0-1'
+    key: '0-1',
+    visible: true,
+    width: 150
   },
   {
     title: 'File Type',
-    key: '0-2'
+    key: '0-2',
+    visible: true,
+    width: 150
   },
   {
     title: 'Created',
-    key: '0-c'
+    key: '0-c',
+    visible: true,
+    width: 150
   },
   {
     title: 'Detail View',
-    key: '0-d'
+    key: '0-d',
+    visible: true,
+    width: 150
   },
 ];
 
@@ -387,9 +397,17 @@ const ResultTable: React.FC<Props> = (props) => {
         const treeItem = tree.splice(fromIndex - 1, 1)[0];
         header.splice(toIndex - 1, 0, colItem);
         tree.splice(toIndex - 1, 0, treeItem);
-        let updatedHeader = reconstructHeader(deepCopy(header), toStringArray(checkedColumns))
-        setRenderColumns(updatedHeader);
+
+        let delimitedHeader = header.map( (item, index) => {
+          let newHeader = { ...item }
+          delete newHeader['onHeaderCell']
+          delete newHeader['onCell']
+          delete newHeader['render']
+          return newHeader
+        });
+        setRenderColumns(header);
         setTreeColumns(tree)
+        setDefaultColumns(delimitedHeader);
       }
     },
     nodeSelector: "th",

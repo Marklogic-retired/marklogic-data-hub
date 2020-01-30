@@ -183,7 +183,6 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
 
   const setPageRoute = (route: string) => {
     updateUserPreferences(user.name, { pageRoute: route });
-    setUser({...user, pageRoute: route });
   }
 
   const setResultTable = (tableColumns: any, entityName: string) => {
