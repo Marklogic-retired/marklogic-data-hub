@@ -49,7 +49,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
           )
         } else if (item.rangeValues) {
           return (
-            <Button 
+            <MlButton 
               size="small"
               className={styles.facetButton} 
               key={index}
@@ -58,7 +58,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
             >
               <Icon type='close'/>
               {item.constraint + ': ' + item.rangeValues.lowerBound + ' - ' + item.rangeValues.upperBound}
-            </Button>
+            </MlButton>
           )
         }
         return (
