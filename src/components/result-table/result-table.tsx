@@ -79,7 +79,6 @@ const ResultTable: React.FC<Props> = (props) => {
   const [treeColumns, setTreeColumns] = useState<any[]>([]);
   let counter = 0;
   let parsedPayload = tableParser(props);
-  let nestedColumns = new Set();
 
   useEffect(() => {
     if (props.data) {
@@ -191,7 +190,6 @@ const ResultTable: React.FC<Props> = (props) => {
 
 
           for (let propt in item.itemEntityProperties[0]) {
-            //console.log('propt for in loop', item.itemEntityProperties[0][propt]);
             if (isUri) {
               row.identifier = <Tooltip title={isUri ? item.uri : item.primaryKey}>{'.../' + document}</Tooltip>
             }
@@ -199,8 +197,6 @@ const ResultTable: React.FC<Props> = (props) => {
               row[propt.toLowerCase()] = item.itemEntityProperties[0][propt].toString();
             } else {
               if (Array.isArray(item.itemEntityProperties[0][propt])) {
-                // console.log('nested obj propt', propt);
-                // console.log('nested obj value', item.itemEntityProperties[0][propt]);
                 if (item.itemEntityProperties[0][propt].length > 0) {
                   let objectKeys = Object.keys(item.itemEntityProperties[0][propt][0]);
                   let objKeyMap = {}
@@ -220,9 +216,7 @@ const ResultTable: React.FC<Props> = (props) => {
                   objKeyMap[item] = propt + '_' + item;
                 });
                 let reMappedObject = renameKeys(objKeyMap, item.itemEntityProperties[0][propt]);
-                //nested = item.itemEntityProperties[0][propt];
                 row = {...row, ...reMappedObject}
-
               }  else {
                 row[propt.toLowerCase()] = item.itemEntityProperties[0][propt].toString();
               }
@@ -467,13 +461,13 @@ const ResultTable: React.FC<Props> = (props) => {
     />;
   }
 
+  
   const headerRender = (col) => {
-    console.log('updated header render', col)
     setRenderColumns(col);
     setCheckedColumns(deepCopy(col));
     setRenderTableData(mergeRows(col));
   }
-
+// TODO updateTreeColumns with headerRender
   const updateTreeColumns = (columns) => {
     setTreeColumns(columns);
   }

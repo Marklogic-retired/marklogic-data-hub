@@ -116,7 +116,7 @@ export const tableParser = (props) => {
   let primaryKeys: string[] = [];
   let entityTitle: string[] = [];
   let consdata = new Array();
-
+  
   props.data && props.data.forEach(item => {
     if (item.hasOwnProperty('extracted')) {
       if (item.format === 'json' && item.hasOwnProperty('extracted')) {
@@ -165,7 +165,6 @@ export const tableParser = (props) => {
     }
 
   });
-
   return {
     data: consdata,
     primaryKeys: primaryKeys,

@@ -19,17 +19,11 @@ const ColumnSelector: React.FC<Props> = (props) => {
   const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
   const [checkedKeys, setCheckedKeys] = useState<any[]>([]);
   const [selectedKeys, setSelectedKeys] = useState<any[]>([]);
-  //const [tree, setTree] = useState<any[]>(props.tree);
   const [searchValue, setSearchValue] = useState("");
   let primaryKey = props.tree[0] && props.tree[0].key && props.tree[0].key;
   let allKeys = getKeys(props.tree)
   const dataList = new Array();
   let prevTree = props.tree;
-
-
-  // useEffect(() => {
-  //   setTree(props.tree)
-  // }, [props.tree])
 
   useEffect(() => {
     setCheckedKeys(getChildKeys(props.title))
@@ -146,7 +140,7 @@ const ColumnSelector: React.FC<Props> = (props) => {
       
       props.headerRender(updateHeader(data, col));
       //props.headerRender(reconstructHeader(deepCopy(data), col));
-      // Doesn't work
+      // TODO Doesn't work
       props.updateTreeColumns(data)
     }
   };
