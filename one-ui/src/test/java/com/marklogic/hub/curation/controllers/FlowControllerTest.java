@@ -1,6 +1,7 @@
 package com.marklogic.hub.curation.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.io.StringHandle;
@@ -22,6 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.io.IOException;
 import java.util.List;
 
 
@@ -54,8 +56,13 @@ class FlowControllerTest {
             "\"user\":\"\",\"runBefore\":false},\"batchSize\":100,\"threadCount\":4,\"stepDefinitionType\":\"CUSTOM\",\"stepDefType\":\"CUSTOM\"," +
             "\"stepDefinitionName\":\"second\",\"selectedSource\":\"\"}";
 
+    JsonNode validLoadDataConfig = new ObjectMapper().readTree("{ \"name\": \"validArtifact\", \"sourceFormat\": \"xml\", \"targetFormat\": \"json\"}");
+
     @Autowired
     private FlowController controller;
+
+    @Autowired
+    private LoadDataController loadDataController;
 
     @Autowired
     private TestHelper testHelper;
@@ -65,13 +72,17 @@ class FlowControllerTest {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    FlowControllerTest() throws JsonProcessingException {
+    }
+
     @BeforeEach
     void before(){
         testHelper.authenticateSession();
     }
 
     @Test
-    void getFlow() throws JsonProcessingException {
+    void getFlow() throws IOException {
+        int startingFlowCount = ((List)controller.getFlows().getBody()).size();
         try {
             //POST flow
             controller.createFlow(flowString);
@@ -79,7 +90,7 @@ class FlowControllerTest {
 
             //GET all flows
             ResponseEntity<?> flows = controller.getFlows();
-            Assertions.assertEquals(1, ((List)flows.getBody()).size());
+            Assertions.assertEquals(startingFlowCount + 1, ((List)flows.getBody()).size());
 
             //GET all steps in a flow
             List<StepModel> steps = controller.getSteps("testFlow");
@@ -117,10 +128,23 @@ class FlowControllerTest {
             docMgr.read("/step-definitions/custom/second/second.step.json").next().getContent(readHandle);
             //the step-def should be written
             Assertions.assertNotNull(readHandle.get());
+
+            //link artifact to step options
+            loadDataController.updateArtifact("validArtifact", validLoadDataConfig);
+            controller.linkArtifact("testFlow", "e2e-xml-ingestion", "loadData", "validArtifact");
+
             //GET step
             stepModel = (StepModel)controller.getStep("testFlow", "e2e-xml-ingestion").getBody();
             Assertions.assertEquals("e2e-xml", stepModel.getName());
             Assertions.assertEquals(100, stepModel.getBatchSize().intValue());
+            // step should have LoadData link
+            Assertions.assertTrue(stepModel.getOptions().has("loadData"), "Should have loadData link");
+            Assertions.assertEquals("validArtifact", stepModel.getOptions().get("loadData").get("name").asText(), "Link should have expected name");
+
+            // remove artifact link
+            controller.removeLinkToArtifact("testFlow", "e2e-xml-ingestion", "loadData", "validArtifact");
+            stepModel = (StepModel)controller.getStep("testFlow", "e2e-xml-ingestion").getBody();
+            Assertions.assertFalse(stepModel.getOptions().has("loadData"), "Should not have loadData link");
 
             //DELETE step
             controller.deleteStep("testFlow", "e2e-xml-ingestion" );
@@ -135,8 +159,7 @@ class FlowControllerTest {
             catch (Exception e){
                 logger.info("Exception is expected as the step being fetched has been deleted");
             }
-        }
-        finally {
+        } finally {
             //DELETE flow
             controller.deleteFlow("testFlow");
             try{
@@ -146,6 +169,7 @@ class FlowControllerTest {
             catch (Exception e) {
                 logger.info("Exception is expected as the flow being fetched has been deleted");
             }
+            loadDataController.deleteLoadDataConfig("validArtifact");
         }
     }
 }

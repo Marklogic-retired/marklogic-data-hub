@@ -183,6 +183,10 @@ task generateStepDefinitionInterface(type: com.marklogic.client.tools.gradle.End
     serviceDeclarationFile = dataServicesPath + "/stepDefinition/service.json"
 }
 
+task generateArtifactsInterface(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask, group: dataServicesGroup) {
+    serviceDeclarationFile = dataServicesPath + "/artifacts/service.json"
+}
+
 task generateRolesInterface(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask, group: dataServicesGroup) {
     serviceDeclarationFile = dataServicesPath + "/roles/service.json"
 }
