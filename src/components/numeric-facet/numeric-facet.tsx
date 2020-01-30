@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Slider, InputNumber, Button } from 'antd';
+import { Slider, InputNumber } from 'antd';
+import { MlButton } from 'marklogic-ui-library';
 import { SearchContext } from '../../util/search-context';
 import styles from './numeric-facet.module.scss';
 import axios from "axios";
@@ -124,11 +125,11 @@ const NumericFacet: React.FC<Props> = (props) => {
       </div>
       {showApply && (
         <div className={styles.applyButtonContainer}>
-          <Button
+          <MlButton
             type="primary"
             size="small"
             onClick={() => props.applyAllFacets()}
-          >Apply</Button>
+          >Apply</MlButton>
         </div>
       )}
     </div>
