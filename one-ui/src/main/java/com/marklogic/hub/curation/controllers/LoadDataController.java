@@ -108,6 +108,19 @@ public class LoadDataController extends AbstractArtifactController {
         return "loadData";
     }
 
+    @RequestMapping(value = "/{artifactName}/settings", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<JsonNode> getArtifactSettings(@PathVariable String artifactName) {
+        ResponseEntity<JsonNode> resp = super.getArtifactSettings(artifactName);
+        return resp;
+    }
+
+    @RequestMapping(value = "/{artifactName}/settings", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<JsonNode> updateArtifactSettings(@PathVariable String artifactName, @RequestBody ObjectNode settings) {
+        return super.updateArtifactSettings(artifactName, settings);
+    }
+
     private void enrichLoadData(ObjectNode loadDataConfig) {
         int fileCount = 0;
         if (loadDataConfig.hasNonNull("inputFilePath")) {
