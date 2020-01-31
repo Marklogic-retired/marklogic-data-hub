@@ -115,6 +115,37 @@ public interface ArtifactService {
                 );
             }
 
+            @Override
+            public JsonNode getArtifactSettings(String artifactType, String artifactName) {
+                return BaseProxy.JsonDocumentType.toJsonNode(
+                    baseProxy
+                        .request("getArtifactSettings.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS)
+                        .withSession()
+                        .withParams(
+                            BaseProxy.atomicParam("artifactType", false, BaseProxy.StringType.fromString(artifactType)),
+                            BaseProxy.atomicParam("artifactName", false, BaseProxy.StringType.fromString(artifactName))
+                        )
+                        .withMethod("POST")
+                        .responseSingle(false, Format.JSON)
+                );
+            }
+
+            @Override
+            public JsonNode setArtifactSettings(String artifactType, String artifactName, JsonNode settings) {
+                return BaseProxy.JsonDocumentType.toJsonNode(
+                    baseProxy
+                        .request("setArtifactSettings.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED)
+                        .withSession()
+                        .withParams(
+                            BaseProxy.atomicParam("artifactType", false, BaseProxy.StringType.fromString(artifactType)),
+                            BaseProxy.atomicParam("artifactName", false, BaseProxy.StringType.fromString(artifactName)),
+                            BaseProxy.documentParam("settings", false, new JacksonHandle().with(settings))
+                        )
+                        .withMethod("POST")
+                        .responseSingle(false, Format.JSON)
+                );
+            }
+
         }
 
         return new ArtifactServiceImpl(db);
@@ -145,7 +176,7 @@ public interface ArtifactService {
     com.fasterxml.jackson.databind.JsonNode getArtifact(String artifactType, String artifactName);
 
     /**
-     * Invokes the getList operation on the database server
+     * Invokes the setArtifact operation on the database server
      *
      * @param artifactType	provides input
      * @param artifactName	provides input
@@ -155,7 +186,7 @@ public interface ArtifactService {
     com.fasterxml.jackson.databind.JsonNode setArtifact(String artifactType, String artifactName, JsonNode artifact);
 
     /**
-     * Invokes the getList operation on the database server
+     * Invokes the deleteArtifact operation on the database server
      *
      * @param artifactType	provides input
      * @param artifactName	provides input
@@ -172,4 +203,23 @@ public interface ArtifactService {
      * @return	as output
      */
     com.fasterxml.jackson.databind.JsonNode validateArtifact(String artifactType, String artifactName, JsonNode artifact);
+
+    /**
+     * Invokes the getArtifactSettings operation on the database server
+     *
+     * @param artifactType	provides input
+     * @param artifactName	provides input
+     * @return	as output
+     */
+    com.fasterxml.jackson.databind.JsonNode getArtifactSettings(String artifactType, String artifactName);
+
+    /**
+     * Invokes the setArtifactSettings operation on the database server
+     *
+     * @param artifactType	provides input
+     * @param artifactName	provides input
+     * @param settings	provides input
+     * @return	as output
+     */
+    com.fasterxml.jackson.databind.JsonNode setArtifactSettings(String artifactType, String artifactName, JsonNode settings);
 }
