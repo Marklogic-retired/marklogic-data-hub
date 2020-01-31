@@ -159,8 +159,8 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
   }
 
   const setLatestJobFacet = (vals: string, option: string) => {
-    let facets = {};
-    facets = { createdByJob: [vals] };
+    let facets = {};    
+    facets = { createdByJob: {dataType: "string", stringValues: [vals]} };
     setSearchOptions({
       ...searchOptions,
       start: 1,
