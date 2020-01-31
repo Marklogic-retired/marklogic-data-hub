@@ -504,6 +504,7 @@ const ResultTable: React.FC<Props> = (props) => {
             pagination={false}
             expandedRowRender={expandedRowRender}
             expandIcon={expandIcon}
+            scroll={{y:650}}
             data-cy="search-tabular"
           />
         </div>
