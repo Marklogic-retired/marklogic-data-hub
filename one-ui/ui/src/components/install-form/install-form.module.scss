@@ -8,11 +8,16 @@
   }
 }
 
-.installButton button {
+.installButton button,
+.successMessage button {
   color:#ffffff;
   width: 100%;
   background-color: #44499C;
   border: none;
+}
+
+.successMessage button {
+  margin: 30px 0 50px;
 }
 
 .welcomeMessage {
