@@ -164,8 +164,6 @@ const Sidebar: React.FC<Props> = (props) => {
         let additionalFacetVals = vals.map(item => {
           return { name: item, count: 0, value: item }
         });
-
-        if (!newAllSelectedfacets.hasOwnProperty(constraint)) {
           // facet value doesn't exist
           newAllSelectedfacets = {
             ...newAllSelectedfacets,
@@ -174,14 +172,15 @@ const Sidebar: React.FC<Props> = (props) => {
               [valueKey]: vals
             }
           }
-          // TODO duplicate facet is added if additional facet vals contains
-          // existing value
-          newEntityFacets[index]['facetValues'].unshift(...additionalFacetVals);
-        } else {
-          // add facet vals to selected facet
-          newAllSelectedfacets[constraint][valueKey].push(...vals)
+        for (let i = 0; i < additionalFacetVals.length; i++) {
+          for (let j = 0; j < newEntityFacets[index]['facetValues'].length; j++) {
+            if (additionalFacetVals[i].name === newEntityFacets[index]['facetValues'][j].name) {
+              newEntityFacets[index]['facetValues'].splice(j, 1);
+              break;
+            }
+          }
+            newEntityFacets[index]['facetValues'].unshift(additionalFacetVals[i]);
         }
-
       }
       setEntityFacets(newEntityFacets);
     } else if (facetCategory === 'hub') {
