@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 import { Form, Icon, Input, Button, Progress, Row, Col, Alert } from 'antd';
 import axios from 'axios';
 import { Message } from 'stompjs/lib/stomp.min';
@@ -101,12 +101,22 @@ const InstallForm: React.FC = () => {
         </div>
         <div className={styles.successMessage} style={successMessage.show ? {display: 'block'} : {display: 'none'}}>
           <Alert message={successMessage.message} description={successMessage.description} type='success' showIcon />
+          <Link to="/home">
+            <MlButton 
+              id="goToDashboard" 
+              type="primary" 
+              size="default" 
+              htmlType="submit"
+            >
+              Go to Dashboard
+            </MlButton>
+          </Link>
         </div>
         <div className={styles.errorMessage} style={errorMessage.show ? {display: 'block'} : {display: 'none'}}>
           <Alert message={errorMessage.message} description={errorMessage.description} type='error' showIcon />
         </div>
 
-        <div className={styles.installForm}>
+        <div className={styles.installForm} style={successMessage.show ? {display: 'none'} : {display: 'block'}}>
           <Form onSubmit={handleSubmit} className={styles.installForm} data-cy='login'>
               <label className={styles.formLabel}>Project Directory:</label>
               <Form.Item 
