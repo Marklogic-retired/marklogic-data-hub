@@ -111,8 +111,7 @@ public class LoadDataController extends AbstractArtifactController {
     @RequestMapping(value = "/{artifactName}/settings", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<JsonNode> getArtifactSettings(@PathVariable String artifactName) {
-        ResponseEntity<JsonNode> resp = super.getArtifactSettings(artifactName);
-        return resp;
+        return super.getArtifactSettings(artifactName);
     }
 
     @RequestMapping(value = "/{artifactName}/settings", method = RequestMethod.POST)
