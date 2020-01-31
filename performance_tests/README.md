@@ -8,6 +8,8 @@ RUNNING TESTS:
 3. run "node index.js TESTNAME"
     ex: "node index.js browseDocs"
 
+    *** RUN index_all.js INSTEAD OF index.js TO GET A FULL PERFORMANCE REPORT ***
+
 BROWSEDOCS.js:
 1. This script simply browses x amount pages of documents without selecting any facets. 
 2. You can change the number of pages it browses by changing the const variable "browseDocs" at the top of the script.

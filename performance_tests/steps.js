@@ -3,10 +3,7 @@ const { extractDataFromPerformanceTiming } = require('./perfHelper');
 const numPages = 10; //number of pages the script will browse
 const numSteps = 1; //number of step facets that will be selected
 
-async function collections(page) {
-    const performanceTiming = JSON.parse(
-        await page.evaluate(() => JSON.stringify(window.performance.timing))
-    );
+async function steps(page) {
 
     await page.waitForSelector('#hub-properties')
     await page.click('#hub-properties')
@@ -35,19 +32,8 @@ async function collections(page) {
         await page.waitFor(1000)
         await page.waitForSelector('[class*=Browse_searchBar] > [class*=search-pagination_searchPaginationContainer]:nth-child(3) > .ant-pagination > .ant-pagination-item-' + i + ' > a')
         await page.click('[class*=Browse_searchBar] > [class*=search-pagination_searchPaginationContainer]:nth-child(3) > .ant-pagination > .ant-pagination-item-' + i + ' > a')
-        console.log(extractDataFromPerformanceTiming(performanceTiming,
-            'responseEnd',
-            'domInteractive',
-            'loadEventEnd'))
     }
 
-
-    return extractDataFromPerformanceTiming(
-        performanceTiming,
-        'responseEnd',
-        'domInteractive',
-        'loadEventEnd'
-    );
 }
 
-module.exports = collections;
+module.exports = steps;
