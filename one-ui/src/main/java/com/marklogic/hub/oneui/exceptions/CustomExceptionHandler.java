@@ -20,7 +20,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.FailedRequestException;
-import com.marklogic.client.impl.FailedRequest;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -30,6 +29,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.io.IOException;
+
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
@@ -38,12 +39,13 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(FailedRequestException.class)
     protected ResponseEntity<JsonNode> handleFailedRequestExceptionRequest(
         FailedRequestException failedRequestException) {
-        FailedRequest failedRequest = failedRequestException.getFailedRequest();
         ObjectNode errJson = mapper.createObjectNode();
-        errJson.put("code", failedRequest.getStatusCode());
-        errJson.put("message", failedRequest.getStatus());
-        errJson.put("details", failedRequest.getMessage());
-        return new ResponseEntity<>(errJson, HttpStatus.valueOf(failedRequest.getStatusCode()));
+        errJson.put("code", failedRequestException.getServerStatusCode());
+        errJson.put("message", failedRequestException.getServerStatus());
+        HttpStatus httpStatus = HttpStatus.valueOf(failedRequestException.getServerStatusCode());
+        errJson.put("suggestion", httpStatusSuggestion(httpStatus));
+        errJson.put("details", failedRequestException.getServerMessage());
+        return new ResponseEntity<>(errJson, httpStatus);
     }
 
     @ExceptionHandler(HttpClientErrorException.class)
@@ -52,7 +54,9 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         ObjectNode errJson = mapper.createObjectNode();
         errJson.put("code", httpClientErrorException.getRawStatusCode());
         errJson.put("message", httpClientErrorException.getMessage());
-        return new ResponseEntity<>(errJson, HttpStatus.valueOf(httpClientErrorException.getRawStatusCode()));
+        HttpStatus httpStatus = HttpStatus.valueOf(httpClientErrorException.getRawStatusCode());
+        errJson.put("suggestion", httpStatusSuggestion(httpStatus));
+        return new ResponseEntity<>(errJson, httpStatus);
     }
     @ExceptionHandler(ForbiddenException.class)
     protected ResponseEntity<JsonNode> handleForbiddenExceptionRequest(
@@ -60,6 +64,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         ObjectNode errJson = mapper.createObjectNode();
         errJson.put("code", 403);
         errJson.put("message", exception.getMessage());
+        errJson.put("suggestion", "Ensure your MarkLogic user has the proper roles");
         if (exception.getRequiredRoles() != null && exception.getRequiredRoles().size() > 0) {
             ArrayNode requiredRolesArray = errJson.putArray("requiredRoles");
             exception.getRequiredRoles().forEach(requiredRolesArray::add);
@@ -73,6 +78,32 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         ObjectNode errJson = mapper.createObjectNode();
         errJson.put("code", 500);
         errJson.put("message", exception.getMessage());
+        errJson.put("suggestion", exceptionSuggestion(exception));
         return new ResponseEntity<>(errJson, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private String httpStatusSuggestion(HttpStatus httpStatus) {
+        switch (httpStatus) {
+            case FORBIDDEN:
+                return "Ensure your MarkLogic user has the proper roles";
+            case BAD_REQUEST:
+                return "Ensure the request follows the expected format";
+            case INTERNAL_SERVER_ERROR:
+                return "Contact your server administrator";
+            default:
+                return null;
+        }
+    }
+
+    private String exceptionSuggestion(Exception exception) {
+        Throwable rootException = exception;
+        if (exception instanceof RuntimeException && exception.getCause() != null) {
+            rootException = exception.getCause();
+        }
+        if (rootException instanceof IOException) {
+            return "Ensure the user running the service has permissions to read/write the project directory";
+        } else {
+            return "Contact your server administrator";
+        }
     }
 }
