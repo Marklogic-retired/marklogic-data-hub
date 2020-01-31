@@ -69,13 +69,17 @@ export function getArtifacts(artifactType) {
 export function deleteArtifact(artifactType, artifactName, artifactVersion = 'latest') {
     const artifactKey = generateArtifactKey(artifactType, artifactName, artifactVersion);
     const artifactLibrary =  getArtifactTypeLibrary(artifactType);
+
     // Currently there is no versioning for loadData artifacts
     const node = getArtifactNode(artifactType, artifactName, artifactVersion);
 
-    //delete related config file if existed
-    let settingType = artifactType + 'Settings';
-    const settingLibrary = getArtifactTypeLibrary(settingType);
-    const settingNode = settingLibrary.getArtifactSettingNode(artifactName, artifactVersion);
+    let settingNode = {};
+    if (artifactType == 'loadData') {
+        //delete related config file if existed
+        const settingLibrary = getArtifactTypeLibrary(artifactType + 'Settings');
+        settingNode = settingLibrary.getArtifactSettingNode(artifactName,
+            artifactVersion);
+    }
 
     for (const db of artifactLibrary.getStorageDatabases()) {
         dataHub.hubUtils.deleteDocument(xdmp.nodeUri(node), db);
@@ -84,9 +88,12 @@ export function deleteArtifact(artifactType, artifactName, artifactVersion = 'la
         }
     }
 
-    const artifactSettingKey = generateArtifactKey(settingType, artifactName);
-    if (cachedArtifacts[artifactSettingKey]) {
-        delete cachedArtifacts[artifactSettingKey];
+    if (artifactType == 'loadData') {
+        const artifactSettingKey = generateArtifactKey(artifactType + 'Settings',
+            artifactName);
+        if (cachedArtifacts[artifactSettingKey]) {
+            delete cachedArtifacts[artifactSettingKey];
+        }
     }
     delete cachedArtifacts[artifactKey];
     return { success: true };
