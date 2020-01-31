@@ -362,6 +362,11 @@ public class HubProjectImpl implements HubProject {
             IOUtils.closeQuietly(is);
         }
 
+        //New 5.3.0 roles
+        writeRoleFile(rolesDir, "data-hub-load-data-reader.json");
+        writeRoleFile(rolesDir, "data-hub-load-data-writer.json");
+
+
         // New 5.2.0 roles
         writeRoleFile(rolesDir, "data-hub-admin.json");
         writeRoleFile(rolesDir, "data-hub-developer.json");
