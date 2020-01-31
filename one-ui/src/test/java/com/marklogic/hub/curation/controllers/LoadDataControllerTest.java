@@ -16,6 +16,8 @@
  */
 package com.marklogic.hub.curation.controllers;
 
+import java.io.IOException;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,6 +29,7 @@ import com.marklogic.hub.ArtifactManager;
 import com.marklogic.hub.impl.ArtifactManagerImpl;
 import com.marklogic.hub.oneui.Application;
 import com.marklogic.hub.oneui.TestHelper;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -54,6 +57,19 @@ public class LoadDataControllerTest {
     TestHelper testHelper;
 
     ObjectNode validLoadDataConfig = (ObjectNode) new ObjectMapper().readTree("{ \"name\": \"validArtifact\", \"sourceFormat\": \"xml\", \"targetFormat\": \"json\"}");
+
+
+    static final String LOAD_DATA_SETTINGS = "{\n"
+        + "    \"artifactName\" : \"validArtifact\",\n"
+        + "    \"additionalCollections\" : [ \"Collection1\", \"Collection2\" ],\n"
+        + "    \"targetDatabase\" : \"data-hub-STAGING\",\n"
+        + "    \"permissions\" : \"rest-reader,read,rest-writer,update\",\n"
+        + "    \"customHook\" : {\n"
+        + "          \"module\" : \"\",\n"
+        + "          \"parameters\" : { },\n"
+        + "          \"user\" : \"\",\n"
+        + "          \"runBefore\" : false\n"
+        + "    }}";
 
 
     static final String LOAD_DATA_SETTINGS = "{\n"
