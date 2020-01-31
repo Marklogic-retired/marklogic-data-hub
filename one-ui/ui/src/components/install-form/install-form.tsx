@@ -17,8 +17,8 @@ const InstallForm: React.FC = () => {
   const [installProgress, setInstallProgress] = useState({percentage: 0, message: ''});
   const [redirectToHome, setRedirectToHome] = useState(false);
   const [isDirectoryTouched, setDirectoryTouched] = useState(false);
-  const [errorMessage, setErrorMessage] = useState({show: false, message: '', description: ''});
-  const [successMessage, setSuccessMessage] = useState({show: false, message: '', description: ''});
+  const [errorMessage, setErrorMessage] = useState({show: false, message: '', description: <div/>});
+  const [successMessage, setSuccessMessage] = useState({show: false, message: '', description: <div/>});
   const [welcomeMessage, setWelcomeMessage] = useState({show: true, message: 'Welcome, '});
   const [buttonDisabled, setButtonDisabled] = useState(false);
 
@@ -56,9 +56,11 @@ const InstallForm: React.FC = () => {
         localStorage.setItem('dhIsInstalled', 'true');
         setEnvironment();
         setButtonDisabled(true);
-        let description = 'The following roles are installed in Data Hub. To continue, log in as any of these roles: ';
-        description += dataHubRoles.join(', ');
-        setErrorMessage({show: false, message: '', description: ''});
+        let description = <><p>{'The following roles are installed in Data Hub. To continue, log in as any of these roles:'}</p>
+          <ul>{dataHubRoles.map((r) => {
+            return <li>{r}</li>;
+          })}</ul></>;
+        setErrorMessage({show: false, message: '', description: <p></p>});
         setSuccessMessage({show: true, message: 'Installation Success', description: description});
         setWelcomeMessage({show: false, message: ''});
         setIsLoading(false);
@@ -67,9 +69,12 @@ const InstallForm: React.FC = () => {
     } catch (error) {
       console.log('INSTALL ERROR', error.response);
       setIsLoading(false);
-      setIsLoading(false);
-      setErrorMessage({show: true, message: 'Installation Failure', description: error.response.data.message});
-      setSuccessMessage({show: false, message: '', description: ''});
+      setErrorMessage({
+        show: true, 
+        message: 'Installation Failure', 
+        description: <><p>{error.response.data.message}</p><p>{error.response.data.suggestion}</p></>
+      });
+      setSuccessMessage({show: false, message: '', description: <div/>});
       setWelcomeMessage({show: false, message: ''});
     }
     if (unsubscribeId) {
@@ -82,10 +87,10 @@ const InstallForm: React.FC = () => {
     // TODO Handle directory form field validation
     if (event.target.id === 'directory') {
       if (event.target.value === ' ') {
-        //setDirectoryTouched(false);
+        setDirectoryTouched(false);
       }
       else {
-        //setDirectoryTouched(true);
+        setDirectoryTouched(true);
         setDirectory(event.target.value);
       }
     }
@@ -125,31 +130,25 @@ const InstallForm: React.FC = () => {
                   validateStatus={(directory || !isDirectoryTouched) ? '' : 'error'}
                   help={(directory || !isDirectoryTouched) ? '' : 'Project directory is required'}
               >
-                  <Row gutter={8}>
-                      <Col span={24}> 
-                          <Input
-                          id="directory"
-                          placeholder="Enter project directory"
-                          value={directory}
-                          onChange={handleChange}
-                          />
-                      </Col>
-                  </Row>
-                  { isLoading && !errorMessage.show ? <Row gutter={8}>
-                    <Col span={24}>
-                      <Progress percent={installProgress.percentage} status={errorMessage.show ? 'exception' : 'active'}/>
-                    </Col>
-                  </Row>: null }
-                  { isLoading && !errorMessage.show ? <Row gutter={8}>
-                    <Col span={24}>{installProgress.message}</Col>
-                  </Row>: null }
+                  <Input
+                  id="directory"
+                  placeholder="Enter project directory"
+                  value={directory}
+                  onChange={handleChange}
+                  />
+                  { isLoading && !errorMessage.show ? 
+                    <Progress percent={installProgress.percentage} status={errorMessage.show ? 'exception' : 'active'}/>
+                  : null }
+                  { isLoading && !errorMessage.show ? 
+                    <>{installProgress.message}</>
+                  : null }
               </Form.Item>
               <Form.Item className={styles.installButton}>
                   <MlButton 
                     id="submit" 
                     type="primary" 
                     size="default" 
-                    disabled={isLoading || buttonDisabled} 
+                    disabled={!directory || isLoading || buttonDisabled} 
                     htmlType="submit"
                   >
                       Install Data Hub
