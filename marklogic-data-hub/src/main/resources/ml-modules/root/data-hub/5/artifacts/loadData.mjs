@@ -22,7 +22,7 @@ const dataHub = DataHubSingleton.instance();
 
 const collections = ['http://marklogic.com/data-hub/load-data-artifact'];
 const databases = [dataHub.config.STAGINGDATABASE, dataHub.config.FINALDATABASE];
-const permissions = [xdmp.permission(dataHub.consts.DATA_HUB_DEVELOPER_ROLE, 'update'), xdmp.permission(dataHub.consts.DATA_HUB_OPERATOR_ROLE, 'read')];
+const permissions = [xdmp.permission(dataHub.consts.DATA_HUB_LOAD_DATA_WRITE_ROLE, 'update'), xdmp.permission(dataHub.consts.DATA_HUB_LOAD_DATA_READ_ROLE, 'read')];
 const requiredProperties = ['name', 'sourceFormat', 'targetFormat'];
 
 export function getNameProperty() {
