@@ -16,6 +16,8 @@
  */
 package com.marklogic.hub.curation.controllers;
 
+import java.io.IOException;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,6 +27,7 @@ import com.marklogic.client.FailedRequestException;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.oneui.Application;
 import com.marklogic.hub.oneui.TestHelper;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,6 +37,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {Application.class, ApplicationConfig.class, LoadDataControllerTest.class})
@@ -45,6 +50,19 @@ public class LoadDataControllerTest {
     TestHelper testHelper;
 
     JsonNode validLoadDataConfig = new ObjectMapper().readTree("{ \"name\": \"validArtifact\", \"sourceFormat\": \"xml\", \"targetFormat\": \"json\"}");
+
+
+    static final String LOAD_DATA_SETTINGS = "{\n"
+        + "    \"artifactName\" : \"validArtifact\",\n"
+        + "    \"additionalCollections\" : [ \"Collection1\", \"Collection2\" ],\n"
+        + "    \"targetDatabase\" : \"data-hub-STAGING\",\n"
+        + "    \"permissions\" : \"rest-reader,read,rest-writer,update\",\n"
+        + "    \"customHook\" : {\n"
+        + "          \"module\" : \"\",\n"
+        + "          \"parameters\" : { },\n"
+        + "          \"user\" : \"\",\n"
+        + "          \"runBefore\" : false\n"
+        + "    }}";
 
     public LoadDataControllerTest() throws JsonProcessingException {
     }
@@ -75,5 +93,32 @@ public class LoadDataControllerTest {
         assertThrows(FailedRequestException.class, () -> controller.getArtifact("validArtifact"));
     }
 
+    //@Test
+    public void testLoadDataSettings() throws IOException {
+        testHelper.authenticateSession();
+        controller.updateArtifact("validArtifact", validLoadDataConfig);
+
+        JsonNode result = controller.getArtifactSettings("validArtifact").getBody();
+        assertTrue(result.isEmpty(), "No load data settings yet!");
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode settings = mapper.readTree(LOAD_DATA_SETTINGS);
+
+        controller.updateArtifactSettings("validArtifact", settings);
+
+        result = controller.getArtifactSettings("validArtifact").getBody();
+        assertEquals("validArtifact", result.get("artifactName").asText());
+        assertEquals(2, result.get("additionalCollections").size());
+        assertEquals("Collection2", result.get("additionalCollections").get(1).asText());
+        assertEquals("data-hub-STAGING", result.get("targetDatabase").asText());
+        assertTrue(result.has("permissions"), "missing permissions");
+        assertTrue(result.has("customHook"), "missing customHook");
+
+        ResponseEntity<JsonNode> deleteResp = controller.deleteArtifact("validArtifact");
+        assertEquals(HttpStatus.OK, deleteResp.getStatusCode(), "Delete should have been successful");
+
+        assertTrue(controller.getArtifactSettings("validArtifact").getBody().isEmpty());
+        assertThrows(FailedRequestException.class, () -> controller.getArtifact("validArtifact"));
+    }
 
 }
