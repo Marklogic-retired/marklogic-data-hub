@@ -12,6 +12,8 @@ interface Props {
     data: any;
     deleteLoadDataArtifact: any;
     createLoadDataArtifact: any;
+    canReadWrite: any;
+    canReadOnly: any;
   }
 
 const LoadDataList: React.FC<Props> = (props) => {
@@ -129,7 +131,7 @@ const LoadDataList: React.FC<Props> = (props) => {
 
    return (
     <div className={styles.loaddataContainer}>
-        <div><MlButton type="primary" size="default" className={styles.addNewButton} onClick={OpenAddNewDialog}>Add New</MlButton></div>
+        {props.canReadWrite ? <div><MlButton type="primary" size="default" className={styles.addNewButton} onClick={OpenAddNewDialog}>Add New</MlButton></div> : ''}
         <br/><br/>
         <Table
         pagination={{showSizeChanger: true, pageSizeOptions:pageSizeOptions}}
@@ -138,7 +140,12 @@ const LoadDataList: React.FC<Props> = (props) => {
         dataSource={props.data}
         rowKey="name"
         />
-        <NewDataLoadDialog newLoad={newDataLoad} title={title} setNewLoad={setNewDataLoad} createLoadDataArtifact={props.createLoadDataArtifact} stepData={stepData}/>
+        <NewDataLoadDialog newLoad={newDataLoad} 
+        title={title} setNewLoad={setNewDataLoad} 
+        createLoadDataArtifact={props.createLoadDataArtifact} 
+        stepData={stepData}
+        canReadWrite={props.canReadWrite}
+        canReadOnly={props.canReadOnly}/>
         {deleteConfirmation}
 
     </div>
