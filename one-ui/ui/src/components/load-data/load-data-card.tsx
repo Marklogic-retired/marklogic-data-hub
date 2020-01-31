@@ -8,11 +8,12 @@ import sourceFormatOptions from '../../config/formats.config';
 import NewDataLoadDialog from './new-data-load-dialog/new-data-load-dialog';
 import { convertDateFromISO } from '../../config/conversionFunctions.config';
 
-
 interface Props {
     data: any;
     deleteLoadDataArtifact: any;
     createLoadDataArtifact: any;
+    canReadOnly: any;
+    canReadWrite: any;
   }
 
 const LoadDataCard: React.FC<Props> = (props) => {
@@ -86,7 +87,7 @@ const LoadDataCard: React.FC<Props> = (props) => {
     return (
         <div className={styles.loaddataContainer}>
             <Row gutter={16} type="flex" >
-                <Col >
+                {props.canReadWrite ? <Col >
                     <Card
                         size="small"
                         className={styles.addNewCard}>
@@ -94,7 +95,7 @@ const LoadDataCard: React.FC<Props> = (props) => {
                         <br />
                         <p className={styles.addNewContent}>Add New</p>
                     </Card>
-                </Col>{props && props.data.length > 0 ? props.data.map((elem,index) => (
+                </Col> : ''}{props && props.data.length > 0 ? props.data.map((elem,index) => (
                     <Col key={index}><Card
                         actions={[
                             <span>{elem.filesNeedReuploaded ? (
@@ -120,7 +121,14 @@ const LoadDataCard: React.FC<Props> = (props) => {
                         <p className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</p>
                     </Card></Col>
                 )) : <span></span> }</Row>
-                <NewDataLoadDialog newLoad={newDataLoad} title={title} setNewLoad={setNewDataLoad} createLoadDataArtifact={props.createLoadDataArtifact} stepData={stepData}/>
+                <NewDataLoadDialog 
+                newLoad={newDataLoad} 
+                title={title} 
+                setNewLoad={setNewDataLoad} 
+                createLoadDataArtifact={props.createLoadDataArtifact} 
+                stepData={stepData}
+                canReadWrite={props.canReadWrite}
+                canReadOnly={props.canReadOnly}/>
                 {deleteConfirmation}
         </div>
     );

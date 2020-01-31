@@ -1,14 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import styles from './LoadData.module.scss';
 import LoadDataList from '../components/load-data/load-data-list';
 import SwitchView from '../components/load-data/switch-view';
 import LoadDataCard from '../components/load-data/load-data-card';
 import axios from 'axios'
+import { RolesContext } from "../util/roles";
 
 const LoadData: React.FC = () => {
   let [viewType, setViewType] = useState('table');
   const [isLoading, setIsLoading] = useState(false);
   const [loadDataArtifacts, setLoadDataArtifacts] = useState<any[]>([]);
+
+  //For role based privileges
+  const roleService = useContext(RolesContext);
+  const canReadOnly = roleService.canReadLoadData();
+  const canReadWrite = roleService.canWriteLoadData();
 
   //Set context for switching views
   const handleViewTypeSelection = (vtype) => {
@@ -80,24 +86,31 @@ const LoadData: React.FC = () => {
       data={loadDataArtifacts}
       deleteLoadDataArtifact={deleteLoadDataArtifact}
       createLoadDataArtifact={createLoadDataArtifact}
+      canReadWrite={canReadWrite}
+      canReadOnly={canReadOnly}
     />
   }
   else {
     output = <div className={styles.cardView}>
-      <LoadDataCard data={loadDataArtifacts} deleteLoadDataArtifact={deleteLoadDataArtifact} 
-      createLoadDataArtifact={createLoadDataArtifact}/>
+      <LoadDataCard data={loadDataArtifacts} 
+      deleteLoadDataArtifact={deleteLoadDataArtifact} 
+      createLoadDataArtifact={createLoadDataArtifact} 
+      canReadWrite={canReadWrite}
+      canReadOnly={canReadOnly}/>
     </div>
   }
 
 
   return (
     <div>
+      {canReadWrite || canReadOnly ?
       <div className={styles.content}>
         <div className={styles.LoadDataStyles}>
           <div className={styles.switchview}><SwitchView handleSelection={handleViewTypeSelection}/></div>
           {output}
         </div>
-      </div>
+      </div> : ''
+    }
     </div>
   );
 }
