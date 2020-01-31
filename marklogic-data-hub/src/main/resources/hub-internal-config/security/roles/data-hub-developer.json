@@ -10,7 +10,8 @@
     "data-hub-flow-writer",
     "data-hub-mapping-writer",
     "data-hub-step-definition-writer",
-    "data-hub-entity-model-writer"
+    "data-hub-entity-model-writer",
+    "data-hub-load-data-writer"
   ],
   "privilege": [
     {
