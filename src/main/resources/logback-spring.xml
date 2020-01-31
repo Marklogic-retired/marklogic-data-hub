@@ -3,7 +3,6 @@
 -->
 
 <configuration>
-  <include resource="org/springframework/boot/logging/logback/base.xml"/>
   <include file="log_include.xml"/>
   <springProperty scope="context" name="LOG_PATH" source="log.path"/>
 
