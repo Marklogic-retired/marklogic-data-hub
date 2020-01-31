@@ -29,6 +29,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.io.IOException;
+
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
@@ -75,6 +77,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         ObjectNode errJson = mapper.createObjectNode();
         errJson.put("code", 403);
         errJson.put("message", exception.getMessage());
+        errJson.put("suggestion", "Ensure your MarkLogic user has the proper roles");
         if (exception.getRequiredRoles() != null && exception.getRequiredRoles().size() > 0) {
             ArrayNode requiredRolesArray = errJson.putArray("requiredRoles");
             exception.getRequiredRoles().forEach(requiredRolesArray::add);
