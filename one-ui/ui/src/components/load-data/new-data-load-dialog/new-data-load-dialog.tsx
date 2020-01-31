@@ -28,7 +28,7 @@ const NewDataLoadDialog = (props) => {
   const [uploadPercent, setUploadPercent] = useState();
   const [toDelete, setToDelete] = useState(false);
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
-
+  const [tobeDisabled, setTobeDisabled] = useState(false);
 
   useEffect(() => {
     if (props.stepData && JSON.stringify(props.stepData) != JSON.stringify({}) && props.title === 'Edit Data Load') {
@@ -49,6 +49,7 @@ const NewDataLoadDialog = (props) => {
       buildURIPreview(props.stepData);
       setFileList([]);
       setIsValid(true);
+      setTobeDisabled(true);
     } else {
       setStepName('');
       setStepNameTouched(false);
@@ -64,6 +65,7 @@ const NewDataLoadDialog = (props) => {
     }
 
     return (() => {
+
       setStepName('');
       setStepNameTouched(false);
       setDescription('');
@@ -76,6 +78,7 @@ const NewDataLoadDialog = (props) => {
       setFileList([]);
       setPreviewURI('');
       setInputFilePath('');
+      setTobeDisabled(false);
     })
 
   }, [props.stepData, props.title, props.newLoad]);
@@ -186,24 +189,36 @@ const NewDataLoadDialog = (props) => {
 
     let dataPayload;
     if(inputFilePath === ''){
-      if(srcFormat === 'Delimited Text'){
+      if(props.stepData.inputFilePath){
         dataPayload = {
-         name: stepName,
-         description: description,
-         sourceFormat: srcFormat,
-         separator: fieldSeparator === 'Other'? otherSeparator : fieldSeparator,
-         targetFormat: tgtFormat,
-         outputURIReplacement: outUriReplacement
+          name: stepName,
+          description: description,
+          sourceFormat: srcFormat,
+          separator: fieldSeparator === 'Other'? otherSeparator : fieldSeparator,
+          targetFormat: tgtFormat,
+          outputURIReplacement: outUriReplacement,
+          inputFilePath: props.stepData.inputFilePath
+        }
+      } else {
+        if(srcFormat === 'Delimited Text'){
+          dataPayload = {
+           name: stepName,
+           description: description,
+           sourceFormat: srcFormat,
+           separator: fieldSeparator === 'Other'? otherSeparator : fieldSeparator,
+           targetFormat: tgtFormat,
+           outputURIReplacement: outUriReplacement
+         }
+       } else {
+          dataPayload = {
+           name: stepName,
+           description: description,
+           sourceFormat: srcFormat,
+           targetFormat: tgtFormat,
+           outputURIReplacement: outUriReplacement
+         }
        }
-     } else {
-        dataPayload = {
-         name: stepName,
-         description: description,
-         sourceFormat: srcFormat,
-         targetFormat: tgtFormat,
-         outputURIReplacement: outUriReplacement
-       }
-     }
+      }
     } else {
       if(srcFormat === 'Delimited Text'){
         dataPayload = {
@@ -570,6 +585,7 @@ const NewDataLoadDialog = (props) => {
             placeholder="Enter name"
             value={stepName}
             onChange={handleChange}
+            disabled={tobeDisabled}
           />
         </Form.Item>
         <Form.Item label={<span>
@@ -584,9 +600,10 @@ const NewDataLoadDialog = (props) => {
             placeholder="Enter description"
             value={description}
             onChange={handleChange}
+            disabled={props.canReadOnly}
           />
         </Form.Item>
-        <Form.Item label={<span>
+        {props.canReadWrite ? <Form.Item label={<span>
           Files:&nbsp;
               <Tooltip title={NewLoadTooltips.files}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
@@ -602,7 +619,7 @@ const NewDataLoadDialog = (props) => {
             <Button>Upload</Button>
           </Upload>&nbsp;&nbsp;
                 {uploadPercent != 100 ? <Progress type="circle" percent={uploadPercent} width={50} /> : <span>{fileList.length} files uploaded</span>}</span>
-        </Form.Item>
+        </Form.Item> : ''}
         <Form.Item label={<span>
           Source Format:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
               <Tooltip title={NewLoadTooltips.sourceFormat}>
@@ -617,6 +634,7 @@ const NewDataLoadDialog = (props) => {
             optionFilterProp="children"
             value={srcFormat}
             onChange={handleSrcFormat}
+            disabled={props.canReadOnly}
           >
             {soptions}
           </Select>
@@ -636,6 +654,7 @@ const NewDataLoadDialog = (props) => {
             value={fieldSeparator}
             onChange={handleFieldSeparator}
             style={{width: 120}}
+            disabled={props.canReadOnly}
           >
             {fsoptions}
           </Select></span>
@@ -645,6 +664,7 @@ const NewDataLoadDialog = (props) => {
             value={otherSeparator}
             onChange={handleOtherSeparator}
             style={{width: 75}}
+            disabled={props.canReadOnly}
           /> : ''}</span>
         </Form.Item> : ''}
         <Form.Item label={<span>
@@ -658,7 +678,8 @@ const NewDataLoadDialog = (props) => {
             id="targetFormat"
             placeholder="Enter target format"
             value={tgtFormat}
-            onChange={handleTgtFormat}>
+            onChange={handleTgtFormat}
+            disabled={props.canReadOnly}>
             {toptions}
           </Select>
         </Form.Item>
@@ -674,6 +695,7 @@ const NewDataLoadDialog = (props) => {
             placeholder="Enter comma-separated list of replacements"
             value={outUriReplacement}
             onChange={handleChange}
+            disabled={props.canReadOnly}
           />
         </Form.Item>
         <Form.Item label={<span>
@@ -691,7 +713,7 @@ const NewDataLoadDialog = (props) => {
           <div className={styles.submitButtons}>
             <Button onClick={() => onCancel()}>Cancel</Button>
             &nbsp;&nbsp;
-            <Button type="primary" htmlType="submit" disabled={!isValid} onClick={handleSubmit}>Save</Button>
+            <Button type="primary" htmlType="submit" disabled={!isValid || props.canReadOnly} onClick={handleSubmit}>Save</Button>
           </div>
         </Form.Item>
       </Form>
