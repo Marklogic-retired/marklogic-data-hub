@@ -10,7 +10,7 @@ const testPage = require('./' + process.argv.slice(2)[0]);
         waitUntil: 'networkidle0',
     });
 
-await page.goto('http://rh7-intel64-perf-4:8080', { waitUntil: 'domcontentloaded' });
+await page.goto('https://rh7v-10-dhf-stress-1:8443', { waitUntil: 'domcontentloaded' });
 process.on('unhandledRejection', error => {
     console.log('unhandledRejection', error.message);
 });
@@ -39,7 +39,7 @@ await page.setViewport({ width: 1916, height: 997 })
     await page.click('.ant-row #submit')
 
     await page.waitFor(5000)
-    await page.goto('http://rh7-intel64-perf-4:8080/browse', { waitUntil: 'domcontentloaded' })
+    await page.goto('https://rh7v-10-dhf-stress-1:8443/browse', { waitUntil: 'domcontentloaded' })
     console.log(await testPage(page));
 
     console.log("\n==== performance.getEntries() ====\n");
