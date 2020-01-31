@@ -169,18 +169,17 @@ const NewDataLoadDialog = (props) => {
   const deleteConfirmation = <Modal
         visible={deleteDialogVisible}
         bodyStyle={{textAlign: 'center'}}
-        width={350}
+        width={250}
         maskClosable={false}
         closable={false}
         footer={null}
     >
-        <span className={styles.ConfirmationMessage}>Are you sure you want to leave?</span><br/><br/>
-        <span className={styles.ConfirmationMessage}>Your changes will be lost.</span>
-        <br/><br/><br/>
+        <span className={styles.ConfirmationMessage}>Discard changes?</span>
+        <br/><br/>
         <div >
-            <Button onClick={() => onDelCancel()}>Stay</Button>
+            <Button onClick={() => onDelCancel()}>No</Button>
             &nbsp;&nbsp;
-            <Button type="primary" htmlType="submit" onClick={onDelOk}>Leave</Button>
+            <Button type="primary" htmlType="submit" onClick={onDelOk}>Yes</Button>
           </div>
     </Modal>;
 
@@ -600,7 +599,7 @@ const NewDataLoadDialog = (props) => {
             placeholder="Enter description"
             value={description}
             onChange={handleChange}
-            disabled={props.canReadOnly}
+            disabled={props.canReadOnly && !props.canReadWrite}
           />
         </Form.Item>
         {props.canReadWrite ? <Form.Item label={<span>
@@ -634,7 +633,7 @@ const NewDataLoadDialog = (props) => {
             optionFilterProp="children"
             value={srcFormat}
             onChange={handleSrcFormat}
-            disabled={props.canReadOnly}
+            disabled={props.canReadOnly && !props.canReadWrite}
           >
             {soptions}
           </Select>
@@ -654,7 +653,7 @@ const NewDataLoadDialog = (props) => {
             value={fieldSeparator}
             onChange={handleFieldSeparator}
             style={{width: 120}}
-            disabled={props.canReadOnly}
+            disabled={props.canReadOnly && !props.canReadWrite}
           >
             {fsoptions}
           </Select></span>
@@ -664,7 +663,7 @@ const NewDataLoadDialog = (props) => {
             value={otherSeparator}
             onChange={handleOtherSeparator}
             style={{width: 75}}
-            disabled={props.canReadOnly}
+            disabled={props.canReadOnly && !props.canReadWrite}
           /> : ''}</span>
         </Form.Item> : ''}
         <Form.Item label={<span>
@@ -679,7 +678,7 @@ const NewDataLoadDialog = (props) => {
             placeholder="Enter target format"
             value={tgtFormat}
             onChange={handleTgtFormat}
-            disabled={props.canReadOnly}>
+            disabled={props.canReadOnly && !props.canReadWrite}>
             {toptions}
           </Select>
         </Form.Item>
@@ -695,7 +694,7 @@ const NewDataLoadDialog = (props) => {
             placeholder="Enter comma-separated list of replacements"
             value={outUriReplacement}
             onChange={handleChange}
-            disabled={props.canReadOnly}
+            disabled={props.canReadOnly && !props.canReadWrite}
           />
         </Form.Item>
         <Form.Item label={<span>
@@ -713,7 +712,7 @@ const NewDataLoadDialog = (props) => {
           <div className={styles.submitButtons}>
             <Button onClick={() => onCancel()}>Cancel</Button>
             &nbsp;&nbsp;
-            <Button type="primary" htmlType="submit" disabled={!isValid || props.canReadOnly} onClick={handleSubmit}>Save</Button>
+            <Button type="primary" htmlType="submit" disabled={!isValid || !props.canReadWrite} onClick={handleSubmit}>Save</Button>
           </div>
         </Form.Item>
       </Form>
