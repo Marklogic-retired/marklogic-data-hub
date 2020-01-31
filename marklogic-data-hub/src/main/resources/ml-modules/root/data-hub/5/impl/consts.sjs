@@ -46,5 +46,9 @@ module.exports = {
   ]),
 
   DATA_HUB_OPERATOR_ROLE: "data-hub-operator",
-  DATA_HUB_DEVELOPER_ROLE: "data-hub-developer"
+  DATA_HUB_DEVELOPER_ROLE: "data-hub-developer",
+  DATA_HUB_LOAD_DATA_READ_ROLE: "data-hub-load-data-reader",
+  DATA_HUB_LOAD_DATA_WRITE_ROLE: "data-hub-load-data-writer",
+  DATA_HUB_MAPPING_READ_ROLE: "data-hub-mapping-reader",
+  DATA_HUB_MAPPING_WRITE_ROLE: "data-hub-mapping-writer"
 };
