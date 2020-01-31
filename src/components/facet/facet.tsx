@@ -62,11 +62,7 @@ const Facet: React.FC<Props> = (props) => {
   }, [searchOptions]);
 
   const checkFacetValues = (checkedValues) => {
-    let updatedChecked:string[] = [];
-    for(let value of checked){
-      if(updatedChecked.indexOf(value) === -1)
-        updatedChecked.push(value);
-    }
+    let updatedChecked = [...checked];
     for(let value of checkedValues){
       if(updatedChecked.indexOf(value) === -1)
         updatedChecked.push(value);
