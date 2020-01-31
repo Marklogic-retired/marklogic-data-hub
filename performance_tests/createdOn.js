@@ -4,10 +4,6 @@ const numPages = 10;
 
 async function createdOn(page) {
 
-    const performanceTiming = JSON.parse(
-            await page.evaluate(() => JSON.stringify(window.performance.timing))
-            );
-
     await page.waitForSelector('#hub-properties > .ant-collapse-header')
         await page.click('#hub-properties > .ant-collapse-header')
         await page.waitFor(1000)
@@ -29,19 +25,7 @@ async function createdOn(page) {
             await page.waitFor(1000)
                 await page.waitForSelector('[class*=Browse_searchBar] > [class*=search-pagination_searchPaginationContainer]:nth-child(3) > .ant-pagination > .ant-pagination-item-' + i + ' > a')
                 await page.click('[class*=Browse_searchBar] > [class*=search-pagination_searchPaginationContainer]:nth-child(3) > .ant-pagination > .ant-pagination-item-' + i + ' > a')
-                console.log(extractDataFromPerformanceTiming(
-                            performanceTiming,
-                            'responseEnd',
-                            'domInteractive',
-                            'loadEventEnd'))
         }
-
-    return extractDataFromPerformanceTiming(
-            performanceTiming,
-            'responseEnd',
-            'domInteractive',
-            'loadEventEnd'
-            );
 }
 
 module.exports = createdOn;

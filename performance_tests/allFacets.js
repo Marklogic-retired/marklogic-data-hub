@@ -5,10 +5,7 @@ const numCollections = 2; //number of collection facets that will be selected
 const numFlows = 1; //number of flow facets that will be selected
 const numSteps = 1; //number of flow facets that will be selected
 
-async function collections(page) {
-    const performanceTiming = JSON.parse(
-        await page.evaluate(() => JSON.stringify(window.performance.timing))
-    );
+async function allFacets(page) {
 
     await page.waitForSelector('#hub-properties > .ant-collapse-header')
     await page.click('#hub-properties > .ant-collapse-header')
@@ -86,19 +83,8 @@ async function collections(page) {
             return
         }
         await page.click('[class*=Browse_searchBar] > [class*=search-pagination_searchPaginationContainer]:nth-child(3) > .ant-pagination > .ant-pagination-item-' + i + ' > a')
-        console.log(extractDataFromPerformanceTiming(performanceTiming,
-            'responseEnd',
-            'domInteractive',
-            'loadEventEnd'))
     }
 
-
-    return extractDataFromPerformanceTiming(
-        performanceTiming,
-        'responseEnd',
-        'domInteractive',
-        'loadEventEnd'
-    );
 }
 
-module.exports = collections;
+module.exports = allFacets;
