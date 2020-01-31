@@ -45,13 +45,11 @@ await page.setViewport({ width: 1916, height: 997 })
     console.log("\n==== performance.getEntries() ====\n");
     console.log(
         await page.evaluate( () =>
-            JSON.stringify(performance.getEntries()
-            .filter(e => e.entryType === 'resource')
-            .map(e => [e.name, e.duration]), null, "  ")
+            JSON.stringify(performance.getEntries(), null, "  ")
             )
         );
 
-    /* console.log("\n==== performance.toJSON() ====\n");
+    console.log("\n==== performance.toJSON() ====\n");
     console.log(
         await page.evaluate( () =>
             JSON.stringify(performance.toJSON(), null, "  ")
@@ -66,7 +64,7 @@ await page.setViewport({ width: 1916, height: 997 })
 
     console.log("\n==== Devtools: Performance.getMetrics ====\n");
     let performanceMetrics = await page._client.send('Performance.getMetrics');
-    console.log( performanceMetrics.metrics ); */
+    console.log( performanceMetrics.metrics );
 
     await browser.close()
 })()

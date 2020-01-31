@@ -63,9 +63,12 @@ const Facet: React.FC<Props> = (props) => {
 
   const checkFacetValues = (checkedValues) => {
     let updatedChecked = [...checked];
-    props.addFacetValues(props.constraint, checkedValues, props.facetType, props.facetCategory);
-    updatedChecked.push(...checkedValues);
+    for(let value of checkedValues){
+      if(updatedChecked.indexOf(value) === -1)
+        updatedChecked.push(value);
+    }
     setChecked(updatedChecked);
+    props.addFacetValues(props.constraint, updatedChecked, props.facetType, props.facetCategory);
     toggleApply(true);
   }
 
@@ -165,7 +168,7 @@ const Facet: React.FC<Props> = (props) => {
           onClick={() => showMore()}
           data-cy="show-more"
         >{(more) ? '<< less' : 'more >>'}</div>
-        {props.facetType === 'xs:string' &&
+        {props.facetType === 'xs:string' && props.facetValues.length >= 25 &&
         <div className={styles.searchValues}>
           <PopOverSearch
               name={props.name}
