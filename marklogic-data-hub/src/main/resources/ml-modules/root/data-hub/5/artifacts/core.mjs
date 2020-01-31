@@ -18,6 +18,7 @@
 import * as LoadData from './loadData';
 import * as Flows from './flows';
 import * as StepDefs from './stepDefinitions'
+import * as LoadDataSetting from './loadDataSettings';
 
 const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
 const dataHub = DataHubSingleton.instance();
@@ -26,7 +27,8 @@ const cachedArtifacts = {};
 const registeredArtifactTypes = {
     loadData: LoadData,
     flows: Flows,
-    stepDefinitions: StepDefs
+    stepDefinitions: StepDefs,
+    loadDataSettings: LoadDataSetting
 };
 
 export function getTypesInfo() {
@@ -69,8 +71,22 @@ export function deleteArtifact(artifactType, artifactName, artifactVersion = 'la
     const artifactLibrary =  getArtifactTypeLibrary(artifactType);
     // Currently there is no versioning for loadData artifacts
     const node = getArtifactNode(artifactType, artifactName, artifactVersion);
+
+    //delete related config file if existed
+    let settingType = artifactType + 'Settings';
+    const settingLibrary = getArtifactTypeLibrary(settingType);
+    const settingNode = settingLibrary.getArtifactSettingNode(artifactName, artifactVersion);
+
     for (const db of artifactLibrary.getStorageDatabases()) {
         dataHub.hubUtils.deleteDocument(xdmp.nodeUri(node), db);
+        if (!fn.empty(settingNode)) {
+            dataHub.hubUtils.deleteDocument(xdmp.nodeUri(settingNode), db);
+        }
+    }
+
+    const artifactSettingKey = generateArtifactKey(settingType, artifactName);
+    if (cachedArtifacts[artifactSettingKey]) {
+        delete cachedArtifacts[artifactSettingKey];
     }
     delete cachedArtifacts[artifactKey];
     return { success: true };
@@ -104,6 +120,43 @@ export function setArtifact(artifactType, artifactName, artifact) {
     }
     cachedArtifacts[artifactKey] = artifact;
     return artifact;
+}
+
+export function getArtifactSettings(artifactType, artifactName, artifactVersion = 'latest') {
+    let settingType = artifactType + 'Settings';
+    const artifactSettingKey = generateArtifactKey(settingType, artifactName);
+    if (!cachedArtifacts[artifactSettingKey]) {
+        const settingLibrary = getArtifactTypeLibrary(settingType);
+        const settingNode = settingLibrary.getArtifactSettingNode(artifactName, artifactVersion);
+
+        if (fn.empty(settingNode)) {
+            return {};
+        }
+        cachedArtifacts[artifactSettingKey] = settingNode.toObject();
+    }
+    return cachedArtifacts[artifactSettingKey];
+}
+
+export function setArtifactSettings(artifactType, artifactName, settings) {
+    let settingType = artifactType + 'Settings';
+    const artifactSettingKey = generateArtifactKey(settingType, artifactName);
+    let validArtifact = validateArtifact(settingType, artifactName, settings) || settings;
+    if (validArtifact instanceof Error) {
+        throw new Error(`Invalid artifact with error message: ${validArtifact.message}`);
+    }
+    const artifactLibrary =  getArtifactTypeLibrary(settingType);
+    const artifactDatabases = artifactLibrary.getStorageDatabases();
+    const artifactDirectory = getArtifactDirectory(artifactType, artifactName, settings);
+    const artifactFileExtension = getArtifactFileExtension(settingType);
+    const artifactPermissions = artifactLibrary.getPermissions();
+    const artifactCollections = artifactLibrary.getCollections();
+    settings.lastUpdated = fn.string(fn.currentDateTime());
+
+    for (const db of artifactDatabases) {
+        dataHub.hubUtils.writeDocument(`${artifactDirectory}${xdmp.urlEncode(artifactName)}${artifactFileExtension}`, settings, artifactPermissions, artifactCollections, db);
+    }
+    cachedArtifacts[artifactSettingKey] = settings;
+    return settings;
 }
 
 export function validateArtifact(artifactType, artifactName, artifact) {
