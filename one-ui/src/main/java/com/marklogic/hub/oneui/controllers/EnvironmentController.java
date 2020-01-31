@@ -20,7 +20,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
-import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.oneui.models.HubConfigSession;
 import com.marklogic.hub.oneui.models.StatusMessage;
 import com.marklogic.hub.oneui.services.DataHubService;
@@ -86,10 +85,10 @@ public class EnvironmentController {
 
     @RequestMapping(value = "/install", method = RequestMethod.POST)
     @ResponseBody
-    public JsonNode install(@RequestBody ObjectNode payload, HttpSession session) {
+    public JsonNode install(@RequestBody ObjectNode payload, HttpSession session) throws Exception {
         // get original project directory value, so we can revert if failure occurs
         String originalDirectory = environmentService.getProjectDirectory();
-        final DataHubConfigurationException[] dataHubConfigurationException = {null};
+        final Exception[] dataHubConfigurationException = {null};
         HubDeployStatusListener listener = new HubDeployStatusListener() {
             int lastPercentageComplete = 0;
             @Override
@@ -106,7 +105,7 @@ public class EnvironmentController {
                 String message = "Error encountered running command: " + commandName;
                 template.convertAndSend("/topic/install-status", new StatusMessage(lastPercentageComplete, message));
                 logger.error(message, exception);
-                dataHubConfigurationException[0] = new DataHubConfigurationException(exception.getMessage());
+                dataHubConfigurationException[0] = exception;
                 environmentService.setProjectDirectory(originalDirectory);
             }
         };
