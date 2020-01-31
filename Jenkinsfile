@@ -547,10 +547,11 @@ pipeline{
                             cd $WORKSPACE/data-hub/examples/dh-5-example; \
                             rm -rf $GRADLE_USER_HOME/caches; \
                             ./gradlew -i hubInit -Ptesting=true; \
+                            cp ../../marklogic-data-hub/gradle.properties .; \
                             ./gradlew -i mlDeploy -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
-                            ./gradlew hubRunFlow -PflowName=ingestion_only-flow -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
-                            ./gradlew hubRunFlow -PflowName=ingestion_mapping-flow -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
-                            ./gradlew hubRunFlow -PflowName=ingestion_mapping_mastering-flow -Ptesting=true -PmlUsername=admin -PmlPassword=admin;
+                            ./gradlew hubRunFlow -PflowName=ingestion_only-flow -Ptesting=true; \
+                            ./gradlew hubRunFlow -PflowName=ingestion_mapping-flow -Ptesting=true; \
+                            ./gradlew hubRunFlow -PflowName=ingestion_mapping_mastering-flow -Ptesting=true;
                             "
                         '''
                         }
@@ -583,9 +584,10 @@ pipeline{
                             cd $WORKSPACE/data-hub/examples/dhf5-custom-hook; \
                             rm -rf $GRADLE_USER_HOME/caches; \
                             ./gradlew -i hubInit -Ptesting=true; \
+                            cp ../../marklogic-data-hub/gradle.properties .; \
                             ./gradlew -i mlDeploy -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
-                            ./gradlew hubRunFlow -PflowName=LoadOrders -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
-                            ./gradlew hubRunFlow -PflowName=LoadOrders -Ptesting=true -PmlUsername=admin -PmlPassword=admin;
+                            ./gradlew hubRunFlow -PflowName=LoadOrders -Ptesting=true; \
+                            ./gradlew hubRunFlow -PflowName=LoadOrders -Ptesting=true;
                             "
                         '''
                         }
@@ -620,11 +622,12 @@ pipeline{
                             cd $WORKSPACE/data-hub/examples/mapping-example; \
                             rm -rf $GRADLE_USER_HOME/caches; \
                             ./gradlew -i hubInit -Ptesting=true; \
+                            cp ../../marklogic-data-hub/gradle.properties .; \
                             ./gradlew -i mlDeploy -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
-                            ./gradlew hubRunFlow -PflowName=jsonToJson -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
-                            ./gradlew hubRunFlow -PflowName=jsonToXml -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
-                            ./gradlew hubRunFlow -PflowName=xmlToJson -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
-                            ./gradlew hubRunFlow -PflowName=xmlToXml -Ptesting=true -PmlUsername=admin -PmlPassword=admin;
+                            ./gradlew hubRunFlow -PflowName=jsonToJson -Ptesting=true; \
+                            ./gradlew hubRunFlow -PflowName=jsonToXml -Ptesting=true; \
+                            ./gradlew hubRunFlow -PflowName=xmlToJson -Ptesting=true; \
+                            ./gradlew hubRunFlow -PflowName=xmlToXml -Ptesting=true;
                             "
                         '''
                         }
@@ -657,8 +660,9 @@ pipeline{
                             cd $WORKSPACE/data-hub/examples/smart-mastering-complete; \
                             rm -rf $GRADLE_USER_HOME/caches; \
                             ./gradlew -i hubInit -Ptesting=true; \
+                            cp ../../marklogic-data-hub/gradle.properties .; \
                             ./gradlew -i mlDeploy -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
-                            ./gradlew hubRunFlow -PflowName=persons -Ptesting=true -PmlUsername=admin -PmlPassword=admin;
+                            ./gradlew hubRunFlow -PflowName=persons -Ptesting=true;
                             "
                         '''
                         }
