@@ -10,6 +10,7 @@
     "data-hub-mapping-reader",
     "data-hub-entity-model-reader",
     "data-hub-step-definition-reader",
+    "data-hub-load-data-reader",
     "tde-view"
   ],
   "privilege": [
