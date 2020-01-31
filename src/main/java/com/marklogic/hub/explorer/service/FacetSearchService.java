@@ -36,16 +36,13 @@ public class FacetSearchService {
   @Autowired
   ExplorerConfig explorerConfig;
 
-  private String entityName = null;
-  private String facetName = null;
-
   public List<String> getFacetValues(FacetSearchQuery fsQuery) {
     List<String> facetValues = new ArrayList<>();
     DatabaseClient client = databaseClientHolder.getDatabaseClient();
     String sqlQuery = generateSqlQuery(fsQuery);
     if (sqlQuery != null) {
       JsonNode queryResults = executioner.executeSqlQuery(client, sqlQuery).get();
-      facetValues = parseFacetQueryResults(queryResults, facetName);
+      facetValues = parseFacetQueryResults(queryResults, fsQuery);
     }
     return facetValues;
   }
@@ -58,8 +55,10 @@ public class FacetSearchService {
     Properties props = explorerConfig.getQueryProperties();
     String sqlQuery = props.getProperty("minMaxFacetValuesQuery");
 
-    entityName = facetInfo.getSchemaName() + DOT_CHAR + facetInfo.getEntityName();
-    facetName = entityName + DOT_CHAR + facetInfo.getFacetName();
+    String entityName = STRING_IDENTIFIER + facetInfo.getSchemaName() + STRING_IDENTIFIER + DOT_CHAR
+        + STRING_IDENTIFIER + facetInfo.getEntityName() + STRING_IDENTIFIER;
+    String facetName = entityName + DOT_CHAR + STRING_IDENTIFIER + facetInfo.getFacetName()
+        + STRING_IDENTIFIER;
     String minFacet = facetInfo.getFacetName() + "Min";
     String maxFacet = facetInfo.getFacetName() + "Max";
 
@@ -79,8 +78,11 @@ public class FacetSearchService {
 
   private String generateSqlQuery(FacetSearchQuery fsq) {
     String query = null;
-    entityName = fsq.getFacetInfo().getSchemaName() + DOT_CHAR + fsq.getFacetInfo().getEntityName();
-    facetName = entityName + DOT_CHAR + fsq.getFacetInfo().getFacetName();
+    String entityName =
+        STRING_IDENTIFIER + fsq.getFacetInfo().getSchemaName() + STRING_IDENTIFIER + DOT_CHAR
+            + STRING_IDENTIFIER + fsq.getFacetInfo().getEntityName() + STRING_IDENTIFIER;
+    String facetName = entityName + DOT_CHAR + STRING_IDENTIFIER + fsq.getFacetInfo().getFacetName()
+        + STRING_IDENTIFIER;
     Properties prop = explorerConfig.getQueryProperties();
 
     if (fsq.getDataType().equals(STRING_DATATYPE)) {
@@ -97,8 +99,11 @@ public class FacetSearchService {
     return query;
   }
 
-  private List<String> parseFacetQueryResults(JsonNode queryResults, String facetName) {
+  private List<String> parseFacetQueryResults(JsonNode queryResults, FacetSearchQuery fsq) {
     List<String> values = new ArrayList<>();
+    String facetName =
+        fsq.getFacetInfo().getSchemaName() + DOT_CHAR + fsq.getFacetInfo().getEntityName()
+            + DOT_CHAR + fsq.getFacetInfo().getFacetName();
     if (queryResults != null) {
       queryResults.path("rows").forEach(jsonNode -> {
         String value = jsonNode.get(facetName).get("value").asText();
