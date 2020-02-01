@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useContext} from 'react';
 import { RolesContext } from './roles';
+import {setEnvironment, getEnvironment, resetEnvironment} from '../util/environment';
 
 type UserContextInterface = {
   name: string,
@@ -52,6 +53,9 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
   const rolesService = useContext(RolesContext);
 
   const loginAuthenticated = (username: string, authResponse: any) => {
+    if(authResponse.isInstalled) {
+      setEnvironment();
+    }
     localStorage.setItem('dataHubUser', username);
     localStorage.setItem('dhIsInstalled', authResponse.isInstalled);
     localStorage.setItem('dhUserHasManagePrivileges', authResponse.hasManagePrivileges);
@@ -72,6 +76,7 @@ const AuthProvider: React.FC<{ children: any }> = ({children}) => {
     localStorage.setItem('dhUserHasManagePrivileges', '');
     localStorage.setItem('projectName', '');
     rolesService.setRoles([]);
+    resetEnvironment();
     setUser({ ...user,name: '', authenticated: false, redirect: true });
   };
 
