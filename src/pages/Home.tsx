@@ -40,7 +40,7 @@ const Home: React.FC = () => {
       </Content>
       <Footer className={styles.footer}>
         <div className={styles.copyright}>
-          <Text type="secondary">Copyright @ 2019 MarkLogic Corporation. All Rights Reserved | <a href="https://s3-us-west-2.amazonaws.com/marklogic-services-resources/legal/ServiceTerms.pdf" rel="noopener noreferrer" target="_blank" data-cy="terms">Terms and Conditions</a> | <a href="https://www.marklogic.com/privacy/" rel="noopener noreferrer" target="_blank">Policies</a></Text>
+          <Text type="secondary">Copyright @ 2020 MarkLogic Corporation. All Rights Reserved | <a href="https://s3-us-west-2.amazonaws.com/marklogic-services-resources/legal/ServiceTerms.pdf" rel="noopener noreferrer" target="_blank" data-cy="terms">Terms and Conditions</a> | <a href="https://www.marklogic.com/privacy/" rel="noopener noreferrer" target="_blank">Policies</a></Text>
         </div>
       </Footer>
     </Layout>
