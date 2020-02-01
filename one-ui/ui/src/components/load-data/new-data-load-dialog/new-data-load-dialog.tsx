@@ -633,7 +633,7 @@ const NewDataLoadDialog = (props) => {
             disabled={props.canReadOnly && !props.canReadWrite}
           />
         </Form.Item>
-        {props.canReadWrite ? <Form.Item label={<span>
+        <Form.Item label={<span>
           Files:&nbsp;
               <Tooltip title={NewLoadTooltips.files}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
