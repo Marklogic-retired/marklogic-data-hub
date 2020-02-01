@@ -5,6 +5,7 @@ import axios from 'axios';
 import { Message } from 'stompjs/lib/stomp.min';
 import { StompContext } from '../../util/stomp';
 import styles from './install-form.module.scss';
+import {setEnvironment} from '../../util/environment';
 
 const InstallForm: React.FC = () => {
 
@@ -36,6 +37,7 @@ const InstallForm: React.FC = () => {
       });
       if (response.status === 200) {
         localStorage.setItem('dhIsInstalled', 'true');
+        setEnvironment();
         setErrorResponse('');
         setIsLoading(false);
         setRedirectToHome(true);
