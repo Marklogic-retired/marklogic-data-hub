@@ -16,8 +16,6 @@
 package com.marklogic.hub.oneui.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.impl.Versions;
 import com.marklogic.hub.oneui.models.EnvironmentInfo;
 import com.marklogic.hub.oneui.models.HubConfigSession;
@@ -37,6 +35,9 @@ public class EnvironmentService {
 
     @Autowired
     private Versions versions;
+
+    @Autowired
+    private EnvironmentConfig environmentConfig;
 
     private Preferences prefs = Preferences.userNodeForPackage(EnvironmentService.class);
 
@@ -91,12 +92,7 @@ public class EnvironmentService {
     }
 
     public JsonNode getProjectInfo() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        ObjectNode resp = objectMapper.createObjectNode();
-        resp.put("dhfVersion", versions.getHubVersion());
-        resp.put("projectName", hubConfig.getHubProject().getProjectName());
-        resp.put("projectDir", hubConfig.getHubProject().getProjectDir().toString());
-        resp.put("mlVersion", versions.getMarkLogicVersion());
-        return resp;
+        environmentConfig.setProjectInfo();
+        return environmentConfig.toJson();
     }
 }
