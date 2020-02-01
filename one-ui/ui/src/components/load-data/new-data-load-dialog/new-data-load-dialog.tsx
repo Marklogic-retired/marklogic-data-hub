@@ -602,7 +602,7 @@ const NewDataLoadDialog = (props) => {
             disabled={props.canReadOnly && !props.canReadWrite}
           />
         </Form.Item>
-        {props.canReadWrite ? <Form.Item label={<span>
+        <Form.Item label={<span>
           Files:&nbsp;
               <Tooltip title={NewLoadTooltips.files}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
@@ -612,13 +612,15 @@ const NewDataLoadDialog = (props) => {
           <span className={styles.upload}><Upload
           {...uploadProps}
           multiple={true}
+          disabled={!props.canReadWrite}
           customRequest={customRequest}
           //onChange={handleUpload}
           >
-            <Button>Upload</Button>
+            <Button disabled={!props.canReadWrite}>Upload</Button>
           </Upload>&nbsp;&nbsp;
-                {uploadPercent != 100 ? <Progress type="circle" percent={uploadPercent} width={50} /> : <span>{fileList.length} files uploaded</span>}</span>
-        </Form.Item> : ''}
+                {props.canReadWrite ? (uploadPercent > 0 && uploadPercent < 100 ? <Progress type="circle" percent={uploadPercent} width={50} /> : '') : ''}
+                {props.canReadWrite ? (uploadPercent === 100 ? <span>{fileList.length} files uploaded</span> : '') : ''}</span>
+        </Form.Item>
         <Form.Item label={<span>
           Source Format:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
               <Tooltip title={NewLoadTooltips.sourceFormat}>
