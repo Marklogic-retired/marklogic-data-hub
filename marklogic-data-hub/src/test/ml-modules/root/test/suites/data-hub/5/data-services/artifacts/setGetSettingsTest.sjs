@@ -2,28 +2,28 @@ const test = require("/test/test-helper.xqy");
 
 function invokeSetService(artifactType, artifactName, artifact) {
   return fn.head(xdmp.invoke(
-    "/data-hub/5/data-services/artifacts/setArtifact.sjs",
+    "/data-hub/5/data-services/artifacts/setArtifact.mjs",
     {artifactType, artifactName, artifact: xdmp.toJSON(artifact)}
   ));
 }
 
 function invokeGetService(artifactType, artifactName) {
   return fn.head(xdmp.invoke(
-    "/data-hub/5/data-services/artifacts/getArtifact.sjs",
+    "/data-hub/5/data-services/artifacts/getArtifact.mjs",
     {artifactType, artifactName}
   ));
 }
 
 function invokeSetSettingsService(artifactType, artifactName, settings) {
   return fn.head(xdmp.invoke(
-    "/data-hub/5/data-services/artifacts/setArtifactSettings.sjs",
+    "/data-hub/5/data-services/artifacts/setArtifactSettings.mjs",
     {artifactType, artifactName, settings: xdmp.toJSON(settings)}
   ));
 }
 
 function invokeGetSettngsService(artifactType, artifactName) {
   return fn.head(xdmp.invoke(
-    "/data-hub/5/data-services/artifacts/getArtifactSettings.sjs",
+    "/data-hub/5/data-services/artifacts/getArtifactSettings.mjs",
     {artifactType, artifactName}
   ));
 }
@@ -77,7 +77,7 @@ function getArtifactSettings() {
 
 function deleteArtifact() {
   return fn.head(xdmp.invoke(
-    "/data-hub/5/data-services/artifacts/deleteArtifact.sjs",
+    "/data-hub/5/data-services/artifacts/deleteArtifact.mjs",
     {artifactType: 'loadData', artifactName: 'validArtifact'}
   ));
 }
