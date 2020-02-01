@@ -651,7 +651,7 @@ const NewDataLoadDialog = (props) => {
           <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
         </Tooltip>
         </Form.Item>
-        {props.canReadWrite ? <Form.Item label={<span>
+        <Form.Item label={<span>
           Files:&nbsp;
             </span>} labelAlign="left">
           <span className={styles.upload}><Upload
