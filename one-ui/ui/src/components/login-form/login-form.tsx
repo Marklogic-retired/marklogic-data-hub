@@ -52,6 +52,8 @@ const LoginForm: React.FC = () => {
         message = 'The username and password combination is not recognized by MarkLogic.'
       } else if (error.response.status === 400) {
         message = 'The host name "' + host + '" was not found.';
+      } else if (error.response.status === 403) {
+        message = 'User does not have the required permissions to run Data Hub.';
       }
       console.log('LOGIN ERROR', error.response);
       setIsLoading(false);
@@ -164,14 +166,14 @@ const LoginForm: React.FC = () => {
             onBlur={handleChange}
           />
         </Form.Item>
-          <div className={styles.help}>
+          { /* <div className={styles.help}>
             <span className={styles.remember}>
               <Checkbox className={styles.rememberCheck}>Remember me</Checkbox>
             </span>
             <a className={styles.forgot} href="" data-cy="forgot">
               Forgot password?
             </a>
-          </div>
+          </div> */ }
           <Form.Item className={styles.loginButton}>
             <MlButton 
               id="submit" 
