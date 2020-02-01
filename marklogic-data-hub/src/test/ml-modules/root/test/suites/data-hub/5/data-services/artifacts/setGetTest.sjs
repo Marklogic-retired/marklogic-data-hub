@@ -33,6 +33,14 @@ function getArtifact() {
   ];
 }
 
+function deleteArtifact() {
+  return fn.head(xdmp.invoke(
+    "/data-hub/5/data-services/artifacts/deleteArtifact.mjs",
+    {artifactType: 'loadData', artifactName: 'validArtifact'}
+  ));
+}
+
 []
   .concat(insertValidArtifact())
-  .concat(getArtifact());
+  .concat(getArtifact())
+  .concat(deleteArtifact());
