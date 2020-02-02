@@ -58,3 +58,9 @@ export function validateArtifact(artifact) {
     }
     return artifact;
 }
+
+export function getArtifactSettingNode(artifactName, artifactVersion) {
+    // Currently there is no versioning for loadData artifacts
+    const results = cts.search(cts.andQuery([cts.collectionQuery(collections[0]), cts.jsonPropertyValueQuery('artifactName', artifactName)]));
+    return fn.head(results);
+}
