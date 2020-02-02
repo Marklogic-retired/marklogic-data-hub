@@ -18,7 +18,6 @@
 import * as LoadData from './loadData';
 import * as Flows from './flows';
 import * as StepDefs from './stepDefinitions'
-import * as LoadDataSetting from './loadDataSettings';
 
 const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
 const dataHub = DataHubSingleton.instance();
@@ -27,8 +26,7 @@ const cachedArtifacts = {};
 const registeredArtifactTypes = {
     loadData: LoadData,
     flows: Flows,
-    stepDefinitions: StepDefs,
-    loadDataSettings: LoadDataSetting
+    stepDefinitions: StepDefs
 };
 
 export function getTypesInfo() {
@@ -76,8 +74,7 @@ export function deleteArtifact(artifactType, artifactName, artifactVersion = 'la
     let settingNode = {};
     if (artifactType == 'loadData') {
         //delete related config file if existed
-        const settingLibrary = getArtifactTypeLibrary(artifactType + 'Settings');
-        settingNode = settingLibrary.getArtifactSettingNode(artifactName,
+        settingNode = artifactLibrary.getArtifactSettingNode(artifactName,
             artifactVersion);
     }
 
@@ -130,10 +127,9 @@ export function setArtifact(artifactType, artifactName, artifact) {
 }
 
 export function getArtifactSettings(artifactType, artifactName, artifactVersion = 'latest') {
-    let settingType = artifactType + 'Settings';
-    const artifactSettingKey = generateArtifactKey(settingType, artifactName);
+    const artifactSettingKey = generateArtifactKey(artifactType + 'Settings', artifactName);
     if (!cachedArtifacts[artifactSettingKey]) {
-        const settingLibrary = getArtifactTypeLibrary(settingType);
+        const settingLibrary = getArtifactTypeLibrary(artifactType);
         const settingNode = settingLibrary.getArtifactSettingNode(artifactName, artifactVersion);
 
         if (fn.empty(settingNode)) {
@@ -145,23 +141,23 @@ export function getArtifactSettings(artifactType, artifactName, artifactVersion 
 }
 
 export function setArtifactSettings(artifactType, artifactName, settings) {
-    let settingType = artifactType + 'Settings';
-    const artifactSettingKey = generateArtifactKey(settingType, artifactName);
-    let validArtifact = validateArtifact(settingType, artifactName, settings) || settings;
-    if (validArtifact instanceof Error) {
-        throw new Error(`Invalid artifact with error message: ${validArtifact.message}`);
+    const requiredProperties = ['artifactName', 'targetDatabase'];
+    let validSettings = validateArtifactSettings(settings, requiredProperties);
+    if (validSettings instanceof Error) {
+        throw new Error(`Invalid artifact settings with error message: ${validSettings.message}`);
     }
-    const artifactLibrary =  getArtifactTypeLibrary(settingType);
+    const artifactLibrary =  getArtifactTypeLibrary(artifactType);
     const artifactDatabases = artifactLibrary.getStorageDatabases();
     const artifactDirectory = getArtifactDirectory(artifactType, artifactName, settings);
-    const artifactFileExtension = getArtifactFileExtension(settingType);
+    const artifactFileExtension = '.settings.json';
     const artifactPermissions = artifactLibrary.getPermissions();
-    const artifactCollections = artifactLibrary.getCollections();
+    const settingCollections = ['http://marklogic.com/data-hub/load-data-artifact/settings'];
     settings.lastUpdated = fn.string(fn.currentDateTime());
 
     for (const db of artifactDatabases) {
-        dataHub.hubUtils.writeDocument(`${artifactDirectory}${xdmp.urlEncode(artifactName)}${artifactFileExtension}`, settings, artifactPermissions, artifactCollections, db);
+        dataHub.hubUtils.writeDocument(`${artifactDirectory}${xdmp.urlEncode(artifactName)}${artifactFileExtension}`, settings, artifactPermissions, settingCollections, db);
     }
+    const artifactSettingKey = generateArtifactKey(artifactType + 'Settings', artifactName);
     cachedArtifacts[artifactSettingKey] = settings;
     return settings;
 }
@@ -210,4 +206,12 @@ function returnErrToClient(statusCode, statusMsg, body)
 {
     fn.error(null, 'RESTAPI-SRVEXERR',
         Sequence.from([statusCode, statusMsg, body]));
+}
+
+function validateArtifactSettings(settings, requiredProperties) {
+    const missingProperties = requiredProperties.filter((propName) => !settings[propName]);
+    if (missingProperties.length) {
+        return new Error(`Missing the following required properties: ${JSON.stringify(missingProperties)}`);
+    }
+    return settings;
 }
