@@ -71,29 +71,15 @@ export function deleteArtifact(artifactType, artifactName, artifactVersion = 'la
     // Currently there is no versioning for loadData artifacts
     const node = getArtifactNode(artifactType, artifactName, artifactVersion);
 
-    let settingNode = {};
-    if (artifactType == 'loadData') {
-        //delete related config file if existed
-        settingNode = artifactLibrary.getArtifactSettingNode(artifactName,
-            artifactVersion);
-    }
-
     for (const db of artifactLibrary.getStorageDatabases()) {
         dataHub.hubUtils.deleteDocument(xdmp.nodeUri(node), db);
-        if (!fn.empty(settingNode)) {
-            dataHub.hubUtils.deleteDocument(xdmp.nodeUri(settingNode), db);
-        }
-    }
-
-    if (artifactType == 'loadData') {
-        const artifactSettingKey = generateArtifactKey(artifactType + 'Settings',
-            artifactName);
-        if (cachedArtifacts[artifactSettingKey]) {
-            delete cachedArtifacts[artifactSettingKey];
-        }
     }
     delete cachedArtifacts[artifactKey];
-    return { success: true };
+    if (artifactType != 'loadData') {
+        return { success: true };
+    }
+    //delete related config file if existed
+    return deleteArtifactSettings(artifactType, artifactName, artifactVersion);
 }
 
 export function getArtifact(artifactType, artifactName, artifactVersion = 'latest') {
@@ -129,8 +115,10 @@ export function setArtifact(artifactType, artifactName, artifact) {
 export function getArtifactSettings(artifactType, artifactName, artifactVersion = 'latest') {
     const artifactSettingKey = generateArtifactKey(artifactType + 'Settings', artifactName);
     if (!cachedArtifacts[artifactSettingKey]) {
-        const settingLibrary = getArtifactTypeLibrary(artifactType);
-        const settingNode = settingLibrary.getArtifactSettingNode(artifactName, artifactVersion);
+        const artifactLibrary = getArtifactTypeLibrary(artifactType);
+        const settingCollection = `http://marklogic.com/data-hub/${artifactType}/settings`;
+
+        const settingNode = artifactLibrary.getArtifactSettingNode(settingCollection, artifactName, artifactVersion);
 
         if (fn.empty(settingNode)) {
             return {};
@@ -151,7 +139,7 @@ export function setArtifactSettings(artifactType, artifactName, settings) {
     const artifactDirectory = getArtifactDirectory(artifactType, artifactName, settings);
     const artifactFileExtension = '.settings.json';
     const artifactPermissions = artifactLibrary.getPermissions();
-    const settingCollections = ['http://marklogic.com/data-hub/load-data-artifact/settings'];
+    const settingCollections = [`http://marklogic.com/data-hub/${artifactType}/settings`];
     settings.lastUpdated = fn.string(fn.currentDateTime());
 
     for (const db of artifactDatabases) {
@@ -214,4 +202,25 @@ function validateArtifactSettings(settings, requiredProperties) {
         return new Error(`Missing the following required properties: ${JSON.stringify(missingProperties)}`);
     }
     return settings;
+}
+
+function deleteArtifactSettings(artifactType, artifactName, artifactVersion = 'latest') {
+    const artifactLibrary =  getArtifactTypeLibrary(artifactType);
+    const settingCollection = `http://marklogic.com/data-hub/${artifactType}/settings`;
+
+    const settingNode = artifactLibrary.getArtifactSettingNode(settingCollection, artifactName,
+        artifactVersion);
+
+    if (!fn.empty(settingNode)) {
+        for (const db of artifactLibrary.getStorageDatabases()) {
+            dataHub.hubUtils.deleteDocument(xdmp.nodeUri(settingNode), db);
+        }
+    }
+
+    const artifactSettingKey = generateArtifactKey(artifactType + 'Settings',
+        artifactName);
+    if (cachedArtifacts[artifactSettingKey]) {
+        delete cachedArtifacts[artifactSettingKey];
+    }
+    return { success: true };
 }
