@@ -8,6 +8,7 @@ import com.marklogic.appdeployer.command.alert.DeployAlertConfigsCommand;
 import com.marklogic.appdeployer.command.alert.DeployAlertRulesCommand;
 import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
 import com.marklogic.appdeployer.command.schemas.LoadSchemasCommand;
+import com.marklogic.appdeployer.command.security.DeployPrivilegesCommand;
 import com.marklogic.appdeployer.command.security.DeployRolesCommand;
 import com.marklogic.appdeployer.command.tasks.DeployScheduledTasksCommand;
 import com.marklogic.appdeployer.command.temporal.DeployTemporalAxesCommand;
@@ -154,6 +155,7 @@ public class DhsDeployer extends LoggingObject {
 
     protected List<Command> buildCommandsForSecurityAdmin() {
         List<Command> commands = new ArrayList<>();
+        commands.add(new DeployPrivilegesCommand());
         commands.add(new DeployRolesCommand());
         return commands;
     }
