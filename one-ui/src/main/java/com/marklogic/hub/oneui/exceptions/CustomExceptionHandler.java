@@ -64,7 +64,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         ObjectNode errJson = mapper.createObjectNode();
         errJson.put("code", 403);
         errJson.put("message", exception.getMessage());
-        errJson.put("suggestion", "Ensure your MarkLogic user has the proper roles");
+        errJson.put("suggestion", "Log in as a MarkLogic user with permissions to install or upgrade Data Hub.");
         if (exception.getRequiredRoles() != null && exception.getRequiredRoles().size() > 0) {
             ArrayNode requiredRolesArray = errJson.putArray("requiredRoles");
             exception.getRequiredRoles().forEach(requiredRolesArray::add);
@@ -85,11 +85,11 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     private String httpStatusSuggestion(HttpStatus httpStatus) {
         switch (httpStatus) {
             case FORBIDDEN:
-                return "Ensure your MarkLogic user has the proper roles";
+                return "Ensure your MarkLogic user has the proper roles for this action.";
             case BAD_REQUEST:
-                return "Ensure the request follows the expected format";
+                return "Resend the request in the correct format.";
             case INTERNAL_SERVER_ERROR:
-                return "Contact your server administrator";
+                return "Contact your server administrator.";
             default:
                 return null;
         }
@@ -101,9 +101,9 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
             rootException = exception.getCause();
         }
         if (rootException instanceof IOException) {
-            return "Ensure the user running the service has permissions to read/write the project directory";
+            return "Verify that the user account running the service has permissions to read from or write to the project directory.";
         } else {
-            return "Contact your server administrator";
+            return "Contact your server administrator.";
         }
     }
 }
