@@ -13,6 +13,7 @@ import com.marklogic.mgmt.mapper.DefaultResourceMapper;
 import com.marklogic.mgmt.resource.security.PrivilegeManager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -21,9 +22,15 @@ import java.util.List;
 public class CreateGranularPrivilegesCommand implements Command, UndoableCommand {
 
     private HubConfig hubConfig;
+    private List<String> groupNames;
 
     public CreateGranularPrivilegesCommand(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
+    }
+
+    public CreateGranularPrivilegesCommand(HubConfig hubConfig, List<String> groupNames) {
+        this.hubConfig = hubConfig;
+        this.groupNames = groupNames;
     }
 
     /**
@@ -78,29 +85,7 @@ public class CreateGranularPrivilegesCommand implements Command, UndoableCommand
         p.setAction("http://marklogic.com/xdmp/privileges/admin/database/alerts/$$database-id(" + finalDbName + ")");
         mgr.save(p.getJson());
 
-        if (hubConfig.getIsProvisionedEnvironment()) {
-            p.setPrivilegeName("admin-group-scheduled-task-Analyzer");
-            p.setAction("http://marklogic.com/xdmp/privileges/admin/group/scheduled-task/$$group-id(Analyzer)");
-            mgr.save(p.getJson());
-
-            p.setPrivilegeName("admin-group-scheduled-task-Curator");
-            p.setAction("http://marklogic.com/xdmp/privileges/admin/group/scheduled-task/$$group-id(Curator)");
-            mgr.save(p.getJson());
-
-            p.setPrivilegeName("admin-group-scheduled-task-Evaluator");
-            p.setAction("http://marklogic.com/xdmp/privileges/admin/group/scheduled-task/$$group-id(Evaluator)");
-            mgr.save(p.getJson());
-
-            p.setPrivilegeName("admin-group-scheduled-task-Operator");
-            p.setAction("http://marklogic.com/xdmp/privileges/admin/group/scheduled-task/$$group-id(Operator)");
-            mgr.save(p.getJson());
-        } else {
-            String groupName = hubConfig.getAppConfig().getGroupName();
-
-            p.setPrivilegeName("admin-group-scheduled-task-" + groupName);
-            p.setAction("http://marklogic.com/xdmp/privileges/admin/group/scheduled-task/$$group-id(" + groupName + ")");
-            mgr.save(p.getJson());
-        }
+        buildScheduledTaskPrivileges().forEach(privilege -> mgr.save(privilege.getJson()));
     }
 
     @Override
@@ -128,15 +113,9 @@ public class CreateGranularPrivilegesCommand implements Command, UndoableCommand
         mgr.deleteAtPath("/manage/v2/privileges/admin-database-alerts-" + finalDbName + "?kind=execute");
         mgr.deleteAtPath("/manage/v2/privileges/admin-database-alerts-" + stagingDbName + "?kind=execute");
 
-        if (hubConfig.getIsProvisionedEnvironment()) {
-            mgr.deleteAtPath("/manage/v2/privileges/admin-group-scheduled-task-Analyzer" + "?kind=execute");
-            mgr.deleteAtPath("/manage/v2/privileges/admin-group-scheduled-task-Curator" + "?kind=execute");
-            mgr.deleteAtPath("/manage/v2/privileges/admin-group-scheduled-task-Evaluator" + "?kind=execute");
-            mgr.deleteAtPath("/manage/v2/privileges/admin-group-scheduled-task-Operator" + "?kind=execute");
-        } else {
-            String groupName = hubConfig.getAppConfig().getGroupName();
+        getGroupNamesForScheduledTaskPrivileges().forEach(groupName -> {
             mgr.deleteAtPath("/manage/v2/privileges/admin-group-scheduled-task-" + groupName + "?kind=execute");
-        }
+        });
     }
 
     /**
@@ -182,5 +161,33 @@ public class CreateGranularPrivilegesCommand implements Command, UndoableCommand
         }
         p.addRole(role);
         return p;
+    }
+
+    /**
+     * Builds a list of privileges to create based on the groupNames configured on this object. If none have been
+     * configured, then the groupName in AppConfig is used.
+     *
+     * @return
+     */
+    protected List<Privilege> buildScheduledTaskPrivileges() {
+        List<Privilege> privileges = new ArrayList<>();
+        getGroupNamesForScheduledTaskPrivileges().forEach(groupName -> {
+            Privilege p = new Privilege(null, "admin-group-scheduled-task-" + groupName);
+            p.setKind("execute");
+            p.setAction("http://marklogic.com/xdmp/privileges/admin/group/scheduled-task/$$group-id(" + groupName + ")");
+            p.addRole("data-hub-developer");
+            privileges.add(p);
+        });
+        return privileges;
+    }
+
+    protected List<String> getGroupNamesForScheduledTaskPrivileges() {
+        return (groupNames != null && !groupNames.isEmpty()) ?
+            groupNames :
+            Arrays.asList(hubConfig.getAppConfig().getGroupName());
+    }
+
+    public List<String> getGroupNames() {
+        return groupNames;
     }
 }

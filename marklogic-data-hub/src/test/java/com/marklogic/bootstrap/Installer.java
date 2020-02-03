@@ -51,6 +51,13 @@ public class Installer extends HubTestBase {
             dataHubOperator.setPassword("password");
             dataHubOperator.addRole("data-hub-operator");
             dataHubOperator.save();
+
+            User testAdmin = new User(new API(adminHubConfig.getManageClient()), "test-admin-for-data-hub-tests");
+            testAdmin.setDescription("This user is intended to be used by DHF tests that require admin or " +
+                "admin-like capabilities, such as being able to deploy a DHF application");
+            testAdmin.setPassword("password");
+            testAdmin.addRole("admin");
+            testAdmin.save();
         }
 
         if (getDataHubAdminConfig().getIsProvisionedEnvironment()) {
