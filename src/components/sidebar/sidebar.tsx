@@ -60,7 +60,7 @@ const Sidebar: React.FC<Props> = (props) => {
         for (let constraint in searchOptions.searchFacets) {
           // TODO fix the date picker
           if (constraint === 'createdOnRange') {
-            selectedFacets.push({ constraint, facet: searchOptions.searchFacets[constraint]['rangeValues'] })
+            selectedFacets.push({ constraint, facet: searchOptions.searchFacets[constraint]['rangeValues']});
           } else {
             let datatype = searchOptions.searchFacets[constraint].dataType;
             if (datatype === 'xs:string') {
@@ -89,19 +89,24 @@ const Sidebar: React.FC<Props> = (props) => {
   }, [props.selectedEntities, props.facets]);
 
   const onDateChange = (dateVal, dateArray) => {
-    let updateFacets = { ...allSelectedFacets };
+    let updateFacets = {...allSelectedFacets};
     if (dateVal.length > 1) {
       toggleApply(true);
-      updateFacets = { ...updateFacets, createdOnRange: dateArray }
+      updateFacets = {
+        ...updateFacets, createdOnRange:
+          {
+            dataType: 'date',
+            rangeValues: {lowerBound: dateArray[0], upperBound: dateArray[1]}
+          }
+      }
       setDatePickerValue([moment(dateArray[0]), moment(dateArray[1])]);
     } else {
       toggleApply(false);
-      delete updateFacets.createdOnRange
+      delete updateFacets.createdOnRange;
       setDatePickerValue([null, null]);
     }
     setAllSelectedFacets(updateFacets);
   }
-
 
   const updateSelectedFacets = (constraint: string, vals: string[], datatype: string) => {
     let facets = { ...allSelectedFacets };
@@ -151,6 +156,7 @@ const Sidebar: React.FC<Props> = (props) => {
     let newAllSelectedfacets = { ...allSelectedFacets };
     let valueKey = 'stringValues';
     // TODO add support for non string facets
+
     if (dataType === 'xs:string') {
       valueKey = 'stringValues';
     }
