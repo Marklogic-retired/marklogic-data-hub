@@ -189,11 +189,6 @@ public class SearchHelper {
       }
     });
 
-    // Setting search string if provided by user
-    if (StringUtils.isNotEmpty(searchQuery.getQuery().getSearchStr())) {
-      queries.add(queryBuilder.term(searchQuery.getQuery().getSearchStr()));
-    }
-
     // And between all the queries
     StructuredQueryDefinition finalQueryDef = queryBuilder
         .and(queries.toArray(new StructuredQueryDefinition[0]));

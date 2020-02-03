@@ -9,6 +9,7 @@ import java.util.Set;
 import com.marklogic.hub.explorer.model.SearchQuery;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -36,7 +37,12 @@ public class SearchOptionBuilder {
 
     //build sort order options
     buildSortOrderOptions(sb, searchQuery);
-
+    // Setting search string if provided by user
+    if (StringUtils.isNotEmpty(searchQuery.getQuery().getSearchStr())) {
+      sb.append("<qtext>")
+          .append(StringEscapeUtils.escapeXml(searchQuery.getQuery().getSearchStr()))
+          .append("</qtext>");
+    }
     sb.append(query);
     sb.append(SEARCH_TAIL);
 
