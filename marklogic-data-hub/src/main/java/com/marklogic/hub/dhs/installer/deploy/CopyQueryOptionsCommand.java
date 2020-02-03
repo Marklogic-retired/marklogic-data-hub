@@ -6,12 +6,23 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class CopyQueryOptionsCommand extends AbstractCommand {
 
     private HubConfig hubConfig;
+    private List<String> groupNames;
+    private List<String> serverNames;
+    private String jobDatabaseName;
 
-    public CopyQueryOptionsCommand(HubConfig hubConfig) {
+    private String scriptResponse;
+
+    public CopyQueryOptionsCommand(HubConfig hubConfig, List<String> groupNames, List<String> serverNames, String jobDatabaseName) {
         this.hubConfig = hubConfig;
+        this.groupNames = groupNames;
+        this.serverNames = serverNames;
+        this.jobDatabaseName = jobDatabaseName;
 
         // Need to run this after the contents of ml-modules-final is loaded
         setExecuteSortOrder(new LoadUserModulesCommand().getExecuteSortOrder() + 1);
@@ -19,48 +30,75 @@ public class CopyQueryOptionsCommand extends AbstractCommand {
 
     @Override
     public void execute(CommandContext context) {
-        String script = "declareUpdate();\n" +
-            "[\n" +
-            "  '/Evaluator/data-hub-JOBS/rest-api/options/jobs.xml',\n" +
-            "  '/Evaluator/data-hub-JOBS/rest-api/options/traces.xml',\n" +
-            "  '/Evaluator/data-hub-STAGING/rest-api/options/default.xml',\n" +
-            "  '/Evaluator/data-hub-STAGING/rest-api/options/exp-default.xml'\n" +
-            "].forEach(uri => {\n" +
-            "  if (fn.docAvailable(uri)) { console.log('Reproducing: ' + uri); xdmp.documentInsert(uri.replace('Evaluator', 'Curator'), cts.doc(uri), \n" +
-            "    xdmp.documentGetPermissions(uri), xdmp.documentGetCollections(uri));}\n" +
-            "});\n" +
-
-            "\n" +
-            "const stagingUri = '/Evaluator/data-hub-STAGING/rest-api/options/default.xml';\n" +
-            "if (fn.docAvailable(stagingUri)) { " +
-            "  xdmp.documentInsert('/Evaluator/data-hub-FINAL/rest-api/options/default.xml', cts.doc(stagingUri), xdmp.documentGetPermissions(stagingUri), xdmp.documentGetCollections(stagingUri));\n" +
-            "  xdmp.documentInsert('/Curator/data-hub-FINAL/rest-api/options/default.xml', cts.doc(stagingUri), xdmp.documentGetPermissions(stagingUri), xdmp.documentGetCollections(stagingUri));" +
-            "}\n\n" +
-
-            "const explorerUri = '/Evaluator/data-hub-STAGING/rest-api/options/exp-default.xml';\n" +
-            "if (fn.docAvailable(explorerUri)) { " +
-            "  xdmp.documentInsert('/Evaluator/data-hub-FINAL/rest-api/options/exp-default.xml', cts.doc(explorerUri), xdmp.documentGetPermissions(explorerUri), xdmp.documentGetCollections(explorerUri));\n" +
-            "  xdmp.documentInsert('/Curator/data-hub-FINAL/rest-api/options/exp-default.xml', cts.doc(explorerUri), xdmp.documentGetPermissions(explorerUri), xdmp.documentGetCollections(explorerUri));" +
-            "}\n\n" +
-
-            "[\n" +
-            "  '/Analyzer/data-hub-ANALYTICS/rest-api/options/default.xml',\n" +
-            "  '/Analyzer/data-hub-ANALYTICS-REST/rest-api/options/default.xml',\n" +
-            "  '/Operator/data-hub-OPERATION/rest-api/options/default.xml',\n" +
-            "  '/Operator/data-hub-OPERATION-REST/rest-api/options/default.xml',\n" +
-            "  '/Evaluator/data-hub-ANALYTICS/rest-api/options/default.xml',\n" +
-            "  '/Evaluator/data-hub-OPERATION/rest-api/options/default.xml'\n" +
-            "].forEach(uri => {\n" +
-            "  if (fn.docAvailable(stagingUri)) {console.log('Inserting: ' + uri); xdmp.documentInsert(uri, cts.doc(stagingUri), xdmp.documentGetPermissions(stagingUri), \n" +
-            "    xdmp.documentGetCollections(stagingUri));}\n" +
-            "})";
+        final String script = buildScript();
 
         DatabaseClient client = hubConfig.newModulesDbClient();
         try {
-            client.newServerEval().javascript(script).eval().close();
+            scriptResponse = client.newServerEval().javascript(script)
+                .addVariable("stagingServer", serverNames.get(0))
+                .addVariable("jobServer", jobDatabaseName)
+                .addVariable("groups", groupNames.stream().collect(Collectors.joining(",")))
+                .addVariable("servers", serverNames.subList(1, serverNames.size()).stream().collect(Collectors.joining(",")))
+                .evalAs(String.class);
         } finally {
             client.release();
         }
 
+        logger.info("Copied search options to the following URIs in the modules database:\n" + scriptResponse);
+    }
+
+    protected String buildScript() {
+        return "declareUpdate();\n" +
+            "var stagingServer;\n" +
+            "var jobServer;\n" +
+            "var groups;\n" +
+            "var servers;\n" +
+            "\n" +
+            "groups = groups.split(',');\n" +
+            "servers = servers.split(',');\n" +
+            "const firstGroup = groups[0];\n" +
+            "\n" +
+            "// This array is returned for testing purposes\n" +
+            "const createdUris = [];\n" +
+            "\n" +
+            "let stagingUris = cts.uriMatch('/' + firstGroup + '/' + stagingServer + '/rest-api/options/*').toArray().forEach(uri => {\n" +
+            "  const doc = cts.doc(uri);\n" +
+            "  const perms = xdmp.documentGetPermissions(uri);\n" +
+            "  const collections = xdmp.documentGetCollections(uri);\n" +
+            "  // Copy options from first group to other groups for stagingServer\n" +
+            "  groups.slice(1).map(group => {\n" +
+            "    let newUri = uri.toString().replace('/' + firstGroup + '/', '/' + group + '/');\n" +
+            "    xdmp.documentInsert(newUri, doc, perms, collections);\n" +
+            "    createdUris.push(newUri);\n" +
+            "  });\n" +
+            "  \n" +
+            "  // Copy options to every group for all other servers\n" +
+            "  groups.forEach(group => {\n" +
+            "    servers.forEach(server => {\n" +
+            "      let newUri = uri.toString().replace('/' + firstGroup + '/', '/' + group + '/');\n" +
+            "      newUri = newUri.replace('/' + stagingServer + '/', '/' + server + '/');\n" +
+            "      xdmp.documentInsert(newUri, doc, perms, collections);\n" +
+            "      createdUris.push(newUri);\n" +
+            "    });\n" +
+            "  });\n" +
+            "});\n" +
+            "\n" +
+            "// Copy jobs options to job servers in other groups\n" +
+            "cts.uriMatch('/' + firstGroup + '/' + jobServer + '/rest-api/options/*').toArray().map(uri => {\n" +
+            "  const doc = cts.doc(uri);\n" +
+            "  const perms = xdmp.documentGetPermissions(uri);\n" +
+            "  const collections = xdmp.documentGetCollections(uri);\n" +
+            "  groups.slice(1).forEach(group => {\n" +
+            "    let newUri = uri.toString().replace('/' + firstGroup + '/', '/' + group + '/');\n" +
+            "    xdmp.documentInsert(newUri, doc, perms, collections);\n" +
+            "    createdUris.push(newUri);\n" +
+            "  });\n" +
+            "});\n" +
+            "\n" +
+            "createdUris;";
+    }
+
+    public String getScriptResponse() {
+        return scriptResponse;
     }
 }

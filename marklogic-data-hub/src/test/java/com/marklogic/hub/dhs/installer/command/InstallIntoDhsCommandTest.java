@@ -5,7 +5,6 @@ import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.ResourceFilenameFilter;
 import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
-import com.marklogic.appdeployer.command.modules.DeleteTestModulesCommand;
 import com.marklogic.appdeployer.command.security.DeployAmpsCommand;
 import com.marklogic.appdeployer.command.security.DeployPrivilegesCommand;
 import com.marklogic.appdeployer.command.security.DeployRolesCommand;
@@ -91,7 +90,10 @@ public class InstallIntoDhsCommandTest extends HubTestBase {
         InstallIntoDhsCommand command = new InstallIntoDhsCommand();
         command.hubConfig = super.adminHubConfig;
 
-        List<Command> commands = command.buildCommandsForDhs();
+        Options options = new Options();
+        options.setGroupNames("Evaluator,Curator");
+
+        List<Command> commands = command.buildCommandsForDhs(options);
         Collections.sort(commands, Comparator.comparing(Command::getExecuteSortOrder));
 
         int index = 0;
@@ -120,6 +122,12 @@ public class InstallIntoDhsCommandTest extends HubTestBase {
         assertFalse(filter.accept(dir, "flow-developer-role.json"), "The DHF 'legacy' roles should not be deployed as they grant too many privileges for a DHS user");
         assertFalse(filter.accept(dir, "flow-operator-role.json"), "The DHF 'legacy' roles should not be deployed as they grant too many privileges for a DHS user");
         assertFalse(filter.accept(dir, "data-hub-admin-role.json"), "The DHF 'legacy' roles should not be deployed as they grant too many privileges for a DHS user");
+
+        CreateGranularPrivilegesCommand createGranularPrivilegesCommand = (CreateGranularPrivilegesCommand) commands.get(13);
+        List<String> names = createGranularPrivilegesCommand.getGroupNames();
+        assertEquals("Evaluator", names.get(0));
+        assertEquals("Curator", names.get(1));
+        assertEquals(2, names.size());
     }
 
     private void verifyDefaultProperties(Properties props) {
@@ -182,8 +190,7 @@ public class InstallIntoDhsCommandTest extends HubTestBase {
 
             Assertions.assertEquals(DocumentMetadataHandle.Capability.UPDATE, modulePerms.get("data-hub-environment-manager").iterator().next());
             Assertions.assertNull(modulePerms.get("rest-admin-internal"));
-        }
-        finally {
+        } finally {
             new DatabaseManager(getDataHubAdminConfig().getManageClient()).clearDatabase(HubConfig.DEFAULT_MODULES_DB_NAME);
             installHubModules();
             installHubArtifacts(adminHubConfig, true);

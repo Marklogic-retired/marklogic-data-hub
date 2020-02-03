@@ -45,6 +45,20 @@ public class Options {
     )
     private boolean disableSsl;
 
+    @Parameter(
+        names = {"--groups"},
+        description = "Comma-delimited list of group names that REST options should be copied to, and for which granular " +
+            "privileges should be created for scheduled tasks"
+    )
+    private String groupNames = "Evaluator,Curator,Analyzer,Operator";
+
+    @Parameter(
+        names = {"--servers"},
+        description = "Comma-delimited list of server names. Search options are expected to be loaded into the first server, and then they " +
+            "will be copied to the appropriate locations for each of the other servers combined with each of the groups defined by --groups."
+    )
+    private String serverNames = "data-hub-STAGING,data-hub-FINAL,data-hub-ANALYTICS,data-hub-ANALYTICS-REST,data-hub-OPERATION,data-hub-OPERATION-REST";
+
     @DynamicParameter(
         names = "-P",
         description = "Use this argument to include any property supported by DHF; e.g. -PmlHost=somehost"
@@ -97,5 +111,21 @@ public class Options {
 
     public void setDisableSsl(boolean disableSsl) {
         this.disableSsl = disableSsl;
+    }
+
+    public String getGroupNames() {
+        return groupNames;
+    }
+
+    public void setGroupNames(String groupNames) {
+        this.groupNames = groupNames;
+    }
+
+    public String getServerNames() {
+        return serverNames;
+    }
+
+    public void setServerNames(String serverNames) {
+        this.serverNames = serverNames;
     }
 }

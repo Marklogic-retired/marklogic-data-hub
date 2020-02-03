@@ -7,6 +7,7 @@ import com.marklogic.appdeployer.command.security.DeployAmpsCommand;
 import com.marklogic.appdeployer.command.security.DeployPrivilegesCommand;
 import com.marklogic.appdeployer.command.security.DeployRolesCommand;
 import com.marklogic.appdeployer.command.triggers.DeployTriggersCommand;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.dhs.installer.Options;
@@ -34,7 +35,7 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
 
         String groupName = "Evaluator";
         modifyHubConfigForDhs(groupName);
-        deployer.setCommands(buildCommandsForDhs());
+        deployer.setCommands(buildCommandsForDhs(options));
         deployer.deploy(hubConfig.getAppConfig());
 
         // Update the servers in the Curator group
@@ -50,9 +51,11 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
      * In the spirit of whitelisting, we'll only setup the commands that we know we need for installing DHF.
      * We may need a more broad set of commands for user files.
      */
-    protected List<Command> buildCommandsForDhs() {
+    protected List<Command> buildCommandsForDhs(Options options) {
         DeployOtherDatabasesCommand dbCommand = new DeployOtherDatabasesCommand();
         dbCommand.setDeployDatabaseCommandFactory(new HubDeployDatabaseCommandFactory(hubConfig));
+
+        List<String> groupNames = Arrays.asList(options.getGroupNames().split(","));
 
         List<Command> commands = new ArrayList<>();
         commands.add(new DeployPrivilegesCommand());
@@ -82,10 +85,12 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
         // another DatabaseClient, which the Versions class will do.
         commands.add(new GenerateFunctionMetadataCommand(hubConfig, true));
 
-        commands.add(new CopyQueryOptionsCommand(hubConfig));
+        commands.add(new CopyQueryOptionsCommand(hubConfig, groupNames,
+            Arrays.asList(options.getServerNames().split(",")), hubConfig.getDbName(DatabaseKind.JOB)
+        ));
         commands.add(new UpdateDhsModulesPermissionsCommand(hubConfig));
 
-        commands.add(new CreateGranularPrivilegesCommand(hubConfig));
+        commands.add(new CreateGranularPrivilegesCommand(hubConfig, groupNames));
 
         return commands;
     }

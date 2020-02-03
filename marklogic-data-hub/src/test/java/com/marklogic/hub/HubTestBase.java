@@ -459,6 +459,10 @@ public class HubTestBase {
         return runAsFlowOperator();
     }
 
+    protected HubConfigImpl runAsAdmin() {
+        return runAsUser("test-admin-for-data-hub-tests", "password");
+    }
+    
     protected HubConfigImpl runAsUser(String mlUsername, String mlPassword) {
         adminHubConfig.setMlUsername(mlUsername);
         adminHubConfig.setMlPassword(mlPassword);
