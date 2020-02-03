@@ -101,12 +101,15 @@ const ResultTable: React.FC<Props> = (props) => {
         let newRenderColumns: any[] = [];
         let parsedEntityDocObj = parsedPayload.data[0] && parsedPayload.data[0].itemEntityProperties[0];
         let columns = setPrimaryKeyColumn(headerParser(parsedEntityDocObj));
-        
+        columns.length && columns.push({title: 'Detail View', key: '0-d'})
+
         if (defaultColumns.length === 0 ) {
           if (renderColumns.length === 0 ) {
+
             if (columns.length > 5) {
               // TODO Save user pref
               newRenderColumns = columns.slice(0, 5);
+              newRenderColumns.push(columns.slice(-1)[0])
             } else {
               newRenderColumns = columns;
             }
@@ -125,6 +128,7 @@ const ResultTable: React.FC<Props> = (props) => {
               if (columns.length > 5) {
                 // TODO Save user pref
                 newRenderColumns = columns.slice(0, 5);
+                newRenderColumns.push(columns.slice(-1)[0])
               } else {
                 newRenderColumns = columns;
               }
