@@ -1,10 +1,11 @@
 import { Modal, Form, Input, Button, Tooltip, Icon, Progress, Upload, Select, Collapse, Switch, message } from "antd";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import styles from './load-data-settings-dialog.module.scss';
 import { NewLoadTooltips } from '../../../config/tooltips.config';
 import Axios from "axios";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy } from '@fortawesome/free-regular-svg-icons';
+import { RolesContext } from "../../../util/roles";
 
 import { RolesContext } from "../../../util/roles";
 
@@ -15,24 +16,45 @@ import { RolesContext } from "../../../util/roles";
 const LoadDataSettingsDialog = (props) => {
 
   const [tgtDatabase, setgtDatabase] = useState(props.stepData && props.stepData != {} ? 'data-hub-STAGING' : 'data-hub-STAGING');
+  const[ additionalCollection, setAdditionalCollection ] = useState([])
   const [isTgtDatabaseTouched, setTgtDatabaseTouched] = useState(false);
   const [targetPermissions, setTargetPermissions] = useState('rest-reader,read,rest-writer,update');
-  const [provGranularity, setProvGranularity] = useState('coarse-grained');
+  const [provGranularity, setProvGranularity] = useState('Coarse-grained');
   const [module, setModule] = useState('');
   const [cHparameters, setCHparameters] = useState(JSON.stringify({}, null, 4));
   const [user, setUser] = useState('');
   const [runBefore, setRunBefore] = useState(false);
   const [mlcpCommand, setMLCPCommand] = useState('');
   const [toExpand, setToExpand] = useState(false);
+  const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
+
+  //For Role based access of artifacts
+  const roleService = useContext(RolesContext);
+  const canReadOnly = roleService.canReadLoadData();
+  const canReadWrite = roleService.canWriteLoadData();
+
+
   const tgtDatabaseOptions = {
     'data-hub-STAGING': 'data-hub-STAGING',
     'data-hub-FINAL': 'data-hub-FINAL'
   }
-  const provGranOptions = ['coarse-grained', 'OFF'];
+  const provGranOptions = ['Coarse-grained', 'OFF'];
 
   let mlcp = {};
 
   useEffect(() => {
+    if (props.stepData && JSON.stringify(props.stepData) != JSON.stringify({})){
+      
+      setAdditionalCollection(props.stepData.additionalCollection);
+      setTargetPermissions(props.stepData.targetPermissions);
+      setModule(props.stepData.module);
+      setCHparameters(props.stepData.parameters);
+      setProvGranularity(props.stepData.provenanceGranularity);
+      setUser(props.stepData.user);
+      setRunBefore(props.stepData.runBefore);
+
+    }
+
     return () => {
       updateMlcpCommand();
     };
@@ -42,13 +64,63 @@ const LoadDataSettingsDialog = (props) => {
 
   const onCancel = () => {
     console.log('On cancel called')
-    props.setOpenLoadDataSettings(false)
+    if(checkDeleteOpenEligibility()){
+      setDeleteDialogVisible(true);
+    }
   }
 
   const onOk = () => {
     console.log('On Ok called')
     props.setOpenLoadDataSettings(false)
   }
+
+  const checkDeleteOpenEligibility = () => {
+    if (props.stepData && JSON.stringify(props.stepData) != JSON.stringify({})){
+      
+      if(tgtDatabase === props.stepData.targetDatabase
+      && additionalCollection === props.stepData.additionalCollection
+      && targetPermissions === props.stepData.targetPermissions
+      && module === props.stepData.module
+      && cHparameters === props.stepData.parameters
+      && provGranularity === props.stepData.provenanceGranularity
+      && user === props.stepData.user
+      && runBefore === props.stepData.runBefore
+      ) {
+              return false; 
+        } else {
+          return true;
+         }  
+      
+    } else {
+          return true;
+    }
+  }
+
+  const onDelOk = () => {
+    props.setOpenLoadDataSettings(false)
+    setDeleteDialogVisible(false)
+  }
+
+  const onDelCancel = () => {
+    setDeleteDialogVisible(false)
+  }
+
+  const deleteConfirmation = <Modal
+        visible={deleteDialogVisible}
+        bodyStyle={{textAlign: 'center'}}
+        width={250}
+        maskClosable={false}
+        closable={false}
+        footer={null}
+    >
+        <span className={styles.ConfirmationMessage}>Discard changes?</span><br/><br/>
+      
+        <div >
+            <Button onClick={() => onDelCancel()}>No</Button>
+            &nbsp;&nbsp;
+            <Button type="primary" htmlType="submit" onClick={onDelOk}>Yes</Button>
+          </div>
+    </Modal>;
 
   const handleSubmit = () => {
     console.log('Save button called')
@@ -224,6 +296,7 @@ const LoadDataSettingsDialog = (props) => {
       placeholder="Enter module"
       value={module}
       onChange={handleChange}
+      disabled={!canReadWrite}
     />
   </Form.Item>
     <Form.Item label={<span className={styles.cHItemLabel}>
@@ -239,6 +312,7 @@ const LoadDataSettingsDialog = (props) => {
         placeholder="Enter parameters"
         value={cHparameters}
         onChange={handleChange}
+        disabled={!canReadWrite}
       />
     </Form.Item>
     <Form.Item label={<span className={styles.cHItemLabel}>
@@ -254,6 +328,7 @@ const LoadDataSettingsDialog = (props) => {
         placeholder="Enter user information"
         value={user}
         onChange={handleChange}
+        disabled={!canReadWrite}
       />
     </Form.Item>
     <Form.Item label={<span className={styles.cHItemLabel}>
@@ -264,11 +339,10 @@ const LoadDataSettingsDialog = (props) => {
       &nbsp;
 </span>} labelAlign="left"
       className={styles.formItem}>
-      <Switch checkedChildren="ON" unCheckedChildren="OFF" onChange={handleRunBefore} />
+      <Switch checkedChildren="ON" unCheckedChildren="OFF" onChange={handleRunBefore} disabled={!canReadWrite}/>
     </Form.Item></div>
 
 
-  const { Panel } = Collapse;
   const tgtDbOptions = Object.keys(tgtDatabaseOptions).map(d => <Select.Option key={tgtDatabaseOptions[d]}>{d}</Select.Option>);
   const provGranOpt = provGranOptions.map(d => <Select.Option key={d}>{d}</Select.Option>);
   return (
@@ -298,7 +372,8 @@ const LoadDataSettingsDialog = (props) => {
               placeholder="Enter target database"
               value={tgtDatabase}
               onChange={handleTgtDatabase}
-              className={styles.formItem}>
+              className={styles.formItem}
+              disabled={!canReadWrite}>
               {tgtDbOptions}
             </Select>
           </Form.Item>
@@ -314,6 +389,7 @@ const LoadDataSettingsDialog = (props) => {
               style={{ width: '100%' }}
               placeholder="Please select"
               defaultValue={['Collection1', 'Collection2']}
+              disabled={!canReadWrite}
             // onChange={handleChange}
             >
 
@@ -332,6 +408,7 @@ const LoadDataSettingsDialog = (props) => {
               placeholder="Enter targetPermissions"
               value={targetPermissions}
               onChange={handleChange}
+              disabled={!canReadWrite}
             />
           </Form.Item>
           <Form.Item label={<span>
@@ -346,6 +423,7 @@ const LoadDataSettingsDialog = (props) => {
               id="provGranularity"
               value={provGranularity}
               onChange={handleProvGranularity}
+              disabled={!canReadWrite}
             >
               {provGranOpt}
             </Select>
@@ -374,11 +452,12 @@ const LoadDataSettingsDialog = (props) => {
             <div className={styles.submitButtons}>
               <Button onClick={() => onCancel()}>Cancel</Button>
               &nbsp;&nbsp;
-            <Button type="primary" htmlType="submit" onClick={handleSubmit}>Save</Button>
+            <Button type="primary" htmlType="submit" onClick={handleSubmit} disabled={!canReadWrite}>Save</Button>
             </div>
           </Form.Item>
         </Form>
       </div>
+      {deleteConfirmation}
     </Modal>
   );
 }
