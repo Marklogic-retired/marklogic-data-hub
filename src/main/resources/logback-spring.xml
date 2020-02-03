@@ -43,7 +43,7 @@
   <logger name="com.marklogic.hub.explorer" level="${root.level:-INFO}"/>
   <logger name="org.springframework" level="ERROR"/>
   <logger name="org.apache.http" level="WARN"/>
-  <logger name="com.marklogic.client.impl" level="WARN"/>
+  <logger name="com.marklogic.client.impl" level="${jca.level:-WARN}"/>
   <logger name="org.apache.catalina.webresources.Cache" level="ERROR"/>
   <logger name="java.util.prefs" level="OFF"/>
 </configuration>
