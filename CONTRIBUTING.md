@@ -27,7 +27,7 @@ Looking to build the code from source? Look no further.
 #### Prerequisites
 You need:
 
-- MarkLogic Server 9.0-7 or later
+- MarkLogic Server (see [Version Compatibility](https://docs.marklogic.com/datahub/refs/version-compatibility.html) for the correct version)
 - Java JDK 8 or later
 - Gradle 4.6 or later
 - A decent IDE. (Recommended: IntelliJ)
@@ -44,18 +44,48 @@ cd /path/to/data-hub-project/
 ```
 
 
-#### Making Changes to the Hub Gradle Plugin
+#### Building and using the Data Hub Java library
 
-If you are testing a change to the ml-data-hub Gradle plugin or a cutting-edge development version, you might want to use a local copy of the Gradle plugin in your Data Hub project. These situations are rare.
+If you wish to make changes to or try out the latest code in the Data Hub Java library (marklogic-data-hub-(version).jar), follow 
+these instructions:
 
-To use a local copy of the Gradle plugin in your Data Hub project, you must tell Gradle to use your local copy instead of the one in the cloud.
-
-1. Publish your Data Hub Plugin to the local Maven repository.
+1. Publish the library to your local Maven repository (defaults to ~/.m2/repository).
 
   ```bash
-  cd /path/to/data-hub-project/
+  cd /path/to/marklogic-data-hub/
   ./gradlew publishToMavenLocal
-  cd /path/to/data-hub-project/ml-data-hub-plugin
+  ```
+ 
+2. In the build.gradle file for the project that will use the library, add your local Maven repository as a repository if it's not alreaded included:
+
+  ```bash
+  repositories {
+    mavenLocal()
+  }
+  ```
+
+3. Assuming that you're using Gradle's java plugin, add the library as a dependency to your project:
+
+  ```bash
+  dependencies {
+    compile "com.marklogic:marklogic-data-hub:(version)"
+  ```
+
+The version is defined in gradle.properties in the marklogic-data-hub root project directory. You can override this if 
+desired when publishing to your local Maven repository - e.g.
+
+    ./gradlew publishToMavenLocal -Pversion=myVersion
+
+
+#### Building and using the Data Hub Gradle Plugin
+
+If you are testing a change to the ml-data-hub Gradle plugin or a cutting-edge development version, you might want to use a local copy of the Gradle plugin in your Data Hub project. 
+To use a local copy of the Gradle plugin in your Data Hub project, you must tell Gradle to use your local copy instead of the one in the cloud.
+
+1. Publish the plugin to your local Maven repository (defaults to ~/.m2/repository).
+
+  ```bash
+  cd /path/to/marklogic-data-hub/
   ./gradlew publishToMavenLocal
   ```
 
