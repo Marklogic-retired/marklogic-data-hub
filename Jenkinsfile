@@ -349,8 +349,12 @@ pipeline{
 		}
 		stage('rh7-singlenode'){
 		when {
-  			branch 'develop'
-			}
+	            expression{
+	                props = readProperties file:'data-hub/pipeline.properties';
+                    println(props['ExecutionBranch'])
+	            return (env.BRANCH_NAME==props['ExecutionBranch'])
+	            }
+	           }
 			agent { label 'dhfLinuxAgent'}
 			steps{
 			 script{
@@ -435,8 +439,11 @@ pipeline{
 		}
 		stage('Linux Core Parallel Execution'){
 		when {
-  			branch props['ExecutionBranch']
-  			beforeAgent true
+	            expression{
+	                props = readProperties file:'data-hub/pipeline.properties';
+                    println(props['ExecutionBranch'])
+	            return (env.BRANCH_NAME==props['ExecutionBranch'])
+	            }
 		}
 		parallel{
 		stage('rh7_cluster_10.0-Nightly'){
@@ -527,8 +534,11 @@ pipeline{
 		}
 		stage('example projects parallel'){
 		when {
-                 branch props['ExecutionBranch']
-                 beforeAgent true
+	            expression{
+	                props = readProperties file:'data-hub/pipeline.properties';
+                    println(props['ExecutionBranch'])
+	            return (env.BRANCH_NAME==props['ExecutionBranch'])
+	            }
               }
             parallel{
             stage('dh5-example'){
@@ -685,8 +695,11 @@ pipeline{
 		}
 		stage('quick start linux parallel'){
 		when {
-          			branch props['ExecutionBranch']
-          			beforeAgent true
+	            expression{
+	                props = readProperties file:'data-hub/pipeline.properties';
+                    println(props['ExecutionBranch'])
+	            return (env.BRANCH_NAME==props['ExecutionBranch'])
+	            }
         		}
 		parallel{
 		stage('qs_rh7_90-nightly'){
@@ -761,8 +774,11 @@ pipeline{
 		}
 		stage('Windows Core Parallel'){
 		when {
-          			branch props['ExecutionBranch']
-          			beforeAgent true
+	            expression{
+	                props = readProperties file:'data-hub/pipeline.properties';
+                    println(props['ExecutionBranch'])
+	            return (env.BRANCH_NAME==props['ExecutionBranch'])
+	            }
         		}
 		    parallel{
 		stage('w12_SN_9.0-Nightly'){
@@ -874,8 +890,11 @@ pipeline{
 		}
 		stage('Merge PR to Release Branch'){
 		when {
-  			branch 'develop'
-  			beforeAgent true
+	            expression{
+	                props = readProperties file:'data-hub/pipeline.properties';
+                    println(props['ExecutionBranch'])
+	            return (env.BRANCH_NAME==props['ExecutionBranch'])
+	            }
 		}
 		agent {label 'dhmaster'}
 		steps{
@@ -919,8 +938,11 @@ pipeline{
 		}
 		stage('Sanity Tests'){
 			when {
-  			branch props['ReleaseBranch']
-  			beforeAgent true
+	            expression{
+	                props = readProperties file:'data-hub/pipeline.properties';
+                    println(props['ExecutionBranch'])
+	            return (env.BRANCH_NAME==props['ReleaseBranch'])
+	            }
 		}
 			agent { label 'dhfLinuxAgent'}
 			steps{
