@@ -36,7 +36,6 @@ interface ISearchContextInterface {
   setLatestJobFacet: (vals: string, option: string) => void;
   clearFacet: (constraint: string, val: string) => void;
   clearAllFacets: () => void;
-  setDateFacet: (dates: string[]) => void;
   clearDateFacet: () => void;
   clearRangeFacet: (range: string) => void;
   resetSearchOptions: () => void;
@@ -55,7 +54,6 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setLatestJobFacet: () => { },
   clearFacet: () => { },
   clearAllFacets: () => { },
-  setDateFacet: () => { },
   clearDateFacet: () => { },
   clearRangeFacet: () => { },
   resetSearchOptions: () => { },
@@ -195,8 +193,9 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
     });
   }
 
-  const setDateFacet = (dates: string[]) => {
-    setSearchOptions({
+/*
+  const setDateFacet = (dates) => {
+   setSearchOptions({
       ...searchOptions,
       start: 1,
       pageNumber: 1,
@@ -207,6 +206,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       }
     });
   }
+*/
 
   const clearDateFacet = () => {
     let facets = searchOptions.searchFacets;
@@ -273,7 +273,6 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       clearFacet,
       clearAllFacets,
       setLatestJobFacet,
-      setDateFacet,
       clearDateFacet,
       clearRangeFacet,
       resetSearchOptions,

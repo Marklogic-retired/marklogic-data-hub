@@ -35,6 +35,8 @@ const SelectedFacets: React.FC<Props> = (props) => {
       }
       { props.selectedFacets.map((item, index) => {
         if (item.constraint === 'createdOnRange') {
+          let dateValues:any = [];
+          dateValues.push(item.facet.lowerBound,item.facet.upperBound);
           return (
             <MlButton
               size="small"
@@ -44,7 +46,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
               data-cy='clear-date-facet'
             >
               <Icon type='close'/>
-              {item.facet.join(' ~ ')}
+              { dateValues.join(' ~ ') }
             </MlButton>
           )
         } else if (item.rangeValues) {
