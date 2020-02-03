@@ -68,11 +68,12 @@ const InstallForm: React.FC = () => {
       }
     } catch (error) {
       console.log('INSTALL ERROR', error.response);
+      let message = (error.response.status === 500) ? 'Internal Server Error' : error.response.data.message;
       setIsLoading(false);
       setErrorMessage({
         show: true, 
         message: 'Installation Failure', 
-        description: <><p>{error.response.data.message}</p><p>{error.response.data.suggestion}</p></>
+        description: <><p>{message}</p><p>{error.response.data.suggestion}</p></>
       });
       setSuccessMessage({show: false, message: '', description: <div/>});
       setWelcomeMessage({show: false, message: ''});
