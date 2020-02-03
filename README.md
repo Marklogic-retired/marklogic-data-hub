@@ -140,3 +140,7 @@ Naturally, you can set this on the command line you use to start explorer:
 ```
 as described above.
 
+You can also configure the logging level for MarkLogic Java Client API using  
+```
+  $ java -Djca.level=WARN -jar ...
+```
