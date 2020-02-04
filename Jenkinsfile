@@ -445,6 +445,7 @@ pipeline{
 	            return (env.BRANCH_NAME==props['ExecutionBranch'])
 	            }
 		}
+		agent {label 'dhmaster'};
 		parallel{
 		stage('rh7_cluster_10.0-Nightly'){
 			agent { label 'dhfLinuxAgent'}
@@ -540,6 +541,7 @@ pipeline{
 	            return (env.BRANCH_NAME==props['ExecutionBranch'])
 	            }
               }
+            agent {label 'dhmaster'};
             parallel{
             stage('dh5-example'){
                  agent { label 'dhfLinuxAgent'}
@@ -701,6 +703,7 @@ pipeline{
 	            return (env.BRANCH_NAME==props['ExecutionBranch'])
 	            }
         		}
+        agent {label 'dhmaster'};
 		parallel{
 		stage('qs_rh7_90-nightly'){
 			agent { label 'lnx-dhf-jenkins-slave-2'}
@@ -780,6 +783,7 @@ pipeline{
 	            return (env.BRANCH_NAME==props['ExecutionBranch'])
 	            }
         		}
+        	agent {label 'dhmaster'};
 		    parallel{
 		stage('w12_SN_9.0-Nightly'){
 			agent { label 'dhfWinagent'}
