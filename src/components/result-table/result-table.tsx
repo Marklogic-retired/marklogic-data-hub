@@ -115,15 +115,17 @@ const ResultTable: React.FC<Props> = (props) => {
         let parsedEntityDocObj = parsedPayload.data[0] && parsedPayload.data[0].itemEntityProperties[0];
         let newColumns = setPrimaryKeyColumn(headerParser(parsedEntityDocObj));
 
-        if (!tableColumns && newColumns.length !== 0) {
+        if (newColumns.length !== 0) {
           if (newColumns.length > 5) {
             newRenderColumns = newColumns.slice(0, 4);
+          } else {
+            newRenderColumns = newColumns;
           }
           newRenderColumns.push(DETAIL_HEADER_OBJ)
-          updateTablePreferences(user.name, searchOptions.entityNames[0], newRenderColumns)
-        }
+          if (!tableColumns) {
+            updateTablePreferences(user.name, searchOptions.entityNames[0], newRenderColumns)
+          }
 
-        if (newColumns.length !== 0) {
           let renderHeader = tableHeader(tableColumns ? tableColumns['columns'] : newRenderColumns , '');
 
           setRenderColumns(renderHeader);
@@ -131,10 +133,8 @@ const ResultTable: React.FC<Props> = (props) => {
           setTreeColumns(tableHeader(newColumns, ''));
           setCheckedColumns(renderHeader);
           setDefaultColumns(newColumns);
-        } 
+        }
       }
-        // Fix
-
     }
   }, [props.data]);
 
@@ -479,9 +479,13 @@ const ResultTable: React.FC<Props> = (props) => {
     let userPref = getUserPreferences(user.name);
     if (userPref) {
       let values = JSON.parse(userPref);
-      return values.resultTableColumns.find( item => item.name === entity);
+      if (values && values.hasOwnProperty('resultTableColumns')) {
+        return values.resultTableColumns.find( item => item.name === entity);
+      } else {
+        return null;
+      }
     } else {
-      return [];
+      return null;
     }
   }
 

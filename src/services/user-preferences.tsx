@@ -29,49 +29,45 @@ export const createUserPreferences = (username: string) => {
 }
 
 export const getUserPreferences = (username: string): string => {
-  let currentPreferences = localStorage.getItem(`dataHubExplorerUserPreferences-${username}`);
+  let currentPreferences = localStorage.getItem(`dataHubExplorerUserPreferences-${username}`) || 'null';
 
   if (currentPreferences) {
     let parsedPreferences = JSON.parse(currentPreferences);
-    if (parsedPreferences.hasOwnProperty('entityNames')) {
+    if (parsedPreferences && parsedPreferences.hasOwnProperty('entityNames')) {
       // old preferences, replace with new default preferences
       createUserPreferences(username);
       return JSON.stringify(defaultUserPreferences);
     }
   }
-
   return currentPreferences ? currentPreferences : '';
 }
 
 export const updateUserPreferences = (username: string, newPreferences: any) => {
-  let currentPreferences = localStorage.getItem(`dataHubExplorerUserPreferences-${username}`);
-  let parsedPreferences = JSON.parse(currentPreferences ? currentPreferences : '');
+  let currentPreferences = localStorage.getItem(`dataHubExplorerUserPreferences-${username}`) || 'null';
+  let parsedPreferences = JSON.parse(currentPreferences);
 
-  if (parsedPreferences.hasOwnProperty('entityNames')) {
+  if (parsedPreferences && parsedPreferences.hasOwnProperty('entityNames')) {
     // old preferences, use defaultUser preferences
     parsedPreferences = { ...defaultUserPreferences }
   }
   let updatedPreferences = { ...parsedPreferences, ...newPreferences }
   localStorage.setItem(`dataHubExplorerUserPreferences-${username}`, JSON.stringify(updatedPreferences));
-  
-  return;
 }
 
 export const updateTablePreferences = (username: string, entity: string, tableColumns: any ) => {
-  let currentPreferences = localStorage.getItem(`dataHubExplorerUserPreferences-${username}`);
-  let parsedPreferences: UserPreferences = JSON.parse(currentPreferences ? currentPreferences : '');
-  let index = parsedPreferences['resultTableColumns'].findIndex( item => item.name === entity);
-  let tableObject = {
-    name: entity,
-    columns: tableColumns
+  let currentPreferences = localStorage.getItem(`dataHubExplorerUserPreferences-${username}`) || 'null';
+  let parsedPreferences = JSON.parse(currentPreferences);
+  if (parsedPreferences) {
+    let index = parsedPreferences['resultTableColumns'].findIndex( item => item.name === entity);
+    let tableObject = {
+      name: entity,
+      columns: tableColumns
+    }
+    if (index >= 0) {
+      parsedPreferences.resultTableColumns[index] = tableObject; 
+    } else {
+      parsedPreferences.resultTableColumns.push(tableObject);
+    }
+    localStorage.setItem(`dataHubExplorerUserPreferences-${username}`, JSON.stringify(parsedPreferences));
   }
-  if (index >= 0) {
-    parsedPreferences.resultTableColumns[index] = tableObject; 
-  } else {
-    parsedPreferences.resultTableColumns.push(tableObject);
-  }
-  
-  localStorage.setItem(`dataHubExplorerUserPreferences-${username}`, JSON.stringify(parsedPreferences));
-  
-  return;
 }
