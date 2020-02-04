@@ -8,8 +8,7 @@ type UserContextInterface = {
   redirect: boolean,
   error : any,
   tableView: boolean,
-  pageRoute: string,
-  resultTableColumns: any[]
+  pageRoute: string
 }
 
 const defaultUserData = {
@@ -23,8 +22,7 @@ const defaultUserData = {
     type: ''
   },
   tableView: true,
-  pageRoute: '/view',
-  resultTableColumns: []
+  pageRoute: '/view'
 }
 
 interface IUserContextInterface {
@@ -37,7 +35,6 @@ interface IUserContextInterface {
   clearRedirect: () => void;
   setTableView: (viewType: boolean) => void;
   setPageRoute: (route: string) => void;
-  setResultTable: (tableColumns: any, entityName: string) => void;
 }
 
 export const UserContext = React.createContext<IUserContextInterface>({
@@ -49,8 +46,7 @@ export const UserContext = React.createContext<IUserContextInterface>({
   clearErrorMessage: () => {},
   clearRedirect: () => {},
   setTableView: () => {},
-  setPageRoute: () => {},
-  setResultTable: () => {}
+  setPageRoute: () => {}
 });
 
 const UserProvider: React.FC<{ children: any }> = ({children}) => {
@@ -185,32 +181,32 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
     updateUserPreferences(user.name, { pageRoute: route });
   }
 
-  const setResultTable = (tableColumns: any, entityName: string) => {
-    let newResultTable = [...user.resultTableColumns];
-    let newTablePref = {
-      entity: entityName,
-      columns: tableColumns
-    }
-    let entityTablePref = user.resultTableColumns.find(item => item.entity === entityName);
+  // const setResultTable = (tableColumns: any, entityName: string) => {
+  //   let newResultTable = [...user.resultTableColumns];
+  //   let newTablePref = {
+  //     entity: entityName,
+  //     columns: tableColumns
+  //   }
+  //   let entityTablePref = user.resultTableColumns.find(item => item.entity === entityName);
     
-    if (entityTablePref) {
-      let index = user.resultTableColumns.findIndex(item => item.entity === entityName);
-      if (newResultTable[index].columns.toString() !== tableColumns.toString()) {
-        newResultTable[index] = newTablePref;
-        //updateUserPreferences(user.name, { resultTableColumns: newResultTable });
-        setUser({...user, resultTableColumns: newResultTable });
-      }
+  //   if (entityTablePref) {
+  //     let index = user.resultTableColumns.findIndex(item => item.entity === entityName);
+  //     if (newResultTable[index].columns.toString() !== tableColumns.toString()) {
+  //       newResultTable[index] = newTablePref;
+  //       //updateUserPreferences(user.name, { resultTableColumns: newResultTable });
+  //       setUser({...user, resultTableColumns: newResultTable });
+  //     }
       
-    } else {
-      newResultTable.push(newTablePref);
-      //updateUserPreferences(user.name, { resultTableColumns: newResultTable });
-      setUser({...user, resultTableColumns: newResultTable });
-    }
-    console.log('table', newResultTable)
+  //   } else {
+  //     newResultTable.push(newTablePref);
+  //     //updateUserPreferences(user.name, { resultTableColumns: newResultTable });
+  //     setUser({...user, resultTableColumns: newResultTable });
+  //   }
+  //   console.log('table', newResultTable)
 
-     //
-    //setUser({...user, resultTableColumns: newResultTable });
-  }
+  //    //
+  //   //setUser({...user, resultTableColumns: newResultTable });
+  // }
 
   useEffect(() => {
     if (sessionUser) {
@@ -228,8 +224,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
       clearErrorMessage,
       clearRedirect,
       setTableView,
-      setPageRoute,
-      setResultTable
+      setPageRoute
     }}>
       {children}
     </UserContext.Provider>

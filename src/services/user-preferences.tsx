@@ -28,14 +28,47 @@ export const createUserPreferences = (username: string) => {
   return;
 }
 
-export const getUserPreferences = (username: string) => {
-  return localStorage.getItem(`dataHubExplorerUserPreferences-${username}`);
+export const getUserPreferences = (username: string): string => {
+  let currentPreferences = localStorage.getItem(`dataHubExplorerUserPreferences-${username}`);
+
+  if (currentPreferences) {
+    let parsedPreferences = JSON.parse(currentPreferences);
+    if (parsedPreferences.hasOwnProperty('entityNames')) {
+      // old preferences, replace with new default preferences
+      createUserPreferences(username);
+      return JSON.stringify(defaultUserPreferences);
+    }
+  }
+
+  return currentPreferences ? currentPreferences : '';
 }
 
 export const updateUserPreferences = (username: string, newPreferences: any) => {
   let currentPreferences = localStorage.getItem(`dataHubExplorerUserPreferences-${username}`);
   let parsedPreferences = JSON.parse(currentPreferences ? currentPreferences : '');
-  let updatedPreferences = {...parsedPreferences, ...newPreferences}
+
+  if (parsedPreferences.hasOwnProperty('entityNames')) {
+    // old preferences, use defaultUser preferences
+    parsedPreferences = { ...defaultUserPreferences }
+  }
+  let updatedPreferences = { ...parsedPreferences, ...newPreferences }
   localStorage.setItem(`dataHubExplorerUserPreferences-${username}`, JSON.stringify(updatedPreferences));
+  
+  return;
+}
+
+export const updateTablePreferences = (username: string, columnObject: any ) => {
+  let currentPreferences = localStorage.getItem(`dataHubExplorerUserPreferences-${username}`);
+  let parsedPreferences = JSON.parse(currentPreferences ? currentPreferences : '');
+  let index = parsedPreferences.resultTableColumns.findIndex( item => item.name === columnObject.name);
+  
+  if (index >= 0) {
+    parsedPreferences.resultTableColumns[index] = columnObject;
+  } else {
+    parsedPreferences.resultTableColumns.push(columnObject);
+  }
+  
+  localStorage.setItem(`dataHubExplorerUserPreferences-${username}`, JSON.stringify(parsedPreferences));
+  
   return;
 }

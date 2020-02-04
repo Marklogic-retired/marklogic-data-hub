@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { getUserPreferences } from '../services/user-preferences';
+import { getUserPreferences, updateTablePreferences } from '../services/user-preferences';
 import { UserContext } from './user-context';
 
 type SearchContextInterface = {
@@ -10,7 +10,8 @@ type SearchContextInterface = {
   pageLength: number,
   pageSize: number,
   searchFacets: any,
-  maxRowsPerPage: number
+  maxRowsPerPage: number,
+  resultTableColumns: any[]
 }
 
 const defaultSearchOptions = {
@@ -21,12 +22,13 @@ const defaultSearchOptions = {
   pageLength: 20,
   pageSize: 20,
   searchFacets: {},
-  maxRowsPerPage: 100
+  maxRowsPerPage: 100,
+  resultTableColumns: []
 }
 
 interface ISearchContextInterface {
   searchOptions: SearchContextInterface;
-  searchFromUserPref: (username: string) => void;
+  setSearchFromUserPref: (username: string) => void;
   setQuery: (searchString: string) => void;
   setPage: (pageNumber: number, totalDocuments: number) => void;
   setPageLength: (current: number, pageSize: number) => void;
@@ -41,11 +43,12 @@ interface ISearchContextInterface {
   clearRangeFacet: (range: string) => void;
   resetSearchOptions: () => void;
   setAllSearchFacets: (facets: any) => void;
+  updateResultTable: (name: string, columns: any[]) => void;
 }
 
 export const SearchContext = React.createContext<ISearchContextInterface>({
   searchOptions: defaultSearchOptions,
-  searchFromUserPref: () => { },
+  setSearchFromUserPref: () => { },
   setQuery: () => { },
   setPage: () => { },
   setPageLength: () => { },
@@ -59,7 +62,8 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   clearDateFacet: () => { },
   clearRangeFacet: () => { },
   resetSearchOptions: () => { },
-  setAllSearchFacets: () => { }
+  setAllSearchFacets: () => { },
+  updateResultTable: () => {}
 });
 
 const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
@@ -67,7 +71,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
   const [searchOptions, setSearchOptions] = useState<SearchContextInterface>(defaultSearchOptions);
   const { user } = useContext(UserContext);
 
-  const searchFromUserPref = (username: string) => {
+  const setSearchFromUserPref = (username: string) => {
     let userPreferences = getUserPreferences(username);
     if (userPreferences) {
       let values = JSON.parse(userPreferences);
@@ -78,7 +82,8 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
         query: values.query.searchStr,
         entityNames: values.query.entityNames,
         searchFacets: values.query.facets,
-        pageLength: values.pageLength
+        pageLength: values.pageLength,
+        resultTableColumns: values.resultTableColumns
       });
     }
   }
@@ -254,16 +259,41 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       pageLength: searchOptions.pageSize
     });
   }
+
+  const updateResultTable = (name: string, columns: any[]) => {
+    let newTableColumns = [ ...searchOptions.resultTableColumns ];
+    let newTableObject = { name, columns }
+
+    if (searchOptions.resultTableColumns.length ) {
+      let index = searchOptions.resultTableColumns.findIndex( item => item.name === name);
+      console.log('index', index);
+      
+      if (index >= 0) {
+        newTableColumns[index] = newTableObject;
+      } else {
+        newTableColumns.push(newTableObject);
+      }
+    } else {
+      newTableColumns.push(newTableObject);
+    }
+
+    updateTablePreferences(user.name, newTableObject);
+    setSearchOptions({
+      ...searchOptions,
+      resultTableColumns: newTableColumns
+    });
+  }
+
   useEffect(() => {
     if (user.authenticated) {
-      searchFromUserPref(user.name);
+      setSearchFromUserPref(user.name);
     }
   }, [user.authenticated]);
 
   return (
     <SearchContext.Provider value={{
       searchOptions,
-      searchFromUserPref,
+      setSearchFromUserPref,
       setQuery,
       setPage,
       setPageLength,
@@ -277,7 +307,8 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       clearDateFacet,
       clearRangeFacet,
       resetSearchOptions,
-      setAllSearchFacets
+      setAllSearchFacets,
+      updateResultTable
     }}>
       {children}
     </SearchContext.Provider>

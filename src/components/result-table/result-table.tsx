@@ -4,6 +4,7 @@ import { Resizable } from 'react-resizable'
 import { Table, Tooltip, Icon } from 'antd';
 import { SearchContext } from '../../util/search-context';
 import { dateConverter } from '../../util/date-conversion';
+import { updateTablePreferences } from '../../services/user-preferences';
 import { xmlParser } from '../../util/xml-parser';
 import styles from './result-table.module.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -71,7 +72,7 @@ const DEFAULT_ALL_ENTITIES_HEADER = [
 ];
 
 const ResultTable: React.FC<Props> = (props) => {
-  const { searchOptions } = useContext(SearchContext);
+  const { searchOptions, updateResultTable } = useContext(SearchContext);
   const [defaultColumns, setDefaultColumns] = useState<any[]>([]);
   const [renderColumns, setRenderColumns] = useState<any[]>([]);
   const [renderTableData, setRenderTableData] = useState<any[]>([]);
@@ -84,18 +85,20 @@ const ResultTable: React.FC<Props> = (props) => {
     if (props.data) {
       if (searchOptions.entityNames.length === 0 ) {
         // All Entities
-        let renderHeader = tableHeader(DEFAULT_ALL_ENTITIES_HEADER, '');
-        let newTableData = formatTableData(parsedPayload.data, true);
-        // set render DOM data
+        let newTableData = formatTableData(parsedPayload.data, true);       
+        let tableColumns = searchOptions.resultTableColumns.find( item => item.name === 'all'); 
+        let renderHeader = tableHeader( tableColumns ? tableColumns['columns'] : DEFAULT_ALL_ENTITIES_HEADER, '');
+        let newDefaultColumns = delimitHeader(renderHeader); 
+
+        if (!tableColumns) {
+          updateResultTable('all', newDefaultColumns);
+        }
+        
+        setRenderColumns(renderHeader)
         setRenderTableData(newTableData);
-        setRenderColumns(renderHeader);
-        //set popover tree data
         setTreeColumns(renderHeader);
-        //set popover tree selected checkboxes data
         setCheckedColumns(renderHeader);
-        // set default columns from payload
-        // TODO set from user pref if it exists. save without tableHeader transform
-        setDefaultColumns(DEFAULT_ALL_ENTITIES_HEADER);
+        setDefaultColumns(newDefaultColumns);
       } else {
         // An Entity is selected
         let newRenderColumns: any[] = [];
@@ -103,6 +106,9 @@ const ResultTable: React.FC<Props> = (props) => {
         let columns = setPrimaryKeyColumn(headerParser(parsedEntityDocObj));
         columns.length && columns.push({title: 'Detail View', key: '0-d'})
 
+        //console.log('new columns', columns)
+        //console.log('no default render header', renderHeader)
+        
         if (defaultColumns.length === 0 ) {
           if (renderColumns.length === 0 ) {
 
@@ -116,6 +122,8 @@ const ResultTable: React.FC<Props> = (props) => {
           }
 
           let renderHeader = tableHeader(newRenderColumns, '');
+          // console.log('no default render header', renderHeader)
+          // console.log('nd default columns', columns)
           setRenderColumns(renderHeader);
           setRenderTableData(mergeRows(renderHeader));
           setTreeColumns(tableHeader(columns, ''));
@@ -133,6 +141,9 @@ const ResultTable: React.FC<Props> = (props) => {
                 newRenderColumns = columns;
               }
               let renderHeader = tableHeader(newRenderColumns, '');
+
+              // console.log('render header', renderHeader)
+              // console.log('default columns', columns)
               setRenderColumns(renderHeader);
               setRenderTableData(mergeRows(renderHeader));
               setTreeColumns(tableHeader(columns, ''));
@@ -296,8 +307,8 @@ const ResultTable: React.FC<Props> = (props) => {
             title: item.title,
             dataIndex: parent ? parent + '_' + item.title.replace(/ /g, '').toLowerCase() : item.title.replace(/ /g, '').toLowerCase(),
             key: item.key,
-            visible: true,
-            width: 150,
+            visible: item.hasOwnProperty('visible') ? item.visible : true,
+            width: item.hasOwnProperty('width') ? item.width : 150,
             onHeaderCell: column => ({
               width: column.width,
               onResize: handleResize(item.title),
@@ -377,6 +388,7 @@ const ResultTable: React.FC<Props> = (props) => {
         if (title == columns[i].title)
           index = i;
       }
+
       const nextColumns = [...columns];
       nextColumns[index] = {
         ...nextColumns[index],
@@ -395,14 +407,13 @@ const ResultTable: React.FC<Props> = (props) => {
         const treeItem = tree.splice(fromIndex - 1, 1)[0];
         header.splice(toIndex - 1, 0, colItem);
         tree.splice(toIndex - 1, 0, treeItem);
+        let delimitedHeader = delimitHeader(header);
+        let entity = 'all';
 
-        let delimitedHeader = header.map( (item, index) => {
-          let newHeader = { ...item }
-          delete newHeader['onHeaderCell']
-          delete newHeader['onCell']
-          delete newHeader['render']
-          return newHeader
-        });
+        if ( searchOptions.entityNames.length > 0) {
+          entity = searchOptions.entityNames[0]
+        }
+        updateResultTable(entity, delimitedHeader);
         setRenderColumns(header);
         setTreeColumns(tree)
         setDefaultColumns(delimitedHeader);
@@ -475,6 +486,28 @@ const ResultTable: React.FC<Props> = (props) => {
   const updateTreeColumns = (columns) => {
     setTreeColumns(columns);
   }
+
+  const delimitHeader = (header: any[]) => {
+    return header.map( (column, index) => {
+      let newCol = { ...column }
+      delete newCol['onHeaderCell']
+      delete newCol['onCell']
+      delete newCol['render']
+      return newCol
+    });
+  };
+
+  const checkHeaderMeta = (header) => {
+    if (!header.hasOwnProperty('visible')) {
+      header['visible'] = false;
+    }
+
+    if (!header.hasOwnProperty('width')) {
+      header['width'] = 150;
+    }
+    return header;
+  };
+  
 
   let icons: any = [];
   let expIcons: any = [];
