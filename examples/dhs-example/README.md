@@ -18,7 +18,7 @@ The ml-config and other-config directories will still be processed, but hub-inte
 
 As of 5.2.0, a user with the data-hub-security-admin role is permitted to deploy roles that grant privileges that are
 inherited by the user performing the deployment. As an example of this, the 
-src/main/ml-config/security/roles/custom-role1.json file defines a new role with the "manage" privilege, which is 
+src/main/ml-config/security/roles/custom-role1.json file defines a new role with the "role-set-external-names" privilege, which is 
 inherited by the data-hub-security-admin role. 
 
 Permitted resources can be deployed via the following task (assuming that gradle-dhs.properties defines the host and
