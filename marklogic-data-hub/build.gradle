@@ -371,6 +371,7 @@ test {
 
 task testAcceptance(type: Test) {
     useJUnitPlatform  {
+        include 'com/marklogic/hub_unit_test/RunMarkLogicUnitTestsTest*'
         include 'com/marklogic/hub/**'
         if (!(certAuth || sslRun)){
             include 'com/marklogic/hub/PiiE2E.class'
