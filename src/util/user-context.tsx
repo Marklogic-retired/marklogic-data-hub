@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { createUserPreferences, getUserPreferences, updateUserPreferences } from '../services/user-preferences';
+import { 
+  createUserPreferences,
+  getUserPreferences, 
+  updateUserPreferences
+} from '../services/user-preferences';
 
 type UserContextInterface = {
   name: string,
@@ -180,33 +184,6 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
   const setPageRoute = (route: string) => {
     updateUserPreferences(user.name, { pageRoute: route });
   }
-
-  // const setResultTable = (tableColumns: any, entityName: string) => {
-  //   let newResultTable = [...user.resultTableColumns];
-  //   let newTablePref = {
-  //     entity: entityName,
-  //     columns: tableColumns
-  //   }
-  //   let entityTablePref = user.resultTableColumns.find(item => item.entity === entityName);
-    
-  //   if (entityTablePref) {
-  //     let index = user.resultTableColumns.findIndex(item => item.entity === entityName);
-  //     if (newResultTable[index].columns.toString() !== tableColumns.toString()) {
-  //       newResultTable[index] = newTablePref;
-  //       //updateUserPreferences(user.name, { resultTableColumns: newResultTable });
-  //       setUser({...user, resultTableColumns: newResultTable });
-  //     }
-      
-  //   } else {
-  //     newResultTable.push(newTablePref);
-  //     //updateUserPreferences(user.name, { resultTableColumns: newResultTable });
-  //     setUser({...user, resultTableColumns: newResultTable });
-  //   }
-  //   console.log('table', newResultTable)
-
-  //    //
-  //   //setUser({...user, resultTableColumns: newResultTable });
-  // }
 
   useEffect(() => {
     if (sessionUser) {

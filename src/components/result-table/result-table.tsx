@@ -2,9 +2,10 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Resizable } from 'react-resizable'
 import { Table, Tooltip, Icon } from 'antd';
+import { UserContext } from '../../util/user-context';
 import { SearchContext } from '../../util/search-context';
 import { dateConverter } from '../../util/date-conversion';
-import { updateTablePreferences } from '../../services/user-preferences';
+import { updateTablePreferences, getUserPreferences } from '../../services/user-preferences';
 import { xmlParser } from '../../util/xml-parser';
 import styles from './result-table.module.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -71,8 +72,16 @@ const DEFAULT_ALL_ENTITIES_HEADER = [
   },
 ];
 
+const DETAIL_HEADER_OBJ = {
+  title: 'Detail View',
+  key: '0-d',
+  visible: true,
+  width: 150
+}
+
 const ResultTable: React.FC<Props> = (props) => {
-  const { searchOptions, updateResultTable } = useContext(SearchContext);
+  const { searchOptions } = useContext(SearchContext);
+  const { user } = useContext(UserContext);
   const [defaultColumns, setDefaultColumns] = useState<any[]>([]);
   const [renderColumns, setRenderColumns] = useState<any[]>([]);
   const [renderTableData, setRenderTableData] = useState<any[]>([]);
@@ -86,12 +95,12 @@ const ResultTable: React.FC<Props> = (props) => {
       if (searchOptions.entityNames.length === 0 ) {
         // All Entities
         let newTableData = formatTableData(parsedPayload.data, true);       
-        let tableColumns = searchOptions.resultTableColumns.find( item => item.name === 'all'); 
+        let tableColumns = getUserPref('all');
         let renderHeader = tableHeader( tableColumns ? tableColumns['columns'] : DEFAULT_ALL_ENTITIES_HEADER, '');
         let newDefaultColumns = delimitHeader(renderHeader); 
 
         if (!tableColumns) {
-          updateResultTable('all', newDefaultColumns);
+          updateTablePreferences(user.name, 'all', newDefaultColumns)
         }
         
         setRenderColumns(renderHeader)
@@ -101,58 +110,31 @@ const ResultTable: React.FC<Props> = (props) => {
         setDefaultColumns(newDefaultColumns);
       } else {
         // An Entity is selected
+        let tableColumns = getUserPref(searchOptions.entityNames[0]);
         let newRenderColumns: any[] = [];
         let parsedEntityDocObj = parsedPayload.data[0] && parsedPayload.data[0].itemEntityProperties[0];
-        let columns = setPrimaryKeyColumn(headerParser(parsedEntityDocObj));
-        columns.length && columns.push({title: 'Detail View', key: '0-d'})
+        let newColumns = setPrimaryKeyColumn(headerParser(parsedEntityDocObj));
 
-        //console.log('new columns', columns)
-        //console.log('no default render header', renderHeader)
-        
-        if (defaultColumns.length === 0 ) {
-          if (renderColumns.length === 0 ) {
-
-            if (columns.length > 5) {
-              // TODO Save user pref
-              newRenderColumns = columns.slice(0, 5);
-              newRenderColumns.push(columns.slice(-1)[0])
-            } else {
-              newRenderColumns = columns;
-            }
+        if (!tableColumns && newColumns.length !== 0) {
+          if (newColumns.length > 5) {
+            newRenderColumns = newColumns.slice(0, 4);
           }
+          newRenderColumns.push(DETAIL_HEADER_OBJ)
+          updateTablePreferences(user.name, searchOptions.entityNames[0], newRenderColumns)
+        }
 
-          let renderHeader = tableHeader(newRenderColumns, '');
-          // console.log('no default render header', renderHeader)
-          // console.log('nd default columns', columns)
+        if (newColumns.length !== 0) {
+          let renderHeader = tableHeader(tableColumns ? tableColumns['columns'] : newRenderColumns , '');
+
           setRenderColumns(renderHeader);
           setRenderTableData(mergeRows(renderHeader));
-          setTreeColumns(tableHeader(columns, ''));
+          setTreeColumns(tableHeader(newColumns, ''));
           setCheckedColumns(renderHeader);
-          setDefaultColumns(columns);
-        } else {
-          if (renderColumns.length > 0) {
-            let newRenderColumns: any[] = [];
-            if (JSON.stringify(columns) !== JSON.stringify(renderColumns)) {
-              if (columns.length > 5) {
-                // TODO Save user pref
-                newRenderColumns = columns.slice(0, 5);
-                newRenderColumns.push(columns.slice(-1)[0])
-              } else {
-                newRenderColumns = columns;
-              }
-              let renderHeader = tableHeader(newRenderColumns, '');
-
-              // console.log('render header', renderHeader)
-              // console.log('default columns', columns)
-              setRenderColumns(renderHeader);
-              setRenderTableData(mergeRows(renderHeader));
-              setTreeColumns(tableHeader(columns, ''));
-              setCheckedColumns(renderHeader);
-              setDefaultColumns(columns);
-            }
-          }
-        }
+          setDefaultColumns(newColumns);
+        } 
       }
+        // Fix
+
     }
   }, [props.data]);
 
@@ -293,6 +275,7 @@ const ResultTable: React.FC<Props> = (props) => {
   const tableHeader = (columns, parent) => {
     let col = new Array();
     let set = new Set();
+
     columns.forEach((item, index) => {
       if (item.hasOwnProperty('children')) {
         col.push({
@@ -394,6 +377,7 @@ const ResultTable: React.FC<Props> = (props) => {
         ...nextColumns[index],
         width: size.width,
       };
+      updateUserPref(nextColumns);
       return nextColumns
     })
   };
@@ -407,16 +391,10 @@ const ResultTable: React.FC<Props> = (props) => {
         const treeItem = tree.splice(fromIndex - 1, 1)[0];
         header.splice(toIndex - 1, 0, colItem);
         tree.splice(toIndex - 1, 0, treeItem);
-        let delimitedHeader = delimitHeader(header);
-        let entity = 'all';
-
-        if ( searchOptions.entityNames.length > 0) {
-          entity = searchOptions.entityNames[0]
-        }
-        updateResultTable(entity, delimitedHeader);
+        updateUserPref(header);
         setRenderColumns(header);
         setTreeColumns(tree)
-        setDefaultColumns(delimitedHeader);
+        //setDefaultColumns(delimitedHeader);
       }
     },
     nodeSelector: "th",
@@ -495,19 +473,28 @@ const ResultTable: React.FC<Props> = (props) => {
       delete newCol['render']
       return newCol
     });
-  };
+  }; 
 
-  const checkHeaderMeta = (header) => {
-    if (!header.hasOwnProperty('visible')) {
-      header['visible'] = false;
+  const getUserPref = (entity: string) => {
+    let userPref = getUserPreferences(user.name);
+    if (userPref) {
+      let values = JSON.parse(userPref);
+      return values.resultTableColumns.find( item => item.name === entity);
+    } else {
+      return [];
+    }
+  }
+
+  const updateUserPref = (header: any[]) => {
+    let delimitedHeader = delimitHeader(header);
+    let entity = 'all';
+
+    if ( searchOptions.entityNames.length > 0) {
+      entity = searchOptions.entityNames[0]
     }
 
-    if (!header.hasOwnProperty('width')) {
-      header['width'] = 150;
-    }
-    return header;
-  };
-  
+    updateTablePreferences(user.name, entity, delimitedHeader);
+  }
 
   let icons: any = [];
   let expIcons: any = [];

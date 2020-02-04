@@ -31,6 +31,7 @@ const Browse: React.FC<Props> = ({ location }) => {
     searchOptions,
     setEntityClearQuery,
     setLatestJobFacet,
+    resetSearchOptions
   } = useContext(SearchContext);
   const searchBarRef = useRef<HTMLDivElement>(null);
 
@@ -52,7 +53,6 @@ const Browse: React.FC<Props> = ({ location }) => {
         let entityArray = [...entityFromJSON(response.data).map(entity => entity.info.title)];
         setEntites(entityArray);
         setEntityDefArray(entityParser(parsedModelData));
-        // 
       }
     } catch (error) {
       handleError(error);
@@ -91,7 +91,6 @@ const Browse: React.FC<Props> = ({ location }) => {
   }
 
   useEffect(() => {
-    console.log('browse mount')
     if (location.state && location.state.entity) {
       setEntityClearQuery(location.state.entity);
     }
@@ -142,6 +141,7 @@ const Browse: React.FC<Props> = ({ location }) => {
       // entityName is not part of entity model from model payload
       // change user preferences to default user pref.
       createUserPreferences(user.name);
+      resetSearchOptions();
     }
   };
 

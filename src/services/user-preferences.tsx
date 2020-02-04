@@ -57,15 +57,18 @@ export const updateUserPreferences = (username: string, newPreferences: any) => 
   return;
 }
 
-export const updateTablePreferences = (username: string, columnObject: any ) => {
+export const updateTablePreferences = (username: string, entity: string, tableColumns: any ) => {
   let currentPreferences = localStorage.getItem(`dataHubExplorerUserPreferences-${username}`);
-  let parsedPreferences = JSON.parse(currentPreferences ? currentPreferences : '');
-  let index = parsedPreferences.resultTableColumns.findIndex( item => item.name === columnObject.name);
-  
+  let parsedPreferences: UserPreferences = JSON.parse(currentPreferences ? currentPreferences : '');
+  let index = parsedPreferences['resultTableColumns'].findIndex( item => item.name === entity);
+  let tableObject = {
+    name: entity,
+    columns: tableColumns
+  }
   if (index >= 0) {
-    parsedPreferences.resultTableColumns[index] = columnObject;
+    parsedPreferences.resultTableColumns[index] = tableObject; 
   } else {
-    parsedPreferences.resultTableColumns.push(columnObject);
+    parsedPreferences.resultTableColumns.push(tableObject);
   }
   
   localStorage.setItem(`dataHubExplorerUserPreferences-${username}`, JSON.stringify(parsedPreferences));

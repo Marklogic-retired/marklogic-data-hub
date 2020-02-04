@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { getUserPreferences, updateTablePreferences } from '../services/user-preferences';
+import { getUserPreferences } from '../services/user-preferences';
 import { UserContext } from './user-context';
 
 type SearchContextInterface = {
@@ -10,8 +10,7 @@ type SearchContextInterface = {
   pageLength: number,
   pageSize: number,
   searchFacets: any,
-  maxRowsPerPage: number,
-  resultTableColumns: any[]
+  maxRowsPerPage: number
 }
 
 const defaultSearchOptions = {
@@ -22,8 +21,7 @@ const defaultSearchOptions = {
   pageLength: 20,
   pageSize: 20,
   searchFacets: {},
-  maxRowsPerPage: 100,
-  resultTableColumns: []
+  maxRowsPerPage: 100
 }
 
 interface ISearchContextInterface {
@@ -43,7 +41,6 @@ interface ISearchContextInterface {
   clearRangeFacet: (range: string) => void;
   resetSearchOptions: () => void;
   setAllSearchFacets: (facets: any) => void;
-  updateResultTable: (name: string, columns: any[]) => void;
 }
 
 export const SearchContext = React.createContext<ISearchContextInterface>({
@@ -63,7 +60,6 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   clearRangeFacet: () => { },
   resetSearchOptions: () => { },
   setAllSearchFacets: () => { },
-  updateResultTable: () => {}
 });
 
 const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
@@ -82,8 +78,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
         query: values.query.searchStr,
         entityNames: values.query.entityNames,
         searchFacets: values.query.facets,
-        pageLength: values.pageLength,
-        resultTableColumns: values.resultTableColumns
+        pageLength: values.pageLength
       });
     }
   }
@@ -260,29 +255,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
     });
   }
 
-  const updateResultTable = (name: string, columns: any[]) => {
-    let newTableColumns = [ ...searchOptions.resultTableColumns ];
-    let newTableObject = { name, columns }
 
-    if (searchOptions.resultTableColumns.length ) {
-      let index = searchOptions.resultTableColumns.findIndex( item => item.name === name);
-      console.log('index', index);
-      
-      if (index >= 0) {
-        newTableColumns[index] = newTableObject;
-      } else {
-        newTableColumns.push(newTableObject);
-      }
-    } else {
-      newTableColumns.push(newTableObject);
-    }
-
-    updateTablePreferences(user.name, newTableObject);
-    setSearchOptions({
-      ...searchOptions,
-      resultTableColumns: newTableColumns
-    });
-  }
 
   useEffect(() => {
     if (user.authenticated) {
@@ -307,8 +280,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       clearDateFacet,
       clearRangeFacet,
       resetSearchOptions,
-      setAllSearchFacets,
-      updateResultTable
+      setAllSearchFacets
     }}>
       {children}
     </SearchContext.Provider>
