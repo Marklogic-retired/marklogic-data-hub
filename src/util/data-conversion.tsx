@@ -438,6 +438,7 @@ export const setTreeVisibility = (ob, str) => {
           ob[i].visible = false;
         } else {
           v = true;
+          ob[i].visible = true;
         }  
       }
     }

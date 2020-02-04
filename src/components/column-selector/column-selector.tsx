@@ -148,6 +148,7 @@ const ColumnSelector: React.FC<Props> = (props) => {
   const onChange = e => {
     const { value } = e.target;
     let filteredTree = setTreeVisibility(deepCopy(prevTree), value)
+    
     props.updateTreeColumns(filteredTree.ob)
     generateList(filteredTree.ob);
 
