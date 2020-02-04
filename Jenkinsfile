@@ -440,9 +440,11 @@ pipeline{
 		stage('Linux Core Parallel Execution'){
 		when {
 	            expression{
+	             node('dhmaster'){
 	                props = readProperties file:'data-hub/pipeline.properties';
                     println(props['ExecutionBranch'])
 	            return (env.BRANCH_NAME==props['ExecutionBranch'])
+	            }
 	            }
 		}
 		parallel{
@@ -535,9 +537,11 @@ pipeline{
 		stage('example projects parallel'){
 		when {
 	            expression{
+	            node('dhmaster'){
 	                props = readProperties file:'data-hub/pipeline.properties';
                     println(props['ExecutionBranch'])
 	            return (env.BRANCH_NAME==props['ExecutionBranch'])
+	            }
 	            }
               }
             parallel{
@@ -696,9 +700,11 @@ pipeline{
 		stage('quick start linux parallel'){
 		when {
 	            expression{
+	             node('dhmaster'){
 	                props = readProperties file:'data-hub/pipeline.properties';
                     println(props['ExecutionBranch'])
 	            return (env.BRANCH_NAME==props['ExecutionBranch'])
+	            }
 	            }
         		}
 		parallel{
@@ -775,9 +781,11 @@ pipeline{
 		stage('Windows Core Parallel'){
 		when {
 	            expression{
+	             node('dhmaster'){
 	                props = readProperties file:'data-hub/pipeline.properties';
                     println(props['ExecutionBranch'])
 	            return (env.BRANCH_NAME==props['ExecutionBranch'])
+	            }
 	            }
         		}
 		    parallel{
