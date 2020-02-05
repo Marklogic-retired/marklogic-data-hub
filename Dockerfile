@@ -6,7 +6,7 @@ WORKDIR /usr/src/app
 ENV PATH /usr/src/app/node_modules/.bin:$PATH
 COPY package.json /usr/src/app/package.json
 RUN npm install
-RUN npm install react-scripts@3.0.1 -g
+RUN npm install react-scripts@3.3.1 -g
 COPY . /usr/src/app
 # RUN CI=true npm test
 RUN npm run build
