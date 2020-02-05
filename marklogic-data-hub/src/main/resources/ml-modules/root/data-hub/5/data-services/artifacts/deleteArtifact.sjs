@@ -15,6 +15,8 @@
  */
 'use strict';
 
-import * as Artifacts from '/data-hub/5/artifacts/core.mjs';
+const Artifacts = require('/data-hub/5/artifacts/core.sjs');
 
-Artifacts.getTypesInfo();
+var artifactType, artifactName, artifactVersion;
+
+Artifacts.deleteArtifact(artifactType, artifactName, artifactVersion);
