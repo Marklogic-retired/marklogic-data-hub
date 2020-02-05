@@ -15,9 +15,9 @@
  */
 'use strict';
 
-xdmp.documentInsert(external.docUri, external.content, {permissions: external.permissions, collections: external.collections });
-let writeInfo = {
-    transaction: xdmp.transaction(),
-    dateTime: fn.currentDateTime()
-};
-writeInfo;
+const Artifacts = require('/data-hub/5/artifacts/core.sjs');
+
+var artifactType;
+
+Artifacts.getArtifacts(artifactType);
+

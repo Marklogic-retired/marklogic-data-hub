@@ -15,6 +15,10 @@
  */
 'use strict';
 
-import * as Artifacts from '/data-hub/5/artifacts/core.mjs';
+declareUpdate();
 
-Artifacts.setArtifactSettings(external.artifactType, external.artifactName, external.settings.toObject());
+var docUri;
+
+if (fn.docAvailable(docUri)) {
+    xdmp.documentDelete(docUri);
+}
