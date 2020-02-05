@@ -2,14 +2,14 @@ const test = require("/test/test-helper.xqy");
 
 function invokeSetService(artifactType, artifactName, artifact) {
   return fn.head(xdmp.invoke(
-    "/data-hub/5/data-services/artifacts/setArtifact.mjs",
+    "/data-hub/5/data-services/artifacts/setArtifact.sjs",
     {artifactType, artifactName, artifact: xdmp.toJSON(artifact)}
   ));
 }
 
 function invokeGetService(artifactType, artifactName) {
   return fn.head(xdmp.invoke(
-    "/data-hub/5/data-services/artifacts/getArtifact.mjs",
+    "/data-hub/5/data-services/artifacts/getArtifact.sjs",
     {artifactType, artifactName}
   ));
 }
@@ -35,7 +35,7 @@ function getArtifact() {
 
 function deleteArtifact() {
   return fn.head(xdmp.invoke(
-    "/data-hub/5/data-services/artifacts/deleteArtifact.mjs",
+    "/data-hub/5/data-services/artifacts/deleteArtifact.sjs",
     {artifactType: 'loadData', artifactName: 'validArtifact'}
   ));
 }
