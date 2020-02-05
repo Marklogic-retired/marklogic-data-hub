@@ -15,18 +15,24 @@
  */
 'use strict';
 
+declareUpdate();
+
+var permissions,
+  writeQueue,
+  baseCollections;
+
 const temporal = require("/MarkLogic/temporal.xqy");
 
 const temporalCollections = temporal.collections().toArray().reduce((acc, col) => {
     acc[col] = true;
     return acc;
 }, {});
-let basePermissions = external.permissions;
-for (let content of external.writeQueue) {
+
+for (let content of writeQueue) {
     let context = (content.context||{});
-    let permissions = (basePermissions || []).concat((context.permissions||[]));
+    let fullPermissions = (permissions || []).concat((context.permissions||[]));
     let existingCollections = xdmp.documentGetCollections(content.uri);
-    let collections = fn.distinctValues(Sequence.from(external.baseCollections.concat((context.collections||[])))).toArray();
+    let collections = fn.distinctValues(Sequence.from(baseCollections.concat((context.collections||[])))).toArray();
     let metadata = context.metadata;
     let temporalCollection = collections.concat(existingCollections).find((col) => temporalCollections[col]);
     let isDeleteOp = !!content['$delete'];
@@ -46,13 +52,13 @@ for (let content of external.writeQueue) {
             }
             temporal.documentInsert(temporalCollection, content.uri, content.value,
                 {
-                    permissions,
+                    permissions: fullPermissions,
                     collections: collections.filter((col) => !temporalCollections[col]),
                     metadata
                 }
             );
         } else {
-            xdmp.documentInsert(content.uri, content.value, {permissions, collections, metadata});
+            xdmp.documentInsert(content.uri, content.value, {permissions: fullPermissions, collections, metadata});
         }
     }
 }
