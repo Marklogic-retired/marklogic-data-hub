@@ -33,7 +33,7 @@ public interface ArtifactService {
             public JsonNode getArtifactTypesInfo() {
                 return BaseProxy.JsonDocumentType.toJsonNode(
                     baseProxy
-                        .request("getArtifactTypesInfo.mjs", BaseProxy.ParameterValuesKind.NONE)
+                        .request("getArtifactTypesInfo.sjs", BaseProxy.ParameterValuesKind.NONE)
                         .withSession()
                         .withMethod("POST")
                         .responseSingle(false, Format.JSON)
@@ -44,7 +44,7 @@ public interface ArtifactService {
             public JsonNode getList(String artifactType) {
                 return BaseProxy.JsonDocumentType.toJsonNode(
                     baseProxy
-                        .request("getList.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC)
+                        .request("getList.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC)
                         .withSession()
                         .withParams(
                             BaseProxy.atomicParam("artifactType", false, BaseProxy.StringType.fromString(artifactType)))
@@ -57,7 +57,7 @@ public interface ArtifactService {
             public JsonNode getArtifact(String artifactType, String artifactName) {
                 return BaseProxy.JsonDocumentType.toJsonNode(
                     baseProxy
-                        .request("getArtifact.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS)
+                        .request("getArtifact.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS)
                         .withSession()
                         .withParams(
                             BaseProxy.atomicParam("artifactType", false, BaseProxy.StringType.fromString(artifactType)),
@@ -72,7 +72,7 @@ public interface ArtifactService {
             public JsonNode setArtifact(String artifactType, String artifactName, JsonNode artifact) {
                 return BaseProxy.JsonDocumentType.toJsonNode(
                     baseProxy
-                        .request("setArtifact.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED)
+                        .request("setArtifact.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED)
                         .withSession()
                         .withParams(
                             BaseProxy.atomicParam("artifactType", false, BaseProxy.StringType.fromString(artifactType)),
@@ -88,7 +88,7 @@ public interface ArtifactService {
             public JsonNode deleteArtifact(String artifactType, String artifactName) {
                 return BaseProxy.JsonDocumentType.toJsonNode(
                     baseProxy
-                        .request("deleteArtifact.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS)
+                        .request("deleteArtifact.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS)
                         .withSession()
                         .withParams(
                             BaseProxy.atomicParam("artifactType", false, BaseProxy.StringType.fromString(artifactType)),
@@ -103,7 +103,7 @@ public interface ArtifactService {
             public JsonNode validateArtifact(String artifactType, String artifactName, JsonNode artifact) {
                 return BaseProxy.JsonDocumentType.toJsonNode(
                     baseProxy
-                        .request("validateArtifact.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC)
+                        .request("validateArtifact.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC)
                         .withSession()
                         .withParams(
                             BaseProxy.atomicParam("artifactType", false, BaseProxy.StringType.fromString(artifactType)),
@@ -119,7 +119,7 @@ public interface ArtifactService {
             public JsonNode getArtifactSettings(String artifactType, String artifactName) {
                 return BaseProxy.JsonDocumentType.toJsonNode(
                     baseProxy
-                        .request("getArtifactSettings.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS)
+                        .request("getArtifactSettings.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS)
                         .withSession()
                         .withParams(
                             BaseProxy.atomicParam("artifactType", false, BaseProxy.StringType.fromString(artifactType)),
@@ -134,7 +134,7 @@ public interface ArtifactService {
             public JsonNode setArtifactSettings(String artifactType, String artifactName, JsonNode settings) {
                 return BaseProxy.JsonDocumentType.toJsonNode(
                     baseProxy
-                        .request("setArtifactSettings.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED)
+                        .request("setArtifactSettings.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED)
                         .withSession()
                         .withParams(
                             BaseProxy.atomicParam("artifactType", false, BaseProxy.StringType.fromString(artifactType)),
