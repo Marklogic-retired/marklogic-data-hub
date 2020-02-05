@@ -15,6 +15,16 @@
  */
 'use strict';
 
-import * as Artifacts from '/data-hub/5/artifacts/core.mjs';
+declareUpdate();
 
-Artifacts.deleteArtifact(external.artifactType, external.artifactName, external.artifactVersion);
+var docUri,
+    content,
+    permissions,
+    collections;
+
+xdmp.documentInsert(docUri, content, {permissions: permissions, collections: collections });
+let writeInfo = {
+    transaction: xdmp.transaction(),
+    dateTime: fn.currentDateTime()
+};
+writeInfo;

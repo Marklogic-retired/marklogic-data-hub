@@ -16,65 +16,62 @@
 'use strict';
 
 const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
+
+// define constants for caching expensive operations
 const dataHub = DataHubSingleton.instance();
 
-const collections = ['http://marklogic.com/data-hub/step-definition'];
+const collections = ['http://marklogic.com/data-hub/load-data-artifact'];
 const databases = [dataHub.config.STAGINGDATABASE, dataHub.config.FINALDATABASE];
-const permissions = [xdmp.permission(dataHub.consts.DATA_HUB_DEVELOPER_ROLE, 'update'), xdmp.permission(dataHub.consts.DATA_HUB_OPERATOR_ROLE, 'read')];
-const requiredProperties = ['name'];
+const permissions = [xdmp.permission(dataHub.consts.DATA_HUB_LOAD_DATA_WRITE_ROLE, 'update'), xdmp.permission(dataHub.consts.DATA_HUB_LOAD_DATA_READ_ROLE, 'read')];
+const requiredProperties = ['name', 'sourceFormat', 'targetFormat'];
 
-export function getNameProperty() {
+function getNameProperty() {
     return 'name';
 }
 
-export function getVersionProperty() {
+function getVersionProperty() {
     return null;
 }
 
-export function getCollections() {
+function getCollections() {
     return collections;
 }
 
-export function getStorageDatabases() {
+function getStorageDatabases() {
     return databases;
 }
 
-export function getPermissions() {
+function getPermissions() {
     return permissions;
 }
 
-export function getArtifactNode(artifactName, artifactVersion) {
+function getArtifactNode(artifactName, artifactVersion) {
+    // Currently there is no versioning for loadData artifacts
     const results = cts.search(cts.andQuery([cts.collectionQuery(collections[0]), cts.jsonPropertyValueQuery('name', artifactName)]));
     return fn.head(results);
 }
 
-export function getDirectory(artifactName, artifact) {
-    let doc = getArtifactNode(artifactName, null);
-    let dir = "/step-definitions/";
-    let type;
-    if(!doc && artifact && artifactName) {
-        dir = dir + artifact.type.toLowerCase() + "/" + artifact.name +"/"
-    }
-    else if (doc) {
-        let mutableArtifact = doc.toObject();
-        if(mutableArtifact.name.startsWith("default-") || mutableArtifact.name == 'entity-services-mapping'){
-            dir = dir + mutableArtifact.toLowerCase() + "/" + "/marklogic/";
-        }
-        else {
-            dir = dir + mutableArtifact.type.toLowerCase() + "/" + mutableArtifact.name + "/";
-        }
-    }
-    return dir;
-}
-
-export function getFileExtension() {
-    return ".step.json";
-}
-
-export function validateArtifact(artifact) {
+function validateArtifact(artifact) {
     const missingProperties = requiredProperties.filter((propName) => !artifact[propName]);
     if (missingProperties.length) {
         return new Error(`Missing the following required properties: ${JSON.stringify(missingProperties)}`);
     }
     return artifact;
 }
+
+function getArtifactSettingNode(collectionName, artifactName, artifactVersion) {
+    // Currently there is no versioning for loadData artifacts
+    const results = cts.search(cts.andQuery([cts.collectionQuery(collectionName), cts.jsonPropertyValueQuery('artifactName', artifactName)]));
+    return fn.head(results);
+}
+
+module.exports = {
+  getNameProperty,
+  getVersionProperty,
+  getCollections,
+  getStorageDatabases,
+  getPermissions,
+  getArtifactNode,
+  validateArtifact,
+  getArtifactSettingNode
+};
