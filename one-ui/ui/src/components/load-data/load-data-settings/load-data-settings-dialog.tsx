@@ -1,93 +1,134 @@
 import { Modal, Form, Input, Button, Tooltip, Icon, Progress, Upload, Select, Collapse, Switch, message } from "antd";
 import React, { useState, useEffect, useContext } from "react";
 import styles from './load-data-settings-dialog.module.scss';
-import { NewLoadTooltips } from '../../../config/tooltips.config';
+import { LoadDataSettings } from '../../../config/tooltips.config';
 import Axios from "axios";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCopy } from '@fortawesome/free-regular-svg-icons';
+
 import { RolesContext } from "../../../util/roles";
 
 const LoadDataSettingsDialog = (props) => {
 
+  //const [settingsArtifact, setSettingsArtifact] = useState({});
   const [tgtDatabase, setgtDatabase] = useState(props.stepData && props.stepData != {} ? 'data-hub-STAGING' : 'data-hub-STAGING');
-  const[ additionalCollection, setAdditionalCollection ] = useState([])
+  const[ additionalCollections, setAdditionalCollections ] = useState<any[]>([]);
+  const [isAddCollTouched, setAddCollTouched] = useState(false);
   const [isTgtDatabaseTouched, setTgtDatabaseTouched] = useState(false);
   const [targetPermissions, setTargetPermissions] = useState('rest-reader,read,rest-writer,update');
-  const [provGranularity, setProvGranularity] = useState('Coarse-grained');
+  const [isTgtPermissionsTouched, setIsTgtPermissionsTouched] = useState(false);
+  const [provGranularity, setProvGranularity] = useState('coarse-grained');
+  const [isProvGranTouched, setIsProvGranTouched] = useState(false);
   const [module, setModule] = useState('');
+  const [isModuleTouched, setIsModuleTouched] = useState(false);
   const [cHparameters, setCHparameters] = useState(JSON.stringify({}, null, 4));
+  const [isCHParamTouched, setIsCHParamTouched] = useState(false);
   const [user, setUser] = useState('');
+  const [isUserTouched, setIsUserTouched] = useState(false);
   const [runBefore, setRunBefore] = useState(false);
-  const [mlcpCommand, setMLCPCommand] = useState('');
+  const [isRunBeforeTouched, setIsRunBeforeTouched] = useState(false);
+  //const [mlcpCommand, setMLCPCommand] = useState('');
   const [toExpand, setToExpand] = useState(false);
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
+  const [isLoading,setIsLoading] = useState(false);
 
   //For Role based access of artifacts
   const roleService = useContext(RolesContext);
   const canReadOnly = roleService.canReadLoadData();
   const canReadWrite = roleService.canWriteLoadData();
 
-
   const tgtDatabaseOptions = {
     'data-hub-STAGING': 'data-hub-STAGING',
     'data-hub-FINAL': 'data-hub-FINAL'
   }
-  const provGranOptions = ['Coarse-grained', 'OFF'];
-
-  let mlcp = {};
+  const provGranOptions = ['coarse-grained', 'off'];
 
   useEffect(() => {
-    if (props.stepData && JSON.stringify(props.stepData) != JSON.stringify({})){
-      
-      setAdditionalCollection(props.stepData.additionalCollection);
-      setTargetPermissions(props.stepData.targetPermissions);
-      setModule(props.stepData.module);
-      setCHparameters(props.stepData.parameters);
-      setProvGranularity(props.stepData.provenanceGranularity);
-      setUser(props.stepData.user);
-      setRunBefore(props.stepData.runBefore);
 
-    }
+    getSettingsArtifact();
 
     return () => {
-      updateMlcpCommand();
+      setTgtDatabaseTouched(false);
+      setAddCollTouched(false);
+      setIsTgtPermissionsTouched(false);
+      setIsModuleTouched(false);
+      setIsCHParamTouched(false);
+      setIsProvGranTouched(false);
+      setIsUserTouched(false);
+      setIsRunBeforeTouched(false);
     };
-  })
+  },[props.openLoadDataSettings  ,isLoading])
 
+//CREATE/POST settings Artifact
+const createSettingsArtifact = async (settingsObj) => {
+  console.log('settingsObj',settingsObj)
 
+  try {
+    setIsLoading(true);
+    let response = await Axios.post(`/api/artifacts/loadData/${props.stepData.name}/settings`, settingsObj);
+    if (response.status === 200) {
+      console.log('Create/Update LoadData Settings Artifact API Called successfully!')
+      setIsLoading(false);
+    }
+  }
+  catch (error) {
+    let message = error.response.data.message;
+    console.log('Error While creating the Load Data settings artifact!', message)
+    setIsLoading(false);
+  }
+
+}
+
+//GET the settings artifact
+const getSettingsArtifact = async () => {
+
+  try {
+    let response = await Axios.get(`/api/artifacts/loadData/${props.stepData.name}/settings`);
+    
+    if (response.status === 200) {
+      setgtDatabase(response.data.targetDatabase);
+      setAdditionalCollections([...response.data.additionalCollections]);
+      setTargetPermissions(response.data.permissions);
+      setModule(response.data.customHook.module);
+      setCHparameters(response.data.customHook.parameters);
+      setProvGranularity(response.data.provenanceGranularity);
+      setUser(response.data.customHook.user);
+      setRunBefore(response.data.customHook.runBefore);
+      console.log('GET Load Data Settings Artifacts API Called successfully!',response.data);
+    } 
+  } catch (error) {
+      let message = error.response;
+      console.log('Error while fetching load data settings artifacts', message);
+  }
+
+}
 
   const onCancel = () => {
-    console.log('On cancel called')
     if(checkDeleteOpenEligibility()){
       setDeleteDialogVisible(true);
+    } else {
+      props.setOpenLoadDataSettings(false)
     }
   }
 
   const onOk = () => {
-    console.log('On Ok called')
     props.setOpenLoadDataSettings(false)
   }
 
+  //Check if Delete Confirmation dialog should be opened or not.
   const checkDeleteOpenEligibility = () => {
-    if (props.stepData && JSON.stringify(props.stepData) != JSON.stringify({})){
-      
-      if(tgtDatabase === props.stepData.targetDatabase
-      && additionalCollection === props.stepData.additionalCollection
-      && targetPermissions === props.stepData.targetPermissions
-      && module === props.stepData.module
-      && cHparameters === props.stepData.parameters
-      && provGranularity === props.stepData.provenanceGranularity
-      && user === props.stepData.user
-      && runBefore === props.stepData.runBefore
+  
+      if(!isTgtDatabaseTouched
+      && !isAddCollTouched
+      && !isTgtPermissionsTouched
+      && !isModuleTouched
+      && !isCHParamTouched
+      && !isProvGranTouched
+      && !isUserTouched
+      && !isRunBeforeTouched
       ) {
               return false; 
         } else {
           return true;
          }  
-      
-    } else {
-          return true;
-    }
   }
 
   const onDelOk = () => {
@@ -116,39 +157,49 @@ const LoadDataSettingsDialog = (props) => {
           </div>
     </Modal>;
 
-  const handleSubmit = () => {
-    console.log('Save button called')
-    //props.setOpenLoadDataSettings(false)
-  }
-  const handleChange = (event) => {
-    if (event.target.id === 'name') {
-      if (event.target.value === ' ') {
-        //setStepNameTouched(false);
-      }
-      else {
-        //setStepNameTouched(true);
-        //setStepName(event.target.value);
-      }
-    }
+  const handleSubmit = async (event: { preventDefault: () => void; }) => {
+    if (event) event.preventDefault();
 
+    let dataPayload = {
+        artifactName : props.stepData.name,
+        additionalCollections : additionalCollections,
+        targetDatabase : tgtDatabase,
+        permissions : targetPermissions,
+        provenanceGranularity: provGranularity,
+        customHook : {
+            module : module,
+            parameters : cHparameters,
+            user : user,
+            runBefore : runBefore
+        }
+      }
+    
+    createSettingsArtifact(dataPayload);
+    props.setOpenLoadDataSettings(false)
+  }
+
+  const handleChange = (event) => {
+    
     if (event.target.id === 'targetPermissions') {
-      setTargetPermissions(event.target.value)
+      setTargetPermissions(event.target.value);
+      setIsTgtPermissionsTouched(true);
     }
 
     if (event.target.id === 'module') {
-      setModule(event.target.value)
+      setModule(event.target.value);
+      setIsModuleTouched(true);
     }
 
     if (event.target.id === 'cHparameters') {
-      setCHparameters(event.target.value)
+      setCHparameters(event.target.value);
+      setIsCHParamTouched(true);
     }
 
     if (event.target.id === 'user') {
-      setUser(event.target.value)
+      setUser(event.target.value);
+      setIsUserTouched(true);
     }
-
   }
-
 
   const handleTgtDatabase = (value) => {
 
@@ -161,14 +212,35 @@ const LoadDataSettingsDialog = (props) => {
     }
   }
 
+  const handleAddColl = (value) => {
+
+    if (value === ' ') {
+      setAddCollTouched(false);
+    }
+    else {
+      setAddCollTouched(true);
+      setAdditionalCollections(value);
+    }
+  }
+
   const handleProvGranularity = (value) => {
 
     if (value === ' ') {
-      //setTgtDatabaseTouched(false);
+      setIsProvGranTouched(false);
     }
     else {
-      //setTgtDatabaseTouched(true);
+      setIsProvGranTouched(true);
       setProvGranularity(value);
+    }
+  }
+
+  const handleRunBefore = (checked, event) => {
+    if (checked) {
+      setRunBefore(true);
+      setIsRunBeforeTouched(true);
+    } else {
+      setRunBefore(false);
+      setIsRunBeforeTouched(true);
     }
   }
 
@@ -183,98 +255,6 @@ const LoadDataSettingsDialog = (props) => {
     },
   };
 
-  const handleRunBefore = (checked, event) => {
-    if (checked) {
-      setRunBefore(true);
-    } else {
-      setRunBefore(false);
-    }
-  }
-
-  //Build MLCP Command from the existing fields
-  const buildMlcpOptions = () => {
-    const options: Array<any> = [];
-
-    addMlcpOption(options, 'import', null, false, false);
-    addMlcpOption(options, 'mode', 'local', false, true);
-
-    const host = 'localhost';
-    const port = '8010';
-    const username = localStorage.getItem('dataHubUser');
-    let input_file_path = props.stepData && props.stepData.inputFilePath ? props.stepData.inputFilePath : '';
-    let in_file_tp = props.stepData.sourceFormat;
-    let input_file_type = (in_file_tp !== 'csv') ? 'documents' : 'delimited_text';
-    let document_type = props.stepData && props.stepData.targetFormat ? props.stepData.targetFormat.toLowerCase() : '';
-    let delimiter = props.stepData.separator;
-    let output_permissions = targetPermissions;
-    let step_number = 1;//String(flow.steps.findIndex(i => i.id === step.id)+1);
-    let transform_param = 'flow-name=XYZ,Step=abc';//`flow-name=${encodeURIComponent(flow.name)},step=${encodeURIComponent(step_number)}`
-    let collections = 'Collections'; //step.options.collections;
-    let output_uri_replace = props.stepData.outputURIReplacement;
-    addMlcpOption(options, 'host', host, false, true);
-    addMlcpOption(options, 'port', port, false, true);
-    addMlcpOption(options, 'username', username, false, true);
-    addMlcpOption(options, 'password', '*****', false, true);
-    addMlcpOption(options, 'input_file_path', input_file_path, false, true);
-    addMlcpOption(options, 'input_file_type', input_file_type, false, true);
-    if (input_file_type === 'delimited_text') {
-      addMlcpOption(options, 'generate_uri', 'true', false, true);
-    };
-    if (input_file_type === 'delimited_text' && delimiter !== ',') {
-      addMlcpOption(options, 'delimiter', delimiter, false, true);
-    };
-    addMlcpOption(options, 'output_collections', collections, false, true);
-    if (output_permissions) {
-      addMlcpOption(options, 'output_permissions', output_permissions, false, true);
-    };
-    if (output_uri_replace) {
-      addMlcpOption(options, 'output_uri_replace', output_uri_replace, false, true);
-    };
-    addMlcpOption(options, 'document_type', document_type, false, true);
-    addMlcpOption(options, 'transform_module', '/data-hub/5/transforms/mlcp-flow-transform.sjs', false, true);
-    addMlcpOption(options, 'transform_namespace', 'http://marklogic.com/data-hub/mlcp-flow-transform', false, true);
-    addMlcpOption(options, 'transform_param', transform_param, false, true);
-
-    return options;
-  }
-
-
-  const addMlcpOption = (options: any, key: string, value: any, isOtherOption: boolean, appendDash: boolean) => {
-    if (appendDash) {
-      options.push('-' + key);
-    } else {
-      options.push(key);
-    }
-
-    if (value) {
-      if (isOtherOption) {
-        mlcp[key] = value;
-      }
-      if (value.type !== 'boolean' && value.type !== 'number') {
-        value = '"' + value + '"';
-      }
-      options.push(value);
-    }
-  }
-
-  const updateMlcpCommand = () => {
-    let mlcpCommand = 'mlcp';
-    mlcpCommand += (navigator.appVersion.indexOf('Win') !== -1) ? '.bat' : '.sh';
-    mlcpCommand += ' ' + buildMlcpOptions().join(' ');
-
-    mlcpCommand = mlcpCommand;
-
-    setMLCPCommand(mlcpCommand);
-    return mlcpCommand;
-  }
-
-
-  //Copy the MLCP Command to the Clipboard
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(mlcpCommand);
-    message.success('Copied to the Clipboard!');
-  }
-
   const toggleCustomHook = () => {
     if (!toExpand) {
       setToExpand(true);
@@ -285,7 +265,7 @@ const LoadDataSettingsDialog = (props) => {
 
   const customHookProperties = <div><Form.Item label={<span className={styles.cHItemLabel}>
     Module:&nbsp;
-  <Tooltip title={NewLoadTooltips.module}>
+  <Tooltip title={LoadDataSettings.module}>
       <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
     </Tooltip>
     &nbsp;
@@ -301,7 +281,7 @@ const LoadDataSettingsDialog = (props) => {
   </Form.Item>
     <Form.Item label={<span className={styles.cHItemLabel}>
       Parameters:&nbsp;
-  <Tooltip title={NewLoadTooltips.parameters}>
+  <Tooltip title={LoadDataSettings.cHParameters}>
         <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
       </Tooltip>
       &nbsp;
@@ -317,7 +297,7 @@ const LoadDataSettingsDialog = (props) => {
     </Form.Item>
     <Form.Item label={<span className={styles.cHItemLabel}>
       User:&nbsp;
-  <Tooltip title={NewLoadTooltips.user}>
+  <Tooltip title={LoadDataSettings.user}>
         <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
       </Tooltip>
       &nbsp;
@@ -333,18 +313,19 @@ const LoadDataSettingsDialog = (props) => {
     </Form.Item>
     <Form.Item label={<span className={styles.cHItemLabel}>
       RunBefore:&nbsp;
-  <Tooltip title={NewLoadTooltips.runbefore}>
+  <Tooltip title={LoadDataSettings.runBefore}>
         <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
       </Tooltip>
       &nbsp;
 </span>} labelAlign="left"
       className={styles.formItem}>
-      <Switch checkedChildren="ON" unCheckedChildren="OFF" onChange={handleRunBefore} disabled={!canReadWrite}/>
+      <Switch checked={runBefore} checkedChildren="ON" unCheckedChildren="OFF" onChange={handleRunBefore} disabled={!canReadWrite}/>
     </Form.Item></div>
 
-
   const tgtDbOptions = Object.keys(tgtDatabaseOptions).map(d => <Select.Option key={tgtDatabaseOptions[d]}>{d}</Select.Option>);
+  
   const provGranOpt = provGranOptions.map(d => <Select.Option key={d}>{d}</Select.Option>);
+
   return (
     <Modal
       visible={props.openLoadDataSettings}
@@ -361,7 +342,7 @@ const LoadDataSettingsDialog = (props) => {
         <Form {...formItemLayout} onSubmit={handleSubmit} colon={false}>
           <Form.Item label={<span>
             Target Database:&nbsp;&nbsp;
-              <Tooltip title={NewLoadTooltips.targetDatabase}>
+              <Tooltip title={LoadDataSettings.targetDatabase}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
             </Tooltip>
             &nbsp;
@@ -379,25 +360,26 @@ const LoadDataSettingsDialog = (props) => {
           </Form.Item>
           <Form.Item label={<span>
             Additional Collections:&nbsp;
-              <Tooltip title={NewLoadTooltips.additonalCollections}>
+              <Tooltip title={LoadDataSettings.additionalCollections}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
             </Tooltip>
             &nbsp;
             </span>} labelAlign="left" className={styles.formItem}>
             <Select
+              id="additionalColl"
               mode="tags"
               style={{ width: '100%' }}
               placeholder="Please select"
-              defaultValue={['Collection1', 'Collection2']}
+              value={additionalCollections}
               disabled={!canReadWrite}
-            // onChange={handleChange}
+              onChange={handleAddColl}
             >
 
             </Select>
           </Form.Item>
           <Form.Item label={<span>
             Target Permissions:&nbsp;
-              <Tooltip title={NewLoadTooltips.targetPermissions}>
+              <Tooltip title={LoadDataSettings.targetPermissions}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
             </Tooltip>
             &nbsp;
@@ -413,7 +395,7 @@ const LoadDataSettingsDialog = (props) => {
           </Form.Item>
           <Form.Item label={<span>
             Provenance Granularity:&nbsp;&nbsp;
-              <Tooltip title={NewLoadTooltips.provGranularity}>
+              <Tooltip title={LoadDataSettings.provGranularity}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
             </Tooltip>
             &nbsp;
@@ -435,19 +417,6 @@ const LoadDataSettingsDialog = (props) => {
             className={styles.formItem}></Form.Item>
           {toExpand ? customHookProperties : ''}
 
-          <Form.Item label={<span>
-            MLCP Command:&nbsp;
-              <Tooltip title={NewLoadTooltips.mlcpcommand}>
-              <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-            </Tooltip>
-            <span className={styles.readOnlyLabel}>(Read-only)</span>
-            <br style={{ lineHeight: '1px', width: '0px', marginBottom: '-20px' }} />
-          </span>} labelAlign="left"
-            className={styles.formItem}>
-            <div className={styles.mlcpCmd}>
-              <p>{mlcpCommand}  <Tooltip title={'Click to copy to the clipboard'} placement="bottom"><i><FontAwesomeIcon icon={faCopy} className={styles.copyIcon} size="2x" onClick={copyToClipboard} /></i></Tooltip></p>
-            </div>
-          </Form.Item>
           <Form.Item className={styles.submitButtonsForm}>
             <div className={styles.submitButtons}>
               <Button onClick={() => onCancel()}>Cancel</Button>

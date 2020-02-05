@@ -38,8 +38,8 @@ const LoadDataList: React.FC<Props> = (props) => {
         setNewDataLoad(true);
     }
 
-    const OpenLoadDataSettingsDialog = (index) => {
-        setStepData(prevState => ({ ...prevState, ...props.data[index]}));
+    const OpenLoadDataSettingsDialog = (record) => {
+        setStepData(prevState => ({ ...prevState, ...record}));
         //openLoadDataSettings = true;
         setOpenLoadDataSettings(true);
         console.log('Open settings', openLoadDataSettings)
@@ -129,7 +129,7 @@ const LoadDataList: React.FC<Props> = (props) => {
             key: 'actions',
             render: (text, row) => (
                 <span>
-                    <Tooltip title={'Settings'} placement="bottom"><Icon type="setting" onClick={() => OpenLoadDataSettingsDialog(row.name)} className={styles.settingsIcon} /></Tooltip>
+                    <Tooltip title={'Settings'} placement="bottom"><Icon type="setting" onClick={() => OpenLoadDataSettingsDialog(row)} className={styles.settingsIcon} /></Tooltip>
                     &nbsp;&nbsp;
                     {props.canReadWrite ? <Tooltip title={'Delete'} placement="bottom"><i><FontAwesomeIcon icon={faTrashAlt} onClick={() => {showDeleteConfirm(row.name)}} className={styles.deleteIcon} size="lg"/></i></Tooltip> : 
                     <Tooltip title={'Delete'} placement="bottom"><i><FontAwesomeIcon icon={faTrashAlt} onClick={(event) => event.preventDefault()} className={styles.disabledDeleteIcon} size="lg"/></i></Tooltip> }
