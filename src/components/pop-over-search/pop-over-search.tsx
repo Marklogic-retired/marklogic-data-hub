@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Popover, Input, Checkbox, Icon} from 'antd';
+import {Popover, Input, Checkbox, Icon} from 'antd';
 import styles from './pop-over-search.module.scss';
 import axios from "axios";
 
@@ -18,7 +18,7 @@ const PopOverSearch: React.FC<Props> = (props) => {
   const [popOverVisibility, setPopOverVisibilty] = useState(false);
 
   const getFacetValues = async (param) => {
-    if(param.target.value.length >= 2 && param.target.value.toLowerCase()){
+    if (param.target.value.length >= 2 && param.target.value.toLowerCase()) {
       try {
         const response = await axios({
           method: 'POST',
@@ -49,15 +49,17 @@ const PopOverSearch: React.FC<Props> = (props) => {
 
   const addFacetValues = () => {
     props.checkFacetValues(checkedValues);
+    setPopOverVisibilty(false);
   }
 
   const searchPopover = () => {
     setPopOverVisibilty(true);
   }
 
-  const closePopover = () => {
-    setPopOverVisibilty(false);
+  const handleChange = (visible) => {
+    setPopOverVisibilty(visible);
   }
+
 
   const content = (
     <div className={styles.popover}>
@@ -68,17 +70,20 @@ const PopOverSearch: React.FC<Props> = (props) => {
       <hr/>
       <div className={styles.checkIcon}>
         <Icon type="check-square-o" className={styles.popoverIcons} onClick={addFacetValues}/>
-        <Icon type="close-square-o" className={styles.popoverIcons} onClick={closePopover}/>
       </div>
     </div>
   )
 
   return (
-    <Popover placement="leftTop" content={content} trigger="click" visible={popOverVisibility}>
-      <div className={styles.search} onClick={searchPopover}>Search</div>
+    <Popover
+      placement="leftTop"
+      content={content}
+      trigger="click"
+      onVisibleChange={handleChange}
+      visible={popOverVisibility}>
+      <div className={styles.search}>Search</div>
     </Popover>
   )
-
 }
 
 export default PopOverSearch;
