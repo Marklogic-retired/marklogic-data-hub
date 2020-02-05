@@ -18,44 +18,75 @@
 const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
 const dataHub = DataHubSingleton.instance();
 
-const collections = ['http://marklogic.com/data-hub/flow'];
+const collections = ['http://marklogic.com/data-hub/step-definition'];
 const databases = [dataHub.config.STAGINGDATABASE, dataHub.config.FINALDATABASE];
 const permissions = [xdmp.permission(dataHub.consts.DATA_HUB_DEVELOPER_ROLE, 'update'), xdmp.permission(dataHub.consts.DATA_HUB_OPERATOR_ROLE, 'read')];
 const requiredProperties = ['name'];
 
-export function getNameProperty() {
+function getNameProperty() {
     return 'name';
 }
 
-export function getVersionProperty() {
+function getVersionProperty() {
     return null;
 }
 
-export function getCollections() {
+function getCollections() {
     return collections;
 }
 
-export function getStorageDatabases() {
+function getStorageDatabases() {
     return databases;
 }
 
-export function getPermissions() {
+function getPermissions() {
     return permissions;
 }
 
-export function getFileExtension() {
-    return '.flow.json';
-}
-
-export function getArtifactNode(artifactName, artifactVersion) {
+function getArtifactNode(artifactName, artifactVersion) {
     const results = cts.search(cts.andQuery([cts.collectionQuery(collections[0]), cts.jsonPropertyValueQuery('name', artifactName)]));
     return fn.head(results);
 }
 
-export function validateArtifact(artifact) {
+function getDirectory(artifactName, artifact) {
+    let doc = getArtifactNode(artifactName, null);
+    let dir = "/step-definitions/";
+    let type;
+    if(!doc && artifact && artifactName) {
+        dir = dir + artifact.type.toLowerCase() + "/" + artifact.name +"/"
+    }
+    else if (doc) {
+        let mutableArtifact = doc.toObject();
+        if(mutableArtifact.name.startsWith("default-") || mutableArtifact.name == 'entity-services-mapping'){
+            dir = dir + mutableArtifact.toLowerCase() + "/" + "/marklogic/";
+        }
+        else {
+            dir = dir + mutableArtifact.type.toLowerCase() + "/" + mutableArtifact.name + "/";
+        }
+    }
+    return dir;
+}
+
+function getFileExtension() {
+    return ".step.json";
+}
+
+function validateArtifact(artifact) {
     const missingProperties = requiredProperties.filter((propName) => !artifact[propName]);
     if (missingProperties.length) {
         return new Error(`Missing the following required properties: ${JSON.stringify(missingProperties)}`);
     }
     return artifact;
 }
+
+module.exports = {
+  getNameProperty,
+  getVersionProperty,
+  getCollections,
+  getStorageDatabases,
+  getDirectory,
+  getPermissions,
+  getFileExtension,
+  getArtifactNode,
+  validateArtifact
+};

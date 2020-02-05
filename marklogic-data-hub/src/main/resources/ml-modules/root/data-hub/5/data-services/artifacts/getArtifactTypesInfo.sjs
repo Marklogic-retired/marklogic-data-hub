@@ -15,6 +15,6 @@
  */
 'use strict';
 
-if (fn.docAvailable(external.docUri)) {
-    xdmp.documentDelete(external.docUri);
-}
+const Artifacts = require('/data-hub/5/artifacts/core.sjs');
+
+Artifacts.getTypesInfo();
