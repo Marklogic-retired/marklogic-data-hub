@@ -58,13 +58,12 @@ const Sidebar: React.FC<Props> = (props) => {
       if (Object.entries(searchOptions.searchFacets).length !== 0) {
         let selectedFacets: any[] = [];
         for (let constraint in searchOptions.searchFacets) {
-          // TODO fix the date picker
           if (constraint === 'createdOnRange') {
             selectedFacets.push({ constraint, facet: searchOptions.searchFacets[constraint]['rangeValues']});
             toggleApply(false);
           } else {
             let datatype = searchOptions.searchFacets[constraint].dataType;
-            if (datatype === 'xs:string') {
+            if (datatype === 'xs:string' || datatype === 'string') {
               searchOptions.searchFacets[constraint]['stringValues'].map(facet => {
                 selectedFacets.push({ constraint, facet });
               });
