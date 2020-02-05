@@ -9,7 +9,7 @@ import { RolesContext } from "../../../util/roles";
 const LoadDataSettingsDialog = (props) => {
 
   //const [settingsArtifact, setSettingsArtifact] = useState({});
-  const [tgtDatabase, setgtDatabase] = useState(props.stepData && props.stepData != {} ? 'data-hub-STAGING' : 'data-hub-STAGING');
+  const [tgtDatabase, setTgtDatabase] = useState('data-hub-STAGING');
   const[ additionalCollections, setAdditionalCollections ] = useState<any[]>([]);
   const [isAddCollTouched, setAddCollTouched] = useState(false);
   const [isTgtDatabaseTouched, setTgtDatabaseTouched] = useState(false);
@@ -35,14 +35,11 @@ const LoadDataSettingsDialog = (props) => {
   const canReadOnly = roleService.canReadLoadData();
   const canReadWrite = roleService.canWriteLoadData();
 
-  const tgtDatabaseOptions = {
-    'data-hub-STAGING': 'data-hub-STAGING',
-    'data-hub-FINAL': 'data-hub-FINAL'
-  }
+  const tgtDatabaseOptions = ['data-hub-STAGING','data-hub-FINAL'];
+
   const provGranOptions = ['coarse-grained', 'off'];
 
   useEffect(() => {
-
     getSettingsArtifact();
 
     return () => {
@@ -54,6 +51,15 @@ const LoadDataSettingsDialog = (props) => {
       setIsProvGranTouched(false);
       setIsUserTouched(false);
       setIsRunBeforeTouched(false);
+      setTgtDatabase('data-hub-STAGING');
+      setAdditionalCollections([]);
+      setTargetPermissions('rest-reader,read,rest-writer,update');
+      setModule('');
+      setCHparameters(JSON.stringify({}, null, 4));
+      setProvGranularity('coarse-grained');
+      setUser('');
+      setRunBefore(false);
+      
     };
   },[props.openLoadDataSettings  ,isLoading])
 
@@ -84,7 +90,7 @@ const getSettingsArtifact = async () => {
     let response = await Axios.get(`/api/artifacts/loadData/${props.stepData.name}/settings`);
     
     if (response.status === 200) {
-      setgtDatabase(response.data.targetDatabase);
+      setTgtDatabase(response.data.targetDatabase);
       setAdditionalCollections([...response.data.additionalCollections]);
       setTargetPermissions(response.data.permissions);
       setModule(response.data.customHook.module);
@@ -97,6 +103,14 @@ const getSettingsArtifact = async () => {
   } catch (error) {
       let message = error.response;
       console.log('Error while fetching load data settings artifacts', message);
+      setTgtDatabase('data-hub-STAGING');
+      setAdditionalCollections([]);
+      setTargetPermissions('rest-reader,read,rest-writer,update');
+      setModule('');
+      setCHparameters(JSON.stringify({}, null, 4));
+      setProvGranularity('coarse-grained');
+      setUser('');
+      setRunBefore(false);
   }
 
 }
@@ -208,7 +222,7 @@ const getSettingsArtifact = async () => {
     }
     else {
       setTgtDatabaseTouched(true);
-      setgtDatabase(value);
+      setTgtDatabase(value);
     }
   }
 
@@ -322,7 +336,7 @@ const getSettingsArtifact = async () => {
       <Switch checked={runBefore} checkedChildren="ON" unCheckedChildren="OFF" onChange={handleRunBefore} disabled={!canReadWrite}/>
     </Form.Item></div>
 
-  const tgtDbOptions = Object.keys(tgtDatabaseOptions).map(d => <Select.Option key={tgtDatabaseOptions[d]}>{d}</Select.Option>);
+  const tgtDbOptions = tgtDatabaseOptions.map(d => <Select.Option key={d}>{d}</Select.Option>);
   
   const provGranOpt = provGranOptions.map(d => <Select.Option key={d}>{d}</Select.Option>);
 
@@ -354,8 +368,8 @@ const getSettingsArtifact = async () => {
               placeholder="Enter target database"
               value={tgtDatabase}
               onChange={handleTgtDatabase}
-              className={styles.formItem}
-              disabled={!canReadWrite}>
+              disabled={!canReadWrite}
+              >
               {tgtDbOptions}
             </Select>
           </Form.Item>
