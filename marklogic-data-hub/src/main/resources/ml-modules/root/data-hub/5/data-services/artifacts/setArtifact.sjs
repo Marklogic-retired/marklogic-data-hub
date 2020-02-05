@@ -15,6 +15,8 @@
  */
 'use strict';
 
-import * as Artifacts from '/data-hub/5/artifacts/core.mjs';
+const Artifacts = require('/data-hub/5/artifacts/core.sjs');
 
-Artifacts.getArtifact(external.artifactType, external.artifactName, external.artifactVersion);
+var artifactType, artifactName, artifact;
+
+Artifacts.setArtifact(artifactType, artifactName, artifact.toObject());
