@@ -15,9 +15,9 @@
  */
 'use strict';
 
-import * as LoadData from './loadData';
-import * as Flows from './flows';
-import * as StepDefs from './stepDefinitions'
+const LoadData = require('./loadData');
+const Flows = require('./flows');
+const StepDefs = require('./stepDefinitions');
 
 const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
 const dataHub = DataHubSingleton.instance();
@@ -29,7 +29,7 @@ const registeredArtifactTypes = {
     stepDefinitions: StepDefs
 };
 
-export function getTypesInfo() {
+function getTypesInfo() {
     const typesInfo = [];
     for (const artifactType of Object.keys(registeredArtifactTypes)) {
         if (registeredArtifactTypes.hasOwnProperty(artifactType)) {
@@ -48,7 +48,7 @@ export function getTypesInfo() {
     return typesInfo;
 }
 
-export function getArtifacts(artifactType) {
+function getArtifacts(artifactType) {
     const artifacts = [];
     const queriesForAnd = [];
     const artifactLibrary =  getArtifactTypeLibrary(artifactType);
@@ -64,7 +64,7 @@ export function getArtifacts(artifactType) {
     return artifacts;
 }
 
-export function deleteArtifact(artifactType, artifactName, artifactVersion = 'latest') {
+function deleteArtifact(artifactType, artifactName, artifactVersion = 'latest') {
     const artifactKey = generateArtifactKey(artifactType, artifactName, artifactVersion);
     const artifactLibrary =  getArtifactTypeLibrary(artifactType);
 
@@ -82,7 +82,7 @@ export function deleteArtifact(artifactType, artifactName, artifactVersion = 'la
     return deleteArtifactSettings(artifactType, artifactName, artifactVersion);
 }
 
-export function getArtifact(artifactType, artifactName, artifactVersion = 'latest') {
+function getArtifact(artifactType, artifactName, artifactVersion = 'latest') {
     const artifactKey = generateArtifactKey(artifactType, artifactName, artifactVersion);
     if (!cachedArtifacts[artifactKey]) {
         const artifactLibrary =  getArtifactTypeLibrary(artifactType);
@@ -92,7 +92,7 @@ export function getArtifact(artifactType, artifactName, artifactVersion = 'lates
     return cachedArtifacts[artifactKey];
 }
 
-export function setArtifact(artifactType, artifactName, artifact) {
+function setArtifact(artifactType, artifactName, artifact) {
     const artifactKey = generateArtifactKey(artifactType, artifactName);
     let validArtifact = validateArtifact(artifactType, artifactName, artifact) || artifact;
     if (validArtifact instanceof Error) {
@@ -112,7 +112,7 @@ export function setArtifact(artifactType, artifactName, artifact) {
     return artifact;
 }
 
-export function getArtifactSettings(artifactType, artifactName, artifactVersion = 'latest') {
+function getArtifactSettings(artifactType, artifactName, artifactVersion = 'latest') {
     const artifactSettingKey = generateArtifactKey(artifactType + 'Settings', artifactName);
     if (!cachedArtifacts[artifactSettingKey]) {
         const artifactLibrary = getArtifactTypeLibrary(artifactType);
@@ -128,7 +128,7 @@ export function getArtifactSettings(artifactType, artifactName, artifactVersion 
     return cachedArtifacts[artifactSettingKey];
 }
 
-export function setArtifactSettings(artifactType, artifactName, settings) {
+function setArtifactSettings(artifactType, artifactName, settings) {
     const requiredProperties = ['artifactName', 'targetDatabase'];
     let validSettings = validateArtifactSettings(settings, requiredProperties);
     if (validSettings instanceof Error) {
@@ -150,7 +150,7 @@ export function setArtifactSettings(artifactType, artifactName, settings) {
     return settings;
 }
 
-export function validateArtifact(artifactType, artifactName, artifact) {
+function validateArtifact(artifactType, artifactName, artifact) {
     const artifactLibrary =  getArtifactTypeLibrary(artifactType);
     const validatedArtifact = artifactLibrary.validateArtifact(artifact, artifactName);
     if (validatedArtifact instanceof Error) {
@@ -224,3 +224,14 @@ function deleteArtifactSettings(artifactType, artifactName, artifactVersion = 'l
     }
     return { success: true };
 }
+
+module.exports = {
+    getTypesInfo,
+    getArtifacts,
+    deleteArtifact,
+    getArtifact,
+    setArtifact,
+    getArtifactSettings,
+    setArtifactSettings,
+    validateArtifact
+};

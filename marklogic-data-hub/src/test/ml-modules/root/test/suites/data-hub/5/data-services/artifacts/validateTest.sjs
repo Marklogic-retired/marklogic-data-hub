@@ -2,7 +2,7 @@ const test = require("/test/test-helper.xqy");
 
 function invokeService(artifactType, artifactName, artifact) {
   return fn.head(xdmp.invoke(
-    "/data-hub/5/data-services/artifacts/validateArtifact.mjs",
+    "/data-hub/5/data-services/artifacts/validateArtifact.sjs",
     {artifactType, artifactName, artifact: xdmp.toJSON(artifact)}
   ));
 }
