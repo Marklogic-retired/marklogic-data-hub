@@ -2,8 +2,10 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Resizable } from 'react-resizable'
 import { Table, Tooltip, Icon } from 'antd';
+import { UserContext } from '../../util/user-context';
 import { SearchContext } from '../../util/search-context';
 import { dateConverter } from '../../util/date-conversion';
+import { updateTablePreferences, getUserPreferences } from '../../services/user-preferences';
 import { xmlParser } from '../../util/xml-parser';
 import styles from './result-table.module.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -70,8 +72,16 @@ const DEFAULT_ALL_ENTITIES_HEADER = [
   },
 ];
 
+const DETAIL_HEADER_OBJ = {
+  title: 'Detail View',
+  key: '0-d',
+  visible: true,
+  width: 150
+}
+
 const ResultTable: React.FC<Props> = (props) => {
   const { searchOptions } = useContext(SearchContext);
+  const { user } = useContext(UserContext);
   const [defaultColumns, setDefaultColumns] = useState<any[]>([]);
   const [renderColumns, setRenderColumns] = useState<any[]>([]);
   const [renderTableData, setRenderTableData] = useState<any[]>([]);
@@ -84,62 +94,46 @@ const ResultTable: React.FC<Props> = (props) => {
     if (props.data) {
       if (searchOptions.entityNames.length === 0 ) {
         // All Entities
-        let renderHeader = tableHeader(DEFAULT_ALL_ENTITIES_HEADER, '');
-        let newTableData = formatTableData(parsedPayload.data, true);
-        // set render DOM data
+        let newTableData = formatTableData(parsedPayload.data, true);       
+        let tableColumns = getUserPref('all');
+        let renderHeader = tableHeader( tableColumns ? tableColumns['columns'] : DEFAULT_ALL_ENTITIES_HEADER, '');
+        let newDefaultColumns = delimitHeader(renderHeader); 
+
+        if (!tableColumns) {
+          updateTablePreferences(user.name, 'all', newDefaultColumns)
+        }
+        
+        setRenderColumns(renderHeader)
         setRenderTableData(newTableData);
-        setRenderColumns(renderHeader);
-        //set popover tree data
         setTreeColumns(renderHeader);
-        //set popover tree selected checkboxes data
         setCheckedColumns(renderHeader);
-        // set default columns from payload
-        // TODO set from user pref if it exists. save without tableHeader transform
-        setDefaultColumns(DEFAULT_ALL_ENTITIES_HEADER);
+        setDefaultColumns(newDefaultColumns);
       } else {
         // An Entity is selected
+        let tableColumns = getUserPref(searchOptions.entityNames[0]);
         let newRenderColumns: any[] = [];
         let parsedEntityDocObj = parsedPayload.data[0] && parsedPayload.data[0].itemEntityProperties[0];
-        let columns = setPrimaryKeyColumn(headerParser(parsedEntityDocObj));
-        columns.length && columns.push({title: 'Detail View', key: '0-d'})
+        let newColumns = setPrimaryKeyColumn(headerParser(parsedEntityDocObj));
 
-        if (defaultColumns.length === 0 ) {
-          if (renderColumns.length === 0 ) {
-
-            if (columns.length > 5) {
-              // TODO Save user pref
-              newRenderColumns = columns.slice(0, 5);
-              newRenderColumns.push(columns.slice(-1)[0])
-            } else {
-              newRenderColumns = columns;
-            }
+        if (newColumns.length !== 0) {
+          if (newColumns.length > 5) {
+            newRenderColumns = newColumns.slice(0, 4);
+          } else {
+            newRenderColumns = newColumns;
+          }
+          newRenderColumns.push(DETAIL_HEADER_OBJ);
+          newColumns.push(DETAIL_HEADER_OBJ);
+          if (!tableColumns) {
+            updateTablePreferences(user.name, searchOptions.entityNames[0], newRenderColumns)
           }
 
-          let renderHeader = tableHeader(newRenderColumns, '');
+          let renderHeader = tableHeader(tableColumns ? tableColumns['columns'] : newRenderColumns , '');
+
           setRenderColumns(renderHeader);
           setRenderTableData(mergeRows(renderHeader));
-          setTreeColumns(tableHeader(columns, ''));
+          setTreeColumns(tableHeader(newColumns, ''));
           setCheckedColumns(renderHeader);
-          setDefaultColumns(columns);
-        } else {
-          if (renderColumns.length > 0) {
-            let newRenderColumns: any[] = [];
-            if (JSON.stringify(columns) !== JSON.stringify(renderColumns)) {
-              if (columns.length > 5) {
-                // TODO Save user pref
-                newRenderColumns = columns.slice(0, 5);
-                newRenderColumns.push(columns.slice(-1)[0])
-              } else {
-                newRenderColumns = columns;
-              }
-              let renderHeader = tableHeader(newRenderColumns, '');
-              setRenderColumns(renderHeader);
-              setRenderTableData(mergeRows(renderHeader));
-              setTreeColumns(tableHeader(columns, ''));
-              setCheckedColumns(renderHeader);
-              setDefaultColumns(columns);
-            }
-          }
+          setDefaultColumns(newColumns);
         }
       }
     }
@@ -282,6 +276,7 @@ const ResultTable: React.FC<Props> = (props) => {
   const tableHeader = (columns, parent) => {
     let col = new Array();
     let set = new Set();
+
     columns.forEach((item, index) => {
       if (item.hasOwnProperty('children')) {
         col.push({
@@ -296,8 +291,8 @@ const ResultTable: React.FC<Props> = (props) => {
             title: item.title,
             dataIndex: parent ? parent + '_' + item.title.replace(/ /g, '').toLowerCase() : item.title.replace(/ /g, '').toLowerCase(),
             key: item.key,
-            visible: true,
-            width: 150,
+            visible: item.hasOwnProperty('visible') ? item.visible : true,
+            width: item.hasOwnProperty('width') ? item.width : 150,
             onHeaderCell: column => ({
               width: column.width,
               onResize: handleResize(item.title),
@@ -377,11 +372,13 @@ const ResultTable: React.FC<Props> = (props) => {
         if (title == columns[i].title)
           index = i;
       }
+
       const nextColumns = [...columns];
       nextColumns[index] = {
         ...nextColumns[index],
         width: size.width,
       };
+      updateUserPref(nextColumns);
       return nextColumns
     })
   };
@@ -395,17 +392,10 @@ const ResultTable: React.FC<Props> = (props) => {
         const treeItem = tree.splice(fromIndex - 1, 1)[0];
         header.splice(toIndex - 1, 0, colItem);
         tree.splice(toIndex - 1, 0, treeItem);
-
-        let delimitedHeader = header.map( (item, index) => {
-          let newHeader = { ...item }
-          delete newHeader['onHeaderCell']
-          delete newHeader['onCell']
-          delete newHeader['render']
-          return newHeader
-        });
+        updateUserPref(header);
         setRenderColumns(header);
         setTreeColumns(tree)
-        setDefaultColumns(delimitedHeader);
+        //setDefaultColumns(delimitedHeader);
       }
     },
     nodeSelector: "th",
@@ -474,6 +464,41 @@ const ResultTable: React.FC<Props> = (props) => {
 // TODO updateTreeColumns with headerRender
   const updateTreeColumns = (columns) => {
     setTreeColumns(columns);
+  }
+
+  const delimitHeader = (header: any[]) => {
+    return header.map( (column, index) => {
+      let newCol = { ...column }
+      delete newCol['onHeaderCell']
+      delete newCol['onCell']
+      delete newCol['render']
+      return newCol
+    });
+  }; 
+
+  const getUserPref = (entity: string) => {
+    let userPref = getUserPreferences(user.name);
+    if (userPref) {
+      let values = JSON.parse(userPref);
+      if (values && values.hasOwnProperty('resultTableColumns')) {
+        return values.resultTableColumns.find( item => item.name === entity);
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
+
+  const updateUserPref = (header: any[]) => {
+    let delimitedHeader = delimitHeader(header);
+    let entity = 'all';
+
+    if ( searchOptions.entityNames.length > 0) {
+      entity = searchOptions.entityNames[0]
+    }
+
+    updateTablePreferences(user.name, entity, delimitedHeader);
   }
 
   let icons: any = [];

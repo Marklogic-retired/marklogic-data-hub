@@ -26,7 +26,7 @@ const defaultSearchOptions = {
 
 interface ISearchContextInterface {
   searchOptions: SearchContextInterface;
-  searchFromUserPref: (username: string) => void;
+  setSearchFromUserPref: (username: string) => void;
   setQuery: (searchString: string) => void;
   setPage: (pageNumber: number, totalDocuments: number) => void;
   setPageLength: (current: number, pageSize: number) => void;
@@ -44,7 +44,7 @@ interface ISearchContextInterface {
 
 export const SearchContext = React.createContext<ISearchContextInterface>({
   searchOptions: defaultSearchOptions,
-  searchFromUserPref: () => { },
+  setSearchFromUserPref: () => { },
   setQuery: () => { },
   setPage: () => { },
   setPageLength: () => { },
@@ -57,7 +57,7 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   clearDateFacet: () => { },
   clearRangeFacet: () => { },
   resetSearchOptions: () => { },
-  setAllSearchFacets: () => { }
+  setAllSearchFacets: () => { },
 });
 
 const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
@@ -65,7 +65,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
   const [searchOptions, setSearchOptions] = useState<SearchContextInterface>(defaultSearchOptions);
   const { user } = useContext(UserContext);
 
-  const searchFromUserPref = (username: string) => {
+  const setSearchFromUserPref = (username: string) => {
     let userPreferences = getUserPreferences(username);
     if (userPreferences) {
       let values = JSON.parse(userPreferences);
@@ -254,16 +254,19 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       pageLength: searchOptions.pageSize
     });
   }
+
+
+
   useEffect(() => {
     if (user.authenticated) {
-      searchFromUserPref(user.name);
+      setSearchFromUserPref(user.name);
     }
   }, [user.authenticated]);
 
   return (
     <SearchContext.Provider value={{
       searchOptions,
-      searchFromUserPref,
+      setSearchFromUserPref,
       setQuery,
       setPage,
       setPageLength,

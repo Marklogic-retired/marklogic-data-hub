@@ -12,7 +12,7 @@ import SearchPagination from '../components/search-pagination/search-pagination'
 import SearchSummary from '../components/search-summary/search-summary';
 import SearchResults from '../components/search-results/search-results';
 import ResultTable from '../components/result-table/result-table';
-import { updateUserPreferences } from '../services/user-preferences';
+import { updateUserPreferences, createUserPreferences } from '../services/user-preferences';
 import { entityFromJSON, entityParser } from '../util/data-conversion';
 import styles from './Browse.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -31,6 +31,7 @@ const Browse: React.FC<Props> = ({ location }) => {
     searchOptions,
     setEntityClearQuery,
     setLatestJobFacet,
+    resetSearchOptions
   } = useContext(SearchContext);
   const searchBarRef = useRef<HTMLDivElement>(null);
 
@@ -62,16 +63,7 @@ const Browse: React.FC<Props> = ({ location }) => {
 
   const getSearchResults = async (allEntities: string[]) => {
     try {
-      let preferencesObject = {
-        query: {
-          searchStr: searchOptions.query,
-          entityNames: searchOptions.entityNames,
-          facets: searchOptions.searchFacets
-        },
-        pageLength: searchOptions.pageLength
-      }
-
-      updateUserPreferences(user.name, preferencesObject);
+      handleUserPreferences();
       setIsLoading(true);
       const response = await axios({
         method: 'POST',
@@ -132,6 +124,25 @@ const Browse: React.FC<Props> = ({ location }) => {
     setIsActive(false);
     setIsSnippetActive(true);
     setTableView(false)
+  };
+
+  const handleUserPreferences = () => {
+    let preferencesObject = {
+      query: {
+        searchStr: searchOptions.query,
+        entityNames: searchOptions.entityNames,
+        facets: searchOptions.searchFacets
+      },
+      pageLength: searchOptions.pageLength
+    }
+    updateUserPreferences(user.name, preferencesObject);
+
+    if ( searchOptions.entityNames.length > 0 && !entities.includes(searchOptions.entityNames[0])) {
+      // entityName is not part of entity model from model payload
+      // change user preferences to default user pref.
+      createUserPreferences(user.name);
+      resetSearchOptions();
+    }
   };
 
   useLayoutEffect(() => {
