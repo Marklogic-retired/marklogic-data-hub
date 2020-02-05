@@ -427,7 +427,8 @@ const getSettingsArtifact = async () => {
       onOk={() => onOk()}
       okText="Save"
       className={styles.SettingsModal}
-      footer={null}>
+      footer={null}
+      maskClosable={false}>
       <p className={styles.title}>Load Data Settings</p>
       <br />
       <div className={styles.newDataLoadForm}>
