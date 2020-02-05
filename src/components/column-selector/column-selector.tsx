@@ -36,7 +36,8 @@ const ColumnSelector: React.FC<Props> = (props) => {
 
   const onCheck = checkedKeys => {
     setCheckedKeys(checkedKeys);
-    props.headerRender(updateHeader(props.tree, checkedKeys));
+    // props.headerRender(updateHeader(props.tree, checkedKeys));
+    props.headerRender(reconstructHeader(props.tree, checkedKeys));
   };
 
   const generateList = data => {
@@ -72,6 +73,7 @@ const ColumnSelector: React.FC<Props> = (props) => {
                 {renderTreeNodes(item.children)}
               </TreeNode>
             );
+
           } else {
             return (
               <TreeNode key={item.key} title={title} >
@@ -138,8 +140,8 @@ const ColumnSelector: React.FC<Props> = (props) => {
         }
       }
       
-      props.headerRender(updateHeader(data, col));
-      //props.headerRender(reconstructHeader(deepCopy(data), col));
+      // props.headerRender(updateHeader(data, col));
+      props.headerRender(reconstructHeader(deepCopy(data), col));
       // TODO Doesn't work
       props.updateTreeColumns(data)
     }
