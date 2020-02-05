@@ -3,7 +3,7 @@ const test = require("/test/test-helper.xqy");
 
 function invokeService() {
   return fn.head(xdmp.invoke(
-    "/data-hub/5/data-services/artifacts/getArtifactTypesInfo.mjs",
+    "/data-hub/5/data-services/artifacts/getArtifactTypesInfo.sjs",
     {}
   ));
 }

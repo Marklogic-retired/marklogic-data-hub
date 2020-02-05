@@ -16,42 +16,43 @@
 'use strict';
 
 const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
-
-// define constants for caching expensive operations
 const dataHub = DataHubSingleton.instance();
 
-const collections = ['http://marklogic.com/data-hub/load-data-artifact'];
+const collections = ['http://marklogic.com/data-hub/flow'];
 const databases = [dataHub.config.STAGINGDATABASE, dataHub.config.FINALDATABASE];
-const permissions = [xdmp.permission(dataHub.consts.DATA_HUB_LOAD_DATA_WRITE_ROLE, 'update'), xdmp.permission(dataHub.consts.DATA_HUB_LOAD_DATA_READ_ROLE, 'read')];
-const requiredProperties = ['name', 'sourceFormat', 'targetFormat'];
+const permissions = [xdmp.permission(dataHub.consts.DATA_HUB_DEVELOPER_ROLE, 'update'), xdmp.permission(dataHub.consts.DATA_HUB_OPERATOR_ROLE, 'read')];
+const requiredProperties = ['name'];
 
-export function getNameProperty() {
+function getNameProperty() {
     return 'name';
 }
 
-export function getVersionProperty() {
+function getVersionProperty() {
     return null;
 }
 
-export function getCollections() {
+function getCollections() {
     return collections;
 }
 
-export function getStorageDatabases() {
+function getStorageDatabases() {
     return databases;
 }
 
-export function getPermissions() {
+function getPermissions() {
     return permissions;
 }
 
-export function getArtifactNode(artifactName, artifactVersion) {
-    // Currently there is no versioning for loadData artifacts
+function getFileExtension() {
+    return '.flow.json';
+}
+
+function getArtifactNode(artifactName, artifactVersion) {
     const results = cts.search(cts.andQuery([cts.collectionQuery(collections[0]), cts.jsonPropertyValueQuery('name', artifactName)]));
     return fn.head(results);
 }
 
-export function validateArtifact(artifact) {
+function validateArtifact(artifact) {
     const missingProperties = requiredProperties.filter((propName) => !artifact[propName]);
     if (missingProperties.length) {
         return new Error(`Missing the following required properties: ${JSON.stringify(missingProperties)}`);
@@ -59,8 +60,13 @@ export function validateArtifact(artifact) {
     return artifact;
 }
 
-export function getArtifactSettingNode(collectionName, artifactName, artifactVersion) {
-    // Currently there is no versioning for loadData artifacts
-    const results = cts.search(cts.andQuery([cts.collectionQuery(collectionName), cts.jsonPropertyValueQuery('artifactName', artifactName)]));
-    return fn.head(results);
-}
+module.exports = {
+  getNameProperty,
+  getVersionProperty,
+  getCollections,
+  getStorageDatabases,
+  getPermissions,
+  getFileExtension,
+  getArtifactNode,
+  validateArtifact
+};
