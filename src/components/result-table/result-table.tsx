@@ -121,7 +121,8 @@ const ResultTable: React.FC<Props> = (props) => {
           } else {
             newRenderColumns = newColumns;
           }
-          newRenderColumns.push(DETAIL_HEADER_OBJ)
+          newRenderColumns.push(DETAIL_HEADER_OBJ);
+          newColumns.push(DETAIL_HEADER_OBJ);
           if (!tableColumns) {
             updateTablePreferences(user.name, searchOptions.entityNames[0], newRenderColumns)
           }
