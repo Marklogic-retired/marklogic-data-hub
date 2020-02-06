@@ -91,11 +91,11 @@ const Browse: React.FC<Props> = ({ location }) => {
   }
 
   useEffect(() => {
-    if (location.state && location.state.entity) {
-      setEntityClearQuery(location.state.entity);
+    if (location.state && location.state['entity']) {
+      setEntityClearQuery(location.state['entity']);
     }
-    if (location.state && location.state.jobId) {
-      setLatestJobFacet(location.state.jobId, location.state.entityName);
+    if (location.state && location.state['jobId']) {
+      setLatestJobFacet(location.state['jobId'], location.state['entityName']);
     }
     if (!user.error.type) {
       getEntityModel();
