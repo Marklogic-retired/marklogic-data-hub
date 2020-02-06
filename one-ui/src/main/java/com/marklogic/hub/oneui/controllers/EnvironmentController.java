@@ -22,6 +22,7 @@ import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.oneui.exceptions.BadRequestException;
+import com.marklogic.hub.oneui.exceptions.ProjectDirectoryException;
 import com.marklogic.hub.oneui.models.HubConfigSession;
 import com.marklogic.hub.oneui.models.StatusMessage;
 import com.marklogic.hub.oneui.services.DataHubService;
@@ -42,6 +43,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
@@ -89,6 +91,7 @@ public class EnvironmentController {
     @RequestMapping(value = "/install", method = RequestMethod.POST)
     @ResponseBody
     public JsonNode install(@RequestBody ObjectNode payload) throws Exception {
+        String originalDirectory = environmentService.getProjectDirectory();
         final Exception[] dataHubConfigurationException = {null};
         HubDeployStatusListener listener = new HubDeployStatusListener() {
             int lastPercentageComplete = 0;
@@ -112,8 +115,13 @@ public class EnvironmentController {
         String directory = payload.get("directory").asText("");
         // setting the project directory will resolve any relative paths
         try {
+            Path directoryPath = Paths.get(directory);
             if (StringUtils.isEmpty(directory)) {
-                throw new BadRequestException("Missing required directory property");
+                throw new BadRequestException("Property 'directory', identifying project location, not specified");
+            } else if (!directoryPath.isAbsolute()) {
+                throw new ProjectDirectoryException("Project directory supplied must be an absolute path: " + directory);
+            } else if (!directoryPath.toFile().exists()) {
+                throw new ProjectDirectoryException("Project directory '" + directory + "' does not exist or cannot be read");
             }
             hubConfig.createProject(directory);
             // Set the AppConfig with a new AppConfig with the new project directory to ensure it doesn't try to use the current directory
@@ -125,7 +133,12 @@ public class EnvironmentController {
             listener.onError("Initializing", e);
         }
         if (dataHubConfigurationException[0] != null) {
-            throw dataHubConfigurationException[0];
+            Exception exception = dataHubConfigurationException[0];
+            Throwable rootCause = dataHubConfigurationException[0].getCause();
+            if (exception instanceof IOException || rootCause instanceof IOException) {
+                exception = new ProjectDirectoryException(exception.getMessage(), exception);
+            }
+            throw exception;
         }
         environmentService.setProjectDirectory(directory);
         return payload;
