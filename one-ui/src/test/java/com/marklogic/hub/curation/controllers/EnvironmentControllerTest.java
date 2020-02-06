@@ -10,6 +10,7 @@ import ch.qos.logback.core.filter.Filter;
 import ch.qos.logback.core.spi.FilterReply;
 import ch.qos.logback.core.status.Status;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.appdeployer.command.security.DeployPrivilegesCommand;
 import com.marklogic.appdeployer.command.security.DeployRolesCommand;
 import com.marklogic.hub.ApplicationConfig;
@@ -20,6 +21,7 @@ import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.oneui.Application;
 import com.marklogic.hub.oneui.TestHelper;
 import com.marklogic.hub.oneui.controllers.EnvironmentController;
+import com.marklogic.hub.oneui.exceptions.ProjectDirectoryException;
 import com.marklogic.hub.oneui.models.HubConfigSession;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -188,5 +190,18 @@ public class EnvironmentControllerTest {
         }
         Assertions.assertFalse(containsUnexpectedDirectory[0], "Shouldn't find reference to old directory in logs");
         Assertions.assertTrue(containsExpectedDirectory[0], "Should find reference to new directory in logs");
+    }
+
+    @Test
+    void installAttemptWithBadDirectory() {
+        final ObjectNode relativePayload = new ObjectMapper().createObjectNode().put("directory","relative-path");
+        Assertions.assertThrows(ProjectDirectoryException.class, () -> {
+            environmentController.install(relativePayload);
+            Assertions.fail("Should have thrown exception for relative path!");
+        });
+        final ObjectNode nonExistentPayload = new ObjectMapper().createObjectNode().put("directory","/non-existent");
+        Assertions.assertThrows(ProjectDirectoryException.class, () -> {
+            environmentController.install(nonExistentPayload);
+        });
     }
 }
