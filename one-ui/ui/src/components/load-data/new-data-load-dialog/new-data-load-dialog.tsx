@@ -268,6 +268,15 @@ const NewDataLoadDialog = (props) => {
 
     if (event.target.id === 'outputUriReplacement') {
       setOutUriReplacement(event.target.value)
+      let dataPayload = {
+        name: stepName,
+        description: description,
+        sourceFormat: srcFormat,
+        targetFormat: tgtFormat,
+        outputURIReplacement: event.target.value
+      }
+
+      buildURIPreview(dataPayload);
     }
     if(srcFormat && tgtFormat && (event.target.id === 'name' && event.target.value.length > 0)) {
       setIsValid(true);
@@ -512,14 +521,12 @@ const NewDataLoadDialog = (props) => {
       let replace = output_uri_replace.split(",");
       if (replace.length % 2 !== 0) {
         uri = "Error: Missing one (or more) replacement strings";
-        return;
       }
       for (var i = 0; i < replace.length - 1; i++) {
         let replacement = replace[++i].trim();
         if (!replacement.startsWith("'") ||
             !replacement.endsWith("'")) {
           uri = "Error: The replacement string must be enclosed in single quotes";
-          return;
         }
       }
       for (var i = 0; i < replace.length - 1; i += 2) {
@@ -530,7 +537,6 @@ const NewDataLoadDialog = (props) => {
         }
         catch(ex) {
           uri = ex;
-          return;
         }
       }
     }
