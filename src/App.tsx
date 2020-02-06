@@ -42,7 +42,7 @@ const App: React.FC<Props> = ({history, location}) => {
     }
     if (user.authenticated && location.state && !user.redirect && user.error.type === '') {
       if (location.state.hasOwnProperty('from')) {
-        history.push(location.state.from.pathname);
+        history.push(location.state['from']['pathname']);
       }
     }
     if (user.redirect && user.error.type !== '') {
