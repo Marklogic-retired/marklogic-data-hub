@@ -51,7 +51,7 @@ const LoginForm: React.FC = () => {
       if (error.response.status === 401) {
         message = 'The username and password combination is not recognized by MarkLogic.'
       } else if (error.response.status === 400) {
-        message = 'The host name "' + host + '" was not found.';
+        message = 'The host "' + host + '" was not found.';
       } else if (error.response.status === 403) {
         message = 'User does not have the required permissions to run Data Hub.';
       }
