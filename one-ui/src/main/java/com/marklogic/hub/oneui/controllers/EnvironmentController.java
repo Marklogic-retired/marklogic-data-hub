@@ -18,12 +18,15 @@ package com.marklogic.hub.oneui.controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
+import com.marklogic.hub.oneui.exceptions.BadRequestException;
 import com.marklogic.hub.oneui.models.HubConfigSession;
 import com.marklogic.hub.oneui.models.StatusMessage;
 import com.marklogic.hub.oneui.services.DataHubService;
 import com.marklogic.hub.oneui.services.EnvironmentService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +40,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -85,9 +88,7 @@ public class EnvironmentController {
 
     @RequestMapping(value = "/install", method = RequestMethod.POST)
     @ResponseBody
-    public JsonNode install(@RequestBody ObjectNode payload, HttpSession session) throws Exception {
-        // get original project directory value, so we can revert if failure occurs
-        String originalDirectory = environmentService.getProjectDirectory();
+    public JsonNode install(@RequestBody ObjectNode payload) throws Exception {
         final Exception[] dataHubConfigurationException = {null};
         HubDeployStatusListener listener = new HubDeployStatusListener() {
             int lastPercentageComplete = 0;
@@ -106,17 +107,18 @@ public class EnvironmentController {
                 template.convertAndSend("/topic/install-status", new StatusMessage(lastPercentageComplete, message));
                 logger.error(message, exception);
                 dataHubConfigurationException[0] = exception;
-                environmentService.setProjectDirectory(originalDirectory);
             }
         };
+        String directory = payload.get("directory").asText("");
         // setting the project directory will resolve any relative paths
         try {
-            environmentService.setProjectDirectory(payload.get("directory").asText(""));
-            String directory = environmentService.getProjectDirectory();
+            if (StringUtils.isEmpty(directory)) {
+                throw new BadRequestException("Missing required directory property");
+            }
             hubConfig.createProject(directory);
+            // Set the AppConfig with a new AppConfig with the new project directory to ensure it doesn't try to use the current directory
+            hubConfig.setAppConfig(new AppConfig(Paths.get(directory).toFile()));
             hubConfig.initHubProject();
-            // TODO do we need to allow a different environments for curation UI?
-            hubConfig.withPropertiesFromEnvironment("local");
             hubConfig.refreshProject();
             dataHubService.install(listener);
         } catch (Exception e) {
@@ -125,6 +127,7 @@ public class EnvironmentController {
         if (dataHubConfigurationException[0] != null) {
             throw dataHubConfigurationException[0];
         }
+        environmentService.setProjectDirectory(directory);
         return payload;
     }
 
