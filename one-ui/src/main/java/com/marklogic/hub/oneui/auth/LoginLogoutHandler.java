@@ -58,10 +58,6 @@ public class LoginLogoutHandler implements AuthenticationSuccessHandler, LogoutS
         resp.put("hasManagePrivileges", authenticationToken.hasManagePrivileges());
         resp.put("projectName", (String) request.getSession().getAttribute("projectName"));
         clearAuthenticationAttributes(request);
-        if (authenticationToken.stagingIsAccessible()) {
-            RolesService rolesService = RolesService.on(authenticationToken.getHubConfigSession().newStagingClient());
-            resp.putArray("roles").addAll((ArrayNode) rolesService.getRoles());
-        }
         response.setContentType("application/json");
         response.getOutputStream().write(mapper.writeValueAsBytes(resp));
     }
