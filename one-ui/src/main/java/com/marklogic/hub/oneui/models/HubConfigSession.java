@@ -32,6 +32,7 @@ import org.springframework.web.context.annotation.SessionScope;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -93,7 +94,8 @@ public class HubConfigSession implements HubConfig, InitializingBean, Disposable
         manageConfig.setPassword(password);
         hubConfigImpl.getManageClient().setManageConfig(manageConfig);
 
-        hubConfigImpl.hydrateConfigs();
+        hubConfigImpl.createProject(environmentService.getProjectDirectory());
+        hubConfigImpl.refreshProject();
         // construct clients now, so we can clear our password fields
         eagerlyConstructClients();
 
