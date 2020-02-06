@@ -114,15 +114,16 @@ const ResultTable: React.FC<Props> = (props) => {
         let newRenderColumns: any[] = [];
         let parsedEntityDocObj = parsedPayload.data[0] && parsedPayload.data[0].itemEntityProperties[0];
         let newColumns = setPrimaryKeyColumn(headerParser(parsedEntityDocObj));
-
+        newColumns.push(DETAIL_HEADER_OBJ);
+        
         if (newColumns.length !== 0) {
           if (newColumns.length > 5) {
             newRenderColumns = newColumns.slice(0, 4);
+            newRenderColumns.push(DETAIL_HEADER_OBJ);
           } else {
             newRenderColumns = newColumns;
           }
-          newRenderColumns.push(DETAIL_HEADER_OBJ);
-          newColumns.push(DETAIL_HEADER_OBJ);
+
           if (!tableColumns) {
             updateTablePreferences(user.name, searchOptions.entityNames[0], newRenderColumns)
           }
