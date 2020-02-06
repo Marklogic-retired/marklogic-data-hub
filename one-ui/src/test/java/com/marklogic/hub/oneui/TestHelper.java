@@ -56,6 +56,7 @@ public class TestHelper {
     public void setHubProjectDirectory() {
         environmentService.setProjectDirectory(tempProjectDirectory.toAbsolutePath().toString());
         if (!hubConfig.getHubProject().isInitialized()) {
+            hubConfig.createProject(environmentService.getProjectDirectory());
             hubConfig.initHubProject();
         }
     }
