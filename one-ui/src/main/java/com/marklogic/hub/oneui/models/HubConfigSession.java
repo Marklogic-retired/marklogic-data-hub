@@ -32,7 +32,6 @@ import org.springframework.web.context.annotation.SessionScope;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -1002,12 +1001,7 @@ public class HubConfigSession implements HubConfig, InitializingBean, Disposable
         if (hubConfigImpl.getAdminManager() == null) {
             hubConfigImpl.setAdminManager(new AdminManager());
         }
-        String projectDirectory = environmentService.getProjectDirectory();
-        // running createProject prior to setAppConfig to avoid NullPointerException
-        hubConfigImpl.createProject(projectDirectory);
-        // create AppConfig that has the project directory set according to environment, rather than the default working directory
-        hubConfigImpl.setAppConfig(new AppConfig(Paths.get(projectDirectory).toFile()), false);
-        hubConfigImpl.refreshProject();
+        setProjectDirectory(environmentService.getProjectDirectory());
         this.dataHub = new DataHubImpl(this);
     }
 
@@ -1024,6 +1018,12 @@ public class HubConfigSession implements HubConfig, InitializingBean, Disposable
                     });
             clientsByKindAndDatabaseName.clear();
         }
+    }
+
+    public void setProjectDirectory(String projectDirectory) {
+        hubConfigImpl.setAppConfig(null, true);
+        hubConfigImpl.createProject(projectDirectory);
+        hubConfigImpl.refreshProject();
     }
 
     //only for test purpose
