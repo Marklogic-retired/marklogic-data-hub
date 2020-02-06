@@ -16,7 +16,7 @@ services:
     depends_on:
       - explorer
   explorer:
-    image: mlregistry.marklogic.com/explorer/explorer:5.1-snapshot
+    image: mlregistry.marklogic.com/explorer/explorer:5.2-snapshot
     container_name: "explorer"
     ports:
       - "8080:8080"
