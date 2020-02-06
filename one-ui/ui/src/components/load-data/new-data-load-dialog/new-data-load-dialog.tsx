@@ -266,18 +266,6 @@ const NewDataLoadDialog = (props) => {
       setDescription(event.target.value)
     }
 
-    if (event.target.id === 'outputUriReplacement') {
-      setOutUriReplacement(event.target.value)
-      let dataPayload = {
-        name: stepName,
-        description: description,
-        sourceFormat: srcFormat,
-        targetFormat: tgtFormat,
-        outputURIReplacement: event.target.value
-      }
-
-      buildURIPreview(dataPayload);
-    }
     if(srcFormat && tgtFormat && (event.target.id === 'name' && event.target.value.length > 0)) {
       setIsValid(true);
     }
@@ -286,6 +274,21 @@ const NewDataLoadDialog = (props) => {
     }
     if(stepName && srcFormat && tgtFormat && outUriReplacement) {
       buildURIPreview(props.stepData);
+    }
+  }
+
+  const handleOutURIReplacement = (event) => {
+    if (event.target.id === 'outputUriReplacement') {
+      setOutUriReplacement(event.target.value);
+      let dataPayload = {
+        name: stepName,
+        description: description,
+        sourceFormat: srcFormat,
+        targetFormat: tgtFormat,
+        outputURIReplacement: event.target.value
+      };
+
+      buildURIPreview(dataPayload);
     }
   }
 
@@ -502,7 +505,7 @@ const NewDataLoadDialog = (props) => {
     let uri;
     let input_file_type = stepData.sourceFormat;
     let document_type = stepData.targetFormat.toLowerCase();
-    let output_uri_replace = outUriReplacement || stepData.outputURIReplacement;
+    let output_uri_replace = stepData.outputURIReplacement;
     let loadDataName = stepData.name;
     var formatMap = new Map();
 
@@ -701,7 +704,7 @@ const NewDataLoadDialog = (props) => {
             id="outputUriReplacement"
             placeholder="Enter comma-separated list of replacements"
             value={outUriReplacement}
-            onChange={handleChange}
+            onChange={handleOutURIReplacement}
             disabled={props.canReadOnly && !props.canReadWrite}
           />
         </Form.Item>
