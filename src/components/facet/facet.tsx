@@ -168,7 +168,7 @@ const Facet: React.FC<Props> = (props) => {
           onClick={() => showMore()}
           data-cy="show-more"
         >{(more) ? '<< less' : 'more >>'}</div>
-        {props.facetType === 'xs:string' && props.facetValues.length >= 25 &&
+        {props.facetType === 'xs:string' &&
         <div className={styles.searchValues}>
           <PopOverSearch
               name={props.name}
