@@ -8,24 +8,26 @@ import Footer from './components/footer/footer';
 import Login from './pages/Login';
 import Home from './pages/Home';
 import Reset from './pages/Reset';
-import './App.css';
-import { themes, themeMap } from './config/themes.config';
 import Install from './pages/Install';
 import LoadData from './pages/LoadData';
 import ProjectInfo from './pages/ProjectInfo';
+import NoMatchRedirect from './pages/no-match-redirect';
+import './App.css';
+import { themes, themeMap } from './config/themes.config';
+import axios from 'axios';
 
 interface Props extends RouteComponentProps<any> {}
 
 const App: React.FC<Props> = ({history, location}) => {
   document.title = 'MarkLogic Data Hub';
-  const { user, clearErrorMessage, clearRedirect } = useContext(AuthContext);
+  const { user, clearErrorMessage, clearRedirect, handleError } = useContext(AuthContext);
   const [asyncError, setAsyncError] = useState(false);
   const [showProjectHeader, setShowProjectHeader] = useState(false);
 
-  const PrivateRoute = ({ component: Component, ...rest }) => (
+  const PrivateRoute = ({ children, ...rest }) => (
     <Route {...rest} render={ props => (
       user.authenticated === true ? (
-        <Component {...props}/>
+        children
       ) : (
         <Redirect push={true} to={{
           pathname: '/',
@@ -75,6 +77,16 @@ const App: React.FC<Props> = ({history, location}) => {
     }
   }, [user]);
 
+  // Handle timeout (returns status 401)
+  useEffect(() => {
+    // TODO access non-specific endpoint
+    axios.get('/api/artifacts/loadData')
+      .then(res => {})
+      .catch(err => {
+          handleError(err);
+      })
+  }, [location.pathname]);
+
   const path = location['pathname'];
   const pageTheme = (themeMap[path]) ? themes[themeMap[path]] : themes['default'];
   document.body.classList.add(pageTheme['bodyBg']);
@@ -87,11 +99,20 @@ const App: React.FC<Props> = ({history, location}) => {
       { !asyncError && (
         <Switch>
           <Route path="/" exact component={Login}/>
-          <PrivateRoute path="/home" exact component={Home} />
-          <Route path="/install" exact component={Install}/>
-          <Route path="/load-data" exact component={LoadData}/>
-          <Route path="/project-info" exact component={ProjectInfo}/>
+          <PrivateRoute path="/home" exact>
+            <Home/>
+          </PrivateRoute>
+          <PrivateRoute path="/install" exact>
+            <Install/>
+          </PrivateRoute>
+          <PrivateRoute path="/load-data" exact>
+            <LoadData/>
+          </PrivateRoute>
+          <PrivateRoute path="/project-info" exact>
+            <ProjectInfo/>
+          </PrivateRoute>
           <Route path="/reset" exact component={Reset}/>
+          <Route component={NoMatchRedirect}/>
         </Switch>
       )}
       </main>
