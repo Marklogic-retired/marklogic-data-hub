@@ -222,7 +222,7 @@ describe('json scenario for table on browse documents page', () => {
     //check table rows
     browsePage.getTableRows().should('have.length', 6);
     //check table columns
-    browsePage.getTableColumns().should('have.length', 6);
+    browsePage.getTableColumns().should('have.length', 5);
     //check cells data
     for (let i = 1; i <= 6; i++) {
       for (let j = 2; j <= 5; j++) {
