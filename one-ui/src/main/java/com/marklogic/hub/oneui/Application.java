@@ -62,10 +62,10 @@ public class Application {
         Stream.of(HttpStatus.values()).forEach((httpStatus -> {
             int statusValue = httpStatus.value();
             if (statusValue >= 400) {
-                errorPages.add(new ErrorPage(HttpStatus.NOT_FOUND, "/index"));
+                errorPages.add(new ErrorPage(HttpStatus.valueOf(statusValue), "/error"));
             }
         }));
-        factory.getErrorPages().add(new ErrorPage(Throwable.class, "/index"));
+        factory.getErrorPages().add(new ErrorPage(Throwable.class, "/error"));
 		return factory;
 	}
 }
