@@ -1,11 +1,20 @@
-import React, { useContext, CSSProperties } from 'react';
+import React, { CSSProperties } from 'react';
 import styles from './ProjectInfo.module.scss';
 import {Card, Button} from 'antd';
 import { Row, Col } from 'antd';
 import axios from 'axios';
 import {getEnvironment} from '../util/environment';
 
+type EnvInterface = {
+  dataHubVersion: string,
+  marklogicVersion: string,
+  projectName: string,
+  projectDir: string
+}
+
 const ProjectInfo: React.FC = () => {
+  let env:EnvInterface = getEnvironment();
+
   const cardCss:CSSProperties = {backgroundColor: '#F6F8FF', borderColor: '#44499C'};
   const divCss:CSSProperties = { padding: '1em 6em'};
 
@@ -26,7 +35,7 @@ const ProjectInfo: React.FC = () => {
         link.click();
    });
   }
-  const env = getEnvironment();
+
   return (
     <div style={divCss}>
       <Row gutter={[30,20]}>
