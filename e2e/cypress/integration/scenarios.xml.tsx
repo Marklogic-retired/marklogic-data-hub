@@ -54,10 +54,11 @@ describe('xml scenario on browse documents page', () => {
       cy.login(user.username, user.password);
     })
     cy.wait(500);
-    // cy.visit('/browse');
-    cy.get('.ant-menu-item').contains('Browse Documents').click();
+    cy.visit('/browse');
+    // cy.get('.ant-menu-item').contains('Browse Documents').click();
     cy.wait(2000);
     browsePage.getFacetView();
+    browsePage.selectEntity('All Entities');
   });
 
   it('select "all entities" verify docs, hub/entity properties', () => {
@@ -166,10 +167,11 @@ describe('xml scenario for table on browse documents page', () => {
       cy.login(user.username, user.password);
     })
     cy.wait(500);
-    // cy.visit('/browse');
-    cy.get('.ant-menu-item').contains('Browse Documents').click();
+    cy.visit('/browse');
+    // cy.get('.ant-menu-item').contains('Browse Documents').click();
     cy.wait(1000);
     browsePage.getTableView();
+    browsePage.selectEntity('All Entities');
   });
 
   it('select PersonXML entity and verify table', () => {
@@ -184,7 +186,7 @@ describe('xml scenario for table on browse documents page', () => {
     //check table columns
     browsePage.getTableColumns().should('have.length', 4);
     //check cells data
-    for (let i = 2; i <= 6; i++) {
+    for (let i = 2; i <= 5; i++) {
       for (let j = 2; j <= 4; j++) {
         browsePage.getTableCell(i, j).should('not.be.empty')
       }
