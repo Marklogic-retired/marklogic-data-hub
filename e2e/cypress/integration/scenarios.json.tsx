@@ -158,7 +158,7 @@ describe('json scenario on browse documents page', () => {
 });
 
 
-describe.only('json scenario for table on browse documents page', () => {
+describe('json scenario for table on browse documents page', () => {
 
   var facets: string[] = ['collection', 'flow'];
 
