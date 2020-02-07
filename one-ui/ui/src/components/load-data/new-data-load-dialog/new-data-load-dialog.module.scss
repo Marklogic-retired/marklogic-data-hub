@@ -17,8 +17,6 @@
 }
 .questionCircle {
     font-size: 12px;
-    vertical-align: top;
-    margin-top: 6px;
     color: #ACB0CF;
 }
 
@@ -63,4 +61,26 @@ span.readOnlyLabel {
 
 .ConfirmationMessage {
     font-size: 16px
+}
+
+.fileUploadErrorContainer{
+    margin-top: 10px;
+    margin-bottom: 0px;
+    color: #DB4f59;
+    line-height: 4px;
+    padding-left: 4px;
+    .fileUploadError{
+        margin: 0;
+        color: #DB4f59;
+    }
+}
+
+.input{
+    width: 95%;
+}
+
+.lineBreak {
+    line-height: 1px;
+     width: 0px;
+     margin-bottom: -20px;
 }
