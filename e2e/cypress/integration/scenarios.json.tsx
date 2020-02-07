@@ -172,7 +172,7 @@ describe('json scenario for table on browse documents page', () => {
     cy.wait(500);
     // cy.visit('/browse');
     cy.get('.ant-menu-item').contains('Browse Documents').click();
-    cy.wait(1000);
+    cy.wait(2000);
     browsePage.getTableView();
   });
 
@@ -222,7 +222,7 @@ describe('json scenario for table on browse documents page', () => {
     //check table rows
     browsePage.getTableRows().should('have.length', 6);
     //check table columns
-    browsePage.getTableColumns().should('have.length', 6);
+    browsePage.getTableColumns().should('have.length', 5);
     //check cells data
     for (let i = 1; i <= 6; i++) {
       for (let j = 2; j <= 5; j++) {

@@ -56,7 +56,7 @@ describe('xml scenario on browse documents page', () => {
     cy.wait(500);
     // cy.visit('/browse');
     cy.get('.ant-menu-item').contains('Browse Documents').click();
-    cy.wait(1000);
+    cy.wait(2000);
     browsePage.getFacetView();
   });
 
@@ -182,7 +182,7 @@ describe('xml scenario for table on browse documents page', () => {
     //check table rows
     browsePage.getTableRows().should('have.length', 6);
     //check table columns
-    browsePage.getTableColumns().should('have.length', 5);
+    browsePage.getTableColumns().should('have.length', 4);
     //check cells data
     for (let i = 2; i <= 6; i++) {
       for (let j = 2; j <= 4; j++) {
