@@ -158,7 +158,7 @@ describe('json scenario on browse documents page', () => {
 });
 
 
-describe('json scenario for table on browse documents page', () => {
+describe.only('json scenario for table on browse documents page', () => {
 
   var facets: string[] = ['collection', 'flow'];
 
@@ -172,7 +172,7 @@ describe('json scenario for table on browse documents page', () => {
     cy.wait(500);
     // cy.visit('/browse');
     cy.get('.ant-menu-item').contains('Browse Documents').click();
-    cy.wait(1000);
+    cy.wait(2000);
     browsePage.getTableView();
   });
 

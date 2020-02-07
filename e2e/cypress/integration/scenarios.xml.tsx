@@ -56,7 +56,7 @@ describe('xml scenario on browse documents page', () => {
     cy.wait(500);
     // cy.visit('/browse');
     cy.get('.ant-menu-item').contains('Browse Documents').click();
-    cy.wait(1000);
+    cy.wait(2000);
     browsePage.getFacetView();
   });
 
