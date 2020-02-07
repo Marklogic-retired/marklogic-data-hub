@@ -42,8 +42,8 @@ function post(context, params, input) {
     let sourceDatabase = combinedOptions.sourceDatabase || datahub.flow.globalContext.sourceDatabase;
     let query = null;
     let uris = null;
-    if (params.uri || options.uris) {
-      uris = datahub.hubUtils.normalizeToArray(params.uri || options.uris);
+    if (options.uris) {
+      uris = datahub.hubUtils.normalizeToArray(options.uris);
       query = cts.documentQuery(uris);
     } else {
       let sourceQuery = combinedOptions.sourceQuery || flow.sourceQuery;
@@ -52,8 +52,6 @@ function post(context, params, input) {
     let content;
     if (stepDetails.name === 'default-merging' && stepDetails.type === 'merging' && uris) {
       content = uris.map((uri) => { return { uri }; });
-    } else if (!query && input && fn.count(input) === uris.length) {
-      content = datahub.hubUtils.normalizeToArray(input).map((inputDoc, i) => { return { uri: uris[i],  value: inputDoc }; });
     } else {
       content = datahub.hubUtils.queryToContentDescriptorArray(query, combinedOptions, sourceDatabase);
     }
