@@ -26,6 +26,9 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
 
+import java.util.Set;
+import java.util.stream.Stream;
+
 @ComponentScan(basePackages = "com.marklogic.hub", excludeFilters = {@ComponentScan.Filter(
 		type = FilterType.REGEX,
 		pattern = "com\\.marklogic\\.hub\\.impl\\.HubConfigImpl")
@@ -54,7 +57,15 @@ public class Application {
 	@Bean
 	public ConfigurableServletWebServerFactory webServerFactory() {
 		TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory();
-		factory.getErrorPages().add(new ErrorPage(HttpStatus.NOT_FOUND, "/"));
+		// All errors should go to the index page
+        Set<ErrorPage> errorPages = factory.getErrorPages();
+        Stream.of(HttpStatus.values()).forEach((httpStatus -> {
+            int statusValue = httpStatus.value();
+            if (statusValue >= 400) {
+                errorPages.add(new ErrorPage(HttpStatus.NOT_FOUND, "/index"));
+            }
+        }));
+        factory.getErrorPages().add(new ErrorPage(Throwable.class, "/index"));
 		return factory;
 	}
 }
