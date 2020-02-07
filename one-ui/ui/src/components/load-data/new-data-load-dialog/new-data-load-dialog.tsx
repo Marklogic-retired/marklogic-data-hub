@@ -1,5 +1,5 @@
 import { Modal, Form, Input, Button, Tooltip, Icon, Progress, Upload, Select } from "antd";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, CSSProperties } from "react";
 import styles from './new-data-load-dialog.module.scss';
 import { srcOptions, tgtOptions, fieldSeparatorOptions } from '../../../config/formats.config';
 import {NewLoadTooltips} from '../../../config/tooltips.config';
@@ -30,6 +30,7 @@ const NewDataLoadDialog = (props) => {
   const [toDelete, setToDelete] = useState(false);
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [tobeDisabled, setTobeDisabled] = useState(false);
+  const [displayUploadError, setDisplayUploadError] = useState(false);
 
   useEffect(() => {
     if (props.stepData && JSON.stringify(props.stepData) != JSON.stringify({}) && props.title === 'Edit Data Load') {
@@ -80,6 +81,7 @@ const NewDataLoadDialog = (props) => {
       setPreviewURI('');
       setInputFilePath('');
       setTobeDisabled(false);
+      setDisplayUploadError(false);
     })
 
   }, [props.stepData, props.title, props.newLoad]);
@@ -448,11 +450,12 @@ const NewDataLoadDialog = (props) => {
       let resp = await Axios.post(url, formData, {
         onUploadProgress: e => {
           onProgress({ percent: (e.loaded / e.total) * 100 });
-          let percent=(e.loaded / e.total) * 100
+          let percent=(e.loaded / e.total) * 100;
+          percent = Math.round( percent * 100 + Number.EPSILON ) / 100;
           setUploadPercent(percent);
         },
         headers: {
-          'Content-Type': 'multipart/form-data; boundary=${fd._boundary}'
+          'Content-Type': 'multipart/form-data; boundary=${formData._boundary}'
         },
       })
       if (resp.status == 200){
@@ -468,7 +471,10 @@ const NewDataLoadDialog = (props) => {
       
     }
     catch(err) {
-        console.log('Error while uploading the files', err)
+        console.log('Error while uploading the files', err.response.data.message)
+        if (err.response.data.message.startsWith('Maximum upload size exceeded')){
+          setDisplayUploadError(true);
+        }
         /*......*/
         onError(err);
       }
@@ -499,7 +505,7 @@ const NewDataLoadDialog = (props) => {
       sm: { span: 7 },
     },
     wrapperCol: {
-      xs: { span: 24 },
+      xs: { span: 28 },
       sm: { span: 15 },
     },
   };
@@ -507,6 +513,10 @@ const NewDataLoadDialog = (props) => {
   const soptions = Object.keys(srcOptions).map(d => <Select.Option key={srcOptions[d]}>{d}</Select.Option>);
   const fsoptions = Object.keys(fieldSeparatorOptions).map(d => <Select.Option key={fieldSeparatorOptions[d]}>{d}</Select.Option>);
   const toptions = Object.keys(tgtOptions).map(d => <Select.Option key={tgtOptions[d]}>{d}</Select.Option>);
+
+  const uploadButton: CSSProperties = displayUploadError ? {
+    border: '1px solid #DB4f59'
+  } : {}
 
   const buildURIPreview = (stepData) => {
     let uri;
@@ -576,11 +586,16 @@ const NewDataLoadDialog = (props) => {
     }
     return uuid;
   }
-  
+
+  const resetUploadError = () => {
+    if(displayUploadError) {
+      setDisplayUploadError(false);
+    }
+  }
 
   return (<Modal visible={props.newLoad}
     title={null}
-    width="700px"
+    width="55em"
     onCancel={() => onCancel()}
     onOk={() => onOk()}
     okText="Save"
@@ -589,14 +604,12 @@ const NewDataLoadDialog = (props) => {
     maskClosable={false}>
 
     <p className={styles.title}>{props.title}</p>
-    <br />
+    <br/>
     <div className={styles.newDataLoadForm}>
       <Form {...formItemLayout} onSubmit={handleSubmit} colon={false}>
         <Form.Item label={<span>
           Name:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
-              <Tooltip title={NewLoadTooltips.name}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
+              
           &nbsp;
             </span>} labelAlign="left"
           validateStatus={(stepName || !isStepNameTouched) ? '' : 'error'}
@@ -608,14 +621,13 @@ const NewDataLoadDialog = (props) => {
             value={stepName}
             onChange={handleChange}
             disabled={tobeDisabled}
-          />
+           className={styles.input}
+          />&nbsp;&nbsp;<Tooltip title={NewLoadTooltips.name}>
+            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+          </Tooltip>
         </Form.Item>
         <Form.Item label={<span>
           Description:&nbsp;
-              <Tooltip title={NewLoadTooltips.description}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
-          &nbsp;
             </span>} labelAlign="left">
           <Input
             id="description"
@@ -623,14 +635,13 @@ const NewDataLoadDialog = (props) => {
             value={description}
             onChange={handleChange}
             disabled={props.canReadOnly && !props.canReadWrite}
-          />
+            className={styles.input}
+          />&nbsp;&nbsp;<Tooltip title={NewLoadTooltips.description}>
+          <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+        </Tooltip>
         </Form.Item>
         <Form.Item label={<span>
           Files:&nbsp;
-              <Tooltip title={NewLoadTooltips.files}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
-          &nbsp;
             </span>} labelAlign="left">
           <span className={styles.upload}><Upload
           {...uploadProps}
@@ -639,17 +650,17 @@ const NewDataLoadDialog = (props) => {
           customRequest={customRequest}
           //onChange={handleUpload}
           >
-            <Button disabled={!props.canReadWrite}>Upload</Button>
-          </Upload>&nbsp;&nbsp;
-                {props.canReadWrite ? (uploadPercent > 0 && uploadPercent < 100 ? <Progress type="circle" percent={uploadPercent} width={50} /> : '') : ''}
-                {props.canReadWrite ? (uploadPercent === 100 ? <span>{fileList.length} files uploaded</span> : '') : ''}</span>
+            <Button disabled={!props.canReadWrite} onClick={resetUploadError} style={uploadButton}>Upload</Button>
+          </Upload>&nbsp;&nbsp;<Tooltip title={NewLoadTooltips.files}>
+          <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+        </Tooltip>&nbsp;&nbsp;
+                {props.canReadWrite && !displayUploadError ? (uploadPercent > 0 && uploadPercent < 100 ? <Progress type="circle" percent={uploadPercent} width={50} /> : '') : ''}
+                {props.canReadWrite && !displayUploadError ? (uploadPercent === 100 ? <span>{fileList.length} files uploaded</span> : '') : ''}
+                </span>
+                {displayUploadError ? <div className={styles.fileUploadErrorContainer}> The total size of the files must be 100MB or less. </div> : ''}
         </Form.Item>
         <Form.Item label={<span>
           Source Format:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
-              <Tooltip title={NewLoadTooltips.sourceFormat}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
-          &nbsp;
             </span>} labelAlign="left">
           <Select
             id="sourceFormat"
@@ -659,16 +670,16 @@ const NewDataLoadDialog = (props) => {
             value={srcFormat}
             onChange={handleSrcFormat}
             disabled={props.canReadOnly && !props.canReadWrite}
+            style={{width: '95%'}}
           >
             {soptions}
           </Select>
+          &nbsp;&nbsp;<Tooltip title={NewLoadTooltips.sourceFormat}>
+            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+          </Tooltip>
         </Form.Item>
          {srcFormat === 'Delimited Text' ? <Form.Item label={<span>
           Field Separator:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
-              <Tooltip title={NewLoadTooltips.fieldSeparator}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
-          &nbsp;
             </span>} labelAlign="left">
           <span><Select
             id="fieldSeparator"
@@ -682,37 +693,37 @@ const NewDataLoadDialog = (props) => {
           >
             {fsoptions}
           </Select></span>
-          &nbsp;&nbsp;
-          <span>{fieldSeparator === 'Other' ? <Input
+          &nbsp;&nbsp; 
+          <span>{fieldSeparator === 'Other' ? <span><Input
             id="otherSeparator"
             value={otherSeparator}
             onChange={handleOtherSeparator}
             style={{width: 75}}
             disabled={props.canReadOnly && !props.canReadWrite}
-          /> : ''}</span>
+          />&nbsp;&nbsp;<Tooltip title={NewLoadTooltips.fieldSeparator}>
+          <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+        </Tooltip></span> : <span>&nbsp;&nbsp;<Tooltip title={NewLoadTooltips.fieldSeparator}>
+          <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+        </Tooltip></span>}</span>
         </Form.Item> : ''}
         <Form.Item label={<span>
           Target Format:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
-              <Tooltip title={NewLoadTooltips.targetFormat}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
-          &nbsp;
             </span>} labelAlign="left">
           <Select
             id="targetFormat"
             placeholder="Enter target format"
             value={tgtFormat}
             onChange={handleTgtFormat}
-            disabled={props.canReadOnly && !props.canReadWrite}>
+            disabled={props.canReadOnly && !props.canReadWrite}
+            style={{width: '95%'}}>
             {toptions}
-          </Select>
+          </Select>&nbsp;&nbsp;
+              <Tooltip title={NewLoadTooltips.targetFormat}>
+            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+          </Tooltip>
         </Form.Item>
         <Form.Item label={<span>
           Output URI Replacement:&nbsp;
-              <Tooltip title={NewLoadTooltips.outputURIReplacement}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
-          &nbsp;
             </span>} labelAlign="left">
           <Input
             id="outputUriReplacement"
@@ -720,18 +731,22 @@ const NewDataLoadDialog = (props) => {
             value={outUriReplacement}
             onChange={handleOutURIReplacement}
             disabled={props.canReadOnly && !props.canReadWrite}
-          />
+            className={styles.input}
+          />&nbsp;&nbsp;
+          <Tooltip title={NewLoadTooltips.outputURIReplacement}>
+        <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+      </Tooltip>
         </Form.Item>
         <Form.Item label={<span>
           Target URI Preview:&nbsp;
-              <Tooltip title={NewLoadTooltips.targetURIPreview}>
+              
+          <span className={styles.readOnlyLabel}>(Read-only)</span>
+          <br className={styles.lineBreak} />
+        </span>} labelAlign="left">
+          <span>{previewURI}</span>&nbsp;&nbsp;
+          <Tooltip title={NewLoadTooltips.targetURIPreview}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </Tooltip>
-          <span className={styles.readOnlyLabel}>(Read-only)</span>
-          <br style={{ lineHeight: '1px', width: '0px', marginBottom: '-20px' }} />
-        </span>} labelAlign="left">
-          <p>{previewURI}</p>
-
         </Form.Item>
         <Form.Item className={styles.submitButtonsForm}>
           <div className={styles.submitButtons}>
