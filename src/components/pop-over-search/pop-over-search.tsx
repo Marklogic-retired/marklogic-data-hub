@@ -41,6 +41,9 @@ const PopOverSearch: React.FC<Props> = (props) => {
         console.log(error)
       }
     }
+    else{
+      setOptions([]);
+    }
   }
 
   const onSelectCheckboxes = (checkedValues) => {
