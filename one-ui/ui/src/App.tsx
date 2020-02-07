@@ -54,8 +54,10 @@ const App: React.FC<Props> = ({history, location}) => {
       if (user.redirect || location.pathname === '/') {
         if (localStorage.getItem('dhIsInstalled') === 'false' && localStorage.getItem('dhUserHasManagePrivileges') === 'true') {
           history.push('/install');
+        } else if (location.state && location.state.hasOwnProperty('from')) {
+            history.push(location.state.from.pathname);
         } else {
-          history.push('/home');
+            history.push('/home');
         }
       }
     }
