@@ -3,6 +3,7 @@ import styles from './LoadData.module.scss';
 import LoadDataList from '../components/load-data/load-data-list';
 import SwitchView from '../components/load-data/switch-view';
 import LoadDataCard from '../components/load-data/load-data-card';
+import { AuthContext } from '../util/auth-context';
 import axios from 'axios'
 import { RolesContext } from "../util/roles";
 
@@ -10,6 +11,7 @@ const LoadData: React.FC = () => {
   let [viewType, setViewType] = useState('table');
   const [isLoading, setIsLoading] = useState(false);
   const [loadDataArtifacts, setLoadDataArtifacts] = useState<any[]>([]);
+  const { handleError } = useContext(AuthContext);
 
   //For role based privileges
   const roleService = useContext(RolesContext);
@@ -42,6 +44,7 @@ const LoadData: React.FC = () => {
       let message = error.response.data.message;
       console.log('Error While creating the Load Data artifact!', message)
       setIsLoading(false);
+      handleError(error);
     }
 
   }
@@ -58,6 +61,7 @@ const LoadData: React.FC = () => {
     } catch (error) {
         let message = error.response.data.message;
         console.log('Error while fetching load data artifacts', message);
+        handleError(error);
     }
   }
 
@@ -75,6 +79,7 @@ const LoadData: React.FC = () => {
         let message = error.response.data.message;
         console.log('Error while deleting load data artifact.', message);
         setIsLoading(false);
+        handleError(error);
     }
   }
 
