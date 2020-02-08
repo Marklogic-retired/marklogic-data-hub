@@ -1,4 +1,4 @@
-import Background from '../components/assets/Color_Large_Banner.jpg';
+import Background from '../assets/Color_Large_Banner.jpg';
 
 // Page themes
 let themes = {
