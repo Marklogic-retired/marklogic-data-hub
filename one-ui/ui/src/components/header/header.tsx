@@ -1,7 +1,8 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
 import axios from 'axios';
 import { Layout, Icon, Avatar, Menu, Tooltip, Dropdown } from 'antd';
+import ProjectName from './project-name';
 import { AuthContext } from '../../util/auth-context';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faRoute } from '@fortawesome/free-solid-svg-icons'
@@ -28,22 +29,6 @@ const Header:React.FC<Props> = ({ location }) => {
     }
   };
 
-  const handleReset = async () => {
-    try {
-      console.log('resetting env and logging out');
-      let response = await axios.post(`/api/environment/reset`, {});
-      if (response.status === 200 ) {
-        userNotAuthenticated();
-      }
-    } catch (error) {
-      handleError(error);
-    }
-  };
-
-  const handleOpenChange = (keys) => {
-    console.log('handleOpenChange', keys);
-  };
-
   let userMenu = <div className={styles.userMenu}>
     <div className={styles.username}>{localStorage.getItem('dataHubUser')}</div>
     <div className={styles.logout}>
@@ -62,7 +47,6 @@ const Header:React.FC<Props> = ({ location }) => {
         className={styles.globalIcons}
         mode="horizontal"
         theme="dark"
-        onOpenChange={handleOpenChange}
       >
         <Menu.Item>
           <Tooltip title="Tour"><i className="tour"><FontAwesomeIcon icon={faRoute} /></i></Tooltip>
@@ -100,19 +84,28 @@ const Header:React.FC<Props> = ({ location }) => {
     </div>
   }
 
-  return (
-    <Layout.Header className={styles.container}>
-      <div className={styles.logoContainer}>
-        <Link to="/home">
-          <Avatar size={48} className={styles.logo} src={logo} />
-        </Link>
-      </div>
-      <div id="title" className={styles.title}>
-        <Link to="/home">MarkLogic Data Hub</Link>
-      </div>
-      {globalIcons}
-    </Layout.Header>
+  const showProjectName = (
+    user.authenticated && 
+    localStorage.getItem('dhIsInstalled')==='true' && 
+    localStorage.getItem('projectName') != ''
+  );
+  const projectName = localStorage.getItem('projectName');
 
+  return (
+    <>
+      <Layout.Header className={styles.container}>
+        <div className={styles.logoContainer}>
+          <Link to="/home">
+            <Avatar size={48} className={styles.logo} src={logo} />
+          </Link>
+        </div>
+        <div id="title" className={styles.title}>
+          <Link to="/home">MarkLogic Data Hub</Link>
+        </div>
+        {globalIcons}
+      </Layout.Header>
+      {showProjectName &&(<ProjectName name={projectName}/>)}
+    </>
   )
 }
 
