@@ -6,9 +6,8 @@ import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
 import sourceFormatOptions from '../../config/formats.config';
 import NewDataLoadDialog from './new-data-load-dialog/new-data-load-dialog';
-import { convertDateFromISO } from '../../config/conversionFunctions.config';
+import { convertDateFromISO } from '../../util/conversionFunctions';
 import LoadDataSettingsDialog from './load-data-settings/load-data-settings-dialog';
-
 
 interface Props {
     data: any;
