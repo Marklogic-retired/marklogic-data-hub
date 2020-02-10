@@ -261,6 +261,14 @@ const NewDataLoadDialog = (props) => {
       else {
         setStepNameTouched(true);
         setStepName(event.target.value);
+        let dataPayload = {
+          name: event.target.value,
+          description: description,
+          sourceFormat: srcFormat,
+          targetFormat: tgtFormat,
+          outputURIReplacement: outUriReplacement
+        };
+        buildURIPreview(dataPayload);
       }
     }
 
@@ -273,9 +281,6 @@ const NewDataLoadDialog = (props) => {
     }
     if(event.target.id === 'name' && event.target.value.length == 0){
       setIsValid(false);
-    }
-    if(stepName && srcFormat && tgtFormat && outUriReplacement) {
-      buildURIPreview(props.stepData);
     }
   }
 
@@ -526,12 +531,16 @@ const NewDataLoadDialog = (props) => {
       let replace = output_uri_replace.split(",");
       if (replace.length % 2 !== 0) {
         uri = "Error: Missing one (or more) replacement strings";
+        setPreviewURI(uri);
+        return;
       }
       for (var i = 0; i < replace.length - 1; i++) {
         let replacement = replace[++i].trim();
         if (!replacement.startsWith("'") ||
-            !replacement.endsWith("'")) {
+            !replacement.endsWith("'") || replacement.split("'").length % 2 === 0) {
           uri = "Error: The replacement string must be enclosed in single quotes";
+          setPreviewURI(uri);
+          return;
         }
       }
       for (var i = 0; i < replace.length - 1; i += 2) {
@@ -542,6 +551,8 @@ const NewDataLoadDialog = (props) => {
         }
         catch(ex) {
           uri = ex;
+          setPreviewURI(uri);
+          return;
         }
       }
     }
