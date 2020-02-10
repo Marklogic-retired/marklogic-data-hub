@@ -34,7 +34,7 @@ const TableView: React.FC<Props> = (props) => {
     return parsedData;
   }
 
-  if (props.document.envelope || props.document.content.envelope || props.document.content['es:envelope'] || props.document['es:envelope']) {
+  if (props.document) {
     if (props.contentType === 'json') {
       if(props.document.envelope){
         Object.keys(props.document.envelope.instance).forEach(instance => {

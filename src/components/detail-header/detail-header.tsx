@@ -14,12 +14,14 @@ const DetailHeader: React.FC<Props> = (props) => {
   const { Text } = Typography;
   const fileType = props.contentType;
   let envelope: any = {};
+  let esEnvelope: any = {};
   let title: string = '';
   let primaryKey: string = '';
   let id: string = '';
   let timestamp: string = '';
   let sources: string = '';
   let document: any = {};
+  let esDocument: any = {};
 
   if (fileType === 'json') {
     if (props.document.envelope) {
@@ -39,6 +41,31 @@ const DetailHeader: React.FC<Props> = (props) => {
               if (props.primaryKey === props.document.envelope.instance[instance][key]) {
                 primaryKey = key;
                 id = props.document.envelope.instance[instance][key]
+              }
+            });
+          }
+        });
+      } else {
+        id = props.uri;
+      }
+    }
+   else{
+      esEnvelope = props.document['es:envelope'];
+      esDocument = Object.keys(esEnvelope['es:instance'])[0];
+      if (esEnvelope['es:instance'].hasOwnProperty('es:info')) {
+        title = esEnvelope['es:instance']['es:info'].hasOwnProperty('es:title') && esEnvelope['es:instance']['es:info']['es:title'];
+      }
+      if (esEnvelope.hasOwnProperty('es:headers')) {
+        timestamp = esEnvelope['es:headers'].hasOwnProperty('createdOn') && esEnvelope['es:headers'].createdOn;
+        sources = esEnvelope['es:headers'].hasOwnProperty('sources') && esEnvelope['es:headers'].sources[0].name;
+      }
+      if (props.primaryKey) {
+        Object.keys(esEnvelope['es:instance']).forEach(instance => {
+          if (instance !== 'info') {
+            Object.keys(esEnvelope['es:instance'][instance]).forEach(function (key) {
+              if (props.primaryKey === esEnvelope['es:instance'][instance][key]) {
+                primaryKey = key;
+                id = esEnvelope['es:instance'][instance][key]
               }
             });
           }
@@ -72,6 +99,31 @@ const DetailHeader: React.FC<Props> = (props) => {
       } else {
         id = props.uri;
       }
+    }
+    else{
+        esEnvelope = props.document.content['es:envelope'];
+        if (esEnvelope.hasOwnProperty('es:headers')) {
+          timestamp = esEnvelope['es:headers'].hasOwnProperty('createdOn') && esEnvelope['es:headers'].createdOn[0];
+          sources = esEnvelope['es:headers'].hasOwnProperty('sources') && esEnvelope['es:headers'].sources[0].name;
+        }
+        esDocument = Object.keys(esEnvelope['es:instance'])[1];
+        if (esEnvelope['es:instance'].hasOwnProperty('es:info')) {
+          title = esEnvelope['es:instance']['es:info'].hasOwnProperty('es:title') && esEnvelope['es:instance']['es:info']['es:title'];
+        }
+        if (props.primaryKey) {
+          Object.keys(esEnvelope['es:instance']).forEach(instance => {
+            if (instance !== 'info') {
+              Object.keys(esEnvelope['es:instance'][instance]).forEach(function (key) {
+                if (props.primaryKey == esEnvelope['es:instance'][instance][key]) {
+                  primaryKey = key;
+                  id = esEnvelope['es:instance'][instance][key];
+                }
+              });
+            }
+          });
+        } else {
+          id = props.uri;
+        }
     }
   }
 
