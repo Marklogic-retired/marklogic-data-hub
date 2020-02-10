@@ -8,13 +8,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faRoute } from '@fortawesome/free-solid-svg-icons'
 import logo from './logo.png';
 import styles from './header.module.scss';
+import Application from '../../config/application.config';
 import { MlButton } from 'marklogic-ui-library';
 
 const { SubMenu } = Menu;
 
 interface Props extends RouteComponentProps<any> {}
 
-const Header:React.FC<Props> = ({ location }) => {
+const Header:React.FC<Props> = ({ history, location }) => {
   const { user, userNotAuthenticated, handleError } = useContext(AuthContext);
 
   const handleLogout = async () => {
@@ -91,16 +92,23 @@ const Header:React.FC<Props> = ({ location }) => {
   );
   const projectName = localStorage.getItem('projectName');
 
+  const handleHomeClick = () => {
+    if (localStorage.getItem('dhIsInstalled') === 'false' && 
+    localStorage.getItem('dhUserHasManagePrivileges') === 'true') {
+      history.push('/install');
+    } else {
+      history.push('/home');
+    }
+  };
+
   return (
     <>
       <Layout.Header className={styles.container}>
-        <div className={styles.logoContainer}>
-          <Link to="/home">
-            <Avatar size={48} className={styles.logo} src={logo} />
-          </Link>
+        <div className={styles.logoContainer} onClick={handleHomeClick}>
+          <Avatar size={48} className={styles.logo} src={logo} />
         </div>
-        <div id="title" className={styles.title}>
-          <Link to="/home">MarkLogic Data Hub</Link>
+        <div id="title" className={styles.title} onClick={handleHomeClick}>
+          {Application.title}
         </div>
         {globalIcons}
       </Layout.Header>
