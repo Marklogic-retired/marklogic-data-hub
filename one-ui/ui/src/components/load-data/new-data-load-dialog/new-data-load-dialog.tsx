@@ -64,6 +64,7 @@ const NewDataLoadDialog = (props) => {
       setUploadPercent(0);
       setFileList([]);
       setPreviewURI('');
+      setIsValid(false);
     }
 
     return (() => {
@@ -271,6 +272,12 @@ const NewDataLoadDialog = (props) => {
           outputURIReplacement: outUriReplacement
         };
         buildURIPreview(dataPayload);
+
+        if (event.target.value.length == 0) {
+          setIsValid(false);
+        } else if (srcFormat && tgtFormat) {
+          setIsValid(true);
+        }
       }
     }
 
@@ -278,12 +285,6 @@ const NewDataLoadDialog = (props) => {
       setDescription(event.target.value)
     }
 
-    if(srcFormat && tgtFormat && (event.target.id === 'name' && event.target.value.length > 0)) {
-      setIsValid(true);
-    }
-    if(event.target.id === 'name' && event.target.value.length == 0){
-      setIsValid(false);
-    }
   }
 
   const handleOutURIReplacement = (event) => {
@@ -590,6 +591,8 @@ const NewDataLoadDialog = (props) => {
   const resetUploadError = () => {
     if(displayUploadError) {
       setDisplayUploadError(false);
+      setUploadPercent(0);
+      setFileList([]);
     }
   }
 
