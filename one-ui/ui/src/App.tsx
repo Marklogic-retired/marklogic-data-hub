@@ -67,9 +67,10 @@ const App: React.FC<Props> = ({history, location}) => {
   }, [user]);
 
   useEffect(() => {
-    // Check for timeout on new route (returns 401 error)
+    // On route change...
     axios.get('/api/environment/project')
       .then(res => {})
+      // Timeouts throw 401s and are caught here
       .catch(err => {
           handleError(err);
       })
