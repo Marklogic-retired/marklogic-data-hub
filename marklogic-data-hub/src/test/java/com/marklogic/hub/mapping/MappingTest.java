@@ -1,9 +1,14 @@
 package com.marklogic.hub.mapping;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.bootstrap.Installer;
+import com.marklogic.client.dataservices.OutputEndpoint;
+import com.marklogic.client.impl.NodeConverter;
 import com.marklogic.client.io.BytesHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
@@ -24,8 +29,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ApplicationConfig.class)
@@ -61,15 +65,51 @@ public class MappingTest extends HubTestBase {
     @Test
     public void testMappingStep() throws Exception {
         installProject();
-
         installHubArtifacts(getDataHubAdminConfig(), true);
         installUserModules(getDataHubAdminConfig(), true);
 
         RunFlowResponse flowResponse = runFlow("CustomerXML", "1", "2");
         RunStepResponse mappingJob = flowResponse.getStepResponses().get("2");
         assertTrue(mappingJob.isSuccess(), "Mapping job failed: "+mappingJob.stepOutput);
-        assertTrue(getFinalDocCount("CustomerXMLMapping") == 1,"There should be one doc in CustomerXMLMapping collection");
-        assertTrue(getDocCountByQuery(HubConfig.DEFAULT_FINAL_NAME, "cts:and-query((cts:json-property-value-query('id', 'ALFKI', 'exact'), cts:collection-query('CustomerXMLMapping')))") == 1, "Attribute properly mapped");
+        verifyMappingResultsAreCorrect();
+    }
+
+    private void verifyMappingResultsAreCorrect() {
+        assertEquals(1, getFinalDocCount("CustomerXMLMapping"));
+        assertEquals(1, getDocCountByQuery(HubConfig.DEFAULT_FINAL_NAME, "cts:and-query((cts:json-property-value-query('id', 'ALFKI', 'exact'), cts:collection-query('CustomerXMLMapping')))"),
+            "Attribute properly mapped");
+    }
+
+    /**
+     * This test verifies that the Bulk API can be used against the runSteps endpoint. Eventually, this code will move
+     * into the application to be reused.
+     *
+     * @throws Exception
+     */
+    @Test
+    void runMappingStepViaDataServicesEndpoint() throws Exception {
+        installProject();
+        installHubArtifacts(getDataHubAdminConfig(), true);
+        installUserModules(getDataHubAdminConfig(), true);
+
+        runFlow("CustomerXML", "1");
+
+        OutputEndpoint.BulkOutputCaller bulkCaller = OutputEndpoint.on(
+            adminHubConfig.newStagingClient(null),
+            adminHubConfig.newModulesDbClient().newJSONDocumentManager().read("/data-hub/5/data-services/stepRunner/runSteps.api", new JacksonHandle())
+        ).bulkCaller();
+
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode workUnit = mapper.createObjectNode();
+        workUnit.put("flowName", "CustomerXML");
+        workUnit.putArray("steps").add("2");
+
+        bulkCaller.setWorkUnit(new JacksonHandle(workUnit));
+        bulkCaller.setEndpointState(new JacksonHandle(mapper.createObjectNode()));
+        bulkCaller.setOutputListener(response -> logger.info(NodeConverter.InputStreamToString(response)));
+        bulkCaller.awaitCompletion();
+
+        verifyMappingResultsAreCorrect();
     }
 
     @Test

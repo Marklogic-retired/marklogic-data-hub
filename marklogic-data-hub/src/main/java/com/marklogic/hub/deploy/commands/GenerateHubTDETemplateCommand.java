@@ -73,8 +73,8 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
             //filterEntities(entityNameFileMap);
 
             if (!entityNameFileMap.isEmpty()) {
-                logger.warn("About to generate a template for the following entities: {} into directory {} ",
-                    this.entityNamesList.isEmpty() ? entityNameFileMap.keySet() : this.entityNamesList, hubConfig.getAppConfig().getSchemasPath());
+                logger.warn("About to generate a template for the following entities: {}",
+                    this.entityNamesList.isEmpty() ? entityNameFileMap.keySet() : this.entityNamesList);
                 List<GeneratedCode> generatedCodes = new ArrayList<>();
                 for (File f : entityNameFileMap.values()) {
                     File esModel;
