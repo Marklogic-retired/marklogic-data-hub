@@ -20,13 +20,11 @@ const DetailHeader: React.FC<Props> = (props) => {
   let id: string = '';
   let timestamp: string = '';
   let sources: string = '';
-  let document: any = {};
-  let esDocument: any = {};
+
 
   if (fileType === 'json') {
     if (props.document.envelope) {
       envelope = props.document.envelope;
-      document = Object.keys(envelope.instance)[0];
       if (envelope.instance.hasOwnProperty('info')) {
         title = envelope.instance.info.hasOwnProperty('title') && envelope.instance.info.title;
       }
@@ -51,7 +49,6 @@ const DetailHeader: React.FC<Props> = (props) => {
     }
    else{
       esEnvelope = props.document['es:envelope'];
-      esDocument = Object.keys(esEnvelope['es:instance'])[0];
       if (esEnvelope['es:instance'].hasOwnProperty('es:info')) {
         title = esEnvelope['es:instance']['es:info'].hasOwnProperty('es:title') && esEnvelope['es:instance']['es:info']['es:title'];
       }
@@ -81,7 +78,6 @@ const DetailHeader: React.FC<Props> = (props) => {
         timestamp = envelope.headers.hasOwnProperty('createdOn') && envelope.headers.createdOn;
         sources = envelope.headers.hasOwnProperty('sources') && envelope.headers.sources.name;
       }
-      document = Object.keys(envelope.instance)[1];
       if (envelope.instance.hasOwnProperty('info')) {
         title = envelope.instance.info.hasOwnProperty('title') && envelope.instance.info.title;
       }
@@ -106,7 +102,6 @@ const DetailHeader: React.FC<Props> = (props) => {
           timestamp = esEnvelope['es:headers'].hasOwnProperty('createdOn') && esEnvelope['es:headers'].createdOn[0];
           sources = esEnvelope['es:headers'].hasOwnProperty('sources') && esEnvelope['es:headers'].sources[0].name;
         }
-        esDocument = Object.keys(esEnvelope['es:instance'])[1];
         if (esEnvelope['es:instance'].hasOwnProperty('es:info')) {
           title = esEnvelope['es:instance']['es:info'].hasOwnProperty('es:title') && esEnvelope['es:instance']['es:info']['es:title'];
         }
