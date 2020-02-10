@@ -10,6 +10,7 @@ import Home from './pages/Home';
 import Install from './pages/Install';
 import ProjectInfo from './pages/ProjectInfo';
 import LoadData from './pages/LoadData';
+import EntityTiles from './components/entities/entity-tiles';
 import Reset from './pages/Reset';
 import NoMatchRedirect from './pages/noMatchRedirect';
 
@@ -17,6 +18,7 @@ import './App.css';
 import Application from './config/application.config';
 import { themes, themeMap } from './config/themes.config';
 import axios from 'axios';
+
 
 interface Props extends RouteComponentProps<any> {}
 
@@ -98,6 +100,9 @@ const App: React.FC<Props> = ({history, location}) => {
         </PrivateRoute>
         <PrivateRoute path="/load-data" exact>
           <LoadData/>
+        </PrivateRoute>
+        <PrivateRoute path="/entity-tiles" exact>
+          <EntityTiles/>
         </PrivateRoute>
         <Route path="/reset" exact component={Reset}/>
         <Route component={NoMatchRedirect}/>
