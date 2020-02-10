@@ -5,6 +5,7 @@ header.container {
     position: relative;
     top: -1px;
     left: -40px;
+    cursor: pointer;
     span.logo {
       background: #fff;
       img {
@@ -22,10 +23,9 @@ header.container {
     font-weight: 400;
     float: left;
     margin: 0 60px 0 20px;
-    a, a:hover {
-      color: #fff;
-    }
     text-align: right;
+    color: #fff;
+    cursor: pointer;
   }
 }
 
