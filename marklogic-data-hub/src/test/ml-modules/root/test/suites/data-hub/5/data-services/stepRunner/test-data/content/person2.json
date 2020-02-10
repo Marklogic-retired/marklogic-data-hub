@@ -1,0 +1,16 @@
+{
+  "envelope": {
+    "instance": {
+      "personId": "222",
+      "theNickname": "Nicky",
+      "theName": {
+        "middleName": "Middle",
+        "lastName": "Last",
+        "firstName": {
+          "theValue": "First",
+          "thePrefix": "SomePrefix"
+        }
+      }
+    }
+  }
+}

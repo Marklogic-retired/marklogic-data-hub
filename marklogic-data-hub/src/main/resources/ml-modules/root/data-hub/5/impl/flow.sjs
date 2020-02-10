@@ -96,16 +96,6 @@ class Flow {
     return docs;
   }
 
-  deleteFlow(flowName) {
-    let uris = cts.uris("", null ,cts.andQuery([cts.orQuery([cts.directoryQuery("/flows/"),cts.collectionQuery("http://marklogic.com/data-hub/flow")]),
-      cts.jsonPropertyValueQuery("name", flowName)]));
-    for (let doc of uris) {
-      if (fn.docAvailable(doc)){
-        this.hubUtils.deleteDocument(doc, this.config.STAGINGDATABASE);
-      }
-    }
-  }
-
   //note: we're using uriMatch here to avoid case sensitivity, but still strongly match on the actual flow name itself
   //TODO: make this a flat fn.doc call in the future and figure out how to normalize the uri so we don't need this loop at all
   getFlow(name) {
@@ -140,6 +130,53 @@ class Flow {
     }
   }
 
+  /**
+   * Find records that match a query based on the given inputs. Each matching record is wrapped in a
+   * "content descriptor" object that is guaranteed to have at least a "uri" property.
+   *
+   * @param flowName
+   * @param stepNumber
+   * @param options
+   * @param filterQuery
+   * @return {*}
+   */
+  findMatchingContent(flowName, stepNumber, options, filterQuery) {
+    const flow = this.getFlow(flowName);
+    const flowStep = flow.steps[stepNumber];
+    const stepDetails = this.step.getStepByNameAndType(flowStep.stepDefinitionName, flowStep.stepDefinitionType);
+    const combinedOptions = Object.assign({}, stepDetails.options || {}, flow.options || {}, flowStep.options || {}, options);
+
+    let query;
+    let uris = null;
+    if (options.uris) {
+      uris = this.datahub.hubUtils.normalizeToArray(options.uris);
+      query = cts.documentQuery(uris);
+    } else {
+      let sourceQuery = combinedOptions.sourceQuery || flow.sourceQuery;
+      query = sourceQuery ? xdmp.eval(sourceQuery) : null;
+    }
+
+    if (stepDetails.name === 'default-merging' && stepDetails.type === 'merging' && uris) {
+      return uris.map((uri) => { return { uri }; });
+    } else {
+      let sourceDatabase = combinedOptions.sourceDatabase || this.globalContext.sourceDatabase;
+      if (filterQuery) {
+        query = cts.andQuery([query, filterQuery]);
+      }
+      return this.datahub.hubUtils.queryToContentDescriptorArray(query, combinedOptions, sourceDatabase);
+    }
+  }
+
+  /**
+   * It's unlikely that this actually runs a "flow", unless the flow consists of one step and only one transaction is
+   * needed to run the step. More likely, this is really "process a batch of items for a step".
+   *
+   * @param flowName Required name of the flow to run
+   * @param jobId Required ID of the job associated with the execution of the given step and flow
+   * @param content Array of content "descriptors", where each descriptor is expected to at least have a "uri" property
+   * @param options Optional map of options that are used to override the flow and step configuration
+   * @param stepNumber The number of the step within the given flow to run
+   */
   runFlow(flowName, jobId, content = [], options, stepNumber) {
     let uris = content.map((contentItem) => contentItem.uri);
     let flow = this.getFlow(flowName);
