@@ -467,11 +467,12 @@ const ResultTable: React.FC<Props> = (props) => {
 
   
   const headerRender = (col) => {
+    updateUserPref(col);
     setRenderColumns(col);
     setCheckedColumns(deepCopy(col));
     setRenderTableData(mergeRows(col));
   }
-// TODO updateTreeColumns with headerRender
+
   const updateTreeColumns = (columns) => {
     setTreeColumns(columns);
   }
