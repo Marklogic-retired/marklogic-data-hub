@@ -114,9 +114,9 @@ const ResultTable: React.FC<Props> = (props) => {
         let newRenderColumns: any[] = [];
         let parsedEntityDocObj = parsedPayload.data[0] && parsedPayload.data[0].itemEntityProperties[0];
         let newColumns = setPrimaryKeyColumn(headerParser(parsedEntityDocObj));
-        newColumns.push(DETAIL_HEADER_OBJ);
         
         if (newColumns.length !== 0) {
+          newColumns.push(DETAIL_HEADER_OBJ);
           if (newColumns.length > 5) {
             newRenderColumns = newColumns.slice(0, 4);
             newRenderColumns.push(DETAIL_HEADER_OBJ);
@@ -135,6 +135,12 @@ const ResultTable: React.FC<Props> = (props) => {
           setTreeColumns(tableHeader(newColumns, ''));
           setCheckedColumns(renderHeader);
           setDefaultColumns(newColumns);
+        } else {
+          setRenderColumns([]);
+          setRenderTableData([]);
+          setTreeColumns([]);
+          setCheckedColumns([]);
+          setDefaultColumns([]);
         }
       }
     }
