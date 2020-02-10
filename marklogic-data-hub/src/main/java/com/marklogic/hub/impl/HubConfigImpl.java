@@ -1947,8 +1947,6 @@ public class HubConfigImpl implements HubConfig
 
         initializeModulePaths(config);
 
-        config.setSchemasPath(getUserSchemasDir().toString());
-
         addDhfPropertiesToCustomTokens(config);
 
         String version = getJarVersion();
