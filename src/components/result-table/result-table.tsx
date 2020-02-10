@@ -81,7 +81,7 @@ const DETAIL_HEADER_OBJ = {
 
 const ResultTable: React.FC<Props> = (props) => {
   const { searchOptions } = useContext(SearchContext);
-  const { user } = useContext(UserContext);
+  const { user, setAlertMessage } = useContext(UserContext);
   const [defaultColumns, setDefaultColumns] = useState<any[]>([]);
   const [renderColumns, setRenderColumns] = useState<any[]>([]);
   const [renderTableData, setRenderTableData] = useState<any[]>([]);
@@ -91,6 +91,9 @@ const ResultTable: React.FC<Props> = (props) => {
   let parsedPayload = tableParser(props);
 
   useEffect(() => {
+    if (parsedPayload === null) {
+      setAlertMessage('Error', 'No instance information in payload');
+    }
     if (props.data) {
       if (searchOptions.entityNames.length === 0 ) {
         // All Entities

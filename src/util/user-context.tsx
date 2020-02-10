@@ -39,6 +39,7 @@ interface IUserContextInterface {
   clearRedirect: () => void;
   setTableView: (viewType: boolean) => void;
   setPageRoute: (route: string) => void;
+  setAlertMessage: (title: string, message: string) => void;
 }
 
 export const UserContext = React.createContext<IUserContextInterface>({
@@ -50,7 +51,8 @@ export const UserContext = React.createContext<IUserContextInterface>({
   clearErrorMessage: () => {},
   clearRedirect: () => {},
   setTableView: () => {},
-  setPageRoute: () => {}
+  setPageRoute: () => {},
+  setAlertMessage: () => {}
 });
 
 const UserProvider: React.FC<{ children: any }> = ({children}) => {
@@ -185,6 +187,17 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
     updateUserPreferences(user.name, { pageRoute: route });
   }
 
+  const setAlertMessage = (title: string, message: string) => {
+    setUser({ 
+      ...user,
+      error: {
+        title,
+        message,
+        type: 'ALERT'
+      }
+    });
+  }
+
   useEffect(() => {
     if (sessionUser) {
       sessionAuthenticated(sessionUser);
@@ -201,7 +214,8 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
       clearErrorMessage,
       clearRedirect,
       setTableView,
-      setPageRoute
+      setPageRoute,
+      setAlertMessage
     }}>
       {children}
     </UserContext.Provider>

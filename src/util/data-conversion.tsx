@@ -120,6 +120,10 @@ export const tableParser = (props) => {
   props.data && props.data.forEach(item => {
     if (item.hasOwnProperty('extracted')) {
       if (item.format === 'json' && item.hasOwnProperty('extracted')) {
+        if (item.extracted.content.length <= 1) {
+          // content data does not exist in payload
+          return null;
+        }
         createdOn = item.extracted.content[0].headers.createdOn;
         if (item.extracted.hasOwnProperty('content') && item.extracted.content[1]) {
           itemEntityName = Object.keys(item.extracted.content[1]);
@@ -128,6 +132,10 @@ export const tableParser = (props) => {
       };
 
       if (item.format === 'xml' && item.hasOwnProperty('extracted')) {
+        if (item.extracted.content.length <= 1) {
+          // content data does not exist in payload
+          return null;
+        }
         let header = xmlParser(item.extracted.content[0]);
         let entity = xmlParser(item.extracted.content[1]);
         if (header && header.hasOwnProperty('headers')) {

@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import styles from './search-result.module.scss';
 import ReactHtmlParser from 'react-html-parser';
+import { UserContext } from '../../util/user-context';
 import { dateConverter } from '../../util/date-conversion';
 import { xmlParser } from '../../util/xml-parser';
 import ExpandableTableView from "../expandable-table-view/expandable-table-view";
@@ -15,6 +16,7 @@ interface Props extends RouteComponentProps {
 };
 
 const SearchResult: React.FC<Props> = (props) => {
+  const { setAlertMessage } = useContext(UserContext);
   const [show, toggleShow] = useState(false);
 
   let itemEntityName: string[] = [];
@@ -27,28 +29,33 @@ const SearchResult: React.FC<Props> = (props) => {
   let uri: string = encodeURIComponent(props.item.uri);
 
   if (props.item.format === 'json' && props.item.hasOwnProperty('extracted')) {
-    props.item.extracted.content.forEach(contentObject => {
-      if (Object.keys(contentObject)[0] === 'headers') {
-        const headerValues = Object.values<any>(contentObject);
-        createdOnVal = headerValues[0].hasOwnProperty('createdOn') && headerValues[0].createdOn.toString().substring(0, 19);
-        sourcesVal = headerValues[0].hasOwnProperty('sources') && headerValues[0].sources.map(src => {
-          return src.name;
-        }).join(', ');
-      } else {
-        itemEntityName = Object.keys(contentObject);
-        itemEntityProperties = Object.values<any>(contentObject);
-        if (itemEntityName.length && props.entityDefArray.length) {
-          entityDef = props.entityDefArray.find(entity => entity.name === itemEntityName[0]);
-        }
-        if (itemEntityProperties.length && entityDef.primaryKey) {
-          if (Array.isArray(itemEntityProperties[0]) && itemEntityProperties[0].length) {
-            primaryKeyValue = encodeURIComponent(props.item.uri);
-          } else {
-            primaryKeyValue = itemEntityProperties[0][entityDef.primaryKey];
+    if (props.item.extracted.content.length <= 1) {
+          // content data does not exist in payload
+          setAlertMessage('Error', 'No instance information in payload');
+    } else {
+      props.item.extracted.content.forEach(contentObject => {
+        if (Object.keys(contentObject)[0] === 'headers') {
+          const headerValues = Object.values<any>(contentObject);
+          createdOnVal = headerValues[0].hasOwnProperty('createdOn') && headerValues[0].createdOn.toString().substring(0, 19);
+          sourcesVal = headerValues[0].hasOwnProperty('sources') && headerValues[0].sources.map(src => {
+            return src.name;
+          }).join(', ');
+        } else {
+          itemEntityName = Object.keys(contentObject);
+          itemEntityProperties = Object.values<any>(contentObject);
+          if (itemEntityName.length && props.entityDefArray.length) {
+            entityDef = props.entityDefArray.find(entity => entity.name === itemEntityName[0]);
+          }
+          if (itemEntityProperties.length && entityDef.primaryKey) {
+            if (Array.isArray(itemEntityProperties[0]) && itemEntityProperties[0].length) {
+              primaryKeyValue = encodeURIComponent(props.item.uri);
+            } else {
+              primaryKeyValue = itemEntityProperties[0][entityDef.primaryKey];
+            }
           }
         }
-      }
-    });
+      }); 
+    }
   } else if (props.item.format === 'xml' && props.item.hasOwnProperty('extracted')) {
     props.item.extracted.content.forEach(contentObject => {
       let obj = xmlParser(contentObject);
