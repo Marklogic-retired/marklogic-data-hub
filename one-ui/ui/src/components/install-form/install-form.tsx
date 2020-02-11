@@ -4,6 +4,7 @@ import { Form, Icon, Input, Button, Progress, Row, Col, Alert } from 'antd';
 import axios from 'axios';
 import { Message } from 'stompjs/lib/stomp.min';
 import { StompContext } from '../../util/stomp';
+import { AuthContext } from '../../util/auth-context';
 import styles from './install-form.module.scss';
 import {setEnvironment} from '../../util/environment';
 
@@ -12,6 +13,7 @@ import { MlButton } from 'marklogic-ui-library';
 const InstallForm: React.FC = () => {
 
   const stompService = useContext(StompContext);
+  const { userNotAuthenticated, handleError } = useContext(AuthContext);
   const [directory, setDirectory] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [installProgress, setInstallProgress] = useState({percentage: 0, message: ''});
@@ -29,8 +31,11 @@ const InstallForm: React.FC = () => {
       .then(res => {       
           setDirectory(res.data.directory);
       })
-      .catch(err => {
-          console.log(err);
+      .catch(error => {
+          let message = error.response.data.message;
+          console.log('Error getting project data.', message)
+          setIsLoading(false);
+          handleError(error);
       })
   }, []);
 
@@ -67,6 +72,9 @@ const InstallForm: React.FC = () => {
         //setRedirectToHome(true); // Auto-redirect after installation
       }
     } catch (error) {
+      if (error.response.status === 401) {
+        userNotAuthenticated();
+      }
       console.log('INSTALL ERROR', error.response);
       let message = (error.response.status === 500) ? 'Internal Server Error' : error.response.data.message;
       setIsLoading(false);
