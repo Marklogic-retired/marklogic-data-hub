@@ -32,8 +32,8 @@ public class LoadDataController extends AbstractArtifactController {
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<JsonNode> getArtifacts() {
-        ResponseEntity<JsonNode> resp = super.getArtifacts();
+    public ResponseEntity<ArrayNode> getArtifacts() {
+        ResponseEntity<ArrayNode> resp = super.getArtifacts();
         ArrayNode arrayNode = (ArrayNode) resp.getBody();
         for (Iterator<JsonNode> it = arrayNode.elements(); it.hasNext();) {
             ObjectNode loadConfig = (ObjectNode) it.next();
@@ -44,7 +44,7 @@ public class LoadDataController extends AbstractArtifactController {
 
     @RequestMapping(value = "/{artifactName}", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<JsonNode> updateArtifact(@PathVariable String artifactName, @RequestBody ObjectNode loadDataJson) {
+    public ResponseEntity<ObjectNode> updateArtifact(@PathVariable String artifactName, @RequestBody ObjectNode loadDataJson) throws IOException {
         // scrub dynamic properties
         loadDataJson.remove("fileCount");
         loadDataJson.remove("filesNeedReuploaded");
@@ -53,39 +53,42 @@ public class LoadDataController extends AbstractArtifactController {
 
     @RequestMapping(value = "/{artifactName}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<JsonNode> getArtifact(@PathVariable String artifactName) {
-        ResponseEntity<JsonNode> resp = super.getArtifact(artifactName);
+    public ResponseEntity<ObjectNode> getArtifact(@PathVariable String artifactName) {
+        ResponseEntity<ObjectNode> resp = super.getArtifact(artifactName);
         enrichLoadData((ObjectNode) Objects.requireNonNull(resp.getBody()));
         return resp;
     }
 
     @RequestMapping(value = "/{artifactName}", method = RequestMethod.DELETE)
-    @ResponseBody
-    public ResponseEntity<JsonNode> deleteLoadDataConfig(@PathVariable String artifactName) {
-        return super.deleteArtifact(artifactName);
+    public void deleteLoadDataConfig(@PathVariable String artifactName) throws IOException {
+        super.deleteArtifact(artifactName);
     }
 
     @RequestMapping(value = "/{artifactName}/validate", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<JsonNode> validateArtifact(@PathVariable String artifactName, @RequestBody JsonNode loadDataJson) {
+    public ResponseEntity<ObjectNode> validateArtifact(@PathVariable String artifactName, @RequestBody JsonNode loadDataJson) {
         return super.validateArtifact(artifactName, loadDataJson);
     }
 
     @RequestMapping(value = "/{artifactName}/setData", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<JsonNode> setData(@PathVariable String artifactName, @RequestParam("files") MultipartFile[] uploadedFiles) throws IOException {
+    public ResponseEntity<ObjectNode> setData(@PathVariable String artifactName, @RequestParam("files") MultipartFile[] uploadedFiles) {
         ObjectNode loadDataJson = (ObjectNode) super.getArtifact(artifactName).getBody();
         Path dataSetDirectoryPath = Paths.get(environmentService.getProjectDirectory(), "data-sets", artifactName);
         assert loadDataJson != null;
         loadDataJson.put("inputFilePath", dataSetDirectoryPath.toString());
         File dataSetDirectory = dataSetDirectoryPath.toFile();
-        if (dataSetDirectory.exists()) {
-            FileUtils.deleteDirectory(dataSetDirectoryPath.toFile());
-        }
-        dataSetDirectory.mkdirs();
-        for (MultipartFile file:uploadedFiles) {
-            Path newFilePath = Paths.get(dataSetDirectoryPath.toString(), file.getOriginalFilename());
-            file.transferTo(newFilePath);
+        try {
+            if (dataSetDirectory.exists()) {
+                FileUtils.deleteDirectory(dataSetDirectoryPath.toFile());
+            }
+            dataSetDirectory.mkdirs();
+            for (MultipartFile file : uploadedFiles) {
+                Path newFilePath = Paths.get(dataSetDirectoryPath.toString(), file.getOriginalFilename());
+                file.transferTo(newFilePath);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         super.updateArtifact(artifactName, loadDataJson);
         enrichLoadData(loadDataJson);
@@ -93,12 +96,16 @@ public class LoadDataController extends AbstractArtifactController {
     }
 
     @RequestMapping(value = "/{artifactName}/setData", method = RequestMethod.DELETE)
-    public ResponseEntity<JsonNode> deleteData(@PathVariable String artifactName) throws IOException {
+    public ResponseEntity<ObjectNode> deleteData(@PathVariable String artifactName) {
         ObjectNode loadDataJson = (ObjectNode) super.getArtifact(artifactName).getBody();
         Path dataSetDirectoryPath = Paths.get(environmentService.getProjectDirectory(), "data-sets", artifactName);
         assert loadDataJson != null;
         if (dataSetDirectoryPath.toFile().exists()) {
-            FileUtils.deleteDirectory(dataSetDirectoryPath.toFile());
+            try {
+                FileUtils.deleteDirectory(dataSetDirectoryPath.toFile());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
         enrichLoadData(loadDataJson);
         return new ResponseEntity<>(loadDataJson, HttpStatus.OK);
@@ -110,13 +117,13 @@ public class LoadDataController extends AbstractArtifactController {
 
     @RequestMapping(value = "/{artifactName}/settings", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<JsonNode> getArtifactSettings(@PathVariable String artifactName) {
+    public ResponseEntity<ObjectNode> getArtifactSettings(@PathVariable String artifactName) {
         return super.getArtifactSettings(artifactName);
     }
 
     @RequestMapping(value = "/{artifactName}/settings", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<JsonNode> updateArtifactSettings(@PathVariable String artifactName, @RequestBody ObjectNode settings) {
+    public ResponseEntity<ObjectNode> updateArtifactSettings(@PathVariable String artifactName, @RequestBody ObjectNode settings) {
         return super.updateArtifactSettings(artifactName, settings);
     }
 
