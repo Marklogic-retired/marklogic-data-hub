@@ -40,8 +40,7 @@ const PopOverSearch: React.FC<Props> = (props) => {
       } catch (error) {
         console.log(error)
       }
-    }
-    else{
+    } else {
       setOptions([]);
     }
   }
