@@ -95,7 +95,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     private String exceptionSuggestion(Exception exception) {
         if (exception instanceof ProjectDirectoryException) {
-            return "Verify that the user account running the service has permissions to read from or write to the project directory.";
+            return ((ProjectDirectoryException) exception).getSuggestion();
         } else {
             return "Contact your server administrator.";
         }
