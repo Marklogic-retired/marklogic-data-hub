@@ -76,7 +76,7 @@ const InstallForm: React.FC = () => {
         userNotAuthenticated();
       }
       console.log('INSTALL ERROR', error.response);
-      let message = (error.response.status === 500) ? 'Internal Server Error' : error.response.data.message;
+      let message = (error.response.data.message) ? error.response.data.message : 'Internal Server Error';
       setIsLoading(false);
       setErrorMessage({
         show: true, 
