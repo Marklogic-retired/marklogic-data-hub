@@ -29,7 +29,12 @@ const DetailHeader: React.FC<Props> = (props) => {
         title = envelope.instance.info.hasOwnProperty('title') && envelope.instance.info.title;
       }
       if (envelope.hasOwnProperty('headers')) {
-        timestamp = envelope.headers.hasOwnProperty('createdOn') && envelope.headers.createdOn;
+        if(typeof(envelope.headers.createdOn) === 'object'){
+          timestamp = envelope.headers.hasOwnProperty('createdOn') && envelope.headers.createdOn[0];
+        }
+        else{
+          timestamp = envelope.headers.hasOwnProperty('createdOn') && envelope.headers.createdOn;
+        }
         sources = envelope.headers.hasOwnProperty('sources') && envelope.headers.sources[0].name;
       }
       if (props.primaryKey) {
@@ -39,30 +44,6 @@ const DetailHeader: React.FC<Props> = (props) => {
               if (props.primaryKey === props.document.envelope.instance[instance][key]) {
                 primaryKey = key;
                 id = props.document.envelope.instance[instance][key]
-              }
-            });
-          }
-        });
-      } else {
-        id = props.uri;
-      }
-    }
-   else{
-      esEnvelope = props.document['es:envelope'];
-      if (esEnvelope['es:instance'].hasOwnProperty('es:info')) {
-        title = esEnvelope['es:instance']['es:info'].hasOwnProperty('es:title') && esEnvelope['es:instance']['es:info']['es:title'];
-      }
-      if (esEnvelope.hasOwnProperty('es:headers')) {
-        timestamp = esEnvelope['es:headers'].hasOwnProperty('createdOn') && esEnvelope['es:headers'].createdOn;
-        sources = esEnvelope['es:headers'].hasOwnProperty('sources') && esEnvelope['es:headers'].sources[0].name;
-      }
-      if (props.primaryKey) {
-        Object.keys(esEnvelope['es:instance']).forEach(instance => {
-          if (instance !== 'info') {
-            Object.keys(esEnvelope['es:instance'][instance]).forEach(function (key) {
-              if (props.primaryKey === esEnvelope['es:instance'][instance][key]) {
-                primaryKey = key;
-                id = esEnvelope['es:instance'][instance][key]
               }
             });
           }
