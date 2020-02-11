@@ -20,6 +20,7 @@ export const entityFromJSON = (data: any) => {
   interface Property {
     name: string,
     datatype: string,
+    ref: string,
     collation: string
   }
 
@@ -55,11 +56,18 @@ export const entityFromJSON = (data: any) => {
             let property: Property = {
               name: '',
               datatype: '',
+              ref: '',
               collation: ''
             }
             property.name = properties;
             property.collation = item['definitions'][definition][entityKeys][properties]['collation'];
-            property.datatype = item['definitions'][definition][entityKeys][properties]['datatype'];
+            if (item['definitions'][definition][entityKeys][properties]['datatype']) {
+              property.datatype = item['definitions'][definition][entityKeys][properties]['datatype'];
+              item['definitions'][definition][entityKeys][properties]['datatype'] === 'array' ? property.ref = item['definitions'][definition][entityKeys][properties]['items']['$ref'].split('/').pop() : property.ref = '';
+            } else if (item['definitions'][definition][entityKeys][properties]['$ref']) {
+              property.ref = item['definitions'][definition][entityKeys][properties]['$ref'].split('/').pop();
+              property.datatype = 'entity';
+            }
             entityProperties.push(property);
           }
         } else {
@@ -79,17 +87,23 @@ export const entityParser = (data: any) => {
     let rangeIndex = [];
     let nestedEntityDefinition;
     let parsedEntity = {};
+    let properties = [];
     let entityDefinition = entity.definitions.find(definition => definition.name === entity.info.title);
     for (var prop in entity.definitions) {
       nestedEntityDefinition = entity.definitions[prop];
       if (nestedEntityDefinition) {
         rangeIndex = rangeIndex.concat(nestedEntityDefinition['elementRangeIndex']).concat(nestedEntityDefinition['rangeIndex']);
       }
+
+      if (entity.definitions[prop]['name'] === entity.info['title']) {
+        properties = entity.definitions[prop]['properties']
+      }
     }
     parsedEntity = {
       name: entityDefinition['name'],
       primaryKey: entityDefinition.hasOwnProperty('primaryKey') ? entityDefinition['primaryKey'] : '',
-      rangeIndex: rangeIndex.length ? rangeIndex : []
+      rangeIndex: rangeIndex.length ? rangeIndex : [],
+      properties: properties
     }
     return parsedEntity;
   });
