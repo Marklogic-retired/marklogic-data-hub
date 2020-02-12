@@ -119,9 +119,9 @@ public class EnvironmentController {
             if (StringUtils.isEmpty(directory)) {
                 throw new BadRequestException("Property 'directory', identifying project location, not specified");
             } else if (!directoryPath.isAbsolute()) {
-                throw new ProjectDirectoryException("Project directory supplied must be an absolute path: " + directory);
+                throw new ProjectDirectoryException("The Project Directory field requires an absolute path. (" + directory + ")", "Enter the absolute path to an existing local directory.");
             } else if (!directoryPath.toFile().exists()) {
-                throw new ProjectDirectoryException("Project directory '" + directory + "' does not exist or cannot be read");
+                throw new ProjectDirectoryException("The specified project directory cannot be read. (" + directory + ")", "Verify that the directory exists and that the user account running the service has permission to read it.");
             }
             hubConfig.createProject(directory);
             // Set the AppConfig with a new AppConfig with the new project directory to ensure it doesn't try to use the current directory
@@ -136,7 +136,7 @@ public class EnvironmentController {
             Exception exception = dataHubConfigurationException[0];
             Throwable rootCause = dataHubConfigurationException[0].getCause();
             if (exception instanceof IOException || rootCause instanceof IOException) {
-                exception = new ProjectDirectoryException(exception.getMessage(), exception);
+                exception = new ProjectDirectoryException(exception.getMessage(), "Verify that the directory exists and that the user account running the service has permission to read it.", exception);
             }
             throw exception;
         }
