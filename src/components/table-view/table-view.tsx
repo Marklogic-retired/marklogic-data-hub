@@ -34,19 +34,30 @@ const TableView: React.FC<Props> = (props) => {
     return parsedData;
   }
 
-  if (props.document.envelope || props.document.content.envelope) {
+  if (props.document) {
     if (props.contentType === 'json') {
-      Object.keys(props.document.envelope.instance).forEach(instance => {
-        if (instance !== 'info') {
-          data = parseJson(props.document.envelope.instance[instance]);
-        }
-      });
+      if(props.document.envelope){
+        Object.keys(props.document.envelope.instance).forEach(instance => {
+          if (instance !== 'info') {
+            data = parseJson(props.document.envelope.instance[instance]);
+          }
+        });
+      }
     } else if (props.contentType === 'xml') {
-      Object.keys(props.document.content.envelope.instance).forEach(instance => {
-        if (instance !== 'info') {
-          data = parseJson(props.document.content.envelope.instance[instance]);
-        }
-      });
+      if(props.document.content.envelope){
+        Object.keys(props.document.content.envelope.instance).forEach(instance => {
+          if (instance !== 'info') {
+            data = parseJson(props.document.content.envelope.instance[instance]);
+          }
+        });
+      }
+      else{
+        Object.keys(props.document.content['es:envelope']['es:instance']).forEach(instance => {
+          if (instance !== 'info') {
+            data = parseJson(props.document.content['es:envelope']['es:instance'][instance]);
+          }
+        });
+      }
     }
   }
 
