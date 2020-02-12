@@ -98,7 +98,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
             {data && <DetailHeader document={data} contentType={contentType} uri={docUri} primaryKey={pkValue} />}
           </div>
           <div id='menu' className={styles.menu}>
-            <Menu onClick={(event) => handleClick(event)} mode="horizontal" selectedKeys={[selected]}>
+            <Menu id='subMenu' onClick={(event) => handleClick(event)} mode="horizontal" selectedKeys={[selected]}>
               <Menu.Item key="instance" id='instance' data-cy="instance-view">
               <FontAwesomeIcon  icon={faThList} size="lg" /><span className={styles.subMenu}>Instance</span>
              </Menu.Item>
