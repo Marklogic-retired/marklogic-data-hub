@@ -84,7 +84,7 @@ const detailSteps = [
     content: 'Here is the entity name, primary key (or document URI), and metadata.'
   },
   {
-    selector: '[class*="Detail_menu"]',
+    selector: '#subMenu',
     content: 'Switch between a table view of harmonized instance data and raw JSON/XML data.'
   }
 ];
