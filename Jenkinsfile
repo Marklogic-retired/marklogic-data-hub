@@ -175,7 +175,7 @@ pipeline{
 			 props = readProperties file:'data-hub/pipeline.properties';
 				 copyRPM 'Release','10.0-3'
 				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
-				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;set +e;./gradlew clean;./gradlew marklogic-data-hub:test || true;sleep 10s;./gradlew ml-data-hub:test || true;./gradlew web:test || true;'
+				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;set +e;./gradlew clean;./gradlew marklogic-data-hub:testAcceptance || true;sleep 10s;./gradlew ml-data-hub:test || true;./gradlew web:test || true;'
 				junit '**/TEST-*.xml'
 
 				if(env.CHANGE_TITLE){
@@ -519,7 +519,7 @@ pipeline{
                         props = readProperties file:'data-hub/pipeline.properties';
                         def dockerhost=setupMLDockerCluster 3
                         sh '''
-                            docker exec -u builder -i '''+dockerhost+''' /bin/sh -c "export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;\
+                            docker exec -u builder -i '''+dockerhost+''' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;\
                             export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR; \
                             export M2_HOME=$MAVEN_HOME/bin; \
                             export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin; \
@@ -556,7 +556,7 @@ pipeline{
                         props = readProperties file:'data-hub/pipeline.properties';
                         def dockerhost=setupMLDockerCluster 3
                         sh '''
-                            docker exec -u builder -i '''+dockerhost+''' /bin/sh -c "export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;\
+                            docker exec -u builder -i '''+dockerhost+''' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;\
                             export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR; \
                             export M2_HOME=$MAVEN_HOME/bin; \
                             export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin; \
@@ -594,7 +594,7 @@ pipeline{
                         props = readProperties file:'data-hub/pipeline.properties';
                         def dockerhost=setupMLDockerCluster 3
                         sh '''
-                            docker exec -u builder -i '''+dockerhost+''' /bin/sh -c "export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;\
+                            docker exec -u builder -i '''+dockerhost+''' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;\
                             export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR; \
                             export M2_HOME=$MAVEN_HOME/bin; \
                             export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin; \
@@ -632,7 +632,7 @@ pipeline{
                         props = readProperties file:'data-hub/pipeline.properties';
                         def dockerhost=setupMLDockerCluster 3
                         sh '''
-                            docker exec -u builder -i '''+dockerhost+''' /bin/sh -c "export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;\
+                            docker exec -u builder -i '''+dockerhost+''' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;\
                             export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR; \
                             export M2_HOME=$MAVEN_HOME/bin; \
                             export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin; \
