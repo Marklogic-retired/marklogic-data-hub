@@ -119,9 +119,9 @@ public class EnvironmentController {
             if (StringUtils.isEmpty(directory)) {
                 throw new BadRequestException("Property 'directory', identifying project location, not specified");
             } else if (!directoryPath.isAbsolute()) {
-                throw new ProjectDirectoryException("The Project Directory field requires an absolute path.", "Enter the absolute path to an existing local directory.");
+                throw new ProjectDirectoryException("The Project Directory field requires an absolute path. You entered: " + directory, "Enter the absolute path to an existing local directory.");
             } else if (!directoryPath.toFile().exists()) {
-                throw new ProjectDirectoryException("The specified project directory cannot be read.", "Verify that the directory exists and that the user account running the service has permission to read it.");
+                throw new ProjectDirectoryException("The specified directory does not exist: " + directory, "Create the directory and specify its absolute path.");
             }
             hubConfig.createProject(directory);
             // Set the AppConfig with a new AppConfig with the new project directory to ensure it doesn't try to use the current directory
@@ -136,7 +136,7 @@ public class EnvironmentController {
             Exception exception = dataHubConfigurationException[0];
             Throwable rootCause = dataHubConfigurationException[0].getCause();
             if (exception instanceof IOException || rootCause instanceof IOException) {
-                exception = new ProjectDirectoryException(exception.getMessage(), "Verify that the directory exists and that the user account running the service has permission to read it.", exception);
+                exception = new ProjectDirectoryException("Your user account does not have write permissions to the installation directory.", "Log in as a user with write permissions to the directory you specify, or provide the absolute path to another directory.", exception);
             }
             throw exception;
         }
