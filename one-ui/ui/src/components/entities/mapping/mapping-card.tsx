@@ -1,5 +1,5 @@
 import React, { CSSProperties, useState } from 'react';
-import styles from '../../load-data/load-data-card.module.scss';
+import styles from './mapping-card.module.scss';
 import {Card, Icon, Tooltip, Popover, Row, Col, Modal} from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
@@ -49,7 +49,7 @@ const MappingCard: React.FC<Props> = (props) => {
     //Custom CSS for source Format
     const sourceFormatStyle = (sourceFmt) => {
         let customStyles: CSSProperties = {
-            float: 'left',
+            float: 'right',
             backgroundColor: (sourceFmt.toUpperCase() === 'XML' ? sourceFormatOptions.xml.color : (sourceFmt.toUpperCase() === 'JSON' ? sourceFormatOptions.json.color : (sourceFmt.toUpperCase() === 'CSV' ? sourceFormatOptions.csv.color : sourceFormatOptions.default.color))),
             fontSize: '12px',
             borderRadius: '50%',
@@ -110,12 +110,7 @@ const MappingCard: React.FC<Props> = (props) => {
                 </Col> : ''}{props && props.data.length > 0 ? props.data.map((elem,index) => (
                     <Col key={index}><Card
                         actions={[
-                            <span>{elem.filesNeedReuploaded ? (
-                                <Popover
-                                    content={"Files must be reuploaded"}
-                                    trigger="click"
-                                    placement="bottom"
-                                ><i><FontAwesomeIcon icon={faExclamationCircle} className={styles.popover} size="lg" /></i></Popover>) : ''}</span>,
+                            <span></span>,
                             <Tooltip title={'Settings'} placement="bottom"><Icon type="setting" key="setting" onClick={() => OpenLoadDataSettingsDialog(index)}/></Tooltip>,
                             <Tooltip title={'Edit'} placement="bottom"><Icon type="edit" key="edit" onClick={() => OpenEditStepDialog(index)}/></Tooltip>,
                             props.canReadWrite ? <Tooltip title={'Delete'} placement="bottom"><i><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg" onClick={() => handleCardDelete(elem.name)}/></i></Tooltip> : <i><FontAwesomeIcon icon={faTrashAlt} onClick={(event) => event.preventDefault()} className={styles.disabledDeleteIcon} size="lg"/></i>,
@@ -125,11 +120,15 @@ const MappingCard: React.FC<Props> = (props) => {
                         size="small"
                     >
                         <div className={styles.formatFileContainer}>
+                            <span className={styles.stepNameStyle}>{getInitialChars(elem.name, 27, '...')}</span>
                             <span style={sourceFormatStyle(elem.sourceFormat)}>{elem.sourceFormat.toUpperCase()}</span>
-                            <span className={styles.files}>Files</span>
+                            
+                            {/* <span className={styles.files}>Files</span> */}
                         </div><br />
-                        <div className={styles.fileCount}>{elem.fileCount}</div>
-                        <span className={styles.stepNameStyle}>{getInitialChars(elem.name, 27, '...')}</span>
+                        <div className={styles.sourceQuery}>Source Query: {getInitialChars(elem.sourceQuery,32,'...')}</div>
+                        <br /><br />
+                        {/* <div className={styles.fileCount}>{elem.fileCount}</div> */}
+                        {/* <span className={styles.stepNameStyle}>{getInitialChars(elem.name, 27, '...')}</span> */}
                         <p className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</p>
                     </Card></Col>
                 )) : <span></span> }</Row>

@@ -19,39 +19,65 @@ const EntityTiles: React.FC = () => {
         console.log('Master View -- To be Created')
     }
 
-    const loadDataArtifacts = {
+    //Temporary Data - To be removed
+    const loadDataArtifacts = [{
+        "name": "CustomerRecords",
+        "mappings": [{ "name": "Map 1", "description": "", "sourceFormat": "json", "sourceQuery": "cts.CollectionQuery('Provider')", "Collections": ['Provider'], "lastUpdated": "2020-02-15T11:25:35.765299-08:00", "fileCount": 3, "filesNeedReuploaded": false },
+        { "name": "Customer Mapping - New", "description": "", "sourceFormat": "xml", "sourceQuery": "cts.uris(null,null,cts.andQuery[cts.CollectionQuery('Customer'),cts.elementAttributeValueQuery()])", "Collections": ['Customer'], "lastUpdated": "2020-02-11T11:25:35.765299-08:00", "fileCount": 1, "filesNeedReuploaded": false },
+        { "name": "Map 3", "description": "", "sourceFormat": "json", "sourceQuery": "cts.CollectionQuery('Finance')", "Collections": ['Finance'], "lastUpdated": "2020-01-18T11:25:35.765299-08:00", "fileCount": 10, "filesNeedReuploaded": true },
+        { "name": "Map 1", "description": "", "sourceFormat": "Delimited Text", "sourceQuery": "cts.CollectionQuery('AirlineDataCust')", "Collections": ['AirlineData'], "lastUpdated": "2020-01-12T11:25:35.765299-08:00", "fileCount": 6, "filesNeedReuploaded": false }
+        ]
+    },
+    {
+        "name": "StudentCollegeRecordsNew",
+        "mappings": [{ "name": "Map 4", "description": "", "sourceFormat": "json", "sourceQuery": "cts.CollectionQuery('Provider')", "Collections": ['Provider'], "lastUpdated": "2020-02-15T11:25:35.765299-08:00", "fileCount": 3, "filesNeedReuploaded": false },
+        { "name": "StudentRec Mapping - New", "description": "", "sourceFormat": "xml", "sourceQuery": "cts.uris(null,null,cts.andQuery[cts.CollectionQuery('Customer'),cts.elementAttributeValueQuery()])", "Collections": ['Customer'], "lastUpdated": "2020-02-11T11:25:35.765299-08:00", "fileCount": 1, "filesNeedReuploaded": false }]
+    },
+    {
+        "name": "ProviderRecords",
+        "mappings": [{ "name": "Map 6", "description": "", "sourceFormat": "json", "sourceQuery": "cts.CollectionQuery('Provider')", "Collections": ['Provider'], "lastUpdated": "2020-02-15T11:25:35.765299-08:00", "fileCount": 3, "filesNeedReuploaded": false },
+        { "name": "Provider Mapping - New", "description": "", "sourceFormat": "xml", "sourceQuery": "cts.uris(null,null,cts.andQuery[cts.CollectionQuery('Customer'),cts.elementAttributeValueQuery()])", "Collections": ['Customer'], "lastUpdated": "2020-02-11T11:25:35.765299-08:00", "fileCount": 1, "filesNeedReuploaded": false }]
+    }];
 
-    }
+    
 
     const deleteLoadDataArtifact = () => {
-
+        console.log('Delete API Called!')
     }
 
     const createLoadDataArtifact = () => {
-
+        console.log('Create API Called!')
     }
 
     const canReadWrite = true;
     const canReadOnly = true;
 
-    let output;
+    const outputCards = (entMaps) => {
+        let output;
 
-    if (viewType === 'map') {
-        output = <div className={styles.cardView}>
-            <MappingCard data={loadDataArtifacts}
-                deleteLoadDataArtifact={deleteLoadDataArtifact}
-                createLoadDataArtifact={createLoadDataArtifact}
-                canReadWrite={canReadWrite}
-                canReadOnly={canReadOnly} />
-        </div>
-    } else {
-        output = <div><br/>This funcitonality is not created yet.</div>
+        if (viewType === 'map') {
+            output = <div className={styles.cardView}>
+                <MappingCard data={entMaps}
+                    deleteLoadDataArtifact={deleteLoadDataArtifact}
+                    createLoadDataArtifact={createLoadDataArtifact}
+                    canReadWrite={canReadWrite}
+                    canReadOnly={canReadOnly} />
+            </div>
+        } else {
+            output = <div><br/>This functionality is not implemented yet.</div>
+        }
+
+        return output;
     }
+    
 
     return (
         <div className={styles.entityContainer}>
+        
         <Collapse accordion>
-            <Panel header="Entity 1" key="1">
+            { loadDataArtifacts.map((map,index) => (
+                <Panel header={map.name} key={map.name}>
+            <div className={styles.switchMapMaster}>
             <Menu mode="horizontal" defaultSelectedKeys={['map']}>
                 <Menu.Item key='map' onClick={mappingCardsView}>
                     Mapping
@@ -60,14 +86,16 @@ const EntityTiles: React.FC = () => {
                     Master
                 </Menu.Item>
             </Menu>
-            {output}
+            </div>
+            {outputCards(map.mappings)}
             </Panel>
-            <Panel header="Entity 2" key="2">
+            ))}
+            {/* <Panel header="StudentCollegeRecords" key="2">
                 <p>{text}</p>
             </Panel>
-            <Panel header="Entity 3" key="3">
+            <Panel header="ProviderRecords" key="3">
                 <p>{text}</p>
-            </Panel>
+            </Panel> */}
         </Collapse>
         </div>
     );
