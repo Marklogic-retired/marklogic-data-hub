@@ -17,12 +17,18 @@ package com.marklogic.hub.curation.controllers;
 
 import com.marklogic.hub.curation.services.FlowManagerService;
 import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.oneui.models.StepModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
@@ -102,4 +108,17 @@ public class FlowController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/{flowName}/run", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<?> runFlow(@PathVariable String flowName, @RequestBody(required = false) List<String> steps) {
+        RunFlowResponse flow = flowManagerService.runFlow(flowName, steps);
+        return new ResponseEntity<>(flow, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/{flowName}/stop", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<?> stopFlow(@PathVariable String flowName) {
+        Flow flow = flowManagerService.stop(flowName);
+        return new ResponseEntity<>(flow, HttpStatus.OK);
+    }
 }

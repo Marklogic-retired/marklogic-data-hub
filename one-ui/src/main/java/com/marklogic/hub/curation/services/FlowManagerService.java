@@ -5,7 +5,9 @@ import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.StepDefinitionManager;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowImpl;
+import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.oneui.exceptions.DataHubException;
 import com.marklogic.hub.oneui.models.StepModel;
 import com.marklogic.hub.scaffold.Scaffolding;
@@ -23,13 +25,20 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class FlowManagerService {
 
     @Autowired
     private FlowManager flowManager;
+
+    @Autowired
+    private FlowRunnerImpl flowRunner;
 
     @Autowired
     private StepDefinitionManager stepDefinitionManager;
@@ -315,5 +324,37 @@ public class FlowManagerService {
         }
     }
 
+
+    /**
+     * This is synchronized because Coverity is reporting that flowManagerService is being modified without proper
+     * synchronization when it's invoked by FlowController.
+     *
+     * @param flowName
+     * @param steps
+     * @return
+     */
+    public synchronized RunFlowResponse runFlow(String flowName, List<String> steps) {
+        if (steps == null || steps.size() == 0) {
+            return flowRunner.runFlow(flowName);
+        }
+        else {
+            Flow flow = flowManager.getFlow(flowName);
+            List<String> restrictedSteps = new ArrayList<>();
+            steps.forEach((step) -> restrictedSteps.add(this.getStepKeyInStepMap(flow, step)));
+            return flowRunner.runFlow(flowName, restrictedSteps);
+        }
+    }
+
+    public Flow stop(String flowName) {
+        List<String> jobIds = flowRunner.getQueuedJobIdsFromFlow(flowName);
+        Iterator<String> itr = jobIds.iterator();
+        if (!itr.hasNext()) {
+            throw new BadRequestException("Flow not running.");
+        }
+        while (itr.hasNext()) {
+            flowRunner.stopJob(itr.next());
+        }
+        return getFlow(flowName);
+    }
 
 }

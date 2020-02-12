@@ -6,11 +6,13 @@ import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowImpl;
 import com.marklogic.hub.oneui.Application;
 import com.marklogic.hub.oneui.TestHelper;
 import com.marklogic.hub.oneui.models.HubConfigSession;
 import com.marklogic.hub.oneui.models.StepModel;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -68,6 +70,13 @@ class FlowControllerTest {
     @BeforeEach
     void before(){
         testHelper.authenticateSession();
+    }
+
+    @AfterEach
+    void after(){
+        if (controller.getFlow("testFlow") != null) {
+            controller.deleteFlow("testFlow");
+        }
     }
 
     @Test
@@ -147,5 +156,14 @@ class FlowControllerTest {
                 logger.info("Exception is expected as the flow being fetched has been deleted");
             }
         }
+    }
+
+    @Test
+    void runFlow() {
+        controller.createFlow(flowString);
+        RunFlowResponse resp = (RunFlowResponse) controller.runFlow("testFlow", null).getBody();
+        Assertions.assertEquals("finished", resp.getJobStatus(), "Run flow is successfully called");
+        Assertions.assertEquals("testFlow", resp.getFlowName(), "Run flow response has correct flow name");
+        // TODO The current runFlow call is essentially a no-op. More complex testing will be done as part of task DHFPROD-4304
     }
 }

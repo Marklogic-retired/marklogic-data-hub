@@ -293,7 +293,7 @@ paths:
                 '200':
                     description: Successful Operation
                     schema:
-                        $ref: '#/definitions/flow'
+                        $ref: '#/definitions/runFlowResponse'
                 '400':
                     description: Bad Request
                     schema:
@@ -2275,6 +2275,39 @@ definitions:
                 - '{}'
                 - '{}'
             version: 0
+    runFlowResponse:
+        type: object
+        required:
+            - jobId
+            - jobStatus
+        properties:
+            jobId:
+                type: string
+                description: Id of a job running the flow
+            jobStatus:
+                type: string
+                description: status of job
+            lastAttemptedStep:
+                type: string
+                description: Id of last attempted step
+            lastCompletedStep:
+                type: string
+                description: Id of the last step successfully completed
+            user:
+                type: string
+                description: Id of the user running the flow
+            stepResponses:
+                type: object
+                description: Responses from the steps run
+            timeEnded:
+                type: string
+                description: ISO DateTime the run completed
+            flow:
+                type: string
+                description: Name of the flow running
+            timeStarted:
+                type: string
+                description: ISO DataTime the run started
     step:
         type: object
         required:
