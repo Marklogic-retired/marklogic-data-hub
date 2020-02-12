@@ -169,13 +169,4 @@ public class ExplorerConfig {
       finalTrustManager = new SimpleX509TrustManager();
     }
   }
-
-  @PostConstruct
-  public void getQueries() {
-    try {
-      this.queryProperties = ExplorerUtil.getPropertiesFromClassPath(QUERIES_FILE);
-    } catch (IOException e) {
-      logger.error(e.getMessage());
-    }
-  }
 }
