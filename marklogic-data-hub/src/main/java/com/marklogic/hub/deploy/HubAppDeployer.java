@@ -88,7 +88,7 @@ public class HubAppDeployer extends SimpleAppDeployer {
         this.completed = 0;
         onStatusChange(0, "Uninstalling...");
         super.undeploy(appConfig);
-        onStatusChange(100, "Installation Complete");
+        onStatusChange(100, "Uninstallation Complete");
     }
 
     @Override
