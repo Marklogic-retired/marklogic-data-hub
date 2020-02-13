@@ -26,6 +26,8 @@ class CollectorLib {
 
     if (isMergingStep) {
       sourceQuery = fn.normalizeSpace(`cts.values(cts.pathReference('/matchSummary/URIsToProcess', ['type=string','collation=http://marklogic.com/collation/']), null, null, ${sourceQuery})`);
+    } else if (combinedOptions.valueBasedQuery) {
+      sourceQuery = fn.normalizeSpace(`${sourceQuery}`);
     } else if (true == combinedOptions.constrainSourceQueryToJob) {
       if (combinedOptions.jobId) {
         sourceQuery = fn.normalizeSpace(`cts.andQuery([cts.fieldWordQuery('datahubCreatedByJob', '${combinedOptions.jobId}'), ${sourceQuery}])`);
