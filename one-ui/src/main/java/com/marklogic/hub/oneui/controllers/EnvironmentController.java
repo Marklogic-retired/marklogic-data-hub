@@ -37,6 +37,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -47,6 +48,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.web.multipart.MultipartFile;
+
+import static com.marklogic.hub.oneui.utils.DataHubProjectUtils.backupExistingFSProject;
+import static com.marklogic.hub.oneui.utils.DataHubProjectUtils.cleanExistingFSProject;
+import static com.marklogic.hub.oneui.utils.DataHubProjectUtils.extractZipProject;
 
 @Controller
 @RequestMapping("/api/environment")
@@ -90,58 +96,13 @@ public class EnvironmentController {
 
     @RequestMapping(value = "/install", method = RequestMethod.POST)
     @ResponseBody
-    public JsonNode install(@RequestBody ObjectNode payload) throws Exception {
-        String originalDirectory = environmentService.getProjectDirectory();
-        final Exception[] dataHubConfigurationException = {null};
-        HubDeployStatusListener listener = new HubDeployStatusListener() {
-            int lastPercentageComplete = 0;
-            @Override
-            public void onStatusChange(int percentComplete, String message) {
-                if (percentComplete >= 0) {
-                    logger.info(percentComplete + "% " + message);
-                    lastPercentageComplete = percentComplete;
-                    template.convertAndSend("/topic/install-status", new StatusMessage(percentComplete, message), stompHeaders);
-                }
-            }
-
-            @Override
-            public void onError(String commandName, Exception exception) {
-                String message = "Error encountered running command: " + commandName;
-                template.convertAndSend("/topic/install-status", new StatusMessage(lastPercentageComplete, message));
-                logger.error(message, exception);
-                dataHubConfigurationException[0] = exception;
-            }
-        };
+    public void install(@RequestBody ObjectNode payload) throws Exception {
         String directory = payload.get("directory").asText("");
-        // setting the project directory will resolve any relative paths
-        try {
-            Path directoryPath = Paths.get(directory);
-            if (StringUtils.isEmpty(directory)) {
-                throw new BadRequestException("Property 'directory', identifying project location, not specified");
-            } else if (!directoryPath.isAbsolute()) {
-                throw new ProjectDirectoryException("The Project Directory field requires an absolute path. You entered: " + directory, "Enter the absolute path to an existing local directory.");
-            } else if (!directoryPath.toFile().exists()) {
-                throw new ProjectDirectoryException("The specified directory does not exist: " + directory, "Create the directory and specify its absolute path.");
-            }
-            hubConfig.createProject(directory);
-            // Set the AppConfig with a new AppConfig with the new project directory to ensure it doesn't try to use the current directory
-            hubConfig.setAppConfig(new AppConfig(Paths.get(directory).toFile()));
-            hubConfig.initHubProject();
-            hubConfig.refreshProject();
-            dataHubService.install(listener);
-        } catch (Exception e) {
-            listener.onError("Initializing", e);
-        }
-        if (dataHubConfigurationException[0] != null) {
-            Exception exception = dataHubConfigurationException[0];
-            Throwable rootCause = dataHubConfigurationException[0].getCause();
-            if (exception instanceof IOException || rootCause instanceof IOException) {
-                exception = new ProjectDirectoryException("Your user account does not have write permissions to the installation directory.", "Log in as a user with write permissions to the directory you specify, or provide the absolute path to another directory.", exception);
-            }
-            throw exception;
-        }
-        environmentService.setProjectDirectory(directory);
-        return payload;
+
+        final Exception[] dataHubConfigurationException = {null};
+        HubDeployStatusListener listener = getInstallListener(dataHubConfigurationException, false);
+
+        install(directory, listener, dataHubConfigurationException);
     }
 
     @RequestMapping(value = "/project-download", produces = "application/zip")
@@ -170,5 +131,99 @@ public class EnvironmentController {
     @ResponseBody
     public JsonNode getProjectInfo() {
         return environmentService.getProjectInfo();
+    }
+
+    @RequestMapping(value = "/project-upload", method = RequestMethod.POST)
+    @ResponseBody
+    public void uploadProject(@RequestParam("zipfile") MultipartFile uploadedFile) throws Exception {
+        final Exception[] dataHubConfigurationException = {null};
+        HubDeployStatusListener listener = getInstallListener(dataHubConfigurationException, false);
+
+        HubProject project = hubConfig.getHubProject();
+
+        //backup first
+        backupExistingFSProject(project, listener);
+
+        // delete contents from the current project folder
+        cleanExistingFSProject(project, listener);
+
+        // extract the uploaded & zipped project file into the current project folder
+        extractZipProject(project, uploadedFile, listener);
+
+        HubDeployStatusListener uninstalllistener = getInstallListener(dataHubConfigurationException, true);
+        dataHubService.unInstall(uninstalllistener);
+
+        install(project.getProjectDirString(), listener, dataHubConfigurationException);
+    }
+
+    private HubDeployStatusListener getInstallListener(final Exception[] dataHubConfigurationException, boolean isUninstall) {
+        HubDeployStatusListener listener = new HubDeployStatusListener() {
+            int lastPercentageComplete = 0;
+            @Override
+            public void onStatusChange(int percentComplete, String message) {
+                if (percentComplete >= 0) {
+                    logger.info(percentComplete + "% " + message);
+                    lastPercentageComplete = percentComplete;
+                    String msg = "";
+                    if (message.endsWith("Complete")) {
+                        msg = message;
+                    } else if (isUninstall && !message.startsWith("Uninstalling")) {
+                       msg = "Uninstalling..." + message;
+                    } else {
+                       msg = "Installing..." + message;
+                    }
+                    template.convertAndSend("/topic/install-status", new StatusMessage(percentComplete, msg), stompHeaders);
+                }
+            }
+
+            @Override
+            public void onError(String commandName, Exception exception) {
+                String message = "Error encountered running command: " + commandName;
+                String msg = "";
+                if (message.endsWith("Complete")) {
+                    msg = message;
+                } else if (isUninstall && !message.startsWith("Uninstalling")) {
+                    msg = "Uninstalling..." + message;
+                } else {
+                    msg = "Installing..." + message;
+                }
+                template.convertAndSend("/topic/install-status", new StatusMessage(lastPercentageComplete, msg));
+
+                logger.error(message, exception);
+                dataHubConfigurationException[0] = exception;
+            }
+        };
+        return listener;
+    }
+
+    private void install(String directory, HubDeployStatusListener listener, final Exception[] dataHubConfigurationException) throws Exception {
+        try {
+            // setting the project directory will resolve any relative paths
+            Path directoryPath = Paths.get(directory);
+            if (StringUtils.isEmpty(directory)) {
+                throw new BadRequestException("Property 'directory', identifying project location, not specified");
+            } else if (!directoryPath.isAbsolute()) {
+                throw new ProjectDirectoryException("The Project Directory field requires an absolute path. You entered: " + directory, "Enter the absolute path to an existing local directory.");
+            } else if (!directoryPath.toFile().exists()) {
+                throw new ProjectDirectoryException("The specified directory does not exist: " + directory, "Create the directory and specify its absolute path.");
+            }
+            hubConfig.createProject(directory);
+            // Set the AppConfig with a new AppConfig with the new project directory to ensure it doesn't try to use the current directory
+            hubConfig.setAppConfig(new AppConfig(Paths.get(directory).toFile()));
+            hubConfig.initHubProject();
+            hubConfig.refreshProject();
+            dataHubService.install(listener);
+        } catch (Exception e) {
+            listener.onError("Initializing", e);
+        }
+        if (dataHubConfigurationException[0] != null) {
+            Exception exception = dataHubConfigurationException[0];
+            Throwable rootCause = dataHubConfigurationException[0].getCause();
+            if (exception instanceof IOException || rootCause instanceof IOException) {
+                exception = new ProjectDirectoryException("Your user account does not have write permissions to the installation directory.", "Log in as a user with write permissions to the directory you specify, or provide the absolute path to another directory.", exception);
+            }
+            throw exception;
+        }
+        environmentService.setProjectDirectory(directory);
     }
 }

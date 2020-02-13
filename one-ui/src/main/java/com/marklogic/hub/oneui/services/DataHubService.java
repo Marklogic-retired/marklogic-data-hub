@@ -29,6 +29,19 @@ public class DataHubService {
         return false;
     }
 
+    public boolean unInstall(HubDeployStatusListener listener) {
+        logger.info("Uninstalling Data Hub...");
+        try {
+            hubConfigSession.getDataHub().uninstall(listener);
+            return true;
+        } catch(Exception e) {
+            logger.warn("Error encountered uninstalling Data Hub...", e);
+            listener.onStatusChange(-1, getStackTrace(e));
+            listener.onError("unInstall", e);
+        }
+        return false;
+    }
+
     private String getStackTrace(final Throwable throwable) {
         final StringWriter sw = new StringWriter();
         final PrintWriter pw = new PrintWriter(sw, true);
