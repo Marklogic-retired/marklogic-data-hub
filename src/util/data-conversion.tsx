@@ -130,7 +130,7 @@ export const tableParser = (props) => {
   let primaryKeys: string[] = [];
   let entityTitle: string[] = [];
   let consdata = new Array();
-  
+
   props.data && props.data.forEach(item => {
     if (item.hasOwnProperty('extracted')) {
       if (item.format === 'json' && item.hasOwnProperty('extracted')) {
@@ -234,6 +234,44 @@ export const headerParser = function (obj: Object) {
   return parser(obj, keys)
 };
 
+//constructs array of entity parameter name objects with zero dash keys.
+export const headerPropsParser = function (entities, entity) {
+  let keys = new Array();
+  let deep = 0;
+  keys.push(0);
+  let obj = entities.find(e => e.name === entity[0])
+  const parser = (entityObj, c) => {
+    let data = new Array();
+    entityObj && entityObj.properties.forEach(p => {
+      if (p.datatype === 'array' && p.ref.length > 0) {
+        keys.push(c);
+        data.push({
+          title: p.name,
+          key: keys.join('-'),
+          children: parser(entities.find(e => e.name === p.ref), deep)
+        })
+        keys.splice(-1)
+      } else if (p.datatype === 'entity' && p.ref.length > 0) {
+        keys.push(c);
+        data.push({
+          title: p.name,
+          key: keys.join('-'),
+          children: parser(entities.find(e => e.name === p.ref), deep)
+        })
+        keys.pop();
+      } else {
+        data.push({
+          title: p.name,
+          key: keys.join('-') + '-' + c
+        })
+      }
+      c++;
+    });
+    return data;
+  }
+  return parser(obj, 0)
+}
+
 export const getKeys = function (obj: Object) {
   let keys = new Array();
   const parser = (obj: Object) => {
@@ -318,15 +356,13 @@ export const reconstructHeader = (obj1, keys) => {
       if (obj[i] !== null && (obj[i]).hasOwnProperty('children')) {
         let k = obj[i].key;
         if (!keys.includes(k)) {
-          let hasParent;
-          for (let i in keys) {
-            let pk = getParentKey(keys[i], obj)
-            if (pk) {
-              hasParent = true;
+          let hasParent = getParentKey(k, obj);
+          if (!hasParent) {
+            let r = reconstruct(obj[i].children, keys)
+            if (r.length === 0) {
+              obj.splice(Number(i), 1);
+              i--;
             }
-          }
-          if (hasParent) {
-            reconstruct(obj[i].children, keys)
           } else {
             obj.splice(Number(i), 1);
             i--;
@@ -347,6 +383,7 @@ export const reconstructHeader = (obj1, keys) => {
   return reconstruct(obj, keys)
 }
 
+
 export const deepCopy = inObject => {
   let outObject, value, key
   if (typeof inObject !== "object" || inObject === null) {
@@ -365,10 +402,10 @@ export const deepCopy = inObject => {
 export const updateHeader = (tree, keys) => {
   let updatedHeader: any[] = []
   let newtree: any[] = deepCopy(tree);
-  keys.forEach( (key, index) => {
-    let headerObj = newtree.find( obj => obj.key === key);
+  keys.forEach((key, index) => {
+    let headerObj = newtree.find(obj => obj.key === key);
     if (headerObj) {
-      if (headerObj.hasOwnProperty('children') ) {
+      if (headerObj.hasOwnProperty('children')) {
         if (Array.isArray(headerObj.children)) {
           // remove children and add children back if key is found
           headerObj.children = [];
@@ -376,31 +413,31 @@ export const updateHeader = (tree, keys) => {
           headerObj.children = {};
         }
       }
-      if ( updatedHeader.find( obj => obj.key === headerObj.key)) {
+      if (updatedHeader.find(obj => obj.key === headerObj.key)) {
 
       } else {
         updatedHeader.push(headerObj);
       }
-      
+
     } else {
       // could not find column. must be child key
       // TODO: keep parsing key until a parentObj is found?
       let parseKey = key.split('-');
       parseKey.pop();
       let parentKey = parseKey.join('-');
-      
-      let parentObj = updatedHeader.find( obj => obj.key === parentKey);
-      let updateParentIndex = updatedHeader.findIndex( obj => obj.key === parentKey);
+
+      let parentObj = updatedHeader.find(obj => obj.key === parentKey);
+      let updateParentIndex = updatedHeader.findIndex(obj => obj.key === parentKey);
       if (parentObj !== undefined && parentObj.hasOwnProperty('children')) {
         // update parentObj's children by pushing new child obj
         // check if childobj is already in parent obj
 
         // adding child obj to update header
-        let index = tree.findIndex( obj => obj.key === parentKey);
-        let childObj = tree[index].hasOwnProperty('children') && tree[index].children.find( childObj => childObj.key === key);
+        let index = tree.findIndex(obj => obj.key === parentKey);
+        let childObj = tree[index].hasOwnProperty('children') && tree[index].children.find(childObj => childObj.key === key);
         if (childObj) {
-          if ( parentObj.children.find( child => child.key === childObj.key )) {
-            
+          if (parentObj.children.find(child => child.key === childObj.key)) {
+
           } else {
             parentObj.children.push(childObj);
             updatedHeader[updateParentIndex] = parentObj;
@@ -409,9 +446,9 @@ export const updateHeader = (tree, keys) => {
       } else {
         // no parent object in updated header
         // add parent object and child to updatedHeader
-        parentObj = newtree.find( obj => obj.key === parentKey);
-        if (parentObj && parentObj.hasOwnProperty('children')) {       
-          let childObj = parentObj.children.find( childObj => childObj.key === key);
+        parentObj = newtree.find(obj => obj.key === parentKey);
+        if (parentObj && parentObj.hasOwnProperty('children')) {
+          let childObj = parentObj.children.find(childObj => childObj.key === key);
           if (childObj) {
             //console.log('find child', parentObj.children.find( child => child.key === childObj.key))
             parentObj.children = [childObj];
@@ -424,7 +461,7 @@ export const updateHeader = (tree, keys) => {
   return updatedHeader;
 }
 
-export const getTitles = (object:Array<Object>) => {
+export const getTitles = (object: Array<Object>) => {
   let arr = new Array();
   const titles = (obj) => {
     for (let i = 0; i < obj.length; i++) {
@@ -446,25 +483,25 @@ export const setTreeVisibility = (ob, str) => {
     for (let i = 0; i < ob.length; i++) {
       if (ob[i] !== null && (ob[i]).hasOwnProperty('children')) {
         let n = filter(ob[i].children)
-        if(n.v === false  || n.v === undefined) {
+        if (n.v === false || n.v === undefined) {
           ob[i].visible = false;
-        } else if (n.v === true){
+        } else if (n.v === true) {
           v = true;
         }
-         if (ob[i].title.toLowerCase().includes(str.toLowerCase())) {
+        if (ob[i].title.toLowerCase().includes(str.toLowerCase())) {
           ob[i].visible = true;
           v = true;
-        } 
+        }
       } else {
-        if(!ob[i].title.toLowerCase().includes(str.toLowerCase())) {
+        if (!ob[i].title.toLowerCase().includes(str.toLowerCase())) {
           ob[i].visible = false;
         } else {
           v = true;
           ob[i].visible = true;
-        }  
+        }
       }
     }
-    return {ob, v};
+    return { ob, v };
   }
   return filter(ob);
 }
