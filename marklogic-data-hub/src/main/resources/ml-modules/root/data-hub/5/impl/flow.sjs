@@ -148,7 +148,9 @@ class Flow {
 
     let query;
     let uris = null;
-    if (options.uris) {
+    if(options.uris && options.valueBasedQuery) {
+      uris = this.datahub.hubUtils.normalizeToArray(options.uris);
+    } else if (options.uris) {
       uris = this.datahub.hubUtils.normalizeToArray(options.uris);
       query = cts.documentQuery(uris);
     } else {
@@ -158,6 +160,8 @@ class Flow {
 
     if (stepDetails.name === 'default-merging' && stepDetails.type === 'merging' && uris) {
       return uris.map((uri) => { return { uri }; });
+    } else if(combinedOptions.valueBasedQuery && uris) {
+      return uris;
     } else {
       let sourceDatabase = combinedOptions.sourceDatabase || this.globalContext.sourceDatabase;
       if (filterQuery) {
@@ -178,7 +182,12 @@ class Flow {
    * @param stepNumber The number of the step within the given flow to run
    */
   runFlow(flowName, jobId, content = [], options, stepNumber) {
-    let uris = content.map((contentItem) => contentItem.uri);
+    let uris;
+    if(options.valueBasedQuery){
+      uris = content;
+    } else {
+      uris = content.map((contentItem) => contentItem.uri);
+    }
     let flow = this.getFlow(flowName);
     if(!flow) {
       this.datahub.debug.log({message: 'The flow with the name '+flowName+' could not be found.', type: 'error'});
@@ -374,7 +383,11 @@ class Flow {
       }
     } else {
       for (let contentItem of content) {
-        flowInstance.globalContext.uri = contentItem.uri;
+        if(options.valueBasedQuery){
+          flowInstance.globalContext.uri = contentItem;
+        } else {
+          flowInstance.globalContext.uri = contentItem.uri;
+        }
         try {
           let results = normalizeToSequence(flowInstance.runMain(contentItem, options, processor.run));
           flowInstance.processResults(results, options, flowName, step);
