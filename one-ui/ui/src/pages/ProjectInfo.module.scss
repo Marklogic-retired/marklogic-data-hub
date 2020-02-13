@@ -75,3 +75,20 @@
   float:left;
   font-weight: 500;
 }
+
+.uploadButton {
+  font-family: HelveticaNeue;
+  font-weight: 500;
+  background-color: #1510A7;
+  margin-left: 300px;
+  align-items: center;
+  justify-content: center;
+  top: 40%;
+  left: -10%;
+  width: 36%;
+}
+
+.errorMessage, .successMessage {
+  text-align: left;
+}
+
