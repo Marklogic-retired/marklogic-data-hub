@@ -11,7 +11,7 @@ import styles from './result-table.module.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCode, faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
 import ColumnSelector from '../../components/column-selector/column-selector';
-import { tableParser, headerParser, deepCopy, reconstructHeader, toStringArray } from '../../util/data-conversion';
+import { tableParser, headerParser, deepCopy, reconstructHeader, toStringArray, headerPropsParser } from '../../util/data-conversion';
 import ReactDragListView from 'react-drag-listview'
 
 
@@ -95,17 +95,17 @@ const ResultTable: React.FC<Props> = (props) => {
       setAlertMessage('Error', 'No instance information in payload');
     }
     if (props.data) {
-      if (searchOptions.entityNames.length === 0 ) {
+      if (searchOptions.entityNames.length === 0) {
         // All Entities
-        let newTableData = formatTableData(parsedPayload.data, true);       
+        let newTableData = formatTableData(parsedPayload.data, true);
         let tableColumns = getUserPref('all');
-        let renderHeader = tableHeader( tableColumns ? tableColumns['columns'] : DEFAULT_ALL_ENTITIES_HEADER, '');
-        let newDefaultColumns = delimitHeader(renderHeader); 
+        let renderHeader = tableHeader(tableColumns ? tableColumns['columns'] : DEFAULT_ALL_ENTITIES_HEADER, '');
+        let newDefaultColumns = delimitHeader(renderHeader);
 
         if (!tableColumns) {
           updateTablePreferences(user.name, 'all', newDefaultColumns)
         }
-        
+
         setRenderColumns(renderHeader)
         setRenderTableData(newTableData);
         setTreeColumns(renderHeader);
@@ -115,10 +115,10 @@ const ResultTable: React.FC<Props> = (props) => {
         // An Entity is selected
         let tableColumns = getUserPref(searchOptions.entityNames[0]);
         let newRenderColumns: any[] = [];
-        let parsedEntityDocObj = parsedPayload.data[0] && parsedPayload.data[0].itemEntityProperties[0];
-        let newColumns = setPrimaryKeyColumn(headerParser(parsedEntityDocObj));
-        
-        if (newColumns.length !== 0) {
+
+        if (parsedPayload.data.length !== 0) {
+          //pass entityDefArray of entities and current selected entity
+          let newColumns = setPrimaryKeyColumn(headerPropsParser(props.entityDefArray, searchOptions.entityNames))
           newColumns.push(DETAIL_HEADER_OBJ);
           if (newColumns.length > 5) {
             newRenderColumns = newColumns.slice(0, 4);
@@ -131,7 +131,7 @@ const ResultTable: React.FC<Props> = (props) => {
             updateTablePreferences(user.name, searchOptions.entityNames[0], newRenderColumns)
           }
 
-          let renderHeader = tableHeader(tableColumns ? tableColumns['columns'] : newRenderColumns , '');
+          let renderHeader = tableHeader(tableColumns ? tableColumns['columns'] : newRenderColumns, '');
 
           setRenderColumns(renderHeader);
           setRenderTableData(mergeRows(renderHeader));
@@ -209,10 +209,10 @@ const ResultTable: React.FC<Props> = (props) => {
                   let objectKeys = Object.keys(item.itemEntityProperties[0][propt][0]);
                   let objKeyMap = {}
 
-                  objectKeys.forEach( item => {
+                  objectKeys.forEach(item => {
                     objKeyMap[item] = propt + '_' + item;
                   });
-                  nested = item.itemEntityProperties[0][propt].map( item => {
+                  nested = item.itemEntityProperties[0][propt].map(item => {
                     return renameKeys(objKeyMap, item);
                   });
                 }
@@ -220,12 +220,12 @@ const ResultTable: React.FC<Props> = (props) => {
               } else if (typeof item.itemEntityProperties[0][propt] === 'object') {
                 let objectKeys = Object.keys(item.itemEntityProperties[0][propt]);
                 let objKeyMap = {}
-                objectKeys.forEach( item => {
+                objectKeys.forEach(item => {
                   objKeyMap[item] = propt + '_' + item;
                 });
                 let reMappedObject = renameKeys(objKeyMap, item.itemEntityProperties[0][propt]);
-                row = {...row, ...reMappedObject}
-              }  else {
+                row = { ...row, ...reMappedObject }
+              } else {
                 row[propt.toLowerCase()] = item.itemEntityProperties[0][propt].toString();
               }
             }
@@ -243,23 +243,23 @@ const ResultTable: React.FC<Props> = (props) => {
 
               }
 
-              if(values.length){
+              if (values.length) {
                 for (let key of Object.keys(values[0])) {
                   duplicateRow[key.toLowerCase()] = values[0][key].toString();
                 }
               }
               duplicateRow.key = rowCounter;
               duplicateRow.nestedId = index;
-              duplicateRow.lastNestedIndex = nested.length -1
+              duplicateRow.lastNestedIndex = nested.length - 1
               if (index === 0) {
                 duplicateRow.isNested = true;
               }
-              data.push({...duplicateRow, ...nested[index] })
+              data.push({ ...duplicateRow, ...nested[index] })
               rowCounter++;
             })
             //nestedId++;
             //if row has a nested object
-          } 
+          }
           else {
             rowCounter++;
             data.push(row)
@@ -276,13 +276,13 @@ const ResultTable: React.FC<Props> = (props) => {
 
   const renameKeys = (keysMap, obj) => {
     return Object
-    .keys(obj)
-    .reduce((acc, key) => ({
+      .keys(obj)
+      .reduce((acc, key) => ({
         ...acc,
         ...{ [keysMap[key] || key]: obj[key] }
-    }), {});
+      }), {});
   }
-  
+
   const tableHeader = (columns, parent) => {
     let col = new Array();
     let set = new Set();
@@ -328,7 +328,7 @@ const ResultTable: React.FC<Props> = (props) => {
                 }
               };
 
-              
+
               if (row.hasOwnProperty('nestedId')) {
                 // Works, but need to differentiate row cells that have
                 // nested array of objects
@@ -447,9 +447,9 @@ const ResultTable: React.FC<Props> = (props) => {
       return parsedData;
     }
 
-    let index:string = '';
-    for(let i in parsedPayload.data){
-      if(parsedPayload.data[i].primaryKey == rowId.primaryKey){
+    let index: string = '';
+    for (let i in parsedPayload.data) {
+      if (parsedPayload.data[i].primaryKey == rowId.primaryKey) {
         index = i;
       }
     }
@@ -465,7 +465,7 @@ const ResultTable: React.FC<Props> = (props) => {
     />;
   }
 
-  
+
   const headerRender = (col) => {
     updateUserPref(col);
     setRenderColumns(col);
@@ -478,21 +478,21 @@ const ResultTable: React.FC<Props> = (props) => {
   }
 
   const delimitHeader = (header: any[]) => {
-    return header.map( (column, index) => {
+    return header.map((column, index) => {
       let newCol = { ...column }
       delete newCol['onHeaderCell']
       delete newCol['onCell']
       delete newCol['render']
       return newCol
     });
-  }; 
+  };
 
   const getUserPref = (entity: string) => {
     let userPref = getUserPreferences(user.name);
     if (userPref) {
       let values = JSON.parse(userPref);
       if (values && values.hasOwnProperty('resultTableColumns')) {
-        return values.resultTableColumns.find( item => item.name === entity);
+        return values.resultTableColumns.find(item => item.name === entity);
       } else {
         return null;
       }
@@ -505,7 +505,7 @@ const ResultTable: React.FC<Props> = (props) => {
     let delimitedHeader = delimitHeader(header);
     let entity = 'all';
 
-    if ( searchOptions.entityNames.length > 0) {
+    if (searchOptions.entityNames.length > 0) {
       entity = searchOptions.entityNames[0]
     }
 
@@ -514,7 +514,7 @@ const ResultTable: React.FC<Props> = (props) => {
 
   let icons: any = [];
   let expIcons: any = [];
-  function expandIcon({expanded, expandable, record, onExpand}) {
+  function expandIcon({ expanded, expandable, record, onExpand }) {
     if (expanded && record.nestedColumns) {
       expIcons.push(record.primaryKey);
     }
@@ -523,19 +523,19 @@ const ResultTable: React.FC<Props> = (props) => {
     }
     icons.push(record.primaryKey);
     return (
-        <a style={{color: 'black'}} onClick={e => onExpand(record, e)}>
-          {expanded ? <Icon type="down"/> : <Icon type="right"/>}
-        </a>
+      <a style={{ color: 'black' }} onClick={e => onExpand(record, e)}>
+        {expanded ? <Icon type="down" /> : <Icon type="right" />}
+      </a>
     );
   }
-  
+
   return (
     <>
       <div className={styles.columnSelector} data-cy="column-selector">
         <ColumnSelector title={checkedColumns} tree={treeColumns} headerRender={headerRender} updateTreeColumns={updateTreeColumns} />
       </div>
       <ReactDragListView.DragColumn {...dragProps}>
-        <div className={styles.tabular}>        
+        <div className={styles.tabular}>
           <Table bordered components={components}
             className="search-tabular"
             rowKey="key"
