@@ -80,7 +80,7 @@ List of security related properties for Explorer app server:
 
 | Property                       | Description                                                | Default Value                   |
 |--------------------------------|------------------------------------------------------------|---------------------------------|
-| server.servlet.session.timeout | Sets session timeout                                       | 5 minutes                       |
+| server.servlet.session.timeout | Sets session timeout in seconds                            | 300                             |
 | server.ssl.key-store-type      | Sets the format used for the keystore                      | PKCS12                          |
 | server.ssl.key-store           | Sets the path to the keystore containing the certificate   | classpath:keystore/explorer.p12 |
 | server.ssl.key-store-password  | Sets the password used to generate the certificate         | explorer                        |
