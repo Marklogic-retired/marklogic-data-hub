@@ -1,7 +1,7 @@
 import { Modal, Form, Input, Button, Tooltip, Icon, Select, Radio } from "antd";
 import React, { useState, useEffect } from "react";
 import styles from './create-edit-mapping-dialog.module.scss';
-import {NewMapTooltips} from '../../../../config/tooltips.config';
+import { NewMapTooltips } from '../../../../config/tooltips.config';
 import Axios from "axios";
 
 const CreateEditMappingDialog = (props) => {
@@ -9,7 +9,7 @@ const CreateEditMappingDialog = (props) => {
   const [mapName, setMapName] = useState('');
   const [description, setDescription] = useState(props.mapData && props.mapData != {} ? props.mapData.description : '');
   const [collections, setCollections] = useState<any[]>([]);
-  const [selectedSource,setSelectedSource] = useState(props.mapData && props.mapData != {} ? props.mapData.selectedSource : 'collection')
+  const [selectedSource, setSelectedSource] = useState(props.mapData && props.mapData != {} ? props.mapData.selectedSource : 'collection')
   const [srcQuery, setSrcQuery] = useState(props.mapData && props.mapData != {} ? props.mapData.sourceQuery : '');
 
   //To check submit validity
@@ -23,7 +23,7 @@ const CreateEditMappingDialog = (props) => {
 
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [tobeDisabled, setTobeDisabled] = useState(false);
-  const colList = ['Provider','Claims','Students','Customer'];
+  const colList = ['Provider', 'Claims', 'Students', 'Customer']; //To be removed once integrated with EndPoints.
 
   useEffect(() => {
     if (props.mapData && JSON.stringify(props.mapData) != JSON.stringify({}) && props.title === 'Edit Mapping') {
@@ -58,12 +58,12 @@ const CreateEditMappingDialog = (props) => {
 
   const onCancel = () => {
 
-    if(checkDeleteOpenEligibility()) {
+    if (checkDeleteOpenEligibility()) {
       console.log(isMapNameTouched
-        ,isDescriptionTouched
-        ,isSelectedSourceTouched
-        ,isCollectionsTouched
-        ,isSrcQueryTouched)
+        , isDescriptionTouched
+        , isSelectedSourceTouched
+        , isCollectionsTouched
+        , isSrcQueryTouched)
       setDeleteDialogVisible(true);
     } else {
       props.setNewMap(false);
@@ -98,25 +98,25 @@ const CreateEditMappingDialog = (props) => {
   }
 
   const deleteConfirmation = <Modal
-        visible={deleteDialogVisible}
-        bodyStyle={{textAlign: 'center'}}
-        width={250}
-        maskClosable={false}
-        closable={false}
-        footer={null}
-    >
-        <span className={styles.ConfirmationMessage}>Discard changes?</span>
-        <br/><br/>
-        <div >
-            <Button onClick={() => onDelCancel()}>No</Button>
-            &nbsp;&nbsp;
+    visible={deleteDialogVisible}
+    bodyStyle={{ textAlign: 'center' }}
+    width={250}
+    maskClosable={false}
+    closable={false}
+    footer={null}
+  >
+    <span className={styles.ConfirmationMessage}>Discard changes?</span>
+    <br /><br />
+    <div >
+      <Button onClick={() => onDelCancel()}>No</Button>
+      &nbsp;&nbsp;
             <Button type="primary" htmlType="submit" onClick={onDelOk}>Yes</Button>
-          </div>
-    </Modal>;
+    </div>
+  </Modal>;
 
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
     if (event) event.preventDefault();
-    
+
     let dataPayload = {}
     // let dataPayload = {
     //        name: mapName,
@@ -125,11 +125,11 @@ const CreateEditMappingDialog = (props) => {
     //        sourceQuery: srcQuery,
     //        collection: []
     //      }
-    
+
     setIsValid(true);
 
     //Call create Mapping artifact API function
- 
+
     props.createMappingArtifact(dataPayload);
 
     props.setNewMap(false);
@@ -143,8 +143,8 @@ const CreateEditMappingDialog = (props) => {
       else {
         setMapNameTouched(true);
         setMapName(event.target.value);
-        if(event.target.value.length > 0) {
-          if(JSON.stringify(collections) !== JSON.stringify([]) || srcQuery){
+        if (event.target.value.length > 0) {
+          if (JSON.stringify(collections) !== JSON.stringify([]) || srcQuery) {
             setIsValid(true);
           }
         } else {
@@ -160,13 +160,13 @@ const CreateEditMappingDialog = (props) => {
       else {
         setDescriptionTouched(true);
         setDescription(event.target.value);
-        if(props.mapData && props.mapData.description){
-          if(event.target.value === props.mapData.description){
+        if (props.mapData && props.mapData.description) {
+          if (event.target.value === props.mapData.description) {
             setDescriptionTouched(false);
           }
         }
-        if(props.title === 'New Mapping'){
-          if(event.target.value === ''){
+        if (props.title === 'New Mapping') {
+          if (event.target.value === '') {
             setDescriptionTouched(false);
           }
         }
@@ -180,12 +180,12 @@ const CreateEditMappingDialog = (props) => {
       else {
         setSrcQueryTouched(true);
         setSrcQuery(event.target.value);
-        if(event.target.value.length > 0) {
-          if(mapName){
+        if (event.target.value.length > 0) {
+          if (mapName) {
             setIsValid(true);
           }
         } else {
-            setIsValid(false);
+          setIsValid(false);
         }
       }
     }
@@ -198,48 +198,48 @@ const CreateEditMappingDialog = (props) => {
     else {
       setCollectionsTouched(true);
       setCollections(value);
-      if(props.mapData && props.mapData.collections){
-        if(value.length === props.mapData.collections.length && value.every((item, index) => props.mapData.collections[index] === item)){
+      if (props.mapData && props.mapData.collections) {
+        if (value.length === props.mapData.collections.length && value.every((item, index) => props.mapData.collections[index] === item)) {
           setCollectionsTouched(false);
         }
       }
-      if(value.length > 0) {
-        if(mapName){
+      if (value.length > 0) {
+        if (mapName) {
           setIsValid(true);
         }
       } else {
-          setIsValid(false);
+        setIsValid(false);
       }
     }
   }
 
   const handleSelectedSource = (event) => {
-      if (event.target.value === ' ') {
+    if (event.target.value === ' ') {
+      setSelectedSourceTouched(false);
+    }
+    else {
+      setSelectedSourceTouched(true);
+      setSelectedSource(event.target.value);
+      if (event.target.value === props.mapData.selectedSource) {
         setSelectedSourceTouched(false);
       }
-      else {
-        setSelectedSourceTouched(true);
-        setSelectedSource(event.target.value);
-        if(event.target.value === props.mapData.selectedSource){
-          setSelectedSourceTouched(false);
-        }
-        if(event.target.value === 'collection'){
-          if(mapName && JSON.stringify(collections) !== JSON.stringify([])){
-            setIsValid(true);
-          } else {
-            setIsValid(false);
-          }
+      if (event.target.value === 'collection') {
+        if (mapName && JSON.stringify(collections) !== JSON.stringify([])) {
+          setIsValid(true);
         } else {
-          if(mapName && srcQuery){
-            setIsValid(true);
-          } else {
-            setIsValid(false);
-          }
+          setIsValid(false);
+        }
+      } else {
+        if (mapName && srcQuery) {
+          setIsValid(true);
+        } else {
+          setIsValid(false);
         }
       }
     }
-  
-  
+  }
+
+
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -273,28 +273,26 @@ const CreateEditMappingDialog = (props) => {
     <div className={styles.newMappingForm}>
       <Form {...formItemLayout} onSubmit={handleSubmit} colon={false}>
         <Form.Item label={<span>
-          Name:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
-              <Tooltip title={NewMapTooltips.name}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
+          Name:&nbsp;<span className={styles.asterisk}>*</span>
           &nbsp;
             </span>} labelAlign="left"
           validateStatus={(mapName || !isMapNameTouched) ? '' : 'error'}
           help={(mapName || !isMapNameTouched) ? '' : 'Name is required'}
-          >
+        >
           <Input
             id="name"
             placeholder="Enter name"
             value={mapName}
             onChange={handleChange}
             disabled={tobeDisabled}
-          />
+            className={styles.input}
+          />&nbsp;&nbsp;
+          <Tooltip title={NewMapTooltips.name}>
+        <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+      </Tooltip>
         </Form.Item>
         <Form.Item label={<span>
-          Description:&nbsp;
-              <Tooltip title={NewMapTooltips.description}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
+          Description:
           &nbsp;
             </span>} labelAlign="left">
           <Input
@@ -303,44 +301,48 @@ const CreateEditMappingDialog = (props) => {
             value={description}
             onChange={handleChange}
             disabled={props.canReadOnly && !props.canReadWrite}
-          />
+            className={styles.input}
+          />&nbsp;&nbsp;
+          <Tooltip title={NewMapTooltips.description}>
+        <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+      </Tooltip>
         </Form.Item>
-        
+
         <Form.Item label={<span>
-          Source Query:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
+          Source Query:&nbsp;<span className={styles.asterisk}>*</span>
+          &nbsp;
+            </span>} labelAlign="left">
+          <Radio.Group
+            id="srcType"
+            options={srcTypeOptions}
+            onChange={handleSelectedSource}
+            value={selectedSource}
+            disabled={!props.canReadWrite}
+          >
+          </Radio.Group>
               <Tooltip title={NewMapTooltips.sourceQuery}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </Tooltip>
-          &nbsp;
-            </span>} labelAlign="left">
-            <Radio.Group
-            id="srcType"
-            options={srcTypeOptions}
-            onChange={handleSelectedSource} 
-            value={selectedSource}
+          {selectedSource === 'collection' ? <Select
+            id="collList"
+            mode="multiple"
+            style={{ width: '100%' }}
+            placeholder="Please select"
+            value={collections}
             disabled={!props.canReadWrite}
-            >
-            </Radio.Group>
-        {selectedSource === 'collection' ? <Select
-              id="collList"
-              mode="multiple"
-              style={{ width: '100%' }}
-              placeholder="Please select"
-              value={collections}
-              disabled={!props.canReadWrite}
-              onChange={handleCollList}
-            >
-        {collectionsList}
-            </Select> : <TextArea
+            onChange={handleCollList}
+          >
+            {collectionsList}
+          </Select> : <TextArea
             id="srcQuery"
             placeholder="Enter Source Query"
             value={srcQuery}
             onChange={handleChange}
             disabled={!props.canReadWrite}
-            ></TextArea>}
+          ></TextArea>}
         </Form.Item>
-        <br/><br/><br/><br/>
-                
+        <br /><br /><br /><br />
+
         <Form.Item className={styles.submitButtonsForm}>
           <div className={styles.submitButtons}>
             <Button onClick={() => onCancel()}>Cancel</Button>
