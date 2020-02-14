@@ -84,7 +84,7 @@ declare function helper-impl:property-name-to-query($options as element(), $full
               function($val, $weight) {
                 $scope-query(cts:element-value-query(
                   $qname,
-                  $val,
+                  $val ! fn:string(.),
                   ("case-insensitive"),
                   $weight
                 ))
