@@ -31,9 +31,9 @@ public class EnvironmentServiceTest {
     void testGetProjectInfo(){
         JsonNode resp = environmentService.getProjectInfo();
         Assertions.assertNotNull(resp);
-        Assertions.assertNotNull(resp.get("dhfVersion"));
+        Assertions.assertNotNull(resp.get("dataHubVersion"));
         Assertions.assertNotNull(resp.get("projectName"));
         Assertions.assertNotNull(resp.get("projectDir"));
-        Assertions.assertNotNull(resp.get("mlVersion"));
+        Assertions.assertNotNull(resp.get("marklogicVersion"));
     }
 }
