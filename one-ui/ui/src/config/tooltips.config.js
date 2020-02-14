@@ -22,7 +22,12 @@ const LoadDataSettings = {
     'mlcpCommand': 'To ingest files using MLCP, copy and paste this complete command to a command-line prompt . Note: MLCP and QuickStart generate two different URIs for the same delimited file.'
 }
 
+const NewMapTooltips = {
+
+}
+
 export {
     NewLoadTooltips,
-    LoadDataSettings
+    LoadDataSettings,
+    NewMapTooltips
 }
