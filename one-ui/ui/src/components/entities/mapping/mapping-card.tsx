@@ -1,49 +1,46 @@
 import React, { CSSProperties, useState } from 'react';
 import styles from './mapping-card.module.scss';
-import {Card, Icon, Tooltip, Popover, Row, Col, Modal} from 'antd';
+import {Card, Icon, Tooltip, Row, Col, Modal} from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
 import sourceFormatOptions from '../../../config/formats.config';
 import { convertDateFromISO } from '../../../util/conversionFunctions';
-import NewDataLoadDialog from '../../load-data/new-data-load-dialog/new-data-load-dialog';
-import LoadDataSettingsDialog from '../../load-data/load-data-settings/load-data-settings-dialog';
-
+import CreateEditMappingDialog from './create-edit-mapping-dialog/create-edit-mapping-dialog';
 
 interface Props {
     data: any;
-    deleteLoadDataArtifact: any;
-    createLoadDataArtifact: any;
+    deleteMappingArtifact: any;
+    createMappingArtifact: any;
     canReadOnly: any;
     canReadWrite: any;
   }
 
 const MappingCard: React.FC<Props> = (props) => {
-    const [newDataLoad, setNewDataLoad] = useState(false);
+    const [newMap, setNewMap] = useState(false);
     const [title, setTitle] = useState('');
-    const [stepData, setStepData] = useState({});
+    const [mapData, setMapData] = useState({});
     const [dialogVisible, setDialogVisible] = useState(false);
     const [loadArtifactName, setLoadArtifactName] = useState('');
 
-    const [openLoadDataSettings, setOpenLoadDataSettings] = useState(false);
+    //const [openLoadDataSettings, setOpenLoadDataSettings] = useState(false);
 
 
     const OpenAddNewDialog = () => {
-        setTitle('New Data Load');
-        setNewDataLoad(true);
+        setTitle('New Mapping');
+        setNewMap(true);
     }
 
     const OpenEditStepDialog = (index) => {
-        setTitle('Edit Data Load');
-        setStepData(prevState => ({ ...prevState, ...props.data[index]}));
-        setNewDataLoad(true);
+        setTitle('Edit Mapping');
+        setMapData(prevState => ({ ...prevState, ...props.data[index]}));
+        setNewMap(true);
     }
 
-    const OpenLoadDataSettingsDialog = (index) => {
-        setStepData(prevState => ({ ...prevState, ...props.data[index]}));
-        //openLoadDataSettings = true;
-        setOpenLoadDataSettings(true);
-        console.log('Open settings', openLoadDataSettings)
+    const OpenMappingSettingsDialog = (index) => {
+        // setMapData(prevState => ({ ...prevState, ...props.data[index]}));
+        // //openLoadDataSettings = true;
+        // setOpenLoadDataSettings(true);
+        console.log('Open settings')
     }
 
     //Custom CSS for source Format
@@ -76,7 +73,7 @@ const MappingCard: React.FC<Props> = (props) => {
       }
 
       const onOk = (name) => {
-        props.deleteLoadDataArtifact(name)
+        props.deleteMappingArtifact(name)
         setDialogVisible(false);
       }
 
@@ -111,7 +108,7 @@ const MappingCard: React.FC<Props> = (props) => {
                     <Col key={index}><Card
                         actions={[
                             <span></span>,
-                            <Tooltip title={'Settings'} placement="bottom"><Icon type="setting" key="setting" onClick={() => OpenLoadDataSettingsDialog(index)}/></Tooltip>,
+                            <Tooltip title={'Settings'} placement="bottom"><Icon type="setting" key="setting" onClick={() => OpenMappingSettingsDialog(index)}/></Tooltip>,
                             <Tooltip title={'Edit'} placement="bottom"><Icon type="edit" key="edit" onClick={() => OpenEditStepDialog(index)}/></Tooltip>,
                             props.canReadWrite ? <Tooltip title={'Delete'} placement="bottom"><i><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg" onClick={() => handleCardDelete(elem.name)}/></i></Tooltip> : <i><FontAwesomeIcon icon={faTrashAlt} onClick={(event) => event.preventDefault()} className={styles.disabledDeleteIcon} size="lg"/></i>,
                         ]}
@@ -120,28 +117,25 @@ const MappingCard: React.FC<Props> = (props) => {
                         size="small"
                     >
                         <div className={styles.formatFileContainer}>
-                            <span className={styles.stepNameStyle}>{getInitialChars(elem.name, 27, '...')}</span>
+                            <span className={styles.mapNameStyle}>{getInitialChars(elem.name, 27, '...')}</span>
                             <span style={sourceFormatStyle(elem.sourceFormat)}>{elem.sourceFormat.toUpperCase()}</span>
                             
-                            {/* <span className={styles.files}>Files</span> */}
                         </div><br />
                         <div className={styles.sourceQuery}>Source Query: {getInitialChars(elem.sourceQuery,32,'...')}</div>
                         <br /><br />
-                        {/* <div className={styles.fileCount}>{elem.fileCount}</div> */}
-                        {/* <span className={styles.stepNameStyle}>{getInitialChars(elem.name, 27, '...')}</span> */}
                         <p className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</p>
                     </Card></Col>
                 )) : <span></span> }</Row>
-                <NewDataLoadDialog 
-                newLoad={newDataLoad} 
+                <CreateEditMappingDialog 
+                newMap={newMap} 
                 title={title} 
-                setNewLoad={setNewDataLoad} 
-                createLoadDataArtifact={props.createLoadDataArtifact} 
-                stepData={stepData}
+                setNewMap={setNewMap} 
+                createMappingArtifact={props.createMappingArtifact} 
+                mapData={mapData}
                 canReadWrite={props.canReadWrite}
                 canReadOnly={props.canReadOnly}/>
                 {deleteConfirmation}
-                <LoadDataSettingsDialog openLoadDataSettings={openLoadDataSettings} setOpenLoadDataSettings={setOpenLoadDataSettings} stepData={stepData}/>
+                
         </div>
     );
 
