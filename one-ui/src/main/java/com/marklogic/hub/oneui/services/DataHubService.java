@@ -16,30 +16,26 @@ public class DataHubService {
     @Autowired
     private HubConfigSession hubConfigSession;
 
-    public boolean install(HubDeployStatusListener listener) {
+    public void install(HubDeployStatusListener listener) {
         logger.info("Installing Data Hub...");
         try {
             hubConfigSession.getDataHub().install(listener);
-            return true;
         } catch(Exception e) {
             logger.warn("Error encountered installing Data Hub...", e);
             listener.onStatusChange(-1, getStackTrace(e));
             listener.onError("Init", e);
         }
-        return false;
     }
 
-    public boolean unInstall(HubDeployStatusListener listener) {
+    public void unInstall(HubDeployStatusListener listener) {
         logger.info("Uninstalling Data Hub...");
         try {
             hubConfigSession.getDataHub().uninstall(listener);
-            return true;
         } catch(Exception e) {
             logger.warn("Error encountered uninstalling Data Hub...", e);
             listener.onStatusChange(-1, getStackTrace(e));
             listener.onError("unInstall", e);
         }
-        return false;
     }
 
     private String getStackTrace(final Throwable throwable) {
