@@ -60,8 +60,9 @@ public class LoadDataController extends AbstractArtifactController {
     }
 
     @RequestMapping(value = "/{artifactName}", method = RequestMethod.DELETE)
-    public void deleteLoadDataConfig(@PathVariable String artifactName) throws IOException {
+    public void deleteArtifact(@PathVariable String artifactName) throws IOException {
         super.deleteArtifact(artifactName);
+        deleteDataSetDirectory(artifactName);
     }
 
     @RequestMapping(value = "/{artifactName}/validate", method = RequestMethod.POST)
@@ -98,15 +99,8 @@ public class LoadDataController extends AbstractArtifactController {
     @RequestMapping(value = "/{artifactName}/setData", method = RequestMethod.DELETE)
     public ResponseEntity<ObjectNode> deleteData(@PathVariable String artifactName) {
         ObjectNode loadDataJson = (ObjectNode) super.getArtifact(artifactName).getBody();
-        Path dataSetDirectoryPath = Paths.get(environmentService.getProjectDirectory(), "data-sets", artifactName);
         assert loadDataJson != null;
-        if (dataSetDirectoryPath.toFile().exists()) {
-            try {
-                FileUtils.deleteDirectory(dataSetDirectoryPath.toFile());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        deleteDataSetDirectory(artifactName);
         enrichLoadData(loadDataJson);
         return new ResponseEntity<>(loadDataJson, HttpStatus.OK);
     }
@@ -127,7 +121,7 @@ public class LoadDataController extends AbstractArtifactController {
         return super.updateArtifactSettings(artifactName, settings);
     }
 
-    private void enrichLoadData(ObjectNode loadDataConfig) {
+    protected void enrichLoadData(ObjectNode loadDataConfig) {
         int fileCount = 0;
         if (loadDataConfig.hasNonNull("inputFilePath")) {
             String inputFilePath = loadDataConfig.get("inputFilePath").asText();
@@ -138,5 +132,20 @@ public class LoadDataController extends AbstractArtifactController {
         }
         loadDataConfig.put("fileCount", fileCount);
         loadDataConfig.put("filesNeedReuploaded", fileCount == 0);
+    }
+
+    private void deleteDataSetDirectory(String artifactName) {
+        Path dataSetDirectoryPath = dataSetDirectory(artifactName);
+        if (dataSetDirectoryPath.toFile().exists()) {
+            try {
+                FileUtils.deleteDirectory(dataSetDirectoryPath.toFile());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    protected Path dataSetDirectory(String artifactName) {
+        return Paths.get(environmentService.getProjectDirectory(), "data-sets", artifactName);
     }
 }

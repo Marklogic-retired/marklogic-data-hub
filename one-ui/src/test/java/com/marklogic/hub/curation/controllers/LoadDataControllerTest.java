@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
@@ -53,7 +54,7 @@ public class LoadDataControllerTest {
     @Autowired
     TestHelper testHelper;
 
-    JsonNode validLoadDataConfig = new ObjectMapper().readTree("{ \"name\": \"validArtifact\", \"sourceFormat\": \"xml\", \"targetFormat\": \"json\"}");
+    ObjectNode validLoadDataConfig = (ObjectNode) new ObjectMapper().readTree("{ \"name\": \"validArtifact\", \"sourceFormat\": \"xml\", \"targetFormat\": \"json\"}");
 
 
     static final String LOAD_DATA_SETTINGS = "{\n"
@@ -88,17 +89,21 @@ public class LoadDataControllerTest {
         assertEquals("json", resultByName.get("targetFormat").asText(), "Getting artifact by name should return object with expected properties");
         assertTrue(artifactProjectLocation.toFile().exists(), "File should have been created in the project directory");
 
+        ObjectNode enrichedJson = controller.setData("validArtifact", new MockMultipartFile[]{ new MockMultipartFile("file", "orig", null, "docTest".getBytes())}).getBody();
+        assertEquals(1, enrichedJson.get("fileCount").asInt(), "File should be added to data set.");
+
         controller.deleteArtifact("validArtifact");
         assertFalse(artifactProjectLocation.toFile().exists(), "File should have been deleted from the project directory");
 
         resultList = (ArrayNode) controller.getArtifacts().getBody();
 
         assertEquals(0, resultList.size(), "List of load data artifacts should now be 0 after deleting validArtifact");
+        assertFalse(controller.dataSetDirectory("validArtifact").toFile().exists(), "Data set directory for validArtifact should no longer exist");
 
         assertThrows(FailedRequestException.class, () -> controller.getArtifact("validArtifact"));
     }
 
-    //@Test
+    @Test
     public void testLoadDataSettings() throws IOException {
         testHelper.authenticateSession();
         controller.updateArtifact("validArtifact", validLoadDataConfig);
