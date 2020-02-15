@@ -446,9 +446,13 @@ const NewDataLoadDialog = (props) => {
 
 
     //API call for
-    try {
+
       const url = `/api/artifacts/loadData/${stepName}/setData`;
-      let resp = await Axios.post(url, formData, {
+
+      await Axios({
+        method: 'post',
+        url: url,
+        data: formData,
         onUploadProgress: e => {
           onProgress({ percent: (e.loaded / e.total) * 100 });
           let percent=(e.loaded / e.total) * 100;
@@ -456,30 +460,30 @@ const NewDataLoadDialog = (props) => {
           setUploadPercent(percent);
         },
         headers: {
-          'Content-Type': 'multipart/form-data; boundary=${formData._boundary}'
-        },
-      })
-      if (resp.status == 200){
-        console.log('responses.status',resp)
+          'Content-Type': 'multipart/form-data; boundary=${formData._boundary}',
+          crossorigin:true
+        }
+      }).then(resp => {
+        console.log('responses.status',resp);
+        if (resp.data && resp.data.message){
+          if(resp.data.message.startsWith('Maximum upload size exceeded') || resp.data.message.includes('Network Error')){
+            setDisplayUploadError(true);
+          }
+        }
         if(resp.data && resp.data.inputFilePath){
           setInputFilePath(resp.data.inputFilePath);
         }
         if(stepName && srcFormat && tgtFormat && resp.data.inputFilePath) {
           buildURIPreview(resp.data);
         }
-        onSuccess(resp.status);
+      }).catch(err => {
+        console.log('Error while uploading the files', err)
+      if (err.message && (err.message.startsWith('Maximum upload size exceeded') || err.message.includes('Network Error') || err.message.includes('Request failed with status code 500'))){
+        setDisplayUploadError(true);
       }
-      
-    }
-    catch(err) {
-        console.log('Error while uploading the files', err.response.data.message)
-        if (err.response.data.message.startsWith('Maximum upload size exceeded')){
-          setDisplayUploadError(true);
-        }
-        /*......*/
-        onError(err);
-      }
-
+      /*......*/
+      onError(err);
+      });
 
   };
 
@@ -660,7 +664,7 @@ const NewDataLoadDialog = (props) => {
                 {props.canReadWrite && !displayUploadError ? (uploadPercent > 0 && uploadPercent < 100 ? <Progress type="circle" percent={uploadPercent} width={50} /> : '') : ''}
                 {props.canReadWrite && !displayUploadError ? (uploadPercent === 100 ? <span>{fileList.length} files uploaded</span> : '') : ''}
                 </span>
-                {displayUploadError ? <div className={styles.fileUploadErrorContainer}> The total size of the files must be 100MB or less. </div> : ''}
+                {displayUploadError ? <div className={styles.fileUploadErrorContainer}> The upload was unsuccessful. </div> : ''}
         </Form.Item>
         <Form.Item label={<span>
           Source Format:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
