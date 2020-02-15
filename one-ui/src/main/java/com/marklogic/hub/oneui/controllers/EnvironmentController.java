@@ -20,13 +20,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.hub.HubProject;
-import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.oneui.exceptions.BadRequestException;
 import com.marklogic.hub.oneui.exceptions.ProjectDirectoryException;
+import com.marklogic.hub.oneui.listener.UIDeployListener;
 import com.marklogic.hub.oneui.models.HubConfigSession;
-import com.marklogic.hub.oneui.models.StatusMessage;
 import com.marklogic.hub.oneui.services.DataHubService;
 import com.marklogic.hub.oneui.services.EnvironmentService;
+import com.marklogic.hub.oneui.services.DataHubProjectUtils;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,20 +45,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
 import org.springframework.web.multipart.MultipartFile;
-
-import static com.marklogic.hub.oneui.utils.DataHubProjectUtils.backupExistingFSProject;
-import static com.marklogic.hub.oneui.utils.DataHubProjectUtils.cleanExistingFSProject;
-import static com.marklogic.hub.oneui.utils.DataHubProjectUtils.extractZipProject;
 
 @Controller
 @RequestMapping("/api/environment")
@@ -70,10 +63,6 @@ public class EnvironmentController {
 
     @Autowired
     private SimpMessagingTemplate template;
-
-    static final Map<String, Object> stompHeaders = new HashMap<String, Object>(){{
-        put("content-type","application/json");
-    }};
 
     private ObjectMapper mapper = new ObjectMapper();
 
@@ -98,11 +87,7 @@ public class EnvironmentController {
     @ResponseBody
     public void install(@RequestBody ObjectNode payload) throws Exception {
         String directory = payload.get("directory").asText("");
-
-        final Exception[] dataHubConfigurationException = {null};
-        HubDeployStatusListener listener = getInstallListener(dataHubConfigurationException, false);
-
-        install(directory, listener, dataHubConfigurationException);
+        install(directory, new UIDeployListener(template, false));
     }
 
     @RequestMapping(value = "/project-download", produces = "application/zip")
@@ -136,67 +121,16 @@ public class EnvironmentController {
     @RequestMapping(value = "/project-upload", method = RequestMethod.POST)
     @ResponseBody
     public void uploadProject(@RequestParam("zipfile") MultipartFile uploadedFile) throws Exception {
-        final Exception[] dataHubConfigurationException = {null};
-        HubDeployStatusListener listener = getInstallListener(dataHubConfigurationException, false);
+        UIDeployListener listener = new UIDeployListener(template, false);
 
         HubProject project = hubConfig.getHubProject();
+        DataHubProjectUtils.replaceFSProject(project, uploadedFile, listener);
 
-        //backup first
-        backupExistingFSProject(project, listener);
-
-        // delete contents from the current project folder
-        cleanExistingFSProject(project, listener);
-
-        // extract the uploaded & zipped project file into the current project folder
-        extractZipProject(project, uploadedFile, listener);
-
-        HubDeployStatusListener uninstalllistener = getInstallListener(dataHubConfigurationException, true);
-        dataHubService.unInstall(uninstalllistener);
-
-        install(project.getProjectDirString(), listener, dataHubConfigurationException);
+        dataHubService.unInstall(new UIDeployListener(template,true));
+        install(project.getProjectDirString(), listener);
     }
 
-    private HubDeployStatusListener getInstallListener(final Exception[] dataHubConfigurationException, boolean isUninstall) {
-        HubDeployStatusListener listener = new HubDeployStatusListener() {
-            int lastPercentageComplete = 0;
-            @Override
-            public void onStatusChange(int percentComplete, String message) {
-                if (percentComplete >= 0) {
-                    logger.info(percentComplete + "% " + message);
-                    lastPercentageComplete = percentComplete;
-                    String msg = "";
-                    if (message.endsWith("Complete")) {
-                        msg = message;
-                    } else if (isUninstall && !message.startsWith("Uninstalling")) {
-                       msg = "Uninstalling..." + message;
-                    } else {
-                       msg = "Installing..." + message;
-                    }
-                    template.convertAndSend("/topic/install-status", new StatusMessage(percentComplete, msg), stompHeaders);
-                }
-            }
-
-            @Override
-            public void onError(String commandName, Exception exception) {
-                String message = "Error encountered running command: " + commandName;
-                String msg = "";
-                if (message.endsWith("Complete")) {
-                    msg = message;
-                } else if (isUninstall && !message.startsWith("Uninstalling")) {
-                    msg = "Uninstalling..." + message;
-                } else {
-                    msg = "Installing..." + message;
-                }
-                template.convertAndSend("/topic/install-status", new StatusMessage(lastPercentageComplete, msg));
-
-                logger.error(message, exception);
-                dataHubConfigurationException[0] = exception;
-            }
-        };
-        return listener;
-    }
-
-    private void install(String directory, HubDeployStatusListener listener, final Exception[] dataHubConfigurationException) throws Exception {
+    private void install(String directory, UIDeployListener listener) throws Exception {
         try {
             // setting the project directory will resolve any relative paths
             Path directoryPath = Paths.get(directory);
@@ -214,15 +148,10 @@ public class EnvironmentController {
             hubConfig.refreshProject();
             dataHubService.install(listener);
         } catch (Exception e) {
-            listener.onError("Initializing", e);
+            listener.onError("Initializing ", e);
         }
-        if (dataHubConfigurationException[0] != null) {
-            Exception exception = dataHubConfigurationException[0];
-            Throwable rootCause = dataHubConfigurationException[0].getCause();
-            if (exception instanceof IOException || rootCause instanceof IOException) {
-                exception = new ProjectDirectoryException("Your user account does not have write permissions to the installation directory.", "Log in as a user with write permissions to the directory you specify, or provide the absolute path to another directory.", exception);
-            }
-            throw exception;
+        if (listener.getException() != null) {
+            throw listener.getException();
         }
         environmentService.setProjectDirectory(directory);
     }

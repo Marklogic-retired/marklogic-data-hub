@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.oneui.utils;
+package com.marklogic.hub.oneui.services;
 
 import com.marklogic.hub.HubProject;
-import com.marklogic.hub.deploy.util.HubDeployStatusListener;
+import com.marklogic.hub.oneui.listener.UIDeployListener;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -35,17 +35,34 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
 public class DataHubProjectUtils {
-    protected final static Logger logger = LoggerFactory.getLogger(DataHubProjectUtils.class);
+    protected static final Logger logger = LoggerFactory.getLogger(DataHubProjectUtils.class);
 
+    /**
+     *
+     * @param project
+     * @param uploadedFile
+     * @param listener
+     */
+    public static void replaceFSProject(HubProject project, MultipartFile uploadedFile, UIDeployListener listener) {
+        //backup first
+        backupExistingFSProject(project, listener);
+
+        // delete contents from the current project folder
+        cleanExistingFSProject(project, listener);
+
+        // extract the uploaded & zipped project file into the current project folder
+        extractZipProject(project, uploadedFile, listener);
+
+    }
     /**
      * backup existing server-side project folder structure into a zip file
      *
      * @param project
+     * @param listener
      */
-    public static void backupExistingFSProject(HubProject project, HubDeployStatusListener listener) {
+    public static void backupExistingFSProject(HubProject project, UIDeployListener listener) {
         listener.onStatusChange(0, String.format("Backing up the existing project (%s)", project.getProjectName()));
-        File backupPath = new File(
-            FilenameUtils.concat(FileUtils.getTempDirectoryPath(), "datahub-project"));
+        File backupPath = new File(FilenameUtils.concat(FileUtils.getTempDirectoryPath(), "datahub-project"));
 
         if (!backupPath.exists()) {
             try {
@@ -55,12 +72,10 @@ public class DataHubProjectUtils {
             }
         }
 
-        File backupFile = new File(
-            FilenameUtils.concat(backupPath.toString(), project.getProjectName() + ".zip"));
+        File backupFile = new File(FilenameUtils.concat(backupPath.toString(), project.getProjectName() + ".zip"));
         try (OutputStream out = new FileOutputStream(backupFile)) {
             project.exportProject(out);
-            logger
-                .info(String.format("Backed up the existing project to %s", backupFile.getAbsolutePath()));
+            logger.info(String.format("Backed up the existing project to %s", backupFile.getAbsolutePath()));
         } catch (IOException e) {
             throw new RuntimeException(
                 String.format("Failed to back up the existing project into (%s) due to (%s).", backupFile.getAbsolutePath(),
@@ -73,14 +88,14 @@ public class DataHubProjectUtils {
      * clean contents of the existing server-side project folder
      *
      * @param project
+     * @param listener
      */
-    public static void cleanExistingFSProject(HubProject project, HubDeployStatusListener listener) {
+    public static void cleanExistingFSProject(HubProject project, UIDeployListener listener) {
         Path currProjectDir = project.getProjectDir();
         listener.onStatusChange(0, String.format("Cleaning the existing project folder (%s)", currProjectDir.toFile().getAbsolutePath()));
         try {
             FileUtils.cleanDirectory(currProjectDir.toFile());
-            logger
-                .info(String.format("Cleaned the existing project folder (%s)", currProjectDir.toFile().getAbsolutePath()));
+            logger.info(String.format("Cleaned the existing project folder (%s)", currProjectDir.toFile().getAbsolutePath()));
         } catch (IOException e) {
             throw new RuntimeException(
                 String.format("Failed to clean the existing project folder (%s) due to (%s).", currProjectDir.toFile().getAbsolutePath(), e.getMessage()));
@@ -93,8 +108,9 @@ public class DataHubProjectUtils {
      *
      * @param project
      * @param uploadedFile
+     * @param listener
      */
-    public static void extractZipProject(HubProject project, MultipartFile uploadedFile, HubDeployStatusListener listener) {
+    public static void extractZipProject(HubProject project, MultipartFile uploadedFile, UIDeployListener listener) {
         Path currProjectDir = project.getProjectDir();
         listener.onStatusChange(0, String.format("Extracting the uploaded zip project into (%s)", currProjectDir.toFile().getAbsolutePath()));
         byte[] buffer = new byte[2048];
@@ -119,8 +135,7 @@ public class DataHubProjectUtils {
                     }
                 }
             }
-            logger
-                .info(String.format("Extracted the uploaded zip project into (%s)", currProjectDir.toFile().getAbsolutePath()));
+            logger.info(String.format("Extracted the uploaded zip project into (%s)", currProjectDir.toFile().getAbsolutePath()));
         } catch (IOException e) {
             throw new RuntimeException(
                 String.format("Failed to extract the uploaded zip project into (%s) due to (%s).", currProjectDir.toFile().getAbsolutePath(), e.getMessage()));
