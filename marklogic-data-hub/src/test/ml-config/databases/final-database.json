@@ -18,6 +18,23 @@
       "collation" : "http://marklogic.com/collation//S1",
       "range-value-positions" : false,
       "invalid-values" : "reject"
+    },
+    {
+      "scalar-type" : "string",
+      "namespace-uri" : "",
+      "localname" : "searchStrCityFacet",
+      "collation" : "http://marklogic.com/collation/",
+      "range-value-positions" : false,
+      "invalid-values" : "reject"
+    }
+  ],
+  "range-path-index": [
+    {
+      "scalar-type": "string",
+      "path-expression": "//*:instance/SearchFacetsEntity/searchStrNameFacet",
+      "collation": "http://marklogic.com/collation/",
+      "range-value-positions": false,
+      "invalid-values": "reject"
     }
   ]
 }

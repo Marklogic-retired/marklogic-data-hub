@@ -1,0 +1,29 @@
+{
+  "functionName": "getFacetValues",
+  "params": [
+    {
+      "name": "entityName",
+      "datatype": "string"
+    },
+    {
+      "name": "facetName",
+      "datatype": "string"
+    },
+    {
+      "name": "indexType",
+      "datatype": "string"
+    },
+    {
+      "name": "searchStr",
+      "datatype": "string"
+    },
+    {
+      "name": "limit",
+      "datatype": "int"
+    }
+  ],
+  "return": {
+    "datatype": "jsonDocument",
+    "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+  }
+}
