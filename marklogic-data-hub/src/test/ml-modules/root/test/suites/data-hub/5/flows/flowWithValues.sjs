@@ -8,11 +8,12 @@ function describe(item) {
 }
 
 function flowWorksWithValues() {
-  let resp = datahub.flow.runFlow('CustomerByValue', 'value-test-job', [],
+  let resp = datahub.flow.runFlow('CustomerByValue', 'value-test-job', [], 
   { provenanceGranularityLevel: 'off', "uris":["comma-separated","uris","of","records","to","process"]}, 1);
   return [
     test.assertTrue(resp.errors.length === 0, `Errors were thrown on values input from step: ${describe(resp.errors)}`)
   ];
 }
 
-[].concat(flowWorksWithValues());
+[]
+  .concat(flowWorksWithValues());
