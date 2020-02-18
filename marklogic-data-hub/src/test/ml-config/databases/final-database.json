@@ -26,6 +26,46 @@
       "collation" : "http://marklogic.com/collation/",
       "range-value-positions" : false,
       "invalid-values" : "reject"
+    },
+    {
+      "scalar-type": "int",
+      "namespace-uri": "",
+      "localname": "numRangeIntProp",
+      "collation": "",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "decimal",
+      "namespace-uri": "",
+      "localname": "numRangeIntegerProp",
+      "collation": "",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "long",
+      "namespace-uri": "",
+      "localname": "numRangeLongProp",
+      "collation": "",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "float",
+      "namespace-uri": "",
+      "localname": "numRangeFloatProp",
+      "collation": "",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "double",
+      "namespace-uri": "",
+      "localname": "numRangeDoubleProp",
+      "collation": "",
+      "range-value-positions": false,
+      "invalid-values": "reject"
     }
   ],
   "range-path-index": [

@@ -1,0 +1,21 @@
+{
+  "functionName": "getNumericFacetsRange",
+  "params": [
+    {
+      "name": "entityName",
+      "datatype": "string"
+    },
+    {
+      "name": "facetName",
+      "datatype": "string"
+    },
+    {
+      "name": "indexType",
+      "datatype": "string"
+    }
+  ],
+  "return": {
+    "datatype": "jsonDocument",
+    "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+  }
+}
