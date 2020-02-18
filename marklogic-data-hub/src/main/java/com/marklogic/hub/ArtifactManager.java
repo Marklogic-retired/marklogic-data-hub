@@ -18,6 +18,10 @@ package com.marklogic.hub;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.hub.artifact.ArtifactTypeInfo;
+import com.marklogic.hub.impl.ArtifactManagerImpl;
+
+import java.util.List;
 
 /**
  * Handles writing artifacts to ML server and project directory and reading artifacts from ML server
@@ -88,4 +92,28 @@ public interface ArtifactManager {
      */
     public ObjectNode updateArtifactSettings(String artifactType, String artifactName, JsonNode settings);
 
+    /**
+     * Provides metadata about the various artifact types
+     *
+     * @return List&lt;ArtifactTypeInfo&gt; providing information about the various artifact types
+     */
+    public List<ArtifactTypeInfo> getArtifactTypeInfoList();
+
+    /**
+     * Provides metadata about the a given artifact type
+     *
+     * @param artifactType - type of artifact the operation is dealing with
+     * @return ArtifactTypeInfo providing information about the specified artifact type
+     */
+    ArtifactTypeInfo getArtifactTypeInfo(String artifactType);
+
+    /**
+     * Provides metadata about the a given artifact type
+     *
+     * @param hubConfig - HubConfig
+     * @return ArtifactManager connecting via the given HubConfig
+     */
+    static ArtifactManager on(HubConfig hubConfig) {
+        return new ArtifactManagerImpl(hubConfig);
+    }
 }

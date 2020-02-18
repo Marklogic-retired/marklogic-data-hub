@@ -26,12 +26,19 @@ import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.ext.modulesloader.Modules;
 import com.marklogic.client.ext.modulesloader.ModulesFinder;
-import com.marklogic.client.ext.modulesloader.impl.*;
+import com.marklogic.client.ext.modulesloader.impl.BaseModulesFinder;
+import com.marklogic.client.ext.modulesloader.impl.EntityDefModulesFinder;
+import com.marklogic.client.ext.modulesloader.impl.MappingDefModulesFinder;
+import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
 import com.marklogic.client.ext.util.DefaultDocumentPermissionsParser;
 import com.marklogic.client.ext.util.DocumentPermissionsParser;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.hub.ArtifactManager;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.artifact.ArtifactTypeInfo;
+import com.marklogic.hub.dataservices.ArtifactService;
+import com.marklogic.hub.impl.ArtifactManagerImpl;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -102,7 +109,8 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
 
     @Override
     public void execute(CommandContext context) {
-        DatabaseClient stagingClient = hubConfig.newStagingClient();
+        // Passing null for dbName to use with Data Services
+        DatabaseClient stagingClient = hubConfig.newStagingClient(null);
         DatabaseClient finalClient = hubConfig.newFinalClient();
 
         Path entitiesPath = hubConfig.getHubEntitiesDir();
@@ -144,8 +152,6 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         };
         EntityDefModulesFinder entityDefModulesFinder = new EntityDefModulesFinder();
         MappingDefModulesFinder mappingDefModulesFinder = new MappingDefModulesFinder();
-        StepDefModulesFinder stepDefModulesFinder = new StepDefModulesFinder();
-        FlowDefModulesFinder flowDefModulesFinder = new FlowDefModulesFinder();
         try {
             //first let's do the entities paths
             if (entitiesPath.toFile().exists()) {
@@ -188,41 +194,43 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                     }
                 });
             }
-
-            // let's do step-definitions
-            if (stepDefPath.toFile().exists()) {
-                Files.walkFileTree(stepDefPath, new SimpleFileVisitor<Path>() {
+            ArtifactManager artifactManager = new ArtifactManagerImpl(hubConfig);
+            ArtifactService artifactService = ArtifactService.on(stagingClient);
+            ObjectMapper mapper = new ObjectMapper();
+            // New way to deploy Artifacts via Data Services
+            for (ArtifactTypeInfo typeInfo: artifactManager.getArtifactTypeInfoList()) {
+                final String artifactType = typeInfo.getType();
+                final Path artifactPath = hubConfig.getHubProject().getArtifactTypePath(typeInfo);
+                logger.info("Deploying artifacts of type '" + artifactType + "'");
+                if (!typeInfo.getUserCanUpdate()) {
+                    logger.info("User is not permitted to update artifacts of type '" + artifactType+ "', so will not load any artifacts of that type" );
+                    continue;
+                }
+                if (!artifactPath.toFile().exists()) {
+                    logger.info("Artifact directory '"+ artifactPath.toString() + "' does not exist, so will not load any artifacts from it." );
+                    continue;
+                }
+                final String fileExtension = "*" + typeInfo.getFileExtension();
+                BaseModulesFinder modulesFinder = new BaseModulesFinder(){
                     @Override
-                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                        executeWalk(
-                            dir,
-                            stepDefModulesFinder,
-                            propertiesModuleManager,
-                            stepResourceToURI,
-                            buildMetadata(hubConfig.getStepDefinitionPermissions(), "http://marklogic.com/data-hub/step-definition"),
-                            stagingStepDefDocumentWriteSet,
-                            finalStepDefDocumentWriteSet
-                        );
-                        return FileVisitResult.CONTINUE;
+                    protected Modules findModulesWithResolvedBaseDir(String resolvedBaseDir) {
+                        Modules modules = new Modules();
+                        modules.setAssets(findResources(artifactType + " Artifact", resolvedBaseDir, fileExtension));
+                        return modules;
                     }
-                });
-            }
-
-
-            // let's do flows
-            if (flowPath.toFile().exists()) {
-                Files.walkFileTree(flowPath, new SimpleFileVisitor<Path>() {
+                };
+                Files.walkFileTree(artifactPath, new SimpleFileVisitor<Path>() {
                     @Override
                     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                        executeWalk(
-                            dir,
-                            flowDefModulesFinder,
-                            propertiesModuleManager,
-                            flowResourceToURI,
-                            buildMetadata(hubConfig.getFlowPermissions(), "http://marklogic.com/data-hub/flow"),
-                            stagingFlowDocumentWriteSet,
-                            finalFlowDocumentWriteSet
-                        );
+                        if (dir.toFile().isDirectory()) {
+                            executeWalkWithDataService(
+                                dir,
+                                modulesFinder,
+                                artifactService,
+                                typeInfo,
+                                mapper
+                            );
+                        }
                         return FileVisitResult.CONTINUE;
                     }
                 });
@@ -268,6 +276,24 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                 resourceToURI.toURI(r),
                 metadata,
                 writeSets
+            );
+        }
+    }
+
+    private void executeWalkWithDataService(
+        Path dir,
+        ModulesFinder modulesFinder,
+        ArtifactService artifactService,
+        ArtifactTypeInfo artifactTypeInfo,
+        ObjectMapper mapper
+    ) throws IOException {
+        Modules modules = modulesFinder.findModules(dir.toString());
+        for (Resource r : modules.getAssets()) {
+            JsonNode artifactJson = mapper.readTree(r.getFile());
+            artifactService.setArtifact(
+                artifactTypeInfo.getType(),
+                artifactJson.get(artifactTypeInfo.getNameProperty()).asText(),
+                artifactJson
             );
         }
     }

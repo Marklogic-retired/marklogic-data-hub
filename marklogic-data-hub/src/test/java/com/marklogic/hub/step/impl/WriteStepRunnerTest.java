@@ -44,6 +44,7 @@ public class WriteStepRunnerTest extends HubTestBase {
         getDataHubAdminConfig();
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
         FileUtils.copyDirectory(getResourceFile("flow-runner-test/flows"), hubConfig.getFlowsDir().toFile());
+        FileUtils.copyDirectory(getResourceFile("flow-runner-test/loadData"), hubConfig.getHubProjectDir().resolve("loadData").toFile());
         installUserModules(getDataHubAdminConfig(), true);
     }
 
@@ -87,7 +88,7 @@ public class WriteStepRunnerTest extends HubTestBase {
         csvTask.run();
 
         //test xml 'inputFileType'
-        wsr.withStep("1");
+        wsr.withStep("1").withOptions(new HashMap<String, Object>());
         wsr.loadStepRunnerParameters();
 
         Runnable xmlTask = ()->{

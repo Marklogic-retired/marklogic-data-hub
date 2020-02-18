@@ -2,7 +2,10 @@ package com.marklogic.hub.flow.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.hub.ArtifactManager;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.flow.Flow;
@@ -24,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -83,6 +87,8 @@ public class FlowRunnerImpl implements FlowRunner{
     private ThreadPoolExecutor threadPool;
     private JobDocManager jobDocManager;
     private boolean disableJobOutput = false;
+
+    private ArtifactManager artifactManager = null;
 
     public FlowRunnerImpl() {
     }
@@ -311,12 +317,26 @@ public class FlowRunnerImpl implements FlowRunner{
             while (! stepQueue.isEmpty()) {
                 stepNum = stepQueue.poll();
                 runningStep = runningFlow.getSteps().get(stepNum);
-                Map<String, Object> optsMap ;
-                if(flow.getOverrideOptions() != null) {
-                    optsMap = new HashMap<>(flow.getOverrideOptions());
+                // create override step configuration
+                Map<String, Object> stepConfig = new HashMap<>();
+                // Apply options from artifacts
+                applyArtifactSettings(runningStep, stepConfig);
+                // Apply options from flow overrides
+                Map<String, Object> flowOverrideStepConfig = flow.getOverrideStepConfig();
+                if (flowOverrideStepConfig != null) {
+                    // merge together fileLocations properties that may come from either loadData or flow overrides
+                    if (stepConfig.containsKey("fileLocations") && flowOverrideStepConfig.containsKey("fileLocations")) {
+                        Map<String, String> fileLocations = new HashMap<>();
+                        fileLocations.putAll((Map<String, String>)stepConfig.get("fileLocations"));
+                        fileLocations.putAll((Map<String, String>)flowOverrideStepConfig.get("fileLocations"));
+                        flowOverrideStepConfig.put("fileLocations", fileLocations);
+                    }
+                    stepConfig.putAll(flowOverrideStepConfig);
                 }
-                else {
-                    optsMap = new HashMap<>();
+
+                Map<String, Object> optsMap = new HashMap<>();
+                if (flow.getOverrideOptions() != null) {
+                    optsMap.putAll(flow.getOverrideOptions());
                 }
 
                 AtomicLong errorCount = new AtomicLong();
@@ -349,12 +369,10 @@ public class FlowRunnerImpl implements FlowRunner{
                                 listener.onStatusChanged(jobId, runningStep, jobStatus, percentComplete, successfulEvents, failedEvents, runningStep.getName() + " : " + message);
                             });
                         });
-
-                    //If property values are overriden in UI, use those values over any other.
-                    if(flow.getOverrideStepConfig() != null) {
-                        stepRunner.withStepConfig(flow.getOverrideStepConfig());
+                    //If property values are overridden in UI or via artifacts, use those values over any other.
+                    if(stepConfig.keySet().size() > 0) {
+                        stepRunner.withStepConfig(stepConfig);
                     }
-
                     stepResp = stepRunner.run();
                     stepRunner.awaitCompletion();
                 }
@@ -598,5 +616,67 @@ public class FlowRunnerImpl implements FlowRunner{
 
     public HubConfig getHubConfig() {
         return hubConfig;
+    }
+
+    // Brings in artifact settings for running a step
+    protected void applyArtifactSettings(Step step, Map<String, Object> stepConfig) {
+         Map<String, Object> stepOptions = step.getOptions();
+         ArtifactManager artifactManager = getArtifactManager();
+        artifactManager.getArtifactTypeInfoList().forEach((artifactTypeInfo) -> {
+            String artifactType = artifactTypeInfo.getType();
+            if (stepOptions.containsKey(artifactType)) {
+                ObjectNode linkObject = (ObjectNode) stepOptions.get(artifactType);
+                String artifactName = linkObject.get(artifactTypeInfo.getNameProperty()).asText();
+                ObjectNode artifactJson = artifactManager.getArtifact(artifactType, artifactName);
+
+                if ("loadData".equals(artifactType)) {
+                    Map<String, String> fileLocations = new HashMap<>();
+                    List<String> fileLocationFields = Arrays.asList("separator", "outputURIReplacement", "inputFilePath");
+                    for (String fileLocationField : fileLocationFields) {
+                        if (artifactJson.hasNonNull(fileLocationField)) {
+                            fileLocations.put(fileLocationField, artifactJson.get(fileLocationField).asText());
+                        }
+                    }
+                    fileLocations.put("inputFileType", artifactJson.get("sourceFormat").asText());
+                    stepOptions.put("outputFormat", artifactJson.get("targetFormat").asText());
+                    stepConfig.put("fileLocations", fileLocations);
+                }
+                ObjectNode artifactSettingsJson = null;
+                try {
+                    artifactSettingsJson = artifactManager.getArtifactSettings(artifactType, artifactName);
+                } catch (FailedRequestException e) {
+                }
+                if (artifactSettingsJson != null) {
+                    List<String> stepConfigIntProperties = Arrays.asList("batchSize", "threadCount");
+                    for (String stepConfigIntProperty: stepConfigIntProperties) {
+                        if (artifactSettingsJson.hasNonNull(stepConfigIntProperty)) {
+                            stepConfig.put(stepConfigIntProperty, artifactSettingsJson.get(stepConfigIntProperty).asInt());
+                        }
+                    }
+                    if (artifactSettingsJson.hasNonNull("customHook")) {
+                        step.setCustomHook(artifactSettingsJson.get("customHook"));
+                    }
+                    List<String> stepOptionProperties = Arrays.asList("collections", "permissions");
+                    ObjectMapper mapper = new ObjectMapper();
+                    if (artifactSettingsJson.hasNonNull("collections")) {
+                        try {
+                            stepOptions.put("collections", Arrays.asList(mapper.readValue(artifactSettingsJson.get("collections").toString(), String[].class)));
+                        } catch (IOException e) {
+                            logger.warn("Unable to parse collections from artifact settings", e);
+                        }
+                    }
+                    if (artifactSettingsJson.hasNonNull("permissions")) {
+                        stepOptions.put("permissions", artifactSettingsJson.get("permissions").asText());
+                    }
+                }
+            }
+        });
+    }
+
+    private ArtifactManager getArtifactManager() {
+        if (this.artifactManager == null) {
+            this.artifactManager = ArtifactManager.on(hubConfig);
+        }
+        return this.artifactManager;
     }
 }
