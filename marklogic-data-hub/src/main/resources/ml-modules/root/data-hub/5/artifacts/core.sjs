@@ -36,14 +36,19 @@ function getTypesInfo() {
     for (const artifactType of Object.keys(registeredArtifactTypes)) {
         if (registeredArtifactTypes.hasOwnProperty(artifactType)) {
             const artifactLibrary = registeredArtifactTypes[artifactType];
+            const updateRoles = artifactLibrary.getPermissions().filter((perm) => perm.capability === 'update').map((perm) => String(perm.roleId));
+            const readRoles = artifactLibrary.getPermissions().filter((perm) => perm.capability === 'read').map((perm) => String(perm.roleId));
+            const currentRoles = xdmp.getCurrentRoles().toArray().map(String);
+            const userCanUpdate = updateRoles.some((roleId) => currentRoles.includes(roleId));
+            const userCanRead = readRoles.some((roleId) => currentRoles.includes(roleId));
             typesInfo.push({
                 type: artifactType,
-                storageDatabases: artifactLibrary.getStorageDatabases(),
-                collections: artifactLibrary.getCollections(),
                 fileExtension: getArtifactFileExtension(artifactType),
                 directory: getArtifactDirectory(artifactType),
                 nameProperty: artifactLibrary.getNameProperty(),
-                versionProperty: artifactLibrary.getVersionProperty()
+                versionProperty: artifactLibrary.getVersionProperty(),
+                userCanUpdate: userCanUpdate,
+                userCanRead: userCanRead
             });
         }
     }

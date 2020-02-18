@@ -21,7 +21,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.datamovement.*;
+import com.marklogic.client.datamovement.DataMovementManager;
+import com.marklogic.client.datamovement.JacksonCSVSplitter;
+import com.marklogic.client.datamovement.JobTicket;
+import com.marklogic.client.datamovement.WriteBatcher;
+import com.marklogic.client.datamovement.WriteEvent;
 import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.ext.util.DefaultDocumentPermissionsParser;
 import com.marklogic.client.ext.util.DocumentPermissionsParser;
@@ -29,6 +33,7 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.hub.ArtifactManager;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.collector.DiskQueue;
@@ -38,7 +43,13 @@ import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.job.JobDocManager;
 import com.marklogic.hub.job.JobStatus;
-import com.marklogic.hub.step.*;
+import com.marklogic.hub.step.RunStepResponse;
+import com.marklogic.hub.step.StepDefinition;
+import com.marklogic.hub.step.StepFinishedListener;
+import com.marklogic.hub.step.StepItemCompleteListener;
+import com.marklogic.hub.step.StepItemFailureListener;
+import com.marklogic.hub.step.StepRunner;
+import com.marklogic.hub.step.StepStatusListener;
 import com.marklogic.hub.util.json.JSONObject;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -47,13 +58,26 @@ import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -350,7 +374,6 @@ public class WriteStepRunner implements StepRunner {
             stepFileLocation =  mapper.convertValue(flow.getStep(step).getFileLocations(), Map.class);
             fileLocation.putAll(stepFileLocation);
         }
-
         inputFilePath = (String)fileLocation.get("inputFilePath");
         inputFileType = (String)fileLocation.get("inputFileType");
         outputURIReplacement = (String)fileLocation.get("outputURIReplacement");
@@ -364,8 +387,18 @@ public class WriteStepRunner implements StepRunner {
         if(stepConfig.get("threadCount") != null) {
             this.threadCount = Integer.parseInt(stepConfig.get("threadCount").toString());
         }
-        if(stepConfig.get("fileLocations") != null) {
-            HashMap<String, String> fileLocations = (HashMap) stepConfig.get("fileLocations");
+        Map<String, String> fileLocations = null;
+        if (stepConfig.get("fileLocations") == null && comboOptions.has("loadData")) {
+            ArtifactManager artifactManager = ArtifactManager.on(this.hubConfig);
+            ObjectNode linkObject = (ObjectNode) comboOptions.get("loadData");
+            String artifactName = linkObject.get("name").asText();
+            ObjectNode artifactJson = artifactManager.getArtifact("loadData", artifactName);
+            fileLocations =  mapper.convertValue(artifactJson, Map.class);
+            fileLocations.put("inputFileType", artifactJson.get("sourceFormat").asText());
+        } else if(stepConfig.get("fileLocations") != null) {
+            fileLocations = (Map) stepConfig.get("fileLocations");
+        }
+        if (fileLocations != null) {
             if(fileLocations.get("inputFilePath") != null) {
                 this.inputFilePath = fileLocations.get("inputFilePath");
             }

@@ -77,6 +77,7 @@ import org.json.JSONException;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -494,7 +495,7 @@ public class HubTestBase implements InitializingBean {
     protected HubConfigImpl runAsAdmin() {
         return runAsUser("test-admin-for-data-hub-tests", "password");
     }
-    
+
     protected HubConfigImpl runAsUser(String mlUsername, String mlPassword) {
         adminHubConfig.setMlUsername(mlUsername);
         adminHubConfig.setMlPassword(mlPassword);
@@ -1264,6 +1265,8 @@ public class HubTestBase implements InitializingBean {
             FileUtils.copyDirectory(getResourceFile("flow-runner-test/flows"), adminHubConfig.getFlowsDir().toFile());
             FileUtils.copyDirectory(getResourceFile("flow-runner-test/input"),
                 adminHubConfig.getHubProjectDir().resolve("input").toFile());
+            FileUtils.copyDirectory(getResourceFile("flow-runner-test/loadData"),
+                adminHubConfig.getHubProjectDir().resolve("loadData").toFile());
             FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/step-definitions/json-ingestion.step.json"),
                 adminHubConfig.getStepsDirByType(StepDefinition.StepDefinitionType.INGESTION).resolve("json-ingestion").toFile());
             FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/step-definitions/json-mapping.step.json"),
@@ -1286,7 +1289,7 @@ public class HubTestBase implements InitializingBean {
             final File flowFile = projectDir.resolve("flows").resolve(flowFilename).toFile();
             ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
             JsonNode flow = objectMapper.readTree(flowFile);
-            makeInputFilePathsAbsolute(flow, projectDir.toFile().getAbsolutePath());
+            makeInputFilePathsAbsoluteForFlow(flow, projectDir.toFile().getAbsolutePath());
             ObjectMapperFactory.getObjectMapper().writeValue(flowFile, flow);
 
             JSONDocumentManager mgr = stagingClient.newJSONDocumentManager();
@@ -1300,22 +1303,54 @@ public class HubTestBase implements InitializingBean {
         }
     }
 
-    protected void makeInputFilePathsAbsolute(JsonNode flow, String projectDir) {
+    protected void makeInputFilePathsAbsoluteInLoadDataArtifact(String loadDataArtifactName) {
+        final String loadDataArtifactFileName = loadDataArtifactName + ".loadData.json";
+        try {
+            Path projectDir = adminHubConfig.getHubProject().getProjectDir();
+            final File loadDataArtifactFile = projectDir.resolve("loadData").resolve(loadDataArtifactFileName).toFile();
+            ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
+            JsonNode loadDataArtifact = objectMapper.readTree(loadDataArtifactFile);
+            makeInputFilePathsAbsoluteForLoadDataArtifact(loadDataArtifact, projectDir.toFile().getAbsolutePath());
+            ObjectMapperFactory.getObjectMapper().writeValue(loadDataArtifactFile, loadDataArtifact);
+
+            JSONDocumentManager mgr = stagingClient.newJSONDocumentManager();
+            final String uri = "/loadData/" + loadDataArtifactFileName;
+            if (mgr.exists(uri) != null) {
+                DocumentMetadataHandle metadata = mgr.readMetadata(uri, new DocumentMetadataHandle());
+                mgr.write(uri, metadata, new JacksonHandle(loadDataArtifact));
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    protected void makeInputFilePathsAbsoluteForFlow(JsonNode flow, String projectDir) {
         JsonNode steps = flow.get("steps");
         steps.fieldNames().forEachRemaining(name -> {
             JsonNode step = steps.get(name);
             if (step.has("fileLocations")) {
                 ObjectNode fileLocations = (ObjectNode) step.get("fileLocations");
-                if (fileLocations.has("inputFilePath")) {
-                    String currentPath = fileLocations.get("inputFilePath").asText();
-                    if (!Paths.get(currentPath).isAbsolute()) {
-                        fileLocations.put("inputFilePath", projectDir + "/" + currentPath);
-                    }
-                }
+                makeInputFilePathsAbsolute(fileLocations, projectDir);
+            } else if (step.has("options") && step.get("options").has("loadData")) {
+                String loadDataArtifactName = step.get("options").get("loadData").get("name").asText();
+                makeInputFilePathsAbsoluteInLoadDataArtifact(loadDataArtifactName);
             }
         });
     }
 
+    protected void makeInputFilePathsAbsoluteForLoadDataArtifact(JsonNode loadDataArtifact, String projectDir) {
+        ObjectNode fileLocations = (ObjectNode) loadDataArtifact;
+        makeInputFilePathsAbsolute(fileLocations, projectDir);
+    }
+
+    protected void makeInputFilePathsAbsolute(ObjectNode fileLocations, String projectDir) {
+        if (fileLocations.has("inputFilePath")) {
+            String currentPath = fileLocations.get("inputFilePath").asText();
+            if (!Paths.get(currentPath).isAbsolute()) {
+                fileLocations.put("inputFilePath", projectDir + "/" + currentPath);
+            }
+        }
+    }
     /**
      * These assertions are made in several tests, so this method is in this class to avoid duplicating them.
      */
