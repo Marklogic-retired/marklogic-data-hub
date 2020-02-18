@@ -6,6 +6,7 @@ import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
 import sourceFormatOptions from '../../../config/formats.config';
 import { convertDateFromISO } from '../../../util/conversionFunctions';
 import CreateEditMappingDialog from './create-edit-mapping-dialog/create-edit-mapping-dialog';
+import SourceToEntityMap from './source-entity-map/source-to-entity-map';
 
 interface Props {
     data: any;
@@ -22,6 +23,7 @@ const MappingCard: React.FC<Props> = (props) => {
     const [mapData, setMapData] = useState({});
     const [dialogVisible, setDialogVisible] = useState(false);
     const [loadArtifactName, setLoadArtifactName] = useState('');
+    const [mappingVisible, setMappingVisible] = useState(false);
 
     //const [openLoadDataSettings, setOpenLoadDataSettings] = useState(false);
 
@@ -102,6 +104,26 @@ const MappingCard: React.FC<Props> = (props) => {
         >
         <span style={{fontSize: '16px'}}>Are you sure you want to delete this?</span>
         </Modal>;
+    
+    // const SourceToEntityMap = <Modal
+    //     visible={mappingVisible}
+    //     okText='Yes'
+    //     cancelText='No'
+    //     onOk={() => setMappingVisible(false)}
+    //     onCancel={() => setMappingVisible(false)}
+    //     width={600}
+    //     maskClosable={false}
+    //     >
+    //     <span style={{fontSize: '16px'}}>This is just a sample dialog for mapping</span>
+    //     </Modal>;
+    
+    const openSourceToEntityMapping = () => {
+            setMappingVisible(true);
+    }
+
+    const cardContainer: CSSProperties = {
+        cursor: 'pointer',width: '330px',margin:'-12px -12px', padding: '5px 5px'
+    }
 
     return (
         <div className={styles.loaddataContainer}>
@@ -123,9 +145,9 @@ const MappingCard: React.FC<Props> = (props) => {
                             props.canReadWrite ? <Tooltip title={'Delete'} placement="bottom"><i><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg" onClick={() => handleCardDelete(elem.name)}/></i></Tooltip> : <i><FontAwesomeIcon icon={faTrashAlt} onClick={(event) => event.preventDefault()} className={styles.disabledDeleteIcon} size="lg"/></i>,
                         ]}
                         className={styles.cardStyle}
-                        
                         size="small"
                     >
+                        <div style={cardContainer} onClick={openSourceToEntityMapping}>
                         <div className={styles.formatFileContainer}>
                             <span className={styles.mapNameStyle}>{getInitialChars(elem.name, 27, '...')}</span>
                             {/* <span style={sourceFormatStyle(elem.sourceFormat)}>{elem.sourceFormat.toUpperCase()}</span> */}
@@ -134,6 +156,7 @@ const MappingCard: React.FC<Props> = (props) => {
                         {elem.selectedSource === 'collection' ? <div className={styles.sourceQuery}>Collection: {extractCollectionFromSrcQuery(elem.sourceQuery)}</div> : <div className={styles.sourceQuery}>Source Query: {getInitialChars(elem.sourceQuery,32,'...')}</div>}
                         <br /><br />
                         <p className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</p>
+                        </div>
                     </Card></Col>
                 )) : <span></span> }</Row>
                 <CreateEditMappingDialog 
@@ -147,6 +170,9 @@ const MappingCard: React.FC<Props> = (props) => {
                 canReadWrite={props.canReadWrite}
                 canReadOnly={props.canReadOnly}/>
                 {deleteConfirmation}
+                <SourceToEntityMap 
+                mappingVisible={mappingVisible}
+                setMappingVisible={setMappingVisible}/>
                 
         </div>
     );

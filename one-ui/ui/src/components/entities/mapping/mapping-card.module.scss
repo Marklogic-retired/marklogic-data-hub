@@ -10,6 +10,9 @@
     border: 1px solid #d7d6d6;
     margin-bottom: 10px;
 }
+.cardStyle:hover {
+    border: 1px solid #67749c;
+}
 
 .mapNameStyle{
     font-size: 20px;
@@ -39,11 +42,6 @@
     margin-right: 0px;
 }
 
-.popover {
-    color: #FF8C00;
-    align-items: flex-start;
-    cursor: pointer;
-}
 .addNewCard{
     width: 330px;
     margin-top: 9px;
@@ -77,3 +75,5 @@
     pointer-events: none;
     padding-bottom: 2px;
 }
+
+
