@@ -1,0 +1,4 @@
+{
+  "endpointDirectory": "/data-hub/5/data-services/searchFacetValues/",
+  "$javaClass": "com.marklogic.hub.dataservices.FacetValuesSearch"
+}

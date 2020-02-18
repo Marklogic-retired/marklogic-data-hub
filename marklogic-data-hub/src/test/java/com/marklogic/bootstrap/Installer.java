@@ -1,10 +1,16 @@
 package com.marklogic.bootstrap;
 
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.security.User;
+
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -40,6 +46,14 @@ public class Installer extends HubTestBase {
         }
 
         if (!isInstalled) {
+            try {
+                Path srcDir = Paths.get("src", "test", "ml-config", "databases","final-database.json");
+                Path dstDir = Paths.get(adminHubConfig.getUserDatabaseDir().toString(), "test-final-database.json");
+                FileUtils.copyFile(srcDir.toAbsolutePath().toFile(), dstDir.toAbsolutePath().toFile());
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+            }
+
             dataHub.install();
 
             User dataHubDeveloper = new User(new API(adminHubConfig.getManageClient()), "test-data-hub-developer");
