@@ -32,6 +32,9 @@ const NewDataLoadDialog = (props) => {
   const [tobeDisabled, setTobeDisabled] = useState(false);
   const [displayUploadError, setDisplayUploadError] = useState(false);
 
+  //tooltip text for the upload button help icon
+  const uploadButtonTooltip = <p>Click <b>Upload</b> to select the source files. The total size of the files must be 100MB or less.</p>
+
   useEffect(() => {
     if (props.stepData && JSON.stringify(props.stepData) != JSON.stringify({}) && props.title === 'Edit Data Load') {
       setStepName(props.stepData.name);
@@ -658,7 +661,7 @@ const NewDataLoadDialog = (props) => {
           //onChange={handleUpload}
           >
             <Button disabled={!props.canReadWrite} onClick={resetUploadError} style={uploadButton}>Upload</Button>
-          </Upload>&nbsp;&nbsp;<Tooltip title={NewLoadTooltips.files}>
+          </Upload>&nbsp;&nbsp;<Tooltip title={uploadButtonTooltip}>
           <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
         </Tooltip>&nbsp;&nbsp;
                 {props.canReadWrite && !displayUploadError ? (uploadPercent > 0 && uploadPercent < 100 ? <Progress type="circle" percent={uploadPercent} width={50} /> : '') : ''}
