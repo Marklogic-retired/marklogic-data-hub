@@ -7,17 +7,14 @@
       "stepDefinitionName": "default-ingestion",
       "name": "e2e-xml",
       "stepDefinitionType": "INGESTION",
-      "fileLocations": {
-        "inputFilePath": "input",
-        "inputFileType": "xml",
-        "outputURIReplacement": ".*/input,''"
-      },
       "customHook": {},
       "retryLimit" : null,
       "batchSize" : null,
       "threadCount" : null,
       "options": {
-        "outputFormat": "xml",
+        "loadData": {
+          "name": "testLoadData"
+        },
         "permissions": "data-hub-operator,read,data-hub-operator,update",
         "collections": ["xml-coll"]
       }

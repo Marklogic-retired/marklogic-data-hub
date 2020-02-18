@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.HubProject;
+import com.marklogic.hub.artifact.ArtifactTypeInfo;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.util.FileUtil;
@@ -1086,5 +1087,16 @@ public class HubProjectImpl implements HubProject {
     @Override
     public Path getProjectDir() {
         return projectDir;
+    }
+
+    /**
+     * Returns the directory for a given artifact
+     *
+     * @param artifactTypeInfo Class describing an artifact type
+     * @return the project's directory as a Path
+     */
+    @Override
+    public Path getArtifactTypePath(ArtifactTypeInfo artifactTypeInfo) {
+        return getProjectDir().toAbsolutePath().resolve(artifactTypeInfo.getDirectory().replaceAll("^/","")).toAbsolutePath();
     }
 }

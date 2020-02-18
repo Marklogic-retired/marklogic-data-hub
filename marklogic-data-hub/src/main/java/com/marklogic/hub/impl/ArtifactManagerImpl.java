@@ -16,21 +16,23 @@
 package com.marklogic.hub.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.ArtifactManager;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.artifact.ArtifactTypeInfo;
 import com.marklogic.hub.dataservices.ArtifactService;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
-@Component
 public class ArtifactManagerImpl implements ArtifactManager {
     HubConfig hubConfig;
 
@@ -38,8 +40,6 @@ public class ArtifactManagerImpl implements ArtifactManager {
     public ArtifactManagerImpl(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
     }
-
-    protected ArrayNode allArtifactTypeInfo = null;
 
 
     public ArrayNode getArtifacts(String artifactType) {
@@ -101,23 +101,23 @@ public class ArtifactManagerImpl implements ArtifactManager {
     }
 
     protected String getNameFromArtifact(String artifactType, ObjectNode artifact) {
-        ObjectNode artifactTypeInfo = getArtifactTypeInfo(artifactType);
-        return artifact.get(artifactTypeInfo.get("nameProperty").asText()).asText();
+        ArtifactTypeInfo artifactTypeInfo = getArtifactTypeInfo(artifactType);
+        return artifact.get(artifactTypeInfo.getNameProperty()).asText();
     }
 
     protected String getVersionFromArtifact(String artifactType, ObjectNode artifact) {
-        ObjectNode artifactTypeInfo = getArtifactTypeInfo(artifactType);
-        boolean hasVersioning = artifactTypeInfo.hasNonNull("versionProperty");
+        ArtifactTypeInfo artifactTypeInfo = getArtifactTypeInfo(artifactType);
+        boolean hasVersioning = artifactTypeInfo.getVersionProperty() != null;
         if (hasVersioning) {
-            return artifact.get(artifactTypeInfo.get("versionProperty").asText()).asText();
+            return artifact.get(artifactTypeInfo.getVersionProperty()).asText();
         }
         return null;
     }
 
     public Path buildArtifactProjectLocation(String artifactType, String artifactName, String artifactVersion) {
-        ObjectNode artifactTypeInfo = getArtifactTypeInfo(artifactType);
-        Path artifactDirectory = Paths.get(hubConfig.getHubProject().getProjectDir().toString(), artifactTypeInfo.get("directory").asText());
-        String artifactExtension = artifactTypeInfo.get("fileExtension").asText();
+        ArtifactTypeInfo artifactTypeInfo = getArtifactTypeInfo(artifactType);
+        Path artifactDirectory = Paths.get(hubConfig.getHubProject().getProjectDir().toString(), artifactTypeInfo.getDirectory());
+        String artifactExtension = artifactTypeInfo.getFileExtension();
         boolean hasVersioning = artifactVersion != null;
         String fileName;
         if (hasVersioning) {
@@ -129,18 +129,28 @@ public class ArtifactManagerImpl implements ArtifactManager {
         return artifactDirectory.resolve(fileName);
     }
 
-    protected ObjectNode getArtifactTypeInfo(String artifactType) {
-        if (allArtifactTypeInfo == null) {
-            allArtifactTypeInfo = (ArrayNode) getArtifactService().getArtifactTypesInfo();
+    public List<ArtifactTypeInfo> getArtifactTypeInfoList() {
+        ArrayNode allArtifactTypeInfoArray = (ArrayNode) getArtifactService().getArtifactTypesInfo();
+        List<ArtifactTypeInfo> allArtifactTypeInfo = new LinkedList<ArtifactTypeInfo>();
+        ObjectMapper objectMapper = new ObjectMapper();
+        for (Iterator<JsonNode> it = allArtifactTypeInfoArray.elements(); it.hasNext(); ) {
+            try {
+                allArtifactTypeInfo.add(objectMapper.readerFor(ArtifactTypeInfo.class).readValue((ObjectNode) it.next()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
-        ObjectNode artifactInfo = null;
-        for (Iterator<JsonNode> it = allArtifactTypeInfo.elements(); it.hasNext(); ) {
-            JsonNode jsonNode = it.next();
-            if (jsonNode.get("type").asText("").equals(artifactType)) {
-                artifactInfo = (ObjectNode) jsonNode;
+        return allArtifactTypeInfo;
+    }
+
+    public ArtifactTypeInfo getArtifactTypeInfo(String artifactType) {
+        ArtifactTypeInfo artifactTypeInfo = null;
+        for (ArtifactTypeInfo typeInfo: getArtifactTypeInfoList()) {
+            if (typeInfo.getType().equals(artifactType)) {
+                artifactTypeInfo = typeInfo;
                 break;
             }
         }
-        return artifactInfo;
+        return artifactTypeInfo;
     }
 }

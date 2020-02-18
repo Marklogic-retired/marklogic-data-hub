@@ -310,7 +310,7 @@ public class FlowRunnerTest extends HubTestBase {
         RunFlowResponse resp1 = runFlow("testFlow","1", UUID.randomUUID().toString(), opts, stepConfig);
         flowRunner.awaitCompletion();
 
-        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "binary-text-collection") == 2);
+        assertEquals(2, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "binary-text-collection"));
         Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
         Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp1.getJobStatus()));
     }
