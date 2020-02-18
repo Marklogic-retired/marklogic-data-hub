@@ -184,11 +184,11 @@ function validateArtifact(artifactType, artifactName, artifact) {
     return validatedArtifact;
 }
 
-export function linkToStepOptions(flowName, stepID, artifactType, artifactName, artifactVersion = 'latest') {
+function linkToStepOptions(flowName, stepID, artifactType, artifactName, artifactVersion = 'latest') {
     return linkToStepOptionsOperation('addLink', flowName, stepID, artifactType, artifactName, artifactVersion);
 }
 
-export function removeLinkToStepOptions(flowName, stepID, artifactType, artifactName, artifactVersion = 'latest') {
+function removeLinkToStepOptions(flowName, stepID, artifactType, artifactName, artifactVersion = 'latest') {
     return linkToStepOptionsOperation('removeLink', flowName, stepID, artifactType, artifactName, artifactVersion);
 }
 
@@ -330,5 +330,7 @@ module.exports = {
     getArtifactSettings,
     setArtifactSettings,
     validateArtifact,
-    getEntityTitles
+    getEntityTitles,
+    linkToStepOptions,
+    removeLinkToStepOptions
 };
