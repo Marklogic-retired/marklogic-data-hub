@@ -1,0 +1,17 @@
+{
+  "name": "myValueFlow",
+  "options": {
+    "collections": ["myValueFlow"]
+  },
+  "description": "flow description",
+  "steps": {
+    "1": {
+      "stepDefinitionName": "ByValue",
+      "stepDefinitionType": "CUSTOM",
+      "options": {
+        "sourceDatabase": "data-hub-STAGING",
+        "targetDatabase": "data-hub-STAGING"
+      }
+    }
+  }
+}
