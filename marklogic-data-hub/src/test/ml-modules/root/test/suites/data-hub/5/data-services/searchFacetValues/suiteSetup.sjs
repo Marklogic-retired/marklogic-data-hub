@@ -6,7 +6,12 @@ xdmp.documentInsert("/exp/doc1",
         "instance": {
           "SearchFacetsEntity": {
             "searchStrNameFacet": "firstName1",
-            "searchStrCityFacet": "Reims"
+            "searchStrCityFacet": "Reims",
+            "numRangeIntProp": 1,
+            "numRangeLongProp": 1,
+            "numRangeIntegerProp": 1.5,
+            "numRangeFloatProp": 1.5,
+            "numRangeDoubleProp": 1.5
           }
         }
       }
@@ -26,7 +31,12 @@ xdmp.documentInsert("/exp/doc2",
         "instance": {
           "SearchFacetsEntity": {
             "searchStrNameFacet": "firstName2",
-            "searchStrCityFacet": "Raleigh"
+            "searchStrCityFacet": "Raleigh",
+            "numRangeIntProp": 10,
+            "numRangeLongProp": 10,
+            "numRangeIntegerProp": 10.5,
+            "numRangeFloatProp": 10.5,
+            "numRangeDoubleProp": 10.5
           }
         }
       }
@@ -46,7 +56,12 @@ xdmp.documentInsert("/exp/doc3",
         "instance": {
           "SearchFacetsEntity": {
             "searchStrNameFacet": "firstName3",
-            "searchStrCityFacet": "ranchi"
+            "searchStrCityFacet": "ranchi",
+            "numRangeIntProp": 2147483647,
+            "numRangeLongProp": 650,
+            "numRangeIntegerProp": 120.5,
+            "numRangeFloatProp": 1500.00,
+            "numRangeDoubleProp": 9.22337203685478e18
           }
         }
       }
