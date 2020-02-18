@@ -1,20 +1,16 @@
 {
   "name": "myValueFlow",
   "options": {
-    "collections": ["myValueFlow"],
-    "targetEntity" : "Customer",
-    "sourceQuery" : "cts.values(cts.uriReference())",
-    "valueBasedQuery": true,
-    "noWrite": true
+    "collections": ["myValueFlow"]
   },
   "description": "flow description",
   "steps": {
     "1": {
-      "stepDefinitionName": "CustomerByValue",
+      "stepDefinitionName": "ByValue",
       "stepDefinitionType": "CUSTOM",
       "options": {
-        "sourceDatabase": "data-hub-FINAL",
-        "targetDatabase": "data-hub-FINAL"
+        "sourceDatabase": "data-hub-STAGING",
+        "targetDatabase": "data-hub-STAGING"
       }
     }
   }
