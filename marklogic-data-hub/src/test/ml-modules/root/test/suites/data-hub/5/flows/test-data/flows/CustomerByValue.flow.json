@@ -1,7 +1,11 @@
 {
   "name": "myValueFlow",
   "options": {
-    "collections": ["myValueFlow"]
+    "collections": ["myValueFlow"],
+    "targetEntity" : "Customer",
+    "sourceQuery" : "cts.values(cts.uriReference())",
+    "valueBasedQuery": true,
+    "noWrite": true
   },
   "description": "flow description",
   "steps": {
