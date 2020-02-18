@@ -828,14 +828,14 @@
                 {
                     "name": "flowId",
                     "in": "path",
-                    "description": "Id of flow to be updated",
+                    "description": "Id of flow to be updated, which is the flow name",
                     "required": true,
                     "type": "string"
                 },
                 {
                     "name": "stepId",
                     "in": "path",
-                    "description": "Id of step to be updated",
+                    "description": "Id of step to be updated, a composite of '<stepName>-<stepType>'",
                     "required": true,
                     "type": "string"
                 },
@@ -913,14 +913,14 @@
                 {
                     "name": "flowId",
                     "in": "path",
-                    "description": "Id of flow to be fetched",
+                    "description": "Id of flow to be fetched, which is the flow name",
                     "required": true,
                     "type": "string"
                 },
                 {
                     "name": "stepId",
                     "in": "path",
-                    "description": "Id of step to be fetched",
+                    "description": "Id of step to be fetched, a composite of '<stepName>-<stepType>'",
                     "required": true,
                     "type": "string"
                 }],
@@ -991,14 +991,14 @@
             {
               "name": "flowId",
               "in": "path",
-              "description": "Id of flow to be updated",
+              "description": "Id of flow to be updated, which is the flow name",
               "required": true,
               "type": "string"
             },
             {
               "name": "stepId",
               "in": "path",
-              "description": "Id of step to be updated",
+              "description": "Id of step to be updated, a composite of '<stepName>-<stepType>'",
               "required": true,
               "type": "string"
             },
@@ -1092,14 +1092,14 @@
             {
               "name": "flowId",
               "in": "path",
-              "description": "Id of flow to be fetched",
+              "description": "Id of flow to be fetched, which is the flow name",
               "required": true,
               "type": "string"
             },
             {
               "name": "stepId",
               "in": "path",
-              "description": "Id of step to be fetched",
+              "description": "Id of step to be fetched, a composite of '<stepName>-<stepType>'",
               "required": true,
               "type": "string"
             },
@@ -4145,7 +4145,7 @@
                 "id":
                 {
                     "type": "string",
-                    "description": "Id of a flow"
+                    "description": "Id of a flow, which is the flow name"
                 },
                 "name":
                 {
@@ -4251,7 +4251,7 @@
                 "id":
                 {
                     "type": "string",
-                    "description": "Id of a step"
+                    "description": "Id of a step, a composite of '<stepName>-<stepType>'"
                 },
                 "name":
                 {
