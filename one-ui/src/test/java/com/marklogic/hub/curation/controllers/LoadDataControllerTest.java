@@ -61,10 +61,11 @@ public class LoadDataControllerTest {
         + "    \"artifactName\" : \"validArtifact\",\n"
         + "    \"additionalCollections\" : [ \"Collection1\", \"Collection2\" ],\n"
         + "    \"targetDatabase\" : \"data-hub-STAGING\",\n"
-        + "    \"permissions\" : \"rest-reader,read,rest-writer,update\",\n"
+        + "    \"permissions\" : \"data-hub-load-data-reader,read,data-hub-load-data-writer,update\",\n"
+        +"     \"provenanceGranularity\": \"coarse-grained\",\n"
         + "    \"customHook\" : {\n"
         + "          \"module\" : \"\",\n"
-        + "          \"parameters\" : { },\n"
+        + "          \"parameters\" : \"\",\n"
         + "          \"user\" : \"\",\n"
         + "          \"runBefore\" : false\n"
         + "    }}";
