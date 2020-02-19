@@ -1,0 +1,10 @@
+{
+    "host" : "https://rh7v-10-dhf-stress-1:8443",
+    "username" : "admin",
+    "password" : "admin",
+    "numPages" : 2,
+    "numQueryPages" : 2,
+    "numCollections" : 2,
+    "numFlows" : 1,
+    "numSteps" : 1
+}

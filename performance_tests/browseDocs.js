@@ -1,10 +1,9 @@
 const { extractDataFromPerformanceTiming } = require('./perfHelper');
-
-const numPages = 10;
+const prop = require('./config');
 
 async function browseDocs(page) {
 
-    for (var i = 2; i < numPages; i++) {
+    for (var i = 2; i < prop.numPages+1; i++) {
         try {
             await page.waitForSelector('[class*=Browse_searchBar] > [class*=search-pagination_searchPaginationContainer]:nth-child(3) > .ant-pagination > .ant-pagination-item-' + i + ' > a', {timeout: 5000})
         }
