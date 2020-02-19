@@ -2,7 +2,7 @@ import { useRef, useEffect } from 'react'
 
 const isBrowser = typeof window !== `undefined`
 
-export function useScrollPosition(effect, dependencies, wait) {
+export const useScrollPosition = (effect, dependencies, wait) => {
   const position = useRef(getScrollPosition());
 
   let debounceTime = null;

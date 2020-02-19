@@ -9,17 +9,19 @@ import tooltipsConfig from '../config/tooltips.config';
 import styles from './View.module.scss';
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useInterval } from '../hooks/use-interval';
 
 const { Content } = Layout;
 const tooltips = tooltipsConfig.viewEntities;
 
 const View: React.FC = () => {
-  const { user, handleError } = useContext(UserContext);
+  const { user, handleError, userNotAuthenticated } = useContext(UserContext);
   const [entities, setEntites] = useState<any[]>([]);
   const [lastHarmonized, setLastHarmonized] = useState<any[]>([]);
   const [facetValues, setFacetValues] = useState<any[]>([]);
   const [totalDocs, setTotalDocs] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [sessionCount, setSessionCount] = useState(0);
 
   const componentIsMounted = useRef(true);
 
@@ -68,6 +70,7 @@ const View: React.FC = () => {
       const response = await axios(`/datahub/v2/jobs/models`);
       if (componentIsMounted.current) {
         setLastHarmonized(response.data);
+        setSessionCount(0);
       }
     } catch (error) {
       handleError(error);
@@ -83,6 +86,14 @@ const View: React.FC = () => {
       componentIsMounted.current = false
     }
   }, []);
+
+  useInterval(() => {
+    if (sessionCount === user.maxSessionTime) {
+      userNotAuthenticated();
+    } else {
+      setSessionCount(sessionCount + 1);
+    }    
+  }, 1000);
 
   return (
     <Layout className={styles.container}>

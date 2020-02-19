@@ -12,7 +12,8 @@ type UserContextInterface = {
   redirect: boolean,
   error : any,
   tableView: boolean,
-  pageRoute: string
+  pageRoute: string,
+  maxSessionTime: number
 }
 
 const defaultUserData = {
@@ -26,7 +27,8 @@ const defaultUserData = {
     type: ''
   },
   tableView: true,
-  pageRoute: '/view'
+  pageRoute: '/view',
+  maxSessionTime: 300
 }
 
 interface IUserContextInterface {
@@ -40,6 +42,7 @@ interface IUserContextInterface {
   setTableView: (viewType: boolean) => void;
   setPageRoute: (route: string) => void;
   setAlertMessage: (title: string, message: string) => void;
+  setLoginSessionTime: (time: number) => void;
 }
 
 export const UserContext = React.createContext<IUserContextInterface>({
@@ -52,7 +55,8 @@ export const UserContext = React.createContext<IUserContextInterface>({
   clearRedirect: () => {},
   setTableView: () => {},
   setPageRoute: () => {},
-  setAlertMessage: () => {}
+  setAlertMessage: () => {},
+  setLoginSessionTime: () => {}
 });
 
 const UserProvider: React.FC<{ children: any }> = ({children}) => {
@@ -65,10 +69,22 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
     let userPreferences = getUserPreferences(username);
     if (userPreferences) {
       let values = JSON.parse(userPreferences);
-      setUser({ ...user,name: username, authenticated: true, redirect: true, tableView: values.tableView, pageRoute: values.pageRoute });
+      setUser({ 
+        ...user,
+        name: username,
+        authenticated: true,
+        redirect: true,
+        tableView: values.tableView,
+        pageRoute: values.pageRoute 
+      });
     } else {
       createUserPreferences(username);
-      setUser({ ...user,name: username, authenticated: true, redirect: true });
+      setUser({ 
+        ...user,
+        name: username,
+        authenticated: true,
+        redirect: true
+      });
     }
   };
 
@@ -77,7 +93,13 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
     let userPreferences = getUserPreferences(username);
     if (userPreferences) {
       let values = JSON.parse(userPreferences);
-      setUser({ ...user,name: username, authenticated: true, tableView: values.tableView, pageRoute: values.pageRoute });
+      setUser({ 
+        ...user,
+        name: username,
+        authenticated: true,
+        tableView: values.tableView,
+        pageRoute: values.pageRoute 
+      });
     } else {
       createUserPreferences(username);
       setUser({ ...user,name: username, authenticated: true });
@@ -198,6 +220,10 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
     });
   }
 
+  const setLoginSessionTime = (time: number) => {
+    setUser({...user, maxSessionTime: time });
+  }
+
   useEffect(() => {
     if (sessionUser) {
       sessionAuthenticated(sessionUser);
@@ -215,7 +241,8 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
       clearRedirect,
       setTableView,
       setPageRoute,
-      setAlertMessage
+      setAlertMessage,
+      setLoginSessionTime
     }}>
       {children}
     </UserContext.Provider>
