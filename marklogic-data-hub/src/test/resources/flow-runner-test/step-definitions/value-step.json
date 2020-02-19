@@ -1,0 +1,14 @@
+{
+  "lang": "zxx",
+  "name": "values-step",
+  "type": "CUSTOM",
+  "version": 1,
+  "retryLimit" : 0,
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "options": {
+   "valueBasedQuery" : true,
+    "sourceQuery": "cts.values()"
+  },
+  "modulePath": "/data-hub/5/builtins/steps/custom/value-step/main.sjs"
+}
