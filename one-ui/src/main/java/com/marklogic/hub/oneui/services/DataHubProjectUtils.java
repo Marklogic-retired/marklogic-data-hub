@@ -32,7 +32,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.multipart.MultipartFile;
 
 public class DataHubProjectUtils {
     protected static final Logger logger = LoggerFactory.getLogger(DataHubProjectUtils.class);
@@ -40,10 +39,10 @@ public class DataHubProjectUtils {
     /**
      *
      * @param project
-     * @param uploadedFile
+     * @param in
      * @param listener
      */
-    public static void replaceFSProject(HubProject project, MultipartFile uploadedFile, UIDeployListener listener) {
+    public static void replaceProject(HubProject project, InputStream in, UIDeployListener listener) {
         //backup first
         backupExistingFSProject(project, listener);
 
@@ -51,7 +50,7 @@ public class DataHubProjectUtils {
         cleanExistingFSProject(project, listener);
 
         // extract the uploaded & zipped project file into the current project folder
-        extractZipProject(project, uploadedFile, listener);
+        extractZipProject(project, in, listener);
 
     }
     /**
@@ -107,15 +106,14 @@ public class DataHubProjectUtils {
      * extract uploaded zip file into the server-side project folder
      *
      * @param project
-     * @param uploadedFile
+     * @param in
      * @param listener
      */
-    public static void extractZipProject(HubProject project, MultipartFile uploadedFile, UIDeployListener listener) {
+    public static void extractZipProject(HubProject project, InputStream in, UIDeployListener listener) {
         Path currProjectDir = project.getProjectDir();
         listener.onStatusChange(0, String.format("Extracting the uploaded zip project into (%s)", currProjectDir.toFile().getAbsolutePath()));
         byte[] buffer = new byte[2048];
-        try (InputStream in = uploadedFile.getInputStream();
-             BufferedInputStream bis = new BufferedInputStream(in);
+        try (BufferedInputStream bis = new BufferedInputStream(in);
              ZipInputStream stream = new ZipInputStream(bis)) {
             ZipEntry entry;
             while ((entry = stream.getNextEntry()) != null) {
