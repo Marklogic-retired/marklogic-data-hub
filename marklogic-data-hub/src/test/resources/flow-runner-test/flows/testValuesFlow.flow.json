@@ -1,6 +1,7 @@
 {
   "name": "testValuesFlow",
   "description": "flow description",
+  "stopOnError": "true",
   "steps": {
     "1": {
       "stepDefinitionName": "json-ingestion",
@@ -8,8 +9,7 @@
       "stepDefinitionType": "INGESTION",
       "customHook": {},
       "options": {
-        "permissions": "data-hub-operator,read,data-hub-operator,update",
-        "targetDatabase": "data-hub-FINAL"
+        "permissions": "data-hub-operator,read,data-hub-operator,update"
       },
       "fileLocations": {
         "inputFilePath": "input",
@@ -17,14 +17,17 @@
       }
     },
     "2": {
-      "stepDefinitionName": "value-step",
+      "stepDefinitionName": "values-flow",
       "name": "valueFlow",
       "stepDefinitionType": "CUSTOM",
       "customHook": {},
       "options": {
-        "targetDatabase": "data-hub-FINAL",
         "permissions": "data-hub-operator,read,data-hub-operator,update",
         "valueBasedQuery": true
+      },
+      "fileLocations": {
+        "inputFilePath": "input",
+        "outputURIReplacement": ".*/input,''"
       }
     }
   }
