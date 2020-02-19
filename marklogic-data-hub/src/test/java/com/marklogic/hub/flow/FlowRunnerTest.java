@@ -206,6 +206,21 @@ public class FlowRunnerTest extends HubTestBase {
     }
 
     @Test
+    public void testValueBasedQueryCollector(){
+        Map<String,Object> opts = new HashMap<>();
+        List<String> coll = new ArrayList<>();
+        coll.add("test-values-collection");
+        opts.put("targetDatabase", HubConfig.DEFAULT_FINAL_NAME);
+        opts.put("collections", coll);
+        opts.put("sourceQuery", "cts.values(cts.collectionReference(), '', [], cts.collectionQuery('test-values-collection'))");
+
+        RunFlowResponse resp = runFlow("testValuesFlow", "1,2", UUID.randomUUID().toString(), opts, null);
+        flowRunner.awaitCompletion();
+        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "test-values-collection") == 2);
+        Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
+    }
+
+    @Test
     public void testRunFlowOptions(){
         Map<String,Object> opts = new HashMap<>();
         List<String> coll = new ArrayList<>();

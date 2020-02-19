@@ -73,7 +73,7 @@ query = new CollectorLib().prepareSourceQuery(combinedOptions, stepDefinition);
 
 try {
   let urisEval;
-  if (/^\s*cts\.(uris|values)\(.*\)\s*$/.test(query)) {
+  if (/^\s*cts\.(uris|values)\(.*\)\s*$/.test(query) || combinedOptions.valueBasedQuery) {
     urisEval = query;
   } else {
     urisEval = "cts.uris(null, null, " + query + ")";
