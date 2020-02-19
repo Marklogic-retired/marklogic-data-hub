@@ -18,6 +18,7 @@
 const LoadData = require('./loadData');
 const Flows = require('./flows');
 const StepDefs = require('./stepDefinitions');
+const Mapping = require('./mapping');
 
 const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
 const dataHub = DataHubSingleton.instance();
@@ -26,7 +27,8 @@ const cachedArtifacts = {};
 const registeredArtifactTypes = {
     loadData: LoadData,
     flows: Flows,
-    stepDefinitions: StepDefs
+    stepDefinitions: StepDefs,
+    mapping: Mapping
 };
 
 function getTypesInfo() {
@@ -56,10 +58,41 @@ function getArtifacts(artifactType) {
         queriesForAnd.push(cts.collectionQuery(coll));
     }
     if (queriesForAnd.length) {
-        const results = cts.search(queriesForAnd.length > 1 ? cts.andQuery(queriesForAnd) : queriesForAnd[0]);
-        for (const result of results) {
-            artifacts.push(result.toObject());
+        if (artifactType == "loadData") {
+            const results = cts.search(queriesForAnd.length > 1 ? cts.andQuery(queriesForAnd) : queriesForAnd[0]);
+            for (const result of results) {
+                artifacts.push(result.toObject());
+            }
+            return artifacts;
+        } else {
+            return getArtifactsGroupbyEntity(artifactType, queriesForAnd)
         }
+    }
+    return [];
+}
+
+function getArtifactsGroupbyEntity(artifactType, queriesForAnd) {
+    const artifacts = [];
+    const entityNames = getEntityNames();
+    for (const ename of entityNames) {
+        let configByEntity = {};
+        configByEntity.name = ename;
+        queriesForAnd.push(cts.jsonPropertyValueQuery("entityName", ename));
+        let configs = cts.search(cts.andQuery(queriesForAnd));
+        // artifactType can be mapping, mastering, merging
+        switch (artifactType) {
+            case "mapping":
+                configByEntity.mapping = configs;
+                break;
+            case "matching":
+                configByEntity.matching = configs;
+                break;
+            case "merging":
+                configByEntity.merging = configs;
+                break;
+        }
+        artifacts.push(configByEntity);
+        queriesForAnd.pop();
     }
     return artifacts;
 }
@@ -223,6 +256,16 @@ function deleteArtifactSettings(artifactType, artifactName, artifactVersion = 'l
         delete cachedArtifacts[artifactSettingKey];
     }
     return { success: true };
+}
+
+function getEntityNames() {
+    let entities = cts.search(cts.collectionQuery("http://marklogic.com/entity-services/models"))
+    const entityNames = [];
+    for (const e of entities) {
+        let name = e.xpath('//info//title');
+        entityNames.push(name);
+    }
+    return entityNames;
 }
 
 module.exports = {
