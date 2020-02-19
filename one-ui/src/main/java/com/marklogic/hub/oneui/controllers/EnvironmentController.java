@@ -124,7 +124,7 @@ public class EnvironmentController {
         UIDeployListener listener = new UIDeployListener(template, false);
 
         HubProject project = hubConfig.getHubProject();
-        DataHubProjectUtils.replaceFSProject(project, uploadedFile, listener);
+        DataHubProjectUtils.replaceProject(project, uploadedFile.getInputStream(), listener);
 
         dataHubService.unInstall(new UIDeployListener(template,true));
         install(project.getProjectDirString(), listener);
@@ -132,11 +132,12 @@ public class EnvironmentController {
 
     private void install(String directory, UIDeployListener listener) throws Exception {
         try {
-            // setting the project directory will resolve any relative paths
-            Path directoryPath = Paths.get(directory);
             if (StringUtils.isEmpty(directory)) {
                 throw new BadRequestException("Property 'directory', identifying project location, not specified");
-            } else if (!directoryPath.isAbsolute()) {
+            }
+            // setting the project directory will resolve any relative paths
+            Path directoryPath = Paths.get(directory);
+            if (!directoryPath.isAbsolute()) {
                 throw new ProjectDirectoryException("The Project Directory field requires an absolute path. You entered: " + directory, "Enter the absolute path to an existing local directory.");
             } else if (!directoryPath.toFile().exists()) {
                 throw new ProjectDirectoryException("The specified directory does not exist: " + directory, "Create the directory and specify its absolute path.");
