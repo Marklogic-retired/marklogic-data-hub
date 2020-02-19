@@ -21,6 +21,7 @@ const MappingCard: React.FC<Props> = (props) => {
     const [newMap, setNewMap] = useState(false);
     const [title, setTitle] = useState('');
     const [mapData, setMapData] = useState({});
+    const [mapName, setMapName] = useState({});
     const [dialogVisible, setDialogVisible] = useState(false);
     const [loadArtifactName, setLoadArtifactName] = useState('');
     const [mappingVisible, setMappingVisible] = useState(false);
@@ -117,8 +118,10 @@ const MappingCard: React.FC<Props> = (props) => {
     //     <span style={{fontSize: '16px'}}>This is just a sample dialog for mapping</span>
     //     </Modal>;
     
-    const openSourceToEntityMapping = () => {
+    const openSourceToEntityMapping = (name) => {
+            setMapName(name);
             setMappingVisible(true);
+            
     }
 
     const cardContainer: CSSProperties = {
@@ -147,7 +150,7 @@ const MappingCard: React.FC<Props> = (props) => {
                         className={styles.cardStyle}
                         size="small"
                     >
-                        <div style={cardContainer} onClick={openSourceToEntityMapping}>
+                        <div style={cardContainer} onClick={() => openSourceToEntityMapping(elem.name)}>
                         <div className={styles.formatFileContainer}>
                             <span className={styles.mapNameStyle}>{getInitialChars(elem.name, 27, '...')}</span>
                             {/* <span style={sourceFormatStyle(elem.sourceFormat)}>{elem.sourceFormat.toUpperCase()}</span> */}
@@ -172,7 +175,9 @@ const MappingCard: React.FC<Props> = (props) => {
                 {deleteConfirmation}
                 <SourceToEntityMap 
                 mappingVisible={mappingVisible}
-                setMappingVisible={setMappingVisible}/>
+                setMappingVisible={setMappingVisible}
+                mapName={mapName}
+                entityName={props.entityName}/>
                 
         </div>
     );
