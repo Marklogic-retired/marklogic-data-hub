@@ -1,0 +1,34 @@
+{
+  "name": "testValuesFlow",
+  "description": "flow description",
+  "stopOnError": "true",
+  "steps": {
+    "1": {
+      "stepDefinitionName": "json-ingestion",
+      "name": "e2e-json",
+      "stepDefinitionType": "INGESTION",
+      "customHook": {},
+      "options": {
+        "permissions": "data-hub-operator,read,data-hub-operator,update"
+      },
+      "fileLocations": {
+        "inputFilePath": "input",
+        "outputURIReplacement": ".*/input,''"
+      }
+    },
+    "2": {
+      "stepDefinitionName": "values-flow",
+      "name": "valueFlow",
+      "stepDefinitionType": "CUSTOM",
+      "customHook": {},
+      "options": {
+        "permissions": "data-hub-operator,read,data-hub-operator,update",
+        "valueBasedQuery": true
+      },
+      "fileLocations": {
+        "inputFilePath": "input",
+        "outputURIReplacement": ".*/input,''"
+      }
+    }
+  }
+}
