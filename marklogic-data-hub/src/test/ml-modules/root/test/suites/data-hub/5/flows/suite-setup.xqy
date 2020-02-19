@@ -29,7 +29,7 @@ xdmp:invoke-function(function() {
     ()
   ),
   xdmp:document-insert(
-    "/test/custom-by-value-step/main.sjs",
+    "/test/customer-by-value/main.sjs",
     test:get-test-file("valueStep.sjs"),
     (xdmp:default-permissions(), xdmp:permission("rest-extension-user", "execute"), xdmp:permission("data-hub-module-reader", "read"), xdmp:permission("data-hub-module-writer", "update")),
     ()
