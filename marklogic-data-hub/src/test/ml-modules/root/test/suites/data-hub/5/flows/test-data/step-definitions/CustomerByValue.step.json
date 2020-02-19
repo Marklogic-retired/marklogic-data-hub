@@ -1,5 +1,5 @@
 {
-  "name" : "ByValue",
+  "name" : "CustomerByValue",
   "type" : "CUSTOM",
   "version" : 1,
   "options" : {
@@ -13,5 +13,5 @@
   },
   "customHook" : { },
   "lang" : "zxx",
-  "modulePath" : "/test/custom-by-value-step/main.sjs"
+  "modulePath" : "/test/customer-by-value/main.sjs"
 }

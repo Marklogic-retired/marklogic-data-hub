@@ -8,7 +8,7 @@ xdmp:invoke-function(function() {
     "/test/custom-null-step/main.sjs"
   ),
     xdmp:document-delete(
-    "/test/custom-by-value-step/main.sjs"
+    "/test/customer-by-value/main.sjs"
   )
 },
   map:entry("database", xdmp:modules-database())
