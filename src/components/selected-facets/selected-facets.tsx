@@ -3,6 +3,8 @@ import { Icon } from 'antd';
 import { MlButton } from 'marklogic-ui-library';
 import { SearchContext } from '../../util/search-context';
 import styles from './selected-facets.module.scss';
+import moment from 'moment';
+
 
 interface Props {
   selectedFacets: any[];
@@ -50,18 +52,34 @@ const SelectedFacets: React.FC<Props> = (props) => {
             </MlButton>
           )
         } else if (item.rangeValues) {
-          return (
-            <MlButton 
-              size="small"
-              className={styles.facetButton} 
-              key={index}
-              onClick={()=> clearRangeFacet(item.constraint)}
-              data-cy='clear-range-facet'
-            >
-              <Icon type='close'/>
-              {item.constraint + ': ' + item.rangeValues.lowerBound + ' - ' + item.rangeValues.upperBound}
-            </MlButton>
-          )
+          if (moment(item.rangeValues.lowerBound).isValid() && moment(item.rangeValues.upperBound).isValid()) {
+            let dateValues:any = [];
+            dateValues.push(item.rangeValues.lowerBound,item.rangeValues.upperBound);
+            return (
+              <MlButton
+                size="small"
+                className={styles.dateFacet} 
+                key={index}
+                onClick={()=> clearRangeFacet(item.constraint)}
+              >
+                <Icon type='close'/>
+                {item.constraint + ': ' + item.rangeValues.lowerBound + ' ~ ' + item.rangeValues.upperBound}
+              </MlButton>
+            )
+          } else {
+            return (
+              <MlButton 
+                size="small"
+                className={styles.facetButton} 
+                key={index}
+                onClick={()=> clearRangeFacet(item.constraint)}
+                data-cy='clear-range-facet'
+              >
+                <Icon type='close'/>
+                {item.constraint + ': ' + item.rangeValues.lowerBound + ' - ' + item.rangeValues.upperBound}
+              </MlButton>
+            )
+          }
         }
         return (
           <MlButton

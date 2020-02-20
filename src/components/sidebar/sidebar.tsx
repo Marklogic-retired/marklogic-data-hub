@@ -12,6 +12,7 @@ import styles from './sidebar.module.scss';
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import NumericFacet from '../numeric-facet/numeric-facet';
+import DateFacet from '../date-facet/date-facet';
 
 
 const { Panel } = Collapse;
@@ -59,7 +60,7 @@ const Sidebar: React.FC<Props> = (props) => {
         let selectedFacets: any[] = [];
         for (let constraint in searchOptions.searchFacets) {
           if (constraint === 'createdOnRange') {
-            selectedFacets.push({ constraint, facet: searchOptions.searchFacets[constraint]['rangeValues']});
+            selectedFacets.push({ constraint, facet: searchOptions.searchFacets[constraint]['rangeValues'] });
             toggleApply(false);
           } else {
             let datatype = searchOptions.searchFacets[constraint].dataType;
@@ -69,6 +70,9 @@ const Sidebar: React.FC<Props> = (props) => {
               });
             } else if (integers.includes(datatype) || decimals.includes(datatype)) {
               // TODO add support for other data types
+              let rangeValues = searchOptions.searchFacets[constraint].rangeValues
+              selectedFacets.push({ constraint, rangeValues });
+            } else if (datatype === 'xs:date' || datatype === 'date') {
               let rangeValues = searchOptions.searchFacets[constraint].rangeValues
               selectedFacets.push({ constraint, rangeValues });
             }
@@ -89,15 +93,15 @@ const Sidebar: React.FC<Props> = (props) => {
   }, [props.selectedEntities, props.facets]);
 
   const onDateChange = (dateVal, dateArray) => {
-    let updateFacets = {...allSelectedFacets};
+    let updateFacets = { ...allSelectedFacets };
     if (dateVal.length > 1) {
       toggleApply(true);
       updateFacets = {
         ...updateFacets, createdOnRange:
-          {
-            dataType: 'date',
-            rangeValues: {lowerBound: dateArray[0], upperBound: dateArray[1]}
-          }
+        {
+          dataType: 'date',
+          rangeValues: { lowerBound: dateArray[0], upperBound: dateArray[1] }
+        }
       }
       setDatePickerValue([moment(dateArray[0]), moment(dateArray[1])]);
     } else {
@@ -170,14 +174,14 @@ const Sidebar: React.FC<Props> = (props) => {
         let additionalFacetVals = vals.map(item => {
           return { name: item, count: 0, value: item }
         });
-          // facet value doesn't exist
-          newAllSelectedfacets = {
-            ...newAllSelectedfacets,
-            [constraint]: {
-              dataType,
-              [valueKey]: vals
-            }
+        // facet value doesn't exist
+        newAllSelectedfacets = {
+          ...newAllSelectedfacets,
+          [constraint]: {
+            dataType,
+            [valueKey]: vals
           }
+        }
         for (let i = 0; i < additionalFacetVals.length; i++) {
           for (let j = 0; j < newEntityFacets[index]['facetValues'].length; j++) {
             if (additionalFacetVals[i].name === newEntityFacets[index]['facetValues'][j].name) {
@@ -185,7 +189,7 @@ const Sidebar: React.FC<Props> = (props) => {
               break;
             }
           }
-            newEntityFacets[index]['facetValues'].unshift(additionalFacetVals[i]);
+          newEntityFacets[index]['facetValues'].unshift(additionalFacetVals[i]);
         }
       }
       setEntityFacets(newEntityFacets);
@@ -222,7 +226,15 @@ const Sidebar: React.FC<Props> = (props) => {
     let updateFacets = { ...allSelectedFacets };
     if (value.length > 1) {
       updateFacets = { ...updateFacets, [facet]: { dataType: datatype, rangeValues: { lowerBound: value[0].toString(), upperBound: value[1].toString() } } }
-    } 
+    }
+    setAllSelectedFacets(updateFacets);
+  }
+
+  const onDateFacetChange = (datatype, facet, value) => {
+    let updateFacets = { ...allSelectedFacets };
+    if (value.length > 1) {
+      updateFacets = { ...updateFacets, [facet]: { dataType: datatype, rangeValues: { lowerBound: moment(value[0]).format('YYYY-MM-DD'), upperBound: moment(value[1]).format('YYYY-MM-DD') } } }
+    }
     setAllSelectedFacets(updateFacets);
   }
 
@@ -239,7 +251,7 @@ const Sidebar: React.FC<Props> = (props) => {
         {props.selectedEntities.length === 1 && (
           <Panel id="entity-properties" header={<div className={styles.title}>Entity Properties</div>} key="entityProperties" style={{ borderBottom: 'none' }}>
             {entityFacets.length ? entityFacets.map((facet, index) => {
-              let datatype = ''; 
+              let datatype = '';
               let step;
               switch (facet.type) {
                 case 'xs:string': {
@@ -256,6 +268,19 @@ const Sidebar: React.FC<Props> = (props) => {
                       updateSelectedFacets={updateSelectedFacets}
                       applyAllFacets={applyAllFacets}
                       addFacetValues={addFacetValues}
+                    />
+                  )
+                }
+                case 'xs:date': {
+                  datatype = 'date';
+                  return Object.entries(facet).length !== 0 && (
+                    <DateFacet
+                      constraint={facet.facetName}
+                      facet={facet}
+                      datatype={datatype}
+                      key={facet.facetName}
+                      onChange={onDateFacetChange}
+                      applyAllFacets={applyAllFacets}
                     />
                   )
                 }
@@ -305,14 +330,16 @@ const Sidebar: React.FC<Props> = (props) => {
                   <div key={index}>
                     <NumericFacet
                       constraint={facet.facetName}
-                      facet={facet} step={step}
+                      facet={facet}
+                      step={step}
                       datatype={datatype}
+                      key={facet.facetName}
                       onChange={onNumberFacetChange}
                       applyAllFacets={applyAllFacets}
                     />
                   </div>
                 )
-              } 
+              }
             }) :
               <div>No Facets</div>
             }
@@ -330,10 +357,10 @@ const Sidebar: React.FC<Props> = (props) => {
           {showApply && (
             <div className={styles.applyButtonContainer}>
               <MlButton
-                type="primary" 
-                size="small" 
+                type="primary"
+                size="small"
                 data-cy={"datepicker-apply-button"}
-                onClick={()=> applyAllFacets()}
+                onClick={() => applyAllFacets()}
               >Apply</MlButton>
             </div>
           )}
