@@ -5,7 +5,9 @@ function main(values, options) {
 
   let content =  {};
   //manually get doc based on values
-  content.value = fn.head(cts.search(cts.collectionQuery(values)).toObject();
+  let findDoc = fn.head(cts.search(cts.collectionQuery(values.valueOf())));
+  content.uri = fn.documentUri(findDoc);
+  content.value = findDoc.toObject();
   content.context = {};
   content.context.collections = ['test-values-collection'];
   content.uri = "/prefix" + content.uri;
