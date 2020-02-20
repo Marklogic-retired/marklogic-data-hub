@@ -221,7 +221,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
   }
 
   const setLoginSessionTime = (time: number) => {
-    setUser({...user, maxSessionTime: time });
+    setUser({ ...user, maxSessionTime: time });
   }
 
   useEffect(() => {

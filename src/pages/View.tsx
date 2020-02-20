@@ -92,7 +92,7 @@ const View: React.FC = () => {
       userNotAuthenticated();
     } else {
       setSessionCount(sessionCount + 1);
-    }    
+    }
   }, 1000);
 
   return (

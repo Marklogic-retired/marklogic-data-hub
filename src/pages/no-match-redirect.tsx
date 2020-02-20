@@ -1,13 +1,15 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Result } from 'antd';
 import { withRouter } from 'react-router-dom';
 import { UserContext } from '../util/user-context';
+import { useInterval } from '../hooks/use-interval';
 import { MlButton } from 'marklogic-ui-library';
 
 
 const NoMatchRedirect = ({history}) => {
 
-  const { user, clearErrorMessage } = useContext(UserContext);
+  const { user, clearErrorMessage, userNotAuthenticated } = useContext(UserContext);
+  const [sessionCount, setSessionCount] = useState(0);
 
   useEffect(() => {
     clearErrorMessage();
@@ -16,6 +18,15 @@ const NoMatchRedirect = ({history}) => {
   const backToHomePage = () => {
     return user.authenticated ? history.push('/view') : history.push('/');
   }
+
+  useInterval(() => {
+    if (sessionCount === user.maxSessionTime) {
+      userNotAuthenticated();
+    } else {
+      setSessionCount(sessionCount + 1);
+    }
+  }, 1000);
+
   return (
       <Result
           status="404"

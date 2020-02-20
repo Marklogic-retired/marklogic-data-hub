@@ -182,7 +182,7 @@ const Browse: React.FC<Props> = ({ location }) => {
       userNotAuthenticated();
     } else {
       setSessionCount(sessionCount + 1);
-    }    
+    }
   }, 1000);
 
   return (

@@ -95,7 +95,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
       userNotAuthenticated();
     } else {
       setSessionCount(sessionCount + 1);
-    }    
+    }
   }, 1000);
 
   return (
