@@ -16,7 +16,7 @@ function main(values, options) {
   content.value = envelope;
   content.context = {};
   content.context.collections = ['test-values-collection'];
-  content.context.permissions = "data-hub-operator,read,data-hub-operator,update";
+  content.context.permissions = datahub.hubUtils.parsePermissions("data-hub-operator,read,data-hub-operator,update");
   content.uri = "/prefix" + uri;
   //pass document back to be written with a /prefix in front of it to now give us 2 docs in the test-values-collection in this test
   return content;
