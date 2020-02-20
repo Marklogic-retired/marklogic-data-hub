@@ -7,6 +7,7 @@ import sourceFormatOptions from '../../../config/formats.config';
 import { convertDateFromISO } from '../../../util/conversionFunctions';
 import CreateEditMappingDialog from './create-edit-mapping-dialog/create-edit-mapping-dialog';
 import SourceToEntityMap from './source-entity-map/source-to-entity-map';
+import {getResultsByQuery, getDoc} from '../../../util/search-service'
 
 interface Props {
     data: any;
@@ -25,6 +26,7 @@ const MappingCard: React.FC<Props> = (props) => {
     const [dialogVisible, setDialogVisible] = useState(false);
     const [loadArtifactName, setLoadArtifactName] = useState('');
     const [mappingVisible, setMappingVisible] = useState(false);
+    const [sourceData, setSourceData] = useState({});
 
     //const [openLoadDataSettings, setOpenLoadDataSettings] = useState(false);
 
@@ -106,19 +108,52 @@ const MappingCard: React.FC<Props> = (props) => {
         <span style={{fontSize: '16px'}}>Are you sure you want to delete this?</span>
         </Modal>;
     
-    // const SourceToEntityMap = <Modal
-    //     visible={mappingVisible}
-    //     okText='Yes'
-    //     cancelText='No'
-    //     onOk={() => setMappingVisible(false)}
-    //     onCancel={() => setMappingVisible(false)}
-    //     width={600}
-    //     maskClosable={false}
-    //     >
-    //     <span style={{fontSize: '16px'}}>This is just a sample dialog for mapping</span>
-    //     </Modal>;
     
+    const getSourceDataFromUri = () => {
+        let response = getResultsByQuery('data-hub-STAGING','cts.collection("http://marklogic.com/data-hub/load-data-artifact")',5, true);
+        console.log('search-response',response);
+
+        let sourceDoc = getDoc('data-hub-STAGING', '/loadData/Yeard.loadData.json')
+        console.log('sourceDoc service API called',sourceDoc)
+        // try {
+        //     let response = await axios.get('/api/artifacts/mapping');
+            
+        //     if (response.status === 200) {
+        //       setLoadDataArtifacts([...response.data]);
+        //       console.log('GET Artifacts API Called successfully!');
+        //     } 
+        //   } catch (error) {
+        //       let message = error.response.data.message;
+        //       console.log('Error while fetching load data artifacts', message);
+        //       handleError(error);
+        //   }
+        let resp = {
+            "id": 118,
+            "transactionDate": "08/29/2018",
+            "firstName": "Anjanette",
+            "lastName": "Reisenberg",
+            "gender": "F",
+            "phone": "(213)-405-4543"
+        }
+        return resp;
+    }
+    
+    //Temp data - to be deleted
+    const respData = {
+        "id": 118,
+        "transactionDate": "08/29/2018",
+        "firstName": "Anjanette",
+        "lastName": "Reisenberg",
+        "gender": "F",
+        "phone": "(213)-405-4543"
+    }
+    var srcData: any = [];
+
     const openSourceToEntityMapping = (name) => {
+            setSourceData(prevState => ({ ...prevState, ...getSourceDataFromUri()}))
+            Object.keys(respData).map(key => srcData.push({key : key, val: respData[key]}))
+            console.log('sourceData',getSourceDataFromUri())
+            console.log('converted data', srcData)
             setMapName(name);
             setMappingVisible(true);
             
@@ -174,6 +209,7 @@ const MappingCard: React.FC<Props> = (props) => {
                 canReadOnly={props.canReadOnly}/>
                 {deleteConfirmation}
                 <SourceToEntityMap 
+                sourceData={srcData}
                 mappingVisible={mappingVisible}
                 setMappingVisible={setMappingVisible}
                 mapName={mapName}
