@@ -26,9 +26,9 @@ import com.marklogic.hub.oneui.models.HubConfigSession;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
 public class CollectionsManager {
 
     @Autowired
