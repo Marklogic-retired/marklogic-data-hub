@@ -17,17 +17,13 @@
       }
     },
     "2": {
-      "stepDefinitionName": "value-flow",
+      "stepDefinitionName": "value-step",
       "name": "valueFlow",
       "stepDefinitionType": "CUSTOM",
       "customHook": {},
       "options": {
         "permissions": "data-hub-operator,read,data-hub-operator,update",
         "valueBasedQuery": true
-      },
-      "fileLocations": {
-        "inputFilePath": "input",
-        "outputURIReplacement": ".*/input,''"
       }
     }
   }
