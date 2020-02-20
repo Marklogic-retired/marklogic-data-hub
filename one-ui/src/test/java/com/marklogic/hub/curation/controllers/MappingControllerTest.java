@@ -33,7 +33,7 @@ public class MappingControllerTest {
 
     static final String MAPPING_CONFIG_1 = "{\n" +
         "  \"name\": \"TestCustomerMapping\",\n" +
-        "  \"entityName\": \"Customer\",\n" +
+        "  \"targetEntity\": \"Customer\",\n" +
         "  \"description\": \"TestCustomerMapping does ...\",\n" +
         "  \"selectedSource\":\"query\",\n" +
         "  \"sourceQuery\": \"cts.CollectionQuery('RAW-CUSTOMER')\",\n" +
@@ -42,7 +42,7 @@ public class MappingControllerTest {
 
     static final String MAPPING_CONFIG_2 = "{\n" +
         "  \"name\": \"TestOrderMapping1\",\n" +
-        "  \"entityName\": \"Order\",\n" +
+        "  \"targetEntity\": \"Order\",\n" +
         "  \"description\": \"TestOrderMapping1 does ...\",\n" +
         "  \"selectedSource\": \"collection\",\n" +
         "  \"sourceQuery\": \"\",\n" +
@@ -51,7 +51,7 @@ public class MappingControllerTest {
 
     static final String MAPPING_CONFIG_3 = "{\n" +
         "  \"name\" : \"TestOrderMapping2\",\n" +
-        "  \"entityName\" : \"Order\",\n" +
+        "  \"targetEntity\" : \"Order\",\n" +
         "  \"description\" : \"TestOrderMapping2 does ...\",\n" +
         "  \"selectedSource\": \"query\",\n" +
         "  \"sourceQuery\": \"cts.CollectionQuery('RAW-ORDER')\",\n" +
@@ -74,14 +74,14 @@ public class MappingControllerTest {
         configsGroupbyEntity.forEach(e -> {
             String currEntityName = e.get("name").asText();
             if ("Customer".equals(currEntityName) || "Order".equals(currEntityName)) {
-                JsonNode mappingNode = e.get("mapping");
-                assertTrue(e.get("mapping").size() > 0, String.format("Should have at least 1 mapping config associated with the entity (%s).", currEntityName));
+                JsonNode mappingNode = e.get("config");
+                assertTrue(e.get("config").size() > 0, String.format("Should have at least 1 mapping config associated with the entity (%s).", currEntityName));
                 if (mappingNode instanceof ArrayNode) {
                     boolean found = false;
                     int mapConfigCount = 0;
                     int i = 0;
                     for (; i < mappingNode.size(); ++i) {
-                        String mappedEntityName = mappingNode.get(i).get("entityName").asText();
+                        String mappedEntityName = mappingNode.get(i).get("targetEntity").asText();
                         String mapName = mappingNode.get(i).get("name").asText();
                         if (("Customer".equals(currEntityName) && currEntityName.equals(mappedEntityName) && "TestCustomerMapping".equals(mapName))
                             || ("Order".equals(currEntityName) && currEntityName.equals(mappedEntityName)
@@ -97,7 +97,7 @@ public class MappingControllerTest {
                         assertEquals(2, mapConfigCount, "Should have 2 mapping configs associate with the entity (Order).");
                     }
                 } else if (mappingNode instanceof ObjectNode) {
-                    assertEquals(currEntityName, mappingNode.get("entityName").asText(), "mismatch entity name.");
+                    assertEquals(currEntityName, mappingNode.get("targetEntity").asText(), "mismatch entity name.");
                     if ("Customer".equals(currEntityName)) {
                         assertEquals("TestCustomerMapping", mappingNode.get("name").asText(), "mismatch mapping name.");
                     } else { //Order
