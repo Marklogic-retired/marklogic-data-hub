@@ -210,6 +210,7 @@ public class FlowRunnerTest extends HubTestBase {
         Map<String,Object> opts = new HashMap<>();
         List<String> coll = new ArrayList<>();
         coll.add("test-values-collection");
+        opts.put("fullOutput", true);
         opts.put("sourceDatabase", HubConfig.DEFAULT_FINAL_NAME);
         opts.put("targetDatabase", HubConfig.DEFAULT_FINAL_NAME);
         opts.put("collections", coll);
