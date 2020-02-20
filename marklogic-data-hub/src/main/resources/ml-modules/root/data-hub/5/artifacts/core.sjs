@@ -18,7 +18,7 @@
 const LoadData = require('./loadData');
 const Flows = require('./flows');
 const StepDefs = require('./stepDefinitions');
-const Mapping = require('./mapping');
+const Mappings = require('./mappings');
 
 const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
 const dataHub = DataHubSingleton.instance();
@@ -28,7 +28,7 @@ const registeredArtifactTypes = {
     loadData: LoadData,
     flows: Flows,
     stepDefinitions: StepDefs,
-    mapping: Mapping
+    mappings: Mappings
 };
 
 function getTypesInfo() {
@@ -67,15 +67,15 @@ function getArtifacts(artifactType) {
 }
 
 function getArtifactsGroupByEntity(queriesForAnd) {
-    const configs = cts.search(cts.andQuery(queriesForAnd.concat(cts.jsonPropertyValueQuery("targetEntity", getEntityNames())))).toArray();
-    const configByEntity = configs.map(e => e.toObject()).reduce((res, e) => {
-            res[e.targetEntity] = res[e.targetEntity] || {name : e.targetEntity};
-            res[e.targetEntity].config = res[e.targetEntity].config || [];
-            res[e.targetEntity].config.push(e);
+    const artifacts = cts.search(cts.andQuery(queriesForAnd.concat(cts.jsonPropertyValueQuery("targetEntity", getEntityNames())))).toArray();
+    const artifactsByEntity = artifacts.map(e => e.toObject()).reduce((res, e) => {
+            res[e.targetEntity] = res[e.targetEntity] || {entityType : e.targetEntity};
+            res[e.targetEntity].artifacts = res[e.targetEntity].artifacts || [];
+            res[e.targetEntity].artifacts.push(e);
             return res;
         }, {});
 
-    return Object.keys(configByEntity).map(e => configByEntity[e]);
+    return Object.keys(artifactsByEntity).map(e => artifactsByEntity[e]);
 }
 
 function deleteArtifact(artifactType, artifactName, artifactVersion = 'latest') {
