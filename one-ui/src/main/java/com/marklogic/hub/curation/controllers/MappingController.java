@@ -33,6 +33,6 @@ public class MappingController extends AbstractArtifactController {
 
     @Override
     protected String getArtifactType() {
-        return "mapping";
+        return "mappings";
     }
 }

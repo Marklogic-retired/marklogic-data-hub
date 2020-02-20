@@ -72,10 +72,10 @@ public class MappingControllerTest {
         assertTrue(configsGroupbyEntity.size() > 0, "The group entity count of mapping configs should be greater than 2.");
 
         configsGroupbyEntity.forEach(e -> {
-            String currEntityName = e.get("name").asText();
+            String currEntityName = e.get("entityType").asText();
             if ("Customer".equals(currEntityName) || "Order".equals(currEntityName)) {
-                JsonNode mappingNode = e.get("config");
-                assertTrue(e.get("config").size() > 0, String.format("Should have at least 1 mapping config associated with the entity (%s).", currEntityName));
+                JsonNode mappingNode = e.get("artifacts");
+                assertTrue(e.get("artifacts").size() > 0, String.format("Should have at least 1 mapping config associated with the entity (%s).", currEntityName));
                 if (mappingNode instanceof ArrayNode) {
                     boolean found = false;
                     int mapConfigCount = 0;
