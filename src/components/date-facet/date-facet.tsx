@@ -46,9 +46,9 @@ const DateFacet: React.FC<Props> = (props) => {
 
     return (
         <div className={styles.name} >
-            <p>{props.facet.facetName}</p>
+            <p className={styles.facetName}>{props.facet.facetName}</p>
             <RangePicker
-                className={styles.datePicker}
+                // className={styles.datePicker}
                 onChange={onChange}
                 value={datePickerValue}
                 key={props.facet.facetName}

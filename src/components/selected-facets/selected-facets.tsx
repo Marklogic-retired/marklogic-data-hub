@@ -63,7 +63,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
                 onClick={()=> clearRangeFacet(item.constraint)}
               >
                 <Icon type='close'/>
-                {item.constraint + ': ' + item.rangeValues.lowerBound + ' - ' + item.rangeValues.upperBound}
+                {item.constraint + ': ' + item.rangeValues.lowerBound + ' ~ ' + item.rangeValues.upperBound}
               </MlButton>
             )
           } else {
