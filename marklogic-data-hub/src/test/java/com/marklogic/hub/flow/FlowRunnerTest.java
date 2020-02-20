@@ -213,8 +213,13 @@ public class FlowRunnerTest extends HubTestBase {
         opts.put("targetDatabase", HubConfig.DEFAULT_FINAL_NAME);
         opts.put("collections", coll);
         opts.put("sourceQuery", "cts.values(cts.collectionReference(), '', [], cts.collectionQuery('test-values-collection'))");
-
-        RunFlowResponse resp = runFlow("testValuesFlow", "1,2", UUID.randomUUID().toString(), opts, null);
+        String jobid = UUID.randomUUID().toString();
+        RunFlowResponse resp = runFlow("testValuesFlow", "1", jobid, opts, null);
+        flowRunner.awaitCompletion();
+        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "test-values-collection") == 1);
+        System.out.println(resp.toJson());
+        resp = runFlow("testValuesFlow", "2", jobid, opts, null);
+        System.out.println(resp.toJson());
         flowRunner.awaitCompletion();
         Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "test-values-collection") == 2);
         Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
