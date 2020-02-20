@@ -51,23 +51,23 @@ function getTypesInfo() {
 }
 
 function getArtifacts(artifactType) {
-    const queriesForAnd = [];
+    const queries = [];
     const artifactLibrary =  getArtifactTypeLibrary(artifactType);
     for (const coll of artifactLibrary.getCollections()) {
-        queriesForAnd.push(cts.collectionQuery(coll));
+        queries.push(cts.collectionQuery(coll));
     }
-    if (queriesForAnd.length) {
+    if (queries.length) {
         if (artifactType == "loadData") {
-            return cts.search(queriesForAnd.length > 1 ? cts.andQuery(queriesForAnd) : queriesForAnd[0]).toArray();
+            return cts.search(cts.andQuery(queries)).toArray();
         } else {
-            return getArtifactsGroupByEntity(queriesForAnd)
+            return getArtifactsGroupByEntity(queries)
         }
     }
     return [];
 }
 
-function getArtifactsGroupByEntity(queriesForAnd) {
-    const artifacts = cts.search(cts.andQuery(queriesForAnd.concat(cts.jsonPropertyValueQuery("targetEntity", getEntityNames())))).toArray();
+function getArtifactsGroupByEntity(queries) {
+    const artifacts = cts.search(cts.andQuery(queries.concat(cts.jsonPropertyValueQuery("targetEntity", getEntityNames())))).toArray();
     const artifactsByEntity = artifacts.map(e => e.toObject()).reduce((res, e) => {
             res[e.targetEntity] = res[e.targetEntity] || {entityType : e.targetEntity};
             res[e.targetEntity].artifacts = res[e.targetEntity].artifacts || [];
