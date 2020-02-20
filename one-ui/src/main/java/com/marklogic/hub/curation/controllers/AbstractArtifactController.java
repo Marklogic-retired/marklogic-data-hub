@@ -47,14 +47,6 @@ public abstract class AbstractArtifactController implements InitializingBean {
         return new ResponseEntity<>(artifactManager.updateArtifactSettings(this.getArtifactType(), artifactName, settings), HttpStatus.OK);
     }
 
-    protected ResponseEntity<ObjectNode> getArtifactSettings(String artifactName) {
-        return new ResponseEntity<>(artifactManager.getArtifactSettings(this.getArtifactType(), artifactName), HttpStatus.OK);
-    }
-
-    protected ResponseEntity<ObjectNode> updateArtifactSettings(String artifactName, JsonNode settings) {
-        return new ResponseEntity<>(artifactManager.updateArtifactSettings(this.getArtifactType(), artifactName, settings), HttpStatus.OK);
-    }
-
     protected abstract String getArtifactType();
 
     public void afterPropertiesSet() {

@@ -69,19 +69,6 @@ public class LoadDataControllerTest {
         + "          \"runBefore\" : false\n"
         + "    }}";
 
-
-    static final String LOAD_DATA_SETTINGS = "{\n"
-        + "    \"artifactName\" : \"validArtifact\",\n"
-        + "    \"additionalCollections\" : [ \"Collection1\", \"Collection2\" ],\n"
-        + "    \"targetDatabase\" : \"data-hub-STAGING\",\n"
-        + "    \"permissions\" : \"rest-reader,read,rest-writer,update\",\n"
-        + "    \"customHook\" : {\n"
-        + "          \"module\" : \"\",\n"
-        + "          \"parameters\" : { },\n"
-        + "          \"user\" : \"\",\n"
-        + "          \"runBefore\" : false\n"
-        + "    }}";
-
     public LoadDataControllerTest() throws JsonProcessingException {
     }
 

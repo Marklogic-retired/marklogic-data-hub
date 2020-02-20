@@ -6,8 +6,6 @@ import Axios from "axios";
 
 import { RolesContext } from "../../../util/roles";
 
-import { RolesContext } from "../../../util/roles";
-
 const LoadDataSettingsDialog = (props) => {
 
   //const [settingsArtifact, setSettingsArtifact] = useState({});
@@ -114,7 +112,6 @@ const getSettingsArtifact = async () => {
       setUser('');
       setRunBefore(false);
   }
-  const provGranOptions = ['coarse-grained', 'OFF'];
 
 }
 
@@ -226,17 +223,6 @@ const getSettingsArtifact = async () => {
     else {
       setTgtDatabaseTouched(true);
       setTgtDatabase(value);
-    }
-  }
-
-  const handleAddColl = (value) => {
-
-    if (value === ' ') {
-      setAddCollTouched(false);
-    }
-    else {
-      setAddCollTouched(true);
-      setAdditionalCollections(value);
     }
   }
 
