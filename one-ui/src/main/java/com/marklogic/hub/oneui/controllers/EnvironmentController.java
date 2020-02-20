@@ -131,10 +131,10 @@ public class EnvironmentController {
     }
 
     private void install(String directory, UIDeployListener listener) throws Exception {
+        if (StringUtils.isEmpty(directory)) {
+            throw new BadRequestException("Property 'directory', identifying project location, not specified");
+        }
         try {
-            if (StringUtils.isEmpty(directory)) {
-                throw new BadRequestException("Property 'directory', identifying project location, not specified");
-            }
             // setting the project directory will resolve any relative paths
             Path directoryPath = Paths.get(directory);
             if (!directoryPath.isAbsolute()) {
