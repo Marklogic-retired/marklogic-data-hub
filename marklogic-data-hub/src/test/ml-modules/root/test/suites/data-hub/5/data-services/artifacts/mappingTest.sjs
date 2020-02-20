@@ -14,10 +14,10 @@ function invokeGetAllService(artifactType) {
     ));
 }
 
-function invokeGetService(artifactType, artifactName) {
+function invokeValidateService(artifactType, artifactName, artifact) {
     return fn.head(xdmp.invoke(
-        "/data-hub/5/data-services/artifacts/getArtifact.sjs",
-        {artifactType, artifactName}
+        "/data-hub/5/data-services/artifacts/validateArtifact.sjs",
+        {artifactType, artifactName, artifact: xdmp.toJSON(artifact)}
     ));
 }
 
@@ -51,9 +51,36 @@ function deleteArtifact(artifactName) {
     ));
 }
 
+function validArtifact() {
+    const result = invokeValidateService('mappings','validMapping', { name: 'validMapping', targetEntity: 'Customer', selectedSource: 'collection'});
+    return [
+        test.assertEqual("validMapping", result.name),
+        test.assertEqual("Customer", result.targetEntity),
+        test.assertEqual("collection", result.selectedSource)
+    ];
+}
+
+function invalidArtifact() {
+    try {
+        const result = invokeValidateService('mappings', "invalidMapping", { name: 'invalidMapping'});
+        return [test.assertTrue(false, 'Should have thrown a validation error')];
+    } catch (e) {
+        let msg = e.data[2];
+        return [
+            test.assertEqual(3, e.data.length, `Error doesn't have the expected validate information: "${JSON.stringify(e)}"`),
+            test.assertTrue(fn.contains(msg, 'required'), `Message: "${msg}" doesn't have "required"`),
+            test.assertTrue(fn.contains(msg, 'targetEntity'), `Message: "${msg}" doesn't have "targetEntity"`),
+            test.assertTrue(fn.contains(msg, 'selectedSource'), `Message: "${msg}" doesn't have "selectedSource"`),
+            test.assertFalse(fn.contains(msg, 'name'), `Message: "${msg}" has "name" when it shouldn't`)
+        ];
+    }
+}
+
 []
     .concat(updateMappingConfig('TestMapping'))
     .concat(updateMappingConfig('TestMapping2'))
     .concat(getArtifacts())
     .concat(deleteArtifact('TestMapping'))
-    .concat(deleteArtifact('TestMapping2'));
+    .concat(deleteArtifact('TestMapping2'))
+    .concat(validArtifact())
+    .concat(invalidArtifact());
