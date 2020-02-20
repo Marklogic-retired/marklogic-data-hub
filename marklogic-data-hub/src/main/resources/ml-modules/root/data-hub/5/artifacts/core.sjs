@@ -59,11 +59,7 @@ function getArtifacts(artifactType) {
     }
     if (queriesForAnd.length) {
         if (artifactType == "loadData") {
-            const results = cts.search(queriesForAnd.length > 1 ? cts.andQuery(queriesForAnd) : queriesForAnd[0]);
-            for (const result of results) {
-                artifacts.push(result.toObject());
-            }
-            return artifacts;
+            return cts.search(queriesForAnd.length > 1 ? cts.andQuery(queriesForAnd) : queriesForAnd[0]).toArray();
         } else {
             return getArtifactsGroupbyEntity(artifactType, queriesForAnd)
         }
@@ -77,20 +73,8 @@ function getArtifactsGroupbyEntity(artifactType, queriesForAnd) {
     for (const ename of entityNames) {
         let configByEntity = {};
         configByEntity.name = ename;
-        queriesForAnd.push(cts.jsonPropertyValueQuery("entityName", ename));
-        let configs = cts.search(cts.andQuery(queriesForAnd));
-        // artifactType can be mapping, mastering, merging
-        switch (artifactType) {
-            case "mapping":
-                configByEntity.mapping = configs;
-                break;
-            case "matching":
-                configByEntity.matching = configs;
-                break;
-            case "merging":
-                configByEntity.merging = configs;
-                break;
-        }
+        queriesForAnd.push(cts.jsonPropertyValueQuery("targetEntity", ename));
+        configByEntity.config = cts.search(cts.andQuery(queriesForAnd));
         artifacts.push(configByEntity);
         queriesForAnd.pop();
     }
@@ -259,13 +243,7 @@ function deleteArtifactSettings(artifactType, artifactName, artifactVersion = 'l
 }
 
 function getEntityNames() {
-    let entities = cts.search(cts.collectionQuery("http://marklogic.com/entity-services/models"))
-    const entityNames = [];
-    for (const e of entities) {
-        let name = e.xpath('//info//title');
-        entityNames.push(name);
-    }
-    return entityNames;
+    return cts.search(cts.collectionQuery("http://marklogic.com/entity-services/models")).toArray().map(e => e.xpath("//info//title"));
 }
 
 module.exports = {

@@ -22,10 +22,10 @@ function invokeGetService(artifactType, artifactName) {
 }
 
 function updateMappingConfig(artifactName) {
-    const result = invokeSetService('mapping', artifactName, {'name': `${artifactName}`, 'entityName': 'Customer', 'description': 'Mapping does ...', 'selectedSource': 'query', 'sourceQuery': '', 'collections': ['RAW-CUSTOMER']});
+    const result = invokeSetService('mapping', artifactName, {'name': `${artifactName}`, 'targetEntity': 'Customer', 'description': 'Mapping does ...', 'selectedSource': 'query', 'sourceQuery': '', 'collections': ['RAW-CUSTOMER']});
     return [
         test.assertEqual(artifactName, result.name),
-        test.assertEqual("Customer", result.entityName)
+        test.assertEqual("Customer", result.targetEntity)
     ];
 }
 
@@ -33,11 +33,10 @@ function getArtifacts() {
     const configsByEntity = invokeGetAllService('mapping');
     configsByEntity.forEach(entity => {
         if (entity.name === 'Customer') {
-            const mappings = entity.mapping;
-            mappings.forEach(mapping => {
-                console.log("map name: " + mapping.name);
+            const config = entity.config;
+            config.forEach(mapping => {
                 if (mapping.name == 'TestMapping' || mapping.name === 'TestMapping2') {
-                    test.assertEqual("Customer", mapping.entityName);
+                    test.assertEqual("Customer", mapping.targetEntity);
                     test.assertTrue(xdmp.castableAs('http://www.w3.org/2001/XMLSchema', 'dateTime', mapping.lastUpdated));
                 }
             })
