@@ -51,7 +51,6 @@ function getTypesInfo() {
 }
 
 function getArtifacts(artifactType) {
-    const artifacts = [];
     const queriesForAnd = [];
     const artifactLibrary =  getArtifactTypeLibrary(artifactType);
     for (const coll of artifactLibrary.getCollections()) {
@@ -61,24 +60,22 @@ function getArtifacts(artifactType) {
         if (artifactType == "loadData") {
             return cts.search(queriesForAnd.length > 1 ? cts.andQuery(queriesForAnd) : queriesForAnd[0]).toArray();
         } else {
-            return getArtifactsGroupbyEntity(artifactType, queriesForAnd)
+            return getArtifactsGroupByEntity(queriesForAnd)
         }
     }
     return [];
 }
 
-function getArtifactsGroupbyEntity(artifactType, queriesForAnd) {
-    const artifacts = [];
-    const entityNames = getEntityNames();
-    for (const ename of entityNames) {
-        let configByEntity = {};
-        configByEntity.name = ename;
-        queriesForAnd.push(cts.jsonPropertyValueQuery("targetEntity", ename));
-        configByEntity.config = cts.search(cts.andQuery(queriesForAnd));
-        artifacts.push(configByEntity);
-        queriesForAnd.pop();
-    }
-    return artifacts;
+function getArtifactsGroupByEntity(queriesForAnd) {
+    const configs = cts.search(cts.andQuery(queriesForAnd.concat(cts.jsonPropertyValueQuery("targetEntity", getEntityNames())))).toArray();
+    const configByEntity = configs.map(e => e.toObject()).reduce((res, e) => {
+            res[e.targetEntity] = res[e.targetEntity] || {name : e.targetEntity};
+            res[e.targetEntity].config = res[e.targetEntity].config || [];
+            res[e.targetEntity].config.push(e);
+            return res;
+        }, {});
+
+    return Object.keys(configByEntity).map(e => configByEntity[e]);
 }
 
 function deleteArtifact(artifactType, artifactName, artifactVersion = 'latest') {
@@ -207,8 +204,7 @@ function generateArtifactKey(artifactType, artifactName, artifactVersion = 'late
     return `${artifactType}:${artifactName}:${artifactVersion}`;
 }
 
-function returnErrToClient(statusCode, statusMsg, body)
-{
+function returnErrToClient(statusCode, statusMsg, body) {
     fn.error(null, 'RESTAPI-SRVEXERR',
         Sequence.from([statusCode, statusMsg, body]));
 }
