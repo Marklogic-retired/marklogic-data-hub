@@ -8,7 +8,11 @@
   "threadCount" : 4,
   "options": {
    "valueBasedQuery" : true,
-    "sourceQuery": "cts.values()"
+    "sourceQuery": "cts.values()",
+    "sourceDatabase" : "data-hub-FINAL",
+    "permissions" : "rest-reader,read,rest-writer,update",
+    "outputFormat" : "json",
+    "targetDatabase" : "data-hub-FINAL"
   },
   "modulePath": "/custom-modules/custom/value-step/main.sjs"
 }
