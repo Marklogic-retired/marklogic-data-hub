@@ -1,7 +1,5 @@
 const { extractDataFromPerformanceTiming } = require('./perfHelper');
-
-const numPages = 10; //number of pages the script will browse
-const numSteps = 1; //number of step facets that will be selected
+const prop = require('./config');
 
 async function steps(page) {
 
@@ -12,8 +10,8 @@ async function steps(page) {
     await page.click('[data-cy=step-facet-block] > div > [data-cy=step-facet-item] > [class*=facet_value] > .ant-checkbox > [data-cy=step-facet-item-checkbox]')
     await page.waitFor(1000);
 
-    if (numSteps > 1) {
-        for (var i = 2; i <= numSteps; i++) {
+    if (prop.numSteps > 1) {
+        for (var i = 2; i <= prop.numSteps; i++) {
             try {
                 await page.waitForSelector('div > [data-cy=step-facet-item]:nth-child(' + i + ') > [class*=facet_value] > .ant-checkbox > [data-cy=step-facet-item-checkbox]', {timeout: 5000})
             }
@@ -28,7 +26,7 @@ async function steps(page) {
      await page.waitForSelector('.ant-collapse-content > .ant-collapse-content-box > [class*=facet_facetContainer] > [class*=facet_applyButtonContainer] > .ant-btn')
      await page.click('.ant-collapse-content > .ant-collapse-content-box > [class*=facet_facetContainer] > [class*=facet_applyButtonContainer] > .ant-btn')
 
-    for (var i = 2; i <= numPages+1; i++) {
+    for (var i = 2; i <= prop.numPages+1; i++) {
         await page.waitFor(1000)
         await page.waitForSelector('[class*=Browse_searchBar] > [class*=search-pagination_searchPaginationContainer]:nth-child(3) > .ant-pagination > .ant-pagination-item-' + i + ' > a')
         await page.click('[class*=Browse_searchBar] > [class*=search-pagination_searchPaginationContainer]:nth-child(3) > .ant-pagination > .ant-pagination-item-' + i + ' > a')

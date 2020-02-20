@@ -1,23 +1,18 @@
 const puppeteer = require('puppeteer');
 const testPage = require('./' + process.argv.slice(2)[0]);
+const prop = require('./config');
 
 (async () => {
-    const browser = await puppeteer.launch({ignoreHTTPSErrors: true, headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox']});
+    const browser = await puppeteer.launch({ignoreHTTPSErrors: true, headless: false, args: ['--no-sandbox', '--disable-setuid-sandbox']});
     const page = await browser.newPage()
 
-    //await page.setCacheEnabled(false)
     const navigationPromise = page.waitForNavigation({
         waitUntil: 'networkidle0',
     });
 
-await page.goto('https://rh7v-10-dhf-stress-1:8443', { waitUntil: 'domcontentloaded' });
+await page.goto(prop.host, { waitUntil: 'domcontentloaded' });
 process.on('unhandledRejection', error => {
     console.log('unhandledRejection', error.message);
-});
-
-new Promise((_, reject) => reject(new Error('error'))).
-catch(error => {
-    console.log('caught', err.message);
 });
 
 await page.setViewport({ width: 1916, height: 997 })
@@ -28,19 +23,19 @@ await page.setViewport({ width: 1916, height: 997 })
     await page.waitForSelector('.ant-col #username')
     await page.click('.ant-col #username')
 
-    await page.type('.ant-col #username', 'admin')
+    await page.type('.ant-col #username', prop.username)
 
     await page.waitForSelector('.ant-col #password')
     await page.click('.ant-col #password')
 
-    await page.type('.ant-col #password', 'admin')
+    await page.type('.ant-col #password', prop.password)
 
     await page.waitForSelector('.ant-row #submit')
     await page.click('.ant-row #submit')
 
     await page.waitFor(5000)
-    await page.goto('https://rh7v-10-dhf-stress-1:8443/browse', { waitUntil: 'domcontentloaded' })
-    console.log(await testPage(page));
+    await page.goto(prop.host + '/browse', { waitUntil: 'domcontentloaded' })
+    await testPage(page);
 
     console.log("\n==== performance.getEntries() ====\n");
     console.log(
