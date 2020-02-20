@@ -2,38 +2,79 @@
 .mapContainer{
     //padding: 40px 200px 100px 40px;
     //margin-bottom: 100px;
+    height: 100%;
+    //box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
 .headerTitle{
     font-size: 1.5em;
 }
 
+.parentContainer{
+    display: flex;
+    flex-direction: row;
+    padding-bottom: 2vh;
+}
+
 .sourceContainer{
     width: 500px;
+    height: auto;
     flex: 4;
-    float: left;
-  display: flex;
-  flex-direction: column;
-  padding-right: 20px;
-  word-break: break-all;
+    display: flex;
+    flex-direction: column;
+    padding-right: 20px;
+    word-break: break-all;
+}
+
+.sourceTable {
+    & thead > tr > th {
+        background-color: #fafafa;
+        line-height: 2px;
+      };
+    & tbody > tr > td {
+        line-height: 2px;
+    }
 }
 
 .entityContainer{
     width: 700px;
     flex: 9;
-  display: flex;
-  flex-direction: column;
-  padding-right: 20px;
-  word-break: break-all;
+    display: flex;
+    flex-direction: column;
+    padding-right: 20px;
+    word-break: break-all;
+}
+
+.entityTable {
+    & thead > tr > th {
+        background-color: #fafafa;
+        line-height: 2px;
+      };
+    & tbody > tr > td {
+        line-height: 2px;
+    }
 }
 .entityIcon{
     background: transparent;
     border: none;
-    color: #44499C;
+    color: #ffc53dd6;
+}
+.sourceDataIcon {
+    background: transparent;
+    border: none;
+    color: #7F86B5;
 }
 
 .questionCircle {
     font-size: 12px;
     color: #ACB0CF;
+}
+
+.xpathDoc{
+    color: black;
+}
+
+.docLink{
+    cursor: pointer;
 }
   
