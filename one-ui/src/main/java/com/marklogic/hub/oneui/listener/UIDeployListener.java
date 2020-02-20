@@ -48,8 +48,8 @@ public class UIDeployListener implements HubDeployStatusListener {
         logger.error(message, exception);
         this.exception = exception;
         if (exception instanceof IOException || exception.getCause() instanceof IOException) {
-            this.exception = new ProjectDirectoryException("Your user account does not have write permissions to the installation directory.",
-                "Unable to deploy project due to IO error: " + exception.getMessage(), exception);
+            this.exception = new ProjectDirectoryException("Installation failed; please contact a system administrator for assistance.",
+                "Installation error: " + exception.getMessage(), exception);
         }
     }
 
