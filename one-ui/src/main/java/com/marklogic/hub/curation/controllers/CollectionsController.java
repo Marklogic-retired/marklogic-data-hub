@@ -1,6 +1,6 @@
 package com.marklogic.hub.curation.controllers;
 
-import com.marklogic.hub.curation.services.CollectionsService;
+import com.marklogic.hub.curation.services.CollectionsManager;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class CollectionsController {
 
     @Autowired
-    private CollectionsService collectionsService;
+    private CollectionsManager collectionsService;
 
     @RequestMapping(value = "/{databaseName}", method = RequestMethod.GET)
     @ResponseBody
