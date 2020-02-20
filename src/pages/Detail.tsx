@@ -12,6 +12,8 @@ import XmlView from '../components/xml-view/xml-view';
 import { xmlParser, xmlDecoder } from '../util/xml-parser';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faThList, faCode} from "@fortawesome/free-solid-svg-icons";
+import { useInterval } from '../hooks/use-interval';
+
 
 interface Props extends RouteComponentProps<any> { }
 
@@ -19,7 +21,7 @@ const { Content } = Layout;
 
 const Detail: React.FC<Props> = ({ history, location }) => {
 
-  const { user, handleError } = useContext(UserContext);
+  const { user, handleError, userNotAuthenticated } = useContext(UserContext);
   const uriSplit = location.pathname.replace('/detail/', '');
   const pkValue = uriSplit.split('/')[0] === '-' ? '' : decodeURIComponent(uriSplit.split('/')[0]);
   const uri = decodeURIComponent(uriSplit.split('/')[1]).replace(/ /g, "%2520");
@@ -29,6 +31,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [contentType, setContentType] = useState();
   const [xml, setXml] = useState();
+  const [sessionCount, setSessionCount] = useState(0);
 
   const componentIsMounted = useRef(true);
 
@@ -55,7 +58,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
             setData(xmlParser(decodedXml).Document);
             setXml(xmlDecoder(decodedXml));
           }
-
+          setSessionCount(0);
           setIsLoading(false);
         }
 
@@ -86,6 +89,14 @@ const Detail: React.FC<Props> = ({ history, location }) => {
   const handleClick = (event) => {
     setSelected(event.key);
   }
+
+  useInterval(() => {
+    if (sessionCount === user.maxSessionTime) {
+      userNotAuthenticated();
+    } else {
+      setSessionCount(sessionCount + 1);
+    }
+  }, 1000);
 
   return (
     <Layout>

@@ -27,9 +27,12 @@ const LoginForm: React.FC = () => {
         password
       });
       if (response.status === 200) {
+        let session = await axios('/datahub/v2/info');
+        let sessionTime = parseInt(session.data['session.timeout']);
+
         setErrorResponse('');
         setIsLoading(false);
-        loginAuthenticated(username);
+        loginAuthenticated(username, sessionTime);
       } 
     } catch (error) {
       let message = error.response.data.message === 'Unauthorized' ? error.response.data.message : 'Internal Server Error';

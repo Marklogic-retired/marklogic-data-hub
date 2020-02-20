@@ -4,6 +4,7 @@ import { Layout, Tooltip, Spin } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { UserContext } from '../util/user-context';
 import { SearchContext } from '../util/search-context';
+import { useInterval } from '../hooks/use-interval';
 import { useScrollPosition } from '../hooks/use-scroll-position';
 import AsyncLoader from '../components/async-loader/async-loader';
 import Sidebar from '../components/sidebar/sidebar';
@@ -26,7 +27,12 @@ const Browse: React.FC<Props> = ({ location }) => {
 
   const { Content, Sider } = Layout;
   const componentIsMounted = useRef(true);
-  const { user, handleError, setTableView } = useContext(UserContext);
+  const { 
+    user,
+    handleError,
+    setTableView,
+    userNotAuthenticated 
+  } = useContext(UserContext);
   const {
     searchOptions,
     setEntityClearQuery,
@@ -44,6 +50,7 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [active, setIsActive] = useState(user.tableView);
   const [snippetActive, setIsSnippetActive] = useState(!user.tableView);
   const [endScroll, setEndScroll] = useState(false);
+  const [sessionCount, setSessionCount] = useState(0);
 
   const getEntityModel = async () => {
     try {
@@ -82,6 +89,7 @@ const Browse: React.FC<Props> = ({ location }) => {
         setData(response.data.results);
         setFacets(response.data.facets);
         setTotalDocuments(response.data.total);
+        setSessionCount(0);
       }
     } catch (error) {
       handleError(error);
@@ -168,6 +176,14 @@ const Browse: React.FC<Props> = ({ location }) => {
     [endScroll],
     null
   )
+
+  useInterval(() => {
+    if (sessionCount === user.maxSessionTime) {
+      userNotAuthenticated();
+    } else {
+      setSessionCount(sessionCount + 1);
+    }
+  }, 1000);
 
   return (
     <>

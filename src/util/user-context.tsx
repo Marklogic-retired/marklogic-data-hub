@@ -12,7 +12,8 @@ type UserContextInterface = {
   redirect: boolean,
   error : any,
   tableView: boolean,
-  pageRoute: string
+  pageRoute: string,
+  maxSessionTime: number
 }
 
 const defaultUserData = {
@@ -26,12 +27,13 @@ const defaultUserData = {
     type: ''
   },
   tableView: true,
-  pageRoute: '/view'
+  pageRoute: '/view',
+  maxSessionTime: 300
 }
 
 interface IUserContextInterface {
   user: UserContextInterface;
-  loginAuthenticated: (username: string) => void;
+  loginAuthenticated: (username: string, sessionTime: number) => void;
   sessionAuthenticated: (username: string) => void;
   userNotAuthenticated: () => void;
   handleError: (error:any) => void;
@@ -60,15 +62,28 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
   const [user, setUser] = useState<UserContextInterface>(defaultUserData);
   const sessionUser = localStorage.getItem('dataHubExplorerUser');
 
-  const loginAuthenticated = (username: string) => {
+  const loginAuthenticated = (username: string, sessionTime: number) => {
     localStorage.setItem('dataHubExplorerUser', username);
     let userPreferences = getUserPreferences(username);
     if (userPreferences) {
       let values = JSON.parse(userPreferences);
-      setUser({ ...user,name: username, authenticated: true, redirect: true, tableView: values.tableView, pageRoute: values.pageRoute });
+      setUser({ 
+        ...user,
+        name: username,
+        authenticated: true,
+        redirect: true,
+        tableView: values.tableView,
+        pageRoute: values.pageRoute,
+        maxSessionTime: sessionTime 
+      });
     } else {
       createUserPreferences(username);
-      setUser({ ...user,name: username, authenticated: true, redirect: true });
+      setUser({ 
+        ...user,
+        name: username,
+        authenticated: true,
+        redirect: true
+      });
     }
   };
 
@@ -77,7 +92,13 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
     let userPreferences = getUserPreferences(username);
     if (userPreferences) {
       let values = JSON.parse(userPreferences);
-      setUser({ ...user,name: username, authenticated: true, tableView: values.tableView, pageRoute: values.pageRoute });
+      setUser({ 
+        ...user,
+        name: username,
+        authenticated: true,
+        tableView: values.tableView,
+        pageRoute: values.pageRoute 
+      });
     } else {
       createUserPreferences(username);
       setUser({ ...user,name: username, authenticated: true });
