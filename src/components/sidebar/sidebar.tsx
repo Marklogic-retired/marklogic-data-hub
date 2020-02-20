@@ -59,7 +59,6 @@ const Sidebar: React.FC<Props> = (props) => {
       if (Object.entries(searchOptions.searchFacets).length !== 0) {
         let selectedFacets: any[] = [];
         for (let constraint in searchOptions.searchFacets) {
-          console.log('LOOP searchOptions.searchFacets',searchOptions.searchFacets)
           if (constraint === 'createdOnRange') {
             selectedFacets.push({ constraint, facet: searchOptions.searchFacets[constraint]['rangeValues'] });
             toggleApply(false);
@@ -78,7 +77,6 @@ const Sidebar: React.FC<Props> = (props) => {
               selectedFacets.push({ constraint, rangeValues });
             }
           }
-          console.log('selectedFacets',selectedFacets)
           setSelectedFacets(selectedFacets);
         }
         if (!selectedFacets.some(item => item.constraint === 'createdOnRange')) {
@@ -232,13 +230,13 @@ const Sidebar: React.FC<Props> = (props) => {
     setAllSelectedFacets(updateFacets);
   }
 
-    const onDateFacetChange = (datatype, facet, value) => {
-      let updateFacets = { ...allSelectedFacets };
-      if (value.length > 1) {
-        updateFacets = { ...updateFacets, [facet]: { dataType: datatype, rangeValues: { lowerBound: moment(value[0]).format('YYYY-MM-DD'), upperBound: moment(value[1]).format('YYYY-MM-DD')} } }        
-      } 
-      setAllSelectedFacets(updateFacets);
+  const onDateFacetChange = (datatype, facet, value) => {
+    let updateFacets = { ...allSelectedFacets };
+    if (value.length > 1) {
+      updateFacets = { ...updateFacets, [facet]: { dataType: datatype, rangeValues: { lowerBound: moment(value[0]).format('YYYY-MM-DD'), upperBound: moment(value[1]).format('YYYY-MM-DD') } } }
     }
+    setAllSelectedFacets(updateFacets);
+  }
 
   return (
     <div className={styles.sideBarContainer} id={'sideBarContainer'}>
@@ -275,24 +273,16 @@ const Sidebar: React.FC<Props> = (props) => {
                 }
                 case 'xs:date': {
                   datatype = 'date';
-                  console.log('got date')
-                  console.log(facet)
-
                   return Object.entries(facet).length !== 0 && (
-                    <div>
-                   <DateFacet 
-                    constraint={facet.facetName}
-                    facet={facet}
-                    datatype={datatype}
-                    onChange={onDateFacetChange}
-                    applyAllFacets={applyAllFacets}
-                   
-                   />
-            
-                  </div>
+                    <DateFacet
+                      constraint={facet.facetName}
+                      facet={facet}
+                      datatype={datatype}
+                      key={facet.facetName}
+                      onChange={onDateFacetChange}
+                      applyAllFacets={applyAllFacets}
+                    />
                   )
-
-                  break;
                 }
                 case 'xs:int': {
                   datatype = 'int';
@@ -343,6 +333,7 @@ const Sidebar: React.FC<Props> = (props) => {
                       facet={facet}
                       step={step}
                       datatype={datatype}
+                      key={facet.facetName}
                       onChange={onNumberFacetChange}
                       applyAllFacets={applyAllFacets}
                     />

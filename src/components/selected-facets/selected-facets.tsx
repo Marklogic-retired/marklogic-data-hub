@@ -34,7 +34,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
           <Icon type='close'/>
           Clear All
         </MlButton>
-      } {console.log('props.selectedFacets',props.selectedFacets)}
+      }
       { props.selectedFacets.map((item, index) => {
         if (item.constraint === 'createdOnRange') {
           let dateValues:any = [];
@@ -53,8 +53,6 @@ const SelectedFacets: React.FC<Props> = (props) => {
           )
         } else if (item.rangeValues) {
           if (moment(item.rangeValues.lowerBound).isValid() && moment(item.rangeValues.upperBound).isValid()) {
-            console.log('ITEM', item)
-
             let dateValues:any = [];
             dateValues.push(item.rangeValues.lowerBound,item.rangeValues.upperBound);
             return (
@@ -63,7 +61,6 @@ const SelectedFacets: React.FC<Props> = (props) => {
                 className={styles.dateFacet} 
                 key={index}
                 onClick={()=> clearRangeFacet(item.constraint)}
-                // data-cy='clear-date-facet'
               >
                 <Icon type='close'/>
                 {item.constraint + ': ' + item.rangeValues.lowerBound + ' - ' + item.rangeValues.upperBound}
