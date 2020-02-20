@@ -33,7 +33,7 @@ const defaultUserData = {
 
 interface IUserContextInterface {
   user: UserContextInterface;
-  loginAuthenticated: (username: string) => void;
+  loginAuthenticated: (username: string, sessionTime: number) => void;
   sessionAuthenticated: (username: string) => void;
   userNotAuthenticated: () => void;
   handleError: (error:any) => void;
@@ -42,7 +42,6 @@ interface IUserContextInterface {
   setTableView: (viewType: boolean) => void;
   setPageRoute: (route: string) => void;
   setAlertMessage: (title: string, message: string) => void;
-  setLoginSessionTime: (time: number) => void;
 }
 
 export const UserContext = React.createContext<IUserContextInterface>({
@@ -55,8 +54,7 @@ export const UserContext = React.createContext<IUserContextInterface>({
   clearRedirect: () => {},
   setTableView: () => {},
   setPageRoute: () => {},
-  setAlertMessage: () => {},
-  setLoginSessionTime: () => {}
+  setAlertMessage: () => {}
 });
 
 const UserProvider: React.FC<{ children: any }> = ({children}) => {
@@ -64,7 +62,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
   const [user, setUser] = useState<UserContextInterface>(defaultUserData);
   const sessionUser = localStorage.getItem('dataHubExplorerUser');
 
-  const loginAuthenticated = (username: string) => {
+  const loginAuthenticated = (username: string, sessionTime: number) => {
     localStorage.setItem('dataHubExplorerUser', username);
     let userPreferences = getUserPreferences(username);
     if (userPreferences) {
@@ -75,7 +73,8 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
         authenticated: true,
         redirect: true,
         tableView: values.tableView,
-        pageRoute: values.pageRoute 
+        pageRoute: values.pageRoute,
+        maxSessionTime: sessionTime 
       });
     } else {
       createUserPreferences(username);
@@ -220,10 +219,6 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
     });
   }
 
-  const setLoginSessionTime = (time: number) => {
-    setUser({ ...user, maxSessionTime: time });
-  }
-
   useEffect(() => {
     if (sessionUser) {
       sessionAuthenticated(sessionUser);
@@ -241,8 +236,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
       clearRedirect,
       setTableView,
       setPageRoute,
-      setAlertMessage,
-      setLoginSessionTime
+      setAlertMessage
     }}>
       {children}
     </UserContext.Provider>
