@@ -22,7 +22,7 @@ function invokeGetService(artifactType, artifactName) {
 }
 
 function updateMappingConfig(artifactName) {
-    const result = invokeSetService('mapping', artifactName, {'name': `${artifactName}`, 'targetEntity': 'Customer', 'description': 'Mapping does ...', 'selectedSource': 'query', 'sourceQuery': '', 'collections': ['RAW-CUSTOMER']});
+    const result = invokeSetService('mappings', artifactName, {'name': `${artifactName}`, 'targetEntity': 'Customer', 'description': 'Mapping does ...', 'selectedSource': 'query', 'sourceQuery': '', 'collections': ['RAW-CUSTOMER']});
     return [
         test.assertEqual(artifactName, result.name),
         test.assertEqual("Customer", result.targetEntity)
@@ -30,11 +30,11 @@ function updateMappingConfig(artifactName) {
 }
 
 function getArtifacts() {
-    const configsByEntity = invokeGetAllService('mapping');
-    configsByEntity.forEach(entity => {
-        if (entity.name === 'Customer') {
-            const config = entity.config;
-            config.forEach(mapping => {
+    const artifactsByEntity = invokeGetAllService('mappings');
+    artifactsByEntity.forEach(entity => {
+        if (entity.entityType === 'Customer') {
+            const artifacts = entity.artifacts;
+            artifacts.forEach(mapping => {
                 if (mapping.name == 'TestMapping' || mapping.name === 'TestMapping2') {
                     test.assertEqual("Customer", mapping.targetEntity);
                     test.assertTrue(xdmp.castableAs('http://www.w3.org/2001/XMLSchema', 'dateTime', mapping.lastUpdated));
@@ -47,7 +47,7 @@ function getArtifacts() {
 function deleteArtifact(artifactName) {
     return fn.head(xdmp.invoke(
         "/data-hub/5/data-services/artifacts/deleteArtifact.sjs",
-        {artifactType: 'mapping', artifactName: `${artifactName}`}
+        {artifactType: 'mappings', artifactName: `${artifactName}`}
     ));
 }
 
