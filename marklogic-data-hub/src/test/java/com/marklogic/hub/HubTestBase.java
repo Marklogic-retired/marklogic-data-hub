@@ -494,7 +494,7 @@ public class HubTestBase implements InitializingBean {
     protected HubConfigImpl runAsAdmin() {
         return runAsUser("test-admin-for-data-hub-tests", "password");
     }
-    
+
     protected HubConfigImpl runAsUser(String mlUsername, String mlPassword) {
         adminHubConfig.setMlUsername(mlUsername);
         adminHubConfig.setMlPassword(mlPassword);
@@ -1268,8 +1268,12 @@ public class HubTestBase implements InitializingBean {
                 adminHubConfig.getStepsDirByType(StepDefinition.StepDefinitionType.INGESTION).resolve("json-ingestion").toFile());
             FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/step-definitions/json-mapping.step.json"),
                 adminHubConfig.getStepsDirByType(StepDefinition.StepDefinitionType.MAPPING).resolve("json-mapping").toFile());
+            FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/step-definitions/value-step.step.json"),
+                adminHubConfig.getStepsDirByType(StepDefinition.StepDefinitionType.CUSTOM).resolve("value-step").toFile());
             FileUtils.copyDirectory(getResourceFile("flow-runner-test/mappings"),
                 adminHubConfig.getHubMappingsDir().resolve("e2e-mapping").toFile());
+            FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/src/main/ml-modules/root/custom-modules/custom/value-step/main.sjs"),
+                adminHubConfig.getModulesDir().resolve("root/custom-modules/custom/value-step").toFile());
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
