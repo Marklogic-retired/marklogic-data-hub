@@ -23,14 +23,14 @@ const dataHub = DataHubSingleton.instance();
 const collections = ['http://marklogic.com/data-hub/mapping-artifact'];
 const databases = [dataHub.config.STAGINGDATABASE, dataHub.config.FINALDATABASE];
 const permissions = [xdmp.permission(dataHub.consts.DATA_HUB_MAPPING_WRITE_ROLE, 'update'), xdmp.permission(dataHub.consts.DATA_HUB_MAPPING_READ_ROLE, 'read')];
-const requiredProperties = ['name', 'entityName', 'selectedSource'];
+const requiredProperties = ['name', 'targetEntity', 'selectedSource'];
 
 function getNameProperty() {
     return 'name';
 }
 
 function getEntityNameProperty() {
-    return 'entityName';
+    return 'targetEntity';
 }
 
 function getSelectedSourceProperty() {
