@@ -52,7 +52,25 @@
       };
     & tbody > tr > td {
         line-height: 2px;
+        vertical-align: top;
     }
+}
+
+.mapExpContainer {
+    width: 100%;
+    display: inline-flex;
+    vertical-align: top;
+    //border: 1px solid red;
+    margin-top: -12px;
+    margin-bottom: -12px;
+    align-items: flex-start;
+}
+
+.mapExpression{
+    width: 100%;
+    line-height: 1px;
+    vertical-align: top;
+    justify-content: top;
 }
 .entityIcon{
     background: transparent;
@@ -64,7 +82,33 @@
     border: none;
     color: #7F86B5;
 }
+.listIcon{
+    background: transparent;
+    border: none;
+    color: #394494;
+    display: inline-block;
+    vertical-align: top;
+	//position: relative;
+    margin-top: 4px;
+    font-size: 20px;
+    cursor: pointer;
+}
 
+.functionIcon{
+    color: #394494;
+    font-size: 14px;
+    width: 22px;
+    height: 18px;
+    border: 1px solid #394494;
+    border-radius: 2px;
+    padding: 0px 0px 0px 0px;
+    cursor: pointer;
+    display: inline-block;
+    vertical-align: top;
+    text-align: center;
+    align-items: center; 
+    margin-top: 5px;
+}
 .questionCircle {
     font-size: 12px;
     color: #ACB0CF;
