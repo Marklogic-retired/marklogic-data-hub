@@ -54,8 +54,6 @@ public class LoadDataControllerTest {
     @Autowired
     TestHelper testHelper;
 
-    ObjectNode validLoadDataConfig = (ObjectNode) new ObjectMapper().readTree("{ \"name\": \"validArtifact\", \"sourceFormat\": \"xml\", \"targetFormat\": \"json\"}");
-
 
     static final String LOAD_DATA_SETTINGS = "{\n"
         + "    \"artifactName\" : \"validArtifact\",\n"
@@ -76,7 +74,7 @@ public class LoadDataControllerTest {
     @Test
     void testLoadDataController() throws IOException {
         testHelper.authenticateSession();
-        controller.updateArtifact("validArtifact", validLoadDataConfig);
+        controller.updateArtifact("validArtifact", testHelper.validLoadDataConfig);
 
         ArrayNode resultList = (ArrayNode) controller.getArtifacts().getBody();
 
@@ -106,7 +104,7 @@ public class LoadDataControllerTest {
     @Test
     public void testLoadDataSettings() throws IOException {
         testHelper.authenticateSession();
-        controller.updateArtifact("validArtifact", validLoadDataConfig);
+        controller.updateArtifact("validArtifact", testHelper.validLoadDataConfig);
 
         JsonNode result = controller.getArtifactSettings("validArtifact").getBody();
         assertTrue(result.isEmpty(), "No load data settings yet!");
