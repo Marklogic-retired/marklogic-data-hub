@@ -5,13 +5,16 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.LogbackException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.appdeployer.command.security.DeployPrivilegesCommand;
 import com.marklogic.appdeployer.command.security.DeployRolesCommand;
 import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.ArtifactManager;
 import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
 import com.marklogic.hub.deploy.commands.DeployHubOtherServersCommand;
 import com.marklogic.hub.deploy.commands.DeployHubTriggersCommand;
+import com.marklogic.hub.impl.ArtifactManagerImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.oneui.Application;
 import com.marklogic.hub.oneui.TestHelper;
@@ -27,6 +30,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -49,10 +53,8 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.multipart.MultipartFile;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {Application.class, ApplicationConfig.class, FlowControllerTest.class})
@@ -66,6 +68,12 @@ public class EnvironmentControllerTest {
 
     @Autowired
     private EnvironmentController environmentController;
+
+    @Autowired
+    LoadDataController controller;
+
+    @Autowired
+    ArtifactManager artifactManager;
 
     private boolean hasBeenInitialized = false;
 
@@ -86,6 +94,24 @@ public class EnvironmentControllerTest {
 
     @Test
     void downloadProject() throws IOException {
+        //Creating a load data artifact so it can be verified for download test
+        testHelper.authenticateSession();
+        controller.updateArtifact("validArtifact", testHelper.validLoadDataConfig);
+
+        ArrayNode resultList = (ArrayNode) controller.getArtifacts().getBody();
+
+        assertEquals(1, resultList.size(), "List of load data artifacts should now be 1");
+
+        Path artifactProjectLocation = ((ArtifactManagerImpl)artifactManager).buildArtifactProjectLocation(controller.getArtifactType(), "validArtifact", null);
+        ObjectNode resultByName = controller.getArtifact("validArtifact").getBody();
+        assertEquals("validArtifact", resultByName.get("name").asText(), "Getting artifact by name should return object with expected properties");
+        assertEquals("xml", resultByName.get("sourceFormat").asText(), "Getting artifact by name should return object with expected properties");
+        assertEquals("json", resultByName.get("targetFormat").asText(), "Getting artifact by name should return object with expected properties");
+        assertTrue(artifactProjectLocation.toFile().exists(), "File should have been created in the project directory");
+
+        ObjectNode enrichedJson = controller.setData("validArtifact", new MockMultipartFile[]{ new MockMultipartFile("file", "orig", null, "docTest".getBytes())}).getBody();
+        assertEquals(1, enrichedJson.get("fileCount").asInt(), "File should be added to data set.");
+
         MockHttpServletResponse response = new MockHttpServletResponse();
         environmentController.downloadProject(new MockHttpServletRequest(), response);
         List<String> zipContent = new ArrayList();
@@ -101,6 +127,8 @@ public class EnvironmentControllerTest {
         assertFalse(zipContent.isEmpty());
         assertTrue(zipContent.contains("entities" + File.separator));
         assertTrue(zipContent.contains("flows" + File.separator));
+        assertTrue(zipContent.contains("loadData" + File.separator));
+        assertFalse(zipContent.contains("data-sets" + File.separator));
     }
 
     @Test
