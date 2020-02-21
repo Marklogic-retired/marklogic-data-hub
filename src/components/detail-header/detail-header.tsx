@@ -29,13 +29,18 @@ const DetailHeader: React.FC<Props> = (props) => {
           title = envelope.instance.info.hasOwnProperty('title') && envelope.instance.info.title;
         }
         if (envelope.hasOwnProperty('headers')) {
-          if(typeof(envelope.headers.createdOn) === 'object'){
+          if (typeof (envelope.headers.createdOn) === 'object') {
             timestamp = envelope.headers.hasOwnProperty('createdOn') && envelope.headers.createdOn[0];
-          }
-          else{
+          } else {
             timestamp = envelope.headers.hasOwnProperty('createdOn') && envelope.headers.createdOn;
           }
-          sources = envelope.headers.hasOwnProperty('sources') && envelope.headers.sources.name;
+        }
+        if (envelope.headers.hasOwnProperty('sources')) {
+          if (Array.isArray(envelope.headers.sources)) {
+            sources = envelope.headers.sources[0].name;
+          } else {
+            sources = envelope.headers.sources.name;
+          }
         }
         if (props.primaryKey) {
           Object.keys(props.document.envelope.instance).forEach(instance => {
