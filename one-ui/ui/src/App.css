@@ -53,3 +53,7 @@ ul#global-icons.ant-menu .ant-menu-item i.tour,
 ul#global-icons.ant-menu .ant-dropdown-trigger .anticon.anticon-user {
     font-size: 24px;
 }
+
+.ant-upload.ant-upload-select{
+    display: block;
+}

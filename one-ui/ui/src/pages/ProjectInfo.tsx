@@ -175,16 +175,12 @@ const ProjectInfo: React.FC = () => {
                         <br/>
 
                         <Card size="small" className={styles.smallCard} bordered={false}>
-                            <p className={styles.aligncenter}>Upload project as .zip file</p>
-                            <Row><Col>
-                                <span>
-                                    <Upload {...uploadProps} multiple={false}
-                                                  disabled={!hasManagePriviledge || isLoading || buttonDisabled}
-                                                  customRequest={customRequest}>
+                                <p className={styles.aligncenter}>Upload project as .zip file</p>
+                                <Upload {...uploadProps} multiple={false}
+                                        disabled={!hasManagePriviledge || isLoading || buttonDisabled}
+                                        customRequest={customRequest}>
                                     <Button type="primary" className={styles.uploadButton}>Upload</Button>
-                                    </Upload>
-                                </span>
-                            </Col></Row>
+                                </Upload>
                             <br/>
                             <Row><Col>
                                 <span>
