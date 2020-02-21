@@ -1,13 +1,14 @@
 
 import React, { useState, useEffect } from "react";
-import { Modal, Table, Icon, Popover } from "antd";
+import { Modal, Table, Icon, Popover, Input, Button } from "antd";
 import styles from './source-to-entity-map.module.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faObjectUngroup, faList } from "@fortawesome/free-solid-svg-icons";
-import {getResultsByQuery} from '../../../../util/search-service'
 
 const SourceToEntityMap = (props) => {
 
+    const [mapExp, setMapExp] = useState({});
+    const [mapExpTouched, setMapExpTouched] = useState(false);
 
     //Documentation links for using Xpath expressions
     const xPathDocLinks = <div className={styles.xpathDoc}><span id="doc">Documentation:</span>
@@ -18,6 +19,8 @@ const SourceToEntityMap = (props) => {
         </ul></div>
     </div>;
 
+    const { TextArea } = Input;
+
     const onOk = () => {
         props.setMappingVisible(false)
         console.log('Map Saved!')
@@ -26,6 +29,15 @@ const SourceToEntityMap = (props) => {
     const onCancel = () => {
         props.setMappingVisible(false)
         console.log('Map cancelled!')
+    }
+
+    const handleMapExp = (event) => {
+        console.log('event', event);
+        
+            setMapExpTouched(true);
+
+            setMapExp({a: event.target.value});
+        
     }
 
     const columns = [
@@ -63,7 +75,16 @@ const SourceToEntityMap = (props) => {
             placement="top" ><Icon type="question-circle" className={styles.questionCircle} theme="filled" /></Popover>
             </span>,
             dataIndex: 'xPathExpression',
-            key: 'xPathExpression'
+            key: 'xPathExpression',
+            render: (text, row)=> (<div className={styles.mapExpContainer}>
+                <TextArea 
+                className={styles.mapExpression}
+                value={mapExp[row.name]}
+                onChange={() => handleMapExp(row.name)}
+                autoSize={{ minRows: 1 }}></TextArea>&nbsp;&nbsp;
+                <i><FontAwesomeIcon icon={faList} size="lg" className={styles.listIcon}
+                /></i>&nbsp;&nbsp;
+                <span ><Button className={styles.functionIcon} size="small">fx</Button></span></div>)
           },
           {
             title: 'Value',
@@ -82,7 +103,20 @@ const SourceToEntityMap = (props) => {
     {key: "phone", val: "(213)-405-4543"}
     ]
 
- 
+    const entData = [
+        {
+            name: "id", 
+            type: "string",
+            xPathExpression: '',
+            value: ''
+        },
+        {
+            name: "add1", 
+            type: "string",
+            xPathExpression: '',
+            value: ''
+        }
+    ]
 
 
 
@@ -131,7 +165,7 @@ return (<Modal
         //size="small"
         tableLayout="unset"
         columns={entityColumns}
-        dataSource={props.data}
+        dataSource={entData}
         rowKey="name"
         />
         </div>
