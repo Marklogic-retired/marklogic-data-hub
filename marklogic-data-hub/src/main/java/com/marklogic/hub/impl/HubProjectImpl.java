@@ -643,7 +643,7 @@ public class HubProjectImpl implements HubProject {
 
     private void writeToStream(OutputStream out) {
         try (ZipOutputStream zout = new ZipOutputStream(out)){
-            Stream.of("entities", "flows", "src" + File.separator + "main", "mappings", "step-definitions", "gradle",
+            Stream.of("entities", "flows", "src" + File.separator + "main", "mappings", "step-definitions", "loadData", "gradle",
                 "gradlew", "gradlew.bat", "build.gradle", "gradle.properties").forEach(file ->{
                 File fileToZip = getProjectDir().resolve(file).toFile();
                 try {
