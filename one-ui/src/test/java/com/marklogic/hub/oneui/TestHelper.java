@@ -1,5 +1,7 @@
 package com.marklogic.hub.oneui;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.oneui.auth.MarkLogicAuthenticationManager;
 import com.marklogic.hub.oneui.models.EnvironmentInfo;
 import com.marklogic.hub.oneui.models.HubConfigSession;
@@ -39,6 +41,8 @@ public class TestHelper {
 
     @Autowired
     private EnvironmentService environmentService;
+
+    public ObjectNode validLoadDataConfig = (ObjectNode) new ObjectMapper().readTree("{ \"name\": \"validArtifact\", \"sourceFormat\": \"xml\", \"targetFormat\": \"json\"}");
 
     public TestHelper() throws IOException {
     }
