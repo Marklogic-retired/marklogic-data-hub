@@ -25,7 +25,7 @@ const LoadDataSettings = {
 const NewMapTooltips = {
     'name': 'The name of this mapping configuration.', 
     'description': 'The description of this mapping configuration.', 
-    'sourceQuery' : 'The Collection or CTS query to use to select the source data to process in this configuration.',
+    'sourceQuery' : 'The collection or CTS query that selects the source data to process in this configuration.',
 }
 
 export {

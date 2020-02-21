@@ -9,6 +9,7 @@ import CreateEditMappingDialog from './create-edit-mapping-dialog/create-edit-ma
 
 interface Props {
     data: any;
+    entityName: any;
     deleteMappingArtifact: any;
     createMappingArtifact: any;
     canReadOnly: any;
@@ -118,7 +119,7 @@ const MappingCard: React.FC<Props> = (props) => {
                     >
                         <div className={styles.formatFileContainer}>
                             <span className={styles.mapNameStyle}>{getInitialChars(elem.name, 27, '...')}</span>
-                            <span style={sourceFormatStyle(elem.sourceFormat)}>{elem.sourceFormat.toUpperCase()}</span>
+                            {/* <span style={sourceFormatStyle(elem.sourceFormat)}>{elem.sourceFormat.toUpperCase()}</span> */}
                             
                         </div><br />
                         <div className={styles.sourceQuery}>Source Query: {getInitialChars(elem.sourceQuery,32,'...')}</div>
@@ -129,8 +130,10 @@ const MappingCard: React.FC<Props> = (props) => {
                 <CreateEditMappingDialog 
                 newMap={newMap} 
                 title={title} 
-                setNewMap={setNewMap} 
-                createMappingArtifact={props.createMappingArtifact} 
+                setNewMap={setNewMap}
+                targetEntity={props.entityName}
+                createMappingArtifact={props.createMappingArtifact}
+                deleteMappingArtifact={props.deleteMappingArtifact}  
                 mapData={mapData}
                 canReadWrite={props.canReadWrite}
                 canReadOnly={props.canReadOnly}/>

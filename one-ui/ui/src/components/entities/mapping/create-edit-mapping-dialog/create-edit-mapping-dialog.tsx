@@ -117,14 +117,14 @@ const CreateEditMappingDialog = (props) => {
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
     if (event) event.preventDefault();
 
-    let dataPayload = {}
-    // let dataPayload = {
-    //        name: mapName,
-    //        description: description,
-    //        selectedSource: selectedSource,
-    //        sourceQuery: srcQuery,
-    //        collection: []
-    //      }
+    let dataPayload = {
+           name: mapName,
+           targetEntity: props.targetEntity,
+           description: description,
+           selectedSource: selectedSource,
+           sourceQuery: srcQuery,
+           collection: []
+         }
 
     setIsValid(true);
 
@@ -325,7 +325,7 @@ const CreateEditMappingDialog = (props) => {
           </Tooltip>
           {selectedSource === 'collection' ? <Select
             id="collList"
-            mode="multiple"
+            mode="tags"
             style={{ width: '100%' }}
             placeholder="Please select"
             value={collections}
