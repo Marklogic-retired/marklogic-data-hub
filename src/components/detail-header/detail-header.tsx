@@ -35,7 +35,7 @@ const DetailHeader: React.FC<Props> = (props) => {
           else{
             timestamp = envelope.headers.hasOwnProperty('createdOn') && envelope.headers.createdOn;
           }
-          sources = envelope.headers.hasOwnProperty('sources') && envelope.headers.sources[0].name;
+          sources = envelope.headers.hasOwnProperty('sources') && envelope.headers.sources.name;
         }
         if (props.primaryKey) {
           Object.keys(props.document.envelope.instance).forEach(instance => {

@@ -37,9 +37,15 @@ const SearchResult: React.FC<Props> = (props) => {
         if (Object.keys(contentObject)[0] === 'headers') {
           const headerValues = Object.values<any>(contentObject);
           createdOnVal = headerValues[0].hasOwnProperty('createdOn') && headerValues[0].createdOn.toString().substring(0, 19);
-          sourcesVal = headerValues[0].hasOwnProperty('sources') && headerValues[0].sources.map(src => {
-            return src.name;
-          }).join(', ');
+          if (headerValues[0].hasOwnProperty('sources')) {
+            if (Array.isArray(headerValues[0].sources)) {
+              sourcesVal = headerValues[0].sources.map(src => {
+                return src.name;
+              }).join(', ');
+            } else {
+              sourcesVal = headerValues[0].sources.name;
+            }
+          }
         } else {
           itemEntityName = Object.keys(contentObject);
           itemEntityProperties = Object.values<any>(contentObject);
