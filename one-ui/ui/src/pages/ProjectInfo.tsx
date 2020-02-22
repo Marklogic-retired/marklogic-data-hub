@@ -111,10 +111,6 @@ const ProjectInfo: React.FC = () => {
             stompService.unsubscribe(unsubscribeId);
             unsubscribeId = '';
         }
-        /*        if (unsubscribeId2) {
-                    stompService.unsubscribe(unsubscribeId2);
-                    unsubscribeId2 = '';
-                }*/
     }
 
     return (
@@ -133,7 +129,6 @@ const ProjectInfo: React.FC = () => {
                                     <p className={styles.alignleftresults}>{env.dataHubVersion}</p>
                                 </Col>
                             </Row>
-
                             <Row>
                                 <Col span={6}>
                                     <p className={styles.alignleft}>MarkLogic Version:</p>
@@ -173,13 +168,10 @@ const ProjectInfo: React.FC = () => {
                             </div>
                         </Card>
                         <br/>
-
                         <Card size="small" className={styles.smallCard} bordered={false}>
                                 <p className={styles.aligncenter}>Upload project as .zip file</p>
-                                <Upload {...uploadProps} multiple={false}
-                                        disabled={!hasManagePriviledge || isLoading || buttonDisabled}
-                                        customRequest={customRequest}>
-                                    <Button type="primary" className={styles.uploadButton}>Upload</Button>
+                                <Upload {...uploadProps} multiple={false} customRequest={customRequest}>
+                                    <Button type="primary" className={styles.uploadButton} disabled={!hasManagePriviledge || isLoading || buttonDisabled}>Upload</Button>
                                 </Upload>
                             <br/>
                             <Row><Col>
