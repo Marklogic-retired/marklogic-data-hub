@@ -67,7 +67,8 @@ function getArtifacts(artifactType) {
 }
 
 function getArtifactsGroupByEntity(queries) {
-    const artifacts = cts.search(cts.andQuery(queries.concat(cts.jsonPropertyValueQuery("targetEntity", getEntityNames())))).toArray();
+    const entityNames = getEntityNames();
+    const artifacts = cts.search(cts.andQuery(queries.concat(cts.jsonPropertyValueQuery("targetEntity", entityNames)))).toArray();
     const artifactsByEntity = artifacts.map(e => e.toObject()).reduce((res, e) => {
             res[e.targetEntity] = res[e.targetEntity] || {entityType : e.targetEntity};
             res[e.targetEntity].artifacts = res[e.targetEntity].artifacts || [];
@@ -75,7 +76,17 @@ function getArtifactsGroupByEntity(queries) {
             return res;
         }, {});
 
-    return Object.keys(artifactsByEntity).map(e => artifactsByEntity[e]);
+    const entityWithoutArtifacts = [];
+    for (const ename of entityNames) {
+        if (!artifactsByEntity[ename]) {
+            entityWithoutArtifacts.push(ename);
+        }
+    }
+    const allArtifactsByEntity = Object.keys(artifactsByEntity).map(e => artifactsByEntity[e]);
+    for (const e of entityWithoutArtifacts) {
+        allArtifactsByEntity.push({entityType : e, artifacts : []});
+    }
+    return allArtifactsByEntity;
 }
 
 function deleteArtifact(artifactType, artifactName, artifactVersion = 'latest') {
