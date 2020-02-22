@@ -8,6 +8,7 @@ import { faObjectUngroup, faList } from "@fortawesome/free-solid-svg-icons";
 const SourceToEntityMap = (props) => {
 
     const [mapExp, setMapExp] = useState({});
+
     const [mapExpTouched, setMapExpTouched] = useState(false);
 
     //Documentation links for using Xpath expressions
@@ -31,13 +32,9 @@ const SourceToEntityMap = (props) => {
         console.log('Map cancelled!')
     }
 
-    const handleMapExp = (event) => {
-        console.log('event', event);
-        
-            setMapExpTouched(true);
-
-            setMapExp({a: event.target.value});
-        
+    const handleMapExp = (name,event) => {
+        setMapExpTouched(true);
+        setMapExp({...mapExp, [name]: event.target.value});
     }
 
     const columns = [
@@ -80,7 +77,7 @@ const SourceToEntityMap = (props) => {
                 <TextArea 
                 className={styles.mapExpression}
                 value={mapExp[row.name]}
-                onChange={() => handleMapExp(row.name)}
+                onChange={(e) => handleMapExp(row.name,e)}
                 autoSize={{ minRows: 1 }}></TextArea>&nbsp;&nbsp;
                 <i><FontAwesomeIcon icon={faList} size="lg" className={styles.listIcon}
                 /></i>&nbsp;&nbsp;
@@ -97,10 +94,10 @@ const SourceToEntityMap = (props) => {
 
     const sData = [{key: "id", val: 118},
     {key: "transactionDate", val: "08/29/2018"},
-    {key: "firstName", val: "Anjanette"},
+    {key: "firstName", val: "Anjanette", children: [{key: "Home", val: "554-223-4534",children: [{key: "Mobile", val: "009-223-4534"}]}]},
     {key: "lastName", val: "Reisenberg"},
     {key: "gender", val: "F"},
-    {key: "phone", val: "(213)-405-4543"}
+    {key: "phone", val: "(213)-405-4543",children: [{key: "Mobile", val: "009-223-4534"}]}
     ]
 
     const entData = [
@@ -117,7 +114,25 @@ const SourceToEntityMap = (props) => {
             value: ''
         }
     ]
-
+   const customExpandIcon = (props) => {
+       if(props.expandable) {
+        if (props.expanded) {
+            return <a style={{ color: 'black' }} onClick={e => {
+                props.onExpand(props.record, e);
+            }}><Icon type="down" /> </a>
+        } else {
+            return <a style={{ color: 'black' }} onClick={e => {
+                props.onExpand(props.record, e);
+            }}><Icon type="right" /> </a>
+        }
+       } else {
+           if(props.expanded) {
+               return <a style={{ color: 'black' }} onClick={e => {
+                props.onExpand(props.record, e);
+            }}></a>
+           }
+       }
+    }
 
 
 return (<Modal
@@ -146,7 +161,10 @@ return (<Modal
             </div>
         <Table
         pagination={false}
+        defaultExpandAllRows={true}
+        expandIcon={(props) => customExpandIcon(props)}
         className={styles.sourceTable}
+        rowClassName={() => styles.srcTableRows}
         //size="small"
         columns={columns}
         dataSource={sData}
