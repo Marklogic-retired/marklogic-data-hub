@@ -41,7 +41,6 @@ const Flows: React.FC<Props> = (props) => {
     const [stepDialogVisible, setStepDialogVisible] = useState(false);
     const [flowName, setFlowName] = useState('');
     const [stepName, setStepName] = useState('');
-    const [showEdit, setShowEdit] = useState('');
 
     const OpenAddNewDialog = () => {
         setTitle('New Flow');
@@ -173,28 +172,14 @@ const Flows: React.FC<Props> = (props) => {
     );
 
     const flowHeader = (name, index) => (
-        <span className={styles.flowNameOuter}>
-            <span 
-                className={props.canWriteFlows ? styles.flowNameInner : styles.flowNameInnerDisabled}
-                onMouseLeave={(e) => setShowEdit('')}
-            >
-                <span onMouseOver={(e) => setShowEdit(index)}>{name}</span>
-                { props.canWriteFlows ?
-                    <Tooltip 
-                        title={'Edit Flow'} 
-                        placement="bottom"
-                    >
-                        <span 
-                            className={styles.editFlow} 
-                            style={{ visibility: showEdit === index ? 'visible' : 'hidden' }}
-                        >
-                            <Icon type="edit" onClick={(e) => OpenEditFlowDialog(e, index)}/>
-                        </span> 
-                    </Tooltip> : 
-                    null 
-                }
+        <Tooltip 
+            title={'Edit Flow'} 
+            placement="right"
+        >
+            <span className={styles.flowName} onClick={(e) => OpenEditFlowDialog(e, index)}>
+                {name}
             </span>
-        </span>
+        </Tooltip>
     );
 
     const OpenEditFlowDialog = (e, index) => {
