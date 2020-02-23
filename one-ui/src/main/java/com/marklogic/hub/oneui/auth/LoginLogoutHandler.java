@@ -49,13 +49,12 @@ public class LoginLogoutHandler implements AuthenticationSuccessHandler, LogoutS
                 resp.putArray("roles").addAll((ArrayNode) rolesService.getRoles());
                 if (authenticationToken.hasManagePrivileges()) {
                     ArrayNode rolesNodes = (ArrayNode) resp.get("roles");
-                    rolesNodes.forEach(e -> {
-                        if ("data-hub-environment-manager".equals(e.asText())) {
+                    rolesNodes.forEach(role -> {
+                        if ("data-hub-environment-manager".equals(role.asText())) {
                             managePrivilege[0] = true;
-                            return;
-                        } else if ("manager-admin".equals(e.asText())) {
+                        } else if ("manage-admin".equals(role.asText())) {
                             managePrivilege[1] = true;
-                        } else if ("security".equals(e.asText())) {
+                        } else if ("security".equals(role.asText())) {
                             managePrivilege[2] = true;
                         }
                     });
