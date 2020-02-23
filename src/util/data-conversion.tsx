@@ -111,6 +111,11 @@ export const entityParser = (data: any) => {
 
         if (propArray.includes(index)) {
           pathIndexMap.set(index, path + '/' + index);
+        } else if (propRefArray.length > 0) {  //has nested ref
+          let pArr = new Array();
+          pArr.push(path)
+          let a = getRefPath(entity.info.title, index, data, pArr).join('');
+          pathIndexMap.set(index, a);
         }
       }
 
@@ -121,15 +126,10 @@ export const entityParser = (data: any) => {
           pathIndexMap.set(rIndex, path + '/' + rIndex);
 
         } else if (propRefArray.length > 0) {  //has nested ref
-          // console.log('data',data)
-          // console.log('current entity',entity.info.title)
-
           let pArr = new Array();
           pArr.push(path)
           let a = getRefPath(entity.info.title, rIndex, data, pArr).join('');
           pathIndexMap.set(rIndex, a);
-
-
         }
       }
     }
