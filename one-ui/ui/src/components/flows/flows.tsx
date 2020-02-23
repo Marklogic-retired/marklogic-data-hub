@@ -110,7 +110,7 @@ const Flows: React.FC<Props> = (props) => {
         <Modal
             visible={dialogVisible}
             okText='Yes'
-            okType='danger'
+            okType='primary'
             cancelText='No'
             onOk={() => onOk(flowName)}
             onCancel={() => onCancel()}
@@ -124,7 +124,7 @@ const Flows: React.FC<Props> = (props) => {
         <Modal
             visible={stepDialogVisible}
             okText='Yes'
-            okType='danger'
+            okType='primary'
             cancelText='No'
             onOk={() => onStepOk(flowName, stepName)}
             onCancel={() => onCancel()}
@@ -205,7 +205,6 @@ const Flows: React.FC<Props> = (props) => {
                 let step = flow.steps[i];
                 // TODO Handle steps that don't have input formats
                 let stepFormat = (step.fileLocations) ?  getLoadSourceFormat(step.name) : 'json';
-                //let stepFormat = (step.fileLocations) ?  getLoadSourceFormat(step.fileLocations.inputFileType) : 'json';
                 return (
                     <Card 
                         style={{ width: 300, marginRight: 20 }} 
