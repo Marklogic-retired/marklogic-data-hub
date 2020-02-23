@@ -27,26 +27,6 @@ const EntityTiles: React.FC = () => {
         console.log('Master View -- To be Created')
     }
 
-    //Temporary Data - To be removed
-    // const entityArtifacts = [{
-    //     "name": "CustomerRecords",
-    //     "mappings": [{ "name": "Map 1", "description": "Map1 Description", "sourceFormat": "json", "selectedSource": "collection", "sourceQuery": "cts.CollectionQuery('Provider')", "collections": ['Provider','Claims'], "lastUpdated": "2020-02-15T11:25:35.765299-08:00", "fileCount": 3, "filesNeedReuploaded": false },
-    //     { "name": "Customer Mapping - New", "description": "", "sourceFormat": "xml", "selectedSource": "query", "sourceQuery": "cts.uris(null,null,cts.andQuery[cts.CollectionQuery('Customer'),cts.elementAttributeValueQuery()])", "collections": ['Customer'], "lastUpdated": "2020-02-11T11:25:35.765299-08:00", "fileCount": 1, "filesNeedReuploaded": false },
-    //     { "name": "Map 3", "description": "", "sourceFormat": "json", "selectedSource": "collection","sourceQuery": "cts.CollectionQuery('Finance')", "collections": ['Finance'], "lastUpdated": "2020-01-18T11:25:35.765299-08:00", "fileCount": 10, "filesNeedReuploaded": true },
-    //     { "name": "Map 1", "description": "", "sourceFormat": "Delimited Text", "selectedSource": "collection","sourceQuery": "cts.CollectionQuery('AirlineDataCust')", "collections": ['AirlineData'], "lastUpdated": "2020-01-12T11:25:35.765299-08:00", "fileCount": 6, "filesNeedReuploaded": false }
-    //     ]
-    // },
-    // {
-    //     "name": "StudentCollegeRecordsNew",
-    //     "mappings": [{ "name": "Map 4", "description": "", "sourceFormat": "json", "selectedSource": "collection", "sourceQuery": "cts.CollectionQuery('Provider')", "collections": ['Provider'], "lastUpdated": "2020-02-15T11:25:35.765299-08:00", "fileCount": 3, "filesNeedReuploaded": false },
-    //     { "name": "StudentRec Mapping - New", "description": "", "sourceFormat": "xml", "selectedSource": "query","sourceQuery": "cts.uris(null,null,cts.andQuery[cts.CollectionQuery('Customer'),cts.elementAttributeValueQuery()])", "collections": ['Customer'], "lastUpdated": "2020-02-11T11:25:35.765299-08:00", "fileCount": 1, "filesNeedReuploaded": false }]
-    // },
-    // {
-    //     "name": "ProviderRecords",
-    //     "mappings": [{ "name": "Map 6", "description": "", "sourceFormat": "json", "selectedSource": "collection","sourceQuery": "cts.CollectionQuery('Provider')", "collections": ['Provider'], "lastUpdated": "2020-02-15T11:25:35.765299-08:00", "fileCount": 3, "filesNeedReuploaded": false },
-    //     { "name": "Provider Mapping - New", "description": "", "sourceFormat": "xml","selectedSource": "query", "sourceQuery": "cts.uris(null,null,cts.andQuery[cts.CollectionQuery('Customer'),cts.elementAttributeValueQuery()])", "collections": ['Customer'], "lastUpdated": "2020-02-11T11:25:35.765299-08:00", "fileCount": 1, "filesNeedReuploaded": false }]
-    // }];
-
     useEffect(() => {
         getMappingArtifacts();
         console.log('useEffect Called')
@@ -58,7 +38,10 @@ const EntityTiles: React.FC = () => {
             let response = await axios.get('/api/artifacts/mapping');
             
             if (response.status === 200) {
-                setEntityArtifacts([...response.data]);
+                let entArt = response.data;
+                entArt.sort((a, b) => (a.entityType > b.entityType) ? 1 : -1)
+                console.log('entArt',entArt)
+                setEntityArtifacts([...entArt]);
               console.log('GET Mapping Artifacts API Called successfully!',response);
             } 
           } catch (error) {
