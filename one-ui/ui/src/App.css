@@ -54,58 +54,6 @@ ul#global-icons.ant-menu .ant-dropdown-trigger .anticon.anticon-user {
     font-size: 24px;
 }
 
-/* Load Data Contextual Menu, based on: */
-/* https://github.com/vkbansal/react-contextmenu/blob/master/examples/react-contextmenu.css */
-div#load-data-card-view nav.react-contextmenu {
-    background-color: #fff;
-    background-clip: padding-box;
-    border: 1px solid #d9d9d9;
-    border-radius: .25rem;
-    color: rgba(0,0,0,0.65);
-    font-family: "Helvetica Neue";
-    font-size: 14px;
-    margin: 2px 0 0;
-    min-width: 160px;
-    outline: none;
-    opacity: 0;
-    padding: 5px 0;
-    pointer-events: none;
-    text-align: left;
-    transition: opacity 250ms ease !important;
-}
-div#load-data-card-view nav.react-contextmenu.react-contextmenu--visible {
-    opacity: 1;
-    pointer-events: auto;
-    z-index: 9999;
-}
-div#load-data-card-view .react-contextmenu-item {
-    background: 0 0;
-    border: 0;
-    color: #373a3c;
-	cursor: pointer;
-    font-weight: 400;
-    line-height: 1.5;
-    padding: 3px 20px;
-    text-align: inherit;
-    white-space: nowrap;
-}
-div#load-data-card-view .react-contextmenu-item.react-contextmenu-item--active,
-div#load-data-card-view .react-contextmenu-item.react-contextmenu-item--selected {
-    color: #44499C;
-    text-decoration: none;
-}
-div#load-data-card-view .react-contextmenu-item.react-contextmenu-submenu {
-	padding: 0;
-}
-div#load-data-card-view .react-contextmenu-item.react-contextmenu-submenu > .react-contextmenu-item:after {
-    content: "▶";
-    font-size: 9px;
-    display: inline-block;
-    position: absolute;
-    right: 5px;
-    top: 7.4px;
-}
-
 /* Tool Bench Flows view */
 div#flows-container div.ant-collapse-content-box {
     padding: 4px 16px 16px;
