@@ -19,6 +19,7 @@ const LoadData: React.FC = () => {
   const roleService = useContext(RolesContext);
   const canReadOnly = roleService.canReadLoadData();
   const canReadWrite = roleService.canWriteLoadData();
+  const canWriteFlows = roleService.canWriteFlows();
 
   //Set context for switching views
   const handleViewTypeSelection = (vtype) => {
@@ -170,6 +171,7 @@ const LoadData: React.FC = () => {
         createLoadDataArtifact={createLoadDataArtifact} 
         canReadWrite={canReadWrite}
         canReadOnly={canReadOnly}
+        canWriteFlows={canWriteFlows}
         addStepToFlow={addStepToFlow}
         addStepToNew={addStepToNew}
       />
