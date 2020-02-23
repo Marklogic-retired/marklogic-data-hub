@@ -1,6 +1,6 @@
 import React, { CSSProperties, useState } from 'react';
 import styles from './load-data-card.module.scss';
-import {Card, Icon, Tooltip, Popover, Row, Col, Modal} from 'antd';
+import {Card, Icon, Tooltip, Popover, Row, Col, Modal, Select} from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
@@ -8,7 +8,7 @@ import sourceFormatOptions from '../../config/formats.config';
 import NewDataLoadDialog from './new-data-load-dialog/new-data-load-dialog';
 import { convertDateFromISO } from '../../util/conversionFunctions';
 import LoadDataSettingsDialog from './load-data-settings/load-data-settings-dialog';
-import { ContextMenu, ContextMenuTrigger, MenuItem, SubMenu } from "react-contextmenu";
+const { Option } = Select;
 
 interface Props {
     data: any;
@@ -31,6 +31,7 @@ const LoadDataCard: React.FC<Props> = (props) => {
     const [addDialogVisible, setAddDialogVisible] = useState(false);
     const [loadArtifactName, setLoadArtifactName] = useState('');
     const [flowName, setFlowName] = useState('');
+    const [showLinks, setShowLinks] = useState('');
 
     const [openLoadDataSettings, setOpenLoadDataSettings] = useState(false);
 
@@ -86,11 +87,11 @@ const LoadDataCard: React.FC<Props> = (props) => {
         setDialogVisible(false);
     }
 
-    const handleStepAdd = (event, data) => {
-        console.log('handleStepAdd', data )
+    const handleStepAdd = (loadDataName, flowName) => {
+        console.log('handleStepAdd', loadDataName, flowName )
         setAddDialogVisible(true);
-        setLoadArtifactName(data.loadDataArtifact.name);
-        setFlowName(data.flowName);
+        setLoadArtifactName(loadDataName);
+        setFlowName(flowName);
     }
 
     const onAddOk = (lName, fName) => {
@@ -134,69 +135,17 @@ const LoadDataCard: React.FC<Props> = (props) => {
             </div>
         </Modal>
     );   
-        
-    // Pass Load Data name in attributes as workaround for unresolved typescript issue:
-    // https://github.com/vkbansal/react-contextmenu/issues/270
-    const collect = (menuProps) => {
-        console.log('collect', menuProps.attributes);
-        return { 
-            loadDataArtifact: props.data.find(loadData => loadData.name === menuProps.attributes.className) 
-        };
-    }
-
-    // const contextualMenu = (
-    //     <ContextMenu id={MENU_TYPE}>
-    //         <MenuItem onClick={props.addStepToNew}>Add a step to a new flow</MenuItem>
-    //         <SubMenu title="Add a step to an existing flow">
-    //             {props && props.flows.length > 0 ? props.flows.map((flow) => (
-    //                 <MenuItem onClick={handleStepAdd} data={{ flowName: flow.name }}>{flow.name}</MenuItem>
-    //             )) : null }
-    //         </SubMenu>
-    //     </ContextMenu>
-    // );
-
-    const createContextualMenus = (propsData) => {
-        let menus: any = [];
-        for (let index = 0; index < propsData.length; index++) {
-            let elem = propsData[index];
-            menus.push(<ContextMenu id={MENU_TYPE+index.toString()}>
-                <MenuItem onClick={props.addStepToNew}>Add a step to a new flow</MenuItem>
-                <SubMenu title="Add a step to an existing flow">
-                    {props && props.flows.length > 0 ? props.flows.map((flow) => (
-                        <MenuItem onClick={handleStepAdd} data={{ 
-                            flowName: flow.name, 
-                            loadDataName: elem.name,
-                            index: index
-                        }}>{flow.name}</MenuItem>
-                    )) : null }
-                </SubMenu>
-            </ContextMenu>)
-        }
-        return menus
-    }
-
-    let contextTrigger;
-    const toggleMenu = e => {
-        if(contextTrigger) {
-            contextTrigger.handleContextClick(e);
-        }
-        e.preventDefault();
-    };
 
     const createCards = (propsData) => {
         let cards: any = [];
         for (let i = 0; i < propsData.length; i++) {
             let elem = propsData[i];
-            console.log('making menu', MENU_TYPE+i.toString());
             cards.push(<Col key={i}>
-                <ContextMenuTrigger 
-                    id={MENU_TYPE+i.toString()}
-                    attributes={{className: elem.name}}
-                    collect={collect}
-                    ref={c => contextTrigger = c}
+                <div
+                    onMouseOver={(e) => setShowLinks(elem.name)}
+                    onMouseLeave={(e) => setShowLinks('')}
                 >
                     <Card
-                        onContextMenu={toggleMenu}
                         actions={[
                             <span>{elem.filesNeedReuploaded ? (
                                 <Popover
@@ -209,7 +158,6 @@ const LoadDataCard: React.FC<Props> = (props) => {
                             props.canReadWrite ? <Tooltip title={'Delete'} placement="bottom"><i><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg" onClick={() => handleCardDelete(elem.name)}/></i></Tooltip> : <i><FontAwesomeIcon icon={faTrashAlt} onClick={(event) => event.preventDefault()} className={styles.disabledDeleteIcon} size="lg"/></i>,
                         ]}
                         className={styles.cardStyle}
-                        
                         size="small"
                     >
                         <div className={styles.formatFileContainer}>
@@ -219,8 +167,21 @@ const LoadDataCard: React.FC<Props> = (props) => {
                         <div className={styles.fileCount}>{elem.fileCount}</div>
                         <span className={styles.stepNameStyle}>{getInitialChars(elem.name, 27, '...')}</span>
                         <p className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</p>
+                        <div className={styles.cardLinks} style={{display: showLinks === elem.name ? 'block' : 'none'}}>
+                            <div className={styles.cardLink}>Open step details</div>
+                            <div className={styles.cardLink}>Add step to a new flow</div>
+                            <div className={styles.cardLink}>
+                                Add step to an existing flow
+                                <div className={styles.cardLinkSelect}>
+                                    <Select defaultValue="Test Load 1" style={{ width: '100%' }} onChange={() => handleStepAdd('Load Name', elem.name)}>
+                                        <Option value="Test Load 1">Test Load 1</Option>
+                                        <Option value="Test Load 2">Test Load 2</Option>
+                                    </Select>
+                                </div>
+                        </div>
+                        </div>
                     </Card>
-                </ContextMenuTrigger>
+                </div>
             </Col>)
         }
         return cards
@@ -256,7 +217,6 @@ const LoadDataCard: React.FC<Props> = (props) => {
                 setOpenLoadDataSettings={setOpenLoadDataSettings} 
                 stepData={stepData}
             />
-            {createContextualMenus(props.data)}
         </div>
     );
 
