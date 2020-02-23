@@ -23,44 +23,9 @@
         cursor: not-allowed;
     }
 
-    .flowNameOuter {
-        display: inline-block;
-        position: relative;
-        top: 0;
-        left: 0;
-        height: 15px;
-        width: 500px;
-    }
-
-    .flowNameInner {
-        display: inline-block;
-        position: absolute;
-        top: -8px;
-        left: -6px;
-        height: 36px;
-        padding: 10px 6px;
-        line-height: 15px;
+    .flowName {
         color: #3f4692;
-    }
-
-    .flowNameInner:hover {
-        border: solid 1px #ecf6fe;
-        top: -9px;
-        left: -7px;
-    }
-
-    .flowNameInnerDisabled:hover {
-        border: 0;
-    }
-
-    .editFlow {
-        position: relative;
-        right: -6px;
-        font-size: 15px;
         cursor: pointer;
-        margin-left: 2px;
-        padding: 9px 12px;
-        background-color: #ecf6fe;
     }
 
     .panelContent {
