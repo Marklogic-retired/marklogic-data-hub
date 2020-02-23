@@ -170,12 +170,12 @@ const LoadDataCard: React.FC<Props> = (props) => {
                         <div className={styles.cardLinks} style={{display: showLinks === elem.name ? 'block' : 'none'}}>
                             <div className={styles.cardLink}>Open step details</div>
                             <div className={styles.cardLink}>Add step to a new flow</div>
-                            <div className={styles.cardLink}>
+                            <div className={styles.cardNonLink}>
                                 Add step to an existing flow
                                 <div className={styles.cardLinkSelect}>
-                                    <Select defaultValue="Test Load 1" style={{ width: '100%' }} onChange={() => handleStepAdd('Load Name', elem.name)}>
-                                        <Option value="Test Load 1">Test Load 1</Option>
-                                        <Option value="Test Load 2">Test Load 2</Option>
+                                    <Select defaultValue="" style={{ width: '100%' }} onChange={() => handleStepAdd('Test Flow 1', elem.name)}>
+                                        <Option value="Test Flow 1">Test Flow 1</Option>
+                                        <Option value="Test Flow 2">Test Flow 2</Option>
                                     </Select>
                                 </div>
                         </div>

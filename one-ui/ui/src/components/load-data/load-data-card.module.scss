@@ -99,6 +99,15 @@
     cursor: pointer;
 }
 
+.cardNonLink {
+    color: rgba(0, 0, 0, 0.65);
+    background-color: #ecf6fe;
+    margin-bottom: 12px;
+    padding: 8px;
+    font-size: 16px;
+    cursor: default;
+}
+
 .cardLinkSelect {
     margin-top: 4px;
 }
