@@ -8,7 +8,8 @@ const CreateEditMappingDialog = (props) => {
 
   const [mapName, setMapName] = useState('');
   const [description, setDescription] = useState(props.mapData && props.mapData != {} ? props.mapData.description : '');
-  const [collections, setCollections] = useState<any[]>([]);
+  //const [collections, setCollections] = useState<any[]>([]);
+  const [collections, setCollections] = useState('');
   const [selectedSource, setSelectedSource] = useState(props.mapData && props.mapData != {} ? props.mapData.selectedSource : 'collection')
   const [srcQuery, setSrcQuery] = useState(props.mapData && props.mapData != {} ? props.mapData.sourceQuery : '');
 
@@ -29,7 +30,8 @@ const CreateEditMappingDialog = (props) => {
     if (props.mapData && JSON.stringify(props.mapData) != JSON.stringify({}) && props.title === 'Edit Mapping') {
       setMapName(props.mapData.name);
       setDescription(props.mapData.description);
-      setCollections([...props.mapData.collections]);
+      //setCollections([...props.mapData.collection]);
+      setCollections(props.mapData.collection);
       setSrcQuery(props.mapData.sourceQuery);
       setSelectedSource(props.mapData.selectedSource);
       setIsValid(true);
@@ -37,7 +39,8 @@ const CreateEditMappingDialog = (props) => {
     } else {
       setMapName('');
       setMapNameTouched(false);
-      setCollections([]);
+      //setCollections([]);
+      setCollections('');
       setDescription('');
       setSrcQuery('')
     }
@@ -116,15 +119,27 @@ const CreateEditMappingDialog = (props) => {
 
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
     if (event) event.preventDefault();
-
-    let dataPayload = {
-           name: mapName,
-           targetEntity: props.targetEntity,
-           description: description,
-           selectedSource: selectedSource,
-           sourceQuery: srcQuery,
-           collection: []
-         }
+    let dataPayload;
+    if(selectedSource === 'collection') {
+      let sQuery = `cts.collectionQuery(['${collections}'])`;
+      dataPayload = {
+        name: mapName,
+        targetEntity: props.targetEntity,
+        description: description,
+        selectedSource: selectedSource,
+        sourceQuery: sQuery,
+        collection: collections
+      }
+    } else {
+      dataPayload = {
+        name: mapName,
+        targetEntity: props.targetEntity,
+        description: description,
+        selectedSource: selectedSource,
+        sourceQuery: srcQuery,
+      }
+    }
+    
 
     setIsValid(true);
 
@@ -189,8 +204,32 @@ const CreateEditMappingDialog = (props) => {
         }
       }
     }
+    if (event.target.id === 'collList') {
+      if (event.target.value === ' ') {
+        setCollectionsTouched(false);
+      }
+      else {
+        setCollectionsTouched(true);
+        setCollections(event.target.value);
+        console.log('event.target.value',event.target.value === props.mapData.collection, props.mapData && props.mapData.collection)
+        if (props.mapData && props.mapData.collection) {
+          console.log('props.mapData.collection',props.mapData.collection,event.target.value)
+          if (props.mapData.collection === event.target.value) {
+            
+            setCollectionsTouched(false);
+          }
+        }
+        if (event.target.value.length > 0) {
+          if (mapName) {
+            setIsValid(true);
+          }
+        } else {
+          setIsValid(false);
+        }
+      }
+    }
   }
-
+/* // Handling multiple collections in a select tags list - Deprecated
   const handleCollList = (value) => {
     if (value === ' ') {
       setCollectionsTouched(false);
@@ -212,6 +251,7 @@ const CreateEditMappingDialog = (props) => {
       }
     }
   }
+  */
 
   const handleSelectedSource = (event) => {
     if (event.target.value === ' ') {
@@ -323,17 +363,17 @@ const CreateEditMappingDialog = (props) => {
               <Tooltip title={NewMapTooltips.sourceQuery}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </Tooltip>
-          {selectedSource === 'collection' ? <Select
+          {selectedSource === 'collection' ? <Input
             id="collList"
-            mode="tags"
+            //mode="tags"
             style={{ width: '100%' }}
             placeholder="Please select"
             value={collections}
             disabled={!props.canReadWrite}
-            onChange={handleCollList}
+            onChange={handleChange}
           >
-            {collectionsList}
-          </Select> : <TextArea
+            {/* {collectionsList} */}
+          </Input> : <TextArea
             id="srcQuery"
             placeholder="Enter Source Query"
             value={srcQuery}
