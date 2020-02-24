@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { Modal, Table, Icon, Popover, Input, Button } from "antd";
+import { Modal, Table, Icon, Popover, Input, Button, Alert, message } from "antd";
 import styles from './source-to-entity-map.module.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faObjectUngroup, faList } from "@fortawesome/free-solid-svg-icons";
@@ -35,6 +35,16 @@ const SourceToEntityMap = (props) => {
     const handleMapExp = (name,event) => {
         setMapExpTouched(true);
         setMapExp({...mapExp, [name]: event.target.value});
+        // let obj = {
+        //     name: name,
+        //     expr: mapExp[name],
+        //     prop: prop
+        //   }
+        //mapExpressions[obj.name] = obj.expr;
+        //mapExp[name]['sourcedFrom'] = obj.expr;
+        //onHandleInput(obj);
+        //props.saveMap(obj)
+        //success();
     }
 
     const columns = [
@@ -43,12 +53,14 @@ const SourceToEntityMap = (props) => {
           dataIndex: 'key',
           key: 'key',
           sorter: (a:any, b:any) => a.key.length - b.key.length,
+          width: '60%'
         },
         {
           title: 'Value',
           dataIndex: 'val',
           key: 'val',
           sorter: (a:any, b:any) => a.val.length - b.val.length,
+          width: '40%'
         }
     ];
 
@@ -109,39 +121,41 @@ const SourceToEntityMap = (props) => {
    const customExpandIcon = (props) => {
        if(props.expandable) {
         if (props.expanded) {
-            return <a style={{ color: 'black' }} onClick={e => {
+            return <a className={styles.expandIcon} onClick={e => {
                 props.onExpand(props.record, e);
             }}><Icon type="down" /> </a>
         } else {
-            return <a style={{ color: 'black' }} onClick={e => {
+            return <a className={styles.expandIcon} onClick={e => {
                 props.onExpand(props.record, e);
             }}><Icon type="right" /> </a>
         }
        } else {
            if(props.expanded) {
-               return <a style={{ color: 'black' }} onClick={e => {
+               return <a style={{ color: 'black'}} onClick={e => {
                 props.onExpand(props.record, e);
             }}></a>
            }
        }
     }
+    const success = () => {
+        message.success('All changes are saved to disk on 02/24/2020 12:11:34', 3);
+      };
 
 
 return (<Modal
         visible={props.mappingVisible}
-        // okText='Yes'
-        // cancelText='No'
-        //title={props.mapName}
         onOk={() => onOk()}
         onCancel={() => onCancel()}
-        width={1300}
+        width={1500}
         maskClosable={false}
         footer={null}
         wrapClassName={styles.mapContainer}
         >
             <div className={styles.header}>
-                <p className={styles.headerTitle}>{props.mapName}</p>
+                <span className={styles.headerTitle}>{props.mapName}</span>
+                {/* <span><Alert type="success" message="All changes are saved to disk on 02/24/2020 12:11:34" banner className={styles.saveMessage}/></span> */}
             </div>
+            
         
         <div className={styles.parentContainer}>
         
@@ -157,6 +171,7 @@ return (<Modal
         expandIcon={(props) => customExpandIcon(props)}
         className={styles.sourceTable}
         rowClassName={() => styles.srcTableRows}
+        scroll={{ y: 600 }}
         //size="small"
         columns={columns}
         dataSource={props.sourceData}
