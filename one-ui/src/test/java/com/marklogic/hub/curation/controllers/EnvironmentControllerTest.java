@@ -177,6 +177,24 @@ public class EnvironmentControllerTest {
     @Test
     public void testUploadProject() throws Exception {
         testHelper.authenticateSessionAsEnvironmentManager();
+
+        controller.updateArtifact("validArtifact", testHelper.validLoadDataConfig);
+
+        ArrayNode resultList = (ArrayNode) controller.getArtifacts().getBody();
+
+        assertEquals(1, resultList.size(), "List of load data artifacts should now be 1");
+
+        Path artifactProjectLocation = ((ArtifactManagerImpl)artifactManager).buildArtifactProjectLocation(controller.getArtifactType(), "validArtifact", null);
+        ObjectNode resultByName = controller.getArtifact("validArtifact").getBody();
+        assertEquals("validArtifact", resultByName.get("name").asText(), "Getting artifact by name should return object with expected properties");
+        assertEquals("xml", resultByName.get("sourceFormat").asText(), "Getting artifact by name should return object with expected properties");
+        assertEquals("json", resultByName.get("targetFormat").asText(), "Getting artifact by name should return object with expected properties");
+        assertTrue(artifactProjectLocation.toFile().exists(), "File should have been created in the project directory");
+
+        ObjectNode enrichedJson = controller.setData("validArtifact", new MockMultipartFile[]{ new MockMultipartFile("file", "orig", null, "docTest".getBytes())}).getBody();
+        assertEquals(1, enrichedJson.get("fileCount").asInt(), "File should be added to data set.");
+
+
         ObjectMapper om = new ObjectMapper();
         EnvironmentConfig envConfig = om.treeToValue(environmentController.getProjectInfo(), EnvironmentConfig.class);
         if (envConfig == null || StringUtils.isEmpty(envConfig.getProjectDir())) {
