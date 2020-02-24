@@ -67,7 +67,7 @@ function getArtifacts(artifactType) {
 }
 
 function getArtifactsGroupByEntity(queries) {
-    const entityNames = getEntityNames();
+    const entityNames = getEntityTitles();
     const artifacts = cts.search(cts.andQuery(queries.concat(cts.jsonPropertyValueQuery("targetEntity", entityNames)))).toArray();
     const artifactsByEntity = artifacts.map(e => e.toObject()).reduce((res, e) => {
             res[e.targetEntity] = res[e.targetEntity] || {entityType : e.targetEntity};
@@ -249,7 +249,7 @@ function deleteArtifactSettings(artifactType, artifactName, artifactVersion = 'l
     return { success: true };
 }
 
-function getEntityNames() {
+function getEntityTitles() {
     return cts.search(cts.collectionQuery("http://marklogic.com/entity-services/models")).toArray().map(e => e.xpath("//info//title"));
 }
 
@@ -262,5 +262,5 @@ module.exports = {
     getArtifactSettings,
     setArtifactSettings,
     validateArtifact,
-    getEntityNames
+    getEntityTitles
 };
