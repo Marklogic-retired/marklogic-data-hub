@@ -21,9 +21,9 @@ function invokeValidateService(artifactType, artifactName, artifact) {
     ));
 }
 
-function invokeGetEntityNamesService() {
+function invokeGetEntityTitlesService() {
     return fn.head(xdmp.invoke(
-        "/data-hub/5/data-services/artifacts/getEntityNames.sjs",
+        "/data-hub/5/data-services/artifacts/getEntityTitles.sjs",
         {}
     ));
 }
@@ -38,7 +38,7 @@ function updateMappingConfig(artifactName) {
 
 function getArtifacts() {
     const artifactsByEntity = invokeGetAllService('mappings');
-    const entityNames = invokeGetEntityNamesService();
+    const entityNames = invokeGetEntityTitlesService();
     test.assertEqual(entityNames.length, artifactsByEntity.length);
     artifactsByEntity.forEach(entity => {
         if (entity.entityType === 'TestEntity-hasMappingConfig') {
@@ -86,7 +86,6 @@ function invalidArtifact() {
 }
 
 []
-    //.concat(getEntityNames())
     .concat(updateMappingConfig('TestMapping'))
     .concat(updateMappingConfig('TestMapping2'))
     .concat(getArtifacts())
