@@ -111,6 +111,7 @@ export const entityParser = (data: any) => {
 
         if (propArray.includes(index)) {
           pathIndexMap.set(index, path + '/' + index);
+
         } else if (propRefArray.length > 0) {  //has nested ref
           let pArr = new Array();
           pArr.push(path)
@@ -134,7 +135,6 @@ export const entityParser = (data: any) => {
       }
     }
 
-
     parsedEntity = {
       name: entityDefinition['name'],
       info: entity.info,
@@ -148,75 +148,16 @@ export const entityParser = (data: any) => {
   });
 }
 
-
-
-// const getRefPath = (entity, index, data, path) => {
-//   console.log('entity', entity)
-//   console.log('index', index)
-//   console.log('data', data)
-//   console.log('path', path)
-
-//   let a = new Array();
-//   let p = new String(path);
-
-//   const getPath = (entity, index, data, path) => {
-
-//     let r = path;
-//     // let pp = path;
-
-//     data.forEach(item => {
-//       if (item.info.title === entity) {
-//         let entityDefinition = item.definitions.find(definition => definition.name === entity);
-//         entityDefinition.properties.forEach(element => {
-//           let elementPath = r;
-
-//           if (element.ref.length > 0) {
-//             elementPath = elementPath.concat('/').concat(element.ref);
-//             console.log('second elementPath', elementPath)
-//             let ppp = getRefPath(element.ref, index, data, elementPath)
-//             console.log('ppp', ppp)
-
-//             return ppp;
-//           } else if (element.name === index) {
-//             console.log('FUND element', element)
-//             elementPath = elementPath.concat('/').concat(element.name);
-//             console.log('FINAL PATH', elementPath)
-//             r = elementPath
-//             return r;
-//           }
-//         });
-//       }
-//     });
-
-//     console.log('R!', r)
-//     return r;
-
-//   }
-
-
-
-//   return getPath(entity, index, data, p);
-
-// }
-
-
 const getRefPath = (entity, index, data, path) => {
-  console.log('entity', entity)
-  console.log('index', index)
-  console.log('data', data)
-  console.log('path', path)
 
-  let fp;
+  let fullPath;
 
-  let a = new Array(...path);
   const getPath = (entity, index, data, path) => {
-    let r = [...path];
-
-    for (let item of data) {
+    data.forEach(item => {
       if (item.info.title === entity) {
         let entityDefinition = item.definitions.find(definition => definition.name === entity);
-        for (let element of entityDefinition.properties) {
-          let elementPath = [...r];
+        entityDefinition.properties.forEach(element => {
+          let elementPath = [...path];
 
           if (element.ref.length > 0) {
             elementPath.push('/');
@@ -227,46 +168,17 @@ const getRefPath = (entity, index, data, path) => {
           if (element.name === index) {
             elementPath.push('/');
             elementPath.push(element.name)
-            console.log('FINAL PATH', elementPath)
-            fp = elementPath;
-            return fp;
+            fullPath = elementPath;
+            return fullPath;
           }
-        }
+        });
       }
-    }
+    });
 
-    // data.forEach(item => {
-    //   if (item.info.title === entity) {
-    //     let entityDefinition = item.definitions.find(definition => definition.name === entity);
-    //     entityDefinition.properties.forEach(element => {
-    //       let elementPath = [...r];
-
-    //       if (element.ref.length > 0) {
-    //         elementPath.push('/');
-    //         elementPath.push(element.ref)
-    //         console.log('second elementPath', elementPath)
-    //         getRefPath(element.ref, index, data, elementPath)
-
-    //       } else if (element.name === index) {
-    //         console.log('FUND element', element)
-    //         elementPath.push('/');
-    //         elementPath.push(element.name)
-    //         console.log('FINAL PATH', elementPath)
-    //         if(elementPath) {
-    //           r = [...elementPath]
-    //         }
-    //         // r = elementPath
-    //         // return r;
-    //       }
-    //     });
-    //   }
-    // });
-
-    return fp;
-
+    return fullPath;
   }
 
-  return getPath(entity, index, data, a);
+  return getPath(entity, index, data, path);
 }
 
 
