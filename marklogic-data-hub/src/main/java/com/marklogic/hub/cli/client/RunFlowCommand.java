@@ -12,6 +12,7 @@ import com.marklogic.mgmt.util.SimplePropertySource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -40,7 +41,7 @@ public class RunFlowCommand extends CommandLineFlowInputs implements Runnable {
         names = "-P",
         description = "Override any Data Hub property; e.g. -PmlStagingPort=8410 -PmlFinalPort=8411. See https://docs.marklogic.com/datahub/tools/gradle/gradle-properties.html for a full list."
     )
-    private Map<String, String> params;
+    private Map<String, String> params = new HashMap<>();
 
     @Override
     public void run() {
