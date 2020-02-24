@@ -16,6 +16,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import com.marklogic.mgmt.ManageClient;
+import com.marklogic.mgmt.ManageConfig;
+import com.marklogic.mgmt.api.API;
+import com.marklogic.mgmt.api.security.User;
+import org.junit.jupiter.api.AfterAll;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,6 +50,17 @@ public class TestHelper {
     @Value("${test.dataHubEnvironmentManagerPassword:data-hub-environment-manager-user}")
     public String dataHubEnvironmentManagerPassword;
 
+    @Value("${test.adminUserName:admin}")
+    public String adminUserName;
+    @Value("${test.adminPassword:admin}")
+    public String adminPassword;
+
+    private API adminAPI;
+
+    private ManageClient client;
+
+    private User user;
+
     public Path tempProjectDirectory = Files.createTempDirectory("one-ui-hub-project");
 
     @Autowired
@@ -57,11 +75,13 @@ public class TestHelper {
     }
 
     public void authenticateSession() {
+        createUser(dataHubDeveloperUsername,dataHubDeveloperPassword,"data-hub-developer");
        EnvironmentInfo environmentInfo = new EnvironmentInfo(mlHost, "DIGEST", 8000,"DIGEST", 8002,"DIGEST", 8010, "DIGEST", 8011);
        hubConfig.setCredentials(environmentInfo, dataHubDeveloperUsername, dataHubDeveloperPassword);
     }
 
     public void authenticateSessionAsEnvironmentManager() {
+        createUser(dataHubEnvironmentManagerUsername,dataHubEnvironmentManagerPassword,"data-hub-environment-manager");
         EnvironmentInfo environmentInfo = new EnvironmentInfo(mlHost, "DIGEST", 8000,"DIGEST", 8002,"DIGEST", 8010, "DIGEST", 8011);
         hubConfig.setCredentials(environmentInfo, dataHubEnvironmentManagerUsername, dataHubEnvironmentManagerPassword);
     }
@@ -101,5 +121,21 @@ public class TestHelper {
 
     public File getResourceFile(String resourceName) {
         return new File(Objects.requireNonNull(TestHelper.class.getClassLoader().getResource(resourceName)).getFile());
+    }
+    private void createUser(String username, String password, String role) {
+        client = new ManageClient();
+        client.setManageConfig(new ManageConfig(mlHost, 8002, adminUserName, adminPassword));
+        adminAPI = new API(client);
+
+        user = new User(adminAPI, username);
+        user.setUserName(username);
+        user.setPassword(password);
+        user.setRole(Stream.of(role).collect(Collectors.toList()));
+        user.save();
+    }
+
+    @AfterAll
+    private void deleteUser() {
+        user.delete();
     }
 }
