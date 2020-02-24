@@ -49,7 +49,7 @@ public class RunFlowCommand extends CommandLineFlowInputs implements Runnable {
         Pair<FlowInputs, String> pair = super.buildFlowInputs();
         System.out.println(pair.getRight());
 
-        RunFlowResponse response = flowRunner.runFlowWithoutProject(pair.getLeft());
+        RunFlowResponse response = flowRunner.runFlow(pair.getLeft());
         flowRunner.awaitCompletion();
         System.out.println("\nOutput:");
         System.out.println(response.toJson());

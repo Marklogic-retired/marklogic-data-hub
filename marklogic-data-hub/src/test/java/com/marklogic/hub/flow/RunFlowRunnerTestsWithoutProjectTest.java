@@ -4,7 +4,6 @@ import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.step.MarkLogicStepDefinitionProvider;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.step.StepDefinitionProvider;
-import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -38,7 +37,7 @@ public class RunFlowRunnerTestsWithoutProjectTest extends FlowRunnerTest {
         makeInputFilePathsAbsoluteInFlow(flowName);
         verifyStepDefinitionsCanBeFound(flowRunner);
 
-        return flowRunner.runFlowWithoutProject(inputs);
+        return flowRunner.runFlow(inputs);
     }
 
     /**
