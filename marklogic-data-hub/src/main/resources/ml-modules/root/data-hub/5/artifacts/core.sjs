@@ -261,5 +261,6 @@ module.exports = {
     setArtifact,
     getArtifactSettings,
     setArtifactSettings,
-    validateArtifact
+    validateArtifact,
+    getEntityNames
 };
