@@ -92,14 +92,6 @@ const SourceToEntityMap = (props) => {
 
     ]
 
-    const sData = [{key: "id", val: 118},
-    {key: "transactionDate", val: "08/29/2018"},
-    {key: "firstName", val: "Anjanette", children: [{key: "Home", val: "554-223-4534",children: [{key: "Mobile", val: "009-223-4534"}]}]},
-    {key: "lastName", val: "Reisenberg"},
-    {key: "gender", val: "F"},
-    {key: "phone", val: "(213)-405-4543",children: [{key: "Mobile", val: "009-223-4534"}]}
-    ]
-
     const entData = [
         {
             name: "id", 
@@ -167,7 +159,7 @@ return (<Modal
         rowClassName={() => styles.srcTableRows}
         //size="small"
         columns={columns}
-        dataSource={sData}
+        dataSource={props.sourceData}
         tableLayout="unset"
         rowKey="name"
         />

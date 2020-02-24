@@ -22,6 +22,7 @@ const MappingCard: React.FC<Props> = (props) => {
     const [newMap, setNewMap] = useState(false);
     const [title, setTitle] = useState('');
     const [mapData, setMapData] = useState({});
+    const [nestedSourceData, setNestedSourceData] = useState<any[]>([]);
     const [mapName, setMapName] = useState({});
     const [dialogVisible, setDialogVisible] = useState(false);
     const [loadArtifactName, setLoadArtifactName] = useState('');
@@ -140,24 +141,146 @@ const MappingCard: React.FC<Props> = (props) => {
     
     //Temp data - to be deleted
     const respData = {
-        "id": 118,
-        "transactionDate": "08/29/2018",
-        "firstName": "Anjanette",
-        "lastName": "Reisenberg",
-        "gender": "F",
-        "phone": "(213)-405-4543"
+        "id": 11145,
+        "transactionDate": "10/2/2019",
+        "product": {
+            "Name": "MarkLogic",
+            "Details": {
+                "Sub-Category": "Software"
+            },
+            "Licensed": "Yes",
+            "productInfo": [
+                {
+                    "name": "Voltsillam",
+                    "ProdPrice": 7.0,
+                    "ProdQuantity": 7
+                },
+                {
+                    "name": "Latlux",
+                    "ProdPrice": 9.17,
+                    "ProdQuantity": 10
+                }]
+        },
+        "customer": {
+            "firstName": "Nikhil",
+            "lastName": "Shrivastava",
+            "gender": "M"
+        },
+        "items": [
+            {
+                "name": "Voltsillam",
+                "price": 2.0,
+                "quantity": 7
+            },
+            {
+                "name": "Latlux",
+                "price": 7.17,
+                "quantity": 10
+            },
+            {
+                "name": "Biodex",
+                "price": 5.01,
+                "quantity": 2
+            },
+            {
+                "name": "Fixflex",
+                "price": 8.77,
+                "quantity": 6
+            },
+            {
+                "name": "Keylex",
+                "price": 5.57,
+                "quantity": 3
+            }
+        ]
     }
-    var srcData: any = [];
 
+    // construct infinitely nested source Data
+    const generateNestedDataSource = (respData, nestedDoc: Array<any>) => {
+        
+        Object.keys(respData).map(key => {
+            let val = respData[key];
+            if (val != null && val!= "") {
+                console.log('value found',key,val);
+                if (val.constructor.name === "Object") {
+                    console.log('Object found',key,val);
+                    let propty = {
+                        key: key,
+                        'children': []
+                    }
+
+                    
+                    console.log('parameter nestedDoc',propty.children);
+                    generateNestedDataSource(val, propty.children);
+                    nestedDoc.push(propty);
+
+                } else if (val.constructor.name === "Array") {
+                    //srcData.push({key : key, val: respData[key]})
+
+                    console.log('Array found',key,val);
+                    
+                    val.forEach(obj => {
+                        if(obj.constructor.name == "String"){
+                          let propty = {
+                            key: key,
+                            val: obj
+                          };
+                          nestedDoc.push(propty);
+                        } else {
+                            let propty = {
+                                key: key,
+                                children: []
+                              };
+                              
+                          generateNestedDataSource(obj, propty.children);
+                          nestedDoc.push(propty);
+                        }
+                      });
+
+                } else {
+                    console.log('string found',key,val);
+                    let propty = {
+                        key: key,
+                        val: String(val)
+                      };
+                    nestedDoc.push(propty);
+                }
+
+            } else {
+                console.log('invalid found',key,val);
+                let propty = {
+                    key: key,
+                    val: ""
+                  };
+                nestedDoc.push(propty);
+            }
+        });
+        console.log('nested Doc return statement', nestedDoc);
+
+        return nestedDoc;
+        
+        
+        
+    }
+    let nestedDoc: any = [];
     const openSourceToEntityMapping = (name) => {
             setSourceData(prevState => ({ ...prevState, ...getSourceDataFromUri()}))
-            Object.keys(respData).map(key => srcData.push({key : key, val: respData[key]}))
-            console.log('sourceData',getSourceDataFromUri())
-            console.log('converted data', srcData)
+            let nestDoc= generateNestedDataSource(respData,nestedDoc);
+            setNestedSourceData([...nestDoc]);
+            //console.log('nestedDoc',generateNestedDataSource(srcData,nestedDoc));
+            //console.log('sourceData',getSourceDataFromUri())
+            //console.log('converted data', srcData)
             setMapName(name);
             setMappingVisible(true);
-            
     }
+    // const sData = [{key: "id", val: 118},
+    // {key: "transactionDate", val: "08/29/2018"},
+    // {key: "firstName", children: [{key: "Home", val: "554-223-4534",children: [{key: "Mobile", val: "009-223-4534"}]},
+    //             {key: "Home2", val: "224-223-4534",children: [{key: "Mobile3", val: "009-223-4534"}]}]},
+    // {key: "lastName", val: "Reisenberg"},
+    // {key: "gender", val: "F"},
+    // {key: "phone", val: "(213)-405-4543",children: [{key: "Mobile", val: "009-223-4534"}]}
+    // ]
 
     const cardContainer: CSSProperties = {
         cursor: 'pointer',width: '330px',margin:'-12px -12px', padding: '5px 5px'
@@ -209,7 +332,7 @@ const MappingCard: React.FC<Props> = (props) => {
                 canReadOnly={props.canReadOnly}/>
                 {deleteConfirmation}
                 <SourceToEntityMap 
-                sourceData={srcData}
+                sourceData={nestedSourceData}
                 mappingVisible={mappingVisible}
                 setMappingVisible={setMappingVisible}
                 mapName={mapName}
