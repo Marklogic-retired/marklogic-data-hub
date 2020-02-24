@@ -33,7 +33,7 @@ public class RunFlowWithoutProject {
         inputs.setInputFilePath(inputFilePath);
 
         System.out.println("Running flow: " + flowName);
-        RunFlowResponse response = flowRunner.runFlowWithoutProject(inputs);
+        RunFlowResponse response = flowRunner.runFlow(inputs);
         flowRunner.awaitCompletion();
         System.out.println("Response: " + response);
     }

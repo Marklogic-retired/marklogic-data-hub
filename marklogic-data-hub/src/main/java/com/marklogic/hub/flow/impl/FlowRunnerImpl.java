@@ -84,7 +84,7 @@ public class FlowRunnerImpl implements FlowRunner{
      * project files from the filesystem.
      *
      * This constructor handles ensuring that step definitions are retrieved from MarkLogic as opposed to from the
-     * filesystem. It is expected that the "runFlowWithoutProject" method will then be used, which ensures that flow
+     * filesystem. It is expected that the "runFlow(FlowInputs)" method will then be used, which ensures that flow
      * artifacts are also retrieved from MarkLogic as opposed to from the filesystem.
      *
      * @param hubConfig
@@ -101,30 +101,37 @@ public class FlowRunnerImpl implements FlowRunner{
         return this;
     }
 
+    @Deprecated
     public RunFlowResponse runFlow(String flowName) {
         return runFlow(flowName, null, null, new HashMap<>(), new HashMap<>());
     }
 
+    @Deprecated
     public RunFlowResponse runFlow(String flowName, List<String> stepNums) {
         return runFlow(flowName, stepNums, null, new HashMap<>(), new HashMap<>());
     }
 
+    @Deprecated
     public RunFlowResponse runFlow(String flowName, String jobId) {
         return runFlow(flowName, null, jobId, new HashMap<>(), new HashMap<>());
     }
 
+    @Deprecated
     public RunFlowResponse runFlow(String flowName, List<String> stepNums, String jobId) {
         return runFlow(flowName, stepNums, jobId, new HashMap<>(), new HashMap<>());
     }
 
+    @Deprecated
     public RunFlowResponse runFlow(String flowName, String jobId, Map<String, Object> options) {
         return runFlow(flowName, null, jobId, options, new HashMap<>());
     }
 
+    @Deprecated
     public RunFlowResponse runFlow(String flowName, List<String> stepNums,  String jobId, Map<String, Object> options) {
         return runFlow(flowName, stepNums, jobId, options, new HashMap<>());
     }
 
+    @Deprecated
     public RunFlowResponse runFlow(String flowName, List<String> stepNums, String jobId, Map<String, Object> options, Map<String, Object> stepConfig) {
         Flow flow = flowManager.getFlow(flowName);
         if (flow == null) {
@@ -141,7 +148,7 @@ public class FlowRunnerImpl implements FlowRunner{
      * @return
      */
     @Override
-    public RunFlowResponse runFlowWithoutProject(FlowInputs flowInputs) {
+    public RunFlowResponse runFlow(FlowInputs flowInputs) {
         final String flowName = flowInputs.getFlowName();
         if (StringUtils.isEmpty(flowName)) {
             throw new IllegalArgumentException("Cannot run flow; no flow name provided");
@@ -156,7 +163,7 @@ public class FlowRunnerImpl implements FlowRunner{
         return runFlow(flow, flowInputs.getSteps(), flowInputs.getJobId(), flowInputs.getOptions(), flowInputs.getStepConfig());
     }
 
-    public RunFlowResponse runFlow(Flow flow, List<String> stepNums, String jobId, Map<String, Object> options, Map<String, Object> stepConfig) {
+    protected RunFlowResponse runFlow(Flow flow, List<String> stepNums, String jobId, Map<String, Object> options, Map<String, Object> stepConfig) {
         if (options != null && options.containsKey("disableJobOutput")) {
             disableJobOutput = Boolean.parseBoolean(options.get("disableJobOutput").toString());
         } else {

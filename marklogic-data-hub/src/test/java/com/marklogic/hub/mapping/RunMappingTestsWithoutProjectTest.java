@@ -6,7 +6,7 @@ import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 
 /**
- * Extends MappingTest so that each of its tests can be run via the runFlowWithoutProject method.
+ * Extends MappingTest so that each of its tests can be run via the runFlow(FlowInputs) method.
  */
 public class RunMappingTestsWithoutProjectTest extends MappingTest {
 
@@ -15,7 +15,7 @@ public class RunMappingTestsWithoutProjectTest extends MappingTest {
         makeInputFilePathsAbsoluteInFlow(flowName);
         FlowRunner flowRunner = new FlowRunnerImpl(host, flowRunnerUser, flowRunnerPassword);
         FlowInputs inputs = new FlowInputs(flowName, stepIds);
-        RunFlowResponse response = flowRunner.runFlowWithoutProject(inputs);
+        RunFlowResponse response = flowRunner.runFlow(inputs);
         flowRunner.awaitCompletion();
         return response;
     }
