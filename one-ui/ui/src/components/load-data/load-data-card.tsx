@@ -21,8 +21,6 @@ interface Props {
     addStepToNew: any;
 }
 
-const MENU_TYPE = 'contextMenu';
-
 const LoadDataCard: React.FC<Props> = (props) => {
     const [newDataLoad, setNewDataLoad] = useState(false);
     const [title, setTitle] = useState('');
@@ -197,7 +195,7 @@ const LoadDataCard: React.FC<Props> = (props) => {
                                             )) : null}
                                         </Select>
                                     </div>
-                            </div>
+                                </div>
                             </div>
                         </Card>
                     </div>
