@@ -30,10 +30,15 @@ const CreateEditMappingDialog = (props) => {
     if (props.mapData && JSON.stringify(props.mapData) != JSON.stringify({}) && props.title === 'Edit Mapping') {
       setMapName(props.mapData.name);
       setDescription(props.mapData.description);
-      //setCollections([...props.mapData.collection]);
-      setCollections(props.mapData.collection);
       setSrcQuery(props.mapData.sourceQuery);
       setSelectedSource(props.mapData.selectedSource);
+      if(props.mapData.selectedSource === 'collection'){
+      let srcCollection = props.mapData.sourceQuery.substring(
+          props.mapData.sourceQuery.lastIndexOf("[") + 2, 
+          props.mapData.sourceQuery.lastIndexOf("]") - 1
+      );
+      setCollections(srcCollection);
+      }
       setIsValid(true);
       setTobeDisabled(true);
     } else {
@@ -127,8 +132,7 @@ const CreateEditMappingDialog = (props) => {
         targetEntity: props.targetEntity,
         description: description,
         selectedSource: selectedSource,
-        sourceQuery: sQuery,
-        collection: collections
+        sourceQuery: sQuery
       }
     } else {
       dataPayload = {
@@ -136,7 +140,7 @@ const CreateEditMappingDialog = (props) => {
         targetEntity: props.targetEntity,
         description: description,
         selectedSource: selectedSource,
-        sourceQuery: srcQuery,
+        sourceQuery: srcQuery
       }
     }
     
@@ -360,26 +364,28 @@ const CreateEditMappingDialog = (props) => {
             disabled={!props.canReadWrite}
           >
           </Radio.Group>
-              <Tooltip title={NewMapTooltips.sourceQuery}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
-          {selectedSource === 'collection' ? <Input
+          {selectedSource === 'collection' ? <div ><span className={styles.srcCollectionInput}><Input
             id="collList"
             //mode="tags"
-            style={{ width: '100%' }}
+            className={styles.input}
             placeholder="Please select"
             value={collections}
             disabled={!props.canReadWrite}
             onChange={handleChange}
           >
             {/* {collectionsList} */}
-          </Input> : <TextArea
+          </Input>&nbsp;&nbsp;<Tooltip title={NewMapTooltips.sourceQuery}>
+            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+          </Tooltip></span></div> : <span><TextArea
             id="srcQuery"
             placeholder="Enter Source Query"
             value={srcQuery}
             onChange={handleChange}
             disabled={!props.canReadWrite}
-          ></TextArea>}
+            className={styles.input}
+          ></TextArea>&nbsp;&nbsp;<Tooltip title={NewMapTooltips.sourceQuery}>
+          <Icon type="question-circle" className={styles.questionCircleTextArea} theme="filled" />
+        </Tooltip></span>}
         </Form.Item>
         <br /><br /><br /><br />
 
