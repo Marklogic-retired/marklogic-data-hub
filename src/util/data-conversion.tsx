@@ -92,12 +92,12 @@ export const entityParser = (data: any) => {
     let properties = [];
     let entityDefinition = entity.definitions.find(definition => definition.name === entity.info.title);
 
-
     let propArray = entityDefinition['properties'].map(p => p.name);
     let propRefArray = entityDefinition['properties'].filter(p => p.ref.length > 0);
 
     for (var prop in entity.definitions) {
-      let path = entity.info['baseUri'] + entity.info['version'] + '/' + entity.info['title'];
+      let path = entity.info['baseUri'] + entity.info['title'] + '-' + entity.info['version'] + '/' + entityDefinition.name;
+
       nestedEntityDefinition = entity.definitions[prop];
       if (nestedEntityDefinition) {
         rangeIndex = rangeIndex.concat(nestedEntityDefinition['elementRangeIndex']).concat(nestedEntityDefinition['rangeIndex']);
@@ -106,6 +106,7 @@ export const entityParser = (data: any) => {
       if (entity.definitions[prop]['name'] === entity.info['title']) {
         properties = entity.definitions[prop]['properties'];
       }
+      
       for (let index of nestedEntityDefinition['elementRangeIndex']) {
         rangeIndexMap.set(index, 'elementRangeIndex');
 
@@ -113,6 +114,7 @@ export const entityParser = (data: any) => {
           pathIndexMap.set(index, path + '/' + index);
 
         } else if (propRefArray.length > 0) {  //has nested ref
+
           let pArr = new Array();
           pArr.push(path)
           let a = getRefPath(entity.info.title, index, data, pArr).join('');
@@ -127,6 +129,8 @@ export const entityParser = (data: any) => {
           pathIndexMap.set(rIndex, path + '/' + rIndex);
 
         } else if (propRefArray.length > 0) {  //has nested ref
+          console.log('propRefArray',propRefArray)
+
           let pArr = new Array();
           pArr.push(path)
           let a = getRefPath(entity.info.title, rIndex, data, pArr).join('');
@@ -160,6 +164,8 @@ const getRefPath = (entity, index, data, path) => {
           let elementPath = [...path];
 
           if (element.ref.length > 0) {
+            elementPath.push('/');
+            elementPath.push(element.name);
             elementPath.push('/');
             elementPath.push(element.ref)
             getPath(element.ref, index, data, elementPath)
