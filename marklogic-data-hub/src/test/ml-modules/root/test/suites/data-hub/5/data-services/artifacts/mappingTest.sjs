@@ -21,22 +21,31 @@ function invokeValidateService(artifactType, artifactName, artifact) {
     ));
 }
 
+function invokeGetEntityNamesService() {
+    return fn.head(xdmp.invoke(
+        "/data-hub/5/data-services/artifacts/getEntityNames.sjs",
+        {}
+    ));
+}
+
 function updateMappingConfig(artifactName) {
-    const result = invokeSetService('mappings', artifactName, {'name': `${artifactName}`, 'targetEntity': 'Customer', 'description': 'Mapping does ...', 'selectedSource': 'query', 'sourceQuery': '', 'collections': ['RAW-CUSTOMER']});
+    const result = invokeSetService('mappings', artifactName, {'name': `${artifactName}`, 'targetEntity': 'TestEntity-hasMappingConfig', 'description': 'Mapping does ...', 'selectedSource': 'query', 'sourceQuery': '', 'collections': ['RAW-COL']});
     return [
         test.assertEqual(artifactName, result.name),
-        test.assertEqual("Customer", result.targetEntity)
+        test.assertEqual("TestEntity-hasMappingConfig", result.targetEntity)
     ];
 }
 
 function getArtifacts() {
     const artifactsByEntity = invokeGetAllService('mappings');
+    const entityNames = invokeGetEntityNamesService();
+    test.assertEqual(entityNames.length, artifactsByEntity.length);
     artifactsByEntity.forEach(entity => {
-        if (entity.entityType === 'Customer') {
+        if (entity.entityType === 'TestEntity-hasMappingConfig') {
             const artifacts = entity.artifacts;
             artifacts.forEach(mapping => {
                 if (mapping.name == 'TestMapping' || mapping.name === 'TestMapping2') {
-                    test.assertEqual("Customer", mapping.targetEntity);
+                    test.assertEqual("TestEntity-hasMappingConfig", mapping.targetEntity);
                     test.assertTrue(xdmp.castableAs('http://www.w3.org/2001/XMLSchema', 'dateTime', mapping.lastUpdated));
                 }
             })
@@ -52,10 +61,10 @@ function deleteArtifact(artifactName) {
 }
 
 function validArtifact() {
-    const result = invokeValidateService('mappings','validMapping', { name: 'validMapping', targetEntity: 'Customer', selectedSource: 'collection'});
+    const result = invokeValidateService('mappings','validMapping', { name: 'validMapping', targetEntity: 'TestEntity-hasMappingConfig', selectedSource: 'collection'});
     return [
         test.assertEqual("validMapping", result.name),
-        test.assertEqual("Customer", result.targetEntity),
+        test.assertEqual("TestEntity-hasMappingConfig", result.targetEntity),
         test.assertEqual("collection", result.selectedSource)
     ];
 }
@@ -77,6 +86,7 @@ function invalidArtifact() {
 }
 
 []
+    //.concat(getEntityNames())
     .concat(updateMappingConfig('TestMapping'))
     .concat(updateMappingConfig('TestMapping2'))
     .concat(getArtifacts())
