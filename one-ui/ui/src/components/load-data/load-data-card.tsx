@@ -87,6 +87,11 @@ const LoadDataCard: React.FC<Props> = (props) => {
         setDialogVisible(false);
     }
 
+    function handleSelect(obj) {
+        console.log('handleSelect', obj);
+        handleStepAdd(obj.loadName, obj.flowName);
+    }
+
     const handleStepAdd = (loadDataName, flowName) => {
         console.log('handleStepAdd', loadDataName, flowName )
         setAddDialogVisible(true);
@@ -136,57 +141,6 @@ const LoadDataCard: React.FC<Props> = (props) => {
         </Modal>
     );   
 
-    const createCards = (propsData) => {
-        let cards: any = [];
-        for (let i = 0; i < propsData.length; i++) {
-            let elem = propsData[i];
-            cards.push(<Col key={i}>
-                <div
-                    onMouseOver={(e) => setShowLinks(elem.name)}
-                    onMouseLeave={(e) => setShowLinks('')}
-                >
-                    <Card
-                        actions={[
-                            <span>{elem.filesNeedReuploaded ? (
-                                <Popover
-                                    content={"Files must be reuploaded"}
-                                    trigger="click"
-                                    placement="bottom"
-                                ><i><FontAwesomeIcon icon={faExclamationCircle} className={styles.popover} size="lg" /></i></Popover>) : ''}</span>,
-                            <Tooltip title={'Settings'} placement="bottom"><Icon type="setting" key="setting" onClick={() => OpenLoadDataSettingsDialog(i)}/></Tooltip>,
-                            <Tooltip title={'Edit'} placement="bottom"><Icon type="edit" key="edit" onClick={() => OpenEditStepDialog(i)}/></Tooltip>,
-                            props.canReadWrite ? <Tooltip title={'Delete'} placement="bottom"><i><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg" onClick={() => handleCardDelete(elem.name)}/></i></Tooltip> : <i><FontAwesomeIcon icon={faTrashAlt} onClick={(event) => event.preventDefault()} className={styles.disabledDeleteIcon} size="lg"/></i>,
-                        ]}
-                        className={styles.cardStyle}
-                        size="small"
-                    >
-                        <div className={styles.formatFileContainer}>
-                            <span style={sourceFormatStyle(elem.sourceFormat)}>{elem.sourceFormat.toUpperCase()}</span>
-                            <span className={styles.files}>Files</span>
-                        </div><br />
-                        <div className={styles.fileCount}>{elem.fileCount}</div>
-                        <span className={styles.stepNameStyle}>{getInitialChars(elem.name, 27, '...')}</span>
-                        <p className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</p>
-                        <div className={styles.cardLinks} style={{display: showLinks === elem.name ? 'block' : 'none'}}>
-                            <div className={styles.cardLink}>Open step details</div>
-                            <div className={styles.cardLink}>Add step to a new flow</div>
-                            <div className={styles.cardNonLink}>
-                                Add step to an existing flow
-                                <div className={styles.cardLinkSelect}>
-                                    <Select defaultValue="" style={{ width: '100%' }} onChange={() => handleStepAdd('Test Flow 1', elem.name)}>
-                                        <Option value="Test Flow 1">Test Flow 1</Option>
-                                        <Option value="Test Flow 2">Test Flow 2</Option>
-                                    </Select>
-                                </div>
-                        </div>
-                        </div>
-                    </Card>
-                </div>
-            </Col>)
-        }
-        return cards
-    }
-
     return (
         <div id="load-data-card-view" className={styles.loaddataContainer}>
             <Row gutter={16} type="flex" >
@@ -198,8 +152,56 @@ const LoadDataCard: React.FC<Props> = (props) => {
                         <br />
                         <p className={styles.addNewContent}>Add New</p>
                     </Card>
-                </Col> : ''}
-                { props && props.data.length > 0 ? createCards(props.data) : <span></span> }
+                </Col> : ''}{ props && props.data.length > 0 ? props.data.map((elem,index) => (
+                <Col key={index}>
+                    <div
+                        onMouseOver={(e) => setShowLinks(elem.name)}
+                        onMouseLeave={(e) => setShowLinks('')}
+                    >
+                        <Card
+                            actions={[
+                                <span>{elem.filesNeedReuploaded ? (
+                                    <Popover
+                                        content={"Files must be reuploaded"}
+                                        trigger="click"
+                                        placement="bottom"
+                                    ><i><FontAwesomeIcon icon={faExclamationCircle} className={styles.popover} size="lg" /></i></Popover>) : ''}</span>,
+                                <Tooltip title={'Settings'} placement="bottom"><Icon type="setting" key="setting" onClick={() => OpenLoadDataSettingsDialog(index)}/></Tooltip>,
+                                <Tooltip title={'Edit'} placement="bottom"><Icon type="edit" key="edit" onClick={() => OpenEditStepDialog(index)}/></Tooltip>,
+                                props.canReadWrite ? <Tooltip title={'Delete'} placement="bottom"><i><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg" onClick={() => handleCardDelete(elem.name)}/></i></Tooltip> : <i><FontAwesomeIcon icon={faTrashAlt} onClick={(event) => event.preventDefault()} className={styles.disabledDeleteIcon} size="lg"/></i>,
+                            ]}
+                            className={styles.cardStyle}
+                            size="small"
+                        >
+                            <div className={styles.formatFileContainer}>
+                                <span style={sourceFormatStyle(elem.sourceFormat)}>{elem.sourceFormat.toUpperCase()}</span>
+                                <span className={styles.files}>Files</span>
+                            </div><br />
+                            <div className={styles.fileCount}>{elem.fileCount}</div>
+                            <span className={styles.stepNameStyle}>{getInitialChars(elem.name, 27, '...')}</span>
+                            <p className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</p>
+                            <div className={styles.cardLinks} style={{display: showLinks === elem.name ? 'block' : 'none'}}>
+                                <div className={styles.cardLink}>Open step details</div>
+                                <div className={styles.cardLink}>Add step to a new flow</div>
+                                <div className={styles.cardNonLink}>
+                                    Add step to an existing flow
+                                    <div className={styles.cardLinkSelect}>
+                                        <Select 
+                                            style={{ width: '100%' }} 
+                                            onChange={(flowName) => handleSelect({flowName: flowName, loadName: elem.name})}
+                                            placeholder="Select Flow"
+                                            defaultActiveFirstOption={false}
+                                        >
+                                            { props.flows && props.flows.length > 0 ? props.flows.map((f,i) => (
+                                                <Option value={f.name}>{f.name}</Option>
+                                            )) : null}
+                                        </Select>
+                                    </div>
+                            </div>
+                            </div>
+                        </Card>
+                    </div>
+                </Col>)) : <span></span> }
             </Row>
             <NewDataLoadDialog 
                 newLoad={newDataLoad} 
