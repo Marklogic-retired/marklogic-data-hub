@@ -201,23 +201,19 @@ const MappingCard: React.FC<Props> = (props) => {
         Object.keys(respData).map(key => {
             let val = respData[key];
             if (val != null && val!= "") {
-                console.log('value found',key,val);
+   
                 if (val.constructor.name === "Object") {
-                    console.log('Object found',key,val);
+     
                     let propty = {
                         key: key,
                         'children': []
                     }
 
-                    
-                    console.log('parameter nestedDoc',propty.children);
                     generateNestedDataSource(val, propty.children);
                     nestedDoc.push(propty);
 
                 } else if (val.constructor.name === "Array") {
                     //srcData.push({key : key, val: respData[key]})
-
-                    console.log('Array found',key,val);
                     
                     val.forEach(obj => {
                         if(obj.constructor.name == "String"){
@@ -238,7 +234,7 @@ const MappingCard: React.FC<Props> = (props) => {
                       });
 
                 } else {
-                    console.log('string found',key,val);
+
                     let propty = {
                         key: key,
                         val: String(val)
@@ -247,7 +243,7 @@ const MappingCard: React.FC<Props> = (props) => {
                 }
 
             } else {
-                console.log('invalid found',key,val);
+
                 let propty = {
                     key: key,
                     val: ""
@@ -255,7 +251,6 @@ const MappingCard: React.FC<Props> = (props) => {
                 nestedDoc.push(propty);
             }
         });
-        console.log('nested Doc return statement', nestedDoc);
 
         return nestedDoc;
         
@@ -267,20 +262,10 @@ const MappingCard: React.FC<Props> = (props) => {
             setSourceData(prevState => ({ ...prevState, ...getSourceDataFromUri()}))
             let nestDoc= generateNestedDataSource(respData,nestedDoc);
             setNestedSourceData([...nestDoc]);
-            //console.log('nestedDoc',generateNestedDataSource(srcData,nestedDoc));
-            //console.log('sourceData',getSourceDataFromUri())
-            //console.log('converted data', srcData)
             setMapName(name);
             setMappingVisible(true);
     }
-    // const sData = [{key: "id", val: 118},
-    // {key: "transactionDate", val: "08/29/2018"},
-    // {key: "firstName", children: [{key: "Home", val: "554-223-4534",children: [{key: "Mobile", val: "009-223-4534"}]},
-    //             {key: "Home2", val: "224-223-4534",children: [{key: "Mobile3", val: "009-223-4534"}]}]},
-    // {key: "lastName", val: "Reisenberg"},
-    // {key: "gender", val: "F"},
-    // {key: "phone", val: "(213)-405-4543",children: [{key: "Mobile", val: "009-223-4534"}]}
-    // ]
+
 
     const cardContainer: CSSProperties = {
         cursor: 'pointer',width: '330px',margin:'-12px -12px', padding: '5px 5px'
