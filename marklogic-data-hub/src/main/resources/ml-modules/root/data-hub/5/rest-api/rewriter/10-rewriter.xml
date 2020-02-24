@@ -333,7 +333,7 @@
                 <match-header name="range">
                     <dispatch>/data-hub/5/rest-api/endpoints/document-item-query.xqy</dispatch>
                 </match-header>
-                <dispatch>/data-hub/5/rest-api/endpoints/document-item-query-head.xqy</dispatch>
+                <dispatch>/MarkLogic/rest-api/endpoints/document-item-query-head.xqy</dispatch>
             </match-method>
             <match-method any-of="OPTIONS">
                 <match-query-param name="txid">
@@ -374,7 +374,7 @@
                 <match-query-param name="transform">
                     <dispatch>/data-hub/5/rest-api/endpoints/document-item-update.xqy</dispatch>
                 </match-query-param>
-                <dispatch>/data-hub/5/rest-api/endpoints/document-item-update-put.xqy</dispatch>
+                <dispatch>/MarkLogic/rest-api/endpoints/document-item-update-put.xqy</dispatch>
             </match-method>
             <match-method any-of="DELETE">
                 <match-query-param name="txid">
@@ -390,7 +390,7 @@
                 <match-query-param name="category" repeated="true">
                   <dispatch>/data-hub/5/rest-api/endpoints/document-item-update.xqy</dispatch>
                 </match-query-param>
-                <dispatch>/data-hub/5/rest-api/endpoints/document-item-update-delete.xqy</dispatch>
+                <dispatch>/MarkLogic/rest-api/endpoints/document-item-update-delete.xqy</dispatch>
              </match-method>
             <match-method any-of="POST">
                 <match-query-param name="txid">
