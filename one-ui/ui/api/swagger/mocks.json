@@ -2474,7 +2474,7 @@
                         "description": "Successful Operation",
                         "schema":
                         {
-                            "$ref": "#/definitions/AnyObject"
+                            "$ref": "#/definitions/mappingArtifact"
                         }
                     },
                     "400":
@@ -2537,7 +2537,15 @@
                     "type": "string",
                     "in": "path",
                     "required": true
-                }],
+                },
+                  {
+                    "name": "mapping",
+                    "schema": {
+                      "$ref": "#/definitions/mappingArtifact"
+                    },
+                    "in": "body",
+                    "required": true
+                  }],
                 "responses":
                 {
                     "200":
@@ -2545,7 +2553,7 @@
                         "description": "Successful Operation",
                         "schema":
                         {
-                            "$ref": "#/definitions/AnyObject"
+                            "$ref": "#/definitions/mappingArtifact"
                         }
                     },
                     "400":
@@ -2598,7 +2606,7 @@
                 ],
                 "summary": "Get all Mappings for a Project",
                 "description": "....",
-                "operationId": "deketeProjectMappings",
+                "operationId": "deleteProjectMappings",
                 "produces": [
                     "application/json"
                 ],
@@ -4140,6 +4148,58 @@
                 }
             }
         },
+      "mappingArtifact":
+      {
+        "type": "object",
+        "required": ["name", "targetEntity", "selectedSource"],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "targetEntity": {
+            "type": "string",
+            "description": "Entity Type the input data will be mapped to"
+          },
+          "selectedSource": {
+            "type": "string"
+          },
+          "sourceQuery": {
+            "type": "string",
+            "description": "Query for mapping input"
+          },
+          "properties": {
+            "$ref": "#/definitions/mappingArtifactProperties"
+          }
+        }
+      },
+      "mappingArtifactProperties": {
+          "type": "object",
+          "required": ["sourcedFrom"],
+          "properties": {
+            "entityProperty1": {
+              "$ref": "#/definitions/mappingArtifactProperty"
+            },
+            "entityProperty2": {
+              "$ref": "#/definitions/mappingArtifactProperty"
+            }
+          }
+        },
+      "mappingArtifactProperty": {
+        "type" : "object",
+        "properties": {
+          "sourcedFrom": {
+            "type": "string",
+            "description": "XPath expression that generates the value for the property or provides dataset for child expression"
+          },
+          "targetEntity": {
+            "type": "string",
+            "description": "Entity Type the input data will be mapped to"
+          },
+          "properties": {
+            "$ref": "#/definitions/mappingArtifactProperties"
+          }
+        }
+      },
         "job":
         {
             "type": "object",
