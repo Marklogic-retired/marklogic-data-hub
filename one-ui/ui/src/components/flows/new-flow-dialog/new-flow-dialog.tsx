@@ -108,10 +108,6 @@ const NewFlowDialog = (props) => {
       <Form {...formItemLayout} onSubmit={handleSubmit} colon={false}>
         <Form.Item label={<span>
           Name:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
-              <Tooltip title={NewFlowTooltips.name}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
-          &nbsp;
             </span>} labelAlign="left"
           validateStatus={(flowName || !isFlowNameTouched) ? '' : 'error'}
           help={(flowName || !isFlowNameTouched) ? '' : 'Name is required'}>
@@ -121,21 +117,25 @@ const NewFlowDialog = (props) => {
             value={flowName}
             onChange={handleChange}
             disabled={tobeDisabled}
-          />
+            className={styles.input}
+          />&nbsp;&nbsp;
+          <Tooltip title={NewFlowTooltips.name}>
+            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+          </Tooltip>
         </Form.Item>
         <Form.Item label={<span>
           Description:&nbsp;
-              <Tooltip title={NewFlowTooltips.description}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
-          &nbsp;
             </span>} labelAlign="left">
           <Input
             id="description"
             placeholder="Enter description"
             value={description}
             onChange={handleChange}
-          />
+            className={styles.input}
+          />&nbsp;&nbsp;
+          <Tooltip title={NewFlowTooltips.description}>
+            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+          </Tooltip>
         </Form.Item>
         <Form.Item className={styles.submitButtonsForm}>
           <div className={styles.submitButtons}>

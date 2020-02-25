@@ -17,8 +17,11 @@
 }
 .questionCircle {
     font-size: 12px;
-    vertical-align: top;
-    margin-top: 6px;
+    color: #ACB0CF;
+}
+
+.questionCircle {
+    font-size: 12px;
     color: #ACB0CF;
 }
 
@@ -36,4 +39,8 @@
 .submitButtons{
     text-align: right;
     width: 162%;
+}
+
+.input{
+    width: 95%;
 }
