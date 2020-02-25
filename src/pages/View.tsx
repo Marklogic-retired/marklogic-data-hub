@@ -21,7 +21,7 @@ const View: React.FC = () => {
   const [facetValues, setFacetValues] = useState<any[]>([]);
   const [totalDocs, setTotalDocs] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [sessionCount, setSessionCount] = useState(0);
+  let sessionCount = 0;
 
   const componentIsMounted = useRef(true);
 
@@ -70,7 +70,7 @@ const View: React.FC = () => {
       const response = await axios(`/datahub/v2/jobs/models`);
       if (componentIsMounted.current) {
         setLastHarmonized(response.data);
-        setSessionCount(0);
+        sessionCount = 0;
       }
     } catch (error) {
       handleError(error);
@@ -91,7 +91,7 @@ const View: React.FC = () => {
     if (sessionCount === user.maxSessionTime) {
       userNotAuthenticated();
     } else {
-      setSessionCount(sessionCount + 1);
+      sessionCount += 1;
     }
   }, 1000);
 
