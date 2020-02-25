@@ -82,75 +82,164 @@ export const entityFromJSON = (data: any) => {
   return entityArray;
 }
 
-export const entityParser = (data: any) => {
-  return data.map((entity, index) => {
-    let rangeIndex = [];
-    let rangeIndexMap = new Map();
-    let pathIndexMap = new Map();
-    let nestedEntityDefinition;
-    let parsedEntity = {};
-    let properties = [];
-    let entityDefinition = entity.definitions.find(definition => definition.name === entity.info.title);
+// export const entityParser = (data: any) => {
+//   return data.map((entity, index) => {
+//     let rangeIndex = [];
+//     let rangeIndexMap = new Map();
+//     let pathIndexMap = new Map();
+//     let nestedEntityDefinition;
+//     let parsedEntity = {};
+//     let properties = [];
+//     let entityDefinition = entity.definitions.find(definition => definition.name === entity.info.title);
 
-    let propArray = entityDefinition['properties'].map(p => p.name);
-    let propRefArray = entityDefinition['properties'].filter(p => p.ref.length > 0);
+//     let propArray = entityDefinition['properties'].map(p => p.name);
+//     let propRefArray = entityDefinition['properties'].filter(p => p.ref.length > 0);
 
-    for (var prop in entity.definitions) {
-      let path = entity.info['baseUri'] + entity.info['title'] + '-' + entity.info['version'] + '/' + entityDefinition.name;
+//     for (var prop in entity.definitions) {
+//       let path = entity.info['baseUri'] + entity.info['title'] + '-' + entity.info['version'] + '/' + entityDefinition.name + '&';
 
-      nestedEntityDefinition = entity.definitions[prop];
-      if (nestedEntityDefinition) {
-        rangeIndex = rangeIndex.concat(nestedEntityDefinition['elementRangeIndex']).concat(nestedEntityDefinition['rangeIndex']);
-      }
+//       nestedEntityDefinition = entity.definitions[prop];
+//       if (nestedEntityDefinition) {
+//         rangeIndex = rangeIndex.concat(nestedEntityDefinition['elementRangeIndex']).concat(nestedEntityDefinition['rangeIndex']);
+//       }
 
-      if (entity.definitions[prop]['name'] === entity.info['title']) {
-        properties = entity.definitions[prop]['properties'];
-      }
+//       if (entity.definitions[prop]['name'] === entity.info['title']) {
+//         properties = entity.definitions[prop]['properties'];
+//       }
       
-      for (let index of nestedEntityDefinition['elementRangeIndex']) {
-        rangeIndexMap.set(index, 'elementRangeIndex');
+//       for (let index of nestedEntityDefinition['elementRangeIndex']) {
+//         rangeIndexMap.set(index, 'elementRangeIndex');
 
-        if (propArray.includes(index)) {
-          pathIndexMap.set(index, path + '/' + index);
+//         if (propArray.includes(index)) {
+//           pathIndexMap.set(index, path + '/' + index);
 
-        } else if (propRefArray.length > 0) {  //has nested ref
+//         } else if (propRefArray.length > 0) {  //has nested ref
 
-          let pArr = new Array();
-          pArr.push(path)
-          let a = getRefPath(entity.info.title, index, data, pArr).join('');
-          pathIndexMap.set(index, a);
+//           let pArr = new Array();
+//           pArr.push(path)
+//           let a = getRefPath(entity.info.title, index, data, pArr).join('');
+//           pathIndexMap.set(index, a);
+//         }
+//       }
+
+//       for (let rIndex of nestedEntityDefinition['rangeIndex']) {
+//         rangeIndexMap.set(rIndex, 'rangeIndex');
+
+//         if (propArray.includes(rIndex)) {
+//           pathIndexMap.set(rIndex, path + '/' + rIndex);
+
+//         } else if (propRefArray.length > 0) {  //has nested ref
+
+//           let pArr = new Array();
+//           pArr.push(path)
+//           let a = getRefPath(entity.info.title, rIndex, data, pArr).join('');
+//           pathIndexMap.set(rIndex, a);
+//         }
+//       }
+//     }
+
+//     parsedEntity = {
+//       name: entityDefinition['name'],
+//       info: entity.info,
+//       primaryKey: entityDefinition.hasOwnProperty('primaryKey') ? entityDefinition['primaryKey'] : '',
+//       rangeIndex: rangeIndex.length ? rangeIndex : [],
+//       properties: properties,
+//       rangeIndexMap: rangeIndexMap,
+//       pathIndexMap: pathIndexMap
+//     }
+//     return parsedEntity;
+//   });
+// }
+
+export const entityParser = (data: any) => {
+    return data.map((entity, index) => {
+      let rangeIndex = [];
+      let rangeIndexMap = new Map();
+      let pathIndexMap = new Map();
+      let pathEntityIndexMap = new Map();
+      let nestedEntityDefinition;
+      let parsedEntity = {};
+      let properties = [];
+      let entityDefinition = entity.definitions.find(definition => definition.name === entity.info.title);
+      let values = {}
+      let pathIndexArray = new Array();
+  
+      let propArray = entityDefinition['properties'].map(p => p.name);
+      let propRefArray = entityDefinition['properties'].filter(p => p.ref.length > 0);
+  
+      for (var prop in entity.definitions) {
+        let path = entity.info['baseUri'] + entity.info['title'] + '-' + entity.info['version'] + '/' + entityDefinition.name;
+        let entityPath = entityDefinition.name;
+  
+        nestedEntityDefinition = entity.definitions[prop];
+        if (nestedEntityDefinition) {
+          rangeIndex = rangeIndex.concat(nestedEntityDefinition['elementRangeIndex']).concat(nestedEntityDefinition['rangeIndex']);
+        }
+  
+        if (entity.definitions[prop]['name'] === entity.info['title']) {
+          properties = entity.definitions[prop]['properties'];
+        }
+        
+        for (let index of nestedEntityDefinition['elementRangeIndex']) {
+          rangeIndexMap.set(index, 'elementRangeIndex');
+  
+          if (propArray.includes(index)) {
+            pathIndexMap.set(index, '/' + index);
+            pathEntityIndexMap.set(index, '/' + index);
+  
+          } else if (propRefArray.length > 0) {  //has nested ref
+            let pArr = new Array();
+            pathIndexMap.set(index, getRefPath(entity.info.title, index, data, pArr).join(''));
+            pathEntityIndexMap.set(index, getEntityPath(entity.info.title, index, data, pArr).join(''));
+            
+          }
+          values = {
+            index: index,
+            entityIRI: path,
+            propertyPath: pathIndexMap.get(index),
+            entityPath: entityPath + pathEntityIndexMap.get(index)
+          }
+          pathIndexArray.push(values)
+        }
+  
+        for (let rIndex of nestedEntityDefinition['rangeIndex']) {
+          rangeIndexMap.set(rIndex, 'rangeIndex');
+  
+          if (propArray.includes(rIndex)) {
+            pathIndexMap.set(rIndex, '/' + rIndex);
+            pathEntityIndexMap.set(rIndex, '/' + rIndex);
+
+          } else if (propRefArray.length > 0) {  //has nested ref
+  
+            let pArr = new Array();
+            pathIndexMap.set(rIndex, getRefPath(entity.info.title, rIndex, data, pArr).join(''));
+            pathEntityIndexMap.set(rIndex, getEntityPath(entity.info.title, rIndex, data, pArr).join(''));
+            
+          }
+          values = {
+            index: rIndex,
+            entityIRI : path,
+            propertyPath : pathIndexMap.get(rIndex),
+            entityPath: entityPath + pathEntityIndexMap.get(rIndex)
+
+          }
+          pathIndexArray.push(values)
         }
       }
-
-      for (let rIndex of nestedEntityDefinition['rangeIndex']) {
-        rangeIndexMap.set(rIndex, 'rangeIndex');
-
-        if (propArray.includes(rIndex)) {
-          pathIndexMap.set(rIndex, path + '/' + rIndex);
-
-        } else if (propRefArray.length > 0) {  //has nested ref
-          console.log('propRefArray',propRefArray)
-
-          let pArr = new Array();
-          pArr.push(path)
-          let a = getRefPath(entity.info.title, rIndex, data, pArr).join('');
-          pathIndexMap.set(rIndex, a);
-        }
+  
+      parsedEntity = {
+        name: entityDefinition['name'],
+        info: entity.info,
+        primaryKey: entityDefinition.hasOwnProperty('primaryKey') ? entityDefinition['primaryKey'] : '',
+        rangeIndex: rangeIndex.length ? rangeIndex : [],
+        properties: properties,
+        rangeIndexMap: rangeIndexMap,
+        pathIndex: pathIndexArray
       }
-    }
+      return parsedEntity;
+    });
+  }
 
-    parsedEntity = {
-      name: entityDefinition['name'],
-      info: entity.info,
-      primaryKey: entityDefinition.hasOwnProperty('primaryKey') ? entityDefinition['primaryKey'] : '',
-      rangeIndex: rangeIndex.length ? rangeIndex : [],
-      properties: properties,
-      rangeIndexMap: rangeIndexMap,
-      pathIndexMap: pathIndexMap
-    }
-    return parsedEntity;
-  });
-}
 
 const getRefPath = (entity, index, data, path) => {
 
@@ -166,6 +255,41 @@ const getRefPath = (entity, index, data, path) => {
           if (element.ref.length > 0) {
             elementPath.push('/');
             elementPath.push(element.name);
+            // elementPath.push('/');
+            // elementPath.push(element.ref)
+            getPath(element.ref, index, data, elementPath)
+          }
+
+          if (element.name === index) {
+            elementPath.push('/');
+            elementPath.push(element.name)
+            fullPath = elementPath;
+            return fullPath;
+          }
+        });
+      }
+    });
+
+    return fullPath;
+  }
+
+  return getPath(entity, index, data, path);
+}
+
+const getEntityPath = (entity, index, data, path) => {
+
+  let fullPath;
+
+  const getPath = (entity, index, data, path) => {
+    data.forEach(item => {
+      if (item.info.title === entity) {
+        let entityDefinition = item.definitions.find(definition => definition.name === entity);
+        entityDefinition.properties.forEach(element => {
+          let elementPath = [...path];
+
+          if (element.ref.length > 0) {
+            // elementPath.push('/');
+            // elementPath.push(element.name);
             elementPath.push('/');
             elementPath.push(element.ref)
             getPath(element.ref, index, data, elementPath)
