@@ -36,10 +36,10 @@ class AuthTest {
     public String mlHost;
 
     @Value("${test.dataHubDeveloperUsername}")
-    public String mlDHDeveloper;
+    public String dataHubDeveloperUsername;
 
     @Value("${test.dataHubDeveloperPassword}")
-    public String mlDHDeveloperPwd;
+    public String dataHubDeveloperPassword;
 
     @Autowired
     MockMvc mockMvc;
@@ -77,7 +77,7 @@ class AuthTest {
 
     @Test
     void loginWithDevCredentialsAndLogout() throws Exception {
-        String payload = getLoginPayload(mlDHDeveloper, mlDHDeveloperPwd);
+        String payload = getLoginPayload(dataHubDeveloperUsername, dataHubDeveloperPassword);
         final MockHttpSession session[] = new MockHttpSession[1];
         // Login
         mockMvc
