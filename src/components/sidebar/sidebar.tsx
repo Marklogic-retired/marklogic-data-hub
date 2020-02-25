@@ -41,7 +41,6 @@ const Sidebar: React.FC<Props> = (props) => {
   let decimals = ['decimal', 'double', 'float'];
 
   useEffect(() => {
-    console.log(props)
     if (props.facets) {
       const parsedFacets = facetParser(props.facets);
       const filteredHubFacets = hubPropertiesConfig.map(hubFacet => {

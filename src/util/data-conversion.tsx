@@ -195,11 +195,16 @@ export const entityParser = (data: any) => {
           }
           values = {
             index: index,
+            indexType: 'elementRangeIndex',
             entityIRI: path,
             propertyPath: pathIndexMap.get(index),
             entityPath: entityPath + pathEntityIndexMap.get(index)
           }
           pathIndexArray.push(values)
+
+          if (!pathIndexArray.some(e => e.index === index)) {
+            pathIndexArray.push(values)
+          }
         }
   
         for (let rIndex of nestedEntityDefinition['rangeIndex']) {
@@ -218,12 +223,14 @@ export const entityParser = (data: any) => {
           }
           values = {
             index: rIndex,
+            indexType: 'rangeIndex',
             entityIRI : path,
             propertyPath : pathIndexMap.get(rIndex),
             entityPath: entityPath + pathEntityIndexMap.get(rIndex)
-
           }
-          pathIndexArray.push(values)
+          if (!pathIndexArray.some(e => e.index === rIndex)) {
+            pathIndexArray.push(values)
+          }
         }
       }
   
@@ -255,8 +262,6 @@ const getRefPath = (entity, index, data, path) => {
           if (element.ref.length > 0) {
             elementPath.push('/');
             elementPath.push(element.name);
-            // elementPath.push('/');
-            // elementPath.push(element.ref)
             getPath(element.ref, index, data, elementPath)
           }
 
@@ -288,8 +293,6 @@ const getEntityPath = (entity, index, data, path) => {
           let elementPath = [...path];
 
           if (element.ref.length > 0) {
-            // elementPath.push('/');
-            // elementPath.push(element.name);
             elementPath.push('/');
             elementPath.push(element.ref)
             getPath(element.ref, index, data, elementPath)
