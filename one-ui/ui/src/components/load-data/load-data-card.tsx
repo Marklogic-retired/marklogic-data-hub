@@ -17,6 +17,7 @@ interface Props {
     createLoadDataArtifact: any;
     canReadOnly: any;
     canReadWrite: any;
+    canWriteFlows: any;
     addStepToFlow: any;
     addStepToNew: any;
 }
@@ -85,13 +86,25 @@ const LoadDataCard: React.FC<Props> = (props) => {
         setDialogVisible(false);
     }
 
+    function handleMouseOver(e, name) {
+        console.log('handleMouseOver', e.target.className);
+        // Handle all possible events from mouseover of card body
+        if (typeof e.target.className === 'string' && 
+            (e.target.className === 'ant-card-body' ||
+             e.target.className.startsWith('load-data-card_formatFileContainer') ||
+             e.target.className.startsWith('load-data-card_formatFileContainer') ||
+             e.target.className.startsWith('load-data-card_stepNameStyle') ||
+             e.target.className.startsWith('load-data-card_fileCount'))
+        ) {
+            setShowLinks(name);
+        }
+    }
+
     function handleSelect(obj) {
-        console.log('handleSelect', obj);
         handleStepAdd(obj.loadName, obj.flowName);
     }
 
     const handleStepAdd = (loadDataName, flowName) => {
-        console.log('handleStepAdd', loadDataName, flowName )
         setAddDialogVisible(true);
         setLoadArtifactName(loadDataName);
         setFlowName(flowName);
@@ -153,7 +166,7 @@ const LoadDataCard: React.FC<Props> = (props) => {
                 </Col> : ''}{ props && props.data.length > 0 ? props.data.map((elem,index) => (
                 <Col key={index}>
                     <div
-                        onMouseOver={(e) => setShowLinks(elem.name)}
+                        onMouseOver={(e) => handleMouseOver(e, elem.name)}
                         onMouseLeave={(e) => setShowLinks('')}
                     >
                         <Card
@@ -178,8 +191,7 @@ const LoadDataCard: React.FC<Props> = (props) => {
                             <div className={styles.fileCount}>{elem.fileCount}</div>
                             <span className={styles.stepNameStyle}>{getInitialChars(elem.name, 27, '...')}</span>
                             <p className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</p>
-                            <div className={styles.cardLinks} style={{display: showLinks === elem.name ? 'block' : 'none'}}>
-                                <div className={styles.cardLink}>Open step details</div>
+                            {props.canWriteFlows ? <div className={styles.cardLinks} style={{display: showLinks === elem.name ? 'block' : 'none'}}>
                                 <div className={styles.cardLink}>Add step to a new flow</div>
                                 <div className={styles.cardNonLink}>
                                     Add step to an existing flow
@@ -196,7 +208,7 @@ const LoadDataCard: React.FC<Props> = (props) => {
                                         </Select>
                                     </div>
                                 </div>
-                            </div>
+                            </div> : null}
                         </Card>
                     </div>
                 </Col>)) : <span></span> }
