@@ -2,6 +2,7 @@ import React, { useState, CSSProperties } from 'react';
 import { Collapse, Button, Icon, Card, Tooltip, Modal } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+import { MlButton } from 'marklogic-ui-library';
 import NewFlowDialog from './new-flow-dialog/new-flow-dialog';
 import sourceFormatOptions from '../../config/formats.config';
 import styles from './flows.module.scss';
@@ -252,11 +253,11 @@ const Flows: React.FC<Props> = (props) => {
         {props.canReadFlows || props.canWriteFlows ?
             <>
                 <div className={styles.createContainer}>
-                    <Button 
-                        className={styles.createButton} 
+                    <MlButton 
+                        className={styles.createButton} size="default"
                         type="primary" onClick={OpenAddNewDialog} 
                         disabled={!props.canWriteFlows}
-                    >Create Flow</Button>
+                    >Create Flow</MlButton>
                 </div>
                 <Collapse 
                     className={styles.collapseFlows}
