@@ -44,20 +44,16 @@ const NewFlowDialog = (props) => {
 
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
     if (event) event.preventDefault();
-
     let dataPayload = {
         name: flowName,
         description: description
       }
     setIsLoading(true);
-
-    //Call create data load artifact API function
     if (props.title === 'Edit Flow') {
       props.updateFlow(dataPayload, flowName);
     } else {
       props.createFlow(dataPayload);
     }
-
     props.setNewFlow(false);
   }
 
@@ -130,6 +126,7 @@ const NewFlowDialog = (props) => {
             placeholder="Enter description"
             value={description}
             onChange={handleChange}
+            disabled={!props.canWriteFlows}
             className={styles.input}
           />&nbsp;&nbsp;
           <Tooltip title={NewFlowTooltips.description}>
@@ -138,7 +135,8 @@ const NewFlowDialog = (props) => {
         </Form.Item>
         <Form.Item className={styles.submitButtonsForm}>
           <div className={styles.submitButtons}>
-            <Button onClick={() => onCancel()}>Cancel</Button>
+            {props.canWriteFlows ? 
+            <><Button onClick={() => onCancel()}>Cancel</Button>
             &nbsp;&nbsp;
             <Button 
               type="primary" 
@@ -147,7 +145,9 @@ const NewFlowDialog = (props) => {
               onClick={handleSubmit}
             >
               Save
-            </Button>
+            </Button></> :
+            <Button onClick={() => onCancel()}>Close</Button>
+            }   
           </div>
         </Form.Item>
       </Form>
