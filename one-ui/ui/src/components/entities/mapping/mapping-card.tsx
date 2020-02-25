@@ -68,6 +68,15 @@ const MappingCard: React.FC<Props> = (props) => {
         return result;
     }
 
+    const extractCollectionFromSrcQuery = (query) => {
+
+        let srcCollection = query.substring(
+            query.lastIndexOf("[") + 2, 
+            query.lastIndexOf("]") - 1
+        );
+        return getInitialChars(srcCollection,30,'...');
+    }
+
     const handleCardDelete = (name) => {
         setDialogVisible(true);
         setLoadArtifactName(name);
@@ -122,7 +131,7 @@ const MappingCard: React.FC<Props> = (props) => {
                             {/* <span style={sourceFormatStyle(elem.sourceFormat)}>{elem.sourceFormat.toUpperCase()}</span> */}
                             
                         </div><br />
-                        <div className={styles.sourceQuery}>Source Query: {getInitialChars(elem.sourceQuery,32,'...')}</div>
+                        {elem.selectedSource === 'collection' ? <div className={styles.sourceQuery}>Collection: {extractCollectionFromSrcQuery(elem.sourceQuery)}</div> : <div className={styles.sourceQuery}>Source Query: {getInitialChars(elem.sourceQuery,32,'...')}</div>}
                         <br /><br />
                         <p className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</p>
                     </Card></Col>
