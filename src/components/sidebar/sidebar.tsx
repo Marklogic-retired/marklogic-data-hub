@@ -75,7 +75,7 @@ const Sidebar: React.FC<Props> = (props) => {
             } else if (datatype === 'xs:date' || datatype === 'date') {
               let rangeValues = searchOptions.searchFacets[constraint].rangeValues
               selectedFacets.push({ constraint, rangeValues });
-            } else if (datatype === 'xs:dateTime' || datatype === 'date-time') {
+            } else if (datatype === 'xs:dateTime' || datatype === 'dateTime') {
               let rangeValues = searchOptions.searchFacets[constraint].rangeValues;
               selectedFacets.push({ constraint, rangeValues });
             }
@@ -296,7 +296,7 @@ const Sidebar: React.FC<Props> = (props) => {
                   )
                 }
                 case 'xs:dateTime': {
-                  datatype = 'date-time';
+                  datatype = 'dateTime';
                   return Object.entries(facet).length !== 0 && (
                     <DateTimeFacet
                       constraint={facet.facetName}
