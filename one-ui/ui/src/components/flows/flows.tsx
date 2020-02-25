@@ -20,10 +20,6 @@ interface Props {
     canWriteFlows: boolean;
 }
 
-function callback(key) {
-    console.log(key);
-}
-
 const StepDefinitionTypeTitles = {
     'INGESTION': 'Load',
     'MAPPING': 'Map',
@@ -84,7 +80,6 @@ const Flows: React.FC<Props> = (props) => {
     }
 
     const handleStepDelete = (fName, sName) => {
-        console.log('handleStepDelete', fName, sName);
         setStepDialogVisible(true);
         setFlowName(fName);
         setStepName(sName);
@@ -96,7 +91,6 @@ const Flows: React.FC<Props> = (props) => {
     }
 
     const onStepOk = (fName, sName) => {
-        console.log('onStepOk', fName, sName);
         props.deleteStep(fName, sName)
         setStepDialogVisible(false);
     }
@@ -193,9 +187,6 @@ const Flows: React.FC<Props> = (props) => {
         return (StepDefinitionTypeTitles[stepDef]) ? StepDefinitionTypeTitles[stepDef] : 'Unknown';
     }
 
-    console.log('props.flows', props.flows);
-    console.log('props.loads', props.loads);
-
     let panels;
     if (props.flows) {
         panels = props.flows.map((flow, i) => {
@@ -263,7 +254,6 @@ const Flows: React.FC<Props> = (props) => {
                     >Create Flow</Button>
                 </div>
                 <Collapse 
-                    onChange={callback}
                     className={styles.collapseFlows}
                 >
                     {panels}
