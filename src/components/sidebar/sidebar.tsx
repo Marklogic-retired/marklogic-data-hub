@@ -13,7 +13,7 @@ import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import NumericFacet from '../numeric-facet/numeric-facet';
 import DateFacet from '../date-facet/date-facet';
-import DateTimeFacet from "../date-time-facet/date-time-facet";
+import DateTimeFacet from '../date-time-facet/date-time-facet';
 
 
 const { Panel } = Collapse;
