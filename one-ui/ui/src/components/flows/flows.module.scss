@@ -28,6 +28,11 @@
         cursor: pointer;
     }
 
+    .disabledFlowName {
+        color: #3f4692;
+        cursor: not-allowed;
+    }
+
     .panelContent {
         width: 100%;
         display: flex;

@@ -23,7 +23,7 @@ interface Props {
 const StepDefinitionTypeTitles = {
     'INGESTION': 'Load',
     'MAPPING': 'Map',
-    'MASZTERING': 'Master',
+    'MASTERING': 'Master',
     'MATCHING': 'Match',
     'MERGING': 'Merge',
     'CUSTOM': 'Custom'
@@ -170,9 +170,14 @@ const Flows: React.FC<Props> = (props) => {
             title={'Edit Flow'} 
             placement="right"
         >
-            <span className={styles.flowName} onClick={(e) => OpenEditFlowDialog(e, index)}>
-                {name}
-            </span>
+            {props.canWriteFlows ?
+                <span className={styles.flowName} onClick={(e) => OpenEditFlowDialog(e, index)}>
+                    {name}
+                </span>  :
+                <span className={styles.disabledFlowName} onClick={(e) => e.stopPropagation()}>
+                    {name}
+                </span>
+            }
         </Tooltip>
     );
 
