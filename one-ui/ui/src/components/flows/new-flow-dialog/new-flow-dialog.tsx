@@ -1,4 +1,4 @@
-import { Modal, Form, Input, Button, Tooltip, Icon, Progress, Upload, Select } from "antd";
+import { Modal, Form, Input, Button, Tooltip, Icon } from "antd";
 import React, { useState, useEffect } from "react";
 import styles from './new-flow-dialog.module.scss';
 import {NewFlowTooltips} from '../../../config/tooltips.config';
@@ -9,7 +9,6 @@ const NewFlowDialog = (props) => {
   const [description, setDescription] = useState(props.flowData && props.flowData != {} ? props.flowData.description : '');
 
   const [isFlowNameTouched, setFlowNameTouched] = useState(false);
-  const [isDescriptionTouched, setDescriptionTouched] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
   const [tobeDisabled, setTobeDisabled] = useState(false);
