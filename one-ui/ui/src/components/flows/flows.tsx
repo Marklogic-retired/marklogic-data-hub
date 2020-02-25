@@ -132,10 +132,7 @@ const Flows: React.FC<Props> = (props) => {
     const deleteIcon = (name) => (
         <span className={styles.deleteFlow}>
             {props.canWriteFlows ?
-                <Tooltip 
-                    title={'Delete Flow'} 
-                    placement="bottom"
-                >
+                <Tooltip title={'Delete Flow'} placement="bottom">
                     <i>
                         <FontAwesomeIcon 
                             icon={faTrashAlt} 
@@ -148,10 +145,7 @@ const Flows: React.FC<Props> = (props) => {
                             size="lg"/>
                     </i>
                 </Tooltip> :
-                <Tooltip 
-                    title={'Delete'} 
-                    placement="bottom"
-                >
+                <Tooltip title={'Delete'} placement="bottom">
                     <i>
                         <FontAwesomeIcon 
                             icon={faTrashAlt} 
@@ -167,18 +161,10 @@ const Flows: React.FC<Props> = (props) => {
     );
 
     const flowHeader = (name, index) => (
-        <Tooltip 
-            title={'Edit Flow'} 
-            placement="right"
-        >
-            {props.canWriteFlows ?
-                <span className={styles.flowName} onClick={(e) => OpenEditFlowDialog(e, index)}>
-                    {name}
-                </span>  :
-                <span className={styles.disabledFlowName} onClick={(e) => e.stopPropagation()}>
-                    {name}
-                </span>
-            }
+        <Tooltip title={props.canWriteFlows ? 'Edit Flow' : 'Flow Details'} placement="right">
+            <span className={styles.flowName} onClick={(e) => OpenEditFlowDialog(e, index)}>
+                {name}
+            </span>
         </Tooltip>
     );
 
@@ -235,11 +221,7 @@ const Flows: React.FC<Props> = (props) => {
                 )
             });
             return (
-                <Panel 
-                    header={flowHeader(flow.name, i)} 
-                    key={i} 
-                    extra={deleteIcon(name)}
-                >
+                <Panel header={flowHeader(flow.name, i)} key={i} extra={deleteIcon(name)}>
                     <div className={styles.panelContent}>
                         {cards}
                     </div>
@@ -271,6 +253,7 @@ const Flows: React.FC<Props> = (props) => {
                     createFlow={props.createFlow}
                     updateFlow={props.updateFlow}
                     flowData={flowData}
+                    canWriteFlows={props.canWriteFlows}
                 />
                 {deleteConfirmation}
                 {deleteStepConfirmation}
