@@ -2,14 +2,14 @@ const test = require("/test/test-helper.xqy");
 
 function invokeLinkService(flowName, stepID, artifactType, artifactName) {
   return fn.head(xdmp.invoke(
-    "/data-hub/5/data-services/artifacts/linkToStepOptions.mjs",
+    "/data-hub/5/data-services/artifacts/linkToStepOptions.sjs",
     {flowName, stepID, artifactType, artifactName}
   ));
 }
 
 function invokeRemoveLinkService(flowName, stepID, artifactType, artifactName) {
   return fn.head(xdmp.invoke(
-    "/data-hub/5/data-services/artifacts/removeLinkToStepOptions.mjs",
+    "/data-hub/5/data-services/artifacts/removeLinkToStepOptions.sjs",
     {flowName, stepID, artifactType, artifactName}
   ));
 }
