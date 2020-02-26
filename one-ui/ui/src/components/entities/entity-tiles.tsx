@@ -9,6 +9,8 @@ const EntityTiles: React.FC = () => {
 
     const [viewType, setViewType] = useState('map');
     const [entityArtifacts, setEntityArtifacts] = useState<any[]>([]);
+    const [entitiesInfo, setEntitiesInfo] = useState<any[]>([]);
+
     const { Panel } = Collapse;
 
     const [isLoading, setIsLoading] = useState(false);
@@ -29,9 +31,28 @@ const EntityTiles: React.FC = () => {
 
     useEffect(() => {
         getMappingArtifacts();
-        console.log('useEffect Called')
-        
+        getEntityInfo();
     },[isLoading]);
+
+    const getEntityInfo = async () => {
+        try {
+        let response = await axios.get(`/api/entities`);
+        if(response.status === 200) {
+            let entData:any = {};
+            response.data.map(ent => {
+                entData[ent.info.title] = ent
+            });
+            setEntitiesInfo({...entData});
+        }
+            
+              console.log('GET Entities Info API Called successfully!');
+             
+          } catch (error) {
+              let message = error;
+              console.log('Error while fetching entities Info', message);
+          }
+
+    }
 
     const getMappingArtifacts = async () => {
         try {
@@ -65,26 +86,23 @@ const EntityTiles: React.FC = () => {
               let message = error.response.data.message;
               console.log('Error while deleting load data artifact.', message);
               setIsLoading(false);
-              //handleError(error);
           }
     }
 
     const createMappingArtifact = async (mapObj) => {
-        console.log('Create API Called!')
         try {
             setIsLoading(true);
       
-            let response = await axios.post(`/api/artifacts/mapping/${mapObj.name}`, mapObj);
+            let response = await axios.post(`/api/mapping/${mapObj.name}`, mapObj);
             if (response.status === 200) {
-              console.log('Create/Update LoadDataArtifact API Called successfully!')
+              console.log('Create/Update MappingArtifact API Called successfully!')
               setIsLoading(false);
             }
           }
           catch (error) {
             let message = error.response.data.message;
-            console.log('Error While creating the Load Data artifact!', message)
+            console.log('Error While creating the Mapping artifact!', message)
             setIsLoading(false);
-            //handleError(error);
           }
     }
 
@@ -98,7 +116,8 @@ const EntityTiles: React.FC = () => {
                     deleteMappingArtifact={deleteMappingArtifact}
                     createMappingArtifact={createMappingArtifact}
                     canReadWrite={canReadWrite}
-                    canReadOnly={canReadOnly} />
+                    canReadOnly={canReadOnly}
+                    entitiesInfo={entitiesInfo[entMaps.entityType]} />
             </div>
         } else {
             output = <div><br/>This functionality is not implemented yet.</div>
