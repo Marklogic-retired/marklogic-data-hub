@@ -65,7 +65,7 @@ class HubUtils {
   }
 
   updateNodePath(docURI, xpath, newNode, database = xdmp.databaseName(xdmp.database())){
-    return fn.head(xdmp.invoke('/data-hub/5/impl/hub-utils/invoke-update-node-path.mjs',
+    return fn.head(xdmp.invoke('/data-hub/5/impl/hub-utils/invoke-update-node-path.sjs',
       {
         docURI, xpath, newNode
       },
