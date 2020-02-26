@@ -4,7 +4,7 @@ import {Card, Icon, Tooltip, Row, Col, Modal} from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
 import sourceFormatOptions from '../../../config/formats.config';
-import { convertDateFromISO } from '../../../util/conversionFunctions';
+import { convertDateFromISO, getInitialChars } from '../../../util/conversionFunctions';
 import CreateEditMappingDialog from './create-edit-mapping-dialog/create-edit-mapping-dialog';
 import SourceToEntityMap from './source-entity-map/source-to-entity-map';
 import {getResultsByQuery, getDoc} from '../../../util/search-service'
@@ -16,6 +16,7 @@ interface Props {
     createMappingArtifact: any;
     canReadOnly: any;
     canReadWrite: any;
+    entitiesInfo: any;
   }
 
 const MappingCard: React.FC<Props> = (props) => {
@@ -27,7 +28,12 @@ const MappingCard: React.FC<Props> = (props) => {
     const [dialogVisible, setDialogVisible] = useState(false);
     const [loadArtifactName, setLoadArtifactName] = useState('');
     const [mappingVisible, setMappingVisible] = useState(false);
-    const [sourceData, setSourceData] = useState({});
+    const [sourceData, setSourceData] = useState<any[]>([]);
+    const [sourceURI,setSourceURI] = useState('');
+
+    //For Entity table
+    const [entityData, setEntityData] = useState<any[]>([]);
+    let nestedDoc: any = [];
 
     //const [openLoadDataSettings, setOpenLoadDataSettings] = useState(false);
 
@@ -108,35 +114,36 @@ const MappingCard: React.FC<Props> = (props) => {
         >
         <span style={{fontSize: '16px'}}>Are you sure you want to delete this?</span>
         </Modal>;
-    
-    
-    const getSourceDataFromUri = () => {
-        let response = getResultsByQuery('data-hub-STAGING','cts.collection("http://marklogic.com/data-hub/load-data-artifact")',5, true);
-        console.log('search-response',response);
 
-        let sourceDoc = getDoc('data-hub-STAGING', '/loadData/Yeard.loadData.json')
-        console.log('sourceDoc service API called',sourceDoc)
-        // try {
-        //     let response = await axios.get('/api/artifacts/mapping');
-            
-        //     if (response.status === 200) {
-        //       setLoadDataArtifacts([...response.data]);
-        //       console.log('GET Artifacts API Called successfully!');
-        //     } 
-        //   } catch (error) {
-        //       let message = error.response.data.message;
-        //       console.log('Error while fetching load data artifacts', message);
-        //       handleError(error);
-        //   }
-        let resp = {
-            "id": 118,
-            "transactionDate": "08/29/2018",
-            "firstName": "Anjanette",
-            "lastName": "Reisenberg",
-            "gender": "F",
-            "phone": "(213)-405-4543"
+
+    const getSourceDataFromUri = async (index) => {
+
+        let database = props.data[index].sourceDatabase || 'data-hub-STAGING';
+        
+        try{
+        let response = await getResultsByQuery(database,'cts.collectionQuery("SampleCustomerNew")',5, true);
+          if (response.status === 200) {
+           setSourceURI(response.data[0].uri);
+
+           try{
+            let srcDocResp = await getDoc('STAGING', response.data[0].uri)
+            if (srcDocResp.status === 200) {
+
+                let sDta = generateNestedDataSource(srcDocResp.data,nestedDoc);
+                setSourceData(prevState => ([ ...prevState, ...sDta]));
+            }
+            } catch(error)  {
+                let message = error.response.data.message;
+                console.log('Error While loading the data from URI!', message)
+            }
+          }
         }
-        return resp;
+        catch(error)  {
+            let message = error;//.response.data.message;
+            console.log('Error While loading the data from URI!', message)
+        }
+           
+       
     }
     
     //Temp data - to be deleted
@@ -257,10 +264,32 @@ const MappingCard: React.FC<Props> = (props) => {
         
         
     }
-    let nestedDoc: any = [];
-    const openSourceToEntityMapping = (name) => {
-            setSourceData(prevState => ({ ...prevState, ...getSourceDataFromUri()}))
-            let nestDoc= generateNestedDataSource(respData,nestedDoc);
+    
+    
+    const extractEntityInfoForTable = () => {
+        let entProps = props.entitiesInfo.definitions.definitions[props.entityName].properties;
+        let entTableTempData: any = [];
+        entProps.map(prop => {
+            let propty = {
+                name : prop.name,
+                type : prop.datatype
+            }
+            entTableTempData.push(propty)
+        })
+        setEntityData([...entTableTempData]);
+        
+        console.log('entProps',entProps)
+
+    }
+
+    const openSourceToEntityMapping = (name,index) => {
+            setMapData(prevState => ({ ...prevState, ...props.data[index]}));
+            //setSourceData(prevState => ({ ...prevState, ...getSourceDataFromUri()}))
+ 
+            getSourceDataFromUri(index);
+            extractEntityInfoForTable();
+            let nestDoc= generateNestedDataSource(sourceData,nestedDoc);
+            console.log('nestDoc',nestDoc)
             setNestedSourceData([...nestDoc]);
             setMapName(name);
             setMappingVisible(true);
@@ -293,7 +322,7 @@ const MappingCard: React.FC<Props> = (props) => {
                         className={styles.cardStyle}
                         size="small"
                     >
-                        <div style={cardContainer} onClick={() => openSourceToEntityMapping(elem.name)}>
+                        <div style={cardContainer} onClick={() => openSourceToEntityMapping(elem.name,index)}>
                         <div className={styles.formatFileContainer}>
                             <span className={styles.mapNameStyle}>{getInitialChars(elem.name, 27, '...')}</span>
                             {/* <span style={sourceFormatStyle(elem.sourceFormat)}>{elem.sourceFormat.toUpperCase()}</span> */}
@@ -317,11 +346,14 @@ const MappingCard: React.FC<Props> = (props) => {
                 canReadOnly={props.canReadOnly}/>
                 {deleteConfirmation}
                 <SourceToEntityMap 
-                sourceData={nestedSourceData}
+                sourceData={sourceData}
+                mapData={mapData}
+                entityData={entityData}
                 mappingVisible={mappingVisible}
                 setMappingVisible={setMappingVisible}
                 mapName={mapName}
-                entityName={props.entityName}/>
+                entityName={props.entityName}
+                updateMappingArtifact={props.createMappingArtifact}/>
                 
         </div>
     );

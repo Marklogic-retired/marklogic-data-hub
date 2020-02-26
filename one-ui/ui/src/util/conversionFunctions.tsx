@@ -28,6 +28,16 @@ const convertDateFromISO = (InputDate) => {
 
 }
 
+const getInitialChars = (str, num, suffix) => {
+    suffix = suffix ? suffix : '...';
+    let result = str;
+    if (typeof str === 'string' && str.length > num) {
+        result = str.substr(0, num) + suffix;
+    }
+    return result;
+}
+
 export {
-    convertDateFromISO
+    convertDateFromISO,
+    getInitialChars
 }

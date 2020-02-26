@@ -1,15 +1,24 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, CSSProperties } from "react";
 import { Modal, Table, Icon, Popover, Input, Button, Alert, message } from "antd";
 import styles from './source-to-entity-map.module.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faObjectUngroup, faList } from "@fortawesome/free-solid-svg-icons";
+import { getInitialChars } from "../../../../util/conversionFunctions";
 
 const SourceToEntityMap = (props) => {
 
     const [mapExp, setMapExp] = useState({});
 
     const [mapExpTouched, setMapExpTouched] = useState(false);
+    const [mapExpression, setMapExpression] = useState({});
+    const [editingURI, setEditingUri] = useState(false);
+
+    const [mapSaved, setMapSaved] = useState(false);
+
+    const sampleDocUri: CSSProperties = {
+
+    }
 
     //Documentation links for using Xpath expressions
     const xPathDocLinks = <div className={styles.xpathDoc}><span id="doc">Documentation:</span>
@@ -22,6 +31,33 @@ const SourceToEntityMap = (props) => {
 
     const { TextArea } = Input;
 
+    const handleEditingURI = () => {
+
+    }
+
+    const srcDetails = <div className={styles.xpathDoc}><span id="doc">Collection: </span>
+        <div>URI: </div>
+        {/* <span onClick={handleEditingURI} style={sampleDocUri} >{{  }}</span>
+        <span onClick={handleEditingURI}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> */}
+    </div>;
+
+
+    useEffect(() => {
+        initializeMapExpressions();
+    },[props.mapData]);
+
+
+    //Set the mapping expressions, if already exists.
+    const initializeMapExpressions = () => {
+        if(props.mapData && props.mapData.properties) {
+            let obj = {};
+            Object.keys(props.mapData.properties).map(key => {
+                obj[key] = props.mapData.properties[key]['sourcedFrom'];
+            });
+            setMapExp({...mapExp, ...obj});
+        }
+    }
+
     const onOk = () => {
         props.setMappingVisible(false)
         console.log('Map Saved!')
@@ -31,10 +67,51 @@ const SourceToEntityMap = (props) => {
         props.setMappingVisible(false)
         console.log('Map cancelled!')
     }
+    const handleExpSubmit = async () => {
+        if(mapExpTouched){
+        let obj = {};
+        Object.keys(mapExp).map(key => {
+            obj[key] = {"sourcedFrom" : mapExp[key]}
+        })
+        console.log('mapData',props.mapData);
+        let dataPayload = {
+                name: props.mapName,
+                targetEntity: props.mapData.targetEntity,
+                description: props.mapData.description,
+                selectedSource: props.mapData.selectedSource,
+                sourceQuery: props.mapData.sourceQuery,
+                properties: obj
+              }
+        console.log('dataPayLoad',dataPayload);
+            
+        await props.updateMappingArtifact(dataPayload);
+        }
+        console.log('this is jsut a sample')
+        setMapExpTouched(false);
+        
+    }
 
     const handleMapExp = (name,event) => {
         setMapExpTouched(true);
         setMapExp({...mapExp, [name]: event.target.value});
+        
+        // dataPayload = {
+        //     name: mapName,
+        //     targetEntity: props.targetEntity,
+        //     description: description,
+        //     selectedSource: selectedSource,
+        //     sourceQuery: sQuery,
+        //     collection: collections
+        //     properties: {
+        //       'id': {
+        //         'sourcedFrom': faSortAlphaDownAlt,
+        //       }
+        //       'sdged': {
+        //         'sourcedFrom': faSortAlphaDownAlt,
+        //       }
+        //     }
+        //   }
+        // }
         // let obj = {
         //     name: name,
         //     expr: mapExp[name],
@@ -60,7 +137,8 @@ const SourceToEntityMap = (props) => {
           dataIndex: 'val',
           key: 'val',
           sorter: (a:any, b:any) => a.val.length - b.val.length,
-          width: '40%'
+          width: '40%',
+          render: (text) => getInitialChars(text,20,'...')
         }
     ];
 
@@ -90,6 +168,7 @@ const SourceToEntityMap = (props) => {
                 className={styles.mapExpression}
                 value={mapExp[row.name]}
                 onChange={(e) => handleMapExp(row.name,e)}
+                onBlur={handleExpSubmit}
                 autoSize={{ minRows: 1 }}></TextArea>&nbsp;&nbsp;
                 <i><FontAwesomeIcon icon={faList} size="lg" className={styles.listIcon}
                 /></i>&nbsp;&nbsp;
@@ -153,7 +232,7 @@ return (<Modal
         >
             <div className={styles.header}>
                 <span className={styles.headerTitle}>{props.mapName}</span>
-                {/* <span><Alert type="success" message="All changes are saved to disk on 02/24/2020 12:11:34" banner className={styles.saveMessage}/></span> */}
+            {mapSaved ? <span><Alert type="success" message="All changes are saved to disk on 02/24/2020 12:11:34" banner className={styles.saveMessage}/></span> : ''}
             </div>
             
         
@@ -163,7 +242,10 @@ return (<Modal
             <div className={styles.sourceDetails}>
                 <p className={styles.sourceName}
                 ><i><FontAwesomeIcon icon={faList} size="sm" className={styles.sourceDataIcon}
-                /></i> Source Data <Icon type="question-circle" className={styles.questionCircle} theme="filled" /></p>
+                /></i> Source Data <Popover
+                content={srcDetails}
+                trigger="click"
+                placement="right" ><Icon type="question-circle" className={styles.questionCircle} theme="filled" /></Popover></p>
             </div>
         <Table
         pagination={false}
@@ -190,7 +272,7 @@ return (<Modal
         //size="small"
         tableLayout="unset"
         columns={entityColumns}
-        dataSource={entData}
+        dataSource={props.entityData}
         rowKey="name"
         />
         </div>
