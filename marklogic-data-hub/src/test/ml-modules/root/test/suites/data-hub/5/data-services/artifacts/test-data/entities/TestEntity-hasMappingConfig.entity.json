@@ -1,0 +1,16 @@
+{
+  "info": {
+    "title": "TestEntity-hasMappingConfig",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "TestEntity-hasMappingConfig": {
+      "properties": {
+        "prop1": {
+          "datatype": "string"
+        }
+      }
+    }
+  }
+}
