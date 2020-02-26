@@ -15,11 +15,12 @@
  */
 'use strict';
 
-const doc = cts.doc(external.docURI);
+var docURI, xpath, newNode;
+const doc = cts.doc(docURI);
 
 if (fn.exists(doc)) {
-    const oldNode = fn.head(cts.doc(external.docURI).xpath(external.xpath));
+    const oldNode = fn.head(cts.doc(docURI).xpath(xpath));
     if (fn.exists(oldNode)) {
-        xdmp.nodeReplace(oldNode, external.newNode);
+        xdmp.nodeReplace(oldNode, newNode);
     }
 }
