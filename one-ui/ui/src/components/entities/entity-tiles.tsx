@@ -93,16 +93,18 @@ const EntityTiles: React.FC = () => {
         try {
             setIsLoading(true);
       
-            let response = await axios.post(`/api/mapping/${mapObj.name}`, mapObj);
+            let response = await axios.post(`/api/artifacts/mapping/${mapObj.name}`, mapObj);
             if (response.status === 200) {
               console.log('Create/Update MappingArtifact API Called successfully!')
               setIsLoading(false);
+              return true;
             }
           }
           catch (error) {
-            let message = error.response.data.message;
+            let message = error;//.response.data.message;
             console.log('Error While creating the Mapping artifact!', message)
             setIsLoading(false);
+            return false;
           }
     }
 
