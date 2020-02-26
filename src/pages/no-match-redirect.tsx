@@ -9,7 +9,7 @@ import { MlButton } from 'marklogic-ui-library';
 const NoMatchRedirect = ({history}) => {
 
   const { user, clearErrorMessage, userNotAuthenticated } = useContext(UserContext);
-  const [sessionCount, setSessionCount] = useState(0);
+  let sessionCount = 0;
 
   useEffect(() => {
     clearErrorMessage();
@@ -23,7 +23,7 @@ const NoMatchRedirect = ({history}) => {
     if (sessionCount === user.maxSessionTime) {
       userNotAuthenticated();
     } else {
-      setSessionCount(sessionCount + 1);
+      sessionCount += 1;
     }
   }, 1000);
 

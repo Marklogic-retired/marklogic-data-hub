@@ -50,7 +50,7 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [active, setIsActive] = useState(user.tableView);
   const [snippetActive, setIsSnippetActive] = useState(!user.tableView);
   const [endScroll, setEndScroll] = useState(false);
-  const [sessionCount, setSessionCount] = useState(0);
+  let sessionCount = 0;
 
   const getEntityModel = async () => {
     try {
@@ -89,7 +89,7 @@ const Browse: React.FC<Props> = ({ location }) => {
         setData(response.data.results);
         setFacets(response.data.facets);
         setTotalDocuments(response.data.total);
-        setSessionCount(0);
+        sessionCount = 0;
       }
     } catch (error) {
       handleError(error);
@@ -165,23 +165,19 @@ const Browse: React.FC<Props> = ({ location }) => {
     }
   },[endScroll])
 
-  useScrollPosition(
-    ({ currPos }) => {
-      if (currPos.endOfScroll && !endScroll) {
-        setEndScroll(true);
-      } else if (!currPos.endOfScroll && endScroll) {
-        setEndScroll(false);
-      }
-    },
-    [endScroll],
-    null
-  )
+  useScrollPosition(({ currPos }) => {
+    if (currPos.endOfScroll && !endScroll) {
+      setEndScroll(true);
+    } else if (!currPos.endOfScroll && endScroll) {
+      setEndScroll(false);
+    }
+  }, [endScroll], null );
 
   useInterval(() => {
     if (sessionCount === user.maxSessionTime) {
       userNotAuthenticated();
     } else {
-      setSessionCount(sessionCount + 1);
+      sessionCount += 1;
     }
   }, 1000);
 

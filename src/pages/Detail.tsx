@@ -31,7 +31,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [contentType, setContentType] = useState();
   const [xml, setXml] = useState();
-  const [sessionCount, setSessionCount] = useState(0);
+  let sessionCount = 0;
 
   const componentIsMounted = useRef(true);
 
@@ -58,7 +58,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
             setData(xmlParser(decodedXml).Document);
             setXml(xmlDecoder(decodedXml));
           }
-          setSessionCount(0);
+          sessionCount = 0;
           setIsLoading(false);
         }
 
@@ -94,7 +94,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
     if (sessionCount === user.maxSessionTime) {
       userNotAuthenticated();
     } else {
-      setSessionCount(sessionCount + 1);
+      sessionCount += 1;
     }
   }, 1000);
 
