@@ -13,6 +13,7 @@ import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import NumericFacet from '../numeric-facet/numeric-facet';
 import DateFacet from '../date-facet/date-facet';
+import DateTimeFacet from '../date-time-facet/date-time-facet';
 
 
 const { Panel } = Collapse;
@@ -69,11 +70,13 @@ const Sidebar: React.FC<Props> = (props) => {
                 selectedFacets.push({ constraint, facet });
               });
             } else if (integers.includes(datatype) || decimals.includes(datatype)) {
-              // TODO add support for other data types
               let rangeValues = searchOptions.searchFacets[constraint].rangeValues
               selectedFacets.push({ constraint, rangeValues });
             } else if (datatype === 'xs:date' || datatype === 'date') {
               let rangeValues = searchOptions.searchFacets[constraint].rangeValues
+              selectedFacets.push({ constraint, rangeValues });
+            } else if (datatype === 'xs:dateTime' || datatype === 'dateTime') {
+              let rangeValues = searchOptions.searchFacets[constraint].rangeValues;
               selectedFacets.push({ constraint, rangeValues });
             }
           }
@@ -238,6 +241,14 @@ const Sidebar: React.FC<Props> = (props) => {
     setAllSelectedFacets(updateFacets);
   }
 
+  const onDateTimeFacetChange = (datatype, facet, value) => {
+    let updateFacets = { ...allSelectedFacets };
+    if (value.length > 1) {
+      updateFacets = { ...updateFacets, [facet]: { dataType: datatype, rangeValues: { lowerBound: moment(value[0]).format('YYYY-MM-DDTHH:mm:ss'), upperBound: moment(value[1]).format('YYYY-MM-DDTHH:mm:ss') } } }
+    }
+    setAllSelectedFacets(updateFacets);
+  }
+
   return (
     <div className={styles.sideBarContainer} id={'sideBarContainer'}>
       <SelectedFacets selectedFacets={selectedFacets} />
@@ -284,6 +295,19 @@ const Sidebar: React.FC<Props> = (props) => {
                     />
                   )
                 }
+                case 'xs:dateTime': {
+                  datatype = 'dateTime';
+                  return Object.entries(facet).length !== 0 && (
+                    <DateTimeFacet
+                      constraint={facet.facetName}
+                      facet={facet}
+                      datatype={datatype}
+                      key={facet.facetName}
+                      onChange={onDateTimeFacetChange}
+                      applyAllFacets={applyAllFacets}
+                    />
+                  )
+                }
                 case 'xs:int': {
                   datatype = 'int';
                   step = 1;
@@ -319,7 +343,6 @@ const Sidebar: React.FC<Props> = (props) => {
                   step = 0.1;
                   break;
                 }
-                //add date type cases
 
                 default:
                   break;
