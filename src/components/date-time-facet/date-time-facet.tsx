@@ -44,9 +44,19 @@ const DateTimeFacet: React.FC<Props> = (props) => {
     }
   }, [searchOptions]);
 
+  const formatTitle = () => {
+    let objects = props.name.split('.');
+    if (objects.length > 2) {
+      let first = objects[0];
+      let last = objects.slice(-1);
+      return first + '. ... .' + last;
+    }
+    return props.name;
+  }
+
   return (
     <div className={styles.name} >
-      <p className={styles.facetName}>{props.name}</p>
+      <p className={styles.facetName}>{formatTitle()}</p>
       <RangePicker
         showTime={{ format: 'HH:mm:ss' }}
         format="YYYY-MM-DD HH:mm:ss"
