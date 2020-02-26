@@ -3,6 +3,7 @@
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const datahub = DataHubSingleton.instance();
 const es = require('/MarkLogic/entity-services/entity-services');
+const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 const inst = require('/MarkLogic/entity-services/entity-services-instance');
 const mappingLib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
 const sem = require("/MarkLogic/semantics.xqy");
@@ -155,7 +156,7 @@ function getRelatedMappings(mapping, related = [mapping]) {
 
 function getTargetEntity(targetEntityType) {
   if (!entitiesByTargetType[targetEntityType]) {
-    let entityModel = getModel(targetEntityType);
+    let entityModel = entityLib.findModelForEntityIRI(targetEntityType);
     if (fn.empty(entityModel)) {
       entityModel = fallbackLegacyEntityLookup(targetEntityType)
     }
@@ -199,14 +200,6 @@ function buildEntityMappingXML(mapping, entity) {
 
 function getEntityName(targetEntityType) {
   return fn.head(fn.reverse(fn.tokenize(targetEntityType,'/')));
-}
-
-function getModel(targetEntityType) {
-  return fn.head(cts.search(
-      cts.andQuery([
-        cts.collectionQuery('http://marklogic.com/entity-services/models'),
-        cts.tripleRangeQuery(sem.iri(targetEntityType), sem.curieExpand("rdf:type"), sem.curieExpand("es:EntityType",semPrefixes), "=")
-      ])));
 }
 
 function fallbackLegacyEntityLookup(targetEntityType) {
