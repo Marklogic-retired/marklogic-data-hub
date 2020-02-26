@@ -293,7 +293,7 @@ const MappingCard: React.FC<Props> = (props) => {
             setNestedSourceData([...nestDoc]);
             setMapName(name);
             setMappingVisible(true);
-    }
+      }
 
 
     const cardContainer: CSSProperties = {
@@ -353,7 +353,9 @@ const MappingCard: React.FC<Props> = (props) => {
                 setMappingVisible={setMappingVisible}
                 mapName={mapName}
                 entityName={props.entityName}
-                updateMappingArtifact={props.createMappingArtifact}/>
+                updateMappingArtifact={props.createMappingArtifact}
+                canReadWrite={props.canReadWrite}
+                canReadOnly={props.canReadOnly}/>
                 
         </div>
     );

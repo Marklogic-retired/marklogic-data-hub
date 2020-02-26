@@ -4,7 +4,7 @@ import { Modal, Table, Icon, Popover, Input, Button, Alert, message } from "antd
 import styles from './source-to-entity-map.module.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faObjectUngroup, faList } from "@fortawesome/free-solid-svg-icons";
-import { getInitialChars } from "../../../../util/conversionFunctions";
+import { getInitialChars, convertDateFromISO } from "../../../../util/conversionFunctions";
 
 const SourceToEntityMap = (props) => {
 
@@ -73,7 +73,7 @@ const SourceToEntityMap = (props) => {
         Object.keys(mapExp).map(key => {
             obj[key] = {"sourcedFrom" : mapExp[key]}
         })
-        console.log('mapData',props.mapData);
+        //console.log('mapData',props.mapData);
         let dataPayload = {
                 name: props.mapName,
                 targetEntity: props.mapData.targetEntity,
@@ -82,11 +82,13 @@ const SourceToEntityMap = (props) => {
                 sourceQuery: props.mapData.sourceQuery,
                 properties: obj
               }
-        console.log('dataPayLoad',dataPayload);
+        //console.log('dataPayLoad',dataPayload);
             
-        await props.updateMappingArtifact(dataPayload);
+        let mapSavedResult = await props.updateMappingArtifact(dataPayload);
+        console.log('mapSavedResult',mapSavedResult)
+        setMapSaved(mapSavedResult);
         }
-        console.log('this is jsut a sample')
+        
         setMapExpTouched(false);
         
     }
@@ -169,7 +171,8 @@ const SourceToEntityMap = (props) => {
                 value={mapExp[row.name]}
                 onChange={(e) => handleMapExp(row.name,e)}
                 onBlur={handleExpSubmit}
-                autoSize={{ minRows: 1 }}></TextArea>&nbsp;&nbsp;
+                autoSize={{ minRows: 1 }}
+                disabled={!props.canReadWrite}></TextArea>&nbsp;&nbsp;
                 <i><FontAwesomeIcon icon={faList} size="lg" className={styles.listIcon}
                 /></i>&nbsp;&nbsp;
                 <span ><Button className={styles.functionIcon} size="small">fx</Button></span></div>)
@@ -217,7 +220,14 @@ const SourceToEntityMap = (props) => {
        }
     }
     const success = () => {
-        message.success('All changes are saved to disk on 02/24/2020 12:11:34', 3);
+        //message.success('All changes are saved to disk on 02/24/2020 12:11:34', 3);
+        let message = `All changes are saved to disk on ${convertDateFromISO(props.mapData.lastUpdated)}`
+        let msg = <span><Alert type="success" message={message} banner className={styles.saveMessage}/></span>
+        setTimeout(() => {
+            setMapSaved(false);
+        }, 3000);
+        return msg;
+
       };
 
 
@@ -232,7 +242,7 @@ return (<Modal
         >
             <div className={styles.header}>
                 <span className={styles.headerTitle}>{props.mapName}</span>
-            {mapSaved ? <span><Alert type="success" message="All changes are saved to disk on 02/24/2020 12:11:34" banner className={styles.saveMessage}/></span> : ''}
+            {mapSaved ? success() : <span className={styles.noMessage}></span>}
             </div>
             
         
