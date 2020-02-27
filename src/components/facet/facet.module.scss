@@ -10,6 +10,10 @@
   .name {
     font-size: 15px;
     font-weight: bold;
+    text-overflow: ellipsis;
+    overflow: hidden; 
+    width: 200px; 
+    white-space: nowrap;
   }
 
   .summary {

@@ -139,10 +139,20 @@ const Facet: React.FC<Props> = (props) => {
     </div>
     );
 
+    const formatTitle = () => {
+      let objects = props.name.split('.');
+      if (objects.length > 2) {
+        let first = objects[0];
+        let last = objects.slice(-1);
+        return first + '. ... .' + last;
+      }
+      return props.name;
+    }
+    
   return (
     <div className={styles.facetContainer} data-cy={stringConverter(props.name) + "-facet-block"}>
       <div className={styles.header}>
-        <div className={styles.name} data-cy={stringConverter(props.name) + "-facet"}>{props.name}<Tooltip
+        <div className={styles.name} data-cy={stringConverter(props.name) + "-facet"}>{<Tooltip title={props.name}>{formatTitle()}</Tooltip>}<Tooltip
           title={props.tooltip} placement="topLeft">
           {props.tooltip ?
             <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm"/> : ''}</Tooltip></div>

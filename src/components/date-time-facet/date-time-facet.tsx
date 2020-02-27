@@ -8,7 +8,7 @@ import styles from './date-time-facet.module.scss';
 const { RangePicker } = DatePicker;
 
 interface Props {
-  facet: any
+  name: any
   constraint: string;
   datatype: any
   key: any
@@ -26,7 +26,7 @@ const DateTimeFacet: React.FC<Props> = (props) => {
 
   const onChange = (e) => {
     toggleApply(true);
-    props.onChange(props.datatype, props.facet.facetName, e);
+    props.onChange(props.datatype, props.name, e);
     (e[0] && e[1]) && setDateTimePickerValue([moment(e[0].format('YYYY-MM-DDTHH:mm:ss')), moment(e[1].format('YYYY-MM-DDTHH:mm:ss'))])
   }
 
@@ -44,9 +44,19 @@ const DateTimeFacet: React.FC<Props> = (props) => {
     }
   }, [searchOptions]);
 
+  const formatTitle = () => {
+    let objects = props.name.split('.');
+    if (objects.length > 2) {
+      let first = objects[0];
+      let last = objects.slice(-1);
+      return first + '. ... .' + last;
+    }
+    return props.name;
+  }
+
   return (
     <div className={styles.name} >
-      <p className={styles.facetName}>{props.facet.facetName}</p>
+      <p className={styles.facetName}>{formatTitle()}</p>
       <RangePicker
         showTime={{ format: 'HH:mm:ss' }}
         format="YYYY-MM-DD HH:mm:ss"
@@ -54,7 +64,7 @@ const DateTimeFacet: React.FC<Props> = (props) => {
         onChange={onChange}
         //onOk={onOk}
         value={dateTimePickerValue}
-        key={props.facet.facetName}
+        key={props.name}
       />
       <br/>
       {showApply && (

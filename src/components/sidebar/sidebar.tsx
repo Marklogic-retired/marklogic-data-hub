@@ -37,7 +37,6 @@ const Sidebar: React.FC<Props> = (props) => {
   const [allSelectedFacets, setAllSelectedFacets] = useState<any>(searchOptions.searchFacets);
   const [datePickerValue, setDatePickerValue] = useState<any[]>([null, null]);
   const [showApply, toggleApply] = useState(false);
-
   let integers = ['int', 'integer', 'short', 'long'];
   let decimals = ['decimal', 'double', 'float'];
 
@@ -55,6 +54,7 @@ const Sidebar: React.FC<Props> = (props) => {
           let entityFacetValues = parsedFacets.find(facet => facet.facetName === rangeIndex);
           return entityFacetValues ? { ...entityFacetValues } : false;
         });
+
         setEntityFacets(newEntityFacets ? newEntityFacets.filter(item => item !== false) : []);
       }
       if (Object.entries(searchOptions.searchFacets).length !== 0) {
@@ -264,104 +264,109 @@ const Sidebar: React.FC<Props> = (props) => {
             {entityFacets.length ? entityFacets.map((facet, index) => {
               let datatype = '';
               let step;
-              switch (facet.type) {
-                case 'xs:string': {
-                  return Object.entries(facet).length !== 0 && (
-                    <Facet
-                      name={facet.hasOwnProperty('displayName') ? facet.displayName : facet.facetName}
-                      constraint={facet.facetName}
-                      facetValues={facet.facetValues}
-                      key={facet.facetName}
-                      tooltip=""
-                      facetType={facet.type}
-                      facetCategory="entity"
-                      selectedEntity={props.selectedEntities}
-                      updateSelectedFacets={updateSelectedFacets}
-                      applyAllFacets={applyAllFacets}
-                      addFacetValues={addFacetValues}
-                    />
+              let entity = props.entityDefArray.find(entity => entity.name === props.selectedEntities[0])
+              let pathIndex = entity['pathIndex'].find(({ index }) => index === facet.facetName);
+              if (pathIndex) {
+                switch (facet.type) {
+                  case 'xs:string': {
+                    return Object.entries(facet).length !== 0 && (
+                      <Facet
+                        name={pathIndex.entityPath}
+                        constraint={pathIndex.entityPath}
+                        facetValues={facet.facetValues}
+                        key={facet.facetName}
+                        tooltip=""
+                        facetType={facet.type}
+                        facetCategory="entity"
+                        selectedEntity={props.selectedEntities}
+                        updateSelectedFacets={updateSelectedFacets}
+                        applyAllFacets={applyAllFacets}
+                        addFacetValues={addFacetValues}
+                      />
+                    )
+                  }
+                  case 'xs:date': {
+                    datatype = 'date';
+                    return Object.entries(facet).length !== 0 && (
+                      <DateFacet
+                        constraint={pathIndex.entityPath}
+                        name={pathIndex.entityPath}
+                        datatype={datatype}
+                        key={facet.facetName}
+                        onChange={onDateFacetChange}
+                        applyAllFacets={applyAllFacets}
+                      />
+                    )
+                  }
+                  case 'xs:dateTime': {
+                    datatype = 'dateTime';
+                    return Object.entries(facet).length !== 0 && (
+                      <DateTimeFacet
+                        constraint={pathIndex.entityPath}
+                        name={pathIndex.entityPath}
+                        datatype={datatype}
+                        key={facet.facetName}
+                        onChange={onDateTimeFacetChange}
+                        applyAllFacets={applyAllFacets}
+                      />
+                    )
+                  }
+                  case 'xs:int': {
+                    datatype = 'int';
+                    step = 1;
+                    break;
+                  }
+                  case 'xs:integer': {
+                    datatype = 'integer';
+                    step = 1;
+                    break;
+                  }
+                  case 'xs:short': {
+                    datatype = 'short';
+                    step = 1;
+                    break;
+                  }
+                  case 'xs:long': {
+                    datatype = 'long';
+                    step = 1;
+                    break;
+                  }
+                  case 'xs:decimal': {
+                    datatype = 'decimal';
+                    step = 0.1;
+                    break;
+                  }
+                  case 'xs:double': {
+                    datatype = 'double';
+                    step = 0.1;
+                    break;
+                  }
+                  case 'xs:float': {
+                    datatype = 'float';
+                    step = 0.1;
+                    break;
+                  }
+                  //add date type cases
+  
+                  default:
+                    break;
+                }
+  
+                if (step && facet.facetValues.length) {
+                  return (
+                    <div key={index}>
+                      <NumericFacet
+                        constraint={pathIndex.entityPath}
+                        name={pathIndex.entityPath}
+                        step={step}
+                        datatype={datatype}
+                        key={facet.facetName}
+                        onChange={onNumberFacetChange}
+                        applyAllFacets={applyAllFacets}
+                      />
+                    </div>
                   )
-                }
-                case 'xs:date': {
-                  datatype = 'date';
-                  return Object.entries(facet).length !== 0 && (
-                    <DateFacet
-                      constraint={facet.facetName}
-                      facet={facet}
-                      datatype={datatype}
-                      key={facet.facetName}
-                      onChange={onDateFacetChange}
-                      applyAllFacets={applyAllFacets}
-                    />
-                  )
-                }
-                case 'xs:dateTime': {
-                  datatype = 'dateTime';
-                  return Object.entries(facet).length !== 0 && (
-                    <DateTimeFacet
-                      constraint={facet.facetName}
-                      facet={facet}
-                      datatype={datatype}
-                      key={facet.facetName}
-                      onChange={onDateTimeFacetChange}
-                      applyAllFacets={applyAllFacets}
-                    />
-                  )
-                }
-                case 'xs:int': {
-                  datatype = 'int';
-                  step = 1;
-                  break;
-                }
-                case 'xs:integer': {
-                  datatype = 'integer';
-                  step = 1;
-                  break;
-                }
-                case 'xs:short': {
-                  datatype = 'short';
-                  step = 1;
-                  break;
-                }
-                case 'xs:long': {
-                  datatype = 'long';
-                  step = 1;
-                  break;
-                }
-                case 'xs:decimal': {
-                  datatype = 'decimal';
-                  step = 0.1;
-                  break;
-                }
-                case 'xs:double': {
-                  datatype = 'double';
-                  step = 0.1;
-                  break;
-                }
-                case 'xs:float': {
-                  datatype = 'float';
-                  step = 0.1;
-                  break;
-                }
-
-                default:
-                  break;
-              }
-
-              if (step && facet.facetValues.length) {
-                return (
-                  <div key={index}>
-                    <NumericFacet
-                      constraint={facet.facetName}
-                      facet={facet}
-                      step={step}
-                      datatype={datatype}
-                      key={facet.facetName}
-                      onChange={onNumberFacetChange}
-                      applyAllFacets={applyAllFacets}
-                    />
-                  </div>
-                )
+                }                
               }
             }) :
               <div>No Facets</div>

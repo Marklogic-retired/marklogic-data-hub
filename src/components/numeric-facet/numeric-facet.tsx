@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Slider, InputNumber } from 'antd';
+import { Slider, InputNumber, Tooltip } from 'antd';
 import { MlButton } from 'marklogic-ui-library';
 import { SearchContext } from '../../util/search-context';
 import styles from './numeric-facet.module.scss';
 import axios from "axios";
 
 interface Props {
-  facet: any
+  name: any
   step: number
   constraint: string;
   datatype: any
@@ -31,7 +31,7 @@ const NumericFacet: React.FC<Props> = (props) => {
       data: {
         "schemaName": searchOptions.entityNames[0],
         "entityName": searchOptions.entityNames[0],
-        "facetName": props.facet.facetName
+        "facetName": props.name
       }
     });
 
@@ -63,7 +63,7 @@ const NumericFacet: React.FC<Props> = (props) => {
   const onChange = (e) => {
     setRange(e);
     toggleApply(true);
-    props.onChange(props.datatype, props.facet.facetName, e)
+    props.onChange(props.datatype, props.name, e)
   }
 
   const onChangeMinInput = (e) => {
@@ -72,7 +72,7 @@ const NumericFacet: React.FC<Props> = (props) => {
       modifiedRange[0] = e;
       setRange(modifiedRange);
       toggleApply(true);
-      props.onChange(props.datatype, props.facet.facetName, modifiedRange)
+      props.onChange(props.datatype, props.name, modifiedRange)
     }
   }
 
@@ -82,7 +82,7 @@ const NumericFacet: React.FC<Props> = (props) => {
       modifiedRange[1] = e;
       setRange(modifiedRange);
       toggleApply(true);
-      props.onChange(props.datatype, props.facet.facetName, modifiedRange)
+      props.onChange(props.datatype, props.name, modifiedRange)
     }
   }
 
@@ -91,7 +91,7 @@ const NumericFacet: React.FC<Props> = (props) => {
   }, []);
 
   useEffect(() => {
-    !Object.keys(searchOptions.searchFacets).includes(props.facet.facetName) && setRange(rangeLimit)
+    !Object.keys(searchOptions.searchFacets).includes(props.name) && setRange(rangeLimit)
 
     if (Object.entries(searchOptions.searchFacets).length !== 0 && searchOptions.searchFacets.hasOwnProperty(props.constraint)) {
       for (let facet in searchOptions.searchFacets) {
@@ -118,9 +118,19 @@ const NumericFacet: React.FC<Props> = (props) => {
     }
   }, [searchOptions]);
 
+  const formatTitle = () => {
+    let objects = props.name.split('.');
+    if (objects.length > 2) {
+      let first = objects[0];
+      let last = objects.slice(-1);
+      return first + '. ... .' + last;
+    }
+    return props.name;
+  }
+
   return (
     <div className={styles.facetName} >
-      <p className={styles.name}>{props.facet.facetName}</p>
+      <p className={styles.name}>{<Tooltip title={props.name}>{formatTitle()}</Tooltip>}</p>
       <div className={styles.numericFacet}>
         <Slider className={styles.slider} range={true} value={[range[0], range[1]]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={(e) => onChange(e)} />
         <InputNumber className={styles.inputNumber} value={range[0]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={onChangeMinInput} />
