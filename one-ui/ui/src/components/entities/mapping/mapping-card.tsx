@@ -1,4 +1,4 @@
-import React, { CSSProperties, useState } from 'react';
+import React, { CSSProperties, useState, useEffect } from 'react';
 import styles from './mapping-card.module.scss';
 import {Card, Icon, Tooltip, Row, Col, Modal} from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -23,19 +23,22 @@ const MappingCard: React.FC<Props> = (props) => {
     const [newMap, setNewMap] = useState(false);
     const [title, setTitle] = useState('');
     const [mapData, setMapData] = useState({});
-    const [nestedSourceData, setNestedSourceData] = useState<any[]>([]);
     const [mapName, setMapName] = useState({});
     const [dialogVisible, setDialogVisible] = useState(false);
     const [loadArtifactName, setLoadArtifactName] = useState('');
     const [mappingVisible, setMappingVisible] = useState(false);
     const [sourceData, setSourceData] = useState<any[]>([]);
     const [sourceURI,setSourceURI] = useState('');
+    const [docNotFound, setDocNotFound] = useState(false);
 
     //For Entity table
     const [entityData, setEntityData] = useState<any[]>([]);
-    let nestedDoc: any = [];
 
     //const [openLoadDataSettings, setOpenLoadDataSettings] = useState(false);
+
+    useEffect(() => {
+        setSourceData([]);
+    },[props.data]);
 
 
     const OpenAddNewDialog = () => {
@@ -119,88 +122,40 @@ const MappingCard: React.FC<Props> = (props) => {
     const getSourceDataFromUri = async (index) => {
 
         let database = props.data[index].sourceDatabase || 'data-hub-STAGING';
+        let sQuery = props.data[index].sourceQuery;
+        console.log('sQuery',sQuery);
         
         try{
-        let response = await getResultsByQuery(database,'cts.collectionQuery("SampleCustomerNew")',5, true);
+        let response = await getResultsByQuery(database,sQuery,10, true);
           if (response.status === 200) {
            setSourceURI(response.data[0].uri);
 
            try{
             let srcDocResp = await getDoc('STAGING', response.data[0].uri)
             if (srcDocResp.status === 200) {
-
-                let sDta = generateNestedDataSource(srcDocResp.data,nestedDoc);
-                setSourceData(prevState => ([ ...prevState, ...sDta]));
+                let nestedDoc: any = [];
+                let docRoot = srcDocResp.data['envelope'] ? srcDocResp.data['envelope']['instance'] : srcDocResp.data;
+                let sDta = generateNestedDataSource(docRoot,nestedDoc);
+                console.log('sData' , sDta)
+                //setSourceData(prevState => ([ ...prevState, ...sDta]));
+                setSourceData([...sDta]);
             }
             } catch(error)  {
                 let message = error.response.data.message;
-                console.log('Error While loading the data from URI!', message)
+                console.log('Error While loading the Doc from URI!', message)
+                setDocNotFound(true);
             }
           }
         }
         catch(error)  {
             let message = error;//.response.data.message;
-            console.log('Error While loading the data from URI!', message)
+            console.log('Error While loading the source data!', message)
+            setDocNotFound(true);
         }
            
        
     }
-    
-    //Temp data - to be deleted
-    const respData = {
-        "id": 11145,
-        "transactionDate": "10/2/2019",
-        "product": {
-            "Name": "MarkLogic",
-            "Details": {
-                "Sub-Category": "Software"
-            },
-            "Licensed": "Yes",
-            "productInfo": [
-                {
-                    "name": "Voltsillam",
-                    "ProdPrice": 7.0,
-                    "ProdQuantity": 7
-                },
-                {
-                    "name": "Latlux",
-                    "ProdPrice": 9.17,
-                    "ProdQuantity": 10
-                }]
-        },
-        "customer": {
-            "firstName": "Nikhil",
-            "lastName": "Shrivastava",
-            "gender": "M"
-        },
-        "items": [
-            {
-                "name": "Voltsillam",
-                "price": 2.0,
-                "quantity": 7
-            },
-            {
-                "name": "Latlux",
-                "price": 7.17,
-                "quantity": 10
-            },
-            {
-                "name": "Biodex",
-                "price": 5.01,
-                "quantity": 2
-            },
-            {
-                "name": "Fixflex",
-                "price": 8.77,
-                "quantity": 6
-            },
-            {
-                "name": "Keylex",
-                "price": 5.57,
-                "quantity": 3
-            }
-        ]
-    }
+
 
     // construct infinitely nested source Data
     const generateNestedDataSource = (respData, nestedDoc: Array<any>) => {
@@ -277,20 +232,13 @@ const MappingCard: React.FC<Props> = (props) => {
             entTableTempData.push(propty)
         })
         setEntityData([...entTableTempData]);
-        
-        console.log('entProps',entProps)
 
     }
 
     const openSourceToEntityMapping = (name,index) => {
             setMapData(prevState => ({ ...prevState, ...props.data[index]}));
-            //setSourceData(prevState => ({ ...prevState, ...getSourceDataFromUri()}))
- 
             getSourceDataFromUri(index);
             extractEntityInfoForTable();
-            let nestDoc= generateNestedDataSource(sourceData,nestedDoc);
-            console.log('nestDoc',nestDoc)
-            setNestedSourceData([...nestDoc]);
             setMapName(name);
             setMappingVisible(true);
       }
@@ -347,6 +295,7 @@ const MappingCard: React.FC<Props> = (props) => {
                 {deleteConfirmation}
                 <SourceToEntityMap 
                 sourceData={sourceData}
+                sourceURI={sourceURI}
                 mapData={mapData}
                 entityData={entityData}
                 mappingVisible={mappingVisible}
@@ -355,7 +304,8 @@ const MappingCard: React.FC<Props> = (props) => {
                 entityName={props.entityName}
                 updateMappingArtifact={props.createMappingArtifact}
                 canReadWrite={props.canReadWrite}
-                canReadOnly={props.canReadOnly}/>
+                canReadOnly={props.canReadOnly}
+                docNotFound={docNotFound}/>
                 
         </div>
     );

@@ -2,24 +2,18 @@ import React, { useState, useContext, useEffect } from 'react';
 import { Collapse, Menu } from 'antd';
 import styles from './entity-tiles.module.scss';
 import MappingCard from './mapping/mapping-card';
-import { RolesContext } from '../../util/roles';
 import axios from 'axios'
 
-const EntityTiles: React.FC = () => {
+const EntityTiles = (props) => {
 
     const [viewType, setViewType] = useState('map');
     const [entityArtifacts, setEntityArtifacts] = useState<any[]>([]);
-    const [entitiesInfo, setEntitiesInfo] = useState<any[]>([]);
 
+    //For accordian within entity tiles
     const { Panel } = Collapse;
 
     const [isLoading, setIsLoading] = useState(false);
     
-    //Role based access
-    const roleService = useContext(RolesContext);
-    const canReadOnly = roleService.canReadMappings();
-    const canReadWrite = roleService.canWriteMappings();
-
     const mappingCardsView = () => {
         setViewType('map');
     }
@@ -31,28 +25,7 @@ const EntityTiles: React.FC = () => {
 
     useEffect(() => {
         getMappingArtifacts();
-        getEntityInfo();
     },[isLoading]);
-
-    const getEntityInfo = async () => {
-        try {
-        let response = await axios.get(`/api/entities`);
-        if(response.status === 200) {
-            let entData:any = {};
-            response.data.map(ent => {
-                entData[ent.info.title] = ent
-            });
-            setEntitiesInfo({...entData});
-        }
-            
-              console.log('GET Entities Info API Called successfully!');
-             
-          } catch (error) {
-              let message = error;
-              console.log('Error while fetching entities Info', message);
-          }
-
-    }
 
     const getMappingArtifacts = async () => {
         try {
@@ -98,6 +71,8 @@ const EntityTiles: React.FC = () => {
               console.log('Create/Update MappingArtifact API Called successfully!')
               setIsLoading(false);
               return true;
+            } else {
+                return false;
             }
           }
           catch (error) {
@@ -117,9 +92,9 @@ const EntityTiles: React.FC = () => {
                     entityName={entMaps.entityType}
                     deleteMappingArtifact={deleteMappingArtifact}
                     createMappingArtifact={createMappingArtifact}
-                    canReadWrite={canReadWrite}
-                    canReadOnly={canReadOnly}
-                    entitiesInfo={entitiesInfo[entMaps.entityType]} />
+                    canReadWrite={props.canReadWrite}
+                    canReadOnly={props.canReadOnly}
+                    entitiesInfo={props.entitiesInfo[entMaps.entityType]} />
             </div>
         } else {
             output = <div><br/>This functionality is not implemented yet.</div>
