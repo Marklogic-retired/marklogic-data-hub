@@ -2,7 +2,7 @@
   "functionName": "getMatchingPropertyValues",
   "params": [
     {
-      "name": "entityIRI",
+      "name": "entityTypeId",
       "datatype": "string"
     },
     {
