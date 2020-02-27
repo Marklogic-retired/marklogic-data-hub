@@ -15,8 +15,8 @@ function invokeService(entityTypeId, propertyPath, referenceType, pattern, limit
 
 // Uncomment the tests when DHFPROD-4494 bug is resolved.
 /*function testMatchingValuesStartingWithPattern() {
-  let entityTypeId = "http://marklogic.com/EntitiesSearchEntity-0.0.1/EntitiesSearchEntity";
-  let propertyPath = "numStrEntityProp/strCityProp";
+  let entityTypeId = "http://marklogic.com/EntitySearchEntity-0.0.1/EntitySearchEntity";
+  let propertyPath = "numericStringEntityProp/stringCityProp";
   const result = invokeService(entityTypeId, propertyPath, "path", "doc2", 10);
   return [
     test.assertEqual(2, result.length),
@@ -26,8 +26,8 @@ function invokeService(entityTypeId, propertyPath, referenceType, pattern, limit
 }
 
 function testMatchingValuesWithPatternInBetween() {
-  let entityTypeId = "http://marklogic.com/EntitiesSearchEntity-0.0.1/EntitiesSearchEntity";
-  let propertyPath = "numStrEntityProp/strCityProp";
+  let entityTypeId = "http://marklogic.com/EntitySearchEntity-0.0.1/EntitySearchEntity";
+  let propertyPath = "numericStringEntityProp/stringCityProp";
   const result = invokeService(entityTypeId, propertyPath, "path", "city", 10);
   return [
     test.assertEqual(4, result.length),
@@ -39,8 +39,8 @@ function testMatchingValuesWithPatternInBetween() {
 }
 
 function testMatchingValuesOnRangePathOneLevelNesting() {
-  let entityTypeId = "http://marklogic.com/EntitiesSearchEntity-0.0.1/EntitiesSearchEntity";
-  let propertyPath = "numStrEntityProp/strCityProp";
+  let entityTypeId = "http://marklogic.com/EntitySearchEntity-0.0.1/EntitySearchEntity";
+  let propertyPath = "numericStringEntityProp/stringCityProp";
   const result = invokeService(entityTypeId, propertyPath, "path", "city", 10);
   return [
     test.assertEqual(4, result.length),
@@ -52,8 +52,8 @@ function testMatchingValuesOnRangePathOneLevelNesting() {
 }
 
 function testMatchingValuesOnRangePathNoNesting() {
-  let entityTypeId = "http://marklogic.com/EntitiesSearchEntity-0.0.1/EntitiesSearchEntity";
-  let propertyPath = "srchEntyProp2";
+  let entityTypeId = "http://marklogic.com/EntitySearchEntity-0.0.1/EntitySearchEntity";
+  let propertyPath = "searchEntityProp2";
   const result = invokeService(entityTypeId, propertyPath, "path", "city", 10);
   return [
     test.assertEqual(2, result.length),
@@ -63,8 +63,8 @@ function testMatchingValuesOnRangePathNoNesting() {
 }
 
 function testMatchingValuesWithLimit() {
-  let entityTypeId = "http://marklogic.com/EntitiesSearchEntity-0.0.1/EntitiesSearchEntity";
-  let propertyPath = "numStrEntityProp/strCityProp";
+  let entityTypeId = "http://marklogic.com/EntitySearchEntity-0.0.1/EntitySearchEntity";
+  let propertyPath = "numericStringEntityProp/stringCityProp";
   const result = invokeService(entityTypeId, propertyPath, "path", "city", 3);
   return [
     test.assertEqual(3, result.length)
@@ -72,8 +72,8 @@ function testMatchingValuesWithLimit() {
 }*/
 
 function testMatchingValuesOnRangeElementIndexes() {
-  let entityTypeId = "http://marklogic.com/EntitiesSearchEntity-0.0.1/EntitiesSearchEntity";
-  let propertyPath = "strNameProp";
+  let entityTypeId = "http://marklogic.com/EntitySearchEntity-0.0.1/EntitySearchEntity";
+  let propertyPath = "stringNameProp";
   const result = invokeService(entityTypeId, propertyPath, "element", "name", 10);
   return [
     test.assertEqual(4, result.length),
@@ -85,7 +85,7 @@ function testMatchingValuesOnRangeElementIndexes() {
 }
 
 function testMatchingValuesOnRangeFieldIndexes() {
-  let entityTypeId = "http://marklogic.com/EntitiesSearchEntity-0.0.1/EntitiesSearchEntity";
+  let entityTypeId = "http://marklogic.com/EntitySearchEntity-0.0.1/EntitySearchEntity";
   let propertyPath = "datahubCreatedInFlow";
   const result = invokeService(entityTypeId, propertyPath, "field", "flow", 10);
   return [

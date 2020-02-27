@@ -16,18 +16,18 @@ xdmp.documentInsert("/exp/doc1",
         "triples": [],
         "instance": {
           "info": {
-            "title": "EntitiesSearchEntity",
+            "title": "EntitySearchEntity",
             "version": "0.0.1",
             "baseUri": "http://marklogic.com/"
           },
-          "EntitiesSearchEntity": {
-            "numStrEntityProp": [
+          "EntitySearchEntity": {
+            "numericStringEntityProp": [
               {
-                "NumStringEntity": {
-                  "strNameProp": "doc1Name1Prop",
-                  "strCityProp": "doc1City1Prop",
+                "NumericStringEntity": {
+                  "stringNameProp": "doc1Name1Prop",
+                  "stringCityProp": "doc1City1Prop",
                   "intProp": 1,
-                  "numEntProp": {
+                  "numericEntityProp": {
                     "NumericEntity": {
                       "intProp": 11,
                       "longProp": 110,
@@ -39,11 +39,11 @@ xdmp.documentInsert("/exp/doc1",
                 }
               },
               {
-                "NumStringEntity": {
-                  "strNameProp": "doc1Name2Prop",
-                  "strCityProp": "doc1City2Prop",
+                "NumericStringEntity": {
+                  "stringNameProp": "doc1Name2Prop",
+                  "stringCityProp": "doc1City2Prop",
                   "intProp": 2,
-                  "numEntProp": {
+                  "numericEntityProp": {
                     "NumericEntity": {
                       "intProp": 57,
                       "longProp": 157,
@@ -55,8 +55,8 @@ xdmp.documentInsert("/exp/doc1",
                 }
               }
             ],
-            "srchEntyProp2": "doc1SrchEntyProp2",
-            "srchEntyProp1": "doc1SrchEntyProp1"
+            "searchEntityProp2": "doc1SrchEntyProp2",
+            "searchEntityProp1": "doc1SrchEntyProp1"
           }
         }
       }
@@ -85,18 +85,18 @@ xdmp.documentInsert("/exp/doc2",
         "triples": [],
         "instance": {
           "info": {
-            "title": "EntitiesSearchEntity",
+            "title": "EntitySearchEntity",
             "version": "0.0.1",
             "baseUri": "http://marklogic.com/"
           },
-          "EntitiesSearchEntity": {
-            "numStrEntityProp": [
+          "EntitySearchEntity": {
+            "numericStringEntityProp": [
               {
-                "NumStringEntity": {
-                  "strNameProp": "doc2Name1Prop",
-                  "strCityProp": "doc2City1Prop",
+                "NumericStringEntity": {
+                  "stringNameProp": "doc2Name1Prop",
+                  "stringCityProp": "doc2City1Prop",
                   "intProp": 1,
-                  "numEntProp": {
+                  "numericEntityProp": {
                     "NumericEntity": {
                       "intProp": 21,
                       "longProp": 210,
@@ -108,11 +108,11 @@ xdmp.documentInsert("/exp/doc2",
                 }
               },
               {
-                "NumStringEntity": {
-                  "strNameProp": "doc2Name2Prop",
-                  "strCityProp": "doc2City2Prop",
+                "NumericStringEntity": {
+                  "stringNameProp": "doc2Name2Prop",
+                  "stringCityProp": "doc2City2Prop",
                   "intProp": 2,
-                  "numEntProp": {
+                  "numericEntityProp": {
                     "NumericEntity": {
                       "intProp": 77,
                       "longProp": 757,
@@ -124,8 +124,8 @@ xdmp.documentInsert("/exp/doc2",
                 }
               }
             ],
-            "srchEntyProp2": "doc2SrchEntyProp2",
-            "srchEntyProp1": "doc2SrchEntyProp1"
+            "searchEntityProp2": "doc2SrchEntyProp2",
+            "searchEntityProp1": "doc2SrchEntyProp1"
           }
         }
       }
@@ -186,10 +186,10 @@ xdmp.documentInsert("/entities/NumericEntity.entity.json",
       collections: "http://marklogic.com/entity-services/models"
     });
 
-xdmp.documentInsert("/entities/NumStringEntity.entity.json",
+xdmp.documentInsert("/entities/NumericStringEntity.entity.json",
     {
       "info": {
-        "title": "NumStringEntity",
+        "title": "NumericStringEntity",
         "version": "0.0.1",
         "baseUri": "http://marklogic.com/"
       },
@@ -225,30 +225,30 @@ xdmp.documentInsert("/entities/NumStringEntity.entity.json",
             }
           }
         },
-        "NumStringEntity": {
+        "NumericStringEntity": {
           "required": [],
           "pii": [],
           "elementRangeIndex": [
-            "strNameProp"
+            "stringNameProp"
           ],
           "rangeIndex": [
-            "strCityProp",
+            "stringCityProp",
             "intProp"
           ],
           "wordLexicon": [],
           "properties": {
-            "strNameProp": {
+            "stringNameProp": {
               "datatype": "string",
               "collation": "http://marklogic.com/collation/codepoint"
             },
-            "strCityProp": {
+            "stringCityProp": {
               "datatype": "string",
               "collation": "http://marklogic.com/collation/codepoint"
             },
             "intProp": {
               "datatype": "int"
             },
-            "numEntProp": {
+            "numericEntityProp": {
               "$ref": "#/definitions/NumericEntity"
             }
           }
@@ -260,37 +260,37 @@ xdmp.documentInsert("/entities/NumStringEntity.entity.json",
       collections: "http://marklogic.com/entity-services/models"
     });
 
-xdmp.documentInsert("/entities/EntitiesSearchEntity.entity.json",
+xdmp.documentInsert("/entities/EntitySearchEntity.entity.json",
     {
       "info": {
-        "title": "EntitiesSearchEntity",
+        "title": "EntitySearchEntity",
         "version": "0.0.1",
         "baseUri": "http://marklogic.com/"
       },
       "definitions": {
-        "EntitiesSearchEntity": {
+        "EntitySearchEntity": {
           "required": [],
           "pii": [],
           "elementRangeIndex": [
-            "srchEntyProp1"
+            "searchEntityProp1"
           ],
           "rangeIndex": [
-            "srchEntyProp2"
+            "searchEntityProp2"
           ],
           "wordLexicon": [],
           "properties": {
-            "srchEntyProp1": {
+            "searchEntityProp1": {
               "datatype": "string",
               "collation": "http://marklogic.com/collation/codepoint"
             },
-            "srchEntyProp2": {
+            "searchEntityProp2": {
               "datatype": "string",
               "collation": "http://marklogic.com/collation/codepoint"
             },
-            "numStrEntityProp": {
+            "numericStringEntityProp": {
               "datatype": "array",
               "items": {
-                "$ref": "#/definitions/NumStringEntity"
+                "$ref": "#/definitions/NumericStringEntity"
               }
             }
           }
@@ -326,30 +326,30 @@ xdmp.documentInsert("/entities/EntitiesSearchEntity.entity.json",
             }
           }
         },
-        "NumStringEntity": {
+        "NumericStringEntity": {
           "required": [],
           "pii": [],
           "elementRangeIndex": [
-            "strNameProp"
+            "stringNameProp"
           ],
           "rangeIndex": [
-            "strCityProp",
+            "stringCityProp",
             "intProp"
           ],
           "wordLexicon": [],
           "properties": {
-            "strNameProp": {
+            "stringNameProp": {
               "datatype": "string",
               "collation": "http://marklogic.com/collation/codepoint"
             },
-            "strCityProp": {
+            "stringCityProp": {
               "datatype": "string",
               "collation": "http://marklogic.com/collation/codepoint"
             },
             "intProp": {
               "datatype": "int"
             },
-            "numEntProp": {
+            "numericEntityProp": {
               "$ref": "#/definitions/NumericEntity"
             }
           }
