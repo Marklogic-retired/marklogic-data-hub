@@ -1,13 +1,11 @@
 package com.marklogic.hub.explorer.model;
 
-import java.util.List;
-
 public class FacetSearchQuery {
 
   private FacetInfo facetInfo;
   private String dataType;
   private String limit;
-  private List<String> queryParams;
+  private String pattern;
 
   public FacetInfo getFacetInfo() {
     return facetInfo;
@@ -33,11 +31,11 @@ public class FacetSearchQuery {
     this.limit = limit;
   }
 
-  public List<String> getQueryParams() {
-    return queryParams;
+  public String getPattern() {
+    return pattern;
   }
 
-  public void setQueryParams(List<String> queryParams) {
-    this.queryParams = queryParams;
+  public void setPattern(String pattern) {
+    this.pattern = pattern;
   }
 }

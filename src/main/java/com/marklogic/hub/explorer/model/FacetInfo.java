@@ -1,31 +1,32 @@
 package com.marklogic.hub.explorer.model;
 
 public class FacetInfo {
-  private String schemaName;
-  private String entityName;
-  private String facetName;
 
-  public String getSchemaName() {
-    return schemaName;
+  private String entityTypeId;
+  private String propertyPath;
+  private String referenceType;
+
+  public String getEntityTypeId() {
+    return entityTypeId;
   }
 
-  public void setSchemaName(String schemaName) {
-    this.schemaName = schemaName;
+  public void setEntityTypeId(String entityTypeId) {
+    this.entityTypeId = entityTypeId;
   }
 
-  public String getEntityName() {
-    return entityName;
+  public String getPropertyPath() {
+    return propertyPath;
   }
 
-  public void setEntityName(String entityName) {
-    this.entityName = entityName;
+  public void setPropertyPath(String propertyPath) {
+    this.propertyPath = propertyPath;
   }
 
-  public String getFacetName() {
-    return facetName;
+  public String getReferenceType() {
+    return referenceType;
   }
 
-  public void setFacetName(String facetName) {
-    this.facetName = facetName;
+  public void setReferenceType(String referenceType) {
+    this.referenceType = referenceType;
   }
 }
