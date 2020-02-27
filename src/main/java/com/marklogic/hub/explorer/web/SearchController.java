@@ -3,8 +3,6 @@
  */
 package com.marklogic.hub.explorer.web;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import com.marklogic.hub.explorer.model.Document;
@@ -13,6 +11,8 @@ import com.marklogic.hub.explorer.model.FacetSearchQuery;
 import com.marklogic.hub.explorer.model.SearchQuery;
 import com.marklogic.hub.explorer.service.FacetSearchService;
 import com.marklogic.hub.explorer.service.SearchService;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -61,13 +61,13 @@ public class SearchController {
 
   @RequestMapping(value = "/facet-values", method = RequestMethod.POST)
   @ResponseBody
-  public List<String> getFacetValues(@RequestBody FacetSearchQuery fsQuery) {
+  public JsonNode getFacetValues(@RequestBody FacetSearchQuery fsQuery) {
     return facetSearchService.getFacetValues(fsQuery);
   }
 
   @RequestMapping(value = "/facet-values/range", method = RequestMethod.POST)
   @ResponseBody
-  public Map<String, String> getFacetValuesRange(@RequestBody FacetInfo facetInfo) {
+  public JsonNode getFacetValuesRange(@RequestBody FacetInfo facetInfo) {
     return facetSearchService.getFacetValuesRange(facetInfo);
   }
 }
