@@ -1,0 +1,29 @@
+{
+  "functionName": "getMatchingPropertyValues",
+  "params": [
+    {
+      "name": "entityTypeId",
+      "datatype": "string"
+    },
+    {
+      "name": "propertyPath",
+      "datatype": "string"
+    },
+    {
+      "name": "referenceType",
+      "datatype": "string"
+    },
+    {
+      "name": "pattern",
+      "datatype": "string"
+    },
+    {
+      "name": "limit",
+      "datatype": "int"
+    }
+  ],
+  "return": {
+    "datatype": "jsonDocument",
+    "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+  }
+}

@@ -98,6 +98,10 @@ task generateJobInfo(type: com.marklogic.client.tools.gradle.EndpointProxiesGenT
     serviceDeclarationFile = 'src/main/resources/ml-modules/data-services/jobInfo/service.json'
 }
 
+task generateEntitySearchService(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask) {
+    serviceDeclarationFile = 'src/main/resources/ml-modules/data-services/entitySearch/service.json'
+}
+
 configurations.all {
     exclude group: 'org.slf4j', module: 'slf4j-log4j12'
     resolutionStrategy {
