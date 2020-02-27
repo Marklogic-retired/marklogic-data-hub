@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, CSSProperties } from "react";
-import { Modal, Table, Icon, Popover, Input, Button, Alert, message } from "antd";
+import { Modal, Table, Icon, Popover, Input, Button, Alert, message, Tooltip, Spin } from "antd";
 import styles from './source-to-entity-map.module.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faObjectUngroup, faList } from "@fortawesome/free-solid-svg-icons";
@@ -15,6 +15,7 @@ const SourceToEntityMap = (props) => {
     const [editingURI, setEditingUri] = useState(false);
 
     const [mapSaved, setMapSaved] = useState(false);
+    const [errorInSaving,setErrorInSaving] = useState('');
 
     const sampleDocUri: CSSProperties = {
 
@@ -36,7 +37,7 @@ const SourceToEntityMap = (props) => {
     }
 
     const srcDetails = <div className={styles.xpathDoc}><span id="doc">Collection: </span>
-        <div>URI: </div>
+<div>URI: {props.sourceURI}</div>
         {/* <span onClick={handleEditingURI} style={sampleDocUri} >{{  }}</span>
         <span onClick={handleEditingURI}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> */}
     </div>;
@@ -44,6 +45,9 @@ const SourceToEntityMap = (props) => {
 
     useEffect(() => {
         initializeMapExpressions();
+        return(()=> {
+            setMapExp({});
+        })
     },[props.mapData]);
 
 
@@ -54,7 +58,7 @@ const SourceToEntityMap = (props) => {
             Object.keys(props.mapData.properties).map(key => {
                 obj[key] = props.mapData.properties[key]['sourcedFrom'];
             });
-            setMapExp({...mapExp, ...obj});
+            setMapExp({...obj});
         }
     }
 
@@ -85,7 +89,12 @@ const SourceToEntityMap = (props) => {
         //console.log('dataPayLoad',dataPayload);
             
         let mapSavedResult = await props.updateMappingArtifact(dataPayload);
-        console.log('mapSavedResult',mapSavedResult)
+        console.log('mapSavedResult',mapSavedResult);
+        if(mapSavedResult){
+            setErrorInSaving('noError');
+        } else {
+            setErrorInSaving('error');
+        }
         setMapSaved(mapSavedResult);
         }
         
@@ -96,34 +105,7 @@ const SourceToEntityMap = (props) => {
     const handleMapExp = (name,event) => {
         setMapExpTouched(true);
         setMapExp({...mapExp, [name]: event.target.value});
-        
-        // dataPayload = {
-        //     name: mapName,
-        //     targetEntity: props.targetEntity,
-        //     description: description,
-        //     selectedSource: selectedSource,
-        //     sourceQuery: sQuery,
-        //     collection: collections
-        //     properties: {
-        //       'id': {
-        //         'sourcedFrom': faSortAlphaDownAlt,
-        //       }
-        //       'sdged': {
-        //         'sourcedFrom': faSortAlphaDownAlt,
-        //       }
-        //     }
-        //   }
-        // }
-        // let obj = {
-        //     name: name,
-        //     expr: mapExp[name],
-        //     prop: prop
-        //   }
-        //mapExpressions[obj.name] = obj.expr;
-        //mapExp[name]['sourcedFrom'] = obj.expr;
-        //onHandleInput(obj);
-        //props.saveMap(obj)
-        //success();
+       
     }
 
     const columns = [
@@ -138,9 +120,10 @@ const SourceToEntityMap = (props) => {
           title: 'Value',
           dataIndex: 'val',
           key: 'val',
+          ellipsis: true,
           sorter: (a:any, b:any) => a.val.length - b.val.length,
           width: '40%',
-          render: (text) => getInitialChars(text,20,'...')
+        render: (text) => <span>{text ? text.substr(0,20): ''}{text && text.length > 20 ? <Tooltip title={text}><span>...</span></Tooltip> : ''}</span>
         }
     ];
 
@@ -186,20 +169,6 @@ const SourceToEntityMap = (props) => {
 
     ]
 
-    const entData = [
-        {
-            name: "id", 
-            type: "string",
-            xPathExpression: '',
-            value: ''
-        },
-        {
-            name: "add1", 
-            type: "string",
-            xPathExpression: '',
-            value: ''
-        }
-    ]
    const customExpandIcon = (props) => {
        if(props.expandable) {
         if (props.expanded) {
@@ -212,37 +181,57 @@ const SourceToEntityMap = (props) => {
             }}><Icon type="right" /> </a>
         }
        } else {
-           if(props.expanded) {
-               return <a style={{ color: 'black'}} onClick={e => {
-                props.onExpand(props.record, e);
-            }}></a>
-           }
+           return <span style={{ color: 'black'}} onClick={e => {
+            props.onExpand(props.record, e);
+        }}></span>
        }
     }
+
+    // CSS properties for the alert message after saviing the mapping
+    const saveMessageCSS: CSSProperties = {
+        border: errorInSaving === 'noError' ? '1px solid #008000' : '1px solid #ff0000',
+        marginLeft: '30em'
+    }
+
     const success = () => {
-        //message.success('All changes are saved to disk on 02/24/2020 12:11:34', 3);
-        let message = `All changes are saved to disk on ${convertDateFromISO(props.mapData.lastUpdated)}`
-        let msg = <span><Alert type="success" message={message} banner className={styles.saveMessage}/></span>
+        let mesg = `All changes are saved on ${convertDateFromISO(new Date())}`
+        let errorMesg = `An error occured while saving the changes.`
+        
+        let msg = <span><Alert type="success" message={mesg} banner style={saveMessageCSS}/></span>
+        let errorMsg = <span><Alert type="error" message={errorMesg} banner style={saveMessageCSS}/></span>
         setTimeout(() => {
-            setMapSaved(false);
+            setErrorInSaving('');
         }, 3000);
-        return msg;
+
+        return errorInSaving === 'noError' ? msg : errorMsg;
 
       };
+
+      //handle spinner while source data is loading
+
+      const handleSpinner = () => {
+          if (!props.sourceData){
+             return true
+
+          } else {
+            return true;
+          }
+          
+      }
 
 
 return (<Modal
         visible={props.mappingVisible}
         onOk={() => onOk()}
         onCancel={() => onCancel()}
-        width={1500}
+        width={1600}
         maskClosable={false}
         footer={null}
-        wrapClassName={styles.mapContainer}
+        className={styles.mapContainer}
         >
             <div className={styles.header}>
                 <span className={styles.headerTitle}>{props.mapName}</span>
-            {mapSaved ? success() : <span className={styles.noMessage}></span>}
+            {errorInSaving ? success() : <span className={styles.noMessage}></span>}
             </div>
             
         
@@ -257,6 +246,7 @@ return (<Modal
                 trigger="click"
                 placement="right" ><Icon type="question-circle" className={styles.questionCircle} theme="filled" /></Popover></p>
             </div>
+            <Spin spinning={JSON.stringify(props.sourceData) === JSON.stringify([]) && !props.docNotFound}> 
         <Table
         pagination={false}
         defaultExpandAllRows={true}
@@ -264,12 +254,14 @@ return (<Modal
         className={styles.sourceTable}
         rowClassName={() => styles.srcTableRows}
         scroll={{ y: 600 }}
+        indentSize={14}
         //size="small"
         columns={columns}
         dataSource={props.sourceData}
         tableLayout="unset"
         rowKey="name"
         />
+        </Spin>
         </div>
 
         <div className={styles.entityContainer}>
