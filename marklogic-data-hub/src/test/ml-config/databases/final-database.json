@@ -20,41 +20,9 @@
       "invalid-values" : "reject"
     },
     {
-      "scalar-type" : "string",
-      "namespace-uri" : "",
-      "localname" : "searchStrCityFacet",
-      "collation" : "http://marklogic.com/collation/",
-      "range-value-positions" : false,
-      "invalid-values" : "reject"
-    },
-    {
-      "scalar-type": "int",
-      "namespace-uri": "",
-      "localname": "numRangeIntProp",
-      "collation": "",
-      "range-value-positions": false,
-      "invalid-values": "reject"
-    },
-    {
       "scalar-type": "decimal",
       "namespace-uri": "",
-      "localname": "numRangeIntegerProp",
-      "collation": "",
-      "range-value-positions": false,
-      "invalid-values": "reject"
-    },
-    {
-      "scalar-type": "long",
-      "namespace-uri": "",
-      "localname": "numRangeLongProp",
-      "collation": "",
-      "range-value-positions": false,
-      "invalid-values": "reject"
-    },
-    {
-      "scalar-type": "float",
-      "namespace-uri": "",
-      "localname": "numRangeFloatProp",
+      "localname": "decimalProp",
       "collation": "",
       "range-value-positions": false,
       "invalid-values": "reject"
@@ -62,17 +30,69 @@
     {
       "scalar-type": "double",
       "namespace-uri": "",
-      "localname": "numRangeDoubleProp",
+      "localname": "doubleProp",
       "collation": "",
       "range-value-positions": false,
       "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "float",
+      "namespace-uri": "",
+      "localname": "floatProp",
+      "collation": "",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
+      "scalar-type" : "string",
+      "namespace-uri" : "",
+      "localname" : "strNameProp",
+      "collation" : "http://marklogic.com/collation/codepoint",
+      "range-value-positions" : false,
+      "invalid-values" : "reject"
+    },
+    {
+      "scalar-type" : "string",
+      "namespace-uri" : "",
+      "localname" : "srchEntyProp1",
+      "collation" : "http://marklogic.com/collation/codepoint",
+      "range-value-positions" : false,
+      "invalid-values" : "reject"
     }
   ],
   "range-path-index": [
     {
+      "scalar-type": "int",
+      "path-expression": "//*:instance/NumericEntity/intProp",
+      "collation": "",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "long",
+      "path-expression": "//*:instance/NumericEntity/longProp",
+      "collation": "",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "int",
+      "path-expression": "//*:instance/NumStringEntity/intProp",
+      "collation": "",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
       "scalar-type": "string",
-      "path-expression": "//*:instance/SearchFacetsEntity/searchStrNameFacet",
-      "collation": "http://marklogic.com/collation/",
+      "path-expression": "//*:instance/NumStringEntity/strCityProp",
+      "collation": "http://marklogic.com/collation/codepoint",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "string",
+      "path-expression": "//*:instance/EntitiesSearchEntity/srchEntyProp2",
+      "collation": "http://marklogic.com/collation/codepoint",
       "range-value-positions": false,
       "invalid-values": "reject"
     }

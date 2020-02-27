@@ -46,14 +46,7 @@ public class Installer extends HubTestBase {
         }
 
         if (!isInstalled) {
-            try {
-                Path srcDir = Paths.get("src", "test", "ml-config", "databases","final-database.json");
-                Path dstDir = Paths.get(adminHubConfig.getUserDatabaseDir().toString(), "test-final-database.json");
-                FileUtils.copyFile(srcDir.toAbsolutePath().toFile(), dstDir.toAbsolutePath().toFile());
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
-            }
-
+            copyTestIndexesFileToProject();
             dataHub.install();
 
             User dataHubDeveloper = new User(new API(adminHubConfig.getManageClient()), "test-data-hub-developer");
@@ -76,6 +69,16 @@ public class Installer extends HubTestBase {
 
         if (getDataHubAdminConfig().getIsProvisionedEnvironment()) {
             installHubModules();
+        }
+    }
+
+    private void copyTestIndexesFileToProject() {
+        try {
+            Path srcDir = Paths.get("src", "test", "ml-config", "databases","final-database.json");
+            Path dstDir = Paths.get(adminHubConfig.getUserDatabaseDir().toString(), "test-final-database.json");
+            FileUtils.copyFile(srcDir.toAbsolutePath().toFile(), dstDir.toAbsolutePath().toFile());
+        } catch (IOException ioe) {
+            throw new RuntimeException("Unable to copy test indexes file to project", ioe);
         }
     }
 
