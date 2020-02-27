@@ -13,8 +13,8 @@ function invokeService(entityTypeId, propertyPath, referenceType) {
 
 // Uncomment the tests when DHFPROD-4494 bug is resolved.
 /*function testMinMaxTwoLevelNesting() {
-  let entityTypeId = "http://marklogic.com/EntitiesSearchEntity-0.0.1/EntitiesSearchEntity";
-  let propertyPath = "numStrEntityProp/numEntProp/intProp";
+  let entityTypeId = "http://marklogic.com/EntitySearchEntity-0.0.1/EntitySearchEntity";
+  let propertyPath = "numStrEntityProp/numericEntityProp/intProp";
   const result = invokeService(entityTypeId, propertyPath, "path");
   return [
     test.assertEqual(11, result.min),
@@ -23,8 +23,8 @@ function invokeService(entityTypeId, propertyPath, referenceType) {
 }
 
 function testMinMaxOneLevelNesting() {
-  let entityTypeId = "http://marklogic.com/EntitiesSearchEntity-0.0.1/EntitiesSearchEntity";
-  let propertyPath = "numStrEntityProp/intProp";
+  let entityTypeId = "http://marklogic.com/EntitySearchEntity-0.0.1/EntitySearchEntity";
+  let propertyPath = "numericStringEntityProp/intProp";
   const result = invokeService(entityTypeId, propertyPath, "path");
   return [
     test.assertEqual(1, result.min),
@@ -33,8 +33,8 @@ function testMinMaxOneLevelNesting() {
 }
 
 function testMinMaxLongProperty() {
-  let entityTypeId = "http://marklogic.com/EntitiesSearchEntity-0.0.1/EntitiesSearchEntity";
-  let propertyPath = "numStrEntityProp/numEntProp/longProp";
+  let entityTypeId = "http://marklogic.com/EntitySearchEntity-0.0.1/EntitySearchEntity";
+  let propertyPath = "numericStringEntityProp/numericEntityProp/longProp";
   const result = invokeService(entityTypeId, propertyPath, "path");
   return [
     test.assertEqual(110, result.min),
@@ -43,7 +43,7 @@ function testMinMaxLongProperty() {
 }*/
 
 function testMinMaxDecimalProperty() {
-  let entityTypeId = "http://marklogic.com/EntitiesSearchEntity-0.0.1/EntitiesSearchEntity";
+  let entityTypeId = "http://marklogic.com/EntitySearchEntity-0.0.1/EntitySearchEntity";
   let propertyPath = "decimalProp";
   const result = invokeService(entityTypeId, propertyPath, "element");
   return [
@@ -53,7 +53,7 @@ function testMinMaxDecimalProperty() {
 }
 
 function testMinMaxDoubleProperty() {
-  let entityTypeId = "http://marklogic.com/EntitiesSearchEntity-0.0.1/EntitiesSearchEntity";
+  let entityTypeId = "http://marklogic.com/EntitySearchEntity-0.0.1/EntitySearchEntity";
   let propertyPath = "doubleProp";
   const result = invokeService(entityTypeId, propertyPath, "element");
   return [
@@ -63,7 +63,7 @@ function testMinMaxDoubleProperty() {
 }
 
 function testMinMaxFloatProperty() {
-  let entityTypeId = "http://marklogic.com/EntitiesSearchEntity-0.0.1/EntitiesSearchEntity";
+  let entityTypeId = "http://marklogic.com/EntitySearchEntity-0.0.1/EntitySearchEntity";
   let propertyPath = "floatProp";
   const result = invokeService(entityTypeId, propertyPath, "element");
   return [
