@@ -99,9 +99,9 @@ class Flow {
   //note: we're using uriMatch here to avoid case sensitivity, but still strongly match on the actual flow name itself
   //TODO: make this a flat fn.doc call in the future and figure out how to normalize the uri so we don't need this loop at all
   getFlow(name) {
-    let uriMatches = cts.uriMatch('/flows/'+name+'.flow.json', ['case-insensitive'], cts.directoryQuery("/flows/"));
-    // cache flow to prevent repeated calls.
     if (cachedFlows[name] === undefined) {
+      let uriMatches = cts.uriMatch('/flows/' + name + '.flow.json', ['case-insensitive'], cts.directoryQuery("/flows/"));
+      // cache flow to prevent repeated calls.
       if (fn.count(uriMatches) === 1) {
         cachedFlows[name] = cts.doc(fn.head(uriMatches)).toObject();
       } else if (fn.count(uriMatches) > 1) {
