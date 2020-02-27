@@ -1,4 +1,0 @@
-{
-  "endpointDirectory": "/data-hub/5/data-services/numericFacetValuesRange/",
-  "$javaClass": "com.marklogic.hub.dataservices.NumericFacetValuesRange"
-}

@@ -1,20 +1,20 @@
 {
-  "functionName": "getFacetValues",
+  "functionName": "getMatchingPropertyValues",
   "params": [
     {
-      "name": "entityName",
+      "name": "entityIRI",
       "datatype": "string"
     },
     {
-      "name": "facetName",
+      "name": "propertyPath",
       "datatype": "string"
     },
     {
-      "name": "indexType",
+      "name": "referenceType",
       "datatype": "string"
     },
     {
-      "name": "searchStr",
+      "name": "pattern",
       "datatype": "string"
     },
     {
