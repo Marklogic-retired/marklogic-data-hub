@@ -2,15 +2,15 @@
   "functionName": "getNumericFacetsRange",
   "params": [
     {
-      "name": "entityName",
+      "name": "entityIRI",
       "datatype": "string"
     },
     {
-      "name": "facetName",
+      "name": "propertyPath",
       "datatype": "string"
     },
     {
-      "name": "indexType",
+      "name": "referenceType",
       "datatype": "string"
     }
   ],
