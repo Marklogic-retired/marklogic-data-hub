@@ -1,8 +1,8 @@
 {
-  "functionName": "getNumericFacetsRange",
+  "functionName": "getMinAndMaxPropertyValues",
   "params": [
     {
-      "name": "entityIRI",
+      "name": "entityTypeId",
       "datatype": "string"
     },
     {

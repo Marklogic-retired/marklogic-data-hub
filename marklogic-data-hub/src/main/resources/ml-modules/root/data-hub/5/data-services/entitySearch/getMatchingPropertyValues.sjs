@@ -1,6 +1,6 @@
 const lib = require('/data-hub/5/impl/hub-es.sjs');
 
-var entityIRI;
+var entityTypeId;
 var propertyPath;
 var referenceType;
 var pattern;
@@ -15,7 +15,7 @@ if(referenceType === 'element') {
 } else if(referenceType === 'collection') {
   query = cts.collectionReference();
 } else {
-  let rangeIndexPath = lib.getPropertyRangePath(entityIRI, propertyPath);
+  let rangeIndexPath = lib.getPropertyRangePath(entityTypeId, propertyPath);
   query = cts.pathReference(rangeIndexPath);
 }
 
