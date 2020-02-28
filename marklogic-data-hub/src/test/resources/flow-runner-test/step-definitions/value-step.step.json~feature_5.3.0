@@ -1,0 +1,18 @@
+{
+  "lang": "zxx",
+  "name": "value-step",
+  "type": "CUSTOM",
+  "version": 1,
+  "retryLimit" : 0,
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "options": {
+   "valueBasedQuery" : true,
+    "sourceQuery": "cts.values()",
+    "sourceDatabase" : "data-hub-FINAL",
+    "permissions" : "rest-reader,read,rest-writer,update",
+    "outputFormat" : "json",
+    "targetDatabase" : "data-hub-FINAL"
+  },
+  "modulePath": "/custom-modules/custom/value-step/main.sjs"
+}
