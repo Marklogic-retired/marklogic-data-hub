@@ -3,9 +3,6 @@
  */
 package com.marklogic.hub.explorer.util;
 
-import java.io.IOException;
-import java.util.Properties;
-
 import javax.annotation.PostConstruct;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
@@ -14,8 +11,6 @@ import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager;
 
 import org.apache.commons.lang3.BooleanUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
@@ -23,10 +18,6 @@ import org.springframework.stereotype.Component;
 @Component
 @PropertySource({"classpath:explorer-defaults.properties"})
 public class ExplorerConfig {
-
-  private static final String QUERIES_FILE = "SqlQueries.properties";
-  private static final Logger logger = LoggerFactory.getLogger(ExplorerConfig.class);
-  private Properties queryProperties = null;
 
   @Value("${mlHost}")
   private String hostname;
@@ -155,10 +146,6 @@ public class ExplorerConfig {
 
   public void setHostLoadBalancer(Boolean hostLoadBalancer) {
     isHostLoadBalancer = hostLoadBalancer;
-  }
-
-  public Properties getQueryProperties() {
-    return this.queryProperties;
   }
 
   @PostConstruct

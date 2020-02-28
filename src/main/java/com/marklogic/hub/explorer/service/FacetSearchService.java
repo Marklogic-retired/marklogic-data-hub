@@ -26,12 +26,12 @@ public class FacetSearchService {
     DatabaseClient dbClient = databaseClientHolder.getDataServiceClient();
 
     if (fsQuery.getFacetInfo().getReferenceType().equals("field")) {
-      fsQuery.getFacetInfo().setReferenceType("field");
-      if (fsQuery.getFacetInfo().getPropertyPath().equals("Step")) {
+
+      if (fsQuery.getFacetInfo().getPropertyPath().equals("createdByStep")) {
         fsQuery.getFacetInfo().setPropertyPath("datahubCreatedByStep");
       }
 
-      if (fsQuery.getFacetInfo().getPropertyPath().equals("Flow")) {
+      if (fsQuery.getFacetInfo().getPropertyPath().equals("createdInFlowRange")) {
         fsQuery.getFacetInfo().setPropertyPath("datahubCreatedInFlow");
       }
     }
