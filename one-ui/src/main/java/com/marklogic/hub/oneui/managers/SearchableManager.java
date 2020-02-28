@@ -21,11 +21,11 @@ import com.marklogic.client.query.StructuredQueryDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class SearchableManager {
+public class SearchableManager {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    StructuredQueryDefinition addRangeConstraint(StructuredQueryBuilder sb, String name, String value) {
+    protected StructuredQueryDefinition addRangeConstraint(StructuredQueryBuilder sb, String name, String value) {
         StructuredQueryDefinition sqd = null;
         if (value != null && !value.isEmpty()) {
             sqd = sb.rangeConstraint(name, StructuredQueryBuilder.Operator.EQ, value);
