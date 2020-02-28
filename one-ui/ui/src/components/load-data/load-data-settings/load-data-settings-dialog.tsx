@@ -6,14 +6,6 @@ import Axios from "axios";
 
 import { RolesContext } from "../../../util/roles";
 
-import { RolesContext } from "../../../util/roles";
-
-import { RolesContext } from "../../../util/roles";
-
-import { RolesContext } from "../../../util/roles";
-
-import { RolesContext } from "../../../util/roles";
-
 const LoadDataSettingsDialog = (props) => {
 
   //const [settingsArtifact, setSettingsArtifact] = useState({});
@@ -67,7 +59,7 @@ const LoadDataSettingsDialog = (props) => {
       setProvGranularity('coarse-grained');
       setUser('');
       setRunBefore(false);
-      
+
     };
   },[props.openLoadDataSettings  ,isLoading])
 
@@ -96,7 +88,7 @@ const getSettingsArtifact = async () => {
 
   try {
     let response = await Axios.get(`/api/artifacts/loadData/${props.stepData.name}/settings`);
-    
+
     if (response.status === 200) {
       setTgtDatabase(response.data.targetDatabase);
       setAdditionalCollections([...response.data.additionalCollections]);
@@ -107,7 +99,7 @@ const getSettingsArtifact = async () => {
       setUser(response.data.customHook.user);
       setRunBefore(response.data.customHook.runBefore);
       console.log('GET Load Data Settings Artifacts API Called successfully!',response.data);
-    } 
+    }
   } catch (error) {
       let message = error.response;
       console.log('Error while fetching load data settings artifacts', message);
@@ -138,7 +130,7 @@ const getSettingsArtifact = async () => {
 
   //Check if Delete Confirmation dialog should be opened or not.
   const checkDeleteOpenEligibility = () => {
-  
+
       if(!isTgtDatabaseTouched
       && !isAddCollTouched
       && !isTgtPermissionsTouched
@@ -148,10 +140,10 @@ const getSettingsArtifact = async () => {
       && !isUserTouched
       && !isRunBeforeTouched
       ) {
-              return false; 
+              return false;
         } else {
           return true;
-         }  
+         }
   }
 
   const onDelOk = () => {
@@ -172,7 +164,7 @@ const getSettingsArtifact = async () => {
         footer={null}
     >
         <span className={styles.ConfirmationMessage}>Discard changes?</span><br/><br/>
-      
+
         <div >
             <Button onClick={() => onDelCancel()}>No</Button>
             &nbsp;&nbsp;
@@ -196,13 +188,13 @@ const getSettingsArtifact = async () => {
             runBefore : runBefore
         }
       }
-    
+
     createSettingsArtifact(dataPayload);
     props.setOpenLoadDataSettings(false)
   }
 
   const handleChange = (event) => {
-    
+
     if (event.target.id === 'targetPermissions') {
       setTargetPermissions(event.target.value);
       setIsTgtPermissionsTouched(true);
@@ -232,103 +224,6 @@ const getSettingsArtifact = async () => {
     else {
       setTgtDatabaseTouched(true);
       setTgtDatabase(value);
-    }
-  }
-
-  const handleAddColl = (value) => {
-
-    if (value === ' ') {
-      setAddCollTouched(false);
-    }
-    else {
-      setAddCollTouched(true);
-      setAdditionalCollections(value);
-    }
-  }
-
-  const handleAddColl = (value) => {
-
-    if (value === ' ') {
-      setAddCollTouched(false);
-    }
-    else {
-      setAddCollTouched(true);
-      setAdditionalCollections(value);
-    }
-  }
-
-  const handleProvGranularity = (value) => {
-
-    if (value === ' ') {
-      setIsProvGranTouched(false);
-    }
-    else {
-      setIsProvGranTouched(true);
-      setProvGranularity(value);
-    }
-  }
-
-  const handleRunBefore = (checked, event) => {
-    if (checked) {
-      setRunBefore(true);
-      setIsRunBeforeTouched(true);
-    } else {
-      setRunBefore(false);
-      setIsRunBeforeTouched(true);
-    }
-  }
-
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 7 },
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 15 },
-    },
-  };
-
-  const handleRunBefore = (checked, event) => {
-    if (checked) {
-      setRunBefore(true);
-    } else {
-      setRunBefore(false);
-    }
-  }
-
-  //Build MLCP Command from the existing fields
-  const buildMlcpOptions = () => {
-    const options: Array<any> = [];
-
-    addMlcpOption(options, 'import', null, false, false);
-    addMlcpOption(options, 'mode', 'local', false, true);
-
-    if (event.target.id === 'user') {
-      setUser(event.target.value);
-      setIsUserTouched(true);
-    }
-  }
-
-  const handleTgtDatabase = (value) => {
-
-    if (value === ' ') {
-      setTgtDatabaseTouched(false);
-    }
-    else {
-      setTgtDatabaseTouched(true);
-      setTgtDatabase(value);
-    }
-  }
-
-  const handleAddColl = (value) => {
-
-    if (value === ' ') {
-      setAddCollTouched(false);
-    }
-    else {
-      setAddCollTouched(true);
-      setAdditionalCollections(value);
     }
   }
 
@@ -443,7 +338,7 @@ const getSettingsArtifact = async () => {
     </Form.Item></div>
 
   const tgtDbOptions = tgtDatabaseOptions.map(d => <Select.Option key={d}>{d}</Select.Option>);
-  
+
   const provGranOpt = provGranOptions.map(d => <Select.Option key={d}>{d}</Select.Option>);
 
   return (
