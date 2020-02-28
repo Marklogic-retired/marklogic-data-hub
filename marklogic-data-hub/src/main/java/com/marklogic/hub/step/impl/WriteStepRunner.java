@@ -278,7 +278,7 @@ public class WriteStepRunner implements StepRunner {
             if (!disableJobOutput) {
                 JsonNode jobDoc = null;
                 try {
-                    jobDoc = jobDocManager.postJobs(jobId, JobStatus.FAILED_PREFIX + step, step, null, runStepResponse);
+                    jobDoc = jobDocManager.postJobs(jobId, JobStatus.FAILED_PREFIX + step, flow.getName(), step, null, runStepResponse);
                 }
                 catch (Exception ex) {
                     throw ex;
@@ -449,7 +449,7 @@ public class WriteStepRunner implements StepRunner {
             runStepResponse.withStatus(stepStatus);
 
             try {
-                jobDoc = jobDocManager.postJobs(jobId, stepStatus, step, stepStatus.contains(JobStatus.COMPLETED_PREFIX) ? step : null, runStepResponse);
+                jobDoc = jobDocManager.postJobs(jobId, stepStatus, flow.getName(), step, stepStatus.contains(JobStatus.COMPLETED_PREFIX) ? step : null, runStepResponse);
             }
             catch (Exception e) {
                 throw e;
@@ -621,7 +621,7 @@ public class WriteStepRunner implements StepRunner {
             }
             JsonNode jobDoc = null;
             try {
-                jobDoc = jobDocManager.postJobs(jobId, stepStatus, step, stepStatus.equalsIgnoreCase(JobStatus.COMPLETED_PREFIX + step) ? step : null, runStepResponse);
+                jobDoc = jobDocManager.postJobs(jobId, stepStatus, flow.getName(), step, stepStatus.equalsIgnoreCase(JobStatus.COMPLETED_PREFIX + step) ? step : null, runStepResponse);
             }
             catch (Exception e) {
                 logger.error("Unable to update job document, cause: " + e.getMessage());

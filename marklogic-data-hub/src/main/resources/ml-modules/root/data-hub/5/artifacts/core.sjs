@@ -50,6 +50,8 @@ function getTypesInfo() {
     return typesInfo;
 }
 
+const entityServiceDrivenArtifactTypes = ['mappings', 'matching', 'merging', 'mastering'];
+
 function getArtifacts(artifactType) {
     const queries = [];
     const artifactLibrary =  getArtifactTypeLibrary(artifactType);
@@ -57,10 +59,10 @@ function getArtifacts(artifactType) {
         queries.push(cts.collectionQuery(coll));
     }
     if (queries.length) {
-        if (artifactType == "loadData") {
-            return cts.search(cts.andQuery(queries)).toArray();
+        if (entityServiceDrivenArtifactTypes.includes(artifactType)) {
+          return getArtifactsGroupByEntity(queries)
         } else {
-            return getArtifactsGroupByEntity(queries)
+          return cts.search(cts.andQuery(queries)).toArray();
         }
     }
     return [];

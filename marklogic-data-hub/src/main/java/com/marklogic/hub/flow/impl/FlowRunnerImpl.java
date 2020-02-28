@@ -380,7 +380,7 @@ public class FlowRunnerImpl implements FlowRunner{
                     }
                     if (!disableJobOutput) {
                         try {
-                            jobDocManager.postJobs(jobId, JobStatus.FAILED_PREFIX + stepNum, stepNum, null, stepResp);
+                            jobDocManager.postJobs(jobId, JobStatus.FAILED_PREFIX + stepNum, flow.getName(), stepNum, null, stepResp);
                         } catch (Exception ex) {
                             logger.error(ex.getMessage());
                         }
