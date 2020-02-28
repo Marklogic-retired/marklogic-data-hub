@@ -1,7 +1,9 @@
 package com.marklogic.hub.explorer.service;
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.MarkLogicServerException;
 import com.marklogic.hub.explorer.dataservices.EntitySearchService;
+import com.marklogic.hub.explorer.exception.ExplorerException;
 import com.marklogic.hub.explorer.model.FacetInfo;
 import com.marklogic.hub.explorer.model.FacetSearchQuery;
 import com.marklogic.hub.explorer.util.DatabaseClientHolder;
@@ -9,8 +11,6 @@ import com.marklogic.hub.explorer.util.ExplorerConfig;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -36,17 +36,25 @@ public class FacetSearchService {
       }
     }
 
-    return EntitySearchService.on(dbClient)
-        .getMatchingPropertyValues(fsQuery.getFacetInfo().getEntityTypeId(),
-            fsQuery.getFacetInfo().getPropertyPath(), fsQuery.getFacetInfo().getReferenceType(),
-            fsQuery.getPattern(), Integer.parseInt(fsQuery.getLimit()));
+    try {
+      return EntitySearchService.on(dbClient)
+          .getMatchingPropertyValues(fsQuery.getFacetInfo().getEntityTypeId(),
+              fsQuery.getFacetInfo().getPropertyPath(), fsQuery.getFacetInfo().getReferenceType(),
+              fsQuery.getPattern(), Integer.parseInt(fsQuery.getLimit()));
+    } catch (MarkLogicServerException mse) {
+      throw new ExplorerException(mse.getServerStatusCode(), mse.getServerMessage());
+    }
   }
 
   public JsonNode getFacetValuesRange(FacetInfo facetInfo) {
     DatabaseClient dbClient = databaseClientHolder.getDataServiceClient();
-    
-    return EntitySearchService.on(dbClient)
-        .getMinAndMaxPropertyValues(facetInfo.getEntityTypeId(), facetInfo.getPropertyPath(),
-            facetInfo.getReferenceType());
+
+    try {
+      return EntitySearchService.on(dbClient)
+          .getMinAndMaxPropertyValues(facetInfo.getEntityTypeId(), facetInfo.getPropertyPath(),
+              facetInfo.getReferenceType());
+    } catch (MarkLogicServerException mse) {
+      throw new ExplorerException(mse.getServerStatusCode(), mse.getServerMessage());
+    }
   }
 }

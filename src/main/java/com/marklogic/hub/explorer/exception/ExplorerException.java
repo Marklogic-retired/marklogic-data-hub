@@ -14,7 +14,12 @@ public class ExplorerException extends RuntimeException {
     this.error = error;
   }
 
-	public ExplorerException(String message, Throwable cause) {
-		super(message, cause);
-	}
+  public ExplorerException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
+  public ExplorerException(int statusCode, String message) {
+    super(message);
+    this.statusCode = statusCode;
+  }
 }
