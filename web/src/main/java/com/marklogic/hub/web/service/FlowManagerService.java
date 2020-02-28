@@ -134,7 +134,7 @@ public class FlowManagerService {
     }
 
     public List<String> getFlowNames() {
-        return flowManager.getFlowNames();
+        return flowManager.getLocalFlowNames();
     }
 
     public JsonNode validateStep(String flowName, String stepId){

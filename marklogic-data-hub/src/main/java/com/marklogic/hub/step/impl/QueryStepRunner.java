@@ -272,7 +272,7 @@ public class QueryStepRunner implements StepRunner {
             runStepResponse.withStepOutput(errors.toString());
             if (!disableJobOutput) {
                 JsonNode jobDoc = null;
-                jobDoc = jobDocManager.postJobs(jobId, JobStatus.FAILED_PREFIX + step, step, null, runStepResponse);
+                jobDoc = jobDocManager.postJobs(jobId, JobStatus.FAILED_PREFIX + step, flow.getName(), step, null, runStepResponse);
                 try {
                     return StepRunnerUtil.getResponse(jobDoc, step);
                 } catch (Exception ignored) {
@@ -357,7 +357,7 @@ public class QueryStepRunner implements StepRunner {
             runStepResponse.withStatus(stepStatus);
 
             try {
-                jobDoc = jobDocManager.postJobs(jobId, stepStatus, step, stepStatus.contains(JobStatus.COMPLETED_PREFIX) ? step : null, runStepResponse);
+                jobDoc = jobDocManager.postJobs(jobId, stepStatus, flow.getName(), step, stepStatus.contains(JobStatus.COMPLETED_PREFIX) ? step : null, runStepResponse);
             }
             catch (Exception e) {
                 throw e;
@@ -513,7 +513,7 @@ public class QueryStepRunner implements StepRunner {
             }
             JsonNode jobDoc = null;
             try {
-                jobDoc = jobDocManager.postJobs(jobId, stepStatus, step, (JobStatus.COMPLETED_PREFIX + step).equalsIgnoreCase(stepStatus) ? step : null, runStepResponse);
+                jobDoc = jobDocManager.postJobs(jobId, stepStatus, flow.getName(), step, (JobStatus.COMPLETED_PREFIX + step).equalsIgnoreCase(stepStatus) ? step : null, runStepResponse);
             }
             catch (Exception e) {
                 logger.error(e.getMessage());

@@ -38,7 +38,7 @@ public class NewJobService {
         if (StringUtils.isNotEmpty(flowId)) {
             return getJobs(flowId, null);
         }
-        List<String> flowNames = flowManager.getFlowNames();
+        List<String> flowNames = flowManager.getLocalFlowNames();
         List<JobModel> jobModels = new ArrayList<>();
         flowNames.forEach(f -> jobModels.addAll(getJobs(f, null)));
         return jobModels;
