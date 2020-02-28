@@ -43,7 +43,11 @@ function get(context, params) {
     resp = datahub.jobs.getJobDocsByFlow(flow);
   }
   else if (fn.exists(latest)) {
-    resp = datahub.jobs.getLastestJobDocPerFlow();
+    flowNames = (fn.exists(flowNames)) ? datahub.hubUtils.normalizeToSequence(flowNames) : flowNames;
+    resp = datahub.jobs.getLatestJobDocPerFlow(flowNames);
+    if (fn.count(flowNames) === 1) {
+      resp = resp[0];
+    }
   }
   else{
     fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([400, "Bad Request", "Incorrect options"]));

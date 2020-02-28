@@ -68,6 +68,18 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
     @Autowired
     private StepDefinitionManager stepDefinitionManager;
 
+    public FlowManagerImpl() { }
+
+    public FlowManagerImpl(HubConfig hubConfig) {
+        this();
+        this.hubConfig = hubConfig;
+    }
+
+    public FlowManagerImpl(HubConfig hubConfig, MappingManager mappingManager) {
+        this(hubConfig);
+        this.mappingManager = mappingManager;
+    }
+
     public void setHubConfig(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
     }
@@ -133,7 +145,7 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
 
     @Override
     public List<Flow> getFlows() {
-        List<String> flowNames = getFlowNames();
+        List<String> flowNames = getLocalFlowNames();
         List<Flow> flows = new ArrayList<>();
         for (String flowName : flowNames) {
             Flow flow = getFlow(flowName);
@@ -146,9 +158,8 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
         return flows;
     }
 
-    //TODO: Use ArtifactService to get all flows
     @Override
-    public List<String> getFlowNames() {
+    public List<String> getLocalFlowNames() {
         // Get all the files with flow.json extension from flows dir
         File flowsDir = hubConfig.getFlowsDir().toFile();
         if (flowsDir == null || !flowsDir.exists()) {
@@ -160,6 +171,17 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
             .map(f -> f.getName().replaceAll("(.+)\\.flow\\.json", "$1"))
             .collect(Collectors.toList());
 
+        return flowNames;
+    }
+
+    @Override
+    public List<String> getFlowNames() {
+        List<String> flowNames = new ArrayList<>();
+        getArtifactService().getList("flows").elements().forEachRemaining((flow) -> {
+            if (flow.has("name")) {
+                flowNames.add(flow.get("name").asText());
+            }
+        });
         return flowNames;
     }
 
@@ -432,7 +454,7 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
     }
 
     public List<Flow> getLocalFlows() {
-        List<String> flowNames = getFlowNames();
+        List<String> flowNames = getLocalFlowNames();
         List<Flow> flows = new ArrayList<>();
         for (String flow : flowNames) {
             flows.add(getLocalFlow(flow));
