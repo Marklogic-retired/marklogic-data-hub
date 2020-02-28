@@ -85,13 +85,6 @@ def dhfWinTests(String mlVersion, String type){
         bat 'cd data-hub & gradlew.bat ml-data-hub:test  || exit /b 0'
         bat 'cd data-hub & gradlew.bat web:test || exit /b 0'
         junit '**/TEST-*.xml'
-        commitMessage = sh (returnStdout: true, script:'''
-                            curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
-        def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
-        def commit=slurper.message.toString().trim();
-        JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
-        JIRA_ID=JIRA_ID.split(" ")[0];
-        commitMessage=null;
          //jiraAddComment comment: 'Jenkins rh7_cluster_9.0-Nightly Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
     }
 }
@@ -359,7 +352,7 @@ pipeline{
 			steps{
 			 script{
                 props = readProperties file:'data-hub/pipeline.properties';
-				copyRPM 'Release','9.0-11'
+				copyRPM 'Release','9.0-12'
 				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
 				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test -Dorg.gradle.jvmargs=-Xmx1g || true;sleep 10s;./gradlew ml-data-hub:test || true;sleep 10s;./gradlew web:test || true;sleep 10s;./gradlew marklogic-data-hub:testBootstrap || true;sleep 10s;./gradlew ml-data-hub:testFullCycle || true;'
 				junit '**/TEST-*.xml'
@@ -387,53 +380,6 @@ pipeline{
                       sh 'mkdir -p MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/MLLogs/'
                       archiveArtifacts artifacts: 'MLLogs/**/*'
                       sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME failed. Please fix the tests and create a PR or create a bug for the failures.',false,'rh7-singlenode Tests for  $BRANCH_NAME Failed'
-                  }
-                  }
-		}
-		stage('Merge PR to Integration Branch'){
-		when {
-  			branch 'FeatureBranch'
-  			beforeAgent true
-		}
-		agent {label 'dhmaster'}
-		steps{
-		withCredentials([usernameColonPassword(credentialsId: '550650ab-ee92-4d31-a3f4-91a11d5388a3', variable: 'Credentials')]) {
-		script{
-		    props = readProperties file:'data-hub/pipeline.properties';
-			//JIRA_ID=env.CHANGE_TITLE.split(':')[0]
-			prResponse = sh (returnStdout: true, script:'''
-			curl -u $Credentials  -X POST -H 'Content-Type:application/json' -d '{\"title\": \"Automated PR for Integration Branch\" , \"head\": \"FeatureBranch\" , \"base\": \"IntegrationBranch\" }' '''+githubAPIUrl+'''/pulls ''')
-			println(prResponse)
-			def slurper = new JsonSlurper().parseText(prResponse)
-			println(slurper.number)
-			prNumber=slurper.number;
-			}
-			}
-			withCredentials([usernameColonPassword(credentialsId: 'a0ec09aa-f339-44de-87c4-1a4936df44f5', variable: 'Credentials')]) {
-                    sh "curl -u $Credentials  -X POST  -d '{\"event\": \"APPROVE\"}' "+githubAPIUrl+"/pulls/${prNumber}/reviews"
-                }
-             withCredentials([usernameColonPassword(credentialsId: '550650ab-ee92-4d31-a3f4-91a11d5388a3', variable: 'Credentials')]) {
-             script{
-              props = readProperties file:'data-hub/pipeline.properties';
-             sh "curl -o - -s -w \"\n%{http_code}\n\" -X PUT -d '{\"commit_title\": \"$JIRA_ID: Merge pull request\", \"merge_method\": \"rebase\"}' -u $Credentials  "+githubAPIUrl+"/pulls/${prNumber}/merge | tail -2 > mergeResult.txt"
-    					def mergeResult = readFile('mergeResult.txt').trim()
-    					if(mergeResult=="200"){
-    						println("Merge successful")
-    					}else{
-    						println("Merge Failed")
-                sh 'exit 1'
-    					}
-    			}
-             }
-
-		}
-		post{
-                  success {
-                    println("Automated PR For Integration branch Completed")
-                   }
-                   failure {
-                      println("Creation of Automated PR Failed")
-                     
                   }
                   }
 		}
@@ -503,6 +449,25 @@ pipeline{
                    unstable {
                       println("rh7_cluster_9.0-11 Tests Failed")
                       sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on 9.0-11 rh7 cluster failed. Please fix the tests and create a PR or create a bug for the failures.',false,'rh7_cluster_9.0-11 Tests for $BRANCH_NAME Failed'
+                  }
+                  }
+		}
+        stage('rh7_cluster_9.0-12'){
+			agent { label 'dhfLinuxAgent'}
+			steps{
+		    dhflinuxTests("9.0-12","Release")
+			}
+			post{
+				always{
+				  	sh 'rm -rf $WORKSPACE/xdmp'
+				  }
+                  success {
+                    println("rh7_cluster_9.0-12 Tests Completed")
+                    sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on rh7 cluster 9.0-12 of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'rh7_cluster_9.0-12 Tests for $BRANCH_NAME Passed'
+                   }
+                   unstable {
+                      println("rh7_cluster_9.0-12 Tests Failed")
+                      sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on 9.0-12 rh7 cluster failed. Please fix the tests and create a PR or create a bug for the failures.',false,'rh7_cluster_9.0-12 Tests for $BRANCH_NAME Failed'
                   }
                   }
 		}
@@ -827,22 +792,22 @@ pipeline{
                   }
                   }
 		}
-		stage('w12_SN_9.0-11'){
+		stage('w12_SN_9.0-12'){
 			agent { label 'dhfWinagent'}
 			steps{
-                dhfWinTests("9.0-11","Release")
+                dhfWinTests("9.0-12","Release")
 			}
 			post{
 				always{
                        bat 'RMDIR /S/Q xdmp'
 				  }
                   success {
-                    println("w12_SN_9.0-11 Tests Completed")
-                    sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on W2k12 SN 9.0-11 of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'w12_SN_9.0-11 Tests for $BRANCH_NAME Passed'
+                    println("w12_SN_9.0-12 Tests Completed")
+                    sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on W2k12 SN 9.0-12 of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'w12_SN_9.0-12 Tests for $BRANCH_NAME Passed'
                    }
                    unstable {
-                      println("w12_SN_9.0-11 Tests Failed")
-                      sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on 9.0-11 w2k12 SN failed. Please fix the tests and create a PR or create a bug for the failures.',false,'w12_SN_9.0-11 Tests for $BRANCH_NAME Failed'
+                      println("w12_SN_9.0-12 Tests Failed")
+                      sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on 9.0-12 w2k12 SN failed. Please fix the tests and create a PR or create a bug for the failures.',false,'w12_SN_9.0-12 Tests for $BRANCH_NAME Failed'
                   }
                   }
 		}
