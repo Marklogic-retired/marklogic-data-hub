@@ -974,7 +974,7 @@
                 "x-swagger-router-controller": "Steps"
             }
         },
-      "/flows/{flowId}/steps/{stepId}/link/{artifactType}/{artifactName}/{artifactVersion}":
+      "/flows/{flowId}/steps/{stepId}/link/{artifactType}/{artifactName}":
       {
         "post":
         {
@@ -1014,13 +1014,6 @@
               "in": "path",
               "description": "Name of artifact to link to step",
               "required": true,
-              "type": "string"
-            },
-            {
-              "name": "artifactVersion",
-              "in": "path",
-              "description": "Optional version of artifact to link to step",
-              "required": false,
               "type": "string"
             }
             ],
@@ -1116,12 +1109,205 @@
               "description": "Name of artifact to link to step",
               "required": true,
               "type": "string"
+            }],
+          "responses":
+          {
+            "200":
+            {
+              "description": "Successful Operation"
+            },
+            "400":
+            {
+              "description": "Bad Request",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "401":
+            {
+              "description": "Unauthorized",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "403":
+            {
+              "description": "Forbidden",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "404":
+            {
+              "description": "Not Found",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "500":
+            {
+              "description": "Internal Server Error",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            }
+          },
+          "x-swagger-router-controller": "Steps"
+        }
+      },
+      "/flows/{flowId}/steps/{stepId}/link/{artifactType}/{artifactName}/{artifactVersion}":
+      {
+        "post":
+        {
+          "tags": [
+            "steps"
+          ],
+          "summary": "Link artifact to step",
+          "description": "",
+          "operationId": "linkFlowStepToArtifactWithVersion",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "flowId",
+              "in": "path",
+              "description": "Id of flow to be updated, which is the flow name",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "stepId",
+              "in": "path",
+              "description": "Id of step to be updated, a composite of '<stepName>-<stepType>'",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "artifactType",
+              "in": "path",
+              "description": "Type of artifact to link to step",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "artifactName",
+              "in": "path",
+              "description": "Name of artifact to link to step",
+              "required": true,
+              "type": "string"
             },
             {
               "name": "artifactVersion",
               "in": "path",
               "description": "Optional version of artifact to link to step",
-              "required": false,
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses":
+          {
+            "200":
+            {
+              "description": "Successful Operation",
+              "schema":
+              {
+                "$ref": "#/definitions/flow"
+              }
+            },
+            "400":
+            {
+              "description": "Bad Request",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "401":
+            {
+              "description": "Unauthorized",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "403":
+            {
+              "description": "Forbidden",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "404":
+            {
+              "description": "Not Found",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "500":
+            {
+              "description": "Internal Server Error",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            }
+          },
+          "x-swagger-router-controller": "Steps"
+        },
+        "delete":
+        {
+          "tags": [
+            "steps"
+          ],
+          "summary": "Delete step by Id",
+          "description": "",
+          "operationId": "removeArtifactWithVersionedLinkFromFlowStep",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "flowId",
+              "in": "path",
+              "description": "Id of flow to be fetched, which is the flow name",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "stepId",
+              "in": "path",
+              "description": "Id of step to be fetched, a composite of '<stepName>-<stepType>'",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "artifactType",
+              "in": "path",
+              "description": "Type of artifact to link to step",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "artifactName",
+              "in": "path",
+              "description": "Name of artifact to link to step",
+              "required": true,
+              "type": "string"
+            },
+            {
+              "name": "artifactVersion",
+              "in": "path",
+              "description": "Optional version of artifact to link to step",
+              "required": true,
               "type": "string"
             }],
           "responses":
@@ -1975,7 +2161,7 @@
                     "jobs"
                 ],
                 "summary": "Cancel a job",
-                "description": "....",
+                "description": "This has never been implemented. We currently use the flows API to stop running flows.",
                 "operationId": "cancelJobWithID",
                 "produces": [
                     "application/json"
@@ -2041,6 +2227,149 @@
                 "x-swagger-router-controller": "Jobs"
             }
         },
+      "/jobs/latest":
+      {
+        "get":
+        {
+          "tags": [
+            "jobs"
+          ],
+          "summary": "Find the latest job for each flow",
+          "description": "....",
+          "operationId": "getLatestJobForEachFlow",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [],
+          "responses":
+          {
+            "200":
+            {
+              "description": "Successful Operation",
+              "schema":
+              {
+                "type": "array",
+                "items": { "$ref": "#/definitions/job" }
+              }
+            },
+            "400":
+            {
+              "description": "Bad Request",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "401":
+            {
+              "description": "Unauthorized",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "403":
+            {
+              "description": "Forbidden",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "404":
+            {
+              "description": "Not Found",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "500":
+            {
+              "description": "Internal Server Error",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            }
+          },
+          "x-swagger-router-controller": "Jobs"
+        }
+      },
+      "/jobs/latest/{flowName}":
+      {
+        "get":
+        {
+          "tags": [
+            "jobs"
+          ],
+          "summary": "Find the latest job a flow",
+          "description": "....",
+          "operationId": "getLatestJobForAFlow",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "flowName",
+              "type": "string",
+              "in": "path",
+              "required": true
+            }],
+          "responses":
+          {
+            "200":
+            {
+              "description": "Successful Operation",
+              "schema":
+              {
+                "$ref": "#/definitions/job"
+              }
+            },
+            "400":
+            {
+              "description": "Bad Request",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "401":
+            {
+              "description": "Unauthorized",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "403":
+            {
+              "description": "Forbidden",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "404":
+            {
+              "description": "Not Found",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "500":
+            {
+              "description": "Internal Server Error",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            }
+          },
+          "x-swagger-router-controller": "Jobs"
+        }
+      },
         "/jobs/{jobId}":
         {
             "get":
@@ -4189,22 +4518,6 @@
                         {}
                     }
                 },
-                "jobs":
-                {
-                    "type": "array",
-                    "description": "Array of Job IDs generated by this flow",
-                    "items":
-                    {
-                        "type": "string"
-                    }
-                },
-                "latestJob":
-                {
-                    "type": "object",
-                    "description": "Data related to the last job run for this Flow",
-                    "properties":
-                    {}
-                },
                 "isValid":
                 {
                     "type": "boolean",
@@ -4220,11 +4533,6 @@
             },
             "example":
             {
-                "latestJob": "{}",
-                "jobs": [
-                    "jobs",
-                    "jobs"
-                ],
                 "isValid": true,
                 "name": "name",
                 "options": "{}",
