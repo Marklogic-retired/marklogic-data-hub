@@ -13,6 +13,7 @@ interface IRolesContextInterface {
     canWriteFlows: () => boolean;
     canReadStepDefinitions: () => boolean;
     canWriteStepDefinitions: () => boolean;
+    hasOperatorRole: () => boolean;
 }
 
 /**
@@ -56,6 +57,9 @@ export class RolesService implements IRolesContextInterface {
     };
     public canWriteStepDefinitions:() => boolean = () => {
         return this.roles.includes('data-hub-step-definition-writer');
+    };
+    public hasOperatorRole:() => boolean = () => {
+        return this.roles.includes('data-hub-operator');
     };
 }
 
