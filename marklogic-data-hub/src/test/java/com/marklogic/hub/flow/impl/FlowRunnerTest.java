@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.marklogic.hub.flow;
+package com.marklogic.hub.flow.impl;
 
 import com.marklogic.bootstrap.Installer;
 import com.marklogic.client.DatabaseClient;
@@ -24,11 +24,13 @@ import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.flow.impl.FlowRunnerImpl;
+import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.RunStepResponse;
+import com.marklogic.hub.step.impl.Step;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,6 +41,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 @ExtendWith(SpringExtension.class)
@@ -47,6 +50,9 @@ public class FlowRunnerTest extends HubTestBase {
 
     @Autowired
     FlowRunnerImpl flowRunner;
+
+    @Autowired
+    FlowManager flowManager;
 
     @BeforeAll
     public static void setup() {
@@ -66,7 +72,9 @@ public class FlowRunnerTest extends HubTestBase {
     }
 
     @Test
-    public void testRunFlow(){
+    public void testRunFlow() {
+        verifyThatLoadDataSettingsAreAppliedToStepConfig();
+
         RunFlowResponse resp = runFlow("testFlow", null, null, null, null);
         flowRunner.awaitCompletion();
 
@@ -385,5 +393,20 @@ public class FlowRunnerTest extends HubTestBase {
             "Expected job status of first response to be 'finished', but was: " + resp.getJobStatus());
         Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp1.getJobStatus()),
             "Expected job status of second response to be 'finished', but was: " + resp1.getJobStatus());
+    }
+
+    private void verifyThatLoadDataSettingsAreAppliedToStepConfig() {
+        final Step step = flowManager.getFlow("testFlow").getStep("1");
+        final Map<String, Object> stepConfig = new HashMap<>();
+
+        flowRunner.applyArtifactSettings(step, stepConfig);
+
+        assertTrue(stepConfig.containsKey("fileLocations"), "fileLocations in stepConfig should have been " +
+            "populated from the LoadData artifact");
+
+        final Map<String, String> fileLocations = (Map<String,String>)stepConfig.get("fileLocations");
+        assertEquals("xml", fileLocations.get("inputFileType"));
+        assertEquals(".*/input,''", fileLocations.get("outputURIReplacement"));
+        assertEquals("input", fileLocations.get("inputFilePath"));
     }
 }
