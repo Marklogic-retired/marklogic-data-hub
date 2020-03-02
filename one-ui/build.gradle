@@ -9,9 +9,6 @@ buildscript {
 	}
 }
 
-sourceCompatibility = "9"
-targetCompatibility = "9"
-
 apply plugin: "java"
 apply plugin: "org.springframework.boot"
 apply plugin: 'maven-publish'
@@ -20,6 +17,9 @@ apply plugin: 'war'
 apply plugin: "com.moowork.node"
 
 mainClassName = "com.marklogic.hub.oneui.Application"
+
+sourceCompatibility = "9"
+targetCompatibility = "9"
 
 ext {
 	taskGroup = "Spring Boot UI"
@@ -53,7 +53,7 @@ dependencies {
 
 	compile("org.aspectj:aspectjweaver:1.8.9")
 	compile("org.springframework:spring-messaging")
-	compile "com.marklogic:marklogic-client-api:5.0.1"
+
     compile project(":marklogic-data-hub")
 
 	//spring boot test libs

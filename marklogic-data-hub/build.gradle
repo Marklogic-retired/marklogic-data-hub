@@ -175,8 +175,12 @@ ext {
     dataServicesPath = "src/main/resources/ml-modules/root/data-hub/5/data-services"
 }
 
-task generateSourceDataInterface(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask, group: dataServicesGroup) {
+task generateMasteringServiceInterface(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask, group: dataServicesGroup) {
     serviceDeclarationFile = dataServicesPath + "/mastering/service.json"
+}
+
+task generateSecurityServiceInterface(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask, group: dataServicesGroup) {
+    serviceDeclarationFile = dataServicesPath + "/security/service.json"
 }
 
 task generateStepDefinitionInterface(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask, group: dataServicesGroup) {

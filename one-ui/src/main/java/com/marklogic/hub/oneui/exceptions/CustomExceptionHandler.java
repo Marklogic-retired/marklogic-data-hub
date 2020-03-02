@@ -24,6 +24,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.HttpClientErrorException;
@@ -67,6 +68,22 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
             ArrayNode requiredRolesArray = errJson.putArray("requiredRoles");
             exception.getRequiredRoles().forEach(requiredRolesArray::add);
         }
+        return new ResponseEntity<>(errJson, HttpStatus.FORBIDDEN);
+    }
+
+    /**
+     * TODO The UI receives the 403 and redirects back to the login page, which isn't correct - we instead need a
+     * "You're logged in, but you can't do that" page.
+     *
+     * @param exception
+     * @return
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    protected ResponseEntity<JsonNode> handleAccessDeniedException(AccessDeniedException exception) {
+        ObjectNode errJson = mapper.createObjectNode();
+        errJson.put("code", 403);
+        errJson.put("message", exception.getMessage());
+        errJson.put("suggestion", "Log in as a MarkLogic user with authority to perform this action.");
         return new ResponseEntity<>(errJson, HttpStatus.FORBIDDEN);
     }
 

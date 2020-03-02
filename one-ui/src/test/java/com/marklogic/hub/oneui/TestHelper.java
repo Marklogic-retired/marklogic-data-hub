@@ -6,7 +6,6 @@ import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.FileHandle;
-import com.marklogic.hub.oneui.auth.MarkLogicAuthenticationManager;
 import com.marklogic.hub.oneui.models.EnvironmentInfo;
 import com.marklogic.hub.oneui.models.HubConfigSession;
 import com.marklogic.hub.oneui.services.EnvironmentService;
@@ -34,8 +33,6 @@ import java.util.Objects;
 @PropertySource("classpath:application-test.properties")
 public class TestHelper {
     static final protected Logger logger = LoggerFactory.getLogger(TestHelper.class);
-    @Autowired
-    MarkLogicAuthenticationManager markLogicAuthenticationManager;
 
     @Value("${test.mlHost:localhost}")
     public String mlHost;
