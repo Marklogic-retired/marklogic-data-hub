@@ -11,14 +11,14 @@ import {getResultsByQuery, getDoc} from '../../../util/search-service'
 
 interface Props {
     data: any;
-    entityName: any;
+    entityTypeTitle: any;
     getMappingArtifactByMapName: any;
     deleteMappingArtifact: any;
     createMappingArtifact: any;
     updateMappingArtifact: any;
     canReadOnly: any;
     canReadWrite: any;
-    entitiesInfo: any;
+    entityModel: any;
   }
 
 const MappingCard: React.FC<Props> = (props) => {
@@ -34,7 +34,7 @@ const MappingCard: React.FC<Props> = (props) => {
     const [docNotFound, setDocNotFound] = useState(false);
 
     //For Entity table
-    const [entityData, setEntityData] = useState<any[]>([]);
+    const [entityTypeProperties, setEntityTypeProperties] = useState<any[]>([]);
 
     //const [openLoadDataSettings, setOpenLoadDataSettings] = useState(false);
 
@@ -217,7 +217,7 @@ const MappingCard: React.FC<Props> = (props) => {
     
     
     const extractEntityInfoForTable = () => {
-        let entProps = props.entitiesInfo.definitions.definitions[props.entityName].properties;
+        let entProps = props.entityModel.definitions.definitions[props.entityTypeTitle].properties;
         let entTableTempData: any = [];
         entProps.map(prop => {
             let propty = {
@@ -226,12 +226,12 @@ const MappingCard: React.FC<Props> = (props) => {
             }
             entTableTempData.push(propty)
         })
-        setEntityData([...entTableTempData]);
+        setEntityTypeProperties([...entTableTempData]);
 
     }
 
     const openSourceToEntityMapping = async (name,index) => {
-            let mData = await props.getMappingArtifactByMapName(props.entityName,name);
+            let mData = await props.getMappingArtifactByMapName(props.entityTypeTitle,name);
             setSourceURI('');
             //setMapData({...props.data[index]});
             setMapData({...mData})
@@ -284,7 +284,7 @@ const MappingCard: React.FC<Props> = (props) => {
                 newMap={newMap} 
                 title={title} 
                 setNewMap={setNewMap}
-                targetEntity={props.entityName}
+                targetEntity={props.entityTypeTitle}
                 createMappingArtifact={props.createMappingArtifact}
                 deleteMappingArtifact={props.deleteMappingArtifact}  
                 mapData={mapData}
@@ -295,11 +295,11 @@ const MappingCard: React.FC<Props> = (props) => {
                 sourceData={sourceData}
                 sourceURI={sourceURI}
                 mapData={mapData}
-                entityData={entityData}
+                entityTypeProperties={entityTypeProperties}
                 mappingVisible={mappingVisible}
                 setMappingVisible={setMappingVisible}
                 mapName={mapName}
-                entityName={props.entityName}
+                entityTypeTitle={props.entityTypeTitle}
                 getMappingArtifactByMapName={props.getMappingArtifactByMapName}
                 updateMappingArtifact={props.updateMappingArtifact}
                 canReadWrite={props.canReadWrite}

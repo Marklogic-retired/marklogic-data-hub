@@ -32,34 +32,33 @@ const EntityTiles = (props) => {
             let response = await axios.get('/api/artifacts/mapping');
             
             if (response.status === 200) {
-                let entArt = response.data;
-                entArt.sort((a, b) => (a.entityType > b.entityType) ? 1 : -1)
-                console.log('entArt',entArt)
-                setEntityArtifacts([...entArt]);
+                let mapArtifacts = response.data;
+                mapArtifacts.sort((a, b) => (a.entityType > b.entityType) ? 1 : -1)
+                setEntityArtifacts([...mapArtifacts]);
               console.log('GET Mapping Artifacts API Called successfully!',response);
             } 
           } catch (error) {
               let message = error;
-              console.log('Error while fetching mapping artifacts', message);
+              console.log('Error while fetching the mappings!', message);
           }
     }
 
-    const getMappingArtifactByMapName = async (entityName,mapName) => {
+    const getMappingArtifactByMapName = async (entityTypeTitle,mapName) => {
         try {
             let response = await axios.get(`/api/artifacts/mapping/${mapName}`);
             
             if (response.status === 200) {
-                let entArt = response.data;
+                let mapArtifacts = response.data;
 
-               if(entArt.targetEntity === entityName){
-                return entArt;
+               if(mapArtifacts.targetEntity === entityTypeTitle){
+                return mapArtifacts;
                }
                
               console.log('GET Mapping Artifacts API Called successfully!',response);
             } 
           } catch (error) {
               let message = error;
-              console.log('Error while fetching mapping artifact', message);
+              console.log('Error while fetching the mapping!', message);
           }
     }
 
@@ -75,16 +74,16 @@ const EntityTiles = (props) => {
             } 
           } catch (error) {
               let message = error.response.data.message;
-              console.log('Error while deleting mapping artifact.', message);
+              console.log('Error while deleting the mapping!', message);
               setIsLoading(false);
           }
     }
 
-    const createMappingArtifact = async (mapObj) => {
+    const createMappingArtifact = async (mapping) => {
         try {
             setIsLoading(true);
       
-            let response = await axios.post(`/api/artifacts/mapping/${mapObj.name}`, mapObj);
+            let response = await axios.post(`/api/artifacts/mapping/${mapping.name}`, mapping);
             if (response.status === 200) {
               console.log('Create MappingArtifact API Called successfully!')
               setIsLoading(false);
@@ -95,16 +94,16 @@ const EntityTiles = (props) => {
           }
           catch (error) {
             let message = error;
-            console.log('Error While creating the Mapping artifact!', message)
+            console.log('Error while creating the mapping!', message)
             setIsLoading(false);
             return false;
           }
     }
 
-    const updateMappingArtifact = async (mapObj) => {
+    const updateMappingArtifact = async (mapping) => {
         try {
       
-            let response = await axios.post(`/api/artifacts/mapping/${mapObj.name}`, mapObj);
+            let response = await axios.post(`/api/artifacts/mapping/${mapping.name}`, mapping);
             if (response.status === 200) {
               console.log('Update MappingArtifact API Called successfully!')
               return true;
@@ -114,25 +113,25 @@ const EntityTiles = (props) => {
           }
           catch (error) {
             let message = error;
-            console.log('Error While updating the Mapping artifact!', message)
+            console.log('Error while updating the mapping!', message)
             return false;
           }
     }
 
-    const outputCards = (entMaps) => {
+    const outputCards = (entityCardData) => {
         let output;
 
         if (viewType === 'map') {
             output = <div className={styles.cardView}>
-                <MappingCard data={entMaps.artifacts}
-                    entityName={entMaps.entityType}
+                <MappingCard data={entityCardData.artifacts}
+                    entityTypeTitle={entityCardData.entityType}
                     getMappingArtifactByMapName={getMappingArtifactByMapName}
                     deleteMappingArtifact={deleteMappingArtifact}
                     createMappingArtifact={createMappingArtifact}
                     updateMappingArtifact={updateMappingArtifact}
                     canReadWrite={props.canReadWrite}
                     canReadOnly={props.canReadOnly}
-                    entitiesInfo={props.entitiesInfo[entMaps.entityType]} />
+                    entityModel={props.entityModels[entityCardData.entityType]} />
             </div>
         } else {
             output = <div><br/>This functionality is not implemented yet.</div>
