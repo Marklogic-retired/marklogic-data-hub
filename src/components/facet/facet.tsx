@@ -15,8 +15,10 @@ interface Props {
   constraint: string;
   facetValues: any[];
   tooltip: string;
-  selectedEntity: string[];
   facetCategory: string;
+  referenceType: string;
+  entityTypeId: any;
+  propertyPath: any;
   updateSelectedFacets: (constraint: string, vals: string[], datatype: string) => void;
   applyAllFacets: () => void;
   addFacetValues: (constraint: string, vals: string[], datatype: string, facetCategory: string) => void;
@@ -178,12 +180,12 @@ const Facet: React.FC<Props> = (props) => {
           onClick={() => showMore()}
           data-cy="show-more"
         >{(more) ? '<< less' : 'more >>'}</div>
-        {props.facetType === 'xs:string' && props.facetCategory === "entity" &&
+        {(props.facetType === 'xs:string' || 'collection') &&
         <div className={styles.searchValues}>
           <PopOverSearch
-              name={props.name}
-              selectedEntity={props.selectedEntity[0]}
-              facetValues={props.facetValues}
+              referenceType={props.referenceType}
+              entityTypeId={props.entityTypeId}
+              propertyPath={props.propertyPath}
               checkFacetValues={checkFacetValues}
           />
         </div>}

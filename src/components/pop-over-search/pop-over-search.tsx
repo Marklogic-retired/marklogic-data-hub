@@ -4,9 +4,9 @@ import styles from './pop-over-search.module.scss';
 import axios from "axios";
 
 interface Props {
-  name: string;
-  selectedEntity: string;
-  facetValues: any[];
+  referenceType: string;
+  entityTypeId: any;
+  propertyPath: any;
   checkFacetValues: (checkedValues: any[]) => void;
 };
 
@@ -17,23 +17,21 @@ const PopOverSearch: React.FC<Props> = (props) => {
   const [checkedValues, setCheckedValues] = useState<any[]>([]);
   const [popOverVisibility, setPopOverVisibilty] = useState(false);
 
-  const getFacetValues = async (param) => {
-    if (param.target.value.length >= 2 && param.target.value.toLowerCase()) {
+  const getFacetValues = async (e) => {
+    if (e.target.value.length >= 2 && e.target.value.toLowerCase()) {
       try {
         const response = await axios({
           method: 'POST',
           url: `/datahub/v2/search/facet-values`,
           data: {
             "facetInfo": {
-              "schemaName": props.selectedEntity,
-              "entityName": props.selectedEntity,
-              "facetName": props.name
+              "referenceType": props.referenceType,
+              "entityTypeId": props.entityTypeId,
+              "propertyPath": props.propertyPath
             },
             "limit": 10,
             "dataType": "string",
-            "queryParams": [
-              param.target.value
-            ]
+            "pattern": e.target.value
           }
         });
         setOptions(response.data);
