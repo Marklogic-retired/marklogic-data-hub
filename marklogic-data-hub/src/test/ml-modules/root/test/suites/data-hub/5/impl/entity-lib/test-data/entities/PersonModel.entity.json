@@ -1,0 +1,75 @@
+{
+  "info" : {
+    "title" : "PersonModel",
+    "version" : "0.0.1",
+    "baseUri" : "http://marklogic.com/example/"
+  },
+  "definitions" : {
+    "Person" : {
+      "required" : [ "ssn" ],
+      "pii" : [ ],
+      "elementRangeIndex" : [ ],
+      "rangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "ssn" : {
+          "datatype" : "string",
+          "description": "An expected unique identifier for a Person",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "names" : {
+          "datatype" : "array",
+          "items" : {
+            "$ref" : "#/definitions/Name"
+          }
+        },
+        "address" : {
+          "datatype" : "array",
+          "items" : {
+            "$ref" : "#/definitions/Address"
+          }
+        },
+        "employer": {
+          "$ref": "http://marklogic.com/example/EmployerModel-0.0.1/Employer"
+        }
+      }
+    },
+    "Name" : {
+      "properties" : {
+        "first" : {
+          "datatype" : "string"
+        },
+        "last" : {
+          "datatype" : "string"
+        }
+      }
+    },
+    "Address" : {
+      "properties" : {
+        "city" : {
+          "datatype" : "string"
+        },
+        "state" : {
+          "datatype" : "string"
+        },
+        "dateRanges" : {
+          "datatype" : "array",
+          "description" : "Defines when the person was associated with the address",
+          "items" : {
+            "$ref" : "#/definitions/DateRange"
+          }
+        }
+      }
+    },
+    "DateRange" : {
+      "properties" : {
+        "startDate" : {
+          "datatype" : "date"
+        },
+        "endDate" : {
+          "datatype" : "date"
+        }
+      }
+    }
+  }
+}

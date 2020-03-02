@@ -1,0 +1,34 @@
+{
+  "info" : {
+    "title" : "EmployerModel",
+    "version" : "0.0.1",
+    "baseUri" : "http://marklogic.com/example/"
+  },
+  "definitions" : {
+    "Employer" : {
+      "required" : [ ],
+      "pii" : [ ],
+      "elementRangeIndex" : [ ],
+      "rangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "name" : {
+          "datatype" : "string"
+        },
+        "address" : {
+          "$ref" : "#/definitions/Address"
+        }
+      }
+    },
+    "Address" : {
+      "properties" : {
+        "city" : {
+          "datatype" : "string"
+        },
+        "state" : {
+          "datatype" : "string"
+        }
+      }
+    }
+  }
+}
