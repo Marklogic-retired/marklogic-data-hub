@@ -50,11 +50,23 @@ const Sidebar: React.FC<Props> = (props) => {
       setHubFacets(filteredHubFacets);
       if (props.selectedEntities.length) {
         const entityDef = props.entityDefArray.find(entity => entity.name === props.selectedEntities[0]);
-        const newEntityFacets = entityDef.rangeIndex.length && entityDef.rangeIndex.map(rangeIndex => {
+        let newEntityFacets = entityDef.rangeIndex.length && entityDef.rangeIndex.map(rangeIndex => {
           let entityFacetValues = parsedFacets.find(facet => facet.facetName === rangeIndex);
           return entityFacetValues ? { ...entityFacetValues } : false;
         });
-
+        if (newEntityFacets) {
+          for (let i in newEntityFacets) {
+            if (newEntityFacets[i]['facetName'] === entityDef.pathIndex[i]['index']) {
+              newEntityFacets[i].referenceType = entityDef.pathIndex[i].referenceType;
+              newEntityFacets[i].entityTypeId = entityDef.pathIndex[i].entityTypeId;
+              if (entityDef.pathIndex[i].referenceType === 'element') {
+                newEntityFacets[i].propertyPath = entityDef.pathIndex[i].index;
+              } else {
+                newEntityFacets[i].propertyPath = entityDef.pathIndex[i].propertyPath;
+              }
+            }
+          }
+        }
         setEntityFacets(newEntityFacets ? newEntityFacets.filter(item => item !== false) : []);
       }
       if (Object.entries(searchOptions.searchFacets).length !== 0) {
@@ -269,7 +281,7 @@ const Sidebar: React.FC<Props> = (props) => {
               if (pathIndex) {
                 switch (facet.type) {
                   case 'xs:string': {
-                    return Object.entries(facet).length !== 0 && (
+                    return Object.entries(facet).length !== 0 && facet.facetValues.length > 0 && (
                       <Facet
                         name={pathIndex.entityPath}
                         constraint={pathIndex.entityPath}
@@ -278,7 +290,9 @@ const Sidebar: React.FC<Props> = (props) => {
                         tooltip=""
                         facetType={facet.type}
                         facetCategory="entity"
-                        selectedEntity={props.selectedEntities}
+                        referenceType ={facet.referenceType}
+                        entityTypeId={facet.entityTypeId}
+                        propertyPath={facet.propertyPath}
                         updateSelectedFacets={updateSelectedFacets}
                         applyAllFacets={applyAllFacets}
                         addFacetValues={addFacetValues}
@@ -359,6 +373,9 @@ const Sidebar: React.FC<Props> = (props) => {
                         constraint={pathIndex.entityPath}
                         name={pathIndex.entityPath}
                         step={step}
+                        referenceType={facet.referenceType}
+                        entityTypeId={facet.entityTypeId}
+                        propertyPath={facet.propertyPath}
                         datatype={datatype}
                         key={facet.facetName}
                         onChange={onNumberFacetChange}
@@ -402,10 +419,12 @@ const Sidebar: React.FC<Props> = (props) => {
                 tooltip={facet.tooltip}
                 facetType={facet.type}
                 facetCategory="hub"
-                selectedEntity={props.selectedEntities}
                 updateSelectedFacets={updateSelectedFacets}
                 applyAllFacets={applyAllFacets}
                 addFacetValues={addFacetValues}
+                referenceType={facet.referenceType}
+                entityTypeId={facet.entityTypeId}
+                propertyPath={facet.propertyPath}
               />
             )
           })}

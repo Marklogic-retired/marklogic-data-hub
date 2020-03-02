@@ -28,6 +28,12 @@ describe("Facet component", () => {
             tooltip=""
             updateSelectedFacets={jest.fn()}
             applyAllFacets={jest.fn()}
+            addFacetValues={jest.fn()}
+            referenceType={''}
+            entityTypeId={''}
+            propertyPath={''}
+            facetType={'xs:string'}
+            facetCategory={'hub'}
           />
         )
       });

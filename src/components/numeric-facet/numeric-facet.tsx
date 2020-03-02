@@ -10,6 +10,9 @@ interface Props {
   step: number
   constraint: string;
   datatype: any
+  referenceType: string;
+  entityTypeId: any;
+  propertyPath: any;
   onChange: (datatype: any, facetName: any, value: any[]) => void;
   applyAllFacets: () => void;
 };
@@ -29,9 +32,9 @@ const NumericFacet: React.FC<Props> = (props) => {
       method: 'POST',
       url: `/datahub/v2/search/facet-values/range`,
       data: {
-        "schemaName": searchOptions.entityNames[0],
-        "entityName": searchOptions.entityNames[0],
-        "facetName": props.name
+        "referenceType": props.referenceType,
+        "entityTypeId": props.entityTypeId,
+        "propertyPath": props.propertyPath
       }
     });
 
