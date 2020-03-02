@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Collapse, Menu } from 'antd';
 import styles from './entity-tiles.module.scss';
 import MappingCard from './mapping/mapping-card';
@@ -41,7 +41,25 @@ const EntityTiles = (props) => {
           } catch (error) {
               let message = error;
               console.log('Error while fetching mapping artifacts', message);
-              //handleError(error);
+          }
+    }
+
+    const getMappingArtifactByMapName = async (entityName,mapName) => {
+        try {
+            let response = await axios.get(`/api/artifacts/mapping/${mapName}`);
+            
+            if (response.status === 200) {
+                let entArt = response.data;
+
+               if(entArt.targetEntity === entityName){
+                return entArt;
+               }
+               
+              console.log('GET Mapping Artifacts API Called successfully!',response);
+            } 
+          } catch (error) {
+              let message = error;
+              console.log('Error while fetching mapping artifact', message);
           }
     }
 
@@ -57,7 +75,7 @@ const EntityTiles = (props) => {
             } 
           } catch (error) {
               let message = error.response.data.message;
-              console.log('Error while deleting load data artifact.', message);
+              console.log('Error while deleting mapping artifact.', message);
               setIsLoading(false);
           }
     }
@@ -68,7 +86,7 @@ const EntityTiles = (props) => {
       
             let response = await axios.post(`/api/artifacts/mapping/${mapObj.name}`, mapObj);
             if (response.status === 200) {
-              console.log('Create/Update MappingArtifact API Called successfully!')
+              console.log('Create MappingArtifact API Called successfully!')
               setIsLoading(false);
               return true;
             } else {
@@ -76,9 +94,27 @@ const EntityTiles = (props) => {
             }
           }
           catch (error) {
-            let message = error;//.response.data.message;
+            let message = error;
             console.log('Error While creating the Mapping artifact!', message)
             setIsLoading(false);
+            return false;
+          }
+    }
+
+    const updateMappingArtifact = async (mapObj) => {
+        try {
+      
+            let response = await axios.post(`/api/artifacts/mapping/${mapObj.name}`, mapObj);
+            if (response.status === 200) {
+              console.log('Update MappingArtifact API Called successfully!')
+              return true;
+            } else {
+                return false;
+            }
+          }
+          catch (error) {
+            let message = error;
+            console.log('Error While updating the Mapping artifact!', message)
             return false;
           }
     }
@@ -90,8 +126,10 @@ const EntityTiles = (props) => {
             output = <div className={styles.cardView}>
                 <MappingCard data={entMaps.artifacts}
                     entityName={entMaps.entityType}
+                    getMappingArtifactByMapName={getMappingArtifactByMapName}
                     deleteMappingArtifact={deleteMappingArtifact}
                     createMappingArtifact={createMappingArtifact}
+                    updateMappingArtifact={updateMappingArtifact}
                     canReadWrite={props.canReadWrite}
                     canReadOnly={props.canReadOnly}
                     entitiesInfo={props.entitiesInfo[entMaps.entityType]} />

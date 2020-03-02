@@ -3,8 +3,8 @@ import React, { useState, useEffect, CSSProperties } from "react";
 import { Modal, Table, Icon, Popover, Input, Button, Alert, message, Tooltip, Spin } from "antd";
 import styles from './source-to-entity-map.module.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faObjectUngroup, faList } from "@fortawesome/free-solid-svg-icons";
-import { getInitialChars, convertDateFromISO } from "../../../../util/conversionFunctions";
+import { faObjectUngroup, faList, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
+import { getInitialChars, convertDateFromISO, getLastChars } from "../../../../util/conversionFunctions";
 
 const SourceToEntityMap = (props) => {
 
@@ -13,9 +13,14 @@ const SourceToEntityMap = (props) => {
     const [mapExpTouched, setMapExpTouched] = useState(false);
     const [mapExpression, setMapExpression] = useState({});
     const [editingURI, setEditingUri] = useState(false);
-
+    const [showEditURIOption, setShowEditURIOption] = useState(false);
     const [mapSaved, setMapSaved] = useState(false);
     const [errorInSaving,setErrorInSaving] = useState('');
+
+    const [srcURI, setSrcURI] = useState(props.sourceURI);
+
+    const [srcData, setSrcData] = useState<any[]>([]);
+
 
     const sampleDocUri: CSSProperties = {
 
@@ -32,14 +37,38 @@ const SourceToEntityMap = (props) => {
 
     const { TextArea } = Input;
 
-    const handleEditingURI = () => {
+    const handleEditIconClick = () => {
+        setEditingUri(true);
+    }
+
+    const handleURIEditing = (e) => {
+        setSrcURI(e.target.value);
 
     }
 
-    const srcDetails = <div className={styles.xpathDoc}><span id="doc">Collection: </span>
-<div>URI: {props.sourceURI}</div>
-        {/* <span onClick={handleEditingURI} style={sampleDocUri} >{{  }}</span>
-        <span onClick={handleEditingURI}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> */}
+    const handleMouseOver = (e) => {
+        setShowEditURIOption(true);
+    }
+
+    const handleCloseEditOption = (srcURI) => {
+        setSrcURI(srcURI);
+        setEditingUri(false);
+    }
+
+    const handleSubmitUri = (uri) =>{
+        props.getMappingArtifactByMapName();
+        props.fetchSrcDocFromUri(uri);
+        setEditingUri(false);
+    }
+
+
+    const srcDetails = <div className={styles.xpathDoc}>
+        {props.mapData.selectedSource === 'collection' ? <div className={styles.sourceQuery}>Collection: {props.extractCollectionFromSrcQuery(props.mapData.sourceQuery)}</div> : <div className={styles.sourceQuery}>Source Query: {getInitialChars(props.mapData.sourceQuery,32,'...')}</div>}
+        {!editingURI ? <div 
+            onMouseOver={(e) => handleMouseOver(e)}
+            onMouseLeave={(e) => setShowEditURIOption(false)} className={styles.uri}>{!showEditURIOption ? <span className={styles.notShowingEditIcon}>URI: &nbsp;{getLastChars(srcURI,42,'...')}</span> :
+        <span>URI: <span className={styles.showingEditIcon}>{getLastChars(srcURI,42,'...')}  <i><FontAwesomeIcon icon={faPencilAlt} size="lg" onClick={handleEditIconClick} className={styles.editIcon}
+        /></i></span></span>}</div> : <div className={styles.inputURIContainer}>URI: <span><Input value={srcURI} onChange={handleURIEditing} className={styles.uriEditing}></Input>&nbsp;<Icon type="close" className={styles.closeIcon} onClick={() => handleCloseEditOption(srcURI)}/>&nbsp;<Icon type="check" className={styles.checkIcon} onClick={() => handleSubmitUri(srcURI)}/></span></div>}
     </div>;
 
 
@@ -48,8 +77,21 @@ const SourceToEntityMap = (props) => {
         return(()=> {
             setMapExp({});
         })
-    },[props.mapData]);
+    },[props.mappingVisible]);
 
+
+    useEffect(() => {
+        if(props.sourceURI){
+            setSrcURI(props.sourceURI);
+        }
+        
+    },[props.sourceURI]);
+
+    useEffect(() => {
+        setSrcData([...props.sourceData])
+        
+    },[props.sourceData]);
+    
 
     //Set the mapping expressions, if already exists.
     const initializeMapExpressions = () => {
@@ -89,7 +131,6 @@ const SourceToEntityMap = (props) => {
         //console.log('dataPayLoad',dataPayload);
             
         let mapSavedResult = await props.updateMappingArtifact(dataPayload);
-        console.log('mapSavedResult',mapSavedResult);
         if(mapSavedResult){
             setErrorInSaving('noError');
         } else {
@@ -187,7 +228,7 @@ const SourceToEntityMap = (props) => {
        }
     }
 
-    // CSS properties for the alert message after saviing the mapping
+    // CSS properties for the alert message after saving the mapping
     const saveMessageCSS: CSSProperties = {
         border: errorInSaving === 'noError' ? '1px solid #008000' : '1px solid #ff0000',
         marginLeft: '30em'
@@ -206,18 +247,6 @@ const SourceToEntityMap = (props) => {
         return errorInSaving === 'noError' ? msg : errorMsg;
 
       };
-
-      //handle spinner while source data is loading
-
-      const handleSpinner = () => {
-          if (!props.sourceData){
-             return true
-
-          } else {
-            return true;
-          }
-          
-      }
 
 
 return (<Modal
@@ -244,7 +273,8 @@ return (<Modal
                 /></i> Source Data <Popover
                 content={srcDetails}
                 trigger="click"
-                placement="right" ><Icon type="question-circle" className={styles.questionCircle} theme="filled" /></Popover></p>
+                placement="right" 
+                ><Icon type="question-circle" className={styles.questionCircle} theme="filled" /></Popover></p>
             </div>
             <Spin spinning={JSON.stringify(props.sourceData) === JSON.stringify([]) && !props.docNotFound}> 
         <Table
@@ -257,7 +287,7 @@ return (<Modal
         indentSize={14}
         //size="small"
         columns={columns}
-        dataSource={props.sourceData}
+        dataSource={srcData}
         tableLayout="unset"
         rowKey="name"
         />

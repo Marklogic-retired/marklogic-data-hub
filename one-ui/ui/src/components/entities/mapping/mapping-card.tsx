@@ -12,8 +12,10 @@ import {getResultsByQuery, getDoc} from '../../../util/search-service'
 interface Props {
     data: any;
     entityName: any;
+    getMappingArtifactByMapName: any;
     deleteMappingArtifact: any;
     createMappingArtifact: any;
+    updateMappingArtifact: any;
     canReadOnly: any;
     canReadWrite: any;
     entitiesInfo: any;
@@ -73,16 +75,6 @@ const MappingCard: React.FC<Props> = (props) => {
         return customStyles;
     }
 
-    //Truncate a string (Step Name) to desired no. of characters
-    const getInitialChars = (str, num, suffix) => {
-        suffix = suffix ? suffix : '...';
-        let result = str;
-        if (typeof str === 'string' && str.length > num) {
-            result = str.substr(0, num) + suffix;
-        }
-        return result;
-    }
-
     const extractCollectionFromSrcQuery = (query) => {
 
         let srcCollection = query.substring(
@@ -119,24 +111,36 @@ const MappingCard: React.FC<Props> = (props) => {
         </Modal>;
 
 
-    const getSourceDataFromUri = async (index) => {
+    const getSourceData = async (index) => {
 
         let database = props.data[index].sourceDatabase || 'data-hub-STAGING';
         let sQuery = props.data[index].sourceQuery;
-        console.log('sQuery',sQuery);
         
         try{
         let response = await getResultsByQuery(database,sQuery,10, true);
           if (response.status === 200) {
            setSourceURI(response.data[0].uri);
+           
+           fetchSrcDocFromUri(response.data[0].uri);
+        
+          }
+        }
+        catch(error)  {
+            let message = error;//.response.data.message;
+            console.log('Error While loading the source data!', message);
+            setDocNotFound(true);
+        }
+           
+       
+    }
 
-           try{
-            let srcDocResp = await getDoc('STAGING', response.data[0].uri)
+    const fetchSrcDocFromUri = async (uri) => {
+        try{
+            let srcDocResp = await getDoc('STAGING', uri);
             if (srcDocResp.status === 200) {
                 let nestedDoc: any = [];
                 let docRoot = srcDocResp.data['envelope'] ? srcDocResp.data['envelope']['instance'] : srcDocResp.data;
                 let sDta = generateNestedDataSource(docRoot,nestedDoc);
-                console.log('sData' , sDta)
                 //setSourceData(prevState => ([ ...prevState, ...sDta]));
                 setSourceData([...sDta]);
             }
@@ -145,15 +149,6 @@ const MappingCard: React.FC<Props> = (props) => {
                 console.log('Error While loading the Doc from URI!', message)
                 setDocNotFound(true);
             }
-          }
-        }
-        catch(error)  {
-            let message = error;//.response.data.message;
-            console.log('Error While loading the source data!', message)
-            setDocNotFound(true);
-        }
-           
-       
     }
 
 
@@ -235,9 +230,12 @@ const MappingCard: React.FC<Props> = (props) => {
 
     }
 
-    const openSourceToEntityMapping = (name,index) => {
-            setMapData(prevState => ({ ...prevState, ...props.data[index]}));
-            getSourceDataFromUri(index);
+    const openSourceToEntityMapping = async (name,index) => {
+            let mData = await props.getMappingArtifactByMapName(props.entityName,name);
+            setSourceURI('');
+            //setMapData({...props.data[index]});
+            setMapData({...mData})
+            getSourceData(index);
             extractEntityInfoForTable();
             setMapName(name);
             setMappingVisible(true);
@@ -302,10 +300,13 @@ const MappingCard: React.FC<Props> = (props) => {
                 setMappingVisible={setMappingVisible}
                 mapName={mapName}
                 entityName={props.entityName}
-                updateMappingArtifact={props.createMappingArtifact}
+                getMappingArtifactByMapName={props.getMappingArtifactByMapName}
+                updateMappingArtifact={props.updateMappingArtifact}
                 canReadWrite={props.canReadWrite}
                 canReadOnly={props.canReadOnly}
-                docNotFound={docNotFound}/>
+                docNotFound={docNotFound}
+                extractCollectionFromSrcQuery={extractCollectionFromSrcQuery}
+                fetchSrcDocFromUri={fetchSrcDocFromUri}/>
                 
         </div>
     );
