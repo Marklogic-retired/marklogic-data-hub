@@ -37,7 +37,17 @@ const getInitialChars = (str, num, suffix) => {
     return result;
 }
 
+const getLastChars = (str, num, prefix) => {
+    prefix = prefix ? prefix : '...';
+    let result = str;
+    if (typeof str === 'string' && str.length > num) {
+      result = prefix + str.substr(str.length - num);
+    }
+    return result;
+  }
+
 export {
     convertDateFromISO,
-    getInitialChars
+    getInitialChars,
+    getLastChars
 }

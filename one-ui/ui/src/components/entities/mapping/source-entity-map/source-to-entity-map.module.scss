@@ -145,3 +145,61 @@
     text-align: left;
     font-size: 11px;
 }
+
+.inputURIContainer{
+    //display: inline-flex;
+    //float: left;
+    margin-left: -4px;
+    vertical-align: middle;
+    text-align: left;
+    //border: 1px solid red;
+    width: 105%;
+}
+.uriEditing{
+    display: inline-block;
+    width: 330px;
+}
+
+.sourceQuery{
+    padding-bottom: 5px;
+    margin-left: -4px;
+}
+.uri{
+    margin-left: -4px;
+    //border: 1px solid red;
+    padding: 4px 0px;
+    height : 32px;
+}
+.showingEditIcon{
+    padding: 5px 3px;
+    border: 1px solid #b9daed;
+}
+.notShowingEditIcon{
+    padding: 5px 3px;
+    margin-left: -3px;
+}
+
+.editIcon{
+    font-Size: 27px;
+    color: #394494;
+    background-color: #b9daed;
+    padding: 5px 3px 5px 3px;
+    margin-bottom: -2px;
+    margin-right: -3px;
+    cursor: pointer;
+}
+
+.checkIcon{
+    background-color: #7F86B5;
+    border-radius: 3px;
+    padding: 2px 2px;
+    color: #ffffff;
+    cursor: pointer;
+}
+.closeIcon{
+    background-color: #7F86B5;
+    color: #ffffff;
+    border-radius: 3px;
+    padding: 2px 2px;
+    cursor: pointer;
+}
