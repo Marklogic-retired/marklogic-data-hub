@@ -20,8 +20,8 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.curation.services.FlowManagerService;
 import com.marklogic.hub.dataservices.ArtifactService;
 import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.oneui.models.HubConfigSession;
 import com.marklogic.hub.flow.RunFlowResponse;
+import com.marklogic.hub.oneui.models.HubConfigSession;
 import com.marklogic.hub.oneui.models.StepModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -42,75 +42,75 @@ public class FlowController {
 
     @Autowired
     HubConfigSession hubConfig;
-    @Autowired
-    private FlowManagerService flowManagerService;
+
+    private FlowManagerService lastFlowManagerService = null;
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> getFlows() {
-        List<Flow> flows = flowManagerService.getFlows();
+        List<Flow> flows = getFlowManagerService().getFlows();
         return new ResponseEntity<>(flows, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<?> createFlow(@RequestBody String flowJson) {
-        Flow flow = flowManagerService.createFlow(flowJson);
+        Flow flow = getFlowManagerService().createFlow(flowJson);
         return new ResponseEntity<>(flow, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{flowName}", method = RequestMethod.PUT)
     @ResponseBody
     public ResponseEntity<?> updateFlow(@PathVariable String flowName, @RequestBody String flowJson) {
-        Flow flow = flowManagerService.updateFlow(flowJson);
+        Flow flow = getFlowManagerService().updateFlow(flowJson);
         return new ResponseEntity<>(flow, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{flowName}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> getFlow(@PathVariable String flowName) {
-        Flow flow = flowManagerService.getFlow(flowName);
+        Flow flow = getFlowManagerService().getFlow(flowName);
         return new ResponseEntity<>(flow, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{flowName}", method = RequestMethod.DELETE)
     @ResponseBody
     public ResponseEntity<?> deleteFlow(@PathVariable String flowName) {
-        flowManagerService.deleteFlow(flowName);
+        getFlowManagerService().deleteFlow(flowName);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{flowName}/steps", method = RequestMethod.GET)
     @ResponseBody
     public List<StepModel> getSteps(@PathVariable String flowName) {
-        return flowManagerService.getSteps(flowName);
+        return getFlowManagerService().getSteps(flowName);
     }
 
     @RequestMapping(value = "/{flowName}/steps/{stepId}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> getStep(@PathVariable String flowName, @PathVariable String stepId) {
-        StepModel stepModel = flowManagerService.getStep(flowName, stepId);
+        StepModel stepModel = getFlowManagerService().getStep(flowName, stepId);
         return new ResponseEntity<>(stepModel, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{flowName}/steps", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<?> createStep(@PathVariable String flowName, @RequestParam(value = "stepOrder", required = false) Integer stepOrder, @RequestBody String stepJson) {
-        StepModel stepModel = flowManagerService.createStep(flowName, stepOrder, null, stepJson);
+        StepModel stepModel = getFlowManagerService().createStep(flowName, stepOrder, null, stepJson);
         return new ResponseEntity<>(stepModel, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{flowName}/steps/{stepId}", method = RequestMethod.PUT)
     @ResponseBody
     public ResponseEntity<?> createStep(@PathVariable String flowName, @PathVariable String stepId, @RequestBody String stepJson) {
-        StepModel stepModel = flowManagerService.createStep(flowName, null, stepId, stepJson);
+        StepModel stepModel = getFlowManagerService().createStep(flowName, null, stepId, stepJson);
         return new ResponseEntity<>(stepModel, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{flowName}/steps/{stepId}", method = RequestMethod.DELETE)
     @ResponseBody
     public ResponseEntity<?> deleteStep(@PathVariable String flowName, @PathVariable String stepId) {
-        flowManagerService.deleteStep(flowName, stepId);
+        getFlowManagerService().deleteStep(flowName, stepId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -125,7 +125,7 @@ public class FlowController {
     public ResponseEntity<?> linkArtifact(@PathVariable String flowName, @PathVariable String stepId, @PathVariable String artifactType, @PathVariable String artifactName, @PathVariable String artifactVersion) {
         JsonNode newFlow = getArtifactService().linkToStepOptions(flowName, stepId, artifactType, artifactName, artifactVersion);
         // only updating local, since the artifact service updated the flow in MarkLogic
-        flowManagerService.updateFlow(newFlow.toString(), true);
+        getFlowManagerService().updateFlow(newFlow.toString(), true);
         return new ResponseEntity<>(newFlow, HttpStatus.OK);
     }
 
@@ -140,21 +140,21 @@ public class FlowController {
     public ResponseEntity<?> removeLinkToArtifact(@PathVariable String flowName, @PathVariable String stepId, @PathVariable String artifactType, @PathVariable String artifactName, @PathVariable String artifactVersion) {
         JsonNode newFlow = getArtifactService().removeLinkToStepOptions(flowName, stepId, artifactType, artifactName, artifactVersion);
         // only updating local, since the artifact service updated the flow in MarkLogic
-        flowManagerService.updateFlow(newFlow.toString(), true);
+        getFlowManagerService().updateFlow(newFlow.toString(), true);
         return new ResponseEntity<>(newFlow, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{flowName}/run", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<?> runFlow(@PathVariable String flowName, @RequestBody(required = false) List<String> steps) {
-        RunFlowResponse flow = flowManagerService.runFlow(flowName, steps);
+        RunFlowResponse flow = getFlowManagerService().runFlow(flowName, steps);
         return new ResponseEntity<>(flow, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{flowName}/stop", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<?> stopFlow(@PathVariable String flowName) {
-        Flow flow = flowManagerService.stop(flowName);
+        Flow flow = getFlowManagerService().stop(flowName);
         return new ResponseEntity<>(flow, HttpStatus.OK);
     }
 
@@ -163,4 +163,13 @@ public class FlowController {
         return ArtifactService.on(dataServicesClient);
     }
 
+    private FlowManagerService getFlowManagerService() {
+        lastFlowManagerService = new FlowManagerService(this.hubConfig.getHubConfigImpl());
+        return lastFlowManagerService;
+    }
+
+    // protected method for testing
+    protected FlowManagerService getLastFlowManagerService() {
+        return lastFlowManagerService;
+    }
 }
