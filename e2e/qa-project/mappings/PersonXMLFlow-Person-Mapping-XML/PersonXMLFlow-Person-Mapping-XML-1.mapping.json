@@ -5,16 +5,17 @@
   "version" : 1,
   "targetEntityType" : "http://example.org/PersonXML-0.0.1/PersonXML",
   "sourceContext" : "/",
-  "sourceURI" : "/C/dev/fork/explorer-ui/e2e/qa-project/input/person-xml/person2.xml",
+  "sourceURI" : "/Users/svishaka/WebstormProjects/explorer-ui/e2e/qa-project/input/person-xml/person5.xml",
   "properties" : {
     "fname" : {
-      "sourcedFrom" : "person/fname"
+      "sourcedFrom" : "root/person/fname"
     },
     "lname" : {
-      "sourcedFrom" : "person/lname"
+      "sourcedFrom" : "root/person/lname"
     },
     "id" : {
-      "sourcedFrom" : "person/id"
+      "sourcedFrom" : "root/person/id"
     }
-  }
+  },
+  "namespaces" : { }
 }

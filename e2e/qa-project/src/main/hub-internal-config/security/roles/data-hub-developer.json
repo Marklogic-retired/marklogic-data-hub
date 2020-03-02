@@ -1,0 +1,52 @@
+{
+  "role-name": "data-hub-developer",
+  "description": "Permits developing and operating a Data Hub application",
+  "role": [
+    "data-hub-operator",
+    "manage-user",
+    "ps-user",
+    "tde-admin",
+    "data-hub-module-writer",
+    "data-hub-flow-writer",
+    "data-hub-mapping-writer",
+    "data-hub-step-definition-writer",
+    "data-hub-entity-model-writer"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "any-uri",
+      "action": "http://marklogic.com/xdmp/privileges/any-uri",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "create-trigger",
+      "action": "http://marklogic.com/xdmp/privileges/create-trigger",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "get-system-logs",
+      "action": "http://marklogic.com/xdmp/privileges/logs/system",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "protect-path",
+      "action": "http://marklogic.com/xdmp/privileges/protect-path",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "remove-path",
+      "action": "http://marklogic.com/xdmp/privileges/remove-path",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "rest-admin",
+      "action": "http://marklogic.com/xdmp/privileges/rest-admin",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "temporal-admin",
+      "action": "http://marklogic.com/xdmp/privileges/temporal-admin",
+      "kind": "execute"
+    }
+  ]
+}

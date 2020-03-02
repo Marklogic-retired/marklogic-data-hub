@@ -5,7 +5,7 @@
   "version" : 2,
   "targetEntityType" : "http://example.org/Customer-0.0.1/Customer",
   "sourceContext" : "/",
-  "sourceURI" : "/C/dev/fork/marklogic-data-hub/web/e2e/qa-project/input/advantage/cust154.json",
+  "sourceURI" : "/Users/svishaka/WebstormProjects/explorer-ui/e2e/qa-project/input/advantage/cust94.json",
   "properties" : {
     "zip" : {
       "sourcedFrom" : "Postal"
@@ -22,5 +22,6 @@
     "lastname" : {
       "sourcedFrom" : "LastName"
     }
-  }
+  },
+  "namespaces" : { }
 }

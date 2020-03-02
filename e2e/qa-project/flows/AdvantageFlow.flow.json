@@ -21,7 +21,7 @@
         },
         "sourceQuery" : "cts.collectionQuery([\"\"])",
         "collections" : [ "Customer-Ingest" ],
-        "permissions" : "rest-reader,read,rest-writer,update",
+        "permissions" : "data-hub-operator,read,data-hub-operator,update",
         "outputFormat" : "json",
         "targetDatabase" : "data-hub-STAGING"
       },
@@ -31,7 +31,7 @@
         "user" : "",
         "runBefore" : false
       },
-      "retryLimit" : 0,
+      "retryLimit" : null,
       "batchSize" : 100,
       "threadCount" : 4,
       "stepDefinitionName" : "default-ingestion",
@@ -56,6 +56,7 @@
         "targetEntity" : "Customer",
         "sourceDatabase" : "data-hub-STAGING",
         "collections" : [ "Customer-Mapping", "Customer" ],
+        "permissions" : "data-hub-operator,read,data-hub-operator,update",
         "validateEntity" : false,
         "sourceCollection" : "Customer-Ingest",
         "outputFormat" : "json",
@@ -67,7 +68,7 @@
         "user" : "",
         "runBefore" : false
       },
-      "retryLimit" : null,
+      "retryLimit" : 0,
       "batchSize" : 100,
       "threadCount" : 4,
       "stepDefinitionName" : "default-mapping",
