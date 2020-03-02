@@ -189,7 +189,7 @@ const SourceToEntityMap = (props) => {
             </span>,
             dataIndex: 'xPathExpression',
             key: 'xPathExpression',
-            render: (text, row)=> (<div className={styles.mapExpContainer}>
+            render: (text, row)=> (<div className={styles.mapExpressionContainer}>
                 <TextArea 
                 className={styles.mapExpression}
                 value={mapExp[row.name]}
@@ -284,7 +284,7 @@ return (<Modal
         defaultExpandAllRows={true}
         expandIcon={(props) => customExpandIcon(props)}
         className={styles.sourceTable}
-        rowClassName={() => styles.srcTableRows}
+        rowClassName={() => styles.sourceTableRows}
         scroll={{ y: 800 }}
         indentSize={14}
         //size="small"
@@ -300,16 +300,16 @@ return (<Modal
         id="entityContainer"
         className={styles.entityContainer}>
         <div className={styles.entityDetails}>
-                <p className={styles.entityName}><i><FontAwesomeIcon icon={faObjectUngroup } size="sm" className={styles.entityIcon}/></i> Entity: {props.entityName}</p>
+                <p className={styles.entityTypeTitle}><i><FontAwesomeIcon icon={faObjectUngroup } size="sm" className={styles.entityIcon}/></i> Entity: {props.entityTypeTitle}</p>
             </div>
         <Table
         pagination={false}
         className={styles.entityTable}
         //size="small"
-        scroll={{ y: 800 }}
+        //scroll={{ y: 800 }}
         tableLayout="unset"
         columns={entityColumns}
-        dataSource={props.entityData}
+        dataSource={props.entityTypeProperties}
         rowKey="name"
         />
         </div>

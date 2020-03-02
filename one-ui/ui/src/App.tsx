@@ -19,7 +19,7 @@ import './App.css';
 import Application from './config/application.config';
 import { themes, themeMap } from './config/themes.config';
 import axios from 'axios';
-import Entities from './pages/Entities';
+import EntityTypes from './pages/EntityTypes';
 
 
 interface Props extends RouteComponentProps<any> {}
@@ -104,7 +104,7 @@ const App: React.FC<Props> = ({history, location}) => {
           <LoadData/>
         </PrivateRoute>
         <PrivateRoute path="/entity-tiles" exact>
-          <Entities/>
+          <EntityTypes/>
         </PrivateRoute>
         <PrivateRoute path="/bench" exact>
           <Bench/>
