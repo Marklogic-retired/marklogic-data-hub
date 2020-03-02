@@ -1,6 +1,7 @@
-package com.marklogic.hub.flow;
+package com.marklogic.hub.flow.impl;
 
-import com.marklogic.hub.flow.impl.FlowRunnerImpl;
+import com.marklogic.hub.flow.FlowInputs;
+import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.step.MarkLogicStepDefinitionProvider;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.step.StepDefinitionProvider;
