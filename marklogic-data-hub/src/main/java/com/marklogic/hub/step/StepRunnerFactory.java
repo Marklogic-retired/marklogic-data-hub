@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.impl.StepDefinitionManagerImpl;
 import com.marklogic.hub.step.impl.QueryStepRunner;
 import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.step.impl.WriteStepRunner;
@@ -33,6 +32,7 @@ public class StepRunnerFactory {
 
     public StepRunnerFactory(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
+        this.stepDefinitionProvider = new MarkLogicStepDefinitionProvider(hubConfig.newStagingClient(null));
     }
 
     public StepRunner getStepRunner(Flow flow, String stepNum)  {

@@ -13,6 +13,7 @@ import com.marklogic.hub.oneui.Application;
 import com.marklogic.hub.oneui.TestHelper;
 import com.marklogic.hub.oneui.models.HubConfigSession;
 import com.marklogic.hub.oneui.models.StepModel;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +27,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -43,13 +46,13 @@ class FlowControllerTest {
             "  \"steps\" : { }\n" +
             "}";
 
-    private final String stepString = "{\"name\":\"e2e-xml\",\"description\":\"\",\"options\":{\"additionalCollections\":[]" +
+    private final String stepString = "{\"name\":\"e2e-json\",\"description\":\"\",\"options\":{\"additionalCollections\":[]" +
             ",\"headers\":{\"sources\":[{\"name\":\"runXqyFuncFlow\"}],\"createdOn\":\"currentDateTime\",\"createdBy\":\"currentUser\"}," +
             "\"sourceQuery\":\"\",\"collections\":[\"xml-xqy\"],\"permissions\":\"data-hub-operator,read,data-hub-operator,update\"," +
             "\"outputFormat\":\"xml\",\"targetDatabase\":\"data-hub-STAGING\"},\"customHook\":{},\"retryLimit\":0,\"batchSize\":0," +
             "\"threadCount\":0,\"stepDefinitionName\":\"default-ingestion\",\"stepDefinitionType\":\"INGESTION\",\"fileLocations\":" +
-            "{\"inputFilePath\":\"/Users/ssambasu/source/marklogic-data-hub/marklogic-data-hub/ye-olde-project/input\",\"inputFileType\":" +
-            "\"xml\",\"outputURIReplacement\":\".*/input,'/xqyfunc'\",\"separator\":\"\"}}";
+            "{\"inputFilePath\":\"input\",\"inputFileType\":" +
+            "\"json\",\"outputURIReplacement\":\".*/input,'/xqyfunc'\",\"separator\":\"\"}}";
 
     private final String customStepString = "{\"name\":\"second\",\"description\":\"\",\"isValid\":false,\"modulePath\":\"\",\"options\":" +
             "{\"collections\":[\"second\"],\"additionalCollections\":[],\"sourceQuery\":\"cts.collectionQuery([])\",\"sourceCollection\":\"\"," +
@@ -58,13 +61,16 @@ class FlowControllerTest {
             "\"user\":\"\",\"runBefore\":false},\"batchSize\":100,\"threadCount\":4,\"stepDefinitionType\":\"CUSTOM\",\"stepDefType\":\"CUSTOM\"," +
             "\"stepDefinitionName\":\"second\",\"selectedSource\":\"\"}";
 
-    JsonNode validLoadDataConfig = new ObjectMapper().readTree("{ \"name\": \"validArtifact\", \"sourceFormat\": \"xml\", \"targetFormat\": \"json\"}");
+    JsonNode validLoadDataConfig = new ObjectMapper().readTree("{ \"name\": \"validArtifact\", \"sourceFormat\": \"json\", \"targetFormat\": \"json\", \"inputFilePath\": \"input\"}");
 
     @Autowired
     private FlowController controller;
 
     @Autowired
     private LoadDataController loadDataController;
+
+    @Autowired
+    private JobsController jobsController;
 
     @Autowired
     private TestHelper testHelper;
@@ -80,11 +86,18 @@ class FlowControllerTest {
     @BeforeEach
     void before(){
         testHelper.authenticateSession();
+        testHelper.setHubProjectDirectory();
     }
 
     @AfterEach
     void after(){
-        if (controller.getFlow("testFlow") != null) {
+        ResponseEntity<?> flowResp = null;
+        try {
+            flowResp = controller.getFlow("testFlow");
+        } catch (Exception e) {
+
+        }
+        if (flowResp != null) {
             controller.deleteFlow("testFlow");
         }
     }
@@ -128,7 +141,7 @@ class FlowControllerTest {
             Assertions.assertEquals(1, (steps.size()));
 
             //PUT step
-            controller.createStep("testFlow","e2e-xml-ingestion", mapper.writeValueAsString(stepModel));
+            controller.createStep("testFlow","e2e-json-ingestion", mapper.writeValueAsString(stepModel));
             //POST custom step
             controller.createStep("testFlow", 2, customStepString).getBody();
 
@@ -140,29 +153,29 @@ class FlowControllerTest {
 
             //link artifact to step options
             loadDataController.updateArtifact("validArtifact", validLoadDataConfig);
-            controller.linkArtifact("testFlow", "e2e-xml-ingestion", "loadData", "validArtifact");
+            controller.linkArtifact("testFlow", "e2e-json-ingestion", "loadData", "validArtifact");
 
             //GET step
-            stepModel = (StepModel)controller.getStep("testFlow", "e2e-xml-ingestion").getBody();
-            Assertions.assertEquals("e2e-xml", stepModel.getName());
+            stepModel = (StepModel)controller.getStep("testFlow", "e2e-json-ingestion").getBody();
+            Assertions.assertEquals("e2e-json", stepModel.getName());
             Assertions.assertEquals(100, stepModel.getBatchSize().intValue());
             // step should have LoadData link
             Assertions.assertTrue(stepModel.getOptions().has("loadData"), "Should have loadData link");
             Assertions.assertEquals("validArtifact", stepModel.getOptions().get("loadData").get("name").asText(), "Link should have expected name");
 
             // remove artifact link
-            controller.removeLinkToArtifact("testFlow", "e2e-xml-ingestion", "loadData", "validArtifact");
-            stepModel = (StepModel)controller.getStep("testFlow", "e2e-xml-ingestion").getBody();
+            controller.removeLinkToArtifact("testFlow", "e2e-json-ingestion", "loadData", "validArtifact");
+            stepModel = (StepModel)controller.getStep("testFlow", "e2e-json-ingestion").getBody();
             Assertions.assertFalse(stepModel.getOptions().has("loadData"), "Should not have loadData link");
 
             //DELETE step
-            controller.deleteStep("testFlow", "e2e-xml-ingestion" );
+            controller.deleteStep("testFlow", "e2e-json-ingestion" );
             controller.deleteStep("testFlow", "second-custom" );
 
             //the module should be deleted
             Assertions.assertFalse(docMgr.read("/step-definitions/custom/second/second.step.json").hasNext());
             try{
-                controller.getStep("testFlow", "e2e-xml-ingestion");
+                controller.getStep("testFlow", "e2e-json-ingestion");
                 Assertions.fail();
             }
             catch (Exception e){
@@ -183,11 +196,23 @@ class FlowControllerTest {
     }
 
     @Test
-    void runFlow() {
+    void runFlow() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        String hubProjectDir = hubConfig.getProjectDir();
+        FileUtils.copyDirectory(testHelper.getResourceFile("input"), Paths.get(hubProjectDir,"input").toFile());
         controller.createFlow(flowString);
-        RunFlowResponse resp = (RunFlowResponse) controller.runFlow("testFlow", null).getBody();
-        Assertions.assertEquals("finished", resp.getJobStatus(), "Run flow is successfully called");
+        //PUT step
+        controller.createStep("testFlow", 1, stepString).getBody();
+        //link artifact to step options
+        loadDataController.updateArtifact("validArtifact", validLoadDataConfig);
+        controller.linkArtifact("testFlow", "e2e-json-ingestion", "loadData", "validArtifact");
+
+        RunFlowResponse resp = (RunFlowResponse) controller.runFlow("testFlow", Collections.singletonList("e2e-json-ingestion")).getBody();
+
         Assertions.assertEquals("testFlow", resp.getFlowName(), "Run flow response has correct flow name");
-        // TODO The current runFlow call is essentially a no-op. More complex testing will be done as part of task DHFPROD-4304
+        controller.getLastFlowManagerService().getLastFlowRunner().awaitCompletion();
+        JsonNode jobsDoc = jobsController.getJob(resp.getJobId());
+        String jobStatus = jobsDoc.get("jobStatus").asText();
+        Assertions.assertEquals("finished", jobStatus, "Job status should be 'finished' once threads complete");
     }
 }

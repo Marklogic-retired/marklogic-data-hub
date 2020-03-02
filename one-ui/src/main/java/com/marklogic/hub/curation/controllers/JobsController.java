@@ -65,9 +65,9 @@ public class JobsController extends SearchableManager {
 
     @RequestMapping(value = "/{jobId}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<?> getJob(@PathVariable String jobId) {
+    public JsonNode getJob(@PathVariable String jobId) {
         JsonNode jobsObj = getJobs(getJobDocManager(), jobId, null);
-        return new ResponseEntity<>(flattenJobsJson(jobsObj), HttpStatus.OK);
+        return flattenJobsJson(jobsObj);
     }
 
     @RequestMapping(value = "latest/{flowName}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -83,7 +83,7 @@ public class JobsController extends SearchableManager {
     }
 
     private JsonNode getJobs(JobDocManager jobDocManager, String jobId, String flowName) {
-        JsonNode jobsJson = (ArrayNode) jobDocManager.getJobDocument(jobId, flowName);
+        JsonNode jobsJson = jobDocManager.getJobDocument(jobId, flowName);
         if (jobsJson == null) {
             throw new RuntimeException("Unable to get job document");
         }
