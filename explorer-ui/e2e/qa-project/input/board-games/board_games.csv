@@ -1,0 +1,272 @@
+game_id,SKU,title,price,description,years_active,publication_date,players,age_range,setup_time,playing_time,chance,category,has_extensions,has_accessories,has_apparel,popularity_tier,probability_apparel,probability_accessories,probability_extensions
+1000192,160410725471,left foxglove,24.95,,0,2009,2–5 (6 w/expansion),,0,40 to 80 minutes,,Board Game|Strategy,False,False,False,4,0.1,0.1,0.1
+1000155,195722202378,dynamic eyeball,15.0,,0,1986,2-4,,0,0,,Board Game,True,False,False,4,0.1,0.1,0.1
+1000109,115153344249,white blade,8.99,,0,0,0,,5 minutes,15 to 60 minutes,,Board Game|Deduction,False,True,False,3,0.3,0.3,0.3
+1000055,101591922267,different gallon,4.5,,0,0,2–7,,5–15 minutes,about 3 hours,Medium,Board Game,True,True,False,3,0.3,0.3,0.3
+1000238,132304402752,golden clam,35.0,,0,0,2–4,,0,10 minutes,Medium,Board Game|Dexterity,False,True,True,1,1.0,1.0,1.0
+1000150,186880256583,conceptual cobweb,35.0,,0,0,2–4,,10 minutes,60–120 minutes,some,Board Game,True,False,True,1,1.0,1.0,1.0
+1000128,172916175812,filthy search,24.95,,0,0,3–5,,20 minutes,90–120 minutes,Medium,Board Game|Strategic thought,False,False,False,3,0.3,0.3,0.3
+1000233,193519225127,russian great-grandmother,33.99,,0,0,2+ Players,,0,0,,Board Game,False,False,False,4,0.1,0.1,0.1
+1000148,104553406468,original explanation,12.99,,0,0,0,,0,0,,Board Game,False,True,False,4,0.1,0.1,0.1
+1000082,159929577929,reliable nephew,15.0,,0,0,2 to 6,,approx. 5 minutes,> 45 minutes,Card shuffling,Board Game|Bluffing,True,True,False,3,0.3,0.3,0.3
+1000025,175211439308,safe constant,12.99,,0,0,2,,1 minute,40 minutes,None,Board Game|Strategic thought,False,False,True,1,1.0,1.0,1.0
+1000258,167784852301,big steamroller,35.0,,0,0,3 to 6,,< 5 minutes,30 min-2hrs,Medium,Board Game|Team play,True,True,False,4,0.1,0.1,0.1
+1000066,118675935929,stingy sharon,33.99,,since 1957,0,2–6,,5–15 minutes,1–8 hours,"Medium (5 dice, cards)",Board Game,False,True,False,4,0.1,0.1,0.1
+1000268,184636131970,pleasant rainmaker,25.0,,1987-present,0,0,,0,0,,Board Game|Game system,False,False,False,3,0.3,0.3,0.3
+1000153,164451986229,unwilling eave,4.5,,0,0,0,,0,0,,Board Game,False,False,False,4,0.1,0.1,0.1
+1000079,118229850449,dull chairlift,25.0,,0,0,3 to 5,,0,45 minutes,,Board Game,False,False,False,4,0.1,0.1,0.1
+1000076,141781173051,potential approval,15.0,,0,0,2 to 5,,5 minutes,45 minutes,Medium,Board Game|Planning,False,True,False,3,0.3,0.3,0.3
+1000115,187282230672,exclusive typewriter,35.0,,0,0,2-4,,30 seconds,10-30 minutes,None,Board Game|Tactics,False,False,False,3,0.3,0.3,0.3
+1000102,148979734999,unfair fact,8.99,,0,0,2–5 (6–8 with expansion),,1–5 minutes,30–90 minutes,Medium,Board Game|Tile-based,True,False,False,4,0.1,0.1,0.1
+1000171,187071644897,olympic jot,35.0,,0,0,3 to 4 (5-6 with extension),,approx. 10 minutes,90+ minutes,Medium,Board Game,False,True,True,1,1.0,1.0,1.0
+1000256,167958516470,inadequate faucet,19.99,,0,0,1 to 8,,30-60 minutes,120-240 minutes,Medium,Board Game|Cooperative gaming,False,False,False,4,0.1,0.1,0.1
+1000095,109343951269,harsh yogurt,4.5,,0,0,2–4,,< 1 minute,20 - 30 minutes,None,Board Game|Strategic thought,False,False,False,4,0.1,0.1,0.1
+1000244,185407492438,uncomfortable mechanic,35.0,,0,0,2–4,,5 minutes,30 min,None,Board Game|Manual dexterity,False,True,False,4,0.1,0.1,0.1
+1000263,121259905065,puzzled sandra,12.99,,0,0,1 to 5,,5 minutes,45-60 minutes,,Board Game,False,False,False,2,0.75,0.75,0.75
+1000003,144951251826,bitter command,8.99,,0,0,2–4,,< 1 minute,20 - 30 minutes,None,Board Game|Strategic thought,False,False,False,3,0.3,0.3,0.3
+1000061,182893602000,global son,9.99,,0,0,0,,0,0,,Board Game,False,False,True,1,1.0,1.0,1.0
+1000111,132362551004,alert doubling,10.0,,0,0,Recommended for at least 4; can be played by 2 or 3,,1-5 minutes,15-30 minutes,Low,Board Game|Language skills,False,False,False,3,0.3,0.3,0.3
+1000072,101166955093,weird air,33.99,,0,0,2 to 6,,> 5 minutes,> 1 hour,Med,Board Game|Strategy,False,True,False,4,0.1,0.1,0.1
+1000032,134937796642,classical golf,4.5,,1989—,0,2,,0,0,,Board Game,True,False,False,2,0.75,0.75,0.75
+1000012,167337524450,smart edward,8.99,,0,0,"1 versus 1, plus an optional arbiter or referee",,2 to 3 minutes,30 to 120 minutes (player-dependent),Yes,Board Game,False,False,False,3,0.3,0.3,0.3
+1000216,138812386935,soft bike,19.99,,0,0,1-6,,5 minutes,30 minutes per player,Goal and Event cards,Board Game,False,True,False,4,0.1,0.1,0.1
+1000200,131841112651,gothic cuckoo,35.0,,0,0,2-5,,Approximately 5 minutes,20-45 minutes,None,Board Game|Tile placement,True,True,False,2,0.75,0.75,0.75
+1000198,177920404963,distinctive philosophy,33.99,,0,0,2-6,,5-10 min.,60+ minutes,,Board Game,True,False,False,4,0.1,0.1,0.1
+1000163,189648453939,violent eyelid,19.99,,0,0,2 to 6,,5-10 minutes,30-60 minutes,Low,Board Game|Planning,False,True,False,4,0.1,0.1,0.1
+1000166,188160550480,dangerous bolero,4.5,,0,0,0,,10 min,45 min,Moderate,Board Game,False,True,False,4,0.1,0.1,0.1
+1000058,188156753317,excellent indication,9.99,,0,0,2–4,,0,0,,Board Game,False,False,False,2,0.75,0.75,0.75
+1000106,106455227436,petite nickel,9.99,,0,0,2 to 4,,0,15-25 minutes,,Board Game,False,False,False,4,0.1,0.1,0.1
+1000130,177897644317,careful crack,24.95,,0,0,2-4,,< 5 minutes,1 hour,High,Board Game,False,True,False,3,0.3,0.3,0.3
+1000231,143325197317,kind stock-in-trade,35.0,,0,1995,0,,approximately 8 minutes,1-4 hours,low-moderate,Board Game|Strategy,False,False,False,2,0.75,0.75,0.75
+1000085,101897294018,wonderful footnote,25.0,,0,0,2–4,,5–15 minutes,Approximately 1.5–3 hours,,Board Game|Calculation,False,False,False,4,0.1,0.1,0.1
+1000048,138479070674,isolated death,12.99,,0,0,2–6,,5 minutes,from 10 minutes to about 2 hours,,Board Game,False,False,False,4,0.1,0.1,0.1
+1000020,141628768843,liberal spinach,8.99,,0,0,2,,2 minutes,30 minutes,Medium,Board Game|Strategic thought,False,False,True,1,1.0,1.0,1.0
+1000190,108764708187,robust deathwatch,35.0,,0,2005,3–7,,0,60-90 minutes,,Board Game,True,False,False,2,0.75,0.75,0.75
+1000042,124321090955,mysterious bugle,12.99,,0,1973,0,,0,0,,Board Game|Board game,False,False,False,3,0.3,0.3,0.3
+1000213,127912011186,meaningful wedding,35.0,,2005,0,0,,0,6+ hours,,Board Game|Strategy,False,False,False,2,0.75,0.75,0.75
+1000220,120334390616,busy eagle,4.5,,0,0,2–6,,10 minutes,60+ minutes,High,Board Game|Strategic thought,False,False,False,4,0.1,0.1,0.1
+1000257,131625732236,metropolitan observation,4.5,,0,2008,Base game: 3-6 players (additional possible with certain expansions),,Base game: 10 minutes (+ 5 minutes with expansions),Base game: 120–240 minutes (first time could be double),Some,Board Game|Board game,False,True,False,2,0.75,0.75,0.75
+1000046,115899657430,exact age,25.0,,0,0,3 to 6,,< 5 minutes,30 min-2hrs,Medium,Board Game|Team play,False,False,False,2,0.75,0.75,0.75
+1000185,153336251294,orthodox sunroom,25.0,,0,0,2-6,,1-3 minutes,a little over 3 minutes per round,Low,Board Game,False,True,False,3,0.3,0.3,0.3
+1000152,130640064374,armed insulation,8.99,,0,0,2-4,,1-5 minutes,15-30 minutes,Medium,Board Game|Memorisation,False,False,False,2,0.75,0.75,0.75
+1000019,172490376023,tan broker,33.99,,0,0,2,,2 minutes,30 minutes,None,Board Game|Strategic thought,False,False,False,4,0.1,0.1,0.1
+1000018,121093345394,wild genetics,15.0,,0,0,0,,0,0,,Board Game,False,False,False,2,0.75,0.75,0.75
+1000193,123206535388,high brassiere,33.99,,0,0,2+,,Negligible,15–45 minutes,Entirely,Board Game,False,False,False,3,0.3,0.3,0.3
+1000009,109568617984,damp stepmother,9.99,,First documented in 1800s. Fallen largely out of use by first half of 1900s.,0,2,,30 seconds - 1 minute,5–60 minutes,,Board Game,False,False,False,3,0.3,0.3,0.3
+1000191,155661081707,unlikely shoe-horn,35.0,,0,0,0,,0,0,,Board Game,True,True,False,3,0.3,0.3,0.3
+1000186,188313615578,intimate distribution,12.99,,0,0,At least 2 (can be played in teams),,5 minutes,30 to 45 minutes,Medium,Board Game,False,False,False,4,0.1,0.1,0.1
+1000197,172591859143,gleaming trousers,4.5,,0,0,3–5,,0,90 minutes,,Board Game,True,False,False,4,0.1,0.1,0.1
+1000129,138948775138,extensive ptarmigan,8.99,,0,0,0,,0,0,,Board Game,False,False,False,4,0.1,0.1,0.1
+1000013,142256336352,petite jasmine,4.5,,0,0,2,,Minimal,0,None,Board Game,False,False,False,4,0.1,0.1,0.1
+1000178,141606253740,permanent megalomaniac,4.5,,0,0,3 to 6,,0,0,,Board Game|Strategy,False,False,False,3,0.3,0.3,0.3
+1000246,161793147487,environmental apse,12.99,,0,1995,0,,approximately 8 minutes,1-4 hours,low-moderate,Board Game|Strategy,False,True,False,4,0.1,0.1,0.1
+1000015,181687026138,immense poison,25.0,,1942–present,0,2,,None,30 minutes – 2 hours (11×11 board),None,Board Game,True,False,False,4,0.1,0.1,0.1
+1000228,101903123748,crazy dame,24.95,,0,0,2–5,,5–10 minutes,240 minutes,Medium,Board Game|Strategic thought,False,False,False,2,0.75,0.75,0.75
+1000039,157789013108,elegant morning,10.0,,0,0,2,,< 1 minute,0,None,Board Game,False,True,False,4,0.1,0.1,0.1
+1000154,152348612552,premier maestro,25.0,,1960 to present,0,2–4,,1–3 minutes,~30 minutes,,Board Game,True,False,False,3,0.3,0.3,0.3
+1000121,168463702492,biological cartilage,15.0,,0,0,2-4,,1 minute,10 minutes/random,None,Board Game,True,False,False,3,0.3,0.3,0.3
+1000107,176925017473,shy fleece,9.99,,0,0,2-7,,15 minutes,3–12 hours,Low,Board Game,True,False,False,3,0.3,0.3,0.3
+1000010,188814001578,native foray,15.0,,0,0,2,,Negligible,30 minutes,None,Board Game,True,False,False,4,0.1,0.1,0.1
+1000188,154738930694,wooden dhow,8.99,,0,0,2–4,,2–6 minutes,0,Medium (letters drawn),Board Game,False,False,False,3,0.3,0.3,0.3
+1000047,101243502533,commercial jail,10.0,,0,0,2–4,,< 1 minute,20 - 30 minutes,None,Board Game|Strategic thought,False,True,False,3,0.3,0.3,0.3
+1000122,103007225195,successful ink,12.99,,0,0,2 to 6,,7 minutes,60–180 minutes,"Limited, no dice used in combat",Board Game|Strategic thinking,False,False,False,3,0.3,0.3,0.3
+1000134,182378779835,mathematical passion,10.0,,0,Early 1970s,2 to 6,,0,0,"Mid (dice, card-drawing, luck)",Board Game,True,False,False,4,0.1,0.1,0.1
+1000170,191211760776,urgent philippines,35.0,,0,0,2 to 6,,10-15 minutes,120+ minutes,Medium,Board Game,False,False,False,3,0.3,0.3,0.3
+1000211,132132079206,prominent brazil,15.0,,0,0,2–6 (teams allowed),,5 minutes,~120 minutes (varies widely),,Board Game,True,True,False,3,0.3,0.3,0.3
+1000083,144191903595,socialist league,25.0,,0,0,2–6,,1–5 minutes,16–60 minutes,"High (dice rolling, luck)",Board Game,False,False,False,4,0.1,0.1,0.1
+1000040,175203595001,tame crib,8.99,,0,0,2,,Negligible,30 minutes,None,Board Game,False,False,False,4,0.1,0.1,0.1
+1000097,177419070843,missing arithmetic,33.99,,0,0,2–3 players or teams,,3 minutes,30–90 minutes,Low,Board Game,False,False,False,4,0.1,0.1,0.1
+1000214,185509202673,previous sponge,8.99,,0,0,2–6,,1-5 minutes,30-60 minutes,Very low,Board Game|Abstract strategy,True,False,False,4,0.1,0.1,0.1
+1000062,182295756397,necessary folder,4.5,,Since c. 1896,0,2–4,,0,< 120 min,,Board Game,False,True,False,2,0.75,0.75,0.75
+1000005,174806769756,ridiculous black,24.95,,0,0,2,,< 1 minute,~15 minutes,None,Board Game,False,False,False,3,0.3,0.3,0.3
+1000094,199675199122,comfortable mice,35.0,,0,0,0,,0,0,,Board Game,False,False,False,4,0.1,0.1,0.1
+1000158,167278170034,grieving shrimp,35.0,,0,0,2 to 4 (2 to 6 on reverse side),,1 minute,about 30 minutes,,Board Game|Board game,True,False,False,4,0.1,0.1,0.1
+1000187,140424601038,outdoor fiber,8.99,,0,0,3–6,,5–15 minutes,1 hour (player dependent),initial set-up,Board Game,True,False,True,1,1.0,1.0,1.0
+1000029,134298570951,mixed lout,24.95,,0,0,2–4,,2–6 minutes,0,Medium (letters drawn),Board Game,False,False,False,4,0.1,0.1,0.1
+1000070,165815136827,popular broom,33.99,,0,0,0,,0,0,,Board Game,False,False,False,4,0.1,0.1,0.1
+1000077,159944198106,visible swan,12.99,,1991—,0,2–10,,5 minutes,60+ minutes,Some,Board Game,False,True,False,3,0.3,0.3,0.3
+1000016,146070777397,aggregate crystallography,15.0,,0,0,2,,1 minute,35 minutes,,Board Game,True,False,False,3,0.3,0.3,0.3
+1000117,107696280698,ugliest dependent,19.99,,0,0,3 to 8,,0,20 minutes,,Board Game,False,False,False,4,0.1,0.1,0.1
+1000157,169231592649,colossal ping,8.99,,0,0,3 to 6,,0,60 minutes,,Board Game,False,False,False,4,0.1,0.1,0.1
+1000161,125151848280,correct footrest,9.99,,0,0,2–6,,5–15 minutes,Approximately 1.5–3 hours,,Board Game|Calculation,False,True,False,2,0.75,0.75,0.75
+1000254,170924856617,mathematical program,24.95,,0,0,2–4,,1–5 minutes,0,High (Cards),Board Game,False,False,False,4,0.1,0.1,0.1
+1000140,164091776512,secure circumference,24.95,,0,0,1-4,,1 minute,45 minutes,Medium,Board Game|Strategic thought,False,False,False,4,0.1,0.1,0.1
+1000182,158374508511,fluffy particle,33.99,,0,0,2-4,,1 minutes,45 minutes,Medium,Board Game|Strategic thought,True,False,True,1,1.0,1.0,1.0
+1000203,192291742391,rival briefs,12.99,,0,0,2–4,,5 minutes,90 minutes,Low,Board Game|Strategy,False,True,False,2,0.75,0.75,0.75
+1000266,188560428271,massive example,33.99,,0,0,0,,0,0,,Board Game,True,False,False,4,0.1,0.1,0.1
+1000027,134548331917,mammoth shortwave,24.95,,"First documented in the 1800s, possibly played in the 1600s. Fallen somewhat out of use after the 1950s.",0,2,,30 seconds - 1 minute,5–60 minutes,,Board Game,False,True,True,1,1.0,1.0,1.0
+1000180,126181976561,minor laundry,35.0,,0,0,2 or more,,<5 minutes,15 to 45 minutes,None,Board Game,False,True,False,4,0.1,0.1,0.1
+1000205,172134788074,different digital,10.0,,0,"1999, 2008","4 or more, played in teams",,2 minutes,60 minutes,Little,Board Game|General knowledge,False,False,False,3,0.3,0.3,0.3
+1000212,186039156892,delicate forest,25.0,,0,0,2–4,,1 minutes,~30 minutes,,Board Game,False,False,False,4,0.1,0.1,0.1
+1000093,181818922951,wonderful flute,12.99,,2006–present,0,2–4 teams,,5 minutes,45 minutes,,Board Game,True,False,False,4,0.1,0.1,0.1
+1000249,149177507748,varied slope,24.95,,0,0,2 to 4,,< 5 minutes,< 10 minutes,Complete,Board Game|Counting,True,False,False,2,0.75,0.75,0.75
+1000011,153963643949,gross memory,4.5,,0,0,2,,0,0,None,Board Game,False,False,False,3,0.3,0.3,0.3
+1000184,178288386742,ethnic push,4.5,,0,0,3 to 4,,0,0,,Board Game,False,False,False,3,0.3,0.3,0.3
+1000051,174121602938,calm pleasure,4.5,,0,0,2 - 6,,2 minutes,30 mins to an hour,Dice rolls,Board Game|Strategy,True,False,False,4,0.1,0.1,0.1
+1000119,164310772556,ready quotation,25.0,,0,0,2–4,,10 minutes,60–120 minutes,some,Board Game,False,False,False,4,0.1,0.1,0.1
+1000113,114578571494,wet cadet,33.99,,0,0,3–6+ (depending on edition),,5–10 minutes,20–120+ minutes,Medium,Board Game|Prediction,True,False,False,4,0.1,0.1,0.1
+1000103,124016555933,sparkling suitcase,33.99,,0,1955,2 to 6,,5-10 minutes,45-90 minutes,Medium,Board Game,False,False,False,3,0.3,0.3,0.3
+1000194,105698185919,liable greenhouse,25.0,,0,0,2–4,,1–5 minutes,0,High (Cards),Board Game,True,False,True,1,1.0,1.0,1.0
+1000084,120596758697,fatal awareness,10.0,,0,0,1 to 5,,5–10 minutes,30–60 minutes per player,,Board Game,True,True,False,3,0.3,0.3,0.3
+1000030,139891051381,shared processing,24.95,,0,0,0,,0,0,,Board Game,False,True,False,3,0.3,0.3,0.3
+1000133,133592958882,confident assistance,10.0,,0,0,0,,0,0,,Board Game,False,False,False,2,0.75,0.75,0.75
+1000108,182270022756,nasty gene,4.5,,0,0,2-4,,5 minutes,30 minutes,Low,Board Game|Bluffing,False,False,False,2,0.75,0.75,0.75
+1000174,182232002232,promising title,15.0,,0,0,2-4,,1-5 minutes,30-45 minutes,Very low,Board Game|Area visualisation,False,True,True,1,1.0,1.0,1.0
+1000116,113773167819,strange probation,33.99,,0,2014,2 to 5,,approx. 5 minutes,60 to 120 minutes,,Board Game|Resource management,False,False,False,3,0.3,0.3,0.3
+1000230,162871184978,standard duplexer,25.0,,0,0,2–6,,5–10 minutes,1–2 hours,Medium,Board Game,False,True,False,3,0.3,0.3,0.3
+1000239,156648609351,distinctive poisoning,8.99,,0,0,1 or more,,< 2 minutes,Usually 5–15 minutes,None,Board Game,False,False,True,1,1.0,1.0,1.0
+1000141,143756977645,favourite somewhere,10.0,,0,0,2–4,,10 minutes,90 minutes,Low,Board Game|Strategic thought,True,True,False,3,0.3,0.3,0.3
+1000234,181157012321,delightful pool,12.99,,0,0,2-4,,0,0,,Board Game|Eye–hand coordination,False,False,False,4,0.1,0.1,0.1
+1000067,135299244875,multiple spy,12.99,,0,2005,4-8,,5 minutes,45-60 minutes,High,Board Game,False,False,False,4,0.1,0.1,0.1
+1000110,167517368544,intense queen,33.99,,0,0,0,,5 minutes,15 to 60 minutes,,Board Game|Deduction,False,False,False,4,0.1,0.1,0.1
+1000028,189803681270,deep sort,9.99,,0,0,0,,0,0,,Board Game,False,False,False,4,0.1,0.1,0.1
+1000137,112259482485,crazy granddaughter,8.99,,0,0,2-4,,1-5 minutes,15-30 minutes,None,Board Game|Path navigation,False,False,False,3,0.3,0.3,0.3
+1000202,160486663189,handsome fresco,35.0,,0,0,2–5,,<5 minutes,1-2 Hours,Moderate,Board Game|Strategy,True,False,False,4,0.1,0.1,0.1
+1000022,195390517840,calm aperitif,4.5,,1970 to present,0,2,,< 5 minutes,10–30 minutes,None,Board Game,True,False,False,4,0.1,0.1,0.1
+1000143,179940230530,outstanding chug,15.0,,0,0,3 to 7,,5 minutes,40 minutes,,Board Game,False,False,False,4,0.1,0.1,0.1
+1000054,127471083431,universal notoriety,33.99,,1932-1970s,1932,2–8,,5–15 minutes,Approximately 1.5–3 hours,,Board Game|Negotiation,False,False,False,4,0.1,0.1,0.1
+1000250,190230474259,scornful spasm,35.0,,0,0,2–4,,0,10 minutes,Medium,Board Game|Dexterity,True,False,False,3,0.3,0.3,0.3
+1000169,105225018102,possible bill,19.99,,0,0,3–5,,0,60-90 minutes,,Board Game,False,False,False,2,0.75,0.75,0.75
+1000092,138778257325,retired wrong,12.99,,0,0,0,,0,0,,Board Game,True,False,False,4,0.1,0.1,0.1
+1000151,146942511275,collective coal,35.0,,0,1986,3-5,,0,240 minutes / 4 hours,Low,Board Game|economic,False,False,False,2,0.75,0.75,0.75
+1000267,179297362462,successive populist,12.99,,0,0,2–6,,2 minutes,10–180 minutes,Medium,Board Game,False,False,False,4,0.1,0.1,0.1
+1000069,175288466804,cooperative courage,15.0,,0,0,2–6,,5–15 minutes,30 minutes,,Board Game|Teamwork,False,False,False,3,0.3,0.3,0.3
+1000255,132701307689,western scheme,24.95,,0,0,2-4,,2 minutes,30 minutes/random,High (luck),Board Game|Reading/Counting,True,True,True,1,1.0,1.0,1.0
+1000081,169218031708,jolly fascia,10.0,,0,0,3-6,,5 minutes,90 minutes,Tile drawing,Board Game|Tile laying,False,False,False,2,0.75,0.75,0.75
+1000162,179457272263,tender tinkle,9.99,,0,0,3-5,,5 minutes,60 minutes,Low,Board Game|Hand management,False,False,False,4,0.1,0.1,0.1
+1000124,112178744448,post-war skywalk,9.99,,1974–present,0,0,,0,Varies,,Board Game|Fantasy,True,False,True,1,1.0,1.0,1.0
+1000105,160558556111,prominent hardening,24.95,,0,0,2 to 5,,5 minutes,60–180 minutes,None; although initial turn order and placement of the initial 6 buildings are random,Board Game,False,True,False,4,0.1,0.1,0.1
+1000142,101687003159,wet stamen,4.5,,0,0,2-7 (4-7 for full game),,10-15 minutes,3-7 hours,Medium,Board Game,False,False,False,4,0.1,0.1,0.1
+1000024,111133779786,reasonable godmother,8.99,,0,0,2,,< 5 minutes,30 minutes,None,Board Game,False,False,False,4,0.1,0.1,0.1
+1000002,197026933837,organic creek,12.99,,0,0,2,,< 1 minute,20 minutes,None,Board Game|Deduction,False,False,False,3,0.3,0.3,0.3
+1000071,116332714401,real curler,33.99,,0,0,2 to 6,,30 minutes,2 to 4 hours,Medium,Board Game,True,False,False,2,0.75,0.75,0.75
+1000149,155965905341,sick toothpaste,35.0,,0,0,2–6,,5–10 minutes,15–80 minutes,Medium,Board Game,True,False,False,3,0.3,0.3,0.3
+1000176,164503531318,beneficial mind,15.0,,0,2006,2-4 Players,,1 minute,30–45 minutes,Moderate,Board Game|Strategy,True,True,False,2,0.75,0.75,0.75
+1000253,109378538384,ethical birdbath,9.99,,0,0,2+,,Negligible,15–45 minutes,Entirely,Board Game,False,False,False,2,0.75,0.75,0.75
+1000038,197883957968,remote oar,15.0,,0,0,0,,0,0,,Board Game,False,False,False,3,0.3,0.3,0.3
+1000208,178932808287,terrible segment,24.95,,0,0,2–6,,5 minutes,2 hours,Medium,Board Game|Resource Allocation,False,False,False,4,0.1,0.1,0.1
+1000232,196370173779,premier profession,19.99,,0,0,2–5,,<5 minutes,1-2 Hours,Moderate,Board Game|Strategy,True,True,False,2,0.75,0.75,0.75
+1000112,185145796388,persistent bonnet,15.0,,0,0,2–6,,<5 minutes,45 Minutes,Moderate,Board Game|Programming,False,False,False,4,0.1,0.1,0.1
+1000098,129641622788,damp department,33.99,,0,0,0,,0,0,,Board Game,True,False,False,2,0.75,0.75,0.75
+1000135,100789046105,intensive independent,35.0,,0,0,2-4,,Less than 5 minutes,90-120 minutes,Low,Board Game|Some knowledge of American and/or Canadian football,False,True,False,4,0.1,0.1,0.1
+1000123,137869708540,just monitor,10.0,,0,0,2 to 4,,0,30 to 45 minutes,,Board Game,False,False,False,4,0.1,0.1,0.1
+1000033,112421290008,victorian uzbekistan,35.0,,since 1946,0,2,,2 to 10 minutes,30 to 120 minutes,None,Board Game,False,False,False,4,0.1,0.1,0.1
+1000014,102074775082,fierce palm,33.99,,0,0,2,,2 minutes,30 minutes,None,Board Game,False,True,False,4,0.1,0.1,0.1
+1000199,182522887363,empty maximum,24.95,,0,0,2 to 5,,approx. 10 minutes,30 mins per player,Very Low,Board Game|Resource management,True,True,False,3,0.3,0.3,0.3
+1000057,170107909512,parallel fill,15.0,,0,0,2 or more,,20+ minutes,1+ hours,Medium,Board Game,False,False,False,4,0.1,0.1,0.1
+1000044,111211104404,wandering estimate,24.95,,0,0,4–7 (3–8 with expansion sets),,approx. 5-10 min.,20–90 minutes,Card drawing,Board Game|Card playing,False,False,False,3,0.3,0.3,0.3
+1000026,149434246913,perfect philippines,10.0,,0,2006,2-4 Players,,1 minute,30–45 minutes,Moderate,Board Game|Strategy,False,True,False,3,0.3,0.3,0.3
+1000164,126349265224,inner hobby,15.0,,0,0,3–5,,< 5 minutes,30-45 minutes,Medium,Board Game,True,False,False,4,0.1,0.1,0.1
+1000088,130802698518,colonial century,19.99,,0,0,3–5,,5 minutes,60–90 minutes,,Board Game,True,False,False,3,0.3,0.3,0.3
+1000006,192134336903,ethical young,25.0,,at least 5000,0,2,,<1 minute,30 minutes – 2 hours,None,Board Game,False,False,False,3,0.3,0.3,0.3
+1000146,100367597173,strong trip,9.99,,0,0,1 to 5,,5–10 minutes,30-60 minutes per player,Very Low,Board Game,False,True,False,4,0.1,0.1,0.1
+1000080,146613949117,giant believe,12.99,,0,0,the minimum is 2 the maximum is 16,,< 1 minutes,1 hour,Medium,Board Game,True,False,False,4,0.1,0.1,0.1
+1000007,161797005097,light stacking,19.99,,c. 6th-century India to present,0,2,,0,0,None,Board Game,False,False,False,2,0.75,0.75,0.75
+1000132,168965600763,welcome wingtip,4.5,,0,0,3-8,,Approx. 5 minutes,45-75 minutes,Low,Board Game,False,False,False,2,0.75,0.75,0.75
+1000100,122947409519,Sound judge,25.0,,0,1949,2–4,,3 minutes,15–21 minutes,Complete,Board Game|Color recognition,False,False,False,3,0.3,0.3,0.3
+1000217,187168137883,normal hook,15.0,,0,0,0,,approx. 5 minutes,approx. 2 hours,Low,Board Game,False,False,False,3,0.3,0.3,0.3
+1000206,106939851008,enormous county,19.99,,0,0,2–4,,5 minutes,> 60 minutes,,Board Game|Strategic thought,False,False,False,3,0.3,0.3,0.3
+1000241,150924213916,semantic kale,35.0,,0,0,0,,0,0,,Board Game,False,False,False,4,0.1,0.1,0.1
+1000078,116240539529,slow buffer,15.0,,0,0,2–6,,3 minutes,45–60 minutes,Low,Board Game|Strategy,False,False,False,4,0.1,0.1,0.1
+1000035,122785493391,pleased fiddle,33.99,,4th–12th centuries,0,2,,< 1 minute,Typically 5–20 minutes,None,Board Game,False,True,False,4,0.1,0.1,0.1
+1000023,140767637254,worried baseball,25.0,,> 2000 years ago to present,0,2,,< 1 minute,5–60 minutes,None,Board Game,False,False,False,4,0.1,0.1,0.1
+1000218,199874744770,major fiction,12.99,,0,0,1+,,0,30 minutes,High,Board Game,False,False,False,2,0.75,0.75,0.75
+1000136,188016671647,sympathetic payment,9.99,,0,1991,3-6,,0,180 minutes,,Board Game,False,False,False,2,0.75,0.75,0.75
+1000073,138652416231,helpful employ,25.0,,0,0,2–6,,5–10 minutes,1–8 (or more) hours (player dependent),medium,Board Game,False,False,False,3,0.3,0.3,0.3
+1000224,173199759428,healthy retina,12.99,,0,2011,2–5,,0,60 minutes,,Board Game|board game,False,False,False,2,0.75,0.75,0.75
+1000227,122648907091,steep tree,35.0,,since 1957,0,2–6,,5–15 minutes,1–8 hours,"Medium (5 dice, cards)",Board Game,False,False,False,2,0.75,0.75,0.75
+1000165,134001731583,lucky role,25.0,,0,0,2–6,,5–10 minutes,1-3 hours,,Board Game|Dice rolling,False,True,False,2,0.75,0.75,0.75
+1000145,131776378459,weary gladiolus,24.95,,0,0,2–5,,<1 minute,15-30 minutes,High,Board Game|Probability theory,True,False,False,3,0.3,0.3,0.3
+1000139,188937171897,outstanding detention,33.99,,0,0,2–6,,10 minutes,120 minutes,None,Board Game,True,True,False,3,0.3,0.3,0.3
+1000172,137647507838,super analysis,15.0,,0,0,2 to 5,,5–10 minutes,60–120 minutes,Medium,Board Game,True,True,False,4,0.1,0.1,0.1
+1000037,102408404598,rubber foam,4.5,,0,2005,2,,5–15 minutes,3 hours,,Board Game,False,True,False,4,0.1,0.1,0.1
+1000000,147936518623,revolutionary drizzle,9.99,,0,0,2 (or more),,20-60 seconds,10 minutes-2 hours,None,Board Game,True,False,False,2,0.75,0.75,0.75
+1000261,147400546253,whole coliseum,12.99,,0,0,2–5,,5 minutes,45–75 minutes,,Board Game|Cooperation,False,False,False,4,0.1,0.1,0.1
+1000090,111831323489,amused passive,35.0,,0,0,2–5,,< 1 min,About 90 minutes,Medium,Board Game,False,False,False,2,0.75,0.75,0.75
+1000226,152443510388,sad bongo,25.0,,0,0,2 to 6,,10-15 minutes,120+ minutes,Medium,Board Game,False,False,False,4,0.1,0.1,0.1
+1000160,178132990532,hot statistic,4.5,,0,0,2–4,,10 minutes,60–75 minutes,None,Board Game|Strategic thought,False,True,False,3,0.3,0.3,0.3
+1000159,199994822574,large-scale repair,15.0,,0,1988,1–6,,15 minutes,2–6 hours,Medium,Board Game,False,False,False,2,0.75,0.75,0.75
+1000089,138025817093,stormy weeder,10.0,,0,0,1 to 8,,30-60 minutes,120-240 minutes,Medium,Board Game|Cooperative gaming,True,False,False,3,0.3,0.3,0.3
+1000036,129152885334,favourable shake,35.0,,0,1988,1–4,,1 minute,30 minutes,Medium,Board Game|Strategic thought,False,False,False,2,0.75,0.75,0.75
+1000221,171225719432,healthy shake,24.95,,0,0,2–4,,5 minutes,60-90 minutes,Low,Board Game|Set collection,False,False,False,3,0.3,0.3,0.3
+1000173,161750099432,gay fishnet,35.0,,0,0,2 to 5,,5–10 minutes,90–150 minutes,Very Low,Board Game,True,False,False,2,0.75,0.75,0.75
+1000043,176179356710,loud france,10.0,,0,0,2–5,,10-30 minutes,2–10+ hours,Medium,Board Game,True,True,False,4,0.1,0.1,0.1
+1000131,158796282225,important neuropathologist,35.0,,0,0,2 to 4,,0,45 minutes,,Board Game,False,True,False,3,0.3,0.3,0.3
+1000229,154115924868,historic speakerphone,8.99,,0,0,1 to 5,,5 minutes,45-60 minutes,,Board Game,False,False,False,3,0.3,0.3,0.3
+1000118,186180438087,big goose,25.0,,0,0,3 to 6,,0,30 minutes,,Board Game,False,False,False,3,0.3,0.3,0.3
+1000049,183469851670,elaborate feet,19.99,,0,0,2–6,,5–20 minutes,1–3 hours (player dependent),"medium-dice, cards",Board Game,False,False,True,1,1.0,1.0,1.0
+1000050,191286644937,ideal balance,9.99,,0,0,0,,5 minutes,15 to 60 minutes,,Board Game|Deduction,False,False,True,1,1.0,1.0,1.0
+1000210,139736730610,silky stocking,15.0,,0,0,0,,0,0,,Board Game|Trivia,False,False,False,4,0.1,0.1,0.1
+1000053,136966836429,mad ability,19.99,,0,2011,0,,0,2-3 hours,,Board Game|Strategy,False,True,False,3,0.3,0.3,0.3
+1000096,128202796308,wild copper,12.99,,0,0,2-4,,0,0,,Board Game,True,False,False,4,0.1,0.1,0.1
+1000034,139746705470,magnificent crest,24.95,,First documented in 1600s.,0,2,,30 seconds - 1 minute,5–60 minutes,,Board Game,False,False,False,3,0.3,0.3,0.3
+1000065,197140362580,mental tanzania,25.0,,0,0,2–6,,5–10 minutes,About 3 hours,,Board Game,False,False,False,4,0.1,0.1,0.1
+1000196,123438676751,prime bookend,35.0,,0,0,2–6,,5–10 minutes,1–2 hours,Medium,Board Game,False,False,False,3,0.3,0.3,0.3
+1000209,154621824550,opposite bill,35.0,,0,0,2–6,,2 minutes,30 minutes,Low,Board Game|Resource management,False,False,False,2,0.75,0.75,0.75
+1000189,186414916241,various laborer,24.95,,0,1995,0,,approximately 8 minutes,1-4 hours,low-moderate,Board Game|Strategy,False,True,False,3,0.3,0.3,0.3
+1000175,153207337584,missing reinscription,25.0,,0,0,2-4,,< 1 minute,20 minutes,None,Board Game|Deduction,False,False,False,4,0.1,0.1,0.1
+1000068,170963706825,ugly guide,35.0,,0,0,2–6,,5–15 minutes,"about 1-3 hours; length depends greatly on ruleset chosen (ex: ""Advanced Play"").","medium-dice, cards",Board Game,False,False,False,4,0.1,0.1,0.1
+1000101,105240637940,coming face,19.99,,0,0,2–4,,< 1 minute,3–45 minutes,Medium,Board Game|Strategy,False,False,False,4,0.1,0.1,0.1
+1000177,124877170896,mixed semicolon,19.99,,0,0,2 to 5,,5 minutes,45 - 60 minutes,Medium,Board Game|Auction,False,True,False,4,0.1,0.1,0.1
+1000075,156502423858,planned calf,24.95,,0,0,2–6,,10–15 minutes,120+ minutes (player dependent),low to medium,Board Game,False,True,False,2,0.75,0.75,0.75
+1000237,172581334166,unnecessary injury,19.99,,0,0,2,,0,10 minutes,,Board Game,True,False,False,2,0.75,0.75,0.75
+1000259,168679224787,swiss folder,15.0,,0,2009,1–6,,0,60 minutes,,Board Game|Strategy,False,False,False,2,0.75,0.75,0.75
+1000252,179193915475,purring hoe,25.0,,0,0,2 - 4,,5-15 mins,30 mins approx,High (dice rolling game),Board Game|Careful finger dexterity,False,False,False,3,0.3,0.3,0.3
+1000125,134429963378,public marshland,9.99,,0,0,2–5,,5 minutes,90 minutes,Low,Board Game|Strategy,False,False,False,3,0.3,0.3,0.3
+1000138,189097567776,tiny marketing,8.99,,0,0,3-6,,0,60 minutes +,,Board Game,True,True,False,4,0.1,0.1,0.1
+1000204,122231313553,african tail,9.99,,0,0,2–4,,10 minutes,60–90 minutes,Medium,Board Game|Strategic thought,True,False,False,2,0.75,0.75,0.75
+1000181,166713936837,cute dependent,25.0,,0,0,2–8,,10 minutes,120 minutes,Medium,Board Game|Simple programming,False,False,False,4,0.1,0.1,0.1
+1000091,199615289033,fierce chin,19.99,,0,0,3–6,,5 minutes,60 minutes,Medium,Board Game,False,False,True,1,1.0,1.0,1.0
+1000147,111733582356,scientific tiara,12.99,,0,0,2 to 8,,10 minutes (approx.),45 minutes (approx.),"High (spinning a wheel, card-drawing, luck)",Board Game,True,False,False,3,0.3,0.3,0.3
+1000004,184331286860,primitive tattler,12.99,,23,0,2,,4–10 minutes,"45-150 minutes, depending on rules version",,Board Game,False,False,False,2,0.75,0.75,0.75
+1000240,132899636789,outdoor guilty,8.99,,0,0,1 or more,,0,10 min,Low,Board Game|Dexterity,True,False,False,4,0.1,0.1,0.1
+1000021,185185748945,semantic grain,4.5,,0,0,"2-12, two teams",,0,0,Medium,Board Game|Linguistics,False,False,False,2,0.75,0.75,0.75
+1000167,142903893220,dual cactus,12.99,,0,0,2 to 4,,5 minutes,45-60 minutes,Low,Board Game,True,True,True,1,1.0,1.0,1.0
+1000251,184295463093,divine ottoman,12.99,,Since c. 1896,0,2–4,,0,< 120 min,,Board Game,True,False,False,3,0.3,0.3,0.3
+1000059,190066651627,used switch,4.5,,0,0,1 or more,,< 2 minutes,Usually 5–15 minutes,None,Board Game,False,False,False,4,0.1,0.1,0.1
+1000223,199292813083,available routine,33.99,,0,0,2-7 (4-7 for full game),,10-15 minutes,3-7 hours,Medium,Board Game,True,False,False,2,0.75,0.75,0.75
+1000008,165916459929,territorial fear,19.99,,0,1974,2,,0,1 - 10 minutes,,Board Game|Abstract strategy,False,False,True,1,1.0,1.0,1.0
+1000183,169755702164,excessive sad,25.0,,0,0,2-4,,Approx 5 min.,Approx 45 min.,Tile drawing,Board Game|Tile laying,False,False,False,4,0.1,0.1,0.1
+1000086,122370756857,numerous scale,25.0,,0,0,2–4,,2–6 minutes,~50 minutes,Medium (letters drawn),Board Game,True,True,False,4,0.1,0.1,0.1
+1000248,133184266904,flying loaf,9.99,,0,0,2–6,,1–5 minutes,30+ minutes,High,Board Game,False,True,False,2,0.75,0.75,0.75
+1000235,117435495673,additional pot,9.99,,ca. 1876–,0,2 or 4,,0,0,,Board Game,True,False,False,4,0.1,0.1,0.1
+1000060,164926079895,impossible arrival,25.0,,0,0,2,,5–10 minutes,10-30 minutes,None,Board Game|Tactics,False,False,False,3,0.3,0.3,0.3
+1000052,195379816961,universal rabbi,19.99,,0,1959,2–7,,5–10 minutes,4–12 hours,None,Board Game,False,False,True,1,1.0,1.0,1.0
+1000207,195734150559,rolling union,25.0,,0,0,3–6,,5–10 minutes,90 minutes (1.5 hours) [average],,Board Game,False,True,False,2,0.75,0.75,0.75
+1000243,148412458084,silent thought,10.0,,0,0,0,,0,0,,Board Game|physical skill game,False,True,True,1,1.0,1.0,1.0
+1000045,105439867483,intimate audience,24.95,,0,0,2 to 4,,<5 minutes,15-30 minutes,None,Board Game|Path navigation,False,False,False,4,0.1,0.1,0.1
+1000215,164028917612,convinced mode,33.99,,0,0,2 to 4,,< 2 min,45 to 90 minutes,Medium,Board Game,True,False,False,2,0.75,0.75,0.75
+1000264,109395191404,post-war guarantee,8.99,,0,2005,3–7,,0,60-90 minutes,,Board Game,False,False,False,2,0.75,0.75,0.75
+1000179,143421703568,sophisticated shred,10.0,,0,0,2 to 5,,5 minutes,45 - 60 minutes,Medium,Board Game|Auction,False,False,False,2,0.75,0.75,0.75
+1000236,164505358534,gay goldfish,24.95,,0,0,0,,0,0,,Board Game,False,False,False,4,0.1,0.1,0.1
+1000201,186305438386,british duffel,15.0,,0,0,2 to 4,,5–10 minutes,45–60 minutes,Medium,Board Game|Strategic thought,True,False,False,3,0.3,0.3,0.3
+1000074,147048364959,continental efficacy,8.99,,0,1980,2–6,,0,2-6 hours,,Board Game|Board wargame,False,False,False,3,0.3,0.3,0.3
+1000195,178326562855,enthusiastic bellows,9.99,,0,0,2 to 4,,0,30 minutes,,Board Game|Resource management,False,False,False,4,0.1,0.1,0.1
+1000099,122790452612,zany campaign,12.99,,0,0,2 to 8,,5 minutes,30 minutes,Medium,Board Game|Strategy,True,True,False,4,0.1,0.1,0.1
+1000001,131923525349,ministerial grandmother,33.99,,"Approximately 5,000 years ago to present",0,2,,10–30 seconds,5–60 minutes,,Board Game,True,False,False,4,0.1,0.1,0.1
+1000156,133652714825,unconscious congresswoman,10.0,,0,0,3-6,,5-10 minutes,1 hour,a little,Board Game,False,True,True,1,1.0,1.0,1.0
+1000087,161884461745,bitter finisher,25.0,,0,0,2–6,,10 minutes,60 minutes,Medium,Board Game|Currency trading,False,True,False,2,0.75,0.75,0.75
+1000041,163461363075,precious contest,19.99,,0,0,2,,2 minutes,30 minutes,None,Board Game|Strategy,False,False,False,2,0.75,0.75,0.75
+1000120,144099758746,influential naturalisation,10.0,,0,0,2 to 4 (up to 6 with the Intrigue expansion),,5–10 minutes,~30 minutes,Medium,Board Game,False,False,False,2,0.75,0.75,0.75
+1000269,138227430989,ancient flip-flops,35.0,,0,0,2–5,,5 minutes,45–60 minutes,High,Board Game|Bidding,False,False,False,3,0.3,0.3,0.3
+1000114,181355688292,ruling sill,35.0,,0,0,4+,,approx. 2 minutes,> 35 minutes,Medium,Board Game,False,True,False,4,0.1,0.1,0.1
+1000017,111967190145,very column,12.99,,0,0,2,,< 1 minute,From 20 minutes to several hours,None,Board Game,False,False,False,3,0.3,0.3,0.3
+1000031,185309308105,injured freedom,25.0,,0,0,2,,< 2 minutes,30 mins. to 2 hours (typically),None,Board Game|Strategy,False,True,False,3,0.3,0.3,0.3
+1000219,118565531816,complete footnote,35.0,,0,0,0,,0,0,,Board Game,False,False,False,4,0.1,0.1,0.1
+1000247,140100549238,crowded kale,35.0,,0,0,2 or more,,< 5 minutes,3 to 8 minutes,None,Board Game|Manual dexterity,False,False,False,4,0.1,0.1,0.1
+1000063,102478492630,busy snake,35.0,,0,0,0,,5–10 minutes,60–240 minutes (1–4 hours) [average],,Board Game,True,False,False,4,0.1,0.1,0.1
+1000245,168556694590,beautiful pumpkin,19.99,,0,1949,2–4,,3 minutes,15–21 minutes,Complete,Board Game|Color recognition,True,True,False,2,0.75,0.75,0.75
+1000222,186043447762,turkish lynx,25.0,,0,0,3-6,,5 minutes,90 minutes,Tile drawing,Board Game|Tile laying,True,True,False,4,0.1,0.1,0.1
+1000144,155941819723,comfortable pancreas,33.99,,0,0,2-4,,5 minutes,15 - 45 minutes,Medium (tile drawing),Board Game,True,False,True,1,1.0,1.0,1.0
+1000127,130555166860,clever lady,24.95,,0,0,2–4,,0,0,Medium,Board Game|Strategic thought,False,False,False,4,0.1,0.1,0.1
+1000265,181062763264,selfish composition,8.99,,0,0,1 to 5,,0,30 minutes,,Board Game,False,False,False,3,0.3,0.3,0.3
+1000168,164540429977,planned casserole,35.0,,0,0,4 or more,,< 5 minutes,1 hour,Medium,Board Game|Drawing,False,True,True,1,1.0,1.0,1.0
+1000242,137928896824,clever sneakers,10.0,,0,0,2 or 4,,2 minutes,10–90 minutes,Very low,Board Game|Table top game,False,True,False,2,0.75,0.75,0.75
+1000064,132455624890,massive sister-in-law,33.99,,0,0,2 to 4,,< 5 minutes,< 30 min,High,Board Game,False,False,False,2,0.75,0.75,0.75
+1000104,198512737268,scornful stepmother,10.0,,0,0,2 to 5,,5 minutes,45 minutes,Medium,Board Game|Planning,False,False,False,4,0.1,0.1,0.1
+1000225,183653956380,upset differential,10.0,,0,0,0,,5–10 minutes,60–240 minutes (1–4 hours) [average],,Board Game,True,False,False,4,0.1,0.1,0.1
+1000262,184839518783,soft tramp,8.99,,0,0,0,,10 min,45 min,Moderate,Board Game,False,True,False,3,0.3,0.3,0.3
+1000056,158834124173,brilliant dame,25.0,,0,Early 1970s,2 to 6,,0,0,"Mid (dice, card-drawing, luck)",Board Game,False,True,True,1,1.0,1.0,1.0
+1000260,175040772880,allied professional,25.0,,0,0,1-4,,10 min,90 min,,Board Game,False,True,False,3,0.3,0.3,0.3
+1000126,150313477688,romantic rheumatism,19.99,,0,0,2–6,,< 5 minutes,60 minutes,Medium,Board Game,False,True,False,3,0.3,0.3,0.3
+1001111,160410725471,left fox glove,24.95,,0,2009,2–5 (6 w/expansion),,0,40 to 80 minutes,,Board Game|Strategy,False,False,False,4,0.1,0.1,0.1

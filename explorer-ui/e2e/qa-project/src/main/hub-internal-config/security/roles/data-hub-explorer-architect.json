@@ -1,0 +1,14 @@
+{
+  "role-name": "data-hub-explorer-architect",
+  "description": "Permits accessing entity models via the REST API",
+  "role": [
+    "data-hub-entity-model-reader"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "rest-reader",
+      "action": "http://marklogic.com/xdmp/privileges/rest-reader",
+      "kind": "execute"
+    }
+  ]
+}

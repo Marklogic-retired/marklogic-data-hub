@@ -1,0 +1,8 @@
+{
+  "path-expression" : "/envelope//instance//Person/id",
+  "path-namespace" : [ ],
+  "permission" : {
+    "role-name" : "pii-reader",
+    "capability" : "read"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "id": 2,
+  "fname": "Alma",
+  "lname": "Daniel",
+  "age": 35,
+  "gender": "female",
+  "eyeColor": "blue",
+  "company": "BIZMATIC",
+  "email": "almadaniel@bizmatic.com",
+  "phone": "+1 (812) 472-2940",
+  "street": "889 Hendrix Street",
+  "city": "Caberfae",
+  "state": "Maryland",
+  "zip": "68155",
+  "isActive": true,
+  "balance": "$2,882.72",
+  "registered": "2015-04-06T07:32:03 +07:00",
+  "favoriteFruit": "strawberry",
+  "synonym": "match"
+}

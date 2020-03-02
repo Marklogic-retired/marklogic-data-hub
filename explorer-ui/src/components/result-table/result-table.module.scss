@@ -1,0 +1,23 @@
+
+.nestedTable{
+  padding: 30px;
+  margin: 0px;
+}
+
+.redirectIcons a {
+  padding: 8px;
+  color: #44499C;
+}
+
+.columnSelector {
+  margin-right: 26px;
+  height: 10px;
+  //  cursor: pointer;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.tabular {
+  margin-top: 20px;
+  overflow-x: auto;
+}

@@ -1,0 +1,31 @@
+{
+  "info" : {
+    "title" : "PersonXML",
+    "version" : "0.0.1",
+    "baseUri" : "http://example.org/"
+  },
+  "definitions" : {
+    "PersonXML" : {
+      "primaryKey" : "id",
+      "required" : [ ],
+      "pii" : [ ],
+      "elementRangeIndex" : [ "fname", "lname" ],
+      "rangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "id" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "fname" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "lname" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}

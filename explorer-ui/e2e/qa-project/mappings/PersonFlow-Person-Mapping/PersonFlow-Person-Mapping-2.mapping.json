@@ -1,0 +1,24 @@
+{
+  "lang" : "zxx",
+  "name" : "PersonFlow-Person-Mapping",
+  "description" : "",
+  "version" : 2,
+  "targetEntityType" : "http://example.org/Person-0.0.1/Person",
+  "sourceContext" : "/",
+  "sourceURI" : "/Users/svishaka/WebstormProjects/explorer-ui/e2e/qa-project/input/person-json/doc3.json",
+  "properties" : {
+    "fname" : {
+      "sourcedFrom" : "fname"
+    },
+    "lname" : {
+      "sourcedFrom" : "lname"
+    },
+    "id" : {
+      "sourcedFrom" : "id"
+    },
+    "desc" : {
+      "sourcedFrom" : "description"
+    }
+  },
+  "namespaces" : { }
+}

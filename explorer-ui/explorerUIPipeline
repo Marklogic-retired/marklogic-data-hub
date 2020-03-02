@@ -1,0 +1,85 @@
+@Library('shared-libraries') _
+pipeline{
+	agent none;
+	options {
+  	checkoutToSubdirectory 'explorer-ui'
+  	skipStagesAfterUnstable()
+	}
+	environment{
+	DMC_USER     = credentials('MLBUILD_USER')
+    DMC_PASSWORD= credentials('MLBUILD_PASSWORD')
+    BUILDER_PASS=credentials('BUILDER_PASS')
+	}
+	parameters{
+	string(name: 'Email', defaultValue: 'data-hub-explorer@marklogic.com', description: 'Who should I say send the email to?')
+	}
+	stages{
+		stage('Build-explorer-ui'){
+		agent { label 'explorerLinux'}
+			steps{
+				println(BRANCH_NAME)
+				}
+				post{
+                   failure {
+                      println("Explorer Build FAILED")
+                      script{
+                      def email;
+                    if(env.CHANGE_AUTHOR_EMAIL){
+                    	def author=env.CHANGE_AUTHOR_EMAIL.toString().trim().toLowerCase()
+                    	email=author;
+                    }else{
+                    email=Email
+                    }
+                      sendMail email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Explorer-UI_CI/detail/${JOB_BASE_NAME}/${BUILD_ID}  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Pipeline Failed at the stage while building datahub. Please fix the issues',false,'Data Hub Build for $BRANCH_NAME Failed'
+                      }
+                  }
+                  }
+		}
+		stage('Unit-Tests'){
+		agent { label 'explorerLinux'}
+			steps{
+				sh 'cd $WORKSPACE/explorer-ui;npm install; CI=true npm run test | true'
+				junit 'explorer-ui/junit.xml'
+				cobertura coberturaReportFile: 'explorer-ui/cobertura-coverage.xml'
+				script{
+				if(env.CHANGE_TITLE){
+				JIRA_ID=env.CHANGE_TITLE.split(':')[0]
+				if(JIRA_ID.startsWith("DHFPROD")){
+				jiraAddComment comment: 'Jenkins Unit Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+				}
+				}
+				}
+			}
+			post{
+                  success {
+                    println("Unit Tests Completed")
+                    script{
+                    def email;
+                    if(env.CHANGE_AUTHOR_EMAIL){
+                    def author=env.CHANGE_AUTHOR_EMAIL.toString().trim().toLowerCase()
+                    email=author;
+                    }else{
+                    	email=Email
+
+                    }
+                    sendMail email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Explorer-UI_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the Unit Tests Passed on $BRANCH_NAME ',false,'Unit Tests for  $BRANCH_NAME Passed'
+                    }
+                   }
+                   unsuccessful {
+                      println("Unit Tests Failed")
+                      script{
+                      def email;
+                    if(env.CHANGE_AUTHOR_EMAIL){
+                    	def author=env.CHANGE_AUTHOR_EMAIL.toString().trim().toLowerCase()
+                    	email=author;
+                    }else{
+                    email=Email
+                    }
+                      sendMail email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Explorer-UI_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the  Unit Tests Failed on  $BRANCH_NAME. Please look into the issues and fix it.',false,'Unit Tests for $BRANCH_NAME Failed'
+                      }
+                  }
+             }
+		}
+
+	}
+}

@@ -1,0 +1,66 @@
+.logo {
+  color: white;
+}
+
+.icon {
+  padding-top: 10px;
+  margin-right: 5px;
+}
+
+.iconContain {
+  height: 0px;
+  width: 240px;
+  position: relative;
+  left: -40px;
+}
+
+.navBar{
+  position: fixed;
+  z-index:  1;
+  width:  100%
+}
+
+.title {
+  font-size: 20px;
+  float: left;
+  margin: 0px 40px 0px 20px;
+  color: silver;
+  font-weight: bold;
+  text-align: right;
+}
+
+.user {
+  float: right;
+}
+
+.help {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.65);
+  position: relative;
+  top: -3px;
+}
+
+.help:hover {
+  color: rgba(255, 255, 255, 0.98);
+}
+
+.helpContain {
+  top: 2px;
+  right: 0%;
+  position: absolute;
+  color:white;
+  margin-right: 8px;
+}
+
+.route {
+  top:-1px;
+  right: 3%;
+  position: absolute;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+
+.route span:hover{
+  color: rgba(255, 255, 255, 0.98);
+}
+

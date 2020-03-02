@@ -1,0 +1,20 @@
+<root>
+<age>38</age>
+<balance>$3,116.77</balance>
+<city>Clay</city>
+<company>PLAYCE</company>
+<email>hurstlara@playce.com</email>
+<eyeColor>blue</eyeColor>
+<favoriteFruit>banana</favoriteFruit>
+<fname>Hurst</fname>
+<gender>male</gender>
+<id>6</id>
+<isActive>false</isActive>
+<lname>Lara</lname>
+<phone>+1 (830) 497-3371</phone>
+<registered>2017-05-10T11:54:14 +07:00</registered>
+<state>Texas</state>
+<street>463 Fair Street</street>
+<synonym>race</synonym>
+<zip>12425</zip>
+</root>

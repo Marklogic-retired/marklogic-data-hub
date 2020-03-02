@@ -1,0 +1,20 @@
+<root>
+<age>35</age>
+<balance>$2,511.70</balance>
+<city>Vaughn</city>
+<company>MITROC</company>
+<email>dorthyblackburn@mitroc.com</email>
+<eyeColor>brown</eyeColor>
+<favoriteFruit>banana</favoriteFruit>
+<fname>Bill</fname>
+<gender>male</gender>
+<id>0</id>
+<isActive>false</isActive>
+<lname>Hopkins</lname>
+<phone>+1 (988) 597-3702</phone>
+<registered>2014-10-29T06:15:24 +07:00</registered>
+<state>Utah</state>
+<street>577 Ditmas Avenue</street>
+<synonym>big</synonym>
+<zip>90644</zip>
+</root>

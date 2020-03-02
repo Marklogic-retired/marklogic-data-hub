@@ -1,0 +1,39 @@
+version: "3.7"
+services:
+  explorer-ui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: "explorer-ui"
+    container_name: "explorerui"
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - API_URL=explorer:8443
+      - SSL_CERT=/etc/nginx/www.explorer.com.cert.pem
+      - SSL_KEY=/etc/nginx/www.explorer.com.key.pem
+    depends_on:
+      - explorer
+  explorer:
+    image: mlregistry.marklogic.com/explorer/explorer:5.2-snapshot
+    container_name: "explorer"
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    environment:
+      - mlHost=mldhf
+      - spring.profiles.active=production
+    depends_on:
+      - mldhf
+  mldhf:
+    image: mlregistry.marklogic.com/explorerdeps/datahub-on-10.0-3:5.2-snapshot
+    container_name: "mldhf"
+    ports:
+      - "8000-8020:8000-8020"
+    volumes:
+      - ${dhvolume}:/projects
+    environment:
+      - MARKLOGIC_INIT=true
+      - MARKLOGIC_ADMIN_USERNAME=${mlusername}
+      - MARKLOGIC_ADMIN_PASSWORD=${mlpassword}

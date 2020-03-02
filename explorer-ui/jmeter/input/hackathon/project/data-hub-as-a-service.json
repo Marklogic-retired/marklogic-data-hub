@@ -1,0 +1,8 @@
+{
+  "projectName": "Data Hub as a Service",
+  "description": "Design and implement cloud capability for Data Hub for both AWS and Azure", 
+  "requirementOne": "Clouds",
+  "requirementTwo": "Databases",
+  "manager": "David Beckham",
+  "funInterest": "Soccer"
+}

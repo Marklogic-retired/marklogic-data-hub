@@ -1,0 +1,39 @@
+{
+  "name": "ml-dh-entity-create",
+  "description": "MarkLogic Data Hub entity model creation trigger",
+  "event": {
+    "data-event": {
+      "collection-scope": {
+        "uri": "http://marklogic.com/entity-services/models"
+      },
+      "document-content": {
+        "update-kind": "create"
+      },
+      "when": "post-commit"
+    }
+  },
+  "module": "data-hub/4/triggers/entity-model-trigger.xqy",
+  "module-db": "%%mlModulesDbName%%",
+  "module-root": "/",
+  "enabled": true,
+  "recursive": true,
+  "task-priority": "normal",
+  "permission": [
+    {
+      "role-name": "%%mlFlowDeveloperRole%%",
+      "capability": "update"
+    },
+    {
+      "role-name": "%%mlFlowOperatorRole%%",
+      "capability": "read"
+    },
+    {
+      "role-name": "data-hub-developer",
+      "capability": "update"
+    },
+    {
+      "role-name": "data-hub-operator",
+      "capability": "read"
+    }
+  ]
+}
