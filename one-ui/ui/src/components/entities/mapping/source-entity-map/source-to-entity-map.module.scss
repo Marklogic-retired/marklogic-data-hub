@@ -172,11 +172,16 @@
 }
 .showingEditIcon{
     padding: 5px 3px;
-    border: 1px solid #b9daed;
+    border: 1px solid #E9F7FE;
+    color: #394494;
 }
 .notShowingEditIcon{
     padding: 5px 3px;
     margin-left: -3px;
+}
+
+.URItext{
+    color: #394494;
 }
 
 .editIcon{
@@ -202,4 +207,8 @@
     border-radius: 3px;
     padding: 2px 2px;
     cursor: pointer;
+}
+
+.docLinksUl{
+    padding-left: 1vw;
 }
