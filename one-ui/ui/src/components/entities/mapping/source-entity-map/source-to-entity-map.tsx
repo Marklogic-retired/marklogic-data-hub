@@ -28,7 +28,7 @@ const SourceToEntityMap = (props) => {
 
     //Documentation links for using Xpath expressions
     const xPathDocLinks = <div className={styles.xpathDoc}><span id="doc">Documentation:</span>
-        <div><ul>
+        <div><ul className={styles.docLinksUl}>
             <li><a href="https://www.w3.org/TR/xpath/all/" target="_blank" className={styles.docLink}>XPath Expressions</a></li>
             <li><a href="https://docs.marklogic.com/guide/app-dev/TDE#id_99178" target="_blank" className={styles.docLink}>Extraction Functions</a></li>
             <li><a href="https://docs.marklogic.com/datahub/flows/dhf-mapping-functions.html" target="_blank" className={styles.docLink}>Mapping Functions</a></li>
@@ -66,7 +66,7 @@ const SourceToEntityMap = (props) => {
         {props.mapData.selectedSource === 'collection' ? <div className={styles.sourceQuery}>Collection: {props.extractCollectionFromSrcQuery(props.mapData.sourceQuery)}</div> : <div className={styles.sourceQuery}>Source Query: {getInitialChars(props.mapData.sourceQuery,32,'...')}</div>}
         {!editingURI ? <div 
             onMouseOver={(e) => handleMouseOver(e)}
-            onMouseLeave={(e) => setShowEditURIOption(false)} className={styles.uri}>{!showEditURIOption ? <span className={styles.notShowingEditIcon}>URI: &nbsp;{getLastChars(srcURI,42,'...')}</span> :
+            onMouseLeave={(e) => setShowEditURIOption(false)} className={styles.uri}>{!showEditURIOption ? <span className={styles.notShowingEditIcon}>URI: <span className={styles.URItext}>&nbsp;{getLastChars(srcURI,42,'...')}</span></span> :
         <span>URI: <span className={styles.showingEditIcon}>{getLastChars(srcURI,42,'...')}  <i><FontAwesomeIcon icon={faPencilAlt} size="lg" onClick={handleEditIconClick} className={styles.editIcon}
         /></i></span></span>}</div> : <div className={styles.inputURIContainer}>URI: <span><Input value={srcURI} onChange={handleURIEditing} className={styles.uriEditing}></Input>&nbsp;<Icon type="close" className={styles.closeIcon} onClick={() => handleCloseEditOption(srcURI)}/>&nbsp;<Icon type="check" className={styles.checkIcon} onClick={() => handleSubmitUri(srcURI)}/></span></div>}
     </div>;
@@ -197,9 +197,9 @@ const SourceToEntityMap = (props) => {
                 onBlur={handleExpSubmit}
                 autoSize={{ minRows: 1 }}
                 disabled={!props.canReadWrite}></TextArea>&nbsp;&nbsp;
-                <i><FontAwesomeIcon icon={faList} size="lg" className={styles.listIcon}
+                <i id="listIcon"><FontAwesomeIcon icon={faList} size="lg" className={styles.listIcon}
                 /></i>&nbsp;&nbsp;
-                <span ><Button className={styles.functionIcon} size="small">fx</Button></span></div>)
+                <span ><Button id="functionIcon" className={styles.functionIcon} size="small">fx</Button></span></div>)
           },
           {
             title: 'Value',
@@ -238,8 +238,8 @@ const SourceToEntityMap = (props) => {
         let mesg = `All changes are saved on ${convertDateFromISO(new Date())}`
         let errorMesg = `An error occured while saving the changes.`
         
-        let msg = <span><Alert type="success" message={mesg} banner style={saveMessageCSS}/></span>
-        let errorMsg = <span><Alert type="error" message={errorMesg} banner style={saveMessageCSS}/></span>
+        let msg = <span id="successMessage"><Alert type="success" message={mesg} banner style={saveMessageCSS}/></span>
+        let errorMsg = <span id="errorMessage"><Alert type="error" message={errorMesg} banner style={saveMessageCSS}/></span>
         setTimeout(() => {
             setErrorInSaving('');
         }, 3000);
@@ -266,8 +266,10 @@ return (<Modal
         
         <div className={styles.parentContainer}>
         
-        <div className={styles.sourceContainer}>
-            <div className={styles.sourceDetails}>
+        <div 
+        id="srcContainer"
+        className={styles.sourceContainer}>
+            <div id="srcDetails" className={styles.sourceDetails}>
                 <p className={styles.sourceName}
                 ><i><FontAwesomeIcon icon={faList} size="sm" className={styles.sourceDataIcon}
                 /></i> Source Data <Popover
@@ -283,7 +285,7 @@ return (<Modal
         expandIcon={(props) => customExpandIcon(props)}
         className={styles.sourceTable}
         rowClassName={() => styles.srcTableRows}
-        scroll={{ y: 600 }}
+        scroll={{ y: 800 }}
         indentSize={14}
         //size="small"
         columns={columns}
@@ -294,7 +296,9 @@ return (<Modal
         </Spin>
         </div>
 
-        <div className={styles.entityContainer}>
+        <div 
+        id="entityContainer"
+        className={styles.entityContainer}>
         <div className={styles.entityDetails}>
                 <p className={styles.entityName}><i><FontAwesomeIcon icon={faObjectUngroup } size="sm" className={styles.entityIcon}/></i> Entity: {props.entityName}</p>
             </div>
@@ -302,6 +306,7 @@ return (<Modal
         pagination={false}
         className={styles.entityTable}
         //size="small"
+        scroll={{ y: 800 }}
         tableLayout="unset"
         columns={entityColumns}
         dataSource={props.entityData}
