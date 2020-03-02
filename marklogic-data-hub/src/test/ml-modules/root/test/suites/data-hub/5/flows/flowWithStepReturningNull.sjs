@@ -8,7 +8,7 @@ function describe(item) {
 }
 
 function flowWorksWithNull() {
-  let resp = datahub.flow.runFlow('CustomerNull', 'null-test-job', [
+  let resp = datahub.flow.runFlow('myNullFlow', 'null-test-job', [
     {
       uri: '/customer1.json',
       value: cts.doc('/customer1.json'),
