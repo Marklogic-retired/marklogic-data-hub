@@ -1,0 +1,10 @@
+{
+  "role-name": "data-hub-environment-manager",
+  "description": "DHS-specific role for installing Data Hub",
+  "role": [
+    "manage-admin",
+    "security",
+    "data-hub-admin",
+    "rest-admin-internal"
+  ]
+}
