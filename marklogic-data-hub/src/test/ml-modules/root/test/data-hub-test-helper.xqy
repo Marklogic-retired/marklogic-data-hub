@@ -130,3 +130,12 @@ declare function get-first-batch-document()
     </options>
   )
 };
+
+declare function get-modules-document($uri as xs:string)
+{
+  xdmp:invoke-function(function() {fn:doc($uri)},
+    <options xmlns="xdmp:eval">
+      <database>{xdmp:database("data-hub-MODULES")}</database>
+    </options>
+  )
+};
