@@ -78,7 +78,7 @@ const MappingCard: React.FC<Props> = (props) => {
     const extractCollectionFromSrcQuery = (query) => {
 
         let srcCollection = query.substring(
-            query.lastIndexOf("[") + 2, 
+            query.lastIndexOf("[") + 2,
             query.lastIndexOf("]") - 1
         );
         return getInitialChars(srcCollection,30,'...');
@@ -96,7 +96,7 @@ const MappingCard: React.FC<Props> = (props) => {
 
       const onCancel = () => {
         setDialogVisible(false);
-      }  
+      }
 
     const deleteConfirmation = <Modal
         visible={dialogVisible}
@@ -115,14 +115,14 @@ const MappingCard: React.FC<Props> = (props) => {
 
         let database = props.data[index].sourceDatabase || 'data-hub-STAGING';
         let sQuery = props.data[index].sourceQuery;
-        
+
         try{
         let response = await getResultsByQuery(database,sQuery,10, true);
           if (response.status === 200) {
            setSourceURI(response.data[0].uri);
-           
+
            fetchSrcDocFromUri(response.data[0].uri);
-        
+
           }
         }
         catch(error)  {
@@ -130,8 +130,8 @@ const MappingCard: React.FC<Props> = (props) => {
             console.log('Error While loading the source data!', message);
             setDocNotFound(true);
         }
-           
-       
+
+
     }
 
     const fetchSrcDocFromUri = async (uri) => {
@@ -154,13 +154,13 @@ const MappingCard: React.FC<Props> = (props) => {
 
     // construct infinitely nested source Data
     const generateNestedDataSource = (respData, nestedDoc: Array<any>) => {
-        
+
         Object.keys(respData).map(key => {
             let val = respData[key];
             if (val != null && val!= "") {
-   
+
                 if (val.constructor.name === "Object") {
-     
+
                     let propty = {
                         key: key,
                         'children': []
@@ -171,7 +171,7 @@ const MappingCard: React.FC<Props> = (props) => {
 
                 } else if (val.constructor.name === "Array") {
                     //srcData.push({key : key, val: respData[key]})
-                    
+
                     val.forEach(obj => {
                         if(obj.constructor.name == "String"){
                           let propty = {
@@ -184,7 +184,7 @@ const MappingCard: React.FC<Props> = (props) => {
                                 key: key,
                                 children: []
                               };
-                              
+
                           generateNestedDataSource(obj, propty.children);
                           nestedDoc.push(propty);
                         }
@@ -210,14 +210,14 @@ const MappingCard: React.FC<Props> = (props) => {
         });
 
         return nestedDoc;
-        
-        
-        
+
+
+
     }
-    
-    
+
+
     const extractEntityInfoForTable = () => {
-        let entProps = props.entityModel.definitions.definitions[props.entityTypeTitle].properties;
+        let entProps = props.entityModel.definitions[props.entityTypeTitle].properties;
         let entTableTempData: any = [];
         entProps.map(prop => {
             let propty = {
@@ -272,7 +272,7 @@ const MappingCard: React.FC<Props> = (props) => {
                         <div className={styles.formatFileContainer}>
                             <span className={styles.mapNameStyle}>{getInitialChars(elem.name, 27, '...')}</span>
                             {/* <span style={sourceFormatStyle(elem.sourceFormat)}>{elem.sourceFormat.toUpperCase()}</span> */}
-                            
+
                         </div><br />
                         {elem.selectedSource === 'collection' ? <div className={styles.sourceQuery}>Collection: {extractCollectionFromSrcQuery(elem.sourceQuery)}</div> : <div className={styles.sourceQuery}>Source Query: {getInitialChars(elem.sourceQuery,32,'...')}</div>}
                         <br /><br />
@@ -280,18 +280,18 @@ const MappingCard: React.FC<Props> = (props) => {
                         </div>
                     </Card></Col>
                 )) : <span></span> }</Row>
-                <CreateEditMappingDialog 
-                newMap={newMap} 
-                title={title} 
+                <CreateEditMappingDialog
+                newMap={newMap}
+                title={title}
                 setNewMap={setNewMap}
                 targetEntity={props.entityTypeTitle}
                 createMappingArtifact={props.createMappingArtifact}
-                deleteMappingArtifact={props.deleteMappingArtifact}  
+                deleteMappingArtifact={props.deleteMappingArtifact}
                 mapData={mapData}
                 canReadWrite={props.canReadWrite}
                 canReadOnly={props.canReadOnly}/>
                 {deleteConfirmation}
-                <SourceToEntityMap 
+                <SourceToEntityMap
                 sourceData={sourceData}
                 sourceURI={sourceURI}
                 mapData={mapData}
@@ -307,7 +307,7 @@ const MappingCard: React.FC<Props> = (props) => {
                 docNotFound={docNotFound}
                 extractCollectionFromSrcQuery={extractCollectionFromSrcQuery}
                 fetchSrcDocFromUri={fetchSrcDocFromUri}/>
-                
+
         </div>
     );
 
