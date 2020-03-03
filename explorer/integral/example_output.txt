@@ -1,0 +1,67 @@
+Running Suite: Basic Tests The fundamental tests
+
+Step: baby step
+the first thing
+ PASS 
+End of Step
+
+
+Step: login
+verify an invalid login fails
+ PASS 
+End of Step
+
+
+Step: login
+verify a secure login
+ PASS 
+End of Step
+
+
+Step: analyst login
+verify an analyst can login
+ PASS 
+End of Step
+
+
+Step: analyst access
+verify an analyst can see entities
+ PASS 
+End of Step
+
+
+Step: architect login
+verify an architect can login
+ PASS 
+End of Step
+
+
+Step: architect access
+verify an architect can see entities
+ PASS 
+End of Step
+
+
+Step: analyst login
+verify an analyst can login
+ PASS 
+End of Step
+
+
+Step: analyst access
+verify an analyst can see documents
+ PASS 
+End of Step
+
+
+Step: architect login
+verify an architect can login
+ PASS 
+End of Step
+
+
+Step: architect access
+verify an architect cannot see documents
+ PASS 
+End of Step
+End Suite

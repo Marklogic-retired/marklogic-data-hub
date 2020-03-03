@@ -1,0 +1,101 @@
+@Library('shared-libraries') _
+pipeline{
+	agent none;
+	options {
+  	checkoutToSubdirectory 'explorer'
+  	skipStagesAfterUnstable()
+	}
+	environment{
+	JAVA_HOME_DIR="~/java/jdk-11.0.2"
+	JAVA_HOME_8="~/java/jdk1.8.0_72"
+	GRADLE_DIR="/.gradle"
+	MAVEN_HOME="/usr/local/maven"
+	DMC_USER     = credentials('MLBUILD_USER')
+    DMC_PASSWORD= credentials('MLBUILD_PASSWORD')
+    BUILDER_PASS=credentials('BUILDER_PASS')
+	}
+	parameters{
+	string(name: 'Email', defaultValue: 'Akshay.Sonvane@marklogic.com,Bruce.An@marklogic.com,Diane.Brown@marklogic.com,Hao.Liu@marklogic.com,Mike.Wooldridge@marklogic.com,Rahul.Vudutala@marklogic.com,Sanjeevani.Vishaka@marklogic.comTimur.Isangulov@marklogic.com,stadikon@marklogic.com,Zulfi.Umrani@marklogic.com', description: 'Who should I say send the email to?')
+	}
+	stages{
+		stage('Build-explorer'){
+		agent { label 'explorerLinux'}
+			steps{
+				println(BRANCH_NAME)
+				bitBucketCheckout 'explorer-ui','https://project.marklogic.com/repo/scm/prod/explorer-ui.git','develop'
+				sh 'cd $WORKSPACE/explorer-ui;npm install;npm run build'
+				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/explorer;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;./gradlew copyUiFiles -PreactUiPath=$WORKSPACE/explorer-ui;./gradlew build -x test;'
+				archiveArtifacts artifacts: 'explorer/build/libs/* ', onlyIfSuccessful: true
+				}
+				post{
+                   failure {
+                      println("Explorer Build FAILED")
+                      script{
+                      def email;
+                    if(env.CHANGE_AUTHOR){
+                    	def author=env.CHANGE_AUTHOR_EMAIL.toString().trim().toLowerCase()
+                    	email=author;
+                    }else{
+                    email=Email
+                    }
+                      sendMail email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Explorer/detail/${JOB_BASE_NAME}/${BUILD_ID}  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Pipeline Failed at the stage while building datahub. Please fix the issues',false,'Data Hub Build for $BRANCH_NAME Failed'
+                      }
+                  }
+                  }
+		}
+		stage('Unit-Tests'){
+		agent { label 'explorerLinux'}
+			steps{
+				copyRPM 'Release','10.0-3'
+				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
+				gitCheckout 'marklogic-data-hub','https://github.com/marklogic/marklogic-data-hub.git','master'
+				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_8"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/marklogic-data-hub;./gradlew clean;./gradlew marklogic-data-hub:bootstrap -Pskipui=true;'
+				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/explorer;rm -rf $GRADLE_USER_HOME/caches;set +e;./gradlew clean;./gradlew test || true;'
+				junit '**/TEST-*.xml'
+				script{
+				if(env.CHANGE_TITLE){
+				JIRA_ID=env.CHANGE_TITLE.split(':')[0]
+				if(JIRA_ID.startsWith("DHFPROD")){
+				jiraAddComment comment: 'Jenkins Unit Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+				}
+				}
+				}
+			}
+			post{
+				  always{
+				  	sh 'rm -rf $WORKSPACE/xdmp'
+				  }
+                  success {
+                    println("Unit Tests Completed")
+                    script{
+                    def email;
+                    if(env.CHANGE_AUTHOR_EMAIL){
+                    def author=env.CHANGE_AUTHOR_EMAIL.toString().trim().toLowerCase()
+                    email=author;
+                    }else{
+                    	email=Email
+
+                    }
+                    sendMail email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Explorer_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the Unit Tests Passed on $BRANCH_NAME ',false,'Unit Tests for  $BRANCH_NAME Passed'
+                    }
+                   }
+                   unsuccessful {
+                      println("Unit Tests Failed")
+                      sh 'mkdir -p MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/MLLogs/'
+                       archiveArtifacts artifacts: 'MLLogs/**/*'
+                      script{
+                      def email;
+                    if(env.CHANGE_AUTHOR_EMAIL){
+                    	def author=env.CHANGE_AUTHOR_EMAIL.toString().trim().toLowerCase()
+                    	email=author;
+                    }else{
+                    email=Email
+                    }
+                      sendMail email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the  Unit Tests Failed on  $BRANCH_NAME. Please look into the issues and fix it.',false,'Unit Tests for $BRANCH_NAME Failed'
+                      }
+                  }
+             }
+		}
+
+	}
+}
