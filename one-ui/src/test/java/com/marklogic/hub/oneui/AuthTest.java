@@ -6,7 +6,6 @@ package com.marklogic.hub.oneui;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.marklogic.hub.oneui.auth.LoginInfo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +18,7 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -57,7 +57,13 @@ class AuthTest {
             .andDo (
                 result -> {
                     session[0] = (MockHttpSession) result.getRequest().getSession();
-                    assertTrue(result.getResponse().getContentAsString().contains("\"hasManagePrivileges\":true"));
+                    String strResponse = result.getResponse().getContentAsString();
+                    ObjectMapper mapper = new ObjectMapper();
+                    JsonNode jsonResonse = mapper.readTree(strResponse);
+                    assertTrue(jsonResonse.get("roles").isArray());
+                    assertTrue(jsonResonse.get("authorities").isArray());
+                    assertTrue(jsonResonse.get("authorities").toString().contains("canInstallDataHub"));
+                    assertEquals(jsonResonse.get("hasManagePrivileges").asBoolean(), true);
                 })
             .andExpect(status().isOk());
 
@@ -84,7 +90,9 @@ class AuthTest {
                     ObjectMapper mapper = new ObjectMapper();
                     JsonNode jsonResonse = mapper.readTree(strResponse);
                     assertTrue(jsonResonse.get("roles").isArray());
-                    assertTrue(strResponse.contains("\"hasManagePrivileges\":true"));
+                    assertTrue(jsonResonse.get("authorities").isArray());
+                    assertTrue(jsonResonse.get("authorities").toString().contains("canInstallDataHub"));
+                    assertEquals(jsonResonse.get("hasManagePrivileges").asBoolean(), true);
                 })
             .andExpect(status().isOk());
 
@@ -107,7 +115,12 @@ class AuthTest {
             .andDo (
                 result -> {
                     session[0] = (MockHttpSession) result.getRequest().getSession();
-                    assertTrue(result.getResponse().getContentAsString().contains("\"hasManagePrivileges\":false"));
+                    String strResponse = result.getResponse().getContentAsString();
+                    ObjectMapper mapper = new ObjectMapper();
+                    JsonNode jsonResonse = mapper.readTree(strResponse);
+                    assertTrue(jsonResonse.get("roles").isArray());
+                    assertTrue(jsonResonse.get("authorities").isArray());
+                    assertEquals(jsonResonse.get("hasManagePrivileges").asBoolean(), false);
                 })
             .andExpect(status().isOk());
 

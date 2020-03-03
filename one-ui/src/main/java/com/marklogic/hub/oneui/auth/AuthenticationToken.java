@@ -29,15 +29,16 @@ public class AuthenticationToken extends AbstractAuthenticationToken {
 
     private static final long serialVersionUID = SpringSecurityCoreVersion.SERIAL_VERSION_UID;
 
-    private String username;
+    private final String username;
     private String password;
-    private boolean hasManagePrivileges;
-    private boolean dataHubInstalled;
-    private String projectName;
-    private ArrayNode roles;
+    private final boolean hasManagePrivileges;
+    private final boolean dataHubInstalled;
+    private final String projectName;
+    private final ArrayNode roles;
+    private final ArrayNode authorites;
 
     public AuthenticationToken(String username, String password, boolean hasManagePrivileges, boolean dataHubInstalled,
-                               String projectName, ArrayNode roles, Collection<GrantedAuthority> authorities) {
+                               String projectName, ArrayNode authorites, ArrayNode roles, Collection<GrantedAuthority> authorities) {
         super(authorities);
         super.setAuthenticated(true);
         this.username = username;
@@ -45,6 +46,7 @@ public class AuthenticationToken extends AbstractAuthenticationToken {
         this.hasManagePrivileges = hasManagePrivileges;
         this.dataHubInstalled = dataHubInstalled;
         this.projectName = projectName;
+        this.authorites = authorites;
         this.roles = roles;
     }
 
@@ -83,5 +85,9 @@ public class AuthenticationToken extends AbstractAuthenticationToken {
 
     public ArrayNode getRoles() {
         return roles;
+    }
+
+    public ArrayNode getAuthorites() {
+        return authorites;
     }
 }
