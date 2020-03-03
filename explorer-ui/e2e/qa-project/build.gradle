@@ -1,13 +1,13 @@
 buildscript {
   repositories {
 maven {url 'http://distro.marklogic.com/nexus/repository/maven-snapshots/'}
-    mavenLocal() 
+    mavenLocal()
     jcenter()
 }
 dependencies {
 classpath "com.marklogic:ml-data-hub:5.2-SNAPSHOT"
 classpath "com.marklogic:marklogic-data-hub:5.2-SNAPSHOT"
-  } 
+  }
 }
 
 plugins {
@@ -22,3 +22,13 @@ plugins {
 }
 
 apply plugin: "com.marklogic.ml-data-hub"
+
+task extractZip(type: Copy) {
+    from zipTree('input.zip')
+    def destDir = System.getProperty("user.dir")
+    destinationDir = file(destDir)
+    doLast {
+        println("Input directory is extracted to: " + destDir + "/input")
+    }
+}
+mlDeploy.dependsOn extractZip
