@@ -1,0 +1,46 @@
+.icon {
+    z-index: -1;
+    position: absolute;
+    margin-top: -150px;
+    right: 70px;
+}
+
+.container {
+    min-height: 90vh;
+    background: transparent;
+    position: relative;
+}
+
+.footer {
+    position: relative;
+    background: transparent;
+}
+
+.grid{
+    margin-top: 180px;
+}
+
+.title{
+    font-size: 40px;
+    text-align: center;
+}
+
+.copyright {
+    position: relative;
+    width: 100%;
+    text-align: center;
+}
+
+.copyright a {
+    color: inherit;
+    text-decoration: underline;
+  }
+
+.policy {
+    line-height: 1.2;
+}
+
+.policy a {
+    color: inherit;
+    text-decoration: underline;
+  }

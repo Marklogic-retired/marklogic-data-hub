@@ -1,0 +1,7 @@
+{
+  "namespace" : "http://marklogic.com/rest-api/lib/db-util",
+  "local-name" : "do-set-transaction-time-limit",
+  "document-uri" : "/data-hub/5/rest-api/lib/db-util.xqy",
+  "modules-database" : "%%mlModulesDbName%%",
+  "role" : [ "rest-writer-internal" ]
+}

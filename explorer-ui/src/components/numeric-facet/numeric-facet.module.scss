@@ -1,0 +1,35 @@
+.range-input {
+  display: flex;
+  align-items: center;
+}
+
+.name {
+  font-size: 15px;
+  font-weight: bold;
+  margin-bottom: 3px;
+  text-overflow: ellipsis;
+  overflow: hidden; 
+  width: 250px; 
+  white-space: nowrap;
+}
+
+.applyButtonContainer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 3px;
+}
+
+.inputNumber {
+  width: 70px;
+  margin: 0 0 0 5px;
+}
+
+.numericFacet {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.slider {
+  width: 60%;
+}

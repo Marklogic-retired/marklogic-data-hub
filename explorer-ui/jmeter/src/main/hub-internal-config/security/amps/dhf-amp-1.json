@@ -1,0 +1,7 @@
+{
+  "namespace" : "",
+  "local-name" : "addResponseHeader",
+  "document-uri" : "/data-hub/5/rest-api/lib/endpoint-util.sjs",
+  "modules-database" : "%%mlModulesDbName%%",
+  "role" : [ "rest-reader-internal" ]
+}

@@ -1,0 +1,6 @@
+{
+  "user-name": "user2",
+  "description": "A user that is used for reading and writing from MarkLogic Data Hub databases",
+  "password": "user2",
+  "role": ["app-user"]
+}

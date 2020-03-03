@@ -1,0 +1,7 @@
+{
+  "namespace" : "http://marklogic.com/rest-api/models/document-model-query-head",
+  "local-name" : "head",
+  "document-uri" : "/data-hub/5/rest-api/models/document-model-query-head.xqy",
+  "modules-database" : "%%mlModulesDbName%%",
+  "role" : [ "rest-reader-internal" ]
+}

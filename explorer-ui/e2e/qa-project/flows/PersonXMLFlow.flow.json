@@ -1,0 +1,78 @@
+{
+  "name" : "PersonXMLFlow",
+  "description" : "",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stopOnError" : false,
+  "options" : { },
+  "version" : 0,
+  "steps" : {
+    "1" : {
+      "name" : "Person-Ingestion-XML",
+      "description" : "",
+      "options" : {
+        "additionalCollections" : [ ],
+        "headers" : {
+          "sources" : [ {
+            "name" : "PersonXMLFlow"
+          } ],
+          "createdOn" : "currentDateTime",
+          "createdBy" : "currentUser"
+        },
+        "sourceQuery" : "cts.collectionQuery([])",
+        "collections" : [ "Person-Ingestion-XML" ],
+        "permissions" : "data-hub-operator,read,data-hub-operator,update",
+        "outputFormat" : "xml",
+        "targetDatabase" : "data-hub-STAGING"
+      },
+      "customHook" : {
+        "module" : "",
+        "parameters" : { },
+        "user" : "",
+        "runBefore" : false
+      },
+      "retryLimit" : 0,
+      "batchSize" : 100,
+      "threadCount" : 4,
+      "stepDefinitionName" : "default-ingestion",
+      "stepDefinitionType" : "INGESTION",
+      "fileLocations" : {
+        "inputFilePath" : "./input/person-xml",
+        "inputFileType" : "xml",
+        "outputURIReplacement" : "",
+        "separator" : ""
+      }
+    },
+    "2" : {
+      "name" : "Person-Mapping-XML",
+      "description" : "",
+      "options" : {
+        "additionalCollections" : [ ],
+        "sourceQuery" : "cts.collectionQuery([\"Person-Ingestion-XML\"])",
+        "mapping" : {
+          "name" : "PersonXMLFlow-Person-Mapping-XML",
+          "version" : 1
+        },
+        "targetEntity" : "PersonXML",
+        "sourceDatabase" : "data-hub-STAGING",
+        "collections" : [ "Person-Mapping-XML", "PersonXML" ],
+        "permissions" : "data-hub-operator,read,data-hub-operator,update",
+        "validateEntity" : false,
+        "sourceCollection" : "Person-Ingestion-XML",
+        "outputFormat" : "xml",
+        "targetDatabase" : "data-hub-FINAL"
+      },
+      "customHook" : {
+        "module" : "",
+        "parameters" : { },
+        "user" : "",
+        "runBefore" : false
+      },
+      "retryLimit" : null,
+      "batchSize" : 100,
+      "threadCount" : 4,
+      "stepDefinitionName" : "entity-services-mapping",
+      "stepDefinitionType" : "MAPPING"
+    }
+  }
+}
