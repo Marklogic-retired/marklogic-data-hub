@@ -12,8 +12,7 @@ Then, build the uber jar for this Azure function (the jar will be in the ./targe
 
     mvn clean package
 
-Then run the function locally:
-Note: make sure to have JAVA_HOME env is setup and points to JDK 1.8
+Then run the function locally: (note: make sure to have JAVA_HOME env variable is setup and points to JDK 1.8)
 
     mvn azure-functions:run
 
