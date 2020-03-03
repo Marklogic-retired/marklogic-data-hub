@@ -71,6 +71,7 @@ div#flows-container div.ant-card-body {
     border-top: white;
     padding: 4px 12px 12px;
 }
+
 /* Tool Bench Flow Errors */
 div#error-list div.ant-collapse {
     position: relative;
@@ -81,4 +82,8 @@ div#error-list div.ant-collapse div.ant-collapse-item {
 }
 div#error-list div.ant-collapse div.ant-collapse-item div.ant-collapse-content div.ant-collapse-content-box {
     padding: 0 16px;
+}
+
+.ant-upload.ant-upload-select{
+    display: block;
 }
