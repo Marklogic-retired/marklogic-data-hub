@@ -22,7 +22,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubProject;
 import com.marklogic.hub.MappingManager;
 import com.marklogic.hub.entity.HubEntity;
 import com.marklogic.hub.error.DataHubProjectException;
@@ -31,6 +30,7 @@ import com.marklogic.hub.mapping.MappingImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -46,8 +46,9 @@ import java.util.List;
 @Component
 public class MappingManagerImpl extends LoggingObject implements MappingManager {
 
+    @Autowired
     protected HubConfig hubConfig;
-    protected HubProject hubProject;
+    @Autowired
     private Scaffolding scaffolding;
     private EntityManager entityManager;
 
@@ -55,7 +56,6 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
 
     public MappingManagerImpl(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
-        this.hubProject = hubConfig.getHubProject();
         this.entityManager = new EntityManagerImpl(this.hubConfig);
         this.scaffolding = new ScaffoldingImpl(this.hubConfig);
     }
