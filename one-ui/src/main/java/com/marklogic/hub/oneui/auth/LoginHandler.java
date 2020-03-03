@@ -47,6 +47,9 @@ public class LoginHandler implements AuthenticationSuccessHandler {
         if (token.getRoles() != null) {
             jsonResponse.putArray("roles").addAll(token.getRoles());
         }
+        if (token.getAuthorites() != null) {
+            jsonResponse.putArray("authorities").addAll(token.getAuthorites());
+        }
         jsonResponse.put("isInstalled", token.isDataHubInstalled());
         jsonResponse.put("hasManagePrivileges", token.hasManagePrivileges());
         jsonResponse.put("projectName", token.getProjectName());

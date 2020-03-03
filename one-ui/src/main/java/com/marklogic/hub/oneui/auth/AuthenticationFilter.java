@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -106,29 +107,30 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
         final DatabaseClient stagingClient = hubConfig.newStagingClient(null);
 
         boolean dataHubInstalled = false;
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        ArrayNode[] roles = new ArrayNode[1];
+
+        Pair<List<GrantedAuthority>, ArrayNode> grantAuthoritiesPair = null;
 
         final boolean [] canInstallDataHub = new boolean[1];
         try {
             dataHubInstalled = stagingClient.checkConnection().isConnected();
-            if (!(hasManagePrivileges || dataHubInstalled)) {
-                throw new ForbiddenException("User doesn't have the required roles to install or run the Data Hub");
-            }
-            if (dataHubInstalled) {
-                authorities = getAuthoritiesForAuthenticatedUser(stagingClient, roles, canInstallDataHub);
-            }
         } catch (Exception ignored) {
             // TODO Ignoring this because it means the DH isn't installed and needs to be?
         }
 
-        if (roles[0] == null) {
-            ObjectMapper mapper = new ObjectMapper();
-            roles[0] = mapper.createObjectNode().putArray("roles");
+        if (!(hasManagePrivileges || dataHubInstalled)) {
+            throw new ForbiddenException("User doesn't have the required roles to install or run the Data Hub");
         }
 
+        if (!dataHubInstalled) {
+            return new AuthenticationToken(username, password,true, dataHubInstalled,
+                hubConfig.getHubProject().getProjectName(), null, null, new ArrayList<>());
+        }
+
+        ArrayNode[] roles = new ArrayNode[1];
+        grantAuthoritiesPair = getAuthoritiesForAuthenticatedUser(stagingClient, roles, canInstallDataHub);
+
         return new AuthenticationToken(username, password, hasManagePrivileges && canInstallDataHub[0], dataHubInstalled,
-            hubConfig.getHubProject().getProjectName(), roles[0], authorities);
+            hubConfig.getHubProject().getProjectName(), grantAuthoritiesPair.getRight(), roles[0], grantAuthoritiesPair.getLeft());
     }
 
     /**
@@ -143,8 +145,9 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
      * @param canInstallDataHub
      * @return
      */
-    protected List<GrantedAuthority> getAuthoritiesForAuthenticatedUser(DatabaseClient stagingClient, ArrayNode[] roles, boolean[] canInstallDataHub) {
-        List<GrantedAuthority> authorities = new ArrayList<>();
+    protected Pair<List<GrantedAuthority>, ArrayNode> getAuthoritiesForAuthenticatedUser(DatabaseClient stagingClient, ArrayNode[] roles, boolean[] canInstallDataHub) {
+        List<GrantedAuthority> grantAuthorities = new ArrayList<>();
+        ArrayNode authorities = null;
         JsonNode response = SecurityService.on(stagingClient).getAuthorities();
         if (response != null) {
             if (response.has("authorities")) {
@@ -153,12 +156,23 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
                     if ("canInstallDataHub".equals(authority))  {
                         canInstallDataHub[0] = true;
                     }
-                    authorities.add(new SimpleGrantedAuthority("ROLE_" + authority));
+                    grantAuthorities.add(new SimpleGrantedAuthority("ROLE_" + authority));
                 });
+                authorities = (ArrayNode) response.get("authorities");
             }
-            roles[0] = (ArrayNode) response.get("roles");
+            if (response.has("roles")) {
+                roles[0] = (ArrayNode) response.get("roles");
+            }
         }
-        return authorities;
+        if (authorities == null) {
+            ObjectMapper mapper = new ObjectMapper();
+            authorities = mapper.createObjectNode().putArray("authorities");
+        }
+        if (roles[0] == null) {
+            ObjectMapper mapper = new ObjectMapper();
+            roles[0] = mapper.createObjectNode().putArray("roles");
+        }
+        return Pair.of(grantAuthorities, authorities);
     }
 
     protected boolean canAccessManageServer(String host) {
