@@ -15,14 +15,49 @@
  */
 'use strict';
 
-// TODO This is just stubbed out, a real implementation is needed.
+const Artifacts = require('/data-hub/5/artifacts/core.sjs');
+const roleIdToName = (roleID) => xdmp.roleName(roleID);
+const currentRoles = xdmp.getCurrentRoles().toArray().map(String);
+let currentRoleNames = currentRoles.map(roleIdToName);
 
-let response = {
-  "authorities": [
-    "canInstallDataHub",
-    "canReadLoadData",
-    "canWriteLoadData"
-  ]
+const defaultManageRoles = ['admin', 'data-hub-environment-manager'].map((roleName) => String(xdmp.role(roleName)));
+const manageRolesMustAllMatched = ['manage-admin', 'security'].map((roleName) => String(xdmp.role(roleName)));
+
+let hasManagerRole = defaultManageRoles.some((role) => currentRoles.includes(role));
+if (!hasManagerRole) {
+  hasManagerRole = manageRolesMustAllMatched.every((role) => currentRoles.indexOf(role) !== -1);
+}
+
+if (currentRoleNames.includes('admin')) {
+  currentRoleNames = xdmp.roles().toArray().map(roleIdToName);
+}
+const datahubRoles  = currentRoleNames.filter((roleName) => fn.startsWith(roleName, 'data-hub'));
+
+const privileges = {
+  "authorities": [],
+  "roles": []
 };
 
-response;
+if (hasManagerRole) {
+  privileges.authorities.push('canInstallDataHub');
+}
+
+const typesInfo = Artifacts.getTypesInfo();
+for (const artifactTypeInfo of typesInfo) {
+  const type = artifactTypeInfo.type;
+  const writeAuthority = `canWrite${type.substr(0,1).toUpperCase()}${type.substr(1)}`;
+
+  if (artifactTypeInfo.userCanUpdate) {
+    privileges.authorities.push(writeAuthority);
+  }
+
+  const readAuthority = `canRead${type.substr(0,1).toUpperCase()}${type.substr(1)}`;
+
+  if (artifactTypeInfo.userCanRead) {
+    privileges.authorities.push(readAuthority);
+  }
+}
+
+datahubRoles.forEach(role => privileges.roles.push(role))
+
+privileges;

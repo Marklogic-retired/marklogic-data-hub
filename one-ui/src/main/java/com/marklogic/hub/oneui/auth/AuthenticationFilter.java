@@ -19,13 +19,18 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.hub.dataservices.RolesService;
 import com.marklogic.hub.dataservices.SecurityService;
 import com.marklogic.hub.oneui.exceptions.BadRequestException;
 import com.marklogic.hub.oneui.exceptions.ForbiddenException;
 import com.marklogic.hub.oneui.models.EnvironmentInfo;
 import com.marklogic.hub.oneui.models.HubConfigSession;
 import com.marklogic.hub.oneui.services.EnvironmentService;
+import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -39,13 +44,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Custom authentication filter for the one-ui web application. All authentication logic is handled by this class, with
@@ -109,24 +107,28 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
 
         boolean dataHubInstalled = false;
         List<GrantedAuthority> authorities = new ArrayList<>();
-        ArrayNode roles = null;
+        ArrayNode[] roles = new ArrayNode[1];
 
+        final boolean [] canInstallDataHub = new boolean[1];
         try {
             dataHubInstalled = stagingClient.checkConnection().isConnected();
+            if (!(hasManagePrivileges || dataHubInstalled)) {
+                throw new ForbiddenException("User doesn't have the required roles to install or run the Data Hub");
+            }
             if (dataHubInstalled) {
-                roles = (ArrayNode) RolesService.on(stagingClient).getRoles();
-                authorities = getAuthoritiesForAuthenticatedUser(stagingClient);
+                authorities = getAuthoritiesForAuthenticatedUser(stagingClient, roles, canInstallDataHub);
             }
         } catch (Exception ignored) {
             // TODO Ignoring this because it means the DH isn't installed and needs to be?
         }
 
-        if (!(hasManagePrivileges || dataHubInstalled)) {
-            throw new ForbiddenException("User doesn't have the required roles to install or run the Data Hub");
+        if (roles[0] == null) {
+            ObjectMapper mapper = new ObjectMapper();
+            roles[0] = mapper.createObjectNode().putArray("roles");
         }
 
-        return new AuthenticationToken(username, password, hasManagePrivileges, dataHubInstalled,
-            hubConfig.getHubProject().getProjectName(), roles, authorities);
+        return new AuthenticationToken(username, password, hasManagePrivileges && canInstallDataHub[0], dataHubInstalled,
+            hubConfig.getHubProject().getProjectName(), roles[0], authorities);
     }
 
     /**
@@ -137,15 +139,24 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
      * - see https://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#appendix-faq-role-prefix.
      *
      * @param stagingClient
+     * @param roles
+     * @param canInstallDataHub
      * @return
      */
-    protected List<GrantedAuthority> getAuthoritiesForAuthenticatedUser(DatabaseClient stagingClient) {
+    protected List<GrantedAuthority> getAuthoritiesForAuthenticatedUser(DatabaseClient stagingClient, ArrayNode[] roles, boolean[] canInstallDataHub) {
         List<GrantedAuthority> authorities = new ArrayList<>();
         JsonNode response = SecurityService.on(stagingClient).getAuthorities();
-        if (response != null && response.has("authorities")) {
-            response.get("authorities").iterator().forEachRemaining(node -> {
-                authorities.add(new SimpleGrantedAuthority("ROLE_" + node.asText()));
-            });
+        if (response != null) {
+            if (response.has("authorities")) {
+                response.get("authorities").iterator().forEachRemaining(node -> {
+                    String authority = node.asText();
+                    if ("canInstallDataHub".equals(authority))  {
+                        canInstallDataHub[0] = true;
+                    }
+                    authorities.add(new SimpleGrantedAuthority("ROLE_" + authority));
+                });
+            }
+            roles[0] = (ArrayNode) response.get("roles");
         }
         return authorities;
     }
