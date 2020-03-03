@@ -37,6 +37,7 @@ hs_err_pid*
 local.settings.json
 bin/
 obj/
+dependency-reduced-pom.xml
 
 # Azure Telemetry
 azure-functions-core-tools/.telemetry/
