@@ -1,4 +1,3 @@
-
 .pageTitle{
   font-family: HelveticaNeue;
   font-size: 20px;
@@ -21,8 +20,6 @@
   font-weight: 300;
   background-color: #F8F8F8;
   color: black;
-  align-items: center;
-  justify-content: center;
   text-align: center;
 }
 
@@ -36,7 +33,8 @@
 }
 
 .addNewButton {
-  width: 20%;
+  width:27%;
+  max-width: 27%;
   font-family: HelveticaNeue;
   font-weight: 500;
   background-color: #1510A7;
@@ -80,15 +78,11 @@
   font-family: HelveticaNeue;
   font-weight: 500;
   background-color: #1510A7;
-  margin-left: 300px;
-  align-items: center;
-  justify-content: center;
-  top: 40%;
-  left: -10%;
-  width: 36%;
+  left: 40%;
+  width:27%;
+  max-width: 27%;
 }
 
 .errorMessage, .successMessage {
   text-align: left;
 }
-
