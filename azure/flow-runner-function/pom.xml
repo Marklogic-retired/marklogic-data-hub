@@ -31,6 +31,15 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
+      <!-- Required for some DHF dependencies, such as ml-app-deployer -->
+      <repository>
+        <id>jcenter</id>
+        <url>https://jcenter.bintray.com/</url>
+      </repository>
+      <repository>
+        <id>marklogic-internal</id>
+        <url>http://distro.marklogic.com/nexus/repository/maven-releases/</url>
+      </repository>
     </repositories>
 
     <pluginRepositories>
@@ -67,11 +76,7 @@
             <dependency>
                 <groupId>com.marklogic</groupId>
                 <artifactId>marklogic-data-hub</artifactId>
-                <version>5.2-SNAPSHOT</version>
-                <!-- using system scope will not package the datahub client jar into Uber jar
-                <scope>system</scope>
-                <systemPath>${project.basedir}/lib/marklogic-data-hub-5.2-SNAPSHOT-client.jar</systemPath>
-                -->
+                <version>5.2.0-rc1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -84,14 +89,7 @@
         <dependency>
             <groupId>com.marklogic</groupId>
             <artifactId>marklogic-data-hub</artifactId>
-            <version>5.2-SNAPSHOT</version>
-            <!--
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/marklogic-data-hub-5.2-SNAPSHOT-client.jar</systemPath>
-            -->
         </dependency>
-
-        <!-- Test -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
