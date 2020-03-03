@@ -31,9 +31,8 @@ if (!hasManagerRole) {
 if (currentRoleNames.includes('admin')) {
   currentRoleNames = xdmp.roles().toArray().map(roleIdToName);
 }
-const datahubRoles  = currentRoleNames.filter((roleName) => fn.startsWith(roleName, 'data-hub'));
 
-const privileges = {
+const response = {
   "authorities": [],
   "roles": []
 };
@@ -58,6 +57,6 @@ for (const artifactTypeInfo of typesInfo) {
   }
 }
 
-datahubRoles.forEach(role => privileges.roles.push(role))
+response.roles = currentRolesNames.filter(roleName => fn.startsWith(roleName, "data-hub"));
 
-privileges;
+response;
