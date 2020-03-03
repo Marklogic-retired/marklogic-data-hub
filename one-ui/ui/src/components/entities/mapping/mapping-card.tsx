@@ -36,6 +36,14 @@ const MappingCard: React.FC<Props> = (props) => {
     //For Entity table
     const [entityTypeProperties, setEntityTypeProperties] = useState<any[]>([]);
 
+    //For storing docURIs
+    const [docUris, setDocUris] = useState<any[]>([]);
+
+    //For handling docUris navigation
+    const [disableURINavLeft, setDisableURINavLeft] = useState(true);
+    const [disableURINavRight, setDisableURINavRight] = useState(false);
+
+
     //const [openLoadDataSettings, setOpenLoadDataSettings] = useState(false);
 
     useEffect(() => {
@@ -117,13 +125,21 @@ const MappingCard: React.FC<Props> = (props) => {
         let sQuery = props.data[index].sourceQuery;
 
         try{
-        let response = await getResultsByQuery(database,sQuery,10, true);
+        let response = await getResultsByQuery(database,sQuery,20, true);
           if (response.status === 200) {
+           if(response.data.length > 0){
+            setDisableURINavRight(response.data.length > 1 ? false : true);
+            let uris: any = [];
+            response.data.forEach(doc => {
+                uris.push(doc.uri);
+              })
+           setDocUris([...uris]);
            setSourceURI(response.data[0].uri);
 
            fetchSrcDocFromUri(response.data[0].uri);
 
           }
+        }
         }
         catch(error)  {
             let message = error;//.response.data.message;
@@ -306,8 +322,12 @@ const MappingCard: React.FC<Props> = (props) => {
                 canReadOnly={props.canReadOnly}
                 docNotFound={docNotFound}
                 extractCollectionFromSrcQuery={extractCollectionFromSrcQuery}
-                fetchSrcDocFromUri={fetchSrcDocFromUri}/>
-
+                fetchSrcDocFromUri={fetchSrcDocFromUri}
+                docUris={docUris}
+                disableURINavLeft={disableURINavLeft}
+                disableURINavRight={disableURINavRight}
+                setDisableURINavLeft={setDisableURINavLeft}
+                setDisableURINavRight={setDisableURINavRight}/>
         </div>
     );
 

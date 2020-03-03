@@ -212,3 +212,75 @@
 .docLinksUl{
     padding-left: 1vw;
 }
+
+.navigationCollapseButtons{
+    width: 100%;
+    justify-content: space-between;
+    vertical-align: middle;
+    text-align: center;
+    padding-bottom: 2px;
+    height: 5vh;
+}
+
+.navigate_source_uris{
+    width: 115px;
+    display: flex;
+    align-content: center ; 
+    vertical-align: bottom;
+    justify-content: space-between;
+    text-align: center;
+    margin: 0px auto;
+    white-space: nowrap;
+  }
+ .navigate_uris_left {
+    display: flex;
+    user-select: none;
+    cursor: pointer;
+    width: 2vw;
+    text-align: center;  
+    align-content: center ; 
+    justify-content: center;
+    background:none;
+    outline: none !important;
+    > Icon { 
+        display: block;
+    }
+  }
+  .URI_Index{
+    > p {
+    border: 1px solid #7F86B5;
+    border-radius: 4px;
+    background-color: #7F86B5;
+    color: #ffffff;
+    width: 32px;
+    height: 32px;
+    padding-top: 4px;
+    
+    font-size: 15px;
+    
+    }
+  }
+  
+  .navigate_uris_right {
+    display: flex;
+    user-select: none;
+    cursor: pointer;
+    //position: relative;
+    width: 2vw;
+    background:none;
+    outline: none !important;
+    //display: block;
+    text-align: center;
+    outline: none;
+    align-content: center ; 
+    justify-content: center;
+    > Icon { 
+        display: block;
+    }
+  }
+
+
+
+  #browse-buttons{
+    border: 1px solid rgba(0, 0, 0, 0.961); 
+  }

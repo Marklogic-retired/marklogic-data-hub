@@ -11,7 +11,6 @@ const SourceToEntityMap = (props) => {
     const [mapExp, setMapExp] = useState({});
 
     const [mapExpTouched, setMapExpTouched] = useState(false);
-    const [mapExpression, setMapExpression] = useState({});
     const [editingURI, setEditingUri] = useState(false);
     const [showEditURIOption, setShowEditURIOption] = useState(false);
     const [mapSaved, setMapSaved] = useState(false);
@@ -21,10 +20,8 @@ const SourceToEntityMap = (props) => {
 
     const [srcData, setSrcData] = useState<any[]>([]);
 
-
-    const sampleDocUri: CSSProperties = {
-
-    }
+    //Navigate URI buttons
+    const [uriIndex,setUriIndex] = useState(0);
 
     //Documentation links for using Xpath expressions
     const xPathDocLinks = <div className={styles.xpathDoc}><span id="doc">Documentation:</span>
@@ -91,7 +88,64 @@ const SourceToEntityMap = (props) => {
         setSrcData([...props.sourceData])
         
     },[props.sourceData]);
+
+    //To handle navigation buttons
+    const onNavigateURIList = (index) => {
+        const end = props.docUris.length - 1;
+        // Not at beginning or end of range
+        if (index > 0 && index < end) {
+          props.setDisableURINavLeft(false);
+          props.setDisableURINavRight(false);
+          setUriIndex(index);
+          setSrcURI(props.docUris[index]);
+          onUpdateURINavButtons(props.docUris[index]);
     
+        } // At beginning of range 
+        else if (index === 0) {
+            props.setDisableURINavLeft(true);
+          if (end > 0) {
+            props.setDisableURINavRight(false);
+          }
+          setUriIndex(index);
+          setSrcURI(props.docUris[index]);
+          onUpdateURINavButtons(props.docUris[index]);
+        } // At end of range
+        else if (index === end) {
+          if (end > 0) {
+            props.setDisableURINavLeft(false);
+          }
+          props.setDisableURINavRight(true);
+          setUriIndex(index);
+          setSrcURI(props.docUris[index]);
+          onUpdateURINavButtons(props.docUris[index]);
+        } else {
+          // Before beginning of range
+          if (index < 0) {
+            props.setDisableURINavLeft(true);
+          } 
+          // After end of range
+          else {
+            props.setDisableURINavRight(true);
+          }
+        }
+      }
+    const onUpdateURINavButtons = (uri) => {
+        props.fetchSrcDocFromUri(uri);
+    }
+
+    const navigationButtons = <span className={styles.navigate_source_uris}>
+    <Button className={styles.navigate_uris_left} onClick={() => onNavigateURIList(uriIndex-1)} disabled={props.disableURINavLeft}>
+      <Icon type="left" className={styles.navigateIcon}/>
+    </Button>
+    &nbsp;
+    <div className={styles.URI_Index}><p>{uriIndex+1}</p></div>
+    &nbsp;
+    <Button className={styles.navigate_uris_right} onClick={() => onNavigateURIList(uriIndex+1)} disabled={props.disableURINavRight}>
+      <Icon type="right" className={styles.navigateIcon}/>
+    </Button>
+    </span>
+    
+    //Code for navigation buttons ends here
 
     //Set the mapping expressions, if already exists.
     const initializeMapExpressions = () => {
@@ -278,6 +332,7 @@ return (<Modal
                 placement="right" 
                 ><Icon type="question-circle" className={styles.questionCircle} theme="filled" /></Popover></p>
             </div>
+            <div className={styles.navigationCollapseButtons}>{navigationButtons}</div>
             <Spin spinning={JSON.stringify(props.sourceData) === JSON.stringify([]) && !props.docNotFound}> 
         <Table
         pagination={false}
