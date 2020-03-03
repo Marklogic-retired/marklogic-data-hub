@@ -219,10 +219,10 @@ const MappingCard: React.FC<Props> = (props) => {
     const extractEntityInfoForTable = () => {
         let entProps = props.entityModel.definitions[props.entityTypeTitle].properties;
         let entTableTempData: any = [];
-        entProps.map(prop => {
+        Object.keys(entProps).map(key => {
             let propty = {
-                name : prop.name,
-                type : prop.datatype
+                name : key,
+                type : entProps[key].datatype
             }
             entTableTempData.push(propty)
         })
