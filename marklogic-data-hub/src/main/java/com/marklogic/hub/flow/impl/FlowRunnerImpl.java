@@ -568,7 +568,7 @@ public class FlowRunnerImpl implements FlowRunner{
                 }
                 //Run the next step
                 else {
-                    if(!(threadPool != null && threadPool.isTerminating())) {
+                    if (threadPool != null && !threadPool.isTerminating()) {
                         threadPool.execute(new FlowRunnerTask(stepRunnerFactory, runningFlow, runningJobId,((FlowRunnerTask)r).getStepQueue()));
                     }
                 }
