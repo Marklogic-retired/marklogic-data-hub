@@ -71,13 +71,18 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
     public FlowManagerImpl() { }
 
     public FlowManagerImpl(HubConfig hubConfig) {
-        this();
-        this.hubConfig = hubConfig;
+        this(hubConfig, new MappingManagerImpl(hubConfig), new StepDefinitionManagerImpl(hubConfig));
     }
 
     public FlowManagerImpl(HubConfig hubConfig, MappingManager mappingManager) {
-        this(hubConfig);
+        this.hubConfig = hubConfig;
         this.mappingManager = mappingManager;
+    }
+
+    public FlowManagerImpl(HubConfig hubConfig, MappingManager mappingManager, StepDefinitionManager stepDefinitionManager) {
+        this.hubConfig = hubConfig;
+        this.mappingManager = mappingManager;
+        this.stepDefinitionManager = stepDefinitionManager;
     }
 
     public void setHubConfig(HubConfig hubConfig) {

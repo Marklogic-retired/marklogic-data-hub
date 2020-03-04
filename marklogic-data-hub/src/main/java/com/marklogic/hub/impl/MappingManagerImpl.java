@@ -22,7 +22,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubProject;
 import com.marklogic.hub.MappingManager;
 import com.marklogic.hub.entity.HubEntity;
 import com.marklogic.hub.error.DataHubProjectException;
@@ -49,15 +48,17 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
 
     @Autowired
     protected HubConfig hubConfig;
-
-    @Autowired
-    protected HubProject hubProject;
-
     @Autowired
     private Scaffolding scaffolding;
-
-    @Autowired
     private EntityManager entityManager;
+
+    public MappingManagerImpl() {}
+
+    public MappingManagerImpl(HubConfig hubConfig) {
+        this.hubConfig = hubConfig;
+        this.entityManager = new EntityManagerImpl(this.hubConfig);
+        this.scaffolding = new ScaffoldingImpl(this.hubConfig);
+    }
 
     @Override public Mapping createMapping(String mappingName) {
         return createMapping(mappingName, null);

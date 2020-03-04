@@ -1030,4 +1030,9 @@ public class HubConfigSession implements HubConfig, InitializingBean, Disposable
     protected Map<DatabaseKind, Map<String, DatabaseClient>> getAllDatabaseClients() {
         return clientsByKindAndDatabaseName;
     }
+
+    // this is used for flow runner, so we have a HubConfig that isn't session scoped
+    public HubConfigImpl getHubConfigImpl() {
+        return hubConfigImpl;
+    }
 }
