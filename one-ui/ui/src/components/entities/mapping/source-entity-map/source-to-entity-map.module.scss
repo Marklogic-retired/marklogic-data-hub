@@ -59,6 +59,20 @@
     > .lineSpacing{
         margin : 20px 0 20px 0;
     }
+    > .entityDetails{
+        display: inline-block;
+        vertical-align: middle;
+        height: 5vh;
+        margin-bottom: -14px;
+        > .entityTypeTitle{
+            float: left;
+            padding-top: 6px;
+        }
+        >.btn_icons{
+            float: right;
+            padding-right: 4px;
+        }
+    }
 }
 
 .entityTable {
@@ -110,6 +124,10 @@
 .entityDetails{
     align-items: left;
     float: left;
+}
+.sourceDetails{
+    padding-top: 5px;
+    margin-bottom: -14px;
 }
 .sourceDataIcon {
     background: transparent;
@@ -236,7 +254,9 @@
     vertical-align: middle;
     text-align: center;
     padding-bottom: 2px;
+    margin-top: -12px;
     height: 5vh;
+
 }
 
 .navigate_source_uris{
