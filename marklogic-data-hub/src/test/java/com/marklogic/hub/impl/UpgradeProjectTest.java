@@ -140,6 +140,11 @@ public class UpgradeProjectTest extends HubTestBase {
         Document actual = getXmlFromInputStream(FileUtils.openInputStream(hubProject.getUserConfigDir().resolve("database-fields").resolve("final-database.xml").toFile()));
         assertXMLEqual(expected, actual);
 
+        // Check that artifact directories are created
+        assertTrue(hubProject.getProjectDir().resolve("loadData").toFile().exists(), "loadData folder should scaffold out");
+        assertTrue(hubProject.getProjectDir().resolve("matching").toFile().exists(), "matching folder should scaffold out");
+        assertTrue(hubProject.getProjectDir().resolve("merging").toFile().exists(), "merging folder should scaffold out");
+
     }
 
     @Test

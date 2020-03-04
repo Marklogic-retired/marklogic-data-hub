@@ -80,6 +80,8 @@ public class HubProjectImpl implements HubProject {
     private Path stepDefinitionsDir;
     private String userModulesDeployTimestampFile = USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES;
 
+    private String[] artifactTypes = new String[]{"mappings", "entities", "loadData", "matching", "merging", "step-definitions"};
+
     @Autowired @Lazy
     private FlowManagerImpl flowManager;
 
@@ -264,7 +266,13 @@ public class HubProjectImpl implements HubProject {
     }
 
     @Override public void init(Map<String, String> customTokens) {
-        this.stepDefinitionsDir.toFile().mkdirs();
+        // Scaffold out artifact directories
+        for (String artifactType: artifactTypes) {
+            File artifactTypeDir =  getProjectDir().resolve(artifactType).toFile();
+            if (!artifactTypeDir.exists()) {
+                artifactTypeDir.mkdirs();
+            }
+        }
 
         Path userModules = this.projectDir.resolve(MODULES_DIR);
         userModules.toFile().mkdirs();
@@ -277,12 +285,6 @@ public class HubProjectImpl implements HubProject {
         for (StepDefinition.StepDefinitionType stepType : StepDefinition.StepDefinitionType.values()) {
             customModulesDir.resolve(stepType.toString().toLowerCase()).toFile().mkdirs();
         }
-
-        Path entitiesDir = getHubEntitiesDir();
-        entitiesDir.toFile().mkdirs();
-
-        Path mappingsDir = getHubMappingsDir();
-        mappingsDir.toFile().mkdirs();
 
         Path hubServersDir = getHubServersDir();
         hubServersDir.toFile().mkdirs();
