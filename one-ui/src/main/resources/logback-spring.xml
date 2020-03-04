@@ -1,9 +1,5 @@
-<!--
-  Copyright 2019 MarkLogic Corporation. All rights reserved.
--->
 
 <configuration>
-  <include file="log_include.xml"/>
   <springProperty scope="context" name="LOG_PATH" source="log.path"/>
 
   <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
@@ -15,8 +11,8 @@
   </appender>
 
   <appender name="RollingFile"
-    class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>${LOG_PATH}/explorer.log</file>
+            class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${LOG_PATH}/oneui.log</file>
     <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
       <Pattern>%d %p %C{1.} [%t] %m%n</Pattern>
     </encoder>
@@ -24,7 +20,7 @@
     <rollingPolicy
       class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
       <!-- rollover daily and when the file reaches 10 MegaBytes -->
-      <fileNamePattern>${LOG_PATH}/archived/explorer-%d{yyyy-MM-dd}.%i.log
+      <fileNamePattern>${LOG_PATH}/archived/oneui-%d{yyyy-MM-dd}.%i.log
       </fileNamePattern>
       <timeBasedFileNamingAndTriggeringPolicy
         class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
@@ -40,7 +36,7 @@
   </root>
 
   <!-- We only want the application itself controlled by root.level -->
-  <logger name="com.marklogic.hub.explorer" level="${root.level:-INFO}"/>
+  <logger name="com.marklogic.hub.oneui" level="${root.level:-INFO}"/>
   <logger name="org.springframework" level="ERROR"/>
   <logger name="org.apache.http" level="WARN"/>
   <logger name="com.marklogic.client.impl" level="${jca.level:-WARN}"/>
