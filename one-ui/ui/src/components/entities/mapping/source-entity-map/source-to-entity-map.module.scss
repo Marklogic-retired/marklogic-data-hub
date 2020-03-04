@@ -63,7 +63,7 @@
         display: inline-block;
         vertical-align: middle;
         height: 5vh;
-        margin-bottom: -14px;
+        margin-bottom: -17px;
         > .entityTypeTitle{
             float: left;
             padding-top: 6px;
@@ -72,6 +72,10 @@
             float: right;
             padding-right: 4px;
         }
+    }
+
+    > .DividerEntity {
+        margin-bottom: 14px;
     }
 }
 
