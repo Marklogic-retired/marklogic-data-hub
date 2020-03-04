@@ -9,6 +9,7 @@ import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowImpl;
+import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.oneui.Application;
 import com.marklogic.hub.oneui.TestHelper;
 import com.marklogic.hub.oneui.models.HubConfigSession;
@@ -24,7 +25,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -64,7 +67,7 @@ class FlowControllerTest {
     JsonNode validLoadDataConfig = new ObjectMapper().readTree("{ \"name\": \"validArtifact\", \"sourceFormat\": \"json\", \"targetFormat\": \"json\", \"inputFilePath\": \"input\"}");
 
     @Autowired
-    private FlowController controller;
+    private FlowTestController controller;
 
     @Autowired
     private LoadDataController loadDataController;
@@ -97,7 +100,7 @@ class FlowControllerTest {
         } catch (Exception e) {
 
         }
-        if (flowResp != null) {
+        if (flowResp != null && flowResp.getBody() != null) {
             controller.deleteFlow("testFlow");
         }
     }
@@ -156,7 +159,7 @@ class FlowControllerTest {
             controller.linkArtifact("testFlow", "e2e-json-ingestion", "loadData", "validArtifact");
 
             //GET step
-            stepModel = (StepModel)controller.getStep("testFlow", "e2e-json-ingestion").getBody();
+            stepModel = (StepModel)controller.getStep("testFlow", "e2e-json-ingestion");
             Assertions.assertEquals("e2e-json", stepModel.getName());
             Assertions.assertEquals(100, stepModel.getBatchSize().intValue());
             // step should have LoadData link
@@ -165,7 +168,7 @@ class FlowControllerTest {
 
             // remove artifact link
             controller.removeLinkToArtifact("testFlow", "e2e-json-ingestion", "loadData", "validArtifact");
-            stepModel = (StepModel)controller.getStep("testFlow", "e2e-json-ingestion").getBody();
+            stepModel = (StepModel)controller.getStep("testFlow", "e2e-json-ingestion");
             Assertions.assertFalse(stepModel.getOptions().has("loadData"), "Should not have loadData link");
 
             //DELETE step
@@ -185,8 +188,8 @@ class FlowControllerTest {
             //DELETE flow
             controller.deleteFlow("testFlow");
             try{
-                controller.getFlow("testFlow");
-                Assertions.fail();
+                Flow flow = (Flow) controller.getFlow("testFlow").getBody();
+                Assertions.assertNull(flow, "Flow shouldn't exist anymore");
             }
             catch (Exception e) {
                 logger.info("Exception is expected as the flow being fetched has been deleted");
@@ -207,12 +210,27 @@ class FlowControllerTest {
         loadDataController.updateArtifact("validArtifact", validLoadDataConfig);
         controller.linkArtifact("testFlow", "e2e-json-ingestion", "loadData", "validArtifact");
 
-        RunFlowResponse resp = (RunFlowResponse) controller.runFlow("testFlow", Collections.singletonList("e2e-json-ingestion")).getBody();
+        RunFlowResponse resp = (RunFlowResponse) controller.runFlow("testFlow", Collections.singletonList("e2e-json-ingestion"));
 
         Assertions.assertEquals("testFlow", resp.getFlowName(), "Run flow response has correct flow name");
-        controller.getLastFlowManagerService().getLastFlowRunner().awaitCompletion();
+        controller.getLastFlowRunner().awaitCompletion();
         JsonNode jobsDoc = jobsController.getJob(resp.getJobId());
         String jobStatus = jobsDoc.get("jobStatus").asText();
         Assertions.assertEquals("finished", jobStatus, "Job status should be 'finished' once threads complete");
+    }
+
+    @Controller
+    @RequestMapping("/api/test/flows")
+    static class FlowTestController extends FlowController {
+        protected FlowRunnerImpl lastFlowRunner = null;
+
+        protected FlowRunnerImpl getFlowRunner() {
+            lastFlowRunner = (FlowRunnerImpl) super.getFlowRunner();
+            return lastFlowRunner;
+        }
+
+        protected FlowRunnerImpl getLastFlowRunner() {
+            return lastFlowRunner;
+        }
     }
 }
