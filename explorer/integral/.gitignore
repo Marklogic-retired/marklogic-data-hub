@@ -1,0 +1,10 @@
+.DS_Store
+.gradle/
+.settings/
+.metadata
+.idea
+.project
+.classpath
+build
+out
+integration_report.txt

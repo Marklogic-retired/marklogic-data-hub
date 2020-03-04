@@ -1,0 +1,7 @@
+# Run Liseners
+org.springframework.boot.SpringApplicationRunListener=\
+com.marklogic.hub.explorer.ApplicationRunListener
+
+# Failure Analyzers
+org.springframework.boot.diagnostics.FailureAnalyzer=\
+com.marklogic.hub.explorer.PortInUseFailureAnalyzer
