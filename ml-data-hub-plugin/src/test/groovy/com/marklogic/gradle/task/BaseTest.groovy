@@ -311,10 +311,7 @@ class BaseTest extends Specification {
     }
 
     public MappingManager getMappingManager() {
-        return new MappingManagerImpl(){{
-            hubConfig = hubConfig();
-            hubProject = hubConfig().getHubProject();
-        }};
+        return new MappingManagerImpl(hubConfig());
     }
 
     def setupSpec() {
