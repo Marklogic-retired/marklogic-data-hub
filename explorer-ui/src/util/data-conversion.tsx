@@ -93,23 +93,29 @@ export const entityParser = (data: any) => {
       let entityDefinition = entity.definitions.find(definition => definition.name === entity.info.title);
       let values = {}
       let pathIndexArray = new Array();
-  
+
       let propArray = entityDefinition['properties'].map(p => p.name);
       let propRefArray = entityDefinition['properties'].filter(p => p.ref.length > 0);
-  
+
       for (var prop in entity.definitions) {
         let path = entity.info['baseUri'] + entity.info['title'] + '-' + entity.info['version'] + '/' + entityDefinition.name;
         // let entityPath = entityDefinition.name;
-  
+
         nestedEntityDefinition = entity.definitions[prop];
         if (nestedEntityDefinition) {
-          rangeIndex = rangeIndex.concat(nestedEntityDefinition['elementRangeIndex']).concat(nestedEntityDefinition['rangeIndex']);
+            let rangeIndexWithDup = [];
+            rangeIndexWithDup = rangeIndexWithDup.concat(nestedEntityDefinition['elementRangeIndex']).concat(nestedEntityDefinition['rangeIndex']);
+            for (let key of rangeIndexWithDup) {
+                if (rangeIndex.indexOf(key) === -1) {
+                    rangeIndex.push(key);
+                }
+            }
         }
-  
+
         if (entity.definitions[prop]['name'] === entity.info['title']) {
           properties = entity.definitions[prop]['properties'];
         }
-        
+
         for (let index of nestedEntityDefinition['elementRangeIndex']) {
           if (propArray.includes(index)) {
             pathIndexMap.set(index, index);
@@ -132,7 +138,7 @@ export const entityParser = (data: any) => {
             pathIndexArray.push(values)
           }
         }
-  
+
         for (let rIndex of nestedEntityDefinition['rangeIndex']) {
           if (propArray.includes(rIndex)) {
             pathIndexMap.set(rIndex, rIndex);
@@ -154,7 +160,7 @@ export const entityParser = (data: any) => {
           }
         }
       }
-  
+
       parsedEntity = {
         name: entityDefinition['name'],
         info: entity.info,

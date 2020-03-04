@@ -11,8 +11,8 @@
     font-size: 15px;
     font-weight: bold;
     text-overflow: ellipsis;
-    overflow: hidden; 
-    width: 200px; 
+    overflow: hidden;
+    width: 200px;
     white-space: nowrap;
   }
 
@@ -25,6 +25,7 @@
     .selected {
       color: #666;
       margin: 0 3px;
+      width: 60px;
     }
 
     .clearInactive, .clearActive {
