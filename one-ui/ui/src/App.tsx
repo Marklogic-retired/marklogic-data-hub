@@ -47,14 +47,14 @@ const App: React.FC<Props> = ({history, location}) => {
       }
       if (location.state && !user.redirect && user.error.type === '') {
         if (location.state.hasOwnProperty('from')) {
-          history.push(location.state.from.pathname);
+          history.push(location.state['from'].pathname);
         }
       }
       if (user.redirect || location.pathname === '/') {
         if (localStorage.getItem('dhIsInstalled') === 'false' && localStorage.getItem('dhUserHasManagePrivileges') === 'true') {
           history.push('/install');
         } else if (location.state && location.state.hasOwnProperty('from')) {
-            history.push(location.state.from.pathname);
+            history.push(location.state['from'].pathname);
         } else {
             history.push('/home');
         }
