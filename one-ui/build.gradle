@@ -56,6 +56,11 @@ dependencies {
 
     compile project(":marklogic-data-hub")
 
+    // Dependencies for springfox's swagger UI - see https://springfox.github.io/springfox/docs/current/
+    // After authenticating in oneui, can go to http://localhost:8080/swagger-ui.html
+    compile "io.springfox:springfox-swagger2:2.9.2"
+    compile "io.springfox:springfox-swagger-ui:2.9.2"
+
 	//spring boot test libs
 	testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.1.3.RELEASE'
 	testImplementation 'org.springframework.security:spring-security-test'

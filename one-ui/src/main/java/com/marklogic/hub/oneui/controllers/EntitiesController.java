@@ -60,7 +60,7 @@ class EntitiesController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<?> saveEntities(@RequestBody List<HubEntity> entities) throws ClassNotFoundException, IOException {
+    public ResponseEntity<Void> saveEntities(@RequestBody List<HubEntity> entities) throws ClassNotFoundException, IOException {
         EntityManager entityManagerService = getEntitiesManager();
         for (HubEntity entity : entities) {
             entityManagerService.saveEntity(entity, false);
@@ -92,7 +92,7 @@ class EntitiesController {
 
     @RequestMapping(value = "/{entityName}", method = RequestMethod.DELETE)
     @ResponseBody
-    public ResponseEntity<?> deleteEntity(@PathVariable String entityName) throws ClassNotFoundException, IOException {
+    public ResponseEntity<Void> deleteEntity(@PathVariable String entityName) throws ClassNotFoundException, IOException {
         getEntitiesManager().deleteEntity(entityName);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

@@ -41,35 +41,35 @@ public class FlowController {
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<?> getFlows() {
+    public ResponseEntity<List<Flow>> getFlows() {
         List<Flow> flows = flowManagerService.getFlows();
         return new ResponseEntity<>(flows, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<?> createFlow(@RequestBody String flowJson) {
+    public ResponseEntity<Flow> createFlow(@RequestBody String flowJson) {
         Flow flow = flowManagerService.createFlow(flowJson);
         return new ResponseEntity<>(flow, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{flowName}", method = RequestMethod.PUT)
     @ResponseBody
-    public ResponseEntity<?> updateFlow(@PathVariable String flowName, @RequestBody String flowJson) {
+    public ResponseEntity<Flow> updateFlow(@PathVariable String flowName, @RequestBody String flowJson) {
         Flow flow = flowManagerService.updateFlow(flowJson);
         return new ResponseEntity<>(flow, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{flowName}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<?> getFlow(@PathVariable String flowName) {
+    public ResponseEntity<Flow> getFlow(@PathVariable String flowName) {
         Flow flow = flowManagerService.getFlow(flowName);
         return new ResponseEntity<>(flow, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{flowName}", method = RequestMethod.DELETE)
     @ResponseBody
-    public ResponseEntity<?> deleteFlow(@PathVariable String flowName) {
+    public ResponseEntity<Void> deleteFlow(@PathVariable String flowName) {
         flowManagerService.deleteFlow(flowName);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -82,28 +82,28 @@ public class FlowController {
 
     @RequestMapping(value = "/{flowName}/steps/{stepId}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<?> getStep(@PathVariable String flowName, @PathVariable String stepId) {
+    public ResponseEntity<StepModel> getStep(@PathVariable String flowName, @PathVariable String stepId) {
         StepModel stepModel = flowManagerService.getStep(flowName, stepId);
         return new ResponseEntity<>(stepModel, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{flowName}/steps", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<?> createStep(@PathVariable String flowName, @RequestParam(value = "stepOrder", required = false) Integer stepOrder, @RequestBody String stepJson) {
+    public ResponseEntity<StepModel> createStep(@PathVariable String flowName, @RequestParam(value = "stepOrder", required = false) Integer stepOrder, @RequestBody String stepJson) {
         StepModel stepModel = flowManagerService.createStep(flowName, stepOrder, null, stepJson);
         return new ResponseEntity<>(stepModel, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{flowName}/steps/{stepId}", method = RequestMethod.PUT)
     @ResponseBody
-    public ResponseEntity<?> createStep(@PathVariable String flowName, @PathVariable String stepId, @RequestBody String stepJson) {
+    public ResponseEntity<StepModel> createStep(@PathVariable String flowName, @PathVariable String stepId, @RequestBody String stepJson) {
         StepModel stepModel = flowManagerService.createStep(flowName, null, stepId, stepJson);
         return new ResponseEntity<>(stepModel, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{flowName}/steps/{stepId}", method = RequestMethod.DELETE)
     @ResponseBody
-    public ResponseEntity<?> deleteStep(@PathVariable String flowName, @PathVariable String stepId) {
+    public ResponseEntity<Void> deleteStep(@PathVariable String flowName, @PathVariable String stepId) {
         flowManagerService.deleteStep(flowName, stepId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
