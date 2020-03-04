@@ -38,7 +38,7 @@ const response = {
 };
 
 if (hasManagerRole) {
-  privileges.authorities.push('canInstallDataHub');
+  response.authorities.push('canInstallDataHub');
 }
 
 const typesInfo = Artifacts.getTypesInfo();
@@ -47,16 +47,16 @@ for (const artifactTypeInfo of typesInfo) {
   const writeAuthority = `canWrite${type.substr(0,1).toUpperCase()}${type.substr(1)}`;
 
   if (artifactTypeInfo.userCanUpdate) {
-    privileges.authorities.push(writeAuthority);
+    response.authorities.push(writeAuthority);
   }
 
   const readAuthority = `canRead${type.substr(0,1).toUpperCase()}${type.substr(1)}`;
 
   if (artifactTypeInfo.userCanRead) {
-    privileges.authorities.push(readAuthority);
+    response.authorities.push(readAuthority);
   }
 }
 
-response.roles = currentRolesNames.filter(roleName => fn.startsWith(roleName, "data-hub"));
+response.roles = currentRoleNames.filter(roleName => fn.startsWith(roleName, "data-hub"));
 
 response;
