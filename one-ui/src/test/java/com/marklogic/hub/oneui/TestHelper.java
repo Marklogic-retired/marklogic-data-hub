@@ -70,8 +70,6 @@ public class TestHelper {
 
     public ObjectNode validLoadDataConfig = (ObjectNode) new ObjectMapper().readTree("{ \"name\": \"validArtifact\", \"sourceFormat\": \"xml\", \"targetFormat\": \"json\"}");
 
-    protected ArtifactManagerImpl artifactManager;
-
     public TestHelper() throws IOException {
     }
 
