@@ -649,6 +649,11 @@ public class HubProjectImpl implements HubProject {
             Stream.of("entities", "flows", "src" + File.separator + "main", "mappings", "step-definitions", "loadData", "gradle",
                 "gradlew", "gradlew.bat", "build.gradle", "gradle.properties").forEach(file ->{
                 File fileToZip = getProjectDir().resolve(file).toFile();
+                if (!fileToZip.exists()) {
+                    // should we add check if some missing files/folders are mandatory and give error info?
+                    logger.warn(String.format("%s does not exist during project export.", fileToZip.toString()));
+                    return;
+                }
                 try {
                     if (fileToZip.isDirectory()) {
                         zout.putNextEntry(new ZipEntry(file + File.separator));
