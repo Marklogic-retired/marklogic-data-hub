@@ -195,6 +195,10 @@ task generateRolesInterface(type: com.marklogic.client.tools.gradle.EndpointProx
     serviceDeclarationFile = dataServicesPath + "/roles/service.json"
 }
 
+task generateJobInfoInterface(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask, group: dataServicesGroup) {
+    serviceDeclarationFile = dataServicesPath + "/jobInfo/service.json"
+}
+
 task generateDataServiceInterfaces {
     description = "Generate Java interfaces for all Data Services. Must run this from the ./marklogic-data-hub directory"
     dependsOn {
