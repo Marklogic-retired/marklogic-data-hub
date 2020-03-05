@@ -33,8 +33,7 @@ public class DeployProtectedPathsWhenUpdatingIndexesTest extends HubTestBase {
 
     @Test
     public void test() {
-        // Initializing this to ensure that updateIndexes can be called
-        getDataHubAdminConfig();
+        runAsDataHubDeveloper();
 
         givenAProtectedPathFile();
         dataHub.updateIndexes();
