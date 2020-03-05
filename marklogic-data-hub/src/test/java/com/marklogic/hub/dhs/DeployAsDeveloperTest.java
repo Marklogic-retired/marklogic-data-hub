@@ -9,6 +9,7 @@ import com.marklogic.appdeployer.command.alert.DeployAlertConfigsCommand;
 import com.marklogic.appdeployer.command.alert.DeployAlertRulesCommand;
 import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
 import com.marklogic.appdeployer.command.schemas.LoadSchemasCommand;
+import com.marklogic.appdeployer.command.security.DeployProtectedPathsCommand;
 import com.marklogic.appdeployer.command.tasks.DeployScheduledTasksCommand;
 import com.marklogic.appdeployer.command.temporal.DeployTemporalAxesCommand;
 import com.marklogic.appdeployer.command.temporal.DeployTemporalCollectionsCommand;
@@ -17,6 +18,7 @@ import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.dhs.installer.deploy.DeployHubQueryRolesetsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.impl.HubConfigImpl;
@@ -169,8 +171,9 @@ public class DeployAsDeveloperTest {
     public void buildCommandList() {
         List<Command> commands = new DhsDeployer().buildCommandsForDeveloper(hubConfig);
         Collections.sort(commands, Comparator.comparing(Command::getExecuteSortOrder));
-        System.out.println(commands);
         int index = 0;
+        assertTrue(commands.get(index++) instanceof DeployProtectedPathsCommand);
+        assertTrue(commands.get(index++) instanceof DeployHubQueryRolesetsCommand);
         assertTrue(commands.get(index++) instanceof DeployOtherDatabasesCommand);
         assertTrue(commands.get(index++) instanceof LoadSchemasCommand);
         assertTrue(commands.get(index++) instanceof LoadUserModulesCommand);
@@ -182,13 +185,13 @@ public class DeployAsDeveloperTest {
         assertTrue(commands.get(index++) instanceof DeployAlertConfigsCommand);
         assertTrue(commands.get(index++) instanceof DeployAlertActionsCommand);
         assertTrue(commands.get(index++) instanceof DeployAlertRulesCommand);
-        assertEquals(11, commands.size(),
+        assertEquals(13, commands.size(),
             "As of ML 10.0-3, the granular privilege for indexes doesn't seem to work with XML payloads. " +
                 "Bug https://bugtrack.marklogic.com/54231 has been created to track that. Thus, " +
                 "DeployDatabaseFieldCommand cannot be included and ml-config/database-fields/final-database.xml " +
                 "cannot be processed.");
 
-        DeployOtherDatabasesCommand dodc = (DeployOtherDatabasesCommand) commands.get(0);
+        DeployOtherDatabasesCommand dodc = (DeployOtherDatabasesCommand) commands.get(2);
         ResourceFilenameFilter filter = (ResourceFilenameFilter) dodc.getResourceFilenameFilter();
         assertEquals("(staging|final|job)-database.json", filter.getIncludePattern().pattern(),
             "DHS users aren't allowed to create their own databases, so the command for deploying databases is restricted " +

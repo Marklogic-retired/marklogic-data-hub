@@ -3,16 +3,19 @@ package com.marklogic.hub.security;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.mgmt.SaveReceipt;
 import com.marklogic.mgmt.api.database.Database;
 import com.marklogic.mgmt.api.database.GeospatialElementIndex;
 import com.marklogic.mgmt.api.security.protectedpath.Permission;
 import com.marklogic.mgmt.api.security.protectedpath.ProtectedPath;
+import com.marklogic.mgmt.api.security.queryroleset.QueryRoleset;
 import com.marklogic.mgmt.api.task.Task;
 import com.marklogic.mgmt.api.trigger.*;
 import com.marklogic.mgmt.resource.alert.AlertActionManager;
 import com.marklogic.mgmt.resource.alert.AlertConfigManager;
 import com.marklogic.mgmt.resource.alert.AlertRuleManager;
 import com.marklogic.mgmt.resource.security.ProtectedPathManager;
+import com.marklogic.mgmt.resource.security.QueryRolesetManager;
 import com.marklogic.mgmt.resource.tasks.TaskManager;
 import com.marklogic.mgmt.resource.temporal.TemporalAxesManager;
 import com.marklogic.mgmt.resource.temporal.TemporalCollectionManager;
@@ -24,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -106,7 +110,31 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
         } finally {
             userWithRoleBeingTestedClient.delete("/manage/v2/protected-paths/" + URLEncoder.encode(pathExpression, "UTF-8") + "?force=true");
             assertFalse(adminProtectedPathManager.exists(pathExpression),
-                "The remove-path privilege should allow the user to delete a protected path");
+                "The remove-path privilege should allow the user to delete a protected path. Note that in ML 10.0-3, the unprotect-path " +
+                    "privilege is not needed to perform this operation. The Admin UI requires first unprotecting a protected path, but " +
+                    "the Manage API is able to delete a protected path without unprotecting it first.");
+        }
+    }
+
+    @Test
+    void task10CreateQueryRolesets() {
+        final QueryRolesetManager mgr = new QueryRolesetManager(userWithRoleBeingTestedClient);
+        final List<String> originalRolesetIds = mgr.getAsXml().getListItemIdRefs();
+
+        QueryRoleset qr = new QueryRoleset(null);
+        qr.setRoleName(Arrays.asList("harmonized-reader", "harmonized-updater"));
+        qr.setApi(userWithRoleBeingTestedApi);
+        SaveReceipt receipt = mgr.save(qr.getJson());
+        final String rolesetPath = receipt.getResponse().getHeaders().getLocation().toString();
+
+        final List<String> newRolesetIds = mgr.getAsXml().getListItemIdRefs();
+        try {
+            assertEquals(originalRolesetIds.size() + 1, newRolesetIds.size(),
+                "Expected one more roleset to exist");
+        } finally {
+            userWithRoleBeingTestedClient.delete(rolesetPath);
+            final List<String> rolesetIdsAfterDeletion = mgr.getAsXml().getListItemIdRefs();
+            assertEquals(originalRolesetIds.size(), rolesetIdsAfterDeletion.size());
         }
     }
 

@@ -9,6 +9,7 @@ import com.marklogic.appdeployer.command.alert.DeployAlertRulesCommand;
 import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
 import com.marklogic.appdeployer.command.schemas.LoadSchemasCommand;
 import com.marklogic.appdeployer.command.security.DeployPrivilegesCommand;
+import com.marklogic.appdeployer.command.security.DeployProtectedPathsCommand;
 import com.marklogic.appdeployer.command.security.DeployRolesCommand;
 import com.marklogic.appdeployer.command.tasks.DeployScheduledTasksCommand;
 import com.marklogic.appdeployer.command.temporal.DeployTemporalAxesCommand;
@@ -19,6 +20,7 @@ import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.deploy.HubAppDeployer;
+import com.marklogic.hub.dhs.installer.deploy.DeployHubQueryRolesetsCommand;
 import com.marklogic.hub.deploy.commands.HubDeployDatabaseCommandFactory;
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
@@ -182,6 +184,9 @@ public class DhsDeployer extends LoggingObject {
         commands.add(new DeployTriggersCommand());
         commands.add(new LoadSchemasCommand());
         commands.add(new DeployScheduledTasksCommand());
+
+        commands.add(new DeployProtectedPathsCommand());
+        commands.add(new DeployHubQueryRolesetsCommand());
 
         return commands;
     }
