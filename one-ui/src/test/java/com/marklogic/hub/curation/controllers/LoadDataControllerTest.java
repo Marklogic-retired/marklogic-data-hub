@@ -27,6 +27,7 @@ import com.marklogic.hub.ArtifactManager;
 import com.marklogic.hub.impl.ArtifactManagerImpl;
 import com.marklogic.hub.oneui.Application;
 import com.marklogic.hub.oneui.TestHelper;
+import com.marklogic.hub.oneui.models.HubConfigSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,8 +47,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {Application.class, ApplicationConfig.class, LoadDataControllerTest.class})
 public class LoadDataControllerTest {
-    @Autowired
-    ArtifactManager artifactManager;
 
     @Autowired
     LoadDataController controller;
@@ -87,7 +86,7 @@ public class LoadDataControllerTest {
 
         assertEquals(1, resultList.size(), "List of load data artifacts should now be 1");
 
-        Path artifactProjectLocation = ((ArtifactManagerImpl)artifactManager).buildArtifactProjectLocation(controller.getArtifactType(), "validArtifact", null);
+        Path artifactProjectLocation = testHelper.getArtifactManager().buildArtifactProjectLocation(controller.getArtifactType(), "validArtifact", null);
         ObjectNode resultByName = controller.getArtifact("validArtifact").getBody();
         assertEquals("validArtifact", resultByName.get("name").asText(), "Getting artifact by name should return object with expected properties");
         assertEquals("xml", resultByName.get("sourceFormat").asText(), "Getting artifact by name should return object with expected properties");

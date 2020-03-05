@@ -169,7 +169,7 @@ class FlowControllerTest {
             catch (Exception e) {
                 logger.info("Exception is expected as the flow being fetched has been deleted");
             }
-            loadDataController.deleteLoadDataConfig("validArtifact");
+            loadDataController.deleteArtifact("validArtifact");
         }
     }
 }
