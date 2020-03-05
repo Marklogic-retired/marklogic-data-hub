@@ -14,6 +14,11 @@
   ],
   "privilege": [
     {
+      "privilege-name": "add-query-rolesets",
+      "action": "http://marklogic.com/xdmp/privileges/add-query-rolesets",
+      "kind": "execute"
+    },
+    {
       "privilege-name": "any-uri",
       "action": "http://marklogic.com/xdmp/privileges/any-uri",
       "kind": "execute"
@@ -36,6 +41,11 @@
     {
       "privilege-name": "remove-path",
       "action": "http://marklogic.com/xdmp/privileges/remove-path",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "remove-query-rolesets",
+      "action": "http://marklogic.com/xdmp/privileges/remove-query-rolesets",
       "kind": "execute"
     },
     {
