@@ -18,7 +18,6 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -63,7 +62,6 @@ class AuthTest {
                     assertTrue(jsonResonse.get("roles").isArray());
                     assertTrue(jsonResonse.get("authorities").isArray());
                     assertTrue(jsonResonse.get("authorities").toString().contains("canInstallDataHub"));
-                    assertEquals(jsonResonse.get("hasManagePrivileges").asBoolean(), true);
                 })
             .andExpect(status().isOk());
 
@@ -92,7 +90,6 @@ class AuthTest {
                     assertTrue(jsonResonse.get("roles").isArray());
                     assertTrue(jsonResonse.get("authorities").isArray());
                     assertTrue(jsonResonse.get("authorities").toString().contains("canInstallDataHub"));
-                    assertEquals(jsonResonse.get("hasManagePrivileges").asBoolean(), true);
                 })
             .andExpect(status().isOk());
 
@@ -120,7 +117,7 @@ class AuthTest {
                     JsonNode jsonResonse = mapper.readTree(strResponse);
                     assertTrue(jsonResonse.get("roles").isArray());
                     assertTrue(jsonResonse.get("authorities").isArray());
-                    assertEquals(jsonResonse.get("hasManagePrivileges").asBoolean(), false);
+                    assertFalse(jsonResonse.get("authorities").toString().contains("canInstallDataHub"));
                 })
             .andExpect(status().isOk());
 

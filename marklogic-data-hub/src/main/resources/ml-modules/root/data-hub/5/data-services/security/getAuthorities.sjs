@@ -20,13 +20,8 @@ const roleIdToName = (roleID) => xdmp.roleName(roleID);
 const currentRoles = xdmp.getCurrentRoles().toArray().map(String);
 let currentRoleNames = currentRoles.map(roleIdToName);
 
-const defaultManageRoles = ['admin', 'data-hub-environment-manager'].map((roleName) => String(xdmp.role(roleName)));
-const manageRolesMustAllMatched = ['manage-admin', 'security'].map((roleName) => String(xdmp.role(roleName)));
-
-let hasManagerRole = defaultManageRoles.some((role) => currentRoles.includes(role));
-if (!hasManagerRole) {
-  hasManagerRole = manageRolesMustAllMatched.every((role) => currentRoles.indexOf(role) !== -1);
-}
+const manageAdminRolesMustAllMatched = ['manage-admin', 'security'].map((roleName) => String(xdmp.role(roleName)));
+const hasManageAdminAndSecurity = manageAdminRolesMustAllMatched.every((role) => currentRoles.indexOf(role) !== -1);
 
 if (currentRoleNames.includes('admin')) {
   currentRoleNames = xdmp.roles().toArray().map(roleIdToName);
@@ -37,7 +32,7 @@ const response = {
   "roles": []
 };
 
-if (hasManagerRole) {
+if (currentRoleNames.includes('admin') || hasManageAdminAndSecurity) {
   response.authorities.push('canInstallDataHub');
 }
 
