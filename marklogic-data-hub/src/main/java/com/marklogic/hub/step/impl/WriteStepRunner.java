@@ -111,15 +111,16 @@ public class WriteStepRunner implements StepRunner {
     private Thread runningThread = null;
     private DataMovementManager dataMovementManager = null;
     private WriteBatcher writeBatcher = null;
-    private String inputFilePath = null;
     private JobDocManager jobDocManager;
-    private String outputCollections;
-    private String outputPermissions;
-    private String outputFormat;
-    private String inputFileType;
-    private String outputURIReplacement;
-    private String separator = ",";
-    private AtomicBoolean isStopped = new AtomicBoolean(false);
+    // setting these values to protected so their values can be tested
+    protected String inputFilePath = null;
+    protected String outputCollections;
+    protected String outputPermissions;
+    protected String outputFormat;
+    protected String inputFileType;
+    protected String outputURIReplacement;
+    protected String separator = ",";
+    protected AtomicBoolean isStopped = new AtomicBoolean(false);
     private IngestionStepDefinitionImpl stepDef;
     private Map<String, Object> stepConfig = new HashMap<>();
     private DocumentPermissionsParser documentPermissionsParser = new DefaultDocumentPermissionsParser();
