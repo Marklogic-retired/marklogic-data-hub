@@ -6,6 +6,8 @@ import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.FileHandle;
+import com.marklogic.hub.ArtifactManager;
+import com.marklogic.hub.impl.ArtifactManagerImpl;
 import com.marklogic.hub.oneui.models.EnvironmentInfo;
 import com.marklogic.hub.oneui.models.HubConfigSession;
 import com.marklogic.hub.oneui.services.EnvironmentService;
@@ -67,6 +69,8 @@ public class TestHelper {
     private EnvironmentService environmentService;
 
     public ObjectNode validLoadDataConfig = (ObjectNode) new ObjectMapper().readTree("{ \"name\": \"validArtifact\", \"sourceFormat\": \"xml\", \"targetFormat\": \"json\"}");
+
+    protected ArtifactManagerImpl artifactManager;
 
     public TestHelper() throws IOException {
     }
@@ -134,5 +138,9 @@ public class TestHelper {
     @AfterAll
     private void deleteUser() {
         user.delete();
+    }
+
+    public ArtifactManagerImpl getArtifactManager() {
+        return new ArtifactManagerImpl(hubConfig);
     }
 }

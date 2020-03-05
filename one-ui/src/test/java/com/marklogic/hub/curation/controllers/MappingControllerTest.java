@@ -22,8 +22,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {Application.class, ApplicationConfig.class})
 public class MappingControllerTest {
-    @Autowired
-    ArtifactManager artifactManager;
 
     @Autowired
     MappingController controller;
