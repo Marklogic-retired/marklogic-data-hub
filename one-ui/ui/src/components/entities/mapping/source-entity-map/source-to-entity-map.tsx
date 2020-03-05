@@ -227,12 +227,14 @@ const SourceToEntityMap = (props) => {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
+            width:'20%',
             sorter: (a:any, b:any) => a.name.length - b.name.length,
           },
           {
             title: 'Type',
             dataIndex: 'type',
             key: 'type',
+            width:'10%',
             sorter: (a:any, b:any) => a.type.length - b.type.length,
           },
           {
@@ -243,6 +245,7 @@ const SourceToEntityMap = (props) => {
             </span>,
             dataIndex: 'xPathExpression',
             key: 'xPathExpression',
+            width:'50%',
             render: (text, row)=> (<div className={styles.mapExpressionContainer}>
                 <TextArea 
                 className={styles.mapExpression}
@@ -259,7 +262,9 @@ const SourceToEntityMap = (props) => {
             title: 'Value',
             dataIndex: 'value',
             key: 'value',
+            width:'20%',
             sorter: (a:any, b:any) => a.value.length - b.value.length,
+            render: (text,row) => (<div>New</div>)
           }
 
     ]
@@ -307,7 +312,7 @@ return (<Modal
         visible={props.mappingVisible}
         onOk={() => onOk()}
         onCancel={() => onCancel()}
-        width={1600}
+        width={'96vw'}
         maskClosable={false}
         footer={null}
         className={styles.mapContainer}
@@ -340,7 +345,7 @@ return (<Modal
         expandIcon={(props) => customExpandIcon(props)}
         className={styles.sourceTable}
         rowClassName={() => styles.sourceTableRows}
-        scroll={{ y: 800 }}
+        scroll={{ y: '70vh' }}
         indentSize={14}
         //size="small"
         columns={columns}
@@ -356,12 +361,13 @@ return (<Modal
         className={styles.entityContainer}>
         <div className={styles.entityDetails}>
                 <p className={styles.entityTypeTitle}><i><FontAwesomeIcon icon={faObjectUngroup } size="sm" className={styles.entityIcon}/></i> Entity: {props.entityTypeTitle}</p>
-            </div>
+        </div>
+        <div className={styles.lineSpacing}></div>
         <Table
         pagination={false}
         className={styles.entityTable}
         //size="small"
-        //scroll={{ y: 800 }}
+        scroll={{ y: '70vh' }}
         tableLayout="unset"
         columns={entityColumns}
         dataSource={props.entityTypeProperties}

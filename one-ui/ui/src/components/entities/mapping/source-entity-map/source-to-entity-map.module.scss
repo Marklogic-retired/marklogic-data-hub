@@ -1,10 +1,6 @@
 
 .mapContainer{
-    //padding: 40px 200px 100px 40px;
-    //margin-bottom: 100px;
-    height: 100%;
-    top: 8vh;
-    //box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    top: 8px;
 }
 .header{
     display:inline-flex;
@@ -12,11 +8,9 @@
 .headerTitle{
     font-size: 1.5em;
     width: fit-content;
-    //border: 1px solid red;
 }
 
 .saveMessage{
-    //width: fit-content;
     border: 1px solid #ff0000;
     margin-left: 30em;
 }
@@ -28,6 +22,7 @@
     flex-direction: row;
     padding-bottom: 2vh;
     padding-top: 1vh;
+    height: 87vh;
 }
 
 .sourceContainer{
@@ -60,6 +55,10 @@
     flex-direction: column;
     padding-right: 20px;
     word-break: break-all;
+
+    > .lineSpacing{
+        margin : 20px 0 20px 0;
+    }
 }
 
 .entityTable {
@@ -233,7 +232,6 @@
     white-space: nowrap;
   }
  .navigate_uris_left {
-    display: flex;
     user-select: none;
     cursor: pointer;
     width: 2vw;
@@ -242,8 +240,9 @@
     justify-content: center;
     background:none;
     outline: none !important;
-    > Icon { 
+    > .navigateIcon { 
         display: block;
+        margin-left: -6px;
     }
   }
   .URI_Index{
@@ -262,20 +261,18 @@
   }
   
   .navigate_uris_right {
-    display: flex;
     user-select: none;
     cursor: pointer;
-    //position: relative;
     width: 2vw;
     background:none;
     outline: none !important;
-    //display: block;
     text-align: center;
     outline: none;
     align-content: center ; 
     justify-content: center;
-    > Icon { 
+    > .navigateIcon { 
         display: block;
+        margin-left: -6px;
     }
   }
 
