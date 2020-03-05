@@ -69,6 +69,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         return new String[]{
             "/api/environment/initialized",
             "/websocket/**",
+            "/actuator/**",
             "/",
             "/*.js",
             "/*.ttf",
