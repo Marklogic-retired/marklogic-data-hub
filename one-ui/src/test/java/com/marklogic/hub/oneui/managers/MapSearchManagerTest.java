@@ -22,9 +22,9 @@ import static com.marklogic.client.io.DocumentMetadataHandle.Capability.UPDATE;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {Application.class})
-class SearchManagerTest {
+class MapSearchManagerTest {
     @Autowired
-    private SearchManager searchService;
+    private MapSearchManager mapSearchManager;
     @Autowired
     private HubConfigSession hubConfigSession;
     @Autowired
@@ -60,7 +60,7 @@ class SearchManagerTest {
         query.sourceQuery = "cts.collectionQuery('UrisOnly')";
         query.count = 1;
         query.urisOnly = urisOnly;
-        JsonNode resp = searchService.sjsSearch(query).get(0);
+        JsonNode resp = mapSearchManager.sjsSearch(query).get(0);
         String uri =resp.get("uri").asText();
         Assertions.assertEquals("/employee2.json", uri);
 
