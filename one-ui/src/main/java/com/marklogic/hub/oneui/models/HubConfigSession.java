@@ -891,7 +891,17 @@ public class HubConfigSession implements HubConfig, InitializingBean, Disposable
      */
     @Override
     public DatabaseClient newFinalClient() {
-        return getClientByDatabaseKindAndName(DatabaseKind.FINAL, hubConfigImpl.getDbName(DatabaseKind.FINAL));
+        return getClientByDatabaseKindAndName(DatabaseKind.FINAL, null);
+    }
+
+    /**
+     * Gets a new DatabaseClient that queries the Final database and appserver
+     * @param dbName the name of the database
+     * @return A client that accesses the hub's Final appserver and the database passed as param.
+     */
+    @Override
+    public DatabaseClient newFinalClient(String dbName) {
+        return getClientByDatabaseKindAndName(DatabaseKind.FINAL, dbName);
     }
 
     /**
@@ -956,6 +966,7 @@ public class HubConfigSession implements HubConfig, InitializingBean, Disposable
         clientsByKindAndDatabaseName.put(DatabaseKind.STAGING, stagingClients);
         Map<String, DatabaseClient> finalClients = new HashMap<>();
         // create client for data services (no database name)
+        finalClients.put(null, hubConfigImpl.newFinalClient(null));
         finalClients.put(hubConfigImpl.getDbName(DatabaseKind.FINAL), hubConfigImpl.newFinalClient());
         finalClients.put(hubConfigImpl.getDbName(DatabaseKind.STAGING), hubConfigImpl.newReverseFlowClient());
         clientsByKindAndDatabaseName.put(DatabaseKind.FINAL, finalClients);
