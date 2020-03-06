@@ -19,6 +19,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.FailedRequestException;
+import com.marklogic.hub.InstallInfo;
 import com.marklogic.hub.dataservices.SecurityService;
 import com.marklogic.hub.oneui.exceptions.BadRequestException;
 import com.marklogic.hub.oneui.exceptions.ForbiddenException;
@@ -106,16 +108,11 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
 
         final DatabaseClient stagingClient = hubConfig.newStagingClient(null);
 
-        boolean dataHubInstalled = false;
+        boolean dataHubInstalled = isDataHubInstalled();
 
         Pair<List<GrantedAuthority>, ArrayNode> grantAuthoritiesPair = null;
 
         final boolean [] canInstallDataHub = new boolean[1];
-        try {
-            dataHubInstalled = stagingClient.checkConnection().isConnected();
-        } catch (Exception ignored) {
-            // TODO Ignoring this because it means the DH isn't installed and needs to be?
-        }
 
         if (!(hasManagePrivileges || dataHubInstalled)) {
             throw new ForbiddenException("User doesn't have the required roles to install or run the Data Hub");
@@ -185,5 +182,32 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
             }
         }
         return false;
+    }
+
+    protected boolean isDataHubInstalled() {
+        // If an install attempt through the UI didn't complete, we consider the Data Hub not installed
+        if (environmentService.isInDirtyState()) {
+            return false;
+        }
+        DatabaseClient stagingClient = hubConfig.newStagingClient(null);
+        // multiple ways of checking for Data Hub install status.
+        boolean dataHubInstalled = false;
+        boolean successfulInstallCheckAttempt = false;
+        // First check the project directory way
+        try {
+            InstallInfo installInfo = hubConfig.getDataHub().isInstalled();
+            dataHubInstalled = installInfo.isInstalled();
+            successfulInstallCheckAttempt = true;
+        } catch (Exception ignored) {}
+        // If an exception is thrown due to missing initialized project, etc. Check the for the staging App server
+        if (!successfulInstallCheckAttempt) {
+            try {
+                dataHubInstalled = stagingClient.checkConnection().isConnected();
+            } catch (Exception ignored) {
+                // TODO Ignoring this because it means the DH isn't installed and needs to be?
+            }
+        }
+        //
+        return dataHubInstalled;
     }
 }

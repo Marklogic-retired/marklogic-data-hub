@@ -10,35 +10,21 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.appdeployer.command.security.DeployPrivilegesCommand;
 import com.marklogic.appdeployer.command.security.DeployRolesCommand;
 import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.ArtifactManager;
 import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
 import com.marklogic.hub.deploy.commands.DeployHubOtherServersCommand;
 import com.marklogic.hub.deploy.commands.DeployHubTriggersCommand;
-import com.marklogic.hub.impl.ArtifactManagerImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.oneui.Application;
 import com.marklogic.hub.oneui.TestHelper;
+import com.marklogic.hub.oneui.auth.AuthenticationFilter;
 import com.marklogic.hub.oneui.controllers.EnvironmentController;
 import com.marklogic.hub.oneui.exceptions.ProjectDirectoryException;
 import com.marklogic.hub.oneui.listener.UIDeployListener;
 import com.marklogic.hub.oneui.models.HubConfigSession;
 import com.marklogic.hub.oneui.services.DataHubProjectUtils;
 import com.marklogic.hub.oneui.services.EnvironmentConfig;
+import com.marklogic.hub.oneui.services.EnvironmentService;
 import com.marklogic.hub.oneui.utils.TestLoggingAppender;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,8 +39,26 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.multipart.MultipartFile;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {Application.class, ApplicationConfig.class, FlowControllerTest.class})
@@ -68,6 +72,9 @@ public class EnvironmentControllerTest {
 
     @Autowired
     private EnvironmentController environmentController;
+
+    @Autowired
+    private EnvironmentService environmentService;
 
     @Autowired
     LoadDataController controller;
@@ -164,6 +171,11 @@ public class EnvironmentControllerTest {
             environmentController.install(relativePayload);
             fail("Should have thrown exception for relative path!");
         });
+        // check that the environment service indicates that the install is in a dirty state
+        assertTrue(environmentService.isInDirtyState(), "Install should be in a dirty state");
+        // check that the AuthenticationFilter shows the Data Hub isn't installed after a failed install attempt
+        TestAuthenticationFilter authenticationFilter = new TestAuthenticationFilter(environmentService, hubConfigSession);
+        assertFalse(authenticationFilter.isDataHubInstalled(), "AuthenticationFilter shouldn't indicate the Data Hub is installed");
         final ObjectNode nonExistentPayload = new ObjectMapper().createObjectNode().put("directory", "/non-existent");
         assertThrows(ProjectDirectoryException.class, () -> {
             environmentController.install(nonExistentPayload);
@@ -216,5 +228,15 @@ public class EnvironmentControllerTest {
         }
 
         assertTrue(SUCCESS_LOG_MSG.isEmpty(), "has error or exception thrown.");
+    }
+
+    static class TestAuthenticationFilter extends AuthenticationFilter {
+        public TestAuthenticationFilter(EnvironmentService environmentService, HubConfigSession hubConfig) {
+            super(environmentService, hubConfig);
+        }
+
+        public boolean isDataHubInstalled() {
+            return super.isDataHubInstalled();
+        }
     }
 }

@@ -60,6 +60,14 @@ public class EnvironmentService {
         return prefs.get("projectDirectory", System.getProperty("user.dir"));
     }
 
+    public synchronized boolean isInDirtyState() {
+        return prefs.getBoolean("isInDirtyState", false);
+    }
+
+    public synchronized void setIsInDirtyState(boolean isInDirtyState) {
+        prefs.putBoolean("isInDirtyState", isInDirtyState);
+    }
+
     public synchronized void reset() {
         prefs.remove("environment");
         prefs.remove("projectDirectory");
