@@ -40,7 +40,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                     throws IOException {
                     Resource requestedResource = location.createRelative(resourcePath);
                     return requestedResource.exists() && requestedResource.isReadable() ? requestedResource
-                        : new ClassPathResource("forward:index.html");
+                        : new ClassPathResource("static/index.html");
                 }
             });
     }
