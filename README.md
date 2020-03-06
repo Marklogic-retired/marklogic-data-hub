@@ -11,7 +11,7 @@ For Data Hub version 5.2, you need:
 
   - Gradle 4.6 or later
   - Java JDK 8 or later
-  - Check MarkLogic Version Compatibily [here](https://docs.marklogic.com/datahub/refs/version-compatibility.html)
+  - Check [MarkLogic Version Compatibility](https://docs.marklogic.com/datahub/refs/version-compatibility.html)
 
 
 # Getting Started
