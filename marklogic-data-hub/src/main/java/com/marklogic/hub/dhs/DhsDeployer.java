@@ -185,7 +185,16 @@ public class DhsDeployer extends LoggingObject {
         commands.add(new LoadSchemasCommand());
         commands.add(new DeployScheduledTasksCommand());
 
-        commands.add(new DeployProtectedPathsCommand());
+        /**
+         * Have run into an odd problem where when a user without the "security" role deploys QRs immediately after
+         * deploying PPs, the PPs don't work. Deploying PPs immediately after QRs does result in the PPs working. Or,
+         * deploying QRs some amount of time after deploying PPs works as well. So in this context, PPs are deployed
+         * after everything else is done, and QRs are deployed first based on the default sort order of the command.
+         */
+        DeployProtectedPathsCommand pathsCommand = new DeployProtectedPathsCommand();
+        pathsCommand.setExecuteSortOrder(Integer.MAX_VALUE);
+        commands.add(pathsCommand);
+
         commands.add(new DeployHubQueryRolesetsCommand());
 
         return commands;

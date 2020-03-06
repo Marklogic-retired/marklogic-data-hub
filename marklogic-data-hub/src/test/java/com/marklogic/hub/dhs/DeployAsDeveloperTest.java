@@ -18,9 +18,9 @@ import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.dhs.installer.deploy.DeployHubQueryRolesetsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
+import com.marklogic.hub.dhs.installer.deploy.DeployHubQueryRolesetsCommand;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.impl.HubProjectImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -172,7 +172,6 @@ public class DeployAsDeveloperTest {
         List<Command> commands = new DhsDeployer().buildCommandsForDeveloper(hubConfig);
         Collections.sort(commands, Comparator.comparing(Command::getExecuteSortOrder));
         int index = 0;
-        assertTrue(commands.get(index++) instanceof DeployProtectedPathsCommand);
         assertTrue(commands.get(index++) instanceof DeployHubQueryRolesetsCommand);
         assertTrue(commands.get(index++) instanceof DeployOtherDatabasesCommand);
         assertTrue(commands.get(index++) instanceof LoadSchemasCommand);
@@ -185,16 +184,22 @@ public class DeployAsDeveloperTest {
         assertTrue(commands.get(index++) instanceof DeployAlertConfigsCommand);
         assertTrue(commands.get(index++) instanceof DeployAlertActionsCommand);
         assertTrue(commands.get(index++) instanceof DeployAlertRulesCommand);
+        assertTrue(commands.get(index++) instanceof DeployProtectedPathsCommand);
         assertEquals(13, commands.size(),
             "As of ML 10.0-3, the granular privilege for indexes doesn't seem to work with XML payloads. " +
                 "Bug https://bugtrack.marklogic.com/54231 has been created to track that. Thus, " +
                 "DeployDatabaseFieldCommand cannot be included and ml-config/database-fields/final-database.xml " +
                 "cannot be processed.");
 
-        DeployOtherDatabasesCommand dodc = (DeployOtherDatabasesCommand) commands.get(2);
+        DeployOtherDatabasesCommand dodc = (DeployOtherDatabasesCommand) commands.get(1);
         ResourceFilenameFilter filter = (ResourceFilenameFilter) dodc.getResourceFilenameFilter();
         assertEquals("(staging|final|job)-database.json", filter.getIncludePattern().pattern(),
             "DHS users aren't allowed to create their own databases, so the command for deploying databases is restricted " +
                 "to only updating the 3 known databases");
+
+        DeployProtectedPathsCommand pathsCommand = (DeployProtectedPathsCommand) commands.get(commands.size() - 1);
+        assertEquals(Integer.MAX_VALUE, pathsCommand.getExecuteSortOrder(),
+            "The PPs command is executed last to avoid the timing issue that occurs when a user without the 'security' " +
+                "role deploys PPs and then QRs immediately afterwards");
     }
 }
