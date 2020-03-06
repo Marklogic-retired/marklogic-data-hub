@@ -16,6 +16,7 @@
 package com.marklogic.hub.oneui.auth;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.SpringSecurityCoreVersion;
@@ -35,10 +36,9 @@ public class AuthenticationToken extends AbstractAuthenticationToken {
     private final boolean dataHubInstalled;
     private final String projectName;
     private final ArrayNode roles;
-    private final ArrayNode authorites;
 
     public AuthenticationToken(String username, String password, boolean hasManagePrivileges, boolean dataHubInstalled,
-                               String projectName, ArrayNode authorites, ArrayNode roles, Collection<GrantedAuthority> authorities) {
+                               String projectName, ArrayNode roles, Collection<GrantedAuthority> authorities) {
         super(authorities);
         super.setAuthenticated(true);
         this.username = username;
@@ -46,7 +46,6 @@ public class AuthenticationToken extends AbstractAuthenticationToken {
         this.hasManagePrivileges = hasManagePrivileges;
         this.dataHubInstalled = dataHubInstalled;
         this.projectName = projectName;
-        this.authorites = authorites;
         this.roles = roles;
     }
 
@@ -85,9 +84,5 @@ public class AuthenticationToken extends AbstractAuthenticationToken {
 
     public ArrayNode getRoles() {
         return roles;
-    }
-
-    public ArrayNode getAuthorites() {
-        return authorites;
     }
 }

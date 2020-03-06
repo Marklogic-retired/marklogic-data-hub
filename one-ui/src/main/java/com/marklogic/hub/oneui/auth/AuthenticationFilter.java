@@ -123,14 +123,13 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
 
         if (!dataHubInstalled) {
             return new AuthenticationToken(username, password,true, dataHubInstalled,
-                hubConfig.getHubProject().getProjectName(), null, null, new ArrayList<>());
+                hubConfig.getHubProject().getProjectName(),null, new ArrayList<>());
         }
 
-        ArrayNode[] roles = new ArrayNode[1];
-        grantAuthoritiesPair = getAuthoritiesForAuthenticatedUser(stagingClient, roles, canInstallDataHub);
+        grantAuthoritiesPair = getAuthoritiesForAuthenticatedUser(stagingClient, canInstallDataHub);
 
-        return new AuthenticationToken(username, password, hasManagePrivileges && canInstallDataHub[0], dataHubInstalled,
-            hubConfig.getHubProject().getProjectName(), grantAuthoritiesPair.getRight(), roles[0], grantAuthoritiesPair.getLeft());
+        return new AuthenticationToken(username, password,hasManagePrivileges && canInstallDataHub[0], dataHubInstalled,
+            hubConfig.getHubProject().getProjectName(), grantAuthoritiesPair.getRight(), grantAuthoritiesPair.getLeft());
     }
 
     /**
@@ -141,13 +140,12 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
      * - see https://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#appendix-faq-role-prefix.
      *
      * @param stagingClient
-     * @param roles
      * @param canInstallDataHub
      * @return
      */
-    protected Pair<List<GrantedAuthority>, ArrayNode> getAuthoritiesForAuthenticatedUser(DatabaseClient stagingClient, ArrayNode[] roles, boolean[] canInstallDataHub) {
+    protected Pair<List<GrantedAuthority>, ArrayNode> getAuthoritiesForAuthenticatedUser(DatabaseClient stagingClient, boolean[] canInstallDataHub) {
         List<GrantedAuthority> grantAuthorities = new ArrayList<>();
-        ArrayNode authorities = null;
+        ArrayNode roles = null;
         JsonNode response = SecurityService.on(stagingClient).getAuthorities();
         if (response != null) {
             if (response.has("authorities")) {
@@ -158,21 +156,16 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
                     }
                     grantAuthorities.add(new SimpleGrantedAuthority("ROLE_" + authority));
                 });
-                authorities = (ArrayNode) response.get("authorities");
             }
             if (response.has("roles")) {
-                roles[0] = (ArrayNode) response.get("roles");
+                roles = (ArrayNode) response.get("roles");
             }
         }
-        if (authorities == null) {
+        if (roles == null) {
             ObjectMapper mapper = new ObjectMapper();
-            authorities = mapper.createObjectNode().putArray("authorities");
+            roles = mapper.createObjectNode().putArray("roles");
         }
-        if (roles[0] == null) {
-            ObjectMapper mapper = new ObjectMapper();
-            roles[0] = mapper.createObjectNode().putArray("roles");
-        }
-        return Pair.of(grantAuthorities, authorities);
+        return Pair.of(grantAuthorities, roles);
     }
 
     protected boolean canAccessManageServer(String host) {
