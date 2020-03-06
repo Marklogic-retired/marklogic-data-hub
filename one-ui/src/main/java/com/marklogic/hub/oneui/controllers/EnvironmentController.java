@@ -47,6 +47,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 @Controller
 @RequestMapping("/api/environment")
 public class EnvironmentController {
@@ -152,7 +159,10 @@ public class EnvironmentController {
             listener.onError("Initializing ", e);
         }
         if (listener.getException() != null) {
+            environmentService.setIsInDirtyState(true);
             throw listener.getException();
+        } else {
+            environmentService.setIsInDirtyState(false);
         }
         environmentService.setProjectDirectory(directory);
     }

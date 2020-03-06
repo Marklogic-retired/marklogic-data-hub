@@ -25,6 +25,8 @@ public interface HubDeployStatusListener {
 
     /**
      * Method to execute when the listener throws an error
+     * @param commandName - the command that the error occurred during
+     * @param error - the exception thrown during the install/uninstall process
      */
     void onError(String commandName, Exception error);
 }
