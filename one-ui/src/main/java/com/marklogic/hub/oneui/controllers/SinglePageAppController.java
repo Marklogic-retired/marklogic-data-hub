@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class SinglePageAppController implements ErrorController {
-    @RequestMapping(value = {"/", "/home", "/load-data", "/install", "/login", "/project-info"})
+    @RequestMapping(value = {"/"})
     public String index() {
         return "forward:index.html";
     }
