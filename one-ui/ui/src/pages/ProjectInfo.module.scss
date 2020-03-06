@@ -33,11 +33,10 @@
 }
 
 .addNewButton {
-  width:27%;
-  max-width: 27%;
+  width:120px;
   font-family: HelveticaNeue;
   font-weight: 500;
-  background-color: #1510A7;
+  background-color: #44499C;
   align-items: center;
   justify-content: center;
   top: 40%;
@@ -77,12 +76,16 @@
 .uploadButton {
   font-family: HelveticaNeue;
   font-weight: 500;
-  background-color: #1510A7;
+  background-color: #44499C;
+  align-items: center;
+  justify-content: center;
   left: 40%;
-  width:27%;
-  max-width: 27%;
+  width:120px;
 }
 
 .errorMessage, .successMessage {
   text-align: left;
+  align-items: center;
+  justify-content: center;
+  width:480px;
 }
