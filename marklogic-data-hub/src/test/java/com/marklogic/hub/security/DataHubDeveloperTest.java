@@ -6,6 +6,8 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.mgmt.SaveReceipt;
 import com.marklogic.mgmt.api.database.Database;
 import com.marklogic.mgmt.api.database.GeospatialElementIndex;
+import com.marklogic.mgmt.api.security.Role;
+import com.marklogic.mgmt.api.security.RolePrivilege;
 import com.marklogic.mgmt.api.security.protectedpath.Permission;
 import com.marklogic.mgmt.api.security.protectedpath.ProtectedPath;
 import com.marklogic.mgmt.api.security.queryroleset.QueryRoleset;
@@ -16,6 +18,7 @@ import com.marklogic.mgmt.resource.alert.AlertConfigManager;
 import com.marklogic.mgmt.resource.alert.AlertRuleManager;
 import com.marklogic.mgmt.resource.security.ProtectedPathManager;
 import com.marklogic.mgmt.resource.security.QueryRolesetManager;
+import com.marklogic.mgmt.resource.security.RoleManager;
 import com.marklogic.mgmt.resource.tasks.TaskManager;
 import com.marklogic.mgmt.resource.temporal.TemporalAxesManager;
 import com.marklogic.mgmt.resource.temporal.TemporalCollectionManager;
@@ -87,6 +90,8 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
 
     @Test
     public void task10CreateProtectedPaths() throws Exception {
+        verifyRoleHasAllProtectedPathAndQueryRolesetPrivileges();
+
         final String pathExpression = "/some/path";
         ProtectedPath path = new ProtectedPath(pathExpression);
         path.setPermission(Arrays.asList(new com.marklogic.mgmt.api.security.protectedpath.Permission("rest-reader", "read")));
@@ -114,6 +119,30 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
                     "privilege is not needed to perform this operation. The Admin UI requires first unprotecting a protected path, but " +
                     "the Manage API is able to delete a protected path without unprotecting it first.");
         }
+    }
+
+    private void verifyRoleHasAllProtectedPathAndQueryRolesetPrivileges() {
+        Role role = resourceMapper.readResource(new RoleManager(adminUserClient).getPropertiesAsJson("data-hub-developer"), Role.class);
+        List<RolePrivilege> privileges = role.getPrivilege();
+        Arrays.asList("protect-path", "remove-path", "unprotect-path", "path-add-permissions", "path-get-permissions", "path-remove-permissions",
+            "path-set-permissions", "add-query-rolesets", "remove-query-rolesets", "database-node-query-rolesets", "node-query-rolesets")
+            .stream().forEach(privilegeName -> {
+
+            boolean found = false;
+            for (RolePrivilege rp : privileges) {
+                if (privilegeName.equals(rp.getPrivilegeName())) {
+                    found = true;
+                    break;
+                }
+            }
+            assertTrue(found, "Did not find privilege: " + privilegeName + ". Due to the odd issue with protected paths " +
+                "not working if query rolesets are deployed immediately after protected paths by a user without the " +
+                "'security' role, all privileges related to PPs and QRs are granted to the data-hub-developer role to " +
+                "minimize the chance of some other mysterious issue popping up. The Manage API appears to allow for " +
+                "PPs to be deployed and deleted with just protect-path and remove-path, and for QRs to be deployed " +
+                "and deleted with just add-query-rolesets and remove-query-rolesets, but we're granting all the privileges " +
+                "just to be safe.");
+        });
     }
 
     @Test
