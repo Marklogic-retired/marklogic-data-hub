@@ -65,7 +65,21 @@ dependencies {
 
 	testCompile "org.junit.platform:junit-platform-runner:${junitPlatformVersion}"
 }
+node {
+    // Version of node to use.
+    version = '12.16.1'
 
+    // // Version of npm to use.
+    npmVersion = '6.13.4'
+
+    download = true
+
+    // Set the work directory for unpacking node
+    workDir = file("${project.buildDir}/nodejs")
+
+    // Set the work directory where node_modules should be located
+    nodeModulesDir = file("${project.projectDir}/ui")
+}
 task installDependencies(type: NpmTask, group: taskGroup) {
 	description = "Install UI dependencies before building the UI files"
 	args = ["install"]
