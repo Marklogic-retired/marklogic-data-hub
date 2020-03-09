@@ -27,12 +27,6 @@ describe("Search Bar component", () => {
     expect(wrapper.find('.ant-input-search button')).toHaveLength(1);
   });
 
-  test("enter text on search input", () => {
-    wrapper.find('.ant-input-search input')
-      .simulate('change', { target: { value: 'John Smith' } });
-    expect(wrapper.find('.ant-input-search input').instance().value).toEqual('John Smith');
-  });
-
   test("click on search button", () => {
     wrapper.find('.ant-input-search button').simulate('click');
   });
