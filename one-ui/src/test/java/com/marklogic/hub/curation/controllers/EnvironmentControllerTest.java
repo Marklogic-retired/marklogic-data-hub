@@ -25,20 +25,6 @@ import com.marklogic.hub.oneui.services.DataHubProjectUtils;
 import com.marklogic.hub.oneui.services.EnvironmentConfig;
 import com.marklogic.hub.oneui.services.EnvironmentService;
 import com.marklogic.hub.oneui.utils.TestLoggingAppender;
-import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -53,6 +39,19 @@ import java.util.Set;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.web.multipart.MultipartFile;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -182,21 +181,35 @@ public class EnvironmentControllerTest {
         });
     }
 
+    @Test
+    public void testUploadProjectWithoutArchiveFolder() throws Exception {
+        testUploadProject("datahub-project.zip");
+    }
 
     @Test
-    public void testUploadProject() throws Exception {
-        testHelper.authenticateSessionAsEnvironmentManager();
+    public void testUploadProjectWithArchiveFolder() throws Exception {
+        testUploadProject("dhfWithArchiveFolder.zip");
+    }
+
+    public void testUploadProject(String zipFileName) throws Exception {
+        //use admin test for now, data-hub-environment-manager-user might not exist.
+        testHelper.authenticateSessionAsAdmin();
+        TestAuthenticationFilter authenticationFilter = new TestAuthenticationFilter(environmentService, hubConfigSession);
+        boolean installed = authenticationFilter.isDataHubInstalled();
+        if (!installed) {
+            //can not test upload project unless it is installed first
+            return;
+        }
+        assertFalse(StringUtils.isEmpty(hubConfigSession.getProjectDir()), "Project directory should exist!");
 
         ObjectMapper om = new ObjectMapper();
         EnvironmentConfig envConfig = om.treeToValue(environmentController.getProjectInfo(), EnvironmentConfig.class);
-        if (envConfig == null || StringUtils.isEmpty(envConfig.getProjectDir())) {
-            return;
-        }
+        assertFalse(envConfig == null || StringUtils.isEmpty(envConfig.getProjectDir()), "Project directory should exist!");
 
-        File file = new File(EnvironmentControllerTest.class.getClassLoader().getResource("datahub-project.zip").getFile());
+        File file = new File(EnvironmentControllerTest.class.getClassLoader().getResource(zipFileName).getFile());
         FileInputStream input = new FileInputStream(file);
 
-        MultipartFile mockMultipartFile = new MockMultipartFile("datahub-project.zip", "", "application/zip", input);
+        MultipartFile mockMultipartFile = new MockMultipartFile(zipFileName, "", "application/zip", input);
 
         Set<String> SUCCESS_LOG_MSG = new HashSet<>(Arrays.asList("Backed up the existing project", "Cleaned the existing project folder",
             "Extracted the uploaded zip project", "100% Uninstallation Complete", "100% Installation Complete"));
@@ -213,6 +226,12 @@ public class EnvironmentControllerTest {
                 });
                 if (found) {
                     SUCCESS_LOG_MSG.remove(matched[0]);
+                    if ("Extracted the uploaded zip project".equals(matched[0])) {
+                        File projectFolder = new File(hubConfigSession.getProjectDir());
+                        assertTrue(Stream.of(projectFolder.list()).anyMatch(e -> "gradle.properties".equals(e)));
+                        assertTrue(Stream.of(projectFolder.list()).anyMatch(e -> "flows".equals(e)));
+                        assertTrue(Stream.of(projectFolder.list()).anyMatch(e -> "src".equals(e)));
+                    }
                 }
             }
         };
