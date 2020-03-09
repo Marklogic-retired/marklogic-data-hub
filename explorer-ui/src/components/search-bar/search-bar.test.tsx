@@ -43,7 +43,7 @@ describe('Search Bar', () => {
 
   afterEach(cleanup);
 
-  test('should type in the search bar', async () => {
+  test('should type in the search bar', () => {
     const { getByPlaceholderText } = render(<SearchBar entities={entities} />);
     const searchInput = getByPlaceholderText("Type search text");
     expect(searchInput).toHaveAttribute('value', '');
@@ -51,13 +51,13 @@ describe('Search Bar', () => {
     expect(searchInput).toHaveAttribute('value', 'test');
   });
 
-  test('should render All Entities select option', async () => {
+  test('should render All Entities select option', () => {
     const { getByText } = render(<SearchBar entities={entities} />);
     const selector = getByText('All Entities');
     expect(selector).toBeInTheDocument();
   });
 
-  test('should render props entity select option', async () => {
+  test('should render props entity select option', () => {
     const { getByText, getByTestId } = render(<SearchBar entities={entities} />);
     const selector = getByTestId('entity-select');
     expect(selector).toBeInTheDocument();
