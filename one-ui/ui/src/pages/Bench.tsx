@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
 import styles from './Bench.module.scss';
 import Flows from '../components/flows/flows';
-import { Modal } from 'antd';
+import { Modal, Collapse } from 'antd';
 import axios from 'axios'
 import { RolesContext } from "../util/roles";
+
+const { Panel } = Collapse;
 
 interface PollConfig {
     interval: number;
@@ -13,7 +15,8 @@ interface PollConfig {
 const Statuses = {
     'FINISHED': 'finished',
     'CANCELED': 'canceled',
-    'FAILED': 'failed'
+    'FAILED': 'failed',
+    'FINISHED_WITH_ERRORS': 'finished_with_errors'
 }
 
 const Bench: React.FC = () => {
@@ -149,16 +152,68 @@ const Bench: React.FC = () => {
         });
     }
 
-    function showErrors(stepName, stepType, errors) {
+    function getErrors(response) {
+        let errors = [];
+        if (response['stepResponses']) {
+            let stepProp = Object.keys(response['stepResponses'])[0];
+            errors = response['stepResponses'][stepProp]['stepOutput'];
+        }
+        return errors;
+    }
+
+    function getErrorsSummary(response) {
+        let maxErrors = 10; // Returned from backend
+        let stepProp = Object.keys(response['stepResponses'])[0];
+        let jobResp = response['stepResponses'][stepProp];
+        return (<span>Out of {jobResp['successfulBatches']+jobResp['failedBatches']} batches, 
+            <span className={styles.errorVal}> {jobResp['successfulBatches']}</span> succeeded and 
+            <span className={styles.errorVal}> {jobResp['failedBatches']}</span> failed. 
+            {(jobResp['failedBatches'] > maxErrors) ? 
+                <span> Error messages for the first {maxErrors} failures are displayed below.</span> : 
+                <span> Error messages are displayed below.</span>}
+            </span>);
+    }
+
+    const getErrorsHeader = (index) => (
+        <span className={styles.errorHeader}>
+            Error {index+1}
+        </span>
+    );
+
+    function showErrors(stepName, stepType, errors, response) {
         Modal.error({
             title: <p>{stepType} "{stepName}" completed with errors</p>,
             content: (
-                <div>
-                    <ul>{errors.map(e => { return <li>{e}</li> })}</ul>
+                <div id="error-list">
+                    <p className={styles.errorSummary}>{getErrorsSummary(response)}</p>
+                    <Collapse defaultActiveKey={['0']} bordered={false}>
+                        {errors.map((e, i) => { 
+                            return <Panel header={getErrorsHeader(i)} key={i}>
+                                <span className={styles.errorLabel}>Message:</span> {e}
+                            </Panel>
+                        })}
+                    </Collapse>
                 </div>
             ),
             okText: 'Close',
-            mask: false
+            mask: false,
+            width: 800
+        });
+    }
+
+    function showFailed(stepName, stepType, errors) {
+        Modal.error({
+            title: <p>{stepType} "{stepName}" failed</p>,
+            content: (
+                <div id="error-list">
+                    {errors.map((e, i) => { 
+                        return <p><span className={styles.errorLabel}>Error message:</span> {e}</p>
+                    })}
+                </div>
+            ),
+            okText: 'Close',
+            mask: false,
+            width: 800
         });
     }
 
@@ -169,10 +224,11 @@ const Bench: React.FC = () => {
             let promise = fn();
             promise.then(function(response){
                 let status = response.data.jobStatus;
-                console.log('Flow status: ', status);
-                if (status === Statuses.FINISHED || status === Statuses.CANCELED || status === Statuses.FAILED) {
+                console.log('Flow status: ', status, response.data);
+                if (status === Statuses.FINISHED || status === Statuses.CANCELED || 
+                    status === Statuses.FAILED || status === Statuses.FINISHED_WITH_ERRORS) {
                     // Non-running status, resolve promise
-                    resolve(status);
+                    resolve(response.data);
                 } else {
                     // Still running, poll again
                     setTimeout(checkStatus, interval, resolve, reject);
@@ -203,15 +259,19 @@ const Bench: React.FC = () => {
                     poll(function() {
                         return axios.get('/api/jobs/' + jobId);
                     }, pollConfig.interval)
-                    .then(function(status) {
+                    .then(function(response: any) {
                         setRunEnded({flowId: flowId, stepId: stepId});
-                        if (status === 'finished') {
+                        if (response['jobStatus'] === Statuses.FINISHED) {
                             console.log('Flow complete: ' + flowId);
                             showSuccess(stepName, stepType);
-                        } else {
-                            console.log('Flow ' + status + ': ' + flowId);
-                            // TODO Handle errors DHFPROD-4025
-                            showErrors(stepName, stepType, ['error1', 'error2', 'error3']);
+                        } else if (response['jobStatus'] === Statuses.FINISHED_WITH_ERRORS) {
+                            console.log('Flow finished with errors: ' + flowId);
+                            let errors = getErrors(response);
+                            showErrors(stepName, stepType, errors, response);
+                        } else if (response['jobStatus'] === Statuses.FAILED) {
+                            console.log('Flow failed: ' + flowId);
+                            let errors = getErrors(response);
+                            showFailed(stepName, stepType, errors);
                         }
                         setIsLoading(false);
                     }).catch(function(error) {
