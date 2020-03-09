@@ -37,6 +37,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.FileCopyUtils;
 
 public class DataHubProjectUtils {
     protected static final Logger logger = LoggerFactory.getLogger(DataHubProjectUtils.class);
@@ -120,13 +121,13 @@ public class DataHubProjectUtils {
     public static void extractZipProject(HubProject project, InputStream in, UIDeployListener listener) {
         Path currProjectDir = project.getProjectDir();
         listener.onStatusChange(0, String.format("Extracting the uploaded zip project into (%s)", currProjectDir.toFile().getAbsolutePath()));
-        byte[] buffer = new byte[2048];
 
         //deal with a zip file that has or does not have an extra archive folder,
         //if there is an extra archive folder in the zip, ignore creating the folder so that the new project-related folder structure is extracted into the current project folder
         //we guarantee the new project is extracted into the current project folder with introducing a new archive folder
         //also the existing folder and name are intact.
-        String archiveFolder = getArchiveFolderOfZipFile(currProjectDir, in);
+        String currFolderName =  currProjectDir.toFile().getAbsolutePath();
+        String archiveFolder = getArchiveFolderOfZipFile(currFolderName, in);
 
         try (BufferedInputStream bis = new BufferedInputStream(in);
              ZipInputStream stream = new ZipInputStream(bis)) {
@@ -151,6 +152,7 @@ public class DataHubProjectUtils {
                         Files.createDirectories(filePath);
                     }
                 } else {
+                    byte[] buffer = new byte[2048];
                     try (FileOutputStream fos = new FileOutputStream(filePath.toFile());
                          BufferedOutputStream bos = new BufferedOutputStream(fos, buffer.length)) {
                         int len;
@@ -168,26 +170,34 @@ public class DataHubProjectUtils {
         listener.onStatusChange(0, String.format("Completed extracting the uploaded zip project into (%s)", currProjectDir.toFile().getAbsolutePath()));
     }
 
+    /**
+     * convert input stream to byte array input stream if necessary
+     * @param in
+     * @return
+     */
     private static InputStream toByteArrayInputStream(InputStream in) {
         if (in instanceof ByteArrayInputStream) {
             return in;
         }
-        byte[] buff = new byte[8000];
-        int bytesRead = 0;
-        ByteArrayOutputStream bao = new ByteArrayOutputStream();
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
-            while ((bytesRead = in.read(buff)) != -1) {
-                bao.write(buff, 0, bytesRead);
-            }
+            FileCopyUtils.copy(in, out);
         } catch (IOException e) {
             throw new RuntimeException(String.format("Failed to convert to ByteArrayInputStream due to (%s)", e.getMessage()));
         }
-        byte[] data = bao.toByteArray();
-        ByteArrayInputStream bin = new ByteArrayInputStream(data);
-        return bin;
+
+        return new ByteArrayInputStream(out.toByteArray());
     }
 
-    private static String getArchiveFolderOfZipFile(Path currProjectDir, InputStream in) {
+    /**
+     * get the archive folder if existed, otherwise return null
+     *
+     * @param currFolderName
+     * @param in
+     * @return
+     */
+    private static String getArchiveFolderOfZipFile(String currFolderName, InputStream in) {
         Set<String> topLevelPaths = new HashSet<>();
         try (BufferedInputStream bis = new BufferedInputStream(in);
              ZipInputStream stream = new ZipInputStream(bis)) {
@@ -213,14 +223,15 @@ public class DataHubProjectUtils {
             in.reset();
         } catch (IOException e) {
             throw new RuntimeException(
-                String.format("Failed to extract the uploaded zip project into (%s) due to (%s).", currProjectDir.toFile().getAbsolutePath(), e.getMessage()));
+                String.format("Failed to extract the uploaded zip project into (%s) due to (%s).", currFolderName, e.getMessage()));
         }
         if (topLevelPaths.isEmpty()) {
-            String errorMsg = String.format("Failed to extract the uploaded zip project into (%s) due to (%s).", currProjectDir.toFile().getAbsolutePath(), "invalid zipped project file");
+            String errorMsg = String.format("Failed to extract the uploaded zip project into (%s) due to (%s).", currFolderName, "invalid zipped project file");
             logger.error(errorMsg);
             throw new RuntimeException(errorMsg);
         }
         if (topLevelPaths.size() == 1)   {
+            //entry is the archive folder
             return topLevelPaths.iterator().next();
         }
         return null;

@@ -183,7 +183,7 @@ public class EnvironmentControllerTest {
 
     @Test
     public void testUploadProjectWithoutArchiveFolder() throws Exception {
-        testUploadProject("datahub-project.zip");
+        testUploadProject("dhfWithoutArchiveFolder.zip");
     }
 
     @Test
