@@ -134,7 +134,7 @@ const NumericFacet: React.FC<Props> = (props) => {
   return (
     <div className={styles.facetName} >
       <p className={styles.name}>{<Tooltip title={props.name}>{formatTitle()}</Tooltip>}</p>
-      <div className={styles.numericFacet}>
+      <div className={styles.numericFacet} data-testid='numeric-slider'>
         <Slider className={styles.slider} range={true} value={[range[0], range[1]]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={(e) => onChange(e)} />
         <InputNumber className={styles.inputNumber} value={range[0]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={onChangeMinInput} />
         <InputNumber className={styles.inputNumber} value={range[1]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={onChangeMaxInput} />

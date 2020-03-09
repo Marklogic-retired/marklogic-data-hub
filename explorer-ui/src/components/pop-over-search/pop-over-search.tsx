@@ -63,12 +63,12 @@ const PopOverSearch: React.FC<Props> = (props) => {
 
   const content = (
     <div className={styles.popover}>
-      <Input placeholder="Search" allowClear={true} onChange={getFacetValues}/>
+      <Input placeholder="Search" allowClear={true} onChange={getFacetValues} data-testid='input-field'/>
       <div className={styles.scrollOptions}>
         <Checkbox.Group options={options} onChange={onSelectCheckboxes}></Checkbox.Group>
       </div>
       <hr/>
-      <div className={styles.checkIcon}>
+      <div className={styles.checkIcon} data-testid='check-icon'>
         <Icon type="check-square-o" className={styles.popoverIcons} onClick={addFacetValues}/>
       </div>
     </div>
@@ -81,7 +81,7 @@ const PopOverSearch: React.FC<Props> = (props) => {
       trigger="click"
       onVisibleChange={handleChange}
       visible={popOverVisibility}>
-      <div className={styles.search}>Search</div>
+      <div className={styles.search} data-testid='search-input'>Search</div>
     </Popover>
   )
 }
