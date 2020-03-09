@@ -44,6 +44,7 @@ const LoginForm: React.FC = () => {
         setMessage({show: false, text: ''});
         setIsLoading(false);
         console.log(response);
+        localStorage.setItem('loginResp',JSON.stringify(response.data));
         loginAuthenticated(username, response.data);
       } 
     } catch (error) {
