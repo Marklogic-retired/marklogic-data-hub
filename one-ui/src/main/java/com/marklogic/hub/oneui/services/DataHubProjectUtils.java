@@ -19,6 +19,8 @@ import com.marklogic.hub.HubProject;
 import com.marklogic.hub.oneui.listener.UIDeployListener;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -26,10 +28,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,16 +48,19 @@ public class DataHubProjectUtils {
      * @param listener
      */
     public static void replaceProject(HubProject project, InputStream in, UIDeployListener listener) {
-        //backup first
+        // backup first
         backupExistingFSProject(project, listener);
 
         // delete contents from the current project folder
         cleanExistingFSProject(project, listener);
 
-        // extract the uploaded & zipped project file into the current project folder
-        extractZipProject(project, in, listener);
+        // convert to byte array input stream if necessary
+        InputStream bin = toByteArrayInputStream(in);
 
+        // extract the uploaded & zipped project file into the current project folder
+        extractZipProject(project, bin, listener);
     }
+
     /**
      * backup existing server-side project folder structure into a zip file
      *
@@ -113,11 +121,31 @@ public class DataHubProjectUtils {
         Path currProjectDir = project.getProjectDir();
         listener.onStatusChange(0, String.format("Extracting the uploaded zip project into (%s)", currProjectDir.toFile().getAbsolutePath()));
         byte[] buffer = new byte[2048];
+
+        //deal with a zip file that has or does not have an extra archive folder,
+        //if there is an extra archive folder in the zip, ignore creating the folder so that the new project-related folder structure is extracted into the current project folder
+        //we guarantee the new project is extracted into the current project folder with introducing a new archive folder
+        //also the existing folder and name are intact.
+        String archiveFolder = getArchiveFolderOfZipFile(currProjectDir, in);
+
         try (BufferedInputStream bis = new BufferedInputStream(in);
              ZipInputStream stream = new ZipInputStream(bis)) {
             ZipEntry entry;
             while ((entry = stream.getNextEntry()) != null) {
-                Path filePath = currProjectDir.resolve(entry.getName());
+                String entryName = entry.getName();
+                if (entryName.startsWith("__MACOSX")) { //mac os special folder
+                    continue;
+                }
+                Path filePath = null;
+                if (StringUtils.isEmpty(archiveFolder)) {
+                    filePath = currProjectDir.resolve(entryName);
+                } else {
+                    if (!entryName.startsWith(archiveFolder) || entryName.length() <= archiveFolder.length() + 1) {
+                        continue;
+                    }
+                    String childPath = entryName.substring(archiveFolder.length() + 1);
+                    filePath = currProjectDir.resolve(childPath);
+                }
                 if (entry.isDirectory()) {
                     if (!Files.exists(filePath)) {
                         Files.createDirectories(filePath);
@@ -125,7 +153,6 @@ public class DataHubProjectUtils {
                 } else {
                     try (FileOutputStream fos = new FileOutputStream(filePath.toFile());
                          BufferedOutputStream bos = new BufferedOutputStream(fos, buffer.length)) {
-
                         int len;
                         while ((len = stream.read(buffer)) > 0) {
                             bos.write(buffer, 0, len);
@@ -139,5 +166,63 @@ public class DataHubProjectUtils {
                 String.format("Failed to extract the uploaded zip project into (%s) due to (%s).", currProjectDir.toFile().getAbsolutePath(), e.getMessage()));
         }
         listener.onStatusChange(0, String.format("Completed extracting the uploaded zip project into (%s)", currProjectDir.toFile().getAbsolutePath()));
+    }
+
+    private static InputStream toByteArrayInputStream(InputStream in) {
+        if (in instanceof ByteArrayInputStream) {
+            return in;
+        }
+        byte[] buff = new byte[8000];
+        int bytesRead = 0;
+        ByteArrayOutputStream bao = new ByteArrayOutputStream();
+        try {
+            while ((bytesRead = in.read(buff)) != -1) {
+                bao.write(buff, 0, bytesRead);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(String.format("Failed to convert to ByteArrayInputStream due to (%s)", e.getMessage()));
+        }
+        byte[] data = bao.toByteArray();
+        ByteArrayInputStream bin = new ByteArrayInputStream(data);
+        return bin;
+    }
+
+    private static String getArchiveFolderOfZipFile(Path currProjectDir, InputStream in) {
+        Set<String> topLevelPaths = new HashSet<>();
+        try (BufferedInputStream bis = new BufferedInputStream(in);
+             ZipInputStream stream = new ZipInputStream(bis)) {
+            ZipEntry entry;
+            while ((entry = stream.getNextEntry()) != null) {
+                String entryName = entry.getName();
+                String topPath = FilenameUtils.getPathNoEndSeparator(entryName);
+                String topFileName  = FilenameUtils.getName(entryName);
+                if (topPath.startsWith("__MACOSX")) {
+                    continue;
+                }
+                if (!topPath.contains(File.separator)) {
+                    if (StringUtils.isNotEmpty(topPath)) {
+                        topLevelPaths.add(topPath);
+                    } else if (StringUtils.isNotEmpty(topFileName) && !topFileName.contains(File.separator))  {
+                        topLevelPaths.add(topFileName);
+                    }
+                    if (topLevelPaths.size() > 1) {
+                        break;
+                    }
+                }
+            }
+            in.reset();
+        } catch (IOException e) {
+            throw new RuntimeException(
+                String.format("Failed to extract the uploaded zip project into (%s) due to (%s).", currProjectDir.toFile().getAbsolutePath(), e.getMessage()));
+        }
+        if (topLevelPaths.isEmpty()) {
+            String errorMsg = String.format("Failed to extract the uploaded zip project into (%s) due to (%s).", currProjectDir.toFile().getAbsolutePath(), "invalid zipped project file");
+            logger.error(errorMsg);
+            throw new RuntimeException(errorMsg);
+        }
+        if (topLevelPaths.size() == 1)   {
+            return topLevelPaths.iterator().next();
+        }
+        return null;
     }
 }
