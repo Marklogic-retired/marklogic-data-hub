@@ -1,4 +1,4 @@
-import React, { CSSProperties, useState, useEffect } from 'react';
+import React, {CSSProperties, useState, useEffect, useContext} from 'react';
 import styles from './mapping-card.module.scss';
 import {Card, Icon, Tooltip, Row, Col, Modal} from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -8,6 +8,9 @@ import { convertDateFromISO, getInitialChars } from '../../../util/conversionFun
 import CreateEditMappingDialog from './create-edit-mapping-dialog/create-edit-mapping-dialog';
 import SourceToEntityMap from './source-entity-map/source-to-entity-map';
 import {getResultsByQuery, getDoc} from '../../../util/search-service'
+import ActivitySettingsDialog from "../../activity-settings/activity-settings-dialog";
+import { MappingSettings } from '../../../config/tooltips.config';
+import {RolesContext} from "../../../util/roles";
 
 interface Props {
     data: any;
@@ -22,6 +25,8 @@ interface Props {
   }
 
 const MappingCard: React.FC<Props> = (props) => {
+    const activityType = 'mapping';
+    const roleService = useContext(RolesContext);
     const [newMap, setNewMap] = useState(false);
     const [title, setTitle] = useState('');
     const [mapData, setMapData] = useState({});
@@ -44,7 +49,7 @@ const MappingCard: React.FC<Props> = (props) => {
     const [disableURINavRight, setDisableURINavRight] = useState(false);
 
 
-    //const [openLoadDataSettings, setOpenLoadDataSettings] = useState(false);
+    const [openMappingSettings, setOpenMappingSettings] = useState(false);
 
     useEffect(() => {
         setSourceData([]);
@@ -63,9 +68,8 @@ const MappingCard: React.FC<Props> = (props) => {
     }
 
     const OpenMappingSettingsDialog = (index) => {
-        // setMapData(prevState => ({ ...prevState, ...props.data[index]}));
-        // //openLoadDataSettings = true;
-        // setOpenLoadDataSettings(true);
+        setMapData(prevState => ({ ...prevState, ...props.data[index]}));
+        setOpenMappingSettings(true);
         console.log('Open settings')
     }
 
@@ -328,6 +332,14 @@ const MappingCard: React.FC<Props> = (props) => {
                 disableURINavRight={disableURINavRight}
                 setDisableURINavLeft={setDisableURINavLeft}
                 setDisableURINavRight={setDisableURINavRight}/>
+            <ActivitySettingsDialog
+                tooltipsData={MappingSettings}
+                openActivitySettings={openMappingSettings}
+                setOpenActivitySettings={setOpenMappingSettings}
+                stepData={mapData}
+                activityType={activityType}
+                canWrite={roleService.canWriteMappings()}
+            />
         </div>
     );
 

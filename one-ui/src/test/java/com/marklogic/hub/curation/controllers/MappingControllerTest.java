@@ -4,20 +4,20 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.client.FailedRequestException;
+import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.ArtifactManager;
 import com.marklogic.hub.oneui.Application;
 import com.marklogic.hub.oneui.TestHelper;
-import java.io.IOException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {Application.class, ApplicationConfig.class})
@@ -56,10 +56,29 @@ public class MappingControllerTest {
         "  \"collections\": []\n" +
         "}";
 
+    static final String MAPPING_SETTINGS = "{\n"
+            + "    \"artifactName\" : \"TestCustomerMapping\",\n"
+            + "    \"additionalCollections\" : [ \"Collection1\", \"Collection2\" ],\n"
+            + "    \"targetDatabase\" : \"data-hub-STAGING\",\n"
+            + "    \"permissions\" : \"data-hub-load-data-reader,read,data-hub-load-data-writer,update\",\n"
+            +"     \"provenanceGranularity\": \"coarse-grained\",\n"
+            + "    \"customHook\" : {\n"
+            + "          \"module\" : \"\",\n"
+            + "          \"parameters\" : \"\",\n"
+            + "          \"user\" : \"\",\n"
+            + "          \"runBefore\" : false\n"
+            + "    }}";
     @Test
     void testMappingConfigs() throws IOException {
         testHelper.authenticateSession();
         ObjectMapper om = new ObjectMapper();
+
+        // Add entities for mappings
+        DocumentMetadataHandle meta = new DocumentMetadataHandle();
+        meta.getCollections().add("http://marklogic.com/entity-services/models");
+        meta.getPermissions().add("data-hub-developer", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE);
+        testHelper.addStagingDoc("/entities/Customer.entity.json", meta, "entities/Customer.entity.json");
+        testHelper.addStagingDoc("/entities/Order.entity.json", meta, "entities/Order.entity.json");
 
         controller.updateArtifact("TestCustomerMapping", om.readTree(MAPPING_CONFIG_1));
         controller.updateArtifact("TestOrderMapping1", om.readTree(MAPPING_CONFIG_2));
@@ -67,7 +86,7 @@ public class MappingControllerTest {
 
         ArrayNode configsGroupbyEntity = controller.getArtifacts().getBody();
 
-        assertTrue(configsGroupbyEntity.size() > 0, "The group entity count of mapping configs should be greater than 2.");
+        assertTrue(configsGroupbyEntity.size() >= 2, "The group entity count of mapping configs should be greater than 2.");
 
         configsGroupbyEntity.forEach(e -> {
             String currEntityName = e.get("entityType").asText();
@@ -110,5 +129,32 @@ public class MappingControllerTest {
         controller.deleteArtifact("TestCustomerMapping");
         controller.deleteArtifact("TestOrderMapping1");
         controller.deleteArtifact("TestOrderMapping2");
+    }
+
+    @Test
+    public void testMappingSettings() throws IOException {
+        testHelper.authenticateSession();
+        ObjectMapper om = new ObjectMapper();
+        controller.updateArtifact("TestCustomerMapping", om.readTree(MAPPING_CONFIG_1));
+
+        JsonNode result = controller.getArtifactSettings("TestCustomerMapping").getBody();
+        assertTrue(result.isEmpty(), "No mapping settings yet!");
+
+        JsonNode settings = om.readTree(MAPPING_SETTINGS);
+
+        controller.updateArtifactSettings("TestCustomerMapping", settings);
+
+        result = controller.getArtifactSettings("TestCustomerMapping").getBody();
+        assertEquals("TestCustomerMapping", result.get("artifactName").asText());
+        assertEquals(2, result.get("additionalCollections").size());
+        assertEquals("Collection2", result.get("additionalCollections").get(1).asText());
+        assertEquals("data-hub-STAGING", result.get("targetDatabase").asText());
+        assertTrue(result.has("permissions"), "missing permissions");
+        assertTrue(result.has("customHook"), "missing customHook");
+
+        controller.deleteArtifact("TestCustomerMapping");
+
+        assertTrue(controller.getArtifactSettings("TestCustomerMapping").getBody().isEmpty());
+        assertThrows(FailedRequestException.class, () -> controller.getArtifact("TestCustomerMapping"));
     }
 }

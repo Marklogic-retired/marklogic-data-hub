@@ -62,7 +62,7 @@ function getArtifacts(artifactType) {
         queries.push(cts.collectionQuery(coll));
     }
     if (queries.length) {
-        if (artifactType == "loadData") {
+        if (artifactType === "loadData") {
             return cts.search(cts.andQuery(queries)).toArray();
         } else {
             return getArtifactsGroupByEntity(queries)
@@ -105,11 +105,10 @@ function deleteArtifact(artifactType, artifactName, artifactVersion = 'latest') 
         dataHub.hubUtils.deleteDocument(xdmp.nodeUri(node), db);
     }
     delete cachedArtifacts[artifactKey];
-    if (artifactType != 'loadData') {
-        return { success: true };
+    if (artifactLibrary.getArtifactSettingNode) {
+        return deleteArtifactSettings(artifactType, artifactName, artifactVersion);
     }
-    //delete related config file if existed
-    return deleteArtifactSettings(artifactType, artifactName, artifactVersion);
+    return { success: true };
 }
 
 function getArtifact(artifactType, artifactName, artifactVersion = 'latest') {
