@@ -38,6 +38,18 @@ public class MappingController extends AbstractArtifactController {
         super.deleteArtifact(artifactName);
     }
 
+    @RequestMapping(value = "/{artifactName}/settings", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<ObjectNode> getArtifactSettings(@PathVariable String artifactName) {
+        return super.getArtifactSettings(artifactName);
+    }
+
+    @RequestMapping(value = "/{artifactName}/settings", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<ObjectNode> updateArtifactSettings(@PathVariable String artifactName, @RequestBody ObjectNode settings) {
+        return super.updateArtifactSettings(artifactName, settings);
+    }
+
     @Override
     protected String getArtifactType() {
         return "mappings";

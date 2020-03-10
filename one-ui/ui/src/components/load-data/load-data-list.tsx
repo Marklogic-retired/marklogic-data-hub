@@ -7,7 +7,7 @@ import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
 import NewDataLoadDialog from './new-data-load-dialog/new-data-load-dialog';
 import { MlButton } from 'marklogic-ui-library';
 import { convertDateFromISO } from '../../util/conversionFunctions';
-import LoadDataSettingsDialog from './load-data-settings/load-data-settings-dialog';
+import ActivitySettingsDialog from "../activity-settings/activity-settings-dialog";
 
 interface Props {
     data: any;
@@ -131,7 +131,7 @@ const LoadDataList: React.FC<Props> = (props) => {
                 <span>
                     <Tooltip title={'Settings'} placement="bottom"><Icon type="setting" onClick={() => OpenLoadDataSettingsDialog(row)} className={styles.settingsIcon} /></Tooltip>
                     &nbsp;&nbsp;
-                    {props.canReadWrite ? <Tooltip title={'Delete'} placement="bottom"><i><FontAwesomeIcon icon={faTrashAlt} onClick={() => {showDeleteConfirm(row.name)}} className={styles.deleteIcon} size="lg"/></i></Tooltip> : 
+                    {props.canReadWrite ? <Tooltip title={'Delete'} placement="bottom"><i><FontAwesomeIcon icon={faTrashAlt} onClick={() => {showDeleteConfirm(row.name)}} className={styles.deleteIcon} size="lg"/></i></Tooltip> :
                     <Tooltip title={'Delete'} placement="bottom"><i><FontAwesomeIcon icon={faTrashAlt} onClick={(event) => event.preventDefault()} className={styles.disabledDeleteIcon} size="lg"/></i></Tooltip> }
                 </span>
             ),
@@ -150,15 +150,15 @@ const LoadDataList: React.FC<Props> = (props) => {
         dataSource={props.data}
         rowKey="name"
         />
-        <NewDataLoadDialog newLoad={newDataLoad} 
-        title={title} setNewLoad={setNewDataLoad} 
-        createLoadDataArtifact={props.createLoadDataArtifact} 
+        <NewDataLoadDialog newLoad={newDataLoad}
+        title={title} setNewLoad={setNewDataLoad}
+        createLoadDataArtifact={props.createLoadDataArtifact}
         stepData={stepData}
         canReadWrite={props.canReadWrite}
         canReadOnly={props.canReadOnly}/>
         {deleteConfirmation}
-        <LoadDataSettingsDialog openLoadDataSettings={openLoadDataSettings} setOpenLoadDataSettings={setOpenLoadDataSettings} stepData={stepData}/>
-        
+        <ActivitySettingsDialog openLoadDataSettings={openLoadDataSettings} setOpenLoadDataSettings={setOpenLoadDataSettings} stepData={stepData} canWrite={props.canReadWrite}/>
+
     </div>
    );
 }

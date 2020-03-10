@@ -1,17 +1,21 @@
 import { Modal, Form, Input, Button, Tooltip, Icon, Progress, Upload, Select, Collapse, Switch, message } from "antd";
 import React, { useState, useEffect, useContext } from "react";
-import styles from './load-data-settings-dialog.module.scss';
-import { LoadDataSettings } from '../../../config/tooltips.config';
+import styles from './activity-settings-dialog.module.scss';
+import { ActivitySettings } from '../../config/tooltips.config';
 import Axios from "axios";
 
-import { RolesContext } from "../../../util/roles";
-
-const LoadDataSettingsDialog = (props) => {
-
+const ActivitySettingsDialog = (props) => {
+  const settingsTooltips = Object.assign({}, ActivitySettings, props.tooltipsData);
+  const activityType = props.activityType;
+  const usesSourceDatabase = activityType !== 'loadData';
   //const [settingsArtifact, setSettingsArtifact] = useState({});
-  const [tgtDatabase, setTgtDatabase] = useState('data-hub-STAGING');
+  const defaultTargetDatabase = (activityType === 'loadData') ? 'data-hub-STAGING' : 'data-hub-FINAL';
+  const defaultSourceDatabase = (activityType === 'mapping') ? 'data-hub-STAGING' : 'data-hub-FINAL';
+  const [tgtDatabase, setTgtDatabase] = useState(defaultTargetDatabase);
+  const [srcDatabase, setSrcDatabase] = useState(defaultSourceDatabase);
   const[ additionalCollections, setAdditionalCollections ] = useState<any[]>([]);
   const [isAddCollTouched, setAddCollTouched] = useState(false);
+  const [isSrcDatabaseTouched, setSrcDatabaseTouched] = useState(false);
   const [isTgtDatabaseTouched, setTgtDatabaseTouched] = useState(false);
   const [targetPermissions, setTargetPermissions] = useState('rest-reader,read,rest-writer,update');
   const [isTgtPermissionsTouched, setIsTgtPermissionsTouched] = useState(false);
@@ -30,10 +34,7 @@ const LoadDataSettingsDialog = (props) => {
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [isLoading,setIsLoading] = useState(false);
 
-  //For Role based access of artifacts
-  const roleService = useContext(RolesContext);
-  const canReadOnly = roleService.canReadLoadData();
-  const canReadWrite = roleService.canWriteLoadData();
+  const canReadWrite = props.canWrite;
 
   const tgtDatabaseOptions = ['data-hub-STAGING','data-hub-FINAL'];
 
@@ -51,7 +52,8 @@ const LoadDataSettingsDialog = (props) => {
       setIsProvGranTouched(false);
       setIsUserTouched(false);
       setIsRunBeforeTouched(false);
-      setTgtDatabase('data-hub-STAGING');
+      setSrcDatabase(defaultSourceDatabase);
+      setTgtDatabase(defaultTargetDatabase);
       setAdditionalCollections([]);
       setTargetPermissions('rest-reader,read,rest-writer,update');
       setModule('');
@@ -59,9 +61,9 @@ const LoadDataSettingsDialog = (props) => {
       setProvGranularity('coarse-grained');
       setUser('');
       setRunBefore(false);
-      
+
     };
-  },[props.openLoadDataSettings  ,isLoading])
+  },[props.openActivitySettings  ,isLoading])
 
 //CREATE/POST settings Artifact
 const createSettingsArtifact = async (settingsObj) => {
@@ -69,15 +71,15 @@ const createSettingsArtifact = async (settingsObj) => {
 
   try {
     setIsLoading(true);
-    let response = await Axios.post(`/api/artifacts/loadData/${props.stepData.name}/settings`, settingsObj);
+    let response = await Axios.post(`/api/artifacts/${activityType}/${props.stepData.name}/settings`, settingsObj);
     if (response.status === 200) {
-      console.log('Create/Update LoadData Settings Artifact API Called successfully!')
+      console.log('Create/Update Activity Settings Artifact API Called successfully!')
       setIsLoading(false);
     }
   }
   catch (error) {
     let message = error.response.data.message;
-    console.log('Error While creating the Load Data settings artifact!', message)
+    console.log('Error While creating the Activity settings artifact!', message)
     setIsLoading(false);
   }
 
@@ -87,9 +89,12 @@ const createSettingsArtifact = async (settingsObj) => {
 const getSettingsArtifact = async () => {
 
   try {
-    let response = await Axios.get(`/api/artifacts/loadData/${props.stepData.name}/settings`);
-    
+    let response = await Axios.get(`/api/artifacts/${activityType}/${props.stepData.name}/settings`);
+
     if (response.status === 200) {
+      if (response.data.sourceDatabase) {
+          setSrcDatabase(response.data.sourceDatabase);
+      }
       setTgtDatabase(response.data.targetDatabase);
       setAdditionalCollections([...response.data.additionalCollections]);
       setTargetPermissions(response.data.permissions);
@@ -99,11 +104,12 @@ const getSettingsArtifact = async () => {
       setUser(response.data.customHook.user);
       setRunBefore(response.data.customHook.runBefore);
       console.log('GET Load Data Settings Artifacts API Called successfully!',response.data);
-    } 
+    }
   } catch (error) {
       let message = error.response;
       console.log('Error while fetching load data settings artifacts', message);
-      setTgtDatabase('data-hub-STAGING');
+      setSrcDatabase(defaultSourceDatabase);
+      setTgtDatabase(defaultTargetDatabase);
       setAdditionalCollections([]);
       setTargetPermissions('rest-reader,read,rest-writer,update');
       setModule('');
@@ -119,18 +125,19 @@ const getSettingsArtifact = async () => {
     if(checkDeleteOpenEligibility()){
       setDeleteDialogVisible(true);
     } else {
-      props.setOpenLoadDataSettings(false)
+      props.setOpenActivitySettings(false)
     }
   }
 
   const onOk = () => {
-    props.setOpenLoadDataSettings(false)
+    props.setOpenActivitySettings(false)
   }
 
   //Check if Delete Confirmation dialog should be opened or not.
   const checkDeleteOpenEligibility = () => {
-  
-      if(!isTgtDatabaseTouched
+
+      if(!isSrcDatabaseTouched
+      &&!isTgtDatabaseTouched
       && !isAddCollTouched
       && !isTgtPermissionsTouched
       && !isModuleTouched
@@ -139,14 +146,14 @@ const getSettingsArtifact = async () => {
       && !isUserTouched
       && !isRunBeforeTouched
       ) {
-              return false; 
+              return false;
         } else {
           return true;
-         }  
+         }
   }
 
   const onDelOk = () => {
-    props.setOpenLoadDataSettings(false)
+    props.setOpenActivitySettings(false)
     setDeleteDialogVisible(false)
   }
 
@@ -163,7 +170,7 @@ const getSettingsArtifact = async () => {
         footer={null}
     >
         <span className={styles.ConfirmationMessage}>Discard changes?</span><br/><br/>
-      
+
         <div >
             <Button onClick={() => onDelCancel()}>No</Button>
             &nbsp;&nbsp;
@@ -177,6 +184,7 @@ const getSettingsArtifact = async () => {
     let dataPayload = {
         artifactName : props.stepData.name,
         additionalCollections : additionalCollections,
+        sourceDatabase : usesSourceDatabase ? srcDatabase : null,
         targetDatabase : tgtDatabase,
         permissions : targetPermissions,
         provenanceGranularity: provGranularity,
@@ -187,13 +195,13 @@ const getSettingsArtifact = async () => {
             runBefore : runBefore
         }
       }
-    
+
     createSettingsArtifact(dataPayload);
-    props.setOpenLoadDataSettings(false)
+    props.setOpenActivitySettings(false)
   }
 
   const handleChange = (event) => {
-    
+
     if (event.target.id === 'targetPermissions') {
       setTargetPermissions(event.target.value);
       setIsTgtPermissionsTouched(true);
@@ -225,6 +233,18 @@ const getSettingsArtifact = async () => {
       setTgtDatabase(value);
     }
   }
+
+
+    const handleSrcDatabase = (value) => {
+
+        if (value === ' ') {
+            setSrcDatabaseTouched(false);
+        }
+        else {
+            setSrcDatabaseTouched(true);
+            setSrcDatabase(value);
+        }
+    }
 
   const handleAddColl = (value) => {
 
@@ -279,7 +299,7 @@ const getSettingsArtifact = async () => {
 
   const customHookProperties = <div><Form.Item label={<span className={styles.cHItemLabel}>
     Module:&nbsp;
-  <Tooltip title={LoadDataSettings.module}>
+  <Tooltip title={settingsTooltips.module}>
       <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
     </Tooltip>
     &nbsp;
@@ -295,7 +315,7 @@ const getSettingsArtifact = async () => {
   </Form.Item>
     <Form.Item label={<span className={styles.cHItemLabel}>
       Parameters:&nbsp;
-  <Tooltip title={LoadDataSettings.cHParameters}>
+  <Tooltip title={settingsTooltips.cHParameters}>
         <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
       </Tooltip>
       &nbsp;
@@ -311,7 +331,7 @@ const getSettingsArtifact = async () => {
     </Form.Item>
     <Form.Item label={<span className={styles.cHItemLabel}>
       User:&nbsp;
-  <Tooltip title={LoadDataSettings.user}>
+  <Tooltip title={settingsTooltips.user}>
         <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
       </Tooltip>
       &nbsp;
@@ -327,7 +347,7 @@ const getSettingsArtifact = async () => {
     </Form.Item>
     <Form.Item label={<span className={styles.cHItemLabel}>
       RunBefore:&nbsp;
-  <Tooltip title={LoadDataSettings.runBefore}>
+  <Tooltip title={settingsTooltips.runBefore}>
         <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
       </Tooltip>
       &nbsp;
@@ -337,12 +357,12 @@ const getSettingsArtifact = async () => {
     </Form.Item></div>
 
   const tgtDbOptions = tgtDatabaseOptions.map(d => <Select.Option key={d}>{d}</Select.Option>);
-  
+
   const provGranOpt = provGranOptions.map(d => <Select.Option key={d}>{d}</Select.Option>);
 
   return (
     <Modal
-      visible={props.openLoadDataSettings}
+      visible={props.openActivitySettings}
       title={null}
       width="700px"
       onCancel={() => onCancel()}
@@ -351,13 +371,31 @@ const getSettingsArtifact = async () => {
       className={styles.SettingsModal}
       footer={null}
       maskClosable={false}>
-      <p className={styles.title}>Load Data Settings</p>
+      <p className={styles.title}>Activity Settings</p>
       <br />
       <div className={styles.newDataLoadForm}>
         <Form {...formItemLayout} onSubmit={handleSubmit} colon={false}>
-          <Form.Item label={<span>
+            { usesSourceDatabase ? <Form.Item label={<span>
+            Source Database:&nbsp;&nbsp;
+                <Tooltip title={settingsTooltips.sourceDatabase}>
+              <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+            </Tooltip>
+                &nbsp;
+            </span>} labelAlign="left"
+                       className={styles.formItem}>
+                <Select
+                    id="sourceDatabase"
+                    placeholder="Enter source database"
+                    value={srcDatabase}
+                    onChange={handleSrcDatabase}
+                    disabled={!canReadWrite}
+                >
+                    {tgtDbOptions}
+                </Select>
+            </Form.Item> : null
+          }<Form.Item label={<span>
             Target Database:&nbsp;&nbsp;
-              <Tooltip title={LoadDataSettings.targetDatabase}>
+              <Tooltip title={settingsTooltips.targetDatabase}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
             </Tooltip>
             &nbsp;
@@ -375,7 +413,7 @@ const getSettingsArtifact = async () => {
           </Form.Item>
           <Form.Item label={<span>
             Additional Collections:&nbsp;
-              <Tooltip title={LoadDataSettings.additionalCollections}>
+              <Tooltip title={settingsTooltips.additionalCollections}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
             </Tooltip>
             &nbsp;
@@ -394,7 +432,7 @@ const getSettingsArtifact = async () => {
           </Form.Item>
           <Form.Item label={<span>
             Target Permissions:&nbsp;
-              <Tooltip title={LoadDataSettings.targetPermissions}>
+              <Tooltip title={settingsTooltips.targetPermissions}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
             </Tooltip>
             &nbsp;
@@ -410,7 +448,7 @@ const getSettingsArtifact = async () => {
           </Form.Item>
           <Form.Item label={<span>
             Provenance Granularity:&nbsp;&nbsp;
-              <Tooltip title={LoadDataSettings.provGranularity}>
+              <Tooltip title={settingsTooltips.provGranularity}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
             </Tooltip>
             &nbsp;
@@ -429,14 +467,14 @@ const getSettingsArtifact = async () => {
             <span className={styles.cHookLabel} onClick={toggleCustomHook}>Custom Hook</span>&nbsp;&nbsp;
               <Icon type="right" className={styles.rightArrow} onClick={toggleCustomHook} rotate={toExpand ? 90 : 0} />
           </span>} labelAlign="left"
-            className={styles.formItem}></Form.Item>
+            className={styles.formItem} />
           {toExpand ? customHookProperties : ''}
 
           <Form.Item className={styles.submitButtonsForm}>
             <div className={styles.submitButtons}>
               <Button onClick={() => onCancel()}>Cancel</Button>
               &nbsp;&nbsp;
-            <Button type="primary" htmlType="submit" onClick={handleSubmit} disabled={!canReadWrite}>Save</Button>
+            <Button id={'saveButton'} type="primary" htmlType="submit" onClick={handleSubmit} disabled={!canReadWrite}>Save</Button>
             </div>
           </Form.Item>
         </Form>
@@ -446,4 +484,4 @@ const getSettingsArtifact = async () => {
   );
 }
 
-export default LoadDataSettingsDialog;
+export default ActivitySettingsDialog;
