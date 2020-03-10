@@ -5,7 +5,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -44,7 +43,7 @@ public class DataHubProjectUtilsTest {
         File file = new File(EnvironmentControllerTest.class.getClassLoader().getResource("dhfWithoutArchiveFolder.zip").getFile());
         FileInputStream input = new FileInputStream(file);
 
-        assertThrows(InvocationTargetException.class, () -> {
+        assertThrows(RuntimeException.class, () -> {
             DataHubProjectUtils.getArchiveFolderOfZipFile("", input);
             fail("Should have thrown exception because the input stream is not ByteArrayInputStream.");
         });
