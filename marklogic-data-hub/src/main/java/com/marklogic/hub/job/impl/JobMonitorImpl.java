@@ -25,33 +25,23 @@ import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.util.RequestParameters;
-import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.job.JobDocManager;
 import com.marklogic.hub.job.JobMonitor;
 import com.marklogic.hub.job.JobStatus;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Component
 public class JobMonitorImpl implements JobMonitor {
-
-    private DatabaseClient client;
-
-    @Autowired
-    private HubConfig hubConfig;
 
     private JobDocManager jobDocManager;
     private Batches batches;
 
-    public void setupClient() {
-        this.client = hubConfig.newJobDbClient();
+    public JobMonitorImpl(DatabaseClient client) {
         this.jobDocManager = new JobDocManager(client);
-        batches = new Batches(client);
+        this.batches = new Batches(client);
     }
 
     //obtain the currently running  jobs on the cluster
@@ -77,7 +67,7 @@ public class JobMonitorImpl implements JobMonitor {
             throw new RuntimeException("Unable to get job document");
         }
         String status = null;
-        if(job.get("job") != null){
+        if (job.get("job") != null) {
             status = job.get("job").get("jobStatus").textValue();
         }
         return status;
@@ -85,9 +75,9 @@ public class JobMonitorImpl implements JobMonitor {
 
 
     //status of all batches in a step within a jobID
-    public Map<String,String> getStepBatchStatus(String jobId, String step) {
+    public Map<String, String> getStepBatchStatus(String jobId, String step) {
         JsonNode batch = batches.getBatches(jobId, step, null);
-        Map<String,String> status = new HashMap<>();
+        Map<String, String> status = new HashMap<>();
         if (batch.isArray()) {
             for (final JsonNode objNode : batch) {
                 status.put(objNode.get("batch").get("batchId").textValue(), objNode.get("batch").get("batchStatus").textValue());
@@ -110,8 +100,9 @@ public class JobMonitorImpl implements JobMonitor {
     public List<String> getBatchResponse(String jobId, String batchId) {
         JsonNode batch = batches.getBatches(jobId, null, batchId);
         ObjectMapper mapper = new ObjectMapper();
-        ObjectReader reader = mapper.readerFor(new TypeReference<List<String>>() {});
-        if(batch.get("batch") != null) {
+        ObjectReader reader = mapper.readerFor(new TypeReference<List<String>>() {
+        });
+        if (batch.get("batch") != null) {
             try {
                 return reader.readValue(batch.get("batch").get("uris"));
             } catch (IOException e) {
@@ -123,7 +114,7 @@ public class JobMonitorImpl implements JobMonitor {
     }
 
     public class Batches extends ResourceManager {
-        private static final String NAME = "ml:batches";
+        private static final String NAME = "mlBatches";
 
         private RequestParameters params;
 
@@ -134,19 +125,19 @@ public class JobMonitorImpl implements JobMonitor {
 
         private JsonNode getBatches(String jobId, String step, String batchId) {
             params = new RequestParameters();
-            if(jobId == null) {
+            if (jobId == null) {
                 throw new RuntimeException("Cannot get batches without jobId");
             }
             params.add("jobid", jobId);
-            if(batchId != null) {
+            if (batchId != null) {
                 params.add("batchid", batchId);
             }
-            if(step != null) {
+            if (step != null) {
                 params.add("step", step);
             }
 
             ResourceServices.ServiceResultIterator resultItr = this.getServices().get(params);
-            if (resultItr == null || ! resultItr.hasNext()) {
+            if (resultItr == null || !resultItr.hasNext()) {
                 throw new RuntimeException("Unable to get batch document");
             }
             ResourceServices.ServiceResult res = resultItr.next();

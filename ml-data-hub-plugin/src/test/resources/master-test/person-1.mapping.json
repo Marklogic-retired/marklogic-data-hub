@@ -1,0 +1,26 @@
+{
+  "lang" : "zxx",
+  "name" : "person",
+  "description" : "Default description",
+  "version" : 1,
+  "targetEntityType" : "http://example.org/person-0.0.1/person",
+  "sourceContext" : "//",
+  "sourceURI" : "",
+  "properties" : {
+    "id" : {
+      "sourcedFrom" : "id"
+    },
+    "firstName" : {
+      "sourcedFrom" : "firstName"
+    },
+    "lastName" : {
+      "sourcedFrom" : "lastName"
+    },
+    "gender" : {
+      "sourcedFrom" : "gender"
+    },
+    "email" : {
+      "sourcedFrom" : "email"
+    }
+  }
+}

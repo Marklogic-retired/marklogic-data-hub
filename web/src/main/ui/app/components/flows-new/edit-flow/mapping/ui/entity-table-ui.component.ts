@@ -34,6 +34,11 @@ export class EntityTableUiComponent implements OnChanges {
   // Show/hide nested property table
   showProp = {};
   showPropInit = false;
+  htmlLinks = `<ul>
+  <li><a href="https://www.w3.org/TR/xpath/all/" target="_blank">XPath Expressions</a></li>
+  <li><a href="https://docs.marklogic.com/guide/app-dev/TDE#id_99178" target="_blank">Extraction Functions</a></li>
+  <li><a href="https://docs.marklogic.com/datahub/flows/dhf-mapping-functions.html" target="_blank">Mapping Functions</a></li>
+  </ul>`;
 
   @ViewChild(MatTable)
   table: MatTable<any>;
@@ -193,9 +198,9 @@ export class EntityTableUiComponent implements OnChanges {
     //f.selectionStart = startPos;
     //f.selectionEnd = startPos+content.length;
     f.focus();
-    this.onHandleInput({ 
-      name: prop.name, 
-      expr: f.value, 
+    this.onHandleInput({
+      name: prop.name,
+      expr: f.value,
       prop: prop
     });
   }
@@ -206,8 +211,8 @@ export class EntityTableUiComponent implements OnChanges {
 
   insertField(fieldName, index, prop) {
     let field = fieldName;//.replace(/[^\/]+\:/g, '');
-    if(String(field).includes(" ")){
-      field = "*[local-name(.)='" + field + "']";
+    if (/(&|>|<|'|"|}|{|\s)/g.test(String(field))) {
+      field = "*[local-name(.)='" + this.escapeXML(field) + "']";
     }
     // Trim context from beginning of fieldName if needed
     if (this.context) {
@@ -217,6 +222,17 @@ export class EntityTableUiComponent implements OnChanges {
       }
     }
     this.insertContent(field, index, prop)
+  }
+
+  escapeXML(input = '') {
+    return input
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/'/g, '&apos;')
+      .replace(/"/g, '&quot;')
+      .replace(/{/g, '&#123;')
+      .replace(/}/g, '&#125;');
   }
 
   //Indenting the nested levels

@@ -67,7 +67,6 @@ public interface HubConfig {
     String DEFAULT_USER_NAME = "flow-operator";
     String DEFAULT_DEVELOPER_ROLE_NAME = "flow-developer-role";
     String DEFAULT_DEVELOPER_USER_NAME = "flow-developer";
-    String DEFAULT_ADMIN_ROLE_NAME = "data-hub-admin-role";
 
     Integer DEFAULT_STAGING_PORT = 8010;
     Integer DEFAULT_FINAL_PORT = 8011;
@@ -338,6 +337,8 @@ public interface HubConfig {
      */
     Boolean getIsProvisionedEnvironment();
 
+    void setIsProvisionedEnvironment(boolean isProvisionedEnvironment);
+
     /**
      * Returns the path for the custom forests definition
      * @return path where the custom forests are as string
@@ -360,6 +361,33 @@ public interface HubConfig {
      * each entity model
      */
     String getEntityModelPermissions();
+
+    /**
+     * Prior to 5.2.0, entities were assigned permissions returned by getModulePermissions. For 5.2.0 and later, this
+     * method should be used to know which permissions to assign to flow document.
+     *
+     * @return a comma-delimited string of role1,capability1,role2,capability2 that defines the permissions to add to
+     * each flow document
+     */
+    String getFlowPermissions();
+
+    /**
+     * Prior to 5.2.0, entities were assigned permissions returned by getModulePermissions. For 5.2.0 and later, this
+     * method should be used to know which permissions to assign to mapping document.
+     *
+     * @return a comma-delimited string of role1,capability1,role2,capability2 that defines the permissions to add to
+     * each mapping document
+     */
+    String getMappingPermissions();
+
+    /**
+     * Prior to 5.2.0, entities were assigned permissions returned by getModulePermissions. For 5.2.0 and later, this
+     * method should be used to know which permissions to assign to step definition document.
+     *
+     * @return a comma-delimited string of role1,capability1,role2,capability2 that defines the permissions to add to
+     * each step definition document
+     */
+    String getStepDefinitionPermissions();
 
     /**
      * Obtains the project directory as a string

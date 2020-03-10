@@ -7,7 +7,7 @@ import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.util.RequestParameters;
 
 public class MappingFunctions extends ResourceManager {
-    private static final String NAME = "ml:mappingFunctions";
+    private static final String NAME = "mlMappingFunctions";
 
     public MappingFunctions(DatabaseClient client) {
         super();

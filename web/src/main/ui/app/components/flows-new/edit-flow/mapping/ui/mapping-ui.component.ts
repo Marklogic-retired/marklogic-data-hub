@@ -539,7 +539,7 @@ export class MappingUiComponent implements OnChanges {
   //Indenting the nested levels
   IndentCondition(prop) {
     let count = prop.split('/').length - 1;
-    let indentSize = 20*count;
+    let indentSize = 12*count;
   
     let style = {'text-indent': indentSize+'px'}
   return style

@@ -31,7 +31,7 @@ class HubUpdateTaskTest extends BaseTest {
         println(runTask('hubInstallModules', '-i').getOutput())
         println(runTask('mlLoadModules', '-i').getOutput())
     }
-    
+
     //if 4.0 project is upgraded, remove the backed up directories
     def setup() {
         File hubConfigDir = hubConfig().hubProject.projectDir.resolve("src/main/hub-internal-config-" + hubConfig().getDHFVersion()).toFile()
@@ -46,7 +46,7 @@ class HubUpdateTaskTest extends BaseTest {
         given:
         def gradlePropsFile = testProjectDir.getRoot().toPath().resolve("gradle.properties")
         gradlePropsFile.toFile().append("\nmlDHFVersion=4.2.2");
-        hubConfig().refreshProject(null, true)
+        hubConfig().loadConfigurationFromProperties(null, true)
         when:
         def result = runFailTask("hubUpdate")
 

@@ -14,7 +14,7 @@ import java.util.List;
 
 class DbConfigsManager extends ResourceManager {
 
-    private static final String NAME = "ml:dbConfigs";
+    private static final String NAME = "mlDbConfigs";
 
     private RequestParameters params = new RequestParameters();
 

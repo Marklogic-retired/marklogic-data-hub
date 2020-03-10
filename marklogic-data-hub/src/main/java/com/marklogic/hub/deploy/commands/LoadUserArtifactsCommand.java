@@ -73,6 +73,16 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         setExecuteSortOrder(SortOrderConstants.DEPLOY_TRIGGERS + 1);
     }
 
+    /**
+     * For use outside of a Spring container.
+     *
+     * @param hubConfig
+     */
+    public LoadUserArtifactsCommand(HubConfig hubConfig) {
+        this();
+        this.hubConfig = hubConfig;
+    }
+
     boolean isArtifactDir(Path dir, Path startPath) {
         String dirStr = dir.toString();
         String startPathStr = Pattern.quote(startPath.toString());
@@ -147,7 +157,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                             entityDefModulesFinder,
                             propertiesModuleManager,
                             entityResourceToURI,
-                            buildMetadataForEntityModels(hubConfig),
+                            buildMetadata(hubConfig.getEntityModelPermissions(), "http://marklogic.com/entity-services/models"),
                             stagingEntityDocumentWriteSet,
                             finalEntityDocumentWriteSet
                         );
@@ -166,7 +176,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                                 mappingDefModulesFinder,
                                 propertiesModuleManager,
                                 mappingResourceToURI,
-                                buildMetadata("http://marklogic.com/data-hub/mappings", hubConfig.getModulePermissions()),
+                                buildMetadata(hubConfig.getMappingPermissions(), "http://marklogic.com/data-hub/mappings"),
                                 stagingMappingDocumentWriteSet,
                                 finalMappingDocumentWriteSet
                             );
@@ -189,7 +199,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                             stepDefModulesFinder,
                             propertiesModuleManager,
                             stepResourceToURI,
-                            buildMetadata("http://marklogic.com/data-hub/step-definition", hubConfig.getModulePermissions()),
+                            buildMetadata(hubConfig.getStepDefinitionPermissions(), "http://marklogic.com/data-hub/step-definition"),
                             stagingStepDefDocumentWriteSet,
                             finalStepDefDocumentWriteSet
                         );
@@ -209,7 +219,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                             flowDefModulesFinder,
                             propertiesModuleManager,
                             flowResourceToURI,
-                            buildMetadata("http://marklogic.com/data-hub/flow", hubConfig.getModulePermissions()),
+                            buildMetadata(hubConfig.getFlowPermissions(), "http://marklogic.com/data-hub/flow"),
                             stagingFlowDocumentWriteSet,
                             finalFlowDocumentWriteSet
                         );
@@ -242,25 +252,6 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         }
     }
 
-    /**
-     * As of 5.1.0, entity model permissions are separate from module permissions. Though if entity model permissions
-     * are not defined, then this falls back to using module permissions.
-     *
-     * @param config
-     * @return
-     */
-    protected DocumentMetadataHandle buildMetadataForEntityModels(HubConfig config) {
-        String permissions = config.getEntityModelPermissions();
-        if (permissions == null || permissions.trim().length() < 1) {
-            if (logger.isInfoEnabled()) {
-                logger.info("Entity model permissions were not set, so using module permissions; consider setting mlEntityModelPermissions " +
-                    "in case you want entity models to have custom permissions.");
-            }
-            permissions = config.getModulePermissions();
-        }
-        return buildMetadata("http://marklogic.com/entity-services/models", permissions);
-    }
-
     private void executeWalk(
         Path dir,
         ModulesFinder modulesFinder,
@@ -281,7 +272,15 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         }
     }
 
-    private DocumentMetadataHandle buildMetadata(String collection, String permissions) {
+    /**
+     * As of 5.2.0, artifact permissions are separate from module permissions. If artifact permissions
+     * are not defined, then it falls back to using default permissions.
+     *
+     * @param permissions
+     * @param collection
+     * @return
+     */
+    protected DocumentMetadataHandle buildMetadata(String permissions, String collection) {
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add(collection);
         documentPermissionsParser.parsePermissions(permissions, meta.getPermissions());

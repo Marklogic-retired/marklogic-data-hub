@@ -8,4 +8,5 @@ export class MappingOptions {
   public mapping: any;
   public targetEntity: string;
   public outputFormat: string;
+  public permissions: string;
 }

@@ -27,12 +27,8 @@ import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
-import com.marklogic.hub.impl.FlowManagerImpl;
-import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.RunStepResponse;
-import com.marklogic.hub.step.StepDefinition;
-import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,8 +36,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.io.IOException;
 import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 @ExtendWith(SpringExtension.class)
@@ -49,13 +46,7 @@ import java.util.*;
 public class FlowRunnerTest extends HubTestBase {
 
     @Autowired
-    private FlowManagerImpl fm;
-
-    @Autowired
-    private FlowRunnerImpl fr;
-
-    @Autowired
-    private HubConfigImpl hubConfig;
+    FlowRunnerImpl flowRunner;
 
     @BeforeAll
     public static void setup() {
@@ -69,48 +60,24 @@ public class FlowRunnerTest extends HubTestBase {
     }
 
     @BeforeEach
-    public void setupEach() throws IOException {
-        basicSetup();
-        getDataHubAdminConfig();
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
-        FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/entities/e2eentity.entity.json"),
-            hubConfig.getHubEntitiesDir().toFile());
-        installUserModules(getDataHubAdminConfig(), true);
-        FileUtils.copyDirectory(getResourceFile("flow-runner-test/flows"), hubConfig.getFlowsDir().toFile());
-        FileUtils.copyDirectory(getResourceFile("flow-runner-test/input"),
-            hubConfig.getHubProjectDir().resolve("input").toFile());
-        FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/step-definitions/json-ingestion.step.json"),
-            hubConfig.getStepsDirByType(StepDefinition.StepDefinitionType.INGESTION).resolve("json-ingestion").toFile());
-        FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/step-definitions/json-mapping.step.json"),
-            hubConfig.getStepsDirByType(StepDefinition.StepDefinitionType.MAPPING).resolve("json-mapping").toFile());
-        FileUtils.copyDirectory(getResourceFile("flow-runner-test/mappings"),
-            hubConfig.getHubMappingsDir().resolve("e2e-mapping").toFile());
-        installUserModules(getDataHubAdminConfig(), true);
-        installHubArtifacts(getDataHubAdminConfig(), true);
-        getHubFlowRunnerConfig();
+    public void setupEach() {
+        setupProjectForRunningTestFlow();
+        runAsDataHubOperator();
     }
 
     @Test
     public void testRunFlow(){
-        RunFlowResponse resp = fr.runFlow("testFlow");
-        fr.awaitCompletion();
-        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "xml-coll") == 1);
-        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "csv-coll") == 25);
-        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "csv-tab-coll") == 25);
-        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "json-coll") == 1);
-        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "json-map") == 1);
-        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map") == 1);
+        RunFlowResponse resp = runFlow("testFlow", null, null, null, null);
+        flowRunner.awaitCompletion();
+
+        System.out.println("Logging response to help with debugging this failure on Jenkins: " + resp);
+        verifyCollectionCountsFromRunningTestFlow();
         Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
         XMLDocumentManager docMgr = stagingClient.newXMLDocumentManager();
         DocumentMetadataHandle metadataHandle = new DocumentMetadataHandle();
         docMgr.readMetadata("/ingest-xml.xml", metadataHandle);
         DocumentMetadataHandle.DocumentPermissions perms = metadataHandle.getPermissions();
-        Assertions.assertEquals(2, perms.get("flow-developer-role").size());
-        Assertions.assertNotNull(resp.getUser());
-        Assertions.assertNotNull(resp.getStartTime());
-        Assertions.assertNotNull(resp.getEndTime());
-        Assertions.assertNotNull(resp.getLastAttemptedStep());
-        Assertions.assertNotNull(resp.getLastCompletedStep());
+        Assertions.assertEquals(2, perms.get("data-hub-operator").size());
         RunStepResponse stepResp = resp.getStepResponses().get("1");
         Assertions.assertNotNull(stepResp.getStepStartTime());
         Assertions.assertNotNull(stepResp.getStepEndTime());
@@ -139,8 +106,9 @@ public class FlowRunnerTest extends HubTestBase {
 
         stepDetails.put("outputURIReplacement" ,".*/input,'/output'");
         stepConfig.put("fileLocations", stepDetails);
-        RunFlowResponse resp = fr.runFlow("testFlow",Arrays.asList("3"), UUID.randomUUID().toString(),opts, stepConfig);
-        fr.awaitCompletion();
+
+        RunFlowResponse resp = runFlow("testFlow", "3", UUID.randomUUID().toString(),opts, stepConfig);
+        flowRunner.awaitCompletion();
         Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "csv-coll") == 25);
         Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
         EvalResultIterator resultItr = runInDatabase("fn:count(cts:uri-match(\"/output/*.xml\"))", HubConfig.DEFAULT_STAGING_NAME);
@@ -158,6 +126,11 @@ public class FlowRunnerTest extends HubTestBase {
         }
      }
 
+     protected RunFlowResponse runFlow(String flowName, String commaDelimitedSteps, String jobId, Map<String,Object> options, Map<String, Object> stepConfig) {
+        List<String> steps = commaDelimitedSteps != null ? Arrays.asList(commaDelimitedSteps.split(",")) : null;
+         return flowRunner.runFlow(flowName, steps, jobId, options, stepConfig);
+     }
+
     @Test
     public void testIngestCSVasXMLCustomDelimiter(){
         Map<String,Object> opts = new HashMap<>();
@@ -169,8 +142,8 @@ public class FlowRunnerTest extends HubTestBase {
         stepDetails.put("outputURIReplacement" ,".*/input,'/output'");
         stepDetails.put("separator" ,"\t");
         stepConfig.put("fileLocations", stepDetails);
-        RunFlowResponse resp = fr.runFlow("testFlow",Arrays.asList("4"), UUID.randomUUID().toString(),opts, stepConfig);
-        fr.awaitCompletion();
+        RunFlowResponse resp = runFlow("testFlow", "4", UUID.randomUUID().toString(),opts, stepConfig);
+        flowRunner.awaitCompletion();
         Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "csv-tab-coll") == 25);
         Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
         EvalResultIterator resultItr = runInDatabase("fn:count(cts:uri-match(\"/output/*.xml\"))", HubConfig.DEFAULT_STAGING_NAME);
@@ -193,8 +166,8 @@ public class FlowRunnerTest extends HubTestBase {
         stepDetails.put("inputFileType","text");
         stepDetails.put("outputURIReplacement" ,".*/input,'/output'");
         stepConfig.put("fileLocations", stepDetails);
-        RunFlowResponse resp = fr.runFlow("testFlow",Arrays.asList("2"), UUID.randomUUID().toString(),opts, stepConfig);
-        fr.awaitCompletion();
+        RunFlowResponse resp = runFlow("testFlow", "2", UUID.randomUUID().toString(),opts, stepConfig);
+        flowRunner.awaitCompletion();
         Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "text-collection") == 1);
         Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
     }
@@ -203,8 +176,8 @@ public class FlowRunnerTest extends HubTestBase {
     public void testEmptyCollector(){
         Map<String,Object> opts = new HashMap<>();
         opts.put("sourceQuery", "cts.collectionQuery('non-existent-collection')");
-        RunFlowResponse resp = fr.runFlow("testFlow", Arrays.asList("1", "6"), UUID.randomUUID().toString(), opts);
-        fr.awaitCompletion();
+        RunFlowResponse resp = runFlow("testFlow", "1,6", UUID.randomUUID().toString(), opts, null);
+        flowRunner.awaitCompletion();
         Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "xml-coll") == 1);
         Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map") == 0);
         Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
@@ -215,8 +188,8 @@ public class FlowRunnerTest extends HubTestBase {
         Map<String,Object> opts = new HashMap<>();
         opts.put("sourceQuery", "cts.collectionQuer('xml-coll')");
         //Flow finishing with "finished_with_errors" status
-        RunFlowResponse resp = fr.runFlow("testFlow", Arrays.asList("1", "6"), UUID.randomUUID().toString(), opts);
-        fr.awaitCompletion();
+        RunFlowResponse resp = runFlow("testFlow", "1,6", UUID.randomUUID().toString(), opts, null);
+        flowRunner.awaitCompletion();
         Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "xml-coll") == 1);
         Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map") == 0);
         Assertions.assertTrue(JobStatus.FINISHED_WITH_ERRORS.toString().equalsIgnoreCase(resp.getJobStatus()));
@@ -224,8 +197,8 @@ public class FlowRunnerTest extends HubTestBase {
         Assertions.assertTrue(stepResp.getStatus().equalsIgnoreCase("failed step 6"));
 
         //Flow finishing with "failed" status
-        resp = fr.runFlow("testFlow", Arrays.asList("6"), UUID.randomUUID().toString(), opts);
-        fr.awaitCompletion();
+        resp = runFlow("testFlow", "6", UUID.randomUUID().toString(), opts, null);
+        flowRunner.awaitCompletion();
         Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map") == 0);
         Assertions.assertTrue(JobStatus.FAILED.toString().equalsIgnoreCase(resp.getJobStatus()));
         stepResp = resp.getStepResponses().get("6");
@@ -235,27 +208,21 @@ public class FlowRunnerTest extends HubTestBase {
     @Test
     public void testRunFlowOptions(){
         Map<String,Object> opts = new HashMap<>();
-        List<String> steps = new ArrayList<>();
-        steps.add("1");
-        steps.add("2");
         List<String> coll = new ArrayList<>();
         coll.add("test-collection");
         opts.put("targetDatabase", HubConfig.DEFAULT_FINAL_NAME);
         opts.put("collections", coll);
-        opts.put("permissions", "rest-reader,read");
         opts.put("sourceQuery", "cts.collectionQuery('test-collection')");
-        RunFlowResponse resp = fr.runFlow("testFlow",steps, UUID.randomUUID().toString(), opts);
-        fr.awaitCompletion();
-        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "test-collection") == 2);
+        RunFlowResponse resp = runFlow("testFlow", "1,2", UUID.randomUUID().toString(), opts, null);
+        flowRunner.awaitCompletion();
+        Assertions.assertEquals(2, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "test-collection"));
         Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
 
         opts.put("targetDatabase", HubConfig.DEFAULT_STAGING_NAME);
         opts.put("sourceDatabase", HubConfig.DEFAULT_FINAL_NAME);
-        steps = new ArrayList<>();
-        steps.add("5");
-        resp = fr.runFlow("testFlow", steps, UUID.randomUUID().toString(), opts);
-        fr.awaitCompletion();
-        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "test-collection") == 2);
+        resp = runFlow("testFlow", "5", UUID.randomUUID().toString(), opts, null);
+        flowRunner.awaitCompletion();
+        Assertions.assertEquals(2, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "test-collection"));
         Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
     }
 
@@ -263,9 +230,6 @@ public class FlowRunnerTest extends HubTestBase {
     public void testRunFlowStepConfig(){
         Map<String,Object> stepConfig = new HashMap<>();
         Map<String,Object> opts = new HashMap<>();
-        List<String> steps = new ArrayList<>();
-        steps.add("1");
-        steps.add("2");
         List<String> coll = new ArrayList<>();
         coll.add("test-collection");
         Map<String,String> stepDetails = new HashMap<>();
@@ -275,10 +239,9 @@ public class FlowRunnerTest extends HubTestBase {
         stepConfig.put("batchSize", "1");
         opts.put("targetDatabase", HubConfig.DEFAULT_FINAL_NAME);
         opts.put("collections", coll);
-        opts.put("permissions", "rest-reader,read");
 
-        RunFlowResponse resp = fr.runFlow("testFlow",steps, UUID.randomUUID().toString(), opts, stepConfig);
-        fr.awaitCompletion();
+        RunFlowResponse resp = runFlow("testFlow", "1,2", UUID.randomUUID().toString(), opts, stepConfig);
+        flowRunner.awaitCompletion();
         Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "test-collection") == 1);
         // Assert that a Job document is created
         Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_JOB_NAME, "Job") == 1);
@@ -288,19 +251,15 @@ public class FlowRunnerTest extends HubTestBase {
     @Test
     public void testDisableJobOutput(){
         Map<String,Object> opts = new HashMap<>();
-        List<String> steps = new ArrayList<>();
-        steps.add("1");
-        steps.add("2");
         List<String> coll = new ArrayList<>();
         coll.add("test-collection");
         opts.put("targetDatabase", HubConfig.DEFAULT_FINAL_NAME);
         opts.put("collections", coll);
-        opts.put("permissions", "rest-reader,read");
         opts.put("sourceQuery", "cts.collectionQuery('test-collection')");
         opts.put("disableJobOutput", Boolean.TRUE);
 
-        RunFlowResponse resp = fr.runFlow("testFlow",steps, UUID.randomUUID().toString(), opts);
-        fr.awaitCompletion();
+        RunFlowResponse resp = runFlow("testFlow", "1,2", UUID.randomUUID().toString(), opts, null);
+        flowRunner.awaitCompletion();
         Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "test-collection") == 2);
         Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
         // Assert that no Jobs documents were created
@@ -318,8 +277,8 @@ public class FlowRunnerTest extends HubTestBase {
         mapping.put("version", "1");
         opts.put("mapping", mapping);
 
-        RunFlowResponse resp = fr.runFlow("testFlow",Arrays.asList("1","6"), UUID.randomUUID().toString(), opts);
-        fr.awaitCompletion();
+        RunFlowResponse resp = runFlow("testFlow", "1,6", UUID.randomUUID().toString(), opts, null);
+        flowRunner.awaitCompletion();
         Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "xml-coll") == 1);
         Assertions.assertTrue(JobStatus.STOP_ON_ERROR.toString().equalsIgnoreCase(resp.getJobStatus()));
     }
@@ -328,8 +287,6 @@ public class FlowRunnerTest extends HubTestBase {
     public void testIngestBinaryAndTxt(){
         Map<String,Object> stepConfig = new HashMap<>();
         Map<String,Object> opts = new HashMap<>();
-        List<String> steps = new ArrayList<>();
-        steps.add("1");
         List<String> coll = new ArrayList<>();
         coll.add("binary-text-collection");
         Map<String,String> stepDetails = new HashMap<>();
@@ -339,9 +296,8 @@ public class FlowRunnerTest extends HubTestBase {
         stepConfig.put("batchSize", "1");
         opts.put("outputFormat", "binary");
         opts.put("collections", coll);
-        opts.put("permissions", "rest-reader,read");
-        RunFlowResponse resp = fr.runFlow("testFlow",steps, UUID.randomUUID().toString(), opts, stepConfig);
-        fr.awaitCompletion();
+        RunFlowResponse resp = runFlow("testFlow","1", UUID.randomUUID().toString(), opts, stepConfig);
+        flowRunner.awaitCompletion();
 
         coll = new ArrayList<>();
         coll.add("text-collection");
@@ -351,8 +307,8 @@ public class FlowRunnerTest extends HubTestBase {
         stepConfig.put("fileLocations", stepDetails);
         stepConfig.put("batchSize", "1");
         opts.put("outputFormat", "text");
-        RunFlowResponse resp1 = fr.runFlow("testFlow",steps, UUID.randomUUID().toString(), opts, stepConfig);
-        fr.awaitCompletion();
+        RunFlowResponse resp1 = runFlow("testFlow","1", UUID.randomUUID().toString(), opts, stepConfig);
+        flowRunner.awaitCompletion();
 
         Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "binary-text-collection") == 2);
         Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
@@ -363,8 +319,6 @@ public class FlowRunnerTest extends HubTestBase {
     public void testUnsupportedFileType(){
         Map<String,Object> stepConfig = new HashMap<>();
         Map<String,Object> opts = new HashMap<>();
-        List<String> steps = new ArrayList<>();
-        steps.add("1");
         List<String> coll = new ArrayList<>();
         coll.add("binary-text-collection");
         Map<String,String> stepDetails = new HashMap<>();
@@ -374,9 +328,8 @@ public class FlowRunnerTest extends HubTestBase {
         stepConfig.put("batchSize", "1");
         opts.put("outputFormat", "Binary");
         opts.put("collections", coll);
-        opts.put("permissions", "rest-reader,read");
-        RunFlowResponse resp = fr.runFlow("testFlow",steps, UUID.randomUUID().toString(), opts, stepConfig);
-        fr.awaitCompletion();
+        RunFlowResponse resp = runFlow("testFlow","1", UUID.randomUUID().toString(), opts, stepConfig);
+        flowRunner.awaitCompletion();
 
         Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "binary-text-collection") == 0);
         Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
@@ -384,17 +337,17 @@ public class FlowRunnerTest extends HubTestBase {
 
     @Test
     public void testStopJob() {
-        RunFlowResponse resp = fr.runFlow("testFlow");
+        RunFlowResponse resp = runFlow("testFlow", null, null, null, null);
         Runnable r = ()->{
             try {
                 Thread.sleep(2650L);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            fr.stopJob(resp.getJobId());
+            flowRunner.stopJob(resp.getJobId());
         };
         r.run();
-        fr.awaitCompletion();
+        flowRunner.awaitCompletion();
 
         //Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "xml-coll") > 0);
         Assertions.assertTrue(JobStatus.CANCELED.toString().equalsIgnoreCase(resp.getJobStatus()));
@@ -404,8 +357,6 @@ public class FlowRunnerTest extends HubTestBase {
     public void testRunMultipleJobs() {
         Map<String,Object> stepConfig = new HashMap<>();
         Map<String,Object> opts = new HashMap<>();
-        List<String> steps = new ArrayList<>();
-        steps.add("2");
         List<String> coll = new ArrayList<>();
         coll.add("test-collection");
         Map<String,String> stepDetails = new HashMap<>();
@@ -425,14 +376,14 @@ public class FlowRunnerTest extends HubTestBase {
         opts1.put("collections", coll1);
 
 
-        RunFlowResponse resp = fr.runFlow("testFlow",steps, UUID.randomUUID().toString(), opts, stepConfig);
-        RunFlowResponse resp1 = fr.runFlow("testFlow",steps, UUID.randomUUID().toString(), opts1, stepConfig1);
-        fr.awaitCompletion();
-        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "test-collection") == 1);
-        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "test-collection1") == 1);
-        System.out.println(resp.getJobStatus());
-        System.out.println(resp1.getJobStatus());
-        Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
-        Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp1.getJobStatus()));
+        RunFlowResponse resp = runFlow("testFlow", "2", UUID.randomUUID().toString(), opts, stepConfig);
+        RunFlowResponse resp1 = runFlow("testFlow", "2", UUID.randomUUID().toString(), opts1, stepConfig1);
+        flowRunner.awaitCompletion();
+        assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "test-collection"));
+        assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "test-collection1"));
+        Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()),
+            "Expected job status of first response to be 'finished', but was: " + resp.getJobStatus());
+        Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp1.getJobStatus()),
+            "Expected job status of second response to be 'finished', but was: " + resp1.getJobStatus());
     }
 }

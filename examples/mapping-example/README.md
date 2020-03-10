@@ -21,17 +21,22 @@ Next, start up QuickStart and browse to this project folder and login to QuickSt
 
 ## How to test the flows
 
-This project has four flows:
+This project has nine flows:
 
 1. The jsonToJson flow ingests and maps a single JSON document to a JSON entity instance
 1. The jsonToXml flow ingests and maps a single JSON document to an XML entity instance
 1. The xmlToJson flow ingests and maps a single XML document to a JSON entity instance
 1. The xmlToXml flow ingests and maps a single XML document to an XML entity instance
+1. The application_member flow ingests and maps a single JSON document to a JSON entity instance
+1. The gene_sample flow ingests and maps a single XML document to an XML entity instance
+1. The insurance_application flow ingests and maps a single XML document to an XML entity instance
+1. The medical_journal flow ingests and maps a single XML document to an XML entity instance
+1. The protein_sample flow ingests and maps a single XML document to an XML entity instance
 
 The jsonToJson and jsonToXml flows demonstrate a wide array of mapping features, while the xmlToJson and xmlToXml flows are more focused on a few
-features specific to XML like attributes and namespaces.
+features specific to XML like attributes and namespaces. All the remaining flows demonstrate a similar mapping feature and uses the sample data from "Pharma Hub" project.
 
-All the flows can be run from the "Flows" page in QuickStart. Each will ingest one document into the staging database and then
+The flows can be run from the "Flows" page in QuickStart. Each will ingest one document into the staging database and then
 write one entity instance - a Person - to the final database. The Person entity definition contains two nested entity 
 properties to demonstrate mapping data from a source document to nested entities:
 

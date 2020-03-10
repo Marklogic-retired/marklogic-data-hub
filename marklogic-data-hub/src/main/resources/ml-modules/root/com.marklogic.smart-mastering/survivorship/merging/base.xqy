@@ -28,6 +28,8 @@ import module namespace auditing = "http://marklogic.com/smart-mastering/auditin
   at "../../auditing/base.xqy";
 import module namespace coll-impl = "http://marklogic.com/smart-mastering/survivorship/collections"
   at "collections.xqy";
+import module namespace config = "http://marklogic.com/data-hub/config"
+  at "/com.marklogic.hub/config.xqy";
 import module namespace fun-ext = "http://marklogic.com/smart-mastering/function-extension"
   at "../../function-extension/base.xqy";
 import module namespace history = "http://marklogic.com/smart-mastering/auditing/history"
@@ -197,11 +199,8 @@ declare function merge-impl:save-merge-models-by-uri(
       xdmp:document-insert(
         $audit-trace => map:get("uri"),
         $audit-trace => map:get("value"),
-        (
-          xdmp:default-permissions()
-        ),
-        ($audit-trace => map:get("context"))
-          => map:get("collections")
+        $audit-trace => map:get("context") => map:get("permissions"),
+        $audit-trace => map:get("context") => map:get("collections")
       ),
       let $on-merge-options := $merge-options/merging:algorithms/merging:collections/merging:on-merge
       let $distinct-uris := fn:distinct-values(($uris, $uris))[fn:doc-available(.)][fn:not(. = $merge-uri)]
@@ -210,10 +209,11 @@ declare function merge-impl:save-merge-models-by-uri(
         xdmp:document-insert(
           $merge-uri,
           $merged-document,
-          (
+          let $perms := (
             xdmp:default-permissions(),
             fn:map(xdmp:document-get-permissions#1, $uris)
-          ),
+          )
+          return if (fn:exists($perms)) then $perms else config:get-default-data-hub-permissions(),
           coll-impl:on-merge(map:new((
             for $uri in $distinct-uris
             return map:entry($uri, xdmp:document-get-collections($uri)[fn:not(. = $const:ARCHIVED-COLL)])
@@ -386,20 +386,20 @@ declare function merge-impl:rollback-merge(
   $block-future-merges as xs:boolean
 ) as xs:string*
 {
-  let $latest-auditing-receipt-for-doc :=
-    fn:head(
-      for $auditing-doc in auditing:auditing-receipts-for-doc-uri($merged-doc-uri)
-      order by $auditing-doc//prov:time ! xs:dateTime(.) descending
-      return $auditing-doc
-    )
   let $merge-doc-headers := fn:doc($merged-doc-uri)/*:envelope/*:headers
   let $merge-options-ref := $merge-doc-headers/*:merge-options/*:value ! fn:string(.)
   let $castable-as-hex := $merge-options-ref castable as xs:hexBinary
   let $merge-options :=
-            if ($castable-as-hex) then
-              xdmp:zip-get(binary { $merge-options-ref }, "merge-options.xml")/*
-            else
-              fn:doc($merge-options-ref)/*
+    if ($castable-as-hex) then
+      xdmp:zip-get(binary { $merge-options-ref }, "merge-options.xml")/*
+    else
+      fn:doc($merge-options-ref)/*
+  let $latest-auditing-receipt-for-doc :=
+    fn:head(
+      for $auditing-doc in auditing:auditing-receipts-for-doc-uri($merged-doc-uri, $merge-options)
+      order by $auditing-doc//prov:time ! xs:dateTime(.) descending
+      return $auditing-doc
+    )
   let $all-contributing-uris := $merge-doc-headers/*:merges/*:document-uri
   let $last-merge-dateTime := fn:max($all-contributing-uris/(@last-merge|../last-merge) ! xs:dateTime(.))
   let $previous-uris := if (fn:empty($last-merge-dateTime) and fn:exists($latest-auditing-receipt-for-doc)) then
@@ -413,11 +413,12 @@ declare function merge-impl:rollback-merge(
       if ($block-future-merges) then
         matcher:block-matches($previous-uris)
       else ()
-    let $on-merge-options := $merge-options/merging:algorithms/merging:collections/merging:on-merge
+    let $on-no-match-options := $merge-options/merging:algorithms/merging:collections/merging:on-no-match
+    let $archive-collections := coll-impl:on-no-match(map:map(), $merge-options/merging:algorithms/merging:collections/merging:on-archive)
     for $previous-doc-uri in $previous-uris
-    let $new-collections := coll-impl:on-merge(
-            map:entry($previous-doc-uri, xdmp:document-get-collections($previous-doc-uri)[fn:not(. = $const:ARCHIVED-COLL)])
-          ,$on-merge-options)
+    let $new-collections := coll-impl:on-no-match(
+            map:entry($previous-doc-uri, xdmp:document-get-collections($previous-doc-uri)[fn:not(. = $archive-collections)])
+          ,$on-no-match-options)
     where fn:not($previous-doc-uri = $merged-doc-uri or merge-impl:source-of-other-merged-doc($previous-doc-uri, $merged-doc-uri))
     return (
       $previous-doc-uri,
@@ -618,15 +619,13 @@ declare function merge-impl:build-merge-models-by-uri(
             )
           ),
           map:entry("permissions",
-            (
+            let $perms := (
               xdmp:default-permissions($merge-uri, "objects"),
               for $uri in $uris
               let $write-object := util-impl:retrieve-write-object($uri)
-              return
-                $write-object
-                => map:get("context")
-                => map:get("permissions")
+              return $write-object => map:get("context") => map:get("permissions")
             )
+            return if (fn:exists($perms)) then $perms else config:get-default-data-hub-permissions()
           )
         ))
       ),
@@ -2324,15 +2323,36 @@ declare function merge-impl:archive-document($uri as xs:string, $merge-options a
   merge-impl:lock-for-update($uri),
   if (map:contains($documents-archived-in-transaction, $uri)) then ()
   else
+    (: If we're archiving a merged document, we want to only retain the collections specifically for merged and archived
+      and drop collections carried over by the documents merged into it.
+    :)
+    let $collection-algorithms := $merge-options/merging:algorithms/merging:collections
+    let $is-merged-doc := fn:starts-with($uri,$MERGED-DIR)
+    let $doc-collections := if ($is-merged-doc) then map:map() else map:entry($uri, xdmp:document-get-collections($uri))
+    return
     map:put(
       $documents-archived-in-transaction,
       $uri,
       (
         xdmp:document-set-collections(
           $uri,
-          coll-impl:on-archive(
-            map:entry($uri, xdmp:document-get-collections($uri)),
-            $merge-options/merging:algorithms/merging:collections/merging:on-archive
+          (
+            if ($is-merged-doc) then (
+              let $on-no-match-collections := coll-impl:on-no-match(
+                  $doc-collections,
+                  $collection-algorithms/merging:on-archive
+                )
+              let $on-merge-collections := coll-impl:on-merge(
+                  $doc-collections,
+                  $collection-algorithms/merging:on-merge
+                )
+              (: Exclude any overlap of on-merge with on-no-match :)
+              return $on-merge-collections[fn:not(. = $on-no-match-collections)]
+            ) else (),
+            coll-impl:on-archive(
+              $doc-collections,
+              $collection-algorithms/merging:on-archive
+            )
           )
         ),
         fn:true()

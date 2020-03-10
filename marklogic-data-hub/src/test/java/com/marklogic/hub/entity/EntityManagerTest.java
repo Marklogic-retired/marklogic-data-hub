@@ -17,11 +17,7 @@ package com.marklogic.hub.entity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.marklogic.hub.EntityManager;
-import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubProject;
-import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.*;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;
@@ -60,6 +56,7 @@ public class EntityManagerTest extends HubTestBase {
     public void clearDbs() {
         deleteProjectDir();
         basicSetup();
+        getDataHubAdminConfig();
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
         getDataHub().clearUserModules();
         installHubModules();
@@ -170,10 +167,12 @@ public class EntityManagerTest extends HubTestBase {
     }
 
     @Test
-    public void testDeploySearchOptionsWithFlowRunnerUser() throws IOException, SAXException {
+    public void deploySearchOptionsAsDataHubDeveloper() {
+        runAsDataHubDeveloper();
+
     	getDataHub().clearUserModules();
         installEntities();
-        
+
         Path dir = Paths.get(PROJECT_PATH, HubConfig.ENTITY_CONFIG_DIR);
         assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE));
         assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
@@ -181,9 +180,9 @@ public class EntityManagerTest extends HubTestBase {
         assertFalse(Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
         assertEquals(0, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
-        //Deploy with flow runner
-        getHubFlowRunnerConfig();
-        HashMap<Enum, Boolean> deployed = entityManager.deployQueryOptions();
+
+        entityManager.deployQueryOptions();
+
         //Change to admin config
         getDataHubAdminConfig();
         //Search options files not written to modules db but created.

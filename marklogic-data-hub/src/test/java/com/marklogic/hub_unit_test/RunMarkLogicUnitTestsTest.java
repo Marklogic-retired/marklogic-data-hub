@@ -1,5 +1,9 @@
 package com.marklogic.hub_unit_test;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubTestBase;
@@ -8,8 +12,13 @@ import com.marklogic.test.unit.TestManager;
 import com.marklogic.test.unit.TestModule;
 import com.marklogic.test.unit.TestResult;
 import com.marklogic.test.unit.TestSuiteResult;
+
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
@@ -30,6 +39,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {ApplicationConfig.class, TestConfig.class})
+@TestInstance(Lifecycle.PER_CLASS)
 public class RunMarkLogicUnitTestsTest extends HubTestBase {
 
     private static boolean loadedHubArtifacts = false;
@@ -47,6 +57,17 @@ public class RunMarkLogicUnitTestsTest extends HubTestBase {
         }
     }
 
+    @BeforeAll
+    public void setupIndexes() {
+        try {
+            Path srcDir = Paths.get("src", "test", "ml-config", "databases","final-database.json");
+            Path dstDir = Paths.get(adminHubConfig.getUserDatabaseDir().toString(), "test-final-database.json");
+            FileUtils.copyFile(srcDir.toAbsolutePath().toFile(), dstDir.toAbsolutePath().toFile());
+        } catch (IOException ioe) {
+            throw new RuntimeException("Unable to copy test indexes file to project", ioe);
+        }
+        dataHub.updateIndexes();
+    }
     /**
      * This is overridden so that the test class is only initialized once, which is sufficient. Otherwise, it's invoked
      * for every unit test module, which is unnecessary.

@@ -1,0 +1,12 @@
+<alert-rule-properties xmlns="http://marklogic.com/manage/alert-rule/properties">
+  <name>sample-rule</name>
+  <description>Triggered when the document contains the word "hello"</description>
+  <query>
+    <cts:word-query xmlns:cts="http://marklogic.com/cts">
+      <cts:text xml:lang="en">hello</cts:text>
+    </cts:word-query>
+  </query>
+  <external-security-id>0</external-security-id>
+  <action-name>log-alert</action-name>
+  <options />
+</alert-rule-properties>

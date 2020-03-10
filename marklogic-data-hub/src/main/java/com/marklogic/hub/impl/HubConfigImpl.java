@@ -32,8 +32,6 @@ import com.marklogic.hub.HubProject;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.error.InvalidDBOperationError;
-import com.marklogic.hub.job.impl.JobMonitorImpl;
-import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.mgmt.DefaultManageConfigFactory;
 import com.marklogic.mgmt.ManageClient;
@@ -41,6 +39,7 @@ import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
 import com.marklogic.mgmt.admin.AdminManager;
 import com.marklogic.mgmt.admin.DefaultAdminConfigFactory;
+import com.marklogic.mgmt.util.SimplePropertySource;
 import org.apache.commons.text.CharacterPredicate;
 import org.apache.commons.text.RandomStringGenerator;
 import org.slf4j.Logger;
@@ -48,7 +47,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
@@ -57,10 +58,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
+import java.util.function.Consumer;
 
 @JsonAutoDetect(
     fieldVisibility = JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC,
@@ -78,16 +77,6 @@ public class HubConfigImpl implements HubConfig
 
     // a set of properties to use for legacy token replacement.
     Properties projectProperties = null;
-
-    @Autowired
-    LegacyFlowManagerImpl flowManager;
-    @Autowired
-    DataHubImpl dataHub;
-    @Autowired
-    Versions versions;
-    @Autowired
-    JobMonitorImpl jobMonitor;
-
 
     protected String host;
 
@@ -154,8 +143,6 @@ public class HubConfigImpl implements HubConfig
     private String flowDeveloperRoleName;
     private String flowDeveloperUserName;
 
-    private String dataHubAdminRoleName;
-
     private String DHFVersion;
 
     private String hubLogLevel;
@@ -173,7 +160,11 @@ public class HubConfigImpl implements HubConfig
 
     protected String modulePermissions;
 
+    private String mappingPermissions;
+    private String flowPermissions;
+    private String stepDefinitionPermissions;
     private String entityModelPermissions;
+    private String jobPermissions;
 
     private ManageConfig manageConfig;
     private ManageClient manageClient;
@@ -184,23 +175,112 @@ public class HubConfigImpl implements HubConfig
 
     private static final Logger logger = LoggerFactory.getLogger(HubConfigImpl.class);
 
-    private ObjectMapper objmapper;
-
     // By default, DHF uses gradle-local.properties for your local environment.
     private String envString = "local";
 
+    // Defines functions for consuming properties from a PropertySource
+    private Map<String, Consumer<String>> propertyConsumerMap;
+
+    /**
+     * No-arg constructor that does not initialize any HubConfigImpl property values. The expectation is that these will
+     * be set via a Spring Environment.
+     */
     public HubConfigImpl() {
-        objmapper = new ObjectMapper();
         projectProperties = new Properties();
     }
 
-    public HubConfigImpl(Environment environment) {
+    /**
+     * Constructor for when using this object outside of a Spring container, but a HubProject and Spring Environment are
+     * still needed.
+     *
+     * @param hubProject
+     * @param environment
+     */
+    public HubConfigImpl(HubProject hubProject, Environment environment) {
         this();
+        this.hubProject = hubProject;
         this.environment = environment;
     }
 
+    /**
+     * Static method for a new instance of HubConfigImpl based on default DHF property values with no dependency on
+     * Spring or on project files. The no-arg constructor is already reserved for use within a Spring container, where
+     * default values are expected to be set via the Spring Environment.
+     *
+     * @return
+     */
+    public static HubConfigImpl withDefaultProperties() {
+        HubConfigImpl hubConfig = new HubConfigImpl();
+        hubConfig.applyDefaultProperties();
+        return hubConfig;
+    }
+
+    /**
+     * Provides a minimally-configured instance of HubConfigImpl based on DHF default properties, with no dependency
+     * on Spring or on project files.
+     *
+     * @param host
+     * @param mlUsername
+     * @param mlPassword
+     */
+    public HubConfigImpl(String host, String mlUsername, String mlPassword) {
+        this();
+        applyDefaultProperties();
+        setHost(host);
+        setMlUsername(mlUsername);
+        setMlPassword(mlPassword);
+    }
+
+    /**
+     * When this class is not used in a Spring environment, this method is used to apply properties for the
+     * dhf-defaults.properties file to initialize an instance of this class.
+     */
+    public void applyDefaultProperties() {
+        Properties props = new Properties();
+        try {
+            props.load(new ClassPathResource("dhf-defaults.properties").getInputStream());
+        } catch (IOException ex) {
+            throw new RuntimeException("Unable to initialize HubConfigImpl; could not find dhf-defaults.properties on the classpath; cause: " + ex.getMessage(), ex);
+        }
+        applyProperties(new SimplePropertySource(props));
+    }
+
+    /**
+     * Applies properties in the given property source to this instance. This allows for an instance of HubConfigImpl
+     * to be populated via properties from any source, such as a command line program or an external orchestration tool,
+     * as opposed to just from a Spring Environment.
+     *
+     * Note that this differs substantially from how loadConfigurationFromProperties works. That function's behavior
+     * depends on whether a field has a value or not. This method is intended to set a field's value regardless of
+     * whether it has a value or not.
+     *
+     * @param propertySource
+     */
+    public void applyProperties(com.marklogic.mgmt.util.PropertySource propertySource) {
+        if (propertyConsumerMap == null) {
+            // This is necessary because some old DHF tests "reset" all the properties in the HubConfigImpl object,
+            // which results in propertyConsumerMap being nulled out. In the real world, it's unlikely that
+            // propertyConsumerMap will ever be null after an instance of this class is instantiated.
+            initializePropertyConsumerMap();
+        }
+
+        for (String propertyName : propertyConsumerMap.keySet()) {
+            String value = propertySource.getProperty(propertyName);
+            if (value != null) {
+                propertyConsumerMap.get(propertyName).accept(value);
+            }
+        }
+
+        hydrateConfigs();
+    }
+
+    protected HubProject requireHubProject() {
+        Assert.notNull(hubProject, "A HubProject has not been set, and thus this operation cannot be performed");
+        return hubProject;
+    }
+
     public void createProject(String projectDirString) {
-        hubProject.createProject(projectDirString);
+        requireHubProject().createProject(projectDirString);
     }
 
     public String getHost() { return appConfig.getHost(); }
@@ -799,15 +879,30 @@ public class HubConfigImpl implements HubConfig
     }
 
     // impl only pending refactor to Flow Component
+    @JsonIgnore
     public String getMlUsername() {
         return mlUsername;
     }
     // impl only pending refactor to Flow Component
+    @JsonIgnore
     public String getMlPassword() {
         return mlPassword;
     }
 
-    public void setHost(String host ) { this.host = host; }
+    public void setHost(String host ) {
+        this.host = host;
+        /**
+         * It's not clear why HubConfig has its own 'host' property, as that's already defined on AppConfig. But since
+         * getHost returns appConfig.getHost, then it follows that when setHost is called, both this class's 'host'
+         * property and the AppConfig should be modified.
+         */
+        if (appConfig != null) {
+            appConfig.setHost(host);
+        } else {
+            appConfig = new AppConfig();
+            appConfig.setHost(host);
+        }
+    }
 
     public void setMlUsername(String mlUsername) {
         this.mlUsername = mlUsername;
@@ -834,6 +929,11 @@ public class HubConfigImpl implements HubConfig
         return isProvisionedEnvironment;
     }
 
+    @Override
+    public void setIsProvisionedEnvironment(boolean isProvisionedEnvironment) {
+        this.isProvisionedEnvironment = isProvisionedEnvironment;
+    }
+
     public void setLoadBalancerHost(String loadBalancerHost) {
         this.loadBalancerHost = loadBalancerHost;
     }
@@ -855,9 +955,33 @@ public class HubConfigImpl implements HubConfig
     }
 
     @Override
+    public String getFlowPermissions() {
+        return flowPermissions;
+    }
+
+    @Override
+    public String getMappingPermissions() {
+        return mappingPermissions;
+    }
+
+    @Override
+    public String getStepDefinitionPermissions() {
+        return stepDefinitionPermissions;
+    }
+
+    public String getJobPermissions() {
+        return jobPermissions;
+    }
+
+    public void setJobPermissions(String jobPermissions) {
+        this.jobPermissions = jobPermissions;
+    }
+
+
+    @Override
     @Deprecated
     public String getProjectDir() {
-        return hubProject.getProjectDirString();
+        return requireHubProject().getProjectDirString();
     }
 
     @Override
@@ -874,28 +998,47 @@ public class HubConfigImpl implements HubConfig
         this.entityModelPermissions = entityModelPermissions;
     }
 
+    public void setFlowPermissions(String flowPermissions) {
+        this.flowPermissions = flowPermissions;
+    }
+
+    public void setMappingPermissions(String mappingPermissions) {
+        this.mappingPermissions = mappingPermissions;
+    }
+
+    public void setStepDefinitionPermissions(String stepDefinitionPermissions) {
+        this.stepDefinitionPermissions = stepDefinitionPermissions;
+    }
+
     @JsonIgnore
     @Override  public HubProject getHubProject() {
         return this.hubProject;
     }
 
     @Override  public void initHubProject() {
-        this.hubProject.init(getCustomTokens());
+        if (appConfig == null) {
+            appConfig = new DefaultAppConfigFactory().newAppConfig();
+        }
+        addDhfPropertiesToCustomTokens(appConfig);
+        this.requireHubProject().init(appConfig.getCustomTokens());
     }
 
     @Override
     @Deprecated
     public String getHubModulesDeployTimestampFile() {
-        return hubProject.getHubModulesDeployTimestampFile();
+        return requireHubProject().getHubModulesDeployTimestampFile();
     }
 
     @Override
     @Deprecated
     public String getUserModulesDeployTimestampFile() {
-        return hubProject.getUserModulesDeployTimestampFile();
+        return requireHubProject().getUserModulesDeployTimestampFile();
     }
 
-
+    /**
+     * After setting properties, this method must be invoked to instantiate SSL objects in case any of the SSL-related
+     * properties have been set to true.
+     */
     public void hydrateConfigs() {
         if (stagingSimpleSsl != null && stagingSimpleSsl) {
             stagingSslContext = SimpleX509TrustManager.newSSLContext();
@@ -946,35 +1089,50 @@ public class HubConfigImpl implements HubConfig
         }
     }
 
-
-    public void loadConfigurationFromProperties(){
+    @JsonIgnore
+    public void refreshProject() {
         loadConfigurationFromProperties(null, true);
     }
 
+    /**
+     * Expected to be used when an instance of this class is managed by a Spring container, as it depends on a Spring
+     * environment object being set.
+     *
+     * This method also operates in one of two ways for each field. If a field value is null, it is set based on the
+     * value in the incoming Properties object, or based on the Spring environment as a fallback. But if the field value
+     * is already set, then its value is stored in the class's projectProperties field.
+     *
+     * @param properties
+     * @param loadGradleProperties
+     */
     public void loadConfigurationFromProperties(Properties properties, boolean loadGradleProperties) {
+        if (environment == null) {
+            throw new RuntimeException("Unable to load configuration from properties, the Spring environment object is null");
+        }
+
         projectProperties = new Properties();
 
-        /*
-         * Not sure if this code should still be here. We don't want to do this in a Gradle environment because the
-         * properties have already been loaded and processed by the Gradle properties plugin, and they should be in
-         * the incoming Properties object. So the use case for this would be when there's a gradle.properties file
-         * available but Gradle isn't being used.
+        /**
+         * The primary use case for this block of code is when an instance of this class is used in the QuickStart
+         * application, where properties are read from a Gradle properties file but Gradle itself is not used. In a
+         * Gradle environment, properties will have already been loaded and processed by the Gradle properties plugin,
+         * and they should be in the incoming Properties object.
          */
         if (loadGradleProperties) {
             if (logger.isInfoEnabled()) {
                 logger.info("Loading properties from gradle.properties");
             }
-            File file = hubProject.getProjectDir().resolve("gradle.properties").toFile();
+            File file = requireHubProject().getProjectDir().resolve("gradle.properties").toFile();
             loadPropertiesFromFile(file, projectProperties);
 
             if (envString != null) {
-                File envPropertiesFile = hubProject.getProjectDir().resolve("gradle-" + envString + ".properties").toFile();
+                File envPropertiesFile = requireHubProject().getProjectDir().resolve("gradle-" + envString + ".properties").toFile();
                 if (envPropertiesFile != null && envPropertiesFile.exists()) {
                     if (logger.isInfoEnabled()) {
                         logger.info("Loading additional properties from " + envPropertiesFile.getAbsolutePath());
                     }
                     loadPropertiesFromFile(envPropertiesFile, projectProperties);
-                    hubProject.setUserModulesDeployTimestampFile(envString + "-" + USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES);
+                    requireHubProject().setUserModulesDeployTimestampFile(envString + "-" + USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES);
                 }
             }
         }
@@ -984,6 +1142,7 @@ public class HubConfigImpl implements HubConfig
         }
 
         if (host == null) {
+            // Can't call setHost here because the AppConfig needs to be "hydrated", which will happen later in this method
             host = getEnvPropString(projectProperties, "mlHost", environment.getProperty("mlHost"));
         }
         else {
@@ -1285,13 +1444,6 @@ public class HubConfigImpl implements HubConfig
             projectProperties.setProperty("mlFlowDeveloperUserName", flowDeveloperUserName);
         }
 
-        if (dataHubAdminRoleName == null) {
-            dataHubAdminRoleName = getEnvPropString(projectProperties, "mlDataHubAdminRole", environment.getProperty("mlDataHubAdminRole"));
-        }
-        else {
-            projectProperties.setProperty("mlDataHubAdminRole", dataHubAdminRoleName);
-        }
-
         if (modulePermissions == null) {
             modulePermissions = getEnvPropString(projectProperties, "mlModulePermissions", environment.getProperty("mlModulePermissions"));
         }
@@ -1304,6 +1456,34 @@ public class HubConfigImpl implements HubConfig
         }
         else {
             projectProperties.setProperty("mlEntityModelPermissions", entityModelPermissions);
+        }
+
+        if (mappingPermissions == null) {
+            mappingPermissions = getEnvPropString(projectProperties, "mlMappingPermissions", environment.getProperty("mlMappingPermissions"));
+        }
+        else {
+            projectProperties.setProperty("mlMappingPermissions", mappingPermissions);
+        }
+
+        if (flowPermissions == null) {
+            flowPermissions = getEnvPropString(projectProperties, "mlFlowPermissions", environment.getProperty("mlFlowPermissions"));
+        }
+        else {
+            projectProperties.setProperty("mlFlowPermissions", flowPermissions);
+        }
+
+        if (stepDefinitionPermissions == null) {
+            stepDefinitionPermissions = getEnvPropString(projectProperties, "mlStepDefinitionPermissions", environment.getProperty("mlStepDefinitionPermissions"));
+        }
+        else {
+            projectProperties.setProperty("mlStepDefinitionPermissions", stepDefinitionPermissions);
+        }
+
+        if (jobPermissions == null) {
+            jobPermissions = getEnvPropString(projectProperties, "mlJobPermissions", environment.getProperty("mlJobPermissions"));
+        }
+        else {
+            projectProperties.setProperty("mlJobPermissions", jobPermissions);
         }
 
         DHFVersion = getEnvPropString(projectProperties, "mlDHFVersion", environment.getProperty("mlDHFVersion"));
@@ -1352,55 +1532,33 @@ public class HubConfigImpl implements HubConfig
         else {
             projectProperties.setProperty("mlIsProvisionedEnvironment", isProvisionedEnvironment.toString());
         }
+
         // Need to do this first so that objects like the final SSL objects are set before hydrating AppConfig
         hydrateConfigs();
 
         hydrateAppConfigs(projectProperties);
     }
 
-    private void hydrateAppConfigs(Properties properties) {
+    protected void hydrateAppConfigs(Properties properties) {
         com.marklogic.mgmt.util.PropertySource propertySource = properties::getProperty;
-        hydrateAppConfigs(propertySource);
-    }
 
-    private void hydrateAppConfigs(Environment environment) {
-        com.marklogic.mgmt.util.PropertySource propertySource = environment::getProperty;
-        hydrateAppConfigs(propertySource);
-    }
-
-    private void hydrateAppConfigs(com.marklogic.mgmt.util.PropertySource propertySource) {
         if (appConfig != null) {
+            // Still need to call this since the setter also "updates" appConfig with DHF-specific values
             setAppConfig(appConfig);
-        }
-        else {
+        } else {
             setAppConfig(new DefaultAppConfigFactory(propertySource).newAppConfig());
         }
 
-        if (adminConfig != null) {
-            setAdminConfig(adminConfig);
-        }
-        else {
+        if (adminConfig == null) {
             setAdminConfig(new DefaultAdminConfigFactory(propertySource).newAdminConfig());
         }
-
-        if (adminManager != null) {
-            setAdminManager(adminManager);
-        }
-        else {
+        if (adminManager == null) {
             setAdminManager(new AdminManager(getAdminConfig()));
         }
-
-        if (manageConfig != null) {
-            setManageConfig(manageConfig);
-        }
-        else {
+        if (manageConfig == null) {
             setManageConfig(new DefaultManageConfigFactory(propertySource).newManageConfig());
         }
-
-        if (manageClient != null) {
-            setManageClient(manageClient);
-        }
-        else {
+        if (manageClient == null) {
             setManageClient(new ManageClient(getManageConfig()));
         }
     }
@@ -1443,7 +1601,9 @@ public class HubConfigImpl implements HubConfig
     public DatabaseClient newStagingClient(String dbName) {
         AppConfig appConfig = getAppConfig();
         DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), stagingPort, getMlUsername(), getMlPassword());
-        config.setDatabase(dbName);
+        if (dbName != null) {
+            config.setDatabase(dbName);
+        }
         config.setSecurityContextType(SecurityContextType.valueOf(stagingAuthMethod.toUpperCase()));
         config.setSslHostnameVerifier(stagingSslHostnameVerifier);
         config.setSslContext(stagingSslContext);
@@ -1524,85 +1684,85 @@ public class HubConfigImpl implements HubConfig
 
     @JsonIgnore
     @Override public Path getModulesDir() {
-        return hubProject.getModulesDir();
+        return requireHubProject().getModulesDir();
     }
 
     @JsonIgnore
-    public Path getHubProjectDir() { return hubProject.getProjectDir(); }
+    public Path getHubProjectDir() { return requireHubProject().getProjectDir(); }
 
     @JsonIgnore
     @Override public Path getHubPluginsDir() {
-        return hubProject.getHubPluginsDir();
+        return requireHubProject().getHubPluginsDir();
     }
 
     @JsonIgnore
-    @Override public Path getHubEntitiesDir() { return hubProject.getHubEntitiesDir(); }
+    @Override public Path getHubEntitiesDir() { return requireHubProject().getHubEntitiesDir(); }
 
     @JsonIgnore
-    @Override public Path getHubMappingsDir() { return hubProject.getHubMappingsDir(); }
+    @Override public Path getHubMappingsDir() { return requireHubProject().getHubMappingsDir(); }
 
     @JsonIgnore
     @Override
     public Path getStepsDirByType(StepDefinition.StepDefinitionType type) {
-        return hubProject.getStepsDirByType(type);
+        return requireHubProject().getStepsDirByType(type);
     }
 
     @JsonIgnore
     @Override public Path getHubConfigDir() {
-        return hubProject.getHubConfigDir();
+        return requireHubProject().getHubConfigDir();
     }
 
     @JsonIgnore
     @Override public Path getHubDatabaseDir() {
-        return hubProject.getHubDatabaseDir();
+        return requireHubProject().getHubDatabaseDir();
     }
 
     @JsonIgnore
     @Override public Path getHubServersDir() {
-        return hubProject.getHubServersDir();
+        return requireHubProject().getHubServersDir();
     }
 
     @JsonIgnore
     @Override public Path getHubSecurityDir() {
-        return hubProject.getHubSecurityDir();
+        return requireHubProject().getHubSecurityDir();
     }
 
     @JsonIgnore
     @Override public Path getUserSecurityDir() {
-        return hubProject.getUserSecurityDir();
+        return requireHubProject().getUserSecurityDir();
     }
 
     @JsonIgnore
     @Override public Path getUserConfigDir() {
-        return hubProject.getUserConfigDir();
+        return requireHubProject().getUserConfigDir();
     }
 
     @JsonIgnore
     @Override public Path getUserDatabaseDir() {
-        return hubProject.getUserDatabaseDir();
+        return requireHubProject().getUserDatabaseDir();
     }
 
     @JsonIgnore
-    @Override public Path getUserSchemasDir() { return hubProject.getUserSchemasDir(); }
+    @Override public Path getUserSchemasDir() { return requireHubProject().getUserSchemasDir(); }
 
     @JsonIgnore
     @Override public Path getEntityDatabaseDir() {
-        return hubProject.getEntityDatabaseDir();
+        return requireHubProject().getEntityDatabaseDir();
     }
 
     @Override
     public Path getFlowsDir() {
-        return hubProject.getFlowsDir();
+        return requireHubProject().getFlowsDir();
     }
 
     @Override
     public Path getStepDefinitionsDir() {
-        return hubProject.getStepDefinitionsDir();
+        return requireHubProject().getStepDefinitionsDir();
     }
 
     @JsonIgnore
     @Override public Path getUserServersDir() {
-        return hubProject.getUserServersDir();
+        return requireHubProject().getUserServersDir();
     }
 
     @JsonIgnore
@@ -1634,7 +1794,7 @@ public class HubConfigImpl implements HubConfig
 
         // this lets debug builds work from an IDE
         if (version.equals("${project.version}")) {
-            version = "5.1.0";
+            version = "5.2.0";
         }
         return version;
     }
@@ -1649,16 +1809,19 @@ public class HubConfigImpl implements HubConfig
         return this.hubLogLevel;
     }
 
-    private Map<String, String> getCustomTokens() {
-        AppConfig appConfig = getAppConfig();
-        if (appConfig == null) {
-            appConfig = new DefaultAppConfigFactory().newAppConfig();
+    /**
+     * Populates the custom tokens map in the given AppConfig object. For each field, if its value is set, then that value
+     * is stored in the custom tokens map. Else, an attempt is made to retrieve a value for the field from the Spring
+     * Environment. Thus, the expectation is that this class is used in a Spring context where a Spring Environment
+     * object is set.
+     *
+     * @param appConfig
+     */
+    protected void addDhfPropertiesToCustomTokens(AppConfig appConfig) {
+        if (environment == null) {
+            throw new RuntimeException("Unable to add DHF properties to custom tokens map because the Spring environment object is null");
         }
-        modifyCustomTokensMap(appConfig);
-        return appConfig.getCustomTokens();
-    }
 
-    protected void modifyCustomTokensMap(AppConfig appConfig) {
         Map<String, String> customTokens = appConfig.getCustomTokens();
         customTokens.put("%%mlHost%%", appConfig == null ? environment.getProperty("mlHost") : appConfig.getHost());
         customTokens.put("%%mlStagingAppserverName%%", stagingHttpName == null ? environment.getProperty("mlStagingAppserverName") : stagingHttpName);
@@ -1701,13 +1864,14 @@ public class HubConfigImpl implements HubConfig
         customTokens.put("%%mlFlowDeveloperRole%%", flowDeveloperRoleName == null ? environment.getProperty("mlFlowDeveloperRole") : flowDeveloperRoleName);
         customTokens.put("%%mlFlowDeveloperUserName%%", flowDeveloperUserName == null ? environment.getProperty("mlFlowDeveloperUserName") : flowDeveloperUserName);
 
-        customTokens.put("%%mlDataHubAdminRole%%", dataHubAdminRoleName == null ? environment.getProperty("mlDataHubAdminRole") : dataHubAdminRoleName);
 
         // random password for hub user
         RandomStringGenerator randomStringGenerator = new RandomStringGenerator.Builder().withinRange(33, 126).filteredBy((CharacterPredicate) codePoint -> (codePoint != 92 && codePoint != 34)).build();
         customTokens.put("%%mlFlowOperatorPassword%%", randomStringGenerator.generate(20));
         // and another random password for hub Admin User
         customTokens.put("%%mlFlowDeveloperPassword%%", randomStringGenerator.generate(20));
+
+        customTokens.put("%%mlJobPermissions%%", jobPermissions == null ? environment.getProperty("mlJobPermissions") : jobPermissions);
 
         customTokens.put("%%mlCustomForestPath%%", customForestPath == null ? environment.getProperty("mlCustomForestPath") : customForestPath);
 
@@ -1724,17 +1888,6 @@ public class HubConfigImpl implements HubConfig
         if (projectProperties.containsKey("mlFlowDeveloperPassword")) {
             customTokens.put("%%mlFlowDeveloperPassword%%", projectProperties.getProperty("mlFlowDeveloperPassword"));
         }
-        /* can't iterate through env properties, so rely on custom tokens itself?
-        if (environment != null) {
-            Enumeration keyEnum = environment.propertyNames();
-            while (keyEnum.hasMoreElements()) {
-                String key = (String) keyEnum.nextElement();
-                if (key.matches("^ml[A-Z].+") && !customTokens.containsKey(key)) {
-                    customTokens.put("%%" + key + "%%", (String) environmentProperties.get(key));
-                }
-            }
-        }
-        */
     }
 
     /**
@@ -1743,6 +1896,10 @@ public class HubConfigImpl implements HubConfig
      * @param config
      */
     private void updateAppConfig(AppConfig config) {
+        if (host != null) {
+            config.setHost(host);
+        }
+
         // If the user hasn't set the app name then override it to "DHF" instead of "my-app"
         if ("my-app".equals(config.getName())) {
             config.setName("DHF");
@@ -1785,7 +1942,7 @@ public class HubConfigImpl implements HubConfig
 
         config.setSchemasPath(getUserSchemasDir().toString());
 
-        modifyCustomTokensMap(config);
+        addDhfPropertiesToCustomTokens(config);
 
         String version = getJarVersion();
         config.getCustomTokens().put("%%mlHubVersion%%", version);
@@ -1904,7 +2061,7 @@ public class HubConfigImpl implements HubConfig
     {
 
         try {
-            return objmapper.writerWithDefaultPrettyPrinter().writeValueAsString(this);
+            return new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(this);
         }
         catch(Exception e)
         {
@@ -1912,21 +2069,6 @@ public class HubConfigImpl implements HubConfig
 
         }
 
-    }
-
-    @JsonIgnore
-    public void refreshProject() {
-        refreshProject(null, true);
-    }
-
-    @JsonIgnore
-    public void refreshProject(Properties properties, boolean loadGradleProperties) {
-        loadConfigurationFromProperties(properties, loadGradleProperties);
-
-        flowManager.setupClient();
-        dataHub.wireClient();
-        versions.setupClient();
-        jobMonitor.setupClient();
     }
 
     /**
@@ -1940,7 +2082,7 @@ public class HubConfigImpl implements HubConfig
     @JsonIgnore
     public HubConfig withPropertiesFromEnvironment(String environment) {
         this.envString = environment;
-        hubProject.setUserModulesDeployTimestampFile(envString + "-" + USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES);
+        requireHubProject().setUserModulesDeployTimestampFile(envString + "-" + USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES);
         return this;
     }
 
@@ -1959,7 +2101,7 @@ public class HubConfigImpl implements HubConfig
             }
         }
         catch (IOException e) {
-            throw new DataHubProjectException("No properties file found in project " + hubProject.getProjectDirString());
+            throw new DataHubProjectException("No properties file found in project " + requireHubProject().getProjectDirString());
         }
     }
 
@@ -2040,13 +2182,78 @@ public class HubConfigImpl implements HubConfig
         flowDeveloperRoleName = null;
         flowDeveloperUserName = null;
 
-        dataHubAdminRoleName = null;
         customForestPath = null;
         modulePermissions = null;
         entityModelPermissions = null;
+        mappingPermissions = null;
+        stepDefinitionPermissions = null;
+        flowPermissions = null;
+        jobPermissions = null;
         hubLogLevel = null;
         loadBalancerHost = null;
         isHostLoadBalancer = null;
     }
 
+    /**
+     * Defines functions for consuming properties from a PropertySource. This differs substantially from
+     * loadConfigurationFromProperties, as that function's behavior depends on whether a field has a value or not.
+     */
+    protected void initializePropertyConsumerMap() {
+        propertyConsumerMap = new LinkedHashMap<>();
+
+        propertyConsumerMap.put("mlDHFVersion", prop -> DHFVersion = prop);
+        propertyConsumerMap.put("mlHost", prop -> setHost(prop));
+        propertyConsumerMap.put("mlIsHostLoadBalancer", prop -> isHostLoadBalancer = Boolean.parseBoolean(prop));
+        propertyConsumerMap.put("mlIsProvisionedEnvironment", prop -> isProvisionedEnvironment = Boolean.parseBoolean(prop));
+
+        propertyConsumerMap.put("mlStagingAppserverName", prop -> stagingHttpName = prop);
+        propertyConsumerMap.put("mlStagingPort", prop -> stagingPort = Integer.parseInt(prop));
+        propertyConsumerMap.put("mlStagingDbName", prop -> stagingDbName = prop);
+        propertyConsumerMap.put("mlStagingForestsPerHost", prop -> stagingForestsPerHost = Integer.parseInt(prop));
+        propertyConsumerMap.put("mlStagingAuth", prop -> stagingAuthMethod = prop);
+        propertyConsumerMap.put("mlStagingSimpleSsl", prop -> stagingSimpleSsl = Boolean.parseBoolean(prop));
+
+        propertyConsumerMap.put("mlFinalAppserverName", prop -> finalHttpName = prop);
+        propertyConsumerMap.put("mlFinalPort", prop -> finalPort = Integer.parseInt(prop));
+        propertyConsumerMap.put("mlFinalDbName", prop -> finalDbName = prop);
+        propertyConsumerMap.put("mlFinalForestsPerHost", prop -> finalForestsPerHost = Integer.parseInt(prop));
+        propertyConsumerMap.put("mlFinalAuth", prop -> finalAuthMethod = prop);
+        propertyConsumerMap.put("mlFinalSimpleSsl", prop -> finalSimpleSsl = Boolean.parseBoolean(prop));
+
+        propertyConsumerMap.put("mlJobAppserverName", prop -> jobHttpName = prop);
+        propertyConsumerMap.put("mlJobPort", prop -> jobPort = Integer.parseInt(prop));
+        propertyConsumerMap.put("mlJobDbName", prop -> jobDbName = prop);
+        propertyConsumerMap.put("mlJobForestsPerHost", prop -> jobForestsPerHost = Integer.parseInt(prop));
+        propertyConsumerMap.put("mlJobAuth", prop -> jobAuthMethod = prop);
+        propertyConsumerMap.put("mlJobSimpleSsl", prop -> jobSimpleSsl = Boolean.parseBoolean(prop));
+
+        propertyConsumerMap.put("mlModulesDbName", prop -> modulesDbName = prop);
+        propertyConsumerMap.put("mlModulesForestsPerHost", prop -> modulesForestsPerHost = Integer.parseInt(prop));
+
+        propertyConsumerMap.put("mlStagingTriggersDbName", prop -> stagingTriggersDbName = prop);
+        propertyConsumerMap.put("mlStagingTriggersForestsPerHost", prop -> stagingTriggersForestsPerHost = Integer.parseInt(prop));
+        propertyConsumerMap.put("mlStagingSchemasDbName", prop -> stagingSchemasDbName = prop);
+        propertyConsumerMap.put("mlStagingSchemasForestsPerHost", prop -> stagingSchemasForestsPerHost = Integer.parseInt(prop));
+
+        propertyConsumerMap.put("mlFinalTriggersDbName", prop -> finalTriggersDbName = prop);
+        propertyConsumerMap.put("mlFinalTriggersForestsPerHost", prop -> finalTriggersForestsPerHost = Integer.parseInt(prop));
+        propertyConsumerMap.put("mlFinalSchemasDbName", prop -> finalSchemasDbName = prop);
+        propertyConsumerMap.put("mlFinalSchemasForestsPerHost", prop -> finalSchemasForestsPerHost = Integer.parseInt(prop));
+
+        propertyConsumerMap.put("mlCustomForestPath", prop -> customForestPath = prop);
+
+        propertyConsumerMap.put("mlFlowOperatorRole", prop -> flowOperatorRoleName = prop);
+        propertyConsumerMap.put("mlFlowOperatorUserName", prop -> flowOperatorUserName = prop);
+        propertyConsumerMap.put("mlFlowDeveloperRole", prop -> flowDeveloperRoleName = prop);
+        propertyConsumerMap.put("mlFlowDeveloperUserName", prop -> flowDeveloperUserName = prop);
+
+        propertyConsumerMap.put("mlHubLogLevel", prop -> hubLogLevel = prop);
+
+        propertyConsumerMap.put("mlEntityModelPermissions", prop -> entityModelPermissions = prop);
+        propertyConsumerMap.put("mlFlowPermissions", prop -> flowPermissions = prop);
+        propertyConsumerMap.put("mlJobPermissions", prop -> jobPermissions = prop);
+        propertyConsumerMap.put("mlMappingPermissions", prop -> mappingPermissions = prop);
+        propertyConsumerMap.put("mlModulePermissions", prop -> modulePermissions = prop);
+        propertyConsumerMap.put("mlStepDefinitionPermissions", prop -> stepDefinitionPermissions = prop);
+    }
 }

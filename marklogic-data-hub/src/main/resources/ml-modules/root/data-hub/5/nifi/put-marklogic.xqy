@@ -157,7 +157,7 @@ declare function build-put-marklogic($params as map:map)
         </entry>
         <entry>
           <key>Server Transform</key>
-          <value>ml:runIngest</value>
+          <value>mlRunIngest</value>
         </entry>
         <entry>
           <key>Temporal Collection</key>

@@ -1,0 +1,29 @@
+{
+  "info" : {
+    "title" : "Insurance_Application",
+    "version" : "0.0.1",
+    "baseUri" : "http://example.org/"
+  },
+  "definitions" : {
+    "Insurance_Application" : {
+      "required" : [ ],
+      "pii" : [ ],
+      "elementRangeIndex" : [ ],
+      "rangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "claim_id" : {
+          "datatype" : "integer",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "member_dob" : {
+          "datatype" : "dateTime"
+        },
+        "member_name" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}

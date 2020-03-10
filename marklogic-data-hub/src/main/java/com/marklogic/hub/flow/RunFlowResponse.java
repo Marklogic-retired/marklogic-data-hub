@@ -1,6 +1,8 @@
 package com.marklogic.hub.flow;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.marklogic.hub.step.RunStepResponse;
 
 import java.util.HashMap;
@@ -24,7 +26,17 @@ public class RunFlowResponse {
         this.jobId = jobId;
     }
 
-    RunFlowResponse() {}
+    public RunFlowResponse() {}
+
+    public String toJson() {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+            return objectMapper.writeValueAsString(this);
+        } catch (Exception ex) {
+            throw new RuntimeException("Unable to serialize to JSON, cause: " + ex.getMessage(), ex);
+        }
+    }
 
     @JsonProperty("flow")
     public String getFlowName() {

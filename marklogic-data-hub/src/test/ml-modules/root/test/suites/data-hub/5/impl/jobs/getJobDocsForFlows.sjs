@@ -1,7 +1,7 @@
 const test = require("/test/test-helper.xqy");
 
 const Jobs = require("/data-hub/5/impl/jobs.sjs");
-const jobs = new Jobs();
+const jobs = new Jobs.Jobs();
 
 function getJobDocs(flowNameArray) {
   return fn.head(

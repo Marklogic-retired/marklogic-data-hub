@@ -28,24 +28,6 @@ export default function(qaProjectDir) {
       await expect(dashboardPage.jobCount().getText()).toBe('0');
     });
 
-    it('should check default documents after redeploy', async function () {
-      await appPage.clickFlowTab();
-      await browser.wait(EC.visibilityOf(manageFlowPage.flowName("SimpleFlow")));
-      await manageFlowPage.redeploy();
-      await appPage.clickDashboardTab();
-      await expect(dashboardPage.stagingCount().getText()).toBeGreaterThan(0);
-      await expect(dashboardPage.finalCount().getText()).toBeGreaterThan(0);
-      await expect(dashboardPage.jobCount().getText()).toBe('0');
-    });
-
-    it('should remove all documents', async function () {
-      await appPage.clickDashboardTab();
-      await dashboardPage.clearAllDatabases();
-      await expect(dashboardPage.stagingCount().getText()).toBe('0');
-      await expect(dashboardPage.finalCount().getText()).toBe('0');
-      await expect(dashboardPage.jobCount().getText()).toBe('0');
-    });
-
     it('should verify menu about', async function () {
       await appPage.clickDashboardTab();
       await appPage.clickAbout();

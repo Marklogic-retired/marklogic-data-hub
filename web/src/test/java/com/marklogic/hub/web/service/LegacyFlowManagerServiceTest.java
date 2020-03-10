@@ -195,7 +195,7 @@ public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
         LegacyFlowStatusListener flowStatusListener = (jobId, percentComplete, message) -> {
             logger.error(message);
         };
-        MlcpRunner mlcpRunner = new MlcpRunner(null, "com.marklogic.hub.util.MlcpMain", getHubFlowRunnerConfig(), flow, stagingClient, mlcpOptions, flowStatusListener);
+        MlcpRunner mlcpRunner = new MlcpRunner(null, "com.marklogic.hub.util.MlcpMain", runAsFlowOperator(), flow, stagingClient, mlcpOptions, flowStatusListener);
         mlcpRunner.start();
         mlcpRunner.join();
 

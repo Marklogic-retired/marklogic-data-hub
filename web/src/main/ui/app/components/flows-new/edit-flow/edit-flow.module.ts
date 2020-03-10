@@ -31,7 +31,7 @@ import {MappingComponent} from './mapping/mapping.component';
 import {MappingUiComponent} from './mapping/ui/mapping-ui.component';
 import {EntityTableUiComponent} from './mapping/ui/entity-table-ui.component';
 
-import {BsDropdownModule, TooltipModule} from 'ngx-bootstrap';
+import {BsDropdownModule, TooltipModule, PopoverModule} from 'ngx-bootstrap';
 import {FocusElementDirective} from '../../../directives/focus-element/focus-element.directive';
 import {ListFilterPipe} from '../../../components/mappings/ui/listfilter.pipe';
 import {MdlModule} from '@angular-mdl/core';
@@ -90,6 +90,7 @@ import {ClipboardDirective} from '../../../directives/clipboard/clipboard.direct
     ReactiveFormsModule,
     BsDropdownModule.forRoot(),
     TooltipModule.forRoot(),
+    PopoverModule.forRoot(),
     MdlModule,
     FolderBrowserModule,
     AppCommonModule

@@ -1,0 +1,40 @@
+{
+  "info" : {
+    "title" : "Medical_Journal",
+    "version" : "0.0.1",
+    "baseUri" : "http://example.org/"
+  },
+  "definitions" : {
+    "Medical_Journal" : {
+      "required" : [ ],
+      "pii" : [ ],
+      "elementRangeIndex" : [ ],
+      "rangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "article_type" : {
+          "datatype" : "array",
+          "items" : {
+            "datatype" : "string",
+            "collation" : "http://marklogic.com/collation/codepoint"
+          }
+        },
+        "publisher_name" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "authors" : {
+          "datatype" : "array",
+          "items" : {
+            "datatype" : "string",
+            "collation" : "http://marklogic.com/collation/codepoint"
+          }
+        },
+        "title" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}

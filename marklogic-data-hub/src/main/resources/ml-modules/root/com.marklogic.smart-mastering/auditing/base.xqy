@@ -14,6 +14,8 @@ import module namespace const = "http://marklogic.com/smart-mastering/constants"
   at "/com.marklogic.smart-mastering/constants.xqy";
 import module namespace coll = "http://marklogic.com/smart-mastering/collections"
   at "/com.marklogic.smart-mastering/impl/collections.xqy";
+import module namespace config = "http://marklogic.com/data-hub/config"
+  at "/com.marklogic.hub/config.xqy";
 
 declare namespace prov = "http://www.w3.org/ns/prov#";
 declare namespace foaf = "http://xmlns.com/foaf/0.1/";
@@ -60,7 +62,7 @@ declare function auditing:audit-trace(
     xdmp:document-insert(
       $audit-trace-def => map:get("uri"),
       $audit-trace-def => map:get("value"),
-      xdmp:default-permissions(),
+      $audit-trace-def => map:get("context") => map:get("permissions"),
       $audit-trace-def => map:get("context") => map:get("collections")
     )
 };
@@ -194,20 +196,29 @@ declare function auditing:build-audit-trace(
     map:map()
       => map:with("uri", "/com.marklogic.smart-mastering/auditing/"|| $action ||"/"||sem:uuid-string()||".xml")
       => map:with("value", $prov-xml)
-      => map:with("context", map:entry("collections",coll:auditing-collections($options)))
+      => map:with("context", map:new((
+        map:entry("collections",coll:auditing-collections($options)),
+        map:entry("permissions", config:get-default-data-hub-permissions())
+      )))
 };
 
 (:
  : Retrieve auditing records involving a particular URI.
  :)
-declare function auditing:auditing-receipts-for-doc-uri($doc-uri as xs:string)
+declare function auditing:auditing-receipts-for-doc-uri($doc-uri as xs:string, $merge-options as node()?)
 {
-  cts:search(fn:collection(($const:AUDITING-COLL,$ps-collection))/prov:document,
-    cts:element-value-query(
-      (xs:QName("auditing:new-uri"),xs:QName("new-uri")),
-      $doc-uri,
-      "exact"
-    )
+  cts:search(fn:collection()/prov:document,
+    let $collection-query := if (fn:exists($merge-options)) then cts:collection-query(coll:auditing-collections($merge-options)) else ()
+    let $uri-query :=
+      cts:element-value-query(
+        (xs:QName("auditing:new-uri"),xs:QName("new-uri")),
+        $doc-uri,
+        "exact"
+      )
+    return if (fn:count(($collection-query, $uri-query)) gt 1) then
+      cts:and-query(($collection-query, $uri-query))
+    else
+      $uri-query
   )
 };
 
@@ -247,14 +258,8 @@ declare function auditing:auditing-receipts-for-doc-history($doc-uris as xs:stri
 declare function auditing:audit-trace-rollback($prov-xml, $merge-options as node()?)
 {
   let $merged-uri :=
-    fn:string(
-      $prov-xml/(prov:collection|prov:entity)[fn:starts-with(prov:type, "result of record ")]/prov:label
-    )
-  for $entity in $prov-xml/(prov:collection|prov:entity)[fn:starts-with(prov:type, "contributing record for ")]
-  let $orig-uri :=
-    fn:string(
-      $entity/*:label
-    )
+    fn:string($prov-xml/auditing:new-uri)
+  for $orig-uri in $prov-xml/auditing:previous-uri ! fn:string(.)
   where fn:not($merged-uri = $orig-uri)
   return
     auditing:audit-trace(
@@ -428,7 +433,7 @@ declare function auditing:build-semantic-info($prov-xml as element(prov:document
       sem:graph-insert(
         sem:iri("mdm-auditing"),
         $auditing-managed-triples,
-        xdmp:default-permissions(),
+        config:get-default-data-hub-permissions(),
         $const:AUDITING-COLL
       )
     else (),

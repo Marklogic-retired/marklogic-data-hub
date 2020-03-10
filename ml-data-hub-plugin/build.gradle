@@ -25,7 +25,6 @@ buildscript {
     }
 }
 
-
 plugins {
     id 'net.saliman.properties' version '1.4.6'
     id "groovy"
@@ -36,6 +35,7 @@ plugins {
     id "io.spring.dependency-management" version "1.0.7.RELEASE"
 }
 
+mainClassName = "com.marklogic.hub.ApplicationConfig"
 apply plugin: "com.gradle.plugin-publish"
 
 sourceCompatibility = 1.8

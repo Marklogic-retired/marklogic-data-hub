@@ -25,10 +25,7 @@ import com.marklogic.client.document.DocumentManager
 import com.marklogic.client.eval.EvalResult
 import com.marklogic.client.eval.EvalResultIterator
 import com.marklogic.client.eval.ServerEvaluationCall
-import com.marklogic.client.io.DocumentMetadataHandle
-import com.marklogic.client.io.Format
-import com.marklogic.client.io.InputStreamHandle
-import com.marklogic.client.io.StringHandle
+import com.marklogic.client.io.*
 import com.marklogic.hub.ApplicationConfig
 import com.marklogic.hub.DatabaseKind
 import com.marklogic.hub.HubConfig
@@ -110,6 +107,10 @@ class BaseTest extends Specification {
         _hubConfig.newFinalClient().newDocumentManager().write(uri, meta, new StringHandle(doc))
     }
 
+    void installJobDoc(String uri, DocumentMetadataHandle meta, String doc) {
+        _hubConfig.newJobDbClient().newDocumentManager().write(uri, meta, new FileHandle(getResourceFile(doc)));
+    }
+
     void installModule(String path, String localPath) {
 
         InputStreamHandle handle = new InputStreamHandle(new File("src/test/resources/" + localPath).newInputStream())
@@ -137,7 +138,7 @@ class BaseTest extends Specification {
             for $database in fn:tokenize($databases, ",")
              return
                xdmp:eval(
-                 'cts:uris() ! xdmp:document-delete(.)',
+                 'cts:uris((),(),cts:not-query(cts:collection-query(\"http://marklogic.com/provenance-services/record\"))) ! xdmp:document-delete(.)',
                  (),
                  map:entry("database", xdmp:database($database))
                )
@@ -162,6 +163,10 @@ class BaseTest extends Specification {
         } catch (IOException e) {
             e.printStackTrace()
         }
+    }
+
+    protected File getResourceFile(String resource) {
+        return new File("src/test/resources/" + resource);
     }
 
     static void copyResourceToFile(String resourceName, File dest) {
@@ -276,26 +281,25 @@ class BaseTest extends Specification {
         return _manageClient;
     }
 
-    public int getStagingRangePathIndexSize() {
+    int getStagingIndexValuesSize(def namespace) {
         Fragment databseFragment = getDatabaseManager().getPropertiesAsXml(_hubConfig.getDbName(DatabaseKind.STAGING));
-        return databseFragment.getElementValues("//m:range-path-index").size()
+        return databseFragment.getElementValues(namespace).size();
     }
 
-    public int getFinalRangePathIndexSize() {
+    int getFinalIndexValuesSize(def namespace) {
         Fragment databseFragment = getDatabaseManager().getPropertiesAsXml(_hubConfig.getDbName(DatabaseKind.FINAL));
-        return databseFragment.getElementValues("//m:range-path-index").size()
+        return databseFragment.getElementValues(namespace).size();
     }
 
-    public int getJobsRangePathIndexSize() {
+    int getJobsIndexValuesSize(def namespace) {
         Fragment databseFragment = getDatabaseManager().getPropertiesAsXml(_hubConfig.getDbName(DatabaseKind.JOB));
-        return databseFragment.getElementValues("//m:range-path-index").size()
+        return databseFragment.getElementValues(namespace).size();
     }
 
     //Use this method sparingly as it slows down the test
     public void resetProperties() {
         Field[] fields = HubConfigImpl.class.getDeclaredFields();
-        Set<String> s =  Stream.of("hubProject", "environment", "flowManager",
-            "dataHub", "versions", "logger", "objmapper", "projectProperties", "jobMonitor").collect(Collectors.toSet());
+        Set<String> s =  Stream.of("hubProject", "environment", "logger", "objmapper", "projectProperties").collect(Collectors.toSet());
 
         for(Field f : fields){
             if(! s.contains(f.getName())) {

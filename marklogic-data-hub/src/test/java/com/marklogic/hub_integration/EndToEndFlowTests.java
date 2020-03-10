@@ -871,7 +871,7 @@ public class EndToEndFlowTests extends HubTestBase {
             throw new RuntimeException(e);
         }
 
-        MlcpRunner mlcpRunner = new MlcpRunner(null, "com.marklogic.hub.util.MlcpMain", getHubFlowRunnerConfig(), flow, databaseClient, mlcpOptions, null);
+        MlcpRunner mlcpRunner = new MlcpRunner(null, "com.marklogic.hub.util.MlcpMain", runAsFlowOperator(), flow, databaseClient, mlcpOptions, null);
         mlcpRunner.setDatabase(databaseClient.getDatabase());
         mlcpRunner.start();
         try {
@@ -966,7 +966,7 @@ public class EndToEndFlowTests extends HubTestBase {
         assertEquals(0, tracingCount);
         assertEquals(0, jobsCount);
 
-        String transform = codeFormat.equals(CodeFormat.JAVASCRIPT) ? "ml:sjsInputFlow" : "ml:inputFlow";
+        String transform = codeFormat.equals(CodeFormat.JAVASCRIPT) ? "mlSjsInputFlow" : "mlInputFlow";
         ServerTransform serverTransform = new ServerTransform(transform);
         if (passJobId) {
             serverTransform.addParameter("job-id", UUID.randomUUID().toString());
@@ -1050,7 +1050,7 @@ public class EndToEndFlowTests extends HubTestBase {
         assertEquals(0, tracingCount);
         assertEquals(0, jobsCount);
 
-        String transform = codeFormat.equals(CodeFormat.JAVASCRIPT) ? "ml:sjsInputFlow" : "ml:inputFlow";
+        String transform = codeFormat.equals(CodeFormat.JAVASCRIPT) ? "mlSjsInputFlow" : "mlInputFlow";
 		ServerTransform serverTransform = new ServerTransform(transform);
         if (passJobId) {
             serverTransform.addParameter("job-id", UUID.randomUUID().toString());
@@ -1145,7 +1145,7 @@ public class EndToEndFlowTests extends HubTestBase {
         assertEquals(0, getJobDocCount());
 
         installDocs(dataFormat, ENTITY, srcClient, useEs, testSize);
-        getHubFlowRunnerConfig();
+        runAsFlowOperator();
         LegacyFlow harmonizeFlow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
         LegacyFlowRunner flowRunner = flowManager.newFlowRunner()
             .withFlow(harmonizeFlow)

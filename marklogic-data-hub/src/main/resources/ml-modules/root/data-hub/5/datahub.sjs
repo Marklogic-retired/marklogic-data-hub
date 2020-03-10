@@ -41,7 +41,7 @@ class DataHub {
     this.performance = new Perf(config, this);
     this.hubUtils = new HubUtils(config, this);
     this.flow = new Flow(config, null, this);
-    this.jobs = new Jobs(config, this);
+    this.jobs = new Jobs.Jobs(config, this);
     this.prov = new Prov(Object.assign({}, config, {autoCommit: false}), this);
     this.debug = new Debug(config, this);
     if (this.performance.performanceMetricsOn()) {

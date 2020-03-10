@@ -7,7 +7,8 @@
         "lastName": "Smith",
         "emailAddress": "jane.smith@example.org",
         "dob": "1988-08-01",
-        "datetime": "1996-07-04T14:25:55-07:00"
+        "datetime": "1996-07-04T14:25:55-07:00",
+        "description & notes": "Details found here"
       }
     }
   }

@@ -47,6 +47,7 @@ public class EntityServicesAlignmentTest extends HubTestBase {
     public void clearDbs() {
         deleteProjectDir();
         basicSetup();
+        getDataHubAdminConfig();
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
         getDataHub().clearUserModules();
         installHubModules();

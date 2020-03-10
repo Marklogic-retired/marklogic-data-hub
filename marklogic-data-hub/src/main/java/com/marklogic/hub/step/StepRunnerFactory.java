@@ -18,23 +18,29 @@ public class StepRunnerFactory {
 
     @Autowired
     private HubConfig hubConfig;
+
     @Autowired
-    private StepDefinitionManagerImpl stepDefMgr;
+    private StepDefinitionProvider stepDefinitionProvider;
+
     private StepRunner stepRunner;
     private int batchSize = 100;
     private int threadCount = 4;
     private String sourceDatabase;
     private String targetDatabase;
 
+    public StepRunnerFactory() {
+    }
+
+    public StepRunnerFactory(HubConfig hubConfig) {
+        this.hubConfig = hubConfig;
+    }
+
     public StepRunner getStepRunner(Flow flow, String stepNum)  {
         Map<String, Step> steps = flow.getSteps();
         Step step = steps.get(stepNum);
-        StepDefinition stepDef = stepDefMgr.getStepDefinition(step.getStepDefinitionName(), step.getStepDefinitionType());
+        StepDefinition stepDef = stepDefinitionProvider.getStepDefinition(step.getStepDefinitionName(), step.getStepDefinitionType());
 
         switch (step.getStepDefinitionType()) {
-            case MAPPING:
-                stepRunner = new QueryStepRunner(hubConfig);
-                break;
             case INGESTION:
                 stepRunner = new WriteStepRunner(hubConfig);
                 break;
@@ -102,4 +108,7 @@ public class StepRunnerFactory {
         return stepRunner;
     }
 
+    public void setStepDefinitionProvider(StepDefinitionProvider stepDefinitionProvider) {
+        this.stepDefinitionProvider = stepDefinitionProvider;
+    }
 }

@@ -32,6 +32,8 @@ import com.marklogic.hub.web.listeners.DeployUserModulesListener;
 import com.marklogic.hub.web.listeners.ValidateListener;
 import com.marklogic.hub.web.model.StatusMessage;
 import com.marklogic.hub.web.service.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -53,6 +55,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -84,6 +87,8 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
 
     @Autowired
     private EnvironmentConfig envConfig;
+
+    private static final Logger logger = LoggerFactory.getLogger(CurrentProjectController.class);
 
     @RequestMapping(value = "/", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
@@ -212,21 +217,30 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
         return jsonResponse;
     }
 
-    private void startProjectWatcher() throws IOException {
-        String flowsDir = hubConfig.getFlowsDir().toString();
-        String stepDefinitionsDir = hubConfig.getStepDefinitionsDir().toString();
-        String entitiesDir = hubConfig.getHubEntitiesDir().toString();
-        String mappingsDir = hubConfig.getHubMappingsDir().toString();
+    private void startProjectWatcher() {
+        File flowsDir = hubConfig.getFlowsDir().toFile();
+        File stepDefinitionsDir = hubConfig.getStepDefinitionsDir().toFile();
+        File entitiesDir = hubConfig.getHubEntitiesDir().toFile();
+        File mappingsDir = hubConfig.getHubMappingsDir().toFile();
         if (!watcherService.hasListener(this)) {
-            watcherService.watch(flowsDir);
-            watcherService.watch(stepDefinitionsDir);
-            watcherService.watch(entitiesDir);
-            watcherService.watch(mappingsDir);
+            enableWatcherService(flowsDir);
+            enableWatcherService(stepDefinitionsDir);
+            enableWatcherService(entitiesDir);
+            enableWatcherService(mappingsDir);
             //watch ml-modules/root/custom-modules/ingestion|mapping|mastering dirs
             for (StepDefinition.StepDefinitionType stepType : StepDefinition.StepDefinitionType.values()) {
-                watcherService.watch(hubProject.getCustomModulesDir().resolve(stepType.toString().toLowerCase()).toString());
+                enableWatcherService(hubProject.getCustomModulesDir().resolve(stepType.toString().toLowerCase()).toFile());
             }
             watcherService.addListener(this);
+        }
+    }
+
+    private void enableWatcherService(File dir) {
+        try{
+            watcherService.watch(dir.toString());
+        }
+        catch (IOException ex){
+            logger.warn("Unable to enable watcher server for directory: " + dir.toString() + "; cause: " + ex.getMessage());
         }
     }
 
@@ -285,14 +299,26 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
     }
 
     @Override
-    public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+    public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)  {
         request.getSession().invalidate();
-        if (watcherService.hasListener(this)) {
-            watcherService.unwatch(hubConfig.getStepDefinitionsDir().toString());
-            watcherService.unwatch(hubConfig.getHubEntitiesDir().toString());
-            watcherService.unwatch(hubConfig.getHubMappingsDir().toString());
-            watcherService.unwatch(hubConfig.getFlowsDir().toString());
-            watcherService.removeListener(this);
+        disableWatcherService(hubConfig.getStepDefinitionsDir().toFile());
+        disableWatcherService(hubConfig.getHubEntitiesDir().toFile());
+        disableWatcherService(hubConfig.getHubMappingsDir().toFile());
+        disableWatcherService(hubConfig.getFlowsDir().toFile());
+        disableWatcherService(hubConfig.getStepDefinitionsDir().toFile());
+        disableWatcherService(hubProject.getCustomModulesDir().toFile());
+        watcherService.removeListener(this);
+        mappingManagerService.unsetMappingValidators();
+    }
+
+    private void disableWatcherService(File dir) {
+        try{
+            if(dir != null && dir.exists()) {
+                watcherService.unwatch(dir.toString());
+            }
+        }
+        catch (IOException ex){
+            logger.warn("Unable to disable watcher server for directory: " + dir.toString() + "; cause: " + ex.getMessage());
         }
         mappingManagerService.unsetMappingValidators();
     }

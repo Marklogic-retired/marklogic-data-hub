@@ -25,7 +25,7 @@ let $assertions := (
 (: Record a block :)
 let $_ :=
   xdmp:invoke-function(
-    function() { blocks-impl:block-match($uri3, $uri4) },
+    function() { blocks-impl:block-matches(($uri3, $uri4)) },
     <options xmlns="xdmp:eval">
       <isolation>different-transaction</isolation>
       <update>true</update>

@@ -194,7 +194,7 @@ function jobReport(jobID, stepResponse, options, reqOptProperties = requiredOpti
       query: `createdByJob:"${jobID}" AND Collection:"${collectionsInformation.notificationCollection}"`
     },
     collectionsInformation,
-    matchProvenanceQuery: `// Run this against the '${options.targetDatabase || datahub.config.FINALDATABASE}' database with the 'data-hub-admin-role' or other privileged user
+    matchProvenanceQuery: `// Run this against the '${options.targetDatabase || datahub.config.FINALDATABASE}' database with a privileged user
     const masteringLib = require('/data-hub/5/builtins/steps/mastering/default/lib.sjs'); 
     
     let mergedAndNotifiedQuery = cts.andQuery([

@@ -84,7 +84,7 @@ declare function helper-impl:property-name-to-query($options as element(), $full
               function($val, $weight) {
                 $scope-query(cts:element-value-query(
                   $qname,
-                  $val,
+                  $val ! fn:string(.),
                   ("case-insensitive"),
                   $weight
                 ))
@@ -172,18 +172,28 @@ declare function helper-impl:group-queries-by-scope($queries as cts:query*, $gro
           cts:json-property-scope-query-query($query)
         else if ($is-element-scope) then
           cts:element-query-query($query)
+        else if ($query instance of cts:or-query) then
+          helper-impl:group-queries-by-scope(cts:or-query-queries($query), cts:or-query#1)
+        else if ($query instance of cts:and-query) then
+          helper-impl:group-queries-by-scope(cts:and-query-queries($query), cts:and-query#1)
         else
           $query
       return
         map:put($queries-by-scope, $key, (map:get($queries-by-scope, $key),$values))
-    for $key in map:keys($queries-by-scope)
-    let $grouped-queries := map:get($queries-by-scope, $key)
-    let $grouped-queries := if (fn:exists($grouping-query-fun) and fn:count($grouped-queries) gt 1) then $grouping-query-fun($grouped-queries) else $grouped-queries
+    let $grouped-queries :=
+      for $key in map:keys($queries-by-scope)
+      let $grouped-queries := map:get($queries-by-scope, $key)
+      let $grouped-queries := if (fn:exists($grouping-query-fun) and fn:count($grouped-queries) gt 1) then $grouping-query-fun($grouped-queries) else $grouped-queries
+      return
+        if (fn:starts-with($key, "json-prop:")) then
+          cts:json-property-scope-query(fn:tokenize(fn:substring-after($key, "json-prop:"), $string-token), $grouped-queries)
+        else if (fn:starts-with($key, "element:")) then
+          cts:element-query(fn:tokenize(fn:substring-after($key, "element:"), $string-token) ! xdmp:QName-from-key(.), $grouped-queries)
+        else
+          $grouped-queries
     return
-      if (fn:starts-with($key, "json-prop:")) then
-        cts:json-property-scope-query(fn:tokenize(fn:substring-after($key, "json-prop:"), $string-token), $grouped-queries)
-      else if (fn:starts-with($key, "element:")) then
-        cts:element-query(fn:tokenize(fn:substring-after($key, "element:"), $string-token) ! xdmp:QName-from-key(.), $grouped-queries)
+      if (fn:count($grouped-queries) gt 1 and fn:exists($grouping-query-fun)) then
+        $grouping-query-fun($grouped-queries)
       else
         $grouped-queries
 };

@@ -42,7 +42,16 @@
   <!-- EXPRESSION COLUMN -->
   <ng-container matColumnDef="expression">
     <mat-header-cell *matHeaderCellDef>
-      XPath Expression
+      <span>XPath Expression</span>
+      <span>
+        <mat-icon id="lookup-icon" [popover]="TooltipLkp" autoClose="true" [outsideClick]="true"><i
+            class="fa fa-question-circle fa-xs"></i>
+        </mat-icon>
+      </span>
+      <ng-template #TooltipLkp>
+          <span id="doc">Documentation:</span>
+          <div id="html-link" [innerHtml]="htmlLinks"></div>
+        </ng-template>
     </mat-header-cell>
     <mat-cell *matCellDef="let prop; let i = dataIndex">
       <div *ngIf="isNested(prop)" class="context-label">

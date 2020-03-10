@@ -28,6 +28,7 @@
       "options": {
         "targetDatabase": "%%mlStagingDbName%%",
         "sourceQuery": "cts.collectionQuery([])",
+        "permissions": "data-hub-operator,read,data-hub-operator,update",
         "outputFormat": "json",
         "collections": [
           "default-ingestion"
@@ -56,6 +57,7 @@
         "sourceDatabase": "%%mlStagingDbName%%",
         "targetDatabase": "%%mlFinalDbName%%",
         "sourceQuery": "cts.collectionQuery('default-ingestion')",
+        "permissions": "data-hub-operator,read,data-hub-operator,update",
         "outputFormat": "json",
         "collections": [
           "default-mapping",
@@ -87,6 +89,7 @@
         "targetDatabase": "%%mlFinalDbName%%",
         "targetEntity": "entity-name",
         "sourceQuery": "cts.andQuery([cts.collectionQuery('default-mapping'),cts.collectionQuery('mdm-content')])",
+        "permissions": "data-hub-operator,read,data-hub-operator,update",
         "outputFormat": "json",
         "collections": [
           "default-mastering, mastered"

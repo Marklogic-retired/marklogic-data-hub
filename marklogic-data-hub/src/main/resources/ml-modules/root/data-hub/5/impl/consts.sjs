@@ -43,5 +43,8 @@ module.exports = {
     ["currentUser", "currentUser"],
     ["createdBy", "currentUser"],
     ["datahubCreatedBy", "currentUser"]
-  ])
+  ]),
+
+  DATA_HUB_OPERATOR_ROLE: "data-hub-operator",
+  DATA_HUB_DEVELOPER_ROLE: "data-hub-developer"
 };

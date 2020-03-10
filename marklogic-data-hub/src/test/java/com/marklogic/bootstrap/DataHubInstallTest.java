@@ -21,28 +21,28 @@ import com.marklogic.client.admin.ServerConfigurationManager;
 import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.QueryOptionsListHandle;
+import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.*;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 import static org.junit.jupiter.api.Assertions.*;
@@ -61,7 +61,6 @@ public class DataHubInstallTest extends HubTestBase
     private static int afterTelemetryInstallCount = 0;
 
     static boolean setupDone = false;
-    static String projectDir = PROJECT_PATH;
 
     @Autowired
     public void setDataHub(DataHub dataHub){
@@ -74,8 +73,7 @@ public class DataHubInstallTest extends HubTestBase
     }
 
     @BeforeEach
-    public void setup()
-    {
+    public void setup() throws IOException {
         // special case do-one setup.
         XMLUnit.setIgnoreWhitespace(true);
         // the project dir must be available for uninstall to do anything... interesting.
@@ -122,9 +120,27 @@ public class DataHubInstallTest extends HubTestBase
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+            copyFlowArtifactsToProject();
+            Path hubProjDir = getDataHubAdminConfig().getHubProject().getProjectDir();
+            Assertions.assertTrue(hubProjDir.resolve("input").toFile().exists());
+            project.exportProject(hubProjDir.resolve("build").resolve("datahub-project.zip").toFile());
+            //copy file to build dir from project dir
+            FileUtils.copyFileToDirectory(hubProjDir.resolve("build").resolve("datahub-project.zip").toFile(), new File("build"));
+            //delete proj dir
+            deleteProjectDir();
+            //unzip the exported zip file
+            unzip("build/datahub-project.zip", PROJECT_PATH);
+            resetProperties();
+            adminHubConfig.refreshProject();
+
+            //"input" dir doesn't exist in the exported project.
+            Assertions.assertFalse(hubProjDir.resolve("input").toFile().exists());
             getDataHub().install(null);
-            getDataHubAdminConfig().refreshProject();
             setupDone = true;
+            String actual = stagingDocMgr.read("/step-definitions/ingestion/json-ingestion/json-ingestion.step.json").next().getContent(new StringHandle()).get();
+            //Ensure the step defintion is deployed
+            assertJsonEqual(FileUtils.readFileToString(getResourceFile("flow-runner-test/step-definitions/json-ingestion.step.json")),
+              actual  , false);
         }
         afterTelemetryInstallCount = getTelemetryInstallCount();
     }
@@ -134,9 +150,48 @@ public class DataHubInstallTest extends HubTestBase
     {
         dataHub.uninstall();
         setupDone = false;
+        new Installer().deleteProjectDir();
     }
 
+    private void unzip(String fileZip, String destDir) throws IOException {
+        File dir = new File(destDir);
+        // create output directory if it doesn't exist
+        if(!dir.exists()) dir.mkdirs();
+        byte[] buffer = new byte[1024];
+        ZipInputStream zis = new ZipInputStream(new FileInputStream(fileZip));
+        ZipEntry zipEntry = zis.getNextEntry();
+        while (zipEntry != null) {
+            File newFile = newFile(dir, zipEntry);
+            if(zipEntry.isDirectory()){
+                if(!newFile.exists())
+                    newFile.mkdirs();
+            }
+            else {
+                FileOutputStream fos = new FileOutputStream(newFile);
+                int len;
+                while ((len = zis.read(buffer)) > 0) {
+                    fos.write(buffer, 0, len);
+                }
+                fos.close();
+            }
+            zipEntry = zis.getNextEntry();
+        }
+        zis.closeEntry();
+        zis.close();
+    }
 
+    private File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {
+        File destFile = new File(destinationDir, zipEntry.getName());
+
+        String destDirPath = destinationDir.getCanonicalPath();
+        String destFilePath = destFile.getCanonicalPath();
+
+        if (!destFilePath.startsWith(destDirPath + File.separator)) {
+            throw new IOException("Entry is outside of the target dir: " + zipEntry.getName());
+        }
+
+        return destFile;
+    }
     @Test
     public void testTelemetryInstallCount() throws IOException
     {
@@ -162,8 +217,6 @@ public class DataHubInstallTest extends HubTestBase
         //checking if modules are written to correct db
         assertNotNull(getModulesFile("/ext/sample-trigger.xqy"));
 
-        assertNotNull(getModulesFile("/ext/sample-trigger.xqy"));
-
         //checking if tdes are written to correct db
         Document expectedXml = getXmlFromResource("data-hub-test/scaffolding/tdedoc.xml");
         Document actualXml = stagingSchemasClient.newDocumentManager().read("/tde/tdedoc.xml").next().getContent(new DOMHandle()).get();
@@ -180,7 +233,7 @@ public class DataHubInstallTest extends HubTestBase
     }
 
     @Test
-    public void testInstallHubModules() throws IOException
+    public void testInstallHubModules()
     {
         assertTrue(getDataHub().isInstalled().isInstalled());
 
@@ -205,15 +258,15 @@ public class DataHubInstallTest extends HubTestBase
     }
 
     @Test
-    public void getHubModulesVersion() throws IOException
+    public void getHubModulesVersion()
     {
-        String version = getHubFlowRunnerConfig().getJarVersion();
+        String version = adminHubConfig.getJarVersion();
         assertEquals(version, versions.getHubVersion());
         getDataHubAdminConfig();
     }
 
     @Test
-    public void testInstallUserModules() throws IOException, ParserConfigurationException, SAXException, URISyntaxException
+    public void testInstallUserModules() throws IOException, URISyntaxException
     {
         deleteProjectDir();
         Path src = Paths.get(DataHubInstallTest.class.getClassLoader().getResource("data-hub-test").toURI());

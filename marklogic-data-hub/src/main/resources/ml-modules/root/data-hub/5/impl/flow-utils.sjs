@@ -110,7 +110,7 @@ class FlowUtils {
         }
       }
     } else if (inputFormat === dataFormat) {
-      if(content instanceof Element &&  content.nodeName.toLowerCase() === 'root' && content.namespaceURI.toLowerCase() === ""){
+      if(content instanceof Element &&  content.nodeName.toLowerCase() === 'dataHubXmlWrapper' && content.namespaceURI.toLowerCase() === ""){
         instance = Sequence.from(content.xpath('node()'));
       } else {
         if(content['$attachments']) {
@@ -475,7 +475,7 @@ class FlowUtils {
     if(contentInput instanceof Sequence){
       contentInput = contentInput.toArray();
     }
-    let nb = new NodeBuilder().startElement('root');
+    let nb = new NodeBuilder().startElement('dataHubXmlWrapper');
     return  this.jsonToXmlNodeBuilder(contentInput, nb).endElement().toNode().xpath('node()');
   }
 

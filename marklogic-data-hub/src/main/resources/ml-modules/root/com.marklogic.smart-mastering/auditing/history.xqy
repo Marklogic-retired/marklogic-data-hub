@@ -34,7 +34,7 @@ declare function history:property-history(
   $property-values as xs:string*
 ) as map:map
 {
-  let $document-auditing := auditing:auditing-receipts-for-doc-uri($doc-uri)
+  let $document-auditing := auditing:auditing-receipts-for-doc-uri($doc-uri, ())
   let $properties :=
     if (fn:exists($properties)) then
       $properties
