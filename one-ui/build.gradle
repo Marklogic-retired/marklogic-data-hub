@@ -77,6 +77,9 @@ node {
     // Set the work directory for unpacking node
     workDir = file("${project.buildDir}/nodejs")
 
+    // Set the work directory for NPM
+    npmWorkDir = file("${project.buildDir}/npm")
+
     // Set the work directory where node_modules should be located
     nodeModulesDir = file("${project.projectDir}/ui")
 }
