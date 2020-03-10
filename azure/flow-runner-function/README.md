@@ -8,6 +8,10 @@ First, ensure you're connected to the MarkLogic VPN. This allows you to resolve 
 marklogic-data-hub-5.2.0-rc1. Once 5.2.0 is publicly available, we'll update this to use that and you won't need to 
 be on the VPN.
 
+Then edit the following line in the pom.xml file. Provide a different name for the functionAppName:
+ 
+    <functionAppName>az-functions-20200227122602814</functionAppName> 
+
 Then, build the uber jar for this Azure function (the jar will be in the ./target directory):
 
     mvn clean package
