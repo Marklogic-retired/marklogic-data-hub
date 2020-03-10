@@ -175,7 +175,7 @@ public class DataHubProjectUtils {
      * @param in
      * @return
      */
-    private static InputStream toByteArrayInputStream(InputStream in) {
+    protected static InputStream toByteArrayInputStream(InputStream in) {
         if (in instanceof ByteArrayInputStream) {
             return in;
         }
@@ -197,7 +197,7 @@ public class DataHubProjectUtils {
      * @param in
      * @return
      */
-    private static String getArchiveFolderOfZipFile(String currFolderName, InputStream in) {
+    protected static String getArchiveFolderOfZipFile(String currFolderName, InputStream in) {
         Set<String> topLevelPaths = new HashSet<>();
         try (BufferedInputStream bis = new BufferedInputStream(in);
              ZipInputStream stream = new ZipInputStream(bis)) {

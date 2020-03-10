@@ -192,8 +192,7 @@ public class EnvironmentControllerTest {
     }
 
     public void testUploadProject(String zipFileName) throws Exception {
-        //use admin test for now, data-hub-environment-manager-user might not exist.
-        testHelper.authenticateSessionAsAdmin();
+        testHelper.authenticateSessionAsEnvironmentManager();
         TestAuthenticationFilter authenticationFilter = new TestAuthenticationFilter(environmentService, hubConfigSession);
         boolean installed = authenticationFilter.isDataHubInstalled();
         if (!installed) {
