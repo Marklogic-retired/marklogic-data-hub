@@ -1,0 +1,37 @@
+{
+  "info": {
+    "title": "person",
+    "version": "0.0.1",
+    "baseUri": "http://example.com/",
+    "description": "An person entity"
+  },
+  "definitions": {
+    "person": {
+      "description": "The person entity root.",
+      "required": [],
+      "rangeIndex": [
+        "id"
+      ],
+      "elementRangeIndex": [],
+      "wordLexicon": [],
+      "properties": {
+        "id": {
+          "datatype": "string"
+        },
+        "firstName": {
+          "datatype": "string"
+        },
+        "lastName": {
+          "datatype": "string"
+        },
+        "gender": {
+          "datatype": "string"
+        },
+        "email": {
+          "datatype": "string"
+        }
+      },
+      "primaryKey": "id"
+    }
+  }
+}

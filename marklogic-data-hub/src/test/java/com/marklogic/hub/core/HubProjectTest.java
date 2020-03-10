@@ -19,8 +19,7 @@ import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.Properties;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ApplicationConfig.class)
@@ -44,7 +43,7 @@ public class HubProjectTest extends HubTestBase {
 
     @Test
     public void testInit() throws IOException {
-        HubConfig config = getHubFlowRunnerConfig();
+        HubConfig config = adminHubConfig;
         config.createProject(PROJECT_PATH);
         config.setHttpName(DatabaseKind.STAGING, "my-crazy-test-staging");
         config.setDbName(DatabaseKind.STAGING, "my-crazy-test-staging");
@@ -81,6 +80,21 @@ public class HubProjectTest extends HubTestBase {
         assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-entity-model-reader.json").exists());
         assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/flow-developer-role.json").exists());
         assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/flow-operator-role.json").exists());
+        assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-module-reader.json").exists());
+        assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-module-writer.json").exists());
+        assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-job-reader.json").exists());
+        assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-job-internal.json").exists());
+        assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-flow-reader.json").exists());
+        assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-flow-writer.json").exists());
+        assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-mapping-reader.json").exists());
+        assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-mapping-writer.json").exists());
+        assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-step-definition-reader.json").exists());
+        assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-step-definition-writer.json").exists());
+        assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-entity-model-reader.json").exists());
+        assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-entity-model-writer.json").exists());
+
+        assertTrue(new File(projectPath,"src/main/hub-internal-config/security/amps/amps-dhf-update-batch.json").exists());
+        assertTrue(new File(projectPath,"src/main/hub-internal-config/security/amps/amps-dhf-update-job.json").exists());
 
         assertTrue(new File(projectPath, "src/main/ml-config/servers/final-server.json").exists());
         assertTrue(new File(projectPath, "src/main/ml-config/databases/final-database.json").exists());
@@ -96,6 +110,7 @@ public class HubProjectTest extends HubTestBase {
         Properties props = new Properties();
         FileInputStream propsStream = new FileInputStream(gradleProperties);
         String fileContents = IOUtils.toString(propsStream);
+        assertFalse(fileContents.contains("mlModulePermissions"));
         fileContents = fileContents.replace("mlUsername=", "mlUsername=twituser");
         fileContents = fileContents.replace("mlPassword=", "mlPassword=twitpassword");
         fileContents = fileContents.replace("# mlManageUsername=", "mlManageUsername=manage-user");
@@ -152,6 +167,13 @@ public class HubProjectTest extends HubTestBase {
 
         assertEquals(config.getFlowOperatorRoleName(), props.getProperty("mlFlowOperatorRole"));
         assertEquals(config.getFlowOperatorUserName(), props.getProperty("mlFlowOperatorUserName"));
+
+        //per DHFPROD-3617,DHFPROD-3618 following properties shouldn't be there in gradle.properties after hubInit is run. Users can adjust these if needed
+        assertNull(props.getProperty("mlEntityPermissions"));
+        assertNull(props.getProperty("mlFlowPermissions"));
+        assertNull(props.getProperty("mlMappingPermissions"));
+        assertNull(props.getProperty("mlStepDefinitionPermissions"));
+        assertNull(props.getProperty("mlJobPermissions"));
 
         File gradleLocalProperties = new File(projectPath, "gradle-local.properties");
         assertTrue(gradleLocalProperties.exists());

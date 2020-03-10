@@ -56,7 +56,7 @@ public class LegacyFlowManagerTest extends HubTestBase {
 
     @Autowired
     private Scaffolding scaffolding;
-    
+
     @BeforeAll
     public static void runOnce() {
         new Installer().deleteProjectDir();
@@ -304,7 +304,7 @@ public class LegacyFlowManagerTest extends HubTestBase {
         installModules();
         assertEquals(2, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
-        getHubFlowRunnerConfig();
+        runAsFlowOperator();
         LegacyFlow flow1 = fm.getFlow("test", "my-test-flow1");
         LegacyFlowRunner flowRunner = fm.newFlowRunner()
             .withFlow(flow1)
@@ -329,13 +329,13 @@ public class LegacyFlowManagerTest extends HubTestBase {
         installModules();
         assertEquals(0, getStagingDocCount());
         assertEquals(2, getFinalDocCount());
-        getHubFlowRunnerConfig();
+        runAsFlowOperator();
         LegacyFlow flow1 = fm.getFlow("test", "my-test-flow1");
         LegacyFlowRunner flowRunner = fm.newFlowRunner()
             .withFlow(flow1)
             .withBatchSize(10)
             .withThreadCount(1)
-            .withSourceClient(getHubFlowRunnerConfig().newReverseFlowClient())
+            .withSourceClient(adminHubConfig.newReverseFlowClient())
             .withDestinationDatabase(HubConfig.DEFAULT_STAGING_NAME);
         flowRunner.run();
         flowRunner.awaitCompletion();
@@ -365,7 +365,7 @@ public class LegacyFlowManagerTest extends HubTestBase {
 
         assertEquals(2, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
-        getHubFlowRunnerConfig();
+        runAsFlowOperator();
         LegacyFlow flow1 = fm.getFlow("test", "my-test-flow-with-header");
         LegacyFlowRunner flowRunner = fm.newFlowRunner()
             .withFlow(flow1)
@@ -397,7 +397,7 @@ public class LegacyFlowManagerTest extends HubTestBase {
 
         assertEquals(2, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
-        getHubFlowRunnerConfig();
+        runAsFlowOperator();
         LegacyFlow flow1 = fm.getFlow("test", "my-test-flow-with-all");
         LegacyFlowRunner flowRunner = fm.newFlowRunner()
             .withFlow(flow1)
@@ -429,7 +429,7 @@ public class LegacyFlowManagerTest extends HubTestBase {
 
         assertEquals(2, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
-        getHubFlowRunnerConfig();
+        runAsFlowOperator();
         LegacyFlow flow1 = fm.getFlow("test", "my-test-flow-ns-xml-sjs");
         LegacyFlowRunner flowRunner = fm.newFlowRunner()
             .withFlow(flow1)
@@ -461,7 +461,7 @@ public class LegacyFlowManagerTest extends HubTestBase {
 
         assertEquals(2, getStagingDocCount());
         assertEquals(0, getFinalDocCount());
-        getHubFlowRunnerConfig();
+        runAsFlowOperator();
         LegacyFlow flow1 = fm.getFlow("test", "my-test-flow-ns-xml-xqy");
         LegacyFlowRunner flowRunner = fm.newFlowRunner()
             .withFlow(flow1)

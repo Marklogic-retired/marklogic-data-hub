@@ -4,24 +4,57 @@ buildscript {
         maven { url "https://plugins.gradle.org/m2/" }
         jcenter()
     }
-
     dependencies {
-        classpath "net.saliman:gradle-properties-plugin:1.5.1"
         if (project.hasProperty("testing")) {
-            classpath "com.marklogic:ml-data-hub:5.1-SNAPSHOT"
+            classpath "com.marklogic:ml-data-hub:5.2-SNAPSHOT"
         } else {
-            classpath "gradle.plugin.com.marklogic:ml-data-hub:5.1.0"
+            classpath "gradle.plugin.com.marklogic:ml-data-hub:5.2.0"
         }
     }
 }
 
-apply plugin: "net.saliman.properties"
+plugins {
+    id "net.saliman.properties" version "1.5.1"
+    id "java"
+}
 apply plugin: "com.marklogic.ml-data-hub"
 
-task extractZip (type: Copy) {
+repositories {
+    mavenLocal()
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    if (project.hasProperty("testing")) {
+        compile "com.marklogic:marklogic-data-hub:5.2-SNAPSHOT"
+    } else {
+        compile "com.marklogic:marklogic-data-hub:5.2.0"
+    }
+}
+
+if (project.hasProperty("mlHost")) {
+    task runFlowWithoutProject(type: JavaExec) {
+        description = "Run a flow without depending on project files. Because the first step is an ingestion step that defaults to having " +
+            "a relative file path value, the inputFilePath must be overridden by passing in an absolute path to that directory."
+        classpath = sourceSets.main.runtimeClasspath
+        main = "org.example.RunFlowWithoutProject"
+        args = [
+            mlHost,
+            mlUsername,
+            mlPassword,
+            new File("mastering-input").getAbsolutePath()
+        ]
+    }
+}
+
+task extractZip(type: Copy) {
+    description = "Extract the input.zip file as part of deploying the application so that sample data is available for ingestion."
     from zipTree('input.zip')
     def destDir = System.getProperty("user.dir")
-    println("input directory is extracted to: " + destDir + "/input")
     destinationDir = file(destDir)
+    doLast {
+        println("Input directory is extracted to: " + destDir + "/input")
+    }
 }
-mlDeployApp.dependsOn extractZip
+mlDeploy.dependsOn extractZip

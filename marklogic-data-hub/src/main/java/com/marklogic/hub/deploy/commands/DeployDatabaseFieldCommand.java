@@ -16,20 +16,17 @@
 
 package com.marklogic.hub.deploy.commands;
 
+import com.marklogic.appdeployer.command.AbstractResourceCommand;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.SortOrderConstants;
-import com.marklogic.appdeployer.command.databases.DeployDatabaseCommand;
+import com.marklogic.mgmt.resource.ResourceManager;
 import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import com.marklogic.rest.util.Fragment;
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.core.io.support.ResourcePatternResolver;
-import org.springframework.util.FileCopyUtils;
 
-import java.io.IOException;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +37,7 @@ import java.util.List;
  * The reason that these fields are applied via an XML file is to avoid a bug specific to JSON files and the Manage
  * API that is not yet fixed in ML 9.0-9.
  */
-public class DeployDatabaseFieldCommand extends DeployDatabaseCommand {
+public class DeployDatabaseFieldCommand extends AbstractResourceCommand {
 
     private final static Namespace MANAGE_NS = Namespace.getNamespace("http://marklogic.com/manage");
 
@@ -49,32 +46,29 @@ public class DeployDatabaseFieldCommand extends DeployDatabaseCommand {
     }
 
     @Override
-    public void execute(CommandContext context) {
-        DatabaseManager dbManager = new DatabaseManager(context.getManageClient());
-        for (Resource r : getDatabaseFieldFilesFromClasspath()) {
-            String payload;
-            try {
-                payload = new String(FileCopyUtils.copyToByteArray(r.getInputStream()));
-            } catch (IOException e) {
-                throw new RuntimeException("Unable to read database field file from classpath, cause: " + e.getMessage(), e);
-            }
-
-            payload = payloadTokenReplacer.replaceTokens(payload, context.getAppConfig(), false);
-            payload = addExistingFieldsAndRangeFieldIndexes(payload, dbManager);
-            dbManager.save(payload);
-        }
+    protected File[] getResourceDirs(CommandContext context) {
+        return findResourceDirs(context, configDir -> new File(configDir.getBaseDir(), "database-fields"));
     }
 
-    protected Resource[] getDatabaseFieldFilesFromClasspath() {
-        ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(DeployDatabaseFieldCommand.class.getClassLoader());
-        try {
-            return resolver.getResources("classpath*:/ml-database-field/*.xml");
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to find ml-database-field files on the classpath, cause: " + e.getMessage(), e);
-        }
+    @Override
+    protected ResourceManager getResourceManager(CommandContext commandContext) {
+        return new DatabaseManager(commandContext.getManageClient());
     }
 
-    protected String addExistingFieldsAndRangeFieldIndexes(String payload, DatabaseManager dbManager) {
+    @Override
+    protected String adjustPayloadBeforeSavingResource(CommandContext context, File f, String payload) {
+        payload = super.adjustPayloadBeforeSavingResource(context, f, payload);
+        return addExistingFieldsAndRangeFieldIndexes(payload, new DatabaseManager(context.getManageClient()));
+    }
+
+    @Override
+    public void undo(CommandContext context) {
+        //no-op as deleting database will delete all the fields and indexes associated with it.
+        logger.info("No action required on undeploy, as the command for deleting databases on undeploy will also delete " +
+            "the fields and indexes created by this command.");
+    }
+
+    protected String addExistingFieldsAndRangeFieldIndexes(String payload, ResourceManager dbManager) {
         Fragment newProps = new Fragment(payload);
         Fragment existingProps = dbManager.getPropertiesAsXml(newProps.getElementValue("/node()/m:database-name"));
 

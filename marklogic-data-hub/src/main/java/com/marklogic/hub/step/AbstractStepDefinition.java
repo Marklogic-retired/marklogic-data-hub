@@ -48,6 +48,7 @@ public abstract class AbstractStepDefinition implements StepDefinition {
         version = 1;
 
         options = new HashMap<>();
+        options.put("permissions", "data-hub-operator,read,data-hub-operator,update");
 
         customHook = new JSONObject().jsonNode();
         retryLimit = 0;

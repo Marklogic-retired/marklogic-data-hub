@@ -240,13 +240,19 @@ public class QueryStepRunner implements StepRunner {
                 isFullOutput = Boolean.parseBoolean(options.get("fullOutput").toString());
             }
         }
+
         if(options.get("sourceDatabase") != null) {
             this.stagingClient = hubConfig.newStagingClient(StepRunnerUtil.objectToString(options.get("sourceDatabase")));
         }
         if(options.get("targetDatabase") != null) {
             this.destinationDatabase = StepRunnerUtil.objectToString(options.get("targetDatabase"));
         }
+
         options.put("flow", this.flow.getName());
+
+        // Needed to support constrainSourceQueryToJob
+        options.put("jobId", jobId);
+
         Collection<String> uris = null;
         //If current step is the first run step job output isn't disabled, a job doc is created
         if (!disableJobOutput) {
@@ -303,10 +309,8 @@ public class QueryStepRunner implements StepRunner {
         return this.batchSize;
     }
 
-    private Collection<String> runCollector() throws Exception {
-        Collector c = new CollectorImpl(this.flow);
-        c.setHubConfig(hubConfig);
-        c.setClient(stagingClient);
+    private Collection<String> runCollector() {
+        Collector c = new CollectorImpl(hubConfig, stagingClient);
 
         stepStatusListeners.forEach((StepStatusListener listener) -> {
             listener.onStatusChange(this.jobId, 0, JobStatus.RUNNING_PREFIX + step, 0, 0,  "running collector");
@@ -460,6 +464,9 @@ public class QueryStepRunner implements StepRunner {
                     if (errorMessages.size() < MAX_ERROR_MESSAGES) {
                         errorMessages.add(e.toString());
                     }
+                    // if exception is thrown update the failed related metrics
+                    stepMetrics.getFailedBatches().addAndGet(1);
+                    stepMetrics.getFailedEvents().addAndGet(batchSize);
                 }
             })
             .onQueryFailure((QueryBatchException failure) -> {
@@ -539,7 +546,7 @@ public class QueryStepRunner implements StepRunner {
             this.flow = flow;
             this.srcClient = srcClient;
             this.targetDatabase = targetDatabase;
-            this.srcClient.init("ml:runFlow" , this);
+            this.srcClient.init("mlRunFlow" , this);
         }
 
 

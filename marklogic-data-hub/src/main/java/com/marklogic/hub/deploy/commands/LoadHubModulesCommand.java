@@ -52,6 +52,16 @@ public class LoadHubModulesCommand extends AbstractCommand {
         setExecuteSortOrder(SortOrderConstants.LOAD_MODULES - 1);
     }
 
+    /**
+     * For use outside of a Spring container.
+     *
+     * @param hubConfig
+     */
+    public LoadHubModulesCommand(HubConfig hubConfig) {
+        this();
+        this.hubConfig = hubConfig;
+    }
+
     @Override
     public void execute(CommandContext context) {
         String timestampFile = hubConfig.getHubProject().getHubModulesDeployTimestampFile();

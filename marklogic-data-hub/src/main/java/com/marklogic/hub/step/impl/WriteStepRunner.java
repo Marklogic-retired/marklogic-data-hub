@@ -50,6 +50,8 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -100,7 +102,6 @@ public class WriteStepRunner implements StepRunner {
 
     public WriteStepRunner(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
-        this.stagingClient = hubConfig.newStagingClient();
         this.destinationDatabase = hubConfig.getDbName(DatabaseKind.STAGING);
     }
 
@@ -395,24 +396,30 @@ public class WriteStepRunner implements StepRunner {
         }
     }
 
-    private Collection<String> runFileCollector() throws Exception {
-        FileCollector c = new FileCollector(inputFilePath, inputFileType);
-        c.setHubConfig(hubConfig);
+    protected Path determineInputFilePath(String inputFilePath) {
+        Path dirPath = Paths.get(inputFilePath);
+        if (dirPath.isAbsolute()) {
+            return dirPath;
+        }
 
+        if (hubConfig != null && hubConfig.getHubProject() != null) {
+            String projectDirString = hubConfig.getHubProject().getProjectDirString();
+            return new File(projectDirString, dirPath.toString()).toPath().toAbsolutePath();
+        }
+
+        return new File(dirPath.toString()).toPath().toAbsolutePath();
+    }
+
+    private Collection<String> runFileCollector() {
         stepStatusListeners.forEach((StepStatusListener listener) -> {
             listener.onStatusChange(this.jobId, 0, JobStatus.RUNNING_PREFIX + step, 0, 0,  "fetching files");
         });
-        final DiskQueue<String> uris ;
-        try {
-            if(!isStopped.get()) {
-                uris = c.run();
-            }
-            else {
-                uris = null;
-            }
+        final DiskQueue<String> uris;
+        if(!isStopped.get()) {
+            uris = new FileCollector(inputFileType).run(determineInputFilePath(this.inputFilePath));
         }
-        catch (Exception e) {
-            throw e;
+        else {
+            uris = null;
         }
         return uris;
     }
@@ -457,6 +464,9 @@ public class WriteStepRunner implements StepRunner {
         }
 
         Vector<String> errorMessages = new Vector<>();
+        if (stagingClient == null) {
+            stagingClient = hubConfig.newStagingClient();
+        }
         dataMovementManager = stagingClient.newDataMovementManager();
 
         HashMap<String, JobTicket> ticketWrapper = new HashMap<>();
@@ -464,7 +474,7 @@ public class WriteStepRunner implements StepRunner {
         double uriSize = uris.size();
         Map<String,Object> fullResponse = new HashMap<>();
 
-        ServerTransform serverTransform = new ServerTransform("ml:runIngest");
+        ServerTransform serverTransform = new ServerTransform("mlRunIngest");
         serverTransform.addParameter("job-id", jobId);
         serverTransform.addParameter("step", step);
         serverTransform.addParameter("flow-name", flow.getName());
@@ -614,7 +624,7 @@ public class WriteStepRunner implements StepRunner {
                 jobDoc = jobDocManager.postJobs(jobId, stepStatus, step, stepStatus.equalsIgnoreCase(JobStatus.COMPLETED_PREFIX + step) ? step : null, runStepResponse);
             }
             catch (Exception e) {
-                logger.error(e.getMessage());
+                logger.error("Unable to update job document, cause: " + e.getMessage());
             }
             if(jobDoc != null) {
                 try {
@@ -622,9 +632,8 @@ public class WriteStepRunner implements StepRunner {
                     runStepResponse.setStepStartTime(tempResp.getStepStartTime());
                     runStepResponse.setStepEndTime(tempResp.getStepEndTime());
                 }
-                catch (Exception ex)
-                {
-                    logger.error(ex.getMessage());
+                catch (Exception ex) {
+                    logger.error("Unable to update step response, cause: " + ex.getMessage());
                 }
             }
         });

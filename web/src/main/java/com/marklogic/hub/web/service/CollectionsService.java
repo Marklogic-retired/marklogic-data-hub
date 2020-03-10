@@ -52,7 +52,7 @@ public class CollectionsService {
     }
 
     public class Collections extends ResourceManager {
-        private static final String NAME = "ml:collections";
+        private static final String NAME = "mlCollections";
 
         private RequestParameters params;
 

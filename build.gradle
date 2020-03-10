@@ -12,7 +12,8 @@ allprojects {
 
 subprojects {
     apply plugin: 'java'
-
+    apply plugin: 'jacoco'
+    apply plugin: 'application'
     sourceCompatibility = "1.8"
     targetCompatibility = "1.8"
 
@@ -33,6 +34,16 @@ subprojects {
             exceptionFormat 'full'
         }
     }
+    jacocoTestReport {
+        reports {
+            xml.enabled true
+        }
+    }
+    task applicationCodeCoverageReport(type:JacocoReport) {
+        executionData run
+        sourceSets sourceSets.main
+    }
+
 
 }
 

@@ -10,6 +10,7 @@ plugins {
     id 'com.marklogic.ml-development-tools' version '4.2.0'
 }
 
+mainClassName='com.marklogic.hub.ApplicationConfig'
 repositories {
     jcenter()
     maven { url 'http://repo.spring.io/milestone' }
@@ -41,7 +42,6 @@ dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot', version: '2.1.3.RELEASE'
     compile group: 'org.springframework.integration', name: 'spring-integration-http', version: '5.1.3.RELEASE'
     compile group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version: '2.1.3.RELEASE'
-    testCompile group: 'org.springframework', name: 'spring-test', version: '5.1.5.RELEASE'
 
     compile 'com.marklogic:mlcp-util:0.9.0'
     compile 'com.marklogic:marklogic-data-movement-components:1.0'
@@ -49,7 +49,8 @@ dependencies {
     compile 'org.apache.commons:commons-text:1.1'
 
     // For installer program
-    implementation "com.beust:jcommander:1.72"
+    compile "com.beust:jcommander:1.72"
+
     //https://github.com/jaegertracing/jaeger-client-java/tree/master/jaeger-core
     compile("io.jaegertracing:jaeger-core:0.35.4")
     compile("io.jaegertracing:jaeger-thrift:0.35.4")
@@ -64,6 +65,8 @@ dependencies {
 
     // Only needed to run tests in an (IntelliJ) IDE(A) that bundles an older version
     testRuntime "org.junit.platform:junit-platform-launcher:${junitPlatformVersion}"
+
+    testCompile group: 'org.springframework', name: 'spring-test', version: '5.1.5.RELEASE'
 
     testCompile 'xmlunit:xmlunit:1.3'
     testCompile 'org.skyscreamer:jsonassert:1.5.0'
@@ -92,10 +95,28 @@ configurations.all {
 }
 
 // The Spring Boot bootJar task produces an executable jar with all dependencies that runs the DHF installer
+// This jar is only meant to be used by the DHS team for installing DHF into DHS
 bootJar {
-    classifier = "installer"
-    mainClassName = "com.marklogic.hub.cli.Installer"
+    archiveClassifier = "installer"
+    mainClassName = "com.marklogic.hub.dhs.installer.Main"
 }
+
+task clientJar(type: Jar) {
+    description = "Build an executable jar to be used by DHF clients; as of 5.2.0, this is just for running flows"
+    manifest {
+        attributes "Main-Class": "com.marklogic.hub.cli.client.Main"
+    }
+    archiveClassifier = "client"
+    from(configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {
+        exclude "META-INF/*.SF"
+        exclude "META-INF/*.DSA"
+        exclude "META-INF/*.RSA"
+    }
+    exclude "spring-boot*.jar"
+    exclude "*jaeger*.jar"
+    with jar
+}
+build.dependsOn clientJar
 
 node {
   // Version of node to use.
@@ -163,6 +184,10 @@ task generateSourceDataInterface(type: com.marklogic.client.tools.gradle.Endpoin
     serviceDeclarationFile = dataServicesPath + "/mastering/service.json"
 }
 
+task generateStepDefinitionInterface(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask, group: dataServicesGroup) {
+    serviceDeclarationFile = dataServicesPath + "/stepDefinition/service.json"
+}
+
 task generateDataServiceInterfaces {
     description = "Generate Java interfaces for all Data Services. Must run this from the ./marklogic-data-hub directory"
     dependsOn {
@@ -180,6 +205,8 @@ if (!(
         gradle.startParameter.taskNames*.toLowerCase().contains("javadoc") ||
         gradle.startParameter.taskNames*.toLowerCase().contains("bootjar") ||
         gradle.startParameter.taskNames*.toLowerCase().contains("marklogic-data-hub:bootjar") ||
+        gradle.startParameter.taskNames*.toLowerCase().contains("clientjar") ||
+        gradle.startParameter.taskNames*.toLowerCase().contains("marklogic-data-hub:clientjar") ||
         project.hasProperty('skipui')
 )
 ) {
@@ -241,7 +268,8 @@ publishing {
             from components.java
             artifact sourcesJar
             artifact javadocJar
-	    artifact bootJar
+            artifact bootJar
+            artifact clientJar
 
             pom.withXml {
                 asNode().appendNode('description', pomCustomizations.textdescription.text())
@@ -256,13 +284,13 @@ publishing {
     }
     repositories {
         maven {
-          if(project.hasProperty("mavenUser")) {
-            credentials {
-            username mavenUser
-            password mavenPassword
+            if (project.hasProperty("mavenUser")) {
+                credentials {
+                    username mavenUser
+                    password mavenPassword
+                }
             }
-          }
-          url publishUrl
+            url publishUrl
         }
     }
 }

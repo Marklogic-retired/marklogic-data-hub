@@ -1,0 +1,30 @@
+{
+  "lang" : "zxx",
+  "name" : "insurance_application-insuranceApplicationMapping",
+  "description" : "",
+  "version" : 0,
+  "targetEntityType" : "http://example.org/Insurance_Application-0.0.1/Insurance_Application",
+  "sourceContext" : "/",
+  "sourceURI" : "/pharmaData/insuranceApplication/Insurance_Application.xml",
+  "properties" : {
+    "member_dob" : {
+      "sourcedFrom" : "persistence.ffe.cms.hhs.gov:insuranceApplication/persistence.ffe.cms.hhs.gov:applicationMember/persistence.ffe.cms.hhs.gov:member/persistence.ffe.cms.hhs.gov:birthDate"
+    },
+    "claim_id" : {
+      "sourcedFrom" : "persistence.ffe.cms.hhs.gov:insuranceApplication/base.persistence.base.cms.hhs.gov:objectIdentifier"
+    },
+    "member_name" : {
+      "sourcedFrom" : "persistence.ffe.cms.hhs.gov:insuranceApplication/persistence.ffe.cms.hhs.gov:applicationMember/persistence.ffe.cms.hhs.gov:member/persistence.ffe.cms.hhs.gov:personName"
+    }
+  },
+  "namespaces" : {
+    "persistence.ffe.cms.hhs.gov" : "http://persistence.ffe.cms.hhs.gov",
+    "base2" : "http://base2.persistence.base.cms.hhs.gov",
+    "persistence.base.cms.hhs.gov" : "http://persistence.base.cms.hhs.gov",
+    "base2.persistence.base.cms.hhs.gov" : "http://base2.persistence.base.cms.hhs.gov",
+    "ns2" : "http://persistence.base.cms.hhs.gov",
+    "base.persistence.base.cms.hhs.gov" : "http://base.persistence.base.cms.hhs.gov",
+    "base" : "http://base.persistence.base.cms.hhs.gov",
+    "ns3" : "http://base.persistence.base.cms.hhs.gov"
+  }
+}

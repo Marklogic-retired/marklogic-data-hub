@@ -15,7 +15,6 @@ function testParseDate() {
 function testMoreParseDate() {
   return [
     test.assertEqual(xs.date("2018-01-02"), core.parseDate("01-02-2018", "MM-DD-YYYY")),
-
     test.assertEqual(xs.date("1996-07-16"), core.parseDate("Jul 16, 1996", "Mon DD, YYYY")),
     test.assertEqual(xs.date("1996-07-16"), core.parseDate("Jul 16,1996", "Mon DD, YYYY")),
     test.assertEqual(xs.date("1996-07-16"), core.parseDate("Jul 16, 1996", "Mon DD,YYYY")),

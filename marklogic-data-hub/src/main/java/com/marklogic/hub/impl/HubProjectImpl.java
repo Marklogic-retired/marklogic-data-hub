@@ -34,11 +34,22 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathFactory;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -46,6 +57,8 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import static com.marklogic.hub.HubConfig.HUB_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES;
 import static com.marklogic.hub.HubConfig.USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES;
@@ -282,6 +295,14 @@ public class HubProjectImpl implements HubProject {
         writeResourceFile("hub-internal-config/databases/staging-schemas-database.json", hubDatabaseDir.resolve("staging-schemas-database.json"), true);
         writeResourceFile("hub-internal-config/databases/staging-triggers-database.json", hubDatabaseDir.resolve("staging-triggers-database.json"), true);
 
+        Path hubDatabaseFieldsDir = getHubConfigDir().resolve("database-fields");
+        hubDatabaseFieldsDir.toFile().mkdirs();
+        writeResourceFile("hub-internal-config/database-fields/staging-database.xml",
+            hubDatabaseFieldsDir.resolve("staging-database.xml"), true);
+        writeResourceFile("hub-internal-config/database-fields/job-database.xml",
+            hubDatabaseFieldsDir.resolve("job-database.xml"), true);
+
+
         // Per DHFPROD-3159, we no longer overwrite user config (ml-config) files. These are rarely updated by DHF,
         // while users may update them at any time. If DHF ever needs to update one of these files in the future, it
         // should do so via a method in this class that makes the update directly to the file without losing any
@@ -299,6 +320,9 @@ public class HubProjectImpl implements HubProject {
         writeResourceFile("ml-config/databases/final-schemas-database.json", userDatabaseDir.resolve("final-schemas-database.json"), overwriteUserConfigFiles);
         writeResourceFile("ml-config/databases/final-triggers-database.json", userDatabaseDir.resolve("final-triggers-database.json"), overwriteUserConfigFiles);
 
+        Path userDatabaseFieldsDir = getUserConfigDir().resolve("database-fields");
+        userDatabaseFieldsDir.toFile().mkdirs();
+        writeResourceFile("ml-config/database-fields/final-database.xml", userDatabaseFieldsDir.resolve("final-database.xml"), overwriteUserConfigFiles);
         // the following config has to do with ordering of initialization.
         // users and roles must be present to install the hub.
         // amps cannot be installed until after staging modules db exists.
@@ -338,9 +362,33 @@ public class HubProjectImpl implements HubProject {
             IOUtils.closeQuietly(is);
         }
 
-        writeRoleFile(rolesDir, "data-hub-admin-role.json");
+        // New 5.2.0 roles
+        writeRoleFile(rolesDir, "data-hub-admin.json");
+        writeRoleFile(rolesDir, "data-hub-developer.json");
+        writeRoleFile(rolesDir, "data-hub-environment-manager.json");
+        writeRoleFile(rolesDir, "data-hub-job-internal.json");
+        writeRoleFile(rolesDir, "data-hub-job-reader.json");
+        writeRoleFile(rolesDir, "data-hub-monitor.json");
+        writeRoleFile(rolesDir, "data-hub-operator.json");
+        writeRoleFile(rolesDir, "data-hub-portal-security-admin.json");
+        writeRoleFile(rolesDir, "data-hub-security-admin.json");
+        writeRoleFile(rolesDir, "data-hub-flow-reader.json");
+        writeRoleFile(rolesDir, "data-hub-flow-writer.json");
+        writeRoleFile(rolesDir, "data-hub-mapping-reader.json");
+        writeRoleFile(rolesDir, "data-hub-mapping-writer.json");
+        writeRoleFile(rolesDir, "data-hub-step-definition-reader.json");
+        writeRoleFile(rolesDir, "data-hub-step-definition-writer.json");
+        writeRoleFile(rolesDir, "data-hub-entity-model-writer.json");
+        writeRoleFile(rolesDir, "data-hub-module-reader.json");
+        writeRoleFile(rolesDir, "data-hub-module-writer.json");
+
+
+        // New 5.1.0 roles
         writeRoleFile(rolesDir, "data-hub-entity-model-reader.json");
         writeRoleFile(rolesDir, "data-hub-explorer-architect.json");
+
+        // Legacy roles
+        writeRoleFile(rolesDir, "data-hub-admin-role.json");
         writeRoleFile(rolesDir, "flow-developer-role.json");
         writeRoleFile(rolesDir, "flow-operator-role.json");
 
@@ -507,6 +555,120 @@ public class HubProjectImpl implements HubProject {
         }
         upgradeFlows();
         removeEmptyRangeElementIndexArrayFromFinalDatabaseFile();
+        addPathRangeIndexesToFinalDatabase();
+    }
+
+    private void addPathRangeIndexesToFinalDatabase() {
+        File finalDbFile = getUserConfigDir().resolve("database-fields").resolve("final-database.xml").toFile();
+        try {
+            FileInputStream fileInputStream = new FileInputStream(finalDbFile);
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+
+            Document document = documentBuilder.parse(fileInputStream);
+
+            XPathFactory xPathFactory = XPathFactory.newInstance();
+            XPath xPath = xPathFactory.newXPath();
+
+            XPathExpression expr = xPath.compile("//range-path-index/*[local-name()='path-expression']/text()='//actionDetails/*/uris'");
+
+            Boolean isNodePresent = Boolean.parseBoolean(expr.evaluate(document));
+
+            if(!isNodePresent) {
+                Node node = (Node) xPath
+                    .evaluate("//*[local-name()='range-path-indexes']", document.getDocumentElement(), XPathConstants.NODE);
+
+                Node newNode = node.appendChild(document.createElement("range-path-index"));
+
+                Element scalarType = document.createElement("scalar-type");
+                scalarType.setTextContent("string");
+
+                Element collation = document.createElement("scalar-type");
+                collation.setTextContent("http://marklogic.com/collation/");
+
+                Element pathExpression = document.createElement("path-expression");
+                pathExpression.setTextContent("//actionDetails/*/uris");
+
+                Element rangeValuePosition = document.createElement("range-value-positions");
+                rangeValuePosition.setTextContent("true");
+
+                Element invalidValues = document.createElement("invalid-values");
+                invalidValues.setTextContent("reject");
+
+                newNode.appendChild(scalarType);
+                newNode.appendChild(collation);
+                newNode.appendChild(pathExpression);
+                newNode.appendChild(rangeValuePosition);
+                newNode.appendChild(invalidValues);
+
+                TransformerFactory tf = TransformerFactory.newInstance();
+                Transformer transformer = tf.newTransformer();
+                transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+                transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+                transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+                transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+
+                transformer.transform(new DOMSource(document),
+                    new StreamResult(new OutputStreamWriter(new FileOutputStream(finalDbFile), "UTF-8")));
+            }
+        }
+        catch (Exception e) {
+            throw new DataHubProjectException("Error while upgrading project; was not able to add //actionDetails/*/uris " +
+                "path range index to final-database.xml file; cause: " + e.getMessage(), e);
+        }
+
+    }
+
+    @Override
+    public void exportProject(File location) {
+        if(!location.getParentFile().exists()) {
+            location.getParentFile().mkdirs();
+        }
+        try (ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(location))){
+            Stream.of("entities", "flows", "src" + File.separator + "main", "mappings", "step-definitions", "gradle",
+                "gradlew", "gradlew.bat", "build.gradle", "gradle.properties").forEach(file ->{
+                File fileToZip = getProjectDir().resolve(file).toFile();
+                try {
+                    if (fileToZip.isDirectory()) {
+                        zout.putNextEntry(new ZipEntry(file + File.separator));
+                        zipSubDirectory(file + File.separator, fileToZip, zout);
+                    } else {
+                        zipSubDirectory("", fileToZip, zout);
+                    }
+                }
+                catch (Exception ex){
+                    throw new RuntimeException("Unable to export project, cause: " + ex.getMessage(), ex);
+                }
+            });
+        }
+        catch (Exception e){
+            throw new RuntimeException("Unable to export project, cause: " + e.getMessage(), e);
+        }
+    }
+
+    private void zipSubDirectory(String basePath, File fileToZip, ZipOutputStream zout) throws IOException {
+        File[] files = fileToZip.listFiles();
+        if(files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    String path = basePath + file.getName() + File.separator;
+                    zout.putNextEntry(new ZipEntry(path));
+                    zipSubDirectory(path, file, zout);
+                } else {
+                    addFileToZip(basePath, file, zout);
+                }
+            }
+        }
+        else {
+            addFileToZip(basePath, fileToZip, zout);
+        }
+    }
+
+    private void addFileToZip(String basePath, File fileToZip, ZipOutputStream zout) throws  IOException {
+        FileInputStream fin = new FileInputStream(fileToZip);
+        zout.putNextEntry(new ZipEntry(basePath + fileToZip.getName()));
+        IOUtils.copy(fin, zout);
+        IOUtils.closeQuietly(fin);
     }
 
     protected void upgradeFlows() {

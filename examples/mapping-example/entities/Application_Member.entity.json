@@ -1,0 +1,25 @@
+{
+  "info" : {
+    "title" : "Application_Member",
+    "version" : "0.0.1",
+    "baseUri" : "http://example.org/"
+  },
+  "definitions" : {
+    "Application_Member" : {
+      "required" : [ ],
+      "pii" : [ ],
+      "elementRangeIndex" : [ ],
+      "rangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "medicaid_eventDate" : {
+          "datatype" : "dateTime"
+        },
+        "medicaid_eventID" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}

@@ -7,6 +7,7 @@
     <property namespace="" localname="LocationCity" name="city"/>
     <property namespace="" localname="LocationState" name="state"/>
     <property namespace="" localname="LocationPostalCode" name="zip"/>
+    <property namespace="" localname="CaseAmount" name="case-amount"/>
   </property-defs>
   <algorithms>
     <algorithm name="std-reduce" function="standard-reduction"/>
@@ -20,6 +21,8 @@
     <add property-name="city" weight="3"/>
     <add property-name="state" weight="1"/>
     <add property-name="zip" weight="3"/>
+    <!-- Only adding case-amount to trigger test for bug DHFPROD-4428 -->
+    <add property-name="case-amount" weight="1"/>
     <expand property-name="first-name" algorithm-ref="dbl-metaphone" weight="6">
       <dictionary>name-dictionary.xml</dictionary>
       <distance-threshold>10</distance-threshold>

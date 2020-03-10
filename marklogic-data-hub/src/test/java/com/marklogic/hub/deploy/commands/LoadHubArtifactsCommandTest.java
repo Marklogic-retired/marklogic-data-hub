@@ -3,6 +3,7 @@ package com.marklogic.hub.deploy.commands;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.impl.HubConfigImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,10 +11,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ApplicationConfig.class)
@@ -33,31 +35,57 @@ public class LoadHubArtifactsCommandTest extends HubTestBase {
 
     @Test
     public void verifyDefaultPermissions() {
-        DocumentMetadataHandle h = loadHubArtifactsCommand.buildDocumentMetadata("some-collection");
+        DocumentMetadataHandle h = loadHubArtifactsCommand.buildMetadata(adminHubConfig.getFlowPermissions(),"http://marklogic.com/data-hub/flow");
         assertEquals(1, h.getCollections().size());
-        assertEquals("some-collection", h.getCollections().iterator().next());
+        assertEquals("http://marklogic.com/data-hub/flow", h.getCollections().iterator().next());
 
-        final String message = "To ensure that hub artifacts have at least some permissions on them when " +
-            "deploying DHF to ML 10, mlModulePermissions is expected to be used to set permissions. This " +
-            "should result in rest-reader and rest-writer permissions being added.";
 
         DocumentMetadataHandle.DocumentPermissions perms = h.getPermissions();
-        Set<DocumentMetadataHandle.Capability> capabilities = perms.get("rest-reader");
-        assertEquals(1, capabilities.size(), message);
-        assertEquals(DocumentMetadataHandle.Capability.READ, capabilities.iterator().next());
+        assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("data-hub-flow-reader").iterator().next());
 
-        capabilities = perms.get("rest-writer");
-        assertEquals(2, capabilities.size(), message);
-        assertTrue(capabilities.contains(DocumentMetadataHandle.Capability.INSERT));
-        assertTrue(capabilities.contains(DocumentMetadataHandle.Capability.UPDATE));
+        h = loadHubArtifactsCommand.buildMetadata(adminHubConfig.getStepDefinitionPermissions(),"http://marklogic.com/data-hub/step-definition");
+        assertEquals(1, h.getCollections().size());
+        assertEquals("http://marklogic.com/data-hub/step-definition", h.getCollections().iterator().next());
+
+
+        perms = h.getPermissions();
+        assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("data-hub-step-definition-reader").iterator().next());
+
+        h = loadHubArtifactsCommand.buildMetadata(adminHubConfig.getModulePermissions(), "hub-core-module");
+        perms = h.getPermissions();
+        List<DocumentMetadataHandle.Capability> dhModReader = new ArrayList<>();
+        dhModReader.add(perms.get("data-hub-module-reader").iterator().next());
+        dhModReader.add(perms.get("data-hub-module-reader").iterator().next());
+
+        dhModReader.contains(DocumentMetadataHandle.Capability.READ);
+        dhModReader.contains(DocumentMetadataHandle.Capability.EXECUTE);
+        assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("data-hub-module-writer").iterator().next());
+        assertEquals(DocumentMetadataHandle.Capability.EXECUTE, perms.get("rest-extension-user").iterator().next());
     }
 
     @Test
-    public void noModulePermissions() {
-        adminHubConfig.setModulePermissions("");
-        DocumentMetadataHandle h = loadHubArtifactsCommand.buildDocumentMetadata("some-collection");
-        assertEquals(0, h.getPermissions().size(), "If the user for some reason sets mlModulePermissions to an empty string, " +
-            "no error should occur; the document permissions should just be empty");
+    public void customPermissions() {
+        //ensuring that permissions are user configured as opposed to the defaults
+        HubConfigImpl config = new HubConfigImpl();
+
+        config.setFlowPermissions("manage-user,read,manage-admin,update");
+        config.setStepDefinitionPermissions("manage-user,read,manage-admin,update");
+        config.setModulePermissions("manage-user,read,manage-admin,update");
+
+        DocumentMetadataHandle.DocumentPermissions perms = loadUserArtifactsCommand.buildMetadata(config.getStepDefinitionPermissions(),"http://marklogic.com/data-hub/step-definition").getPermissions();
+        assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("manage-user").iterator().next());
+        assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("manage-admin").iterator().next());
+        assertNull(perms.get("data-hub-step-definition-reader"));
+
+        perms = loadUserArtifactsCommand.buildMetadata(config.getFlowPermissions(),"http://marklogic.com/data-hub/flow").getPermissions();
+        assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("manage-user").iterator().next());
+        assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("manage-admin").iterator().next());
+        assertNull(perms.get("data-hub-flow-writer"));
+
+        perms = loadUserArtifactsCommand.buildMetadata(config.getModulePermissions(), "hub-core-module").getPermissions();
+        assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("manage-user").iterator().next());
+        assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("manage-admin").iterator().next());
+        assertNull(perms.get("data-hub-module-writer"));
     }
 }
 

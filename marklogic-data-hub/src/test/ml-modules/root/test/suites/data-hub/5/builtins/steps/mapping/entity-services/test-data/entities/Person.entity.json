@@ -36,6 +36,9 @@
         "name": {
           "$ref": "#/definitions/Name"
         },
+        "alias": {
+          "$ref": "#/definitions/Name"
+        },
         "nickname": {
           "datatype": "string"
         }

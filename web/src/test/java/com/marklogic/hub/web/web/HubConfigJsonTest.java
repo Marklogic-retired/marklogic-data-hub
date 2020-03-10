@@ -18,6 +18,8 @@
 package com.marklogic.hub.web.web;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.impl.HubConfigImpl;
@@ -34,6 +36,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {WebApplication.class, ApplicationConfig.class, HubConfigJsonTest.class, JsonTest.class})
@@ -53,6 +56,10 @@ public class HubConfigJsonTest {
         hubConfig.createProject(PROJECT_PATH);
         hubConfig.initHubProject();
         hubConfig.refreshProject();
+
+        hubConfig.setMlUsername("mluser");
+        hubConfig.setMlPassword("mlpassword");
+        hubConfig.setLoadBalancerHost("somehost");
 
         String expected = "{\n" +
             "  \"stagingDbName\": \"data-hub-STAGING\",\n" +
@@ -83,9 +90,18 @@ public class HubConfigJsonTest {
             "  \"flowOperatorRoleName\": \"flow-operator-role\",\n" +
             "  \"flowOperatorUserName\": \"flow-operator\",\n" +
             "  \"customForestPath\": \"forests\",\n" +
-            "  \"modulePermissions\": \"rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute,flow-developer-role,read,flow-developer-role,execute,flow-developer-role,insert,flow-operator-role,read,flow-operator-role,execute\",\n" +
             "  \"jarVersion\": \"" + hubConfig.getJarVersion() + "\"\n" +
             "}";
+
         assertThat(json.write(hubConfig)).isEqualToJson(expected);
+
+        // Verify some fields were not serialized
+        JsonNode actualJson = new ObjectMapper().readTree(json.write(hubConfig).getJson());
+        assertFalse(actualJson.has("mlUsername"), "mlUsername and mlPassword were previously serialized because they " +
+            "had public getters in HubConfigImpl, but this seems like an unintended error, as we wouldn't want to " +
+            "serialize passwords out into a JSON string");
+        assertFalse(actualJson.has("mlPassword"));
+        assertFalse(actualJson.has("loadBalancerHost"), "It is not known why this is JsonIgnore'd, but that was the " +
+            "case with HubConfigImpl, so it's expected to be enforced by AbstractHubConfig as well");
     }
 }

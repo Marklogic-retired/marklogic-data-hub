@@ -33,6 +33,8 @@ public class DeployProtectedPathsWhenUpdatingIndexesTest extends HubTestBase {
 
     @Test
     public void test() {
+        runAsDataHubDeveloper();
+
         givenAProtectedPathFile();
         dataHub.updateIndexes();
         thenTheProtectedPathIsDeployed();
@@ -45,6 +47,8 @@ public class DeployProtectedPathsWhenUpdatingIndexesTest extends HubTestBase {
         perm.put("role-name", "pii-reader");
         perm.put("capability", "read");
         ConfigDir configDir = new ConfigDir(new File(PROJECT_PATH, "src/main/ml-config"));
+        configDir.getBaseDir().mkdirs();
+        configDir.getSecurityDir().mkdirs();
         File pathsDir = configDir.getProtectedPathsDir();
         pathsDir.mkdirs();
         File f = new File(pathsDir, "01_pii-protected-paths.json");

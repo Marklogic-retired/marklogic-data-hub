@@ -366,7 +366,7 @@ public class MappingE2E extends HubTestBase {
         assertEquals(0, getJobDocCount());
 
         installDocs(flowName, dataFormat, ENTITY, srcClient);
-        getHubFlowRunnerConfig();
+        runAsFlowOperator();
         LegacyFlow harmonizeFlow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
 
         LegacyFlowRunner flowRunner = flowManager.newFlowRunner()

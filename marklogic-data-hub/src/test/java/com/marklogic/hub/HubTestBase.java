@@ -18,6 +18,7 @@ package com.marklogic.hub;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
@@ -34,19 +35,14 @@ import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.ext.SecurityContextType;
-import com.marklogic.client.ext.file.JarDocumentFileReader;
 import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager;
-import com.marklogic.client.ext.tokenreplacer.DefaultTokenReplacer;
-import com.marklogic.client.ext.tokenreplacer.TokenReplacer;
+import com.marklogic.client.ext.util.DefaultDocumentPermissionsParser;
+import com.marklogic.client.ext.util.DocumentPermissionsParser;
 import com.marklogic.client.io.*;
 import com.marklogic.client.io.marker.AbstractReadHandle;
 import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.error.DataHubConfigurationException;
-import com.marklogic.hub.impl.DataHubImpl;
-import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.hub.impl.HubProjectImpl;
-import com.marklogic.hub.impl.Versions;
-import com.marklogic.hub.job.impl.JobMonitorImpl;
+import com.marklogic.hub.impl.*;
 import com.marklogic.hub.legacy.LegacyDebugging;
 import com.marklogic.hub.legacy.LegacyTracing;
 import com.marklogic.hub.legacy.flow.CodeFormat;
@@ -54,10 +50,12 @@ import com.marklogic.hub.legacy.flow.DataFormat;
 import com.marklogic.hub.legacy.flow.FlowType;
 import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
+import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.util.ComboListener;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
+import com.marklogic.mgmt.util.ObjectMapperFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -100,6 +98,7 @@ import java.util.stream.Stream;
 import static com.marklogic.client.io.DocumentMetadataHandle.Capability.READ;
 import static com.marklogic.client.io.DocumentMetadataHandle.Capability.UPDATE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 @SuppressWarnings("deprecation")
@@ -154,16 +153,6 @@ public class HubTestBase {
 
     @Autowired
     protected LegacyFlowManagerImpl fm;
-
-    @Autowired
-    protected JobMonitorImpl jobMonitor;
-
-    protected JarDocumentFileReader jarDocumentFileReader = null;
-
-    // to speedup dev cycle, you can create a hub and set this to true.
-    // for true setup/teardown, must be 'false'
-    private static boolean isInstalled = false;
-    private static int nInstalls = 0;
 
     static final protected Logger logger = LoggerFactory.getLogger(HubTestBase.class);
 
@@ -428,6 +417,12 @@ public class HubTestBase {
         LegacyTracing.create(stagingClient).disable();
     }
 
+    /**
+     * Returns a HubConfigImpl with a username/password that is flow-developer/password, unless mlUsername and mlPassword
+     * have been modified in the gradle.properties file for this project.
+     *
+     * @return
+     */
     protected HubConfigImpl getDataHubAdminConfig() {
         if (isSslRun() || isCertAuth()) {
             certInit();
@@ -441,17 +436,40 @@ public class HubTestBase {
         adminHubConfig.getAppConfig().getCmaConfig().setDeployRoles(false);
         adminHubConfig.getAppConfig().getCmaConfig().setDeployUsers(false);
 
-        wireClients();
         return adminHubConfig;
     }
 
-    protected HubConfigImpl getHubFlowRunnerConfig() {
-        adminHubConfig.setMlUsername(flowRunnerUser);
-        adminHubConfig.setMlPassword(flowRunnerPassword);
+    protected HubConfigImpl runAsFlowOperator() {
+        return runAsUser(flowRunnerUser, flowRunnerPassword);
+    }
+
+    protected HubConfigImpl runAsDataHubDeveloper() {
+        if (isVersionCompatibleWith520Roles()) {
+            return runAsUser("test-data-hub-developer", "password");
+        }
+        logger.warn("ML version is not compatible with 5.2.0 roles, so will run as flow-developer instead of data-hub-developer");
+        return getDataHubAdminConfig();
+    }
+
+    protected HubConfigImpl runAsDataHubOperator() {
+        if (isVersionCompatibleWith520Roles()) {
+            return runAsUser("test-data-hub-operator", "password");
+        }
+        logger.warn("ML version is not compatible with 5.2.0 roles, so will run as flow-operator instead of data-hub-operator");
+        return runAsFlowOperator();
+    }
+
+    protected HubConfigImpl runAsAdmin() {
+        return runAsUser("test-admin-for-data-hub-tests", "password");
+    }
+    
+    protected HubConfigImpl runAsUser(String mlUsername, String mlPassword) {
+        adminHubConfig.setMlUsername(mlUsername);
+        adminHubConfig.setMlPassword(mlPassword);
         appConfig = adminHubConfig.getAppConfig();
-        manageConfig = ((HubConfigImpl)adminHubConfig).getManageConfig();
-        manageClient = ((HubConfigImpl)adminHubConfig).getManageClient();
-        adminConfig = ((HubConfigImpl)adminHubConfig).getAdminConfig();
+        manageConfig = adminHubConfig.getManageConfig();
+        manageClient = adminHubConfig.getManageClient();
+        adminConfig = adminHubConfig.getAdminConfig();
         if(isCertAuth()) {
             appConfig.setAppServicesCertFile("src/test/resources/ssl/client-flow-operator.p12");
             adminHubConfig.setCertFile(DatabaseKind.STAGING, "src/test/resources/ssl/client-flow-operator.p12");
@@ -472,20 +490,14 @@ public class HubTestBase {
             adminHubConfig.setTrustManager(DatabaseKind.FINAL, (X509TrustManager) tmf.getTrustManagers()[0]);
             adminHubConfig.setCertPass(DatabaseKind.FINAL, "abcd");
 
-            //manageConfig.setConfigureSimpleSsl(false);
             manageConfig.setSecuritySslContext(certContext);
             manageConfig.setPassword(null);
             manageConfig.setSecurityPassword(null);
 
-            //adminConfig.setConfigureSimpleSsl(false);
             adminConfig.setPassword(null);
         }
-        adminHubConfig.setAppConfig(appConfig);
-        ((HubConfigImpl)adminHubConfig).setManageConfig(manageConfig);
+        // Re-initializes the Manage API connection
         manageClient.setManageConfig(manageConfig);
-        ((HubConfigImpl)adminHubConfig).setManageClient(manageClient);
-        ((HubConfigImpl)adminHubConfig).setAdminConfig(adminConfig);
-        wireClients();
         return adminHubConfig;
     }
 
@@ -585,7 +597,6 @@ public class HubTestBase {
         ((HubConfigImpl)adminHubConfig).setManageClient(manageClient);
 
         ((HubConfigImpl)adminHubConfig).setAdminConfig(adminConfig);
-        wireClients();
     }
 
     public void deleteProjectDir() {
@@ -731,6 +742,11 @@ public class HubTestBase {
         return ((JacksonHandle)res).get();
     }
 
+    protected String getStringQueryResults(String query, String database) {
+        AbstractReadHandle res = runInDatabase(query, database, new StringHandle());
+        return ((StringHandle)res).get();
+    }
+
     protected int getTelemetryInstallCount(){
         int count = 0;
         EvalResultIterator resultItr = runInDatabase("xdmp:feature-metric-status()/*:feature-metrics/*:features/*:feature[@name=\"datahub.core.install.count\"]/data()", stagingClient.getDatabase());
@@ -749,7 +765,7 @@ public class HubTestBase {
     protected void clearStagingFinalAndJobDatabases() {
         clearDatabases(HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
-
+    //not getting uris of prov collection as they cannot be deleted by flow-developer
     public void clearDatabases(String... databases) {
         ServerEvaluationCall eval = stagingClient.newServerEval();
         String installer =
@@ -757,7 +773,7 @@ public class HubTestBase {
             "for $database in fn:tokenize($databases, \",\")\n" +
             "return\n" +
             "  xdmp:eval('\n" +
-            "    cts:uris() ! xdmp:document-delete(.)\n" +
+            "    cts:uris((),(),cts:not-query(cts:collection-query(\"http://marklogic.com/provenance-services/record\"))) ! xdmp:document-delete(.)\n" +
             "  ',\n" +
             "  (),\n" +
             "  map:entry(\"database\", xdmp:database($database))\n" +
@@ -801,9 +817,8 @@ public class HubTestBase {
                 default:
                     handle.setFormat(Format.TEXT);
             }
-            DocumentMetadataHandle permissions = new DocumentMetadataHandle()
-                .withPermission(getDataHubAdminConfig().getFlowOperatorRoleName(), DocumentMetadataHandle.Capability.EXECUTE, UPDATE, READ);
-            writeSet.add(path, permissions, handle);
+
+            writeSet.add(path, getPermissionsMetaDataHandle(), handle);
         });
         modMgr.write(writeSet);
         writeSet.parallelStream().forEach((writeOp) -> { IOUtils.closeQuietly((InputStreamHandle) writeOp.getContent());});
@@ -825,9 +840,16 @@ public class HubTestBase {
         default:
             handle.setFormat(Format.TEXT);
         }
-        modMgr.write(path, permissions, handle);
+        modMgr.write(path, getPermissionsMetaDataHandle(), handle);
         clearFlowCache();
         handle.close();
+    }
+
+    private DocumentMetadataHandle getPermissionsMetaDataHandle() {
+        DocumentMetadataHandle permissions = new DocumentMetadataHandle();
+        DocumentPermissionsParser documentPermissionsParser = new DefaultDocumentPermissionsParser();
+        documentPermissionsParser.parsePermissions(getDataHubAdminConfig().getModulePermissions(), permissions.getPermissions());
+        return permissions;
     }
 
     protected void clearFlowCache() {
@@ -999,20 +1021,6 @@ public class HubTestBase {
         deployer.deploy(hubConfig.getAppConfig());
     }
 
-    private TokenReplacer buildModuleTokenReplacer(AppConfig appConfig) {
-        DefaultTokenReplacer r = new DefaultTokenReplacer();
-        final Map<String, String> customTokens = appConfig.getCustomTokens();
-        if (customTokens != null && !customTokens.isEmpty()) {
-            r.addPropertiesSource(() -> {
-                Properties p = new Properties();
-                p.putAll(customTokens);
-                return p;
-            });
-        }
-
-        return r;
-    }
-
     protected void installHubArtifacts(HubConfig hubConfig, boolean force) {
         logger.debug("Installing hub artifacts into MarkLogic");
         List<Command> commands = new ArrayList<>();
@@ -1165,18 +1173,10 @@ public class HubTestBase {
     }
 
 
-    public void wireClients() {
-        fm.setupClient();
-        dataHub.wireClient();
-        versions.setupClient();
-        jobMonitor.setupClient();
-
-    }
     //Use this method sparingly as it slows down the test
     public void resetProperties() {
         Field[] fields = HubConfigImpl.class.getDeclaredFields();
-        Set<String> s =  Stream.of("hubProject", "environment", "flowManager",
-                "dataHub", "versions", "logger", "objmapper", "projectProperties", "jobMonitor").collect(Collectors.toSet());
+        Set<String> s =  Stream.of("hubProject", "environment", "logger", "objmapper", "projectProperties").collect(Collectors.toSet());
 
         for(Field f : fields){
             if(! s.contains(f.getName())) {
@@ -1201,5 +1201,98 @@ public class HubTestBase {
         StringHandle strHandle = new StringHandle();
         runInDatabase("sem:timezone-string(fn:current-dateTime())", HubConfig.DEFAULT_FINAL_NAME, strHandle);
         return strHandle.get();
+    }
+
+    //Not checking the dates for nightly as we expect tests to run on latest nightly
+    protected boolean isVersionCompatibleWith520Roles() {
+        Versions.MarkLogicVersion serverVersion = versions.getMLVersion();
+        if(serverVersion.isNightly()){
+            //Supported on 10.0-nightly only
+            return (serverVersion.getMajor() == 10);
+        }
+        else {
+            return (serverVersion.getMajor() == 10 && serverVersion.getMinor() >= 300);
+
+        }
+    }
+
+    protected void setupProjectForRunningTestFlow() {
+        basicSetup();
+        getDataHubAdminConfig();
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
+        copyFlowArtifactsToProject();
+        installUserModules(getDataHubAdminConfig(), true);
+        installHubArtifacts(getDataHubAdminConfig(), true);
+    }
+
+    protected void copyFlowArtifactsToProject() {
+        try {
+            FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/entities/e2eentity.entity.json"),
+                adminHubConfig.getHubEntitiesDir().toFile());
+            FileUtils.copyDirectory(getResourceFile("flow-runner-test/flows"), adminHubConfig.getFlowsDir().toFile());
+            FileUtils.copyDirectory(getResourceFile("flow-runner-test/input"),
+                adminHubConfig.getHubProjectDir().resolve("input").toFile());
+            FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/step-definitions/json-ingestion.step.json"),
+                adminHubConfig.getStepsDirByType(StepDefinition.StepDefinitionType.INGESTION).resolve("json-ingestion").toFile());
+            FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/step-definitions/json-mapping.step.json"),
+                adminHubConfig.getStepsDirByType(StepDefinition.StepDefinitionType.MAPPING).resolve("json-mapping").toFile());
+            FileUtils.copyDirectory(getResourceFile("flow-runner-test/mappings"),
+                adminHubConfig.getHubMappingsDir().resolve("e2e-mapping").toFile());
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    /**
+     * This is needed for running flows without a HubProject because if the paths are relative (which they are by
+     * default), then a HubProject is needed to resolve them into absolute paths.
+     */
+    protected void makeInputFilePathsAbsoluteInFlow(String flowName) {
+        final String flowFilename = flowName + ".flow.json";
+        try {
+            Path projectDir = adminHubConfig.getHubProject().getProjectDir();
+            final File flowFile = projectDir.resolve("flows").resolve(flowFilename).toFile();
+            ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
+            JsonNode flow = objectMapper.readTree(flowFile);
+            makeInputFilePathsAbsolute(flow, projectDir.toFile().getAbsolutePath());
+            ObjectMapperFactory.getObjectMapper().writeValue(flowFile, flow);
+
+            JSONDocumentManager mgr = stagingClient.newJSONDocumentManager();
+            final String uri = "/flows/" + flowFilename;
+            if (mgr.exists(uri) != null) {
+                DocumentMetadataHandle metadata = mgr.readMetadata("/flows/" + flowFilename, new DocumentMetadataHandle());
+                mgr.write("/flows/" + flowFilename, metadata, new JacksonHandle(flow));
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    protected void makeInputFilePathsAbsolute(JsonNode flow, String projectDir) {
+        JsonNode steps = flow.get("steps");
+        steps.fieldNames().forEachRemaining(name -> {
+            JsonNode step = steps.get(name);
+            if (step.has("fileLocations")) {
+                ObjectNode fileLocations = (ObjectNode) step.get("fileLocations");
+                if (fileLocations.has("inputFilePath")) {
+                    String currentPath = fileLocations.get("inputFilePath").asText();
+                    if (!Paths.get(currentPath).isAbsolute()) {
+                        fileLocations.put("inputFilePath", projectDir + "/" + currentPath);
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * These assertions are made in several tests, so this method is in this class to avoid duplicating them.
+     */
+    protected void verifyCollectionCountsFromRunningTestFlow() {
+        assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "xml-coll"));
+        assertEquals(25, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "csv-coll"));
+        assertEquals(25, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "csv-tab-coll"));
+        assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "json-coll"));
+        assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "json-map"));
+        assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map"));
     }
 }

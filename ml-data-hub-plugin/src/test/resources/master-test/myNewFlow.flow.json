@@ -1,0 +1,173 @@
+{
+  "name": "myNewFlow",
+  "options": {
+    "collections": ["myNewFlow"]
+  },
+  "description": "flow description",
+  "steps": {
+    "1": {
+      "stepDefinitionName": "default-ingestion",
+      "stepDefinitionType": "INGESTION",
+      "fileLocations": {
+        "inputFilePath": "input",
+        "inputFileType": "json",
+        "outputURIReplacement": ".*/input,''"
+      },
+      "options": {
+        "sourceDatabase": "data-hub-STAGING",
+        "targetDatabase": "data-hub-STAGING",
+        "sourceQuery": null,
+        "outputFormat": "json",
+        "collections": ["default-ingestion"]
+      }
+    },
+    "2": {
+      "stepDefinitionName": "default-mapping",
+      "stepDefinitionType": "MAPPING",
+      "options": {
+        "collections" : [ "mapping", "mdm-content" ],
+        "sourceDatabase": "data-hub-STAGING",
+        "targetDatabase": "data-hub-FINAL",
+        "mapping": {
+          "name": "person",
+          "version": 1
+        },
+        "sourceQuery" : "cts.collectionQuery('default-ingestion')"
+      }
+    },
+    "3": {
+      "stepDefinitionName": "default-mastering",
+      "stepDefinitionType": "MASTERING",
+      "options": {
+        "provenanceGranularityLevel": "fine",
+        "sourceDatabase": "data-hub-FINAL",
+        "targetDatabase": "data-hub-FINAL",
+        "targetEntity": "person",
+        "acceptsBatch": true,
+        "stepUpdate": true,
+        "collections": [
+          "master"
+        ],
+        "sourceQuery": "cts.collectionQuery('mapping')",
+        "mergeOptions": {
+          "propertyDefs": {
+            "properties": [
+              {
+                "namespace": "",
+                "localname": "id",
+                "name": "id"
+              },
+              {
+                "namespace": "",
+                "localname": "firstName",
+                "name": "firstName"
+              },
+              {
+                "namespace": "",
+                "localname": "lastName",
+                "name": "lastName"
+              },
+              {
+                "namespace": "",
+                "localname": "Address",
+                "name": "address"
+              }
+            ]
+          },
+          "algorithms": {
+            "stdAlgorithm": {
+              "timestamp": {
+                "path": "/envelope/headers/ingestDateTime"
+              }
+            }
+          },
+          "merging": [
+            {
+              "default": "true",
+              "maxSources": "1",
+              "sourceWeights": [{
+                "source": {
+                  "name": "A",
+                  "weight": "10"
+                }
+              }]
+            }
+          ]
+        },
+        "matchOptions": {
+          "dataFormat": "json",
+          "propertyDefs": {
+            "property": [
+              {
+                "namespace": "",
+                "localname": "firstName",
+                "name": "firstName"
+              },
+              {
+                "namespace": "",
+                "localname": "lastName",
+                "name": "lastName"
+              },
+              {
+                "namespace": "",
+                "localname": "email",
+                "name": "email"
+              },
+              {
+                "namespace": "",
+                "localname": "gender",
+                "name": "gender"
+              }
+            ]
+          },
+          "algorithms": {
+            "algorithm": []
+          },
+          "scoring": {
+            "add": [
+              {
+                "propertyName": "email",
+                "weight": "50"
+              },
+              {
+                "propertyName": "lastName",
+                "weight": "12"
+              },
+              {
+                "propertyName": "firstName",
+                "weight": "6"
+              },
+              {
+                "propertyName": "gender",
+                "weight": "3"
+              }
+            ],
+            "expand": [],
+            "reduce": []
+          },
+          "thresholds": {
+            "threshold": [
+              {
+                "above": "30",
+                "label": "Possible Match"
+              },
+              {
+                "above": "50",
+                "label": "Likely Match",
+                "action": "notify"
+              },
+              {
+                "above": "68",
+                "label": "Definitive Match",
+                "action": "merge"
+              }
+            ]
+          },
+          "tuning": {
+            "maxScan": "200"
+          }
+        }
+      }
+    }
+  }
+}

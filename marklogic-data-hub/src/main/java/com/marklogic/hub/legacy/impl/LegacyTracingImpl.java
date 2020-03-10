@@ -25,7 +25,7 @@ import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.legacy.LegacyTracing;
 
 public class LegacyTracingImpl extends ResourceManager implements LegacyTracing {
-    private static final String NAME = "ml:tracing";
+    private static final String NAME = "mlTracing";
 
     public LegacyTracingImpl(DatabaseClient client) {
         super();

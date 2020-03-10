@@ -28,6 +28,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'war'
 
+
 war {
   baseName = 'marklogic-datahub'
   version = "${version}"
@@ -37,7 +38,7 @@ war {
   }
 
 }
-
+mainClassName = "com.marklogic.hub.web.WebApplication"
 bootWar {
   baseName "marklogic-datahub"
 }

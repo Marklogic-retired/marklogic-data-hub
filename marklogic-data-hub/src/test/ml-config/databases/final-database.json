@@ -18,6 +18,83 @@
       "collation" : "http://marklogic.com/collation//S1",
       "range-value-positions" : false,
       "invalid-values" : "reject"
+    },
+    {
+      "scalar-type": "decimal",
+      "namespace-uri": "",
+      "localname": "decimalProp",
+      "collation": "",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "double",
+      "namespace-uri": "",
+      "localname": "doubleProp",
+      "collation": "",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "float",
+      "namespace-uri": "",
+      "localname": "floatProp",
+      "collation": "",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
+      "scalar-type" : "string",
+      "namespace-uri" : "",
+      "localname" : "stringNameProp",
+      "collation" : "http://marklogic.com/collation/codepoint",
+      "range-value-positions" : false,
+      "invalid-values" : "reject"
+    },
+    {
+      "scalar-type" : "string",
+      "namespace-uri" : "",
+      "localname" : "searchEntityProp1",
+      "collation" : "http://marklogic.com/collation/codepoint",
+      "range-value-positions" : false,
+      "invalid-values" : "reject"
+    }
+  ],
+  "range-path-index": [
+    {
+      "scalar-type": "int",
+      "path-expression": "//*:instance/NumericEntity/intProp",
+      "collation": "",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "long",
+      "path-expression": "//*:instance/NumericEntity/longProp",
+      "collation": "",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "int",
+      "path-expression": "//*:instance/NumericStringEntity/intProp",
+      "collation": "",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "string",
+      "path-expression": "//*:instance/NumericStringEntity/stringCityProp",
+      "collation": "http://marklogic.com/collation/codepoint",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "string",
+      "path-expression": "//*:instance/EntitySearchEntity/searchEntityProp2",
+      "collation": "http://marklogic.com/collation/codepoint",
+      "range-value-positions": false,
+      "invalid-values": "reject"
     }
   ]
 }

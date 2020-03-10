@@ -1,0 +1,11 @@
+{
+  "role-name": "test-custom-role1",
+  "description": "Because data-hub-security-admin has the grant-my-privileges privilege, it can create roles that inherit privileges inherited by data-hub-security-admin",
+  "privilege": [
+    {
+      "privilege-name": "role-set-external-names",
+      "kind": "execute",
+      "action": "http://marklogic.com/xdmp/privileges/role-set-external-names"
+    }
+  ]
+}

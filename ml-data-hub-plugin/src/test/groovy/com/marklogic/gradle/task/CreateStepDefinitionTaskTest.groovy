@@ -18,6 +18,7 @@
 package com.marklogic.gradle.task
 
 import com.marklogic.hub.HubConfig
+import groovy.json.JsonSlurper
 import org.gradle.testkit.runner.UnexpectedBuildFailure
 import org.gradle.testkit.runner.UnexpectedBuildSuccess
 
@@ -62,6 +63,9 @@ class CreateStepDefinitionTaskTest extends BaseTest {
         File stepDir = Paths.get(testProjectDir.root.toString(), "step-definitions", "custom", "my-test-step").toFile()
         println stepDir.toString()
         stepDir.isDirectory()
+        def jsonSlurper = new JsonSlurper()
+        def data = jsonSlurper.parse(Paths.get(testProjectDir.root.toString(), "step-definitions", "custom", "my-test-step", "my-test-step.step.json").toFile());
+        data.options.permissions == "data-hub-operator,read,data-hub-operator,update";
     }
 
     def "create step with valid name and type"() {
@@ -82,5 +86,31 @@ class CreateStepDefinitionTaskTest extends BaseTest {
 
         File stepDir = Paths.get(testProjectDir.root.toString(), "step-definitions", "mapping", "my-new-step").toFile()
         stepDir.isDirectory()
+        def jsonSlurper = new JsonSlurper()
+        def data = jsonSlurper.parse(Paths.get(testProjectDir.root.toString(), "step-definitions", "mapping", "my-new-step", "my-new-step.step.json").toFile());
+        data.options.permissions == "data-hub-operator,read,data-hub-operator,update";
+    }
+
+    def "create mastering step with valid name and type"() {
+        given:
+        propertiesFile << """
+            ext {
+                stepDefName=my-mastering-step
+                stepDefType=mastering
+            }
+        """
+
+        when:
+        def result = runTask('hubCreateStepDefinition')
+
+        then:
+        notThrown(UnexpectedBuildFailure)
+        result.task(":hubCreateStepDefinition").outcome == SUCCESS
+
+        File stepDir = Paths.get(testProjectDir.root.toString(), "step-definitions", "mastering", "my-mastering-step").toFile()
+        stepDir.isDirectory()
+        def jsonSlurper = new JsonSlurper()
+        def data = jsonSlurper.parse(Paths.get(stepDir.toString(), "my-mastering-step.step.json").toFile());
+        data.options.permissions == "data-hub-operator,read,data-hub-operator,update";
     }
 }

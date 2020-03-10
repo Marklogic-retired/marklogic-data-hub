@@ -92,7 +92,7 @@ public class LegacyJobManagerTest extends HubTestBase {
         HashMap<String, Object> options = new HashMap<>();
         options.put("name", "Bob Smith");
         options.put("age", 55);
-        getHubFlowRunnerConfig();
+        runAsFlowOperator();
         LegacyFlowRunner flowRunner = fm.newFlowRunner()
             .withFlow(harmonizeFlow)
             .withBatchSize(10)
@@ -114,7 +114,7 @@ public class LegacyJobManagerTest extends HubTestBase {
             .onItemComplete(flowItemCompleteListener);
         flowRunner.run();
         flowRunner.awaitCompletion();
-        jobManager = LegacyJobManager.create(getHubFlowRunnerConfig().newJobDbClient());
+        jobManager = LegacyJobManager.create(adminHubConfig.newJobDbClient());
     }
 
     @AfterEach

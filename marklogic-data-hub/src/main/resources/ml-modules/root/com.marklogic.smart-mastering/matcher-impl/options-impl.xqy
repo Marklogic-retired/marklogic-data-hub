@@ -12,6 +12,8 @@ module namespace opt-impl = "http://marklogic.com/smart-mastering/options-impl";
 
 import module namespace algorithms = "http://marklogic.com/smart-mastering/algorithms"
   at "/com.marklogic.smart-mastering/algorithms/base.xqy";
+import module namespace config = "http://marklogic.com/data-hub/config"
+  at "/com.marklogic.hub/config.xqy";
 import module namespace const = "http://marklogic.com/smart-mastering/constants"
   at "/com.marklogic.smart-mastering/constants.xqy";
 import module namespace json="http://marklogic.com/xdmp/json"
@@ -126,7 +128,7 @@ declare function opt-impl:save-options(
     xdmp:document-insert(
       $ALGORITHM-OPTIONS-DIR||$name||".xml",
       $options,
-      xdmp:default-permissions(),
+      config:get-default-data-hub-permissions(),
       ($const:OPTIONS-COLL, $const:MATCH-OPTIONS-COLL, $const:ALGORITHM-COLL)
     )
   )

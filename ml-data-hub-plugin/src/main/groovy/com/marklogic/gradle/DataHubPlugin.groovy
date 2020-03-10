@@ -25,16 +25,10 @@ import com.marklogic.gradle.task.client.WatchTask
 import com.marklogic.gradle.task.command.HubUpdateIndexesCommand
 import com.marklogic.gradle.task.databases.ClearModulesDatabaseTask
 import com.marklogic.gradle.task.databases.UpdateIndexesTask
-import com.marklogic.gradle.task.dhs.DhsDeployTask
+import com.marklogic.gradle.task.deploy.DeployAsDeveloperTask
+import com.marklogic.gradle.task.deploy.DeployAsSecurityAdminTask
 import com.marklogic.hub.ApplicationConfig
-import com.marklogic.hub.cli.command.InstallIntoDhsCommand
-import com.marklogic.hub.deploy.commands.ClearDHFModulesCommand
-import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand
-import com.marklogic.hub.deploy.commands.GeneratePiiCommand
-import com.marklogic.hub.deploy.commands.LoadHubArtifactsCommand
-import com.marklogic.hub.deploy.commands.LoadHubModulesCommand
-import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand
-import com.marklogic.hub.deploy.commands.LoadUserModulesCommand
+import com.marklogic.hub.deploy.commands.*
 import com.marklogic.hub.deploy.util.ModuleWatchingConsumer
 import com.marklogic.hub.impl.*
 import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl
@@ -83,7 +77,7 @@ class DataHubPlugin implements Plugin<Project> {
 
         project.plugins.apply(MarkLogicPlugin.class)
 
-        logger.info("\nInitializing data-hub-gradle")
+        logger.info("\nInitializing ml-data-hub Gradle plugin")
         setupHub(project)
 
         String deployGroup = "MarkLogic Data Hub Setup"
@@ -118,6 +112,8 @@ class DataHubPlugin implements Plugin<Project> {
                 " for specific entities by setting the (comma separated) project property 'entityNames'. E.g. -PentityNames=Entity1,Entity2")
         project.task("hubSaveIndexes", group: scaffoldGroup, type: SaveIndexes,
             description: "Saves the indexes defined in {entity-name}.entity.json file to staging and final entity config in src/main/entity-config/databases directory")
+        project.task("hubExportProject", group: scaffoldGroup, type: ExportProjectTask,
+            description: "Exports the contents of the hub project directory")
 
         project.tasks.mlPostDeploy.getDependsOn().add("hubGenerateExplorerOptions")
 
@@ -188,10 +184,18 @@ class DataHubPlugin implements Plugin<Project> {
         String flowGroup = "MarkLogic Data Hub Flow Management"
         project.task("hubRunFlow", group: flowGroup, type: RunFlowTask)
 
-        String dhsGroup = "DHS"
-        project.task("dhsDeploy", group: dhsGroup, type: DhsDeployTask,
-            description: "Deploy project resources and modules into a DHS instance"
-        ).finalizedBy(["hubGenerateExplorerOptions"])
+        project.task("hubDeployAsSecurityAdmin", group: deployGroup, type: DeployAsSecurityAdminTask,
+            description: "Deploy roles as a user with the data-hub-security-admin role")
+
+        project.task("hubDeployAsDeveloper", group: deployGroup, type: DeployAsDeveloperTask,
+            description: "Deploy project configuration as a user with the data-hub-developer role"
+        ).finalizedBy(["hubGenerateExplorerOptions"]).mustRunAfter("hubDeployAsSecurityAdmin")
+
+        project.task("hubDeploy", group: deployGroup, dependsOn: ["hubDeployAsDeveloper", "hubDeployAsSecurityAdmin"],
+            description: "Deploy project configuration as a user with the data-hub-security-admin and data-hub-developer roles")
+
+        project.task("dhsDeploy", dependsOn: ["hubDeploy"],
+            description: "dhsDeploy has been replaced in 5.2.0 by hubDeploy and similar tasks. It is now simply an alias for hubDeploy.")
 
         logger.info("Finished initializing ml-data-hub\n")
     }
@@ -229,42 +233,38 @@ class DataHubPlugin implements Plugin<Project> {
 
         hubConfig.createProject(project.getProjectDir().getAbsolutePath())
 
-        boolean calledHubInit = this.userCalledTask(project, "hubinit")
-        boolean calledHubUpdate = this.userCalledTask(project, "hubupdate")
-        boolean calledHubInitOrUpdate = calledHubInit || calledHubUpdate
-
+        boolean calledHubInitOrUpdate = userCalledTask(project, "hubinit") || userCalledTask(project, "hubupdate")
         if (!calledHubInitOrUpdate && !hubProject.isInitialized()) {
             throw new GradleException("Please initialize your project first by running the 'hubInit' Gradle task, or update it by running the 'hubUpdate' Gradle task")
         }
 
         else {
 
-            // If the user called hubInit, only load the configuration. Refreshing the project will fail because
-            // gradle.properties doesn't exist yet.
-            if (calledHubInit) {
-                hubConfig.loadConfigurationFromProperties(new ProjectPropertySource(project).getProperties(), false)
-            }
-             else {
-                Properties props = new ProjectPropertySource(project).getProperties()
-
-                if (userCalledTask(project, "dhsdeploy")) {
-                    new InstallIntoDhsCommand().applyDhsSpecificProperties(props)
-                }
-
-                hubConfig.refreshProject(props, false)
-            }
-
             // By default, DHF uses gradle-local.properties for your local environment.
             def envNameProp = project.hasProperty("environmentName") ? project.property("environmentName") : "local"
             hubConfig.withPropertiesFromEnvironment(envNameProp.toString())
 
-            hubConfig.setAppConfig(extensions.getByName("mlAppConfig"))
+            // Assign the AppConfig created by ml-gradle to hubConfig so that when it updates its instance of AppConfig
+            // with DHF-specific values, it's updating the instance that's used by all the ml-gradle tasks as well.
+            // Can skip updating the AppConfig as it will be updated via the call to loadConfigurationFromProperties.
+            hubConfig.setAppConfig(extensions.getByName("mlAppConfig"), true)
+
+            // Create a Properties object containing all of the properties loaded by Gradle
+            Properties projectProperties = new ProjectPropertySource(project).getProperties()
+            // Populate hubConfig properties, telling hubConfig not to load from gradle.properties as that's already happened
+            hubConfig.loadConfigurationFromProperties(projectProperties, false)
+
+            // Ensure that hubConfig is using the same admin/manage objects that ml-gradle created. DHF doesn't have
+            // any additional properties for customizing these objects, so whatever was created by ml-gradle is what
+            // DHF should use as well.
             hubConfig.setAdminConfig(extensions.getByName("mlAdminConfig"))
             hubConfig.setAdminManager(extensions.getByName("mlAdminManager"))
             hubConfig.setManageConfig(extensions.getByName("mlManageConfig"))
             hubConfig.setManageClient(extensions.getByName("mlManageClient"))
 
             // Turning off CMA for resources that have bugs in ML 9.0-7/8
+            // TODO This can likely be removed now that DHF requires a version higher than those, but will need to test
+            // to confirm.
             hubConfig.getAppConfig().getCmaConfig().setCombineRequests(false);
             hubConfig.getAppConfig().getCmaConfig().setDeployDatabases(false);
             hubConfig.getAppConfig().getCmaConfig().setDeployRoles(false);
@@ -293,6 +293,15 @@ class DataHubPlugin implements Plugin<Project> {
     boolean userCalledTask(Project project, String lowerCaseTaskName) {
         for (String taskName : project.getGradle().getStartParameter().getTaskNames()) {
             if (taskName.toLowerCase().equals(lowerCaseTaskName)) {
+                return true
+            }
+        }
+        return false
+    }
+
+    boolean userCalledDhsDeployTask(Project project) {
+        for (String taskName : project.getGradle().getStartParameter().getTaskNames()) {
+            if (taskName.toLowerCase().startsWith("dhsdeploy")) {
                 return true
             }
         }

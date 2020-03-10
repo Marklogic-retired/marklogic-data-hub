@@ -42,21 +42,20 @@
 	}
 
 	.mat-column-name {
-		width: 20% !important;
-		min-width: 20% !important;
+		width: 27% !important;
+		min-width: 27% !important;
 		padding-left: 2%;
 	}    
 	.mat-column-datatype {
-		width: 15% !important;
-		min-width: 15% !important;
+		width: 18% !important;
+		min-width: 18% !important;
 	}
 	.mat-column-expression {
-	    width: 50% !important;
-	    min-width: 50% !important;
+	    width: 375px !important;
+	    min-width: 375px !important;
 	}   
 	.mat-column-value {
 	    width: 15% !important;
-	    min-width: 15% !important;
 	}
 
 	.prop-toggle {
@@ -93,7 +92,7 @@
 	}
 
 	.contextField {
-		width: 252px;
+		width: 254px;
 	}
 
 	.context-label {
@@ -133,7 +132,7 @@
 
 .spacer {
 	display: inline-block;
-	width: 20px;
+	width: 12px;
 }
 
 .hide {
@@ -181,4 +180,12 @@
       margin: 0;  
       padding: 0;
 
+}
+
+#lookup-icon {
+	font-size: 1.2rem;
+	margin-top: 1px;
+	padding-left: 6px;
+	outline: none;
+  border: none;
 }

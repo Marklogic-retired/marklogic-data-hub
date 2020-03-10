@@ -12,7 +12,7 @@ public class MappingValidator extends ResourceManager {
 
     public MappingValidator(DatabaseClient client) {
         super();
-        client.init("ml:mappingValidator", this);
+        client.init("mlMappingValidator", this);
     }
 
     public JsonNode validateJsonMapping(String jsonMapping, String uri) {
@@ -21,5 +21,5 @@ public class MappingValidator extends ResourceManager {
         return getServices().post(params,
             new StringHandle(jsonMapping).withFormat(Format.JSON), new JacksonHandle()).get();
     }
-    
+
 }

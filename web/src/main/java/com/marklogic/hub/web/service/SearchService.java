@@ -135,11 +135,11 @@ public class SearchService extends SearchableService {
         else {
             docMgr = finalDocMgr;
         }
-        return docMgr.readAs(docUri, String.class, new ServerTransform("ml:prettifyXML"));
+        return docMgr.readAs(docUri, String.class, new ServerTransform("mlPrettifyXML"));
     }
 
     public class Collections extends ResourceManager {
-        private static final String NAME = "ml:collections";
+        private static final String NAME = "mlCollections";
 
         private RequestParameters params;
 

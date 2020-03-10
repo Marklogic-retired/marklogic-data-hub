@@ -18,7 +18,6 @@ package com.marklogic.hub.legacy.flow;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
@@ -261,7 +260,7 @@ public class LegacyFlowRunnerTest extends HubTestBase {
                 projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/FlowWithHubUser/content.xqy"),
                 StandardCopyOption.REPLACE_EXISTING);
         try {
-            installUserModules(getHubFlowRunnerConfig(), false);
+            installUserModules(runAsFlowOperator(), false);
         }
         catch(Exception e) {
             Assert.assertTrue(e.getMessage().toUpperCase().contains("SEC-URIPRIV:") || e.getMessage().toLowerCase().contains("do not have permission"));
@@ -272,7 +271,7 @@ public class LegacyFlowRunnerTest extends HubTestBase {
         Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
         copyFile("e2e-test/" + ENTITY + ".entity.json", entityDir.resolve(ENTITY + ".entity.json"));
         try {
-            installUserModules(getHubFlowRunnerConfig(), false);
+            installUserModules(runAsFlowOperator(), false);
         }
         catch(Exception e) {
             Assert.assertTrue(e.getMessage().toUpperCase().contains("SEC-URIPRIV:") || e.getMessage().toLowerCase().contains("do not have permission"));
@@ -291,7 +290,7 @@ public class LegacyFlowRunnerTest extends HubTestBase {
         mappingManager.saveMapping(testMap);
 
         try {
-            installUserModules(getHubFlowRunnerConfig(), false);
+            installUserModules(runAsFlowOperator(), false);
         }
         catch(Exception e) {
             Assert.assertTrue(e.getMessage().toUpperCase().contains("SEC-URIPRIV:"));
@@ -303,7 +302,7 @@ public class LegacyFlowRunnerTest extends HubTestBase {
 
         scaffolding.createLegacyFlow(ENTITY, "MappingFlowWithHubUser", FlowType.HARMONIZE, CodeFormat.JAVASCRIPT, DataFormat.XML, true, "test-1");
         try {
-            installUserModules(getHubFlowRunnerConfig(), false);
+            installUserModules(runAsFlowOperator(), false);
         }
         catch(Exception e) {
             Assert.assertTrue(e.getMessage().toUpperCase().contains("SEC-URIPRIV:"));

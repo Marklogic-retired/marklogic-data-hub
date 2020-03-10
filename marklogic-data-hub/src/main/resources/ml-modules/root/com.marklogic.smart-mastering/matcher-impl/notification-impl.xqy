@@ -24,6 +24,8 @@ module namespace notify-impl = "http://marklogic.com/smart-mastering/notificatio
 
 import module namespace coll-impl = "http://marklogic.com/smart-mastering/survivorship/collections"
   at "/com.marklogic.smart-mastering/survivorship/merging/collections.xqy";
+import module namespace config = "http://marklogic.com/data-hub/config"
+  at "/com.marklogic.hub/config.xqy";
 import module namespace const = "http://marklogic.com/smart-mastering/constants"
   at "/com.marklogic.smart-mastering/constants.xqy";
 import module namespace json="http://marklogic.com/xdmp/json"
@@ -108,7 +110,10 @@ declare function notify-impl:build-match-notification(
         ),
       map:entry("context",
         map:new((
-          map:entry("permissions", xdmp:default-permissions($notification-uri, "objects")),
+          map:entry("permissions",
+            let $perms := xdmp:default-permissions($notification-uri, "objects")
+            return if (fn:exists($perms)) then $perms else config:get-default-data-hub-permissions()
+          ),
           map:entry("collections", coll-impl:on-notification(
             map:map(),
             $options/merging:algorithms/merging:collections/merging:on-notification

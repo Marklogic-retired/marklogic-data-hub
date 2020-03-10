@@ -18,74 +18,103 @@ const xsltPermissions = [
   xdmp.permission(datahub.config.FLOWOPERATORROLE,'execute'),
   xdmp.permission(datahub.config.FLOWDEVELOPERROLE,'execute'),
   xdmp.permission(datahub.config.FLOWOPERATORROLE,'read'),
-  xdmp.permission(datahub.config.FLOWDEVELOPERROLE,'read')
+  xdmp.permission(datahub.config.FLOWDEVELOPERROLE,'read'),
+  xdmp.permission(datahub.consts.DATA_HUB_OPERATOR_ROLE,'execute'),
+  xdmp.permission(datahub.consts.DATA_HUB_DEVELOPER_ROLE,'execute'),
+  xdmp.permission(datahub.consts.DATA_HUB_OPERATOR_ROLE,'read'),
+  xdmp.permission(datahub.consts.DATA_HUB_DEVELOPER_ROLE,'read')
 ];
 
 const reservedNamespaces = ['m', 'map'];
 
-function buildMappingXML(mappingJSON) {
-  // Obtain all linked JSON mappings
-  const relatedMappings = getRelatedMappings(mappingJSON).map((mappingDoc) => mappingDoc.toObject());
+/**
+ * Build an XML mapping template in the http://marklogic.com/entity-services/mapping namespace, which can then be the
+ * input to the Entity Services mappingPut function that generates an XSLT template.
+ *
+ * @param mappingDoc expected to be a document-node and not an object asdfasdf
+ * @return {*}
+ */
+function buildMappingXML(mappingDoc) {
   if (dhMappingTraceIsEnabled) {
     xdmp.trace(dhMappingTrace, 'Building mapping XML');
   }
-  // for each mapping build out the mapping XML
-  const entityTemplates = [];
-  const mappingJsonObj = mappingJSON.toObject();
-  const parentEntity = getTargetEntity(fn.string(mappingJsonObj.targetEntityType));
-  for (let mapping of relatedMappings) {
+
+  const mappingObject = mappingDoc.toObject();
+  const rootEntityTypeTitle = getEntityName(mappingObject.targetEntityType);
+
+  // For the root mapping and for each nested object property (regardless of depth), build an object with a single
+  // property of the path of the mapping and a value of the mapping. Each of these will then become an XML m:entity template.
+  const rootMapping = {};
+  rootMapping[rootEntityTypeTitle] = mappingObject;
+  let mappings = [rootMapping];
+  mappings = mappings.concat(getObjectPropertyMappings(mappingObject, rootEntityTypeTitle));
+
+  const parentEntity = getTargetEntity(fn.string(mappingObject.targetEntityType));
+
+  // For each mapping, build an m:entity template
+  const entityTemplates = mappings.map(objectPropertyMapping => {
+    const propertyPath = Object.keys(objectPropertyMapping)[0];
+    const mapping = objectPropertyMapping[propertyPath];
     if (dhMappingTraceIsEnabled) {
-      xdmp.trace(dhMappingTrace, `Generating template for ${mapping.targetEntityType}`);
+      xdmp.trace(dhMappingTrace, `Generating template for propertyPath '${propertyPath}' and entityTypeId '${mapping.targetEntityType}'`);
     }
-    let entity = (mapping.targetEntityType.startsWith("#/definitions/")) ? parentEntity : getTargetEntity(mapping.targetEntityType);
-    let entityTemplate = buildEntityMappingXML(mapping, entity);
+    const model = (mapping.targetEntityType.startsWith("#/definitions/")) ? parentEntity : getTargetEntity(mapping.targetEntityType);
+    const template = buildEntityTemplate(mapping, model, propertyPath);
     if (dhMappingTraceIsEnabled) {
-      xdmp.trace(dhMappingTrace, `Generated template: ${entityTemplate}`);
+      xdmp.trace(dhMappingTrace, `Generated template: ${template}`);
     }
-    entityTemplates.push(entityTemplate);
-  }
-  let entityName = getEntityName(mappingJSON.root.targetEntityType);
+    return template;
+  });
+
   const namespaces = [];
-  if (mappingJsonObj.namespaces) {
-    for (const prefix of Object.keys(mappingJsonObj.namespaces).sort()) {
-      if (mappingJsonObj.namespaces.hasOwnProperty(prefix)) {
+  if (mappingObject.namespaces) {
+    for (const prefix of Object.keys(mappingObject.namespaces).sort()) {
+      if (mappingObject.namespaces.hasOwnProperty(prefix)) {
         if (reservedNamespaces.includes(prefix)) {
           throw new Error(`'${prefix}' is a reserved namespace.`);
         }
-        namespaces.push(`xmlns:${prefix}="${mappingJsonObj.namespaces[prefix]}"`);
+        namespaces.push(`xmlns:${prefix}="${mappingObject.namespaces[prefix]}"`);
       }
     }
   }
-  // compose the final template
+
   // Importing the "map" namespace fixes an issue when testing a mapping from QuickStart that hasn't been reproduced
   // yet in a unit test; it ensures that the map:* calls in the XSLT resolve to map functions.
-  let finalTemplate = `
-      <m:mapping xmlns:m="http://marklogic.com/entity-services/mapping" xmlns:map="http://marklogic.com/xdmp/map" ${namespaces.join(' ')}>
+  return xdmp.unquote(`
+    <m:mapping xmlns:m="http://marklogic.com/entity-services/mapping" xmlns:map="http://marklogic.com/xdmp/map" ${namespaces.join(' ')}>
       ${retrieveFunctionImports()}
       ${entityTemplates.join('\n')}
-      <!-- Default entity is ${entityName} -->
+      <!-- Default entity is ${rootEntityTypeTitle} -->
       <m:output>
         <m:for-each><m:select>/</m:select>
-            <m:call-template name="${entityName}" />
+            <m:call-template name="${rootEntityTypeTitle}" />
         </m:for-each>
       </m:output>
-    </m:mapping>
-  `;
-  return xdmp.unquote(finalTemplate);
+    </m:mapping>`);
 }
 
-function buildMapProperties(mapping, entityModel) {
+/**
+ * Returns a string of XML. The XML contains elements in the http://marklogic.com/entity-services/mapping namespace,
+ * each of which represents a mapping expression in the given mapping.
+ *
+ * @param mapping a JSON mapping with a properties array containing mapping expressions
+ * @param model the ES model, containing a definitions array of entity types
+ * @param propertyPath the path in the entity type for the property being mapped. This is used for nested object
+ * properties, where a call-template element must be built that references a template constructed by buildEntityTemplate
+ * @return {string}
+ */
+function buildMapProperties(mapping, model, propertyPath) {
   let mapProperties = mapping.properties;
   let propertyLines = [];
   if (dhMappingTraceIsEnabled) {
-    xdmp.trace(dhMappingTrace, `Building mapping properties for '${mapping.targetEntityType}' with 
-    '${xdmp.describe(entityModel)}'`);
+    xdmp.trace(dhMappingTrace, `Building mapping properties for '${mapping.targetEntityType}' with
+    '${xdmp.describe(model)}'`);
   }
   let entityName = getEntityName(mapping.targetEntityType);
   if (dhMappingTraceIsEnabled) {
     xdmp.trace(dhMappingTrace, `Using entity name: ${entityName}`);
   }
-  let entityDefinition = entityModel.definitions[entityName];
+  let entityDefinition = model.definitions[entityName];
   if (dhMappingTraceIsEnabled) {
     xdmp.trace(dhMappingTrace, `Using entity definition: ${entityDefinition}`);
   }
@@ -117,8 +146,9 @@ function buildMapProperties(mapping, entityModel) {
       if (isInternalMapping || isArray) {
         let propLine;
         if (isInternalMapping) {
-          let subEntityName = getEntityName(mapProperty.targetEntityType);
-          propLine = `<${propTag} ${isArray? 'datatype="array"':''}><m:call-template name="${subEntityName}"/></${propTag}>`;
+          // The template name will match one of the templates constructed by getObjectPropertyTemplates
+          const templateName = propertyPath == "" ? prop : propertyPath + "." + prop;
+          propLine = `<${propTag} ${isArray? 'datatype="array"':''}><m:call-template name="${templateName}"/></${propTag}>`;
         } else {
           propLine = `<${propTag} datatype="array" xsi:type="xs:${dataType}"><m:val>.</m:val></${propTag}>`;
         }
@@ -137,16 +167,36 @@ function buildMapProperties(mapping, entityModel) {
   return propertyLines.join('\n');
 }
 
-function getRelatedMappings(mapping, related = [mapping]) {
-  // get references to sub mappings
+/**
+ * Recursive function that returns a mapping for each property with a targetEntityType, which signifies that it is
+ * mapping to an object property. Each of these will need to be converted into an m:entity XML template. The name of
+ * each template is guaranteed to be unique by being based on the propertyPath and the title of each object property
+ * being mapped. This ensures that we have uniquely-named templates in the XSLT transform that's generated from the
+ * XML mapping template.
+ *
+ * @param mapping
+ * @param propertyPath
+ * @param objectPropertyMappings
+ * @return {*[]}
+ */
+function getObjectPropertyMappings(mapping, propertyPath, objectPropertyMappings = []) {
   if (dhMappingTraceIsEnabled) {
     xdmp.trace(dhMappingTrace, `Getting related mappings for '${xdmp.describe(mapping)}'`);
   }
-  let internalMappings = mapping.xpath('/properties//object-node()[exists(targetEntityType) and exists(properties)]');
-  for (let internalMapping of internalMappings) {
-    related.push(internalMapping);
+  if (mapping.properties) {
+    Object.keys(mapping.properties).forEach(propertyTitle => {
+      const property = mapping.properties[propertyTitle];
+      if (property.targetEntityType && property.properties) {
+        const propertyMapping = {};
+        const nestedPropertyPath = propertyPath == "" ? propertyTitle : propertyPath + "." + propertyTitle;
+        propertyMapping[nestedPropertyPath] = property;
+        objectPropertyMappings.push(propertyMapping);
+
+        getObjectPropertyMappings(property, nestedPropertyPath, objectPropertyMappings);
+      }
+    });
   }
-  return related;
+  return objectPropertyMappings;
 }
 
 function getTargetEntity(targetEntityType) {
@@ -178,17 +228,27 @@ function retrieveFunctionImports() {
   return customImports.join('\n');
 }
 
-function buildEntityMappingXML(mapping, entity) {
-  let entityTitle = entity.info.title;
+/**
+ * Build an "entity template", defined by an entity element in the http://marklogic.com/entity-services/mapping
+ * namespace, for the given property mapping.
+ *
+ * @param mapping
+ * @param model
+ * @param propertyPath the path in the entity type for the property being mapped. This is used as the name of the
+ * entity template, and thus it will also be used in call-template references to this template.
+ *
+ * @return {string}
+ */
+function buildEntityTemplate(mapping, model, propertyPath) {
   let entityName = getEntityName(mapping.targetEntityType);
-  let entityDefinition = entity.definitions[entityName];
+  let entityDefinition = model.definitions[entityName];
   let namespacePrefix = entityDefinition.namespacePrefix;
   let entityTag = namespacePrefix ? `${namespacePrefix}:${entityName}`: entityName;
   let namespaceNode = `xmlns${namespacePrefix ? `:${namespacePrefix}`: ''}="${entityDefinition.namespace || ''}"`;
   return `
-      <m:entity name="${entityName}" xmlns:m="http://marklogic.com/entity-services/mapping">
+      <m:entity name="${propertyPath}" xmlns:m="http://marklogic.com/entity-services/mapping">
         <${entityTag} ${namespaceNode} xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          ${buildMapProperties(mapping, entity)}
+          ${buildMapProperties(mapping, model, propertyPath)}
         </${entityTag}>
       </m:entity>`;
 }
@@ -296,18 +356,24 @@ function validatePropertyMapping(fullMapping, propertyName, sourcedFrom) {
     // As of trunk 10.0-20190916, mappings are being validated against entity schemas in the schema database.
     // This doesn't seem expected, as the validation will almost always fail.
     // Thus, this is not using es.mappingCompile, which does validation, and just invokes the transform instead.
-    let stylesheet = xdmp.xsltInvoke("/MarkLogic/entity-services/mapping-compile.xsl", xmlMapping);
-    xdmp.xsltEval(stylesheet, [], {staticCheck: true});
+    let stylesheet = fn.head(xdmp.xsltInvoke("/MarkLogic/entity-services/mapping-compile.xsl", xmlMapping));
+    xdmp.xsltEval(removeStandardFunction(stylesheet), [], {staticCheck: true});
   } catch (e) {
     // TODO Move this into a separate function for easier testing?
     return getErrorMessage(e);
   }
 }
 
+//This function removes import of "standard-library.xqy" from mapping xslt. Server Bug 54051
+function removeStandardFunction(stylesheet) {
+  return fn.head(xdmp.xqueryEval(' declare variable $stylesheet external; let $node := $stylesheet/node() return element {fn:node-name($node)} {$node/namespace::*, $node/attribute(), $node/element()[fn:not(@href = "/MarkLogic/entity-services/standard-library.xqy")]}'
+  ,{stylesheet:stylesheet}, null));
+}
+
 function runMapping(mapping, uri, propMapping={"targetEntityType":mapping.targetEntityType, "namespaces": mapping.namespaces,"properties": {}}, paths=['properties']) {
   Object.keys(mapping.properties).forEach(propertyName => {
     let mappedProperty = mapping.properties[propertyName];
-    let sourcedFrom = mappedProperty.sourcedFrom;
+    let sourcedFrom = escapeXML(mappedProperty.sourcedFrom);
     paths.push(propertyName);
     //Don't run mapping if the property is unset (sourcedFrom.length==0) or if the validation returns errors
     if(!mappedProperty.errorMessage && sourcedFrom.length > 0){
@@ -342,10 +408,10 @@ function getCanonicalInstance(mapping, uri, propertyName) {
   let xmlMapping = buildMappingXML(fn.head(xdmp.unquote(xdmp.quote(mapping))));
   let doc = cts.doc(uri);
   let instance = extractInstance(doc);
-  let mappingXslt =  xdmp.invokeFunction(function () {
+  let mappingXslt = removeStandardFunction(xdmp.invokeFunction(function () {
       const es = require('/MarkLogic/entity-services/entity-services');
       return es.mappingCompile(xmlMapping);
-     }, {database: xdmp.modulesDatabase()});
+     }, {database: xdmp.modulesDatabase()}));
 
   try {
     let inputDoc = instance;
@@ -436,7 +502,7 @@ module.exports = {
   xsltPermissions,
   xmlMappingCollections,
   buildMappingXML,
-  buildEntityMappingXML,
+  buildEntityTemplate,
   extractInstance,
   getEntityName,
   getTargetEntity,
@@ -444,5 +510,6 @@ module.exports = {
   retrieveFunctionImports,
   versionIsCompatibleWithES,
   validateMapping,
-  validateAndRunMapping
+  validateAndRunMapping,
+  removeStandardFunction
 };

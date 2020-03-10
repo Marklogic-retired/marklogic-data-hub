@@ -26,12 +26,24 @@ public class GenerateFunctionMetadataCommand extends AbstractCommand {
     private Throwable caughtException;
     private DatabaseClient modulesClient;
 
+    private boolean isCompatibleWithES;
+
     public GenerateFunctionMetadataCommand() {
         super();
 
         // Per DHFPROD-3146, need this to run after modules are loaded. LoadUserModulesCommand is configured
         // to run after amps are deployed, so need this to run after user modules are loaded.
         setExecuteSortOrder(new LoadUserModulesCommand().getExecuteSortOrder() + 1);
+    }
+
+    /**
+     * @param hubConfig
+     * @param isCompatibleWithES if it's known that the version of ML supports mapping based on Entity Services, then
+     *                           can set this to true
+     */
+    public GenerateFunctionMetadataCommand(HubConfig hubConfig, boolean isCompatibleWithES) {
+        this.hubConfig = hubConfig;
+        this.isCompatibleWithES = isCompatibleWithES;
     }
 
     public GenerateFunctionMetadataCommand(DatabaseClient modulesClient, Versions versions) {
@@ -42,7 +54,7 @@ public class GenerateFunctionMetadataCommand extends AbstractCommand {
 
     @Override
     public void execute(CommandContext context) {
-        if (versions != null && versions.isVersionCompatibleWithES()) {
+        if (isCompatibleWithES || (versions != null && versions.isVersionCompatibleWithES())) {
             if (modulesClient == null) {
                 if (hubConfig == null) {
                     throw new IllegalStateException("Unable to create a DatabaseClient for the modules database because hubConfig is null");
