@@ -79,12 +79,6 @@ public class TestHelper {
        hubConfig.setCredentials(environmentInfo, dataHubDeveloperUsername, dataHubDeveloperPassword);
     }
 
-    public void authenticateSessionAsAdmin() {
-        createUser("admin", "admin","admin");
-        EnvironmentInfo environmentInfo = new EnvironmentInfo(mlHost, "DIGEST", 8000,"DIGEST", 8002,"DIGEST", 8010, "DIGEST", 8011);
-        hubConfig.setCredentials(environmentInfo, "admin", "admin");
-    }
-
     public void authenticateSessionAsEnvironmentManager() {
         createUser(dataHubEnvironmentManagerUsername,dataHubEnvironmentManagerPassword,"data-hub-environment-manager");
         EnvironmentInfo environmentInfo = new EnvironmentInfo(mlHost, "DIGEST", 8000,"DIGEST", 8002,"DIGEST", 8010, "DIGEST", 8011);
