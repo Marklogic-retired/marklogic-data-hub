@@ -74,6 +74,7 @@ const LoginForm: React.FC = () => {
         help={(username || !isUsernameTouched) ? '' : 'Please input your username!'}>
         <Input
           id="username"
+          data-testid="username"
           prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
           placeholder="Username"
           value={username}
@@ -86,6 +87,7 @@ const LoginForm: React.FC = () => {
         help={(password || !isPasswordTouched) ? '' : 'Please input your password!'}>
         <Input
           id="password"
+          data-testid="password"
           prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
           placeholder="Password"
           type="password"
