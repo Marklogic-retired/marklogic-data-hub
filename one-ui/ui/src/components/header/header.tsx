@@ -3,7 +3,7 @@ import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
 import axios from 'axios';
 import { Layout, Icon, Avatar, Menu, Tooltip, Dropdown } from 'antd';
 import ProjectName from './project-name';
-import { AuthContext } from '../../util/auth-context';
+import { UserContext } from '../../util/user-context';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faRoute } from '@fortawesome/free-solid-svg-icons'
 import logo from './logo.png';
@@ -16,7 +16,7 @@ const { SubMenu } = Menu;
 interface Props extends RouteComponentProps<any> {}
 
 const Header:React.FC<Props> = ({ history, location }) => {
-  const { user, userNotAuthenticated, handleError } = useContext(AuthContext);
+  const { user, userNotAuthenticated, handleError } = useContext(UserContext);
 
   const handleLogout = async () => {
     try {
