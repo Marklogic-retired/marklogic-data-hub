@@ -21,6 +21,7 @@
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.15.1",
     "enzyme-to-json": "^3.4.3",
+    "fast-xml-parser": "^3.16.0",
     "http-proxy-middleware": "^0.20.0",
     "jest-junit": "^9.0.0",
     "less": "^3.10.3",
