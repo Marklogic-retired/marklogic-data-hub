@@ -17,6 +17,7 @@ import Reset from './pages/Reset';
 import NoMatchRedirect from './pages/noMatchRedirect';
 import View from './pages/View';
 import Browse from './pages/Browse';
+import Detail from './pages/Detail';
 
 import './App.css';
 import Application from './config/application.config';
@@ -117,6 +118,9 @@ const App: React.FC<Props> = ({history, location}) => {
           </PrivateRoute>
           <PrivateRoute path="/browse" exact>
               <Browse/>
+          </PrivateRoute>
+          <PrivateRoute path="/detail/:pk/:uri">
+            <Detail/>
           </PrivateRoute>
         </SearchProvider>
         <Route path="/reset" exact component={Reset}/>
