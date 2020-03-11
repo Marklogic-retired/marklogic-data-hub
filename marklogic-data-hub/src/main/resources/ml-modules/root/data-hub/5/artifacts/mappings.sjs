@@ -60,11 +60,21 @@ function getArtifactNode(artifactName, artifactVersion) {
 }
 
 function validateArtifact(artifact) {
-    const missingProperties = requiredProperties.filter((propName) => !artifact[propName]);
-    if (missingProperties.length) {
-        return new Error(`Missing the following required properties: ${JSON.stringify(missingProperties)}`);
-    }
-    return artifact;
+  const missingProperties = requiredProperties.filter((propName) => !artifact[propName]);
+  if (missingProperties.length) {
+    return new Error(`Missing the following required properties: ${JSON.stringify(missingProperties)}`);
+  }
+
+  const mappingWithSameNameButDifferentEntityTypeExists = cts.exists(cts.andQuery([
+    cts.collectionQuery(collections[0]),
+    cts.jsonPropertyValueQuery(getNameProperty(), artifact.name),
+    cts.notQuery(cts.jsonPropertyValueQuery(getEntityNameProperty(), artifact.targetEntity))
+  ]));
+  if (mappingWithSameNameButDifferentEntityTypeExists) {
+    return new Error(`A mapping with the same name but for a different entity type already exists. Please choose a different name.`);
+  }
+
+  return artifact;
 }
 
 module.exports = {
