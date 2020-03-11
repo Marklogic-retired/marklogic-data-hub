@@ -119,7 +119,6 @@ const Browse: React.FC<Props> = ({ location }) => {
   }, []);
 
   useEffect(() => {
-    console.log('search options', searchOptions);
     // if (entities.length && !user.error.type) {
     //   getSearchResults(entities);
     // }

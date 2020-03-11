@@ -75,7 +75,6 @@ const Facet: React.FC<Props> = (props) => {
   }
 
   const handleClick = (e) => {
-    console.log('apply clicked')
     let index = checked.indexOf(e.target.value)
     // Selection
     if (e.target.checked && index === -1) {
