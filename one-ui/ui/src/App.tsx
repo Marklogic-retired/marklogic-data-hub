@@ -1,7 +1,7 @@
 import React, { useEffect, useContext, useState } from 'react';
 import { Switch } from 'react-router';
 import { Route, Redirect, RouteComponentProps, withRouter } from 'react-router-dom';
-import { AuthContext } from './util/auth-context';
+import { UserContext } from './util/user-context';
 import SearchProvider from './util/search-context';
 
 import Header from './components/header/header';
@@ -28,7 +28,7 @@ import axios from 'axios';
 interface Props extends RouteComponentProps<any> {}
 
 const App: React.FC<Props> = ({history, location}) => {
-  const { user, clearRedirect, handleError } = useContext(AuthContext);
+  const { user, clearRedirect, handleError } = useContext(UserContext);
 
   const PrivateRoute = ({ children, ...rest }) => (
     <Route {...rest} render={ props => (

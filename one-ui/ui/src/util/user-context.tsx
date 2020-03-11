@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { 
   createUserPreferences,
   getUserPreferences, 
   updateUserPreferences
 } from '../services/user-preferences';
+import { RolesContext } from './roles';
+import {setEnvironment, getEnvironment, resetEnvironment} from '../util/environment';
 
 type UserContextInterface = {
   name: string,
@@ -33,7 +35,7 @@ const defaultUserData = {
 
 interface IUserContextInterface {
   user: UserContextInterface;
-  loginAuthenticated: (username: string, sessionTime: number) => void;
+  loginAuthenticated: (username: string, authResponse: any) => void;
   sessionAuthenticated: (username: string) => void;
   userNotAuthenticated: () => void;
   handleError: (error:any) => void;
@@ -60,10 +62,21 @@ export const UserContext = React.createContext<IUserContextInterface>({
 const UserProvider: React.FC<{ children: any }> = ({children}) => {
   
   const [user, setUser] = useState<UserContextInterface>(defaultUserData);
-  const sessionUser = localStorage.getItem('dataHubExplorerUser');
+  const sessionUser = localStorage.getItem('dataHubUser');
+  const rolesService = useContext(RolesContext);
 
-  const loginAuthenticated = (username: string, sessionTime: number) => {
-    localStorage.setItem('dataHubExplorerUser', username);
+  const loginAuthenticated = (username: string, authResponse: any) => {
+    if(authResponse.isInstalled) {
+      setEnvironment();
+    }
+    localStorage.setItem('dataHubUser', username);
+    localStorage.setItem('dhIsInstalled', authResponse.isInstalled);
+    localStorage.setItem('dhUserHasManagePrivileges', authResponse.hasManagePrivileges);
+    localStorage.setItem('projectName', authResponse.projectName);
+
+    const roles: string[] =  authResponse.roles || [];
+    rolesService.setRoles(roles);
+
     let userPreferences = getUserPreferences(username);
     if (userPreferences) {
       let values = JSON.parse(userPreferences);
@@ -73,8 +86,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
         authenticated: true,
         redirect: true,
         tableView: values.tableView,
-        pageRoute: values.pageRoute,
-        maxSessionTime: sessionTime 
+        pageRoute: values.pageRoute      
       });
     } else {
       createUserPreferences(username);
@@ -88,7 +100,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
   };
 
   const sessionAuthenticated = (username: string) => {
-    localStorage.setItem('dataHubExplorerUser', username);
+    localStorage.setItem('dataHubUser', username);
     let userPreferences = getUserPreferences(username);
     if (userPreferences) {
       let values = JSON.parse(userPreferences);
@@ -106,15 +118,20 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
   };
 
   const userNotAuthenticated = () => {
-    localStorage.setItem('dataHubExplorerUser', '');
-    setUser({ ...user,name: '', authenticated: false });
+    localStorage.setItem('dataHubUser', '');
+    localStorage.setItem('dhIsInstalled', '');
+    localStorage.setItem('dhUserHasManagePrivileges', '');
+    localStorage.setItem('projectName', '');
+    rolesService.setRoles([]);
+    resetEnvironment();
+    setUser({ ...user,name: '', authenticated: false, redirect: true });
   };
 
   const handleError = (error) => {
     const DEFAULT_MESSAGE = 'Internal Server Error';
     switch (error.response.status) {
       case 401: {
-        localStorage.setItem('dataHubExplorerUser', '');
+        localStorage.setItem('dataHubUser', '');
         setUser({ ...user, name: '', authenticated: false });
         break;
       }
