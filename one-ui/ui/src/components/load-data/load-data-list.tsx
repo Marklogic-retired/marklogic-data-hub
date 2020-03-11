@@ -102,8 +102,8 @@ const LoadDataList: React.FC<Props> = (props) => {
             key: 'sourceFormat',
             render: (text, row) => (
                 <div>
-                    <div>{text}</div>
-                    {row.sourceFormat === 'Delimited Text' ? <div className={styles.sourceFormatFS}>Field Separator: ( {row.separator} )</div> : ''}
+                    <div>{text === 'csv' ? 'Delimited Text' : text}</div>
+                    {row.sourceFormat === 'csv' ? <div className={styles.sourceFormatFS}>Field Separator: ( {row.separator} )</div> : ''}
                 </div>
             ),
             sorter: (a:any, b:any) => a.sourceFormat.length - b.sourceFormat.length,
@@ -131,7 +131,7 @@ const LoadDataList: React.FC<Props> = (props) => {
                 <span>
                     <Tooltip title={'Settings'} placement="bottom"><Icon type="setting" onClick={() => OpenLoadDataSettingsDialog(row)} className={styles.settingsIcon} /></Tooltip>
                     &nbsp;&nbsp;
-                    {props.canReadWrite ? <Tooltip title={'Delete'} placement="bottom"><i><FontAwesomeIcon icon={faTrashAlt} onClick={() => {showDeleteConfirm(row.name)}} className={styles.deleteIcon} size="lg"/></i></Tooltip> : 
+                    {props.canReadWrite ? <Tooltip title={'Delete'} placement="bottom"><i><FontAwesomeIcon icon={faTrashAlt} onClick={() => {showDeleteConfirm(row.name)}} className={styles.deleteIcon} size="lg"/></i></Tooltip> :
                     <Tooltip title={'Delete'} placement="bottom"><i><FontAwesomeIcon icon={faTrashAlt} onClick={(event) => event.preventDefault()} className={styles.disabledDeleteIcon} size="lg"/></i></Tooltip> }
                 </span>
             ),
@@ -150,15 +150,15 @@ const LoadDataList: React.FC<Props> = (props) => {
         dataSource={props.data}
         rowKey="name"
         />
-        <NewDataLoadDialog newLoad={newDataLoad} 
-        title={title} setNewLoad={setNewDataLoad} 
-        createLoadDataArtifact={props.createLoadDataArtifact} 
+        <NewDataLoadDialog newLoad={newDataLoad}
+        title={title} setNewLoad={setNewDataLoad}
+        createLoadDataArtifact={props.createLoadDataArtifact}
         stepData={stepData}
         canReadWrite={props.canReadWrite}
         canReadOnly={props.canReadOnly}/>
         {deleteConfirmation}
         <LoadDataSettingsDialog openLoadDataSettings={openLoadDataSettings} setOpenLoadDataSettings={setOpenLoadDataSettings} stepData={stepData}/>
-        
+
     </div>
    );
 }

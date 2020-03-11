@@ -10,7 +10,7 @@ const sourceFormatOptions = {
 const srcOptions = {
     'XML': 'xml',
     'JSON': 'json',
-    'Delimited Text': 'Delimited Text',
+    'Delimited Text': 'csv',
     'BINARY': 'binary',
     'TEXT' : 'text'
   }

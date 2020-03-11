@@ -63,7 +63,7 @@ function post(context, params, input) {
   let flow = params["flow-name"];
   let step = params["step"];
   let lastCompleted = params["lastCompleted"];
-  let stepResponse = params["stepResponse"];
+  let stepResponse = input.toObject();
   let resp = null;
   try {
     resp = jobsMod.updateJob(datahub, jobId, status, flow, step, lastCompleted, stepResponse);

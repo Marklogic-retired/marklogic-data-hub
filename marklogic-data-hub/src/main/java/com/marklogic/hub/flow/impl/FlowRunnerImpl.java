@@ -402,13 +402,6 @@ public class FlowRunnerImpl implements FlowRunner{
                     else{
                         stepResp.withStatus(JobStatus.FAILED_PREFIX + stepNum);
                     }
-                    if (!disableJobOutput) {
-                        try {
-                            jobDocManager.postJobs(jobId, JobStatus.FAILED_PREFIX + stepNum, flow.getName(), stepNum, null, stepResp);
-                        } catch (Exception ex) {
-                            logger.error(ex.getMessage());
-                        }
-                    }
                     RunStepResponse finalStepResp = stepResp;
                     try {
                         flowStatusListeners.forEach((FlowStatusListener listener) -> {
@@ -460,7 +453,9 @@ public class FlowRunnerImpl implements FlowRunner{
             resp.setJobStatus(jobStatus.toString());
             try {
                 if (!disableJobOutput) {
-                    jobDocManager.updateJobStatus(jobId, jobStatus);
+                    stepOutputs.entrySet().forEach((stepRespEntry) -> {
+                        jobDocManager.postJobs(jobId, jobStatus.toString(), flow.getName(), stepRespEntry.getKey(), null, stepRespEntry.getValue());
+                    });
                 }
             }
             catch (Exception e) {

@@ -306,51 +306,53 @@ module.exports.updateJob = module.amp(
         throw new Error("Cannot create job document. Incorrect options.");
       }
     }
-    jobDoc.job.jobStatus = status;
     //update job status at the end of flow run
     if(status === "finished"|| status === "finished_with_errors" || status === "failed"|| status === "canceled"|| status === "stop-on-error") {
-     jobDoc.job.timeEnded = fn.currentDateTime();
+      jobDoc.job.timeEnded = fn.currentDateTime();
     }
     //update job doc before and after step run
-    else {
-     jobDoc.job.lastAttemptedStep = step;
-     if(lastCompleted) {
+    jobDoc.job.jobStatus = status;
+    if (step) {
+      jobDoc.job.lastAttemptedStep = step;
+      if(lastCompleted) {
        jobDoc.job.lastCompletedStep = lastCompleted;
-     }
-     if(! jobDoc.job.stepResponses[step]){
+      }
+      if(!jobDoc.job.stepResponses[step]){
        jobDoc.job.stepResponses[step] = {};
        jobDoc.job.stepResponses[step].stepStartTime = fn.currentDateTime();
        jobDoc.job.stepResponses[step].status = "running step " + step;
-     }
-     else {
-       let tempTime = jobDoc.job.stepResponses[step].stepStartTime;
-       jobDoc.job.stepResponses[step]  = JSON.parse(stepResponse);
-       let stepResp = jobDoc.job.stepResponses[step];
-       stepResp.stepStartTime = tempTime;
-       stepResp.stepEndTime = fn.currentDateTime();
-       let stepDef = fn.head(datahub.hubUtils.queryLatest(function () {
-           return datahub.flow.step.getStepByNameAndType(stepResp.stepDefinitionName, stepResp.stepDefinitionType);
-         },
-         datahub.config.FINALDATABASE
-       ));
-       let jobsReportFun = datahub.flow.step.makeFunction(datahub.flow, 'jobReport', stepDef.modulePath);
-       if (jobsReportFun) {
-         let flowStep = fn.head(datahub.hubUtils.queryLatest(function () {
-             return datahub.flow.getFlow(stepResp.flowName).steps[step];
-           },
-           datahub.config.FINALDATABASE
-         ));
-         let options = Object.assign({}, stepDef.options, flowStep.options);
-         let jobReport = fn.head(datahub.hubUtils.queryLatest(function () {
-             return jobsReportFun(jobId, stepResp, options);
-           },
-           options.targetDatabase || datahub.config.FINALDATABASE
-         ));
-         if (jobReport) {
-           datahub.hubUtils.writeDocument(`/jobs/reports/${stepResp.flowName}/${step}/${jobId}.json`, jobReport, datahub.jobs.jobPermissions, ['Jobs','JobReport'], datahub.config.JOBDATABASE);
-         }
-       }
-     }
+      }
+      let tempTime = jobDoc.job.stepResponses[step].stepStartTime;
+      if (stepResponse && Object.keys(stepResponse).length) {
+       jobDoc.job.stepResponses[step] = stepResponse;
+      }
+      let stepResp = jobDoc.job.stepResponses[step];
+      stepResp.stepStartTime = tempTime;
+      stepResp.stepEndTime = fn.currentDateTime();
+      if (stepResp.stepDefinitionName && stepResp.stepDefinitionType) {
+        let stepDef = fn.head(datahub.hubUtils.queryLatest(function () {
+            return datahub.flow.step.getStepByNameAndType(stepResp.stepDefinitionName, stepResp.stepDefinitionType);
+          },
+          datahub.config.FINALDATABASE
+        ));
+        let jobsReportFun = datahub.flow.step.makeFunction(datahub.flow, 'jobReport', stepDef.modulePath);
+        if (jobsReportFun) {
+          let flowStep = fn.head(datahub.hubUtils.queryLatest(function () {
+              return datahub.flow.getFlow(stepResp.flowName).steps[step];
+            },
+            datahub.config.FINALDATABASE
+          ));
+          let options = Object.assign({}, stepDef.options, flowStep.options);
+          let jobReport = fn.head(datahub.hubUtils.queryLatest(function () {
+              return jobsReportFun(jobId, stepResp, options);
+            },
+            options.targetDatabase || datahub.config.FINALDATABASE
+          ));
+          if (jobReport) {
+            datahub.hubUtils.writeDocument(`/jobs/reports/${stepResp.flowName}/${step}/${jobId}.json`, jobReport, datahub.jobs.jobPermissions, ['Jobs', 'JobReport'], datahub.config.JOBDATABASE);
+          }
+        }
+      }
     }
     //Update the job doc
     datahub.hubUtils.writeDocument("/jobs/"+ jobId +".json", jobDoc, datahub.jobs.jobPermissions, ['Jobs','Job'], datahub.config.JOBDATABASE);
