@@ -2,6 +2,7 @@ import React, { useEffect, useContext, useState } from 'react';
 import { Switch } from 'react-router';
 import { Route, Redirect, RouteComponentProps, withRouter } from 'react-router-dom';
 import { AuthContext } from './util/auth-context';
+import SearchProvider from './util/search-context';
 
 import Header from './components/header/header';
 import Footer from './components/footer/footer';
@@ -15,6 +16,7 @@ import Bench from './pages/Bench';
 import Reset from './pages/Reset';
 import NoMatchRedirect from './pages/noMatchRedirect';
 import View from './pages/View';
+import Browse from './pages/Browse';
 
 import './App.css';
 import Application from './config/application.config';
@@ -109,9 +111,14 @@ const App: React.FC<Props> = ({history, location}) => {
         <PrivateRoute path="/bench" exact>
           <Bench/>
         </PrivateRoute>
-        <PrivateRoute path="/view" exact>
-            <View/>
-        </PrivateRoute>
+        <SearchProvider>
+          <PrivateRoute path="/view" exact>
+              <View/>
+          </PrivateRoute>
+          <PrivateRoute path="/browse" exact>
+              <Browse/>
+          </PrivateRoute>
+        </SearchProvider>
         <Route path="/reset" exact component={Reset}/>
         <Route component={NoMatchRedirect}/>
       </Switch>

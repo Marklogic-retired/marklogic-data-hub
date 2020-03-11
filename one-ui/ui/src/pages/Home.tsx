@@ -23,9 +23,8 @@ const Home: React.FC = () => {
         <Tooltip title="Click to navigate to Tool Bench" placement="bottom">
             <Link to="/bench" className={styles.bench}><Icon type="tool" /></Link>
         </Tooltip>
-        <Tooltip title="Click to go to View Entities Page" placement="bottom">
-            <Link to="/view" className={styles.text}>View Entities</Link>
-        </Tooltip>
+        <Link to="/view" className={styles.text}>View Entities</Link>
+        <Link to="/browse" className={styles.text}>Browse Entities</Link>
         <Tooltip title="Click to reset host name and log out" placement="bottom">
             <Link to="/reset" className={styles.reset}><Icon type="rollback" /></Link>
         </Tooltip>
