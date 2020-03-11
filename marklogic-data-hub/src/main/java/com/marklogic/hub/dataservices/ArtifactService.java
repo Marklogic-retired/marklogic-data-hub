@@ -54,6 +54,7 @@ public interface ArtifactService {
             private BaseProxy.DBFunctionRequest req_getArtifactSettings;
             private BaseProxy.DBFunctionRequest req_setArtifactSettings;
             private BaseProxy.DBFunctionRequest req_removeLinkToStepOptions;
+            private BaseProxy.DBFunctionRequest req_validateMapping;
             private BaseProxy.DBFunctionRequest req_validateArtifact;
             private BaseProxy.DBFunctionRequest req_getList;
             private BaseProxy.DBFunctionRequest req_getArtifact;
@@ -76,6 +77,8 @@ public interface ArtifactService {
                     "setArtifactSettings.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_removeLinkToStepOptions = this.baseProxy.request(
                     "removeLinkToStepOptions.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                this.req_validateMapping = this.baseProxy.request(
+                    "validateMapping.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_validateArtifact = this.baseProxy.request(
                     "validateArtifact.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_getList = this.baseProxy.request(
@@ -201,6 +204,23 @@ public interface ArtifactService {
             }
 
             @Override
+            public com.fasterxml.jackson.databind.JsonNode validateMapping(String uri, String database, com.fasterxml.jackson.databind.JsonNode jsonMapping) {
+                return validateMapping(
+                    this.req_validateMapping.on(this.dbClient), uri, database, jsonMapping
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode validateMapping(BaseProxy.DBFunctionRequest request, String uri, String database, com.fasterxml.jackson.databind.JsonNode jsonMapping) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.atomicParam("uri", false, BaseProxy.StringType.fromString(uri)),
+                          BaseProxy.atomicParam("database", false, BaseProxy.StringType.fromString(database)),
+                          BaseProxy.documentParam("jsonMapping", false, BaseProxy.JsonDocumentType.fromJsonNode(jsonMapping))
+                          ).responseSingle(false, Format.JSON)
+                );
+            }
+
+            @Override
             public com.fasterxml.jackson.databind.JsonNode validateArtifact(String artifactType, String artifactName, com.fasterxml.jackson.databind.JsonNode artifact) {
                 return validateArtifact(
                     this.req_validateArtifact.on(this.dbClient), artifactType, artifactName, artifact
@@ -321,6 +341,16 @@ public interface ArtifactService {
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode removeLinkToStepOptions(String flowName, String stepID, String artifactType, String artifactName, String artifactVersion);
+
+  /**
+   * Invokes the validateMapping operation on the database server
+   *
+   * @param uri	provides input
+   * @param database	provides input
+   * @param jsonMapping	provides input
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode validateMapping(String uri, String database, com.fasterxml.jackson.databind.JsonNode jsonMapping);
 
   /**
    * Invokes the validateArtifact operation on the database server

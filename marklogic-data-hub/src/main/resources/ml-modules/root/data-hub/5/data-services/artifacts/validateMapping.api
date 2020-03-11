@@ -1,0 +1,22 @@
+{
+    "functionName": "validateMapping",
+    "params": [
+        {
+            "name": "uri",
+            "datatype": "string"
+        },
+        {
+            "name": "database",
+            "datatype": "string"
+        },
+        {
+         "name": "jsonMapping",
+         "datatype": "jsonDocument",
+         "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+        }
+    ],
+    "return": {
+        "datatype": "jsonDocument",
+        "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
+}

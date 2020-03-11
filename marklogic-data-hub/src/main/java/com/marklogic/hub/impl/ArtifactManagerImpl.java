@@ -36,7 +36,6 @@ import java.util.List;
 public class ArtifactManagerImpl implements ArtifactManager {
     HubConfig hubConfig;
 
-
     public ArtifactManagerImpl(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
     }
@@ -152,5 +151,10 @@ public class ArtifactManagerImpl implements ArtifactManager {
             }
         }
         return artifactTypeInfo;
+    }
+
+    @Override
+    public ObjectNode validateMapping(String uri, String database, JsonNode jsonMapping) {
+        return (ObjectNode) getArtifactService().validateMapping(uri, database, jsonMapping);
     }
 }

@@ -108,6 +108,16 @@ public interface ArtifactManager {
     ArtifactTypeInfo getArtifactTypeInfo(String artifactType);
 
     /**
+     * Validates a mapping json between an entity type and instance, and return a mapped instance data or an error message
+     *
+     * @param uri - entity instance uri
+     * @param database - database name
+     * @param jsonMapping - a mapping json
+     * @return JsonNode - a mapped instance data as output or an error message as errorMessage
+     */
+    public ObjectNode validateMapping(String uri, String database, JsonNode jsonMapping);
+
+    /**
      * Provides metadata about the a given artifact type
      *
      * @param hubConfig - HubConfig

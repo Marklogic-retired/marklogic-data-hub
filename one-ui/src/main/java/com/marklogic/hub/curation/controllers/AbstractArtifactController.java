@@ -6,12 +6,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.ArtifactManager;
 import com.marklogic.hub.impl.ArtifactManagerImpl;
 import com.marklogic.hub.oneui.models.HubConfigSession;
+import java.io.IOException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.io.IOException;
 
 public abstract class AbstractArtifactController implements InitializingBean {
     @Autowired
@@ -48,6 +47,10 @@ public abstract class AbstractArtifactController implements InitializingBean {
     }
 
     protected abstract String getArtifactType();
+
+    public ResponseEntity<ObjectNode> validateMapping(String uri, String database, JsonNode jsonMapping) {
+        return new ResponseEntity<>(artifactManager.validateMapping(uri, database, jsonMapping), HttpStatus.OK);
+    }
 
     public void afterPropertiesSet() {
         this.artifactManager = new ArtifactManagerImpl(this.hubConfig);

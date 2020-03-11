@@ -4,10 +4,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.client.io.Format;
+import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.ArtifactManager;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.oneui.Application;
 import com.marklogic.hub.oneui.TestHelper;
+import com.marklogic.hub.oneui.models.HubConfigSession;
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,6 +30,9 @@ public class MappingControllerTest {
 
     @Autowired
     MappingController controller;
+
+    @Autowired
+    private HubConfigSession hubConfigSession;
 
     @Autowired
     TestHelper testHelper;
@@ -54,6 +62,54 @@ public class MappingControllerTest {
         "  \"selectedSource\": \"query\",\n" +
         "  \"sourceQuery\": \"cts.CollectionQuery('RAW-ORDER')\",\n" +
         "  \"collections\": []\n" +
+        "}";
+
+    static final String VALID_MAPING = "{\n" +
+        "    \"targetEntityType\": \"http://marklogic.com/data-hub/example/Customer-0.0.1/Customer\",\n" +
+        "    \"properties\": {\n" +
+        "        \"id\": {\n" +
+        "            \"sourcedFrom\": \"concat(id, 'A')\"\n" +
+        "        }\n" +
+        "    }\n" +
+        "}";
+
+    static final String INVALID_MAPING = "{\n" +
+        "    \"targetEntityType\": \"http://marklogic.com/data-hub/example/Customer-0.0.1/Customer\",\n" +
+        "    \"properties\": {\n" +
+        "        \"id\": {\n" +
+        "            \"sourcedFrom\": \"concat(id, ')\"\n" +
+        "        }\n" +
+        "    }\n" +
+        "}";
+
+    static final String TEST_ENTITY_MODEL = "{\n" +
+        "    \"info\": {\n" +
+        "        \"title\": \"Customer\",\n" +
+        "        \"version\": \"0.0.1\",\n" +
+        "        \"description\": \"A customer\",\n" +
+        "        \"baseUri\": \"http://marklogic.com/data-hub/example/\"\n" +
+        "    },\n" +
+        "    \"definitions\": {\n" +
+        "        \"Customer\": {\n" +
+        "            \"primaryKey\": \"id\",\n" +
+        "            \"required\": [],\n" +
+        "            \"properties\": {\n" +
+        "                \"id\": {\n" +
+        "                    \"datatype\": \"string\",\n" +
+        "                    \"collation\": \"http://marklogic.com/collation/codepoint\"\n" +
+        "                }\n" +
+        "            }\n" +
+        "        }\n" +
+        "    }\n" +
+        "}";
+
+    static final String TEST_ENTITY_INSTANCE = "{\n" +
+        "    \"envelope\": {\n" +
+        "        \"instance\": {\n" +
+        "            \"id\": \"100\"\n" +
+        "        },\n" +
+        "        \"attachments\": null\n" +
+        "    }\n" +
         "}";
 
     @Test
@@ -110,5 +166,32 @@ public class MappingControllerTest {
         controller.deleteArtifact("TestCustomerMapping");
         controller.deleteArtifact("TestOrderMapping1");
         controller.deleteArtifact("TestOrderMapping2");
+    }
+
+    @Test
+    void testValidateMappings() throws IOException {
+        testHelper.authenticateSession();
+
+        DatabaseClient databaseClient = hubConfigSession.newFinalClient();
+        databaseClient.newJSONDocumentManager().write(
+            "/test/entities/Customer.entity.json",
+            new DocumentMetadataHandle().withCollections("http://marklogic.com/entity-services/models"),
+            new StringHandle(TEST_ENTITY_MODEL).withFormat(Format.JSON)
+        );
+        databaseClient.newJSONDocumentManager().write(
+            "/test/customer100.json",
+            new StringHandle(TEST_ENTITY_INSTANCE).withFormat(Format.JSON)
+        );
+        ObjectMapper om = new ObjectMapper();
+        ObjectNode result = controller.validateMapping((ObjectNode) om.readTree(VALID_MAPING),"/test/customer100.json", hubConfigSession.getDbName(DatabaseKind.FINAL)).getBody();
+        assertEquals("concat(id, 'A')", result.get("properties").get("id").get("sourcedFrom").asText(), "SourcedFrom should be concat(id, 'A')");
+        assertEquals("100A", result.get("properties").get("id").get("output").asText(), "outpus should be 100A");
+
+        ObjectNode errorResult = controller.validateMapping((ObjectNode) om.readTree(INVALID_MAPING),"/test/customer100.json", hubConfigSession.getDbName(DatabaseKind.FINAL)).getBody();
+        assertEquals("concat(id, ')", errorResult.get("properties").get("id").get("sourcedFrom").asText(), "SourcedFrom should be concat(id, ')");
+        assertEquals("Invalid XPath expression: concat(id, ')", errorResult.get("properties").get("id").get("errorMessage").asText(), "errorMessage should be Invalid XPath expression: concat(id, ')");
+
+        databaseClient.newJSONDocumentManager().delete("/test/customer100.json");
+        databaseClient.newJSONDocumentManager().delete("/test/entities/Customer.entity.json");
     }
 }
