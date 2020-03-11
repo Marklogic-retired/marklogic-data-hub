@@ -27,11 +27,14 @@
     "less": "^3.10.3",
     "less-loader": "^5.0.0",
     "marklogic-ui-library": "^0.2.1",
-    "node-sass": "^4.13.0",
+    "node-sass": "^4.13.1",
     "react": "^16.12.0",
     "react-app-rewired": "^2.1.5",
     "react-contextmenu": "^2.13.0",
     "react-dom": "^16.12.0",
+    "react-drag-listview": "^0.1.6",
+    "react-html-parser": "^2.0.2",
+    "react-resizable": "^1.10.1",
     "react-router-dom": "^5.1.2",
     "react-scripts": "^3.3.0",
     "sockjs-client": "^1.4.0",
@@ -62,6 +65,9 @@
     ]
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.1.1",
+    "@testing-library/react": "^9.5.0",
+    "@testing-library/user-event": "^10.0.0",
     "customize-cra": "^0.9.1"
   }
 }

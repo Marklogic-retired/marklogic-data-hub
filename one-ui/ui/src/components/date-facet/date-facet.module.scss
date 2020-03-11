@@ -1,0 +1,18 @@
+.name {
+  font-size: 15px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.applyButtonContainer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 3px;
+}
+
+.facetName {
+  margin-bottom: 8px;
+}
