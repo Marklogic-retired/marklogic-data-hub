@@ -102,8 +102,8 @@ const LoadDataList: React.FC<Props> = (props) => {
             key: 'sourceFormat',
             render: (text, row) => (
                 <div>
-                    <div>{text}</div>
-                    {row.sourceFormat === 'Delimited Text' ? <div className={styles.sourceFormatFS}>Field Separator: ( {row.separator} )</div> : ''}
+                    <div>{text === 'csv' ? 'Delimited Text' : text}</div>
+                    {row.sourceFormat === 'csv' ? <div className={styles.sourceFormatFS}>Field Separator: ( {row.separator} )</div> : ''}
                 </div>
             ),
             sorter: (a:any, b:any) => a.sourceFormat.length - b.sourceFormat.length,
@@ -158,7 +158,6 @@ const LoadDataList: React.FC<Props> = (props) => {
         canReadOnly={props.canReadOnly}/>
         {deleteConfirmation}
         <ActivitySettingsDialog openLoadDataSettings={openLoadDataSettings} setOpenLoadDataSettings={setOpenLoadDataSettings} stepData={stepData} canWrite={props.canReadWrite}/>
-
     </div>
    );
 }
