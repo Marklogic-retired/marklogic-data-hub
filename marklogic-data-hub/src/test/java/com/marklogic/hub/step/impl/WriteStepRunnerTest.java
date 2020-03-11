@@ -104,4 +104,20 @@ public class WriteStepRunnerTest extends HubTestBase {
         };
         xmlTask.run();
     }
+
+    @Test
+    public void testLoadStepRunnerParameters() {
+        WriteStepRunner wsr = new WriteStepRunner(hubConfig);
+        Flow flow = flowManager.getFlow("testCsvLoadData");
+        Map<String, Step> steps = flow.getSteps();
+        Step step = steps.get("1");
+        StepDefinition stepDef = stepDefMgr.getStepDefinition(step.getStepDefinitionName(), step.getStepDefinitionType());
+        wsr.withStepDefinition(stepDef).withFlow(flow).withStep("1").withBatchSize(1).withOptions(new HashMap<String, Object>())
+            .withJobId(UUID.randomUUID().toString());
+        wsr.loadStepRunnerParameters();
+        Assertions.assertEquals("csv", wsr.inputFileType, "Input file type should be 'csv'");
+        Assertions.assertEquals("json", wsr.outputFormat, "Output format should be 'json'");
+        Assertions.assertEquals(".*/input,''", wsr.outputURIReplacement, "output URI replacement format should be '.*/input,'''");
+        Assertions.assertEquals(",", wsr.separator, "separator should be ','");
+    }
 }

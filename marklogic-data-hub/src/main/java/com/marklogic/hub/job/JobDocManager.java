@@ -35,17 +35,22 @@ public class JobDocManager extends ResourceManager {
         RequestParameters params = new RequestParameters();
         params.put("jobid", jobId);
         params.put("status", status);
-        params.put("flow", flowName);
+        params.put("flow-name", flowName);
         params.put("step", step);
         params.put("lastCompleted", lastCompleted);
-        try {
-            params.put("stepResponse", JSONObject.writeValueAsString(stepResponse));
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+        String stepRespJSON;
+        if (stepResponse == null) {
+            stepRespJSON = "{}";
+        } else {
+            try {
+                stepRespJSON = JSONObject.writeValueAsString(stepResponse);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
         }
         ResourceServices.ServiceResultIterator resultItr = null;
         try {
-            resultItr = this.getServices().post(params, new StringHandle("{}").withFormat(Format.JSON));
+            resultItr = this.getServices().post(params, new StringHandle(stepRespJSON).withFormat(Format.JSON));
         } catch (Exception e) {
             throw new RuntimeException("Unable to update the job document; cause: " + e.getMessage(), e);
         }
