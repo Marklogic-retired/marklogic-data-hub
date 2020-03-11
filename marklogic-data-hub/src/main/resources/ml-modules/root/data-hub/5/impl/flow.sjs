@@ -263,9 +263,6 @@ class Flow {
         this.datahub.prov.commit();
       }
     }
-    if (prov.granularityLevel() !== prov.OFF_LEVEL) {
-      this.datahub.prov.commit();
-    }
     if (!combinedOptions.noBatchWrite) {
       let batchStatus = "finished";
       if (this.globalContext.failedItems.length) {

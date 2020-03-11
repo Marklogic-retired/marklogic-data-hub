@@ -2,8 +2,6 @@ const lib = require("/data-hub/5/builtins/steps/mastering/default/lib.sjs");
 const test = require("/test/test-helper.xqy");
 const emptySequence = Sequence.from([]);
 
-declareUpdate();
-
 let assertions = [];
 
 xdmp.invokeFunction(
