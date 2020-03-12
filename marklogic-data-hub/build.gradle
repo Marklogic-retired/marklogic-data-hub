@@ -191,8 +191,8 @@ task generateArtifactsInterface(type: com.marklogic.client.tools.gradle.Endpoint
     serviceDeclarationFile = dataServicesPath + "/artifacts/service.json"
 }
 
-task generateRolesInterface(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask, group: dataServicesGroup) {
-    serviceDeclarationFile = dataServicesPath + "/roles/service.json"
+task generateMappingInterface(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask, group: dataServicesGroup) {
+    serviceDeclarationFile = dataServicesPath + "/mapping/service.json"
 }
 
 task generateDataServiceInterfaces {
