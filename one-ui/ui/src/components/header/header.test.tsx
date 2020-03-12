@@ -1,7 +1,7 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { AuthContext } from '../../util/auth-context';
+import { UserContext } from '../../util/user-context';
 import Header from './header';
 
 describe('Header component', () => {
@@ -29,9 +29,9 @@ describe('Header component', () => {
     beforeEach(() => {
       wrapper = mount(
         <Router>
-          <AuthContext.Provider value={context}>
+          <UserContext.Provider value={context}>
             <Header/>
-          </AuthContext.Provider>
+          </UserContext.Provider>
         </Router>
       )
     });
@@ -66,9 +66,9 @@ describe('Header component', () => {
     beforeEach(() => {
       wrapper = mount(
         <Router>
-          <AuthContext.Provider value={context}>
+          <UserContext.Provider value={context}>
             <Header/>
-          </AuthContext.Provider>
+          </UserContext.Provider>
         </Router>
       )
     });
