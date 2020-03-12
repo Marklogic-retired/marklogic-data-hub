@@ -1,9 +1,5 @@
 package com.marklogic.hub_unit_test;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubTestBase;
@@ -12,7 +8,6 @@ import com.marklogic.test.unit.TestManager;
 import com.marklogic.test.unit.TestModule;
 import com.marklogic.test.unit.TestResult;
 import com.marklogic.test.unit.TestSuiteResult;
-
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -24,6 +19,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Runs all marklogic-unit-test tests located under src/test/ml-modules/root/test.
@@ -52,6 +51,7 @@ public class RunMarkLogicUnitTestsTest extends HubTestBase {
     @BeforeEach
     public void setup() {
         if (!loadedHubArtifacts) {
+            clearStagingFinalAndJobDatabases();
             new SimpleAppDeployer(loadHubArtifactsCommand).deploy(adminHubConfig.getAppConfig());
             loadedHubArtifacts = true;
         }
