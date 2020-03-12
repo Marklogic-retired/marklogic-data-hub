@@ -6,6 +6,7 @@ import { UserContext } from '../util/user-context';
 import axios from 'axios'
 import EntityTiles from '../components/entities/entity-tiles';
 
+// TODO Rename EntityTypes component to Curate
 const EntityTypes: React.FC = () => {
 
     useEffect(() => {
@@ -115,19 +116,19 @@ const EntityTypes: React.FC = () => {
 
 
     return (
-        <div className={styles.entityContainer}>
-
-        <EntityTiles
-        flows={flows}
-        canReadMatchMerge={canReadMatchMerge}
-        canWriteMatchMerge={canWriteMatchMerge}
-        canReadWrite={canReadWrite}
-        canReadOnly={canReadOnly}
-        entityModels={entityModels}
-        getEntityModels={getEntityModels}
-        canWriteFlow={canWriteFlow}
-        addStepToFlow={addStepToFlow}
-        addStepToNew={addStepToNew}/>
+        <div className={styles.curateContainer}>
+          <EntityTiles
+            flows={flows}
+            canReadMatchMerge={canReadMatchMerge}
+            canWriteMatchMerge={canWriteMatchMerge}
+            canReadWrite={canReadWrite}
+            canReadOnly={canReadOnly}
+            entityModels={entityModels}
+            getEntityModels={getEntityModels}
+            canWriteFlow={canWriteFlow}
+            addStepToFlow={addStepToFlow}
+            addStepToNew={addStepToNew}
+          />
         </div>
     );
 

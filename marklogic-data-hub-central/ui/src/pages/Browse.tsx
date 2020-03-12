@@ -205,11 +205,11 @@ const Browse: React.FC<Props> = ({ location }) => {
           <AsyncLoader />
           :
           <>
+            {/* TODO Fix searchBar widths, it currently overlaps at narrow browser widths */}
             <div className={styles.searchBar} ref={searchBarRef}
-              style={{
-                width: collapse ? (window.innerWidth - 35) : '76vw',
-                maxWidth: collapse ? (window.innerWidth - 35) : '76vw'
-              }}>
+                  style={{ width: collapse ? '90vw' : '70.5vw',
+                           maxWidth: collapse ? '90vw' : '70.5vw'
+                  }}>
               <SearchBar entities={entities} />
               <SearchSummary
                 total={totalDocuments}

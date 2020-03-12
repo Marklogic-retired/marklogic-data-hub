@@ -157,7 +157,7 @@ const LoadDataCard: React.FC<Props> = (props) => {
     );
 
     return (
-        <div id="load-data-card-view" className={styles.loaddataContainer}>
+        <div id="load-data-card-view" className={styles.loadDataCard}>
             <Row gutter={16} type="flex" >
                 {props.canReadWrite ? <Col >
                     <Card

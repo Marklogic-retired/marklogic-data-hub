@@ -23,7 +23,7 @@ const SwitchView: React.FC<Props> = (props) => {
     }
     
     return (
-        <div >
+        <div className={styles.switchView}>
             <Menu mode="horizontal" defaultSelectedKeys={['table']}>
                 <Menu.Item key='card' className={styles.cardViewOption} >
                     <i><FontAwesomeIcon icon={faThLarge} onClick={cardsView} className={styles.iconStyle} size="2x" /></i>

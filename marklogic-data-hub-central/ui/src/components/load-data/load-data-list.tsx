@@ -138,24 +138,36 @@ const LoadDataList: React.FC<Props> = (props) => {
     ];
 
    return (
-    <div className={styles.loaddataContainer}>
-        {props.canReadWrite ? <div><MlButton type="primary" size="default" className={styles.addNewButton} onClick={OpenAddNewDialog}>Add New</MlButton></div> : ''}
-        <br/><br/>
+    <div className={styles.loadDataList}>
+        <div className={styles.addNewContainer}>
+            {props.canReadWrite ? <div>
+                <MlButton type="primary" size="default" className={styles.addNewButton} onClick={OpenAddNewDialog}>Add New</MlButton>
+            </div> : ''}
+        </div>
         <Table
-        pagination={{showSizeChanger: true, pageSizeOptions:pageSizeOptions}}
-        className={styles.loadTable}
-        columns={columns}
-        dataSource={props.data}
-        rowKey="name"
+            pagination={{showSizeChanger: true, pageSizeOptions:pageSizeOptions}}
+            className={styles.loadDataTable}
+            columns={columns}
+            dataSource={props.data}
+            rowKey="name"
         />
-        <NewDataLoadDialog newLoad={newDataLoad}
-        title={title} setNewLoad={setNewDataLoad}
-        createLoadDataArtifact={props.createLoadDataArtifact}
-        stepData={stepData}
-        canReadWrite={props.canReadWrite}
-        canReadOnly={props.canReadOnly}/>
+        <NewDataLoadDialog 
+            newLoad={newDataLoad}
+            title={title} setNewLoad={setNewDataLoad}
+            createLoadDataArtifact={props.createLoadDataArtifact}
+            stepData={stepData}
+            canReadWrite={props.canReadWrite}
+            canReadOnly={props.canReadOnly}
+        />
         {deleteConfirmation}
-        <ActivitySettingsDialog tooltipData={AdvLoadTooltips} activityType={activityType} openActivitySettings={openLoadDataSettings} setOpenActivitySettings={setOpenLoadDataSettings} stepData={stepData} canWrite={props.canReadWrite}/>
+        <ActivitySettingsDialog 
+            tooltipData={AdvLoadTooltips} 
+            activityType={activityType} 
+            openActivitySettings={openLoadDataSettings} 
+            setOpenActivitySettings={setOpenLoadDataSettings} 
+            stepData={stepData} 
+            canWrite={props.canReadWrite}
+        />
     </div>
    );
 }

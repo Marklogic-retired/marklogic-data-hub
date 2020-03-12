@@ -1,31 +1,16 @@
-.content {
-    padding: 40px 90px 150px 40px;
-    border: 2px solid rgb(255, 255, 255);
-    background-color: rgb(255, 255, 255);
+.loadDataContainer {
     display: flex;
-    align-items: center;
-    justify-content: center;
     flex-direction: column;
+    justify-content: flex-start;
     width: 100%;
-    text-align: center;
-    margin-top: 100px;
-    margin-left: 40px;
-    min-height: 500px;
-   // margin-right: 40px;
-    align-items: center;
+    margin: 0;
+    padding: 20px;
 }
 
-.LoadDataStyles {
+.switchViewContainer {
+    display: flex;
+    flex-direction: row-reverse;
     width: 100%;
-
-    > .switchview {
-        float: right;
-    }
-}
-
-.cardView {
-    //padding-left: 40px;
-    //padding-right: 40px;
-    margin-top: 80px;
-    background-color: rgb(255, 255, 255)
+    margin: 0;
+    padding: 0;
 }
