@@ -366,54 +366,40 @@ public class WriteStepRunner implements StepRunner {
         ObjectMapper mapper = new ObjectMapper();
         Map<String, Object> stepDefFileLocation = new HashMap<>();
         Map<String, Object> stepFileLocation = new HashMap<>();
-        Map<String, Object> fileLocation = new HashMap<>();
+        Map<String, Object> fileLocations = new HashMap<>();
         if(stepDef.getFileLocations() != null) {
             stepDefFileLocation = mapper.convertValue(stepDef.getFileLocations(), Map.class);
-            fileLocation.putAll(stepDefFileLocation);
+            fileLocations.putAll(stepDefFileLocation);
         }
         if(flow.getStep(step).getFileLocations() != null) {
             stepFileLocation =  mapper.convertValue(flow.getStep(step).getFileLocations(), Map.class);
-            fileLocation.putAll(stepFileLocation);
+            fileLocations.putAll(stepFileLocation);
         }
-        inputFilePath = (String)fileLocation.get("inputFilePath");
-        inputFileType = (String)fileLocation.get("inputFileType");
-        outputURIReplacement = (String)fileLocation.get("outputURIReplacement");
-        if(inputFileType.equalsIgnoreCase("csv") && fileLocation.get("separator") != null) {
-            this.separator =((String) fileLocation.get("separator")).trim();
-        }
-
         if(stepConfig.get("batchSize") != null){
             this.batchSize = Integer.parseInt(stepConfig.get("batchSize").toString());
         }
         if(stepConfig.get("threadCount") != null) {
             this.threadCount = Integer.parseInt(stepConfig.get("threadCount").toString());
         }
-        Map<String, String> fileLocations = null;
         if (stepConfig.get("fileLocations") == null && comboOptions.has("loadData")) {
             ArtifactManager artifactManager = ArtifactManager.on(this.hubConfig);
             ObjectNode linkObject = (ObjectNode) comboOptions.get("loadData");
             String artifactName = linkObject.get("name").asText();
             ObjectNode artifactJson = artifactManager.getArtifact("loadData", artifactName);
-            fileLocations =  mapper.convertValue(artifactJson, Map.class);
+            fileLocations.putAll(mapper.convertValue(artifactJson, Map.class));
             fileLocations.put("inputFileType", artifactJson.get("sourceFormat").asText());
         } else if(stepConfig.get("fileLocations") != null) {
-            fileLocations = (Map) stepConfig.get("fileLocations");
+            fileLocations.putAll((Map<String,String>)stepConfig.get("fileLocations"));
         }
-        if (fileLocations != null) {
-            if(fileLocations.get("inputFilePath") != null) {
-                this.inputFilePath = fileLocations.get("inputFilePath");
-            }
-            if(fileLocations.get("inputFileType") != null){
-                this.inputFileType = fileLocations.get("inputFileType");
-            }
-            if(fileLocations.get("outputURIReplacement") != null) {
-                this.outputURIReplacement = fileLocations.get("outputURIReplacement");
-            }
-            if(fileLocations.get("separator") != null) {
-                if(! this.inputFileType.equalsIgnoreCase("csv")){
-                    throw new IllegalArgumentException("Invalid argument for file type " + inputFileType + ". When specifying a separator, the file type must be 'csv'");
+        if (!fileLocations.isEmpty()) {
+            inputFilePath = (String)fileLocations.get("inputFilePath");
+            inputFileType = (String)fileLocations.get("inputFileType");
+            outputURIReplacement = (String)fileLocations.get("outputURIReplacement");
+            if (inputFileType.equalsIgnoreCase("csv") && fileLocations.get("separator") != null) {
+                this.separator =((String) fileLocations.get("separator"));
+                if (!"\t".equals(this.separator)) {
+                    this.separator = this.separator.trim();
                 }
-                this.separator = ((String) fileLocations.get("separator")).trim();
             }
         }
 
