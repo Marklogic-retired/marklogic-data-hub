@@ -10,6 +10,7 @@ import styles from './Modeling.module.scss';
 import { primaryEntityTypes } from '../api/modeling';
 import { UserContext } from '../util/user-context';
 
+// TODO Rename Modeling component to Model
 const Modeling: React.FC = () => {
   const { handleError, resetSessionTime } = useContext(UserContext);
   const [entityTypes, setEntityTypes] = useState<any[]>([]);
@@ -38,7 +39,7 @@ const Modeling: React.FC = () => {
    }
 
   return (
-    <div>
+    <div className={styles.modelContainer}>
       <div className={styles.header}>
         <h1>Entity Types</h1>
         <div className={styles.buttonContainer}>

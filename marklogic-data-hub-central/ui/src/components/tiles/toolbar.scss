@@ -1,0 +1,24 @@
+@font-face {
+    font-family: 'ExploreIcon';
+    src: url(../../fonts/ML_IconFont.ttf)  format('truetype');
+}
+
+.exploreIcon:before { 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    content: "\68";
+    font-family: ExploreIcon;
+    font-size: 24px; 
+    position: relative;
+    left: -2px;
+    background-color: #FFF;
+    border: 1px solid #7F86B5;
+    border-radius: 4px;
+    width: 40px;
+    height: 40px;
+    min-height: 40px;
+    text-align: center;
+    cursor: pointer;
+}

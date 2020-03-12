@@ -1,7 +1,16 @@
+.modelContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 100%;
+  margin: 0;
+  padding: 20px;
+}
+
 .header {
   display: flex;
   margin: 0 auto;
-  width: 90%;
+  width: 100%;
   justify-content: space-between;
 }
 

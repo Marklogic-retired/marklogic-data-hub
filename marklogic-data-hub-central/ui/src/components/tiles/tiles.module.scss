@@ -1,0 +1,50 @@
+.paneHeader {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    padding: 2px 12px;
+    border-bottom: solid 1px;
+    .title {
+        flex: 1;
+        font-size: 18px;
+        i {
+            position: relative;
+            font-size: 24px;
+        }
+        .text {
+            display: inline-block;
+            position: relative;
+            top: -3px;
+            color: #333;
+            padding-left: 10px;
+        }
+        .exploreText {
+            display: inline-block;
+            position: relative;
+            top: -3px;
+            color: #333;
+            padding-left: 2px;
+        }
+    }
+    .controls {
+        display: flex;
+        flex-direction: row;
+        flex: initial;
+        color: #333;
+        margin: 0;
+        padding: 0;
+        i {
+            position: relative;
+            padding-left: 16px;
+            cursor: pointer;
+        }
+        i.fa {
+            top: 4px;
+            font-size: 20px;
+        }
+        i.ant {
+            font-size: 24px;
+        }
+    }
+}

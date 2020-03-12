@@ -20,7 +20,7 @@ const Home: React.FC = () => {
             <Link to="/entity-tiles"><i><FontAwesomeIcon icon={faObjectUngroup } size="2x"/></i></Link>
           </button>
         </Tooltip>
-        <Tooltip title="Click to navigate to Tool Bench" placement="bottom">
+        <Tooltip title="Click to navigate to Tool Bench" placement="left">
             <Link to="/bench" className={styles.bench}><Icon type="tool" /></Link>
         </Tooltip>
         <Link to="/view" className={styles.text}>View Entities</Link>
@@ -29,6 +29,9 @@ const Home: React.FC = () => {
           <button className={styles.modelIcon}>
             <Link to="/model"><i><FontAwesomeIcon icon={faCube } size="2x"/></i></Link>
           </button>
+        </Tooltip>
+        <Tooltip title="Tile UI" placement="left">
+            <Link to="/tiles" className={styles.bench}><Icon type="windows" /></Link>
         </Tooltip>
       </div>
     </div>

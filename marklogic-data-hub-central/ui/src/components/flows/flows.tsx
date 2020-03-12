@@ -202,6 +202,7 @@ const Flows: React.FC<Props> = (props) => {
                     <Card 
                         style={{ width: 300, marginRight: 20 }} 
                         title={StepDefToTitle(step.stepDefinitionType)} 
+                        key={i}
                         size="small"
                         extra={
                             <div className={styles.actions}>

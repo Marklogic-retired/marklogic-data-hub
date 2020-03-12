@@ -1,9 +1,18 @@
-.loaddataContainer{
-    margin-top: 70px;
-    background-color: rgb(253, 253, 253)
+.loadDataList{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
 }
 
-.loadTable {
+.addNewContainer{
+    display: flex;
+    flex-direction: row-reverse;
+    width: 100%;
+    padding-top: 30px;
+}
+
+.loadDataTable {
+    padding-top: 20px;
     & thead > tr > th {
         color: #44499C;
         background-color: #fafafa;

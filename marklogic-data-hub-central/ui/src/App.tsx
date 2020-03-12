@@ -11,6 +11,7 @@ import Home from './pages/Home';
 import ProjectInfo from './pages/ProjectInfo';
 import LoadData from './pages/LoadData';
 import Bench from './pages/Bench';
+import TilesView from './pages/TilesView';
 import NoMatchRedirect from './pages/noMatchRedirect';
 import View from './pages/View';
 import Browse from './pages/Browse';
@@ -112,6 +113,9 @@ const App: React.FC<Props> = ({history, location}) => {
         </PrivateRoute>
         <PrivateRoute path="/bench" exact>
           <Bench/>
+        </PrivateRoute>
+        <PrivateRoute path="/tiles" exact>
+          <TilesView/>
         </PrivateRoute>
         <SearchProvider>
           <PrivateRoute path="/view" exact>

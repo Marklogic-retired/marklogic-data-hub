@@ -1,6 +1,10 @@
-.content {
-    padding: 40px 80px 150px 80px;
-    background-color: rgb(255, 255, 255);
+.runContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 100%;
+    margin: 0;
+    padding: 20px;
 }
 
 .errorHeader, .errorLabel {

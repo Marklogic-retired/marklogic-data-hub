@@ -109,6 +109,32 @@ const mappings = {"data" :
 "status" :200
 };
 
+const entityTypes = [
+  {
+    "entityName": "Customer",
+    "entityTypeId": "http://example.com/Customer-0.0.1/Customer",
+    "entityInstanceCount": 0,
+    "model": {
+      "info": {
+        "title": "Customer",
+        "version": "0.0.1",
+        "baseUri": "http://example.com/",
+        "description": "An Customer entity"
+      },
+      "definitions": {
+        "Customer": {
+          "properties": {
+            "FirstName": {
+              "datatype": "string",
+              "collation": "http://marklogic.com/collation/codepoint"
+            }
+          }
+        }
+      }
+    }
+  }
+];
+
 const flows = {
   "data": [{
     "name": "testFlow",
@@ -267,6 +293,7 @@ const loadsXML = {"data" :
 
 const data = {
     flows: flows,
+    entityTypes: entityTypes,
     flowsWithMapping: flowsWithMapping,
     response: response,
     responseForMapping: responseForMapping,

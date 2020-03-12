@@ -1,5 +1,8 @@
-.loaddataContainer{
-    margin-top: 70px;
+.loadDataCard{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: 30px;
 }
 .cardStyle{
     width: 300px;

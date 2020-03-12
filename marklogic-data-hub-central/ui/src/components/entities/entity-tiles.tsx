@@ -211,7 +211,7 @@ const EntityTiles = (props) => {
 
 
     return (
-        <div className={styles.entityContainer}>
+        <div className={styles.entityTilesContainer}>
 
         <Collapse >
             { entityArtifacts.map((ent,index) => (
