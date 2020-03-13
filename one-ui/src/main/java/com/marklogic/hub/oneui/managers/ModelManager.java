@@ -33,25 +33,28 @@ import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.dataservices.JobInfo;
 import com.marklogic.hub.oneui.exceptions.DataHubException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ModelManager {
-
-    private DatabaseClient finalDatabaseClient;
-
     public static final String ENTITY_MODEL_COLLECTION_NAME =
         "http://marklogic.com/entity-services/models";
+    private static final Logger logger = LoggerFactory.getLogger(ModelManager.class);
 
-    private static final Logger logger = LoggerFactory.getLogger("ModelManager");
+    private DatabaseClient finalDatabaseClient;
+    private DatabaseClient finalDataServiceClient;
 
     public ModelManager(HubConfig hubConfig) {
         this.finalDatabaseClient = hubConfig.newFinalClient(hubConfig.getDbName(DatabaseKind.FINAL));
+        this.finalDataServiceClient = hubConfig.newFinalClient();
     }
 
     /**
@@ -153,5 +156,44 @@ public class ModelManager {
         }
 
         return handle.get();
+    }
+
+    /**
+     * Get latest job info for specified model
+     *
+     * @param modelName Name of the entity model
+     * @return - a JsonNode containing job info
+     */
+    public JsonNode getLatestJobInfo(String modelName) {
+        return getJobInfoFromDB(finalDataServiceClient, modelName);
+    }
+
+    /**
+     * Get latest job info for all models
+     *
+     * @return - a list of JsonNode containing job info
+     */
+    public List<JsonNode> getLatestJobInfoForAllModels() {
+        return getModelNames()
+            .stream()
+            .map(s -> getJobInfoFromDB(finalDataServiceClient, s))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+    }
+
+    JsonNode getJobInfoFromDB(DatabaseClient dbClient, String modelName) {
+        JsonNode node = null;
+        try {
+            node = JobInfo.on(dbClient).getLatestJobData(modelName);
+        }
+        catch (MarkLogicServerException e) {
+            /*
+             * As MarkLogic server throws a FailedRequestException for both data-service module not found
+             * and if the user is unauthorized to access the module; we need to fail silently and log the
+             * issue.
+             */
+            logger.error(e.getMessage());
+        }
+        return node;
     }
 }
