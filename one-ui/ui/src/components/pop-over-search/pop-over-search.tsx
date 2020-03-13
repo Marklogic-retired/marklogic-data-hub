@@ -22,7 +22,7 @@ const PopOverSearch: React.FC<Props> = (props) => {
       try {
         const response = await axios({
           method: 'POST',
-          url: `/datahub/v2/search/facet-values`,
+          url: `/api/search/facet-values`,
           data: {
             "facetInfo": {
               "referenceType": props.referenceType,

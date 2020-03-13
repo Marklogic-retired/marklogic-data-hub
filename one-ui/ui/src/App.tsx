@@ -19,7 +19,7 @@ import View from './pages/View';
 import Browse from './pages/Browse';
 import Detail from './pages/Detail';
 
-import './App.css';
+import './App.scss';
 import Application from './config/application.config';
 import { themes, themeMap } from './config/themes.config';
 import axios from 'axios';
