@@ -48,6 +48,7 @@ public interface MappingService {
             private BaseProxy baseProxy;
 
             private BaseProxy.DBFunctionRequest req_testMapping;
+            private BaseProxy.DBFunctionRequest req_getMappingFunctions;
 
             private MappingServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
@@ -55,6 +56,8 @@ public interface MappingService {
 
                 this.req_testMapping = this.baseProxy.request(
                     "testMapping.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
+                this.req_getMappingFunctions = this.baseProxy.request(
+                    "getMappingFunctions.sjs", BaseProxy.ParameterValuesKind.NONE);
             }
 
             @Override
@@ -73,6 +76,18 @@ public interface MappingService {
                           ).responseSingle(false, Format.JSON)
                 );
             }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode getMappingFunctions() {
+                return getMappingFunctions(
+                    this.req_getMappingFunctions.on(this.dbClient)
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode getMappingFunctions(BaseProxy.DBFunctionRequest request) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request.responseSingle(false, Format.JSON)
+                );
+            }
         }
 
         return new MappingServiceImpl(db, serviceDeclaration);
@@ -87,5 +102,13 @@ public interface MappingService {
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode testMapping(String uri, String database, com.fasterxml.jackson.databind.JsonNode jsonMapping);
+
+  /**
+   * Invokes the getMappingFunctions operation on the database server
+   *
+   * 
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode getMappingFunctions();
 
 }
