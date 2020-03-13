@@ -67,17 +67,17 @@ public class MappingControllerTest {
         "}";
 
     static final String MAPPING_SETTINGS = "{\n"
-            + "    \"artifactName\" : \"TestCustomerMapping\",\n"
-            + "    \"additionalCollections\" : [ \"Collection1\", \"Collection2\" ],\n"
-            + "    \"targetDatabase\" : \"data-hub-STAGING\",\n"
-            + "    \"permissions\" : \"data-hub-load-data-reader,read,data-hub-load-data-writer,update\",\n"
-            +"     \"provenanceGranularity\": \"coarse-grained\",\n"
-            + "    \"customHook\" : {\n"
-            + "          \"module\" : \"\",\n"
-            + "          \"parameters\" : \"\",\n"
-            + "          \"user\" : \"\",\n"
-            + "          \"runBefore\" : false\n"
-            + "    }}";
+        + "    \"artifactName\" : \"TestCustomerMapping\",\n"
+        + "    \"additionalCollections\" : [ \"Collection1\", \"Collection2\" ],\n"
+        + "    \"targetDatabase\" : \"data-hub-STAGING\",\n"
+        + "    \"permissions\" : \"data-hub-load-data-reader,read,data-hub-load-data-writer,update\",\n"
+        + "     \"provenanceGranularity\": \"coarse-grained\",\n"
+        + "    \"customHook\" : {\n"
+        + "          \"module\" : \"\",\n"
+        + "          \"parameters\" : \"\",\n"
+        + "          \"user\" : \"\",\n"
+        + "          \"runBefore\" : false\n"
+        + "    }}";
 
     static final String VALID_MAPING = "{\n" +
         "    \"targetEntityType\": \"http://marklogic.com/data-hub/example/Customer-0.0.1/Customer\",\n" +
@@ -232,15 +232,28 @@ public class MappingControllerTest {
             new StringHandle(TEST_ENTITY_INSTANCE).withFormat(Format.JSON)
         );
         ObjectMapper om = new ObjectMapper();
-        ObjectNode result = controller.testMapping((ObjectNode) om.readTree(VALID_MAPING),"/test/customer100.json", hubConfigSession.getDbName(DatabaseKind.FINAL)).getBody();
+        ObjectNode result = controller.testMapping((ObjectNode) om.readTree(VALID_MAPING), "/test/customer100.json", hubConfigSession.getDbName(DatabaseKind.FINAL)).getBody();
         assertEquals("concat(id, 'A')", result.get("properties").get("id").get("sourcedFrom").asText(), "SourcedFrom should be concat(id, 'A')");
         assertEquals("100A", result.get("properties").get("id").get("output").asText(), "outpus should be 100A");
 
-        ObjectNode errorResult = controller.testMapping((ObjectNode) om.readTree(INVALID_MAPING),"/test/customer100.json", hubConfigSession.getDbName(DatabaseKind.FINAL)).getBody();
+        ObjectNode errorResult = controller.testMapping((ObjectNode) om.readTree(INVALID_MAPING), "/test/customer100.json", hubConfigSession.getDbName(DatabaseKind.FINAL)).getBody();
         assertEquals("concat(id, ')", errorResult.get("properties").get("id").get("sourcedFrom").asText(), "SourcedFrom should be concat(id, ')");
         assertEquals("Invalid XPath expression: concat(id, ')", errorResult.get("properties").get("id").get("errorMessage").asText(), "errorMessage should be Invalid XPath expression: concat(id, ')");
 
         databaseClient.newJSONDocumentManager().delete("/test/customer100.json");
         databaseClient.newJSONDocumentManager().delete("/test/entities/Customer.entity.json");
+    }
+
+    @Test
+    void testgetMappingFunctions() {
+        testHelper.authenticateSession();
+
+        ObjectNode result = controller.getMappingFunctions().getBody();
+        assertTrue(result.size() > 100, "Should have at least 100 functions");
+        assertTrue(result.get("sum") != null, "Should have function 'sum'");
+        assertEquals("sum(xs:anyAtomicType*)", result.get("sum").get("signature").asText(), "Signature should be sum(xs:anyAtomicType*)");
+        assertTrue(result.get("doc") != null, "Should have function 'doc'");
+        assertTrue(result.get("current-dateTime") != null, "Should have function 'current-dateTime'");
+        assertTrue(result.get("fn:sum") == null, "'fn:' has been stripped from the function name and signature");
     }
 }

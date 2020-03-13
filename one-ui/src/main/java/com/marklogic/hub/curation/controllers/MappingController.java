@@ -66,6 +66,12 @@ public class MappingController extends AbstractArtifactController {
         return new ResponseEntity<>((ObjectNode) getMappingService().testMapping(uri, database, jsonMapping), HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/functions", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<ObjectNode> getMappingFunctions() {
+        return  new ResponseEntity<>((ObjectNode) getMappingService().getMappingFunctions(), HttpStatus.OK);
+    }
+
     protected MappingService getMappingService() {
         DatabaseClient dataServicesClient = hubConfig.newStagingClient(null);
         return MappingService.on(dataServicesClient);
