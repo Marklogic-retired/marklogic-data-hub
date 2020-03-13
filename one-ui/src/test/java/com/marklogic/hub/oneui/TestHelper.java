@@ -6,30 +6,29 @@ import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.FileHandle;
-import com.marklogic.hub.ArtifactManager;
 import com.marklogic.hub.impl.ArtifactManagerImpl;
 import com.marklogic.hub.oneui.models.EnvironmentInfo;
 import com.marklogic.hub.oneui.models.HubConfigSession;
 import com.marklogic.hub.oneui.services.EnvironmentService;
+import com.marklogic.mgmt.ManageClient;
+import com.marklogic.mgmt.ManageConfig;
+import com.marklogic.mgmt.api.API;
+import com.marklogic.mgmt.api.security.User;
+import org.junit.jupiter.api.AfterAll;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import com.marklogic.mgmt.ManageClient;
-import com.marklogic.mgmt.ManageConfig;
-import com.marklogic.mgmt.api.API;
-import com.marklogic.mgmt.api.security.User;
-import org.junit.jupiter.api.AfterAll;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Configuration
 @PropertySource("classpath:application-test.properties")
@@ -75,8 +74,8 @@ public class TestHelper {
 
     public void authenticateSession() {
         createUser(dataHubDeveloperUsername,dataHubDeveloperPassword,"data-hub-developer");
-       EnvironmentInfo environmentInfo = new EnvironmentInfo(mlHost, "DIGEST", 8000,"DIGEST", 8002,"DIGEST", 8010, "DIGEST", 8011);
-       hubConfig.setCredentials(environmentInfo, dataHubDeveloperUsername, dataHubDeveloperPassword);
+        EnvironmentInfo environmentInfo = new EnvironmentInfo(mlHost, "DIGEST", 8000,"DIGEST", 8002,"DIGEST", 8010, "DIGEST", 8011);
+        hubConfig.setCredentials(environmentInfo, dataHubDeveloperUsername, dataHubDeveloperPassword);
     }
 
     public void authenticateSessionAsEnvironmentManager() {

@@ -2976,6 +2976,312 @@
                 "x-swagger-router-controller": "Load Data Artifacts"
             }
         },
+      "/artifacts/matching":
+      {
+        "get":
+        {
+          "tags": [
+            "matching"
+          ],
+          "summary": "Get all matching artifacts",
+          "description": "....",
+          "operationId": "getProjectMatchingArtifacts",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "start",
+              "type": "integer",
+              "in": "query",
+              "required": false
+            },
+            {
+              "name": "pageLength",
+              "type": "integer",
+              "in": "query",
+              "required": false
+            }],
+          "responses":
+          {
+            "200":
+            {
+              "description": "Successful Operation",
+
+              "schema":
+              {
+                "type": "array",
+                "items":
+                {
+                  "$ref": "#/definitions/matchingArtifact"
+                }
+              }
+            },
+            "400":
+            {
+              "description": "Bad Request",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "401":
+            {
+              "description": "Unauthorized",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "403":
+            {
+              "description": "Forbidden",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "404":
+            {
+              "description": "Not Found",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "500":
+            {
+              "description": "Internal Server Error",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            }
+          },
+          "x-swagger-router-controller": "Load Data Artifacts"
+        }
+      },
+      "/artifacts/matching/{matchingName}":
+      {
+        "get":
+        {
+          "tags": [
+            "matching"
+          ],
+          "summary": "Get matching artifact by name",
+          "description": "....",
+          "operationId": "getProjectMatchingArtifact",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "matchingName",
+              "type": "string",
+              "in": "path",
+              "required": true
+            }],
+          "responses":
+          {
+            "200":
+            {
+              "description": "Successful Operation",
+              "schema":
+              {
+                "$ref": "#/definitions/matchingArtifact"
+              }
+            },
+            "400":
+            {
+              "description": "Bad Request",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "401":
+            {
+              "description": "Unauthorized",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "403":
+            {
+              "description": "Forbidden",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "404":
+            {
+              "description": "Not Found",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "500":
+            {
+              "description": "Internal Server Error",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            }
+          },
+          "x-swagger-router-controller": "Matching Artifacts"
+        },
+        "post":
+        {
+          "tags": [
+            "matching"
+          ],
+          "summary": "Create/update matching artifact",
+          "description": "....",
+          "operationId": "createProjectMatchingArtifact",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "matchingName",
+              "type": "string",
+              "in": "path",
+              "required": true
+            },
+            {
+              "name": "matchingArtifact",
+              "schema":
+              {
+                "$ref": "#/definitions/matchingArtifact"
+              },
+              "in": "body",
+              "required": true
+            }],
+          "responses":
+          {
+            "200":
+            {
+              "description": "Successful Operation",
+              "schema":
+              {
+                "$ref": "#/definitions/matchingArtifact"
+              }
+            },
+            "400":
+            {
+              "description": "Bad Request",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "401":
+            {
+              "description": "Unauthorized",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "403":
+            {
+              "description": "Forbidden",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "404":
+            {
+              "description": "Not Found",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "500":
+            {
+              "description": "Internal Server Error",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            }
+          },
+          "x-swagger-router-controller": "Matching Artifacts"
+        },
+        "delete":
+        {
+          "tags": [
+            "matching"
+          ],
+          "summary": "Delete matching artifact",
+          "description": "....",
+          "operationId": "deleteProjectMatchingArtifact",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "matchingName",
+              "type": "string",
+              "in": "path",
+              "required": true
+            }],
+          "responses":
+          {
+            "200":
+            {
+              "description": "Successful Operation"
+            },
+            "400":
+            {
+              "description": "Bad Request",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "401":
+            {
+              "description": "Unauthorized",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "403":
+            {
+              "description": "Forbidden",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "404":
+            {
+              "description": "Not Found",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            },
+            "500":
+            {
+              "description": "Internal Server Error",
+              "schema":
+              {
+                "$ref": "#/definitions/error"
+              }
+            }
+          },
+          "x-swagger-router-controller": "Matching Artifacts"
+        }
+      },
         "/artifacts/mappings/{mapName}":
         {
             "get":
@@ -4701,6 +5007,27 @@
                 }
             }
         },
+      "matchingArtifact":
+      {
+        "type": "object",
+        "required": ["name", "targetEntity", "selectedSource"],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "targetEntity": {
+            "type": "string",
+            "description": "Entity Type of the mapped data that will be matched"
+          },
+          "selectedSource": {
+            "type": "string"
+          },
+          "sourceQuery": {
+            "type": "string",
+            "description": "Query for matching"
+          }
+        }
+      },
       "mappingArtifact":
       {
         "type": "object",

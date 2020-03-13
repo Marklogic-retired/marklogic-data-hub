@@ -19,6 +19,7 @@ const LoadData = require('./loadData');
 const Flows = require('./flows');
 const StepDefs = require('./stepDefinitions');
 const Mappings = require('./mappings');
+const Matching = require('./matching');
 
 const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
 const dataHub = DataHubSingleton.instance();
@@ -28,7 +29,8 @@ const registeredArtifactTypes = {
     loadData: LoadData,
     flows: Flows,
     stepDefinitions: StepDefs,
-    mappings: Mappings
+    mappings: Mappings,
+    matching: Matching
 };
 
 function getTypesInfo() {

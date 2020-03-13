@@ -1,0 +1,79 @@
+.loaddataContainer{
+    margin-top: 3vh;
+}
+.cardStyle{
+    width: 330px;
+    margin-top: 9px;
+    text-align: left;
+    align-content: left;
+    padding-bottom: 2px;
+    border: 1px solid #d7d6d6;
+    margin-bottom: 10px;
+}
+
+.matchingNameStyle{
+    font-size: 20px;
+    padding-bottom: 2px;
+}
+
+.lastUpdatedStyle{
+    font-size: 13px;
+    margin-bottom: 0px;
+}
+
+.formatFileContainer {
+    position:absolute;
+    width: 100%;
+    width: 310px
+}
+.sourceQuery {
+    font-size: 13px;
+    margin-top: 10px;
+}
+.fileCount{
+    display: block;
+    text-align: right;
+    font-size: 24px;
+    padding: 0;
+    margin-bottom: 0px;
+    margin-right: 0px;
+}
+
+.popover {
+    color: #FF8C00;
+    align-items: flex-start;
+    cursor: pointer;
+}
+.addNewCard{
+    width: 330px;
+    margin-top: 9px;
+    border: 1px solid #d7d6d6;
+    align-items: center;
+    text-align: center;
+    align-content: center;
+}
+.plusIcon{
+    font-size: 80px;
+    margin-top: 16px;
+    color: #67749c;
+    margin-bottom: 0px;
+    cursor: pointer;
+}
+.addNewContent {
+    font-size: 20px;
+    color: #67749c;
+    margin-bottom: 1.7vh;
+    margin-top: 0px;
+}
+
+.newDataLoad {
+    width: 700px;
+    text-align: left;
+}
+
+.disabledDeleteIcon {
+    font-size: 21px;
+    opacity: 0.5;
+    pointer-events: none;
+    padding-bottom: 2px;
+}

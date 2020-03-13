@@ -384,6 +384,8 @@ public class HubProjectImpl implements HubProject {
         writeRoleFile(rolesDir, "data-hub-flow-writer.json");
         writeRoleFile(rolesDir, "data-hub-mapping-reader.json");
         writeRoleFile(rolesDir, "data-hub-mapping-writer.json");
+        writeRoleFile(rolesDir, "data-hub-match-merge-reader.json");
+        writeRoleFile(rolesDir, "data-hub-match-merge-writer.json");
         writeRoleFile(rolesDir, "data-hub-step-definition-reader.json");
         writeRoleFile(rolesDir, "data-hub-step-definition-writer.json");
         writeRoleFile(rolesDir, "data-hub-entity-model-writer.json");
