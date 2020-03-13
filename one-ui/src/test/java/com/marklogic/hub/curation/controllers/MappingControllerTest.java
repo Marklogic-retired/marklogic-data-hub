@@ -245,7 +245,7 @@ public class MappingControllerTest {
     }
 
     @Test
-    void testgetMappingFunctions() {
+    void testGetMappingFunctions() {
         testHelper.authenticateSession();
 
         ObjectNode result = controller.getMappingFunctions().getBody();
