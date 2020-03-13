@@ -10,7 +10,6 @@ import Home from './pages/Home';
 import Install from './pages/Install';
 import ProjectInfo from './pages/ProjectInfo';
 import LoadData from './pages/LoadData';
-import EntityTiles from './components/entities/entity-tiles';
 import Bench from './pages/Bench';
 import Reset from './pages/Reset';
 import NoMatchRedirect from './pages/noMatchRedirect';

@@ -17,6 +17,8 @@ const EntityTypes: React.FC = () => {
     const roleService = useContext(RolesContext);
     const canReadOnly = roleService.canReadMappings();
     const canReadWrite = roleService.canWriteMappings();
+    const canReadMatchMerge = roleService.canReadMatchMerge();
+    const canWriteMatchMerge = roleService.canWriteMatchMerge();
 
     const getEntityModels = async () => {
         try {
@@ -43,6 +45,8 @@ const EntityTypes: React.FC = () => {
         <div className={styles.entityContainer}>
         
         <EntityTiles
+        canReadMatchMerge={canReadMatchMerge}
+        canWriteMatchMerge={canWriteMatchMerge}
         canReadWrite={canReadWrite}
         canReadOnly={canReadOnly}
         entityModels={entityModels}

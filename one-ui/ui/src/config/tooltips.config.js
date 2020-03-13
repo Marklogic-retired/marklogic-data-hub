@@ -42,11 +42,18 @@ const NewFlowTooltips = {
     'description': 'The description of this flow.'
 }
 
+const NewMatchingTooltips = {
+    'name': 'The name of this matching configuration.',
+    'description': 'The description of this matching configuration.',
+    'sourceQuery' : 'The collection or CTS query that selects the source data to process in this configuration.',
+}
+
 export {
     NewLoadTooltips,
     ActivitySettings,
     LoadDataSettings,
     MappingSettings,
     NewMapTooltips,
+    NewMatchingTooltips,
     NewFlowTooltips
 }
