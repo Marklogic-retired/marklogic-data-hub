@@ -24,6 +24,7 @@ const SourceToEntityMap = (props) => {
     //For TEST and Clear buttons
     const [mapResp, setMapResp] = useState({});
     const [isTestClicked, setIsTestClicked] = useState(false);
+    const [savedMappingArt, setSavedMappingArt] = useState(props.mapData);
 
     //Navigate URI buttons
     const [uriIndex, setUriIndex] = useState(0);
@@ -76,6 +77,8 @@ const SourceToEntityMap = (props) => {
 
     useEffect(() => {
         initializeMapExpressions();
+        onClear();
+        setSavedMappingArt(props.mapData);
         return (() => {
             setMapExp({});
         })
@@ -195,6 +198,11 @@ const SourceToEntityMap = (props) => {
             } else {
                 setErrorInSaving('error');
             }
+            let mapArt = await props.getMappingArtifactByMapName(dataPayload.targetEntity,props.mapName);
+            console.log('mapArt',mapArt)
+            if(mapArt){
+                setSavedMappingArt({...mapArt})
+            }
             setMapSaved(mapSavedResult);
         }
 
@@ -251,7 +259,7 @@ const SourceToEntityMap = (props) => {
             dataIndex: 'xPathExpression',
             key: 'xPathExpression',
             width: '50%',
-            render: (text, row) => (<div className={styles.mapExpressionContainer}>
+            render: (text, row) => (<div className={styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
                 <TextArea
                     className={styles.mapExpression}
                     value={mapExp[row.name]}
@@ -261,7 +269,8 @@ const SourceToEntityMap = (props) => {
                     disabled={!props.canReadWrite}></TextArea>&nbsp;&nbsp;
                 <i id="listIcon"><FontAwesomeIcon icon={faList} size="lg" className={styles.listIcon}
                 /></i>&nbsp;&nbsp;
-                <span ><Button id="functionIcon" className={styles.functionIcon} size="small">fx</Button></span></div>)
+                <span ><Button id="functionIcon" className={styles.functionIcon} size="small">fx</Button></span>
+            </div>{checkFieldInErrors(row.name) ? <div className={styles.validationErrors}>{displayResp(row.name)}</div> : ''}</div>)
         },
         {
             title: 'Value',
@@ -269,7 +278,7 @@ const SourceToEntityMap = (props) => {
             key: 'value',
             width: '20%',
             sorter: (a: any, b: any) => a.value.length - b.value.length,
-            render: (text, row) => (<div>{displayResp(row.name)}</div>)
+            render: (text, row) => (<div>{!checkFieldInErrors(row.name) ? displayResp(row.name) : ''}</div>)
         }
 
     ]
@@ -314,43 +323,9 @@ const SourceToEntityMap = (props) => {
     const emptyData = (JSON.stringify(props.sourceData) === JSON.stringify([]) && !props.docNotFound);
     };
 
-    //SampleData - to be deleted
-    var respValues = {
-        "name": "NewMap1",
-        "targetEntity": "CustomerType",
-        "description": "test map",
-        "selectedSource": "collection",
-        "sourceQuery": "cts.collectionQuery(['ProductItem'])",
-        "properties": {
-            "id": {
-                "sourcedFrom": "id",
-                "output": "266"
-            },
-            "firstname": {
-                "sourcedFrom": "firstName",
-                "errorMessage": "Illegal xpath expression - firstName"
-            },
-            "lastname": {
-                "sourcedFrom": "LastName",
-                "output": "Linnard"
-            }
-        },
-        "lastUpdated": "2020-03-04T14:14:51.913572-08:00"
-    }
-
     const displayResp = (propName) => {
-        // if (mapResp && mapResp["properties"]) {
-        //     let field = mapResp["properties"]
-        //     if (field[propName] && field[propName]["errorMessage"]) {
-        //         return field[propName]["errorMessage"];
-        //     }
-        //     else if (field[propName] && field[propName]["output"]) {
-        //         return field[propName]["output"];
-        //     }
-        // }
-
-        if (respValues && respValues["properties"]) {
-            let field = respValues["properties"]
+        if (mapResp && mapResp["properties"]) {
+            let field = mapResp["properties"]
             if (field[propName] && field[propName]["errorMessage"]) {
                 return field[propName]["errorMessage"];
             }
@@ -358,7 +333,6 @@ const SourceToEntityMap = (props) => {
                 return field[propName]["output"];
             }
         }
-
     }
 
     const checkFieldInErrors = (field) => {
@@ -375,10 +349,11 @@ const SourceToEntityMap = (props) => {
 
     //Logic for Test and Clear buttons
     const getMapValidationResp = async () => {
+        console.log('props.sourceData',props.sourceData)
         setIsTestClicked(true);
         try {
-            let resp = await getMappingValidationResp(props.mapName, props.mapData, props.sourceURI, 'data-hub-STAGING');
-
+            let resp = await getMappingValidationResp(props.mapName, savedMappingArt, props.sourceURI, 'data-hub-STAGING');
+            
             if (resp.status === 200) {
                 console.log('resp.data', resp.data);
                 setMapResp({ ...resp.data });

@@ -11,6 +11,7 @@ import {getResultsByQuery, getDoc} from '../../../util/search-service'
 import ActivitySettingsDialog from "../../activity-settings/activity-settings-dialog";
 import { AdvMapTooltips } from '../../../config/tooltips.config';
 import {RolesContext} from "../../../util/roles";
+import { getSettingsArtifact } from '../../../util/manageArtifacts-service';
 
 interface Props {
     data: any;
@@ -30,12 +31,13 @@ const MappingCard: React.FC<Props> = (props) => {
     const [newMap, setNewMap] = useState(false);
     const [title, setTitle] = useState('');
     const [mapData, setMapData] = useState({});
-    const [mapName, setMapName] = useState({});
+    const [mapName, setMapName] = useState('');
     const [dialogVisible, setDialogVisible] = useState(false);
     const [loadArtifactName, setLoadArtifactName] = useState('');
     const [mappingVisible, setMappingVisible] = useState(false);
     const [sourceData, setSourceData] = useState<any[]>([]);
     const [sourceURI,setSourceURI] = useState('');
+    const [sourceDatabaseName, setSourceDatabaseName] = useState('data-hub-STAGING')
     const [docNotFound, setDocNotFound] = useState(false);
 
     //For Entity table
@@ -71,6 +73,20 @@ const MappingCard: React.FC<Props> = (props) => {
         setMapData(prevState => ({ ...prevState, ...props.data[index]}));
         setOpenMappingSettings(true);
         console.log('Open settings')
+    }
+
+    const getDatabaseFromSettingsArtifact = async (mapName) => {
+        try{
+        let response = await getSettingsArtifact(activityType,mapName)
+        if (response.status === 200) {
+            console.log('settings are',response.data)
+            setSourceDatabaseName(response.data.sourceDatabase)
+        }
+      } catch(error) {
+        let message = error;
+        console.log('Error While fetching the mapping setting!', message);
+        setDocNotFound(true);
+    }
     }
 
     //Custom CSS for source Format
@@ -258,6 +274,7 @@ const MappingCard: React.FC<Props> = (props) => {
             getSourceData(index);
             extractEntityInfoForTable();
             setMapName(name);
+            getDatabaseFromSettingsArtifact(name);
             setMappingVisible(true);
       }
 
