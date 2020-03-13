@@ -1624,10 +1624,10 @@
         "x-swagger-router-controller":"Jobs"
       }
     },
-    "/jobs/models":{
+    "/models/job-info":{
       "get":{
         "tags":[
-          "jobs"
+          "models"
         ],
         "summary":"Returns job info for all models",
         "description":"Returns job info for all models",
@@ -1679,10 +1679,10 @@
         "x-swagger-router-controller":"Jobs"
       }
     },
-    "/jobs/models/{modelName}":{
+    "/models/{modelName}/job-info":{
       "get":{
         "tags":[
-          "jobs"
+          "models"
         ],
         "summary":"Returns job info for given model",
         "description":"Returns job info for given model",
