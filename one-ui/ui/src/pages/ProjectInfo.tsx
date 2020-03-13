@@ -31,7 +31,8 @@ const ProjectInfo: React.FC = () => {
         setFile('');
     }, []);
 
-    const hasManagePriviledge = localStorage.getItem('dhUserHasManagePrivileges') === 'true';
+    //TODO temporarily only allow admin to upload
+    const hasManagePriviledge = localStorage.getItem('dhUserHasManagePrivileges') === 'true' && localStorage.getItem("dataHubUser") === "admin";
 
     const download = () => {
         axios({
