@@ -27,6 +27,12 @@ xdmp:invoke-function(function() {
     test:get-test-file("nullStep.sjs"),
     (xdmp:default-permissions(), xdmp:permission("rest-extension-user", "execute"), xdmp:permission("data-hub-module-reader", "read"), xdmp:permission("data-hub-module-writer", "update")),
     ()
+  ),
+  xdmp:document-insert(
+    "/test/custom-by-value-step/main.sjs",
+    test:get-test-file("valueStep.sjs"),
+    (xdmp:default-permissions(), xdmp:permission("rest-extension-user", "execute"), xdmp:permission("data-hub-module-reader", "read"), xdmp:permission("data-hub-module-writer", "update")),
+    ()
   )
 },
   map:entry("database", xdmp:modules-database())

@@ -1,0 +1,23 @@
+{
+  "name": "CustomerByValue",
+  "options": {
+    "collections": [
+      "CustomerByValue"
+    ],
+    "targetEntity": "Customer",
+    "sourceQuery": "cts.values(cts.uriReference())",
+    "sourceQueryIsScript": true,
+    "noWrite": true
+  },
+  "description": "flow description",
+  "steps": {
+    "1": {
+      "stepDefinitionName": "CustomerByValue",
+      "stepDefinitionType": "CUSTOM",
+      "options": {
+        "sourceDatabase": "data-hub-FINAL",
+        "targetDatabase": "data-hub-FINAL"
+      }
+    }
+  }
+}

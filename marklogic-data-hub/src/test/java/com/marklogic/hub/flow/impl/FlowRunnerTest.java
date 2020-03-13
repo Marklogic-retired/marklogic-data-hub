@@ -21,12 +21,18 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
+import com.marklogic.client.io.BytesHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
+import com.marklogic.client.query.DeleteQueryDefinition;
+import com.marklogic.client.query.QueryManager;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.collector.DiskQueue;
+import com.marklogic.hub.collector.impl.CollectorImpl;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.RunStepResponse;
@@ -40,8 +46,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 @ExtendWith(SpringExtension.class)
@@ -96,6 +101,60 @@ public class FlowRunnerTest extends HubTestBase {
         String file = sh.get();
         Assertions.assertNotNull(file);
         Assertions.assertTrue(file.contains("ingest.csv"));
+    }
+
+    /**
+     * This test demonstrates multiple ways of expressing the sourceQuery as a script that returns values.
+     */
+    @Test
+    public void sourceQueryReturnsScript() {
+        final String flowName = "testValuesFlow";
+
+        // Write a couple test documents that have range indexed values on them
+        DocumentMetadataHandle metadata = new DocumentMetadataHandle();
+        metadata.getCollections().add("collector-test-input");
+        metadata.getPermissions().add("data-hub-operator", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE);
+        finalDocMgr.write("/collector-test1.json", metadata, new BytesHandle("{\"PersonGivenName\":\"Jane\", \"PersonSurName\":\"Smith\"}".getBytes()).withFormat(Format.JSON));
+        finalDocMgr.write("/collector-test2.json", metadata, new BytesHandle("{\"PersonGivenName\":\"John\", \"PersonSurName\":\"Smith\"}".getBytes()).withFormat(Format.JSON));
+
+        Map<String, Object> options = new HashMap<>();
+        options.put("collections", Arrays.asList("collector-test-output"));
+
+        // cts.values with multiple index references and references to the options object too
+        options.put("firstQName", "PersonGivenName");
+        options.put("secondQName", "PersonSurName");
+        options.put("sourceQuery", "cts.values([cts.elementReference(options.firstQName), cts.elementReference(options.secondQName)], null, null, cts.collectionQuery('collector-test-input'))");
+        RunFlowResponse resp = runFlow(flowName, "1", UUID.randomUUID().toString(), options, null);
+        flowRunner.awaitCompletion();
+        assertEquals(JobStatus.FINISHED.toString(), resp.getJobStatus());
+        assertEquals(3, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "collector-test-output"),
+            "There are 3 unique values in the PersonGivenName and PersonSurName indexes, so 3 documents should have been created");
+        deleteCollectorTestOutput();
+
+        // cts.elementValueCoOccurrences
+        options.put("sourceQuery", "cts.elementValueCoOccurrences(xs.QName('PersonGivenName'), xs.QName('PersonSurName'), null, cts.collectionQuery('collector-test-input'))");
+        resp = runFlow(flowName, "1", UUID.randomUUID().toString(), options, null);
+        flowRunner.awaitCompletion();
+        assertEquals(JobStatus.FINISHED.toString(), resp.getJobStatus());
+        assertEquals(2, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "collector-test-output"),
+            "Both test documents should return a co-occurrence. Note that this array will be passed as a string to the " +
+                "endpoint for running a flow. It can be converted into an array via xdmp.eval .");
+        deleteCollectorTestOutput();
+
+        // cts.valueTuples
+        options.put("sourceQuery", "cts.valueTuples([cts.elementReference('PersonGivenName'), cts.elementReference('PersonSurName')], null, cts.collectionQuery('collector-test-input'))");
+        resp = runFlow(flowName, "1", UUID.randomUUID().toString(), options, null);
+        flowRunner.awaitCompletion();
+        assertEquals(JobStatus.FINISHED.toString(), resp.getJobStatus());
+        assertEquals(2, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "collector-test-output"),
+            "Each of the 2 test documents should return a tuple with 2 items in it");
+    }
+
+    private void deleteCollectorTestOutput() {
+        final QueryManager queryManager = finalClient.newQueryManager();
+        final DeleteQueryDefinition deleteQueryDefinition = queryManager.newDeleteDefinition();
+        deleteQueryDefinition.setCollections("collector-test-output");
+        queryManager.delete(deleteQueryDefinition);
     }
 
     @Test

@@ -1,6 +1,7 @@
 package com.marklogic.hub_unit_test;
 
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
+import com.marklogic.bootstrap.Installer;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.junit5.MarkLogicUnitTestArgumentsProvider;
@@ -8,7 +9,6 @@ import com.marklogic.test.unit.TestManager;
 import com.marklogic.test.unit.TestModule;
 import com.marklogic.test.unit.TestResult;
 import com.marklogic.test.unit.TestSuiteResult;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,10 +19,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  * Runs all marklogic-unit-test tests located under src/test/ml-modules/root/test.
@@ -59,15 +55,9 @@ public class RunMarkLogicUnitTestsTest extends HubTestBase {
 
     @BeforeAll
     public void setupIndexes() {
-        try {
-            Path srcDir = Paths.get("src", "test", "ml-config", "databases","final-database.json");
-            Path dstDir = Paths.get(adminHubConfig.getUserDatabaseDir().toString(), "test-final-database.json");
-            FileUtils.copyFile(srcDir.toAbsolutePath().toFile(), dstDir.toAbsolutePath().toFile());
-        } catch (IOException ioe) {
-            throw new RuntimeException("Unable to copy test indexes file to project", ioe);
-        }
-        dataHub.updateIndexes();
+        Installer.applyDatabasePropertiesForTests(dataHub, adminHubConfig);
     }
+
     /**
      * This is overridden so that the test class is only initialized once, which is sufficient. Otherwise, it's invoked
      * for every unit test module, which is unnecessary.

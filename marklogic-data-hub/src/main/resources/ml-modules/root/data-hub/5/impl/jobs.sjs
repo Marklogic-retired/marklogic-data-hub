@@ -361,13 +361,13 @@ module.exports.updateJob = module.amp(
   });
 
 module.exports.updateBatch = module.amp(
-  function updateBatch(datahub, jobId, batchId, batchStatus, uris, writeTransactionInfo, error) {
+  function updateBatch(datahub, jobId, batchId, batchStatus, items, writeTransactionInfo, error) {
     let docObj = datahub.jobs.getBatchDoc(jobId, batchId);
     if(!docObj) {
       throw new Error("Unable to find batch document: "+ batchId);
     }
     docObj.batch.batchStatus = batchStatus;
-    docObj.batch.uris = uris;
+    docObj.batch.uris = items;
     if (batchStatus === "finished" || batchStatus === "finished_with_errors" || batchStatus === "failed") {
       docObj.batch.timeEnded = fn.currentDateTime();
     }

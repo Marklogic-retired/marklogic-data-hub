@@ -6,6 +6,9 @@ import module namespace test = "http://marklogic.com/test" at "/test/test-helper
 xdmp:invoke-function(function() {
   xdmp:document-delete(
     "/test/custom-null-step/main.sjs"
+  ),
+    xdmp:document-delete(
+    "/test/custom-by-value-step/main.sjs"
   )
 },
   map:entry("database", xdmp:modules-database())
