@@ -41,7 +41,15 @@ function getTypesInfo() {
             const updateRoles = artifactLibrary.getPermissions().filter((perm) => perm.capability === 'update').map((perm) => String(perm.roleId));
             const readRoles = artifactLibrary.getPermissions().filter((perm) => perm.capability === 'read').map((perm) => String(perm.roleId));
             const currentRoles = xdmp.getCurrentRoles().toArray().map(String);
-            const userCanUpdate = updateRoles.some((roleId) => currentRoles.includes(roleId));
+            const manageAdminRolesMustAllMatched = ['manage-admin', 'security'].map((roleName) => String(xdmp.role(roleName)));
+            const hasManageAdminAndSecurity = manageAdminRolesMustAllMatched.every((role) => currentRoles.indexOf(role) !== -1);
+            let currentRoleNames = currentRoles.map(roleId => xdmp.roleName(roleId));
+            let userCanUpdate = false;
+            if (currentRoleNames.includes('admin') || hasManageAdminAndSecurity) {
+                userCanUpdate = true;
+            } else {
+                userCanUpdate = updateRoles.some((roleId) => currentRoles.includes(roleId));
+            }
             const userCanRead = readRoles.some((roleId) => currentRoles.includes(roleId));
             typesInfo.push({
                 type: artifactType,

@@ -10,6 +10,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.appdeployer.command.security.DeployPrivilegesCommand;
 import com.marklogic.appdeployer.command.security.DeployRolesCommand;
 import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.ArtifactManager;
+import com.marklogic.hub.artifact.ArtifactTypeInfo;
 import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
 import com.marklogic.hub.deploy.commands.DeployHubOtherServersCommand;
 import com.marklogic.hub.deploy.commands.DeployHubTriggersCommand;
@@ -20,6 +22,7 @@ import com.marklogic.hub.oneui.auth.AuthenticationFilter;
 import com.marklogic.hub.oneui.controllers.EnvironmentController;
 import com.marklogic.hub.oneui.exceptions.ProjectDirectoryException;
 import com.marklogic.hub.oneui.listener.UIDeployListener;
+import com.marklogic.hub.oneui.models.EnvironmentInfo;
 import com.marklogic.hub.oneui.models.HubConfigSession;
 import com.marklogic.hub.oneui.services.DataHubProjectUtils;
 import com.marklogic.hub.oneui.services.EnvironmentConfig;
@@ -192,7 +195,9 @@ public class EnvironmentControllerTest {
     }
 
     public void testUploadProject(String zipFileName) throws Exception {
-        testHelper.authenticateSessionAsEnvironmentManager();
+        EnvironmentInfo environmentInfo = new EnvironmentInfo("localhost", "DIGEST", 8000,"DIGEST", 8002,"DIGEST", 8010, "DIGEST", 8011);
+        hubConfigSession.setCredentials(environmentInfo, testHelper.adminUserName, testHelper.adminPassword);
+
         TestAuthenticationFilter authenticationFilter = new TestAuthenticationFilter(environmentService, hubConfigSession);
         boolean installed = authenticationFilter.isDataHubInstalled();
         if (!installed) {
@@ -246,6 +251,29 @@ public class EnvironmentControllerTest {
         }
 
         assertTrue(SUCCESS_LOG_MSG.isEmpty(), "has error or exception thrown.");
+    }
+
+    @Test
+    public void testManageAdminAndSecurityAuthoritiesForArtifacts() {
+        testHelper.authenticateSessionAsEnvironmentManager();
+        ArtifactManager mgr = testHelper.getArtifactManager();
+        List<ArtifactTypeInfo> lstTypeInfo = mgr.getArtifactTypeInfoList();
+        for (ArtifactTypeInfo typeInfo : lstTypeInfo) {
+            assertTrue(typeInfo.getUserCanUpdate());
+            assertTrue(typeInfo.getUserCanUpdate());
+        }
+    }
+
+    @Test
+    public void testAdminAuthoritiesForArtifacts()  {
+        EnvironmentInfo environmentInfo = new EnvironmentInfo("localhost", "DIGEST", 8000,"DIGEST", 8002,"DIGEST", 8010, "DIGEST", 8011);
+        hubConfigSession.setCredentials(environmentInfo, testHelper.adminUserName, testHelper.adminPassword);
+        ArtifactManager mgr = testHelper.getArtifactManager();
+        List<ArtifactTypeInfo> lstTypeInfo = mgr.getArtifactTypeInfoList();
+        for (ArtifactTypeInfo typeInfo : lstTypeInfo) {
+            assertTrue(typeInfo.getUserCanUpdate());
+            assertFalse(typeInfo.getUserCanRead());
+        }
     }
 
     static class TestAuthenticationFilter extends AuthenticationFilter {
