@@ -89,14 +89,26 @@
         vertical-align: top;
     }
 }
+.mapExpParentContainer{
+    //display: inline;
+    margin-top: -12px;
+    margin-bottom: -12px;
+
+    >.validationErrors {
+        line-height: 3px;
+        padding-top: 10px;
+        padding-bottom: 4px;
+        color: #DB4f59;
+    }
+}
 
 .mapExpressionContainer {
     width: 100%;
     display: inline-flex;
     vertical-align: top;
     //border: 1px solid red;
-    margin-top: -12px;
-    margin-bottom: -12px;
+    //margin-top: -12px;
+    //margin-bottom: -12px;
     align-items: flex-start;
 }
 
