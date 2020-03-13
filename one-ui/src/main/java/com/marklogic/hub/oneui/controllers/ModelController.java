@@ -31,6 +31,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/api/models")
 public class ModelController {
@@ -58,6 +60,20 @@ public class ModelController {
     @ResponseBody
     public ResponseEntity<?> getModel(@PathVariable String modelName) {
         JsonNode json = modelManager.getModel(modelName);
+        return new ResponseEntity<>(json, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/job-info", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<?> getLatestJobInfoForAllModels() {
+        List<JsonNode> modelList = modelManager.getLatestJobInfoForAllModels();
+        return new ResponseEntity<>(modelList, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/{modelName}/job-info", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<?> getLatestJobInfo(@PathVariable String modelName) {
+        JsonNode json = modelManager.getLatestJobInfo(modelName);
         return new ResponseEntity<>(json, HttpStatus.OK);
     }
 }
