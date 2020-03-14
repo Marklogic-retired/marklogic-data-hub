@@ -14,10 +14,11 @@ describe('json scenario on view entities page', () => {
   //login with valid account
   beforeEach(() => {
     cy.visit('/');
-    cy.contains('Sign In');
+    cy.contains('MarkLogic Data Hub');
     cy.fixture('users').then(user => {
       cy.login(user.username, user.password);
     })
+    cy.visit('/view');
   });
 
   it('has total entities and documents', () => {
@@ -49,7 +50,7 @@ describe('json scenario on browse documents page', () => {
   //login with valid account and go to /browse page
   beforeEach(() => {
     cy.visit('/');
-    cy.contains('Sign In');
+    cy.contains('MarkLogic Data Hub');
     cy.fixture('users').then(user => {
       cy.login(user.username, user.password);
     })
@@ -166,7 +167,7 @@ describe('json scenario for table on browse documents page', () => {
   //login with valid account and go to /browse page
   beforeEach(() => {
     cy.visit('/');
-    cy.contains('Sign In');
+    cy.contains('MarkLogic Data Hub');
     cy.fixture('users').then(user => {
       cy.login(user.username, user.password);
     })

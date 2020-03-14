@@ -8,14 +8,12 @@ describe('table test scenarios', () => {
 
   beforeEach(() => {
     cy.visit('/');
-    cy.contains('Sign In');
+    cy.contains('MarkLogic Data Hub');
     cy.fixture('users').then(user => {
       cy.login(user.username, user.password);
     })
     cy.wait(500);
-    cy.get('.ant-menu-item').contains('Browse Documents').click();
-    cy.wait(1000);
-    browsePage.getTableView();
+    cy.visit('/browse');
   });
 
   it('has table', () => {
@@ -39,14 +37,12 @@ describe('column selector test scenarios', () => {
 
   beforeEach(() => {
     cy.visit('/');
-    cy.contains('Sign In');
+    cy.contains('MarkLogic Data Hub');
     cy.fixture('users').then(user => {
       cy.login(user.username, user.password);
     })
     cy.wait(500);
-    cy.get('.ant-menu-item').contains('Browse Documents').click();
-    cy.wait(1000);
-    browsePage.getTableView();
+    cy.visit('/browse');
   });
 
   it('has columns selector popover', () => {
