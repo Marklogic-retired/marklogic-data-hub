@@ -9,10 +9,11 @@ describe('view page validation', () => {
   //login with valid account
   beforeEach(() => {
     cy.visit('/');
-    cy.contains('Sign In');
+    cy.contains('MarkLogic Data Hub');
     cy.fixture('users').then(user => {
       cy.login(user.username, user.password);
     })
+    cy.visit('/view');
   });
 
   it('check last harmonized', () => {
