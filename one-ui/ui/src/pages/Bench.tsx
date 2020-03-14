@@ -271,7 +271,7 @@ const Bench: React.FC = () => {
                         } else if (response['jobStatus'] === Statuses.FAILED) {
                             console.log('Flow failed: ' + flowId);
                             let errors = getErrors(response);
-                            showFailed(stepName, stepType, errors);
+                            showFailed(stepName, stepType, errors.slice(0,1));
                         }
                         setIsLoading(false);
                     }).catch(function(error) {
