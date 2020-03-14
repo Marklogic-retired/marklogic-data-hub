@@ -257,10 +257,10 @@ public class EnvironmentControllerTest {
     public void testManageAdminAndSecurityAuthoritiesForArtifacts() {
         testHelper.authenticateSessionAsEnvironmentManager();
         ArtifactManager mgr = testHelper.getArtifactManager();
-        List<ArtifactTypeInfo> lstTypeInfo = mgr.getArtifactTypeInfoList();
-        for (ArtifactTypeInfo typeInfo : lstTypeInfo) {
+        List<ArtifactTypeInfo> listTypeInfo = mgr.getArtifactTypeInfoList();
+        for (ArtifactTypeInfo typeInfo : listTypeInfo) {
             assertTrue(typeInfo.getUserCanUpdate());
-            assertTrue(typeInfo.getUserCanUpdate());
+            assertTrue(typeInfo.getUserCanRead());
         }
     }
 
@@ -269,8 +269,8 @@ public class EnvironmentControllerTest {
         EnvironmentInfo environmentInfo = new EnvironmentInfo("localhost", "DIGEST", 8000,"DIGEST", 8002,"DIGEST", 8010, "DIGEST", 8011);
         hubConfigSession.setCredentials(environmentInfo, testHelper.adminUserName, testHelper.adminPassword);
         ArtifactManager mgr = testHelper.getArtifactManager();
-        List<ArtifactTypeInfo> lstTypeInfo = mgr.getArtifactTypeInfoList();
-        for (ArtifactTypeInfo typeInfo : lstTypeInfo) {
+        List<ArtifactTypeInfo> listTypeInfo = mgr.getArtifactTypeInfoList();
+        for (ArtifactTypeInfo typeInfo : listTypeInfo) {
             assertTrue(typeInfo.getUserCanUpdate());
             assertFalse(typeInfo.getUserCanRead());
         }
