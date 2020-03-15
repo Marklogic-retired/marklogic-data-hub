@@ -272,7 +272,7 @@ public class EnvironmentControllerTest {
         List<ArtifactTypeInfo> listTypeInfo = mgr.getArtifactTypeInfoList();
         for (ArtifactTypeInfo typeInfo : listTypeInfo) {
             assertTrue(typeInfo.getUserCanUpdate());
-            assertFalse(typeInfo.getUserCanRead());
+            assertFalse(typeInfo.getUserCanRead(), "admin would not allow read but write for deployment!");
         }
     }
 
