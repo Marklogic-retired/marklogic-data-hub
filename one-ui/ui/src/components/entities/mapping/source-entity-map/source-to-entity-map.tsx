@@ -450,7 +450,7 @@ const SourceToEntityMap = (props) => {
 
     const handleFunctionsList = async (name) => {
 
-        setPropListForDropDown([...Object.keys(funcList)]);
+        setPropListForDropDown([...Object.keys(props.mapFunctions)]);
 
         setPropName(name);
         if (!displaySelectList && !displayFuncMenu) {
@@ -465,10 +465,13 @@ const SourceToEntityMap = (props) => {
     }
 
     const functionsDef = (funcName) => {
-        return funcList[funcName].signature
+        return props.mapFunctions[funcName].signature
     }
 
     const insertContent = (content, propName) => {
+        if(!mapExp[propName]){
+            mapExp[propName] = '';
+        }
         let newExp = mapExp[propName].substr(0, caretPosition) + content +
             mapExp[propName].substr(caretPosition, mapExp[propName].length);
         setMapExp({ ...mapExp, [propName]: newExp });

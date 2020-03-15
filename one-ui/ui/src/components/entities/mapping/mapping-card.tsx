@@ -12,6 +12,7 @@ import ActivitySettingsDialog from "../../activity-settings/activity-settings-di
 import { AdvMapTooltips } from '../../../config/tooltips.config';
 import {RolesContext} from "../../../util/roles";
 import { getSettingsArtifact } from '../../../util/manageArtifacts-service';
+import axios from 'axios';
 
 interface Props {
     data: any;
@@ -52,6 +53,9 @@ const MappingCard: React.FC<Props> = (props) => {
 
 
     const [openMappingSettings, setOpenMappingSettings] = useState(false);
+
+    //For storing  mapping functions
+    const [mapFunctions,setMapFunctions] = useState({});
 
     useEffect(() => {
         setSourceData([]);
@@ -249,6 +253,21 @@ const MappingCard: React.FC<Props> = (props) => {
 
     }
 
+    const getMappingFunctions = async () => {
+        try {
+            let response = await axios.get(`/api/artifacts/mapping/functions`);
+
+            if (response.status === 200) {
+                console.log('functions',response.data);
+                setMapFunctions({...response.data});
+              console.log('GET Mapping functions API Called successfully!',response);
+            }
+          } catch (error) {
+              let message = error;
+              console.log('Error while fetching the functions!', message);
+          }
+    }
+
 
     const extractEntityInfoForTable = () => {
         let entProps = props.entityModel.definitions[props.entityTypeTitle].properties;
@@ -272,6 +291,7 @@ const MappingCard: React.FC<Props> = (props) => {
             extractEntityInfoForTable();
             setMapName(name);
             getDatabaseFromSettingsArtifact(name);
+            getMappingFunctions();
             setMappingVisible(true);
       }
 
@@ -347,6 +367,7 @@ const MappingCard: React.FC<Props> = (props) => {
                 setDisableURINavLeft={setDisableURINavLeft}
                 setDisableURINavRight={setDisableURINavRight}
                 sourceDatabaseName={sourceDatabaseName}/>
+                mapFunctions={mapFunctions}/>
             <ActivitySettingsDialog
                 tooltipsData={AdvMapTooltips}
                 openActivitySettings={openMappingSettings}
