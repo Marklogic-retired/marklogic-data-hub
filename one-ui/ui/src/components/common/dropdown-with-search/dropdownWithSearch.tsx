@@ -22,12 +22,11 @@ const DropDownWithSearch = (props) => {
 
     //CSS Styles for the select list
     const listStyle:CSSProperties = {
-        width: '12vw'
+        width: '12vw',
     }
 
     const dropDownStyle: CSSProperties = { 
-        maxHeight: '30vh', 
-        overflow: 'auto',
+        maxHeight: '40vh',
     }
     
     useEffect(() => {
@@ -55,7 +54,9 @@ const DropDownWithSearch = (props) => {
                     showArrow={false}
                     showSearch
                     style={listStyle}
-                    dropdownStyle={dropDownStyle}
+                    //dropdownStyle={dropDownStyle}
+                    dropdownMenuStyle={dropDownStyle}
+                    dropdownClassName={styles.dropDownStyle}
                     value={props.itemValue}
                     onChange={props.onItemSelect}
                 >
