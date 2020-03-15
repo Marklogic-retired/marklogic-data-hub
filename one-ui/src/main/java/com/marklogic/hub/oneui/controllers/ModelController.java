@@ -16,22 +16,18 @@
  */
 package com.marklogic.hub.oneui.controllers;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.oneui.managers.ModelManager;
 import com.marklogic.hub.oneui.models.HubConfigSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.util.List;
 
 @Controller
 @RequestMapping("/api/models")
@@ -52,28 +48,24 @@ public class ModelController {
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> getModels() {
-        JsonNode json = modelManager.getModels();
-        return new ResponseEntity<>(json, HttpStatus.OK);
+        return ResponseEntity.ok(modelManager.getModels());
     }
 
     @RequestMapping(value = "/{modelName}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> getModel(@PathVariable String modelName) {
-        JsonNode json = modelManager.getModel(modelName);
-        return new ResponseEntity<>(json, HttpStatus.OK);
+        return ResponseEntity.ok(modelManager.getModel(modelName));
     }
 
     @RequestMapping(value = "/job-info", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> getLatestJobInfoForAllModels() {
-        List<JsonNode> modelList = modelManager.getLatestJobInfoForAllModels();
-        return new ResponseEntity<>(modelList, HttpStatus.OK);
+        return ResponseEntity.ok(modelManager.getLatestJobInfoForAllModels());
     }
 
     @RequestMapping(value = "/{modelName}/job-info", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> getLatestJobInfo(@PathVariable String modelName) {
-        JsonNode json = modelManager.getLatestJobInfo(modelName);
-        return new ResponseEntity<>(json, HttpStatus.OK);
+        return ResponseEntity.ok(modelManager.getLatestJobInfo(modelName));
     }
 }
