@@ -202,7 +202,9 @@ function getObjectPropertyMappings(mapping, propertyPath, objectPropertyMappings
 
 function getTargetEntity(targetEntityType) {
   if (!entitiesByTargetType[targetEntityType]) {
+    xdmp.log(`targetEntityType: ${xdmp.describe(targetEntityType)}`);
     let entityModel = entityLib.findModelForEntityTypeId(targetEntityType);
+    xdmp.log(`entityModel: ${xdmp.describe(entityModel)}`);
     if (fn.empty(entityModel)) {
       entityModel = fallbackLegacyEntityLookup(targetEntityType)
     }
