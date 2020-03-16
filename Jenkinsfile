@@ -241,11 +241,11 @@ pipeline{
                                ''')
 		    }
 		    def reviewState=getReviewStateOfPR reviewResponse,2,env.GIT_COMMIT ;
-			if((env.CHANGE_TITLE.split(':')[1].contains("Automated PR")) || reviewState.equals("Approved")){
+			if((env.CHANGE_TITLE.split(':')[1].contains("Automated PR")) || reviewState.equals("APPROVED")){
 				println("Automated PR")
 				sh 'exit 0'
 			}
-			else if(reviewState.equals("ChangesRequested")){
+			else if(reviewState.equals("CHANGES_REQUESTED")){
 			    println("Changes Requested")
                 def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
                 email=getEmailFromGITUser author;
@@ -284,7 +284,7 @@ pipeline{
                             }
                         }catch(FlowInterruptedException err){
                             user = err.getCauses()[0].getUser().toString();
-                            if(user=="SYSTEM"){
+                            if(user.equalsIgnoreCase("SYSTEM")){
                                  echo "Timeout 15mins"
                                  sh 'exit 123'
                             }else{
