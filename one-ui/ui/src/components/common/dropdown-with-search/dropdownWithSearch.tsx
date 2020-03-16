@@ -1,6 +1,8 @@
 import { Menu, Select } from "antd"
 import React, { useState, useEffect, useRef, useCallback, CSSProperties } from 'react';
 import styles from './dropdownWithSearch.module.scss';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {faSearch} from '@fortawesome/free-solid-svg-icons';
 
 const DropDownWithSearch = (props) => {
 
@@ -52,10 +54,9 @@ const DropDownWithSearch = (props) => {
                 <Select
                     id="dropdownList"
                     open={selList}
-                    showArrow={false}
                     showSearch
                     style={listStyle}
-                    //dropdownStyle={dropDownStyle}
+                    suffixIcon={<FontAwesomeIcon icon={faSearch} size="2x" className={styles.searchIcon}/>}
                     dropdownMenuStyle={dropDownStyle}
                     dropdownClassName={styles.dropDownStyle}
                     value={props.itemValue}

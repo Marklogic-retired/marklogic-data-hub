@@ -270,7 +270,8 @@ const MappingCard: React.FC<Props> = (props) => {
 
 
     const extractEntityInfoForTable = () => {
-        let entProps = props.entityModel.definitions[props.entityTypeTitle].properties;
+        console.log('entityinfo',props.entityModel)
+        let entProps = props.entityModel && props.entityModel.definitions ? props.entityModel.definitions[props.entityTypeTitle].properties : {};
         let entTableTempData: any = [];
         Object.keys(entProps).map(key => {
             let propty = {
