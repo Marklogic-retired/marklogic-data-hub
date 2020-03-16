@@ -9,7 +9,7 @@ import CreateEditMappingDialog from './create-edit-mapping-dialog/create-edit-ma
 import SourceToEntityMap from './source-entity-map/source-to-entity-map';
 import {getResultsByQuery, getDoc} from '../../../util/search-service'
 import ActivitySettingsDialog from "../../activity-settings/activity-settings-dialog";
-import { MappingSettings } from '../../../config/tooltips.config';
+import { AdvMapTooltips } from '../../../config/tooltips.config';
 import {RolesContext} from "../../../util/roles";
 
 interface Props {
@@ -333,7 +333,7 @@ const MappingCard: React.FC<Props> = (props) => {
                 setDisableURINavLeft={setDisableURINavLeft}
                 setDisableURINavRight={setDisableURINavRight}/>
             <ActivitySettingsDialog
-                tooltipsData={MappingSettings}
+                tooltipsData={AdvMapTooltips}
                 openActivitySettings={openMappingSettings}
                 setOpenActivitySettings={setOpenMappingSettings}
                 stepData={mapData}

@@ -1,7 +1,7 @@
 import { Modal, Form, Input, Button, Tooltip, Icon, Select, Radio } from "antd";
 import React, { useState, useEffect } from "react";
 import styles from './create-edit-matching-dialog.module.scss';
-import { NewMatchingTooltips } from '../../../../config/tooltips.config';
+import { NewMatchTooltips } from '../../../../config/tooltips.config';
 
 const CreateEditMatchingDialog = (props) => {
 
@@ -303,7 +303,7 @@ const CreateEditMatchingDialog = (props) => {
             disabled={tobeDisabled}
             className={styles.input}
           />&nbsp;&nbsp;
-          <Tooltip title={NewMatchingTooltips.name}>
+          <Tooltip title={NewMatchTooltips.name}>
         <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
       </Tooltip>
         </Form.Item>
@@ -319,7 +319,7 @@ const CreateEditMatchingDialog = (props) => {
             disabled={props.canReadOnly && !props.canReadWrite}
             className={styles.input}
           />&nbsp;&nbsp;
-          <Tooltip title={NewMatchingTooltips.description}>
+          <Tooltip title={NewMatchTooltips.description}>
         <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
       </Tooltip>
         </Form.Item>
@@ -346,7 +346,7 @@ const CreateEditMatchingDialog = (props) => {
             onChange={handleChange}
           >
             {/* {collectionsList} */}
-          </Input>&nbsp;&nbsp;<Tooltip title={NewMatchingTooltips.sourceQuery}>
+          </Input>&nbsp;&nbsp;<Tooltip title={NewMatchTooltips.sourceQuery}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </Tooltip></span></div> : <span><TextArea
             id="srcQuery"
@@ -355,7 +355,7 @@ const CreateEditMatchingDialog = (props) => {
             onChange={handleChange}
             disabled={!props.canReadWrite}
             className={styles.input}
-          ></TextArea>&nbsp;&nbsp;<Tooltip title={NewMatchingTooltips.sourceQuery}>
+          ></TextArea>&nbsp;&nbsp;<Tooltip title={NewMatchTooltips.sourceQuery}>
           <Icon type="question-circle" className={styles.questionCircleTextArea} theme="filled" />
         </Tooltip></span>}
         </Form.Item>

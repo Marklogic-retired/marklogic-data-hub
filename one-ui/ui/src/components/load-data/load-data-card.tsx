@@ -8,7 +8,7 @@ import sourceFormatOptions from '../../config/formats.config';
 import NewDataLoadDialog from './new-data-load-dialog/new-data-load-dialog';
 import { convertDateFromISO } from '../../util/conversionFunctions';
 import ActivitySettingsDialog from "../activity-settings/activity-settings-dialog";
-import { LoadDataSettings } from '../../config/tooltips.config';
+import { AdvLoadTooltips } from '../../config/tooltips.config';
 
 import { RolesContext } from "../../util/roles";
 
@@ -231,7 +231,7 @@ const LoadDataCard: React.FC<Props> = (props) => {
             {deleteConfirmation}
             {addConfirmation}
             <ActivitySettingsDialog
-                tooltipData={LoadDataSettings}
+                tooltipData={AdvLoadTooltips}
                 openActivitySettings={openLoadDataSettings}
                 setOpenActivitySettings={setOpenLoadDataSettings}
                 stepData={stepData}
