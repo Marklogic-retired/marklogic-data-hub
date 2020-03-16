@@ -50,6 +50,7 @@ const DropDownWithSearch = (props) => {
         <div ref={node}>
             {menuVisible && <Menu>
                 <Select
+                    id="dropdownList"
                     open={selList}
                     showArrow={false}
                     showSearch
