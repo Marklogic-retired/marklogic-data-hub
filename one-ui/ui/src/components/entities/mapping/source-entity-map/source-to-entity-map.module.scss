@@ -15,7 +15,7 @@
     margin-left: 30em;
 }
 .noMessage{
-    padding: 2.25vh 0vh;
+    padding: 2.85vh 0vh;
 }
 .parentContainer{
     display: flex;
@@ -218,13 +218,21 @@
     padding: 4px 0px;
     height : 32px;
 }
+
+.showingEditContainer{
+    padding-top: 10px;
+    padding-bottom:5px;
+    margin-bottom: -6px;
+}
 .showingEditIcon{
     padding: 5px 3px;
     border: 1px solid #E9F7FE;
     color: #394494;
 }
 .notShowingEditIcon{
-    padding: 5px 3px;
+    padding-top: 10px;
+    padding-right: 2.3em;
+    padding-left: 3px;
     margin-left: -3px;
 }
 
