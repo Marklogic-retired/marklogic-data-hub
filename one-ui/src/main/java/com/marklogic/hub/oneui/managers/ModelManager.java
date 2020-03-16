@@ -182,18 +182,6 @@ public class ModelManager {
     }
 
     JsonNode getJobInfoFromDB(DatabaseClient dbClient, String modelName) {
-        JsonNode node = null;
-        try {
-            node = JobInfo.on(dbClient).getLatestJobData(modelName);
-        }
-        catch (MarkLogicServerException e) {
-            /*
-             * As MarkLogic server throws a FailedRequestException for both data-service module not found
-             * and if the user is unauthorized to access the module; we need to fail silently and log the
-             * issue.
-             */
-            logger.error(e.getMessage());
-        }
-        return node;
+        return JobInfo.on(dbClient).getLatestJobData(modelName);
     }
 }
