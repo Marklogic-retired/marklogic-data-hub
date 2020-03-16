@@ -60,7 +60,12 @@ const View: React.FC = () => {
         setIsLoading(false);
       }
     } catch (error) {
-      handleError(error);
+      if (error['response']['data']['message'] === "REST-INVALIDPARAM: (err:FOER0000) Invalid parameter: No configured options: exp-final-entity-options") {
+        setEntites([]);
+        setIsLoading(false);
+      } else {
+        handleError(error); 
+      }
     }
   }
 
