@@ -3276,12 +3276,12 @@ definitions:
         type: object
         required:
             - name
-            - targetEntity
+            - targetEntityType
             - selectedSource
         properties:
             name:
                 type: string
-            targetEntity:
+            targetEntityType:
                 type: string
                 description: Entity Type of the mapped data that will be matched
             selectedSource:
@@ -3293,12 +3293,12 @@ definitions:
         type: object
         required:
             - name
-            - targetEntity
+            - targetEntityType
             - selectedSource
         properties:
             name:
                 type: string
-            targetEntity:
+            targetEntityType:
                 type: string
                 description: Entity Type the input data will be mapped to
             selectedSource:
@@ -3322,10 +3322,8 @@ definitions:
         properties:
             sourcedFrom:
                 type: string
-                description: >-
-                    XPath expression that generates the value for the property or provides
-                    dataset for child expression
-            targetEntity:
+                description: XPath expression that generates the value for the property or provides dataset for child expression
+            targetEntityType:
                 type: string
                 description: Entity Type the input data will be mapped to
             properties:

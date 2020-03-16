@@ -51,7 +51,7 @@ const EntityTiles = (props) => {
             if (response.status === 200) {
                 let mapArtifacts = response.data;
 
-               if(mapArtifacts.targetEntity === entityTypeTitle){
+               if(mapArtifacts.targetEntityType === entityTypeTitle){
                 return mapArtifacts;
                }
 

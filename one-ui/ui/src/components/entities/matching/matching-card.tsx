@@ -134,7 +134,7 @@ const MatchingCard: React.FC<Props> = (props) => {
                 newMatching={newMatching} 
                 title={title} 
                 setNewMatching={setNewMatching}
-                targetEntity={props.entityName}
+                targetEntityType={props.entityName}
                 createMatchingArtifact={props.createMatchingArtifact}
                 deleteMatchingArtifact={props.deleteMatchingArtifact}
                 matchingData={matchingData}

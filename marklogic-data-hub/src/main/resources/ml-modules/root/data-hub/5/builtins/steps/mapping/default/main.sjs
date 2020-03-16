@@ -52,7 +52,7 @@ function main(content, options) {
   }
 
   //and lastly we get our model definition
-  let targetArr = mapping.targetEntityType.split('/');
+  let targetArr = String(mapping.targetEntityType).split('/');
   let entityName = targetArr[targetArr.length - 1];
   let tVersion = targetArr[targetArr.length - 2].split('-');
   let modelVersion = tVersion[tVersion.length - 1];
