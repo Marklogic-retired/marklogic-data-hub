@@ -32,7 +32,7 @@ function updateMappingConfig(artifactName) {
 
 function createMappingWithSameNameButDifferentEntityType(artifactName) {
   try {
-    invokeSetService('mappings', artifactName, {'name': `${artifactName}`, 'targetEntity': 'SomeOtherEntity-hasMappingConfig', 'selectedSource': 'query'});
+    invokeSetService('mappings', artifactName, {'name': `${artifactName}`, 'targetEntityType': 'SomeOtherEntity-hasMappingConfig', 'selectedSource': 'query'});
     return new Error("Expected a failure because another mapping exists with the same name but a different entity type. " +
       "Mapping names must be globally unique.");
   } catch (e) {
@@ -83,7 +83,7 @@ function invalidArtifact() {
         return [
             test.assertEqual(3, e.data.length, `Error doesn't have the expected validate information: "${JSON.stringify(e)}"`),
             test.assertTrue(fn.contains(msg, 'required'), `Message: "${msg}" doesn't have "required"`),
-            test.assertTrue(fn.contains(msg, 'targetEntity'), `Message: "${msg}" doesn't have "targetEntity"`),
+            test.assertTrue(fn.contains(msg, 'targetEntityType'), `Message: "${msg}" doesn't have "targetEntityType"`),
             test.assertTrue(fn.contains(msg, 'selectedSource'), `Message: "${msg}" doesn't have "selectedSource"`),
             test.assertFalse(fn.contains(msg, 'name'), `Message: "${msg}" has "name" when it shouldn't`)
         ];

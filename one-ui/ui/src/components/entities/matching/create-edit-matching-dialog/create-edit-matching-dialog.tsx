@@ -127,7 +127,7 @@ const CreateEditMatchingDialog = (props) => {
       let sQuery = `cts.collectionQuery(['${collections}'])`;
       dataPayload = {
         name: matchingName,
-        targetEntity: props.targetEntity,
+        targetEntityType: props.targetEntityType,
         description: description,
         selectedSource: selectedSource,
         sourceQuery: sQuery
@@ -135,7 +135,7 @@ const CreateEditMatchingDialog = (props) => {
     } else {
       dataPayload = {
         name: matchingName,
-        targetEntity: props.targetEntity,
+        targetEntityType: props.targetEntityType,
         description: description,
         selectedSource: selectedSource,
         sourceQuery: srcQuery

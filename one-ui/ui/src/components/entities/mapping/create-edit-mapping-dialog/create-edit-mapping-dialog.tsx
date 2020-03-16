@@ -129,7 +129,7 @@ const CreateEditMappingDialog = (props) => {
       let sQuery = `cts.collectionQuery(['${collections}'])`;
       dataPayload = {
         name: mapName,
-        targetEntity: props.targetEntity,
+        targetEntityType: props.targetEntityType,
         description: description,
         selectedSource: selectedSource,
         sourceQuery: sQuery
@@ -137,7 +137,7 @@ const CreateEditMappingDialog = (props) => {
     } else {
       dataPayload = {
         name: mapName,
-        targetEntity: props.targetEntity,
+        targetEntityType: props.targetEntityType,
         description: description,
         selectedSource: selectedSource,
         sourceQuery: srcQuery

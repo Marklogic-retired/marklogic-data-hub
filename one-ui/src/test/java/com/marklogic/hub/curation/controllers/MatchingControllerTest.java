@@ -77,7 +77,7 @@ public class MatchingControllerTest extends TestHelper {
                     int matchConfigCount = 0;
                     int i = 0;
                     for (; i < matchingNode.size(); ++i) {
-                        String matchingEntityName = matchingNode.get(i).get("targetEntity").asText();
+                        String matchingEntityName = matchingNode.get(i).get("targetEntityType").asText();
                         String matchName = matchingNode.get(i).get("name").asText();
                         if (("Customer".equals(currEntityName) && currEntityName.equals(matchingEntityName) && "TestCustomerMatching".equals(matchName))
                             || ("Order".equals(currEntityName) && currEntityName.equals(matchingEntityName)
@@ -93,7 +93,7 @@ public class MatchingControllerTest extends TestHelper {
                         assertEquals(2, matchConfigCount, "Should have 2 matching configs associate with the entity (Order).");
                     }
                 } else if (matchingNode instanceof ObjectNode) {
-                    assertEquals(currEntityName, matchingNode.get("targetEntity").asText(), "mismatch entity name.");
+                    assertEquals(currEntityName, matchingNode.get("targetEntityType").asText(), "mismatch entity name.");
                     if ("Customer".equals(currEntityName)) {
                         assertEquals("TestCustomerMatching", matchingNode.get("name").asText(), "mismatch matching name.");
                     } else { //Order

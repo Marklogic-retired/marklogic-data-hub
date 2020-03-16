@@ -202,7 +202,9 @@ function getObjectPropertyMappings(mapping, propertyPath, objectPropertyMappings
 
 function getTargetEntity(targetEntityType) {
   if (!entitiesByTargetType[targetEntityType]) {
+    xdmp.log(`targetEntityType: ${xdmp.describe(targetEntityType)}`);
     let entityModel = entityLib.findModelForEntityTypeId(targetEntityType);
+    xdmp.log(`entityModel: ${xdmp.describe(entityModel)}`);
     if (fn.empty(entityModel)) {
       entityModel = fallbackLegacyEntityLookup(targetEntityType)
     }
@@ -259,9 +261,9 @@ function getEntityName(targetEntityType) {
 }
 
 function fallbackLegacyEntityLookup(targetEntityType) {
-  let targetArr = targetEntityType.split('/');
+  let targetArr = String(targetEntityType).split('/');
   let entityName = targetArr[targetArr.length - 1];
-  let tVersion = targetArr[targetArr.length - 2].split('-');
+  let tVersion = targetArr[targetArr.length - 2] ? targetArr[targetArr.length - 2].split('-') : '';
   let modelVersion = tVersion[tVersion.length - 1];
   return fn.head(mappingLib.getModel(entityName, modelVersion));
 }
@@ -298,7 +300,7 @@ function validateMapping(mapping) {
   });
   validatedMapping.properties = {};
 
-  Object.keys(mapping.properties).forEach(propertyName => {
+  Object.keys(mapping.properties || {}).forEach(propertyName => {
     let mappedProperty = mapping.properties[propertyName];
 
     // If this is a nested property, validate its child properties first
@@ -364,7 +366,7 @@ function removeStandardFunction(stylesheet) {
 }
 
 function runMapping(mapping, uri, propMapping={"targetEntityType":mapping.targetEntityType, "namespaces": mapping.namespaces,"properties": {}}, paths=['properties']) {
-  Object.keys(mapping.properties).forEach(propertyName => {
+  Object.keys(mapping.properties || {}).forEach(propertyName => {
     let mappedProperty = mapping.properties[propertyName];
     let sourcedFrom = escapeXML(mappedProperty.sourcedFrom);
     paths.push(propertyName);

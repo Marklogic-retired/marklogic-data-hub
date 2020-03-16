@@ -128,7 +128,7 @@ function extractInstanceFromModel(model, modelName, mapping, content, provenance
     }
     let value = null;
     if (!dataType && prop['$ref']) {
-      let refArr = prop['$ref'].split('/');
+      let refArr = String(prop['$ref']).split('/');
       let refModelName = refArr[refArr.length - 1];
       if (valueSource) {
         let itemSource = new NodeBuilder();
@@ -142,7 +142,7 @@ function extractInstanceFromModel(model, modelName, mapping, content, provenance
       let itemsDatatype = items['datatype'];
       let valueArray = [];
       if (!itemsDatatype && items['$ref']) {
-        let refArr = items['$ref'].split('/');
+        let refArr = String(items['$ref']).split('/');
         let refModelName = refArr[refArr.length - 1];
         for (const item of Sequence.from(valueSource)) {
           // let's create and pass the node

@@ -184,7 +184,7 @@ const SourceToEntityMap = (props) => {
             //console.log('mapData',props.mapData);
             let dataPayload = {
                 name: props.mapName,
-                targetEntity: props.mapData.targetEntity,
+                targetEntityType: props.mapData.targetEntityType,
                 description: props.mapData.description,
                 selectedSource: props.mapData.selectedSource,
                 sourceQuery: props.mapData.sourceQuery,
@@ -198,7 +198,7 @@ const SourceToEntityMap = (props) => {
             } else {
                 setErrorInSaving('error');
             }
-            let mapArt = await props.getMappingArtifactByMapName(dataPayload.targetEntity,props.mapName);
+            let mapArt = await props.getMappingArtifactByMapName(dataPayload.targetEntityType,props.mapName);
             console.log('mapArt',mapArt)
             if(mapArt){
                 setSavedMappingArt({...mapArt})

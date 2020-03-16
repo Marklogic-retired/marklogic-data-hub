@@ -85,11 +85,11 @@ function getArtifacts(artifactType) {
 
 function getArtifactsGroupByEntity(queries) {
     const entityNames = getEntityTitles();
-    const artifacts = cts.search(cts.andQuery(queries.concat(cts.jsonPropertyValueQuery("targetEntity", entityNames)))).toArray();
+    const artifacts = cts.search(cts.andQuery(queries.concat(cts.jsonPropertyValueQuery("targetEntityType", entityNames)))).toArray();
     const artifactsByEntity = artifacts.map(e => e.toObject()).reduce((res, e) => {
-            res[e.targetEntity] = res[e.targetEntity] || {entityType : e.targetEntity};
-            res[e.targetEntity].artifacts = res[e.targetEntity].artifacts || [];
-            res[e.targetEntity].artifacts.push(e);
+            res[e.targetEntityType] = res[e.targetEntityType] || {entityType : e.targetEntityType};
+            res[e.targetEntityType].artifacts = res[e.targetEntityType].artifacts || [];
+            res[e.targetEntityType].artifacts.push(e);
             return res;
         }, {});
 

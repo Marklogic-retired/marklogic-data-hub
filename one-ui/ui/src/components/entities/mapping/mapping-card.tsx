@@ -321,7 +321,7 @@ const MappingCard: React.FC<Props> = (props) => {
                 newMap={newMap}
                 title={title}
                 setNewMap={setNewMap}
-                targetEntity={props.entityTypeTitle}
+                targetEntityType={props.entityTypeTitle}
                 createMappingArtifact={props.createMappingArtifact}
                 deleteMappingArtifact={props.deleteMappingArtifact}
                 mapData={mapData}
