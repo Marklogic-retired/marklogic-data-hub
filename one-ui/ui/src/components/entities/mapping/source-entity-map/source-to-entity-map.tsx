@@ -214,7 +214,6 @@ const SourceToEntityMap = (props) => {
                 setErrorInSaving('error');
             }
             let mapArt = await props.getMappingArtifactByMapName(dataPayload.targetEntityType,props.mapName);
-
             if(mapArt){
                 await setSavedMappingArt({...mapArt})
             }
