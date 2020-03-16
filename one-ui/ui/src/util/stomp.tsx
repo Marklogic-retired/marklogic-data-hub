@@ -1,6 +1,6 @@
 // derived from https://github.com/sjmf/ng2-stompjs-demo
 import React from 'react';
-import * as SockJS from 'sockjs-client';
+import SockJS from 'sockjs-client';
 import { Subject ,  BehaviorSubject } from 'rxjs';
 import { Client, Message, Stomp } from 'stompjs/lib/stomp.min';
 
