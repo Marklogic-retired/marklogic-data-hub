@@ -20,7 +20,8 @@ const SearchBar: React.FC<Props> = props => {
     );
     const entityMenu = (
       <Select 
-        id="entity-select" 
+        id="entity-select"
+        data-testid="entity-select"
         data-cy={searchOptions.entityNames.length ? searchOptions.entityNames[0] : 'All Entities'}
         style={{ width: 180 }} 
         value={dropDownValue} 
@@ -71,6 +72,7 @@ const SearchBar: React.FC<Props> = props => {
                   allowClear
                   onSearch={value => handleSearch(value)}
                   data-cy="search-bar"
+                  data-testid="search-bar"
                 />
             </div>
         </div>
