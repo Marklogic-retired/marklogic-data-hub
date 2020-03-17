@@ -112,7 +112,7 @@ public class EnvironmentControllerTest {
 
         assertEquals(1, resultList.size(), "List of load data artifacts should now be 1");
 
-        Path artifactProjectLocation = testHelper.getArtifactManager().buildArtifactProjectLocation(controller.getArtifactType(), "validArtifact", null);
+        Path artifactProjectLocation = testHelper.getArtifactManager().buildArtifactProjectLocation(controller.getArtifactType(), "validArtifact", null, false);
         ObjectNode resultByName = controller.getArtifact("validArtifact").getBody();
         assertEquals("validArtifact", resultByName.get("name").asText(), "Getting artifact by name should return object with expected properties");
         assertEquals("xml", resultByName.get("sourceFormat").asText(), "Getting artifact by name should return object with expected properties");
