@@ -19,14 +19,27 @@ const DataHub = require("/data-hub/5/datahub.sjs");
 
 class CollectorLib {
 
+  /**
+   * Determine the sourceQuery from the given options and stepDefinition and then prepare it for evaluation by the
+   * collector endpoint.
+   *
+   * @param combinedOptions
+   * @param stepDefinition
+   * @return {string|*}
+   */
   prepareSourceQuery(combinedOptions, stepDefinition) {
     let sourceQuery = combinedOptions.sourceQuery;
 
-    let isMergingStep = stepDefinition.name === 'default-merging' && stepDefinition.type === 'merging';
-
+    const isMergingStep = stepDefinition.name === 'default-merging' && stepDefinition.type === 'merging';
     if (isMergingStep) {
-      sourceQuery = fn.normalizeSpace(`cts.values(cts.pathReference('/matchSummary/URIsToProcess', ['type=string','collation=http://marklogic.com/collation/']), null, null, ${sourceQuery})`);
-    } else if (true == combinedOptions.constrainSourceQueryToJob) {
+      return fn.normalizeSpace(`cts.values(cts.pathReference('/matchSummary/URIsToProcess', ['type=string','collation=http://marklogic.com/collation/']), null, null, ${sourceQuery})`);
+    }
+
+    if (combinedOptions.sourceQueryIsScript) {
+      return fn.normalizeSpace(`${sourceQuery}`);
+    }
+
+    if (true == combinedOptions.constrainSourceQueryToJob) {
       if (combinedOptions.jobId) {
         sourceQuery = fn.normalizeSpace(`cts.andQuery([cts.fieldWordQuery('datahubCreatedByJob', '${combinedOptions.jobId}'), ${sourceQuery}])`);
       } else {
@@ -37,7 +50,7 @@ class CollectorLib {
       }
     }
 
-    return sourceQuery;
+    return `cts.uris(null, null, ${sourceQuery})`;
   }
 }
 

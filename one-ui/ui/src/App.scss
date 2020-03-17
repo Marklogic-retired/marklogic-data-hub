@@ -54,7 +54,7 @@ ul#global-icons.ant-menu .ant-dropdown-trigger .anticon.anticon-user {
     font-size: 24px;
 }
 
-/* Tool Bench Flows view */
+/* Tool Bench Flows */
 div#flows-container div.ant-collapse-content-box {
     padding: 4px 16px 16px;
 }
@@ -71,6 +71,23 @@ div#flows-container div.ant-card-body {
     border-top: white;
     padding: 4px 12px 12px;
 }
+
+/* Tool Bench Flow Errors */
+div#error-list div.ant-collapse {
+    position: relative;
+    left: -16px;
+}
+div#error-list div.ant-collapse div.ant-collapse-item {
+    border-bottom: white;
+}
+div#error-list div.ant-collapse div.ant-collapse-item div.ant-collapse-content div.ant-collapse-content-box {
+    padding: 0 16px;
+}
+
+.ant-upload.ant-upload-select{
+    display: block;
+}
+
 
 .ant-table-row-collapsed::after {
   content: '>';
@@ -105,7 +122,7 @@ div#flows-container div.ant-card-body {
 }
 
 .react-resizable > .ant-table-header-column {
-  cursor: move; 
+  cursor: move;
 }
 
 .ant-checkbox-group-item {

@@ -31,20 +31,26 @@ public class JobDocManager extends ResourceManager {
     }
 
     //Called when step execution starts/ completes
-    public JsonNode postJobs(String jobId, String status, String step, String lastCompleted, RunStepResponse stepResponse) {
+    public JsonNode postJobs(String jobId, String status, String flowName, String step, String lastCompleted, RunStepResponse stepResponse) {
         RequestParameters params = new RequestParameters();
         params.put("jobid", jobId);
         params.put("status", status);
+        params.put("flow-name", flowName);
         params.put("step", step);
         params.put("lastCompleted", lastCompleted);
-        try {
-            params.put("stepResponse", JSONObject.writeValueAsString(stepResponse));
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+        String stepRespJSON;
+        if (stepResponse == null) {
+            stepRespJSON = "{}";
+        } else {
+            try {
+                stepRespJSON = JSONObject.writeValueAsString(stepResponse);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
         }
         ResourceServices.ServiceResultIterator resultItr = null;
         try {
-            resultItr = this.getServices().post(params, new StringHandle("{}").withFormat(Format.JSON));
+            resultItr = this.getServices().post(params, new StringHandle(stepRespJSON).withFormat(Format.JSON));
         } catch (Exception e) {
             throw new RuntimeException("Unable to update the job document; cause: " + e.getMessage(), e);
         }
@@ -96,6 +102,20 @@ public class JobDocManager extends ResourceManager {
     public JsonNode getJobDocumentsForFlows(List<String> flowNames) {
         RequestParameters params = new RequestParameters();
         params.put("flowNames", flowNames.toArray(new String[]{}));
+        return getJobDocuments(params);
+    }
+
+    public JsonNode getLatestJobDocumentForFlow(String flowName) {
+        RequestParameters params = new RequestParameters();
+        params.add("flow-name", flowName);
+        params.put("latest", "true");
+        return getJobDocuments(params);
+    }
+
+    public JsonNode getLatestJobDocumentForFlows(List<String> flowNames) {
+        RequestParameters params = new RequestParameters();
+        params.put("flowNames", flowNames.toArray(new String[]{}));
+        params.put("latest", "true");
         return getJobDocuments(params);
     }
 

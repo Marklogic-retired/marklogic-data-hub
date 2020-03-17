@@ -1,4 +1,13 @@
 # Change Log
+## [v5.2.0](https://github.com/marklogic/marklogic-data-hub/releases/tag/v5.2.0) (2020-03-06)
+
+**Fixed Bugs:**
+- [DHFPROD-3089] - QuickStart fails if missing directories [\#2659](https://github.com/marklogic/marklogic-data-hub/issues/2659) [\#2734](https://github.com/marklogic/marklogic-data-hub/issues/2734)
+- [DHFPROD-3092] - some write failures do not get tallied in results [\#2895](https://github.com/marklogic/marklogic-data-hub/issues/2895)
+- [DHFPROD-4071] - An error during search options generation results in invalid options files [\#3434](https://github.com/marklogic/marklogic-data-hub/issues/3434)
+- [DHFPROD-4285] - Mapping fails when entity has two nested properties of the same entity type [\#3526](https://github.com/marklogic/marklogic-data-hub/issues/3526)
+ 
+
 ## [v5.1.0](https://github.com/marklogic/marklogic-data-hub/releases/tag/v5.1.0) (2019-12-05)
 
 **Fixed Bugs:**

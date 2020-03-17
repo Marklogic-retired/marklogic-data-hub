@@ -16,6 +16,7 @@
  */
 package com.marklogic.hub.oneui.controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.entity.HubEntity;
 import com.marklogic.hub.impl.EntityManagerImpl;
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/api/entities")
@@ -47,15 +49,15 @@ class EntitiesController {
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     @ResponseBody
-    public HubEntity createEntity(@RequestBody HubEntity newEntity) throws ClassNotFoundException, IOException {
+    public JsonNode createEntity(@RequestBody HubEntity newEntity) {
         scaffolding.createEntity(newEntity.getInfo().getTitle());
-        return getEntitiesManager().getEntityFromProject(newEntity.getInfo().getTitle());
+        return getEntitiesManager().getEntityFromProject(newEntity.getInfo().getTitle()).toJson();
     }
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public Collection<HubEntity> getEntities() throws ClassNotFoundException, IOException {
-        return getEntitiesManager().getEntities();
+    public Collection<JsonNode> getEntities() {
+        return getEntitiesManager().getEntities().stream().map((HubEntity::toJson)).collect(Collectors.toList());
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -85,9 +87,9 @@ class EntitiesController {
 
     @RequestMapping(value = "/{entityName}", method = RequestMethod.GET)
     @ResponseBody
-    public HubEntity getEntity(@PathVariable String entityName, @RequestParam(required = false)Boolean extendSubEntities) throws ClassNotFoundException, IOException {
+    public JsonNode getEntity(@PathVariable String entityName, @RequestParam(required = false)Boolean extendSubEntities) throws ClassNotFoundException, IOException {
         boolean extSubEntities = (extendSubEntities != null) && extendSubEntities;
-        return getEntitiesManager().getEntityFromProject(entityName, extSubEntities);
+        return getEntitiesManager().getEntityFromProject(entityName, extSubEntities).toJson();
     }
 
     @RequestMapping(value = "/{entityName}", method = RequestMethod.DELETE)

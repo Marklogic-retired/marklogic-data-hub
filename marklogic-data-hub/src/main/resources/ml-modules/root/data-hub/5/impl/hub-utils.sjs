@@ -39,7 +39,7 @@ class HubUtils {
     content: content,
     docUri:docUri,
     permissions:permissions,
-    collections: this.normalizeToSequence(collections)
+    collections: this.normalizeToArray(collections)
     },
     {
      database: xdmp.database(database),
@@ -178,7 +178,7 @@ class HubUtils {
      return value;
    } else if (value === null || value === undefined) {
      return Sequence.from([]);
-   } else if (value.constructor === Array || xdmp.nodeKind(value) === 'array') {
+   } else if (value.constructor === Array || (value instanceof Node && xdmp.nodeKind(value) === 'array')) {
      return Sequence.from(value);
    } else {
      return Sequence.from([value]);

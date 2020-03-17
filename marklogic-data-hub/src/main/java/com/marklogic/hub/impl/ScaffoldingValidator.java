@@ -36,6 +36,13 @@ public class ScaffoldingValidator extends SimpleFileVisitor<Path> {
    @Autowired
    private HubProject project;
 
+   public ScaffoldingValidator() {}
+
+   public ScaffoldingValidator(HubProject hubProject) {
+       this();
+       this.project = hubProject;
+   }
+
    public boolean isUniqueRestServiceExtension(String name) {
        HashMap<String, Boolean> result = new HashMap<>();
        result.put(UNIQUE_KEY, true);

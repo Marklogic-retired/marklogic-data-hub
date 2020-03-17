@@ -11,7 +11,9 @@ const defaultEnv = {
 
 export function setEnvironment()  {
     axios.get('/api/environment/project-info')
-            .then(res => {          
+            .then(res => {
+                //'projectName' redundantly set to handle scenario after installation
+                localStorage.setItem('projectName', res.data.projectName);  
                 localStorage.setItem('environment', JSON.stringify(res.data)) ;
             })
             .catch(err => {

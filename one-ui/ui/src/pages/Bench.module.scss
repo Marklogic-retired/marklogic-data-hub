@@ -2,3 +2,16 @@
     padding: 40px 80px 150px 80px;
     background-color: rgb(255, 255, 255);
 }
+
+.errorHeader, .errorLabel {
+    color: rgba(0, 0, 0, 0.85);
+    font-weight: bold;
+}
+
+.errorSummary {
+    font-weight: normal;
+}
+
+.errorVal {
+    font-weight: bold;
+}

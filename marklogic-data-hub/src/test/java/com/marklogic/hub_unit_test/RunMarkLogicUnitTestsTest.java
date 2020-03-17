@@ -1,10 +1,7 @@
 package com.marklogic.hub_unit_test;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
+import com.marklogic.bootstrap.Installer;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.junit5.MarkLogicUnitTestArgumentsProvider;
@@ -12,8 +9,6 @@ import com.marklogic.test.unit.TestManager;
 import com.marklogic.test.unit.TestModule;
 import com.marklogic.test.unit.TestResult;
 import com.marklogic.test.unit.TestSuiteResult;
-
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,6 +47,7 @@ public class RunMarkLogicUnitTestsTest extends HubTestBase {
     @BeforeEach
     public void setup() {
         if (!loadedHubArtifacts) {
+            clearStagingFinalAndJobDatabases();
             new SimpleAppDeployer(loadHubArtifactsCommand).deploy(adminHubConfig.getAppConfig());
             loadedHubArtifacts = true;
         }
@@ -59,15 +55,9 @@ public class RunMarkLogicUnitTestsTest extends HubTestBase {
 
     @BeforeAll
     public void setupIndexes() {
-        try {
-            Path srcDir = Paths.get("src", "test", "ml-config", "databases","final-database.json");
-            Path dstDir = Paths.get(adminHubConfig.getUserDatabaseDir().toString(), "test-final-database.json");
-            FileUtils.copyFile(srcDir.toAbsolutePath().toFile(), dstDir.toAbsolutePath().toFile());
-        } catch (IOException ioe) {
-            throw new RuntimeException("Unable to copy test indexes file to project", ioe);
-        }
-        dataHub.updateIndexes();
+        Installer.applyDatabasePropertiesForTests(dataHub, adminHubConfig);
     }
+
     /**
      * This is overridden so that the test class is only initialized once, which is sufficient. Otherwise, it's invoked
      * for every unit test module, which is unnecessary.

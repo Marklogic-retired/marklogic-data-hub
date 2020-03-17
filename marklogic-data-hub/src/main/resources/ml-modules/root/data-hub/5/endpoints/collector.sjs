@@ -69,19 +69,18 @@ if (!query) {
   fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([404, "Not Found", "The collector query was empty"]));
 }
 
-query = new CollectorLib().prepareSourceQuery(combinedOptions, stepDefinition);
-
+const javascript = new CollectorLib().prepareSourceQuery(combinedOptions, stepDefinition);
 try {
-  let urisEval;
-  if (/^\s*cts\.(uris|values)\(.*\)\s*$/.test(query)) {
-    urisEval = query;
-  } else {
-    urisEval = "cts.uris(null, null, " + query + ")";
-  }
-  xdmp.eval(urisEval, {options: options}, {database: xdmp.database(database)});
+  /**
+   * DHF 5 has always used this eval, and it certainly is open for code injection. This is partially minimized
+   * by this collector code running in query mode, thus preventing updates. Additionally, while the DHF users
+   * almost all have the required privileges to evaluate code, other functions like xdmp.shutdown require their
+   * own privileges. Furthermore, a malicious user doesn't need to bother with exploiting this but rather can just
+   * hit /v1/eval directly. The broader issue is that DHF users should not have as many privileges as they do, and
+   * amps should be used instead for when it's necessary to e.g. evaluate code.
+   */
+  xdmp.eval(javascript, {options: options}, {database: xdmp.database(database)});
 } catch (err) {
-  //TODO log error message from 'err'
-
   datahub.debug.log(err);
   fn.error(null, 'RESTAPI-INVALIDREQ', err);
 }
