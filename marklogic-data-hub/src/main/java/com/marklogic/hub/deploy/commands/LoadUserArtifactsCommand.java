@@ -40,6 +40,7 @@ import com.marklogic.hub.artifact.ArtifactTypeInfo;
 import com.marklogic.hub.dataservices.ArtifactService;
 import com.marklogic.hub.impl.ArtifactManagerImpl;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
@@ -211,11 +212,12 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                     continue;
                 }
                 final String fileExtension = "*" + typeInfo.getFileExtension();
+                final String settingFileExtension = "*.settings." + FilenameUtils.getExtension(typeInfo.getFileExtension());
                 BaseModulesFinder modulesFinder = new BaseModulesFinder(){
                     @Override
                     protected Modules findModulesWithResolvedBaseDir(String resolvedBaseDir) {
                         Modules modules = new Modules();
-                        modules.setAssets(findResources(artifactType + " Artifact", resolvedBaseDir, fileExtension));
+                        modules.setAssets(findResources(artifactType + " Artifact", resolvedBaseDir, fileExtension, settingFileExtension));
                         return modules;
                     }
                 };
@@ -290,11 +292,18 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         Modules modules = modulesFinder.findModules(dir.toString());
         for (Resource r : modules.getAssets()) {
             JsonNode artifactJson = mapper.readTree(r.getFile());
-            artifactService.setArtifact(
-                artifactTypeInfo.getType(),
-                artifactJson.get(artifactTypeInfo.getNameProperty()).asText(),
-                artifactJson
-            );
+            if (r.getFile().getName().endsWith(".settings." + FilenameUtils.getExtension(artifactTypeInfo.getFileExtension()))) {
+                artifactService.setArtifactSettings(
+                    artifactTypeInfo.getType(),
+                    artifactJson.get("artifactName").asText(),
+                    artifactJson);
+            } else {
+                artifactService.setArtifact(
+                    artifactTypeInfo.getType(),
+                    artifactJson.get(artifactTypeInfo.getNameProperty()).asText(),
+                    artifactJson
+                );
+            }
         }
     }
 
