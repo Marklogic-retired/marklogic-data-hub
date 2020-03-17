@@ -9,6 +9,11 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.appdeployer.command.security.DeployPrivilegesCommand;
 import com.marklogic.appdeployer.command.security.DeployRolesCommand;
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.ResourceNotFoundException;
+import com.marklogic.client.document.JSONDocumentManager;
+import com.marklogic.client.io.Format;
+import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.ArtifactManager;
 import com.marklogic.hub.artifact.ArtifactTypeInfo;
@@ -187,11 +192,26 @@ public class EnvironmentControllerTest {
     @Test
     public void testUploadProjectWithoutArchiveFolder() throws Exception {
         testUploadProject("dhfWithoutArchiveFolder.zip");
+
+        //in the dhfWithoutArchiveFolder.zip, no loadData artifact
+        DatabaseClient databaseClient = hubConfigSession.newFinalClient();
+        JSONDocumentManager docMgr = databaseClient.newJSONDocumentManager();
+        assertThrows(ResourceNotFoundException.class, () -> docMgr.read("/loadData/haoDL-json.loadData.json", new StringHandle().withFormat(Format.JSON)));
+        assertThrows(ResourceNotFoundException.class, () -> docMgr.read("/loadData/haoDL-json.setting.json", new StringHandle().withFormat(Format.JSON)));
     }
 
     @Test
     public void testUploadProjectWithArchiveFolder() throws Exception {
         testUploadProject("dhfWithArchiveFolder.zip");
+
+        //in the dhfWithArchiveFolder.zip, it includes /loadData/haoDL-json.loadData.json and /loadData/haoDL-json.settings.json
+        DatabaseClient databaseClient = hubConfigSession.newFinalClient();
+        JSONDocumentManager docMgr = databaseClient.newJSONDocumentManager();
+        StringHandle searchResult  = docMgr.read("/loadData/haoDL-json.loadData.json", new StringHandle().withFormat(Format.JSON));
+        assertTrue(searchResult.get().startsWith("{\"name\":\"haoDL-json\""), "haoDL-json.loadData.json should be deployed into ML content Database");
+
+        searchResult = docMgr.read("/loadData/haoDL-json.settings.json", new StringHandle().withFormat(Format.JSON));
+        assertTrue(searchResult.get().startsWith("{\"artifactName\":\"haoDL-json\""), "haoDL-json.setting.json should be deployed into ML content Database");
     }
 
     public void testUploadProject(String zipFileName) throws Exception {
