@@ -202,9 +202,7 @@ function getObjectPropertyMappings(mapping, propertyPath, objectPropertyMappings
 
 function getTargetEntity(targetEntityType) {
   if (!entitiesByTargetType[targetEntityType]) {
-    xdmp.log(`targetEntityType: ${xdmp.describe(targetEntityType)}`);
     let entityModel = entityLib.findModelForEntityTypeId(targetEntityType);
-    xdmp.log(`entityModel: ${xdmp.describe(entityModel)}`);
     if (fn.empty(entityModel)) {
       entityModel = fallbackLegacyEntityLookup(targetEntityType)
     }
@@ -416,7 +414,7 @@ function getCanonicalInstance(mapping, uri, propertyName) {
     let outputDoc = inst.canonicalJson(xdmp.xsltEval(mappingXslt, inputDoc));
     let output = outputDoc.xpath("//" + propertyName);
     let arr = output.toArray();
-    if(arr.length === 1) {
+    if(arr.length <= 1) {
       resp.output = String(fn.head(output));
     }
     else {
