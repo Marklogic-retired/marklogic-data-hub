@@ -80,7 +80,7 @@ const MappingCard: React.FC<Props> = (props) => {
         let response = await getSettingsArtifact(activityType,mapName)
         if (response.status === 200) {
             console.log('settings are',response.data)
-            setSourceDatabaseName(response.data.sourceDatabase)
+            await setSourceDatabaseName(response.data.sourceDatabase)
         }
       } catch(error) {
         let message = error;
@@ -162,7 +162,7 @@ const MappingCard: React.FC<Props> = (props) => {
         }
         }
         catch(error)  {
-            let message = error;//.response.data.message;
+            let message = error;
             console.log('Error While loading the source data!', message);
             setDocNotFound(true);
         }
@@ -177,7 +177,6 @@ const MappingCard: React.FC<Props> = (props) => {
                 let nestedDoc: any = [];
                 let docRoot = srcDocResp.data['envelope'] ? srcDocResp.data['envelope']['instance'] : srcDocResp.data;
                 let sDta = generateNestedDataSource(docRoot,nestedDoc);
-                //setSourceData(prevState => ([ ...prevState, ...sDta]));
                 setSourceData([...sDta]);
             }
             } catch(error)  {
@@ -206,7 +205,6 @@ const MappingCard: React.FC<Props> = (props) => {
                     nestedDoc.push(propty);
 
                 } else if (val.constructor.name === "Array") {
-                    //srcData.push({key : key, val: respData[key]})
 
                     val.forEach(obj => {
                         if(obj.constructor.name == "String"){
@@ -269,7 +267,6 @@ const MappingCard: React.FC<Props> = (props) => {
     const openSourceToEntityMapping = async (name,index) => {
             let mData = await props.getMappingArtifactByMapName(props.entityTypeTitle,name);
             setSourceURI('');
-            //setMapData({...props.data[index]});
             setMapData({...mData})
             getSourceData(index);
             extractEntityInfoForTable();
@@ -348,7 +345,8 @@ const MappingCard: React.FC<Props> = (props) => {
                 disableURINavLeft={disableURINavLeft}
                 disableURINavRight={disableURINavRight}
                 setDisableURINavLeft={setDisableURINavLeft}
-                setDisableURINavRight={setDisableURINavRight}/>
+                setDisableURINavRight={setDisableURINavRight}
+                sourceDatabaseName={sourceDatabaseName}/>
             <ActivitySettingsDialog
                 tooltipsData={AdvMapTooltips}
                 openActivitySettings={openMappingSettings}
