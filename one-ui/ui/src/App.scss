@@ -105,7 +105,7 @@ div#flows-container div.ant-card-body {
 }
 
 .react-resizable > .ant-table-header-column {
-  cursor: move; 
+  cursor: move;
 }
 
 .ant-checkbox-group-item {
@@ -116,4 +116,16 @@ div#flows-container div.ant-card-body {
 
 .ant-calendar-picker {
   max-width: 265px;
+}
+
+.ant-layout-sider-zero-width-trigger {
+  color: rgba(0, 0, 0, 0.65);
+  background: #fff;
+  top: 95px;
+  right: -36px;
+}
+
+.ant-layout-sider-zero-width-trigger:hover {
+  background: #44499C;
+  color: #fff;
 }

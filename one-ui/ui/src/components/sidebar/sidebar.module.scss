@@ -1,8 +1,6 @@
 .sideBarContainer {
   overflow-y: auto;
-  position: fixed;
-  width: 300px;
-  max-height: 93vh;
+  max-height: 100vh;
   background-color: #f0f2f5;
 }
 
@@ -58,7 +56,7 @@
 }
 
 .datePicker {
-  margin: 10px 0; 
+  margin: 10px 0;
 }
 
 .dateFacet {
