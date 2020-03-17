@@ -175,6 +175,7 @@ const EntityTiles = (props) => {
 
     const outputCards = (entityCardData, matchingCardData) => {
         let output;
+        console.log('canReadWrite',props.canReadWrite)
 
         if (viewType === 'map') {
             output = <div className={styles.cardView}>

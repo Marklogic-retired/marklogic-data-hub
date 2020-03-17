@@ -73,6 +73,9 @@ const SourceToEntityMap = (props) => {
     const handleSubmitUri = (uri) => {
         props.getMappingArtifactByMapName();
         props.fetchSrcDocFromUri(uri);
+        if(isTestClicked) {
+            getMapValidationResp(uri);
+          }
         setEditingUri(false);
     }
 
@@ -234,6 +237,10 @@ const SourceToEntityMap = (props) => {
         await setCaretPosition(e.target.selectionStart);
     }
 
+    const getDataForValueField = (name) => {
+        return !checkFieldInErrors(name) ? displayResp(name) : '';
+    }
+
     const columns = [
         {
             title: 'Name',
@@ -247,7 +254,7 @@ const SourceToEntityMap = (props) => {
             dataIndex: 'val',
             key: 'val',
             ellipsis: true,
-            sorter: (a: any, b: any) => a.val.length - b.val.length,
+            sorter: (a: any, b: any) => a.val?.length - b.val?.length,
             width: '40%',
             render: (text) => <span>{text ? text.substr(0, 20) : ''}{text && text.length > 20 ? <Tooltip title={text}><span>...</span></Tooltip> : ''}</span>
         }
@@ -290,15 +297,15 @@ const SourceToEntityMap = (props) => {
                 <i id="listIcon"><FontAwesomeIcon icon={faList} size="lg" className={styles.listIcon}
                 /></i>&nbsp;&nbsp;
                 <span ><Dropdown overlay={menu} trigger={['click']}><Button id="functionIcon" className={styles.functionIcon} size="small" onClick={(e) => handleFunctionsList(row.name)}>fx</Button></Dropdown></span></div>
-            <div>{checkFieldInErrors(row.name) ? <div className={styles.validationErrors}>{displayResp(row.name)}</div> : ''}</div></div>)
+            {checkFieldInErrors(row.name) ? <div className={styles.validationErrors}>{displayResp(row.name)}</div> : ''}</div>)
         },
         {
             title: 'Value',
             dataIndex: 'value',
             key: 'value',
             width: '20%',
-            sorter: (a: any, b: any) => a.value.length - b.value.length,
-            render: (text, row) => (<div>{!checkFieldInErrors(row.name) ? displayResp(row.name) : ''}</div>)
+            sorter: (a: any, b: any) => getDataForValueField(a.name).length - getDataForValueField(b.name).length,
+            render: (text, row) => (<div>{getDataForValueField(row.name)}</div>)
         }
     ]
 
@@ -334,7 +341,7 @@ const SourceToEntityMap = (props) => {
         let errorMsg = <span id="errorMessage"><Alert type="error" message={errorMesg} banner style={saveMessageCSS} /></span>
         setTimeout(() => {
             setErrorInSaving('');
-        }, 3000);
+        }, 2000);
 
         return errorInSaving === 'noError' ? msg : errorMsg;
 
@@ -370,7 +377,7 @@ const SourceToEntityMap = (props) => {
     const getMapValidationResp = async (uri) => {
         setIsTestClicked(true);
         try {
-            let resp = await getMappingValidationResp(props.mapName, savedMappingArt, uri, props.sourceDatabaseName);
+            let resp = await getMappingValidationResp(props.mapName, savedMappingArt, uri, 'data-hub-STAGING');
             
             if (resp.status === 200) {
                 setMapResp({ ...resp.data });
@@ -400,51 +407,6 @@ const SourceToEntityMap = (props) => {
               let message = error;
               console.log('Error while fetching the functions!', message);
           }
-    }
-
-    const funcList = {
-        "abs" : {
-            signature: "abs( int )"
-        },
-        "concat": {
-            signature: "concat( a, b, c)"
-        },
-        "func3" : {
-            signature: "func3( int )"
-        },
-        "func4": {
-            signature: "func4( a, b, c)"
-        },
-        "func5" : {
-            signature: "func5( int )"
-        },
-        "func6": {
-            signature: "func6( a, b, c)"
-        },
-        "func7" : {
-            signature: "func7( int )"
-        },
-        "func8": {
-            signature: "func8( a, b, c)"
-        },
-        "func9" : {
-            signature: "func3( int )"
-        },
-        "func10": {
-            signature: "func4( a, b, c)"
-        },
-        "func11" : {
-            signature: "func5( int )"
-        },
-        "func12": {
-            signature: "func6( a, b, c)"
-        },
-        "func13" : {
-            signature: "func7( int )"
-        },
-        "func14": {
-            signature: "func8( a, b, c)"
-        }
     }
 
     const handleFunctionsList = async (name) => {

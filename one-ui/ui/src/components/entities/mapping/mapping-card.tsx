@@ -367,7 +367,7 @@ const MappingCard: React.FC<Props> = (props) => {
                 disableURINavRight={disableURINavRight}
                 setDisableURINavLeft={setDisableURINavLeft}
                 setDisableURINavRight={setDisableURINavRight}
-                sourceDatabaseName={sourceDatabaseName}/>
+                sourceDatabaseName={sourceDatabaseName}
                 mapFunctions={mapFunctions}/>
             <ActivitySettingsDialog
                 tooltipsData={AdvMapTooltips}
