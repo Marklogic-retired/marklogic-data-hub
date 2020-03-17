@@ -4,6 +4,7 @@
 package com.marklogic.hub.oneui;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.oneui.auth.LoginInfo;
 import org.junit.jupiter.api.Test;
@@ -46,14 +47,78 @@ class AuthTest {
     }
 
     @Test
-    void loginWithValidCredentialsAndLogout() throws Exception {
+    void loginWithValidAdminAndLogout() throws Exception {
         String payload = getLoginPayload("admin", "admin");
         final MockHttpSession session[] = new MockHttpSession[1];
         // Login
         mockMvc
             .perform(post(LOGIN_URL).contentType(MediaType.APPLICATION_JSON).content(payload))
-            .andDo(
-                result -> session[0] = (MockHttpSession) result.getRequest().getSession())
+            .andDo (
+                result -> {
+                    session[0] = (MockHttpSession) result.getRequest().getSession();
+                    String strResponse = result.getResponse().getContentAsString();
+                    ObjectMapper mapper = new ObjectMapper();
+                    JsonNode jsonResonse = mapper.readTree(strResponse);
+                    assertTrue(jsonResonse.get("roles").isArray());
+                    assertTrue(jsonResonse.get("authorities").isArray());
+                    assertTrue(jsonResonse.get("authorities").toString().contains("canInstallDataHub"));
+                })
+            .andExpect(status().isOk());
+
+        assertFalse(session[0].isInvalid());
+
+        // Logout
+        mockMvc.perform(get(LOGOUT_URL).session(session[0]))
+            .andExpect(status().isOk());
+
+        assertTrue(session[0].isInvalid());
+    }
+
+    @Test
+    void loginWithDataHubManagerAndLogout() throws Exception {
+        String payload = getLoginPayload("data-hub-environment-manager-user", "data-hub-environment-manager-user");
+        final MockHttpSession session[] = new MockHttpSession[1];
+        // Login
+        mockMvc
+            .perform(post(LOGIN_URL).contentType(MediaType.APPLICATION_JSON).content(payload))
+            .andDo (
+                result -> {
+                    session[0] = (MockHttpSession) result.getRequest().getSession();
+                    String strResponse = result.getResponse().getContentAsString();
+                    ObjectMapper mapper = new ObjectMapper();
+                    JsonNode jsonResonse = mapper.readTree(strResponse);
+                    assertTrue(jsonResonse.get("roles").isArray());
+                    assertTrue(jsonResonse.get("authorities").isArray());
+                    assertTrue(jsonResonse.get("authorities").toString().contains("canInstallDataHub"));
+                })
+            .andExpect(status().isOk());
+
+        assertFalse(session[0].isInvalid());
+
+        // Logout
+        mockMvc.perform(get(LOGOUT_URL).session(session[0]))
+            .andExpect(status().isOk());
+
+        assertTrue(session[0].isInvalid());
+    }
+
+    @Test
+    void loginWithDeveloperUserAndLogout() throws Exception {
+        String payload = getLoginPayload("data-hub-developer-user", "data-hub-developer-user");
+        final MockHttpSession session[] = new MockHttpSession[1];
+        // Login
+        mockMvc
+            .perform(post(LOGIN_URL).contentType(MediaType.APPLICATION_JSON).content(payload))
+            .andDo (
+                result -> {
+                    session[0] = (MockHttpSession) result.getRequest().getSession();
+                    String strResponse = result.getResponse().getContentAsString();
+                    ObjectMapper mapper = new ObjectMapper();
+                    JsonNode jsonResonse = mapper.readTree(strResponse);
+                    assertTrue(jsonResonse.get("roles").isArray());
+                    assertTrue(jsonResonse.get("authorities").isArray());
+                    assertFalse(jsonResonse.get("authorities").toString().contains("canInstallDataHub"));
+                })
             .andExpect(status().isOk());
 
         assertFalse(session[0].isInvalid());

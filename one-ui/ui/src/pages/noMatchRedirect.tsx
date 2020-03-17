@@ -18,7 +18,7 @@ const NoMatchRedirect = ({history}) => {
   }
   return (
       <Result
-          status="404"
+          status={404}
           title="404"
           subTitle="Sorry, the page you visited does not exist."
           extra={<MlButton type="primary" onClick={backToHomePage}>Back Home</MlButton>}

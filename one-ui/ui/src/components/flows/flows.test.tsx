@@ -12,6 +12,8 @@ describe('Flows component', () => {
     let deleteStep = () => null;
     let canReadFlows = false;
     let canWriteFlows = false;
+    let hasOperatorRole = false;
+    let running = [];
     it('should render correctly', () => {
         shallow(<Flows 
             flows={flows} 
@@ -23,6 +25,8 @@ describe('Flows component', () => {
             deleteStep={deleteStep} 
             canReadFlows={canReadFlows} 
             canWriteFlows={canWriteFlows}
+            hasOperatorRole={hasOperatorRole}
+            running={running}
         />);
     });
 });

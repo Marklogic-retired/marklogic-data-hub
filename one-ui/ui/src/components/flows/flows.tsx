@@ -1,5 +1,5 @@
 import React, { useState, CSSProperties } from 'react';
-import { Collapse, Button, Icon, Card, Tooltip, Modal } from 'antd';
+import { Collapse, Spin, Icon, Card, Tooltip, Modal } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { MlButton } from 'marklogic-ui-library';
@@ -19,6 +19,8 @@ interface Props {
     runStep: any;
     canReadFlows: boolean;
     canWriteFlows: boolean;
+    hasOperatorRole: boolean;
+    running: any;
 }
 
 const StepDefinitionTypeTitles = {
@@ -137,8 +139,7 @@ const Flows: React.FC<Props> = (props) => {
                         <FontAwesomeIcon 
                             icon={faTrashAlt} 
                             onClick={event => {
-                                // If you don't want click extra trigger collapse, you can prevent this:
-                                event.stopPropagation();
+                                event.stopPropagation(); // Do not trigger collapse
                                 handleFlowDelete(name);
                             }}
                             className={styles.deleteIcon} 
@@ -179,6 +180,11 @@ const Flows: React.FC<Props> = (props) => {
         return (StepDefinitionTypeTitles[stepDef]) ? StepDefinitionTypeTitles[stepDef] : 'Unknown';
     }
 
+    const isRunning = (flowId, stepId) => {
+        let result = props.running.find(r => (r.flowId === flowId && r.stepId === stepId));
+        return result !== undefined;
+    }
+
     let panels;
     if (props.flows) {
         panels = props.flows.map((flow, i) => {
@@ -195,18 +201,25 @@ const Flows: React.FC<Props> = (props) => {
                         size="small"
                         extra={
                             <div className={styles.actions}>
-                                <div className={styles.run} onClick={() => props.runStep(step.name)}><Icon type="play-circle" theme="filled" /></div>
-                                {props.canWriteFlows ?
-                                    <Tooltip 
-                                        title={'Delete Step'} 
-                                        placement="bottom"
+                                {props.hasOperatorRole ?
+                                    <div 
+                                        className={styles.run} 
+                                        onClick={() => props.runStep(name, step.name + '-' + step.stepDefinitionType, step.name, StepDefToTitle(step.stepDefinitionType))}
                                     >
+                                        <Icon type="play-circle" theme="filled" />
+                                    </div> :
+                                    <div 
+                                        className={styles.disabledRun} 
+                                        onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}
+                                    >
+                                        <Icon type="play-circle" theme="filled" />
+                                    </div>
+                                }
+                                {props.canWriteFlows ?
+                                    <Tooltip title={'Delete Step'} placement="bottom">
                                         <div className={styles.delete} onClick={() => handleStepDelete(flow.name, step.name)}><Icon type="close" /></div>
                                     </Tooltip> :
-                                    <Tooltip 
-                                        title={'Delete Step'} 
-                                        placement="bottom"
-                                    >
+                                    <Tooltip title={'Delete Step'} placement="bottom">
                                         <div className={styles.disabledDelete} onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}><Icon type="close" /></div>
                                     </Tooltip> 
                                 }
@@ -216,6 +229,10 @@ const Flows: React.FC<Props> = (props) => {
                         <div className={styles.cardContent}>
                             <div className={styles.format} style={sourceFormatStyle(stepFormat)}>{stepFormat.toUpperCase()}</div>
                             <div className={styles.name}>{step.name}</div>
+                        </div>
+                        <div className={styles.running} style={{display: isRunning(name, step.name + '-' + step.stepDefinitionType)  ? 'block' : 'none'}}>
+                            <div><Spin /></div>
+                            <div className={styles.runningLabel}>Running...</div>
                         </div>
                     </Card>
                 )

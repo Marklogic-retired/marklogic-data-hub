@@ -1,10 +1,13 @@
 package com.marklogic.bootstrap;
 
 import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.DataHub;
+import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.security.User;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -12,6 +15,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @EnableAutoConfiguration
 public class Installer extends HubTestBase implements InitializingBean {
@@ -56,11 +63,32 @@ public class Installer extends HubTestBase implements InitializingBean {
             testAdmin.setPassword("password");
             testAdmin.addRole("admin");
             testAdmin.save();
+
+            applyDatabasePropertiesForTests(dataHub, adminHubConfig);
         }
 
         if (getDataHubAdminConfig().getIsProvisionedEnvironment()) {
             installHubModules();
         }
+    }
+
+    /**
+     * This is public and static so that it can also be invoked by RunMarkLogicUnitTestsTest. Apparently, some of these
+     * database changes go away as a result of some test that runs in our test suite before RMLUTT. So RMLUTT has to
+     * run this again to ensure that the indexes it depends on are present. Sigh.
+     *
+     * @param dataHub
+     * @param hubConfig
+     */
+    public static void applyDatabasePropertiesForTests(DataHub dataHub, HubConfig hubConfig) {
+        try {
+            Path srcDir = Paths.get("src", "test", "ml-config", "databases","final-database.json");
+            Path dstDir = Paths.get(hubConfig.getUserDatabaseDir().toString(), "test-final-database.json");
+            FileUtils.copyFile(srcDir.toAbsolutePath().toFile(), dstDir.toAbsolutePath().toFile());
+        } catch (IOException ioe) {
+            throw new RuntimeException("Unable to copy test indexes file to project", ioe);
+        }
+        dataHub.updateIndexes();
     }
 
     public static void main(String[] args) {

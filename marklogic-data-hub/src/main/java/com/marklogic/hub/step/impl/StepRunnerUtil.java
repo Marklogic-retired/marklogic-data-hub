@@ -50,7 +50,7 @@ public class StepRunnerUtil {
         }
 
         try {
-            jobDocManager.postJobs(jobId, JobStatus.RUNNING_PREFIX + step, step, null, runStepResponse);
+            jobDocManager.postJobs(jobId, JobStatus.RUNNING_PREFIX + step, flow.getName(), step, null, runStepResponse);
         }
         catch (Exception ex) {
             throw ex;

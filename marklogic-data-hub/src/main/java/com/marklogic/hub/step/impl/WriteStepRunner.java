@@ -111,15 +111,16 @@ public class WriteStepRunner implements StepRunner {
     private Thread runningThread = null;
     private DataMovementManager dataMovementManager = null;
     private WriteBatcher writeBatcher = null;
-    private String inputFilePath = null;
     private JobDocManager jobDocManager;
-    private String outputCollections;
-    private String outputPermissions;
-    private String outputFormat;
-    private String inputFileType;
-    private String outputURIReplacement;
-    private String separator = ",";
-    private AtomicBoolean isStopped = new AtomicBoolean(false);
+    // setting these values to protected so their values can be tested
+    protected String inputFilePath = null;
+    protected String outputCollections;
+    protected String outputPermissions;
+    protected String outputFormat;
+    protected String inputFileType;
+    protected String outputURIReplacement;
+    protected String separator = ",";
+    protected AtomicBoolean isStopped = new AtomicBoolean(false);
     private IngestionStepDefinitionImpl stepDef;
     private Map<String, Object> stepConfig = new HashMap<>();
     private DocumentPermissionsParser documentPermissionsParser = new DefaultDocumentPermissionsParser();
@@ -302,7 +303,7 @@ public class WriteStepRunner implements StepRunner {
             if (!disableJobOutput) {
                 JsonNode jobDoc = null;
                 try {
-                    jobDoc = jobDocManager.postJobs(jobId, JobStatus.FAILED_PREFIX + step, step, null, runStepResponse);
+                    jobDoc = jobDocManager.postJobs(jobId, JobStatus.FAILED_PREFIX + step, flow.getName(), step, null, runStepResponse);
                 }
                 catch (Exception ex) {
                     throw ex;
@@ -365,54 +366,40 @@ public class WriteStepRunner implements StepRunner {
         ObjectMapper mapper = new ObjectMapper();
         Map<String, Object> stepDefFileLocation = new HashMap<>();
         Map<String, Object> stepFileLocation = new HashMap<>();
-        Map<String, Object> fileLocation = new HashMap<>();
+        Map<String, Object> fileLocations = new HashMap<>();
         if(stepDef.getFileLocations() != null) {
             stepDefFileLocation = mapper.convertValue(stepDef.getFileLocations(), Map.class);
-            fileLocation.putAll(stepDefFileLocation);
+            fileLocations.putAll(stepDefFileLocation);
         }
         if(flow.getStep(step).getFileLocations() != null) {
             stepFileLocation =  mapper.convertValue(flow.getStep(step).getFileLocations(), Map.class);
-            fileLocation.putAll(stepFileLocation);
+            fileLocations.putAll(stepFileLocation);
         }
-        inputFilePath = (String)fileLocation.get("inputFilePath");
-        inputFileType = (String)fileLocation.get("inputFileType");
-        outputURIReplacement = (String)fileLocation.get("outputURIReplacement");
-        if(inputFileType.equalsIgnoreCase("csv") && fileLocation.get("separator") != null) {
-            this.separator =((String) fileLocation.get("separator")).trim();
-        }
-
         if(stepConfig.get("batchSize") != null){
             this.batchSize = Integer.parseInt(stepConfig.get("batchSize").toString());
         }
         if(stepConfig.get("threadCount") != null) {
             this.threadCount = Integer.parseInt(stepConfig.get("threadCount").toString());
         }
-        Map<String, String> fileLocations = null;
         if (stepConfig.get("fileLocations") == null && comboOptions.has("loadData")) {
             ArtifactManager artifactManager = ArtifactManager.on(this.hubConfig);
             ObjectNode linkObject = (ObjectNode) comboOptions.get("loadData");
             String artifactName = linkObject.get("name").asText();
             ObjectNode artifactJson = artifactManager.getArtifact("loadData", artifactName);
-            fileLocations =  mapper.convertValue(artifactJson, Map.class);
+            fileLocations.putAll(mapper.convertValue(artifactJson, Map.class));
             fileLocations.put("inputFileType", artifactJson.get("sourceFormat").asText());
         } else if(stepConfig.get("fileLocations") != null) {
-            fileLocations = (Map) stepConfig.get("fileLocations");
+            fileLocations.putAll((Map<String,String>)stepConfig.get("fileLocations"));
         }
-        if (fileLocations != null) {
-            if(fileLocations.get("inputFilePath") != null) {
-                this.inputFilePath = fileLocations.get("inputFilePath");
-            }
-            if(fileLocations.get("inputFileType") != null){
-                this.inputFileType = fileLocations.get("inputFileType");
-            }
-            if(fileLocations.get("outputURIReplacement") != null) {
-                this.outputURIReplacement = fileLocations.get("outputURIReplacement");
-            }
-            if(fileLocations.get("separator") != null) {
-                if(! this.inputFileType.equalsIgnoreCase("csv")){
-                    throw new IllegalArgumentException("Invalid argument for file type " + inputFileType + ". When specifying a separator, the file type must be 'csv'");
+        if (!fileLocations.isEmpty()) {
+            inputFilePath = (String)fileLocations.get("inputFilePath");
+            inputFileType = (String)fileLocations.get("inputFileType");
+            outputURIReplacement = (String)fileLocations.get("outputURIReplacement");
+            if (inputFileType.equalsIgnoreCase("csv") && fileLocations.get("separator") != null) {
+                this.separator =((String) fileLocations.get("separator"));
+                if (!"\t".equals(this.separator)) {
+                    this.separator = this.separator.trim();
                 }
-                this.separator = ((String) fileLocation.get("separator")).trim();
             }
         }
 
@@ -482,7 +469,7 @@ public class WriteStepRunner implements StepRunner {
             runStepResponse.withStatus(stepStatus);
 
             try {
-                jobDoc = jobDocManager.postJobs(jobId, stepStatus, step, stepStatus.contains(JobStatus.COMPLETED_PREFIX) ? step : null, runStepResponse);
+                jobDoc = jobDocManager.postJobs(jobId, stepStatus, flow.getName(), step, stepStatus.contains(JobStatus.COMPLETED_PREFIX) ? step : null, runStepResponse);
             }
             catch (Exception e) {
                 throw e;
@@ -654,7 +641,7 @@ public class WriteStepRunner implements StepRunner {
             }
             JsonNode jobDoc = null;
             try {
-                jobDoc = jobDocManager.postJobs(jobId, stepStatus, step, stepStatus.equalsIgnoreCase(JobStatus.COMPLETED_PREFIX + step) ? step : null, runStepResponse);
+                jobDoc = jobDocManager.postJobs(jobId, stepStatus, flow.getName(), step, stepStatus.equalsIgnoreCase(JobStatus.COMPLETED_PREFIX + step) ? step : null, runStepResponse);
             }
             catch (Exception e) {
                 logger.error("Unable to update job document, cause: " + e.getMessage());

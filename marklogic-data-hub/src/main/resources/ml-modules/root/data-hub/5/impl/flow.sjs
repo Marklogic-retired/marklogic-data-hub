@@ -99,9 +99,9 @@ class Flow {
   //note: we're using uriMatch here to avoid case sensitivity, but still strongly match on the actual flow name itself
   //TODO: make this a flat fn.doc call in the future and figure out how to normalize the uri so we don't need this loop at all
   getFlow(name) {
-    let uriMatches = cts.uriMatch('/flows/'+name+'.flow.json', ['case-insensitive'], cts.directoryQuery("/flows/"));
-    // cache flow to prevent repeated calls.
     if (cachedFlows[name] === undefined) {
+      let uriMatches = cts.uriMatch('/flows/' + name + '.flow.json', ['case-insensitive'], cts.directoryQuery("/flows/"));
+      // cache flow to prevent repeated calls.
       if (fn.count(uriMatches) === 1) {
         cachedFlows[name] = cts.doc(fn.head(uriMatches)).toObject();
       } else if (fn.count(uriMatches) > 1) {
@@ -150,6 +150,10 @@ class Flow {
     let uris = null;
     if (options.uris) {
       uris = this.datahub.hubUtils.normalizeToArray(options.uris);
+      if (options.sourceQueryIsScript) {
+        // When the source query is a script, map each item to a content object with the "uri" property containing the item value
+        return uris.map(uri => {return {uri}});
+      }
       query = cts.documentQuery(uris);
     } else {
       let sourceQuery = combinedOptions.sourceQuery || flow.sourceQuery;
@@ -173,18 +177,19 @@ class Flow {
    *
    * @param flowName Required name of the flow to run
    * @param jobId Required ID of the job associated with the execution of the given step and flow
-   * @param content Array of content "descriptors", where each descriptor is expected to at least have a "uri" property
+   * @param content Array of content "descriptors", where each descriptor is expected to at least have a "uri" property.
+   * The value of the "uri" property is not necessarily a URI; if sourceQueryIsScript is true for the step, then
+   * the value of the "uri" property can be any string.
    * @param options Optional map of options that are used to override the flow and step configuration
    * @param stepNumber The number of the step within the given flow to run
    */
   runFlow(flowName, jobId, content = [], options, stepNumber) {
-    let uris = content.map((contentItem) => contentItem.uri);
+    let items = content.map((contentItem) => contentItem.uri);
     let flow = this.getFlow(flowName);
     if(!flow) {
       this.datahub.debug.log({message: 'The flow with the name '+flowName+' could not be found.', type: 'error'});
       throw Error('The flow with the name '+flowName+' could not be found.')
     }
-    //set the flow in the context
     this.globalContext.flow = flow;
 
     let jobDoc = this.datahub.jobs.getJobDocWithId(jobId);
@@ -244,11 +249,11 @@ class Flow {
     let flowInstance = this;
 
     if (this.isContextDB(this.globalContext.sourceDatabase) && !combinedOptions.stepUpdate) {
-      this.runStep(uris, content, combinedOptions, flowName, stepNumber, stepRef);
+      this.runStep(items, content, combinedOptions, flowName, stepNumber, stepRef);
     } else {
       xdmp.invoke(
         '/data-hub/5/impl/invoke-step.sjs',
-        {flow: flowInstance, uris, content, options: combinedOptions, flowName, step: stepRef, stepNumber},
+        {flow: flowInstance, items, content, options: combinedOptions, flowName, step: stepRef, stepNumber},
         {
           database: this.globalContext.sourceDatabase ? xdmp.database(this.globalContext.sourceDatabase) : xdmp.database(),
           update: combinedOptions.stepUpdate ? 'true': 'false',
@@ -310,7 +315,7 @@ class Flow {
         }
       }
       if (!combinedOptions.disableJobOutput) {
-        jobsMod.updateBatch(this.datahub,this.globalContext.jobId, this.globalContext.batchId, batchStatus, uris, writeTransactionInfo, this.globalContext.batchErrors[0]);
+        jobsMod.updateBatch(this.datahub,this.globalContext.jobId, this.globalContext.batchId, batchStatus, items, writeTransactionInfo, this.globalContext.batchErrors[0]);
       }
     }
 
@@ -333,8 +338,17 @@ class Flow {
     return resp;
   }
 
-  runStep(uris, content, options, flowName, stepNumber, step) {
-    // declareUpdate({explicitCommit: true});
+  /**
+   * @param items the batch of items being processed by the current transaction for the given flow and step. Will be a
+   * set of URIs, unless sourceQueryIsScript is set to true for the step, in which case the items can be any set
+   * of strings.
+   * @param content
+   * @param options
+   * @param flowName
+   * @param stepNumber
+   * @param step
+   */
+  runStep(items, content, options, flowName, stepNumber, step) {
     let flowInstance = this;
     let processor = flowInstance.step.getStepProcessor(flowInstance, step.stepDefinitionName, step.stepDefinitionType);
     if (!(processor && processor.run)) {
@@ -350,7 +364,7 @@ class Flow {
     }
     if (hook && hook.module) {
       // Include all of the step context in the parameters for the custom hook to make use of
-      let parameters = Object.assign({uris, content, options, flowName, stepNumber, step}, hook.parameters);
+      let parameters = Object.assign({uris: items, content, options, flowName, stepNumber, step}, hook.parameters);
       hookOperation = function () {
         flowInstance.datahub.hubUtils.invoke(
           hook.module,
@@ -368,9 +382,9 @@ class Flow {
       try {
         let results = normalizeToSequence(flowInstance.runMain(normalizeToSequence(content), options, processor.run));
         flowInstance.processResults(results, options, flowName, step);
-        flowInstance.globalContext.completedItems = flowInstance.globalContext.completedItems.concat(uris);
+        flowInstance.globalContext.completedItems = flowInstance.globalContext.completedItems.concat(items);
       } catch (e) {
-        this.handleStepError(flowInstance, e, uris);
+        this.handleStepError(flowInstance, e, items);
       }
     } else {
       for (let contentItem of content) {
@@ -391,10 +405,10 @@ class Flow {
     }
   }
 
-  handleStepError(flowInstance, error, uris) {
+  handleStepError(flowInstance, error, items) {
     flowInstance.addBatchError(flowInstance, error, flowInstance.globalContext.uri);
-    if (!flowInstance.globalContext.uri && uris) {
-      flowInstance.globalContext.failedItems = flowInstance.globalContext.failedItems.concat(uris);
+    if (!flowInstance.globalContext.uri && items) {
+      flowInstance.globalContext.failedItems = flowInstance.globalContext.failedItems.concat(items);
     } else if (flowInstance.globalContext.uri) {
       flowInstance.globalContext.failedItems.push(flowInstance.globalContext.uri);
     }

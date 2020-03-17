@@ -13,6 +13,7 @@ import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.FlowStatusListener;
 import com.marklogic.hub.flow.RunFlowResponse;
+import com.marklogic.hub.impl.FlowManagerImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.job.JobDocManager;
 import com.marklogic.hub.job.JobStatus;
@@ -118,8 +119,9 @@ public class FlowRunnerImpl implements FlowRunner{
      */
     public FlowRunnerImpl(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
-        this.stepRunnerFactory = new StepRunnerFactory(this.hubConfig);
-        this.stepRunnerFactory.setStepDefinitionProvider(new MarkLogicStepDefinitionProvider(this.hubConfig.newStagingClient(null)));
+        this.flowManager = new FlowManagerImpl(hubConfig);
+        this.stepRunnerFactory = new StepRunnerFactory(hubConfig);
+        this.stepRunnerFactory.setStepDefinitionProvider(new MarkLogicStepDefinitionProvider(hubConfig.newStagingClient(null)));
     }
 
     @Override
@@ -222,6 +224,7 @@ public class FlowRunnerImpl implements FlowRunner{
             jobId = UUID.randomUUID().toString();
         }
         RunFlowResponse response = new RunFlowResponse(jobId);
+        response.setFlowName(flow.getName());
 
         //Put response, steps and flow in maps with jobId as key
         flowResp.put(jobId, response);
@@ -253,7 +256,7 @@ public class FlowRunnerImpl implements FlowRunner{
             threadPool = new CustomPoolExecutor(2, maxPoolSize, 0L, TimeUnit.MILLISECONDS
                 , new LinkedBlockingQueue<Runnable>());
         }
-        threadPool.execute(new FlowRunnerTask(runningFlow, runningJobId));
+        threadPool.execute(new FlowRunnerTask(stepRunnerFactory, runningFlow, runningJobId));
     }
 
     public void stopJob(String jobId) {
@@ -283,6 +286,7 @@ public class FlowRunnerImpl implements FlowRunner{
     }
 
     private class FlowRunnerTask implements Runnable {
+        final private StepRunnerFactory stepRunnerFactory;
         private String jobId;
         private Flow flow;
         private Queue<String> stepQueue;
@@ -291,12 +295,14 @@ public class FlowRunnerImpl implements FlowRunner{
             return stepQueue;
         }
 
-        FlowRunnerTask(Flow flow, String jobId) {
+        FlowRunnerTask(StepRunnerFactory stepRunnerFactory, Flow flow, String jobId) {
+            this.stepRunnerFactory = stepRunnerFactory;
             this.jobId = jobId;
             this.flow = flow;
         }
 
-        FlowRunnerTask(Flow flow, String jobId, Queue<String> stepQueue) {
+        FlowRunnerTask(StepRunnerFactory stepRunnerFactory, Flow flow, String jobId, Queue<String> stepQueue) {
+            this.stepRunnerFactory = stepRunnerFactory;
             this.jobId = jobId;
             this.flow = flow;
             this.stepQueue = stepQueue;
@@ -348,7 +354,7 @@ public class FlowRunnerImpl implements FlowRunner{
                 //Initializing stepBatchSize to default flow batch size
 
                 try {
-                    stepRunner = stepRunnerFactory.getStepRunner(runningFlow, stepNum)
+                    stepRunner = this.stepRunnerFactory.getStepRunner(runningFlow, stepNum)
                         .withJobId(jobId)
                         .withOptions(optsMap)
                         .onItemComplete((jobID, itemID) -> {
@@ -395,13 +401,6 @@ public class FlowRunnerImpl implements FlowRunner{
                     }
                     else{
                         stepResp.withStatus(JobStatus.FAILED_PREFIX + stepNum);
-                    }
-                    if (!disableJobOutput) {
-                        try {
-                            jobDocManager.postJobs(jobId, JobStatus.FAILED_PREFIX + stepNum, stepNum, null, stepResp);
-                        } catch (Exception ex) {
-                            logger.error(ex.getMessage());
-                        }
                     }
                     RunStepResponse finalStepResp = stepResp;
                     try {
@@ -454,7 +453,9 @@ public class FlowRunnerImpl implements FlowRunner{
             resp.setJobStatus(jobStatus.toString());
             try {
                 if (!disableJobOutput) {
-                    jobDocManager.updateJobStatus(jobId, jobStatus);
+                    stepOutputs.entrySet().forEach((stepRespEntry) -> {
+                        jobDocManager.postJobs(jobId, jobStatus.toString(), flow.getName(), stepRespEntry.getKey(), null, stepRespEntry.getValue());
+                    });
                 }
             }
             catch (Exception e) {
@@ -562,8 +563,8 @@ public class FlowRunnerImpl implements FlowRunner{
                 }
                 //Run the next step
                 else {
-                    if(!(threadPool != null && threadPool.isTerminating())) {
-                        threadPool.execute(new FlowRunnerTask(runningFlow, runningJobId,((FlowRunnerTask)r).getStepQueue()));
+                    if (threadPool != null && !threadPool.isTerminating()) {
+                        threadPool.execute(new FlowRunnerTask(stepRunnerFactory, runningFlow, runningJobId,((FlowRunnerTask)r).getStepQueue()));
                     }
                 }
             }

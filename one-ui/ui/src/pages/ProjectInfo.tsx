@@ -25,12 +25,14 @@ const ProjectInfo: React.FC = () => {
     const [successMessage, setSuccessMessage] = useState({show: false, message: '', description: <div/>});
     const [buttonDisabled, setButtonDisabled] = useState(false)
     const [file, setFile] = useState('');
+    const [warningMessage, setWarningMessage] = useState({show: true, message: '', description: <div>Upload will overwrite all the files in your current project folder.</div>});
 
     useEffect(() => {
         setFile('');
     }, []);
 
-    const hasManagePriviledge = localStorage.getItem('dhUserHasManagePrivileges') === 'true';
+    //TODO temporarily only allow admin to upload
+    const hasManagePriviledge = localStorage.getItem('dhUserHasManagePrivileges') === 'true' && localStorage.getItem("dataHubUser") === "admin";
 
     const download = () => {
         axios({
@@ -50,6 +52,7 @@ const ProjectInfo: React.FC = () => {
             });
     };
 
+
     const uploadProps = {
         showUploadList: false,
         beforeUpload: (file) => {
@@ -62,11 +65,11 @@ const ProjectInfo: React.FC = () => {
             return true;
         },
         file,
-    }
+    };
 
     let unsubscribeId: string = '';
     const customRequest = async option => {
-        const {onSuccess, onError, file, action, onProgress} = option;
+        const {file} = option;
         const formData = new FormData();
         formData.append('zipfile', file);
 
@@ -81,6 +84,7 @@ const ProjectInfo: React.FC = () => {
                 });
             });
             setIsLoading(true);
+            setWarningMessage({show: false, message: '', description: <div/>});
 
             let response = await axios.post('/api/environment/project-upload', formData, {
                 headers: {
@@ -91,10 +95,11 @@ const ProjectInfo: React.FC = () => {
                 localStorage.setItem('dhIsInstalled', 'true');
                 setEnvironment();
                 setButtonDisabled(true);
+                setWarningMessage({show: false, message: '', description: <div/>});
                 let description = <p></p>;
                 setErrorMessage({show: false, message: '', description: description});
                 setSuccessMessage({show: true, message: 'Installation Success', description: description});
-                setIsLoading(false);
+                setIsLoading(false)
             }
         } catch (error) {
             console.log('INSTALL ERROR', error.response);
@@ -111,10 +116,6 @@ const ProjectInfo: React.FC = () => {
             stompService.unsubscribe(unsubscribeId);
             unsubscribeId = '';
         }
-        /*        if (unsubscribeId2) {
-                    stompService.unsubscribe(unsubscribeId2);
-                    unsubscribeId2 = '';
-                }*/
     }
 
     return (
@@ -166,7 +167,7 @@ const ProjectInfo: React.FC = () => {
                         <Card size="small" className={styles.smallCard} bordered={false}>
                             <br/><br/>
                             <div>
-                                <p className={styles.aligncenter}>Download project as .zip file</p>
+                                {<p className={styles.aligncenter}>Download project as .zip file</p>}
                                 <br/>
                                 <Button type="primary" className={styles.addNewButton}
                                         onClick={download}>Download</Button>
@@ -176,16 +177,15 @@ const ProjectInfo: React.FC = () => {
 
                         <Card size="small" className={styles.smallCard} bordered={false}>
                             <p className={styles.aligncenter}>Upload project as .zip file</p>
-                            <Row><Col>
-                                <span>
-                                    <Upload {...uploadProps} multiple={false}
-                                                  disabled={!hasManagePriviledge || isLoading || buttonDisabled}
-                                                  customRequest={customRequest}>
-                                    <Button type="primary" className={styles.uploadButton}>Upload</Button>
-                                    </Upload>
-                                </span>
-                            </Col></Row>
+                            <Upload {...uploadProps} multiple={false} customRequest={customRequest}>
+                                {<Button type="primary" className={styles.uploadButton} disabled={!hasManagePriviledge || isLoading || buttonDisabled}>Upload</Button>}
+                            </Upload>
                             <br/>
+                            <span className={styles.warningMessage}
+                                  style={warningMessage.show && hasManagePriviledge ? {display: 'block'} : {display: 'none'}}>
+                                <Alert message={warningMessage.message} description={warningMessage.description} type='warning'
+                                       showIcon/>
+                            </span>
                             <Row><Col>
                                 <span>
                                     {isLoading && !errorMessage.show ?
@@ -199,16 +199,16 @@ const ProjectInfo: React.FC = () => {
                             </Col></Row>
                             <Row><Col>
                                 <span className={styles.successMessage}
-                                            style={successMessage.show ? {display: 'block'} : {display: 'none'}}>
+                                      style={successMessage.show ? {display: 'block'} : {display: 'none'}}>
                                     <Alert message={successMessage.message} description={successMessage.description} type='success'
-                                        showIcon/>
+                                           showIcon/>
                                </span>
                             </Col></Row>
                             <Row><Col>
                                 <span className={styles.errorMessage}
-                                            style={errorMessage.show ? {display: 'block'} : {display: 'none'}}>
+                                      style={errorMessage.show ? {display: 'block'} : {display: 'none'}}>
                                     <Alert message={errorMessage.message} description={errorMessage.description} type='error'
-                              showIcon/>
+                                           showIcon/>
                                 </span>
                             </Col></Row>
                         </Card>

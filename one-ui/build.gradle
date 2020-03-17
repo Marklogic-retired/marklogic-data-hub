@@ -5,7 +5,7 @@ buildscript {
     }
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:2.2.1.RELEASE"
-        classpath "com.moowork.gradle:gradle-node-plugin:1.3.1"
+        classpath "com.github.node-gradle:gradle-node-plugin:2.2.3"
     }
 }
 
@@ -14,7 +14,7 @@ apply plugin: "org.springframework.boot"
 apply plugin: 'maven-publish'
 apply plugin: "io.spring.dependency-management"
 apply plugin: 'war'
-apply plugin: "com.moowork.node"
+apply plugin: "com.github.node-gradle.node"
 
 mainClassName = "com.marklogic.hub.oneui.Application"
 
@@ -68,7 +68,27 @@ dependencies {
     testCompile group: 'org.mockito', name: 'mockito-core', version: '3.0.0'
     testCompile group: 'org.mockito', name: 'mockito-junit-jupiter', version: '3.0.0'
 }
+node {
+    // Version of node to use.
+    version = '12.16.1'
 
+    // // Version of npm to use.
+    npmVersion = '6.13.4'
+
+    download = true
+    distBaseUrl = 'http://nodejs.org/dist'
+
+    // Set the work directory for unpacking node
+    workDir = file("${project.buildDir}/nodejs")
+
+    // Set the work directory for NPM
+    npmWorkDir = file("${project.buildDir}/npm")
+
+    // Set the work directory where node_modules should be located
+    nodeModulesDir = file("${project.projectDir}/ui")
+
+
+}
 task installDependencies(type: NpmTask, group: taskGroup) {
     description = "Install UI dependencies before building the UI files"
     args = ["install"]

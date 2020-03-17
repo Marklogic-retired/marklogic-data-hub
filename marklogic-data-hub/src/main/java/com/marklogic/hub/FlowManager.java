@@ -78,6 +78,13 @@ public interface FlowManager {
     List<Flow> getLocalFlows();
 
     /**
+     * Retrieves a list of names of flows in the local project
+     *
+     * @return - a list of names of all flows
+     */
+    List<String> getLocalFlowNames();
+
+    /**
      * Retrieves a list of names of flows installed on the MarkLogic server
      *
      * @return - a list of names of all flows

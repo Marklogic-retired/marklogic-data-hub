@@ -36,6 +36,17 @@ function updateMappingConfig(artifactName) {
     ];
 }
 
+function createMappingWithSameNameButDifferentEntityType(artifactName) {
+  try {
+    invokeSetService('mappings', artifactName, {'name': `${artifactName}`, 'targetEntity': 'SomeOtherEntity-hasMappingConfig', 'selectedSource': 'query'});
+    return new Error("Expected a failure because another mapping exists with the same name but a different entity type. " +
+      "Mapping names must be globally unique.");
+  } catch (e) {
+    let msg = e.data[2];
+    return test.assertEqual("A mapping with the same name but for a different entity type already exists. Please choose a different name.", msg);
+  }
+}
+
 function getArtifacts() {
     const artifactsByEntity = invokeGetAllService('mappings');
     const entityNames = invokeGetEntityTitlesService();
@@ -87,6 +98,7 @@ function invalidArtifact() {
 
 []
     .concat(updateMappingConfig('TestMapping'))
+    .concat(createMappingWithSameNameButDifferentEntityType('TestMapping'))
     .concat(updateMappingConfig('TestMapping2'))
     .concat(getArtifacts())
     .concat(deleteArtifact('TestMapping'))

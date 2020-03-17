@@ -1,4 +1,0 @@
-{
-  "endpointDirectory": "/data-hub/5/data-services/roles/",
-  "$javaClass": "com.marklogic.hub.dataservices.RolesService"
-}

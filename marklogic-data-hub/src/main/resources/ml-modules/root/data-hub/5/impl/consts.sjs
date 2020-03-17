@@ -50,5 +50,7 @@ module.exports = {
   DATA_HUB_LOAD_DATA_READ_ROLE: "data-hub-load-data-reader",
   DATA_HUB_LOAD_DATA_WRITE_ROLE: "data-hub-load-data-writer",
   DATA_HUB_MAPPING_READ_ROLE: "data-hub-mapping-reader",
-  DATA_HUB_MAPPING_WRITE_ROLE: "data-hub-mapping-writer"
+  DATA_HUB_MAPPING_WRITE_ROLE: "data-hub-mapping-writer",
+  DATA_HUB_MATCHING_READ_ROLE: "data-hub-match-merge-reader",
+  DATA_HUB_MATCHING_WRITE_ROLE: "data-hub-match-merge-writer"
 };

@@ -24,9 +24,9 @@ import com.marklogic.hub.oneui.exceptions.BadRequestException;
 import com.marklogic.hub.oneui.exceptions.ProjectDirectoryException;
 import com.marklogic.hub.oneui.listener.UIDeployListener;
 import com.marklogic.hub.oneui.models.HubConfigSession;
+import com.marklogic.hub.oneui.services.DataHubProjectUtils;
 import com.marklogic.hub.oneui.services.DataHubService;
 import com.marklogic.hub.oneui.services.EnvironmentService;
-import com.marklogic.hub.oneui.services.DataHubProjectUtils;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Path;
@@ -46,6 +46,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Controller
 @RequestMapping("/api/environment")
@@ -152,7 +159,10 @@ public class EnvironmentController {
             listener.onError("Initializing ", e);
         }
         if (listener.getException() != null) {
+            environmentService.setIsInDirtyState(true);
             throw listener.getException();
+        } else {
+            environmentService.setIsInDirtyState(false);
         }
         environmentService.setProjectDirectory(directory);
     }
