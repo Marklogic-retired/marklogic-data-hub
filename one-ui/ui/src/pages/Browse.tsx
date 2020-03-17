@@ -27,11 +27,11 @@ const Browse: React.FC<Props> = ({ location }) => {
 
   const { Content, Sider } = Layout;
   const componentIsMounted = useRef(true);
-  const { 
+  const {
     user,
     handleError,
     setTableView,
-    userNotAuthenticated 
+    userNotAuthenticated
   } = useContext(UserContext);
   const {
     searchOptions,
@@ -50,6 +50,7 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [active, setIsActive] = useState(user.tableView);
   const [snippetActive, setIsSnippetActive] = useState(!user.tableView);
   const [endScroll, setEndScroll] = useState(false);
+  const [collapse, setCollapsed] = useState(false);
   let sessionCount = 0;
 
   const getEntityModel = async () => {
@@ -106,7 +107,7 @@ const Browse: React.FC<Props> = ({ location }) => {
     if (location.state && location.state['jobId']) {
       setLatestJobFacet(location.state['jobId'], location.state['entityName']);
     }
-    // Removed error handling since it's not in one ui 
+    // Removed error handling since it's not in one ui
     // if (!user.error.type) {
     //   getEntityModel();
     // }
@@ -159,6 +160,10 @@ const Browse: React.FC<Props> = ({ location }) => {
     }
   };
 
+  const onCollapse = () => {
+    setCollapsed(!collapse);
+  }
+
   useLayoutEffect(() => {
     if (endScroll && data.length) {
       if (searchBarRef.current) {
@@ -190,7 +195,7 @@ const Browse: React.FC<Props> = ({ location }) => {
 
   return (
     <Layout>
-      <Sider className={styles.sideBarFacets} width={300}>
+      <Sider className={styles.sideBarFacets} collapsedWidth={0} collapsible onCollapse={onCollapse} width={'20vw'}>
         <Sidebar
           facets={facets}
           selectedEntities={searchOptions.entityNames}
@@ -202,7 +207,9 @@ const Browse: React.FC<Props> = ({ location }) => {
           <AsyncLoader />
           :
           <>
-            <div className={styles.searchBar} ref={searchBarRef}>
+            <div className={styles.searchBar} ref={searchBarRef}
+                 style={{ width: collapse ? (window.innerWidth - 35) : '75vw',
+                     maxWidth: collapse ? (window.innerWidth - 35) : '75vw'}}>
               <SearchBar entities={entities} />
               <SearchSummary
                 total={totalDocuments}
@@ -235,9 +242,9 @@ const Browse: React.FC<Props> = ({ location }) => {
             </div>
             {user.tableView ?
               <div style={{ marginTop: '150px' }}>
-                <ResultTable 
-                  data={data} 
-                  entityDefArray={entityDefArray} 
+                <ResultTable
+                  data={data}
+                  entityDefArray={entityDefArray}
                 />
               </div>
               : <SearchResults data={data} entityDefArray={entityDefArray} />

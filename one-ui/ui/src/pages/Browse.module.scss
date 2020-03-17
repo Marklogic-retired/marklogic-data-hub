@@ -1,21 +1,20 @@
 .content {
   background: #fff;
   padding: 24px;
-  margin-left: 300px;
   width: 100%;
+  margin-top: 45px;
+  padding-left: 36px;
+  max-height: 100vh;
 }
 
 .sideBarFacets {
   background: #f3f3f3;
-  position: fixed;
   margin-top: 61px;
 }
 
 .searchBar {
   position: fixed;
   z-index: 1;
-  left: 324px;
-  right: 20px;
   background-color: white;
 }
 
