@@ -32,15 +32,18 @@ import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ArtifactManagerImpl implements ArtifactManager {
-    HubConfig hubConfig;
+    protected static final Logger logger = LoggerFactory.getLogger(ArtifactManagerImpl.class);
 
+    HubConfig hubConfig;
 
     public ArtifactManagerImpl(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
     }
-
 
     public ArrayNode getArtifacts(String artifactType) {
         return (ArrayNode) getArtifactService().getList(artifactType);
@@ -48,7 +51,7 @@ public class ArtifactManagerImpl implements ArtifactManager {
 
     public ObjectNode updateArtifact(String artifactType, String artifactName, JsonNode artifactJson) {
         ObjectNode resp = (ObjectNode) getArtifactService().setArtifact(artifactType, artifactName, artifactJson);
-        writeArtifactInProject(artifactType, (ObjectNode) artifactJson);
+        writeArtifactInProject(artifactType, (ObjectNode) artifactJson, false);
         return resp;
     }
 
@@ -57,8 +60,11 @@ public class ArtifactManagerImpl implements ArtifactManager {
     }
 
     public void deleteArtifact(String artifactType, String artifactName) {
-       getArtifactService().deleteArtifact(artifactType, artifactName);
-        deleteArtifactInProject(artifactType, artifactName, null);
+        getArtifactService().deleteArtifact(artifactType, artifactName);
+        //delete artifact setting first if exists
+        deleteArtifactInProject(artifactType, artifactName, null, true);
+        //delete artifact
+        deleteArtifactInProject(artifactType, artifactName, null, false);
     }
 
     public ObjectNode validateArtifact(String artifactType, String artifactName, JsonNode artifactJson) {
@@ -70,7 +76,9 @@ public class ArtifactManagerImpl implements ArtifactManager {
     }
 
     public ObjectNode updateArtifactSettings(String artifactType, String artifactName, JsonNode settings) {
-        return (ObjectNode) getArtifactService().setArtifactSettings(artifactType, artifactName, settings);
+        ObjectNode resp = (ObjectNode) getArtifactService().setArtifactSettings(artifactType, artifactName, settings);
+        writeArtifactInProject(artifactType, (ObjectNode) settings, true);
+        return resp;
     }
 
     protected ArtifactService getArtifactService() {
@@ -78,8 +86,18 @@ public class ArtifactManagerImpl implements ArtifactManager {
         return ArtifactService.on(dataServicesClient);
     }
 
-    protected void writeArtifactInProject(String artifactType, ObjectNode artifact) {
-        Path fileLocation = buildArtifactProjectLocation(artifactType, getNameFromArtifact(artifactType, artifact), getVersionFromArtifact(artifactType, artifact));
+    protected void writeArtifactInProject(String artifactType, ObjectNode artifact, boolean isSetting) {
+        Path fileLocation;
+        if (!isSetting) {
+            fileLocation = buildArtifactProjectLocation(artifactType, getNameFromArtifact(artifactType, artifact), getVersionFromArtifact(artifactType, artifact), false);
+        } else {
+            if (artifact.get("artifactName") == null ||  artifact.get("artifactName").asText().length() == 0) {
+                logger.error("Failed to write to project folder due to invalid settings! artifactType: (%s), artifact settings: (%s).", artifactType, artifact.toString());
+                return;
+            }
+            String artifactName = artifact.get("artifactName").asText();
+            fileLocation = buildArtifactProjectLocation(artifactType, artifactName, getVersionFromArtifact(artifactType, artifact),true);
+        }
         // create folders if needed
         if (!fileLocation.getParent().toFile().exists()) {
             fileLocation.getParent().toFile().mkdirs();
@@ -91,8 +109,8 @@ public class ArtifactManagerImpl implements ArtifactManager {
         }
     }
 
-    protected void deleteArtifactInProject(String artifactType, String artifactName, String artifactVersion) {
-        Path fileLocation = buildArtifactProjectLocation(artifactType, artifactName, artifactVersion);
+    protected void deleteArtifactInProject(String artifactType, String artifactName, String artifactVersion, boolean isSetting) {
+        Path fileLocation = buildArtifactProjectLocation(artifactType, artifactName, artifactVersion, isSetting);
         try {
             Files.deleteIfExists(fileLocation);
         } catch (IOException e) {
@@ -114,10 +132,10 @@ public class ArtifactManagerImpl implements ArtifactManager {
         return null;
     }
 
-    public Path buildArtifactProjectLocation(String artifactType, String artifactName, String artifactVersion) {
+    public Path buildArtifactProjectLocation(String artifactType, String artifactName, String artifactVersion, boolean isSetting) {
         ArtifactTypeInfo artifactTypeInfo = getArtifactTypeInfo(artifactType);
         Path artifactDirectory = Paths.get(hubConfig.getHubProject().getProjectDir().toString(), artifactTypeInfo.getDirectory());
-        String artifactExtension = artifactTypeInfo.getFileExtension();
+        String artifactExtension = !isSetting ? artifactTypeInfo.getFileExtension() : ".settings." + FilenameUtils.getExtension(artifactTypeInfo.getFileExtension());
         boolean hasVersioning = artifactVersion != null;
         String fileName;
         if (hasVersioning) {
