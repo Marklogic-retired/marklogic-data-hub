@@ -9,32 +9,23 @@ import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.oneui.Application;
 import com.marklogic.hub.oneui.TestHelper;
 import com.marklogic.hub.oneui.models.HubConfigSession;
-import java.io.IOException;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {Application.class, ApplicationConfig.class})
-public class MappingControllerTest {
+public class MappingControllerTest extends TestHelper{
 
     @Autowired
     MappingController controller;
-
-    @Autowired
-    TestHelper testHelper;
 
     @Autowired
     private HubConfigSession hubConfigSession;
@@ -129,15 +120,15 @@ public class MappingControllerTest {
 
     @Test
     void testMappingConfigs() throws IOException {
-        testHelper.authenticateSession();
+        authenticateSession();
         ObjectMapper om = new ObjectMapper();
 
         // Add entities for mappings
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("http://marklogic.com/entity-services/models");
         meta.getPermissions().add("data-hub-developer", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE);
-        testHelper.addStagingDoc("/entities/Customer.entity.json", meta, "entities/Customer.entity.json");
-        testHelper.addStagingDoc("/entities/Order.entity.json", meta, "entities/Order.entity.json");
+        addStagingDoc("/entities/Customer.entity.json", meta, "entities/Customer.entity.json");
+        addStagingDoc("/entities/Order.entity.json", meta, "entities/Order.entity.json");
 
         controller.updateArtifact("TestCustomerMapping", om.readTree(MAPPING_CONFIG_1));
         controller.updateArtifact("TestOrderMapping1", om.readTree(MAPPING_CONFIG_2));
@@ -192,7 +183,7 @@ public class MappingControllerTest {
 
     @Test
     public void testMappingSettings() throws IOException {
-        testHelper.authenticateSession();
+        authenticateSession();
         ObjectMapper om = new ObjectMapper();
         controller.updateArtifact("TestCustomerMapping", om.readTree(MAPPING_CONFIG_1));
 
@@ -219,7 +210,7 @@ public class MappingControllerTest {
 
     @Test
     void testValidateMappings() throws IOException {
-        testHelper.authenticateSession();
+        authenticateSession();
 
         DatabaseClient databaseClient = hubConfigSession.newFinalClient();
         databaseClient.newJSONDocumentManager().write(
@@ -246,7 +237,7 @@ public class MappingControllerTest {
 
     @Test
     void testGetMappingFunctions() {
-        testHelper.authenticateSession();
+        authenticateSession();
 
         ObjectNode result = controller.getMappingFunctions().getBody();
         assertTrue(result.size() > 100, "Should have at least 100 functions");

@@ -4,28 +4,21 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.oneui.Application;
+import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.hub.oneui.TestHelper;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {Application.class, ApplicationConfig.class})
-public class MatchingControllerTest {
+public class MatchingControllerTest extends TestHelper {
 
     @Autowired
     MatchingController controller;
-
-    @Autowired
-    TestHelper testHelper;
 
     static final String MATCHING_CONFIG_1 = "{\n" +
         "  \"name\": \"TestCustomerMatching\",\n" +
@@ -56,8 +49,15 @@ public class MatchingControllerTest {
 
     @Test
     void testMatchingConfigs() throws IOException {
-        testHelper.authenticateSession();
+        authenticateSession();
         ObjectMapper om = new ObjectMapper();
+
+        // Add entities for mappings
+        DocumentMetadataHandle meta = new DocumentMetadataHandle();
+        meta.getCollections().add("http://marklogic.com/entity-services/models");
+        meta.getPermissions().add("data-hub-developer", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE);
+        addStagingDoc("/entities/Customer.entity.json", meta, "entities/Customer.entity.json");
+        addStagingDoc("/entities/Order.entity.json", meta, "entities/Order.entity.json");
 
         controller.updateArtifact("TestCustomerMatching", om.readTree(MATCHING_CONFIG_1));
         controller.updateArtifact("TestOrderMatching1", om.readTree(MATCHING_CONFIG_2));
