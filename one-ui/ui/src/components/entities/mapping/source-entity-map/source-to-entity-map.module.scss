@@ -93,6 +93,24 @@
     border: none;
     color: #ffc53dd6;
 }
+.emptyCard {
+    background-color: #fff7e6;
+    border: 1px solid #ffc53dd6;
+    flex-wrap: wrap;
+    padding-right: 1px;
+    padding-left: 1px;
+}
+.emptyText {
+    word-break: keep-all;
+}
+.testButtons{
+    align-items: right;
+    float: right;
+}
+.entityDetails{
+    align-items: left;
+    float: left;
+}
 .sourceDataIcon {
     background: transparent;
     border: none;
