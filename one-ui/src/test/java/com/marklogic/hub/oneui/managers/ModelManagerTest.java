@@ -396,7 +396,7 @@ public class ModelManagerTest {
         modelManager = Mockito.spy(new ModelManager(hubConfig));
         ReflectionTestUtils.setField(modelManager, "finalDataServiceClient", dataServiceClient);
         String modelName = "Product";
-        doReturn(expectedNode).when(modelManager).getJobInfoFromDB(dataServiceClient, modelName);
+        doReturn(expectedNode).when(modelManager).getLatestJobData(dataServiceClient, modelName);
 
         // test
         JsonNode actualNode = modelManager.getLatestJobInfo(modelName);
@@ -417,7 +417,7 @@ public class ModelManagerTest {
         modelManager = Mockito.spy(new ModelManager(hubConfig));
         ReflectionTestUtils.setField(modelManager, "finalDataServiceClient", dataServiceClient);
         String modelName = "xyz";
-        doReturn(expectedNode).when(modelManager).getJobInfoFromDB(dataServiceClient, modelName);
+        doReturn(expectedNode).when(modelManager).getLatestJobData(dataServiceClient, modelName);
 
         // test
         JsonNode actualNode = modelManager.getLatestJobInfo(modelName);
@@ -451,7 +451,7 @@ public class ModelManagerTest {
         JsonNode productNode = mapper.readTree(product);
         modelManager = Mockito.spy(new ModelManager(hubConfig));
         doReturn(productNode).when(modelManager)
-            .getJobInfoFromDB(dataServiceClient, "Product");
+            .getLatestJobData(dataServiceClient, "Product");
 
         String order = "{\n"
             + "        \"modelName\": \"Order\",\n"
@@ -460,7 +460,7 @@ public class ModelManagerTest {
             + "    }";
         JsonNode orderNode = mapper.readTree(order);
         doReturn(orderNode).when(modelManager)
-            .getJobInfoFromDB(dataServiceClient, "Order");
+            .getLatestJobData(dataServiceClient, "Order");
 
         ReflectionTestUtils.setField(modelManager, "finalDataServiceClient", dataServiceClient);
 
