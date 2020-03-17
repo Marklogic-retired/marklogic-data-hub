@@ -165,7 +165,7 @@ public class ModelManager {
      * @return - a JsonNode containing job info
      */
     public JsonNode getLatestJobInfo(String modelName) {
-        return getJobInfoFromDB(finalDataServiceClient, modelName);
+        return getLatestJobData(finalDataServiceClient, modelName);
     }
 
     /**
@@ -176,12 +176,12 @@ public class ModelManager {
     public List<JsonNode> getLatestJobInfoForAllModels() {
         return getModelNames()
             .stream()
-            .map(s -> getJobInfoFromDB(finalDataServiceClient, s))
+            .map(s -> getLatestJobData(finalDataServiceClient, s))
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
     }
 
-    JsonNode getJobInfoFromDB(DatabaseClient dbClient, String modelName) {
+    JsonNode getLatestJobData(DatabaseClient dbClient, String modelName) {
         return JobInfo.on(dbClient).getLatestJobData(modelName);
     }
 }
