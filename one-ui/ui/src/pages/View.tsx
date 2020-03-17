@@ -16,7 +16,7 @@ const tooltips = tooltipsConfig.viewEntities;
 
 const View: React.FC = () => {
   const { user, handleError, userNotAuthenticated } = useContext(UserContext);
-  const [entities, setEntites] = useState<any[]>([]);
+  const [entities, setEntities] = useState<any[]>([]);
   const [lastHarmonized, setLastHarmonized] = useState<any[]>([]);
   const [facetValues, setFacetValues] = useState<any[]>([]);
   const [totalDocs, setTotalDocs] = useState(0);
@@ -29,7 +29,7 @@ const View: React.FC = () => {
     try {
       const response = await axios(`/api/models`);
       if (componentIsMounted.current) {
-        setEntites(entityFromJSON(response.data));
+        setEntities(entityFromJSON(response.data));
         let entityArray = [...entityFromJSON(response.data).map(entity => entity.info.title)];
         getSearchResults(entityArray);
         getEntityCollectionDetails();
@@ -67,7 +67,7 @@ const View: React.FC = () => {
 
   const getEntityCollectionDetails = async () => {
     try {
-      const response = await axios(`/api/jobs/models`);
+      const response = await axios(`/api/models/job-info`);
       if (componentIsMounted.current) {
         setLastHarmonized(response.data);
         sessionCount = 0;
