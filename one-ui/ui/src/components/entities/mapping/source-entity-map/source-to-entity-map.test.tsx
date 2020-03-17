@@ -13,6 +13,8 @@ describe('Source to entity mapping dialog component', () => {
     expect(wrapper.find('#srcContainer').length).toEqual(1)
     expect(wrapper.find('#srcDetails').length).toEqual(1)
     expect(wrapper.find('#entityContainer').length).toEqual(1)
+    expect(wrapper.find('#noData').length).toEqual(1)
+    expect(wrapper.find('#dataPresent').length).toEqual(0)
     expect(wrapper.find('#successMessage').length).toEqual(1)
     expect(wrapper.find('#errorMessage').length).toEqual(1)
     expect(wrapper.find('#listIcon').length).toEqual(1)

@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, CSSProperties } from "react";
-import { Modal, Table, Icon, Popover, Input, Button, Alert, message, Tooltip, Spin } from "antd";
+import { Card, Modal, Table, Icon, Popover, Input, Button, Alert, message, Tooltip } from "antd";
 import styles from './source-to-entity-map.module.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faObjectUngroup, faList, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
@@ -306,7 +306,7 @@ const SourceToEntityMap = (props) => {
         return errorInSaving === 'noError' ? msg : errorMsg;
 
       };
-
+    const emptyData = (JSON.stringify(props.sourceData) === JSON.stringify([]) && !props.docNotFound);
 
 return (<Modal
         visible={props.mappingVisible}
@@ -337,30 +337,50 @@ return (<Modal
                 placement="right" 
                 ><Icon type="question-circle" className={styles.questionCircle} theme="filled" /></Popover></p>
             </div>
-            <div className={styles.navigationCollapseButtons}>{navigationButtons}</div>
-            <Spin spinning={JSON.stringify(props.sourceData) === JSON.stringify([]) && !props.docNotFound}> 
-        <Table
-        pagination={false}
-        defaultExpandAllRows={true}
-        expandIcon={(props) => customExpandIcon(props)}
-        className={styles.sourceTable}
-        rowClassName={() => styles.sourceTableRows}
-        scroll={{ y: '70vh' }}
-        indentSize={14}
-        //size="small"
-        columns={columns}
-        dataSource={srcData}
-        tableLayout="unset"
-        rowKey="name"
-        />
-        </Spin>
+            {emptyData ? 
+            <div id="noData">
+                <br/><br/>
+                <Card className={styles.emptyCard} size="small"> 
+                    <div className={styles.emptyText}>
+                         <p>Unable to find source documents using the specified collection or query.</p>
+                         <p>Load some data that mapping can use as reference and/or edit the step
+                         settings to use a source collection or query that will return some results.</p>
+                     </div>
+                </Card>
+            </div>
+            : 
+            <div id="dataPresent">   
+                <div className={styles.navigationCollapseButtons}>{navigationButtons}</div>            
+                <Table
+                pagination={false}
+                defaultExpandAllRows={true}
+                expandIcon={(props) => customExpandIcon(props)}
+                className={styles.sourceTable}
+                rowClassName={() => styles.sourceTableRows}
+                scroll={{ y: '70vh' }}
+                indentSize={14}
+                //size="small"
+                columns={columns}
+                dataSource={srcData}
+                tableLayout="unset"
+                rowKey="name"
+                />            
+            </div> }
+        
         </div>
 
         <div 
         id="entityContainer"
         className={styles.entityContainer}>
-        <div className={styles.entityDetails}>
+        <div>
+            <div className={styles.entityDetails}>
                 <p className={styles.entityTypeTitle}><i><FontAwesomeIcon icon={faObjectUngroup } size="sm" className={styles.entityIcon}/></i> Entity: {props.entityTypeTitle}</p>
+            </div>
+            <div className={styles.testButtons}>
+            <Button disabled={emptyData}>Clear</Button>
+            &nbsp;&nbsp;
+            <Button type="primary" htmlType="submit" disabled={emptyData}>Test</Button>
+            </div>
         </div>
         <div className={styles.lineSpacing}></div>
         <Table
