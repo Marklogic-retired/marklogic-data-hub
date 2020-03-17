@@ -23,13 +23,12 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.hub.oneui.TestHelper;
+import java.io.IOException;
+import java.nio.file.Path;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
-
-import java.io.IOException;
-import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -57,7 +56,6 @@ public class LoadDataControllerTest extends TestHelper {
     public LoadDataControllerTest() throws JsonProcessingException {
     }
 
-    // TODO rework tests to avoid the current dependency on manually adding credentials
     @BeforeEach
     void before(){
         authenticateSession();
@@ -71,7 +69,7 @@ public class LoadDataControllerTest extends TestHelper {
 
         assertEquals(1, resultList.size(), "List of load data artifacts should now be 1");
 
-        Path artifactProjectLocation = getArtifactManager().buildArtifactProjectLocation(controller.getArtifactType(), "validArtifact", null);
+        Path artifactProjectLocation = getArtifactManager().buildArtifactProjectLocation(controller.getArtifactType(), "validArtifact", null, false);
         ObjectNode resultByName = controller.getArtifact("validArtifact").getBody();
         assertEquals("validArtifact", resultByName.get("name").asText(), "Getting artifact by name should return object with expected properties");
         assertEquals("xml", resultByName.get("sourceFormat").asText(), "Getting artifact by name should return object with expected properties");
@@ -101,7 +99,6 @@ public class LoadDataControllerTest extends TestHelper {
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode settings = mapper.readTree(LOAD_DATA_SETTINGS);
-
         controller.updateArtifactSettings("validArtifact", settings);
 
         result = controller.getArtifactSettings("validArtifact").getBody();
@@ -112,10 +109,13 @@ public class LoadDataControllerTest extends TestHelper {
         assertTrue(result.has("permissions"), "missing permissions");
         assertTrue(result.has("customHook"), "missing customHook");
 
+        Path artifactSettingFullName = getArtifactManager().buildArtifactProjectLocation(controller.getArtifactType(), "validArtifact", null, true);
+        assertTrue(artifactSettingFullName.toFile().exists(), "Artifact setting file should have been created in the project directory");
+
         controller.deleteArtifact("validArtifact");
 
         assertTrue(controller.getArtifactSettings("validArtifact").getBody().isEmpty());
         assertThrows(FailedRequestException.class, () -> controller.getArtifact("validArtifact"));
+        assertFalse(artifactSettingFullName.toFile().exists(), "Artifact setting file should no longer exist");
     }
-
 }
