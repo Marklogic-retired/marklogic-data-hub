@@ -1,4 +1,5 @@
 const test = require("/test/test-helper.xqy");
+const Artifacts = require('/data-hub/5/artifacts/core.sjs');
 
 function invokeSetService(artifactType, artifactName, artifact) {
     return fn.head(xdmp.invoke(
@@ -18,13 +19,6 @@ function invokeValidateService(artifactType, artifactName, artifact) {
     return fn.head(xdmp.invoke(
         "/data-hub/5/data-services/artifacts/validateArtifact.sjs",
         {artifactType, artifactName, artifact: xdmp.toJSON(artifact)}
-    ));
-}
-
-function invokeGetEntityTitlesService() {
-    return fn.head(xdmp.invoke(
-        "/data-hub/5/data-services/artifacts/getEntityTitles.sjs",
-        {}
     ));
 }
 
@@ -49,7 +43,7 @@ function createMappingWithSameNameButDifferentEntityType(artifactName) {
 
 function getArtifacts() {
     const artifactsByEntity = invokeGetAllService('mappings');
-    const entityNames = invokeGetEntityTitlesService();
+    const entityNames = Artifacts.getEntityTitles();
     test.assertEqual(entityNames.length, artifactsByEntity.length);
     artifactsByEntity.forEach(entity => {
         if (entity.entityType === 'TestEntity-hasMappingConfig') {
