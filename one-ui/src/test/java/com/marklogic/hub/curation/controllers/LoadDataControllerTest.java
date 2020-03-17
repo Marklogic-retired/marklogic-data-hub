@@ -22,19 +22,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.FailedRequestException;
-import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.ArtifactManager;
-import com.marklogic.hub.impl.ArtifactManagerImpl;
-import com.marklogic.hub.oneui.Application;
 import com.marklogic.hub.oneui.TestHelper;
-import com.marklogic.hub.oneui.models.HubConfigSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -44,16 +36,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {Application.class, ApplicationConfig.class, LoadDataControllerTest.class})
-public class LoadDataControllerTest {
+public class LoadDataControllerTest extends TestHelper {
 
     @Autowired
     LoadDataController controller;
-
-    @Autowired
-    TestHelper testHelper;
-
 
     static final String LOAD_DATA_SETTINGS = "{\n"
         + "    \"artifactName\" : \"validArtifact\",\n"
@@ -74,19 +60,18 @@ public class LoadDataControllerTest {
     // TODO rework tests to avoid the current dependency on manually adding credentials
     @BeforeEach
     void before(){
-        testHelper.authenticateSession();
+        authenticateSession();
     }
 
     @Test
     void testLoadDataController() throws IOException {
-        testHelper.authenticateSession();
-        controller.updateArtifact("validArtifact", testHelper.validLoadDataConfig);
+        controller.updateArtifact("validArtifact", validLoadDataConfig);
 
         ArrayNode resultList = (ArrayNode) controller.getArtifacts().getBody();
 
         assertEquals(1, resultList.size(), "List of load data artifacts should now be 1");
 
-        Path artifactProjectLocation = testHelper.getArtifactManager().buildArtifactProjectLocation(controller.getArtifactType(), "validArtifact", null);
+        Path artifactProjectLocation = getArtifactManager().buildArtifactProjectLocation(controller.getArtifactType(), "validArtifact", null);
         ObjectNode resultByName = controller.getArtifact("validArtifact").getBody();
         assertEquals("validArtifact", resultByName.get("name").asText(), "Getting artifact by name should return object with expected properties");
         assertEquals("xml", resultByName.get("sourceFormat").asText(), "Getting artifact by name should return object with expected properties");
@@ -109,8 +94,7 @@ public class LoadDataControllerTest {
 
     @Test
     public void testLoadDataSettings() throws IOException {
-        testHelper.authenticateSession();
-        controller.updateArtifact("validArtifact", testHelper.validLoadDataConfig);
+        controller.updateArtifact("validArtifact", validLoadDataConfig);
 
         JsonNode result = controller.getArtifactSettings("validArtifact").getBody();
         assertTrue(result.isEmpty(), "No load data settings yet!");

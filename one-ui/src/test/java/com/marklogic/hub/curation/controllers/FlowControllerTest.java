@@ -5,12 +5,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowImpl;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
-import com.marklogic.hub.oneui.Application;
 import com.marklogic.hub.oneui.TestHelper;
 import com.marklogic.hub.oneui.models.HubConfigSession;
 import com.marklogic.hub.oneui.models.StepModel;
@@ -19,14 +17,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
@@ -35,9 +30,7 @@ import java.util.Collections;
 import java.util.List;
 
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {Application.class, ApplicationConfig.class, FlowControllerTest.class})
-class FlowControllerTest {
+class FlowControllerTest extends TestHelper{
     private final String flowString = "{\n" +
             "  \"name\" : \"testFlow\",\n" +
             "  \"description\" : \"\",\n" +
@@ -76,9 +69,6 @@ class FlowControllerTest {
     private JobsController jobsController;
 
     @Autowired
-    private TestHelper testHelper;
-
-    @Autowired
     private HubConfigSession hubConfig;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -88,8 +78,8 @@ class FlowControllerTest {
 
     @BeforeEach
     void before(){
-        testHelper.authenticateSession();
-        testHelper.setHubProjectDirectory();
+        authenticateSession();
+        setHubProjectDirectory();
     }
 
     @AfterEach
@@ -202,7 +192,7 @@ class FlowControllerTest {
     void runFlow() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         String hubProjectDir = hubConfig.getProjectDir();
-        FileUtils.copyDirectory(testHelper.getResourceFile("input"), Paths.get(hubProjectDir,"input").toFile());
+        FileUtils.copyDirectory(getResourceFile("input"), Paths.get(hubProjectDir,"input").toFile());
         controller.createFlow(flowString);
         //PUT step
         controller.createStep("testFlow", 1, stepString).getBody();

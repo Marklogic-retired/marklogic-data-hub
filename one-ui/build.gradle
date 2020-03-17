@@ -118,5 +118,12 @@ copyUiFiles.mustRunAfter buildUi
 test {
 	exclude 'com/marklogic/hub/curation/integrationtests/**'
 	exclude 'com/marklogic/hub/oneui/integrationtests/**'
+    exclude 'com/marklogic/hub/curation/controllers/fullcycle/**'
 	useJUnitPlatform()
+}
+
+task testFullCycle(type: Test) {
+    useJUnitPlatform  {
+        include 'com/marklogic/hub/curation/controllers/fullcycle/**'
+    }
 }
