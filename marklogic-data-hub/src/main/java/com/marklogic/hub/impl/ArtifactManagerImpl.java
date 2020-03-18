@@ -92,8 +92,9 @@ public class ArtifactManagerImpl implements ArtifactManager {
             fileLocation = buildArtifactProjectLocation(artifactType, getNameFromArtifact(artifactType, artifact), getVersionFromArtifact(artifactType, artifact), false);
         } else {
             if (!artifact.has("artifactName") || artifact.get("artifactName").asText().length() == 0) {
-                logger.error("Failed to write to project folder due to invalid settings! artifactType: (%s), artifact settings: (%s).", artifactType, artifact.toString());
-                return;
+                String errorInfo = String.format("Unable to write artifact settings to project folder: no artifactName found! artifactType: (%s), artifact settings: (%s).", artifactType, artifact.toString());
+                logger.error(errorInfo);
+                throw new RuntimeException(errorInfo);
             }
             String artifactName = artifact.get("artifactName").asText();
             fileLocation = buildArtifactProjectLocation(artifactType, artifactName, getVersionFromArtifact(artifactType, artifact),true);
