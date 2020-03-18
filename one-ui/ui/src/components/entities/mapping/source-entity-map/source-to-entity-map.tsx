@@ -1,13 +1,12 @@
 
-import React, { useState, useEffect, CSSProperties, useRef } from "react";
-import { Card, Modal, Table, Icon, Popover, Input, Button, Alert, message, Tooltip, Spin, Divider, Menu, Dropdown, TreeSelect, Select } from "antd";
+import React, { useState, useEffect, CSSProperties } from "react";
+import { Card, Modal, Table, Icon, Popover, Input, Button, Alert, Tooltip, Spin, Dropdown} from "antd";
 import styles from './source-to-entity-map.module.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faObjectUngroup, faList, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import { getInitialChars, convertDateFromISO, getLastChars } from "../../../../util/conversionFunctions";
 import { getMappingValidationResp } from "../../../../util/manageArtifacts-service"
 import DropDownWithSearch from "../../../common/dropdown-with-search/dropdownWithSearch";
-import axios from 'axios';
 
 const SourceToEntityMap = (props) => {
 
@@ -241,6 +240,16 @@ const SourceToEntityMap = (props) => {
         return !checkFieldInErrors(name) ? displayResp(name) : '';
     }
 
+    const mapExpressionStyle = (propName) => {
+        const mapStyle: CSSProperties = {
+            width: '27vw',
+            verticalAlign: 'top',
+            justifyContent: 'top',
+            borderColor: checkFieldInErrors(propName) ? 'red' : ''
+        }
+        return mapStyle;
+}
+
     const columns = [
         {
             title: 'Name',
@@ -287,7 +296,7 @@ const SourceToEntityMap = (props) => {
             render: (text, row) => (<div className={styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
                 <TextArea
                     id="mapexpression"
-                    className={styles.mapExpression}
+                    style={mapExpressionStyle(row.name)}
                     onClick={handleClickInTextArea}
                     value={mapExp[row.name]}
                     onChange={(e) => handleMapExp(row.name, e)}
@@ -297,7 +306,7 @@ const SourceToEntityMap = (props) => {
                 <i id="listIcon"><FontAwesomeIcon icon={faList} size="lg" className={styles.listIcon}
                 /></i>&nbsp;&nbsp;
                 <span ><Dropdown overlay={menu} trigger={['click']}><Button id="functionIcon" className={styles.functionIcon} size="small" onClick={(e) => handleFunctionsList(row.name)}>fx</Button></Dropdown></span></div>
-            {checkFieldInErrors(row.name) ? <div className={styles.validationErrors}>{displayResp(row.name)}</div> : ''}</div>)
+            {checkFieldInErrors(row.name) ? <div id="errorInExp" className={styles.validationErrors}>{displayResp(row.name)}</div> : ''}</div>)
         },
         {
             title: 'Value',
@@ -305,7 +314,7 @@ const SourceToEntityMap = (props) => {
             key: 'value',
             width: '20%',
             sorter: (a: any, b: any) => getDataForValueField(a.name).length - getDataForValueField(b.name).length,
-            render: (text, row) => (<div>{getDataForValueField(row.name)}</div>)
+            render: (text, row) => (<div className={styles.mapValue}><Tooltip title={getDataForValueField(row.name)}>{getInitialChars(getDataForValueField(row.name),25,'...')}</Tooltip></div>)
         }
     ]
 
@@ -330,7 +339,7 @@ const SourceToEntityMap = (props) => {
     // CSS properties for the alert message after saving the mapping
     const saveMessageCSS: CSSProperties = {
         border: errorInSaving === 'noError' ? '1px solid #008000' : '1px solid #ff0000',
-        marginLeft: '30em'
+        marginLeft: '25vw'
     }
 
     const success = () => {
@@ -394,20 +403,6 @@ const SourceToEntityMap = (props) => {
         setIsTestClicked(false);
     }
     /* Insert Function signature in map expressions */
-    const getFunctionsList = async () => {
-        try {
-            let response = await axios.get('/api/artifacts/mapping/functions');
-            
-            if (response.status === 200) {
-                let funcList = response.data;
-                setPropListForDropDown([...funcList]);
-              console.log('GET Functions API Called successfully!',response);
-            } 
-          } catch (error) {
-              let message = error;
-              console.log('Error while fetching the functions!', message);
-          }
-    }
 
     const handleFunctionsList = async (name) => {
 

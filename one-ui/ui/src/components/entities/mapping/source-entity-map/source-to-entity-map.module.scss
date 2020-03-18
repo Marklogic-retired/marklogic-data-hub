@@ -15,7 +15,7 @@
     margin-left: 30em;
 }
 .noMessage{
-    padding: 2.03vh 0vh;
+    padding: 19.5px 0vh;
 }
 .parentContainer{
     display: flex;
@@ -57,7 +57,7 @@
     word-break: break-all;
 
     > .lineSpacing{
-        margin : 20px 0 24px 0;
+        margin : 21px 0 24px 0;
     }
     > .entityDetails{
         display: inline-block;
@@ -99,6 +99,7 @@
         width: 90%;
         line-height: normal;
         padding-top: 6px;
+        padding-left: 2px;
         padding-bottom: 4px;
         color: #DB4f59;
         word-break: break-all;
@@ -119,6 +120,12 @@
     vertical-align: top;
     justify-content: top;
 }
+
+.mapValue {
+    word-break: break-all;
+    line-height: normal
+}
+
 .entityIcon{
     background: transparent;
     border: none;
