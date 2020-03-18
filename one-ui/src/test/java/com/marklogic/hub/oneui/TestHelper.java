@@ -7,6 +7,7 @@ import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.FileHandle;
+import com.marklogic.hub.deploy.commands.LoadHubArtifactsCommand;
 import com.marklogic.hub.impl.ArtifactManagerImpl;
 import com.marklogic.hub.oneui.auth.LoginInfo;
 import com.marklogic.hub.oneui.models.EnvironmentInfo;
@@ -127,6 +128,10 @@ public class TestHelper {
         if (result.hasNext()) {
             logger.error(result.next().getString());
         }
+    }
+
+    protected void loadHubArtifacts(){
+        new LoadHubArtifactsCommand(hubConfig, true).execute(null);
     }
 
     public void addStagingDoc(String uri, DocumentMetadataHandle meta, String resource) {
