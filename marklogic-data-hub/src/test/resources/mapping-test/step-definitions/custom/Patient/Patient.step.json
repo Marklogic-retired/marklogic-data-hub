@@ -1,0 +1,12 @@
+{
+  "name": "Patient",
+  "type": "CUSTOM",
+  "version": 1,
+  "options": {
+    "collections": [
+      "query-coll"
+    ]
+  },
+  "lang": "zxx",
+  "modulePath": "/custom-modules/custom/Patient/main.sjs"
+}

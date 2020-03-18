@@ -4,6 +4,7 @@ import com.marklogic.bootstrap.Installer;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.RunFlowResponse;
+import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.RunStepResponse;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.*;
@@ -132,5 +133,23 @@ public class CustomStepE2E extends HubTestBase{
         RunStepResponse masteringJob = flowResponse.getStepResponses().get("5");
         assertTrue(masteringJob.isSuccess(), "Custom mastering job failed: "+masteringJob.stepOutput);
         assertTrue(getFinalDocCount("mdm-content") == 372,"There should be 372 doc in mdm-content collection, found: " + getFinalDocCount("mdm-content"));
+    }
+
+    @Test
+    @Order(4)
+    public void testQueryAsScript() throws Exception{
+        installUserModules(getDataHubAdminConfig(), true);
+
+        Flow flow = flowManager.getFlow("PatientFlow");
+        if (flow == null) {
+            throw new Exception("PatientFlow Flow Not Found");
+        }
+
+        RunFlowResponse flowResponse =  flowRunner.runFlow("PatientFlow");
+        flowRunner.awaitCompletion();
+        Assertions.assertEquals(JobStatus.FINISHED.toString(), flowResponse.getJobStatus());
+        //The doc is written to final with the patientID obtained by running "sourceQuery"
+        String resp = finalClient.newServerEval().javascript("fn.head(fn.doc('/patient/patient1.json')).toObject().envelope.instance.firstItem").eval().next().getString();
+        Assertions.assertNotNull(resp);
     }
 }

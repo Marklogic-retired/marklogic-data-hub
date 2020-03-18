@@ -1,0 +1,23 @@
+{
+  "name": "PatientFlow",
+  "options": {
+    "collections": [
+      "test-data"
+    ],
+    "targetEntity": "Customer",
+    "sourceQuery": "fn.head(fn.collection(\"AdmissionsCore\")).toObject().envelope.instance.PatientID",
+    "sourceQueryIsScript": true
+  },
+  "description": "flow description",
+  "steps": {
+    "1": {
+      "stepDefinitionName": "Patient",
+      "stepDefinitionType": "CUSTOM",
+      "options": {
+        "fullOutput": true,
+        "sourceDatabase": "data-hub-STAGING",
+        "targetDatabase": "data-hub-FINAL"
+      }
+    }
+  }
+}
