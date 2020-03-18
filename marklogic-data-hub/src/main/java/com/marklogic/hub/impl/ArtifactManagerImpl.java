@@ -91,7 +91,7 @@ public class ArtifactManagerImpl implements ArtifactManager {
         if (!isSetting) {
             fileLocation = buildArtifactProjectLocation(artifactType, getNameFromArtifact(artifactType, artifact), getVersionFromArtifact(artifactType, artifact), false);
         } else {
-            if (artifact.get("artifactName") == null ||  artifact.get("artifactName").asText().length() == 0) {
+            if (!artifact.has("artifactName") || artifact.get("artifactName").asText().length() == 0) {
                 logger.error("Failed to write to project folder due to invalid settings! artifactType: (%s), artifact settings: (%s).", artifactType, artifact.toString());
                 return;
             }
