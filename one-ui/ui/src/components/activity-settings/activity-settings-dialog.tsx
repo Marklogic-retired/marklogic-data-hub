@@ -67,45 +67,44 @@ const ActivitySettingsDialog = (props) => {
 
 //CREATE/POST settings Artifact
 const createSettingsArtifact = async (settingsObj) => {
-  console.log('settingsObj',settingsObj)
-
-  try {
-    setIsLoading(true);
-    let response = await Axios.post(`/api/artifacts/${activityType}/${props.stepData.name}/settings`, settingsObj);
-    if (response.status === 200) {
-      console.log('Create/Update Activity Settings Artifact API Called successfully!')
+  console.log('settingsObj', settingsObj)
+  if (props.stepData.name) {
+    try {
+      setIsLoading(true);
+      let response = await Axios.post(`/api/artifacts/${activityType}/${props.stepData.name}/settings`, settingsObj);
+      if (response.status === 200) {
+        console.log('Create/Update Activity Settings Artifact API Called successfully!')
+        setIsLoading(false);
+      }
+    } catch (error) {
+      let message = error.response.data.message;
+      console.log('Error While creating the Activity settings artifact!', message)
       setIsLoading(false);
     }
   }
-  catch (error) {
-    let message = error.response.data.message;
-    console.log('Error While creating the Activity settings artifact!', message)
-    setIsLoading(false);
-  }
-
 }
 
 //GET the settings artifact
 const getSettingsArtifact = async () => {
+  if (props.stepData.name) {
+    try {
+      let response = await Axios.get(`/api/artifacts/${activityType}/${props.stepData.name}/settings`);
 
-  try {
-    let response = await Axios.get(`/api/artifacts/${activityType}/${props.stepData.name}/settings`);
-
-    if (response.status === 200) {
-      if (response.data.sourceDatabase) {
+      if (response.status === 200) {
+        if (response.data.sourceDatabase) {
           setSrcDatabase(response.data.sourceDatabase);
+        }
+        setTgtDatabase(response.data.targetDatabase);
+        setAdditionalCollections([...response.data.additionalCollections]);
+        setTargetPermissions(response.data.permissions);
+        setModule(response.data.customHook.module);
+        setCHparameters(response.data.customHook.parameters);
+        setProvGranularity(response.data.provenanceGranularity);
+        setUser(response.data.customHook.user);
+        setRunBefore(response.data.customHook.runBefore);
+        console.log('GET Load Data Settings Artifacts API Called successfully!', response.data);
       }
-      setTgtDatabase(response.data.targetDatabase);
-      setAdditionalCollections([...response.data.additionalCollections]);
-      setTargetPermissions(response.data.permissions);
-      setModule(response.data.customHook.module);
-      setCHparameters(response.data.customHook.parameters);
-      setProvGranularity(response.data.provenanceGranularity);
-      setUser(response.data.customHook.user);
-      setRunBefore(response.data.customHook.runBefore);
-      console.log('GET Load Data Settings Artifacts API Called successfully!',response.data);
-    }
-  } catch (error) {
+    } catch (error) {
       let message = error.response;
       console.log('Error while fetching load data settings artifacts', message);
       setSrcDatabase(defaultSourceDatabase);
@@ -117,8 +116,8 @@ const getSettingsArtifact = async () => {
       setProvGranularity('coarse-grained');
       setUser('');
       setRunBefore(false);
+    }
   }
-
 }
 
   const onCancel = () => {
@@ -299,9 +298,6 @@ const getSettingsArtifact = async () => {
 
   const customHookProperties = <div><Form.Item label={<span className={styles.cHItemLabel}>
     Module:&nbsp;
-  <Tooltip title={settingsTooltips.module}>
-      <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-    </Tooltip>
     &nbsp;
 </span>} labelAlign="left"
     className={styles.formItem}>
@@ -311,13 +307,14 @@ const getSettingsArtifact = async () => {
       value={module}
       onChange={handleChange}
       disabled={!canReadWrite}
-    />
+      className={styles.inputWithTooltip}
+    />&nbsp;&nbsp;
+    <Tooltip title={settingsTooltips.module}>
+      <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+    </Tooltip>
   </Form.Item>
     <Form.Item label={<span className={styles.cHItemLabel}>
       Parameters:&nbsp;
-  <Tooltip title={settingsTooltips.cHParameters}>
-        <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-      </Tooltip>
       &nbsp;
 </span>} labelAlign="left"
       className={styles.formItem}>
@@ -327,13 +324,14 @@ const getSettingsArtifact = async () => {
         value={cHparameters}
         onChange={handleChange}
         disabled={!canReadWrite}
-      />
+        className={styles.inputWithTooltip}
+      />&nbsp;&nbsp;
+      <Tooltip title={settingsTooltips.cHParameters}>
+        <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+      </Tooltip>
     </Form.Item>
     <Form.Item label={<span className={styles.cHItemLabel}>
       User:&nbsp;
-  <Tooltip title={settingsTooltips.user}>
-        <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-      </Tooltip>
       &nbsp;
 </span>} labelAlign="left"
       className={styles.formItem}>
@@ -343,17 +341,21 @@ const getSettingsArtifact = async () => {
         value={user}
         onChange={handleChange}
         disabled={!canReadWrite}
-      />
-    </Form.Item>
-    <Form.Item label={<span className={styles.cHItemLabel}>
-      RunBefore:&nbsp;
-  <Tooltip title={settingsTooltips.runBefore}>
+        className={styles.inputWithTooltip}
+      />&nbsp;&nbsp;
+      <Tooltip title={settingsTooltips.user}>
         <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
       </Tooltip>
+    </Form.Item>
+    <Form.Item label={<span className={styles.cHItemLabel}>
+      RunBefore:
       &nbsp;
 </span>} labelAlign="left"
       className={styles.formItem}>
-      <Switch checked={runBefore} checkedChildren="ON" unCheckedChildren="OFF" onChange={handleRunBefore} disabled={!canReadWrite}/>
+      <Switch checked={runBefore} checkedChildren="ON" unCheckedChildren="OFF" onChange={handleRunBefore} disabled={!canReadWrite} />&nbsp;&nbsp;
+      <Tooltip title={settingsTooltips.runBefore} placement={'right'}>
+        <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+      </Tooltip>
     </Form.Item></div>
 
   const tgtDbOptions = tgtDatabaseOptions.map(d => <Select.Option key={d}>{d}</Select.Option>);
@@ -376,11 +378,7 @@ const getSettingsArtifact = async () => {
       <div className={styles.newDataLoadForm}>
         <Form {...formItemLayout} onSubmit={handleSubmit} colon={false}>
             { usesSourceDatabase ? <Form.Item label={<span>
-            Source Database:&nbsp;&nbsp;
-                <Tooltip title={settingsTooltips.sourceDatabase}>
-              <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-            </Tooltip>
-                &nbsp;
+            Source Database:&nbsp;
             </span>} labelAlign="left"
                        className={styles.formItem}>
                 <Select
@@ -389,15 +387,16 @@ const getSettingsArtifact = async () => {
                     value={srcDatabase}
                     onChange={handleSrcDatabase}
                     disabled={!canReadWrite}
+                    className={styles.inputWithTooltip}
                 >
                     {tgtDbOptions}
-                </Select>
+                </Select>&nbsp;&nbsp;
+                <Tooltip title={settingsTooltips.sourceDatabase}>
+                  <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+                </Tooltip>
             </Form.Item> : null
           }<Form.Item label={<span>
-            Target Database:&nbsp;&nbsp;
-              <Tooltip title={settingsTooltips.targetDatabase}>
-              <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-            </Tooltip>
+            Target Database:
             &nbsp;
             </span>} labelAlign="left"
             className={styles.formItem}>
@@ -407,15 +406,16 @@ const getSettingsArtifact = async () => {
               value={tgtDatabase}
               onChange={handleTgtDatabase}
               disabled={!canReadWrite}
+              className={styles.inputWithTooltip}
               >
               {tgtDbOptions}
-            </Select>
-          </Form.Item>
-          <Form.Item label={<span>
-            Additional Collections:&nbsp;
-              <Tooltip title={settingsTooltips.additionalCollections}>
+            </Select>&nbsp;&nbsp;
+            <Tooltip title={settingsTooltips.targetDatabase}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
             </Tooltip>
+          </Form.Item>
+          <Form.Item label={<span>
+            Additional Collections:
             &nbsp;
             </span>} labelAlign="left" className={styles.formItem}>
             <Select
@@ -426,15 +426,16 @@ const getSettingsArtifact = async () => {
               value={additionalCollections}
               disabled={!canReadWrite}
               onChange={handleAddColl}
+              className={styles.inputWithTooltip}
             >
 
-            </Select>
+            </Select>&nbsp;&nbsp;
+            <Tooltip title={settingsTooltips.additionalCollections}>
+              <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+            </Tooltip>
           </Form.Item>
           <Form.Item label={<span>
             Target Permissions:&nbsp;
-              <Tooltip title={settingsTooltips.targetPermissions}>
-              <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-            </Tooltip>
             &nbsp;
             </span>} labelAlign="left"
             className={styles.formItem}>
@@ -444,14 +445,14 @@ const getSettingsArtifact = async () => {
               value={targetPermissions}
               onChange={handleChange}
               disabled={!canReadWrite}
-            />
-          </Form.Item>
-          <Form.Item label={<span>
-            Provenance Granularity:&nbsp;&nbsp;
-              <Tooltip title={settingsTooltips.provGranularity}>
+              className={styles.inputWithTooltip}
+            />&nbsp;&nbsp;
+            <Tooltip title={settingsTooltips.targetPermissions}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
             </Tooltip>
-            &nbsp;
+          </Form.Item>
+          <Form.Item label={<span>
+            Provenance Granularity: &nbsp;
             </span>} labelAlign="left"
             className={styles.formItem}>
             <Select
@@ -459,9 +460,13 @@ const getSettingsArtifact = async () => {
               value={provGranularity}
               onChange={handleProvGranularity}
               disabled={!canReadWrite}
+              className={styles.inputWithTooltip}
             >
               {provGranOpt}
-            </Select>
+            </Select>&nbsp;&nbsp;
+            <Tooltip title={settingsTooltips.provGranularity} placement={'right'}>
+              <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+            </Tooltip>
           </Form.Item>
           <Form.Item label={<span>
             <span className={styles.cHookLabel} onClick={toggleCustomHook}>Custom Hook</span>&nbsp;&nbsp;
