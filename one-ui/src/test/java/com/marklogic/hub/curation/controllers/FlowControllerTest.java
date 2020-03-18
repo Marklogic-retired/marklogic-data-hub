@@ -190,6 +190,7 @@ class FlowControllerTest extends TestHelper{
 
     @Test
     void runFlow() throws IOException {
+        loadHubArtifacts();
         ObjectMapper mapper = new ObjectMapper();
         String hubProjectDir = hubConfig.getProjectDir();
         FileUtils.copyDirectory(getResourceFile("input"), Paths.get(hubProjectDir,"input").toFile());
