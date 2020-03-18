@@ -32,6 +32,21 @@ describe('Update data load settings component', () => {
     expect(wrapper.find('#module').length).toEqual(0)
   });
 
+  test('Load Data Settings Dialog renders without source database ', () => {
+    const stepData = {};
+    wrapper = shallow(<ActivitySettingsDialog stepData={stepData} activityType={'loadData'}/>);
+    expect(wrapper.find('#sourceDatabase').length).toEqual(0)
+    expect(wrapper.find('#targetDatabase').length).toEqual(1)
+    expect(wrapper.find('#additionalColl').length).toEqual(1)
+    expect(wrapper.find('#targetPermissions').length).toEqual(1)
+    expect(wrapper.find('#provGranularity').length).toEqual(1)
+    expect(wrapper.find('#additionalColl').length).toEqual(1)
+    // Custom hook hasn't been expanded yet
+    expect(wrapper.find('#cHparameters').length).toEqual(0)
+    expect(wrapper.find('#user').length).toEqual(0)
+    expect(wrapper.find('#module').length).toEqual(0)
+  });
+
   test('Expect post to be called when saved ', () => {
     expect(getSpy).not.toBeCalled();
     expect(postSpy).not.toBeCalled();
