@@ -38,7 +38,7 @@ describe('login', () => {
     //TODO doesn't work 
   });
 
-  it('navigates to /view on seccessful login', () => {
+  it('navigates to /home on seccessful login', () => {
     cy.fixture('users').then(user => {
       cy.login(user.username, user.password)
       .wait(500)

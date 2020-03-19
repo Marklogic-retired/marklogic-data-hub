@@ -39,6 +39,7 @@
     "react-router-dom": "^5.1.2",
     "react-scripts": "^3.3.0",
     "react-xml-viewer": "^1.0.3",
+    "reactour": "^1.15.2",
     "sockjs-client": "^1.4.0",
     "stompjs": "^2.3.3",
     "typescript": "3.7.2"
@@ -51,8 +52,31 @@
     "client": "react-app-rewired start",
     "eject": "react-scripts eject"
   },
+  "jest": {
+    "snapshotSerializers": [
+      "enzyme-to-json/serializer"
+    ],
+    "coverageReporters": [
+      "text",
+      "cobertura"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.{ts,tsx}"
+    ],
+    "coverageDirectory": "./",
+    "reporters": [
+      "default",
+      "jest-junit"
+    ]
+  },
+  "jest-junit": {
+    "outputName": "TEST-UI_Unit.xml"
+  },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": "react-app",
+    "globals": {
+      "cy": true
+    }
   },
   "browserslist": {
     "production": [
