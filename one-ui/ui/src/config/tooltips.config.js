@@ -23,6 +23,8 @@ const NewFlowTooltips = {
 }
 
 const NewLoadTooltips = {
+    'name': 'The name of this data load configuration.',	
+    'description': 'The description of this data load configuration.',
     'files' : 'Click *Upload* to select the source files. The total size of the files must be 100MB or less.',
     'sourceFormat': 'The format of the source files to load.',
     'fieldSeparator': 'The delimiter in source files. Required if *Source Format* is *Delimited Text*.',
@@ -35,14 +37,22 @@ const AdvLoadTooltips = {  /* Suggestion: Rename to AdvLoadTooltips. */
     'mlcpCommand': 'To load files using MLCP, copy and paste this entire code to a command line. This code passes your step settings as parameter values to MLCP. Note: MLCP and Data Hub generate different URIs for the same delimited file.'
 }
 
-const NewMapTooltips = {}
+const NewMapTooltips = {
+    'name':'The name of this mapping configuration.',
+    'description':'The description of this mapping configuration.',
+    'sourceQuery':'The collection or CTS query that selects the source data to process in this configuration.',
+}
 
 const AdvMapTooltips = {
     'sourceDatabase': 'The database where the input data is read from. For mapping, the default is data-hub-STAGING.',
     'targetDatabase': 'The database where to store the processed data. For mapping, the default is data-hub-FINAL.'
 }
 
-const NewMatchTooltips = {}
+const NewMatchTooltips = {
+    'name': 'The name of this matching configuration.',	    'sourceDatabase': 'The database where the input data is read from. Must be the same as the Matching Step *Source Database*.',
+    'description': 'The description of this matching configuration.',	    'targetDatabase': 'The database where to store the processed data. Must be the same as the Matching Step *Source Database*.',
+    'sourceQuery' : 'The collection or CTS query that selects the source data to process in this configuration.',
+}
 
 const AdvMatchTooltips = {
     'sourceDatabase': 'The database where the input data is read from. For matching, the default is data-hub-FINAL.',
