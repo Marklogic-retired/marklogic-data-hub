@@ -313,7 +313,7 @@ const SourceToEntityMap = (props) => {
             dataIndex: 'value',
             key: 'value',
             width: '20%',
-            sorter: (a: any, b: any) => getDataForValueField(a.name).length - getDataForValueField(b.name).length,
+            sorter: (a: any, b: any) => getDataForValueField(a.name)?.length - getDataForValueField(b.name)?.length,
             render: (text, row) => (<div className={styles.mapValue}><Tooltip title={getDataForValueField(row.name)}>{getInitialChars(getDataForValueField(row.name),25,'...')}</Tooltip></div>)
         }
     ]
