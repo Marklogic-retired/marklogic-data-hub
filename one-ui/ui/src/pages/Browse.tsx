@@ -6,6 +6,7 @@ import { UserContext } from '../util/user-context';
 import { SearchContext } from '../util/search-context';
 import { useInterval } from '../hooks/use-interval';
 import { useScrollPosition } from '../hooks/use-scroll-position';
+import SelectedFacets from '../components/selected-facets/selected-facets';
 import AsyncLoader from '../components/async-loader/async-loader';
 import Sidebar from '../components/sidebar/sidebar';
 import SearchBar from '../components/search-bar/search-bar';
@@ -51,6 +52,7 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [snippetActive, setIsSnippetActive] = useState(!user.tableView);
   const [endScroll, setEndScroll] = useState(false);
   const [collapse, setCollapsed] = useState(false);
+  const [selectedFacets, setSelectedFacets] = useState<any[]>([]);
   let sessionCount = 0;
 
   const getEntityModel = async () => {
@@ -70,7 +72,6 @@ const Browse: React.FC<Props> = ({ location }) => {
   }
 
   const getSearchResults = async (allEntities: string[]) => {
-    console.log('search options', searchOptions);
     try {
       handleUserPreferences();
       setIsLoading(true);
@@ -184,7 +185,6 @@ const Browse: React.FC<Props> = ({ location }) => {
     }
   }, [endScroll], null );
 
-
   useInterval(() => {
     if (sessionCount === user.maxSessionTime) {
       userNotAuthenticated();
@@ -193,6 +193,10 @@ const Browse: React.FC<Props> = ({ location }) => {
     }
   }, 1000);
 
+  const updateSelectedFacets = (facets) => {
+    setSelectedFacets(facets);
+  }
+
   return (
     <Layout>
       <Sider className={styles.sideBarFacets} collapsedWidth={0} collapsible onCollapse={onCollapse} width={'20vw'}>
@@ -200,6 +204,7 @@ const Browse: React.FC<Props> = ({ location }) => {
           facets={facets}
           selectedEntities={searchOptions.entityNames}
           entityDefArray={entityDefArray}
+          facetRender={updateSelectedFacets}
         />
       </Sider>
       <Content className={styles.content}>
@@ -208,8 +213,8 @@ const Browse: React.FC<Props> = ({ location }) => {
           :
           <>
             <div className={styles.searchBar} ref={searchBarRef}
-                 style={{ width: collapse ? (window.innerWidth - 35) : '75vw',
-                     maxWidth: collapse ? (window.innerWidth - 35) : '75vw'}}>
+                 style={{ width: collapse ? (window.innerWidth - 35) : '76vw',
+                     maxWidth: collapse ? (window.innerWidth - 35) : '76vw'}}>
               <SearchBar entities={entities} />
               <SearchSummary
                 total={totalDocuments}
@@ -239,9 +244,14 @@ const Browse: React.FC<Props> = ({ location }) => {
                 </div>
                 </div>
               </div>
+              <div>
+                <SelectedFacets selectedFacets={selectedFacets} />
+              </div>
             </div>
+
+            <div className={styles.fixedView} >
             {user.tableView ?
-              <div style={{ marginTop: '150px' }}>
+              <div>
                 <ResultTable
                   data={data}
                   entityDefArray={entityDefArray}
@@ -249,6 +259,8 @@ const Browse: React.FC<Props> = ({ location }) => {
               </div>
               : <SearchResults data={data} entityDefArray={entityDefArray} />
             }
+            </div>
+            
             <br />
             <div>
               <SearchSummary

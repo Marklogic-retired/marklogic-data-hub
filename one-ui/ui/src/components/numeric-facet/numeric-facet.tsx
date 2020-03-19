@@ -30,7 +30,7 @@ const NumericFacet: React.FC<Props> = (props) => {
   const getFacetRange = async () => {
     const response = await axios({
       method: 'POST',
-      url: `/datahub/v2/search/facet-values/range`,
+      url: `/api/search/facet-values/range`,
       data: {
         "referenceType": props.referenceType,
         "entityTypeId": props.entityTypeId,
