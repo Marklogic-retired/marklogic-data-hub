@@ -3,7 +3,6 @@ import { Collapse, Icon, DatePicker, Tooltip } from 'antd';
 import { MlButton } from 'marklogic-ui-library';
 import moment from 'moment';
 import Facet from '../facet/facet';
-import SelectedFacets from '../selected-facets/selected-facets';
 import { SearchContext } from '../../util/search-context';
 import { facetParser } from '../../util/data-conversion';
 import hubPropertiesConfig from '../../config/hub-properties.config';
@@ -24,6 +23,7 @@ interface Props {
   facets: any;
   selectedEntities: string[];
   entityDefArray: any[];
+  facetRender: (facets: any) => void;
 };
 
 const Sidebar: React.FC<Props> = (props) => {
@@ -33,7 +33,6 @@ const Sidebar: React.FC<Props> = (props) => {
   } = useContext(SearchContext);
   const [entityFacets, setEntityFacets] = useState<any[]>([]);
   const [hubFacets, setHubFacets] = useState<any[]>([]);
-  const [selectedFacets, setSelectedFacets] = useState<any[]>([]);
   const [allSelectedFacets, setAllSelectedFacets] = useState<any>(searchOptions.searchFacets);
   const [datePickerValue, setDatePickerValue] = useState<any[]>([null, null]);
   const [showApply, toggleApply] = useState(false);
@@ -92,14 +91,14 @@ const Sidebar: React.FC<Props> = (props) => {
               selectedFacets.push({ constraint, rangeValues });
             }
           }
-          setSelectedFacets(selectedFacets);
+          props.facetRender(selectedFacets);
         }
         if (!selectedFacets.some(item => item.constraint === 'createdOnRange')) {
           setDatePickerValue([null, null]);
           toggleApply(false)
         }
       } else {
-        setSelectedFacets([]);
+        props.facetRender([]);
         setAllSelectedFacets({});
         setDatePickerValue([null, null]);
         toggleApply(false);
@@ -263,7 +262,6 @@ const Sidebar: React.FC<Props> = (props) => {
 
   return (
     <div className={styles.sideBarContainer} id={'sideBarContainer'}>
-      <SelectedFacets selectedFacets={selectedFacets} />
       <Collapse
         className={styles.sideBarFacets}
         defaultActiveKey={['entityProperties']}
