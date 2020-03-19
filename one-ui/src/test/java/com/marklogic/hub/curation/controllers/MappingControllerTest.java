@@ -17,8 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 
-import java.io.IOException;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MappingControllerTest extends TestHelper{
@@ -31,7 +29,7 @@ public class MappingControllerTest extends TestHelper{
 
     static final String MAPPING_CONFIG_1 = "{\n" +
         "  \"name\": \"TestCustomerMapping\",\n" +
-        "  \"targetEntity\": \"Customer\",\n" +
+        "  \"targetEntityType\": \"Customer\",\n" +
         "  \"description\": \"TestCustomerMapping does ...\",\n" +
         "  \"selectedSource\":\"query\",\n" +
         "  \"sourceQuery\": \"cts.CollectionQuery('RAW-CUSTOMER')\",\n" +
@@ -40,7 +38,7 @@ public class MappingControllerTest extends TestHelper{
 
     static final String MAPPING_CONFIG_2 = "{\n" +
         "  \"name\": \"TestOrderMapping1\",\n" +
-        "  \"targetEntity\": \"Order\",\n" +
+        "  \"targetEntityType\": \"Order\",\n" +
         "  \"description\": \"TestOrderMapping1 does ...\",\n" +
         "  \"selectedSource\": \"collection\",\n" +
         "  \"sourceQuery\": \"\",\n" +
@@ -49,7 +47,7 @@ public class MappingControllerTest extends TestHelper{
 
     static final String MAPPING_CONFIG_3 = "{\n" +
         "  \"name\" : \"TestOrderMapping2\",\n" +
-        "  \"targetEntity\" : \"Order\",\n" +
+        "  \"targetEntityType\" : \"Order\",\n" +
         "  \"description\" : \"TestOrderMapping2 does ...\",\n" +
         "  \"selectedSource\": \"query\",\n" +
         "  \"sourceQuery\": \"cts.CollectionQuery('RAW-ORDER')\",\n" +
