@@ -4,7 +4,7 @@ import { Form, Icon, Input, Button, Progress, Row, Col, Alert } from 'antd';
 import axios from 'axios';
 import { Message } from 'stompjs/lib/stomp.min';
 import { StompContext } from '../../util/stomp';
-import { AuthContext } from '../../util/auth-context';
+import { UserContext } from '../../util/user-context';
 import styles from './install-form.module.scss';
 import {setEnvironment} from '../../util/environment';
 
@@ -13,7 +13,7 @@ import { MlButton } from 'marklogic-ui-library';
 const InstallForm: React.FC = () => {
 
   const stompService = useContext(StompContext);
-  const { userNotAuthenticated, handleError } = useContext(AuthContext);
+  const { userNotAuthenticated, handleError } = useContext(UserContext);
   const [directory, setDirectory] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [installProgress, setInstallProgress] = useState({percentage: 0, message: ''});

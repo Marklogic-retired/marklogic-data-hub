@@ -1,18 +1,16 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { render } from '@testing-library/react'
 import InstallForm from './install-form';
+import {BrowserRouter} from "react-router-dom";
 
 
 describe('Install page', () => {
-  let wrapper: any;
-
-  beforeEach(() => {
-    wrapper = shallow(<InstallForm />)
-  });
 
   test('login fields renders ', () => {
-    expect(wrapper.exists('.anticon-check-circle')).toBe(true);
-    expect(wrapper.find('#directory').length).toEqual(1);
+      const { container } = render(<BrowserRouter><InstallForm /></BrowserRouter>);
+
+      expect(container.querySelector('.anticon-check-circle')).toBeInTheDocument();
+      expect(container.querySelector('#directory')).toBeInTheDocument();
   });
 
 });

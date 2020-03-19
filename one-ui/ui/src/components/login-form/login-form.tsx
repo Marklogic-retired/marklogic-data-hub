@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { Form, Icon, Input, Button, Checkbox, Alert } from 'antd';
 import axios from 'axios';
 import styles from './login-form.module.scss';
-import { AuthContext } from '../../util/auth-context';
+import { UserContext } from '../../util/user-context';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 
@@ -10,7 +10,7 @@ import { MlButton } from 'marklogic-ui-library';
 
 const LoginForm: React.FC = () => {
 
-  const { loginAuthenticated } = useContext(AuthContext);
+  const { loginAuthenticated } = useContext(UserContext);
   const [isHostSet, setHostSet] = useState(true);
   const [host, setHost] = useState('');
   const [username, setUsername] = useState('');

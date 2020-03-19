@@ -1634,9 +1634,16 @@ public class HubConfigImpl implements HubConfig
 
     @Override
     public DatabaseClient newFinalClient() {
+        return newFinalClient(finalDbName);
+    }
+
+    @Override
+    public DatabaseClient newFinalClient(String dbName) {
         AppConfig appConfig = getAppConfig();
         DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), finalPort, getMlUsername(), getMlPassword());
-        config.setDatabase(finalDbName);
+        if (dbName != null) {
+            config.setDatabase(dbName);
+        }
         config.setSecurityContextType(SecurityContextType.valueOf(finalAuthMethod.toUpperCase()));
         config.setSslHostnameVerifier(finalSslHostnameVerifier);
         config.setSslContext(finalSslContext);

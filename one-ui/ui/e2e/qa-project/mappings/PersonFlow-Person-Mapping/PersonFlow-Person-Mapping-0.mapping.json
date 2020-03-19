@@ -1,0 +1,10 @@
+{
+  "lang" : "zxx",
+  "name" : "PersonFlow-Person-Mapping",
+  "description" : "",
+  "version" : 0,
+  "targetEntityType" : "http://example.org/Person-0.0.1/Person",
+  "sourceContext" : "/",
+  "sourceURI" : "",
+  "properties" : { }
+}

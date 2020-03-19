@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.impl.FlowManagerImpl;
 import com.marklogic.hub.job.JobDocManager;
-import com.marklogic.hub.oneui.managers.SearchableManager;
+import com.marklogic.hub.oneui.managers.MapSearchableManager;
 import com.marklogic.hub.oneui.models.HubConfigSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,7 +40,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping(value="/api/jobs")
-public class JobsController extends SearchableManager {
+public class JobsController extends MapSearchableManager {
     @Autowired
     private HubConfigSession hubConfig;
 

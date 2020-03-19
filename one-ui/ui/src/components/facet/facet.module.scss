@@ -1,0 +1,97 @@
+.facetContainer {
+  margin-bottom: 16px;
+
+  .header {
+    display: flex;
+    padding: 0 0 3px 0;
+    justify-content: space-between;
+  }
+
+  .name {
+    font-size: 15px;
+    font-weight: bold;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 200px;
+    white-space: nowrap;
+  }
+
+  .summary {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 4px;
+    font-size: 12px;
+
+    .selected {
+      color: #666;
+      margin: 0 3px;
+      width: 60px;
+    }
+
+    .clearInactive, .clearActive {
+      color: #ccc;
+      margin: 0 5px;
+    }
+
+    .clearActive {
+      color: #666;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .toggle {
+      display: inline-block;
+      position: relative;
+      width: 20px;
+      padding: 0 5px 0 0;
+      text-align: right;
+      cursor: pointer;
+    }
+  }
+
+  .checkContainer {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .value {
+    width: 180px;
+    padding: 1px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .count {
+    padding: 0 5px 0 0;
+    color: #999;
+  }
+
+  .more {
+    position: relative;
+    top: 3px;
+    left: 30px;
+    font-size: 12px;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .infoIcon {
+    font-size: 12px;
+    margin-left: 6px;
+    color: #A9A9A9;
+    position: relative;
+    top: -1px;
+  }
+
+  .searchValues {
+    color: #44499C;
+    max-width: 50px;
+    cursor: pointer;
+  }
+}
+
+.applyButtonContainer {
+  display: flex;
+  justify-content: flex-end;
+}

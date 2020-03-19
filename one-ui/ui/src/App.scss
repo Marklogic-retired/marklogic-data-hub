@@ -1,0 +1,148 @@
+/*@import '../node_modules/antd/dist/antd.css';*/
+@import '../node_modules/marklogic-ui-library/dist/styles.min.css';
+
+body {
+	font-family: 'Helvetica Neue';
+}
+
+.ant-layout-header {
+    background-color: #031529;
+}
+
+/* Ensure footer is pinned to bottom of browser or end of content */
+#root {
+    height: 100%;
+    margin: 0;
+}
+main {
+    flex: 1;
+}
+#background {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+.ant-layout-footer {
+    display: flex;
+    justify-content: center;
+    padding: 30px 0;
+    margin: 0;
+    background-color: transparent;
+}
+
+/* Handle any excess scroll space below background image */
+.bgColorImage {
+    background-color: #ac4c58;
+}
+.bgColorWhite {
+    background-color: #fff;
+}
+
+/* Customize icons in header */
+ul#global-icons.ant-menu .ant-menu-item.ant-menu-item-selected {
+    background-color: transparent;
+}
+ul#global-icons.ant-menu .ant-menu-item,
+ul#global-icons.ant-menu .ant-dropdown-trigger {
+    padding: 0 15px;
+}
+ul#global-icons.ant-menu .ant-menu-item .anticon.anticon-search,
+ul#global-icons.ant-menu .ant-menu-item .anticon.anticon-question-circle,
+ul#global-icons.ant-menu .ant-menu-item .anticon.anticon-setting,
+ul#global-icons.ant-menu .ant-menu-item i.tour,
+ul#global-icons.ant-menu .ant-dropdown-trigger .anticon.anticon-user {
+    font-size: 24px;
+}
+
+/* Tool Bench Flows */
+div#flows-container div.ant-collapse-content-box {
+    padding: 4px 16px 16px;
+}
+div#flows-container div.ant-collapse-item div.ant-collapse-content {
+    border-top: white;
+}
+div#flows-container div.ant-card-bordered {
+    border: 1px dashed rgb(221, 221, 221);
+}
+div#flows-container div.ant-card-head {
+    border-bottom: white;
+}
+div#flows-container div.ant-card-body {
+    border-top: white;
+    padding: 4px 12px 12px;
+}
+
+/* Tool Bench Flow Errors */
+div#error-list div.ant-collapse {
+    position: relative;
+    left: -16px;
+}
+div#error-list div.ant-collapse div.ant-collapse-item {
+    border-bottom: white;
+}
+div#error-list div.ant-collapse div.ant-collapse-item div.ant-collapse-content div.ant-collapse-content-box {
+    padding: 0 16px;
+}
+
+.ant-upload.ant-upload-select{
+    display: block;
+}
+
+
+.ant-table-row-collapsed::after {
+  content: '>';
+}
+
+.ant-table-row-expanded::after {
+  content: '\22C1';
+}
+
+.react-resizable {
+  position: relative;
+  background-clip: padding-box;
+}
+
+.react-resizable-handle {
+  position: absolute;
+  width: 30px;
+  height: 100%;
+  bottom: 0;
+  right: -15px;
+  cursor: col-resize;
+  z-index: 1;
+}
+
+.ant-tooltip {
+  white-space: pre-wrap;
+}
+
+.ant-popover {
+  position: fixed;
+  z-index: 1;
+}
+
+.react-resizable > .ant-table-header-column {
+  cursor: move;
+}
+
+.ant-checkbox-group-item {
+  display: block;
+  margin-right: 0;
+  padding: 2px;
+}
+
+.ant-calendar-picker {
+  max-width: 265px;
+}
+
+.ant-layout-sider-zero-width-trigger {
+  color: rgba(0, 0, 0, 0.65);
+  background: #fff;
+  top: 95px;
+  right: -36px;
+}
+
+.ant-layout-sider-zero-width-trigger:hover {
+  background: #44499C;
+  color: #fff;
+}

@@ -1,13 +1,13 @@
 import React, { useContext, useEffect } from 'react';
 import { Result } from 'antd';
 import { withRouter } from 'react-router-dom';
-import { AuthContext } from '../util/auth-context';
+import { UserContext } from '../util/user-context';
 import { MlButton } from 'marklogic-ui-library';
 
 
 const NoMatchRedirect = ({history}) => {
 
-  const { user, clearErrorMessage } = useContext(AuthContext);
+  const { user, clearErrorMessage } = useContext(UserContext);
 
   useEffect(() => {
     clearErrorMessage();

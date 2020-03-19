@@ -30,7 +30,7 @@ public class HubConfigSessionTest extends TestHelper {
     public void databaseClientsTest() {
         assertEquals(hubConfig.getAllDatabaseClients().values().stream()
             .flatMap(s -> s.values().stream().filter(
-                Objects::nonNull)).count(), 4);
+                Objects::nonNull)).count(), 5);
         hubConfig.destroy();
         assertEquals(hubConfig.getAllDatabaseClients().size(), 0);
     }

@@ -1,10 +1,10 @@
 import React, { useContext, useEffect } from 'react';
 import { withRouter } from 'react-router-dom';
 import axios from 'axios';
-import { AuthContext } from '../../util/auth-context';
+import { UserContext } from '../../util/user-context';
 
 const ResetEnv:React.FC = () => {
-  const { userNotAuthenticated, handleError } = useContext(AuthContext);
+  const { userNotAuthenticated, handleError } = useContext(UserContext);
 
   useEffect(() => {
     axios.post(`/api/environment/reset`, {})

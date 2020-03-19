@@ -16,12 +16,11 @@
  */
 package com.marklogic.hub.oneui.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+
 import com.fasterxml.jackson.databind.JsonNode;
-import com.marklogic.hub.oneui.models.HubConfigSession;
-import com.marklogic.hub.oneui.models.SJSSearchQuery;
-import com.marklogic.hub.oneui.models.SearchQuery;
+import com.marklogic.hub.oneui.managers.FacetSearchManager;
 import com.marklogic.hub.oneui.managers.SearchManager;
+import com.marklogic.hub.oneui.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
@@ -31,51 +30,68 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
+
 
 @Controller
 @RequestMapping(value = "/api/search")
 public class SearchController {
 
     @Autowired
-    private SearchManager searchService;
+    private SearchManager searchManager;
+
+    @Autowired
+    private FacetSearchManager facetSearchManager;
 
     @Autowired
     private HubConfigSession hubConfig;
 
     @Bean
     @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS, value = "request")
-    SearchManager searchService() {
+    FacetSearchManager facetSearchService() {
+        return new FacetSearchManager(hubConfig);
+    }
+
+    @Bean
+    @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS, value = "request")
+    SearchManager searchManager() {
         return new SearchManager(hubConfig);
     }
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public String search(@RequestBody SearchQuery searchQuery) throws JsonProcessingException {
-        return searchService.search(searchQuery).get();
+    public String search(@RequestBody SearchQuery searchQuery) {
+        return searchManager.search(searchQuery).get();
     }
 
-    @RequestMapping(value = "/sjsSearch", method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public JsonNode sjsSearch(@RequestBody SJSSearchQuery sjsSearchQuery) {
-        return searchService.sjsSearch(sjsSearchQuery);
-    }
-
-    @RequestMapping(value = "/doc", method = RequestMethod.GET)
-    @ResponseBody
-    public ResponseEntity<String> getDoc(@RequestParam String database, @RequestParam String docUri) {
+    public ResponseEntity<Document> search(@RequestParam String docUri) {
+        Optional<Document> optionalContent = searchManager.getDocument(docUri);
         HttpHeaders headers = new HttpHeaders();
-        String body = searchService.getDoc(database, docUri);
-        if (body.startsWith("<")) {
-            headers.setContentType(MediaType.APPLICATION_XML);
-        }
-        else {
-            headers.setContentType(MediaType.APPLICATION_JSON);
-        }
-        return new ResponseEntity<>(body, headers, HttpStatus.OK);
+
+        return optionalContent.map(content -> {
+            if (content.getContent().startsWith("<")) {
+                headers.setContentType(MediaType.APPLICATION_XML);
+            }
+            else {
+                headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+            }
+            return new ResponseEntity<>(content, headers, HttpStatus.OK);
+        }).orElse(new ResponseEntity<>(HttpStatus.OK));
+    }
+
+    @RequestMapping(value = "/facet-values", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonNode getFacetValues(@RequestBody FacetSearchQuery fsQuery) {
+        return facetSearchManager.getFacetValues(fsQuery);
+    }
+
+    @RequestMapping(value = "/facet-values/range", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonNode getFacetValuesRange(@RequestBody FacetInfo facetInfo) {
+        return facetSearchManager.getFacetValuesRange(facetInfo);
     }
 }

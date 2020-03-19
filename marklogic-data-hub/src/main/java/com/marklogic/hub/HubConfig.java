@@ -614,11 +614,17 @@ public interface HubConfig {
     DatabaseClient newReverseFlowClient();
 
     /**
+     * Gets a new DatabaseClient that queries the Final database and appserver
+     * @return A client that accesses the hub's Final appserver and staging database.
+     */
+    DatabaseClient newFinalClient();
+
+    /**
      * Gets a new DatabaseClient that queries the Final database using the final appserver.
      * and final modules database.  (Future, will be same behavior as newReverseFlowClient when modules databases are merged.)
      * @return A DatabaseClient
      */
-    DatabaseClient newFinalClient();
+    DatabaseClient newFinalClient(String dbName);
 
     /**
      * Gets information on a datahub configuration

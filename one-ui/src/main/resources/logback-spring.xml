@@ -1,0 +1,45 @@
+
+<configuration>
+  <springProperty scope="context" name="LOG_PATH" source="log.path"/>
+
+  <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+    <!-- encoders are assigned the type
+         ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %highlight(%-5level) %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <appender name="RollingFile"
+            class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${LOG_PATH}/oneui.log</file>
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+      <Pattern>%d %p %C{1.} [%t] %m%n</Pattern>
+    </encoder>
+
+    <rollingPolicy
+      class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <!-- rollover daily and when the file reaches 10 MegaBytes -->
+      <fileNamePattern>${LOG_PATH}/archived/oneui-%d{yyyy-MM-dd}.%i.log
+      </fileNamePattern>
+      <timeBasedFileNamingAndTriggeringPolicy
+        class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+        <maxFileSize>10MB</maxFileSize>
+      </timeBasedFileNamingAndTriggeringPolicy>
+    </rollingPolicy>
+  </appender>
+
+  <!-- LOG everything at configured level or INFO by default -->
+  <root level="${root.level:-INFO}">
+    <appender-ref ref="RollingFile" />
+    <appender-ref ref="Console" />
+  </root>
+
+  <!-- We only want the application itself controlled by root.level -->
+  <logger name="com.marklogic.hub.oneui" level="${root.level:-INFO}"/>
+  <logger name="org.springframework" level="ERROR"/>
+  <logger name="org.apache.http" level="WARN"/>
+  <logger name="com.marklogic.client.impl" level="${jca.level:-WARN}"/>
+  <logger name="org.apache.catalina.webresources.Cache" level="ERROR"/>
+  <logger name="java.util.prefs" level="OFF"/>
+</configuration>

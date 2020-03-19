@@ -1,0 +1,80 @@
+.sideBarContainer {
+  overflow-y: auto;
+  //position: fixed;
+  //width: 300px;
+  max-height: 100vh;
+  background-color: #f0f2f5;
+}
+
+.sideBarFacets {
+  background-color: #f0f2f5;
+  width: 100%;
+  height: 100%;
+  padding: 0 0 0 5px;
+}
+
+.title {
+  font-size: 15px;
+  color: #999;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.facet {
+  font-weight: bold;
+}
+.test {
+  display: flex;
+}
+
+.facetContainer {
+  background-color: rgb(245, 245, 245);
+}
+.clear {
+  padding: 0 5px;
+}
+.clear:hover {
+  text-decoration: underline;
+}
+
+.clearContainer {
+  margin: 10px 0 0 17px;
+}
+
+.clearAllBtn {
+  margin-right: 2px;
+}
+
+.facetButton {
+  max-width: 150px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  margin: 0 2px 2px 0;
+}
+
+.facetName {
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.datePicker {
+  margin: 10px 0;
+}
+
+.dateFacet {
+  width: 225px;
+  margin: 2px 2px 2px 0;
+}
+
+.infoIcon{
+  font-size: 12px;
+  margin-left: 6px;
+  color: #A9A9A9;
+  position: relative;
+  top: -1px;
+}
+
+.applyButtonContainer {
+  display: flex;
+  justify-content: flex-end;
+}

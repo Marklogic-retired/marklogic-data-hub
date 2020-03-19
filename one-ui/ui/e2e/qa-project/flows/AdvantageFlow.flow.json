@@ -1,0 +1,78 @@
+{
+  "name" : "AdvantageFlow",
+  "description" : "",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stopOnError" : false,
+  "options" : { },
+  "version" : 0,
+  "steps" : {
+    "1" : {
+      "name" : "Customer-Ingest",
+      "description" : "",
+      "options" : {
+        "additionalCollections" : [ ],
+        "headers" : {
+          "sources" : [ {
+            "name" : "AdvantageFlow"
+          } ],
+          "createdOn" : "currentDateTime",
+          "createdBy" : "currentUser"
+        },
+        "sourceQuery" : "cts.collectionQuery([\"\"])",
+        "collections" : [ "Customer-Ingest" ],
+        "permissions" : "data-hub-operator,read,data-hub-operator,update",
+        "outputFormat" : "json",
+        "targetDatabase" : "data-hub-STAGING"
+      },
+      "customHook" : {
+        "module" : "",
+        "parameters" : { },
+        "user" : "",
+        "runBefore" : false
+      },
+      "retryLimit" : null,
+      "batchSize" : 100,
+      "threadCount" : 4,
+      "stepDefinitionName" : "default-ingestion",
+      "stepDefinitionType" : "INGESTION",
+      "fileLocations" : {
+        "inputFilePath" : "./input/advantage",
+        "inputFileType" : "json",
+        "outputURIReplacement" : "",
+        "separator" : ""
+      }
+    },
+    "2" : {
+      "name" : "Customer-Mapping",
+      "description" : "",
+      "options" : {
+        "additionalCollections" : [ ],
+        "sourceQuery" : "cts.collectionQuery([\"Customer-Ingest\"])",
+        "mapping" : {
+          "name" : "AdvantageFlow-Customer-Mapping",
+          "version" : 2
+        },
+        "targetEntity" : "Customer",
+        "sourceDatabase" : "data-hub-STAGING",
+        "collections" : [ "Customer-Mapping", "Customer" ],
+        "permissions" : "data-hub-operator,read,data-hub-operator,update",
+        "validateEntity" : false,
+        "sourceCollection" : "Customer-Ingest",
+        "outputFormat" : "json",
+        "targetDatabase" : "data-hub-FINAL"
+      },
+      "customHook" : {
+        "module" : "",
+        "parameters" : { },
+        "user" : "",
+        "runBefore" : false
+      },
+      "retryLimit" : 0,
+      "batchSize" : 100,
+      "threadCount" : 4,
+      "stepDefinitionName" : "default-mapping",
+      "stepDefinitionType" : "MAPPING"
+    }
+  }
+}

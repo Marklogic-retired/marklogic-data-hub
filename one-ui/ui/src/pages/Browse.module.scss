@@ -1,0 +1,55 @@
+.content {
+  background: #fff;
+  padding: 24px;
+  width: 100%;
+  margin-top: 45px;
+  padding-left: 36px;
+  max-height: 100vh;
+}
+
+.sideBarFacets {
+  background: #f3f3f3;
+  margin-top: 61px;
+}
+
+.searchBar {
+  position: fixed;
+  z-index: 1;
+  background-color: white;
+}
+
+.spinViews {
+  margin-right: 12px;
+}
+
+.switchViews {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 2.5em;
+}
+
+.toggleView {
+  float: right;
+  padding: 8px;
+  border: 1px solid #666;
+  cursor: pointer;
+}
+
+.toggled {
+  background-color: #44499C;
+  float: right;
+  padding: 8px;
+  border: 1px solid #666;
+  cursor: pointer;
+  color: white;
+}
+
+.overlay {
+  position: absolute;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  z-index: 999;
+}

@@ -1,0 +1,34 @@
+buildscript {
+  repositories {
+maven {url 'http://distro.marklogic.com/nexus/repository/maven-snapshots/'}
+    mavenLocal()
+    jcenter()
+}
+dependencies {
+classpath "com.marklogic:ml-data-hub:5.2-SNAPSHOT"
+classpath "com.marklogic:marklogic-data-hub:5.2-SNAPSHOT"
+  }
+}
+
+plugins {
+    // this plugin lets you create properties files
+    // for multiple environments... like dev, qa, prod
+    id 'net.saliman.properties' version '1.4.6'
+
+    // this is the data hub framework gradle plugin
+    // it includes ml-gradle. This plugin is what lets you
+    // run DHF (Data Hub Framework) tasks from the
+    // command line
+}
+
+apply plugin: "com.marklogic.ml-data-hub"
+
+task extractZip(type: Copy) {
+    from zipTree('input.zip')
+    def destDir = System.getProperty("user.dir")
+    destinationDir = file(destDir)
+    doLast {
+        println("Input directory is extracted to: " + destDir + "/input")
+    }
+}
+mlDeploy.dependsOn extractZip

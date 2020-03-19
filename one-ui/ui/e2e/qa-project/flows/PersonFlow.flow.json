@@ -1,0 +1,78 @@
+{
+  "name" : "PersonFlow",
+  "description" : "",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stopOnError" : false,
+  "options" : { },
+  "version" : 0,
+  "steps" : {
+    "1" : {
+      "name" : "Person-Ingest",
+      "description" : "",
+      "options" : {
+        "additionalCollections" : [ ],
+        "headers" : {
+          "sources" : [ {
+            "name" : "PersonFlow"
+          } ],
+          "createdOn" : "currentDateTime",
+          "createdBy" : "currentUser"
+        },
+        "sourceQuery" : "cts.collectionQuery([\"\"])",
+        "collections" : [ "Person-Ingest" ],
+        "permissions" : "data-hub-operator,read,data-hub-operator,update",
+        "outputFormat" : "json",
+        "targetDatabase" : "data-hub-STAGING"
+      },
+      "customHook" : {
+        "module" : "",
+        "parameters" : { },
+        "user" : "",
+        "runBefore" : false
+      },
+      "retryLimit" : null,
+      "batchSize" : 100,
+      "threadCount" : 4,
+      "stepDefinitionName" : "default-ingestion",
+      "stepDefinitionType" : "INGESTION",
+      "fileLocations" : {
+        "inputFilePath" : "./input/person-json",
+        "inputFileType" : "json",
+        "outputURIReplacement" : "",
+        "separator" : ""
+      }
+    },
+    "2" : {
+      "name" : "Person-Mapping",
+      "description" : "",
+      "options" : {
+        "additionalCollections" : [ ],
+        "sourceQuery" : "cts.collectionQuery([\"Person-Ingest\"])",
+        "mapping" : {
+          "name" : "PersonFlow-Person-Mapping",
+          "version" : 2
+        },
+        "targetEntity" : "Person",
+        "sourceDatabase" : "data-hub-STAGING",
+        "collections" : [ "Person-Mapping", "Person" ],
+        "permissions" : "data-hub-operator,read,data-hub-operator,update",
+        "validateEntity" : false,
+        "sourceCollection" : "Person-Ingest",
+        "outputFormat" : "json",
+        "targetDatabase" : "data-hub-FINAL"
+      },
+      "customHook" : {
+        "module" : "",
+        "parameters" : { },
+        "user" : "",
+        "runBefore" : false
+      },
+      "retryLimit" : 0,
+      "batchSize" : 100,
+      "threadCount" : 4,
+      "stepDefinitionName" : "default-mapping",
+      "stepDefinitionType" : "MAPPING"
+    }
+  }
+}

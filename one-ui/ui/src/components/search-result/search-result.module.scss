@@ -1,0 +1,60 @@
+.title {
+	padding-top: 5px;
+	font-size: 16px;
+	font-weight: bold;
+
+	.entityName {
+		color: #666;
+		font-weight: bold;
+		padding-right: 8px;
+	}
+
+	.primaryKey {
+	  color: #666;
+	  padding-right: 5px;
+	}
+
+}
+
+.snippet {
+	padding-top: 8px;
+}
+
+.metadata {
+	padding-top: 8px;
+	padding-bottom: 6px;
+
+	.metaItem {
+		display: inline-block;
+		width: 260px;
+	}
+
+	.metaLabel {
+		font-weight: bold;
+		color: #666;
+		padding-right: 8px;
+	}
+
+	.metaValue {
+		padding-right: 15px;
+  }
+  .format {
+    padding-right: 5px;
+    text-transform: uppercase;
+  }
+}
+
+.expandableIcon {
+	font-size: 15px;
+	margin-right: 5px;
+	cursor: pointer
+}
+
+.redirectIcons {
+	float: right;
+}
+
+.redirectIcons a {
+	padding: 8px;
+	color: #666;
+}

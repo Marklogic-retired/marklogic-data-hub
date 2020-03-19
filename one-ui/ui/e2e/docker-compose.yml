@@ -1,0 +1,12 @@
+version: '3.7'
+services:
+  cypress:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    image: "e2e"
+    environment:
+      - CYPRESS_baseUrl=https://${HOSTNAME}:8443
+    working_dir: /e2e
+    volumes:
+      - ./:/e2e
