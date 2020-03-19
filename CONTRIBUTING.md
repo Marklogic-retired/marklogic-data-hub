@@ -5,7 +5,7 @@ through the process.
 
  - [Issues and Bugs](#found-an-issue)
  - [Feature Requests](#want-a-feature)
- - [Building from Source](#building-marklogic-data-hub-from-source)
+ - [Developing Data Hub](#developing-data-hub)
  - [Submission Guidelines](#submission-guidelines)
 
 
@@ -17,34 +17,69 @@ If you find a bug in the source code or a mistake in the documentation, you can 
 You can request a new feature by submitting an issue to our [GitHub Issue Tracker][issue tracker].  If you
 would like to implement a new feature then first create a new issue and discuss it with one of our
 project maintainers.
-#####Note: As of version 2.0.3, pull requests will only be accepted for MarkLogic 9. Only critical bug fixes will be accepted for MarkLogic 8 on the legacy 2.0.2 or earlier branches.
 
 
-## Building MarkLogic Data Hub from Source
-Looking to build the code from source? Look no further.
+## Developing Data Hub 
 
+This section describes how to build and test new features and fixes in Data Hub. This includes changes to the following subprojects in this project:
 
-#### Prerequisites
+- the Data Hub library in ./marklogic-data-hub
+- the Data Hub Gradle plugin in ./ml-data-hub-plugin
+- the One-UI web application in ./one-ui
+- the QuickStart web application in ./web
+
+### Prerequisites
+
 You need:
 
 - MarkLogic Server (see [Version Compatibility](https://docs.marklogic.com/datahub/refs/version-compatibility.html) for the correct version)
-- Java JDK 8 or later
-- Gradle 4.6 or later
-- A decent IDE. (Recommended: IntelliJ)
+- Java JDK 9 or later
+- Gradle 5.x or later
 
+### Testing changes to the Data Hub library
 
-#### Building from the command line
-**WARNING:** _The Data Hub build includes a large number of tests which take a total of approximately 30 minutes. You can skip the tests; however, you must run the tests before submitting changes._
+The source code for the Data Hub library is in the ./marklogic-data-hub subproject. This project contains hundreds of 
+tests, written in JUnit and also written using [marklogic-unit-test](https://github.com/marklogic-community/marklogic-unit-test). 
+While developing, you'll create/modify/run tests to verify the changes that you're making. 
 
-The build script builds ALL the Data Hub deliverables (marklogic-data-hub.jar, marklogic-datahub-<version>.war, and ml-data-hub-plugin for Gradle). To build, run:
+To run the tests, you first need to deploy a test instance of Data Hub to MarkLogic. The configuration for this instance
+is in the ./marklogic-data-hub/gradle.properties; you can override these values in gradle-local.properties. Verify
+that the values for mlSecurityUsername and mlSecurityPassword are correct, as that user will be used to deploy the test
+instance of Data Hub. Also, ensure that you do not have a Data Hub instance already deployed to the MarkLogic that you 
+will connect to. Then, run the following Gradle task from the root project:
 
-```bash
-cd /path/to/data-hub-project/
-./gradlew build -x test
-```
+    ./gradlew -Pskipui= bootstrap
+    
+The "skipui=" property tells Gradle to skip building the QuickStart web application, which is not needed right now. 
 
+After two or three minutes, the bootstrap process will finish, and the test instance of Data Hub will be installed in MarkLogic. 
 
-#### Building and using the Data Hub Java library
+#### Running tests 
+
+At this point, you could run all the tests, but those can take an hour or more to finish. Instead, running the 
+marklogic-unit-test tests is a better way to do a quick sanity check on your deployment:
+
+    ./gradlew testUnit
+
+After running that, you can also access the marklogic-unit-test GUI test runner at http://localhost:8011/test/default.xqy . This 
+GUI allows you to run individual tests or sets of tests, which "testUnit" does not yet support. 
+
+If you are looking to change Data Hub code that runs in MarkLogic - i.e. the files under 
+./marklogic-data-hub/src/main/resources/ml-modules - consider running the following Gradle task that will 
+automatically load files into MarkLogic as you change them:
+
+    ./gradlew -i -PignoreDirty=true mlWatch
+
+The "ignoreDirty" parameters tells the mlWatch task to only load files that are modified once mlWatch starts running. 
+
+If you'd instead like to run the JUnit tests, you can use the Gradle "--tests" feature to run a subset of tests - e.g. 
+
+    ./gradlew test --tests FlowRunnerTest
+
+Or, if you've loaded this project into an IDE such as Intellij, you can simply use the IDE's capabilities for running 
+one or more tests at once. 
+
+#### Testing the Data Hub library in another project 
 
 If you wish to make changes to or try out the latest code in the Data Hub Java library (marklogic-data-hub-(version).jar), follow 
 these instructions:
@@ -52,7 +87,7 @@ these instructions:
 1. Publish the library to your local Maven repository (defaults to ~/.m2/repository).
 
   ```bash
-  cd /path/to/marklogic-data-hub/
+  cd marklogic-data-hub
   ./gradlew publishToMavenLocal
   ```
  
@@ -77,24 +112,24 @@ desired when publishing to your local Maven repository - e.g.
     ./gradlew publishToMavenLocal -Pversion=myVersion
 
 
-#### Building and using the Data Hub Gradle Plugin
+### Testing changes to the Data Hub Gradle plugin 
 
-If you are testing a change to the ml-data-hub Gradle plugin or a cutting-edge development version, you might want to use a local copy of the Gradle plugin in your Data Hub project. 
-To use a local copy of the Gradle plugin in your Data Hub project, you must tell Gradle to use your local copy instead of the one in the cloud.
+The source code for the Data Hub library is in the ./ml-data-hub-plugin subproject. While tests exist for these tasks 
+and it's possible to add your own, you may also want to publish a local copy of the Data Hub plugin and test it in 
+another project. To do so, follow the steps below. 
 
 1. Publish the plugin to your local Maven repository (defaults to ~/.m2/repository).
 
   ```bash
-  cd /path/to/marklogic-data-hub/
+  cd ml-data-hub-plugin
   ./gradlew publishToMavenLocal
   ```
 
-2. In your Data Hub project's `build.gradle` file, enter the local version:
+2. Then add the following to the build.gradle file of the project where you'd like to test your just-published Data Hub 
+Gradle plugin:
 
   ```groovy
-
   // this goes at the top above the plugins section
-
   buildscript {
     repositories {
       mavenLocal()
@@ -107,7 +142,6 @@ To use a local copy of the Gradle plugin in your Data Hub project, you must tell
 
   plugins {
      ...
-
      // comment out this line. It pulls the version from the cloud
      // id 'com.marklogic.ml-data-hub' version '4.0.0'
   }
@@ -116,32 +150,36 @@ To use a local copy of the Gradle plugin in your Data Hub project, you must tell
   apply plugin: "com.marklogic.ml-data-hub"
   ```
 
-3. To run the plugin's unit tests, navigate to the ml-data-hub-plugin directory, then do the following:
+Your Data Hub project will now be using the Data Hub plugin that you published. 
 
-  a. Run all unit tests
+#### Running tests on the Data Hub plugin
 
+To run the plugin's unit tests, first follow [the instructions above](#Testing-changes-to-the-Data-Hub-library) for 
+deploying a test instance of Data Hub to MarkLogic. 
+
+Then, similar to testing the Data Hub library, you can run all of the tests:
+
+    cd ml-data-hub-plugin
     ../gradlew test
 
+Or just run a specific test:
 
-  b. Run one unit test
+    ../gradlew test --tests CreateEntityTaskTest
 
-    ../gradlew -Dtest.single=CreateEntityTask test
+### Running and testing one-ui
 
+See the one-UI README.md file for more information.
 
-**Note**: This change goes in a Data Hub project's `build.gradle`. Not the Data Hub source code's build.gradle.
+### Running QuickStart from source
 
-
-#### Running QuickStart from Source
-
-1. Install the prerequisites.
-
-2. Open two terminal windows.
+The source code for the QuickStart web application is in the ./web subproject. To run and test this locally, begin by 
+opening two terminal windows - you'll run the webapp from one, and then the middle tier from the other.
 
   **Terminal window 1** - This runs the webapp.
 
       ```bash
-      cd /path/to/data-hub-project
-      ./gradlew bootrun
+      cd web
+      ../gradlew bootrun
       ```
 
   **NOTE:** The progress indicator stops around 90%. This is normal. In Gradle, 100% means it finished running. This stays running indefinitely and thus shows 90%.
@@ -153,84 +191,13 @@ To use a local copy of the Gradle plugin in your Data Hub project, you must tell
   **Terminal window 2** - This runs QuickStart.
 
       ```
-      cd /path/to/data-hub-project
-      ./gradlew runui
+      cd web
+      ../gradlew runui
       ```
 
 In a web browser, navigate to [http://localhost:4200](http://localhost:4200) to use the debug version of QuickStart.
 
-
-### Troubleshooting
-
-If the `gradle runui` command fails, try the following to troubleshoot.
-
-
-#### Do you have Gradle 3.4 or newer?
-
-Using gradle directly:
-  ```
-  gradle -v
-  ```
-or if you are using the wrapper:
-  ```
-  ./gradlew -v
-  ```
-
-If your gradle wrapper is older than `3.4`:
-  ```
-  gradle wrapper --gradle-version 3.4
-  ```
-
-
-#### Are you on the develop branch?
-
-_Hint: You should be._
-
-To check:
-  ```bash
-  git branch
-  ```
-
-To switch to the develop branch:
-  ```bash
-  git checkout develop
-  ```
-
-
-#### Do you have the latest code?
-
-  Better make sure...
-
-
-##### If you cloned from the github.com/marklogic/marklogic-data-hub repo:
-
-  ```bash
-  git pull origin develop
-  ```
-
-##### If you forked then cloned your fork:
-
-  1. Make sure you have the upstream files:
-
-      ```bash
-      $ git remote add upstream git://github.com/marklogic/marklogic-data-hub.git
-      ```
-
-  2. Fetch the upstream files:
-
-      ```bash
-      git fetch upstream develop
-      ```
-
-  3. Merge it:
-
-      ```bash
-      git rebase upstream/develop
-      ```
-
-#### Remove the `web/node_modules` directory.
-
-If you see several javascript errors, you might have a corrupted `node_modules` directory. Remove it then run again.
+If you see several javascript errors, you might have a corrupted `node_modules` directory. Remove it, then run again.
 
   ```bash
   rm -rf web/node_modules
@@ -332,39 +299,11 @@ Use `git rebase` (not `git merge`) to sync your work from time to time.
 
 #### Test your code
 
-- Run the JUnit tests.
+See the sections above on how to test changes to the Data Hub library and/or to the Data Hub Gradle plugin. 
 
-  ```sh
-  $ ./gradlew test
-  ```
-
-- To run a single test:
-
-  ```sh
-  $ ./gradlew -Dtest.single=TestName test
-  ```
-
-- For best results, do not include the final word test. For example, suppose you want to run FlowRunnerTest:
-
-  ```sh
-  $ ./gradlew -Dtest.single=FlowRunner test
-  ```
-
-- To run the QuickStart end-to-end tests, you need Node.js 8.9.1 or later and run:
-  ```jshelllanguage
-  gradlew bootrun
-  cd web
-  npm install
-  npm install -g protractor
-  npm run webdriver-update
-  npm run e2e
-  ```
-*Note: For end-to-end (e2e) tests, Data Hub must be running and so must a MarkLogic instance with available appservers for the ports 8010-8014.*
-
-You can run the e2e tests from Intellij or another IDE to perform fullstack debugging. To do so, add a run/debug
-task that runs the script "e2e". Make sure to add a 'before launch' task as folows: `npm run "webdriver-update"`.
-
-**IMPORTANT: All submitted patches must pass ALL tests.**
+Once your pull request is submitted (see below), MarkLogic's internal CI process will handle running all of the tests
+against your branch in a clean environment. Project maintainers will notify you of any failures so that you can 
+address them.
 
 
 #### Push your changes
@@ -376,7 +315,8 @@ task that runs the script "e2e". Make sure to add a 'before launch' task as folo
 
 #### Agree to the contributor License
 
-Before we can accept and merge your changes, you must sign a [Contributor License Agreement](http://developer.marklogic.com/products/cla). You only need to do this once.
+Before we can accept and merge your changes, you must sign a [Contributor License Agreement](http://developer.marklogic.com/products/cla). 
+You only need to do this once.
 
 
 #### Submit the pull request

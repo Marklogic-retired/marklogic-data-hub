@@ -10,19 +10,30 @@ Boot middle tier instead of a Node middle tier
 During development, you'll run two separate processes - the Spring Boot middle tier (which defaults to Tomcat), and 
 the UI. Node is still used for building and running the UI. 
 
-To get the latest UI changes, run the follow to build the UI:
+To run the UI, first go into the ./one-ui/ui directory:
 
-    ./gradlew build
+    cd one-ui/ui
 
-You can run the Spring Boot middle tier via the following Gradle task (run this from the same directory that this README
-file is in):
+The first time you run the UI, and any time after you've made changes or pulled down changes, you'll need to run 
+the following task to pull down all of the UI dependencies:
+
+    npm install
+
+Then, you can run the UI:
+
+    npm start
+
+The UI will then be available at http://localhost:3000 . 
+
+You can then run the Spring Boot middle tier by running the following Gradle task from the ./one-ui directory (i.e. 
+the same directory that this README.md file is in):
 
     ./gradlew bootRun
 
 Alternatively, you can also run the com.marklogic.hub.oneui.Application class in your IDE. 
 
-You'll see in the logging that Tomcat is listening on port 8080. This is configured via the server.port file in 
-src/main/resources/application.properties. You're free to change this to any port that you wish.
+You'll see in the logging that Tomcat is listening on port 8080. This is configured via the server.port property in 
+src/main/resources/application.properties . 
 
 ## Using this for production 
 
