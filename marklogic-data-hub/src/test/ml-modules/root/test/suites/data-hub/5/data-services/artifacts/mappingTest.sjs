@@ -23,10 +23,10 @@ function invokeValidateService(artifactType, artifactName, artifact) {
 }
 
 function updateMappingConfig(artifactName) {
-    const result = invokeSetService('mappings', artifactName, {'name': `${artifactName}`, 'targetEntity': 'TestEntity-hasMappingConfig', 'description': 'Mapping does ...', 'selectedSource': 'query', 'sourceQuery': '', 'collections': ['RAW-COL']});
+    const result = invokeSetService('mappings', artifactName, {'name': `${artifactName}`, 'targetEntityType': 'TestEntity-hasMappingConfig', 'description': 'Mapping does ...', 'selectedSource': 'query', 'sourceQuery': '', 'collections': ['RAW-COL']});
     return [
         test.assertEqual(artifactName, result.name),
-        test.assertEqual("TestEntity-hasMappingConfig", result.targetEntity)
+        test.assertEqual("TestEntity-hasMappingConfig", result.targetEntityType)
     ];
 }
 
@@ -50,7 +50,7 @@ function getArtifacts() {
             const artifacts = entity.artifacts;
             artifacts.forEach(mapping => {
                 if (mapping.name == 'TestMapping' || mapping.name === 'TestMapping2') {
-                    test.assertEqual("TestEntity-hasMappingConfig", mapping.targetEntity);
+                    test.assertEqual("TestEntity-hasMappingConfig", mapping.targetEntityType);
                     test.assertTrue(xdmp.castableAs('http://www.w3.org/2001/XMLSchema', 'dateTime', mapping.lastUpdated));
                 }
             })
@@ -66,10 +66,10 @@ function deleteArtifact(artifactName) {
 }
 
 function validArtifact() {
-    const result = invokeValidateService('mappings','validMapping', { name: 'validMapping', targetEntity: 'TestEntity-hasMappingConfig', selectedSource: 'collection'});
+    const result = invokeValidateService('mappings','validMapping', { name: 'validMapping', targetEntityType: 'TestEntity-hasMappingConfig', selectedSource: 'collection'});
     return [
         test.assertEqual("validMapping", result.name),
-        test.assertEqual("TestEntity-hasMappingConfig", result.targetEntity),
+        test.assertEqual("TestEntity-hasMappingConfig", result.targetEntityType),
         test.assertEqual("collection", result.selectedSource)
     ];
 }
