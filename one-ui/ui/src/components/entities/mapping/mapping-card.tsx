@@ -261,7 +261,6 @@ const MappingCard: React.FC<Props> = (props) => {
             let response = await axios.get(`/api/artifacts/mapping/functions`);
 
             if (response.status === 200) {
-                console.log('functions',response.data);
                 setMapFunctions({...response.data});
               console.log('GET Mapping functions API Called successfully!',response);
             }
