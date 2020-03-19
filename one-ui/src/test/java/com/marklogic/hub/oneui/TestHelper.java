@@ -3,10 +3,13 @@ package com.marklogic.hub.oneui;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.FileHandle;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.deploy.commands.LoadHubArtifactsCommand;
 import com.marklogic.hub.impl.ArtifactManagerImpl;
 import com.marklogic.hub.oneui.auth.LoginInfo;
@@ -183,5 +186,13 @@ public class TestHelper {
         user = new User(adminAPI, username);
         user.setRole(Stream.of(role).collect(Collectors.toList()));
         user.save();
+    }
+
+    protected GenericDocumentManager getFinalGenericDocumentManager(DatabaseKind databaseKind) {
+        return getFinalClient(databaseKind).newDocumentManager();
+    }
+
+    protected DatabaseClient getFinalClient(DatabaseKind databaseKind) {
+        return hubConfig.newFinalClient(hubConfig.getDbName(databaseKind));
     }
 }

@@ -12,7 +12,9 @@
     "data-hub-step-definition-reader",
     "data-hub-load-data-reader",
     "data-hub-match-merge-reader",
-    "tde-view"
+    "tde-view",
+    "data-hub-saved-query-reader",
+    "data-hub-saved-query-writer"
   ],
   "privilege": [
     {

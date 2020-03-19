@@ -368,6 +368,8 @@ public class HubProjectImpl implements HubProject {
         //New 5.3.0 roles
         writeRoleFile(rolesDir, "data-hub-load-data-reader.json");
         writeRoleFile(rolesDir, "data-hub-load-data-writer.json");
+        writeRoleFile(rolesDir, "data-hub-saved-query-reader.json");
+        writeRoleFile(rolesDir, "data-hub-saved-query-writer.json");
 
 
         // New 5.2.0 roles

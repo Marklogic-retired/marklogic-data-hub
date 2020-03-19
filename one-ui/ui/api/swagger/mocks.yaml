@@ -2546,6 +2546,87 @@ paths:
                     schema:
                         $ref: '#/definitions/error'
             x-swagger-router-controller: facetValue
+    /savedQueries:
+        post:
+            tags:
+                - Saved Queries
+            summary: Save user search query into database
+            description: ....
+            operationId: saveQuery
+            produces:
+                - application/json
+            parameters:
+                - in: body
+                  name: body
+                  required: true
+                  schema:
+                      $ref: '#/definitions/savedQueryRequest'
+            responses:
+                '200':
+                    description: Successful Operation
+                    schema:
+                        $ref: '#/definitions/savedQuery'
+                '400':
+                    description: Bad Request
+                    schema:
+                        $ref: '#/definitions/error'
+                '401':
+                    description: Unauthorized
+                    schema:
+                        $ref: '#/definitions/error'
+                '403':
+                    description: Forbidden
+                    schema:
+                        $ref: '#/definitions/error'
+                '404':
+                    description: Not Found
+                    schema:
+                        $ref: '#/definitions/error'
+                '500':
+                    description: Internal Server Error
+                    schema:
+                        $ref: '#/definitions/error'
+            x-swagger-router-controller: savedQuery
+        put:
+            tags:
+                - Saved Queries
+            summary: Update saved user search query into database
+            description: ....
+            operationId: updateQuery
+            produces:
+                - application/json
+            parameters:
+                - in: body
+                  name: body
+                  required: true
+                  schema:
+                      $ref: '#/definitions/updateQueryRequest'
+            responses:
+                '200':
+                    description: Successful Operation
+                    schema:
+                        $ref: '#/definitions/savedQuery'
+                '400':
+                    description: Bad Request
+                    schema:
+                        $ref: '#/definitions/error'
+                '401':
+                    description: Unauthorized
+                    schema:
+                        $ref: '#/definitions/error'
+                '403':
+                    description: Forbidden
+                    schema:
+                        $ref: '#/definitions/error'
+                '404':
+                    description: Not Found
+                    schema:
+                        $ref: '#/definitions/error'
+                '500':
+                    description: Internal Server Error
+                    schema:
+                        $ref: '#/definitions/error'
+            x-swagger-router-controller: savedQuery
     /environment/reset:
         post:
             tags:
@@ -3398,6 +3479,168 @@ definitions:
             flowId: flow-id
             endTime: '2000-01-23T04:56:07.000+00:00'
             status: canceled
+    savedQueryRequest:
+        type: object
+        description: Save user search query request
+        properties:
+            id:
+                type: string
+                description: Identifier for a saved query
+            name:
+                type: string
+                description: Name of the saved query
+            description:
+                type: string
+                description: Description about the saved query
+            query:
+                type: object
+                description: Data related to the last job run for this Flow
+                properties: {}
+            propertiesToDisplay:
+                type: array
+                description: Array of properties to display in tabular view or during export
+                items:
+                    type: string
+        example:
+            savedQuery:
+                id: ''
+                name: some-query
+                description: some-query-description
+                query:
+                    searchText: some-string
+                    entityTypeIds:
+                        - Entity1
+                    selectedFacets:
+                        Collection:
+                            dataType: string
+                            stringValues:
+                                - Entity1
+                                - Collection1
+                        facet1:
+                            dataType: decimal
+                            rangeValues:
+                                lowerBound: '2.5'
+                                upperBound: '15'
+                        facet2:
+                            dataType: dateTime
+                            rangeValues:
+                                lowerBound: '2020-01-01T13:06:17'
+                                upperBound: '2020-01-22T13:06:17'
+                propertiesToDisplay:
+                    - facet1
+                    - EntityTypeProperty1
+    updateQueryRequest:
+        type: object
+        description: Update user search query request
+        properties:
+            id:
+                type: string
+                description: Identifier for a saved query
+            name:
+                type: string
+                description: Name of the saved query
+            description:
+                type: string
+                description: Description about the saved query
+            query:
+                type: object
+                description: Data related to the last job run for this Flow
+                properties: {}
+            propertiesToDisplay:
+                type: array
+                description: Array of properties to display in tabular view or during export
+                items:
+                    type: string
+        example:
+            savedQuery:
+                id: a986e6f1-e20d-4cce-bd75-5a5806cb9712
+                name: some-query
+                description: some-query-description
+                query:
+                    searchText: some-string
+                    entityTypeIds:
+                        - Entity1
+                    selectedFacets:
+                        Collection:
+                            dataType: string
+                            stringValues:
+                                - Entity1
+                                - Collection1
+                        facet1:
+                            dataType: decimal
+                            rangeValues:
+                                lowerBound: '2.5'
+                                upperBound: '15'
+                        facet2:
+                            dataType: dateTime
+                            rangeValues:
+                                lowerBound: '2020-01-01T13:06:17'
+                                upperBound: '2020-01-22T13:06:17'
+                propertiesToDisplay:
+                    - facet1
+                    - EntityTypeProperty1
+    savedQuery:
+        type: object
+        description: Saved user search query
+        properties:
+            id:
+                type: string
+                description: Identifier for a saved query
+            name:
+                type: string
+                description: Name of the saved query
+            description:
+                type: string
+                description: Description about the saved query
+            query:
+                type: object
+                description: Data related to the last job run for this Flow
+                properties: {}
+            propertiesToDisplay:
+                type: array
+                description: Array of properties to display in tabular view or during export
+                items:
+                    type: string
+            owner:
+                type: string
+                description: defines the user who owns the query
+            systemMetadata:
+                type: object
+                description: contains user created or updated and the time stamps when updated
+                properties: {}
+        example:
+            id: a986e6f1-e20d-4cce-bd75-5a5806cb9712
+            name: some-query
+            description: some-query-description
+            query:
+                searchText: some-string
+                entityTypeIds:
+                    - Entity1
+                selectedFacets:
+                    Collection:
+                        dataType: string
+                        stringValues:
+                            - Entity1
+                            - Collection1
+                    facet1:
+                        dataType: decimal
+                        rangeValues:
+                            lowerBound: '2.5'
+                            upperBound: '15'
+                    facet2:
+                        dataType: dateTime
+                        rangeValues:
+                            lowerBound: '2020-01-01T13:06:17'
+                            upperBound: '2020-01-22T13:06:17'
+            propertiesToDisplay:
+                - facet1
+                - EntityTypeProperty1
+            owner: data-hub-user
+            systemMetadata:
+                createdBy: data-hub-user
+                createdDateTime: '2020-03-17T13:09:55.458979-07:00'
+                lastUpdatedBy: data-hub-user
+                lastUpdatedDateTime: '2020-03-17T13:09:55.458979-07:00'
     error:
         type: object
         properties:
