@@ -130,3 +130,10 @@ task testFullCycle(type: Test) {
         include 'com/marklogic/hub/curation/controllers/fullcycle/**'
     }
 }
+
+task testUI(type: NpmTask, dependsOn: installDependencies, group: taskGroup){
+    description = "Runs the UI unit tests"
+    args = ["run", "test"]
+    execOverrides { it.workingDir = reactUiPath }
+}
+test.finalizedBy('testUI') 
