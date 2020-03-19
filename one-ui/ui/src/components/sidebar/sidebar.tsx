@@ -3,7 +3,6 @@ import { Collapse, Icon, DatePicker, Tooltip } from 'antd';
 import { MlButton } from 'marklogic-ui-library';
 import moment from 'moment';
 import Facet from '../facet/facet';
-// import SelectedFacets from '../selected-facets/selected-facets';
 import { SearchContext } from '../../util/search-context';
 import { facetParser } from '../../util/data-conversion';
 import hubPropertiesConfig from '../../config/hub-properties.config';
@@ -267,7 +266,6 @@ const Sidebar: React.FC<Props> = (props) => {
 
   return (
     <div className={styles.sideBarContainer} id={'sideBarContainer'}>
-      {/* <SelectedFacets selectedFacets={selectedFacets} /> */}
       <Collapse
         className={styles.sideBarFacets}
         defaultActiveKey={['entityProperties']}
