@@ -19,6 +19,7 @@ const LoadData = require('./loadData');
 const Flows = require('./flows');
 const StepDefs = require('./stepDefinitions');
 const Mappings = require('./mappings');
+const Matching = require('./matching');
 
 const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
 const dataHub = DataHubSingleton.instance();
@@ -28,7 +29,8 @@ const registeredArtifactTypes = {
     loadData: LoadData,
     flows: Flows,
     stepDefinitions: StepDefs,
-    mappings: Mappings
+    mappings: Mappings,
+    matching: Matching
 };
 
 function getTypesInfo() {
@@ -39,7 +41,15 @@ function getTypesInfo() {
             const updateRoles = artifactLibrary.getPermissions().filter((perm) => perm.capability === 'update').map((perm) => String(perm.roleId));
             const readRoles = artifactLibrary.getPermissions().filter((perm) => perm.capability === 'read').map((perm) => String(perm.roleId));
             const currentRoles = xdmp.getCurrentRoles().toArray().map(String);
-            const userCanUpdate = updateRoles.some((roleId) => currentRoles.includes(roleId));
+            const manageAdminRolesMustAllMatched = ['manage-admin', 'security'].map((roleName) => String(xdmp.role(roleName)));
+            const hasManageAdminAndSecurity = manageAdminRolesMustAllMatched.every((role) => currentRoles.indexOf(role) !== -1);
+            let currentRoleNames = currentRoles.map(roleId => xdmp.roleName(roleId));
+            let userCanUpdate = false;
+            if (currentRoleNames.includes('admin') || hasManageAdminAndSecurity) {
+                userCanUpdate = true;
+            } else {
+                userCanUpdate = updateRoles.some((roleId) => currentRoles.includes(roleId));
+            }
             const userCanRead = readRoles.some((roleId) => currentRoles.includes(roleId));
             typesInfo.push({
                 type: artifactType,
@@ -55,6 +65,8 @@ function getTypesInfo() {
     return typesInfo;
 }
 
+const entityServiceDrivenArtifactTypes = ['mappings', 'matching', 'merging', 'mastering'];
+
 function getArtifacts(artifactType) {
     const queries = [];
     const artifactLibrary =  getArtifactTypeLibrary(artifactType);
@@ -62,10 +74,10 @@ function getArtifacts(artifactType) {
         queries.push(cts.collectionQuery(coll));
     }
     if (queries.length) {
-        if (artifactType == "loadData") {
-            return cts.search(cts.andQuery(queries)).toArray();
+        if (entityServiceDrivenArtifactTypes.includes(artifactType)) {
+          return getArtifactsGroupByEntity(queries)
         } else {
-            return getArtifactsGroupByEntity(queries)
+          return cts.search(cts.andQuery(queries)).toArray();
         }
     }
     return [];
@@ -105,11 +117,10 @@ function deleteArtifact(artifactType, artifactName, artifactVersion = 'latest') 
         dataHub.hubUtils.deleteDocument(xdmp.nodeUri(node), db);
     }
     delete cachedArtifacts[artifactKey];
-    if (artifactType != 'loadData') {
-        return { success: true };
+    if (artifactLibrary.getArtifactSettingNode) {
+        return deleteArtifactSettings(artifactType, artifactName, artifactVersion);
     }
-    //delete related config file if existed
-    return deleteArtifactSettings(artifactType, artifactName, artifactVersion);
+    return { success: true };
 }
 
 function getArtifact(artifactType, artifactName, artifactVersion = 'latest') {

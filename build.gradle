@@ -28,7 +28,7 @@ subprojects {
 		testCompile 'org.apache.httpcomponents:httpclient:4.3.5'
     }
 
-    test{
+    tasks.withType(Test){
         testLogging{
             events 'started','passed', 'skipped', 'failed'
             exceptionFormat 'full'

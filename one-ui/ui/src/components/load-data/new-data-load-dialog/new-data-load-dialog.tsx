@@ -15,9 +15,9 @@ const NewDataLoadDialog = (props) => {
   const [outUriReplacement, setOutUriReplacement] = useState(props.stepData && props.stepData != {} ? props.stepData.outputURIReplacement : '');
   const [fieldSeparator, setFieldSeparator] = useState(props.stepData && props.stepData != {} ? props.stepData.fieldSeparator : ',');
   const [otherSeparator, setOtherSeparator] = useState('');
-  
 
-  
+
+
   const [isStepNameTouched, setStepNameTouched] = useState(false);
   const [isSrcFormatTouched, setSrcFormatTouched] = useState(false);
   const [isTgtFormatTouched, setTgtFormatTouched] = useState(false);
@@ -103,26 +103,26 @@ const NewDataLoadDialog = (props) => {
 
   const checkDeleteOpenEligibility = () => {
     if (props.stepData && JSON.stringify(props.stepData) != JSON.stringify({}) && props.title === 'Edit Data Load'){
-      
+
       if(stepName === props.stepData.name
       && description === props.stepData.description
       && srcFormat === props.stepData.sourceFormat
       && tgtFormat === props.stepData.targetFormat
       && outUriReplacement === props.stepData.outputURIReplacement
       ) {
-        
-        if((props.stepData.separator && fieldSeparator === 'Other' && otherSeparator === props.stepData.separator) || 
+
+        if((props.stepData.separator && fieldSeparator === 'Other' && otherSeparator === props.stepData.separator) ||
            (props.stepData.separator && fieldSeparator !== 'Other' && fieldSeparator === props.stepData.separator) ||
            (!props.stepData.separator && fieldSeparator === ',' && otherSeparator === '')
            ) {
              if((props.stepData.inputFilePath && inputFilePath !== props.stepData.inputFilePath) ||
                 (inputFilePath === '')){
-                  
+
               return false;
              } else {
               return true;
              }
-            
+
         } else {
           return true;
          }
@@ -200,13 +200,17 @@ const NewDataLoadDialog = (props) => {
           name: stepName,
           description: description,
           sourceFormat: srcFormat,
-          separator: fieldSeparator === 'Other'? otherSeparator : fieldSeparator,
+          separator: null,
           targetFormat: tgtFormat,
           outputURIReplacement: outUriReplacement,
           inputFilePath: props.stepData.inputFilePath
+        };
+        // cannot set separator unless using the CSV source format
+        if (srcFormat === 'csv') {
+            dataPayload.separator = fieldSeparator === 'Other'? otherSeparator : fieldSeparator;
         }
       } else {
-        if(srcFormat === 'Delimited Text'){
+        if(srcFormat === 'csv'){
           dataPayload = {
            name: stepName,
            description: description,
@@ -225,9 +229,9 @@ const NewDataLoadDialog = (props) => {
          }
        }
       }
-      
+
     } else {
-      if(srcFormat === 'Delimited Text'){
+      if(srcFormat === 'csv'){
         dataPayload = {
          name: stepName,
          description: description,
@@ -249,11 +253,11 @@ const NewDataLoadDialog = (props) => {
      }
 
     }
-    
+
     setIsValid(true);
 
     //Call create data load artifact API function
- 
+
     props.createLoadDataArtifact(dataPayload);
 
     props.setNewLoad(false);
@@ -314,7 +318,7 @@ const NewDataLoadDialog = (props) => {
       setSrcFormatTouched(true);
       setSrcFormat(value);
 
-      if(value === 'Delimited Text'){
+      if(value === 'csv'){
         setFieldSeparator(',');
       }
       let dataPayload = {
@@ -377,10 +381,10 @@ const NewDataLoadDialog = (props) => {
   const deleteFilesFromDirectory = async (loadDataName) => {
     try {
       let response = await Axios.delete(`/api/artifacts/loadData/${loadDataName}/setData`);
-      
+
       if (response.status === 200) {
         console.log('DELETE API Called successfully!');
-      } 
+      }
     } catch (error) {
         let message = error.response.data.message;
         console.log('Error while deleting load data artifact.', message);
@@ -392,10 +396,10 @@ const NewDataLoadDialog = (props) => {
 
     try {
       let response = await Axios.delete(`/api/artifacts/loadData/${loadDataName}`);
-      
+
       if (response.status === 200) {
         console.log('DELETE API Called successfully!');
-      } 
+      }
     } catch (error) {
         let message = error.response.data.message;
         console.log('Error while deleting load data artifact.', message);
@@ -421,7 +425,7 @@ const NewDataLoadDialog = (props) => {
 
     if (response.status === 200) {
       console.log('GET API Called in custom request!');
-    } 
+    }
   } catch (error) {
       let errorCode = error.response.data.code;
       let message = error.response.data.message;
@@ -541,7 +545,7 @@ const NewDataLoadDialog = (props) => {
 
     uri = "/" + loadDataName;
 
-    if(input_file_type !== "Delimited Text") {
+    if(input_file_type !== "csv") {
       uri = uri + "/example" + formatMap.get(document_type);
     }
 
@@ -619,7 +623,7 @@ const NewDataLoadDialog = (props) => {
       <Form {...formItemLayout} onSubmit={handleSubmit} colon={false}>
         <Form.Item label={<span>
           Name:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
-              
+
           &nbsp;
             </span>} labelAlign="left"
           validateStatus={(stepName || !isStepNameTouched) ? '' : 'error'}
@@ -688,7 +692,7 @@ const NewDataLoadDialog = (props) => {
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </Tooltip>
         </Form.Item>
-         {srcFormat === 'Delimited Text' ? <Form.Item label={<span>
+         {srcFormat === 'csv' ? <Form.Item label={<span>
           Field Separator:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
             </span>} labelAlign="left">
           <span><Select
@@ -703,7 +707,7 @@ const NewDataLoadDialog = (props) => {
           >
             {fsoptions}
           </Select></span>
-          &nbsp;&nbsp; 
+          &nbsp;&nbsp;
           <span>{fieldSeparator === 'Other' ? <span><Input
             id="otherSeparator"
             value={otherSeparator}
@@ -749,7 +753,7 @@ const NewDataLoadDialog = (props) => {
         </Form.Item>
         <Form.Item label={<span>
           Target URI Preview:&nbsp;
-              
+
           <span className={styles.readOnlyLabel}>(Read-only)</span>
           <br className={styles.lineBreak} />
         </span>} labelAlign="left">

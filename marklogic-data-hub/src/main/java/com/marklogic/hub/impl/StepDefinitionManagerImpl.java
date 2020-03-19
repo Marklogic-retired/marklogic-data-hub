@@ -44,6 +44,13 @@ public class StepDefinitionManagerImpl extends LoggingObject implements StepDefi
     @Autowired
     private HubConfig hubConfig;
 
+    public StepDefinitionManagerImpl() {}
+
+    public StepDefinitionManagerImpl(HubConfig hubConfig) {
+        this();
+        this.hubConfig = hubConfig;
+    }
+
     @Override
     public void saveStepDefinition(StepDefinition stepDefinition) {
         saveStepDefinition(stepDefinition, false);

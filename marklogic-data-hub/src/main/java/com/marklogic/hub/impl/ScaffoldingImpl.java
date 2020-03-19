@@ -43,7 +43,7 @@ import java.util.Map;
 
 @Component
 public class ScaffoldingImpl implements Scaffolding {
-    
+
     @Autowired
     HubConfig hubConfig;
 
@@ -53,6 +53,14 @@ public class ScaffoldingImpl implements Scaffolding {
     private ScaffoldingValidator validator;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    public ScaffoldingImpl() {}
+
+    public ScaffoldingImpl(HubConfig hubConfig) {
+        this();
+        this.hubConfig = hubConfig;
+        this.validator = new ScaffoldingValidator(hubConfig.getHubProject());
+    }
 
     public static String getAbsolutePath(String first, String... more) {
         StringBuilder absolutePath = new StringBuilder(first);

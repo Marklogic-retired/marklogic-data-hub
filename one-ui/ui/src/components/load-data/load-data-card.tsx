@@ -1,4 +1,4 @@
-import React, { CSSProperties, useState } from 'react';
+import React, {CSSProperties, useContext, useState} from 'react';
 import styles from './load-data-card.module.scss';
 import {Card, Icon, Tooltip, Popover, Row, Col, Modal, Select} from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -7,7 +7,11 @@ import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
 import sourceFormatOptions from '../../config/formats.config';
 import NewDataLoadDialog from './new-data-load-dialog/new-data-load-dialog';
 import { convertDateFromISO } from '../../util/conversionFunctions';
-import LoadDataSettingsDialog from './load-data-settings/load-data-settings-dialog';
+import ActivitySettingsDialog from "../activity-settings/activity-settings-dialog";
+import { AdvLoadTooltips } from '../../config/tooltips.config';
+
+import { RolesContext } from "../../util/roles";
+
 const { Option } = Select;
 
 interface Props {
@@ -23,6 +27,8 @@ interface Props {
 }
 
 const LoadDataCard: React.FC<Props> = (props) => {
+    const activityType = 'loadData';
+    const roleService = useContext(RolesContext);
     const [newDataLoad, setNewDataLoad] = useState(false);
     const [title, setTitle] = useState('');
     const [stepData, setStepData] = useState({});
@@ -89,7 +95,7 @@ const LoadDataCard: React.FC<Props> = (props) => {
     function handleMouseOver(e, name) {
         console.log('handleMouseOver', e.target.className);
         // Handle all possible events from mouseover of card body
-        if (typeof e.target.className === 'string' && 
+        if (typeof e.target.className === 'string' &&
             (e.target.className === 'ant-card-body' ||
              e.target.className.startsWith('load-data-card_formatFileContainer') ||
              e.target.className.startsWith('load-data-card_formatFileContainer') ||
@@ -118,7 +124,7 @@ const LoadDataCard: React.FC<Props> = (props) => {
     const onCancel = () => {
         setDialogVisible(false);
         setAddDialogVisible(false);
-    }  
+    }
 
     const deleteConfirmation = (
         <Modal
@@ -134,8 +140,8 @@ const LoadDataCard: React.FC<Props> = (props) => {
                 Are you sure you want to delete "{loadArtifactName}"?
             </div>
         </Modal>
-    );   
-        
+    );
+
     const addConfirmation = (
         <Modal
             visible={addDialogVisible}
@@ -150,7 +156,7 @@ const LoadDataCard: React.FC<Props> = (props) => {
                 Are you sure you want to add "{loadArtifactName}" to flow "{flowName}"?
             </div>
         </Modal>
-    );   
+    );
 
     return (
         <div id="load-data-card-view" className={styles.loaddataContainer}>
@@ -196,8 +202,8 @@ const LoadDataCard: React.FC<Props> = (props) => {
                                 <div className={styles.cardNonLink}>
                                     Add step to an existing flow
                                     <div className={styles.cardLinkSelect}>
-                                        <Select 
-                                            style={{ width: '100%' }} 
+                                        <Select
+                                            style={{ width: '100%' }}
                                             onChange={(flowName) => handleSelect({flowName: flowName, loadName: elem.name})}
                                             placeholder="Select Flow"
                                             defaultActiveFirstOption={false}
@@ -213,21 +219,24 @@ const LoadDataCard: React.FC<Props> = (props) => {
                     </div>
                 </Col>)) : <span></span> }
             </Row>
-            <NewDataLoadDialog 
-                newLoad={newDataLoad} 
-                title={title} 
-                setNewLoad={setNewDataLoad} 
-                createLoadDataArtifact={props.createLoadDataArtifact} 
+            <NewDataLoadDialog
+                newLoad={newDataLoad}
+                title={title}
+                setNewLoad={setNewDataLoad}
+                createLoadDataArtifact={props.createLoadDataArtifact}
                 stepData={stepData}
                 canReadWrite={props.canReadWrite}
                 canReadOnly={props.canReadOnly}
             />
             {deleteConfirmation}
             {addConfirmation}
-            <LoadDataSettingsDialog 
-                openLoadDataSettings={openLoadDataSettings} 
-                setOpenLoadDataSettings={setOpenLoadDataSettings} 
+            <ActivitySettingsDialog
+                tooltipData={AdvLoadTooltips}
+                openActivitySettings={openLoadDataSettings}
+                setOpenActivitySettings={setOpenLoadDataSettings}
                 stepData={stepData}
+                activityType={activityType}
+                canWrite={roleService.canWriteLoadData()}
             />
         </div>
     );

@@ -122,6 +122,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
     localStorage.setItem('dhIsInstalled', '');
     localStorage.setItem('dhUserHasManagePrivileges', '');
     localStorage.setItem('projectName', '');
+    localStorage.setItem('loginResp','');
     rolesService.setRoles([]);
     resetEnvironment();
     setUser({ ...user,name: '', authenticated: false, redirect: true });
@@ -239,6 +240,10 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
   useEffect(() => {
     if (sessionUser) {
       sessionAuthenticated(sessionUser);
+      let loginResponse = JSON.parse(localStorage.getItem('loginResp') || '{}')
+      if(JSON.stringify(loginResponse) !== JSON.stringify({})){
+        loginAuthenticated(sessionUser,loginResponse);
+      }
     }
   }, []);
 

@@ -1,67 +1,40 @@
 package com.marklogic.hub.curation.controllers;
 
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.LogbackException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.appdeployer.command.security.DeployPrivilegesCommand;
-import com.marklogic.appdeployer.command.security.DeployRolesCommand;
-import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.ArtifactManager;
-import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
-import com.marklogic.hub.deploy.commands.DeployHubOtherServersCommand;
-import com.marklogic.hub.deploy.commands.DeployHubTriggersCommand;
-import com.marklogic.hub.impl.ArtifactManagerImpl;
-import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.hub.oneui.Application;
+import com.marklogic.hub.artifact.ArtifactTypeInfo;
 import com.marklogic.hub.oneui.TestHelper;
+import com.marklogic.hub.oneui.auth.AuthenticationFilter;
 import com.marklogic.hub.oneui.controllers.EnvironmentController;
 import com.marklogic.hub.oneui.exceptions.ProjectDirectoryException;
-import com.marklogic.hub.oneui.listener.UIDeployListener;
 import com.marklogic.hub.oneui.models.HubConfigSession;
-import com.marklogic.hub.oneui.services.DataHubProjectUtils;
-import com.marklogic.hub.oneui.services.EnvironmentConfig;
-import com.marklogic.hub.oneui.utils.TestLoggingAppender;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import org.apache.commons.lang3.StringUtils;
+import com.marklogic.hub.oneui.services.EnvironmentService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.web.multipart.MultipartFile;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {Application.class, ApplicationConfig.class, FlowControllerTest.class})
-public class EnvironmentControllerTest {
-
-    @Autowired
-    private TestHelper testHelper;
+public class EnvironmentControllerTest extends TestHelper {
 
     @Autowired
     private HubConfigSession hubConfigSession;
@@ -70,39 +43,38 @@ public class EnvironmentControllerTest {
     private EnvironmentController environmentController;
 
     @Autowired
-    LoadDataController controller;
+    private EnvironmentService environmentService;
 
     @Autowired
-    ArtifactManager artifactManager;
+    LoadDataController controller;
 
     private boolean hasBeenInitialized = false;
-
 
     @BeforeEach
     void before() {
         if (!hasBeenInitialized) {
-            testHelper.setHubProjectDirectory();
-            testHelper.authenticateSession();
+            setHubProjectDirectory();
+            authenticateSession();
             hasBeenInitialized = true;
         }
     }
 
     @AfterEach
     void after() {
-        testHelper.setHubProjectDirectory();
+        setHubProjectDirectory();
     }
 
     @Test
     void downloadProject() throws IOException {
         //Creating a load data artifact so it can be verified for download test
-        testHelper.authenticateSession();
-        controller.updateArtifact("validArtifact", testHelper.validLoadDataConfig);
+        authenticateSession();
+        controller.updateArtifact("validArtifact", validLoadDataConfig);
 
         ArrayNode resultList = (ArrayNode) controller.getArtifacts().getBody();
 
         assertEquals(1, resultList.size(), "List of load data artifacts should now be 1");
 
-        Path artifactProjectLocation = ((ArtifactManagerImpl)artifactManager).buildArtifactProjectLocation(controller.getArtifactType(), "validArtifact", null);
+        Path artifactProjectLocation = getArtifactManager().buildArtifactProjectLocation(controller.getArtifactType(), "validArtifact", null);
         ObjectNode resultByName = controller.getArtifact("validArtifact").getBody();
         assertEquals("validArtifact", resultByName.get("name").asText(), "Getting artifact by name should return object with expected properties");
         assertEquals("xml", resultByName.get("sourceFormat").asText(), "Getting artifact by name should return object with expected properties");
@@ -132,93 +104,57 @@ public class EnvironmentControllerTest {
     }
 
     @Test
-    void installProjectWithNewDirectory() throws Exception {
-        testHelper.authenticateSessionAsEnvironmentManager();
-        String unexpectedDirectory = testHelper.tempProjectDirectory.toAbsolutePath().toString();
-        String expectedDirectory = Files.createTempDirectory("one-ui-hub-project-different-dir").toAbsolutePath().toString();
-        boolean[] containsUnexpectedDirectory = {false};
-        boolean[] containsExpectedDirectory = {false};
-        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-        // Special test appender to check for directories in output
-        TestLoggingAppender<ILoggingEvent> testAppender = new TestLoggingAppender<>() {
-            @Override
-            public void doAppend(ILoggingEvent event) throws LogbackException {
-                containsUnexpectedDirectory[0] = containsUnexpectedDirectory[0] || event.getMessage().contains(unexpectedDirectory);
-                containsExpectedDirectory[0] = containsExpectedDirectory[0] || event.getMessage().contains(expectedDirectory);
-            }
-        };
-        // Subset of classes that look read from project directory for install
-        Class<?>[] classes = {HubConfigImpl.class, DeployDatabaseFieldCommand.class, DeployHubOtherServersCommand.class, DeployHubTriggersCommand.class, DeployPrivilegesCommand.class, DeployRolesCommand.class};
-        Object[] loggers = Stream.of(classes).map(loggerContext::getLogger).toArray();
-
-        Stream.of(loggers).forEach((logger -> ((Logger) logger).addAppender(testAppender)));
-        try {
-            environmentController.install(new ObjectMapper().createObjectNode().put("directory", expectedDirectory));
-        } finally {
-            Stream.of(loggers).forEach((logger -> ((Logger) logger).detachAppender(testAppender)));
-        }
-        assertFalse(containsUnexpectedDirectory[0], "Shouldn't find reference to old directory in logs");
-        assertTrue(containsExpectedDirectory[0], "Should find reference to new directory in logs");
-    }
-
-    @Test
     void installAttemptWithBadDirectory() {
-        final ObjectNode relativePayload = new ObjectMapper().createObjectNode().put("directory", "relative-path");
-        assertThrows(ProjectDirectoryException.class, () -> {
-            environmentController.install(relativePayload);
-            fail("Should have thrown exception for relative path!");
-        });
-        final ObjectNode nonExistentPayload = new ObjectMapper().createObjectNode().put("directory", "/non-existent");
-        assertThrows(ProjectDirectoryException.class, () -> {
-            environmentController.install(nonExistentPayload);
-        });
+        try {
+            final ObjectNode relativePayload = new ObjectMapper().createObjectNode().put("directory", "relative-path");
+            assertThrows(ProjectDirectoryException.class, () -> {
+                environmentController.install(relativePayload);
+                fail("Should have thrown exception for relative path!");
+            });
+            // check that the environment service indicates that the install is in a dirty state
+            assertTrue(environmentService.isInDirtyState(), "Install should be in a dirty state");
+            // check that the AuthenticationFilter shows the Data Hub isn't installed after a failed install attempt
+            TestAuthenticationFilter authenticationFilter = new TestAuthenticationFilter(environmentService, hubConfigSession);
+            assertFalse(authenticationFilter.isDataHubInstalled(), "AuthenticationFilter shouldn't indicate the Data Hub is installed");
+            final ObjectNode nonExistentPayload = new ObjectMapper().createObjectNode().put("directory", "/non-existent");
+            assertThrows(ProjectDirectoryException.class, () -> {
+                environmentController.install(nonExistentPayload);
+            });
+        }
+        finally{
+            environmentService.setIsInDirtyState(false);
+        }
     }
 
+    @Test
+    public void testManageAdminAndSecurityAuthoritiesForArtifacts() {
+        authenticateSessionAsEnvironmentManager();
+        ArtifactManager mgr = getArtifactManager();
+        List<ArtifactTypeInfo> listTypeInfo = mgr.getArtifactTypeInfoList();
+        for (ArtifactTypeInfo typeInfo : listTypeInfo) {
+            assertTrue(typeInfo.getUserCanUpdate());
+            assertTrue(typeInfo.getUserCanRead());
+        }
+    }
 
     @Test
-    public void testUploadProject() throws Exception {
-        testHelper.authenticateSessionAsEnvironmentManager();
+    public void testAdminAuthoritiesForArtifacts()  {
+        authenticateSessionAsAdmin();
+        ArtifactManager mgr = getArtifactManager();
+        List<ArtifactTypeInfo> listTypeInfo = mgr.getArtifactTypeInfoList();
+        for (ArtifactTypeInfo typeInfo : listTypeInfo) {
+            assertTrue(typeInfo.getUserCanUpdate());
+            assertFalse(typeInfo.getUserCanRead(), "admin would not allow read but write for deployment!");
+        }
+    }
 
-        ObjectMapper om = new ObjectMapper();
-        EnvironmentConfig envConfig = om.treeToValue(environmentController.getProjectInfo(), EnvironmentConfig.class);
-        if (envConfig == null || StringUtils.isEmpty(envConfig.getProjectDir())) {
-            return;
+    static class TestAuthenticationFilter extends AuthenticationFilter {
+        public TestAuthenticationFilter(EnvironmentService environmentService, HubConfigSession hubConfig) {
+            super(environmentService, hubConfig);
         }
 
-        File file = new File(EnvironmentControllerTest.class.getClassLoader().getResource("datahub-project.zip").getFile());
-        FileInputStream input = new FileInputStream(file);
-
-        MultipartFile mockMultipartFile = new MockMultipartFile("datahub-project.zip", "", "application/zip", input);
-
-        Set<String> SUCCESS_LOG_MSG = new HashSet<>(Arrays.asList("Backed up the existing project", "Cleaned the existing project folder",
-            "Extracted the uploaded zip project", "100% Uninstallation Complete", "100% Installation Complete"));
-        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-        TestLoggingAppender<ILoggingEvent> testAppender = new TestLoggingAppender<>() {
-            @Override
-            public void doAppend(ILoggingEvent event) throws LogbackException {
-                String[] matched = {null};
-                boolean found = SUCCESS_LOG_MSG.stream().anyMatch(e -> {
-                    if (event.getMessage().startsWith(e)) {
-                        matched[0] = e;
-                        return true;
-                    } else return false;
-                });
-                if (found) {
-                    SUCCESS_LOG_MSG.remove(matched[0]);
-                }
-            }
-        };
-
-        Class<?>[] classes = {DataHubProjectUtils.class, UIDeployListener.class};
-        Object[] loggers = Stream.of(classes).map(loggerContext::getLogger).toArray();
-        Stream.of(loggers).forEach((logger -> ((Logger) logger).addAppender(testAppender)));
-
-        try {
-            environmentController.uploadProject(mockMultipartFile);
-        } finally {
-            Stream.of(loggers).forEach((logger -> ((Logger) logger).detachAppender(testAppender)));
+        public boolean isDataHubInstalled() {
+            return super.isDataHubInstalled();
         }
-
-        assertTrue(SUCCESS_LOG_MSG.isEmpty(), "has error or exception thrown.");
     }
 }

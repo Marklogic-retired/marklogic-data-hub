@@ -15,14 +15,43 @@
  */
 'use strict';
 
-// TODO This is just stubbed out, a real implementation is needed.
+const Artifacts = require('/data-hub/5/artifacts/core.sjs');
+const roleIdToName = (roleID) => xdmp.roleName(roleID);
+const currentRoles = xdmp.getCurrentRoles().toArray().map(String);
+let currentRoleNames = currentRoles.map(roleIdToName);
 
-let response = {
-  "authorities": [
-    "canInstallDataHub",
-    "canReadLoadData",
-    "canWriteLoadData"
-  ]
+const manageAdminRolesMustAllMatched = ['manage-admin', 'security'].map((roleName) => String(xdmp.role(roleName)));
+const hasManageAdminAndSecurity = manageAdminRolesMustAllMatched.every((role) => currentRoles.indexOf(role) !== -1);
+
+if (currentRoleNames.includes('admin')) {
+  currentRoleNames = xdmp.roles().toArray().map(roleIdToName);
+}
+
+const response = {
+  "authorities": [],
+  "roles": []
 };
+
+if (currentRoleNames.includes('admin') || hasManageAdminAndSecurity) {
+  response.authorities.push('canInstallDataHub');
+}
+
+const typesInfo = Artifacts.getTypesInfo();
+for (const artifactTypeInfo of typesInfo) {
+  const type = artifactTypeInfo.type;
+  const writeAuthority = `canWrite${type.substr(0,1).toUpperCase()}${type.substr(1)}`;
+
+  if (artifactTypeInfo.userCanUpdate) {
+    response.authorities.push(writeAuthority);
+  }
+
+  const readAuthority = `canRead${type.substr(0,1).toUpperCase()}${type.substr(1)}`;
+
+  if (artifactTypeInfo.userCanRead) {
+    response.authorities.push(readAuthority);
+  }
+}
+
+response.roles = currentRoleNames.filter(roleName => fn.startsWith(roleName, "data-hub"));
 
 response;

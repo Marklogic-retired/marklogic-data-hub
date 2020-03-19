@@ -1,0 +1,8 @@
+{
+  "name": "testCsv",
+  "inputFilePath": "input/csv",
+  "sourceFormat": "csv",
+  "outputURIReplacement": ".*/input,''",
+  "targetFormat": "json",
+  "separator": ","
+}

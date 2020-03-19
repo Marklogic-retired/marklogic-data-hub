@@ -5,6 +5,8 @@ interface IRolesContextInterface {
     setRoles: (roles: string[]) => void;
     canReadMappings: () => boolean;
     canWriteMappings: () => boolean;
+    canReadMatchMerge: () => boolean;
+    canWriteMatchMerge: () => boolean;
     canReadLoadData: () => boolean;
     canWriteLoadData: () => boolean;
     canReadEntityModels: () => boolean;
@@ -13,6 +15,7 @@ interface IRolesContextInterface {
     canWriteFlows: () => boolean;
     canReadStepDefinitions: () => boolean;
     canWriteStepDefinitions: () => boolean;
+    hasOperatorRole: () => boolean;
 }
 
 /**
@@ -32,6 +35,12 @@ export class RolesService implements IRolesContextInterface {
     };
     public canWriteMappings:() => boolean = () => {
         return this.roles.includes('data-hub-mapping-writer');
+    };
+    public canReadMatchMerge:() => boolean = () => {
+        return this.roles.includes('data-hub-match-merge-reader');
+    };
+    public canWriteMatchMerge:() => boolean = () => {
+        return this.roles.includes('data-hub-match-merge-writer');
     };
     public canReadLoadData:() => boolean = () => {
         return this.roles.includes('data-hub-load-data-reader');
@@ -56,6 +65,9 @@ export class RolesService implements IRolesContextInterface {
     };
     public canWriteStepDefinitions:() => boolean = () => {
         return this.roles.includes('data-hub-step-definition-writer');
+    };
+    public hasOperatorRole:() => boolean = () => {
+        return this.roles.includes('data-hub-operator');
     };
 }
 

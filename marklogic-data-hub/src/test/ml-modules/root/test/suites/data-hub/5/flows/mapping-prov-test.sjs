@@ -6,7 +6,7 @@ const Provenance = require("/data-hub/5/impl/prov.sjs");
 const myProv = new Provenance();
 
 function fineProvOnMapping() {
-  datahub.flow.runFlow('CustomerMapping', 'prov-test-job', [
+  datahub.flow.runFlow('myNewFlow', 'prov-test-job', [
     {
       uri: '/customer1.json',
       value: cts.doc('/customer1.json'),

@@ -2,7 +2,7 @@ const test = require("/test/test-helper.xqy");
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const datahub = DataHubSingleton.instance();
 
-const output = datahub.flow.runFlow('CustomerMapping', 'error-on-write-job', [
+const output = datahub.flow.runFlow('myNewFlow', 'error-on-write-job', [
   {
     uri: '/customer1.json',
     value: cts.doc('/customer1.json'),

@@ -2,10 +2,16 @@ package com.marklogic.hub.curation.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.StepDefinitionManager;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowImpl;
+import com.marklogic.hub.flow.impl.FlowRunnerImpl;
+import com.marklogic.hub.impl.FlowManagerImpl;
+import com.marklogic.hub.impl.ScaffoldingImpl;
+import com.marklogic.hub.impl.StepDefinitionManagerImpl;
 import com.marklogic.hub.oneui.exceptions.DataHubException;
 import com.marklogic.hub.oneui.models.StepModel;
 import com.marklogic.hub.scaffold.Scaffolding;
@@ -16,26 +22,32 @@ import com.marklogic.hub.util.json.JSONUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
-@Service
+
 public class FlowManagerService {
 
-    @Autowired
+    private HubConfig hubConfig;
     private FlowManager flowManager;
-
-    @Autowired
     private StepDefinitionManager stepDefinitionManager;
-
-    @Autowired
     private Scaffolding scaffolding;
+    private FlowRunnerImpl lastFlowRunner = null;
+
+    public FlowManagerService(HubConfig hubConfig) {
+        this.hubConfig = hubConfig;
+        this.flowManager = new FlowManagerImpl(this.hubConfig);
+        this.stepDefinitionManager = new StepDefinitionManagerImpl(this.hubConfig);
+        this.scaffolding = new ScaffoldingImpl(this.hubConfig);
+    }
 
     public Flow updateFlow(String flowJson) {
         return updateFlow(flowJson, false);
@@ -324,4 +336,47 @@ public class FlowManagerService {
     }
 
 
+    /**
+     * This is synchronized because Coverity is reporting that flowManagerService is being modified without proper
+     * synchronization when it's invoked by FlowController.
+     *
+     * @param flowName
+     * @param steps
+     * @return
+     */
+    public synchronized RunFlowResponse runFlow(String flowName, List<String> steps) {
+        FlowRunnerImpl flowRunner = getFlowRunner();
+        if (steps == null || steps.size() == 0) {
+            return flowRunner.runFlow(flowName);
+        }
+        else {
+            Flow flow = flowManager.getFlow(flowName);
+            List<String> restrictedSteps = new ArrayList<>();
+            steps.forEach((step) -> restrictedSteps.add(this.getStepKeyInStepMap(flow, step)));
+            return flowRunner.runFlow(flowName, restrictedSteps);
+        }
+    }
+
+    public Flow stop(String flowName) {
+        FlowRunnerImpl flowRunner = getFlowRunner();
+        List<String> jobIds = flowRunner.getQueuedJobIdsFromFlow(flowName);
+        Iterator<String> itr = jobIds.iterator();
+        if (!itr.hasNext()) {
+            throw new BadRequestException("Flow not running.");
+        }
+        while (itr.hasNext()) {
+            flowRunner.stopJob(itr.next());
+        }
+        return getFlow(flowName);
+    }
+
+    protected FlowRunnerImpl getFlowRunner() {
+        lastFlowRunner = new FlowRunnerImpl(this.hubConfig);
+        return lastFlowRunner;
+    }
+
+    // TODO public so the FlowControllerTest can see it
+    public FlowRunnerImpl getLastFlowRunner() {
+        return lastFlowRunner;
+    }
 }

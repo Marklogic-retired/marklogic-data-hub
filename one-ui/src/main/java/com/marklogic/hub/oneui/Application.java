@@ -40,7 +40,7 @@ public class Application {
 		SpringApplication.run(Application.class, args);
 	}
 
-	@Bean
+    @Bean
 	public CommonsRequestLoggingFilter requestLoggingFilter() {
 		CommonsRequestLoggingFilter filter = new CommonsRequestLoggingFilter();
 		filter.setIncludeClientInfo(true);

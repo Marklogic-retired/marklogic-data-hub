@@ -6,9 +6,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.env.MockEnvironment;
 
+import java.io.File;
 import java.util.Properties;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HubConfigImplTest {
 
@@ -54,6 +58,9 @@ public class HubConfigImplTest {
         config.loadConfigurationFromProperties(new Properties(), false);
         assertEquals("somehost", config.getHost());
         assertEquals("somehost", config.getAppConfig().getHost());
+        assertTrue(new File(config.getAppConfig().getSchemaPaths().get(0)).isAbsolute(),
+            "LoadSchemasCommand requires that the schemas path be absolute ");
+
     }
 
     private void verifyDefaultValues(HubConfigImpl config) {

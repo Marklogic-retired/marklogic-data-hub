@@ -17,14 +17,16 @@ package com.marklogic.hub.oneui.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.web.WebAttributes;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-
+import com.fasterxml.jackson.databind.node.TextNode;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.web.WebAttributes;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 public class LoginHandler implements AuthenticationSuccessHandler {
 
@@ -47,6 +49,16 @@ public class LoginHandler implements AuthenticationSuccessHandler {
         if (token.getRoles() != null) {
             jsonResponse.putArray("roles").addAll(token.getRoles());
         }
+
+        List<TextNode> authorities = new ArrayList<>();
+        token.getAuthorities().forEach(auth -> {
+            String authority = auth.getAuthority();
+            if (authority.length() > 5) { //trim prefix "ROLE_"
+                authorities.add(new TextNode(auth.getAuthority().substring(5, authority.length())));
+            }
+        });
+        jsonResponse.putArray("authorities").addAll(authorities);
+
         jsonResponse.put("isInstalled", token.isDataHubInstalled());
         jsonResponse.put("hasManagePrivileges", token.hasManagePrivileges());
         jsonResponse.put("projectName", token.getProjectName());
