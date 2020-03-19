@@ -122,8 +122,10 @@
 }
 
 .mapValue {
+    margin-top: -6px;
+    margin-bottom: -8px;
     word-break: break-all;
-    line-height: normal
+    line-height: normal;
 }
 
 .entityIcon{
@@ -224,7 +226,6 @@
 }
 .uri{
     margin-left: -4px;
-    //border: 1px solid red;
     padding: 4px 0px;
     height : 32px;
 }

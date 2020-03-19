@@ -356,7 +356,6 @@ const SourceToEntityMap = (props) => {
 
       };
     const emptyData = (JSON.stringify(props.sourceData) === JSON.stringify([]) && !props.docNotFound);
-    };
 
     const displayResp = (propName) => {
         if (mapResp && mapResp["properties"]) {
@@ -386,7 +385,7 @@ const SourceToEntityMap = (props) => {
     const getMapValidationResp = async (uri) => {
         setIsTestClicked(true);
         try {
-            let resp = await getMappingValidationResp(props.mapName, savedMappingArt, uri, 'data-hub-STAGING');
+            let resp = await getMappingValidationResp(props.mapName, savedMappingArt, uri, props.sourceDatabaseName);
             
             if (resp.status === 200) {
                 setMapResp({ ...resp.data });
@@ -483,24 +482,6 @@ const SourceToEntityMap = (props) => {
                         placement="right"
                     ><Icon type="question-circle" className={styles.questionCircle} theme="filled" /></Popover></p>
                 </div>
-                {/* <Divider /> */}
-                <div className={styles.navigationCollapseButtons}>{navigationButtons}</div>
-                <Spin spinning={JSON.stringify(props.sourceData) === JSON.stringify([]) && !props.docNotFound}>
-                    <Table
-                        pagination={false}
-                        defaultExpandAllRows={true}
-                        expandIcon={(props) => customExpandIcon(props)}
-                        className={styles.sourceTable}
-                        rowClassName={() => styles.sourceTableRows}
-                        scroll={{ y: '70vh' }}
-                        indentSize={14}
-                        columns={columns}
-                        dataSource={srcData}
-                        tableLayout="unset"
-                        rowKey="name"
-                    />
-                </Spin>
-            </div>
             {emptyData ? 
             <div id="noData">
                 <br/><br/>
@@ -532,6 +513,7 @@ const SourceToEntityMap = (props) => {
                 />
                 </Spin>           
             </div> }
+            </div>
         <div 
         id="entityContainer"
         className={styles.entityContainer}>
