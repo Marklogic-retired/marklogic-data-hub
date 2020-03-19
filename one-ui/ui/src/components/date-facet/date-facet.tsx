@@ -55,8 +55,8 @@ const DateFacet: React.FC<Props> = (props) => {
       }
       
     return (
-        <div className={styles.name} >
-            <p className={styles.name}>{formatTitle()}</p>
+        <div className={styles.name} data-testid="facet-date-picker">
+            <p className={styles.name} >{formatTitle()}</p>
             <RangePicker
                 // className={styles.datePicker}
                 onChange={onChange}

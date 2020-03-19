@@ -55,7 +55,7 @@ const DateTimeFacet: React.FC<Props> = (props) => {
   }
 
   return (
-    <div className={styles.name} >
+    <div className={styles.name} data-testid="facet-date-time-picker">
       <p className={styles.facetName}>{formatTitle()}</p>
       <RangePicker
         showTime={{ format: 'HH:mm:ss' }}
