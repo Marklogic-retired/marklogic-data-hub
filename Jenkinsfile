@@ -241,11 +241,14 @@ pipeline{
                                ''')
 		    }
 		    def reviewState=getReviewStateOfPR reviewResponse,2,env.GIT_COMMIT ;
-			if((env.CHANGE_TITLE.split(':')[1].contains("Automated PR")) || reviewState.equals("APPROVED")){
+			if((env.CHANGE_TITLE.split(':')[1].contains("Automated PR")) || reviewState.equalsIgnoreCase("APPROVED")){
 				println("Automated PR")
 				sh 'exit 0'
 			}
-			else if(reviewState.equals("CHANGES_REQUESTED")){
+			else if(reviewState.equalsIgnoreCase("APPROVED")){
+			  sh 'exit 0'
+			}
+			else if(reviewState.equalsIgnoreCase("CHANGES_REQUESTED")){
 			    println("Changes Requested")
                 def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
                 email=getEmailFromGITUser author;
@@ -265,7 +268,7 @@ pipeline{
                                       ''')
                     def slurper = new JsonSlurperClassic().parseText(reviewersList.toString().trim())
                     def emailList="";
-                    if(slurper.users.isEmpty() && reviewesList.isEmpty){
+                    if(slurper.users.isEmpty() && reviewesList.isEmpty()){
                         def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
                         email=getEmailFromGITUser author;
                         if(count==4){
