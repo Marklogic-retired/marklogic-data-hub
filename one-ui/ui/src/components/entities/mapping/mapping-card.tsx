@@ -83,8 +83,11 @@ const MappingCard: React.FC<Props> = (props) => {
         try{
         let response = await getSettingsArtifact(activityType,mapName)
         if (response.status === 200) {
-            console.log('settings are',response.data)
-            await setSourceDatabaseName(response.data.sourceDatabase)
+            if(response.data.sourceDatabase){
+                await setSourceDatabaseName(response.data.sourceDatabase)
+            } else {
+                await setSourceDatabaseName('data-hub-STAGING')
+            }
         }
       } catch(error) {
         let message = error;
@@ -291,7 +294,7 @@ const MappingCard: React.FC<Props> = (props) => {
             getSourceData(index);
             extractEntityInfoForTable();
             setMapName(name);
-            getDatabaseFromSettingsArtifact(name);
+            await getDatabaseFromSettingsArtifact(name);
             getMappingFunctions();
             setMappingVisible(true);
       }
