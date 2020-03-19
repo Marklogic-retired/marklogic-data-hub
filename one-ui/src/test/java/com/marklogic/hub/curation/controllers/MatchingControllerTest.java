@@ -22,7 +22,7 @@ public class MatchingControllerTest extends TestHelper {
 
     static final String MATCHING_CONFIG_1 = "{\n" +
         "  \"name\": \"TestCustomerMatching\",\n" +
-        "  \"targetEntity\": \"Customer\",\n" +
+        "  \"targetEntityType\": \"Customer\",\n" +
         "  \"description\": \"TestCustomerMatching does ...\",\n" +
         "  \"selectedSource\":\"query\",\n" +
         "  \"sourceQuery\": \"cts.CollectionQuery('RAW-CUSTOMER')\",\n" +
@@ -31,7 +31,7 @@ public class MatchingControllerTest extends TestHelper {
 
     static final String MATCHING_CONFIG_2 = "{\n" +
         "  \"name\": \"TestOrderMatching1\",\n" +
-        "  \"targetEntity\": \"Order\",\n" +
+        "  \"targetEntityType\": \"Order\",\n" +
         "  \"description\": \"TestOrderMatching1 does ...\",\n" +
         "  \"selectedSource\": \"collection\",\n" +
         "  \"sourceQuery\": \"\",\n" +
@@ -40,7 +40,7 @@ public class MatchingControllerTest extends TestHelper {
 
     static final String MATCHING_CONFIG_3 = "{\n" +
         "  \"name\" : \"TestOrderMatching2\",\n" +
-        "  \"targetEntity\" : \"Order\",\n" +
+        "  \"targetEntityType\" : \"Order\",\n" +
         "  \"description\" : \"TestOrderMatching2 does ...\",\n" +
         "  \"selectedSource\": \"query\",\n" +
         "  \"sourceQuery\": \"cts.CollectionQuery('RAW-ORDER')\",\n" +
