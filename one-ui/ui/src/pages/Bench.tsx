@@ -4,6 +4,7 @@ import Flows from '../components/flows/flows';
 import { Modal, Collapse } from 'antd';
 import axios from 'axios'
 import { RolesContext } from "../util/roles";
+import { UserContext } from '../util/user-context';
 
 const { Panel } = Collapse;
 
@@ -20,6 +21,7 @@ const Statuses = {
 }
 
 const Bench: React.FC = () => {
+    const { resetSessionTime } = useContext(UserContext)
     const [isLoading, setIsLoading] = useState(false);
     const [flows, setFlows] = useState<any[]>([]);
     const [loads, setLoads] = useState<any[]>([]);
@@ -68,6 +70,8 @@ const Bench: React.FC = () => {
             console.log('********* ERROR', error);
             let message = error.response.data.message;
             console.log('Error getting flows', message);
+        } finally {
+          resetSessionTime();
         }
     }
 
@@ -94,6 +98,8 @@ const Bench: React.FC = () => {
             //let message = error.response.data.message;
             console.log('Error posting flow', error)
             setIsLoading(false);
+        } finally {
+          resetSessionTime();
         }
     }
 
@@ -109,11 +115,12 @@ const Bench: React.FC = () => {
                 console.log('PUT flow success', response);
                 setIsLoading(false);
             }
-        }
-        catch (error) {
+        } catch (error) {
             //let message = error.response.data.message;
             console.log('Error updating flow', error)
             setIsLoading(false);
+        } finally {
+          resetSessionTime();
         }
     }
 
@@ -128,6 +135,8 @@ const Bench: React.FC = () => {
         } catch (error) {
             console.log('Error deleting flow', error);
             setIsLoading(false);
+        } finally {
+          resetSessionTime();
         }
     }
 
@@ -141,6 +150,8 @@ const Bench: React.FC = () => {
         } catch (error) {
             let message = error.response.data.message;
             console.log('Error getting loads', message);
+        } finally {
+          resetSessionTime();
         }
     }
 
@@ -285,6 +296,8 @@ const Bench: React.FC = () => {
             console.log('Error running step', error);
             setRunEnded({flowId: flowId, stepId: stepId});
             setIsLoading(false);
+        } finally {
+          resetSessionTime();
         }
     }
     
@@ -301,6 +314,8 @@ const Bench: React.FC = () => {
         } catch (error) {
             console.log('Error deleting step', error);
             setIsLoading(false);
+        } finally {
+          resetSessionTime();
         }
     }
 

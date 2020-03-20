@@ -13,7 +13,7 @@ import { MlButton } from 'marklogic-ui-library';
 const InstallForm: React.FC = () => {
 
   const stompService = useContext(StompContext);
-  const { userNotAuthenticated, handleError } = useContext(UserContext);
+  const { userNotAuthenticated, handleError, resetSessionTime } = useContext(UserContext);
   const [directory, setDirectory] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [installProgress, setInstallProgress] = useState({percentage: 0, message: ''});
@@ -36,6 +36,9 @@ const InstallForm: React.FC = () => {
           console.log('Error getting project data.', message)
           setIsLoading(false);
           handleError(error);
+      })
+      .finally(() => {
+        resetSessionTime();
       })
   }, []);
 
@@ -85,6 +88,8 @@ const InstallForm: React.FC = () => {
       });
       setSuccessMessage({show: false, message: '', description: <div/>});
       setWelcomeMessage({show: false, message: ''});
+    } finally {
+      resetSessionTime();
     }
     if (unsubscribeId) {
       stompService.unsubscribe(unsubscribeId);

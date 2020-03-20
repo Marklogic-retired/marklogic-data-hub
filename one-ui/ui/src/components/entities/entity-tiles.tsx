@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Collapse, Menu } from 'antd';
 import styles from './entity-tiles.module.scss';
 import MappingCard from './mapping/mapping-card';
 import MatchingCard from './matching/matching-card';
-import axios from 'axios'
+import axios from 'axios';
+import { UserContext } from '../../util/user-context';
 
 const EntityTiles = (props) => {
-
+  const { resetSessionTime } = useContext(UserContext);
     const [viewType, setViewType] = useState('map');
     const [entityArtifacts, setEntityArtifacts] = useState<any[]>([]);
     const [matchingArtifacts, setMatchingArtifacts] = useState<any[]>([]);
@@ -41,6 +42,8 @@ const EntityTiles = (props) => {
           } catch (error) {
               let message = error;
               console.log('Error while fetching the mappings!', message);
+          } finally {
+            resetSessionTime();
           }
     }
 
@@ -50,7 +53,6 @@ const EntityTiles = (props) => {
 
             if (response.status === 200) {
                 let mapArtifacts = response.data;
-
                if(mapArtifacts.targetEntityType === entityTypeTitle){
                 return mapArtifacts;
                }
@@ -60,6 +62,8 @@ const EntityTiles = (props) => {
           } catch (error) {
               let message = error;
               console.log('Error while fetching the mapping!', message);
+          } finally {
+            resetSessionTime();
           }
     }
 
@@ -77,6 +81,8 @@ const EntityTiles = (props) => {
               let message = error.response.data.message;
               console.log('Error while deleting the mapping!', message);
               setIsLoading(false);
+          } finally {
+            resetSessionTime();
           }
     }
 
@@ -92,12 +98,13 @@ const EntityTiles = (props) => {
             } else {
                 return false;
             }
-          }
-          catch (error) {
+          } catch (error) {
             let message = error;
             console.log('Error while creating the mapping!', message)
             setIsLoading(false);
             return false;
+          } finally {
+            resetSessionTime();
           }
     }
 
@@ -111,11 +118,12 @@ const EntityTiles = (props) => {
             } else {
                 return false;
             }
-          }
-          catch (error) {
+          } catch (error) {
             let message = error;
             console.log('Error while updating the mapping!', message)
             return false;
+          } finally {
+            resetSessionTime();
           }
     }
 
@@ -133,6 +141,8 @@ const EntityTiles = (props) => {
               let message = error;
               console.log('Error while fetching matching artifacts', message);
               //handleError(error);
+          } finally {
+            resetSessionTime();
           }
     }
 
@@ -151,6 +161,8 @@ const EntityTiles = (props) => {
               console.log('Error while deleting matching artifact.', message);
               setIsLoading(false);
               //handleError(error);
+          } finally {
+            resetSessionTime();
           }
     }
 
@@ -164,12 +176,13 @@ const EntityTiles = (props) => {
               console.log('Create/Update matching API Called successfully!')
               setIsLoading(false);
             }
-          }
-          catch (error) {
+          } catch (error) {
             let message = error.response.data.message;
             console.log('Error While creating the matching artifact!', message)
             setIsLoading(false);
             //handleError(error);
+          } finally {
+            resetSessionTime();
           }
     }
 

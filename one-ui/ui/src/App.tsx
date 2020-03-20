@@ -1,8 +1,11 @@
 import React, { useEffect, useContext, useState } from 'react';
 import { Switch } from 'react-router';
 import { Route, Redirect, RouteComponentProps, withRouter } from 'react-router-dom';
+import { Modal } from 'antd';
 import { UserContext } from './util/user-context';
 import SearchProvider from './util/search-context';
+import { useInterval } from './hooks/use-interval';
+import { SESSION_WARNING } from './config/application.config';
 
 import Header from './components/header/header';
 import Footer from './components/footer/footer';
@@ -17,18 +20,27 @@ import NoMatchRedirect from './pages/noMatchRedirect';
 import View from './pages/View';
 import Browse from './pages/Browse';
 import Detail from './pages/Detail';
+import EntityTypes from './pages/EntityTypes';
 
 import './App.scss';
-import Application from './config/application.config';
+import { Application }from './config/application.config';
 import { themes, themeMap } from './config/themes.config';
 import axios from 'axios';
-import EntityTypes from './pages/EntityTypes';
+
 
 
 interface Props extends RouteComponentProps<any> {}
 
 const App: React.FC<Props> = ({history, location}) => {
-  const { user, clearRedirect, handleError } = useContext(UserContext);
+  const { 
+    user,
+    userNotAuthenticated,
+    clearRedirect,
+    handleError,
+    setSessionWarning,
+    resetSessionTime
+  } = useContext(UserContext);
+  const [sessionTime, setSessionTime] = useState(SESSION_WARNING);
 
   const PrivateRoute = ({ children, ...rest }) => (
     <Route {...rest} render={ props => (
@@ -88,9 +100,55 @@ const App: React.FC<Props> = ({history, location}) => {
   document.body.classList.add(pageTheme['bodyBg']);
   document.title = Application.title;
 
+  useInterval(() => {
+    if (user.sessionWarning) {
+      if (sessionTime === 0) {
+        handleLogout();
+      } else {
+        setSessionTime(sessionTime - 1);
+      }
+    }
+  }, 1000);
+
+  const continueSession = async () => {
+    // refresh session
+    try {
+      await axios('/api/info');
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setSessionTime(SESSION_WARNING);
+      setSessionWarning(false);
+    }
+  }
+
+  const handleLogout = async () => {
+    try {
+      let response = await axios(`/api/logout`);
+      if (response.status === 200 ) {
+        userNotAuthenticated();
+      }
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setSessionTime(SESSION_WARNING);
+    }
+  };
+
   return (
     <div id="background" style={pageTheme['background']}>
       <Header/>
+      <Modal 
+        visible={user.sessionWarning} 
+        closable={false}
+        title={"Session Timeout"} 
+        cancelText="Log Out"
+        onCancel={() => handleLogout()} 
+        okText="Continue Session"
+        onOk={() => continueSession()}
+      >
+        <p data-cy="inactivity">Due to Inactivity, you will be logged out in {sessionTime} seconds</p>
+      </Modal>
       <main>
       <Switch>
         <Route path="/" exact component={Login}/>

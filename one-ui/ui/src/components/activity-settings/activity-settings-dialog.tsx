@@ -3,8 +3,10 @@ import React, { useState, useEffect, useContext } from "react";
 import styles from './activity-settings-dialog.module.scss';
 import { ActivitySettings } from '../../config/tooltips.config';
 import Axios from "axios";
+import { UserContext } from '../../util/user-context';
 
 const ActivitySettingsDialog = (props) => {
+  const { resetSessionTime } = useContext(UserContext); 
   const settingsTooltips = Object.assign({}, ActivitySettings, props.tooltipsData);
   const activityType = props.activityType;
   const usesSourceDatabase = activityType !== 'loadData';
@@ -74,12 +76,14 @@ const createSettingsArtifact = async (settingsObj) => {
       let response = await Axios.post(`/api/artifacts/${activityType}/${props.stepData.name}/settings`, settingsObj);
       if (response.status === 200) {
         console.log('Create/Update Activity Settings Artifact API Called successfully!')
-        setIsLoading(false);
+        setIsLoading(false); 
       }
     } catch (error) {
       let message = error.response.data.message;
       console.log('Error While creating the Activity settings artifact!', message)
       setIsLoading(false);
+    } finally {
+      resetSessionTime();
     }
   }
 }
@@ -116,6 +120,8 @@ const getSettingsArtifact = async () => {
       setProvGranularity('coarse-grained');
       setUser('');
       setRunBefore(false);
+    } finally {
+      resetSessionTime();
     }
   }
 }

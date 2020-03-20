@@ -1,12 +1,13 @@
 import { Modal, Form, Input, Button, Tooltip, Icon, Progress, Upload, Select } from "antd";
-import React, { useState, useEffect, CSSProperties } from "react";
+import React, { useState, useEffect, CSSProperties, useContext } from "react";
 import styles from './new-data-load-dialog.module.scss';
 import { srcOptions, tgtOptions, fieldSeparatorOptions } from '../../../config/formats.config';
 import {NewLoadTooltips} from '../../../config/tooltips.config';
 import Axios from "axios";
+import { UserContext } from '../../../util/user-context';
 
 const NewDataLoadDialog = (props) => {
-
+  const { resetSessionTime } = useContext(UserContext);
   const [stepName, setStepName] = useState('');
   const [description, setDescription] = useState(props.stepData && props.stepData != {} ? props.stepData.description : '');
   const [inputFilePath, setInputFilePath] = useState(props.stepData && props.stepData.inputFilePath ? props.stepData.inputFilePath : '');
@@ -388,6 +389,8 @@ const NewDataLoadDialog = (props) => {
     } catch (error) {
         let message = error.response.data.message;
         console.log('Error while deleting load data artifact.', message);
+    } finally {
+      resetSessionTime();
     }
 
   }
@@ -403,6 +406,8 @@ const NewDataLoadDialog = (props) => {
     } catch (error) {
         let message = error.response.data.message;
         console.log('Error while deleting load data artifact.', message);
+    } finally {
+      resetSessionTime();
     }
   }
   const createDefaultLoadDataArtifact = async (dataPayload) => {
@@ -411,10 +416,11 @@ const NewDataLoadDialog = (props) => {
       if (response.status === 200) {
         console.log('Create default LoadDataArtifact API Called successfully!')
       }
-    }
-    catch (error) {
+    } catch (error) {
       let message = error.response.data.message;
       console.log('Error While creating the default Load Data artifact!', message)
+    } finally {
+      resetSessionTime();
     }
   }
   const customRequest = async option => {
@@ -442,6 +448,8 @@ const NewDataLoadDialog = (props) => {
         }
         await createDefaultLoadDataArtifact(dataPayload);
       }
+  } finally {
+    resetSessionTime();
   }
 
     let fl  = fileList;
@@ -483,6 +491,7 @@ const NewDataLoadDialog = (props) => {
         if(stepName && srcFormat && tgtFormat && resp.data.inputFilePath) {
           buildURIPreview(resp.data);
         }
+        resetSessionTime();
       }).catch(err => {
         console.log('Error while uploading the files', err)
       if (err.message && (err.message.startsWith('Maximum upload size exceeded') || err.message.includes('Network Error') || err.message.includes('Request failed with status code 500'))){

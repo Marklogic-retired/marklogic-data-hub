@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import {Popover, Input, Checkbox, Icon} from 'antd';
-import styles from './pop-over-search.module.scss';
+import React, { useState, useContext } from 'react';
 import axios from "axios";
+import {Popover, Input, Checkbox, Icon} from 'antd';
+
+import styles from './pop-over-search.module.scss';
+import { UserContext } from '../../util/user-context';
 
 interface Props {
   referenceType: string;
@@ -12,7 +14,7 @@ interface Props {
 
 
 const PopOverSearch: React.FC<Props> = (props) => {
-
+  const { resetSessionTime } = useContext(UserContext);
   const [options, setOptions] = useState<any[]>([]);
   const [checkedValues, setCheckedValues] = useState<any[]>([]);
   const [popOverVisibility, setPopOverVisibilty] = useState(false);
@@ -37,6 +39,8 @@ const PopOverSearch: React.FC<Props> = (props) => {
         setOptions(response.data);
       } catch (error) {
         console.log(error)
+      } finally {
+        resetSessionTime();
       }
     } else {
       setOptions([]);

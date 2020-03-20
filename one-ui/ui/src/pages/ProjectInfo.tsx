@@ -4,6 +4,7 @@ import {Alert, Button, Card, Col, Progress, Row, Upload} from 'antd';
 import axios from 'axios';
 import {getEnvironment, setEnvironment} from '../util/environment';
 import {StompContext} from '../util/stomp';
+import { UserContext } from '../util/user-context';
 
 type EnvInterface = {
     dataHubVersion: string,
@@ -18,6 +19,7 @@ const ProjectInfo: React.FC = () => {
     const cardCss: CSSProperties = {backgroundColor: '#F6F8FF', borderColor: '#44499C'};
     const divCss: CSSProperties = {padding: '1em 6em'};
 
+    const { resetSessionTime } = useContext(UserContext);
     const stompService = useContext(StompContext);
     const [isLoading, setIsLoading] = useState(false);
     const [installProgress, setInstallProgress] = useState({percentage: 0, message: ''});
@@ -49,6 +51,9 @@ const ProjectInfo: React.FC = () => {
                 link.setAttribute('download', filename);
                 document.body.appendChild(link);
                 link.click();
+            })
+            .finally(() => {
+              resetSessionTime();
             });
     };
 
@@ -111,6 +116,8 @@ const ProjectInfo: React.FC = () => {
                 description: <><p>{message}</p><p>{error.response.data.suggestion}</p></>
             });
             setSuccessMessage({show: false, message: '', description: <div/>});
+        } finally {
+          resetSessionTime();
         }
         if (unsubscribeId) {
             stompService.unsubscribe(unsubscribeId);
