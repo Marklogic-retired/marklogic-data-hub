@@ -21,6 +21,8 @@ const CreateEditMappingDialog = (props) => {
   const [isSelectedSourceTouched, setSelectedSourceTouched] = useState(false);
 
   const [isValid, setIsValid] = useState(false);
+  const [isNameDuplicate,setIsNameDuplicate] = useState(false);
+  const [errorMessage,setErrorMessage] = useState('');
 
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [tobeDisabled, setTobeDisabled] = useState(false);
@@ -44,10 +46,10 @@ const CreateEditMappingDialog = (props) => {
     } else {
       setMapName('');
       setMapNameTouched(false);
-      //setCollections([]);
       setCollections('');
       setDescription('');
       setSrcQuery('')
+      setIsNameDuplicate(false);
     }
 
     return (() => {
@@ -60,6 +62,7 @@ const CreateEditMappingDialog = (props) => {
       setSelectedSourceTouched(false);
       setCollectionsTouched(false);
       setTobeDisabled(false);
+      setIsNameDuplicate(false);
     })
 
   }, [props.mapData, props.title, props.newMap]);
@@ -67,11 +70,6 @@ const CreateEditMappingDialog = (props) => {
   const onCancel = () => {
 
     if (checkDeleteOpenEligibility()) {
-      console.log(isMapNameTouched
-        , isDescriptionTouched
-        , isSelectedSourceTouched
-        , isCollectionsTouched
-        , isSrcQueryTouched)
       setDeleteDialogVisible(true);
     } else {
       props.setNewMap(false);
@@ -149,9 +147,16 @@ const CreateEditMappingDialog = (props) => {
 
     //Call create Mapping artifact API function
 
-    props.createMappingArtifact(dataPayload);
+    let status = await props.createMappingArtifact(dataPayload);
 
-    props.setNewMap(false);
+    if (status.code === 200) {
+      props.setNewMap(false);
+    } else if (status.code === 400) {
+      
+      setErrorMessage(status.message)
+      setIsNameDuplicate(true);
+      setIsValid(false);
+    }
   }
 
   const handleChange = (event) => {
@@ -164,7 +169,8 @@ const CreateEditMappingDialog = (props) => {
         setMapName(event.target.value);
         if (event.target.value.length > 0) {
           if (JSON.stringify(collections) !== JSON.stringify([]) || srcQuery) {
-            setIsValid(true);
+              setIsValid(true);
+              setIsNameDuplicate(false);
           }
         } else {
           setIsValid(false);
@@ -215,9 +221,7 @@ const CreateEditMappingDialog = (props) => {
       else {
         setCollectionsTouched(true);
         setCollections(event.target.value);
-        console.log('event.target.value',event.target.value === props.mapData.collection, props.mapData && props.mapData.collection)
         if (props.mapData && props.mapData.collection) {
-          console.log('props.mapData.collection',props.mapData.collection,event.target.value)
           if (props.mapData.collection === event.target.value) {
             
             setCollectionsTouched(false);
@@ -320,8 +324,8 @@ const CreateEditMappingDialog = (props) => {
           Name:&nbsp;<span className={styles.asterisk}>*</span>
           &nbsp;
             </span>} labelAlign="left"
-          validateStatus={(mapName || !isMapNameTouched) ? '' : 'error'}
-          help={(mapName || !isMapNameTouched) ? '' : 'Name is required'}
+          validateStatus={(mapName || !isMapNameTouched) ? (!isNameDuplicate ? '' : 'error') : 'error'}
+          help={(mapName || !isMapNameTouched) ? (isNameDuplicate ? errorMessage :'') : 'Name is required'}
         >
           <Input
             id="name"

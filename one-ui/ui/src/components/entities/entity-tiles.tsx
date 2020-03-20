@@ -88,16 +88,20 @@ const EntityTiles = (props) => {
             if (response.status === 200) {
               console.log('Create MappingArtifact API Called successfully!')
               setIsLoading(false);
-              return true;
+              return {code: response.status};
             } else {
-                return false;
+                return {code: response.status};
             }
           }
           catch (error) {
             let message = error;
+            let code = error.response.data.code;
+            let details = error.response.data.details
             console.log('Error while creating the mapping!', message)
             setIsLoading(false);
-            return false;
+            let err={code: code,
+                    message: details}
+            return err;
           }
     }
 
