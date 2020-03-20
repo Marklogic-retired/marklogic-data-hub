@@ -5,7 +5,6 @@ import { Modal } from 'antd';
 import { UserContext } from './util/user-context';
 import SearchProvider from './util/search-context';
 import { useInterval } from './hooks/use-interval';
-import { SESSION_WARNING } from './config/application.config';
 
 import Header from './components/header/header';
 import Footer from './components/footer/footer';
@@ -23,7 +22,7 @@ import Detail from './pages/Detail';
 import EntityTypes from './pages/EntityTypes';
 
 import './App.scss';
-import { Application }from './config/application.config';
+import { Application, SESSION_WARNING } from './config/application.config';
 import { themes, themeMap } from './config/themes.config';
 import axios from 'axios';
 
@@ -92,6 +91,9 @@ const App: React.FC<Props> = ({history, location}) => {
       // Timeouts throw 401s and are caught here
       .catch(err => {
           handleError(err);
+      })
+      .finally(() => {
+        resetSessionTime();
       })
   }, [location.pathname]);
 
