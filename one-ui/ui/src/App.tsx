@@ -1,7 +1,7 @@
 import React, { useEffect, useContext, useState } from 'react';
 import { Switch } from 'react-router';
 import { Route, Redirect, RouteComponentProps, withRouter } from 'react-router-dom';
-import { Modal } from 'antd';
+import { Modal, Icon } from 'antd';
 import { UserContext } from './util/user-context';
 import SearchProvider from './util/search-context';
 import { useInterval } from './hooks/use-interval';
@@ -149,7 +149,7 @@ const App: React.FC<Props> = ({history, location}) => {
         okText="Continue Session"
         onOk={() => continueSession()}
       >
-        <p data-cy="inactivity">Due to Inactivity, you will be logged out in {sessionTime} seconds</p>
+        <p data-cy="inactivity">Due to Inactivity, you will be logged out in <b>{sessionTime} seconds</b></p>
       </Modal>
       <main>
       <Switch>
