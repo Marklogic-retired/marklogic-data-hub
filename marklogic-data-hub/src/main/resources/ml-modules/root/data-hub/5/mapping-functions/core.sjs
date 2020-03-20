@@ -58,7 +58,7 @@ function memoryLookup(input, inputDictionary) {
     throw dictionary;
   }
   let lookupValue = dictionary[input];
-  if (!lookupValue) {
+  if (!lookupValue && false != lookupValue) {
     datahub.debug.log({message: `Lookup value not found for '${input}' with dictionary '${xdmp.describe(inputDictionary)}'`, type: 'warning'});
   }
   return lookupValue;
