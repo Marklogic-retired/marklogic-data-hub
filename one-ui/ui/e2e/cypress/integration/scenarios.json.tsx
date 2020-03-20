@@ -18,6 +18,7 @@ describe('json scenario on view entities page', () => {
     cy.fixture('users').then(user => {
       cy.login(user.username, user.password);
     })
+    cy.wait(500);
     cy.visit('/view');
   });
 
@@ -66,7 +67,7 @@ describe('json scenario on browse documents page', () => {
     browsePage.getSelectedEntity().should('contain', 'All Entities');
     cy.wait(2000);
     browsePage.getHubPropertiesExpanded();
-    browsePage.getTotalDocuments().should('be.greaterThan', '1008')
+    browsePage.getTotalDocuments().should('be.greaterThan', 1008)
     browsePage.getDocuments().each(function (item, i) {
       browsePage.getDocumentEntityName(i).should('exist');
       //browsePage.getDocumentId(i).should('exist');
@@ -87,7 +88,7 @@ describe('json scenario on browse documents page', () => {
     browsePage.getSelectedEntity().should('contain', 'Person');
     cy.wait(2000);
     browsePage.getHubPropertiesExpanded();
-    browsePage.getTotalDocuments().should('be.greaterThan', '5')
+    browsePage.getTotalDocuments().should('be.greaterThan', 5)
     browsePage.getDocuments().each(function (item, i) {
       browsePage.getDocumentEntityName(i).should('exist');
       //browsePage.getDocumentId(i).should('exist');
@@ -110,7 +111,7 @@ describe('json scenario on browse documents page', () => {
     browsePage.getHubPropertiesExpanded();
     browsePage.getExpandableSnippetView();
     cy.wait(500);
-    browsePage.getTotalDocuments().should('be.greaterThan', '1008');
+    browsePage.getTotalDocuments().should('be.greaterThan', 1008);
     browsePage.getFacetItemCheckbox('collection', 'Person').click();
     // browsePage.applyFacetSearchSelection('collection');
     browsePage.getFacetApplyButton().click();
@@ -184,7 +185,7 @@ describe('json scenario for table on browse documents page', () => {
     cy.wait(2000);
     browsePage.getHubPropertiesExpanded();
     browsePage.getExpandableTableView();
-    browsePage.getTotalDocuments().should('be.greaterThan', '1008')
+    browsePage.getTotalDocuments().should('be.greaterThan', 1008)
     browsePage.getColumnTitle(2).should('contain', 'Identifier');
     browsePage.getColumnTitle(3).should('contain', 'Entity');
     browsePage.getColumnTitle(4).should('contain', 'File Type');
@@ -200,7 +201,7 @@ describe('json scenario for table on browse documents page', () => {
     browsePage.getSelectedEntity().should('contain', 'All Entities');
     cy.wait(2000);
     browsePage.getHubPropertiesExpanded();
-    browsePage.getTotalDocuments().should('be.greaterThan', '1008')
+    browsePage.getTotalDocuments().should('be.greaterThan', 1008)
     //check table rows
     browsePage.getTableRows().should('have.length', 20);
     //check table columns
@@ -221,7 +222,7 @@ describe('json scenario for table on browse documents page', () => {
     browsePage.getSelectedEntity().should('contain', 'Person');
     cy.wait(2000);
     browsePage.getHubPropertiesExpanded();
-    browsePage.getTotalDocuments().should('be.greaterThan', '5')
+    browsePage.getTotalDocuments().should('be.greaterThan', 5)
     //check table rows
     browsePage.getTableRows().should('have.length', 6);
     //check table columns

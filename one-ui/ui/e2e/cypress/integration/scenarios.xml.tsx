@@ -18,6 +18,7 @@ describe('xml scenario on view entities page', () => {
     cy.fixture('users').then(user => {
       cy.login(user.username, user.password);
     })
+    cy.wait(500);
     cy.visit('/view');
   });
 
@@ -66,7 +67,7 @@ describe('xml scenario on browse documents page', () => {
     browsePage.getSelectedEntity().should('contain', 'All Entities');
     cy.wait(2000);
     browsePage.getHubPropertiesExpanded();
-    browsePage.getTotalDocuments().should('be.greaterThan', '1008')
+    browsePage.getTotalDocuments().should('be.greaterThan', 1008)
     browsePage.getDocuments().each(function (item, i) {
       browsePage.getDocumentEntityName(i).should('exist');
       //browsePage.getDocumentId(i).should('exist');
@@ -87,7 +88,7 @@ describe('xml scenario on browse documents page', () => {
     browsePage.getSelectedEntity().should('contain', 'PersonXML');
     cy.wait(2000);
     browsePage.getHubPropertiesExpanded();
-    browsePage.getTotalDocuments().should('be.greaterThan', '5')
+    browsePage.getTotalDocuments().should('be.greaterThan', 5)
     browsePage.getDocuments().each(function (item, i) {
       browsePage.getDocumentEntityName(i).should('exist');
       //browsePage.getDocumentId(i).should('exist');
@@ -109,7 +110,7 @@ describe('xml scenario on browse documents page', () => {
     cy.wait(500);
     browsePage.getHubPropertiesExpanded();
     browsePage.getShowMoreLink().click();
-    browsePage.getTotalDocuments().should('be.greaterThan', '1008');
+    browsePage.getTotalDocuments().should('be.greaterThan', 1008);
     browsePage.getFacetItemCheckbox('collection', 'PersonXML').click();
     // browsePage.applyFacetSearchSelection('collection');
     browsePage.getFacetApplyButton().click();
@@ -180,7 +181,7 @@ describe('xml scenario for table on browse documents page', () => {
     browsePage.getSelectedEntity().should('contain', 'PersonXML');
     cy.wait(2000);
     browsePage.getHubPropertiesExpanded();
-    browsePage.getTotalDocuments().should('be.greaterThan', '5')
+    browsePage.getTotalDocuments().should('be.greaterThan', 5)
     cy.wait(1000);
     //check table rows
     browsePage.getTableRows().should('have.length', 6);
