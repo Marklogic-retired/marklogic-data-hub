@@ -148,6 +148,7 @@ const App: React.FC<Props> = ({history, location}) => {
         onCancel={() => handleLogout()} 
         okText="Continue Session"
         onOk={() => continueSession()}
+        maskClosable={false}
       >
         <p data-cy="inactivity">Due to Inactivity, you will be logged out in <b>{sessionTime} seconds</b></p>
       </Modal>
