@@ -20,7 +20,7 @@ describe('table test scenarios', () => {
     browsePage.getSelectedEntity().should('contain', 'All Entities');
     cy.wait(2000);
     browsePage.getHubPropertiesExpanded();
-    browsePage.getTotalDocuments().should('be.greaterThan', '1008')
+    browsePage.getTotalDocuments().should('be.greaterThan', 1008)
     browsePage.getTableRows().should('be.visible');
     browsePage.getTableColumns().should('be.visible');
   });

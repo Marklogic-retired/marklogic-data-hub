@@ -13,6 +13,7 @@ describe('view page validation', () => {
     cy.fixture('users').then(user => {
       cy.login(user.username, user.password);
     })
+    cy.wait(500);
     cy.visit('/view');
   });
 
