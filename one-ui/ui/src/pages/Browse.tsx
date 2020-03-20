@@ -244,7 +244,7 @@ const Browse: React.FC<Props> = ({ location }) => {
                 </div>
                 </div>
               </div>
-              <div>
+              <div className={styles.selectedFacets}>
                 <SelectedFacets selectedFacets={selectedFacets} />
               </div>
             </div>

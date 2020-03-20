@@ -33,7 +33,6 @@ const Sidebar: React.FC<Props> = (props) => {
   } = useContext(SearchContext);
   const [entityFacets, setEntityFacets] = useState<any[]>([]);
   const [hubFacets, setHubFacets] = useState<any[]>([]);
-  const [selectedFacets, setSelectedFacets] = useState<any[]>([]);
   const [allSelectedFacets, setAllSelectedFacets] = useState<any>(searchOptions.searchFacets);
   const [datePickerValue, setDatePickerValue] = useState<any[]>([null, null]);
   const [showApply, toggleApply] = useState(false);
@@ -92,7 +91,6 @@ const Sidebar: React.FC<Props> = (props) => {
               selectedFacets.push({ constraint, rangeValues });
             }
           }
-          setSelectedFacets(selectedFacets);
           props.facetRender(selectedFacets);
         }
         if (!selectedFacets.some(item => item.constraint === 'createdOnRange')) {
@@ -100,7 +98,6 @@ const Sidebar: React.FC<Props> = (props) => {
           toggleApply(false)
         }
       } else {
-        setSelectedFacets([]);
         props.facetRender([]);
         setAllSelectedFacets({});
         setDatePickerValue([null, null]);
@@ -171,7 +168,6 @@ const Sidebar: React.FC<Props> = (props) => {
 
   const applyAllFacets = () => {
     setAllSearchFacets(allSelectedFacets);
-    // props.facetRender(selectedFacets);
   }
 
   const addFacetValues = (constraint: string, vals: string[], dataType: string, facetCategory: string) => {
