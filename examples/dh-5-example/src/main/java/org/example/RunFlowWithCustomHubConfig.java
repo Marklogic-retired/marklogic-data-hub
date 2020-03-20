@@ -17,7 +17,8 @@ public class RunFlowWithCustomHubConfig {
         final String password = args[2];
         final String inputFilePath = args[3];
 
-        HubConfigImpl hubConfig = new HubConfigImpl();
+        // Instantiate a HubConfig with DHF's default set of properties, and then start customizing it
+        HubConfigImpl hubConfig = HubConfigImpl.withDefaultProperties();
         hubConfig.setHost(host);
         hubConfig.setMlUsername(username);
         hubConfig.setMlPassword(password);
