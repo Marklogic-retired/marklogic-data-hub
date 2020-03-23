@@ -1,0 +1,48 @@
+{
+  "title": "ModelDescriptor",
+  "type": "object",
+  "description": "JSON schema representation of a MarkLogic Entity Services model",
+  "x-marklogic": {
+    "collections": [
+      "http://marklogic.com/entity-services/models"
+    ],
+    "permissions": [
+      {
+        "role-name": "data-hub-entity-model-reader",
+        "capability": "read"
+      },
+      {
+        "role-name": "data-hub-entity-model-writer",
+        "capability": "update"
+      }
+    ],
+    "uri-template": "/entities/${./info/title}.entity.json",
+    "databases": [
+      "final",
+      "staging"
+    ]
+  },
+  "properties": {
+    "info": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "baseUri": {
+          "type": "string",
+          "description": "Optional for ES, but required by DHF"
+        }
+      },
+      "required": [
+        "title"
+      ]
+    },
+    "definitions": {
+      "$ref": "./ModelDefinitions.v1.json"
+    }
+  }
+}
