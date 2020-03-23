@@ -1,0 +1,8 @@
+{
+  "functionName" : "getPrimaryEntityTypes",
+  "desc" : "Returns an array of primary entity types. A primary entity type is the entity type in a model descriptor with a name equal to the title of the model descriptor.",
+  "return" : {
+    "datatype" : "jsonDocument",
+    "$javaClass" : "com.fasterxml.jackson.databind.JsonNode"
+  }
+}

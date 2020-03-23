@@ -1,0 +1,29 @@
+{
+  "title": "PrimaryEntityTypes",
+  "type": "array",
+  "x-examples": {},
+  "description": "Defines the data needed for presenting entity types in the UI",
+  "items": {
+    "type": "object",
+    "properties": {
+      "entityName": {
+        "type": "string"
+      },
+      "entityInstanceCount": {
+        "type": "number"
+      },
+      "lastHarmonizedDateTime": {
+        "type": "string",
+        "description": "Included if the user can read instances of this type, and at least one instance has been processed by a step. Likely should use \"processed\" instead of \"harmonized\" here.",
+        "format": "date-time"
+      },
+      "model": {
+        "$ref": "./ModelDescriptor.v1.json"
+      }
+    },
+    "required": [
+      "entityName",
+      "model"
+    ]
+  }
+}

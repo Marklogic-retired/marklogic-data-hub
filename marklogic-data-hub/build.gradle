@@ -175,24 +175,21 @@ ext {
     dataServicesPath = "src/main/resources/ml-modules/root/data-hub/5/data-services"
 }
 
-task generateMasteringServiceInterface(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask, group: dataServicesGroup) {
-    serviceDeclarationFile = dataServicesPath + "/mastering/service.json"
+task generateFilesForDataServices(type: JavaExec) {
+    description = "Generate DS source files based on API files in the ./specs directory"
+    classpath = sourceSets.test.runtimeClasspath
+    main = 'com.marklogic.hub.tools.DataServiceFilesGenerator'
 }
 
-task generateSecurityServiceInterface(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask, group: dataServicesGroup) {
-    serviceDeclarationFile = dataServicesPath + "/security/service.json"
-}
-
-task generateStepDefinitionInterface(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask, group: dataServicesGroup) {
-    serviceDeclarationFile = dataServicesPath + "/stepDefinition/service.json"
-}
-
-task generateArtifactsInterface(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask, group: dataServicesGroup) {
-    serviceDeclarationFile = dataServicesPath + "/artifacts/service.json"
-}
-
-task generateMappingInterface(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask, group: dataServicesGroup) {
-    serviceDeclarationFile = dataServicesPath + "/mapping/service.json"
+// Dynamically generate a task for each data-service directory, where the task can generate a Java interface for the data service
+new File("src/main/resources/ml-modules/root/data-hub/5/data-services").listFiles().each { file ->
+    // jobInfo is currently excluded as the Explorer source code already has a generated interface
+    if (file.isDirectory() && new File(file, "service.json").exists() && !"jobInfo".equals(file.getName())) {
+        task "generate${file.getName()}Interface"(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask, group: dataServicesGroup) {
+            description = "Must run this from the ./marklogic-data-hub directory"
+            serviceDeclarationFile = dataServicesPath + "/${file.getName()}/service.json"
+        }
+    }
 }
 
 task generateJobInfoInterface(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask, group: dataServicesGroup) {
@@ -222,6 +219,7 @@ if (!(
         gradle.startParameter.taskNames*.toLowerCase().contains("marklogic-data-hub:bootjar") ||
         gradle.startParameter.taskNames*.toLowerCase().contains("clientjar") ||
         gradle.startParameter.taskNames*.toLowerCase().contains("marklogic-data-hub:clientjar") ||
+        gradle.startParameter.taskNames*.toLowerCase().contains("generatefilesfordataservices") ||
         project.hasProperty('skipui')
 )
 ) {

@@ -1,0 +1,17 @@
+{
+  "title": "RESTError",
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "integer"
+    },
+    "message": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "description": "Common error data structure for errors returned by the middle tier"
+}

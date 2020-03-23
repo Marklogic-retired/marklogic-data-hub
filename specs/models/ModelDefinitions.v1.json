@@ -1,0 +1,125 @@
+{
+  "title": "ModelDefinitions",
+  "type": "object",
+  "additionalProperties": false,
+  "patternProperties": {
+    "^[a-zA-Z0-9]+$": {
+      "type": "object",
+      "properties": {
+        "required": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "pii": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "elementRangeIndex": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rangeIndex": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "wordLexicon": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "properties": {
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^[a-zA-Z0-9]+$": {
+              "type": "object",
+              "properties": {
+                "datatype": {
+                  "type": "string",
+                  "description": "The type of the value",
+                  "enum": [
+                    "boolean",
+                    "date",
+                    "dateTime",
+                    "dayTimeDuration",
+                    "decimal",
+                    "double",
+                    "float",
+                    "int",
+                    "long",
+                    "string",
+                    "time",
+                    "unsignedInt",
+                    "unsignedLong",
+                    "array",
+                    "object",
+                    "binaryDocument",
+                    "jsonDocument",
+                    "textDocument",
+                    "xmlDocument",
+                    "session"
+                  ]
+                },
+                "collation": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "datatype": {
+                      "type": "string",
+                      "description": "The type of the value",
+                      "enum": [
+                        "boolean",
+                        "date",
+                        "dateTime",
+                        "dayTimeDuration",
+                        "decimal",
+                        "double",
+                        "float",
+                        "int",
+                        "long",
+                        "string",
+                        "time",
+                        "unsignedInt",
+                        "unsignedLong",
+                        "array",
+                        "object",
+                        "binaryDocument",
+                        "jsonDocument",
+                        "textDocument",
+                        "xmlDocument",
+                        "session"
+                      ]
+                    },
+                    "collation": {
+                      "type": "string"
+                    },
+                    "$ref": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "required": [
+                "datatype"
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

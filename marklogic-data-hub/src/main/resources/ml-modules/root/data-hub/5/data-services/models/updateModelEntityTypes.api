@@ -1,0 +1,15 @@
+{
+  "functionName" : "updateModelEntityTypes",
+  "params" : [ {
+    "name" : "name",
+    "datatype" : "string",
+    "desc" : "The name of the model"
+  }, {
+    "name" : "input",
+    "datatype" : "jsonDocument",
+    "$javaClass" : "com.fasterxml.jackson.databind.JsonNode",
+    "schema" : {
+      "$ref" : "../../models/ModelDefinitions.v1.json"
+    }
+  } ]
+}

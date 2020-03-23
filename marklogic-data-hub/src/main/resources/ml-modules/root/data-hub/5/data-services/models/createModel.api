@@ -1,0 +1,28 @@
+{
+  "functionName" : "createModel",
+  "desc" : "Create a new model, resulting in a new entity descriptor with a primary entity type in it.",
+  "params" : [ {
+    "name" : "input",
+    "datatype" : "jsonDocument",
+    "$javaClass" : "com.fasterxml.jackson.databind.JsonNode",
+    "schema" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "description" : {
+          "type" : "string"
+        },
+        "baseUri" : {
+          "type" : "string"
+        }
+      },
+      "required" : [ "name" ]
+    }
+  } ],
+  "return" : {
+    "datatype" : "jsonDocument",
+    "$javaClass" : "com.fasterxml.jackson.databind.JsonNode"
+  }
+}
