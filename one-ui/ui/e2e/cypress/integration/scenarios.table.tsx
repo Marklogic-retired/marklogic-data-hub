@@ -1,8 +1,10 @@
 /// <reference types="cypress"/>
 
 import BrowsePage from '../support/pages/browse';
+import HomePage from "../support/pages/home";
 
 const browsePage = new BrowsePage();
+const homePage = new HomePage();
 
 describe('table test scenarios', () => {
 
@@ -13,7 +15,8 @@ describe('table test scenarios', () => {
       cy.login(user.username, user.password);
     })
     cy.wait(500);
-    cy.visit('/browse');
+    homePage.getBrowseEntities().click();
+    //cy.visit('/browse');
   });
 
   it('has table', () => {
@@ -42,7 +45,8 @@ describe('column selector test scenarios', () => {
       cy.login(user.username, user.password);
     })
     cy.wait(500);
-    cy.visit('/browse');
+    homePage.getBrowseEntities().click();
+    //cy.visit('/browse');
   });
 
   it('has columns selector popover', () => {
