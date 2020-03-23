@@ -1,12 +1,12 @@
 import React from 'react';
 import ActivitySettingsDialog from './activity-settings-dialog';
-import Axios from 'axios';
+import axios, { AxiosRequestConfig, AxiosPromise, AxiosResponse } from 'axios';
 import { shallow } from 'enzyme';
 import {act} from "react-dom/test-utils";
 import { fireEvent, render, waitForElementToBeRemoved } from "@testing-library/react";
 import data from '../../config/data.config';
 
-jest.mock('Axios');
+jest.mock('axios');
 
 describe('Update data load settings component', () => {
   let wrapper: any;
@@ -15,8 +15,8 @@ describe('Update data load settings component', () => {
 
 
   beforeEach(() => {
-    getSpy = jest.spyOn(Axios, 'get');
-    postSpy = jest.spyOn(Axios, 'post');
+    getSpy = jest.spyOn(axios, 'get');
+    postSpy = jest.spyOn(axios, 'post');
     wrapper = shallow(<ActivitySettingsDialog {...data.activitySettings}/>);
   });
 
