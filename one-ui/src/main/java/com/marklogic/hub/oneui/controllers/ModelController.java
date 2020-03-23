@@ -16,6 +16,8 @@
  */
 package com.marklogic.hub.oneui.controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.hub.dataservices.ModelsService;
 import com.marklogic.hub.oneui.managers.ModelManager;
 import com.marklogic.hub.oneui.models.HubConfigSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,5 +69,11 @@ public class ModelController {
     @ResponseBody
     public ResponseEntity<?> getLatestJobInfo(@PathVariable String modelName) {
         return ResponseEntity.ok(modelManager.getLatestJobInfo(modelName));
+    }
+
+    @RequestMapping(value = "/primaryEntityTypes", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<JsonNode> getPrimaryEntityTypes() {
+        return ResponseEntity.ok(ModelsService.on(hubConfig.newFinalClient(null)).getPrimaryEntityTypes());
     }
 }

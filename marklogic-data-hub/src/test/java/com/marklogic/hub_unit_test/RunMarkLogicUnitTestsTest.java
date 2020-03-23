@@ -4,6 +4,7 @@ import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.bootstrap.Installer;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.deploy.commands.LoadHubArtifactsCommand;
 import com.marklogic.junit5.MarkLogicUnitTestArgumentsProvider;
 import com.marklogic.test.unit.TestManager;
 import com.marklogic.test.unit.TestModule;
@@ -48,7 +49,7 @@ public class RunMarkLogicUnitTestsTest extends HubTestBase {
     public void setup() {
         if (!loadedHubArtifacts) {
             clearStagingFinalAndJobDatabases();
-            new SimpleAppDeployer(loadHubArtifactsCommand).deploy(adminHubConfig.getAppConfig());
+            new SimpleAppDeployer(new LoadHubArtifactsCommand(adminHubConfig)).deploy(adminHubConfig.getAppConfig());
             loadedHubArtifacts = true;
         }
     }

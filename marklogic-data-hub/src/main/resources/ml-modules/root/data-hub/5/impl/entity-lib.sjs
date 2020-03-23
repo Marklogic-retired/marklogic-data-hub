@@ -130,11 +130,42 @@ function getModelId(model) {
   return baseUri + info.title + "-" + info.version;
 }
 
+/**
+ * The expectation is that in the future, this will be a more sophisticated query than just assuming that a collection
+ * equalling the entity name is a reliable way of finding entity instances.
+ * @return {*}
+ */
+function buildQueryForEntityName(entityName) {
+  return cts.collectionQuery(entityName);
+}
+
+function getLatestJobData(entityName) {
+  const latestJob = fn.head(fn.subsequence(
+    cts.search(
+      buildQueryForEntityName(entityName),
+      [cts.indexOrder(cts.fieldReference("datahubCreatedOn"), "descending")]
+    ), 1, 1
+  ));
+  if (latestJob) {
+    const uri = xdmp.nodeUri(latestJob);
+    const response = {
+      latestJobDateTime : xdmp.documentGetMetadataValue(uri, "datahubCreatedOn")
+    };
+    let jobIds = xdmp.documentGetMetadataValue(uri, "datahubCreatedByJob");
+    if (jobIds) {
+      response.latestJobId = jobIds.split(" ").pop();
+    }
+    return response;
+  }
+  return null;
+}
+
 module.exports = {
   findEntityTypeIds,
   findEntityType,
   findEntityTypesAsMap,
   findModelForEntityTypeId,
   getEntityTypeId,
-  getEntityTypeIdParts
+  getEntityTypeIdParts,
+  getLatestJobData
 };

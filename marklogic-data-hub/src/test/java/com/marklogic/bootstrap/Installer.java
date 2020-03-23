@@ -4,8 +4,12 @@ import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.api.API;
+import com.marklogic.mgmt.api.security.Privilege;
 import com.marklogic.mgmt.api.security.User;
+import com.marklogic.mgmt.mapper.DefaultResourceMapper;
+import com.marklogic.mgmt.resource.security.PrivilegeManager;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,12 +73,26 @@ public class Installer extends HubTestBase implements InitializingBean {
             dataHubEnvManager.addRole("data-hub-environment-manager");
             dataHubEnvManager.save();
 
+            addStatusPrivilegeToDataHubDeveloper();
+
             applyDatabasePropertiesForTests(dataHub, adminHubConfig);
         }
 
         if (getDataHubAdminConfig().getIsProvisionedEnvironment()) {
             installHubModules();
         }
+    }
+
+    /**
+     * This allows for any user that inherits data-hub-developer to invoke the "waitForTasksToFinish" method.
+     */
+    protected void addStatusPrivilegeToDataHubDeveloper() {
+        ManageClient client = adminHubConfig.getManageClient();
+        PrivilegeManager mgr = new PrivilegeManager(client);
+        String json = mgr.getAsJson("status-builtins", "kind", "execute");
+        Privilege p = new DefaultResourceMapper(new API(client)).readResource(json, Privilege.class);
+        p.addRole("data-hub-developer");
+        mgr.save(p.getJson());
     }
 
     /**
@@ -87,7 +105,7 @@ public class Installer extends HubTestBase implements InitializingBean {
      */
     public static void applyDatabasePropertiesForTests(DataHub dataHub, HubConfig hubConfig) {
         try {
-            Path srcDir = Paths.get("src", "test", "ml-config", "databases","final-database.json");
+            Path srcDir = Paths.get("src", "test", "ml-config", "databases", "final-database.json");
             Path dstDir = Paths.get(hubConfig.getUserDatabaseDir().toString(), "test-final-database.json");
             FileUtils.copyFile(srcDir.toAbsolutePath().toFile(), dstDir.toAbsolutePath().toFile());
         } catch (IOException ioe) {

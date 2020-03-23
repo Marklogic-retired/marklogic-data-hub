@@ -12,9 +12,13 @@
       "entityInstanceCount": {
         "type": "number"
       },
-      "lastHarmonizedDateTime": {
+      "latestJobId": {
         "type": "string",
-        "description": "Included if the user can read instances of this type, and at least one instance has been processed by a step. Likely should use \"processed\" instead of \"harmonized\" here.",
+        "description": "If at least one instance of this type has been processed by a job, then this will contain the ID of the most recent such job."
+      },
+      "latestJobDateTime": {
+        "type": "string",
+        "description": "If latestJobId is populated, then this will contain the dateTime of the most entity instance of this type most recently processed.",
         "format": "date-time"
       },
       "model": {

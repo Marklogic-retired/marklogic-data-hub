@@ -23,6 +23,7 @@ import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
+import com.marklogic.bootstrap.Installer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.DatabaseClientFactory.Authentication;
@@ -81,6 +82,7 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 import org.w3c.dom.Document;
@@ -143,11 +145,13 @@ public class HubTestBase implements InitializingBean {
     @Autowired
     protected ApplicationContext context;
 
+    /**
+     * This is a misleading name; it's really "the current HubConfig being used by tests". It's actually rarely a user
+     * with the admin role; it's most often a user with the flow-developer-role role, which has the manage-admin role.
+     * But it can be changed at any point by any test.
+     */
     @Autowired
     protected HubConfigImpl adminHubConfig;
-
-    //@Autowired
-    //protected HubConfigImpl hubConfig;
 
     @Autowired
     protected DataHubImpl dataHub;
@@ -157,21 +161,6 @@ public class HubTestBase implements InitializingBean {
 
     @Autowired
     protected Versions versions;
-
-    @Autowired
-    protected LoadHubModulesCommand loadHubModulesCommand;
-
-    @Autowired
-    protected LoadHubArtifactsCommand loadHubArtifactsCommand;
-
-    @Autowired
-    protected LoadUserModulesCommand loadUserModulesCommand;
-
-    @Autowired
-    protected LoadUserArtifactsCommand loadUserArtifactsCommand;
-
-    @Autowired
-    protected GenerateFunctionMetadataCommand generateFunctionMetadataCommand;
 
     @Autowired
     protected Scaffolding scaffolding;
@@ -232,7 +221,6 @@ public class HubTestBase implements InitializingBean {
     public  GenericDocumentManager finalDocMgr;
     public  JSONDocumentManager jobDocMgr;
     public  GenericDocumentManager modMgr;
-    public  String bootStrapHost = null;
     static TrustManagerFactory tmf;
 
     static {
@@ -1022,55 +1010,96 @@ public class HubTestBase implements InitializingBean {
         }
     }
 
-    //installHubModules(), installUserModules() and clearUserModules() must be run as 'flow-developer'.
     protected void installHubModules() {
         logger.debug("Installing Data Hub modules into MarkLogic");
         List<Command> commands = new ArrayList<>();
-        commands.add(loadHubModulesCommand);
+        commands.add(new LoadHubModulesCommand(adminHubConfig));
 
         SimpleAppDeployer deployer = new SimpleAppDeployer(adminHubConfig.getManageClient(), adminHubConfig.getAdminManager());
         deployer.setCommands(commands);
         deployer.deploy(adminHubConfig.getAppConfig());
     }
 
+
+    /**
+     * Use this anytime a test needs to wait for things that run on the ML task server - generally, post-commit triggers
+     * - to finish, without resorting to arbitrary Thread.sleep calls that don't always work and often require more
+     * waiting than necessary.
+     */
+    protected void waitForTasksToFinish() {
+        String query = "xquery version '1.0-ml';" +
+            "\n declare namespace ss = 'http://marklogic.com/xdmp/status/server';" +
+            "\n declare namespace hs = 'http://marklogic.com/xdmp/status/host';" +
+            "\n let $task-server-id as xs:unsignedLong := xdmp:host-status(xdmp:host())//hs:task-server-id" +
+            "\n return fn:count(xdmp:server-status(xdmp:host(), $task-server-id)/ss:request-statuses/*)";
+
+        final int maxTries = 100;
+        final long sleepPeriod = 200;
+
+        int taskCount = Integer.parseInt(getServerEval(HubConfig.DEFAULT_STAGING_NAME).xquery(query).evalAs(String.class));
+        int tries = 0;
+        logger.debug("Waiting for task server tasks to finish, count: " + taskCount);
+        while (taskCount > 0 && tries < maxTries) {
+            tries++;
+            try {
+                Thread.sleep(sleepPeriod);
+            } catch (Exception ex) {
+                // ignore
+            }
+            taskCount = Integer.parseInt(getServerEval(HubConfig.DEFAULT_STAGING_NAME).xquery(query).evalAs(String.class));
+            logger.debug("Waiting for task server tasks to finish, count: " + taskCount);
+        }
+    }
+
+    protected void installUserModulesAndArtifacts() {
+        installUserModules(adminHubConfig, true);
+    }
+
+    /**
+     * This loads user artifacts as well, despite the name.
+     *
+     * @param hubConfig
+     * @param force
+     */
     protected void installUserModules(HubConfig hubConfig, boolean force) {
         logger.debug("Installing user modules into MarkLogic");
         List<Command> commands = new ArrayList<>();
+
+        LoadUserModulesCommand loadUserModulesCommand = new LoadUserModulesCommand(adminHubConfig);
         loadUserModulesCommand.setForceLoad(force);
         commands.add(loadUserModulesCommand);
 
-        LoadModulesCommand loadModulesCommand = new LoadModulesCommand();
-        commands.add(loadModulesCommand);
-        //'generateFunctionMetadataCommand' must be called before deploying mappings. If mapping is deployed first
-        // and it references custom functions, mapping xslt will not have reference to custom functions and tests
-        // would fail with XDMP-UNDFUN: (err:XPST0017) Undefined function customDateTime().
-        commands.add(generateFunctionMetadataCommand);
+        commands.add(new GenerateFunctionMetadataCommand(adminHubConfig));
 
+        LoadUserArtifactsCommand loadUserArtifactsCommand = new LoadUserArtifactsCommand(adminHubConfig);
         loadUserArtifactsCommand.setForceLoad(force);
         commands.add(loadUserArtifactsCommand);
 
-        SimpleAppDeployer deployer = new SimpleAppDeployer(((HubConfigImpl)hubConfig).getManageClient(), ((HubConfigImpl)hubConfig).getAdminManager());
+        SimpleAppDeployer deployer = new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager());
         deployer.setCommands(commands);
         deployer.deploy(hubConfig.getAppConfig());
+
+        waitForTasksToFinish();
+    }
+
+    protected void installUserArtifacts() {
+        LoadUserArtifactsCommand command = new LoadUserArtifactsCommand(adminHubConfig);
+        command.setForceLoad(true);
+        new SimpleAppDeployer(adminHubConfig.getManageClient(), adminHubConfig.getAdminManager(), command).deploy(adminHubConfig.getAppConfig());
+        waitForTasksToFinish();
     }
 
     protected void installHubArtifacts(HubConfig hubConfig, boolean force) {
         logger.debug("Installing hub artifacts into MarkLogic");
         List<Command> commands = new ArrayList<>();
 
-        loadHubArtifactsCommand.setForceLoad(force);
-        commands.add(loadHubArtifactsCommand);
+        LoadHubArtifactsCommand command = new LoadHubArtifactsCommand(adminHubConfig);
+        command.setForceLoad(force);
+        commands.add(command);
 
-        SimpleAppDeployer deployer = new SimpleAppDeployer(((HubConfigImpl)hubConfig).getManageClient(), ((HubConfigImpl)hubConfig).getAdminManager());
+        SimpleAppDeployer deployer = new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager());
         deployer.setCommands(commands);
         deployer.deploy(hubConfig.getAppConfig());
-
-        // Provides some time for post-commit triggers to complete
-        try {
-            Thread.sleep(1500);
-        } catch (InterruptedException e) {
-            logger.warn("Unexpected error while trying to sleep: " + e.getMessage(), e);
-        }
     }
 
     public void clearUserModules() {
@@ -1249,13 +1278,22 @@ public class HubTestBase implements InitializingBean {
         }
     }
 
-    protected void setupProjectForRunningTestFlow() {
+    /**
+     * Resets the project by clearing the 3 databases and then installing the OOTB artifacts (flows and step definitions)
+     * into the DHF instance.
+     */
+    protected void resetProject() {
+        new Installer().deleteProjectDir();
         basicSetup();
         getDataHubAdminConfig();
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
+        installHubArtifacts(getDataHubAdminConfig(), true);
+    }
+
+    protected void setupProjectForRunningTestFlow() {
+        resetProject();
         copyFlowArtifactsToProject();
         installUserModules(getDataHubAdminConfig(), true);
-        installHubArtifacts(getDataHubAdminConfig(), true);
     }
 
     protected void copyFlowArtifactsToProject() {
@@ -1379,5 +1417,55 @@ public class HubTestBase implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         init();
+    }
+
+    /**
+     * Load the files associated with the entity reference model.
+     */
+    protected void loadReferenceModelProject() {
+        loadProjectFiles("entity-reference-model");
+    }
+
+    /**
+     * Intended to make it easy to specify a set of project files to load for a particular test. You likely will want to
+     * call "resetProject" before calling this.
+     *
+     * @param folderInClasspath
+     */
+    protected void loadProjectFiles(String folderInClasspath) {
+        boolean loadModules = false;
+
+        try {
+            File testProjectDir = new ClassPathResource(folderInClasspath).getFile();
+            File entitiesDir = new File(testProjectDir, "entities");
+            if (entitiesDir.exists()) {
+                FileUtils.copyDirectory(entitiesDir, adminHubConfig.getHubEntitiesDir().toFile());
+            }
+
+            File flowsDir = new File(testProjectDir, "flows");
+            if (flowsDir.exists()) {
+                FileUtils.copyDirectory(flowsDir, adminHubConfig.getFlowsDir().toFile());
+            }
+
+            File stepDefinitionsDir = new File(testProjectDir, "step-definitions");
+            if (stepDefinitionsDir.exists()) {
+                FileUtils.copyDirectory(stepDefinitionsDir, adminHubConfig.getStepDefinitionsDir().toFile());
+            }
+
+            File modulesDir = new File(testProjectDir, "modules");
+            if (modulesDir.exists()) {
+                FileUtils.copyDirectory(modulesDir, adminHubConfig.getModulesDir().toFile());
+                loadModules = true;
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to load project files: " + e.getMessage(), e);
+        }
+
+        if (loadModules) {
+            installUserModulesAndArtifacts();
+        } else {
+            installUserArtifacts();
+        }
     }
 }

@@ -17,16 +17,13 @@
 
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 
-var entityCollection;
-
-let res = {
-  "entityCollection": entityCollection,
-  "latestJobId": null,
-  "latestJobDateTime": null
-};
-
-const latestJobData = entityLib.getLatestJobData(entityCollection);
-if (latestJobData) {
-  res = Object.assign(res, latestJobData);
-}
-res;
+fn.collection("http://marklogic.com/entity-services/models").toArray().map(model => {
+  const entityName = model.toObject().info.title;
+  const jobData = entityLib.getLatestJobData(entityName);
+  const response = {
+    entityName: entityName,
+    entityInstanceCount: cts.estimate(cts.collectionQuery(entityName)),
+    model: model
+  };
+  return Object.assign(response, jobData);
+})

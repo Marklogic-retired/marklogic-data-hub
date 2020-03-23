@@ -476,7 +476,9 @@ public class HubProjectImpl implements HubProject {
 
     private void writeResourceFile(String srcFile, Path dstFile, boolean overwrite) {
         if (overwrite || !dstFile.toFile().exists()) {
-            logger.info("Getting file: " + srcFile);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Getting file: " + srcFile);
+            }
             InputStream inputStream = null;
             try {
                 inputStream = HubProject.class.getClassLoader().getResourceAsStream(srcFile);
