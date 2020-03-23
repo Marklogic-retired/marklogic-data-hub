@@ -25,8 +25,8 @@ describe('Source to Entity mapping component', () => {
       expect(wrapper.find('#functionIcon').length).toEqual(0);
       expect(wrapper.find('#Clear-btn').length).toEqual(1);
       expect(wrapper.find('#Test-btn').length).toEqual(1);
-      expect(wrapper.find('#errorInExp').length).toEqual(1);
-      expect(wrapper.find('#valuesAfterTest').length).toEqual(1);
+      expect(wrapper.find('#errorInExp').length).toEqual(0);
+      expect(wrapper.find('#valuesAfterTest').length).toEqual(0);
   });
 
   test('Modal renders a message when there is no source data', () => {
