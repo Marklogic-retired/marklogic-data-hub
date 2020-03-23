@@ -2,8 +2,10 @@
 
 import ViewPage from '../support/pages/view';
 import LoginPage from "../support/pages/login";
+import HomePage from "../support/pages/home";
 
 const viewPage = new ViewPage();
+const homePage = new HomePage();
 
 describe('view page validation', () => {
   //login with valid account
@@ -14,7 +16,8 @@ describe('view page validation', () => {
       cy.login(user.username, user.password);
     })
     cy.wait(500);
-    cy.visit('/view');
+    homePage.getViewEntities().click();
+    //cy.visit('/view');
   });
 
   it('check last harmonized', () => {

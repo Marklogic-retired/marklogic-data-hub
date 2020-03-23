@@ -4,10 +4,12 @@ import LoginPage from '../support/pages/login';
 import ViewPage from '../support/pages/view';
 import BrowsePage from '../support/pages/browse';
 import DetailPage from '../support/pages/detail';
+import HomePage from "../support/pages/home";
 
 const viewPage = new ViewPage();
 const browsePage = new BrowsePage();
 const detailPage = new DetailPage();
+const homePage = new HomePage();
 
 describe('json scenario on view entities page', () => {
 
@@ -19,7 +21,8 @@ describe('json scenario on view entities page', () => {
       cy.login(user.username, user.password);
     })
     cy.wait(500);
-    cy.visit('/view');
+    homePage.getViewEntities().click();
+    //cy.visit('/view');
   });
 
   it('has total entities and documents', () => {
@@ -56,7 +59,8 @@ describe('json scenario on browse documents page', () => {
       cy.login(user.username, user.password);
     })
     cy.wait(500);
-    cy.visit('/browse');
+    homePage.getBrowseEntities().click();
+    //cy.visit('/browse');
     // cy.get('.ant-menu-item').contains('Browse Documents').click();
     cy.wait(1000);
     browsePage.getFacetView();
@@ -173,7 +177,8 @@ describe('json scenario for table on browse documents page', () => {
       cy.login(user.username, user.password);
     })
     cy.wait(500);
-    cy.visit('/browse');
+    homePage.getBrowseEntities().click();
+    //cy.visit('/browse');
     // cy.get('.ant-menu-item').contains('Browse Documents').click();
     cy.wait(2000);
     browsePage.getTableView();
