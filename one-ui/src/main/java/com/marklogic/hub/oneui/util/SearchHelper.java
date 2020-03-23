@@ -33,6 +33,7 @@ import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.oneui.exceptions.DataHubException;
+import com.marklogic.hub.oneui.managers.ModelManager;
 import com.marklogic.hub.oneui.models.DocSearchQueryInfo;
 import com.marklogic.hub.oneui.models.Document;
 import com.marklogic.hub.oneui.models.SearchQuery;
@@ -69,10 +70,12 @@ public class SearchHelper {
 
     private DatabaseClient finalDatabaseClient;
     private SearchOptionBuilder soBuilder;
+    private ModelManager modelManager;
 
     public SearchHelper(HubConfig hubConfig) {
         this.finalDatabaseClient = hubConfig.newFinalClient(hubConfig.getDbName(DatabaseKind.FINAL));
         this.soBuilder = new SearchOptionBuilder();
+        this.modelManager = new ModelManager(hubConfig);
     }
 
     public StringHandle search(SearchQuery searchQuery) {
@@ -96,6 +99,12 @@ public class SearchHelper {
 
         }
         catch (MarkLogicServerException e) {
+            // If there are no entityModels to search, then we expect an error because no search options will exist
+            if(searchQuery.getQuery().getEntityNames().isEmpty() || modelManager.getModels().size() == 0) {
+                logger.warn("No entityTypes present to perform search");
+                return new StringHandle("");
+            }
+
             logger.error(e.getLocalizedMessage());
 
             // Resorting to string contains check as there isn't any other discernible difference
