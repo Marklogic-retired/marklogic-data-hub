@@ -63,7 +63,15 @@ export const entityFromJSON = (data: any) => {
             property.collation = item['definitions'][definition][entityKeys][properties]['collation'];
             if (item['definitions'][definition][entityKeys][properties]['datatype']) {
               property.datatype = item['definitions'][definition][entityKeys][properties]['datatype'];
-              item['definitions'][definition][entityKeys][properties]['datatype'] === 'array' ? property.ref = item['definitions'][definition][entityKeys][properties]['items']['$ref'].split('/').pop() : property.ref = '';
+
+              if (item['definitions'][definition][entityKeys][properties]['datatype'] === 'array') {
+                if(item['definitions'][definition][entityKeys][properties]['items'].hasOwnProperty('$ref')) {
+                  property.ref = item['definitions'][definition][entityKeys][properties]['items']['$ref'].split('/').pop();
+                } else {
+                  property.ref = '';
+                }
+              }
+
             } else if (item['definitions'][definition][entityKeys][properties]['$ref']) {
               property.ref = item['definitions'][definition][entityKeys][properties]['$ref'].split('/').pop();
               property.datatype = 'entity';
