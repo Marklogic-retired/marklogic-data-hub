@@ -55,6 +55,7 @@ const EntityTable: React.FC<Props> = (props) => {
       rowKey="property"
       className="property-table"
       data-cy="property-table"
+      data-testid='property-table'
       columns={columns}
       dataSource={properties}
       pagination={false}
@@ -73,7 +74,9 @@ const EntityTable: React.FC<Props> = (props) => {
             pathname: "/browse",
             state: { entity: text }
           }}
-            data-cy={text}>
+            data-cy={text}
+            data-testid={text}
+          >
             {text}
           </Link>
         )
@@ -101,7 +104,9 @@ const EntityTable: React.FC<Props> = (props) => {
             pathname: "/browse",
             state: { jobId: parseText[1], entityName: parseText[2] }
           }}
-            data-cy= 'last-harmonized'>
+            data-cy= 'last-harmonized'
+            data-testid={`last-harmonized-${parseText[2]}`}
+          >
             {parseText[0]}
           </Link>
         )
