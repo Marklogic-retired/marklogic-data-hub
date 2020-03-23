@@ -1,15 +1,12 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { render, fireEvent } from '@testing-library/react';
 import DropDownWithSearch from './dropdownWithSearch';
+import data from "../../../config/data.config";
 
 describe('DropDownWithSearch component', () => {
-  let wrapper: any;
-
-  beforeEach(() => {
-    wrapper = shallow(<DropDownWithSearch data/>)
-  });
 
   test('DropDownWithSearch component renders ', () => {
-    expect(wrapper.find('#dropdownList').length).toEqual(1)
+      const {container} = render(<DropDownWithSearch {...data.dropDownWithSearch} />);
+      expect(container.querySelector('#dropdownList')).toBeInTheDocument();
   });
 });

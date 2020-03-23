@@ -40,6 +40,7 @@
     "react-scripts": "^3.3.0",
     "react-xml-viewer": "^1.0.3",
     "reactour": "^1.15.2",
+    "sinon": "^9.0.1",
     "sockjs-client": "^1.4.0",
     "stompjs": "^2.3.3",
     "typescript": "3.7.2"
