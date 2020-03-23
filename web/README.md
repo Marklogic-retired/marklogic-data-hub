@@ -1,2 +1,0 @@
-# MarkLogic Data Hub - Web
-

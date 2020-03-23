@@ -23,14 +23,14 @@ const dataHub = DataHubSingleton.instance();
 const collections = ['http://marklogic.com/data-hub/matching-artifact'];
 const databases = [dataHub.config.STAGINGDATABASE, dataHub.config.FINALDATABASE];
 const permissions = [xdmp.permission(dataHub.consts.DATA_HUB_MATCHING_WRITE_ROLE, 'update'), xdmp.permission(dataHub.consts.DATA_HUB_MATCHING_READ_ROLE, 'read')];
-const requiredProperties = ['name', 'targetEntity', 'selectedSource'];
+const requiredProperties = ['name', 'targetEntityType', 'selectedSource'];
 
 function getNameProperty() {
     return 'name';
 }
 
 function getEntityNameProperty() {
-    return 'targetEntity';
+    return 'targetEntityType';
 }
 
 function getSelectedSourceProperty() {

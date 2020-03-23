@@ -23,6 +23,10 @@ describe('Source to Entity mapping component', () => {
       //List and Function icon are displayed only when the entity table loads with entity properties
       expect(wrapper.find('#listIcon').length).toEqual(0);
       expect(wrapper.find('#functionIcon').length).toEqual(0);
+      expect(wrapper.find('#Clear-btn').length).toEqual(1);
+      expect(wrapper.find('#Test-btn').length).toEqual(1);
+      expect(wrapper.find('#errorInExp').length).toEqual(0);
+      expect(wrapper.find('#valuesAfterTest').length).toEqual(0);
   });
 
   test('Modal renders a message when there is no source data', () => {

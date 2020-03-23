@@ -15,7 +15,7 @@
     margin-left: 30em;
 }
 .noMessage{
-    padding: 2.25vh 0vh;
+    padding: 19.5px 0vh;
 }
 .parentContainer{
     display: flex;
@@ -57,7 +57,26 @@
     word-break: break-all;
 
     > .lineSpacing{
-        margin : 20px 0 20px 0;
+        margin : 21px 0 24px 0;
+    }
+    > .entityDetails{
+        display: inline-block;
+        vertical-align: middle;
+        height: 5vh;
+        margin-bottom: -17px;
+        > .entityTypeTitle{
+            float: left;
+            padding-top: 6px;
+        }
+        >.btn_icons{
+            float: right;
+            padding-right: 4px;
+        }
+    }
+
+    > .DividerEntity {
+        margin-bottom: 16px;
+        margin-top: 20px;
     }
 }
 
@@ -71,14 +90,27 @@
         vertical-align: top;
     }
 }
+.mapExpParentContainer{
+    //display: inline;
+    margin-top: -12px;
+    margin-bottom: -12px;
+
+    >.validationErrors {
+        width: 90%;
+        line-height: normal;
+        padding-top: 6px;
+        padding-left: 2px;
+        padding-bottom: 4px;
+        color: #DB4f59;
+        word-break: break-all;
+
+    }
+}
 
 .mapExpressionContainer {
     width: 100%;
     display: inline-flex;
     vertical-align: top;
-    //border: 1px solid red;
-    margin-top: -12px;
-    margin-bottom: -12px;
     align-items: flex-start;
 }
 
@@ -88,6 +120,14 @@
     vertical-align: top;
     justify-content: top;
 }
+
+.mapValue {
+    margin-top: -6px;
+    margin-bottom: -8px;
+    word-break: break-all;
+    line-height: normal;
+}
+
 .entityIcon{
     background: transparent;
     border: none;
@@ -111,6 +151,10 @@
     align-items: left;
     float: left;
 }
+.sourceDetails{
+    padding-top: 5px;
+    margin-bottom: -14px;
+}
 .sourceDataIcon {
     background: transparent;
     border: none;
@@ -122,7 +166,6 @@
     color: #394494;
     display: inline-block;
     vertical-align: top;
-	//position: relative;
     margin-top: 4px;
     font-size: 20px;
     cursor: pointer;
@@ -183,9 +226,14 @@
 }
 .uri{
     margin-left: -4px;
-    //border: 1px solid red;
     padding: 4px 0px;
     height : 32px;
+}
+
+.showingEditContainer{
+    padding-top: 10px;
+    padding-bottom:5px;
+    margin-bottom: -6px;
 }
 .showingEditIcon{
     padding: 5px 3px;
@@ -193,7 +241,9 @@
     color: #394494;
 }
 .notShowingEditIcon{
-    padding: 5px 3px;
+    padding-top: 10px;
+    padding-right: 2.3em;
+    padding-left: 3px;
     margin-left: -3px;
 }
 
@@ -235,8 +285,10 @@
     justify-content: space-between;
     vertical-align: middle;
     text-align: center;
-    padding-bottom: 2px;
+    padding-bottom: 4px;
+    margin-top: 2px;
     height: 5vh;
+
 }
 
 .navigate_source_uris{

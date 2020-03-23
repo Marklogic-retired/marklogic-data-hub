@@ -30,7 +30,7 @@ const NumericFacet: React.FC<Props> = (props) => {
   const getFacetRange = async () => {
     const response = await axios({
       method: 'POST',
-      url: `/datahub/v2/search/facet-values/range`,
+      url: `/api/search/facet-values/range`,
       data: {
         "referenceType": props.referenceType,
         "entityTypeId": props.entityTypeId,
@@ -110,9 +110,7 @@ const NumericFacet: React.FC<Props> = (props) => {
               if(rangeLimit[0] === rangeArray[0] && rangeLimit[1] === rangeArray[1]) {
                 delete searchOptions.searchFacets[facet]
               }
-            } else {
-              setRange(rangeArray)
-            }
+            } 
           }
         }
       }

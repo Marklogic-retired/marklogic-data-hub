@@ -17,10 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MappingControllerTest extends TestHelper{
 
@@ -32,7 +29,7 @@ public class MappingControllerTest extends TestHelper{
 
     static final String MAPPING_CONFIG_1 = "{\n" +
         "  \"name\": \"TestCustomerMapping\",\n" +
-        "  \"targetEntity\": \"Customer\",\n" +
+        "  \"targetEntityType\": \"Customer\",\n" +
         "  \"description\": \"TestCustomerMapping does ...\",\n" +
         "  \"selectedSource\":\"query\",\n" +
         "  \"sourceQuery\": \"cts.CollectionQuery('RAW-CUSTOMER')\",\n" +
@@ -41,7 +38,7 @@ public class MappingControllerTest extends TestHelper{
 
     static final String MAPPING_CONFIG_2 = "{\n" +
         "  \"name\": \"TestOrderMapping1\",\n" +
-        "  \"targetEntity\": \"Order\",\n" +
+        "  \"targetEntityType\": \"Order\",\n" +
         "  \"description\": \"TestOrderMapping1 does ...\",\n" +
         "  \"selectedSource\": \"collection\",\n" +
         "  \"sourceQuery\": \"\",\n" +
@@ -50,7 +47,7 @@ public class MappingControllerTest extends TestHelper{
 
     static final String MAPPING_CONFIG_3 = "{\n" +
         "  \"name\" : \"TestOrderMapping2\",\n" +
-        "  \"targetEntity\" : \"Order\",\n" +
+        "  \"targetEntityType\" : \"Order\",\n" +
         "  \"description\" : \"TestOrderMapping2 does ...\",\n" +
         "  \"selectedSource\": \"query\",\n" +
         "  \"sourceQuery\": \"cts.CollectionQuery('RAW-ORDER')\",\n" +
@@ -148,7 +145,7 @@ public class MappingControllerTest extends TestHelper{
                     int mapConfigCount = 0;
                     int i = 0;
                     for (; i < mappingNode.size(); ++i) {
-                        String mappedEntityName = mappingNode.get(i).get("targetEntity").asText();
+                        String mappedEntityName = mappingNode.get(i).get("targetEntityType").asText();
                         String mapName = mappingNode.get(i).get("name").asText();
                         if (("Customer".equals(currEntityName) && currEntityName.equals(mappedEntityName) && "TestCustomerMapping".equals(mapName))
                             || ("Order".equals(currEntityName) && currEntityName.equals(mappedEntityName)
@@ -164,7 +161,7 @@ public class MappingControllerTest extends TestHelper{
                         assertEquals(2, mapConfigCount, "Should have 2 mapping configs associate with the entity (Order).");
                     }
                 } else if (mappingNode instanceof ObjectNode) {
-                    assertEquals(currEntityName, mappingNode.get("targetEntity").asText(), "mismatch entity name.");
+                    assertEquals(currEntityName, mappingNode.get("targetEntityType").asText(), "mismatch entity name.");
                     if ("Customer".equals(currEntityName)) {
                         assertEquals("TestCustomerMapping", mappingNode.get("name").asText(), "mismatch mapping name.");
                     } else { //Order

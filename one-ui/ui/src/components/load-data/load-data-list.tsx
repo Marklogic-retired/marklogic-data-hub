@@ -8,6 +8,7 @@ import NewDataLoadDialog from './new-data-load-dialog/new-data-load-dialog';
 import { MlButton } from 'marklogic-ui-library';
 import { convertDateFromISO } from '../../util/conversionFunctions';
 import ActivitySettingsDialog from "../activity-settings/activity-settings-dialog";
+import {AdvLoadTooltips} from "../../config/tooltips.config";
 
 interface Props {
     data: any;
@@ -18,6 +19,7 @@ interface Props {
   }
 
 const LoadDataList: React.FC<Props> = (props) => {
+    const activityType = 'loadData';
     const [newDataLoad, setNewDataLoad] = useState(false);
     const [title, setTitle] = useState('');
     const [dialogVisible, setDialogVisible] = useState(false);
@@ -39,8 +41,8 @@ const LoadDataList: React.FC<Props> = (props) => {
     }
 
     const OpenLoadDataSettingsDialog = (record) => {
+        console.log('Open record', record);
         setStepData(prevState => ({ ...prevState, ...record}));
-        //openLoadDataSettings = true;
         setOpenLoadDataSettings(true);
         console.log('Open settings', openLoadDataSettings)
     }
@@ -70,10 +72,6 @@ const LoadDataList: React.FC<Props> = (props) => {
     >
         <span style={{ fontSize: '16px' }}>Are you sure you want to delete this?</span>
     </Modal>;
-
-    const openSettingsDialog = () => {
-        return 'Settings Dialog will be placed here!'
-    }
 
     const columns = [
         {
@@ -157,7 +155,7 @@ const LoadDataList: React.FC<Props> = (props) => {
         canReadWrite={props.canReadWrite}
         canReadOnly={props.canReadOnly}/>
         {deleteConfirmation}
-        <ActivitySettingsDialog openLoadDataSettings={openLoadDataSettings} setOpenLoadDataSettings={setOpenLoadDataSettings} stepData={stepData} canWrite={props.canReadWrite}/>
+        <ActivitySettingsDialog tooltipData={AdvLoadTooltips} activityType={activityType} openActivitySettings={openLoadDataSettings} setOpenActivitySettings={setOpenLoadDataSettings} stepData={stepData} canWrite={props.canReadWrite}/>
     </div>
    );
 }

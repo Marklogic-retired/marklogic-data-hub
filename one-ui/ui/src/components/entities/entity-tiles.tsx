@@ -51,7 +51,7 @@ const EntityTiles = (props) => {
             if (response.status === 200) {
                 let mapArtifacts = response.data;
 
-               if(mapArtifacts.targetEntity === entityTypeTitle){
+               if(mapArtifacts.targetEntityType === entityTypeTitle){
                 return mapArtifacts;
                }
 
@@ -175,6 +175,7 @@ const EntityTiles = (props) => {
 
     const outputCards = (entityCardData, matchingCardData) => {
         let output;
+        console.log('canReadWrite',props.canReadWrite)
 
         if (viewType === 'map') {
             output = <div className={styles.cardView}>

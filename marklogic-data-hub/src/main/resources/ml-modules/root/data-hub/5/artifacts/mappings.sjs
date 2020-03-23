@@ -23,14 +23,14 @@ const dataHub = DataHubSingleton.instance();
 const collections = ['http://marklogic.com/data-hub/mapping-artifact'];
 const databases = [dataHub.config.STAGINGDATABASE, dataHub.config.FINALDATABASE];
 const permissions = [xdmp.permission(dataHub.consts.DATA_HUB_MAPPING_WRITE_ROLE, 'update'), xdmp.permission(dataHub.consts.DATA_HUB_MAPPING_READ_ROLE, 'read')];
-const requiredProperties = ['name', 'targetEntity', 'selectedSource'];
+const requiredProperties = ['name', 'targetEntityType', 'selectedSource'];
 
 function getNameProperty() {
     return 'name';
 }
 
 function getEntityNameProperty() {
-    return 'targetEntity';
+    return 'targetEntityType';
 }
 
 function getSelectedSourceProperty() {
@@ -68,7 +68,7 @@ function validateArtifact(artifact) {
   const mappingWithSameNameButDifferentEntityTypeExists = cts.exists(cts.andQuery([
     cts.collectionQuery(collections[0]),
     cts.jsonPropertyValueQuery(getNameProperty(), artifact.name),
-    cts.notQuery(cts.jsonPropertyValueQuery(getEntityNameProperty(), artifact.targetEntity))
+    cts.notQuery(cts.jsonPropertyValueQuery(getEntityNameProperty(), artifact.targetEntityType))
   ]));
   if (mappingWithSameNameButDifferentEntityTypeExists) {
     return new Error(`A mapping with the same name but for a different entity type already exists. Please choose a different name.`);

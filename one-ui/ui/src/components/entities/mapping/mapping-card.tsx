@@ -11,6 +11,8 @@ import {getResultsByQuery, getDoc} from '../../../util/search-service'
 import ActivitySettingsDialog from "../../activity-settings/activity-settings-dialog";
 import { AdvMapTooltips } from '../../../config/tooltips.config';
 import {RolesContext} from "../../../util/roles";
+import { getSettingsArtifact } from '../../../util/manageArtifacts-service';
+import axios from 'axios';
 
 interface Props {
     data: any;
@@ -30,12 +32,13 @@ const MappingCard: React.FC<Props> = (props) => {
     const [newMap, setNewMap] = useState(false);
     const [title, setTitle] = useState('');
     const [mapData, setMapData] = useState({});
-    const [mapName, setMapName] = useState({});
+    const [mapName, setMapName] = useState('');
     const [dialogVisible, setDialogVisible] = useState(false);
     const [loadArtifactName, setLoadArtifactName] = useState('');
     const [mappingVisible, setMappingVisible] = useState(false);
     const [sourceData, setSourceData] = useState<any[]>([]);
     const [sourceURI,setSourceURI] = useState('');
+    const [sourceDatabaseName, setSourceDatabaseName] = useState('data-hub-STAGING')
     const [docNotFound, setDocNotFound] = useState(false);
 
     //For Entity table
@@ -50,6 +53,9 @@ const MappingCard: React.FC<Props> = (props) => {
 
 
     const [openMappingSettings, setOpenMappingSettings] = useState(false);
+
+    //For storing  mapping functions
+    const [mapFunctions,setMapFunctions] = useState({});
 
     useEffect(() => {
         setSourceData([]);
@@ -71,6 +77,23 @@ const MappingCard: React.FC<Props> = (props) => {
         setMapData(prevState => ({ ...prevState, ...props.data[index]}));
         setOpenMappingSettings(true);
         console.log('Open settings')
+    }
+
+    const getDatabaseFromSettingsArtifact = async (mapName) => {
+        try{
+        let response = await getSettingsArtifact(activityType,mapName)
+        if (response.status === 200) {
+            if(response.data.sourceDatabase){
+                await setSourceDatabaseName(response.data.sourceDatabase)
+            } else {
+                await setSourceDatabaseName('data-hub-STAGING')
+            }
+        }
+      } catch(error) {
+        let message = error;
+        console.log('Error While fetching the mapping setting!', message);
+        setDocNotFound(true);
+    }
     }
 
     //Custom CSS for source Format
@@ -146,7 +169,7 @@ const MappingCard: React.FC<Props> = (props) => {
         }
         }
         catch(error)  {
-            let message = error;//.response.data.message;
+            let message = error;
             console.log('Error While loading the source data!', message);
             setDocNotFound(true);
         }
@@ -161,7 +184,6 @@ const MappingCard: React.FC<Props> = (props) => {
                 let nestedDoc: any = [];
                 let docRoot = srcDocResp.data['envelope'] ? srcDocResp.data['envelope']['instance'] : srcDocResp.data;
                 let sDta = generateNestedDataSource(docRoot,nestedDoc);
-                //setSourceData(prevState => ([ ...prevState, ...sDta]));
                 setSourceData([...sDta]);
             }
             } catch(error)  {
@@ -190,7 +212,6 @@ const MappingCard: React.FC<Props> = (props) => {
                     nestedDoc.push(propty);
 
                 } else if (val.constructor.name === "Array") {
-                    //srcData.push({key : key, val: respData[key]})
 
                     val.forEach(obj => {
                         if(obj.constructor.name == "String"){
@@ -235,9 +256,24 @@ const MappingCard: React.FC<Props> = (props) => {
 
     }
 
+    const getMappingFunctions = async () => {
+        try {
+            let response = await axios.get(`/api/artifacts/mapping/functions`);
+
+            if (response.status === 200) {
+                setMapFunctions({...response.data});
+              console.log('GET Mapping functions API Called successfully!',response);
+            }
+          } catch (error) {
+              let message = error;
+              console.log('Error while fetching the functions!', message);
+          }
+    }
+
 
     const extractEntityInfoForTable = () => {
-        let entProps = props.entityModel.definitions[props.entityTypeTitle].properties;
+        console.log('entityinfo',props.entityModel)
+        let entProps = props.entityModel && props.entityModel.definitions ? props.entityModel.definitions[props.entityTypeTitle].properties : {};
         let entTableTempData: any = [];
         Object.keys(entProps).map(key => {
             let propty = {
@@ -253,11 +289,12 @@ const MappingCard: React.FC<Props> = (props) => {
     const openSourceToEntityMapping = async (name,index) => {
             let mData = await props.getMappingArtifactByMapName(props.entityTypeTitle,name);
             setSourceURI('');
-            //setMapData({...props.data[index]});
             setMapData({...mData})
             getSourceData(index);
             extractEntityInfoForTable();
             setMapName(name);
+            await getDatabaseFromSettingsArtifact(name);
+            getMappingFunctions();
             setMappingVisible(true);
       }
 
@@ -304,7 +341,7 @@ const MappingCard: React.FC<Props> = (props) => {
                 newMap={newMap}
                 title={title}
                 setNewMap={setNewMap}
-                targetEntity={props.entityTypeTitle}
+                targetEntityType={props.entityTypeTitle}
                 createMappingArtifact={props.createMappingArtifact}
                 deleteMappingArtifact={props.deleteMappingArtifact}
                 mapData={mapData}
@@ -331,7 +368,9 @@ const MappingCard: React.FC<Props> = (props) => {
                 disableURINavLeft={disableURINavLeft}
                 disableURINavRight={disableURINavRight}
                 setDisableURINavLeft={setDisableURINavLeft}
-                setDisableURINavRight={setDisableURINavRight}/>
+                setDisableURINavRight={setDisableURINavRight}
+                sourceDatabaseName={sourceDatabaseName}
+                mapFunctions={mapFunctions}/>
             <ActivitySettingsDialog
                 tooltipsData={AdvMapTooltips}
                 openActivitySettings={openMappingSettings}
