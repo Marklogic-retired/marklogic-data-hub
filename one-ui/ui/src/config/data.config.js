@@ -74,9 +74,33 @@ const mapProps = {
   ]
 };
 
+const activitySettings = {
+  activityType: 'mapping',
+  canWrite: true,
+  openActivitySettings: true,
+  stepData: {
+    name: 'testLoad'
+  },
+  setOpenActivitySettings: jest.fn()
+};
+
+const dropDownWithSearch = {
+  setDisplaySelectList: jest.fn(),
+  setDisplayMenu: jest.fn(),
+  displaySelectList: true,
+  displayMenu: true,
+  srcData: [ 'id', 'name', 'avg', 'memoryLookUp' ]
+};
+
 const data = {
+  data: {
+    canRead: false,
+    canWrite: true
+  },
   flows: flows,
-  mapProps: mapProps
+  mapProps: mapProps,
+  activitySettings: activitySettings,
+  dropDownWithSearch: dropDownWithSearch
 };
 
 export default data;
