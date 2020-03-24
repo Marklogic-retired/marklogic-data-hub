@@ -9,19 +9,17 @@ import tooltipsConfig from '../config/explorer-tooltips.config';
 import styles from './View.module.scss';
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useInterval } from '../hooks/use-interval';
 
 const { Content } = Layout;
 const tooltips = tooltipsConfig.viewEntities;
 
 const View: React.FC = () => {
-  const { user, handleError, userNotAuthenticated } = useContext(UserContext);
+  const { user, handleError, resetSessionTime } = useContext(UserContext);
   const [entities, setEntities] = useState<any[]>([]);
   const [lastHarmonized, setLastHarmonized] = useState<any[]>([]);
   const [facetValues, setFacetValues] = useState<any[]>([]);
   const [totalDocs, setTotalDocs] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  let sessionCount = 0;
 
   const componentIsMounted = useRef(true);
 
@@ -36,6 +34,8 @@ const View: React.FC = () => {
       }
     } catch (error) {
       handleError(error);
+    } finally {
+      resetSessionTime();
     }
   }
 
@@ -61,6 +61,8 @@ const View: React.FC = () => {
       }
     } catch (error) {
       handleError(error);
+    } finally {
+      resetSessionTime();
     }
   }
 
@@ -70,10 +72,11 @@ const View: React.FC = () => {
       const response = await axios(`/api/models/job-info`);
       if (componentIsMounted.current) {
         setLastHarmonized(response.data);
-        sessionCount = 0;
       }
     } catch (error) {
       handleError(error);
+    } finally {
+      resetSessionTime();
     }
   }
 
@@ -86,14 +89,6 @@ const View: React.FC = () => {
       componentIsMounted.current = false
     }
   }, []);
-
-  useInterval(() => {
-    if (sessionCount === user.maxSessionTime) {
-      userNotAuthenticated();
-    } else {
-      sessionCount += 1;
-    }
-  }, 1000);
 
   return (
     <Layout className={styles.container}>

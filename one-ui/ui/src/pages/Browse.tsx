@@ -4,7 +4,6 @@ import { Layout, Tooltip, Spin } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { UserContext } from '../util/user-context';
 import { SearchContext } from '../util/search-context';
-import { useInterval } from '../hooks/use-interval';
 import { useScrollPosition } from '../hooks/use-scroll-position';
 import SelectedFacets from '../components/selected-facets/selected-facets';
 import AsyncLoader from '../components/async-loader/async-loader';
@@ -32,7 +31,7 @@ const Browse: React.FC<Props> = ({ location }) => {
     user,
     handleError,
     setTableView,
-    userNotAuthenticated
+    resetSessionTime
   } = useContext(UserContext);
   const {
     searchOptions,
@@ -53,7 +52,6 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [endScroll, setEndScroll] = useState(false);
   const [collapse, setCollapsed] = useState(false);
   const [selectedFacets, setSelectedFacets] = useState<any[]>([]);
-  let sessionCount = 0;
 
   const getEntityModel = async () => {
     try {
@@ -68,6 +66,7 @@ const Browse: React.FC<Props> = ({ location }) => {
       handleError(error);
     } finally {
       setIsLoading(false);
+      resetSessionTime();
     }
   }
 
@@ -92,12 +91,12 @@ const Browse: React.FC<Props> = ({ location }) => {
         setData(response.data.results);
         setFacets(response.data.facets);
         setTotalDocuments(response.data.total);
-        sessionCount = 0;
       }
     } catch (error) {
       handleError(error);
     } finally {
       setIsLoading(false);
+      resetSessionTime();
     }
   }
 
@@ -184,14 +183,6 @@ const Browse: React.FC<Props> = ({ location }) => {
       setEndScroll(false);
     }
   }, [endScroll], null );
-
-  useInterval(() => {
-    if (sessionCount === user.maxSessionTime) {
-      userNotAuthenticated();
-    } else {
-      sessionCount += 1;
-    }
-  }, 1000);
 
   const updateSelectedFacets = (facets) => {
     setSelectedFacets(facets);

@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faRoute } from '@fortawesome/free-solid-svg-icons'
 import logo from './logo.png';
 import styles from './header.module.scss';
-import Application from '../../config/application.config';
+import { Application } from '../../config/application.config';
 import { MlButton } from 'marklogic-ui-library';
 
 const { SubMenu } = Menu;

@@ -32,7 +32,6 @@ describe('View Page', () => {
     const { getByTestId, debug } = render(
       <View />,
     )
-    debug()
     // const container = getByTestId('selected-facet-block')
     // expect(container).toHaveStyle('visibility: hidden');
   });

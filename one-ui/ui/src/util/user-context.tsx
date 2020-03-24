@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import axios from 'axios';
 import { 
   createUserPreferences,
   getUserPreferences, 
@@ -6,6 +7,8 @@ import {
 } from '../services/user-preferences';
 import { RolesContext } from './roles';
 import {setEnvironment, getEnvironment, resetEnvironment} from '../util/environment';
+import { useInterval } from '../hooks/use-interval';
+import { SESSION_WARNING_COUNTDOWN } from '../config/application.config';
 
 type UserContextInterface = {
   name: string,
@@ -15,7 +18,8 @@ type UserContextInterface = {
   error : any,
   tableView: boolean,
   pageRoute: string,
-  maxSessionTime: number
+  maxSessionTime: number,
+  sessionWarning: boolean
 }
 
 const defaultUserData = {
@@ -30,7 +34,8 @@ const defaultUserData = {
   },
   tableView: true,
   pageRoute: '/view',
-  maxSessionTime: 300
+  maxSessionTime: 300,
+  sessionWarning: false
 }
 
 interface IUserContextInterface {
@@ -44,6 +49,9 @@ interface IUserContextInterface {
   setTableView: (viewType: boolean) => void;
   setPageRoute: (route: string) => void;
   setAlertMessage: (title: string, message: string) => void;
+  resetSessionTime: () => void;
+  setSessionWarning: (sessionWarning: boolean) => void;
+  toggleSessionTimer: (runSessionTimer: boolean) => void;
 }
 
 export const UserContext = React.createContext<IUserContextInterface>({
@@ -56,7 +64,10 @@ export const UserContext = React.createContext<IUserContextInterface>({
   clearRedirect: () => {},
   setTableView: () => {},
   setPageRoute: () => {},
-  setAlertMessage: () => {}
+  setAlertMessage: () => {},
+  resetSessionTime: () => {},
+  setSessionWarning: () => {},
+  toggleSessionTimer: () => {}
 });
 
 const UserProvider: React.FC<{ children: any }> = ({children}) => {
@@ -64,11 +75,16 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
   const [user, setUser] = useState<UserContextInterface>(defaultUserData);
   const sessionUser = localStorage.getItem('dataHubUser');
   const rolesService = useContext(RolesContext);
+  let sessionCount = 300;
+  let sessionTimer = true;
 
-  const loginAuthenticated = (username: string, authResponse: any) => {
+  const loginAuthenticated = async (username: string, authResponse: any) => {
     if(authResponse.isInstalled) {
       setEnvironment();
     }
+    let session = await axios('/api/info');
+    sessionCount = parseInt(session.data['session.timeout']);
+
     localStorage.setItem('dataHubUser', username);
     localStorage.setItem('dhIsInstalled', authResponse.isInstalled);
     localStorage.setItem('dhUserHasManagePrivileges', authResponse.hasManagePrivileges);
@@ -86,7 +102,9 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
         authenticated: true,
         redirect: true,
         tableView: values.tableView,
-        pageRoute: values.pageRoute      
+        pageRoute: values.pageRoute,
+        maxSessionTime: sessionCount,
+        sessionWarning: false        
       });
     } else {
       createUserPreferences(username);
@@ -94,7 +112,9 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
         ...user,
         name: username,
         authenticated: true,
-        redirect: true
+        redirect: true,
+        maxSessionTime: sessionCount,
+        sessionWarning: false  
       });
     }
   };
@@ -109,11 +129,13 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
         name: username,
         authenticated: true,
         tableView: values.tableView,
-        pageRoute: values.pageRoute 
+        pageRoute: values.pageRoute,
+        maxSessionTime: sessionCount,
+        sessionWarning: false   
       });
     } else {
       createUserPreferences(username);
-      setUser({ ...user,name: username, authenticated: true });
+      setUser({ ...user,name: username, authenticated: true, sessionWarning: false });
     }
   };
 
@@ -125,7 +147,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
     localStorage.setItem('loginResp','');
     rolesService.setRoles([]);
     resetEnvironment();
-    setUser({ ...user,name: '', authenticated: false, redirect: true });
+    setUser({ ...user,name: '', authenticated: false, redirect: true, sessionWarning: false });
   };
 
   const handleError = (error) => {
@@ -237,6 +259,19 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
     });
   }
 
+  const resetSessionTime = () => {
+    sessionCount = user.maxSessionTime;
+  }
+
+  const setSessionWarning = (sessionWarning: boolean) => {
+    setUser({ ...user, sessionWarning });
+  }
+
+  const toggleSessionTimer = (runSessionTimer: boolean) => {
+    sessionTimer = runSessionTimer;
+    sessionCount = user.maxSessionTime;
+  }
+
   useEffect(() => {
     if (sessionUser) {
       sessionAuthenticated(sessionUser);
@@ -246,6 +281,16 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
       }
     }
   }, []);
+
+  useInterval(() => {
+    if (user.authenticated && sessionTimer) {
+      if (sessionCount === SESSION_WARNING_COUNTDOWN) {
+        setSessionWarning(true);
+      } else {
+        sessionCount -= 1;
+      }
+    }
+  }, 1000);
 
   return (
     <UserContext.Provider value={{ 
@@ -258,7 +303,10 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
       clearRedirect,
       setTableView,
       setPageRoute,
-      setAlertMessage
+      setAlertMessage,
+      resetSessionTime,
+      setSessionWarning,
+      toggleSessionTimer
     }}>
       {children}
     </UserContext.Provider>
