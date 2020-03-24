@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Slider, InputNumber, Tooltip } from 'antd';
 import { MlButton } from 'marklogic-ui-library';
 import { SearchContext } from '../../util/search-context';
+import { UserContext } from '../../util/user-context';
 import styles from './numeric-facet.module.scss';
 import { rangeFacet } from '../../api/facets'
 
@@ -21,6 +22,7 @@ const NumericFacet: React.FC<Props> = (props) => {
   const {
     searchOptions,
   } = useContext(SearchContext);
+  const { handleError, resetSessionTime } = useContext(UserContext);
 
   const [range, setRange] = useState<number[]>([]);
   const [rangeLimit, setRangeLimit] = useState<number[]>([]);
@@ -28,31 +30,38 @@ const NumericFacet: React.FC<Props> = (props) => {
   let numbers = ['int', 'integer', 'short', 'long', 'decimal', 'double', 'float'];
 
   const getFacetRange = async () => {
-    const response = await rangeFacet(props)
+    try {
+      const response = await rangeFacet(props)
 
-    if (response.data) {
-      let range = [...[response.data.min, response.data.max].map(Number)]
-      setRangeLimit(range)
-
-      if (Object.entries(searchOptions.searchFacets).length !== 0 && searchOptions.searchFacets.hasOwnProperty(props.constraint)) {
-        for (let facet in searchOptions.searchFacets) {
-          if (facet === props.constraint) {
-            let valueType = '';
-            if (numbers.includes(searchOptions.searchFacets[facet].dataType)) {
-              valueType = 'rangeValues';
-            }
-            if (searchOptions.searchFacets[facet][valueType]) {
-              const rangeArray = Object.values(searchOptions.searchFacets[facet][valueType]).map(Number)
-              if (rangeArray && rangeArray.length > 0) {
-                setRange(rangeArray)
+      if (response.data) {
+        let range = [...[response.data.min, response.data.max].map(Number)]
+        setRangeLimit(range)
+  
+        if (Object.entries(searchOptions.searchFacets).length !== 0 && searchOptions.searchFacets.hasOwnProperty(props.constraint)) {
+          for (let facet in searchOptions.searchFacets) {
+            if (facet === props.constraint) {
+              let valueType = '';
+              if (numbers.includes(searchOptions.searchFacets[facet].dataType)) {
+                valueType = 'rangeValues';
+              }
+              if (searchOptions.searchFacets[facet][valueType]) {
+                const rangeArray = Object.values(searchOptions.searchFacets[facet][valueType]).map(Number)
+                if (rangeArray && rangeArray.length > 0) {
+                  setRange(rangeArray)
+                }
               }
             }
           }
+        } else {
+          setRange(range)
         }
-      } else {
-        setRange(range)
       }
+    } catch (error) {
+      handleError(error)
+    } finally {
+      resetSessionTime()
     }
+
   }
 
   const onChange = (e) => {

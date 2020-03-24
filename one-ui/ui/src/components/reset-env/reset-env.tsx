@@ -4,7 +4,7 @@ import axios from 'axios';
 import { UserContext } from '../../util/user-context';
 
 const ResetEnv:React.FC = () => {
-  const { userNotAuthenticated, handleError } = useContext(UserContext);
+  const { userNotAuthenticated, handleError, resetSessionTime } = useContext(UserContext);
 
   useEffect(() => {
     axios.post(`/api/environment/reset`, {})
@@ -14,6 +14,9 @@ const ResetEnv:React.FC = () => {
       })
       .catch(err => {
         handleError(err);
+      })
+      .finally(() => {
+        resetSessionTime();
       })
   });
 

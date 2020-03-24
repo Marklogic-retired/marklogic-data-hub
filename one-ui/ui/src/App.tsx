@@ -19,16 +19,23 @@ import Browse from './pages/Browse';
 import Detail from './pages/Detail';
 
 import './App.scss';
-import Application from './config/application.config';
+import { Application } from './config/application.config';
 import { themes, themeMap } from './config/themes.config';
 import axios from 'axios';
 import EntityTypes from './pages/EntityTypes';
+import ModalStatus from './components/modal-status/modal-status';
 
 
 interface Props extends RouteComponentProps<any> {}
 
 const App: React.FC<Props> = ({history, location}) => {
-  const { user, clearRedirect, handleError } = useContext(UserContext);
+  const { 
+    user,
+    clearRedirect,
+    handleError,
+    resetSessionTime
+  } = useContext(UserContext);
+  const [showModal, toggleModal] = useState(false);
 
   const PrivateRoute = ({ children, ...rest }) => (
     <Route {...rest} render={ props => (
@@ -71,6 +78,12 @@ const App: React.FC<Props> = ({history, location}) => {
         history.push('/');
       }
     }
+
+    if (user.sessionWarning) {
+      toggleModal(true);
+    } else {
+      toggleModal(false);
+    }
   }, [user]);
 
   useEffect(() => {
@@ -81,6 +94,9 @@ const App: React.FC<Props> = ({history, location}) => {
       .catch(err => {
           handleError(err);
       })
+      .finally(() => {
+        resetSessionTime();
+      });
   }, [location.pathname]);
 
   const path = location['pathname'];
@@ -91,6 +107,7 @@ const App: React.FC<Props> = ({history, location}) => {
   return (
     <div id="background" style={pageTheme['background']}>
       <Header/>
+      <ModalStatus visible={showModal}/>
       <main>
       <Switch>
         <Route path="/" exact component={Login}/>

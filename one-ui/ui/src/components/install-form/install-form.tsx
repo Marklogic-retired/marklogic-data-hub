@@ -13,7 +13,7 @@ import { MlButton } from 'marklogic-ui-library';
 const InstallForm: React.FC = () => {
 
   const stompService = useContext(StompContext);
-  const { userNotAuthenticated, handleError } = useContext(UserContext);
+  const { userNotAuthenticated, handleError, resetSessionTime, toggleSessionTimer } = useContext(UserContext);
   const [directory, setDirectory] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [installProgress, setInstallProgress] = useState({percentage: 0, message: ''});
@@ -37,6 +37,9 @@ const InstallForm: React.FC = () => {
           setIsLoading(false);
           handleError(error);
       })
+      .finally(() => {
+        resetSessionTime();
+      });
   }, []);
 
   let username = localStorage.getItem('dataHubUser');
@@ -54,6 +57,7 @@ const InstallForm: React.FC = () => {
         });
       });
       setIsLoading(true);
+      toggleSessionTimer(false);
       let response = await axios.post('/api/environment/install', {
         directory
       });
@@ -85,6 +89,8 @@ const InstallForm: React.FC = () => {
       });
       setSuccessMessage({show: false, message: '', description: <div/>});
       setWelcomeMessage({show: false, message: ''});
+    } finally {
+      toggleSessionTimer(true);
     }
     if (unsubscribeId) {
       stompService.unsubscribe(unsubscribeId);

@@ -1,12 +1,14 @@
 import { Modal, Form, Input, Button, Tooltip, Icon, Progress, Upload, Select } from "antd";
-import React, { useState, useEffect, CSSProperties } from "react";
+import React, { useState, useEffect, useContext, CSSProperties } from "react";
 import styles from './new-data-load-dialog.module.scss';
 import { srcOptions, tgtOptions, fieldSeparatorOptions } from '../../../config/formats.config';
 import {NewLoadTooltips} from '../../../config/tooltips.config';
+import { UserContext } from '../../../util/user-context';
 import Axios from "axios";
 
 const NewDataLoadDialog = (props) => {
   const [fileUploadCount, setFileUploadCount] = useState(0);
+  const { resetSessionTime } = useContext(UserContext);
   const [stepName, setStepName] = useState('');
   const [description, setDescription] = useState(props.stepData && props.stepData != {} ? props.stepData.description : '');
   const [inputFilePath, setInputFilePath] = useState(props.stepData && props.stepData.inputFilePath ? props.stepData.inputFilePath : '');
@@ -388,6 +390,8 @@ const NewDataLoadDialog = (props) => {
     } catch (error) {
         let message = error.response.data.message;
         console.log('Error while deleting load data artifact.', message);
+    } finally {
+      resetSessionTime();
     }
 
   }
@@ -411,10 +415,11 @@ const NewDataLoadDialog = (props) => {
       if (response.status === 200) {
         console.log('Create default LoadDataArtifact API Called successfully!')
       }
-    }
-    catch (error) {
+    } catch (error) {
       let message = error.response.data.message;
       console.log('Error While creating the default Load Data artifact!', message)
+    } finally {
+      resetSessionTime();
     }
   }
 

@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { Collapse, Menu } from 'antd';
 import styles from './EntityTypes.module.scss';
 import { RolesContext } from '../util/roles';
+import { UserContext } from '../util/user-context';
 import axios from 'axios'
 import EntityTiles from '../components/entities/entity-tiles';
 
@@ -11,6 +12,7 @@ const EntityTypes: React.FC = () => {
         getEntityModels();
     },[]);
 
+    const { resetSessionTime } = useContext(UserContext);
     const [entityModels, setEntityModels] = useState<any[]>([]);
     
     //Role based access
@@ -36,6 +38,8 @@ const EntityTypes: React.FC = () => {
           } catch (error) {
               let message = error;
               console.log('Error while fetching entities Info', message);
+          } finally {
+            resetSessionTime();
           }
 
     }
