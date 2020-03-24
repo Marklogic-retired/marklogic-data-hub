@@ -22,7 +22,7 @@ Then run the function locally: (note: make sure to have JAVA_HOME env variable i
 
 You can then test it by running the following:
 
-    curl -w "\n" http://localhost:7071/api/HttpExampleDhfFlow --data flowNameDoesntMatterYet
+    curl -w "\n" http://localhost:7071/api/HttpExampleDataHubFlow --data flowNameDoesntMatterYet
 
 ## Testing on Azure
 
@@ -38,7 +38,7 @@ Then deploy your function (this can take many seconds to finish):
 
 Then get your HTTP trigger URL and test the endpoint - your URL should be similar to what's shown below:
 
-    curl -w "\n" https://az-functions-20200227122602814.azurewebsites.net/api/HttpExampleDhfFlow --data flowNameDoesntMatterYet
+    curl -w "\n" https://az-functions-data-hub-sample-v1.azurewebsites.net/api/HttpExampleDataHubFlow --data flowNameDoesntMatterYet
 
 
 You can also follow the instructions at https://docs.microsoft.com/en-us/azure/azure-functions/functions-add-output-binding-storage-queue-java to connect the function to Azure storage. If you do that, then after running the test, 

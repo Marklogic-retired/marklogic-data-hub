@@ -16,13 +16,13 @@ import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 /**
  * Azure Functions with HTTP Trigger.
  */
-public class FunctionDhfFlow {
+public class FunctionDataHubFlow {
     /**
-     * This function listens at endpoint "/api/HttpExample". Two ways to invoke it using "curl" command in bash:
-     * 1. curl -d "HTTP Body" {your host}/api/HttpExample
-     * 2. curl "{your host}/api/HttpExample?name=HTTP%20Query"
+     * This function listens at endpoint "/api/HttpExampleDataHubFlow". Two ways to invoke it using "curl" command in bash:
+     * 1. curl -d "HTTP Body" {your host}/api/HttpExampleDataHubFlow
+     * 2. curl "{your host}/api/HttpExampleDataHubFlow?name=HTTP%20Query"
      */
-    @FunctionName("HttpExampleDhfFlow")
+    @FunctionName("HttpExampleDataHubFlow")
     public HttpResponseMessage run(
             @HttpTrigger(name = "req", methods = {HttpMethod.GET, HttpMethod.POST}, authLevel = AuthorizationLevel.ANONYMOUS) HttpRequestMessage<Optional<String>> request,
             @QueueOutput(name = "msg", queueName = "dhf-queue", connection = "AzureWebJobsStorage") OutputBinding<String> msg,
@@ -38,20 +38,25 @@ public class FunctionDhfFlow {
         } else {
             // Write the name to the message queue.
             msg.setValue(name);
-
-            runFlow();
-            return request.createResponseBuilder(HttpStatus.OK).body("Hello, " + name).build();
+            String runFlowMessage = "Flow <" + name + "> successfully executed."; //default message
+            try {
+                runFlow(name);
+            } catch (Exception ex) {
+                context.getLogger().severe("Exception caught: " + ex.getMessage());
+                runFlowMessage = ex.getMessage(); //set to exception
+            }
+            return request.createResponseBuilder(HttpStatus.OK).body(runFlowMessage).build();
         }
     }
 
-    // Run DHF flow
-    public void runFlow() {
+    // Run DataHub flow
+    public void runFlow(String flowName) {
         System.out.println ("**** Inside AzureFunction runFlow method");
         // Create a FlowRunner instance.
-        FlowRunner flowRunner = new FlowRunnerImpl("ml_host", "ml-admin-user", "ml-admin-pwd");
+        FlowRunner flowRunner = new FlowRunnerImpl("localhost", "ml-admin-user", "ml-admin-pwd");
 
         // Specify the flow to run.
-        FlowInputs inputs = new FlowInputs("my-flow-name");
+        FlowInputs inputs = new FlowInputs(flowName);
 
         // To run only a subset of the steps in the flow, uncomment the following line and specify the sequence numbers of the steps to run.
         // inputs.setSteps(Arrays.asList("2,3,4"));
