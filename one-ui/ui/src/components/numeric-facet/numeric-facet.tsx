@@ -3,13 +3,13 @@ import { Slider, InputNumber, Tooltip } from 'antd';
 import { MlButton } from 'marklogic-ui-library';
 import { SearchContext } from '../../util/search-context';
 import styles from './numeric-facet.module.scss';
-import axios from "axios";
+import { rangeFacet } from '../../api/facets'
 
 interface Props {
-  name: any
-  step: number
+  name: any;
+  step: number;
   constraint: string;
-  datatype: any
+  datatype: any;
   referenceType: string;
   entityTypeId: any;
   propertyPath: any;
@@ -28,15 +28,7 @@ const NumericFacet: React.FC<Props> = (props) => {
   let numbers = ['int', 'integer', 'short', 'long', 'decimal', 'double', 'float'];
 
   const getFacetRange = async () => {
-    const response = await axios({
-      method: 'POST',
-      url: `/api/search/facet-values/range`,
-      data: {
-        "referenceType": props.referenceType,
-        "entityTypeId": props.entityTypeId,
-        "propertyPath": props.propertyPath
-      }
-    });
+    const response = await rangeFacet(props)
 
     if (response.data) {
       let range = [...[response.data.min, response.data.max].map(Number)]
@@ -107,7 +99,7 @@ const NumericFacet: React.FC<Props> = (props) => {
             const rangeArray = Object.values(searchOptions.searchFacets[facet][valueType]).map(Number)
             if (JSON.stringify(range) === JSON.stringify(rangeArray)) {
               toggleApply(false);
-              if(rangeLimit[0] === rangeArray[0] && rangeLimit[1] === rangeArray[1]) {
+              if (rangeLimit[0] === rangeArray[0] && rangeLimit[1] === rangeArray[1]) {
                 delete searchOptions.searchFacets[facet]
               }
             } 
