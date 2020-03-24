@@ -70,5 +70,15 @@ assertions.push(
   )
 );
 
+sourceQuery = lib.prepareSourceQuery(
+  {
+    sourceQuery: "cts.uris(null, null, cts.trueQuery())"
+  }, {}
+);
+assertions.push(
+  test.assertEqual("cts.uris(null, null, cts.trueQuery())", sourceQuery,
+    "For backwards compatibility (even though it's not documented or tested anywhere), a user can pass in cts.uris " +
+    "without having to set sourceQueryIsScript")
+);
 
 assertions;

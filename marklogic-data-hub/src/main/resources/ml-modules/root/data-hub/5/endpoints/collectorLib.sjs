@@ -50,6 +50,13 @@ class CollectorLib {
       }
     }
 
+    // This is retained only for backwards compatibility, though its existence is neither documented nor tested
+    // prior to DHFPROD-4665. Prior to DHFPROD-3854, this did support cts.values, though it would not have worked had
+    // someone tried to use that, since the rest of DHF was still expecting URIs to be returned, not values.
+    if (/^\s*cts\.uris\(.*\)\s*$/.test(sourceQuery)) {
+      return sourceQuery;
+    }
+
     return `cts.uris(null, null, ${sourceQuery})`;
   }
 }
