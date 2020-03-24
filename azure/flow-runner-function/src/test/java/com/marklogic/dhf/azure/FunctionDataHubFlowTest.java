@@ -18,9 +18,9 @@ import static org.mockito.Mockito.*;
 /**
  * Unit test for Function class.
  */
-public class FunctionDhfFlowTest {
+public class FunctionDataHubFlowTest {
     /**
-     * Unit test for HttpTriggerJava method.
+     * Unit test for HttpExampleDataHubFlow method.
      */
     @Test
     public void testHttpTriggerJava() throws Exception {
@@ -52,7 +52,7 @@ public class FunctionDhfFlowTest {
         // Invoke
         // Running invalid flow throws Exception. The test fails without the try/catch block.
         try {
-            final HttpResponseMessage ret = new FunctionDhfFlow().run(req, msg, context);
+            final HttpResponseMessage ret = new FunctionDataHubFlow().run(req, msg, context);
         } catch (java.lang.RuntimeException ex) {
             System.out.println (ex.getMessage());
         }
