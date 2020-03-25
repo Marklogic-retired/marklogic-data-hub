@@ -17,7 +17,8 @@ const ActivitySettingsDialog = (props) => {
   const [isAddCollTouched, setAddCollTouched] = useState(false);
   const [isSrcDatabaseTouched, setSrcDatabaseTouched] = useState(false);
   const [isTgtDatabaseTouched, setTgtDatabaseTouched] = useState(false);
-  const [targetPermissions, setTargetPermissions] = useState('rest-reader,read,rest-writer,update');
+  const defaultPermissions = 'data-hub-operator,read,data-hub-operator,update';
+  const [targetPermissions, setTargetPermissions] = useState(defaultPermissions);
   const [isTgtPermissionsTouched, setIsTgtPermissionsTouched] = useState(false);
   const [provGranularity, setProvGranularity] = useState('coarse-grained');
   const [isProvGranTouched, setIsProvGranTouched] = useState(false);
@@ -55,7 +56,7 @@ const ActivitySettingsDialog = (props) => {
       setSrcDatabase(defaultSourceDatabase);
       setTgtDatabase(defaultTargetDatabase);
       setAdditionalCollections([]);
-      setTargetPermissions('rest-reader,read,rest-writer,update');
+      setTargetPermissions(defaultPermissions);
       setModule('');
       setCHparameters(JSON.stringify({}, null, 4));
       setProvGranularity('coarse-grained');
@@ -110,7 +111,7 @@ const getSettingsArtifact = async () => {
       setSrcDatabase(defaultSourceDatabase);
       setTgtDatabase(defaultTargetDatabase);
       setAdditionalCollections([]);
-      setTargetPermissions('rest-reader,read,rest-writer,update');
+      setTargetPermissions(defaultPermissions);
       setModule('');
       setCHparameters(JSON.stringify({}, null, 4));
       setProvGranularity('coarse-grained');
