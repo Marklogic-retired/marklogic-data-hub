@@ -412,20 +412,23 @@ public class FlowRunnerTest extends HubTestBase {
 
     @Test
     public void testStopJob() {
-        RunFlowResponse resp = runFlow("testFlow", null, null, null, null);
-        Runnable r = ()->{
-            try {
-                Thread.sleep(850);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            flowRunner.stopJob(resp.getJobId());
+        final String jobId = "testStopJob";
+        final long enoughTimeForTheJobToStartButNotYetFinish = 300;
+
+        Runnable jobStoppingThread = ()->{
+            sleep(enoughTimeForTheJobToStartButNotYetFinish);
+            flowRunner.stopJob(jobId);
         };
-        r.run();
+
+        RunFlowResponse resp = runFlow("testFlow", null, jobId, null, null);
+        jobStoppingThread.run();
         flowRunner.awaitCompletion();
 
-        //Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "xml-coll") > 0);
-        Assertions.assertTrue(JobStatus.CANCELED.toString().equalsIgnoreCase(resp.getJobStatus()));
+        final String status = resp.getJobStatus() != null ? resp.getJobStatus().toLowerCase() : "";
+        assertEquals(JobStatus.CANCELED.toString().toLowerCase(), status,
+            "Expected the response status to be canceled, since the job was stopped before it finished, but was instead: " + status
+         + ". If this failed in Jenkins, it likely can be ignored because we don't have a firm idea of how long the " +
+                "thread that stops the job should wait until it stops the job.");
     }
 
     @Test
