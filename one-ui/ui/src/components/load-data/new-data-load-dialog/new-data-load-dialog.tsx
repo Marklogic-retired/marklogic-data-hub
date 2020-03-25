@@ -6,7 +6,7 @@ import {NewLoadTooltips} from '../../../config/tooltips.config';
 import Axios from "axios";
 
 const NewDataLoadDialog = (props) => {
-
+  const [fileUploadCount, setFileUploadCount] = useState(0);
   const [stepName, setStepName] = useState('');
   const [description, setDescription] = useState(props.stepData && props.stepData != {} ? props.stepData.description : '');
   const [inputFilePath, setInputFilePath] = useState(props.stepData && props.stepData.inputFilePath ? props.stepData.inputFilePath : '');
@@ -24,7 +24,7 @@ const NewDataLoadDialog = (props) => {
   const [isFieldSeparatorTouched, setFieldSeparatorTouched] = useState(false);
   const [isOtherSeparatorTouched, setOtherSeparatorTouched] = useState(false);
   const [isValid, setIsValid] = useState(false);
-  const [fileList, setFileList] = useState<any>([]);
+  const [fileList, setFileList] = useState<any[]>([]);
   const [previewURI, setPreviewURI] = useState('');
   const [uploadPercent, setUploadPercent] = useState();
   const [toDelete, setToDelete] = useState(false);
@@ -417,42 +417,44 @@ const NewDataLoadDialog = (props) => {
       console.log('Error While creating the default Load Data artifact!', message)
     }
   }
+
   const customRequest = async option => {
     const { onSuccess, onError, file, action, onProgress } = option;
+    const filenames = fileList.map(({name}) => name);
+    if (filenames.indexOf(file.name) === (filenames.length - 1)) {
+      try {
+        let response = await Axios.get(`/api/artifacts/loadData/${stepName}`);
 
-   try {
-    let response = await Axios.get(`/api/artifacts/loadData/${stepName}`);
-
-    if (response.status === 200) {
-      console.log('GET API Called in custom request!');
-    }
-  } catch (error) {
-      let errorCode = error.response.data.code;
-      let message = error.response.data.message;
-      console.log('Error while fetching load data artifacts from custom request', message);
-
-      if(errorCode === 404){
-        setToDelete(true);
-        let dataPayload = {
-          name: stepName,
-          description: description,
-          sourceFormat: srcFormat,
-          targetFormat: tgtFormat,
-          outputURIReplacement: outUriReplacement
+        if (response.status === 200) {
+          console.log('GET API Called in custom request!');
         }
-        await createDefaultLoadDataArtifact(dataPayload);
+      } catch (error) {
+        let errorCode = error.response.data.code;
+        let message = error.response.data.message;
+        console.log('Error while fetching load data artifacts from custom request', message);
+
+        if (errorCode === 404) {
+          setToDelete(true);
+          let dataPayload = {
+            name: stepName,
+            description: description,
+            sourceFormat: srcFormat,
+            targetFormat: tgtFormat,
+            outputURIReplacement: outUriReplacement
+          }
+          await createDefaultLoadDataArtifact(dataPayload);
+        }
       }
-  }
 
-    let fl  = fileList;
-    const formData = new FormData();
+      let fl = fileList;
+      const formData = new FormData();
 
-    fl.forEach(file => {
-      formData.append('files', file);
-    });
+      fl.forEach(file => {
+        formData.append('files', file);
+      });
 
 
-    //API call for
+      //API call for
 
       const url = `/api/artifacts/loadData/${stepName}/setData`;
 
@@ -461,37 +463,40 @@ const NewDataLoadDialog = (props) => {
         url: url,
         data: formData,
         onUploadProgress: e => {
-          onProgress({ percent: (e.loaded / e.total) * 100 });
-          let percent=(e.loaded / e.total) * 100;
-          percent = Math.round( percent * 100 + Number.EPSILON ) / 100;
+          onProgress({percent: (e.loaded / e.total) * 100});
+          let percent = (e.loaded / e.total) * 100;
+          percent = Math.round(percent * 100 + Number.EPSILON) / 100;
           setUploadPercent(percent);
         },
         headers: {
           'Content-Type': 'multipart/form-data; boundary=${formData._boundary}',
-          crossorigin:true
+          crossorigin: true
         }
       }).then(resp => {
-        console.log('responses.status',resp);
-        if (resp.data && resp.data.message){
-          if(resp.data.message.startsWith('Maximum upload size exceeded') || resp.data.message.includes('Network Error')){
+        console.log('responses.status', resp);
+        if (resp.data && resp.data.message) {
+          if (resp.data.message.startsWith('Maximum upload size exceeded') || resp.data.message.includes('Network Error')) {
             setDisplayUploadError(true);
           }
         }
-        if(resp.data && resp.data.inputFilePath){
+        if (resp.data && resp.data.inputFilePath) {
           setInputFilePath(resp.data.inputFilePath);
         }
-        if(stepName && srcFormat && tgtFormat && resp.data.inputFilePath) {
+        if (stepName && srcFormat && tgtFormat && resp.data.inputFilePath) {
           buildURIPreview(resp.data);
         }
+        // reset files on successful upload
+        setFileUploadCount(fileList.length);
+        setFileList([]);
       }).catch(err => {
         console.log('Error while uploading the files', err)
-      if (err.message && (err.message.startsWith('Maximum upload size exceeded') || err.message.includes('Network Error') || err.message.includes('Request failed with status code 500'))){
-        setDisplayUploadError(true);
-      }
-      /*......*/
-      onError(err);
+        if (err.message && (err.message.startsWith('Maximum upload size exceeded') || err.message.includes('Network Error') || err.message.includes('Request failed with status code 500'))) {
+          setDisplayUploadError(true);
+        }
+        /*......*/
+        onError(err);
       });
-
+    }
   };
 
   const uploadProps = {
@@ -658,6 +663,7 @@ const NewDataLoadDialog = (props) => {
           Files:&nbsp;
             </span>} labelAlign="left">
           <span className={styles.upload}><Upload
+          id="fileUpload"
           {...uploadProps}
           multiple={true}
           disabled={!props.canReadWrite}
@@ -669,7 +675,7 @@ const NewDataLoadDialog = (props) => {
           <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
         </Tooltip>&nbsp;&nbsp;
                 {props.canReadWrite && !displayUploadError ? (uploadPercent > 0 && uploadPercent < 100 ? <Progress type="circle" percent={uploadPercent} width={50} /> : '') : ''}
-                {props.canReadWrite && !displayUploadError ? (uploadPercent === 100 ? <span>{fileList.length} files uploaded</span> : '') : ''}
+                {props.canReadWrite && !displayUploadError ? (uploadPercent === 100 ? <span>{fileUploadCount} files uploaded</span> : '') : ''}
                 </span>
                 {displayUploadError ? <div className={styles.fileUploadErrorContainer}> The upload was unsuccessful. </div> : ''}
         </Form.Item>
