@@ -247,7 +247,13 @@ public class HubTestBase implements InitializingBean {
         }
     }
 
-
+    protected void sleep(long ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException ex) {
+            logger.warn("Caught unexpected InterruptedException while sleeping: " + ex.getMessage());
+        }
+    }
 
     protected void basicSetup() {
         XMLUnit.setIgnoreWhitespace(true);
