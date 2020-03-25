@@ -27,6 +27,7 @@ describe('Update data load settings component', () => {
     expect(wrapper.find('#targetPermissions').length).toEqual(1)
     expect(wrapper.find('#provGranularity').length).toEqual(1)
     expect(wrapper.find('#additionalColl').length).toEqual(1)
+    expect(wrapper.find('#targetPermissions').props().value).toEqual('data-hub-operator,read,data-hub-operator,update')
     // Custom hook hasn't been expanded yet
     expect(wrapper.find('#cHparameters').length).toEqual(0)
     expect(wrapper.find('#user').length).toEqual(0)
