@@ -12,6 +12,7 @@ import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.oneui.TestHelper;
 import com.marklogic.hub.oneui.models.HubConfigSession;
 import com.marklogic.hub.oneui.models.StepModel;
+import com.marklogic.hub.util.json.JSONUtils;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -124,19 +125,31 @@ class FlowControllerTest extends TestHelper{
 
             //POST step
             StepModel stepModel = (StepModel)controller.createStep("testFlow", 1, stepString).getBody();
+            controller.createStep("testFlow", 2, "{\"name\":\"name\",\"stepDefinitionName\":\"default-ingestion\",\"stepDefinitionType\"" +
+                ":\"INGESTION\",\"options\":{\"loadData\":{\"name\":\"name\"}}}");
+
+            JsonNode flowJson = JSONUtils.convertArtifactToJson(controller.getFlow("testFlow").getBody());
 
             Assertions.assertNotNull(stepModel);
+            //"fileLocations" should  be present in flow declaration if already present in the step
+            Assertions.assertNotNull(flowJson.get("steps").get("1"));
+            Assertions.assertNotNull(flowJson.get("steps").get("1").get("fileLocations"));
+
+            //"fileLocations" should  not be present in flow declaration if it is not present in the step
+            Assertions.assertNotNull(flowJson.get("steps").get("2"));
+            Assertions.assertNull(flowJson.get("steps").get("2").get("fileLocations"));
+
             //update batch size
             stepModel.setBatchSize(100);
 
             //GET all steps in a flow
             steps = controller.getSteps("testFlow");
-            Assertions.assertEquals(1, (steps.size()));
+            Assertions.assertEquals(2, (steps.size()));
 
             //PUT step
             controller.createStep("testFlow","e2e-json-ingestion", mapper.writeValueAsString(stepModel));
             //POST custom step
-            controller.createStep("testFlow", 2, customStepString).getBody();
+            controller.createStep("testFlow", 3, customStepString).getBody();
 
             GenericDocumentManager docMgr = hubConfig.newStagingClient().newDocumentManager();
             StringHandle readHandle = new StringHandle();

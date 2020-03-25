@@ -296,6 +296,9 @@ public class StepModel {
         if (step.getFileLocations() != null) {
             defaultStep.setFileLocations(step.getFileLocations());
         }
+        else {
+            defaultStep.setFileLocations(null);
+        }
 
         // Overwrite fields
         defaultStep.setRetryLimit(step.getRetryLimit());
