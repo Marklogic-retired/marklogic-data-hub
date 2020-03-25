@@ -268,7 +268,7 @@ const CreateEditMappingDialog = (props) => {
     else {
       setSelectedSourceTouched(true);
       setSelectedSource(event.target.value);
-      if (event.target.value === props.mapData.selectedSource) {
+      if (props.mapData && event.target.value === props.mapData.selectedSource) {
         setSelectedSourceTouched(false);
       }
       if (event.target.value === 'collection') {

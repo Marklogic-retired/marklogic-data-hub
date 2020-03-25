@@ -44,9 +44,9 @@ const mapProps = {
   mapData: {
     name: 'testMap',
     description: 'Description of testMap',
-    targetEntity: 'Person',
+    targetEntityType: 'Person',
     selectedSource: 'collection',
-    sourceQuery: null,
+    sourceQuery: "cts.collectionQuery([''])",
     properties: {
       id: {  sourcedFrom: 'id' },
       name: { sourcedFrom: 'name' }
@@ -74,6 +74,36 @@ const mapProps = {
   ]
 };
 
+const newMap = {
+  title: 'New Mapping',
+  newMap: true,
+  setNewMap: jest.fn(),
+  canReadWrite: true,
+  isMapNameTouched: false,
+  isDescriptionTouched: false,
+  isSelectedSourceTouched: false,
+  isCollectionsTouched: false,
+  isSrcQueryTouched: false,
+  deleteDialogVisible: false
+};
+
+const editMap = {
+  title: 'Edit Mapping',
+  newMap: true,
+  mapData: {
+    name: 'testMap',
+    description: 'Description of testMap',
+    targetEntityType: 'Person',
+    selectedSource: 'collection',
+    sourceQuery: "cts.collectionQuery(['map-collection'])",
+    properties: {
+      id: {  sourcedFrom: 'id' },
+      name: { sourcedFrom: 'name' }
+    }
+  },
+  canReadWrite: true
+};
+
 const activitySettings = {
   activityType: 'mapping',
   canWrite: true,
@@ -99,6 +129,8 @@ const data = {
   },
   flows: flows,
   mapProps: mapProps,
+  newMap: newMap,
+  editMap: editMap,
   activitySettings: activitySettings,
   dropDownWithSearch: dropDownWithSearch
 };
