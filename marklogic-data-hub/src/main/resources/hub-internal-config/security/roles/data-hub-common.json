@@ -1,0 +1,21 @@
+{
+  "role-name": "data-hub-common",
+  "description": "Contains a common set of privileges/roles needed for Data Hub 5+ operation",
+  "role": [
+    "rest-extension-user",
+    "rest-reader",
+    "data-hub-module-reader"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "xdmp:eval-in",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-eval-in",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdbc:eval-in",
+      "action": "http://marklogic.com/xdmp/privileges/xdbc-eval-in",
+      "kind": "execute"
+    }
+  ]
+}

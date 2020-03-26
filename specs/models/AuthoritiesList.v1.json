@@ -1,0 +1,30 @@
+{
+  "title": "AuthoritiesList.v1",
+  "type": "array",
+  "items": {
+    "type": "string"
+  },
+  "enum": [
+    "canLoginToHubCentral",
+    "canWriteLoadData",
+    "canReadLoadData",
+    "canWriteMapping",
+    "canReadMapping",
+    "canWriteFlow",
+    "canReadFlow",
+    "canWriteStepDefinition",
+    "canReadStepDefinition",
+    "canReadMatching",
+    "canWriteMatching",
+    "canWriteMerge",
+    "canReadMerge"
+  ],
+  "x-examples": {
+    "hub-central-load-data-writer": [
+      "canLoginToHubCentral",
+      "canReadLoadData",
+      "canWriteLoadData"
+    ]
+  },
+  "description": "List describing the autorites a given user has."
+}

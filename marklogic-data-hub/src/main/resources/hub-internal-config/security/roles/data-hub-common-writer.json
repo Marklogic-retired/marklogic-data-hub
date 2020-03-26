@@ -1,0 +1,34 @@
+{
+  "role-name": "data-hub-common-writer",
+  "description": "Contains a common set of privileges/roles needed for Data Hub 5+ write operations",
+  "role": [
+    "data-hub-common"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "xdmp:document-load",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-document-load",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "unprotected-collections",
+      "action": "http://marklogic.com/xdmp/privileges/unprotected-collections",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "unprotected-uri",
+      "action": "http://marklogic.com/xdmp/privileges/unprotected-uri",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "ps-user",
+      "action": "http://marklogic.com/xdmp/privileges/ps-user",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "rest-writer",
+      "action": "http://marklogic.com/xdmp/privileges/rest-writer",
+      "kind": "execute"
+    }
+  ]
+}
