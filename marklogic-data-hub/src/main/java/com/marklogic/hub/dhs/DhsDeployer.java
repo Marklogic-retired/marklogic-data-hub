@@ -14,6 +14,7 @@ import com.marklogic.appdeployer.command.security.DeployRolesCommand;
 import com.marklogic.appdeployer.command.tasks.DeployScheduledTasksCommand;
 import com.marklogic.appdeployer.command.temporal.DeployTemporalAxesCommand;
 import com.marklogic.appdeployer.command.temporal.DeployTemporalCollectionsCommand;
+import com.marklogic.appdeployer.command.temporal.DeployTemporalCollectionsLSQTCommand;
 import com.marklogic.appdeployer.command.triggers.DeployTriggersCommand;
 import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.client.ext.helper.LoggingObject;
@@ -183,6 +184,7 @@ public class DhsDeployer extends LoggingObject {
 
         commands.add(new DeployTemporalAxesCommand());
         commands.add(new DeployTemporalCollectionsCommand());
+        commands.add(new DeployTemporalCollectionsLSQTCommand());
         commands.add(new DeployTriggersCommand());
         commands.add(new LoadSchemasCommand());
         commands.add(new DeployScheduledTasksCommand());
