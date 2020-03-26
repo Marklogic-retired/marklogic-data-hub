@@ -109,9 +109,14 @@ class Step {
     }
   }
 
-  //grab the module and require it
   makeFunction(flow, funcName, moduleUri) {
-    let stepModule = this.hubUtils.retrieveModuleLibrary(moduleUri);
+    let stepModule;
+    try {
+      stepModule = this.hubUtils.retrieveModuleLibrary(moduleUri);
+    } catch (e) {
+      fn.error(null, 'RESTAPI-SRVEXERR', Sequence.from([400, "MODULE-NOT-FOUND",
+        `Unable to access module: ${moduleUri}. Verify that this module is in your modules database and that your user account has a role that grants read permission to this module.`]));
+    }
     if (this.performance.performanceMetricsOn())  {
       return this.performance.instrumentStep(stepModule, stepModule[funcName], flow.globalContext.jobId, flow.globalContext.batchId, flow.globalContext.flow.name, moduleUri, flow.globalContext.uri);
     }

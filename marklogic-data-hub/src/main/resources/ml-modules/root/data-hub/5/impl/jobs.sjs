@@ -335,7 +335,13 @@ module.exports.updateJob = module.amp(
           },
           datahub.config.FINALDATABASE
         ));
-        let jobsReportFun = datahub.flow.step.makeFunction(datahub.flow, 'jobReport', stepDef.modulePath);
+        let jobsReportFun = null;
+        try {
+          jobsReportFun = datahub.flow.step.makeFunction(datahub.flow, 'jobReport', stepDef.modulePath);
+        } catch (e) {
+          // If this function cannot be obtained, it is because the modulePath does not exist. No need to fail here;
+          // a better error will be thrown later when the step is run and the module cannot be found.
+        }
         if (jobsReportFun) {
           let flowStep = fn.head(datahub.hubUtils.queryLatest(function () {
               return datahub.flow.getFlow(stepResp.flowName).steps[step];
