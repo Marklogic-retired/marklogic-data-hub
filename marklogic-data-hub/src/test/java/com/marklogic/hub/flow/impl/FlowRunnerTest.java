@@ -111,6 +111,26 @@ public class FlowRunnerTest extends HubTestBase {
         Assertions.assertTrue(file.contains("ingest.csv"));
     }
 
+    @Test
+    void customStepReferencesModulePathThatDoesntExist() {
+        // Delete the module that the value-step step-definition points to
+        runAsDataHubDeveloper();
+        adminHubConfig.newModulesDbClient().newDocumentManager().delete("/custom-modules/custom/value-step/main.sjs");
+
+        runAsDataHubOperator();
+        Map<String, Object> options = new HashMap<>();
+        options.put("collections", Arrays.asList("collector-test-output"));
+        options.put("sourceQuery", "cts.collectionQuery('shouldnt-return-anything')");
+        RunFlowResponse resp = runFlow("testValuesFlow", "1", UUID.randomUUID().toString(), options, null);
+        flowRunner.awaitCompletion();
+
+        List<String> errors = resp.getStepResponses().get("1").getStepOutput();
+        assertEquals(1, errors.size(), "Expecting an error due to the missing module");
+        assertTrue(errors.get(0).contains("Unable to access module: /custom-modules/custom/value-step/main.sjs. " +
+            "Verify that this module is in your modules database and that your user account has a role that grants read permission to this module."),
+            "Did not find expected message in error; error: " + errors.get(0));
+    }
+
     /**
      * This test demonstrates multiple ways of expressing the sourceQuery as a script that returns values.
      */
