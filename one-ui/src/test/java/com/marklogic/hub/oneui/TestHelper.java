@@ -4,12 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.FileHandle;
 import com.marklogic.hub.DatabaseKind;
+import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.deploy.commands.LoadHubArtifactsCommand;
 import com.marklogic.hub.impl.ArtifactManagerImpl;
 import com.marklogic.hub.oneui.auth.LoginInfo;
@@ -188,11 +190,33 @@ public class TestHelper {
         user.save();
     }
 
-    protected GenericDocumentManager getFinalGenericDocumentManager(DatabaseKind databaseKind) {
-        return getFinalClient(databaseKind).newDocumentManager();
+    protected EvalResultIterator runJsInDatabase(String query, String databaseName) {
+        try {
+            return getServerEval(databaseName).javascript(query).eval();
+        }
+        catch(FailedRequestException e) {
+            throw new RuntimeException("Failed to run query:  " + query,e);
+        }
     }
 
-    protected DatabaseClient getFinalClient(DatabaseKind databaseKind) {
-        return hubConfig.newFinalClient(hubConfig.getDbName(databaseKind));
+    private ServerEvaluationCall getServerEval(String databaseName) {
+        return getClientByName(databaseName).newServerEval();
+    }
+
+    protected DatabaseClient getClientByName(String databaseName) {
+        switch(databaseName) {
+            case HubConfig.DEFAULT_FINAL_NAME:
+                return hubConfig.newFinalClient(databaseName);
+            case HubConfig.DEFAULT_MODULES_DB_NAME:
+                return hubConfig.newModulesDbClient();
+            case HubConfig.DEFAULT_JOB_NAME:
+                return hubConfig.newJobDbClient();
+            default:
+                return hubConfig.newStagingClient(databaseName);
+        }
+    }
+
+    protected HubConfig getHubConfig() {
+        return this.hubConfig;
     }
 }

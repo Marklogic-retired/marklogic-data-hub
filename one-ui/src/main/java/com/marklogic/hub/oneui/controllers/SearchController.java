@@ -77,7 +77,7 @@ public class SearchController {
                 headers.setContentType(MediaType.APPLICATION_XML);
             }
             else {
-                headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+                headers.setContentType(MediaType.APPLICATION_JSON);
             }
             return new ResponseEntity<>(content, headers, HttpStatus.OK);
         }).orElse(new ResponseEntity<>(HttpStatus.OK));
