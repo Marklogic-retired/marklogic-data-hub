@@ -1,0 +1,31 @@
+{
+  "title": "AuthoritiesList.v1",
+  "type": "array",
+  "items": {
+    "type": "string"
+  },
+  "enum": [
+    "canInstallDataHub",
+    "canLoginToDataHub",
+    "canWriteLoadData",
+    "canReadLoadData",
+    "canWriteMappings",
+    "canReadMappings",
+    "canWriteFlows",
+    "canReadFlows",
+    "canWriteStepDefinitions",
+    "canReadStepDefinitions",
+    "canReadMatching",
+    "canWriteMatching",
+    "canWriteMerge",
+    "canReadMerge"
+  ],
+  "x-examples": {
+    "data-hub-load-data-writer": [
+      "canLoginToDataHub",
+      "canReadLoadData",
+      "canWriteLoadData"
+    ]
+  },
+  "description": ""
+}
