@@ -20,6 +20,7 @@ import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.deploy.HubAppDeployer;
+import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand;
 import com.marklogic.hub.dhs.installer.deploy.DeployHubQueryRolesetsCommand;
 import com.marklogic.hub.deploy.commands.HubDeployDatabaseCommandFactory;
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
@@ -178,6 +179,7 @@ public class DhsDeployer extends LoggingObject {
         LoadUserModulesCommand loadUserModulesCommand = new LoadUserModulesCommand(hubConfig);
         loadUserModulesCommand.setForceLoad(true);
         commands.add(loadUserModulesCommand);
+        commands.add(new GenerateFunctionMetadataCommand(hubConfig, true));
 
         commands.add(new DeployTemporalAxesCommand());
         commands.add(new DeployTemporalCollectionsCommand());
