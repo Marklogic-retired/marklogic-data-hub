@@ -113,10 +113,15 @@ task copyUiFiles(type: Copy, dependsOn: deleteSpringBootUiFiles, group: taskGrou
 }
 
 // Before the Spring Boot jar is built, build the UI files and copy them over
-build.dependsOn buildUi
-build.dependsOn copyUiFiles
-copyUiFiles.mustRunAfter buildUi
-
+if (!(
+        gradle.startParameter.taskNames*.toLowerCase().contains("publishplugins") ||
+        gradle.startParameter.taskNames*.toLowerCase().contains("bintrayUpload") ||
+        gradle.startParameter.taskNames*.toLowerCase().contains("javadoc") ||
+        project.hasProperty('skipui')
+)
+) {
+    tasks.processResources.dependsOn(buildUi, copyUiFiles)
+}
 
 test {
 	exclude 'com/marklogic/hub/curation/integrationtests/**'
@@ -136,4 +141,4 @@ task testUI(type: NpmTask, dependsOn: installDependencies, group: taskGroup){
     args = ["run", "test"]
     execOverrides { it.workingDir = reactUiPath }
 }
-test.finalizedBy('testUI') 
+test.finalizedBy('testUI')
