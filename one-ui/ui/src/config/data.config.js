@@ -39,9 +39,16 @@ const flows = [
 ];
 
 const mapProps = {
-  sourceData: [{ key: 'proteinId', val: '123EAC' },
+  sourceData: [
+    { key: 'proteinId', val: '123EAC' },
     { key: '@proteinType', val: 'home' },
-    { key: 'nutFree:name', val: 'testName1' }],
+    { key: 'nutFree:name', val: 'testName1' }
+  ],
+  srcData: [
+    { key: 'proteinId', val: '123EAC' },
+    { key: '@proteinType', val: 'home' },
+    { key: 'nutFree:name', val: 'testName1' }
+  ],
   sourceURI: '/dummy/mapping/source/uri1.json',
   mapData: {
     name: 'testMap',
@@ -53,6 +60,10 @@ const mapProps = {
       id: {  sourcedFrom: 'id' },
       name: { sourcedFrom: 'mappedName' }
     }
+  },
+  namespaces: {
+    nutFree: 'http://namespaces/nutfree',
+    withNuts: 'http://namespaces/withNuts'
   },
   mapName: 'testMap',
   getMappingArtifactByMapName: jest.fn(),

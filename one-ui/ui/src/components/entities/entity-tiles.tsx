@@ -37,13 +37,12 @@ const EntityTiles = (props) => {
                 let mapArtifacts = response.data;
                 mapArtifacts.sort((a, b) => (a.entityType > b.entityType) ? 1 : -1)
                 setEntityArtifacts([...mapArtifacts]);
-              console.log('GET Mapping Artifacts API Called successfully!',response);
             }
           } catch (error) {
               let message = error;
-              console.log('Error while fetching the mappings!', message);
-          } finally {
-            resetSessionTime();
+              console.error('Error while fetching the mappings!', message);
+            } finally {
+              resetSessionTime();  
           }
     }
 
@@ -58,11 +57,10 @@ const EntityTiles = (props) => {
                 return mapArtifacts;
                }
 
-              console.log('GET Mapping Artifacts API Called successfully!',response);
             }
           } catch (error) {
               let message = error;
-              console.log('Error while fetching the mapping!', message);
+              console.error('Error while fetching the mapping!', message);
           } finally {
             resetSessionTime();
           }
@@ -80,7 +78,7 @@ const EntityTiles = (props) => {
             }
           } catch (error) {
               let message = error.response.data.message;
-              console.log('Error while deleting the mapping!', message);
+              console.error('Error while deleting the mapping!', message);
               setIsLoading(false);
           }
     }
@@ -91,7 +89,6 @@ const EntityTiles = (props) => {
 
             let response = await axios.post(`/api/artifacts/mapping/${mapping.name}`, mapping);
             if (response.status === 200) {
-              console.log('Create MappingArtifact API Called successfully!')
               setIsLoading(false);
               return {code: response.status};
             } else {
@@ -101,7 +98,7 @@ const EntityTiles = (props) => {
             let message = error;
             let code = error.response.data.code;
             let details = error.response.data.details
-            console.log('Error while creating the mapping!', message)
+            console.error('Error while creating the mapping!', message)
             setIsLoading(false);
             let err={code: code,
                     message: details}
@@ -116,14 +113,13 @@ const EntityTiles = (props) => {
 
             let response = await axios.post(`/api/artifacts/mapping/${mapping.name}`, mapping);
             if (response.status === 200) {
-              console.log('Update MappingArtifact API Called successfully!')
               return true;
             } else {
                 return false;
             }
           } catch (error) {
             let message = error;
-            console.log('Error while updating the mapping!', message)
+            console.error('Error while updating the mapping!', message)
             return false;
           } finally {
             resetSessionTime();
@@ -136,9 +132,8 @@ const EntityTiles = (props) => {
             if (response.status === 200) {
                 let entArt = response.data;
                 entArt.sort((a, b) => (a.entityType > b.entityType) ? 1 : -1)
-                console.log('entArt',entArt)
                 setMatchingArtifacts([...entArt]);
-              console.log('GET matching Artifacts API Called successfully!',response);
+              console.log('GET matching Artifacts API Called successfully!');
             }
           } catch (error) {
               let message = error;

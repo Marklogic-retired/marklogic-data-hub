@@ -72,7 +72,7 @@ const SourceToEntityMap = (props) => {
 
     const handleSubmitUri = (uri) => {
         props.getMappingArtifactByMapName();
-        props.fetchSrcDocFromUri(uri);
+        props.fetchSrcDocFromUri(uri,props.mapIndex);
         if(isTestClicked) {
             getMapValidationResp(uri);
         }
@@ -152,7 +152,7 @@ const SourceToEntityMap = (props) => {
         }
     }
     const onUpdateURINavButtons = (uri) => {
-        props.fetchSrcDocFromUri(uri);
+        props.fetchSrcDocFromUri(uri,props.mapIndex);
         if(isTestClicked) {
             getMapValidationResp(uri);
         }
@@ -199,14 +199,9 @@ const SourceToEntityMap = (props) => {
                 obj[key] = { "sourcedFrom": mapExp[key] }
             })
 
-            let dataPayload = {
-                name: props.mapName,
-                targetEntityType: props.mapData.targetEntityType,
-                description: props.mapData.description,
-                selectedSource: props.mapData.selectedSource,
-                sourceQuery: props.mapData.sourceQuery,
-                properties: obj
-            }
+            let {lastUpdated, properties, ...dataPayload} = props.mapData;
+            
+            dataPayload = {...dataPayload, properties: obj};
 
             let mapSavedResult = await props.updateMappingArtifact(dataPayload);
             if (mapSavedResult) {
@@ -256,8 +251,8 @@ const SourceToEntityMap = (props) => {
             dataIndex: 'key',
             key: 'key',
             sorter: (a: any, b: any) => a.key.length - b.key.length,
-            ellipsis: true,
-            width: '60%'
+            width: '60%',
+            render: (text) => <span>{text?.split(':').length > 1 ? <span><Tooltip title={text?.split(':')[0]+' = "'+props.namespaces[text?.split(':')[0]]+'"'}><span id="namespace" className={styles.namespace}>{text?.split(':')[0]+': '}</span></Tooltip><span>{text?.split(':')[1]}</span></span> : text}</span>
         },
         {
             title: 'Value',
@@ -266,7 +261,7 @@ const SourceToEntityMap = (props) => {
             ellipsis: true,
             sorter: (a: any, b: any) => a.val?.length - b.val?.length,
             width: '40%',
-            render: (text) => <span>{text ? text : ''}</span>
+            render: (text) => <span>{text ? String(text).substr(0, 20) : ''}{text && text.length > 20 ? <Tooltip title={text}><span className={styles.toolTipForValues}>...</span></Tooltip> : ''}</span>
         }
     ];
 
@@ -482,6 +477,7 @@ const SourceToEntityMap = (props) => {
             footer={null}
             className={styles.mapContainer}
             bodyStyle={{paddingBottom:0}}
+            destroyOnClose={true}
         >
             <div className={styles.header}>
                 <span className={styles.headerTitle}>{props.mapName}</span>
@@ -545,13 +541,13 @@ const SourceToEntityMap = (props) => {
                                         expandIcon={(props) => customExpandIcon(props)}
                                         className={styles.sourceTable}
                                         rowClassName={() => styles.sourceTableRows}
-                                        scroll={{y: '70vh', x: 'max-content' }}
+                                        scroll={{y: '60vh', x: 'max-content' }}
                                         indentSize={14}
                                         //size="small"
                                         columns={columns}
                                         dataSource={srcData}
                                         tableLayout="unset"
-                                        rowKey="name"
+                                        rowKey={record => JSON.stringify(record)}
                                     />
                             </div> }
                     </div>
@@ -568,7 +564,7 @@ const SourceToEntityMap = (props) => {
                         <Table
                             pagination={false}
                             className={styles.entityTable}
-                            scroll={{  x: 'max-content', y: '70vh' }}
+                            scroll={{  x: 'max-content', y: '60vh' }}
                             columns={entityColumns}
                             dataSource={props.entityTypeProperties}
                             tableLayout="unset"

@@ -84,4 +84,15 @@ describe('Enzyme Source-to-entity map tests', () => {
         const splitPane = wrapper.find(SplitPane);
         expect(splitPane).toHaveLength(1);
     });
+
+  test('XML source data renders properly',() => {
+    const { getByText } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true}/>);
+    expect(getByText('Source Data')).toBeInTheDocument();
+    expect(getByText('proteinId')).toBeInTheDocument();
+    expect(getByText('123EAC')).toBeInTheDocument();
+    expect(getByText('@proteinType')).toBeInTheDocument();
+    expect(getByText('home')).toBeInTheDocument();
+    expect(getByText(/nutFree:/)).toBeInTheDocument();
+    expect(getByText('testName1')).toBeInTheDocument();
+  })
 });
