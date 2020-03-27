@@ -13,6 +13,7 @@ import { AdvMapTooltips } from '../../../config/tooltips.config';
 import {RolesContext} from "../../../util/roles";
 import { getSettingsArtifact } from '../../../util/manageArtifacts-service';
 import axios from 'axios';
+import { xmlParserForMapping } from '../../../util/xml-parser';
 
 interface Props {
     data: any;
@@ -56,6 +57,13 @@ const MappingCard: React.FC<Props> = (props) => {
 
     //For storing  mapping functions
     const [mapFunctions,setMapFunctions] = useState({});
+
+    //For storing namespaces
+    const [namespaces, setNamespaces] = useState({});
+    let nmspaces: any = {};
+    let mapIndexLocal: number = -1;
+    const [mapIndex, setMapIndex] = useState(-1);
+    let namespaceString = '';
 
     useEffect(() => {
         setSourceData([]);
@@ -177,83 +185,233 @@ const MappingCard: React.FC<Props> = (props) => {
 
     }
 
-    const fetchSrcDocFromUri = async (uri) => {
+    const fetchSrcDocFromUri = async (uri, index = mapIndexLocal) => {
         try{
             let srcDocResp = await getDoc('STAGING', uri);
             if (srcDocResp.status === 200) {
+                let parsedDoc: any;
+                if(typeof(srcDocResp.data) === 'string'){
+                    parsedDoc = getParsedXMLDoc(srcDocResp);
+                } else {
+                    parsedDoc = srcDocResp.data;
+                }
+                if(parsedDoc['envelope']){
+                    if(parsedDoc['envelope'].hasOwnProperty('@xmlns')){
+                        
+                        let nmspcURI = parsedDoc['envelope']['@xmlns']
+                        let indCheck = nmspcURI.lastIndexOf('/');
+                        let ind = indCheck !== -1 ? indCheck + 1 : 0;
+                        let nmspcString = nmspcURI.slice(ind);
+                        namespaceString = nmspcString;
+                        nmspaces = { ...nmspaces, [namespaceString]: nmspcURI};
+                        setNamespaces({ ...namespaces, [namespaceString]: nmspcURI})
+                    }
+                }
                 let nestedDoc: any = [];
-                let docRoot = srcDocResp.data['envelope'] ? srcDocResp.data['envelope']['instance'] : srcDocResp.data;
+                let docRoot = parsedDoc['envelope'] ? parsedDoc['envelope']['instance'] : parsedDoc;
                 let sDta = generateNestedDataSource(docRoot,nestedDoc);
+                setSourceData([]);
                 setSourceData([...sDta]);
+                if(typeof(srcDocResp.data) === 'string'){
+                    let mData = await props.getMappingArtifactByMapName(props.entityTypeTitle,props.data[index].name);
+                    updateMappingWithNamespaces(mData);
+                }
             }
             } catch(error)  {
-                let message = error.response.data.message;
+                let message = error//.response.data.message;
                 console.log('Error While loading the Doc from URI!', message)
                 setDocNotFound(true);
             }
     }
 
+    const getParsedXMLDoc = (xmlDoc) => {
+        let parsedDoc = xmlParserForMapping(xmlDoc.data);
+        return parsedDoc;
+    }
 
-    // construct infinitely nested source Data
-    const generateNestedDataSource = (respData, nestedDoc: Array<any>) => {
+    const updateMappingWithNamespaces = async (mapDataLocal) => {
+        let {lastUpdated, ...dataPayload} = mapDataLocal;
+        dataPayload['namespaces'] = nmspaces;
+        await props.updateMappingArtifact(dataPayload);
+        
+        let mapArt = await props.getMappingArtifactByMapName(dataPayload.targetEntityType,dataPayload.name);
 
-        Object.keys(respData).map(key => {
-            let val = respData[key];
-            if (val != null && val!= "") {
+        if(mapArt) {
+            await setMapData({...mapArt});
+        }
+    }
 
-                if (val.constructor.name === "Object") {
+    //Generate namespaces for source properties
+    const getNamespace = (key, val, parentNamespace) => {
+        let objWithNmspace = '';
+        if (key.split(':').length > 1) {
+            let arr = key.split(':');
+            if (nmspaces.hasOwnProperty(arr[0]) && nmspaces[arr[0]] !== arr[0]) {
+                let indCheck = nmspaces[arr[0]].lastIndexOf('/');
+                let ind = indCheck !== -1 ? indCheck + 1 : 0;
+                objWithNmspace = nmspaces[arr[0]].slice(ind) + ': ' + arr[1];
+            }
+        }
 
-                    let propty = {
-                        key: key,
-                        'children': []
+        if (val.constructor.name === 'Object') {
+            let valObject = Object.keys(val).filter((el) => /^@xmlns/.test(el));
+            let count = valObject.length;
+            if (count === 1) {
+                valObject.map(el => {
+                    let nsObj = getNamespaceObject(val,el);
+
+                    if (objWithNmspace === '') {
+                        if (key.split(':').length > 1) {
+                            let keyArr = key.split(':');
+                            objWithNmspace = nsObj.nmspace + ': ' + keyArr[1];
+                        } else {
+                            objWithNmspace = nsObj.nmspace + ': ' + key;
+                        }
                     }
 
-                    generateNestedDataSource(val, propty.children);
+                    nmspaces = { ...nmspaces, ...nsObj.obj };
+                    setNamespaces({ ...nmspaces, ...nsObj.obj })
+                })
+            } else if (count > 1) {
+                valObject.map(el => {
+                    let nsObj = getNamespaceObject(val,el);
+                    nmspaces = { ...nmspaces, ...nsObj.obj };
+                    setNamespaces({ ...nmspaces, ...nsObj.obj })
+                })
+            }
+        }
+        return objWithNmspace === '' ? (parentNamespace !== '' ? parentNamespace +':'+ key : key) : objWithNmspace;
+    }
+
+    const getNamespaceObject = (val, el) => {
+        let indCheck = val[el].lastIndexOf('/');
+        let ind = indCheck !== -1 ? indCheck + 1 : 0;
+        let obj: any = {};
+        let nmspace = val[el].slice(ind);
+        if (!nmspaces.hasOwnProperty(nmspace)) {
+            obj[nmspace] = val[el];
+        }
+        let colonIndex = el.indexOf(':');
+        if (colonIndex !== -1) {
+            if (!obj.hasOwnProperty(el.slice(colonIndex + 1)) && !nmspaces.hasOwnProperty(el.slice(colonIndex + 1))) {
+                if (el.slice(colonIndex + 1) !== nmspace) {
+                    obj[el.slice(colonIndex + 1)] = nmspace;
+                }
+            }
+        }
+        return {
+            nmspace: nmspace,
+            obj: obj
+        };
+    }
+
+    //Generate property object to push into deeply nested source data
+    const getPropertyObject = (key, obj) => {
+        let propty: any;
+        if (obj.hasOwnProperty('#text')) {
+            if (Object.keys(obj).filter((el) => /^@xmlns/.test(el) || el === '#text').length === Object.keys(obj).length) {
+                propty = {
+                    key: key,
+                    val: obj['#text']
+                }
+            } else {
+                propty = {
+                    key: key,
+                    val: obj['#text'],
+                    'children': []
+                }
+            }
+        } else {
+            propty = {
+                key: key,
+                'children': []
+            }
+        }
+        return propty;
+    }
+
+
+    // construct infinitely nested source Data
+    const generateNestedDataSource = (respData, nestedDoc: Array<any>, parentNamespace = namespaceString) => {
+        Object.keys(respData).map(key => {
+            let val = respData[key];
+            if (val !== null && val !== "") {
+
+                if (val.constructor.name === "Object") {
+                    let tempNS = parentNamespace;
+
+                    if(val.hasOwnProperty('@xmlns')){
+                        parentNamespace = updateParentNamespace(val);
+                        
+                    }
+
+                    let finalKey = getNamespace(key, val, parentNamespace);
+                    let propty = getPropertyObject(finalKey, val);
+
+                    generateNestedDataSource(val, propty.children, parentNamespace);
                     nestedDoc.push(propty);
 
+                    if(parentNamespace !== tempNS){
+                        parentNamespace = tempNS;
+                    }
                 } else if (val.constructor.name === "Array") {
 
                     val.forEach(obj => {
-                        if(obj.constructor.name == "String"){
-                          let propty = {
-                            key: key,
-                            val: obj
-                          };
-                          nestedDoc.push(propty);
-                        } else {
+                        if (obj.constructor.name == "String") {
                             let propty = {
                                 key: key,
-                                children: []
-                              };
+                                val: obj
+                            };
+                            nestedDoc.push(propty);
+                        } else {
+                            let tempNS = parentNamespace;
+                            if(obj.constructor.name === "Object" && obj.hasOwnProperty('@xmlns')){
+                                parentNamespace = updateParentNamespace(obj);
+                            }
+                            let finalKey = getNamespace(key, obj, parentNamespace);
+                            let propty = getPropertyObject(finalKey, obj);
 
-                          generateNestedDataSource(obj, propty.children);
-                          nestedDoc.push(propty);
+                            generateNestedDataSource(obj, propty.children, parentNamespace);
+                            nestedDoc.push(propty);
+                            if(parentNamespace !== tempNS){
+                                parentNamespace = tempNS;
+                            }
                         }
-                      });
+                    });
 
                 } else {
 
-                    let propty = {
-                        key: key,
-                        val: String(val)
-                      };
-                    nestedDoc.push(propty);
+                    if (key !== '#text' && !/^@xmlns/.test(key)) {
+                        let finalKey = !/^@/.test(key) ? getNamespace(key, val, parentNamespace) : key;
+                        let propty: any;
+                        propty = {
+                            key: finalKey,
+                            val: String(val)
+                        };
+                        
+                        nestedDoc.push(propty);
+                    }
                 }
 
             } else {
-
+                let finalKey = getNamespace(key, val, parentNamespace);
                 let propty = {
-                    key: key,
+                    key: finalKey,
                     val: ""
-                  };
+                };
+
                 nestedDoc.push(propty);
             }
         });
-
         return nestedDoc;
+    }
 
-
-
+    const updateParentNamespace = (val) => {
+        let nmspcURI = val['@xmlns'];
+        let indCheck = nmspcURI.lastIndexOf('/');
+        let ind = indCheck !== -1 ? indCheck + 1 : 0;
+        let nmspcString = nmspcURI.slice(ind);
+        return nmspcString;
     }
 
     const getMappingFunctions = async () => {
@@ -262,7 +420,7 @@ const MappingCard: React.FC<Props> = (props) => {
 
             if (response.status === 200) {
                 setMapFunctions({...response.data});
-              console.log('GET Mapping functions API Called successfully!',response);
+              console.log('GET Mapping functions API Called successfully!');
             }
           } catch (error) {
               let message = error;
@@ -272,7 +430,6 @@ const MappingCard: React.FC<Props> = (props) => {
 
 
     const extractEntityInfoForTable = () => {
-        console.log('entityinfo',props.entityModel)
         let entProps = props.entityModel && props.entityModel.definitions ? props.entityModel.definitions[props.entityTypeTitle].properties : {};
         let entTableTempData: any = [];
         Object.keys(entProps).map(key => {
@@ -287,10 +444,12 @@ const MappingCard: React.FC<Props> = (props) => {
     }
 
     const openSourceToEntityMapping = async (name,index) => {
+            mapIndexLocal = index; 
+            setMapIndex(index); 
             let mData = await props.getMappingArtifactByMapName(props.entityTypeTitle,name);
             setSourceURI('');
             setMapData({...mData})
-            getSourceData(index);
+            await getSourceData(index);
             extractEntityInfoForTable();
             setMapName(name);
             await getDatabaseFromSettingsArtifact(name);
@@ -370,7 +529,9 @@ const MappingCard: React.FC<Props> = (props) => {
                 setDisableURINavLeft={setDisableURINavLeft}
                 setDisableURINavRight={setDisableURINavRight}
                 sourceDatabaseName={sourceDatabaseName}
-                mapFunctions={mapFunctions}/>
+                mapFunctions={mapFunctions}
+                namespaces={namespaces}
+                mapIndex={mapIndex}/>
             <ActivitySettingsDialog
                 tooltipsData={AdvMapTooltips}
                 openActivitySettings={openMappingSettings}
