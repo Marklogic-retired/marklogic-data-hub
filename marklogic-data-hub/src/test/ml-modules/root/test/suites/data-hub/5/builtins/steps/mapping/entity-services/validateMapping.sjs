@@ -13,28 +13,6 @@ function validateGenderMapping(sourcedFrom) {
   });
 }
 
-function generateMappingStyleSheet() {
-  let mapping =
-    {
-        targetEntityType: entityType,
-        properties: {
-          id: {sourcedFrom: "id"}
-        }
-    }
-  let xmlMapping = esMappingLib.buildMappingXML(fn.head(xdmp.unquote(xdmp.quote(mapping))));
-  let stylesheet = fn.head(xdmp.xsltInvoke("/MarkLogic/entity-services/mapping-compile.xsl", xmlMapping));
-  return stylesheet;
-}
-
-function testRemoveStandardFunction() {
-  let stylesheet = generateMappingStyleSheet();
-  let removedStdFn = String(esMappingLib.removeStandardFunction(stylesheet));
-  return [
-    test.assertFalse(removedStdFn.includes("/MarkLogic/entity-services/standard-library.xqy"),"standard-library should be removed"),
-    test.assertEqual(removedStdFn, String(esMappingLib.removeStandardFunction(xdmp.unquote(removedStdFn)))
-    ,"if input doesn't have standard-library the input xslt should bee returned")];
-}
-
 function validMapping() {
   let sourcedFrom = "memoryLookup(gender, '{\"m\": \"Male\", \"f\": \"Female\", \"nb\": \"Non-Binary\"}')";
   let result = validateGenderMapping(sourcedFrom);
@@ -134,7 +112,6 @@ if (esMappingLib.versionIsCompatibleWithES()) {
     .concat(mixOfValidAndInvalidExpressions())
     .concat(validUseOfCustomFunction())
     .concat(invalidUseOfCustomFunction())
-    .concat(testRemoveStandardFunction())
   ;
 }
 else {

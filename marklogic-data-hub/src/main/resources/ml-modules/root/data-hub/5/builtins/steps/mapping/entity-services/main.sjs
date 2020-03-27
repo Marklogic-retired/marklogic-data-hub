@@ -4,13 +4,13 @@ const defaultLib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs')
 const lib = require('/data-hub/5/builtins/steps/mapping/entity-services/lib.sjs');
 const es = require('/MarkLogic/entity-services/entity-services');
 const entityValidationLib = require('entity-validation-lib.sjs');
+const xqueryLib = require('xquery-lib.xqy')
 
 // caching mappings in key to object since tests can have multiple mappings run in same transaction
 var mappings = {};
 var entityModel = null;
 
 function main(content, options) {
-  let id = content.uri;
   //let's set our output format, so we know what we're exporting
   let inputFormat = options.inputFormat ? options.inputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;
   let outputFormat = options.outputFormat ? options.outputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;
@@ -62,10 +62,12 @@ function main(content, options) {
   let entity = lib.getTargetEntity(targetEntityType);
   let instance = lib.extractInstance(doc);
   let provenance = {};
-  //Then we obtain the newInstance and process it from the source context
+
+  const userParams = {"URI":content.uri};
+
   let newInstance;
   try {
-    newInstance = es.mapToCanonical(instance, mappingURIforXML, {'format':outputFormat});
+    newInstance = xqueryLib.dataHubMapToCanonical(instance, mappingURIforXML, userParams, {"format":outputFormat});
   } catch (e) {
     datahub.debug.log({message: e, type: 'error'});
     throw Error(e);

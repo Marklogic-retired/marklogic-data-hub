@@ -224,6 +224,7 @@ assertions.push(
 expectedTemplate = tidyXML(`
   <m:mapping xmlns:m="http://marklogic.com/entity-services/mapping" xmlns:map="http://marklogic.com/xdmp/map" xmlns:ns1="http://ns1" xmlns:ns2="http://ns2">
     ${mappingLib.retrieveFunctionImports()}
+    <m:param name="URI"/>
     <m:entity name="Customer" xmlns:m="http://marklogic.com/entity-services/mapping">
       <Customer xmlns="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <m:optional><ID xsi:type="xs:string"><m:val>string(@CustomerID)</m:val></ID></m:optional>

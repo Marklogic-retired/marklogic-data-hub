@@ -57,7 +57,7 @@ function testSaveNewQuery() {
     test.assertNotEqual(null, result.savedQuery.id),
     test.assertEqual("some-query", result.savedQuery.name),
     test.assertEqual(4, Object.keys(result.savedQuery.systemMetadata).length),
-    test.assertEqual("flow-developer", result.savedQuery.owner)
+    test.assertEqual(xdmp.getCurrentUser(), result.savedQuery.owner)
   ];
 }
 
@@ -73,7 +73,7 @@ function testModifyQuery() {
     test.assertEqual(id, result.savedQuery.id),
     test.assertEqual("modified-query", result.savedQuery.name),
     test.assertEqual(4, Object.keys(result.savedQuery.systemMetadata).length),
-    test.assertEqual("flow-developer", result.savedQuery.owner)
+    test.assertEqual(xdmp.getCurrentUser(), result.savedQuery.owner)
   ];
 }
 

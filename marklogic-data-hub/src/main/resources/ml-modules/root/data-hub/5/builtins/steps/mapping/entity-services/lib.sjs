@@ -23,7 +23,12 @@ const xsltPermissions = [
   xdmp.permission(datahub.consts.DATA_HUB_OPERATOR_ROLE,'execute'),
   xdmp.permission(datahub.consts.DATA_HUB_DEVELOPER_ROLE,'execute'),
   xdmp.permission(datahub.consts.DATA_HUB_OPERATOR_ROLE,'read'),
-  xdmp.permission(datahub.consts.DATA_HUB_DEVELOPER_ROLE,'read')
+  xdmp.permission(datahub.consts.DATA_HUB_DEVELOPER_ROLE,'read'),
+  xdmp.permission("data-hub-module-reader", "execute"),
+  // In the absence of this, ML will report an error about standard-library.xqy not being found. This is misleading; the
+  // actual problem is that a mapping will fail if the XML or XSLT representation of a mapping does not have this
+  // permission on it, which is expected to be on every other DHF module
+  xdmp.permission("rest-extension-user", "execute")
 ];
 
 const reservedNamespaces = ['m', 'map'];
@@ -84,6 +89,7 @@ function buildMappingXML(mappingDoc) {
   return xdmp.unquote(`
     <m:mapping xmlns:m="http://marklogic.com/entity-services/mapping" xmlns:map="http://marklogic.com/xdmp/map" ${namespaces.join(' ')}>
       ${retrieveFunctionImports()}
+      <m:param name="URI"/>
       ${entityTemplates.join('\n')}
       <!-- Default entity is ${rootEntityTypeTitle} -->
       <m:output>
@@ -202,9 +208,7 @@ function getObjectPropertyMappings(mapping, propertyPath, objectPropertyMappings
 
 function getTargetEntity(targetEntityType) {
   if (!entitiesByTargetType[targetEntityType]) {
-    xdmp.log(`targetEntityType: ${xdmp.describe(targetEntityType)}`);
     let entityModel = entityLib.findModelForEntityTypeId(targetEntityType);
-    xdmp.log(`entityModel: ${xdmp.describe(entityModel)}`);
     if (fn.empty(entityModel)) {
       entityModel = fallbackLegacyEntityLookup(targetEntityType)
     }
@@ -352,17 +356,10 @@ function validatePropertyMapping(fullMapping, propertyName, sourcedFrom) {
     // This doesn't seem expected, as the validation will almost always fail.
     // Thus, this is not using es.mappingCompile, which does validation, and just invokes the transform instead.
     let stylesheet = fn.head(xdmp.xsltInvoke("/MarkLogic/entity-services/mapping-compile.xsl", xmlMapping));
-    xdmp.xsltEval(removeStandardFunction(stylesheet), [], {staticCheck: true});
+    xdmp.xsltEval(stylesheet, [], {staticCheck: true});
   } catch (e) {
-    // TODO Move this into a separate function for easier testing?
     return getErrorMessage(e);
   }
-}
-
-//This function removes import of "standard-library.xqy" from mapping xslt. Server Bug 54051
-function removeStandardFunction(stylesheet) {
-  return fn.head(xdmp.xqueryEval(' declare variable $stylesheet external; let $node := $stylesheet/node() return element {fn:node-name($node)} {$node/namespace::*, $node/attribute(), $node/element()[fn:not(@href = "/MarkLogic/entity-services/standard-library.xqy")]}'
-  ,{stylesheet:stylesheet}, null));
 }
 
 function runMapping(mapping, uri, propMapping={"targetEntityType":mapping.targetEntityType, "namespaces": mapping.namespaces,"properties": {}}, paths=['properties']) {
@@ -403,17 +400,19 @@ function getCanonicalInstance(mapping, uri, propertyName) {
   let xmlMapping = buildMappingXML(fn.head(xdmp.unquote(xdmp.quote(mapping))));
   let doc = cts.doc(uri);
   let instance = extractInstance(doc);
-  let mappingXslt = removeStandardFunction(xdmp.invokeFunction(function () {
+  let mappingXslt = xdmp.invokeFunction(function () {
       const es = require('/MarkLogic/entity-services/entity-services');
       return es.mappingCompile(xmlMapping);
-     }, {database: xdmp.modulesDatabase()}));
+     }, {database: xdmp.modulesDatabase()});
 
   try {
     let inputDoc = instance;
     if (!(inputDoc instanceof Document)) {
       inputDoc = fn.head(xdmp.unquote(String(instance)));
     }
-    let outputDoc = inst.canonicalJson(xdmp.xsltEval(mappingXslt, inputDoc));
+
+    const userParams = {"URI":uri};
+    let outputDoc = inst.canonicalJson(xdmp.xsltEval(mappingXslt, inputDoc, userParams));
     let output = outputDoc.xpath("//" + propertyName);
     let arr = output.toArray();
     if(arr.length <= 1) {
@@ -505,6 +504,5 @@ module.exports = {
   retrieveFunctionImports,
   versionIsCompatibleWithES,
   validateMapping,
-  validateAndRunMapping,
-  removeStandardFunction
+  validateAndRunMapping
 };
