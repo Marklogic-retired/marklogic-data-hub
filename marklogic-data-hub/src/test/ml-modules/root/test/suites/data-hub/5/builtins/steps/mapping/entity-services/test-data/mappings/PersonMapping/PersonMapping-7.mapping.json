@@ -1,0 +1,24 @@
+{
+  "lang": "zxx",
+  "name": "PersonMapping",
+  "version": 7,
+  "sourceContext": "/",
+  "targetEntityType": "http://marklogic.com/data-hub/example/Person-1.0.0/Person",
+  "properties": {
+    "id": {
+      "sourcedFrom": "personId"
+    },
+    "nickname": {
+      "sourcedFrom": "$URI"
+    },
+    "name": {
+      "sourcedFrom": "theName",
+      "targetEntityType": "http://marklogic.com/data-hub/example/Person-1.0.0/Name",
+      "properties": {
+        "last" : {
+          "sourcedFrom": "lastName"
+        }
+      }
+    }
+  }
+}

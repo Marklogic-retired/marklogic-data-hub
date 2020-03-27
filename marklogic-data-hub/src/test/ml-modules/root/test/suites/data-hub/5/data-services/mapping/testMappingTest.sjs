@@ -58,11 +58,10 @@ function invokeService(jsonMapping, uri, database) {
 }
 
 function testMappings() {
-    dataHub.hubUtils.writeDocument("/test/entities/Customer.entity.json", testEntityModel , [xdmp.permission('rest-reader', 'read'),
-        xdmp.permission('rest-writer', 'update')], ['http://marklogic.com/entity-services/models'], dataHub.config.FINALDATABASE);
+  const perms = [xdmp.permission("data-hub-operator", "read"), xdmp.permission("data-hub-operator", "update")];
 
-    dataHub.hubUtils.writeDocument("/test/customer100.json", testEntityInstance , [xdmp.permission('rest-reader', 'read'),
-        xdmp.permission('rest-writer', 'update')], ['Customer'], dataHub.config.FINALDATABASE);
+    dataHub.hubUtils.writeDocument("/test/entities/Customer.entity.json", testEntityModel , perms, ['http://marklogic.com/entity-services/models'], dataHub.config.FINALDATABASE);
+    dataHub.hubUtils.writeDocument("/test/customer100.json", testEntityInstance , perms, ['Customer'], dataHub.config.FINALDATABASE);
 
     const result = invokeService(validMapping,'/test/customer100.json', 'data-hub-FINAL');
     const errorResult = invokeService(invalidMapping,'/test/customer100.json', 'data-hub-FINAL');
