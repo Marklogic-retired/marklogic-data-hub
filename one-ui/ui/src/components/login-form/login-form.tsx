@@ -11,7 +11,7 @@ import { MlButton } from 'marklogic-ui-library';
 const LoginForm: React.FC = () => {
 
   const { loginAuthenticated } = useContext(UserContext);
-  const [isHostSet, setHostSet] = useState(true);
+  const [isHostSet, setHostSet] = useState(false);
   const [host, setHost] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
