@@ -17,10 +17,12 @@ describe("Sidebar component", () => {
             entityDefArray={entityDefArray}
             facets={searchPayloadFacets}
             selectedEntities={[]}
+            facetRender = {jest.fn()}
+            checkFacetRender = {jest.fn()}
           />
         )
       });
-  
+
       it('should render only Hub Properties Panel', () => {
         expect(wrapper.exists('#hub-properties')).toBe(true);
         expect(wrapper.exists('#entity-properties')).toBe(false);
@@ -34,10 +36,12 @@ describe("Sidebar component", () => {
             entityDefArray={entityDefArray}
             facets={searchPayloadFacets}
             selectedEntities={['Customer']}
+            facetRender = {jest.fn()}
+            checkFacetRender = {jest.fn()}
           />
         )
       });
-  
+
       it('should render both Entity and Hub Properties panel', () => {
         expect(wrapper.exists('#hub-properties')).toBe(true);
         expect(wrapper.exists('#entity-properties')).toBe(true);

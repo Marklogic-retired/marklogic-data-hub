@@ -27,7 +27,6 @@ describe("Facet component", () => {
             key={filteredEntityFacets[0].facetName}
             tooltip=""
             updateSelectedFacets={jest.fn()}
-            applyAllFacets={jest.fn()}
             addFacetValues={jest.fn()}
             referenceType={''}
             entityTypeId={''}
@@ -37,7 +36,7 @@ describe("Facet component", () => {
           />
         )
       });
-  
+
       it('should render Checkboxes and item count', () => {
         expect(wrapper.exists('[data-cy="gender-facet"]')).toBe(true);
         expect(wrapper.exists('[data-cy="gender-facet-item-count"]')).toBe(true);

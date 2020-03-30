@@ -108,7 +108,7 @@ describe('json scenario on browse documents page', () => {
     })
   });
 
-  it('apply facet search and verify docs, hub/entity properties', () => {
+  it.only('apply facet search and verify docs, hub/entity properties', () => {
     browsePage.selectEntity('All Entities');
     browsePage.getSelectedEntity().should('contain', 'All Entities');
     cy.wait(500);
@@ -117,12 +117,15 @@ describe('json scenario on browse documents page', () => {
     cy.wait(500);
     browsePage.getTotalDocuments().should('be.greaterThan', 1008);
     browsePage.getFacetItemCheckbox('collection', 'Person').click();
-    // browsePage.applyFacetSearchSelection('collection');
-    browsePage.getFacetApplyButton().click();
-    cy.wait(500);
-    browsePage.getTotalDocuments().should('be.equal', 6);
-    browsePage.getFacetSearchSelectionCount('collection').should('contain', '1');
-    browsePage.clearFacetSearchSelection('collection');
+    browsePage.getSelectedFacets().should('exist');
+    browsePage.getClearSelectedFacets().should('exist');
+    browsePage.getClearSelectedFacets().click({multiple:true});
+    //browsePage.getGreySelectedFacets('Person').should('exist');
+    //browsePage.getFacetApplyButton();
+    //cy.wait(500);
+    browsePage.getTotalDocuments().should('be.equal', 1015);
+    //browsePage.getFacetSearchSelectionCount('collection').should('contain', '1');
+    //browsePage.clearFacetSearchSelection('collection');
   });
 
   it('search for a simple text/query and verify content', () => {

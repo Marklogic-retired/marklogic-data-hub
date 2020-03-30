@@ -113,16 +113,29 @@ class BrowsePage {
     return cy.get('[data-cy=' + facet + '-selected-count]').invoke('text');
   }
 
-  applyFacetSearchSelection(facet: string) {
+  /*applyFacetSearchSelection(facet: string) {
     return cy.get('[data-cy=' + facet + '-facet-apply-button]').click();
+  }
+  */
+
+  getSelectedFacets(){
+      return cy.get('[data-cy=selected-facet-block]');
+  }
+
+  getGreySelectedFacets(facet: string){
+    return cy.get('#selected-facets [data-cy=clear-grey-' + facet +']').invoke('text');
+  }
+
+  getClearSelectedFacets(){
+    return cy.get('[data-cy=clear-all-button]' );
+  }
+
+  getFacetApplyButton() {
+    return cy.get('[data-cy=facet-apply-button]').click();
   }
 
   applyDatePickerSelection(facet: string) {
     return cy.get('[data-cy=datepicker-facet-apply-button]').click();
-  }
-  
-  getFacetApplyButton() {
-    return cy.get('[data-cy=collection-facet-apply-button]');
   }
 
   //search bar

@@ -13,7 +13,6 @@ describe("<NumericFacet/>", () => {
             constraint={''}
             datatype={''}
             onChange={jest.fn()}
-            applyAllFacets={jest.fn()}
             referenceType={''}
             entityTypeId={''}
             propertyPath={''}
@@ -31,7 +30,6 @@ describe("<NumericFacet/>", () => {
             constraint={'age'}
             datatype={'int'}
             onChange={jest.fn()}
-            applyAllFacets={jest.fn()}
             referenceType={'element'}
             entityTypeId={''}
             propertyPath={'intProp'}
@@ -39,7 +37,7 @@ describe("<NumericFacet/>", () => {
 
         await act(async () => {
             setTimeout(() => {
-                //verify range slider renders 
+                //verify range slider renders
                 expect(getByTestId("numeric-slider")).toBeInTheDocument();
                 //verify range slider min value
                 expect(getByDisplayValue("11")).toBeInTheDocument();

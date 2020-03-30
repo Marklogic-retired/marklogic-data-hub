@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Slider, InputNumber, Tooltip } from 'antd';
-import { MlButton } from 'marklogic-ui-library';
 import { SearchContext } from '../../util/search-context';
 import { UserContext } from '../../util/user-context';
 import styles from './numeric-facet.module.scss';
@@ -15,7 +14,6 @@ interface Props {
   entityTypeId: any;
   propertyPath: any;
   onChange: (datatype: any, facetName: any, value: any[]) => void;
-  applyAllFacets: () => void;
 };
 
 const NumericFacet: React.FC<Props> = (props) => {
@@ -26,7 +24,6 @@ const NumericFacet: React.FC<Props> = (props) => {
 
   const [range, setRange] = useState<number[]>([]);
   const [rangeLimit, setRangeLimit] = useState<number[]>([]);
-  const [showApply, toggleApply] = useState(false);
   let numbers = ['int', 'integer', 'short', 'long', 'decimal', 'double', 'float'];
 
   const getFacetRange = async () => {
@@ -36,7 +33,7 @@ const NumericFacet: React.FC<Props> = (props) => {
       if (response.data) {
         let range = [...[response.data.min, response.data.max].map(Number)]
         setRangeLimit(range)
-  
+
         if (Object.entries(searchOptions.searchFacets).length !== 0 && searchOptions.searchFacets.hasOwnProperty(props.constraint)) {
           for (let facet in searchOptions.searchFacets) {
             if (facet === props.constraint) {
@@ -66,7 +63,6 @@ const NumericFacet: React.FC<Props> = (props) => {
 
   const onChange = (e) => {
     setRange(e);
-    toggleApply(true);
     props.onChange(props.datatype, props.name, e)
   }
 
@@ -75,7 +71,6 @@ const NumericFacet: React.FC<Props> = (props) => {
       let modifiedRange = [...range];
       modifiedRange[0] = e;
       setRange(modifiedRange);
-      toggleApply(true);
       props.onChange(props.datatype, props.name, modifiedRange)
     }
   }
@@ -85,7 +80,6 @@ const NumericFacet: React.FC<Props> = (props) => {
       let modifiedRange = [...range];
       modifiedRange[1] = e;
       setRange(modifiedRange);
-      toggleApply(true);
       props.onChange(props.datatype, props.name, modifiedRange)
     }
   }
@@ -107,16 +101,13 @@ const NumericFacet: React.FC<Props> = (props) => {
           if (searchOptions.searchFacets[facet][valueType]) {
             const rangeArray = Object.values(searchOptions.searchFacets[facet][valueType]).map(Number)
             if (JSON.stringify(range) === JSON.stringify(rangeArray)) {
-              toggleApply(false);
               if (rangeLimit[0] === rangeArray[0] && rangeLimit[1] === rangeArray[1]) {
                 delete searchOptions.searchFacets[facet]
               }
-            } 
+            }
           }
         }
       }
-    } else {
-      toggleApply(false);
     }
   }, [searchOptions]);
 
@@ -138,15 +129,6 @@ const NumericFacet: React.FC<Props> = (props) => {
         <InputNumber className={styles.inputNumber} value={range[0]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={onChangeMinInput} />
         <InputNumber className={styles.inputNumber} value={range[1]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={onChangeMaxInput} />
       </div>
-      {showApply && (
-        <div className={styles.applyButtonContainer}>
-          <MlButton
-            type="primary"
-            size="small"
-            onClick={() => props.applyAllFacets()}
-          >Apply</MlButton>
-        </div>
-      )}
     </div>
   )
 }

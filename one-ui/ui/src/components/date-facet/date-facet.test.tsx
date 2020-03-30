@@ -11,7 +11,6 @@ describe("Date facet", () => {
             datatype={'date'}
             key={'0'}
             onChange={jest.fn()}
-            applyAllFacets={jest.fn()}
         />);
 
         const dateFacet = getByTestId("facet-date-picker");
