@@ -52,6 +52,8 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [endScroll, setEndScroll] = useState(false);
   const [collapse, setCollapsed] = useState(false);
   const [selectedFacets, setSelectedFacets] = useState<any[]>([]);
+  const [greyFacets, setGreyFacets] = useState<any[]>([]);
+  let sessionCount = 0;
 
   const getEntityModel = async () => {
     try {
@@ -188,6 +190,10 @@ const Browse: React.FC<Props> = ({ location }) => {
     setSelectedFacets(facets);
   }
 
+  const updateCheckedFacets = (facets) => {
+    setGreyFacets(facets);
+  }
+
   return (
     <Layout>
       <Sider className={styles.sideBarFacets} collapsedWidth={0} collapsible onCollapse={onCollapse} width={'20vw'}>
@@ -196,6 +202,7 @@ const Browse: React.FC<Props> = ({ location }) => {
           selectedEntities={searchOptions.entityNames}
           entityDefArray={entityDefArray}
           facetRender={updateSelectedFacets}
+          checkFacetRender={updateCheckedFacets}
         />
       </Sider>
       <Content className={styles.content}>
@@ -236,7 +243,7 @@ const Browse: React.FC<Props> = ({ location }) => {
                 </div>
               </div>
               <div className={styles.selectedFacets}>
-                <SelectedFacets selectedFacets={selectedFacets} />
+                <SelectedFacets selectedFacets={selectedFacets} greyFacets={greyFacets}/>
               </div>
             </div>
 
@@ -251,7 +258,7 @@ const Browse: React.FC<Props> = ({ location }) => {
               : <SearchResults data={data} entityDefArray={entityDefArray} />
             }
             </div>
-            
+
             <br />
             <div>
               <SearchSummary

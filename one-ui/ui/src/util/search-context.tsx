@@ -40,10 +40,16 @@ interface ISearchContextInterface {
   clearRangeFacet: (range: string) => void;
   resetSearchOptions: () => void;
   setAllSearchFacets: (facets: any) => void;
+  greyedOptions: SearchContextInterface;
+  setAllGreyedOptions: (facets: any) => void;
+  clearGreyFacet: (constraint: string, val: string) => void;
+  clearAllGreyFacets: () => void;
+  resetGreyedOptions: () => void;
 }
 
 export const SearchContext = React.createContext<ISearchContextInterface>({
   searchOptions: defaultSearchOptions,
+  greyedOptions: defaultSearchOptions,
   setSearchFromUserPref: () => { },
   setQuery: () => { },
   setPage: () => { },
@@ -58,11 +64,16 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   clearRangeFacet: () => { },
   resetSearchOptions: () => { },
   setAllSearchFacets: () => { },
+  setAllGreyedOptions: () => {},
+  clearGreyFacet: () => { },
+  clearAllGreyFacets: () => { },
+  resetGreyedOptions: () => { }
 });
 
 const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
 
   const [searchOptions, setSearchOptions] = useState<SearchContextInterface>(defaultSearchOptions);
+  const [greyedOptions, setGreyedOptions] = useState<SearchContextInterface>(defaultSearchOptions);
   const { user } = useContext(UserContext);
 
   const setSearchFromUserPref = (username: string) => {
@@ -142,6 +153,13 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       entityNames: entityOptions,
       pageLength: searchOptions.pageSize
     });
+      setGreyedOptions({
+          ...greyedOptions,
+          start: 1,
+          searchFacets: {},
+          entityNames: entityOptions,
+          pageLength: greyedOptions.pageSize
+      });
   }
 
   const setEntityClearQuery = (option: string) => {
@@ -157,7 +175,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
   }
 
   const setLatestJobFacet = (vals: string, option: string) => {
-    let facets = {};    
+    let facets = {};
     facets = { createdByJob: {dataType: "string", stringValues: [vals]} };
     setSearchOptions({
       ...searchOptions,
@@ -191,6 +209,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       pageNumber: 1,
       pageLength: searchOptions.pageSize
     });
+    clearAllGreyFacets();
   }
 
 /*
@@ -255,7 +274,44 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
     });
   }
 
+  const clearGreyFacet = (constraint: string, val: string) => {
+    let facets = greyedOptions.searchFacets;
+    let valueKey = '';
+    if (facets[constraint].dataType === 'xs:string' || facets[constraint].dataType === 'string') {
+     valueKey = 'stringValues';
+    }
+    if (facets[constraint][valueKey].length > 1) {
+     facets[constraint][valueKey] = facets[constraint][valueKey].filter(option => option !== val);
+    } else {
+     delete facets[constraint]
+    }
+    setGreyedOptions({...greyedOptions, searchFacets: facets})
+ }
 
+  const clearAllGreyFacets = () => {
+    setGreyedOptions({
+      ...greyedOptions,
+      searchFacets: {},
+      start: 1,
+      pageNumber: 1,
+      pageLength: greyedOptions.pageSize
+    });
+    resetGreyedOptions();
+  }
+
+  const resetGreyedOptions = () => {
+    setGreyedOptions({ ...defaultSearchOptions });
+  }
+
+  const setAllGreyedOptions = (facets: any) => {
+    setGreyedOptions({
+      ...greyedOptions,
+      searchFacets: facets,
+      start: 1,
+      pageNumber: 1,
+      pageLength: greyedOptions.pageSize
+    });
+  }
 
   useEffect(() => {
     if (user.authenticated) {
@@ -266,6 +322,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
   return (
     <SearchContext.Provider value={{
       searchOptions,
+      greyedOptions,
       setSearchFromUserPref,
       setQuery,
       setPage,
@@ -279,7 +336,11 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       clearDateFacet,
       clearRangeFacet,
       resetSearchOptions,
-      setAllSearchFacets
+      setAllSearchFacets,
+      setAllGreyedOptions,
+      clearGreyFacet,
+      clearAllGreyFacets,
+      resetGreyedOptions
     }}>
       {children}
     </SearchContext.Provider>

@@ -13,7 +13,6 @@ interface Props {
   datatype: any
   key: any
   onChange: (datatype: any, facetName: any, value: any[]) => void;
-  applyAllFacets: () => void;
 };
 
 const DateTimeFacet: React.FC<Props> = (props) => {
@@ -21,11 +20,9 @@ const DateTimeFacet: React.FC<Props> = (props) => {
     searchOptions,
   } = useContext(SearchContext);
 
-  const [showApply, toggleApply] = useState(false);
   const [dateTimePickerValue, setDateTimePickerValue] = useState<any[]>([null, null]);
 
   const onChange = (e) => {
-    toggleApply(true);
     props.onChange(props.datatype, props.name, e);
     (e[0] && e[1]) && setDateTimePickerValue([moment(e[0].format('YYYY-MM-DDTHH:mm:ss')), moment(e[1].format('YYYY-MM-DDTHH:mm:ss'))])
   }
@@ -35,7 +32,6 @@ const DateTimeFacet: React.FC<Props> = (props) => {
       for (let facet in searchOptions.searchFacets) {
         if (facet === props.constraint) {
           setDateTimePickerValue([moment(searchOptions.searchFacets[facet].rangeValues.lowerBound), moment(searchOptions.searchFacets[facet].rangeValues.upperBound)])
-          toggleApply(false);
         }
       }
     }
@@ -66,16 +62,6 @@ const DateTimeFacet: React.FC<Props> = (props) => {
         value={dateTimePickerValue}
         key={props.name}
       />
-      <br/>
-      {showApply && (
-        <div className={styles.applyButton}>
-          <MlButton
-            type="primary"
-            size="small"
-            onClick={() => props.applyAllFacets()}
-          >Apply</MlButton>
-        </div>
-      )}
     </div>
   )
 }
