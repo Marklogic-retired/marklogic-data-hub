@@ -1,0 +1,75 @@
+{
+  "info": {
+    "title": "Customer",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "Customer": {
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "shipping": {
+          "$ref": "#/definitions/Address"
+        },
+        "billing": {
+          "$ref": "#/definitions/Address"
+        },
+        "customerNumber": {
+          "datatype": "integer"
+        },
+        "customerSince": {
+          "datatype": "date"
+        },
+        "orders": {
+          "datatype": "array",
+          "items": {
+            "$ref": "http://example.org/Order-0.0.1/Order"
+          }
+        }
+      }
+    },
+    "Address": {
+      "required": [],
+      "pii": [],
+      "elementRangeIndex": [],
+      "rangeIndex": [],
+      "wordLexicon": [],
+      "properties": {
+        "street": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "city": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "state": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "zip": {
+          "$ref": "#/definitions/Zip"
+        }
+      }
+    },
+    "Zip": {
+      "required": [],
+      "properties": {
+        "fiveDigit": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "plusFour": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}

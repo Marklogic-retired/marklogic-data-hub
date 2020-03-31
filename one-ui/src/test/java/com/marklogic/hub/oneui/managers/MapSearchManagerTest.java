@@ -1,37 +1,22 @@
 package com.marklogic.hub.oneui.managers;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.oneui.TestHelper;
-import com.marklogic.hub.oneui.models.HubConfigSession;
+import com.marklogic.hub.oneui.AbstractOneUiTest;
 import com.marklogic.hub.oneui.models.SJSSearchQuery;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.marklogic.client.io.DocumentMetadataHandle.Capability.*;
+class MapSearchManagerTest extends AbstractOneUiTest {
 
-class MapSearchManagerTest extends TestHelper {
     @Autowired
-    private MapSearchManager mapSearchManager;
-    @Autowired
-    private HubConfigSession hubConfigSession;
+    MapSearchManager mapSearchManager;
 
     @BeforeEach
     void before() {
-        authenticateSession();
-        DocumentMetadataHandle meta = new DocumentMetadataHandle();
-        meta.getCollections().add("UrisOnly");
-        meta.getPermissions().add("data-hub-developer", READ, UPDATE, EXECUTE);
-        addStagingDoc("/employee2.json", meta, "input/employee2.json");
-    }
-
-    @AfterEach
-    void after() {
-        clearDatabases(hubConfigSession.getDbName(DatabaseKind.STAGING));
+        addStagingDoc("input/employee2.json", "/employee2.json", "UrisOnly");
     }
 
     @Test
@@ -46,7 +31,7 @@ class MapSearchManagerTest extends TestHelper {
 
     private void sjsSearch(boolean urisOnly) {
         SJSSearchQuery query = new SJSSearchQuery();
-        query.database = hubConfigSession.getDbName(DatabaseKind.STAGING);
+        query.database = hubConfig.getDbName(DatabaseKind.STAGING);
         query.sourceQuery = "cts.collectionQuery('UrisOnly')";
         query.count = 1;
         query.urisOnly = urisOnly;
@@ -56,8 +41,7 @@ class MapSearchManagerTest extends TestHelper {
 
         if (urisOnly) {
             Assertions.assertNull(resp.get("docs"));
-        }
-        else {
+        } else {
             Assertions.assertNotNull(resp.get("docs"));
         }
     }

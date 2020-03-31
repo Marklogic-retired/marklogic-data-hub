@@ -12,6 +12,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,17 +37,22 @@ public class LoadHubArtifactsCommandTest extends HubTestBase {
     @Test
     public void verifyDefaultPermissions() {
         DocumentMetadataHandle h = loadHubArtifactsCommand.buildMetadata(adminHubConfig.getFlowPermissions(),"http://marklogic.com/data-hub/flow");
-        assertEquals(1, h.getCollections().size());
-        assertEquals("http://marklogic.com/data-hub/flow", h.getCollections().iterator().next());
-
+        assertEquals(2, h.getCollections().size());
+        Iterator<String> collections = h.getCollections().iterator();
+        assertEquals("http://marklogic.com/data-hub/flow", collections.next());
+        assertEquals("hub-core-artifact", collections.next(),
+            "This collection is being introduced in 5.3.0 so that one-ui has an easy way of not deleting artifacts " +
+                "installed as part of DH Core. We'll soon take advantage of this in the DH Core test suite, along with " +
+                "an upcoming capability for uninstalling user project files without uninstalling DH Core.");
 
         DocumentMetadataHandle.DocumentPermissions perms = h.getPermissions();
         assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("data-hub-flow-reader").iterator().next());
 
         h = loadHubArtifactsCommand.buildMetadata(adminHubConfig.getStepDefinitionPermissions(),"http://marklogic.com/data-hub/step-definition");
-        assertEquals(1, h.getCollections().size());
-        assertEquals("http://marklogic.com/data-hub/step-definition", h.getCollections().iterator().next());
-
+        assertEquals(2, h.getCollections().size());
+        collections = h.getCollections().iterator();
+        assertEquals("http://marklogic.com/data-hub/step-definition", collections.next());
+        assertEquals("hub-core-artifact", collections.next());
 
         perms = h.getPermissions();
         assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("data-hub-step-definition-reader").iterator().next());

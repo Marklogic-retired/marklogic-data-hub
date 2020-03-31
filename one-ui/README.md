@@ -5,6 +5,7 @@ cases:
 Boot middle tier instead of a Node middle tier
 1. For production, you want to deploy an executable Spring Boot jar that includes all of the static UI resources
 
+
 ## Using this during development
 
 During development, you'll run two separate processes - the Spring Boot middle tier (which defaults to Tomcat), and 
@@ -34,6 +35,11 @@ Alternatively, you can also run the com.marklogic.hub.oneui.Application class in
 
 You'll see in the logging that Tomcat is listening on port 8080. This is configured via the server.port property in 
 src/main/resources/application.properties . 
+
+### Writing tests for the Java middle tier
+
+See the comments in the AbstractOneUiTest class for information on how to write tests for the Java code in this application.
+
 
 ## Using this for production 
 

@@ -7,12 +7,11 @@ import ch.qos.logback.core.LogbackException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.appdeployer.command.security.DeployPrivilegesCommand;
 import com.marklogic.appdeployer.command.security.DeployRolesCommand;
-import com.marklogic.hub.curation.controllers.LoadDataController;
 import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
 import com.marklogic.hub.deploy.commands.DeployHubOtherServersCommand;
 import com.marklogic.hub.deploy.commands.DeployHubTriggersCommand;
 import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.hub.oneui.TestHelper;
+import com.marklogic.hub.oneui.AbstractOneUiTest;
 import com.marklogic.hub.oneui.auth.AuthenticationFilter;
 import com.marklogic.hub.oneui.controllers.EnvironmentController;
 import com.marklogic.hub.oneui.listener.UIDeployListener;
@@ -21,9 +20,14 @@ import com.marklogic.hub.oneui.services.DataHubProjectUtils;
 import com.marklogic.hub.oneui.services.EnvironmentConfig;
 import com.marklogic.hub.oneui.services.EnvironmentService;
 import com.marklogic.hub.oneui.utils.TestLoggingAppender;
+import com.marklogic.mgmt.ManageClient;
+import com.marklogic.mgmt.ManageConfig;
+import com.marklogic.mgmt.api.API;
+import com.marklogic.mgmt.api.security.User;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,49 +40,53 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
-public class EnvironmentControllerInstallTest extends TestHelper {
-
-    @Autowired
-    private HubConfigSession hubConfigSession;
-
-    @Autowired
-    private EnvironmentController environmentController;
-
-    @Autowired
-    private EnvironmentService environmentService;
+/**
+ * These tests are all being disabled, because as of 2020-03-31, we know that DH Central will not be allowed to install
+ * DHF in a DHS environment. Keeping the test though, as we can likely rework it for the new "Install user project"
+ * capability that we'll need in DHS.
+ */
+@Tag("Destructive")
+public class EnvironmentControllerInstallTest extends AbstractOneUiTest {
 
     @Autowired
-    LoadDataController controller;
+    EnvironmentController environmentController;
 
-    private boolean hasBeenInitialized = false;
-
-    @BeforeEach
-    void before() {
-        if (!hasBeenInitialized) {
-            setHubProjectDirectory();
-            authenticateSession();
-            hasBeenInitialized = true;
-        }
-    }
+    @Autowired
+    EnvironmentService environmentService;
 
     @AfterEach
     void after() {
         /*  The tests uninstalls/installs datahub, hence the roles have to be reassigned to users
             after datahub is reinstalled. */
-        assignRoleToUsers();
-        setHubProjectDirectory();
+        //assignRoleToUsers();
     }
+
+//    private void assignRoleToUsers() {
+//        assignRoleToUser(testConfig.dataHubOperatorUsername, "data-hub-operator");
+//        assignRoleToUser(testConfig.dataHubDeveloperUsername, "data-hub-developer");
+//        assignRoleToUser(testConfig.dataHubEnvironmentManagerUsername, "data-hub-environment-manager");
+//    }
+//
+//    private void assignRoleToUser(String username, String role) {
+//        ManageClient client = new ManageClient();
+//        client.setManageConfig(new ManageConfig(testConfig.host, 8002, testConfig.adminUsername, testConfig.adminPassword));
+//
+//        User user = new User(new API(client), username);
+//        user.setRole(Stream.of(role).collect(Collectors.toList()));
+//        user.save();
+//    }
 
     @Test
     void installProjectWithNewDirectory() throws Exception {
-        authenticateSessionAsEnvironmentManager();
-        String unexpectedDirectory = tempProjectDirectory.toAbsolutePath().toString();
+        if (true) return;
+        runAsEnvironmentManager();
+        String unexpectedDirectory = environmentService.getProjectDirectory();
         String expectedDirectory = Files.createTempDirectory("one-ui-hub-project-different-dir").toAbsolutePath().toString();
         boolean[] containsUnexpectedDirectory = {false};
         boolean[] containsExpectedDirectory = {false};
@@ -111,23 +119,25 @@ public class EnvironmentControllerInstallTest extends TestHelper {
      */
     @Test
     public void testUploadProjectWithoutArchiveFolder() throws Exception {
+        if (true) return;
         testUploadProject("dhfWithoutArchiveFolder.zip");
     }
 
     @Test
     public void testUploadProjectWithArchiveFolder() throws Exception {
+        if (true) return;
         testUploadProject("dhfWithArchiveFolder.zip");
     }
 
     private void testUploadProject(String zipFileName) throws Exception {
-        authenticateSessionAsAdmin();
-        TestAuthenticationFilter authenticationFilter = new TestAuthenticationFilter(environmentService, hubConfigSession);
+        runAsAdmin();
+        TestAuthenticationFilter authenticationFilter = new TestAuthenticationFilter(environmentService, hubConfig);
         boolean installed = authenticationFilter.isDataHubInstalled();
         if (!installed) {
             //can not test upload project unless it is installed first
             return;
         }
-        assertFalse(StringUtils.isEmpty(hubConfigSession.getProjectDir()), "Project directory should exist!");
+        assertFalse(StringUtils.isEmpty(hubConfig.getProjectDir()), "Project directory should exist!");
 
         ObjectMapper om = new ObjectMapper();
         EnvironmentConfig envConfig = om.treeToValue(environmentController.getProjectInfo(), EnvironmentConfig.class);
@@ -154,7 +164,7 @@ public class EnvironmentControllerInstallTest extends TestHelper {
                 if (found) {
                     SUCCESS_LOG_MSG.remove(matched[0]);
                     if ("Extracted the uploaded zip project".equals(matched[0])) {
-                        File projectFolder = new File(hubConfigSession.getProjectDir());
+                        File projectFolder = new File(hubConfig.getProjectDir());
                         assertTrue(Stream.of(projectFolder.list()).anyMatch(e -> "gradle.properties".equals(e)));
                         assertTrue(Stream.of(projectFolder.list()).anyMatch(e -> "flows".equals(e)));
                         assertTrue(Stream.of(projectFolder.list()).anyMatch(e -> "src".equals(e)));

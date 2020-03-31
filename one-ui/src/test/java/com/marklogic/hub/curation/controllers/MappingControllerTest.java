@@ -1,7 +1,6 @@
 package com.marklogic.hub.curation.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
@@ -10,8 +9,7 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.oneui.TestHelper;
-import com.marklogic.hub.oneui.models.HubConfigSession;
+import com.marklogic.hub.oneui.AbstractOneUiTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,13 +17,10 @@ import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class MappingControllerTest extends TestHelper{
+public class MappingControllerTest extends AbstractOneUiTest {
 
     @Autowired
     MappingController controller;
-
-    @Autowired
-    private HubConfigSession hubConfigSession;
 
     static final String MAPPING_CONFIG_1 = "{\n" +
         "  \"name\": \"TestCustomerMapping\",\n" +
@@ -117,19 +112,11 @@ public class MappingControllerTest extends TestHelper{
 
     @Test
     void testMappingConfigs() throws IOException {
-        authenticateSession();
-        ObjectMapper om = new ObjectMapper();
+        installReferenceProject();
 
-        // Add entities for mappings
-        DocumentMetadataHandle meta = new DocumentMetadataHandle();
-        meta.getCollections().add("http://marklogic.com/entity-services/models");
-        meta.getPermissions().add("data-hub-developer", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE);
-        addStagingDoc("/entities/Customer.entity.json", meta, "entities/Customer.entity.json");
-        addStagingDoc("/entities/Order.entity.json", meta, "entities/Order.entity.json");
-
-        controller.updateArtifact("TestCustomerMapping", om.readTree(MAPPING_CONFIG_1));
-        controller.updateArtifact("TestOrderMapping1", om.readTree(MAPPING_CONFIG_2));
-        controller.updateArtifact("TestOrderMapping2", om.readTree(MAPPING_CONFIG_3));
+        controller.updateArtifact("TestCustomerMapping", objectMapper.readTree(MAPPING_CONFIG_1));
+        controller.updateArtifact("TestOrderMapping1", objectMapper.readTree(MAPPING_CONFIG_2));
+        controller.updateArtifact("TestOrderMapping2", objectMapper.readTree(MAPPING_CONFIG_3));
 
         ArrayNode configsGroupbyEntity = controller.getArtifacts().getBody();
 
@@ -172,22 +159,16 @@ public class MappingControllerTest extends TestHelper{
                 }
             }
         });
-
-        controller.deleteArtifact("TestCustomerMapping");
-        controller.deleteArtifact("TestOrderMapping1");
-        controller.deleteArtifact("TestOrderMapping2");
     }
 
     @Test
     public void testMappingSettings() throws IOException {
-        authenticateSession();
-        ObjectMapper om = new ObjectMapper();
-        controller.updateArtifact("TestCustomerMapping", om.readTree(MAPPING_CONFIG_1));
+        controller.updateArtifact("TestCustomerMapping", objectMapper.readTree(MAPPING_CONFIG_1));
 
         JsonNode result = controller.getArtifactSettings("TestCustomerMapping").getBody();
         assertTrue(result.isEmpty(), "No mapping settings yet!");
 
-        JsonNode settings = om.readTree(MAPPING_SETTINGS);
+        JsonNode settings = objectMapper.readTree(MAPPING_SETTINGS);
 
         controller.updateArtifactSettings("TestCustomerMapping", settings);
 
@@ -206,10 +187,8 @@ public class MappingControllerTest extends TestHelper{
     }
 
     @Test
-    void testValidateMappings() throws IOException {
-        authenticateSession();
-
-        DatabaseClient databaseClient = hubConfigSession.newFinalClient();
+    void testValidateMappings() {
+        DatabaseClient databaseClient = hubConfig.newFinalClient();
         databaseClient.newJSONDocumentManager().write(
             "/test/entities/Customer.entity.json",
             new DocumentMetadataHandle().withCollections("http://marklogic.com/entity-services/models"),
@@ -219,23 +198,18 @@ public class MappingControllerTest extends TestHelper{
             "/test/customer100.json",
             new StringHandle(TEST_ENTITY_INSTANCE).withFormat(Format.JSON)
         );
-        ObjectMapper om = new ObjectMapper();
-        ObjectNode result = controller.testMapping((ObjectNode) om.readTree(VALID_MAPING), "/test/customer100.json", hubConfigSession.getDbName(DatabaseKind.FINAL)).getBody();
+
+        ObjectNode result = controller.testMapping(readJsonObject(VALID_MAPING), "/test/customer100.json", hubConfig.getDbName(DatabaseKind.FINAL)).getBody();
         assertEquals("concat(id, 'A')", result.get("properties").get("id").get("sourcedFrom").asText(), "SourcedFrom should be concat(id, 'A')");
         assertEquals("100A", result.get("properties").get("id").get("output").asText(), "outpus should be 100A");
 
-        ObjectNode errorResult = controller.testMapping((ObjectNode) om.readTree(INVALID_MAPING), "/test/customer100.json", hubConfigSession.getDbName(DatabaseKind.FINAL)).getBody();
+        ObjectNode errorResult = controller.testMapping(readJsonObject(INVALID_MAPING), "/test/customer100.json", hubConfig.getDbName(DatabaseKind.FINAL)).getBody();
         assertEquals("concat(id, ')", errorResult.get("properties").get("id").get("sourcedFrom").asText(), "SourcedFrom should be concat(id, ')");
         assertEquals("Invalid XPath expression: concat(id, ')", errorResult.get("properties").get("id").get("errorMessage").asText(), "errorMessage should be Invalid XPath expression: concat(id, ')");
-
-        databaseClient.newJSONDocumentManager().delete("/test/customer100.json");
-        databaseClient.newJSONDocumentManager().delete("/test/entities/Customer.entity.json");
     }
 
     @Test
     void testGetMappingFunctions() {
-        authenticateSession();
-
         ObjectNode result = controller.getMappingFunctions().getBody();
         assertTrue(result.size() > 100, "Should have at least 100 functions");
         assertTrue(result.get("sum") != null, "Should have function 'sum'");

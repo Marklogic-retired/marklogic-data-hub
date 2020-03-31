@@ -16,16 +16,16 @@
  */
 package com.marklogic.hub.curation.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.FailedRequestException;
-import com.marklogic.hub.oneui.TestHelper;
+import com.marklogic.hub.impl.ArtifactManagerImpl;
+import com.marklogic.hub.oneui.AbstractOneUiTest;
 import java.io.IOException;
 import java.nio.file.Path;
-import org.junit.jupiter.api.BeforeEach;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class LoadDataControllerTest extends TestHelper {
+public class LoadDataControllerTest extends AbstractOneUiTest {
 
     @Autowired
     LoadDataController controller;
@@ -53,23 +53,15 @@ public class LoadDataControllerTest extends TestHelper {
         + "          \"runBefore\" : false\n"
         + "    }}";
 
-    public LoadDataControllerTest() throws JsonProcessingException {
-    }
-
-    @BeforeEach
-    void before(){
-        authenticateSession();
-    }
-
     @Test
     void testLoadDataController() throws IOException {
-        controller.updateArtifact("validArtifact", validLoadDataConfig);
+        controller.updateArtifact("validArtifact", newLoadDataConfig());
 
         ArrayNode resultList = (ArrayNode) controller.getArtifacts().getBody();
 
         assertEquals(1, resultList.size(), "List of load data artifacts should now be 1");
 
-        Path artifactProjectLocation = getArtifactManager().buildArtifactProjectLocation(controller.getArtifactType(), "validArtifact", null, false);
+        Path artifactProjectLocation = new ArtifactManagerImpl(hubConfig).buildArtifactProjectLocation(controller.getArtifactType(), "validArtifact", null, false);
         ObjectNode resultByName = controller.getArtifact("validArtifact").getBody();
         assertEquals("validArtifact", resultByName.get("name").asText(), "Getting artifact by name should return object with expected properties");
         assertEquals("xml", resultByName.get("sourceFormat").asText(), "Getting artifact by name should return object with expected properties");
@@ -92,7 +84,7 @@ public class LoadDataControllerTest extends TestHelper {
 
     @Test
     public void testLoadDataSettings() throws IOException {
-        controller.updateArtifact("validArtifact", validLoadDataConfig);
+        controller.updateArtifact("validArtifact", newLoadDataConfig());
 
         JsonNode result = controller.getArtifactSettings("validArtifact").getBody();
         assertTrue(result.isEmpty(), "No load data settings yet!");
@@ -109,7 +101,7 @@ public class LoadDataControllerTest extends TestHelper {
         assertTrue(result.has("permissions"), "missing permissions");
         assertTrue(result.has("customHook"), "missing customHook");
 
-        Path artifactSettingFullName = getArtifactManager().buildArtifactProjectLocation(controller.getArtifactType(), "validArtifact", null, true);
+        Path artifactSettingFullName = new ArtifactManagerImpl(hubConfig).buildArtifactProjectLocation(controller.getArtifactType(), "validArtifact", null, true);
         assertTrue(artifactSettingFullName.toFile().exists(), "Artifact setting file should have been created in the project directory");
 
         controller.deleteArtifact("validArtifact");

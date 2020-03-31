@@ -1,22 +1,18 @@
 package com.marklogic.hub.oneui.models;
 
-import com.marklogic.hub.oneui.TestHelper;
+import com.marklogic.hub.oneui.AbstractOneUiTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class HubConfigSessionTest extends TestHelper {
-
-    @Autowired
-    private HubConfigSession hubConfig;
+public class HubConfigSessionTest extends AbstractOneUiTest {
 
     @BeforeEach
     void before() {
-        authenticateSession();
+        runAsDataHubDeveloper();
     }
 
     @Test
