@@ -206,7 +206,7 @@ public class FlowController {
     @ResponseBody
     public RunFlowResponse runFlow(@PathVariable String flowName, @RequestBody(required = false) List<String> steps) {
         FlowManager flowManager = getFlowManager();
-        FlowRunnerImpl flowRunner = getFlowRunner();
+        FlowRunnerImpl flowRunner = newFlowRunner();
         if (steps == null || steps.size() == 0) {
             return flowRunner.runFlow(flowName);
         }
@@ -221,7 +221,7 @@ public class FlowController {
     @RequestMapping(value = "/{flowName}/stop", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<?> stopFlow(@PathVariable String flowName) {
-        FlowRunnerImpl flowRunner = getFlowRunner();
+        FlowRunnerImpl flowRunner = newFlowRunner();
         List<String> jobIds = flowRunner.getQueuedJobIdsFromFlow(flowName);
         Iterator<String> itr = jobIds.iterator();
         if (!itr.hasNext()) {
@@ -477,7 +477,7 @@ set modulePaths in 'StepModel' and 'StepDefinition' .
         return new FlowManagerImpl(this.hubConfig.getHubConfigImpl());
     }
 
-    protected FlowRunnerImpl getFlowRunner() {
+    protected FlowRunnerImpl newFlowRunner() {
         return new FlowRunnerImpl(this.hubConfig.getHubConfigImpl());
     }
 }

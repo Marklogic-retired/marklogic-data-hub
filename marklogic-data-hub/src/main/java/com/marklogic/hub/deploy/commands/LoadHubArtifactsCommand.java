@@ -169,6 +169,7 @@ public class LoadHubArtifactsCommand extends AbstractCommand {
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
 
         meta.getCollections().add(collection);
+        meta.getCollections().add("hub-core-artifact");
         documentPermissionsParser.parsePermissions(permissions, meta.getPermissions());
         return meta;
     }

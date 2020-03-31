@@ -3,16 +3,14 @@ package com.marklogic.hub.curation.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.hub.ArtifactManager;
 import com.marklogic.hub.artifact.ArtifactTypeInfo;
-import com.marklogic.hub.oneui.TestHelper;
+import com.marklogic.hub.impl.ArtifactManagerImpl;
+import com.marklogic.hub.oneui.AbstractOneUiTest;
 import com.marklogic.hub.oneui.auth.AuthenticationFilter;
 import com.marklogic.hub.oneui.controllers.EnvironmentController;
 import com.marklogic.hub.oneui.exceptions.ProjectDirectoryException;
 import com.marklogic.hub.oneui.models.HubConfigSession;
 import com.marklogic.hub.oneui.services.EnvironmentService;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -34,47 +32,27 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class EnvironmentControllerTest extends TestHelper {
+public class EnvironmentControllerTest extends AbstractOneUiTest {
 
     @Autowired
-    private HubConfigSession hubConfigSession;
+    EnvironmentController environmentController;
 
     @Autowired
-    private EnvironmentController environmentController;
-
-    @Autowired
-    private EnvironmentService environmentService;
+    EnvironmentService environmentService;
 
     @Autowired
     LoadDataController controller;
 
-    private boolean hasBeenInitialized = false;
-
-    @BeforeEach
-    void before() {
-        if (!hasBeenInitialized) {
-            setHubProjectDirectory();
-            authenticateSession();
-            hasBeenInitialized = true;
-        }
-    }
-
-    @AfterEach
-    void after() {
-        setHubProjectDirectory();
-    }
-
     @Test
     void downloadProject() throws IOException {
         //Creating a load data artifact so it can be verified for download test
-        authenticateSession();
-        controller.updateArtifact("validArtifact", validLoadDataConfig);
+        controller.updateArtifact("validArtifact", newLoadDataConfig());
 
         ArrayNode resultList = (ArrayNode) controller.getArtifacts().getBody();
 
         assertEquals(1, resultList.size(), "List of load data artifacts should now be 1");
 
-        Path artifactProjectLocation = getArtifactManager().buildArtifactProjectLocation(controller.getArtifactType(), "validArtifact", null,false);
+        Path artifactProjectLocation = new ArtifactManagerImpl(hubConfig).buildArtifactProjectLocation(controller.getArtifactType(), "validArtifact", null,false);
 
         ObjectNode resultByName = controller.getArtifact("validArtifact").getBody();
         assertEquals("validArtifact", resultByName.get("name").asText(), "Getting artifact by name should return object with expected properties");
@@ -115,7 +93,7 @@ public class EnvironmentControllerTest extends TestHelper {
             // check that the environment service indicates that the install is in a dirty state
             assertTrue(environmentService.isInDirtyState(), "Install should be in a dirty state");
             // check that the AuthenticationFilter shows the Data Hub isn't installed after a failed install attempt
-            TestAuthenticationFilter authenticationFilter = new TestAuthenticationFilter(environmentService, hubConfigSession);
+            TestAuthenticationFilter authenticationFilter = new TestAuthenticationFilter(environmentService, hubConfig);
             assertFalse(authenticationFilter.isDataHubInstalled(), "AuthenticationFilter shouldn't indicate the Data Hub is installed");
             final ObjectNode nonExistentPayload = new ObjectMapper().createObjectNode().put("directory", "/non-existent");
             assertThrows(ProjectDirectoryException.class, () -> {
@@ -129,9 +107,8 @@ public class EnvironmentControllerTest extends TestHelper {
 
     @Test
     public void testManageAdminAndSecurityAuthoritiesForArtifacts() {
-        authenticateSessionAsEnvironmentManager();
-        ArtifactManager mgr = getArtifactManager();
-        List<ArtifactTypeInfo> listTypeInfo = mgr.getArtifactTypeInfoList();
+        runAsEnvironmentManager();
+        List<ArtifactTypeInfo> listTypeInfo = new ArtifactManagerImpl(hubConfig).getArtifactTypeInfoList();
         for (ArtifactTypeInfo typeInfo : listTypeInfo) {
             assertTrue(typeInfo.getUserCanUpdate());
             assertTrue(typeInfo.getUserCanRead());
@@ -140,9 +117,8 @@ public class EnvironmentControllerTest extends TestHelper {
 
     @Test
     public void testAdminAuthoritiesForArtifacts()  {
-        authenticateSessionAsAdmin();
-        ArtifactManager mgr = getArtifactManager();
-        List<ArtifactTypeInfo> listTypeInfo = mgr.getArtifactTypeInfoList();
+        runAsAdmin();
+        List<ArtifactTypeInfo> listTypeInfo = new ArtifactManagerImpl(hubConfig).getArtifactTypeInfoList();
         for (ArtifactTypeInfo typeInfo : listTypeInfo) {
             assertTrue(typeInfo.getUserCanUpdate());
             assertFalse(typeInfo.getUserCanRead(), "admin would not allow read but write for deployment!");

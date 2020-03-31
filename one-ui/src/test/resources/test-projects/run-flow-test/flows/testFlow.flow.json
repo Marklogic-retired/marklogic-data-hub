@@ -1,0 +1,15 @@
+{
+  "name": "testFlow",
+  "steps": {
+    "1": {
+      "name": "testStep",
+      "stepDefinitionName": "testStep",
+      "stepDefinitionType": "CUSTOM",
+      "options": {
+        "sourceQuery": "cts.collectionQuery('doesnt-matter')",
+        "sourceDatabase": "data-hub-FINAL",
+        "targetDatabase": "data-hub-FINAL"
+      }
+    }
+  }
+}

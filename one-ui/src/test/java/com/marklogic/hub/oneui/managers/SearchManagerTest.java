@@ -16,8 +16,7 @@
  */
 package com.marklogic.hub.oneui.managers;
 
-import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.oneui.TestHelper;
+import com.marklogic.hub.oneui.AbstractOneUiTest;
 import com.marklogic.hub.oneui.models.SearchQuery;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,21 +27,20 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SearchManagerTest extends TestHelper {
+public class SearchManagerTest extends AbstractOneUiTest {
 
     SearchManager searchManager;
 
     @BeforeEach
     public void setUpDocs() {
-        authenticateSession();
-        searchManager = new SearchManager(getHubConfig());
+        searchManager = new SearchManager(hubConfig);
     }
 
     @Test
     public void testSearchResultsOnNoData() {
         searchManager.QUERY_OPTIONS = "non-existent-options";
         String collectionDeleteQuery = "declareUpdate(); xdmp.collectionDelete(\"http://marklogic.com/entity-services/models\")";
-        runJsInDatabase(collectionDeleteQuery, HubConfig.DEFAULT_FINAL_NAME);
+        hubConfig.newFinalClient().newServerEval().javascript(collectionDeleteQuery).evalAs(String.class);
         assertTrue(searchManager.search(new SearchQuery()).get().isEmpty());
 
         SearchQuery query = new SearchQuery();

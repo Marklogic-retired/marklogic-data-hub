@@ -1,11 +1,9 @@
 package com.marklogic.hub.curation.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.client.io.DocumentMetadataHandle;
-import com.marklogic.hub.oneui.TestHelper;
+import com.marklogic.hub.oneui.AbstractOneUiTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -15,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class MatchingControllerTest extends TestHelper {
+public class MatchingControllerTest extends AbstractOneUiTest {
 
     @Autowired
     MatchingController controller;
@@ -49,19 +47,11 @@ public class MatchingControllerTest extends TestHelper {
 
     @Test
     void testMatchingConfigs() throws IOException {
-        authenticateSession();
-        ObjectMapper om = new ObjectMapper();
+        installReferenceProject();
 
-        // Add entities for mappings
-        DocumentMetadataHandle meta = new DocumentMetadataHandle();
-        meta.getCollections().add("http://marklogic.com/entity-services/models");
-        meta.getPermissions().add("data-hub-developer", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE);
-        addStagingDoc("/entities/Customer.entity.json", meta, "entities/Customer.entity.json");
-        addStagingDoc("/entities/Order.entity.json", meta, "entities/Order.entity.json");
-
-        controller.updateArtifact("TestCustomerMatching", om.readTree(MATCHING_CONFIG_1));
-        controller.updateArtifact("TestOrderMatching1", om.readTree(MATCHING_CONFIG_2));
-        controller.updateArtifact("TestOrderMatching2", om.readTree(MATCHING_CONFIG_3));
+        controller.updateArtifact("TestCustomerMatching", objectMapper.readTree(MATCHING_CONFIG_1));
+        controller.updateArtifact("TestOrderMatching1", objectMapper.readTree(MATCHING_CONFIG_2));
+        controller.updateArtifact("TestOrderMatching2", objectMapper.readTree(MATCHING_CONFIG_3));
 
         ArrayNode configsGroupbyEntity = controller.getArtifacts().getBody();
 
@@ -104,9 +94,5 @@ public class MatchingControllerTest extends TestHelper {
                 }
             }
         });
-
-        controller.deleteArtifact("TestCustomerMatching");
-        controller.deleteArtifact("TestOrderMatching1");
-        controller.deleteArtifact("TestOrderMatching2");
     }
 }

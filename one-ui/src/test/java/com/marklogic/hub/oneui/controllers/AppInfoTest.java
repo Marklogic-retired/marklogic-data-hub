@@ -16,23 +16,16 @@
  */
 package com.marklogic.hub.oneui.controllers;
 
-import com.marklogic.hub.oneui.Application;
+import com.marklogic.hub.oneui.AbstractOneUiTest;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {Application.class})
-@WebAppConfiguration
-public class AppInfoTest {
+public class AppInfoTest extends AbstractOneUiTest {
 
     @Autowired
     AppInfoController appInfoController;
@@ -42,6 +35,8 @@ public class AppInfoTest {
 
     @Test
     public void getInfo() {
+        installReferenceProject();
+
         String expectedTimeout = environment.getProperty("server.servlet.session.timeout");
         String actualTimeout = Objects.requireNonNull(appInfoController.getInfo().getBody())
             .get("session.timeout");
