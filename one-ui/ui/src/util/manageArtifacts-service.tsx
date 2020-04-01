@@ -12,7 +12,14 @@ const getSettingsArtifact = async (activityType,artifactName) => {
     return response;
 }
 
+const getNestedEntities = async (entityTypeTitle) => {
+    console.log(`GET /api/entities/${entityTypeTitle}?extendSubEntities=true`);
+    let response = await axios.get(`/api/entities/${entityTypeTitle}?extendSubEntities=true`);
+    return response;
+}
+
 export {
     getMappingValidationResp,
-    getSettingsArtifact
+    getSettingsArtifact,
+    getNestedEntities
 }

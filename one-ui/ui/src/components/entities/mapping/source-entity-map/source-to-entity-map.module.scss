@@ -101,6 +101,24 @@ hr {
         vertical-align: top;
     }
 }
+
+.typeContainer {
+    margin-bottom: -17px;
+
+    > .typeContextContainer {
+        margin-top: -13px;
+        margin-bottom:-14px;
+        > .typeContext {
+            color: #777777;
+            font-size: 12px
+        }
+
+        >.typeText{
+            margin-top: 10px
+        }
+    }
+}
+
 .mapExpParentContainer{
     //display: inline;
     margin-top: -12px;
@@ -220,6 +238,13 @@ hr {
 .docLink{
     cursor: pointer;
     margin-left: -5px;
+}
+
+.contextHelp{
+    width: 14vw;
+    word-wrap: normal;
+    font-size: 14px;
+    color: #777777;
 }
 .expandIcon{
     //color: black;

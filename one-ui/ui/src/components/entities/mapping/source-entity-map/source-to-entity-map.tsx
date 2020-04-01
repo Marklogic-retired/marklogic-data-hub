@@ -12,6 +12,7 @@ import SplitPane from 'react-split-pane';
 const SourceToEntityMap = (props) => {
 
     const [mapExp, setMapExp] = useState({});
+    let mapExpUI: any = {};
     /*-------------------*/
 
     //For Dropdown menu
@@ -49,6 +50,9 @@ const SourceToEntityMap = (props) => {
             <li><a href="https://docs.marklogic.com/datahub/flows/dhf-mapping-functions.html" target="_blank" className={styles.docLink}>Mapping Functions</a></li>
         </ul></div>
     </div>;
+
+    //Text for Context Icon
+    const contextHelp = <div className={styles.contextHelp}>An element in the source data from which to derive the values of this entity property's children. Both the source data element and the entity property must be of the same type (Object or an array of Object instances). Use a slash (&quot;/&quot;) if the source model is flat.</div>;
 
     const { TextArea } = Input;
 
@@ -175,13 +179,40 @@ const SourceToEntityMap = (props) => {
     //Set the mapping expressions, if already exists.
     const initializeMapExpressions = () => {
         if (props.mapData && props.mapData.properties) {
-            let obj = {};
-            Object.keys(props.mapData.properties).map(key => {
-                obj[key] = props.mapData.properties[key]['sourcedFrom'];
-            });
-            setMapExp({ ...obj });
+            initializeMapExpForUI(props.mapData.properties);
+            setMapExp({ ...mapExpUI });
         }
     }
+
+    
+    //Refresh the UI mapExp from the the one saved in the database
+    const initializeMapExpForUI  = (mapExp,parentKey = '') => {
+        Object.keys(mapExp).map(key => {
+          let val = mapExp[key];
+          if(val.hasOwnProperty('properties')){
+              
+            let tempKey = parentKey;
+              if(parentKey !== key){
+                 parentKey = parentKey ? parentKey + '/' + key : key;
+              }
+            mapExpUI[parentKey] = mapExp[key]['sourcedFrom'];
+            initializeMapExpForUI(val.properties,parentKey);
+            if(parentKey !== tempKey){
+                          parentKey = tempKey;
+                      }
+            
+          } else { 
+            let tempKey = parentKey;
+            if(parentKey !== key){
+                          parentKey = parentKey ? parentKey + '/' + key : key;
+                      }
+              mapExpUI[parentKey] = mapExp[key]['sourcedFrom'];
+            if(parentKey !== tempKey){
+                          parentKey = tempKey;
+                      }
+          }
+        })
+      }
 
     const onOk = () => {
         props.setMappingVisible(false)
@@ -192,12 +223,40 @@ const SourceToEntityMap = (props) => {
         props.setMappingVisible(false)
         console.log('Map cancelled!')
     }
+
+    const convertMapExpToMapArt = (obj, path, val) => { 
+        const propPath = path.replace(/\//g,'/properties/');
+        const keys = propPath.split('/');
+        const lastKey = keys.pop();
+        const lastObj = keys.reduce((obj, key) => 
+            obj[key] = key !== 'properties' ? (obj[key] || {'sourcedFrom':''}) : obj[key] || {}, 
+            obj); 
+        lastObj[lastKey] = val;
+
+        return obj;
+    };
+
+    const getTgtEntityTypesInMap = (mapExp) => {
+        Object.keys(mapExp).map(key => {
+          let val = mapExp[key];
+          if(val.constructor.name === 'Object'){
+            if(val.hasOwnProperty('properties')){
+              val['targetEntityType'] = props.tgtEntityReferences[key];
+              getTgtEntityTypesInMap(val.properties);
+            }
+          }
+        })
+        
+      }
+
     const handleExpSubmit = async () => {
         if (mapExpTouched) {
             let obj = {};
-            Object.keys(mapExp).map(key => {
-                obj[key] = { "sourcedFrom": mapExp[key] }
-            })
+
+            Object.keys(mapExp).map( key => {
+                convertMapExpToMapArt(obj, key, {'sourcedFrom': mapExp[key]});
+              })
+            await getTgtEntityTypesInMap(obj);
 
             let {lastUpdated, properties, ...dataPayload} = props.mapData;
             
@@ -237,7 +296,7 @@ const SourceToEntityMap = (props) => {
 
     const mapExpressionStyle = (propName) => {
         const mapStyle: CSSProperties = {
-            width: '30vw',
+            width: '22vw',
             verticalAlign: 'top',
             justifyContent: 'top',
             borderColor: checkFieldInErrors(propName) ? 'red' : ''
@@ -273,6 +332,10 @@ const SourceToEntityMap = (props) => {
             width: '18%',
             sorter: (a: any, b: any) => a.name.length - b.name.length,
             ellipsis: true,
+            render: (text) => {
+                const propName = text.split('/').pop();
+                return <span>{propName}</span>
+            }
         },
         {
             ellipsis: true,
@@ -281,6 +344,16 @@ const SourceToEntityMap = (props) => {
             key: 'type',
             width: '15%',
             sorter: (a: any, b: any) => a.type.length - b.type.length,
+            render: (text) => {
+                const expanded = text.startsWith('parent-');
+                const dType = expanded ? text.slice(text.indexOf('-')+1): text;
+            return <div className={styles.typeContainer}>
+                {expanded ? <div className={styles.typeContextContainer}><span className={styles.typeContext}>Context</span>&nbsp;<Popover
+                content={contextHelp}
+                trigger="click"
+                placement="right"><Icon type="question-circle" className={styles.questionCircle} theme="filled" /></Popover><p className={styles.typeText}>{dType}</p></div> : text}
+                </div>
+            }
         },
         {
             title: <span>XPath Expression <Popover
@@ -288,10 +361,9 @@ const SourceToEntityMap = (props) => {
                 trigger="click"
                 placement="top" ><Icon type="question-circle" className={styles.questionCircle} theme="filled" /></Popover>
             </span>,
-            dataIndex: 'xPathExpression',
-            key: 'xPathExpression',
-            ellipsis: true,
-
+            dataIndex: 'key',
+            key: 'key',
+            width: '45%',
             render: (text, row) => (<div className={styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
                 <TextArea
                     id="mapexpression"
@@ -325,9 +397,9 @@ const SourceToEntityMap = (props) => {
                     props.onExpand(props.record, e);
                 }}><Icon type="down" /> </a>
             } else {
-                return <a className={styles.expandIcon} onClick={e => {
+                return <a  className={styles.expandIcon} onClick={e => {
                     props.onExpand(props.record, e);
-                }}><Icon type="right" /> </a>
+                }}><Icon type="right" data-testid="expandedIcon"/> </a>
             }
         } else {
             return <span style={{ color: 'black' }} onClick={e => {
@@ -357,21 +429,28 @@ const SourceToEntityMap = (props) => {
     };
     const emptyData = (JSON.stringify(props.sourceData) === JSON.stringify([]) && !props.docNotFound);
 
+    const getValue = (object, keys) => keys.split('.').reduce((o, k) => (o || {})[k], object);
+
     const displayResp = (propName) => {
+        const finalProp = propName.replace(/\//g,'.properties.');
         if (mapResp && mapResp["properties"]) {
-            let field = mapResp["properties"]
-            if (field[propName] && field[propName]["errorMessage"]) {
-                return field[propName]["errorMessage"];
+            let field = mapResp["properties"];
+            let prop = getValue(field,finalProp);
+            if (prop && prop["errorMessage"]) {
+                return prop["errorMessage"];
             }
-            else if (field[propName] && field[propName]["output"]) {
-                return field[propName]["output"];
+            else if (prop && prop["output"]) {
+                return prop["output"];
             }
         }
     }
 
     const checkFieldInErrors = (field) => {
+        const finalProp = field.replace(/\//g,'.properties.');
+        let record = mapResp["properties"];
+        let prop = getValue(record,finalProp);
         if (mapResp && mapResp['properties']) {
-            if (mapResp['properties'][field] && mapResp['properties'][field]['errorMessage']) {
+            if (prop && prop['errorMessage']) {
                 return true;
             } else {
                 return false;
@@ -389,11 +468,10 @@ const SourceToEntityMap = (props) => {
 
             if (resp.status === 200) {
                 setMapResp({ ...resp.data });
-                console.log('Mapping validation API called successfully!')
             }
         }
         catch (err) {
-            console.log('Error while applying validation on current URI!', err)
+            console.error('Error while applying validation on current URI!', err)
         }
     }
 
@@ -565,10 +643,13 @@ const SourceToEntityMap = (props) => {
                             pagination={false}
                             className={styles.entityTable}
                             scroll={{  x: 'max-content', y: '60vh' }}
+                            expandIcon={(props) => customExpandIcon(props)}
+                            indentSize={14}
+                            defaultExpandAllRows={true}        
                             columns={entityColumns}
                             dataSource={props.entityTypeProperties}
                             tableLayout="unset"
-                            rowKey="name"
+                            rowKey={record => JSON.stringify(record)}
                         />
                     </div>
                 </SplitPane>
@@ -580,3 +661,4 @@ const SourceToEntityMap = (props) => {
 }
 
 export default SourceToEntityMap;
+
