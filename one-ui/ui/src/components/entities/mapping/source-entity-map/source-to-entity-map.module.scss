@@ -20,9 +20,9 @@
 .parentContainer{
     display: flex;
     flex-direction: row;
-    padding-bottom: 2vh;
+    padding-bottom: 1vh;
     padding-top: 1vh;
-    height: 87vh;
+    height: 80vh;
 }
 
 .sourceContainer{
@@ -32,6 +32,7 @@
     display: flex;
     flex-direction: column;
     padding-right: 20px;
+    padding-left: 20px;
     word-break: break-all;
 }
 
@@ -54,6 +55,7 @@
     display: flex;
     flex-direction: column;
     padding-right: 20px;
+    padding-left: 20px;
     word-break: break-all;
 
     > .lineSpacing{
@@ -67,10 +69,9 @@
         > .entityTypeTitle{
             float: left;
             padding-top: 6px;
-        }
-        >.btn_icons{
-            float: right;
-            padding-right: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
     }
 
@@ -79,7 +80,17 @@
         margin-top: 20px;
     }
 }
-
+.btn_icons{
+    float: right;
+    padding-right: 4px;
+}
+hr {
+    display: block;
+    margin-top: 2em;
+    margin-bottom: -0.5em;
+    margin-left: -1.5em;
+    margin-right: -1.5em;
+}
 .entityTable {
     & thead > tr > th {
         background-color: #fafafa;
@@ -118,13 +129,15 @@
     width: 100%;
     line-height: 1px;
     vertical-align: top;
-    justify-content: top;
+    //justify-content: top;
 }
 
 .mapValue {
     margin-top: -6px;
     margin-bottom: -8px;
-    word-break: break-all;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     line-height: normal;
 }
 
@@ -144,11 +157,11 @@
     word-break: keep-all;
 }
 .testButtons{
-    align-items: right;
+    align-items: flex-end;
     float: right;
 }
 .entityDetails{
-    align-items: left;
+    align-items: flex-start;
     float: left;
 }
 .sourceDetails{
@@ -183,7 +196,7 @@
     display: inline-block;
     vertical-align: top;
     text-align: center;
-    align-items: center; 
+    align-items: center;
     margin-top: 5px;
 }
 .questionCircle {
@@ -294,7 +307,7 @@
 .navigate_source_uris{
     width: 115px;
     display: flex;
-    align-content: center ; 
+    align-content: center ;
     vertical-align: bottom;
     justify-content: space-between;
     text-align: center;
@@ -305,12 +318,12 @@
     user-select: none;
     cursor: pointer;
     width: 2vw;
-    text-align: center;  
-    align-content: center ; 
+    text-align: center;
+    align-content: center ;
     justify-content: center;
     background:none;
     outline: none !important;
-    > .navigateIcon { 
+    > .navigateIcon {
         display: block;
         margin-left: -6px;
     }
@@ -324,12 +337,12 @@
     width: 32px;
     height: 32px;
     padding-top: 4px;
-    
+
     font-size: 15px;
-    
+
     }
   }
-  
+
   .navigate_uris_right {
     user-select: none;
     cursor: pointer;
@@ -338,16 +351,14 @@
     outline: none !important;
     text-align: center;
     outline: none;
-    align-content: center ; 
+    align-content: center ;
     justify-content: center;
-    > .navigateIcon { 
+    > .navigateIcon {
         display: block;
         margin-left: -6px;
     }
   }
 
-
-
   #browse-buttons{
-    border: 1px solid rgba(0, 0, 0, 0.961); 
+    border: 1px solid rgba(0, 0, 0, 0.961);
   }
