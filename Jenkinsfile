@@ -21,17 +21,54 @@ def dhflinuxTests(String mlVersion,String type){
     		props = readProperties file:'data-hub/pipeline.properties';
     		copyRPM type,mlVersion
     		def dockerhost=setupMLDockerCluster 3
-    		sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test || true;sleep 10s;./gradlew ml-data-hub:test || true;sleep 10s;./gradlew web:test || true;sleep 10s;./gradlew one-ui:test || true;sleep 10s; ./gradlew marklogic-data-hub:testBootstrap || true;sleep 10s;./gradlew ml-data-hub:testFullCycle || true;sleep 10s;./gradlew one-ui:testFullCycle || true;"'
+    		sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test || true;sleep 10s;./gradlew ml-data-hub:test || true;sleep 10s;./gradlew web:test || true;sleep 10s;./gradlew one-ui:test |& tee console.log || true;sleep 10s; ./gradlew marklogic-data-hub:testBootstrap || true;sleep 10s;./gradlew ml-data-hub:testFullCycle || true;sleep 10s;./gradlew one-ui:testFullCycle || true;"'
     		junit '**/TEST-*.xml'
-    		commitMessage = sh (returnStdout: true, script:'''
-    		curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
-    		def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
-    		def commit=slurper.message.toString().trim();
-    		JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
-    		JIRA_ID=JIRA_ID.split(" ")[0];
-    		commitMessage=null;
-    		//jiraAddComment comment: 'Jenkins rh7_cluster_9.0-Nightly Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
-    	}
+            def output=readFile 'data-hub/console.log'
+		    def result=false;
+            if(output.contains("npm ERR!")){
+                result=true;
+            }
+            if(result){
+                currentBuild.result='UNSTABLE'
+            }
+    		}
+}
+def dhfCypressE2ETests(String mlVersion, String type){
+    script{
+        copyRPM type,mlVersion
+        setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
+        copyArtifacts filter: '**/*one*.war', fingerprintArtifacts: true, flatten: true, projectName: '${JOB_NAME}', selector: specific('${BUILD_NUMBER}')
+        sh(script:'''#!/bin/bash
+                    export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;
+                    export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;
+                    export M2_HOME=$MAVEN_HOME/bin;
+                    export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;
+                    cd $WORKSPACE;
+                    WAR_NAME=$(basename *one*.war )
+                    cd $WORKSPACE/data-hub;
+                    rm -rf $GRADLE_USER_HOME/caches;
+                    ./gradlew clean;
+                    cd one-ui/ui/e2e;
+                    chmod +x setup.sh;
+                    ./setup.sh;
+                    nohup java -jar $WORKSPACE/$WAR_NAME >> nohup.out &
+                    sleep 10s;
+                    mkdir -p output;
+                    docker build . -t cypresstest;
+                    docker run --name cypresstest --env CYPRESS_BASE_URL=http://$HOSTNAME:8080 cypresstest |& tee output/console.log;
+                    docker cp cypresstest:results output;
+                    docker cp cypresstest:cypress/videos output
+                 ''')
+        junit '**/*.xml'
+        def output=readFile 'data-hub/one-ui/ui/e2e/output/console.log'
+        def result=false;
+        if(output.contains("npm ERR!")){
+            result=true;
+        }
+        if(result){
+           currentBuild.result='UNSTABLE'
+        }
+    }
 }
 def dhfqsLinuxTests(String mlVersion,String type){
 	script{
@@ -55,15 +92,7 @@ def dhfqsLinuxTests(String mlVersion,String type){
          ''')
          junit '**/web/e2e/reports/*.xml'
          archiveArtifacts artifacts: 'data-hub/web/e2e/reports/*.html, data-hub/web/e2e/reports/*.xml, data-hub/web/e2e/reports/screenshots/*.png, data-hub/web/e2e/screenshoter-plugin/**/*, nohup.out'
-	     commitMessage = sh (returnStdout: true, script:'''
-	     curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
-		 def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
-		 def commit=slurper.message.toString().trim();
-		 JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
-		 JIRA_ID=JIRA_ID.split(" ")[0];
-		 commitMessage=null;
-		 //jiraAddComment comment: 'Jenkins qs_rh7_90-nightly Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
-	}
+	     }
 }
 def dhfWinTests(String mlVersion, String type){
     script{
@@ -87,7 +116,6 @@ def dhfWinTests(String mlVersion, String type){
         bat 'cd data-hub & gradlew.bat web:test || exit /b 0'
         bat 'cd data-hub & gradlew.bat one-ui:test || exit /b 0'
         junit '**/TEST-*.xml'
-         //jiraAddComment comment: 'Jenkins rh7_cluster_9.0-Nightly Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
     }
 }
 pipeline{
@@ -177,9 +205,16 @@ pipeline{
 			 props = readProperties file:'data-hub/pipeline.properties';
 				 copyRPM 'Release','10.0-3'
 				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
-				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;set +e;./gradlew clean;./gradlew marklogic-data-hub:testAcceptance || true;sleep 10s;./gradlew ml-data-hub:test || true;./gradlew web:test || true;./gradlew one-ui:test || true;'
+				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;set +e;./gradlew clean;./gradlew marklogic-data-hub:testAcceptance || true;sleep 10s;./gradlew ml-data-hub:test || true;./gradlew web:test || true;./gradlew one-ui:test |& tee console.log || true;'
 				junit '**/TEST-*.xml'
-
+				def output=readFile 'data-hub/console.log'
+				def result=false;
+                if(output.contains("npm ERR!")){
+                   result=true;
+                }
+                if(result){
+                   currentBuild.result='UNSTABLE'
+                }
 				if(env.CHANGE_TITLE){
 				JIRA_ID=env.CHANGE_TITLE.split(':')[0]
 				jiraAddComment comment: 'Jenkins Unit Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
@@ -241,6 +276,8 @@ pipeline{
                                ''')
 		    }
 		    def reviewState=getReviewStateOfPR reviewResponse,2,env.GIT_COMMIT ;
+		    println(env.GIT_COMMIT)
+		    println(reviewState)
 			if((env.CHANGE_TITLE.split(':')[1].contains("Automated PR")) || reviewState.equalsIgnoreCase("APPROVED")){
 				println("Automated PR")
 				sh 'exit 0'
@@ -287,6 +324,7 @@ pipeline{
                             }
                         }catch(FlowInterruptedException err){
                             user = err.getCauses()[0].getUser().toString();
+                            println(user)
                             if(user.equalsIgnoreCase("SYSTEM")){
                                  echo "Timeout 15mins"
                                  sh 'exit 123'
@@ -401,16 +439,16 @@ pipeline{
                 props = readProperties file:'data-hub/pipeline.properties';
 				copyRPM 'Release','9.0-12'
 				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
-				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test -Dorg.gradle.jvmargs=-Xmx1g || true;sleep 10s;./gradlew ml-data-hub:test || true;sleep 10s;./gradlew web:test || true;sleep 10s;./gradlew one-ui:test || true;sleep 10s;./gradlew marklogic-data-hub:testBootstrap || true;sleep 10s;./gradlew ml-data-hub:testFullCycle || true;sleep 10s;./gradlew one-ui:testFullCycle || true;'
+				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test -Dorg.gradle.jvmargs=-Xmx1g || true;sleep 10s;./gradlew ml-data-hub:test || true;sleep 10s;./gradlew web:test || true;sleep 10s;./gradlew one-ui:test |& tee console.log || true;sleep 10s;./gradlew marklogic-data-hub:testBootstrap || true;sleep 10s;./gradlew ml-data-hub:testFullCycle || true;sleep 10s;./gradlew one-ui:testFullCycle || true;'
 				junit '**/TEST-*.xml'
-				 commitMessage = sh (returnStdout: true, script:'''
-			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
-			def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
-				def commit=slurper.message.toString().trim();
-				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
-				JIRA_ID=JIRA_ID.split(" ")[0];
-				commitMessage=null;
-				//jiraAddComment comment: 'Jenkins rh7-singlenode Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+                def output=readFile 'data-hub/console.log'
+				def result=false;
+                if(output.contains("npm ERR!")){
+                   result=true;
+                }
+                if(result){
+                   currentBuild.result='UNSTABLE'
+                }
 				}
 			}
 			post{
@@ -706,9 +744,101 @@ pipeline{
                  }
             }
             }
-
-
 		}
+		stage('cypress E2E linux parallel'){
+		    when {
+        	   expression{
+        	      node('dhmaster'){
+        	        props = readProperties file:'data-hub/pipeline.properties';
+                    println(props['ExecutionBranch'])
+        	        return (env.BRANCH_NAME==props['ExecutionBranch'])
+        	      }
+        	   }
+            }
+            parallel{
+            stage('cypress_rh7_90_nightly'){
+                agent { label 'dhfLinuxAgent'}
+                steps{
+                    dhfCypressE2ETests("9.0","Latest")
+                }
+			    post{
+                  always{
+                    sh 'docker rm -f cypresstest; docker rmi cypresstest;'
+                  }
+                  success {
+                    println("cypress_rh7_90-nightly Tests Completed")
+                    sendMail Email,'<h3>Cypress End-End Tests Passed on Nigtly 9.0 ML Server Cluster </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Cypress End-End | Linux RH7 | ML-9.0-Nightly | Single Node | Passed'
+                   }
+                   unsuccessful {
+                      println("cypress_rh7_90-nightly Tests Failed")
+                      sendMail Email,'<h3>Some Cypress End-End Tests Failed on Nightly 9.0 ML Server Cluster </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Cypress End-End | Linux RH7 | ML-9.0-Nightly | Single Node | Failed'
+                      archiveArtifacts '**/videos/*'
+                    }
+                 }
+		    }
+            stage('cypress_rh7_10_nightly'){
+                agent { label 'dhfLinuxAgent'}
+                steps{
+                    dhfCypressE2ETests("10.0","Latest")
+                }
+			    post{
+                  always{
+                    sh 'docker rm -f cypresstest; docker rmi cypresstest;'
+                  }
+                  success {
+                    println("cypress_rh7_10-nightly Tests Completed")
+                    sendMail Email,'<h3>Cypress End-End Tests Passed on Nigtly 10.0 ML Server Cluster </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Cypress End-End | Linux RH7 | ML-10.0-Nightly | Single Node | Passed'
+                   }
+                   unsuccessful {
+                      println("cypress_rh7_90-nightly Tests Failed")
+                      sendMail Email,'<h3>Some Cypress End-End Tests Failed on Nightly 10.0 ML Server Cluster </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Cypress End-End | Linux RH7 | ML-10.0-Nightly | Single Node | Failed'
+                      archiveArtifacts '**/videos/*'
+                  }
+                }
+		    }
+            stage('cypress_rh7_90_release'){
+                agent { label 'dhfLinuxAgent'}
+                steps{
+                    dhfCypressE2ETests("9.0-12","Release")
+                }
+			    post{
+                  always{
+                    sh 'docker rm -f cypresstest; docker rmi cypresstest;'
+                  }
+                  success {
+                    println("cypress_rh7_90-Release Tests Completed")
+                    sendMail Email,'<h3>Cypress End-End Tests Passed on Released 9.0 ML Server Cluster </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Cypress End-End | Linux RH7 | ML-9.0-12 | Single Node | Passed'
+                   }
+                   unsuccessful {
+                      println("cypress_rh7_90-Release Tests Failed")
+                      sendMail Email,'<h3>Some Cypress End-End Tests Failed on Released 9.0 ML Server Cluster </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Cypress End-End | Linux RH7 | ML-9.0-12 | Single Node | Failed'
+                      archiveArtifacts '**/videos/*'
+                  }
+                }
+		    }
+            stage('cypress_rh7_10_release'){
+                agent { label 'dhfLinuxAgent'}
+                steps{
+                    dhfCypressE2ETests("10.0-3","Release")
+                }
+			    post{
+                  always{
+                    sh 'docker rm -f cypresstest; docker rmi cypresstest;'
+                  }
+                  success {
+                    println("cypress_rh7_10-Release Tests Completed")
+                    sendMail Email,'<h3>Cypress End-End Tests Passed on Released 10.0 ML Server Cluster </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Cypress End-End | Linux RH7 | ML-10.0-3 | Single Node | Passed'
+                   }
+                   unsuccessful {
+                      println("cypress_rh7_10-Release Tests Failed")
+                      sendMail Email,'<h3>Some Cypress End-End Tests Failed on Released 10.0 ML Server Cluster </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Cypress End-End | Linux RH7 | ML-10.0-3 | Single Node | Failed'
+                      archiveArtifacts '**/videos/*'
+                  }
+                }
+		    }
+
+            }
+        }
 		stage('quick start linux parallel'){
 		when {
 	            expression{
@@ -881,7 +1011,6 @@ pipeline{
                         bat 'cd data-hub & gradlew.bat ml-data-hub:test  || exit /b 0'
                         bat 'cd data-hub & gradlew.bat web:test || exit /b 0'
                         junit '**/TEST-*.xml'
-                         //jiraAddComment comment: 'Jenkins rh7_cluster_9.0-Nightly Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
                     }
 			}
 			post{
@@ -900,103 +1029,6 @@ pipeline{
 		}
 
 		    }
-		}
-		stage('Merge PR to Release Branch'){
-		when {
-	            expression{
-	                props = readProperties file:'data-hub/pipeline.properties';
-                    println(props['ExecutionBranch'])
-	            return (env.BRANCH_NAME==props['ExecutionBranch'])
-	            }
-		}
-		agent {label 'dhmaster'}
-		steps{
-		withCredentials([usernameColonPassword(credentialsId: '550650ab-ee92-4d31-a3f4-91a11d5388a3', variable: 'Credentials')]) {
-		script{
-			//JIRA_ID=env.CHANGE_TITLE.split(':')[0]
-			prResponse = sh (returnStdout: true, script:'''
-			curl -u $Credentials  -X POST -H 'Content-Type:application/json' -d '{\"title\": \"Automated PR for Release Branch\" , \"head\": \"develop\" , \"base\": \"'''+props['ReleaseBranch']+'''\" }' '''+githubAPIUrl+'''/pulls ''')
-			println(prResponse)
-			def slurper = new JsonSlurper().parseText(prResponse)
-			println(slurper.number)
-			prNumber=slurper.number;
-			}
-			}
-			withCredentials([usernameColonPassword(credentialsId: 'a0ec09aa-f339-44de-87c4-1a4936df44f5', variable: 'Credentials')]) {
-                    sh "curl -u $Credentials  -X POST  -d '{\"event\": \"APPROVE\"}' "+githubAPIUrl+"/pulls/${prNumber}/reviews"
-                }
-                withCredentials([usernameColonPassword(credentialsId: '550650ab-ee92-4d31-a3f4-91a11d5388a3', variable: 'Credentials')]) {
-              script{
-             sh "curl -o - -s -w \"\n%{http_code}\n\" -X PUT -d '{\"commit_title\": \"$JIRA_ID: Merge pull request\", \"merge_method\": \"rebase\"}' -u $Credentials  "+githubAPIUrl+"/pulls/${prNumber}/merge | tail -2 > mergeResult.txt"
-    					def mergeResult = readFile('mergeResult.txt').trim()
-    					if(mergeResult=="200"){
-    						println("Merge successful")
-    					}else{
-    						println("Merge Failed")
-                sh 'exit 1'
-    					}
-    			}
-             }
-
-		}
-		post{
-                  success {
-                    println("Automated PR For Release branch created")
-
-                   }
-                   failure {
-                      println("Creation of Automated PR Failed")
-                  }
-                  }
-		}
-		stage('Sanity Tests'){
-			when {
-	            expression{
-	                props = readProperties file:'data-hub/pipeline.properties';
-                    println(props['ExecutionBranch'])
-	            return (env.BRANCH_NAME==props['ReleaseBranch'])
-	            }
-		}
-			agent { label 'dhfLinuxAgent'}
-			steps{
-			script{
-			    props = readProperties file:'data-hub/pipeline.properties';
-				copyRPM 'Release','10.0-3'
-				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
-				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;./gradlew clean;./gradlew marklogic-data-hub:test || true;sleep 10s;./gradlew ml-data-hub:test || true;sleep 10s;./gradlew web:test || true;./gradlew one-ui:test || true;'
-				junit '**/TEST-*.xml'
-				 commitMessage = sh (returnStdout: true, script:'''
-			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
-			def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
-				def commit=slurper.message.toString().trim();
-				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
-				JIRA_ID=JIRA_ID.split(" ")[0];
-				commitMessage=null;
-				//jiraAddComment comment: 'Jenkins Sanity Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
-				}
-			}
-			post{
-				always{
-				  	sh 'rm -rf $WORKSPACE/xdmp'
-				  }
-                  success {
-                    println("Sanity Tests Completed")
-                    sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the sanity tests of the branch $BRANCH_NAME passed and next stage is to release',false,'Sanity Tests for $BRANCH_NAME Passed'
-                    script{
-						def transitionInput =[transition: [id: '31']]
-						//JIRA_ID=env.CHANGE_TITLE.split(':')[0]
-						//jiraTransitionIssue idOrKey: JIRA_ID, input: transitionInput, site: 'JIRA'
-						}
-                    //sendMail Email,'Run the release pipeline to release Datahub',false,'Datahub is ready for Release'
-
-                   }
-                   unstable {
-                      println("Sanity Tests Failed")
-                      sh 'mkdir -p MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/MLLogs/'
-                      archiveArtifacts artifacts: 'MLLogs/**/*'
-                      //sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the Sanity tests of the branch $BRANCH_NAME on  failed. Please fix the tests and create a PR or create a bug for the failures.',false,'Sanity Tests for $BRANCH_NAME Failed'
-                  }
-                  }
 		}
 	}
 }
