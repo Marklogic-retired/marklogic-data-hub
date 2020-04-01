@@ -32,7 +32,7 @@ const CreateEditMatchingDialog = (props) => {
       setSelectedSource(props.matchingData.selectedSource);
       if(props.matchingData.selectedSource === 'collection'){
       let srcCollection = props.matchingData.sourceQuery.substring(
-          props.matchingData.sourceQuery.lastIndexOf("[") + 2, 
+          props.matchingData.sourceQuery.lastIndexOf("[") + 2,
           props.matchingData.sourceQuery.lastIndexOf("]") - 1
       );
       setCollections(srcCollection);
@@ -65,11 +65,6 @@ const CreateEditMatchingDialog = (props) => {
   const onCancel = () => {
 
     if (checkDeleteOpenEligibility()) {
-      console.log(isMatchingNameTouched
-        , isDescriptionTouched
-        , isSelectedSourceTouched
-        , isCollectionsTouched
-        , isSrcQueryTouched)
       setDeleteDialogVisible(true);
     } else {
       props.setNewMatching(false);
@@ -141,7 +136,7 @@ const CreateEditMatchingDialog = (props) => {
         sourceQuery: srcQuery
       }
     }
-    
+
 
     setIsValid(true);
 
@@ -211,11 +206,10 @@ const CreateEditMatchingDialog = (props) => {
       else {
         setCollectionsTouched(true);
         setCollections(event.target.value);
-        console.log('event.target.value',event.target.value === props.matchingData.collection, props.matchingData && props.matchingData.collection)
         if (props.matchingData && props.matchingData.collection) {
           console.log('props.matchingData.collection',props.matchingData.collection,event.target.value)
           if (props.matchingData.collection === event.target.value) {
-            
+
             setCollectionsTouched(false);
           }
         }
@@ -237,7 +231,7 @@ const CreateEditMatchingDialog = (props) => {
     else {
       setSelectedSourceTouched(true);
       setSelectedSource(event.target.value);
-      if (event.target.value === props.matchingData.selectedSource) {
+      if (props.matchingData && event.target.value === props.matchingData.selectedSource) {
         setSelectedSourceTouched(false);
       }
       if (event.target.value === 'collection') {
