@@ -11,7 +11,7 @@ import {getResultsByQuery, getDoc} from '../../../util/search-service'
 import ActivitySettingsDialog from "../../activity-settings/activity-settings-dialog";
 import { AdvMapTooltips } from '../../../config/tooltips.config';
 import {RolesContext} from "../../../util/roles";
-import { getSettingsArtifact } from '../../../util/manageArtifacts-service';
+import { getSettingsArtifact, getNestedEntities } from '../../../util/manageArtifacts-service';
 import axios from 'axios';
 import { xmlParserForMapping } from '../../../util/xml-parser';
 
@@ -44,6 +44,9 @@ const MappingCard: React.FC<Props> = (props) => {
 
     //For Entity table
     const [entityTypeProperties, setEntityTypeProperties] = useState<any[]>([]);
+    const [tgtEntityReferences,setTgtEntityReferences] = useState({});
+    let EntitYTableKeyIndex = 0;
+    let tgtRefs:any = {};
 
     //For storing docURIs
     const [docUris, setDocUris] = useState<any[]>([]);
@@ -249,7 +252,7 @@ const MappingCard: React.FC<Props> = (props) => {
             if (nmspaces.hasOwnProperty(arr[0]) && nmspaces[arr[0]] !== arr[0]) {
                 let indCheck = nmspaces[arr[0]].lastIndexOf('/');
                 let ind = indCheck !== -1 ? indCheck + 1 : 0;
-                objWithNmspace = nmspaces[arr[0]].slice(ind) + ': ' + arr[1];
+                objWithNmspace = nmspaces[arr[0]].slice(ind) + ':' + arr[1];
             }
         }
 
@@ -263,9 +266,9 @@ const MappingCard: React.FC<Props> = (props) => {
                     if (objWithNmspace === '') {
                         if (key.split(':').length > 1) {
                             let keyArr = key.split(':');
-                            objWithNmspace = nsObj.nmspace + ': ' + keyArr[1];
+                            objWithNmspace = nsObj.nmspace + ':' + keyArr[1];
                         } else {
-                            objWithNmspace = nsObj.nmspace + ': ' + key;
+                            objWithNmspace = nsObj.nmspace + ':' + key;
                         }
                     }
 
@@ -329,7 +332,6 @@ const MappingCard: React.FC<Props> = (props) => {
         }
         return propty;
     }
-
 
     // construct infinitely nested source Data
     const generateNestedDataSource = (respData, nestedDoc: Array<any>, parentNamespace = namespaceString) => {
@@ -428,19 +430,84 @@ const MappingCard: React.FC<Props> = (props) => {
           }
     }
 
+    const extractEntityInfoForTable = async () => {
+        let resp = await getNestedEntities(props.entityTypeTitle);
+        if (resp.status === 200) {
+            let entProps = resp.data && resp.data.definitions ? resp.data.definitions[props.entityTypeTitle].properties : {};
+            let entEntityTempData: any = [];
+            let nestedEntityProps = extractNestedEntityData(entProps, entEntityTempData);
+            setEntityTypeProperties([...nestedEntityProps]);
+            setTgtEntityReferences({...tgtRefs });
+        }
+    }
 
-    const extractEntityInfoForTable = () => {
-        let entProps = props.entityModel && props.entityModel.definitions ? props.entityModel.definitions[props.entityTypeTitle].properties : {};
-        let entTableTempData: any = [];
+
+    const extractNestedEntityData = (entProps, nestedEntityData: Array<any>,parentKey = '') => {
+
         Object.keys(entProps).map(key => {
-            let propty = {
-                name : key,
-                type : entProps[key].datatype
-            }
-            entTableTempData.push(propty)
-        })
-        setEntityTypeProperties([...entTableTempData]);
+            let val = entProps[key];
 
+            if (val.hasOwnProperty('subProperties')) {
+                let dataTp = getDatatype(val);
+                EntitYTableKeyIndex = EntitYTableKeyIndex + 1;
+                if(val.$ref || val.items.$ref) {
+                    let ref = val.$ref ? val.$ref : val.items?.$ref;
+                    tgtRefs[key] = ref;
+                }
+                let tempKey = parentKey;
+                if(parentKey !== key){
+                    parentKey = parentKey ? parentKey + '/' + key : key;
+                }
+                let propty = {
+                    key: EntitYTableKeyIndex,
+                    name: parentKey,
+                    type: dataTp,
+                    children: []
+                }
+                nestedEntityData.push(propty);
+                extractNestedEntityData(val.subProperties, propty.children, parentKey);
+
+                if(parentKey !== tempKey){
+                    parentKey = tempKey;
+                }
+
+            } else {
+                let dataTp = getDatatype(val);
+                EntitYTableKeyIndex = EntitYTableKeyIndex + 1;
+                let tempKey = parentKey;
+                if(parentKey !== key){
+                    parentKey = parentKey ? parentKey + '/' + key : key;
+                }
+                let propty = {
+                    key: EntitYTableKeyIndex,
+                    name: parentKey,
+                    type: dataTp
+                }
+                nestedEntityData.push(propty);
+                if(parentKey !== tempKey){
+                    parentKey = tempKey;
+                }
+            }
+        });
+
+        return nestedEntityData;
+    }
+
+    const getDatatype = (prop) => {
+        if (prop.datatype === 'array') {
+            if (prop.items && prop.items.$ref) {
+                let s = prop.items.$ref.split('/');
+                return 'parent-' + s.slice(-1).pop() + ' [ ]';
+            } else if (prop.items && prop.items.datatype) {
+                return 'parent-' + prop.items.datatype + ' [ ]';
+            }
+        } else if (prop.hasOwnProperty('$ref') && prop.$ref !== null) {
+            let s = prop.$ref.split('/');
+            return 'parent-' + s.slice(-1).pop();
+        } else {
+            return prop.datatype;
+        }
+        return null;
     }
 
     const openSourceToEntityMapping = async (name,index) => {
@@ -531,7 +598,8 @@ const MappingCard: React.FC<Props> = (props) => {
                 sourceDatabaseName={sourceDatabaseName}
                 mapFunctions={mapFunctions}
                 namespaces={namespaces}
-                mapIndex={mapIndex}/>
+                mapIndex={mapIndex}
+                tgtEntityReferences={tgtEntityReferences}/>
             <ActivitySettingsDialog
                 tooltipsData={AdvMapTooltips}
                 openActivitySettings={openMappingSettings}

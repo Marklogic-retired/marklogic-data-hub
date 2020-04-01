@@ -22,17 +22,53 @@ describe('Create/Edit Mapping artifact component', () => {
     expect(getByLabelText('Collection')).toBeChecked();
   });
 
-  test('Verify mapping name is mandatory and Save button is disabled', () => {
-    const { getByText, getByPlaceholderText } = render(<CreateEditMappingDialog {...data.newMap} />);
+  test('Verify mapping name, source query is mandatory and Save button is disabled', () => {
+    const { getByText, getByPlaceholderText, getByLabelText } = render(<CreateEditMappingDialog {...data.newMap} />);
     const nameInput = getByPlaceholderText('Enter name');
     const saveButton = getByText('Save');
+    const collInput = getByPlaceholderText('Please select');
     
+    // Enter the value for name input.
+    fireEvent.change(nameInput, { target: {value: 'testCreateMap'}});
+    expect(nameInput).toHaveValue('testCreateMap');
+    expect(saveButton).toBeDisabled(); // It should be disabled since no value is provided yet for Collection or Query.
+
+    //Providing the value for Collection field now so that Save button can be enabled.
+    fireEvent.change(collInput, { target: {value: 'testCollection'}});
+    expect(collInput).toHaveValue('testCollection');
+    expect(saveButton).toBeEnabled(); //Should be enabled now as all the mandatory fields have values.
+
+    //Removing the value of Name field to check if getting the error what name field is required.
+    fireEvent.change(nameInput, { target: {value: ''}});
+    expect(getByText('Name is required')).toBeInTheDocument();
+    expect(saveButton).toBeDisabled();
+
+    //Adding the value for name field to test if Source Query /Collections fields are 'Required', in the next test case.
     fireEvent.change(nameInput, { target: {value: 'testCreateMap'}});
     expect(nameInput).toHaveValue('testCreateMap');
     expect(saveButton).toBeEnabled();
-    
-    fireEvent.change(nameInput, { target: {value: ''}});
-    expect(getByText('Name is required')).toBeInTheDocument();
+
+    //Removing collection field value to check if we get the validation error as 'Collection or Query is required'.
+    fireEvent.change(collInput, { target: {value: ''}});
+    expect(getByText('Collection or Query is required')).toBeInTheDocument();
+    expect(saveButton).toBeDisabled();
+
+    //Adding the collection value now to see if we go back to enabling the save button once collection value is provided.
+    fireEvent.change(collInput, { target: {value: 'testCollection'}});
+    expect(collInput).toHaveValue('testCollection');
+    expect(saveButton).toBeEnabled();
+
+    // Remove collection value first and provide a value for Query field later.
+    fireEvent.change(collInput, { target: {value: ''}});
+    expect(saveButton).toBeDisabled(); // Checking if the Save button is disabled again , before updating the value for Query.
+    fireEvent.click(getByLabelText('Query'));  //updating the value of Query field now.
+    const queryInput = getByPlaceholderText('Enter Source Query');
+    fireEvent.change(queryInput, { target: {value: 'cts.collectionQuery(["testCollection"])'}});
+    expect(saveButton).toBeEnabled(); //Should be disabled since neither Query nor Collection field has any value.
+
+    //Removing source field value now to check if we get the validation error as 'Collection or Query is required'.
+    fireEvent.change(queryInput, { target: {value: ''}});
+    expect(getByText('Collection or Query is required')).toBeInTheDocument();
     expect(saveButton).toBeDisabled();
   });
 

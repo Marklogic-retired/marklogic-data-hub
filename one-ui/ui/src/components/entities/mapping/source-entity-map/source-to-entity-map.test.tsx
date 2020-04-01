@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, cleanup, fireEvent } from '@testing-library/react';
+import { render, cleanup, fireEvent, getByTestId } from '@testing-library/react';
 import SourceToEntityMap from './source-to-entity-map';
 import data from '../../../../config/data.config';
 import { shallow } from 'enzyme';
@@ -94,5 +94,31 @@ describe('Enzyme Source-to-entity map tests', () => {
     expect(getByText('home')).toBeInTheDocument();
     expect(getByText(/nutFree:/)).toBeInTheDocument();
     expect(getByText('testName1')).toBeInTheDocument();
+  });
+
+  test('Nested entity data renders properly',() => {
+    let entityTypePropertiesUpdated = [
+        { name: 'propId', type: 'int' },
+        { name: 'propName', type: 'string' },
+        { name: 'items', type: 'parent-ItemType [ ]'},
+        { name: 'items/type', type: 'string'},
+        { name: 'items/category', type: 'parent-catItem'},
+        { name: 'items/category/itemProdCat1', type: 'string'},
+        { name: 'items/category/itemProdCat2', type: 'string'}
+        
+      ]
+    const { getByText,getByTestId,queryByText,getByLabelText,getAllByText } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} entityTypeProperties={entityTypePropertiesUpdated}/>);
+    expect(getByText('propId')).toBeInTheDocument();
+    expect(getByText('propName')).toBeInTheDocument();
+    expect(getByText('items')).toBeInTheDocument();
+    expect(getByText('type')).toBeInTheDocument();
+    expect(getByText('category')).toBeInTheDocument();
+    expect(getAllByText('Context').length).toBe(2);
+    expect(getByText('ItemType [ ]')).toBeInTheDocument();
+    expect(getByText('itemProdCat1')).toBeInTheDocument();
+    expect(getByText('itemProdCat2')).toBeInTheDocument();
+    //TO DO: Below tests can be done when working on E2E tests.
+    //fireEvent.click(getByLabelText('icon: down'));
+    //expect(queryByText('category')).not.toBeInTheDocument();
   })
 });

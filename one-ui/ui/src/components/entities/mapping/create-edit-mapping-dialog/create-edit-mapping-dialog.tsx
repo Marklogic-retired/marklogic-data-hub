@@ -168,7 +168,7 @@ const CreateEditMappingDialog = (props) => {
         setMapNameTouched(true);
         setMapName(event.target.value);
         if (event.target.value.length > 0) {
-          if (JSON.stringify(collections) !== JSON.stringify([]) || srcQuery) {
+          if (collections|| srcQuery) {
               setIsValid(true);
               setIsNameDuplicate(false);
           }
@@ -272,7 +272,7 @@ const CreateEditMappingDialog = (props) => {
         setSelectedSourceTouched(false);
       }
       if (event.target.value === 'collection') {
-        if (mapName && JSON.stringify(collections) !== JSON.stringify([])) {
+        if (mapName && collections) {
           setIsValid(true);
         } else {
           setIsValid(false);
@@ -359,7 +359,10 @@ const CreateEditMappingDialog = (props) => {
         <Form.Item label={<span>
           Source Query:&nbsp;<span className={styles.asterisk}>*</span>
           &nbsp;
-            </span>} labelAlign="left">
+            </span>} labelAlign="left"
+            validateStatus={(collections || srcQuery || (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)) ? '' : 'error'}
+            help={(collections || srcQuery || (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)) ? '' : 'Collection or Query is required'}
+            >
           <Radio.Group
             id="srcType"
             options={srcTypeOptions}
