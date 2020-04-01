@@ -1,12 +1,13 @@
 
 import React, { useState, useEffect, CSSProperties } from "react";
-import { Card, Modal, Table, Icon, Popover, Input, Button, Alert, Tooltip, Spin, Dropdown} from "antd";
+import { Card, Modal, Table, Icon, Popover, Input, Button, Alert, Tooltip, Dropdown} from "antd";
 import styles from './source-to-entity-map.module.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faObjectUngroup, faList, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import { getInitialChars, convertDateFromISO, getLastChars } from "../../../../util/conversionFunctions";
 import { getMappingValidationResp } from "../../../../util/manageArtifacts-service"
 import DropDownWithSearch from "../../../common/dropdown-with-search/dropdownWithSearch";
+import SplitPane from 'react-split-pane';
 
 const SourceToEntityMap = (props) => {
 
@@ -74,17 +75,17 @@ const SourceToEntityMap = (props) => {
         props.fetchSrcDocFromUri(uri);
         if(isTestClicked) {
             getMapValidationResp(uri);
-          }
+        }
         setEditingUri(false);
     }
 
     const srcDetails = props.mapData && props.mapData.sourceQuery && props.mapData.selectedSource ? <div className={styles.xpathDoc}>
         {props.mapData.selectedSource === 'collection' ? <div className={styles.sourceQuery}>Collection: {props.extractCollectionFromSrcQuery(props.mapData.sourceQuery)}</div> : <div className={styles.sourceQuery}>Source Query: {getInitialChars(props.mapData.sourceQuery,32,'...')}</div>}
-        {!editingURI ? <div 
+        {!editingURI ? <div
             onMouseOver={(e) => handleMouseOver(e)}
             onMouseLeave={(e) => setShowEditURIOption(false)} className={styles.uri}>{!showEditURIOption ? <span className={styles.notShowingEditIcon}>URI: <span className={styles.URItext}>&nbsp;{getLastChars(srcURI,42,'...')}</span></span> :
-        <span className={styles.showingEditContainer}>URI: <span className={styles.showingEditIcon}>{getLastChars(srcURI,42,'...')}  <i><FontAwesomeIcon icon={faPencilAlt} size="lg" onClick={handleEditIconClick} className={styles.editIcon}
-        /></i></span></span>}</div> : <div className={styles.inputURIContainer}>URI: <span><Input value={srcURI} onChange={handleURIEditing} className={styles.uriEditing}></Input>&nbsp;<Icon type="close" className={styles.closeIcon} onClick={() => handleCloseEditOption(srcURI)}/>&nbsp;<Icon type="check" className={styles.checkIcon} onClick={() => handleSubmitUri(srcURI)}/></span></div>}
+            <span className={styles.showingEditContainer}>URI: <span className={styles.showingEditIcon}>{getLastChars(srcURI,42,'...')}  <i><FontAwesomeIcon icon={faPencilAlt} size="lg" onClick={handleEditIconClick} className={styles.editIcon}
+            /></i></span></span>}</div> : <div className={styles.inputURIContainer}>URI: <span><Input value={srcURI} onChange={handleURIEditing} className={styles.uriEditing}></Input>&nbsp;<Icon type="close" className={styles.closeIcon} onClick={() => handleCloseEditOption(srcURI)}/>&nbsp;<Icon type="check" className={styles.checkIcon} onClick={() => handleSubmitUri(srcURI)}/></span></div>}
     </div> : '';
 
 
@@ -121,7 +122,7 @@ const SourceToEntityMap = (props) => {
             setSrcURI(props.docUris[index]);
             onUpdateURINavButtons(props.docUris[index]);
 
-        } // At beginning of range 
+        } // At beginning of range
         else if (index === 0) {
             props.setDisableURINavLeft(true);
             if (end > 0) {
@@ -154,7 +155,7 @@ const SourceToEntityMap = (props) => {
         props.fetchSrcDocFromUri(uri);
         if(isTestClicked) {
             getMapValidationResp(uri);
-          }
+        }
     }
 
     const navigationButtons = <span className={styles.navigate_source_uris}>
@@ -162,9 +163,9 @@ const SourceToEntityMap = (props) => {
             <Icon type="left" className={styles.navigateIcon} />
         </Button>
         &nbsp;
-    <div className={styles.URI_Index}><p>{uriIndex + 1}</p></div>
+        <div className={styles.URI_Index}><p>{uriIndex + 1}</p></div>
         &nbsp;
-    <Button className={styles.navigate_uris_right} onClick={() => onNavigateURIList(uriIndex + 1)} disabled={props.disableURINavRight}>
+        <Button className={styles.navigate_uris_right} onClick={() => onNavigateURIList(uriIndex + 1)} disabled={props.disableURINavRight}>
             <Icon type="right" className={styles.navigateIcon} />
         </Button>
     </span>
@@ -241,13 +242,13 @@ const SourceToEntityMap = (props) => {
 
     const mapExpressionStyle = (propName) => {
         const mapStyle: CSSProperties = {
-            width: '27vw',
+            width: '30vw',
             verticalAlign: 'top',
             justifyContent: 'top',
             borderColor: checkFieldInErrors(propName) ? 'red' : ''
         }
         return mapStyle;
-}
+    }
 
     const columns = [
         {
@@ -255,6 +256,7 @@ const SourceToEntityMap = (props) => {
             dataIndex: 'key',
             key: 'key',
             sorter: (a: any, b: any) => a.key.length - b.key.length,
+            ellipsis: true,
             width: '60%'
         },
         {
@@ -264,7 +266,7 @@ const SourceToEntityMap = (props) => {
             ellipsis: true,
             sorter: (a: any, b: any) => a.val?.length - b.val?.length,
             width: '40%',
-            render: (text) => <span>{text ? text.substr(0, 20) : ''}{text && text.length > 20 ? <Tooltip title={text}><span>...</span></Tooltip> : ''}</span>
+            render: (text) => <span>{text ? text : ''}</span>
         }
     ];
 
@@ -273,14 +275,16 @@ const SourceToEntityMap = (props) => {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
-            width: '20%',
+            width: '18%',
             sorter: (a: any, b: any) => a.name.length - b.name.length,
+            ellipsis: true,
         },
         {
+            ellipsis: true,
             title: 'Type',
             dataIndex: 'type',
             key: 'type',
-            width: '10%',
+            width: '15%',
             sorter: (a: any, b: any) => a.type.length - b.type.length,
         },
         {
@@ -291,7 +295,8 @@ const SourceToEntityMap = (props) => {
             </span>,
             dataIndex: 'xPathExpression',
             key: 'xPathExpression',
-            width: '50%',
+            ellipsis: true,
+
             render: (text, row) => (<div className={styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
                 <TextArea
                     id="mapexpression"
@@ -305,15 +310,16 @@ const SourceToEntityMap = (props) => {
                 <i id="listIcon"><FontAwesomeIcon icon={faList} size="lg" className={styles.listIcon}
                 /></i>&nbsp;&nbsp;
                 <span ><Dropdown overlay={menu} trigger={['click']}><Button id="functionIcon" className={styles.functionIcon} size="small" onClick={(e) => handleFunctionsList(row.name)}>fx</Button></Dropdown></span></div>
-            {checkFieldInErrors(row.name) ? <div id="errorInExp" className={styles.validationErrors}>{displayResp(row.name)}</div> : ''}</div>)
+                {checkFieldInErrors(row.name) ? <div id="errorInExp" className={styles.validationErrors}>{displayResp(row.name)}</div> : ''}</div>)
         },
         {
             title: 'Value',
             dataIndex: 'value',
             key: 'value',
             width: '20%',
+            ellipsis: true,
             sorter: (a: any, b: any) => getDataForValueField(a.name)?.length - getDataForValueField(b.name)?.length,
-            render: (text, row) => (<div className={styles.mapValue}><Tooltip title={getDataForValueField(row.name)}>{getInitialChars(getDataForValueField(row.name),25,'...')}</Tooltip></div>)
+            render: (text, row) => (<div className={styles.mapValue}><Tooltip title={getDataForValueField(row.name)}>{getDataForValueField(row.name)}</Tooltip></div>)
         }
     ]
 
@@ -353,7 +359,7 @@ const SourceToEntityMap = (props) => {
 
         return errorInSaving === 'noError' ? msg : errorMsg;
 
-      };
+    };
     const emptyData = (JSON.stringify(props.sourceData) === JSON.stringify([]) && !props.docNotFound);
 
     const displayResp = (propName) => {
@@ -385,7 +391,7 @@ const SourceToEntityMap = (props) => {
         setIsTestClicked(true);
         try {
             let resp = await getMappingValidationResp(props.mapName, savedMappingArt, uri, props.sourceDatabaseName);
-            
+
             if (resp.status === 200) {
                 setMapResp({ ...resp.data });
                 console.log('Mapping validation API called successfully!')
@@ -451,98 +457,127 @@ const SourceToEntityMap = (props) => {
             handleDropdownMenu={handleFunctionsList} />
     );
 
+    const splitPaneStyles= {
+        pane1: {  minWidth: '150px' },
+        pane2: {  minWidth: '140px', maxWidth: '90%' },
+        pane: { overflow: 'hidden' },
+    };
+
+    const splitStyle:CSSProperties= {
+        position: 'relative',
+        height: 'none',
+    }
+    const resizerStyle:CSSProperties = {
+        border: '1px solid rgba(1, 22, 39, 0.21)',
+        cursor: 'col-resize',
+        height: 'auto',
+    }
 
     return (<Modal
-        visible={props.mappingVisible}
-        onOk={() => onOk()}
-        onCancel={() => onCancel()}
-        width={'96vw'}
-        maskClosable={false}
-        footer={null}
-        className={styles.mapContainer}
-    >
-        <div className={styles.header}>
-            <span className={styles.headerTitle}>{props.mapName}</span>
-            {errorInSaving ? success() : <span className={styles.noMessage}></span>}
-        </div>
-
-
-        <div className={styles.parentContainer}>
-
-            <div
-                id="srcContainer"
-                className={styles.sourceContainer}>
-                <div id="srcDetails" className={styles.sourceDetails}>
-                    <p className={styles.sourceName}
-                    ><i><FontAwesomeIcon icon={faList} size="sm" className={styles.sourceDataIcon}
-                    /></i> Source Data <Popover
-                        content={srcDetails}
-                        trigger="click"
-                        placement="right"
-                    ><Icon type="question-circle" className={styles.questionCircle} theme="filled" /></Popover></p>
-                </div>
-            {emptyData ? 
-            <div id="noData">
-                <br/><br/>
-                <Card className={styles.emptyCard} size="small"> 
-                    <div className={styles.emptyText}>
-                         <p>Unable to find source documents using the specified collection or query.</p>
-                         <p>Load some data that mapping can use as reference and/or edit the step
-                         settings to use a source collection or query that will return some results.</p>
-                     </div>
-                </Card>
+            visible={props.mappingVisible}
+            onOk={() => onOk()}
+            onCancel={() => onCancel()}
+            width={'96vw'}
+            maskClosable={false}
+            footer={null}
+            className={styles.mapContainer}
+            bodyStyle={{paddingBottom:0}}
+        >
+            <div className={styles.header}>
+                <span className={styles.headerTitle}>{props.mapName}</span>
+                {errorInSaving ? success() : <span className={styles.noMessage}></span>}
             </div>
-            : 
-            <div id="dataPresent">   
-                <div className={styles.navigationCollapseButtons}>{navigationButtons}</div> 
-                <Spin spinning={JSON.stringify(props.sourceData) === JSON.stringify([]) && !props.docNotFound}>           
-                <Table
-                pagination={false}
-                defaultExpandAllRows={true}
-                expandIcon={(props) => customExpandIcon(props)}
-                className={styles.sourceTable}
-                rowClassName={() => styles.sourceTableRows}
-                scroll={{ y: '70vh' }}
-                indentSize={14}
-                //size="small"
-                columns={columns}
-                dataSource={srcData}
-                tableLayout="unset"
-                rowKey="name"
-                />
-                </Spin>           
-            </div> }
-            </div>
-        <div 
-        id="entityContainer"
-        className={styles.entityContainer}>
-            <div className={styles.entityDetails}>
-                <span className={styles.entityTypeTitle}><p ><i><FontAwesomeIcon icon={faObjectUngroup} size="sm" className={styles.entityIcon} /></i> Entity: {props.entityTypeTitle}</p></span>
-                <span className={styles.btn_icons}>
+            <br/>
+            <span className={styles.btn_icons}>
                     <Button id="Clear-btn" mat-raised-button color="primary" disabled={emptyData} onClick={() => onClear()}>
                         Clear
                     </Button>
-                    &nbsp;&nbsp;
-                    <Button id="Test-btn" mat-raised-button type="primary" disabled={emptyData} onClick={() => getMapValidationResp(srcURI)}>
+                &nbsp;&nbsp;
+                <Button id="Test-btn" mat-raised-button type="primary" disabled={emptyData} onClick={() => getMapValidationResp(srcURI)}>
                         Test
                     </Button>
-                    </span>
-                </div>
-                {/* <Divider className={styles.DividerEntity}></Divider> */}
+            </span>
+            <br/>
+            <hr/>
+            <div className={styles.parentContainer}>
+                <SplitPane
+                    style={splitStyle}
+                    paneStyle={splitPaneStyles.pane}
+                    allowResize={true}
+                    resizerStyle={resizerStyle}
+                    pane1Style={splitPaneStyles.pane1}
+                    pane2Style={splitPaneStyles.pane2}
+                    split="vertical"
+                    primary="second"
+                    defaultSize="70%"
+                >
+                    <div
+                        id="srcContainer"
+                        data-testid="srcContainer"
+                        className={styles.sourceContainer}>
+                        <div id="srcDetails" data-testid="srcDetails" className={styles.sourceDetails}>
+                            <p className={styles.sourceName}
+                            ><i><FontAwesomeIcon icon={faList} size="sm" className={styles.sourceDataIcon}
+                            /></i> Source Data <Popover
+                                content={srcDetails}
+                                trigger="click"
+                                placement="right"
+                            ><Icon type="question-circle" className={styles.questionCircle} theme="filled" /></Popover></p>
+                        </div>
+                        <br/>
+                        {emptyData ?
+                            <div id="noData">
+                                <br/><br/>
+                                <Card className={styles.emptyCard} size="small">
+                                    <div className={styles.emptyText}>
+                                        <p>Unable to find source documents using the specified collection or query.</p>
+                                        <p>Load some data that mapping can use as reference and/or edit the step
+                                            settings to use a source collection or query that will return some results.</p>
+                                    </div>
+                                </Card>
+                            </div>
+                            :
+                            <div id="dataPresent">
+                                <div className={styles.navigationCollapseButtons}>{navigationButtons}</div>
+                                    <Table
+                                        pagination={false}
+                                        defaultExpandAllRows={true}
+                                        expandIcon={(props) => customExpandIcon(props)}
+                                        className={styles.sourceTable}
+                                        rowClassName={() => styles.sourceTableRows}
+                                        scroll={{y: '70vh', x: 'max-content' }}
+                                        indentSize={14}
+                                        //size="small"
+                                        columns={columns}
+                                        dataSource={srcData}
+                                        tableLayout="unset"
+                                        rowKey="name"
+                                    />
+                            </div> }
+                    </div>
+                    <div
+                        id="entityContainer"
+                        data-testid="entityContainer"
+                        className={styles.entityContainer}>
+                        <div className={styles.entityDetails}>
+                            <span className={styles.entityTypeTitle}><p ><i><FontAwesomeIcon icon={faObjectUngroup} size="sm" className={styles.entityIcon} /></i> Entity: {props.entityTypeTitle}</p></span>
 
-                <div className={styles.lineSpacing}></div>
-                <Table
-                    pagination={false}
-                    className={styles.entityTable}
-                    scroll={{ y: '70vh' }}
-                    tableLayout="unset"
-                    columns={entityColumns}
-                    dataSource={props.entityTypeProperties}
-                    rowKey="name"
-                />
+                        </div>
+                        <br/>
+                        <div className={styles.lineSpacing}></div>
+                        <Table
+                            pagination={false}
+                            className={styles.entityTable}
+                            scroll={{  x: 'max-content', y: '70vh' }}
+                            columns={entityColumns}
+                            dataSource={props.entityTypeProperties}
+                            tableLayout="unset"
+                            rowKey="name"
+                        />
+                    </div>
+                </SplitPane>
             </div>
-        </div>
-    </Modal>
+        </Modal>
 
     );
 
