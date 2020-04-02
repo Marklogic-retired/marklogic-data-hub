@@ -1,7 +1,5 @@
 {
-  "database-name": "%%mlFinalDbName%%",
-  "schema-database": "%%mlFinalSchemasDbName%%",
-  "triggers-database": "%%mlFinalTriggersDbName%%",
+  "database-name": "data-hub-FINAL",
   "range-element-index" : [
     {
       "scalar-type" : "string",
