@@ -11,8 +11,8 @@ const ActivitySettingsDialog = (props) => {
   const activityType = props.activityType;
   const usesSourceDatabase = activityType !== 'loadData';
   //const [settingsArtifact, setSettingsArtifact] = useState({});
-  const defaultTargetDatabase = (activityType === 'loadData') ? 'data-hub-STAGING' : 'data-hub-FINAL';
-  const defaultSourceDatabase = (activityType === 'mapping') ? 'data-hub-STAGING' : 'data-hub-FINAL';
+  const defaultTargetDatabase = !usesSourceDatabase ? 'data-hub-STAGING' : 'data-hub-FINAL';
+  const defaultSourceDatabase = usesSourceDatabase ? 'data-hub-STAGING' : 'data-hub-FINAL';
   const [tgtDatabase, setTgtDatabase] = useState(defaultTargetDatabase);
   const [srcDatabase, setSrcDatabase] = useState(defaultSourceDatabase);
   const[ additionalCollections, setAdditionalCollections ] = useState<any[]>([]);
@@ -365,9 +365,9 @@ const getSettingsArtifact = async () => {
       </Tooltip>
     </Form.Item></div>
 
-  const tgtDbOptions = tgtDatabaseOptions.map(d => <Select.Option key={d}>{d}</Select.Option>);
+  const tgtDbOptions = tgtDatabaseOptions.map(d => <Select.Option data-testid='dbOptions' key={d}>{d}</Select.Option>);
 
-  const provGranOpt = provGranOptions.map(d => <Select.Option key={d}>{d}</Select.Option>);
+  const provGranOpt = provGranOptions.map(d => <Select.Option data-testid='provOptions' key={d}>{d}</Select.Option>);
 
   return (
     <Modal
@@ -464,6 +464,7 @@ const getSettingsArtifact = async () => {
             className={styles.formItem}>
             <Select
               id="provGranularity"
+              placeholder="Select provenance granularity"
               value={provGranularity}
               onChange={handleProvGranularity}
               disabled={!canReadWrite}
