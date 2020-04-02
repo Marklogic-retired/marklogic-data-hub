@@ -1,4 +1,10 @@
 # Change Log
+## [v5.2.1](https://github.com/marklogic/marklogic-data-hub/releases/tag/v5.2.1) (2020-04-02)
+
+**Fixed Bugs:**
+- [DHFPROD-4697] - hubDeploy* tasks are not generating function metadata
+
+
 ## [v5.2.0](https://github.com/marklogic/marklogic-data-hub/releases/tag/v5.2.0) (2020-03-06)
 
 **Fixed Bugs:**
