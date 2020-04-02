@@ -112,7 +112,7 @@ const activitySettings = {
   canWrite: true,
   openActivitySettings: true,
   stepData: {
-    name: 'testLoad'
+    name: 'testActivitySettings'
   },
   setOpenActivitySettings: jest.fn()
 };
