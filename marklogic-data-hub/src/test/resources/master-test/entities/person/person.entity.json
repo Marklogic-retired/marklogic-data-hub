@@ -2,7 +2,7 @@
   "info": {
     "title": "person",
     "version": "0.0.1",
-    "baseUri": "http://example.com/",
+    "baseUri": "http://example.org/",
     "description": "An person entity"
   },
   "definitions": {

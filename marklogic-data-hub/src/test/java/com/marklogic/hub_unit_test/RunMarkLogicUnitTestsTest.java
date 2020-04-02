@@ -55,7 +55,7 @@ public class RunMarkLogicUnitTestsTest extends HubTestBase {
 
     @BeforeAll
     public void setupIndexes() {
-        Installer.applyDatabasePropertiesForTests(dataHub, adminHubConfig);
+        Installer.applyDatabasePropertiesForTests(adminHubConfig);
     }
 
     /**

@@ -1,12 +1,15 @@
 package com.marklogic.bootstrap;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.security.User;
-import org.apache.commons.io.FileUtils;
+import com.marklogic.mgmt.resource.databases.DatabaseManager;
+import com.marklogic.rest.util.JsonNodeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -15,10 +18,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.util.FileCopyUtils;
 
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.regex.Pattern;
 
 @EnableAutoConfiguration
 public class Installer extends HubTestBase implements InitializingBean {
@@ -69,7 +75,7 @@ public class Installer extends HubTestBase implements InitializingBean {
             dataHubEnvManager.addRole("data-hub-environment-manager");
             dataHubEnvManager.save();
 
-            applyDatabasePropertiesForTests(dataHub, adminHubConfig);
+            applyDatabasePropertiesForTests(adminHubConfig);
         }
 
         if (getDataHubAdminConfig().getIsProvisionedEnvironment()) {
@@ -82,18 +88,20 @@ public class Installer extends HubTestBase implements InitializingBean {
      * database changes go away as a result of some test that runs in our test suite before RMLUTT. So RMLUTT has to
      * run this again to ensure that the indexes it depends on are present. Sigh.
      *
-     * @param dataHub
      * @param hubConfig
      */
-    public static void applyDatabasePropertiesForTests(DataHub dataHub, HubConfig hubConfig) {
+    public static void applyDatabasePropertiesForTests(HubConfig hubConfig) {
+        File testFile = Paths.get("src", "test", "ml-config", "databases", "final-database.json").toFile();
         try {
-            Path srcDir = Paths.get("src", "test", "ml-config", "databases","final-database.json");
-            Path dstDir = Paths.get(hubConfig.getUserDatabaseDir().toString(), "test-final-database.json");
-            FileUtils.copyFile(srcDir.toAbsolutePath().toFile(), dstDir.toAbsolutePath().toFile());
+            String payload = new String(FileCopyUtils.copyToByteArray(testFile));
+            new DatabaseManager(hubConfig.getManageClient()).save(payload);
+            // Gotta rerun this command since the test file has path range indexes in it
+            DeployDatabaseFieldCommand command = new DeployDatabaseFieldCommand();
+            command.setResourceFilenamesIncludePattern(Pattern.compile("final-database.xml"));
+            command.execute(new CommandContext(hubConfig.getAppConfig(), hubConfig.getManageClient(), null));
         } catch (IOException ioe) {
-            throw new RuntimeException("Unable to copy test indexes file to project", ioe);
+            throw new RuntimeException("Unable to deploy test indexes from file: " + testFile, ioe);
         }
-        dataHub.updateIndexes();
     }
 
     public static void main(String[] args) {
