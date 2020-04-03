@@ -23,13 +23,11 @@ const PopOverSearch: React.FC<Props> = (props) => {
       try {
         const response = await axios({
           method: 'POST',
-          url: `/api/search/facet-values`,
+          url: `/api/entitySearch/facet-values`,
           data: {
-            "facetInfo": {
-              "referenceType": props.referenceType,
-              "entityTypeId": props.entityTypeId,
-              "propertyPath": props.propertyPath
-            },
+            "referenceType": props.referenceType,
+            "entityTypeId": props.entityTypeId,
+            "propertyPath": props.propertyPath,
             "limit": 10,
             "dataType": "string",
             "pattern": e.target.value

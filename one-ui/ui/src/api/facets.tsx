@@ -3,7 +3,7 @@ import axios from "axios";
 export const rangeFacet = async (props) => {
   return await axios({
     method: 'POST',
-    url: `/api/search/facet-values/range`,
+    url: `/api/entitySearch/facet-values/range`,
     data: {
       "referenceType": props.referenceType,
       "entityTypeId": props.entityTypeId,

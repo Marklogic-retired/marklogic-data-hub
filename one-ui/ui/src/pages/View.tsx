@@ -43,7 +43,7 @@ const View: React.FC = () => {
     try {
       const response = await axios({
         method: 'POST',
-        url: `/api/search`,
+        url: `/api/entitySearch`,
         data: {
           query: {
             searchStr: '',

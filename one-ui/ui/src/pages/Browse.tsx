@@ -78,7 +78,7 @@ const Browse: React.FC<Props> = ({ location }) => {
       setIsLoading(true);
       const response = await axios({
         method: 'POST',
-        url: `/api/search`,
+        url: `/api/entitySearch`,
         data: {
           query: {
             searchStr: searchOptions.query,
