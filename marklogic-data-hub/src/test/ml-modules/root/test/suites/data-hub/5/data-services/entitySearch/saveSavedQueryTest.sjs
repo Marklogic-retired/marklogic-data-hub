@@ -40,7 +40,7 @@ var saveQuery = JSON.stringify({
 
 function invokeService(saveQuery) {
   return fn.head(xdmp.invoke(
-      "/data-hub/5/data-services/savedQueries/saveSavedQuery.sjs",
+      "/data-hub/5/data-services/entitySearch/saveSavedQuery.sjs",
       {
         "saveQuery": saveQuery
       }

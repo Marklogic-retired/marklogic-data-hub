@@ -53,7 +53,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-public class SearchManager {
+public class EntitySearchManager {
 
     private static final String COLLECTION_CONSTRAINT_NAME = "Collection";
     private static final String CREATED_ON_CONSTRAINT_NAME = "createdOnRange";
@@ -71,7 +71,7 @@ public class SearchManager {
     private static final String SEARCH_TAIL = "</search>";
     private static final Set<String> METADATA_FIELD_NAME = new HashSet<>(Arrays.asList("datahubCreatedOn"));
 
-    private static final Logger logger = LoggerFactory.getLogger(SearchManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(EntitySearchManager.class);
 
 
 
@@ -79,7 +79,7 @@ public class SearchManager {
     private DatabaseClient finalDatabaseClient;
     private ModelManager modelManager;
 
-    public SearchManager(HubConfig hubConfig) {
+    public EntitySearchManager(HubConfig hubConfig) {
         this.finalDatabaseClient = hubConfig.newFinalClient(hubConfig.getDbName(DatabaseKind.FINAL));
         this.modelManager = new ModelManager(hubConfig);
     }

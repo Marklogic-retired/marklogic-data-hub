@@ -8,9 +8,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class SavedQueriesControllerTest extends AbstractMvcTest {
+public class EntitySearchControllerTest extends AbstractMvcTest {
 
-    private final static String PATH = "/api/savedQueries";
+    private final static String SAVED_QUERIES_PATH = "/api/entitySearch/savedQueries";
 
     private ObjectNode savedQueryResponse;
 
@@ -30,7 +30,7 @@ public class SavedQueriesControllerTest extends AbstractMvcTest {
             "  }\n" +
             "}";
 
-        postJson(PATH, json)
+        postJson(SAVED_QUERIES_PATH, json)
             .andExpect(status().isCreated())
             .andDo(result -> {
                 savedQueryResponse = readJsonObject(result.getResponse().getContentAsString());
@@ -41,7 +41,7 @@ public class SavedQueriesControllerTest extends AbstractMvcTest {
         ObjectNode query = (ObjectNode) savedQueryResponse.get("savedQuery");
         query.put("description", "Updated description");
 
-        putJson(PATH, savedQueryResponse.toString())
+        putJson(SAVED_QUERIES_PATH, savedQueryResponse.toString())
             .andExpect(status().isOk())
             .andDo(result -> {
                 ObjectNode response = readJsonObject(result.getResponse().getContentAsString());

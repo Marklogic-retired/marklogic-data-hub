@@ -4,9 +4,11 @@ function invokeService(entityTypeId, propertyPath, referenceType) {
   return fn.head(xdmp.invoke(
       "/data-hub/5/data-services/entitySearch/getMinAndMaxPropertyValues.sjs",
       {
-        "entityTypeId": entityTypeId,
-        "propertyPath": propertyPath,
-        "referenceType": referenceType
+        "facetRangeSearchQuery": JSON.stringify({
+          "entityTypeId": entityTypeId,
+          "propertyPath": propertyPath,
+          "referenceType": referenceType
+        })
       }
   ));
 }

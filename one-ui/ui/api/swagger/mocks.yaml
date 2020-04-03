@@ -2403,7 +2403,7 @@ paths:
                     schema:
                         $ref: '#/definitions/error'
             x-swagger-router-controller: Jobs
-    /search:
+    /entitySearch:
         post:
             tags:
                 - search
@@ -2476,7 +2476,7 @@ paths:
                     schema:
                         $ref: '#/definitions/error'
             x-swagger-router-controller: search
-    /facet-values/range:
+    /entitySearch/facet-values/range:
         post:
             tags:
                 - facet values
@@ -2511,7 +2511,7 @@ paths:
                     schema:
                         $ref: '#/definitions/error'
             x-swagger-router-controller: facetValue
-    /facet-values:
+    /entitySearch/facet-values:
         post:
             tags:
                 - facet values
@@ -2546,7 +2546,7 @@ paths:
                     schema:
                         $ref: '#/definitions/error'
             x-swagger-router-controller: facetValue
-    /savedQueries:
+    /entitySearch/savedQueries:
         post:
             tags:
                 - Saved Queries
