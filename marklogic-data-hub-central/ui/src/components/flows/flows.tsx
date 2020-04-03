@@ -40,6 +40,7 @@ const Flows: React.FC<Props> = (props) => {
     const [stepDialogVisible, setStepDialogVisible] = useState(false);
     const [flowName, setFlowName] = useState('');
     const [stepName, setStepName] = useState('');
+    const [stepType, setStepType] = useState('');
 
     const OpenAddNewDialog = () => {
         setTitle('New Flow');
@@ -82,10 +83,11 @@ const Flows: React.FC<Props> = (props) => {
         setFlowName(name);
     }
 
-    const handleStepDelete = (fName, sName) => {
+    const handleStepDelete = (fName, sName, sType) => {
         setStepDialogVisible(true);
         setFlowName(fName);
         setStepName(sName);
+        setStepType(sType);
     }
 
     const onOk = (name) => {
@@ -93,8 +95,8 @@ const Flows: React.FC<Props> = (props) => {
         setDialogVisible(false);
     }
 
-    const onStepOk = (fName, sName) => {
-        props.deleteStep(fName, sName)
+    const onStepOk = (fName, sName, sType) => {
+        props.deleteStep(fName, sName, sType)
         setStepDialogVisible(false);
     }
 
@@ -123,7 +125,7 @@ const Flows: React.FC<Props> = (props) => {
             okText='Yes'
             okType='primary'
             cancelText='No'
-            onOk={() => onStepOk(flowName, stepName)}
+            onOk={() => onStepOk(flowName, stepName, stepType)}
             onCancel={() => onCancel()}
             width={350}
         >
@@ -217,7 +219,7 @@ const Flows: React.FC<Props> = (props) => {
                                 }
                                 {props.canWriteFlows ?
                                     <Tooltip title={'Delete Step'} placement="bottom">
-                                        <div className={styles.delete} onClick={() => handleStepDelete(flow.name, step.name)}><Icon type="close" /></div>
+                                        <div className={styles.delete} onClick={() => handleStepDelete(flow.name, step.name, step.stepDefinitionType)}><Icon type="close" /></div>
                                     </Tooltip> :
                                     <Tooltip title={'Delete Step'} placement="bottom">
                                         <div className={styles.disabledDelete} onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}><Icon type="close" /></div>
