@@ -314,8 +314,8 @@ const Bench: React.FC = () => {
     }
 
     // DELETE /flows​/{flowId}​/steps​/{stepId}
-    const deleteStep = async (flowId, stepId) => {
-        let url = '/api/flows/' + flowId + '/steps/' + stepId + '-' + 'INGESTION';
+    const deleteStep = async (flowId, stepId, type) => {
+        let url = '/api/flows/' + flowId + '/steps/' + stepId + '-' + type;
         try {
             setIsLoading(true);
             let response = await axios.delete(url);
