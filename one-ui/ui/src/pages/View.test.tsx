@@ -13,7 +13,7 @@ describe('View Page', () => {
   .reply(200, modelResponse);
 
   const getSearchResults = nock('http://localhost:8080')
-  .post('/api/search', {
+  .post('/api/entitySearch', {
     query: {
       searchStr: '',
       entityNames: 'Order',

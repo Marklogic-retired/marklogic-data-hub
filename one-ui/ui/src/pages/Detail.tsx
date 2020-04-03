@@ -38,7 +38,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
 
     const fetchData = async () => {
       try {
-        const result = await axios(`/api/search?docUri=${uri}`);
+        const result = await axios(`/api/entitySearch?docUri=${uri}`);
         if (!result.data) {
           history.push('/error');
         }
