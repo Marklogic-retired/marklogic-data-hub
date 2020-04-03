@@ -1,12 +1,47 @@
 const lib = require('/data-hub/5/impl/hub-es.sjs');
 
-var entityTypeId;
-var propertyPath;
-var referenceType;
-var pattern;
-var limit;
+var facetValuesSearchQuery;
+if(facetValuesSearchQuery == null) {
+  throw Error("Request cannot be empty");
+}
+let queryObj = JSON.parse(facetValuesSearchQuery);
 
+if(queryObj.entityTypeId == null) {
+  throw Error("Could not get matching values, search query is missing entityTypeId property");
+}
+
+if(queryObj.propertyPath == null) {
+  throw Error("Could not get matching values, search query is missing propertyPath property");
+}
+
+if(queryObj.referenceType == null) {
+  throw Error("Could not get matching values, search query is missing referenceType property");
+}
+
+if(queryObj.limit == null) {
+  queryObj.limit = 10;
+}
+
+if(queryObj.pattern == null) {
+  queryObj.pattern = "";
+}
+
+let entityTypeId = queryObj.entityTypeId;
+let propertyPath = queryObj.propertyPath;
+let referenceType = queryObj.referenceType;
+let limit = queryObj.limit;
+let pattern = queryObj.pattern;
 var query;
+
+if (referenceType === "field") {
+  if (propertyPath === "createdByStep") {
+    propertyPath = "datahubCreatedByStep";
+  }
+
+  if (propertyPath === "createdInFlowRange") {
+    propertyPath = "datahubCreatedInFlow";
+  }
+}
 
 if(referenceType === 'element') {
   query = cts.elementReference(propertyPath);

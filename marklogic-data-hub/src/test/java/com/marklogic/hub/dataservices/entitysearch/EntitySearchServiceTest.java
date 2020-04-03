@@ -1,4 +1,4 @@
-package com.marklogic.hub.dataservices.savedQueries;
+package com.marklogic.hub.dataservices.entitysearch;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,11 +7,9 @@ import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.dataservices.SavedQueriesService;
-import org.junit.jupiter.api.BeforeAll;
+import com.marklogic.hub.dataservices.EntitySearchService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -25,19 +23,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ApplicationConfig.class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class SavedQueriesServiceTest extends HubTestBase {
+public class EntitySearchServiceTest extends HubTestBase {
 
     private static JsonNode queryDoc;
-    private SavedQueriesService savedQueriesService;
-
-    @BeforeAll
-    void createSavedQueriesServiceInstance() {
-        this.savedQueriesService = SavedQueriesService.on(adminHubConfig.newFinalClient(null));
-    }
+    private EntitySearchService entitySearchService;
 
     @BeforeEach
     void before() throws IOException {
+        entitySearchService = EntitySearchService.on(adminHubConfig.newFinalClient(null));
         String jsonString = "{\n" +
                 "  \"savedQuery\": {\n" +
                 "    \"id\": \"\",\n" +
@@ -81,7 +74,7 @@ public class SavedQueriesServiceTest extends HubTestBase {
 
     @Test
     void testSaveAndModifyQuery() {
-        JsonNode firstResponse = savedQueriesService.saveSavedQuery(queryDoc);
+        JsonNode firstResponse = entitySearchService.saveSavedQuery(queryDoc);
         String id = firstResponse.get("savedQuery").get("id").asText();
 
         assertNotNull(firstResponse);
@@ -96,7 +89,7 @@ public class SavedQueriesServiceTest extends HubTestBase {
 
         ObjectNode savedQueryNode = (ObjectNode) firstResponse.get("savedQuery");
         savedQueryNode.put("name", "modified-name");
-        JsonNode modifiedResponse = savedQueriesService.saveSavedQuery(firstResponse);
+        JsonNode modifiedResponse = entitySearchService.saveSavedQuery(firstResponse);
 
         assertNotNull(modifiedResponse);
         assertEquals(id, modifiedResponse.get("savedQuery").get("id").asText());
@@ -107,11 +100,11 @@ public class SavedQueriesServiceTest extends HubTestBase {
 
     @Test
     void testModifyQueryWithNonExistentId() {
-        JsonNode firstResponse = savedQueriesService.saveSavedQuery(queryDoc);
+        JsonNode firstResponse = entitySearchService.saveSavedQuery(queryDoc);
         ObjectNode savedQueryNode = (ObjectNode) firstResponse.get("savedQuery");
         savedQueryNode.put("id", "some-non-existent-id");
         savedQueryNode.put("name", "modified-name");
-        JsonNode modifiedResponse = savedQueriesService.saveSavedQuery(firstResponse);
+        JsonNode modifiedResponse = entitySearchService.saveSavedQuery(firstResponse);
         assertNotNull(modifiedResponse.get("savedQuery").get("id"));
     }
 
@@ -119,42 +112,42 @@ public class SavedQueriesServiceTest extends HubTestBase {
     void testSaveQueryWithNoName() {
         ObjectNode savedQueryNode = (ObjectNode) queryDoc.get("savedQuery");
         savedQueryNode.remove("name");
-        assertThrows(FailedRequestException.class, () -> savedQueriesService.saveSavedQuery(queryDoc));
+        assertThrows(FailedRequestException.class, () -> entitySearchService.saveSavedQuery(queryDoc));
     }
 
     @Test
     void testSaveQueryWithEmptyName() {
         ObjectNode savedQueryNode = (ObjectNode) queryDoc.get("savedQuery");
         savedQueryNode.put("name", "");
-        assertThrows(FailedRequestException.class, () -> savedQueriesService.saveSavedQuery(queryDoc));
+        assertThrows(FailedRequestException.class, () -> entitySearchService.saveSavedQuery(queryDoc));
     }
 
     @Test
     void testSaveQueryWithNoQuery() {
         ObjectNode savedQueryNode = (ObjectNode) queryDoc.get("savedQuery");
         savedQueryNode.remove("query");
-        assertThrows(FailedRequestException.class, () -> savedQueriesService.saveSavedQuery(queryDoc));
+        assertThrows(FailedRequestException.class, () -> entitySearchService.saveSavedQuery(queryDoc));
     }
 
     @Test
     void testSaveQueryWithEmptyQuery() {
         ObjectNode savedQueryNode = (ObjectNode) queryDoc.get("savedQuery");
         savedQueryNode.put("query", "");
-        assertThrows(FailedRequestException.class, () -> savedQueriesService.saveSavedQuery(queryDoc));
+        assertThrows(FailedRequestException.class, () -> entitySearchService.saveSavedQuery(queryDoc));
     }
 
     @Test
     void testSaveQueryWithNoPropertiesToDisplay() {
         ObjectNode savedQueryNode = (ObjectNode) queryDoc.get("savedQuery");
         savedQueryNode.remove("propertiesToDisplay");
-        assertThrows(FailedRequestException.class, () -> savedQueriesService.saveSavedQuery(queryDoc));
+        assertThrows(FailedRequestException.class, () -> entitySearchService.saveSavedQuery(queryDoc));
     }
 
     @Test
     void testSaveQueryWithEmptyPropertiesToDisplay() {
         ObjectNode savedQueryNode = (ObjectNode) queryDoc.get("savedQuery");
         savedQueryNode.put("propertiesToDisplay", "");
-        assertThrows(FailedRequestException.class, () -> savedQueriesService.saveSavedQuery(queryDoc));
+        assertThrows(FailedRequestException.class, () -> entitySearchService.saveSavedQuery(queryDoc));
     }
 
     private void assertPermissionsAndCollections(String docUri) {

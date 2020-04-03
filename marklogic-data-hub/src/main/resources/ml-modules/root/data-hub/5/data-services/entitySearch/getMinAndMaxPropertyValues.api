@@ -2,16 +2,9 @@
   "functionName": "getMinAndMaxPropertyValues",
   "params": [
     {
-      "name": "entityTypeId",
-      "datatype": "string"
-    },
-    {
-      "name": "propertyPath",
-      "datatype": "string"
-    },
-    {
-      "name": "referenceType",
-      "datatype": "string"
+      "name": "facetRangeSearchQuery",
+      "datatype": "jsonDocument",
+      "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
     }
   ],
   "return": {

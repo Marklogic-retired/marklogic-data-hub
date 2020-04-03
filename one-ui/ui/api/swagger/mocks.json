@@ -3555,7 +3555,7 @@
         "x-swagger-router-controller": "Jobs"
       }
     },
-    "/search": {
+    "/entitySearch": {
       "post": {
         "tags": [
           "search"
@@ -3664,7 +3664,7 @@
         "x-swagger-router-controller": "search"
       }
     },
-    "/facet-values/range": {
+    "/entitySearch/facet-values/range": {
       "post": {
         "tags": [
           "facet values"
@@ -3716,7 +3716,7 @@
         "x-swagger-router-controller": "facetValue"
       }
     },
-    "/facet-values": {
+    "/entitySearch/facet-values": {
       "post": {
         "tags": [
           "facet values"
@@ -3768,7 +3768,7 @@
         "x-swagger-router-controller": "facetValue"
       }
     },
-    "/savedQueries":{
+    "/entitySearch/savedQueries":{
       "post":{
         "tags":[
           "Saved Queries"

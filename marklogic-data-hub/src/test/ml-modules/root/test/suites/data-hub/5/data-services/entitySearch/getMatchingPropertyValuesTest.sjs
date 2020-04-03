@@ -4,11 +4,13 @@ function invokeService(entityTypeId, propertyPath, referenceType, pattern, limit
   return fn.head(xdmp.invoke(
       "/data-hub/5/data-services/entitySearch/getMatchingPropertyValues.sjs",
       {
-        "entityTypeId": entityTypeId,
-        "propertyPath": propertyPath,
-        "referenceType": referenceType,
-        "pattern": pattern,
-        "limit": limit
+        "facetValuesSearchQuery": JSON.stringify({
+          "entityTypeId": entityTypeId,
+          "propertyPath": propertyPath,
+          "referenceType": referenceType,
+          "pattern": pattern,
+          "limit": limit
+        })
       }
   ));
 }

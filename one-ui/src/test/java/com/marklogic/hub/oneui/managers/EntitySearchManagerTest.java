@@ -27,25 +27,25 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SearchManagerTest extends AbstractOneUiTest {
+public class EntitySearchManagerTest extends AbstractOneUiTest {
 
-    SearchManager searchManager;
+    EntitySearchManager entitySearchManager;
 
     @BeforeEach
     public void setUpDocs() {
-        searchManager = new SearchManager(hubConfig);
+        entitySearchManager = new EntitySearchManager(hubConfig);
     }
 
     @Test
     public void testSearchResultsOnNoData() {
-        searchManager.QUERY_OPTIONS = "non-existent-options";
+        entitySearchManager.QUERY_OPTIONS = "non-existent-options";
         String collectionDeleteQuery = "declareUpdate(); xdmp.collectionDelete(\"http://marklogic.com/entity-services/models\")";
         hubConfig.newFinalClient().newServerEval().javascript(collectionDeleteQuery).evalAs(String.class);
-        assertTrue(searchManager.search(new SearchQuery()).get().isEmpty());
+        assertTrue(entitySearchManager.search(new SearchQuery()).get().isEmpty());
 
         SearchQuery query = new SearchQuery();
         query.getQuery().setEntityNames(Arrays.asList("Some-entityType"));
-        assertTrue(searchManager.search(query).get().isEmpty());
+        assertTrue(entitySearchManager.search(query).get().isEmpty());
     }
 
     @Test
@@ -70,7 +70,7 @@ public class SearchManagerTest extends AbstractOneUiTest {
         searchQuery.setSortOrder(sortOrderList);
         String expectedResult = "<search xmlns=\"http://marklogic.com/appservices/search\">\n<options><sort-order type=\"xs:string\" direction=\"ascending\"><element ns=\"\" name=\"entityTypeProperty1\"/>\n" +
                 "</sort-order><sort-order direction=\"descending\"><field name=\"datahubCreatedOn\"/>\n</sort-order></options><query><collection-query><uri>collection1</uri></collection-query></query></search>";
-        assertTrue(searchManager.buildSearchOptions(query, searchQuery).equals(expectedResult));
+        assertTrue(entitySearchManager.buildSearchOptions(query, searchQuery).equals(expectedResult));
     }
 
     @Test
@@ -80,6 +80,6 @@ public class SearchManagerTest extends AbstractOneUiTest {
         searchQuery.getQuery().setSearchStr("&<>'\"");
 
         String expectedResult = "<search xmlns=\"http://marklogic.com/appservices/search\">\n<qtext>&amp;&lt;&gt;&apos;&quot;</qtext><query><collection-query><uri>collection1</uri></collection-query></query></search>";
-        assertTrue(searchManager.buildSearchOptions(query, searchQuery).equals(expectedResult));
+        assertTrue(entitySearchManager.buildSearchOptions(query, searchQuery).equals(expectedResult));
     }
 }
