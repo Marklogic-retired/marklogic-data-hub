@@ -189,6 +189,7 @@ const EntityTiles = (props) => {
         if (viewType === 'map') {
             output = <div className={styles.cardView}>
                 <MappingCard data={entityCardData.artifacts}
+                    flows={props.flows}
                     entityTypeTitle={entityCardData.entityType}
                     getMappingArtifactByMapName={getMappingArtifactByMapName}
                     deleteMappingArtifact={deleteMappingArtifact}
@@ -196,7 +197,10 @@ const EntityTiles = (props) => {
                     updateMappingArtifact={updateMappingArtifact}
                     canReadWrite={props.canReadWrite}
                     canReadOnly={props.canReadOnly}
-                    entityModel={props.entityModels[entityCardData.entityType]} />
+                    entityModel={props.entityModels[entityCardData.entityType]}
+                    canWriteFlows={props.canWriteFlows}
+                    addStepToFlow={props.addStepToFlow}
+                    addStepToNew={props.addStepToNew}/>
             </div>
         }
         else if (viewType === 'matching'){
