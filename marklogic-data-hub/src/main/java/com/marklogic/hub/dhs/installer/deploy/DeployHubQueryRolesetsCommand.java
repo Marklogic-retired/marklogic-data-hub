@@ -26,7 +26,7 @@ public class DeployHubQueryRolesetsCommand extends DeployQueryRolesetsCommand {
             receipt = super.saveResource(mgr, context, payload);
         } catch (HttpClientErrorException ex) {
             if (isPermissionedDeniedException(ex)) {
-                logger.info("Received SEC-PERMDENIED error when deploying query roleset; this can be safely ignored if the " +
+                logger.error("Received SEC-PERMDENIED error when deploying query roleset; this can be safely ignored if the " +
                     "query roleset already exists in MarkLogic.");
             } else {
                 throw ex;

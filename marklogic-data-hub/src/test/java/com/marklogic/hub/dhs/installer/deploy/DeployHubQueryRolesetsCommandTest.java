@@ -38,16 +38,21 @@ public class DeployHubQueryRolesetsCommandTest extends AbstractSecurityTest {
             assertEquals(201, receipt.getResponse().getStatusCodeValue(), "The query roleset should have been created " +
                 "successfully because data-hub-developer has the add-query-rolesets privilege");
 
-            receipt = command.saveResource(mgr, new CommandContext(new AppConfig(), userWithRoleBeingTestedClient, null), payload);
-            assertNull(receipt, "The receipt object will be null because the Manage API threw an exception, since a " +
-                "user without the security role can't call POST again on a query roleset, and the data-hub-developer " +
-                "user doesn't have the security role. And a PUT call can't be made because the GET endpoint for a " +
-                "roleset doesn't support passing in the role names that constitute a roleset, so there's no way to " +
-                "figure out the roleset ID which would be required by the PUT call." +
-                "" +
-                "So instead of an exception being thrown, check the logging to verify that a message was logged " +
-                "indicating that the SEC-PERMDENIED exception can be safely ignored if the query roleset has already " +
-                "been deployed. This is the best we can do in DHF based on ML 10.0-3.");
+            if ("10.0-3".equals(versions.getMarkLogicVersion())) {
+                receipt = command.saveResource(mgr, new CommandContext(new AppConfig(), userWithRoleBeingTestedClient, null), payload);
+                assertNull(receipt, "The receipt object will be null because the Manage API threw an exception, since a " +
+                    "user without the security role can't call POST again on a query roleset, and the data-hub-developer " +
+                    "user doesn't have the security role. And a PUT call can't be made because the GET endpoint for a " +
+                    "roleset doesn't support passing in the role names that constitute a roleset, so there's no way to " +
+                    "figure out the roleset ID which would be required by the PUT call." +
+                    "" +
+                    "So instead of an exception being thrown, check the logging to verify that a message was logged " +
+                    "indicating that the SEC-PERMDENIED exception can be safely ignored if the query roleset has already " +
+                    "been deployed. This is the best we can do in DHF based on ML 10.0-3.");
+            } else {
+                logger.info("On the nightly build for 10.0-4, the bug with query rolesets has been fixed. " +
+                    "Once 10.0-4 is released, we can update this test to verify the above condition is longer met.");
+            }
         } finally {
             // The lack of an exception from this verifies that the roleset was deleted successfully
             userWithRoleBeingTestedClient.delete(rolesetPath);

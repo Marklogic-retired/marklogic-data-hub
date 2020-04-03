@@ -13,11 +13,13 @@ import com.marklogic.appdeployer.command.security.DeployProtectedPathsCommand;
 import com.marklogic.appdeployer.command.tasks.DeployScheduledTasksCommand;
 import com.marklogic.appdeployer.command.temporal.DeployTemporalAxesCommand;
 import com.marklogic.appdeployer.command.temporal.DeployTemporalCollectionsCommand;
+import com.marklogic.appdeployer.command.temporal.DeployTemporalCollectionsLSQTCommand;
 import com.marklogic.appdeployer.command.triggers.DeployTriggersCommand;
 import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand;
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.dhs.installer.deploy.DeployHubQueryRolesetsCommand;
@@ -171,6 +173,7 @@ public class DeployAsDeveloperTest {
     public void buildCommandList() {
         List<Command> commands = new DhsDeployer().buildCommandsForDeveloper(hubConfig);
         Collections.sort(commands, Comparator.comparing(Command::getExecuteSortOrder));
+
         int index = 0;
         assertTrue(commands.get(index++) instanceof DeployHubQueryRolesetsCommand);
         assertTrue(commands.get(index++) instanceof DeployOtherDatabasesCommand);
@@ -180,12 +183,15 @@ public class DeployAsDeveloperTest {
         assertTrue(commands.get(index++) instanceof LoadUserArtifactsCommand);
         assertTrue(commands.get(index++) instanceof DeployTemporalAxesCommand);
         assertTrue(commands.get(index++) instanceof DeployTemporalCollectionsCommand);
+        assertTrue(commands.get(index++) instanceof DeployTemporalCollectionsLSQTCommand);
         assertTrue(commands.get(index++) instanceof DeployScheduledTasksCommand);
         assertTrue(commands.get(index++) instanceof DeployAlertConfigsCommand);
         assertTrue(commands.get(index++) instanceof DeployAlertActionsCommand);
         assertTrue(commands.get(index++) instanceof DeployAlertRulesCommand);
+        assertTrue(commands.get(index++) instanceof GenerateFunctionMetadataCommand);
         assertTrue(commands.get(index++) instanceof DeployProtectedPathsCommand);
-        assertEquals(13, commands.size(),
+
+        assertEquals(15, commands.size(),
             "As of ML 10.0-3, the granular privilege for indexes doesn't seem to work with XML payloads. " +
                 "Bug https://bugtrack.marklogic.com/54231 has been created to track that. Thus, " +
                 "DeployDatabaseFieldCommand cannot be included and ml-config/database-fields/final-database.xml " +
