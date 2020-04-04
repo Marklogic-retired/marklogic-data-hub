@@ -48,7 +48,9 @@ public interface EntitySearchService {
             private BaseProxy baseProxy;
 
             private BaseProxy.DBFunctionRequest req_getMinAndMaxPropertyValues;
+            private BaseProxy.DBFunctionRequest req_getSavedQuery;
             private BaseProxy.DBFunctionRequest req_saveSavedQuery;
+            private BaseProxy.DBFunctionRequest req_getSavedQueries;
             private BaseProxy.DBFunctionRequest req_getMatchingPropertyValues;
 
             private EntitySearchServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
@@ -57,8 +59,12 @@ public interface EntitySearchService {
 
                 this.req_getMinAndMaxPropertyValues = this.baseProxy.request(
                     "getMinAndMaxPropertyValues.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                this.req_getSavedQuery = this.baseProxy.request(
+                    "getSavedQuery.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_saveSavedQuery = this.baseProxy.request(
                     "saveSavedQuery.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                this.req_getSavedQueries = this.baseProxy.request(
+                    "getSavedQueries.sjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_getMatchingPropertyValues = this.baseProxy.request(
                     "getMatchingPropertyValues.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
             }
@@ -79,6 +85,21 @@ public interface EntitySearchService {
             }
 
             @Override
+            public com.fasterxml.jackson.databind.JsonNode getSavedQuery(String id) {
+                return getSavedQuery(
+                    this.req_getSavedQuery.on(this.dbClient), id
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode getSavedQuery(BaseProxy.DBFunctionRequest request, String id) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.atomicParam("id", false, BaseProxy.StringType.fromString(id))
+                          ).responseSingle(false, Format.JSON)
+                );
+            }
+
+            @Override
             public com.fasterxml.jackson.databind.JsonNode saveSavedQuery(com.fasterxml.jackson.databind.JsonNode saveQuery) {
                 return saveSavedQuery(
                     this.req_saveSavedQuery.on(this.dbClient), saveQuery
@@ -90,6 +111,18 @@ public interface EntitySearchService {
                       .withParams(
                           BaseProxy.documentParam("saveQuery", false, BaseProxy.JsonDocumentType.fromJsonNode(saveQuery))
                           ).responseSingle(false, Format.JSON)
+                );
+            }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode getSavedQueries() {
+                return getSavedQueries(
+                    this.req_getSavedQueries.on(this.dbClient)
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode getSavedQueries(BaseProxy.DBFunctionRequest request) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request.responseSingle(false, Format.JSON)
                 );
             }
 
@@ -121,12 +154,28 @@ public interface EntitySearchService {
     com.fasterxml.jackson.databind.JsonNode getMinAndMaxPropertyValues(com.fasterxml.jackson.databind.JsonNode facetRangeSearchQuery);
 
   /**
+   * Invokes the getSavedQuery operation on the database server
+   *
+   * @param id	provides input
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode getSavedQuery(String id);
+
+  /**
    * Invokes the saveSavedQuery operation on the database server
    *
    * @param saveQuery	provides input
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode saveSavedQuery(com.fasterxml.jackson.databind.JsonNode saveQuery);
+
+  /**
+   * Invokes the getSavedQueries operation on the database server
+   *
+   * 
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode getSavedQueries();
 
   /**
    * Invokes the getMatchingPropertyValues operation on the database server
