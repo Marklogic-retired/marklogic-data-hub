@@ -2,6 +2,7 @@ package com.marklogic.hub.oneui;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.client.io.DocumentMetadataHandle;
@@ -125,6 +126,14 @@ public abstract class AbstractOneUiTest {
     protected ObjectNode readJsonObject(String json) {
         try {
             return (ObjectNode) objectMapper.readTree(json);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    protected ArrayNode readJsonArray(String json) {
+        try {
+            return (ArrayNode) objectMapper.readTree(json);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

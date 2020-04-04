@@ -1,0 +1,9 @@
+{
+  "functionName": "getSavedQueries",
+  "params": [],
+  "return": {
+    "datatype": "jsonDocument",
+    "$javaClass": "com.fasterxml.jackson.databind.JsonNode",
+    "description": "Returns an array of saved queries for the current user"
+  }
+}

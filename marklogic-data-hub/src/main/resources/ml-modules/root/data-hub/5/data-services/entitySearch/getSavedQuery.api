@@ -1,0 +1,14 @@
+{
+  "functionName": "getSavedQuery",
+  "params": [
+    {
+      "name": "id",
+      "datatype": "string"
+    }
+  ],
+  "return": {
+    "datatype": "jsonDocument",
+    "$javaClass": "com.fasterxml.jackson.databind.JsonNode",
+    "description": "Returns the savedQuery with an 'id' matching the input; current user must match the user stored in the saved query"
+  }
+}

@@ -10,7 +10,9 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.util.MultiValueMap;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -73,6 +75,14 @@ public abstract class AbstractMvcTest extends AbstractOneUiTest {
 
     protected ResultActions putJson(String url, String json) throws Exception {
         MockHttpServletRequestBuilder builder = put(url).contentType(MediaType.APPLICATION_JSON).content(json);
+        if (mockHttpSession != null) {
+            builder.session(mockHttpSession);
+        }
+        return mockMvc.perform(builder);
+    }
+
+    protected ResultActions getJson(String url, MultiValueMap<String, String> params) throws Exception {
+        MockHttpServletRequestBuilder builder = get(url).params(params);
         if (mockHttpSession != null) {
             builder.session(mockHttpSession);
         }

@@ -96,6 +96,18 @@ public class EntitySearchController {
         return new ResponseEntity<>(getEntitySearchService().saveSavedQuery(queryDocument), HttpStatus.OK);
     }
 
+    @RequestMapping(method = RequestMethod.GET, value = "/savedQueries")
+    @ResponseBody
+    public ResponseEntity<JsonNode> getQueryDocuments() {
+        return new ResponseEntity<>(getEntitySearchService().getSavedQueries(), HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/savedQueries/query")
+    @ResponseBody
+    public ResponseEntity<JsonNode> getQueryDocument(@RequestParam String id) {
+        return new ResponseEntity<>(getEntitySearchService().getSavedQuery(id), HttpStatus.OK);
+    }
+
     private EntitySearchService getEntitySearchService() {
         return EntitySearchService.on(hubConfig.newFinalClient());
     }

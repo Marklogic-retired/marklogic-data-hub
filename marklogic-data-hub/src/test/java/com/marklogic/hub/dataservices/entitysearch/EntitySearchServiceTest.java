@@ -83,9 +83,9 @@ public class EntitySearchServiceTest extends HubTestBase {
         assertNotNull(firstResponse.get("savedQuery").get("systemMetadata"));
         assertEquals("some-query", firstResponse.get("savedQuery").get("name").asText());
         assertEquals(4, firstResponse.get("savedQuery").get("systemMetadata").size());
-        assertEquals("flow-developer", firstResponse.get("savedQuery").get("owner").asText());
-        assertEquals("flow-developer", firstResponse.get("savedQuery").get("systemMetadata").get("createdBy").asText());
-        assertPermissionsAndCollections("/saved-queries/" + id + ".json");
+        assertTrue(!firstResponse.get("savedQuery").get("owner").asText().isEmpty());
+        assertTrue(!firstResponse.get("savedQuery").get("systemMetadata").get("createdBy").asText().isEmpty());
+        assertPermissionsAndCollections(id);
 
         ObjectNode savedQueryNode = (ObjectNode) firstResponse.get("savedQuery");
         savedQueryNode.put("name", "modified-name");
@@ -93,9 +93,9 @@ public class EntitySearchServiceTest extends HubTestBase {
 
         assertNotNull(modifiedResponse);
         assertEquals(id, modifiedResponse.get("savedQuery").get("id").asText());
-        assertEquals("flow-developer", modifiedResponse.get("savedQuery").get("owner").asText());
+        assertTrue(!firstResponse.get("savedQuery").get("owner").asText().isEmpty());
         assertEquals("modified-name", modifiedResponse.get("savedQuery").get("name").asText());
-        assertPermissionsAndCollections("/saved-queries/" + id + ".json");
+        assertPermissionsAndCollections(id);
     }
 
     @Test
@@ -150,7 +150,36 @@ public class EntitySearchServiceTest extends HubTestBase {
         assertThrows(FailedRequestException.class, () -> entitySearchService.saveSavedQuery(queryDoc));
     }
 
-    private void assertPermissionsAndCollections(String docUri) {
+    @Test
+    void testGetQueryDocuments() {
+        entitySearchService.saveSavedQuery(queryDoc);
+        JsonNode savedQueries = entitySearchService.getSavedQueries();
+        assertTrue(savedQueries.size() > 0, "There should be at least one saved query document");
+    }
+
+    @Test
+    void testGetQueryDocument() {
+        JsonNode response = entitySearchService.saveSavedQuery(queryDoc);
+        String id = response.get("savedQuery").get("id").asText();
+        String expectedQuery = "{\"searchText\":\"some-string\",\"entityTypeIds\":[\"Entity1\"],\"selectedFacets\":{\"Collection\":{\"dataType\":\"string\",\"stringValues\":[\"Entity1\",\"Collection1\"]},\"facet1\":{\"dataType\":\"decimal\",\"rangeValues\":{\"lowerBound\":\"2.5\",\"upperBound\":\"15\"}},\"facet2\":{\"dataType\":\"dateTime\",\"rangeValues\":{\"lowerBound\":\"2020-01-01T13:06:17\",\"upperBound\":\"2020-01-22T13:06:17\"}}}}";
+        JsonNode savedQuery = entitySearchService.getSavedQuery(id);
+        assertEquals(id, savedQuery.get("savedQuery").get("id").asText());
+        assertTrue(!savedQuery.get("savedQuery").get("owner").asText().isEmpty());
+        assertEquals("some-query", savedQuery.get("savedQuery").get("name").asText());
+        assertEquals(expectedQuery, savedQuery.get("savedQuery").get("query").toString());
+        assertEquals(4, savedQuery.get("savedQuery").get("systemMetadata").size());
+        assertPermissionsAndCollections(id);
+    }
+
+    @Test
+    void testGetQueryDocumentWithNonExistentId() {
+        String id = "some-random-id";
+        JsonNode savedQuery = entitySearchService.getSavedQuery(id);
+        assertEquals(0, savedQuery.size());
+    }
+
+    private void assertPermissionsAndCollections(String id) {
+        String docUri = "/saved-queries/" + id + ".json";
         DocumentMetadataHandle metadataHandle = new DocumentMetadataHandle();
         finalDocMgr.readMetadata(docUri, metadataHandle);
         DocumentMetadataHandle.DocumentPermissions permissions = metadataHandle.getPermissions();
