@@ -122,8 +122,10 @@ export const entityParser = (data: any) => {
             pathEntityIndexMap.set(index, index);
           } else if (propRefArray.length > 0) {  //has nested ref
             let pArr = new Array();
-            pathIndexMap.set(index, getRefPath(entity.info.title, index, data, pArr).join(''));
-            pathEntityIndexMap.set(index, getEntityPath(entity.info.title, index, data, pArr).join(''));
+              if((getRefPath(entity.info.title, index, data, pArr).length) > 0){
+                  pathIndexMap.set(index, getRefPath(entity.info.title, index, data, pArr).join(''));
+                  pathEntityIndexMap.set(index, getEntityPath(entity.info.title, index, data, pArr).join(''));
+              }
           }
           values = {
             index: index,
@@ -145,8 +147,10 @@ export const entityParser = (data: any) => {
             pathEntityIndexMap.set(rIndex, rIndex);
           } else if (propRefArray.length > 0) {  //has nested ref
             let pArr = new Array();
-            pathIndexMap.set(rIndex, getRefPath(entity.info.title, rIndex, data, pArr).join(''));
-            pathEntityIndexMap.set(rIndex, getEntityPath(entity.info.title, rIndex, data, pArr).join(''));
+              if((getRefPath(entity.info.title, rIndex, data, pArr).length) > 0){
+                  pathIndexMap.set(rIndex, getRefPath(entity.info.title, rIndex, data, pArr).join(''));
+                  pathEntityIndexMap.set(rIndex, getEntityPath(entity.info.title, rIndex, data, pArr).join(''));
+              }
           }
           values = {
             index: rIndex,
@@ -176,7 +180,7 @@ export const entityParser = (data: any) => {
 
 const getRefPath = (entity, index, data, path) => {
 
-  let fullPath;
+  let fullPath = [...path];
 
   const getPath = (entity, index, data, path) => {
     data.forEach(item => {
