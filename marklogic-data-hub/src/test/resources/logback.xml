@@ -28,6 +28,11 @@
     <appender-ref ref="STDOUT" />
   </logger>
 
+  <!-- Shut this thing up unless there's a real problem, otherwise pollutes the logs -->
+  <logger name="com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager" level="ERROR" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
+
   <logger name="com.marklogic.mgmt" level="WARN" additivity="false">
     <appender-ref ref="STDOUT" />
   </logger>

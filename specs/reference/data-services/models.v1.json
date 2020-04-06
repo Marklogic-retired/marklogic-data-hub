@@ -78,7 +78,14 @@
         "tags": [],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../../models/ModelDescriptor.v1.json"
+                }
+              }
+            }
           }
         },
         "operationId": "get-updateModelInfo.sjs",
@@ -123,6 +130,18 @@
             "description": "The name of the model"
           }
         ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "../../models/ModelDescriptor.v1.json"
+                }
+              }
+            }
+          }
+        },
         "requestBody": {
           "content": {
             "application/json": {

@@ -15,7 +15,6 @@ import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.step.RunStepResponse;
-import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,14 +39,9 @@ public class MappingTest extends HubTestBase {
     @Autowired
     FlowRunner flowRunner;
 
-    @BeforeAll
-    public static void setup() {
-        XMLUnit.setIgnoreWhitespace(true);
-        new Installer().setupProject();
-    }
-
     @BeforeEach
     public void setupTest() {
+        resetProject();
         runAsDataHubOperator();
     }
 
@@ -388,10 +382,11 @@ public class MappingTest extends HubTestBase {
     }
 
     private void installProject() throws IOException {
+        projectPath.toFile().mkdirs();
         String[] directoriesToCopy = new String[]{"input", "flows", "entities", "mappings", "src/main/ml-modules/root/custom-modules"};
         for (final String subDirectory: directoriesToCopy) {
             final Path subProjectPath = projectPath.resolve(subDirectory);
-            subProjectPath.toFile().mkdir();
+            subProjectPath.toFile().mkdirs();
             Path subResourcePath = Paths.get("mapping-test", subDirectory);
             copyFileStructure(subResourcePath, subProjectPath);
         }

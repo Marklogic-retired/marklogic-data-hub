@@ -21,6 +21,7 @@
  * resides in this module to promote reuse and also simplify upgrades as Entity Services changes within MarkLogic.
  */
 
+const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
 const sem = require("/MarkLogic/semantics.xqy");
 const semPrefixes = {es: 'http://marklogic.com/entity-services#'};
 
@@ -39,7 +40,7 @@ function findEntityTypeIds() {
  */
 function findEntityTypesAsMap() {
   const map = {};
-  for (var doc of cts.search(cts.collectionQuery("http://marklogic.com/entity-services/models"))) {
+  for (var doc of cts.search(cts.collectionQuery(getModelCollection()))) {
     Object.assign(map, convertModelToEntityTypeMap(doc.toObject()));
   }
   return map;
@@ -52,7 +53,7 @@ function findEntityTypesAsMap() {
 function findModelForEntityTypeId(entityTypeId) {
   return fn.head(cts.search(
     cts.andQuery([
-      cts.collectionQuery('http://marklogic.com/entity-services/models'),
+      cts.collectionQuery(getModelCollection()),
       cts.tripleRangeQuery(sem.iri(entityTypeId), sem.curieExpand("rdf:type"), sem.curieExpand("es:EntityType", semPrefixes))
     ])));
 }
@@ -130,11 +131,108 @@ function getModelId(model) {
   return baseUri + info.title + "-" + info.version;
 }
 
+/**
+ * The expectation is that in the future, this will be a more sophisticated query than just assuming that a collection
+ * equalling the entity name is a reliable way of finding entity instances.
+ * @return {*}
+ */
+function buildQueryForEntityName(entityName) {
+  return cts.collectionQuery(entityName);
+}
+
+function getLatestJobData(entityName) {
+  const latestJob = fn.head(fn.subsequence(
+    cts.search(
+      buildQueryForEntityName(entityName),
+      [cts.indexOrder(cts.fieldReference("datahubCreatedOn"), "descending")]
+    ), 1, 1
+  ));
+  if (latestJob) {
+    const uri = xdmp.nodeUri(latestJob);
+    const response = {
+      latestJobDateTime : xdmp.documentGetMetadataValue(uri, "datahubCreatedOn")
+    };
+    let jobIds = xdmp.documentGetMetadataValue(uri, "datahubCreatedByJob");
+    if (jobIds) {
+      response.latestJobId = jobIds.split(" ").pop();
+    }
+    return response;
+  }
+  return null;
+}
+
+function getModelUri(entityName) {
+  return "/entities/" + xdmp.urlEncode(entityName) + ".entity.json";
+}
+
+function getModelCollection() {
+  return "http://marklogic.com/entity-services/models";
+}
+
+/**
+ * Handles writing the model to both databases. Will overwrite existing permissions/collections, which is consistent
+ * with how DH has been since 5.0.
+ *
+ * @param entityName
+ * @param model
+ */
+function writeModel(entityName, model) {
+  if (model.info) {
+    if (!model.info.version) {
+      model.info.version = "1.0.0";
+    }
+    if (!model.info.baseUri) {
+      model.info.baseUri = "http://example.org/";
+    }
+  }
+
+  if (model.definitions) {
+    validateModelDefinitions(model.definitions);
+  }
+
+  const dataHub = DataHubSingleton.instance();
+
+  dataHub.hubUtils.replaceLangWithLanguage(model);
+
+  let permsString = dataHub.config.MODELPERMISSIONS;
+  if (!permsString || permsString.startsWith("%%ml")) {
+    // Safeguard, as the token is somehow not being replaced when tests are run in Jenkins
+    permsString = "data-hub-entity-model-reader,read,data-hub-entity-model-writer,update";
+  }
+  const permissions = dataHub.hubUtils.parsePermissions(permsString);
+
+  [dataHub.config.STAGINGDATABASE, dataHub.config.FINALDATABASE].forEach(db => {
+    dataHub.hubUtils.writeDocument(entityLib.getModelUri(name), model, permissions, getModelCollection(), db);
+  });
+}
+
+function validateModelDefinitions(definitions) {
+  const pattern = /^[a-zA-Z][a-zA-Z0-9\-_]*$/;
+  Object.keys(definitions).forEach(entityName => {
+    if (!pattern.test(entityName)) {
+      throw new Error(`Invalid entity name: ${entityName}; must start with a letter and can only contain letters, numbers, hyphens, and underscores.`);
+    }
+    if (definitions[entityName].properties) {
+      Object.keys(definitions[entityName].properties).forEach(propertyName => {
+        if (!pattern.test(propertyName)) {
+          throw new Error(`Invalid property name: ${propertyName}; must start with a letter and can only contain letters, numbers, hyphens, and underscores.`);
+        }
+      });
+    }
+    return entityName;
+  });
+}
+
 module.exports = {
   findEntityTypeIds,
   findEntityType,
   findEntityTypesAsMap,
   findModelForEntityTypeId,
   getEntityTypeId,
-  getEntityTypeIdParts
+  getEntityTypeIdParts,
+  getLatestJobData,
+  getModelCollection,
+  getModelUri,
+  validateModelDefinitions,
+  writeModel
 };

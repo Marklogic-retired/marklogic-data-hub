@@ -24,6 +24,7 @@ import com.marklogic.mgmt.util.ObjectMapperFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -37,9 +38,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @ContextConfiguration(classes = ApplicationConfig.class)
 public class LoadUserArtifactsCommandTest extends HubTestBase {
 
+    private LoadUserArtifactsCommand loadUserArtifactsCommand;
+
     @BeforeEach
     public void setup() {
-        loadUserArtifactsCommand.setHubConfig(getDataHubAdminConfig());
+        loadUserArtifactsCommand = new LoadUserArtifactsCommand(adminHubConfig);
     }
 
     @Test

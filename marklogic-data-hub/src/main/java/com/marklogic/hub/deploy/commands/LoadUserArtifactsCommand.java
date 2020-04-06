@@ -38,6 +38,7 @@ import com.marklogic.hub.ArtifactManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.artifact.ArtifactTypeInfo;
 import com.marklogic.hub.dataservices.ArtifactService;
+import com.marklogic.hub.dataservices.ModelsService;
 import com.marklogic.hub.impl.ArtifactManagerImpl;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
 import org.apache.commons.io.FilenameUtils;
@@ -110,107 +111,27 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
 
     @Override
     public void execute(CommandContext context) {
-        // Passing null for dbName to use with Data Services
         DatabaseClient stagingClient = hubConfig.newStagingClient(null);
-        DatabaseClient finalClient = hubConfig.newFinalClient();
 
-        Path entitiesPath = hubConfig.getHubEntitiesDir();
-        Path mappingsPath = hubConfig.getHubMappingsDir();
-        Path stepDefPath = hubConfig.getStepDefinitionsDir();
-        Path flowPath = hubConfig.getFlowsDir();
-
-        JSONDocumentManager finalDocMgr = finalClient.newJSONDocumentManager();
-        JSONDocumentManager stagingDocMgr = stagingClient.newJSONDocumentManager();
-
-        DocumentWriteSet finalEntityDocumentWriteSet = finalDocMgr.newWriteSet();
-        DocumentWriteSet stagingEntityDocumentWriteSet = stagingDocMgr.newWriteSet();
-        DocumentWriteSet stagingMappingDocumentWriteSet = stagingDocMgr.newWriteSet();
-        DocumentWriteSet finalMappingDocumentWriteSet = finalDocMgr.newWriteSet();
-        DocumentWriteSet stagingStepDefDocumentWriteSet = stagingDocMgr.newWriteSet();
-        DocumentWriteSet finalStepDefDocumentWriteSet = finalDocMgr.newWriteSet();
-        DocumentWriteSet stagingFlowDocumentWriteSet = stagingDocMgr.newWriteSet();
-        DocumentWriteSet finalFlowDocumentWriteSet = finalDocMgr.newWriteSet();
-        PropertiesModuleManager propertiesModuleManager = getModulesManager();
-        ResourceToURI entityResourceToURI = new ResourceToURI(){
-            public String toURI(Resource r) {
-                return "/entities/" + r.getFilename();
-            }
-        };
-        ResourceToURI mappingResourceToURI = new ResourceToURI(){
-            public String toURI(Resource r) throws IOException {
-                return "/mappings/" + r.getFile().getParentFile().getName() + "/" + r.getFilename();
-            }
-        };
-        ResourceToURI flowResourceToURI = new ResourceToURI(){
-            public String toURI(Resource r) {
-                return "/flows/" + r.getFilename();
-            }
-        };
-        ResourceToURI stepResourceToURI = new ResourceToURI(){
-            public String toURI(Resource r) throws IOException {
-                return "/step-definitions/" + r.getFile().getParentFile().getParentFile().getName() + "/" + r.getFile().getParentFile().getName() + "/" + r.getFilename();
-            }
-        };
-        EntityDefModulesFinder entityDefModulesFinder = new EntityDefModulesFinder();
-        MappingDefModulesFinder mappingDefModulesFinder = new MappingDefModulesFinder();
         try {
-            //first let's do the entities paths
-            if (entitiesPath.toFile().exists()) {
-                Files.walkFileTree(entitiesPath, new SimpleFileVisitor<Path>() {
-                    @Override
-                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                        executeWalk(
-                            dir,
-                            entityDefModulesFinder,
-                            propertiesModuleManager,
-                            entityResourceToURI,
-                            buildMetadata(hubConfig.getEntityModelPermissions(), "http://marklogic.com/entity-services/models"),
-                            stagingEntityDocumentWriteSet,
-                            finalEntityDocumentWriteSet
-                        );
-                        return FileVisitResult.CONTINUE;
-                    }
-                });
-            }
-            //now let's do the mappings paths
-            if (mappingsPath.toFile().exists()) {
-                Files.walkFileTree(mappingsPath, new SimpleFileVisitor<Path>() {
-                    @Override
-                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                        if (isArtifactDir(dir, mappingsPath.toAbsolutePath())) {
-                            executeWalk(
-                                dir,
-                                mappingDefModulesFinder,
-                                propertiesModuleManager,
-                                mappingResourceToURI,
-                                buildMetadata(hubConfig.getMappingPermissions(), "http://marklogic.com/data-hub/mappings"),
-                                stagingMappingDocumentWriteSet,
-                                finalMappingDocumentWriteSet
-                            );
-                            return FileVisitResult.CONTINUE;
-                        }
-                        else {
-                            return FileVisitResult.CONTINUE;
-                        }
-                    }
-                });
-            }
+            loadModels(stagingClient);
+            loadMappingsViaRestApi(stagingClient);
+
             ArtifactManager artifactManager = new ArtifactManagerImpl(hubConfig);
             ArtifactService artifactService = ArtifactService.on(stagingClient);
-            ObjectMapper mapper = new ObjectMapper();
-            // New way to deploy Artifacts via Data Services
             for (ArtifactTypeInfo typeInfo: artifactManager.getArtifactTypeInfoList()) {
                 final String artifactType = typeInfo.getType();
                 final Path artifactPath = hubConfig.getHubProject().getArtifactTypePath(typeInfo);
-                logger.info("Deploying artifacts of type '" + artifactType + "'");
-                if (!typeInfo.getUserCanUpdate()) {
-                    logger.info("User is not permitted to update artifacts of type '" + artifactType+ "', so will not load any artifacts of that type" );
-                    continue;
-                }
                 if (!artifactPath.toFile().exists()) {
-                    logger.info("Artifact directory '"+ artifactPath.toString() + "' does not exist, so will not load any artifacts from it." );
+                    logger.debug("Artifact directory '"+ artifactPath + "' does not exist, so will not load any artifacts from it." );
                     continue;
                 }
+                if (!typeInfo.getUserCanUpdate()) {
+                    logger.warn("User is not permitted to update artifacts of type '" + artifactType+ "', so will not " +
+                        "load any artifacts of that type from directory " + artifactPath);
+                    continue;
+                }
+                logger.info("Loading artifacts of type '" + artifactType + "' from directory " + artifactPath);
                 final String fileExtension = "*" + typeInfo.getFileExtension();
                 final String settingFileExtension = "*.settings." + FilenameUtils.getExtension(typeInfo.getFileExtension());
                 BaseModulesFinder modulesFinder = new BaseModulesFinder(){
@@ -225,40 +146,91 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                     @Override
                     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                         if (dir.toFile().isDirectory()) {
-                            executeWalkWithDataService(
-                                dir,
-                                modulesFinder,
-                                artifactService,
-                                typeInfo,
-                                mapper
-                            );
+                            executeWalkWithDataService(dir, modulesFinder, artifactService, typeInfo);
                         }
                         return FileVisitResult.CONTINUE;
                     }
                 });
             }
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Unable to load user artifacts, cause: " + e.getMessage(), e);
+        }
+    }
 
-            if (stagingEntityDocumentWriteSet.size() > 0) {
-                finalDocMgr.write(finalEntityDocumentWriteSet);
-                stagingDocMgr.write(stagingEntityDocumentWriteSet);
-            }
+    protected void loadModels(DatabaseClient stagingClient) throws IOException {
+        final Path modelsPath = hubConfig.getHubEntitiesDir();
+        if (modelsPath.toFile().exists()) {
+            ModelsService modelsService = ModelsService.on(stagingClient);
+            EntityDefModulesFinder modulesFinder = new EntityDefModulesFinder();
+            Files.walkFileTree(modelsPath, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    logger.info("Loading models from directory " + dir);
+                    modulesFinder.findModules(dir.toString()).getAssets().forEach(r -> {
+                        JsonNode model;
+                        try {
+                            model = objectMapper.readTree(r.getInputStream());
+                        } catch (IOException e) {
+                            throw new RuntimeException("Unable to read model as JSON; model filename: " + r.getFilename(), e);
+                        }
+                        modelsService.saveModel(model);
+                        logger.info("Loaded model from file " + r.getFilename());
+                    });
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        }
+    }
+
+    /**
+     * TODO The ArtifactService isn't loading all mappings the way that this method does, so we still need it in place
+     * for mappings created prior to 5.3.0.
+     *
+     * @param stagingClient
+     * @throws IOException
+     */
+    protected void loadMappingsViaRestApi(DatabaseClient stagingClient) throws IOException {
+        Path mappingsPath = hubConfig.getHubMappingsDir();
+        if (mappingsPath.toFile().exists()) {
+            DatabaseClient finalClient = hubConfig.newFinalClient();
+            JSONDocumentManager finalDocMgr = finalClient.newJSONDocumentManager();
+            JSONDocumentManager stagingDocMgr = stagingClient.newJSONDocumentManager();
+            DocumentWriteSet stagingMappingDocumentWriteSet = stagingDocMgr.newWriteSet();
+            DocumentWriteSet finalMappingDocumentWriteSet = finalDocMgr.newWriteSet();
+
+            PropertiesModuleManager propertiesModuleManager = getModulesManager();
+            ResourceToURI mappingResourceToURI = new ResourceToURI(){
+                public String toURI(Resource r) throws IOException {
+                    return "/mappings/" + r.getFile().getParentFile().getName() + "/" + r.getFilename();
+                }
+            };
+            MappingDefModulesFinder mappingDefModulesFinder = new MappingDefModulesFinder();
+            Files.walkFileTree(mappingsPath, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    if (isArtifactDir(dir, mappingsPath.toAbsolutePath())) {
+                        executeWalk(
+                            dir,
+                            mappingDefModulesFinder,
+                            propertiesModuleManager,
+                            mappingResourceToURI,
+                            buildMetadata(hubConfig.getMappingPermissions(), "http://marklogic.com/data-hub/mappings"),
+                            stagingMappingDocumentWriteSet,
+                            finalMappingDocumentWriteSet
+                        );
+                        return FileVisitResult.CONTINUE;
+                    }
+                    else {
+                        return FileVisitResult.CONTINUE;
+                    }
+                }
+            });
+
             if (stagingMappingDocumentWriteSet.size() > 0) {
                 stagingDocMgr.write(stagingMappingDocumentWriteSet);
                 finalDocMgr.write(finalMappingDocumentWriteSet);
             }
-            if (stagingStepDefDocumentWriteSet.size() > 0) {
-                stagingDocMgr.write(stagingStepDefDocumentWriteSet);
-                finalDocMgr.write(finalStepDefDocumentWriteSet);
-            }
-            if (stagingFlowDocumentWriteSet.size() > 0) {
-                stagingDocMgr.write(stagingFlowDocumentWriteSet);
-                finalDocMgr.write(finalFlowDocumentWriteSet);
-            }
-
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-            //throw new RuntimeException(e);
         }
     }
 
@@ -286,23 +258,24 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         Path dir,
         ModulesFinder modulesFinder,
         ArtifactService artifactService,
-        ArtifactTypeInfo artifactTypeInfo,
-        ObjectMapper mapper
+        ArtifactTypeInfo artifactTypeInfo
     ) throws IOException {
         Modules modules = modulesFinder.findModules(dir.toString());
         for (Resource r : modules.getAssets()) {
-            JsonNode artifactJson = mapper.readTree(r.getFile());
+            JsonNode artifactJson = objectMapper.readTree(r.getFile());
             if (r.getFile().getName().endsWith(".settings." + FilenameUtils.getExtension(artifactTypeInfo.getFileExtension()))) {
                 artifactService.setArtifactSettings(
                     artifactTypeInfo.getType(),
                     artifactJson.get("artifactName").asText(),
                     artifactJson);
+                logger.info(String.format("Loaded artifact settings of type '%s' from file %s", artifactTypeInfo.getType(), r.getFilename()));
             } else {
                 artifactService.setArtifact(
                     artifactTypeInfo.getType(),
                     artifactJson.get(artifactTypeInfo.getNameProperty()).asText(),
                     artifactJson
                 );
+                logger.info(String.format("Loaded artifact of type type '%s' file %s", artifactTypeInfo.getType(), r.getFilename()));
             }
         }
     }

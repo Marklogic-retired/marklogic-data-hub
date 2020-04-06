@@ -31,7 +31,7 @@
       "parameters": []
     },
     "/api/models/${name}/info": {
-      "post": {
+      "put": {
         "summary": "Edit model info",
         "operationId": "post-api-models-info",
         "responses": {

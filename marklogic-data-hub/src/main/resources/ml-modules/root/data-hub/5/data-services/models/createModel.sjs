@@ -17,16 +17,30 @@
 
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 
-var entityCollection;
+var input = fn.head(xdmp.fromJSON(input));
 
-let res = {
-  "entityCollection": entityCollection,
-  "latestJobId": null,
-  "latestJobDateTime": null
+const name = input.name;
+const description = input.description;
+
+if (name == null) {
+  new Error("The model must have an info object with a title property");
+}
+
+const model = {
+  info: {
+    title: name
+  },
+  definitions: {}
 };
 
-const latestJobData = entityLib.getLatestJobData(entityCollection);
-if (latestJobData) {
-  res = Object.assign(res, latestJobData);
+model.definitions[name] = {
+  properties: {}
+};
+
+if (input.description) {
+  model.definitions[name].description = description;
 }
-res;
+
+entityLib.writeModel(name, model);
+
+model;

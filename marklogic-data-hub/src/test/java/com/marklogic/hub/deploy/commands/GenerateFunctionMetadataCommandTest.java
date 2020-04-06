@@ -75,8 +75,8 @@ public class GenerateFunctionMetadataCommandTest extends HubTestBase {
 
     @Test
     public void sortOrder() {
-        int metadataOrder = generateFunctionMetadataCommand.getExecuteSortOrder();
-        int userModulesOrder = loadUserModulesCommand.getExecuteSortOrder();
+        int metadataOrder = new GenerateFunctionMetadataCommand().getExecuteSortOrder();
+        int userModulesOrder = new LoadUserModulesCommand().getExecuteSortOrder();
         assertTrue(metadataOrder > userModulesOrder,
             "Function metadata should be generated after user modules are loaded");
     }

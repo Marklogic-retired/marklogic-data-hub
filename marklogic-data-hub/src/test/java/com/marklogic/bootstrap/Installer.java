@@ -1,15 +1,17 @@
 package com.marklogic.bootstrap;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
+import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.api.API;
+import com.marklogic.mgmt.api.security.Privilege;
 import com.marklogic.mgmt.api.security.User;
+import com.marklogic.mgmt.mapper.DefaultResourceMapper;
 import com.marklogic.mgmt.resource.databases.DatabaseManager;
-import com.marklogic.rest.util.JsonNodeUtil;
+import com.marklogic.mgmt.resource.security.PrivilegeManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -23,7 +25,6 @@ import org.springframework.util.FileCopyUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.regex.Pattern;
 
 @EnableAutoConfiguration
@@ -75,12 +76,26 @@ public class Installer extends HubTestBase implements InitializingBean {
             dataHubEnvManager.addRole("data-hub-environment-manager");
             dataHubEnvManager.save();
 
+            addStatusPrivilegeToDataHubDeveloper();
+
             applyDatabasePropertiesForTests(adminHubConfig);
         }
 
         if (getDataHubAdminConfig().getIsProvisionedEnvironment()) {
             installHubModules();
         }
+    }
+
+    /**
+     * This allows for any user that inherits data-hub-developer to invoke the "waitForTasksToFinish" method.
+     */
+    protected void addStatusPrivilegeToDataHubDeveloper() {
+        ManageClient client = adminHubConfig.getManageClient();
+        PrivilegeManager mgr = new PrivilegeManager(client);
+        String json = mgr.getAsJson("status-builtins", "kind", "execute");
+        Privilege p = new DefaultResourceMapper(new API(client)).readResource(json, Privilege.class);
+        p.addRole("data-hub-developer");
+        mgr.save(p.getJson());
     }
 
     /**

@@ -1,0 +1,16 @@
+{
+  "name": "echoFlow",
+  "steps": {
+    "1": {
+      "name": "echoStep",
+      "stepDefinitionName": "echoStep",
+      "stepDefinitionType": "CUSTOM",
+      "options": {
+        "sourceQuery": "cts.collectionQuery('customer-input')",
+        "sourceDatabase": "data-hub-FINAL",
+        "targetDatabase": "data-hub-FINAL",
+        "collections": ["Customer"]
+      }
+    }
+  }
+}

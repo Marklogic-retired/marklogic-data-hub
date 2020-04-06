@@ -13,9 +13,6 @@
         },
         "description" : {
           "type" : "string"
-        },
-        "baseUri" : {
-          "type" : "string"
         }
       },
       "required" : [ "name" ]

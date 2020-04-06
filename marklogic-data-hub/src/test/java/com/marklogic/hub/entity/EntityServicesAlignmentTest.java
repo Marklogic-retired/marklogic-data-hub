@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.io.File;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -34,8 +33,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ApplicationConfig.class)
 public class EntityServicesAlignmentTest extends HubTestBase {
-    static Path projectPath = Paths.get(PROJECT_PATH).toAbsolutePath();
-    private static File projectDir = projectPath.toFile();
 
     @Autowired
     HubProject project;
@@ -94,8 +91,7 @@ public class EntityServicesAlignmentTest extends HubTestBase {
 
         installUserModules(getDataHubAdminConfig(), true);
 
-        // Adding sleep to give the server enough time to act on triggers in both staging and final databases.
-        Thread.sleep(1000);
+        waitForTasksToFinish();
 
         assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, "http://marklogic.com/xdmp/tde"));
         assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, "http://marklogic.com/xdmp/tde"));

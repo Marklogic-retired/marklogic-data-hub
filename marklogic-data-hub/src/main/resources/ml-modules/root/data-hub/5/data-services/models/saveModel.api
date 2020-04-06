@@ -1,0 +1,11 @@
+{
+    "functionName": "saveModel",
+    "desc": "Save a model, where the input is a JSON model",
+    "params": [
+        {
+            "name": "model",
+            "datatype": "jsonDocument",
+            "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+        }
+    ]
+}
