@@ -161,7 +161,7 @@ public class DataServiceFilesGenerator extends LoggingObject {
     }
 
     private final static String MODULE_TEXT = "/*\n" +
-        "  Copyright 2012-2019 MarkLogic Corporation\n" +
+        "  Copyright (c) 2020 MarkLogic Corporation\n" +
         "\n" +
         "  Licensed under the Apache License, Version 2.0 (the \"License\");\n" +
         "  you may not use this file except in compliance with the License.\n" +
