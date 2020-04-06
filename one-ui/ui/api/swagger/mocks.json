@@ -1,9 +1,8 @@
 {
   "swagger": "2.0",
   "info": {
-    "description": "This is a sample of a DataHub Swagger document defining endpoints to be mocked",
-    "version": "1.0.0",
-    "title": "Data Hub Curation API",
+    "version": "5.3.0-SNAPSHOT",
+    "title": "Hub Central REST API",
     "license": {
       "name": "Apache 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"

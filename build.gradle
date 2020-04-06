@@ -1,3 +1,17 @@
+import com.fasterxml.jackson.databind.node.ObjectNode
+import com.marklogic.mgmt.util.ObjectMapperFactory
+import com.marklogic.rest.util.JsonNodeUtil
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "com.marklogic:ml-app-deployer:4.0.0"
+        classpath "commons-io:commons-io:2.5"
+    }
+}
+
 allprojects {
     task resolveAllDependencies {
         doLast {
@@ -22,7 +36,6 @@ subprojects {
         mavenLocal()
     }
 
-
     dependencies {
         testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.3.1'
 		testCompile 'org.apache.httpcomponents:httpclient:4.3.5'
@@ -43,12 +56,42 @@ subprojects {
         executionData run
         sourceSets sourceSets.main
     }
-
-
 }
 
-wrapper {
-    gradleVersion = '4.10'
+task buildSwaggerFile {
+    description = "Merges the existing mocks.json file in one-ui with the new OpenAPI endpoint " +
+        "files in ./specs. As new endpoint files are added, please add them to this task so they can be " +
+        "merged together."
+    doLast {
+        def mapper = ObjectMapperFactory.getObjectMapper()
+        def mocks = mapper.readTree(new File("one-ui/ui/api/swagger/mocks.json"))
+        def models = mapper.readTree(new File("specs/reference/rest-endpoints/models.v1.json"))
+        def paths = JsonNodeUtil.mergeObjectNodes((ObjectNode) models.get("paths"), (ObjectNode) mocks.get("paths"))
+
+        mocks.remove("paths")
+        models.remove("paths")
+        def merged = JsonNodeUtil.mergeObjectNodes(models, mocks)
+        merged.set("paths", paths)
+
+        // Results in a useless pulldown in the UI
+        merged.remove("servers")
+        // swagger-ui-express will complain if both this and OpenAPI are in the merged JSON
+        merged.remove("swagger")
+
+        println "Copying ./specs to ./one-ui/ui/mockserver/specs, which is gitignored"
+        org.apache.commons.io.FileUtils.copyDirectory(
+            new File("specs"),
+            new File("one-ui/ui/mockserver/specs")
+        )
+
+        def outputPath = "one-ui/ui/mockserver/specs/reference/rest-endpoints"
+        println "Writing merged-apis.json to " + outputPath
+        def outputFile = new File(new File(outputPath), "merged-apis.json")
+        outputFile.createNewFile()
+        outputFile.setText(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(merged))
+
+        println "You can now run 'npm install' and then 'npm start' from one-ui/ui/mockserver"
+    }
 }
 
 //Task to update versions in files they are hardcoded. If version is hardcoded in any other files in the future,it has to be added to the list
@@ -61,6 +104,7 @@ task updateVersion {
                      "web/gradle.properties",
                      "one-ui/gradle.properties",
                      "one-ui/src/main/resources/application.properties",
+                     "one-ui/ui/api/swagger/mocks.json",
                      "marklogic-data-hub/src/main/resources/scaffolding/build_gradle",
                      "marklogic-data-hub/src/main/java/com/marklogic/hub/impl/HubConfigImpl.java",
                      "examples/dh-5-example/build.gradle",
