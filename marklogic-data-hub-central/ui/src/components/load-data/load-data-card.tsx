@@ -93,11 +93,9 @@ const LoadDataCard: React.FC<Props> = (props) => {
     }
 
     function handleMouseOver(e, name) {
-        console.log('handleMouseOver', e.target.className);
         // Handle all possible events from mouseover of card body
         if (typeof e.target.className === 'string' &&
             (e.target.className === 'ant-card-body' ||
-             e.target.className.startsWith('load-data-card_formatFileContainer') ||
              e.target.className.startsWith('load-data-card_formatFileContainer') ||
              e.target.className.startsWith('load-data-card_stepNameStyle') ||
              e.target.className.startsWith('load-data-card_fileCount'))
@@ -209,7 +207,7 @@ const LoadDataCard: React.FC<Props> = (props) => {
                                             defaultActiveFirstOption={false}
                                         >
                                             { props.flows && props.flows.length > 0 ? props.flows.map((f,i) => (
-                                                <Option value={f.name}>{f.name}</Option>
+                                                <Option value={f.name} key={i}>{f.name}</Option>
                                             )) : null}
                                         </Select>
                                     </div>

@@ -5,6 +5,7 @@ import MappingCard from './mapping-card';
 describe('Mapping cards view component', () => {
   it('should render correctly', () => {
     shallow(<MappingCard data 
+      flows
       entityTypeTitle
       getMappingArtifactByMapName
       deleteMappingArtifact
@@ -12,6 +13,9 @@ describe('Mapping cards view component', () => {
       updateMappingArtifact
       canReadOnly
       canReadWrite
-      entityModel/>);
+      canWriteFlows
+      entityModel
+      addStepToFlow
+      addStepToNew/>);
   });
 });

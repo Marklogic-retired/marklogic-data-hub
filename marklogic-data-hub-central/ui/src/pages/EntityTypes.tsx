@@ -28,23 +28,20 @@ const EntityTypes: React.FC = () => {
 
     const getEntityModels = async () => {
         try {
-        let response = await axios.get(`/api/entities`);
-        if(response.status === 200) {
-            let entModels:any = {};
-            response.data.map(ent => {
-                entModels[ent.info.title] = ent
-            });
-            setEntityModels({...entModels});
+          let response = await axios.get(`/api/entities`);
+          if (response.status === 200) {
+              let entModels:any = {};
+              response.data.map(ent => {
+                  entModels[ent.info.title] = ent
+              });
+              setEntityModels({...entModels});
+          }    
+        } catch (error) {
+            let message = error;
+            console.error('Error while fetching entities Info', message);
+        } finally {
+          resetSessionTime();
         }
-            
-              console.log('GET Entities Info API Called successfully!');
-             
-          } catch (error) {
-              let message = error;
-              console.log('Error while fetching entities Info', message);
-          } finally {
-            resetSessionTime();
-          }
 
     }
 
@@ -54,17 +51,16 @@ const EntityTypes: React.FC = () => {
             let response = await axios.get('/api/flows');
             if (response.status === 200) {
                 setFlows(response.data);
-                console.log('GET flows successful', response);
             } 
         } catch (error) {
             let message = error.response.data.message;
-            console.log('Error getting flows', message);
+            console.error('Error getting flows', message);
         } finally {
         resetSessionTime();
         }
     }
 
-  // POST load data step to new flow
+  // POST mapping step to new flow
   const addStepToNew = async () => {
     try {
       setIsLoading(true);
@@ -76,7 +72,7 @@ const EntityTypes: React.FC = () => {
       //} 
     } catch (error) {
         let message = error.response.data.message;
-        console.log('Error while adding load data step to new flow.', message);
+        console.error('Error while adding mapping step to new flow.', message);
         setIsLoading(false);
         handleError(error);
     } finally {
@@ -84,15 +80,15 @@ const EntityTypes: React.FC = () => {
     }
   }
 
-  // POST load data step to existing flow
-  const addStepToFlow = async (loadArtifactName, flowName) => {
+  // POST mapping step to existing flow
+  const addStepToFlow = async (mappingArtifactName, flowName) => {
     let stepToAdd = {
-      "name": loadArtifactName,
-      "stepDefinitionName": "default-ingestion",
-      "stepDefinitionType": "INGESTION",
+      "name": mappingArtifactName,
+      "stepDefinitionName": "default-mapping",
+      "stepDefinitionType": "MAPPING",
       options: {
-        "loadData": { 
-          "name": loadArtifactName
+        "mapping": { 
+          "name": mappingArtifactName
         }
       }
     };
@@ -102,15 +98,14 @@ const EntityTypes: React.FC = () => {
       let body = stepToAdd;
       let response = await axios.post(url, body);
       if (response.status === 200) {
-        console.log('POST addStepToFlow', response.data);
         setIsLoading(false);
       } 
     } catch (error) {
         let message = error.response.data.message;
-        console.log('Error while adding load data step to flow.', message);
+        console.error('Error while adding mapping step to flow.', message);
         setIsLoading(false);
         Modal.error({
-          content: 'Error adding step "' + loadArtifactName + '" to flow "' + flowName + '."',
+          content: 'Error adding step "' + mappingArtifactName + '" to flow "' + flowName + '."',
         });
         handleError(error);
     } finally {

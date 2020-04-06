@@ -33,18 +33,16 @@ const LoadData: React.FC = () => {
 
   //CREATE/POST load data Artifact
   const createLoadDataArtifact = async (loadDataObj) => {
-    console.log('loadDataObj', loadDataObj);
     try {
       setIsLoading(true);
 
       let response = await axios.post(`/api/artifacts/loadData/${loadDataObj.name}`, loadDataObj);
       if (response.status === 200) {
-        console.log('Create/Update LoadDataArtifact API Called successfully!')
         setIsLoading(false);
       }
     } catch (error) {
       let message = error.response.data.message;
-      console.log('Error While creating the Load Data artifact!', message)
+      console.error('Error While creating the Load Data artifact!', message)
       setIsLoading(false);
       handleError(error);
     } finally {
@@ -60,11 +58,10 @@ const LoadData: React.FC = () => {
       
       if (response.status === 200) {
         setLoadDataArtifacts([...response.data]);
-        console.log('GET Artifacts API Called successfully!');
       } 
     } catch (error) {
         let message = error.response.data.message;
-        console.log('Error while fetching load data artifacts', message);
+        console.error('Error while fetching load data artifacts', message);
         handleError(error);
     }
   }
@@ -76,12 +73,11 @@ const LoadData: React.FC = () => {
       let response = await axios.delete(`/api/artifacts/loadData/${loadDataName}`);
       
       if (response.status === 200) {
-        console.log('DELETE API Called successfully!');
         setIsLoading(false);
       } 
     } catch (error) {
         let message = error.response.data.message;
-        console.log('Error while deleting load data artifact.', message);
+        console.error('Error while deleting load data artifact.', message);
         setIsLoading(false);
         handleError(error);
     } finally {
@@ -95,11 +91,10 @@ const LoadData: React.FC = () => {
         let response = await axios.get('/api/flows');
         if (response.status === 200) {
             setFlows(response.data);
-            console.log('GET flows successful', response);
         } 
     } catch (error) {
         let message = error.response.data.message;
-        console.log('Error getting flows', message);
+        console.error('Error getting flows', message);
     } finally {
       resetSessionTime();
     }
@@ -117,7 +112,7 @@ const LoadData: React.FC = () => {
       //} 
     } catch (error) {
         let message = error.response.data.message;
-        console.log('Error while adding load data step to new flow.', message);
+        console.error('Error while adding load data step to new flow.', message);
         setIsLoading(false);
         handleError(error);
     } finally {
@@ -143,12 +138,11 @@ const LoadData: React.FC = () => {
       let body = stepToAdd;
       let response = await axios.post(url, body);
       if (response.status === 200) {
-        console.log('POST addStepToFlow', response.data);
         setIsLoading(false);
       } 
     } catch (error) {
         let message = error.response.data.message;
-        console.log('Error while adding load data step to flow.', message);
+        console.error('Error while adding load data step to flow.', message);
         setIsLoading(false);
         Modal.error({
           content: 'Error adding step "' + loadArtifactName + '" to flow "' + flowName + '."',
