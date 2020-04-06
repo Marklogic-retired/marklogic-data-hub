@@ -270,13 +270,19 @@ pipeline{
 		count++;
 		    props = readProperties file:'data-hub/pipeline.properties';
 		     def  reviewResponse;
+		     def commitHash;
 		    withCredentials([usernameColonPassword(credentialsId: '550650ab-ee92-4d31-a3f4-91a11d5388a3', variable: 'Credentials')]) {
 		     reviewResponse = sh (returnStdout: true, script:'''
                                curl -u $Credentials  -X GET  '''+githubAPIUrl+'''/pulls/$CHANGE_ID/reviews
                                ''')
+             commitHash = sh (returnStdout: true, script:'''
+                               curl -u $Credentials  -X GET  '''+githubAPIUrl+'''/pulls/$CHANGE_ID
+                               ''')
 		    }
-		    def reviewState=getReviewStateOfPR reviewResponse,2,env.GIT_COMMIT ;
-		    println(env.GIT_COMMIT)
+		    def jsonObj = new JsonSlurperClassic().parseText(commitHash.toString().trim())
+		    def commit_id=jsonObj.head.sha
+		    println(commit_id)
+		    def reviewState=getReviewStateOfPR reviewResponse,2,commit_id ;
 		    println(reviewState)
 			if((env.CHANGE_TITLE.split(':')[1].contains("Automated PR")) || reviewState.equalsIgnoreCase("APPROVED")){
 				println("Automated PR")
