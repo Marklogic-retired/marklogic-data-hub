@@ -22,7 +22,6 @@ import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.MappingManager;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.util.FileUtil;
-import com.marklogic.hub.util.HubModuleManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,9 +29,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,8 +41,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ApplicationConfig.class)
 public class MappingManagerTest extends HubTestBase {
-    static Path projectPath = Paths.get(PROJECT_PATH).toAbsolutePath();
-    private static File projectDir = projectPath.toFile();
 
     private        String mappingName = "my-fun-test";
 
@@ -215,39 +210,4 @@ public class MappingManagerTest extends HubTestBase {
     private void copySecondTestMap() {
         FileUtil.copy(getResourceStream("scaffolding-test/"+mappingName+"-2"+MappingManager.MAPPING_FILE_EXTENSION), getDataHubAdminConfig().getHubMappingsDir().resolve(mappingName+"/"+mappingName+"-2"+MappingManager.MAPPING_FILE_EXTENSION).toFile());
     }
-
-    private void installMappings() {
-        Path employeeDir = project.getEntityDir("employee");
-        employeeDir.toFile().mkdirs();
-        assertTrue(employeeDir.toFile().exists());
-        FileUtil.copy(getResourceStream("scaffolding-test/employee.entity.json"),
-            employeeDir.resolve("employee.entity.json").toFile());
-
-        Path managerDir = project.getEntityDir("manager");
-        managerDir.toFile().mkdirs();
-        assertTrue(managerDir.toFile().exists());
-        FileUtil.copy(getResourceStream("scaffolding-test/manager.entity.json"), managerDir.resolve("manager.entity.json").toFile());
-    }
-
-    private void updateManagerEntity() {
-        Path managerDir = project.getEntityDir("manager");
-        assertTrue(managerDir.toFile().exists());
-        File targetFile = managerDir.resolve("manager.entity.json").toFile();
-        FileUtil.copy(getResourceStream("scaffolding-test/manager2.entity.json"), targetFile);
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        targetFile.setLastModified(System.currentTimeMillis());
-    }
-
-    private HubModuleManager getPropsMgr() {
-        String timestampFile = getDataHubAdminConfig().getHubProject().getUserModulesDeployTimestampFile();
-        HubModuleManager propertiesModuleManager = new HubModuleManager(timestampFile);
-        return propertiesModuleManager;
-    }
-
-
-
 }

@@ -146,6 +146,7 @@ function setArtifact(artifactType, artifactName, artifact) {
     const artifactPermissions = artifactLibrary.getPermissions();
     const artifactCollections = artifactLibrary.getCollections();
     artifact.lastUpdated = fn.string(fn.currentDateTime());
+    dataHub.hubUtils.replaceLangWithLanguage(artifact);
     for (const db of artifactDatabases) {
         dataHub.hubUtils.writeDocument(`${artifactDirectory}${xdmp.urlEncode(artifactName)}${artifactFileExtension}`, artifact, artifactPermissions, artifactCollections, db);
     }

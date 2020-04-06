@@ -97,7 +97,7 @@ public class MasterTest extends HubTestBase {
         String[] directoriesToCopy = new String[]{"input", "flows", "step-definitions", "entities", "mappings"};
         for (final String subDirectory : directoriesToCopy) {
             final Path subProjectPath = projectPath.resolve(subDirectory);
-            subProjectPath.toFile().mkdir();
+            subProjectPath.toFile().mkdirs();
             Path subResourcePath = Paths.get("master-test", subDirectory);
             copyFileStructure(subResourcePath, subProjectPath);
         }
@@ -144,7 +144,7 @@ public class MasterTest extends HubTestBase {
         // that it fails sometimes is being ignored enough that there's no value in having Jenkins test runs fail solely
         // because this returns 205 instead of 208. The ideal solution is likely to narrow down the set of documents
         // that are expected to be merged together, as it's very difficult right now to know why only 205 are in the
-        // collection and which 3 are "missing". 
+        // collection and which 3 are "missing".
         int masteredCount = getFinalDocCount("sm-person-mastered");
         assertTrue(masteredCount >= 205, "Expecting at least 205 documents to be in the 'sm-person-mastered' collection, but only found: "+ masteredCount);
 

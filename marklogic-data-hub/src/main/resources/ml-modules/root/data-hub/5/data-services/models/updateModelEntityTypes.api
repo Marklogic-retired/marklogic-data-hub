@@ -11,5 +11,9 @@
     "schema" : {
       "$ref" : "../../models/ModelDefinitions.v1.json"
     }
-  } ]
+  } ],
+  "return" : {
+    "datatype" : "jsonDocument",
+    "$javaClass" : "com.fasterxml.jackson.databind.JsonNode"
+  }
 }

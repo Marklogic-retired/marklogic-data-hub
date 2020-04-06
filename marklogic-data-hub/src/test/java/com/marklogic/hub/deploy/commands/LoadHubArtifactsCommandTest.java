@@ -36,6 +36,7 @@ public class LoadHubArtifactsCommandTest extends HubTestBase {
 
     @Test
     public void verifyDefaultPermissions() {
+        LoadHubArtifactsCommand loadHubArtifactsCommand = new LoadHubArtifactsCommand(adminHubConfig);
         DocumentMetadataHandle h = loadHubArtifactsCommand.buildMetadata(adminHubConfig.getFlowPermissions(),"http://marklogic.com/data-hub/flow");
         assertEquals(2, h.getCollections().size());
         Iterator<String> collections = h.getCollections().iterator();
@@ -77,6 +78,8 @@ public class LoadHubArtifactsCommandTest extends HubTestBase {
         config.setFlowPermissions("manage-user,read,manage-admin,update");
         config.setStepDefinitionPermissions("manage-user,read,manage-admin,update");
         config.setModulePermissions("manage-user,read,manage-admin,update");
+
+        LoadUserArtifactsCommand loadUserArtifactsCommand = new LoadUserArtifactsCommand(adminHubConfig);
 
         DocumentMetadataHandle.DocumentPermissions perms = loadUserArtifactsCommand.buildMetadata(config.getStepDefinitionPermissions(),"http://marklogic.com/data-hub/step-definition").getPermissions();
         assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("manage-user").iterator().next());

@@ -16,18 +16,19 @@
  */
 package com.marklogic.hub.oneui.controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.hub.dataservices.ModelsService;
+import com.marklogic.hub.impl.ModelManagerImpl;
 import com.marklogic.hub.oneui.managers.ModelManager;
 import com.marklogic.hub.oneui.models.HubConfigSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/api/models")
@@ -37,7 +38,7 @@ public class ModelController {
     protected ModelManager modelManager;
 
     @Autowired
-    private HubConfigSession hubConfig;
+    protected HubConfigSession hubConfig;
 
     @Bean
     @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS, value = "request")
@@ -67,5 +68,33 @@ public class ModelController {
     @ResponseBody
     public ResponseEntity<?> getLatestJobInfo(@PathVariable String modelName) {
         return ResponseEntity.ok(modelManager.getLatestJobInfo(modelName));
+    }
+
+    @RequestMapping(value = "/primaryEntityTypes", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<JsonNode> getPrimaryEntityTypes() {
+        return ResponseEntity.ok(newService().getPrimaryEntityTypes());
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<JsonNode> createModel(@RequestBody JsonNode input) {
+        return new ResponseEntity<>(newService().createModel(input), HttpStatus.CREATED);
+    }
+
+    @RequestMapping(value = "/{modelName}/info", method = RequestMethod.PUT)
+    public ResponseEntity<Void> updateModelInfo(@PathVariable String modelName, @RequestBody JsonNode input) {
+        newService().updateModelInfo(modelName, input.has("description") ? input.get("description").asText() : "");
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/{modelName}/entityTypes", method = RequestMethod.PUT)
+    public ResponseEntity<Void> updateModelEntityTypes(@PathVariable String modelName, @RequestBody JsonNode entityTypes) {
+        newService().updateModelEntityTypes(modelName, entityTypes);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private ModelsService newService() {
+        return new ModelManagerImpl(hubConfig);
     }
 }

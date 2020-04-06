@@ -17,16 +17,16 @@
 
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 
-var entityCollection;
+var name;
+var input = fn.head(xdmp.fromJSON(input));
 
-let res = {
-  "entityCollection": entityCollection,
-  "latestJobId": null,
-  "latestJobDateTime": null
-};
-
-const latestJobData = entityLib.getLatestJobData(entityCollection);
-if (latestJobData) {
-  res = Object.assign(res, latestJobData);
+const uri = entityLib.getModelUri(name);
+if (!fn.docAvailable(uri)) {
+  new Error("Could not find model with name: " + name);
 }
-res;
+
+const model = cts.doc(uri).toObject();
+model.definitions = input;
+entityLib.writeModel(name, model);
+
+model;

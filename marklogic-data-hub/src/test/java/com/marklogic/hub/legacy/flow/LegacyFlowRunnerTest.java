@@ -21,15 +21,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
+import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.mapping.Mapping;
 import com.marklogic.hub.util.FileUtil;
 import org.custommonkey.xmlunit.XMLAssert;
-import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Assert;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,9 +45,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ApplicationConfig.class)
@@ -57,16 +54,16 @@ public class LegacyFlowRunnerTest extends HubTestBase {
     private static Path projectDir = Paths.get(".", "ye-olde-project");
 
     @BeforeEach
-    public void setup() throws IOException {
-        XMLUnit.setIgnoreWhitespace(true);
-        deleteProjectDir();
-        createProjectDir();
+    public void setup(){
+        resetProject();
+
+        // Specific to this test - must also delete legacy entities in the modules database
+        runInModules("cts:uri-match('/entities/**') ! xdmp:document-delete(.)");
+
         enableDebugging();
         enableTracing();
 
         scaffolding.createEntity(ENTITY);
-        clearUserModules();
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
 
     @Test
@@ -291,10 +288,12 @@ public class LegacyFlowRunnerTest extends HubTestBase {
 
         try {
             installUserModules(runAsFlowOperator(), false);
+            fail("Expected this to fail as the user does not have the ability to update the loaded entity model");
         }
         catch(Exception e) {
-            Assert.assertTrue(e.getMessage().toUpperCase().contains("SEC-URIPRIV:"));
+            logger.info("Caught expected error: " + e.getMessage());
         }
+
         // Mapping should not be deployed
         assertFalse(finalDocMgr.read("/mappings/test/test-1.mapping.json").hasNext());
         // Deploys mapping to final db

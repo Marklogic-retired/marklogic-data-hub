@@ -231,7 +231,20 @@ class HubUtils {
       }
     }
     return parts.join('');
-  };
+  }
+
+  /**
+   * This was originally addressed via DHFPROD-3193 - based on an update to ML 10.0-2, "lang" must now be used instead
+   * of "language".
+   *
+   * @param artifact
+   */
+  replaceLangWithLanguage(artifact) {
+    if (artifact.language) {
+      artifact.lang = artifact.language;
+      delete artifact.language;
+    }
+  }
 }
 
 module.exports = HubUtils;

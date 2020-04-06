@@ -69,8 +69,6 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
     @Autowired
     private HubConfig hubConfig;
 
-    private ObjectMapper mapper;
-
     public EntityManagerImpl() {
     }
 
@@ -103,16 +101,16 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
                 String options = generator.generateOptions(entities, false);
                 if (options != null) {
                     FileUtils.writeStringToFile(stagingFile, options);
-                    logger.info("Wrote entity-specific search options to: " + stagingFile.getAbsolutePath());
+                    logger.debug("Wrote entity-specific search options to: " + stagingFile.getAbsolutePath());
                     FileUtils.writeStringToFile(finalFile, options);
-                    logger.info("Wrote entity-specific search options to: " + finalFile.getAbsolutePath());
+                    logger.debug("Wrote entity-specific search options to: " + finalFile.getAbsolutePath());
                 }
                 String expOptions = generator.generateOptions(entities, true);
                 if (expOptions != null) {
                     FileUtils.writeStringToFile(expStagingFile, expOptions);
-                    logger.info("Wrote entity-specific search options for Explorer to: " + stagingFile.getAbsolutePath());
+                    logger.debug("Wrote entity-specific search options for Explorer to: " + stagingFile.getAbsolutePath());
                     FileUtils.writeStringToFile(expFinalFile, expOptions);
-                    logger.info("Wrote entity-specific search options for Explorer to: " + finalFile.getAbsolutePath());
+                    logger.debug("Wrote entity-specific search options for Explorer to: " + finalFile.getAbsolutePath());
                 }
                 return true;
             }
@@ -137,9 +135,9 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
                 String options = generator.generateOptions(entities, true);
                 if (options != null) {
                     FileUtils.writeStringToFile(expStagingFile, options);
-                    logger.info("Wrote entity-specific search options for Explorer to: " + expStagingFile.getAbsolutePath());
+                    logger.debug("Wrote entity-specific search options for Explorer to: " + expStagingFile.getAbsolutePath());
                     FileUtils.writeStringToFile(expFinalFile, options);
-                    logger.info("Wrote entity-specific search options for Explorer to: " + expFinalFile.getAbsolutePath());
+                    logger.debug("Wrote entity-specific search options for Explorer to: " + expFinalFile.getAbsolutePath());
                 }
             }
         } catch (IOException e) {
@@ -515,6 +513,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         return entities;
     }
 
+    @Deprecated(since = "DHF 5.3.0; use ModelsService instead")
     public HubEntity saveEntity(HubEntity entity, Boolean rename) throws IOException {
         JsonNode node = entity.toJson();
         ObjectMapper objectMapper = new ObjectMapper();
