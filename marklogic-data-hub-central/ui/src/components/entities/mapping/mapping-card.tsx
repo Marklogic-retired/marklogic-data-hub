@@ -42,7 +42,7 @@ const MappingCard: React.FC<Props> = (props) => {
     const [mapName, setMapName] = useState('');
     const [dialogVisible, setDialogVisible] = useState(false);
     const [addDialogVisible, setAddDialogVisible] = useState(false);
-    const [loadArtifactName, setLoadArtifactName] = useState('');
+    const [mappingArtifactName, setMappingArtifactName] = useState('');
     const [mappingVisible, setMappingVisible] = useState(false);
     const [sourceData, setSourceData] = useState<any[]>([]);
     const [sourceURI,setSourceURI] = useState('');
@@ -141,7 +141,7 @@ const MappingCard: React.FC<Props> = (props) => {
 
     const handleCardDelete = (name) => {
         setDialogVisible(true);
-        setLoadArtifactName(name);
+        setMappingArtifactName(name);
       }
 
       const onOk = (name) => {
@@ -155,7 +155,6 @@ const MappingCard: React.FC<Props> = (props) => {
       }
 
       function handleMouseOver(e, name) {
-        console.log('handleMouseOver', e.target);
         // Handle all possible events from mouseover of card body
         if (typeof e.target.className === 'string' &&
             (e.target.className === 'ant-card-body' ||
@@ -168,26 +167,11 @@ const MappingCard: React.FC<Props> = (props) => {
         }
     }
 
-    function handleSelect(obj) {
-        handleStepAdd(obj.loadName, obj.flowName);
-    }
-
-    const handleStepAdd = (loadDataName, flowName) => {
-        setAddDialogVisible(true);
-        setLoadArtifactName(loadDataName);
-        setFlowName(flowName);
-    }
-
-    const onAddOk = (lName, fName) => {
-        props.addStepToFlow(lName, fName)
-        setAddDialogVisible(false);
-    }
-
     const deleteConfirmation = <Modal
         visible={dialogVisible}
         okText='Yes'
         cancelText='No'
-        onOk={() => onOk(loadArtifactName)}
+        onOk={() => onOk(mappingArtifactName)}
         onCancel={() => onCancel()}
         width={350}
         maskClosable={false}
@@ -568,18 +552,33 @@ const MappingCard: React.FC<Props> = (props) => {
         cursor: 'pointer',width: '330px',margin:'-12px -12px', padding: '5px 5px'
     }
 
+    function handleSelect(obj) {
+        handleStepAdd(obj.mappingName, obj.flowName);
+    }
+
+    const handleStepAdd = (mappingName, flowName) => {
+        setAddDialogVisible(true);
+        setMappingArtifactName(mappingName);
+        setFlowName(flowName);
+    }
+
+    const onAddOk = (lName, fName) => {
+        props.addStepToFlow(lName, fName, 'mapping')
+        setAddDialogVisible(false);
+    }
+
     const addConfirmation = (
         <Modal
             visible={addDialogVisible}
             okText='Yes'
             cancelText='No'
-            onOk={() => onAddOk(loadArtifactName, flowName)}
+            onOk={() => onAddOk(mappingArtifactName, flowName)}
             onCancel={() => onCancel()}
             width={350}
             maskClosable={false}
         >
             <div style={{fontSize: '16px', padding: '10px'}}>
-                Are you sure you want to add "{loadArtifactName}" to flow "{flowName}"?
+                Are you sure you want to add "{mappingArtifactName}" to flow "{flowName}"?
             </div>
         </Modal>
     );
@@ -611,7 +610,6 @@ const MappingCard: React.FC<Props> = (props) => {
                                 className={styles.cardStyle}
                                 size="small"
                             >
-                                <div className={styles.cardContainer} style={cardContainer} onClick={() => openSourceToEntityMapping(elem.name,index)}>
                                 <div className={styles.formatFileContainer}>
                                     <span className={styles.mapNameStyle}>{getInitialChars(elem.name, 27, '...')}</span>
                                     {/* <span style={sourceFormatStyle(elem.sourceFormat)}>{elem.sourceFormat.toUpperCase()}</span> */}
@@ -620,20 +618,20 @@ const MappingCard: React.FC<Props> = (props) => {
                                 {elem.selectedSource === 'collection' ? <div className={styles.sourceQuery}>Collection: {extractCollectionFromSrcQuery(elem.sourceQuery)}</div> : <div className={styles.sourceQuery}>Source Query: {getInitialChars(elem.sourceQuery,32,'...')}</div>}
                                 <br /><br />
                                 <p className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</p>
-                                </div>
                                 {props.canWriteFlows ? <div className={styles.cardLinks} style={{display: showLinks === elem.name ? 'block' : 'none'}}>
+                                    <div className={styles.cardLink} onClick={() => openSourceToEntityMapping(elem.name,index)}>Open step details</div>
                                     <div className={styles.cardLink}>Add step to a new flow</div>
                                     <div className={styles.cardNonLink}>
                                         Add step to an existing flow
                                         <div className={styles.cardLinkSelect}>
                                             <Select
                                                 style={{ width: '100%' }}
-                                                onChange={(flowName) => handleSelect({flowName: flowName, loadName: elem.name})}
+                                                onChange={(flowName) => handleSelect({flowName: flowName, mappingName: elem.name})}
                                                 placeholder="Select Flow"
                                                 defaultActiveFirstOption={false}
                                             >
                                                 { props.flows && props.flows.length > 0 ? props.flows.map((f,i) => (
-                                                    <Option value={f.name}>{f.name}</Option>
+                                                    <Option value={f.name} key={i}>{f.name}</Option>
                                                 )) : null}
                                             </Select>
                                         </div>
@@ -688,6 +686,7 @@ const MappingCard: React.FC<Props> = (props) => {
                 activityType={activityType}
                 canWrite={roleService.canWriteMappings()}
             />
+            {addConfirmation}
         </div>
     );
 
