@@ -47,11 +47,22 @@ function getArtifact() {
   ];
 }
 
+function getDefaultArtifactSettings() {
+  const result = invokeGetSettngsService('loadData','validArtifact');
+  return [
+    test.assertEqual("validArtifact", result.artifactName),
+    test.assertEqual("data-hub-STAGING", result.targetDatabase),
+    test.assertEqual(1, result.collections.length),
+    test.assertEqual("default-ingestion", result.collections[0]),
+    test.assertTrue(fn.empty(result.lastUpdated))
+  ];
+}
+
 function insertArtifactSettings() {
   const result = invokeSetSettingsService('loadData','validArtifact', {
     'artifactName' : 'validArtifact',
     'additionalCollections' : [ 'Collection1', 'Collection2' ],
-    'targetDatabase' : 'data-hub-STAGING',
+    'targetDatabase' : 'data-hub-FINAL',
     'permissions' : 'rest-reader,read,rest-writer,update',
     'customHook' : {
       'module' : '',
@@ -62,7 +73,7 @@ function insertArtifactSettings() {
   });
   return [
     test.assertEqual("validArtifact", result.artifactName),
-    test.assertEqual("data-hub-STAGING", result.targetDatabase)
+    test.assertEqual("data-hub-FINAL", result.targetDatabase)
   ];
 }
 
@@ -70,7 +81,7 @@ function getArtifactSettings() {
   const result = invokeGetSettngsService('loadData','validArtifact');
   return [
     test.assertEqual("validArtifact", result.artifactName),
-    test.assertEqual("data-hub-STAGING", result.targetDatabase),
+    test.assertEqual("data-hub-FINAL", result.targetDatabase),
     test.assertTrue(xdmp.castableAs('http://www.w3.org/2001/XMLSchema', 'dateTime', result.lastUpdated))
   ];
 }
@@ -82,9 +93,11 @@ function deleteArtifact() {
   ));
 }
 
+
 []
   .concat(insertValidArtifact())
   .concat(getArtifact())
+  .concat(getDefaultArtifactSettings())
   .concat(insertArtifactSettings())
   .concat(getArtifactSettings())
   .concat(deleteArtifact());

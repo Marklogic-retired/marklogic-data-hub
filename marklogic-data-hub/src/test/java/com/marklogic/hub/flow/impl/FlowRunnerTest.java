@@ -16,6 +16,7 @@
 
 package com.marklogic.hub.flow.impl;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.bootstrap.Installer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.XMLDocumentManager;
@@ -36,22 +37,13 @@ import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.step.impl.Step;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -86,8 +78,6 @@ public class FlowRunnerTest extends HubTestBase {
 
     @Test
     public void testRunFlow() {
-        verifyThatLoadDataSettingsAreAppliedToStepConfig();
-
         RunFlowResponse resp = runFlow("testFlow", null, null, null, null);
         flowRunner.awaitCompletion();
 
@@ -485,7 +475,8 @@ public class FlowRunnerTest extends HubTestBase {
             "Expected job status of second response to be 'finished', but was: " + resp1.getJobStatus());
     }
 
-    private void verifyThatLoadDataSettingsAreAppliedToStepConfig() {
+    @Test
+    public void verifyThatLoadDataSettingsAreAppliedToStepConfig() {
         final Step step = flowManager.getFlow("testFlow").getStep("1");
         final Map<String, Object> stepConfig = new HashMap<>();
 
@@ -494,9 +485,17 @@ public class FlowRunnerTest extends HubTestBase {
         assertTrue(stepConfig.containsKey("fileLocations"), "fileLocations in stepConfig should have been " +
             "populated from the LoadData artifact");
 
+        // Verify file locations information
         final Map<String, String> fileLocations = (Map<String,String>)stepConfig.get("fileLocations");
         assertEquals("xml", fileLocations.get("inputFileType"));
         assertEquals(".*/input,''", fileLocations.get("outputURIReplacement"));
         assertEquals("input", fileLocations.get("inputFilePath"));
+
+        // Verify additional settings come through
+        assertEquals("data-hub-STAGING", ((JsonNode) step.getOptions().get("targetDatabase")).asText());
+        assertEquals("data-hub-operator,read,data-hub-operator,update", ((JsonNode) step.getOptions().get("permissions")).asText());
+        List<String> collections = (List<String>) step.getOptions().get("collections");
+        assertEquals(1, collections.size());
+        assertEquals("xml-coll", collections.get(0));
     }
 }

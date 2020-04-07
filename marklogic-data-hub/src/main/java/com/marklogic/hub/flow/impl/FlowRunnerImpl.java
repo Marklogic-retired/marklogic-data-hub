@@ -657,17 +657,32 @@ public class FlowRunnerImpl implements FlowRunner{
                     if (artifactSettingsJson.hasNonNull("customHook")) {
                         step.setCustomHook(artifactSettingsJson.get("customHook"));
                     }
-                    List<String> stepOptionProperties = Arrays.asList("collections", "permissions");
                     ObjectMapper mapper = new ObjectMapper();
+                    List<String> collections = new ArrayList<>();
+                    // collections needs to be read in a special way so it is treated as a list
                     if (artifactSettingsJson.hasNonNull("collections")) {
                         try {
-                            stepOptions.put("collections", Arrays.asList(mapper.readValue(artifactSettingsJson.get("collections").toString(), String[].class)));
+                            collections.addAll(Arrays.asList(mapper.readValue(artifactSettingsJson.get("collections").toString(), String[].class)));
                         } catch (IOException e) {
                             logger.warn("Unable to parse collections from artifact settings", e);
                         }
                     }
-                    if (artifactSettingsJson.hasNonNull("permissions")) {
-                        stepOptions.put("permissions", artifactSettingsJson.get("permissions").asText());
+                    if (artifactSettingsJson.hasNonNull("additionalCollections")) {
+                        try {
+                            collections.addAll(Arrays.asList(mapper.readValue(artifactSettingsJson.get("additionalCollections").toString(), String[].class)));
+                        } catch (IOException e) {
+                            logger.warn("Unable to parse collections from artifact settings", e);
+                        }
+                    }
+                    if (collections.size() > 0) {
+                        stepOptions.put("collections", collections);
+                    }
+                    // loop over other text settings
+                    List<String> stepOptionProperties = Arrays.asList("sourceDatabase", "targetDatabase", "targetFormat", "permissions", "provenanceGranularityLevel", "customHook", "additionalCollections");
+                    for (String stepOptionProperty : stepOptionProperties) {
+                        if (artifactSettingsJson.hasNonNull(stepOptionProperty)) {
+                            stepOptions.put(stepOptionProperty, artifactSettingsJson.get(stepOptionProperty));
+                        }
                     }
                 }
             }

@@ -10,7 +10,7 @@ describe('Update data load settings component', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
-    cleanup;
+    cleanup();
   });
 
   test('Verify settings dialog renders for Mapping', () => {
@@ -26,7 +26,7 @@ describe('Update data load settings component', () => {
     expect(getByText('Please select')).toBeInTheDocument();
     expect(getByPlaceholderText('Enter targetPermissions')).toHaveValue('data-hub-operator,read,data-hub-operator,update');
     expect(getByText('Provenance Granularity:')).toBeInTheDocument();
-    expect(getByText('coarse-grained')).toBeInTheDocument();
+    expect(getByText('coarse')).toBeInTheDocument();
     expect(getByText('Custom Hook')).toBeInTheDocument();    
     fireEvent.click(getByText('Custom Hook'));
     expect(getByPlaceholderText('Enter module')).toBeInTheDocument();
@@ -46,7 +46,7 @@ describe('Update data load settings component', () => {
     expect(getByText('Please select')).toBeInTheDocument();
     expect(getByPlaceholderText('Enter targetPermissions')).toHaveValue('data-hub-operator,read,data-hub-operator,update');
     expect(getByText('Provenance Granularity:')).toBeInTheDocument();
-    expect(getByText('coarse-grained')).toBeInTheDocument();
+    expect(getByText('coarse')).toBeInTheDocument();
     expect(getByText('Custom Hook')).toBeInTheDocument();    
     fireEvent.click(getByText('Custom Hook'));
     expect(getByPlaceholderText('Enter module')).toBeInTheDocument();
@@ -74,9 +74,45 @@ describe('Update data load settings component', () => {
     expect(getByPlaceholderText('Enter targetPermissions')).toHaveValue('data-hub-monitor,update');
 
     //Verifying provenance options select field
-    fireEvent.click(getByText('coarse-grained'));
+    fireEvent.click(getByText('coarse'));
     const provOptions = getAllByTestId('provOptions').map(li => li);
-    expect(provOptions.map(li => li.textContent).toString()).toEqual('coarse-grained,off');
+    expect(provOptions.map(li => li.textContent).toString()).toEqual('coarse,off');
+    fireEvent.select(provOptions[1]);
+    expect(getByText('off')).toBeInTheDocument();
+
+    fireEvent.click(getByText('Custom Hook'));
+    fireEvent.change(getByPlaceholderText('Enter module'), { target: { value: 'test-module' }});
+    expect(getByPlaceholderText('Enter module')).toHaveValue('test-module');
+    fireEvent.change(getByPlaceholderText('Enter parameters'), { target: { value: '{}' }});
+    expect(getByPlaceholderText('Enter parameters')).toHaveValue('{}');
+    fireEvent.change(getByPlaceholderText('Enter user information'), { target: { value: 'test-user' }});
+    expect(getByPlaceholderText('Enter user information')).toHaveValue('test-user');
+    fireEvent.click(getByRole('switch'));
+    expect(getByText('ON')).toBeInTheDocument();
+  });
+
+  test('Verify all form fields can be input/selected by user for mapping', () => {
+    const { getByText, getAllByTestId, getByPlaceholderText, getByRole } = render(<ActivitySettingsDialog {...data.activitySettings} />);
+
+    //Verifying both database options select fields exist
+    expect(getByText('data-hub-STAGING')).toBeInTheDocument();
+    expect(getByText('data-hub-FINAL')).toBeInTheDocument();
+
+    fireEvent.change(getByPlaceholderText('Enter targetPermissions'), { target: { value: 'data-hub-monitor,update' }});
+    expect(getByPlaceholderText('Enter targetPermissions')).toHaveValue('data-hub-monitor,update');
+
+    // Verify targetFormat options select field
+    expect(getByText('JSON')).toBeInTheDocument();
+    fireEvent.click(getByText('JSON'));
+    const testFormatOptions = getAllByTestId('targetFormatOptions').map(li => li);
+    expect(testFormatOptions.map(li => li.textContent).toString()).toEqual('JSON,XML');
+    fireEvent.select(testFormatOptions[1]);
+    expect(getByText('XML')).toBeInTheDocument();
+
+    //Verifying provenance options select field
+    fireEvent.click(getByText('coarse'));
+    const provOptions = getAllByTestId('provOptions').map(li => li);
+    expect(provOptions.map(li => li.textContent).toString()).toEqual('coarse,off');
     fireEvent.select(provOptions[1]);
     expect(getByText('off')).toBeInTheDocument();
 

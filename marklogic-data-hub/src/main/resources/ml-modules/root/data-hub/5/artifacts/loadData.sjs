@@ -65,6 +65,16 @@ function getArtifactSettingNode(collectionName, artifactName, artifactVersion) {
     return fn.head(results);
 }
 
+function defaultArtifactSettings(artifactName) {
+    return {
+        artifactName,
+        collections: ['default-ingestion'],
+        additionalCollections: [],
+        targetDatabase: dataHub.config.STAGINGDATABASE,
+        provenanceGranularityLevel: 'coarse'
+    };
+}
+
 module.exports = {
   getNameProperty,
   getVersionProperty,
@@ -73,5 +83,6 @@ module.exports = {
   getPermissions,
   getArtifactNode,
   validateArtifact,
-  getArtifactSettingNode
+  getArtifactSettingNode,
+  defaultArtifactSettings
 };

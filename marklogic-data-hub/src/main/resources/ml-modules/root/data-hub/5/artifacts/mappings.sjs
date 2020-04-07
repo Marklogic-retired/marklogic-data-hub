@@ -83,6 +83,17 @@ function getArtifactSettingNode(collectionName, artifactName, artifactVersion) {
   return fn.head(results);
 }
 
+function defaultArtifactSettings(artifactName) {
+    return {
+        artifactName,
+        collections: ['default-mapping'],
+        additionalCollections: [],
+        sourceDatabase: dataHub.config.STAGINGDATABASE,
+        targetDatabase: dataHub.config.FINALDATABASE,
+        provenanceGranularityLevel: 'coarse'
+    };
+}
+
 module.exports = {
     getNameProperty,
     getVersionProperty,
@@ -91,5 +102,6 @@ module.exports = {
     getPermissions,
     getArtifactNode,
     validateArtifact,
-    getArtifactSettingNode
+    getArtifactSettingNode,
+    defaultArtifactSettings
 };
