@@ -40,6 +40,13 @@ src/main/resources/application.properties .
 
 See the comments in the AbstractOneUiTest class for information on how to write tests for the Java code in this application.
 
+### Viewing OpenAPI docs
+
+To view the OpenAPI docs for the REST middle tier endpoints in this project, just do the following:
+
+    cd one-ui/ui/mockserver
+    npm install
+    npm start
 
 ## Using this for production 
 

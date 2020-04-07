@@ -12,6 +12,7 @@
   "dependencies": {
     "express": "^4.17.1",
     "http-proxy-middleware": "^0.20.0",
+    "json-refs": "^3.0.15",
     "request": "^2.88.0",
     "swagger-express-middleware": "^2.0.4",
     "swagger-ui-express": "^4.1.2"
