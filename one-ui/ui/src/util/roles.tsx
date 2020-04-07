@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface IRolesContextInterface {
+export interface IRolesContextInterface {
     roles: string[];
     setRoles: (roles: string[]) => void;
     canReadMappings: () => boolean;
@@ -72,4 +72,3 @@ export class RolesService implements IRolesContextInterface {
 }
 
 export const RolesContext = React.createContext<IRolesContextInterface>(new RolesService());
-

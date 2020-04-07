@@ -403,7 +403,7 @@ public class QueryStepRunner implements StepRunner {
                     stepMetrics.getSuccessfulEvents().addAndGet(response.totalCount - response.errorCount);
                     if (response.errors != null) {
                         if (errorMessages.size() < MAX_ERROR_MESSAGES) {
-                            errorMessages.addAll(response.errors.stream().map(jsonNode -> StepRunnerUtil.jsonToString(jsonNode)).collect(Collectors.toList()));
+                            errorMessages.addAll(response.errors.stream().limit(MAX_ERROR_MESSAGES - errorMessages.size()).map(jsonNode -> StepRunnerUtil.jsonToString(jsonNode)).collect(Collectors.toList()));
                         }
                     }
 
