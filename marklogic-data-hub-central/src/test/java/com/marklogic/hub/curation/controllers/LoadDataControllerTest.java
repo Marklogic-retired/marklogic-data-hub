@@ -30,10 +30,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.io.IOException;
+import java.nio.file.Path;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LoadDataControllerTest extends AbstractOneUiTest {
 
@@ -87,7 +87,10 @@ public class LoadDataControllerTest extends AbstractOneUiTest {
         controller.updateArtifact("validArtifact", newLoadDataConfig());
 
         JsonNode result = controller.getArtifactSettings("validArtifact").getBody();
-        assertTrue(result.isEmpty(), "No load data settings yet!");
+        // Check for defaults
+        assertEquals("validArtifact", result.get("artifactName").asText());
+        assertEquals(1, result.get("collections").size());
+        assertEquals("default-ingestion", result.get("collections").get(0).asText());
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode settings = mapper.readTree(LOAD_DATA_SETTINGS);
@@ -106,7 +109,6 @@ public class LoadDataControllerTest extends AbstractOneUiTest {
 
         controller.deleteArtifact("validArtifact");
 
-        assertTrue(controller.getArtifactSettings("validArtifact").getBody().isEmpty());
         assertThrows(FailedRequestException.class, () -> controller.getArtifact("validArtifact"));
         assertFalse(artifactSettingFullName.toFile().exists(), "Artifact setting file should no longer exist");
     }

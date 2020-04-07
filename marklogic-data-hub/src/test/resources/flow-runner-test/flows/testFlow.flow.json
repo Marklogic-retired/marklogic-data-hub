@@ -14,9 +14,7 @@
       "options": {
         "loadData": {
           "name": "testLoadData"
-        },
-        "permissions": "data-hub-operator,read,data-hub-operator,update",
-        "collections": ["xml-coll"]
+        }
       }
     },
     "2": {

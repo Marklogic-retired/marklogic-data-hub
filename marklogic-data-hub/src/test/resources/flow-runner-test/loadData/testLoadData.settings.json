@@ -1,0 +1,6 @@
+{
+  "artifactName": "testLoadData",
+  "targetDatabase": "data-hub-STAGING",
+  "permissions": "data-hub-operator,read,data-hub-operator,update",
+  "collections": ["xml-coll"]
+}

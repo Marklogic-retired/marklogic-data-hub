@@ -166,7 +166,10 @@ public class MappingControllerTest extends AbstractOneUiTest {
         controller.updateArtifact("TestCustomerMapping", objectMapper.readTree(MAPPING_CONFIG_1));
 
         JsonNode result = controller.getArtifactSettings("TestCustomerMapping").getBody();
-        assertTrue(result.isEmpty(), "No mapping settings yet!");
+        // Check for defaults
+        assertEquals("TestCustomerMapping", result.get("artifactName").asText());
+        assertEquals(1, result.get("collections").size());
+        assertEquals("default-mapping", result.get("collections").get(0).asText());
 
         JsonNode settings = objectMapper.readTree(MAPPING_SETTINGS);
 
@@ -182,7 +185,6 @@ public class MappingControllerTest extends AbstractOneUiTest {
 
         controller.deleteArtifact("TestCustomerMapping");
 
-        assertTrue(controller.getArtifactSettings("TestCustomerMapping").getBody().isEmpty());
         assertThrows(FailedRequestException.class, () -> controller.getArtifact("TestCustomerMapping"));
     }
 

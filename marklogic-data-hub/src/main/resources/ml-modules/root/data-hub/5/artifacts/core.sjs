@@ -163,6 +163,9 @@ function getArtifactSettings(artifactType, artifactName, artifactVersion = 'late
         const settingNode = artifactLibrary.getArtifactSettingNode(settingCollection, artifactName, artifactVersion);
 
         if (fn.empty(settingNode)) {
+            if (artifactLibrary.defaultArtifactSettings) {
+                return artifactLibrary.defaultArtifactSettings(artifactName);
+            }
             return {};
         }
         cachedArtifacts[artifactSettingKey] = settingNode.toObject();
