@@ -66,7 +66,7 @@ const Bench: React.FC = () => {
             if (response.status === 200) {
                 setFlows(response.data);
                 console.log('GET flows successful', response);
-            } 
+            }
         } catch (error) {
             console.log('********* ERROR', error);
             let message = error.response.data.message;
@@ -131,7 +131,7 @@ const Bench: React.FC = () => {
             if (response.status === 200) {
                 console.log('DELETE flow success', name);
                 setIsLoading(false);
-            } 
+            }
         } catch (error) {
             console.log('Error deleting flow', error);
             setIsLoading(false);
@@ -144,7 +144,7 @@ const Bench: React.FC = () => {
             if (response.status === 200) {
                 setLoads(response.data);
                 console.log('GET loads successful', response);
-            } 
+            }
         } catch (error) {
             let message = error.response.data.message;
             console.log('Error getting loads', message);
@@ -174,11 +174,11 @@ const Bench: React.FC = () => {
         let maxErrors = 10; // Returned from backend
         let stepProp = Object.keys(response['stepResponses'])[0];
         let jobResp = response['stepResponses'][stepProp];
-        return (<span>Out of {jobResp['successfulBatches']+jobResp['failedBatches']} batches, 
-            <span className={styles.errorVal}> {jobResp['successfulBatches']}</span> succeeded and 
-            <span className={styles.errorVal}> {jobResp['failedBatches']}</span> failed. 
-            {(jobResp['failedBatches'] > maxErrors) ? 
-                <span> Error messages for the first {maxErrors} failures are displayed below.</span> : 
+        return (<span>Out of {jobResp['successfulBatches']+jobResp['failedBatches']} batches,
+            <span className={styles.errorVal}> {jobResp['successfulBatches']}</span> succeeded and
+            <span className={styles.errorVal}> {jobResp['failedBatches']}</span> failed.
+            {(jobResp['failedBatches'] > maxErrors) ?
+                <span> Error messages for the first {maxErrors} failures are displayed below.</span> :
                 <span> Error messages are displayed below.</span>}
             </span>);
     }
@@ -196,9 +196,9 @@ const Bench: React.FC = () => {
                 <div id="error-list">
                     <p className={styles.errorSummary}>{getErrorsSummary(response)}</p>
                     <Collapse defaultActiveKey={['0']} bordered={false}>
-                        {errors.map((e, i) => { 
+                        {errors.map((e, i) => {
                             return <Panel header={getErrorsHeader(i)} key={i}>
-                                <span className={styles.errorLabel}>Message:</span> {e}
+                                 {getErrorDetails(e)}
                             </Panel>
                         })}
                     </Collapse>
@@ -215,8 +215,8 @@ const Bench: React.FC = () => {
             title: <p>{stepType} "{stepName}" failed</p>,
             content: (
                 <div id="error-list">
-                    {errors.map((e, i) => { 
-                        return <p><span className={styles.errorLabel}>Error message:</span> {e}</p>
+                    {errors.map((e, i) => {
+                        return getErrorDetails(e)
                     })}
                 </div>
             ),
@@ -226,15 +226,31 @@ const Bench: React.FC = () => {
         });
     }
 
+    function getErrorDetails(e) {
+
+        try {
+            let errorObject = JSON.parse(e);
+           return <div>
+               <span className={styles.errorLabel}>Message:</span> <span> {errorObject.message}</span><br/><br/>
+               <span className={styles.errorLabel}>URI:</span> <span>  {errorObject.uri} </span><br/><br/>
+               <span className={styles.errorLabel}>Details:</span>  <span style={{whiteSpace:'pre-line'}}> {errorObject.stack}</span>
+            </div>;
+        }
+        catch(ex) {
+            console.log(JSON.stringify(ex))
+            return  <div><span className={styles.errorLabel}>Message:</span>  <span style={{whiteSpace:'pre-line'}}> {e}</span> </div>;
+        }
+    }
+
     // Poll status for running flow
     function poll(fn, interval) {
         let tries = 0;
-        let checkStatus = (resolve, reject) => { 
+        let checkStatus = (resolve, reject) => {
             let promise = fn();
             promise.then(function(response){
                 let status = response.data.jobStatus;
                 console.log('Flow status: ', status, response.data);
-                if (status === Statuses.FINISHED || status === Statuses.CANCELED || 
+                if (status === Statuses.FINISHED || status === Statuses.CANCELED ||
                     status === Statuses.FAILED || status === Statuses.FINISHED_WITH_ERRORS) {
                     // Non-running status, resolve promise
                     resolve(response.data);
@@ -264,7 +280,7 @@ const Bench: React.FC = () => {
             if (response.status === 200) {
                 console.log('Flow started: ' + flowId);
                 let jobId = response.data.jobId;
-                await setTimeout( function(){ 
+                await setTimeout( function(){
                     poll(function() {
                         return axios.get('/api/jobs/' + jobId);
                     }, pollConfig.interval)
@@ -289,14 +305,14 @@ const Bench: React.FC = () => {
                         setIsLoading(false);
                     });
                 }, pollConfig.interval);
-            } 
+            }
         } catch (error) {
             console.log('Error running step', error);
             setRunEnded({flowId: flowId, stepId: stepId});
             setIsLoading(false);
         }
     }
-    
+
     // DELETE /flows​/{flowId}​/steps​/{stepId}
     const deleteStep = async (flowId, stepId) => {
         let url = '/api/flows/' + flowId + '/steps/' + stepId + '-' + 'INGESTION';
@@ -306,7 +322,7 @@ const Bench: React.FC = () => {
             if (response.status === 200) {
                 console.log('DELETE step success', stepId);
                 setIsLoading(false);
-            } 
+            }
         } catch (error) {
             console.log('Error deleting step', error);
             setIsLoading(false);
@@ -316,10 +332,10 @@ const Bench: React.FC = () => {
   return (
     <div>
         <div className={styles.content}>
-            <Flows 
-                flows={flows} 
+            <Flows
+                flows={flows}
                 loads={loads}
-                deleteFlow={deleteFlow} 
+                deleteFlow={deleteFlow}
                 createFlow={createFlow}
                 updateFlow={updateFlow}
                 runStep={runStep}
