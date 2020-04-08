@@ -6,8 +6,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.io.JacksonHandle;
-import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.oneui.TestHelper;
+import com.marklogic.hub.oneui.AbstractOneUiTest;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -15,17 +14,14 @@ import java.io.File;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ModelControllerTest extends TestHelper {
+public class ModelControllerTest extends AbstractOneUiTest {
 
     private final static String MODEL_NAME = "UiTestEntity";
 
     private ModelController controller;
 
     @Test
-    void testModelsServicesEndpoints() {
-        authenticateSession();
-        clearDatabases(hubConfig.getDbName(DatabaseKind.STAGING), hubConfig.getDbName(DatabaseKind.FINAL));
-        controller = new ModelController();
+    void testModelsServicesEndpoints() { controller = new ModelController();
         controller.hubConfig = hubConfig;
 
         createModel();
