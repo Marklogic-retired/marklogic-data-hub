@@ -80,8 +80,7 @@ public class LegacyTracingTest extends HubTestBase {
 
     @Test
     public void runXMLFlowSansTracing() {
-        assertEquals(0, getFinalDocCount());
-        assertEquals(0, getTracingDocCount());
+        int finalCount = getFinalDocCount();
 
         LegacyTracing t = LegacyTracing.create(flowRunnerClient);
         assertFalse(t.isEnabled());
@@ -95,8 +94,7 @@ public class LegacyTracingTest extends HubTestBase {
         flowRunner.run();
         flowRunner.awaitCompletion();
 
-        assertEquals(5, getFinalDocCount());
-        assertEquals(0, getTracingDocCount());
+        assertEquals(finalCount + 5, getFinalDocCount());
 
         // disable must be idempotent
         disableTracing();
@@ -106,8 +104,7 @@ public class LegacyTracingTest extends HubTestBase {
 
     @Test
     public void runJSONFlowSansTracing() {
-        assertEquals(0, getFinalDocCount());
-        assertEquals(0, getTracingDocCount());
+        int finalCount = getFinalDocCount();
 
         LegacyTracing t = LegacyTracing.create(flowRunnerClient);
         assertFalse(t.isEnabled());
@@ -121,14 +118,12 @@ public class LegacyTracingTest extends HubTestBase {
         flowRunner.run();
         flowRunner.awaitCompletion();
 
-        assertEquals(5, getFinalDocCount());
-        assertEquals(0, getTracingDocCount());
+        assertEquals(5 + finalCount, getFinalDocCount());
     }
 
     @Test
     public void runXMLFlowWithTracing() {
-        assertEquals(0, getFinalDocCount());
-        assertEquals(0, getTracingDocCount());
+        int tracingCount = getTracingDocCount();
 
         LegacyTracing t = LegacyTracing.create(flowRunnerClient);
         assertFalse(t.isEnabled());
@@ -145,14 +140,12 @@ public class LegacyTracingTest extends HubTestBase {
         flowRunner.run();
         flowRunner.awaitCompletion();
 
-        assertEquals(5, getFinalDocCount());
-        assertEquals(6, getTracingDocCount());
+        assertEquals(tracingCount + 6, getTracingDocCount());
     }
 
     @Test
     public void runXqyXmlFlowWithBinaryContent() {
-        assertEquals(0, getFinalDocCount());
-        assertEquals(0, getTracingDocCount());
+        int tracingCount = getTracingDocCount();
 
         LegacyTracing t = LegacyTracing.create(flowRunnerClient);
         assertFalse(t.isEnabled());
@@ -169,8 +162,7 @@ public class LegacyTracingTest extends HubTestBase {
         flowRunner.run();
         flowRunner.awaitCompletion();
 
-        assertEquals(5, getFinalDocCount());
-        assertEquals(6, getTracingDocCount());
+        assertEquals(tracingCount + 6, getTracingDocCount());
 
 
         DocumentRecord doc = finalDocMgr.read("/doc/1.xml").next();
@@ -195,8 +187,7 @@ public class LegacyTracingTest extends HubTestBase {
 
     @Test
     public void runXqyJsonFlowWithBinaryContent() {
-        assertEquals(0, getFinalDocCount());
-        assertEquals(0, getTracingDocCount());
+        int tracingCount = getTracingDocCount();
 
         LegacyTracing t = LegacyTracing.create(flowRunnerClient);
         assertFalse(t.isEnabled());
@@ -213,8 +204,7 @@ public class LegacyTracingTest extends HubTestBase {
         flowRunner.run();
         flowRunner.awaitCompletion();
 
-        assertEquals(5, getFinalDocCount());
-        assertEquals(6, getTracingDocCount());
+        assertEquals(tracingCount + 6, getTracingDocCount());
 
         DocumentRecord doc = finalDocMgr.read("/doc/1.json").next();
         String finalDoc= doc.getContent(new StringHandle()).get();
@@ -229,8 +219,7 @@ public class LegacyTracingTest extends HubTestBase {
 
     @Test
     public void runJSONFlowWithTracing() {
-        assertEquals(0, getFinalDocCount());
-        assertEquals(0, getTracingDocCount());
+        int tracingCount = getTracingDocCount();
 
         LegacyTracing t = LegacyTracing.create(flowRunnerClient);
         assertFalse(t.isEnabled());
@@ -247,15 +236,13 @@ public class LegacyTracingTest extends HubTestBase {
         flowRunner.run();
         flowRunner.awaitCompletion();
 
-        assertEquals(5, getFinalDocCount());
-        assertEquals(6, getTracingDocCount());
+        assertEquals(tracingCount + 6, getTracingDocCount());
     }
 
 
     @Test
     public void runSjsJsonFlowWithBinaryContent() {
-        assertEquals(0, getFinalDocCount());
-        assertEquals(0, getTracingDocCount());
+        int tracingCount = getTracingDocCount();
 
         LegacyTracing t = LegacyTracing.create(flowRunnerClient);
         assertFalse(t.isEnabled());
@@ -272,8 +259,7 @@ public class LegacyTracingTest extends HubTestBase {
         flowRunner.run();
         flowRunner.awaitCompletion();
 
-        assertEquals(5, getFinalDocCount());
-        assertEquals(6, getTracingDocCount());
+        assertEquals(tracingCount + 6, getTracingDocCount());
 
         DocumentRecord doc = finalDocMgr.read("1").next();
         String finalDoc= doc.getContent(new StringHandle()).get();
@@ -287,8 +273,7 @@ public class LegacyTracingTest extends HubTestBase {
 
     @Test
     public void runSjsXmlFlowWithBinaryContent() {
-        assertEquals(0, getFinalDocCount());
-        assertEquals(0, getTracingDocCount());
+        int tracingCount = getTracingDocCount();
 
         LegacyTracing t = LegacyTracing.create(flowRunnerClient);
         assertFalse(t.isEnabled());
@@ -305,8 +290,7 @@ public class LegacyTracingTest extends HubTestBase {
         flowRunner.run();
         flowRunner.awaitCompletion();
 
-        assertEquals(5, getFinalDocCount());
-        assertEquals(6, getTracingDocCount());
+        assertEquals(tracingCount + 6, getTracingDocCount());
 
         DocumentRecord doc = finalDocMgr.read("1").next();
         Document finalDoc = doc.getContent(new DOMHandle()).get();
@@ -322,8 +306,7 @@ public class LegacyTracingTest extends HubTestBase {
 
     @Test
     public void runXMLErrorFlowWithoutTracing() {
-        assertEquals(0, getFinalDocCount());
-        assertEquals(0, getTracingDocCount());
+        int tracingCount = getTracingDocCount();
 
         LegacyTracing t = LegacyTracing.create(flowRunnerClient);
         assertFalse(t.isEnabled());
@@ -337,8 +320,7 @@ public class LegacyTracingTest extends HubTestBase {
         flowRunner.run();
         flowRunner.awaitCompletion();
 
-        assertEquals(0, getFinalDocCount());
-        assertEquals(5, getTracingDocCount());
+        assertEquals(tracingCount + 5, getTracingDocCount());
 
         Document node = jobDocMgr.search(allButCollectors(), 1).next().getContent(new DOMHandle()).get();
         assertEquals(1, node.getElementsByTagName("step").getLength());
@@ -347,8 +329,7 @@ public class LegacyTracingTest extends HubTestBase {
 
     @Test
     public void runXMLWriterErrorFlowWithoutTracing() {
-        assertEquals(0, getFinalDocCount());
-        assertEquals(0, getTracingDocCount());
+        int tracingCount = getTracingDocCount();
 
         LegacyTracing t = LegacyTracing.create(flowRunnerClient);
         assertFalse(t.isEnabled());
@@ -362,8 +343,7 @@ public class LegacyTracingTest extends HubTestBase {
         flowRunner.run();
         flowRunner.awaitCompletion();
 
-        assertEquals(0, getFinalDocCount());
-        assertEquals(5, getTracingDocCount());
+        assertEquals(tracingCount + 5, getTracingDocCount());
 
         Document node = jobDocMgr.search(allButCollectors(), 1).next().getContent(new DOMHandle()).get();
         assertEquals(1, node.getElementsByTagName("step").getLength());
@@ -372,8 +352,7 @@ public class LegacyTracingTest extends HubTestBase {
 
     @Test
     public void runJSONErrorFlowWithoutTracing() {
-        assertEquals(0, getFinalDocCount());
-        assertEquals(0, getTracingDocCount());
+        int tracingCount = getTracingDocCount();
 
         LegacyTracing t = LegacyTracing.create(flowRunnerClient);
         assertFalse(t.isEnabled());
@@ -387,8 +366,7 @@ public class LegacyTracingTest extends HubTestBase {
         flowRunner.run();
         flowRunner.awaitCompletion();
 
-        assertEquals(0, getFinalDocCount());
-        assertEquals(5, getTracingDocCount());
+        assertEquals(tracingCount + 5, getTracingDocCount());
 
         JsonNode node = jobDocMgr.search(allButCollectors(), 1).next().getContent(new JacksonHandle()).get();
         System.out.println(node.asText());
@@ -399,8 +377,7 @@ public class LegacyTracingTest extends HubTestBase {
 
     @Test
     public void runJSONWriterErrorFlowWithoutTracing() {
-        assertEquals(0, getFinalDocCount());
-        assertEquals(0, getTracingDocCount());
+        int tracingCount = getTracingDocCount();
 
         LegacyTracing t = LegacyTracing.create(flowRunnerClient);
         assertFalse(t.isEnabled());
@@ -414,8 +391,7 @@ public class LegacyTracingTest extends HubTestBase {
         flowRunner.run();
         flowRunner.awaitCompletion();
 
-        assertEquals(0, getFinalDocCount());
-        assertEquals(5, getTracingDocCount());
+        assertEquals(tracingCount + 5, getTracingDocCount());
 
         JsonNode node = jobDocMgr.search(allButCollectors(), 1).next().getContent(new JacksonHandle()).get();
         assertEquals(1, node.get("trace").get("steps").size());

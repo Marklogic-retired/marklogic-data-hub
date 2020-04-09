@@ -213,13 +213,15 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
 
         AllButAssetsModulesFinder allButAssetsModulesFinder = new AllButAssetsModulesFinder();
 
-        Path dir = Paths.get(hubConfig.getHubProject().getProjectDirString(), HubConfig.ENTITY_CONFIG_DIR);
-        if (!dir.toFile().exists()) {
-            dir.toFile().mkdirs();
+        // deploy the auto-generated ES search options, but not if mlWatch is being run, as it will result in the same
+        // options being generated and loaded over and over
+        if (!watchingModules) {
+            Path entityConfigDir = Paths.get(hubConfig.getHubProject().getProjectDirString(), HubConfig.ENTITY_CONFIG_DIR);
+            if (!entityConfigDir.toFile().exists()) {
+                entityConfigDir.toFile().mkdirs();
+            }
+            entityManager.deployQueryOptions();
         }
-
-        // deploy the auto-generated ES search options
-        entityManager.deployQueryOptions();
 
         try {
             if (startPath.toFile().exists()) {
