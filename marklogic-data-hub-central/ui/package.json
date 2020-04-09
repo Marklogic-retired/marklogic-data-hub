@@ -1,0 +1,102 @@
+{
+  "name": "marklogic-data-hub-central",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@fortawesome/fontawesome-common-types": "^0.2.26",
+    "@fortawesome/fontawesome-svg-core": "^1.2.25",
+    "@fortawesome/free-regular-svg-icons": "^5.12.0",
+    "@fortawesome/free-solid-svg-icons": "^5.11.2",
+    "@fortawesome/react-fontawesome": "^0.1.7",
+    "@types/enzyme": "^3.10.3",
+    "@types/jest": "24.0.23",
+    "@types/node": "12.12.11",
+    "@types/react": "16.9.11",
+    "@types/react-dom": "16.9.4",
+    "@types/react-router": "^5.1.3",
+    "@types/react-router-dom": "^5.1.2",
+    "antd": "^3.26.14",
+    "axios": "^0.19.0",
+    "babel-plugin-import": "^1.13.0",
+    "enzyme": "^3.10.0",
+    "enzyme-adapter-react-16": "^1.15.1",
+    "enzyme-to-json": "^3.4.3",
+    "fast-xml-parser": "^3.16.0",
+    "http-proxy-middleware": "^0.20.0",
+    "jest-junit": "^9.0.0",
+    "less": "^3.10.3",
+    "less-loader": "^5.0.0",
+    "marklogic-ui-library": "^0.2.1",
+    "node-sass": "^4.13.1",
+    "react": "^16.12.0",
+    "react-app-rewired": "^2.1.5",
+    "react-contextmenu": "^2.13.0",
+    "react-dom": "^16.12.0",
+    "react-drag-listview": "^0.1.6",
+    "react-html-parser": "^2.0.2",
+    "react-json-view": "^1.19.1",
+    "react-resizable": "^1.10.1",
+    "react-router-dom": "^5.1.2",
+    "react-scripts": "^3.3.0",
+    "react-split-pane": "^0.1.91",
+    "react-xml-viewer": "^1.0.3",
+    "reactour": "^1.15.2",
+    "sinon": "^9.0.1",
+    "sockjs-client": "^1.4.0",
+    "stompjs": "^2.3.3",
+    "typescript": "3.7.2"
+  },
+  "scripts": {
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test --coverage --watchAll=false",
+    "server": "npm run start --prefix ./mockserver",
+    "client": "react-app-rewired start",
+    "eject": "react-scripts eject"
+  },
+  "jest": {
+    "snapshotSerializers": [
+      "enzyme-to-json/serializer"
+    ],
+    "coverageReporters": [
+      "text",
+      "cobertura"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.{ts,tsx}"
+    ],
+    "coverageDirectory": "./",
+    "reporters": [
+      "default",
+      "jest-junit"
+    ]
+  },
+  "jest-junit": {
+    "outputName": "TEST-UI_Unit.xml"
+  },
+  "eslintConfig": {
+    "extends": "react-app",
+    "globals": {
+      "cy": true
+    }
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.1.1",
+    "@testing-library/react": "^9.5.0",
+    "@testing-library/user-event": "^10.0.0",
+    "nock": "^12.0.1",
+    "customize-cra": "^0.9.1"
+  }
+}
