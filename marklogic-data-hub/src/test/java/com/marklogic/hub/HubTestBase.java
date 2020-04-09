@@ -784,14 +784,16 @@ public class HubTestBase implements InitializingBean {
         return count;
     }
 
-    protected int getMlMajorVersion() {
-        return Integer.parseInt(versions.getMarkLogicVersion().substring(0, 1));
-    }
-
     protected void clearStagingFinalAndJobDatabases() {
         clearDatabases(HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
-    //not getting uris of prov collection as they cannot be deleted by flow-developer
+
+    /**
+     * Excludes provenance documents, as they cannot be deleted by any of the users that run DHF tests.
+     * Also excluding hub-core-artifact documents so that these do not need to be reloaded.
+     *
+     * @param databases
+     */
     public void clearDatabases(String... databases) {
         ServerEvaluationCall eval = stagingClient.newServerEval();
         String installer =
@@ -799,7 +801,7 @@ public class HubTestBase implements InitializingBean {
             "for $database in fn:tokenize($databases, \",\")\n" +
             "return\n" +
             "  xdmp:eval('\n" +
-            "    cts:uris((),(),cts:not-query(cts:collection-query(\"http://marklogic.com/provenance-services/record\"))) ! xdmp:document-delete(.)\n" +
+            "    cts:uris((),(),cts:not-query(cts:collection-query((\"http://marklogic.com/provenance-services/record\", \"hub-core-artifact\")))) ! xdmp:document-delete(.)\n" +
             "  ',\n" +
             "  (),\n" +
             "  map:entry(\"database\", xdmp:database($database))\n" +
@@ -1072,6 +1074,8 @@ public class HubTestBase implements InitializingBean {
 
         LoadUserModulesCommand loadUserModulesCommand = new LoadUserModulesCommand(adminHubConfig);
         loadUserModulesCommand.setForceLoad(force);
+        // Avoids loading from ml-modules-final; TODO See if any test needs them
+        loadUserModulesCommand.setWatchingModules(true);
         commands.add(loadUserModulesCommand);
 
         commands.add(new GenerateFunctionMetadataCommand(adminHubConfig));
@@ -1292,7 +1296,7 @@ public class HubTestBase implements InitializingBean {
         basicSetup();
         getDataHubAdminConfig();
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
-        installHubArtifacts(getDataHubAdminConfig(), true);
+        //installHubArtifacts(getDataHubAdminConfig(), true);
     }
 
     protected void setupProjectForRunningTestFlow() {

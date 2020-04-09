@@ -218,8 +218,11 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
             dir.toFile().mkdirs();
         }
 
-        // deploy the auto-generated ES search options
-        entityManager.deployQueryOptions();
+        // deploy the auto-generated ES search options, but not if mlWatch is being run, as it will result in the same
+        // options being generated and loaded over and over
+        if (!watchingModules) {
+            entityManager.deployQueryOptions();
+        }
 
         try {
             if (startPath.toFile().exists()) {

@@ -49,6 +49,13 @@ class HubUtils {
     }));
   }
 
+  /**
+   * @param writeQueue
+   * @param permissions
+   * @param collections
+   * @param database
+   * @return An object consisting of two properties - "transaction" and "dateTime"
+   */
   writeDocuments(writeQueue, permissions = xdmp.defaultPermissions(), collections = [], database = xdmp.databaseName(xdmp.database())){
     return fn.head(xdmp.invoke('/data-hub/5/impl/hub-utils/invoke-queue-write.sjs',
       {
