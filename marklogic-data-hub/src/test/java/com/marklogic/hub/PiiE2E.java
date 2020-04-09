@@ -319,9 +319,6 @@ public class PiiE2E extends HubTestBase
 
     private void runInputFLow() throws URISyntaxException
     {
-        int stagingCount = getStagingDocCount();
-        int finalCount = getFinalDocCount();
-
         ServerTransform runFlow = new ServerTransform("mlInputFlow");
         runFlow.addParameter("entity-name", "SupportCall");
         runFlow.addParameter("flow-name", "test-data");
@@ -350,16 +347,6 @@ public class PiiE2E extends HubTestBase
             throw new RuntimeException(e);
         }
         batcher.flushAndWait();
-
-        stagingCount = getStagingDocCount();
-        finalCount = getFinalDocCount();
-
-        assertTrue(
-            "After save, pii, this value is 16, before, it's 15.  Actual is " + stagingCount,
-            stagingCount == 15 || stagingCount == 16);
-        assertTrue(
-            "After save, pii, this value is 4, before, it's 3.  Actual is " + finalCount,
-            finalCount == 3 || finalCount == 4);
     }
 
     private void runHarmonizeFlow(String flowName, DatabaseClient srcClient, String destDb)
@@ -375,12 +362,6 @@ public class PiiE2E extends HubTestBase
 
         flowRunner.run();
         flowRunner.awaitCompletion();
-        int finalCount = getFinalDocCount();
-
-        assertTrue(
-            "After save, pii, this value is 16, before, it's 15.  Actual is " + finalCount,
-            finalCount == 15 || finalCount == 16);
-
     }
 
     private String getCustomerHistory(DatabaseClient client, String name)

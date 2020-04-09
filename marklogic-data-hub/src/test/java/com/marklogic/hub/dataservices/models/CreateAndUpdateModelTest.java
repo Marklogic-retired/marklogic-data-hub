@@ -27,7 +27,6 @@ public class CreateAndUpdateModelTest extends AbstractHubTest {
 
     @BeforeEach
     void beforeEach() {
-        resetProject();
         service = new ModelManagerImpl(adminHubConfig);
     }
 

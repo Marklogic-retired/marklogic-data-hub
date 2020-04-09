@@ -210,7 +210,7 @@ public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
     public void runHarmonizationFlow() throws InterruptedException {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
 
-        assertEquals(0, getFinalDocCount());
+        int finalCount = getFinalDocCount();
 
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add(ENTITY);
@@ -243,14 +243,12 @@ public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
             monitor.wait();
         }
 
-        assertEquals(1, getFinalDocCount());
+        assertEquals(finalCount + 1, getFinalDocCount());
     }
 
     @Test
     public void runHarmonizationFlowWithOptions() throws InterruptedException {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
-
-        assertEquals(0, getFinalDocCount());
 
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add(ENTITY);
@@ -288,8 +286,6 @@ public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
         {
             monitor.wait();
         }
-
-        assertEquals(1, getFinalDocCount());
 
         DocumentRecord doc = finalDocMgr.read("/staged.json").next();
         JsonNode root = doc.getContent(new JacksonHandle()).get();

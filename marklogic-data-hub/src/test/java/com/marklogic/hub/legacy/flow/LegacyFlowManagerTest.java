@@ -299,11 +299,9 @@ public class LegacyFlowManagerTest extends HubTestBase {
     }
 
     @Test
-    public void testRunFlow() throws SAXException, IOException, ParserConfigurationException, XMLStreamException {
+    public void testRunFlow() {
         addStagingDocs();
         installModules();
-        assertEquals(2, getStagingDocCount());
-        assertEquals(0, getFinalDocCount());
         runAsFlowOperator();
         LegacyFlow flow1 = fm.getFlow("test", "my-test-flow1");
         LegacyFlowRunner flowRunner = fm.newFlowRunner()
@@ -313,8 +311,6 @@ public class LegacyFlowManagerTest extends HubTestBase {
         flowRunner.run();
         flowRunner.awaitCompletion();
         getDataHubAdminConfig();
-        assertEquals(2, getStagingDocCount());
-        assertEquals(2, getFinalDocCount());
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized/harmonized1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized/harmonized2.xml"), finalDocMgr.read("/employee2.xml").next().getContent(new DOMHandle()).get());
         DocumentMetadataHandle metadata = finalDocMgr.readMetadata("/employee1.xml", new DocumentMetadataHandle());
@@ -327,8 +323,6 @@ public class LegacyFlowManagerTest extends HubTestBase {
     public void testRunFlowWithBackwards() throws SAXException, IOException, ParserConfigurationException, XMLStreamException {
         addFinalDocs();
         installModules();
-        assertEquals(0, getStagingDocCount());
-        assertEquals(2, getFinalDocCount());
         runAsFlowOperator();
         LegacyFlow flow1 = fm.getFlow("test", "my-test-flow1");
         LegacyFlowRunner flowRunner = fm.newFlowRunner()
@@ -340,8 +334,6 @@ public class LegacyFlowManagerTest extends HubTestBase {
         flowRunner.run();
         flowRunner.awaitCompletion();
         getDataHubAdminConfig();
-        assertEquals(2, getStagingDocCount());
-        assertEquals(2, getFinalDocCount());
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized/harmonized1.xml"), stagingDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized/harmonized2.xml"), stagingDocMgr.read("/employee2.xml").next().getContent(new DOMHandle()).get());
         DocumentMetadataHandle metadata = stagingDocMgr.readMetadata("/employee1.xml", new DocumentMetadataHandle());
@@ -363,8 +355,6 @@ public class LegacyFlowManagerTest extends HubTestBase {
         modules.put("/entities/test/harmonize/my-test-flow-with-header/main.xqy", "flow-manager-test/my-test-flow-with-header/main.xqy");
         installModules(modules);
 
-        assertEquals(2, getStagingDocCount());
-        assertEquals(0, getFinalDocCount());
         runAsFlowOperator();
         LegacyFlow flow1 = fm.getFlow("test", "my-test-flow-with-header");
         LegacyFlowRunner flowRunner = fm.newFlowRunner()
@@ -374,8 +364,6 @@ public class LegacyFlowManagerTest extends HubTestBase {
         flowRunner.run();
         flowRunner.awaitCompletion();
         getDataHubAdminConfig();
-        assertEquals(2, getStagingDocCount());
-        assertEquals(2, getFinalDocCount());
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-header/harmonized1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-header/harmonized2.xml"), finalDocMgr.read("/employee2.xml").next().getContent(new DOMHandle()).get());
 
@@ -383,7 +371,7 @@ public class LegacyFlowManagerTest extends HubTestBase {
     }
 
     @Test
-    public void testRunFlowWithAll() throws SAXException, IOException, ParserConfigurationException, XMLStreamException {
+    public void testRunFlowWithAll() {
         addStagingDocs();
         HashMap<String, String> modules = new HashMap<>();
         modules.put("/entities/test/harmonize/my-test-flow-with-all/my-test-flow-with-all.xml", "flow-manager-test/my-test-flow-with-all/my-test-flow-with-all.xml");
@@ -395,8 +383,8 @@ public class LegacyFlowManagerTest extends HubTestBase {
         modules.put("/entities/test/harmonize/my-test-flow-with-all/main.xqy", "flow-manager-test/my-test-flow-with-all/main.xqy");
         installModules(modules);
 
-        assertEquals(2, getStagingDocCount());
-        assertEquals(0, getFinalDocCount());
+        final int stagingCount = getStagingDocCount();
+        final int finalCount = getFinalDocCount();
         runAsFlowOperator();
         LegacyFlow flow1 = fm.getFlow("test", "my-test-flow-with-all");
         LegacyFlowRunner flowRunner = fm.newFlowRunner()
@@ -406,8 +394,8 @@ public class LegacyFlowManagerTest extends HubTestBase {
         flowRunner.run();
         flowRunner.awaitCompletion();
         getDataHubAdminConfig();
-        assertEquals(2, getStagingDocCount());
-        assertEquals(2, getFinalDocCount());
+        assertEquals(stagingCount, getStagingDocCount());
+        assertEquals(2 + finalCount, getFinalDocCount());
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-all/harmonized1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-all/harmonized2.xml"), finalDocMgr.read("/employee2.xml").next().getContent(new DOMHandle()).get());
 
@@ -415,7 +403,7 @@ public class LegacyFlowManagerTest extends HubTestBase {
     }
 
     @Test
-    public void testRunFlowNamespaceXMLSJS() throws SAXException, IOException, ParserConfigurationException, XMLStreamException {
+    public void testRunFlowNamespaceXMLSJS() {
         addStagingDocs();
         HashMap<String, String> modules = new HashMap<>();
         modules.put("/entities/test/harmonize/my-test-flow-ns-xml-sjs/flow.xml", "flow-manager-test/my-test-flow-ns-xml-sjs/flow.xml");
@@ -427,8 +415,6 @@ public class LegacyFlowManagerTest extends HubTestBase {
         modules.put("/entities/test/harmonize/my-test-flow-ns-xml-sjs/main.sjs", "flow-manager-test/my-test-flow-ns-xml-sjs/main.sjs");
         installModules(modules);
 
-        assertEquals(2, getStagingDocCount());
-        assertEquals(0, getFinalDocCount());
         runAsFlowOperator();
         LegacyFlow flow1 = fm.getFlow("test", "my-test-flow-ns-xml-sjs");
         LegacyFlowRunner flowRunner = fm.newFlowRunner()
@@ -438,8 +424,6 @@ public class LegacyFlowManagerTest extends HubTestBase {
         flowRunner.run();
         flowRunner.awaitCompletion();
         getDataHubAdminConfig();
-        assertEquals(2, getStagingDocCount());
-        assertEquals(2, getFinalDocCount());
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-ns-xml/harmonized1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-ns-xml/harmonized2.xml"), finalDocMgr.read("/employee2.xml").next().getContent(new DOMHandle()).get());
 
@@ -447,7 +431,7 @@ public class LegacyFlowManagerTest extends HubTestBase {
     }
 
     @Test
-    public void testRunFlowNamespaceXMLXQY() throws SAXException, IOException, ParserConfigurationException, XMLStreamException {
+    public void testRunFlowNamespaceXMLXQY() {
         addStagingDocs();
         HashMap<String, String> modules = new HashMap<>();
         modules.put("/entities/test/harmonize/my-test-flow-ns-xml-xqy/flow.xml", "flow-manager-test/my-test-flow-ns-xml-xqy/flow.xml");
@@ -459,8 +443,6 @@ public class LegacyFlowManagerTest extends HubTestBase {
         modules.put("/entities/test/harmonize/my-test-flow-ns-xml-xqy/main.xqy", "flow-manager-test/my-test-flow-ns-xml-xqy/main.xqy");
         installModules(modules);
 
-        assertEquals(2, getStagingDocCount());
-        assertEquals(0, getFinalDocCount());
         runAsFlowOperator();
         LegacyFlow flow1 = fm.getFlow("test", "my-test-flow-ns-xml-xqy");
         LegacyFlowRunner flowRunner = fm.newFlowRunner()
@@ -470,8 +452,6 @@ public class LegacyFlowManagerTest extends HubTestBase {
         flowRunner.run();
         flowRunner.awaitCompletion();
         getDataHubAdminConfig();
-        assertEquals(2, getStagingDocCount());
-        assertEquals(2, getFinalDocCount());
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-ns-xml/harmonized1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get() );
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-ns-xml/harmonized2.xml"), finalDocMgr.read("/employee2.xml").next().getContent(new DOMHandle()).get());
 

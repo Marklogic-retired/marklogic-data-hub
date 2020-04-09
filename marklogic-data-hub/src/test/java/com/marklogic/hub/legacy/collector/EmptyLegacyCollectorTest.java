@@ -18,9 +18,9 @@ package com.marklogic.hub.legacy.collector;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.datamovement.JobTicket;
 import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.legacy.flow.*;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,9 +29,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
@@ -41,10 +38,9 @@ import static org.junit.Assert.assertEquals;
 public class EmptyLegacyCollectorTest extends HubTestBase {
 
     private static final String ENTITY = "streamentity";
-    private static Path projectDir = Paths.get(".", "ye-olde-project");
 
     @BeforeEach
-    public void setup() throws IOException {
+    public void setup() {
         // note, not basicSetup
 
         XMLUnit.setIgnoreWhitespace(true);
@@ -65,8 +61,6 @@ public class EmptyLegacyCollectorTest extends HubTestBase {
 
     @Test
     public void runCollector() {
-        assertEquals(0, getStagingDocCount());
-        assertEquals(0, getFinalDocCount());
         LegacyFlow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
             FlowType.HARMONIZE);
         HashMap<String, Object> options = new HashMap<>();
@@ -81,7 +75,6 @@ public class EmptyLegacyCollectorTest extends HubTestBase {
             .withStopOnFailure(true);
         JobTicket ticket = flowRunner.run();
         flowRunner.awaitCompletion();
-        assertEquals(0, getFinalDocCount());
 
         JsonNode node = jobDocMgr.read("/jobs/" + ticket.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
         assertEquals(ticket.getJobId(), node.get("jobId").asText());

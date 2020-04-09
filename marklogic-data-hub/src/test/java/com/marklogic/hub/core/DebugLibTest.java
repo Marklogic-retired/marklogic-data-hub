@@ -65,7 +65,7 @@ public class DebugLibTest extends HubTestBase {
 
     private void run516() {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME);
-        assertEquals(0, getStagingDocCount());
+        final int currentCount = getStagingDocCount();
 
         ServerTransform runFlow = new ServerTransform("mlInputFlow");
         runFlow.addParameter("entity-name", entityName);
@@ -91,6 +91,6 @@ public class DebugLibTest extends HubTestBase {
         batcher.flushAndWait();
 
         assertFalse(errorMessage, runFlowFailed);
-        assertEquals(2, getStagingDocCount());
+        assertEquals(currentCount + 2, getStagingDocCount());
     }
 }
