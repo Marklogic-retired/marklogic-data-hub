@@ -1,0 +1,29 @@
+.header {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.heading {
+  display: flex;
+  justify-content: flex-start;
+  width: 85%;
+}
+
+.menu {
+  width: 15%;
+  display: flex;
+  justify-content: flex-end;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.detailContent {
+  background: #fff;
+  padding: 18px 36px;
+  margin-top: 65px;
+}
+
+.subMenu {
+  padding: 10px;
+  font-size: 18px;
+}

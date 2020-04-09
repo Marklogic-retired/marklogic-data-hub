@@ -1,0 +1,10 @@
+{
+  "lang" : "zxx",
+  "name" : "PersonXMLFlow-Person-Mapping-XML",
+  "description" : "",
+  "version" : 0,
+  "targetEntityType" : "http://example.org/PersonXML-0.0.1/PersonXML",
+  "sourceContext" : "/",
+  "sourceURI" : "",
+  "properties" : { }
+}
