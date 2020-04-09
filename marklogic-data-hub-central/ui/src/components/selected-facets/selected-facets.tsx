@@ -83,9 +83,10 @@ const SelectedFacets: React.FC<Props> = (props) => {
         </MlButton>
       }
       { props.selectedFacets.map((item, index) => {
-        if (item.constraint === 'createdOnRange') {
+        let facetName = item.displayName ? item.displayName : item.constraint;
+        if (facetName === 'createdOnRange') {
           let dateValues:any = [];
-          dateValues.push(item.facet.lowerBound,item.facet.upperBound);
+          dateValues.push(item.facet.lowerBound, item.facet.upperBound);
           return (
             <MlButton
               size="small"
@@ -111,7 +112,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
                 onClick={()=> clearRangeFacet(item.constraint)}
               >
                 <Icon type='close'/>
-                {item.constraint + ': ' + item.rangeValues.lowerBound + ' ~ ' + item.rangeValues.upperBound}
+                {facetName + ': ' + item.rangeValues.lowerBound + ' ~ ' + item.rangeValues.upperBound}
               </MlButton>
             )
           } else {
@@ -125,7 +126,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
                 data-testid='clear-range-facet'
               >
                 <Icon type='close'/>
-                {item.constraint + ': ' + item.rangeValues.lowerBound + ' - ' + item.rangeValues.upperBound}
+                {facetName + ': ' + item.rangeValues.lowerBound + ' - ' + item.rangeValues.upperBound}
               </MlButton>
             )
           }
@@ -140,11 +141,12 @@ const SelectedFacets: React.FC<Props> = (props) => {
             data-testid={`clear-${item.facet}`}
           >
             <Icon type='close'/>
-              {item.constraint + ': ' + item.facet}
+              {facetName + ': ' + item.facet}
           </MlButton>
         )
       })}
         {props.greyFacets.map((item, index) => {
+            let facetName = item.displayName ? item.displayName : item.constraint;
             if (item.constraint === 'createdOnRange') {
                 let dateValues: any = [];
                 dateValues.push(item.facet.lowerBound, item.facet.upperBound);
@@ -173,7 +175,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
                             //onClick={() => clearRangeFacet(item.constraint)}
                         >
                             <Icon type='close'/>
-                            {item.constraint + ': ' + item.rangeValues.lowerBound + ' ~ ' + item.rangeValues.upperBound}
+                            {facetName + ': ' + item.rangeValues.lowerBound + ' ~ ' + item.rangeValues.upperBound}
                         </MlButton>
                     )
                 } else {
@@ -187,23 +189,28 @@ const SelectedFacets: React.FC<Props> = (props) => {
                             data-testid='clear-range-facet'
                         >
                             <Icon type='close'/>
-                            {item.constraint + ': ' + item.rangeValues.lowerBound + ' - ' + item.rangeValues.upperBound}
+                            {facetName + ': ' + item.rangeValues.lowerBound + ' - ' + item.rangeValues.upperBound}
                         </MlButton>
                     )
                 }
             }
             return (
-                (unCheckRest(item.constraint, item.facet)) && <Tooltip title={'Not yet applied'}><MlButton
+              (unCheckRest(item.constraint, item.facet)) && 
+                <Tooltip 
+                  key={index + '-' + item.facet} 
+                  title={'Not yet applied'}
+                >
+                  <MlButton
                     size="small"
                     className={styles.facetGreyButton}
-                    key={index}
                     //onClick={() => clearGreyFacet(item.constraint, item.facet)}
                     data-cy={`clear-grey-${item.facet}`}
                     data-testid={`clear-grey-${item.facet}`}
-                >
-                    <Icon type='close'/>
-                    {item.constraint + ': ' + item.facet}
-                </MlButton></Tooltip>
+                  >
+                  <Icon type='close'/>
+                  {facetName + ': ' + item.facet}
+                </MlButton>
+              </Tooltip>
             )
         })}
         {props.greyFacets.length > 0 &&

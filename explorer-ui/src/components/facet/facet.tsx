@@ -19,7 +19,7 @@ interface Props {
   referenceType: string;
   entityTypeId: any;
   propertyPath: any;
-  updateSelectedFacets: (constraint: string, vals: string[], datatype: string) => void;
+  updateSelectedFacets: (constraint: string, vals: string[], datatype: string, isNested: boolean) => void;
   applyAllFacets: () => void;
   addFacetValues: (constraint: string, vals: string[], datatype: string, facetCategory: string) => void;
 };
@@ -37,22 +37,30 @@ const Facet: React.FC<Props> = (props) => {
   let checkedFacets: any[] = [];
 
   useEffect(() => {
-    if (Object.entries(searchOptions.searchFacets).length !== 0 && searchOptions.searchFacets.hasOwnProperty(props.constraint)) {
-      for (let facet in searchOptions.searchFacets) {
-        if (facet === props.constraint) {
-          let valueType = '';
-          if (searchOptions.searchFacets[facet].dataType === 'xs:string') {
-            valueType = 'stringValues';
-          }
-         
-          // TODO add support for non string facets
-          const checkedArray = searchOptions.searchFacets[facet][valueType];
-          if (checkedArray && checkedArray.length) {
-            // checking if arrays are equivalent
-            if (JSON.stringify(checked) === JSON.stringify(checkedArray)) {
-              toggleApply(false);
-            } else {
-              setChecked(checkedArray);
+    if (Object.entries(searchOptions.searchFacets).length !== 0) {
+      let facetName: string = '';
+      if (searchOptions.searchFacets.hasOwnProperty(props.constraint)) {
+        facetName = props.constraint;
+      } else if (searchOptions.searchFacets.hasOwnProperty(props.propertyPath)) {
+        facetName = props.propertyPath;
+      }
+
+      if (facetName) {
+        for (let facet in searchOptions.searchFacets) {
+          if (facet === facetName) {
+            let valueType = '';
+            if (searchOptions.searchFacets[facet].dataType === 'xs:string') {
+              valueType = 'stringValues';
+            }
+           
+            const checkedArray = searchOptions.searchFacets[facet][valueType];
+            if (checkedArray && checkedArray.length) {
+              // checking if arrays are equivalent
+              if (JSON.stringify(checked) === JSON.stringify(checkedArray)) {
+                toggleApply(false);
+              } else {
+                setChecked(checkedArray);
+              }
             }
           }
         }
@@ -76,11 +84,12 @@ const Facet: React.FC<Props> = (props) => {
 
   const handleClick = (e) => {
     let index = checked.indexOf(e.target.value)
+    let isNested = props.constraint === props.propertyPath ? false : true;
     // Selection
     if (e.target.checked && index === -1) {
       setChecked([...checked, e.target.value]);
       toggleApply(true);
-      props.updateSelectedFacets(props.constraint, [...checked, e.target.value], props.facetType);
+      props.updateSelectedFacets(props.constraint, [...checked, e.target.value], props.facetType, isNested);
     }
     // Deselection
     else if (index !== -1) {
@@ -92,7 +101,7 @@ const Facet: React.FC<Props> = (props) => {
         toggleApply(true);
       }
       setChecked(newChecked);
-      props.updateSelectedFacets(props.constraint, newChecked, props.facetType);
+      props.updateSelectedFacets(props.constraint, newChecked, props.facetType, isNested);
     }
   }
 
@@ -103,7 +112,7 @@ const Facet: React.FC<Props> = (props) => {
     } else {
       toggleApply(false);
     }
-    props.updateSelectedFacets(props.constraint, [], props.facetType);
+    props.updateSelectedFacets(props.constraint, [], props.facetType, false);
   }
 
 

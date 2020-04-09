@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { DatePicker } from 'antd';
-import { MlButton } from 'marklogic-ui-library';
 import { SearchContext } from '../../util/search-context';
 import moment from 'moment';
 import styles from './date-time-facet.module.scss';
@@ -12,7 +11,8 @@ interface Props {
   constraint: string;
   datatype: any
   key: any
-  onChange: (datatype: any, facetName: any, value: any[]) => void;
+  propertyPath: string
+  onChange: (datatype: any, facetName: any, value: any[], isNested: boolean) => void;
 };
 
 const DateTimeFacet: React.FC<Props> = (props) => {
@@ -23,7 +23,8 @@ const DateTimeFacet: React.FC<Props> = (props) => {
   const [dateTimePickerValue, setDateTimePickerValue] = useState<any[]>([null, null]);
 
   const onChange = (e) => {
-    props.onChange(props.datatype, props.name, e);
+    let isNested = props.constraint === props.propertyPath ? false : true;
+    props.onChange(props.datatype, props.name, e, isNested);
     (e[0] && e[1]) && setDateTimePickerValue([moment(e[0].format('YYYY-MM-DDTHH:mm:ss')), moment(e[1].format('YYYY-MM-DDTHH:mm:ss'))])
   }
 

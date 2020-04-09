@@ -13,7 +13,7 @@ interface Props {
   referenceType: string;
   entityTypeId: any;
   propertyPath: any;
-  onChange: (datatype: any, facetName: any, value: any[]) => void;
+  onChange: (datatype: any, facetName: any, value: any[], isNested: boolean) => void;
 };
 
 const NumericFacet: React.FC<Props> = (props) => {
@@ -29,28 +29,36 @@ const NumericFacet: React.FC<Props> = (props) => {
   const getFacetRange = async () => {
     try {
       const response = await rangeFacet(props)
-
-      if (response.data) {
+      if (response['data']) {
         let range = [...[response.data.min, response.data.max].map(Number)]
         setRangeLimit(range)
+        setRange(range);
 
-        if (Object.entries(searchOptions.searchFacets).length !== 0 && searchOptions.searchFacets.hasOwnProperty(props.constraint)) {
-          for (let facet in searchOptions.searchFacets) {
-            if (facet === props.constraint) {
-              let valueType = '';
-              if (numbers.includes(searchOptions.searchFacets[facet].dataType)) {
-                valueType = 'rangeValues';
-              }
-              if (searchOptions.searchFacets[facet][valueType]) {
-                const rangeArray = Object.values(searchOptions.searchFacets[facet][valueType]).map(Number)
-                if (rangeArray && rangeArray.length > 0) {
-                  setRange(rangeArray)
+        if (Object.entries(searchOptions.searchFacets).length !== 0) {
+          let facetName: string = '';
+          if (searchOptions.searchFacets.hasOwnProperty(props.constraint)) {
+            facetName = props.constraint;
+          } else if (searchOptions.searchFacets.hasOwnProperty(props.propertyPath) && props.constraint !== props.propertyPath) {
+            facetName = props.propertyPath;
+          }
+          if (facetName) {
+            for (let facet in searchOptions.searchFacets) {
+              if (facet === facetName) {
+                let valueType = '';
+                if (numbers.includes(searchOptions.searchFacets[facet].dataType)) {
+                  valueType = 'rangeValues';
+                }
+                if (searchOptions.searchFacets[facet][valueType]) {
+                  const rangeArray = Object.values(searchOptions.searchFacets[facet][valueType]).map(Number)
+                  if (rangeArray && rangeArray.length > 0) {
+                    setRange(rangeArray)
+                  }
                 }
               }
             }
+          } else {
+            // setRange([]);
           }
-        } else {
-          setRange(range)
         }
       }
     } catch (error) {
@@ -62,47 +70,60 @@ const NumericFacet: React.FC<Props> = (props) => {
   }
 
   const onChange = (e) => {
+    let isNested = props.name === props.propertyPath ? false : true;
     setRange(e);
-    props.onChange(props.datatype, props.name, e)
+    props.onChange(props.datatype, props.name, e, isNested)
   }
 
   const onChangeMinInput = (e) => {
     if (e && typeof e === 'number') {
+      let isNested = props.name === props.propertyPath ? false : true;
       let modifiedRange = [...range];
       modifiedRange[0] = e;
       setRange(modifiedRange);
-      props.onChange(props.datatype, props.name, modifiedRange)
+      props.onChange(props.datatype, props.name, modifiedRange, isNested)
     }
   }
 
   const onChangeMaxInput = (e) => {
     if (e && typeof e === 'number') {
+      let isNested = props.name === props.propertyPath ? false : true;
       let modifiedRange = [...range];
       modifiedRange[1] = e;
       setRange(modifiedRange);
-      props.onChange(props.datatype, props.name, modifiedRange)
+      props.onChange(props.datatype, props.name, modifiedRange, isNested)
     }
   }
 
   useEffect(() => {
     getFacetRange();
-  }, []);
+  }, [searchOptions.searchFacets]);
 
   useEffect(() => {
     !Object.keys(searchOptions.searchFacets).includes(props.name) && setRange(rangeLimit)
 
-    if (Object.entries(searchOptions.searchFacets).length !== 0 && searchOptions.searchFacets.hasOwnProperty(props.constraint)) {
-      for (let facet in searchOptions.searchFacets) {
-        if (facet === props.constraint) {
-          let valueType = '';
-          if (numbers.includes(searchOptions.searchFacets[facet].dataType)) {
-            valueType = 'rangeValues';
-          }
-          if (searchOptions.searchFacets[facet][valueType]) {
-            const rangeArray = Object.values(searchOptions.searchFacets[facet][valueType]).map(Number)
-            if (JSON.stringify(range) === JSON.stringify(rangeArray)) {
-              if (rangeLimit[0] === rangeArray[0] && rangeLimit[1] === rangeArray[1]) {
-                delete searchOptions.searchFacets[facet]
+    if (Object.entries(searchOptions.searchFacets).length !== 0) {
+
+      let facetName: string = '';
+      if (searchOptions.searchFacets.hasOwnProperty(props.constraint)) {
+        facetName = props.constraint;
+      } else if (searchOptions.searchFacets.hasOwnProperty(props.propertyPath)) {
+        facetName = props.propertyPath;
+      }
+
+      if (facetName) {
+        for (let facet in searchOptions.searchFacets) {
+          if (facet === facetName) {
+            let valueType = '';
+            if (numbers.includes(searchOptions.searchFacets[facet].dataType)) {
+              valueType = 'rangeValues';
+            }
+            if (searchOptions.searchFacets[facet][valueType]) {
+              const rangeArray = Object.values(searchOptions.searchFacets[facet][valueType]).map(Number)
+              if (JSON.stringify(range) === JSON.stringify(rangeArray)) {
+                if (rangeLimit[0] === rangeArray[0] && rangeLimit[1] === rangeArray[1]) {
+                  delete searchOptions.searchFacets[facet]
+                }
               }
             }
           }

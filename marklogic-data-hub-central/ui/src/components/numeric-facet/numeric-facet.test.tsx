@@ -24,7 +24,7 @@ describe("<NumericFacet/>", () => {
     })
 
     test("Numeric component renders with mock data", async (done) => {
-        const { getByTestId, getByDisplayValue } = render(<NumericFacet
+        const { getByTestId, getByDisplayValue, debug } = render(<NumericFacet
             name={'age'}
             step={1}
             constraint={'age'}
@@ -32,12 +32,13 @@ describe("<NumericFacet/>", () => {
             onChange={jest.fn()}
             referenceType={'element'}
             entityTypeId={''}
-            propertyPath={'intProp'}
+            propertyPath={'age'}
         />);
 
         await act(async () => {
             setTimeout(() => {
                 //verify range slider renders
+                debug()
                 expect(getByTestId("numeric-slider")).toBeInTheDocument();
                 //verify range slider min value
                 expect(getByDisplayValue("11")).toBeInTheDocument();
