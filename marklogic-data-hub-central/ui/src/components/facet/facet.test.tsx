@@ -1,49 +1,75 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { render, fireEvent } from '@testing-library/react';
+
 import Facet from './facet';
-import { entityFromJSON, facetParser, entityParser } from '../../util/data-conversion';
-import modelResponse from '../../assets/mock-data/model-response';
-import searchPayloadFacets from '../../assets/mock-data/search-payload-facets';
+import { facetValues } from '../../assets/mock-data/entity-table';
 
 describe("Facet component", () => {
-    let wrapper;
-    const parsedModelData = entityFromJSON(modelResponse);
-    const entityDefArray = entityParser(parsedModelData);
-    const parsedFacets = facetParser(searchPayloadFacets);
+  it("Facet component renders with data properly" , () => {
+    const { getByTestId, getByText } = render(
+        <Facet
+          name="sales_region"
+          constraint="sales_region"
+          facetValues={facetValues}
+          key=""
+          tooltip=""
+          facetType="xs:string"
+          facetCategory="entity"
+          updateSelectedFacets={jest.fn()}
+          addFacetValues={jest.fn()}
+          referenceType="element"
+          entityTypeId=""
+          propertyPath="sales_region"
+        />
+    )
+    expect(getByText(/sales_region/i)).toBeInTheDocument();
 
-    describe('Facet component renders correctly', () => {
-      beforeEach(() => {
-        const entityDef = entityDefArray.find(entity => entity.name === 'Customer');
+    expect(getByText(/Customer/i)).toBeInTheDocument();
+    expect(getByText(/50/i)).toBeInTheDocument();
+    expect(getByText(/OrderDetail/i)).toBeInTheDocument();
+    expect(getByText(/15,000/i)).toBeInTheDocument();
 
-        const filteredEntityFacets = entityDef.rangeIndex.length && entityDef.rangeIndex.map( rangeIndex => {
-          let entityFacetValues = parsedFacets.find(facet => facet.facetName === rangeIndex);
-          return {...entityFacetValues}
-        });
-        wrapper = shallow(
-          <Facet
-            name={filteredEntityFacets[0].hasOwnProperty('displayName') ? filteredEntityFacets[0].displayName : filteredEntityFacets[0].facetName}
-            constraint={filteredEntityFacets[0].facetName}
-            facetValues={filteredEntityFacets[0].facetValues}
-            key={filteredEntityFacets[0].facetName}
-            tooltip=""
-            updateSelectedFacets={jest.fn()}
-            addFacetValues={jest.fn()}
-            referenceType={''}
-            entityTypeId={''}
-            propertyPath={''}
-            facetType={'xs:string'}
-            facetCategory={'hub'}
-          />
-        )
-      });
+    fireEvent.click(getByTestId("show-more"));
+    // show extra facets
+    expect(getByText(/ProductDetail/i)).toBeInTheDocument();
+    expect(getByText(/4,095/i)).toBeInTheDocument();
+    expect(getByText(/Protein/i)).toBeInTheDocument();
+    expect(getByText(/607/i)).toBeInTheDocument();
+    expect(getByText(/CustomerType/i)).toBeInTheDocument();
+    expect(getByText(/999/i)).toBeInTheDocument();
+  });
 
-      it('should render Checkboxes and item count', () => {
-        expect(wrapper.exists('[data-cy="gender-facet"]')).toBe(true);
-        expect(wrapper.exists('[data-cy="gender-facet-item-count"]')).toBe(true);
-      });
-      it('should not render apply button', () => {
-        expect(wrapper.exists('[data-cy="gender-facet-apply-button"]')).toBe(false);
+  it("Facet component renders with nested data properly" , () => {
+    const { getByTestId, getByText } = render(
+        <Facet
+          name="Sales.sales_region"
+          constraint="Sales.sales_region"
+          facetValues={facetValues}
+          key=""
+          tooltip=""
+          facetType="xs:string"
+          facetCategory="entity"
+          updateSelectedFacets={jest.fn()}
+          addFacetValues={jest.fn()}
+          referenceType="element"
+          entityTypeId=""
+          propertyPath="sales_region"
+        />
+    )
+    expect(getByText(/Sales.sales_region/i)).toBeInTheDocument();
 
-      });
-    });
-})
+    expect(getByText(/Customer/i)).toBeInTheDocument();
+    expect(getByText(/50/i)).toBeInTheDocument();
+    expect(getByText(/OrderDetail/i)).toBeInTheDocument();
+    expect(getByText(/15,000/i)).toBeInTheDocument();
+
+    fireEvent.click(getByTestId("show-more"));
+    // show extra facets
+    expect(getByText(/ProductDetail/i)).toBeInTheDocument();
+    expect(getByText(/4,095/i)).toBeInTheDocument();
+    expect(getByText(/Protein/i)).toBeInTheDocument();
+    expect(getByText(/607/i)).toBeInTheDocument();
+    expect(getByText(/CustomerType/i)).toBeInTheDocument();
+    expect(getByText(/999/i)).toBeInTheDocument();
+  });
+});

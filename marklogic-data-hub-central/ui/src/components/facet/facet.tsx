@@ -18,7 +18,7 @@ interface Props {
   referenceType: string;
   entityTypeId: any;
   propertyPath: any;
-  updateSelectedFacets: (constraint: string, vals: string[], datatype: string) => void;
+  updateSelectedFacets: (constraint: string, vals: string[], datatype: string, isNested: boolean) => void;
   addFacetValues: (constraint: string, vals: string[], datatype: string, facetCategory: string) => void;
 };
 
@@ -33,16 +33,16 @@ const Facet: React.FC<Props> = (props) => {
 
   let checkedFacets: any[] = [];
 
-    const setCheckedOptions = (searchOptions) => {
+    const setCheckedOptions = (facetName) => {
         for (let facet in searchOptions.searchFacets) {
-            if (facet === props.constraint) {
+            if (facet === facetName) {
                 let valueType = '';
                 if (searchOptions.searchFacets[facet].dataType === 'xs:string') {
                     valueType = 'stringValues';
                 }
                 // TODO add support for non string facets
-                const checkedArray = searchOptions.searchFacets[facet][valueType];
-                if (checkedArray && checkedArray.length) {
+                const checkedArray = searchOptions.searchFacets[facet][valueType];                
+                if (checkedArray.length) {
                     // checking if arrays are equivalent
                     if (JSON.stringify(checked) === JSON.stringify(checkedArray)) {
                     } else {
@@ -54,20 +54,36 @@ const Facet: React.FC<Props> = (props) => {
     }
 
     useEffect(() => {
-        if (Object.entries(searchOptions.searchFacets).length !== 0 && searchOptions.searchFacets.hasOwnProperty(props.constraint)) {
-            setCheckedOptions(searchOptions)
-        } else {
-            setChecked([]);
+      if (Object.entries(searchOptions.searchFacets).length !== 0 && searchOptions.searchFacets.hasOwnProperty(props.constraint)) {
+        let facetName: string = '';
+        if (searchOptions.searchFacets.hasOwnProperty(props.constraint)) {
+          facetName = props.constraint;
+        } else if (searchOptions.searchFacets.hasOwnProperty(props.propertyPath) && props.constraint !== props.propertyPath) {
+          facetName = props.propertyPath;
         }
+        if (facetName) {
+          setCheckedOptions(facetName)
+        }
+      } else {
+        setChecked([])
+      }
     }, [searchOptions]);
 
 
     useEffect(() => {
-        if (Object.entries(greyedOptions.searchFacets).length !== 0 && greyedOptions.searchFacets.hasOwnProperty(props.constraint)) {
-            setCheckedOptions(greyedOptions)
-        } else if ((Object.entries(searchOptions.searchFacets).length === 0 || (!searchOptions.searchFacets.hasOwnProperty(props.constraint)))) {
-            setChecked([]);
+      if (Object.entries(greyedOptions.searchFacets).length !== 0) {
+        let facetName: string = '';
+        if (searchOptions.searchFacets.hasOwnProperty(props.constraint)) {
+          facetName = props.constraint;
+        } else if (searchOptions.searchFacets.hasOwnProperty(props.propertyPath) && props.constraint !== props.propertyPath) {
+          facetName = props.propertyPath;
         }
+        if (facetName) {
+          setCheckedOptions(facetName)
+        }
+      } else if ((Object.entries(searchOptions.searchFacets).length === 0 || (!searchOptions.searchFacets.hasOwnProperty(props.constraint)))) {
+        setChecked([]);
+      }
     }, [greyedOptions]);
 
 
@@ -83,23 +99,24 @@ const Facet: React.FC<Props> = (props) => {
 
   const handleClick = (e) => {
     let index = checked.indexOf(e.target.value)
+    let isNested = props.constraint === props.propertyPath ? false : true;
     // Selection
     if (e.target.checked && index === -1) {
       setChecked([...checked, e.target.value]);
-      props.updateSelectedFacets(props.constraint, [...checked, e.target.value], props.facetType);
+      props.updateSelectedFacets(props.constraint, [...checked, e.target.value], props.facetType, isNested);
     }
     // Deselection
     else if (index !== -1) {
       let newChecked = [...checked];
       newChecked.splice(index, 1);
       setChecked(newChecked);
-      props.updateSelectedFacets(props.constraint, newChecked, props.facetType);
+      props.updateSelectedFacets(props.constraint, newChecked, props.facetType, isNested);
     }
   }
 
   const handleClear = () => {
     setChecked([]);
-    props.updateSelectedFacets(props.constraint, [], props.facetType);
+    props.updateSelectedFacets(props.constraint, [], props.facetType, false);
   }
 
 
@@ -129,6 +146,7 @@ const Facet: React.FC<Props> = (props) => {
         checked={checked.includes(facet.value)}
         className={styles.value}
         data-cy={stringConverter(props.name) + "-facet-item-checkbox"}
+        data-testid={stringConverter(props.name) + "-" + facet + "-facet-item-checkbox"}
       >
         <Tooltip title={facet.value}>{facet.value}</Tooltip>
       </Checkbox>
@@ -150,10 +168,17 @@ const Facet: React.FC<Props> = (props) => {
   return (
     <div className={styles.facetContainer} data-cy={stringConverter(props.name) + "-facet-block"}>
       <div className={styles.header}>
-        <div className={styles.name} data-cy={stringConverter(props.name) + "-facet"}>{<Tooltip title={props.name}>{formatTitle()}</Tooltip>}<Tooltip
-          title={props.tooltip} placement="topLeft">
-          {props.tooltip ?
-            <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm"/> : ''}</Tooltip></div>
+        <div 
+          className={styles.name} 
+          data-cy={stringConverter(props.name) + "-facet"}
+        >
+          <Tooltip title={props.name}>{formatTitle()}</Tooltip>
+            <Tooltip
+              title={props.tooltip} placement="topLeft">
+              {props.tooltip ?
+                <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm"/> : ''}
+            </Tooltip>
+        </div>
         <div className={styles.summary}>
           {checked.length > 0 ? <div className={styles.selected}
                                      data-cy={stringConverter(props.name) + "-selected-count"}>{checked.length} selected</div> : ''}
@@ -175,6 +200,7 @@ const Facet: React.FC<Props> = (props) => {
           style={{display: (props.facetValues.length > SHOW_MINIMUM) ? 'block' : 'none'}}
           onClick={() => showMore()}
           data-cy="show-more"
+          data-testid="show-more"
         >{(more) ? '<< less' : 'more >>'}</div>
         {(props.facetType === 'xs:string' || 'collection') &&
         <div className={styles.searchValues}>

@@ -6,3 +6,5 @@ bin
 build
 src/main/resources/static
 installer.log
+cobertura-coverage.xml
+TEST-UI_Unit.xml

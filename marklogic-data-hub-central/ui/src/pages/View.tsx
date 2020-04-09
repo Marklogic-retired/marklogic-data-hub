@@ -54,15 +54,15 @@ const View: React.FC = () => {
           pageLength: 1,
         }
       });
-      if (componentIsMounted.current) {
+      if (componentIsMounted.current && response['data']) {
         setTotalDocs(response.data.total);
         setFacetValues(response.data.facets.Collection.facetValues);
-        setIsLoading(false);
       }
     } catch (error) {
       handleError(error);
     } finally {
       resetSessionTime();
+      setIsLoading(false);
     }
   }
 
