@@ -25,7 +25,9 @@ This section describes how to build and test new features and fixes in Data Hub.
 
 - the Data Hub library in ./marklogic-data-hub
 - the Data Hub Gradle plugin in ./ml-data-hub-plugin
-- the One-UI web application in ./marklogic-data-hub-central
+- the 
+
+web application in ./marklogic-data-hub-central
 - the QuickStart web application in ./web
 
 ### Prerequisites
@@ -168,7 +170,7 @@ Or just run a specific test:
 
 ### Running and testing marklogic-data-hub-central
 
-See the one-UI README.md file for more information.
+See the marklogic-data-hub-central README.md file for more information.
 
 ### Running QuickStart from source
 
