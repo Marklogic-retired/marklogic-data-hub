@@ -15,11 +15,10 @@
  *
  */
 
-package com.marklogic.gradle.fullcycle
+package com.marklogic.gradle.task
 
 import com.marklogic.gradle.task.BaseTest
 import com.marklogic.hub.HubConfig
-
 import org.apache.commons.io.FileUtils
 import org.gradle.testkit.runner.UnexpectedBuildFailure
 import org.gradle.testkit.runner.UnexpectedBuildSuccess
@@ -33,12 +32,10 @@ class CreateHarmonizeFlowTaskTest extends BaseTest {
     def setupSpec() {
         createGradleFiles()
         runTask("hubInit")
-        runTask("mlDeploy")
 		clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
 
     def cleanupSpec() {
-        runTask('mlUndeploy', '-Pconfirm=true')
     }
 
     def "createHarmonizeFlow with no entityName"() {
