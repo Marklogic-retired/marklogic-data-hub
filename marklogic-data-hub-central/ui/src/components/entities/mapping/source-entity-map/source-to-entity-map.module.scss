@@ -49,6 +49,29 @@
     line-height: 1px;
 }
 
+.filterContainer {
+    padding: 8px
+}
+.searchInput { 
+    min-width: 8vw;
+    margin-bottom: 8px;
+    display: block
+}
+.resetButton { 
+    width: 90px;
+    margin-right: 8px  
+}
+
+.searchSubmitButton {
+    width: 90px
+}
+
+.highlightStyle { 
+    background-color: #ffc069;
+    padding: 0px
+}
+   
+
 .entityContainer{
     width: auto;
     flex: 9;
@@ -58,14 +81,11 @@
     padding-left: 20px;
     word-break: break-all;
 
-    > .lineSpacing{
-        margin : 21px 0 24px 0;
-    }
     > .entityDetails{
         display: inline-block;
         vertical-align: middle;
-        height: 5vh;
-        margin-bottom: -17px;
+        //height: 5vh;
+        margin-bottom: 13px;
         > .entityTypeTitle{
             float: left;
             padding-top: 6px;
@@ -75,11 +95,32 @@
         }
     }
 
-    > .DividerEntity {
-        margin-bottom: 16px;
-        margin-top: 20px;
+    > .columnOptionsSelectorContainer {
+        display: inline-block;
+        margin-bottom: 10px;
+        > .columnOptionsSelector{
+            float: right;
+        }
     }
 }
+
+.DropdownMenuItem {
+    display: flex;
+    vertical-align: middle;
+    max-height: 3vh;
+}
+
+.columnSelectorOverlay{
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.checkBoxItem{
+    line-height: 2vh;
+    margin-top: 4px;
+}
+
 .btn_icons{
     float: right;
     padding-right: 4px;
@@ -94,7 +135,8 @@ hr {
 .entityTable {
     & thead > tr > th {
         background-color: #fafafa;
-        line-height: 2px;
+        padding-top: 12px;
+        padding-bottom: 12px;
       };
     & tbody > tr > td {
         line-height: 2px;
@@ -184,7 +226,7 @@ hr {
 }
 .sourceDetails{
     padding-top: 5px;
-    margin-bottom: -14px;
+    //margin-bottom: -14px;
 }
 .sourceDataIcon {
     background: transparent;
@@ -335,7 +377,6 @@ hr {
     padding-bottom: 4px;
     margin-top: 2px;
     height: 5vh;
-
 }
 
 .navigate_source_uris{

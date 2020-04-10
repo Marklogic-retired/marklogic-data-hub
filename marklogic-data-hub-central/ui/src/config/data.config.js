@@ -61,17 +61,53 @@ const loadData = {
    
 };
 
+const xmlSourceData = [
+  {
+    key: 'sampleProtein', children: [
+      { key: 'proteinId', val: '123EAC' },
+      { key: '@proteinType', val: 'home' },
+      {
+      key: 'nutFree:name', children: [
+        { key: 'FirstNamePreferred', val: 'John' },
+        { key: 'LastName', val: 'Smith' }
+      ]
+      },
+      { key: 'proteinCat', val: 'commercial' }
+    ]
+  }
+];
+
+const jsonSourceData = [
+  { key: 'proteinId', val: '123EAC' },
+  { key: 'proteinType', val: 'home' },
+  {
+    key: 'nutFreeName', children: [
+      { key: 'FirstNamePreferred', val: 'John' },
+      { key: 'LastName', val: 'Smith' }
+    ]
+  },
+  { key: 'proteinCat', val: 'commercial' }
+];
+
+const entityTypeProperties = [
+  { name: 'propId', type: 'int' },
+  { name: 'propName', type: 'string' },
+  {
+    name: 'items', type: 'parent-ItemType [ ]', children: [
+      { name: 'items/itemTypes', type: 'string' },
+      {
+        name: 'items/itemCategory', type: 'parent-catItem', children: [
+          { name: 'items/itemCategory/artCraft', type: 'string' },
+          { name: 'items/itemCategory/automobile', type: 'string' }
+        ]
+      }]
+  },
+  { name: 'gender', type: 'string' }
+]
+
 const mapProps = {
-  sourceData: [
-    { key: 'proteinId', val: '123EAC' },
-    { key: '@proteinType', val: 'home' },
-    { key: 'nutFree:name', val: 'testName1' }
-  ],
-  srcData: [
-    { key: 'proteinId', val: '123EAC' },
-    { key: '@proteinType', val: 'home' },
-    { key: 'nutFree:name', val: 'testName1' }
-  ],
+  sourceData: jsonSourceData,
+  entityTypeProperties : entityTypeProperties,
   sourceURI: '/dummy/mapping/source/uri1.json',
   mapData: {
     name: 'testMap',
@@ -80,8 +116,8 @@ const mapProps = {
     selectedSource: 'collection',
     sourceQuery: "cts.collectionQuery([''])",
     properties: {
-      id: {  sourcedFrom: 'id' },
-      name: { sourcedFrom: 'mappedName' }
+      propId: {  sourcedFrom: 'id' },
+      propName: {sourcedFrom: 'testNameInExp'}
     }
   },
   namespaces: {
@@ -104,11 +140,7 @@ const mapProps = {
   canReadOnly: false,
   docNotFound: false,
   entityTypeTitle: 'Person',
-  extractCollectionFromSrcQuery: jest.fn(),
-  entityTypeProperties: [
-    { name: 'id', type: 'int' },
-    { name: 'name', type: 'string' }
-  ]
+  extractCollectionFromSrcQuery: jest.fn()
 };
 
 const newMap = {
@@ -170,7 +202,8 @@ const data = {
   newMap: newMap,
   editMap: editMap,
   activitySettings: activitySettings,
-  dropDownWithSearch: dropDownWithSearch
+  dropDownWithSearch: dropDownWithSearch,
+  xmlSourceData: xmlSourceData
 };
 
 export default data;
