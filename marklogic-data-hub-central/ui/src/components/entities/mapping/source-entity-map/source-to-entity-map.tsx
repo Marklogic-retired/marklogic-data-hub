@@ -1,13 +1,14 @@
 
-import React, { useState, useEffect, CSSProperties } from "react";
-import { Card, Modal, Table, Icon, Popover, Input, Button, Alert, Tooltip, Dropdown} from "antd";
+import React, { useState, useEffect, CSSProperties, useRef } from "react";
+import { Card, Modal, Table, Icon, Popover, Input, Button, Alert, Tooltip, Dropdown, Menu, Checkbox, Row, AutoComplete} from "antd";
 import styles from './source-to-entity-map.module.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faObjectUngroup, faList, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
+import { faObjectUngroup, faList, faPencilAlt, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { getInitialChars, convertDateFromISO, getLastChars } from "../../../../util/conversionFunctions";
 import { getMappingValidationResp } from "../../../../util/manageArtifacts-service"
 import DropDownWithSearch from "../../../common/dropdown-with-search/dropdownWithSearch";
 import SplitPane from 'react-split-pane';
+import Highlighter from 'react-highlight-words';
 
 const SourceToEntityMap = (props) => {
 
@@ -55,6 +56,23 @@ const SourceToEntityMap = (props) => {
     const contextHelp = <div className={styles.contextHelp}>An element in the source data from which to derive the values of this entity property's children. Both the source data element and the entity property must be of the same type (Object or an array of Object instances). Use a slash (&quot;/&quot;) if the source model is flat.</div>;
 
     const { TextArea } = Input;
+
+    //For Column Option dropdown checkboxes
+    const [checkedEntityColumns,setCheckedEntityColumns] = useState({
+        'name': true,
+        'type': true,
+        'key': true,
+        'value': true
+    });
+
+    const [colOptMenuVisible, setColOptMenuVisible] = useState(false);
+
+    const columnOptionsLabel = {
+        name: 'Name',
+        type: 'Type',
+        key: 'XPath Expression',
+        value: 'Value'
+    };
 
     const handleEditIconClick = () => {
         setEditingUri(true);
@@ -304,21 +322,123 @@ const SourceToEntityMap = (props) => {
         return mapStyle;
     }
 
+    //For filter search in source table
+    let searchInput: any;
+    //For Source Table
+    const [searchSourceText,setSearchSourceText] = useState('');
+    const [searchedSourceColumn,setSearchedSourceColumn] = useState('');
+    //For Entity table
+    const [searchEntityText,setSearchEntityText] = useState('');
+    const [searchedEntityColumn,setSearchedEntityColumn] = useState('');
+
+    const handleColSearch = (selectedKeys, confirm, dataIndex) => {
+        confirm();
+        if(dataIndex === 'key'){
+            setSearchSourceText(selectedKeys[0]);
+            setSearchedSourceColumn(dataIndex); 
+        } else {
+            setSearchEntityText(selectedKeys[0]);
+            setSearchedEntityColumn(dataIndex);
+        }
+      };
+
+    const handleSearchReset = (clearFilters,dataIndex) => {
+        clearFilters();
+        if(dataIndex === 'key'){
+            setSearchSourceText('');
+            setSearchedSourceColumn(''); 
+        } else {
+            setSearchEntityText('');
+            setSearchedEntityColumn('');
+        }
+    };
+
+    const getColumnFilterProps = dataIndex => ({
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+            <div className={styles.filterContainer}>
+                <Input
+                    ref={node => {
+                        searchInput = node;
+                    }}
+                    data-testid={`searchInput-${dataIndex}`}
+                    placeholder={`Search name`}
+                    value={selectedKeys[0]}
+                    onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                    onPressEnter={() => handleColSearch(selectedKeys, confirm, dataIndex)}
+                    className={styles.searchInput}
+                />
+                <Button data-testid={`ResetSearch-${dataIndex}`} onClick={() => handleSearchReset(clearFilters, dataIndex)} size="small" className={styles.resetButton}>
+                    Reset
+              </Button>
+                <Button
+                    data-testid={`submitSearch-${dataIndex}`}
+                    type="primary"
+                    onClick={() => handleColSearch(selectedKeys, confirm, dataIndex)}
+                    size="small"
+                    className={styles.searchSubmitButton}
+                >
+                    <Icon type="search" theme="outlined" /> Search
+              </Button>
+            </div>
+        ),
+        filterIcon: filtered => <i><FontAwesomeIcon data-testid={`filterIcon-${dataIndex}`} icon={faSearch} size="lg" style={{ color: filtered ? '#5B69AF' : undefined }} /></i>,
+        onFilter: (value, record) => {
+            let recordString = getPropValueFromDataIndex(record, dataIndex);
+            return recordString.toString().toLowerCase().includes(value.toLowerCase());
+        },
+        onFilterDropdownVisibleChange: visible => {
+            if (visible) {
+                setTimeout(() => searchInput?.select());
+            }
+        }
+    });
+
+    const getPropValueFromDataIndex = (record, index) => {
+        let res;
+        if(record.hasOwnProperty('children')){
+          res = '-'+record[index];
+          record['children'].map(obj => {
+            res = res + getPropValueFromDataIndex(obj,index)
+            });
+          return res;
+        } else {
+          return '-'+record[index];
+        }
+    }
+
+    const getRenderOutput = (textToSearchInto,valueToDisplay,columnName,searchedCol,searchTxt) => {
+        if(searchedCol === columnName) {
+            return <Highlighter
+            highlightClassName={styles.highlightStyle}
+            searchWords={[searchTxt]}
+            autoEscape
+            textToHighlight={textToSearchInto}
+          />
+        } else {
+            return valueToDisplay;
+        }
+    }
+
     const columns = [
         {
-            title: 'Name',
+            title: <span data-testid="sourceTableKey">Name</span>,
             dataIndex: 'key',
             key: 'key',
-            sorter: (a: any, b: any) => a.key.length - b.key.length,
+            ...getColumnFilterProps('key'),
+            sorter: (a: any, b: any) => a.key?.localeCompare(b.key),
             width: '60%',
-            render: (text) => <span>{text?.split(':').length > 1 ? <span><Tooltip title={text?.split(':')[0]+' = "'+props.namespaces[text?.split(':')[0]]+'"'}><span id="namespace" className={styles.namespace}>{text?.split(':')[0]+': '}</span></Tooltip><span>{text?.split(':')[1]}</span></span> : text}</span>
+            render: (text) => {
+                let textToSearchInto = text?.split(':').length > 1 ? text?.split(':')[0]+': '+text?.split(':')[1] : text;
+                let valueToDisplay = <span>{text?.split(':').length > 1 ? <span><Tooltip title={text?.split(':')[0]+' = "'+props.namespaces[text?.split(':')[0]]+'"'}><span id="namespace" className={styles.namespace}>{text?.split(':')[0]+': '}</span></Tooltip><span>{text?.split(':')[1]}</span></span> : text}</span>;
+                return getRenderOutput(textToSearchInto,valueToDisplay,'key',searchedSourceColumn,searchSourceText);
+            }
         },
         {
-            title: 'Value',
+            title: <span data-testid="sourceTableValue">Value</span>,
             dataIndex: 'val',
             key: 'val',
             ellipsis: true,
-            sorter: (a: any, b: any) => a.val?.length - b.val?.length,
+            sorter: (a: any, b: any) => a.val?.localeCompare(b.val),
             width: '40%',
             render: (text) => <span>{text ? String(text).substr(0, 20) : ''}{text && text.length > 20 ? <Tooltip title={text}><span className={styles.toolTipForValues}>...</span></Tooltip> : ''}</span>
         }
@@ -326,24 +446,26 @@ const SourceToEntityMap = (props) => {
 
     const entityColumns = [
         {
-            title: 'Name',
+            title: <span data-testid="entityTableName">Name</span>,
             dataIndex: 'name',
             key: 'name',
             width: '18%',
-            sorter: (a: any, b: any) => a.name.length - b.name.length,
+            ...getColumnFilterProps('name'),
+            sorter: (a: any, b: any) => a.name?.localeCompare(b.name),
             ellipsis: true,
             render: (text) => {
-                const propName = text.split('/').pop();
-                return <span>{propName}</span>
+                let textToSearchInto = text.split('/').pop();
+                let valueToDisplay = <span>{textToSearchInto}</span>;
+                return getRenderOutput(textToSearchInto,valueToDisplay,'name',searchedEntityColumn,searchEntityText);
             }
         },
         {
             ellipsis: true,
-            title: 'Type',
+            title: <span data-testid="entityTableType">Type</span>,
             dataIndex: 'type',
             key: 'type',
             width: '15%',
-            sorter: (a: any, b: any) => a.type.length - b.type.length,
+            sorter: (a: any, b: any) => getEntityDataType(a.type).localeCompare(getEntityDataType(b.type)),
             render: (text) => {
                 const expanded = text.startsWith('parent-');
                 const dType = expanded ? text.slice(text.indexOf('-')+1): text;
@@ -385,10 +507,14 @@ const SourceToEntityMap = (props) => {
             key: 'value',
             width: '20%',
             ellipsis: true,
-            sorter: (a: any, b: any) => getDataForValueField(a.name)?.length - getDataForValueField(b.name)?.length,
+            sorter: (a: any, b: any) => getDataForValueField(a.name)?.localeCompare(getDataForValueField(b.name)),
             render: (text, row) => (<div className={styles.mapValue}><Tooltip title={getDataForValueField(row.name)}>{getDataForValueField(row.name)}</Tooltip></div>)
         }
     ]
+
+    const getEntityDataType = (prop) => {
+        return prop.startsWith('parent-') ? prop.slice(prop.indexOf('-')+1) : prop;
+    }
 
     const customExpandIcon = (props) => {
         if (props.expandable) {
@@ -546,6 +672,58 @@ const SourceToEntityMap = (props) => {
         height: 'auto',
     }
 
+    //Code for handling column selector in Entity table
+
+    const handleColOptMenuClick = e => {
+        if (e.key === 'FuzzyMatch') {
+          setColOptMenuVisible(false);
+        }
+    };
+    
+    const handleColOptMenuVisibleChange = flag => {
+        setColOptMenuVisible(flag);
+    };
+
+
+    const handleColOptionsChecked = async (e) => {
+        let obj = checkedEntityColumns;
+        obj[e.target.value] = e.target.checked;
+        await setCheckedEntityColumns({...obj});
+    }
+
+    const columnOptionsDropdown = (
+        <div className={styles.menuParentDiv}>
+            <Menu onClick={handleColOptMenuClick}>
+                {Object.keys(checkedEntityColumns).map(entLabel => (
+                    <Menu.Item key={entLabel}
+                    className={styles.DropdownMenuItem}><Checkbox
+                        data-testid={`columnOptionsCheckBox-${entLabel}`}
+                        key={entLabel}
+                        value={entLabel}
+                        onChange={handleColOptionsChecked}
+                        defaultChecked={true}
+                        className={styles.checkBoxItem}
+                    >{columnOptionsLabel[entLabel]}</Checkbox></Menu.Item>
+                ))}
+            </Menu>
+        </div>
+    );
+
+    const columnOptionsSelector = <div className={styles.columnOptionsSelector}>
+        <Dropdown overlay={columnOptionsDropdown}
+        trigger={['click']}
+        onVisibleChange={handleColOptMenuVisibleChange}
+        visible={colOptMenuVisible}
+        placement="bottomRight"
+        overlayClassName={styles.columnSelectorOverlay}><a onClick={e => e.preventDefault()}>
+        Column Options <Icon type="down" theme="outlined"/>
+      </a></Dropdown>
+    </div>
+
+    const getColumnsForEntityTable:any = () => {
+        return entityColumns.map(el => checkedEntityColumns[el.key] ? el : '').filter(item => item);
+    }
+
     return (<Modal
             visible={props.mappingVisible}
             onOk={() => onOk()}
@@ -598,7 +776,6 @@ const SourceToEntityMap = (props) => {
                                 placement="right"
                             ><Icon type="question-circle" className={styles.questionCircle} theme="filled" /></Popover></p>
                         </div>
-                        <br/>
                         {emptyData ?
                             <div id="noData">
                                 <br/><br/>
@@ -635,10 +812,8 @@ const SourceToEntityMap = (props) => {
                         className={styles.entityContainer}>
                         <div className={styles.entityDetails}>
                             <span className={styles.entityTypeTitle}><p ><i><FontAwesomeIcon icon={faObjectUngroup} size="sm" className={styles.entityIcon} /></i> Entity: {props.entityTypeTitle}</p></span>
-
                         </div>
-                        <br/>
-                        <div className={styles.lineSpacing}></div>
+                        <div className={styles.columnOptionsSelectorContainer}>{columnOptionsSelector}</div>
                         <Table
                             pagination={false}
                             className={styles.entityTable}
@@ -646,7 +821,7 @@ const SourceToEntityMap = (props) => {
                             expandIcon={(props) => customExpandIcon(props)}
                             indentSize={14}
                             defaultExpandAllRows={true}        
-                            columns={entityColumns}
+                            columns={getColumnsForEntityTable()}
                             dataSource={props.entityTypeProperties}
                             tableLayout="unset"
                             rowKey={record => JSON.stringify(record)}
