@@ -33,20 +33,28 @@ const Facet: React.FC<Props> = (props) => {
 
   let checkedFacets: any[] = [];
 
-    const setCheckedOptions = (facetName) => {
-        for (let facet in searchOptions.searchFacets) {
-            if (facet === facetName) {
-                let valueType = '';
-                if (searchOptions.searchFacets[facet].dataType === 'xs:string') {
-                    valueType = 'stringValues';
-                }
-                // TODO add support for non string facets
-                const checkedArray = searchOptions.searchFacets[facet][valueType];                
-                if (checkedArray.length) {
-                    // checking if arrays are equivalent
-                    if (JSON.stringify(checked) === JSON.stringify(checkedArray)) {
-                    } else {
-                        setChecked(checkedArray);
+    const setCheckedOptions = (selectedOptions) => {
+        let facetName: string = '';
+        if (selectedOptions.searchFacets.hasOwnProperty(props.constraint)) {
+            facetName = props.constraint;
+        } else if (selectedOptions.searchFacets.hasOwnProperty(props.propertyPath) && props.constraint !== props.propertyPath) {
+            facetName = props.propertyPath;
+        }
+        if (facetName) {
+            for (let facet in selectedOptions.searchFacets) {
+                if (facet === facetName) {
+                    let valueType = '';
+                    if (selectedOptions.searchFacets[facet].dataType === 'xs:string') {
+                        valueType = 'stringValues';
+                    }
+                    // TODO add support for non string facets
+                    const checkedArray = selectedOptions.searchFacets[facet][valueType];
+                    if (checkedArray && checkedArray.length) {
+                        // checking if arrays are equivalent
+                        if (JSON.stringify(checked) === JSON.stringify(checkedArray)) {
+                        } else {
+                            setChecked(checkedArray);
+                        }
                     }
                 }
             }
@@ -54,37 +62,22 @@ const Facet: React.FC<Props> = (props) => {
     }
 
     useEffect(() => {
-      if (Object.entries(searchOptions.searchFacets).length !== 0 && searchOptions.searchFacets.hasOwnProperty(props.constraint)) {
-        let facetName: string = '';
-        if (searchOptions.searchFacets.hasOwnProperty(props.constraint)) {
-          facetName = props.constraint;
-        } else if (searchOptions.searchFacets.hasOwnProperty(props.propertyPath) && props.constraint !== props.propertyPath) {
-          facetName = props.propertyPath;
+        if (Object.entries(searchOptions.searchFacets).length !== 0 && searchOptions.searchFacets.hasOwnProperty(props.constraint)) {
+            setCheckedOptions(searchOptions)
+        } else if ((Object.entries(greyedOptions.searchFacets).length === 0 || (!greyedOptions.searchFacets.hasOwnProperty(props.constraint)))) {
+            setChecked([]);
         }
-        if (facetName) {
-          setCheckedOptions(facetName)
-        }
-      } else {
-        setChecked([])
-      }
     }, [searchOptions]);
 
 
     useEffect(() => {
-      if (Object.entries(greyedOptions.searchFacets).length !== 0) {
-        let facetName: string = '';
-        if (searchOptions.searchFacets.hasOwnProperty(props.constraint)) {
-          facetName = props.constraint;
-        } else if (searchOptions.searchFacets.hasOwnProperty(props.propertyPath) && props.constraint !== props.propertyPath) {
-          facetName = props.propertyPath;
+        if (Object.entries(greyedOptions.searchFacets).length !== 0 && greyedOptions.searchFacets.hasOwnProperty(props.constraint)) {
+            setCheckedOptions(greyedOptions)
+        } else if ((Object.entries(searchOptions.searchFacets).length === 0 || (!searchOptions.searchFacets.hasOwnProperty(props.constraint)))) {
+            setChecked([]);
         }
-        if (facetName) {
-          setCheckedOptions(facetName)
-        }
-      } else if ((Object.entries(searchOptions.searchFacets).length === 0 || (!searchOptions.searchFacets.hasOwnProperty(props.constraint)))) {
-        setChecked([]);
-      }
     }, [greyedOptions]);
+
 
 
     const checkFacetValues = (checkedValues) => {
@@ -168,8 +161,8 @@ const Facet: React.FC<Props> = (props) => {
   return (
     <div className={styles.facetContainer} data-cy={stringConverter(props.name) + "-facet-block"}>
       <div className={styles.header}>
-        <div 
-          className={styles.name} 
+        <div
+          className={styles.name}
           data-cy={stringConverter(props.name) + "-facet"}
         >
           <Tooltip title={props.name}>{formatTitle()}</Tooltip>

@@ -149,11 +149,14 @@ const Sidebar: React.FC<Props> = (props) => {
           }
       } else {
           if (Object.entries(searchOptions.searchFacets).length === 0) {
-              setAllSearchFacets({})
+              setAllSearchFacets({});
+              setAllSelectedFacets({});
+          } else{
+              setAllSelectedFacets(searchOptions.searchFacets);
           }
           props.checkFacetRender([]);
       }
-  }, [greyedOptions.searchFacets]);
+  }, [greyedOptions]);
 
 
   const updateSelectedFacets = (constraint: string, vals: string[], datatype: string, isNested: boolean) => {

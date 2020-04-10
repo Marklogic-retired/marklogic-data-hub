@@ -123,15 +123,20 @@ class BrowsePage {
   }
 
   getGreySelectedFacets(facet: string){
-    return cy.get('#selected-facets [data-cy=clear-grey-' + facet +']').invoke('text');
+    return cy.get('#selected-facets [data-cy=clear-grey-' + facet +']');
   }
 
-  getClearSelectedFacets(){
-    return cy.get('[data-cy=clear-all-button]' );
+  getClearGreyFacets(){
+    return cy.get('[data-cy=clear-all-grey-button]');
   }
 
   getFacetApplyButton() {
-    return cy.get('[data-cy=facet-apply-button]').click();
+     return cy.get('svg[data-icon="check-square"]')
+    //return cy.get('#selected-facets [data-cy=facet-apply-button]');
+  }
+
+  getClearAllButton() {
+    return cy.get('[data-cy=clear-all-button]');
   }
 
   applyDatePickerSelection(facet: string) {
