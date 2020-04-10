@@ -108,7 +108,7 @@ describe('json scenario on browse documents page', () => {
     })
   });
 
-  it.only('apply facet search and verify docs, hub/entity properties', () => {
+  it('apply facet search and verify docs, hub/entity properties', () => {
     browsePage.selectEntity('All Entities');
     browsePage.getSelectedEntity().should('contain', 'All Entities');
     cy.wait(500);
@@ -118,15 +118,43 @@ describe('json scenario on browse documents page', () => {
     browsePage.getTotalDocuments().should('be.greaterThan', 1008);
     browsePage.getFacetItemCheckbox('collection', 'Person').click();
     browsePage.getSelectedFacets().should('exist');
-    browsePage.getClearSelectedFacets().should('exist');
-    browsePage.getClearSelectedFacets().click({multiple:true});
-    //browsePage.getGreySelectedFacets('Person').should('exist');
-    //browsePage.getFacetApplyButton();
-    //cy.wait(500);
-    browsePage.getTotalDocuments().should('be.equal', 1015);
-    //browsePage.getFacetSearchSelectionCount('collection').should('contain', '1');
-    //browsePage.clearFacetSearchSelection('collection');
+    browsePage.getGreySelectedFacets('Person').should('exist');
+    browsePage.getFacetApplyButton().should('exist');
+    browsePage.getClearGreyFacets().should('exist');
+    browsePage.getFacetApplyButton().click();
+    cy.wait(500);
+    browsePage.getTotalDocuments().should('be.equal', 6);
+    browsePage.getClearAllButton().should('exist');
+    browsePage.getFacetSearchSelectionCount('collection').should('contain', '1');
+    browsePage.clearFacetSearchSelection('collection');
   });
+
+  it('apply facet search and clear individual grey facet', () => {
+     browsePage.selectEntity('All Entities');
+     browsePage.getSelectedEntity().should('contain', 'All Entities');
+     cy.wait(500);
+     browsePage.getHubPropertiesExpanded();
+     browsePage.getTotalDocuments().should('be.greaterThan', 1008);
+     browsePage.getFacetItemCheckbox('collection', 'Person').click();
+     browsePage.getGreySelectedFacets('Person').click();
+     cy.wait(500);
+     browsePage.getTotalDocuments().should('be.greaterThan', 1008);
+    });
+
+  it('apply facet search and clear all grey facets', () => {
+     browsePage.selectEntity('All Entities');
+     browsePage.getSelectedEntity().should('contain', 'All Entities');
+     cy.wait(500);
+     browsePage.getHubPropertiesExpanded();
+     browsePage.getTotalDocuments().should('be.greaterThan', 1008);
+     browsePage.getFacetItemCheckbox('collection', 'Person').click();
+     browsePage.getFacetItemCheckbox('collection', 'Customer').click();
+     browsePage.getGreySelectedFacets('Person').should('exist');
+     browsePage.getGreySelectedFacets('Customer').should('exist');
+     browsePage.getClearGreyFacets().click();
+     cy.wait(500);
+     browsePage.getTotalDocuments().should('be.greaterThan', 1008);
+    });
 
   it('search for a simple text/query and verify content', () => {
     cy.wait(500);

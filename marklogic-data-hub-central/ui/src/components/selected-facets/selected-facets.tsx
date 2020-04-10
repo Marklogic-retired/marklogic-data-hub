@@ -4,6 +4,8 @@ import { MlButton } from 'marklogic-ui-library';
 import { SearchContext } from '../../util/search-context';
 import styles from './selected-facets.module.scss';
 import moment from 'moment';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {faCheckSquare, faTable, faWindowClose} from '@fortawesome/free-solid-svg-icons'
 
 
 interface Props {
@@ -20,6 +22,8 @@ const SelectedFacets: React.FC<Props> = (props) => {
     clearRangeFacet,
     clearAllGreyFacets,
     clearGreyFacet,
+    clearGreyDateFacet,
+    clearGreyRangeFacet,
     greyedOptions,
     setAllSearchFacets,
    } = useContext(SearchContext);
@@ -150,12 +154,12 @@ const SelectedFacets: React.FC<Props> = (props) => {
             if (item.constraint === 'createdOnRange') {
                 let dateValues: any = [];
                 dateValues.push(item.facet.lowerBound, item.facet.upperBound);
-                return (
+                return ((unCheckRest(item.constraint, item.facet)) &&
                     <MlButton
                         size="small"
                         className={styles.facetGreyButton}
                         key={index}
-                        //onClick={() => clearDateFacet()}
+                        onClick={() => clearGreyDateFacet()}
                         data-cy='clear-date-facet'
                         data-testid='clear-date-facet'
                     >
@@ -167,24 +171,24 @@ const SelectedFacets: React.FC<Props> = (props) => {
                 if (moment(item.rangeValues.lowerBound).isValid() && moment(item.rangeValues.upperBound).isValid()) {
                     let dateValues: any = [];
                     dateValues.push(item.rangeValues.lowerBound, item.rangeValues.upperBound);
-                    return (
+                    return ((unCheckRest(item.constraint, item.facet)) &&
                         <MlButton
                             size="small"
                             className={styles.facetGreyButton}
                             key={index}
-                            //onClick={() => clearRangeFacet(item.constraint)}
+                            onClick={() => clearGreyRangeFacet(item.constraint)}
                         >
                             <Icon type='close'/>
                             {facetName + ': ' + item.rangeValues.lowerBound + ' ~ ' + item.rangeValues.upperBound}
                         </MlButton>
                     )
                 } else {
-                    return (
+                    return ((unCheckRest(item.constraint, item.facet)) &&
                         <MlButton
                             size="small"
                             className={styles.facetGreyButton}
                             key={index}
-                            //onClick={() => clearRangeFacet(item.constraint)}
+                            onClick={() => clearGreyRangeFacet(item.constraint)}
                             data-cy='clear-range-facet'
                             data-testid='clear-range-facet'
                         >
@@ -195,15 +199,16 @@ const SelectedFacets: React.FC<Props> = (props) => {
                 }
             }
             return (
-              (unCheckRest(item.constraint, item.facet)) && 
-                <Tooltip 
-                  key={index + '-' + item.facet} 
+              (unCheckRest(item.constraint, item.facet)) &&
+                <Tooltip
+                  key={index + '-' + item.facet}
                   title={'Not yet applied'}
                 >
                   <MlButton
                     size="small"
                     className={styles.facetGreyButton}
-                    //onClick={() => clearGreyFacet(item.constraint, item.facet)}
+                    key={index}
+                    onClick={() => clearGreyFacet(item.constraint, item.facet)}
                     data-cy={`clear-grey-${item.facet}`}
                     data-testid={`clear-grey-${item.facet}`}
                   >
@@ -213,25 +218,28 @@ const SelectedFacets: React.FC<Props> = (props) => {
               </Tooltip>
             )
         })}
-        {props.greyFacets.length > 0 &&
-        <Tooltip title={'Discard all changes'}><MlButton
-            size="small"
-            className={styles.clearAllBtn}
-            onClick={clearGreyFacets}
-            data-cy='clear-all-grey-button'
-            data-testid='clear-all-grey-button'
-        >
-            <Icon type='close'/>
-        </MlButton></Tooltip>
-        }
         {showApply &&
-        <Tooltip title={'Apply all changes'}><MlButton
-            size="small"
-            onClick={() => applyFacet()}
-            data-cy='facet-apply-button'
-        >
-            <Icon type='check'/>
-        </MlButton></Tooltip>
+        <Tooltip title={'Apply all changes'}>
+            <FontAwesomeIcon
+                icon={faCheckSquare}
+                onClick={() => applyFacet()}
+                size="lg"
+                className={styles.checkIcon}
+                data-cy='facet-apply-button'
+                data-testid='facet-apply-button'
+            />
+        </Tooltip>
+        }
+        {props.greyFacets.length > 0 &&
+        <Tooltip title={'Discard all changes'}>
+            <FontAwesomeIcon
+                icon={faWindowClose}
+                onClick={clearGreyFacets}
+                data-cy='clear-all-grey-button'
+                data-testid='clear-all-grey-button'
+                className={styles.closeIcon}
+                size="lg" />
+        </Tooltip>
         }
     </div>
   );
