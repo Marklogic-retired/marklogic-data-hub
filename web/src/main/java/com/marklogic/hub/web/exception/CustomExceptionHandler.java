@@ -15,11 +15,6 @@
  */
 package com.marklogic.hub.web.exception;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.client.FailedRequestException;
-import com.marklogic.client.impl.FailedRequest;
 import com.marklogic.hub.web.model.ApiError;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -37,7 +32,6 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
-    ObjectMapper mapper = new ObjectMapper();
 
     private ResponseEntity<?> buildResponseEntity(ApiError apiError) {
         return new ResponseEntity<>(apiError.getErrorInfo(), new HttpHeaders(), apiError.getStatus());
@@ -63,16 +57,5 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         DataHubException ex) {
         ApiError apiError = new ApiError(BAD_REQUEST, ex);
         return buildResponseEntity(apiError);
-    }
-
-    @ExceptionHandler(FailedRequestException.class)
-    protected ResponseEntity<JsonNode> handleFailedRequestExceptionRequest(
-        FailedRequestException failedRequestException) {
-        FailedRequest failedRequest = failedRequestException.getFailedRequest();
-        ObjectNode errJson = mapper.createObjectNode();
-        errJson.put("code", failedRequest.getStatusCode());
-        errJson.put("message", failedRequest.getStatus());
-        errJson.put("details", failedRequest.getMessage());
-        return new ResponseEntity<JsonNode>(errJson, HttpStatus.valueOf(failedRequest.getStatusCode()));
     }
 }
