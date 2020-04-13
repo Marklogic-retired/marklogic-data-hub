@@ -203,7 +203,7 @@ pipeline{
 			steps{
 			script{
 			 props = readProperties file:'data-hub/pipeline.properties';
-				 copyRPM 'Release','10.0-3'
+				 copyRPM 'Release','10.0-4'
 				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
 				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;set +e;./gradlew clean;./gradlew marklogic-data-hub:testAcceptance;sleep 10s;./gradlew ml-data-hub:test;./gradlew web:test;./gradlew marklogic-data-hub-central:test |& tee console.log;'
 				junit '**/TEST-*.xml'
@@ -524,25 +524,6 @@ pipeline{
                   }
                   }
 		}
-		stage('rh7_cluster_9.0-11'){
-			agent { label 'dhfLinuxAgent'}
-			steps{
-		    dhflinuxTests("9.0-11","Release")
-			}
-			post{
-				always{
-				  	sh 'rm -rf $WORKSPACE/xdmp'
-				  }
-                  success {
-                    println("rh7_cluster_9.0-11 Tests Completed")
-                    sendMail Email,'<h3>Tests Passed on  9.0-11 ML Server Cluster </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-9.0-11 | Cluster | Passed'
-                   }
-                   unstable {
-                      println("rh7_cluster_9.0-11 Tests Failed")
-                      sendMail Email,'<h3>Some Tests Failed on 9.0-11 ML Server Cluster </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-9.0-11 | Cluster | Failed'
-                  }
-                  }
-		}
         stage('rh7_cluster_9.0-12'){
 			agent { label 'dhfLinuxAgent'}
 			steps{
@@ -581,6 +562,25 @@ pipeline{
                            }
                            }
              }
+             stage('rh7_cluster_10.0-4'){
+               agent { label 'dhfLinuxAgent'}
+               steps{
+                    dhflinuxTests("10.0-4","Release");
+               }
+               post{
+                 always{
+                     sh 'rm -rf $WORKSPACE/xdmp'
+                   }
+                           success {
+                             println("rh7_cluster_10.0-4 Tests Completed")
+                             sendMail Email,'<h3>Tests Passed on  10.0-4 ML Server Cluster </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-10.0-4 | Cluster | Passed'
+                            }
+                            unstable {
+                               println("rh7_cluster_10.0-4 Tests Failed")
+                               sendMail Email,'<h3>Some Tests Failed on 10.0-4 ML Server Cluster </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-10.0-4 | Cluster | Failed'
+                           }
+                           }
+             }
 		}
 		post{
 			success{
@@ -605,7 +605,7 @@ pipeline{
                  agent { label 'dhfLinuxAgent'}
                 steps{
                      sh 'cd $WORKSPACE/data-hub/examples/dh-5-example;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
-                     copyRPM 'Release','10.0-3'
+                     copyRPM 'Release','10.0-4'
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
                         def dockerhost=setupMLDockerCluster 3
@@ -642,7 +642,7 @@ pipeline{
                  agent { label 'dhfLinuxAgent'}
                 steps{
                       sh 'cd $WORKSPACE/data-hub/examples/dhf5-custom-hook;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
-                     copyRPM 'Release','10.0-3'
+                     copyRPM 'Release','10.0-4'
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
                         def dockerhost=setupMLDockerCluster 3
@@ -680,7 +680,7 @@ pipeline{
                  agent { label 'dhfLinuxAgent'}
                 steps{
                      sh 'cd $WORKSPACE/data-hub/examples/mapping-example;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
-                     copyRPM 'Release','10.0-3'
+                     copyRPM 'Release','10.0-4'
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
                         def dockerhost=setupMLDockerCluster 3
@@ -718,7 +718,7 @@ pipeline{
                  agent { label 'dhfLinuxAgent'}
                 steps{
                      sh 'cd $WORKSPACE/data-hub/examples/smart-mastering-complete;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
-                     copyRPM 'Release','10.0-3'
+                     copyRPM 'Release','10.0-4'
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
                         def dockerhost=setupMLDockerCluster 3
@@ -825,7 +825,7 @@ pipeline{
             stage('cypress_rh7_10_release'){
                 agent { label 'dhfLinuxAgent'}
                 steps{
-                    dhfCypressE2ETests("10.0-3","Release")
+                    dhfCypressE2ETests("10.0-4","Release")
                 }
 			    post{
                   always{
@@ -833,11 +833,11 @@ pipeline{
                   }
                   success {
                     println("cypress_rh7_10-Release Tests Completed")
-                    sendMail Email,'<h3>Cypress End-End Tests Passed on Released 10.0 ML Server Cluster </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Cypress End-End | Linux RH7 | ML-10.0-3 | Single Node | Passed'
+                    sendMail Email,'<h3>Cypress End-End Tests Passed on Released 10.0 ML Server Cluster </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Cypress End-End | Linux RH7 | ML-10.0-4 | Single Node | Passed'
                    }
                    unsuccessful {
                       println("cypress_rh7_10-Release Tests Failed")
-                      sendMail Email,'<h3>Some Cypress End-End Tests Failed on Released 10.0 ML Server Cluster </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Cypress End-End | Linux RH7 | ML-10.0-3 | Single Node | Failed'
+                      sendMail Email,'<h3>Some Cypress End-End Tests Failed on Released 10.0 ML Server Cluster </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Cypress End-End | Linux RH7 | ML-10.0-4 | Single Node | Failed'
                       archiveArtifacts '**/videos/*'
                   }
                 }
@@ -910,17 +910,17 @@ pipeline{
         		stage('qs_rh7_10-release'){
                 			agent { label 'lnx-dhf-jenkins-slave-2'}
                 			steps{
-                                 dhfqsLinuxTests("10.0-3","Release")
+                                 dhfqsLinuxTests("10.0-4","Release")
                 			}
                 			post{
 
                                   success {
                                     println("qs_rh7_10-release Tests Completed")
-                                    sendMail Email,'<h3>Quick start End-End Tests Passed on Released 10.0 ML Server Cluster </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Quick Start End-End | Linux RH7 | ML-10.0-3 | Cluster | Passed'
+                                    sendMail Email,'<h3>Quick start End-End Tests Passed on Released 10.0 ML Server Cluster </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Quick Start End-End | Linux RH7 | ML-10.0-4 | Cluster | Passed'
                                    }
                                    unstable {
                                       println("qs_rh7_10-release Tests Failed")
-                                      sendMail Email,'<h3>Some Quick Start End-End Tests Failed on Released 10.0 ML Server Cluster </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Quick Start End-End | Linux RH7 | ML-10.0-3 | Cluster | Failed'
+                                      sendMail Email,'<h3>Some Quick Start End-End Tests Failed on Released 10.0 ML Server Cluster </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Quick Start End-End | Linux RH7 | ML-10.0-4 | Cluster | Failed'
                                   }
                                   }
                 		}
@@ -994,11 +994,11 @@ pipeline{
                   }
                   }
 		}
-		stage('w12_cluster_10.0-3'){
+		stage('w12_cluster_10.0-4'){
 			agent { label 'dhfWinCluster'}
 			steps{
                     script{
-                        copyMSI "Release","10.0-3";
+                        copyMSI "Release","10.0-4";
                         def pkgOutput=bat(returnStdout:true , script: '''
                 	                    cd xdmp/src
                 	                    for /f "delims=" %%a in ('dir /s /b *.msi') do set "name=%%~a"
@@ -1024,12 +1024,12 @@ pipeline{
 				  	bat 'RMDIR /S/Q xdmp'
 				  }
                   success {
-                    println("w12_cluster_10.0-3 Tests Completed")
-                    sendMail Email,'<h3>Tests Passed on Released 10.0 ML Server Cluster on Windows Platform</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Windows W2k12 | ML-10.0-3 | Cluster | Passed'
+                    println("w12_cluster_10.0-4 Tests Completed")
+                    sendMail Email,'<h3>Tests Passed on Released 10.0 ML Server Cluster on Windows Platform</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Windows W2k12 | ML-10.0-4 | Cluster | Passed'
                    }
                    unstable {
-                      println("w12_cluster_10.0-3 Tests Failed")
-                      sendMail Email,'<h3>Some Tests Failed on Released 10.0 ML Server on Windows Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Windows W2k12 | ML-10.0-3 | Cluster | Failed'
+                      println("w12_cluster_10.0-4 Tests Failed")
+                      sendMail Email,'<h3>Some Tests Failed on Released 10.0 ML Server on Windows Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Windows W2k12 | ML-10.0-4 | Cluster | Failed'
                   }
                   }
 		}
