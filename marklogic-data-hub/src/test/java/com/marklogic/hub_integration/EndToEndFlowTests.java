@@ -811,11 +811,9 @@ public class EndToEndFlowTests extends HubTestBase {
 
         if (srcClient.getDatabase().equals(HubConfig.DEFAULT_STAGING_NAME)) {
             assertEquals(testSize, getStagingDocCount(collection));
-            assertEquals(0, getFinalDocCount(collection));
         }
         else {
             assertEquals(testSize, getFinalDocCount(collection));
-            assertEquals(0, getStagingDocCount(collection));
         }
     }
 
@@ -826,11 +824,6 @@ public class EndToEndFlowTests extends HubTestBase {
     	clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
 
         String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.INPUT, useEs);
-
-        assertEquals(0, getStagingDocCount());
-        assertEquals(0, getFinalDocCount());
-        assertEquals(0, getTracingDocCount());
-        assertEquals(0, getJobDocCount());
 
         LegacyFlow flow = flowManager.getFlow(ENTITY, flowName, FlowType.INPUT);
         String inputPath = getResourceFile("e2e-test/input/input" + fileSuffix + "." + dataFormat.toString()).getAbsolutePath();
@@ -956,15 +949,9 @@ public class EndToEndFlowTests extends HubTestBase {
 
         String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.INPUT, useEs);
 
-        int stagingCount = getStagingDocCount();
-        int finalCount = getFinalDocCount();
-        int tracingCount = getTracingDocCount();
-        int jobsCount = getJobDocCount();
-
-        assertEquals(0, stagingCount);
-        assertEquals(0, finalCount);
-        assertEquals(0, tracingCount);
-        assertEquals(0, jobsCount);
+        final int existingStagingCount = getStagingDocCount();
+        final int existingFinalCount = getFinalDocCount();
+        final int existingJobsCount = getJobDocCount();
 
         String transform = codeFormat.equals(CodeFormat.JAVASCRIPT) ? "mlSjsInputFlow" : "mlInputFlow";
         ServerTransform serverTransform = new ServerTransform(transform);
@@ -998,15 +985,13 @@ public class EndToEndFlowTests extends HubTestBase {
 
         }
 
-        stagingCount = getStagingDocCount();
-        finalCount = getFinalDocCount();
-        tracingCount = getTracingDocCount();
-        jobsCount = getJobDocCount();
+        int stagingCount = getStagingDocCount();
+        int finalCount = getFinalDocCount();
+        int jobsCount = getJobDocCount();
 
-        assertEquals(finalCounts.stagingCount, stagingCount);
-        assertEquals(finalCounts.finalCount, finalCount);
-        //assertEquals(finalCounts.tracingCount, tracingCount);
-        assertEquals(finalCounts.jobCount, jobsCount);
+        assertEquals(finalCounts.stagingCount, stagingCount - existingStagingCount);
+        assertEquals(finalCounts.finalCount, finalCount - existingFinalCount);
+        assertEquals(finalCounts.jobCount, jobsCount - existingJobsCount);
 
         if (finalCounts.stagingCount == 1) {
             String filename = "final";
@@ -1040,15 +1025,9 @@ public class EndToEndFlowTests extends HubTestBase {
     private void testInputFlowViaDMSDK(String prefix, String fileSuffix, CodeFormat codeFormat, DataFormat dataFormat, boolean useEs, boolean passJobId, Map<String, Object> options, FinalCounts finalCounts) {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
         String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.INPUT, useEs);
-        int stagingCount = getStagingDocCount();
-        int finalCount = getFinalDocCount();
-        int tracingCount = getTracingDocCount();
-        int jobsCount = getJobDocCount();
-
-        assertEquals(0, stagingCount);
-        assertEquals(0, finalCount);
-        assertEquals(0, tracingCount);
-        assertEquals(0, jobsCount);
+        final int existingStagingCount = getStagingDocCount();
+        final int existingFinalCount = getFinalDocCount();
+        final int existingJobsCount = getJobDocCount();
 
         String transform = codeFormat.equals(CodeFormat.JAVASCRIPT) ? "mlSjsInputFlow" : "mlInputFlow";
 		ServerTransform serverTransform = new ServerTransform(transform);
@@ -1082,15 +1061,13 @@ public class EndToEndFlowTests extends HubTestBase {
         batcher.add("/input" + fileSuffix + "." + dataFormat.toString(), handle);
         batcher.flushAndWait();
 
-        stagingCount = getStagingDocCount();
-        finalCount = getFinalDocCount();
-        tracingCount = getTracingDocCount();
-        jobsCount = getJobDocCount();
+        int stagingCount = getStagingDocCount();
+        int finalCount = getFinalDocCount();
+        int jobsCount = getJobDocCount();
 
-        assertEquals(finalCounts.stagingCount, stagingCount);
-        assertEquals(finalCounts.finalCount, finalCount);
-        //assertEquals(finalCounts.tracingCount, tracingCount);
-        assertEquals(finalCounts.jobCount, jobsCount);
+        assertEquals(finalCounts.stagingCount, stagingCount - existingStagingCount);
+        assertEquals(finalCounts.finalCount, finalCount - existingFinalCount);
+        assertEquals(finalCounts.jobCount, jobsCount - existingJobsCount);
 
         if (finalCounts.stagingCount == 1) {
             String filename = "final";
@@ -1138,11 +1115,6 @@ public class EndToEndFlowTests extends HubTestBase {
         boolean useEs, boolean waitForCompletion, int testSize)
     {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
-
-        assertEquals(0, getStagingDocCount());
-        assertEquals(0, getFinalDocCount());
-        assertEquals(0, getTracingDocCount());
-        assertEquals(0, getJobDocCount());
 
         installDocs(dataFormat, ENTITY, srcClient, useEs, testSize);
         runAsFlowOperator();
@@ -1283,14 +1255,6 @@ public class EndToEndFlowTests extends HubTestBase {
         Vector<String> failed = new Vector<>();
 
         Tuple<LegacyFlowRunner, JobTicket> tuple = runHarmonizeFlow(flowName, dataFormat, completed, failed, options, srcClient, destDb, useEs, true);
-
-        int stagingCount = getStagingDocCount();
-        int finalCount = getFinalDocCount();
-        int jobsCount = getJobDocCount();
-
-        assertEquals(finalCounts.stagingCount, stagingCount);
-        assertEquals(finalCounts.finalCount, finalCount);
-        assertEquals(finalCounts.jobCount, jobsCount);
 
         assertEquals(finalCounts.completedCount, completed.size());
         assertEquals(finalCounts.failedCount, failed.size());
