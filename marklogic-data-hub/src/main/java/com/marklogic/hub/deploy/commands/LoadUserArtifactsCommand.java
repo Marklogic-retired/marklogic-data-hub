@@ -142,15 +142,23 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                         return modules;
                     }
                 };
-                Files.walkFileTree(artifactPath, new SimpleFileVisitor<Path>() {
-                    @Override
-                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                        if (dir.toFile().isDirectory()) {
-                            executeWalkWithDataService(dir, modulesFinder, artifactService, typeInfo);
+                if("stepDefinition".equals(artifactType)){
+                    Files.walkFileTree(artifactPath, new SimpleFileVisitor<Path>() {
+                        @Override
+                        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                            if (dir.toFile().isDirectory()) {
+                                loadArtifactsWithDataService(dir, modulesFinder, artifactService, typeInfo);
+                            }
+                            return FileVisitResult.CONTINUE;
                         }
-                        return FileVisitResult.CONTINUE;
-                    }
-                });
+                    });
+                }
+                else {
+                    /*  No need to call File.walk for other artifacts as they are all present in base dir, also we shouldn't
+                    attempt to load the mappings again using DS.
+                    */
+                    loadArtifactsWithDataService(artifactPath, modulesFinder, artifactService, typeInfo);
+                }
             }
         }
         catch (IOException e) {
@@ -254,7 +262,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         }
     }
 
-    private void executeWalkWithDataService(
+    private void loadArtifactsWithDataService(
         Path dir,
         ModulesFinder modulesFinder,
         ArtifactService artifactService,

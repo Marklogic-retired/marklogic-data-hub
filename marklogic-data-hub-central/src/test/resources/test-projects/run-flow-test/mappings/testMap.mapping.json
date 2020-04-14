@@ -1,0 +1,15 @@
+{
+  "name": "testMap",
+  "targetEntityType": "Item",
+  "description": "",
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['default-ingestion'])",
+  "properties": {
+    "name": {
+      "sourcedFrom": "Region"
+    },
+    "price": {
+      "sourcedFrom": "Country"
+    }
+  }
+}

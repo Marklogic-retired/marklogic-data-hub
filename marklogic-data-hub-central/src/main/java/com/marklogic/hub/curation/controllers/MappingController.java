@@ -55,7 +55,7 @@ public class MappingController extends AbstractArtifactController {
 
     @Override
     protected String getArtifactType() {
-        return "mappings";
+        return "mapping";
     }
 
     @RequestMapping(value = "/validation", method = RequestMethod.POST)

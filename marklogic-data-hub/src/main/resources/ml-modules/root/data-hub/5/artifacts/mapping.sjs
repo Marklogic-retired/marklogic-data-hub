@@ -53,6 +53,10 @@ function getPermissions() {
     return permissions;
 }
 
+function getDirectory() {
+  return "/mappings/";
+}
+
 function getArtifactNode(artifactName, artifactVersion) {
     // Currently there is no versioning for loadData artifacts
     const results = cts.search(cts.andQuery([cts.collectionQuery(collections[0]), cts.jsonPropertyValueQuery('name', artifactName)]));
@@ -101,6 +105,7 @@ module.exports = {
     getStorageDatabases,
     getPermissions,
     getArtifactNode,
+    getDirectory,
     validateArtifact,
     getArtifactSettingNode,
     defaultArtifactSettings

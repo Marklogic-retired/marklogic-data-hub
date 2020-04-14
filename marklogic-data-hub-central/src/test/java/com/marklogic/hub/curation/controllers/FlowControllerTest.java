@@ -3,6 +3,7 @@ package com.marklogic.hub.curation.controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.document.GenericDocumentManager;
+import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.RunFlowResponse;
@@ -166,7 +167,7 @@ class FlowControllerTest extends AbstractOneUiTest {
     }
 
     @Test
-    void runFlow() {
+    void runFlow() throws IOException {
         installProject("run-flow-test");
 
         RunFlowResponse resp = controller.runFlow("testFlow", Collections.singletonList("testStep-custom"));
@@ -177,6 +178,39 @@ class FlowControllerTest extends AbstractOneUiTest {
         JsonNode job = jobsController.getJob(resp.getJobId());
         String jobStatus = job.get("jobStatus").asText();
         assertEquals("finished", jobStatus, "Job status should be 'finished' once threads complete; job doc: " + job);
+
+
+        addStagingDoc("input/mapInput.json", "/input/mapInput.json", "default-ingestion");
+
+        //Equivalent to adding a step from GUI
+        controller.createStep("testFlow" , 2, "{\n" +
+            "\"name\": \"testMap\",\n" +
+            "\"stepDefinitionName\": \"entity-services-mapping\",\n" +
+            "\"stepDefinitionType\": \"MAPPING\",\n" +
+            "\"options\": {\n" +
+            "\"mapping\": {\n" +
+            "\"name\": \"testMap\"\n" +
+            "} } }");
+        try {
+            resp = controller.runFlow("testFlow", Collections.singletonList("testMap-mapping"));
+
+            assertEquals("testFlow", resp.getFlowName(), "Run flow response has correct flow name");
+            controller.getLastFlowRunner().awaitCompletion();
+
+            job = jobsController.getJob(resp.getJobId());
+            jobStatus = job.get("jobStatus").asText();
+            assertEquals("finished", jobStatus, "Job status should be 'finished' once threads complete; job doc: " + job);
+
+            EvalResultIterator itr = hubConfig.newStagingClient().newServerEval().xquery("xdmp:estimate(fn:collection('mapInput'))").eval();
+            Assertions.assertEquals(1, itr.next().getNumber().intValue());
+
+            itr = hubConfig.newStagingClient().newServerEval().xquery("xdmp:estimate(fn:collection('default-mapping'))").eval();
+            Assertions.assertEquals(1, itr.next().getNumber().intValue());
+        }
+        finally {
+            controller.deleteStep("testFlow", "testMap-mapping");
+            Assertions.assertEquals(1, controller.getSteps("testFlow").size());
+        }
     }
 
     @Controller

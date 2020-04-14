@@ -47,6 +47,10 @@ function getFileExtension() {
     return '.flow.json';
 }
 
+function getDirectory() {
+  return "/flows/";
+}
+
 function getArtifactNode(artifactName, artifactVersion) {
     const results = cts.search(cts.andQuery([cts.collectionQuery(collections[0]), cts.jsonPropertyValueQuery('name', artifactName)]));
     return fn.head(results);
@@ -68,5 +72,6 @@ module.exports = {
   getPermissions,
   getFileExtension,
   getArtifactNode,
+  getDirectory,
   validateArtifact
 };

@@ -8,7 +8,7 @@ function invokeService() {
 }
 
 const response = invokeService();
-const minExpectedAuthorities = ["canReadLoadData", "canReadFlows", "canReadStepDefinitions", "canReadMappings", "canReadMatching"];
+const minExpectedAuthorities = ["canReadLoadData", "canReadFlow", "canReadStepDefinition", "canReadMapping", "canReadMatching"];
 const minExpectedRoles = ["data-hub-operator", "data-hub-entity-model-reader", "data-hub-job-reader", "data-hub-flow-reader",
     "data-hub-step-definition-reader", "data-hub-load-data-reader", "data-hub-match-merge-reader", "data-hub-mapping-reader",
     "data-hub-saved-query-reader", "data-hub-saved-query-writer", "data-hub-module-reader"];

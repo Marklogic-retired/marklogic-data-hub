@@ -34,6 +34,7 @@
       "description" : "",
       "options" : {
         "sourceQuery" : "cts.collectionQuery([\"CustomerXMLIngest\"])",
+        "constrainSourceQueryToJob": true,
         "mapping" : {
           "name" : "CustomerXML-CustomerXMLMapping",
           "version" : 0

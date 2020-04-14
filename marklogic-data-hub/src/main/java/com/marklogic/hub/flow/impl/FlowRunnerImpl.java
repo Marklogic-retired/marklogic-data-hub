@@ -628,9 +628,8 @@ public class FlowRunnerImpl implements FlowRunner{
             if (stepOptions.containsKey(artifactType)) {
                 ObjectNode linkObject = (ObjectNode) stepOptions.get(artifactType);
                 String artifactName = linkObject.get(artifactTypeInfo.getNameProperty()).asText();
-                ObjectNode artifactJson = artifactManager.getArtifact(artifactType, artifactName);
-
                 if ("loadData".equals(artifactType)) {
+                    ObjectNode artifactJson = artifactManager.getArtifact(artifactType, artifactName);
                     Map<String, String> fileLocations = new HashMap<>();
                     List<String> fileLocationFields = Arrays.asList("separator", "outputURIReplacement", "inputFilePath");
                     for (String fileLocationField : fileLocationFields) {

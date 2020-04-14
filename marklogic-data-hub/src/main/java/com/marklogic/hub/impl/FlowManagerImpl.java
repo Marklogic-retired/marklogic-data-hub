@@ -96,7 +96,7 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
         }
         Flow flow;
         try {
-            JsonNode jsonFlow = getArtifactService().getArtifact("flows", flowName);
+            JsonNode jsonFlow = getArtifactService().getArtifact("flow", flowName);
             flow = new FlowImpl().deserialize(jsonFlow);
         } catch (FailedRequestException ex) {
             if (HttpStatus.valueOf(ex.getServerStatusCode()) == HttpStatus.NOT_FOUND) {
@@ -182,7 +182,7 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
     @Override
     public List<String> getFlowNames() {
         List<String> flowNames = new ArrayList<>();
-        getArtifactService().getList("flows").elements().forEachRemaining((flow) -> {
+        getArtifactService().getList("flow").elements().forEachRemaining((flow) -> {
             if (flow.has("name")) {
                 flowNames.add(flow.get("name").asText());
             }
@@ -233,7 +233,7 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
         }
 
         try{
-            getArtifactService().deleteArtifact("flows", flowName);
+            getArtifactService().deleteArtifact("flow", flowName);
         }
         catch (Exception e){
             throw new RuntimeException("Unable to delete flow; cause: " + e.getMessage(), e);
@@ -294,7 +294,7 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
     public void saveFlow(Flow flow) {
         saveLocalFlow(flow);
         try{
-            getArtifactService().setArtifact("flows", flow.getName(), JSONUtils.convertArtifactToJson(flow));
+            getArtifactService().setArtifact("flow", flow.getName(), JSONUtils.convertArtifactToJson(flow));
         }
         catch (Exception e){
             throw new RuntimeException("Unable to create flow; cause: " + e.getMessage(), e);

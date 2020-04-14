@@ -33,7 +33,7 @@ const defaultGlobalContext = {
 
 class Flow {
 
-  constructor(config = null, globalContext = null, datahub = null) {
+  constructor(config = null, globalContext = null, datahub = null, artifactsCore = null) {
     if (!config) {
       config = require("/com.marklogic.hub/config.sjs");
     }
@@ -47,6 +47,7 @@ class Flow {
     this.step = new Step(config, datahub);
     this.flowUtils = new FlowUtils(config);
     this.consts = datahub.consts;
+    this.artifactsCore =  require('/data-hub/5/artifacts/core.sjs');
     this.writeQueue = [];
     if (globalContext) {
       this.globalContext = globalContext;
@@ -221,14 +222,46 @@ class Flow {
     }
     let stepDetails = this.step.getStepByNameAndType(stepRef.stepDefinitionName, stepRef.stepDefinitionType);
 
+    //get options from settings
+    let artifactTypes = [];
+    this.artifactsCore.getTypesInfo().forEach((element) => artifactTypes.push(element.type));
+    let artifactName, artifactType ;
+    artifactTypes.forEach(element => {
+      if(stepRef.options[element]){
+        artifactName =  stepRef.options[element].name;
+        artifactType = element;
+      }
+    })
     //here we consolidate options and override in order of priority: runtime flow options, step defined options, process defined options
-    let combinedOptions = Object.assign({}, stepDetails.options, flow.options, stepRef.options, options);
+    let combinedOptions;
+    let artifactSettings, artifact;
+    if(artifactType && artifactName) {
+      try {
+        artifact = this.artifactsCore.getArtifact(artifactType, artifactName);
+      }
+      catch(ex) {
+        this.datahub.debug.log({message: 'This flow runs older version of ' + artifactType + ' : ' + artifactName , type: 'warning'});
+      }
+      artifactSettings = this.artifactsCore.getArtifactSettings(artifactType, artifactName);
+    }
+
+    //If new artifacts are present, use them (stepRef.options is always empty except for the {artifactType:artifactName})
+    if(artifact && artifactSettings){
+      //Write to collection  "default-*" and include additional collections if set
+      artifactSettings.collections = artifactSettings.collections ? artifactSettings.collections : ['default-'+ artifactType];
+      artifactSettings.collections = artifactSettings.additionalCollections ? artifactSettings.collections.concat(artifactSettings.additionalCollections) : artifactSettings.collections ;
+      combinedOptions = Object.assign({}, stepDetails.options, flow.options, stepRef.options, artifactSettings, options);
+    }
+    else {
+      combinedOptions = Object.assign({}, stepDetails.options, flow.options, stepRef.options, options);
+    }
+
     // set provenance granularity based off of combined options
     this.datahub.prov.granularityLevel(combinedOptions.provenanceGranularityLevel);
     // combine all collections
     let collections = [
       options.collections,
-      ((stepRef.options || {}).collections || (stepDetails.options || {}).collections),
+      ((stepRef.options || {}).collections || (artifactSettings || {}).collections  || (stepDetails.options || {}).collections),
       (flow.options || {}).collections
     ].reduce((previousValue, currentValue) => (previousValue || []).concat((currentValue || [])))
       // filter out any null/empty collections that may exist

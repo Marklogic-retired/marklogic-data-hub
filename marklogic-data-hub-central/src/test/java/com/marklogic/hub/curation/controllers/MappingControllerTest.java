@@ -163,6 +163,7 @@ public class MappingControllerTest extends AbstractOneUiTest {
 
     @Test
     public void testMappingSettings() throws IOException {
+        installReferenceProject();
         controller.updateArtifact("TestCustomerMapping", objectMapper.readTree(MAPPING_CONFIG_1));
 
         JsonNode result = controller.getArtifactSettings("TestCustomerMapping").getBody();
