@@ -15,6 +15,7 @@
  */
 package com.marklogic.hub.central;
 
+import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
@@ -29,35 +30,40 @@ import org.springframework.web.filter.CommonsRequestLoggingFilter;
 import java.util.Set;
 import java.util.stream.Stream;
 
-@ComponentScan(basePackages = "com.marklogic.hub", excludeFilters = {@ComponentScan.Filter(
-		type = FilterType.REGEX,
-		pattern = "com\\.marklogic\\.hub\\.impl\\.HubConfigImpl")
-})
+@ComponentScan(
+    basePackages = "com.marklogic.hub",
+    excludeFilters = {@ComponentScan.Filter(
+        type = FilterType.REGEX,
+        pattern = "com\\.marklogic\\.hub\\.impl\\.HubConfigImpl")
+    }
+)
 @SpringBootApplication
 public class Application {
 
-	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication app = new SpringApplication(Application.class);
+        app.setBannerMode(Banner.Mode.OFF);
+        app.run(args);
+    }
 
     @Bean
-	public CommonsRequestLoggingFilter requestLoggingFilter() {
-		CommonsRequestLoggingFilter filter = new CommonsRequestLoggingFilter();
-		filter.setIncludeClientInfo(true);
-		filter.setIncludeQueryString(true);
-		return filter;
-	}
+    public CommonsRequestLoggingFilter requestLoggingFilter() {
+        CommonsRequestLoggingFilter filter = new CommonsRequestLoggingFilter();
+        filter.setIncludeClientInfo(true);
+        filter.setIncludeQueryString(true);
+        return filter;
+    }
 
-	/**
-	 * Copied from https://karl.run/2018/05/07/kotlin-spring-boot-react/ - ensures that for a single page application,
-	 * any non-root route is routed back to "/".
-	 *
-	 * @return
-	 */
-	@Bean
-	public ConfigurableServletWebServerFactory webServerFactory() {
-		TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory();
-		// All errors should go to the index page
+    /**
+     * Copied from https://karl.run/2018/05/07/kotlin-spring-boot-react/ - ensures that for a single page application,
+     * any non-root route is routed back to "/".
+     *
+     * @return
+     */
+    @Bean
+    public ConfigurableServletWebServerFactory webServerFactory() {
+        TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory();
+        // All errors should go to the index page
         Set<ErrorPage> errorPages = factory.getErrorPages();
         Stream.of(HttpStatus.values()).forEach((httpStatus -> {
             int statusValue = httpStatus.value();
@@ -66,6 +72,6 @@ public class Application {
             }
         }));
         factory.getErrorPages().add(new ErrorPage(Throwable.class, "/error"));
-		return factory;
-	}
+        return factory;
+    }
 }

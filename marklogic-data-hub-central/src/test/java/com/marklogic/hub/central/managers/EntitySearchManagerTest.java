@@ -16,7 +16,7 @@
  */
 package com.marklogic.hub.central.managers;
 
-import com.marklogic.hub.central.AbstractOneUiTest;
+import com.marklogic.hub.central.AbstractHubCentralTest;
 import com.marklogic.hub.central.models.SearchQuery;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class EntitySearchManagerTest extends AbstractOneUiTest {
+public class EntitySearchManagerTest extends AbstractHubCentralTest {
 
     EntitySearchManager entitySearchManager;
 

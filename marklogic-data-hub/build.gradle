@@ -220,6 +220,8 @@ if (!(
         gradle.startParameter.taskNames*.toLowerCase().contains("clientjar") ||
         gradle.startParameter.taskNames*.toLowerCase().contains("marklogic-data-hub:clientjar") ||
         gradle.startParameter.taskNames*.toLowerCase().contains("generatefilesfordataservices") ||
+        // Added for Hub Central
+        gradle.startParameter.taskNames*.toLowerCase().contains("bootrun") ||
         project.hasProperty('skipui')
 )
 ) {

@@ -1,20 +1,15 @@
-package com.marklogic.hub.curation.controllers;
+package com.marklogic.hub.central.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.hub.central.services.EnvironmentService;
+import com.marklogic.hub.central.HubCentral;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -27,8 +22,9 @@ import java.util.Objects;
 @Controller
 @RequestMapping("/api/artifacts/loadData")
 public class LoadDataController extends AbstractArtifactController {
+
     @Autowired
-    private EnvironmentService environmentService;
+    HubCentral hubCentral;
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
@@ -75,7 +71,7 @@ public class LoadDataController extends AbstractArtifactController {
     @ResponseBody
     public ResponseEntity<ObjectNode> setData(@PathVariable String artifactName, @RequestParam("files") MultipartFile[] uploadedFiles) {
         ObjectNode loadDataJson = (ObjectNode) super.getArtifact(artifactName).getBody();
-        Path dataSetDirectoryPath = Paths.get(environmentService.getProjectDirectory(), "data-sets", artifactName);
+        Path dataSetDirectoryPath = Paths.get(hubCentral.getProjectDirectory(), "data-sets", artifactName);
         assert loadDataJson != null;
         loadDataJson.put("inputFilePath", dataSetDirectoryPath.toString());
         File dataSetDirectory = dataSetDirectoryPath.toFile();
@@ -146,6 +142,6 @@ public class LoadDataController extends AbstractArtifactController {
     }
 
     protected Path dataSetDirectory(String artifactName) {
-        return Paths.get(environmentService.getProjectDirectory(), "data-sets", artifactName);
+        return Paths.get(hubCentral.getProjectDirectory(), "data-sets", artifactName);
     }
 }

@@ -240,13 +240,17 @@ public class HubConfigImpl implements HubConfig
      * dhf-defaults.properties file to initialize an instance of this class.
      */
     public void applyDefaultProperties() {
+        applyProperties(new SimplePropertySource(newDefaultProperties()));
+    }
+
+    public static Properties newDefaultProperties() {
         Properties props = new Properties();
         try {
             props.load(new ClassPathResource("dhf-defaults.properties").getInputStream());
         } catch (IOException ex) {
             throw new RuntimeException("Unable to initialize HubConfigImpl; could not find dhf-defaults.properties on the classpath; cause: " + ex.getMessage(), ex);
         }
-        applyProperties(new SimplePropertySource(props));
+        return props;
     }
 
     /**
@@ -276,6 +280,10 @@ public class HubConfigImpl implements HubConfig
         }
 
         hydrateConfigs();
+
+        // Force AppConfig to be recreated based on the PropertySource
+        this.appConfig = null;
+        hydrateAppConfigs(propertySource);
     }
 
     protected HubProject requireHubProject() {
@@ -1544,12 +1552,10 @@ public class HubConfigImpl implements HubConfig
         // Need to do this first so that objects like the final SSL objects are set before hydrating AppConfig
         hydrateConfigs();
 
-        hydrateAppConfigs(projectProperties);
+        hydrateAppConfigs(projectProperties::getProperty);
     }
 
-    protected void hydrateAppConfigs(Properties properties) {
-        com.marklogic.mgmt.util.PropertySource propertySource = properties::getProperty;
-
+    protected void hydrateAppConfigs(com.marklogic.mgmt.util.PropertySource propertySource) {
         if (appConfig != null) {
             // Still need to call this since the setter also "updates" appConfig with DHF-specific values
             setAppConfig(appConfig);
@@ -1950,13 +1956,16 @@ public class HubConfigImpl implements HubConfig
         forestCounts.put(finalSchemasDbName, finalSchemasForestsPerHost);
         config.setForestCounts(forestCounts);
 
-        initializeConfigDirs(config);
+        // In Hub Central, a HubProject will not exist, so no need to do these things
+        if (hubProject != null) {
+            initializeConfigDirs(config);
+            initializeModulePaths(config);
+            config.setSchemaPaths(List.of(getUserSchemasDir().toString()));
+        }
 
-        initializeModulePaths(config);
-
-        config.setSchemaPaths(List.of(getUserSchemasDir().toString()));
-
-        addDhfPropertiesToCustomTokens(config);
+        if (environment != null) {
+            addDhfPropertiesToCustomTokens(config);
+        }
 
         String version = getJarVersion();
         config.getCustomTokens().put("%%mlHubVersion%%", version);

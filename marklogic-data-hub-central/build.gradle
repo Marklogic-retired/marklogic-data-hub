@@ -4,16 +4,20 @@ buildscript {
 		maven { url "https://plugins.gradle.org/m2/" }
 	}
 	dependencies {
-		classpath "org.springframework.boot:spring-boot-gradle-plugin:2.2.1.RELEASE"
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:2.2.6.RELEASE"
 		classpath "com.github.node-gradle:gradle-node-plugin:2.2.3"
 	}
 }
 
-apply plugin: "java"
+plugins {
+    id "net.saliman.properties" version "1.5.1"
+    id "java"
+}
+
 apply plugin: "org.springframework.boot"
-apply plugin: 'maven-publish'
+apply plugin: "maven-publish"
 apply plugin: "io.spring.dependency-management"
-apply plugin: 'war'
+apply plugin: "war"
 apply plugin: "com.github.node-gradle.node"
 
 mainClassName = "com.marklogic.hub.central.Application"
@@ -34,6 +38,13 @@ bootJar {
     baseName = springBootJarName
 }
 
+// To pass Gradle properties for HubCentral to Spring Boot, copy them into the JVM environment
+bootRun.doFirst {
+    environment "mlHost", mlHost
+    environment "hubProjectPath", hubProjectPath
+    environment "hubUseLocalDefaults", hubUseLocalDefaults
+}
+
 repositories {
     jcenter()
     mavenCentral()
@@ -41,33 +52,35 @@ repositories {
 }
 
 dependencies {
-    compile "org.springframework.boot:spring-boot-starter-web"
-    compile group: 'org.springframework.security', name: 'spring-security-core', version: '5.2.1.RELEASE'
-    compile group: 'org.springframework.security', name: 'spring-security-config', version: '5.2.1.RELEASE'
-    compile group: 'org.springframework.security', name: 'spring-security-web', version: '5.2.1.RELEASE'
-    compile group: 'org.springframework', name: 'spring-web', version: '5.2.2.RELEASE'
-    compile group: 'org.springframework', name: 'spring-webmvc', version: '5.2.2.RELEASE'
-    compile group: 'org.springframework', name: 'spring-websocket', version: '5.2.2.RELEASE'
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '2.2.2.RELEASE'
-    compile("org.springframework.boot:spring-boot-starter-websocket")
-    compile("org.springframework.boot:spring-boot-starter-thymeleaf")
-
-    compile("org.aspectj:aspectjweaver:1.8.9")
-    compile("org.springframework:spring-messaging")
-
     compile project(":marklogic-data-hub")
 
-    //spring boot test libs
-    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.1.3.RELEASE'
-    testImplementation 'org.springframework.security:spring-security-test'
-    // JUnit Jupiter API and TestEngine implementation
+    // Main dependency for a Spring Boot web application
+    compile "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
+
+    // Used for hosting static resources when running as an executable jar/war
+    runtime "org.springframework.boot:spring-boot-starter-thymeleaf:${springBootVersion}"
+
+    // Enables Spring Security - https://docs.spring.io/spring-security/site/docs/current/reference/html5/
+    compile "org.springframework.security:spring-security-web:${springSecurityVersion}"
+    compile "org.springframework.security:spring-security-config:${springSecurityVersion}"
+
+    // Enables WebSocket - https://spring.io/guides/gs/messaging-stomp-websocket/
+    compile "org.springframework.boot:spring-boot-starter-websocket:${springBootVersion}"
+
+    // Enables Spring Boot actuator - https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#production-ready
+    runtime "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}"
+
+    testCompile "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
+    testImplementation "org.springframework.security:spring-security-test:${springSecurityVersion}"
+
     testCompile "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
     testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
 
     testCompile "org.junit.platform:junit-platform-runner:${junitPlatformVersion}"
-    testCompile group: 'org.mockito', name: 'mockito-core', version: '3.0.0'
-    testCompile group: 'org.mockito', name: 'mockito-junit-jupiter', version: '3.0.0'
+    testCompile "org.mockito:mockito-core:3.0.0"
+    testCompile "org.mockito:mockito-junit-jupiter:3.0.0"
 }
+
 node {
     // Version of node to use.
     version = '12.16.1'
@@ -114,9 +127,11 @@ task copyUiFiles(type: Copy, dependsOn: deleteSpringBootUiFiles, group: taskGrou
 
 // Before the Spring Boot jar is built, build the UI files and copy them over
 if (!(
-        gradle.startParameter.taskNames*.toLowerCase().contains("publishplugins") ||
+    gradle.startParameter.taskNames*.toLowerCase().contains("publishplugins") ||
         gradle.startParameter.taskNames*.toLowerCase().contains("bintrayUpload") ||
         gradle.startParameter.taskNames*.toLowerCase().contains("javadoc") ||
+        // bootRun doesn't need the UI, as it's assumed that the UI is being run separately via npm start
+        gradle.startParameter.taskNames*.toLowerCase().contains("bootrun") ||
         project.hasProperty('skipui')
 )
 ) {

@@ -4,25 +4,19 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
-import com.marklogic.client.ext.SecurityContextType;
-import com.marklogic.hub.DataHub;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
+import com.marklogic.hub.central.HubCentral;
 import com.marklogic.hub.error.DataHubConfigurationException;
-import com.marklogic.hub.impl.DataHubImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.hub.impl.HubProjectImpl;
-import com.marklogic.hub.central.services.EnvironmentService;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
-import com.marklogic.mgmt.admin.AdminConfig;
 import com.marklogic.mgmt.admin.AdminManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
@@ -35,79 +29,32 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Properties;
 
 @Component
 @Primary
 @SessionScope
-public class HubConfigSession implements HubConfig, InitializingBean, DisposableBean {
+public class HubConfigSession implements HubConfig, DisposableBean {
+
     private static final Logger logger = LoggerFactory.getLogger(HubConfigSession.class);
 
     private HubConfigImpl hubConfigImpl;
-
-    @Autowired
-    private Environment environment;
-
-    @Autowired
-    private EnvironmentService environmentService;
-
     private Map<DatabaseKind, Map<String, DatabaseClient>> clientsByKindAndDatabaseName  = new HashMap<>();
 
-    private DataHub dataHub;
-
-    public void setCredentials(EnvironmentInfo environmentInfo, String username, String password) {
-        // customize hubConfig
-        hubConfigImpl.setAuthMethod(DatabaseKind.STAGING, environmentInfo.dhStagingAuthMethod.toLowerCase());
-        hubConfigImpl.setAuthMethod(DatabaseKind.FINAL, environmentInfo.dhFinalAuthMethod.toLowerCase());
-        hubConfigImpl.setHost(environmentInfo.mlHost);
-        hubConfigImpl.setPort(DatabaseKind.STAGING, environmentInfo.dhStagingPort);
-        hubConfigImpl.setPort(DatabaseKind.FINAL, environmentInfo.dhFinalPort);
-        hubConfigImpl.setMlUsername(username);
-        hubConfigImpl.setMlPassword(password);
-        // Setup app config
-        AppConfig appConfig = hubConfigImpl.getAppConfig();
-        appConfig.setAppServicesUsername(username);
-        appConfig.setAppServicesPassword(password);
-        appConfig.setRestAdminUsername(username);
-        appConfig.setRestAdminPassword(password);
-        appConfig.setHost(environmentInfo.mlHost);
-        appConfig.setRestPort(environmentInfo.dhStagingPort);
-        appConfig.setAppServicesSecurityContextType(SecurityContextType.valueOf(environmentInfo.mlAuthMethod));
-        appConfig.setRestSecurityContextType(SecurityContextType.valueOf(environmentInfo.mlAuthMethod));
-
-        // Setup admin manager/config
-        AdminConfig adminConfig = hubConfigImpl.getAdminConfig();
-        adminConfig.setHost(environmentInfo.mlHost);
-        adminConfig.setUsername(username);
-        adminConfig.setPassword(password);
-        hubConfigImpl.getAdminManager().setAdminConfig(adminConfig);
-
-        // setup manageConfig
-        ManageConfig manageConfig = hubConfigImpl.getManageConfig();
-        manageConfig.setHost(environmentInfo.mlHost);
-        if (environmentInfo.mlManagePort != 0) {
-            manageConfig.setPort(environmentInfo.mlManagePort);
-        }
-        manageConfig.setSecurityUsername(username);
-        manageConfig.setSecurityPassword(password);
-        manageConfig.setUsername(username);
-        manageConfig.setPassword(password);
-        hubConfigImpl.getManageClient().setManageConfig(manageConfig);
-
-        hubConfigImpl.createProject(environmentService.getProjectDirectory());
-        hubConfigImpl.refreshProject();
-        // construct clients now, so we can clear our password fields
+    /**
+     * Initialize this class with a configured HubConfigImpl object, which will then be used to construct the various
+     * DatabaseClient objects.
+     *
+     * @param hubConfig
+     */
+    public void initialize(HubConfigImpl hubConfig) {
+        this.hubConfigImpl = hubConfig;
         eagerlyConstructClients();
 
-        // TODO figure out a way to clear out passwords after client construction and support install
-/*
-        hubConfigImpl.setMlPassword(null);
-        appConfig.setAppServicesPassword(null);
-        appConfig.setRestAdminPassword(null);
-        adminConfig.setPassword(null);
-        manageConfig.setSecurityPassword(null);
-        manageConfig.setPassword(null);
-*/
+        // TODO Once we introduce HubClient, we'll store that in the HTTP session and no longer store HubConfigSesssion
+        // in it, which still has passwords hanging around in the HubConfigImpl object.
     }
+
     /**
      * Gets the hostname of the AppConfig
      * @return name of host
@@ -984,38 +931,6 @@ public class HubConfigSession implements HubConfig, InitializingBean, Disposable
         return client;
     }
 
-    public DataHub getDataHub() {
-        return this.dataHub;
-    }
-
-    /**
-     * Invoked by the containing {@code BeanFactory} after it has set all bean properties
-     * and satisfied {@link BeanFactoryAware}, {@code ApplicationContextAware} etc.
-     * <p>This method allows the bean instance to perform validation of its overall
-     * configuration and final initialization when all bean properties have been set.
-     *
-     * @throws Exception in the event of misconfiguration (such as failure to set an
-     *                   essential property) or if initialization fails for any other reason
-     */
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        hubConfigImpl = new HubConfigImpl(new HubProjectImpl(), environment);
-        if (hubConfigImpl.getManageConfig() == null) {
-            hubConfigImpl.setManageConfig(new ManageConfig());
-        }
-        if (hubConfigImpl.getManageClient() == null) {
-            hubConfigImpl.setManageClient(new ManageClient());
-        }
-        if (hubConfigImpl.getAdminConfig() == null) {
-            hubConfigImpl.setAdminConfig(new AdminConfig());
-        }
-        if (hubConfigImpl.getAdminManager() == null) {
-            hubConfigImpl.setAdminManager(new AdminManager());
-        }
-        setProjectDirectory(environmentService.getProjectDirectory());
-        this.dataHub = new DataHubImpl(this);
-    }
-
     @Override
     public void destroy() {
         if (!clientsByKindAndDatabaseName.isEmpty()) {
@@ -1029,12 +944,6 @@ public class HubConfigSession implements HubConfig, InitializingBean, Disposable
                     });
             clientsByKindAndDatabaseName.clear();
         }
-    }
-
-    public void setProjectDirectory(String projectDirectory) {
-        hubConfigImpl.setAppConfig(null, true);
-        hubConfigImpl.createProject(projectDirectory);
-        hubConfigImpl.refreshProject();
     }
 
     //only for test purpose

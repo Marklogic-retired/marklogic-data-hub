@@ -34,7 +34,7 @@ class AuthTest extends AbstractMvcTest {
 
     @Test
     void loginWithValidAdminAndLogout() throws Exception {
-        loginAsUser(testConfig.adminUsername).andDo(result -> {
+        loginAsUser(testConstants.ADMIN_USERNAME).andDo(result -> {
             String strResponse = result.getResponse().getContentAsString();
             JsonNode jsonResponse = objectMapper.readTree(strResponse);
             assertTrue(jsonResponse.get("roles").isArray());
@@ -52,7 +52,7 @@ class AuthTest extends AbstractMvcTest {
 
     @Test
     void loginWithDataHubManagerAndLogout() throws Exception {
-        loginAsUser(testConfig.dataHubEnvironmentManagerUsername).andDo(
+        loginAsUser(testConstants.ENVIRONMENT_MANAGER_USERNAME).andDo(
             result -> {
                 String strResponse = result.getResponse().getContentAsString();
                 JsonNode jsonResponse = objectMapper.readTree(strResponse);

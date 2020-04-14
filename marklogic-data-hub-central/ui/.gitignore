@@ -26,3 +26,6 @@ yarn-error.log*
 
 .idea
 *.iml
+
+cobertura-coverage.xml
+TEST-UI_Unit.xml

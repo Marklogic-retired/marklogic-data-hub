@@ -1,4 +1,4 @@
-package com.marklogic.hub.curation.controllers;
+package com.marklogic.hub.central.controllers;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
