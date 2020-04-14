@@ -1,6 +1,6 @@
 package com.marklogic.hub.central.models;
 
-import com.marklogic.hub.central.AbstractOneUiTest;
+import com.marklogic.hub.central.AbstractHubCentralTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -8,7 +8,7 @@ import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class HubConfigSessionTest extends AbstractOneUiTest {
+public class HubConfigSessionTest extends AbstractHubCentralTest {
 
     @BeforeEach
     void before() {

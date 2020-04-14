@@ -18,13 +18,7 @@ package com.marklogic.hub.central.auth;
 public class LoginInfo {
     public String username;
     public String password;
+
+    // Temporarily leaving in until this feature can be completely removed from the UI
     public String mlHost;
-    public String mlAuthMethod = "DIGEST";
-    public String mlManageAuthMethod = "DIGEST";
-    public String dhStagingAuthMethod = "DIGEST";
-    public String dhFinalAuthMethod = "DIGEST";
-    public int mlPort = 8000;
-    public int mlManagePort = 8002;
-    public int dhStagingPort = 8010;
-    public int dhFinalPort = 8011;
 }

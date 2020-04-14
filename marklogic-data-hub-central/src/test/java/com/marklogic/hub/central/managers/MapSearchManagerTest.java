@@ -2,14 +2,14 @@ package com.marklogic.hub.central.managers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.central.AbstractOneUiTest;
+import com.marklogic.hub.central.AbstractHubCentralTest;
 import com.marklogic.hub.central.models.SJSSearchQuery;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-class MapSearchManagerTest extends AbstractOneUiTest {
+class MapSearchManagerTest extends AbstractHubCentralTest {
 
     @Autowired
     MapSearchManager mapSearchManager;

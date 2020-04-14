@@ -7,18 +7,16 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.FileHandle;
-import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
-import com.marklogic.hub.central.models.EnvironmentInfo;
 import com.marklogic.hub.central.models.HubConfigSession;
-import com.marklogic.hub.central.services.EnvironmentService;
+import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.test.context.TestPropertySource;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,31 +43,28 @@ import java.io.IOException;
  * In short - try to keep this class fairly lean so that it's easy for developers to find methods to reuse that are
  * likely applicable to their testing needs.
  */
-@PropertySource("classpath:application-test.properties")
+@TestPropertySource("classpath:application-test.properties")
 @SpringBootTest(classes = {Application.class})
-public abstract class AbstractOneUiTest {
+public abstract class AbstractHubCentralTest {
 
     final protected Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     protected HubConfigSession hubConfig;
 
-    @Autowired
-    protected TestConfig testConfig;
+    protected TestConstants testConstants;
 
     // Declaring this as many tests need one of these
     protected ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
-    EnvironmentService environmentService;
+    HubCentral hubCentral;
 
     @BeforeEach
     void beforeEachTest() throws IOException {
         long start = System.currentTimeMillis();
 
-        environmentService.setProjectDirectory("build/marklogic-data-hub-central-test-project");
-
-        FileUtils.deleteDirectory(new File(environmentService.getProjectDirectory()));
+        FileUtils.deleteDirectory(new File(hubCentral.getProjectDirectory()));
 
         // Admin is needed to clear out provenance data
         runAsAdmin();
@@ -77,7 +72,7 @@ public abstract class AbstractOneUiTest {
 
         // By default, a test should run as a data-hub-developer
         runAsDataHubDeveloper();
-        logger.info("Initializing test project in directory: " + environmentService.getProjectDirectory());
+        logger.info("Initializing test project in directory: " + hubCentral.getProjectDirectory());
         hubConfig.initHubProject();
 
         logger.info("Initialized test, time: " + (System.currentTimeMillis() - start));
@@ -91,20 +86,15 @@ public abstract class AbstractOneUiTest {
     }
 
     protected void runAsDataHubDeveloper() {
-        hubConfig.setCredentials(newEnvironmentInfo(), testConfig.dataHubDeveloperUsername, testConfig.dataHubDeveloperPassword);
+        hubConfig.initialize(hubCentral.newHubConfig(testConstants.DEVELOPER_USERNAME, testConstants.DEVELOPER_PASSWORD));
     }
 
     protected void runAsEnvironmentManager() {
-        hubConfig.setCredentials(newEnvironmentInfo(), testConfig.dataHubEnvironmentManagerUsername, testConfig.dataHubEnvironmentManagerPassword);
+        hubConfig.initialize(hubCentral.newHubConfig(testConstants.ENVIRONMENT_MANAGER_USERNAME, testConstants.ENVIRONMENT_MANAGER_PASSWORD));
     }
 
     protected void runAsAdmin() {
-        hubConfig.setCredentials(newEnvironmentInfo(), testConfig.adminUsername, testConfig.adminPassword);
-    }
-
-    protected EnvironmentInfo newEnvironmentInfo() {
-        final String auth = "DIGEST";
-        return new EnvironmentInfo(testConfig.host, auth, 8000, auth, 8002, auth, 8010, auth, 8011);
+        hubConfig.initialize(hubCentral.newHubConfig(testConstants.ADMIN_USERNAME, testConstants.ADMIN_PASSWORD));
     }
 
     protected void addStagingDoc(String resource, String uri, String... collections) {

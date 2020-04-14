@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-package com.marklogic.hub.curation.controllers;
+package com.marklogic.hub.central.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

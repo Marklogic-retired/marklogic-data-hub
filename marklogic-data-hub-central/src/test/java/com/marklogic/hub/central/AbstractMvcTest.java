@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * should be applicable to a wide swath of tests, not just a handful.
  */
 @AutoConfigureMockMvc
-public abstract class AbstractMvcTest extends AbstractOneUiTest {
+public abstract class AbstractMvcTest extends AbstractHubCentralTest {
 
     @Autowired
     protected MockMvc mockMvc;
@@ -38,7 +38,7 @@ public abstract class AbstractMvcTest extends AbstractOneUiTest {
     }
 
     protected ResultActions loginAsDataHubDeveloper() {
-        return loginAsUser(testConfig.dataHubDeveloperUsername);
+        return loginAsUser(testConstants.DEVELOPER_USERNAME);
     }
 
     protected ResultActions loginAsUser(String username) {
@@ -55,7 +55,6 @@ public abstract class AbstractMvcTest extends AbstractOneUiTest {
 
     protected String buildLoginPayload(String username) {
         LoginInfo loginInfo = new LoginInfo();
-        loginInfo.mlHost = testConfig.host;
         loginInfo.username = username;
         loginInfo.password = "password";
         try {

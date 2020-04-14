@@ -1,6 +1,6 @@
 package com.marklogic.hub.central.services;
 
-import com.marklogic.hub.curation.controllers.EnvironmentControllerTest;
+import com.marklogic.hub.central.controllers.EnvironmentControllerTest;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;

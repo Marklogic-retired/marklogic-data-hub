@@ -1,9 +1,10 @@
-package com.marklogic.hub.curation.controllers;
+package com.marklogic.hub.central.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.hub.central.AbstractOneUiTest;
+import com.marklogic.hub.central.AbstractHubCentralTest;
+import com.marklogic.hub.central.controllers.MatchingController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -13,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class MatchingControllerTest extends AbstractOneUiTest {
+public class MatchingControllerTest extends AbstractHubCentralTest {
 
     @Autowired
     MatchingController controller;

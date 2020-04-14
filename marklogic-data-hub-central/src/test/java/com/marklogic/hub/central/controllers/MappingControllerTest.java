@@ -1,4 +1,4 @@
-package com.marklogic.hub.curation.controllers;
+package com.marklogic.hub.central.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -9,7 +9,8 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.central.AbstractOneUiTest;
+import com.marklogic.hub.central.AbstractHubCentralTest;
+import com.marklogic.hub.central.controllers.MappingController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,7 +18,7 @@ import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class MappingControllerTest extends AbstractOneUiTest {
+public class MappingControllerTest extends AbstractHubCentralTest {
 
     @Autowired
     MappingController controller;

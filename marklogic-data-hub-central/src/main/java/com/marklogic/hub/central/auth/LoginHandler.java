@@ -59,8 +59,10 @@ public class LoginHandler implements AuthenticationSuccessHandler {
         });
         jsonResponse.putArray("authorities").addAll(authorities);
 
-        jsonResponse.put("isInstalled", token.isDataHubInstalled());
-        jsonResponse.put("hasManagePrivileges", token.hasManagePrivileges());
+        // TODO These two things should go away
+        jsonResponse.put("isInstalled", true);
+        jsonResponse.put("hasManagePrivileges", false);
+
         jsonResponse.put("projectName", token.getProjectName());
 
         clearAuthenticationAttributes(request);

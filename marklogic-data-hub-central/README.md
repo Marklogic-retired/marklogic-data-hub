@@ -31,10 +31,26 @@ the same directory that this README.md file is in):
 
     ./gradlew bootRun
 
-Alternatively, you can also run the com.marklogic.hub.oneui.Application class in your IDE. 
+See the gradle.properties file in this project for the properties that you can customize. If you're testing against a 
+local MarkLogic instance, it's likely that your DHF instance uses digest authentication with no SSL. If so, set the 
+following property:
 
-You'll see in the logging that Tomcat is listening on port 8080. This is configured via the server.port property in 
+    ./gradlew bootRun -PhubUseLocalDefaults=true
+
+If you need that set, odds are you want that as a default. So create gradle-local.properties in this project and add 
+the following to it (that file is gitignored):
+
+    hubUseLocalDefaults=true
+
+Alternatively, you can also run the com.marklogic.hub.central.Application class in your IDE. If you need to override 
+the properties in gradle.properties that are used for local testing, set them as environment variables when running
+this program in your IDE. 
+
+You'll see in the logging that Hub Central is listening on port 8080. This is configured via the server.port property in 
 src/main/resources/application.properties . 
+
+If you are instead building the executable war for local testing, read the section below on how to override properties
+when doing so.
 
 ### Writing tests for the Java middle tier
 
@@ -50,22 +66,27 @@ To view the OpenAPI docs for the REST middle tier endpoints in this project, jus
 
 ## Using this for production 
 
-For a production environment, it's typical to package up a Spring Boot app as an executable jar. Thus, we won't be 
+For a production environment, it's typical to package up a Spring Boot app as an executable war (or jar). Thus, we won't be 
 using Node to run the UI - we'll need the UI to be hosted from within the Spring Boot app. 
 
 To build the Spring Boot executable jar, with the UI files included in it, just run:
 
-    gradle clean build
+    gradle clean bootWar
 
-This will produce an executable jar in the "build/libs" directory. Note that you can change the name and version in the 
-jar filename by modifying the "bootJar" block in build.gradle.
+This will produce an executable war in the "build/libs" directory (it also unfortunately involves building the 
+apparently-obsolete "trace-ui" in ./marklogic-data-hub, which adds an unnecessary minute to the build time). 
 
 The jar can then be run from the location where it was created:
 
-    java -jar build/libs/marklogic-data-hub-central-spring-boot.jar
+    java -jar build/libs/marklogic-data-hub-central-(version).war
     
 Or copy the jar to any other location to run it. More information on this topic can be found in the 
 [Spring Boot docs for installing applications](https://docs.spring.io/spring-boot/docs/current/reference/html/deployment-install.html).
+
+One item of note is that Spring Boot environment properties can be overridden in the following manner when running an 
+executable jar or war:
+
+    java -jar build/libs/marklogic-data-hub-central-(version).war --hubUseLocalDefaults=true
 
 ## Configuring the application
 

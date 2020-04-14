@@ -14,15 +14,16 @@
  *  limitations under the License.
  *
  */
-package com.marklogic.hub.curation.controllers;
+package com.marklogic.hub.central.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.FailedRequestException;
+import com.marklogic.hub.central.controllers.LoadDataController;
 import com.marklogic.hub.impl.ArtifactManagerImpl;
-import com.marklogic.hub.central.AbstractOneUiTest;
+import com.marklogic.hub.central.AbstractHubCentralTest;
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -35,7 +36,7 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class LoadDataControllerTest extends AbstractOneUiTest {
+public class LoadDataControllerTest extends AbstractHubCentralTest {
 
     @Autowired
     LoadDataController controller;

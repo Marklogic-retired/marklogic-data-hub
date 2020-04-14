@@ -31,19 +31,14 @@ public class AuthenticationToken extends AbstractAuthenticationToken {
 
     private final String username;
     private String password;
-    private final boolean hasManagePrivileges;
-    private final boolean dataHubInstalled;
     private final String projectName;
     private final ArrayNode roles;
 
-    public AuthenticationToken(String username, String password, boolean hasManagePrivileges, boolean dataHubInstalled,
-                               String projectName, ArrayNode roles, Collection<GrantedAuthority> authorities) {
+    public AuthenticationToken(String username, String password, String projectName, ArrayNode roles, Collection<GrantedAuthority> authorities) {
         super(authorities);
         super.setAuthenticated(true);
         this.username = username;
         this.password = password;
-        this.hasManagePrivileges = hasManagePrivileges;
-        this.dataHubInstalled = dataHubInstalled;
         this.projectName = projectName;
         this.roles = roles;
     }
@@ -67,14 +62,6 @@ public class AuthenticationToken extends AbstractAuthenticationToken {
 
     public Object getPrincipal() {
         return this.username;
-    }
-
-    public boolean hasManagePrivileges() {
-        return this.hasManagePrivileges;
-    }
-
-    public boolean isDataHubInstalled() {
-        return dataHubInstalled;
     }
 
     public String getProjectName() {

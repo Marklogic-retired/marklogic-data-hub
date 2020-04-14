@@ -1,18 +1,15 @@
-package com.marklogic.hub.curation.controllers;
+package com.marklogic.hub.central.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.artifact.ArtifactTypeInfo;
+import com.marklogic.hub.central.AbstractHubCentralTest;
 import com.marklogic.hub.impl.ArtifactManagerImpl;
-import com.marklogic.hub.central.AbstractOneUiTest;
-import com.marklogic.hub.central.auth.AuthenticationFilter;
-import com.marklogic.hub.central.controllers.EnvironmentController;
-import com.marklogic.hub.central.exceptions.ProjectDirectoryException;
-import com.marklogic.hub.central.models.HubConfigSession;
-import com.marklogic.hub.central.services.EnvironmentService;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
@@ -23,27 +20,25 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class EnvironmentControllerTest extends AbstractOneUiTest {
+public class EnvironmentControllerTest extends AbstractHubCentralTest {
 
     @Autowired
     EnvironmentController environmentController;
 
     @Autowired
-    EnvironmentService environmentService;
-
-    @Autowired
     LoadDataController controller;
 
+    @Autowired
+    Environment environment;
+
     @Test
+    @Disabled("This will be re-implemented")
     void downloadProject() throws IOException {
         //Creating a load data artifact so it can be verified for download test
         controller.updateArtifact("validArtifact", newLoadDataConfig());
@@ -52,7 +47,7 @@ public class EnvironmentControllerTest extends AbstractOneUiTest {
 
         assertEquals(1, resultList.size(), "List of load data artifacts should now be 1");
 
-        Path artifactProjectLocation = new ArtifactManagerImpl(hubConfig).buildArtifactProjectLocation(controller.getArtifactType(), "validArtifact", null,false);
+        Path artifactProjectLocation = new ArtifactManagerImpl(hubConfig).buildArtifactProjectLocation(controller.getArtifactType(), "validArtifact", null, false);
 
         ObjectNode resultByName = controller.getArtifact("validArtifact").getBody();
         assertEquals("validArtifact", resultByName.get("name").asText(), "Getting artifact by name should return object with expected properties");
@@ -60,7 +55,7 @@ public class EnvironmentControllerTest extends AbstractOneUiTest {
         assertEquals("json", resultByName.get("targetFormat").asText(), "Getting artifact by name should return object with expected properties");
         assertTrue(artifactProjectLocation.toFile().exists(), "File should have been created in the project directory");
 
-        ObjectNode enrichedJson = controller.setData("validArtifact", new MockMultipartFile[]{ new MockMultipartFile("file", "orig", null, "docTest".getBytes())}).getBody();
+        ObjectNode enrichedJson = controller.setData("validArtifact", new MockMultipartFile[]{new MockMultipartFile("file", "orig", null, "docTest".getBytes())}).getBody();
         assertEquals(1, enrichedJson.get("fileCount").asInt(), "File should be added to data set.");
 
         MockHttpServletResponse response = new MockHttpServletResponse();
@@ -83,29 +78,6 @@ public class EnvironmentControllerTest extends AbstractOneUiTest {
     }
 
     @Test
-    void installAttemptWithBadDirectory() {
-        try {
-            final ObjectNode relativePayload = new ObjectMapper().createObjectNode().put("directory", "relative-path");
-            assertThrows(ProjectDirectoryException.class, () -> {
-                environmentController.install(relativePayload);
-                fail("Should have thrown exception for relative path!");
-            });
-            // check that the environment service indicates that the install is in a dirty state
-            assertTrue(environmentService.isInDirtyState(), "Install should be in a dirty state");
-            // check that the AuthenticationFilter shows the Data Hub isn't installed after a failed install attempt
-            TestAuthenticationFilter authenticationFilter = new TestAuthenticationFilter(environmentService, hubConfig);
-            assertFalse(authenticationFilter.isDataHubInstalled(), "AuthenticationFilter shouldn't indicate the Data Hub is installed");
-            final ObjectNode nonExistentPayload = new ObjectMapper().createObjectNode().put("directory", "/non-existent");
-            assertThrows(ProjectDirectoryException.class, () -> {
-                environmentController.install(nonExistentPayload);
-            });
-        }
-        finally{
-            environmentService.setIsInDirtyState(false);
-        }
-    }
-
-    @Test
     public void testManageAdminAndSecurityAuthoritiesForArtifacts() {
         runAsEnvironmentManager();
         List<ArtifactTypeInfo> listTypeInfo = new ArtifactManagerImpl(hubConfig).getArtifactTypeInfoList();
@@ -116,7 +88,7 @@ public class EnvironmentControllerTest extends AbstractOneUiTest {
     }
 
     @Test
-    public void testAdminAuthoritiesForArtifacts()  {
+    public void testAdminAuthoritiesForArtifacts() {
         runAsAdmin();
         List<ArtifactTypeInfo> listTypeInfo = new ArtifactManagerImpl(hubConfig).getArtifactTypeInfoList();
         for (ArtifactTypeInfo typeInfo : listTypeInfo) {
@@ -125,13 +97,20 @@ public class EnvironmentControllerTest extends AbstractOneUiTest {
         }
     }
 
-    static class TestAuthenticationFilter extends AuthenticationFilter {
-        public TestAuthenticationFilter(EnvironmentService environmentService, HubConfigSession hubConfig) {
-            super(environmentService, hubConfig);
-        }
+    @Test
+    void testGetProjectInfo() {
+        JsonNode resp = environmentController.getProjectInfo();
+        assertNotNull(resp);
+        assertNotNull(resp.get("dataHubVersion"));
+        assertNotNull(resp.get("projectName"));
+        assertNotNull(resp.get("projectDir"));
+        assertNotNull(resp.get("marklogicVersion"));
+    }
 
-        public boolean isDataHubInstalled() {
-            return super.isDataHubInstalled();
-        }
+    @Test
+    public void getInfo() {
+        String expectedTimeout = environment.getProperty("server.servlet.session.timeout");
+        String actualTimeout = Objects.requireNonNull(environmentController.getInfo().getBody()).get("session.timeout");
+        assertEquals(expectedTimeout, actualTimeout);
     }
 }
