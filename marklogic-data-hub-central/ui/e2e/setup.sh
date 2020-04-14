@@ -4,9 +4,9 @@ set e+x
 cd qa-project
 
 ./gradlew hubInit
-./gradlew mlDeploy
-./gradlew hubSaveIndexes
-./gradlew hubDeployAsDeveloper
+./gradlew mlDeploy --info
+./gradlew hubSaveIndexes --info
+./gradlew hubDeployAsDeveloper --info
 
 ./gradlew hubRunFlow -PflowName=AdvantageFlow -PentityName=Customer -PbatchSize=100 -PthreadCount=4 -Psteps="1,2"
 ./gradlew hubRunFlow -PflowName=PersonFlow -PentityName=Person -PbatchSize=100 -PthreadCount=4 -Psteps="1,2"
