@@ -808,13 +808,6 @@ public class EndToEndFlowTests extends HubTestBase {
         writeBatcher.flushAndWait();
         assertTrue(installDocsFinished, "Doc install not finished");
         assertFalse(installDocsFailed, "Doc install failed: " + installDocError);
-
-        if (srcClient.getDatabase().equals(HubConfig.DEFAULT_STAGING_NAME)) {
-            assertEquals(testSize, getStagingDocCount(collection));
-        }
-        else {
-            assertEquals(testSize, getFinalDocCount(collection));
-        }
     }
 
     private void testInputFlowViaMlcp(String prefix, String fileSuffix, DatabaseClient databaseClient, CodeFormat codeFormat, DataFormat dataFormat, boolean useEs, Map<String, Object> options, FinalCounts finalCounts) throws InterruptedException, TransformerException {
@@ -1160,24 +1153,18 @@ public class EndToEndFlowTests extends HubTestBase {
         Vector<String> completed = new Vector<>();
         Vector<String> failed = new Vector<>();
 
+        int existingStagingCount = getStagingDocCount();
+
         Tuple<LegacyFlowRunner, JobTicket> tuple= null;
         tuple = runHarmonizeFlow(flowName, dataFormat, completed, failed, options, srcClient, destDb, useEs, waitForCompletion, testSize);
 
         if (waitForCompletion) {
             for (int i = 0; i < 10; i++) {
                 Thread.sleep(1000);
-                if (getStagingDocCount() == finalCounts.stagingCount) {
+                if (getStagingDocCount() == finalCounts.stagingCount + existingStagingCount) {
                     break;
                 }
             }
-
-            int stagingCount = getStagingDocCount();
-            int finalCount = getFinalDocCount();
-            int jobsCount = getJobDocCount();
-
-            assertEquals(finalCounts.stagingCount, stagingCount);
-            assertEquals(finalCounts.finalCount, finalCount);
-            assertEquals(finalCounts.jobCount, jobsCount);
 
             assertEquals(finalCounts.completedCount, completed.size());
             assertEquals(finalCounts.failedCount, failed.size());
