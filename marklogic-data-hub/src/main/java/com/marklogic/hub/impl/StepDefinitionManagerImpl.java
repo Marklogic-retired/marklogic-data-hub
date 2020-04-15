@@ -148,30 +148,7 @@ public class StepDefinitionManagerImpl extends LoggingObject implements StepDefi
 
     @Override
     public StepDefinition createStepDefinitionFromJSON(JsonNode json) {
-        String stepDefName = null;
-        String stepDefType = null;
-        if(json.get("name") !=null && !json.get("name").isNull()) {
-            stepDefName = json.get("name").asText();
-        }
-        else{
-            throw new DataHubProjectException("StepDefinition should have a name");
-        }
-        if(json.get("type") !=null && !json.get("type").isNull()) {
-            stepDefType = json.get("type").asText();
-        }
-        else{
-            throw new DataHubProjectException("StepDefinition should have a type");
-        }
-
-        StepDefinition step;
-        if(StringUtils.isNotEmpty(stepDefName) && StringUtils.isNotEmpty(stepDefType)) {
-            step = StepDefinition.create(stepDefName, StepDefinition.StepDefinitionType.getStepDefinitionType(stepDefType));
-        }
-        else{
-            step = StepDefinition.create("default", StepDefinition.StepDefinitionType.CUSTOM);
-        }
-        step.deserialize(json);
-        return step;
+        return StepDefinition.createStepDefinitionFromJSON(json);
     }
 
     private Path resolvePath(Path path, String more) {

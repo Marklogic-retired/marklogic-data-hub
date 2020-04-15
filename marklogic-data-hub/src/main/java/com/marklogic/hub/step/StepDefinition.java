@@ -17,7 +17,9 @@
 package com.marklogic.hub.step;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.step.impl.*;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,6 +57,32 @@ public interface StepDefinition {
         public String toString() {
             return this.type;
         }
+    }
+
+    static StepDefinition createStepDefinitionFromJSON(JsonNode json) {
+        String stepDefName;
+        String stepDefType;
+
+        if (json.get("name") != null && !json.get("name").isNull()) {
+            stepDefName = json.get("name").asText();
+        } else {
+            throw new DataHubProjectException("StepDefinition should have a name");
+        }
+
+        if (json.get("type") != null && !json.get("type").isNull()) {
+            stepDefType = json.get("type").asText();
+        } else {
+            throw new DataHubProjectException("StepDefinition should have a type");
+        }
+
+        StepDefinition step;
+        if (StringUtils.isNotEmpty(stepDefName) && StringUtils.isNotEmpty(stepDefType)) {
+            step = StepDefinition.create(stepDefName, StepDefinition.StepDefinitionType.getStepDefinitionType(stepDefType));
+        } else {
+            step = StepDefinition.create("default", StepDefinition.StepDefinitionType.CUSTOM);
+        }
+        step.deserialize(json);
+        return step;
     }
 
     /**

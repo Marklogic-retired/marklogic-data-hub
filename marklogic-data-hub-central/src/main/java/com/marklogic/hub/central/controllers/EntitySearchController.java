@@ -18,36 +18,23 @@ package com.marklogic.hub.central.controllers;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.marklogic.hub.dataservices.EntitySearchService;
 import com.marklogic.hub.central.managers.EntitySearchManager;
 import com.marklogic.hub.central.models.Document;
-import com.marklogic.hub.central.models.HubConfigSession;
 import com.marklogic.hub.central.models.SearchQuery;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.marklogic.hub.dataservices.EntitySearchService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
 
 @Controller
 @RequestMapping(value = "/api/entitySearch")
-public class EntitySearchController {
-
-    @Autowired
-    private HubConfigSession hubConfig;
-
-    EntitySearchManager entitySearchManager() {
-        return new EntitySearchManager(hubConfig);
-    }
+public class EntitySearchController extends BaseController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
@@ -64,8 +51,7 @@ public class EntitySearchController {
         return optionalContent.map(content -> {
             if (content.getContent().startsWith("<")) {
                 headers.setContentType(MediaType.APPLICATION_XML);
-            }
-            else {
+            } else {
                 headers.setContentType(MediaType.APPLICATION_JSON);
             }
             return new ResponseEntity<>(content, headers, HttpStatus.OK);
@@ -108,7 +94,11 @@ public class EntitySearchController {
         return new ResponseEntity<>(getEntitySearchService().getSavedQuery(id), HttpStatus.OK);
     }
 
+    private EntitySearchManager entitySearchManager() {
+        return new EntitySearchManager(getHubConfig());
+    }
+
     private EntitySearchService getEntitySearchService() {
-        return EntitySearchService.on(hubConfig.newFinalClient());
+        return EntitySearchService.on(getHubConfig().newFinalClient(null));
     }
 }

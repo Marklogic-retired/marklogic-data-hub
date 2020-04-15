@@ -19,13 +19,8 @@ package com.marklogic.hub.central.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.central.managers.MapSearchManager;
-import com.marklogic.hub.central.models.HubConfigSession;
-import com.marklogic.hub.central.models.SJSSearchQuery;
 import com.marklogic.hub.central.models.MapSearchQuery;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
+import com.marklogic.hub.central.models.SJSSearchQuery;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -35,43 +30,34 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping(value = "/api/map-search")
-public class MapSearchController {
-
-    @Autowired
-    private MapSearchManager mapSearchManager;
-
-    @Autowired
-    private HubConfigSession hubConfig;
-
-    @Bean
-    @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS, value = "request")
-    MapSearchManager searchService() {
-        return new MapSearchManager(hubConfig);
-    }
+public class MapSearchController extends BaseController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public String search(@RequestBody MapSearchQuery mapSearchQuery) throws JsonProcessingException {
-        return mapSearchManager.search(mapSearchQuery).get();
+        return newMapSearchManager().search(mapSearchQuery).get();
     }
 
     @RequestMapping(value = "/sjsSearch", method = RequestMethod.POST)
     @ResponseBody
     public JsonNode sjsSearch(@RequestBody SJSSearchQuery sjsSearchQuery) {
-        return mapSearchManager.sjsSearch(sjsSearchQuery);
+        return newMapSearchManager().sjsSearch(sjsSearchQuery);
     }
 
     @RequestMapping(value = "/doc", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> getDoc(@RequestParam String database, @RequestParam String docUri) {
         HttpHeaders headers = new HttpHeaders();
-        String body = mapSearchManager.getDoc(database, docUri);
+        String body = newMapSearchManager().getDoc(database, docUri);
         if (body.startsWith("<")) {
             headers.setContentType(MediaType.APPLICATION_XML);
-        }
-        else {
+        } else {
             headers.setContentType(MediaType.APPLICATION_JSON);
         }
         return new ResponseEntity<>(body, headers, HttpStatus.OK);
+    }
+
+    private MapSearchManager newMapSearchManager() {
+        return new MapSearchManager(getHubConfig());
     }
 }

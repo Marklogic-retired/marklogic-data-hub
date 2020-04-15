@@ -18,7 +18,6 @@ package com.marklogic.hub.central.controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.central.HubCentral;
 import com.marklogic.hub.impl.Versions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,13 +37,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Controller
-public class EnvironmentController extends LoggingObject {
+public class EnvironmentController extends BaseController {
 
     @Autowired
     HubCentral hubCentral;
-
-    @Autowired
-    Versions versions;
 
     @Autowired
     Environment environment;
@@ -72,7 +68,6 @@ public class EnvironmentController extends LoggingObject {
     public JsonNode getProject() {
         ObjectNode obj = mapper.createObjectNode();
         obj.put("isInitialized", true);
-        obj.put("directory", hubCentral.getProjectDirectory());
         return obj;
     }
 
@@ -102,8 +97,8 @@ public class EnvironmentController extends LoggingObject {
     @RequestMapping(value = "/api/environment/project-info", method = RequestMethod.GET)
     @ResponseBody
     public JsonNode getProjectInfo() {
+        Versions versions = new Versions(getHubConfig());
         ObjectNode node = new ObjectMapper().createObjectNode();
-        node.put("projectDir", hubCentral.getProjectDirectory());
         node.put("projectName", hubCentral.getProjectName());
         node.put("dataHubVersion", versions.getHubVersion());
         node.put("marklogicVersion", versions.getMarkLogicVersion());

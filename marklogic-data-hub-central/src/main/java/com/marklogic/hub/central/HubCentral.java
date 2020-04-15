@@ -1,9 +1,7 @@
 package com.marklogic.hub.central;
 
 import com.marklogic.client.ext.helper.LoggingObject;
-import com.marklogic.hub.HubProject;
 import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.hub.impl.HubProjectImpl;
 import com.marklogic.mgmt.util.PropertySource;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,14 +23,8 @@ public class HubCentral extends LoggingObject implements InitializingBean {
     @Value("${mlHost:localhost}")
     String host;
 
-    @Value("${hubProjectPath:build/hub-central-test-project}")
-    String projectPath;
-
     @Value("${hubUseLocalDefaults:false}")
     boolean useLocalDefaults;
-
-    // TODO This is temporary, until HC no longer depends on a HubProject
-    private HubProject hubProject;
 
     /**
      * When the application starts up, initialize a project at the configured project path. This will go away before
@@ -42,14 +34,6 @@ public class HubCentral extends LoggingObject implements InitializingBean {
     public void afterPropertiesSet() {
         logger.info("Will connect to MarkLogic host: " + host);
 
-        hubProject = new HubProjectImpl();
-        logger.info("Temporarily initializing project at: " + projectPath);
-        hubProject.createProject(projectPath);
-
-        HubConfigImpl tempHubConfig = new HubConfigImpl(hubProject, environment);
-        tempHubConfig.initHubProject();
-        logger.info("Initialized project at: " + getProjectDirectory());
-
         if (useLocalDefaults) {
             logger.info("Local defaults of digest authentication and no SSL will be used when connecting to MarkLogic");
         }
@@ -58,7 +42,7 @@ public class HubCentral extends LoggingObject implements InitializingBean {
     }
 
     public HubConfigImpl newHubConfig(String username, String password) {
-        HubConfigImpl hubConfig = new HubConfigImpl(hubProject, environment);
+        HubConfigImpl hubConfig = new HubConfigImpl(null, environment);
         hubConfig.setMlUsername(username);
         hubConfig.setMlPassword(password);
         hubConfig.applyProperties(buildPropertySource(username, password));
@@ -112,10 +96,7 @@ public class HubCentral extends LoggingObject implements InitializingBean {
     }
 
     public String getProjectName() {
-        return hubProject.getProjectName();
+        return "Data Hub Project";
     }
 
-    public String getProjectDirectory() {
-        return hubProject.getProjectDir().toString();
-    }
 }

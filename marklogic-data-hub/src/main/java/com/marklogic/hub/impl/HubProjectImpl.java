@@ -416,7 +416,10 @@ public class HubProjectImpl implements HubProject {
         getUserDatabaseDir().toFile().mkdirs();
 
         //scaffold schemas
-        getUserDatabaseDir().resolve(customTokens.get("%%mlStagingSchemasDbName%%")).resolve("schemas").toFile().mkdirs();
+        final String stagingSchemasKey = "%%mlStagingSchemasDbName%%";
+        if (customTokens != null && customTokens.containsKey(stagingSchemasKey)) {
+            getUserDatabaseDir().resolve(customTokens.get(stagingSchemasKey)).resolve("schemas").toFile().mkdirs();
+        }
         getUserSchemasDir().toFile().mkdirs();
 
         //create flow dir

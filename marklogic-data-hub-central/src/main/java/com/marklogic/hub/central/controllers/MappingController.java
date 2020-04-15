@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping("/api/artifacts/mapping")
 public class MappingController extends AbstractArtifactController {
+
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<ArrayNode> getArtifacts() {
@@ -73,7 +74,6 @@ public class MappingController extends AbstractArtifactController {
     }
 
     protected MappingService getMappingService() {
-        DatabaseClient dataServicesClient = hubConfig.newStagingClient(null);
-        return MappingService.on(dataServicesClient);
+        return MappingService.on(getHubConfig().newStagingClient(null));
     }
 }

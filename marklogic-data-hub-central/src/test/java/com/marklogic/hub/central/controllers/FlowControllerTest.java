@@ -49,13 +49,6 @@ class FlowControllerTest extends AbstractHubCentralTest {
         "{\"inputFilePath\":\"input\",\"inputFileType\":" +
         "\"json\",\"outputURIReplacement\":\".*/input,'/xqyfunc'\",\"separator\":\"\"}}";
 
-    private final String customStepString = "{\"name\":\"second\",\"description\":\"\",\"isValid\":false,\"modulePath\":\"\",\"options\":" +
-        "{\"collections\":[\"second\"],\"additionalCollections\":[],\"sourceQuery\":\"cts.collectionQuery([])\",\"sourceCollection\":\"\"," +
-        "\"sourceDatabase\":\"data-hub-STAGING\",\"permissions\":\"data-hub-operator,read,data-hub-operator,update\",\"outputFormat\":" +
-        "\"json\",\"targetEntity\":\"\",\"targetDatabase\":\"data-hub-FINAL\"},\"customHook\":{\"module\":\"\",\"parameters\":{}," +
-        "\"user\":\"\",\"runBefore\":false},\"batchSize\":100,\"threadCount\":4,\"stepDefinitionType\":\"CUSTOM\",\"stepDefType\":\"CUSTOM\"," +
-        "\"stepDefinitionName\":\"second\",\"selectedSource\":\"\"}";
-
     @Autowired
     FlowTestController controller;
 
@@ -117,14 +110,6 @@ class FlowControllerTest extends AbstractHubCentralTest {
 
             //PUT step
             controller.createStep("testFlow", "e2e-json-ingestion", mapper.writeValueAsString(stepModel));
-            //POST custom step
-            controller.createStep("testFlow", 3, customStepString).getBody();
-
-            GenericDocumentManager docMgr = hubConfig.newStagingClient().newDocumentManager();
-            StringHandle readHandle = new StringHandle();
-            docMgr.read("/step-definitions/custom/second/second.step.json").next().getContent(readHandle);
-            //the step-def should be written
-            Assertions.assertNotNull(readHandle.get());
 
             //link artifact to step options
             loadDataController.updateArtifact("validArtifact", newLoadDataConfig());
@@ -145,10 +130,7 @@ class FlowControllerTest extends AbstractHubCentralTest {
 
             //DELETE step
             controller.deleteStep("testFlow", "e2e-json-ingestion");
-            controller.deleteStep("testFlow", "second-custom");
 
-            //the module should be deleted
-            Assertions.assertFalse(docMgr.read("/step-definitions/custom/second/second.step.json").hasNext());
             try {
                 controller.getStep("testFlow", "e2e-json-ingestion");
                 Assertions.fail();
@@ -156,15 +138,13 @@ class FlowControllerTest extends AbstractHubCentralTest {
                 logger.info("Exception is expected as the step being fetched has been deleted");
             }
         } finally {
-            //DELETE flow
             controller.deleteFlow("testFlow");
             try {
-                Flow flow = (Flow) controller.getFlow("testFlow").getBody();
+                Flow flow = controller.getFlow("testFlow").getBody();
                 Assertions.assertNull(flow, "Flow shouldn't exist anymore");
             } catch (Exception e) {
                 logger.info("Exception is expected as the flow being fetched has been deleted");
             }
-            loadDataController.deleteArtifact("validArtifact");
         }
     }
 

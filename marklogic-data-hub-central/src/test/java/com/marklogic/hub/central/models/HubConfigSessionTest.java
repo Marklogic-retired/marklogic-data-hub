@@ -17,17 +17,17 @@ public class HubConfigSessionTest extends AbstractHubCentralTest {
 
     @Test
     public void databaseClientKindsTest() {
-        assertEquals(hubConfig.getAllDatabaseClients().size(), 2);
-        hubConfig.destroy();
-        assertEquals(hubConfig.getAllDatabaseClients().size(), 0);
+        assertEquals(hubConfigSession.getAllDatabaseClients().size(), 2);
+        hubConfigSession.destroy();
+        assertEquals(hubConfigSession.getAllDatabaseClients().size(), 0);
     }
 
     @Test
     public void databaseClientsTest() {
-        assertEquals(hubConfig.getAllDatabaseClients().values().stream()
+        assertEquals(hubConfigSession.getAllDatabaseClients().values().stream()
             .flatMap(s -> s.values().stream().filter(
                 Objects::nonNull)).count(), 5);
-        hubConfig.destroy();
-        assertEquals(hubConfig.getAllDatabaseClients().size(), 0);
+        hubConfigSession.destroy();
+        assertEquals(hubConfigSession.getAllDatabaseClients().size(), 0);
     }
 }

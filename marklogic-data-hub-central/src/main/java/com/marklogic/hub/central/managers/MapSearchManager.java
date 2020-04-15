@@ -32,13 +32,13 @@ import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.central.exceptions.BadRequestException;
-import com.marklogic.hub.central.models.SJSSearchQuery;
 import com.marklogic.hub.central.models.MapSearchQuery;
+import com.marklogic.hub.central.models.SJSSearchQuery;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 
-public class MapSearchManager extends MapSearchableManager {
+public class MapSearchManager {
 
     private HubConfig hubConfig;
     private QueryManager stagingQueryMgr;
@@ -62,8 +62,7 @@ public class MapSearchManager extends MapSearchableManager {
         if (mapSearchQuery.database.equalsIgnoreCase(DatabaseKind.getName(DatabaseKind.STAGING))) {
             queryMgr = stagingQueryMgr;
             dbPrefix = "staging-";
-        }
-        else {
+        } else {
             queryMgr = finalQueryMgr;
             dbPrefix = "final-";
         }
@@ -82,8 +81,7 @@ public class MapSearchManager extends MapSearchableManager {
                     sb.containerQuery(sb.jsonProperty("instance"), sb.and())
                 )
             );
-        }
-        else {
+        } else {
             sb = queryMgr.newStructuredQueryBuilder("default");
         }
 
@@ -128,11 +126,18 @@ public class MapSearchManager extends MapSearchableManager {
         GenericDocumentManager docMgr;
         if (database.equalsIgnoreCase(DatabaseKind.getName(DatabaseKind.STAGING))) {
             docMgr = stagingDocMgr;
-        }
-        else {
+        } else {
             docMgr = finalDocMgr;
         }
         return docMgr.readAs(docUri, String.class, new ServerTransform("mlPrettifyXML"));
+    }
+
+    private StructuredQueryDefinition addRangeConstraint(StructuredQueryBuilder sb, String name, String value) {
+        StructuredQueryDefinition sqd = null;
+        if (value != null && !value.isEmpty()) {
+            sqd = sb.rangeConstraint(name, StructuredQueryBuilder.Operator.EQ, value);
+        }
+        return sqd;
     }
 
     public class Collections extends ResourceManager {

@@ -17,14 +17,8 @@
 package com.marklogic.hub.central.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.marklogic.hub.dataservices.ModelsService;
-import com.marklogic.hub.impl.ModelManagerImpl;
 import com.marklogic.hub.central.managers.ModelManager;
-import com.marklogic.hub.central.models.HubConfigSession;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
+import com.marklogic.hub.dataservices.ModelsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -32,42 +26,18 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/api/models")
-public class ModelController {
-
-    @Autowired
-    protected ModelManager modelManager;
-
-    @Autowired
-    protected HubConfigSession hubConfig;
-
-    @Bean
-    @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS, value = "request")
-    ModelManager modelManager() {
-        return new ModelManager(hubConfig);
-    }
+public class ModelController extends BaseController {
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> getModels() {
-        return ResponseEntity.ok(modelManager.getModels());
-    }
-
-    @RequestMapping(value = "/{modelName}", method = RequestMethod.GET)
-    @ResponseBody
-    public ResponseEntity<?> getModel(@PathVariable String modelName) {
-        return ResponseEntity.ok(modelManager.getModel(modelName));
+        return ResponseEntity.ok(newModelManager().getModels());
     }
 
     @RequestMapping(value = "/job-info", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> getLatestJobInfoForAllModels() {
-        return ResponseEntity.ok(modelManager.getLatestJobInfoForAllModels());
-    }
-
-    @RequestMapping(value = "/{modelName}/job-info", method = RequestMethod.GET)
-    @ResponseBody
-    public ResponseEntity<?> getLatestJobInfo(@PathVariable String modelName) {
-        return ResponseEntity.ok(modelManager.getLatestJobInfo(modelName));
+        return ResponseEntity.ok(newModelManager().getLatestJobInfoForAllModels());
     }
 
     @RequestMapping(value = "/primaryEntityTypes", method = RequestMethod.GET)
@@ -94,7 +64,11 @@ public class ModelController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    private ModelManager newModelManager() {
+        return new ModelManager(getHubConfig());
+    }
+
     private ModelsService newService() {
-        return new ModelManagerImpl(hubConfig);
+        return ModelsService.on(getHubConfig().newFinalClient(null));
     }
 }

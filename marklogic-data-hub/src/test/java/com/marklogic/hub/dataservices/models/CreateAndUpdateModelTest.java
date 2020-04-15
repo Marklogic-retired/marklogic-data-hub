@@ -8,11 +8,9 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.AbstractHubTest;
 import com.marklogic.hub.dataservices.ModelsService;
-import com.marklogic.hub.impl.ModelManagerImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,7 +25,7 @@ public class CreateAndUpdateModelTest extends AbstractHubTest {
 
     @BeforeEach
     void beforeEach() {
-        service = new ModelManagerImpl(adminHubConfig);
+        service = ModelsService.on(adminHubConfig.newFinalClient(null));
     }
 
     @Test
@@ -78,10 +76,6 @@ public class CreateAndUpdateModelTest extends AbstractHubTest {
      * @throws IOException
      */
     private void verifyPersistedModels(String expectedDescription) throws IOException {
-        File file = new File(adminHubConfig.getHubProject().getHubEntitiesDir().toFile(), MODEL_NAME + ".entity.json");
-        assertTrue(file.exists(), "Expected model file to exist: " + file.getAbsolutePath());
-        verifyModelContents(mapper.readTree(file), expectedDescription);
-
         JSONDocumentManager stagingMgr = adminHubConfig.newStagingClient().newJSONDocumentManager();
         JSONDocumentManager finalMgr = adminHubConfig.newFinalClient().newJSONDocumentManager();
 

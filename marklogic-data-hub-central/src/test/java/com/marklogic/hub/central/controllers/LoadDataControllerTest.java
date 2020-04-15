@@ -21,18 +21,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.FailedRequestException;
-import com.marklogic.hub.central.controllers.LoadDataController;
-import com.marklogic.hub.impl.ArtifactManagerImpl;
 import com.marklogic.hub.central.AbstractHubCentralTest;
-import java.io.IOException;
-import java.nio.file.Path;
-
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -55,6 +50,7 @@ public class LoadDataControllerTest extends AbstractHubCentralTest {
         + "    }}";
 
     @Test
+    @Disabled("This test will be worked when upload is reworked for LoadData")
     void testLoadDataController() throws IOException {
         controller.updateArtifact("validArtifact", newLoadDataConfig());
 
@@ -62,23 +58,19 @@ public class LoadDataControllerTest extends AbstractHubCentralTest {
 
         assertEquals(1, resultList.size(), "List of load data artifacts should now be 1");
 
-        Path artifactProjectLocation = new ArtifactManagerImpl(hubConfig).buildArtifactProjectLocation(controller.getArtifactType(), "validArtifact", null, false);
         ObjectNode resultByName = controller.getArtifact("validArtifact").getBody();
         assertEquals("validArtifact", resultByName.get("name").asText(), "Getting artifact by name should return object with expected properties");
         assertEquals("xml", resultByName.get("sourceFormat").asText(), "Getting artifact by name should return object with expected properties");
         assertEquals("json", resultByName.get("targetFormat").asText(), "Getting artifact by name should return object with expected properties");
-        assertTrue(artifactProjectLocation.toFile().exists(), "File should have been created in the project directory");
 
         ObjectNode enrichedJson = controller.setData("validArtifact", new MockMultipartFile[]{ new MockMultipartFile("file", "orig", null, "docTest".getBytes())}).getBody();
         assertEquals(1, enrichedJson.get("fileCount").asInt(), "File should be added to data set.");
 
         controller.deleteArtifact("validArtifact");
-        assertFalse(artifactProjectLocation.toFile().exists(), "File should have been deleted from the project directory");
 
         resultList = (ArrayNode) controller.getArtifacts().getBody();
 
         assertEquals(0, resultList.size(), "List of load data artifacts should now be 0 after deleting validArtifact");
-        assertFalse(controller.dataSetDirectory("validArtifact").toFile().exists(), "Data set directory for validArtifact should no longer exist");
 
         assertThrows(FailedRequestException.class, () -> controller.getArtifact("validArtifact"));
     }
@@ -105,12 +97,8 @@ public class LoadDataControllerTest extends AbstractHubCentralTest {
         assertTrue(result.has("permissions"), "missing permissions");
         assertTrue(result.has("customHook"), "missing customHook");
 
-        Path artifactSettingFullName = new ArtifactManagerImpl(hubConfig).buildArtifactProjectLocation(controller.getArtifactType(), "validArtifact", null, true);
-        assertTrue(artifactSettingFullName.toFile().exists(), "Artifact setting file should have been created in the project directory");
-
         controller.deleteArtifact("validArtifact");
 
         assertThrows(FailedRequestException.class, () -> controller.getArtifact("validArtifact"));
-        assertFalse(artifactSettingFullName.toFile().exists(), "Artifact setting file should no longer exist");
     }
 }
