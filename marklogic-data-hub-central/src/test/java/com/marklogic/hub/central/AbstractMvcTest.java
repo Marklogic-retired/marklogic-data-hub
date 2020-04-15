@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.util.MultiValueMap;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -82,6 +83,14 @@ public abstract class AbstractMvcTest extends AbstractHubCentralTest {
 
     protected ResultActions getJson(String url, MultiValueMap<String, String> params) throws Exception {
         MockHttpServletRequestBuilder builder = get(url).params(params);
+        if (mockHttpSession != null) {
+            builder.session(mockHttpSession);
+        }
+        return mockMvc.perform(builder);
+    }
+
+    protected ResultActions deleteJson(String url, MultiValueMap<String, String> params) throws Exception {
+        MockHttpServletRequestBuilder builder = delete(url).params(params);
         if (mockHttpSession != null) {
             builder.session(mockHttpSession);
         }

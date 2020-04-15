@@ -1,0 +1,9 @@
+{
+  "functionName": "deleteSavedQuery",
+  "params": [
+    {
+      "name": "id",
+      "datatype": "string"
+    }
+  ]
+}

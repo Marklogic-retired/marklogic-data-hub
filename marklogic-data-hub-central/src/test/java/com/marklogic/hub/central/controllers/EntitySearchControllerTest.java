@@ -18,7 +18,7 @@ public class EntitySearchControllerTest extends AbstractMvcTest {
     private ObjectNode savedQueryResponse;
 
     @Test
-    void createThenUpdateSavedQuery() throws Exception {
+    void testCRUDOnSavedQuery() throws Exception {
         String json = "{\n" +
             "  \"savedQuery\": {\n" +
             "    \"name\": \"some-query\",\n" +
@@ -33,6 +33,7 @@ public class EntitySearchControllerTest extends AbstractMvcTest {
             "  }\n" +
             "}";
 
+        // testing save query document
         postJson(SAVED_QUERIES_PATH, json)
             .andExpect(status().isCreated())
             .andDo(result -> {
@@ -41,6 +42,7 @@ public class EntitySearchControllerTest extends AbstractMvcTest {
                     "can e.g. display a link to the saved query");
             });
 
+        // testing update savedQuery document
         ObjectNode query = (ObjectNode) savedQueryResponse.get("savedQuery");
         query.put("description", "Updated description");
 
@@ -50,56 +52,8 @@ public class EntitySearchControllerTest extends AbstractMvcTest {
                 ObjectNode response = readJsonObject(result.getResponse().getContentAsString());
                 assertEquals("Updated description", response.get("savedQuery").get("description").asText());
             });
-    }
 
-    @Test
-    void getSavedQueries() throws Exception {
-        String json = "{\n" +
-                "  \"savedQuery\": {\n" +
-                "    \"name\": \"some-query\",\n" +
-                "    \"description\": \"some-query-description\",\n" +
-                "    \"query\": {\n" +
-                "      \"searchText\": \"some-string\",\n" +
-                "      \"entityTypeIds\": [\n" +
-                "        \"Entity1\"\n" +
-                "      ]\n" +
-                "    },\n" +
-                "    \"propertiesToDisplay\": [\"facet1\", \"EntityTypeProperty1\"]\n" +
-                "  }\n" +
-                "}";
-
-        postJson(SAVED_QUERIES_PATH, json)
-                .andExpect(status().isCreated())
-                .andDo(result -> savedQueryResponse = readJsonObject(result.getResponse().getContentAsString()));
-
-        getJson(SAVED_QUERIES_PATH, new LinkedMultiValueMap<>())
-                .andExpect(status().isOk())
-                .andDo(result -> {
-                    ArrayNode response = readJsonArray(result.getResponse().getContentAsString());
-                    assertTrue(response.size() > 0, "There should be at least one saved query document");
-                });
-    }
-
-    @Test
-    void getSavedQuery() throws Exception {
-        String json = "{\n" +
-                "  \"savedQuery\": {\n" +
-                "    \"name\": \"some-query\",\n" +
-                "    \"description\": \"some-query-description\",\n" +
-                "    \"query\": {\n" +
-                "      \"searchText\": \"some-string\",\n" +
-                "      \"entityTypeIds\": [\n" +
-                "        \"Entity1\"\n" +
-                "      ]\n" +
-                "    },\n" +
-                "    \"propertiesToDisplay\": [\"facet1\", \"EntityTypeProperty1\"]\n" +
-                "  }\n" +
-                "}";
-
-        postJson(SAVED_QUERIES_PATH, json)
-                .andExpect(status().isCreated())
-                .andDo(result -> savedQueryResponse = readJsonObject(result.getResponse().getContentAsString()));
-
+        // testing get savedQuery document
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("id", savedQueryResponse.get("savedQuery").get("id").asText());
 
@@ -108,6 +62,25 @@ public class EntitySearchControllerTest extends AbstractMvcTest {
                 .andDo(result -> {
                     ObjectNode response = readJsonObject(result.getResponse().getContentAsString());
                     assertEquals(savedQueryResponse.get("savedQuery").get("id").asText(), response.get("savedQuery").get("id").asText());
+                });
+
+        // testing get all savedQuery documents
+        getJson(SAVED_QUERIES_PATH, new LinkedMultiValueMap<>())
+                .andExpect(status().isOk())
+                .andDo(result -> {
+                    ArrayNode response = readJsonArray(result.getResponse().getContentAsString());
+                    assertTrue(response.size() > 0, "There should be at least one saved query document");
+                });
+
+        // testing delete savedQuery document
+        deleteJson(SAVED_QUERIES_PATH+"/query", params)
+                .andExpect(status().isNoContent());
+
+        getJson(SAVED_QUERIES_PATH+"/query", params)
+                .andExpect(status().isOk())
+                .andDo(result -> {
+                    ObjectNode response = readJsonObject(result.getResponse().getContentAsString());
+                    assertTrue(response.isEmpty());
                 });
     }
 }
