@@ -1,6 +1,6 @@
-  <CustOrders>
+  <CustOrders xmlns="custOrderInfo">
     <CustomerID>101</CustomerID>
-    <Name>
+    <Name type="preferred">
       <FirstName>Randolph</FirstName>
       <LastName>Gonzales</LastName>
     </Name>
