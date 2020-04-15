@@ -9,6 +9,7 @@
       "required": [
         "name"
       ],
+      "elementRangeIndex" : [ "customerId", "name" ],
       "primaryKey": "customerId",
       "properties": {
         "customerId": {

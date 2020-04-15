@@ -8,7 +8,7 @@
     "Address": {
       "required": [],
       "pii": [],
-      "elementRangeIndex": [],
+      "elementRangeIndex": ["street", "city", "state"],
       "rangeIndex": [],
       "wordLexicon": [],
       "properties": {
