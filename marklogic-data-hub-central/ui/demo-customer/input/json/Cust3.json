@@ -1,10 +1,10 @@
 {
   "CustomerID": 103,
   "Name": {
-    "FirstName": "Hopkins",
-    "LastName": "Bernard"
+    "FirstName": "Adams",
+    "LastName": "Cole"
   },
-  "Email": "hopkinsbernard@nutralab.com",
+  "Email": "coleadams39@nutralab.com",
   "Address": {
     "Shipping": {
       "Street": "Verona Place",
