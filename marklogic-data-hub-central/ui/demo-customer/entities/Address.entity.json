@@ -2,11 +2,15 @@
   "info": {
     "title": "Address",
     "version": "0.0.1",
-    "baseUri": "http://marklogic.com/example/"
+    "baseUri": "http://example.org/"
   },
   "definitions": {
     "Address": {
       "required": [],
+      "pii": [],
+      "elementRangeIndex": [],
+      "rangeIndex": [],
+      "wordLexicon": [],
       "properties": {
         "street": {
           "datatype": "string",
@@ -21,7 +25,20 @@
           "collation": "http://marklogic.com/collation/codepoint"
         },
         "zip": {
-          "$ref": "http://example.org/Zip-0.0.1/Zip"
+          "$ref": "#/definitions/Zip"
+        }
+      }
+    },
+    "Zip": {
+      "required": [],
+      "properties": {
+        "fiveDigit": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "plusFour": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
         }
       }
     }

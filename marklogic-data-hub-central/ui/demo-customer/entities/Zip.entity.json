@@ -2,7 +2,7 @@
   "info": {
     "title": "Zip",
     "version": "0.0.1",
-    "baseUri": "http://marklogic.com/example/"
+    "baseUri": "http://example.org/"
   },
   "definitions": {
     "Zip": {
