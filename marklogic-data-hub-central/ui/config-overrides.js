@@ -15,7 +15,8 @@ module.exports = override(
     '@background-color-light': '#ffffff',
     '@card-actions-background': '#f7f9fa',
     '@table-row-hover-bg': '#E9F7FE',
-    '@item-hover-bg': '#E9F7FE'
+    '@item-hover-bg': '#E9F7FE',
+    '@error-color' : '#B32424'
     },
  }),
 );

@@ -216,7 +216,6 @@ class BrowsePage {
     return cy.get('[data-cy=column-selector] > div > svg');
   }
 
-
   //popover
   getColumnSelector(){
     return cy.get('.ant-popover-inner');
@@ -241,6 +240,11 @@ class BrowsePage {
     cy.get(`.ant-popover-inner ul > li:nth-child(${index}) .ant-tree-checkbox`).should('have.class', 'ant-tree-checkbox-checked') ? cy.get(`.ant-popover-inner ul > li:nth-child(${index}) .ant-tree-checkbox`).click() : '';
   }
 
+
+  //temp query icon
+  getManageQueriesIcon(){
+    return cy.get('[data-testid=manage-queries-modal-icon]');
+  }
 
 }
 

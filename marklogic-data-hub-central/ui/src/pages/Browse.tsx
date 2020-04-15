@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useRef, useLayoutEffect } from 'react';
 import axios from 'axios';
-import { Layout, Tooltip, Spin } from 'antd';
+import { Layout, Tooltip, Spin, Button, Alert } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { UserContext } from '../util/user-context';
 import { SearchContext } from '../util/search-context';
@@ -18,7 +18,7 @@ import { entityFromJSON, entityParser } from '../util/data-conversion';
 import styles from './Browse.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStream, faTable } from '@fortawesome/free-solid-svg-icons'
-
+import QueryModal from '../components/queries/managing/manage-query';
 
 interface Props extends RouteComponentProps<any> {
 }
@@ -194,6 +194,7 @@ const Browse: React.FC<Props> = ({ location }) => {
     setGreyFacets(facets);
   }
 
+
   return (
     <Layout>
       <Sider className={styles.sideBarFacets} collapsedWidth={0} collapsible onCollapse={onCollapse} width={'20vw'}>
@@ -245,6 +246,10 @@ const Browse: React.FC<Props> = ({ location }) => {
               <div className={styles.selectedFacets}>
                 <SelectedFacets selectedFacets={selectedFacets} greyFacets={greyFacets}/>
               </div>
+
+
+              <QueryModal />
+
             </div>
 
             <div className={styles.fixedView} >

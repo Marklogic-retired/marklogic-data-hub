@@ -8,3 +8,7 @@ export const relativeTimeConverter = (date:string) => {
   return moment(date).fromNow();
 }
 
+export const queryDateConverter = (date:string) => {
+  return moment(date).format("DD-MMM-YY HH:mm");
+}
+
