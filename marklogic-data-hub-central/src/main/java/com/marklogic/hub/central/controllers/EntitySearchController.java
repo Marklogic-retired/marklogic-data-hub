@@ -108,6 +108,13 @@ public class EntitySearchController {
         return new ResponseEntity<>(getEntitySearchService().getSavedQuery(id), HttpStatus.OK);
     }
 
+    @RequestMapping(method = RequestMethod.DELETE, value = "/savedQueries/query")
+    @ResponseBody
+    public ResponseEntity deleteQueryDocument(@RequestParam String id) {
+        getEntitySearchService().deleteSavedQuery(id);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+
     private EntitySearchService getEntitySearchService() {
         return EntitySearchService.on(hubConfig.newFinalClient());
     }

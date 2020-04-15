@@ -178,6 +178,21 @@ public class EntitySearchServiceTest extends HubTestBase {
         assertEquals(0, savedQuery.size());
     }
 
+    @Test
+    void testDeleteQueryDocument() {
+        JsonNode savedQuery = entitySearchService.saveSavedQuery(queryDoc);
+        String id = savedQuery.get("savedQuery").get("id").asText();
+        entitySearchService.deleteSavedQuery(id);
+        assertEquals(0, entitySearchService.getSavedQuery(id).size());
+    }
+
+    @Test
+    void testDeleteQueryDocumentWithNonExistentId() {
+        String id = "some-random-id";
+        entitySearchService.deleteSavedQuery(id);
+        assertEquals(0, entitySearchService.getSavedQuery(id).size());
+    }
+
     private void assertPermissionsAndCollections(String id) {
         String docUri = "/saved-queries/" + id + ".json";
         DocumentMetadataHandle metadataHandle = new DocumentMetadataHandle();

@@ -49,6 +49,7 @@ public interface EntitySearchService {
 
             private BaseProxy.DBFunctionRequest req_getMinAndMaxPropertyValues;
             private BaseProxy.DBFunctionRequest req_getSavedQuery;
+            private BaseProxy.DBFunctionRequest req_deleteSavedQuery;
             private BaseProxy.DBFunctionRequest req_saveSavedQuery;
             private BaseProxy.DBFunctionRequest req_getSavedQueries;
             private BaseProxy.DBFunctionRequest req_getMatchingPropertyValues;
@@ -61,6 +62,8 @@ public interface EntitySearchService {
                     "getMinAndMaxPropertyValues.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_getSavedQuery = this.baseProxy.request(
                     "getSavedQuery.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                this.req_deleteSavedQuery = this.baseProxy.request(
+                    "deleteSavedQuery.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_saveSavedQuery = this.baseProxy.request(
                     "saveSavedQuery.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_getSavedQueries = this.baseProxy.request(
@@ -97,6 +100,19 @@ public interface EntitySearchService {
                           BaseProxy.atomicParam("id", false, BaseProxy.StringType.fromString(id))
                           ).responseSingle(false, Format.JSON)
                 );
+            }
+
+            @Override
+            public void deleteSavedQuery(String id) {
+                deleteSavedQuery(
+                    this.req_deleteSavedQuery.on(this.dbClient), id
+                    );
+            }
+            private void deleteSavedQuery(BaseProxy.DBFunctionRequest request, String id) {
+              request
+                      .withParams(
+                          BaseProxy.atomicParam("id", false, BaseProxy.StringType.fromString(id))
+                          ).responseNone();
             }
 
             @Override
@@ -160,6 +176,14 @@ public interface EntitySearchService {
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode getSavedQuery(String id);
+
+  /**
+   * Invokes the deleteSavedQuery operation on the database server
+   *
+   * @param id	provides input
+   * 
+   */
+    void deleteSavedQuery(String id);
 
   /**
    * Invokes the saveSavedQuery operation on the database server
