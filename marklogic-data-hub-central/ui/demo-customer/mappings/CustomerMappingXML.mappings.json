@@ -1,0 +1,1 @@
+{"name":"CustomerMappingXML","targetEntityType":"Customer","description":"","selectedSource":"collection","sourceQuery":"cts.collectionQuery(['customerXML'])","namespaces":{"entity-services":"http://marklogic.com/entity-services","":""}}

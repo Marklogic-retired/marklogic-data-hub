@@ -1,0 +1,33 @@
+{
+    "CustomerID": 101,
+    "Name": {
+      "FirstName": "Carmella",
+      "LastName": "Hardin"
+    },
+    "Email": "carmellahardin@nutralab.com",
+    "Address": {
+      "Shipping": {
+        "Street": "Whitwell Place",
+        "City": "Ellerslie",
+        "State": "Georgia",
+        "Postal": "52239-1718"
+      },
+      "Billing": {
+        "Street": "Anna Court",
+        "City": "Stewart",
+        "State": "Kansas",
+        "Postal": "62601-6783"
+      }
+    },
+    "Phone": "(910) 407-2081",
+    "Orders": [
+      {
+        "OrderID": "EO-2906"
+      },
+      {
+        "OrderID": "EO-1396"
+      }
+    ],
+    "PIN": 2172,
+    "Created": "2017-04-03T09:47:37"
+  }

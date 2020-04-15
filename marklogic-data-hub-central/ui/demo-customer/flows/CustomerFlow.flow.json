@@ -1,0 +1,69 @@
+{
+  "name" : "CustomerFlow",
+  "description" : "",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stopOnError" : false,
+  "options" : { },
+  "version" : 0,
+  "steps" : {
+    "1" : {
+      "name" : "CustomerLoadJSON",
+      "description" : "",
+      "options" : {
+        "sourceQuery" : null,
+        "collections" : [ "default-ingestion", "customerJSON" ],
+        "loadData" : {
+          "name" : "CustomerLoadJSON"
+        },
+        "outputFormat" : "json",
+        "targetDatabase" : "data-hub-STAGING"
+      },
+      "customHook" : { },
+      "retryLimit" : 0,
+      "batchSize" : 0,
+      "threadCount" : 0,
+      "stepDefinitionName" : "default-ingestion",
+      "stepDefinitionType" : "INGESTION"
+    },
+    "2" : {
+      "name" : "CustomerLoadXML",
+      "description" : "",
+      "options" : {
+        "sourceQuery" : null,
+        "collections" : [ "default-ingestion", "customerXML" ],
+        "loadData" : {
+          "name" : "CustomerLoadXML"
+        },
+        "outputFormat" : "json",
+        "targetDatabase" : "data-hub-STAGING"
+      },
+      "customHook" : { },
+      "retryLimit" : 0,
+      "batchSize" : 0,
+      "threadCount" : 0,
+      "stepDefinitionName" : "default-ingestion",
+      "stepDefinitionType" : "INGESTION"
+    },
+    "3" : {
+      "name" : "CustomerMappingJSON",
+      "description" : "",
+      "options" : {
+        "sourceQuery" : "cts.collectionQuery('default-ingestion')",
+        "mapping" : {
+          "name" : "CustomerMappingJSON"
+        },
+        "sourceDatabase" : "data-hub-STAGING",
+        "collections" : [ "default-mapping", "mdm-content" ],
+        "validateEntity" : false,
+        "targetDatabase" : "data-hub-FINAL"
+      },
+      "customHook" : { },
+      "retryLimit" : null,
+      "batchSize" : 0,
+      "threadCount" : 0,
+      "stepDefinitionName" : "default-mapping",
+      "stepDefinitionType" : "MAPPING"
+    }
+  }
+}

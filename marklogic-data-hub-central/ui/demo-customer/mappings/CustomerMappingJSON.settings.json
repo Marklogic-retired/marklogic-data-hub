@@ -1,0 +1,1 @@
+{"artifactName":"CustomerMappingJSON","collections":["default-mapping"],"additionalCollections":[],"sourceDatabase":"data-hub-STAGING","targetDatabase":"data-hub-FINAL","targetFormat":"JSON","permissions":"data-hub-operator,read,data-hub-operator,update","provenanceGranularityLevel":"coarse","customHook":{"module":"","parameters":"{}","user":"","runBefore":false}}

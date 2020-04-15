@@ -1,0 +1,29 @@
+{
+  "info": {
+    "title": "Address",
+    "version": "0.0.1",
+    "baseUri": "http://marklogic.com/example/"
+  },
+  "definitions": {
+    "Address": {
+      "required": [],
+      "properties": {
+        "street": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "city": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "state": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "zip": {
+          "$ref": "http://example.org/Zip-0.0.1/Zip"
+        }
+      }
+    }
+  }
+}

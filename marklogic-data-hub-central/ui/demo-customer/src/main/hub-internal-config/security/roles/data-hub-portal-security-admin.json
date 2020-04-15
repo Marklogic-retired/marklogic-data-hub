@@ -1,0 +1,8 @@
+{
+  "role-name": "data-hub-portal-security-admin",
+  "description": "DHS-specific role for users that can perform security tasks within the DHS portal",
+  "role": [
+    "manage-admin",
+    "security"
+  ]
+}

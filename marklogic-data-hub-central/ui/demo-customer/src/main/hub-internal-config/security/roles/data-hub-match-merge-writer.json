@@ -1,0 +1,4 @@
+{
+  "role-name": "data-hub-match-merge-writer",
+  "description": "Permits writing a matching or merging configuration"
+}

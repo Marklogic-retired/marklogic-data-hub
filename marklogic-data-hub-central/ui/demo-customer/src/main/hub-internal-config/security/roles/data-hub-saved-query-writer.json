@@ -1,0 +1,4 @@
+{
+  "role-name": "data-hub-saved-query-writer",
+  "description": "Permits updating saved query documents"
+}

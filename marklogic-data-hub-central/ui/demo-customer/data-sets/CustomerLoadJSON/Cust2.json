@@ -1,0 +1,35 @@
+{
+  "CustomerID": 102,
+  "Name": {
+    "FirstName": "Adams",
+    "LastName": "Cole"
+  },
+  "Email": "adamscole@nutralab.com",
+  "Address": {
+    "Shipping": {
+      "Street": "Lefferts Place",
+      "City": "Marenisco",
+      "State": "Maryland",
+      "Postal": "44582-8427"
+    },
+    "Billing": {
+      "Street": "Varick Avenue",
+      "City": "Mooresburg",
+      "State": "Delaware",
+      "Postal": "17654-1292"
+    }
+  },
+  "Phone": "(870) 495-2539",
+  "Orders": [
+    {
+      "OrderID": "EO-1144",
+      "Status" : "Completed"
+    },
+    {
+      "OrderID": "EO-4159",
+      "Status" : "Pending"
+    }
+  ],
+  "PIN": 2288,
+  "Created": "2014-01-05T18:01:03"
+}

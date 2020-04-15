@@ -1,0 +1,115 @@
+{
+  "role-name": "%%mlFlowDeveloperRole%%",
+  "description": "Data Hub role for developing a Data Hub application; data-hub-developer is preferred over this role to ease migration of a Data Hub application to DHS",
+  "role": [
+    "rest-admin","manage-admin","tde-admin",
+    "data-hub-developer"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "xdmp:set-server-field",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-set-server-field",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:get-server-field",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-get-server-field",
+      "kind":"execute"
+    },
+    {
+      "privilege-name": "manage",
+      "action": "http://marklogic.com/xdmp/privileges/manage",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:eval",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-eval",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:eval-in",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-eval-in",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:xslt-eval",
+      "action": "http://marklogic.com/xdmp/privileges/xslt-eval",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:xslt-invoke",
+      "action": "http://marklogic.com/xdmp/privileges/xslt-invoke",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:invoke",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-invoke",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:invoke-in",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-invoke-in",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdbc:invoke",
+      "action": "http://marklogic.com/xdmp/privileges/xdbc-invoke",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdbc:invoke-in",
+      "action": "http://marklogic.com/xdmp/privileges/xdbc-invoke-in",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdbc:eval",
+      "action": "http://marklogic.com/xdmp/privileges/xdbc-eval",
+      "kind":"execute"
+    },
+    {
+      "privilege-name": "xdbc:eval-in",
+      "action": "http://marklogic.com/xdmp/privileges/xdbc-eval-in",
+      "kind":"execute"
+    },
+    {
+      "privilege-name": "xdbc:insert",
+      "action": "http://marklogic.com/xdmp/privileges/xdbc-insert",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdbc:insert-in",
+      "action": "http://marklogic.com/xdmp/privileges/xdbc-insert-in",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:document-load",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-document-load",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:get-server-field-names",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-get-server-field-names",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "unprotected-collections",
+      "action": "http://marklogic.com/xdmp/privileges/unprotected-collections",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "any-uri",
+      "action": "http://marklogic.com/xdmp/privileges/any-uri",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "ps-user",
+      "action": "http://marklogic.com/xdmp/privileges/ps-user",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "sem:sparql",
+      "action": "http://marklogic.com/xdmp/privileges/sem-sparql",
+      "kind": "execute"
+    }
+  ]
+}

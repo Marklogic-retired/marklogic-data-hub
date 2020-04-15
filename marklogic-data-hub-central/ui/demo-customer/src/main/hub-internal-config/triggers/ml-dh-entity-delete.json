@@ -1,0 +1,39 @@
+{
+  "name": "ml-dh-entity-delete",
+  "description": "MarkLogic Data Hub entity model delete trigger",
+  "event": {
+    "data-event": {
+      "collection-scope": {
+        "uri": "http://marklogic.com/entity-services/models"
+      },
+      "document-content": {
+        "update-kind": "delete"
+      },
+      "when": "post-commit"
+    }
+  },
+  "module": "data-hub/4/triggers/entity-model-delete-trigger.xqy",
+  "module-db": "%%mlModulesDbName%%",
+  "module-root": "/",
+  "enabled": true,
+  "recursive": true,
+  "task-priority": "normal",
+  "permission": [
+    {
+      "role-name": "%%mlFlowDeveloperRole%%",
+      "capability": "update"
+    },
+    {
+      "role-name": "%%mlFlowOperatorRole%%",
+      "capability": "read"
+    },
+    {
+      "role-name": "data-hub-developer",
+      "capability": "update"
+    },
+    {
+      "role-name": "data-hub-operator",
+      "capability": "read"
+    }
+  ]
+}
