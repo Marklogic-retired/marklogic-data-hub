@@ -23,38 +23,38 @@ import java.util.Map;
 
 public class DocSearchQueryInfo {
 
-  private String searchStr;
-  private List<String> entityNames;
-  private Map<String, FacetData> facets;
+  private String searchText;
+  private List<String> entityTypeIds;
+  private Map<String, FacetData> selectedFacets;
 
   public DocSearchQueryInfo() {
-    this.searchStr = "";
-    this.entityNames = new ArrayList<>();
-    this.facets = new HashMap<>();
+    this.searchText = "";
+    this.entityTypeIds = new ArrayList<>();
+    this.selectedFacets = new HashMap<>();
   }
 
-  public String getSearchStr() {
-    return searchStr;
+  public String getSearchText() {
+    return searchText;
   }
 
-  public void setSearchStr(String searchStr) {
-    this.searchStr = searchStr;
+  public void setSearchText(String searchText) {
+    this.searchText = searchText;
   }
 
-  public List<String> getEntityNames() {
-    return entityNames;
+  public List<String> getEntityTypeIds() {
+    return entityTypeIds;
   }
 
-  public void setEntityNames(List<String> entityNames) {
-    this.entityNames = entityNames;
+  public void setEntityTypeIds(List<String> entityTypeIds) {
+    this.entityTypeIds = entityTypeIds;
   }
 
-  public Map<String, FacetData> getFacets() {
-    return facets;
+  public Map<String, FacetData> getSelectedFacets() {
+    return selectedFacets;
   }
 
-  public void setFacets(Map<String, FacetData> facets) {
-    this.facets = facets;
+  public void setSelectedFacets(Map<String, FacetData> selectedFacets) {
+    this.selectedFacets = selectedFacets;
   }
 
   public final static class FacetData {

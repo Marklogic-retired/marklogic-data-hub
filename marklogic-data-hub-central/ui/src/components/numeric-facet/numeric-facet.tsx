@@ -34,22 +34,22 @@ const NumericFacet: React.FC<Props> = (props) => {
         setRangeLimit(range)
         setRange(range);
 
-        if (Object.entries(searchOptions.searchFacets).length !== 0) {
+        if (Object.entries(searchOptions.selectedFacets).length !== 0) {
           let facetName: string = '';
-          if (searchOptions.searchFacets.hasOwnProperty(props.constraint)) {
+          if (searchOptions.selectedFacets.hasOwnProperty(props.constraint)) {
             facetName = props.constraint;
-          } else if (searchOptions.searchFacets.hasOwnProperty(props.propertyPath) && props.constraint !== props.propertyPath) {
+          } else if (searchOptions.selectedFacets.hasOwnProperty(props.propertyPath) && props.constraint !== props.propertyPath) {
             facetName = props.propertyPath;
           }
           if (facetName) {
-            for (let facet in searchOptions.searchFacets) {
+            for (let facet in searchOptions.selectedFacets) {
               if (facet === facetName) {
                 let valueType = '';
-                if (numbers.includes(searchOptions.searchFacets[facet].dataType)) {
+                if (numbers.includes(searchOptions.selectedFacets[facet].dataType)) {
                   valueType = 'rangeValues';
                 }
-                if (searchOptions.searchFacets[facet][valueType]) {
-                  const rangeArray = Object.values(searchOptions.searchFacets[facet][valueType]).map(Number)
+                if (searchOptions.selectedFacets[facet][valueType]) {
+                  const rangeArray = Object.values(searchOptions.selectedFacets[facet][valueType]).map(Number)
                   if (rangeArray && rangeArray.length > 0) {
                     setRange(rangeArray)
                   }
@@ -97,32 +97,32 @@ const NumericFacet: React.FC<Props> = (props) => {
 
   useEffect(() => {
     getFacetRange();
-  }, [searchOptions.searchFacets]);
+  }, [searchOptions.selectedFacets]);
 
   useEffect(() => {
-    !Object.keys(searchOptions.searchFacets).includes(props.name) && setRange(rangeLimit)
+    !Object.keys(searchOptions.selectedFacets).includes(props.name) && setRange(rangeLimit)
 
-    if (Object.entries(searchOptions.searchFacets).length !== 0) {
+    if (Object.entries(searchOptions.selectedFacets).length !== 0) {
 
       let facetName: string = '';
-      if (searchOptions.searchFacets.hasOwnProperty(props.constraint)) {
+      if (searchOptions.selectedFacets.hasOwnProperty(props.constraint)) {
         facetName = props.constraint;
-      } else if (searchOptions.searchFacets.hasOwnProperty(props.propertyPath)) {
+      } else if (searchOptions.selectedFacets.hasOwnProperty(props.propertyPath)) {
         facetName = props.propertyPath;
       }
 
       if (facetName) {
-        for (let facet in searchOptions.searchFacets) {
+        for (let facet in searchOptions.selectedFacets) {
           if (facet === facetName) {
             let valueType = '';
-            if (numbers.includes(searchOptions.searchFacets[facet].dataType)) {
+            if (numbers.includes(searchOptions.selectedFacets[facet].dataType)) {
               valueType = 'rangeValues';
             }
-            if (searchOptions.searchFacets[facet][valueType]) {
-              const rangeArray = Object.values(searchOptions.searchFacets[facet][valueType]).map(Number)
+            if (searchOptions.selectedFacets[facet][valueType]) {
+              const rangeArray = Object.values(searchOptions.selectedFacets[facet][valueType]).map(Number)
               if (JSON.stringify(range) === JSON.stringify(rangeArray)) {
                 if (rangeLimit[0] === rangeArray[0] && rangeLimit[1] === rangeArray[1]) {
-                  delete searchOptions.searchFacets[facet]
+                  delete searchOptions.selectedFacets[facet]
                 }
               }
             }

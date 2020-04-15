@@ -29,10 +29,10 @@ const DateTimeFacet: React.FC<Props> = (props) => {
   }
 
   useEffect(() => {
-    if (Object.entries(searchOptions.searchFacets).length !== 0 && searchOptions.searchFacets.hasOwnProperty(props.constraint)) {
-      for (let facet in searchOptions.searchFacets) {
+    if (Object.entries(searchOptions.selectedFacets).length !== 0 && searchOptions.selectedFacets.hasOwnProperty(props.constraint)) {
+      for (let facet in searchOptions.selectedFacets) {
         if (facet === props.constraint) {
-          setDateTimePickerValue([moment(searchOptions.searchFacets[facet].rangeValues.lowerBound), moment(searchOptions.searchFacets[facet].rangeValues.upperBound)])
+          setDateTimePickerValue([moment(searchOptions.selectedFacets[facet].rangeValues.lowerBound), moment(searchOptions.selectedFacets[facet].rangeValues.upperBound)])
         }
       }
     }

@@ -1,8 +1,8 @@
 interface UserPreferences {
   query: {
-    searchStr: string,
-    entityNames: string[],
-    facets: any
+    searchText: string,
+    entityTypeIds: string[],
+    selectedFacets: any
   },
   pageLength: number,
   tableView: boolean,
@@ -12,9 +12,9 @@ interface UserPreferences {
 
 export const defaultUserPreferences = {
   query: {
-    searchStr: '',
-    entityNames: [],
-    facets: {}
+    searchText: '',
+    entityTypeIds: [],
+    selectedFacets: {}
   },
   pageLength: 20,
   tableView: true,
@@ -32,7 +32,7 @@ export const getUserPreferences = (username: string): string => {
   let currentPreferences = localStorage.getItem(`dataHubExplorerUserPreferences-${username}`) || 'null';
   if (currentPreferences !== 'null') {
     let parsedPreferences = JSON.parse(currentPreferences);
-    if (parsedPreferences && parsedPreferences.hasOwnProperty('entityNames')) {
+    if (parsedPreferences && parsedPreferences.hasOwnProperty('entityTypeIds')) {
       // old preferences, replace with new default preferences
       createUserPreferences(username);
       return JSON.stringify(defaultUserPreferences);
@@ -48,7 +48,7 @@ export const updateUserPreferences = (username: string, newPreferences: any) => 
   let currentPreferences = localStorage.getItem(`dataHubExplorerUserPreferences-${username}`) || 'null';
   let parsedPreferences = currentPreferences !== 'null' ? JSON.parse(currentPreferences) : null;
 
-  if (parsedPreferences && parsedPreferences.hasOwnProperty('entityNames')) {
+  if (parsedPreferences && parsedPreferences.hasOwnProperty('entityTypeIds')) {
     // old preferences, use defaultUser preferences
     parsedPreferences = { ...defaultUserPreferences }
   }

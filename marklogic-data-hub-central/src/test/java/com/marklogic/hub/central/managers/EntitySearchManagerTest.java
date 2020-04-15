@@ -44,7 +44,7 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
         assertTrue(entitySearchManager.search(new SearchQuery()).get().isEmpty());
 
         SearchQuery query = new SearchQuery();
-        query.getQuery().setEntityNames(Arrays.asList("Some-entityType"));
+        query.getQuery().setEntityTypeIds(Arrays.asList("Some-entityType"));
         assertTrue(entitySearchManager.search(query).get().isEmpty());
     }
 
@@ -77,7 +77,7 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
     void testXmlEscapeUtils() {
         String query = "<query><collection-query><uri>collection1</uri></collection-query></query>";
         SearchQuery searchQuery = new SearchQuery();
-        searchQuery.getQuery().setSearchStr("&<>'\"");
+        searchQuery.getQuery().setSearchText("&<>'\"");
 
         String expectedResult = "<search xmlns=\"http://marklogic.com/appservices/search\">\n<qtext>&amp;&lt;&gt;&apos;&quot;</qtext><query><collection-query><uri>collection1</uri></collection-query></query></search>";
         assertTrue(entitySearchManager.buildSearchOptions(query, searchQuery).equals(expectedResult));

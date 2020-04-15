@@ -81,9 +81,9 @@ const Browse: React.FC<Props> = ({ location }) => {
         url: `/api/entitySearch`,
         data: {
           query: {
-            searchStr: searchOptions.query,
-            entityNames: searchOptions.entityNames.length ? searchOptions.entityNames : allEntities,
-            facets: searchOptions.searchFacets,
+            searchText: searchOptions.query,
+            entityTypeIds: searchOptions.entityTypeIds.length ? searchOptions.entityTypeIds : allEntities,
+            selectedFacets: searchOptions.selectedFacets,
           },
           start: searchOptions.start,
           pageLength: searchOptions.pageLength,
@@ -146,15 +146,15 @@ const Browse: React.FC<Props> = ({ location }) => {
   const handleUserPreferences = () => {
     let preferencesObject = {
       query: {
-        searchStr: searchOptions.query,
-        entityNames: searchOptions.entityNames,
-        facets: searchOptions.searchFacets
+        searchText: searchOptions.query,
+        entityTypeIds: searchOptions.entityTypeIds,
+        selectedFacets: searchOptions.selectedFacets
       },
       pageLength: searchOptions.pageLength
     }
     updateUserPreferences(user.name, preferencesObject);
 
-    if ( searchOptions.entityNames.length > 0 && !entities.includes(searchOptions.entityNames[0])) {
+    if ( searchOptions.entityTypeIds.length > 0 && !entities.includes(searchOptions.entityTypeIds[0])) {
       // entityName is not part of entity model from model payload
       // change user preferences to default user pref.
       createUserPreferences(user.name);
@@ -199,7 +199,7 @@ const Browse: React.FC<Props> = ({ location }) => {
       <Sider className={styles.sideBarFacets} collapsedWidth={0} collapsible onCollapse={onCollapse} width={'20vw'}>
         <Sidebar
           facets={facets}
-          selectedEntities={searchOptions.entityNames}
+          selectedEntities={searchOptions.entityTypeIds}
           entityDefArray={entityDefArray}
           facetRender={updateSelectedFacets}
           checkFacetRender={updateCheckedFacets}
