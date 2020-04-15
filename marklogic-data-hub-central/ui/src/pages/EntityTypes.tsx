@@ -17,7 +17,7 @@ const EntityTypes: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [flows, setFlows] = useState<any[]>([]);
     const [entityModels, setEntityModels] = useState<any[]>([]);
-    
+
     //Role based access
     const roleService = useContext(RolesContext);
     const canReadOnly = roleService.canReadMappings();
@@ -35,7 +35,7 @@ const EntityTypes: React.FC = () => {
                   entModels[ent.info.title] = ent
               });
               setEntityModels({...entModels});
-          }    
+          }
         } catch (error) {
             let message = error;
             console.error('Error while fetching entities Info', message);
@@ -65,11 +65,11 @@ const EntityTypes: React.FC = () => {
     try {
       setIsLoading(true);
       //let response = await axios.post(`/api/artifacts/????/${flowName}`);
-      
+
       //if (response.status === 200) {
         console.log('POST addStepToNew');
         setIsLoading(false);
-      //} 
+      //}
     } catch (error) {
         let message = error.response.data.message;
         console.error('Error while adding mapping step to new flow.', message);
@@ -84,10 +84,10 @@ const EntityTypes: React.FC = () => {
   const addStepToFlow = async (mappingArtifactName, flowName) => {
     let stepToAdd = {
       "name": mappingArtifactName,
-      "stepDefinitionName": "default-mapping",
+      "stepDefinitionName": "entity-services-mapping",
       "stepDefinitionType": "MAPPING",
       options: {
-        "mapping": { 
+        "mapping": {
           "name": mappingArtifactName
         }
       }
@@ -99,7 +99,7 @@ const EntityTypes: React.FC = () => {
       let response = await axios.post(url, body);
       if (response.status === 200) {
         setIsLoading(false);
-      } 
+      }
     } catch (error) {
         let message = error.response.data.message;
         console.error('Error while adding mapping step to flow.', message);
@@ -112,11 +112,11 @@ const EntityTypes: React.FC = () => {
       resetSessionTime();
     }
   }
-    
+
 
     return (
         <div className={styles.entityContainer}>
-        
+
         <EntityTiles
         flows={flows}
         canReadMatchMerge={canReadMatchMerge}

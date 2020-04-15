@@ -69,7 +69,7 @@ if (!query) {
   fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([404, "Not Found", "The collector query was empty"]));
 }
 
-const javascript = new CollectorLib().prepareSourceQuery(combinedOptions, stepDefinition);
+const javascript = new CollectorLib(datahub).prepareSourceQuery(combinedOptions, stepDefinition);
 try {
   /**
    * DHF 5 has always used this eval, and it certainly is open for code injection. This is partially minimized

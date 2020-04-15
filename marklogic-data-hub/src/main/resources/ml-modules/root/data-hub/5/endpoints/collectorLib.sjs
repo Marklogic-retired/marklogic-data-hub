@@ -15,9 +15,13 @@
  */
 'use strict';
 
-const DataHub = require("/data-hub/5/datahub.sjs");
+const artifactsCore = require('/data-hub/5/artifacts/core.sjs');
 
 class CollectorLib {
+
+  constructor(datahub){
+    this.datahub = datahub;
+  }
 
   /**
    * Determine the sourceQuery from the given options and stepDefinition and then prepare it for evaluation by the
@@ -39,11 +43,25 @@ class CollectorLib {
       return fn.normalizeSpace(`${sourceQuery}`);
     }
 
+    //Get sourceQuery from mapping artifact if present
+    if(combinedOptions.mapping) {
+      let mappingArtifact;
+      try {
+        mappingArtifact = artifactsCore.getArtifact("mapping", combinedOptions.mapping.name)
+      }
+      catch (ex) {
+        this.datahub.debug.log({message: 'This flow runs older version of  mapping: ' + combinedOptions.mapping.name , type: 'warning'});
+      }
+      if(mappingArtifact) {
+        sourceQuery = mappingArtifact.sourceQuery;
+      }
+    }
+
     if (true == combinedOptions.constrainSourceQueryToJob) {
       if (combinedOptions.jobId) {
         sourceQuery = fn.normalizeSpace(`cts.andQuery([cts.fieldWordQuery('datahubCreatedByJob', '${combinedOptions.jobId}'), ${sourceQuery}])`);
       } else {
-        new DataHub().debug.log({
+        this.datahub.debug.log({
           message: "Ignoring constrainSourceQueryToJob=true because no jobId was provided in the options",
           type: "warning"
         });

@@ -16,9 +16,9 @@
 'use strict';
 
 const LoadData = require('./loadData');
-const Flows = require('./flows');
-const StepDefs = require('./stepDefinitions');
-const Mappings = require('./mappings');
+const Flow = require('./flow');
+const StepDef = require('./stepDefinition');
+const Mapping = require('./mapping');
 const Matching = require('./matching');
 
 const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
@@ -27,9 +27,9 @@ const dataHub = DataHubSingleton.instance();
 const cachedArtifacts = {};
 const registeredArtifactTypes = {
     loadData: LoadData,
-    flows: Flows,
-    stepDefinitions: StepDefs,
-    mappings: Mappings,
+    flow: Flow,
+    stepDefinition: StepDef,
+    mapping: Mapping,
     matching: Matching
 };
 
@@ -65,7 +65,7 @@ function getTypesInfo() {
     return typesInfo;
 }
 
-const entityServiceDrivenArtifactTypes = ['mappings', 'matching', 'merging', 'mastering'];
+const entityServiceDrivenArtifactTypes = ['mapping', 'matching', 'merging', 'mastering'];
 
 function getArtifacts(artifactType) {
     const queries = [];
@@ -220,8 +220,8 @@ function linkToStepOptionsOperation(operation, flowName, stepID, artifactType, a
     artifactVersion = artifactLibrary.getVersionProperty() ? artifactObject[artifactLibrary.getVersionProperty()] : artifactVersion;
 
 
-    const flowDatabases =  getArtifactTypeLibrary('flows').getStorageDatabases();
-    const flowNode = getArtifactNode('flows', flowName);
+    const flowDatabases =  getArtifactTypeLibrary('flow').getStorageDatabases();
+    const flowNode = getArtifactNode('flow', flowName);
     const stepName = stepID.substring(0, stepID.lastIndexOf('-'));
     const stepType = stepID.substring(stepID.lastIndexOf('-') + 1).toLowerCase();
     const stepOptionsXPath = dataHub.hubUtils.xquerySanitizer`/steps/*[name eq "${stepName}"][lower-case(stepDefinitionType) eq "${stepType}"]/options`;

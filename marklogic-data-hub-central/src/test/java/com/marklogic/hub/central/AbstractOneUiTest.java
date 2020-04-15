@@ -176,6 +176,11 @@ public abstract class AbstractOneUiTest {
             if (stepDefinitionsDir.exists()) {
                 FileUtils.copyDirectory(stepDefinitionsDir, hubConfig.getStepDefinitionsDir().toFile());
             }
+
+            File mappingsDir = new File(testProjectDir, "mappings");
+            if (mappingsDir.exists()) {
+                FileUtils.copyDirectory(mappingsDir, hubConfig.getHubMappingsDir().toFile());
+            }
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }

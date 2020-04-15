@@ -416,10 +416,7 @@ set modulePaths in 'StepModel' and 'StepDefinition' .
         StepDefinitionManager stepDefinitionManager = getStepDefinitionManager();
         if (stepDefinitionManager.getStepDefinition(step.getStepDefinitionName(), step.getStepDefinitionType()) != null) {
             String stepType = step.getStepDefinitionType().toString().toLowerCase();
-            if(step.getStepDefinitionName().equalsIgnoreCase("default-" + stepType) || "entity-services-mapping".equalsIgnoreCase(step.getStepDefinitionName())) {
-                step = mergeDefaultStepDefinitionIntoStep(stepModel, step);
-            }
-            else {
+            if(!(step.getStepDefinitionName().equalsIgnoreCase("default-" + stepType) || "entity-services-mapping".equalsIgnoreCase(step.getStepDefinitionName()))) {
                 StepDefinition oldStepDefinition = stepDefinitionManager.getStepDefinition(step.getStepDefinitionName(), step.getStepDefinitionType());
                 StepDefinition stepDefinition = transformFromStep(oldStepDefinition, step, stepModel);
                 stepDefinitionManager.saveStepDefinition(stepDefinition);
@@ -444,25 +441,6 @@ set modulePaths in 'StepModel' and 'StepDefinition' .
         StepDefinition newStepDefinition = stepDefinition.transformFromStep(stepDefinition, step);
         newStepDefinition.setModulePath(stepModel.getModulePath());
         return newStepDefinition;
-    }
-
-    private Step mergeDefaultStepDefinitionIntoStep(StepModel stepModel, Step step) {
-        String stepType = step.getStepDefinitionType().toString().toLowerCase();
-        StepDefinition defaultStepDefinition = getDefaultStepDefinitionFromResources("hub-internal-artifacts/step-definitions/" + stepType + "/marklogic/"+ step.getStepDefinitionName() +".step.json", step.getStepDefinitionType());
-        Step defaultStep = defaultStepDefinition.transformToStep(step.getName(), defaultStepDefinition, new Step());
-        return StepModel.mergeFields(stepModel, defaultStep, step);
-    }
-
-    private StepDefinition getDefaultStepDefinitionFromResources(String resourcePath, StepDefinition.StepDefinitionType stepDefinitionType) {
-        try (InputStream in = FlowController.class.getClassLoader().getResourceAsStream(resourcePath)) {
-            JSONObject jsonObject = new JSONObject(IOUtils.toString(in));
-            StepDefinition defaultStep = StepDefinition.create(stepDefinitionType.toString(), stepDefinitionType);
-            defaultStep.deserialize(jsonObject.jsonNode());
-            return defaultStep;
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     protected Scaffolding getScaffolding() {

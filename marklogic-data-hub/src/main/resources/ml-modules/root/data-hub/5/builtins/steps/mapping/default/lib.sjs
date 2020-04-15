@@ -15,7 +15,12 @@ function getModel(targetEntity, version = '0.0.1') {
 }
 
 function getMapping(mappingName) {
-  return fn.head(cts.search(cts.andQuery([cts.collectionQuery('http://marklogic.com/data-hub/mappings'), cts.jsonPropertyValueQuery('name', mappingName, ['case-insensitive'])]), ["unfiltered", cts.indexOrder(cts.uriReference(), "descending")]));
+  //Look in new collection, if artifact is not present fallback to the old collection
+  let mapping =  fn.head(cts.search(cts.andQuery([cts.collectionQuery('http://marklogic.com/data-hub/mapping-artifact'), cts.jsonPropertyValueQuery('name', mappingName, ['case-insensitive'])]), ["unfiltered", cts.indexOrder(cts.uriReference(), "descending")]));
+  if (fn.empty(mapping)) {
+    mapping = fn.head(cts.search(cts.andQuery([cts.collectionQuery('http://marklogic.com/data-hub/mappings'), cts.jsonPropertyValueQuery('name', mappingName, ['case-insensitive'])]), ["unfiltered", cts.indexOrder(cts.uriReference(), "descending")]));
+  }
+  return mapping;
 }
 
 function getMappingWithVersion(mappingName, version) {
