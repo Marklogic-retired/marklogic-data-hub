@@ -95,7 +95,7 @@ const ResultTable: React.FC<Props> = (props) => {
       setAlertMessage('Error', 'No instance information in payload');
     }
     if (props.data) {
-      if (searchOptions.entityNames.length === 0) {
+      if (searchOptions.entityTypeIds.length === 0) {
         // All Entities
         let newTableData = formatTableData(parsedPayload.data, true);
         let tableColumns = getUserPref('all');
@@ -113,12 +113,12 @@ const ResultTable: React.FC<Props> = (props) => {
         setDefaultColumns(newDefaultColumns);
       } else {
         // An Entity is selected
-        let tableColumns = getUserPref(searchOptions.entityNames[0]);
+        let tableColumns = getUserPref(searchOptions.entityTypeIds[0]);
         let newRenderColumns: any[] = [];
 
         if (parsedPayload.data.length !== 0) {
           //pass entityDefArray of entities and current selected entity
-          let newColumns = setPrimaryKeyColumn(headerPropsParser(props.entityDefArray, searchOptions.entityNames))
+          let newColumns = setPrimaryKeyColumn(headerPropsParser(props.entityDefArray, searchOptions.entityTypeIds))
           newColumns.push(DETAIL_HEADER_OBJ);
           if (newColumns.length > 5) {
             newRenderColumns = newColumns.slice(0, 4);
@@ -128,7 +128,7 @@ const ResultTable: React.FC<Props> = (props) => {
           }
 
           if (!tableColumns) {
-            updateTablePreferences(user.name, searchOptions.entityNames[0], newRenderColumns)
+            updateTablePreferences(user.name, searchOptions.entityTypeIds[0], newRenderColumns)
           }
 
           let renderHeader = tableHeader(tableColumns ? tableColumns['columns'] : newRenderColumns, '');
@@ -174,7 +174,7 @@ const ResultTable: React.FC<Props> = (props) => {
             </Link>
           </div>
 
-        if (searchOptions.entityNames.length === 0) {
+        if (searchOptions.entityTypeIds.length === 0) {
           row =
           {
             key: rowCounter,
@@ -505,8 +505,8 @@ const ResultTable: React.FC<Props> = (props) => {
     let delimitedHeader = delimitHeader(header);
     let entity = 'all';
 
-    if (searchOptions.entityNames.length > 0) {
-      entity = searchOptions.entityNames[0]
+    if (searchOptions.entityTypeIds.length > 0) {
+      entity = searchOptions.entityTypeIds[0]
     }
 
     updateTablePreferences(user.name, entity, delimitedHeader);

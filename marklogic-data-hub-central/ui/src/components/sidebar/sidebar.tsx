@@ -36,7 +36,7 @@ const Sidebar: React.FC<Props> = (props) => {
   } = useContext(SearchContext);
   const [entityFacets, setEntityFacets] = useState<any[]>([]);
   const [hubFacets, setHubFacets] = useState<any[]>([]);
-  const [allSelectedFacets, setAllSelectedFacets] = useState<any>(searchOptions.searchFacets);
+  const [allSelectedFacets, setAllSelectedFacets] = useState<any>(searchOptions.selectedFacets);
   const [datePickerValue, setDatePickerValue] = useState<any[]>([null, null]);
   let integers = ['int', 'integer', 'short', 'long'];
   let decimals = ['decimal', 'double', 'float'];
@@ -70,9 +70,9 @@ const Sidebar: React.FC<Props> = (props) => {
         }
         setEntityFacets(newEntityFacets ? newEntityFacets.filter(item => item !== false) : []);
       }
-      if (Object.entries(searchOptions.searchFacets).length !== 0) {
+      if (Object.entries(searchOptions.selectedFacets).length !== 0) {
         let selectedFacets: any[] = [];
-        for (let constraint in searchOptions.searchFacets) {
+        for (let constraint in searchOptions.selectedFacets) {
           let displayName = '';
           let entity = props.entityDefArray.find(entity => entity.name === props.selectedEntities[0])
           let pathIndex = entity && entity['pathIndex'].find(({ index }) => index === constraint);
@@ -81,21 +81,21 @@ const Sidebar: React.FC<Props> = (props) => {
           }
 
           if (constraint === 'createdOnRange') {
-            selectedFacets.push({ constraint, facet: searchOptions.searchFacets[constraint]['rangeValues'], displayName });
+            selectedFacets.push({ constraint, facet: searchOptions.selectedFacets[constraint]['rangeValues'], displayName });
           } else {
-            let datatype = searchOptions.searchFacets[constraint].dataType;
+            let datatype = searchOptions.selectedFacets[constraint].dataType;
             if (datatype === 'xs:string' || datatype === 'string') {
-              searchOptions.searchFacets[constraint]['stringValues'].map(facet => {
+              searchOptions.selectedFacets[constraint]['stringValues'].map(facet => {
                 selectedFacets.push({ constraint, facet, displayName });
               });
             } else if (integers.includes(datatype) || decimals.includes(datatype)) {
-              let rangeValues = searchOptions.searchFacets[constraint].rangeValues
+              let rangeValues = searchOptions.selectedFacets[constraint].rangeValues
               selectedFacets.push({ constraint, rangeValues, displayName });
             } else if (datatype === 'xs:date' || datatype === 'date') {
-              let rangeValues = searchOptions.searchFacets[constraint].rangeValues
+              let rangeValues = searchOptions.selectedFacets[constraint].rangeValues
               selectedFacets.push({ constraint, rangeValues, displayName });
             } else if (datatype === 'xs:dateTime' || datatype === 'dateTime') {
-              let rangeValues = searchOptions.searchFacets[constraint].rangeValues;
+              let rangeValues = searchOptions.selectedFacets[constraint].rangeValues;
               selectedFacets.push({ constraint, rangeValues, displayName });
             }
           }
@@ -114,9 +114,9 @@ const Sidebar: React.FC<Props> = (props) => {
 
 
   useEffect(() => {
-      if (Object.entries(greyedOptions.searchFacets).length !== 0) {
+      if (Object.entries(greyedOptions.selectedFacets).length !== 0) {
           let checkedFacets: any[] = [];
-          for (let constraint in greyedOptions.searchFacets) {
+          for (let constraint in greyedOptions.selectedFacets) {
               let displayName = '';
               let entity = props.entityDefArray.find(entity => entity.name === props.selectedEntities[0])
               let pathIndex = entity && entity['pathIndex'].find(({ index }) => index === constraint);
@@ -124,21 +124,21 @@ const Sidebar: React.FC<Props> = (props) => {
                 displayName = pathIndex.entityPath;
               }
               if (constraint === 'createdOnRange') {
-                  checkedFacets.push({constraint, facet: greyedOptions.searchFacets[constraint]['rangeValues'], displayName });
+                  checkedFacets.push({constraint, facet: greyedOptions.selectedFacets[constraint]['rangeValues'], displayName });
               } else {
-                  let datatype = greyedOptions.searchFacets[constraint].dataType;
+                  let datatype = greyedOptions.selectedFacets[constraint].dataType;
                   if (datatype === 'xs:string' || datatype === 'string') {
-                      greyedOptions.searchFacets[constraint]['stringValues'].map(facet => {
+                      greyedOptions.selectedFacets[constraint]['stringValues'].map(facet => {
                           checkedFacets.push({constraint, facet, displayName });
                       });
                   } else if (integers.includes(datatype) || decimals.includes(datatype)) {
-                      let rangeValues = greyedOptions.searchFacets[constraint].rangeValues
+                      let rangeValues = greyedOptions.selectedFacets[constraint].rangeValues
                       checkedFacets.push({constraint, rangeValues, displayName });
                   } else if (datatype === 'xs:date' || datatype === 'date') {
-                      let rangeValues = greyedOptions.searchFacets[constraint].rangeValues
+                      let rangeValues = greyedOptions.selectedFacets[constraint].rangeValues
                       checkedFacets.push({constraint, rangeValues, displayName});
                   } else if (datatype === 'xs:dateTime' || datatype === 'dateTime') {
-                      let rangeValues = greyedOptions.searchFacets[constraint].rangeValues;
+                      let rangeValues = greyedOptions.selectedFacets[constraint].rangeValues;
                       checkedFacets.push({constraint, rangeValues, displayName});
                   }
               }
@@ -148,11 +148,11 @@ const Sidebar: React.FC<Props> = (props) => {
               setDatePickerValue([null, null]);
           }
       } else {
-          if (Object.entries(searchOptions.searchFacets).length === 0) {
+          if (Object.entries(searchOptions.selectedFacets).length === 0) {
               setAllSearchFacets({});
               setAllSelectedFacets({});
           } else{
-              setAllSelectedFacets(searchOptions.searchFacets);
+              setAllSelectedFacets(searchOptions.selectedFacets);
           }
           props.checkFacetRender([]);
       }

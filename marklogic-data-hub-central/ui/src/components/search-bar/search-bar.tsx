@@ -22,7 +22,7 @@ const SearchBar: React.FC<Props> = props => {
       <Select 
         id="entity-select"
         data-testid="entity-select"
-        data-cy={searchOptions.entityNames.length ? searchOptions.entityNames[0] : 'All Entities'}
+        data-cy={searchOptions.entityTypeIds.length ? searchOptions.entityTypeIds[0] : 'All Entities'}
         style={{ width: 180 }} 
         value={dropDownValue} 
         onChange={value => handleOptionSelect(value)} 
@@ -50,9 +50,9 @@ const SearchBar: React.FC<Props> = props => {
       if (searchString !== searchOptions.query) {
         setSearchString(searchOptions.query);
       }
-      if( searchOptions.entityNames.length === 1) {
-        if (dropDownValue !== searchOptions.entityNames[0]){
-          setDropdownValue(searchOptions.entityNames[0]);
+      if( searchOptions.entityTypeIds.length === 1) {
+        if (dropDownValue !== searchOptions.entityTypeIds[0]){
+          setDropdownValue(searchOptions.entityTypeIds[0]);
         }
       } else {
         setDropdownValue('All Entities');

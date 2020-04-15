@@ -100,7 +100,7 @@ public class EntitySearchManager {
         }
         catch (MarkLogicServerException e) {
             // If there are no entityModels to search, then we expect an error because no search options will exist
-            if(searchQuery.getQuery().getEntityNames().isEmpty() || modelManager.getModels().size() == 0) {
+            if(searchQuery.getQuery().getEntityTypeIds().isEmpty() || modelManager.getModels().size() == 0) {
                 logger.warn("No entityTypes present to perform search");
                 return new StringHandle("");
             }
@@ -158,13 +158,13 @@ public class EntitySearchManager {
         List<StructuredQueryDefinition> queries = new ArrayList<>();
 
         // Filtering search results for docs related to an entity
-        if (!CollectionUtils.isEmpty(searchQuery.getQuery().getEntityNames())) {
+        if (!CollectionUtils.isEmpty(searchQuery.getQuery().getEntityTypeIds())) {
             // Collections to search
-            String[] collections = searchQuery.getQuery().getEntityNames().toArray(new String[0]);
+            String[] collections = searchQuery.getQuery().getEntityTypeIds().toArray(new String[0]);
             // Collections that have the mastering audit and notification docs. Excluding docs from
             // these collection in search results
             String[] excludedCollections = getExcludedCollections(
-                searchQuery.getQuery().getEntityNames());
+                searchQuery.getQuery().getEntityTypeIds());
 
             StructuredQueryDefinition finalCollQuery = queryBuilder
                 .andNot(queryBuilder.collection(collections),
@@ -178,7 +178,7 @@ public class EntitySearchManager {
         }
 
         // Filtering by facets
-        searchQuery.getQuery().getFacets().forEach((facetType, data) -> {
+        searchQuery.getQuery().getSelectedFacets().forEach((facetType, data) -> {
             StructuredQueryDefinition facetDef = null;
 
             if (facetType.equals(COLLECTION_CONSTRAINT_NAME)) {
@@ -268,8 +268,8 @@ public class EntitySearchManager {
         //build sort order options
         buildSortOrderOptions(sb, searchQuery);
         // Setting search string if provided by user
-        if (StringUtils.isNotEmpty(searchQuery.getQuery().getSearchStr())) {
-            sb.append("<qtext>").append(StringEscapeUtils.escapeXml10(searchQuery.getQuery().getSearchStr())).append("</qtext>");
+        if (StringUtils.isNotEmpty(searchQuery.getQuery().getSearchText())) {
+            sb.append("<qtext>").append(StringEscapeUtils.escapeXml10(searchQuery.getQuery().getSearchText())).append("</qtext>");
         }
         sb.append(query);
         sb.append(SEARCH_TAIL);

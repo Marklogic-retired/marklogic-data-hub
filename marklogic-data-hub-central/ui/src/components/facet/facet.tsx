@@ -35,20 +35,20 @@ const Facet: React.FC<Props> = (props) => {
 
     const setCheckedOptions = (selectedOptions) => {
         let facetName: string = '';
-        if (selectedOptions.searchFacets.hasOwnProperty(props.constraint)) {
+        if (selectedOptions.selectedFacets.hasOwnProperty(props.constraint)) {
             facetName = props.constraint;
-        } else if (selectedOptions.searchFacets.hasOwnProperty(props.propertyPath) && props.constraint !== props.propertyPath) {
+        } else if (selectedOptions.selectedFacets.hasOwnProperty(props.propertyPath) && props.constraint !== props.propertyPath) {
             facetName = props.propertyPath;
         }
         if (facetName) {
-            for (let facet in selectedOptions.searchFacets) {
+            for (let facet in selectedOptions.selectedFacets) {
                 if (facet === facetName) {
                     let valueType = '';
-                    if (selectedOptions.searchFacets[facet].dataType === 'xs:string') {
+                    if (selectedOptions.selectedFacets[facet].dataType === 'xs:string') {
                         valueType = 'stringValues';
                     }
                     // TODO add support for non string facets
-                    const checkedArray = selectedOptions.searchFacets[facet][valueType];
+                    const checkedArray = selectedOptions.selectedFacets[facet][valueType];
                     if (checkedArray && checkedArray.length) {
                         // checking if arrays are equivalent
                         if (JSON.stringify(checked) === JSON.stringify(checkedArray)) {
@@ -62,18 +62,18 @@ const Facet: React.FC<Props> = (props) => {
     }
 
     useEffect(() => {
-        if (Object.entries(searchOptions.searchFacets).length !== 0 && searchOptions.searchFacets.hasOwnProperty(props.constraint)) {
+        if (Object.entries(searchOptions.selectedFacets).length !== 0 && searchOptions.selectedFacets.hasOwnProperty(props.constraint)) {
             setCheckedOptions(searchOptions)
-        } else if ((Object.entries(greyedOptions.searchFacets).length === 0 || (!greyedOptions.searchFacets.hasOwnProperty(props.constraint)))) {
+        } else if ((Object.entries(greyedOptions.selectedFacets).length === 0 || (!greyedOptions.selectedFacets.hasOwnProperty(props.constraint)))) {
             setChecked([]);
         }
     }, [searchOptions]);
 
 
     useEffect(() => {
-        if (Object.entries(greyedOptions.searchFacets).length !== 0 && greyedOptions.searchFacets.hasOwnProperty(props.constraint)) {
+        if (Object.entries(greyedOptions.selectedFacets).length !== 0 && greyedOptions.selectedFacets.hasOwnProperty(props.constraint)) {
             setCheckedOptions(greyedOptions)
-        } else if ((Object.entries(searchOptions.searchFacets).length === 0 || (!searchOptions.searchFacets.hasOwnProperty(props.constraint)))) {
+        } else if ((Object.entries(searchOptions.selectedFacets).length === 0 || (!searchOptions.selectedFacets.hasOwnProperty(props.constraint)))) {
             setChecked([]);
         }
     }, [greyedOptions]);

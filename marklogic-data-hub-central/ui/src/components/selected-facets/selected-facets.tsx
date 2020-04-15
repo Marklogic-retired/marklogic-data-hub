@@ -43,7 +43,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
 
 
     const applyFacet = () => {
-        setAllSearchFacets(greyedOptions.searchFacets);
+        setAllSearchFacets(greyedOptions.selectedFacets);
         clearAllGreyFacets();
         toggleApplyClicked(true);
         toggleApply(false);
@@ -72,7 +72,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
       data-testid='selected-facet-block'
       data-cy='selected-facet-block'
       className={styles.clearContainer}
-      style={ (Object.entries(searchOptions.searchFacets).length === 0 && Object.entries(greyedOptions.searchFacets).length === 0) ? {'visibility': 'hidden'} : {'visibility': 'visible'}}
+      style={ (Object.entries(searchOptions.selectedFacets).length === 0 && Object.entries(greyedOptions.selectedFacets).length === 0) ? {'visibility': 'hidden'} : {'visibility': 'visible'}}
     >
       { (props.selectedFacets.length > 0 ) &&
         <MlButton

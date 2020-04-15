@@ -46,9 +46,9 @@ const View: React.FC = () => {
         url: `/api/entitySearch`,
         data: {
           query: {
-            searchStr: '',
-            entityNames: allEntities,
-            facets: {}
+            searchText: '',
+            entityTypeIds: allEntities,
+            selectedFacets: {}
           },
           start: 1,
           pageLength: 1,

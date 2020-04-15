@@ -4,23 +4,23 @@ import { UserContext } from './user-context';
 
 type SearchContextInterface = {
   query: string,
-  entityNames: string[],
+  entityTypeIds: string[],
   start: number,
   pageNumber: number,
   pageLength: number,
   pageSize: number,
-  searchFacets: any,
+  selectedFacets: any,
   maxRowsPerPage: number
 }
 
 const defaultSearchOptions = {
   query: '',
-  entityNames: [],
+  entityTypeIds: [],
   start: 1,
   pageNumber: 1,
   pageLength: 20,
   pageSize: 20,
-  searchFacets: {},
+  selectedFacets: {},
   maxRowsPerPage: 100
 }
 
@@ -88,9 +88,9 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
         ...searchOptions,
         start: 1,
         pageNumber: 1,
-        query: values.query.searchStr,
-        entityNames: values.query.entityNames,
-        searchFacets: values.query.facets,
+        query: values.query.searchText,
+        entityTypeIds: values.query.entityTypeIds,
+        selectedFacets: values.query.selectedFacets,
         pageLength: values.pageLength
       });
     }
@@ -134,15 +134,15 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
   const setSearchFacets = (constraint: string, vals: string[]) => {
     let facets = {};
     if (vals.length > 0) {
-      facets = { ...searchOptions.searchFacets, [constraint]: vals };
+      facets = { ...searchOptions.selectedFacets, [constraint]: vals };
     } else {
-      facets = { ...searchOptions.searchFacets };
+      facets = { ...searchOptions.selectedFacets };
       delete facets[constraint];
     }
     setSearchOptions({
       ...searchOptions,
       start: 1,
-      searchFacets: facets,
+      selectedFacets: facets,
       pageNumber: 1,
       pageLength: searchOptions.pageSize
     });
@@ -153,15 +153,15 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
     setSearchOptions({
       ...searchOptions,
       start: 1,
-      searchFacets: {},
-      entityNames: entityOptions,
+      selectedFacets: {},
+      entityTypeIds: entityOptions,
       pageLength: searchOptions.pageSize
     });
       setGreyedOptions({
           ...greyedOptions,
           start: 1,
-          searchFacets: {},
-          entityNames: entityOptions,
+          selectedFacets: {},
+          entityTypeIds: entityOptions,
           pageLength: greyedOptions.pageSize
       });
   }
@@ -171,8 +171,8 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       ...searchOptions,
       query: '',
       start: 1,
-      searchFacets: {},
-      entityNames: [option],
+      selectedFacets: {},
+      entityTypeIds: [option],
       pageNumber: 1,
       pageLength: searchOptions.pageSize,
     });
@@ -184,15 +184,15 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
     setSearchOptions({
       ...searchOptions,
       start: 1,
-      searchFacets: facets,
-      entityNames: [option],
+      selectedFacets: facets,
+      entityTypeIds: [option],
       pageNumber: 1,
       pageLength: searchOptions.pageSize
     });
   }
 
   const clearFacet = (constraint: string, val: string) => {
-    let facets = searchOptions.searchFacets;
+    let facets = searchOptions.selectedFacets;
     let valueKey = '';
     if (facets[constraint].dataType === 'xs:string' || facets[constraint].dataType === 'string') {
       valueKey = 'stringValues';
@@ -202,15 +202,15 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
     } else {
       delete facets[constraint]
     }
-    setSearchOptions({ ...searchOptions, searchFacets: facets });
-      if(Object.entries(greyedOptions.searchFacets).length > 0 && greyedOptions.searchFacets.hasOwnProperty(constraint))
+    setSearchOptions({ ...searchOptions, selectedFacets: facets });
+      if(Object.entries(greyedOptions.selectedFacets).length > 0 && greyedOptions.selectedFacets.hasOwnProperty(constraint))
         clearGreyFacet(constraint, val);
   }
 
   const clearAllFacets = () => {
     setSearchOptions({
       ...searchOptions,
-      searchFacets: {},
+      selectedFacets: {},
       start: 1,
       pageNumber: 1,
       pageLength: searchOptions.pageSize
@@ -225,8 +225,8 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       start: 1,
       pageNumber: 1,
       pageLength: searchOptions.pageSize,
-      searchFacets: {
-        ...searchOptions.searchFacets,
+      selectedFacets: {
+        ...searchOptions.selectedFacets,
         createdOnRange: dates
       }
     });
@@ -234,12 +234,12 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
 */
 
   const clearDateFacet = () => {
-    let facets = searchOptions.searchFacets;
+    let facets = searchOptions.selectedFacets;
     if (facets.hasOwnProperty('createdOnRange')) {
       delete facets.createdOnRange;
       setSearchOptions({
         ...searchOptions,
-        searchFacets: facets,
+        selectedFacets: facets,
         start: 1,
         pageNumber: 1,
         pageLength: searchOptions.pageSize
@@ -248,7 +248,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
   }
 
   const clearRangeFacet = (range: string) => {
-    let facets = searchOptions.searchFacets;
+    let facets = searchOptions.selectedFacets;
     let constraints = Object.keys(facets)
     constraints.forEach(facet => {
       if (facets[facet].hasOwnProperty('rangeValues') && facet === range) {
@@ -258,12 +258,12 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
 
     setSearchOptions({
       ...searchOptions,
-      searchFacets: facets,
+      selectedFacets: facets,
       start: 1,
       pageNumber: 1,
       pageLength: searchOptions.pageSize
     });
-      if(Object.entries(greyedOptions.searchFacets).length > 0)
+      if(Object.entries(greyedOptions.selectedFacets).length > 0)
        clearGreyRangeFacet(range)
   }
 
@@ -275,7 +275,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
   const setAllSearchFacets = (facets: any) => {
     setSearchOptions({
       ...searchOptions,
-      searchFacets: facets,
+      selectedFacets: facets,
       start: 1,
       pageNumber: 1,
       pageLength: searchOptions.pageSize
@@ -283,12 +283,12 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
   }
 
     const clearGreyDateFacet = () => {
-        let facets = greyedOptions.searchFacets;
+        let facets = greyedOptions.selectedFacets;
         if (facets.hasOwnProperty('createdOnRange')) {
             delete facets.createdOnRange;
             setGreyedOptions({
                 ...greyedOptions,
-                searchFacets: facets,
+                selectedFacets: facets,
                 start: 1,
                 pageNumber: 1,
                 pageLength: greyedOptions.pageSize
@@ -297,7 +297,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
     }
 
     const clearGreyRangeFacet = (range: string) => {
-        let facets = greyedOptions.searchFacets;
+        let facets = greyedOptions.selectedFacets;
         let constraints = Object.keys(facets)
         constraints.forEach(facet => {
             if (facets[facet].hasOwnProperty('rangeValues') && facet === range) {
@@ -307,7 +307,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
 
         setGreyedOptions({
             ...greyedOptions,
-            searchFacets: facets,
+            selectedFacets: facets,
             start: 1,
             pageNumber: 1,
             pageLength: greyedOptions.pageSize
@@ -315,7 +315,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
     }
 
   const clearGreyFacet = (constraint: string, val: string) => {
-    let facets = greyedOptions.searchFacets;
+    let facets = greyedOptions.selectedFacets;
     let valueKey = '';
         if (facets[constraint].dataType === 'xs:string' || facets[constraint].dataType === 'string') {
             valueKey = 'stringValues';
@@ -325,13 +325,13 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
         } else {
             delete facets[constraint]
         }
-        setGreyedOptions({...greyedOptions, searchFacets: facets})
+        setGreyedOptions({...greyedOptions, selectedFacets: facets})
  }
 
   const clearAllGreyFacets = () => {
     setGreyedOptions({
       ...greyedOptions,
-      searchFacets: {},
+      selectedFacets: {},
       start: 1,
       pageNumber: 1,
       pageLength: greyedOptions.pageSize
@@ -346,7 +346,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
   const setAllGreyedOptions = (facets: any) => {
     setGreyedOptions({
       ...greyedOptions,
-      searchFacets: facets,
+      selectedFacets: facets,
       start: 1,
       pageNumber: 1,
       pageLength: greyedOptions.pageSize
