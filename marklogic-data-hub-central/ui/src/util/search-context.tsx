@@ -34,6 +34,7 @@ interface ISearchContextInterface {
   setEntity: (option: string) => void;
   setEntityClearQuery: (option: string) => void;
   setLatestJobFacet: (vals: string, option: string) => void;
+  applyQuery: (searchText: string, entityTypeIds: string[], selectedFacets: {}) => void;
   clearFacet: (constraint: string, val: string) => void;
   clearAllFacets: () => void;
   clearDateFacet: () => void;
@@ -59,6 +60,7 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setSearchFacets: () => { },
   setEntity: () => { },
   setEntityClearQuery: () => { },
+  applyQuery: () => { },
   setLatestJobFacet: () => { },
   clearFacet: () => { },
   clearAllFacets: () => { },
@@ -353,6 +355,18 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
     });
   }
 
+  const applyQuery = (searchText: string, entityTypeIds: string[], selectedFacets: {}) => {
+    setSearchOptions({
+      ...searchOptions,
+      start: 1,
+      selectedFacets: selectedFacets,
+      query: searchText,
+      entityTypeIds: entityTypeIds,
+      pageNumber: 1,
+      pageLength: searchOptions.pageSize
+    });
+  }
+
   useEffect(() => {
     if (user.authenticated) {
       setSearchFromUserPref(user.name);
@@ -382,7 +396,8 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       setAllGreyedOptions,
       clearGreyFacet,
       clearAllGreyFacets,
-      resetGreyedOptions
+      resetGreyedOptions,
+      applyQuery
     }}>
       {children}
     </SearchContext.Provider>
