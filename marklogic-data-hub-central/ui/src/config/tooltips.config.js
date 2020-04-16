@@ -90,6 +90,14 @@ const NewCustomOtherTooltips = {}
 
 const AdvCustomOtherTooltips = {}
 
+const ModelingTooltips = {
+  entityTypeName: 'Click to view or edit settings for this entity type.',
+  instanceNumber: 'Click to navigate to the Explorer tile showing all instances of this entity type.',
+  lastProcessed: 'Click to navigate to the Explorer tile showing all instances of that enttiy processed at the time.',
+  addEntityName: 'Names must start with a letter, and can contain letters, numbers, hyphens, and underscores.',
+  enitityDescription: 'Description for the entity'  
+}
+
 
 export {
     ActivitySettings,
@@ -101,5 +109,6 @@ export {
     NewMatchTooltips,
     AdvMatchTooltips,
     NewMergeTooltips,
-    AdvMergeTooltips
+    AdvMergeTooltips,
+    ModelingTooltips
 }

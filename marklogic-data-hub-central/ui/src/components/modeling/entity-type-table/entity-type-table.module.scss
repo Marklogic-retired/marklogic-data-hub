@@ -1,0 +1,14 @@
+.table {
+  width: 92%;
+  margin: 0 auto;
+}
+.iconContainer > .icon:first-child, .iconContainer > .icon:nth-child(2) {
+  margin-right: 8px;
+}
+.icon {
+  cursor: pointer;
+}
+th.actions,
+td.actions {
+  text-align: center !important;
+}

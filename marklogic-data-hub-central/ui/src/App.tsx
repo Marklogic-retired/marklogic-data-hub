@@ -17,6 +17,7 @@ import NoMatchRedirect from './pages/noMatchRedirect';
 import View from './pages/View';
 import Browse from './pages/Browse';
 import Detail from './pages/Detail';
+import Modeling from './pages/Modeling';
 
 import './App.scss';
 import { Application } from './config/application.config';
@@ -94,9 +95,6 @@ const App: React.FC<Props> = ({history, location}) => {
       .catch(err => {
           handleError(err);
       })
-      .finally(() => {
-        resetSessionTime();
-      });
   }, [location.pathname]);
 
   const path = location['pathname'];
@@ -138,6 +136,9 @@ const App: React.FC<Props> = ({history, location}) => {
           </PrivateRoute>
           <PrivateRoute path="/detail/:pk/:uri">
             <Detail/>
+          </PrivateRoute>
+          <PrivateRoute path="/model" exact>
+            <Modeling/>
           </PrivateRoute>
         </SearchProvider>
         <Route path="/reset" exact component={Reset}/>

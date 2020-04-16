@@ -3,7 +3,7 @@ import styles from './Home.module.scss';
 import { Tooltip, Icon } from 'antd';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCubes, faObjectUngroup } from '@fortawesome/free-solid-svg-icons';
+import { faCubes, faObjectUngroup, faCube } from '@fortawesome/free-solid-svg-icons';
 const Home: React.FC = () => {
 
   return (
@@ -25,6 +25,11 @@ const Home: React.FC = () => {
         </Tooltip>
         <Link to="/view" className={styles.text}>View Entities</Link>
         <Link to="/browse" className={styles.text}>Browse Entities</Link>
+        <Tooltip title="Click to navigate to Model Screen" placement="left">
+          <button className={styles.modelIcon}>
+            <Link to="/model"><i><FontAwesomeIcon icon={faCube } size="2x"/></i></Link>
+          </button>
+        </Tooltip>
         <Tooltip title="Click to reset host name and log out" placement="bottom">
             <Link to="/reset" className={styles.reset}><Icon type="rollback" /></Link>
         </Tooltip>
