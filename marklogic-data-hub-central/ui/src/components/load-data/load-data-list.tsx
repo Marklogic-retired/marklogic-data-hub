@@ -127,9 +127,9 @@ const LoadDataList: React.FC<Props> = (props) => {
             key: 'actions',
             render: (text, row) => (
                 <span>
-                    <Tooltip title={'Settings'} placement="bottom"><Icon type="setting" onClick={() => OpenLoadDataSettingsDialog(row)} className={styles.settingsIcon} /></Tooltip>
+                    <Tooltip title={'Settings'} placement="bottom"><Icon type="setting" data-testid={row.name+'-settings'} onClick={() => OpenLoadDataSettingsDialog(row)} className={styles.settingsIcon} /></Tooltip>
                     &nbsp;&nbsp;
-                    {props.canReadWrite ? <Tooltip title={'Delete'} placement="bottom"><i><FontAwesomeIcon icon={faTrashAlt} onClick={() => {showDeleteConfirm(row.name)}} className={styles.deleteIcon} size="lg"/></i></Tooltip> :
+                    {props.canReadWrite ? <Tooltip title={'Delete'} placement="bottom"><i><FontAwesomeIcon icon={faTrashAlt} data-testid={row.name+'-delete'}onClick={() => {showDeleteConfirm(row.name)}} className={styles.deleteIcon} size="lg"/></i></Tooltip> :
                     <Tooltip title={'Delete'} placement="bottom"><i><FontAwesomeIcon icon={faTrashAlt} onClick={(event) => event.preventDefault()} className={styles.disabledDeleteIcon} size="lg"/></i></Tooltip> }
                 </span>
             ),
