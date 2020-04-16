@@ -7,6 +7,9 @@ class HomePage{
     getBrowseEntities() {
         return cy.contains('Browse Entities');
     }
+    getModeling() {
+      return cy.contains('Modeling');
+  }
 }
 
 export default HomePage;

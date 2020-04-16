@@ -1,0 +1,18 @@
+.header {
+  display: flex;
+  margin: 0 auto;
+  width: 90%;
+  justify-content: space-between;
+}
+
+.buttonContainer {
+  display: flex;
+}
+
+.buttonContainer > button:nth-child(2), .buttonContainer > button:last-child {
+  margin-left: 5px;
+}
+
+.icon {
+  margin-right: 3px;
+}
