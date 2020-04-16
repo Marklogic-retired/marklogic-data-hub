@@ -5,7 +5,7 @@ const datahub = DataHubSingleton.instance();
  * Simple custom step that just marks the content as processed via a URI alteration.
  */
 function main(contentItem, options) {
-  const instance = cts.doc(contentItem.uri);
+  const instance = cts.doc(contentItem.uri).toObject();
   return {
     uri: "/echo" + contentItem.uri,
     value: datahub.flow.flowUtils.makeEnvelope(instance, {}, [], "json"),

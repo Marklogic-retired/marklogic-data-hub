@@ -1430,8 +1430,9 @@ public class HubTestBase implements InitializingBean {
     /**
      * Load the files associated with the entity reference model.
      */
-    protected void loadReferenceModelProject() {
+    protected ReferenceModelProject loadReferenceModelProject() {
         loadProjectFiles("entity-reference-model");
+        return new ReferenceModelProject(adminHubConfig);
     }
 
     /**

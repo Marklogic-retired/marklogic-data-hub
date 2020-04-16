@@ -7,8 +7,9 @@
   "definitions": {
     "Order": {
       "required": [],
+      "primaryKey": "orderId",
       "properties": {
-        "orderID": {
+        "orderId": {
           "datatype": "string"
         },
         "address": {

@@ -1,0 +1,22 @@
+{
+  "info": {
+    "title": "Order",
+    "version": "0.0.1",
+    "baseUri": "http://marklogic.com/"
+  },
+  "definitions": {
+    "Order": {
+      "properties": {
+        "OrderID": {
+          "datatype": "string"
+        },
+        "ShipCity": {
+          "datatype": "string"
+        },
+        "ShipAddress": {
+          "datatype": "string"
+        }
+      }
+    }
+  }
+}

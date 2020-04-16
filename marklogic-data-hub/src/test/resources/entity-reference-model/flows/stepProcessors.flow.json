@@ -1,0 +1,56 @@
+{
+  "name": "stepProcessors",
+  "steps": {
+    "1": {
+      "name": "stepOne",
+      "stepDefinitionName": "echoStep",
+      "stepDefinitionType": "CUSTOM",
+      "options": {
+        "sourceQuery": "cts.collectionQuery('customer-input')"
+      },
+      "processors": [
+        {
+          "path": "/custom-modules/step-processors/addHeaders.sjs",
+          "when": "beforeContentPersisted",
+          "vars": {
+            "headerValueToAdd": "world"
+          }
+        },
+        {
+          "path": "/custom-modules/step-processors/addPermissions.sjs",
+          "when": "beforeContentPersisted"
+        }
+      ]
+    },
+    "2": {
+      "name": "missingProcessorModule",
+      "stepDefinitionName": "echoStep",
+      "stepDefinitionType": "CUSTOM",
+      "options": {
+        "sourceQuery": "cts.collectionQuery('customer-input')"
+      },
+      "processors": [
+        {
+          "path": "/missing/module.sjs",
+          "when": "beforeContentPersisted"
+        }
+      ]
+    },
+    "3": {
+      "name": "missingWhen",
+      "stepDefinitionName": "echoStep",
+      "stepDefinitionType": "CUSTOM",
+      "options": {
+        "sourceQuery": "cts.collectionQuery('customer-input')"
+      },
+      "processors": [
+        {
+          "path": "/custom-modules/step-processors/addHeaders.sjs",
+          "vars": {
+            "headerValueToAdd": "world"
+          }
+        }
+      ]
+    }
+  }
+}

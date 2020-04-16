@@ -32,7 +32,6 @@ let flowDoc = {
                 }
               };
 
-//metadata is set in processResults method of flow.sjs as below and it gets called for every step in the flowDoc
 //this is to verify that stepDefName corresponding to the stepNumber is the value of metadata datahubCreatedByStep
 for (const stepNum in flowDoc.steps) {
   metadata.push(flowUtils.createMetadata(metadata ? metadata : {}, flowDoc.name, flowDoc.steps[stepNum].stepDefinitionName, jobId).datahubCreatedByStep)
