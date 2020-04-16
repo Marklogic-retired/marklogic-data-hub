@@ -341,15 +341,6 @@ public class MappingE2E extends HubTestBase {
         writeBatcher.flushAndWait();
         assertTrue(installDocsFinished, "Doc install not finished");
         assertFalse(installDocsFailed, "Doc install failed: " + installDocError);
-
-        if (srcClient.getDatabase().equals(HubConfig.DEFAULT_STAGING_NAME)) {
-            assertEquals(TEST_SIZE, getStagingDocCount(collection));
-            assertEquals(0, getFinalDocCount(collection));
-        }
-        else {
-            assertEquals(TEST_SIZE, getFinalDocCount(collection));
-            assertEquals(0, getStagingDocCount(collection));
-        }
     }
 
     private Tuple<LegacyFlowRunner, JobTicket> runHarmonizeFlow(
@@ -360,10 +351,6 @@ public class MappingE2E extends HubTestBase {
         boolean waitForCompletion)
     {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
-
-        assertEquals(0, getStagingDocCount());
-        assertEquals(0, getFinalDocCount());
-        assertEquals(0, getJobDocCount());
 
         installDocs(flowName, dataFormat, ENTITY, srcClient);
         runAsFlowOperator();
@@ -409,19 +396,19 @@ public class MappingE2E extends HubTestBase {
         Vector<String> completed = new Vector<>();
         Vector<String> failed = new Vector<>();
 
+        final int originalStagingCount = getStagingDocCount();
+        final int originalFinalCount = getFinalDocCount();
+        final int originalJobsCount = getJobDocCount();
+
         Tuple<LegacyFlowRunner, JobTicket> tuple = runHarmonizeFlow(flowName, dataFormat, completed, failed, options, srcClient, destDb, waitForCompletion);
 
         if (waitForCompletion) {
             // takes a little time to run.
             Thread.sleep(2000);
-            int stagingCount = getStagingDocCount();
-            int finalCount = getFinalDocCount();
-            int jobsCount = getJobDocCount();
 
-            assertEquals(finalCounts.stagingCount, stagingCount);
-            assertEquals(finalCounts.finalCount, finalCount);
-
-            assertEquals(finalCounts.jobCount, jobsCount);
+            assertEquals(finalCounts.stagingCount + originalStagingCount, getStagingDocCount());
+            assertEquals(finalCounts.finalCount + originalFinalCount, getFinalDocCount());
+            assertEquals(finalCounts.jobCount + originalJobsCount, getJobDocCount());
 
             assertEquals(finalCounts.completedCount, completed.size());
             assertEquals(finalCounts.failedCount, failed.size());

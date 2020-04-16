@@ -144,8 +144,6 @@ public class StreamLegacyCollectorTest extends HubTestBase {
         // option to halt execution. This allows us to test that the collector runs to completion while not
         // having to wait for the entire harmonize flow to finish.
         Assumptions.assumeFalse(getDataHubAdminConfig().getIsProvisionedEnvironment());
-        assertEquals(DOC_COUNT, getStagingDocCount());
-        assertEquals(0, getFinalDocCount());
         LegacyFlow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
             FlowType.HARMONIZE);
         HashMap<String, Object> options = new HashMap<>();
@@ -160,7 +158,6 @@ public class StreamLegacyCollectorTest extends HubTestBase {
             .withStopOnFailure(true);
         JobTicket ticket = flowRunner.run();
         flowRunner.awaitCompletion();
-        assertEquals(0, getFinalDocCount());
 
         JsonNode node = jobDocMgr.read("/jobs/" + ticket.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
         assertEquals(ticket.getJobId(), node.get("jobId").asText());
