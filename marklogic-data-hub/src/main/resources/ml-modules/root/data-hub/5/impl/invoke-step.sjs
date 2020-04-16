@@ -1,5 +1,5 @@
 'use strict';
 
-var flow, items, content, options, flowName, stepNumber, step;
+var flowInstance, items, content, combinedOptions, flowName, stepNumber, flowStep;
 
-flow.runStep(items, content, options, flowName, stepNumber, step);
+flowInstance.runStep(items, content, combinedOptions, flowName, stepNumber, flowStep);

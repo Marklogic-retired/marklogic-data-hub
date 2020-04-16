@@ -122,14 +122,6 @@ class Flow {
     this.globalContext.flow = flowObj;
   }
 
-  addToWriteQueue(content) {
-    if (content.uri) {
-      this.writeQueue.push(content);
-    } else {
-      this.datahub.debug.log({ type: 'error', message: `Couldn't add '${xdmp.toJsonString(content)}' to the write queue due to missing uri.`});
-    }
-  }
-
   /**
    * Find records that match a query based on the given inputs. Each matching record is wrapped in a
    * "content descriptor" object that is guaranteed to have at least a "uri" property.
@@ -143,8 +135,8 @@ class Flow {
   findMatchingContent(flowName, stepNumber, options, filterQuery) {
     const flow = this.getFlow(flowName);
     const flowStep = flow.steps[stepNumber];
-    const stepDetails = this.step.getStepByNameAndType(flowStep.stepDefinitionName, flowStep.stepDefinitionType);
-    const combinedOptions = Object.assign({}, stepDetails.options || {}, flow.options || {}, flowStep.options || {}, options);
+    const stepDefinition = this.step.getStepByNameAndType(flowStep.stepDefinitionName, flowStep.stepDefinitionType);
+    const combinedOptions = Object.assign({}, stepDefinition.options || {}, flow.options || {}, flowStep.options || {}, options);
 
     let query;
     let uris = null;
@@ -160,7 +152,7 @@ class Flow {
       query = sourceQuery ? xdmp.eval(sourceQuery) : null;
     }
 
-    if (stepDetails.name === 'default-merging' && stepDetails.type === 'merging' && uris) {
+    if (stepDefinition.name === 'default-merging' && stepDefinition.type === 'merging' && uris) {
       return uris.map((uri) => { return { uri }; });
     } else {
       let sourceDatabase = combinedOptions.sourceDatabase || this.globalContext.sourceDatabase;
@@ -214,30 +206,23 @@ class Flow {
     //set the context for the attempted step
     this.globalContext.attemptStep = stepNumber;
 
-    let stepRef = this.globalContext.flow.steps[stepNumber];
-    if(!stepRef) {
+    const flowStep = this.globalContext.flow.steps[stepNumber];
+    if(!flowStep) {
       this.datahub.debug.log({message: 'Step '+stepNumber+' for the flow: '+flowName+' could not be found.', type: 'error'});
       throw Error('Step '+stepNumber+' for the flow: '+flowName+' could not be found.');
     }
-    let stepDetails = this.step.getStepByNameAndType(stepRef.stepDefinitionName, stepRef.stepDefinitionType);
+    const stepDefinition = this.step.getStepByNameAndType(flowStep.stepDefinitionName, flowStep.stepDefinitionType);
 
     //here we consolidate options and override in order of priority: runtime flow options, step defined options, process defined options
-    let combinedOptions = Object.assign({}, stepDetails.options, flow.options, stepRef.options, options);
+    let combinedOptions = Object.assign({}, stepDefinition.options, flow.options, flowStep.options, options);
     // set provenance granularity based off of combined options
     this.datahub.prov.granularityLevel(combinedOptions.provenanceGranularityLevel);
-    // combine all collections
-    let collections = [
-      options.collections,
-      ((stepRef.options || {}).collections || (stepDetails.options || {}).collections),
-      (flow.options || {}).collections
-    ].reduce((previousValue, currentValue) => (previousValue || []).concat((currentValue || [])))
-      // filter out any null/empty collections that may exist
-      .filter((col) => !!col);
+
     this.globalContext.targetDatabase = combinedOptions.targetDatabase || this.globalContext.targetDatabase;
     this.globalContext.sourceDatabase = combinedOptions.sourceDatabase || this.globalContext.sourceDatabase;
 
     if (!(combinedOptions.noBatchWrite || combinedOptions.disableJobOutput)) {
-      let batchDoc = this.datahub.jobs.createBatch(jobDoc.jobId, stepRef, stepNumber);
+      let batchDoc = this.datahub.jobs.createBatch(jobDoc.jobId, flowStep, stepNumber);
       this.globalContext.batchId = batchDoc.batch.batchId;
     }
 
@@ -246,14 +231,14 @@ class Flow {
       this.datahub = this.datahub.hubUtils.cloneInstance(this.datahub);
       delete this.datahub.flow;
     }
-    let flowInstance = this;
 
     if (this.isContextDB(this.globalContext.sourceDatabase) && !combinedOptions.stepUpdate) {
-      this.runStep(items, content, combinedOptions, flowName, stepNumber, stepRef);
+      this.runStep(items, content, combinedOptions, flowName, stepNumber, flowStep);
     } else {
+      const flowInstance = this;
       xdmp.invoke(
         '/data-hub/5/impl/invoke-step.sjs',
-        {flow: flowInstance, items, content, options: combinedOptions, flowName, step: stepRef, stepNumber},
+        {flowInstance, items, content, combinedOptions, flowName, flowStep, stepNumber},
         {
           database: this.globalContext.sourceDatabase ? xdmp.database(this.globalContext.sourceDatabase) : xdmp.database(),
           update: combinedOptions.stepUpdate ? 'true': 'false',
@@ -267,57 +252,23 @@ class Flow {
     //let's update our jobdoc now
     if (!combinedOptions.noWrite) {
       try {
+        // combine all collections
+        const collections = [
+          options.collections,
+          ((flowStep.options || {}).collections || (stepDefinition.options || {}).collections),
+          (flow.options || {}).collections
+        ].reduce((previousValue, currentValue) => (previousValue || []).concat((currentValue || [])))
+          // filter out any null/empty collections that may exist
+          .filter((col) => !!col);
+
         writeTransactionInfo = this.datahub.hubUtils.writeDocuments(this.writeQueue, xdmp.defaultPermissions(), collections, this.globalContext.targetDatabase);
       } catch (e) {
         this.handleWriteError(this, e);
       }
     }
-    let stepDefTypeLowerCase = (stepDetails.type) ? stepDetails.type.toLowerCase(): stepDetails.type;
-    let stepName = stepRef.name || stepRef.stepDefinitionName;
-    /* Failure to write may have caused there to be nothing written, so checking the completed items length.
-    This approach, rather than clearing the writeQueue on a write error, will allow fullOutput to still return what
-    was attempted to be written to the database. This could be helpful in the future for debugging.
-     */
-    if (this.globalContext.completedItems.length) {
-      let prov = this.datahub.prov;
-      for (let content of this.writeQueue) {
-        let previousUris = this.datahub.hubUtils.normalizeToArray(content.previousUri || content.uri);
-        let info = {
-          derivedFrom: previousUris,
-          influencedBy: stepName,
-          status: (stepDefTypeLowerCase === 'ingestion') ? 'created' : 'updated',
-          metadata: {}
-        };
-        // We may want to hide some documents from provenance. e.g., we don't need provenance of mastering PROV documents
-        if (content.provenance !== false) {
-          let provResult;
-          if (prov.granularityLevel() === prov.FINE_LEVEL && content.provenance) {
-            provResult = this.buildFineProvenanceData(jobId, flowName, stepName, stepRef.stepDefinitionName, stepDefTypeLowerCase, content, info);
-          } else {
-            provResult = prov.createStepRecord(jobId, flowName, stepName, stepRef.stepDefinitionName, stepDefTypeLowerCase, content.uri, info);
-          }
-          if (provResult instanceof Error) {
-            flowInstance.datahub.debug.log({message: provResult.message, type: 'error'});
-          }
-        }
-      }
-      if (prov.granularityLevel() !== prov.OFF_LEVEL) {
-        this.datahub.prov.commit();
-      }
-    }
-    if (!combinedOptions.noBatchWrite) {
-      let batchStatus = "finished";
-      if (this.globalContext.failedItems.length) {
-        if (this.globalContext.completedItems.length) {
-          batchStatus = "finished_with_errors";
-        } else {
-          batchStatus = "failed";
-        }
-      }
-      if (!combinedOptions.disableJobOutput) {
-        jobsMod.updateBatch(this.datahub,this.globalContext.jobId, this.globalContext.batchId, batchStatus, items, writeTransactionInfo, this.globalContext.batchErrors[0]);
-      }
-    }
+
+    this.writeProvenanceData(jobId, flowName, stepDefinition, flowStep);
+    this.updateBatchDocument(combinedOptions, items, writeTransactionInfo);
 
     let resp = {
       "jobId": this.globalContext.jobId,
@@ -343,28 +294,28 @@ class Flow {
    * set of URIs, unless sourceQueryIsScript is set to true for the step, in which case the items can be any set
    * of strings.
    * @param content
-   * @param options
+   * @param combinedOptions
    * @param flowName
    * @param stepNumber
-   * @param step
+   * @param flowStep
    */
-  runStep(items, content, options, flowName, stepNumber, step) {
+  runStep(items, content, combinedOptions, flowName, stepNumber, flowStep) {
     let flowInstance = this;
-    let processor = flowInstance.step.getStepProcessor(flowInstance, step.stepDefinitionName, step.stepDefinitionType);
+    let processor = flowInstance.step.getStepProcessor(flowInstance, flowStep.stepDefinitionName, flowStep.stepDefinitionType);
     if (!(processor && processor.run)) {
-      let errorMsq = `Could not find main() function for process ${step.stepDefinitionType}/${step.stepDefinitionName} for step # ${stepNumber} for the flow: ${flowName} could not be found.`;
+      let errorMsq = `Could not find main() function for process ${flowStep.stepDefinitionType}/${flowStep.stepDefinitionName} for step # ${stepNumber} for the flow: ${flowName} could not be found.`;
       flowInstance.datahub.debug.log({message: errorMsq, type: 'error'});
       throw Error(errorMsq);
     }
 
     let hookOperation = function () {};
-    let hook = step.customHook;
+    let hook = flowStep.customHook;
     if (!hook || !hook.module) {
       hook = processor.customHook;
     }
     if (hook && hook.module) {
       // Include all of the step context in the parameters for the custom hook to make use of
-      let parameters = Object.assign({uris: items, content, options, flowName, stepNumber, step}, hook.parameters);
+      let parameters = Object.assign({uris: items, content, options: combinedOptions, flowName, stepNumber, step: flowStep}, hook.parameters);
       hookOperation = function () {
         flowInstance.datahub.hubUtils.invoke(
           hook.module,
@@ -377,11 +328,17 @@ class Flow {
     if (hook && hook.runBefore) {
       hookOperation();
     }
-    let normalizeToSequence = flowInstance.datahub.hubUtils.normalizeToSequence;
-    if (options.acceptsBatch) {
+
+    const normalizeToSequence = flowInstance.datahub.hubUtils.normalizeToSequence;
+    let contentArray = [];
+
+    if (combinedOptions.acceptsBatch) {
       try {
-        let results = normalizeToSequence(flowInstance.runMain(normalizeToSequence(content), options, processor.run));
-        flowInstance.processResults(results, options, flowName, step);
+        const results = normalizeToSequence(flowInstance.runMain(normalizeToSequence(content), combinedOptions, processor.run));
+        for (const result of results) {
+          this.addMetadataToContent(result, combinedOptions, flowName, flowStep);
+          contentArray.push(result);
+        }
         flowInstance.globalContext.completedItems = flowInstance.globalContext.completedItems.concat(items);
       } catch (e) {
         this.handleStepError(flowInstance, e, items);
@@ -390,8 +347,11 @@ class Flow {
       for (let contentItem of content) {
         flowInstance.globalContext.uri = contentItem.uri;
         try {
-          let results = normalizeToSequence(flowInstance.runMain(contentItem, options, processor.run));
-          flowInstance.processResults(results, options, flowName, step);
+          const results = normalizeToSequence(flowInstance.runMain(contentItem, combinedOptions, processor.run));
+          for (const result of results) {
+            this.addMetadataToContent(result, combinedOptions, flowName, flowStep);
+            contentArray.push(result);
+          }
           flowInstance.globalContext.completedItems.push(flowInstance.globalContext.uri);
         } catch (e) {
           this.handleStepError(flowInstance, e);
@@ -400,8 +360,51 @@ class Flow {
       }
     }
     flowInstance.globalContext.uri = null;
+
+    this.applyProcessorsBeforeContentPersisted(flowStep, contentArray, combinedOptions);
+
+    // Add everything to the writeQueue
+    contentArray.forEach(content => {
+      if (content.uri) {
+        this.writeQueue.push(content);
+      } else {
+        this.datahub.debug.log({ type: 'error', message: `Couldn't add '${xdmp.toJsonString(content)}' to the write queue due to missing uri.`});
+      }
+    });
+
     if (hook && !hook.runBefore) {
       hookOperation();
+    }
+  }
+
+  applyProcessorsBeforeContentPersisted(flowStep, contentArray, combinedOptions) {
+    if (flowStep.processors) {
+      flowStep.processors.filter((processor => "beforeContentPersisted" == processor.when)).forEach(processor => {
+        const vars = Object.assign({}, processor.vars);
+        vars.contentArray = contentArray;
+        vars.options = combinedOptions;
+        contentArray = fn.head(xdmp.invoke(processor.path, vars));
+      });
+    }
+    return contentArray;
+  }
+
+  addMetadataToContent(content, combinedOptions, flowName, flowStep) {
+    const normalizeToArray = this.datahub.hubUtils.normalizeToArray;
+    if (!combinedOptions.acceptsBatch) {
+      content.previousUri = this.globalContext.uri;
+    }
+    //add our metadata to this
+    content.context = content.context || {};
+    content.context.metadata = this.flowUtils.createMetadata(content.context.metadata ? content.context.metadata : {}, flowName, flowStep.stepDefinitionName, this.globalContext.jobId);
+    // normalize context values to arrays
+    if (content.context.collections) {
+      content.context.collections = normalizeToArray(content.context.collections);
+    }
+    if (content.context.permissions) {
+      // normalize permissions to array of JSON permissions
+      content.context.permissions = normalizeToArray(content.context.permissions)
+        .map((perm) => (perm instanceof Element) ? xdmp.permission(xdmp.roleName(fn.string(perm.xpath('*:role-id'))), fn.string(perm.xpath('*:capability')), "object") : perm);
     }
   }
 
@@ -440,27 +443,70 @@ class Flow {
     });
   }
 
-  processResults(results, combinedOptions, flowName, step) {
-    let self = this;
-    let normalizeToArray = self.datahub.hubUtils.normalizeToArray;
-    for (let result of results) {
-      if (result) {
-        if (!combinedOptions.acceptsBatch) {
-          result.previousUri = self.globalContext.uri;
+  /**
+   * Updates the batch document based on what's in the globalContext. This doesn't care about interceptors at all,
+   * as those don't have any impact on the "items" that were the input to this transaction.
+   *
+   * @param combinedOptions
+   * @param items
+   * @param writeTransactionInfo
+   */
+  updateBatchDocument(combinedOptions = {}, items, writeTransactionInfo) {
+    if (!combinedOptions.noBatchWrite) {
+      let batchStatus = "finished";
+      if (this.globalContext.failedItems.length) {
+        if (this.globalContext.completedItems.length) {
+          batchStatus = "finished_with_errors";
+        } else {
+          batchStatus = "failed";
         }
-        //add our metadata to this
-        result.context = result.context || {};
-        result.context.metadata = self.flowUtils.createMetadata(result.context.metadata ? result.context.metadata : {}, flowName, step.stepDefinitionName, this.globalContext.jobId);
-        // normalize context values to arrays
-        if (result.context.collections) {
-          result.context.collections = normalizeToArray(result.context.collections);
+      }
+      if (!combinedOptions.disableJobOutput) {
+        jobsMod.updateBatch(this.datahub,this.globalContext.jobId, this.globalContext.batchId, batchStatus, items, writeTransactionInfo, this.globalContext.batchErrors[0]);
+      }
+    }
+  }
+
+  /**
+   * Writes provenance data based on what's in the writeQueue.
+   *
+   * @param jobId
+   * @param flowName
+   * @param stepDefinition
+   * @param flowStep
+   */
+  writeProvenanceData(jobId, flowName, stepDefinition, flowStep) {
+    const stepDefTypeLowerCase = (stepDefinition.type) ? stepDefinition.type.toLowerCase(): stepDefinition.type;
+    const stepName = flowStep.name || flowStep.stepDefinitionName;
+    /* Failure to write may have caused there to be nothing written, so checking the completed items length.
+    This approach, rather than clearing the writeQueue on a write error, will allow fullOutput to still return what
+    was attempted to be written to the database. This could be helpful in the future for debugging.
+     */
+    if (this.globalContext.completedItems.length) {
+      let prov = this.datahub.prov;
+      for (let content of this.writeQueue) {
+        let previousUris = this.datahub.hubUtils.normalizeToArray(content.previousUri || content.uri);
+        let info = {
+          derivedFrom: previousUris,
+          influencedBy: stepName,
+          status: (stepDefTypeLowerCase === 'ingestion') ? 'created' : 'updated',
+          metadata: {}
+        };
+        // We may want to hide some documents from provenance. e.g., we don't need provenance of mastering PROV documents
+        if (content.provenance !== false) {
+          let provResult;
+          if (prov.granularityLevel() === prov.FINE_LEVEL && content.provenance) {
+            provResult = this.buildFineProvenanceData(jobId, flowName, stepName, flowStep.stepDefinitionName, stepDefTypeLowerCase, content, info);
+          } else {
+            provResult = prov.createStepRecord(jobId, flowName, stepName, flowStep.stepDefinitionName, stepDefTypeLowerCase, content.uri, info);
+          }
+          if (provResult instanceof Error) {
+            flowInstance.datahub.debug.log({message: provResult.message, type: 'error'});
+          }
         }
-        if (result.context.permissions) {
-          // normalize permissions to array of JSON permissions
-          result.context.permissions = normalizeToArray(result.context.permissions)
-            .map((perm) => (perm instanceof Element) ? xdmp.permission(xdmp.roleName(fn.string(perm.xpath('*:role-id'))), fn.string(perm.xpath('*:capability')), "object") : perm);
-        }
-        self.addToWriteQueue(result, self.globalContext);
+      }
+      if (prov.granularityLevel() !== prov.OFF_LEVEL) {
+        this.datahub.prov.commit();
       }
     }
   }

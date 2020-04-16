@@ -9,7 +9,11 @@
       "required": [
         "name"
       ],
+      "primaryKey": "customerId",
       "properties": {
+        "customerId": {
+          "datatype": "integer"
+        },
         "name": {
           "datatype": "string",
           "collation": "http://marklogic.com/collation/codepoint"
@@ -19,9 +23,6 @@
         },
         "billing": {
           "$ref": "#/definitions/Address"
-        },
-        "customerNumber": {
-          "datatype": "integer"
         },
         "customerSince": {
           "datatype": "date"

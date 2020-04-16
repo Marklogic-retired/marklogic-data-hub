@@ -56,12 +56,22 @@ public class FlowInputs {
         this.steps = steps;
     }
 
+    public FlowInputs withSteps(String... steps) {
+        setSteps(Arrays.asList(steps));
+        return this;
+    }
+
     public String getJobId() {
         return jobId;
     }
 
     public void setJobId(String jobId) {
         this.jobId = jobId;
+    }
+
+    public FlowInputs withJobId(String jobId) {
+        setJobId(jobId);
+        return this;
     }
 
     public Map<String, Object> getOptions() {
@@ -72,11 +82,21 @@ public class FlowInputs {
         this.options = options;
     }
 
+    public FlowInputs withOptions(Map<String, Object> options) {
+        setOptions(options);
+        return this;
+    }
+
     public Map<String, Object> getStepConfig() {
         return stepConfig;
     }
 
     public void setStepConfig(Map<String, Object> stepConfig) {
         this.stepConfig = stepConfig;
+    }
+
+    public FlowInputs withStepConfig(Map<String, Object> stepConfig) {
+        setStepConfig(stepConfig);
+        return this;
     }
 }
