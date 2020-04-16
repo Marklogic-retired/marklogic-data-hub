@@ -38,6 +38,29 @@ const flows = [
     }
 ];
 
+const loadData = {
+  data: [
+    {
+      name: "load1",
+      description: "description for load1",
+      sourceFormat: "json",
+      targetFormat: "json"
+    },
+    {
+      name: "load2",
+      description: "description for load2",
+      sourceFormat: "json",
+      targetFormat: "xml",
+      lastUpdated: "2020-04-15T14:22:54.057519-07:00"
+    }
+  ],
+  deleteLoadDataArtifact: jest.fn(),
+  createLoadDataArtifact: jest.fn(),
+  canReadWrite: true,
+  canReadOnly: false,
+   
+};
+
 const mapProps = {
   sourceData: [
     { key: 'proteinId', val: '123EAC' },
@@ -142,6 +165,7 @@ const data = {
     canWrite: true
   },
   flows: flows,
+  loadData: loadData,
   mapProps: mapProps,
   newMap: newMap,
   editMap: editMap,
