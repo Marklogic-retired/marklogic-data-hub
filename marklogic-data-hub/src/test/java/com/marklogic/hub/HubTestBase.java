@@ -22,7 +22,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
-import com.marklogic.bootstrap.Installer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.DatabaseClientFactory.Authentication;
@@ -38,19 +37,10 @@ import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager;
 import com.marklogic.client.ext.util.DefaultDocumentPermissionsParser;
 import com.marklogic.client.ext.util.DocumentPermissionsParser;
-import com.marklogic.client.io.DOMHandle;
-import com.marklogic.client.io.DocumentMetadataHandle;
-import com.marklogic.client.io.FileHandle;
-import com.marklogic.client.io.Format;
-import com.marklogic.client.io.InputStreamHandle;
-import com.marklogic.client.io.JacksonHandle;
-import com.marklogic.client.io.StringHandle;
+import com.marklogic.client.io.*;
 import com.marklogic.client.io.marker.AbstractReadHandle;
-import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand;
 import com.marklogic.hub.deploy.commands.LoadHubArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
-import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
-import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.impl.DataHubImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
@@ -64,6 +54,7 @@ import com.marklogic.hub.legacy.flow.FlowType;
 import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.step.StepDefinition;
+import com.marklogic.hub.test.AbstractHubTest;
 import com.marklogic.hub.util.ComboListener;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
@@ -81,64 +72,35 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.X509TrustManager;
+import javax.net.ssl.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
+import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.marklogic.client.io.DocumentMetadataHandle.Capability.READ;
-import static com.marklogic.client.io.DocumentMetadataHandle.Capability.UPDATE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 @SuppressWarnings("deprecation")
 @Component
-public class HubTestBase implements InitializingBean {
+public class HubTestBase extends AbstractHubTest implements InitializingBean {
 
     public static final String PROJECT_PATH = "ye-olde-project";
     @Autowired
@@ -232,6 +194,16 @@ public class HubTestBase implements InitializingBean {
         } catch (Exception e) {
             throw new DataHubConfigurationException("Root ca not loaded", e);
         }
+    }
+
+    @Override
+    protected HubConfigImpl getHubConfig() {
+        return adminHubConfig;
+    }
+
+    @Override
+    protected File getTestProjectDirectory() {
+        return new File(PROJECT_PATH);
     }
 
     protected void sleep(long ms) {
@@ -362,12 +334,12 @@ public class HubTestBase implements InitializingBean {
         }
     }
 
-    protected DatabaseClient getClient(String host, int port, String dbName, String user,String password, Authentication authMethod) throws Exception {
+    protected DatabaseClient getClient(String host, int port, String dbName, String user,String password, Authentication authMethod) {
         if (isHostLoadBalancer) {
             if (isCertAuth()) {
                 return DatabaseClientFactory.newClient(
                     host, port, dbName,
-                    new DatabaseClientFactory.CertificateAuthContext((user == flowRunnerUser) ? flowOperatorcertContext : flowDevelopercertContext, SSLHostnameVerifier.ANY),
+                    new DatabaseClientFactory.CertificateAuthContext((flowRunnerUser.equals(user)) ? flowOperatorcertContext : flowDevelopercertContext, SSLHostnameVerifier.ANY),
                     DatabaseClient.ConnectionType.GATEWAY);
             } else if (isSslRun()) {
                 switch (authMethod) {
@@ -391,7 +363,7 @@ public class HubTestBase implements InitializingBean {
                 flowOperatorcertContext = createSSLContext(getResourceFile("ssl/client-flow-operator.p12"));*/
                 return DatabaseClientFactory.newClient(
                     host, port, dbName,
-                    new DatabaseClientFactory.CertificateAuthContext((user == flowRunnerUser) ? flowOperatorcertContext : flowDevelopercertContext, SSLHostnameVerifier.ANY));
+                    new DatabaseClientFactory.CertificateAuthContext((flowRunnerUser.equals(user) ? flowOperatorcertContext : flowDevelopercertContext), SSLHostnameVerifier.ANY));
             } else if (isSslRun()) {
                 switch (authMethod) {
                     case DIGEST: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.DigestAuthContext(user, password)
@@ -469,26 +441,25 @@ public class HubTestBase implements InitializingBean {
         return runAsUser(flowRunnerUser, flowRunnerPassword);
     }
 
+    @Override
     protected HubConfigImpl runAsDataHubDeveloper() {
         if (isVersionCompatibleWith520Roles()) {
-            return runAsUser("test-data-hub-developer", "password");
+            return super.runAsDataHubDeveloper();
         }
         logger.warn("ML version is not compatible with 5.2.0 roles, so will run as flow-developer instead of data-hub-developer");
         return getDataHubAdminConfig();
     }
 
+    @Override
     protected HubConfigImpl runAsDataHubOperator() {
         if (isVersionCompatibleWith520Roles()) {
-            return runAsUser("test-data-hub-operator", "password");
+            return super.runAsDataHubOperator();
         }
         logger.warn("ML version is not compatible with 5.2.0 roles, so will run as flow-operator instead of data-hub-operator");
         return runAsFlowOperator();
     }
 
-    protected HubConfigImpl runAsAdmin() {
-        return runAsUser("test-admin-for-data-hub-tests", "password");
-    }
-
+    @Override
     protected HubConfigImpl runAsUser(String mlUsername, String mlPassword) {
         adminHubConfig.setMlUsername(mlUsername);
         adminHubConfig.setMlPassword(mlPassword);
@@ -626,15 +597,9 @@ public class HubTestBase implements InitializingBean {
     }
 
     public void deleteProjectDir() {
-        File projectPath = new File(PROJECT_PATH);
-        if (projectPath.exists()) {
-            try {
-                FileUtils.forceDelete(projectPath);
-            } catch (IOException e) {
-                logger.warn("Unable to delete the project directory", e);
-            }
-        }
+        deleteTestProjectDirectory();
     }
+
     protected static File getResourceFile(String resourceName) {
         return new File(HubTestBase.class.getClassLoader().getResource(resourceName).getFile());
     }
@@ -768,26 +733,6 @@ public class HubTestBase implements InitializingBean {
         return ((JacksonHandle)res).get();
     }
 
-    protected String getStringQueryResults(String query, String database) {
-        AbstractReadHandle res = runInDatabase(query, database, new StringHandle());
-        return ((StringHandle)res).get();
-    }
-
-    protected int getTelemetryInstallCount(){
-        int count = 0;
-        EvalResultIterator resultItr = runInDatabase("xdmp:feature-metric-status()/*:feature-metrics/*:features/*:feature[@name=\"datahub.core.install.count\"]/data()", stagingClient.getDatabase());
-        if (resultItr == null || ! resultItr.hasNext()) {
-            return count;
-        }
-        EvalResult res = resultItr.next();
-        count = Math.toIntExact(Integer.parseInt(res.getString()));
-        return count;
-    }
-
-    protected void clearStagingFinalAndJobDatabases() {
-        clearDatabases(HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_JOB_NAME);
-    }
-
     /**
      * Excludes provenance documents, as they cannot be deleted by any of the users that run DHF tests.
      * Also excluding hub-core-artifact documents so that these do not need to be reloaded.
@@ -856,8 +801,6 @@ public class HubTestBase implements InitializingBean {
     protected void installModule(String path, String localPath) {
         InputStreamHandle handle = new InputStreamHandle(HubTestBase.class.getClassLoader().getResourceAsStream(localPath));
         String ext = FilenameUtils.getExtension(path);
-        DocumentMetadataHandle permissions = new DocumentMetadataHandle()
-            .withPermission(getDataHubAdminConfig().getFlowOperatorRoleName(), DocumentMetadataHandle.Capability.EXECUTE, UPDATE, READ);
         switch(ext) {
         case "xml":
             handle.setFormat(Format.XML);
@@ -942,44 +885,6 @@ public class HubTestBase implements InitializingBean {
         }
     }
 
-    protected void uninstallModule(String path) {
-        ServerEvaluationCall eval = stagingClient.newServerEval();
-        String installer =
-            "xdmp:invoke-function(function() {" +
-            "  xdmp:document-delete(\"" + path + "\")" +
-            "}," +
-            "<options xmlns=\"xdmp:eval\">" +
-            "  <database>{xdmp:modules-database()}</database>" +
-            "  <transaction-mode>update-auto-commit</transaction-mode>" +
-            "</options>)";
-
-        eval.xquery(installer).eval();
-        clearFlowCache();
-    }
-
-    protected String genModel(String modelName) {
-        return "{\n" +
-            "  \"info\": {\n" +
-            "    \"title\": \"" + modelName + "\",\n" +
-            "    \"version\": \"0.0.1\",\n" +
-            "    \"baseUri\": \"\",\n" +
-            "    \"description\":\"\"\n" +
-            "  },\n" +
-            "  \"definitions\": {\n" +
-            "    \"" + modelName + "\": {\n" +
-            "      \"properties\": {\n" +
-            "        \"id\": {\n" +
-            "          \"datatype\": \"iri\",\n" +
-            "          \"description\":\"A unique identifier.\"\n" +
-            "        }\n" +
-            "      },\n" +
-            "      \"primaryKey\": \"id\",\n" +
-            "      \"required\": []\n" +
-            "    }\n" +
-            "  }\n" +
-            "}";
-    }
-
     protected void allCombos(ComboListener listener) {
         CodeFormat[] codeFormats = new CodeFormat[] { CodeFormat.JAVASCRIPT, CodeFormat.XQUERY };
         DataFormat[] dataFormats = new DataFormat[] { DataFormat.JSON, DataFormat.XML };
@@ -1027,41 +932,6 @@ public class HubTestBase implements InitializingBean {
         deployer.deploy(adminHubConfig.getAppConfig());
     }
 
-
-    /**
-     * Use this anytime a test needs to wait for things that run on the ML task server - generally, post-commit triggers
-     * - to finish, without resorting to arbitrary Thread.sleep calls that don't always work and often require more
-     * waiting than necessary.
-     */
-    protected void waitForTasksToFinish() {
-        String query = "xquery version '1.0-ml';" +
-            "\n declare namespace ss = 'http://marklogic.com/xdmp/status/server';" +
-            "\n declare namespace hs = 'http://marklogic.com/xdmp/status/host';" +
-            "\n let $task-server-id as xs:unsignedLong := xdmp:host-status(xdmp:host())//hs:task-server-id" +
-            "\n return fn:count(xdmp:server-status(xdmp:host(), $task-server-id)/ss:request-statuses/*)";
-
-        final int maxTries = 100;
-        final long sleepPeriod = 200;
-
-        int taskCount = Integer.parseInt(getServerEval(HubConfig.DEFAULT_STAGING_NAME).xquery(query).evalAs(String.class));
-        int tries = 0;
-        logger.debug("Waiting for task server tasks to finish, count: " + taskCount);
-        while (taskCount > 0 && tries < maxTries) {
-            tries++;
-            try {
-                Thread.sleep(sleepPeriod);
-            } catch (Exception ex) {
-                // ignore
-            }
-            taskCount = Integer.parseInt(getServerEval(HubConfig.DEFAULT_STAGING_NAME).xquery(query).evalAs(String.class));
-            logger.debug("Waiting for task server tasks to finish, count: " + taskCount);
-        }
-    }
-
-    protected void installUserModulesAndArtifacts() {
-        installUserModules(adminHubConfig, true);
-    }
-
     /**
      * This loads user artifacts as well, despite the name.
      *
@@ -1069,33 +939,7 @@ public class HubTestBase implements InitializingBean {
      * @param force
      */
     protected void installUserModules(HubConfig hubConfig, boolean force) {
-        logger.debug("Installing user modules into MarkLogic");
-        List<Command> commands = new ArrayList<>();
-
-        LoadUserModulesCommand loadUserModulesCommand = new LoadUserModulesCommand(adminHubConfig);
-        loadUserModulesCommand.setForceLoad(force);
-        // Avoids loading from ml-modules-final; TODO See if any test needs them
-        loadUserModulesCommand.setWatchingModules(true);
-        commands.add(loadUserModulesCommand);
-
-        commands.add(new GenerateFunctionMetadataCommand(adminHubConfig));
-
-        LoadUserArtifactsCommand loadUserArtifactsCommand = new LoadUserArtifactsCommand(adminHubConfig);
-        loadUserArtifactsCommand.setForceLoad(force);
-        commands.add(loadUserArtifactsCommand);
-
-        SimpleAppDeployer deployer = new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager());
-        deployer.setCommands(commands);
-        deployer.deploy(hubConfig.getAppConfig());
-
-        waitForTasksToFinish();
-    }
-
-    protected void installUserArtifacts() {
-        LoadUserArtifactsCommand command = new LoadUserArtifactsCommand(adminHubConfig);
-        command.setForceLoad(true);
-        new SimpleAppDeployer(adminHubConfig.getManageClient(), adminHubConfig.getAdminManager(), command).deploy(adminHubConfig.getAppConfig());
-        waitForTasksToFinish();
+        installUserModulesAndArtifacts(hubConfig, force);
     }
 
     protected void installHubArtifacts(HubConfig hubConfig, boolean force) {
@@ -1193,22 +1037,6 @@ public class HubTestBase implements InitializingBean {
         }
     }
 
-    protected void debugOutput(Document xmldoc) {
-        debugOutput(xmldoc, System.out);
-    }
-
-    protected void debugOutput(Document xmldoc, OutputStream os) {
-        try {
-            TransformerFactory tf = TransformerFactory.newInstance();
-            Transformer transformer = tf.newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-            transformer.transform(new DOMSource(xmldoc), new StreamResult(os));
-        } catch (TransformerException e) {
-            throw new DataHubConfigurationException(e);
-        }
-    }
-
     protected void writeProp(String key, String value) {
         try {
             File gradleProperties = new File(PROJECT_PATH, "gradle.properties");
@@ -1286,20 +1114,8 @@ public class HubTestBase implements InitializingBean {
 
         }
     }
-
-    /**
-     * Resets the project by clearing the 3 databases and then installing the OOTB artifacts (flows and step definitions)
-     * into the DHF instance.
-     */
-    protected void resetProject() {
-        new Installer().deleteProjectDir();
-        basicSetup();
-        getDataHubAdminConfig();
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
-    }
-
     protected void setupProjectForRunningTestFlow() {
-        resetProject();
+        resetHubProject();
         copyFlowArtifactsToProject();
         installUserModules(getDataHubAdminConfig(), true);
     }
@@ -1425,56 +1241,5 @@ public class HubTestBase implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         init();
-    }
-
-    /**
-     * Load the files associated with the entity reference model.
-     */
-    protected ReferenceModelProject loadReferenceModelProject() {
-        loadProjectFiles("entity-reference-model");
-        return new ReferenceModelProject(adminHubConfig);
-    }
-
-    /**
-     * Intended to make it easy to specify a set of project files to load for a particular test. You likely will want to
-     * call "resetProject" before calling this.
-     *
-     * @param folderInClasspath
-     */
-    protected void loadProjectFiles(String folderInClasspath) {
-        boolean loadModules = false;
-
-        try {
-            File testProjectDir = new ClassPathResource(folderInClasspath).getFile();
-            File entitiesDir = new File(testProjectDir, "entities");
-            if (entitiesDir.exists()) {
-                FileUtils.copyDirectory(entitiesDir, adminHubConfig.getHubEntitiesDir().toFile());
-            }
-
-            File flowsDir = new File(testProjectDir, "flows");
-            if (flowsDir.exists()) {
-                FileUtils.copyDirectory(flowsDir, adminHubConfig.getFlowsDir().toFile());
-            }
-
-            File stepDefinitionsDir = new File(testProjectDir, "step-definitions");
-            if (stepDefinitionsDir.exists()) {
-                FileUtils.copyDirectory(stepDefinitionsDir, adminHubConfig.getStepDefinitionsDir().toFile());
-            }
-
-            File modulesDir = new File(testProjectDir, "modules");
-            if (modulesDir.exists()) {
-                FileUtils.copyDirectory(modulesDir, adminHubConfig.getModulesDir().toFile());
-                loadModules = true;
-            }
-
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to load project files: " + e.getMessage(), e);
-        }
-
-        if (loadModules) {
-            installUserModulesAndArtifacts();
-        } else {
-            installUserArtifacts();
-        }
     }
 }

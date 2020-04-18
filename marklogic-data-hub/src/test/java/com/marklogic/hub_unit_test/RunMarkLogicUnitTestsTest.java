@@ -48,9 +48,10 @@ public class RunMarkLogicUnitTestsTest extends HubTestBase {
     @BeforeEach
     public void setup() {
         if (!loadedHubArtifacts) {
-            clearStagingFinalAndJobDatabases();
+            resetDatabases();
             new SimpleAppDeployer(new LoadHubArtifactsCommand(adminHubConfig)).deploy(adminHubConfig.getAppConfig());
             loadedHubArtifacts = true;
+            runAsDataHubDeveloper();
         }
     }
 

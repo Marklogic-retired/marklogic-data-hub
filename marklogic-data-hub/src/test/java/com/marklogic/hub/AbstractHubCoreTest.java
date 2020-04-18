@@ -11,10 +11,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ApplicationConfig.class)
-public abstract class AbstractHubTest extends HubTestBase {
+public abstract class AbstractHubCoreTest extends HubTestBase {
 
     @BeforeEach
     void beforeEachHubTest() {
-        resetProject();
+        resetHubProject();
     }
 }

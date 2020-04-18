@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
-import com.marklogic.hub.AbstractHubTest;
-import com.marklogic.hub.ReferenceModelProject;
+import com.marklogic.hub.AbstractHubCoreTest;
+import com.marklogic.hub.test.ReferenceModelProject;
 import com.marklogic.hub.job.JobStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class RunStepWithProcessorsTest extends AbstractHubTest {
+public class RunStepWithProcessorsTest extends AbstractHubCoreTest {
 
     private final static String CUSTOMER1_URI = "/echo/customer1.json";
     private final static String CUSTOMER2_URI = "/echo/customer2.json";

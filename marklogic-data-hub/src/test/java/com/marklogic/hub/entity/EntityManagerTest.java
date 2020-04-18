@@ -25,10 +25,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.xml.sax.SAXException;
 
 import java.io.File;
@@ -40,7 +37,7 @@ import java.util.HashMap;
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class EntityManagerTest extends AbstractHubTest {
+public class EntityManagerTest extends AbstractHubCoreTest {
 
     @Autowired
     EntityManager entityManager;
