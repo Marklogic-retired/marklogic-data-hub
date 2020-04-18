@@ -19,11 +19,13 @@ import com.marklogic.appdeployer.command.AbstractCommand;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.SortOrderConstants;
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.document.DocumentWriteOperation;
 import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
 import com.marklogic.client.ext.util.DefaultDocumentPermissionsParser;
 import com.marklogic.client.ext.util.DocumentPermissionsParser;
+import com.marklogic.client.impl.DocumentWriteOperationImpl;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.HubConfig;
@@ -37,7 +39,7 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
+import java.util.*;
 
 /**
  * Loads hub artifacts (ootb flows and step defs). This will be deployed after triggers
@@ -49,12 +51,6 @@ public class LoadHubArtifactsCommand extends AbstractCommand {
     private HubConfig hubConfig;
 
     private DocumentPermissionsParser documentPermissionsParser = new DefaultDocumentPermissionsParser();
-
-    public void setForceLoad(boolean forceLoad) {
-        this.forceLoad = forceLoad;
-    }
-
-    private boolean forceLoad = false;
 
     public LoadHubArtifactsCommand() {
         super();
@@ -73,86 +69,51 @@ public class LoadHubArtifactsCommand extends AbstractCommand {
         this.hubConfig = hubConfig;
     }
 
-    public LoadHubArtifactsCommand(HubConfig hubConfig, boolean forceLoad) {
-        this(hubConfig);
-        this.hubConfig = hubConfig;
-        this.forceLoad = forceLoad;
-    }
-
-    private PropertiesModuleManager getModulesManager() {
-        String timestampFile = hubConfig.getHubProject().getHubModulesDeployTimestampFile();
-        PropertiesModuleManager pmm = new PropertiesModuleManager(timestampFile);
-
-        if (forceLoad) {
-            pmm.deletePropertiesFile();
-        }
-        return pmm;
-    }
-
     @Override
     public void execute(CommandContext context) {
-        DatabaseClient stagingClient = hubConfig.newStagingClient();
-        DatabaseClient finalClient = hubConfig.newFinalClient();
+        JSONDocumentManager finalDocMgr = hubConfig.newFinalClient().newJSONDocumentManager();
+        JSONDocumentManager stagingDocMgr = hubConfig.newStagingClient().newJSONDocumentManager();
 
-        JSONDocumentManager finalDocMgr = finalClient.newJSONDocumentManager();
-        JSONDocumentManager stagingDocMgr = stagingClient.newJSONDocumentManager();
-
-        DocumentWriteSet finalStepDocumentWriteSet = finalDocMgr.newWriteSet();
-        DocumentWriteSet stagingStepDocumentWriteSet = stagingDocMgr.newWriteSet();
-        DocumentWriteSet finalFlowDocumentWriteSet = finalDocMgr.newWriteSet();
-        DocumentWriteSet stagingFlowDocumentWriteSet = stagingDocMgr.newWriteSet();
-
-
-        PropertiesModuleManager propertiesModuleManager = getModulesManager();
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(getClass().getClassLoader());
-        Resource[] resources = null;
+
+        Map<String, DocumentWriteOperation> writeOps = new HashMap<>();
 
         try {
-
-            // lets do flows
-            resources = resolver.getResources("classpath*:/hub-internal-artifacts/flows/**/*.flow.json");
-            for (Resource r : resources) {
-                File flowFile = new File("hub-internal-artifacts/flows/" + r.getFilename());
+            for (Resource r : resolver.getResources("classpath*:/hub-internal-artifacts/flows/**/*.flow.json")) {
+                File file = new File("hub-internal-artifacts/flows/" + r.getFilename());
                 InputStream inputStream = r.getInputStream();
                 StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
                 inputStream.close();
                 DocumentMetadataHandle meta = buildMetadata(hubConfig.getFlowPermissions(), "http://marklogic.com/data-hub/flow");
-
-                if (forceLoad || propertiesModuleManager.hasFileBeenModifiedSinceLastLoaded(flowFile)) {
-                    stagingFlowDocumentWriteSet.add("/flows/" + flowFile.getName(), meta, handle);
-                    finalFlowDocumentWriteSet.add("/flows/" + flowFile.getName(), meta, handle);
-                    propertiesModuleManager.saveLastLoadedTimestamp(flowFile, new Date());
-                }
+                String uri = "/flows/" + file.getName();
+                writeOps.put(uri, new DocumentWriteOperationImpl(DocumentWriteOperation.OperationType.DOCUMENT_WRITE, uri, meta, handle));
             }
 
-
-            // lets do step-definitions
-            resources = resolver.getResources("classpath*:/hub-internal-artifacts/step-definitions/**/*.step.json");
-            for (Resource r : resources) {
-                File flowFile = new File("hub-internal-artifacts/step-definitions/" + r.getURL().getPath().substring(r.getURL().getPath().indexOf("hub-internal-artifacts/step-definitions/")));
+            for (Resource r : resolver.getResources("classpath*:/hub-internal-artifacts/step-definitions/**/*.step.json")) {
+                File file = new File("hub-internal-artifacts/step-definitions/" + r.getURL().getPath().substring(r.getURL().getPath().indexOf("hub-internal-artifacts/step-definitions/")));
                 InputStream inputStream = r.getInputStream();
                 StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
                 inputStream.close();
                 DocumentMetadataHandle meta = buildMetadata(hubConfig.getStepDefinitionPermissions(), "http://marklogic.com/data-hub/step-definition");
-
-                if (forceLoad || propertiesModuleManager.hasFileBeenModifiedSinceLastLoaded(flowFile)) {
-                    stagingStepDocumentWriteSet.add("/step-definitions/" + flowFile.getParentFile().getParentFile().getName() + "/" + flowFile.getParentFile().getName() + "/" + flowFile.getName(), meta, handle);
-                    finalStepDocumentWriteSet.add("/step-definitions/" + flowFile.getParentFile().getParentFile().getName() + "/" + flowFile.getParentFile().getName() + "/" + flowFile.getName(), meta, handle);
-                    propertiesModuleManager.saveLastLoadedTimestamp(flowFile, new Date());
-                }
+                String uri = "/step-definitions/" + file.getParentFile().getParentFile().getName() + "/" + file.getParentFile().getName() + "/" + file.getName();
+                writeOps.put(uri, new DocumentWriteOperationImpl(DocumentWriteOperation.OperationType.DOCUMENT_WRITE, uri, meta, handle));
             }
+
+            // A Map is used to collect the DocumentWriteOperations to ensure if multiple copies of the same artifact
+            // are found on the classpath - which seems to happen in some scenarios when running tests - then only
+            // one copy is loaded, thus avoiding conflicting update errors.
+            DocumentWriteSet stagingWriteSet = stagingDocMgr.newWriteSet();
+            DocumentWriteSet finalWriteSet = finalDocMgr.newWriteSet();
+            for (String uri : writeOps.keySet()) {
+                DocumentWriteOperation op = writeOps.get(uri);
+                stagingWriteSet.add(op);
+                finalWriteSet.add(op);
+            }
+            stagingDocMgr.write(stagingWriteSet);
+            finalDocMgr.write(finalWriteSet);
         }
         catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        if (stagingStepDocumentWriteSet.size() > 0) {
-            stagingDocMgr.write(stagingStepDocumentWriteSet);
-            finalDocMgr.write(stagingStepDocumentWriteSet);
-        }
-        if (stagingFlowDocumentWriteSet.size() > 0) {
-            stagingDocMgr.write(stagingFlowDocumentWriteSet);
-            finalDocMgr.write(stagingFlowDocumentWriteSet);
+            throw new RuntimeException("Unable to access hub artifacts: " + e.getMessage(), e);
         }
 
     }

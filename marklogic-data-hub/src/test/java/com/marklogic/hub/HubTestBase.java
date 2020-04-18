@@ -943,12 +943,8 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
     }
 
     protected void installHubArtifacts(HubConfig hubConfig, boolean force) {
-        logger.debug("Installing hub artifacts into MarkLogic");
         List<Command> commands = new ArrayList<>();
-
-        LoadHubArtifactsCommand command = new LoadHubArtifactsCommand(adminHubConfig);
-        command.setForceLoad(force);
-        commands.add(command);
+        commands.add(new LoadHubArtifactsCommand(adminHubConfig));
 
         SimpleAppDeployer deployer = new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager());
         deployer.setCommands(commands);

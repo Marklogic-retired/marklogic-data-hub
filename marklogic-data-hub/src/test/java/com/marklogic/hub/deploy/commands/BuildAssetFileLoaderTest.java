@@ -20,7 +20,7 @@ public class BuildAssetFileLoaderTest {
 
         TestAssetFileLoader loader = new TestAssetFileLoader(null);
         command.prepareAssetFileLoader(loader, context);
-        assertNull(loader.batchSize, "The batch size should still be null because it is null on the AppConfig object");
+        assertEquals(50, loader.batchSize, "50 is the default size for this command");
 
         appConfig.setModulesLoaderBatchSize(10);
         command.prepareAssetFileLoader(loader, context);
