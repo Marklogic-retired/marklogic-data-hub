@@ -84,6 +84,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.util.StringUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -1037,8 +1038,9 @@ public class HubTestBase implements InitializingBean {
         String query = "xquery version '1.0-ml';" +
             "\n declare namespace ss = 'http://marklogic.com/xdmp/status/server';" +
             "\n declare namespace hs = 'http://marklogic.com/xdmp/status/host';" +
-            "\n let $task-server-id as xs:unsignedLong := xdmp:host-status(xdmp:host())//hs:task-server-id" +
-            "\n return fn:count(xdmp:server-status(xdmp:host(), $task-server-id)/ss:request-statuses/*)";
+            "\n for $host in xdmp:hosts()" +
+            "\n let $task-server-id := xdmp:host-status($host)//hs:task-server-id" +
+            "\n where $task-server-id return fn:count(xdmp:server-status($host, $task-server-id)/ss:request-statuses/*)";
 
         final int maxTries = 100;
         final long sleepPeriod = 200;
@@ -1055,6 +1057,12 @@ public class HubTestBase implements InitializingBean {
             }
             taskCount = Integer.parseInt(getServerEval(HubConfig.DEFAULT_STAGING_NAME).xquery(query).evalAs(String.class));
             logger.debug("Waiting for task server tasks to finish, count: " + taskCount);
+        }
+
+        // Hack for cluster tests - if there's more than one host, wait a couple more seconds. Sigh.
+        String secondHost = getServerEval(HubConfig.DEFAULT_STAGING_NAME).xquery("xdmp:hosts()[2]").evalAs(String.class);
+        if (StringUtils.hasText(secondHost)) {
+            sleep(2000);
         }
     }
 
