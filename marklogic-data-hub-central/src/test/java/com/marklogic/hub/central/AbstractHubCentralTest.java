@@ -1,18 +1,12 @@
 package com.marklogic.hub.central;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.FileHandle;
 import com.marklogic.hub.central.models.HubConfigSession;
-import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
-import org.apache.commons.io.FileUtils;
+import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.test.AbstractHubTest;
 import org.junit.jupiter.api.BeforeEach;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
@@ -45,56 +39,39 @@ import java.io.IOException;
  */
 @TestPropertySource("classpath:application-test.properties")
 @SpringBootTest(classes = {Application.class})
-public abstract class AbstractHubCentralTest {
-
-    final protected Logger logger = LoggerFactory.getLogger(getClass());
+public abstract class AbstractHubCentralTest extends AbstractHubTest {
 
     @Autowired
     protected HubConfigSession hubConfig;
 
     protected TestConstants testConstants;
 
-    // Declaring this as many tests need one of these
-    protected ObjectMapper objectMapper = new ObjectMapper();
-
     @Autowired
     HubCentral hubCentral;
 
     @BeforeEach
-    void beforeEachTest() throws IOException {
+    void beforeEachTest() {
         long start = System.currentTimeMillis();
-
-        FileUtils.deleteDirectory(new File(hubCentral.getProjectDirectory()));
-
-        // Admin is needed to clear out provenance data
-        runAsAdmin();
-        resetDatabases();
-
+        resetHubProject();
         // By default, a test should run as a data-hub-developer
         runAsDataHubDeveloper();
-        logger.info("Initializing test project in directory: " + hubCentral.getProjectDirectory());
-        hubConfig.initHubProject();
-
         logger.info("Initialized test, time: " + (System.currentTimeMillis() - start));
     }
 
-    protected void resetDatabases() {
-        String xquery = "cts:uris((), (), cts:not-query(cts:collection-query('hub-core-artifact'))) ! xdmp:document-delete(.)";
-        hubConfig.newStagingClient().newServerEval().xquery(xquery).evalAs(String.class);
-        hubConfig.newFinalClient().newServerEval().xquery(xquery).evalAs(String.class);
-        hubConfig.newJobDbClient().newServerEval().xquery(xquery).evalAs(String.class);
+    @Override
+    protected HubConfigImpl getHubConfig() {
+        return hubConfig.getHubConfigImpl();
     }
 
-    protected void runAsDataHubDeveloper() {
-        hubConfig.initialize(hubCentral.newHubConfig(testConstants.DEVELOPER_USERNAME, testConstants.DEVELOPER_PASSWORD));
+    @Override
+    protected File getTestProjectDirectory() {
+        return new File(hubCentral.getProjectDirectory());
     }
 
-    protected void runAsEnvironmentManager() {
-        hubConfig.initialize(hubCentral.newHubConfig(testConstants.ENVIRONMENT_MANAGER_USERNAME, testConstants.ENVIRONMENT_MANAGER_PASSWORD));
-    }
-
-    protected void runAsAdmin() {
-        hubConfig.initialize(hubCentral.newHubConfig(testConstants.ADMIN_USERNAME, testConstants.ADMIN_PASSWORD));
+    @Override
+    protected HubConfigImpl runAsUser(String username, String password) {
+        hubConfig.initialize(hubCentral.newHubConfig(username, password));
+        return null;
     }
 
     protected void addStagingDoc(String resource, String uri, String... collections) {
@@ -113,63 +90,7 @@ public abstract class AbstractHubCentralTest {
         }
     }
 
-    protected ObjectNode readJsonObject(String json) {
-        try {
-            return (ObjectNode) objectMapper.readTree(json);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    protected ArrayNode readJsonArray(String json) {
-        try {
-            return (ArrayNode) objectMapper.readTree(json);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     protected ObjectNode newLoadDataConfig() {
         return readJsonObject("{ \"name\": \"validArtifact\", \"sourceFormat\": \"xml\", \"targetFormat\": \"json\"}");
-    }
-
-    /**
-     * Note that this does not yet wait for the post-commit trigger for entity models to complete. If you have a test
-     * that depends on that, copy the "waitForTasksToFinish" method from DH core.
-     */
-    protected void installReferenceProject() {
-        installProject("reference-project");
-    }
-
-    /**
-     * Install the project files in the given project folder, which is expected to be under
-     * src/test/resources/test-projects. This is the preferred mechanism for loading DH artifacts for tests. Feel free
-     * to add anything else you need to do this method.
-     *
-     * @param projectFolderName
-     */
-    protected void installProject(String projectFolderName) {
-        try {
-            File testProjectDir = new ClassPathResource("test-projects/" + projectFolderName).getFile();
-
-            File entitiesDir = new File(testProjectDir, "entities");
-            if (entitiesDir.exists()) {
-                FileUtils.copyDirectory(entitiesDir, hubConfig.getHubEntitiesDir().toFile());
-            }
-
-            File flowsDir = new File(testProjectDir, "flows");
-            if (flowsDir.exists()) {
-                FileUtils.copyDirectory(flowsDir, hubConfig.getFlowsDir().toFile());
-            }
-
-            File stepDefinitionsDir = new File(testProjectDir, "step-definitions");
-            if (stepDefinitionsDir.exists()) {
-                FileUtils.copyDirectory(stepDefinitionsDir, hubConfig.getStepDefinitionsDir().toFile());
-            }
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-
-        new LoadUserArtifactsCommand(hubConfig).execute(new CommandContext(hubConfig.getAppConfig(), null, null));
     }
 }

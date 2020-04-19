@@ -79,7 +79,7 @@ public class EnvironmentControllerTest extends AbstractHubCentralTest {
 
     @Test
     public void testManageAdminAndSecurityAuthoritiesForArtifacts() {
-        runAsEnvironmentManager();
+        runAsUser(testConstants.ENVIRONMENT_MANAGER_USERNAME, testConstants.ENVIRONMENT_MANAGER_PASSWORD);
         List<ArtifactTypeInfo> listTypeInfo = new ArtifactManagerImpl(hubConfig).getArtifactTypeInfoList();
         for (ArtifactTypeInfo typeInfo : listTypeInfo) {
             assertTrue(typeInfo.getUserCanUpdate());

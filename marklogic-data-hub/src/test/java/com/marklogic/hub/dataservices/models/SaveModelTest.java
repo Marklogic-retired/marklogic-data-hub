@@ -1,7 +1,7 @@
 package com.marklogic.hub.dataservices.models;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.marklogic.hub.AbstractHubTest;
+import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.dataservices.ModelsService;
 import com.marklogic.hub.impl.ModelManagerImpl;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
@@ -11,13 +11,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class SaveModelTest extends AbstractHubTest {
+public class SaveModelTest extends AbstractHubCoreTest {
 
     private ModelsService service;
 
     @BeforeEach
     void beforeEach() {
-        resetProject();
         service = new ModelManagerImpl(adminHubConfig);
     }
 

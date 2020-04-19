@@ -48,7 +48,7 @@ public class MatchingControllerTest extends AbstractHubCentralTest {
 
     @Test
     void testMatchingConfigs() throws IOException {
-        installReferenceProject();
+        loadReferenceModelProject();
 
         controller.updateArtifact("TestCustomerMatching", objectMapper.readTree(MATCHING_CONFIG_1));
         controller.updateArtifact("TestOrderMatching1", objectMapper.readTree(MATCHING_CONFIG_2));

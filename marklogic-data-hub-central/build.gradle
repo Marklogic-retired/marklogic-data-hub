@@ -70,6 +70,8 @@ dependencies {
     // Enables Spring Boot actuator - https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#production-ready
     runtime "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}"
 
+    testImplementation(testFixtures(project(":marklogic-data-hub")))
+
     testCompile "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
     testImplementation "org.springframework.security:spring-security-test:${springSecurityVersion}"
 

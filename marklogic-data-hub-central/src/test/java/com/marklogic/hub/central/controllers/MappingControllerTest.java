@@ -113,7 +113,7 @@ public class MappingControllerTest extends AbstractHubCentralTest {
 
     @Test
     void testMappingConfigs() throws IOException {
-        installReferenceProject();
+        loadReferenceModelProject();
 
         controller.updateArtifact("TestCustomerMapping", objectMapper.readTree(MAPPING_CONFIG_1));
         controller.updateArtifact("TestOrderMapping1", objectMapper.readTree(MAPPING_CONFIG_2));

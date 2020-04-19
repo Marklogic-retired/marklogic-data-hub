@@ -170,7 +170,7 @@ class FlowControllerTest extends AbstractHubCentralTest {
 
     @Test
     void runFlow() {
-        installProject("run-flow-test");
+        loadProjectFiles("test-projects/run-flow-test");
 
         RunFlowResponse resp = controller.runFlow("testFlow", Collections.singletonList("testStep-custom"));
 

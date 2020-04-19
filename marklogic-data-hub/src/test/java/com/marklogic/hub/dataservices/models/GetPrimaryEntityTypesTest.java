@@ -1,15 +1,15 @@
 package com.marklogic.hub.dataservices.models;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.marklogic.hub.AbstractHubTest;
-import com.marklogic.hub.ReferenceModelProject;
+import com.marklogic.hub.AbstractHubCoreTest;
+import com.marklogic.hub.test.ReferenceModelProject;
 import com.marklogic.hub.dataservices.ModelsService;
 import com.marklogic.hub.flow.FlowInputs;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class GetPrimaryEntityTypesTest extends AbstractHubTest {
+public class GetPrimaryEntityTypesTest extends AbstractHubCoreTest {
 
     @Test
     void referenceModelWithOneCustomerLoaded() {

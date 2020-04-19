@@ -23,10 +23,6 @@ class DeployHubArtifactsTask extends HubTask {
 
     @TaskAction
     void deployHubArtifacts() {
-        def cmd = getLoadHubArtifactsCommand()
-        cmd.setForceLoad(true)
-
-        cmd.execute(getCommandContext())
-
+        getLoadHubArtifactsCommand().execute(getCommandContext())
     }
 }

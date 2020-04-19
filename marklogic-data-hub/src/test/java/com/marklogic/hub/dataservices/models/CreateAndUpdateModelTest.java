@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
-import com.marklogic.hub.AbstractHubTest;
+import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.dataservices.ModelsService;
 import com.marklogic.hub.impl.ModelManagerImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +17,7 @@ import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CreateAndUpdateModelTest extends AbstractHubTest {
+public class CreateAndUpdateModelTest extends AbstractHubCoreTest {
 
     private final static String MODEL_NAME = "CreateModelTestEntity";
     private final static String EXPECTED_URI = "/entities/" + MODEL_NAME + ".entity.json";
