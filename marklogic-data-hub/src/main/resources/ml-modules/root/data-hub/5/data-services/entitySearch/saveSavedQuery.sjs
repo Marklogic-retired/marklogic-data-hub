@@ -1,24 +1,42 @@
+/*
+  Copyright 2012-2019 MarkLogic Corporation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*/
 'use strict';
+
 declareUpdate();
+
+const ds = require("/data-hub/5/data-services/ds-utils.sjs");
 
 var saveQuery;
 var userCollections = ["http://marklogic.com/data-hub/saved-query"];
 var queryDocument = JSON.parse(saveQuery);
 
 if (queryDocument == null || queryDocument.savedQuery == null) {
-    throw Error("The request is empty or malformed");
+    ds.throwBadRequest("The request is empty or malformed");
 }
 
 if (queryDocument.savedQuery.name == null || !queryDocument.savedQuery.name) {
-    throw Error("Query name is missing");
+    ds.throwBadRequest("Query name is missing");
 }
 
 if (queryDocument.savedQuery.query == null || Object.keys(queryDocument.savedQuery.query) == 0) {
-    throw Error("Query to be saved cannot be empty");
+    ds.throwBadRequest("Query to be saved cannot be empty");
 }
 
 if (queryDocument.savedQuery.propertiesToDisplay == null || queryDocument.savedQuery.propertiesToDisplay.length == 0) {
-    throw Error("Entity type properties to be displayed cannot be empty");
+    ds.throwBadRequest("Entity type properties to be displayed cannot be empty");
 }
 
 let id = queryDocument.savedQuery.id;

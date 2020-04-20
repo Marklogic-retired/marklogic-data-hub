@@ -15,13 +15,14 @@
 */
 'use strict';
 
+const ds = require("/data-hub/5/data-services/ds-utils.sjs");
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 
 var model = fn.head(xdmp.fromJSON(model));
 
 const name = model.info.title;
 if (name == null) {
-  new Error("The model must have an info object with a title property");
+  ds.throwBadRequest("The model must have an info object with a title property");
 }
 
 entityLib.writeModel(name, model);
