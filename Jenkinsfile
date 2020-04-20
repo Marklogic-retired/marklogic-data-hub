@@ -21,7 +21,7 @@ def dhflinuxTests(String mlVersion,String type){
     		props = readProperties file:'data-hub/pipeline.properties';
     		copyRPM type,mlVersion
     		def dockerhost=setupMLDockerCluster 3
-    		sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test;sleep 10s;./gradlew ml-data-hub:test;sleep 10s;./gradlew web:test;sleep 10s;./gradlew marklogic-data-hub-central:test |& tee console.log;sleep 10s; ./gradlew marklogic-data-hub:testBootstrap;sleep 10s;./gradlew ml-data-hub:testFullCycle;sleep 10s;./gradlew marklogic-data-hub-central:testFullCycle;"'
+    		sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test -i --stacktrace;sleep 10s;./gradlew marklogic-data-hub-central:test -i --stacktrace |& tee console.log;sleep 10s;./gradlew ml-data-hub:test -i --stacktrace;sleep 10s;./gradlew web:test -i --stacktrace;sleep 10s; ./gradlew marklogic-data-hub:testBootstrap -i --stacktrace;sleep 10s;./gradlew ml-data-hub:testFullCycle -i --stacktrace;sleep 10s;./gradlew marklogic-data-hub-central:testFullCycle -i --stacktrace;"'
     		junit '**/TEST-*.xml'
             def output=readFile 'data-hub/console.log'
 		    def result=false;
@@ -37,14 +37,14 @@ def dhfCypressE2ETests(String mlVersion, String type){
     script{
         copyRPM type,mlVersion
         setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
-        copyArtifacts filter: '**/*one*.war', fingerprintArtifacts: true, flatten: true, projectName: '${JOB_NAME}', selector: specific('${BUILD_NUMBER}')
+        copyArtifacts filter: '**/*central*.war', fingerprintArtifacts: true, flatten: true, projectName: '${JOB_NAME}', selector: specific('${BUILD_NUMBER}')
         sh(script:'''#!/bin/bash
                     export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;
                     export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;
                     export M2_HOME=$MAVEN_HOME/bin;
                     export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;
                     cd $WORKSPACE;
-                    WAR_NAME=$(basename *one*.war )
+                    WAR_NAME=$(basename *central*.war )
                     cd $WORKSPACE/data-hub;
                     rm -rf $GRADLE_USER_HOME/caches;
                     ./gradlew clean;
@@ -112,6 +112,7 @@ def dhfWinTests(String mlVersion, String type){
         setupMLWinCluster bldPath,pkgLoc
         bat 'cd data-hub & gradlew.bat clean'
         bat 'cd data-hub & gradlew.bat marklogic-data-hub:test  || exit /b 0'
+        bat 'cd data-hub & gradlew.bat marklogic-data-hub-central:test  || exit /b 0'
         bat 'cd data-hub & gradlew.bat ml-data-hub:test  || exit /b 0'
         bat 'cd data-hub & gradlew.bat web:test || exit /b 0'
         bat 'cd data-hub & gradlew.bat marklogic-data-hub-central:test || exit /b 0'
@@ -180,7 +181,7 @@ pipeline{
 				}
 				}
 				println(BRANCH_NAME)
-				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean --stacktrace;./gradlew build -x test;'
+				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;./gradlew build -x test -i --stacktrace;'
 				archiveArtifacts artifacts: 'data-hub/marklogic-data-hub/build/libs/* , data-hub/ml-data-hub-plugin/build/libs/* , data-hub/web/build/libs/* , data-hub/marklogic-data-hub-central/build/libs/*', onlyIfSuccessful: true			}
 				post{
                    failure {
@@ -205,7 +206,7 @@ pipeline{
 			 props = readProperties file:'data-hub/pipeline.properties';
 				 copyRPM 'Release','10.0-4'
 				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
-				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;set +e;./gradlew clean;./gradlew marklogic-data-hub:testAcceptance;sleep 10s;./gradlew ml-data-hub:test;./gradlew web:test;./gradlew marklogic-data-hub-central:test |& tee console.log;'
+				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;set +e;./gradlew clean;./gradlew marklogic-data-hub:testAcceptance -i --stacktrace;sleep 10s;./gradlew marklogic-data-hub-central:test -i --stacktrace |& tee console.log;sleep 10s;./gradlew ml-data-hub:test -i --stacktrace;./gradlew web:test -i --stacktrace;'
 				junit '**/TEST-*.xml'
 				def output=readFile 'data-hub/console.log'
 				def result=false;
@@ -1014,6 +1015,7 @@ pipeline{
                         setupMLWinCluster bldPath,pkgLoc,"w2k16-10-dhf-2,w2k16-10-dhf-3"
                         bat 'cd data-hub & gradlew.bat clean'
                         bat 'cd data-hub & gradlew.bat marklogic-data-hub:test  || exit /b 0'
+                        bat 'cd data-hub & gradlew.bat marklogic-data-hub-central:test  || exit /b 0'
                         bat 'cd data-hub & gradlew.bat ml-data-hub:test  || exit /b 0'
                         bat 'cd data-hub & gradlew.bat web:test || exit /b 0'
                         junit '**/TEST-*.xml'
