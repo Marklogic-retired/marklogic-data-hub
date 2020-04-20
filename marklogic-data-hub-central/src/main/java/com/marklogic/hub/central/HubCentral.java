@@ -74,36 +74,37 @@ public class HubCentral extends LoggingObject implements InitializingBean {
      * @return
      */
     protected PropertySource buildPropertySource(String username, String password) {
-        Properties applicationProperties = HubConfigImpl.newDefaultProperties();
-        applicationProperties.setProperty("mlUsername", username);
-        applicationProperties.setProperty("mlPassword", password);
-        applicationProperties.setProperty("mlAppServicesUsername", username);
-        applicationProperties.setProperty("mlAppServicesPassword", password);
+        Properties hubDefaultProperties = HubConfigImpl.newDefaultProperties();
 
-        Properties localDefaultProperties = new Properties();
+        Properties primaryProperties = new Properties();
+        primaryProperties.setProperty("mlUsername", username);
+        primaryProperties.setProperty("mlPassword", password);
+        primaryProperties.setProperty("mlAppServicesUsername", username);
+        primaryProperties.setProperty("mlAppServicesPassword", password);
+
         if (useLocalDefaults) {
-            localDefaultProperties.setProperty("mlIsHostLoadBalancer", "false");
-            localDefaultProperties.setProperty("mlAppServicesPort", "8000");
-            localDefaultProperties.setProperty("mlAppServicesAuthentication", "digest");
-            localDefaultProperties.setProperty("mlFinalAuth", "digest");
-            localDefaultProperties.setProperty("mlJobAuth", "digest");
-            localDefaultProperties.setProperty("mlStagingAuth", "digest");
-            localDefaultProperties.setProperty("mlAppServicesSimpleSsl", "false");
-            localDefaultProperties.setProperty("mlFinalSimpleSsl", "false");
-            localDefaultProperties.setProperty("mlJobSimpleSsl", "false");
-            localDefaultProperties.setProperty("mlStagingSimpleSsl", "false");
+            primaryProperties.setProperty("mlIsHostLoadBalancer", "false");
+            primaryProperties.setProperty("mlAppServicesPort", "8000");
+            primaryProperties.setProperty("mlAppServicesAuthentication", "digest");
+            primaryProperties.setProperty("mlFinalAuth", "digest");
+            primaryProperties.setProperty("mlJobAuth", "digest");
+            primaryProperties.setProperty("mlStagingAuth", "digest");
+            primaryProperties.setProperty("mlAppServicesSimpleSsl", "false");
+            primaryProperties.setProperty("mlFinalSimpleSsl", "false");
+            primaryProperties.setProperty("mlJobSimpleSsl", "false");
+            primaryProperties.setProperty("mlStagingSimpleSsl", "false");
         }
 
         return propertyName -> {
-            String value = localDefaultProperties.getProperty(propertyName);
+            String value = primaryProperties.getProperty(propertyName);
             if (value != null) {
                 return value;
             }
             value = environment.getProperty(propertyName);
-            if (value != null) {
+            if (value != null && value.trim().length() > 0) {
                 return value;
             }
-            return applicationProperties.getProperty(propertyName);
+            return hubDefaultProperties.getProperty(propertyName);
         };
     }
 

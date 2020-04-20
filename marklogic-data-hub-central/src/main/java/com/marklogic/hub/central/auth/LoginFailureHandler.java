@@ -17,8 +17,6 @@ package com.marklogic.hub.central.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.hub.central.exceptions.BadRequestException;
-import com.marklogic.hub.central.exceptions.ForbiddenException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
@@ -39,13 +37,7 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
         String json = node.toString();
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        if (exception instanceof BadRequestException) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        } else if (exception instanceof ForbiddenException) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        } else {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        }
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.getWriter().write(json);
     }
 }

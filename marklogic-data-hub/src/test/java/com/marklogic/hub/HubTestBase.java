@@ -17,7 +17,6 @@ package com.marklogic.hub;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.Command;
@@ -97,6 +96,7 @@ import java.util.stream.Stream;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 
 @SuppressWarnings("deprecation")
@@ -677,9 +677,8 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
 
     protected JsonNode getJsonFromResource(String resourceName) {
         InputStream inputStream = HubTestBase.class.getClassLoader().getResourceAsStream(resourceName);
-        ObjectMapper om = new ObjectMapper();
         try {
-            return om.readTree(inputStream);
+            return objectMapper.readTree(inputStream);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -915,14 +914,14 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
 
     public String toJsonString(Object value) {
         try {
-            return new ObjectMapper().writeValueAsString(value);
+            return objectMapper.writeValueAsString(value);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
 
     public JsonNode outputToJson(List<String> stepOutput, int index, String field) throws Exception{
-        JsonNode jsonOutput = new ObjectMapper().readTree(stepOutput.toString());
+        JsonNode jsonOutput = objectMapper.readTree(stepOutput.toString());
         return jsonOutput.get(index).get(field);
     }
 
@@ -1161,10 +1160,9 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
         try {
             Path projectDir = adminHubConfig.getHubProject().getProjectDir();
             final File flowFile = projectDir.resolve("flows").resolve(flowFilename).toFile();
-            ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
             JsonNode flow = objectMapper.readTree(flowFile);
             makeInputFilePathsAbsoluteForFlow(flow, projectDir.toFile().getAbsolutePath());
-            ObjectMapperFactory.getObjectMapper().writeValue(flowFile, flow);
+            objectMapper.writeValue(flowFile, flow);
 
             JSONDocumentManager mgr = stagingClient.newJSONDocumentManager();
             final String uri = "/flows/" + flowFilename;
@@ -1182,10 +1180,9 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
         try {
             Path projectDir = adminHubConfig.getHubProject().getProjectDir();
             final File loadDataArtifactFile = projectDir.resolve("loadData").resolve(loadDataArtifactFileName).toFile();
-            ObjectMapper objectMapper = ObjectMapperFactory.getObjectMapper();
             JsonNode loadDataArtifact = objectMapper.readTree(loadDataArtifactFile);
             makeInputFilePathsAbsoluteForLoadDataArtifact(loadDataArtifact, projectDir.toFile().getAbsolutePath());
-            ObjectMapperFactory.getObjectMapper().writeValue(loadDataArtifactFile, loadDataArtifact);
+            objectMapper.writeValue(loadDataArtifactFile, loadDataArtifact);
 
             JSONDocumentManager mgr = stagingClient.newJSONDocumentManager();
             final String uri = "/loadData/" + loadDataArtifactFileName;
@@ -1249,5 +1246,23 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         init();
+    }
+
+    /**
+     * Convenience method for verifying that the test-data-hub-user user can't do something.
+     *
+     * @param r
+     *
+     */
+    protected void verifyTestUserIsForbiddenTo(Runnable r, String reason) {
+        runAsTestUser();
+        try {
+            r.run();
+            fail("The download call should have failed because the user doesn't have the data-hub-download-configuration-files privilege");
+        } catch (FailedRequestException ex) {
+            assertEquals(403, ex.getServerStatusCode(), "MarkLogic was expected to throw a 403 Forbidden response for " +
+                "the following reason: " + reason);
+            assertEquals("Forbidden", ex.getServerStatus());
+        }
     }
 }

@@ -1,0 +1,14 @@
+{
+  "role-name": "hub-central-downloader",
+  "description": "This temporarily inherits data-hub-operator so it has read access to all the user artifacts. Will rework this once the new 5.3.0 roles are available.",
+  "role": [
+    "data-hub-operator"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "data-hub-download-configuration-files",
+      "action": "http://marklogic.com/data-hub/privileges/download-configuration-files",
+      "kind": "execute"
+    }
+  ]
+}

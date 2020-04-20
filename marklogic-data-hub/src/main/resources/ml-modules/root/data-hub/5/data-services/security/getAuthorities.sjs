@@ -52,6 +52,10 @@ for (const artifactTypeInfo of typesInfo) {
   }
 }
 
+if (currentRoleNames.includes("hub-central-downloader")) {
+  response.authorities.push("canDownloadConfigurationFiles");
+}
+
 response.roles = currentRoleNames.filter(roleName => fn.startsWith(roleName, "data-hub"));
 
 response;

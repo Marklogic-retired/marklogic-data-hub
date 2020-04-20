@@ -31,7 +31,7 @@ import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.central.exceptions.BadRequestException;
+import com.marklogic.hub.central.exceptions.DataHubException;
 import com.marklogic.hub.central.models.SJSSearchQuery;
 import com.marklogic.hub.central.models.MapSearchQuery;
 
@@ -117,7 +117,7 @@ public class MapSearchManager extends MapSearchableManager {
 
     public JsonNode sjsSearch(SJSSearchQuery SJSSearchQuery) {
         if (SJSSearchQuery.sourceQuery == null && SJSSearchQuery.database == null) {
-            throw new BadRequestException("Query requires database or sourceQuery");
+            throw new DataHubException("Query requires database or sourceQuery");
         }
 
         Collections collections = new Collections(hubConfig.newStagingClient());

@@ -3,6 +3,7 @@ package com.marklogic.hub.central;
 import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.util.PropertySource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -104,5 +105,12 @@ public class HubCentralTest {
         assertNotNull(hubConfig.getSslContext(DatabaseKind.JOB));
 
         assertTrue(hubConfig.getIsHostLoadBalancer());
+
+        ManageConfig manageConfig = hubConfig.getManageConfig();
+        assertEquals("anyone", manageConfig.getUsername());
+        assertEquals("anyone", manageConfig.getSecurityUsername());
+        assertEquals("somehost", manageConfig.getHost());
+        assertEquals("anyword", manageConfig.getPassword());
+        assertEquals("anyword", manageConfig.getSecurityPassword());
     }
 }

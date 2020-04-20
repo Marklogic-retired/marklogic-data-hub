@@ -13,6 +13,8 @@ import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand;
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.mgmt.api.API;
+import com.marklogic.mgmt.api.security.User;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.springframework.core.io.ClassPathResource;
@@ -21,6 +23,7 @@ import org.springframework.util.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -79,6 +82,25 @@ public abstract class AbstractHubTest extends LoggingObject {
         return runAsUser("test-admin-for-data-hub-tests", "password");
     }
 
+    protected HubConfigImpl runAsTestUser() {
+        return runAsUser("test-data-hub-user", "password");
+    }
+
+    /**
+     * Each test is free to modify the roles on this user so it can be used for any purpose. Such tests should not
+     * make any assumptions about what roles this user does have entering into the test.
+     *
+     * @param roles
+     */
+    protected void setTestUserRoles(String... roles) {
+        runAsAdmin();
+
+        User user = new User(new API(getHubConfig().getManageClient()), "test-data-hub-user");
+        user.setRole(Arrays.asList(roles));
+        user.setPassword("password");
+        user.save();
+    }
+
     /**
      * Load the files associated with the entity reference model.
      */
@@ -106,6 +128,21 @@ public abstract class AbstractHubTest extends LoggingObject {
             File flowsDir = new File(testProjectDir, "flows");
             if (flowsDir.exists()) {
                 FileUtils.copyDirectory(flowsDir, hubProject.getFlowsDir().toFile());
+            }
+
+            File loadDataDir = new File(testProjectDir, "loadData");
+            if (loadDataDir.exists()) {
+                FileUtils.copyDirectory(loadDataDir, new File(hubProject.getProjectDir().toFile(), "loadData"));
+            }
+
+            File mappingsDir = new File(testProjectDir, "mappings");
+            if (mappingsDir.exists()) {
+                FileUtils.copyDirectory(mappingsDir, hubProject.getHubMappingsDir().toFile());
+            }
+
+            File matchingDir = new File(testProjectDir, "matching");
+            if (matchingDir.exists()) {
+                FileUtils.copyDirectory(matchingDir, new File(hubProject.getProjectDir().toFile(), "matching"));
             }
 
             File stepDefinitionsDir = new File(testProjectDir, "step-definitions");

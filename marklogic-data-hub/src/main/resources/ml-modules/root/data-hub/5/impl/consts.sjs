@@ -52,5 +52,18 @@ module.exports = {
   DATA_HUB_MAPPING_READ_ROLE: "data-hub-mapping-reader",
   DATA_HUB_MAPPING_WRITE_ROLE: "data-hub-mapping-writer",
   DATA_HUB_MATCHING_READ_ROLE: "data-hub-match-merge-reader",
-  DATA_HUB_MATCHING_WRITE_ROLE: "data-hub-match-merge-writer"
+  DATA_HUB_MATCHING_WRITE_ROLE: "data-hub-match-merge-writer",
+
+  HUB_ARTIFACT_COLLECTION: "hub-core-artifact",
+
+  FLOW_COLLECTION: "http://marklogic.com/data-hub/flow",
+  ENTITY_MODEL_COLLECTION: "http://marklogic.com/entity-services/models",
+  LOAD_DATA_COLLECTION: "http://marklogic.com/data-hub/load-data-artifact",
+  LOAD_DATA_SETTINGS_COLLECTION: "http://marklogic.com/data-hub/loadData/settings",
+  MAPPING_COLLECTION: "http://marklogic.com/data-hub/mappings",
+  MAPPING_ARTIFACT_COLLECTION: "http://marklogic.com/data-hub/mapping-artifact",
+  MAPPING_SETTINGS_COLLECTION: "http://marklogic.com/data-hub/mappings/settings",
+  MATCHING_ARTIFACT_COLLECTION: "http://marklogic.com/data-hub/matching-artifact",
+  MATCHING_SETTINGS_COLLECTION: "http://marklogic.com/data-hub/matching/settings",
+  STEP_DEFINITION_COLLECTION: "http://marklogic.com/data-hub/step-definition"
 };

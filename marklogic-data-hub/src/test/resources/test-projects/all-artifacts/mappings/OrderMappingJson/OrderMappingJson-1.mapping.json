@@ -1,0 +1,9 @@
+{
+  "lang": "zxx",
+  "name": "OrderMappingJson",
+  "version": 1,
+  "targetEntityType": "Order",
+  "sourceContext": "/",
+  "properties": {
+  }
+}

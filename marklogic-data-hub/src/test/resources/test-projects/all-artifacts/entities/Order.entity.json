@@ -1,0 +1,17 @@
+{
+  "info": {
+    "title": "Order",
+    "version": "0.0.1",
+    "baseUri": "http://marklogic.com/example/"
+  },
+  "definitions": {
+    "Order": {
+      "required": [],
+      "properties": {
+        "orderID": {
+          "datatype": "string"
+        }
+      }
+    }
+  }
+}
