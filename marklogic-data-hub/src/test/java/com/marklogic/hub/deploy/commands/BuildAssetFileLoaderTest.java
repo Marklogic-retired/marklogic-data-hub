@@ -19,12 +19,10 @@ public class BuildAssetFileLoaderTest {
         CommandContext context = new CommandContext(appConfig, null, null);
 
         TestAssetFileLoader loader = new TestAssetFileLoader(null);
-        command.prepareAssetFileLoader(loader, context);
-        assertNull(loader.batchSize, "The batch size should still be null because it is null on the AppConfig object");
 
-        appConfig.setModulesLoaderBatchSize(10);
+        appConfig.setModulesLoaderBatchSize(7);
         command.prepareAssetFileLoader(loader, context);
-        assertEquals(10, (int) loader.batchSize, "The batch size should now be 10; this gives the user a way to load hub " +
+        assertEquals(7, (int) loader.batchSize, "The batch size should now be 10; this gives the user a way to load hub " +
             "modules in small batches if loading them all in one batch fails, like due to a network issue");
     }
 }

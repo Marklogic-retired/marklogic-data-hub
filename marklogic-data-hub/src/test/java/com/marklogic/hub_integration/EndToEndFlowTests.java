@@ -135,17 +135,11 @@ public class EndToEndFlowTests extends HubTestBase {
     	new Installer().teardownProject();
     }
 
-    private static boolean isSetup = false;
-
     @BeforeEach
     public void setupEach() {
     	createProjectDir();
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
 
-        if (!isSetup) {
-            installHubModules();
-            isSetup = true;
-        }
         enableTracing();
         enableDebugging();
 

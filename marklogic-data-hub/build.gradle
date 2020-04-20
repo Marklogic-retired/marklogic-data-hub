@@ -1,6 +1,7 @@
 plugins {
     id 'net.saliman.properties' version '1.4.6'
     id 'java'
+    id 'java-test-fixtures'
     id 'maven-publish'
     id 'com.jfrog.bintray' version '1.7.2'
     id 'com.marklogic.ml-gradle' version '4.0.0'
@@ -37,7 +38,6 @@ dependencies {
     }
 
     compile group: 'org.springframework.boot', name: 'spring-boot', version: '2.1.3.RELEASE'
-    compile group: 'org.springframework.integration', name: 'spring-integration-http', version: '5.1.3.RELEASE'
     compile group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version: '2.1.3.RELEASE'
 
     compile 'com.marklogic:mlcp-util:0.9.0'
@@ -47,10 +47,6 @@ dependencies {
 
     // For installer program
     compile "com.beust:jcommander:1.72"
-
-    //https://github.com/jaegertracing/jaeger-client-java/tree/master/jaeger-core
-    compile("io.jaegertracing:jaeger-core:0.35.4")
-    compile("io.jaegertracing:jaeger-thrift:0.35.4")
 
     // JUnit Jupiter API and TestEngine implementation
     testCompile "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
@@ -63,7 +59,7 @@ dependencies {
 
     testCompile group: 'org.springframework', name: 'spring-test', version: '5.1.5.RELEASE'
 
-    testCompile 'xmlunit:xmlunit:1.3'
+    testFixturesApi 'xmlunit:xmlunit:1.3'
     testCompile 'org.skyscreamer:jsonassert:1.5.0'
     testCompile 'org.hamcrest:hamcrest-junit:2.0.0.0'
     testCompile 'org.easymock:easymock:3.4'
@@ -108,7 +104,6 @@ task clientJar(type: Jar) {
         exclude "META-INF/*.RSA"
     }
     exclude "spring-boot*.jar"
-    exclude "*jaeger*.jar"
     with jar
 }
 build.dependsOn clientJar

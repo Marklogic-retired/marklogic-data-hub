@@ -55,7 +55,8 @@ public class LegacyFlowRunnerTest extends HubTestBase {
 
     @BeforeEach
     public void setup(){
-        resetProject();
+        resetHubProject();
+        getDataHubAdminConfig();
 
         // Specific to this test - must also delete legacy entities in the modules database
         runInModules("cts:uri-match('/entities/**') ! xdmp:document-delete(.)");

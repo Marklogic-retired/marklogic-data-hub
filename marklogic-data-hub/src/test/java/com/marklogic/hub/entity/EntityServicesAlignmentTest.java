@@ -7,7 +7,7 @@ import com.marklogic.client.expression.PlanBuilder;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.row.RowManager;
-import com.marklogic.hub.AbstractHubTest;
+import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class EntityServicesAlignmentTest extends AbstractHubTest {
+public class EntityServicesAlignmentTest extends AbstractHubCoreTest {
 
     private static final String TDE_COLLECTION = "http://marklogic.com/xdmp/tde";
 
@@ -47,7 +47,7 @@ public class EntityServicesAlignmentTest extends AbstractHubTest {
         assertEquals(0, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, TDE_COLLECTION));
         assertEquals(0, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, TDE_COLLECTION));
 
-        loadProjectFiles("es-alignment-test");
+        installProjectInFolder("es-alignment-test");
 
         assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, TDE_COLLECTION));
         assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, TDE_COLLECTION));

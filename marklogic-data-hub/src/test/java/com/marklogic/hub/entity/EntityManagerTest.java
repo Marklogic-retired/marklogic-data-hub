@@ -17,18 +17,16 @@ package com.marklogic.hub.entity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.marklogic.hub.*;
+import com.marklogic.hub.AbstractHubCoreTest;
+import com.marklogic.hub.EntityManager;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubProject;
 import com.marklogic.hub.util.FileUtil;
-import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.xml.sax.SAXException;
 
 import java.io.File;
@@ -40,20 +38,13 @@ import java.util.HashMap;
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class EntityManagerTest extends AbstractHubTest {
+public class EntityManagerTest extends AbstractHubCoreTest {
 
     @Autowired
     EntityManager entityManager;
 
     @Autowired
     HubProject project;
-
-    @BeforeEach
-    public void clearDbs() {
-        getDataHub().clearUserModules();
-        installHubModules();
-        getPropsMgr().deletePropertiesFile();
-    }
 
     private void installEntities() {
         Path entitiesDir = project.getHubEntitiesDir();
@@ -78,12 +69,6 @@ public class EntityManagerTest extends AbstractHubTest {
             e.printStackTrace();
         }
         targetFile.setLastModified(System.currentTimeMillis());
-    }
-
-    private HubModuleManager getPropsMgr() {
-        String timestampFile = getDataHubAdminConfig().getHubProject().getUserModulesDeployTimestampFile();
-        HubModuleManager propertiesModuleManager = new HubModuleManager(timestampFile);
-        return propertiesModuleManager;
     }
 
     @Test

@@ -186,7 +186,6 @@ public class DataHubService {
 
         // TODO Why load hub artifacts when this method is for loading user modules/artifacts?
         loadHubArtifactsCommand.setHubConfig(hubConfig);
-        loadHubArtifactsCommand.setForceLoad(forceLoad);
 
         // Generating function metadata xslt causes running existing mapping (xslts) step to fail with undefined function
         // for any mappings that use these functions. So, we have to generate function metadata xslt only when 'forceLoad'
