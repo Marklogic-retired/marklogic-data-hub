@@ -477,28 +477,4 @@ public class FlowRunnerTest extends HubTestBase {
         Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp1.getJobStatus()),
             "Expected job status of second response to be 'finished', but was: " + resp1.getJobStatus());
     }
-
-    @Test
-    public void verifyThatLoadDataSettingsAreAppliedToStepConfig() {
-        final Step step = flowManager.getFlow("testFlow").getStep("1");
-        final Map<String, Object> stepConfig = new HashMap<>();
-
-        flowRunner.applyArtifactSettings(step, stepConfig);
-
-        assertTrue(stepConfig.containsKey("fileLocations"), "fileLocations in stepConfig should have been " +
-            "populated from the LoadData artifact");
-
-        // Verify file locations information
-        final Map<String, String> fileLocations = (Map<String,String>)stepConfig.get("fileLocations");
-        assertEquals("xml", fileLocations.get("inputFileType"));
-        assertEquals(".*/input,''", fileLocations.get("outputURIReplacement"));
-        assertEquals("input", fileLocations.get("inputFilePath"));
-
-        // Verify additional settings come through
-        assertEquals("data-hub-STAGING", ((JsonNode) step.getOptions().get("targetDatabase")).asText());
-        assertEquals("data-hub-operator,read,data-hub-operator,update", ((JsonNode) step.getOptions().get("permissions")).asText());
-        List<String> collections = (List<String>) step.getOptions().get("collections");
-        assertEquals(1, collections.size());
-        assertEquals("xml-coll", collections.get(0));
-    }
 }

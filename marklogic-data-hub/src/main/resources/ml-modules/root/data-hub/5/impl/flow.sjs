@@ -33,7 +33,7 @@ const defaultGlobalContext = {
 
 class Flow {
 
-  constructor(config = null, globalContext = null, datahub = null) {
+  constructor(config = null, globalContext = null, datahub = null, artifactsCore = null) {
     if (!config) {
       config = require("/com.marklogic.hub/config.sjs");
     }
@@ -47,6 +47,7 @@ class Flow {
     this.step = new Step(config, datahub);
     this.flowUtils = new FlowUtils(config);
     this.consts = datahub.consts;
+    this.artifactsCore =  require('/data-hub/5/artifacts/core.sjs');
     this.writeQueue = [];
     if (globalContext) {
       this.globalContext = globalContext;
@@ -96,24 +97,9 @@ class Flow {
     return docs;
   }
 
-  //note: we're using uriMatch here to avoid case sensitivity, but still strongly match on the actual flow name itself
-  //TODO: make this a flat fn.doc call in the future and figure out how to normalize the uri so we don't need this loop at all
   getFlow(name) {
     if (cachedFlows[name] === undefined) {
-      let uriMatches = cts.uriMatch('/flows/' + name + '.flow.json', ['case-insensitive'], cts.directoryQuery("/flows/"));
-      // cache flow to prevent repeated calls.
-      if (fn.count(uriMatches) === 1) {
-        cachedFlows[name] = cts.doc(fn.head(uriMatches)).toObject();
-      } else if (fn.count(uriMatches) > 1) {
-        for (let uri of uriMatches) {
-          if (uri === '/flows/' + name + '.flow.json') {
-            cachedFlows[name] = cts.doc(uriMatches).toObject();
-            break;
-          }
-        }
-      } else {
-        cachedFlows[name] = null;
-      }
+      cachedFlows[name] =  this.artifactsCore.getFullFlow(name);
     }
     return cachedFlows[name];
   }

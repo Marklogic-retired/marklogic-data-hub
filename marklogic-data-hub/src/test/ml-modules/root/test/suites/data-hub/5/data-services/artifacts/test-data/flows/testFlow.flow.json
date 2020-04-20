@@ -1,0 +1,50 @@
+{
+  "name": "testFlow",
+  "steps": {
+    "1": {
+      "name": "loadDataTest",
+      "options": {
+        "loadData": {
+          "name": "loadDataTest"
+        }
+      },
+      "stepDefinitionName": "default-ingestion",
+      "stepDefinitionType": "INGESTION"
+    },
+    "2": {
+      "name": "mappingTest",
+      "options": {
+        "mapping": {
+          "name": "mappingTest"
+        }
+      },
+      "stepDefinitionName": "entity-services-mapping",
+      "stepDefinitionType": "MAPPING"
+    },
+    "3": {
+      "name": "mapjson",
+      "description": "",
+      "options": {
+        "additionalCollections": [],
+        "sourceQuery": "cts.collectionQuery([\"ingestjson\"])",
+        "mapping": {
+          "name": "jsonFlow-mapjson",
+          "version": 31
+        },
+        "targetEntity": "Person",
+        "sourceDatabase": "data-hub-STAGING",
+        "collections": ["mapjson", "Person"],
+        "validateEntity": false,
+        "sourceCollection": "ingestjson",
+        "outputFormat": "json",
+        "targetDatabase": "data-hub-FINAL",
+        "fullOutput": true
+      },
+      "retryLimit": 0,
+      "batchSize": 100,
+      "threadCount": 4,
+      "stepDefinitionName": "entity-services-mapping",
+      "stepDefinitionType": "MAPPING"
+    }
+  }
+}

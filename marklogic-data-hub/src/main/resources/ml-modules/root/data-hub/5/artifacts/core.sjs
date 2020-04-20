@@ -16,9 +16,9 @@
 'use strict';
 
 const LoadData = require('./loadData');
-const Flows = require('./flows');
-const StepDefs = require('./stepDefinitions');
-const Mappings = require('./mappings');
+const Flow = require('./flow');
+const StepDef = require('./stepDefinition');
+const Mapping = require('./mapping');
 const Matching = require('./matching');
 
 const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
@@ -27,9 +27,9 @@ const dataHub = DataHubSingleton.instance();
 const cachedArtifacts = {};
 const registeredArtifactTypes = {
     loadData: LoadData,
-    flows: Flows,
-    stepDefinitions: StepDefs,
-    mappings: Mappings,
+    flow: Flow,
+    stepDefinition: StepDef,
+    mapping: Mapping,
     matching: Matching
 };
 
@@ -65,7 +65,8 @@ function getTypesInfo() {
     return typesInfo;
 }
 
-const entityServiceDrivenArtifactTypes = ['mappings', 'matching', 'merging', 'mastering'];
+const entityServiceDrivenArtifactTypes = ['mapping', 'matching', 'merging', 'mastering'];
+const artifactsWithSettings = ['loadData'].concat(entityServiceDrivenArtifactTypes)
 
 function getArtifacts(artifactType) {
     const queries = [];
@@ -151,6 +152,16 @@ function setArtifact(artifactType, artifactName, artifact) {
         dataHub.hubUtils.writeDocument(`${artifactDirectory}${xdmp.urlEncode(artifactName)}${artifactFileExtension}`, artifact, artifactPermissions, artifactCollections, db);
     }
     cachedArtifacts[artifactKey] = artifact;
+
+  //Create settings artifact if they are not present, happens only when creating the artifact.
+    if (artifactsWithSettings.includes(artifactType)) {
+      try {
+        getArtifactSettings(artifactType, artifactName);
+      } catch (ex) {
+        let settings = artifactLibrary.defaultArtifactSettings(artifactName);
+        setArtifactSettings(artifactType, artifactName, settings);
+      }
+    }
     return artifact;
 }
 
@@ -163,10 +174,7 @@ function getArtifactSettings(artifactType, artifactName, artifactVersion = 'late
         const settingNode = artifactLibrary.getArtifactSettingNode(settingCollection, artifactName, artifactVersion);
 
         if (fn.empty(settingNode)) {
-            if (artifactLibrary.defaultArtifactSettings) {
-                return artifactLibrary.defaultArtifactSettings(artifactName);
-            }
-            return {};
+          returnErrToClient(404, 'NOT FOUND');
         }
         cachedArtifacts[artifactSettingKey] = settingNode.toObject();
     }
@@ -220,8 +228,8 @@ function linkToStepOptionsOperation(operation, flowName, stepID, artifactType, a
     artifactVersion = artifactLibrary.getVersionProperty() ? artifactObject[artifactLibrary.getVersionProperty()] : artifactVersion;
 
 
-    const flowDatabases =  getArtifactTypeLibrary('flows').getStorageDatabases();
-    const flowNode = getArtifactNode('flows', flowName);
+    const flowDatabases =  getArtifactTypeLibrary('flow').getStorageDatabases();
+    const flowNode = getArtifactNode('flow', flowName);
     const stepName = stepID.substring(0, stepID.lastIndexOf('-'));
     const stepType = stepID.substring(stepID.lastIndexOf('-') + 1).toLowerCase();
     const stepOptionsXPath = dataHub.hubUtils.xquerySanitizer`/steps/*[name eq "${stepName}"][lower-case(stepDefinitionType) eq "${stepType}"]/options`;
@@ -341,6 +349,79 @@ function getEntityTitles() {
     return cts.search(cts.collectionQuery("http://marklogic.com/entity-services/models")).toArray().map(e => e.xpath("//info//title"));
 }
 
+function getFullFlow(flowName, artifactVersion = 'latest') {
+  let flowNode = getArtifact('flow', flowName);
+  flowNode = createFullFlow(flowName, flowNode);
+  return flowNode;
+}
+
+function createFullFlow(flowName, flowNode){
+  for (let [key, stepValue] of Object.entries(flowNode["steps"])) {
+    let artifactInStepType = stepValue['stepDefinitionType'].toLowerCase() === "ingestion" ? "loadData" : stepValue['stepDefinitionType'].toLowerCase();
+    if(stepValue.options[artifactInStepType]){
+      let artifactInStep =  stepValue.options[artifactInStepType].name;
+      try {
+        let settingsNode = getArtifactSettings(artifactInStepType, artifactInStep)
+        delete settingsNode["artifactName"];
+        settingsNode = clean(settingsNode);
+        let artifactNode = getArtifact(artifactInStepType, artifactInStep);
+        stepValue = addToStep(artifactInStepType,stepValue, artifactNode, settingsNode);
+        stepValue = addToStepOptions(artifactInStepType, stepValue, artifactNode, settingsNode);
+      }
+      catch (ex) {
+        if(artifactInStepType == 'mapping') {
+          dataHub.debug.log({message: 'This flow ' + flowName + ' runs older version of  mapping: ' + artifactInStep , type: 'warning'})
+        }
+        else {
+          throw Error('Getting flow ' + flowName + ' failed: Unable to get settings for the artifact : ' +  artifactInStep);
+        }
+      }
+    }
+  }
+  return flowNode;
+}
+//TODO: Add 'processors' to step once it is known where they will go into (artifact or settings)
+function addToStep(artifactInStepType, stepValue, artifactNode,  settingsNode){
+  if(artifactInStepType === 'loadData') {
+    stepValue.fileLocations = {};
+    stepValue.fileLocations.inputFilePath =   artifactNode["inputFilePath"];
+    stepValue.fileLocations.outputURIReplacement =   artifactNode["outputURIReplacement"];
+    stepValue.fileLocations.inputFileType =   artifactNode["sourceFormat"];
+    stepValue.fileLocations.separator =   artifactNode["separator"];
+  }
+  else {
+      stepValue.options["sourceQuery"] = artifactNode["sourceQuery"];
+    }
+  stepValue.customHook = settingsNode.customHook;
+  delete settingsNode.customHook;
+  return stepValue;
+}
+
+function addToStepOptions(artifactInStepType, stepValue, artifactNode,  settingsNode) {
+  if(artifactInStepType === 'loadData') {
+    stepValue.options["outputFormat"] = artifactNode["targetFormat"];
+  }
+  else {
+    stepValue.options["outputFormat"] = settingsNode["targetFormat"];
+    delete settingsNode['targetFormat'];
+  }
+  stepValue.options = Object.assign(stepValue.options, settingsNode);
+  stepValue.options.collections = stepValue.options.collections ? stepValue.options.collections : [];
+  stepValue.options.collections = stepValue.options.additionalCollections ? stepValue.options.collections.concat(stepValue.options.additionalCollections) : stepValue.options.collections
+  return stepValue;
+}
+
+function clean(obj) {
+  var propNames = Object.getOwnPropertyNames(obj);
+  for (var i = 0; i < propNames.length; i++) {
+    var propName = propNames[i];
+    if (obj[propName] === null || obj[propName] === undefined ) {
+      delete obj[propName];
+    }
+  }
+  return obj
+}
+
 module.exports = {
     getTypesInfo,
     getArtifacts,
@@ -352,5 +433,6 @@ module.exports = {
     validateArtifact,
     getEntityTitles,
     linkToStepOptions,
-    removeLinkToStepOptions
+    removeLinkToStepOptions,
+    getFullFlow
 };

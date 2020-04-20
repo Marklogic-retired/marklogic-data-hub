@@ -71,7 +71,8 @@ function defaultArtifactSettings(artifactName) {
         collections: ['default-ingestion'],
         additionalCollections: [],
         targetDatabase: dataHub.config.STAGINGDATABASE,
-        provenanceGranularityLevel: 'coarse'
+        provenanceGranularityLevel: 'coarse',
+        permissions: 'data-hub-operator,read,data-hub-operator,update'
     };
 }
 

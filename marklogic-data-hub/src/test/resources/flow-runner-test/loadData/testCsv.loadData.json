@@ -4,5 +4,7 @@
   "sourceFormat": "csv",
   "outputURIReplacement": ".*/input,''",
   "targetFormat": "json",
-  "separator": ","
+  "separator": ",",
+  "permissions": "data-hub-operator,read,data-hub-operator,update",
+  "collections": ["csv-coll"]
 }
