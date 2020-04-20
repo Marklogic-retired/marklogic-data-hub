@@ -41,7 +41,7 @@ public class MappingTest extends HubTestBase {
 
     @BeforeEach
     public void setupTest() {
-        resetProject();
+        resetHubProject();
         runAsDataHubOperator();
     }
 

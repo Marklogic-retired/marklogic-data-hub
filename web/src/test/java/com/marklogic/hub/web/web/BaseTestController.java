@@ -46,7 +46,6 @@ public class BaseTestController extends HubTestBase implements InitializingBean 
     public void afterPropertiesSet() throws Exception {
         super.afterPropertiesSet();
         setEnvConfig();
-        installHubModules();
     }
 
 

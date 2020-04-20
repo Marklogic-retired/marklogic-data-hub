@@ -126,6 +126,9 @@ public class FlowRunnerTest extends HubTestBase {
      */
     @Test
     public void sourceQueryReturnsScript() {
+        // These indexes are removed by some other test, so need to ensure they're here for this test
+        Installer.applyDatabasePropertiesForTests(adminHubConfig);
+
         final String flowName = "testValuesFlow";
 
         // Write a couple test documents that have range indexed values on them

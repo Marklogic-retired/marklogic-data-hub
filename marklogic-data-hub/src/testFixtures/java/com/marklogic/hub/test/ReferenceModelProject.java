@@ -1,4 +1,4 @@
-package com.marklogic.hub;
+package com.marklogic.hub.test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;

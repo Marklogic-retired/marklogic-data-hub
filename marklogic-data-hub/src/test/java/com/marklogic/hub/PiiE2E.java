@@ -112,7 +112,6 @@ public class PiiE2E extends HubTestBase
     {
         Assumptions.assumeTrue(!(isCertAuth() || isSslRun() || getDataHubAdminConfig().getIsProvisionedEnvironment()));
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
-        installHubModules();
         installUserModules(getDataHubAdminConfig(), true);
         // Hardcoding to "digest" auth for now
         // needs to be final db

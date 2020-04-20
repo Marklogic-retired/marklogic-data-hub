@@ -13,7 +13,6 @@ public class AbstractServiceTest extends HubTestBase implements InitializingBean
         adminHubConfig.refreshProject();
         ConnectionAuthenticationToken authenticationToken = new ConnectionAuthenticationToken("admin", "admin", "localhost", 1, "local");
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-        installHubModules();
     }
 
     public void afterPropertiesSet() throws Exception {

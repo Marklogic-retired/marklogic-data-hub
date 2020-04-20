@@ -520,6 +520,11 @@ public class DataHubImpl implements DataHub, InitializingBean {
         AppConfig appConfig = hubConfig.getAppConfig();
         disableSomeCmaUsage(appConfig);
 
+        // When setting up the test application, there's a chance of having duplicate modules due to modules existing in
+        // multiple places on the classpath. For the purpose of loading DH modules, this can be avoided by setting the
+        // batch size for loading modules to 1.
+        appConfig.setModulesLoaderBatchSize(1);
+
         // in AWS setting this fails...
         // for now putting in try/catch
         try {

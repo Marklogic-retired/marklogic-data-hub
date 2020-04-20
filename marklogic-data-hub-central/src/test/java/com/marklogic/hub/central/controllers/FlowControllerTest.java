@@ -4,9 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.hub.central.controllers.FlowController;
-import com.marklogic.hub.central.controllers.JobsController;
-import com.marklogic.hub.central.controllers.LoadDataController;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowImpl;
@@ -170,7 +167,7 @@ class FlowControllerTest extends AbstractHubCentralTest {
 
     @Test
     void runFlow() {
-        installProject("run-flow-test");
+        installProjectInFolder("test-projects/run-flow-test");
 
         RunFlowResponse resp = controller.runFlow("testFlow", Collections.singletonList("testStep-custom"));
 

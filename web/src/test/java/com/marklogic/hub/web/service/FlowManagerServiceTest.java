@@ -22,6 +22,7 @@ import com.marklogic.client.document.DocumentPage;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.StepDefinitionManager;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.impl.HubConfigImpl;
@@ -111,7 +112,7 @@ class FlowManagerServiceTest extends AbstractServiceTest {
     void teardownProject() {
         clearUserModules();
         deleteProjectDir();
-        clearStagingFinalAndJobDatabases();
+        clearDatabases(HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
 
     @Test
