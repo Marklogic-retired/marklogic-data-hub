@@ -17,4 +17,4 @@
 - ##### Reviewer:
 
 - [ ] Reviewed Tests
-
+- [ ] Has good error handling and messaging
