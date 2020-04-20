@@ -7,16 +7,10 @@
       "stepDefinitionName": "default-ingestion",
       "stepDefinitionType": "INGESTION",
       "name": "csv",
-      "customHook": {},
-      "retryLimit" : null,
-      "batchSize" : null,
-      "threadCount" : null,
       "options": {
         "loadData": {
           "name": "testCsv"
-        },
-        "permissions": "data-hub-operator,read,data-hub-operator,update",
-        "collections": ["csv-coll"]
+        }
       }
     }
   }

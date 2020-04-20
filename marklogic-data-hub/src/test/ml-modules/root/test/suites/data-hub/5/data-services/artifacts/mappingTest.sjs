@@ -23,7 +23,7 @@ function invokeValidateService(artifactType, artifactName, artifact) {
 }
 
 function updateMappingConfig(artifactName) {
-    const result = invokeSetService('mappings', artifactName, {'name': `${artifactName}`, 'targetEntityType': 'TestEntity-hasMappingConfig', 'description': 'Mapping does ...', 'selectedSource': 'query', 'sourceQuery': '', 'collections': ['RAW-COL']});
+    const result = invokeSetService('mapping', artifactName, {'name': `${artifactName}`, 'targetEntityType': 'TestEntity-hasMappingConfig', 'description': 'Mapping does ...', 'selectedSource': 'query', 'sourceQuery': 'cts.collectionQuery(\"default-ingestion\")', 'collections': ['RAW-COL']});
     return [
         test.assertEqual(artifactName, result.name),
         test.assertEqual("TestEntity-hasMappingConfig", result.targetEntityType)
@@ -32,7 +32,7 @@ function updateMappingConfig(artifactName) {
 
 function createMappingWithSameNameButDifferentEntityType(artifactName) {
   try {
-    invokeSetService('mappings', artifactName, {'name': `${artifactName}`, 'targetEntityType': 'SomeOtherEntity-hasMappingConfig', 'selectedSource': 'query'});
+    invokeSetService('mapping', artifactName, {'name': `${artifactName}`, 'targetEntityType': 'TestEntity-NoMappingConfig', 'selectedSource': 'query'});
     return new Error("Expected a failure because another mapping exists with the same name but a different entity type. " +
       "Mapping names must be globally unique.");
   } catch (e) {
@@ -42,7 +42,7 @@ function createMappingWithSameNameButDifferentEntityType(artifactName) {
 }
 
 function getArtifacts() {
-    const artifactsByEntity = invokeGetAllService('mappings');
+    const artifactsByEntity = invokeGetAllService('mapping');
     const entityNames = Artifacts.getEntityTitles();
     test.assertEqual(entityNames.length, artifactsByEntity.length);
     artifactsByEntity.forEach(entity => {
@@ -61,12 +61,12 @@ function getArtifacts() {
 function deleteArtifact(artifactName) {
     return fn.head(xdmp.invoke(
         "/data-hub/5/data-services/artifacts/deleteArtifact.sjs",
-        {artifactType: 'mappings', artifactName: `${artifactName}`}
+        {artifactType: 'mapping', artifactName: `${artifactName}`}
     ));
 }
 
 function validArtifact() {
-    const result = invokeValidateService('mappings','validMapping', { name: 'validMapping', targetEntityType: 'TestEntity-hasMappingConfig', selectedSource: 'collection'});
+    const result = invokeValidateService('mapping','validMapping', { name: 'validMapping', targetEntityType: 'TestEntity-hasMappingConfig', selectedSource: 'collection'});
     return [
         test.assertEqual("validMapping", result.name),
         test.assertEqual("TestEntity-hasMappingConfig", result.targetEntityType),
@@ -76,7 +76,7 @@ function validArtifact() {
 
 function invalidArtifact() {
     try {
-        const result = invokeValidateService('mappings', "invalidMapping", { name: 'invalidMapping'});
+        const result = invokeValidateService('mapping', "invalidMapping", { name: 'invalidMapping'});
         return [test.assertTrue(false, 'Should have thrown a validation error')];
     } catch (e) {
         let msg = e.data[2];

@@ -77,7 +77,7 @@ public class StepDefinitionManagerImpl extends LoggingObject implements StepDefi
         } catch (IOException e) {
             throw new DataHubProjectException("Could not write Step to disk for project.");
         }
-        getArtifactService().setArtifact("stepDefinitions", stepDefinition.getName(), JSONUtils.convertArtifactToJson(stepDefinition));
+        getArtifactService().setArtifact("stepDefinition", stepDefinition.getName(), JSONUtils.convertArtifactToJson(stepDefinition));
     }
 
     @Override

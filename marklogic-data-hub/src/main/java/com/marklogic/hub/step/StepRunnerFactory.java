@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 public class StepRunnerFactory {
@@ -50,7 +51,7 @@ public class StepRunnerFactory {
         stepRunner = stepRunner.withFlow(flow)
             .withStep(stepNum);
 
-        if(step.getBatchSize() != 0) {
+        if((Optional.ofNullable(step.getBatchSize()).orElse(0) != 0)) {
             batchSize = step.getBatchSize();
         }
         else if(flow.getBatchSize() != 0) {
@@ -61,7 +62,7 @@ public class StepRunnerFactory {
         }
         stepRunner.withBatchSize(batchSize);
 
-        if(step.getThreadCount() != 0) {
+        if((Optional.ofNullable(step.getThreadCount()).orElse(0) != 0)) {
             threadCount = step.getThreadCount();
         }
         else if(flow.getThreadCount() != 0) {

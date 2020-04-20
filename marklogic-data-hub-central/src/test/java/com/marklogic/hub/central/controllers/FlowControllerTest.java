@@ -3,13 +3,13 @@ package com.marklogic.hub.central.controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.document.GenericDocumentManager;
-import com.marklogic.client.io.StringHandle;
+import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowImpl;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.central.AbstractHubCentralTest;
-import com.marklogic.hub.central.models.StepModel;
+import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.json.JSONUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -75,7 +75,7 @@ class FlowControllerTest extends AbstractHubCentralTest {
             Assertions.assertEquals(startingFlowCount + 1, ((List) flows.getBody()).size());
 
             //GET all steps in a flow
-            List<StepModel> steps = controller.getSteps("testFlow");
+            List<Step> steps = controller.getSteps("testFlow");
             Assertions.assertEquals(0, (steps.size()));
 
             ObjectMapper mapper = new ObjectMapper();
@@ -90,7 +90,7 @@ class FlowControllerTest extends AbstractHubCentralTest {
             Assertions.assertEquals(150, ((FlowImpl) entity.getBody()).getBatchSize());
 
             //POST step
-            StepModel stepModel = (StepModel) controller.createStep("testFlow", 1, stepString).getBody();
+            Step stepModel = (Step) controller.createStep("testFlow", 1, stepString).getBody();
             controller.createStep("testFlow", 2, "{\"name\":\"name\",\"stepDefinitionName\":\"default-ingestion\",\"stepDefinitionType\"" +
                 ":\"INGESTION\",\"options\":{\"loadData\":{\"name\":\"name\"}}}");
 
@@ -118,27 +118,29 @@ class FlowControllerTest extends AbstractHubCentralTest {
             controller.createStep("testFlow", 3, customStepString).getBody();
 
             GenericDocumentManager docMgr = hubConfig.newStagingClient().newDocumentManager();
-            StringHandle readHandle = new StringHandle();
+
+           /*  The code that creates a stepdef when custom step is created  has been removed
+           StringHandle readHandle = new StringHandle();
             docMgr.read("/step-definitions/custom/second/second.step.json").next().getContent(readHandle);
             //the step-def should be written
-            Assertions.assertNotNull(readHandle.get());
+            Assertions.assertNotNull(readHandle.get());*/
 
             //link artifact to step options
             loadDataController.updateArtifact("validArtifact", newLoadDataConfig());
             controller.linkArtifact("testFlow", "e2e-json-ingestion", "loadData", "validArtifact");
 
             //GET step
-            stepModel = (StepModel) controller.getStep("testFlow", "e2e-json-ingestion");
+            stepModel = controller.getStep("testFlow", "e2e-json-ingestion");
             Assertions.assertEquals("e2e-json", stepModel.getName());
             Assertions.assertEquals(100, stepModel.getBatchSize().intValue());
             // step should have LoadData link
-            Assertions.assertTrue(stepModel.getOptions().has("loadData"), "Should have loadData link");
-            Assertions.assertEquals("validArtifact", stepModel.getOptions().get("loadData").get("name").asText(), "Link should have expected name");
+            Assertions.assertNotNull(stepModel.getOptions().get("loadData"), "Should have loadData link");
+            Assertions.assertEquals("validArtifact", ((JsonNode)stepModel.getOptions().get("loadData")).get("name").asText(), "Link should have expected name");
 
             // remove artifact link
             controller.removeLinkToArtifact("testFlow", "e2e-json-ingestion", "loadData", "validArtifact");
-            stepModel = (StepModel) controller.getStep("testFlow", "e2e-json-ingestion");
-            Assertions.assertFalse(stepModel.getOptions().has("loadData"), "Should not have loadData link");
+            stepModel = controller.getStep("testFlow", "e2e-json-ingestion");
+            Assertions.assertNull(stepModel.getOptions().get("loadData"), "Should not have loadData link");
 
             //DELETE step
             controller.deleteStep("testFlow", "e2e-json-ingestion");
@@ -163,6 +165,42 @@ class FlowControllerTest extends AbstractHubCentralTest {
             }
             loadDataController.deleteArtifact("validArtifact");
         }
+    }
+    @Test
+    void addMappingToStepAndRun(){
+        installProjectInFolder("test-projects/reference-project");
+        addStagingDoc("input/mapInput.json", "/input/mapInput.json", "default-ingestion");
+
+        //Equivalent to adding a step from GUI
+        controller.createStep("refFlow" , 1, "{\n" +
+            "\"name\": \"testMap\",\n" +
+            "\"stepDefinitionName\": \"entity-services-mapping\",\n" +
+            "\"stepDefinitionType\": \"MAPPING\",\n" +
+            "\"options\": {\n" +
+            "\"mapping\": {\n" +
+            "\"name\": \"testMap\"\n" +
+            "} } }");
+        try {
+            RunFlowResponse resp = controller.runFlow("refFlow", Collections.singletonList("testMap-mapping"));
+
+            assertEquals("refFlow", resp.getFlowName(), "Run flow response has correct flow name");
+            controller.getLastFlowRunner().awaitCompletion();
+
+            JsonNode job = jobsController.getJob(resp.getJobId());
+            String jobStatus = job.get("jobStatus").asText();
+            assertEquals("finished", jobStatus, "Job status should be 'finished' once threads complete; job doc: " + job);
+
+            EvalResultIterator itr = hubConfig.newStagingClient().newServerEval().xquery("xdmp:estimate(fn:collection('mapInput'))").eval();
+            Assertions.assertEquals(1, itr.next().getNumber().intValue());
+
+            itr = hubConfig.newStagingClient().newServerEval().xquery("xdmp:estimate(fn:collection('default-mapping'))").eval();
+            Assertions.assertEquals(1, itr.next().getNumber().intValue());
+        }
+        finally {
+            controller.deleteStep("refFlow", "testMap-mapping");
+            Assertions.assertEquals(0, controller.getSteps("refFlow").size());
+        }
+
     }
 
     @Test

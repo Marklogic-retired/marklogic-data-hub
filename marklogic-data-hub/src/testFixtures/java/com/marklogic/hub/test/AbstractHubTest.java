@@ -103,6 +103,11 @@ public abstract class AbstractHubTest extends LoggingObject {
                 FileUtils.copyDirectory(entitiesDir, hubProject.getHubEntitiesDir().toFile());
             }
 
+            File mappingsDir = new File(testProjectDir, "mappings");
+            if (mappingsDir.exists()) {
+                FileUtils.copyDirectory(mappingsDir, hubProject.getHubMappingsDir().toFile());
+            }
+
             File flowsDir = new File(testProjectDir, "flows");
             if (flowsDir.exists()) {
                 FileUtils.copyDirectory(flowsDir, hubProject.getFlowsDir().toFile());

@@ -56,6 +56,14 @@ public interface FlowManager {
     Flow getLocalFlow(String flowName);
 
     /**
+     * Retrieves the expanded flow document with properties from artifact and settings
+     *
+     * @param flowName - name of the flow
+     * @return a flow object to be used by FlowRunner
+     */
+    Flow getFullFlow(String flowName);
+
+    /**
      * Returns a flow based on the provided name as JSON string
      *
      * @param flowName - name of the flow

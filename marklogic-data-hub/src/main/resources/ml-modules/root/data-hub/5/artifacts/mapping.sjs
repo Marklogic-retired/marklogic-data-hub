@@ -20,7 +20,7 @@ const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
 // define constants for caching expensive operations
 const dataHub = DataHubSingleton.instance();
 
-const collections = ['http://marklogic.com/data-hub/mapping-artifact'];
+const collections = ['http://marklogic.com/data-hub/mappings'];
 const databases = [dataHub.config.STAGINGDATABASE, dataHub.config.FINALDATABASE];
 const permissions = [xdmp.permission(dataHub.consts.DATA_HUB_MAPPING_WRITE_ROLE, 'update'), xdmp.permission(dataHub.consts.DATA_HUB_MAPPING_READ_ROLE, 'read')];
 const requiredProperties = ['name', 'targetEntityType', 'selectedSource'];
@@ -51,6 +51,10 @@ function getStorageDatabases() {
 
 function getPermissions() {
     return permissions;
+}
+
+function getDirectory() {
+  return "/mappings/";
 }
 
 function getArtifactNode(artifactName, artifactVersion) {
@@ -90,7 +94,8 @@ function defaultArtifactSettings(artifactName) {
         additionalCollections: [],
         sourceDatabase: dataHub.config.STAGINGDATABASE,
         targetDatabase: dataHub.config.FINALDATABASE,
-        provenanceGranularityLevel: 'coarse'
+        provenanceGranularityLevel: 'coarse',
+        permissions: 'data-hub-operator,read,data-hub-operator,update'
     };
 }
 
@@ -101,6 +106,7 @@ module.exports = {
     getStorageDatabases,
     getPermissions,
     getArtifactNode,
+    getDirectory,
     validateArtifact,
     getArtifactSettingNode,
     defaultArtifactSettings
