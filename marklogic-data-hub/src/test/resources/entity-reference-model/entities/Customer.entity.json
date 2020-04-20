@@ -24,6 +24,9 @@
         "billing": {
           "$ref": "#/definitions/Address"
         },
+        "customerNumber": {
+          "datatype": "integer"
+        },
         "customerSince": {
           "datatype": "date"
         },

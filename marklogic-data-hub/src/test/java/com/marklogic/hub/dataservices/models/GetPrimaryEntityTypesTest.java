@@ -14,7 +14,7 @@ public class GetPrimaryEntityTypesTest extends AbstractHubCoreTest {
     @Test
     void referenceModelWithOneCustomerLoaded() {
         ReferenceModelProject project = installReferenceModelProject();
-        project.createCustomer(1, "Customer One");
+        project.createRawCustomer(1, "Customer One");
         project.runFlow(new FlowInputs("echoFlow").withJobId("echoFlow-test"));
 
         ArrayNode entityTypes = (ArrayNode) ModelsService.on(adminHubConfig.newFinalClient(null)).getPrimaryEntityTypes();

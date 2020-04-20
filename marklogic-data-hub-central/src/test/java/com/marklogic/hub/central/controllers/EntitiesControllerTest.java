@@ -17,7 +17,7 @@ public class EntitiesControllerTest extends AbstractHubCentralTest {
 
     @Test
     void test() {
-        installReferenceProject();
+        installReferenceModelProject();
 
         Collection<JsonNode> models = controller.getEntityModels();
         assertEquals(2, models.size(), "Expecting Customer and Order");

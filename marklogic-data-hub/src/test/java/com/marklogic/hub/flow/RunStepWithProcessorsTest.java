@@ -25,8 +25,8 @@ public class RunStepWithProcessorsTest extends AbstractHubCoreTest {
     void beforeEach() {
         project = installReferenceModelProject();
         runAsDataHubOperator();
-        project.createCustomer(1, "Jane");
-        project.createCustomer(2, "John");
+        project.createRawCustomer(1, "Jane");
+        project.createRawCustomer(2, "John");
     }
 
     @Test

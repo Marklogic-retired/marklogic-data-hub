@@ -19,6 +19,8 @@ package com.marklogic.hub.central;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.PathResourceResolver;
@@ -43,5 +45,29 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         : new ClassPathResource("static/index.html");
                 }
             });
+    }
+
+    /**
+     * We need this since we are using a StreamingResponseBody for asynchronous request processing in the csv
+     * export feature. StreamingResponseBody by default uses a SimpleAsyncTaskExecutor which does not reuse threads,
+     * as a result, its advisable to provide our own TaskExecutor.
+     * Also, this allows us to configure the Default Timeout which at this point is 10 minutes.
+     * @param configurer
+     */
+    @Override
+    public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
+        final ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+
+        // Setting core pool size to 10 since we aren't expecting more than 5~10 concurrent users.
+        // If all threads are busy and a request comes in then that request is queued.
+        taskExecutor.setCorePoolSize(10);
+
+        // Setting the max pool size, also to 10 makes this a fixed sized thread pool.
+        taskExecutor.setMaxPoolSize(10);
+        taskExecutor.initialize();
+
+        // Setting the default timeout value to 10 minutes since that aligns with the request timeout value of MarkLogic server
+        configurer.setDefaultTimeout(600000)
+            .setTaskExecutor(taskExecutor);
     }
 }

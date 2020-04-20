@@ -113,7 +113,7 @@ public class MappingControllerTest extends AbstractHubCentralTest {
 
     @Test
     void testMappingConfigs() {
-        installReferenceProject();
+        installReferenceModelProject();
 
         controller.updateMapping("TestCustomerMapping", readJsonObject(MAPPING_CONFIG_1));
         controller.updateMapping("TestOrderMapping1", readJsonObject(MAPPING_CONFIG_2));
@@ -164,7 +164,7 @@ public class MappingControllerTest extends AbstractHubCentralTest {
 
     @Test
     public void testMappingSettings() {
-        installReferenceProject();
+        installReferenceModelProject();
         controller.updateMapping("TestCustomerMapping", readJsonObject(MAPPING_CONFIG_1));
 
         JsonNode result = controller.getMappingSettings("TestCustomerMapping").getBody();

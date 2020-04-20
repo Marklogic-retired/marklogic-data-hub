@@ -10,6 +10,9 @@
         "name"
       ],
       "properties": {
+        "customerId": {
+          "datatype": "integer"
+        },
         "name": {
           "datatype": "string",
           "collation": "http://marklogic.com/collation/codepoint"

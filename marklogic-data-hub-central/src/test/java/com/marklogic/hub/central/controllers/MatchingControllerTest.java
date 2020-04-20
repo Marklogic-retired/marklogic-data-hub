@@ -48,7 +48,7 @@ public class MatchingControllerTest extends AbstractHubCentralTest {
 
     @Test
     void testMatchingConfigs() {
-        installReferenceProject();
+        installReferenceModelProject();
 
         controller.updateMatching("TestCustomerMatching", readJsonObject(MATCHING_CONFIG_1));
         controller.updateMatching("TestOrderMatching1", readJsonObject(MATCHING_CONFIG_2));

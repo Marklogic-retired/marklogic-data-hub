@@ -139,10 +139,10 @@ public abstract class AbstractHubCentralTest extends AbstractHubTest {
     }
 
     /**
-     * Note that this does not yet wait for the post-commit trigger for entity models to complete. If you have a test
-     * that depends on that, copy the "waitForTasksToFinish" method from DH core.
+     * Installs the provided project but will not load query options.
+     * @param folderInClasspath
      */
-    protected void installReferenceProject() {
-        installProjectInFolder("test-projects/reference-project");
+    protected void installProjectInFolder(String folderInClasspath) {
+        installProjectInFolder(folderInClasspath, false);
     }
 }

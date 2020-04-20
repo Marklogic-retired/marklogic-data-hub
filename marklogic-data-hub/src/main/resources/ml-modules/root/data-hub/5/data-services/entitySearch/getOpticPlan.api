@@ -1,0 +1,41 @@
+{
+    "functionName": "getOpticPlan",
+    "params": [
+        {
+            "name": "structuredQuery",
+            "datatype": "string"
+        },
+        {
+            "name": "searchText",
+            "datatype": "string",
+            "nullable" : true
+        },
+        {
+            "name": "queryOptions",
+            "datatype": "string"
+        },
+        {
+            "name": "schemaName",
+            "datatype": "string"
+        },
+        {
+            "name": "viewName",
+            "datatype": "string"
+        },
+        {
+            "name": "limit",
+            "datatype": "long",
+            "nullable" : true
+        },
+        {
+            "name": "columns",
+            "datatype": "string",
+            "multiple" : true
+        }
+    ],
+    "return": {
+        "datatype": "jsonDocument",
+        "$javaClass": "com.fasterxml.jackson.databind.JsonNode",
+        "description": "Returns a json representation (AST) of an optic plan."
+    }
+}
