@@ -1,0 +1,142 @@
+{
+  "title": "Step.v1",
+  "type": "object",
+  "properties": {
+    "processors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Path to a module in the modules database that will be invoked via xdmp.invoke"
+          },
+          "when": {
+            "type": "string",
+            "description": "When the processor should be invoked. Only 'beforeContentPersisted' is supported."
+          },
+          "vars": {
+            "type": "object",
+            "description": "Any properties defined in this object are passed to the invoked module"
+          }
+        }
+      }
+    },
+    "customHook": {
+      "type": "object",
+      "properties": {
+        "module": {
+          "type": "string"
+        },
+        "parameters": {
+          "type": "object"
+        },
+        "user": {
+          "type": "string"
+        },
+        "runBefore": {
+          "type": "boolean"
+        }
+      }
+    },
+    "threadCount": {
+      "type": "number",
+      "description": "If set, overrides the threadCount defined at the flow level and in the step definition"
+    },
+    "batchSize": {
+      "type": "number",
+      "description": "If set, overrides the batchSize defined at the flow level and in the step definition"
+    },
+    "stepDefinitionType": {
+      "type": "string"
+    },
+    "stepDefinitionName": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional description fo the step"
+    },
+    "stepId": {
+      "type": "string",
+      "description": "This is generated on the server-side"
+    },
+    "headers": {
+      "type": "object",
+      "description": "Any properties in this object will be copied into the headers of each document processed by the step"
+    },
+    "validateEntity": {
+      "type": "boolean",
+      "description": "Applicable to mapping steps only"
+    },
+    "outputDatabase": {
+      "type": "string"
+    },
+    "inputDatabase": {
+      "type": "string"
+    },
+    "outputFormat": {
+      "type": "string",
+      "enum": [
+        "json",
+        "xml"
+      ]
+    },
+    "outputPermissions": {
+      "type": "string",
+      "description": "Comma-delimited string of role,capability,role,capability,etc"
+    },
+    "outputCollections": {
+      "type": "array",
+      "description": "additional collections provided by the user that get applied to the step output",
+      "items": {
+        "type": "string"
+      }
+    },
+    "defaultOutputCollections": {
+      "type": "array",
+      "description": "default collections associated with a step that are applied to the step output",
+      "items": {
+        "type": "string"
+      }
+    },
+    "acceptsBatch": {
+      "type": "boolean",
+      "default": "false",
+      "description": "If true, the step module is invoked once with all records in the batch passed to it"
+    },
+    "stepUpdate": {
+      "type": "boolean",
+      "default": "false",
+      "description": "If true, custom modules can make changes directly to records in the database"
+    },
+    "provenanceGranularityLevel": {
+      "type": "string",
+      "description": "The granularity of the provenance tracking information: coarse (default) to store document-level provenance information only, fine to store document-level and property-level provenance information, or off to disable provenance tracking in future job runs. Applies only to mapping, matching, merging, mastering, and custom steps.",
+      "enum": [
+        "off",
+        "coarse",
+        "fine"
+      ]
+    },
+    "constrainSourceQueryToJob": {
+      "type": "boolean",
+      "description": "If true, the query is applied to the documents that were created or modified in the same job that executes the step"
+    },
+    "sourceQueryIsScript": {
+      "type": "boolean",
+      "description": "Added in 5.3.0; if true, then sourceQuery can be any JavaScript statement that can be passed into xdmp.eval"
+    },
+    "sourceQuery": {
+      "type": "string",
+      "description": "Defines the items to be processed by the step; must be a cts.query or cts.uris statement if sourceQueryIsScript is false"
+    },
+    "targetEntityTypeId": {
+      "type": "string",
+      "description": "The identifier of an Entity Type. (IRI, with title as fallback)"
+    },
+    "name": {
+      "type": "string"
+    }
+  }
+}

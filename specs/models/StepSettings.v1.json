@@ -1,0 +1,157 @@
+{
+  "title": "StepSettings.v1",
+  "type": "object",
+  "description": "Settings for a step. This is a logical structure to simplify front-end/middle-tier APIs",
+  "properties": {
+    "customHook": {
+      "type": "object",
+      "properties": {
+        "module": {
+          "type": "string"
+        },
+        "parameters": {
+          "type": "string"
+        },
+        "user": {
+          "type": "string"
+        },
+        "runBefore": {
+          "type": "boolean"
+        }
+      }
+    },
+    "provenanceGranularityLevel": {
+      "type": "string",
+      "enum": [
+        "off",
+        "coarse",
+        "fine"
+      ]
+    },
+    "outputPermissions": {
+      "type": "string"
+    },
+    "targetFormat": {
+      "type": "string",
+      "enum": [
+        "json",
+        "xml"
+      ]
+    },
+    "targetDatabase": {
+      "type": "string"
+    },
+    "sourceDatabase": {
+      "type": "string"
+    },
+    "outputCollections": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "defaultOutputCollections": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "targetCollections": {
+      "type": "object",
+      "properties": {
+        "onMerge": {
+          "type": "object",
+          "properties": {
+            "add": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "remove": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "set": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "onNoMatch": {
+          "type": "object",
+          "properties": {
+            "add": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "remove": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "set": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "onArchive": {
+          "type": "object",
+          "properties": {
+            "add": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "remove": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "set": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "onNotification": {
+          "type": "object",
+          "properties": {
+            "add": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "remove": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "set": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

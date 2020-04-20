@@ -1,0 +1,312 @@
+{
+  "title": "MergeStep.v1",
+  "description": "Step the drives merging",
+  "allOf": [
+    {
+      "type": "object",
+      "properties": {
+        "timestampPath": {
+          "type": "string"
+        },
+        "mergeStrategies": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "properties": {
+                  "strategyName": {
+                    "type": "string"
+                  },
+                  "maxValues": {
+                    "type": "integer"
+                  },
+                  "maxSources": {
+                    "type": "integer"
+                  },
+                  "priorityOrder": {
+                    "type": "object",
+                    "properties": {
+                      "lengthWeight": {
+                        "type": "number"
+                      },
+                      "sources": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "sourceName": {
+                              "type": "string"
+                            },
+                            "weight": {
+                              "type": "number"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "strategyName"
+                ]
+              },
+              {
+                "properties": {
+                  "strategyName": {
+                    "type": "string"
+                  },
+                  "maxValues": {
+                    "type": "integer"
+                  },
+                  "maxSources": {
+                    "type": "integer"
+                  },
+                  "mergeModulePath": {
+                    "type": "string"
+                  },
+                  "mergeModuleNamespace": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "strategyName",
+                  "mergeModulePath"
+                ]
+              }
+            ],
+            "type": "object"
+          }
+        },
+        "mergeProperties": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "entityPropertyPath": {
+                    "type": "string"
+                  },
+                  "maxValues": {
+                    "type": "integer"
+                  },
+                  "maxSources": {
+                    "type": "integer"
+                  },
+                  "priorityOrder": {
+                    "type": "object",
+                    "properties": {
+                      "lengthWeight": {
+                        "type": "number"
+                      },
+                      "sources": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "sourceName": {
+                              "type": "string"
+                            },
+                            "weight": {
+                              "type": "number"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "entityPropertyPath": {
+                    "type": "string"
+                  },
+                  "maxValues": {
+                    "type": "integer"
+                  },
+                  "maxSources": {
+                    "type": "integer"
+                  },
+                  "mergeModulePath": {
+                    "type": "string"
+                  },
+                  "mergeModuleNamespace": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "entityPropertyPath": {
+                    "type": "string"
+                  },
+                  "mergeStrategyName": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "targetCollections": {
+          "type": "object",
+          "properties": {
+            "onMerge": {
+              "type": "object",
+              "properties": {
+                "add": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "remove": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "onNoMatch": {
+              "type": "object",
+              "properties": {
+                "add": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "remove": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "onArchive": {
+              "type": "object",
+              "properties": {
+                "add": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "remove": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "onNotification": {
+              "type": "object",
+              "properties": {
+                "add": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "remove": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "required": [
+        "mergeStrategies",
+        "mergeProperties"
+      ]
+    },
+    {
+      "$ref": "./Step.v1.json"
+    }
+  ],
+  "x-examples": {
+    "customer-merge": {
+      "name": "customerMerge",
+      "targetEntityTypeId": "http://example.org/Customer-0.0.1/Customer",
+      "sourceQuery": "cts.collectionQuery('customerMatch')",
+      "mergeStrategies": [
+        {
+          "strategyName": "myFavoriteSource",
+          "maxSources": 1,
+          "priorityOrder": {
+            "lengthWeight": 2,
+            "sources": [
+              {
+                "sourceName": "favoriteSource",
+                "weight": 12
+              },
+              {
+                "sourceName": "lessFavoriteSource",
+                "weight": 8
+              }
+            ]
+          }
+        },
+        {
+          "strategyName": "customMergeStrategy",
+          "mergeModulePath": "/custom/merge/strategy.sjs"
+        }
+      ],
+      "mergeProperties": [
+        {
+          "entityPropertyPath": "name",
+          "mergeStrategyName": "myFavoriteSource"
+        },
+        {
+          "entityPropertyPath": "address",
+          "mergeStrategyName": "customMergeStrategy"
+        }
+      ],
+      "targetCollections": {
+        "onMerge": {
+          "add": [
+            "sm-Customer-mastered"
+          ],
+          "removed": [
+            "sm-Customer-archived"
+          ]
+        },
+        "onArchive": {
+          "add": [
+            "sm-Customer-archived"
+          ],
+          "removed": [
+            "sm-Customer-mastered"
+          ]
+        },
+        "onNoMatch": {
+          "add": [
+            "sm-Customer-mastered"
+          ],
+          "removed": [
+            "sm-Customer-archived"
+          ]
+        },
+        "onNotification": {
+          "add": [
+            "sm-Customer-notification"
+          ],
+          "removed": []
+        }
+      }
+    }
+  }
+}

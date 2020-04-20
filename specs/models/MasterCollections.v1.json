@@ -1,0 +1,52 @@
+{
+  "title": "MasteringCollections.v1",
+  "type": "object",
+        "properties": {
+          "onMerge": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "sm-Person-merged",
+              "sm-Person-mastered"
+            ]
+          },
+          "onNoMatch": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "sm-Person-mastered"
+            ]
+          },
+          "onArchive": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "sm-Person-archived"
+            ]
+          },
+          "onNotification": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "sm-Person-notification"
+            ]
+          },
+          "onAuditing": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "sm-Person-auditing"
+            ]
+          }
+        }
+}

@@ -1,0 +1,215 @@
+{
+  "title": "MatchStep.v1",
+  "description": "Step describing a matching operation",
+  "x-examples": {
+    "customer-matching": {
+      "name": "customerMatching",
+      "targetEntityTypeId": "http://example.org/Customer-0.0.1/Customer",
+      "sourceQuery": "cts.collectionQuery('Customer')",
+      "matchDefintions": [
+        {
+          "entityPropertyPath": "name",
+          "matchType": "doubleMetaphone",
+          "weight": 3.5,
+          "dictionaryURI": "/firstNameDictionary.json",
+          "distanceThreshold": 100
+        },
+        {
+          "entityPropertyPath": "billing.zip",
+          "matchType": "zip",
+          "weight": 3.5
+        },
+        {
+          "entityPropertyPath": "customerNumber",
+          "matchType": "custom",
+          "weight": 5,
+          "algorithmModulePath": "/customerNumberMatching.sjs"
+        }
+      ],
+      "thresholds": [
+        {
+          "thresholdName": "myMergeThreshold",
+          "action": "merge",
+          "score": 12
+        },
+        {
+          "thresholdName": "myNotifyThreshold",
+          "action": "notify",
+          "score": 6.5
+        },
+        {
+          "thresholdName": "myCustomThreshold",
+          "action": "custom",
+          "score": 8.5,
+          "actionModulePath": "/custom/myCustomThreshold.sjs"
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "matchDefintions": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "properties": {
+                  "entityPropertyPath": {
+                    "type": "string"
+                  },
+                  "matchType": {
+                    "type": "string",
+                    "enum": [
+                      "custom"
+                    ]
+                  },
+                  "algorithmModulePath": {
+                    "type": "string"
+                  },
+                  "weight": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 12
+                  },
+                  "algorithmModuleNamespace": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "entityPropertyPath": {
+                    "type": "string"
+                  },
+                  "matchType": {
+                    "type": "string",
+                    "enum": [
+                      "exact",
+                      "zip",
+                      "reduce"
+                    ]
+                  },
+                  "weight": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 12
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "entityPropertyPath": {
+                    "type": "string"
+                  },
+                  "matchType": {
+                    "type": "string",
+                    "enum": [
+                      "doubleMetaphone"
+                    ]
+                  },
+                  "weight": {
+                    "type": "number",
+                    "minimum": -12,
+                    "maximum": 12
+                  },
+                  "dictionaryURI": {
+                    "type": "string"
+                  },
+                  "distanceThreshold": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "collation": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "entityPropertyPath": {
+                    "type": "string"
+                  },
+                  "matchType": {
+                    "type": "string",
+                    "enum": [
+                      "synonym"
+                    ]
+                  },
+                  "weight": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 12
+                  },
+                  "thesaurusURI": {
+                    "type": "string"
+                  },
+                  "filter": {
+                    "type": "string"
+                  }
+                }
+              }
+            ],
+            "type": "object"
+          }
+        },
+        "sourceQuery": {
+          "type": "string"
+        },
+        "thresholds": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "properties": {
+                  "thresholdName": {
+                    "type": "string"
+                  },
+                  "action": {
+                    "type": "string",
+                    "enum": [
+                      "merge",
+                      "notify"
+                    ]
+                  },
+                  "score": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 12
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "thresholdName": {
+                    "type": "string"
+                  },
+                  "action": {
+                    "type": "string",
+                    "enum": [
+                      "custom"
+                    ]
+                  },
+                  "actionModulePath": {
+                    "type": "string"
+                  },
+                  "actionModuleNamespace": {
+                    "type": "string"
+                  }
+                }
+              }
+            ],
+            "type": "object"
+          }
+        }
+      }
+    },
+    {
+      "$ref": "./Step.v1.json"
+    }
+  ]
+}
