@@ -97,4 +97,8 @@ public class ModelController {
     private ModelsService newService() {
         return new ModelManagerImpl(hubConfig);
     }
+
+    public void setHubConfig(HubConfigSession hubConfig) {
+        this.hubConfig = hubConfig;
+    }
 }

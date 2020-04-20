@@ -1,4 +1,4 @@
-package com.marklogic.hub.central.controllers;
+package com.marklogic.hub.central.controllers.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.central.AbstractHubCentralTest;
+import com.marklogic.hub.central.controllers.ModelController;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -22,7 +23,7 @@ public class ModelControllerTest extends AbstractHubCentralTest {
 
     @Test
     void testModelsServicesEndpoints() { controller = new ModelController();
-        controller.hubConfig = hubConfig;
+        controller.setHubConfig(hubConfig);
 
         createModel();
         updateModelInfo();

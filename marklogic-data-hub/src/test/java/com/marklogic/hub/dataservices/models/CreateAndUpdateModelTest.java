@@ -3,6 +3,7 @@ package com.marklogic.hub.dataservices.models;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
@@ -32,10 +33,11 @@ public class CreateAndUpdateModelTest extends AbstractHubCoreTest {
 
     @Test
     void createAndUpdateInfoThenUpdateEntityTypes() throws IOException {
-        ObjectNode input = mapper.createObjectNode();
-        input.put("name", MODEL_NAME);
+        ObjectNode input = newModel(MODEL_NAME);
         input.put("description", "Initial description");
+
         JsonNode model = service.createModel(input);
+
         verifyModelContents(model, "Initial description");
         verifyPersistedModels("Initial description");
 
@@ -51,15 +53,42 @@ public class CreateAndUpdateModelTest extends AbstractHubCoreTest {
      */
     @Test
     void invalidEntityName() {
-        ObjectNode input = mapper.createObjectNode();
-        input.put("name", "Spaces not allowed");
         try {
-            service.createModel(input);
+            service.createModel(newModel("Spaces are not allowed"));
             fail("Expected error because spaces are not allowed in an entity name");
         } catch (Exception ex) {
             logger.info("Caught expected exception: " + ex.getMessage());
             assertTrue(ex.getMessage().contains("must start with a letter"));
         }
+    }
+
+    @Test
+    void entityNameIsAlreadyUsed() {
+        service.createModel(newModel("TestName"));
+        try {
+            service.createModel(newModel("TestName"));
+            fail("Expected a failure because a model already exists with the same name");
+        } catch (FailedRequestException ex) {
+            assertEquals(400, ex.getServerStatusCode());
+            assertEquals("An entity type already exists with a name of TestName", ex.getServerStatus());
+        }
+    }
+
+    @Test
+    void entityNameMissing() {
+        try {
+            service.createModel(mapper.createObjectNode());
+            fail("Expected a failure because no name was provided");
+        } catch (FailedRequestException ex) {
+            assertEquals(400, ex.getServerStatusCode());
+            assertEquals("The model must have an info object with a title property", ex.getServerStatus());
+        }
+    }
+
+    private ObjectNode newModel(String name) {
+        ObjectNode input = mapper.createObjectNode();
+        input.put("name", name);
+        return input;
     }
 
     private void verifyModelContents(JsonNode model, String expectedDescription) {

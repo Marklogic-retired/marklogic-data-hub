@@ -15,6 +15,8 @@
 */
 'use strict';
 
+const ds = require("/data-hub/5/data-services/ds-utils.sjs");
+
 var name;
 var type;
 
@@ -29,5 +31,5 @@ let result = fn.head(fn.subsequence(cts.search(query), 1, 1));
 if (result != undefined) {
   result
 } else {
-  throw Error(`Unable to find a step definition with name ${name} and type ${type}`)
+  ds.throwBadRequest(`Unable to find a step definition with name ${name} and type ${type}`);
 }

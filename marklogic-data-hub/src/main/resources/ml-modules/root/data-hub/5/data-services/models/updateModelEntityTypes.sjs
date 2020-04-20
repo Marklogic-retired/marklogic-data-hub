@@ -15,6 +15,7 @@
 */
 'use strict';
 
+const ds = require("/data-hub/5/data-services/ds-utils.sjs");
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 
 var name;
@@ -22,7 +23,7 @@ var input = fn.head(xdmp.fromJSON(input));
 
 const uri = entityLib.getModelUri(name);
 if (!fn.docAvailable(uri)) {
-  new Error("Could not find model with name: " + name);
+  ds.throwBadRequest("Could not find model with name: " + name);
 }
 
 const model = cts.doc(uri).toObject();
