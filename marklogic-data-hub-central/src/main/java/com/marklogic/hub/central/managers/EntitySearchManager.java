@@ -16,6 +16,9 @@
  */
 package com.marklogic.hub.central.managers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.ForbiddenUserException;
 import com.marklogic.client.MarkLogicServerException;
@@ -23,6 +26,7 @@ import com.marklogic.client.ResourceNotFoundException;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
+import com.marklogic.client.io.ReaderHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.io.marker.StructureWriteHandle;
 import com.marklogic.client.query.QueryManager;
@@ -30,21 +34,29 @@ import com.marklogic.client.query.RawCombinedQueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryBuilder.Operator;
 import com.marklogic.client.query.StructuredQueryDefinition;
+import com.marklogic.client.row.RowManager;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.central.exceptions.DataHubException;
 import com.marklogic.hub.central.models.DocSearchQueryInfo;
 import com.marklogic.hub.central.models.Document;
 import com.marklogic.hub.central.models.SearchQuery;
+import com.marklogic.hub.dataservices.EntitySearchService;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.function.Function;
 
 public class EntitySearchManager {
 
@@ -63,12 +75,16 @@ public class EntitySearchManager {
     private static final String SEARCH_HEAD = "<search xmlns=\"http://marklogic.com/appservices/search\">\n";
     private static final String SEARCH_TAIL = "</search>";
     private static final Set<String> METADATA_FIELD_NAME = new HashSet<>(Arrays.asList("datahubCreatedOn"));
+    private static final String CSV_CONTENT_TYPE = "text/csv";
+    private static final String CSV_FILE_EXTENSION = ".csv";
+    private static final String SEPARATOR = "_";
+    private static final String FILE_PREFIX = "DH_Export_";
 
     private static final Logger logger = LoggerFactory.getLogger(EntitySearchManager.class);
 
 
-
     public static String QUERY_OPTIONS = "exp-final-entity-options";
+    private static Function<String, String> replaceHyphenWithUnderscore = str -> str.replaceAll("-", "_");
     private DatabaseClient finalDatabaseClient;
     private ModelManager modelManager;
 
@@ -93,7 +109,7 @@ public class EntitySearchManager {
         }
         catch (MarkLogicServerException e) {
             // If there are no entityModels to search, then we expect an error because no search options will exist
-            if(searchQuery.getQuery().getEntityTypeIds().isEmpty() || modelManager.getModels().size() == 0) {
+            if (searchQuery.getQuery().getEntityTypeIds().isEmpty() || modelManager.getModels().size() == 0) {
                 logger.warn("No entityTypes present to perform search");
                 return new StringHandle("");
             }
@@ -271,6 +287,145 @@ public class EntitySearchManager {
         return sb.toString();
     }
 
+    public void exportById(String queryId, String fileType, Long limit, OutputStream out, HttpServletResponse response) {
+        JsonNode queryDocument = EntitySearchService.on(finalDatabaseClient).getSavedQuery(queryId);
+        exportByQuery(queryDocument, fileType, limit, out, response);
+    }
+
+    public void exportByQuery(JsonNode queryDocument, String fileType, Long limit, OutputStream out, HttpServletResponse response) {
+        if ("CSV".equals(fileType.toUpperCase())) {
+            prepareResponseHeader(response, CSV_CONTENT_TYPE, getFileNameForDownload(queryDocument, CSV_FILE_EXTENSION));
+            exportRows(queryDocument, limit, out);
+        }
+        else {
+            throw new DataHubException("Invalid file type: " + fileType);
+        }
+    }
+
+    public void exportRows(JsonNode queryDocument, Long limit, OutputStream out) {
+        QueryManager queryMgr = finalDatabaseClient.newQueryManager();
+        SearchQuery searchQuery = transformToSearchQuery(queryDocument);
+        StructuredQueryDefinition structuredQueryDefinition = buildQuery(queryMgr, searchQuery);
+
+        String structuredQuery = structuredQueryDefinition.serialize();
+        String searchText = searchQuery.getQuery().getSearchText();
+        String queryOptions = getQueryOptions(QUERY_OPTIONS);
+        String entityTypeId = getEntityTypeIdForRowExport(queryDocument);
+        List<String> columns = getColumnNamesForRowExport(queryDocument);
+
+        JsonNode opticPlanNode = EntitySearchService.on(finalDatabaseClient).getOpticPlan(structuredQuery, searchText, queryOptions, entityTypeId, entityTypeId, limit, columns.stream());
+        StringHandle stringHandle = new StringHandle(opticPlanNode.toString());
+        RowManager rowManager = finalDatabaseClient.newRowManager();
+        try (ReaderHandle readerHandle = new ReaderHandle()) {
+            rowManager.resultDoc(rowManager.newRawPlanDefinition(stringHandle), readerHandle.withMimetype(CSV_CONTENT_TYPE));
+            readerHandle.write(out);
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        finally {
+            IOUtils.closeQuietly(out);
+        }
+    }
+
+    protected SearchQuery transformToSearchQuery(JsonNode queryDocument) {
+        return Optional.of(queryDocument)
+            .map(node -> node.get("savedQuery"))
+            .map(node -> node.get("query"))
+            .map(node -> {
+                try {
+                    return new ObjectMapper().treeToValue(node, DocSearchQueryInfo.class);
+                }
+                catch (JsonProcessingException e) {
+                    throw new DataHubException("Invalid query");
+                }
+            })
+            .map(docSearchQueryInfo -> {
+                final SearchQuery query = new SearchQuery();
+                query.setQuery(docSearchQueryInfo);
+                return query;
+            })
+            .orElseThrow(() -> new DataHubException("Valid query required"));
+    }
+
+    // Replacing hyphen with underscore for entityTypeId since TDE's do the same.
+    protected String getEntityTypeIdForRowExport(JsonNode queryDocument) {
+        return Optional.of(queryDocument)
+            .map(node -> node.get("savedQuery"))
+            .map(node -> node.get("query"))
+            .map(node -> node.get("entityTypeIds"))
+            .map(node -> node.get(0))
+            .map(JsonNode::textValue)
+            .map(replaceHyphenWithUnderscore)
+            .orElse(null);
+    }
+
+    /*
+     * Replacing hyphen with underscore for column name (entity property names) since TDE's do the same.
+     * Also filtering out columns that have a "." since we dont support object/array type properties for now.
+     */
+    protected List<String> getColumnNamesForRowExport(JsonNode queryDocument) {
+        List<String> columns = new ArrayList<>();
+        Optional.of(queryDocument)
+            .map(node -> node.get("savedQuery"))
+            .map(node -> node.get("propertiesToDisplay"))
+            .ifPresent(node -> node.forEach(colNode -> {
+                String colName = colNode.textValue();
+                if (!colName.contains(".")) {
+                    columns.add(replaceHyphenWithUnderscore.apply(colName));
+                }
+            }));
+        return columns;
+    }
+
+    /*
+     * Returns null when 'name' is missing or blank ("")
+     */
+    protected String getQueryName(JsonNode queryDocument) {
+        return Optional.of(queryDocument)
+            .map(node -> node.get("savedQuery"))
+            .map(node -> node.get("name"))
+            .map(JsonNode::textValue)
+            .filter(StringUtils::isNotBlank)
+            .orElse(null);
+    }
+
+    /**
+     * Retrieves the specified options file name for the final database.
+     *
+     * @param queryOptionsName
+     * @return - Options file as string
+     */
+    protected String getQueryOptions(String queryOptionsName) {
+        String queryOptions;
+        try {
+            queryOptions = finalDatabaseClient.newServerConfigManager()
+                .newQueryOptionsManager()
+                .readOptionsAs(queryOptionsName, Format.XML, String.class);
+        }
+        catch (ResourceNotFoundException e) {
+            throw new DataHubException(String.format("Could not find search options: %s", queryOptionsName), e);
+        }
+        return queryOptions;
+    }
+
+    private void prepareResponseHeader(HttpServletResponse response, String contentType, String fileName) {
+        response.setContentType(contentType);
+        response.setHeader(
+            "Content-Disposition",
+            "attachment;filename=" + fileName);
+    }
+
+    private String getFileNameForDownload(JsonNode queryDocument, String fileExtension) {
+        String queryInfo = getQueryName(queryDocument);
+        if (queryInfo == null) {
+            queryInfo = getEntityTypeIdForRowExport(queryDocument);
+        }
+        String timestamp = DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now().withNano(0));
+
+        return FILE_PREFIX + queryInfo + SEPARATOR + timestamp + fileExtension;
+    }
+
     private void buildSortOrderOptions(StringBuilder sb, SearchQuery searchQuery) {
         Optional<List<SearchQuery.SortOrder>> sortOrders = searchQuery.getSortOrder();
         sortOrders.ifPresent(so -> {
@@ -283,13 +438,15 @@ public class EntitySearchManager {
 
                 if (o.isAscending()) {
                     sb.append(" direction=\"ascending\">");
-                } else {
+                }
+                else {
                     sb.append(" direction=\"descending\">");
                 }
 
                 if (METADATA_FIELD_NAME.contains(o.getName())) {
                     sb.append(String.format("<field name=\"%s\"/>\n", StringEscapeUtils.escapeXml10(o.getName())));
-                } else {
+                }
+                else {
                     sb.append(String.format("<element ns=\"\" name=\"%s\"/>\n", StringEscapeUtils.escapeXml10(o.getName())));
                 }
                 sb.append("</sort-order>");

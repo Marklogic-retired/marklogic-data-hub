@@ -24,12 +24,12 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   in: body
-                    name: body
-                    description: Credentials to login
-                    required: true
-                    schema:
-                        $ref: '#/definitions/loginCredentials'
+                - in: body
+                  name: body
+                  description: Credentials to login
+                  required: true
+                  schema:
+                      $ref: '#/definitions/loginCredentials'
             responses:
                 '200':
                     description: Successful Operation
@@ -66,16 +66,16 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: page
-                    in: query
-                    description: 'Page # of the paginated data'
-                    required: false
-                    type: string
-                -   name: length
-                    in: query
-                    description: Length paginated data
-                    required: false
-                    type: string
+                - name: page
+                  in: query
+                  description: 'Page # of the paginated data'
+                  required: false
+                  type: string
+                - name: length
+                  in: query
+                  description: Length paginated data
+                  required: false
+                  type: string
             responses:
                 '200':
                     description: Successful Operation
@@ -113,12 +113,12 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   in: body
-                    name: body
-                    description: Flow to create
-                    required: true
-                    schema:
-                        $ref: '#/definitions/flow'
+                - in: body
+                  name: body
+                  description: Flow to create
+                  required: true
+                  schema:
+                      $ref: '#/definitions/flow'
             responses:
                 '200':
                     description: Successful Operation
@@ -155,11 +155,11 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: flowId
-                    in: path
-                    description: Id of flow to be fetched
-                    required: true
-                    type: string
+                - name: flowId
+                  in: path
+                  description: Id of flow to be fetched
+                  required: true
+                  type: string
             responses:
                 '200':
                     description: Successful Operation
@@ -195,17 +195,17 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: flowId
-                    in: path
-                    description: Id of flow to be updated
-                    required: true
-                    type: string
-                -   in: body
-                    name: body
-                    description: Updated flow
-                    required: true
-                    schema:
-                        $ref: '#/definitions/flow'
+                - name: flowId
+                  in: path
+                  description: Id of flow to be updated
+                  required: true
+                  type: string
+                - in: body
+                  name: body
+                  description: Updated flow
+                  required: true
+                  schema:
+                      $ref: '#/definitions/flow'
             responses:
                 '200':
                     description: Successful Operation
@@ -239,11 +239,11 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: flowId
-                    in: path
-                    description: Id of flow to be fetched
-                    required: true
-                    type: string
+                - name: flowId
+                  in: path
+                  description: Id of flow to be fetched
+                  required: true
+                  type: string
             responses:
                 '200':
                     description: Successful Operation
@@ -278,19 +278,19 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: flowId
-                    in: path
-                    description: Id of flow to run
-                    required: true
-                    type: string
-                -   in: body
-                    name: body
-                    description: 'Array of Step ids to run, no body if all are being executed'
-                    required: false
-                    schema:
-                        type: array
-                        items:
-                            type: string
+                - name: flowId
+                  in: path
+                  description: Id of flow to run
+                  required: true
+                  type: string
+                - in: body
+                  name: body
+                  description: 'Array of Step ids to run, no body if all are being executed'
+                  required: false
+                  schema:
+                      type: array
+                      items:
+                          type: string
             responses:
                 '200':
                     description: Successful Operation
@@ -327,11 +327,11 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: flowId
-                    in: path
-                    description: Id of flow to stop
-                    required: true
-                    type: string
+                - name: flowId
+                  in: path
+                  description: Id of flow to stop
+                  required: true
+                  type: string
             responses:
                 '200':
                     description: Successful Operation
@@ -368,11 +368,11 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: flowId
-                    in: path
-                    description: Id of flow to be fetched
-                    required: true
-                    type: string
+                - name: flowId
+                  in: path
+                  description: Id of flow to be fetched
+                  required: true
+                  type: string
             responses:
                 '200':
                     description: Successful Operation
@@ -410,24 +410,24 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: flowId
-                    in: path
-                    description: Id of flow
-                    required: true
-                    type: string
-                -   name: stepOrder
-                    in: query
-                    description: >-
-                        The location in the Array of Steps this new Step will be inserted.
-                        Defaults to end of the Array, if not set.
-                    required: false
-                    type: string
-                -   in: body
-                    name: body
-                    description: Step to create
-                    required: true
-                    schema:
-                        $ref: '#/definitions/step'
+                - name: flowId
+                  in: path
+                  description: Id of flow
+                  required: true
+                  type: string
+                - name: stepOrder
+                  in: query
+                  description: >-
+                      The location in the Array of Steps this new Step will be inserted.
+                      Defaults to end of the Array, if not set.
+                  required: false
+                  type: string
+                - in: body
+                  name: body
+                  description: Step to create
+                  required: true
+                  schema:
+                      $ref: '#/definitions/step'
             responses:
                 '200':
                     description: Successful Operation
@@ -464,22 +464,22 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: flowId
-                    in: path
-                    description: 'Id of flow to be updated, which is the flow name'
-                    required: true
-                    type: string
-                -   name: stepId
-                    in: path
-                    description: 'Id of step to be updated, a composite of ''<stepName>-<stepType>'''
-                    required: true
-                    type: string
-                -   in: body
-                    name: body
-                    description: Updated step
-                    required: true
-                    schema:
-                        $ref: '#/definitions/step'
+                - name: flowId
+                  in: path
+                  description: 'Id of flow to be updated, which is the flow name'
+                  required: true
+                  type: string
+                - name: stepId
+                  in: path
+                  description: 'Id of step to be updated, a composite of ''<stepName>-<stepType>'''
+                  required: true
+                  type: string
+                - in: body
+                  name: body
+                  description: Updated step
+                  required: true
+                  schema:
+                      $ref: '#/definitions/step'
             responses:
                 '200':
                     description: Successful Operation
@@ -513,16 +513,16 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: flowId
-                    in: path
-                    description: 'Id of flow to be fetched, which is the flow name'
-                    required: true
-                    type: string
-                -   name: stepId
-                    in: path
-                    description: 'Id of step to be fetched, a composite of ''<stepName>-<stepType>'''
-                    required: true
-                    type: string
+                - name: flowId
+                  in: path
+                  description: 'Id of flow to be fetched, which is the flow name'
+                  required: true
+                  type: string
+                - name: stepId
+                  in: path
+                  description: 'Id of step to be fetched, a composite of ''<stepName>-<stepType>'''
+                  required: true
+                  type: string
             responses:
                 '200':
                     description: Successful Operation
@@ -557,26 +557,26 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: flowId
-                    in: path
-                    description: 'Id of flow to be updated, which is the flow name'
-                    required: true
-                    type: string
-                -   name: stepId
-                    in: path
-                    description: 'Id of step to be updated, a composite of ''<stepName>-<stepType>'''
-                    required: true
-                    type: string
-                -   name: artifactType
-                    in: path
-                    description: Type of artifact to link to step
-                    required: true
-                    type: string
-                -   name: artifactName
-                    in: path
-                    description: Name of artifact to link to step
-                    required: true
-                    type: string
+                - name: flowId
+                  in: path
+                  description: 'Id of flow to be updated, which is the flow name'
+                  required: true
+                  type: string
+                - name: stepId
+                  in: path
+                  description: 'Id of step to be updated, a composite of ''<stepName>-<stepType>'''
+                  required: true
+                  type: string
+                - name: artifactType
+                  in: path
+                  description: Type of artifact to link to step
+                  required: true
+                  type: string
+                - name: artifactName
+                  in: path
+                  description: Name of artifact to link to step
+                  required: true
+                  type: string
             responses:
                 '200':
                     description: Successful Operation
@@ -612,26 +612,26 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: flowId
-                    in: path
-                    description: 'Id of flow to be fetched, which is the flow name'
-                    required: true
-                    type: string
-                -   name: stepId
-                    in: path
-                    description: 'Id of step to be fetched, a composite of ''<stepName>-<stepType>'''
-                    required: true
-                    type: string
-                -   name: artifactType
-                    in: path
-                    description: Type of artifact to link to step
-                    required: true
-                    type: string
-                -   name: artifactName
-                    in: path
-                    description: Name of artifact to link to step
-                    required: true
-                    type: string
+                - name: flowId
+                  in: path
+                  description: 'Id of flow to be fetched, which is the flow name'
+                  required: true
+                  type: string
+                - name: stepId
+                  in: path
+                  description: 'Id of step to be fetched, a composite of ''<stepName>-<stepType>'''
+                  required: true
+                  type: string
+                - name: artifactType
+                  in: path
+                  description: Type of artifact to link to step
+                  required: true
+                  type: string
+                - name: artifactName
+                  in: path
+                  description: Name of artifact to link to step
+                  required: true
+                  type: string
             responses:
                 '200':
                     description: Successful Operation
@@ -666,31 +666,31 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: flowId
-                    in: path
-                    description: 'Id of flow to be updated, which is the flow name'
-                    required: true
-                    type: string
-                -   name: stepId
-                    in: path
-                    description: 'Id of step to be updated, a composite of ''<stepName>-<stepType>'''
-                    required: true
-                    type: string
-                -   name: artifactType
-                    in: path
-                    description: Type of artifact to link to step
-                    required: true
-                    type: string
-                -   name: artifactName
-                    in: path
-                    description: Name of artifact to link to step
-                    required: true
-                    type: string
-                -   name: artifactVersion
-                    in: path
-                    description: Optional version of artifact to link to step
-                    required: true
-                    type: string
+                - name: flowId
+                  in: path
+                  description: 'Id of flow to be updated, which is the flow name'
+                  required: true
+                  type: string
+                - name: stepId
+                  in: path
+                  description: 'Id of step to be updated, a composite of ''<stepName>-<stepType>'''
+                  required: true
+                  type: string
+                - name: artifactType
+                  in: path
+                  description: Type of artifact to link to step
+                  required: true
+                  type: string
+                - name: artifactName
+                  in: path
+                  description: Name of artifact to link to step
+                  required: true
+                  type: string
+                - name: artifactVersion
+                  in: path
+                  description: Optional version of artifact to link to step
+                  required: true
+                  type: string
             responses:
                 '200':
                     description: Successful Operation
@@ -726,31 +726,31 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: flowId
-                    in: path
-                    description: 'Id of flow to be fetched, which is the flow name'
-                    required: true
-                    type: string
-                -   name: stepId
-                    in: path
-                    description: 'Id of step to be fetched, a composite of ''<stepName>-<stepType>'''
-                    required: true
-                    type: string
-                -   name: artifactType
-                    in: path
-                    description: Type of artifact to link to step
-                    required: true
-                    type: string
-                -   name: artifactName
-                    in: path
-                    description: Name of artifact to link to step
-                    required: true
-                    type: string
-                -   name: artifactVersion
-                    in: path
-                    description: Optional version of artifact to link to step
-                    required: true
-                    type: string
+                - name: flowId
+                  in: path
+                  description: 'Id of flow to be fetched, which is the flow name'
+                  required: true
+                  type: string
+                - name: stepId
+                  in: path
+                  description: 'Id of step to be fetched, a composite of ''<stepName>-<stepType>'''
+                  required: true
+                  type: string
+                - name: artifactType
+                  in: path
+                  description: Type of artifact to link to step
+                  required: true
+                  type: string
+                - name: artifactName
+                  in: path
+                  description: Name of artifact to link to step
+                  required: true
+                  type: string
+                - name: artifactVersion
+                  in: path
+                  description: Optional version of artifact to link to step
+                  required: true
+                  type: string
             responses:
                 '200':
                     description: Successful Operation
@@ -785,11 +785,11 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: databaseId
-                    in: path
-                    description: Id of database to get collections from
-                    required: true
-                    type: string
+                - name: databaseId
+                  in: path
+                  description: Id of database to get collections from
+                  required: true
+                  type: string
             responses:
                 '200':
                     description: Successful Operation
@@ -1043,10 +1043,10 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: entityName
-                    type: string
-                    in: path
-                    required: true
+                - name: entityName
+                  type: string
+                  in: path
+                  required: true
             responses:
                 '200':
                     description: Successful Operation
@@ -1082,10 +1082,10 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: entityName
-                    type: string
-                    in: path
-                    required: true
+                - name: entityName
+                  type: string
+                  in: path
+                  required: true
             responses:
                 '200':
                     description: Successful Operation
@@ -1121,10 +1121,10 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: entityName
-                    type: string
-                    in: path
-                    required: true
+                - name: entityName
+                  type: string
+                  in: path
+                  required: true
             responses:
                 '200':
                     description: Successful Operation
@@ -1161,21 +1161,21 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: page
-                    in: query
-                    description: 'Page # of the paginated data'
-                    required: false
-                    type: string
-                -   name: length
-                    in: query
-                    description: Length paginated data
-                    required: false
-                    type: string
-                -   name: flowName
-                    in: query
-                    description: Flow name to filter jobs by
-                    required: false
-                    type: string
+                - name: page
+                  in: query
+                  description: 'Page # of the paginated data'
+                  required: false
+                  type: string
+                - name: length
+                  in: query
+                  description: Length paginated data
+                  required: false
+                  type: string
+                - name: flowName
+                  in: query
+                  description: Flow name to filter jobs by
+                  required: false
+                  type: string
             responses:
                 '200':
                     description: Successful Operation
@@ -1216,10 +1216,10 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: jobId
-                    type: string
-                    in: path
-                    required: true
+                - name: jobId
+                  type: string
+                  in: path
+                  required: true
             responses:
                 '200':
                     description: Successful Operation
@@ -1294,10 +1294,10 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: flowName
-                    type: string
-                    in: path
-                    required: true
+                - name: flowName
+                  type: string
+                  in: path
+                  required: true
             responses:
                 '200':
                     description: Successful Operation
@@ -1334,11 +1334,11 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: jobId
-                    in: path
-                    description: Id of Job to get
-                    required: true
-                    type: string
+                - name: jobId
+                  in: path
+                  description: Id of Job to get
+                  required: true
+                  type: string
             responses:
                 '200':
                     description: Successful Operation
@@ -1374,11 +1374,11 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: jobId
-                    in: path
-                    description: Id of job to be fetched
-                    required: true
-                    type: string
+                - name: jobId
+                  in: path
+                  description: Id of job to be fetched
+                  required: true
+                  type: string
             responses:
                 '200':
                     description: Successful Operation
@@ -1413,14 +1413,14 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: start
-                    type: integer
-                    in: query
-                    required: false
-                -   name: pageLength
-                    type: integer
-                    in: query
-                    required: false
+                - name: start
+                  type: integer
+                  in: query
+                  required: false
+                - name: pageLength
+                  type: integer
+                  in: query
+                  required: false
             responses:
                 '200':
                     description: Successful Operation
@@ -1459,10 +1459,10 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: loadDataName
-                    type: string
-                    in: path
-                    required: true
+                - name: loadDataName
+                  type: string
+                  in: path
+                  required: true
             responses:
                 '200':
                     description: Successful Operation
@@ -1498,15 +1498,15 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: loadDataName
-                    type: string
-                    in: path
-                    required: true
-                -   name: loadDataArtifact
-                    schema:
-                        $ref: '#/definitions/loadDataArtifact'
-                    in: body
-                    required: true
+                - name: loadDataName
+                  type: string
+                  in: path
+                  required: true
+                - name: loadDataArtifact
+                  schema:
+                      $ref: '#/definitions/loadDataArtifact'
+                  in: body
+                  required: true
             responses:
                 '200':
                     description: Successful Operation
@@ -1542,10 +1542,10 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: loadDataName
-                    type: string
-                    in: path
-                    required: true
+                - name: loadDataName
+                  type: string
+                  in: path
+                  required: true
             responses:
                 '200':
                     description: Successful Operation
@@ -1580,10 +1580,10 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: loadDataName
-                    type: string
-                    in: path
-                    required: true
+                - name: loadDataName
+                  type: string
+                  in: path
+                  required: true
             responses:
                 '200':
                     description: Successful Operation
@@ -1623,17 +1623,17 @@ paths:
             consumes:
                 - multipart/form-data
             parameters:
-                -   name: loadDataName
-                    type: string
-                    in: path
-                    required: true
-                -   name: dataSet
-                    type: array
-                    in: formData
-                    items:
-                        type: string
-                        format: binary
-                    required: true
+                - name: loadDataName
+                  type: string
+                  in: path
+                  required: true
+                - name: dataSet
+                  type: array
+                  in: formData
+                  items:
+                      type: string
+                      format: binary
+                  required: true
             responses:
                 '200':
                     description: Successful Operation
@@ -1668,14 +1668,14 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: start
-                    type: integer
-                    in: query
-                    required: false
-                -   name: pageLength
-                    type: integer
-                    in: query
-                    required: false
+                - name: start
+                  type: integer
+                  in: query
+                  required: false
+                - name: pageLength
+                  type: integer
+                  in: query
+                  required: false
             responses:
                 '200':
                     description: Successful Operation
@@ -1714,10 +1714,10 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: matchingName
-                    type: string
-                    in: path
-                    required: true
+                - name: matchingName
+                  type: string
+                  in: path
+                  required: true
             responses:
                 '200':
                     description: Successful Operation
@@ -1753,15 +1753,15 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: matchingName
-                    type: string
-                    in: path
-                    required: true
-                -   name: matchingArtifact
-                    schema:
-                        $ref: '#/definitions/matchingArtifact'
-                    in: body
-                    required: true
+                - name: matchingName
+                  type: string
+                  in: path
+                  required: true
+                - name: matchingArtifact
+                  schema:
+                      $ref: '#/definitions/matchingArtifact'
+                  in: body
+                  required: true
             responses:
                 '200':
                     description: Successful Operation
@@ -1797,10 +1797,10 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: matchingName
-                    type: string
-                    in: path
-                    required: true
+                - name: matchingName
+                  type: string
+                  in: path
+                  required: true
             responses:
                 '200':
                     description: Successful Operation
@@ -1835,10 +1835,10 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: mapName
-                    type: string
-                    in: path
-                    required: true
+                - name: mapName
+                  type: string
+                  in: path
+                  required: true
             responses:
                 '200':
                     description: Successful Operation
@@ -1874,15 +1874,15 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: mapName
-                    type: string
-                    in: path
-                    required: true
-                -   name: mapping
-                    schema:
-                        $ref: '#/definitions/mappingArtifact'
-                    in: body
-                    required: true
+                - name: mapName
+                  type: string
+                  in: path
+                  required: true
+                - name: mapping
+                  schema:
+                      $ref: '#/definitions/mappingArtifact'
+                  in: body
+                  required: true
             responses:
                 '200':
                     description: Successful Operation
@@ -1918,10 +1918,10 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: mapName
-                    type: string
-                    in: path
-                    required: true
+                - name: mapName
+                  type: string
+                  in: path
+                  required: true
             responses:
                 '200':
                     description: Successful Operation
@@ -1958,10 +1958,10 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: mapName
-                    type: string
-                    in: path
-                    required: true
+                - name: mapName
+                  type: string
+                  in: path
+                  required: true
             responses:
                 '200':
                     description: Successful Operation
@@ -2070,10 +2070,10 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: entityType
-                    type: string
-                    in: path
-                    required: true
+                - name: entityType
+                  type: string
+                  in: path
+                  required: true
             responses:
                 '200':
                     description: Successful Operation
@@ -2182,12 +2182,12 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: database
-                    in: query
-                    type: string
-                -   name: docUri
-                    in: query
-                    type: string
+                - name: database
+                  in: query
+                  type: string
+                - name: docUri
+                  in: query
+                  type: string
             responses:
                 '200':
                     description: Successful Operation
@@ -2296,10 +2296,10 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: modelName
-                    type: string
-                    in: path
-                    required: true
+                - name: modelName
+                  type: string
+                  in: path
+                  required: true
             responses:
                 '200':
                     description: Successful Operation
@@ -2373,10 +2373,10 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: modelName
-                    type: string
-                    in: path
-                    required: true
+                - name: modelName
+                  type: string
+                  in: path
+                  required: true
             responses:
                 '200':
                     description: Successful Operation
@@ -2447,9 +2447,9 @@ paths:
             produces:
                 - application/json
             parameters:
-                -   name: docUri
-                    in: query
-                    type: string
+                - name: docUri
+                  in: query
+                  type: string
             responses:
                 '200':
                     description: Successful Operation
@@ -2546,6 +2546,102 @@ paths:
                     schema:
                         $ref: '#/definitions/error'
             x-swagger-router-controller: facetValue
+    /entitySearch/export:
+        post:
+            tags:
+                - Export
+            summary: Export data using saved query json
+            description: ....
+            operationId: exportData
+            produces:
+                - text/csv
+            parameters:
+                - name: queryDocument
+                  type: string
+                  in: query
+                  required: true
+                - name: fileType
+                  type: string
+                  in: query
+                  required: true
+                - name: limit
+                  type: number
+                  in: query
+                  required: false
+            responses:
+                '200':
+                    description: Successful Operation
+                    schema:
+                        $ref: '#/definitions/csvData'
+                '400':
+                    description: Bad Request
+                    schema:
+                        $ref: '#/definitions/error'
+                '401':
+                    description: Unauthorized
+                    schema:
+                        $ref: '#/definitions/error'
+                '403':
+                    description: Forbidden
+                    schema:
+                        $ref: '#/definitions/error'
+                '404':
+                    description: Not Found
+                    schema:
+                        $ref: '#/definitions/error'
+                '500':
+                    description: Internal Server Error
+                    schema:
+                        $ref: '#/definitions/error'
+            x-swagger-router-controller: exportData
+    '/entitySearch/export/query/{queryId}':
+        get:
+            tags:
+                - Export
+            summary: Export data using query Id
+            description: ....
+            operationId: exportDataUsingId
+            produces:
+                - text/csv
+            parameters:
+                - name: queryId
+                  type: string
+                  in: path
+                  required: true
+                - name: fileType
+                  type: string
+                  in: query
+                  required: true
+                - name: limit
+                  type: number
+                  in: query
+                  required: false
+            responses:
+                '200':
+                    description: Successful Operation
+                    schema:
+                        $ref: '#/definitions/csvData'
+                '400':
+                    description: Bad Request
+                    schema:
+                        $ref: '#/definitions/error'
+                '401':
+                    description: Unauthorized
+                    schema:
+                        $ref: '#/definitions/error'
+                '403':
+                    description: Forbidden
+                    schema:
+                        $ref: '#/definitions/error'
+                '404':
+                    description: Not Found
+                    schema:
+                        $ref: '#/definitions/error'
+                '500':
+                    description: Internal Server Error
+                    schema:
+                        $ref: '#/definitions/error'
+            x-swagger-router-controller: exportData
     /entitySearch/savedQueries:
         post:
             tags:
@@ -3243,6 +3339,13 @@ definitions:
         example:
             min: 1
             max: 31
+    csvData:
+        type: object
+        description: CSV data
+        example: |-
+            id,name
+            1,John
+            2,Jane
     facetValue:
         type: object
         description: Range for facet value
@@ -3479,7 +3582,9 @@ definitions:
         properties:
             sourcedFrom:
                 type: string
-                description: XPath expression that generates the value for the property or provides dataset for child expression
+                description: >-
+                    XPath expression that generates the value for the property or provides
+                    dataset for child expression
             targetEntityType:
                 type: string
                 description: Entity Type the input data will be mapped to

@@ -18,6 +18,7 @@ package com.marklogic.hub.central.controllers;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.central.managers.EntitySearchManager;
 import com.marklogic.hub.central.models.Document;
 import com.marklogic.hub.central.models.SearchQuery;
@@ -26,9 +27,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 
@@ -100,6 +104,33 @@ public class EntitySearchController extends BaseController {
     public ResponseEntity deleteQueryDocument(@RequestParam String id) {
         getEntitySearchService().deleteSavedQuery(id);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+
+    /*
+     * In order for the browser to download the file using POST, we are sending the request as HTML Form submit.
+     * As a result we are accepting the queryDocument json as a string since it will be sent as HTML Form data.
+     * https://stackoverflow.com/questions/7563791/is-it-possible-to-download-a-file-with-http-post/46486694#46486694
+     */
+    @RequestMapping(method = RequestMethod.POST, value = "/export")
+    @ResponseBody
+    @Secured("ROLE_canExportEntityInstances")
+    public ResponseEntity<StreamingResponseBody> export(@RequestParam String queryDocument, @RequestParam String fileType, @RequestParam(required = false) Long limit, final HttpServletResponse response) {
+        StreamingResponseBody stream = out -> {
+            newEntitySearchManager().exportByQuery(new ObjectMapper().readTree(queryDocument), fileType, limit, out, response);
+        };
+
+        return ResponseEntity.ok(stream);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/export/query/{queryId}")
+    @ResponseBody
+    @Secured("ROLE_canExportEntityInstances")
+    public ResponseEntity<StreamingResponseBody> exportSavedQuery(@PathVariable String queryId, @RequestParam String fileType, @RequestParam(required = false) Long limit, final HttpServletResponse response) {
+        StreamingResponseBody stream = out -> {
+            newEntitySearchManager().exportById(queryId, fileType, limit, out, response);
+        };
+
+        return ResponseEntity.ok(stream);
     }
 
     private EntitySearchManager newEntitySearchManager() {

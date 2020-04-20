@@ -77,7 +77,7 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
     private DocumentPermissionsParser documentPermissionsParser = new DefaultDocumentPermissionsParser();
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
-    private boolean watchingModules = false;
+    private boolean loadQueryOptions = true;
     private boolean loadAllModules = true;
 
     public void setForceLoad(boolean forceLoad) {
@@ -207,7 +207,7 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
         modulesLoader.loadModules(baseDir, new UserModulesFinder(), stagingClient);
 
         // Don't load these while "watching" modules (i.e. mlWatch is being run), as users can't change these
-        if (!watchingModules) {
+        if (loadQueryOptions) {
             modulesLoader.loadModules("classpath*:/ml-modules-final", new SearchOptionsFinder(), finalClient);
         }
 
@@ -215,7 +215,7 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
 
         // deploy the auto-generated ES search options, but not if mlWatch is being run, as it will result in the same
         // options being generated and loaded over and over
-        if (!watchingModules) {
+        if (loadQueryOptions) {
             Path entityConfigDir = Paths.get(hubConfig.getHubProject().getProjectDirString(), HubConfig.ENTITY_CONFIG_DIR);
             if (!entityConfigDir.toFile().exists()) {
                 entityConfigDir.toFile().mkdirs();
@@ -285,8 +285,8 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
         }
     }
 
-    public void setWatchingModules(boolean watchingModules) {
-        this.watchingModules = watchingModules;
+    public void setLoadQueryOptions(boolean loadQueryOptions) {
+        this.loadQueryOptions = loadQueryOptions;
     }
 
     public void setLoadAllModules(boolean loadAllModules) {

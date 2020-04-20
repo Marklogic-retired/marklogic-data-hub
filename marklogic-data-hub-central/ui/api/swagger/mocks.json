@@ -3768,6 +3768,150 @@
         "x-swagger-router-controller": "facetValue"
       }
     },
+    "/entitySearch/export": {
+      "post": {
+        "tags": [
+          "Export"
+        ],
+        "summary": "Export data using saved query json",
+        "description": "....",
+        "operationId": "exportData",
+        "produces": [
+          "text/csv"
+        ],
+        "parameters": [
+          {
+            "name": "queryDocument",
+            "type": "string",
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "fileType",
+            "type": "string",
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "limit",
+            "type": "number",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Operation",
+            "schema": {
+              "$ref": "#/definitions/csvData"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        },
+        "x-swagger-router-controller": "exportData"
+      }
+    },
+    "/entitySearch/export/query/{queryId}": {
+      "get": {
+        "tags": [
+          "Export"
+        ],
+        "summary": "Export data using query Id",
+        "description": "....",
+        "operationId": "exportDataUsingId",
+        "produces": [
+          "text/csv"
+        ],
+        "parameters": [
+          {
+            "name": "queryId",
+            "type": "string",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "fileType",
+            "type": "string",
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "limit",
+            "type": "number",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Operation",
+            "schema": {
+              "$ref": "#/definitions/csvData"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/error"
+            }
+          }
+        },
+        "x-swagger-router-controller": "exportData"
+      }
+    },
     "/entitySearch/savedQueries":{
       "post":{
         "tags":[
@@ -4709,6 +4853,11 @@
         "min": 1,
         "max": 31
       }
+    },
+    "csvData": {
+      "type": "object",
+      "description": "CSV data",
+      "example": "id,name\n1,John\n2,Jane"
     },
     "facetValue": {
       "type": "object",

@@ -16,8 +16,13 @@
  */
 package com.marklogic.hub.central.managers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.central.AbstractHubCentralTest;
+import com.marklogic.hub.central.exceptions.DataHubException;
 import com.marklogic.hub.central.models.SearchQuery;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -29,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class EntitySearchManagerTest extends AbstractHubCentralTest {
 
+    static String ACTUAL_QUERY_OPTIONS = EntitySearchManager.QUERY_OPTIONS;
     EntitySearchManager entitySearchManager;
 
     @BeforeEach
@@ -36,9 +42,14 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
         entitySearchManager = new EntitySearchManager(getHubClient());
     }
 
+    @AfterEach
+    public void resetData() {
+        EntitySearchManager.QUERY_OPTIONS = ACTUAL_QUERY_OPTIONS;
+    }
+
     @Test
     public void testSearchResultsOnNoData() {
-        entitySearchManager.QUERY_OPTIONS = "non-existent-options";
+        EntitySearchManager.QUERY_OPTIONS = "non-existent-options";
         String collectionDeleteQuery = "declareUpdate(); xdmp.collectionDelete(\"http://marklogic.com/entity-services/models\")";
         getHubClient().getFinalClient().newServerEval().javascript(collectionDeleteQuery).evalAs(String.class);
         assertTrue(entitySearchManager.search(new SearchQuery()).get().isEmpty());
@@ -69,7 +80,7 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
         sortOrderList.add(sortOrder);
         searchQuery.setSortOrder(sortOrderList);
         String expectedResult = "<search xmlns=\"http://marklogic.com/appservices/search\">\n<options><sort-order type=\"xs:string\" direction=\"ascending\"><element ns=\"\" name=\"entityTypeProperty1\"/>\n" +
-                "</sort-order><sort-order direction=\"descending\"><field name=\"datahubCreatedOn\"/>\n</sort-order></options><query><collection-query><uri>collection1</uri></collection-query></query></search>";
+            "</sort-order><sort-order direction=\"descending\"><field name=\"datahubCreatedOn\"/>\n</sort-order></options><query><collection-query><uri>collection1</uri></collection-query></query></search>";
         assertTrue(entitySearchManager.buildSearchOptions(query, searchQuery).equals(expectedResult));
     }
 
@@ -81,5 +92,79 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
 
         String expectedResult = "<search xmlns=\"http://marklogic.com/appservices/search\">\n<qtext>&amp;&lt;&gt;&apos;&quot;</qtext><query><collection-query><uri>collection1</uri></collection-query></query></search>";
         assertTrue(entitySearchManager.buildSearchOptions(query, searchQuery).equals(expectedResult));
+    }
+
+    @Test
+    void testGetColumnNamesForRowExport() throws JsonProcessingException {
+        String json = "{\n" +
+            "  \"savedQuery\": {\n" +
+            "    \"name\": \"some-query\",\n" +
+            "    \"description\": \"some-query-description\",\n" +
+            "    \"query\": {\n" +
+            "      \"searchText\": \"some-string\",\n" +
+            "      \"entityTypeIds\": [\n" +
+            "        \"Entity1\"\n" +
+            "      ]\n" +
+            "    },\n" +
+            "    \"propertiesToDisplay\": [\"facet1\", \"EntityTypeProperty1\", \"facet1.facet\", \"EntityTypeProperty1.property\", \"EntityType-Property\"]\n" +
+            "  }\n" +
+            "}";
+        JsonNode queryDocument = new ObjectMapper().readTree(json);
+        List<String> expectedCols = Arrays.asList("facet1", "EntityTypeProperty1", "EntityType_Property");
+
+        List<String> actualCols = entitySearchManager.getColumnNamesForRowExport(queryDocument);
+
+        assertEquals(expectedCols, actualCols);
+    }
+
+    @Test
+    void testGetQueryName() throws JsonProcessingException {
+        String expectedQueryName = "query123";
+        String json = "{\n" +
+            "  \"savedQuery\": {\n" +
+            "    \"name\": \"" + expectedQueryName + "\",\n" +
+            "    \"description\": \"some-query-description\",\n" +
+            "    \"query\": {\n" +
+            "      \"searchText\": \"some-string\",\n" +
+            "      \"entityTypeIds\": [\n" +
+            "        \"Entity1\"\n" +
+            "      ]\n" +
+            "    },\n" +
+            "    \"propertiesToDisplay\": [\"facet1\", \"EntityTypeProperty1\", \"facet1.facet\", \"EntityTypeProperty1.property\", \"EntityType-Property\"]\n" +
+            "  }\n" +
+            "}";
+        JsonNode queryDocument = new ObjectMapper().readTree(json);
+
+        String actualQueryName = entitySearchManager.getQueryName(queryDocument);
+
+        assertEquals(expectedQueryName, actualQueryName);
+    }
+
+    @Test
+    void testGetEntityTypeForRowExport() throws JsonProcessingException {
+        String json = "{\n" +
+            "  \"savedQuery\": {\n" +
+            "    \"name\": \"some-query\",\n" +
+            "    \"description\": \"some-query-description\",\n" +
+            "    \"query\": {\n" +
+            "      \"searchText\": \"some-string\",\n" +
+            "      \"entityTypeIds\": [\n" +
+            "        \"Entity-1\"\n" +
+            "      ]\n" +
+            "    },\n" +
+            "    \"propertiesToDisplay\": [\"facet1\", \"EntityTypeProperty1\", \"facet1.facet\", \"EntityTypeProperty1.property\", \"EntityType-Property\"]\n" +
+            "  }\n" +
+            "}";
+        String expectedEntityTypeId = "Entity_1";
+        JsonNode queryDocument = new ObjectMapper().readTree(json);
+
+        String actualEntityTypeId = entitySearchManager.getEntityTypeIdForRowExport(queryDocument);
+
+        assertEquals(expectedEntityTypeId, actualEntityTypeId);
+    }
+
+    @Test
+    void testGetQueryOptions() {
+        assertThrows(DataHubException.class, () -> entitySearchManager.getQueryOptions("non-existent-options"));
     }
 }

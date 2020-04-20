@@ -22,7 +22,7 @@ public class ReferenceModelProject {
         this.objectMapper = new ObjectMapper();
     }
 
-    public void createCustomer(int customerId, String name) {
+    public void createRawCustomer(int customerId, String name) {
         JSONDocumentManager mgr = hubClient.getStagingClient().newJSONDocumentManager();
         ObjectNode customer = objectMapper.createObjectNode();
         customer.put("customerId", customerId);
@@ -31,6 +31,34 @@ public class ReferenceModelProject {
             .withCollections("customer-input")
             .withPermission("data-hub-operator", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE);
         mgr.write("/customer" + customerId + ".json", metadata, new JacksonHandle(customer));
+    }
+
+    public void createCustomerInstance(Customer customer) {
+        String customerEntityType = "Customer";
+
+        JSONDocumentManager mgr = hubClient.getFinalClient().newJSONDocumentManager();
+        ObjectNode customerProps = objectMapper.createObjectNode();
+        customerProps.put("customerId", customer.customerId);
+        customerProps.put("name", customer.name);
+        customerProps.put("customerNumber", customer.customerNumber);
+        customerProps.put("customerSince", customer.customerSince);
+
+        ObjectNode infoProp = objectMapper.createObjectNode();
+        infoProp.put("title", customerEntityType);
+        infoProp.put("version", "0.0.1");
+        infoProp.put("baseUri", "http://example.org/");
+
+        ObjectNode instanceProps = objectMapper.createObjectNode();
+        instanceProps.set("info", infoProp);
+        instanceProps.set(customerEntityType, customerProps);
+
+        JsonNode instance = objectMapper.createObjectNode().set("instance", instanceProps);
+        JsonNode envelope = objectMapper.createObjectNode().set("envelope", instance);
+
+        DocumentMetadataHandle metadata = new DocumentMetadataHandle()
+            .withCollections(customerEntityType)
+            .withPermission("data-hub-operator", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE);
+        mgr.write("/" + customerEntityType + customer.customerId + ".json", metadata, new JacksonHandle(envelope));
     }
 
     public RunFlowResponse runFlow(FlowInputs flowInputs) {

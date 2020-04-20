@@ -5,6 +5,9 @@ public class TestConstants {
     public static final String DEVELOPER_USERNAME = "test-data-hub-developer";
     public static final String DEVELOPER_PASSWORD = "password";
 
+    public static final String OPERATOR_USERNAME = "test-data-hub-operator";
+    public static final String OPERATOR_PASSWORD = "password";
+
     public static final String ENVIRONMENT_MANAGER_USERNAME = "test-data-hub-environment-manager";
     public static final String ENVIRONMENT_MANAGER_PASSWORD = "password";
 

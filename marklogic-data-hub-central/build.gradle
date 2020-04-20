@@ -82,6 +82,9 @@ dependencies {
     testCompile "org.mockito:mockito-junit-jupiter:3.0.0"
 }
 
+// We need this to access test resources such as "entity-reference-model" project from core data hub project
+sourceSets.test.resources.srcDir "../marklogic-data-hub/src/test/resources"
+
 node {
     // Version of node to use.
     version = '12.16.1'

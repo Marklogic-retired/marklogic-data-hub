@@ -16,7 +16,7 @@ public class AfterModulesLoadedCallback implements Consumer<ModuleWatchingContex
 
     public AfterModulesLoadedCallback(LoadUserModulesCommand command, CommandContext commandContext) {
         this.loadUserModulesCommand = command;
-        this.loadUserModulesCommand.setWatchingModules(true);
+        this.loadUserModulesCommand.setLoadQueryOptions(false);
         this.commandContext = commandContext;
     }
 

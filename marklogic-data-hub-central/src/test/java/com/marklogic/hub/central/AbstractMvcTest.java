@@ -39,11 +39,11 @@ public abstract class AbstractMvcTest extends AbstractHubCentralTest {
     }
 
     protected ResultActions loginAsDataHubDeveloper() {
-        return loginAsUser(testConstants.DEVELOPER_USERNAME);
+        return loginAsUser(TestConstants.DEVELOPER_USERNAME);
     }
 
     protected ResultActions loginAsTestUser() {
-        return loginAsUser(testConstants.TEST_USER_USERNAME);
+        return loginAsUser(TestConstants.TEST_USER_USERNAME);
     }
 
     protected ResultActions loginAsUser(String username) {
@@ -87,6 +87,14 @@ public abstract class AbstractMvcTest extends AbstractHubCentralTest {
 
     protected ResultActions getJson(String url, MultiValueMap<String, String> params) throws Exception {
         MockHttpServletRequestBuilder builder = get(url).params(params);
+        if (mockHttpSession != null) {
+            builder.session(mockHttpSession);
+        }
+        return mockMvc.perform(builder);
+    }
+
+    protected ResultActions postWithParams(String url, MultiValueMap<String, String> params) throws Exception {
+        MockHttpServletRequestBuilder builder = post(url).contentType(MediaType.APPLICATION_JSON).params(params);
         if (mockHttpSession != null) {
             builder.session(mockHttpSession);
         }

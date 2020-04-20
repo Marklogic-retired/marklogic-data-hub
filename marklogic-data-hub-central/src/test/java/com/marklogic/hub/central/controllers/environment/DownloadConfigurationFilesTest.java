@@ -22,7 +22,7 @@ public class DownloadConfigurationFilesTest extends AbstractMvcTest {
 
     @Test
     void permittedUser() throws Exception {
-        installReferenceProject();
+        installReferenceModelProject();
 
         setTestUserRoles("hub-central-downloader");
 

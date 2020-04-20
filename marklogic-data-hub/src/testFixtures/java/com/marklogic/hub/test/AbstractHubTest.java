@@ -135,12 +135,29 @@ public abstract class AbstractHubTest extends LoggingObject {
     }
 
     /**
+     * Load the files associated with the entity reference model with an option to load query options.
+     */
+    protected ReferenceModelProject installReferenceModelProject(boolean loadQueryOptions) {
+        installProjectInFolder("entity-reference-model", loadQueryOptions);
+        return new ReferenceModelProject(getHubClient());
+    }
+
+    /**
+     * Installs a project for a particular test but will not load query options.
+     * @param folderInClasspath
+     */
+    protected void installProjectInFolder(String folderInClasspath) {
+        installProjectInFolder(folderInClasspath, false);
+    }
+
+    /**
      * Intended to make it easy to specify a set of project files to load for a particular test. You likely will want to
      * call "resetProject" before calling this.
      *
      * @param folderInClasspath
+     * @param loadQueryOptions
      */
-    protected void installProjectInFolder(String folderInClasspath) {
+    protected void installProjectInFolder(String folderInClasspath, boolean loadQueryOptions) {
         boolean loadModules = false;
         HubProject hubProject = getHubConfig().getHubProject();
         try {
@@ -191,24 +208,29 @@ public abstract class AbstractHubTest extends LoggingObject {
             throw new RuntimeException("Unable to load project files: " + e.getMessage(), e);
         }
 
-        if (loadModules) {
-            installUserModulesAndArtifacts();
+        if (loadModules || loadQueryOptions) {
+            installUserModulesAndArtifacts(getHubConfig(), true, loadQueryOptions);
         } else {
             installUserArtifacts();
         }
     }
 
-    protected void installUserModulesAndArtifacts() {
-        installUserModulesAndArtifacts(getHubConfig(), true);
+    /**
+     * Installs user modules and artifacts without loading query options.
+     * @param hubConfig
+     * @param forceLoad
+     */
+    protected void installUserModulesAndArtifacts(HubConfig hubConfig, boolean forceLoad) {
+        installUserModulesAndArtifacts(hubConfig, forceLoad, false);
     }
 
-    protected void installUserModulesAndArtifacts(HubConfig hubConfig, boolean forceLoad) {
+    protected void installUserModulesAndArtifacts(HubConfig hubConfig, boolean forceLoad, boolean loadQueryOptions) {
         logger.debug("Installing user modules into MarkLogic");
         List<Command> commands = new ArrayList<>();
 
         LoadUserModulesCommand loadUserModulesCommand = new LoadUserModulesCommand(hubConfig);
         loadUserModulesCommand.setForceLoad(forceLoad);
-        loadUserModulesCommand.setWatchingModules(true);
+        loadUserModulesCommand.setLoadQueryOptions(loadQueryOptions);
         commands.add(loadUserModulesCommand);
 
         commands.add(new GenerateFunctionMetadataCommand(hubConfig));
