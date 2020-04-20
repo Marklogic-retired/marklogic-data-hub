@@ -1,7 +1,9 @@
 const test = require("/test/test-helper.xqy");
 const CollectorLib = require("/data-hub/5/endpoints/collectorLib.sjs");
+const DataHub = require("/data-hub/5/datahub.sjs");
+const datahub = new DataHub();
 
-const lib = new CollectorLib();
+const lib = new CollectorLib(datahub);
 let assertions = [];
 
 // Query is for a default-merging step

@@ -33,7 +33,6 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.io.JacksonHandle;
-import com.marklogic.hub.ArtifactManager;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.collector.DiskQueue;
@@ -381,15 +380,8 @@ public class WriteStepRunner implements StepRunner {
         if(stepConfig.get("threadCount") != null) {
             this.threadCount = Integer.parseInt(stepConfig.get("threadCount").toString());
         }
-        if (stepConfig.get("fileLocations") == null && comboOptions.has("loadData")) {
-            ArtifactManager artifactManager = ArtifactManager.on(this.hubConfig);
-            ObjectNode linkObject = (ObjectNode) comboOptions.get("loadData");
-            String artifactName = linkObject.get("name").asText();
-            ObjectNode artifactJson = artifactManager.getArtifact("loadData", artifactName);
-            fileLocations.putAll(mapper.convertValue(artifactJson, Map.class));
-            fileLocations.put("inputFileType", artifactJson.get("sourceFormat").asText());
-        } else if(stepConfig.get("fileLocations") != null) {
-            fileLocations.putAll((Map<String,String>)stepConfig.get("fileLocations"));
+        if(stepConfig.get("fileLocations") != null) {
+            fileLocations.putAll((Map<String, String>) stepConfig.get("fileLocations"));
         }
         if (!fileLocations.isEmpty()) {
             inputFilePath = (String)fileLocations.get("inputFilePath");

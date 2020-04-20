@@ -138,19 +138,29 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                     @Override
                     protected Modules findModulesWithResolvedBaseDir(String resolvedBaseDir) {
                         Modules modules = new Modules();
-                        modules.setAssets(findResources(artifactType + " Artifact", resolvedBaseDir, fileExtension, settingFileExtension));
+                        /* First write settings and then the artifact to prevent creation of default artifacts
+                         */
+                        modules.setAssets(findResources(artifactType + " Artifact", resolvedBaseDir, settingFileExtension, fileExtension));
                         return modules;
                     }
                 };
-                Files.walkFileTree(artifactPath, new SimpleFileVisitor<Path>() {
-                    @Override
-                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                        if (dir.toFile().isDirectory()) {
-                            executeWalkWithDataService(dir, modulesFinder, artifactService, typeInfo);
+                /*  All artifacts are present in base dir except stepdef, hence run File.walk
+                    also we shouldn't attempt to reload the previously loaded mappings(using REST) using DS.
+                 */
+                if("stepDefinition".equals(artifactType)){
+                    Files.walkFileTree(artifactPath, new SimpleFileVisitor<Path>() {
+                        @Override
+                        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                            if (dir.toFile().isDirectory()) {
+                                loadArtifactsWithDataService(dir, modulesFinder, artifactService, typeInfo);
+                            }
+                            return FileVisitResult.CONTINUE;
                         }
-                        return FileVisitResult.CONTINUE;
-                    }
-                });
+                    });
+                }
+                else {
+                    loadArtifactsWithDataService(artifactPath, modulesFinder, artifactService, typeInfo);
+                }
             }
         }
         catch (IOException e) {
@@ -254,7 +264,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         }
     }
 
-    private void executeWalkWithDataService(
+    private void loadArtifactsWithDataService(
         Path dir,
         ModulesFinder modulesFinder,
         ArtifactService artifactService,

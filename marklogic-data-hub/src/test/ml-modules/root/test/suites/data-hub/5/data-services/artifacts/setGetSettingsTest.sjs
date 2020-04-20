@@ -54,7 +54,8 @@ function getDefaultArtifactSettings() {
     test.assertEqual("data-hub-STAGING", result.targetDatabase),
     test.assertEqual(1, result.collections.length),
     test.assertEqual("default-ingestion", result.collections[0]),
-    test.assertTrue(fn.empty(result.lastUpdated))
+    //Settings file is created whenever artifacts are created
+    test.assertFalse(fn.empty(result.lastUpdated))
   ];
 }
 

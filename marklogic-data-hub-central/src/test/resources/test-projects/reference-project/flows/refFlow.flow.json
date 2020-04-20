@@ -1,0 +1,10 @@
+{
+  "name" : "refFlow",
+  "description" : "",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stopOnError" : false,
+  "options" : { },
+  "version" : 0,
+  "steps" : { }
+}

@@ -26,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Step {
     private String name;
     private String description;
@@ -36,8 +37,6 @@ public class Step {
     private Integer threadCount;
     private String stepDefinitionName;
     private StepDefinition.StepDefinitionType stepDefinitionType;
-
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private JsonNode fileLocations;
 
     public String getName() {
@@ -134,9 +133,8 @@ public class Step {
         step.setDescription(jsonObject.getString("description"));
         step.setOptions(jsonObject.getMap("options"));
         step.setCustomHook(jsonObject.getNode("customHook"));
-        step.setRetryLimit(jsonObject.getInt("retryLimit"));
-        step.setBatchSize(jsonObject.getInt("batchSize"));
-        step.setThreadCount(jsonObject.getInt("threadCount"));
+        step.setBatchSize(jsonObject.getIntValue("batchSize"));
+        step.setThreadCount(jsonObject.getIntValue("threadCount"));
         step.setFileLocations(jsonObject.getNode("fileLocations"));
         return step;
     }

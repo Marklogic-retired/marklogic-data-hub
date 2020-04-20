@@ -1,0 +1,25 @@
+{
+  "envelope": {
+    "headers": {
+      "createdUsingFile": "/xml-test/data-sets/name/10000_Sales_Records_0.csv"
+    },
+    "triples": [],
+    "instance": {
+      "Region": "Europe",
+      "Country": "Czech Republic",
+      "Item Type": "Beverages",
+      "Sales Channel": "Online",
+      "Order Priority": "C",
+      "Order Date": "10/27/2015",
+      "Order ID": "127481591",
+      "Ship Date": "12/5/2015",
+      "Units Sold": "3491",
+      "Unit Price": "47.45",
+      "Unit Cost": "31.79",
+      "Total Revenue": "165647.95",
+      "Total Cost": "110978.89",
+      "Total Profit": "54669.06"
+    },
+    "attachments": null
+  }
+}

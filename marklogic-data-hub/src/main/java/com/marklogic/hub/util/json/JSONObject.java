@@ -233,6 +233,15 @@ public class JSONObject {
     }
 
     /**
+     * Gets a int value by key with null as default value
+     * @param key json key
+     * @return integer value if present else null
+     */
+    public Integer getIntValue(String key) {
+        return json.get(key) == null ? null : json.get((String) key).asInt();
+    }
+
+    /**
      * Gets a int value by key with 0 as default value
      * @param key a json key
      * @return an integer value

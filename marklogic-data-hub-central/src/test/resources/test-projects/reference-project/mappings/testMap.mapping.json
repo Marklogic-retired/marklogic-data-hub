@@ -1,0 +1,15 @@
+{
+  "name": "testMap",
+  "targetEntityType": "Customer",
+  "description": "",
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['default-ingestion'])",
+  "properties": {
+    "name": {
+      "sourcedFrom": "Region"
+    },
+    "customerNumber": {
+      "sourcedFrom": "xs:integer(*[local-name(.)='Units Sold'])"
+    }
+  }
+}
