@@ -61,17 +61,56 @@ const loadData = {
    
 };
 
+const entityTypeProperties = [
+  { name: 'propId', type: 'int' },
+  { name: 'propName', type: 'string' },
+  { name: 'items', type: 'parent-ItemType [ ]'},
+  { name: 'items/type', type: 'string'},
+  { name: 'items/category', type: 'parent-catItem'},
+  { name: 'items/category/itemProdCat1', type: 'string'},
+  { name: 'items/category/itemProdCat2', type: 'string'},
+  { name: 'entityProp1', type: 'string' },
+  { name: 'entityProp2', type: 'string' },
+  { name: 'entityProp3', type: 'string' },
+  { name: 'entityProp4', type: 'string' },
+  { name: 'entityProp5', type: 'string' },
+  { name: 'entityProp6', type: 'string' },
+  { name: 'entityProp7', type: 'string' },
+  { name: 'entityProp8', type: 'string' },
+  { name: 'entityProp9', type: 'string' },
+  { name: 'entityProp10', type: 'string' },
+  { name: 'entityProp11', type: 'string' },
+  { name: 'entityProp12', type: 'string' },
+  { name: 'entityProp13', type: 'string' },
+  { name: 'entityProp14', type: 'string' },
+  { name: 'entityProp15', type: 'string' },
+  { name: 'entityProp16', type: 'string' } 
+];
+
+const sourceData = [
+  { key: 'proteinId', val: '123EAC' },
+  { key: '@proteinType', val: 'home' },
+  { key: 'nutFree:name', val: 'testName1' },
+  { key: 'sourceProp1', val: '124EAC' },
+  { key: 'sourceProp2', val: '125EAC' },
+  { key: 'sourceProp3', val: '126EAC' },
+  { key: 'sourceProp4', val: '127EAC' },
+  { key: 'sourceProp5', val: '128EAC' },
+  { key: 'sourceProp6', val: '129EAC' },
+  { key: 'sourceProp7', val: '130EAC' },
+  { key: 'sourceProp8', val: '131EAC' },
+  { key: 'sourceProp9', val: '132EAC' },
+  { key: 'sourceProp10', val: '133EAC' },
+  { key: 'sourceProp11', val: '134EAC' },
+  { key: 'sourceProp12', val: '135EAC' },
+  { key: 'sourceProp13', val: '136EAC' },
+  { key: 'sourceProp14', val: '137EAC' },
+  { key: 'sourceProp15', val: '138EAC' },
+  { key: 'sourceProp16', val: '139EAC' },
+];
+
 const mapProps = {
-  sourceData: [
-    { key: 'proteinId', val: '123EAC' },
-    { key: '@proteinType', val: 'home' },
-    { key: 'nutFree:name', val: 'testName1' }
-  ],
-  srcData: [
-    { key: 'proteinId', val: '123EAC' },
-    { key: '@proteinType', val: 'home' },
-    { key: 'nutFree:name', val: 'testName1' }
-  ],
+  sourceData: sourceData,
   sourceURI: '/dummy/mapping/source/uri1.json',
   mapData: {
     name: 'testMap',
@@ -80,8 +119,8 @@ const mapProps = {
     selectedSource: 'collection',
     sourceQuery: "cts.collectionQuery([''])",
     properties: {
-      id: {  sourcedFrom: 'id' },
-      name: { sourcedFrom: 'mappedName' }
+      propId: {  sourcedFrom: 'id' },
+      propName: { sourcedFrom: 'mappedName' }
     }
   },
   namespaces: {
@@ -105,10 +144,7 @@ const mapProps = {
   docNotFound: false,
   entityTypeTitle: 'Person',
   extractCollectionFromSrcQuery: jest.fn(),
-  entityTypeProperties: [
-    { name: 'id', type: 'int' },
-    { name: 'name', type: 'string' }
-  ]
+  entityTypeProperties: entityTypeProperties
 };
 
 const newMap = {

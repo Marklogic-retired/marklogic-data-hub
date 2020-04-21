@@ -216,12 +216,10 @@ const SourceToEntityMap = (props) => {
 
     const onOk = () => {
         props.setMappingVisible(false)
-        console.log('Map Saved!')
     }
 
     const onCancel = () => {
         props.setMappingVisible(false)
-        console.log('Map cancelled!')
     }
 
     const convertMapExpToMapArt = (obj, path, val) => { 
@@ -642,7 +640,7 @@ const SourceToEntityMap = (props) => {
                         <Table
                             pagination={false}
                             className={styles.entityTable}
-                            scroll={{  x: 'max-content', y: '60vh' }}
+                            scroll={{ x: 'max-content', y: '60vh' }}
                             expandIcon={(props) => customExpandIcon(props)}
                             indentSize={14}
                             defaultExpandAllRows={true}        
