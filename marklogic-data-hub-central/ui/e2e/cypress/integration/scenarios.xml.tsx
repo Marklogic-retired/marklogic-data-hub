@@ -17,9 +17,7 @@ describe('xml scenario on view entities page', () => {
   beforeEach(() => {
     cy.visit('/');
     cy.contains('MarkLogic Data Hub');
-    cy.fixture('users').then(user => {
-      cy.login(user.username, user.password);
-    })
+    cy.loginAsDeveloper();
     cy.wait(500);
     homePage.getViewEntities().click();
     //cy.visit('/view');
@@ -55,9 +53,7 @@ describe('xml scenario on browse documents page', () => {
   beforeEach(() => {
     cy.visit('/');
     cy.contains('MarkLogic Data Hub');
-    cy.fixture('users').then(user => {
-      cy.login(user.username, user.password);
-    })
+    cy.loginAsDeveloper();
     cy.wait(500);
     homePage.getBrowseEntities().click();
     //cy.visit('/browse');
@@ -202,9 +198,7 @@ describe('xml scenario for table on browse documents page', () => {
   beforeEach(() => {
     cy.visit('/');
     cy.contains('MarkLogic Data Hub');
-    cy.fixture('users').then(user => {
-      cy.login(user.username, user.password);
-    })
+    cy.loginAsDeveloper();
     cy.wait(500);
     //cy.contains('Browse Entities');
     homePage.getBrowseEntities().click();

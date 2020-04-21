@@ -17,9 +17,7 @@ describe('json scenario on view entities page', () => {
   beforeEach(() => {
     cy.visit('/');
     cy.contains('MarkLogic Data Hub');
-    cy.fixture('users').then(user => {
-      cy.login(user.username, user.password);
-    })
+    cy.loginAsDeveloper();
     cy.wait(500);
     homePage.getViewEntities().click();
     //cy.visit('/view');
@@ -55,9 +53,7 @@ describe('json scenario on browse documents page', () => {
   beforeEach(() => {
     cy.visit('/');
     cy.contains('MarkLogic Data Hub');
-    cy.fixture('users').then(user => {
-      cy.login(user.username, user.password);
-    })
+    cy.loginAsDeveloper();
     cy.wait(500);
     homePage.getBrowseEntities().click();
     //cy.visit('/browse');
@@ -116,6 +112,7 @@ describe('json scenario on browse documents page', () => {
     browsePage.getExpandableSnippetView();
     cy.wait(500);
     browsePage.getTotalDocuments().should('be.greaterThan', 1008);
+    browsePage.getShowMoreLink().click();
     browsePage.getFacetItemCheckbox('collection', 'Person').click();
     browsePage.getSelectedFacets().should('exist');
     browsePage.getGreySelectedFacets('Person').should('exist');
@@ -135,6 +132,7 @@ describe('json scenario on browse documents page', () => {
      cy.wait(500);
      browsePage.getHubPropertiesExpanded();
      browsePage.getTotalDocuments().should('be.greaterThan', 1008);
+     browsePage.getShowMoreLink().click();
      browsePage.getFacetItemCheckbox('collection', 'Person').click();
      browsePage.getGreySelectedFacets('Person').click();
      cy.wait(500);
@@ -147,6 +145,7 @@ describe('json scenario on browse documents page', () => {
      cy.wait(500);
      browsePage.getHubPropertiesExpanded();
      browsePage.getTotalDocuments().should('be.greaterThan', 1008);
+     browsePage.getShowMoreLink().click();
      browsePage.getFacetItemCheckbox('collection', 'Person').click();
      browsePage.getFacetItemCheckbox('collection', 'Customer').click();
      browsePage.getGreySelectedFacets('Person').should('exist');
@@ -204,9 +203,7 @@ describe('json scenario for table on browse documents page', () => {
   beforeEach(() => {
     cy.visit('/');
     cy.contains('MarkLogic Data Hub');
-    cy.fixture('users').then(user => {
-      cy.login(user.username, user.password);
-    })
+    cy.loginAsDeveloper();
     cy.wait(500);
     homePage.getBrowseEntities().click();
     //cy.visit('/browse');

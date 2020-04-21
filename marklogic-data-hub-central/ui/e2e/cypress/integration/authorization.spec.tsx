@@ -39,12 +39,10 @@ describe('login', () => {
   });
 
   it('navigates to /home on seccessful login', () => {
-    cy.fixture('users').then(user => {
-      cy.login(user.username, user.password)
-      .wait(500)
-      .url()
-      .should('include', '/home');
-    })
+    cy.loginAsDeveloper()
+    .wait(500)
+    .url()
+    .should('include', '/home');
   });
 
 });

@@ -12,9 +12,7 @@ describe('view page validation', () => {
   beforeEach(() => {
     cy.visit('/');
     cy.contains('MarkLogic Data Hub');
-    cy.fixture('users').then(user => {
-      cy.login(user.username, user.password);
-    })
+    cy.loginAsDeveloper();
     cy.wait(500);
     homePage.getViewEntities().click();
     //cy.visit('/view');

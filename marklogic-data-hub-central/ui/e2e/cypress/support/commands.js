@@ -28,10 +28,22 @@ import LoginPage from '../support/pages/login';
 
 const loginPage = new LoginPage();
 
-Cypress.Commands.add("login", (email, password) => {
-    loginPage.getUsername().type(email)
+Cypress.Commands.add("login", (username, password) => {
+    loginPage.getUsername().type(username)
     loginPage.getPassword().type(password)
-    loginPage.getSubmitButton().click();
+    loginPage.getLoginButton().click();
+})
+
+Cypress.Commands.add('loginAsDeveloper', () => {
+  cy.fixture('users/developer').then(developer => {
+    cy.login(developer['user-name'], developer.password)
+  })
+})
+
+Cypress.Commands.add("loginAsOperator", () => {
+  cy.fixture('users/operator').then(operator => {
+    cy.login(operator['user-name'], operator.password)
+  })
 })
 
 Cypress.on('uncaught:exception', (err, runnable) => {
