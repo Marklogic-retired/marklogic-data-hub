@@ -11,9 +11,7 @@ describe('table test scenarios', () => {
   beforeEach(() => {
     cy.visit('/');
     cy.contains('MarkLogic Data Hub');
-    cy.fixture('users').then(user => {
-      cy.login(user.username, user.password);
-    })
+    cy.loginAsDeveloper();
     cy.wait(500);
     homePage.getBrowseEntities().click();
     //cy.visit('/browse');
@@ -41,9 +39,7 @@ describe('column selector test scenarios', () => {
   beforeEach(() => {
     cy.visit('/');
     cy.contains('MarkLogic Data Hub');
-    cy.fixture('users').then(user => {
-      cy.login(user.username, user.password);
-    })
+    cy.loginAsDeveloper();
     cy.wait(500);
     homePage.getBrowseEntities().click();
     //cy.visit('/browse');

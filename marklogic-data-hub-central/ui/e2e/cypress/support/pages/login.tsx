@@ -20,7 +20,7 @@ class LoginPage {
         return cy.get('#password');  
     }
 
-    getSubmitButton() {
+    getLoginButton() {
         return cy.get('#submit'); 
     }
 }
