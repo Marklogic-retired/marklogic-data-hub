@@ -18,10 +18,17 @@
 declareUpdate();
 
 const ds = require("/data-hub/5/data-services/ds-utils.sjs");
+const Security = require("/data-hub/5/impl/security.sjs");
 
 var saveQuery;
 var userCollections = ["http://marklogic.com/data-hub/saved-query"];
 var queryDocument = JSON.parse(saveQuery);
+
+let authorized = new Security().getRolesAndAuthorities().authorities.includes("canManageSavedQuery");
+
+if(!authorized) {
+    ds.throwForbidden(xdmp.getCurrentUser() + " user doesn't have authority to save or update query");
+}
 
 if (queryDocument == null || queryDocument.savedQuery == null) {
     ds.throwBadRequest("The request is empty or malformed");
