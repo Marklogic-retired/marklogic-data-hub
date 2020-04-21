@@ -1,0 +1,7 @@
+{
+  "user-name": "%%hubOperatorUsername%%",
+  "password": "%%hubOperatorPassword%%",
+  "role": [
+    "data-hub-operator"
+  ]
+}
