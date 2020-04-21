@@ -25,6 +25,11 @@ function throwBadRequest(message) {
   fn.error(null, 'RESTAPI-SRVEXERR', Sequence.from([400, message]));
 }
 
+function throwForbidden(message) {
+  fn.error(null, 'RESTAPI-SRVEXERR', Sequence.from([403, message]));
+}
+
 module.exports = {
-  throwBadRequest
+  throwBadRequest,
+  throwForbidden
 };
