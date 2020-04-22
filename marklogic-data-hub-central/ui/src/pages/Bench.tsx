@@ -65,12 +65,12 @@ const Bench: React.FC = () => {
             let response = await axios.get('/api/flows');
             if (response.status === 200) {
                 setFlows(response.data);
-                console.log('GET flows successful', response);
+                //console.log('GET flows successful', response);
             }
         } catch (error) {
-            console.log('********* ERROR', error);
+            console.error('********* ERROR', error);
             let message = error.response.data.message;
-            console.log('Error getting flows', message);
+            console.error('Error getting flows', message);
         } finally {
           resetSessionTime();
         }
@@ -91,13 +91,13 @@ const Bench: React.FC = () => {
             }
             let response = await axios.post(`/api/flows`, newFlow);
             if (response.status === 200) {
-                console.log('POST flow success', response);
+                //console.log('POST flow success', response);
                 setIsLoading(false);
             }
         }
         catch (error) {
             //let message = error.response.data.message;
-            console.log('Error posting flow', error)
+            console.error('Error posting flow', error)
             setIsLoading(false);
         }
     }
@@ -111,13 +111,13 @@ const Bench: React.FC = () => {
             }
             let response = await axios.put(`/api/flows/` + flowId, updatedFlow);
             if (response.status === 200) {
-                console.log('PUT flow success', response);
+                //console.log('PUT flow success', response);
                 setIsLoading(false);
             }
         }
         catch (error) {
             //let message = error.response.data.message;
-            console.log('Error updating flow', error)
+            console.error('Error updating flow', error)
             setIsLoading(false);
         } finally {
           resetSessionTime();
@@ -129,11 +129,11 @@ const Bench: React.FC = () => {
             setIsLoading(true);
             let response = await axios.delete(`/api/flows/${name}`);
             if (response.status === 200) {
-                console.log('DELETE flow success', name);
+                //console.log('DELETE flow success', name);
                 setIsLoading(false);
             }
         } catch (error) {
-            console.log('Error deleting flow', error);
+            console.error('Error deleting flow', error);
             setIsLoading(false);
         }
     }
@@ -143,11 +143,11 @@ const Bench: React.FC = () => {
             let response = await axios.get('/api/artifacts/loadData');
             if (response.status === 200) {
                 setLoads(response.data);
-                console.log('GET loads successful', response);
+                //console.log('GET loads successful', response);
             }
         } catch (error) {
             let message = error.response.data.message;
-            console.log('Error getting loads', message);
+            console.error('Error getting loads', message);
         } finally {
           resetSessionTime();
         }
@@ -237,7 +237,7 @@ const Bench: React.FC = () => {
             </div>;
         }
         catch(ex) {
-            console.log(JSON.stringify(ex))
+            //console.log(JSON.stringify(ex))
             return  <div><span className={styles.errorLabel}>Message:</span>  <span style={{whiteSpace:'pre-line'}}> {e}</span> </div>;
         }
     }
@@ -249,7 +249,7 @@ const Bench: React.FC = () => {
             let promise = fn();
             promise.then(function(response){
                 let status = response.data.jobStatus;
-                console.log('Flow status: ', status, response.data);
+                //console.log('Flow status: ', status, response.data);
                 if (status === Statuses.FINISHED || status === Statuses.CANCELED ||
                     status === Statuses.FAILED || status === Statuses.FINISHED_WITH_ERRORS) {
                     // Non-running status, resolve promise
@@ -278,7 +278,7 @@ const Bench: React.FC = () => {
             setIsLoading(true);
             let response = await axios.post('/api/flows/' + flowId + '/run', [stepId]);
             if (response.status === 200) {
-                console.log('Flow started: ' + flowId);
+                //console.log('Flow started: ' + flowId);
                 let jobId = response.data.jobId;
                 await setTimeout( function(){
                     poll(function() {
@@ -287,27 +287,27 @@ const Bench: React.FC = () => {
                     .then(function(response: any) {
                         setRunEnded({flowId: flowId, stepId: stepId});
                         if (response['jobStatus'] === Statuses.FINISHED) {
-                            console.log('Flow complete: ' + flowId);
+                            //console.log('Flow complete: ' + flowId);
                             showSuccess(stepName, stepType);
                         } else if (response['jobStatus'] === Statuses.FINISHED_WITH_ERRORS) {
-                            console.log('Flow finished with errors: ' + flowId);
+                            //console.log('Flow finished with errors: ' + flowId);
                             let errors = getErrors(response);
                             showErrors(stepName, stepType, errors, response);
                         } else if (response['jobStatus'] === Statuses.FAILED) {
-                            console.log('Flow failed: ' + flowId);
+                            //console.log('Flow failed: ' + flowId);
                             let errors = getErrors(response);
                             showFailed(stepName, stepType, errors.slice(0,1));
                         }
                         setIsLoading(false);
                     }).catch(function(error) {
-                        console.log('Flow timeout', error);
+                        console.error('Flow timeout', error);
                         setRunEnded({flowId: flowId, stepId: stepId});
                         setIsLoading(false);
                     });
                 }, pollConfig.interval);
             }
         } catch (error) {
-            console.log('Error running step', error);
+            console.error('Error running step', error);
             setRunEnded({flowId: flowId, stepId: stepId});
             setIsLoading(false);
         }
@@ -320,11 +320,11 @@ const Bench: React.FC = () => {
             setIsLoading(true);
             let response = await axios.delete(url);
             if (response.status === 200) {
-                console.log('DELETE step success', stepId);
+                //console.log('DELETE step success', stepId);
                 setIsLoading(false);
             }
         } catch (error) {
-            console.log('Error deleting step', error);
+            console.error('Error deleting step', error);
             setIsLoading(false);
         }
     }
