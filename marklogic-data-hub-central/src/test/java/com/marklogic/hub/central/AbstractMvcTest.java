@@ -42,6 +42,10 @@ public abstract class AbstractMvcTest extends AbstractHubCentralTest {
         return loginAsUser(testConstants.DEVELOPER_USERNAME);
     }
 
+    protected ResultActions loginAsTestUser() {
+        return loginAsUser(testConstants.TEST_USER_USERNAME);
+    }
+
     protected ResultActions loginAsUser(String username) {
         try {
             return postJson("/api/login", buildLoginPayload(username))

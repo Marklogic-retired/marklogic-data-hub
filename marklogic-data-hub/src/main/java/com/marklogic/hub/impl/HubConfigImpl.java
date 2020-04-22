@@ -281,8 +281,12 @@ public class HubConfigImpl implements HubConfig
 
         hydrateConfigs();
 
-        // Force AppConfig to be recreated based on the PropertySource
+        // Force configs to be recreated based on the PropertySource
         this.appConfig = null;
+        this.adminConfig = null;
+        this.adminManager = null;
+        this.manageConfig = null;
+        this.manageClient = null;
         hydrateAppConfigs(propertySource);
     }
 

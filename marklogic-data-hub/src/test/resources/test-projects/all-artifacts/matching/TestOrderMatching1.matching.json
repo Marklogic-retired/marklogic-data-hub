@@ -1,0 +1,10 @@
+{
+  "name": "TestOrderMatching1",
+  "targetEntityType": "Order",
+  "description": "TestOrderMatching1 does ...",
+  "selectedSource": "collection",
+  "sourceQuery": "",
+  "collections": [
+    "RAW-ORDER"
+  ]
+}

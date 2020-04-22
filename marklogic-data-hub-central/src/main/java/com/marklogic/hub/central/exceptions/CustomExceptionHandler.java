@@ -17,7 +17,6 @@ package com.marklogic.hub.central.exceptions;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.FailedRequestException;
 import org.springframework.core.Ordered;
@@ -49,7 +48,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(HttpClientErrorException.class)
     protected ResponseEntity<JsonNode> handleHttpClientErrorExceptionRequest(
-            HttpClientErrorException httpClientErrorException) {
+        HttpClientErrorException httpClientErrorException) {
         ObjectNode errJson = mapper.createObjectNode();
         errJson.put("code", httpClientErrorException.getRawStatusCode());
         errJson.put("message", httpClientErrorException.getMessage());
@@ -57,27 +56,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         errJson.put("suggestion", httpStatusSuggestion(httpStatus));
         return new ResponseEntity<>(errJson, httpStatus);
     }
-    @ExceptionHandler(ForbiddenException.class)
-    protected ResponseEntity<JsonNode> handleForbiddenExceptionRequest(
-        ForbiddenException exception) {
-        ObjectNode errJson = mapper.createObjectNode();
-        errJson.put("code", 403);
-        errJson.put("message", exception.getMessage());
-        errJson.put("suggestion", "Log in as a MarkLogic user with permissions to install or upgrade Data Hub.");
-        if (exception.getRequiredRoles() != null && exception.getRequiredRoles().size() > 0) {
-            ArrayNode requiredRolesArray = errJson.putArray("requiredRoles");
-            exception.getRequiredRoles().forEach(requiredRolesArray::add);
-        }
-        return new ResponseEntity<>(errJson, HttpStatus.FORBIDDEN);
-    }
 
-    /**
-     * TODO The UI receives the 403 and redirects back to the login page, which isn't correct - we instead need a
-     * "You're logged in, but you can't do that" page.
-     *
-     * @param exception
-     * @return
-     */
     @ExceptionHandler(AccessDeniedException.class)
     protected ResponseEntity<JsonNode> handleAccessDeniedException(AccessDeniedException exception) {
         ObjectNode errJson = mapper.createObjectNode();
@@ -89,11 +68,11 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<JsonNode> handleExceptionRequest(
-            Exception exception) {
+        Exception exception) {
         ObjectNode errJson = mapper.createObjectNode();
         errJson.put("code", 500);
         errJson.put("message", exception.getMessage());
-        errJson.put("suggestion", exceptionSuggestion(exception));
+        errJson.put("suggestion", "Contact your server administrator.");
         return new ResponseEntity<>(errJson, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -107,14 +86,6 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
                 return "Contact your server administrator.";
             default:
                 return null;
-        }
-    }
-
-    private String exceptionSuggestion(Exception exception) {
-        if (exception instanceof ProjectDirectoryException) {
-            return ((ProjectDirectoryException) exception).getSuggestion();
-        } else {
-            return "Contact your server administrator.";
         }
     }
 }

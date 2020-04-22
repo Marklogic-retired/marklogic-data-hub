@@ -10,4 +10,7 @@ public class TestConstants {
 
     public static final String ADMIN_USERNAME = "test-admin-for-data-hub-tests";
     public static final String ADMIN_PASSWORD = "password";
+
+    public static final String TEST_USER_USERNAME = "test-data-hub-user";
+    public static final String TEST_USER_PASSWORD = "password";
 }
