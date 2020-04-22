@@ -1,18 +1,24 @@
 import axios from "axios";
 
-export const saveQuery = async (query) => {
+export const creatNewQuery = async (query) => {
   return await axios({
     method: 'POST',
     url: `/api/entitySearch/savedQueries`,
     data: query
   });
 }
-
 export const fetchQueries = async () => {
   return await axios({
     method: 'GET',
     url: `/api/entitySearch/savedQueries`
   });
+}
+
+export const fetchQueryById = async (query) => {
+    return await axios({
+        method: 'GET',
+        url: `/api/entitySearch/savedQueries/query?id=${query.savedQuery.id}`
+    });
 }
 
 export const updateQuery = async (query) => {

@@ -240,6 +240,27 @@ class BrowsePage {
     cy.get(`.ant-popover-inner ul > li:nth-child(${index}) .ant-tree-checkbox`).should('have.class', 'ant-tree-checkbox-checked') ? cy.get(`.ant-popover-inner ul > li:nth-child(${index}) .ant-tree-checkbox`).click() : '';
   }
 
+  //Save queries
+
+  getSaveModalIcon() {
+    return cy.get('svg[data-icon="save"]')
+  }
+
+  getSaveQueryName() {
+      return cy.get('#save-query-name');
+  }
+
+  getSaveQueryDescription(){
+    return cy.get('#save-query-description');
+  }
+
+  getSaveQueryButton(){
+    return cy.get('#save-query-button');
+  }
+
+  getSaveQueriesDropdown(){
+    return cy.get('#dropdownList');
+  }
 
   //temp query icon
   getManageQueriesIcon(){

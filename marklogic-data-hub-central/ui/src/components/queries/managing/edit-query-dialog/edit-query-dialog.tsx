@@ -94,10 +94,11 @@ const EditQueryDialog = (props) => {
                         colon={false}
                         label={<span className={styles.text}>
                             Query Name:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
-                        </span>} labelAlign="left"
+                        </span>}
+                        labelAlign="left"
                         validateStatus={queryName.length === 0 ? 'error' : ''}
                         help={queryName.length === 0 ? 'Query Name is required' : ''}
-                        
+
                     >
                         <Input
                             id="name"
