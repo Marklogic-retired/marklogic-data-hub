@@ -39,7 +39,7 @@ class JobDeleteTaskTest extends BaseTest {
         new DatabaseManager(hubConfig().getManageClient()).clearDatabase(HubConfig.DEFAULT_JOB_NAME)
 
         println(runTask('hubCreateHarmonizeFlow', '-PentityName=test-entity', '-PflowName=test-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy', '-PuseES=false').getOutput())
-        println(runTask('mlReLoadModules'))
+        println(runTask('hubDeployUserModules'))
 
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME)
         DocumentMetadataHandle meta = new DocumentMetadataHandle();

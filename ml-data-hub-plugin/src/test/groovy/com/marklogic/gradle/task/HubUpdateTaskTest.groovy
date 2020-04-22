@@ -27,9 +27,6 @@ class HubUpdateTaskTest extends BaseTest {
     def setupSpec() {
         createGradleFiles()
         runTask('hubInit')
-        // this will be relatively fast (idempotent) for already-installed hubs
-        println(runTask('hubInstallModules', '-i').getOutput())
-        println(runTask('mlLoadModules', '-i').getOutput())
     }
 
     //if 4.0 project is upgraded, remove the backed up directories

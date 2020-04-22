@@ -22,7 +22,8 @@ class ManualMergeUnmergeTaskTest extends BaseTest{
         copyResourceToFile("master-test/person-1-2.json", Paths.get(testProjectDir.root.toString(),"input","person-1-2.json").toFile())
         copyResourceToFile("master-test/person-1.mapping.json", Paths.get(testProjectDir.root.toString(),"mappings","person","person-1.mapping.json").toFile())
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
-        runTask('mlLoadModules')
+        runTask('hubDeployUserArtifacts')
+        runTask('hubDeployUserModules')
     }
 
     def setup() {

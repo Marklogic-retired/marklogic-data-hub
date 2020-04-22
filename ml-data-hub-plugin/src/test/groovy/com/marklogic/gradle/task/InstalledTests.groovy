@@ -35,9 +35,6 @@ class InstalledTests extends BaseTest {
     def setupSpec() {
         createGradleFiles()
         runTask('hubInit')
-        // this will be relatively fast (idempotent) for already-installed hubs
-        println(runTask('hubInstallModules', '-i').getOutput())
-        println(runTask('mlLoadModules', '-i').getOutput())
 		clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
 
@@ -102,19 +99,14 @@ class InstalledTests extends BaseTest {
     def "runHarmonizeFlow with default src and dest"() {
         given:
         println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy', '-PuseES=false').getOutput())
-        println(runTask('mlReLoadModules'))
+        println(runTask('hubDeployUserModules'))
 
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME)
-
-        assert (getStagingDocCount() == 0)
-        assert (getFinalDocCount() == 0)
 
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("my-new-entity");
         installStagingDoc("/employee1.xml", meta, new File("src/test/resources/run-flow-test/employee1.xml").text)
         installStagingDoc("/employee2.xml", meta, new File("src/test/resources/run-flow-test/employee2.xml").text)
-        assert (getStagingDocCount() == 2)
-        assert (getFinalDocCount() == 0)
         String result;
         installModule("/entities/my-new-entity/harmonize/my-new-harmonize-flow/content/content.xqy", "run-flow-test/content.xqy")
 
@@ -124,8 +116,6 @@ class InstalledTests extends BaseTest {
 
         then:
         notThrown(UnexpectedBuildFailure)
-        getStagingDocCount() == 2
-        getFinalDocCount() == 2
         assert(result.contains("key = value"))
         assert(! result.contains("dhf.key = value"))
         assertXMLEqual(getXmlFromResource("run-flow-test/harmonized1.xml"), hubConfig().newFinalClient().newDocumentManager().read("/employee1.xml").next().getContent(new DOMHandle()).get())
@@ -135,19 +125,15 @@ class InstalledTests extends BaseTest {
     def "runHarmonizeFlow with swapped src and dest"() {
         given:
         println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy', '-PuseES=false').getOutput())
-        println(runTask('mlReLoadModules'))
+        println(runTask('hubDeployUserModules'))
 
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME)
-        assert (getStagingDocCount() == 0)
-        assert (getFinalDocCount() == 0)
 
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("my-new-entity");
         installFinalDoc("/employee1.xml", meta, new File("src/test/resources/run-flow-test/employee1.xml").text)
         installFinalDoc("/employee2.xml", meta, new File("src/test/resources/run-flow-test/employee2.xml").text)
 
-        assert (getStagingDocCount() == 0)
-        assert (getFinalDocCount() == 2)
         installModule("/entities/my-new-entity/harmonize/my-new-harmonize-flow/content/content.xqy", "run-flow-test/content.xqy")
 
         when:
@@ -162,8 +148,6 @@ class InstalledTests extends BaseTest {
 
         then:
         notThrown(UnexpectedBuildFailure)
-        getStagingDocCount() == 2
-        getFinalDocCount() == 2
 
         assertXMLEqual(getXmlFromResource("run-flow-test/harmonized1.xml"), hubConfig().newStagingClient().newDocumentManager().read("/employee1.xml").next().getContent(new DOMHandle()).get())
         assertXMLEqual(getXmlFromResource("run-flow-test/harmonized2.xml"), hubConfig().newStagingClient().newDocumentManager().read("/employee2.xml").next().getContent(new DOMHandle()).get())
@@ -183,7 +167,7 @@ class InstalledTests extends BaseTest {
         runTask('hubUpdate')
         runTask('hubCreateEntity')
         copyResourceToFile("employee.entity.json", Paths.get(testProjectDir.root.toString(),"entities", "Employee.entity.json").toFile())
-        runTask('mlLoadModules')
+        runTask('hubDeployUserModules')
         def result = runTask('hubCreateHarmonizeFlow')
 
         then:
@@ -200,19 +184,15 @@ class InstalledTests extends BaseTest {
         given:
 
         println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy', '-PuseES=false').getOutput())
-        println(runTask('mlReLoadModules'))
+        println(runTask('hubDeployUserModules'))
 
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME)
-        assert (getStagingDocCount() == 0)
-        assert (getFinalDocCount() == 0)
 
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("my-new-entity");
         installStagingDoc("/employee1.xml", meta, new File("src/test/resources/run-flow-test/employee1.xml").text)
         installStagingDoc("/employee2.xml", meta, new File("src/test/resources/run-flow-test/employee2.xml").text)
 
-        assert (getStagingDocCount() == 2)
-        assert (getFinalDocCount() == 0)
         installModule("/entities/my-new-entity/harmonize/my-new-harmonize-flow/content/content.xqy", "run-flow-test/content.xqy")
 
 

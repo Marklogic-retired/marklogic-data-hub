@@ -108,7 +108,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
             // When running tests, the config.sjs/config.xqy modules are somehow being loaded twice - they're logged at
             // the beginning and at the end of the modules being loaded. Without a batch size set, they're loaded in one
             // transaction, causing a conflicting updates error.
-            loader.setBatchSize(10);
+            loader.setBatchSize(1);
         }
 
         JarDocumentFileReader jarDocumentFileReader = new JarDocumentFileReader();

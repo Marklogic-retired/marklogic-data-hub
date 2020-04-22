@@ -64,13 +64,13 @@ class SslTest extends BaseTest {
                     gtcc.setTemplateIdOrName("admin-cert");
                     gtcc.setCommonName("localhost");
                     gtcc.execute(new com.marklogic.appdeployer.command.CommandContext(getAppConfig(), manageClient, adminManager));
-                    
+
                     def command = new com.marklogic.appdeployer.command.security.GenerateTemporaryCertificateCommand()
                     command.setTemplateIdOrName("dhf-cert")
                     command.setCommonName("localhost")
                     command.setValidFor(365)
                     command.execute(new com.marklogic.appdeployer.command.CommandContext(getAppConfig(), manageClient, adminManager));
-                    
+
                     adminConfig = getProject().property("mlAdminConfig")
                     adminConfig.setScheme("https")
                     adminConfig.setConfigureSimpleSsl(true)
@@ -216,7 +216,7 @@ class SslTest extends BaseTest {
     def "runHarmonizeFlow with default src and dest"() {
         given:
         println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy', '-PuseES=false').getOutput())
-        println(runTask('mlReLoadModules'))
+        println(runTask('hubDeployUserModules'))
 
         def newSslContext = SSLContext.getInstance("TLSv1.2")
         newSslContext.init(null, [new SimpleX509TrustManager()] as TrustManager[], null)
@@ -252,7 +252,7 @@ class SslTest extends BaseTest {
     def "runHarmonizeFlow with swapped src and dest"() {
         given:
         println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy', '-PuseES=false').getOutput())
-        println(runTask('mlReLoadModules'))
+        println(runTask('hubDeployUserModules'))
 
         def newSslContext = SSLContext.getInstance("TLSv1.2")
         newSslContext.init(null, [new SimpleX509TrustManager()] as TrustManager[], null)

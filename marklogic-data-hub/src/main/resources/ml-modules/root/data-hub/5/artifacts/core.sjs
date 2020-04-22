@@ -356,7 +356,9 @@ function getFullFlow(flowName, artifactVersion = 'latest') {
 }
 
 function createFullFlow(flowName, flowNode){
-  for (let [key, stepValue] of Object.entries(flowNode["steps"])) {
+  const steps = flowNode["steps"];
+  Object.keys(steps).forEach(key => {
+    let stepValue = steps[key];
     let artifactInStepType = stepValue['stepDefinitionType'].toLowerCase() === "ingestion" ? "loadData" : stepValue['stepDefinitionType'].toLowerCase();
     if(stepValue.options[artifactInStepType]){
       let artifactInStep =  stepValue.options[artifactInStepType].name;
@@ -377,9 +379,10 @@ function createFullFlow(flowName, flowNode){
         }
       }
     }
-  }
+  });
   return flowNode;
 }
+
 //TODO: Add 'processors' to step once it is known where they will go into (artifact or settings)
 function addToStep(artifactInStepType, stepValue, artifactNode,  settingsNode){
   if(artifactInStepType === 'loadData') {
