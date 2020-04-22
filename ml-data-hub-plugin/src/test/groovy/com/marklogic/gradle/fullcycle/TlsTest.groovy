@@ -33,7 +33,7 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 
 class TlsTest extends BaseTest {
-    
+
     def setupSpec() {
         createFullPropertiesFile()
         BaseTest.buildFile = BaseTest.testProjectDir.newFile('build.gradle')
@@ -69,7 +69,7 @@ class TlsTest extends BaseTest {
                     command.setCommonName("localhost")
                     command.setValidFor(365)
                     command.execute(new com.marklogic.appdeployer.command.CommandContext(getAppConfig(), manageClient, adminManager));
-                    
+
                     adminConfig = getProject().property("mlAdminConfig")
                     adminConfig.setScheme("https")
                     adminConfig.setConfigureSimpleSsl(true)
@@ -195,7 +195,7 @@ class TlsTest extends BaseTest {
                     stagingSslContext = newSslContext
                     stagingSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
                     stagingTrustManager = new SimpleX509TrustManager()
-                     
+
                     finalSslContext = newSslContext
                     finalSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
                     finalTrustManager = new SimpleX509TrustManager()
@@ -220,14 +220,14 @@ class TlsTest extends BaseTest {
             new File("src/test/resources/tls-test/ssl-server.json"))
         writeSSLFiles(new File(BaseTest.testProjectDir.root, "src/main/hub-internal-config/servers/staging-server.json"),
             new File("src/test/resources/tls-test/ssl-server.json"))
-       
+
         createProperties()
         result = runTask("enableSSL")
         print(result.output)
         hubConfig().refreshProject()
     }
 
-    
+
     def cleanupSpec() {
         runTask("mlUndeploy", "-Pconfirm=true")
         runTask("hubDeploySecurity")
@@ -251,7 +251,7 @@ class TlsTest extends BaseTest {
         """
     }
 
-    
+
     def "bootstrap a project with ssl out the wazoo"() {
         when:
         def result = runTask('mlDeploy', '-i')
@@ -260,7 +260,7 @@ class TlsTest extends BaseTest {
         hubConfig().stagingSslContext = newSslContext
         hubConfig().stagingSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
         hubConfig().stagingTrustManager = new SimpleX509TrustManager()
-        
+
         hubConfig().finalSslContext = newSslContext
         hubConfig().finalSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
         hubConfig().finalTrustManager = new SimpleX509TrustManager()
@@ -274,16 +274,16 @@ class TlsTest extends BaseTest {
         result.task(":mlDeploy").outcome == SUCCESS
     }
 
-    
+
     def "runHarmonizeFlow with default src and dest"() {
         given:
         println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy', '-PuseES=false').getOutput())
-        println(runTask('mlReLoadModules'))
+        println(runTask('hubDeployUserModules'))
         def newSslContext = SSLContext.getInstance("TLSv1.2")
         newSslContext.init(null, [new SimpleX509TrustManager()] as TrustManager[], null)
         hubConfig().stagingSslContext = newSslContext
         hubConfig().stagingSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
-        
+
         hubConfig().finalSslContext = newSslContext
         hubConfig().finalSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME)
@@ -311,11 +311,11 @@ class TlsTest extends BaseTest {
         assertXMLEqual(getXmlFromResource("run-flow-test/harmonized2.xml"), hubConfig().newFinalClient().newDocumentManager().read("/employee2.xml").next().getContent(new DOMHandle()).get())
     }
 
-    
+
     def "runHarmonizeFlow with swapped src and dest"() {
         given:
         println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy', '-PuseES=false').getOutput())
-        println(runTask('mlReLoadModules'))
+        println(runTask('hubDeployUserModules'))
         def newSslContext = SSLContext.getInstance("TLSv1.2")
         newSslContext.init(null, [new SimpleX509TrustManager()] as TrustManager[], null)
         hubConfig().stagingSslContext = newSslContext

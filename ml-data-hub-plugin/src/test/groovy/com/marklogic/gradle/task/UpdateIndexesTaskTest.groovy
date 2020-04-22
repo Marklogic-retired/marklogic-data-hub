@@ -49,9 +49,10 @@ class UpdateIndexesTaskTest extends BaseTest {
 		String entityStream = new File("src/test/resources/update-indexes/my-unique-order-entity.entity.json").getAbsolutePath()
 		Files.copy(new File(entityStream).toPath(), entityDir.toPath().resolve("my-unique-order-entity.entity.json"), StandardCopyOption.REPLACE_EXISTING)
 
-		// Loading modules to databases
-		runTask('mlLoadModules')
+		runTask('hubDeployUserArtifacts')
+        Thread.sleep(1000)
         runTask('hubSaveIndexes')
+        Thread.sleep(1000)
 
 		// Copying Job database Index info files to src/main/entity-config dir
 		Path dir = hubConfig().getEntityDatabaseDir()
@@ -81,8 +82,6 @@ class UpdateIndexesTaskTest extends BaseTest {
     @IgnoreIf({ System.getProperty('mlIsProvisionedEnvironment') })
 	def "test to deploy indexes to STAGING/FINAL/JOBS Database"() {
 		given:
-        //existing staging and final indexes are from core tests and they get replaced when mlUpdateIndexes is run, so we dont need their count
-		int jobIndexCount = getJobsIndexValuesSize('//m:range-path-index')
 
 		when:
 		def result = runTask('mlUpdateIndexes')
@@ -94,11 +93,9 @@ class UpdateIndexesTaskTest extends BaseTest {
         //Test to verify range-path-index for mlUpdateIndex
 		assert (getStagingIndexValuesSize('//m:range-path-index') == 3)
 		assert (getFinalIndexValuesSize('//m:range-path-index') == 3)
-		assert (getJobsIndexValuesSize('//m:range-path-index') == jobIndexCount+1)
 
         //Test to verify xml DB index configs get updated per DHFPROD-3674
         assert (getStagingIndexValuesSize('//m:field') == 6)
         assert (getFinalIndexValuesSize('//m:field') == 6)
-        assert (getJobsIndexValuesSize('//m:field') == 3)
 	}
 }
