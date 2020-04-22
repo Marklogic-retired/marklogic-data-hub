@@ -17,8 +17,12 @@ import { updateUserPreferences, createUserPreferences } from '../services/user-p
 import { entityFromJSON, entityParser } from '../util/data-conversion';
 import styles from './Browse.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faStream, faTable } from '@fortawesome/free-solid-svg-icons'
 import QueryModal from '../components/queries/managing/manage-query';
+import {faStream, faTable, faSave} from '@fortawesome/free-solid-svg-icons'
+import SaveQueryModal from "../components/queries/saving/save-query-modal/save-query-modal";
+import SaveQueriesDropdown from "../components/queries/saving/save-queries-dropdown/save-queries-dropdown";
+import { fetchQueries, creatNewQuery } from '../api/queries'
+
 
 interface Props extends RouteComponentProps<any> {
 }
@@ -53,6 +57,11 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [collapse, setCollapsed] = useState(false);
   const [selectedFacets, setSelectedFacets] = useState<any[]>([]);
   const [greyFacets, setGreyFacets] = useState<any[]>([]);
+  const [openSaveModal, setOpenSaveModal] = useState(false);
+  const [savedQueries, setSavedQueries] = useState([]);
+  const [showApply, toggleApply] = useState(false);
+  const [applyClicked, toggleApplyClicked] = useState(false);
+
   let sessionCount = 0;
 
   const getEntityModel = async () => {
@@ -194,6 +203,51 @@ const Browse: React.FC<Props> = ({ location }) => {
     setGreyFacets(facets);
   }
 
+  const saveNewQuery = async (queryName, queryDescription, facets) => {
+      let query = {
+          savedQuery: {
+              id: '',
+              name: queryName,
+              description: queryDescription,
+              query: {
+                  searchText: searchOptions.query,
+                  entityTypeIds: searchOptions.entityTypeIds.length ? searchOptions.entityTypeIds : entities,
+                  selectedFacets: facets,
+              },
+              propertiesToDisplay: [''],
+          }
+      }
+      try {
+          setIsLoading(true);
+          const response = await creatNewQuery(query);
+          setOpenSaveModal(false);
+          getSaveQueries();
+      } catch (error) {
+          handleError(error);
+      } finally {
+          setIsLoading(false);
+          resetSessionTime();
+      }
+  }
+
+
+
+    const getSaveQueries = async () => {
+        try {
+            const response = await fetchQueries();
+            if (response.data) {
+                setSavedQueries(response.data);
+            }
+        } catch (error) {
+            handleError(error)
+        } finally {
+            resetSessionTime()
+        }
+    }
+
+    useEffect(() => {
+        getSaveQueries();
+    }, []);
 
   return (
     <Layout>
@@ -243,15 +297,55 @@ const Browse: React.FC<Props> = ({ location }) => {
                 </div>
                 </div>
               </div>
-              <div className={styles.selectedFacets}>
-                <SelectedFacets selectedFacets={selectedFacets} greyFacets={greyFacets}/>
-              </div>
-
-
+                <div>
+                    {selectedFacets.length > 0 &&
+                    <div style={{marginTop: '-22px'}}>
+                        <Tooltip title={'Save the current query'}>
+                            <FontAwesomeIcon
+                                icon={faSave}
+                                onClick={()=>setOpenSaveModal(true)}
+                                data-testid='save-modal'
+                                style={savedQueries.length > 0 ? {
+                                    color: '#5b69af',
+                                    marginLeft: '170px',
+                                    marginBottom: '9px'
+                                } : {color: '#5b69af', marginLeft: '18px',
+                                    marginBottom: '9px'}}
+                                size="lg"/>
+                        </Tooltip>
+                        <div id={'savedQueries'}>
+                        {openSaveModal &&
+                        <SaveQueryModal
+                            setSaveModalVisibility={() => setOpenSaveModal(false)}
+                            saveNewQuery={saveNewQuery}
+                            greyFacets={greyFacets}
+                            toggleApply={(clicked) => toggleApply(clicked)}
+                            toggleApplyClicked={(clicked) => toggleApplyClicked(clicked)}
+                        />}
+                        </div>
+                    </div>}
+                </div>
+                <div className={styles.saveDropdown}>
+                    {savedQueries.length > 0 &&
+                    <SaveQueriesDropdown
+                        savedQueryList={savedQueries}
+                        greyFacets={greyFacets}
+                        toggleApply={(clicked) => toggleApply(clicked)}
+                    />
+                    }
+                </div>
+                <div className={styles.selectedFacets}>
+                    <SelectedFacets
+                        selectedFacets={selectedFacets}
+                        greyFacets={greyFacets}
+                        applyClicked={applyClicked}
+                        showApply={showApply}
+                        toggleApply={(clicked) => toggleApply(clicked)}
+                        toggleApplyClicked={(clicked) => toggleApplyClicked(clicked)}
+                    />
+                </div>
               <QueryModal />
-
             </div>
-
             <div className={styles.fixedView} >
             {user.tableView ?
               <div>

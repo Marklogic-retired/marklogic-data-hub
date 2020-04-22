@@ -15,17 +15,18 @@ const SearchBar: React.FC<Props> = props => {
     const [dropDownValue, setDropdownValue] = useState('All Entities');
     const dropdownOptions = ['All Entities', ...props.entities];
 
-    const options = dropdownOptions.map((entity, index) => 
+    const options = dropdownOptions.map((entity, index) =>
       <Option value={entity} key={index} data-cy="entity-option">{entity}</Option>
     );
+
     const entityMenu = (
-      <Select 
+      <Select
         id="entity-select"
         data-testid="entity-select"
         data-cy={searchOptions.entityTypeIds.length ? searchOptions.entityTypeIds[0] : 'All Entities'}
-        style={{ width: 180 }} 
-        value={dropDownValue} 
-        onChange={value => handleOptionSelect(value)} 
+        style={{ width: 180 }}
+        value={dropDownValue}
+        onChange={value => handleOptionSelect(value)}
       >
         {options}
       </Select>
@@ -62,7 +63,7 @@ const SearchBar: React.FC<Props> = props => {
     return (
         <div className={styles.searchBar}>
             <div className={styles.searchInput}>
-                <Search   
+                <Search
                   value={searchString}
                   onChange={onChange}
                   addonBefore={entityMenu}

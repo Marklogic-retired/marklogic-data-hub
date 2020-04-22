@@ -48,6 +48,7 @@ interface ISearchContextInterface {
   clearGreyFacet: (constraint: string, val: string) => void;
   clearAllGreyFacets: () => void;
   resetGreyedOptions: () => void;
+  applySaveQuery: (searchText: string, entityTypeIds: string[], selectedFacets: {}) => void;
 }
 
 export const SearchContext = React.createContext<ISearchContextInterface>({
@@ -73,7 +74,8 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setAllGreyedOptions: () => {},
   clearGreyFacet: () => { },
   clearAllGreyFacets: () => { },
-  resetGreyedOptions: () => { }
+  resetGreyedOptions: () => { },
+  applySaveQuery: () => { }
 });
 
 const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
@@ -193,6 +195,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
     });
   }
 
+
   const clearFacet = (constraint: string, val: string) => {
     let facets = searchOptions.selectedFacets;
     let valueKey = '';
@@ -275,7 +278,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
   }
 
   const setAllSearchFacets = (facets: any) => {
-    setSearchOptions({
+      setSearchOptions({
       ...searchOptions,
       selectedFacets: facets,
       start: 1,
@@ -367,6 +370,19 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
     });
   }
 
+    const applySaveQuery = (searchText: string, entityTypeIds: string[], selectedFacets: {}) => {
+        setSearchOptions({
+            ...searchOptions,
+            start: 1,
+            selectedFacets: selectedFacets,
+            query: searchText,
+            entityTypeIds: entityTypeIds,
+            pageNumber: 1,
+            pageLength: searchOptions.pageSize
+        });
+
+    }
+
   useEffect(() => {
     if (user.authenticated) {
       setSearchFromUserPref(user.name);
@@ -397,7 +413,8 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       clearGreyFacet,
       clearAllGreyFacets,
       resetGreyedOptions,
-      applyQuery
+      applyQuery,
+      applySaveQuery
     }}>
       {children}
     </SearchContext.Provider>

@@ -1,4 +1,4 @@
-import { getQueriesResponse, putQueryResponse, deleteQueryResponse } from '../../assets/mock-data/query'
+import { getQueriesResponse, putQueryResponse, deleteQueryResponse, saveQueryResponse, fetchQueryByResponse } from '../../assets/mock-data/query'
 
 export const fetchQueries = async () => {
     return await new Promise((resolve) => {
@@ -15,5 +15,17 @@ export const updateQuery = async () => {
 export const removeQuery = async () => {
     return await new Promise((resolve) => {
         resolve(deleteQueryResponse)
+    })
+}
+
+export const creatNewQuery = async () => {
+    return await new Promise((resolve) => {
+        resolve(saveQueryResponse)
+    })
+}
+
+export const fetchQueryById = async () => {
+    return await new Promise((resolve) => {
+        resolve(fetchQueryByResponse);
     })
 }

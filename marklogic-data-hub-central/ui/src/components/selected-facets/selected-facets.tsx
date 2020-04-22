@@ -1,16 +1,20 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect} from 'react';
 import { Icon, Tooltip} from 'antd';
 import { MlButton } from 'marklogic-ui-library';
 import { SearchContext } from '../../util/search-context';
 import styles from './selected-facets.module.scss';
 import moment from 'moment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {faCheckSquare, faTable, faWindowClose} from '@fortawesome/free-solid-svg-icons'
+import {faCheckSquare, faWindowClose} from '@fortawesome/free-solid-svg-icons'
 
 
 interface Props {
   selectedFacets: any[];
   greyFacets: any[];
+  toggleApply: (clicked:boolean) => void;
+  toggleApplyClicked: (clicked:boolean) => void;
+  showApply: boolean
+  applyClicked: boolean
 };
 
 const SelectedFacets: React.FC<Props> = (props) => {
@@ -28,31 +32,37 @@ const SelectedFacets: React.FC<Props> = (props) => {
     setAllSearchFacets,
    } = useContext(SearchContext);
 
-  const [showApply, toggleApply] = useState(false);
-  const [applyClicked, toggleApplyClicked] = useState(false);
-
-
     useEffect(() => {
-        if ((props.greyFacets.length > 0 || props.selectedFacets.length > 0) && (!applyClicked)) {
-            toggleApply(true);
+        if ((props.greyFacets.length > 0 || props.selectedFacets.length > 0) && (!props.applyClicked)) {
+            props.toggleApply(true);
         } else {
-            toggleApply(false);
+            props.toggleApply(false);
         }
-        toggleApplyClicked(false);
+        props.toggleApplyClicked(false);
     }, [props.greyFacets]);
 
 
     const applyFacet = () => {
-        setAllSearchFacets(greyedOptions.selectedFacets);
+        let facets = {...greyedOptions.selectedFacets};
+        for (let constraint in searchOptions.selectedFacets) {
+            if (facets.hasOwnProperty(constraint)) {
+                for (let sValue of searchOptions.selectedFacets[constraint].stringValues) {
+                    if (facets[constraint].stringValues.indexOf(sValue) == -1)
+                        facets[constraint].stringValues.push(sValue);
+                }
+            } else
+                facets[constraint] = searchOptions.selectedFacets[constraint];
+        }
+        setAllSearchFacets(facets);
         clearAllGreyFacets();
-        toggleApplyClicked(true);
-        toggleApply(false);
+        props.toggleApplyClicked(true);
+        props.toggleApply(false);
     }
 
     const clearGreyFacets = () => {
         clearAllGreyFacets();
-        toggleApplyClicked(true);
-        toggleApply(false);
+        props.toggleApplyClicked(true);
+        props.toggleApply(false);
     }
 
 
@@ -218,7 +228,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
               </Tooltip>
             )
         })}
-        {showApply &&
+        {props.showApply &&
         <Tooltip title={'Apply all changes'}>
             <FontAwesomeIcon
                 icon={faCheckSquare}

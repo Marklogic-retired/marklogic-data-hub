@@ -6,7 +6,12 @@ import SelectedFacets from './selected-facets';
 
 test('No Selected Facets', () => {
   const { getByTestId } = render(
-    <SelectedFacets selectedFacets={[]} greyFacets={[]}/>,
+    <SelectedFacets selectedFacets={[]}
+                    greyFacets={[]}
+                    toggleApplyClicked={jest.fn()}
+                    toggleApply={jest.fn()}
+                    showApply={false}
+                    applyClicked={false}/>,
   )
   const container = getByTestId('selected-facet-block')
   expect(container).toHaveStyle('visibility: hidden');
@@ -17,6 +22,10 @@ test('Selected Facets: String facet selected', () => {
     <SelectedFacets
       selectedFacets={[{constraint: 'Collection', facet: 'productMapping'}]}
       greyFacets={[]}
+      toggleApplyClicked={jest.fn()}
+      toggleApply={jest.fn()}
+      showApply={false}
+      applyClicked={true}
     />,
   )
   let clearAllButton = getByTestId('clear-all-button');
@@ -30,6 +39,10 @@ test('Selected Facets: Date facet selected', () => {
     <SelectedFacets
       selectedFacets={[{constraint: 'createdOnRange', facet: { lowerBound: "2019-10-15", upperBound: "2019-11-10" }}]}
       greyFacets={[]}
+      toggleApplyClicked={jest.fn()}
+      toggleApply={jest.fn()}
+      showApply={false}
+      applyClicked={true}
     />,
   )
   let clearAllButton = getByTestId('clear-all-button');
@@ -42,6 +55,10 @@ test('Selected Facets: Date/time facet selected', () => {
     <SelectedFacets
       selectedFacets={[{constraint: 'OrderDate', rangeValues: { lowerBound: "2020-03-03T17:20:40", upperBound: "2020-03-05T17:40:20" }}]}
       greyFacets={[]}
+      toggleApplyClicked={jest.fn()}
+      toggleApply={jest.fn()}
+      showApply={false}
+      applyClicked={true}
     />,
   )
   let clearAllButton = getByTestId('clear-all-button');
@@ -54,6 +71,10 @@ test('Selected Facets: Numeric facet selected', () => {
     <SelectedFacets
       selectedFacets={[{constraint: 'sliderMock', rangeValues: { lowerBound: 10, upperBound: 50 }}]}
       greyFacets={[]}
+      toggleApplyClicked={jest.fn()}
+      toggleApply={jest.fn()}
+      showApply={false}
+      applyClicked={true}
     />,
   )
   let clearAllButton = getByTestId('clear-all-button');

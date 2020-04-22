@@ -34,7 +34,6 @@
   width: 100%;
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 2.5em;
 }
 
 .toggleView {
@@ -60,4 +59,10 @@
   left: 0;
   right: 0;
   z-index: 999;
+}
+
+.saveDropdown {
+    margin-top: -35px;
+    margin-bottom: 43px;
+    margin-left: 10px;
 }
