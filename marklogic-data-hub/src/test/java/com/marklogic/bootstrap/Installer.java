@@ -54,27 +54,33 @@ public class Installer extends HubTestBase implements InitializingBean {
 
         dataHub.install();
 
-        User dataHubDeveloper = new User(new API(adminHubConfig.getManageClient()), "test-data-hub-developer");
+        final API api = new API(adminHubConfig.getManageClient());
+
+        User dataHubDeveloper = new User(api, "test-data-hub-developer");
         dataHubDeveloper.setPassword("password");
         dataHubDeveloper.addRole("data-hub-developer");
         dataHubDeveloper.save();
 
-        User dataHubOperator = new User(new API(adminHubConfig.getManageClient()), "test-data-hub-operator");
+        User dataHubOperator = new User(api, "test-data-hub-operator");
         dataHubOperator.setPassword("password");
         dataHubOperator.addRole("data-hub-operator");
         dataHubOperator.save();
 
-        User testAdmin = new User(new API(adminHubConfig.getManageClient()), "test-admin-for-data-hub-tests");
+        User testAdmin = new User(api, "test-admin-for-data-hub-tests");
         testAdmin.setDescription("This user is intended to be used by DHF tests that require admin or " +
             "admin-like capabilities, such as being able to deploy a DHF application");
         testAdmin.setPassword("password");
         testAdmin.addRole("admin");
         testAdmin.save();
 
-        User dataHubEnvManager = new User(new API(adminHubConfig.getManageClient()), "test-data-hub-environment-manager");
+        User dataHubEnvManager = new User(api, "test-data-hub-environment-manager");
         dataHubEnvManager.setPassword("password");
         dataHubEnvManager.addRole("data-hub-environment-manager");
         dataHubEnvManager.save();
+
+        User dataHubTestUser = new User(api, "test-data-hub-user");
+        dataHubTestUser.setDescription("Each JUnit test is free to change the roles on this to test whatever it wants to test");
+        dataHubTestUser.save();
 
         addStatusPrivilegeToDataHubDeveloper();
 

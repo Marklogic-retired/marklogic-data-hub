@@ -1,0 +1,5 @@
+{
+  "name": "validArtifact",
+  "sourceFormat": "xml",
+  "targetFormat": "json"
+}

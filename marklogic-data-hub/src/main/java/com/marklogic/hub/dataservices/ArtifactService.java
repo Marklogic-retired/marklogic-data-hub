@@ -3,6 +3,7 @@ package com.marklogic.hub.dataservices;
 // IMPORTANT: Do not edit. This file is generated.
 
 import com.marklogic.client.io.Format;
+import java.io.InputStream;
 
 
 import com.marklogic.client.DatabaseClient;
@@ -54,6 +55,7 @@ public interface ArtifactService {
             private BaseProxy.DBFunctionRequest req_getArtifactSettings;
             private BaseProxy.DBFunctionRequest req_setArtifactSettings;
             private BaseProxy.DBFunctionRequest req_removeLinkToStepOptions;
+            private BaseProxy.DBFunctionRequest req_downloadConfigurationFiles;
             private BaseProxy.DBFunctionRequest req_validateArtifact;
             private BaseProxy.DBFunctionRequest req_getList;
             private BaseProxy.DBFunctionRequest req_getArtifact;
@@ -76,6 +78,8 @@ public interface ArtifactService {
                     "setArtifactSettings.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_removeLinkToStepOptions = this.baseProxy.request(
                     "removeLinkToStepOptions.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                this.req_downloadConfigurationFiles = this.baseProxy.request(
+                    "downloadConfigurationFiles.sjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_validateArtifact = this.baseProxy.request(
                     "validateArtifact.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_getList = this.baseProxy.request(
@@ -201,6 +205,18 @@ public interface ArtifactService {
             }
 
             @Override
+            public InputStream downloadConfigurationFiles() {
+                return downloadConfigurationFiles(
+                    this.req_downloadConfigurationFiles.on(this.dbClient)
+                    );
+            }
+            private InputStream downloadConfigurationFiles(BaseProxy.DBFunctionRequest request) {
+              return BaseProxy.BinaryDocumentType.toInputStream(
+                request.responseSingle(false, Format.BINARY)
+                );
+            }
+
+            @Override
             public com.fasterxml.jackson.databind.JsonNode validateArtifact(String artifactType, String artifactName, com.fasterxml.jackson.databind.JsonNode artifact) {
                 return validateArtifact(
                     this.req_validateArtifact.on(this.dbClient), artifactType, artifactName, artifact
@@ -321,6 +337,14 @@ public interface ArtifactService {
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode removeLinkToStepOptions(String flowName, String stepID, String artifactType, String artifactName, String artifactVersion);
+
+  /**
+   * Invokes the downloadConfigurationFiles operation on the database server
+   *
+   * 
+   * @return	as output
+   */
+    InputStream downloadConfigurationFiles();
 
   /**
    * Invokes the validateArtifact operation on the database server

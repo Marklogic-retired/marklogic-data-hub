@@ -59,6 +59,10 @@ class Security {
       }
     }
 
+    if (currentRoleNames.includes("hub-central-downloader")) {
+      response.authorities.push("canDownloadConfigurationFiles");
+    }
+
     response.roles = currentRoleNames.filter(roleName => fn.startsWith(roleName, "data-hub"));
     return response;
   }

@@ -1,0 +1,9 @@
+{
+  "name": "TestOrderMapping1",
+  "targetEntityType": "Order",
+  "selectedSource": "collection",
+  "sourceQuery": "",
+  "collections": [
+    "RAW-ORDER"
+  ]
+}

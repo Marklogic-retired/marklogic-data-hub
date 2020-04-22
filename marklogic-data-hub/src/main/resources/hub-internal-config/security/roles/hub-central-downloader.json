@@ -1,0 +1,20 @@
+{
+  "role-name": "hub-central-downloader",
+  "description": "This temporarily inherits data-hub-operator so it has the necessary privileges to use Data Hub. Will rework this once the new 5.3.0 roles are available.",
+  "role": [
+    "data-hub-operator",
+    "data-hub-entity-model-reader",
+    "data-hub-flow-reader",
+    "data-hub-load-data-reader",
+    "data-hub-mapping-reader",
+    "data-hub-match-merge-reader",
+    "data-hub-step-definition-reader"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "data-hub-download-configuration-files",
+      "action": "http://marklogic.com/data-hub/privileges/download-configuration-files",
+      "kind": "execute"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+    "functionName": "downloadConfigurationFiles",
+    "params": [
+    ],
+    "return": {
+        "datatype": "binaryDocument"
+    }
+}
