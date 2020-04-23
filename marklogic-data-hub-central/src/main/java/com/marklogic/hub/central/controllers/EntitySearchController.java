@@ -40,25 +40,18 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping(value = "/api/entitySearch")
-public class EntitySearchController {
-
-    @Autowired
-    private HubConfigSession hubConfig;
-
-    EntitySearchManager entitySearchManager() {
-        return new EntitySearchManager(hubConfig);
-    }
+public class EntitySearchController extends BaseController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public String search(@RequestBody SearchQuery searchQuery) {
-        return entitySearchManager().search(searchQuery).get();
+        return newEntitySearchManager().search(searchQuery).get();
     }
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<Document> search(@RequestParam String docUri) {
-        Optional<Document> optionalContent = entitySearchManager().getDocument(docUri);
+        Optional<Document> optionalContent = newEntitySearchManager().getDocument(docUri);
         HttpHeaders headers = new HttpHeaders();
 
         return optionalContent.map(content -> {
@@ -115,7 +108,11 @@ public class EntitySearchController {
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
+    private EntitySearchManager newEntitySearchManager() {
+        return new EntitySearchManager(getHubConfig());
+    }
+
     private EntitySearchService getEntitySearchService() {
-        return EntitySearchService.on(hubConfig.newFinalClient());
+        return EntitySearchService.on(getHubConfig().newFinalClient(null));
     }
 }

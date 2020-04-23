@@ -23,18 +23,14 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.ForbiddenUserException;
 import com.marklogic.client.MarkLogicServerException;
 import com.marklogic.client.ResourceNotFoundException;
-import com.marklogic.client.document.DocumentRecord;
 import com.marklogic.client.document.GenericDocumentManager;
-import com.marklogic.client.io.Format;
 import com.marklogic.client.io.JacksonHandle;
-import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
-import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.dataservices.JobInfo;
 import com.marklogic.hub.central.exceptions.DataHubException;
+import com.marklogic.hub.dataservices.JobInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +50,7 @@ public class ModelManager {
 
     public ModelManager(HubConfig hubConfig) {
         this.finalDatabaseClient = hubConfig.newFinalClient(hubConfig.getDbName(DatabaseKind.FINAL));
-        this.finalDataServiceClient = hubConfig.newFinalClient();
+        this.finalDataServiceClient = hubConfig.newFinalClient(null);
     }
 
     /**
@@ -112,60 +108,6 @@ public class ModelManager {
                 .ifPresent(modelNamesList::add));
 
         return modelNamesList;
-    }
-
-    /**
-     * Get an entity info by name
-     *
-     * @param modelName A model name
-     * @return Json representation for an entity
-     */
-    public JsonNode getModel(String modelName) {
-        QueryManager queryMgr = finalDatabaseClient.newQueryManager();
-
-        StructuredQueryBuilder sb = queryMgr.newStructuredQueryBuilder("default");
-        StructuredQueryDefinition sbd =
-            sb.and(
-                sb.collection(ENTITY_MODEL_COLLECTION_NAME),
-                sb.value(sb.jsonProperty("title"), modelName));
-
-        StringHandle sh = new StringHandle();
-        sh.setFormat(Format.JSON);
-
-        GenericDocumentManager docMgr = finalDatabaseClient.newDocumentManager();
-        List<DocumentRecord> documentRecords = new ArrayList<>();
-        try {
-            docMgr.search(sbd, 0, sh).forEach(documentRecords::add);
-        }
-        catch (MarkLogicServerException e) {
-            if (e instanceof ResourceNotFoundException || e instanceof ForbiddenUserException) {
-                logger.warn(e.getLocalizedMessage());
-            }
-            else { //FailedRequestException || ResourceNotResendableException || other runtime exceptions
-                logger.error(e.getLocalizedMessage());
-            }
-            throw new DataHubException(e.getServerMessage(), e);
-        }
-        catch (Exception e) {
-            throw new DataHubException(e.getLocalizedMessage(), e);
-        }
-
-        JacksonHandle handle = new JacksonHandle();
-        if (!documentRecords.isEmpty()) {
-            documentRecords.get(0).getContent(handle);
-        }
-
-        return handle.get();
-    }
-
-    /**
-     * Get latest job info for specified model
-     *
-     * @param modelName Name of the entity model
-     * @return - a JsonNode containing job info
-     */
-    public JsonNode getLatestJobInfo(String modelName) {
-        return getLatestJobData(finalDataServiceClient, modelName);
     }
 
     /**

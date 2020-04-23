@@ -46,6 +46,13 @@ public abstract class AbstractHubTest extends LoggingObject {
         deleteTestProjectDirectory();
         resetDatabases();
         logger.info("Initializing test project in directory: " + getTestProjectDirectory());
+        initializeTestProjectDirectory();
+    }
+
+    /**
+     * Extracted so that HC can override it, since it does not have a HubProject associated with its HubConfig.
+     */
+    protected void initializeTestProjectDirectory() {
         getHubConfig().initHubProject();
     }
 

@@ -74,12 +74,16 @@ function getArtifacts(artifactType) {
     for (const coll of artifactLibrary.getCollections()) {
         queries.push(cts.collectionQuery(coll));
     }
+
     if (queries.length) {
-        if (entityServiceDrivenArtifactTypes.includes(artifactType)) {
-          return getArtifactsGroupByEntity(queries)
-        } else {
-          return cts.search(cts.andQuery(queries)).toArray();
-        }
+      // Since these are user-specific artifacts, hub artifacts (flows and step definitions) are excluded
+      queries.push(cts.notQuery(cts.collectionQuery(dataHub.consts.HUB_ARTIFACT_COLLECTION)));
+
+      if (entityServiceDrivenArtifactTypes.includes(artifactType)) {
+        return getArtifactsGroupByEntity(queries)
+      } else {
+        return cts.search(cts.andQuery(queries)).toArray();
+      }
     }
     return [];
 }

@@ -3,7 +3,6 @@ package com.marklogic.hub.dataservices.models;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.dataservices.ModelsService;
-import com.marklogic.hub.impl.ModelManagerImpl;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,7 @@ public class SaveModelTest extends AbstractHubCoreTest {
 
     @BeforeEach
     void beforeEach() {
-        service = new ModelManagerImpl(adminHubConfig);
+        service = ModelsService.on(adminHubConfig.newFinalClient(null));
     }
 
     @Test

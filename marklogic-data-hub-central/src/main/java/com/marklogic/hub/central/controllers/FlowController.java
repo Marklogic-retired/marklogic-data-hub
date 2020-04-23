@@ -18,100 +18,92 @@ package com.marklogic.hub.central.controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.central.exceptions.DataHubException;
 import com.marklogic.hub.dataservices.ArtifactService;
-import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.FlowInputs;
+import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowImpl;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.impl.FlowManagerImpl;
-import com.marklogic.hub.central.exceptions.DataHubException;
-import com.marklogic.hub.central.models.HubConfigSession;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.util.json.JSONUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("/api/flows")
-public class FlowController {
-
-    @Autowired
-    HubConfigSession hubConfig;
+public class FlowController extends BaseController {
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> getFlows() {
-        List<Flow> flows = getFlowManager().getFlows();
+        List<Flow> flows = new ArrayList<>();
+        getArtifactService().getList("flow").iterator().forEachRemaining(flow -> {
+            FlowImpl f = new FlowImpl();
+            f.deserialize(flow);
+            flows.add(f);
+        });
         return new ResponseEntity<>(flows, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public Flow createFlow(@RequestBody String flowJson) {
-        FlowManager flowManager = getFlowManager();
         JSONObject jsonObject = processPayload(flowJson);
-
         String flowName = jsonObject.getString("name");
-        Flow flow;
-
-        if (flowManager.isFlowExisted(flowName)) {
-            throw new DataHubException("A Flow with " + flowName + " already exists.");
-        }
-        flow = new FlowImpl();
+        Flow flow = new FlowImpl();
         flow.setName(flowName);
-
         flow.deserialize(jsonObject.jsonNode());
-        flowManager.saveFlow(flow);
+        getArtifactService().setArtifact("flow", flowName, processPayload(flowJson).jsonNode());
         return flow;
     }
 
     @RequestMapping(value = "/{flowName}", method = RequestMethod.PUT)
     @ResponseBody
     public ResponseEntity<?> updateFlow(@PathVariable String flowName, @RequestBody String flowJson) {
-        Flow flow = updateFlow(flowJson);
+        JSONObject jsonObject = processPayload(flowJson);
+        Flow flow = getFlow(flowName).getBody();
+        if (flow == null) {
+            throw new DataHubException("Either the flow " + flowName + " doesn't exist or an attempt to change flow name " +
+                "is made which is prohibited ");
+        }
+        flow.deserialize(jsonObject.jsonNode());
+        getArtifactService().setArtifact("flow", flowName, jsonObject.jsonNode());
         return new ResponseEntity<>(flow, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{flowName}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<?> getFlow(@PathVariable String flowName) {
-        Flow flow = getFlowManager().getFlow(flowName);
+    public ResponseEntity<Flow> getFlow(@PathVariable String flowName) {
+        Flow flow = new FlowImpl();
+        flow.deserialize(getArtifactService().getArtifact("flow", flowName));
         return new ResponseEntity<>(flow, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{flowName}", method = RequestMethod.DELETE)
     @ResponseBody
     public ResponseEntity<?> deleteFlow(@PathVariable String flowName) {
-        getFlowManager().deleteFlow(flowName);
+        getArtifactService().deleteArtifact("flow", flowName);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{flowName}/steps", method = RequestMethod.GET)
     @ResponseBody
     public List<Step> getSteps(@PathVariable String flowName) {
-        Flow flow =  getFlowManager().getFlow(flowName);
+        Flow flow = getFlow(flowName).getBody();
         Map<String, Step> stepMap = flow.getSteps();
 
         List<Step> stepList = new ArrayList<>();
@@ -126,8 +118,7 @@ public class FlowController {
     @RequestMapping(value = "/{flowName}/steps/{stepId}", method = RequestMethod.GET)
     @ResponseBody
     public Step getStep(@PathVariable String flowName, @PathVariable String stepId) {
-        FlowManager flowManager = getFlowManager();
-        Flow flow = flowManager.getFlow(flowName);
+        Flow flow = getFlow(flowName).getBody();
         if (flow == null) {
             throw new NotFoundException(flowName + " not found.");
         }
@@ -157,20 +148,15 @@ public class FlowController {
     @RequestMapping(value = "/{flowName}/steps/{stepId}", method = RequestMethod.DELETE)
     @ResponseBody
     public ResponseEntity<?> deleteStep(@PathVariable String flowName, @PathVariable String stepId) {
-        FlowManager flowManager = getFlowManager();
-        Flow flow = flowManager.getFlow(flowName);
+        Flow flow = getFlow(flowName).getBody();
         String key = getStepKeyInStepMap(flow, stepId);
 
         if (StringUtils.isEmpty(key)) {
             throw new BadRequestException("Invalid Step Id");
         }
 
-        try {
-            flowManager.deleteStep(flow, key);
-        }
-        catch (DataHubProjectException e) {
-            throw new NotFoundException(e.getMessage());
-        }
+        FlowManagerImpl.removeStepFromFlow(flow, key);
+        getArtifactService().setArtifact("flow", flowName, JSONUtils.convertArtifactToJson(flow));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -184,8 +170,6 @@ public class FlowController {
     @ResponseBody
     public ResponseEntity<?> linkArtifact(@PathVariable String flowName, @PathVariable String stepId, @PathVariable String artifactType, @PathVariable String artifactName, @PathVariable String artifactVersion) {
         JsonNode newFlow = getArtifactService().linkToStepOptions(flowName, stepId, artifactType, artifactName, artifactVersion);
-        // only updating local, since the artifact service updated the flow in MarkLogic
-        updateFlow(newFlow.toString(), true);
         return new ResponseEntity<>(newFlow, HttpStatus.OK);
     }
 
@@ -199,71 +183,24 @@ public class FlowController {
     @ResponseBody
     public ResponseEntity<?> removeLinkToArtifact(@PathVariable String flowName, @PathVariable String stepId, @PathVariable String artifactType, @PathVariable String artifactName, @PathVariable String artifactVersion) {
         JsonNode newFlow = getArtifactService().removeLinkToStepOptions(flowName, stepId, artifactType, artifactName, artifactVersion);
-        // only updating local, since the artifact service updated the flow in MarkLogic
-        updateFlow(newFlow.toString(), true);
         return new ResponseEntity<>(newFlow, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{flowName}/run", method = RequestMethod.POST)
     @ResponseBody
     public RunFlowResponse runFlow(@PathVariable String flowName, @RequestBody(required = false) List<String> steps) {
-        FlowManager flowManager = getFlowManager();
-        FlowRunnerImpl flowRunner = newFlowRunner();
-        if (steps == null || steps.size() == 0) {
-            return flowRunner.runFlow(flowName);
-        }
-        else {
-            Flow flow = flowManager.getFlow(flowName);
+        FlowInputs inputs = new FlowInputs(flowName);
+        if (steps != null && !steps.isEmpty()) {
+            Flow flow = getFlow(flowName).getBody();
             List<String> restrictedSteps = new ArrayList<>();
             steps.forEach((step) -> restrictedSteps.add(this.getStepKeyInStepMap(flow, step)));
-            return flowRunner.runFlow(flowName, restrictedSteps);
+            inputs.setSteps(restrictedSteps);
         }
+        return newFlowRunner().runFlow(inputs);
     }
 
-    @RequestMapping(value = "/{flowName}/stop", method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseEntity<?> stopFlow(@PathVariable String flowName) {
-        FlowRunnerImpl flowRunner = newFlowRunner();
-        List<String> jobIds = flowRunner.getQueuedJobIdsFromFlow(flowName);
-        Iterator<String> itr = jobIds.iterator();
-        if (!itr.hasNext()) {
-            throw new BadRequestException("Flow not running.");
-        }
-        while (itr.hasNext()) {
-            flowRunner.stopJob(itr.next());
-        }
-        return getFlow(flowName);
-    }
-
-    protected ArtifactService getArtifactService() {
-        DatabaseClient dataServicesClient = hubConfig.newStagingClient(null);
-        return ArtifactService.on(dataServicesClient);
-    }
-
-
-    public Flow updateFlow(String flowJson) {
-        return updateFlow(flowJson, false);
-    }
-
-    public Flow updateFlow(String flowJson, boolean onlyUpdateLocal) {
-        FlowManager flowManager = getFlowManager();
-        //for PUT updating
-        JSONObject jsonObject = processPayload(flowJson);
-
-        String flowName = jsonObject.getString("name");
-        Flow flow;
-        flow = flowManager.getFlow(flowName);
-        if (flow == null) {
-            throw new DataHubException("Either the flow "+ flowName +" doesn't exist or an attempt to change flow name " +
-                "is made which is prohibited ");
-        }
-        flow.deserialize(jsonObject.jsonNode());
-        if (onlyUpdateLocal) {
-            flowManager.saveLocalFlow(flow);
-        } else {
-            flowManager.saveFlow(flow);
-        }
-        return flow;
+    private ArtifactService getArtifactService() {
+        return ArtifactService.on(getHubConfig().newStagingClient(null));
     }
 
     private JSONObject processPayload(String flowJson) {
@@ -307,9 +244,8 @@ public class FlowController {
     }
 
     public Step createStep(String flowName, Integer stepOrder, String stepId, String stringStep) {
-        FlowManager flowManager = getFlowManager();
         JsonNode stepJson;
-        Flow flow = flowManager.getFlow(flowName);
+        Flow flow = getFlow(flowName).getBody();
         Step existingStep = flow.getStep(getStepKeyInStepMap(flow, stepId));
         if (existingStep == null && !StringUtils.isEmpty(stepId)) {
             throw new NotFoundException("Step " + stepId + " Not Found");
@@ -373,15 +309,16 @@ public class FlowController {
             return existingStep;
         }
 
-        flowManager.saveFlow(flow);
+        getArtifactService().setArtifact("flow", flowName, JSONUtils.convertArtifactToJson(flow));
         return step;
     }
 
-    protected FlowManager getFlowManager() {
-        return new FlowManagerImpl(this.hubConfig.getHubConfigImpl());
-    }
-
-    protected FlowRunnerImpl newFlowRunner() {
-        return new FlowRunnerImpl(this.hubConfig.getHubConfigImpl());
+    /**
+     * Included for testing purposes.
+     *
+     * @return
+     */
+    protected FlowRunner newFlowRunner() {
+        return new FlowRunnerImpl(getHubConfig());
     }
 }

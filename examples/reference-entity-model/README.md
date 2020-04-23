@@ -16,3 +16,8 @@ Then deploy the application (the "-i" is for info-level logging, which is helpfu
 To verify that the application is installed, visit http://localhost:8011 in your web browser and authenticate as one of
 the users defined in the gradle.properties file in this project. If the application was successfully installed, you'll
 see a "MarkLogic REST Server" page.
+
+## Authenticating 
+
+This project defines several users in ./src/main/ml-config/security/users that can be used for development and testing. 
+

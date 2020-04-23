@@ -38,7 +38,7 @@ import com.marklogic.hub.central.models.MapSearchQuery;
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 
-public class MapSearchManager extends MapSearchableManager {
+public class MapSearchManager {
 
     private HubConfig hubConfig;
     private QueryManager stagingQueryMgr;
@@ -159,5 +159,13 @@ public class MapSearchManager extends MapSearchableManager {
             ResourceServices.ServiceResult res = resultItr.next();
             return res.getContent(new JacksonHandle()).get();
         }
+    }
+
+    private StructuredQueryDefinition addRangeConstraint(StructuredQueryBuilder sb, String name, String value) {
+        StructuredQueryDefinition sqd = null;
+        if (value != null && !value.isEmpty()) {
+            sqd = sb.rangeConstraint(name, StructuredQueryBuilder.Operator.EQ, value);
+        }
+        return sqd;
     }
 }

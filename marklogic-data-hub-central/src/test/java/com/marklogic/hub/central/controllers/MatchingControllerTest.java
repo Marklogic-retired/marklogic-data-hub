@@ -47,16 +47,15 @@ public class MatchingControllerTest extends AbstractHubCentralTest {
         "}";
 
     @Test
-    void testMatchingConfigs() throws IOException {
+    void testMatchingConfigs() {
         installReferenceProject();
 
-        controller.updateArtifact("TestCustomerMatching", objectMapper.readTree(MATCHING_CONFIG_1));
-        controller.updateArtifact("TestOrderMatching1", objectMapper.readTree(MATCHING_CONFIG_2));
-        controller.updateArtifact("TestOrderMatching2", objectMapper.readTree(MATCHING_CONFIG_3));
+        controller.updateMatching("TestCustomerMatching", readJsonObject(MATCHING_CONFIG_1));
+        controller.updateMatching("TestOrderMatching1", readJsonObject(MATCHING_CONFIG_2));
+        controller.updateMatching("TestOrderMatching2", readJsonObject(MATCHING_CONFIG_3));
 
-        ArrayNode configsGroupbyEntity = controller.getArtifacts().getBody();
-
-        assertTrue(configsGroupbyEntity.size() > 0, "The group entity count of matching configs should be greater than 2.");
+        ArrayNode configsGroupbyEntity = controller.getMatchings().getBody();
+        assertEquals(2, configsGroupbyEntity.size(), "Should be two items in the array - one for each entity type");
 
         configsGroupbyEntity.forEach(e -> {
             String currEntityName = e.get("entityType").asText();
@@ -94,6 +93,15 @@ public class MatchingControllerTest extends AbstractHubCentralTest {
                     fail("error data type!");
                 }
             }
+        });
+
+        controller.deleteMatching("TestCustomerMatching");
+        controller.deleteMatching("TestOrderMatching1");
+        controller.deleteMatching("TestOrderMatching2");
+        configsGroupbyEntity = controller.getMatchings().getBody();
+        configsGroupbyEntity.forEach(item -> {
+            ArrayNode artifacts = (ArrayNode)item.get("artifacts");
+            assertEquals(0, artifacts.size());
         });
     }
 }

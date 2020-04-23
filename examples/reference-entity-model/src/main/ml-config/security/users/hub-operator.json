@@ -1,6 +1,7 @@
 {
-  "user-name": "%%hubOperatorUsername%%",
-  "password": "%%hubOperatorPassword%%",
+  "user-name": "hub-operator",
+  "description": "Generic operator account; will soon be superceded by persona-specific accounts",
+  "password": "%%testPassword%%",
   "role": [
     "data-hub-operator"
   ]

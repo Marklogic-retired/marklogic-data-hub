@@ -3,8 +3,10 @@ package com.marklogic.hub.central;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.FileHandle;
+import com.marklogic.hub.HubProject;
 import com.marklogic.hub.central.models.HubConfigSession;
 import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.impl.HubProjectImpl;
 import com.marklogic.hub.test.AbstractHubTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * Intended base class for any test that wishes to connect to MarkLogic. Tests that do not have any need to connect to
@@ -42,12 +45,15 @@ import java.io.IOException;
 public abstract class AbstractHubCentralTest extends AbstractHubTest {
 
     @Autowired
-    protected HubConfigSession hubConfig;
+    protected HubConfigSession hubConfigSession;
 
     protected TestConstants testConstants;
 
     @Autowired
     HubCentral hubCentral;
+
+    private String testProjectDirectory = "build/hub-central-test-project";
+    private HubProject testHubProject;
 
     @BeforeEach
     void beforeEachTest() {
@@ -56,21 +62,29 @@ public abstract class AbstractHubCentralTest extends AbstractHubTest {
         // By default, a test should run as a data-hub-developer
         runAsDataHubDeveloper();
         logger.info("Initialized test, time: " + (System.currentTimeMillis() - start));
+
+    }
+
+    @Override
+    protected void initializeTestProjectDirectory() {
+        testHubProject = new HubProjectImpl();
+        testHubProject.createProject(testProjectDirectory);
+        testHubProject.init(new HashMap<>());
     }
 
     @Override
     protected HubConfigImpl getHubConfig() {
-        return hubConfig.getHubConfigImpl();
+        return hubConfigSession.getHubConfigImpl();
     }
 
     @Override
     protected File getTestProjectDirectory() {
-        return new File(hubCentral.getProjectDirectory());
+        return new File(testProjectDirectory);
     }
 
     @Override
     protected HubConfigImpl runAsUser(String username, String password) {
-        hubConfig.initialize(hubCentral.newHubConfig(username, password));
+        hubConfigSession.initialize(hubCentral.newHubConfig(username, password));
         return null;
     }
 
@@ -79,7 +93,7 @@ public abstract class AbstractHubCentralTest extends AbstractHubTest {
         metadata.getCollections().addAll(collections);
         metadata.getPermissions().add("data-hub-operator", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE);
         FileHandle handle = new FileHandle(getFileFromClasspath(resource));
-        hubConfig.newStagingClient().newDocumentManager().write(uri, metadata, handle);
+        getHubConfig().newStagingClient().newDocumentManager().write(uri, metadata, handle);
     }
 
     protected File getFileFromClasspath(String resourceName) {
@@ -100,5 +114,22 @@ public abstract class AbstractHubCentralTest extends AbstractHubTest {
      */
     protected void installReferenceProject() {
         installProjectInFolder("test-projects/reference-project");
+    }
+
+    /**
+     * Temporarily sets a HubProject so that a project can be installed. This is then immediately removed from the
+     * HubConfig so that nothing in HC - including tests - can depend on a HubProject being set.
+     *
+     * @param folderInClasspath
+     */
+    @Override
+    protected void installProjectInFolder(String folderInClasspath) {
+        HubConfigImpl realHubConfig = hubConfigSession.getHubConfigImpl();
+        realHubConfig.setHubProject(testHubProject);
+        try {
+            super.installProjectInFolder(folderInClasspath);
+        } finally {
+            realHubConfig.setHubProject(null);
+        }
     }
 }
