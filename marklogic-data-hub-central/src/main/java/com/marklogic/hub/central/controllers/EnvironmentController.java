@@ -42,13 +42,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Controller
-public class EnvironmentController extends LoggingObject {
+public class EnvironmentController extends BaseController {
 
     @Autowired
     HubCentral hubCentral;
-
-    @Autowired
-    HubConfigSession hubConfig;
 
     @Autowired
     Environment environment;
@@ -76,7 +73,8 @@ public class EnvironmentController extends LoggingObject {
     public JsonNode getProject() {
         ObjectNode obj = mapper.createObjectNode();
         obj.put("isInitialized", true);
-        obj.put("directory", hubCentral.getProjectDirectory());
+        // Will remove this as part of
+        obj.put("directory", "N/A");
         return obj;
     }
 
@@ -86,7 +84,7 @@ public class EnvironmentController extends LoggingObject {
         response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
         response.addHeader("Content-Disposition", "attachment; filename=datahub-project.zip");
         try (OutputStream out = response.getOutputStream()) {
-            FileCopyUtils.copy(ArtifactService.on(hubConfig.newStagingClient(null)).downloadConfigurationFiles(), out);
+            FileCopyUtils.copy(ArtifactService.on(getHubConfig().newStagingClient(null)).downloadConfigurationFiles(), out);
             response.flushBuffer();
         } catch (IOException e) {
             throw new RuntimeException("Unable to download project; cause: " + e.getMessage());
@@ -96,9 +94,9 @@ public class EnvironmentController extends LoggingObject {
     @RequestMapping(value = "/api/environment/project-info", method = RequestMethod.GET)
     @ResponseBody
     public JsonNode getProjectInfo() {
-        Versions versions = new Versions(hubConfig);
+        Versions versions = new Versions(getHubConfig());
         ObjectNode node = new ObjectMapper().createObjectNode();
-        node.put("projectDir", hubCentral.getProjectDirectory());
+        node.put("projectDir", "N/A");
         node.put("projectName", hubCentral.getProjectName());
         node.put("dataHubVersion", versions.getHubVersion());
         node.put("marklogicVersion", versions.getMarkLogicVersion());

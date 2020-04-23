@@ -55,47 +55,41 @@ public class LoadDataControllerTest extends AbstractHubCentralTest {
         + "    }}";
 
     @Test
-    void testLoadDataController() throws IOException {
-        controller.updateArtifact("validArtifact", newLoadDataConfig());
+    void testLoadDataController() {
+        controller.updateLoadData("validArtifact", newLoadDataConfig());
 
-        ArrayNode resultList = (ArrayNode) controller.getArtifacts().getBody();
+        ArrayNode resultList = controller.getLoadDatas().getBody();
 
         assertEquals(1, resultList.size(), "List of load data artifacts should now be 1");
 
-        Path artifactProjectLocation = new ArtifactManagerImpl(hubConfig).buildArtifactProjectLocation(controller.getArtifactType(), "validArtifact", null, false);
-        ObjectNode resultByName = controller.getArtifact("validArtifact").getBody();
+        ObjectNode resultByName = controller.getLoadData("validArtifact").getBody();
         assertEquals("validArtifact", resultByName.get("name").asText(), "Getting artifact by name should return object with expected properties");
         assertEquals("xml", resultByName.get("sourceFormat").asText(), "Getting artifact by name should return object with expected properties");
         assertEquals("json", resultByName.get("targetFormat").asText(), "Getting artifact by name should return object with expected properties");
-        assertTrue(artifactProjectLocation.toFile().exists(), "File should have been created in the project directory");
 
         ObjectNode enrichedJson = controller.setData("validArtifact", new MockMultipartFile[]{ new MockMultipartFile("file", "orig", null, "docTest".getBytes())}).getBody();
         assertEquals(1, enrichedJson.get("fileCount").asInt(), "File should be added to data set.");
 
-        controller.deleteArtifact("validArtifact");
-        assertFalse(artifactProjectLocation.toFile().exists(), "File should have been deleted from the project directory");
+        controller.deleteLoadData("validArtifact");
 
-        resultList = (ArrayNode) controller.getArtifacts().getBody();
+        resultList = controller.getLoadDatas().getBody();
 
         assertEquals(0, resultList.size(), "List of load data artifacts should now be 0 after deleting validArtifact");
-        assertFalse(controller.dataSetDirectory("validArtifact").toFile().exists(), "Data set directory for validArtifact should no longer exist");
 
-        assertThrows(FailedRequestException.class, () -> controller.getArtifact("validArtifact"));
+        assertThrows(FailedRequestException.class, () -> controller.getLoadData("validArtifact"));
     }
 
     @Test
-    public void testLoadDataSettings() throws IOException {
-        controller.updateArtifact("validArtifact", newLoadDataConfig());
+    public void testLoadDataSettings() {
+        controller.updateLoadData("validArtifact", newLoadDataConfig());
 
-        JsonNode result = controller.getArtifactSettings("validArtifact").getBody();
+        JsonNode result = controller.getLoadDataSettings("validArtifact").getBody();
         // Check for defaults
         assertEquals("validArtifact", result.get("artifactName").asText());
         assertEquals(1, result.get("collections").size());
         assertEquals("default-ingestion", result.get("collections").get(0).asText());
 
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode settings = mapper.readTree(LOAD_DATA_SETTINGS);
-        controller.updateArtifactSettings("validArtifact", settings);
+        controller.updateLoadDataSettings("validArtifact", readJsonObject(LOAD_DATA_SETTINGS));
 
         result = controller.getArtifactSettings("validArtifact").getBody();
         assertEquals("validArtifact", result.get("artifactName").asText());
@@ -105,12 +99,8 @@ public class LoadDataControllerTest extends AbstractHubCentralTest {
         assertTrue(result.has("permissions"), "missing permissions");
         assertTrue(result.has("customHook"), "missing customHook");
 
-        Path artifactSettingFullName = new ArtifactManagerImpl(hubConfig).buildArtifactProjectLocation(controller.getArtifactType(), "validArtifact", null, true);
-        assertTrue(artifactSettingFullName.toFile().exists(), "Artifact setting file should have been created in the project directory");
-
-        controller.deleteArtifact("validArtifact");
+        controller.deleteLoadData("validArtifact");
 
         assertThrows(FailedRequestException.class, () -> controller.getArtifact("validArtifact"));
-        assertFalse(artifactSettingFullName.toFile().exists(), "Artifact setting file should no longer exist");
     }
 }

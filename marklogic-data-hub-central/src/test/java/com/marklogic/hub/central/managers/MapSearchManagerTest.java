@@ -7,12 +7,8 @@ import com.marklogic.hub.central.models.SJSSearchQuery;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 class MapSearchManagerTest extends AbstractHubCentralTest {
-
-    @Autowired
-    MapSearchManager mapSearchManager;
 
     @BeforeEach
     void before() {
@@ -31,11 +27,11 @@ class MapSearchManagerTest extends AbstractHubCentralTest {
 
     private void sjsSearch(boolean urisOnly) {
         SJSSearchQuery query = new SJSSearchQuery();
-        query.database = hubConfig.getDbName(DatabaseKind.STAGING);
+        query.database = getHubConfig().getDbName(DatabaseKind.STAGING);
         query.sourceQuery = "cts.collectionQuery('UrisOnly')";
         query.count = 1;
         query.urisOnly = urisOnly;
-        JsonNode resp = mapSearchManager.sjsSearch(query).get(0);
+        JsonNode resp = new MapSearchManager(getHubConfig()).sjsSearch(query).get(0);
         String uri = resp.get("uri").asText();
         Assertions.assertEquals("/employee2.json", uri);
 

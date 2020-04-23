@@ -35,37 +35,25 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping(value = "/api/map-search")
-public class MapSearchController {
-
-    @Autowired
-    private MapSearchManager mapSearchManager;
-
-    @Autowired
-    private HubConfigSession hubConfig;
-
-    @Bean
-    @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS, value = "request")
-    MapSearchManager searchService() {
-        return new MapSearchManager(hubConfig);
-    }
+public class MapSearchController extends BaseController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public String search(@RequestBody MapSearchQuery mapSearchQuery) throws JsonProcessingException {
-        return mapSearchManager.search(mapSearchQuery).get();
+        return new MapSearchManager(getHubConfig()).search(mapSearchQuery).get();
     }
 
     @RequestMapping(value = "/sjsSearch", method = RequestMethod.POST)
     @ResponseBody
     public JsonNode sjsSearch(@RequestBody SJSSearchQuery sjsSearchQuery) {
-        return mapSearchManager.sjsSearch(sjsSearchQuery);
+        return new MapSearchManager(getHubConfig()).sjsSearch(sjsSearchQuery);
     }
 
     @RequestMapping(value = "/doc", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> getDoc(@RequestParam String database, @RequestParam String docUri) {
         HttpHeaders headers = new HttpHeaders();
-        String body = mapSearchManager.getDoc(database, docUri);
+        String body = new MapSearchManager(getHubConfig()).getDoc(database, docUri);
         if (body.startsWith("<")) {
             headers.setContentType(MediaType.APPLICATION_XML);
         }

@@ -112,14 +112,14 @@ public class MappingControllerTest extends AbstractHubCentralTest {
         "}";
 
     @Test
-    void testMappingConfigs() throws IOException {
+    void testMappingConfigs() {
         installReferenceProject();
 
-        controller.updateArtifact("TestCustomerMapping", objectMapper.readTree(MAPPING_CONFIG_1));
-        controller.updateArtifact("TestOrderMapping1", objectMapper.readTree(MAPPING_CONFIG_2));
-        controller.updateArtifact("TestOrderMapping2", objectMapper.readTree(MAPPING_CONFIG_3));
+        controller.updateMapping("TestCustomerMapping", readJsonObject(MAPPING_CONFIG_1));
+        controller.updateMapping("TestOrderMapping1", readJsonObject(MAPPING_CONFIG_2));
+        controller.updateMapping("TestOrderMapping2", readJsonObject(MAPPING_CONFIG_3));
 
-        ArrayNode configsGroupbyEntity = controller.getArtifacts().getBody();
+        ArrayNode configsGroupbyEntity = controller.getMappings().getBody();
 
         assertTrue(configsGroupbyEntity.size() >= 2, "The group entity count of mapping configs should be greater than 2.");
 
@@ -163,21 +163,21 @@ public class MappingControllerTest extends AbstractHubCentralTest {
     }
 
     @Test
-    public void testMappingSettings() throws IOException {
+    public void testMappingSettings() {
         installReferenceProject();
-        controller.updateArtifact("TestCustomerMapping", objectMapper.readTree(MAPPING_CONFIG_1));
+        controller.updateMapping("TestCustomerMapping", readJsonObject(MAPPING_CONFIG_1));
 
-        JsonNode result = controller.getArtifactSettings("TestCustomerMapping").getBody();
+        JsonNode result = controller.getMappingSettings("TestCustomerMapping").getBody();
         // Check for defaults
         assertEquals("TestCustomerMapping", result.get("artifactName").asText());
         assertEquals(1, result.get("collections").size());
         assertEquals("default-mapping", result.get("collections").get(0).asText());
 
-        JsonNode settings = objectMapper.readTree(MAPPING_SETTINGS);
+        ObjectNode settings = readJsonObject(MAPPING_SETTINGS);
 
-        controller.updateArtifactSettings("TestCustomerMapping", settings);
+        controller.updateMappingSettings("TestCustomerMapping", settings);
 
-        result = controller.getArtifactSettings("TestCustomerMapping").getBody();
+        result = controller.getMappingSettings("TestCustomerMapping").getBody();
         assertEquals("TestCustomerMapping", result.get("artifactName").asText());
         assertEquals(2, result.get("additionalCollections").size());
         assertEquals("Collection2", result.get("additionalCollections").get(1).asText());
@@ -185,14 +185,14 @@ public class MappingControllerTest extends AbstractHubCentralTest {
         assertTrue(result.has("permissions"), "missing permissions");
         assertTrue(result.has("customHook"), "missing customHook");
 
-        controller.deleteArtifact("TestCustomerMapping");
+        controller.deleteMapping("TestCustomerMapping");
 
-        assertThrows(FailedRequestException.class, () -> controller.getArtifact("TestCustomerMapping"));
+        assertThrows(FailedRequestException.class, () -> controller.getMapping("TestCustomerMapping"));
     }
 
     @Test
     void testValidateMappings() {
-        DatabaseClient databaseClient = hubConfig.newFinalClient();
+        DatabaseClient databaseClient = getHubConfig().newFinalClient();
         databaseClient.newJSONDocumentManager().write(
             "/test/entities/Customer.entity.json",
             new DocumentMetadataHandle().withCollections("http://marklogic.com/entity-services/models"),
@@ -203,11 +203,11 @@ public class MappingControllerTest extends AbstractHubCentralTest {
             new StringHandle(TEST_ENTITY_INSTANCE).withFormat(Format.JSON)
         );
 
-        ObjectNode result = controller.testMapping(readJsonObject(VALID_MAPING), "/test/customer100.json", hubConfig.getDbName(DatabaseKind.FINAL)).getBody();
+        ObjectNode result = controller.testMapping(readJsonObject(VALID_MAPING), "/test/customer100.json", getHubConfig().getDbName(DatabaseKind.FINAL)).getBody();
         assertEquals("concat(id, 'A')", result.get("properties").get("id").get("sourcedFrom").asText(), "SourcedFrom should be concat(id, 'A')");
         assertEquals("100A", result.get("properties").get("id").get("output").asText(), "outpus should be 100A");
 
-        ObjectNode errorResult = controller.testMapping(readJsonObject(INVALID_MAPING), "/test/customer100.json", hubConfig.getDbName(DatabaseKind.FINAL)).getBody();
+        ObjectNode errorResult = controller.testMapping(readJsonObject(INVALID_MAPING), "/test/customer100.json", getHubConfig().getDbName(DatabaseKind.FINAL)).getBody();
         assertEquals("concat(id, ')", errorResult.get("properties").get("id").get("sourcedFrom").asText(), "SourcedFrom should be concat(id, ')");
         assertEquals("Invalid XPath expression: concat(id, ')", errorResult.get("properties").get("id").get("errorMessage").asText(), "errorMessage should be Invalid XPath expression: concat(id, ')");
     }

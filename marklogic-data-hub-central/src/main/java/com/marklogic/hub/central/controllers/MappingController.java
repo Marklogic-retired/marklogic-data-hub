@@ -18,38 +18,39 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping("/api/artifacts/mapping")
 public class MappingController extends AbstractArtifactController {
+
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<ArrayNode> getArtifacts() {
+    public ResponseEntity<ArrayNode> getMappings() {
         return super.getArtifacts();
     }
 
     @RequestMapping(value = "/{artifactName}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<ObjectNode> getArtifact(@PathVariable String artifactName) {
+    public ResponseEntity<ObjectNode> getMapping(@PathVariable String artifactName) {
         return super.getArtifact(artifactName);
     }
 
     @RequestMapping(value = "/{artifactName}", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<ObjectNode> updateArtifact(@PathVariable String artifactName, @RequestBody ObjectNode mappingJson) {
+    public ResponseEntity<ObjectNode> updateMapping(@PathVariable String artifactName, @RequestBody ObjectNode mappingJson) {
         return super.updateArtifact(artifactName, mappingJson);
     }
 
     @RequestMapping(value = "/{artifactName}", method = RequestMethod.DELETE)
-    public void deleteLoadDataConfig(@PathVariable String artifactName) throws IOException {
+    public void deleteMapping(@PathVariable String artifactName) {
         super.deleteArtifact(artifactName);
     }
 
     @RequestMapping(value = "/{artifactName}/settings", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<ObjectNode> getArtifactSettings(@PathVariable String artifactName) {
+    public ResponseEntity<ObjectNode> getMappingSettings(@PathVariable String artifactName) {
         return super.getArtifactSettings(artifactName);
     }
 
     @RequestMapping(value = "/{artifactName}/settings", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<ObjectNode> updateArtifactSettings(@PathVariable String artifactName, @RequestBody ObjectNode settings) {
+    public ResponseEntity<ObjectNode> updateMappingSettings(@PathVariable String artifactName, @RequestBody ObjectNode settings) {
         return super.updateArtifactSettings(artifactName, settings);
     }
 
@@ -73,7 +74,6 @@ public class MappingController extends AbstractArtifactController {
     }
 
     protected MappingService getMappingService() {
-        DatabaseClient dataServicesClient = hubConfig.newStagingClient(null);
-        return MappingService.on(dataServicesClient);
+        return MappingService.on(getHubConfig().newStagingClient(null));
     }
 }

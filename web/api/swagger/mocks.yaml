@@ -273,47 +273,6 @@ paths:
           schema:
             $ref: '#/definitions/error'
       x-swagger-router-controller: Flows
-  '/flows/{flowId}/stop':
-    post:
-      tags:
-        - flows
-      summary: Stop a Flow
-      description: ''
-      operationId: stopFlow
-      produces:
-        - application/json
-      parameters:
-        - name: flowId
-          in: path
-          description: Id of flow to stop
-          required: true
-          type: string
-      responses:
-        '200':
-          description: Successful Operation
-          schema:
-            $ref: '#/definitions/flow'
-        '400':
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/error'
-        '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/error'
-        '403':
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/error'
-        '404':
-          description: Not Found
-          schema:
-            $ref: '#/definitions/error'
-        '500':
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/error'
-      x-swagger-router-controller: Flows
   '/flows/{flowId}/steps':
     get:
       tags:
@@ -544,54 +503,6 @@ paths:
           schema:
             $ref: '#/definitions/error'
       x-swagger-router-controller: Collections
-  /jobs:
-    get:
-      tags:
-        - jobs
-      summary: Returns all jobs
-      description: Returns all jobs
-      operationId: getJobs
-      produces:
-        - application/json
-      parameters:
-        - name: page
-          in: query
-          description: 'Page # of the paginated data'
-          required: false
-          type: string
-        - name: length
-          in: query
-          description: Length paginated data
-          required: false
-          type: string
-      responses:
-        '200':
-          description: Successful Operation
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/job'
-        '400':
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/error'
-        '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/error'
-        '403':
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/error'
-        '404':
-          description: Not Found
-          schema:
-            $ref: '#/definitions/error'
-        '500':
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/error'
-      x-swagger-router-controller: Jobs
   '/jobs/{jobId}':
     get:
       tags:

@@ -261,6 +261,18 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
 
     @Override
     public void deleteStep(Flow flow, String key) {
+        Step removedStep = removeStepFromFlow(flow, key);
+        saveFlow(flow);
+        deleteRelatedStepArtifacts(flow, removedStep);
+    }
+
+    /**
+     * Extracted for reuse in HubCentral
+     * @param flow
+     * @param key
+     * @return
+     */
+    public static Step removeStepFromFlow(Flow flow, String key) {
         Map<String, Step> stepMap = flow.getSteps();
         int stepOrder = Integer.parseInt(key);
 
@@ -284,8 +296,7 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
         }
 
         flow.setSteps(stepMap);
-        saveFlow(flow);
-        deleteRelatedStepArtifacts(flow, removedStep);
+        return removedStep;
     }
 
     @Override

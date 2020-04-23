@@ -9,6 +9,7 @@ import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.central.AbstractHubCentralTest;
 import com.marklogic.hub.central.controllers.ModelController;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 
@@ -19,12 +20,11 @@ public class ModelControllerTest extends AbstractHubCentralTest {
 
     private final static String MODEL_NAME = "UiTestEntity";
 
-    private ModelController controller;
+    @Autowired
+    ModelController controller;
 
     @Test
-    void testModelsServicesEndpoints() { controller = new ModelController();
-        controller.setHubConfig(hubConfig);
-
+    void testModelsServicesEndpoints() {
         createModel();
         updateModelInfo();
         updateModelEntityTypes();
@@ -42,9 +42,6 @@ public class ModelControllerTest extends AbstractHubCentralTest {
         ArrayNode entityTypes = (ArrayNode) controller.getPrimaryEntityTypes().getBody();
         assertEquals(1, entityTypes.size(), "A new model should have been created " +
             "and thus there should be one primary entity type");
-
-        File file = new File(hubConfig.getHubProject().getHubEntitiesDir().toFile(), MODEL_NAME + ".entity.json");
-        assertTrue(file.exists(), "Expected model file to have been written to: " + file.getAbsolutePath());
     }
 
     private void updateModelInfo() {
@@ -52,7 +49,7 @@ public class ModelControllerTest extends AbstractHubCentralTest {
         input.put("description", "Updated description");
         controller.updateModelInfo(MODEL_NAME, input);
 
-        assertEquals("Updated description", loadModel(hubConfig.newFinalClient()).get("definitions").get(MODEL_NAME).get("description").asText());
+        assertEquals("Updated description", loadModel(getHubConfig().newFinalClient()).get("definitions").get(MODEL_NAME).get("description").asText());
     }
 
     private void updateModelEntityTypes() {
@@ -72,7 +69,7 @@ public class ModelControllerTest extends AbstractHubCentralTest {
             throw new RuntimeException(e);
         }
 
-        assertEquals("string", loadModel(hubConfig.newFinalClient()).get("definitions").get(MODEL_NAME).get("properties").get("someProperty").get("datatype").asText());
+        assertEquals("string", loadModel(getHubConfig().newFinalClient()).get("definitions").get(MODEL_NAME).get("properties").get("someProperty").get("datatype").asText());
     }
 
     private JsonNode loadModel(DatabaseClient client) {

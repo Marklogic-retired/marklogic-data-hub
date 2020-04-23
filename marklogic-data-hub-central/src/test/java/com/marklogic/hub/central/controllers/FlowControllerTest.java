@@ -4,11 +4,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.eval.EvalResultIterator;
+import com.marklogic.hub.central.AbstractHubCentralTest;
 import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowImpl;
-import com.marklogic.hub.flow.impl.FlowRunnerImpl;
-import com.marklogic.hub.central.AbstractHubCentralTest;
 import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.json.JSONUtils;
 import org.junit.jupiter.api.Assertions;
@@ -46,13 +46,6 @@ class FlowControllerTest extends AbstractHubCentralTest {
         "{\"inputFilePath\":\"input\",\"inputFileType\":" +
         "\"json\",\"outputURIReplacement\":\".*/input,'/xqyfunc'\",\"separator\":\"\"}}";
 
-    private final String customStepString = "{\"name\":\"second\",\"description\":\"\",\"isValid\":false,\"modulePath\":\"\",\"options\":" +
-        "{\"collections\":[\"second\"],\"additionalCollections\":[],\"sourceQuery\":\"cts.collectionQuery([])\",\"sourceCollection\":\"\"," +
-        "\"sourceDatabase\":\"data-hub-STAGING\",\"permissions\":\"data-hub-operator,read,data-hub-operator,update\",\"outputFormat\":" +
-        "\"json\",\"targetEntity\":\"\",\"targetDatabase\":\"data-hub-FINAL\"},\"customHook\":{\"module\":\"\",\"parameters\":{}," +
-        "\"user\":\"\",\"runBefore\":false},\"batchSize\":100,\"threadCount\":4,\"stepDefinitionType\":\"CUSTOM\",\"stepDefType\":\"CUSTOM\"," +
-        "\"stepDefinitionName\":\"second\",\"selectedSource\":\"\"}";
-
     @Autowired
     FlowTestController controller;
 
@@ -65,6 +58,9 @@ class FlowControllerTest extends AbstractHubCentralTest {
     @Test
     void getFlow() throws IOException {
         int startingFlowCount = ((List) controller.getFlows().getBody()).size();
+        assertEquals(0, startingFlowCount, "Expecting zero flows; the OOTB DH flows should not be " +
+            "returned as those are not user artifacts");
+
         try {
             //POST flow
             controller.createFlow(flowString);
@@ -114,16 +110,8 @@ class FlowControllerTest extends AbstractHubCentralTest {
 
             //PUT step
             controller.createStep("testFlow", "e2e-json-ingestion", mapper.writeValueAsString(stepModel));
-            //POST custom step
-            controller.createStep("testFlow", 3, customStepString).getBody();
 
-            GenericDocumentManager docMgr = hubConfig.newStagingClient().newDocumentManager();
-
-           /*  The code that creates a stepdef when custom step is created  has been removed
-           StringHandle readHandle = new StringHandle();
-            docMgr.read("/step-definitions/custom/second/second.step.json").next().getContent(readHandle);
-            //the step-def should be written
-            Assertions.assertNotNull(readHandle.get());*/
+            GenericDocumentManager docMgr = getHubConfig().newStagingClient().newDocumentManager();
 
             //link artifact to step options
             loadDataController.updateArtifact("validArtifact", newLoadDataConfig());
@@ -135,7 +123,7 @@ class FlowControllerTest extends AbstractHubCentralTest {
             Assertions.assertEquals(100, stepModel.getBatchSize().intValue());
             // step should have LoadData link
             Assertions.assertNotNull(stepModel.getOptions().get("loadData"), "Should have loadData link");
-            Assertions.assertEquals("validArtifact", ((JsonNode)stepModel.getOptions().get("loadData")).get("name").asText(), "Link should have expected name");
+            Assertions.assertEquals("validArtifact", ((JsonNode) stepModel.getOptions().get("loadData")).get("name").asText(), "Link should have expected name");
 
             // remove artifact link
             controller.removeLinkToArtifact("testFlow", "e2e-json-ingestion", "loadData", "validArtifact");
@@ -144,10 +132,7 @@ class FlowControllerTest extends AbstractHubCentralTest {
 
             //DELETE step
             controller.deleteStep("testFlow", "e2e-json-ingestion");
-            controller.deleteStep("testFlow", "second-custom");
 
-            //the module should be deleted
-            Assertions.assertFalse(docMgr.read("/step-definitions/custom/second/second.step.json").hasNext());
             try {
                 controller.getStep("testFlow", "e2e-json-ingestion");
                 Assertions.fail();
@@ -158,7 +143,7 @@ class FlowControllerTest extends AbstractHubCentralTest {
             //DELETE flow
             controller.deleteFlow("testFlow");
             try {
-                Flow flow = (Flow) controller.getFlow("testFlow").getBody();
+                Flow flow = controller.getFlow("testFlow").getBody();
                 Assertions.assertNull(flow, "Flow shouldn't exist anymore");
             } catch (Exception e) {
                 logger.info("Exception is expected as the flow being fetched has been deleted");
@@ -166,13 +151,14 @@ class FlowControllerTest extends AbstractHubCentralTest {
             loadDataController.deleteArtifact("validArtifact");
         }
     }
+
     @Test
-    void addMappingToStepAndRun(){
+    void addMappingToStepAndRun() {
         installProjectInFolder("test-projects/reference-project");
         addStagingDoc("input/mapInput.json", "/input/mapInput.json", "default-ingestion");
 
         //Equivalent to adding a step from GUI
-        controller.createStep("refFlow" , 1, "{\n" +
+        controller.createStep("refFlow", 1, "{\n" +
             "\"name\": \"testMap\",\n" +
             "\"stepDefinitionName\": \"entity-services-mapping\",\n" +
             "\"stepDefinitionType\": \"MAPPING\",\n" +
@@ -190,13 +176,12 @@ class FlowControllerTest extends AbstractHubCentralTest {
             String jobStatus = job.get("jobStatus").asText();
             assertEquals("finished", jobStatus, "Job status should be 'finished' once threads complete; job doc: " + job);
 
-            EvalResultIterator itr = hubConfig.newStagingClient().newServerEval().xquery("xdmp:estimate(fn:collection('mapInput'))").eval();
+            EvalResultIterator itr = getHubConfig().newStagingClient().newServerEval().xquery("xdmp:estimate(fn:collection('mapInput'))").eval();
             Assertions.assertEquals(1, itr.next().getNumber().intValue());
 
-            itr = hubConfig.newStagingClient().newServerEval().xquery("xdmp:estimate(fn:collection('default-mapping'))").eval();
+            itr = getHubConfig().newStagingClient().newServerEval().xquery("xdmp:estimate(fn:collection('default-mapping'))").eval();
             Assertions.assertEquals(1, itr.next().getNumber().intValue());
-        }
-        finally {
+        } finally {
             controller.deleteStep("refFlow", "testMap-mapping");
             Assertions.assertEquals(0, controller.getSteps("refFlow").size());
         }
@@ -220,14 +205,14 @@ class FlowControllerTest extends AbstractHubCentralTest {
     @Controller
     @RequestMapping("/api/test/flows")
     static class FlowTestController extends FlowController {
-        protected FlowRunnerImpl lastFlowRunner = null;
+        protected FlowRunner lastFlowRunner = null;
 
-        protected FlowRunnerImpl newFlowRunner() {
+        protected FlowRunner newFlowRunner() {
             lastFlowRunner = super.newFlowRunner();
             return lastFlowRunner;
         }
 
-        protected FlowRunnerImpl getLastFlowRunner() {
+        protected FlowRunner getLastFlowRunner() {
             return lastFlowRunner;
         }
     }

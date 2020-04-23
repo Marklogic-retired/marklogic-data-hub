@@ -1,7 +1,6 @@
 package com.marklogic.hub.dataservices.models;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.document.JSONDocumentManager;
@@ -9,12 +8,8 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.dataservices.ModelsService;
-import com.marklogic.hub.impl.ModelManagerImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.io.File;
-import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,15 +19,14 @@ public class CreateAndUpdateModelTest extends AbstractHubCoreTest {
     private final static String EXPECTED_URI = "/entities/" + MODEL_NAME + ".entity.json";
 
     private ModelsService service;
-    private ObjectMapper mapper = new ObjectMapper();
 
     @BeforeEach
     void beforeEach() {
-        service = new ModelManagerImpl(adminHubConfig);
+        service = ModelsService.on(adminHubConfig.newFinalClient(null));
     }
 
     @Test
-    void createAndUpdateInfoThenUpdateEntityTypes() throws IOException {
+    void createAndUpdateInfoThenUpdateEntityTypes() {
         ObjectNode input = newModel(MODEL_NAME);
         input.put("description", "Initial description");
 
@@ -77,7 +71,7 @@ public class CreateAndUpdateModelTest extends AbstractHubCoreTest {
     @Test
     void entityNameMissing() {
         try {
-            service.createModel(mapper.createObjectNode());
+            service.createModel(objectMapper.createObjectNode());
             fail("Expected a failure because no name was provided");
         } catch (FailedRequestException ex) {
             assertEquals(400, ex.getServerStatusCode());
@@ -86,7 +80,7 @@ public class CreateAndUpdateModelTest extends AbstractHubCoreTest {
     }
 
     private ObjectNode newModel(String name) {
-        ObjectNode input = mapper.createObjectNode();
+        ObjectNode input = objectMapper.createObjectNode();
         input.put("name", name);
         return input;
     }
@@ -104,13 +98,8 @@ public class CreateAndUpdateModelTest extends AbstractHubCoreTest {
      * Verify the model in the ML databases and in the project filesystem.
      *
      * @param expectedDescription
-     * @throws IOException
      */
-    private void verifyPersistedModels(String expectedDescription) throws IOException {
-        File file = new File(adminHubConfig.getHubProject().getHubEntitiesDir().toFile(), MODEL_NAME + ".entity.json");
-        assertTrue(file.exists(), "Expected model file to exist: " + file.getAbsolutePath());
-        verifyModelContents(mapper.readTree(file), expectedDescription);
-
+    private void verifyPersistedModels(String expectedDescription) {
         JSONDocumentManager stagingMgr = adminHubConfig.newStagingClient().newJSONDocumentManager();
         JSONDocumentManager finalMgr = adminHubConfig.newFinalClient().newJSONDocumentManager();
 
@@ -128,7 +117,7 @@ public class CreateAndUpdateModelTest extends AbstractHubCoreTest {
         assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("data-hub-entity-model-writer").iterator().next());
     }
 
-    private void updateEntityTypes() throws IOException {
+    private void updateEntityTypes() {
         String entityTypes = "{\"" + MODEL_NAME + "\" : {\n" +
             "      \"required\" : [ ],\n" +
             "      \"properties\" : {\n" +
@@ -138,7 +127,7 @@ public class CreateAndUpdateModelTest extends AbstractHubCoreTest {
             "        }\n" +
             "      }\n" +
             "    }}";
-        service.updateModelEntityTypes(MODEL_NAME, mapper.readTree(entityTypes));
+        service.updateModelEntityTypes(MODEL_NAME, readJsonObject(entityTypes));
 
         JSONDocumentManager stagingMgr = adminHubConfig.newStagingClient().newJSONDocumentManager();
         JSONDocumentManager finalMgr = adminHubConfig.newFinalClient().newJSONDocumentManager();
@@ -152,7 +141,7 @@ public class CreateAndUpdateModelTest extends AbstractHubCoreTest {
         verifyModelMetadata(finalMgr.readMetadata(EXPECTED_URI, new DocumentMetadataHandle()));
     }
 
-    private void updateEntityTypesWithInvalidData() throws IOException {
+    private void updateEntityTypesWithInvalidData() {
         String entityTypes = "{\"" + MODEL_NAME + "\" : {\n" +
             "      \"required\" : [ ],\n" +
             "      \"properties\" : {\n" +
@@ -161,7 +150,7 @@ public class CreateAndUpdateModelTest extends AbstractHubCoreTest {
             "        }\n" +
             "      }\n" +
             "    }}";
-        JsonNode input = mapper.readTree(entityTypes);
+        JsonNode input = readJsonObject(entityTypes);
 
         try {
             service.updateModelEntityTypes(MODEL_NAME, input);

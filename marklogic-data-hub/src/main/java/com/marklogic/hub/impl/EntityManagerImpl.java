@@ -395,7 +395,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
      * @param extendSubEntities
      * @return
      */
-    protected HubEntity getEntityFromProject(String entityName, List<HubEntity> modelFilesInProject, String version, Boolean extendSubEntities) {
+    public HubEntity getEntityFromProject(String entityName, List<HubEntity> modelFilesInProject, String version, Boolean extendSubEntities) {
         List<HubEntity> entityDefinitions = convertModelFilesToEntityDefinitions(modelFilesInProject);
         return getEntityFromEntityDefinitions(entityName, entityDefinitions, version, extendSubEntities);
     }

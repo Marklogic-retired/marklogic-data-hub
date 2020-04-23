@@ -24,22 +24,18 @@ import com.marklogic.hub.ArtifactManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.artifact.ArtifactTypeInfo;
 import com.marklogic.hub.dataservices.ArtifactService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.commons.io.FilenameUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ArtifactManagerImpl implements ArtifactManager {
     protected static final Logger logger = LoggerFactory.getLogger(ArtifactManagerImpl.class);
 
-    HubConfig hubConfig;
+    private HubConfig hubConfig;
 
     public ArtifactManagerImpl(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
@@ -50,9 +46,7 @@ public class ArtifactManagerImpl implements ArtifactManager {
     }
 
     public ObjectNode updateArtifact(String artifactType, String artifactName, JsonNode artifactJson) {
-        ObjectNode resp = (ObjectNode) getArtifactService().setArtifact(artifactType, artifactName, artifactJson);
-        writeArtifactInProject(artifactType, (ObjectNode) artifactJson, false);
-        return resp;
+        return (ObjectNode) getArtifactService().setArtifact(artifactType, artifactName, artifactJson);
     }
 
     public ObjectNode getArtifact(String artifactType, String artifactName) {
@@ -61,10 +55,6 @@ public class ArtifactManagerImpl implements ArtifactManager {
 
     public void deleteArtifact(String artifactType, String artifactName) {
         getArtifactService().deleteArtifact(artifactType, artifactName);
-        //delete artifact setting first if exists
-        deleteArtifactInProject(artifactType, artifactName, null, true);
-        //delete artifact
-        deleteArtifactInProject(artifactType, artifactName, null, false);
     }
 
     public ObjectNode validateArtifact(String artifactType, String artifactName, JsonNode artifactJson) {
@@ -76,76 +66,12 @@ public class ArtifactManagerImpl implements ArtifactManager {
     }
 
     public ObjectNode updateArtifactSettings(String artifactType, String artifactName, JsonNode settings) {
-        ObjectNode resp = (ObjectNode) getArtifactService().setArtifactSettings(artifactType, artifactName, settings);
-        writeArtifactInProject(artifactType, (ObjectNode) settings, true);
-        return resp;
+        return (ObjectNode) getArtifactService().setArtifactSettings(artifactType, artifactName, settings);
     }
 
     protected ArtifactService getArtifactService() {
         DatabaseClient dataServicesClient = hubConfig.newStagingClient(null);
         return ArtifactService.on(dataServicesClient);
-    }
-
-    protected void writeArtifactInProject(String artifactType, ObjectNode artifact, boolean isSetting) {
-        Path fileLocation;
-        if (!isSetting) {
-            fileLocation = buildArtifactProjectLocation(artifactType, getNameFromArtifact(artifactType, artifact), getVersionFromArtifact(artifactType, artifact), false);
-        } else {
-            if (!artifact.has("artifactName") || artifact.get("artifactName").asText().length() == 0) {
-                String errorInfo = String.format("Unable to write artifact settings to project folder: no artifactName found! artifactType: (%s), artifact settings: (%s).", artifactType, artifact.toString());
-                logger.error(errorInfo);
-                throw new RuntimeException(errorInfo);
-            }
-            String artifactName = artifact.get("artifactName").asText();
-            fileLocation = buildArtifactProjectLocation(artifactType, artifactName, getVersionFromArtifact(artifactType, artifact),true);
-        }
-        // create folders if needed
-        if (!fileLocation.getParent().toFile().exists()) {
-            fileLocation.getParent().toFile().mkdirs();
-        }
-        try {
-            Files.write(fileLocation, artifact.toString().getBytes());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    protected void deleteArtifactInProject(String artifactType, String artifactName, String artifactVersion, boolean isSetting) {
-        Path fileLocation = buildArtifactProjectLocation(artifactType, artifactName, artifactVersion, isSetting);
-        try {
-            Files.deleteIfExists(fileLocation);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    protected String getNameFromArtifact(String artifactType, ObjectNode artifact) {
-        ArtifactTypeInfo artifactTypeInfo = getArtifactTypeInfo(artifactType);
-        return artifact.get(artifactTypeInfo.getNameProperty()).asText();
-    }
-
-    protected String getVersionFromArtifact(String artifactType, ObjectNode artifact) {
-        ArtifactTypeInfo artifactTypeInfo = getArtifactTypeInfo(artifactType);
-        boolean hasVersioning = artifactTypeInfo.getVersionProperty() != null;
-        if (hasVersioning) {
-            return artifact.get(artifactTypeInfo.getVersionProperty()).asText();
-        }
-        return null;
-    }
-
-    public Path buildArtifactProjectLocation(String artifactType, String artifactName, String artifactVersion, boolean isSetting) {
-        ArtifactTypeInfo artifactTypeInfo = getArtifactTypeInfo(artifactType);
-        Path artifactDirectory = Paths.get(hubConfig.getHubProject().getProjectDir().toString(), artifactTypeInfo.getDirectory());
-        String artifactExtension = !isSetting ? artifactTypeInfo.getFileExtension() : ".settings." + FilenameUtils.getExtension(artifactTypeInfo.getFileExtension());
-        boolean hasVersioning = artifactVersion != null;
-        String fileName;
-        if (hasVersioning) {
-            artifactDirectory = artifactDirectory.resolve(artifactName);
-            fileName = artifactName + "-" + artifactVersion + artifactExtension;
-        } else {
-            fileName = artifactName + artifactExtension;
-        }
-        return artifactDirectory.resolve(fileName);
     }
 
     public List<ArtifactTypeInfo> getArtifactTypeInfoList() {

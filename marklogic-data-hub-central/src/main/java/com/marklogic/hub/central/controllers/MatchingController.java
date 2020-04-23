@@ -11,20 +11,21 @@ import java.io.IOException;
 @Controller
 @RequestMapping("/api/artifacts/matching")
 public class MatchingController extends AbstractArtifactController {
+
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<ArrayNode> getArtifacts() {
+    public ResponseEntity<ArrayNode> getMatchings() {
         return super.getArtifacts();
     }
 
     @RequestMapping(value = "/{artifactName}", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<ObjectNode> updateArtifact(@PathVariable String artifactName, @RequestBody ObjectNode matchingJson) {
+    public ResponseEntity<ObjectNode> updateMatching(@PathVariable String artifactName, @RequestBody ObjectNode matchingJson) {
         return super.updateArtifact(artifactName, matchingJson);
     }
 
     @RequestMapping(value = "/{artifactName}", method = RequestMethod.DELETE)
-    public void deleteLoadDataConfig(@PathVariable String artifactName) throws IOException {
+    public void deleteMatching(@PathVariable String artifactName) {
         super.deleteArtifact(artifactName);
     }
 
