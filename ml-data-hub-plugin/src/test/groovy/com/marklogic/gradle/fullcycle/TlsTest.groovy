@@ -288,15 +288,10 @@ class TlsTest extends BaseTest {
         hubConfig().finalSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME)
 
-        assert (getStagingDocCount() == 0)
-        assert (getFinalDocCount() == 0)
-
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("my-new-entity");
         installStagingDoc("/employee1.xml", meta, new File("src/test/resources/run-flow-test/employee1.xml").text)
         installStagingDoc("/employee2.xml", meta, new File("src/test/resources/run-flow-test/employee2.xml").text)
-        assert (getStagingDocCount() == 2)
-        assert (getFinalDocCount() == 0)
 
         installModule("/entities/my-new-entity/harmonize/my-new-harmonize-flow/content/content.xqy", "run-flow-test/content.xqy")
 
@@ -305,8 +300,6 @@ class TlsTest extends BaseTest {
 
         then:
         notThrown(UnexpectedBuildFailure)
-        getStagingDocCount() == 2
-        getFinalDocCount() == 2
         assertXMLEqual(getXmlFromResource("run-flow-test/harmonized1.xml"), hubConfig().newFinalClient().newDocumentManager().read("/employee1.xml").next().getContent(new DOMHandle()).get())
         assertXMLEqual(getXmlFromResource("run-flow-test/harmonized2.xml"), hubConfig().newFinalClient().newDocumentManager().read("/employee2.xml").next().getContent(new DOMHandle()).get())
     }
@@ -323,16 +316,12 @@ class TlsTest extends BaseTest {
         hubConfig().finalSslContext = newSslContext
         hubConfig().finalSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME)
-        assert (getStagingDocCount() == 0)
-        assert (getFinalDocCount() == 0)
 
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("my-new-entity");
         installFinalDoc("/employee1.xml", meta, new File("src/test/resources/run-flow-test/employee1.xml").text)
         installFinalDoc("/employee2.xml", meta, new File("src/test/resources/run-flow-test/employee2.xml").text)
 
-        assert (getStagingDocCount() == 0)
-        assert (getFinalDocCount() == 2)
         installModule("/entities/my-new-entity/harmonize/my-new-harmonize-flow/content/content.xqy", "run-flow-test/content.xqy")
 
         when:
@@ -347,8 +336,6 @@ class TlsTest extends BaseTest {
 
         then:
         notThrown(UnexpectedBuildFailure)
-        getStagingDocCount() == 2
-        getFinalDocCount() == 2
 
         assertXMLEqual(getXmlFromResource("run-flow-test/harmonized1.xml"), hubConfig().newStagingClient().newDocumentManager().read("/employee1.xml").next().getContent(new DOMHandle()).get())
         assertXMLEqual(getXmlFromResource("run-flow-test/harmonized2.xml"), hubConfig().newStagingClient().newDocumentManager().read("/employee2.xml").next().getContent(new DOMHandle()).get())
