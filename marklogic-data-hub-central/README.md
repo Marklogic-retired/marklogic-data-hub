@@ -78,6 +78,10 @@ If you are connecting to a remote Data Hub instance, you can override mlHost to 
 
     ./gradlew bootRun -PmlHost=somehost
 
+To associate the middle tier with a local Data Hub project, use the following:
+
+    ./gradlew bootRun -PhubProjectPath=/path/to/project
+
 Once you have Hub Central running, you'll see the logging indicating that it is listening on port 8080. This is 
 configured via the server.port property in src/main/resources/application.properties . 
 
