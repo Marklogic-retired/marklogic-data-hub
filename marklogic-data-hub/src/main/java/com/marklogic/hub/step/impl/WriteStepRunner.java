@@ -34,7 +34,9 @@ import com.marklogic.client.io.Format;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.DatabaseKind;
+import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubProject;
 import com.marklogic.hub.collector.DiskQueue;
 import com.marklogic.hub.collector.impl.FileCollector;
 import com.marklogic.hub.error.DataHubConfigurationException;
@@ -88,7 +90,6 @@ public class WriteStepRunner implements StepRunner {
     private Flow flow;
     private int batchSize;
     private int threadCount;
-    private DatabaseClient stagingClient;
     private String destinationDatabase;
     private int previousPercentComplete;
     protected long csvFilesProcessed;
@@ -106,7 +107,9 @@ public class WriteStepRunner implements StepRunner {
     private List<StepStatusListener> stepStatusListeners = new ArrayList<>();
     private List<StepFinishedListener> stepFinishedListeners = new ArrayList<>();
 
-    private HubConfig hubConfig;
+    private HubClient hubClient;
+    private HubProject hubProject;
+
     private Thread runningThread = null;
     private DataMovementManager dataMovementManager = null;
     private WriteBatcher writeBatcher = null;
@@ -124,9 +127,9 @@ public class WriteStepRunner implements StepRunner {
     private Map<String, Object> stepConfig = new HashMap<>();
     private DocumentPermissionsParser documentPermissionsParser = new DefaultDocumentPermissionsParser();
 
-    public WriteStepRunner(HubConfig hubConfig) {
-        this.hubConfig = hubConfig;
-        this.destinationDatabase = hubConfig.getDbName(DatabaseKind.STAGING);
+    public WriteStepRunner(HubClient hubClient, HubProject hubProject) {
+        this.hubClient = hubClient;
+        this.hubProject = hubProject;
     }
 
     public StepRunner withFlow(Flow flow) {
@@ -162,16 +165,8 @@ public class WriteStepRunner implements StepRunner {
     }
 
     @Override
-    public StepRunner withSourceClient(DatabaseClient stagingClient) {
-        //no op for WriteStepRunner
-        return this;
-    }
-
-    @Override
     public StepRunner withDestinationDatabase(String destinationDatabase) {
         this.destinationDatabase = destinationDatabase;
-        //will work only for final db in addition to staging db as it has flow/step artifacts
-        this.stagingClient = hubConfig.newStagingClient(this.destinationDatabase);
         return this;
     }
 
@@ -285,7 +280,7 @@ public class WriteStepRunner implements StepRunner {
         Collection<String> uris = null;
         //If current step is the first run step job output isn't disabled, a job doc is created
         if (!disableJobOutput) {
-            jobDocManager = new JobDocManager(hubConfig.newJobDbClient());
+            jobDocManager = new JobDocManager(hubClient.getJobsClient());
             StepRunnerUtil.initializeStepRun(jobDocManager, runStepResponse, flow, step, jobId);
         } else {
             jobDocManager = null;
@@ -414,12 +409,14 @@ public class WriteStepRunner implements StepRunner {
             return dirPath;
         }
 
-        if (hubConfig != null && hubConfig.getHubProject() != null) {
-            String projectDirString = hubConfig.getHubProject().getProjectDirString();
+        if (this.hubProject != null) {
+            String projectDirString = hubProject.getProjectDirString();
             return new File(projectDirString, dirPath.toString()).toPath().toAbsolutePath();
         }
 
-        return new File(dirPath.toString()).toPath().toAbsolutePath();
+        Path inputPath = new File(dirPath.toString()).toPath().toAbsolutePath();
+        logger.info("No HubProject available to resolve relative inputFilePath; will ingest from: " + inputPath);
+        return inputPath;
     }
 
     private Collection<String> runFileCollector() {
@@ -476,10 +473,10 @@ public class WriteStepRunner implements StepRunner {
         }
 
         Vector<String> errorMessages = new Vector<>();
-        if (stagingClient == null) {
-            stagingClient = hubConfig.newStagingClient();
-        }
-        dataMovementManager = stagingClient.newDataMovementManager();
+
+        dataMovementManager = destinationDatabase.equals(hubClient.getDbName(DatabaseKind.FINAL)) ?
+            hubClient.getFinalClient().newDataMovementManager() :
+            hubClient.getStagingClient().newDataMovementManager();
 
         HashMap<String, JobTicket> ticketWrapper = new HashMap<>();
 
@@ -559,7 +556,7 @@ public class WriteStepRunner implements StepRunner {
         metadataValues.add("datahubCreatedByStep", flow.getStep(step).getStepDefinitionName());
         // TODO createdOn/createdBy data may not be accurate enough. Unfortunately REST transforms don't allow for writing metadata
         metadataValues.add("datahubCreatedOn", DATE_TIME_FORMAT.format(new Date()));
-        metadataValues.add("datahubCreatedBy", ((HubConfigImpl) hubConfig).getMlUsername());
+        metadataValues.add("datahubCreatedBy", hubClient.getUsername());
         writeBatcher.withDefaultMetadata(metadataHandle);
         Format format = null;
         switch (inputFileType.toLowerCase()) {

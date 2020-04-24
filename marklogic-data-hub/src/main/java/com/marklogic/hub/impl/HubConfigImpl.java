@@ -27,6 +27,7 @@ import com.marklogic.client.ext.DatabaseClientConfig;
 import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager;
 import com.marklogic.hub.DatabaseKind;
+import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.error.DataHubConfigurationException;
@@ -58,11 +59,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.function.Consumer;
 
 @JsonAutoDetect(
@@ -1670,7 +1667,6 @@ public class HubConfigImpl implements HubConfig
     public DatabaseClient newJobDbClient() {
         AppConfig appConfig = getAppConfig();
         DatabaseClientConfig config = new DatabaseClientConfig(appConfig.getHost(), jobPort, mlUsername, mlPassword);
-        config.setDatabase(jobDbName);
         config.setSecurityContextType(SecurityContextType.valueOf(jobAuthMethod.toUpperCase()));
         config.setSslHostnameVerifier(jobSslHostnameVerifier);
         config.setSslContext(jobSslContext);
@@ -1684,6 +1680,7 @@ public class HubConfigImpl implements HubConfig
         return appConfig.getConfiguredDatabaseClientFactory().newDatabaseClient(config);
     }
 
+    @Deprecated
     public DatabaseClient newTraceDbClient() {
         return newJobDbClient();
     }
@@ -2282,5 +2279,23 @@ public class HubConfigImpl implements HubConfig
         propertyConsumerMap.put("mlMappingPermissions", prop -> mappingPermissions = prop);
         propertyConsumerMap.put("mlModulePermissions", prop -> modulePermissions = prop);
         propertyConsumerMap.put("mlStepDefinitionPermissions", prop -> stepDefinitionPermissions = prop);
+    }
+
+    /**
+     *
+     * @return
+     */
+    public HubClient newHubClient() {
+        Map<DatabaseKind, String> databaseNames = new HashMap<>();
+        databaseNames.put(DatabaseKind.STAGING, stagingDbName);
+        databaseNames.put(DatabaseKind.FINAL, finalDbName);
+        databaseNames.put(DatabaseKind.JOB, jobDbName);
+        databaseNames.put(DatabaseKind.MODULES, modulesDbName);
+        databaseNames.put(DatabaseKind.STAGING_TRIGGERS, stagingTriggersDbName);
+        databaseNames.put(DatabaseKind.STAGING_SCHEMAS, stagingSchemasDbName);
+        databaseNames.put(DatabaseKind.FINAL_TRIGGERS, finalTriggersDbName);
+        databaseNames.put(DatabaseKind.FINAL_SCHEMAS, finalSchemasDbName);
+
+        return new HubClientImpl(this, databaseNames);
     }
 }

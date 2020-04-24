@@ -36,7 +36,7 @@ public class RunFlowRunnerTestsWithoutProjectTest extends FlowRunnerTest {
         flowRunner = myFlowRunner;
 
         makeInputFilePathsAbsoluteInFlow(flowName);
-        verifyStepDefinitionsCanBeFound(flowRunner);
+        verifyStepDefinitionsCanBeFound();
 
         return flowRunner.runFlow(inputs);
     }
@@ -44,11 +44,9 @@ public class RunFlowRunnerTestsWithoutProjectTest extends FlowRunnerTest {
     /**
      * Before running the flow, we do a little testing to verify that both default and custom step definitions can be
      * found by MarkLogicStepDefinitionProvider.
-     *
-     * @param flowRunner
      */
-    private void verifyStepDefinitionsCanBeFound(FlowRunnerImpl flowRunner) {
-        StepDefinitionProvider provider = new MarkLogicStepDefinitionProvider(flowRunner.getHubConfig().newStagingClient(null));
+    private void verifyStepDefinitionsCanBeFound() {
+        StepDefinitionProvider provider = new MarkLogicStepDefinitionProvider(getHubClient().getStagingClient());
 
         StepDefinition stepDef = provider.getStepDefinition("default-mapping", StepDefinition.StepDefinitionType.MAPPING);
         assertEquals("default-mapping", stepDef.getName());

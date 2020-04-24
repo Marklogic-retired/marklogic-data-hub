@@ -45,7 +45,7 @@ public class RunFlowCommand extends CommandLineFlowInputs implements Runnable {
 
     @Override
     public void run() {
-        FlowRunnerImpl flowRunner = new FlowRunnerImpl(buildHubConfig());
+        FlowRunnerImpl flowRunner = new FlowRunnerImpl(buildHubConfig().newHubClient());
         Pair<FlowInputs, String> pair = super.buildFlowInputs();
         System.out.println(pair.getRight());
 

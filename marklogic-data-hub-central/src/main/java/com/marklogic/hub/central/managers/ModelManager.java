@@ -27,8 +27,7 @@ import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
-import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubClient;
 import com.marklogic.hub.central.exceptions.DataHubException;
 import com.marklogic.hub.dataservices.JobInfo;
 import org.slf4j.Logger;
@@ -48,9 +47,9 @@ public class ModelManager {
     private DatabaseClient finalDatabaseClient;
     private DatabaseClient finalDataServiceClient;
 
-    public ModelManager(HubConfig hubConfig) {
-        this.finalDatabaseClient = hubConfig.newFinalClient(hubConfig.getDbName(DatabaseKind.FINAL));
-        this.finalDataServiceClient = hubConfig.newFinalClient(null);
+    public ModelManager(HubClient hubClient) {
+        this.finalDatabaseClient = hubClient.getFinalClient();
+        this.finalDataServiceClient = hubClient.getFinalClient();
     }
 
     /**

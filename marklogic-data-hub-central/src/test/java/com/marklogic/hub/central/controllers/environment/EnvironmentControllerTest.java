@@ -25,7 +25,7 @@ public class EnvironmentControllerTest extends AbstractHubCentralTest {
     @Test
     public void testManageAdminAndSecurityAuthoritiesForArtifacts() {
         runAsUser(testConstants.ENVIRONMENT_MANAGER_USERNAME, testConstants.ENVIRONMENT_MANAGER_PASSWORD);
-        List<ArtifactTypeInfo> listTypeInfo = ArtifactManager.on(getHubConfig()).getArtifactTypeInfoList();
+        List<ArtifactTypeInfo> listTypeInfo = ArtifactManager.on(getHubClient()).getArtifactTypeInfoList();
         for (ArtifactTypeInfo typeInfo : listTypeInfo) {
             assertTrue(typeInfo.getUserCanUpdate());
             assertTrue(typeInfo.getUserCanRead());
@@ -35,7 +35,7 @@ public class EnvironmentControllerTest extends AbstractHubCentralTest {
     @Test
     public void testAdminAuthoritiesForArtifacts() {
         runAsAdmin();
-        List<ArtifactTypeInfo> listTypeInfo = ArtifactManager.on(getHubConfig()).getArtifactTypeInfoList();
+        List<ArtifactTypeInfo> listTypeInfo = ArtifactManager.on(getHubClient()).getArtifactTypeInfoList();
         for (ArtifactTypeInfo typeInfo : listTypeInfo) {
             assertTrue(typeInfo.getUserCanUpdate());
             assertFalse(typeInfo.getUserCanRead(), "admin would not allow read but write for deployment!");

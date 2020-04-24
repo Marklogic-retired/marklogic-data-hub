@@ -74,6 +74,6 @@ public class MappingController extends AbstractArtifactController {
     }
 
     protected MappingService getMappingService() {
-        return MappingService.on(getHubConfig().newStagingClient(null));
+        return MappingService.on(getHubClient().getStagingClient());
     }
 }

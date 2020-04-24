@@ -111,8 +111,6 @@ class FlowControllerTest extends AbstractHubCentralTest {
             //PUT step
             controller.createStep("testFlow", "e2e-json-ingestion", mapper.writeValueAsString(stepModel));
 
-            GenericDocumentManager docMgr = getHubConfig().newStagingClient().newDocumentManager();
-
             //link artifact to step options
             loadDataController.updateArtifact("validArtifact", newLoadDataConfig());
             controller.linkArtifact("testFlow", "e2e-json-ingestion", "loadData", "validArtifact");
@@ -176,10 +174,10 @@ class FlowControllerTest extends AbstractHubCentralTest {
             String jobStatus = job.get("jobStatus").asText();
             assertEquals("finished", jobStatus, "Job status should be 'finished' once threads complete; job doc: " + job);
 
-            EvalResultIterator itr = getHubConfig().newStagingClient().newServerEval().xquery("xdmp:estimate(fn:collection('mapInput'))").eval();
+            EvalResultIterator itr = getHubClient().getStagingClient().newServerEval().xquery("xdmp:estimate(fn:collection('mapInput'))").eval();
             Assertions.assertEquals(1, itr.next().getNumber().intValue());
 
-            itr = getHubConfig().newStagingClient().newServerEval().xquery("xdmp:estimate(fn:collection('default-mapping'))").eval();
+            itr = getHubClient().getStagingClient().newServerEval().xquery("xdmp:estimate(fn:collection('default-mapping'))").eval();
             Assertions.assertEquals(1, itr.next().getNumber().intValue());
         } finally {
             controller.deleteStep("refFlow", "testMap-mapping");

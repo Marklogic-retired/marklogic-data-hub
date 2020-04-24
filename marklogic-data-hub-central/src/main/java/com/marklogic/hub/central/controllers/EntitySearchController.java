@@ -18,22 +18,16 @@ package com.marklogic.hub.central.controllers;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.marklogic.hub.dataservices.EntitySearchService;
 import com.marklogic.hub.central.managers.EntitySearchManager;
 import com.marklogic.hub.central.models.Document;
-import com.marklogic.hub.central.models.HubConfigSession;
 import com.marklogic.hub.central.models.SearchQuery;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.marklogic.hub.dataservices.EntitySearchService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -109,10 +103,10 @@ public class EntitySearchController extends BaseController {
     }
 
     private EntitySearchManager newEntitySearchManager() {
-        return new EntitySearchManager(getHubConfig());
+        return new EntitySearchManager(getHubClient());
     }
 
     private EntitySearchService getEntitySearchService() {
-        return EntitySearchService.on(getHubConfig().newFinalClient(null));
+        return EntitySearchService.on(getHubClient().getFinalClient());
     }
 }

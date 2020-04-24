@@ -3,8 +3,8 @@ package com.marklogic.hub.central;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.FileHandle;
+import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubProject;
-import com.marklogic.hub.central.models.HubConfigSession;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.impl.HubProjectImpl;
 import com.marklogic.hub.test.AbstractHubTest;
@@ -44,20 +44,25 @@ import java.util.HashMap;
 @SpringBootTest(classes = {Application.class})
 public abstract class AbstractHubCentralTest extends AbstractHubTest {
 
-    @Autowired
-    protected HubConfigSession hubConfigSession;
-
     protected TestConstants testConstants;
 
     @Autowired
     HubCentral hubCentral;
 
+    @Autowired
+    HttpSessionHubClientProvider hubClientProvider;
+
     private String testProjectDirectory = "build/hub-central-test-project";
+    private HubConfigImpl testHubConfig;
     private HubProject testHubProject;
 
     @BeforeEach
     void beforeEachTest() {
         long start = System.currentTimeMillis();
+
+        testHubProject = new HubProjectImpl();
+        testHubConfig = new HubConfigImpl(testHubProject, null);
+
         resetHubProject();
         // By default, a test should run as a data-hub-developer
         runAsDataHubDeveloper();
@@ -67,14 +72,24 @@ public abstract class AbstractHubCentralTest extends AbstractHubTest {
 
     @Override
     protected void initializeTestProjectDirectory() {
-        testHubProject = new HubProjectImpl();
         testHubProject.createProject(testProjectDirectory);
         testHubProject.init(new HashMap<>());
     }
 
     @Override
+    protected HubClient getHubClient() {
+        return hubClientProvider.getHubClient();
+    }
+
+    /**
+     * This should not be used by HC tests! It is still needed by AbstractHubCoreTest, as plenty of core classes still
+     * depend on HubConfig.
+     *
+     * @return
+     */
+    @Override
     protected HubConfigImpl getHubConfig() {
-        return hubConfigSession.getHubConfigImpl();
+        return testHubConfig;
     }
 
     @Override
@@ -82,10 +97,25 @@ public abstract class AbstractHubCentralTest extends AbstractHubTest {
         return new File(testProjectDirectory);
     }
 
+    /**
+     * In an HC test, we use HubCentral to initialize a HubConfigImpl instance - but that's only intended to be used
+     * for test plumbing, and not by the features being tested.
+     *
+     * @param username
+     * @param password
+     * @return
+     */
     @Override
     protected HubConfigImpl runAsUser(String username, String password) {
-        hubConfigSession.initialize(hubCentral.newHubConfig(username, password));
-        return null;
+        // Initialize a new HubConfigImpl
+        testHubConfig = hubCentral.newHubConfig(username, password);
+        testHubConfig.setHubProject(testHubProject);
+
+        // Update the provider with a new HubClient
+        hubClientProvider.setHubClientDelegate(testHubConfig.newHubClient());
+
+        // And return this for the rest of the core test plumbing to use
+        return testHubConfig;
     }
 
     protected void addStagingDoc(String resource, String uri, String... collections) {
@@ -93,7 +123,7 @@ public abstract class AbstractHubCentralTest extends AbstractHubTest {
         metadata.getCollections().addAll(collections);
         metadata.getPermissions().add("data-hub-operator", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE);
         FileHandle handle = new FileHandle(getFileFromClasspath(resource));
-        getHubConfig().newStagingClient().newDocumentManager().write(uri, metadata, handle);
+        getHubClient().getStagingClient().newDocumentManager().write(uri, metadata, handle);
     }
 
     protected File getFileFromClasspath(String resourceName) {
@@ -114,22 +144,5 @@ public abstract class AbstractHubCentralTest extends AbstractHubTest {
      */
     protected void installReferenceProject() {
         installProjectInFolder("test-projects/reference-project");
-    }
-
-    /**
-     * Temporarily sets a HubProject so that a project can be installed. This is then immediately removed from the
-     * HubConfig so that nothing in HC - including tests - can depend on a HubProject being set.
-     *
-     * @param folderInClasspath
-     */
-    @Override
-    protected void installProjectInFolder(String folderInClasspath) {
-        HubConfigImpl realHubConfig = hubConfigSession.getHubConfigImpl();
-        realHubConfig.setHubProject(testHubProject);
-        try {
-            super.installProjectInFolder(folderInClasspath);
-        } finally {
-            realHubConfig.setHubProject(null);
-        }
     }
 }

@@ -49,7 +49,7 @@ public class ModelControllerTest extends AbstractHubCentralTest {
         input.put("description", "Updated description");
         controller.updateModelInfo(MODEL_NAME, input);
 
-        assertEquals("Updated description", loadModel(getHubConfig().newFinalClient()).get("definitions").get(MODEL_NAME).get("description").asText());
+        assertEquals("Updated description", loadModel(getHubClient().getFinalClient()).get("definitions").get(MODEL_NAME).get("description").asText());
     }
 
     private void updateModelEntityTypes() {
@@ -69,7 +69,7 @@ public class ModelControllerTest extends AbstractHubCentralTest {
             throw new RuntimeException(e);
         }
 
-        assertEquals("string", loadModel(getHubConfig().newFinalClient()).get("definitions").get(MODEL_NAME).get("properties").get("someProperty").get("datatype").asText());
+        assertEquals("string", loadModel(getHubClient().getFinalClient()).get("definitions").get(MODEL_NAME).get("properties").get("someProperty").get("datatype").asText());
     }
 
     private JsonNode loadModel(DatabaseClient client) {

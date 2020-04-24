@@ -110,10 +110,10 @@ public interface ArtifactManager {
     /**
      * Provides metadata about the a given artifact type
      *
-     * @param hubConfig - HubConfig
-     * @return ArtifactManager connecting via the given HubConfig
+     * @param hubClient
+     * @return
      */
-    static ArtifactManager on(HubConfig hubConfig) {
-        return new ArtifactManagerImpl(hubConfig);
+    static ArtifactManager on(HubClient hubClient) {
+        return new ArtifactManagerImpl(hubClient);
     }
 }

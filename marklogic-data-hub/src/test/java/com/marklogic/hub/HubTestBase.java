@@ -198,6 +198,11 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
     }
 
     @Override
+    protected HubClient getHubClient() {
+        return getHubConfig().newHubClient();
+    }
+
+    @Override
     protected HubConfigImpl getHubConfig() {
         return adminHubConfig;
     }

@@ -3,10 +3,12 @@ package com.marklogic.hub.flow.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.ArtifactManager;
 import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowInputs;
@@ -66,6 +68,8 @@ public class FlowRunnerImpl implements FlowRunner{
     @Autowired
     private StepRunnerFactory stepRunnerFactory;
 
+    private HubClient hubClient;
+
     private AtomicBoolean isRunning = new AtomicBoolean(false);
     private AtomicBoolean isJobCancelled = new AtomicBoolean(false);
     private AtomicBoolean isJobSuccess = new AtomicBoolean(true);
@@ -101,7 +105,7 @@ public class FlowRunnerImpl implements FlowRunner{
      * @param password the password of the MarkLogic user for running a flow
      */
     public FlowRunnerImpl(String host, String username, String password) {
-        this(new HubConfigImpl(host, username, password));
+        this(new HubConfigImpl(host, username, password).newHubClient());
     }
 
     /**
@@ -113,13 +117,12 @@ public class FlowRunnerImpl implements FlowRunner{
      * filesystem. It is expected that the "runFlow(FlowInputs)" method will then be used, which ensures that flow
      * artifacts are also retrieved from MarkLogic as opposed to from the filesystem.
      *
-     * @param hubConfig
+     * @param hubClient
      */
-    public FlowRunnerImpl(HubConfig hubConfig) {
-        this.hubConfig = hubConfig;
-        this.flowManager = new FlowManagerImpl(hubConfig);
-        this.stepRunnerFactory = new StepRunnerFactory(hubConfig);
-        this.stepRunnerFactory.setStepDefinitionProvider(new MarkLogicStepDefinitionProvider(hubConfig.newStagingClient(null)));
+    public FlowRunnerImpl(HubClient hubClient) {
+        this.hubClient = hubClient;
+        this.stepRunnerFactory = new StepRunnerFactory(hubClient);
+        this.flowManager = new FlowManagerImpl(hubClient);
     }
 
     @Override
@@ -240,7 +243,7 @@ public class FlowRunnerImpl implements FlowRunner{
         runningJobId = jobId;
         runningFlow = flowMap.get(runningJobId);
         if(jobDocManager == null && !disableJobOutput) {
-            jobDocManager = new JobDocManager(hubConfig.newJobDbClient());
+            jobDocManager = new JobDocManager(hubClient != null ? hubClient.getJobsClient() : hubConfig.newJobDbClient());
         }
         if(threadPool == null || threadPool.isTerminated()) {
             // thread pool size needs to be at least 2, so the current step thread can kick-off the next step thread
@@ -579,21 +582,5 @@ public class FlowRunnerImpl implements FlowRunner{
 
     public Flow getRunningFlow() {
         return this.runningFlow;
-    }
-
-    public void setHubConfig(HubConfig hubConfig) {
-        this.hubConfig = hubConfig;
-    }
-
-    public void setStepRunnerFactory(StepRunnerFactory stepRunnerFactory) {
-        this.stepRunnerFactory = stepRunnerFactory;
-    }
-
-    public void setFlowManager(FlowManager flowManager) {
-        this.flowManager = flowManager;
-    }
-
-    public HubConfig getHubConfig() {
-        return hubConfig;
     }
 }

@@ -30,8 +30,7 @@ import com.marklogic.client.query.RawCombinedQueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryBuilder.Operator;
 import com.marklogic.client.query.StructuredQueryDefinition;
-import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubClient;
 import com.marklogic.hub.central.exceptions.DataHubException;
 import com.marklogic.hub.central.models.DocSearchQueryInfo;
 import com.marklogic.hub.central.models.Document;
@@ -45,13 +44,7 @@ import org.springframework.util.CollectionUtils;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 public class EntitySearchManager {
 
@@ -79,9 +72,9 @@ public class EntitySearchManager {
     private DatabaseClient finalDatabaseClient;
     private ModelManager modelManager;
 
-    public EntitySearchManager(HubConfig hubConfig) {
-        this.finalDatabaseClient = hubConfig.newFinalClient(hubConfig.getDbName(DatabaseKind.FINAL));
-        this.modelManager = new ModelManager(hubConfig);
+    public EntitySearchManager(HubClient hubClient) {
+        this.finalDatabaseClient = hubClient.getFinalClient();
+        this.modelManager = new ModelManager(hubClient);
     }
 
     public StringHandle search(SearchQuery searchQuery) {

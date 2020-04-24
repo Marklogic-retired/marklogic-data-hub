@@ -41,7 +41,7 @@ public class DeployHubOtherServersCommand extends DeployOtherServersCommand {
         //set the server version for the rewriter
         final String token = "%%mlServerVersion%%";
         try {
-            final String version = serverVersion != null ? serverVersion : new Versions().getMarkLogicVersion(context.getAppConfig());
+            final String version = serverVersion != null ? serverVersion : new Versions().getMarkLogicVersion();
             customTokens.put(token, version.replaceAll("([^.]+)\\..*", "$1"));
         } catch (Exception ex) {
             logger.warn("Unable to determine the server version; cause: " + ex.getMessage());

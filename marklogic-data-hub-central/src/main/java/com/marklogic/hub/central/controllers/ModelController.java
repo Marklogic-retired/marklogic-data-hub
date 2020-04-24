@@ -66,11 +66,11 @@ public class ModelController extends BaseController {
 
 
     private ModelManager newModelManager() {
-        return new ModelManager(getHubConfig());
+        return new ModelManager(getHubClient());
     }
 
     private ModelsService newService() {
-        return ModelsService.on(getHubConfig().newStagingClient(null));
+        return ModelsService.on(getHubClient().getStagingClient());
     }
 
 }

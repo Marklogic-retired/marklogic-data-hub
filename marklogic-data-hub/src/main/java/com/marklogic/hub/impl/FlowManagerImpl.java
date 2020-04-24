@@ -23,10 +23,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.ext.helper.LoggingObject;
-import com.marklogic.hub.FlowManager;
-import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.MappingManager;
-import com.marklogic.hub.StepDefinitionManager;
+import com.marklogic.hub.*;
 import com.marklogic.hub.dataservices.ArtifactService;
 import com.marklogic.hub.dataservices.FlowService;
 import com.marklogic.hub.error.DataHubProjectException;
@@ -63,6 +60,8 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
     @Autowired
     private HubConfig hubConfig;
 
+    private HubClient hubClient;
+
     @Autowired
     private MappingManager mappingManager;
 
@@ -73,6 +72,10 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
 
     public FlowManagerImpl(HubConfig hubConfig) {
         this(hubConfig, new MappingManagerImpl(hubConfig), new StepDefinitionManagerImpl(hubConfig));
+    }
+
+    public FlowManagerImpl(HubClient hubClient) {
+        this.hubClient = hubClient;
     }
 
     public FlowManagerImpl(HubConfig hubConfig, MappingManager mappingManager) {
@@ -341,11 +344,11 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
     }
 
     protected ArtifactService getArtifactService() {
-        return ArtifactService.on(hubConfig.newStagingClient(null));
+        return ArtifactService.on(hubClient != null ? hubClient.getStagingClient() : hubConfig.newStagingClient(null));
     }
 
     protected FlowService getFlowService() {
-        return FlowService.on(hubConfig.newStagingClient(null));
+        return FlowService.on(hubClient != null ? hubClient.getStagingClient() : hubConfig.newStagingClient(null));
     }
 
     @Deprecated
