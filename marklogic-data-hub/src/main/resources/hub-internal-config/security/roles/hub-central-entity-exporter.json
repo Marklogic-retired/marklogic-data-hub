@@ -1,0 +1,4 @@
+{
+  "role-name": "hub-central-entity-exporter",
+  "description": "Permits exporting entity instance documents"
+}

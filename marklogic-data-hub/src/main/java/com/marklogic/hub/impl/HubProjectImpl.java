@@ -371,6 +371,7 @@ public class HubProjectImpl implements HubProject {
         writeRoleFile(rolesDir, "data-hub-saved-query-reader.json");
         writeRoleFile(rolesDir, "data-hub-saved-query-writer.json");
         writeRoleFile(rolesDir, "hub-central-downloader.json");
+        writeRoleFile(rolesDir, "hub-central-entity-exporter.json");
 
 
         // New 5.2.0 roles

@@ -43,6 +43,10 @@ class Security {
       response.authorities.push('canManageSavedQuery');
     }
 
+    if (currentRoleNames.includes('hub-central-entity-exporter')) {
+      response.authorities.push('canExportEntityInstances');
+    }
+
     const typesInfo = Artifacts.getTypesInfo();
     for (const artifactTypeInfo of typesInfo) {
       const type = artifactTypeInfo.type;
