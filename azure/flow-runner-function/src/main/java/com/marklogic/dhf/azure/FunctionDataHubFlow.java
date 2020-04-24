@@ -6,8 +6,9 @@ import com.microsoft.azure.functions.annotation.FunctionName;
 import com.microsoft.azure.functions.annotation.HttpTrigger;
 import com.microsoft.azure.functions.annotation.QueueOutput;
 
-import java.util.Optional;
 import java.util.Arrays;
+import java.util.Optional;
+import java.util.Properties;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +17,9 @@ import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
+import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.DatabaseKind;
+import com.marklogic.mgmt.util.SimplePropertySource;
 
 /**
  * Azure Functions with HTTP Trigger.
@@ -49,28 +53,32 @@ public class FunctionDataHubFlow {
         context.getLogger().info("json < " + jsonNode + ">");  //don't do this to avoid logging password
 
         // Parse request parameters
-        String mlHost = getValueFromJson(jsonNode, "host");
-        String mlUser = getValueFromJson(jsonNode, "username");
-        String mlPassword = getValueFromJson(jsonNode, "password");
+        String host = getValueFromJson(jsonNode, "host");
+        String username = getValueFromJson(jsonNode, "username");
+        String password = getValueFromJson(jsonNode, "password");
         String flowName = getValueFromJson(jsonNode, "flowName");
-        String flowSteps = getValueFromJson(jsonNode, "steps");
+        String steps = getValueFromJson(jsonNode, "steps");
+        // By default we assume there's a LB, given this is a Cloud env. However, user can optionally
+        // indicate there is NO LB and can connect to ML DB directly.
+        // This is optional parameter. Valies values (if provided) are: 'DIRECT' or 'LoadBalancer'
+        String connection_type = getValueFromJson(jsonNode, "connection_type");  //
 
-        String inputData = "host <" + mlHost + "> username <" + mlUser + "> flowName <" + flowName +
-            "> steps <" + flowSteps + ">";
+        String inputData = "host <" + host + "> username <" + username + "> flowName <" + flowName +
+            "> steps <" + steps + ">";
         context.getLogger().info("Input data: <" + inputData + ">");
 
         // flow-steps is optional, so no need to check
-        if ((mlHost == null) || (mlUser == null) || (mlPassword == null) || (flowName == null)) {
+        if ((host == null) || (username == null) || (password == null) || (flowName == null)) {
             return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body(
                 "Please pass values for host/username/password/flowName in the request body").build();
         } else {
             // Write the input values to the message queue (not logging the password though)
-            String inputMsg = "host <" + mlHost + "> username <" + mlUser + "> flowName <" + flowName + ">";
+            String inputMsg = "host <" + host + "> username <" + username + "> flowName <" + flowName + ">";
             msg.setValue(inputMsg);
 
             String runFlowMessage = "";
             try {
-                runFlowMessage = runFlow(mlHost, mlUser, mlPassword, flowName, flowSteps);
+                runFlowMessage = runFlow(host, username, password, flowName, steps, connection_type);
             } catch (Exception ex) {
                 context.getLogger().severe("Exception caught: " + ex.getMessage());
                 runFlowMessage = ex.getMessage(); //set to exception
@@ -96,8 +104,8 @@ public class FunctionDataHubFlow {
 
     // Build flow inputs object based on the inputs received from the request payload
     // Returns a valid FlowInputs object OR null in case of invalid inputs
-    protected FlowInputs buildFlowInputs(String flowName, String flowSteps) {
-        // supports flowname and flowsteps. Do we need to also support JobId and Options?
+    protected FlowInputs buildFlowInputs(String flowName, String steps) {
+        // supports flowname and steps. Do we need to also support JobId and Options?
 
         //validdate inputs first - look for valid flow name
         if ( (flowName == null) || (flowName.trim().length() <= 0) ) {
@@ -111,34 +119,73 @@ public class FunctionDataHubFlow {
         // Q: Are the flow steps always Integers?
         // Ans: Per Rob, lets treat them as strings for now. So, not adding additional test cases
         // inputs.setSteps(Arrays.asList("2,3,4"))
-        if (flowSteps != null) {
-            inputs.setSteps(Arrays.asList(flowSteps.split(",")));
+        if (steps != null) {
+            inputs.setSteps(Arrays.asList(steps.split(",")));
         }
 
         return inputs;
     }
 
+    // Build a FlowRunner object based on connection type
+    public FlowRunner buildFlowRunner(String host, String username, String password, String connection_type) {
+        // lets validate connection_type. Inputs could be null or various cases of DIRECT or LoadBalancer
+        // need to handle users potentially providing different cases: lower, upper, mixedCase, training spaces etc.
+        boolean isLoadBalancer = true;  // we default to LB given its a cloud env
+        if (connection_type != null) { //we've a non-null string value now
+            if (connection_type.trim().equalsIgnoreCase("DIRECT")) {
+                isLoadBalancer = false;
+            }
+        }
+
+        // DIRECT
+        if (!isLoadBalancer) {
+            return new FlowRunnerImpl(host, username, password);
+        } else {
+            //OK. we are dealing with an env with LoadBalancer. Need to handle things diffrently
+            HubConfigImpl hubConfig = HubConfigImpl.withDefaultProperties();
+
+            Properties props = new Properties();
+            props.setProperty("mlIsHostLoadBalancer", "true"); //this is important for HubConfig to recognize LB
+            hubConfig.applyProperties(new SimplePropertySource(props));
+
+            hubConfig.setHost(host);
+            hubConfig.setLoadBalancerHost(host);
+            hubConfig.setMlUsername(username);
+            hubConfig.setMlPassword(password);
+            hubConfig.setAuthMethod(DatabaseKind.STAGING, "basic");
+            hubConfig.setSimpleSsl(DatabaseKind.STAGING, true);
+            hubConfig.setAuthMethod(DatabaseKind.JOB, "basic");
+            hubConfig.setSimpleSsl(DatabaseKind.JOB, true);
+            hubConfig.setAuthMethod(DatabaseKind.FINAL, "basic");
+            hubConfig.setSimpleSsl(DatabaseKind.FINAL, true);
+
+            hubConfig.hydrateConfigs();
+
+            return new FlowRunnerImpl(hubConfig);
+        }
+    }
+
     // Run DataHub flow
-    public String runFlow(String mlHost, String mlUser, String mlPassword, String flowName, String flowSteps) {
-        System.out.println ("**** Inside AzureFunction runFlow method");
+    public String runFlow(String host, String username, String password, String flowName, String steps,
+                          String connection_type) {
+        //System.out.println ("**** Inside AzureFunction runFlow method");
         // Create a FlowRunner instance.
-        //FlowRunner flowRunner = new FlowRunnerImpl("localhost", "ml-admin-user", "ml-admin-pwd");
-        FlowRunner flowRunner = new FlowRunnerImpl(mlHost, mlUser, mlPassword);
+        FlowRunner flowRunner = buildFlowRunner(host, username, password, connection_type);
 
         // Specify the flow to run.
-        FlowInputs inputs = buildFlowInputs(flowName, flowSteps);
+        FlowInputs inputs = buildFlowInputs(flowName, steps);
         if (inputs == null) {
             return "Invalid flow inputs. Please check.";
         }
 
         // Run the flow.
-        RunFlowResponse response = flowRunner.runFlowWithoutProject(inputs);
+        //RunFlowResponse response = flowRunner.runFlowWithoutProject(inputs);
+        RunFlowResponse response = flowRunner.runFlow(inputs);
 
         // Wait for the flow to end.
         flowRunner.awaitCompletion();
 
         // Return the response.
-        //System.out.println("runFlow Response: " + response);
         return response.toString();
     }
 }
