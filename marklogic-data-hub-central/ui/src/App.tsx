@@ -36,7 +36,6 @@ const App: React.FC<Props> = ({history, location}) => {
     handleError,
     resetSessionTime
   } = useContext(UserContext);
-  const [showModal, toggleModal] = useState(false);
 
   const PrivateRoute = ({ children, ...rest }) => (
     <Route {...rest} render={ props => (
@@ -80,11 +79,6 @@ const App: React.FC<Props> = ({history, location}) => {
       }
     }
 
-    if (user.sessionWarning) {
-      toggleModal(true);
-    } else {
-      toggleModal(false);
-    }
   }, [user]);
 
   useEffect(() => {
@@ -105,7 +99,7 @@ const App: React.FC<Props> = ({history, location}) => {
   return (
     <div id="background" style={pageTheme['background']}>
       <Header/>
-      <ModalStatus visible={showModal}/>
+      <ModalStatus/>
       <main>
       <Switch>
         <Route path="/" exact component={Login}/>
