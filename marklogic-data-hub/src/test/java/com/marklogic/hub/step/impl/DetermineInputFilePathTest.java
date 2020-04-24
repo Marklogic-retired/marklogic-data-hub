@@ -17,7 +17,7 @@ public class DetermineInputFilePathTest {
         HubProjectImpl project = new HubProjectImpl();
         project.createProject(HubTestBase.PROJECT_PATH);
 
-        Path path = new WriteStepRunner(new HubConfigImpl(project, null)).determineInputFilePath("/absolute/path");
+        Path path = new WriteStepRunner(null, project).determineInputFilePath("/absolute/path");
         assertEquals("/absolute/path", path.toString());
     }
 
@@ -26,7 +26,7 @@ public class DetermineInputFilePathTest {
         HubProjectImpl project = new HubProjectImpl();
         project.createProject(HubTestBase.PROJECT_PATH);
 
-        Path path = new WriteStepRunner(new HubConfigImpl(project, null)).determineInputFilePath("relativePath");
+        Path path = new WriteStepRunner(null, project).determineInputFilePath("relativePath");
 
         final String expectedDir = project.getProjectDir().resolve("relativePath").toString();
         assertEquals(expectedDir, path.toString());
@@ -34,7 +34,7 @@ public class DetermineInputFilePathTest {
 
     @Test
     void relativePathWithNoHubProject() {
-        Path path = new WriteStepRunner(new HubConfigImpl()).determineInputFilePath("relativePath");
+        Path path = new WriteStepRunner(null, null).determineInputFilePath("relativePath");
 
         final String expectedDir = Paths.get("relativePath").toAbsolutePath().toString();
         assertEquals(expectedDir, path.toString(),

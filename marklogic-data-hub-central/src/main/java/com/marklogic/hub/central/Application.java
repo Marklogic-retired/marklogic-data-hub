@@ -30,13 +30,16 @@ import org.springframework.web.filter.CommonsRequestLoggingFilter;
 import java.util.Set;
 import java.util.stream.Stream;
 
-@ComponentScan(
-    basePackages = "com.marklogic.hub",
-    excludeFilters = {@ComponentScan.Filter(
-        type = FilterType.REGEX,
-        pattern = "com\\.marklogic\\.hub\\.impl\\.HubConfigImpl")
-    }
-)
+/**
+ * The Hub Central application does not autowire any beans defined in Data Hub core. This is done to avoid any
+ * dependency on a Spring-managed HubConfig instance, which combines both application-wide configuration and
+ * user-specific authentication information. HubConfig also depends on a HubProject, which does not exist in
+ * Hub Central.
+ * <p>
+ * Hub Central beans should depend on HubClient instead, as Hub Central is expected to have a session-scoped
+ * implementation of this interface.
+ */
+@ComponentScan(basePackages = "com.marklogic.hub.central")
 @SpringBootApplication
 public class Application {
 

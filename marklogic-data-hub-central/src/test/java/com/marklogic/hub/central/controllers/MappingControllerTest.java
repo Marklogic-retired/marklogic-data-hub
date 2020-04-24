@@ -192,7 +192,7 @@ public class MappingControllerTest extends AbstractHubCentralTest {
 
     @Test
     void testValidateMappings() {
-        DatabaseClient databaseClient = getHubConfig().newFinalClient();
+        DatabaseClient databaseClient = getHubClient().getFinalClient();
         databaseClient.newJSONDocumentManager().write(
             "/test/entities/Customer.entity.json",
             new DocumentMetadataHandle().withCollections("http://marklogic.com/entity-services/models"),
@@ -203,11 +203,11 @@ public class MappingControllerTest extends AbstractHubCentralTest {
             new StringHandle(TEST_ENTITY_INSTANCE).withFormat(Format.JSON)
         );
 
-        ObjectNode result = controller.testMapping(readJsonObject(VALID_MAPING), "/test/customer100.json", getHubConfig().getDbName(DatabaseKind.FINAL)).getBody();
+        ObjectNode result = controller.testMapping(readJsonObject(VALID_MAPING), "/test/customer100.json", getHubClient().getDbName(DatabaseKind.FINAL)).getBody();
         assertEquals("concat(id, 'A')", result.get("properties").get("id").get("sourcedFrom").asText(), "SourcedFrom should be concat(id, 'A')");
         assertEquals("100A", result.get("properties").get("id").get("output").asText(), "outpus should be 100A");
 
-        ObjectNode errorResult = controller.testMapping(readJsonObject(INVALID_MAPING), "/test/customer100.json", getHubConfig().getDbName(DatabaseKind.FINAL)).getBody();
+        ObjectNode errorResult = controller.testMapping(readJsonObject(INVALID_MAPING), "/test/customer100.json", getHubClient().getDbName(DatabaseKind.FINAL)).getBody();
         assertEquals("concat(id, ')", errorResult.get("properties").get("id").get("sourcedFrom").asText(), "SourcedFrom should be concat(id, ')");
         assertEquals("Invalid XPath expression: concat(id, ')", errorResult.get("properties").get("id").get("errorMessage").asText(), "errorMessage should be Invalid XPath expression: concat(id, ')");
     }

@@ -4,14 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.ArtifactManager;
-import com.marklogic.hub.impl.ArtifactManagerImpl;
-import com.marklogic.hub.central.models.HubConfigSession;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.io.IOException;
 
 public abstract class AbstractArtifactController extends BaseController {
 
@@ -46,5 +40,5 @@ public abstract class AbstractArtifactController extends BaseController {
     protected abstract String getArtifactType();
 
     protected ArtifactManager newArtifactManager() {
-        return ArtifactManager.on(getHubConfig());
+        return ArtifactManager.on(getHubClient());
     }}

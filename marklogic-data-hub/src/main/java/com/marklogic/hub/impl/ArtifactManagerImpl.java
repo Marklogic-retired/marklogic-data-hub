@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.ArtifactManager;
+import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.artifact.ArtifactTypeInfo;
 import com.marklogic.hub.dataservices.ArtifactService;
@@ -35,10 +36,10 @@ import java.util.List;
 public class ArtifactManagerImpl implements ArtifactManager {
     protected static final Logger logger = LoggerFactory.getLogger(ArtifactManagerImpl.class);
 
-    private HubConfig hubConfig;
+    private HubClient hubClient;
 
-    public ArtifactManagerImpl(HubConfig hubConfig) {
-        this.hubConfig = hubConfig;
+    public ArtifactManagerImpl(HubClient hubClient) {
+        this.hubClient = hubClient;
     }
 
     public ArrayNode getArtifacts(String artifactType) {
@@ -70,8 +71,7 @@ public class ArtifactManagerImpl implements ArtifactManager {
     }
 
     protected ArtifactService getArtifactService() {
-        DatabaseClient dataServicesClient = hubConfig.newStagingClient(null);
-        return ArtifactService.on(dataServicesClient);
+        return ArtifactService.on(hubClient.getStagingClient());
     }
 
     public List<ArtifactTypeInfo> getArtifactTypeInfoList() {

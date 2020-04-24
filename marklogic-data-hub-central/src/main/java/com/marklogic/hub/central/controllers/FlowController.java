@@ -16,8 +16,6 @@
 package com.marklogic.hub.central.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.central.exceptions.DataHubException;
 import com.marklogic.hub.dataservices.ArtifactService;
 import com.marklogic.hub.flow.Flow;
@@ -41,7 +39,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/api/flows")
@@ -200,7 +201,7 @@ public class FlowController extends BaseController {
     }
 
     private ArtifactService getArtifactService() {
-        return ArtifactService.on(getHubConfig().newStagingClient(null));
+        return ArtifactService.on(getHubClient().getStagingClient());
     }
 
     private JSONObject processPayload(String flowJson) {
@@ -209,8 +210,7 @@ public class FlowController extends BaseController {
             jsonObject = new JSONObject(flowJson);
 
             JSONUtils.trimText(jsonObject, "separator");
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new DataHubException("Unable to parse flow json string : " + e.getMessage());
         }
 
@@ -255,8 +255,7 @@ public class FlowController extends BaseController {
             stepJson = JSONObject.readInput(stringStep);
             JSONUtils.trimText(stepJson, "separator");
 
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new BadRequestException("Error parsing JSON");
         }
         Step step = Step.deserialize(stepJson);
@@ -274,7 +273,7 @@ public class FlowController extends BaseController {
                 throw new BadRequestException("Changing step name or step type not supported.");
             }
         }
-        if(!EnumUtils.isValidEnumIgnoreCase(StepDefinition.StepDefinitionType.class, step.getStepDefinitionType().toString())) {
+        if (!EnumUtils.isValidEnumIgnoreCase(StepDefinition.StepDefinitionType.class, step.getStepDefinitionType().toString())) {
             throw new BadRequestException("Invalid Step Type");
         }
 
@@ -285,12 +284,10 @@ public class FlowController extends BaseController {
                 currSteps.put(key, step);
             }
             flow.setSteps(currSteps);
-        }
-        else {
+        } else {
             if (stepOrder == null || stepOrder > currSteps.size()) {
                 currSteps.put(String.valueOf(currSteps.size() + 1), step);
-            }
-            else {
+            } else {
                 Map<String, Step> newSteps = new LinkedHashMap<>();
                 final Integer[] count = {1};
                 Step finalStep = step;
@@ -319,6 +316,6 @@ public class FlowController extends BaseController {
      * @return
      */
     protected FlowRunner newFlowRunner() {
-        return new FlowRunnerImpl(getHubConfig());
+        return new FlowRunnerImpl(getHubClient());
     }
 }

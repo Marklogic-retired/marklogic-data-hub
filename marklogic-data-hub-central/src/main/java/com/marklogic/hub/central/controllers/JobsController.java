@@ -46,7 +46,7 @@ public class JobsController extends BaseController {
     }
 
     private JobDocManager getJobDocManager() {
-        return new JobDocManager(getHubConfig().newJobDbClient());
+        return new JobDocManager(getHubClient().getJobsClient());
     }
 
     private JsonNode flattenJobsJson(JsonNode jobJSON) {

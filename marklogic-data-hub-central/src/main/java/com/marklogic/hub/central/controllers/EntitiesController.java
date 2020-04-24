@@ -39,7 +39,7 @@ class EntitiesController extends BaseController {
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public List<JsonNode> getEntityModels() {
-        ArrayNode array = (ArrayNode) ModelsService.on(getHubConfig().newFinalClient(null)).getPrimaryEntityTypes();
+        ArrayNode array = (ArrayNode) ModelsService.on(getHubClient().getFinalClient()).getPrimaryEntityTypes();
         List<JsonNode> models = new ArrayList<>();
         array.iterator().forEachRemaining(node -> {
             models.add(node.get("model"));

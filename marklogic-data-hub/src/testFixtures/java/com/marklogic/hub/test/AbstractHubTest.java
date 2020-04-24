@@ -1,5 +1,6 @@
 package com.marklogic.hub.test;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -7,12 +8,15 @@ import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.ext.helper.LoggingObject;
+import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand;
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.util.FileUtil;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.security.User;
 import org.apache.commons.io.FileUtils;
@@ -31,6 +35,20 @@ import java.util.List;
  */
 public abstract class AbstractHubTest extends LoggingObject {
 
+    /**
+     * Tests should prefer this over getHubConfig, but of course use getHubConfig if HubClient doesn't provide something
+     * that you need.
+     *
+     * @return
+     */
+    protected abstract HubClient getHubClient();
+
+    /**
+     * Use this when you need access to stuff that's not in HubClient. Typically, that means you need a HubProject or
+     * you're using a DH core class that depends on HubConfig.
+     *
+     * @return
+     */
     protected abstract HubConfigImpl getHubConfig();
 
     protected abstract File getTestProjectDirectory();
@@ -71,10 +89,10 @@ public abstract class AbstractHubTest extends LoggingObject {
         // Admin is needed to clear out provenance data
         runAsAdmin();
         String xquery = "cts:uris((), (), cts:not-query(cts:collection-query('hub-core-artifact'))) ! xdmp:document-delete(.)";
-        HubConfig hubConfig = getHubConfig();
-        hubConfig.newStagingClient().newServerEval().xquery(xquery).evalAs(String.class);
-        hubConfig.newFinalClient().newServerEval().xquery(xquery).evalAs(String.class);
-        hubConfig.newJobDbClient().newServerEval().xquery(xquery).evalAs(String.class);
+        HubClient hubClient = getHubClient();
+        hubClient.getStagingClient().newServerEval().xquery(xquery).evalAs(String.class);
+        hubClient.getFinalClient().newServerEval().xquery(xquery).evalAs(String.class);
+        hubClient.getJobsClient().newServerEval().xquery(xquery).evalAs(String.class);
     }
 
     protected HubConfigImpl runAsDataHubDeveloper() {
@@ -113,7 +131,7 @@ public abstract class AbstractHubTest extends LoggingObject {
      */
     protected ReferenceModelProject installReferenceModelProject() {
         installProjectInFolder("entity-reference-model");
-        return new ReferenceModelProject(getHubConfig());
+        return new ReferenceModelProject(getHubClient());
     }
 
     /**
@@ -127,6 +145,12 @@ public abstract class AbstractHubTest extends LoggingObject {
         HubProject hubProject = getHubConfig().getHubProject();
         try {
             File testProjectDir = new ClassPathResource(folderInClasspath).getFile();
+
+            File dataDir = new File(testProjectDir, "data");
+            if (dataDir.exists()) {
+                FileUtils.copyDirectory(dataDir, new File(hubProject.getProjectDir().toFile(), "data"));
+            }
+
             File entitiesDir = new File(testProjectDir, "entities");
             if (entitiesDir.exists()) {
                 FileUtils.copyDirectory(entitiesDir, hubProject.getHubEntitiesDir().toFile());
@@ -225,7 +249,7 @@ public abstract class AbstractHubTest extends LoggingObject {
         final int maxTries = 100;
         final long sleepPeriod = 200;
 
-        DatabaseClient stagingClient = getHubConfig().newStagingClient();
+        DatabaseClient stagingClient = getHubClient().getStagingClient();
 
         int taskCount = Integer.parseInt(stagingClient.newServerEval().xquery(query).evalAs(String.class));
         int tries = 0;
@@ -270,5 +294,13 @@ public abstract class AbstractHubTest extends LoggingObject {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    protected JsonNode getStagingDoc(String uri) {
+        return getHubClient().getStagingClient().newJSONDocumentManager().read(uri, new JacksonHandle()).get();
+    }
+
+    protected JsonNode getFinalDoc(String uri) {
+        return getHubClient().getFinalClient().newJSONDocumentManager().read(uri, new JacksonHandle()).get();
     }
 }

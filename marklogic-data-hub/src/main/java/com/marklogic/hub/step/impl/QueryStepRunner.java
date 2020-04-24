@@ -26,7 +26,7 @@ import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubClient;
 import com.marklogic.hub.collector.Collector;
 import com.marklogic.hub.collector.DiskQueue;
 import com.marklogic.hub.collector.impl.CollectorImpl;
@@ -54,7 +54,7 @@ public class QueryStepRunner implements StepRunner {
     private Flow flow;
     private int batchSize;
     private int threadCount;
-    private DatabaseClient stagingClient;
+    private String sourceDatabase;
     private String destinationDatabase;
     private Map<String, Object> options;
     private int previousPercentComplete;
@@ -70,7 +70,7 @@ public class QueryStepRunner implements StepRunner {
     private List<StepStatusListener> stepStatusListeners = new ArrayList<>();
     private List<StepFinishedListener> stepFinishedListeners = new ArrayList<>();
     private Map<String, Object> stepConfig = new HashMap<>();
-    private HubConfig hubConfig;
+    private HubClient hubClient;
     private Thread runningThread = null;
     private DataMovementManager dataMovementManager = null;
     private QueryBatcher queryBatcher = null;
@@ -78,10 +78,13 @@ public class QueryStepRunner implements StepRunner {
     private AtomicBoolean isStopped = new AtomicBoolean(false) ;
     private StepDefinition stepDef;
 
-    public QueryStepRunner(HubConfig hubConfig) {
-        this.hubConfig = hubConfig;
-        this.stagingClient = hubConfig.newStagingClient();
-        this.destinationDatabase = hubConfig.getDbName(DatabaseKind.FINAL);
+    public QueryStepRunner(HubClient hubClient) {
+        this.hubClient = hubClient;
+        this.destinationDatabase = hubClient.getDbName(DatabaseKind.FINAL);
+    }
+
+    public void setSourceDatabase(String sourceDatabase) {
+        this.sourceDatabase = sourceDatabase;
     }
 
     public StepRunner withFlow(Flow flow) {
@@ -113,12 +116,6 @@ public class QueryStepRunner implements StepRunner {
     @Override
     public StepRunner withThreadCount(int threadCount) {
         this.threadCount = threadCount;
-        return this;
-    }
-
-    @Override
-    public StepRunner withSourceClient(DatabaseClient stagingClient) {
-        this.stagingClient = stagingClient;
         return this;
     }
 
@@ -241,9 +238,11 @@ public class QueryStepRunner implements StepRunner {
             }
         }
 
+        String sourceDatabase = hubClient.getDbName(DatabaseKind.STAGING);
         if(options.get("sourceDatabase") != null) {
-            this.stagingClient = hubConfig.newStagingClient(StepRunnerUtil.objectToString(options.get("sourceDatabase")));
+            sourceDatabase = StepRunnerUtil.objectToString(options.get("sourceDatabase"));
         }
+
         if(options.get("targetDatabase") != null) {
             this.destinationDatabase = StepRunnerUtil.objectToString(options.get("targetDatabase"));
         }
@@ -256,14 +255,14 @@ public class QueryStepRunner implements StepRunner {
         Collection<String> uris = null;
         //If current step is the first run step job output isn't disabled, a job doc is created
         if (!disableJobOutput) {
-            jobDocManager = new JobDocManager(hubConfig.newJobDbClient());
+            jobDocManager = new JobDocManager(hubClient.getJobsClient());
             StepRunnerUtil.initializeStepRun(jobDocManager, runStepResponse, flow, step, jobId);
         } else {
             jobDocManager = null;
         }
 
         try {
-            uris = runCollector();
+            uris = runCollector(sourceDatabase);
         } catch (Exception e) {
             runStepResponse.setCounts(0,0, 0, 0, 0)
                 .withStatus(JobStatus.FAILED_PREFIX + step);
@@ -271,8 +270,7 @@ public class QueryStepRunner implements StepRunner {
             e.printStackTrace(new PrintWriter(errors));
             runStepResponse.withStepOutput(errors.toString());
             if (!disableJobOutput) {
-                JsonNode jobDoc = null;
-                jobDoc = jobDocManager.postJobs(jobId, JobStatus.FAILED_PREFIX + step, flow.getName(), step, null, runStepResponse);
+                JsonNode jobDoc = jobDocManager.postJobs(jobId, JobStatus.FAILED_PREFIX + step, flow.getName(), step, null, runStepResponse);
                 try {
                     return StepRunnerUtil.getResponse(jobDoc, step);
                 } catch (Exception ignored) {
@@ -309,8 +307,8 @@ public class QueryStepRunner implements StepRunner {
         return this.batchSize;
     }
 
-    private Collection<String> runCollector() {
-        Collector c = new CollectorImpl(hubConfig, stagingClient);
+    private Collection<String> runCollector(String sourceDatabase) {
+        Collector c = new CollectorImpl(hubClient, sourceDatabase);
 
         stepStatusListeners.forEach((StepStatusListener listener) -> {
             listener.onStatusChange(this.jobId, 0, JobStatus.RUNNING_PREFIX + step, 0, 0,  "running collector");
@@ -373,7 +371,10 @@ public class QueryStepRunner implements StepRunner {
 
         Vector<String> errorMessages = new Vector<>();
 
-        dataMovementManager = stagingClient.newDataMovementManager();
+        // The client used here doesn't matter, given that a QueryBatcher is going to be constructed based on an
+        // Iterator. It's the construction of the FlowResource that matters, as that makes use of destinationDatabase
+        // to control where outputted documents are written to.
+        dataMovementManager = hubClient.getStagingClient().newDataMovementManager();
 
         double batchCount = Math.ceil((double) uris.size() / (double) batchSize);
 
@@ -381,7 +382,6 @@ public class QueryStepRunner implements StepRunner {
 
         ConcurrentHashMap<DatabaseClient, FlowResource> databaseClientMap = new ConcurrentHashMap<>();
         Map<String,Object> fullResponse = new HashMap<>();
-        ObjectMapper mapper = new ObjectMapper();
         queryBatcher = dataMovementManager.newQueryBatcher(uris.iterator())
             .withBatchSize(batchSize)
             .withThreadCount(threadCount)

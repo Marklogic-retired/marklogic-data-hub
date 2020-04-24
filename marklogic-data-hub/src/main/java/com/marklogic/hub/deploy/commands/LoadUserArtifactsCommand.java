@@ -117,7 +117,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
             loadModels(stagingClient);
             loadMappingsViaRestApi(stagingClient);
 
-            ArtifactManager artifactManager = new ArtifactManagerImpl(hubConfig);
+            ArtifactManager artifactManager = ArtifactManager.on(hubConfig.newHubClient());
             ArtifactService artifactService = ArtifactService.on(stagingClient);
             for (ArtifactTypeInfo typeInfo: artifactManager.getArtifactTypeInfoList()) {
                 final String artifactType = typeInfo.getType();

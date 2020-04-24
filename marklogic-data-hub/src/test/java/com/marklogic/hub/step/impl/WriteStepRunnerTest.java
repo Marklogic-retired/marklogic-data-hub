@@ -55,7 +55,7 @@ public class WriteStepRunnerTest extends HubTestBase {
 
     @Test
     public void testRunningPercent() {
-        WriteStepRunner wsr = new WriteStepRunner(hubConfig);
+        WriteStepRunner wsr = new WriteStepRunner(hubConfig.newHubClient(), hubConfig.getHubProject());
         Flow flow = flowManager.getFullFlow("testFlow");
         Map<String, Step> steps = flow.getSteps();
         Step step = steps.get("3");
@@ -107,7 +107,7 @@ public class WriteStepRunnerTest extends HubTestBase {
 
     @Test
     public void testLoadStepRunnerParameters() {
-        WriteStepRunner wsr = new WriteStepRunner(hubConfig);
+        WriteStepRunner wsr = new WriteStepRunner(hubConfig.newHubClient(), hubConfig.getHubProject());
         Flow flow = flowManager.getFullFlow("testCsvLoadData");
         Map<String, Step> steps = flow.getSteps();
         Step step = steps.get("1");

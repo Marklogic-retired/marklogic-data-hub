@@ -67,13 +67,6 @@ public interface StepRunner {
     StepRunner withThreadCount(int threadCount);
 
     /**
-     * Sets the source client on the step runner. The source client determines which database to run against for building the envelope.
-     * @param sourceClient - the client that will be used
-     * @return  the step runner object
-     */
-    StepRunner withSourceClient(DatabaseClient sourceClient);
-
-    /**
      * Sets the database where flow output data will be persisted to
      * @param destinationDatabase - the name of the destination database
      * @return the step runner object

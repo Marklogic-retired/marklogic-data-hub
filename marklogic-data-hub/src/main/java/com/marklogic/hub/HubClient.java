@@ -13,26 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.collector;
+package com.marklogic.hub;
 
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.hub.HubConfig;
+import org.springframework.web.client.RestTemplate;
 
-
-
-import java.util.Map;
-
-/**
- * Manages config and client for the collector, as well as runs the collector for the associated entity and flow
- */
-public interface Collector {
+public interface HubClient {
 
     /**
-     * Obtains and grabs a list of uris that match the collector code
-     * @param flow - name of which flow
-     * @param step - step of the flow
-     * @param options - options Map for running the step
-     * @return a list of uris as strings in a diskqueue object
+     * @return the name of the MarkLogic user associated with this client
      */
-    DiskQueue<String> run(String flow, String step, Map<String, Object> options);
+    String getUsername();
+
+    DatabaseClient getStagingClient();
+
+    DatabaseClient getFinalClient();
+
+    DatabaseClient getJobsClient();
+
+    String getDbName(DatabaseKind kind);
+
+    /**
+     * This is needed by the CollectorImpl class, which is not yet able to use a DatabaseClient.
+     *
+     * @return
+     */
+    RestTemplate getStagingRestTemplate();
 }

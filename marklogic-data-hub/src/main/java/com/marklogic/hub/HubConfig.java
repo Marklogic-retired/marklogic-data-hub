@@ -86,6 +86,15 @@ public interface HubConfig {
     String PII_PROTECTED_PATHS_FILE = "pii-protected-paths.json";
 
     /**
+     *
+     * @return a HubClient instance based on the configuration of this HubConfig. Ideally, DH clients should construct
+     * a HubConfig based on configuration properties and then call this method to obtain a HubClient. A HubClient should
+     * then be used for all DH operations where possible. HubConfig is still needed by a number of DH classes, but in
+     * general, prefer HubClient over HubConfig.
+     */
+    HubClient newHubClient();
+
+    /**
      * Gets the hostname of the AppConfig
      * @return name of host
      */

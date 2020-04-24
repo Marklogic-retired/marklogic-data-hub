@@ -18,9 +18,7 @@ package com.marklogic.hub.central.controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.central.HubCentral;
-import com.marklogic.hub.central.models.HubConfigSession;
 import com.marklogic.hub.dataservices.ArtifactService;
 import com.marklogic.hub.impl.Versions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +82,7 @@ public class EnvironmentController extends BaseController {
         response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
         response.addHeader("Content-Disposition", "attachment; filename=datahub-project.zip");
         try (OutputStream out = response.getOutputStream()) {
-            FileCopyUtils.copy(ArtifactService.on(getHubConfig().newStagingClient(null)).downloadConfigurationFiles(), out);
+            FileCopyUtils.copy(ArtifactService.on(getHubClient().getStagingClient()).downloadConfigurationFiles(), out);
             response.flushBuffer();
         } catch (IOException e) {
             throw new RuntimeException("Unable to download project; cause: " + e.getMessage());
@@ -94,7 +92,7 @@ public class EnvironmentController extends BaseController {
     @RequestMapping(value = "/api/environment/project-info", method = RequestMethod.GET)
     @ResponseBody
     public JsonNode getProjectInfo() {
-        Versions versions = new Versions(getHubConfig());
+        Versions versions = new Versions(getHubClient());
         ObjectNode node = new ObjectMapper().createObjectNode();
         node.put("projectDir", "N/A");
         node.put("projectName", hubCentral.getProjectName());

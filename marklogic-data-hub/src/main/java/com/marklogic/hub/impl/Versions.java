@@ -22,6 +22,7 @@ import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
+import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.error.ServerValidationException;
 import org.apache.commons.lang3.StringUtils;
@@ -41,8 +42,14 @@ public class Versions {
     @Autowired
     private HubConfig hubConfig;
 
+    private HubClient hubClient;
+
     public Versions() {
         super();
+    }
+
+    public Versions(HubClient hubClient) {
+        this.hubClient = hubClient;
     }
 
     public class MarkLogicVersion {
@@ -92,7 +99,8 @@ public class Versions {
 
     public String getHubVersion() {
         try {
-            return new HubVersionManager(hubConfig.newStagingClient()).getHubVersion();
+            DatabaseClient stagingClient = hubClient != null ? hubClient.getStagingClient() : hubConfig.newStagingClient();
+            return new HubVersionManager(stagingClient).getHubVersion();
         } catch (Exception e) {
         }
 
@@ -108,12 +116,11 @@ public class Versions {
     }
 
     public String getMarkLogicVersion() {
-        return getMarkLogicVersion(getAppConfig());
-    }
-
-    public String getMarkLogicVersion(AppConfig appConfig) {
         // this call specifically needs to access marklogic without a known database
-        ServerEvaluationCall eval = getAppConfig().newAppServicesDatabaseClient(null).newServerEval();
+        DatabaseClient client = hubClient != null ?
+            hubClient.getStagingClient() :
+            getAppConfig().newAppServicesDatabaseClient(null);
+        ServerEvaluationCall eval = client.newServerEval();
         String xqy = "xdmp:version()";
         try (EvalResultIterator result = eval.xquery(xqy).eval()) {
             if (result.hasNext()) {

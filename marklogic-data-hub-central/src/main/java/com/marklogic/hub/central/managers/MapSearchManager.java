@@ -30,26 +30,26 @@ import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubClient;
 import com.marklogic.hub.central.exceptions.DataHubException;
-import com.marklogic.hub.central.models.SJSSearchQuery;
 import com.marklogic.hub.central.models.MapSearchQuery;
+import com.marklogic.hub.central.models.SJSSearchQuery;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 
 public class MapSearchManager {
 
-    private HubConfig hubConfig;
+    private HubClient hubClient;
     private QueryManager stagingQueryMgr;
     private QueryManager finalQueryMgr;
     private GenericDocumentManager stagingDocMgr;
     private GenericDocumentManager finalDocMgr;
 
-    public MapSearchManager(HubConfig hubConfig) {
-        this.hubConfig = hubConfig;
-        DatabaseClient stagingClient = hubConfig.newStagingClient();
-        DatabaseClient finalClient = hubConfig.newFinalClient();
+    public MapSearchManager(HubClient hubClient) {
+        this.hubClient = hubClient;
+        DatabaseClient stagingClient = hubClient.getStagingClient();
+        DatabaseClient finalClient = hubClient.getFinalClient();
         this.stagingQueryMgr = stagingClient.newQueryManager();
         this.stagingDocMgr = stagingClient.newDocumentManager();
         this.finalQueryMgr = finalClient.newQueryManager();
@@ -120,7 +120,7 @@ public class MapSearchManager {
             throw new DataHubException("Query requires database or sourceQuery");
         }
 
-        Collections collections = new Collections(hubConfig.newStagingClient());
+        Collections collections = new Collections(hubClient.getStagingClient());
         return collections.getCollections(SJSSearchQuery.sourceQuery, String.valueOf(SJSSearchQuery.count), SJSSearchQuery.database, String.valueOf(SJSSearchQuery.urisOnly));
     }
 

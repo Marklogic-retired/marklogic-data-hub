@@ -19,8 +19,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.marklogic.client.FailedRequestException;
+import com.marklogic.hub.central.HttpSessionHubClientProvider;
 import com.marklogic.hub.central.HubCentral;
-import com.marklogic.hub.central.models.HubConfigSession;
 import com.marklogic.hub.dataservices.SecurityService;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -45,12 +45,12 @@ import java.util.List;
 public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
     private HubCentral hubCentral;
-    private HubConfigSession hubConfig;
+    private HttpSessionHubClientProvider hubClientProvider;
 
-    public AuthenticationFilter(HubCentral hubCentral, HubConfigSession hubConfig) {
+    public AuthenticationFilter(HubCentral hubCentral, HttpSessionHubClientProvider hubClientProvider) {
         super(new AntPathRequestMatcher("/api/login", "POST"));
         this.hubCentral = hubCentral;
-        this.hubConfig = hubConfig;
+        this.hubClientProvider = hubClientProvider;
         setAuthenticationSuccessHandler(new LoginHandler());
         setAuthenticationFailureHandler(new LoginFailureHandler());
     }
@@ -85,11 +85,11 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
 
         username = username.trim();
 
-        hubConfig.initialize(hubCentral.newHubConfig(username, password));
+        hubClientProvider.setHubClientDelegate(hubCentral.newHubConfig(username, password).newHubClient());
 
         JsonNode response;
         try {
-            response = SecurityService.on(hubConfig.newStagingClient(null)).getAuthorities();
+            response = SecurityService.on(hubClientProvider.getHubClient().getStagingClient()).getAuthorities();
         } catch (Exception e) {
             if (e instanceof FailedRequestException) {
                 FailedRequestException fre = (FailedRequestException) e;

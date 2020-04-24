@@ -33,14 +33,14 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
 
     @BeforeEach
     public void setUpDocs() {
-        entitySearchManager = new EntitySearchManager(getHubConfig());
+        entitySearchManager = new EntitySearchManager(getHubClient());
     }
 
     @Test
     public void testSearchResultsOnNoData() {
         entitySearchManager.QUERY_OPTIONS = "non-existent-options";
         String collectionDeleteQuery = "declareUpdate(); xdmp.collectionDelete(\"http://marklogic.com/entity-services/models\")";
-        getHubConfig().newFinalClient().newServerEval().javascript(collectionDeleteQuery).evalAs(String.class);
+        getHubClient().getFinalClient().newServerEval().javascript(collectionDeleteQuery).evalAs(String.class);
         assertTrue(entitySearchManager.search(new SearchQuery()).get().isEmpty());
 
         SearchQuery query = new SearchQuery();

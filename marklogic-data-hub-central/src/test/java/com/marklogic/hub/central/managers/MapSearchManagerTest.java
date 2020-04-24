@@ -27,11 +27,11 @@ class MapSearchManagerTest extends AbstractHubCentralTest {
 
     private void sjsSearch(boolean urisOnly) {
         SJSSearchQuery query = new SJSSearchQuery();
-        query.database = getHubConfig().getDbName(DatabaseKind.STAGING);
+        query.database = getHubClient().getDbName(DatabaseKind.STAGING);
         query.sourceQuery = "cts.collectionQuery('UrisOnly')";
         query.count = 1;
         query.urisOnly = urisOnly;
-        JsonNode resp = new MapSearchManager(getHubConfig()).sjsSearch(query).get(0);
+        JsonNode resp = new MapSearchManager(getHubClient()).sjsSearch(query).get(0);
         String uri = resp.get("uri").asText();
         Assertions.assertEquals("/employee2.json", uri);
 

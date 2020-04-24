@@ -76,7 +76,7 @@ public class DataHubImplTest extends HubTestBase {
 
         versions = EasyMock.createMockBuilder(Versions.class)
             .withConstructor()
-            .addMockedMethod("getMarkLogicVersion", AppConfig.class)
+            .addMockedMethod("getMarkLogicVersion")
             .createMock();
         dh.setVersions(versions);
     }

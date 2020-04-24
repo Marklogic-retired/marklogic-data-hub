@@ -20,10 +20,9 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.DatabaseClientFactory.SSLHostnameVerifier;
 import com.marklogic.client.MarkLogicIOException;
-import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.collector.DiskQueue;
+import com.marklogic.hub.HubClient;
 import com.marklogic.hub.collector.Collector;
-import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.collector.DiskQueue;
 import com.marklogic.rest.util.MgmtResponseErrorHandler;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -57,38 +56,22 @@ import java.util.*;
 
 public class CollectorImpl implements Collector {
 
-    private DatabaseClient client;
-    private HubConfig hubConfig;
+    private HubClient hubClient;
+    private String sourceDatabase;
 
-    public CollectorImpl() {
+    /**
+     * @param hubClient
+     * @param sourceDatabase Determines what database will be queried; the HTTP request will still go to the staging
+     *                       server
+     */
+    public CollectorImpl(HubClient hubClient, String sourceDatabase) {
+        this.hubClient = hubClient;
+        this.sourceDatabase = sourceDatabase;
     }
-
-    public CollectorImpl(HubConfig hubConfig, DatabaseClient stagingClient) {
-        this.hubConfig = hubConfig;
-        this.client = stagingClient;
-    }
-
-    @Override
-    public void setHubConfig(HubConfig config) { this.hubConfig = config; }
-
-    @Override
-    public HubConfig getHubConfig() {
-        return hubConfig;
-    }
-
-    @Override
-    public void setClient(DatabaseClient client) {
-        this.client = client;
-    }
-
-    @Override
-    public DatabaseClient getClient() {
-        return this.client;
-    }
-
 
     @Override
     public DiskQueue<String> run(String flow, String step, Map<String, Object> options) {
+        final DatabaseClient stagingClient = hubClient.getStagingClient();
         try {
             DiskQueue<String> results = new DiskQueue<>(5000);
 
@@ -97,17 +80,15 @@ public class CollectorImpl implements Collector {
             // https://github.com/marklogic/marklogic-data-hub/issues/632
             // https://github.com/marklogic/marklogic-data-hub/issues/633
             //
-
-            RestTemplate template = newRestTemplate(  ((HubConfigImpl) hubConfig).getMlUsername(), ( (HubConfigImpl) hubConfig).getMlPassword());
             String uriString = String.format(
                 "%s://%s:%d%s?flow-name=%s&database=%s&step=%s",
-                client.getSecurityContext().getSSLContext() != null ? "https" : "http",
-                client.getHost(),
-                client.getPort(),
+                stagingClient.getSecurityContext().getSSLContext() != null ? "https" : "http",
+                stagingClient.getHost(),
+                stagingClient.getPort(),
                 "/v1/internal/hubcollector5",
 
                 URLEncoder.encode(flow, "UTF-8"),
-                URLEncoder.encode(client.getDatabase(), "UTF-8"),
+                URLEncoder.encode(this.sourceDatabase, "UTF-8"),
                 URLEncoder.encode(step, "UTF-8")
             );
             if (options != null) {
@@ -124,29 +105,28 @@ public class CollectorImpl implements Collector {
             ResponseExtractor<Void> responseExtractor = response -> {
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody(), "UTF-8"));
                 String line;
-                while((line = bufferedReader.readLine()) != null) {
+                while ((line = bufferedReader.readLine()) != null) {
                     results.add(line);
                 }
                 bufferedReader.close();
                 return null;
             };
 
-            template.execute(uri, HttpMethod.GET, requestCallback, responseExtractor);
+            hubClient.getStagingRestTemplate().execute(uri, HttpMethod.GET, requestCallback, responseExtractor);
 
             return results;
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
 
-    private RestTemplate newRestTemplate(String username, String password) {
-        DatabaseClientFactory.SecurityContext securityContext = client.getSecurityContext();
+    public static RestTemplate newRestTemplate(DatabaseClient collectorClient, String username, String password) {
+        DatabaseClientFactory.SecurityContext securityContext = collectorClient.getSecurityContext();
 
         BasicCredentialsProvider prov = new BasicCredentialsProvider();
         prov.setCredentials(
-            new AuthScope(client.getHost(), client.getPort(), AuthScope.ANY_REALM),
+            new AuthScope(collectorClient.getHost(), collectorClient.getPort(), AuthScope.ANY_REALM),
             new UsernamePasswordCredentials(username, password));
 
         HttpClientBuilder httpClientBuilder = HttpClientBuilder.create().setDefaultCredentialsProvider(prov);
@@ -167,13 +147,16 @@ public class CollectorImpl implements Collector {
                     }
 
                     @Override
-                    public void verify(String host, SSLSocket ssl) throws IOException {}
+                    public void verify(String host, SSLSocket ssl) throws IOException {
+                    }
 
                     @Override
-                    public void verify(String host, X509Certificate cert) throws SSLException {}
+                    public void verify(String host, X509Certificate cert) throws SSLException {
+                    }
 
                     @Override
-                    public void verify(String host, String[] cns, String[] subjectAlts) throws SSLException {}
+                    public void verify(String host, String[] cns, String[] subjectAlts) throws SSLException {
+                    }
                 };
 
             } else if (verifier == SSLHostnameVerifier.COMMON) {
@@ -197,41 +180,41 @@ public class CollectorImpl implements Collector {
         private SSLHostnameVerifier verifier;
 
         protected HostnameVerifierAdapter(SSLHostnameVerifier verifier) {
-          this.verifier = verifier;
+            this.verifier = verifier;
         }
 
         public void verify(String hostname, X509Certificate cert) throws SSLException {
-          ArrayList<String> cnArray = new ArrayList<>();
-          try {
-            LdapName ldapDN = new LdapName(cert.getSubjectX500Principal().getName());
-            for(Rdn rdn: ldapDN.getRdns()) {
-              Object value = rdn.getValue();
-              if ( "CN".equalsIgnoreCase(rdn.getType()) && value instanceof String ) {
-                cnArray.add((String) value);
-              }
-            }
-            int type_dnsName = 2;
-            int type_ipAddress = 7;
-            ArrayList<String> subjectAltArray = new ArrayList<>();
-            Collection<List<?>> alts = cert.getSubjectAlternativeNames();
-            if ( alts != null ) {
-              for ( List<?> alt : alts ) {
-                if ( alt != null && alt.size() == 2 && alt.get(1) instanceof String ) {
-                  Integer type = (Integer) alt.get(0);
-                  if ( type == type_dnsName || type == type_ipAddress ) {
-                    subjectAltArray.add((String) alt.get(1));
-                  }
+            ArrayList<String> cnArray = new ArrayList<>();
+            try {
+                LdapName ldapDN = new LdapName(cert.getSubjectX500Principal().getName());
+                for (Rdn rdn : ldapDN.getRdns()) {
+                    Object value = rdn.getValue();
+                    if ("CN".equalsIgnoreCase(rdn.getType()) && value instanceof String) {
+                        cnArray.add((String) value);
+                    }
                 }
-              }
+                int type_dnsName = 2;
+                int type_ipAddress = 7;
+                ArrayList<String> subjectAltArray = new ArrayList<>();
+                Collection<List<?>> alts = cert.getSubjectAlternativeNames();
+                if (alts != null) {
+                    for (List<?> alt : alts) {
+                        if (alt != null && alt.size() == 2 && alt.get(1) instanceof String) {
+                            Integer type = (Integer) alt.get(0);
+                            if (type == type_dnsName || type == type_ipAddress) {
+                                subjectAltArray.add((String) alt.get(1));
+                            }
+                        }
+                    }
+                }
+                String[] cns = cnArray.toArray(new String[cnArray.size()]);
+                String[] subjectAlts = subjectAltArray.toArray(new String[subjectAltArray.size()]);
+                verifier.verify(hostname, cns, subjectAlts);
+            } catch (CertificateParsingException e) {
+                throw new MarkLogicIOException(e);
+            } catch (InvalidNameException e) {
+                throw new MarkLogicIOException(e);
             }
-            String[] cns = cnArray.toArray(new String[cnArray.size()]);
-            String[] subjectAlts = subjectAltArray.toArray(new String[subjectAltArray.size()]);
-            verifier.verify(hostname, cns, subjectAlts);
-          } catch(CertificateParsingException e) {
-            throw new MarkLogicIOException(e);
-          } catch(InvalidNameException e) {
-            throw new MarkLogicIOException(e);
-          }
         }
 
         @Override
@@ -248,12 +231,11 @@ public class CollectorImpl implements Collector {
         @Override
         public boolean verify(String hostname, SSLSession session) {
             try {
-              Certificate[] certificates = session.getPeerCertificates();
-              verify(hostname, (X509Certificate) certificates[0]);
-              return true;
-              }
-            catch(SSLException e) {
-              return false;
+                Certificate[] certificates = session.getPeerCertificates();
+                verify(hostname, (X509Certificate) certificates[0]);
+                return true;
+            } catch (SSLException e) {
+                return false;
             }
         }
     }
