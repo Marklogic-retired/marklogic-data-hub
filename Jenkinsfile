@@ -51,7 +51,7 @@ def dhfCypressE2ETests(String mlVersion, String type){
                     cd marklogic-data-hub-central/ui/e2e;
                     chmod +x setup.sh;
                     ./setup.sh;
-                    nohup java -jar $WORKSPACE/$WAR_NAME >> nohup.out &
+                    nohup java -jar $WORKSPACE/$WAR_NAME --hubUseLocalDefaults=true >> nohup.out &
                     sleep 10s;
                     mkdir -p output;
                     docker build . -t cypresstest;
