@@ -1,52 +1,3 @@
-import {IRolesContextInterface} from "../util/roles";
-
-class MockRolesService implements IRolesContextInterface{
-  public roles: string[] = [];
-
-  public setRoles: (roles: string[]) => void = (roles: string[]) => {
-    this.roles = roles;
-  };
-  public canReadMappings:() => boolean = () => {
-    return false;
-  };
-  public canWriteMappings:() => boolean = () => {
-    return false;
-  };
-  public canReadMatchMerge:() => boolean = () => {
-    return false;
-  };
-  public canWriteMatchMerge:() => boolean = () => {
-    return false;
-  };
-  public canReadLoadData:() => boolean = () => {
-    return true;
-  };
-  public canWriteLoadData:() => boolean = () => {
-    return true;
-  };
-  public canReadEntityModels:() => boolean = () => {
-    return false;
-  };
-  public canWriteEntityModels:() => boolean = () => {
-    return false;
-  };
-  public canReadFlows:() => boolean = () => {
-    return true;
-  };
-  public canWriteFlows:() => boolean = () => {
-    return true;
-  };
-  public canReadStepDefinitions:() => boolean = () => {
-    return false;
-  };
-  public canWriteStepDefinitions:() => boolean = () => {
-    return false;
-  };
-  public hasOperatorRole:() => boolean = () => {
-    return true;
-  };
-}
-
 const response = {"data":{"jobId": "350da405-c1e9-4fa7-8269-d9aefe3b4b9a"}, "status": 200};
 const jobRespFailedWithError = {
   "data": {
@@ -136,6 +87,28 @@ const loads = {"data" :
   "status" :200
 };
 
+const mappings = {"data" :
+[{
+  "entityType": "Customer",
+  "artifacts": [
+    {
+      "name": "Mapping1",
+      "targetEntityType": "Customer",
+      "description": "",
+      "selectedSource": "collection",
+      "sourceQuery": "cts.collectionQuery(['default-ingestion'])",
+      "properties": {
+        "customerId": {
+          "sourcedFrom": "PIN"
+        }
+      },
+      "lastUpdated": "2020-04-24T13:21:00.169198-07:00"
+    }
+  ]
+}],
+"status" :200
+};
+
 const flows = {
   "data": [{
     "name": "testFlow",
@@ -171,13 +144,88 @@ const flows = {
   "status" :200
 }
 
+const flowsWithMapping = {
+  "data": [{
+    "name": "Flow1",
+    "description": "",
+    "batchSize": 100,
+    "threadCount": 4,
+    "stopOnError": false,
+    "options": {},
+    "version": 0,
+    "steps": {
+      "1": {
+        "name": "Mapping1",
+        "description": "",
+        "options": {
+          "mapping": {
+            "name": "Mapping1"
+          }
+        },
+        "customHook": {},
+        "retryLimit": 0,
+        "batchSize": 0,
+        "threadCount": 0,
+        "stepDefinitionName": "entity-services-mapping",
+        "stepDefinitionType": "MAPPING"
+      }
+    }
+  }]
+  ,
+  "status" :200
+}
+
+const responseForMapping = {
+  "data": {
+    "jobId": "e4590649-8c4b-419c-b6a1-473069186592",
+    "flow": "Flow1",
+  }, 
+  "status": 200
+};
+
+const jobRespSuccess = {
+  "data": {
+    "jobId": "e4590649-8c4b-419c-b6a1-473069186592",
+    "flow": "Flow1",
+    "user": "dh-dev",
+    "lastAttemptedStep": "1",
+    "lastCompletedStep": "1",
+    "timeStarted": "2020-04-24T14:05:00.31817-07:00",
+    "timeEnded": "2020-04-24T14:05:01.019819-07:00",
+    "stepResponses": {
+      "1": {
+        "flowName": "Flow1",
+        "stepName": "Mapping1",
+        "stepDefinitionName": "entity-services-mapping",
+        "stepDefinitionType": "mapping",
+        "stepOutput": null,
+        "fullOutput": null,
+        "status": "completed step 1",
+        "totalEvents": 0,
+        "successfulEvents": 0,
+        "failedEvents": 0,
+        "successfulBatches": 0,
+        "failedBatches": 0,
+        "success": true,
+        "stepStartTime": "2020-04-24T14:05:00.35012-07:00",
+        "stepEndTime": "2020-04-24T14:05:01.019819-07:00"
+      }
+    },
+    "jobStatus": "finished"
+  },
+  "status": 200
+};
+
 const data = {
     flows: flows,
+    flowsWithMapping: flowsWithMapping,
     response: response,
+    responseForMapping: responseForMapping,
     loads: loads,
+    mappings: mappings,
     jobRespFailedWithError: jobRespFailedWithError,
     jobRespFailed: jobRespFailed,
-    mockRoleService: new MockRolesService()
+    jobRespSuccess: jobRespSuccess
 };
 
 export default data;

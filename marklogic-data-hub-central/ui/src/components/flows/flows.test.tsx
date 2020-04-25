@@ -5,6 +5,7 @@ import Flows from './flows';
 describe('Flows component', () => {
     let flows = [];
     let loads = [];
+    let mappings = [];
     let deleteFlow = () => null;
     let createFlow = () => null;
     let updateFlow = () => null;
@@ -18,6 +19,7 @@ describe('Flows component', () => {
         shallow(<Flows 
             flows={flows} 
             loads={loads} 
+            mappings={mappings} 
             deleteFlow={deleteFlow} 
             createFlow={createFlow} 
             updateFlow={updateFlow} 

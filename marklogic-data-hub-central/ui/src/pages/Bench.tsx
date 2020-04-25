@@ -26,6 +26,7 @@ const Bench: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [flows, setFlows] = useState<any[]>([]);
     const [loads, setLoads] = useState<any[]>([]);
+    const [mappings, setMappings] = useState<any[]>([]);
     const [runStarted, setRunStarted] = useState<any>({});
     const [runEnded, setRunEnded] = useState<any>({});
     const [running, setRunning] = useState<any[]>([]);
@@ -44,9 +45,11 @@ const Bench: React.FC = () => {
     useEffect(() => {
         getFlows();
         getLoads();
+        getMappings();
         return (() => {
             setFlows([]);
             setLoads([]);
+            setMappings([]);
         })
     }, [isLoading]);
 
@@ -148,6 +151,21 @@ const Bench: React.FC = () => {
         } catch (error) {
             let message = error.response.data.message;
             console.error('Error getting loads', message);
+        } finally {
+          resetSessionTime();
+        }
+    }
+
+    const getMappings = async () => {
+        try {
+            let response = await axios.get('/api/artifacts/mapping');
+            if (response.status === 200) {
+                setMappings(response.data);
+                console.log('GET mappings successful', response);
+            }
+        } catch (error) {
+            let message = error.response.data.message;
+            console.log('Error getting mappings', message);
         } finally {
           resetSessionTime();
         }
@@ -335,6 +353,7 @@ const Bench: React.FC = () => {
             <Flows
                 flows={flows}
                 loads={loads}
+                mappings={mappings}
                 deleteFlow={deleteFlow}
                 createFlow={createFlow}
                 updateFlow={updateFlow}
