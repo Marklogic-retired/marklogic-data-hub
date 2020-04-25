@@ -12,6 +12,7 @@ const { Panel } = Collapse;
 interface Props {
     flows: any;
     loads: any;
+    mappings: any;
     deleteFlow: any;
     createFlow: any;
     updateFlow: any;
@@ -47,9 +48,10 @@ const Flows: React.FC<Props> = (props) => {
         setNewFlow(true);
     }
 
-    const getLoadSourceFormat = (loadId) => {
+    const getSourceFormat = (id) => {
+        // TODO handle non-load steps after source format is added
         let found = props.loads.find(load => {
-            return load.name === loadId;
+            return load.name === id;
         });
         return found ? found.sourceFormat : 'json';
     }
@@ -133,11 +135,11 @@ const Flows: React.FC<Props> = (props) => {
         </Modal>
     );
 
-    const deleteIcon = (name) => (
+    const deleteIcon = (name, i) => (
         <span className={styles.deleteFlow}>
             {props.canWriteFlows ?
                 <Tooltip title={'Delete Flow'} placement="bottom">
-                    <i>
+                    <i aria-label={'deleteFlow-' + i}>
                         <FontAwesomeIcon 
                             icon={faTrashAlt} 
                             onClick={event => {
@@ -149,7 +151,7 @@ const Flows: React.FC<Props> = (props) => {
                     </i>
                 </Tooltip> :
                 <Tooltip title={'Delete'} placement="bottom">
-                    <i>
+                    <i aria-label={'deleteStep-' + i}>
                         <FontAwesomeIcon 
                             icon={faTrashAlt} 
                             onClick={(event) => { 
@@ -195,7 +197,7 @@ const Flows: React.FC<Props> = (props) => {
             let cards = indexes.map((i) => {
                 let step = flow.steps[i];
                 // TODO Handle steps that don't have input formats
-                let stepFormat = (step.fileLocations) ?  getLoadSourceFormat(step.name) : 'json';
+                let stepFormat = (step.stepDefinitionType === 'INGESTION') ? getSourceFormat(step.name) : null;
                 return (
                     <Card 
                         style={{ width: 300, marginRight: 20 }} 
@@ -203,33 +205,38 @@ const Flows: React.FC<Props> = (props) => {
                         size="small"
                         extra={
                             <div className={styles.actions}>
-                                {props.hasOperatorRole ?
+                                {props.hasOperatorRole ?            
                                     <div 
                                         className={styles.run} 
                                         onClick={() => props.runStep(name, step.name + '-' + step.stepDefinitionType, step.name, StepDefToTitle(step.stepDefinitionType))}
+                                        aria-label={'runStep-' + i}
                                     >
                                         <Icon type="play-circle" theme="filled" />
-                                    </div> :
+                                    </div>
+                                     :
                                     <div 
                                         className={styles.disabledRun} 
                                         onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}
+                                        aria-label={'runStepDisabled-' + i}
                                     >
                                         <Icon type="play-circle" theme="filled" />
                                     </div>
                                 }
                                 {props.canWriteFlows ?
                                     <Tooltip title={'Delete Step'} placement="bottom">
-                                        <div className={styles.delete} onClick={() => handleStepDelete(flow.name, step.name, step.stepDefinitionType)}><Icon type="close" /></div>
+                                        <div className={styles.delete} aria-label={'deleteStep-' + i} onClick={() => handleStepDelete(flow.name, step.name, step.stepDefinitionType)}><Icon type="close" /></div>
                                     </Tooltip> :
                                     <Tooltip title={'Delete Step'} placement="bottom">
-                                        <div className={styles.disabledDelete} onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}><Icon type="close" /></div>
+                                        <div className={styles.disabledDelete} aria-label={'deleteStepDisabled-' + i} onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}><Icon type="close" /></div>
                                     </Tooltip> 
                                 }
                             </div>
                         }
                     >
                         <div className={styles.cardContent}>
-                            <div className={styles.format} style={sourceFormatStyle(stepFormat)}>{stepFormat.toUpperCase()}</div>
+                            { stepFormat ?
+                                <div className={styles.format} style={sourceFormatStyle(stepFormat)}>{stepFormat.toUpperCase()}</div>
+                                : null }
                             <div className={styles.name}>{step.name}</div>
                         </div>
                         <div className={styles.running} style={{display: isRunning(name, step.name + '-' + step.stepDefinitionType)  ? 'block' : 'none'}}>
@@ -240,7 +247,7 @@ const Flows: React.FC<Props> = (props) => {
                 )
             });
             return (
-                <Panel header={flowHeader(flow.name, i)} key={i} extra={deleteIcon(name)}>
+                <Panel header={flowHeader(flow.name, i)} key={i} extra={deleteIcon(name, i)}>
                     <div className={styles.panelContent}>
                         {cards}
                     </div>
