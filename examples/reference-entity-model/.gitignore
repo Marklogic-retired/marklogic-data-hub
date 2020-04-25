@@ -8,6 +8,4 @@ src/main/ml-config/databases
 src/main/ml-config/servers
 src/main/entity-config
 
-flows
-mappings
 step-definitions

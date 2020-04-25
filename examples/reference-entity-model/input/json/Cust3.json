@@ -1,0 +1,35 @@
+{
+  "CustomerID": 103,
+  "Name": {
+    "FirstName": "Adams",
+    "LastName": "Cole"
+  },
+  "Email": "coleadams39@nutralab.com",
+  "Address": {
+    "Shipping": {
+      "Street": "Verona Place",
+      "City": "Keyport",
+      "State": "Ohio",
+      "Postal": "14391-1362"
+    },
+    "Billing": {
+      "Street": "Ellery Street",
+      "City": "Fillmore",
+      "State": "Missouri",
+      "Postal": "85554-2762"
+    }
+  },
+  "Phone": "(913) 467-3136",
+  "Orders": [
+    {
+      "OrderID": "EO-3333",
+      "Status" : "Shipped"
+    },
+    {
+      "OrderID": "EO-6736",
+      "Status" : "New"
+    }
+  ],
+  "PIN": 5749,
+  "Created": "04/22/2018"
+}

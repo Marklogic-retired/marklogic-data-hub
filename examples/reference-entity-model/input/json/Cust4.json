@@ -1,0 +1,35 @@
+{
+  "CustomerID": 104,
+  "Name": {
+    "FirstName": "Powers",
+    "LastName": "Bauer"
+  },
+  "Email": "powersbauer@nutralab.com",
+  "Address": {
+    "Shipping": {
+      "Street": "Willow Street",
+      "City": "Bedias",
+      "State": "Mississippi",
+      "Postal": "94824-7938"
+    },
+    "Billing": {
+      "Street": "Bainbridge Street",
+      "City": "Retsof",
+      "State": "Vermont",
+      "Postal": "38258-4231"
+    }
+  },
+  "Phone": "(915) 419-3711",
+  "Orders": [
+    {
+      "OrderID": "EO-3401",
+      "Status" : "New"
+    },
+    {
+      "OrderID": "EO-3688",
+      "Status" : "Pending"
+    }
+  ],
+  "PIN": 1423,
+  "Created": "10/11/2016"
+}
