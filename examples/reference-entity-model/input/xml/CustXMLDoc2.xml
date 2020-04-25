@@ -1,0 +1,32 @@
+<CustOrders xmlns="custOrderInfo" Category="ProductOrders" frequency="weekly" PrimeCustomer="Yes">
+    <CustomerID>102</CustomerID>
+    <Name>
+      <FirstName>Mcgee</FirstName>
+      <LastName>Burch</LastName>
+    </Name>
+    <Email type="work">mcgeeburch@nutralab.com</Email>
+    <Address xmlns:add="custAddress">
+      <add:Shipping>
+        <Street>Jefferson Avenue</Street>
+        <City>Bourg</City>
+        <State>Vermont</State>
+        <Postal>26878-9832</Postal>
+      </add:Shipping>
+      <add:Billing>
+        <Street>Himrod Street</Street>
+        <City>Bluffview</City>
+        <State>Oklahoma</State>
+        <Postal>33059-4655</Postal>
+      </add:Billing>
+    </Address>
+    <Phone>(998) 598-2711</Phone>
+    <Orders xmlns="Orders">
+      <OrderID autoRenewal="false">EO-7829</OrderID>
+    </Orders>
+    <Orders>
+      <OrderID>EO-4663</OrderID>
+    </Orders>
+    <PIN>5337</PIN>
+    <Created>2015-10-13T17:46:05</Created>
+  </CustOrders>
+  

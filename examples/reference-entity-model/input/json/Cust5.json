@@ -1,0 +1,35 @@
+{
+  "CustomerID": 105,
+  "Name": {
+    "FirstName": "Holland",
+    "LastName": "Wells"
+  },
+  "Email": "hollandwells@nutralab.com",
+  "Address": {
+    "Shipping": {
+      "Street": "Hanover Place",
+      "City": "Marshall",
+      "State": "Oklahoma",
+      "Postal": "19111-1001"
+    },
+    "Billing": {
+      "Street": "Sunnyside Avenue",
+      "City": "Brutus",
+      "State": "Wisconsin",
+      "Postal": "30706-8854"
+    }
+  },
+  "Phone": "(887) 571-2692",
+  "Orders": [
+    {
+      "OrderID": "EO-5403",
+      "Status" : "Pending"
+    },
+    {
+      "OrderID": "EO-7108",
+      "Status" : "Completed"
+    }
+  ],
+  "PIN": 1772,
+  "Created": "05/06/2016"
+}

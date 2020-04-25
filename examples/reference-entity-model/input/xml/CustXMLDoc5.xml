@@ -1,0 +1,32 @@
+  <CustOrders xmlns="custOrderInfo">
+    <CustomerID>105</CustomerID>
+    <Name>
+      <FirstName>Lola</FirstName>
+      <LastName>Dunn</LastName>
+    </Name>
+    <Email>loladunn@nutralab.com</Email>
+    <Address>
+      <Shipping>
+        <Street>Leonard Street</Street>
+        <City>Glenville</City>
+        <State>Guam</State>
+        <Postal>68994-8449</Postal>
+      </Shipping>
+      <Billing>
+        <Street>Tabor Court</Street>
+        <City>Stollings</City>
+        <State>Pennsylvania</State>
+        <Postal>67317-4661</Postal>
+      </Billing>
+    </Address>
+    <Phone>(955) 511-3261</Phone>
+    <Orders>
+      <OrderID>EO-6797</OrderID>
+    </Orders>
+    <Orders>
+      <OrderID>EO-3612</OrderID>
+    </Orders>
+    <PIN>2833</PIN>
+    <Created>2012-01-22T20:07:29</Created>
+  </row>
+</CustOrders>

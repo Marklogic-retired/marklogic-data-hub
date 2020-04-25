@@ -1,0 +1,1 @@
+{"artifactName":"CustomerLoadXML","collections":["default-ingestion"],"additionalCollections":["customerXML"],"sourceDatabase":null,"targetDatabase":"data-hub-STAGING","targetFormat":"JSON","permissions":"data-hub-operator,read,data-hub-operator,update","provenanceGranularityLevel":"coarse","customHook":{"module":"","parameters":"{}","user":"","runBefore":false}}

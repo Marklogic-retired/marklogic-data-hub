@@ -1,0 +1,1 @@
+{"name":"CustomerLoadXML","description":"","sourceFormat":"xml","targetFormat":"xml","outputURIReplacement":".*CustomerLoadXML,'/customer'","inputFilePath":"data-sets/CustomerLoadXML"}
