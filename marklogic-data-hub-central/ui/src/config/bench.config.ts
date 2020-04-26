@@ -216,6 +216,106 @@ const jobRespSuccess = {
   "status": 200
 };
 
+const flowsJSON = {
+  "data": [{
+    "name": "testFlow",
+    "description": "",
+    "batchSize": 100,
+    "threadCount": 4,
+    "stopOnError": false,
+    "options": {},
+    "version": 0,
+    "steps": {
+      "1": {
+        "name": "loadJSON",
+        "description": "",
+        "options": {
+          "sourceQuery": null,
+          "collections": ["loadJSON"],
+          "loadData": {
+            "name": "loadJSON"
+          },
+          "outputFormat": "json",
+          "targetDatabase": "data-hub-STAGING"
+        },
+        "customHook": {},
+        "retryLimit": 0,
+        "batchSize": 0,
+        "threadCount": 0,
+        "stepDefinitionName": "default-ingestion",
+        "stepDefinitionType": "INGESTION"
+      }
+    }
+  }]
+  ,
+  "status" :200
+}
+
+const flowsXML = {
+  "data": [{
+    "name": "testFlow",
+    "description": "",
+    "batchSize": 100,
+    "threadCount": 4,
+    "stopOnError": false,
+    "options": {},
+    "version": 0,
+    "steps": {
+      "1": {
+        "name": "loadXML",
+        "description": "",
+        "options": {
+          "sourceQuery": null,
+          "collections": ["loadXML"],
+          "loadData": {
+            "name": "loadXML"
+          },
+          "outputFormat": "json",
+          "targetDatabase": "data-hub-STAGING"
+        },
+        "customHook": {},
+        "retryLimit": 0,
+        "batchSize": 0,
+        "threadCount": 0,
+        "stepDefinitionName": "default-ingestion",
+        "stepDefinitionType": "INGESTION"
+      }
+    }
+  }]
+  ,
+  "status" :200
+}
+
+const loadsJSON = {"data" :
+    [{
+      "name": "loadJSON",
+      "description": "",
+      "sourceFormat": "json",
+      "targetFormat": "json",
+      "outputURIReplacement": "",
+      "inputFilePath": "/xml-test/data-sets/failedIngest",
+      "lastUpdated": "2020-04-02T23:08:28.287065-07:00",
+      "fileCount": 1,
+      "filesNeedReuploaded": false
+    }],
+  "status" :200
+};
+
+const loadsXML = {"data" :
+    [{
+      "name": "loadXML",
+      "description": "",
+      "sourceFormat": "xml",
+      "targetFormat": "xml",
+      "outputURIReplacement": "",
+      "inputFilePath": "/xml-test/data-sets/failedIngest",
+      "lastUpdated": "2020-04-02T23:08:28.287065-07:00",
+      "fileCount": 1,
+      "filesNeedReuploaded": false
+    }],
+  "status" :200
+};
+
 const data = {
     flows: flows,
     flowsWithMapping: flowsWithMapping,
@@ -225,7 +325,11 @@ const data = {
     mappings: mappings,
     jobRespFailedWithError: jobRespFailedWithError,
     jobRespFailed: jobRespFailed,
-    jobRespSuccess: jobRespSuccess
+    jobRespSuccess: jobRespSuccess,
+    flowsJSON: flowsJSON,
+    flowsXML: flowsXML,
+    loadsJSON: loadsJSON,
+    loadsXML: loadsXML
 };
 
 export default data;
