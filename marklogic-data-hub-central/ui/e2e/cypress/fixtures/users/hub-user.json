@@ -1,0 +1,6 @@
+{
+    "user-name": "hc-test-user",
+    "description": "A hub central test user",
+    "password": "password",
+    "role": ["hub-central-user"]
+}

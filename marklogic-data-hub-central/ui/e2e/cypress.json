@@ -5,5 +5,8 @@
     "reporterOptions": {
       "mochaFile": "results/cypress-report[hash].xml",
       "toConsole": true
+    },
+    "env": {
+      "mlHost": "localhost"
     }
 }

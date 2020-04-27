@@ -1,0 +1,6 @@
+{
+    "user-name": "test-admin-for-data-hub-tests",
+    "description": "A test admin user to add roles to generic user for tests",
+    "password": "password",
+    "role": ["admin"]
+}

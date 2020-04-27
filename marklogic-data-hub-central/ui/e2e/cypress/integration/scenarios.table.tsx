@@ -11,8 +11,7 @@ describe('table test scenarios', () => {
   beforeEach(() => {
     cy.visit('/');
     cy.contains('MarkLogic Data Hub');
-    cy.loginAsDeveloper();
-    cy.wait(500);
+    cy.loginAsDeveloper().withRequest();
     // temporary change as tile is not working
     homePage.getTitle().click();
     cy.wait(500);
@@ -42,8 +41,7 @@ describe('column selector test scenarios', () => {
   beforeEach(() => {
     cy.visit('/');
     cy.contains('MarkLogic Data Hub');
-    cy.loginAsDeveloper();
-    cy.wait(500);
+    cy.loginAsDeveloper().withRequest();
     // temporary change as tile is not working
     homePage.getTitle().click();
     cy.wait(500);
