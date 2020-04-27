@@ -1,11 +1,11 @@
 import React from 'react';
-import { waitForElement, render, cleanup, fireEvent, within } from '@testing-library/react';
+import { waitForElement, waitForElementToBeRemoved, render, cleanup, fireEvent, within } from '@testing-library/react';
 import SourceToEntityMap from './source-to-entity-map';
 import data from '../../../../config/data.config';
 import { shallow } from 'enzyme';
 import SplitPane from 'react-split-pane';
 import axiosMock from 'axios';
-import { validateMappingTableRow } from '../../../../util/test-utils';
+import { validateMappingTableRow, onClosestTableRow } from '../../../../util/test-utils';
 
 jest.mock('axios');
 
@@ -188,43 +188,43 @@ describe('RTL Source-to-entity map tests', () => {
 
       //Check the sort order of Name column rows before enforcing sort order
       let srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, 'proteinId', 'proteinType', 'nutFreeName', 'proteinCat', 'key');
+      validateMappingTableRow(srcTable, ['proteinId', 'proteinType', 'nutFreeName', 'proteinCat'], 'key');
 
       //Click on the Name column to sort the rows by Ascending order
       fireEvent.click(sourceTableNameSort);
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, 'nutFreeName', 'proteinCat', 'proteinId', 'proteinType',  'key')
+      validateMappingTableRow(srcTable, ['nutFreeName', 'proteinCat', 'proteinId', 'proteinType'],  'key')
 
       //Click on the Name column to sort the rows by Descending order
       fireEvent.click(sourceTableNameSort);
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, 'proteinType','proteinId', 'proteinCat', 'nutFreeName',  'key')
+      validateMappingTableRow(srcTable, ['proteinType','proteinId', 'proteinCat', 'nutFreeName'],  'key')
 
       //Click on the Name column again to remove the applied sort order and check if its removed
       fireEvent.click(sourceTableNameSort);
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, 'proteinId', 'proteinType', 'nutFreeName', 'proteinCat', 'key')
+      validateMappingTableRow(srcTable, ['proteinId', 'proteinType', 'nutFreeName', 'proteinCat'], 'key')
 
       /* Validate sorting on Values column in source table */
 
       //Check the sort order of Values column rows before enforcing sort order
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, '123EAC', 'home', undefined, 'commercial', 'val');
+      validateMappingTableRow(srcTable, ['123EAC', 'home', undefined, 'commercial'], 'val');
 
       //Click on the Values column to sort the rows by Ascending order
       fireEvent.click(sourceTableValueSort);
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, '123EAC', 'commercial', 'home', undefined, 'val')
+      validateMappingTableRow(srcTable, ['123EAC', 'commercial', 'home', undefined], 'val')
 
       //Click on the Values column to sort the rows by Descending order
       fireEvent.click(sourceTableValueSort);
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, 'home', 'commercial', '123EAC', undefined, 'val')
+      validateMappingTableRow(srcTable, ['home', 'commercial', '123EAC', undefined], 'val')
 
       //Click on the Value column again to remove the applied sort order and check if its removed
       fireEvent.click(sourceTableValueSort);
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, '123EAC', 'home', undefined, 'commercial', 'val');
+      validateMappingTableRow(srcTable, ['123EAC', 'home', undefined, 'commercial'], 'val');
 
       /* Validate sorting in Entity table columns */
       const entityTableNameSort = getByTestId('entityTableName'); // For value column sorting
@@ -232,35 +232,164 @@ describe('RTL Source-to-entity map tests', () => {
 
       //Check sort order of Name Column before clicking on sort button
       let entTable = document.querySelectorAll('#entityContainer .ant-table-row-level-0');
-      validateMappingTableRow(entTable, 'propId', 'propName', 'items', 'gender', 'name');
+      validateMappingTableRow(entTable, ['propId', 'propName', 'propAttribute', 'items', 'gender'], 'name');
 
       //Click on the Name column to sort the rows by Ascending order
       fireEvent.click(entityTableNameSort);
       entTable = document.querySelectorAll('#entityContainer .ant-table-row-level-0');
-      validateMappingTableRow(entTable, 'gender', 'items', 'propId', 'propName', 'name')
+      validateMappingTableRow(entTable, ['gender', 'items', 'propAttribute', 'propId', 'propName'], 'name')
 
       //Click on the Name column again to sort the rows by Descending order
       fireEvent.click(entityTableNameSort);
       entTable = document.querySelectorAll('#entityContainer .ant-table-row-level-0');
-      validateMappingTableRow(entTable, 'propName', 'propId', 'items', 'gender', 'name')
+      validateMappingTableRow(entTable, ['propName', 'propId', 'propAttribute', 'items', 'gender'], 'name')
 
       fireEvent.click(entityTableNameSort); //Reset the sort order to go back to default order
 
       //Click on the Type column to sort the rows by Ascending order
       fireEvent.click(entityTableTypeSort);
       entTable = document.querySelectorAll('#entityContainer .ant-table-row-level-0');
-      validateMappingTableRow(entTable, 'int', 'ItemType [ ]', 'string', 'string', 'type');
+      validateMappingTableRow(entTable, ['int', 'ItemType [ ]', 'string', 'string', 'string'], 'type');
 
       //Click on the Type column again to sort the rows by Descending order
       fireEvent.click(entityTableTypeSort);
       entTable = document.querySelectorAll('#entityContainer .ant-table-row-level-0');
-      validateMappingTableRow(entTable, 'string', 'string', 'ItemType [ ]', 'int', 'type');
+      validateMappingTableRow(entTable, ['string', 'string', 'string', 'ItemType [ ]', 'int'], 'type');
 
       //Resetting the sort order to go back to default order
       fireEvent.click(entityTableTypeSort);
       entTable = document.querySelectorAll('#entityContainer .ant-table-row-level-0');
-      validateMappingTableRow(entTable, 'int', 'string', 'ItemType [ ]', 'string', 'type');
+      validateMappingTableRow(entTable, ['int', 'string', 'string', 'ItemType [ ]', 'string'], 'type');
     });
+
+    test('Verify evaluation of valid expression for mapping writer user', async () => {
+        axiosMock.post['mockImplementation'](jest.fn(() => Promise.resolve({ status: 200, data: data.testJSONResponse })));
+        const { getByText, getByTestId } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} />)
+        let propNameExpression = getByText('testNameInExp');
+        let propAttributeExpression = getByText('placeholderAttribute')
+
+        fireEvent.change(propNameExpression, { target: {value: "proteinID" }});
+        fireEvent.blur(propNameExpression)
+        fireEvent.change(propAttributeExpression, { target: {value: "proteinType" }});
+        fireEvent.blur(propAttributeExpression)
+
+        // Test button should be disabled before mapping expression is saved
+        expect(document.querySelector('#Test-btn')).toBeDisabled()
+
+        // waiting for success message before clicking on Test button
+        await(waitForElement(() => (getByTestId('successMessage'))))
+        await(waitForElementToBeRemoved(() => (getByTestId('successMessage'))))
+
+        // Test button should be enabled after mapping expression is saved
+        expect(document.querySelector('#Test-btn')).toBeEnabled()
+        
+        //Verify Test button click
+        fireEvent.click(getByText('Test'))
+        await(waitForElement(() => getByTestId('propName-value')))
+        expect(getByTestId('propName-value')).toHaveTextContent('123EAC')
+        expect(getByTestId('propAttribute-value')).toHaveTextContent('home')
+
+        //Verify Clear button click
+        fireEvent.click(getByText('Clear'))
+        expect(getByTestId('propName-value')).not.toHaveTextContent('123EAC')
+        expect(getByTestId('propAttribute-value')).not.toHaveTextContent('home')
+        // DEBUG
+        // debug(onClosestTableRow(getByTestId('propName-value')))
+        // debug(onClosestTableRow(getByTestId('propAttribute-value')))
+    })
+
+    test('Verify evaluation of valid expression for mapping reader user', async () => {
+        axiosMock.post['mockImplementation'](jest.fn(() => Promise.resolve({ status: 200, data: data.testJSONResponse })));
+        //Updating mapping expression as a mapping writer user first
+        const { getByText, getByTestId, rerender, debug } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} />)
+        let propAttributeExpression = getByText('placeholderAttribute')
+
+        fireEvent.change(propAttributeExpression, { target: {value: "proteinType" }});
+        fireEvent.blur(propAttributeExpression)
+
+        // waiting for success message before clicking on Test button
+        await(waitForElement(() => (getByTestId('successMessage'))))
+
+        //Rerendering as a mapping reader user
+        rerender(<SourceToEntityMap {...data.mapProps} canReadWrite={false} canReadOnly={true} mappingVisible={true}/>)
+
+        //Verify Test button click
+        fireEvent.click(getByText('Test'))
+        await(waitForElement(() => getByTestId('propAttribute-value')))
+        expect(getByTestId('propAttribute-value')).toHaveTextContent('home')
+
+        //Verify Clear button click
+        fireEvent.click(getByText('Clear'))
+        expect(getByTestId('propAttribute-value')).not.toHaveTextContent('home')
+    })
+
+    test('Verify evaluation of invalid expression for mapping writer user', async () => {
+        axiosMock.post['mockImplementation'](jest.fn(() => Promise.resolve({ status: 200, data: data.errorJSONResponse })));
+        const { getByText, getByTestId, queryByTestId, queryByText, debug, getByTitle } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} />)
+        let propIdExpression = getByText('id')
+
+        fireEvent.change(propIdExpression, { target: {value: "proteinID" }})
+        fireEvent.blur(propIdExpression)
+        
+        // waiting for success message before clicking on Test button
+        await(waitForElement(() => (getByTestId('successMessage'))))
+
+        //Verify Test button click
+        fireEvent.click(getByText('Test'))
+        await(waitForElement(() => getByTestId('propId-expErr')))
+
+        //debug(onClosestTableRow(getByTestId('propId-value')))
+        expect(getByTestId('propId-expErr')).toHaveTextContent(data.errorJSONResponse.properties.propId.errorMessage)
+        expect(getByTestId('propId-value')).toHaveTextContent('')
+
+        //SCROLL TEST FOR BUG DHFPROD-4743
+        //let element = document.querySelector('#entityContainer .ant-table-body')
+        //getByText('propId').closest('div');
+        //expect(document.querySelector('#entityContainer .ant-table-fixed-header')).not.toHaveClass('ant-table-scroll-position-right')
+        //fireEvent.scroll(element).valueOf()
+        //expect(document.querySelector('#entityContainer .ant-table-fixed-header')).not.toHaveClass('ant-table-scroll-position-right')
+        //debug(document.querySelector('#entityContainer .ant-table-fixed-header'))
+        
+        //Verify Clear button click
+        fireEvent.click(getByText('Clear'))
+        expect(queryByTestId('propId-expErr')).toBeNull()
+    })
+
+    test('Verify evaluation of invalid expression for mapping reader user', async () => {
+        axiosMock.post['mockImplementation'](jest.fn(() => Promise.resolve({ status: 200, data: data.errorJSONResponse })));
+        //Updating mapping expression as a mapping writer user first
+        const { getByText, getByTestId, rerender, queryByTestId } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} />)
+        let propIdExpression = getByText('id')
+
+        fireEvent.change(propIdExpression, { target: {value: "proteinID" }})
+        fireEvent.blur(propIdExpression)
+        
+        // waiting for success message before clicking on Test button
+        await(waitForElement(() => (getByTestId('successMessage'))))
+
+        //Rerendering as a mapping reader user
+        rerender(<SourceToEntityMap {...data.mapProps} canReadWrite={false} canReadOnly={true} mappingVisible={true} />)
+
+        //Verify Test button click
+        fireEvent.click(getByText('Test'))
+        await(waitForElement(() => getByTestId('propId-expErr')))
+
+        //debug(onClosestTableRow(getByTestId('propId-value')))
+        expect(getByTestId('propId-expErr')).toHaveTextContent(data.errorJSONResponse.properties.propId.errorMessage)
+        expect(getByTestId('propId-value')).toHaveTextContent('')
+        
+        //Verify Clear button click
+        fireEvent.click(getByText('Clear'))
+        expect(queryByTestId('propId-expErr')).toBeNull()
+    })
+
+    xtest('Verify evaluation of valid expression for XML source document', () => {
+        const { getByText } = render(<SourceToEntityMap {...data.mapProps} sourceData={data.xmlSourceData} mappingVisible={true} />)
+        /**
+         * TODO once DHFPROD-4845 is implemented
+         */
+    })
+
 });
 
 describe('Enzyme Source-to-entity map tests', () => {

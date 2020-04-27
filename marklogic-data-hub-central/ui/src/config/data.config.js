@@ -92,6 +92,7 @@ const jsonSourceData = [
 const entityTypeProperties = [
   { name: 'propId', type: 'int' },
   { name: 'propName', type: 'string' },
+  { name: 'propAttribute', type: 'string' },
   {
     name: 'items', type: 'parent-ItemType [ ]', children: [
       { name: 'items/itemTypes', type: 'string' },
@@ -103,7 +104,23 @@ const entityTypeProperties = [
       }]
   },
   { name: 'gender', type: 'string' }
-]
+];
+
+const testJSONResponse = { 
+  properties: { 
+    propName: { output: '123EAC', sourcedFrom: 'proteinId' },
+    propAttribute: { output: 'home', sourcedFrom: 'proteinType' },
+  },
+  targetEntityType: 'Person'
+};
+
+const errorJSONResponse = {
+  properties: { 
+    propId: { errorMessage: 'Invalid lexical value: "123EACtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest"', sourcedFrom: 'proteinId' },
+    propAttribute: { output: 'home', sourcedFrom: 'proteinType' },
+  },
+  targetEntityType: 'Person'
+};
 
 const mapProps = {
   sourceData: jsonSourceData,
@@ -118,6 +135,7 @@ const mapProps = {
     properties: {
       propId: {  sourcedFrom: 'id' },
       propName: {sourcedFrom: 'testNameInExp'},
+      propAttribute: { sourcedFrom: 'placeholderAttribute' },
       items:{ sourcedFrom: "",
       properties:
         { itemTypes : {  sourcedFrom: "" }},
@@ -209,7 +227,9 @@ const data = {
   editMap: editMap,
   activitySettings: activitySettings,
   dropDownWithSearch: dropDownWithSearch,
-  xmlSourceData: xmlSourceData
+  xmlSourceData: xmlSourceData,
+  testJSONResponse: testJSONResponse,
+  errorJSONResponse: errorJSONResponse
 };
 
 export default data;
