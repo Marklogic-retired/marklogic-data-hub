@@ -5,7 +5,7 @@ import LoginPage from '../support/pages/login';
 const loginPage = new LoginPage();
 
 describe('login', () => {
-  beforeEach(() => {
+  before(() => {
     cy.visit('/');
   });
 
@@ -39,8 +39,7 @@ describe('login', () => {
   });
 
   it('navigates to /home on seccessful login', () => {
-    cy.loginAsDeveloper()
-    .wait(500)
+    cy.loginAsDeveloper().withRequest()
     .url()
     .should('include', '/tile')
   });

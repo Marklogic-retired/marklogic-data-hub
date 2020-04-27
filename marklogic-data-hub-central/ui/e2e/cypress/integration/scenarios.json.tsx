@@ -11,7 +11,7 @@ const browsePage = new BrowsePage();
 const detailPage = new DetailPage();
 const homePage = new HomePage();
 
-describe('json scenario on view entities page', () => {
+xdescribe('json scenario on view entities page', () => {
 
   //login with valid account
   beforeEach(() => {
@@ -57,8 +57,7 @@ describe('json scenario on browse documents page', () => {
   beforeEach(() => {
     cy.visit('/');
     cy.contains('MarkLogic Data Hub');
-    cy.loginAsDeveloper();
-    cy.wait(500);
+    cy.loginAsDeveloper().withRequest();
     // temporary change as tile is not working
     homePage.getTitle().click();
     cy.wait(500);
@@ -209,8 +208,7 @@ describe('json scenario for table on browse documents page', () => {
   beforeEach(() => {
     cy.visit('/');
     cy.contains('MarkLogic Data Hub');
-    cy.loginAsDeveloper();
-    cy.wait(500);
+    cy.loginAsDeveloper().withRequest();
     // temporary change as tile is not working
     homePage.getTitle().click();
     cy.wait(500);
@@ -316,6 +314,7 @@ describe('json scenario for table on browse documents page', () => {
     browsePage.getSelectedFacets().should('exist');
     browsePage.getGreySelectedFacets('Kelley').should('exist');
     browsePage.getFacetApplyButton().click();
+    cy.get('[data-testid="spinner"]').should('not.exist')
     browsePage.getFacetView();
     cy.wait(500);
     browsePage.getClearFacetSearchSelection('Kelley').should('contain', 'firstname: Kelley');

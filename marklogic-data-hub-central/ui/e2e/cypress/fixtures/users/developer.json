@@ -1,6 +1,6 @@
 {
-    "user-name": "dh-dev",
+    "user-name": "hc-developer",
     "description": "A data hub dev user",
-    "password": "dh-dev",
-    "role": ["data-hub-developer", "hub-central-entity-exporter", "hub-central-mapping-reader", "hub-central-mapping-writer"]
+    "password": "password",
+    "role": ["data-hub-developer", "hub-central-mapping-reader"]
 }

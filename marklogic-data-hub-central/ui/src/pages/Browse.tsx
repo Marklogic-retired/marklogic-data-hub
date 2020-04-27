@@ -229,7 +229,7 @@ const Browse: React.FC<Props> = ({ location }) => {
                 maxRowsPerPage={searchOptions.maxRowsPerPage}
               />
               <div className={styles.spinViews}>
-                {isLoading && <Spin className={styles.overlay} />}
+                {isLoading && <Spin data-testid="spinner" className={styles.overlay} />}
                 <div className={styles.switchViews}>
                   <div className={!tableView ? styles.toggled : styles.toggleView}
                     data-cy="facet-view" id={'snippetView'}

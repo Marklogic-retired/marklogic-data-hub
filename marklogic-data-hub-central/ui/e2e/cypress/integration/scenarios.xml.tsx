@@ -17,8 +17,7 @@ describe('xml scenario on view entities page', () => {
   beforeEach(() => {
     cy.visit('/');
     cy.contains('MarkLogic Data Hub');
-    cy.loginAsDeveloper();
-    cy.wait(500);
+    cy.loginAsDeveloper().withRequest();
     // temporary change as tile is not working
     homePage.getTitle().click();
     cy.wait(500);
@@ -56,8 +55,7 @@ describe('xml scenario on browse documents page', () => {
   beforeEach(() => {
     cy.visit('/');
     cy.contains('MarkLogic Data Hub');
-    cy.loginAsDeveloper();
-    cy.wait(500);
+    cy.loginAsDeveloper().withRequest();
     // temporary change as tile is not working
     homePage.getTitle().click();
     cy.wait(500);
@@ -203,8 +201,7 @@ describe('xml scenario for table on browse documents page', () => {
   beforeEach(() => {
     cy.visit('/');
     cy.contains('MarkLogic Data Hub');
-    cy.loginAsDeveloper();
-    cy.wait(500);
+    cy.loginAsDeveloper().withRequest();
     // temporary change as tile is not working
     homePage.getTitle().click();
     cy.wait(500);

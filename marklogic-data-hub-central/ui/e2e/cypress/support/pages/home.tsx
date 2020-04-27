@@ -16,6 +16,9 @@ class HomePage{
     getModeling() {
       return cy.contains('Modeling');
   }
+    getEntitiesTile() {
+        return cy.get('button[aria-label="Entity"]');
+    }
 }
 
 export default HomePage;

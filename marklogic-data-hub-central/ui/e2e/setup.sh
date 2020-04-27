@@ -11,7 +11,7 @@ DHS=`echo $1 | cut -d'=' -f 2`
 mlHost=`echo $2 | cut -d'=' -f 2`
 env='local'
 
-credentials='-PmlUsername=dh-dev -PmlPassword=dh-dev'
+credentials='-PmlUsername=hc-developer -PmlPassword=password'
 
 ./gradlew hubInit
 
