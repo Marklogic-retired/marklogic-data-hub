@@ -710,7 +710,7 @@ const SourceToEntityMap = (props) => {
             }
             if(element.children) {
                 flattenSourceDoc(element.children, flatArray, flatArrayKey);
-                flatArrayKey = (flatArrayKey.indexOf("/")==-1)?'':flatArrayKey.substring(0,flatArrayKey.indexOf("/"))
+                flatArrayKey = (flatArrayKey.indexOf("/")==-1)?'':flatArrayKey.substring(0,flatArrayKey.lastIndexOf("/"))
             }
         })
         return flatArray;
