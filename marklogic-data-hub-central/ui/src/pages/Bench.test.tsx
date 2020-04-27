@@ -169,28 +169,6 @@ describe('Verify step display', () => {
         cleanup();
     });
 
-    test('Verify a load step with JSON source is displayed correctly', async () => {
-        axiosMock.get['mockImplementation']((url) => {
-            switch (url) {
-                case '/api/flows':
-                    return Promise.resolve(data.flowsJSON)
-                case '/api/artifacts/loadData':
-                    return Promise.resolve(data.loadsJSON)
-                case '/api/artifacts/mapping':
-                    return Promise.resolve(data.mappings)
-                default:
-                    return Promise.reject(new Error('not found'))
-            }
-        })
-        const { getByText, getByLabelText } = await render(<RolesContext.Provider value={ mockDevRolesService }><Bench/></RolesContext.Provider>);
-        
-        // Click disclosure icon
-        fireEvent.click(getByLabelText("icon: right"));
-        expect(await(waitForElement(() => getByText("JSON")))).toBeInTheDocument();
-        expect(await(waitForElement(() => getByText("loadJSON")))).toBeInTheDocument();
-
-    })
-
     test('Verify a load step with XML source is displayed correctly', async () => {
         axiosMock.get['mockImplementation']((url) => {
             switch (url) {
