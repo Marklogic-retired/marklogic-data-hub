@@ -27,10 +27,10 @@ const DropDownWithSearch = (props) => {
         width: '12vw',
     }
 
-    const dropDownStyle: CSSProperties = { 
+    const dropDownStyle: CSSProperties = {
         maxHeight: '40vh',
     }
-    
+
     useEffect(() => {
         setSelList(props.displaySelectList);
         setMenuVisible(props.displayMenu);
@@ -47,6 +47,15 @@ const DropDownWithSearch = (props) => {
         };
     });
 
+    const optionsStyle = (index) =>{
+        if(props.indentList) {
+            return {lineHeight: '2vh', textIndent: props.indentList[index]+'px'};
+        }
+        else {
+            return {lineHeight: '2vh'};
+        }
+    };
+    /* props.srcData requires an array of tuple instead of a flat array to handle duplicate values */
     return (
 
         <div ref={node}>
@@ -62,7 +71,7 @@ const DropDownWithSearch = (props) => {
                     value={props.itemValue}
                     onChange={props.onItemSelect}
                 >
-                    {props.srcData.map(num => <Select.Option className={styles.selectOptionsStyle} key={num}>{num}</Select.Option>)}
+                    {props.srcData.map((element, index) => <Select.Option style={optionsStyle(index)} key={element.key}>{element.value}</Select.Option>)}
                 </Select>
             </Menu>}
         </div>

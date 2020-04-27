@@ -1,15 +1,19 @@
 import React from 'react';
-import { render, cleanup, fireEvent, within } from '@testing-library/react';
+import { waitForElement, render, cleanup, fireEvent, within } from '@testing-library/react';
 import SourceToEntityMap from './source-to-entity-map';
 import data from '../../../../config/data.config';
 import { shallow } from 'enzyme';
 import SplitPane from 'react-split-pane';
+import axiosMock from 'axios';
 import { validateMappingTableRow } from '../../../../util/test-utils';
+
+jest.mock('axios');
+
 
 describe('RTL Source-to-entity map tests', () => {
     afterEach(cleanup);
     test('RTL tests with no source data', () => {
-        const { getByTestId,  getByText, getByRole } = render(<SourceToEntityMap {... {mapData: data.mapProps.mapData, entityTypeTitle : data.mapProps.entityTypeTitle, sourceData: [], extractCollectionFromSrcQuery: jest.fn()}} mappingVisible={true}/>);
+        const { getByTestId,  getByText, getByRole } = render(<SourceToEntityMap {... {mapData: data.mapProps.mapData,entityTypeProperties:data.mapProps.entityTypeProperties, entityTypeTitle : data.mapProps.entityTypeTitle, sourceData: [], extractCollectionFromSrcQuery: jest.fn()}} mappingVisible={true}/>);
         expect(getByText('Source Data')).toBeInTheDocument();
         expect(getByText('Test')).toBeDisabled;
         expect(getByText('Clear')).toBeDisabled;
@@ -22,7 +26,7 @@ describe('RTL Source-to-entity map tests', () => {
     });
 
     test('RTL tests with source data',  () => {
-        const { getByTestId,  getByText,container, queryByText } = render(<SourceToEntityMap {...data.mapProps}  mappingVisible={true}/>);
+        const { getByTestId,  getByText, queryByText} = render(<SourceToEntityMap {...data.mapProps}  mappingVisible={true}/>);
         expect(getByText('Source Data')).toBeInTheDocument();
         expect(getByText('proteinId')).toBeInTheDocument();
         expect(getByTestId("entityContainer")).toBeInTheDocument();
@@ -41,9 +45,9 @@ describe('RTL Source-to-entity map tests', () => {
     });
 
     test('Filtering Name column in Source and Entity tables',() => {
-      
-      const { getByText,getByTestId,queryByText } = render(<SourceToEntityMap {...data.mapProps} 
-        mappingVisible={true} 
+
+      const { getByText,getByTestId,queryByText } = render(<SourceToEntityMap {...data.mapProps}
+        mappingVisible={true}
         />);
 
       /* Test filter on Source table  */
@@ -56,12 +60,12 @@ describe('RTL Source-to-entity map tests', () => {
       expect(getByTestId('submitSearch-key')).toBeInTheDocument();
       expect(inputSearch).toHaveValue('first');
       fireEvent.click(getByTestId('submitSearch-key')); //Click on Search button to apply the filter with the desired string
-      
+
       //Check if the expected values are available/not available in search result.
       expect(getByText('nutFreeName')).toBeInTheDocument();
       expect(getByText('NamePreferred')).toBeInTheDocument();
       expect(getByText('John')).toBeInTheDocument();
-      expect(queryByText('proteinId')).not.toBeInTheDocument(); 
+      expect(queryByText('proteinId')).not.toBeInTheDocument();
       expect(queryByText('proteinType')).not.toBeInTheDocument();
 
       //Check if the entity properties are not affected by the filter on source table
@@ -78,7 +82,7 @@ describe('RTL Source-to-entity map tests', () => {
       //Check if the expected values are present now after resetting the filter on source table.
       expect(getByText('proteinId')).toBeInTheDocument();
       expect(getByText('proteinType')).toBeInTheDocument();
-      
+
       /* Test filter on Entity table  */
 
       //Updating expression for few fields to be validated later
@@ -101,7 +105,7 @@ describe('RTL Source-to-entity map tests', () => {
       expect(getByText('itemTypes')).toBeInTheDocument();
       expect(getByText('itemCategory')).toBeInTheDocument();
       expect(getByText('Craft')).toBeInTheDocument();
-      expect(queryByText('propId')).not.toBeInTheDocument(); 
+      expect(queryByText('propId')).not.toBeInTheDocument();
       expect(queryByText('propName')).not.toBeInTheDocument();
 
       //Check if the source table properties are not affected by the filter on Entity table
@@ -114,15 +118,15 @@ describe('RTL Source-to-entity map tests', () => {
        fireEvent.click(entityfilterIcon);
        let resetEntitySearch = getByTestId('ResetSearch-name');
        fireEvent.click(resetEntitySearch);
- 
+
        //Check if the expected values are present now after resetting the filter on Entity table.
        expect(getByText('propId')).toBeInTheDocument();
        expect(getByText('propName')).toBeInTheDocument();
     });
 
     test('Column option selector in Entity table',() => {
-      
-      const { getByText,getByTestId } = render(<SourceToEntityMap {...data.mapProps} 
+
+      const { getByText,getByTestId } = render(<SourceToEntityMap {...data.mapProps}
         mappingVisible={true}
         />);
 
@@ -132,7 +136,7 @@ describe('RTL Source-to-entity map tests', () => {
       fireEvent.change(exp, { target: {value: "concat(propName,'-NEW')" }});
       fireEvent.blur(exp);
       expect(getByText("concat(propName,'-NEW')")).toBeInTheDocument();
-      
+
       /* Test column option selector in Entity table  */
       let colOptSelect = getByText('Column Options');
       fireEvent.click(colOptSelect);
@@ -162,7 +166,7 @@ describe('RTL Source-to-entity map tests', () => {
       //Checking the columns one by one in selector and verify that they appear in entity table
       fireEvent.click(Name); //Check Name column
       //Props below should be available now
-      expect(getByText('propId')).toBeInTheDocument(); 
+      expect(getByText('propId')).toBeInTheDocument();
       expect(getByText('propName')).toBeInTheDocument();
 
       fireEvent.click(XPathExpression); //Check XPathExpression column
@@ -264,6 +268,7 @@ describe('Enzyme Source-to-entity map tests', () => {
     beforeEach(() => {
         wrapper = shallow(<SourceToEntityMap {...data.mapProps} />);
     });
+    afterEach(cleanup);
 
     test('Enzyme tests with source data', () => {
         //Use console.log(wrapper.debug()) for debugging the html returned by the wrapper;
@@ -303,31 +308,176 @@ describe('Enzyme Source-to-entity map tests', () => {
         expect(splitPane).toHaveLength(1);
     });
 
-  test('XML source data renders properly',() => {
-    const { getByText } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} sourceData={data.xmlSourceData}/>);
-    expect(getByText('Source Data')).toBeInTheDocument();
-    expect(getByText('proteinId')).toBeInTheDocument();
-    expect(getByText('123EAC')).toBeInTheDocument();
-    expect(getByText('@proteinType')).toBeInTheDocument();
-    expect(getByText('home')).toBeInTheDocument();
-    expect(getByText(/nutFree:/)).toBeInTheDocument();
-    expect(getByText('FirstNamePreferred')).toBeInTheDocument();
-  });
+    test('XML source data renders properly',() => {
+        const { getByText } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} sourceData={data.xmlSourceData}/>);
+        expect(getByText('Source Data')).toBeInTheDocument();
+        expect(getByText('proteinId')).toBeInTheDocument();
+        expect(getByText('123EAC')).toBeInTheDocument();
+        expect(getByText('@proteinType')).toBeInTheDocument();
+        expect(getByText('home')).toBeInTheDocument();
+        expect(getByText(/nutFree:/)).toBeInTheDocument();
+        expect(getByText('FirstNamePreferred')).toBeInTheDocument();
+    });
 
-  test('Nested entity data renders properly',() => {
-    
-    const { getByText,getAllByText } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true}/>);
-    expect(getByText('propId')).toBeInTheDocument();
-    expect(getByText('propName')).toBeInTheDocument();
-    expect(getByText('items')).toBeInTheDocument();
-    expect(getByText('itemTypes')).toBeInTheDocument();
-    expect(getByText('itemCategory')).toBeInTheDocument();
-    expect(getAllByText('Context').length).toBe(2);
-    expect(getByText('ItemType [ ]')).toBeInTheDocument();
-    expect(getByText('artCraft')).toBeInTheDocument();
-    expect(getByText('automobile')).toBeInTheDocument();
-    //TO DO: Below tests can be done when working on E2E tests.
-    //fireEvent.click(getByLabelText('icon: down'));
-    //expect(queryByText('category')).not.toBeInTheDocument();
-  })
+    test('Nested entity data renders properly',() => {
+
+        const { getByText,getAllByText } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true}/>);
+        expect(getByText('propId')).toBeInTheDocument();
+        expect(getByText('propName')).toBeInTheDocument();
+        expect(getByText('items')).toBeInTheDocument();
+        expect(getByText('itemTypes')).toBeInTheDocument();
+        expect(getByText('itemCategory')).toBeInTheDocument();
+        expect(getAllByText('Context').length).toBe(2);
+        expect(getByText('ItemType [ ]')).toBeInTheDocument();
+        expect(getByText('artCraft')).toBeInTheDocument();
+        expect(getByText('automobile')).toBeInTheDocument();
+        //TO DO: Below tests can be done when working on E2E tests.
+        //fireEvent.click(getByLabelText('icon: down'));
+        //expect(queryByText('category')).not.toBeInTheDocument();
+    })
 });
+
+describe('RTL Source Selector/Source Search tests', () => {
+    afterEach(() => {
+        cleanup();
+        jest.clearAllMocks();
+    });
+    beforeEach(() => jest.setTimeout(20000));
+
+    test('Search source',  async() => {
+        axiosMock.post.mockImplementation(data.mapProps.updateMappingArtifact);
+
+        const {getByText,getAllByText, getByTestId, getAllByRole} = render(<SourceToEntityMap {...data.mapProps}  mappingVisible={true}/>);
+
+        let sourceSelector = getByTestId("itemTypes-listIcon");
+
+        //corresponds to 'itemTypes' source selector
+        fireEvent.click(sourceSelector);
+
+        await(waitForElement(() =>  getAllByRole("option"),{"timeout":200}))
+        let firstName = getAllByText("FirstNamePreferred");
+        expect(firstName.length).toEqual(2)
+
+        let lastName = getAllByText("LastName");
+        expect(lastName.length).toEqual(2)
+
+        let inputBox = getByText(
+            (_content, element) =>
+                element.className != null &&
+                element.className ==="ant-select-search__field"
+        );
+
+        fireEvent.click(inputBox)
+        fireEvent.change(inputBox, { target: {value: "Fir" }});
+
+        //2 instances of 'firstName'
+        firstName = getAllByText("FirstNamePreferred");
+        expect(firstName.length).toEqual(2)
+
+        //Only 1 instances of 'lastName' as search has narrowed the results
+        lastName = getAllByText("LastName");
+        expect(lastName.length).toEqual(1)
+
+        fireEvent.keyDown(inputBox, { key: 'Enter', code: 'Enter' , keyCode: 13, charCode: 13 })
+
+        //mapping is saved
+        expect(await(waitForElement(() => getByTestId("successMessage"),{"timeout":200})))
+
+        let mapExp = getByTestId("itemTypes-mapexpression");
+        //Right Xpath is populated
+        expect(mapExp).toHaveTextContent("nutFreeName/FirstNamePreferred");
+    });
+
+    test('Nested JSON source data - Right XPATH expression',  async() => {
+        axiosMock.post.mockImplementation(data.mapProps.updateMappingArtifact);
+        const { getByText,getAllByText,getByTestId, getAllByRole} = render(<SourceToEntityMap {...data.mapProps}  mappingVisible={true}/>);
+        expect(getByText('Source Data')).toBeInTheDocument();
+        expect(getByText('Entity: Person')).toBeInTheDocument();
+        expect(getByText('Test')).toBeEnabled();
+
+        let sourceSelector = getByTestId("itemTypes-listIcon");
+
+        //corresponds to 'itemTypes' source selector
+        fireEvent.click(sourceSelector);
+
+        await(waitForElement(() =>  getAllByRole("option"),{"timeout":200}))
+        let firstName = getAllByText("FirstNamePreferred");
+        expect(firstName.length).toEqual(2)
+
+        //Check if indentation is right
+        expect(firstName[1]).toHaveStyle("line-height: 2vh; text-indent: 20px;");
+
+        //Click on 'FirstNamePreferred'
+        fireEvent.click(firstName[1]);
+
+        //mapping is saved
+        expect(await(waitForElement(() => getByTestId("successMessage"),{"timeout":200})))
+
+        let mapExp = getByTestId("itemTypes-mapexpression");
+        //Right Xpath is populated
+        expect(mapExp).toHaveTextContent("nutFreeName/FirstNamePreferred");
+
+    });
+
+    test('Nested XML source data - Right XPATH expression',  async() => {
+        axiosMock.post.mockImplementation(data.mapProps.updateMappingArtifact);
+        const {getAllByText,getByTestId, getAllByRole} = render(<SourceToEntityMap {...data.mapProps}  sourceData={data.xmlSourceData} mappingVisible={true}/>);
+
+        let sourceSelector = getByTestId("itemTypes-listIcon");
+
+        //corresponds to 'itemTypes' source selector
+        fireEvent.click(sourceSelector);
+
+        await(waitForElement(() =>  getAllByRole("option"),{"timeout":200}))
+        let lastName = getAllByText("LastName");
+        expect(lastName.length).toEqual(2)
+
+        //Check if indentation is right
+        expect(lastName[1]).toHaveStyle("line-height: 2vh; text-indent: 40px;");
+
+        //Click on 'FirstNamePreferred'
+        fireEvent.click(lastName[1]);
+
+        //mapping is saved
+        expect(await(waitForElement(() => getByTestId("successMessage"),{"timeout":200})))
+
+        let mapExp = getByTestId("itemTypes-mapexpression");
+        //Right Xpath is populated
+        expect(mapExp).toHaveTextContent("sampleProtein/nutFree:name/LastName");
+
+    });
+
+    test('Right XPATH with source context',  async() => {
+        axiosMock.post.mockImplementation(data.mapProps.updateMappingArtifact);
+        const {getAllByText, getAllByRole,getByTestId } = render(<SourceToEntityMap {...data.mapProps}  mappingVisible={true}/>);
+
+        let sourceSelector = getByTestId("items-listIcon");
+
+        //corresponds to 'items' source selector
+        fireEvent.click(sourceSelector);
+
+        await(waitForElement(() =>  getAllByRole("option"),{"timeout":600}))
+        //Set 'sourceContext' to 'nutFreeName'
+        let nutFreeName = getAllByText("nutFreeName");
+        expect(nutFreeName.length).toEqual(2)
+        fireEvent.click(getAllByText("nutFreeName")[1]);
+        expect(await(waitForElement(() => getByTestId("successMessage"),{"timeout":600})))
+
+        let mapExp = getByTestId("items-mapexpression");
+        //Right Xpath is populated
+        expect(mapExp).toHaveTextContent("nutFreeName");
+
+        sourceSelector = getByTestId("itemTypes-listIcon");
+        fireEvent.click(sourceSelector);
+        await(waitForElement(() => getAllByRole("option"),{"timeout":600}))
+        let firstName = getAllByText("FirstNamePreferred");
+        fireEvent.click(firstName[1]);
+        //mapping is saved
+        expect(await(waitForElement(() => getByTestId("successMessage"),{"timeout":600})))
+        mapExp = getByTestId("itemTypes-mapexpression");
+
+        //Right Xpath is populated (and not nutFreeName/FirstNamePreferred since sourceContext is set)
+        expect(mapExp).toHaveTextContent("FirstNamePreferred");
+    });
+});
+
