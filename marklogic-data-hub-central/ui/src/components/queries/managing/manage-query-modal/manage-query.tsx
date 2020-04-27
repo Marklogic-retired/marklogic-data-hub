@@ -1,18 +1,17 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Modal, Button, Table } from 'antd';
+import { Modal, Table } from 'antd';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencilAlt, faFileExport, faLink, faTrashAlt, faListOl } from "@fortawesome/free-solid-svg-icons";
-import { UserContext } from '../../../util/user-context';
-import { queryDateConverter } from '../../../util/date-conversion';
-import EditQueryDialog from './edit-query-dialog/edit-query-dialog'
-import { SearchContext } from '../../../util/search-context';
+import { UserContext } from '../../../../util/user-context';
+import { queryDateConverter } from '../../../../util/date-conversion';
+import EditQueryDialog from '../edit-query-dialog/edit-query-dialog'
+import { SearchContext } from '../../../../util/search-context';
 import styles from './manage-query.module.scss';
-import { fetchQueries, updateQuery, removeQuery } from '../../../api/queries'
+import { fetchQueries, updateQuery, removeQuery } from '../../../../api/queries'
 
 
-const QueryModal: React.FC = () => {
+const QueryModal = (props) => {
 
-    const [queries, setQueries] = useState([]);
     const { handleError, resetSessionTime } = useContext(UserContext);
     const { applyQuery } = useContext(SearchContext);
     const [mainModalVisibility, setMainModalVisibility] = useState(false);
@@ -31,7 +30,7 @@ const QueryModal: React.FC = () => {
             const response = await fetchQueries();
 
             if (response['data']) {
-                setQueries(response['data']);
+                props.setQueries(response['data']);
             }
         } catch (error) {
             handleError(error);
@@ -45,7 +44,7 @@ const QueryModal: React.FC = () => {
             const response = await updateQuery(query);
 
             if (response.data) {
-                setQueries(response.data);
+                props.setQueries(response.data);
                 return { code: response.status };
             }
 
@@ -85,6 +84,7 @@ const QueryModal: React.FC = () => {
     const onOk = (query) => {
         deleteQuery(query)
         setDeleteModalVisibility(false);
+        getQueries();
     }
 
     const onCancel = () => {
@@ -92,12 +92,13 @@ const QueryModal: React.FC = () => {
     }
 
     const onApply = (e) => {
-        queries && queries.length > 0 && queries.forEach(query => {
+        props.queries && props.queries.length > 0 && props.queries.forEach(query => {
             if (e.currentTarget.dataset.id === query['savedQuery']['name']) {
                 applyQuery(query['savedQuery']['query']['searchText'], query['savedQuery']['query']['entityTypeIds'], query['savedQuery']['query']['selectedFacets'])
             }
         })
         setMainModalVisibility(false)
+        props.toggleApply(false)
     }
 
     const columns = [
@@ -129,7 +130,7 @@ const QueryModal: React.FC = () => {
             dataIndex: 'edit',
             key: 'edit',
             align: 'center' as 'center',
-            render: text => <a data-id={text} onClick={onEdit}>{text}</a>,
+            render: text => <a data-testid={'edit'} onClick={onEdit}>{text}</a>,
             width: 75,
         },
         {
@@ -151,12 +152,12 @@ const QueryModal: React.FC = () => {
             dataIndex: 'delete',
             key: 'delete',
             align: 'center' as 'center',
-            render: text => <a data-id={text} onClick={onDelete}>{text}</a>,
+            render: text => <a data-testid={'delete'} onClick={onDelete}>{text}</a>,
             width: 75,
         }
     ];
 
-    queries && queries.length > 0 && queries.forEach((query, index) => {
+    props.queries && props.queries.length > 0 && props.queries.forEach(query => {
         data.push(
             {
                 key: query['savedQuery']['id'],
@@ -200,7 +201,7 @@ const QueryModal: React.FC = () => {
                     onRow={(record) => {
                         return {
                             onClick: () => {
-                                queries.forEach((query) => {
+                                props.queries.forEach((query) => {
                                     if (query['savedQuery']['id'] === record.key) {
                                         setSelectedQuery(query);
                                         setQueryName(record.name);

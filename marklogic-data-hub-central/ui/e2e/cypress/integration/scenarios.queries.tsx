@@ -28,9 +28,47 @@ describe('save/manage queries scenarios', () => {
         browsePage.selectEntity('All Entities');
     });
 
-    it('verify manage queries modal', () => {
+    it('apply facet search,open save modal and save queries', () => {
+        browsePage.selectEntity('Customer');
+        browsePage.getSelectedEntity().should('contain', 'Customer');
+        cy.wait(500);
+        browsePage.getFacetItemCheckbox('firstname', 'Kelley').click();
+        browsePage.getFacetItemCheckbox('firstname', 'Lara').click();
+        browsePage.getSelectedFacets().should('exist');
+        browsePage.getGreySelectedFacets('Kelley').should('exist');
+        browsePage.getFacetApplyButton().should('exist');
+        browsePage.getFacetApplyButton().click();
+        browsePage.getSaveModalIcon().click();
+        cy.wait(500);
+        browsePage.getSaveQueryName().should('be.visible');
+        browsePage.getSaveQueryName().type('new-query');
+        browsePage.getSaveQueryDescription().should('be.visible');
+        browsePage.getSaveQueryDescription().type('new-query description');
+        browsePage.getSaveQueryButton().click();
+        cy.wait(500);
+        browsePage.getSaveQueryButton().should('not.be.visible');
+        browsePage.getSaveQueriesDropdown().should('be.visible');
+    });
+
+    it('open manage queries, edit query', () => {
         browsePage.getManageQueriesIcon().click();
-        queryComponent.getManageQueryModal().should('be.visible')
+        queryComponent.getManageQueryModal().should('be.visible');
+        queryComponent.getEditQuery().click();
+        queryComponent.getEditQueryName().type('2');
+        queryComponent.getSubmitButton().click();
+    });
+
+    it('open manage queries, apply query', () => {
+        browsePage.getManageQueriesIcon().click();
+        queryComponent.getManageQueryModal().should('be.visible');
+        queryComponent.getQueryByName('new-query2').click();
+    });
+
+    it('open manage queries, delete query', () => {
+        browsePage.getManageQueriesIcon().click();
+        queryComponent.getManageQueryModal().should('be.visible');
+        queryComponent.getDeleteQuery().click();
+        queryComponent.getDeleteQueryYesButton().click({force: true})
     });
 
 
