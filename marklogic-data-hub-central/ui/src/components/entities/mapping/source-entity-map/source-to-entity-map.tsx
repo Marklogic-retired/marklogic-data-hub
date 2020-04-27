@@ -13,7 +13,10 @@ import Highlighter from 'react-highlight-words';
 const SourceToEntityMap = (props) => {
 
     const [mapExp, setMapExp] = useState({});
+    const [sourceContext, setSourceContext] = useState({});
     let mapExpUI: any = {};
+    let tempMapExp: any = {};
+    let tempSourceContext: any = {}
     /*-------------------*/
 
     //For Dropdown menu
@@ -34,6 +37,16 @@ const SourceToEntityMap = (props) => {
     const [srcURI, setSrcURI] = useState(props.sourceURI);
 
     const [srcData, setSrcData] = useState<any[]>([]);
+
+    //For source dropdown search menu
+    const [flatArray, setFlatArray]   = useState<any[]>([]);
+    const [sourcePropName, setSourcePropName] = useState('');
+    const [sourcePropListForDropDown,setSourcePropListForDropDown] = useState<any>([]);
+    const [sourceIndentForDropDown,setSourceIndentForDropDown] = useState<any>([]);
+    const [sourceValue, setSourceValue] = useState('');
+    const [displaySourceMenu, setDisplaySourceMenu] = useState(false);
+    const [displaySourceList, setDisplaySourceList] = useState(false);
+    const [selectedRow,setSelectedRow] = useState<any>([]);
 
     //For TEST and Clear buttons
     const [mapResp, setMapResp] = useState({});
@@ -130,6 +143,7 @@ const SourceToEntityMap = (props) => {
 
     useEffect(() => {
         setSrcData([...props.sourceData])
+        setFlatArray(flattenSourceDoc([...props.sourceData], [], ''))
 
     }, [props.sourceData]);
 
@@ -199,16 +213,52 @@ const SourceToEntityMap = (props) => {
         if (props.mapData && props.mapData.properties) {
             initializeMapExpForUI(props.mapData.properties);
             setMapExp({ ...mapExpUI });
+            updateSourceContext({ ...mapExpUI },props.entityTypeProperties)
+            setSourceContext({... tempSourceContext})
         }
     }
 
-    
+    const updateSourceContext = (mapExp, entityTable, parentVal = '') =>{
+        entityTable.forEach(element => {
+            let name = element.name;
+            if(element.hasOwnProperty('children')){
+                if(!parentVal){
+                    tempSourceContext[name] = "";
+                }
+                else {
+                    tempSourceContext[name] = parentVal;
+                }
+                if(mapExp[name]) {
+                    if(parentVal){
+                        parentVal = parentVal + "/" + mapExp[name];
+                    }
+                    else{
+                        parentVal = mapExp[name];
+                    }
+                }
+                else {
+                    parentVal = "";
+                }
+                updateSourceContext(mapExp,element.children,parentVal );
+                parentVal = '';
+            }
+            else {
+                if(parentVal){
+                    tempSourceContext[name] = parentVal;
+                }
+                else {
+                    tempSourceContext[name] = '';
+                }
+            }
+        })
+
+    }
+
     //Refresh the UI mapExp from the the one saved in the database
     const initializeMapExpForUI  = (mapExp,parentKey = '') => {
         Object.keys(mapExp).map(key => {
           let val = mapExp[key];
           if(val.hasOwnProperty('properties')){
-              
             let tempKey = parentKey;
               if(parentKey !== key){
                  parentKey = parentKey ? parentKey + '/' + key : key;
@@ -217,38 +267,36 @@ const SourceToEntityMap = (props) => {
             initializeMapExpForUI(val.properties,parentKey);
             if(parentKey !== tempKey){
                           parentKey = tempKey;
-                      }
-            
-          } else { 
+            }
+          }
+          else {
             let tempKey = parentKey;
             if(parentKey !== key){
-                          parentKey = parentKey ? parentKey + '/' + key : key;
-                      }
+                parentKey = parentKey ? parentKey + '/' + key : key;
+            }
               mapExpUI[parentKey] = mapExp[key]['sourcedFrom'];
             if(parentKey !== tempKey){
-                          parentKey = tempKey;
-                      }
+                parentKey = tempKey;
+            }
           }
         })
-      }
+    }
 
     const onOk = () => {
         props.setMappingVisible(false)
-        console.log('Map Saved!')
     }
 
     const onCancel = () => {
         props.setMappingVisible(false)
-        console.log('Map cancelled!')
     }
 
-    const convertMapExpToMapArt = (obj, path, val) => { 
+    const convertMapExpToMapArt = (obj, path, val) => {
         const propPath = path.replace(/\//g,'/properties/');
         const keys = propPath.split('/');
         const lastKey = keys.pop();
-        const lastObj = keys.reduce((obj, key) => 
-            obj[key] = key !== 'properties' ? (obj[key] || {'sourcedFrom':''}) : obj[key] || {}, 
-            obj); 
+        const lastObj = keys.reduce((obj, key) =>
+            obj[key] = key !== 'properties' ? (obj[key] || {'sourcedFrom':''}) : obj[key] || {},
+            obj);
         lastObj[lastKey] = val;
 
         return obj;
@@ -264,37 +312,13 @@ const SourceToEntityMap = (props) => {
             }
           }
         })
-        
       }
 
     const handleExpSubmit = async () => {
         if (mapExpTouched) {
-            let obj = {};
-
-            Object.keys(mapExp).map( key => {
-                convertMapExpToMapArt(obj, key, {'sourcedFrom': mapExp[key]});
-              })
-            await getTgtEntityTypesInMap(obj);
-
-            let {lastUpdated, properties, ...dataPayload} = props.mapData;
-            
-            dataPayload = {...dataPayload, properties: obj};
-
-            let mapSavedResult = await props.updateMappingArtifact(dataPayload);
-            if (mapSavedResult) {
-                setErrorInSaving('noError');
-            } else {
-                setErrorInSaving('error');
-            }
-            let mapArt = await props.getMappingArtifactByMapName(dataPayload.targetEntityType,props.mapName);
-            if(mapArt){
-                await setSavedMappingArt({...mapArt})
-            }
-            setMapSaved(mapSavedResult);
+            saveMapping(mapExp);
         }
-
         setMapExpTouched(false);
-
     }
 
 
@@ -335,7 +359,7 @@ const SourceToEntityMap = (props) => {
         confirm();
         if(dataIndex === 'key'){
             setSearchSourceText(selectedKeys[0]);
-            setSearchedSourceColumn(dataIndex); 
+            setSearchedSourceColumn(dataIndex);
         } else {
             setSearchEntityText(selectedKeys[0]);
             setSearchedEntityColumn(dataIndex);
@@ -346,7 +370,7 @@ const SourceToEntityMap = (props) => {
         clearFilters();
         if(dataIndex === 'key'){
             setSearchSourceText('');
-            setSearchedSourceColumn(''); 
+            setSearchedSourceColumn('');
         } else {
             setSearchEntityText('');
             setSearchedEntityColumn('');
@@ -489,6 +513,7 @@ const SourceToEntityMap = (props) => {
             render: (text, row) => (<div className={styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
                 <TextArea
                     id="mapexpression"
+                    data-testid={row.name.split('/').pop()+'-mapexpression'}
                     style={mapExpressionStyle(row.name)}
                     onClick={handleClickInTextArea}
                     value={mapExp[row.name]}
@@ -496,8 +521,12 @@ const SourceToEntityMap = (props) => {
                     onBlur={handleExpSubmit}
                     autoSize={{ minRows: 1 }}
                     disabled={!props.canReadWrite}></TextArea>&nbsp;&nbsp;
-                <i id="listIcon"><FontAwesomeIcon icon={faList} size="lg" className={styles.listIcon}
-                /></i>&nbsp;&nbsp;
+                <span>
+                    <Dropdown overlay={sourceSearchMenu} trigger={['click']} >
+                        <i  id="listIcon"><FontAwesomeIcon icon={faList} size="lg"  data-testid={row.name.split('/').pop()+'-listIcon'}  className={styles.listIcon} onClick={(e) => handleSourceList(row)}/></i>
+                    </Dropdown>
+                </span>
+                &nbsp;&nbsp;
                 <span ><Dropdown overlay={menu} trigger={['click']}><Button id="functionIcon" className={styles.functionIcon} size="small" onClick={(e) => handleFunctionsList(row.name)}>fx</Button></Dropdown></span></div>
                 {checkFieldInErrors(row.name) ? <div id="errorInExp" className={styles.validationErrors}>{displayResp(row.name)}</div> : ''}</div>)
         },
@@ -544,12 +573,11 @@ const SourceToEntityMap = (props) => {
         let mesg = `All changes are saved on ${convertDateFromISO(new Date())}`
         let errorMesg = `An error occured while saving the changes.`
 
-        let msg = <span id="successMessage"><Alert type="success" message={mesg} banner style={saveMessageCSS} /></span>
-        let errorMsg = <span id="errorMessage"><Alert type="error" message={errorMesg} banner style={saveMessageCSS} /></span>
+        let msg = <span data-testid="successMessage" id="successMessage"><Alert type="success" message={mesg} banner style={saveMessageCSS} /></span>
+        let errorMsg = <span  id="errorMessage"><Alert type="error" message={errorMesg} banner style={saveMessageCSS} /></span>
         setTimeout(() => {
             setErrorInSaving('');
         }, 2000);
-
         return errorInSaving === 'noError' ? msg : errorMsg;
 
     };
@@ -608,8 +636,11 @@ const SourceToEntityMap = (props) => {
     /* Insert Function signature in map expressions */
 
     const handleFunctionsList = async (name) => {
-
-        setPropListForDropDown([...Object.keys(props.mapFunctions)]);
+        let funcArr: any[]= [];
+        Object.keys(props.mapFunctions).forEach(element => {
+            funcArr.push({'key':element, 'value':element});
+        });
+        setPropListForDropDown(funcArr);
 
         setPropName(name);
         if (!displaySelectList && !displayFuncMenu) {
@@ -653,7 +684,141 @@ const SourceToEntityMap = (props) => {
             onItemSelect={onFunctionSelect}
             srcData={propListForDropDown}
             propName={propName}
-            handleDropdownMenu={handleFunctionsList} />
+            handleDropdownMenu={handleFunctionsList}/>
+    );
+    /* Insert source field in map expressions */
+
+    const flattenSourceDoc = (sourceData, flatArray, flatArrayKey) => {
+        sourceData.forEach(element =>{
+            let flatArrayVal = element.key;
+            if(!element.children && element.val) {
+                if(!flatArrayKey&& flatArrayKey.indexOf('/') == -1){
+                    flatArray.push({'value':flatArrayVal, 'key':element.key});
+                }
+                else {
+                    flatArray.push({'value':flatArrayVal, 'key':flatArrayKey+ '/'+element.key});
+                }
+            }
+            else{
+                if(!flatArrayKey){
+                    flatArrayKey =element.key
+                }
+                else {
+                    flatArrayKey = flatArrayKey +'/'+ element.key
+                }
+                flatArray.push({'value':flatArrayVal, 'key':flatArrayKey});
+            }
+            if(element.children) {
+                flattenSourceDoc(element.children, flatArray, flatArrayKey);
+                flatArrayKey = (flatArrayKey.indexOf("/")==-1)?'':flatArrayKey.substring(0,flatArrayKey.indexOf("/"))
+            }
+        })
+        return flatArray;
+    }
+
+    const handleSourceList = async (row) => {
+        setSelectedRow(row);
+        let name = row.name;
+        let propList: any = []
+        let indentList:any = []
+        setPropName(name);
+        //flatArray.forEach(element => propList.push(element.key));
+        flatArray.forEach(element => indentList.push(20*(element.key.split('/').length - 1)));
+        setSourcePropListForDropDown(flatArray);
+        setSourceIndentForDropDown(indentList);
+        setSourcePropName(name);
+        if (!displaySourceList && !displaySourceMenu) {
+            setSourceValue('');
+            await setDisplaySourceList(true);
+            await setDisplaySourceMenu(true);
+        }
+        else {
+            await setDisplaySourceList(false);
+            await setDisplaySourceMenu(false);
+        }
+    }
+
+    const insertSource = async  (content, propName) => {
+        if(!mapExp[propName]){
+            mapExp[propName] = '';
+        }
+        let field = content;//.replace(/[^\/]+\:/g, '');
+        if (/(&|>|<|'|"|}|{|\s)/g.test(String(field))) {
+            field = "*[local-name(.)='" + escapeXML(field) + "']";
+        }
+        // Trim context from beginning of fieldName if needed
+        if (sourceContext[propName]) {
+            let len = sourceContext[propName].length;
+            if (field.substring(0, len+1) === sourceContext[propName] + "/") {
+                field = field.slice(len+1);
+            }
+        }
+
+        let newExp = mapExp[propName].substr(0, caretPosition) + field +
+            mapExp[propName].substr(caretPosition, mapExp[propName].length);
+        await setMapExp({ ...mapExp, [propName]: newExp });
+        tempMapExp = Object.assign ({}, mapExp);
+        tempMapExp[propName] = newExp;
+        saveMapping(tempMapExp);
+        setDisplaySourceList(false);
+        setDisplaySourceMenu(false);
+    }
+
+    function escapeXML(input = '') {
+        return input
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/'/g, '&apos;')
+            .replace(/"/g, '&quot;')
+            .replace(/{/g, '&#123;')
+            .replace(/}/g, '&#125;');
+    }
+
+    const saveMapping =  async (mapObject) => {
+        let obj = {};
+        Object.keys(mapObject).map( key => {
+            convertMapExpToMapArt(obj, key, {'sourcedFrom': mapObject[key]});
+        });
+        await getTgtEntityTypesInMap(obj);
+        let {lastUpdated, properties, ...dataPayload} = props.mapData;
+
+        dataPayload = {...dataPayload, properties: obj};
+
+        let mapSavedResult = await props.updateMappingArtifact(dataPayload);
+        tempSourceContext = {};
+        updateSourceContext(mapObject, props.entityTypeProperties);
+        setSourceContext({... tempSourceContext})
+        if (mapSavedResult) {
+            setErrorInSaving('noError');
+        } else {
+            setErrorInSaving('error');
+        }
+        let mapArt = await props.getMappingArtifactByMapName(dataPayload.targetEntityType,props.mapName);
+        if(mapArt){
+            await setSavedMappingArt({...mapArt})
+        }
+        setMapSaved(mapSavedResult);
+    }
+
+
+    const onSourceSelect = (e, name) => {
+        setSourceValue(e);
+        insertSource(e, propName);
+    }
+
+    const sourceSearchMenu = (
+        <DropDownWithSearch
+            displayMenu={displaySourceMenu}
+            setDisplayMenu={setDisplaySourceMenu}
+            setDisplaySelectList={setDisplaySourceList}
+            displaySelectList={displaySourceList}
+            itemValue={sourceValue}
+            onItemSelect={onSourceSelect}
+            srcData={sourcePropListForDropDown}
+            propName={sourcePropName}
+            handleDropdownMenu={handleSourceList}
+            indentList = {sourceIndentForDropDown}/>
     );
 
     const splitPaneStyles= {
@@ -679,7 +844,7 @@ const SourceToEntityMap = (props) => {
           setColOptMenuVisible(false);
         }
     };
-    
+
     const handleColOptMenuVisibleChange = flag => {
         setColOptMenuVisible(flag);
     };
@@ -820,7 +985,7 @@ const SourceToEntityMap = (props) => {
                             scroll={{  x: 'max-content', y: '60vh' }}
                             expandIcon={(props) => customExpandIcon(props)}
                             indentSize={14}
-                            defaultExpandAllRows={true}        
+                            defaultExpandAllRows={true}
                             columns={getColumnsForEntityTable()}
                             dataSource={props.entityTypeProperties}
                             tableLayout="unset"

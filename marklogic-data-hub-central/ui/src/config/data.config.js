@@ -58,7 +58,7 @@ const loadData = {
   createLoadDataArtifact: jest.fn(),
   canReadWrite: true,
   canReadOnly: false,
-   
+
 };
 
 const xmlSourceData = [
@@ -117,16 +117,22 @@ const mapProps = {
     sourceQuery: "cts.collectionQuery([''])",
     properties: {
       propId: {  sourcedFrom: 'id' },
-      propName: {sourcedFrom: 'testNameInExp'}
+      propName: {sourcedFrom: 'testNameInExp'},
+      items:{ sourcedFrom: "",
+      properties:
+        { itemTypes : {  sourcedFrom: "" }},
+        targetEntityType: "#/definitions/ItemType"
+        }
     }
   },
+  tgtEntityReferences: {"items":"#/definitions/ItemType"},
   namespaces: {
     nutFree: 'http://namespaces/nutfree',
     withNuts: 'http://namespaces/withNuts'
   },
   mapName: 'testMap',
   getMappingArtifactByMapName: jest.fn(),
-  updateMappingArtifact: jest.fn(),
+  updateMappingArtifact: jest.fn(() => Promise.resolve({ status: 200, data: {} })),
   mappingVisible:  false,
   setMappingVisible: true,
   fetchSrcDocFromUri: jest.fn(),
@@ -188,7 +194,7 @@ const dropDownWithSearch = {
   setDisplayMenu: jest.fn(),
   displaySelectList: true,
   displayMenu: true,
-  srcData: [ 'id', 'name', 'avg', 'memoryLookUp' ]
+  srcData: [ {key:'id', value:'id'}, {key:'name', value:'name'}]
 };
 
 const data = {
