@@ -19,7 +19,6 @@ const EditQueryDialog = (props) => {
             if (props.query.savedQuery.hasOwnProperty('description')) {
                 setQueryDescription(props.query.savedQuery.description);
             }
-
         } else {
             setQueryNameTouched(false);
             setQueryDescriptionTouched(false);
@@ -98,7 +97,6 @@ const EditQueryDialog = (props) => {
                         labelAlign="left"
                         validateStatus={queryName.length === 0 ? 'error' : ''}
                         help={queryName.length === 0 ? 'Query Name is required' : ''}
-
                     >
                         <Input
                             id="name"
