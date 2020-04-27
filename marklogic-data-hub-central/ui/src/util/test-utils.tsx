@@ -1,5 +1,5 @@
-const validateMappingTableRow = (dataTable, rowValue1, rowValue2, rowValue3, rowValue4, colName) => {
-    let rowKey = 1;
+const validateMappingTableRow = (dataTable, {...rowValue}, colName) => {
+    let rowKey = 0;
     dataTable.forEach(item => {
         let att: any = item.getAttribute('data-row-key') ? item.getAttribute('data-row-key') : '{}';
         let row = JSON.parse(att);
@@ -18,19 +18,20 @@ const validateMappingTableRow = (dataTable, rowValue1, rowValue2, rowValue3, row
                 keyCol = row.val;
             }
         }
-        if (rowKey === 1) {
-            expect(keyCol).toBe(rowValue1);
-        } else if (rowKey === 2) {
-            expect(keyCol).toBe(rowValue2);
-        } else if (rowKey === 3) {
-            expect(keyCol).toBe(rowValue3);
-        } else {
-            expect(keyCol).toBe(rowValue4);
-        }
-        rowKey = rowKey + 1;
+        expect(keyCol).toBe(rowValue[rowKey])
+        rowKey++;
     });
 }
 
+const onClosestTableRow:any = command => command.closest('tr');
+const onClosestTableBody:any = command => command.closest('tbody');
+const onClosestTable:any = command => command.closest('table');
+const onClosestDiv:any = command => command.closest('div');
+
 export {
-    validateMappingTableRow
+    validateMappingTableRow,
+    onClosestTableRow,
+    onClosestTableBody,
+    onClosestTable,
+    onClosestDiv
 }

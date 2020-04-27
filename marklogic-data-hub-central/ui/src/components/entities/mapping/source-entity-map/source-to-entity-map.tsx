@@ -195,13 +195,13 @@ const SourceToEntityMap = (props) => {
     }
 
     const navigationButtons = <span className={styles.navigate_source_uris}>
-        <Button className={styles.navigate_uris_left} onClick={() => onNavigateURIList(uriIndex - 1)} disabled={props.disableURINavLeft}>
+        <Button className={styles.navigate_uris_left} data-testid="navigate-uris-left" onClick={() => onNavigateURIList(uriIndex - 1)} disabled={props.disableURINavLeft}>
             <Icon type="left" className={styles.navigateIcon} />
         </Button>
         &nbsp;
         <div className={styles.URI_Index}><p>{uriIndex + 1}</p></div>
         &nbsp;
-        <Button className={styles.navigate_uris_right} onClick={() => onNavigateURIList(uriIndex + 1)} disabled={props.disableURINavRight}>
+        <Button className={styles.navigate_uris_right} data-testid="navigate-uris-right" onClick={() => onNavigateURIList(uriIndex + 1)} disabled={props.disableURINavRight}>
             <Icon type="right" className={styles.navigateIcon} />
         </Button>
     </span>
@@ -316,7 +316,7 @@ const SourceToEntityMap = (props) => {
 
     const handleExpSubmit = async () => {
         if (mapExpTouched) {
-            saveMapping(mapExp);
+           await saveMapping(mapExp);
         }
         setMapExpTouched(false);
     }
@@ -528,7 +528,7 @@ const SourceToEntityMap = (props) => {
                 </span>
                 &nbsp;&nbsp;
                 <span ><Dropdown overlay={menu} trigger={['click']}><Button id="functionIcon" className={styles.functionIcon} size="small" onClick={(e) => handleFunctionsList(row.name)}>fx</Button></Dropdown></span></div>
-                {checkFieldInErrors(row.name) ? <div id="errorInExp" className={styles.validationErrors}>{displayResp(row.name)}</div> : ''}</div>)
+                {checkFieldInErrors(row.name) ? <div id="errorInExp" data-testid={row.name+'-expErr'} className={styles.validationErrors}>{displayResp(row.name)}</div> : ''}</div>)
         },
         {
             title: 'Value',
@@ -537,7 +537,7 @@ const SourceToEntityMap = (props) => {
             width: '20%',
             ellipsis: true,
             sorter: (a: any, b: any) => getDataForValueField(a.name)?.localeCompare(getDataForValueField(b.name)),
-            render: (text, row) => (<div className={styles.mapValue}><Tooltip title={getDataForValueField(row.name)}>{getDataForValueField(row.name)}</Tooltip></div>)
+            render: (text, row) => (<div data-testid={row.name.split('/').pop()+'-value'} className={styles.mapValue}><Tooltip title={getDataForValueField(row.name)}>{getInitialChars(getDataForValueField(row.name),25,'...')}</Tooltip></div>)
         }
     ]
 
@@ -672,7 +672,7 @@ const SourceToEntityMap = (props) => {
     const onFunctionSelect = (e, name) => {
         setFunctionValue(e);
         insertContent(functionsDef(e), propName);
-    }
+    }   
 
     const menu = (
         <DropDownWithSearch
@@ -910,7 +910,7 @@ const SourceToEntityMap = (props) => {
                         Clear
                     </Button>
                 &nbsp;&nbsp;
-                <Button id="Test-btn" mat-raised-button type="primary" disabled={emptyData} onClick={() => getMapValidationResp(srcURI)}>
+                <Button id="Test-btn" mat-raised-button type="primary" disabled={emptyData || mapExpTouched} onClick={() => getMapValidationResp(srcURI)}>
                         Test
                     </Button>
             </span>
