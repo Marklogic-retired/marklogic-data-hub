@@ -1,0 +1,9 @@
+{
+  "user-name": "bertrand",
+  "description": "Bertrand is a Business Analyst",
+  "password": "%%testPassword%%",
+  "role": [
+    "data-hub-operator",
+    "hub-central-entity-exporter"
+  ]
+}
