@@ -222,4 +222,29 @@ public class MappingControllerTest extends AbstractHubCentralTest {
         assertTrue(result.get("current-dateTime") != null, "Should have function 'current-dateTime'");
         assertTrue(result.get("fn:sum") == null, "'fn:' has been stripped from the function name and signature");
     }
+
+    /**
+     * Verifies that the structured properties of Customer - Address and Zip - are merged into the Customer to make
+     * life easy for the mapping tool.
+     */
+    @Test
+    void getEntityForMapping() {
+        installReferenceModelProject();
+
+        JsonNode customer = controller.getEntityForMapping("Customer");
+        JsonNode properties = customer.get("definitions").get("Customer").get("properties");
+
+        JsonNode shipping = properties.get("shipping");
+        assertTrue(shipping.has("subProperties"), "shipping should be expanded to include the Address properties");
+        JsonNode shippingProperties = shipping.get("subProperties");
+        assertEquals("string", shippingProperties.get("street").get("datatype").asText());
+        assertEquals("string", shippingProperties.get("city").get("datatype").asText());
+        assertEquals("string", shippingProperties.get("state").get("datatype").asText());
+
+        JsonNode zip = shipping.get("subProperties").get("zip");
+        assertTrue(zip.has("subProperties"), "zip should be expanded to include the Zip properties");
+        JsonNode zipProperties = zip.get("subProperties");
+        assertEquals("string", zipProperties.get("fiveDigit").get("datatype").asText());
+        assertEquals("string", zipProperties.get("plusFour").get("datatype").asText());
+    }
 }

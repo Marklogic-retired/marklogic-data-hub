@@ -13,8 +13,9 @@ const getSettingsArtifact = async (activityType,artifactName) => {
 }
 
 const getNestedEntities = async (entityTypeTitle) => {
-    console.log(`GET /api/entities/${entityTypeTitle}?extendSubEntities=true`);
-    let response = await axios.get(`/api/entities/${entityTypeTitle}?extendSubEntities=true`);
+    const path = `/api/artifacts/mapping/entity/${entityTypeTitle}`;
+    console.log(`GET ${path}`);
+    let response = await axios.get(path);
     return response;
 }
 

@@ -7,7 +7,12 @@
     "type": "object",
     "properties": {
       "entityName": {
-        "type": "string"
+        "type": "string",
+        "description": "Corresponds to the value of info.title in the model"
+      },
+      "entityTypeId": {
+        "type": "string",
+        "description": "Unique identifier for an entity type that combines the entity name, base URI, and version number"
       },
       "entityInstanceCount": {
         "type": "number"
