@@ -69,7 +69,7 @@ const EditQueryDialog = (props) => {
 
         if (status.code === 200) {
             props.setEditModalVisibility(false);
-            props.setQueryName(queryName);
+            props.setCurrentQueryName(queryName);
         }
     }
 

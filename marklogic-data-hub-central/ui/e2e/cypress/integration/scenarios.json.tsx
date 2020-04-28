@@ -126,29 +126,6 @@ describe('json scenario on browse documents page', () => {
     browsePage.clearFacetSearchSelection('Person');
   });
 
-   it('apply facet search,open save modal, save queries and show save query dropdown', () => {
-     browsePage.selectEntity('Customer');
-     browsePage.getSelectedEntity().should('contain', 'Customer');
-     cy.wait(500);
-     browsePage.getFacetItemCheckbox('firstname', 'Kelley').click();
-     browsePage.getFacetItemCheckbox('firstname', 'Lara').click();
-     browsePage.getSelectedFacets().should('exist');
-     browsePage.getGreySelectedFacets('Kelley').should('exist');
-     browsePage.getFacetApplyButton().should('exist');
-     browsePage.getFacetApplyButton().click();
-     browsePage.getSaveModalIcon().click();
-     cy.wait(500);
-     browsePage.getSaveQueryName().should('be.visible');
-     browsePage.getSaveQueryName().type('new query');
-     browsePage.getSaveQueryDescription().should('be.visible');
-     browsePage.getSaveQueryDescription().type('new query description');
-     browsePage.getSaveQueryButton().click();
-     cy.wait(500);
-     browsePage.getSaveQueryButton().should('not.be.visible');
-     browsePage.getSaveQueriesDropdown().should('be.visible');
-     browsePage.getSaveQueriesDropdown().click();
-   });
-
   it('apply facet search and clear individual grey facet', () => {
      browsePage.selectEntity('All Entities');
      browsePage.getSelectedEntity().should('contain', 'All Entities');

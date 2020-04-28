@@ -12,6 +12,11 @@ describe("<SaveQueryDropdown/>", () => {
             savedQueryList={[]}
             greyFacets= {[]}
             toggleApply={jest.fn()}
+            currentQueryName={''}
+            setCurrentQueryName={jest.fn()}
+            setCurrentQueryFn={jest.fn()}
+            currentQuery={{}}
+            setSaveNewIconVisibility={jest.fn()}
         />)
 
         expect(getByTitle("select a query")).toBeInTheDocument();

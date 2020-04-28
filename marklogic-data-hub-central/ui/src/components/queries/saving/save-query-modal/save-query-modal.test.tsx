@@ -1,5 +1,5 @@
 import React from 'react';
-import {fireEvent, render } from "@testing-library/react";
+import {fireEvent, render, wait } from "@testing-library/react";
 import SaveQueryModal from './save-query-modal';
 
 describe("<SaveQueryModal/>", () => {
@@ -14,6 +14,9 @@ describe("<SaveQueryModal/>", () => {
                 {constraint: "lastname", facet: "Coleman", displayName: ''}]}
             toggleApply= {jest.fn()}
             toggleApplyClicked={jest.fn()}
+            currentQueryName= {''}
+            setCurrentQueryName={jest.fn()}
+            setSaveNewIconVisibility={jest.fn()}
         />)
         queryField = getByPlaceholderText("Enter query name");
         fireEvent.change(queryField, { target: {value: 'save new query'} });
@@ -22,5 +25,4 @@ describe("<SaveQueryModal/>", () => {
         expect(queryField).toHaveAttribute('value', 'save new query');
         expect(queryDescription).toHaveAttribute('value', 'save query description');
     });
-
 });

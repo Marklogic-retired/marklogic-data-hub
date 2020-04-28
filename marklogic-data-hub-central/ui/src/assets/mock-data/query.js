@@ -40,7 +40,7 @@ export const getQueriesResponse = [
     }
   }]
 
-//save query
+//save new query
 export const saveQueryResponse =
   {
     "savedQuery": {
