@@ -83,7 +83,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
       setEnvironment();
     }
     let session = await axios('/api/info');
-    sessionCount = parseInt(session.data['session.timeout']);
+    sessionCount = parseInt(session.data['sessionTimeout']);
 
     localStorage.setItem('dataHubUser', username);
     localStorage.setItem('dhIsInstalled', authResponse.isInstalled);

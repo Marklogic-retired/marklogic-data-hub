@@ -53,6 +53,9 @@ repositories {
 dependencies {
     compile project(":marklogic-data-hub")
 
+    compile "io.springfox:springfox-swagger2:2.9.2"
+    compile 'io.springfox:springfox-swagger-ui:2.9.2'
+
     // Main dependency for a Spring Boot web application
     compile "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
 

@@ -1,6 +1,5 @@
 package com.marklogic.hub.central.controllers.environment;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.ArtifactManager;
 import com.marklogic.hub.artifact.ArtifactTypeInfo;
 import com.marklogic.hub.central.AbstractHubCentralTest;
@@ -44,17 +43,17 @@ public class EnvironmentControllerTest extends AbstractHubCentralTest {
 
     @Test
     void testGetProjectInfo() {
-        JsonNode resp = environmentController.getProjectInfo();
-        assertNotNull(resp);
-        assertNotNull(resp.get("dataHubVersion"));
-        assertNotNull(resp.get("projectName"));
-        assertNotNull(resp.get("marklogicVersion"));
+        EnvironmentController.ProjectInfo info = environmentController.getProjectInfo();
+        assertNotNull(info);
+        assertNotNull(info.dataHubVersion);
+        assertNotNull(info.projectName);
+        assertNotNull(info.marklogicVersion);
     }
 
     @Test
     public void getInfo() {
         String expectedTimeout = environment.getProperty("server.servlet.session.timeout");
-        String actualTimeout = Objects.requireNonNull(environmentController.getInfo().getBody()).get("session.timeout");
+        String actualTimeout = Objects.requireNonNull(environmentController.getInfo().sessionTimeout);
         assertEquals(expectedTimeout, actualTimeout);
     }
 }

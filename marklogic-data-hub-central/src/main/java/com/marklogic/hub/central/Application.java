@@ -23,9 +23,14 @@ import org.springframework.boot.web.server.ErrorPage;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.Set;
 import java.util.stream.Stream;
@@ -39,14 +44,30 @@ import java.util.stream.Stream;
  * Hub Central beans should depend on HubClient instead, as Hub Central is expected to have a session-scoped
  * implementation of this interface.
  */
-@ComponentScan(basePackages = "com.marklogic.hub.central")
 @SpringBootApplication
+@EnableSwagger2
+@ComponentScan(basePackages = "com.marklogic.hub.central")
 public class Application {
 
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(Application.class);
         app.setBannerMode(Banner.Mode.OFF);
         app.run(args);
+    }
+
+    /**
+     * Configures the swagger-ui.html endpoint via springfox.
+     *
+     * @return
+     */
+    @Bean
+    public Docket swaggerUiConfiguration() {
+        return new Docket(DocumentationType.SWAGGER_2)
+            .select()
+            .apis(RequestHandlerSelectors.basePackage("com.marklogic.hub.central.controllers"))
+            .apis(RequestHandlerSelectors.withClassAnnotation(Controller.class))
+            .paths(PathSelectors.any())
+            .build();
     }
 
     @Bean
