@@ -123,7 +123,7 @@ describe('json scenario on browse documents page', () => {
     browsePage.getTotalDocuments().should('be.equal', 6);
     browsePage.getClearAllButton().should('exist');
     browsePage.getFacetSearchSelectionCount('collection').should('contain', '1');
-    browsePage.clearFacetSearchSelection('collection');
+    browsePage.clearFacetSearchSelection('Person');
   });
 
    it('apply facet search,open save modal, save queries and show save query dropdown', () => {
@@ -323,6 +323,28 @@ describe('json scenario for table on browse documents page', () => {
     browsePage.getTableViewSourceIcon().click();
     detailPage.getSourceView().click();
     detailPage.getDocumentJSON().should('exist');
+  });
+
+  it('search for multiple facets, switch to snippet view, delete a facet, switch to table view, verify search query', () => {
+    browsePage.selectEntity('Customer');
+    browsePage.getSelectedEntity().should('contain', 'Customer');
+    cy.wait(500);
+    browsePage.getFacetItemCheckbox('firstname', 'Kelley').click();
+    browsePage.getFacetItemCheckbox('lastname', 'Oneal').click();
+    browsePage.getSelectedFacets().should('exist');
+    browsePage.getGreySelectedFacets('Kelley').should('exist');
+    browsePage.getFacetApplyButton().click();
+    browsePage.getFacetView();
+    cy.wait(500);
+    browsePage.getClearFacetSearchSelection('Kelley').should('contain', 'firstname: Kelley');
+    browsePage.getClearFacetSearchSelection('Oneal').should('exist');
+    browsePage.getTotalDocuments().should('be.equal', 0);
+    browsePage.clearFacetSearchSelection('Kelley')
+    cy.wait(500);
+    browsePage.getTableView();
+    cy.wait(200);
+    browsePage.getClearFacetSearchSelection('Oneal').should('exist');
+    browsePage.getTotalDocuments().should('be.equal', 2);
   });
 
 });

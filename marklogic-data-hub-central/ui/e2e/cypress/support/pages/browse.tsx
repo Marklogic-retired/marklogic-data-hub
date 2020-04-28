@@ -105,8 +105,12 @@ class BrowsePage {
     return this.getFacetItem(facet, str).find('[data-cy=' + facet + '-facet-item-count]');
   }
 
+  getClearFacetSearchSelection(facet: string) {
+    return cy.get('[data-cy=clear-' + facet + ']');
+  }
+
   clearFacetSearchSelection(facet: string) {
-    return cy.get('[data-cy=' + facet + '-clear]').click();
+    return cy.get('[data-cy=clear-' + facet +']').click();
   }
 
   getFacetSearchSelectionCount(facet: string) {

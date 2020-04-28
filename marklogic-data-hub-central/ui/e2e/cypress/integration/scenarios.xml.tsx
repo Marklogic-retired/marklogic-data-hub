@@ -121,7 +121,7 @@ describe('xml scenario on browse documents page', () => {
     browsePage.getTotalDocuments().should('be.equal', 6);
     browsePage.getClearAllButton().should('exist');
     browsePage.getFacetSearchSelectionCount('collection').should('contain', '1');
-    browsePage.clearFacetSearchSelection('collection');
+    browsePage.clearFacetSearchSelection('PersonXML');
   });
 
   it('apply facet search and clear individual grey facet', () => {

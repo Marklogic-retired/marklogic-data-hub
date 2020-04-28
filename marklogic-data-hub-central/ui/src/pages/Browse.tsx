@@ -30,7 +30,6 @@ const Browse: React.FC<Props> = ({ location }) => {
   const {
     user,
     handleError,
-    setTableView,
     resetSessionTime
   } = useContext(UserContext);
   const {
@@ -47,14 +46,11 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [facets, setFacets] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [totalDocuments, setTotalDocuments] = useState(0);
-  const [active, setIsActive] = useState(user.tableView);
-  const [snippetActive, setIsSnippetActive] = useState(!user.tableView);
+  const [tableView, toggleTableView] = useState(true);
   const [endScroll, setEndScroll] = useState(false);
   const [collapse, setCollapsed] = useState(false);
   const [selectedFacets, setSelectedFacets] = useState<any[]>([]);
   const [greyFacets, setGreyFacets] = useState<any[]>([]);
-
-  let sessionCount = 0;
 
   const getEntityModel = async () => {
     try {
@@ -131,19 +127,6 @@ const Browse: React.FC<Props> = ({ location }) => {
     }
   }, [searchOptions, entities, user.error.type]);
 
-
-  const tableSwitch = () => {
-    setIsActive(true);
-    setIsSnippetActive(false);
-    setTableView(true)
-  };
-
-  const snippetSwitch = () => {
-    setIsActive(false);
-    setIsSnippetActive(true);
-    setTableView(false)
-  };
-
   const handleUserPreferences = () => {
     let preferencesObject = {
       query: {
@@ -151,7 +134,8 @@ const Browse: React.FC<Props> = ({ location }) => {
         entityTypeIds: searchOptions.entityTypeIds,
         selectedFacets: searchOptions.selectedFacets
       },
-      pageLength: searchOptions.pageLength
+      pageLength: searchOptions.pageLength,
+      tableView: tableView
     }
     updateUserPreferences(user.name, preferencesObject);
 
@@ -231,14 +215,14 @@ const Browse: React.FC<Props> = ({ location }) => {
               <div className={styles.spinViews}>
                 { isLoading && <Spin className={styles.overlay}/>}
                 <div className={styles.switchViews}>
-                <div className={snippetActive ? styles.toggled : styles.toggleView}
+                <div className={!tableView ? styles.toggled : styles.toggleView}
                   data-cy="facet-view" id={'snippetView'}
-                  onClick={() => snippetSwitch()}>
+                  onClick={() => toggleTableView(false)}>
                   <Tooltip title={'Snippet View'}><FontAwesomeIcon icon={faStream} size="lg" /></Tooltip>
                 </div>
-                <div className={active ? styles.toggled : styles.toggleView}
+                <div className={tableView ? styles.toggled : styles.toggleView}
                   data-cy="table-view" id={'tableView'}
-                  onClick={() => tableSwitch()}>
+                  onClick={() => toggleTableView(true)}>
                   <Tooltip title={'Table View'}><FontAwesomeIcon className={styles.tableIcon} icon={faTable} size="lg" /></Tooltip>
                 </div>
                 </div>
@@ -246,7 +230,7 @@ const Browse: React.FC<Props> = ({ location }) => {
               <Query setIsLoading={setIsLoading} entities={entities} selectedFacets={selectedFacets} greyFacets={greyFacets} />
             </div>
             <div className={styles.fixedView} >
-            {user.tableView ?
+            {tableView ?
               <div>
                 <ResultTable
                   data={data}
