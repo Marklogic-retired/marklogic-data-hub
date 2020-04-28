@@ -1,20 +1,22 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {Modal, Form, Input, Radio, Button} from 'antd';
 import {SearchContext} from "../../../../util/search-context";
-import styles from './save-query-modal.module.scss';
+import styles from '../save-query-modal/save-query-modal.module.scss';
+import axios from 'axios';
+import {UserContext} from "../../../../util/user-context";
 
 interface Props {
-    setSaveModalVisibility: () => void;
-    saveNewQuery: (queryName: string, queryDescription: string,facets:{}) => void;
+    setSaveChangesModalVisibility: () => void;
     greyFacets:any[];
     toggleApply: (clicked:boolean) => void;
     toggleApplyClicked: (clicked:boolean) => void;
+    setSaveNewIconVisibility: (clicked:boolean) => void;
+    currentQuery: any
     currentQueryName: string;
     setCurrentQueryName: (name: string) => void;
-    setSaveNewIconVisibility: (clicked:boolean) => void;
 }
 
-const SaveQueryModal: React.FC<Props> = (props) => {
+const SaveChangesModal: React.FC<Props> = (props) => {
 
     const {
         clearAllGreyFacets,
@@ -22,6 +24,12 @@ const SaveQueryModal: React.FC<Props> = (props) => {
         setAllSearchFacets,
         searchOptions,
     } = useContext(SearchContext);
+
+    const {
+        handleError,
+        resetSessionTime
+    } = useContext(UserContext);
+
 
     const [queryName, setQueryName] = useState('');
     const [queryDescription, setQueryDescription] = useState('');
@@ -34,16 +42,26 @@ const SaveQueryModal: React.FC<Props> = (props) => {
     };
 
     const onCancel = () => {
-        props.setSaveModalVisibility();
+        props.setSaveChangesModalVisibility();
     }
 
-    const onOk = () => {
+    useEffect(() => {
+        if (props.currentQuery && JSON.stringify(props.currentQuery) != JSON.stringify({}) && props.currentQuery.hasOwnProperty('savedQuery') && props.currentQuery.savedQuery.hasOwnProperty('name')) {
+            setQueryName(props.currentQuery.savedQuery.name);
+            if (props.currentQuery.savedQuery.hasOwnProperty('description')) {
+                setQueryDescription(props.currentQuery.savedQuery.description);
+            }
+        }
+    }, [props.currentQuery]);
+
+    const onOk = async (queryName, queryDescription, currentQuery) => {
         let facets = {...searchOptions.selectedFacets}
         switch(radioOptionClicked) {
             case 1:
-                setAllSearchFacets(searchOptions.selectedFacets);
-                setAllSearchFacets(greyedOptions.selectedFacets);
+               // setAllSearchFacets(searchOptions.selectedFacets);
+               // setAllSearchFacets(greyedOptions.selectedFacets);
                 facets = {...facets,...greyedOptions.selectedFacets};
+                setAllSearchFacets(facets)
                 clearAllGreyFacets();
                 props.toggleApplyClicked(true);
                 props.toggleApply(false);
@@ -55,12 +73,25 @@ const SaveQueryModal: React.FC<Props> = (props) => {
                 props.toggleApplyClicked(true);
                 props.toggleApply(false);
         }
-
-        if(queryName.length > 0 && queryName.trim().length !== 0){
-            props.saveNewQuery(queryName, queryDescription, facets);
-            props.setSaveNewIconVisibility(false);
-            props.setSaveModalVisibility();
-
+        if (queryName.length > 0 && queryName.trim().length !== 0) {
+            currentQuery.savedQuery.name = queryName;
+            currentQuery.savedQuery.description = queryDescription;
+            if(currentQuery.hasOwnProperty('savedQuery') && currentQuery.savedQuery.hasOwnProperty('query')){
+                currentQuery.savedQuery.query.selectedFacets = facets;
+                currentQuery.savedQuery.query.searchText = searchOptions.query;
+                currentQuery.savedQuery.query.entityTypeIds = searchOptions.entityTypeIds;
+            }
+            try {
+                //const response = await updateQuery(currentQuery);
+                const response = await axios.put(`/api/entitySearch/savedQueries`, currentQuery);
+                if (response.data) {
+                    props.setSaveChangesModalVisibility()
+                }
+            } catch (error) {
+                handleError(error);
+            } finally {
+                resetSessionTime();
+            }
         } else {
             isQueryEmpty('error')
         }
@@ -68,11 +99,11 @@ const SaveQueryModal: React.FC<Props> = (props) => {
     }
 
     const handleChange = (event) => {
-        if (event.target.id === 'save-query-name') {
-           setQueryName(event.target.value);
+        if (event.target.id === 'save-changes-query-name') {
+            setQueryName(event.target.value);
         }
-        if (event.target.id === 'save-query-description') {
-           setQueryDescription(event.target.value);
+        if (event.target.id === 'save-changes-query-description') {
+            setQueryDescription(event.target.value);
         }
     }
 
@@ -87,7 +118,6 @@ const SaveQueryModal: React.FC<Props> = (props) => {
             title={'Save Query'}
             closable={true}
             onCancel={() => onCancel()}
-            onOk={() => onOk()}
             maskClosable={true}
             footer={null}
         >
@@ -105,7 +135,7 @@ const SaveQueryModal: React.FC<Props> = (props) => {
                     help={ queryEmpty === 'error' ? 'Query name is required' : ''}
                 >
                     <Input
-                        id="save-query-name"
+                        id="save-changes-query-name"
                         value={queryName}
                         placeholder={'Enter query name'}
                         onChange={handleChange}
@@ -117,7 +147,7 @@ const SaveQueryModal: React.FC<Props> = (props) => {
                     labelAlign="left"
                 >
                     <Input
-                        id="save-query-description"
+                        id="save-changes-query-description"
                         value={queryDescription}
                         onChange={handleChange}
                         placeholder={'Enter query description'}
@@ -141,7 +171,7 @@ const SaveQueryModal: React.FC<Props> = (props) => {
                         <Button type="primary"
                                 htmlType="submit"
                                 disabled={queryName.length === 0}
-                                onClick={()=> onOk()} id='save-query-button'>Save
+                                onClick={()=> onOk(queryName, queryDescription, props.currentQuery)} id='edit-save-changes-button'>Save
                         </Button>
                     </div>
                 </Form.Item>
@@ -150,6 +180,6 @@ const SaveQueryModal: React.FC<Props> = (props) => {
     )
 }
 
-export default SaveQueryModal;
+export default SaveChangesModal;
 
 

@@ -1,4 +1,4 @@
-import {Select} from "antd"
+import {Select, Input} from "antd"
 import React, {useContext, useEffect, useState} from 'react';
 import styles from './save-queries-dropdown.module.scss';
 import { UserContext } from "../../../../util/user-context";
@@ -10,8 +10,11 @@ interface Props {
     savedQueryList: any[];
     toggleApply: (clicked:boolean) => void;
     greyFacets: any[];
-    queryName: string;
-    setQueryName: (name: string) => void;
+    currentQueryName: string;
+    setCurrentQueryName: (name: string) => void;
+    setCurrentQueryFn: (query:object) => void;
+    currentQuery: any;
+    setSaveNewIconVisibility:(visibility:boolean)=> void;
 };
 
 
@@ -27,7 +30,8 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
         applySaveQuery,
         clearAllGreyFacets,
         searchOptions,
-        setSelectedQuery
+        setSelectedQuery,
+        setAllSearchFacets
     } = useContext(SearchContext);
 
     const savedQueryOptions = props.savedQueryList.map((key) => key.savedQuery.name);
@@ -38,8 +42,8 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
 
     const onItemSelect = (e) => {
         setSelectedQuery(e)
-        props.setQueryName(e)
-        
+        props.setCurrentQueryName(e)
+
         for(let key of props.savedQueryList)
         {
             if(key.savedQuery.name === e){
@@ -47,11 +51,12 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
                 break;
             }
         }
+        props.setSaveNewIconVisibility(false)
     }
 
     useEffect(() => {
-        if (props.queryName !== searchOptions.selectedQuery) {
-            setSelectedQuery(props.queryName)
+        if (props.currentQueryName !== searchOptions.selectedQuery) {
+            setSelectedQuery(props.currentQueryName)
         }
     });
 
@@ -66,9 +71,11 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
                 entityTypeIds = response.data.savedQuery.query.entityTypeIds;
                 selectedFacets = response.data.savedQuery.query.selectedFacets;
                 applySaveQuery(searchText, entityTypeIds, selectedFacets);
+                props.setCurrentQueryFn(key);
                 if(props.greyFacets.length > 0){
                     clearAllGreyFacets();
                 }
+                setAllSearchFacets(selectedFacets);
                 props.toggleApply(false);
             }
         } catch (error) {
@@ -77,6 +84,7 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
             resetSessionTime()
         }
     }
+
 
     return (
         <Select

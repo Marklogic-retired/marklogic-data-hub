@@ -8,6 +8,7 @@ import EditQueryDialog from '../edit-query-dialog/edit-query-dialog'
 import { SearchContext } from '../../../../util/search-context';
 import styles from './manage-query.module.scss';
 import { fetchQueries, updateQuery, removeQuery } from '../../../../api/queries'
+import axios from "axios";
 
 
 const QueryModal = (props) => {
@@ -40,8 +41,8 @@ const QueryModal = (props) => {
 
     const editQuery = async (query) => {
         try {
-            const response = await updateQuery(query);
-
+            //const response = await updateQuery(query);
+            const response = await axios.put(`/api/entitySearch/savedQueries`, query);
             if (response.data) {
                 props.setQueries(response.data);
                 return { code: response.status };
@@ -94,7 +95,7 @@ const QueryModal = (props) => {
         props.queries && props.queries.length > 0 && props.queries.forEach(query => {
             if (e.currentTarget.dataset.id === query['savedQuery']['name']) {
                 applyQuery(query['savedQuery']['query']['searchText'], query['savedQuery']['query']['entityTypeIds'], query['savedQuery']['query']['selectedFacets'])
-                props.setQueryName(query['savedQuery']['name'])
+                props.setCurrentQueryName(query['savedQuery']['name'])
             }
         })
         setMainModalVisibility(false)
@@ -187,7 +188,7 @@ const QueryModal = (props) => {
         width={300}
         maskClosable={false}
     >
-        <span style={{ fontSize: '16px' }}>Are you sure you want to delete '{props.queryName}'?</span>
+        <span style={{ fontSize: '16px' }}>Are you sure you want to delete '{props.currentQueryName}'?</span>
     </Modal>;
 
     return (
@@ -209,7 +210,7 @@ const QueryModal = (props) => {
                                 props.queries.forEach((query) => {
                                     if (query['savedQuery']['id'] === record.key) {
                                         setQuery(query);
-                                        props.setQueryName(record.name);
+                                        props.setCurrentQueryName(record.name);
                                     }
                                 })
                             }
@@ -217,7 +218,14 @@ const QueryModal = (props) => {
                     }}>
                 </Table>
             </Modal>
-            <EditQueryDialog queryName={props.queryName} setQueryName={props.setQueryName} query={query} editQuery={editQuery} getQueries={getQueries} editModalVisibility={editModalVisibility} setEditModalVisibility={setEditModalVisibility} />
+            <EditQueryDialog
+                currentQueryName={props.currentQueryName}
+                setCurrentQueryName={props.setCurrentQueryName}
+                query={query}
+                editQuery={editQuery}
+                getQueries={getQueries}
+                editModalVisibility={editModalVisibility}
+                setEditModalVisibility={setEditModalVisibility} />
             {deleteConfirmation}
         </div>
     )

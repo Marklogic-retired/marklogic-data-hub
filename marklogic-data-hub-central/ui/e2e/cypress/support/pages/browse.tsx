@@ -130,6 +130,10 @@ class BrowsePage {
     return cy.get('#selected-facets [data-cy=clear-grey-' + facet +']');
   }
 
+  getAppliedFacets(facet: string){
+    return cy.get('#selected-facets [data-cy=clear-' + facet +']');
+  }
+
   getClearGreyFacets(){
     return cy.get('[data-cy=clear-all-grey-button]');
   }
@@ -266,7 +270,31 @@ class BrowsePage {
     return cy.get('#dropdownList');
   }
 
-  //temp query icon
+  getEditQueryModalIcon() {
+    return cy.get('svg[data-icon="pencil-alt"]')
+  }
+
+  getSaveACopyModalIcon() {
+    return cy.get('svg[data-icon="copy"]')
+  }
+
+  getEditQueryDetailDesc(){
+    return cy.get('#edit-query-detail-description');
+  }
+
+  getEditQueryDetailButton(){
+      return cy.get('#edit-query-detail-button');
+  }
+
+  getRadioOptionSelected(){
+      return cy.get('[type="radio"]').first().check();
+  }
+
+  getEditSaveChangesButton(){
+      return cy.get('#edit-save-changes-button')
+  }
+
+    //temp query icon
   getManageQueriesIcon(){
     return cy.get('[data-testid=manage-queries-modal-icon]');
   }

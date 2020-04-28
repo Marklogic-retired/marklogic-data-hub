@@ -28,7 +28,7 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.selectEntity('All Entities');
     });
 
-    it('apply facet search,open save modal and save queries', () => {
+    it('apply facet search,open save modal, save new query, edit query details, save a copy of current query', () => {
         browsePage.selectEntity('Customer');
         browsePage.getSelectedEntity().should('contain', 'Customer');
         cy.wait(500);
@@ -36,7 +36,7 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getFacetItemCheckbox('firstname', 'Lara').click();
         browsePage.getSelectedFacets().should('exist');
         browsePage.getGreySelectedFacets('Kelley').should('exist');
-        browsePage.getFacetApplyButton().should('exist');
+        browsePage.getGreySelectedFacets('Lara').should('exist');
         browsePage.getFacetApplyButton().click();
         browsePage.getSaveModalIcon().click();
         cy.wait(500);
@@ -49,6 +49,20 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getSelectedQuery().should('contain', 'new-query');
         browsePage.getSaveQueryButton().should('not.be.visible');
         browsePage.getSaveQueriesDropdown().should('be.visible');
+        browsePage.getEditQueryModalIcon().click();
+        browsePage.getEditQueryDetailDesc().clear();
+        browsePage.getEditQueryDetailDesc().type('new-query description');
+        browsePage.getEditQueryDetailButton().click();
+        browsePage.getSaveACopyModalIcon().click();
+        browsePage.getSaveQueryName().type('new-query-2');
+        browsePage.getSaveQueryButton().click();
+        browsePage.getSelectedQuery().should('contain', 'new-query-2');
+        browsePage.getFacetItemCheckbox('lastname', 'Adams').click();
+        browsePage.getGreySelectedFacets('Adams').should('exist');
+        browsePage.getSaveModalIcon().click();
+        browsePage.getRadioOptionSelected();
+        browsePage.getEditSaveChangesButton().click();
+        browsePage.getAppliedFacets('Adams').should('exist');
     });
 
     it('open manage queries, edit query', () => {
@@ -74,4 +88,7 @@ describe('save/manage queries scenarios, developer role', () => {
         queryComponent.getDeleteQueryYesButton().click({force: true})
     });
 
+
+
 });
+

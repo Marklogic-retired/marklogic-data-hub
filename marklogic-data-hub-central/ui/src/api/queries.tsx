@@ -1,12 +1,13 @@
 import axios from "axios";
 
 export const creatNewQuery = async (query) => {
-  return await axios({
-    method: 'POST',
-    url: `/api/entitySearch/savedQueries`,
-    data: query
-  });
+    return await axios({
+        method: 'POST',
+        url: `/api/entitySearch/savedQueries`,
+        data: query
+    });
 }
+
 export const fetchQueries = async () => {
   return await axios({
     method: 'GET',
@@ -22,11 +23,7 @@ export const fetchQueryById = async (query) => {
 }
 
 export const updateQuery = async (query) => {
-  return await axios({
-    method: 'PUT',
-    url: `/api/entitySearch/savedQueries`,
-    data: query
-  });
+    return await axios.put(`/api/entitySearch/savedQueries`, {query});
 }
 
 export const removeQuery = async (query) => {
