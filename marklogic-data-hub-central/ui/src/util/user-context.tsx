@@ -16,7 +16,6 @@ type UserContextInterface = {
   authenticated: boolean,
   redirect: boolean,
   error : any,
-  tableView: boolean,
   pageRoute: string,
   maxSessionTime: number,
   sessionWarning: boolean
@@ -32,7 +31,6 @@ const defaultUserData = {
     message: '',
     type: ''
   },
-  tableView: true,
   pageRoute: '/view',
   maxSessionTime: 300,
   sessionWarning: false
@@ -46,7 +44,6 @@ interface IUserContextInterface {
   handleError: (error:any) => void;
   clearErrorMessage: () => void;
   clearRedirect: () => void;
-  setTableView: (viewType: boolean) => void;
   setPageRoute: (route: string) => void;
   setAlertMessage: (title: string, message: string) => void;
   resetSessionTime: () => void;
@@ -62,7 +59,6 @@ export const UserContext = React.createContext<IUserContextInterface>({
   handleError: () => {},
   clearErrorMessage: () => {},
   clearRedirect: () => {},
-  setTableView: () => {},
   setPageRoute: () => {},
   setAlertMessage: () => {},
   resetSessionTime: () => {},
@@ -97,7 +93,6 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
         name: username,
         authenticated: true,
         redirect: true,
-        tableView: values.tableView,
         pageRoute: values.pageRoute,
         maxSessionTime: sessionCount,
         sessionWarning: false
@@ -124,7 +119,6 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
         ...user,
         name: username,
         authenticated: true,
-        tableView: values.tableView,
         pageRoute: values.pageRoute,
         maxSessionTime: sessionCount,
         sessionWarning: false
@@ -232,11 +226,6 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
     setUser({ ...user, redirect: false });
   }
 
-  const setTableView = (view) => {
-    updateUserPreferences(user.name, { tableView: view });
-    setUser({...user, tableView: view });
-  }
-
   const setPageRoute = (route: string) => {
     updateUserPreferences(user.name, { pageRoute: route });
   }
@@ -294,7 +283,6 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
       handleError,
       clearErrorMessage,
       clearRedirect,
-      setTableView,
       setPageRoute,
       setAlertMessage,
       resetSessionTime,

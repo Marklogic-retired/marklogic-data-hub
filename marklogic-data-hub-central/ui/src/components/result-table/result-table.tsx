@@ -98,7 +98,7 @@ const ResultTable: React.FC<Props> = (props) => {
       if (searchOptions.entityTypeIds.length === 0) {
         // All Entities
         let newTableData = formatTableData(parsedPayload.data, true);
-        let tableColumns = getUserPref('all');
+        let tableColumns = getUserPref('all') || '';
         let renderHeader = tableHeader(tableColumns ? tableColumns['columns'] : DEFAULT_ALL_ENTITIES_HEADER, '');
         let newDefaultColumns = delimitHeader(renderHeader);
 
@@ -113,10 +113,10 @@ const ResultTable: React.FC<Props> = (props) => {
         setDefaultColumns(newDefaultColumns);
       } else {
         // An Entity is selected
-        let tableColumns = getUserPref(searchOptions.entityTypeIds[0]);
         let newRenderColumns: any[] = [];
 
         if (parsedPayload.data.length !== 0) {
+          let tableColumns = getUserPref(searchOptions.entityTypeIds[0]) || '';
           //pass entityDefArray of entities and current selected entity
           let newColumns = setPrimaryKeyColumn(headerPropsParser(props.entityDefArray, searchOptions.entityTypeIds))
           newColumns.push(DETAIL_HEADER_OBJ);
@@ -127,7 +127,7 @@ const ResultTable: React.FC<Props> = (props) => {
             newRenderColumns = newColumns;
           }
 
-          if (!tableColumns) {
+          if (!tableColumns || JSON.stringify(newRenderColumns) !== JSON.stringify(tableColumns)) {
             updateTablePreferences(user.name, searchOptions.entityTypeIds[0], newRenderColumns)
           }
 
