@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.central.HubCentral;
 import com.marklogic.hub.dataservices.ArtifactService;
+import com.marklogic.hub.impl.DataHubImpl;
 import com.marklogic.hub.impl.Versions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -76,9 +77,9 @@ public class EnvironmentController extends BaseController {
         return obj;
     }
 
-    @RequestMapping(value = "/api/environment/project-download", produces = "application/zip")
-    @Secured("ROLE_canDownloadConfigurationFiles")
-    public void downloadProject(HttpServletResponse response) {
+    @RequestMapping(value = "/api/environment/downloadConfigurationFiles", produces = "application/zip")
+    @Secured("ROLE_downloadConfigurationFiles")
+    public void downloadConfigurationFiles(HttpServletResponse response) {
         response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
         response.addHeader("Content-Disposition", "attachment; filename=datahub-project.zip");
         try (OutputStream out = response.getOutputStream()) {
@@ -87,6 +88,13 @@ public class EnvironmentController extends BaseController {
         } catch (IOException e) {
             throw new RuntimeException("Unable to download project; cause: " + e.getMessage());
         }
+    }
+
+    @RequestMapping(value = "/api/environment/clearUserData")
+    @Secured("ROLE_clearUserData")
+    public ResponseEntity<Void> clearUserData() {
+        new DataHubImpl(getHubClient()).clearUserData();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/api/environment/project-info", method = RequestMethod.GET)

@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 public class DownloadConfigurationFilesTest extends AbstractMvcTest {
 
-    private final static String PATH = "/api/environment/project-download";
+    private final static String PATH = "/api/environment/downloadConfigurationFiles";
 
     @Test
     void permittedUser() throws Exception {

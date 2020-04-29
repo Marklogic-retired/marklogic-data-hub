@@ -3,7 +3,7 @@
   "name": "OrderJSON-OrderJSONMapping",
   "description": "",
   "version": 0,
-  "targetEntityType": "Order-0.0.1/Order",
+  "targetEntityType": "http://marklogic.com/data-hub/Order-0.0.1/Order",
   "sourceContext": "/",
   "sourceURI": "",
   "properties": {

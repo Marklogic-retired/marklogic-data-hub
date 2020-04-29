@@ -370,6 +370,7 @@ public class HubProjectImpl implements HubProject {
         writeRoleFile(rolesDir, "data-hub-load-data-writer.json");
         writeRoleFile(rolesDir, "data-hub-saved-query-reader.json");
         writeRoleFile(rolesDir, "data-hub-saved-query-writer.json");
+        writeRoleFile(rolesDir, "hub-central-clear-user-data.json");
         writeRoleFile(rolesDir, "hub-central-downloader.json");
         writeRoleFile(rolesDir, "hub-central-entity-exporter.json");
 

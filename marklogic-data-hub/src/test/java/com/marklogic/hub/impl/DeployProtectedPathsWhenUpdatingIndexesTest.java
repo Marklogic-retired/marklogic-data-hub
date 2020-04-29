@@ -33,8 +33,6 @@ public class DeployProtectedPathsWhenUpdatingIndexesTest extends HubTestBase {
 
     @Test
     public void test() {
-        runAsDataHubDeveloper();
-
         givenAProtectedPathFile();
         dataHub.updateIndexes();
         thenTheProtectedPathIsDeployed();
@@ -61,6 +59,8 @@ public class DeployProtectedPathsWhenUpdatingIndexesTest extends HubTestBase {
     }
 
     private void thenTheProtectedPathIsDeployed() {
+        runAsAdmin();
+        
         ProtectedPathManager mgr = new ProtectedPathManager(adminHubConfig.getManageClient());
         assertTrue(
             mgr.exists(TEST_PATH_EXPRESSION),

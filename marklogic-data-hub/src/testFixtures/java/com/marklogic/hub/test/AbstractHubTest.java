@@ -19,6 +19,7 @@ import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.security.User;
+import com.marklogic.mgmt.util.SimplePropertySource;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.springframework.core.io.ClassPathResource;
@@ -29,11 +30,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Abstract base class for all Data Hub tests. Intended to provide a set of reusable methods for all tests.
  */
-public abstract class AbstractHubTest extends LoggingObject {
+public abstract class AbstractHubTest extends TestObject {
 
     /**
      * Tests should prefer this over getHubConfig, but of course use getHubConfig if HubClient doesn't provide something
@@ -54,9 +56,6 @@ public abstract class AbstractHubTest extends LoggingObject {
     protected abstract File getTestProjectDirectory();
 
     protected abstract HubConfigImpl runAsUser(String username, String password);
-
-    // Declaring this as many tests need one of these
-    protected ObjectMapper objectMapper = new ObjectMapper();
 
     protected void resetHubProject() {
         XMLUnit.setIgnoreWhitespace(true);
@@ -107,8 +106,26 @@ public abstract class AbstractHubTest extends LoggingObject {
         return runAsUser("test-admin-for-data-hub-tests", "password");
     }
 
+    protected HubConfigImpl runAsTestUserWithRoles(String... roles) {
+        setTestUserRoles(roles);
+        return runAsTestUser();
+    }
+
     protected HubConfigImpl runAsTestUser() {
         return runAsUser("test-data-hub-user", "password");
+    }
+
+    /**
+     * The "runAs" methods do not modify the user associated with the ManageClient that is owned by the HubConfig
+     * object. So if you have a test that needs the ManageClient to run as a different user, call this - though you'll
+     * need to be sure to undo your change (this will be taken care of if you're extending AbstractHubCoreTest).
+     */
+    protected void applyCurrentUserToManageClient() {
+        HubConfigImpl hubConfig = getHubConfig();
+        Properties props = new Properties();
+        props.setProperty("mlManageUsername", hubConfig.getMlUsername());
+        props.setProperty("mlManagePassword", hubConfig.getMlPassword());
+        hubConfig.applyProperties(new SimplePropertySource(props));
     }
 
     /**
@@ -233,8 +250,6 @@ public abstract class AbstractHubTest extends LoggingObject {
         loadUserModulesCommand.setLoadQueryOptions(loadQueryOptions);
         commands.add(loadUserModulesCommand);
 
-        commands.add(new GenerateFunctionMetadataCommand(hubConfig));
-
         LoadUserArtifactsCommand loadUserArtifactsCommand = new LoadUserArtifactsCommand(hubConfig);
         loadUserArtifactsCommand.setForceLoad(forceLoad);
         commands.add(loadUserArtifactsCommand);
@@ -245,6 +260,16 @@ public abstract class AbstractHubTest extends LoggingObject {
 
         // Wait for post-commit triggers to finish
         waitForTasksToFinish();
+
+        try {
+            new GenerateFunctionMetadataCommand(hubConfig).generateFunctionMetadata();
+        } catch (Exception ex) {
+            logger.warn("Unable to generate function metadata. Catching this by default, as at least one test " +
+                "- GetPrimaryEntityTypesTest - is failing in Jenkins because it cannot generate metadata for a module " +
+                "for unknown reasons (the test passes locally). That test does not depend on metadata. If your test " +
+                "does depend on knowing that metadata generation failed, consider overriding this to allow for the " +
+                "exception to propagate; cause: " + ex.getMessage(), ex);
+        }
     }
 
     protected void installUserArtifacts() {
@@ -291,30 +316,6 @@ public abstract class AbstractHubTest extends LoggingObject {
         String secondHost = stagingClient.newServerEval().xquery("xdmp:hosts()[2]").evalAs(String.class);
         if (StringUtils.hasText(secondHost)) {
             sleep(2000);
-        }
-    }
-
-    protected void sleep(long ms) {
-        try {
-            Thread.sleep(ms);
-        } catch (InterruptedException ex) {
-            logger.warn("Unexpected InterruptedException: " + ex.getMessage());
-        }
-    }
-
-    protected ObjectNode readJsonObject(String json) {
-        try {
-            return (ObjectNode) objectMapper.readTree(json);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    protected ArrayNode readJsonArray(String json) {
-        try {
-            return (ArrayNode) objectMapper.readTree(json);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
     }
 

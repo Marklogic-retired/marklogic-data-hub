@@ -12,14 +12,12 @@ import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 
-public class ReferenceModelProject {
+public class ReferenceModelProject extends TestObject {
 
     private HubClient hubClient;
-    private ObjectMapper objectMapper;
 
     public ReferenceModelProject(HubClient hubClient) {
         this.hubClient = hubClient;
-        this.objectMapper = new ObjectMapper();
     }
 
     public void createRawCustomer(int customerId, String name) {

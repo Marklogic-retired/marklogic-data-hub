@@ -131,25 +131,41 @@ public class CreateGranularPrivilegesCommand implements Command, UndoableCommand
         final String finalDbName = hubConfig.getDbName(DatabaseKind.FINAL);
         final String jobsDbName = hubConfig.getDbName(DatabaseKind.JOB);
 
+        final String adminRole = "data-hub-admin";
+        final String clearUserDataRole = "hub-central-clear-user-data";
+        final String developerRole = "data-hub-developer";
+
         List<Privilege> list = new ArrayList<>();
         list.add(buildPrivilege(client, "admin-database-clear-" + stagingDbName, "http://marklogic.com/xdmp/privileges/admin/database/clear/$$database-id(" + stagingDbName + ")",
-            "clear-data-hub-STAGING", existingPrivilegeNames, "data-hub-admin"));
+            "clear-data-hub-STAGING", existingPrivilegeNames, adminRole, clearUserDataRole));
         list.add(buildPrivilege(client, "admin-database-clear-" + finalDbName, "http://marklogic.com/xdmp/privileges/admin/database/clear/$$database-id(" + finalDbName + ")",
-            "clear-data-hub-FINAL", existingPrivilegeNames, "data-hub-admin"));
+            "clear-data-hub-FINAL", existingPrivilegeNames, adminRole, clearUserDataRole));
         list.add(buildPrivilege(client, "admin-database-clear-" + jobsDbName, "http://marklogic.com/xdmp/privileges/admin/database/clear/$$database-id(" + jobsDbName + ")",
-            "clear-data-hub-JOBS", existingPrivilegeNames, "data-hub-admin"));
+            "clear-data-hub-JOBS", existingPrivilegeNames, adminRole, clearUserDataRole));
 
         list.add(buildPrivilege(client, "admin-database-index-" + stagingDbName, "http://marklogic.com/xdmp/privileges/admin/database/index/$$database-id(" + stagingDbName + ")",
-            "STAGING-index-editor", existingPrivilegeNames, "data-hub-developer"));
+            "STAGING-index-editor", existingPrivilegeNames, developerRole));
         list.add(buildPrivilege(client, "admin-database-index-" + finalDbName, "http://marklogic.com/xdmp/privileges/admin/database/index/$$database-id(" + finalDbName + ")",
-            "FINAL-index-editor", existingPrivilegeNames, "data-hub-developer"));
+            "FINAL-index-editor", existingPrivilegeNames, developerRole));
         list.add(buildPrivilege(client, "admin-database-index-" + jobsDbName, "http://marklogic.com/xdmp/privileges/admin/database/index/$$database-id(" + jobsDbName + ")",
-            "JOBS-index-editor", existingPrivilegeNames, "data-hub-developer"));
+            "JOBS-index-editor", existingPrivilegeNames, developerRole));
 
         return list;
     }
 
-    protected Privilege buildPrivilege(ManageClient client, String name, String action, String dhsName, List<String> existingPrivilegeNames, String role) {
+    /**
+     *
+     * @param client
+     * @param name The name of the privilege to create if a privilege with the given dhsName does not exist. This name
+     *             is not the same as the dhsName, as the initial goal was to have a consistent naming convention for
+     *             all granular privileges, and the DHS privilege names are not consistent with that convention.
+     * @param action
+     * @param dhsName
+     * @param existingPrivilegeNames
+     * @param rolesToAdd
+     * @return
+     */
+    protected Privilege buildPrivilege(ManageClient client, String name, String action, String dhsName, List<String> existingPrivilegeNames, String... rolesToAdd) {
         Privilege p;
         if (existingPrivilegeNames.contains(dhsName)) {
             final String json = new PrivilegeManager(client).getAsJson(dhsName, "kind", "execute");
@@ -159,7 +175,9 @@ public class CreateGranularPrivilegesCommand implements Command, UndoableCommand
             p.setKind("execute");
             p.setAction(action);
         }
-        p.addRole(role);
+        for (String role : rolesToAdd) {
+            p.addRole(role);
+        }
         return p;
     }
 

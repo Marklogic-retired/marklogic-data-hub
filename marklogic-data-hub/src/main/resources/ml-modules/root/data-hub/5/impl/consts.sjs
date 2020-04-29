@@ -14,6 +14,16 @@
   limitations under the License.
 */
 
+const FLOW_COLLECTION = "http://marklogic.com/data-hub/flow";
+const ENTITY_MODEL_COLLECTION = "http://marklogic.com/entity-services/models";
+const LOAD_DATA_COLLECTION = "http://marklogic.com/data-hub/load-data-artifact";
+const LOAD_DATA_SETTINGS_COLLECTION = "http://marklogic.com/data-hub/loadData/settings";
+const MAPPING_ARTIFACT_COLLECTION = "http://marklogic.com/data-hub/mappings";
+const MAPPING_SETTINGS_COLLECTION = "http://marklogic.com/data-hub/mapping/settings";
+const MATCHING_ARTIFACT_COLLECTION = "http://marklogic.com/data-hub/matching-artifact";
+const MATCHING_SETTINGS_COLLECTION = "http://marklogic.com/data-hub/matching/settings";
+const STEP_DEFINITION_COLLECTION = "http://marklogic.com/data-hub/step-definition";
+
 module.exports = {
   XQUERY: "xqy",
   JAVASCRIPT: "sjs",
@@ -56,13 +66,25 @@ module.exports = {
 
   HUB_ARTIFACT_COLLECTION: "hub-core-artifact",
 
-  FLOW_COLLECTION: "http://marklogic.com/data-hub/flow",
-  ENTITY_MODEL_COLLECTION: "http://marklogic.com/entity-services/models",
-  LOAD_DATA_COLLECTION: "http://marklogic.com/data-hub/load-data-artifact",
-  LOAD_DATA_SETTINGS_COLLECTION: "http://marklogic.com/data-hub/loadData/settings",
-  MAPPING_ARTIFACT_COLLECTION: "http://marklogic.com/data-hub/mappings",
-  MAPPING_SETTINGS_COLLECTION: "http://marklogic.com/data-hub/mapping/settings",
-  MATCHING_ARTIFACT_COLLECTION: "http://marklogic.com/data-hub/matching-artifact",
-  MATCHING_SETTINGS_COLLECTION: "http://marklogic.com/data-hub/matching/settings",
-  STEP_DEFINITION_COLLECTION: "http://marklogic.com/data-hub/step-definition"
+  FLOW_COLLECTION,
+  ENTITY_MODEL_COLLECTION,
+  LOAD_DATA_COLLECTION,
+  LOAD_DATA_SETTINGS_COLLECTION,
+  MAPPING_ARTIFACT_COLLECTION,
+  MAPPING_SETTINGS_COLLECTION,
+  MATCHING_ARTIFACT_COLLECTION,
+  MATCHING_SETTINGS_COLLECTION,
+  STEP_DEFINITION_COLLECTION,
+
+  USER_ARTIFACT_COLLECTIONS: [
+    FLOW_COLLECTION,
+    ENTITY_MODEL_COLLECTION,
+    LOAD_DATA_COLLECTION,
+    LOAD_DATA_SETTINGS_COLLECTION,
+    MAPPING_ARTIFACT_COLLECTION,
+    MAPPING_SETTINGS_COLLECTION,
+    MATCHING_ARTIFACT_COLLECTION,
+    MATCHING_SETTINGS_COLLECTION,
+    STEP_DEFINITION_COLLECTION
+  ]
 };

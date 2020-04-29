@@ -65,6 +65,10 @@ public class GenerateFunctionMetadataCommand extends AbstractCommand {
 
     @Override
     public void execute(CommandContext context) {
+        generateFunctionMetadata();
+    }
+
+    public void generateFunctionMetadata() {
         if (isCompatibleWithES || getVersions().isVersionCompatibleWithES()) {
             if (modulesClient == null) {
                 if (hubConfig == null) {

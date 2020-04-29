@@ -16,6 +16,7 @@
 package com.marklogic.hub;
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.mgmt.ManageClient;
 import org.springframework.web.client.RestTemplate;
 
 public interface HubClient {
@@ -39,4 +40,11 @@ public interface HubClient {
      * @return
      */
     RestTemplate getStagingRestTemplate();
+
+    /**
+     * Needed for operations that happen outside of a deployment, such as clearing user data or updating indexes.
+     *
+     * @return
+     */
+    ManageClient getManageClient();
 }

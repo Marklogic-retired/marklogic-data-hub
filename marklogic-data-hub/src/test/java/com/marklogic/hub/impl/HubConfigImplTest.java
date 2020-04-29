@@ -1,10 +1,13 @@
 package com.marklogic.hub.impl;
 
 import com.marklogic.hub.DatabaseKind;
+import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.mgmt.util.SimplePropertySource;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.env.MockEnvironment;
+import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.util.Properties;
@@ -17,11 +20,38 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class HubConfigImplTest {
 
     @Test
+    void applyMlUsernameAndMlPassword() {
+        HubConfigImpl config = HubConfigImpl.withDefaultProperties();
+        assertTrue(StringUtils.isEmpty(config.getMlUsername()), "These username and password values are empty " +
+            "because dhf-defaults.properties declares the properties with no value");
+        assertTrue(StringUtils.isEmpty(config.getMlPassword()));
+        assertTrue(StringUtils.isEmpty(config.getManageConfig().getUsername()));
+        assertTrue(StringUtils.isEmpty(config.getManageConfig().getPassword()));
+        assertTrue(StringUtils.isEmpty(config.getAdminConfig().getUsername()));
+        assertTrue(StringUtils.isEmpty(config.getAdminConfig().getPassword()));
+        assertTrue(StringUtils.isEmpty(config.getAppConfig().getAppServicesUsername()));
+        assertTrue(StringUtils.isEmpty(config.getAppConfig().getRestAdminUsername()));
+
+        config.applyMlUsernameAndMlPassword("someone", "someword");
+
+        assertEquals("someone", config.getMlUsername());
+        assertEquals("someword", config.getMlPassword());
+        assertEquals("someone", config.getManageConfig().getUsername());
+        assertEquals("someword", config.getManageConfig().getPassword());
+        assertEquals("someone", config.getAdminConfig().getUsername());
+        assertEquals("someword", config.getAdminConfig().getPassword());
+        assertEquals("someone", config.getAppConfig().getAppServicesUsername());
+        assertEquals("someword", config.getAppConfig().getAppServicesPassword());
+        assertEquals("someone", config.getAppConfig().getRestAdminUsername());
+        assertEquals("someword", config.getAppConfig().getRestAdminPassword());
+    }
+
+    @Test
     void withDefaultValues() {
         HubConfigImpl config = HubConfigImpl.withDefaultProperties();
         assertEquals("localhost", config.getHost());
-        assertNull(config.getMlUsername());
-        assertNull(config.getMlPassword());
+        assertTrue(StringUtils.isEmpty(config.getMlUsername()));
+        assertTrue(StringUtils.isEmpty(config.getMlPassword()));
         verifyDefaultValues(config);
     }
 

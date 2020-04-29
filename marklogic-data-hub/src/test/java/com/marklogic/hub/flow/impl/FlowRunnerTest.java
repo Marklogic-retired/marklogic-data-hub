@@ -16,7 +16,6 @@
 
 package com.marklogic.hub.flow.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.bootstrap.Installer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.XMLDocumentManager;
@@ -35,7 +34,6 @@ import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.RunStepResponse;
-import com.marklogic.hub.step.impl.Step;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -56,9 +54,6 @@ public class FlowRunnerTest extends HubTestBase {
     @Autowired
     FlowRunnerImpl flowRunner;
 
-    @Autowired
-    FlowManager flowManager;
-
     @BeforeAll
     public static void setup() {
         XMLUnit.setIgnoreWhitespace(true);
@@ -73,11 +68,11 @@ public class FlowRunnerTest extends HubTestBase {
     @BeforeEach
     public void setupEach() {
         setupProjectForRunningTestFlow();
-        runAsDataHubOperator();
     }
 
     @Test
     public void testRunFlow() {
+        runAsDataHubOperator();
         RunFlowResponse resp = runFlow("testFlow", null, null, null, null);
         flowRunner.awaitCompletion();
 
@@ -141,6 +136,8 @@ public class FlowRunnerTest extends HubTestBase {
         Map<String, Object> options = new HashMap<>();
         options.put("collections", Arrays.asList("collector-test-output"));
 
+        runAsDataHubOperator();
+
         // cts.values with multiple index references and references to the options object too
         options.put("firstQName", "PersonGivenName");
         options.put("secondQName", "PersonSurName");
@@ -195,6 +192,7 @@ public class FlowRunnerTest extends HubTestBase {
         stepDetails.put("outputURIReplacement" ,".*/input,'/output'");
         stepConfig.put("fileLocations", stepDetails);
 
+        runAsDataHubOperator();
         RunFlowResponse resp = runFlow("testFlow", "3", UUID.randomUUID().toString(),opts, stepConfig);
         flowRunner.awaitCompletion();
         Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "csv-coll") == 25);
@@ -230,6 +228,8 @@ public class FlowRunnerTest extends HubTestBase {
         stepDetails.put("outputURIReplacement" ,".*/input,'/output'");
         stepDetails.put("separator" ,"\t");
         stepConfig.put("fileLocations", stepDetails);
+
+        runAsDataHubOperator();
         RunFlowResponse resp = runFlow("testFlow", "4", UUID.randomUUID().toString(),opts, stepConfig);
         flowRunner.awaitCompletion();
         Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "csv-tab-coll") == 25);
@@ -254,6 +254,8 @@ public class FlowRunnerTest extends HubTestBase {
         stepDetails.put("inputFileType","text");
         stepDetails.put("outputURIReplacement" ,".*/input,'/output'");
         stepConfig.put("fileLocations", stepDetails);
+
+        runAsDataHubOperator();
         RunFlowResponse resp = runFlow("testFlow", "2", UUID.randomUUID().toString(),opts, stepConfig);
         flowRunner.awaitCompletion();
         Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "text-collection") == 1);
@@ -262,6 +264,8 @@ public class FlowRunnerTest extends HubTestBase {
 
     @Test
     public void testEmptyCollector(){
+        runAsDataHubOperator();
+
         Map<String,Object> opts = new HashMap<>();
         opts.put("sourceQuery", "cts.collectionQuery('non-existent-collection')");
         RunFlowResponse resp = runFlow("testFlow", "1,6", UUID.randomUUID().toString(), opts, null);
@@ -273,6 +277,8 @@ public class FlowRunnerTest extends HubTestBase {
 
     @Test
     public void testInvalidQueryCollector(){
+        runAsDataHubOperator();
+
         Map<String,Object> opts = new HashMap<>();
         opts.put("sourceQuery", "cts.collectionQuer('xml-coll')");
         //Flow finishing with "finished_with_errors" status
@@ -295,6 +301,8 @@ public class FlowRunnerTest extends HubTestBase {
 
     @Test
     public void testRunFlowOptions(){
+        runAsDataHubOperator();
+
         Map<String,Object> opts = new HashMap<>();
         List<String> coll = new ArrayList<>();
         coll.add("test-collection");
@@ -316,6 +324,8 @@ public class FlowRunnerTest extends HubTestBase {
 
     @Test
     public void testRunFlowStepConfig(){
+        runAsDataHubOperator();
+
         Map<String,Object> stepConfig = new HashMap<>();
         Map<String,Object> opts = new HashMap<>();
         List<String> coll = new ArrayList<>();
@@ -338,6 +348,8 @@ public class FlowRunnerTest extends HubTestBase {
 
     @Test
     public void testDisableJobOutput(){
+        runAsDataHubOperator();
+
         Map<String,Object> opts = new HashMap<>();
         List<String> coll = new ArrayList<>();
         coll.add("test-collection");
@@ -356,6 +368,8 @@ public class FlowRunnerTest extends HubTestBase {
 
     @Test
     public void testRunFlowStopOnError(){
+        runAsDataHubOperator();
+
         Map<String,Object> opts = new HashMap<>();
 
         opts.put("targetDatabase", HubConfig.DEFAULT_STAGING_NAME);
@@ -373,6 +387,8 @@ public class FlowRunnerTest extends HubTestBase {
 
     @Test
     public void testIngestBinaryAndTxt(){
+        runAsDataHubOperator();
+
         Map<String,Object> stepConfig = new HashMap<>();
         Map<String,Object> opts = new HashMap<>();
         List<String> coll = new ArrayList<>();
@@ -405,6 +421,8 @@ public class FlowRunnerTest extends HubTestBase {
 
     @Test
     public void testUnsupportedFileType(){
+        runAsDataHubOperator();
+
         Map<String,Object> stepConfig = new HashMap<>();
         Map<String,Object> opts = new HashMap<>();
         List<String> coll = new ArrayList<>();
@@ -425,6 +443,8 @@ public class FlowRunnerTest extends HubTestBase {
 
     @Test
     public void testStopJob() {
+        runAsDataHubOperator();
+
         final String jobId = "testStopJob";
         final long enoughTimeForTheJobToStartButNotYetFinish = 300;
 
@@ -446,6 +466,8 @@ public class FlowRunnerTest extends HubTestBase {
 
     @Test
     public void testRunMultipleJobs() {
+        runAsDataHubOperator();
+
         Map<String,Object> stepConfig = new HashMap<>();
         Map<String,Object> opts = new HashMap<>();
         List<String> coll = new ArrayList<>();

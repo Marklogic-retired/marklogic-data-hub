@@ -45,7 +45,7 @@ public abstract class AbstractSecurityTest extends HubTestBase {
 
     @BeforeEach
     public void setupFlowDeveloperApi() {
-        // It's assumed that the "admin" user is the default user for talking to the Manage API
+        runAsAdmin();
         adminUserClient = adminHubConfig.getManageClient();
         adminUserApi = new API(adminUserClient);
         resourceMapper = new DefaultResourceMapper(adminUserApi);

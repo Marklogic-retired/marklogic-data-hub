@@ -166,6 +166,10 @@ class DataHubPlugin implements Plugin<Project> {
         project.task("hubDeleteModuleTimestampsFile", type: DeleteHubModuleTimestampsFileTask, group: deployGroup)
         project.tasks.mlDeleteModuleTimestampsFile.getDependsOn().add("hubDeleteModuleTimestampsFile")
 
+        project.task("hubClearUserData", type: ClearUserDataTask, group: deployGroup,
+            description: "Clears user data in the staging, final, and job databases, only leaving behind hub and user " +
+                "artifacts. Requires sufficient privilege to be able to clear each of the databases.")
+
         /**
          * mlDeploySecurity can't be used here because it will deploy amps under src/main/ml-config, and those will fail
          * to deploy since the modules database hasn't been created yet.

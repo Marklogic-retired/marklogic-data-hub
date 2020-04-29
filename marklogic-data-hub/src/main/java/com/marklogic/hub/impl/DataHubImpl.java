@@ -36,18 +36,20 @@ import com.marklogic.appdeployer.command.security.DeployRolesCommand;
 import com.marklogic.appdeployer.command.security.DeployUsersCommand;
 import com.marklogic.appdeployer.command.security.InsertCertificateHostsTemplateCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.admin.QueryOptionsManager;
 import com.marklogic.client.admin.ResourceExtensionsManager;
 import com.marklogic.client.admin.ServerConfigurationManager;
 import com.marklogic.client.admin.TransformExtensionsManager;
+import com.marklogic.client.document.DocumentWriteOperation;
+import com.marklogic.client.document.DocumentWriteSet;
+import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.eval.ServerEvaluationCall;
+import com.marklogic.client.impl.DocumentWriteOperationImpl;
+import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.QueryOptionsListHandle;
-import com.marklogic.hub.DataHub;
-import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubProject;
-import com.marklogic.hub.InstallInfo;
+import com.marklogic.hub.*;
 import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.CreateGranularPrivilegesCommand;
 import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
@@ -98,12 +100,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 @Component
 public class DataHubImpl implements DataHub, InitializingBean {
 
     @Autowired
     private HubConfig hubConfig;
+
+    private HubClient hubClient;
 
     private LoadHubModulesCommand loadHubModulesCommand;
 
@@ -130,6 +135,16 @@ public class DataHubImpl implements DataHub, InitializingBean {
         this();
         this.hubConfig = hubConfig;
         afterPropertiesSet();
+    }
+
+    /**
+     * Only use this constructor for the clearUserData operation, which does not depend on a HubConfig.
+     *
+     * @param hubClient
+     */
+    public DataHubImpl(HubClient hubClient) {
+        this();
+        this.hubClient = hubClient;
     }
 
     public void afterPropertiesSet() {
@@ -968,4 +983,75 @@ public class DataHubImpl implements DataHub, InitializingBean {
         this.versions = versions;
     }
 
+    /**
+     * Clear "user data", which is anything that's not a user or hub artifact. Depends on the ability to clear the
+     * staging, final, and job databases. An error will be thrown if a user doesn't have the privilege to perform any
+     * of those operations.
+     *
+     * This is intentionally not exposed in the DataHub interface, as there's no use case yet for a client of this
+     * library to perform this operation. It can instead be accessed via Hub Central and Gradle.
+     */
+    public void clearUserData() {
+        final HubClient hubClientToUse = hubClient != null ? hubClient : hubConfig.newHubClient();
+
+        long start = System.currentTimeMillis();
+        logger.info("Clearing user data as user: " + hubClientToUse.getUsername());
+
+        final List<DocumentWriteOperation> userAndHubArtifacts = readUserAndHubArtifacts(hubClientToUse);
+        logger.info("Count of user and hub artifacts read into memory: " + userAndHubArtifacts.size());
+
+        final DatabaseManager databaseManager = new DatabaseManager(hubClientToUse.getManageClient());
+        Stream.of(hubClientToUse.getDbName(DatabaseKind.STAGING), hubClientToUse.getDbName(DatabaseKind.FINAL), hubClientToUse.getDbName(DatabaseKind.JOB)).forEach(db -> {
+            logger.info("Clearing database: " + db);
+            final boolean catchException = false;
+            databaseManager.clearDatabase(db, catchException);
+        });
+
+        writeUserAndHubArtifacts(hubClientToUse, userAndHubArtifacts);
+        logger.info("Finished clearing user data; time elapsed: " + (System.currentTimeMillis() - start));
+    }
+
+    /**
+     * Uses the REST API to determine the URIs of the artifacts that need to be read into memory, as the REST API will
+     * also be used to actually read the documents and their metadata into memory.
+     *
+     * @param hubClientToUse
+     * @return
+     */
+    private List<DocumentWriteOperation> readUserAndHubArtifacts(HubClient hubClientToUse) {
+        List<DocumentWriteOperation> docs = new ArrayList<>();
+        JSONDocumentManager mgr = hubClientToUse.getStagingClient().newJSONDocumentManager();
+        final String script = "const consts = require('/data-hub/5/impl/consts.sjs');\n" +
+            "cts.uris(null, null, cts.collectionQuery(consts.USER_ARTIFACT_COLLECTIONS.concat(consts.HUB_ARTIFACT_COLLECTION)))";
+        hubClientToUse.getStagingClient().newServerEval().javascript(script).eval().iterator().forEachRemaining(item -> {
+            final String uri = item.getString();
+            DocumentMetadataHandle metadata = new DocumentMetadataHandle();
+            JacksonHandle content = new JacksonHandle();
+            mgr.read(uri, metadata, content);
+            docs.add(new DocumentWriteOperationImpl(DocumentWriteOperation.OperationType.DOCUMENT_WRITE, uri, metadata, content));
+        });
+        return docs;
+    }
+
+    /**
+     * After clearing the databases of user data, write the user and hub artifacts back to staging and final.
+     *
+     * @param hubClientToUse
+     * @param userAndHubArtifacts
+     */
+    private void writeUserAndHubArtifacts(HubClient hubClientToUse, List<DocumentWriteOperation> userAndHubArtifacts) {
+        JSONDocumentManager stagingManager = hubClientToUse.getStagingClient().newJSONDocumentManager();
+        JSONDocumentManager finalManager = hubClientToUse.getFinalClient().newJSONDocumentManager();
+        DocumentWriteSet stagingSet = stagingManager.newWriteSet();
+        DocumentWriteSet finalSet = finalManager.newWriteSet();
+        userAndHubArtifacts.forEach(doc -> {
+            stagingSet.add(doc);
+            finalSet.add(doc);
+        });
+        logger.info("Writing user and hub artifacts to staging; count: " + stagingSet.size());
+        stagingManager.write(stagingSet);
+        logger.info("Writing user and hub artifacts to final; count: " + stagingSet.size());
+        finalManager.write(finalSet);
+        logger.info("Finished writing user and hub artifacts to staging and final");
+    }
 }

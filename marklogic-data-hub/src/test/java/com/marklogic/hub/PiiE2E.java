@@ -127,26 +127,22 @@ public class PiiE2E extends HubTestBase
             throw new RuntimeException(e);
         }
 
-        // command list for deploying/undeploying security
-        HubConfigImpl hubConfig = (HubConfigImpl) getDataHubAdminConfig();
-        // Security
+        runAsAdmin();
         List<Command> securityCommands = new ArrayList<Command>();
-        // these two should already be there... we don't want to remove them
-        // securityCommands.add(new DeployHubRolesCommand(hubConfig));
-        // securityCommands.add(new DeployHubUsersCommand(hubConfig));
         securityCommands.add(new DeployRolesCommand());
         securityCommands.add(new DeployUsersCommand());
-        // deploy just these users now...
-        deployer = new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager());
+        deployer = new SimpleAppDeployer(adminHubConfig.getManageClient(), adminHubConfig.getAdminManager());
         deployer.setCommands(securityCommands);
-        secAppConfig = hubConfig.getAppConfig();
-        secAppConfig.setConfigDir(new ConfigDir(hubConfig.getUserConfigDir().toFile()));
+        secAppConfig = adminHubConfig.getAppConfig();
+        secAppConfig.setConfigDir(new ConfigDir(adminHubConfig.getUserConfigDir().toFile()));
 
         deployer.deploy(secAppConfig);
         securityCommands.add(new DeployProtectedPathsCommand());
         securityCommands.add(new DeployQueryRolesetsCommand());
         // now add the paths for test bodies
         deployer.setCommands(securityCommands);
+
+        runAsFlowDeveloper();
     }
 
     @Test

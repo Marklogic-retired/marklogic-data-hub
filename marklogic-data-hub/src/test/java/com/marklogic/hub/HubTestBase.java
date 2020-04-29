@@ -64,6 +64,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.json.JSONException;
+import org.junit.jupiter.api.AfterEach;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -210,6 +211,19 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
     @Override
     protected File getTestProjectDirectory() {
         return new File(PROJECT_PATH);
+    }
+
+
+    /**
+     * Some subclasses of this may have tests that need to change the user of the ManageClient instance. But since many
+     * other tests depend on this object having the flow-developer user as its user, we need to set the adminHubConfig
+     * back to that user.
+     */
+    @AfterEach
+    void resetManagerClientBackToFlowDeveloper() {
+        if (adminHubConfig != null) {
+            adminHubConfig.applyMlUsernameAndMlPassword(user, password);
+        }
     }
 
     protected void sleep(long ms) {
@@ -478,8 +492,8 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
 
     @Override
     protected HubConfigImpl runAsUser(String mlUsername, String mlPassword) {
-        adminHubConfig.setMlUsername(mlUsername);
-        adminHubConfig.setMlPassword(mlPassword);
+        adminHubConfig.applyMlUsernameAndMlPassword(mlUsername, mlPassword);
+
         appConfig = adminHubConfig.getAppConfig();
         manageConfig = adminHubConfig.getManageConfig();
         manageClient = adminHubConfig.getManageClient();
@@ -1094,17 +1108,6 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
                 ReflectionUtils.makeAccessible(f);
                 ReflectionUtils.setField(f, adminHubConfig, null);
             }
-        }
-    }
-
-    protected void copyTestFlowIntoProject() {
-        try {
-            FileUtils.copyFileToDirectory(
-                getResourceFile("flow-manager-test/test-flow.flow.json"),
-                adminHubConfig.getFlowsDir().toFile()
-            );
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 
