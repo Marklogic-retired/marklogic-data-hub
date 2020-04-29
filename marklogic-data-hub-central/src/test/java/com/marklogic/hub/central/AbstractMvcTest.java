@@ -5,6 +5,7 @@ import com.marklogic.hub.central.auth.LoginInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrint;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
@@ -25,7 +26,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Similar to AbstractOneUiTest, please be judicious about adding helper methods to this class. Any methods added
  * should be applicable to a wide swath of tests, not just a handful.
  */
-@AutoConfigureMockMvc
+/*
+* There is a bug in MockMvc that causes ConcurrentModificationException in the testRowExport() test.
+* This happens when it tries to read the response headers for async requests in
+* order to print the response.
+* Thus, we are switching off the printing of requests/responses on MockMvc test failure.
+* */
+@AutoConfigureMockMvc(print = MockMvcPrint.NONE)
 public abstract class AbstractMvcTest extends AbstractHubCentralTest {
 
     @Autowired
