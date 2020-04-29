@@ -23,15 +23,15 @@ describe('Update data load settings component', () => {
     //Add a check for target format once implemented
     //Should show default collections applied???
     expect(getByText('Additional Collections:')).toBeInTheDocument();
-    expect(getByText('Please select')).toBeInTheDocument();
-    expect(getByPlaceholderText('Enter targetPermissions')).toHaveValue('data-hub-operator,read,data-hub-operator,update');
+    expect(getByText('Please select additional collections')).toBeInTheDocument();
+    expect(getByPlaceholderText('Please enter target permissions')).toHaveValue('data-hub-operator,read,data-hub-operator,update');
     expect(getByText('Provenance Granularity:')).toBeInTheDocument();
     expect(getByText('coarse')).toBeInTheDocument();
     expect(getByText('Custom Hook')).toBeInTheDocument();    
     fireEvent.click(getByText('Custom Hook'));
-    expect(getByPlaceholderText('Enter module')).toBeInTheDocument();
-    expect(getByPlaceholderText('Enter parameters')).toHaveValue('{}');
-    expect(getByPlaceholderText('Enter user information')).toBeInTheDocument();
+    expect(getByPlaceholderText('Please enter module')).toBeInTheDocument();
+    expect(getByPlaceholderText('Please enter parameters')).toHaveValue('{}');
+    expect(getByPlaceholderText('Please enter user information')).toBeInTheDocument();
     expect(getByRole('switch')).toBeInTheDocument();
     expect(getByText('OFF')).toBeInTheDocument();
   });
@@ -43,15 +43,15 @@ describe('Update data load settings component', () => {
     expect(getByText('Target Database:')).toBeInTheDocument();
     expect(getByText('data-hub-STAGING')).toBeInTheDocument();
     expect(getByText('Additional Collections:')).toBeInTheDocument();
-    expect(getByText('Please select')).toBeInTheDocument();
-    expect(getByPlaceholderText('Enter targetPermissions')).toHaveValue('data-hub-operator,read,data-hub-operator,update');
+    expect(getByText('Please select additional collections')).toBeInTheDocument();
+    expect(getByPlaceholderText('Please enter target permissions')).toHaveValue('data-hub-operator,read,data-hub-operator,update');
     expect(getByText('Provenance Granularity:')).toBeInTheDocument();
     expect(getByText('coarse')).toBeInTheDocument();
     expect(getByText('Custom Hook')).toBeInTheDocument();    
     fireEvent.click(getByText('Custom Hook'));
-    expect(getByPlaceholderText('Enter module')).toBeInTheDocument();
-    expect(getByPlaceholderText('Enter parameters')).toHaveValue('{}');
-    expect(getByPlaceholderText('Enter user information')).toBeInTheDocument();
+    expect(getByPlaceholderText('Please enter module')).toBeInTheDocument();
+    expect(getByPlaceholderText('Please enter parameters')).toHaveValue('{}');
+    expect(getByPlaceholderText('Please enter user information')).toBeInTheDocument();
     expect(getByRole('switch')).toBeInTheDocument();
     expect(getByText('OFF')).toBeInTheDocument();
   });
@@ -70,8 +70,8 @@ describe('Update data load settings component', () => {
     //https://github.com/testing-library/react-testing-library/issues/375
     //Solution in github wont work because our list for additional collection is empty to start with
 
-    fireEvent.change(getByPlaceholderText('Enter targetPermissions'), { target: { value: 'data-hub-monitor,update' }});
-    expect(getByPlaceholderText('Enter targetPermissions')).toHaveValue('data-hub-monitor,update');
+    fireEvent.change(getByPlaceholderText('Please enter target permissions'), { target: { value: 'data-hub-monitor,update' }});
+    expect(getByPlaceholderText('Please enter target permissions')).toHaveValue('data-hub-monitor,update');
 
     //Verifying provenance options select field
     fireEvent.click(getByText('coarse'));
@@ -81,12 +81,12 @@ describe('Update data load settings component', () => {
     expect(getByText('off')).toBeInTheDocument();
 
     fireEvent.click(getByText('Custom Hook'));
-    fireEvent.change(getByPlaceholderText('Enter module'), { target: { value: 'test-module' }});
-    expect(getByPlaceholderText('Enter module')).toHaveValue('test-module');
-    fireEvent.change(getByPlaceholderText('Enter parameters'), { target: { value: '{}' }});
-    expect(getByPlaceholderText('Enter parameters')).toHaveValue('{}');
-    fireEvent.change(getByPlaceholderText('Enter user information'), { target: { value: 'test-user' }});
-    expect(getByPlaceholderText('Enter user information')).toHaveValue('test-user');
+    fireEvent.change(getByPlaceholderText('Please enter module'), { target: { value: 'test-module' }});
+    expect(getByPlaceholderText('Please enter module')).toHaveValue('test-module');
+    fireEvent.change(getByPlaceholderText('Please enter parameters'), { target: { value: '{}' }});
+    expect(getByPlaceholderText('Please enter parameters')).toHaveValue('{}');
+    fireEvent.change(getByPlaceholderText('Please enter user information'), { target: { value: 'test-user' }});
+    expect(getByPlaceholderText('Please enter user information')).toHaveValue('test-user');
     fireEvent.click(getByRole('switch'));
     expect(getByText('ON')).toBeInTheDocument();
   });
@@ -98,8 +98,8 @@ describe('Update data load settings component', () => {
     expect(getByText('data-hub-STAGING')).toBeInTheDocument();
     expect(getByText('data-hub-FINAL')).toBeInTheDocument();
 
-    fireEvent.change(getByPlaceholderText('Enter targetPermissions'), { target: { value: 'data-hub-monitor,update' }});
-    expect(getByPlaceholderText('Enter targetPermissions')).toHaveValue('data-hub-monitor,update');
+    fireEvent.change(getByPlaceholderText('Please enter target permissions'), { target: { value: 'data-hub-monitor,update' }});
+    expect(getByPlaceholderText('Please enter target permissions')).toHaveValue('data-hub-monitor,update');
 
     // Verify targetFormat options select field
     expect(getByText('JSON')).toBeInTheDocument();
@@ -117,12 +117,12 @@ describe('Update data load settings component', () => {
     expect(getByText('off')).toBeInTheDocument();
 
     fireEvent.click(getByText('Custom Hook'));
-    fireEvent.change(getByPlaceholderText('Enter module'), { target: { value: 'test-module' }});
-    expect(getByPlaceholderText('Enter module')).toHaveValue('test-module');
-    fireEvent.change(getByPlaceholderText('Enter parameters'), { target: { value: '{}' }});
-    expect(getByPlaceholderText('Enter parameters')).toHaveValue('{}');
-    fireEvent.change(getByPlaceholderText('Enter user information'), { target: { value: 'test-user' }});
-    expect(getByPlaceholderText('Enter user information')).toHaveValue('test-user');
+    fireEvent.change(getByPlaceholderText('Please enter module'), { target: { value: 'test-module' }});
+    expect(getByPlaceholderText('Please enter module')).toHaveValue('test-module');
+    fireEvent.change(getByPlaceholderText('Please enter parameters'), { target: { value: '{}' }});
+    expect(getByPlaceholderText('Please enter parameters')).toHaveValue('{}');
+    fireEvent.change(getByPlaceholderText('Please enter user information'), { target: { value: 'test-user' }});
+    expect(getByPlaceholderText('Please enter user information')).toHaveValue('test-user');
     fireEvent.click(getByRole('switch'));
     expect(getByText('ON')).toBeInTheDocument();
   });
@@ -132,13 +132,13 @@ describe('Update data load settings component', () => {
     expect(document.querySelector('#sourceDatabase')).toHaveClass('ant-select-disabled');
     expect(document.querySelector('#targetDatabase')).toHaveClass('ant-select-disabled');
     expect(document.querySelector('#additionalColl')).toHaveClass('ant-select-disabled');
-    expect(getByPlaceholderText('Enter targetPermissions')).toBeDisabled();
+    expect(getByPlaceholderText('Please enter target permissions')).toBeDisabled();
     expect(document.querySelector('#provGranularity')).toHaveClass('ant-select-disabled');
 
     fireEvent.click(getByText('Custom Hook'));
-    expect(getByPlaceholderText('Enter module')).toBeDisabled();
-    expect(getByPlaceholderText('Enter parameters')).toBeDisabled();
-    expect(getByPlaceholderText('Enter user information')).toBeDisabled();
+    expect(getByPlaceholderText('Please enter module')).toBeDisabled();
+    expect(getByPlaceholderText('Please enter parameters')).toBeDisabled();
+    expect(getByPlaceholderText('Please enter user information')).toBeDisabled();
     expect(getByRole('switch')).toBeDisabled();
   });
 
@@ -179,10 +179,10 @@ describe('Update data load settings component', () => {
 
   test('Verify discard dialog modal when Cancel is clicked', () => {
     const { rerender, queryByText, getByPlaceholderText, getByText } = render(<ActivitySettingsDialog {...data.activitySettings} />);
-    //fireEvent.change(getByText('Please select'), { target: { value: 'test-collection' }});
+    //fireEvent.change(getByText('Please select additional collections'), { target: { value: 'test-collection' }});
     fireEvent.click(getByText('Custom Hook'));
-    fireEvent.change(getByPlaceholderText('Enter module'), { target: { value: 'test-module' }});
-    expect(getByPlaceholderText('Enter module')).toHaveValue('test-module');
+    fireEvent.change(getByPlaceholderText('Please enter module'), { target: { value: 'test-module' }});
+    expect(getByPlaceholderText('Please enter module')).toHaveValue('test-module');
     fireEvent.click(getByText('Cancel'));
     expect(getByText('Discard changes?')).toBeInTheDocument();
     expect(getByText('Yes')).toBeInTheDocument();
@@ -202,8 +202,8 @@ describe('Update data load settings component', () => {
   test('Verify discard dialog modal when "x" is clicked', () => {
     const { getByPlaceholderText, getByText, getByLabelText } = render(<ActivitySettingsDialog {...data.activitySettings} />);
     fireEvent.click(getByText('Custom Hook'));
-    fireEvent.change(getByPlaceholderText('Enter module'), { target: { value: 'test-module' }});
-    expect(getByPlaceholderText('Enter module')).toHaveValue('test-module');
+    fireEvent.change(getByPlaceholderText('Please enter module'), { target: { value: 'test-module' }});
+    expect(getByPlaceholderText('Please enter module')).toHaveValue('test-module');
     fireEvent.click(getByLabelText('Close'));
     expect(getByText('Discard changes?')).toBeInTheDocument();
     expect(getByText('Yes')).toBeInTheDocument();
