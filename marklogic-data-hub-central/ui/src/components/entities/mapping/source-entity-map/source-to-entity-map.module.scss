@@ -85,7 +85,7 @@
         display: inline-block;
         vertical-align: middle;
         //height: 5vh;
-        margin-bottom: 13px;
+        margin-bottom: 3px;
         > .entityTypeTitle{
             float: left;
             padding-top: 6px;
@@ -98,8 +98,13 @@
     > .columnOptionsSelectorContainer {
         display: inline-block;
         margin-bottom: 10px;
+        > .expandCollapseBtn {
+            width: 102px;
+            height: 32px;
+        }
         > .columnOptionsSelector{
             float: right;
+            margin-top: 10px;
         }
     }
 }
@@ -371,12 +376,13 @@ hr {
 
 .navigationCollapseButtons{
     width: 100%;
+    display: inline-block;
     justify-content: space-between;
     vertical-align: middle;
-    text-align: center;
-    padding-bottom: 4px;
+    //text-align: center;
+    //padding-bottom: 2px;
     margin-top: 2px;
-    height: 5vh;
+    height: 4.5vh;
 }
 
 .navigate_source_uris{
@@ -386,7 +392,8 @@ hr {
     vertical-align: bottom;
     justify-content: space-between;
     text-align: center;
-    margin: 0px auto;
+    margin-top: -32px;
+    margin-left: 10vw;
     white-space: nowrap;
   }
  .navigate_uris_left {
