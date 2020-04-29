@@ -87,18 +87,16 @@ const ActivitySettingsDialog = (props) => {
 
 //CREATE/POST settings Artifact
 const createSettingsArtifact = async (settingsObj) => {
-  console.log('settingsObj', settingsObj)
   if (props.stepData.name) {
     try {
       setIsLoading(true);
       let response = await Axios.post(`/api/artifacts/${activityType}/${props.stepData.name}/settings`, settingsObj);
       if (response.status === 200) {
-        console.log('Create/Update Activity Settings Artifact API Called successfully!')
         setIsLoading(false);
       }
     } catch (error) {
       let message = error.response.data.message;
-      console.log('Error While creating the Activity settings artifact!', message)
+      console.error('Error while creating the activity settings artifact', message)
       setIsLoading(false);
     } finally {
       resetSessionTime();
@@ -345,7 +343,7 @@ const getSettingsArtifact = async () => {
     className={styles.formItem}>
     <Input
       id="module"
-      placeholder="Enter module"
+      placeholder="Please enter module"
       value={module}
       onChange={handleChange}
       disabled={!canReadWrite}
@@ -362,7 +360,7 @@ const getSettingsArtifact = async () => {
       className={styles.formItem}>
       <Input
         id="cHparameters"
-        placeholder="Enter parameters"
+        placeholder="Please enter parameters"
         value={cHparameters}
         onChange={handleChange}
         disabled={!canReadWrite}
@@ -379,7 +377,7 @@ const getSettingsArtifact = async () => {
       className={styles.formItem}>
       <Input
         id="user"
-        placeholder="Enter user information"
+        placeholder="Please enter user information"
         value={user}
         onChange={handleChange}
         disabled={!canReadWrite}
@@ -425,7 +423,7 @@ const getSettingsArtifact = async () => {
                                          className={styles.formItem}>
           <Select
             id="sourceDatabase"
-            placeholder="Enter source database"
+            placeholder="Please select source database"
             value={srcDatabase}
             onChange={handleSrcDatabase}
             disabled={!canReadWrite}
@@ -444,7 +442,7 @@ const getSettingsArtifact = async () => {
                     className={styles.formItem}>
         <Select
           id="targetDatabase"
-          placeholder="Enter target database"
+          placeholder="Please select target database"
           value={tgtDatabase}
           onChange={handleTgtDatabase}
           disabled={!canReadWrite}
@@ -464,7 +462,7 @@ const getSettingsArtifact = async () => {
             id="additionalColl"
             mode="tags"
             style={{width: '100%'}}
-            placeholder="Please select"
+            placeholder="Please select additional collections"
             value={defaultCollections.concat(additionalCollections)}
             disabled={!canReadWrite}
             onChange={handleAddColl}
@@ -488,7 +486,7 @@ const getSettingsArtifact = async () => {
                    className={styles.formItem}>
           <Input
             id="targetPermissions"
-            placeholder="Enter targetPermissions"
+            placeholder="Please enter target permissions"
             value={targetPermissions}
             onChange={handleChange}
             disabled={!canReadWrite}
@@ -504,7 +502,7 @@ const getSettingsArtifact = async () => {
                                        className={styles.formItem}>
           <Select
             id="targetFormat"
-            placeholder="Select target format"
+            placeholder="Please select target format"
             value={targetFormat}
             onChange={handleTargetFormat}
             disabled={!canReadWrite}
@@ -523,7 +521,7 @@ const getSettingsArtifact = async () => {
                    className={styles.formItem}>
           <Select
             id="provGranularity"
-            placeholder="Select provenance granularity"
+            placeholder="Please select provenance granularity"
             value={provGranularity}
             onChange={handleProvGranularity}
             disabled={!canReadWrite}
