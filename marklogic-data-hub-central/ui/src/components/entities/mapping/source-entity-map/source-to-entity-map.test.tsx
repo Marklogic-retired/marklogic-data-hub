@@ -50,6 +50,10 @@ describe('RTL Source-to-entity map tests', () => {
         mappingVisible={true}
         />);
 
+      //Expanding all the nested levels first to apply filter later
+      fireEvent.click(getByTestId('expandCollapseBtn-source'));
+      fireEvent.click(getByTestId('expandCollapseBtn-entity'));
+
       /* Test filter on Source table  */
       let filterIcon = getByTestId('filterIcon-key');
       expect(filterIcon).toBeInTheDocument();
@@ -181,6 +185,10 @@ describe('RTL Source-to-entity map tests', () => {
         mappingVisible={true}
         />);
 
+      //Expanding all the nested levels first
+      fireEvent.click(getByTestId('expandCollapseBtn-source'));
+      fireEvent.click(getByTestId('expandCollapseBtn-entity'));
+
       const sourceTableNameSort = getByTestId('sourceTableKey'); // For name column sorting
       const sourceTableValueSort = getByTestId('sourceTableValue'); // For value column sorting
 
@@ -188,43 +196,43 @@ describe('RTL Source-to-entity map tests', () => {
 
       //Check the sort order of Name column rows before enforcing sort order
       let srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, ['proteinId', 'proteinType', 'nutFreeName', 'proteinCat'], 'key');
+      validateMappingTableRow(srcTable, ['proteinId', 'proteinType', 'nutFreeName', 'proteinCat'], 'key', data.mapProps.sourceData);
 
       //Click on the Name column to sort the rows by Ascending order
       fireEvent.click(sourceTableNameSort);
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, ['nutFreeName', 'proteinCat', 'proteinId', 'proteinType'],  'key')
+      validateMappingTableRow(srcTable, ['nutFreeName', 'proteinCat', 'proteinId', 'proteinType'],  'key', data.mapProps.sourceData);
 
       //Click on the Name column to sort the rows by Descending order
       fireEvent.click(sourceTableNameSort);
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, ['proteinType','proteinId', 'proteinCat', 'nutFreeName'],  'key')
+      validateMappingTableRow(srcTable, ['proteinType','proteinId', 'proteinCat', 'nutFreeName'],  'key', data.mapProps.sourceData);
 
       //Click on the Name column again to remove the applied sort order and check if its removed
       fireEvent.click(sourceTableNameSort);
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, ['proteinId', 'proteinType', 'nutFreeName', 'proteinCat'], 'key')
+      validateMappingTableRow(srcTable, ['proteinId', 'proteinType', 'nutFreeName', 'proteinCat'], 'key', data.mapProps.sourceData);
 
       /* Validate sorting on Values column in source table */
 
       //Check the sort order of Values column rows before enforcing sort order
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, ['123EAC', 'home', undefined, 'commercial'], 'val');
+      validateMappingTableRow(srcTable, ['123EAC', 'home', undefined, 'commercial'], 'val', data.mapProps.sourceData);
 
       //Click on the Values column to sort the rows by Ascending order
       fireEvent.click(sourceTableValueSort);
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, ['123EAC', 'commercial', 'home', undefined], 'val')
+      validateMappingTableRow(srcTable, ['123EAC', 'commercial', 'home', undefined], 'val', data.mapProps.sourceData);
 
       //Click on the Values column to sort the rows by Descending order
       fireEvent.click(sourceTableValueSort);
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, ['home', 'commercial', '123EAC', undefined], 'val')
+      validateMappingTableRow(srcTable, ['home', 'commercial', '123EAC', undefined], 'val', data.mapProps.sourceData);
 
       //Click on the Value column again to remove the applied sort order and check if its removed
       fireEvent.click(sourceTableValueSort);
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, ['123EAC', 'home', undefined, 'commercial'], 'val');
+      validateMappingTableRow(srcTable, ['123EAC', 'home', undefined, 'commercial'], 'val', data.mapProps.sourceData);
 
       /* Validate sorting in Entity table columns */
       const entityTableNameSort = getByTestId('entityTableName'); // For value column sorting
@@ -232,34 +240,34 @@ describe('RTL Source-to-entity map tests', () => {
 
       //Check sort order of Name Column before clicking on sort button
       let entTable = document.querySelectorAll('#entityContainer .ant-table-row-level-0');
-      validateMappingTableRow(entTable, ['propId', 'propName', 'propAttribute', 'items', 'gender'], 'name');
+      validateMappingTableRow(entTable, ['propId', 'propName', 'propAttribute', 'items', 'gender'], 'name', data.mapProps.entityTypeProperties);
 
       //Click on the Name column to sort the rows by Ascending order
       fireEvent.click(entityTableNameSort);
       entTable = document.querySelectorAll('#entityContainer .ant-table-row-level-0');
-      validateMappingTableRow(entTable, ['gender', 'items', 'propAttribute', 'propId', 'propName'], 'name')
+      validateMappingTableRow(entTable, ['gender', 'items', 'propAttribute', 'propId', 'propName'], 'name', data.mapProps.entityTypeProperties);
 
       //Click on the Name column again to sort the rows by Descending order
       fireEvent.click(entityTableNameSort);
       entTable = document.querySelectorAll('#entityContainer .ant-table-row-level-0');
-      validateMappingTableRow(entTable, ['propName', 'propId', 'propAttribute', 'items', 'gender'], 'name')
+      validateMappingTableRow(entTable, ['propName', 'propId', 'propAttribute', 'items', 'gender'], 'name', data.mapProps.entityTypeProperties);
 
       fireEvent.click(entityTableNameSort); //Reset the sort order to go back to default order
 
       //Click on the Type column to sort the rows by Ascending order
       fireEvent.click(entityTableTypeSort);
       entTable = document.querySelectorAll('#entityContainer .ant-table-row-level-0');
-      validateMappingTableRow(entTable, ['int', 'ItemType [ ]', 'string', 'string', 'string'], 'type');
+      validateMappingTableRow(entTable, ['int', 'ItemType [ ]', 'string', 'string', 'string'], 'type', data.mapProps.entityTypeProperties);
 
       //Click on the Type column again to sort the rows by Descending order
       fireEvent.click(entityTableTypeSort);
       entTable = document.querySelectorAll('#entityContainer .ant-table-row-level-0');
-      validateMappingTableRow(entTable, ['string', 'string', 'string', 'ItemType [ ]', 'int'], 'type');
+      validateMappingTableRow(entTable, ['string', 'string', 'string', 'ItemType [ ]', 'int'], 'type', data.mapProps.entityTypeProperties);
 
       //Resetting the sort order to go back to default order
       fireEvent.click(entityTableTypeSort);
       entTable = document.querySelectorAll('#entityContainer .ant-table-row-level-0');
-      validateMappingTableRow(entTable, ['int', 'string', 'string', 'ItemType [ ]', 'string'], 'type');
+      validateMappingTableRow(entTable, ['int', 'string', 'string', 'ItemType [ ]', 'string'], 'type', data.mapProps.entityTypeProperties);
     });
 
     test('Verify evaluation of valid expression for mapping writer user', async () => {
@@ -390,6 +398,90 @@ describe('RTL Source-to-entity map tests', () => {
          */
     })
 
+    test('CollapseAll/Expand All feature in JSON Source data table and Entity table', () => {
+
+        const { getByTestId, getByText, debug, queryByText } = render(<SourceToEntityMap {...data.mapProps}
+            mappingVisible={true}
+        />);
+
+        /* Validate collapse-expand in source table */
+        //Check if the expected source table elements are present in the DOM before hittting the Expan/Collapse button
+        expect(queryByText('suffix')).not.toBeInTheDocument();
+        expect(getByText('nutFreeName')).toBeInTheDocument();
+        expect(getByText('FirstNamePreferred')).toBeInTheDocument();
+        expect(getByText('LastName')).toBeInTheDocument();
+
+        let expandCollapseBtn = getByTestId('expandCollapseBtn-source');
+
+        expect(expandCollapseBtn.textContent).toBe('Expand All'); // Validating the button label 
+
+        fireEvent.click(expandCollapseBtn); //Expanding all nested levels
+        expect(expandCollapseBtn.textContent).toBe('Collapse All'); // Validating the button label 
+        expect(getByText('suffix')).toBeInTheDocument();
+
+        //Check if indentation is right
+        expect(getByText('suffix').closest('td')?.firstElementChild).toHaveStyle("padding-left: 28px;");
+
+        fireEvent.click(expandCollapseBtn); //Collapsing back to the default view (root and 1st level)
+        expect(expandCollapseBtn.textContent).toBe('Expand All'); // Validating the button label 
+        expect(onClosestTableRow(getByText('suffix'))?.style.display).toBe('none'); // Checking if the row is marked hidden in DOM. All collapsed rows are marked hidden(display: none) once you click on Collapse All button.
+
+        /* Validate collapse-expand in Entity table */
+        //Check if the expected Entity table elements are present in the DOM before hittting the Expan/Collapse button
+        expect(queryByText('artCraft')).not.toBeInTheDocument();
+        expect(getByText('items')).toBeInTheDocument();
+        expect(getByText('itemTypes')).toBeInTheDocument();
+        expect(getByText('itemCategory')).toBeInTheDocument();
+
+        expandCollapseBtn = getByTestId('expandCollapseBtn-entity');
+
+        expect(expandCollapseBtn.textContent).toBe('Expand All');
+
+        fireEvent.click(expandCollapseBtn); //Expanding all nested levels
+        expect(expandCollapseBtn.textContent).toBe('Collapse All');
+        expect(getByText('artCraft')).toBeInTheDocument();
+
+        //Check if indentation is right
+        expect(getByText('artCraft').closest('td')?.firstElementChild).toHaveStyle("padding-left: 28px;");
+
+        fireEvent.click(expandCollapseBtn); //Collapsing back to the default view (root and 1st level)
+        expect(expandCollapseBtn.textContent).toBe('Expand All');
+        expect(onClosestTableRow(getByText('artCraft'))?.style.display).toBe('none'); // Checking if the row is marked hidden(collapsed) in DOM. All collapsed rows are marked hidden(display: none) once you click on Collapse All button.
+    });
+
+    test('CollapseAll/Expand All feature in XML Source data table', () => {
+
+        const { getByTestId, getByText, queryByText } = render(<SourceToEntityMap {...data.mapProps}
+            mappingVisible={true}
+            sourceData={data.xmlSourceData}
+        />);
+
+        //Check if the expected elements are present in the DOM before hittting the Expan/Collapse button
+        expect(queryByText('FirstNamePreferred')).not.toBeInTheDocument();
+        expect(queryByText('LastName')).not.toBeInTheDocument();
+        expect(getByText(/nutFree/)).toBeInTheDocument();
+        expect(getByText('@proteinType')).toBeInTheDocument();
+        expect(getByText('proteinId')).toBeInTheDocument();
+
+        let expandCollapseBtn = getByTestId('expandCollapseBtn-source');
+
+        expect(expandCollapseBtn.textContent).toBe('Expand All');
+
+        fireEvent.click(expandCollapseBtn); //Expanding all nested levels
+        expect(expandCollapseBtn.textContent).toBe('Collapse All');
+        let firstName = getByText('FirstNamePreferred');
+        let lastName = getByText('LastName');
+        expect(firstName).toBeInTheDocument();
+        expect(firstName.closest('td')?.firstElementChild).toHaveStyle("padding-left: 28px;"); // Check if the indentation is right
+        
+        expect(lastName).toBeInTheDocument();
+        expect(lastName.closest('td')?.firstElementChild).toHaveStyle("padding-left: 28px;"); // Check if the indentation is right
+
+        fireEvent.click(expandCollapseBtn); //Collapsing back to the default view (root and 1st level)
+        expect(expandCollapseBtn.textContent).toBe('Expand All');
+        expect(onClosestTableRow(firstName)?.style.display).toBe('none');
+        expect(onClosestTableRow(lastName)?.style.display).toBe('none');
+    });
 });
 
 describe('Enzyme Source-to-entity map tests', () => {
@@ -438,7 +530,11 @@ describe('Enzyme Source-to-entity map tests', () => {
     });
 
     test('XML source data renders properly',() => {
-        const { getByText } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} sourceData={data.xmlSourceData}/>);
+        const { getByText,getByTestId } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} sourceData={data.xmlSourceData}/>);
+        //Expanding all the nested levels first
+        fireEvent.click(getByTestId('expandCollapseBtn-source'));
+        fireEvent.click(getByTestId('expandCollapseBtn-entity'));
+
         expect(getByText('Source Data')).toBeInTheDocument();
         expect(getByText('proteinId')).toBeInTheDocument();
         expect(getByText('123EAC')).toBeInTheDocument();
@@ -450,7 +546,12 @@ describe('Enzyme Source-to-entity map tests', () => {
 
     test('Nested entity data renders properly',() => {
 
-        const { getByText,getAllByText } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true}/>);
+        const { getByText,getAllByText,getByTestId } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true}/>);
+
+        //Expanding all the nested levels first
+        fireEvent.click(getByTestId('expandCollapseBtn-source'));
+        fireEvent.click(getByTestId('expandCollapseBtn-entity'));
+
         expect(getByText('propId')).toBeInTheDocument();
         expect(getByText('propName')).toBeInTheDocument();
         expect(getByText('items')).toBeInTheDocument();
@@ -552,6 +653,9 @@ describe('RTL Source Selector/Source Search tests', () => {
         axiosMock.post.mockImplementation(data.mapProps.updateMappingArtifact);
         const {getAllByText,getByTestId, getAllByRole} = render(<SourceToEntityMap {...data.mapProps}  sourceData={data.xmlSourceData} mappingVisible={true}/>);
 
+        //Expanding all the nested levels first
+        fireEvent.click(getByTestId('expandCollapseBtn-source'));
+        fireEvent.click(getByTestId('expandCollapseBtn-entity'));
         let sourceSelector = getByTestId("itemTypes-listIcon");
 
         //corresponds to 'itemTypes' source selector

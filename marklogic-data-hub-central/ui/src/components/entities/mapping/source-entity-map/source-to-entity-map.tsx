@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, CSSProperties, useRef } from "react";
+import React, { useState, useEffect, CSSProperties, useRef, useLayoutEffect } from "react";
 import { Card, Modal, Table, Icon, Popover, Input, Button, Alert, Tooltip, Dropdown, Menu, Checkbox, Row, AutoComplete} from "antd";
 import styles from './source-to-entity-map.module.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -55,6 +55,16 @@ const SourceToEntityMap = (props) => {
 
     //Navigate URI buttons
     const [uriIndex, setUriIndex] = useState(0);
+
+    //For Collapse all-Expand All buttons
+    const [entityExpandedKeys, setEntityExpandedKeys] = useState<any[]>([]);
+    const [sourceExpandedKeys, setSourceExpandedKeys] = useState<any[]>([]);
+    const [expandedEntityFlag, setExpandedEntityFlag] = useState(false);
+    const [expandedSourceFlag, setExpandedSourceFlag] = useState(false);
+    const [initialSourceKeys, setInitialSourceKeys] = useState<any []>([]);
+    const [initialEntityKeys, setInitialEntityKeys] = useState<any []>([]);
+    const [allSourceKeys, setAllSourceKeys] = useState<any []>([]);
+    const [allEntityKeys, setAllEntityKeys] = useState<any []>([]);
 
     //Documentation links for using Xpath expressions
     const xPathDocLinks = <div className={styles.xpathDoc}><span id="doc">Documentation:</span>
@@ -128,6 +138,8 @@ const SourceToEntityMap = (props) => {
         initializeMapExpressions();
         onClear();
         setSavedMappingArt(props.mapData);
+        initializeEntityExpandKeys();
+        initializeSourceExpandKeys();
         return (() => {
             setMapExp({});
         })
@@ -146,6 +158,36 @@ const SourceToEntityMap = (props) => {
         setFlatArray(flattenSourceDoc([...props.sourceData], [], ''))
 
     }, [props.sourceData]);
+
+    useEffect(()=> {
+        initializeSourceExpandKeys();
+    }, [srcData])
+
+    //Set the collapse/Expand options for Source table, when mapping opens up.
+    const initializeSourceExpandKeys = () => {
+        let initialKeysToExpand:any = []; 
+        props.sourceData.map(obj => {
+            if (obj.hasOwnProperty('children')) {
+                initialKeysToExpand.push(obj.rowKey);
+            };
+        });
+        setSourceExpandedKeys([...initialKeysToExpand]);
+        setInitialSourceKeys([...initialKeysToExpand]);
+        setAllSourceKeys([...getKeysToExpandFromTable(srcData,'rowKey')]);
+    }
+
+    //Set the collapse/Expand options for Entity table, when mapping opens up.
+    const initializeEntityExpandKeys = () => {
+        let initialKeysToExpand:any = [];
+        props.entityTypeProperties.map(obj => {
+            if (obj.hasOwnProperty('children')) {
+                initialKeysToExpand.push(obj.key);
+            };
+        });
+        setEntityExpandedKeys([...initialKeysToExpand]);
+        setInitialEntityKeys([...initialKeysToExpand]);
+        setAllEntityKeys([...getKeysToExpandFromTable(props.entityTypeProperties,'key')])
+    }
 
     //To handle navigation buttons
     const onNavigateURIList = (index) => {
@@ -447,7 +489,7 @@ const SourceToEntityMap = (props) => {
         {
             title: <span data-testid="sourceTableKey">Name</span>,
             dataIndex: 'key',
-            key: 'key',
+            key: 'rowKey',
             ...getColumnFilterProps('key'),
             sorter: (a: any, b: any) => a.key?.localeCompare(b.key),
             width: '60%',
@@ -874,7 +916,7 @@ const SourceToEntityMap = (props) => {
         </div>
     );
 
-    const columnOptionsSelector = <div className={styles.columnOptionsSelector}>
+    const columnOptionsSelector =
         <Dropdown overlay={columnOptionsDropdown}
         trigger={['click']}
         onVisibleChange={handleColOptMenuVisibleChange}
@@ -883,10 +925,86 @@ const SourceToEntityMap = (props) => {
         overlayClassName={styles.columnSelectorOverlay}><a onClick={e => e.preventDefault()}>
         Column Options <Icon type="down" theme="outlined"/>
       </a></Dropdown>
-    </div>
 
     const getColumnsForEntityTable:any = () => {
         return entityColumns.map(el => checkedEntityColumns[el.key] ? el : '').filter(item => item);
+    }
+
+    //Collapse all-Expand All button
+
+    const getKeysToExpandFromTable = (dataArr,rowKey,allKeysToExpand:any = []) => {
+    
+        dataArr.map(obj => {
+            if (obj.hasOwnProperty('children')) {
+                allKeysToExpand.push(obj[rowKey]);
+                if((rowKey === 'key' && !expandedEntityFlag) || (rowKey === 'rowKey' && !expandedSourceFlag)){
+                    getKeysToExpandFromTable(obj['children'],rowKey,allKeysToExpand);
+                }
+            };
+        });
+        return allKeysToExpand;
+    }
+
+    const handleExpandCollapse = (rowKey) => {
+        if(rowKey === 'rowKey'){
+        let keys = getKeysToExpandFromTable(srcData,rowKey);
+            setSourceExpandedKeys([...keys]);
+            if(expandedSourceFlag) {
+                setExpandedSourceFlag(false);
+            } else {
+                setExpandedSourceFlag(true);
+            }
+        } else {
+        let keys = getKeysToExpandFromTable(props.entityTypeProperties,rowKey);
+            setEntityExpandedKeys([...keys]);
+            if(expandedEntityFlag) {
+                setExpandedEntityFlag(false);
+            } else {
+                setExpandedEntityFlag(true);
+            }
+        }
+    }
+
+    const toggleRowExpanded = (expanded, record, rowKey) => {
+ 
+        if (rowKey === 'key') {
+            if (!entityExpandedKeys.includes(record.key)) {
+                setEntityExpandedKeys(prevState => {
+                    let finalKeys = prevState.concat([record['key']]);
+                    if(allEntityKeys.every(item => finalKeys.includes(item))){
+                        setExpandedEntityFlag(true);
+                    }
+                    return finalKeys;
+            });
+            } else {
+                setEntityExpandedKeys(prevState => {
+                    let finalKeys = prevState.filter(item => item !== record['key']);
+                    if(!initialEntityKeys.some(item => finalKeys.includes(item))){
+                        setExpandedEntityFlag(false);
+                    }
+                    return finalKeys});
+            }
+        } else {
+            if (!sourceExpandedKeys.includes(record.rowKey)) {
+                setSourceExpandedKeys(prevState => {
+                    let finalKeys = prevState.concat([record['rowKey']])
+ 
+                    if(allSourceKeys.every(item => finalKeys.includes(item))){
+                        setExpandedSourceFlag(true);
+                    }
+                    return finalKeys;
+                });
+                
+            } else {
+                setSourceExpandedKeys(prevState => {
+                    let finalKeys = prevState.filter(item => item !== record['rowKey']);
+                    if(!initialSourceKeys.some(item => finalKeys.includes(item))){
+                        setExpandedSourceFlag(false);
+                    }
+                    return finalKeys;
+                });
+            }
+        }
     }
 
     return (<Modal
@@ -954,20 +1072,23 @@ const SourceToEntityMap = (props) => {
                             </div>
                             :
                             <div id="dataPresent">
-                                <div className={styles.navigationCollapseButtons}>{navigationButtons}</div>
+                                
+                                <div className={styles.navigationCollapseButtons}><span><Button data-testid="expandCollapseBtn-source" onClick={() => handleExpandCollapse('rowKey')} className={styles.expandCollapseBtn}>{expandedSourceFlag ? 'Collapse All' : 'Expand All'}</Button></span><span>{navigationButtons}</span></div>
                                     <Table
                                         pagination={false}
-                                        defaultExpandAllRows={true}
                                         expandIcon={(props) => customExpandIcon(props)}
+                                        onExpand={(expanded,record) => toggleRowExpanded(expanded,record,'rowKey')}
+                                        expandedRowKeys={sourceExpandedKeys}
                                         className={styles.sourceTable}
                                         rowClassName={() => styles.sourceTableRows}
                                         scroll={{y: '60vh', x: 300 }}
                                         indentSize={14}
+                                        //defaultExpandAllRows={true}
                                         //size="small"
                                         columns={columns}
                                         dataSource={srcData}
                                         tableLayout="unset"
-                                        rowKey={record => JSON.stringify(record)}
+                                        rowKey={(record) => record.rowKey}
                                     />
                             </div> }
                     </div>
@@ -978,18 +1099,21 @@ const SourceToEntityMap = (props) => {
                         <div className={styles.entityDetails}>
                             <span className={styles.entityTypeTitle}><p ><i><FontAwesomeIcon icon={faObjectUngroup} size="sm" className={styles.entityIcon} /></i> Entity: {props.entityTypeTitle}</p></span>
                         </div>
-                        <div className={styles.columnOptionsSelectorContainer}>{columnOptionsSelector}</div>
+                        <div className={styles.columnOptionsSelectorContainer}>
+                            <span><Button data-testid="expandCollapseBtn-entity" onClick={() => handleExpandCollapse('key')} className={styles.expandCollapseBtn}>{expandedEntityFlag ? 'Collapse All' : 'Expand All'}</Button></span><span className={styles.columnOptionsSelector}>{columnOptionsSelector}</span></div>
                         <Table
                             pagination={false}
                             className={styles.entityTable}
                             expandIcon={(props) => customExpandIcon(props)}
+                            onExpand={(expanded,record) => toggleRowExpanded(expanded,record,'key')}
+                            expandedRowKeys={entityExpandedKeys}
                             indentSize={14}
-                            defaultExpandAllRows={true}
+                            //defaultExpandAllRows={true}
                             columns={getColumnsForEntityTable()}
                             scroll={{y: '60vh', x: 1000 }}
                             dataSource={props.entityTypeProperties}
                             tableLayout="unset"
-                            rowKey={record => JSON.stringify(record)}
+                            rowKey={(record: any) => record.key}
                         />
                     </div>
                 </SplitPane>

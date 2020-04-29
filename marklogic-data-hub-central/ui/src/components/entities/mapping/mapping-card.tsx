@@ -55,6 +55,7 @@ const MappingCard: React.FC<Props> = (props) => {
     const [entityTypeProperties, setEntityTypeProperties] = useState<any[]>([]);
     const [tgtEntityReferences,setTgtEntityReferences] = useState({});
     let EntitYTableKeyIndex = 0;
+    let sourceTableKeyIndex = 0;
     let tgtRefs:any = {};
 
     //For storing docURIs
@@ -336,19 +337,25 @@ const MappingCard: React.FC<Props> = (props) => {
         let propty: any;
         if (obj.hasOwnProperty('#text')) {
             if (Object.keys(obj).filter((el) => /^@xmlns/.test(el) || el === '#text').length === Object.keys(obj).length) {
+                sourceTableKeyIndex = sourceTableKeyIndex + 1;
                 propty = {
+                    rowKey: sourceTableKeyIndex,
                     key: key,
                     val: obj['#text']
                 }
             } else {
+                sourceTableKeyIndex = sourceTableKeyIndex + 1;
                 propty = {
+                    rowKey: sourceTableKeyIndex,
                     key: key,
                     val: obj['#text'],
                     'children': []
                 }
             }
         } else {
+            sourceTableKeyIndex = sourceTableKeyIndex + 1;
             propty = {
+                rowKey: sourceTableKeyIndex,
                 key: key,
                 'children': []
             }
@@ -409,7 +416,9 @@ const MappingCard: React.FC<Props> = (props) => {
                     if (key !== '#text' && !/^@xmlns/.test(key)) {
                         let finalKey = !/^@/.test(key) ? getNamespace(key, val, parentNamespace) : key;
                         let propty: any;
+                        sourceTableKeyIndex = sourceTableKeyIndex + 1;
                         propty = {
+                            rowKey: sourceTableKeyIndex,
                             key: finalKey,
                             val: String(val)
                         };
@@ -420,7 +429,9 @@ const MappingCard: React.FC<Props> = (props) => {
 
             } else {
                 let finalKey = getNamespace(key, val, parentNamespace);
+                sourceTableKeyIndex = sourceTableKeyIndex + 1;
                 let propty = {
+                    rowKey: sourceTableKeyIndex,
                     key: finalKey,
                     val: ""
                 };

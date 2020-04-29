@@ -1,8 +1,14 @@
-const validateMappingTableRow = (dataTable, {...rowValue}, colName) => {
+const validateMappingTableRow = (dataTable, {...rowValue}, colName, srcData) => {
     let rowKey = 0;
     dataTable.forEach(item => {
         let att: any = item.getAttribute('data-row-key') ? item.getAttribute('data-row-key') : '{}';
-        let row = JSON.parse(att);
+        let row: any = {};
+        if (srcData[0].hasOwnProperty('name') && srcData[0].hasOwnProperty('type')) {
+            row = srcData.find(obj => obj.key.toString() === att);
+        } else {
+            row = srcData.find(obj => obj.rowKey.toString() === att);
+        }
+
         let keyCol = '';
         if (['key', 'name'].includes(colName)) {
             if (row.hasOwnProperty('name') && row.hasOwnProperty('type')) {
