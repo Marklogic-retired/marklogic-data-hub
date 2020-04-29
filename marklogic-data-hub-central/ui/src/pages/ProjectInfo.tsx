@@ -38,7 +38,7 @@ const ProjectInfo: React.FC = () => {
 
     const download = () => {
         axios({
-            url: '/api/environment/project-download',
+            url: '/api/environment/downloadConfigurationFiles',
             method: 'GET',
             responseType: 'blob'
         })
@@ -55,7 +55,7 @@ const ProjectInfo: React.FC = () => {
             .finally(() => {
               resetSessionTime();
             });
-            
+
     };
 
 

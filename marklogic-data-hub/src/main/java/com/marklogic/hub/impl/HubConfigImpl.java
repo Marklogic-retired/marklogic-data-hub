@@ -2219,11 +2219,29 @@ public class HubConfigImpl implements HubConfig
     }
 
     /**
+     * Convenience method for not just setting mlUsername and mlPassword, but applying their values to all
+     * username/password pairs in this class. Specifically, those are - the ones in manageConfig; the ones in adminConfig;
+     * the restAdmin* ones in appConfig; and the appServices* ones in appConfig.
+     *
+     * @param mlUsername
+     * @param mlPassword
+     */
+    public void applyMlUsernameAndMlPassword(String mlUsername, String mlPassword) {
+        Properties props = new Properties();
+        props.setProperty("mlUsername", mlUsername);
+        props.setProperty("mlPassword", mlPassword);
+        applyProperties(new SimplePropertySource(props));
+    }
+
+    /**
      * Defines functions for consuming properties from a PropertySource. This differs substantially from
      * loadConfigurationFromProperties, as that function's behavior depends on whether a field has a value or not.
      */
     protected void initializePropertyConsumerMap() {
         propertyConsumerMap = new LinkedHashMap<>();
+
+        propertyConsumerMap.put("mlUsername", prop -> mlUsername = prop);
+        propertyConsumerMap.put("mlPassword", prop -> mlPassword = prop);
 
         propertyConsumerMap.put("mlDHFVersion", prop -> DHFVersion = prop);
         propertyConsumerMap.put("mlHost", prop -> setHost(prop));

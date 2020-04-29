@@ -49,9 +49,8 @@ public class HubCentral extends LoggingObject implements InitializingBean {
     }
 
     public HubConfigImpl newHubConfig(String username, String password) {
-        HubConfigImpl hubConfig = new HubConfigImpl(null, environment);
-        hubConfig.setMlUsername(username);
-        hubConfig.setMlPassword(password);
+        // Shouldn't have any need for a Spring environment to be passed in, as buildPropertySource accounts for it
+        HubConfigImpl hubConfig = new HubConfigImpl();
         hubConfig.applyProperties(buildPropertySource(username, password));
         return hubConfig;
     }

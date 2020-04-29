@@ -42,7 +42,6 @@ public class MappingTest extends HubTestBase {
     @BeforeEach
     public void setupTest() {
         resetHubProject();
-        runAsDataHubOperator();
     }
 
     @AfterAll
@@ -62,6 +61,7 @@ public class MappingTest extends HubTestBase {
         installHubArtifacts(getDataHubAdminConfig(), true);
         installUserModules(getDataHubAdminConfig(), true);
 
+        runAsDataHubOperator();
         RunFlowResponse flowResponse = runFlow("CustomerXML", "1", "2");
         RunStepResponse mappingJob = flowResponse.getStepResponses().get("2");
         assertTrue(mappingJob.isSuccess(), "Mapping job failed: "+mappingJob.stepOutput);
@@ -86,6 +86,7 @@ public class MappingTest extends HubTestBase {
         installHubArtifacts(getDataHubAdminConfig(), true);
         installUserModules(getDataHubAdminConfig(), true);
 
+        runAsDataHubOperator();
         runFlow("CustomerXML", "1");
 
         OutputEndpoint.BulkOutputCaller bulkCaller = OutputEndpoint.on(
@@ -118,6 +119,7 @@ public class MappingTest extends HubTestBase {
         //Insert a valid dictionary for document lookup
         runInDatabase("xdmp:document-insert('/lookupDictionary/validDictionary.json', object-node"+getJsonFromResource("mapping-test/lookupDictionary/validDictionary.json")+")", HubConfig.DEFAULT_STAGING_NAME);
 
+        runAsDataHubOperator();
         RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
         assertTrue(mappingJob.isSuccess(), "Mapping job failed: "+mappingJob.stepOutput);
         String jsonString = "{" +
@@ -128,42 +130,6 @@ public class MappingTest extends HubTestBase {
             "}";
         JsonNode actual = getQueryResults("cts:search(fn:doc('/input/json/order1.json')/envelope/instance/Order, cts:collection-query('OrderJSONMapping'))", HubConfig.DEFAULT_FINAL_NAME);
         assertJsonEqual(jsonString, actual.toString(), false);
-    }
-
-    @Disabled
-    @Test
-    //Ignored because not able to reach the code that throws an error when lookup value is non JSON
-    public void testLookupNonJSON() throws Exception{
-        installProject();
-        createMappingFromConfig("testLookupNonJSON.json");
-
-        installHubArtifacts(getDataHubAdminConfig(), true);
-        installUserModules(getDataHubAdminConfig(), true);
-
-        RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
-
-        String output = outputToJson(mappingJob.stepOutput, 0, "message").toString();
-        String expected = "Expected JSON string or object.";
-        assertFalse(mappingJob.isSuccess(), "Mapping job should fail for non JSON memory lookup");
-        assertTrue(output.contains(expected),"Expected "+expected+" to be a substring of " + output);
-    }
-
-    @Disabled
-    @Test
-    //Ignored because we are not throwing an error. Only logging in error_logs and letting the step to pass
-    public void testLookupValueMissing() throws Exception{
-        installProject();
-        createMappingFromConfig("testMissingLookup.json");
-
-        installHubArtifacts(getDataHubAdminConfig(), true);
-        installUserModules(getDataHubAdminConfig(), true);
-
-        RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
-
-        String output = outputToJson(mappingJob.stepOutput, 0, "message").toString();
-        String expected = "Lookup value not found";
-        assertTrue(mappingJob.isSuccess(), "Mapping job should not fail for missing lookup values");
-        assertTrue(output.contains(expected),"Expected "+expected+" to be a substring of "+output);
     }
 
     @Test
@@ -177,6 +143,8 @@ public class MappingTest extends HubTestBase {
 
         //Insert a dictionary with a URI different from the URI in mapping artifact
         runInDatabase("xdmp:document-insert('/lookupDictionary/invalidURI.json', object-node"+getJsonFromResource("mapping-test/lookupDictionary/validDictionary.json")+")", HubConfig.DEFAULT_STAGING_NAME);
+
+        runAsDataHubOperator();
         RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
 
         String output = outputToJson(mappingJob.stepOutput, 0, "message").toString();
@@ -200,6 +168,8 @@ public class MappingTest extends HubTestBase {
             "  Invalid dictionary\n" +
             "</Dictionary>\n" +
             ")", HubConfig.DEFAULT_STAGING_NAME);
+
+        runAsDataHubOperator();
         RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
 
         String output = outputToJson(mappingJob.stepOutput, 0, "message").toString();
@@ -219,6 +189,8 @@ public class MappingTest extends HubTestBase {
         installUserModules(getDataHubAdminConfig(), true);
 
         String timezoneStr = getTimezoneString();
+
+        runAsDataHubOperator();
         RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
         assertTrue(mappingJob.isSuccess(), "Mapping job failed: "+mappingJob.stepOutput);
         String jsonString = "{" +
@@ -253,6 +225,7 @@ public class MappingTest extends HubTestBase {
         installHubArtifacts(getDataHubAdminConfig(), true);
         installUserModules(getDataHubAdminConfig(), true);
 
+        runAsDataHubOperator();
         RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
 
         String output = outputToJson(mappingJob.stepOutput, 0, "message").toString();
@@ -271,6 +244,7 @@ public class MappingTest extends HubTestBase {
         installHubArtifacts(getDataHubAdminConfig(), true);
         installUserModules(getDataHubAdminConfig(), true);
 
+        runAsDataHubOperator();
         RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
 
         String output = outputToJson(mappingJob.stepOutput, 0, "message").toString();
@@ -289,6 +263,7 @@ public class MappingTest extends HubTestBase {
         installHubArtifacts(getDataHubAdminConfig(), true);
         installUserModules(getDataHubAdminConfig(), true);
 
+        runAsDataHubOperator();
         RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
 
         String output = outputToJson(mappingJob.stepOutput, 0, "message").toString();
@@ -307,6 +282,7 @@ public class MappingTest extends HubTestBase {
         installHubArtifacts(getDataHubAdminConfig(), true);
         installUserModules(getDataHubAdminConfig(), true);
 
+        runAsDataHubOperator();
         RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
 
         String output = outputToJson(mappingJob.stepOutput, 0, "message").toString();
@@ -325,6 +301,7 @@ public class MappingTest extends HubTestBase {
         installHubArtifacts(getDataHubAdminConfig(), true);
         installUserModules(getDataHubAdminConfig(), true);
 
+        runAsDataHubOperator();
         RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
         assertTrue(mappingJob.isSuccess(), "Mapping job failed: "+mappingJob.stepOutput);
         String timezoneStr = getTimezoneString();
@@ -346,6 +323,7 @@ public class MappingTest extends HubTestBase {
         installHubArtifacts(getDataHubAdminConfig(), true);
         installUserModules(getDataHubAdminConfig(), true);
 
+        runAsDataHubOperator();
         RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
         assertTrue(mappingJob.isSuccess(), "Mapping job failed: "+mappingJob.stepOutput);
         String jsonString = "{" +

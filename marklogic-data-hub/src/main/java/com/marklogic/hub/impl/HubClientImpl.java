@@ -19,6 +19,7 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.collector.impl.CollectorImpl;
+import com.marklogic.mgmt.ManageClient;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
@@ -31,6 +32,7 @@ public class HubClientImpl implements HubClient {
     private DatabaseClient jobsClient;
     private Map<DatabaseKind, String> databaseNames;
     private RestTemplate stagingRestTemplate;
+    private ManageClient manageClient;
 
     public HubClientImpl(HubConfigImpl hubConfig, Map<DatabaseKind, String> databaseNames) {
         username = hubConfig.getMlUsername();
@@ -41,6 +43,8 @@ public class HubClientImpl implements HubClient {
 
         // TODO Move the newRestTemplate method into a more logical place to reuse this
         this.stagingRestTemplate = CollectorImpl.newRestTemplate(stagingClient, hubConfig.getMlUsername(), hubConfig.getMlPassword());
+
+        this.manageClient = hubConfig.getManageClient();
     }
 
     @Override
@@ -71,5 +75,10 @@ public class HubClientImpl implements HubClient {
     @Override
     public RestTemplate getStagingRestTemplate() {
         return stagingRestTemplate;
+    }
+
+    @Override
+    public ManageClient getManageClient() {
+        return manageClient;
     }
 }

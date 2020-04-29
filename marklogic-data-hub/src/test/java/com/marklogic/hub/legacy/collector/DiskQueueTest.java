@@ -15,7 +15,6 @@
  */
 package com.marklogic.hub.legacy.collector;
 
-import com.marklogic.hub.HubTestBase;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -36,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  *
  * @author Mads Hansen, MarkLogic Corporation
  */
-public class DiskQueueTest extends HubTestBase {
+public class DiskQueueTest {
 
     @Test
     public void testDiskQueue_sizeTooSmall() {

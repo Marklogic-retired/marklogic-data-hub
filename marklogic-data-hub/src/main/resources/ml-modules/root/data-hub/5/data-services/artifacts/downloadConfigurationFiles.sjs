@@ -5,17 +5,7 @@ const consts = require("/data-hub/5/impl/consts.sjs");
 const hent = require("/data-hub/5/impl/hub-entities.xqy");
 
 const userArtifacts = cts.search(cts.andQuery([
-  cts.collectionQuery([
-    consts.FLOW_COLLECTION,
-    consts.ENTITY_MODEL_COLLECTION,
-    consts.LOAD_DATA_COLLECTION,
-    consts.LOAD_DATA_SETTINGS_COLLECTION,
-    consts.MAPPING_ARTIFACT_COLLECTION,
-    consts.MAPPING_SETTINGS_COLLECTION,
-    consts.MATCHING_ARTIFACT_COLLECTION,
-    consts.MATCHING_SETTINGS_COLLECTION,
-    consts.STEP_DEFINITION_COLLECTION
-  ]),
+  cts.collectionQuery(consts.USER_ARTIFACT_COLLECTIONS),
   cts.notQuery(
     cts.collectionQuery(consts.HUB_ARTIFACT_COLLECTION)
   )

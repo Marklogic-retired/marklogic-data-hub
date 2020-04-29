@@ -31,6 +31,10 @@ public class CreateGranularPrivilegesTest extends HubTestBase {
     @BeforeEach
     public void setUp() {
         Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
+
+        // It's acceptable to run this as an admin, as an admin or admin-like user is typically used to install DH
+        // either on-premise or in DHS.
+        runAsAdmin();
     }
 
     /**

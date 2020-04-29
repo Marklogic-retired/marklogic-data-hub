@@ -21,6 +21,7 @@ public class CopyQueryOptionsCommandTest extends HubTestBase {
 
     @Test
     void test() throws Exception {
+        resetHubProject();
         runAsAdmin();
         try {
             final String groupName = adminHubConfig.getAppConfig().getGroupName();

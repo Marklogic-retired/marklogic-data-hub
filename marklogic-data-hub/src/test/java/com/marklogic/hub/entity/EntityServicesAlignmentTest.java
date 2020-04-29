@@ -9,6 +9,7 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.row.RowManager;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubConfig;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -24,6 +25,11 @@ public class EntityServicesAlignmentTest extends AbstractHubCoreTest {
 
     @Autowired
     HubConfig hubConfig;
+
+    @BeforeEach
+    void beforeEach() {
+        runAsFlowDeveloper();
+    }
 
     @Test
     public void testDeployTDEWithNoEntities() {
