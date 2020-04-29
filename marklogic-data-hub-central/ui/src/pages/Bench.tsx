@@ -3,7 +3,7 @@ import styles from './Bench.module.scss';
 import Flows from '../components/flows/flows';
 import { Modal, Collapse } from 'antd';
 import axios from 'axios'
-import { RolesContext } from "../util/roles";
+import { AuthoritiesContext } from "../util/authorities";
 import { UserContext } from '../util/user-context';
 
 const { Panel } = Collapse;
@@ -32,10 +32,10 @@ const Bench: React.FC = () => {
     const [running, setRunning] = useState<any[]>([]);
 
     // For role-based privileges
-    const roleService = useContext(RolesContext);
-    const canReadFlows = roleService.canReadFlows();
-    const canWriteFlows = roleService.canWriteFlows();
-    const hasOperatorRole = roleService.hasOperatorRole();
+    const authorityService = useContext(AuthoritiesContext);
+    const canReadFlow = authorityService.canReadFlow();
+    const canWriteFlow = authorityService.canWriteFlow();
+    const hasOperatorRole = authorityService.hasOperatorRole();
 
     const pollConfig: PollConfig = {
         interval: 1000, // In millseconds
@@ -359,8 +359,8 @@ const Bench: React.FC = () => {
                 updateFlow={updateFlow}
                 runStep={runStep}
                 deleteStep={deleteStep}
-                canReadFlows={canReadFlows}
-                canWriteFlows={canWriteFlows}
+                canReadFlow={canReadFlow}
+                canWriteFlow={canWriteFlow}
                 hasOperatorRole={hasOperatorRole}
                 running={running}
             />

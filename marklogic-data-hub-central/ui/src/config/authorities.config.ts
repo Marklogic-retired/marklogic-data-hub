@@ -1,16 +1,16 @@
-import {IRolesContextInterface} from "../util/roles";
+import {IAuthoritiesContextInterface} from "../util/authorities";
 
 // Roles service for data-hub-developer
-class DeveloperRolesService implements IRolesContextInterface{
-    public roles: string[] = [];
+class DeveloperRolesService implements IAuthoritiesContextInterface{
+    public authorities: string[] = [];
 
-    public setRoles: (roles: string[]) => void = (roles: string[]) => {
-        this.roles = roles;
+    public setAuthorities: (authorities: string[]) => void = (authorities: string[]) => {
+        this.authorities = authorities;
     };
-    public canReadMappings:() => boolean = () => {
+    public canReadMapping:() => boolean = () => {
         return true;
     };
-    public canWriteMappings:() => boolean = () => {
+    public canWriteMapping:() => boolean = () => {
         return true;
     };
     public canReadMatchMerge:() => boolean = () => {
@@ -25,22 +25,22 @@ class DeveloperRolesService implements IRolesContextInterface{
     public canWriteLoadData:() => boolean = () => {
         return true;
     };
-    public canReadEntityModels:() => boolean = () => {
+    public canReadEntityModel:() => boolean = () => {
         return true;
     };
-    public canWriteEntityModels:() => boolean = () => {
+    public canWriteEntityModel:() => boolean = () => {
         return true;
     };
-    public canReadFlows:() => boolean = () => {
+    public canReadFlow:() => boolean = () => {
         return true;
     };
-    public canWriteFlows:() => boolean = () => {
+    public canWriteFlow:() => boolean = () => {
         return true;
     };
-    public canReadStepDefinitions:() => boolean = () => {
+    public canReadStepDefinition:() => boolean = () => {
         return true;
     };
-    public canWriteStepDefinitions:() => boolean = () => {
+    public canWriteStepDefinition:() => boolean = () => {
         return true;
     };
     public hasOperatorRole:() => boolean = () => {
@@ -49,16 +49,16 @@ class DeveloperRolesService implements IRolesContextInterface{
 }
 
 // Roles service for data-hub-operator
-class OperatorRolesService implements IRolesContextInterface{
-    public roles: string[] = [];
+class OperatorRolesService implements IAuthoritiesContextInterface{
+    public authorities: string[] = [];
 
-    public setRoles: (roles: string[]) => void = (roles: string[]) => {
-        this.roles = roles;
+    public setAuthorities: (authorities: string[]) => void = (authorities: string[]) => {
+        this.authorities = authorities;
     };
-    public canReadMappings:() => boolean = () => {
+    public canReadMapping:() => boolean = () => {
         return true;
     };
-    public canWriteMappings:() => boolean = () => {
+    public canWriteMapping:() => boolean = () => {
         return false;
     };
     public canReadMatchMerge:() => boolean = () => {
@@ -73,22 +73,22 @@ class OperatorRolesService implements IRolesContextInterface{
     public canWriteLoadData:() => boolean = () => {
         return false;
     };
-    public canReadEntityModels:() => boolean = () => {
+    public canReadEntityModel:() => boolean = () => {
         return true;
     };
-    public canWriteEntityModels:() => boolean = () => {
+    public canWriteEntityModel:() => boolean = () => {
         return false;
     };
-    public canReadFlows:() => boolean = () => {
+    public canReadFlow:() => boolean = () => {
         return true;
     };
-    public canWriteFlows:() => boolean = () => {
+    public canWriteFlow:() => boolean = () => {
         return false;
     };
-    public canReadStepDefinitions:() => boolean = () => {
+    public canReadStepDefinition:() => boolean = () => {
         return true;
     };
-    public canWriteStepDefinitions:() => boolean = () => {
+    public canWriteStepDefinition:() => boolean = () => {
         return false;
     };
     public hasOperatorRole:() => boolean = () => {
@@ -96,9 +96,9 @@ class OperatorRolesService implements IRolesContextInterface{
     };
   }
 
-  const roles = {
+  const authorities = {
     DeveloperRolesService: new DeveloperRolesService(),
     OperatorRolesService: new OperatorRolesService()
 };
 
-export default roles;
+export default authorities;

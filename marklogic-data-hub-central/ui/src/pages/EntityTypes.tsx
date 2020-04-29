@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Modal } from 'antd';
 import styles from './EntityTypes.module.scss';
-import { RolesContext } from '../util/roles';
+import { AuthoritiesContext } from '../util/authorities';
 import { UserContext } from '../util/user-context';
 import axios from 'axios'
 import EntityTiles from '../components/entities/entity-tiles';
@@ -19,12 +19,12 @@ const EntityTypes: React.FC = () => {
     const [entityModels, setEntityModels] = useState<any[]>([]);
 
     //Role based access
-    const roleService = useContext(RolesContext);
-    const canReadOnly = roleService.canReadMappings();
-    const canReadWrite = roleService.canWriteMappings();
-    const canReadMatchMerge = roleService.canReadMatchMerge();
-    const canWriteMatchMerge = roleService.canWriteMatchMerge();
-    const canWriteFlows = roleService.canWriteFlows();
+    const authorityService = useContext(AuthoritiesContext);
+    const canReadOnly = authorityService.canReadMapping();
+    const canReadWrite = authorityService.canWriteMapping();
+    const canReadMatchMerge = authorityService.canReadMatchMerge();
+    const canWriteMatchMerge = authorityService.canWriteMatchMerge();
+    const canWriteFlow = authorityService.canWriteFlow();
 
     const getEntityModels = async () => {
         try {
@@ -124,7 +124,7 @@ const EntityTypes: React.FC = () => {
         canReadOnly={canReadOnly}
         entityModels={entityModels}
         getEntityModels={getEntityModels}
-        canWriteFlows={canWriteFlows}
+        canWriteFlow={canWriteFlow}
         addStepToFlow={addStepToFlow}
         addStepToNew={addStepToNew}/>
         </div>

@@ -32,14 +32,14 @@ class AuthTest extends AbstractMvcTest {
             .andExpect(status().isUnauthorized());
     }
 
+    // Eventually admin won't be able to login
     @Test
     void loginWithValidAdminAndLogout() throws Exception {
         loginAsUser(testConstants.ADMIN_USERNAME).andDo(result -> {
             String strResponse = result.getResponse().getContentAsString();
             JsonNode jsonResponse = objectMapper.readTree(strResponse);
-            assertTrue(jsonResponse.get("roles").isArray());
             assertTrue(jsonResponse.get("authorities").isArray());
-            assertTrue(jsonResponse.get("authorities").toString().contains("canInstallDataHub"));
+            assertTrue(jsonResponse.get("authorities").toString().contains("writeLoadData"));
         });
 
         assertFalse(mockHttpSession.isInvalid());
@@ -56,9 +56,8 @@ class AuthTest extends AbstractMvcTest {
             result -> {
                 String strResponse = result.getResponse().getContentAsString();
                 JsonNode jsonResponse = objectMapper.readTree(strResponse);
-                assertTrue(jsonResponse.get("roles").isArray());
                 assertTrue(jsonResponse.get("authorities").isArray());
-                assertTrue(jsonResponse.get("authorities").toString().contains("canInstallDataHub"));
+                assertTrue(jsonResponse.get("authorities").toString().contains("writeLoadData"));
             })
             .andExpect(status().isOk());
 
@@ -76,9 +75,8 @@ class AuthTest extends AbstractMvcTest {
             result -> {
                 String strResponse = result.getResponse().getContentAsString();
                 JsonNode jsonResponse = objectMapper.readTree(strResponse);
-                assertTrue(jsonResponse.get("roles").isArray());
                 assertTrue(jsonResponse.get("authorities").isArray());
-                assertFalse(jsonResponse.get("authorities").toString().contains("canInstallDataHub"));
+                assertFalse(jsonResponse.get("authorities").toString().contains("downloadConfigurationFiles"));
             })
             .andExpect(status().isOk());
 

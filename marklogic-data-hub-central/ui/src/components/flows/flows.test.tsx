@@ -11,8 +11,8 @@ describe('Flows component', () => {
     let updateFlow = () => null;
     let runStep = () => null;
     let deleteStep = () => null;
-    let canReadFlows = false;
-    let canWriteFlows = false;
+    let canReadFlow = false;
+    let canWriteFlow = false;
     let hasOperatorRole = false;
     let running = [];
     it('should render correctly', () => {
@@ -25,8 +25,8 @@ describe('Flows component', () => {
             updateFlow={updateFlow} 
             runStep={runStep} 
             deleteStep={deleteStep} 
-            canReadFlows={canReadFlows} 
-            canWriteFlows={canWriteFlows}
+            canReadFlow={canReadFlow}
+            canWriteFlow={canWriteFlow}
             hasOperatorRole={hasOperatorRole}
             running={running}
         />);

@@ -131,7 +131,7 @@ public class EntitySearchController extends BaseController {
      */
     @RequestMapping(method = RequestMethod.POST, value = "/export")
     @ResponseBody
-    @Secured("ROLE_canExportEntityInstances")
+    @Secured("ROLE_exportEntityInstances")
     @ApiOperation("Returns CSV data")
     public ResponseEntity<StreamingResponseBody> export(@RequestParam String queryDocument, @RequestParam String fileType, @RequestParam(required = false) Long limit, final HttpServletResponse response) {
         StreamingResponseBody stream = out -> {
@@ -143,7 +143,7 @@ public class EntitySearchController extends BaseController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/export/query/{queryId}")
     @ResponseBody
-    @Secured("ROLE_canExportEntityInstances")
+    @Secured("ROLE_exportEntityInstances")
     @ApiOperation("Returns CSV data")
     public ResponseEntity<StreamingResponseBody> exportSavedQuery(@PathVariable String queryId, @RequestParam String fileType, @RequestParam(required = false) Long limit, final HttpServletResponse response) {
         StreamingResponseBody stream = out -> {

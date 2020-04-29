@@ -1,4 +1,11 @@
 {
   "role-name": "hub-central-entity-exporter",
-  "description": "Permits exporting entity instance documents"
+  "description": "Permits exporting entity instance documents",
+  "privilege": [
+    {
+      "privilege-name": "data-hub:exportEntityInstances",
+      "action": "http://marklogic.com/data-hub/privileges/export-entity-instances",
+      "kind": "execute"
+    }
+  ]
 }

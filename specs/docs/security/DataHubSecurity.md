@@ -89,7 +89,7 @@ Privilege | Notes
 All Data Hub roles intended for Hub Central users inherit this role.
 
 #### Associate Authorities
- - canLoginToHubCentral
+ - loginToHubCentral
 
 #### Inherited Roles
  - data-hub-common
@@ -99,7 +99,7 @@ All Data Hub roles intended for Hub Central users inherit this role.
 Role to determine if a user can download the Hub Central project.
 
 #### Associate Authorities
- - canDownloadUserArtifacts
+ - downloadConfigurationFiles
 
 #### Inherited Roles
  - data-hub-common
@@ -109,7 +109,7 @@ Role to determine if a user can download the Hub Central project.
 Role to determine if a user can clear their data through Hub Central.
 
 #### Associate Authorities
- - canClearUserData
+ - clearUserData
 
 #### Inherited Roles
  - data-hub-common-writer
@@ -119,8 +119,8 @@ Role to determine if a user can clear their data through Hub Central.
 Can run steps through Hub Central
 
 #### Associate Authorities
- - canReadStep
- - canRunStep
+ - readStep
+ - runStep
 
 #### Inherited Roles
  - hub-central-user
@@ -136,7 +136,7 @@ Can run steps through Hub Central
 Can create and run steps though Hub Central
 
 #### Associate Authorities
- - canWriteStep
+ - writeStep
 
 #### Inherited Roles
  - hub-central-step-runner
@@ -148,7 +148,7 @@ Can create and run steps though Hub Central
 Can read load data artifacts through Hub Central
 
 #### Associate Authorities
- - canReadLoadData
+ - readLoadData
 
 #### Inherited Roles
  - hub-central-user
@@ -159,7 +159,7 @@ Can read load data artifacts through Hub Central
 Can read and write load data artifacts through Hub Central
 
 #### Associate Authorities
- - canWriteLoadData
+ - writeLoadData
 
 #### Inherited Roles
  - hub-central-load-reader
@@ -171,7 +171,7 @@ Can read and write load data artifacts through Hub Central
 Can read mapping artifacts through Hub Central
 
 #### Associate Authorities
- - canReadMapping
+ - readMapping
 
 #### Inherited Roles
  - hub-central-user
@@ -182,7 +182,7 @@ Can read mapping artifacts through Hub Central
 Can read and write mapping artifacts through Hub Central
 
 #### Associate Authorities
- - canWriteMapping
+ - writeMapping
 
 #### Inherited Roles
  - hub-central-mapping-reader
@@ -194,8 +194,8 @@ Can read and write mapping artifacts through Hub Central
 Can read match and merge artifacts through Hub Central
 
 #### Associate Authorities
- - canReadMatching
- - canReadMerge
+ - readMatching
+ - readMerge
 
 #### Inherited Roles
  - hub-central-user
@@ -206,8 +206,8 @@ Can read match and merge artifacts through Hub Central
 Can read and write match and merge artifacts through Hub Central
 
 #### Associate Authorities
- - canWriteMatching
- - canWriteMerge
+ - writeMatching
+ - writeMerge
 
 #### Inherited Roles
  - hub-central-match-merge-reader
@@ -219,7 +219,7 @@ Can read and write match and merge artifacts through Hub Central
 Can read custom artifacts through Hub Central
 
 #### Associate Authorities
- - canReadCustom
+ - readCustom
 
 #### Inherited Roles
  - hub-central-user
@@ -230,7 +230,7 @@ Can read custom artifacts through Hub Central
 Can read and write custom artifacts through Hub Central
 
 #### Associate Authorities
- - canWriteCustom
+ - writeCustom
 
 #### Inherited Roles
  - hub-central-custom-reader

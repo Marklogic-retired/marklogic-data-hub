@@ -5,25 +5,25 @@
     "type": "string"
   },
   "enum": [
-    "canLoginToHubCentral",
-    "canWriteLoadData",
-    "canReadLoadData",
-    "canWriteMapping",
-    "canReadMapping",
-    "canWriteFlow",
-    "canReadFlow",
-    "canWriteStepDefinition",
-    "canReadStepDefinition",
-    "canReadMatching",
-    "canWriteMatching",
-    "canWriteMerge",
-    "canReadMerge"
+    "loginToHubCentral",
+    "writeLoadData",
+    "readLoadData",
+    "writeMapping",
+    "readMapping",
+    "writeFlow",
+    "readFlow",
+    "writeStepDefinition",
+    "readStepDefinition",
+    "readMatching",
+    "writeMatching",
+    "writeMerge",
+    "readMerge"
   ],
   "x-examples": {
     "hub-central-load-data-writer": [
-      "canLoginToHubCentral",
-      "canReadLoadData",
-      "canWriteLoadData"
+      "loginToHubCentral",
+      "readLoadData",
+      "writeLoadData"
     ]
   },
   "description": "List describing the autorites a given user has."

@@ -10,7 +10,7 @@ import SourceToEntityMap from './source-entity-map/source-to-entity-map';
 import {getResultsByQuery, getDoc} from '../../../util/search-service'
 import ActivitySettingsDialog from "../../activity-settings/activity-settings-dialog";
 import { AdvMapTooltips } from '../../../config/tooltips.config';
-import {RolesContext} from "../../../util/roles";
+import {AuthoritiesContext} from "../../../util/authorities";
 import { getSettingsArtifact, getNestedEntities } from '../../../util/manageArtifacts-service';
 import axios from 'axios';
 import { xmlParserForMapping } from '../../../util/xml-parser';
@@ -27,7 +27,7 @@ interface Props {
     updateMappingArtifact: any;
     canReadOnly: any;
     canReadWrite: any;
-    canWriteFlows: any;
+    canWriteFlow: any;
     entityModel: any;
     addStepToFlow: any;
     addStepToNew: any;
@@ -35,7 +35,7 @@ interface Props {
 
 const MappingCard: React.FC<Props> = (props) => {
     const activityType = 'mapping';
-    const roleService = useContext(RolesContext);
+    const authorityService = useContext(AuthoritiesContext);
     const [newMap, setNewMap] = useState(false);
     const [title, setTitle] = useState('');
     const [mapData, setMapData] = useState({});
@@ -618,7 +618,7 @@ const MappingCard: React.FC<Props> = (props) => {
                                 {elem.selectedSource === 'collection' ? <div className={styles.sourceQuery}>Collection: {extractCollectionFromSrcQuery(elem.sourceQuery)}</div> : <div className={styles.sourceQuery}>Source Query: {getInitialChars(elem.sourceQuery,32,'...')}</div>}
                                 <br /><br />
                                 <p className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</p>
-                                {props.canWriteFlows ? <div className={styles.cardLinks} style={{display: showLinks === elem.name ? 'block' : 'none'}}>
+                                {props.canWriteFlow ? <div className={styles.cardLinks} style={{display: showLinks === elem.name ? 'block' : 'none'}}>
                                     <div className={styles.cardLink} onClick={() => openSourceToEntityMapping(elem.name,index)}>Open step details</div>
                                     <div className={styles.cardLink}>Add step to a new flow</div>
                                     <div className={styles.cardNonLink}>
@@ -684,7 +684,7 @@ const MappingCard: React.FC<Props> = (props) => {
                 setOpenActivitySettings={setOpenMappingSettings}
                 stepData={mapData}
                 activityType={activityType}
-                canWrite={roleService.canWriteMappings()}
+                canWrite={authorityService.canWriteMapping()}
             />
             {addConfirmation}
         </div>

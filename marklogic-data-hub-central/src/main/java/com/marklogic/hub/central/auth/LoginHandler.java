@@ -18,15 +18,16 @@ package com.marklogic.hub.central.auth;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LoginHandler implements AuthenticationSuccessHandler {
 
@@ -46,9 +47,6 @@ public class LoginHandler implements AuthenticationSuccessHandler {
         ObjectMapper mapper = new ObjectMapper();
 
         ObjectNode jsonResponse = mapper.createObjectNode();
-        if (token.getRoles() != null) {
-            jsonResponse.putArray("roles").addAll(token.getRoles());
-        }
 
         List<TextNode> authorities = new ArrayList<>();
         token.getAuthorities().forEach(auth -> {

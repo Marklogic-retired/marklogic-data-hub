@@ -3,14 +3,14 @@ import { render, fireEvent, waitForElement, cleanup } from '@testing-library/rea
 import '@testing-library/jest-dom/extend-expect'
 import axiosMock from 'axios'
 import  Bench from '../pages/Bench';
-import {RolesContext} from '../util/roles';
+import {AuthoritiesContext} from '../util/authorities';
 import data from '../config/bench.config';
-import roles from '../config/roles.config';
+import authorities from '../config/authorities.config';
 
 jest.mock('axios');
 
-const mockDevRolesService = roles.DeveloperRolesService;
-const mockOpRolesService = roles.OperatorRolesService;
+const mockDevRolesService = authorities.DeveloperRolesService;
+const mockOpRolesService = authorities.OperatorRolesService;
 
 describe('Verify errors associated with running a step', () => {
 
@@ -35,7 +35,7 @@ describe('Verify errors associated with running a step', () => {
             }
         })
         axiosMock.post['mockImplementationOnce'](jest.fn(() => Promise.resolve(data.response)));
-        const {getAllByText, getByText, getByLabelText } = await render(<RolesContext.Provider value={ mockDevRolesService}><Bench/></RolesContext.Provider>);
+        const {getAllByText, getByText, getByLabelText } = await render(<AuthoritiesContext.Provider value={ mockDevRolesService}><Bench/></AuthoritiesContext.Provider>);
         
         // Click disclosure icon
         fireEvent.click(getByLabelText("icon: right"));
@@ -73,7 +73,7 @@ describe('Verify errors associated with running a step', () => {
             }
         })
         axiosMock.post['mockImplementationOnce'](jest.fn(() => Promise.resolve(data.response)));
-        const { getByText, getByLabelText } = await render(<RolesContext.Provider value={ mockDevRolesService}><Bench/></RolesContext.Provider>);
+        const { getByText, getByLabelText } = await render(<AuthoritiesContext.Provider value={ mockDevRolesService}><Bench/></AuthoritiesContext.Provider>);
         
         // Click disclosure icon
         fireEvent.click(getByLabelText("icon: right"));
@@ -114,7 +114,7 @@ describe('Verify step running', () => {
             }
         })
         axiosMock.post['mockImplementationOnce'](jest.fn(() => Promise.resolve(data.responseForMapping)));
-        const { getByText, getByLabelText } = await render(<RolesContext.Provider value={ mockDevRolesService }><Bench/></RolesContext.Provider>);
+        const { getByText, getByLabelText } = await render(<AuthoritiesContext.Provider value={ mockDevRolesService }><Bench/></AuthoritiesContext.Provider>);
         
         // Click disclosure icon
         fireEvent.click(getByLabelText("icon: right"));
@@ -145,7 +145,7 @@ describe('Verify step running', () => {
             }
         })
         axiosMock.post['mockImplementationOnce'](jest.fn(() => Promise.resolve(data.responseForMapping)));
-        const { getByText, getByLabelText } = await render(<RolesContext.Provider value={ mockOpRolesService }><Bench/></RolesContext.Provider>);
+        const { getByText, getByLabelText } = await render(<AuthoritiesContext.Provider value={ mockOpRolesService }><Bench/></AuthoritiesContext.Provider>);
         
         // Click disclosure icon
         fireEvent.click(getByLabelText("icon: right"));
@@ -182,7 +182,7 @@ describe('Verify step display', () => {
                     return Promise.reject(new Error('not found'))
             }
         })
-        const { getByText, getByLabelText } = await render(<RolesContext.Provider value={ mockDevRolesService }><Bench/></RolesContext.Provider>);
+        const { getByText, getByLabelText } = await render(<AuthoritiesContext.Provider value={ mockDevRolesService }><Bench/></AuthoritiesContext.Provider>);
         
         // Click disclosure icon
         fireEvent.click(getByLabelText("icon: right"));

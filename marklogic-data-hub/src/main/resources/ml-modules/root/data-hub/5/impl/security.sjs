@@ -15,64 +15,60 @@
 */
 'use strict';
 const Artifacts = require('/data-hub/5/artifacts/core.sjs');
+const ds = require("/data-hub/5/data-services/ds-utils.sjs");
+
+const dataHubPrivilegePrefix = 'data-hub:';
+
+const ampedGetDataHubPrivileges = module.amp(function ampedGetDataHubPrivileges() {
+  const userName = xdmp.getCurrentUser();
+  const dataHubPrivilegeNames = xdmp.userPrivileges(userName).toArray().map((priv) => xdmp.privilegeName(priv))
+      .filter((privName) => fn.startsWith(privName, dataHubPrivilegePrefix));
+  return dataHubPrivilegeNames;
+});
 
 class Security {
 
-  getRolesAndAuthorities() {
-    const roleIdToName = (roleID) => xdmp.roleName(roleID);
-    const currentRoles = xdmp.getCurrentRoles().toArray().map(String);
-    let currentRoleNames = currentRoles.map(roleIdToName);
+  getDataHubAuthorities() {
+    return ampedGetDataHubPrivileges()
+        .map((privName) => fn.substringAfter(privName,dataHubPrivilegePrefix));
+  }
 
-    const manageAdminRolesMustAllMatched = ['manage-admin', 'security'].map((roleName) => String(xdmp.role(roleName)));
-    const hasManageAdminAndSecurity = manageAdminRolesMustAllMatched.every((role) => currentRoles.indexOf(role) !== -1);
-
-    if (currentRoleNames.includes('admin')) {
-      currentRoleNames = xdmp.roles().toArray().map(roleIdToName);
+  dataHubAuthorityAssert(dataHubAuthority, msg = `${xdmp.getCurrentUser()} user doesn't have authority ${dataHubAuthority}`) {
+    const dataHubPrivilege = `http://marklogic.com/data-hub/privileges/${fn.lowerCase(fn.replace(dataHubAuthority, '([a-z])([A-Z])', '$1-$2'))}`;
+    try {
+      xdmp.securityAssert(dataHubPrivilege,'execute');
+    } catch (e) {
+      xdmp.log(`Security assertion failed for ${dataHubAuthority}. Exception: ${e.toString()}`, 'warning');
+      ds.throwForbidden(msg);
     }
+  }
 
+  getRolesAndAuthorities() {
     const response = {
-      "authorities": [],
-      "roles": []
+      "authorities": this.getDataHubAuthorities()
     };
 
-    if (currentRoleNames.includes('admin') || hasManageAdminAndSecurity) {
-      response.authorities.push('canInstallDataHub');
-    }
-
-    if (currentRoleNames.includes('data-hub-saved-query-writer')) {
-      response.authorities.push('canManageSavedQuery');
-    }
-
-    if (currentRoleNames.includes('hub-central-entity-exporter')) {
-      response.authorities.push('canExportEntityInstances');
-    }
-
+    // TODO Below logic will go away in favor of privileges
     const typesInfo = Artifacts.getTypesInfo();
     for (const artifactTypeInfo of typesInfo) {
       const type = artifactTypeInfo.type;
-      const writeAuthority = `canWrite${type.substr(0,1).toUpperCase()}${type.substr(1)}`;
+      const writeAuthority = `write${type.substr(0,1).toUpperCase()}${type.substr(1)}`;
 
       if (artifactTypeInfo.userCanUpdate) {
         response.authorities.push(writeAuthority);
       }
 
-      const readAuthority = `canRead${type.substr(0,1).toUpperCase()}${type.substr(1)}`;
+      const readAuthority = `read${type.substr(0,1).toUpperCase()}${type.substr(1)}`;
 
       if (artifactTypeInfo.userCanRead) {
         response.authorities.push(readAuthority);
       }
     }
 
-    if (currentRoleNames.includes("hub-central-downloader")) {
-      response.authorities.push("downloadConfigurationFiles");
-    }
-    if (currentRoleNames.includes("hub-central-clear-user-data")) {
-      response.authorities.push("clearUserData");
-    }
-
-    response.roles = currentRoleNames.filter(roleName => fn.startsWith(roleName, "data-hub"));
     return response;
   }
 }
 
 module.exports = Security;
+
+module.exports.ampedGetDataHubPrivileges = ampedGetDataHubPrivileges;
