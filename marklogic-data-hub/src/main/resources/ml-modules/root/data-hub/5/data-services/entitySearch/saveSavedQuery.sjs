@@ -24,11 +24,8 @@ var saveQuery;
 var userCollections = ["http://marklogic.com/data-hub/saved-query"];
 var queryDocument = JSON.parse(saveQuery);
 
-let authorized = new Security().getRolesAndAuthorities().authorities.includes("canManageSavedQuery");
-
-if(!authorized) {
-    ds.throwForbidden(xdmp.getCurrentUser() + " user doesn't have authority to save or update query");
-}
+const hubsec = new Security();
+hubsec.dataHubAuthorityAssert('manageSavedQuery', `${xdmp.getCurrentUser()} user doesn't have authority to save or update query`);
 
 if (queryDocument == null || queryDocument.savedQuery == null) {
     ds.throwBadRequest("The request is empty or malformed");

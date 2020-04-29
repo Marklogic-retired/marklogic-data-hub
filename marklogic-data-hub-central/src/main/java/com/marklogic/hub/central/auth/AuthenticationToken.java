@@ -15,7 +15,6 @@
  */
 package com.marklogic.hub.central.auth;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.SpringSecurityCoreVersion;
@@ -32,15 +31,13 @@ public class AuthenticationToken extends AbstractAuthenticationToken {
     private final String username;
     private String password;
     private final String projectName;
-    private final ArrayNode roles;
 
-    public AuthenticationToken(String username, String password, String projectName, ArrayNode roles, Collection<GrantedAuthority> authorities) {
+    public AuthenticationToken(String username, String password, String projectName, Collection<GrantedAuthority> authorities) {
         super(authorities);
         super.setAuthenticated(true);
         this.username = username;
         this.password = password;
         this.projectName = projectName;
-        this.roles = roles;
     }
 
     public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
@@ -68,7 +65,4 @@ public class AuthenticationToken extends AbstractAuthenticationToken {
         return projectName;
     }
 
-    public ArrayNode getRoles() {
-        return roles;
-    }
 }

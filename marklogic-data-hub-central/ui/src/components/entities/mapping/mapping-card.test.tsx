@@ -13,7 +13,7 @@ describe('Mapping cards view component', () => {
       updateMappingArtifact
       canReadOnly
       canReadWrite
-      canWriteFlows
+      canWriteFlow
       entityModel
       addStepToFlow
       addStepToNew/>);

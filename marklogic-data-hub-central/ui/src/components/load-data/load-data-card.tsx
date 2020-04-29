@@ -10,7 +10,7 @@ import { convertDateFromISO } from '../../util/conversionFunctions';
 import ActivitySettingsDialog from "../activity-settings/activity-settings-dialog";
 import { AdvLoadTooltips } from '../../config/tooltips.config';
 
-import { RolesContext } from "../../util/roles";
+import { AuthoritiesContext } from "../../util/authorities";
 
 const { Option } = Select;
 
@@ -21,14 +21,14 @@ interface Props {
     createLoadDataArtifact: any;
     canReadOnly: any;
     canReadWrite: any;
-    canWriteFlows: any;
+    canWriteFlow: any;
     addStepToFlow: any;
     addStepToNew: any;
 }
 
 const LoadDataCard: React.FC<Props> = (props) => {
     const activityType = 'loadData';
-    const roleService = useContext(RolesContext);
+    const authorityService = useContext(AuthoritiesContext);
     const [newDataLoad, setNewDataLoad] = useState(false);
     const [title, setTitle] = useState('');
     const [stepData, setStepData] = useState({});
@@ -195,7 +195,7 @@ const LoadDataCard: React.FC<Props> = (props) => {
                             <div className={styles.fileCount}>{elem.fileCount}</div>
                             <span className={styles.stepNameStyle}>{getInitialChars(elem.name, 27, '...')}</span>
                             <p className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</p>
-                            {props.canWriteFlows ? <div className={styles.cardLinks} style={{display: showLinks === elem.name ? 'block' : 'none'}}>
+                            {props.canWriteFlow ? <div className={styles.cardLinks} style={{display: showLinks === elem.name ? 'block' : 'none'}}>
                                 <div className={styles.cardLink}>Add step to a new flow</div>
                                 <div className={styles.cardNonLink}>
                                     Add step to an existing flow
@@ -234,7 +234,7 @@ const LoadDataCard: React.FC<Props> = (props) => {
                 setOpenActivitySettings={setOpenLoadDataSettings}
                 stepData={stepData}
                 activityType={activityType}
-                canWrite={roleService.canWriteLoadData()}
+                canWrite={authorityService.canWriteLoadData()}
             />
         </div>
     );

@@ -198,7 +198,7 @@ const EntityTiles = (props) => {
                     canReadWrite={props.canReadWrite}
                     canReadOnly={props.canReadOnly}
                     entityModel={props.entityModels[entityCardData.entityType]}
-                    canWriteFlows={props.canWriteFlows}
+                    canWriteFlow={props.canWriteFlow}
                     addStepToFlow={props.addStepToFlow}
                     addStepToNew={props.addStepToNew}/>
             </div>

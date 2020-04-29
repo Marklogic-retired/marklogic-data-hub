@@ -18,8 +18,8 @@ interface Props {
     updateFlow: any;
     deleteStep: any;
     runStep: any;
-    canReadFlows: boolean;
-    canWriteFlows: boolean;
+    canReadFlow: boolean;
+    canWriteFlow: boolean;
     hasOperatorRole: boolean;
     running: any;
 }
@@ -137,7 +137,7 @@ const Flows: React.FC<Props> = (props) => {
 
     const deleteIcon = (name, i) => (
         <span className={styles.deleteFlow}>
-            {props.canWriteFlows ?
+            {props.canWriteFlow ?
                 <Tooltip title={'Delete Flow'} placement="bottom">
                     <i aria-label={'deleteFlow-' + i}>
                         <FontAwesomeIcon 
@@ -166,7 +166,7 @@ const Flows: React.FC<Props> = (props) => {
     );
 
     const flowHeader = (name, index) => (
-        <Tooltip title={props.canWriteFlows ? 'Edit Flow' : 'Flow Details'} placement="right">
+        <Tooltip title={props.canWriteFlow ? 'Edit Flow' : 'Flow Details'} placement="right">
             <span className={styles.flowName} onClick={(e) => OpenEditFlowDialog(e, index)}>
                 {name}
             </span>
@@ -222,7 +222,7 @@ const Flows: React.FC<Props> = (props) => {
                                         <Icon type="play-circle" theme="filled" />
                                     </div>
                                 }
-                                {props.canWriteFlows ?
+                                {props.canWriteFlow ?
                                     <Tooltip title={'Delete Step'} placement="bottom">
                                         <div className={styles.delete} aria-label={'deleteStep-' + i} onClick={() => handleStepDelete(flow.name, step.name, step.stepDefinitionType)}><Icon type="close" /></div>
                                     </Tooltip> :
@@ -258,13 +258,13 @@ const Flows: React.FC<Props> = (props) => {
 
    return (
     <div id="flows-container" className={styles.flowsContainer}>
-        {props.canReadFlows || props.canWriteFlows ?
+        {props.canReadFlow || props.canWriteFlow ?
             <>
                 <div className={styles.createContainer}>
                     <MlButton 
                         className={styles.createButton} size="default"
                         type="primary" onClick={OpenAddNewDialog} 
-                        disabled={!props.canWriteFlows}
+                        disabled={!props.canWriteFlow}
                     >Create Flow</MlButton>
                 </div>
                 <Collapse 
@@ -279,7 +279,7 @@ const Flows: React.FC<Props> = (props) => {
                     createFlow={props.createFlow}
                     updateFlow={props.updateFlow}
                     flowData={flowData}
-                    canWriteFlows={props.canWriteFlows}
+                    canWriteFlow={props.canWriteFlow}
                 />
                 {deleteConfirmation}
                 {deleteStepConfirmation}

@@ -106,6 +106,6 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
             authorities.add(new SimpleGrantedAuthority("ROLE_" + authority));
         });
 
-        return new AuthenticationToken(username, password, hubCentral.getProjectName(), (ArrayNode) response.get("roles"), authorities);
+        return new AuthenticationToken(username, password, hubCentral.getProjectName(), authorities);
     }
 }

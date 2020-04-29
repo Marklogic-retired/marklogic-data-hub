@@ -6,7 +6,7 @@ import SwitchView from '../components/load-data/switch-view';
 import LoadDataCard from '../components/load-data/load-data-card';
 import { UserContext } from '../util/user-context';
 import axios from 'axios'
-import { RolesContext } from "../util/roles";
+import { AuthoritiesContext } from "../util/authorities";
 
 const LoadData: React.FC = () => {
   let [viewType, setViewType] = useState('table');
@@ -16,10 +16,10 @@ const LoadData: React.FC = () => {
   const { handleError, resetSessionTime } = useContext(UserContext);
 
   //For role based privileges
-  const roleService = useContext(RolesContext);
-  const canReadOnly = roleService.canReadLoadData();
-  const canReadWrite = roleService.canWriteLoadData();
-  const canWriteFlows = roleService.canWriteFlows();
+  const authorityService = useContext(AuthoritiesContext);
+  const canReadOnly = authorityService.canReadLoadData();
+  const canReadWrite = authorityService.canWriteLoadData();
+  const canWriteFlow = authorityService.canWriteFlow();
 
   //Set context for switching views
   const handleViewTypeSelection = (vtype) => {
@@ -174,7 +174,7 @@ const LoadData: React.FC = () => {
         createLoadDataArtifact={createLoadDataArtifact} 
         canReadWrite={canReadWrite}
         canReadOnly={canReadOnly}
-        canWriteFlows={canWriteFlows}
+        canWriteFlow={canWriteFlow}
         addStepToFlow={addStepToFlow}
         addStepToNew={addStepToNew}
       />

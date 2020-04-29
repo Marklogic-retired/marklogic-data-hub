@@ -5,7 +5,7 @@ import {
   getUserPreferences, 
   updateUserPreferences
 } from '../services/user-preferences';
-import { RolesContext } from './roles';
+import { AuthoritiesContext } from './authorities';
 import {setEnvironment, getEnvironment, resetEnvironment} from '../util/environment';
 import { useInterval } from '../hooks/use-interval';
 import { SESSION_WARNING_COUNTDOWN } from '../config/application.config';
@@ -74,7 +74,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
   
   const [user, setUser] = useState<UserContextInterface>(defaultUserData);
   const sessionUser = localStorage.getItem('dataHubUser');
-  const rolesService = useContext(RolesContext);
+  const authoritiesService = useContext(AuthoritiesContext);
   let sessionCount = 300;
   let sessionTimer = true;
 
@@ -90,8 +90,8 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
     localStorage.setItem('dhUserHasManagePrivileges', authResponse.hasManagePrivileges);
     localStorage.setItem('projectName', authResponse.projectName);
 
-    const roles: string[] =  authResponse.roles || [];
-    rolesService.setRoles(roles);
+    const authorities: string[] =  authResponse.authorities || [];
+    authoritiesService.setAuthorities(authorities);
 
     let userPreferences = getUserPreferences(username);
     if (userPreferences) {
@@ -145,7 +145,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
     localStorage.setItem('dhUserHasManagePrivileges', '');
     localStorage.setItem('projectName', '');
     localStorage.setItem('loginResp','');
-    rolesService.setRoles([]);
+    authoritiesService.setAuthorities([]);
     resetEnvironment();
     setUser({ ...user,name: '', authenticated: false, redirect: true, sessionWarning: false });
   };

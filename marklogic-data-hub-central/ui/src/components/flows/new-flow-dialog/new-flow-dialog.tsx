@@ -126,7 +126,7 @@ const NewFlowDialog = (props) => {
             placeholder="Enter description"
             value={description}
             onChange={handleChange}
-            disabled={!props.canWriteFlows}
+            disabled={!props.canWriteFlow}
             className={styles.input}
           />&nbsp;&nbsp;
           <Tooltip title={NewFlowTooltips.description}>
@@ -135,7 +135,7 @@ const NewFlowDialog = (props) => {
         </Form.Item>
         <Form.Item className={styles.submitButtonsForm}>
           <div className={styles.submitButtons}>
-            {props.canWriteFlows ? 
+            {props.canWriteFlow ?
             <><Button onClick={() => onCancel()}>Cancel</Button>
             &nbsp;&nbsp;
             <Button 

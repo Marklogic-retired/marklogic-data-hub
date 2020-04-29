@@ -1,0 +1,6 @@
+{
+  "local-name" : "ampedGetDataHubPrivileges",
+  "document-uri" : "/data-hub/5/impl/security.sjs",
+  "modules-database" : "%%mlModulesDbName%%",
+  "role" : [ "data-hub-security-internal" ]
+}
