@@ -672,7 +672,7 @@ const SourceToEntityMap = (props) => {
     const onFunctionSelect = (e, name) => {
         setFunctionValue(e);
         insertContent(functionsDef(e), propName);
-    }   
+    }
 
     const menu = (
         <DropDownWithSearch
@@ -982,7 +982,6 @@ const SourceToEntityMap = (props) => {
                         <Table
                             pagination={false}
                             className={styles.entityTable}
-                            scroll={{  x: 'max-content', y: '60vh' }}
                             expandIcon={(props) => customExpandIcon(props)}
                             indentSize={14}
                             defaultExpandAllRows={true}
