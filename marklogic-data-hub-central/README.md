@@ -42,15 +42,15 @@ quickly deploy a DH application using the plugin you just published. To do so, j
 
 After you've deployed the application, it's likely that you'll update your branch later on - perhaps rebasing it from 
 the develop branch - and you'll need to update your application. To do so, you'll first need to publish the Gradle 
-plugin again, as described above. Then, run the following commands from the ./examples/reference-entity-model project:
+plugin again, as described above. Then, because there's a chance that new resources - such as roles and privileges - 
+may have been added to the DH Gradle plugin, you should initialize the project again to ensure that these resources
+are added to the project. This will avoid any deployment errors from occurring, where those errors result from the
+new resources not existing yet. To do so, just run the following from the ./examples/reference-entity-model project:
 
-    rm -rf src/main/hub-internal-config
-    ./gradlew hubInit
-    ./gradlew -i mlDeploy 
+    ./gradlew -i hubInit mlDeploy 
 
-By first removing the hub-internal-config directory, you ensure that hubInit will re-initialize the project, which 
-will guarantee anything that's been added to the hub-internal-config directory on the develop branch will be added to 
-your project. Then, just deploy the application again, and you've now got an updated DH application. 
+Note that the "-i" is optional - it's for info-level logging, and while you don't need it, it's often very helpful 
+in case an error occurs. 
 
 ## Running the middle tier
 
