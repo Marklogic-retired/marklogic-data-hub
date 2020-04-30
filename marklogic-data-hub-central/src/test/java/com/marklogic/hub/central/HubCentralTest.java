@@ -42,6 +42,9 @@ public class HubCentralTest {
         assertEquals("anyone", props.getProperty("mlAppServicesUsername"));
         assertEquals("anyword", props.getProperty("mlAppServicesPassword"));
         assertEquals("true", props.getProperty("mlIsHostLoadBalancer"));
+        assertEquals("true", props.getProperty("mlIsProvisionedEnvironment"));
+        assertEquals("https", props.getProperty("mlManageScheme"));
+        assertEquals("true", props.getProperty("mlManageSimpleSsl"));
         assertEquals("8010", props.getProperty("mlAppServicesPort"));
 
         Stream.of("mlAppServicesAuthentication", "mlFinalAuth", "mlStagingAuth", "mlJobAuth").forEach(name -> {
@@ -65,6 +68,9 @@ public class HubCentralTest {
         assertEquals("anyone", props.getProperty("mlAppServicesUsername"));
         assertEquals("anyword", props.getProperty("mlAppServicesPassword"));
         assertEquals("false", props.getProperty("mlIsHostLoadBalancer"));
+        assertEquals("false", props.getProperty("mlIsProvisionedEnvironment"));
+        assertEquals("http", props.getProperty("mlManageScheme"));
+        assertEquals("false", props.getProperty("mlManageSimpleSsl"));
         assertEquals("8000", props.getProperty("mlAppServicesPort"));
 
         Stream.of("mlAppServicesAuthentication", "mlFinalAuth", "mlStagingAuth", "mlJobAuth").forEach(name -> {
@@ -105,6 +111,7 @@ public class HubCentralTest {
         assertNotNull(hubConfig.getSslContext(DatabaseKind.JOB));
 
         assertTrue(hubConfig.getIsHostLoadBalancer());
+        assertTrue(hubConfig.getIsProvisionedEnvironment());
 
         ManageConfig manageConfig = hubConfig.getManageConfig();
         assertEquals("anyone", manageConfig.getUsername());
@@ -112,5 +119,7 @@ public class HubCentralTest {
         assertEquals("somehost", manageConfig.getHost());
         assertEquals("anyword", manageConfig.getPassword());
         assertEquals("anyword", manageConfig.getSecurityPassword());
+        assertTrue(manageConfig.isConfigureSimpleSsl());
+        assertEquals("https", manageConfig.getScheme());
     }
 }

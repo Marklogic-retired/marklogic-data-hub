@@ -74,6 +74,7 @@ public class HubCentral extends LoggingObject implements InitializingBean {
 
         if (useLocalDefaults) {
             primaryProperties.setProperty("mlIsHostLoadBalancer", "false");
+            primaryProperties.setProperty("mlIsProvisionedEnvironment", "false");
             primaryProperties.setProperty("mlAppServicesPort", "8000");
             primaryProperties.setProperty("mlAppServicesAuthentication", "digest");
             primaryProperties.setProperty("mlFinalAuth", "digest");
@@ -83,6 +84,8 @@ public class HubCentral extends LoggingObject implements InitializingBean {
             primaryProperties.setProperty("mlFinalSimpleSsl", "false");
             primaryProperties.setProperty("mlJobSimpleSsl", "false");
             primaryProperties.setProperty("mlStagingSimpleSsl", "false");
+            primaryProperties.setProperty("mlManageScheme", "http");
+            primaryProperties.setProperty("mlManageSimpleSsl", "false");
         }
 
         return propertyName -> {

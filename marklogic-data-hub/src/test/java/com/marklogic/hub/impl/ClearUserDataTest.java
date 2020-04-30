@@ -39,6 +39,10 @@ public class ClearUserDataTest extends AbstractHubCoreTest {
      */
     @Test
     void test() {
+        if (!isVersionCompatibleWith520Roles()) {
+            return;
+        }
+
         runAsDataHubOperator();
         addTestData();
 
@@ -75,6 +79,10 @@ public class ClearUserDataTest extends AbstractHubCoreTest {
 
     @Test
     void asUserWhoCantClearDatabases() {
+        if (!isVersionCompatibleWith520Roles()) {
+            return;
+        }
+
         runAsDataHubDeveloper();
         applyCurrentUserToManageClient();
         try {
