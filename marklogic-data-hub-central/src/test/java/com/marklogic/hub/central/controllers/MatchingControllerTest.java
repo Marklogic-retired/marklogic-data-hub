@@ -50,9 +50,9 @@ public class MatchingControllerTest extends AbstractHubCentralTest {
     void testMatchingConfigs() {
         installReferenceModelProject();
 
-        controller.updateMatching("TestCustomerMatching", readJsonObject(MATCHING_CONFIG_1));
-        controller.updateMatching("TestOrderMatching1", readJsonObject(MATCHING_CONFIG_2));
-        controller.updateMatching("TestOrderMatching2", readJsonObject(MATCHING_CONFIG_3));
+        controller.updateMatching(readJsonObject(MATCHING_CONFIG_1), "TestCustomerMatching");
+        controller.updateMatching(readJsonObject(MATCHING_CONFIG_2), "TestOrderMatching1");
+        controller.updateMatching(readJsonObject(MATCHING_CONFIG_3), "TestOrderMatching2");
 
         ArrayNode configsGroupbyEntity = controller.getMatchings().getBody();
         assertEquals(2, configsGroupbyEntity.size(), "Should be two items in the array - one for each entity type");

@@ -54,7 +54,11 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
             .exceptionHandling().authenticationEntryPoint(((request, response, authException) -> response.setStatus(HttpServletResponse.SC_UNAUTHORIZED)))
             .and()
             // Define requests that are always permitted, regardless of whether the user is authenticated or not
-            .authorizeRequests().antMatchers(getAlwaysPermittedPatterns()).permitAll().anyRequest().authenticated()
+            .authorizeRequests()
+                // Needed for springfox to work - see https://github.com/springfox/springfox/issues/1996#issuecomment-335155187
+                .antMatchers("/swagger-resources/**", "/swagger-ui.html", "/v2/api-docs", "/webjars/**").permitAll()
+                // Non-springfox patterns to permit
+                .antMatchers(getAlwaysPermittedPatterns()).permitAll().anyRequest().authenticated()
             .and()
             .logout().logoutUrl("/api/logout").logoutSuccessHandler(((request, response, authentication) -> request.getSession().invalidate()));
     }

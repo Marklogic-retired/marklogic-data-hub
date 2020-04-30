@@ -84,6 +84,13 @@ configured via the server.port property in src/main/resources/application.proper
 If you are instead building the executable war for local testing, read the section below on how to override properties
 when doing so.
 
+### Viewing the API docs
+
+Once you have the middle tier running, you can visit http://localhost:8080/swagger-ui.html to view the API docs for 
+all of the endpoints exposed by the middle tier. See the Application.java class in the middle tier for information on 
+how this is configured.
+
+
 ## Running the user interface
 
 To run the UI, first go into UI project directory:

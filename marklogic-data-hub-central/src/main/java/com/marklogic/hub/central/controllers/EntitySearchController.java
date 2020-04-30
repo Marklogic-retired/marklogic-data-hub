@@ -20,9 +20,13 @@ package com.marklogic.hub.central.controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.central.managers.EntitySearchManager;
+import com.marklogic.hub.central.models.DocSearchQueryInfo;
 import com.marklogic.hub.central.models.Document;
 import com.marklogic.hub.central.models.SearchQuery;
 import com.marklogic.hub.dataservices.EntitySearchService;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,6 +37,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -42,6 +49,7 @@ public class EntitySearchController extends BaseController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
+    @ApiOperation("Response is a MarkLogic JSON search response")
     public String search(@RequestBody SearchQuery searchQuery) {
         return newEntitySearchManager().search(searchQuery).get();
     }
@@ -65,43 +73,53 @@ public class EntitySearchController extends BaseController {
 
     @RequestMapping(value = "/facet-values", method = RequestMethod.POST)
     @ResponseBody
-    public JsonNode getFacetValues(@RequestBody JsonNode fsQuery) {
+    @ApiImplicitParam(required = true, paramType = "body", dataType = "FacetValuesQuery")
+    @ApiOperation(value = "Get an array of strings that match the pattern for the given index", response = FacetValues.class)
+    public JsonNode getFacetValues(@RequestBody @ApiParam(hidden = true) JsonNode fsQuery) {
         return getEntitySearchService().getMatchingPropertyValues(fsQuery);
     }
 
     @RequestMapping(value = "/facet-values/range", method = RequestMethod.POST)
     @ResponseBody
-    public JsonNode getFacetValuesRange(@RequestBody JsonNode facetInfo) {
+    @ApiImplicitParam(required = true, paramType = "body", dataType = "IndexMinMaxQuery")
+    @ApiOperation(value = "Get values for a range index", response = IndexMinMax.class)
+    public JsonNode getFacetValuesRange(@RequestBody @ApiParam(hidden = true) JsonNode facetInfo) {
         return getEntitySearchService().getMinAndMaxPropertyValues(facetInfo);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/savedQueries")
     @ResponseBody
-    public ResponseEntity<JsonNode> saveQueryDocument(@RequestBody JsonNode queryDocument) {
+    @ApiImplicitParam(required = true, paramType = "body", dataType = "SavedQueryRequest")
+    @ApiOperation(value = "Create a search query", response = SavedQuery.class)
+    public ResponseEntity<JsonNode> saveQueryDocument(@RequestBody @ApiParam(hidden = true) JsonNode queryDocument) {
         return new ResponseEntity<>(getEntitySearchService().saveSavedQuery(queryDocument), HttpStatus.CREATED);
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/savedQueries")
     @ResponseBody
-    public ResponseEntity<JsonNode> updateQueryDocument(@RequestBody JsonNode queryDocument) {
+    @ApiImplicitParam(required = true, paramType = "body", dataType = "SavedQueryRequest")
+    @ApiOperation(value = "Update a search query", response = SavedQuery.class)
+    public ResponseEntity<JsonNode> updateQueryDocument(@RequestBody @ApiParam(hidden = true) JsonNode queryDocument) {
         return new ResponseEntity<>(getEntitySearchService().saveSavedQuery(queryDocument), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/savedQueries")
     @ResponseBody
+    @ApiOperation(value = "Get all saved queries for the current user", response = SavedQueries.class)
     public ResponseEntity<JsonNode> getQueryDocuments() {
         return new ResponseEntity<>(getEntitySearchService().getSavedQueries(), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/savedQueries/query")
     @ResponseBody
+    @ApiOperation(value = "Get a saved query with the given ID", response = SavedQuery.class)
     public ResponseEntity<JsonNode> getQueryDocument(@RequestParam String id) {
         return new ResponseEntity<>(getEntitySearchService().getSavedQuery(id), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/savedQueries/query")
     @ResponseBody
-    public ResponseEntity deleteQueryDocument(@RequestParam String id) {
+    public ResponseEntity<Void> deleteQueryDocument(@RequestParam String id) {
         getEntitySearchService().deleteSavedQuery(id);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
@@ -114,6 +132,7 @@ public class EntitySearchController extends BaseController {
     @RequestMapping(method = RequestMethod.POST, value = "/export")
     @ResponseBody
     @Secured("ROLE_canExportEntityInstances")
+    @ApiOperation("Returns CSV data")
     public ResponseEntity<StreamingResponseBody> export(@RequestParam String queryDocument, @RequestParam String fileType, @RequestParam(required = false) Long limit, final HttpServletResponse response) {
         StreamingResponseBody stream = out -> {
             newEntitySearchManager().exportByQuery(new ObjectMapper().readTree(queryDocument), fileType, limit, out, response);
@@ -125,6 +144,7 @@ public class EntitySearchController extends BaseController {
     @RequestMapping(method = RequestMethod.GET, value = "/export/query/{queryId}")
     @ResponseBody
     @Secured("ROLE_canExportEntityInstances")
+    @ApiOperation("Returns CSV data")
     public ResponseEntity<StreamingResponseBody> exportSavedQuery(@PathVariable String queryId, @RequestParam String fileType, @RequestParam(required = false) Long limit, final HttpServletResponse response) {
         StreamingResponseBody stream = out -> {
             newEntitySearchManager().exportById(queryId, fileType, limit, out, response);
@@ -139,5 +159,43 @@ public class EntitySearchController extends BaseController {
 
     private EntitySearchService getEntitySearchService() {
         return EntitySearchService.on(getHubClient().getFinalClient());
+    }
+
+    public static class FacetValues extends ArrayList<String> {
+    }
+
+    public static class FacetValuesQuery {
+        public String entityTypeId;
+        public String propertyPath;
+        public String referenceType;
+        public Integer limit;
+        public String pattern;
+    }
+
+    public static class IndexMinMaxQuery {
+        public String entityTypeId;
+        public String propertyPath;
+        public String referenceType;
+    }
+
+    public static class IndexMinMax {
+        public String min;
+        public String max;
+    }
+
+    public static class SavedQueryRequest {
+        public String id;
+        public String name;
+        public String description;
+        public DocSearchQueryInfo query;
+        public List<String> propertiesToDisplay;
+    }
+
+    public static class SavedQuery extends SavedQueryRequest {
+        public String owner;
+        public Map<String, String> systemMetadata;
+    }
+
+    public static class SavedQueries extends ArrayList<SavedQuery> {
     }
 }

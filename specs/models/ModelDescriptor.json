@@ -42,7 +42,7 @@
       ]
     },
     "definitions": {
-      "$ref": "./ModelDefinitions.v1.json"
+      "$ref": "./ModelDefinitions.json"
     }
   }
 }

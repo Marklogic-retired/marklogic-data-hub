@@ -17,6 +17,7 @@ package com.marklogic.hub.central.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.central.exceptions.DataHubException;
+import com.marklogic.hub.central.schemas.FlowSchema;
 import com.marklogic.hub.dataservices.ArtifactService;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowInputs;
@@ -29,6 +30,10 @@ import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.util.json.JSONUtils;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
@@ -50,6 +55,7 @@ public class FlowController extends BaseController {
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
+    @ApiOperation(value = "Get all of the flows", response = Flows.class)
     public ResponseEntity<?> getFlows() {
         List<Flow> flows = new ArrayList<>();
         getArtifactService().getList("flow").iterator().forEachRemaining(flow -> {
@@ -62,7 +68,9 @@ public class FlowController extends BaseController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public Flow createFlow(@RequestBody String flowJson) {
+    @ApiImplicitParam(required = true, paramType = "body", dataType = "FlowSchema")
+    @ApiOperation(value = "Create a flow", response = FlowSchema.class)
+    public Flow createFlow(@RequestBody @ApiParam(hidden = true) String flowJson) {
         JSONObject jsonObject = processPayload(flowJson);
         String flowName = jsonObject.getString("name");
         Flow flow = new FlowImpl();
@@ -74,7 +82,9 @@ public class FlowController extends BaseController {
 
     @RequestMapping(value = "/{flowName}", method = RequestMethod.PUT)
     @ResponseBody
-    public ResponseEntity<?> updateFlow(@PathVariable String flowName, @RequestBody String flowJson) {
+    @ApiImplicitParam(required = true, paramType = "body", dataType = "FlowSchema")
+    @ApiOperation(value = "Update a flow", response = FlowSchema.class)
+    public ResponseEntity<Flow> updateFlow(@RequestBody @ApiParam(hidden = true) String flowJson, @PathVariable String flowName) {
         JSONObject jsonObject = processPayload(flowJson);
         Flow flow = getFlow(flowName).getBody();
         if (flow == null) {
@@ -88,6 +98,7 @@ public class FlowController extends BaseController {
 
     @RequestMapping(value = "/{flowName}", method = RequestMethod.GET)
     @ResponseBody
+    @ApiOperation(value = "Get a flow", response = FlowSchema.class)
     public ResponseEntity<Flow> getFlow(@PathVariable String flowName) {
         Flow flow = new FlowImpl();
         flow.deserialize(getArtifactService().getArtifact("flow", flowName));
@@ -96,13 +107,14 @@ public class FlowController extends BaseController {
 
     @RequestMapping(value = "/{flowName}", method = RequestMethod.DELETE)
     @ResponseBody
-    public ResponseEntity<?> deleteFlow(@PathVariable String flowName) {
+    public ResponseEntity<Void> deleteFlow(@PathVariable String flowName) {
         getArtifactService().deleteArtifact("flow", flowName);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{flowName}/steps", method = RequestMethod.GET)
     @ResponseBody
+    @ApiOperation(value = "Get the steps in a flow", response = Steps.class)
     public List<Step> getSteps(@PathVariable String flowName) {
         Flow flow = getFlow(flowName).getBody();
         Map<String, Step> stepMap = flow.getSteps();
@@ -118,6 +130,7 @@ public class FlowController extends BaseController {
 
     @RequestMapping(value = "/{flowName}/steps/{stepId}", method = RequestMethod.GET)
     @ResponseBody
+    @ApiOperation(value = "Get a step in a flow", response = StepSchema.class)
     public Step getStep(@PathVariable String flowName, @PathVariable String stepId) {
         Flow flow = getFlow(flowName).getBody();
         if (flow == null) {
@@ -134,21 +147,25 @@ public class FlowController extends BaseController {
 
     @RequestMapping(value = "/{flowName}/steps", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<?> createStep(@PathVariable String flowName, @RequestParam(value = "stepOrder", required = false) Integer stepOrder, @RequestBody String stepJson) {
+    @ApiImplicitParam(required = true, paramType = "body", dataType = "StepSchema")
+    @ApiOperation(value = "Create a step", response = StepSchema.class)
+    public ResponseEntity<Step> createStep(@RequestBody @ApiParam(hidden=true) String stepJson, @PathVariable String flowName, @RequestParam(value = "stepOrder", required = false) Integer stepOrder) {
         Step step = createStep(flowName, stepOrder, null, stepJson);
         return new ResponseEntity<>(step, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{flowName}/steps/{stepId}", method = RequestMethod.PUT)
     @ResponseBody
-    public ResponseEntity<?> createStep(@PathVariable String flowName, @PathVariable String stepId, @RequestBody String stepJson) {
+    @ApiImplicitParam(required = true, paramType = "body", dataType = "StepSchema")
+    @ApiOperation(value = "Create a step", response = StepSchema.class)
+    public ResponseEntity<?> createStep(@RequestBody @ApiParam(hidden=true) String stepJson, @PathVariable String flowName, @PathVariable String stepId) {
         Step step = createStep(flowName, null, stepId, stepJson);
         return new ResponseEntity<>(step, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{flowName}/steps/{stepId}", method = RequestMethod.DELETE)
     @ResponseBody
-    public ResponseEntity<?> deleteStep(@PathVariable String flowName, @PathVariable String stepId) {
+    public ResponseEntity<Void> deleteStep(@PathVariable String flowName, @PathVariable String stepId) {
         Flow flow = getFlow(flowName).getBody();
         String key = getStepKeyInStepMap(flow, stepId);
 
@@ -163,12 +180,14 @@ public class FlowController extends BaseController {
 
     @RequestMapping(value = "/{flowName}/steps/{stepId}/link/{artifactType}/{artifactName}", method = RequestMethod.POST)
     @ResponseBody
+    @ApiOperation(value = "Add a step to a flow", response = FlowSchema.class)
     public ResponseEntity<?> linkArtifact(@PathVariable String flowName, @PathVariable String stepId, @PathVariable String artifactType, @PathVariable String artifactName) {
         return linkArtifact(flowName, stepId, artifactType, artifactName, null);
     }
 
     @RequestMapping(value = "/{flowName}/steps/{stepId}/link/{artifactType}/{artifactName}/{artifactVersion}", method = RequestMethod.POST)
     @ResponseBody
+    @ApiOperation(value = "Add a step to a flow", response = FlowSchema.class)
     public ResponseEntity<?> linkArtifact(@PathVariable String flowName, @PathVariable String stepId, @PathVariable String artifactType, @PathVariable String artifactName, @PathVariable String artifactVersion) {
         JsonNode newFlow = getArtifactService().linkToStepOptions(flowName, stepId, artifactType, artifactName, artifactVersion);
         return new ResponseEntity<>(newFlow, HttpStatus.OK);
@@ -176,12 +195,14 @@ public class FlowController extends BaseController {
 
     @RequestMapping(value = "/{flowName}/steps/{stepId}/link/{artifactType}/{artifactName}", method = RequestMethod.DELETE)
     @ResponseBody
+    @ApiOperation(value = "Remove a step from a flow", response = FlowSchema.class)
     public ResponseEntity<?> removeLinkToArtifact(@PathVariable String flowName, @PathVariable String stepId, @PathVariable String artifactType, @PathVariable String artifactName) {
         return removeLinkToArtifact(flowName, stepId, artifactType, artifactName, null);
     }
 
     @RequestMapping(value = "/{flowName}/steps/{stepId}/link/{artifactType}/{artifactName}/{artifactVersion}", method = RequestMethod.DELETE)
     @ResponseBody
+    @ApiOperation(value = "Remove a step from a flow", response = FlowSchema.class)
     public ResponseEntity<?> removeLinkToArtifact(@PathVariable String flowName, @PathVariable String stepId, @PathVariable String artifactType, @PathVariable String artifactName, @PathVariable String artifactVersion) {
         JsonNode newFlow = getArtifactService().removeLinkToStepOptions(flowName, stepId, artifactType, artifactName, artifactVersion);
         return new ResponseEntity<>(newFlow, HttpStatus.OK);
@@ -317,5 +338,34 @@ public class FlowController extends BaseController {
      */
     protected FlowRunner newFlowRunner() {
         return new FlowRunnerImpl(getHubClient());
+    }
+
+    public static class Flows extends ArrayList<FlowSchema> {
+    }
+
+    public static class Steps extends ArrayList<StepSchema> {
+    }
+
+    /**
+     * Defining this because Step.v1.json is for the new Step document schema, and the Step Java class uses JsonNode
+     * for defining customHook and fileLocations, which doesn't resolve nicely.
+     */
+    public static class StepSchema {
+        public String id;
+        public String name;
+        public String description;
+        public String stepDefinitionName;
+        @ApiModelProperty(allowableValues = "INGESTION, MAPPING, MASTERING, MATCHING, MERGING, CUSTOM")
+        public String stepDefinitionType;
+        public boolean isValid;
+        public FileLocations fileLocations;
+        public Map<String, Object> options;
+        public String modulePath;
+    }
+
+    public static class FileLocations {
+        public String inputFilePath;
+        public String outputURIReplacement;
+        public String inputFileType;
     }
 }
