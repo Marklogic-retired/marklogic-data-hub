@@ -22,7 +22,7 @@
         "format": "date-time"
       },
       "model": {
-        "$ref": "./ModelDescriptor.v1.json"
+        "$ref": "./ModelDescriptor.json"
       }
     },
     "required": [

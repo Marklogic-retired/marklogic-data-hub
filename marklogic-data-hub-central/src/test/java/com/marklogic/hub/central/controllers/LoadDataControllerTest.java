@@ -56,7 +56,7 @@ public class LoadDataControllerTest extends AbstractHubCentralTest {
 
     @Test
     void testLoadDataController() {
-        controller.updateLoadData("validArtifact", newLoadDataConfig());
+        controller.updateLoadData(newLoadDataConfig(), "validArtifact");
 
         ArrayNode resultList = controller.getLoadDatas().getBody();
 
@@ -81,7 +81,7 @@ public class LoadDataControllerTest extends AbstractHubCentralTest {
 
     @Test
     public void testLoadDataSettings() {
-        controller.updateLoadData("validArtifact", newLoadDataConfig());
+        controller.updateLoadData(newLoadDataConfig(), "validArtifact");
 
         JsonNode result = controller.getLoadDataSettings("validArtifact").getBody();
         // Check for defaults
@@ -89,7 +89,7 @@ public class LoadDataControllerTest extends AbstractHubCentralTest {
         assertEquals(1, result.get("collections").size());
         assertEquals("default-ingestion", result.get("collections").get(0).asText());
 
-        controller.updateLoadDataSettings("validArtifact", readJsonObject(LOAD_DATA_SETTINGS));
+        controller.updateLoadDataSettings(readJsonObject(LOAD_DATA_SETTINGS), "validArtifact");
 
         result = controller.getArtifactSettings("validArtifact").getBody();
         assertEquals("validArtifact", result.get("artifactName").asText());

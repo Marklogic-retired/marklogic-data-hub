@@ -115,9 +115,9 @@ public class MappingControllerTest extends AbstractHubCentralTest {
     void testMappingConfigs() {
         installReferenceModelProject();
 
-        controller.updateMapping("TestCustomerMapping", readJsonObject(MAPPING_CONFIG_1));
-        controller.updateMapping("TestOrderMapping1", readJsonObject(MAPPING_CONFIG_2));
-        controller.updateMapping("TestOrderMapping2", readJsonObject(MAPPING_CONFIG_3));
+        controller.updateMapping(readJsonObject(MAPPING_CONFIG_1), "TestCustomerMapping");
+        controller.updateMapping(readJsonObject(MAPPING_CONFIG_2), "TestOrderMapping1");
+        controller.updateMapping(readJsonObject(MAPPING_CONFIG_3), "TestOrderMapping2");
 
         ArrayNode configsGroupbyEntity = controller.getMappings().getBody();
 
@@ -165,7 +165,7 @@ public class MappingControllerTest extends AbstractHubCentralTest {
     @Test
     public void testMappingSettings() {
         installReferenceModelProject();
-        controller.updateMapping("TestCustomerMapping", readJsonObject(MAPPING_CONFIG_1));
+        controller.updateMapping(readJsonObject(MAPPING_CONFIG_1), "TestCustomerMapping");
 
         JsonNode result = controller.getMappingSettings("TestCustomerMapping").getBody();
         // Check for defaults
@@ -175,7 +175,7 @@ public class MappingControllerTest extends AbstractHubCentralTest {
 
         ObjectNode settings = readJsonObject(MAPPING_SETTINGS);
 
-        controller.updateMappingSettings("TestCustomerMapping", settings);
+        controller.updateMappingSettings(settings, "TestCustomerMapping");
 
         result = controller.getMappingSettings("TestCustomerMapping").getBody();
         assertEquals("TestCustomerMapping", result.get("artifactName").asText());

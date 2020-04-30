@@ -18,9 +18,11 @@ package com.marklogic.hub.central.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.marklogic.hub.central.schemas.ModelDescriptor;
 import com.marklogic.hub.dataservices.ModelsService;
 import com.marklogic.hub.entity.HubEntity;
 import com.marklogic.hub.impl.EntityManagerImpl;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +40,7 @@ class EntitiesController extends BaseController {
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
+    @ApiOperation("Not documenting because it's going away via DHFPROD-4865")
     public List<JsonNode> getEntityModels() {
         ArrayNode array = (ArrayNode) ModelsService.on(getHubClient().getFinalClient()).getPrimaryEntityTypes();
         List<JsonNode> models = new ArrayList<>();
@@ -49,6 +52,7 @@ class EntitiesController extends BaseController {
 
     @RequestMapping(value = "/{entityName}", method = RequestMethod.GET)
     @ResponseBody
+    @ApiOperation(value = "Returns an entity model with each $ref replaced by the structured type that it refers to", response = ModelDescriptor.class)
     public JsonNode getEntity(@PathVariable String entityName, @RequestParam(required = false) Boolean extendSubEntities) {
         JsonNode entityModel = null;
         for (JsonNode model : getEntityModels()) {

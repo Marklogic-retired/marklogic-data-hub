@@ -20,18 +20,23 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.marklogic.hub.job.JobDocManager;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Map;
+
 @Controller
-@RequestMapping(value="/api/jobs")
+@RequestMapping(value = "/api/jobs")
 public class JobsController extends BaseController {
 
     @RequestMapping(value = "/{jobId}", method = RequestMethod.GET)
     @ResponseBody
+    @ApiOperation(value = "Get the Job document associated with the given ID", response = Job.class)
     public JsonNode getJob(@PathVariable String jobId) {
         JsonNode jobsObj = getJobs(getJobDocManager(), jobId, null);
         return flattenJobsJson(jobsObj);
@@ -61,5 +66,21 @@ public class JobsController extends BaseController {
         } else {
             return jobJSON;
         }
+    }
+
+    public static class Job {
+        public String jobId;
+        public String flowId;
+        public String startTime;
+        public String endTime;
+        public Map<String, Object> steps;
+        public String user;
+        @ApiModelProperty("Name of the flow being processed")
+        public String flow;
+        public Integer lastAttemptedStep;
+        public Integer lastCompletedStep;
+        public String status;
+        public Integer successfulEvents;
+        public Integer failedEvents;
     }
 }

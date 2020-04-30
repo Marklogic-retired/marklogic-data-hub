@@ -11,8 +11,6 @@ import com.marklogic.hub.central.controllers.ModelController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.File;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -45,9 +43,9 @@ public class ModelControllerTest extends AbstractHubCentralTest {
     }
 
     private void updateModelInfo() {
-        ObjectNode input = objectMapper.createObjectNode();
-        input.put("description", "Updated description");
-        controller.updateModelInfo(MODEL_NAME, input);
+        ModelController.UpdateModelInfoInput info = new ModelController.UpdateModelInfoInput();
+        info.description = "Updated description";
+        controller.updateModelInfo(MODEL_NAME, info);
 
         assertEquals("Updated description", loadModel(getHubClient().getFinalClient()).get("definitions").get(MODEL_NAME).get("description").asText());
     }
@@ -64,7 +62,7 @@ public class ModelControllerTest extends AbstractHubCentralTest {
             "    }}";
 
         try {
-            controller.updateModelEntityTypes(MODEL_NAME, objectMapper.readTree(entityTypes));
+            controller.updateModelEntityTypes(objectMapper.readTree(entityTypes), MODEL_NAME);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

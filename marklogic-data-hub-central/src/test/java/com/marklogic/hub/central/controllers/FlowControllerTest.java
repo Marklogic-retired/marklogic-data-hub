@@ -79,16 +79,16 @@ class FlowControllerTest extends AbstractHubCentralTest {
             f1.deserialize(mapper.readTree(flowString));
             f1.setBatchSize(150);
             //PUT flow
-            controller.updateFlow("testFlow", mapper.writeValueAsString(f1));
+            controller.updateFlow(mapper.writeValueAsString(f1), "testFlow");
 
             //GET flow
             ResponseEntity<?> entity = controller.getFlow("testFlow");
             Assertions.assertEquals(150, ((FlowImpl) entity.getBody()).getBatchSize());
 
             //POST step
-            Step stepModel = (Step) controller.createStep("testFlow", 1, stepString).getBody();
-            controller.createStep("testFlow", 2, "{\"name\":\"name\",\"stepDefinitionName\":\"default-ingestion\",\"stepDefinitionType\"" +
-                ":\"INGESTION\",\"options\":{\"loadData\":{\"name\":\"name\"}}}");
+            Step stepModel = (Step) controller.createStep(stepString, "testFlow", 1).getBody();
+            controller.createStep("{\"name\":\"name\",\"stepDefinitionName\":\"default-ingestion\",\"stepDefinitionType\"" +
+                ":\"INGESTION\",\"options\":{\"loadData\":{\"name\":\"name\"}}}", "testFlow", 2);
 
             JsonNode flowJson = JSONUtils.convertArtifactToJson(controller.getFlow("testFlow").getBody());
 
@@ -109,10 +109,10 @@ class FlowControllerTest extends AbstractHubCentralTest {
             Assertions.assertEquals(2, (steps.size()));
 
             //PUT step
-            controller.createStep("testFlow", "e2e-json-ingestion", mapper.writeValueAsString(stepModel));
+            controller.createStep(mapper.writeValueAsString(stepModel), "testFlow", "e2e-json-ingestion");
 
             //link artifact to step options
-            loadDataController.updateArtifact("validArtifact", newLoadDataConfig());
+            loadDataController.updateLoadData(newLoadDataConfig(), "validArtifact");
             controller.linkArtifact("testFlow", "e2e-json-ingestion", "loadData", "validArtifact");
 
             //GET step
@@ -138,7 +138,6 @@ class FlowControllerTest extends AbstractHubCentralTest {
                 logger.info("Exception is expected as the step being fetched has been deleted");
             }
         } finally {
-            //DELETE flow
             controller.deleteFlow("testFlow");
             try {
                 Flow flow = controller.getFlow("testFlow").getBody();
@@ -146,7 +145,6 @@ class FlowControllerTest extends AbstractHubCentralTest {
             } catch (Exception e) {
                 logger.info("Exception is expected as the flow being fetched has been deleted");
             }
-            loadDataController.deleteArtifact("validArtifact");
         }
     }
 
@@ -156,14 +154,14 @@ class FlowControllerTest extends AbstractHubCentralTest {
         addStagingDoc("input/mapInput.json", "/input/mapInput.json", "default-ingestion");
 
         //Equivalent to adding a step from GUI
-        controller.createStep("refFlow", 1, "{\n" +
+        controller.createStep("{\n" +
             "\"name\": \"testMap\",\n" +
             "\"stepDefinitionName\": \"entity-services-mapping\",\n" +
             "\"stepDefinitionType\": \"MAPPING\",\n" +
             "\"options\": {\n" +
             "\"mapping\": {\n" +
             "\"name\": \"testMap\"\n" +
-            "} } }");
+            "} } }", "refFlow", 1);
         try {
             RunFlowResponse resp = controller.runFlow("refFlow", Collections.singletonList("testMap-mapping"));
 

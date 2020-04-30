@@ -18,11 +18,20 @@ package com.marklogic.hub.central.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.central.managers.ModelManager;
+import com.marklogic.hub.central.schemas.ModelDescriptor;
+import com.marklogic.hub.central.schemas.PrimaryEntityType;
 import com.marklogic.hub.dataservices.ModelsService;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Controller
 @RequestMapping("/api/models")
@@ -30,36 +39,42 @@ public class ModelController extends BaseController {
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
+    @ApiOperation("This should no longer be used, use /primaryEntityTypes instead")
     public ResponseEntity<?> getModels() {
         return ResponseEntity.ok(newModelManager().getModels());
     }
 
     @RequestMapping(value = "/job-info", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<?> getLatestJobInfoForAllModels() {
+    @ApiOperation(value = "Get info about the latest job info for each model", response = LatestJobInfoList.class)
+    public ResponseEntity<List<JsonNode>> getLatestJobInfoForAllModels() {
         return ResponseEntity.ok(newModelManager().getLatestJobInfoForAllModels());
     }
 
     @RequestMapping(value = "/primaryEntityTypes", method = RequestMethod.GET)
     @ResponseBody
+    @ApiOperation(value = "Get primary entity types; does not include entity definitions that are considered 'structured' types", response = PrimaryEntityTypeList.class)
     public ResponseEntity<JsonNode> getPrimaryEntityTypes() {
         return ResponseEntity.ok(newService().getPrimaryEntityTypes());
     }
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<JsonNode> createModel(@RequestBody JsonNode input) {
+    @ApiOperation(value = "Create a new model and return the persisted model descriptor", response = ModelDescriptor.class)
+    @ApiImplicitParam(required = true, paramType = "body", dataType = "CreateModelInput")
+    public ResponseEntity<JsonNode> createModel(@RequestBody @ApiParam(hidden = true) JsonNode input) {
         return new ResponseEntity<>(newService().createModel(input), HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/{modelName}/info", method = RequestMethod.PUT)
-    public ResponseEntity<Void> updateModelInfo(@PathVariable String modelName, @RequestBody JsonNode input) {
-        newService().updateModelInfo(modelName, input.has("description") ? input.get("description").asText() : "");
+    public ResponseEntity<Void> updateModelInfo(@PathVariable String modelName, @RequestBody UpdateModelInfoInput input) {
+        newService().updateModelInfo(modelName, input.description);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{modelName}/entityTypes", method = RequestMethod.PUT)
-    public ResponseEntity<Void> updateModelEntityTypes(@PathVariable String modelName, @RequestBody JsonNode entityTypes) {
+    @ApiImplicitParam(required = true, paramType = "body", dataType = "ModelDefinitions")
+    public ResponseEntity<Void> updateModelEntityTypes(@ApiParam(hidden = true) @RequestBody JsonNode entityTypes, @PathVariable String modelName) {
         newService().updateModelEntityTypes(modelName, entityTypes);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -73,4 +88,24 @@ public class ModelController extends BaseController {
         return ModelsService.on(getHubClient().getStagingClient());
     }
 
+    public static class PrimaryEntityTypeList extends ArrayList<PrimaryEntityType> {
+    }
+
+    public static class LatestJobInfoList extends ArrayList<LatestJobInfo> {
+    }
+
+    public static class LatestJobInfo {
+        public String entityCollection;
+        public String latestJobId;
+        public Date latestJobDateTime;
+    }
+
+    public static class CreateModelInput {
+        public String name;
+        public String description;
+    }
+
+    public static class UpdateModelInfoInput {
+        public String description;
+    }
 }

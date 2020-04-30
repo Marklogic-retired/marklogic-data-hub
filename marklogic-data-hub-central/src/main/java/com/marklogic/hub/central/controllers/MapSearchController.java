@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.central.managers.MapSearchManager;
 import com.marklogic.hub.central.models.MapSearchQuery;
 import com.marklogic.hub.central.models.SJSSearchQuery;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,18 +35,21 @@ public class MapSearchController extends BaseController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
+    @ApiOperation("Returns a MarkLogic JSON search response")
     public String search(@RequestBody MapSearchQuery mapSearchQuery) throws JsonProcessingException {
         return new MapSearchManager(getHubClient()).search(mapSearchQuery).get();
     }
 
     @RequestMapping(value = "/sjsSearch", method = RequestMethod.POST)
     @ResponseBody
+    @ApiOperation("Returns a MarkLogic JSON search response")
     public JsonNode sjsSearch(@RequestBody SJSSearchQuery sjsSearchQuery) {
         return new MapSearchManager(getHubClient()).sjsSearch(sjsSearchQuery);
     }
 
     @RequestMapping(value = "/doc", method = RequestMethod.GET)
     @ResponseBody
+    @ApiOperation("Returns a document as a string of JSON or XML")
     public ResponseEntity<String> getDoc(@RequestParam String database, @RequestParam String docUri) {
         HttpHeaders headers = new HttpHeaders();
         String body = new MapSearchManager(getHubClient()).getDoc(database, docUri);

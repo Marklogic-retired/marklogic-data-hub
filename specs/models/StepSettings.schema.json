@@ -1,5 +1,5 @@
 {
-  "title": "StepSettings.v1",
+  "title": "StepSettings",
   "type": "object",
   "description": "Settings for a step. This is a logical structure to simplify front-end/middle-tier APIs",
   "properties": {

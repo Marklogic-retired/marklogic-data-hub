@@ -262,7 +262,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "../../models/StepSettings.v1.json"
+                  "$ref": "../../models/StepSettings.schema.json"
                 }
               }
             }
@@ -280,7 +280,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "../../models/StepSettings.v1.json"
+                  "$ref": "../../models/StepSettings.schema.json"
                 }
               }
             }
@@ -290,7 +290,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "../../models/StepSettings.v1.json"
+                "$ref": "../../models/StepSettings.schema.json"
               }
             }
           }
@@ -472,7 +472,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "../../models/StepSettings.v1.json"
+                  "$ref": "../../models/StepSettings.schema.json"
                 }
               }
             }
@@ -490,7 +490,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "../../models/StepSettings.v1.json"
+                  "$ref": "../../models/StepSettings.schema.json"
                 }
               }
             }
@@ -500,7 +500,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "../../models/StepSettings.v1.json"
+                "$ref": "../../models/StepSettings.schema.json"
               }
             }
           }

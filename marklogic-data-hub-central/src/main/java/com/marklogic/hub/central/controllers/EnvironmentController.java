@@ -22,6 +22,7 @@ import com.marklogic.hub.central.HubCentral;
 import com.marklogic.hub.dataservices.ArtifactService;
 import com.marklogic.hub.impl.DataHubImpl;
 import com.marklogic.hub.impl.Versions;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -37,8 +38,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 @Controller
 public class EnvironmentController extends BaseController {
@@ -51,33 +50,34 @@ public class EnvironmentController extends BaseController {
 
     private ObjectMapper mapper = new ObjectMapper();
 
+    @RequestMapping(value = "/api/environment/project", method = RequestMethod.GET)
+    @ResponseBody
+    @ApiOperation(value = "Not documenting, as this will go away soon")
+    public JsonNode getProject() {
+        ObjectNode obj = mapper.createObjectNode();
+        obj.put("isInitialized", true);
+        obj.put("directory", "N/A");
+        return obj;
+    }
+
     @RequestMapping(value = "/api/info", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<Map<String, String>> getInfo() {
-        Map<String, String> infoMap = new HashMap<>();
-        infoMap.put("session.timeout", environment.getProperty("server.servlet.session.timeout"));
-        return new ResponseEntity<>(infoMap, HttpStatus.OK);
+    public EnvironmentInfo getInfo() {
+        EnvironmentInfo info = new EnvironmentInfo();
+        info.sessionTimeout = environment.getProperty("server.servlet.session.timeout");
+        return info;
     }
 
     @RequestMapping(value = "/api/environment/initialized", method = RequestMethod.GET)
     @ResponseBody
+    @ApiOperation("Not documenting, as this will go away soon")
     public JsonNode isInitialized() {
         ObjectNode obj = mapper.createObjectNode();
         obj.put("isInitialized", true);
         return obj;
     }
 
-    @RequestMapping(value = "/api/environment/project", method = RequestMethod.GET)
-    @ResponseBody
-    public JsonNode getProject() {
-        ObjectNode obj = mapper.createObjectNode();
-        obj.put("isInitialized", true);
-        // Will remove this as part of
-        obj.put("directory", "N/A");
-        return obj;
-    }
-
-    @RequestMapping(value = "/api/environment/downloadConfigurationFiles", produces = "application/zip")
+    @RequestMapping(value = "/api/environment/downloadConfigurationFiles", produces = "application/zip", method = RequestMethod.GET)
     @Secured("ROLE_downloadConfigurationFiles")
     public void downloadConfigurationFiles(HttpServletResponse response) {
         response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
@@ -99,14 +99,28 @@ public class EnvironmentController extends BaseController {
 
     @RequestMapping(value = "/api/environment/project-info", method = RequestMethod.GET)
     @ResponseBody
-    public JsonNode getProjectInfo() {
+    public ProjectInfo getProjectInfo() {
         Versions versions = new Versions(getHubClient());
-        ObjectNode node = new ObjectMapper().createObjectNode();
-        node.put("projectDir", "N/A");
-        node.put("projectName", hubCentral.getProjectName());
-        node.put("dataHubVersion", versions.getHubVersion());
-        node.put("marklogicVersion", versions.getMarkLogicVersion());
-        node.put("host", hubCentral.getHost());
-        return node;
+        ProjectInfo info = new ProjectInfo();
+        info.projectDir = "N/A";
+        info.projectName = hubCentral.getProjectName();
+        info.dataHubVersion = versions.getHubVersion();
+        info.marklogicVersion = versions.getMarkLogicVersion();
+        info.host = hubCentral.getHost();
+        return info;
+    }
+
+    public static class ProjectInfo {
+        public String projectDir;
+        public String projectName;
+        public String dataHubVersion;
+        public String marklogicVersion;
+        public String host;
+    }
+
+    public static class EnvironmentInfo {
+        public String sessionTimeout;
     }
 }
+
+
