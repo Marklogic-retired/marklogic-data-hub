@@ -10,7 +10,8 @@ type SearchContextInterface = {
   pageLength: number,
   pageSize: number,
   selectedFacets: any,
-  maxRowsPerPage: number
+  maxRowsPerPage: number,
+  selectedQuery: string,
 }
 
 const defaultSearchOptions = {
@@ -21,7 +22,8 @@ const defaultSearchOptions = {
   pageLength: 20,
   pageSize: 20,
   selectedFacets: {},
-  maxRowsPerPage: 100
+  maxRowsPerPage: 100,
+  selectedQuery: 'select a query',
 }
 
 interface ISearchContextInterface {
@@ -49,6 +51,7 @@ interface ISearchContextInterface {
   clearAllGreyFacets: () => void;
   resetGreyedOptions: () => void;
   applySaveQuery: (searchText: string, entityTypeIds: string[], selectedFacets: {}) => void;
+  setSelectedQuery: (query: string) => void;
 }
 
 export const SearchContext = React.createContext<ISearchContextInterface>({
@@ -71,11 +74,12 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   clearGreyRangeFacet: () => { },
   resetSearchOptions: () => { },
   setAllSearchFacets: () => { },
-  setAllGreyedOptions: () => {},
+  setAllGreyedOptions: () => { },
   clearGreyFacet: () => { },
   clearAllGreyFacets: () => { },
   resetGreyedOptions: () => { },
-  applySaveQuery: () => { }
+  applySaveQuery: () => { },
+  setSelectedQuery: () => { }
 });
 
 const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
@@ -161,13 +165,13 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       entityTypeIds: entityOptions,
       pageLength: searchOptions.pageSize
     });
-      setGreyedOptions({
-          ...greyedOptions,
-          start: 1,
-          selectedFacets: {},
-          entityTypeIds: entityOptions,
-          pageLength: greyedOptions.pageSize
-      });
+    setGreyedOptions({
+      ...greyedOptions,
+      start: 1,
+      selectedFacets: {},
+      entityTypeIds: entityOptions,
+      pageLength: greyedOptions.pageSize
+    });
   }
 
   const setEntityClearQuery = (option: string) => {
@@ -184,7 +188,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
 
   const setLatestJobFacet = (vals: string, option: string) => {
     let facets = {};
-    facets = { createdByJob: {dataType: "string", stringValues: [vals]} };
+    facets = { createdByJob: { dataType: "string", stringValues: [vals] } };
     setSearchOptions({
       ...searchOptions,
       start: 1,
@@ -208,8 +212,8 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       delete facets[constraint]
     }
     setSearchOptions({ ...searchOptions, selectedFacets: facets });
-      if(Object.entries(greyedOptions.selectedFacets).length > 0 && greyedOptions.selectedFacets.hasOwnProperty(constraint))
-        clearGreyFacet(constraint, val);
+    if (Object.entries(greyedOptions.selectedFacets).length > 0 && greyedOptions.selectedFacets.hasOwnProperty(constraint))
+      clearGreyFacet(constraint, val);
   }
 
   const clearAllFacets = () => {
@@ -223,20 +227,20 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
     clearAllGreyFacets();
   }
 
-/*
-  const setDateFacet = (dates) => {
-   setSearchOptions({
-      ...searchOptions,
-      start: 1,
-      pageNumber: 1,
-      pageLength: searchOptions.pageSize,
-      selectedFacets: {
-        ...searchOptions.selectedFacets,
-        createdOnRange: dates
-      }
-    });
-  }
-*/
+  /*
+    const setDateFacet = (dates) => {
+     setSearchOptions({
+        ...searchOptions,
+        start: 1,
+        pageNumber: 1,
+        pageLength: searchOptions.pageSize,
+        selectedFacets: {
+          ...searchOptions.selectedFacets,
+          createdOnRange: dates
+        }
+      });
+    }
+  */
 
   const clearDateFacet = () => {
     let facets = searchOptions.selectedFacets;
@@ -268,8 +272,8 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       pageNumber: 1,
       pageLength: searchOptions.pageSize
     });
-      if(Object.entries(greyedOptions.selectedFacets).length > 0)
-       clearGreyRangeFacet(range)
+    if (Object.entries(greyedOptions.selectedFacets).length > 0)
+      clearGreyRangeFacet(range)
   }
 
 
@@ -278,7 +282,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
   }
 
   const setAllSearchFacets = (facets: any) => {
-      setSearchOptions({
+    setSearchOptions({
       ...searchOptions,
       selectedFacets: facets,
       start: 1,
@@ -287,51 +291,51 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
     });
   }
 
-    const clearGreyDateFacet = () => {
-        let facets = greyedOptions.selectedFacets;
-        if (facets.hasOwnProperty('createdOnRange')) {
-            delete facets.createdOnRange;
-            setGreyedOptions({
-                ...greyedOptions,
-                selectedFacets: facets,
-                start: 1,
-                pageNumber: 1,
-                pageLength: greyedOptions.pageSize
-            });
-        }
+  const clearGreyDateFacet = () => {
+    let facets = greyedOptions.selectedFacets;
+    if (facets.hasOwnProperty('createdOnRange')) {
+      delete facets.createdOnRange;
+      setGreyedOptions({
+        ...greyedOptions,
+        selectedFacets: facets,
+        start: 1,
+        pageNumber: 1,
+        pageLength: greyedOptions.pageSize
+      });
     }
+  }
 
-    const clearGreyRangeFacet = (range: string) => {
-        let facets = greyedOptions.selectedFacets;
-        let constraints = Object.keys(facets)
-        constraints.forEach(facet => {
-            if (facets[facet].hasOwnProperty('rangeValues') && facet === range) {
-                delete facets[facet]
-            }
-        });
+  const clearGreyRangeFacet = (range: string) => {
+    let facets = greyedOptions.selectedFacets;
+    let constraints = Object.keys(facets)
+    constraints.forEach(facet => {
+      if (facets[facet].hasOwnProperty('rangeValues') && facet === range) {
+        delete facets[facet]
+      }
+    });
 
-        setGreyedOptions({
-            ...greyedOptions,
-            selectedFacets: facets,
-            start: 1,
-            pageNumber: 1,
-            pageLength: greyedOptions.pageSize
-        });
-    }
+    setGreyedOptions({
+      ...greyedOptions,
+      selectedFacets: facets,
+      start: 1,
+      pageNumber: 1,
+      pageLength: greyedOptions.pageSize
+    });
+  }
 
   const clearGreyFacet = (constraint: string, val: string) => {
     let facets = greyedOptions.selectedFacets;
     let valueKey = '';
-        if (facets[constraint].dataType === 'xs:string' || facets[constraint].dataType === 'string') {
-            valueKey = 'stringValues';
-        }
-        if (facets[constraint][valueKey].length > 1) {
-            facets[constraint][valueKey] = facets[constraint][valueKey].filter(option => option !== val);
-        } else {
-            delete facets[constraint]
-        }
-        setGreyedOptions({...greyedOptions, selectedFacets: facets})
- }
+    if (facets[constraint].dataType === 'xs:string' || facets[constraint].dataType === 'string') {
+      valueKey = 'stringValues';
+    }
+    if (facets[constraint][valueKey].length > 1) {
+      facets[constraint][valueKey] = facets[constraint][valueKey].filter(option => option !== val);
+    } else {
+      delete facets[constraint]
+    }
+    setGreyedOptions({ ...greyedOptions, selectedFacets: facets })
+  }
 
   const clearAllGreyFacets = () => {
     setGreyedOptions({
@@ -370,18 +374,28 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
     });
   }
 
-    const applySaveQuery = (searchText: string, entityTypeIds: string[], selectedFacets: {}) => {
-        setSearchOptions({
-            ...searchOptions,
-            start: 1,
-            selectedFacets: selectedFacets,
-            query: searchText,
-            entityTypeIds: entityTypeIds,
-            pageNumber: 1,
-            pageLength: searchOptions.pageSize
-        });
+  const applySaveQuery = (searchText: string, entityTypeIds: string[], selectedFacets: {}) => {
+    setSearchOptions({
+      ...searchOptions,
+      start: 1,
+      selectedFacets: selectedFacets,
+      query: searchText,
+      entityTypeIds: entityTypeIds,
+      pageNumber: 1,
+      pageLength: searchOptions.pageSize
+    });
 
-    }
+  }
+
+  const setSelectedQuery = (query: string) => {
+    setSearchOptions({
+      ...searchOptions,
+      start: 1,
+      pageNumber: 1,
+      pageLength: searchOptions.pageSize,
+      selectedQuery: query
+    });
+  }
 
   useEffect(() => {
     if (user.authenticated) {
@@ -414,7 +428,8 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       clearAllGreyFacets,
       resetGreyedOptions,
       applyQuery,
-      applySaveQuery
+      applySaveQuery,
+      setSelectedQuery
     }}>
       {children}
     </SearchContext.Provider>

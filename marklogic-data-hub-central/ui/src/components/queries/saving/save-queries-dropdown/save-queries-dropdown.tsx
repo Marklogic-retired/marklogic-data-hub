@@ -1,54 +1,59 @@
-import {Select} from "antd"
-import React, {useContext, useEffect, useState} from 'react';
+import { Select } from "antd"
+import React, { useContext, useEffect } from 'react';
 import styles from './save-queries-dropdown.module.scss';
 import { UserContext } from "../../../../util/user-context";
 import { SearchContext } from "../../../../util/search-context";
-import {fetchQueryById} from "../../../../api/queries";
-
+import { fetchQueryById } from "../../../../api/queries";
 
 interface Props {
     savedQueryList: any[];
-    toggleApply: (clicked:boolean) => void;
+    toggleApply: (clicked: boolean) => void;
     greyFacets: any[];
+    queryName: any;
+    setQueryName: (name: string) => void;
 };
 
 
 const SaveQueriesDropdown: React.FC<Props> = (props) => {
-
-    const {Option} = Select;
-    const [dropDownDefaultVal, setDropDownDefaultVal] = useState('select a query');
-
+    const { Option } = Select;
     const {
         handleError,
         resetSessionTime
     } = useContext(UserContext);
     const {
+        searchOptions,
         applySaveQuery,
         clearAllGreyFacets,
-        searchOptions
+        setSelectedQuery
     } = useContext(SearchContext);
-
     const savedQueryOptions = props.savedQueryList.map((key) => key.savedQuery.name);
-
     const options = savedQueryOptions.map((query, index) =>
-        <Option value={query} key={index+1}>{query}</Option>
+        <Option value={query} key={index + 1}>{query}</Option>
     );
 
     const onItemSelect = (e) => {
-        setDropDownDefaultVal(e)
-        for(let key of props.savedQueryList)
-        {
-            if(key.savedQuery.name === e){
+        if (searchOptions.selectedQuery !== '') {
+            setSelectedQuery(e)
+            props.setQueryName(e)
+        }
+        for (let key of props.savedQueryList) {
+            if (key.savedQuery.name === e) {
                 getSaveQueryWithId(key);
                 break;
             }
         }
     }
 
+    useEffect(() => {
+        if (props.queryName !== searchOptions.selectedQuery) {
+            setSelectedQuery(props.queryName)
+        }
+    });
+
     const getSaveQueryWithId = async (key) => {
-        let searchText:string = '';
-        let entityTypeIds:string[] = [];
-        let selectedFacets:{} = {};
+        let searchText: string = '';
+        let entityTypeIds: string[] = [];
+        let selectedFacets: {} = {};
         try {
             const response = await fetchQueryById(key);
             if (response.data) {
@@ -56,7 +61,7 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
                 entityTypeIds = response.data.savedQuery.query.entityTypeIds;
                 selectedFacets = response.data.savedQuery.query.selectedFacets;
                 applySaveQuery(searchText, entityTypeIds, selectedFacets);
-                if(props.greyFacets.length > 0){
+                if (props.greyFacets.length > 0) {
                     clearAllGreyFacets();
                 }
                 props.toggleApply(false);
@@ -68,20 +73,15 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
         }
     }
 
-    useEffect(() => {
-        if (Object.entries(searchOptions.selectedFacets).length == 0)
-            setDropDownDefaultVal('select a query');
-    }, [searchOptions.selectedFacets])
-
     return (
         <Select
             id="dropdownList"
             placeholder={'select a query'}
             className={styles.dropDownStyle}
-            onChange={onItemSelect}
+            onChange={value => onItemSelect(value)}
             data-cy={'drop-down-list'}
             allowClear={true}
-            value={dropDownDefaultVal}
+            value={searchOptions.selectedQuery}
         >
             {options}
         </Select>

@@ -4,7 +4,6 @@ import { UserContext } from '../../util/user-context';
 import { SearchContext } from '../../util/search-context';
 import SelectedFacets from '../../components/selected-facets/selected-facets';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-
 import { faSave } from '@fortawesome/free-solid-svg-icons'
 import SaveQueryModal from "../../components/queries/saving/save-query-modal/save-query-modal";
 import SaveQueriesDropdown from "../../components/queries/saving/save-queries-dropdown/save-queries-dropdown";
@@ -26,6 +25,7 @@ const Query = (props) => {
         searchOptions
     } = useContext(SearchContext);
 
+    const [queryName, setQueryName] = useState(searchOptions.selectedQuery);
     const saveNewQuery = async (queryName, queryDescription, facets) => {
         let query = {
             savedQuery: {
@@ -70,7 +70,6 @@ const Query = (props) => {
         getSaveQueries();
     }, []);
 
-
     return (
         <div>
             <div>
@@ -99,6 +98,8 @@ const Query = (props) => {
                                     greyFacets={props.greyFacets}
                                     toggleApply={(clicked) => toggleApply(clicked)}
                                     toggleApplyClicked={(clicked) => toggleApplyClicked(clicked)}
+                                    queryName={queryName}
+                                    setQueryName={setQueryName}
                                 />}
                         </div>
                     </div>}
@@ -109,6 +110,8 @@ const Query = (props) => {
                         savedQueryList={queries}
                         greyFacets={props.greyFacets}
                         toggleApply={(clicked) => toggleApply(clicked)}
+                        queryName={queryName}
+                        setQueryName={setQueryName}
                     />
                 }
             </div>
@@ -122,7 +125,7 @@ const Query = (props) => {
                     toggleApplyClicked={(clicked) => toggleApplyClicked(clicked)}
                 />
             </div>
-            <QueryModal queries={queries} setQueries={setQueries} toggleApply={toggleApply}/>
+            <QueryModal queries={queries} setQueries={setQueries} toggleApply={toggleApply} queryName={queryName} setQueryName={setQueryName} />
         </div>
     )
 }

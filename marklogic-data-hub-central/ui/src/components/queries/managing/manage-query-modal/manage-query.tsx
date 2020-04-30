@@ -17,7 +17,7 @@ const QueryModal = (props) => {
     const [mainModalVisibility, setMainModalVisibility] = useState(false);
     const [editModalVisibility, setEditModalVisibility] = useState(false);
     const [deleteModalVisibility, setDeleteModalVisibility] = useState(false);
-    const [selectedQuery, setSelectedQuery] = useState({});
+    const [query, setQuery] = useState({});
     const [queryName, setQueryName] = useState('');
     const data = new Array();
 
@@ -28,7 +28,6 @@ const QueryModal = (props) => {
     const getQueries = async () => {
         try {
             const response = await fetchQueries();
-
             if (response['data']) {
                 props.setQueries(response['data']);
             }
@@ -95,6 +94,7 @@ const QueryModal = (props) => {
         props.queries && props.queries.length > 0 && props.queries.forEach(query => {
             if (e.currentTarget.dataset.id === query['savedQuery']['name']) {
                 applyQuery(query['savedQuery']['query']['searchText'], query['savedQuery']['query']['entityTypeIds'], query['savedQuery']['query']['selectedFacets'])
+                props.setQueryName(query['savedQuery']['name'])
             }
         })
         setMainModalVisibility(false)
@@ -177,7 +177,7 @@ const QueryModal = (props) => {
         visible={deleteModalVisibility}
         okText='Yes'
         cancelText='No'
-        onOk={() => onOk(selectedQuery)}
+        onOk={() => onOk(setQuery)}
         onCancel={() => onCancel()}
         width={300}
         maskClosable={false}
@@ -187,7 +187,7 @@ const QueryModal = (props) => {
 
     return (
         <div>
-            <FontAwesomeIcon icon={faListOl} color='#5B69AF' size='lg' onClick={displayModal} style={{ cursor: 'pointer', marginLeft: '-30px', color: '#5B69AF' }} data-testid="manage-queries-modal-icon"/>
+            <FontAwesomeIcon icon={faListOl} color='#5B69AF' size='lg' onClick={displayModal} style={{ cursor: 'pointer', marginLeft: '-30px', color: '#5B69AF' }} data-testid="manage-queries-modal-icon" />
             <Modal
                 title={null}
                 visible={mainModalVisibility}
@@ -203,7 +203,7 @@ const QueryModal = (props) => {
                             onClick: () => {
                                 props.queries.forEach((query) => {
                                     if (query['savedQuery']['id'] === record.key) {
-                                        setSelectedQuery(query);
+                                        setQuery(query);
                                         setQueryName(record.name);
                                     }
                                 })
@@ -212,7 +212,7 @@ const QueryModal = (props) => {
                     }}>
                 </Table>
             </Modal>
-            <EditQueryDialog query={selectedQuery} editQuery={editQuery} getQueries={getQueries} editModalVisibility={editModalVisibility} setEditModalVisibility={setEditModalVisibility} />
+            <EditQueryDialog query={query} editQuery={editQuery} getQueries={getQueries} editModalVisibility={editModalVisibility} setEditModalVisibility={setEditModalVisibility} />
             {deleteConfirmation}
         </div>
     )
