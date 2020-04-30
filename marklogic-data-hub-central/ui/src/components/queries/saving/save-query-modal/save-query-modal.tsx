@@ -9,8 +9,9 @@ interface Props {
     greyFacets:any[];
     toggleApply: (clicked:boolean) => void;
     toggleApplyClicked: (clicked:boolean) => void;
+    queryName: string;
+    setQueryName: (name: string) => void;
 }
-
 
 const SaveQueryModal: React.FC<Props> = (props) => {
 
@@ -20,7 +21,6 @@ const SaveQueryModal: React.FC<Props> = (props) => {
         setAllSearchFacets,
         searchOptions,
     } = useContext(SearchContext);
-
 
     const [queryName, setQueryName] = useState('');
     const [queryDescription, setQueryDescription] = useState('');
@@ -60,6 +60,7 @@ const SaveQueryModal: React.FC<Props> = (props) => {
         } else {
             isQueryEmpty('error')
         }
+        props.setQueryName(queryName)
     }
 
     const handleChange = (event) => {

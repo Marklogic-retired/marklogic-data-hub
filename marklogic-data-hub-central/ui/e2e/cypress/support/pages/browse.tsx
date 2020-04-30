@@ -267,6 +267,11 @@ class BrowsePage {
     return cy.get('[data-testid=manage-queries-modal-icon]');
   }
 
+  //saved query dropdown
+  getSelectedQuery(){
+    return cy.get('[data-cy=drop-down-list] .ant-select-selection-selected-value').invoke('text');
+  }
+
 }
 
 export default BrowsePage;
