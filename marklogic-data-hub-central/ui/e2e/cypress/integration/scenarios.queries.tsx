@@ -46,6 +46,7 @@ describe('save/manage queries scenarios', () => {
         browsePage.getSaveQueryDescription().type('new-query description');
         browsePage.getSaveQueryButton().click();
         cy.wait(500);
+        browsePage.getSelectedQuery().should('contain', 'new-query');
         browsePage.getSaveQueryButton().should('not.be.visible');
         browsePage.getSaveQueriesDropdown().should('be.visible');
     });
@@ -62,6 +63,8 @@ describe('save/manage queries scenarios', () => {
         browsePage.getManageQueriesIcon().click();
         queryComponent.getManageQueryModal().should('be.visible');
         queryComponent.getQueryByName('new-query2').click();
+        cy.wait(500);
+        browsePage.getSelectedQuery().should('contain', 'new-query2');
     });
 
     it('open manage queries, delete query', () => {

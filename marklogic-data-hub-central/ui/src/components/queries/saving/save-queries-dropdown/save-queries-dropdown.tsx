@@ -10,13 +10,14 @@ interface Props {
     savedQueryList: any[];
     toggleApply: (clicked:boolean) => void;
     greyFacets: any[];
+    queryName: string;
+    setQueryName: (name: string) => void;
 };
 
 
 const SaveQueriesDropdown: React.FC<Props> = (props) => {
 
     const {Option} = Select;
-    const [dropDownDefaultVal, setDropDownDefaultVal] = useState('select a query');
 
     const {
         handleError,
@@ -25,7 +26,8 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
     const {
         applySaveQuery,
         clearAllGreyFacets,
-        searchOptions
+        searchOptions,
+        setSelectedQuery
     } = useContext(SearchContext);
 
     const savedQueryOptions = props.savedQueryList.map((key) => key.savedQuery.name);
@@ -35,7 +37,9 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
     );
 
     const onItemSelect = (e) => {
-        setDropDownDefaultVal(e)
+        setSelectedQuery(e)
+        props.setQueryName(e)
+        
         for(let key of props.savedQueryList)
         {
             if(key.savedQuery.name === e){
@@ -44,6 +48,12 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
             }
         }
     }
+
+    useEffect(() => {
+        if (props.queryName !== searchOptions.selectedQuery) {
+            setSelectedQuery(props.queryName)
+        }
+    });
 
     const getSaveQueryWithId = async (key) => {
         let searchText:string = '';
@@ -68,11 +78,6 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
         }
     }
 
-    useEffect(() => {
-        if (Object.entries(searchOptions.selectedFacets).length == 0)
-            setDropDownDefaultVal('select a query');
-    }, [searchOptions.selectedFacets])
-
     return (
         <Select
             id="dropdownList"
@@ -81,7 +86,7 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
             onChange={onItemSelect}
             data-cy={'drop-down-list'}
             allowClear={true}
-            value={dropDownDefaultVal}
+            value={searchOptions.selectedQuery}
         >
             {options}
         </Select>

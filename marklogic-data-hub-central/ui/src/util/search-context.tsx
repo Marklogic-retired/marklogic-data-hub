@@ -10,7 +10,8 @@ type SearchContextInterface = {
   pageLength: number,
   pageSize: number,
   selectedFacets: any,
-  maxRowsPerPage: number
+  maxRowsPerPage: number,
+  selectedQuery: string
 }
 
 const defaultSearchOptions = {
@@ -21,7 +22,8 @@ const defaultSearchOptions = {
   pageLength: 20,
   pageSize: 20,
   selectedFacets: {},
-  maxRowsPerPage: 100
+  maxRowsPerPage: 100,
+  selectedQuery: 'select a query'
 }
 
 interface ISearchContextInterface {
@@ -49,6 +51,7 @@ interface ISearchContextInterface {
   clearAllGreyFacets: () => void;
   resetGreyedOptions: () => void;
   applySaveQuery: (searchText: string, entityTypeIds: string[], selectedFacets: {}) => void;
+  setSelectedQuery: (query: string) => void;
 }
 
 export const SearchContext = React.createContext<ISearchContextInterface>({
@@ -75,7 +78,8 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   clearGreyFacet: () => { },
   clearAllGreyFacets: () => { },
   resetGreyedOptions: () => { },
-  applySaveQuery: () => { }
+  applySaveQuery: () => { },
+  setSelectedQuery: () => { }
 });
 
 const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
@@ -383,6 +387,16 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
 
     }
 
+    const setSelectedQuery = (query: string) => {
+      setSearchOptions({
+        ...searchOptions,
+        start: 1,
+        pageNumber: 1,
+        pageLength: searchOptions.pageSize,
+        selectedQuery: query
+      });
+    }
+
   useEffect(() => {
     if (user.authenticated) {
       setSearchFromUserPref(user.name);
@@ -414,7 +428,8 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       clearAllGreyFacets,
       resetGreyedOptions,
       applyQuery,
-      applySaveQuery
+      applySaveQuery,
+      setSelectedQuery
     }}>
       {children}
     </SearchContext.Provider>

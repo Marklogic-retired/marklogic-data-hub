@@ -17,8 +17,7 @@ const QueryModal = (props) => {
     const [mainModalVisibility, setMainModalVisibility] = useState(false);
     const [editModalVisibility, setEditModalVisibility] = useState(false);
     const [deleteModalVisibility, setDeleteModalVisibility] = useState(false);
-    const [selectedQuery, setSelectedQuery] = useState({});
-    const [queryName, setQueryName] = useState('');
+    const [query, setQuery] = useState({});
     const data = new Array();
 
     useEffect(() => {
@@ -95,6 +94,7 @@ const QueryModal = (props) => {
         props.queries && props.queries.length > 0 && props.queries.forEach(query => {
             if (e.currentTarget.dataset.id === query['savedQuery']['name']) {
                 applyQuery(query['savedQuery']['query']['searchText'], query['savedQuery']['query']['entityTypeIds'], query['savedQuery']['query']['selectedFacets'])
+                props.setQueryName(query['savedQuery']['name'])
             }
         })
         setMainModalVisibility(false)
@@ -177,12 +177,12 @@ const QueryModal = (props) => {
         visible={deleteModalVisibility}
         okText='Yes'
         cancelText='No'
-        onOk={() => onOk(selectedQuery)}
+        onOk={() => onOk(query)}
         onCancel={() => onCancel()}
         width={300}
         maskClosable={false}
     >
-        <span style={{ fontSize: '16px' }}>Are you sure you want to delete '{queryName}'?</span>
+        <span style={{ fontSize: '16px' }}>Are you sure you want to delete '{props.queryName}'?</span>
     </Modal>;
 
     return (
@@ -203,8 +203,8 @@ const QueryModal = (props) => {
                             onClick: () => {
                                 props.queries.forEach((query) => {
                                     if (query['savedQuery']['id'] === record.key) {
-                                        setSelectedQuery(query);
-                                        setQueryName(record.name);
+                                        setQuery(query);
+                                        props.setQueryName(record.name);
                                     }
                                 })
                             }
@@ -212,7 +212,7 @@ const QueryModal = (props) => {
                     }}>
                 </Table>
             </Modal>
-            <EditQueryDialog query={selectedQuery} editQuery={editQuery} getQueries={getQueries} editModalVisibility={editModalVisibility} setEditModalVisibility={setEditModalVisibility} />
+            <EditQueryDialog queryName={props.queryName} setQueryName={props.setQueryName} query={query} editQuery={editQuery} getQueries={getQueries} editModalVisibility={editModalVisibility} setEditModalVisibility={setEditModalVisibility} />
             {deleteConfirmation}
         </div>
     )
