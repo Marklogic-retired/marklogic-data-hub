@@ -21,7 +21,7 @@ def dhflinuxTests(String mlVersion,String type){
     		props = readProperties file:'data-hub/pipeline.properties';
     		copyRPM type,mlVersion
     		def dockerhost=setupMLDockerCluster 3
-    		sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test -i --stacktrace;sleep 10s;./gradlew marklogic-data-hub-central:test -i --stacktrace |& tee console.log;sleep 10s;./gradlew ml-data-hub:test -i --stacktrace;sleep 10s;./gradlew web:test -i --stacktrace;sleep 10s; ./gradlew marklogic-data-hub:testBootstrap -i --stacktrace;sleep 10s;./gradlew ml-data-hub:testFullCycle -i --stacktrace;sleep 10s;./gradlew marklogic-data-hub-central:testFullCycle -i --stacktrace;"'
+    		sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test -i --stacktrace;sleep 10s;./gradlew marklogic-data-hub-central:test -i --stacktrace |& tee console.log;sleep 10s;./gradlew ml-data-hub:test -i --stacktrace;sleep 10s;./gradlew web:test -i --stacktrace;sleep 10s; ./gradlew marklogic-data-hub:testBootstrap -i --stacktrace;sleep 10s;./gradlew ml-data-hub:testFullCycle -i --stacktrace;sleep 10s;"'
     		junit '**/TEST-*.xml'
             def output=readFile 'data-hub/console.log'
 		    def result=false;
@@ -446,7 +446,7 @@ pipeline{
                 props = readProperties file:'data-hub/pipeline.properties';
 				copyRPM 'Release','9.0-12'
 				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
-				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test -Dorg.gradle.jvmargs=-Xmx1g;sleep 10s;./gradlew ml-data-hub:test;sleep 10s;./gradlew web:test;sleep 10s;./gradlew marklogic-data-hub-central:test |& tee console.log;sleep 10s;./gradlew marklogic-data-hub:testBootstrap;sleep 10s;./gradlew ml-data-hub:testFullCycle;sleep 10s;./gradlew marklogic-data-hub-central:testFullCycle;'
+				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test -Dorg.gradle.jvmargs=-Xmx1g -i --stacktrace;sleep 10s;./gradlew ml-data-hub:test -i --stacktrace;sleep 10s;./gradlew web:test -i --stacktrace;sleep 10s;./gradlew marklogic-data-hub-central:test -i --stacktrace |& tee console.log;sleep 10s;./gradlew marklogic-data-hub:testBootstrap -i --stacktrace;sleep 10s;./gradlew ml-data-hub:testFullCycle -i --stacktrace;sleep 10s;'
 				junit '**/TEST-*.xml'
                 def output=readFile 'data-hub/console.log'
 				def result=false;
