@@ -176,11 +176,6 @@ test {
 	useJUnitPlatform()
 }
 
-task testFullCycle(type: Test) {
-    useJUnitPlatform  {
-        include 'com/marklogic/hub/curation/controllers/fullcycle/**'
-    }
-}
 
 task testUI(type: NpmTask, dependsOn: installDependencies, group: taskGroup){
     description = "Runs the UI unit tests"
@@ -188,3 +183,28 @@ task testUI(type: NpmTask, dependsOn: installDependencies, group: taskGroup){
     execOverrides { it.workingDir = reactUiPath }
 }
 test.finalizedBy('testUI')
+
+/*task to publish war file to Maven repository, if project has property "mavenUser" then it will publish to nexus
+ Use '-PskipWeb in your task to skip this task when publishing'*/
+publishing {
+    publications {
+        if(!project.hasProperty('skipWeb')) {
+            mavenWeb(MavenPublication) {
+                group = "com.marklogic"
+                version = "${version}"
+                from components.web
+            }
+        }
+    }
+    repositories {
+        maven {
+            if(project.hasProperty("mavenUser")) {
+                credentials {
+                    username mavenUser
+                    password mavenPassword
+                }
+            }
+            url publishUrl
+        }
+    }
+}
