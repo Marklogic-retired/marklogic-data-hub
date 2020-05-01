@@ -18,10 +18,12 @@
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 
 fn.collection(entityLib.getModelCollection()).toArray().map(model => {
-  const entityName = model.toObject().info.title;
+  model = model.toObject();
+  const entityName = model.info.title;
   const jobData = entityLib.getLatestJobData(entityName);
   const response = {
     entityName: entityName,
+    entityTypeId: entityLib.getEntityTypeId(model, entityName),
     entityInstanceCount: cts.estimate(cts.collectionQuery(entityName)),
     model: model
   };
