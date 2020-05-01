@@ -15,14 +15,16 @@
  */
 'use strict';
 
-const LoadData = require('./loadData');
+const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 const Flow = require('./flow');
-const StepDef = require('./stepDefinition');
+const LoadData = require('./loadData');
 const Mapping = require('./mapping');
 const Matching = require('./matching');
+const StepDef = require('./stepDefinition');
 
 const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
 const dataHub = DataHubSingleton.instance();
+
 // define constants for caching expensive operations
 const cachedArtifacts = {};
 const registeredArtifactTypes = {
@@ -88,27 +90,59 @@ function getArtifacts(artifactType) {
     return [];
 }
 
-function getArtifactsGroupByEntity(queries) {
-    const entityNames = getEntityTitles();
-    const artifacts = cts.search(cts.andQuery(queries.concat(cts.jsonPropertyValueQuery("targetEntityType", entityNames)))).toArray();
-    const artifactsByEntity = artifacts.map(e => e.toObject()).reduce((res, e) => {
-            res[e.targetEntityType] = res[e.targetEntityType] || {entityType : e.targetEntityType};
-            res[e.targetEntityType].artifacts = res[e.targetEntityType].artifacts || [];
-            res[e.targetEntityType].artifacts.push(e);
-            return res;
-        }, {});
+function getEntityTitles() {
+  return cts.search(cts.collectionQuery("http://marklogic.com/entity-services/models")).toArray().map(e => e.xpath("//info//title"));
+}
 
-    const entityWithoutArtifacts = [];
-    for (const ename of entityNames) {
-        if (!artifactsByEntity[ename]) {
-            entityWithoutArtifacts.push(ename);
+/**
+ * To keep things interesting, this needs to support finding artifacts associated with entities where targetEntityType
+ * on an artifact can either be an entityName - e.g. "Customer" - or an entityTypeId - "http://example.org/Customer-0.0.1/Customer".
+ * That's because mappings require entityTypeId, but other artifacts will accept an entityName.
+ * 
+ * @param queries
+ * @returns {*[]}
+ */
+function getArtifactsGroupByEntity(queries) {
+  // This is our map of results
+  const entityNameMap = {};
+
+  // Need all of these for our artifacts query
+  const entityNamesAndTypeIds = [];
+
+  // Iterate over all entity models to prepare our entityNameMap and collect names and IDs
+  fn.collection(entityLib.getModelCollection()).toArray().forEach(model => {
+    model = model.toObject();
+    const entityName = model.info.title;
+    const entityTypeId = entityLib.getEntityTypeId(model, entityName);
+    // TODO Should use "entityName" instead of "entityType", but the UI currently expects "entityType"
+    entityNameMap[entityName] = {entityType: entityName, entityTypeId, artifacts:[]};
+    entityNamesAndTypeIds.push(entityName, entityTypeId);
+  });
+
+  // Find all matching artifacts
+  const artifacts = cts.search(cts.andQuery(
+    queries.concat(cts.jsonPropertyValueQuery("targetEntityType", entityNamesAndTypeIds))
+  )).toArray();
+
+  // Figure out where each artifact goes in the entityNameMap
+  const artifactMap = {};
+  artifacts.forEach(artifact => {
+    artifact = artifact.toObject();
+    const targetEntityType = artifact.targetEntityType;
+    if (entityNameMap[targetEntityType]) {
+      entityNameMap[targetEntityType].artifacts.push(artifact);
+    } else {
+      for (var entityName of Object.keys(entityNameMap)) {
+        if (entityNameMap[entityName].entityTypeId == targetEntityType) {
+          entityNameMap[entityName].artifacts.push(artifact);
+          break;
         }
+      }
     }
-    const allArtifactsByEntity = Object.keys(artifactsByEntity).map(e => artifactsByEntity[e]);
-    for (const e of entityWithoutArtifacts) {
-        allArtifactsByEntity.push({entityType : e, artifacts : []});
-    }
-    return allArtifactsByEntity;
+  })
+
+  // Return an array containing an item for each primary entity type
+  return Object.keys(entityNameMap).map(entityName => entityNameMap[entityName]);
 }
 
 function deleteArtifact(artifactType, artifactName, artifactVersion = 'latest') {
@@ -349,10 +383,6 @@ function deleteArtifactSettings(artifactType, artifactName, artifactVersion = 'l
     return { success: true };
 }
 
-function getEntityTitles() {
-    return cts.search(cts.collectionQuery("http://marklogic.com/entity-services/models")).toArray().map(e => e.xpath("//info//title"));
-}
-
 function getFullFlow(flowName, artifactVersion = 'latest') {
   let flowNode = getArtifact('flow', flowName);
   flowNode = createFullFlow(flowName, flowNode);
@@ -438,7 +468,6 @@ module.exports = {
     getArtifactSettings,
     setArtifactSettings,
     validateArtifact,
-    getEntityTitles,
     linkToStepOptions,
     removeLinkToStepOptions,
     getFullFlow

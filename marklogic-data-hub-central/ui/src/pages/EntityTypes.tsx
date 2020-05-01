@@ -28,13 +28,14 @@ const EntityTypes: React.FC = () => {
 
     const getEntityModels = async () => {
         try {
-          let response = await axios.get(`/api/entities`);
+          let response = await axios.get(`/api/models/primaryEntityTypes`);
           if (response.status === 200) {
-              let entModels:any = {};
-              response.data.map(ent => {
-                  entModels[ent.info.title] = ent
+              let models:any = {};
+              response.data.map(model => {
+                  // model has an entityTypeId property, perhaps that should be used instead of entityName?
+                  models[model.entityName] = model;
               });
-              setEntityModels({...entModels});
+              setEntityModels({...models});
           }
         } catch (error) {
             let message = error;

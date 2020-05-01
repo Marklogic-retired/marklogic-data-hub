@@ -10,11 +10,8 @@ import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.central.AbstractHubCentralTest;
-import com.marklogic.hub.central.controllers.MappingController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,7 +22,7 @@ public class MappingControllerTest extends AbstractHubCentralTest {
 
     static final String MAPPING_CONFIG_1 = "{\n" +
         "  \"name\": \"TestCustomerMapping\",\n" +
-        "  \"targetEntityType\": \"Customer\",\n" +
+        "  \"targetEntityType\": \"http://example.org/Customer-0.0.1/Customer\",\n" +
         "  \"description\": \"TestCustomerMapping does ...\",\n" +
         "  \"selectedSource\":\"query\",\n" +
         "  \"sourceQuery\": \"cts.CollectionQuery('RAW-CUSTOMER')\",\n" +
@@ -34,7 +31,7 @@ public class MappingControllerTest extends AbstractHubCentralTest {
 
     static final String MAPPING_CONFIG_2 = "{\n" +
         "  \"name\": \"TestOrderMapping1\",\n" +
-        "  \"targetEntityType\": \"Order\",\n" +
+        "  \"targetEntityType\": \"http://marklogic.com/example/Order-0.0.1/Order\",\n" +
         "  \"description\": \"TestOrderMapping1 does ...\",\n" +
         "  \"selectedSource\": \"collection\",\n" +
         "  \"sourceQuery\": \"\",\n" +
@@ -43,7 +40,7 @@ public class MappingControllerTest extends AbstractHubCentralTest {
 
     static final String MAPPING_CONFIG_3 = "{\n" +
         "  \"name\" : \"TestOrderMapping2\",\n" +
-        "  \"targetEntityType\" : \"Order\",\n" +
+        "  \"targetEntityType\" : \"http://marklogic.com/example/Order-0.0.1/Order\",\n" +
         "  \"description\" : \"TestOrderMapping2 does ...\",\n" +
         "  \"selectedSource\": \"query\",\n" +
         "  \"sourceQuery\": \"cts.CollectionQuery('RAW-ORDER')\",\n" +
@@ -63,7 +60,7 @@ public class MappingControllerTest extends AbstractHubCentralTest {
         + "          \"runBefore\" : false\n"
         + "    }}";
 
-    static final String VALID_MAPING = "{\n" +
+    static final String VALID_MAPPING = "{\n" +
         "    \"targetEntityType\": \"http://marklogic.com/data-hub/example/Customer-0.0.1/Customer\",\n" +
         "    \"properties\": {\n" +
         "        \"id\": {\n" +
@@ -72,7 +69,7 @@ public class MappingControllerTest extends AbstractHubCentralTest {
         "    }\n" +
         "}";
 
-    static final String INVALID_MAPING = "{\n" +
+    static final String INVALID_MAPPING = "{\n" +
         "    \"targetEntityType\": \"http://marklogic.com/data-hub/example/Customer-0.0.1/Customer\",\n" +
         "    \"properties\": {\n" +
         "        \"id\": {\n" +
@@ -121,43 +118,41 @@ public class MappingControllerTest extends AbstractHubCentralTest {
 
         ArrayNode configsGroupbyEntity = controller.getMappings().getBody();
 
-        assertTrue(configsGroupbyEntity.size() >= 2, "The group entity count of mapping configs should be greater than 2.");
+        assertEquals(2, configsGroupbyEntity.size(), "Should have two entries - one for Customer, one for Order.");
 
         configsGroupbyEntity.forEach(e -> {
-            String currEntityName = e.get("entityType").asText();
-            if ("Customer".equals(currEntityName) || "Order".equals(currEntityName)) {
-                JsonNode mappingNode = e.get("artifacts");
-                assertTrue(e.get("artifacts").size() > 0, String.format("Should have at least 1 mapping config associated with the entity (%s).", currEntityName));
-                if (mappingNode instanceof ArrayNode) {
-                    boolean found = false;
-                    int mapConfigCount = 0;
-                    int i = 0;
-                    for (; i < mappingNode.size(); ++i) {
-                        String mappedEntityName = mappingNode.get(i).get("targetEntityType").asText();
-                        String mapName = mappingNode.get(i).get("name").asText();
-                        if (("Customer".equals(currEntityName) && currEntityName.equals(mappedEntityName) && "TestCustomerMapping".equals(mapName))
-                            || ("Order".equals(currEntityName) && currEntityName.equals(mappedEntityName)
-                            && ("TestOrderMapping1".equals(mapName) || "TestOrderMapping2".equals(mapName)))) {
-                            found = true;
-                            ++mapConfigCount;
-                        }
-                    }
-                    assertTrue(found, String.format("Could not find the entity name (%s)", currEntityName));
-                    if ("Customer".equals(currEntityName)) {
-                        assertEquals(1, mapConfigCount, "Should have 1 mapping config associate with the entity (Customer).");
-                    } else { //Order
-                        assertEquals(2, mapConfigCount, "Should have 2 mapping configs associate with the entity (Order).");
-                    }
-                } else if (mappingNode instanceof ObjectNode) {
-                    assertEquals(currEntityName, mappingNode.get("targetEntityType").asText(), "mismatch entity name.");
-                    if ("Customer".equals(currEntityName)) {
-                        assertEquals("TestCustomerMapping", mappingNode.get("name").asText(), "mismatch mapping name.");
-                    } else { //Order
-                        fail("Should have 2 mapping configs associate with the entity (Order).");
-                    }
-                } else {
-                    fail("error data type!");
-                }
+            if ("Order".equals(e.get("entityType").asText())) {
+                verifyOrderMappings(e);
+            } else {
+                verifyCustomerMappings(e);
+            }
+        });
+    }
+
+    private void verifyOrderMappings(JsonNode node) {
+        assertEquals("Order", node.get("entityType").asText());
+        assertEquals("http://marklogic.com/example/Order-0.0.1/Order", node.get("entityTypeId").asText());
+        assertEquals(2, node.get("artifacts").size());
+        node.get("artifacts").forEach(mapping -> {
+            if ("TestOrderMapping1".equals(mapping.get("name").asText())) {
+                assertEquals("http://marklogic.com/example/Order-0.0.1/Order", mapping.get("targetEntityType").asText());
+            } else {
+                assertEquals("TestOrderMapping2", mapping.get("name").asText());
+                assertEquals("http://marklogic.com/example/Order-0.0.1/Order", mapping.get("targetEntityType").asText());
+            }
+        });
+    }
+
+    private void verifyCustomerMappings(JsonNode node) {
+        assertEquals("Customer", node.get("entityType").asText());
+        assertEquals("http://example.org/Customer-0.0.1/Customer", node.get("entityTypeId").asText());
+        assertEquals(2, node.get("artifacts").size());
+        node.get("artifacts").forEach(mapping -> {
+            if ("SimpleCustomerMapping".equals(mapping.get("name").asText())) {
+                assertEquals("http://example.org/Customer-0.0.1/Customer", mapping.get("targetEntityType").asText());
+            } else {
+                assertEquals("TestCustomerMapping", mapping.get("name").asText());
+                assertEquals("http://example.org/Customer-0.0.1/Customer", mapping.get("targetEntityType").asText());
             }
         });
     }
@@ -203,11 +198,11 @@ public class MappingControllerTest extends AbstractHubCentralTest {
             new StringHandle(TEST_ENTITY_INSTANCE).withFormat(Format.JSON)
         );
 
-        ObjectNode result = controller.testMapping(readJsonObject(VALID_MAPING), "/test/customer100.json", getHubClient().getDbName(DatabaseKind.FINAL)).getBody();
+        ObjectNode result = controller.testMapping(readJsonObject(VALID_MAPPING), "/test/customer100.json", getHubClient().getDbName(DatabaseKind.FINAL)).getBody();
         assertEquals("concat(id, 'A')", result.get("properties").get("id").get("sourcedFrom").asText(), "SourcedFrom should be concat(id, 'A')");
         assertEquals("100A", result.get("properties").get("id").get("output").asText(), "outpus should be 100A");
 
-        ObjectNode errorResult = controller.testMapping(readJsonObject(INVALID_MAPING), "/test/customer100.json", getHubClient().getDbName(DatabaseKind.FINAL)).getBody();
+        ObjectNode errorResult = controller.testMapping(readJsonObject(INVALID_MAPPING), "/test/customer100.json", getHubClient().getDbName(DatabaseKind.FINAL)).getBody();
         assertEquals("concat(id, ')", errorResult.get("properties").get("id").get("sourcedFrom").asText(), "SourcedFrom should be concat(id, ')");
         assertEquals("Invalid XPath expression: concat(id, ')", errorResult.get("properties").get("id").get("errorMessage").asText(), "errorMessage should be Invalid XPath expression: concat(id, ')");
     }
@@ -221,5 +216,30 @@ public class MappingControllerTest extends AbstractHubCentralTest {
         assertTrue(result.get("doc") != null, "Should have function 'doc'");
         assertTrue(result.get("current-dateTime") != null, "Should have function 'current-dateTime'");
         assertTrue(result.get("fn:sum") == null, "'fn:' has been stripped from the function name and signature");
+    }
+
+    /**
+     * Verifies that the structured properties of Customer - Address and Zip - are merged into the Customer to make
+     * life easy for the mapping tool.
+     */
+    @Test
+    void getEntityForMapping() {
+        installReferenceModelProject();
+
+        JsonNode customer = controller.getEntityForMapping("Customer");
+        JsonNode properties = customer.get("definitions").get("Customer").get("properties");
+
+        JsonNode shipping = properties.get("shipping");
+        assertTrue(shipping.has("subProperties"), "shipping should be expanded to include the Address properties");
+        JsonNode shippingProperties = shipping.get("subProperties");
+        assertEquals("string", shippingProperties.get("street").get("datatype").asText());
+        assertEquals("string", shippingProperties.get("city").get("datatype").asText());
+        assertEquals("string", shippingProperties.get("state").get("datatype").asText());
+
+        JsonNode zip = shipping.get("subProperties").get("zip");
+        assertTrue(zip.has("subProperties"), "zip should be expanded to include the Zip properties");
+        JsonNode zipProperties = zip.get("subProperties");
+        assertEquals("string", zipProperties.get("fiveDigit").get("datatype").asText());
+        assertEquals("string", zipProperties.get("plusFour").get("datatype").asText());
     }
 }
