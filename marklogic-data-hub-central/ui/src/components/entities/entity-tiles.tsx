@@ -46,14 +46,14 @@ const EntityTiles = (props) => {
           }
     }
 
-    const getMappingArtifactByMapName = async (entityTypeTitle,mapName) => {
+    const getMappingArtifactByMapName = async (entityTypeId,mapName) => {
         try {
             let response = await axios.get(`/api/artifacts/mapping/${mapName}`);
 
             if (response.status === 200) {
                 let mapArtifacts = response.data;
 
-               if(mapArtifacts.targetEntityType === entityTypeTitle){
+               if(mapArtifacts.targetEntityType === entityTypeId){
                 return mapArtifacts;
                }
 
@@ -67,13 +67,11 @@ const EntityTiles = (props) => {
     }
 
     const deleteMappingArtifact = async (mapName) => {
-        console.log('Delete API Called!')
         try {
             setIsLoading(true);
             let response = await axios.delete(`/api/artifacts/mapping/${mapName}`);
 
             if (response.status === 200) {
-              console.log('DELETE API Called successfully!');
               setIsLoading(false);
             }
           } catch (error) {
@@ -133,50 +131,42 @@ const EntityTiles = (props) => {
                 let entArt = response.data;
                 entArt.sort((a, b) => (a.entityType > b.entityType) ? 1 : -1)
                 setMatchingArtifacts([...entArt]);
-              console.log('GET matching Artifacts API Called successfully!');
             }
           } catch (error) {
               let message = error;
-              console.log('Error while fetching matching artifacts', message);
-              //handleError(error);
+              console.error('Error while fetching matching artifacts', message);
           } finally {
             resetSessionTime();
           }
     }
 
     const deleteMatchingArtifact = async (matchingName) => {
-        console.log('Delete API Called!')
         try {
             setIsLoading(true);
             let response = await axios.delete(`/api/artifacts/matching/${matchingName}`);
 
             if (response.status === 200) {
-              console.log('DELETE matching Called successfully!');
               setIsLoading(false);
             }
           } catch (error) {
               let message = error.response.data.message;
-              console.log('Error while deleting matching artifact.', message);
+              console.error('Error while deleting matching artifact.', message);
               setIsLoading(false);
-              //handleError(error);
           }
     }
 
     const createMatchingArtifact = async (matchingObj) => {
-        console.log('Create API Called!')
         try {
             setIsLoading(true);
 
             let response = await axios.post(`/api/artifacts/matching/${matchingObj.name}`, matchingObj);
             if (response.status === 200) {
-              console.log('Create/Update matching API Called successfully!')
               setIsLoading(false);
             }
           } catch (error) {
             let message = error.response.data.message;
-            console.log('Error While creating the matching artifact!', message)
+            console.error('Error While creating the matching artifact!', message)
             setIsLoading(false);
-            //handleError(error);
           } finally {
             resetSessionTime();
           }
@@ -184,7 +174,6 @@ const EntityTiles = (props) => {
 
     const outputCards = (entityCardData, matchingCardData) => {
         let output;
-        console.log('canReadWrite',props.canReadWrite)
 
         if (viewType === 'map') {
             output = <div className={styles.cardView}>

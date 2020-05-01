@@ -239,7 +239,7 @@ const MappingCard: React.FC<Props> = (props) => {
                 setSourceData([]);
                 setSourceData([...sDta]);
                 if(typeof(srcDocResp.data) === 'string'){
-                    let mData = await props.getMappingArtifactByMapName(props.entityTypeTitle,props.data[index].name);
+                    let mData = await props.getMappingArtifactByMapName(props.entityModel.entityTypeId,props.data[index].name);
                     updateMappingWithNamespaces(mData);
                 }
             }
@@ -536,7 +536,7 @@ const MappingCard: React.FC<Props> = (props) => {
     const openSourceToEntityMapping = async (name,index) => {
             mapIndexLocal = index; 
             setMapIndex(index); 
-            let mData = await props.getMappingArtifactByMapName(props.entityTypeTitle,name);
+            let mData = await props.getMappingArtifactByMapName(props.entityModel.entityTypeId,name);
             setSourceURI('');
             setMapData({...mData})
             await getSourceData(index);
@@ -645,7 +645,7 @@ const MappingCard: React.FC<Props> = (props) => {
                 newMap={newMap}
                 title={title}
                 setNewMap={setNewMap}
-                targetEntityType={props.entityTypeTitle}
+                targetEntityType={props.entityModel.entityTypeId}
                 createMappingArtifact={props.createMappingArtifact}
                 deleteMappingArtifact={props.deleteMappingArtifact}
                 mapData={mapData}
