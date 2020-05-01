@@ -8,7 +8,7 @@ import org.springframework.security.access.AccessDeniedException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 public class ClearUserDataTest extends AbstractMvcTest {
 
@@ -25,7 +25,7 @@ public class ClearUserDataTest extends AbstractMvcTest {
 
         loginAsTestUserWithRoles("hub-central-clear-user-data");
 
-        mockMvc.perform(get(PATH).session(mockHttpSession))
+        mockMvc.perform(post(PATH).session(mockHttpSession))
             .andDo(result -> {
                 assertEquals(200, result.getResponse().getStatus());
             });
@@ -35,7 +35,7 @@ public class ClearUserDataTest extends AbstractMvcTest {
     void forbiddenUser() throws Exception {
         loginAsTestUserWithRoles("data-hub-developer");
 
-        mockMvc.perform(get(PATH).session(mockHttpSession))
+        mockMvc.perform(post(PATH).session(mockHttpSession))
             .andDo(result -> {
                 assertTrue(result.getResolvedException() instanceof AccessDeniedException);
             });

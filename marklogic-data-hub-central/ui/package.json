@@ -52,7 +52,6 @@
     "build": "react-app-rewired build",
     "test:dev": "react-app-rewired test --watchAll=false",
     "test": "react-app-rewired test --coverage --watchAll=false",
-    "server": "npm run start --prefix ./mockserver",
     "client": "react-app-rewired start",
     "eject": "react-scripts eject"
   },

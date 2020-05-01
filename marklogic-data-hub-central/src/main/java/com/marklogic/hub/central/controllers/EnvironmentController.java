@@ -90,7 +90,7 @@ public class EnvironmentController extends BaseController {
         }
     }
 
-    @RequestMapping(value = "/api/environment/clearUserData")
+    @RequestMapping(value = "/api/environment/clearUserData", method = RequestMethod.POST)
     @Secured("ROLE_clearUserData")
     public ResponseEntity<Void> clearUserData() {
         new DataHubImpl(getHubClient()).clearUserData();

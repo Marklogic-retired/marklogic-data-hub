@@ -112,14 +112,6 @@ The UI will then be available at http://localhost:3000 .
 
 See the comments in the AbstractOneUiTest class for information on how to write tests for the Java code in this application.
 
-## Viewing OpenAPI docs
-
-To view the OpenAPI docs for the REST middle tier endpoints in this project, just do the following:
-
-    cd marklogic-data-hub-central/ui/mockserver
-    npm install
-    npm start
-
 # Running Data Hub Central in production 
 
 For a production environment, it's typical to package up a Spring Boot app as an executable war (or jar). Thus, we won't be 
