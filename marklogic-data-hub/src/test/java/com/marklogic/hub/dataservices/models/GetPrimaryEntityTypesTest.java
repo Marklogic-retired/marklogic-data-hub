@@ -24,11 +24,13 @@ public class GetPrimaryEntityTypesTest extends AbstractHubCoreTest {
             String name = entityType.get("entityName").asText();
             if ("Order".equals(name)) {
                 assertEquals("0", entityType.get("entityInstanceCount").asText());
+                assertEquals("http://marklogic.com/example/Order-0.0.1/Order", entityType.get("entityTypeId").asText());
                 assertFalse(entityType.has("latestJobId"), "Job data shouldn't exist since no flows have been run for this entity");
                 assertFalse(entityType.has("latestJobDateTime"));
                 assertEquals("Order", entityType.get("model").get("info").get("title").asText(), "Verifying that the model is included");
             } else {
                 assertEquals("Customer", name);
+                assertEquals("http://example.org/Customer-0.0.1/Customer", entityType.get("entityTypeId").asText());
                 assertEquals("1", entityType.get("entityInstanceCount").asText());
                 assertEquals("echoFlow-test", entityType.get("latestJobId").asText());
                 assertTrue(entityType.has("latestJobDateTime"));
