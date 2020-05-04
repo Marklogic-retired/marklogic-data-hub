@@ -71,8 +71,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
      */
     protected String[] getAlwaysPermittedPatterns() {
         return new String[]{
-            "/api/environment/initialized",
-            "/websocket/**",
             "/actuator/**",
             "/",
             "/*.js",

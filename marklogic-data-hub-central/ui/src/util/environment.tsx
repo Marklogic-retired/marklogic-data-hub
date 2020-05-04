@@ -2,8 +2,7 @@ import axios from 'axios';
 
 const defaultEnv = {
     projectName: '',
-    projectDir: '',
-    dataHubVersion: '',   
+    dataHubVersion: '',
     markLogicVersion: '',
     host:'',
     stagingPort:''
@@ -13,7 +12,7 @@ export function setEnvironment()  {
     axios.get('/api/environment/project-info')
             .then(res => {
                 //'projectName' redundantly set to handle scenario after installation
-                localStorage.setItem('projectName', res.data.projectName);  
+                localStorage.setItem('projectName', res.data.projectName);
                 localStorage.setItem('environment', JSON.stringify(res.data)) ;
             })
             .catch(err => {
@@ -31,11 +30,6 @@ export function getEnvironment():any {
     else{
         return defaultEnv;
     }
-   
 }
 
-export function resetEnvironment() {
-    localStorage.setItem('environment', JSON.stringify(defaultEnv));
-}
-
-export default { setEnvironment, getEnvironment, resetEnvironment };
+export default { setEnvironment, getEnvironment };

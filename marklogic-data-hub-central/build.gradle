@@ -69,9 +69,6 @@ dependencies {
     compile "org.springframework.security:spring-security-web:${springSecurityVersion}"
     compile "org.springframework.security:spring-security-config:${springSecurityVersion}"
 
-    // Enables WebSocket - https://spring.io/guides/gs/messaging-stomp-websocket/
-    compile "org.springframework.boot:spring-boot-starter-websocket:${springBootVersion}"
-
     // Enables Spring Boot actuator - https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#production-ready
     runtime "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}"
 

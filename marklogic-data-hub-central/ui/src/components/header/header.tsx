@@ -86,19 +86,13 @@ const Header:React.FC<Props> = ({ history, location }) => {
   }
 
   const showProjectName = (
-    user.authenticated && 
-    localStorage.getItem('dhIsInstalled')==='true' && 
+    user.authenticated &&
     localStorage.getItem('projectName') != ''
   );
   const projectName = localStorage.getItem('projectName');
 
   const handleHomeClick = () => {
-    if (localStorage.getItem('dhIsInstalled') === 'false' && 
-    localStorage.getItem('dhUserHasManagePrivileges') === 'true') {
-      history.push('/install');
-    } else {
       history.push('/home');
-    }
   };
 
   return (
