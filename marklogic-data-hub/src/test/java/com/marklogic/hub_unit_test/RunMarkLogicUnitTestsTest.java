@@ -1,9 +1,13 @@
 package com.marklogic.hub_unit_test;
 
+import com.marklogic.appdeployer.ConfigDir;
+import com.marklogic.appdeployer.command.security.DeployAmpsCommand;
+import com.marklogic.appdeployer.command.security.DeployRolesCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.bootstrap.Installer;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.deploy.commands.CreateGranularPrivilegesCommand;
 import com.marklogic.hub.deploy.commands.LoadHubArtifactsCommand;
 import com.marklogic.junit5.MarkLogicUnitTestArgumentsProvider;
 import com.marklogic.test.unit.TestManager;
@@ -20,6 +24,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.io.File;
 
 /**
  * Runs all marklogic-unit-test tests located under src/test/ml-modules/root/test.
@@ -68,6 +74,9 @@ public class RunMarkLogicUnitTestsTest extends HubTestBase {
     protected void init() {
         if (!initialized) {
             super.init();
+            // deploy test related amps
+            adminHubConfig.getAppConfig().getConfigDirs().add(new ConfigDir(new File("src/test/ml-config")));
+            new SimpleAppDeployer(new DeployRolesCommand(), new DeployAmpsCommand(), new CreateGranularPrivilegesCommand(adminHubConfig)).deploy(adminHubConfig.getAppConfig());
             initialized = true;
         }
     }

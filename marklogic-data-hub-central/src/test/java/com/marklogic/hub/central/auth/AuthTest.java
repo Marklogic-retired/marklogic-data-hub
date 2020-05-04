@@ -35,19 +35,10 @@ class AuthTest extends AbstractMvcTest {
     // Eventually admin won't be able to login
     @Test
     void loginWithValidAdminAndLogout() throws Exception {
-        loginAsUser(testConstants.ADMIN_USERNAME).andDo(result -> {
-            String strResponse = result.getResponse().getContentAsString();
-            JsonNode jsonResponse = objectMapper.readTree(strResponse);
-            assertTrue(jsonResponse.get("authorities").isArray());
-            assertTrue(jsonResponse.get("authorities").toString().contains("writeLoadData"));
-        });
-
-        assertFalse(mockHttpSession.isInvalid());
-
-        mockMvc.perform(get(LOGOUT_URL).session(mockHttpSession))
-            .andExpect(status().isOk());
-
-        assertTrue(mockHttpSession.isInvalid());
+        String payload = buildLoginPayload(testConstants.ADMIN_USERNAME);
+        mockMvc
+                .perform(post(LOGIN_URL).contentType(MediaType.APPLICATION_JSON).content(payload))
+                .andExpect(status().isForbidden());
     }
 
     @Test

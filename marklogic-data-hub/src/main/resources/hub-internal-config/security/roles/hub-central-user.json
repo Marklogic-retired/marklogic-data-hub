@@ -1,0 +1,14 @@
+{
+  "role-name": "hub-central-user",
+  "description": "This role grants access to Hub Central",
+  "role": [
+    "data-hub-common"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "data-hub:loginToHubCentral",
+      "action": "http://marklogic.com/data-hub/privileges/login-to-hub-central",
+      "kind": "execute"
+    }
+  ]
+}

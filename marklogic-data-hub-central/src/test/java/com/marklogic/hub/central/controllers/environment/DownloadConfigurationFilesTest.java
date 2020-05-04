@@ -51,7 +51,7 @@ public class DownloadConfigurationFilesTest extends AbstractMvcTest {
 
     @Test
     void forbiddenUser() throws Exception {
-        setTestUserRoles("data-hub-operator");
+        setTestUserRoles("hub-central-user");
         loginAsTestUser();
         mockMvc.perform(get(PATH).session(mockHttpSession))
             .andDo(result -> {

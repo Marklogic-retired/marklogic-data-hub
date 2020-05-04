@@ -15,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
     "entityName",
+    "entityTypeId",
     "entityInstanceCount",
     "latestJobId",
     "latestJobDateTime",
@@ -23,12 +24,20 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 public class PrimaryEntityType {
 
     /**
-     * 
+     * Corresponds to the value of info.title in the model
      * (Required)
      * 
      */
     @JsonProperty("entityName")
+    @JsonPropertyDescription("Corresponds to the value of info.title in the model")
     private String entityName;
+    /**
+     * Unique identifier for an entity type that combines the entity name, base URI, and version number
+     * 
+     */
+    @JsonProperty("entityTypeId")
+    @JsonPropertyDescription("Unique identifier for an entity type that combines the entity name, base URI, and version number")
+    private String entityTypeId;
     @JsonProperty("entityInstanceCount")
     private Double entityInstanceCount;
     /**
@@ -59,7 +68,7 @@ public class PrimaryEntityType {
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
-     * 
+     * Corresponds to the value of info.title in the model
      * (Required)
      * 
      */
@@ -69,13 +78,31 @@ public class PrimaryEntityType {
     }
 
     /**
-     * 
+     * Corresponds to the value of info.title in the model
      * (Required)
      * 
      */
     @JsonProperty("entityName")
     public void setEntityName(String entityName) {
         this.entityName = entityName;
+    }
+
+    /**
+     * Unique identifier for an entity type that combines the entity name, base URI, and version number
+     * 
+     */
+    @JsonProperty("entityTypeId")
+    public String getEntityTypeId() {
+        return entityTypeId;
+    }
+
+    /**
+     * Unique identifier for an entity type that combines the entity name, base URI, and version number
+     * 
+     */
+    @JsonProperty("entityTypeId")
+    public void setEntityTypeId(String entityTypeId) {
+        this.entityTypeId = entityTypeId;
     }
 
     @JsonProperty("entityInstanceCount")
@@ -166,6 +193,10 @@ public class PrimaryEntityType {
         sb.append('=');
         sb.append(((this.entityName == null)?"<null>":this.entityName));
         sb.append(',');
+        sb.append("entityTypeId");
+        sb.append('=');
+        sb.append(((this.entityTypeId == null)?"<null>":this.entityTypeId));
+        sb.append(',');
         sb.append("entityInstanceCount");
         sb.append('=');
         sb.append(((this.entityInstanceCount == null)?"<null>":this.entityInstanceCount));
@@ -200,6 +231,7 @@ public class PrimaryEntityType {
         result = ((result* 31)+((this.latestJobDateTime == null)? 0 :this.latestJobDateTime.hashCode()));
         result = ((result* 31)+((this.entityName == null)? 0 :this.entityName.hashCode()));
         result = ((result* 31)+((this.entityInstanceCount == null)? 0 :this.entityInstanceCount.hashCode()));
+        result = ((result* 31)+((this.entityTypeId == null)? 0 :this.entityTypeId.hashCode()));
         result = ((result* 31)+((this.model == null)? 0 :this.model.hashCode()));
         result = ((result* 31)+((this.additionalProperties == null)? 0 :this.additionalProperties.hashCode()));
         result = ((result* 31)+((this.latestJobId == null)? 0 :this.latestJobId.hashCode()));
@@ -215,7 +247,7 @@ public class PrimaryEntityType {
             return false;
         }
         PrimaryEntityType rhs = ((PrimaryEntityType) other);
-        return (((((((this.latestJobDateTime == rhs.latestJobDateTime)||((this.latestJobDateTime!= null)&&this.latestJobDateTime.equals(rhs.latestJobDateTime)))&&((this.entityName == rhs.entityName)||((this.entityName!= null)&&this.entityName.equals(rhs.entityName))))&&((this.entityInstanceCount == rhs.entityInstanceCount)||((this.entityInstanceCount!= null)&&this.entityInstanceCount.equals(rhs.entityInstanceCount))))&&((this.model == rhs.model)||((this.model!= null)&&this.model.equals(rhs.model))))&&((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&&this.additionalProperties.equals(rhs.additionalProperties))))&&((this.latestJobId == rhs.latestJobId)||((this.latestJobId!= null)&&this.latestJobId.equals(rhs.latestJobId))));
+        return ((((((((this.latestJobDateTime == rhs.latestJobDateTime)||((this.latestJobDateTime!= null)&&this.latestJobDateTime.equals(rhs.latestJobDateTime)))&&((this.entityName == rhs.entityName)||((this.entityName!= null)&&this.entityName.equals(rhs.entityName))))&&((this.entityInstanceCount == rhs.entityInstanceCount)||((this.entityInstanceCount!= null)&&this.entityInstanceCount.equals(rhs.entityInstanceCount))))&&((this.entityTypeId == rhs.entityTypeId)||((this.entityTypeId!= null)&&this.entityTypeId.equals(rhs.entityTypeId))))&&((this.model == rhs.model)||((this.model!= null)&&this.model.equals(rhs.model))))&&((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&&this.additionalProperties.equals(rhs.additionalProperties))))&&((this.latestJobId == rhs.latestJobId)||((this.latestJobId!= null)&&this.latestJobId.equals(rhs.latestJobId))));
     }
 
 }

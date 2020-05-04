@@ -1,0 +1,56 @@
+{
+  "role-name": "data-hub-test-internal",
+  "description": "Used to test different roles/privileges at the server level",
+  "privilege": [
+    {
+      "privilege-name": "privilege-add-roles",
+      "action": "http://marklogic.com/xdmp/privileges/privilege-add-roles",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "grant-my-roles",
+      "action": "http://marklogic.com/xdmp/privileges/grant-my-roles",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "grant-all-roles",
+      "action": "http://marklogic.com/xdmp/privileges/grant-all-roles",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "get-role",
+      "action": "http://marklogic.com/xdmp/privileges/get-role",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "create-role",
+      "action": "http://marklogic.com/xdmp/privileges/create-role",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "remove-role",
+      "action": "http://marklogic.com/xdmp/privileges/remove-role",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "get-user",
+      "action": "http://marklogic.com/xdmp/privileges/get-user",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "create-user",
+      "action": "http://marklogic.com/xdmp/privileges/create-user",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "remove-user",
+      "action": "http://marklogic.com/xdmp/privileges/remove-user",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:login",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-login",
+      "kind": "execute"
+    }
+  ]
+}

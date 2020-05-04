@@ -12,7 +12,6 @@ import com.marklogic.mgmt.api.security.User;
 import com.marklogic.mgmt.mapper.DefaultResourceMapper;
 import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import com.marklogic.mgmt.resource.security.PrivilegeManager;
-import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
@@ -59,11 +58,15 @@ public class Installer extends HubTestBase implements InitializingBean {
         User dataHubDeveloper = new User(api, "test-data-hub-developer");
         dataHubDeveloper.setPassword("password");
         dataHubDeveloper.addRole("data-hub-developer");
+        // Temporary until we get the hub-central-developer role complete
+        dataHubDeveloper.addRole("hub-central-user");
         dataHubDeveloper.save();
 
         User dataHubOperator = new User(api, "test-data-hub-operator");
         dataHubOperator.setPassword("password");
         dataHubOperator.addRole("data-hub-operator");
+        // Temporary until we get the hub-central-operator role complete
+        dataHubOperator.addRole("hub-central-user");
         dataHubOperator.save();
 
         User testAdmin = new User(api, "test-admin-for-data-hub-tests");
@@ -76,6 +79,8 @@ public class Installer extends HubTestBase implements InitializingBean {
         User dataHubEnvManager = new User(api, "test-data-hub-environment-manager");
         dataHubEnvManager.setPassword("password");
         dataHubEnvManager.addRole("data-hub-environment-manager");
+        // Temporary
+        dataHubEnvManager.addRole("hub-central-user");
         dataHubEnvManager.save();
 
         User dataHubTestUser = new User(api, "test-data-hub-user");

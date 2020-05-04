@@ -40,8 +40,7 @@ public class ClearUserDataTest extends AbstractMvcTest {
         if (!isVersionCompatibleWith520Roles()) {
             return;
         }
-
-        loginAsTestUserWithRoles("data-hub-developer");
+        loginAsTestUserWithRoles("hub-central-user","data-hub-developer");
 
         mockMvc.perform(post(PATH).session(mockHttpSession))
             .andDo(result -> {
