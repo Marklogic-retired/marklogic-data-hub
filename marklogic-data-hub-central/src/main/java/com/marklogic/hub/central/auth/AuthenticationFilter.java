@@ -17,13 +17,13 @@ package com.marklogic.hub.central.auth;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.hub.central.HttpSessionHubClientProvider;
 import com.marklogic.hub.central.HubCentral;
 import com.marklogic.hub.dataservices.SecurityService;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
@@ -99,13 +99,16 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
             }
             throw e;
         }
-
         List<GrantedAuthority> authorities = new ArrayList<>();
+        final boolean[] hasLoginAuthority = {false};
         response.get("authorities").iterator().forEachRemaining(node -> {
             String authority = node.asText();
+            hasLoginAuthority[0] = ("loginToHubCentral".equals(authority)) || hasLoginAuthority[0];
             authorities.add(new SimpleGrantedAuthority("ROLE_" + authority));
         });
-
+        if (!hasLoginAuthority[0]) {
+            throw new InsufficientAuthenticationException("User doesn't have necessary privileges to access Hub Central");
+        }
         return new AuthenticationToken(username, password, hubCentral.getProjectName(), authorities);
     }
 }

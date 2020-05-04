@@ -1,13 +1,9 @@
 package com.marklogic.hub.test;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;
@@ -17,7 +13,6 @@ import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.impl.Versions;
-import com.marklogic.hub.util.FileUtil;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.security.User;
 import com.marklogic.mgmt.util.SimplePropertySource;

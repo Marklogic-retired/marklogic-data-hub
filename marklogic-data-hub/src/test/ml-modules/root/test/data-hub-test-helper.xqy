@@ -140,3 +140,19 @@ declare function get-modules-document($uri as xs:string)
     </options>
   )
 };
+
+declare function assert-called-from-test()
+{
+  let $stack-uris := (try {
+    fn:error()
+  } catch ($e) {
+    $e/error:stack/error:frame/error:uri ! fn:string()
+  })
+  let $called-from-test :=
+    every $uri in $stack-uris
+    satisfies (fn:starts-with($uri, "/test/") or fn:starts-with($uri, "/MarkLogic/") or fn:starts-with($uri, "/marklogic.rest.resource/marklogic-unit-test/"))
+  where fn:not($called-from-test)
+  return (
+    fn:error(xs:QName('EXTERNAL-AMPED-TEST-ATTEMPT'), "This function shouldn't be called outside of the test framework", $stack-uris)
+  )
+};

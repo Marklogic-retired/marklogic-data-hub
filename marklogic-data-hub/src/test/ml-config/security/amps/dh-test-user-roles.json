@@ -1,0 +1,6 @@
+{
+  "local-name" : "runWithRolesAndPrivileges",
+  "document-uri" : "/test/data-hub-test-helper.sjs",
+  "modules-database" : "%%mlModulesDbName%%",
+  "role" : [ "data-hub-test-internal" ]
+}

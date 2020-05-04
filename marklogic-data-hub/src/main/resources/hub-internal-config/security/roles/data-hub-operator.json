@@ -131,6 +131,11 @@
       "privilege-name": "sem:sparql",
       "action": "http://marklogic.com/xdmp/privileges/sem-sparql",
       "kind": "execute"
+    },
+    {
+      "privilege-name": "status-builtins",
+      "action": "http://marklogic.com/xdmp/privileges/status",
+      "kind": "execute"
     }
   ]
 }

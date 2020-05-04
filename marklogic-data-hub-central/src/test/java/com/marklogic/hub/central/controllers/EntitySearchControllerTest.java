@@ -149,7 +149,7 @@ public class EntitySearchControllerTest extends AbstractMvcTest {
 
 
         // Try exporting without the required role "hub-central-entity-exporter"
-        setTestUserRoles("data-hub-operator");
+        setTestUserRoles("hub-central-user","data-hub-operator");
         loginAsTestUser();
         postWithParams(EXPORT_PATH, getRequestParams(limit, json))
             .andExpect(status().isForbidden());

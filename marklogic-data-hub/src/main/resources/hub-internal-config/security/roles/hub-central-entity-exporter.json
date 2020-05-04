@@ -1,6 +1,9 @@
 {
   "role-name": "hub-central-entity-exporter",
   "description": "Permits exporting entity instance documents",
+  "role": [
+    "hub-central-user"
+  ],
   "privilege": [
     {
       "privilege-name": "data-hub:exportEntityInstances",
