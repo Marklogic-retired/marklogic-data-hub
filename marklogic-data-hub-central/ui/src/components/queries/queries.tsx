@@ -10,6 +10,7 @@ import SaveQueriesDropdown from "../../components/queries/saving/save-queries-dr
 import { fetchQueries, creatNewQuery } from '../../api/queries'
 import styles from './queries.module.scss';
 import QueryModal from '../../components/queries/managing/manage-query-modal/manage-query';
+import { AuthoritiesContext } from "../../util/authorities";
 
 const Query = (props) => {
     const [openSaveModal, setOpenSaveModal] = useState(false);
@@ -26,6 +27,9 @@ const Query = (props) => {
     } = useContext(SearchContext);
     const [queryName, setQueryName] = useState(searchOptions.selectedQuery);
 
+    const authorityService = useContext(AuthoritiesContext);
+    const canExportQuery = authorityService.canExportEntityInstances();
+    
     const saveNewQuery = async (queryName, queryDescription, facets) => {
         let query = {
             savedQuery: {
@@ -126,7 +130,7 @@ const Query = (props) => {
                     toggleApplyClicked={(clicked) => toggleApplyClicked(clicked)}
                 />
             </div>
-            <QueryModal queries={queries} setQueries={setQueries} toggleApply={toggleApply} queryName={queryName} setQueryName={setQueryName} />
+            <QueryModal canExportQuery={canExportQuery} queries={queries} setQueries={setQueries} toggleApply={toggleApply} queryName={queryName} setQueryName={setQueryName} />
         </div>
     )
 }
