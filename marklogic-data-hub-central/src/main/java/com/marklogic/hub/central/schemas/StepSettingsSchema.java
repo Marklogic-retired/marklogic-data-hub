@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 
 /**
- * StepSettings.v1
+ * StepSettings
  * <p>
  * Settings for a step. This is a logical structure to simplify front-end/middle-tier APIs
  * 

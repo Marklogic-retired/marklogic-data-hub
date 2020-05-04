@@ -81,12 +81,6 @@ function validateArtifact(artifact) {
   return artifact;
 }
 
-function getArtifactSettingNode(collectionName, artifactName, artifactVersion) {
-  // Currently there is no versioning for loadData artifacts
-  const results = cts.search(cts.andQuery([cts.collectionQuery(collectionName), cts.jsonPropertyValueQuery('artifactName', artifactName)]));
-  return fn.head(results);
-}
-
 function defaultArtifactSettings(artifactName) {
     return {
         artifactName,
@@ -108,6 +102,5 @@ module.exports = {
     getArtifactNode,
     getDirectory,
     validateArtifact,
-    getArtifactSettingNode,
     defaultArtifactSettings
 };

@@ -184,6 +184,13 @@ function setArtifact(artifactType, artifactName, artifact) {
     const artifactFileExtension = getArtifactFileExtension(artifactType);
     const artifactPermissions = artifactLibrary.getPermissions();
     const artifactCollections = artifactLibrary.getCollections();
+    let existingArtifact;
+    try {
+        existingArtifact = getArtifactNode(artifactType, artifactName);
+    } catch (e) {}
+    if (fn.empty(existingArtifact) && artifactLibrary.defaultArtifact) {
+        artifact = Object.assign({}, artifactLibrary.defaultArtifact(artifactName), artifact);
+    }
     artifact.lastUpdated = fn.string(fn.currentDateTime());
     dataHub.hubUtils.replaceLangWithLanguage(artifact);
     for (const db of artifactDatabases) {
@@ -191,14 +198,10 @@ function setArtifact(artifactType, artifactName, artifact) {
     }
     cachedArtifacts[artifactKey] = artifact;
 
-  //Create settings artifact if they are not present, happens only when creating the artifact.
-    if (artifactsWithSettings.includes(artifactType)) {
-      try {
-        getArtifactSettings(artifactType, artifactName);
-      } catch (ex) {
+    //Create settings artifact if they are not present, happens only when creating the artifact.
+    if (artifactsWithSettings.includes(artifactType) && fn.empty(getArtifactSettingsNode(artifactType,artifactName))) {
         let settings = artifactLibrary.defaultArtifactSettings(artifactName);
         setArtifactSettings(artifactType, artifactName, settings);
-      }
     }
     return artifact;
 }
@@ -206,10 +209,7 @@ function setArtifact(artifactType, artifactName, artifact) {
 function getArtifactSettings(artifactType, artifactName, artifactVersion = 'latest') {
     const artifactSettingKey = generateArtifactKey(artifactType + 'Settings', artifactName);
     if (!cachedArtifacts[artifactSettingKey]) {
-        const artifactLibrary = getArtifactTypeLibrary(artifactType);
-        const settingCollection = `http://marklogic.com/data-hub/${artifactType}/settings`;
-
-        const settingNode = artifactLibrary.getArtifactSettingNode(settingCollection, artifactName, artifactVersion);
+        const settingNode = getArtifactSettingsNode(artifactType, artifactName, artifactVersion);
 
         if (fn.empty(settingNode)) {
           returnErrToClient(404, 'NOT FOUND');
@@ -217,6 +217,12 @@ function getArtifactSettings(artifactType, artifactName, artifactVersion = 'late
         cachedArtifacts[artifactSettingKey] = settingNode.toObject();
     }
     return cachedArtifacts[artifactSettingKey];
+}
+
+function getArtifactSettingsNode(artifactType, artifactName, artifactVersion = 'latest') {
+    const settingCollection = `http://marklogic.com/data-hub/${artifactType}/settings`;
+    const results = cts.search(cts.andQuery([cts.collectionQuery(settingCollection), cts.jsonPropertyValueQuery('artifactName', artifactName)]));
+    return fn.head(results);
 }
 
 function setArtifactSettings(artifactType, artifactName, settings) {
@@ -442,7 +448,7 @@ function addToStepOptions(artifactInStepType, stepValue, artifactNode,  settings
     stepValue.options["outputFormat"] = settingsNode["targetFormat"];
     delete settingsNode['targetFormat'];
   }
-  stepValue.options = Object.assign(stepValue.options, settingsNode);
+  stepValue.options = Object.assign(stepValue.options, artifactNode, settingsNode);
   stepValue.options.collections = stepValue.options.collections ? stepValue.options.collections : [];
   stepValue.options.collections = stepValue.options.additionalCollections ? stepValue.options.collections.concat(stepValue.options.additionalCollections) : stepValue.options.collections
   return stepValue;

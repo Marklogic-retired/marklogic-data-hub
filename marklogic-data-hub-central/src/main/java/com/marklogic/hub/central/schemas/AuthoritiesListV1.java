@@ -16,19 +16,19 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 public enum AuthoritiesListV1 {
 
-    CAN_LOGIN_TO_HUB_CENTRAL(null),
-    CAN_WRITE_LOAD_DATA(null),
-    CAN_READ_LOAD_DATA(null),
-    CAN_WRITE_MAPPING(null),
-    CAN_READ_MAPPING(null),
-    CAN_WRITE_FLOW(null),
-    CAN_READ_FLOW(null),
-    CAN_WRITE_STEP_DEFINITION(null),
-    CAN_READ_STEP_DEFINITION(null),
-    CAN_READ_MATCHING(null),
-    CAN_WRITE_MATCHING(null),
-    CAN_WRITE_MERGE(null),
-    CAN_READ_MERGE(null);
+    LOGIN_TO_HUB_CENTRAL(null),
+    WRITE_LOAD_DATA(null),
+    READ_LOAD_DATA(null),
+    WRITE_MAPPING(null),
+    READ_MAPPING(null),
+    WRITE_FLOW(null),
+    READ_FLOW(null),
+    WRITE_STEP_DEFINITION(null),
+    READ_STEP_DEFINITION(null),
+    READ_MATCHING(null),
+    WRITE_MATCHING(null),
+    WRITE_MERGE(null),
+    READ_MERGE(null);
     private final List<String> value;
     private final static Map<List<String> , AuthoritiesListV1> CONSTANTS = new HashMap<List<String> , AuthoritiesListV1>();
 
