@@ -17,7 +17,6 @@ package com.marklogic.hub;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.mgmt.ManageClient;
-import org.springframework.web.client.RestTemplate;
 
 public interface HubClient {
 
@@ -33,13 +32,6 @@ public interface HubClient {
     DatabaseClient getJobsClient();
 
     String getDbName(DatabaseKind kind);
-
-    /**
-     * This is needed by the CollectorImpl class, which is not yet able to use a DatabaseClient.
-     *
-     * @return
-     */
-    RestTemplate getStagingRestTemplate();
 
     /**
      * Needed for operations that happen outside of a deployment, such as clearing user data or updating indexes.
