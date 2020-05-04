@@ -134,13 +134,6 @@ const QueryModal = (props) => {
             width: 75,
         },
         {
-            title: 'Export',
-            dataIndex: 'export',
-            key: 'export',
-            align: 'center' as 'center',
-            width: 75,
-        },
-        {
             title: 'Link',
             dataIndex: 'link',
             key: 'link',
@@ -156,6 +149,18 @@ const QueryModal = (props) => {
             width: 75,
         }
     ];
+
+    if (props.canExportQuery) {
+        columns.splice(4, 0,
+            {
+                title: 'Export',
+                dataIndex: 'export',
+                key: 'export',
+                align: 'center' as 'center',
+                render: text => <a data-testid={'export'}>{text}</a>,
+                width: 75,
+            })
+    }
 
     props.queries && props.queries.length > 0 && props.queries.forEach(query => {
         data.push(
@@ -187,7 +192,7 @@ const QueryModal = (props) => {
 
     return (
         <div>
-            <FontAwesomeIcon icon={faListOl} color='#5B69AF' size='lg' onClick={displayModal} style={{ cursor: 'pointer', marginLeft: '-30px', color: '#5B69AF' }} data-testid="manage-queries-modal-icon"/>
+            <FontAwesomeIcon icon={faListOl} color='#5B69AF' size='lg' onClick={displayModal} style={{ cursor: 'pointer', marginLeft: '-30px', color: '#5B69AF' }} data-testid="manage-queries-modal-icon" />
             <Modal
                 title={null}
                 visible={mainModalVisibility}

@@ -15,6 +15,7 @@ export interface IAuthoritiesContextInterface {
     canWriteFlow: () => boolean;
     canReadStepDefinition: () => boolean;
     canWriteStepDefinition: () => boolean;
+    canExportEntityInstances: () => boolean;
     hasOperatorRole: () => boolean;
 }
 
@@ -67,6 +68,9 @@ export class AuthoritiesService implements IAuthoritiesContextInterface {
     };
     public canWriteStepDefinition:() => boolean = () => {
         return this.authorities.includes('writeStepDefinition');
+    };
+    public canExportEntityInstances:() => boolean = () => {
+        return this.authorities.includes('exportEntityInstances');
     };
     public hasOperatorRole:() => boolean = () => {
         return this.authorities.includes('operator');

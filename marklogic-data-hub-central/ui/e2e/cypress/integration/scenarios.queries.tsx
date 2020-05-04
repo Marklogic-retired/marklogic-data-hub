@@ -15,7 +15,7 @@ const homePage = new HomePage();
 const queryComponent = new QueryComponent()
 
 
-describe('save/manage queries scenarios', () => {
+describe('save/manage queries scenarios, developer role', () => {
 
     beforeEach(() => {
         cy.visit('/');
@@ -73,7 +73,5 @@ describe('save/manage queries scenarios', () => {
         queryComponent.getDeleteQuery().click();
         queryComponent.getDeleteQueryYesButton().click({force: true})
     });
-
-
 
 });

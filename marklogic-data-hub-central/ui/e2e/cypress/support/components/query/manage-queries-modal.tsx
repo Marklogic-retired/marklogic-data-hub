@@ -28,6 +28,11 @@ class ManageQuery {
     return cy.get('.ant-btn-primary').contains('Yes');
   }
 
+  getExportFileButton() {
+    return cy.get('[data-icon=file-export]');
+  }
+
+  
 }
 
 export default ManageQuery;
