@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import { 
+import {
   createUserPreferences,
-  getUserPreferences, 
+  getUserPreferences,
   updateUserPreferences
 } from '../services/user-preferences';
 import { AuthoritiesContext } from './authorities';
-import {setEnvironment, getEnvironment, resetEnvironment} from '../util/environment';
+import {setEnvironment, getEnvironment} from '../util/environment';
 import { useInterval } from '../hooks/use-interval';
 import { SESSION_WARNING_COUNTDOWN } from '../config/application.config';
 
@@ -27,8 +27,8 @@ const defaultUserData = {
   // email: '',
   authenticated: false,
   redirect: false,
-  error : { 
-    title: '', 
+  error : {
+    title: '',
     message: '',
     type: ''
   },
@@ -71,7 +71,7 @@ export const UserContext = React.createContext<IUserContextInterface>({
 });
 
 const UserProvider: React.FC<{ children: any }> = ({children}) => {
-  
+
   const [user, setUser] = useState<UserContextInterface>(defaultUserData);
   const sessionUser = localStorage.getItem('dataHubUser');
   const authoritiesService = useContext(AuthoritiesContext);
@@ -79,15 +79,11 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
   let sessionTimer = true;
 
   const loginAuthenticated = async (username: string, authResponse: any) => {
-    if(authResponse.isInstalled) {
-      setEnvironment();
-    }
+    setEnvironment();
     let session = await axios('/api/info');
     sessionCount = parseInt(session.data['sessionTimeout']);
 
     localStorage.setItem('dataHubUser', username);
-    localStorage.setItem('dhIsInstalled', authResponse.isInstalled);
-    localStorage.setItem('dhUserHasManagePrivileges', authResponse.hasManagePrivileges);
     localStorage.setItem('projectName', authResponse.projectName);
 
     const authorities: string[] =  authResponse.authorities || [];
@@ -96,7 +92,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
     let userPreferences = getUserPreferences(username);
     if (userPreferences) {
       let values = JSON.parse(userPreferences);
-      setUser({ 
+      setUser({
         ...user,
         name: username,
         authenticated: true,
@@ -104,17 +100,17 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
         tableView: values.tableView,
         pageRoute: values.pageRoute,
         maxSessionTime: sessionCount,
-        sessionWarning: false        
+        sessionWarning: false
       });
     } else {
       createUserPreferences(username);
-      setUser({ 
+      setUser({
         ...user,
         name: username,
         authenticated: true,
         redirect: true,
         maxSessionTime: sessionCount,
-        sessionWarning: false  
+        sessionWarning: false
       });
     }
   };
@@ -124,14 +120,14 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
     let userPreferences = getUserPreferences(username);
     if (userPreferences) {
       let values = JSON.parse(userPreferences);
-      setUser({ 
+      setUser({
         ...user,
         name: username,
         authenticated: true,
         tableView: values.tableView,
         pageRoute: values.pageRoute,
         maxSessionTime: sessionCount,
-        sessionWarning: false   
+        sessionWarning: false
       });
     } else {
       createUserPreferences(username);
@@ -141,12 +137,9 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
 
   const userNotAuthenticated = () => {
     localStorage.setItem('dataHubUser', '');
-    localStorage.setItem('dhIsInstalled', '');
-    localStorage.setItem('dhUserHasManagePrivileges', '');
     localStorage.setItem('projectName', '');
     localStorage.setItem('loginResp','');
     authoritiesService.setAuthorities([]);
-    resetEnvironment();
     setUser({ ...user,name: '', authenticated: false, redirect: true, sessionWarning: false });
   };
 
@@ -166,11 +159,11 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
         console.log('HTTP ERROR', error.resonse);
         let title = error.response.status + ' ' + error.response.statusText;
         let message = DEFAULT_MESSAGE;
-  
+
         if (error.response.data.hasOwnProperty('message')) {
           message = error.response.data.message;
-        } 
-        setUser({ 
+        }
+        setUser({
           ...user,
           error: {
             title: title,
@@ -181,7 +174,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
         break;
       }
       case 404: {
-        setUser({ 
+        setUser({
           ...user,
           redirect: true,
           error: {
@@ -205,8 +198,8 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
 
         if (error.response.data.hasOwnProperty('message')) {
           message = error.response.data.message;
-        } 
-        setUser({ 
+        }
+        setUser({
           ...user,
           error: {
             title,
@@ -219,7 +212,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
       default: {
         console.log('HTTP ERROR ', error.response);
 
-        setUser({ 
+        setUser({
           ...user,
           error: {
             title: DEFAULT_MESSAGE,
@@ -249,7 +242,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
   }
 
   const setAlertMessage = (title: string, message: string) => {
-    setUser({ 
+    setUser({
       ...user,
       error: {
         title,
@@ -293,12 +286,12 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
   }, 1000);
 
   return (
-    <UserContext.Provider value={{ 
+    <UserContext.Provider value={{
       user,
       loginAuthenticated,
       sessionAuthenticated,
       userNotAuthenticated,
-      handleError, 
+      handleError,
       clearErrorMessage,
       clearRedirect,
       setTableView,

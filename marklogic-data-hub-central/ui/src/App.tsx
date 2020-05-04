@@ -8,11 +8,9 @@ import Header from './components/header/header';
 import Footer from './components/footer/footer';
 import Login from './pages/Login';
 import Home from './pages/Home';
-import Install from './pages/Install';
 import ProjectInfo from './pages/ProjectInfo';
 import LoadData from './pages/LoadData';
 import Bench from './pages/Bench';
-import Reset from './pages/Reset';
 import NoMatchRedirect from './pages/noMatchRedirect';
 import View from './pages/View';
 import Browse from './pages/Browse';
@@ -30,7 +28,7 @@ import ModalStatus from './components/modal-status/modal-status';
 interface Props extends RouteComponentProps<any> {}
 
 const App: React.FC<Props> = ({history, location}) => {
-  const { 
+  const {
     user,
     clearRedirect,
     handleError,
@@ -61,9 +59,7 @@ const App: React.FC<Props> = ({history, location}) => {
         }
       }
       if (user.redirect || location.pathname === '/') {
-        if (localStorage.getItem('dhIsInstalled') === 'false' && localStorage.getItem('dhUserHasManagePrivileges') === 'true') {
-          history.push('/install');
-        } else if (location.state && location.state.hasOwnProperty('from')) {
+        if (location.state && location.state.hasOwnProperty('from')) {
             history.push(location.state['from'].pathname);
         } else {
             history.push('/home');
@@ -81,16 +77,6 @@ const App: React.FC<Props> = ({history, location}) => {
 
   }, [user]);
 
-  useEffect(() => {
-    // On route change...
-    axios.get('/api/environment/project')
-      .then(res => {})
-      // Timeouts throw 401s and are caught here
-      .catch(err => {
-          handleError(err);
-      })
-  }, [location.pathname]);
-
   const path = location['pathname'];
   const pageTheme = (themeMap[path]) ? themes[themeMap[path]] : themes['default'];
   document.body.classList.add(pageTheme['bodyBg']);
@@ -105,9 +91,6 @@ const App: React.FC<Props> = ({history, location}) => {
         <Route path="/" exact component={Login}/>
         <PrivateRoute path="/home" exact>
           <Home/>
-        </PrivateRoute>
-        <PrivateRoute path="/install" exact>
-          <Install/>
         </PrivateRoute>
         <PrivateRoute path="/project-info" exact>
           <ProjectInfo/>
@@ -135,7 +118,6 @@ const App: React.FC<Props> = ({history, location}) => {
             <Modeling/>
           </PrivateRoute>
         </SearchProvider>
-        <Route path="/reset" exact component={Reset}/>
         <Route component={NoMatchRedirect}/>
       </Switch>
       </main>

@@ -50,31 +50,12 @@ public class EnvironmentController extends BaseController {
 
     private ObjectMapper mapper = new ObjectMapper();
 
-    @RequestMapping(value = "/api/environment/project", method = RequestMethod.GET)
-    @ResponseBody
-    @ApiOperation(value = "Not documenting, as this will go away soon")
-    public JsonNode getProject() {
-        ObjectNode obj = mapper.createObjectNode();
-        obj.put("isInitialized", true);
-        obj.put("directory", "N/A");
-        return obj;
-    }
-
     @RequestMapping(value = "/api/info", method = RequestMethod.GET)
     @ResponseBody
     public EnvironmentInfo getInfo() {
         EnvironmentInfo info = new EnvironmentInfo();
         info.sessionTimeout = environment.getProperty("server.servlet.session.timeout");
         return info;
-    }
-
-    @RequestMapping(value = "/api/environment/initialized", method = RequestMethod.GET)
-    @ResponseBody
-    @ApiOperation("Not documenting, as this will go away soon")
-    public JsonNode isInitialized() {
-        ObjectNode obj = mapper.createObjectNode();
-        obj.put("isInitialized", true);
-        return obj;
     }
 
     @RequestMapping(value = "/api/environment/downloadConfigurationFiles", produces = "application/zip", method = RequestMethod.GET)
@@ -102,7 +83,6 @@ public class EnvironmentController extends BaseController {
     public ProjectInfo getProjectInfo() {
         Versions versions = new Versions(getHubClient());
         ProjectInfo info = new ProjectInfo();
-        info.projectDir = "N/A";
         info.projectName = hubCentral.getProjectName();
         info.dataHubVersion = versions.getHubVersion();
         info.marklogicVersion = versions.getMarkLogicVersion();
@@ -111,7 +91,6 @@ public class EnvironmentController extends BaseController {
     }
 
     public static class ProjectInfo {
-        public String projectDir;
         public String projectName;
         public String dataHubVersion;
         public String marklogicVersion;

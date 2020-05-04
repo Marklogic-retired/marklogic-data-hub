@@ -30,9 +30,6 @@ const Home: React.FC = () => {
             <Link to="/model"><i><FontAwesomeIcon icon={faCube } size="2x"/></i></Link>
           </button>
         </Tooltip>
-        <Tooltip title="Click to reset host name and log out" placement="bottom">
-            <Link to="/reset" className={styles.reset}><Icon type="rollback" /></Link>
-        </Tooltip>
       </div>
     </div>
   );

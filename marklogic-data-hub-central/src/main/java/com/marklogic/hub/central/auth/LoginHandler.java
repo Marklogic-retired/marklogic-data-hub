@@ -56,11 +56,6 @@ public class LoginHandler implements AuthenticationSuccessHandler {
             }
         });
         jsonResponse.putArray("authorities").addAll(authorities);
-
-        // TODO These two things should go away
-        jsonResponse.put("isInstalled", true);
-        jsonResponse.put("hasManagePrivileges", false);
-
         jsonResponse.put("projectName", token.getProjectName());
 
         clearAuthenticationAttributes(request);
