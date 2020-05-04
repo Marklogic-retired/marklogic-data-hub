@@ -17,22 +17,13 @@
 package com.marklogic.hub.central.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.FailedRequestException;
-import com.marklogic.hub.central.controllers.LoadDataController;
-import com.marklogic.hub.impl.ArtifactManagerImpl;
 import com.marklogic.hub.central.AbstractHubCentralTest;
-import java.io.IOException;
-import java.nio.file.Path;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
-
-import java.io.IOException;
-import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -40,6 +31,8 @@ public class LoadDataControllerTest extends AbstractHubCentralTest {
 
     @Autowired
     LoadDataController controller;
+    @Autowired
+    FlowController flowController;
 
     static final String LOAD_DATA_SETTINGS = "{\n"
         + "    \"artifactName\" : \"validArtifact\",\n"
@@ -66,8 +59,10 @@ public class LoadDataControllerTest extends AbstractHubCentralTest {
         assertEquals("validArtifact", resultByName.get("name").asText(), "Getting artifact by name should return object with expected properties");
         assertEquals("xml", resultByName.get("sourceFormat").asText(), "Getting artifact by name should return object with expected properties");
         assertEquals("json", resultByName.get("targetFormat").asText(), "Getting artifact by name should return object with expected properties");
+        assertTrue(resultByName.get("headers").isObject(), "Artifact should have headers set");
+        assertEquals("validArtifact", resultByName.get("headers").get("sources").get(0).get("name").asText(), "Artifact should have headers source name default to step name");
 
-        ObjectNode enrichedJson = controller.setData("validArtifact", new MockMultipartFile[]{ new MockMultipartFile("file", "orig", null, "docTest".getBytes())}).getBody();
+        ObjectNode enrichedJson = controller.setData("validArtifact", new MockMultipartFile[]{ new MockMultipartFile("file.json", "orig.json", null, "{\"isTest\": true}".getBytes())}).getBody();
         assertEquals(1, enrichedJson.get("fileCount").asInt(), "File should be added to data set.");
 
         controller.deleteLoadData("validArtifact");
