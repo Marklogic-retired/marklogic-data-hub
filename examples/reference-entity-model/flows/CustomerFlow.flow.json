@@ -62,7 +62,7 @@
       "retryLimit" : null,
       "batchSize" : 0,
       "threadCount" : 0,
-      "stepDefinitionName" : "default-mapping",
+      "stepDefinitionName" : "entity-services-mapping",
       "stepDefinitionType" : "MAPPING"
     }
   }
