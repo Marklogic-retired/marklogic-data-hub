@@ -961,7 +961,7 @@ const SourceToEntityMap = (props) => {
                                         expandIcon={(props) => customExpandIcon(props)}
                                         className={styles.sourceTable}
                                         rowClassName={() => styles.sourceTableRows}
-                                        scroll={{y: '60vh', x: 'max-content' }}
+                                        scroll={{y: '60vh', x: 300 }}
                                         indentSize={14}
                                         //size="small"
                                         columns={columns}
@@ -986,6 +986,7 @@ const SourceToEntityMap = (props) => {
                             indentSize={14}
                             defaultExpandAllRows={true}
                             columns={getColumnsForEntityTable()}
+                            scroll={{y: '60vh', x: 1000 }}
                             dataSource={props.entityTypeProperties}
                             tableLayout="unset"
                             rowKey={record => JSON.stringify(record)}
