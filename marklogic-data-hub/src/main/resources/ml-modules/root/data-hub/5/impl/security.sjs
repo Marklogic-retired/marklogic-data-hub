@@ -64,6 +64,10 @@ class Security {
         response.authorities.push(readAuthority);
       }
     }
+    const currentRoleNames = xdmp.getCurrentRoles().toArray().map(roleId => xdmp.roleName(roleId));
+    if(currentRoleNames.includes("data-hub-operator")){
+      response.authorities.push('operator');
+    }
 
     return response;
   }
