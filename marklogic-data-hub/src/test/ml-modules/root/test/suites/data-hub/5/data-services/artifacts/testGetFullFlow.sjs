@@ -87,17 +87,17 @@ function updateArtifact(artifactName) {
   invokeSetService('mapping', 'mapping' + artifactName, {'name': 'mapping' + `${artifactName}`, 'targetEntityType': 'TestEntity-hasMappingConfig', 'description': 'Mapping does ...', 'selectedSource': 'query', 'sourceQuery': 'cts.collectionQuery(\"default-ingestion\")', 'collections': ['RAW-COL']});
 }
 
-function testGetFullFlow1(resp){
+function testGetFullFlow1(resp, artifactName){
 
   //Test Default settings
   test.assertEqualJson(flowNode["steps"]["3"], resp["steps"]["3"], "Old mapping step should not be modified"),
 
   test.assertEqual(dataHub.config.STAGINGDATABASE, resp["steps"]["1"]["options"]["targetDatabase"], "Fetch default settings for loadData"),
-  test.assertEqual(['default-ingestion'], resp["steps"]["1"]["options"]["collections"], "Fetch default settings for loadData"),
+  test.assertEqual(['loadData' + artifactName], resp["steps"]["1"]["options"]["collections"], "Fetch default settings for loadData"),
   test.assertEqual('xml', resp["steps"]["1"]["options"]["outputFormat"], "Fetch outputFormat from artifact for loadData"),
 
   test.assertEqual(dataHub.config.STAGINGDATABASE, resp["steps"]["2"]["options"]["sourceDatabase"], "Fetch default settings for mapping"),
-  test.assertEqual(['default-mapping'], resp["steps"]["2"]["options"]["collections"], "Fetch default settings for mapping")
+  test.assertEqual(['mapping' + artifactName, 'TestEntity-hasMappingConfig'], resp["steps"]["2"]["options"]["collections"], "Fetch default settings for mapping")
 
 }
 
@@ -123,7 +123,7 @@ updateArtifact("Test");
 let output = [];
 //test default settings
 let resp = invokeGetFullFlowService('testFlow');
-output = output.concat(testGetFullFlow1(resp));
+output = output.concat(testGetFullFlow1(resp, "Test"));
 
 //update settings
 updateArtifactSettings("Test");

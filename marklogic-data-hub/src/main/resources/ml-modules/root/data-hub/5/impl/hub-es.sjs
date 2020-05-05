@@ -16,6 +16,7 @@
 
 'use strict';
 const sem = require("/MarkLogic/semantics.xqy");
+const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 
 function getPropertyRangePath(entityIRI, propertyPath) {
   let properties = propertyPath.split("/");
@@ -121,8 +122,31 @@ function getRefEntityIdentifiers(entityIRI, entityInfo, prop) {
   return refEntityId;
 }
 
+const cachedEntityTitles = {};
+
+function findEntityServiceTitle(iri) {
+  // casting as string since we may receive sem.iri
+  const cacheKey = String(iri);
+  if (cachedEntityTitles[cacheKey] === undefined) {
+    if (!(iri instanceof sem.iri)) {
+      iri = sem.iri(iri);
+    }
+    const triple = fn.head(cts.triples(iri,
+        sem.iri('http://marklogic.com/entity-services#title'),
+        null,
+        '=', ['concurrent'], cts.collectionQuery(entityLib.getModelCollection())));
+    if (fn.empty(triple)) {
+      cachedEntityTitles[cacheKey] = null;
+    } else {
+      cachedEntityTitles[cacheKey] = sem.tripleObject(triple);
+    }
+  }
+  return cachedEntityTitles[cacheKey];
+}
+
 module.exports = {
   getPropertyRangePath: getPropertyRangePath,
   getPropertyReferenceType: getPropertyReferenceType,
-  getEntityDefinitionFromIRI: getEntityDefinitionFromIRI
+  getEntityDefinitionFromIRI: getEntityDefinitionFromIRI,
+  findEntityServiceTitle: findEntityServiceTitle
 };

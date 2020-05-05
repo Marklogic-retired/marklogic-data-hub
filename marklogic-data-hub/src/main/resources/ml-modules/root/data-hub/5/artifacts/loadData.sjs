@@ -62,7 +62,7 @@ function validateArtifact(artifact) {
 function defaultArtifactSettings(artifactName) {
     return {
         artifactName,
-        collections: ['default-ingestion'],
+        collections: [artifactName],
         additionalCollections: [],
         targetDatabase: dataHub.config.STAGINGDATABASE,
         provenanceGranularityLevel: 'coarse',

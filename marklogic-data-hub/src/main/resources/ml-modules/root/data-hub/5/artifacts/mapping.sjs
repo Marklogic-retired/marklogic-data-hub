@@ -19,6 +19,8 @@ const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
 
 // define constants for caching expensive operations
 const dataHub = DataHubSingleton.instance();
+const hubEs = require("/data-hub/5/impl/hub-es.sjs");
+
 
 const collections = ['http://marklogic.com/data-hub/mappings'];
 const databases = [dataHub.config.STAGINGDATABASE, dataHub.config.FINALDATABASE];
@@ -81,10 +83,21 @@ function validateArtifact(artifact) {
   return artifact;
 }
 
-function defaultArtifactSettings(artifactName) {
+function getArtifactSettingNode(collectionName, artifactName, artifactVersion) {
+  // Currently there is no versioning for loadData artifacts
+  const results = cts.search(cts.andQuery([cts.collectionQuery(collectionName), cts.jsonPropertyValueQuery('artifactName', artifactName)]));
+  return fn.head(results);
+}
+
+function defaultArtifactSettings(artifactName, entityTypeId) {
+    const defaultCollections =  [artifactName];
+    if (entityTypeId) {
+        // look for Entity Service Title, if not found will use the ID
+        defaultCollections.push(hubEs.findEntityServiceTitle(entityTypeId) || entityTypeId);
+    }
     return {
         artifactName,
-        collections: ['default-mapping'],
+        collections: defaultCollections,
         additionalCollections: [],
         sourceDatabase: dataHub.config.STAGINGDATABASE,
         targetDatabase: dataHub.config.FINALDATABASE,
