@@ -43,8 +43,8 @@ function createMappingWithSameNameButDifferentEntityType(artifactName) {
 
 function getArtifacts() {
     const artifactsByEntity = invokeGetAllService('mapping');
-    const entityNames = Artifacts.getEntityTitles();
-    test.assertEqual(entityNames.length, artifactsByEntity.length);
+    test.assertEqual(2, artifactsByEntity.length,
+      "Should be an entry for each entity type, even if there are no mappings for a type");
     artifactsByEntity.forEach(entity => {
         if (entity.entityType === 'TestEntity-hasMappingConfig') {
             const artifacts = entity.artifacts;
