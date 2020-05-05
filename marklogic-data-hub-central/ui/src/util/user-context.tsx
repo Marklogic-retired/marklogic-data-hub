@@ -6,7 +6,7 @@ import {
   updateUserPreferences
 } from '../services/user-preferences';
 import { AuthoritiesContext } from './authorities';
-import {setEnvironment, getEnvironment} from '../util/environment';
+import {setEnvironment, getEnvironment, resetEnvironment} from '../util/environment';
 import { useInterval } from '../hooks/use-interval';
 import { SESSION_WARNING_COUNTDOWN } from '../config/application.config';
 
@@ -134,6 +134,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
     localStorage.setItem('projectName', '');
     localStorage.setItem('loginResp','');
     authoritiesService.setAuthorities([]);
+    resetEnvironment();
     setUser({ ...user,name: '', authenticated: false, redirect: true, sessionWarning: false });
   };
 
