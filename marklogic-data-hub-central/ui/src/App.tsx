@@ -77,6 +77,16 @@ const App: React.FC<Props> = ({history, location}) => {
 
   }, [user]);
 
+  useEffect(() => {
+    // On route change...
+    axios.get('/api/environment/project-info')
+        .then(res => {})
+        // Timeouts throw 401s and are caught here
+        .catch(err => {
+            handleError(err);
+        })
+  }, [location.pathname]);
+
   const path = location['pathname'];
   const pageTheme = (themeMap[path]) ? themes[themeMap[path]] : themes['default'];
   document.body.classList.add(pageTheme['bodyBg']);
