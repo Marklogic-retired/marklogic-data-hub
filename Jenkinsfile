@@ -50,7 +50,7 @@ def dhfCypressE2ETests(String mlVersion, String type){
                     ./gradlew clean;
                     cd marklogic-data-hub-central/ui/e2e;
                     chmod +x setup.sh;
-                    ./setup.sh;
+                    ./setup.sh dhs=false mlHost=localhost;
                     nohup java -jar $WORKSPACE/$WAR_NAME --hubUseLocalDefaults=true >> nohup.out &
                     sleep 10s;
                     mkdir -p output;

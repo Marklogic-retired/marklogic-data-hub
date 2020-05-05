@@ -37,7 +37,7 @@
       "stepDefinitionName" : "default-ingestion",
       "stepDefinitionType" : "INGESTION",
       "fileLocations" : {
-        "inputFilePath" : "./input/person-xml",
+        "inputFilePath" : "input/person-xml",
         "inputFileType" : "xml",
         "outputURIReplacement" : "",
         "separator" : ""
