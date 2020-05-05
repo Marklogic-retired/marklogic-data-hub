@@ -31,4 +31,4 @@ task extractZip(type: Copy) {
         println("Input directory is extracted to: " + destDir + "/input")
     }
 }
-mlDeploy.dependsOn extractZip
+hubInit.dependsOn extractZip
