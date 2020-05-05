@@ -203,7 +203,7 @@ function setArtifact(artifactType, artifactName, artifact) {
 
     //Create settings artifact if they are not present, happens only when creating the artifact.
     if (artifactsWithSettings.includes(artifactType) && fn.empty(getArtifactSettingsNode(artifactType,artifactName))) {
-        let settings = artifactLibrary.defaultArtifactSettings(artifactName);
+        let settings = artifactLibrary.defaultArtifactSettings(artifactName, artifact.targetEntityType);
         setArtifactSettings(artifactType, artifactName, settings);
     }
     return artifact;

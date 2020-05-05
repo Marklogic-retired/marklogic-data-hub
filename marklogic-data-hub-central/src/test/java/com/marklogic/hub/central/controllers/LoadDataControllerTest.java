@@ -82,7 +82,7 @@ public class LoadDataControllerTest extends AbstractHubCentralTest {
         // Check for defaults
         assertEquals("validArtifact", result.get("artifactName").asText());
         assertEquals(1, result.get("collections").size());
-        assertEquals("default-ingestion", result.get("collections").get(0).asText());
+        assertEquals("validArtifact", result.get("collections").get(0).asText());
 
         controller.updateLoadDataSettings(readJsonObject(LOAD_DATA_SETTINGS), "validArtifact");
 

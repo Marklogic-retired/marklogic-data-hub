@@ -68,10 +68,18 @@ function testGetEntityDefinitionFromIRI(entityIRI, expRes) {
   test.assertTrue(result.definitions[expRes] !== null);
 }
 
+function testGetEntityServiceTitle(entityIRI, expected) {
+  const result = lib.findEntityServiceTitle(entityIRI);
+  return [ test.assertEqual(expected, result) ];
+}
+
 result
 // Exisiting IRI
 .concat(testGetEntityDefinitionFromIRI("http://marklogic.com/EntitiesSearchEntity-0.0.1/EntitiesSearchEntity",
     "EntitiesSearchEntity"))
 // fetching nested objectType from IRI
 .concat(testGetEntityDefinitionFromIRI("http://marklogic.com/EntitiesSearchEntity-0.0.1/NumStringEntity",
-    "NumStringEntity"));
+    "NumStringEntity"))
+// test entity service title function
+.concat(testGetEntityServiceTitle("http://marklogic.com/EntitiesSearchEntity-0.0.1/NumStringEntity", "NumStringEntity"))
+.concat(testGetEntityServiceTitle("http://marklogic.com/EntitiesSearchEntity-0.0.1/EntitiesSearchEntity", "EntitiesSearchEntity"));

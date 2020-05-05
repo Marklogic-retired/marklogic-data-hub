@@ -165,8 +165,9 @@ public class MappingControllerTest extends AbstractHubCentralTest {
         JsonNode result = controller.getMappingSettings("TestCustomerMapping").getBody();
         // Check for defaults
         assertEquals("TestCustomerMapping", result.get("artifactName").asText());
-        assertEquals(1, result.get("collections").size());
-        assertEquals("default-mapping", result.get("collections").get(0).asText());
+        assertEquals(2, result.get("collections").size());
+        assertEquals("TestCustomerMapping", result.get("collections").get(0).asText());
+        assertEquals("Customer", result.get("collections").get(1).asText());
 
         ObjectNode settings = readJsonObject(MAPPING_SETTINGS);
 
