@@ -13,6 +13,8 @@ import { faCode, faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
 import ColumnSelector from '../../components/column-selector/column-selector';
 import { tableParser, headerParser, deepCopy, reconstructHeader, toStringArray, headerPropsParser } from '../../util/data-conversion';
 import ReactDragListView from 'react-drag-listview'
+import QueryExport from '../../components/query-export/query-export';
+
 
 
 const ResizeableTitle = props => {
@@ -37,6 +39,7 @@ const ResizeableTitle = props => {
 interface Props {
   data: any;
   entityDefArray: any[];
+  columns: any;
 };
 
 const DEFAULT_ALL_ENTITIES_HEADER = [
@@ -465,7 +468,6 @@ const ResultTable: React.FC<Props> = (props) => {
     />;
   }
 
-
   const headerRender = (col) => {
     updateUserPref(col);
     setRenderColumns(col);
@@ -531,6 +533,9 @@ const ResultTable: React.FC<Props> = (props) => {
 
   return (
     <>
+      <div className={styles.queryExport}>
+        <QueryExport columns={props.columns}/>
+      </div>
       <div className={styles.columnSelector} data-cy="column-selector">
         <ColumnSelector title={checkedColumns} tree={treeColumns} headerRender={headerRender} updateTreeColumns={updateTreeColumns} />
       </div>

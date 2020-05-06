@@ -16,7 +16,7 @@ import { updateUserPreferences, createUserPreferences } from '../services/user-p
 import { entityFromJSON, entityParser } from '../util/data-conversion';
 import styles from './Browse.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {faStream, faTable} from '@fortawesome/free-solid-svg-icons'
+import { faStream, faTable } from '@fortawesome/free-solid-svg-icons'
 import Query from '../components/queries/queries'
 
 
@@ -51,6 +51,7 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [collapse, setCollapsed] = useState(false);
   const [selectedFacets, setSelectedFacets] = useState<any[]>([]);
   const [greyFacets, setGreyFacets] = useState<any[]>([]);
+  const [columns, setColumns] = useState<string>();
 
   const getEntityModel = async () => {
     try {
@@ -125,7 +126,15 @@ const Browse: React.FC<Props> = ({ location }) => {
     if (entities.length) {
       getSearchResults(entities);
     }
+
   }, [searchOptions, entities, user.error.type]);
+
+  useEffect(() => {
+    let entity = entityDefArray.filter(e => e.name === searchOptions.entityTypeIds[0])[0];
+    if (entity && entity.hasOwnProperty('properties')) {
+      setColumns(entity.properties.map(e => e.name))
+    }
+  }, [searchOptions.entityTypeIds, entityDefArray]);
 
   const handleUserPreferences = () => {
     let preferencesObject = {
@@ -139,7 +148,7 @@ const Browse: React.FC<Props> = ({ location }) => {
     }
     updateUserPreferences(user.name, preferencesObject);
 
-    if ( searchOptions.entityTypeIds.length > 0 && !entities.includes(searchOptions.entityTypeIds[0])) {
+    if (searchOptions.entityTypeIds.length > 0 && !entities.includes(searchOptions.entityTypeIds[0])) {
       // entityName is not part of entity model from model payload
       // change user preferences to default user pref.
       createUserPreferences(user.name);
@@ -161,7 +170,7 @@ const Browse: React.FC<Props> = ({ location }) => {
         searchBarRef.current['style']['boxShadow'] = 'none'
       }
     }
-  },[endScroll])
+  }, [endScroll])
 
   useScrollPosition(({ currPos }) => {
     if (currPos.endOfScroll && !endScroll) {
@@ -169,7 +178,7 @@ const Browse: React.FC<Props> = ({ location }) => {
     } else if (!currPos.endOfScroll && endScroll) {
       setEndScroll(false);
     }
-  }, [endScroll], null );
+  }, [endScroll], null);
 
   const updateSelectedFacets = (facets) => {
     setSelectedFacets(facets);
@@ -191,13 +200,15 @@ const Browse: React.FC<Props> = ({ location }) => {
         />
       </Sider>
       <Content className={styles.content}>
-        { user.error.type === 'ALERT' ?
+        {user.error.type === 'ALERT' ?
           <AsyncLoader />
           :
           <>
             <div className={styles.searchBar} ref={searchBarRef}
-                 style={{ width: collapse ? (window.innerWidth - 35) : '76vw',
-                     maxWidth: collapse ? (window.innerWidth - 35) : '76vw'}}>
+              style={{
+                width: collapse ? (window.innerWidth - 35) : '76vw',
+                maxWidth: collapse ? (window.innerWidth - 35) : '76vw'
+              }}>
               <SearchBar entities={entities} />
               <SearchSummary
                 total={totalDocuments}
@@ -213,32 +224,33 @@ const Browse: React.FC<Props> = ({ location }) => {
                 maxRowsPerPage={searchOptions.maxRowsPerPage}
               />
               <div className={styles.spinViews}>
-                { isLoading && <Spin className={styles.overlay}/>}
+                {isLoading && <Spin className={styles.overlay} />}
                 <div className={styles.switchViews}>
-                <div className={!tableView ? styles.toggled : styles.toggleView}
-                  data-cy="facet-view" id={'snippetView'}
-                  onClick={() => toggleTableView(false)}>
-                  <Tooltip title={'Snippet View'}><FontAwesomeIcon icon={faStream} size="lg" /></Tooltip>
-                </div>
-                <div className={tableView ? styles.toggled : styles.toggleView}
-                  data-cy="table-view" id={'tableView'}
-                  onClick={() => toggleTableView(true)}>
-                  <Tooltip title={'Table View'}><FontAwesomeIcon className={styles.tableIcon} icon={faTable} size="lg" /></Tooltip>
-                </div>
+                  <div className={!tableView ? styles.toggled : styles.toggleView}
+                    data-cy="facet-view" id={'snippetView'}
+                    onClick={() => toggleTableView(false)}>
+                    <Tooltip title={'Snippet View'}><FontAwesomeIcon icon={faStream} size="lg" /></Tooltip>
+                  </div>
+                  <div className={tableView ? styles.toggled : styles.toggleView}
+                    data-cy="table-view" id={'tableView'}
+                    onClick={() => toggleTableView(true)}>
+                    <Tooltip title={'Table View'}><FontAwesomeIcon className={styles.tableIcon} icon={faTable} size="lg" /></Tooltip>
+                  </div>
                 </div>
               </div>
-              <Query setIsLoading={setIsLoading} entities={entities} selectedFacets={selectedFacets} greyFacets={greyFacets} />
+              <Query columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={selectedFacets} greyFacets={greyFacets} />
             </div>
             <div className={styles.fixedView} >
-            {tableView ?
-              <div>
-                <ResultTable
-                  data={data}
-                  entityDefArray={entityDefArray}
-                />
-              </div>
-              : <SearchResults data={data} entityDefArray={entityDefArray} />
-            }
+              {tableView ?
+                <div>
+                  <ResultTable
+                    data={data}
+                    entityDefArray={entityDefArray}
+                    columns={columns}
+                  />
+                </div>
+                : <SearchResults data={data} entityDefArray={entityDefArray} />
+              }
             </div>
             <br />
             <div>

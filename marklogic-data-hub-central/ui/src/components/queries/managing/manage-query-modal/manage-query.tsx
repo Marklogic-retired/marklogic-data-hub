@@ -9,6 +9,8 @@ import { SearchContext } from '../../../../util/search-context';
 import styles from './manage-query.module.scss';
 import { fetchQueries, updateQuery, removeQuery } from '../../../../api/queries'
 import axios from "axios";
+import { exportSavedQuery } from '../../../../api/queries'
+import ExportQueryModal from '../../../query-export/query-export-modal/query-export-modal'
 
 
 const QueryModal = (props) => {
@@ -18,6 +20,9 @@ const QueryModal = (props) => {
     const [mainModalVisibility, setMainModalVisibility] = useState(false);
     const [editModalVisibility, setEditModalVisibility] = useState(false);
     const [deleteModalVisibility, setDeleteModalVisibility] = useState(false);
+    const [exportModalVisibility, setExportModalVisibility] = useState(false);
+    const [recordID, setRecordID] = useState();
+
     const [query, setQuery] = useState({});
     const data = new Array();
 
@@ -102,6 +107,11 @@ const QueryModal = (props) => {
         props.toggleApply(false)
     }
 
+    const displayExportModal = (id) => {
+        setExportModalVisibility(true);
+        setRecordID(id)
+    };
+
     const columns = [
         {
             title: 'Name',
@@ -151,16 +161,24 @@ const QueryModal = (props) => {
         }
     ];
 
+    const exportObj = {
+        title: 'Export',
+        dataIndex: 'export',
+        key: 'export',
+        align: 'center' as 'center',
+        render: text => <a data-testid={'export'} >{text}</a>,
+        onCell: record => {
+            return {
+                onClick: () => {
+                    displayExportModal(record.key);
+                }
+            }
+        },
+        width: 75,
+    }
+
     if (props.canExportQuery) {
-        columns.splice(4, 0,
-            {
-                title: 'Export',
-                dataIndex: 'export',
-                key: 'export',
-                align: 'center' as 'center',
-                render: text => <a data-testid={'export'}>{text}</a>,
-                width: 75,
-            })
+        columns.splice(4, 0, exportObj)
     }
 
     props.queries && props.queries.length > 0 && props.queries.forEach(query => {
@@ -193,6 +211,7 @@ const QueryModal = (props) => {
 
     return (
         <div>
+            <ExportQueryModal recordID={recordID} exportModalVisibility={exportModalVisibility} setExportModalVisibility={setExportModalVisibility} columns={props.columns} />
             <FontAwesomeIcon icon={faListOl} color='#5B69AF' size='lg' onClick={displayModal} style={{ cursor: 'pointer', marginLeft: '-30px', color: '#5B69AF' }} data-testid="manage-queries-modal-icon" />
             <Modal
                 title={null}
@@ -215,7 +234,8 @@ const QueryModal = (props) => {
                                 })
                             }
                         }
-                    }}>
+                    }}
+                >
                 </Table>
             </Modal>
             <EditQueryDialog
