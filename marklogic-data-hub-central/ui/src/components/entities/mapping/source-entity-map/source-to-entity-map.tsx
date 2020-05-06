@@ -26,6 +26,10 @@ const SourceToEntityMap = (props) => {
     const [displaySelectList, setDisplaySelectList] = useState(false);
     const [functionValue, setFunctionValue] = useState('');
     const [caretPosition, setCaretPosition] = useState(0);
+
+    //Dummy ref node to simulate a click event
+    const dummyNode: any = useRef();
+
     /*-------------------*/
 
     const [mapExpTouched, setMapExpTouched] = useState(false);
@@ -554,7 +558,7 @@ const SourceToEntityMap = (props) => {
             width: '45%',
             render: (text, row) => (<div className={styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
                 <TextArea
-                    id="mapexpression"
+                    id={'mapexpression'+row.name.split('/').pop()}
                     data-testid={row.name.split('/').pop()+'-mapexpression'}
                     style={mapExpressionStyle(row.name)}
                     onClick={handleClickInTextArea}
@@ -569,7 +573,7 @@ const SourceToEntityMap = (props) => {
                     </Dropdown>
                 </span>
                 &nbsp;&nbsp;
-                <span ><Dropdown overlay={menu} trigger={['click']}><Button id="functionIcon" className={styles.functionIcon} size="small" onClick={(e) => handleFunctionsList(row.name)}>fx</Button></Dropdown></span></div>
+                <span ><Dropdown overlay={menu} trigger={['click']}><Button id="functionIcon" data-testid={`${row.name.split('/').pop()}-${row.key}-functionIcon`} className={styles.functionIcon} size="small" onClick={(e) => handleFunctionsList(row.name)}>fx</Button></Dropdown></span></div>
                 {checkFieldInErrors(row.name) ? <div id="errorInExp" data-testid={row.name+'-expErr'} className={styles.validationErrors}>{displayResp(row.name)}</div> : ''}</div>)
         },
         {
@@ -700,18 +704,37 @@ const SourceToEntityMap = (props) => {
         return props.mapFunctions[funcName].signature
     }
 
-    const insertContent = (content, propName) => {
+    const insertContent = async (content, propName) => {
         if(!mapExp[propName]){
             mapExp[propName] = '';
         }
         let newExp = mapExp[propName].substr(0, caretPosition) + content +
             mapExp[propName].substr(caretPosition, mapExp[propName].length);
-        setMapExp({ ...mapExp, [propName]: newExp });
-        setDisplaySelectList(false);
-        setDisplayFuncMenu(false);
+        await setMapExp({ ...mapExp, [propName]: newExp });
+        
+        setDisplaySelectList(prev => false);
+        setDisplayFuncMenu(prev => false);
+        //simulate a click event to handle simultaneous event propagation of dropdown and select
+        simulateMouseClick(dummyNode.current)
     }
 
-    const onFunctionSelect = (e, name) => {
+
+    //simulate a click event to destroy both dropdown and select on option select
+    const simulateMouseClick = (element) => {
+        let mouseClickEvents = ['mousedown', 'click', 'mouseup'];
+        mouseClickEvents.forEach(mouseEventType =>
+            element.dispatchEvent(
+                new MouseEvent(mouseEventType, {
+                    view: window,
+                    bubbles: true,
+                    cancelable: true,
+                    buttons: 1
+                })
+            )
+        );
+    }
+
+    const onFunctionSelect = (e) => {
         setFunctionValue(e);
         insertContent(functionsDef(e), propName);
     }
@@ -726,7 +749,8 @@ const SourceToEntityMap = (props) => {
             onItemSelect={onFunctionSelect}
             srcData={propListForDropDown}
             propName={propName}
-            handleDropdownMenu={handleFunctionsList}/>
+            handleDropdownMenu={handleFunctionsList}
+            />
     );
     /* Insert source field in map expressions */
 
@@ -804,6 +828,9 @@ const SourceToEntityMap = (props) => {
         saveMapping(tempMapExp);
         setDisplaySourceList(false);
         setDisplaySourceMenu(false);
+        
+        //simulate a click event to handle simultaneous event propagation of dropdown and select
+        simulateMouseClick(dummyNode.current)
     }
 
     function escapeXML(input = '') {
@@ -844,7 +871,7 @@ const SourceToEntityMap = (props) => {
     }
 
 
-    const onSourceSelect = (e, name) => {
+    const onSourceSelect = (e) => {
         setSourceValue(e);
         insertSource(e, propName);
     }
@@ -1099,6 +1126,7 @@ const SourceToEntityMap = (props) => {
                         <div className={styles.entityDetails}>
                             <span className={styles.entityTypeTitle}><p ><i><FontAwesomeIcon icon={faObjectUngroup} size="sm" className={styles.entityIcon} /></i> Entity: {props.entityTypeTitle}</p></span>
                         </div>
+                        <div ref={dummyNode}></div>
                         <div className={styles.columnOptionsSelectorContainer}>
                             <span><Button data-testid="expandCollapseBtn-entity" onClick={() => handleExpandCollapse('key')} className={styles.expandCollapseBtn}>{expandedEntityFlag ? 'Collapse All' : 'Expand All'}</Button></span><span className={styles.columnOptionsSelector}>{columnOptionsSelector}</span></div>
                         <Table

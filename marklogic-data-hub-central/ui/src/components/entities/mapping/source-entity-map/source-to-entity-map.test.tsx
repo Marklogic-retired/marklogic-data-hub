@@ -482,6 +482,70 @@ describe('RTL Source-to-entity map tests', () => {
         expect(onClosestTableRow(firstName)?.style.display).toBe('none');
         expect(onClosestTableRow(lastName)?.style.display).toBe('none');
     });
+    
+    test('Function selector dropdown in entity table', async () => {
+
+        axiosMock.post['mockImplementation'](jest.fn(() => Promise.resolve({ status: 200, data: data.testJSONResponseWithFunctions })));
+        const { getByText, getByTestId, getAllByRole, queryByText } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} />);
+
+        //Prepare the map expression field for function signature later
+        let propAttributeExpression = getByTestId('propAttribute-mapexpression')
+        fireEvent.change(propAttributeExpression, { target: { value: "" } });
+        fireEvent.blur(propAttributeExpression);
+
+        let functionSelector = getByTestId("propAttribute-3-functionIcon");
+        fireEvent.click(functionSelector);
+        let inputBox = getByText(
+            (_content, element) =>
+                element.className != null &&
+                element.className === "ant-select-search__field"
+        );
+
+        await (waitForElement(() => getAllByRole("option"), { "timeout": 200 }))
+        expect(getByText('concat')).toBeInTheDocument();
+        expect(getByText('documentLookup')).toBeInTheDocument();
+
+        fireEvent.click(inputBox) // focus on the search box
+
+        // Filter out the funcitons list to get to concat function
+        fireEvent.change(inputBox, { target: { value: "conc" } });
+        expect(getByText('concat')).toBeInTheDocument();
+        expect(queryByText('documentLookup')).not.toBeInTheDocument();
+
+        //Choose the concat function
+        fireEvent.keyDown(inputBox, { key: 'Enter', code: 'Enter', keyCode: 13, charCode: 13 })
+
+        //Map Expression is populated with function signature
+        expect(propAttributeExpression).toHaveTextContent("concat(xs:anyAtomicType?)");
+        fireEvent.change(propAttributeExpression, { target: { value: "concat(proteinType,'-NEW')" } });
+        fireEvent.blur(propAttributeExpression);
+
+        await (waitForElement(() => (getByTestId('successMessage'))))
+        await (waitForElementToBeRemoved(() => (getByTestId('successMessage'))))
+
+        expect(propAttributeExpression).toHaveTextContent("concat(proteinType,'-NEW')");
+
+        //Click again on the same function button to verify if it opens up again with the list of functions
+        fireEvent.click(functionSelector);
+        await (waitForElement(() => getAllByRole("option"), { "timeout": 200 }));
+        fireEvent.click(inputBox);
+
+        //Verify multiple matches
+        fireEvent.change(inputBox, { target: { value: "Lookup" } });
+        expect(getByText('memoryLookup')).toBeInTheDocument();
+        expect(getByText('documentLookup')).toBeInTheDocument();
+        expect(queryByText('parseDateTime')).not.toBeInTheDocument();
+
+        //Click on the Fx button again to close the list
+        fireEvent.click(functionSelector);
+
+        //Verify if value appears in the Value column after clicking on Test button
+        fireEvent.click(getByText('Test'));
+        await (waitForElement(() => getByTestId('propAttribute-value')))
+        expect(getByTestId('propAttribute-value')).toHaveTextContent('home-NEW') // home should be mapped as home-New
+
+    });
+
 });
 
 describe('Enzyme Source-to-entity map tests', () => {
@@ -699,14 +763,16 @@ describe('RTL Source Selector/Source Search tests', () => {
         let mapExp = getByTestId("items-mapexpression");
         //Right Xpath is populated
         expect(mapExp).toHaveTextContent("nutFreeName");
-
+    
         sourceSelector = getByTestId("itemTypes-listIcon");
         fireEvent.click(sourceSelector);
         await(waitForElement(() => getAllByRole("option"),{"timeout":600}))
         let firstName = getAllByText("FirstNamePreferred");
-        fireEvent.click(firstName[1]);
+        fireEvent.click(firstName[2]);
         //mapping is saved
-        expect(await(waitForElement(() => getByTestId("successMessage"),{"timeout":600})))
+        await (waitForElement(() => getByTestId("successMessage")))
+        await (waitForElementToBeRemoved(() => (getByTestId('successMessage'))))
+
         mapExp = getByTestId("itemTypes-mapexpression");
 
         //Right Xpath is populated (and not nutFreeName/FirstNamePreferred since sourceContext is set)

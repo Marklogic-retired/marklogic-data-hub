@@ -7,24 +7,24 @@ import {faSearch} from '@fortawesome/free-solid-svg-icons';
 const DropDownWithSearch = (props) => {
 
     const node: any = useRef();
-    const [menuVisible, setMenuVisible] = useState(false);
     const [selList, setSelList] = useState(false);
+    const [menuVisible, setMenuVisible] = useState(false);
+    const [eventValid, setEventValid] = useState(false);
 
     //handle callback from event listeners
     const handleOuterClick = useCallback(
         e => {
             if (node.current && !node.current.contains(e.target)) {
-                setSelList(false);
-                setMenuVisible(false);
-                props.setDisplaySelectList(false);
-                props.setDisplayMenu(false);
+                props.setDisplaySelectList(prev => false);
+                props.setDisplayMenu(prev => false);
+                setEventValid(prev => false);
             }
         }, []
     );
 
     //CSS Styles for the select list
     const listStyle:CSSProperties = {
-        width: '12vw',
+        width: '12em',
     }
 
     const dropDownStyle: CSSProperties = {
@@ -32,13 +32,16 @@ const DropDownWithSearch = (props) => {
     }
 
     useEffect(() => {
-        setSelList(props.displaySelectList);
-        setMenuVisible(props.displayMenu);
-    }, [props.displaySelectList, props.displayMenu]);
+        setSelList(prev => props.setDisplaySelectList);
+        setMenuVisible(prev => props.setDisplayMenu);
+        if(props.setDisplaySelectList){
+            setEventValid(prev => true);
+        }
+    },[props.setDisplaySelectList,props.setDisplayMenu])
 
     //Handling click event outside the Dropdown Menu
     useEffect(() => {
-        if (menuVisible && selList) {
+        if (eventValid) {
             document.addEventListener('click', handleOuterClick);
         }
 
@@ -57,23 +60,21 @@ const DropDownWithSearch = (props) => {
     };
     /* props.srcData requires an array of tuple instead of a flat array to handle duplicate values */
     return (
-
         <div ref={node}>
-            {menuVisible && <Menu>
-                <Select
+               {menuVisible && <Select
                     id="dropdownList"
                     open={selList}
                     showSearch
                     style={listStyle}
+                    getPopupContainer={triggerNode => triggerNode.parentNode ? triggerNode.parentNode : node.current}
                     suffixIcon={<FontAwesomeIcon icon={faSearch} size="2x" className={styles.searchIcon}/>}
                     dropdownMenuStyle={dropDownStyle}
                     dropdownClassName={styles.dropDownStyle}
-                    value={props.itemValue}
+                    value={null}
                     onChange={props.onItemSelect}
                 >
                     {props.srcData.map((element, index) => <Select.Option style={optionsStyle(index)} key={element.key}>{element.value}</Select.Option>)}
-                </Select>
-            </Menu>}
+               </Select>  }
         </div>
     );
 }
