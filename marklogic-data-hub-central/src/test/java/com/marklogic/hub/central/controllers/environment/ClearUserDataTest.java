@@ -21,6 +21,10 @@ public class ClearUserDataTest extends AbstractMvcTest {
 
     @Test
     void permittedUser() throws Exception {
+        if (!isVersionCompatibleWith520Roles()) {
+            return;
+        }
+
         installReferenceModelProject();
 
         loginAsTestUserWithRoles("hub-central-clear-user-data");
@@ -33,6 +37,10 @@ public class ClearUserDataTest extends AbstractMvcTest {
 
     @Test
     void forbiddenUser() throws Exception {
+        if (!isVersionCompatibleWith520Roles()) {
+            return;
+        }
+
         loginAsTestUserWithRoles("data-hub-developer");
 
         mockMvc.perform(post(PATH).session(mockHttpSession))

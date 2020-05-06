@@ -16,6 +16,7 @@ import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand;
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.impl.Versions;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.security.User;
@@ -317,6 +318,14 @@ public abstract class AbstractHubTest extends TestObject {
         if (StringUtils.hasText(secondHost)) {
             sleep(2000);
         }
+    }
+
+    protected boolean isVersionCompatibleWith520Roles() {
+        Versions.MarkLogicVersion serverVersion = new Versions(getHubClient()).getMLVersion();
+        if (serverVersion.isNightly()) {
+            return (serverVersion.getMajor() == 10);
+        }
+        return (serverVersion.getMajor() == 10 && serverVersion.getMinor() >= 300);
     }
 
     protected JsonNode getStagingDoc(String uri) {
