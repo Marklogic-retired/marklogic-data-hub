@@ -116,6 +116,14 @@ const testJSONResponse = {
   targetEntityType: 'Person'
 };
 
+const testJSONResponseWithFunctions = { 
+  properties: { 
+    propName: { output: '123EAC', sourcedFrom: 'proteinId' },
+    propAttribute: { output: 'home-NEW', sourcedFrom: "concat(proteinType,'NEW')" },
+  },
+  targetEntityType: 'Person'
+};
+
 const errorJSONResponse = {
   properties: { 
     propId: { errorMessage: 'Invalid lexical value: "123EACtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest"', sourcedFrom: 'proteinId' },
@@ -123,6 +131,18 @@ const errorJSONResponse = {
   },
   targetEntityType: 'Person'
 };
+
+const mapFunctions = { 
+  "echo": { "category": "custom", "signature": "echo(input)" }, 
+  "memoryLookup": { "category": "builtin", "signature": "memoryLookup(input,inputDictionary)" }, 
+  "documentLookup": { "category": "builtin", "signature": "documentLookup(input,inputDictionaryPath)" }, 
+  "parseDate": { "category": "builtin", "signature": "parseDate(value,pattern)" }, 
+  "parseDateTime": { "category": "builtin", "signature": "parseDateTime(value,pattern)" }, 
+  "add-function": { "category": "custom", "signature": "add-function(num1,num2)" }, 
+  "unparsed-text": { "category": "xpath", "signature": "unparsed-text(xs:string)" }, 
+  "month-from-dateTime": { "category": "xpath", "signature": "month-from-dateTime(xs:dateTime?)" }, "seconds-from-dateTime": { "category": "xpath", "signature": "seconds-from-dateTime(xs:dateTime?)" }, 
+  "concat": { "category": "xpath", "signature": "concat(xs:anyAtomicType?)" } 
+}
 
 const mapProps = {
   sourceData: jsonSourceData,
@@ -166,7 +186,8 @@ const mapProps = {
   canReadOnly: false,
   docNotFound: false,
   entityTypeTitle: 'Person',
-  extractCollectionFromSrcQuery: jest.fn()
+  extractCollectionFromSrcQuery: jest.fn(),
+  mapFunctions: mapFunctions
 };
 
 const newMap = {
@@ -231,7 +252,8 @@ const data = {
   dropDownWithSearch: dropDownWithSearch,
   xmlSourceData: xmlSourceData,
   testJSONResponse: testJSONResponse,
-  errorJSONResponse: errorJSONResponse
+  errorJSONResponse: errorJSONResponse,
+  testJSONResponseWithFunctions: testJSONResponseWithFunctions
 };
 
 export default data;
