@@ -63,7 +63,7 @@ task updateVersion {
                      "marklogic-data-hub-central/gradle.properties",
                      "marklogic-data-hub-central/src/main/resources/application.properties",
                      "marklogic-data-hub/src/main/resources/scaffolding/build_gradle",
-                     "marklogic-data-hub/src/main/java/com/marklogic/hub/impl/HubConfigImpl.java",
+                     "marklogic-data-hub/src/main/java/com/marklogic/hub/impl/VersionInfo.java",
                      "examples/dh-5-example/build.gradle",
                      "examples/dhf5-custom-hook/build.gradle",
                      "examples/insurance/build.gradle",
