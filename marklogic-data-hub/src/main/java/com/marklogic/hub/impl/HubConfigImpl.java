@@ -1804,20 +1804,7 @@ public class HubConfigImpl implements HubConfig
     }
 
     @Override public String getJarVersion() {
-        Properties properties = new Properties();
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("version.properties")) {
-            properties.load(inputStream);
-        } catch (IOException e)
-        {
-            throw new RuntimeException(e);
-        }
-        String version = (String)properties.get("version");
-
-        // this lets debug builds work from an IDE
-        if (version.equals("${project.version}")) {
-            version = "5.3-SNAPSHOT";
-        }
-        return version;
+        return VersionInfo.getBuildVersion();
     }
 
     @Override public String getDHFVersion() {

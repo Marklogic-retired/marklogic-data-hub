@@ -93,6 +93,9 @@ class DataHubPlugin implements Plugin<Project> {
             description: "Ascertains whether a MarkLogic server can accept installation of the DHF.  Requires administrative privileges to the server.")
         project.task("hubInfo", group: deployGroup, type: HubInfoTask)
         project.task("hubUpdate", group: deployGroup, type: UpdateHubTask)
+        project.task("hubVersion", group: deployGroup, type: HubVersionTask,
+            description: "Prints the versions of Data Hub and MarkLogic associated with the value of mlHost, and also prints the version of " +
+                "Data Hub associated with this Gradle task")
 
         String scaffoldGroup = "MarkLogic Data Hub Scaffolding"
         project.task("hubInit", group: scaffoldGroup, type: InitProjectTask)
