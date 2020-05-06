@@ -1117,18 +1117,6 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
         return strHandle.get();
     }
 
-    //Not checking the dates for nightly as we expect tests to run on latest nightly
-    protected boolean isVersionCompatibleWith520Roles() {
-        Versions.MarkLogicVersion serverVersion = versions.getMLVersion();
-        if(serverVersion.isNightly()){
-            //Supported on 10.0-nightly only
-            return (serverVersion.getMajor() == 10);
-        }
-        else {
-            return (serverVersion.getMajor() == 10 && serverVersion.getMinor() >= 300);
-
-        }
-    }
     protected void setupProjectForRunningTestFlow() {
         resetHubProject();
         copyFlowArtifactsToProject();
