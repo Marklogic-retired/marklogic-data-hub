@@ -26,18 +26,15 @@ describe('EntityTypeModal Component', () => {
   test('Valid Entity name is used', async () => {
     axiosMock.post.mockImplementationOnce(jest.fn(() => Promise.resolve({status: 201, data: createModelResponse})));
 
-    const { getByTestId, getByText, debug } = render(
+    const { getByText, getByPlaceholderText } = render(
       <EntityTypeModal 
         isVisible={true} 
         toggleModal={jest.fn()}
         newEntityAdded={jest.fn()}
       />);
     expect(getByText('Add Entity Type')).toBeInTheDocument();
-    await userEvent.type(getByTestId('name-input'), 'AnotherModel');
-    expect(getByTestId('name-input')).toHaveAttribute('value', 'AnotherModel');
-
-    await userEvent.type(getByTestId('description-input'), 'Testing');
-    expect(getByTestId('description-input')).toHaveAttribute('value', 'Testing');
+    await userEvent.type(getByPlaceholderText('Enter name'), 'AnotherModel');
+    await userEvent.type(getByPlaceholderText('Enter description'), 'Testing');
 
     await wait(() => {
       userEvent.click(getByText('Add'));
@@ -49,8 +46,8 @@ describe('EntityTypeModal Component', () => {
     expect(axiosMock.post).toHaveBeenCalledTimes(1);
   });
 
-  test('Invalid Entity name disables add button', async () => {
-    const { getByTestId, getByText } = render(
+  test('Adding an invalid Entity name shows error message', async () => {
+    const { getByText, getByPlaceholderText } = render(
       <EntityTypeModal 
         isVisible={true} 
         toggleModal={jest.fn()}
@@ -58,20 +55,21 @@ describe('EntityTypeModal Component', () => {
       />);
     expect(getByText(/Add Entity Type/i)).toBeInTheDocument();
 
-    await userEvent.type(getByTestId('name-input'), '123-Box');
-    expect(getByTestId('name-input')).toHaveAttribute('value', '123-Box');
+    await userEvent.type(getByPlaceholderText('Enter name'), '123-Box');
+    await userEvent.type(getByPlaceholderText('Enter description'), 'Product entity desription');;
 
-    await userEvent.type(getByTestId('description-input'), 'Product entity desription');
-    expect(getByTestId('description-input')).toHaveAttribute('value', 'Product entity desription');
+    await wait(() => {
+      userEvent.click(getByText('Add'));
+    });
 
-    expect(getByText('Add')).toBeDisabled();
+    expect(getByText('Names must start with a letter, and can contain letters, numbers, hyphens, and underscores.')).toBeInTheDocument();
   });
 
   test('Creating duplicate entity shows error message', async () => {
     axiosMock.post.mockImplementationOnce(jest.fn(() => 
       Promise.reject({ response: {status: 400, data: createModelErrorResponse } })));
 
-    const { getByTestId, getByText } =  render(
+    const { getByText, getByPlaceholderText } =  render(
       <EntityTypeModal 
         isVisible={true} 
         toggleModal={jest.fn()}
@@ -79,11 +77,8 @@ describe('EntityTypeModal Component', () => {
       />);
     expect(getByText('Add Entity Type')).toBeInTheDocument();
 
-    await userEvent.type(getByTestId('name-input'), 'Testing');
-    expect(getByTestId('name-input')).toHaveAttribute('value', 'Testing');
-
-    await userEvent.type(getByTestId('description-input'), '');
-    expect(getByTestId('description-input')).toHaveAttribute('value', '');
+    await userEvent.type(getByPlaceholderText('Enter name'), 'Testing');
+    await userEvent.type(getByPlaceholderText('Enter description'), '');
 
     await wait(() => {
       userEvent.click(getByText('Add'));

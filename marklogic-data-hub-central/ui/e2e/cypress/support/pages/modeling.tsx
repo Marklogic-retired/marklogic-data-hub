@@ -6,11 +6,11 @@ class ModelingPage {
   }
 
   newEntityName(str: string) {
-    cy.get('[data-testid=name]').type(str);
+    cy.get('#name').type(str);
   }
 
   newEntityDescription(str: string) {
-    cy.get('[data-testid=description]').type(str);
+    cy.get('#description').type(str);
   }
 
   submitNewEntityForm() {
