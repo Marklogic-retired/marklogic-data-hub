@@ -7,7 +7,8 @@ interface UserPreferences {
   pageLength: number,
   tableView: boolean,
   pageRoute: string,
-  resultTableColumns: any[]
+  resultTableColumns: any[],
+  selectedQuery: string
 }
 
 export const defaultUserPreferences = {
@@ -19,7 +20,8 @@ export const defaultUserPreferences = {
   pageLength: 20,
   tableView: true,
   pageRoute: '/view',
-  resultTableColumns: []
+  resultTableColumns: [],
+  selectedQuery: 'select a query'
 }
 
 export const createUserPreferences = (username: string) => {

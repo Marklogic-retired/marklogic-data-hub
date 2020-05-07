@@ -40,6 +40,7 @@ const Query = (props) => {
     const [openSaveCopyModal, setOpenSaveCopyModal]= useState(false);
     const [openDiscardChangesModal, setOpenDiscardChangesModal]= useState(false);
     const [currentQueryName, setCurrentQueryName] = useState(searchOptions.selectedQuery);
+    const [currentQueryDescription, setCurrentQueryDescription] = useState('');
 
     const authorityService = useContext(AuthoritiesContext);
     const canExportQuery = authorityService.canExportEntityInstances();
@@ -143,6 +144,8 @@ const Query = (props) => {
                                     toggleApplyClicked={(clicked) => toggleApplyClicked(clicked)}
                                     currentQueryName={currentQueryName}
                                     setCurrentQueryName={setCurrentQueryName}
+                                    currentQueryDescription={currentQueryDescription}
+                                    setCurrentQueryDescription={setCurrentQueryDescription}
                                 />}
                         </div>
                     </div>}
@@ -174,6 +177,8 @@ const Query = (props) => {
                                     currentQuery={currentQuery}
                                     currentQueryName={currentQueryName}
                                     setCurrentQueryName={setCurrentQueryName}
+                                    currentQueryDescription={currentQueryDescription}
+                                    setCurrentQueryDescription={setCurrentQueryDescription}
                                 />}
                         </div>
                     </div>}
@@ -215,6 +220,8 @@ const Query = (props) => {
                         setCurrentQueryName={setCurrentQueryName}
                         setCurrentQueryFn={(query)=> setCurrentQuery(query)}
                         currentQuery={currentQuery}
+                        currentQueryDescription={currentQueryDescription}
+                        setCurrentQueryDescription={setCurrentQueryDescription}
                     />
                     }
                 </div>
@@ -234,6 +241,8 @@ const Query = (props) => {
                     currentQuery={currentQuery}
                     currentQueryName={currentQueryName}
                     setCurrentQueryName={setCurrentQueryName}
+                    currentQueryDescription={currentQueryDescription}
+                    setCurrentQueryDescription={setCurrentQueryDescription}
                 />
                 }
             </div>}
@@ -257,8 +266,18 @@ const Query = (props) => {
                     toggleApplyClicked={(clicked) => toggleApplyClicked(clicked)}
                     currentQueryName={currentQueryName}
                     setCurrentQueryName={setCurrentQueryName}
+                    currentQueryDescription={currentQueryDescription}
+                    setCurrentQueryDescription={setCurrentQueryDescription}
                 />}
             </div>}
+            <div id="selected-query-description" className= {currentQueryDescription.length > 50 ? styles.longDescription : styles.description}>
+                <Tooltip title={currentQueryDescription}>
+                    {
+                        searchOptions.selectedQuery && searchOptions.selectedQuery !== 'select a query' &&
+                        currentQueryDescription.length > 50 ? currentQueryDescription.substring(0, 50).concat("...") : currentQueryDescription
+                    }
+                </Tooltip>
+            </div>
             <div className={styles.selectedFacets}>
                 <SelectedFacets
                     selectedFacets={props.selectedFacets}
@@ -278,6 +297,8 @@ const Query = (props) => {
                 toggleApply={toggleApply}
                 currentQueryName={currentQueryName}
                 setCurrentQueryName={setCurrentQueryName}
+                currentQueryDescription={currentQueryDescription}
+                setCurrentQueryDescription={setCurrentQueryDescription}
             />
         </div>
     )

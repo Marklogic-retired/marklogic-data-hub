@@ -12,7 +12,7 @@ const viewPage = new ViewPage();
 const browsePage = new BrowsePage();
 const detailPage = new DetailPage();
 const homePage = new HomePage();
-const queryComponent = new QueryComponent()
+const queryComponent = new QueryComponent();
 
 
 describe('save/manage queries scenarios, developer role', () => {
@@ -47,14 +47,17 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getSaveQueryButton().click();
         cy.wait(500);
         browsePage.getSelectedQuery().should('contain', 'new-query');
+        browsePage.getSelectedQueryDescription().should('contain', 'new-query description');
         browsePage.getSaveQueryButton().should('not.be.visible');
         browsePage.getSaveQueriesDropdown().should('be.visible');
         browsePage.getEditQueryModalIcon().click();
         browsePage.getEditQueryDetailDesc().clear();
-        browsePage.getEditQueryDetailDesc().type('new-query description');
+        browsePage.getEditQueryDetailDesc().type('new-query description edited');
         browsePage.getEditQueryDetailButton().click();
+        browsePage.getSelectedQueryDescription().should('contain', 'new-query description edited');
         browsePage.getSaveACopyModalIcon().click();
         browsePage.getSaveQueryName().type('new-query-2');
+        browsePage.getSaveQueryDescription().type('new-query-2 description');
         browsePage.getSaveQueryButton().click();
         browsePage.getSelectedQuery().should('contain', 'new-query-2');
         browsePage.getFacetItemCheckbox('lastname', 'Adams').click();
@@ -62,7 +65,13 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getSaveModalIcon().click();
         browsePage.getRadioOptionSelected();
         browsePage.getEditSaveChangesButton().click();
+        browsePage.getSelectedQueryDescription().should('contain', 'new-query-2 description');
         browsePage.getAppliedFacets('Adams').should('exist');
+        cy.reload();
+        homePage.getBrowseEntities().click();
+        cy.wait(1000);
+        browsePage.getSelectedQuery().should('contain', 'new-query-2');
+        browsePage.getSelectedQueryDescription().should('contain', 'new-query-2 description');
     });
 
     it('Edit saved query and verify discard changes functionality', () => {
@@ -98,16 +107,17 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getManageQueriesIcon().click();
         queryComponent.getManageQueryModal().should('be.visible');
         queryComponent.getEditQuery().click();
-        queryComponent.getEditQueryName().type('2');
+        queryComponent.getEditQueryName().clear();
+        queryComponent.getEditQueryName().type('edited-query');
         queryComponent.getSubmitButton().click();
     });
 
     it('open manage queries, apply query', () => {
         browsePage.getManageQueriesIcon().click();
         queryComponent.getManageQueryModal().should('be.visible');
-        queryComponent.getQueryByName('new-query2').click();
+        queryComponent.getQueryByName('edited-query').click();
         cy.wait(500);
-        browsePage.getSelectedQuery().should('contain', 'new-query2');
+        browsePage.getSelectedQuery().should('contain', 'edited-query');
     });
 
     it('open manage queries, delete query', () => {

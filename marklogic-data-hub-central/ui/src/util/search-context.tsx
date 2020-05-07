@@ -50,7 +50,7 @@ interface ISearchContextInterface {
   clearGreyFacet: (constraint: string, val: string) => void;
   clearAllGreyFacets: () => void;
   resetGreyedOptions: () => void;
-  applySaveQuery: (searchText: string, entityTypeIds: string[], selectedFacets: {}) => void;
+  applySaveQuery: (searchText: string, entityTypeIds: string[], selectedFacets: {}, selectedQuery: string) => void;
   setSelectedQuery: (query: string) => void;
 }
 
@@ -99,7 +99,8 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
         query: values.query.searchText,
         entityTypeIds: values.query.entityTypeIds,
         selectedFacets: values.query.selectedFacets,
-        pageLength: values.pageLength
+        pageLength: values.pageLength,
+        selectedQuery: values.selectedQuery
       });
     }
   }
@@ -374,7 +375,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
     });
   }
 
-    const applySaveQuery = (searchText: string, entityTypeIds: string[], selectedFacets: {}) => {
+    const applySaveQuery = (searchText: string, entityTypeIds: string[], selectedFacets: {}, selectedQuery: string) => {
         setSearchOptions({
             ...searchOptions,
             start: 1,
@@ -382,7 +383,8 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
             query: searchText,
             entityTypeIds: entityTypeIds,
             pageNumber: 1,
-            pageLength: searchOptions.pageSize
+            pageLength: searchOptions.pageSize,
+            selectedQuery: selectedQuery
         });
 
     }

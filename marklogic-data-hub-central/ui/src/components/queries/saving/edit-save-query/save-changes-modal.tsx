@@ -14,6 +14,8 @@ interface Props {
     currentQuery: any
     currentQueryName: string;
     setCurrentQueryName: (name: string) => void;
+    currentQueryDescription: string;
+    setCurrentQueryDescription: (description: string) => void;
 }
 
 const SaveChangesModal: React.FC<Props> = (props) => {
@@ -23,6 +25,7 @@ const SaveChangesModal: React.FC<Props> = (props) => {
         greyedOptions,
         setAllSearchFacets,
         searchOptions,
+        applySaveQuery
     } = useContext(SearchContext);
 
     const {
@@ -61,7 +64,7 @@ const SaveChangesModal: React.FC<Props> = (props) => {
                // setAllSearchFacets(searchOptions.selectedFacets);
                // setAllSearchFacets(greyedOptions.selectedFacets);
                 facets = {...facets,...greyedOptions.selectedFacets};
-                setAllSearchFacets(facets)
+                setAllSearchFacets(facets);
                 clearAllGreyFacets();
                 props.toggleApplyClicked(true);
                 props.toggleApply(false);
@@ -95,7 +98,8 @@ const SaveChangesModal: React.FC<Props> = (props) => {
         } else {
             isQueryEmpty('error')
         }
-        props.setCurrentQueryName(queryName);
+        applySaveQuery(searchOptions.query, searchOptions.entityTypeIds, facets, queryName);
+        props.setCurrentQueryDescription(queryDescription);
     }
 
     const handleChange = (event) => {

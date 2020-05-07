@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import { Modal, Form, Input, Button } from 'antd';
 import styles from './edit-query-dialog.module.scss';
+import {SearchContext} from "../../../../util/search-context";
 
 
 const EditQueryDialog = (props) => {
@@ -69,7 +70,6 @@ const EditQueryDialog = (props) => {
 
         if (status.code === 200) {
             props.setEditModalVisibility(false);
-            props.setCurrentQueryName(queryName);
         }
     }
 

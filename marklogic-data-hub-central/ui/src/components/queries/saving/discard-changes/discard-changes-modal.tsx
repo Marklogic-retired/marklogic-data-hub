@@ -16,7 +16,8 @@ const DiscardChangesModal: React.FC<Props> = (props) => {
 
     const {
         applySaveQuery,
-        clearAllGreyFacets
+        clearAllGreyFacets,
+        searchOptions
     } = useContext(SearchContext);
 
     const {
@@ -49,7 +50,7 @@ const DiscardChangesModal: React.FC<Props> = (props) => {
                 searchText = response.data.savedQuery.query.searchText;
                 entityTypeIds = response.data.savedQuery.query.entityTypeIds;
                 selectedFacets = response.data.savedQuery.query.selectedFacets;
-                applySaveQuery(searchText, entityTypeIds, selectedFacets);
+                applySaveQuery(searchText, entityTypeIds, selectedFacets, searchOptions.selectedQuery);
                 clearAllGreyFacets();
             }
             props.setDiscardChangesModalVisibility();
