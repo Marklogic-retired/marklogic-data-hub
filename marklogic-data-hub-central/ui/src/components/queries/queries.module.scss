@@ -4,6 +4,21 @@
     margin-left: 10px;
 }
 
+.description {
+  margin-top: 10px;
+  margin-left: 10px;
+  font-size: 12px;
+  color: #777777;
+}
+
+.longDescription {
+  margin-top: 10px;
+  margin-left: 10px;
+  font-size: 12px;
+  color: #777777;
+  text-overflow: ellipsis;
+}
+
 .selectedFacets {
     //margin-top: -30px;
   }

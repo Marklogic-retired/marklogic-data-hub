@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {Modal, Form, Input, Radio, Button} from 'antd';
 import {SearchContext} from "../../../../util/search-context";
 import styles from './save-query-modal.module.scss';
@@ -12,6 +12,8 @@ interface Props {
     currentQueryName: string;
     setCurrentQueryName: (name: string) => void;
     setSaveNewIconVisibility: (clicked:boolean) => void;
+    currentQueryDescription: string;
+    setCurrentQueryDescription: (description: string) => void;
 }
 
 const SaveQueryModal: React.FC<Props> = (props) => {
@@ -21,6 +23,7 @@ const SaveQueryModal: React.FC<Props> = (props) => {
         greyedOptions,
         setAllSearchFacets,
         searchOptions,
+        applySaveQuery
     } = useContext(SearchContext);
 
     const [queryName, setQueryName] = useState('');
@@ -36,14 +39,12 @@ const SaveQueryModal: React.FC<Props> = (props) => {
     const onCancel = () => {
         props.setSaveModalVisibility();
     }
-
     const onOk = () => {
         let facets = {...searchOptions.selectedFacets}
         switch(radioOptionClicked) {
             case 1:
-                setAllSearchFacets(searchOptions.selectedFacets);
-                setAllSearchFacets(greyedOptions.selectedFacets);
                 facets = {...facets,...greyedOptions.selectedFacets};
+                setAllSearchFacets(facets);
                 clearAllGreyFacets();
                 props.toggleApplyClicked(true);
                 props.toggleApply(false);
@@ -55,7 +56,6 @@ const SaveQueryModal: React.FC<Props> = (props) => {
                 props.toggleApplyClicked(true);
                 props.toggleApply(false);
         }
-
         if(queryName.length > 0 && queryName.trim().length !== 0){
             props.saveNewQuery(queryName, queryDescription, facets);
             props.setSaveNewIconVisibility(false);
@@ -64,7 +64,9 @@ const SaveQueryModal: React.FC<Props> = (props) => {
         } else {
             isQueryEmpty('error')
         }
+        applySaveQuery(searchOptions.query, searchOptions.entityTypeIds, facets, queryName);
         props.setCurrentQueryName(queryName);
+        props.setCurrentQueryDescription(queryDescription);
     }
 
     const handleChange = (event) => {

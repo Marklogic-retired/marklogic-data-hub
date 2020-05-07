@@ -26,6 +26,8 @@ describe("<SaveChangesModal/>", () => {
             currentQuery={currentQuery}
             currentQueryName={''}
             setCurrentQueryName={jest.fn()}
+            currentQueryDescription={''}
+            setCurrentQueryDescription={jest.fn()}
         />)
         queryField = getByPlaceholderText("Enter query name");
         expect(queryField).toHaveAttribute('value', 'Order query');
@@ -48,6 +50,8 @@ describe("<SaveChangesModal/>", () => {
             currentQuery={currentQuery}
             currentQueryName={''}
             setCurrentQueryName={jest.fn()}
+            currentQueryDescription={''}
+            setCurrentQueryDescription={jest.fn()}
         />)
         queryField = getByPlaceholderText("Enter query name");
         fireEvent.change(queryField, { target: {value: ''} });

@@ -15,6 +15,8 @@ interface Props {
     setCurrentQueryFn: (query:object) => void;
     currentQuery: any;
     setSaveNewIconVisibility:(visibility:boolean)=> void;
+    currentQueryDescription: string;
+    setCurrentQueryDescription: (description: string) => void;
 };
 
 
@@ -29,8 +31,7 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
     const {
         applySaveQuery,
         clearAllGreyFacets,
-        searchOptions,
-        setSelectedQuery,
+        searchOptions
     } = useContext(SearchContext);
 
     const savedQueryOptions = props.savedQueryList.map((key) => key.savedQuery.name);
@@ -40,8 +41,7 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
     );
 
     const onItemSelect = (e) => {
-        setSelectedQuery(e)
-        props.setCurrentQueryName(e)
+        props.setCurrentQueryName(e);
 
         for(let key of props.savedQueryList)
         {
@@ -51,13 +51,7 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
             }
         }
         props.setSaveNewIconVisibility(false)
-    }
-
-    useEffect(() => {
-        if (props.currentQueryName !== searchOptions.selectedQuery) {
-            setSelectedQuery(props.currentQueryName)
-        }
-    });
+    };
 
     const getSaveQueryWithId = async (key) => {
         let searchText:string = '';
@@ -69,12 +63,13 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
                 searchText = response.data.savedQuery.query.searchText;
                 entityTypeIds = response.data.savedQuery.query.entityTypeIds;
                 selectedFacets = response.data.savedQuery.query.selectedFacets;
-                applySaveQuery(searchText, entityTypeIds, selectedFacets);
+                applySaveQuery(searchText, entityTypeIds, selectedFacets, response.data.savedQuery.name);
                 props.setCurrentQueryFn(key);
                 if(props.greyFacets.length > 0){
                     clearAllGreyFacets();
                 }
                 props.toggleApply(false);
+                props.setCurrentQueryDescription(response.data.savedQuery.description);
             }
         } catch (error) {
             handleError(error)
@@ -92,7 +87,13 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
             onChange={onItemSelect}
             data-cy={'drop-down-list'}
             allowClear={true}
-            value={searchOptions.selectedQuery}
+            value={(() => {
+                    if(props.currentQueryName !== searchOptions.selectedQuery && props.currentQueryName === 'select a query') {
+                        onItemSelect(searchOptions.selectedQuery);
+                    }
+                    return searchOptions.selectedQuery;
+                })()
+            }
         >
             {options}
         </Select>

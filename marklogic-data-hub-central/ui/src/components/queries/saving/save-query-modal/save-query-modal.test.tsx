@@ -16,6 +16,8 @@ describe("<SaveQueryModal/>", () => {
             toggleApplyClicked={jest.fn()}
             currentQueryName= {''}
             setCurrentQueryName={jest.fn()}
+            currentQueryDescription={''}
+            setCurrentQueryDescription={jest.fn()}
             setSaveNewIconVisibility={jest.fn()}
         />)
         queryField = getByPlaceholderText("Enter query name");

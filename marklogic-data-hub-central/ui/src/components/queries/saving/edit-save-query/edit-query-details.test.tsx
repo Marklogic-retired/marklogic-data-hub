@@ -31,6 +31,8 @@ describe("<EditQueryDetails/>", () => {
             currentQuery={{}}
             currentQueryName={''}
             setCurrentQueryName={jest.fn()}
+            currentQueryDescription={''}
+            setCurrentQueryDescription={jest.fn()}
         />)
         queryField = getByPlaceholderText("Enter new query name");
         fireEvent.change(queryField, { target: {value: 'edit new query'} });
@@ -48,6 +50,8 @@ describe("<EditQueryDetails/>", () => {
             currentQuery={currentQuery}
             currentQueryName={''}
             setCurrentQueryName={jest.fn()}
+            currentQueryDescription={''}
+            setCurrentQueryDescription={jest.fn()}
         />)
         queryField = getByPlaceholderText("Enter new query name");
         fireEvent.change(queryField, { target: {value: 'edit new query'} });

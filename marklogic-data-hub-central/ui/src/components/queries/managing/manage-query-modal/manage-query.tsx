@@ -16,7 +16,6 @@ import ExportQueryModal from '../../../query-export/query-export-modal/query-exp
 const QueryModal = (props) => {
 
     const { handleError, resetSessionTime } = useContext(UserContext);
-    const { applyQuery } = useContext(SearchContext);
     const [mainModalVisibility, setMainModalVisibility] = useState(false);
     const [editModalVisibility, setEditModalVisibility] = useState(false);
     const [deleteModalVisibility, setDeleteModalVisibility] = useState(false);
@@ -25,6 +24,9 @@ const QueryModal = (props) => {
 
     const [query, setQuery] = useState({});
     const data = new Array();
+    const {
+        applySaveQuery
+    } = useContext(SearchContext);
 
     useEffect(() => {
         getQueries();
@@ -99,8 +101,8 @@ const QueryModal = (props) => {
     const onApply = (e) => {
         props.queries && props.queries.length > 0 && props.queries.forEach(query => {
             if (e.currentTarget.dataset.id === query['savedQuery']['name']) {
-                applyQuery(query['savedQuery']['query']['searchText'], query['savedQuery']['query']['entityTypeIds'], query['savedQuery']['query']['selectedFacets'])
-                props.setCurrentQueryName(query['savedQuery']['name'])
+                applySaveQuery(query['savedQuery']['query']['searchText'], query['savedQuery']['query']['entityTypeIds'], query['savedQuery']['query']['selectedFacets'], query['savedQuery']['name']);
+                props.setCurrentQueryDescription(query['savedQuery']['description'])
             }
         })
         setMainModalVisibility(false)
@@ -241,6 +243,8 @@ const QueryModal = (props) => {
             <EditQueryDialog
                 currentQueryName={props.currentQueryName}
                 setCurrentQueryName={props.setCurrentQueryName}
+                currentQueryDescription={props.currentQueryDescription}
+                setCurrentQueryDescription={props.setCurrentQueryDescription}
                 query={query}
                 editQuery={editQuery}
                 getQueries={getQueries}

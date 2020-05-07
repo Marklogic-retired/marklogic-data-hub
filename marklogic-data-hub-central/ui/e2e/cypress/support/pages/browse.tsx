@@ -317,6 +317,10 @@ class BrowsePage {
     return cy.get('[data-cy=drop-down-list] .ant-select-selection-selected-value').invoke('text');
   }
 
+  getSelectedQueryDescription(){
+    return cy.get('#selected-query-description').invoke('text');
+  }
+
 }
 
 export default BrowsePage;

@@ -3,12 +3,15 @@ import {Modal, Form, Input, Button} from 'antd';
 import styles from '../save-query-modal/save-query-modal.module.scss';
 import axios from 'axios';
 import {UserContext} from "../../../../util/user-context";
+import {SearchContext} from "../../../../util/search-context";
 
 interface Props {
     setEditQueryDetailVisibility: () => void;
     currentQuery: any;
     currentQueryName: string;
     setCurrentQueryName: (name: string) => void;
+    currentQueryDescription: string;
+    setCurrentQueryDescription: (name: string) => void;
 }
 
 const EditQueryDetails: React.FC<Props> = (props) => {
@@ -17,6 +20,10 @@ const EditQueryDetails: React.FC<Props> = (props) => {
         handleError,
         resetSessionTime
     } = useContext(UserContext);
+
+    const {
+        setSelectedQuery
+    } = useContext(SearchContext);
 
 
     const [queryName, setQueryName] = useState('');
@@ -61,7 +68,8 @@ const EditQueryDetails: React.FC<Props> = (props) => {
         } else {
             isQueryEmpty('error')
         }
-        props.setCurrentQueryName(queryName)
+        setSelectedQuery(queryName);
+        props.setCurrentQueryDescription(queryDescription);
     }
 
 
