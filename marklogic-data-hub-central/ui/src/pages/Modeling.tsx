@@ -43,6 +43,7 @@ const Modeling: React.FC = () => {
         <h1>Entity Types</h1>
         <div className={styles.buttonContainer}>
           <MlButton 
+            type="primary"
             data-testid="add-btn" 
             onClick={()=> toggleShowEntityModal(true)}
           >
@@ -53,7 +54,7 @@ const Modeling: React.FC = () => {
               icon={faSave} 
               size="sm"
             />
-            Apply All
+            Publish All
           </MlButton>
           <MlButton disabled>
             <FontAwesomeIcon 

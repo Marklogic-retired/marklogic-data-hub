@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios'
-import { Modal, Form, Input, Tooltip } from 'antd';
-import { faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Modal, Form, Input, Tooltip, Icon } from 'antd';
 import styles from './entity-type-modal.module.scss'
 
 import { UserContext } from '../../../util/user-context';
@@ -16,7 +14,6 @@ type Props = {
 
 const EntityTypeModal: React.FC<Props> = (props) => {
   const { handleError, resetSessionTime } = useContext(UserContext);
-  // Must start with a letter & only letters, numbers, hyphens, and underscores are allowed
   const NAME_REGEX = new RegExp('^[A-Za-z][A-Za-z0-9_-]*$');
   const layout = {
     labelCol: { span: 6 },
@@ -39,7 +36,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
 
   const handleChange = (event) => {
     if (event.target.id === 'name') {
-      if (event.target.value === '' || !NAME_REGEX.test(event.target.value)) {
+      if (event.target.value === '') {
         toggleIsNameDisabled(true);
       } else {
         toggleIsNameDisabled(false);
@@ -54,7 +51,11 @@ const EntityTypeModal: React.FC<Props> = (props) => {
 
   const onOk = (event) => {
     event.preventDefault();
-    createEntityType(name, description);
+    if (!NAME_REGEX.test(name)) {
+      setErrorMessage('Names must start with a letter, and can contain letters, numbers, hyphens, and underscores.')
+    } else {
+      createEntityType(name, description);
+    }
   };
 
   const createEntityType = async (name: string, description: string) => {
@@ -90,7 +91,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
       onCancel={() => onCancel()} 
       okText="Add"
       onOk={onOk}
-      okButtonProps={{form:'entity-type-form', htmlType: 'submit', disabled: isNameDisabled}}
+      okButtonProps={{ form:'entity-type-form', htmlType: 'submit' }}
       maskClosable={false}
     >
       <Form
@@ -106,20 +107,20 @@ const EntityTypeModal: React.FC<Props> = (props) => {
               </span>}
           colon={false}
           labelAlign="left"
-          hasFeedback
+
           validateStatus={errorMessage ? 'error' : ''}
           help={errorMessage}
         >
           <Input
             id="name"
-            data-testid="name-input"
+            placeholder="Enter name"
             className={styles.input}
             value={name}
             onChange={handleChange}
             onBlur={handleChange}
           />
           <Tooltip title={ModelingTooltips.addEntityName}>
-            <FontAwesomeIcon className={styles.icon}  icon={faQuestionCircle} />
+            <Icon type="question-circle" className={styles.icon} theme="filled" />
           </Tooltip> 
         </Form.Item>
 
@@ -131,14 +132,14 @@ const EntityTypeModal: React.FC<Props> = (props) => {
           >
           <Input
             id="description"
-            data-testid="description-input"
+            placeholder="Enter description"
             className={styles.input}
             value={description}
             onChange={handleChange}
             onBlur={handleChange}
           />
           <Tooltip title={ModelingTooltips.enitityDescription}>
-            <FontAwesomeIcon className={styles.icon} icon={faQuestionCircle} />
+            <Icon type="question-circle" className={styles.icon} theme="filled" />
           </Tooltip>
         </Form.Item>
       </Form>
