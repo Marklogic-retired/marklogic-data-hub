@@ -75,11 +75,6 @@ const ProjectInfo: React.FC = () => {
                                     <p className={styles.alignleftresults}>{env.projectName}</p>
                                 </Col>
                             </Row>
-                            <Row>
-                                <Col span={6}>
-                                    <p className={styles.alignleft}>Project directory:</p>
-                                </Col>
-                            </Row>
                         </Card>
                     </Col>
                     <Col span={12}>
