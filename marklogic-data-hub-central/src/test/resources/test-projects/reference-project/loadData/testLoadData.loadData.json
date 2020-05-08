@@ -1,0 +1,8 @@
+{
+  "name": "testLoadData",
+  "description": "",
+  "sourceFormat": "json",
+  "separator": null,
+  "targetFormat": "json",
+  "outputURIReplacement": ".*/data-sets,'/data'"
+}

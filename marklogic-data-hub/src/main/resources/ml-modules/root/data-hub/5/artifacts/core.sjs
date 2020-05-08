@@ -191,6 +191,9 @@ function setArtifact(artifactType, artifactName, artifact) {
     if (fn.empty(existingArtifact) && artifactLibrary.defaultArtifact) {
         artifact = Object.assign({}, artifactLibrary.defaultArtifact(artifactName), artifact);
     }
+    if (fn.exists(existingArtifact)) {
+        artifact = Object.assign({}, existingArtifact.toObject(), artifact);
+    }
     artifact.lastUpdated = fn.string(fn.currentDateTime());
     dataHub.hubUtils.replaceLangWithLanguage(artifact);
     for (const db of artifactDatabases) {
