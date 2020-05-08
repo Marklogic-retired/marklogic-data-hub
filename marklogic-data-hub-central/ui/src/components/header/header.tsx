@@ -9,7 +9,7 @@ import { faRoute } from '@fortawesome/free-solid-svg-icons'
 import logo from './logo.png';
 import styles from './header.module.scss';
 import { Application } from '../../config/application.config';
-import { MlButton } from 'marklogic-ui-library';
+import { MLButton } from '@marklogic/design-system';
 
 const { SubMenu } = Menu;
 
@@ -33,9 +33,9 @@ const Header:React.FC<Props> = ({ history, location }) => {
   let userMenu = <div className={styles.userMenu}>
     <div className={styles.username}>{localStorage.getItem('dataHubUser')}</div>
     <div className={styles.logout}>
-      <MlButton id="logOut" type="primary" size="default" onClick={handleLogout}>
+      <MLButton id="logOut" type="primary" size="default" onClick={handleLogout}>
         Log Out
-      </MlButton>
+      </MLButton>
     </div>
   </div>;
 

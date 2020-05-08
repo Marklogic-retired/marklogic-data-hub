@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Collapse, Icon, DatePicker, Tooltip } from 'antd';
-import { MlButton } from 'marklogic-ui-library';
 import moment from 'moment';
 import Facet from '../facet/facet';
 import { SearchContext } from '../../util/search-context';
