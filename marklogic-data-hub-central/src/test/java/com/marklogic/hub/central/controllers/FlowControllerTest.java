@@ -2,7 +2,7 @@ package com.marklogic.hub.central.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.marklogic.client.document.GenericDocumentManager;
+import com.marklogic.client.ResourceNotFoundException;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.hub.central.AbstractHubCentralTest;
 import com.marklogic.hub.flow.Flow;
@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -44,7 +45,7 @@ class FlowControllerTest extends AbstractHubCentralTest {
         "\"outputFormat\":\"xml\",\"targetDatabase\":\"data-hub-STAGING\"},\"customHook\":{},\"retryLimit\":0,\"batchSize\":0," +
         "\"threadCount\":0,\"stepDefinitionName\":\"default-ingestion\",\"stepDefinitionType\":\"INGESTION\",\"fileLocations\":" +
         "{\"inputFilePath\":\"input\",\"inputFileType\":" +
-        "\"json\",\"outputURIReplacement\":\".*/input,'/xqyfunc'\",\"separator\":\"\"}}";
+        "\"json\",\"outputURIReplacement\":\".*/data-sets,'/xqyfunc'\",\"separator\":\"\"}}";
 
     @Autowired
     FlowTestController controller;
@@ -146,6 +147,41 @@ class FlowControllerTest extends AbstractHubCentralTest {
                 logger.info("Exception is expected as the flow being fetched has been deleted");
             }
         }
+    }
+
+    @Test
+    void addLoadDataToStepAndRun() {
+        installProjectInFolder("test-projects/reference-project");
+
+        //Equivalent to adding a step from GUI
+        controller.createStep("{\"name\":\"testLoadData\",\"stepDefinitionName\":\"default-ingestion\",\"stepDefinitionType\"" +
+                ":\"INGESTION\",\"options\":{\"loadData\":{\"name\":\"testLoadData\"}}}", "refFlow", 2);
+        try {
+            // add data to load
+            loadDataController.setData("testLoadData", new MockMultipartFile[]{ new MockMultipartFile("file.json", "file.json", null, "{\"isTest\": true}".getBytes())}).getBody();
+            RunFlowResponse resp = controller.runFlow("refFlow", Collections.singletonList("testLoadData-ingestion"));
+
+            assertEquals("refFlow", resp.getFlowName(), "Run flow response has correct flow name");
+            controller.getLastFlowRunner().awaitCompletion();
+
+            JsonNode job = jobsController.getJob(resp.getJobId());
+            String jobStatus = job.get("jobStatus").asText();
+            assertEquals("finished", jobStatus, "Job status should be 'finished' once threads complete; job doc: " + job);
+            JsonNode loadDataDoc = null;
+            try {
+                loadDataDoc = getStagingDoc("/data/testLoadData/file.json");
+            } catch (ResourceNotFoundException e) {
+                Assertions.fail(e);
+            }
+            Assertions.assertNotNull(loadDataDoc, "File should be loaded");
+            JsonNode sources = loadDataDoc.path("envelope").path("headers").path("sources");
+            Assertions.assertFalse(sources.isMissingNode(), "Header should have sources");
+            Assertions.assertEquals("testLoadData", sources.get(0).path("name").asText(), "Unexpected source name");
+        } finally {
+            controller.deleteStep("refFlow", "testLoadData-ingestion");
+            Assertions.assertEquals(0, controller.getSteps("refFlow").size());
+        }
+
     }
 
     @Test
