@@ -41,7 +41,7 @@ declare function load-non-entities($caller-path as xs:string) as xs:string*
   return load-artifacts($key, $caller-path)
 };
 
-declare function load-artifacts(
+declare private function load-artifacts(
   $artifact-type as xs:string,
   $caller-path as xs:string
 ) as xs:string*
@@ -51,15 +51,14 @@ declare function load-artifacts(
   for $uri in get-artifact-uris($artifact-type, $test-data-path)
   let $path := fn:replace($uri, $test-data-path, "")
   let $artifact-uri := "/" || $path
-  return (
-    $artifact-uri,
-    xdmp:document-insert(
-      $artifact-uri,
-      test:get-test-file($path),
-      xdmp:default-permissions(),
-      map:get($TYPE-TO-COLLECTION-MAP, $artifact-type)
-    )
-  )
+  let $content := test:get-test-file($path)
+  let $permissions := xdmp:default-permissions()
+  let $collections := map:get($TYPE-TO-COLLECTION-MAP, $artifact-type)
+  (: TODO Should really use artifact library for this :)
+  let $_ := invoke-in-staging-and-final(function() {
+    xdmp:document-insert($artifact-uri, $content, $permissions, $collections)
+  })
+  return $artifact-uri
 };
 
 declare function get-artifact-uris(
@@ -85,31 +84,15 @@ declare function get-test-data-path($caller-path as xs:string) as xs:string
   )
 };
 
-declare function delete-artifacts($caller-path as xs:string) as xs:string*
-{
-  let $test-data-path := get-test-data-path($caller-path)
-  return map:keys($TYPE-TO-COLLECTION-MAP) ! delete-artifacts(., $test-data-path)
-};
-
-declare function delete-artifacts(
-  $artifact-type as xs:string,
-  $test-data-path as xs:string
-) as xs:string*
-{
-  for $uri in get-artifact-uris($artifact-type, $test-data-path)
-  let $path := fn:replace($uri, $test-data-path, "")
-  let $artifact-uri := "/" || $path
-  where fn:doc-available($artifact-uri)
-  return (
-    $artifact-uri,
-    xdmp:document-delete($artifact-uri)
-  )
-};
-
 (:
-Typically used to make it easy to make assertions against the contents of the jobs database
-after a test is run.
+suite-setup files should call this to ensure that no documents created by previous tests are left.
 :)
+declare function reset-hub() as empty-sequence()
+{
+  reset-staging-and-final-databases(),
+  clear-jobs-database()
+};
+
 declare function clear-jobs-database()
 {
   xdmp:invoke-function(function() {
@@ -117,6 +100,22 @@ declare function clear-jobs-database()
   },
     <options xmlns="xdmp:eval">
       <database>{xdmp:database("data-hub-JOBS")}</database>
+    </options>
+  )
+};
+
+declare function reset-staging-and-final-databases()
+{
+  invoke-in-staging-and-final(function() {
+    cts:uris((), (), cts:not-query(cts:collection-query("hub-core-artifact"))) ! xdmp:document-delete(.)
+  })
+};
+
+declare function invoke-in-staging-and-final($function)
+{
+  ("data-hub-STAGING", "data-hub-FINAL") ! xdmp:invoke-function($function,
+    <options xmlns="xdmp:eval">
+      <database>{xdmp:database(.)}</database>
     </options>
   )
 };
