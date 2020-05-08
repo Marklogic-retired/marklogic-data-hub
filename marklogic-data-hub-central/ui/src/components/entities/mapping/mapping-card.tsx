@@ -290,9 +290,9 @@ const MappingCard: React.FC<Props> = (props) => {
                     if (objWithNmspace === '') {
                         if (key.split(':').length > 1) {
                             let keyArr = key.split(':');
-                            objWithNmspace = nsObj.nmspace + ':' + keyArr[1];
+                            objWithNmspace = nsObj.nmspace ? nsObj.nmspace + ':' + keyArr[1] : keyArr[1];
                         } else {
-                            objWithNmspace = nsObj.nmspace + ':' + key;
+                            objWithNmspace = nsObj.nmspace ? nsObj.nmspace + ':' + key : key;
                         }
                     }
 
@@ -428,15 +428,18 @@ const MappingCard: React.FC<Props> = (props) => {
                 }
 
             } else {
-                let finalKey = getNamespace(key, val, parentNamespace);
-                sourceTableKeyIndex = sourceTableKeyIndex + 1;
-                let propty = {
-                    rowKey: sourceTableKeyIndex,
-                    key: finalKey,
-                    val: ""
-                };
+                if (!/^@xmlns/.test(key)) {
+                    let finalKey = getNamespace(key, val, parentNamespace);
 
-                nestedDoc.push(propty);
+                    sourceTableKeyIndex = sourceTableKeyIndex + 1;
+                    let propty = {
+                        rowKey: sourceTableKeyIndex,
+                        key: finalKey,
+                        val: ""
+                    };
+
+                    nestedDoc.push(propty);
+                }
             }
         });
         return nestedDoc;
@@ -549,6 +552,8 @@ const MappingCard: React.FC<Props> = (props) => {
             setMapIndex(index); 
             let mData = await props.getMappingArtifactByMapName(props.entityModel.entityTypeId,name);
             setSourceURI('');
+            setDocUris([]);
+            setSourceData([]);
             setMapData({...mData})
             await getSourceData(index);
             extractEntityInfoForTable();
