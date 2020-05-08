@@ -8,16 +8,12 @@ import com.marklogic.bootstrap.Installer;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.deploy.commands.CreateGranularPrivilegesCommand;
-import com.marklogic.hub.deploy.commands.LoadHubArtifactsCommand;
 import com.marklogic.junit5.MarkLogicUnitTestArgumentsProvider;
 import com.marklogic.test.unit.TestManager;
 import com.marklogic.test.unit.TestModule;
 import com.marklogic.test.unit.TestResult;
 import com.marklogic.test.unit.TestSuiteResult;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -44,26 +40,34 @@ import java.io.File;
 @TestInstance(Lifecycle.PER_CLASS)
 public class RunMarkLogicUnitTestsTest extends HubTestBase {
 
-    private static boolean loadedHubArtifacts = false;
+    private static boolean databasesHaveBeenReset = false;
     private static boolean initialized = false;
 
     /**
      * Some tests clear out the final database, so we have to ensure that hub artifacts are still present. Only need to
      * do this once though. It does create a need to extend HubTestBase though
      */
-    @BeforeEach
-    public void setup() {
-        if (!loadedHubArtifacts) {
-            resetDatabases();
-            new SimpleAppDeployer(new LoadHubArtifactsCommand(adminHubConfig)).deploy(adminHubConfig.getAppConfig());
-            loadedHubArtifacts = true;
-            runAsDataHubDeveloper();
-        }
-    }
+//    @BeforeEach
+//    public void setup() {
+//        if (!databasesHaveBeenReset) {
+//        }
+//    }
 
     @BeforeAll
-    public void setupIndexes() {
+    public void prepareDatabasesBeforeAnyTestsRun() {
         Installer.applyDatabasePropertiesForTests(adminHubConfig);
+
+        resetDatabases();
+        runAsDataHubDeveloper();
+    }
+
+    /**
+     * Reset the databases after the last test to ensure that whatever the last test was, it doesn't leave anything
+     * behind that could break the next test in the suite.
+     */
+    @AfterAll
+    public void resetDatabasesAfterAllTestsHaveRun() {
+        resetDatabases();
     }
 
     /**
