@@ -224,7 +224,7 @@ const MappingCard: React.FC<Props> = (props) => {
                 }
                 if(parsedDoc['envelope']){
                     if(parsedDoc['envelope'].hasOwnProperty('@xmlns')){
-                        
+
                         let nmspcURI = parsedDoc['envelope']['@xmlns']
                         let indCheck = nmspcURI.lastIndexOf('/');
                         let ind = indCheck !== -1 ? indCheck + 1 : 0;
@@ -260,7 +260,7 @@ const MappingCard: React.FC<Props> = (props) => {
         let {lastUpdated, ...dataPayload} = mapDataLocal;
         dataPayload['namespaces'] = nmspaces;
         await props.updateMappingArtifact(dataPayload);
-        
+
         let mapArt = await props.getMappingArtifactByMapName(dataPayload.targetEntityType,dataPayload.name);
 
         if(mapArt) {
@@ -374,7 +374,7 @@ const MappingCard: React.FC<Props> = (props) => {
 
                     if(val.hasOwnProperty('@xmlns')){
                         parentNamespace = updateParentNamespace(val);
-                        
+
                     }
 
                     let finalKey = getNamespace(key, val, parentNamespace);
@@ -422,7 +422,7 @@ const MappingCard: React.FC<Props> = (props) => {
                             key: finalKey,
                             val: String(val)
                         };
-                        
+
                         nestedDoc.push(propty);
                     }
                 }
@@ -486,15 +486,13 @@ const MappingCard: React.FC<Props> = (props) => {
 
             if (val.hasOwnProperty('subProperties')) {
                 let dataTp = getDatatype(val);
+                parentKey = parentKey ? parentKey + '/' + key : key;
                 EntitYTableKeyIndex = EntitYTableKeyIndex + 1;
                 if(val.$ref || val.items.$ref) {
-                    let ref = val.$ref ? val.$ref : val.items?.$ref;
-                    tgtRefs[key] = ref;
+                    let ref = val.$ref ? val.$ref : val.items.$ref;
+                    tgtRefs[parentKey] = ref;
                 }
-                let tempKey = parentKey;
-                if(parentKey !== key){
-                    parentKey = parentKey ? parentKey + '/' + key : key;
-                }
+
                 let propty = {
                     key: EntitYTableKeyIndex,
                     name: parentKey,
@@ -503,27 +501,18 @@ const MappingCard: React.FC<Props> = (props) => {
                 }
                 nestedEntityData.push(propty);
                 extractNestedEntityData(val.subProperties, propty.children, parentKey);
-
-                if(parentKey !== tempKey){
-                    parentKey = tempKey;
-                }
+                parentKey = (parentKey.indexOf("/")!=-1)?parentKey.substring(0,parentKey.lastIndexOf('/')):''
 
             } else {
                 let dataTp = getDatatype(val);
                 EntitYTableKeyIndex = EntitYTableKeyIndex + 1;
                 let tempKey = parentKey;
-                if(parentKey !== key){
-                    parentKey = parentKey ? parentKey + '/' + key : key;
-                }
                 let propty = {
                     key: EntitYTableKeyIndex,
-                    name: parentKey,
+                    name: parentKey ? parentKey + '/' + key : key,
                     type: dataTp
                 }
                 nestedEntityData.push(propty);
-                if(parentKey !== tempKey){
-                    parentKey = tempKey;
-                }
             }
         });
 
@@ -548,8 +537,8 @@ const MappingCard: React.FC<Props> = (props) => {
     }
 
     const openSourceToEntityMapping = async (name,index) => {
-            mapIndexLocal = index; 
-            setMapIndex(index); 
+            mapIndexLocal = index;
+            setMapIndex(index);
             let mData = await props.getMappingArtifactByMapName(props.entityModel.entityTypeId,name);
             setSourceURI('');
             setDocUris([]);
