@@ -165,7 +165,7 @@ const SourceToEntityMap = (props) => {
 
     //Set the collapse/Expand options for Source table, when mapping opens up.
     const initializeSourceExpandKeys = () => {
-        let initialKeysToExpand:any = []; 
+        let initialKeysToExpand:any = [];
         props.sourceData.map(obj => {
             if (obj.hasOwnProperty('children')) {
                 initialKeysToExpand.push(obj.rowKey);
@@ -260,9 +260,20 @@ const SourceToEntityMap = (props) => {
         }
     }
 
-    const updateSourceContext = (mapExp, entityTable, parentVal = '') =>{
-        entityTable.forEach(element => {
+    /*  The source context is updated when mapping is saved/loaded, this function does a level order traversal of entity
+     json and updates the sourceContext for every entity property */
+
+    const updateSourceContext = (mapExp, entityTable) =>{
+        let queue:any[] = [];
+        entityTable.forEach(element =>{
+            element["parentVal"] = '';
+            queue.push(element);
+        } );
+
+        while(queue.length > 0){
+            let element = queue.shift();
             let name = element.name;
+            let parentVal = element["parentVal"];
             if(element.hasOwnProperty('children')){
                 if(!parentVal){
                     tempSourceContext[name] = "";
@@ -281,8 +292,10 @@ const SourceToEntityMap = (props) => {
                 else {
                     parentVal = "";
                 }
-                updateSourceContext(mapExp,element.children,parentVal );
-                parentVal = '';
+                element.children.forEach(ele => {
+                    ele.parentVal = parentVal;
+                    queue.push(ele)
+                })
             }
             else {
                 if(parentVal){
@@ -292,8 +305,7 @@ const SourceToEntityMap = (props) => {
                     tempSourceContext[name] = '';
                 }
             }
-        })
-
+        }
     }
 
     //Refresh the UI mapExp from the the one saved in the database
@@ -301,25 +313,14 @@ const SourceToEntityMap = (props) => {
         Object.keys(mapExp).map(key => {
           let val = mapExp[key];
           if(val.hasOwnProperty('properties')){
-            let tempKey = parentKey;
-              if(parentKey !== key){
-                 parentKey = parentKey ? parentKey + '/' + key : key;
-              }
+            parentKey = parentKey ? parentKey + '/' + key : key;
             mapExpUI[parentKey] = mapExp[key]['sourcedFrom'];
             initializeMapExpForUI(val.properties,parentKey);
-            if(parentKey !== tempKey){
-                          parentKey = tempKey;
-            }
+            parentKey = (parentKey.indexOf("/")!=-1) ? parentKey.substring(0,parentKey.lastIndexOf('/')):''
           }
           else {
-            let tempKey = parentKey;
-            if(parentKey !== key){
-                parentKey = parentKey ? parentKey + '/' + key : key;
-            }
-              mapExpUI[parentKey] = mapExp[key]['sourcedFrom'];
-            if(parentKey !== tempKey){
-                parentKey = tempKey;
-            }
+            let tempKey = parentKey ? parentKey + '/' + key : key;
+            mapExpUI[tempKey] = mapExp[key]['sourcedFrom'];
           }
         })
     }
@@ -344,13 +345,14 @@ const SourceToEntityMap = (props) => {
         return obj;
     };
 
-    const getTgtEntityTypesInMap = (mapExp) => {
+    const getTgtEntityTypesInMap = (mapExp, parentKey = '') => {
         Object.keys(mapExp).map(key => {
           let val = mapExp[key];
           if(val.constructor.name === 'Object'){
             if(val.hasOwnProperty('properties')){
-              val['targetEntityType'] = props.tgtEntityReferences[key];
-              getTgtEntityTypesInMap(val.properties);
+              let tempKey = parentKey ? parentKey + "/" + key : key;
+              val['targetEntityType'] = props.tgtEntityReferences[tempKey];
+              getTgtEntityTypesInMap(val.properties, tempKey);
             }
           }
         })
@@ -933,7 +935,7 @@ const SourceToEntityMap = (props) => {
     //Collapse all-Expand All button
 
     const getKeysToExpandFromTable = (dataArr,rowKey,allKeysToExpand:any = []) => {
-    
+
         dataArr.map(obj => {
             if (obj.hasOwnProperty('children')) {
                 allKeysToExpand.push(obj[rowKey]);
@@ -966,7 +968,7 @@ const SourceToEntityMap = (props) => {
     }
 
     const toggleRowExpanded = (expanded, record, rowKey) => {
- 
+
         if (rowKey === 'key') {
             if (!entityExpandedKeys.includes(record.key)) {
                 setEntityExpandedKeys(prevState => {
@@ -988,13 +990,13 @@ const SourceToEntityMap = (props) => {
             if (!sourceExpandedKeys.includes(record.rowKey)) {
                 setSourceExpandedKeys(prevState => {
                     let finalKeys = prevState.concat([record['rowKey']])
- 
+
                     if(allSourceKeys.every(item => finalKeys.includes(item))){
                         setExpandedSourceFlag(true);
                     }
                     return finalKeys;
                 });
-                
+
             } else {
                 setSourceExpandedKeys(prevState => {
                     let finalKeys = prevState.filter(item => item !== record['rowKey']);
@@ -1072,7 +1074,7 @@ const SourceToEntityMap = (props) => {
                             </div>
                             :
                             <div id="dataPresent">
-                                
+
                                 <div className={styles.navigationCollapseButtons}><span><Button data-testid="expandCollapseBtn-source" onClick={() => handleExpandCollapse('rowKey')} className={styles.expandCollapseBtn}>{expandedSourceFlag ? 'Collapse All' : 'Expand All'}</Button></span><span>{navigationButtons}</span></div>
                                     <Table
                                         pagination={false}
