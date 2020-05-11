@@ -31,7 +31,6 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
         clearAllGreyFacets,
         searchOptions,
         setSelectedQuery,
-        setAllSearchFacets
     } = useContext(SearchContext);
 
     const savedQueryOptions = props.savedQueryList.map((key) => key.savedQuery.name);
@@ -75,7 +74,6 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
                 if(props.greyFacets.length > 0){
                     clearAllGreyFacets();
                 }
-                setAllSearchFacets(selectedFacets);
                 props.toggleApply(false);
             }
         } catch (error) {
