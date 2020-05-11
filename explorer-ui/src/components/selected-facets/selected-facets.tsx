@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Icon } from 'antd';
-import { MlButton } from 'marklogic-ui-library';
+import { MLButton } from '@marklogic/design-system';
 import { SearchContext } from '../../util/search-context';
 import styles from './selected-facets.module.scss';
 import moment from 'moment';
@@ -11,7 +11,7 @@ interface Props {
 };
 
 const SelectedFacets: React.FC<Props> = (props) => {
-  const { 
+  const {
     clearAllFacets,
     clearFacet,
     searchOptions,
@@ -20,15 +20,15 @@ const SelectedFacets: React.FC<Props> = (props) => {
    } = useContext(SearchContext);
 
   return (
-    <div 
+    <div
       id='selected-facets'
       data-testid='selected-facet-block'
       data-cy='selected-facet-block'
       className={styles.clearContainer}
       style={ Object.entries(searchOptions.searchFacets).length === 0 ? {'visibility': 'hidden'} : {'visibility': 'visible'}}
     >
-      { props.selectedFacets.length > 0 && 
-        <MlButton
+      { props.selectedFacets.length > 0 &&
+        <MLButton
           size="small"
           className={styles.clearAllBtn}
           onClick={()=> clearAllFacets()}
@@ -37,16 +37,16 @@ const SelectedFacets: React.FC<Props> = (props) => {
         >
           <Icon type='close'/>
           Clear All
-        </MlButton>
+        </MLButton>
       }
       { props.selectedFacets.map((item, index) => {
         if (item.constraint === 'createdOnRange') {
           let dateValues:any = [];
           dateValues.push(item.facet.lowerBound,item.facet.upperBound);
           return (
-            <MlButton
+            <MLButton
               size="small"
-              className={styles.dateFacet} 
+              className={styles.dateFacet}
               key={index}
               onClick={()=> clearDateFacet()}
               data-cy='clear-date-facet'
@@ -54,28 +54,28 @@ const SelectedFacets: React.FC<Props> = (props) => {
             >
               <Icon type='close'/>
               { dateValues.join(' ~ ') }
-            </MlButton>
+            </MLButton>
           )
         } else if (item.rangeValues) {
           if (moment(item.rangeValues.lowerBound).isValid() && moment(item.rangeValues.upperBound).isValid()) {
             let dateValues:any = [];
             dateValues.push(item.rangeValues.lowerBound,item.rangeValues.upperBound);
             return (
-              <MlButton
+              <MLButton
                 size="small"
-                className={styles.dateFacet} 
+                className={styles.dateFacet}
                 key={index}
                 onClick={()=> clearRangeFacet(item.constraint)}
               >
                 <Icon type='close'/>
                 {item.constraint + ': ' + item.rangeValues.lowerBound + ' ~ ' + item.rangeValues.upperBound}
-              </MlButton>
+              </MLButton>
             )
           } else {
             return (
-              <MlButton 
+              <MLButton
                 size="small"
-                className={styles.facetButton} 
+                className={styles.facetButton}
                 key={index}
                 onClick={()=> clearRangeFacet(item.constraint)}
                 data-cy='clear-range-facet'
@@ -83,14 +83,14 @@ const SelectedFacets: React.FC<Props> = (props) => {
               >
                 <Icon type='close'/>
                 {item.constraint + ': ' + item.rangeValues.lowerBound + ' - ' + item.rangeValues.upperBound}
-              </MlButton>
+              </MLButton>
             )
           }
         }
         return (
-          <MlButton
+          <MLButton
             size="small"
-            className={styles.facetButton} 
+            className={styles.facetButton}
             key={index}
             onClick={()=> clearFacet(item.constraint, item.facet)}
             data-cy={`clear-${item.facet}`}
@@ -98,7 +98,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
           >
             <Icon type='close'/>
             {item.facet}
-          </MlButton>
+          </MLButton>
         )
       })}
     </div>

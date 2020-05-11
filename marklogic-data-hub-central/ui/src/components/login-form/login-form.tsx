@@ -6,7 +6,7 @@ import { UserContext } from '../../util/user-context';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 
-import { MlButton } from 'marklogic-ui-library';
+import { MLButton } from '@marklogic/design-system';
 
 const LoginForm: React.FC = () => {
 
@@ -121,7 +121,7 @@ const LoginForm: React.FC = () => {
             </a>
           </div> */ }
           <Form.Item className={styles.loginButton}>
-            <MlButton
+            <MLButton
               id="submit"
               type="primary"
               size="default"
@@ -129,7 +129,7 @@ const LoginForm: React.FC = () => {
               htmlType="submit"
             >
               Log In
-            </MlButton>
+            </MLButton>
         </Form.Item>
       </Form>
     </div>

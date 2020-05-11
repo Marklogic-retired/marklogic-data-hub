@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Collapse, Icon, DatePicker, Tooltip } from 'antd';
-import { MlButton } from 'marklogic-ui-library';
+import { MLButton } from '@marklogic/design-system';
 import moment from 'moment';
 import Facet from '../facet/facet';
 import SelectedFacets from '../selected-facets/selected-facets';
@@ -361,11 +361,11 @@ const Sidebar: React.FC<Props> = (props) => {
                     break;
                   }
                   //add date type cases
-  
+
                   default:
                     break;
                 }
-  
+
                 if (step && facet.facetValues.length) {
                   return (
                     <div key={index}>
@@ -383,7 +383,7 @@ const Sidebar: React.FC<Props> = (props) => {
                       />
                     </div>
                   )
-                }                
+                }
               }
             }) :
               <div>No Facets</div>
@@ -401,12 +401,12 @@ const Sidebar: React.FC<Props> = (props) => {
           />
           {showApply && (
             <div className={styles.applyButtonContainer}>
-              <MlButton
+              <MLButton
                 type="primary"
                 size="small"
                 data-cy={"datepicker-apply-button"}
                 onClick={() => applyAllFacets()}
-              >Apply</MlButton>
+              >Apply</MLButton>
             </div>
           )}
           {hubFacets.map(facet => {

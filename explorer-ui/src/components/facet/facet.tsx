@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Checkbox, Icon, Tooltip } from 'antd';
-import { MlButton } from 'marklogic-ui-library';
+import { MLButton } from '@marklogic/design-system';
 import { SearchContext } from '../../util/search-context';
 import styles from './facet.module.scss';
 import { numberConverter } from '../../util/number-conversion';
@@ -52,7 +52,7 @@ const Facet: React.FC<Props> = (props) => {
             if (searchOptions.searchFacets[facet].dataType === 'xs:string') {
               valueType = 'stringValues';
             }
-           
+
             const checkedArray = searchOptions.searchFacets[facet][valueType];
             if (checkedArray && checkedArray.length) {
               // checking if arrays are equivalent
@@ -159,7 +159,7 @@ const Facet: React.FC<Props> = (props) => {
       }
       return props.name;
     }
-    
+
   return (
     <div className={styles.facetContainer} data-cy={stringConverter(props.name) + "-facet-block"}>
       <div className={styles.header}>
@@ -201,12 +201,12 @@ const Facet: React.FC<Props> = (props) => {
       </div>
       {showApply && (
         <div className={styles.applyButtonContainer}>
-          <MlButton
-            type="primary" 
-            size="small" 
+          <MLButton
+            type="primary"
+            size="small"
             data-cy={stringConverter(props.name) +"-facet-apply-button"}
             onClick={()=> props.applyAllFacets()}
-          >Apply</MlButton>
+          >Apply</MLButton>
         </div>
       )}
     </div>

@@ -17,7 +17,7 @@ test('No Selected Facets', () => {
   expect(container).toHaveStyle('visibility: hidden');
 });
 
-test('Selected Facets: String facet selected', () => {
+test.only('Selected Facets: String facet selected', () => {
   const { getByTestId } = render(
     <SelectedFacets
       selectedFacets={[{constraint: 'Collection', facet: 'productMapping'}]}

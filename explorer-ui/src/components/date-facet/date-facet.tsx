@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { DatePicker } from 'antd';
-import { MlButton } from 'marklogic-ui-library';
+import { MLButton } from '@marklogic/design-system';
 import { SearchContext } from '../../util/search-context';
 import styles from './date-facet.module.scss';
 import moment from 'moment';
@@ -53,7 +53,7 @@ const DateFacet: React.FC<Props> = (props) => {
         }
         return props.name;
       }
-      
+
     return (
         <div className={styles.name} >
             <p className={styles.name}>{formatTitle()}</p>
@@ -65,11 +65,11 @@ const DateFacet: React.FC<Props> = (props) => {
             />
             {showApply && (
                 <div className={styles.applyButtonContainer}>
-                    <MlButton
+                    <MLButton
                         type="primary"
                         size="small"
                         onClick={() => props.applyAllFacets()}
-                    >Apply</MlButton>
+                    >Apply</MLButton>
                 </div>
             )}
         </div>

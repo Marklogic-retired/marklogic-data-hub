@@ -2,7 +2,7 @@ import React, { useState, CSSProperties } from 'react';
 import { Collapse, Spin, Icon, Card, Tooltip, Modal } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
-import { MlButton } from 'marklogic-ui-library';
+import { MLButton } from '@marklogic/design-system';
 import NewFlowDialog from './new-flow-dialog/new-flow-dialog';
 import sourceFormatOptions from '../../config/formats.config';
 import styles from './flows.module.scss';
@@ -105,7 +105,7 @@ const Flows: React.FC<Props> = (props) => {
     const onCancel = () => {
         setDialogVisible(false);
         setStepDialogVisible(false);
-    }  
+    }
 
     const deleteConfirmation = (
         <Modal
@@ -140,25 +140,25 @@ const Flows: React.FC<Props> = (props) => {
             {props.canWriteFlow ?
                 <Tooltip title={'Delete Flow'} placement="bottom">
                     <i aria-label={'deleteFlow-' + i}>
-                        <FontAwesomeIcon 
-                            icon={faTrashAlt} 
+                        <FontAwesomeIcon
+                            icon={faTrashAlt}
                             onClick={event => {
                                 event.stopPropagation(); // Do not trigger collapse
                                 handleFlowDelete(name);
                             }}
-                            className={styles.deleteIcon} 
+                            className={styles.deleteIcon}
                             size="lg"/>
                     </i>
                 </Tooltip> :
                 <Tooltip title={'Delete'} placement="bottom">
                     <i aria-label={'deleteStep-' + i}>
-                        <FontAwesomeIcon 
-                            icon={faTrashAlt} 
-                            onClick={(event) => { 
-                                event.stopPropagation(); 
-                                event.preventDefault(); 
+                        <FontAwesomeIcon
+                            icon={faTrashAlt}
+                            onClick={(event) => {
+                                event.stopPropagation();
+                                event.preventDefault();
                             }}
-                            className={styles.disabledDeleteIcon} 
+                            className={styles.disabledDeleteIcon}
                             size="lg"/>
                     </i>
                 </Tooltip> }
@@ -178,7 +178,7 @@ const Flows: React.FC<Props> = (props) => {
         setTitle('Edit Flow');
         setFlowData(prevState => ({ ...prevState, ...props.flows[index]}));
         setNewFlow(true);
-    }  
+    }
 
     const StepDefToTitle = (stepDef) => {
         return (StepDefinitionTypeTitles[stepDef]) ? StepDefinitionTypeTitles[stepDef] : 'Unknown';
@@ -199,23 +199,23 @@ const Flows: React.FC<Props> = (props) => {
                 // TODO Handle steps that don't have input formats
                 let stepFormat = (step.stepDefinitionType === 'INGESTION') ? getSourceFormat(step.name) : null;
                 return (
-                    <Card 
-                        style={{ width: 300, marginRight: 20 }} 
-                        title={StepDefToTitle(step.stepDefinitionType)} 
+                    <Card
+                        style={{ width: 300, marginRight: 20 }}
+                        title={StepDefToTitle(step.stepDefinitionType)}
                         size="small"
                         extra={
                             <div className={styles.actions}>
-                                {props.hasOperatorRole ?            
-                                    <div 
-                                        className={styles.run} 
+                                {props.hasOperatorRole ?
+                                    <div
+                                        className={styles.run}
                                         onClick={() => props.runStep(name, step.name + '-' + step.stepDefinitionType, step.name, StepDefToTitle(step.stepDefinitionType))}
                                         aria-label={'runStep-' + i}
                                     >
                                         <Icon type="play-circle" theme="filled" />
                                     </div>
                                      :
-                                    <div 
-                                        className={styles.disabledRun} 
+                                    <div
+                                        className={styles.disabledRun}
                                         onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}
                                         aria-label={'runStepDisabled-' + i}
                                     >
@@ -228,7 +228,7 @@ const Flows: React.FC<Props> = (props) => {
                                     </Tooltip> :
                                     <Tooltip title={'Delete Step'} placement="bottom">
                                         <div className={styles.disabledDelete} aria-label={'deleteStepDisabled-' + i} onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}><Icon type="close" /></div>
-                                    </Tooltip> 
+                                    </Tooltip>
                                 }
                             </div>
                         }
@@ -261,21 +261,21 @@ const Flows: React.FC<Props> = (props) => {
         {props.canReadFlow || props.canWriteFlow ?
             <>
                 <div className={styles.createContainer}>
-                    <MlButton 
+                    <MLButton
                         className={styles.createButton} size="default"
-                        type="primary" onClick={OpenAddNewDialog} 
+                        type="primary" onClick={OpenAddNewDialog}
                         disabled={!props.canWriteFlow}
-                    >Create Flow</MlButton>
+                    >Create Flow</MLButton>
                 </div>
-                <Collapse 
+                <Collapse
                     className={styles.collapseFlows}
                 >
                     {panels}
                 </Collapse>
-                <NewFlowDialog 
-                    newFlow={newFlow} 
-                    title={title} 
-                    setNewFlow={setNewFlow} 
+                <NewFlowDialog
+                    newFlow={newFlow}
+                    title={title}
+                    setNewFlow={setNewFlow}
                     createFlow={props.createFlow}
                     updateFlow={props.updateFlow}
                     flowData={flowData}
@@ -284,7 +284,7 @@ const Flows: React.FC<Props> = (props) => {
                 {deleteConfirmation}
                 {deleteStepConfirmation}
             </> :
-            <div></div> 
+            <div></div>
         }
     </div>
    );

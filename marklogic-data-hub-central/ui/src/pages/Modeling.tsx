@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { faSave, faUndo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { MlButton } from 'marklogic-ui-library';
+import { MLButton } from '@marklogic/design-system';
 
 import EntityTypeModal from '../components/modeling/entity-type-modal/entity-type-modal';
 import EntityTypeTable from '../components/modeling/entity-type-table/entity-type-table';
@@ -42,32 +42,32 @@ const Modeling: React.FC = () => {
       <div className={styles.header}>
         <h1>Entity Types</h1>
         <div className={styles.buttonContainer}>
-          <MlButton 
+          <MLButton
             type="primary"
-            data-testid="add-btn" 
+            data-testid="add-btn"
             onClick={()=> toggleShowEntityModal(true)}
           >
-            Add</MlButton>
-          <MlButton disabled>
-            <FontAwesomeIcon 
-              className={styles.icon} 
-              icon={faSave} 
+            Add</MLButton>
+          <MLButton disabled>
+            <FontAwesomeIcon
+              className={styles.icon}
+              icon={faSave}
               size="sm"
             />
             Publish All
-          </MlButton>
-          <MlButton disabled>
-            <FontAwesomeIcon 
-              className={styles.icon} 
-              icon={faUndo} 
+          </MLButton>
+          <MLButton disabled>
+            <FontAwesomeIcon
+              className={styles.icon}
+              icon={faUndo}
               size="sm"
             />
             Revert All
-          </MlButton>
+          </MLButton>
         </div>
       </div>
-      <EntityTypeModal 
-        isVisible={showEntityModal} 
+      <EntityTypeModal
+        isVisible={showEntityModal}
         toggleModal={toggleShowEntityModal}
         newEntityAdded={newEntityAdded}
       />
@@ -76,4 +76,4 @@ const Modeling: React.FC = () => {
   );
 }
 
-export default Modeling; 
+export default Modeling;

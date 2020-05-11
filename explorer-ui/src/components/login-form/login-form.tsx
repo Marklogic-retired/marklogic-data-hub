@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { Form, Icon, Input, Typography, Spin } from 'antd';
-import { MlButton } from 'marklogic-ui-library';
+import { MLButton } from '@marklogic/design-system';
 import axios from 'axios';
 import styles from './login-form.module.scss';
 import { UserContext } from '../../util/user-context';
@@ -17,7 +17,7 @@ const LoginForm: React.FC = () => {
   const [errorResponse, setErrorResponse] = useState('');
   const [isUsernameTouched, setUsernameTouched] = useState(false);
   const [isPasswordTouched, setPasswordTouched] = useState(false);
-  
+
   const handleSubmit = async (event) => {
     if (event) event.preventDefault();
     try {
@@ -33,7 +33,7 @@ const LoginForm: React.FC = () => {
         setErrorResponse('');
         setIsLoading(false);
         loginAuthenticated(username, sessionTime);
-      } 
+      }
     } catch (error) {
       let message = error.response.data.message === 'Unauthorized' ? error.response.data.message : 'Internal Server Error';
       console.log('LOGIN ERROR', error.response);
@@ -68,8 +68,8 @@ const LoginForm: React.FC = () => {
 
   return (
     <Form onSubmit={handleSubmit} className={styles.login} data-cy='login'>
-      <Form.Item 
-        hasFeedback 
+      <Form.Item
+        hasFeedback
         validateStatus={(username || !isUsernameTouched) ? '' : 'error'}
         help={(username || !isUsernameTouched) ? '' : 'Please input your username!'}>
         <Input
@@ -81,8 +81,8 @@ const LoginForm: React.FC = () => {
           onChange={handleChange}
         />
       </Form.Item>
-      <Form.Item 
-        hasFeedback 
+      <Form.Item
+        hasFeedback
         validateStatus={(password || !isPasswordTouched) ? '' : 'error'}
         help={(password || !isPasswordTouched) ? '' : 'Please input your password!'}>
         <Input
@@ -99,9 +99,9 @@ const LoginForm: React.FC = () => {
         <a className={styles.forgot} href="" data-cy="forgot">
           Forgot password?
         </a>
-        <MlButton id="submit" type="primary" disabled={isLoading} htmlType="submit" className={styles.loginButton}>
+        <MLButton id="submit" type="primary" disabled={isLoading} htmlType="submit" className={styles.loginButton}>
           Submit
-        </MlButton>
+        </MLButton>
         {isLoading && <Spin  style={{ marginLeft: '7px' }} />}
         <Text type="danger" data-cy="invalid-credentials">{errorResponse}</Text>
       </Form.Item>
