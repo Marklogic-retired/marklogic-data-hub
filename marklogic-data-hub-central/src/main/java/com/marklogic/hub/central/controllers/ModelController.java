@@ -55,7 +55,8 @@ public class ModelController extends BaseController {
     @ResponseBody
     @ApiOperation(value = "Get primary entity types; does not include entity definitions that are considered 'structured' types", response = PrimaryEntityTypeList.class)
     public ResponseEntity<JsonNode> getPrimaryEntityTypes() {
-        return ResponseEntity.ok(newService().getPrimaryEntityTypes());
+        // This must use the final client instead of staging so that the entityInstanceCount is derived from final
+        return ResponseEntity.ok(ModelsService.on(getHubClient().getFinalClient()).getPrimaryEntityTypes());
     }
 
     @RequestMapping(method = RequestMethod.POST)

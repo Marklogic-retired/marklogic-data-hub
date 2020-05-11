@@ -8,15 +8,16 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.central.AbstractHubCentralTest;
 import com.marklogic.hub.central.controllers.ModelController;
+import com.marklogic.hub.test.Customer;
+import com.marklogic.hub.test.ReferenceModelProject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ModelControllerTest extends AbstractHubCentralTest {
 
-    private final static String MODEL_NAME = "UiTestEntity";
+    private final static String MODEL_NAME = "Customer";
 
     @Autowired
     ModelController controller;
@@ -37,9 +38,17 @@ public class ModelControllerTest extends AbstractHubCentralTest {
         JsonNode model = controller.createModel(input).getBody();
         assertEquals(MODEL_NAME, model.get("info").get("title").asText());
 
+        // Create a customer in final so we have a way to verify the entity instance count
+        new ReferenceModelProject(getHubClient()).createCustomerInstance(new Customer(1, "Jane"));
         ArrayNode entityTypes = (ArrayNode) controller.getPrimaryEntityTypes().getBody();
         assertEquals(1, entityTypes.size(), "A new model should have been created " +
             "and thus there should be one primary entity type");
+
+        JsonNode customerType = entityTypes.get(0);
+        assertEquals("Customer", customerType.get("entityName").asText());
+        assertEquals(1, customerType.get("entityInstanceCount").asInt(),
+            "Should have a count of one because there's one document in the 'Customer' collection");
+
     }
 
     private void updateModelInfo() {

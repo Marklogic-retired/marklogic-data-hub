@@ -6,6 +6,14 @@ public class Customer {
     int customerNumber;
     String customerSince;
 
+    public Customer(int customerId, String name) {
+        this.customerId = customerId;
+        this.name = name;
+    }
+
+    public Customer() {
+    }
+
     public int getCustomerId() {
         return customerId;
     }
