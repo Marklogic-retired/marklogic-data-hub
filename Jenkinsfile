@@ -444,6 +444,7 @@ pipeline{
 			steps{
 			 script{
                 props = readProperties file:'data-hub/pipeline.properties';
+                build job: 'DatahubService/Run-Tests-dhs', propagate: false, wait: false
 				copyRPM 'Release','9.0-12'
 				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
 				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test -Dorg.gradle.jvmargs=-Xmx1g -i --stacktrace;sleep 10s;./gradlew ml-data-hub:test -i --stacktrace;sleep 10s;./gradlew web:test -i --stacktrace;sleep 10s;./gradlew marklogic-data-hub-central:test -i --stacktrace |& tee console.log;sleep 10s;./gradlew marklogic-data-hub:testBootstrap -i --stacktrace;sleep 10s;./gradlew ml-data-hub:testFullCycle -i --stacktrace;sleep 10s;'
