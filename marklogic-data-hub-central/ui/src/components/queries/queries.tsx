@@ -4,7 +4,7 @@ import { UserContext } from '../../util/user-context';
 import { SearchContext } from '../../util/search-context';
 import SelectedFacets from '../../components/selected-facets/selected-facets';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPencilAlt, faSave, faCopy } from '@fortawesome/free-solid-svg-icons'
+import {faPencilAlt, faSave, faCopy, faUndo} from '@fortawesome/free-solid-svg-icons'
 import SaveQueryModal from "../../components/queries/saving/save-query-modal/save-query-modal";
 import SaveQueriesDropdown from "../../components/queries/saving/save-queries-dropdown/save-queries-dropdown";
 import { fetchQueries, creatNewQuery, updateQuery } from '../../api/queries'
@@ -13,6 +13,7 @@ import QueryModal from '../../components/queries/managing/manage-query-modal/man
 import { AuthoritiesContext } from "../../util/authorities";
 import EditQueryDetails from "./saving/edit-save-query/edit-query-details";
 import SaveChangesModal from "./saving/edit-save-query/save-changes-modal";
+import DiscardChangesModal from "./saving/discard-changes/discard-changes-modal";
 
 
 const Query = (props) => {
@@ -35,7 +36,9 @@ const Query = (props) => {
     const [showSaveNewIcon, toggleSaveNewIcon] = useState(true);
     const [showSaveChangesIcon, toggleSaveChangesIcon] = useState(false);
     const [openSaveChangesModal, setOpenSaveChangesModal] = useState(false);
-    const [openSaveCopyModal, setOpenSaveCopyModal] = useState(false);
+    const [showDiscardIcon, toggleDiscardIcon] = useState(false);
+    const [openSaveCopyModal, setOpenSaveCopyModal]= useState(false);
+    const [openDiscardChangesModal, setOpenDiscardChangesModal]= useState(false);
     const [currentQueryName, setCurrentQueryName] = useState(searchOptions.selectedQuery);
 
     const authorityService = useContext(AuthoritiesContext);
@@ -105,8 +108,9 @@ const Query = (props) => {
     useEffect(() => {
         if (!showSaveNewIcon) {
             toggleSaveChangesIcon(true);
+            toggleDiscardIcon(true);
         }
-    }, [props.greyFacets, searchOptions.selectedFacets])
+    }, [props.greyFacets, searchOptions.selectedFacets,searchOptions.query])
 
     return (
         <div>
@@ -173,61 +177,88 @@ const Query = (props) => {
                                 />}
                         </div>
                     </div>}
+                {showDiscardIcon && queries.length > 0 &&
+                <div style={{ marginTop: '-30px', maxWidth:'100px' }}>
+                    <Tooltip title={'Discard changes'}>
+                        <FontAwesomeIcon
+                            icon={faUndo}
+                            onClick={() => setOpenDiscardChangesModal(true)}
+                            style={queries.length > 0 ? {
+                                color: '#5b69af',
+                                marginLeft: '192px',
+                                marginBottom: '9px'
+                            } : {
+                                color: '#5b69af', marginLeft: '192px',
+                                marginBottom: '9px'
+                            }}
+                            size="lg" />
+                    </Tooltip>
+                    <div>
+                        {openDiscardChangesModal &&
+                        <DiscardChangesModal
+                            currentQueryName={currentQueryName}
+                            setDiscardChangesModalVisibility={() => setOpenDiscardChangesModal(false)}
+                            savedQueryList={queries}
+                            toggleApply={(clicked) => toggleApply(clicked)}
+                            toggleApplyClicked={(clicked) => toggleApplyClicked(clicked)}
+                        />}
+                    </div>
+                </div>}
                 <div className={styles.saveDropdown}>
                     {queries.length > 0 &&
-                        <SaveQueriesDropdown
-                            savedQueryList={queries}
-                            setSaveNewIconVisibility={(visibility) => toggleSaveNewIcon(visibility)}
-                            greyFacets={props.greyFacets}
-                            toggleApply={(clicked) => toggleApply(clicked)}
-                            currentQueryName={currentQueryName}
-                            setCurrentQueryName={setCurrentQueryName}
-                            setCurrentQueryFn={(query) => setCurrentQuery(query)}
-                            currentQuery={currentQuery}
-                        />
+                    <SaveQueriesDropdown
+                        savedQueryList={queries}
+                        setSaveNewIconVisibility={(visibility) =>  toggleSaveNewIcon(visibility)}
+                        greyFacets={props.greyFacets}
+                        toggleApply={(clicked) => toggleApply(clicked)}
+                        currentQueryName={currentQueryName}
+                        setCurrentQueryName={setCurrentQueryName}
+                        setCurrentQueryFn={(query)=> setCurrentQuery(query)}
+                        currentQuery={currentQuery}
+                    />
                     }
                 </div>
             </div>
-            {queries.length > 0 && <div style={hoverOverDropdown ? { marginLeft: '192px', marginTop: '-66px' } : { marginLeft: '192px' }}>
+            {queries.length > 0 && <div style={hoverOverDropdown ? {marginLeft:'214px', marginTop: '-66px'}: {marginLeft:'214px'}}>
                 <Tooltip title={'Edit query details'}>
                     {hoverOverDropdown && <FontAwesomeIcon
                         icon={faPencilAlt}
                         size="lg"
-                        onClick={() => setOpenEditDetail(true)}
-                        style={{ width: '16px', color: '#5b69af' }}
+                        onClick={()=>setOpenEditDetail(true)}
+                        style={{width: '16px',color: '#5b69af'}}
                     />}
                 </Tooltip>
                 {openEditDetail &&
-                    <EditQueryDetails
-                        setEditQueryDetailVisibility={() => setOpenEditDetail(false)}
-                        currentQuery={currentQuery}
-                        currentQueryName={currentQueryName}
-                        setCurrentQueryName={setCurrentQueryName}
-                    />
+                <EditQueryDetails
+                    setEditQueryDetailVisibility={() => setOpenEditDetail(false)}
+                    currentQuery={currentQuery}
+                    currentQueryName={currentQueryName}
+                    setCurrentQueryName={setCurrentQueryName}
+                />
                 }
             </div>}
-            {queries.length > 0 &&
-                <div style={{ marginLeft: '214px', marginTop: '-23px' }}>
-                    <Tooltip title={'Save a copy'}>
-                        {hoverOverDropdown && <FontAwesomeIcon
-                            icon={faCopy}
-                            size="lg"
-                            onClick={() => setOpenSaveCopyModal(true)}
-                            style={{ width: '15px', color: '#5b69af' }}
-                        />}
-                    </Tooltip>
-                    {openSaveCopyModal &&
-                        <SaveQueryModal
-                            setSaveModalVisibility={() => setOpenSaveCopyModal(false)}
-                            setSaveNewIconVisibility={(visibility) => toggleSaveNewIcon(visibility)}
-                            saveNewQuery={saveNewQuery}
-                            greyFacets={props.greyFacets}
-                            toggleApply={(clicked) => toggleApply(clicked)}
-                            toggleApplyClicked={(clicked) => toggleApplyClicked(clicked)}
-                            currentQueryName={currentQueryName}
-                            setCurrentQueryName={setCurrentQueryName}
-                        />}
-                </div>}
+            { queries.length > 0 &&
+            <div style={{marginLeft:'234px', marginTop: '-23px'}}>
+                <Tooltip title={'Save a copy'}>
+                    {hoverOverDropdown && <FontAwesomeIcon
+                        icon={faCopy}
+                        size="lg"
+                        onClick={()=>setOpenSaveCopyModal(true)}
+                        style={{width: '15px',color: '#5b69af'}}
+                    />}
+                </Tooltip>
+                {openSaveCopyModal &&
+                <SaveQueryModal
+                    setSaveModalVisibility={() => setOpenSaveCopyModal(false)}
+                    setSaveNewIconVisibility={(visibility) =>  toggleSaveNewIcon(visibility)}
+                    saveNewQuery={saveNewQuery}
+                    greyFacets={props.greyFacets}
+                    toggleApply={(clicked) => toggleApply(clicked)}
+                    toggleApplyClicked={(clicked) => toggleApplyClicked(clicked)}
+                    currentQueryName={currentQueryName}
+                    setCurrentQueryName={setCurrentQueryName}
+                />}
+            </div>}
             <div className={styles.selectedFacets}>
                 <SelectedFacets
                     selectedFacets={props.selectedFacets}
@@ -241,13 +272,15 @@ const Query = (props) => {
 
             <QueryModal
                 canExportQuery={canExportQuery}
-                columns={props.columns}
                 queries={queries}
                 setQueries={setQueries}
+                columns={props.columns}
                 toggleApply={toggleApply}
                 currentQueryName={currentQueryName}
-                setCurrentQueryName={setCurrentQueryName} />
+                setCurrentQueryName={setCurrentQueryName}
+            />
         </div>
     )
+
 }
 export default Query;

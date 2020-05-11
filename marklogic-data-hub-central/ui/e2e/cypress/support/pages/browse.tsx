@@ -294,6 +294,19 @@ class BrowsePage {
       return cy.get('#edit-save-changes-button')
   }
 
+  getDiscardChangesIcon(){
+      return cy.get('svg[data-icon="undo"]')
+  }
+
+  getDiscardYesButton(){
+     return cy.get('#discard-yes-button');
+  }
+
+  getDiscardNoButton(){
+     return cy.get('#discard-no-button');
+  }
+
+
     //temp query icon
   getManageQueriesIcon(){
     return cy.get('[data-testid=manage-queries-modal-icon]');

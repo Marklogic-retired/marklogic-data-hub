@@ -65,6 +65,35 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getAppliedFacets('Adams').should('exist');
     });
 
+    it('Edit saved query and verify discard changes functionality', () => {
+        browsePage.selectEntity('PersonXML');
+        browsePage.getSelectedEntity().should('contain', 'PersonXML');
+        cy.wait(500);
+        browsePage.getFacetItemCheckbox('fname', 'Alex').click();
+        browsePage.getSelectedFacets().should('exist');
+        browsePage.getGreySelectedFacets('Alex').should('exist');
+        browsePage.getFacetApplyButton().click();
+        browsePage.getSaveModalIcon().click();
+        cy.wait(500);
+        browsePage.getSaveQueryName().type('person-query');
+        browsePage.getSaveQueryDescription().type('person-query description');
+        browsePage.getSaveQueryButton().click();
+        cy.wait(500);
+        browsePage.getSelectedQuery().should('contain', 'person-query');
+        browsePage.getFacetItemCheckbox('lname', 'Hopkins').click();
+        browsePage.getGreySelectedFacets('Hopkins').should('exist');
+        browsePage.getDiscardChangesIcon().click();
+        browsePage.getDiscardYesButton().click();
+        browsePage.getAppliedFacets('Alex').should('exist');
+        browsePage.getFacetItemCheckbox('lname', 'Hopkins').click();
+        browsePage.getGreySelectedFacets('Hopkins').should('exist');
+        browsePage.getDiscardChangesIcon().click();
+        browsePage.getDiscardNoButton().click();
+        browsePage.getGreySelectedFacets('Hopkins').should('exist');
+    });
+
+
+
     it('open manage queries, edit query', () => {
         browsePage.getManageQueriesIcon().click();
         queryComponent.getManageQueryModal().should('be.visible');
