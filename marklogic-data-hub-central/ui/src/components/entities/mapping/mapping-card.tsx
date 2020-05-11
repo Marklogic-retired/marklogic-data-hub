@@ -315,7 +315,7 @@ const MappingCard: React.FC<Props> = (props) => {
         let ind = indCheck !== -1 ? indCheck + 1 : 0;
         let obj: any = {};
         let nmspace = val[el].slice(ind);
-        if (!nmspaces.hasOwnProperty(nmspace)) {
+        if (nmspace && !nmspaces.hasOwnProperty(nmspace)) {
             obj[nmspace] = val[el];
         }
         let colonIndex = el.indexOf(':');
