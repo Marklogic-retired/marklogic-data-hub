@@ -44,88 +44,174 @@ describe('RTL Source-to-entity map tests', () => {
         expect(getByText("concat(name,'-NEW')")).toBeInTheDocument();
     });
 
-    test('Filtering Name column in Source and Entity tables',() => {
+    test('Filtering Name column in Source (JSON Source Data) and Entity tables', () => {
 
-      const { getByText,getByTestId,queryByText } = render(<SourceToEntityMap {...data.mapProps}
-        mappingVisible={true}
+        const { getByText, getByTestId, queryByText } = render(<SourceToEntityMap {...data.mapProps}
+            mappingVisible={true}
+            sourceData={data.jsonSourceDataMultipleSiblings}
+            entityTypeProperties={data.entityTypePropertiesMultipleSiblings}
+        />);
+        
+        //For Source table testing
+        let sourcefilterIcon = getByTestId('filterIcon-key');
+        let inputSearchSource = getByTestId('searchInput-key');
+        let resetSourceSearch = getByTestId('ResetSearch-key');
+
+        //For Entity table testing
+        let entityfilterIcon = getByTestId('filterIcon-name');
+        let inputSearchEntity = getByTestId('searchInput-name');
+        let resetEntitySearch = getByTestId('ResetSearch-name');
+
+        /* Test filter for JSON Source data in Source table  */
+        fireEvent.click(sourcefilterIcon);
+        
+        fireEvent.change(inputSearchSource, { target: { value: "first" } }); //Enter a case-insensitive value in inputSearch field
+        expect(inputSearchSource).toHaveValue('first');
+        fireEvent.click(getByTestId('submitSearch-key')); //Click on Search button to apply the filter with the desired string
+
+        //Check if the expected values are available/not available in search result.
+        expect(getByText('nutFreeName')).toBeInTheDocument();
+        expect(getByText('NamePreferred')).toBeInTheDocument();
+        expect(getByText('John')).toBeInTheDocument();
+        expect(queryByText('proteinId')).not.toBeInTheDocument();
+        expect(queryByText('proteinType')).not.toBeInTheDocument();
+        expect(queryByText('withNutsOrganism')).not.toBeInTheDocument();
+        expect(queryByText('OrganismName')).not.toBeInTheDocument();
+        expect(queryByText('Frog virus 3')).not.toBeInTheDocument();
+        expect(queryByText('OrganismType')).not.toBeInTheDocument();
+        expect(queryByText('scientific')).not.toBeInTheDocument();
+
+        //Check if the entity properties are not affected by the filter on source table
+        expect(getByText('propId')).toBeInTheDocument();
+        expect(getByText('propName')).toBeInTheDocument();
+        expect(queryByText('artCraft')).not.toBeInTheDocument();
+        expect(queryByText('automobile')).not.toBeInTheDocument();
+        expect(queryByText('speedometer')).not.toBeInTheDocument();
+        expect(queryByText('windscreen')).not.toBeInTheDocument();
+
+        //Reset the search filter on Source table
+        fireEvent.click(sourcefilterIcon);
+        fireEvent.click(resetSourceSearch);
+
+        //Check if the table goes back to the default state after resetting the filter on source table.
+        expect(getByText('proteinId')).toBeInTheDocument();
+        expect(getByText('proteinType')).toBeInTheDocument();
+        expect(getByText('withNutsOrganism')).toBeInTheDocument();
+        expect(getByText('OrganismName')).toBeInTheDocument();
+        expect(getByText('Frog virus 3')).toBeInTheDocument();
+        expect(getByText('OrganismType')).toBeInTheDocument();
+        expect(getByText('scientific')).toBeInTheDocument();
+        expect(getByText('nutFreeName')).toBeInTheDocument();
+        expect(getByText('FirstNamePreferred')).toBeInTheDocument();
+        expect(getByText('John')).toBeInTheDocument();
+        expect(queryByText('suffix')).not.toBeInTheDocument(); //This is not visible since only root and first level are expanded in the default state
+
+        /* Test filter on Entity table  */
+
+        //Updating expression for few fields to be validated later
+        let exp = getByText('testNameInExp');
+        fireEvent.change(exp, { target: { value: "concat(propName,'-NEW')" } });
+        fireEvent.blur(exp);
+        expect(getByText("concat(propName,'-NEW')")).toBeInTheDocument();
+
+        //Moving along with the filter test
+        fireEvent.click(entityfilterIcon);
+
+        fireEvent.change(inputSearchEntity, { target: { value: "craft" } }); //Enter a case-insensitive value in inputEntitySearch field
+        expect(inputSearchEntity).toHaveValue('craft');
+        fireEvent.click(getByTestId('submitSearch-name')); //Click on Search button to apply the filter with the desired string
+
+        //Check if the expected values are available/not available in search result.
+        expect(getByText('items')).toBeInTheDocument();
+        expect(getByText('itemTypes')).toBeInTheDocument();
+        expect(getByText('itemCategory')).toBeInTheDocument();
+        expect(getByText('Craft')).toBeInTheDocument();
+        expect(queryByText('propId')).not.toBeInTheDocument();
+        expect(queryByText('propName')).not.toBeInTheDocument();
+        //productCategory should be visible and collapsed
+        expect(getByText('productCategory')).toBeInTheDocument();
+        expect(queryByText('speedometer')).not.toBeInTheDocument();
+        expect(queryByText('windscreen')).not.toBeInTheDocument();
+
+        //Check if the source table properties are not affected by the filter on Entity table
+        expect(getByText('proteinId')).toBeInTheDocument();
+        expect(getByText('proteinType')).toBeInTheDocument();
+        expect(getByText('nutFreeName')).toBeInTheDocument();
+        expect(getByText('FirstNamePreferred')).toBeInTheDocument();
+        expect(getByText('LastName')).toBeInTheDocument();
+        expect(getByText('withNutsOrganism')).toBeInTheDocument();
+        expect(getByText('OrganismName')).toBeInTheDocument();
+        expect(getByText('Frog virus 3')).toBeInTheDocument();
+        expect(getByText('OrganismType')).toBeInTheDocument();
+        expect(getByText('scientific')).toBeInTheDocument();
+        expect(getByText('FirstNamePreferred')).toBeInTheDocument();
+        expect(getByText('John')).toBeInTheDocument();
+        expect(queryByText('suffix')).not.toBeInTheDocument();
+
+        //Reset the search filter on Entity table
+        fireEvent.click(entityfilterIcon);
+        fireEvent.click(resetEntitySearch);
+
+        //Check if the table goes back to the default state after resetting the filter on Entity table.
+        expect(getByText('propId')).toBeInTheDocument();
+        expect(getByText('propName')).toBeInTheDocument();
+        expect(getByText('itemTypes')).toBeInTheDocument();
+        expect(getByText('itemCategory')).toBeInTheDocument();
+        expect(onClosestTableRow(getByText('artCraft'))?.style.display).toBe('none');
+        expect(onClosestTableRow(getByText('automobile'))?.style.display).toBe('none');
+        expect(getByText('productCategory')).toBeInTheDocument();
+        expect(queryByText('speedometer')).not.toBeInTheDocument();
+        expect(queryByText('windscreen')).not.toBeInTheDocument();
+    });
+
+    test('Filtering of Name column in XML Source data', () => {
+
+        const { getByText, getByTestId, queryByText } = render(<SourceToEntityMap {...data.mapProps}
+            mappingVisible={true}
+            sourceData={data.xmlSourceDataMultipleSiblings}
+            entityTypeProperties={data.entityTypePropertiesMultipleSiblings}
         />);
 
-      //Expanding all the nested levels first to apply filter later
-      fireEvent.click(getByTestId('expandCollapseBtn-source'));
-      fireEvent.click(getByTestId('expandCollapseBtn-entity'));
+        /* Test filter on Source table with XML data  */
+        let sourcefilterIcon = getByTestId('filterIcon-key');
+        let inputSourceSearch = getByTestId('searchInput-key');
+        let resetSourceSearch = getByTestId('ResetSearch-key');
 
-      /* Test filter on Source table  */
-      let filterIcon = getByTestId('filterIcon-key');
-      expect(filterIcon).toBeInTheDocument();
-      fireEvent.click(filterIcon);
-      let inputSearch = getByTestId('searchInput-key');
-      expect(inputSearch).toBeInTheDocument();
-      fireEvent.change(inputSearch, { target: {value: "first" }}); //Enter a case-insensitive value in inputSearch field
-      expect(getByTestId('submitSearch-key')).toBeInTheDocument();
-      expect(inputSearch).toHaveValue('first');
-      fireEvent.click(getByTestId('submitSearch-key')); //Click on Search button to apply the filter with the desired string
+        fireEvent.click(sourcefilterIcon); //Click on filter icon to open the search input field and other related buttons.
 
-      //Check if the expected values are available/not available in search result.
-      expect(getByText('nutFreeName')).toBeInTheDocument();
-      expect(getByText('NamePreferred')).toBeInTheDocument();
-      expect(getByText('John')).toBeInTheDocument();
-      expect(queryByText('proteinId')).not.toBeInTheDocument();
-      expect(queryByText('proteinType')).not.toBeInTheDocument();
+        fireEvent.change(inputSourceSearch, { target: { value: "organism" } }); //Enter a case-insensitive value in inputSearch field
+        expect(inputSourceSearch).toHaveValue('organism');
+        fireEvent.click(getByTestId('submitSearch-key')); //Click on Search button to apply the filter with the desired string
 
-      //Check if the entity properties are not affected by the filter on source table
-      expect(getByText('propId')).toBeInTheDocument();
-      expect(getByText('propName')).toBeInTheDocument();
-      expect(getByText('artCraft')).toBeInTheDocument();
-      expect(getByText('automobile')).toBeInTheDocument();
+        //Check if the expected values are available/not available in search result.
+        expect(getByText(/withNuts:/)).toBeInTheDocument();
+        expect(getByText('Frog virus 3')).toBeInTheDocument();
+        expect(getByText('scientific')).toBeInTheDocument();
+        expect(getByText(/nutFree:/)).toBeInTheDocument();
+        expect(queryByText('NamePreferred')).not.toBeInTheDocument();
+        expect(queryByText('John')).not.toBeInTheDocument();
+        expect(queryByText('LastName')).not.toBeInTheDocument();
+        expect(queryByText('Smith')).not.toBeInTheDocument();
 
-      //Reset the search filter on Source table
-      fireEvent.click(filterIcon);
-      let resetSearch = getByTestId('ResetSearch-key');
-      fireEvent.click(resetSearch);
+        //Check if the entity properties are not affected by the filter on source table
+        expect(getByText('propId')).toBeInTheDocument();
+        expect(getByText('propName')).toBeInTheDocument();
+        expect(queryByText('artCraft')).not.toBeInTheDocument();
+        expect(queryByText('automobile')).not.toBeInTheDocument();
+        expect(queryByText('speedometer')).not.toBeInTheDocument();
+        expect(queryByText('windscreen')).not.toBeInTheDocument();
 
-      //Check if the expected values are present now after resetting the filter on source table.
-      expect(getByText('proteinId')).toBeInTheDocument();
-      expect(getByText('proteinType')).toBeInTheDocument();
+        //Reset the search filter on Source table
+        fireEvent.click(sourcefilterIcon);
+        fireEvent.click(resetSourceSearch);
 
-      /* Test filter on Entity table  */
-
-      //Updating expression for few fields to be validated later
-      let exp = getByText('testNameInExp');
-      fireEvent.change(exp, { target: {value: "concat(propName,'-NEW')" }});
-      fireEvent.blur(exp);
-      expect(getByText("concat(propName,'-NEW')")).toBeInTheDocument();
-
-      //Moving along with the filter test
-      let entityfilterIcon = getByTestId('filterIcon-name');
-      fireEvent.click(entityfilterIcon);
-      let inputSearchEntity = getByTestId('searchInput-name');
-      fireEvent.change(inputSearchEntity, { target: {value: "craft" }}); //Enter a case-insensitive value in inputEntitySearch field
-      expect(getByTestId('submitSearch-name')).toBeInTheDocument();
-      expect(inputSearchEntity).toHaveValue('craft');
-      fireEvent.click(getByTestId('submitSearch-name')); //Click on Search button to apply the filter with the desired string
-
-      //Check if the expected values are available/not available in search result.
-      expect(getByText('items')).toBeInTheDocument();
-      expect(getByText('itemTypes')).toBeInTheDocument();
-      expect(getByText('itemCategory')).toBeInTheDocument();
-      expect(getByText('Craft')).toBeInTheDocument();
-      expect(queryByText('propId')).not.toBeInTheDocument();
-      expect(queryByText('propName')).not.toBeInTheDocument();
-
-      //Check if the source table properties are not affected by the filter on Entity table
-      expect(getByText('proteinId')).toBeInTheDocument();
-      expect(getByText('proteinType')).toBeInTheDocument();
-      expect(getByText('FirstNamePreferred')).toBeInTheDocument();
-      expect(getByText('LastName')).toBeInTheDocument();
-
-       //Reset the search filter on Entity table
-       fireEvent.click(entityfilterIcon);
-       let resetEntitySearch = getByTestId('ResetSearch-name');
-       fireEvent.click(resetEntitySearch);
-
-       //Check if the expected values are present now after resetting the filter on Entity table.
-       expect(getByText('propId')).toBeInTheDocument();
-       expect(getByText('propName')).toBeInTheDocument();
+        //Check if the table goes back to the default state after resetting the filter on source table.
+        expect(getByText(/nutFree:/)).toBeInTheDocument();
+        expect(getByText(/withNuts:/)).toBeInTheDocument();
+        expect(onClosestTableRow(getByText('Frog virus 3'))?.style.display).toBe('none');
+        expect(onClosestTableRow(getByText('scientific'))?.style.display).toBe('none');
+        expect(queryByText('NamePreferred')).not.toBeInTheDocument();
+        expect(queryByText('LastName')).not.toBeInTheDocument();
     });
 
     test('Column option selector in Entity table',() => {
