@@ -49,6 +49,7 @@ public interface ModelsService {
 
             private BaseProxy.DBFunctionRequest req_updateModelInfo;
             private BaseProxy.DBFunctionRequest req_saveModel;
+            private BaseProxy.DBFunctionRequest req_generateModelConfig;
             private BaseProxy.DBFunctionRequest req_getPrimaryEntityTypes;
             private BaseProxy.DBFunctionRequest req_createModel;
             private BaseProxy.DBFunctionRequest req_updateModelEntityTypes;
@@ -61,6 +62,8 @@ public interface ModelsService {
                     "updateModelInfo.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_saveModel = this.baseProxy.request(
                     "saveModel.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                this.req_generateModelConfig = this.baseProxy.request(
+                    "generateModelConfig.sjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_getPrimaryEntityTypes = this.baseProxy.request(
                     "getPrimaryEntityTypes.sjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_createModel = this.baseProxy.request(
@@ -96,6 +99,18 @@ public interface ModelsService {
                       .withParams(
                           BaseProxy.documentParam("model", false, BaseProxy.JsonDocumentType.fromJsonNode(model))
                           ).responseNone();
+            }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode generateModelConfig() {
+                return generateModelConfig(
+                    this.req_generateModelConfig.on(this.dbClient)
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode generateModelConfig(BaseProxy.DBFunctionRequest request) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request.responseSingle(false, Format.JSON)
+                );
             }
 
             @Override
@@ -161,6 +176,14 @@ public interface ModelsService {
    * 
    */
     void saveModel(com.fasterxml.jackson.databind.JsonNode model);
+
+  /**
+   * Invokes the generateModelConfig operation on the database server
+   *
+   * 
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode generateModelConfig();
 
   /**
    * Returns an array of primary entity types. A primary entity type is the entity type in a model descriptor with a name equal to the title of the model descriptor.

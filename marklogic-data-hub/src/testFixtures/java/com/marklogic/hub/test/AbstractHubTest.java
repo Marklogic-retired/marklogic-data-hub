@@ -2,12 +2,14 @@ package com.marklogic.hub.test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.appdeployer.command.Command;
+import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
+import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
 import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand;
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
@@ -15,10 +17,12 @@ import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.impl.Versions;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.security.User;
+import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import com.marklogic.mgmt.util.SimplePropertySource;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
@@ -27,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 /**
  * Abstract base class for all Data Hub tests. Intended to provide a set of reusable methods for all tests.
@@ -329,5 +334,26 @@ public abstract class AbstractHubTest extends TestObject {
 
     protected JsonNode getFinalDoc(String uri) {
         return getHubClient().getFinalClient().newJSONDocumentManager().read(uri, new JacksonHandle()).get();
+    }
+
+    /**
+     * This is public and static so that it can also be invoked by RunMarkLogicUnitTestsTest. Apparently, some of these
+     * database changes go away as a result of some test that runs in our test suite before RMLUTT. So RMLUTT has to
+     * run this again to ensure that the indexes it depends on are present. Sigh.
+     *
+     * @param hubConfig
+     */
+    public static void applyDatabasePropertiesForTests(HubConfig hubConfig) {
+        try {
+            File testFile = new ClassPathResource("test-config/databases/final-database.json").getFile();
+            String payload = new String(FileCopyUtils.copyToByteArray(testFile));
+            new DatabaseManager(hubConfig.getManageClient()).save(payload);
+            // Gotta rerun this command since the test file has path range indexes in it
+            DeployDatabaseFieldCommand command = new DeployDatabaseFieldCommand();
+            command.setResourceFilenamesIncludePattern(Pattern.compile("final-database.xml"));
+            command.execute(new CommandContext(hubConfig.getAppConfig(), hubConfig.getManageClient(), null));
+        } catch (IOException ioe) {
+            throw new RuntimeException("Unable to deploy test indexes", ioe);
+        }
     }
 }

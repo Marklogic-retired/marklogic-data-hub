@@ -1,11 +1,10 @@
 package com.marklogic.hub.dhs.installer.deploy;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.security.DeployQueryRolesetsCommand;
+import com.marklogic.hub.util.QueryRolesetUtil;
 import com.marklogic.mgmt.SaveReceipt;
 import com.marklogic.mgmt.resource.ResourceManager;
-import com.marklogic.mgmt.util.ObjectMapperFactory;
 import org.springframework.web.client.HttpClientErrorException;
 
 /**
@@ -24,29 +23,10 @@ public class DeployHubQueryRolesetsCommand extends DeployQueryRolesetsCommand {
         SaveReceipt receipt = null;
         try {
             receipt = super.saveResource(mgr, context, payload);
-        } catch (HttpClientErrorException ex) {
-            if (isPermissionedDeniedException(ex)) {
-                logger.error("Received SEC-PERMDENIED error when deploying query roleset; this can be safely ignored if the " +
-                    "query roleset already exists in MarkLogic.");
-            } else {
-                throw ex;
-            }
+        }
+        catch (HttpClientErrorException ex) {
+            QueryRolesetUtil.handleSaveException(ex);
         }
         return receipt;
-    }
-
-    protected boolean isPermissionedDeniedException(HttpClientErrorException ex) {
-        try {
-            JsonNode error = ObjectMapperFactory.getObjectMapper().readTree(ex.getResponseBodyAsString());
-            if (error.has("errorResponse")) {
-                JsonNode errorResponse = error.get("errorResponse");
-                if (errorResponse.has("messageCode")) {
-                    return "SEC-PERMDENIED".equals(errorResponse.get("messageCode").asText());
-                }
-            }
-        } catch (Exception e) {
-            logger.warn("Unexpected error when trying to parse error for deploying query rolesets: " + e.getMessage());
-        }
-        return false;
     }
 }

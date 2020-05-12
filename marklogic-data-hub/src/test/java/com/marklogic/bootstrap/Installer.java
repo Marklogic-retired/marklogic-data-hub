@@ -1,28 +1,18 @@
 package com.marklogic.bootstrap;
 
-import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.security.Privilege;
 import com.marklogic.mgmt.api.security.User;
 import com.marklogic.mgmt.mapper.DefaultResourceMapper;
-import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import com.marklogic.mgmt.resource.security.PrivilegeManager;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.util.FileCopyUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.regex.Pattern;
 
 @EnableAutoConfiguration
 public class Installer extends HubTestBase implements InitializingBean {
@@ -114,26 +104,4 @@ public class Installer extends HubTestBase implements InitializingBean {
         p.addRole("data-hub-developer");
         mgr.save(p.getJson());
     }
-
-    /**
-     * This is public and static so that it can also be invoked by RunMarkLogicUnitTestsTest. Apparently, some of these
-     * database changes go away as a result of some test that runs in our test suite before RMLUTT. So RMLUTT has to
-     * run this again to ensure that the indexes it depends on are present. Sigh.
-     *
-     * @param hubConfig
-     */
-    public static void applyDatabasePropertiesForTests(HubConfig hubConfig) {
-        File testFile = Paths.get("src", "test", "ml-config", "databases", "final-database.json").toFile();
-        try {
-            String payload = new String(FileCopyUtils.copyToByteArray(testFile));
-            new DatabaseManager(hubConfig.getManageClient()).save(payload);
-            // Gotta rerun this command since the test file has path range indexes in it
-            DeployDatabaseFieldCommand command = new DeployDatabaseFieldCommand();
-            command.setResourceFilenamesIncludePattern(Pattern.compile("final-database.xml"));
-            command.execute(new CommandContext(hubConfig.getAppConfig(), hubConfig.getManageClient(), null));
-        } catch (IOException ioe) {
-            throw new RuntimeException("Unable to deploy test indexes from file: " + testFile, ioe);
-        }
-    }
-
 }
