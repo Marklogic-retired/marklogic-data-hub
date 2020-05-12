@@ -17,7 +17,7 @@ const ProjectInfo: React.FC = () => {
     const cardCss: CSSProperties = {backgroundColor: '#F6F8FF', borderColor: '#44499C'};
     const divCss: CSSProperties = {padding: '1em 6em'};
 
-    const { resetSessionTime, toggleSessionTimer } = useContext(UserContext);
+    const { resetSessionTime } = useContext(UserContext);
 
     const download = () => {
         axios({

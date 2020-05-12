@@ -6,9 +6,8 @@ import {
   updateUserPreferences
 } from '../services/user-preferences';
 import { AuthoritiesContext } from './authorities';
-import {setEnvironment, getEnvironment, resetEnvironment} from '../util/environment';
+import {setEnvironment, resetEnvironment} from '../util/environment';
 import { useInterval } from '../hooks/use-interval';
-import { SESSION_WARNING_COUNTDOWN } from '../config/application.config';
 
 type UserContextInterface = {
   name: string,
@@ -17,8 +16,7 @@ type UserContextInterface = {
   redirect: boolean,
   error : any,
   pageRoute: string,
-  maxSessionTime: number,
-  sessionWarning: boolean
+  maxSessionTime: number
 }
 
 const defaultUserData = {
@@ -32,8 +30,7 @@ const defaultUserData = {
     type: ''
   },
   pageRoute: '/view',
-  maxSessionTime: 300,
-  sessionWarning: false
+  maxSessionTime: 300
 }
 
 interface IUserContextInterface {
@@ -47,8 +44,7 @@ interface IUserContextInterface {
   setPageRoute: (route: string) => void;
   setAlertMessage: (title: string, message: string) => void;
   resetSessionTime: () => void;
-  setSessionWarning: (sessionWarning: boolean) => void;
-  toggleSessionTimer: (runSessionTimer: boolean) => void;
+  getSessionTime: () => number;
 }
 
 export const UserContext = React.createContext<IUserContextInterface>({
@@ -62,8 +58,7 @@ export const UserContext = React.createContext<IUserContextInterface>({
   setPageRoute: () => {},
   setAlertMessage: () => {},
   resetSessionTime: () => {},
-  setSessionWarning: () => {},
-  toggleSessionTimer: () => {}
+  getSessionTime: () => { return defaultUserData.maxSessionTime;}
 });
 
 const UserProvider: React.FC<{ children: any }> = ({children}) => {
@@ -94,8 +89,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
         authenticated: true,
         redirect: true,
         pageRoute: values.pageRoute,
-        maxSessionTime: sessionCount,
-        sessionWarning: false
+        maxSessionTime: sessionCount
       });
     } else {
       createUserPreferences(username);
@@ -104,8 +98,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
         name: username,
         authenticated: true,
         redirect: true,
-        maxSessionTime: sessionCount,
-        sessionWarning: false
+        maxSessionTime: sessionCount
       });
     }
   };
@@ -120,12 +113,11 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
         name: username,
         authenticated: true,
         pageRoute: values.pageRoute,
-        maxSessionTime: sessionCount,
-        sessionWarning: false
+        maxSessionTime: sessionCount
       });
     } else {
       createUserPreferences(username);
-      setUser({ ...user,name: username, authenticated: true, sessionWarning: false });
+      setUser({ ...user,name: username, authenticated: true});
     }
   };
 
@@ -135,7 +127,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
     localStorage.setItem('loginResp','');
     authoritiesService.setAuthorities([]);
     resetEnvironment();
-    setUser({ ...user,name: '', authenticated: false, redirect: true, sessionWarning: false });
+    setUser({ ...user,name: '', authenticated: false, redirect: true});
   };
 
   const handleError = (error) => {
@@ -246,13 +238,8 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
     sessionCount = user.maxSessionTime;
   }
 
-  const setSessionWarning = (sessionWarning: boolean) => {
-    setUser({ ...user, sessionWarning });
-  }
-
-  const toggleSessionTimer = (runSessionTimer: boolean) => {
-    sessionTimer = runSessionTimer;
-    sessionCount = user.maxSessionTime;
+  const getSessionTime = () =>{
+      return sessionCount;
   }
 
   useEffect(() => {
@@ -267,11 +254,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
 
   useInterval(() => {
     if (user.authenticated && sessionTimer) {
-      if (sessionCount === SESSION_WARNING_COUNTDOWN) {
-        setSessionWarning(true);
-      } else {
         sessionCount -= 1;
-      }
     }
   }, 1000);
 
@@ -286,9 +269,8 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
       clearRedirect,
       setPageRoute,
       setAlertMessage,
-      resetSessionTime,
-      setSessionWarning,
-      toggleSessionTimer
+      getSessionTime,
+      resetSessionTime
     }}>
       {children}
     </UserContext.Provider>

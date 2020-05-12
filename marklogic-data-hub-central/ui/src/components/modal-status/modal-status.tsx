@@ -21,43 +21,49 @@ const ERROR_BTN_TEXT = {
 }
 
 const ModalStatus: React.FC<Props> = (props) => {
-  const { 
+  const {
     user,
     userNotAuthenticated,
     handleError,
     clearErrorMessage,
     resetSessionTime,
-    setSessionWarning
+    getSessionTime
   } = useContext(UserContext);
   const [showModal, toggleModal] = useState(false);
   const [sessionTime, setSessionTime] = useState(SESSION_WARNING_COUNTDOWN);
   const [title, setTitle] = useState('Session Timeout');
   const [buttonText, setButtonText] = useState(SESSION_BTN_TEXT);
+  const [sessionWarning, setSessionWarning] = useState(false);
+  let sessionCount;
 
   useEffect(() => {
     if (user.error.type === 'MODAL') {
-      setTitle(user.error.title);
-      setButtonText(ERROR_BTN_TEXT);
-      toggleModal(true);
-
-    } else if (user.sessionWarning) {
-      setTitle('Session Timeout');
-      setButtonText(SESSION_BTN_TEXT);
-      toggleModal(true);
+        setTitle(user.error.title);
+        setButtonText(ERROR_BTN_TEXT);
+        toggleModal(true);
+    } else if (sessionWarning) {
+        setTitle('Session Timeout');
+        setButtonText(SESSION_BTN_TEXT);
+        toggleModal(true);
 
     } else {
-      toggleModal(false);
+        toggleModal(false);
     }
-  }, [user.sessionWarning, user.error.type]);
+  }, [sessionWarning, user.error.type]);
+
 
 
   useInterval(() => {
-    if (user.sessionWarning) {
-      if (sessionTime === 0) {
-        onCancel();
-      } else {
-        setSessionTime(sessionTime - 1);
-      }
+    sessionCount = getSessionTime();
+    if(sessionCount <= SESSION_WARNING_COUNTDOWN && !sessionWarning){
+        setSessionWarning(true);
+    }
+    if(sessionWarning) {
+        if (sessionTime === 0) {
+            onCancel();
+        } else {
+            setSessionTime(sessionTime - 1);
+        }
     }
   }, 1000);
 
@@ -65,15 +71,15 @@ const ModalStatus: React.FC<Props> = (props) => {
     if (user.error.type === 'MODAL') {
       clearErrorMessage();
 
-    } else if (user.sessionWarning) {
+    } else if (sessionWarning) {
       // refresh session
       try {
         await axios.get('/api/info');
       } catch (error) {
         handleError(error);
       } finally {
-        setSessionTime(SESSION_WARNING_COUNTDOWN);
         resetSessionTime();
+        setSessionTime(SESSION_WARNING_COUNTDOWN);
         setSessionWarning(false);
         toggleModal(false);
       }
@@ -84,7 +90,7 @@ const ModalStatus: React.FC<Props> = (props) => {
     if (user.error.type === 'MODAL') {
       props.history.push('/error');
 
-    } else if (user.sessionWarning) {
+    } else if (sessionWarning) {
       try {
         let response = await axios.get(`/api/logout`);
         if (response.status === 200 ) {
@@ -97,22 +103,23 @@ const ModalStatus: React.FC<Props> = (props) => {
         setSessionWarning(false);
       }
     }
-    toggleModal(false); 
+    toggleModal(false);
   };
 
   return (
     <Modal
-      visible={showModal} 
-      closable={user.sessionWarning ? false : true }
-      title={title} 
+      visible={showModal}
+      closable={sessionWarning ? false : true }
+      zIndex={5000}
+      title={title}
       cancelText={buttonText.cancel}
-      onCancel={() => onCancel()} 
+      onCancel={() => onCancel()}
       okText={buttonText.ok}
       onOk={() => onOk()}
-      maskClosable={user.sessionWarning ? false : true }
+      maskClosable={sessionWarning ? false : true }
     >
-      {user.sessionWarning && user.error.type !== 'MODAL' && <p>Due to Inactivity, you will be logged out in <b>{sessionTime} seconds</b></p>}
-      {user.error.type === 'MODAL' && <p>{user.error.message}</p>}    
+      {sessionWarning && user.error.type !== 'MODAL' && <p>Due to Inactivity, you will be logged out in <b>{sessionTime} seconds</b></p>}
+      {user.error.type === 'MODAL' && <p>{user.error.message}</p>}
     </Modal>
   )
 }
