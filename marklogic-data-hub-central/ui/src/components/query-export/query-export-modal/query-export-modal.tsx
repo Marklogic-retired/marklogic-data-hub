@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Modal, Form, Input, Radio } from 'antd';
+import { Modal, Form, Input, Radio, Alert } from 'antd';
 import styles from './query-export-modal.module.scss';
 import { SearchContext } from '../../../util/search-context';
 import { UserContext } from '../../../util/user-context';
@@ -85,6 +85,12 @@ const QueryExportModal = (props) => {
             name="basic"
             data-testid='query-export-form'
         >
+            {props.columns && props.columns.some(column => column.includes('.')) && <Alert data-testid='export-warning' className={styles.warning}
+                message='One or more structured properties are included in this query. The
+                                       data for those properties will not be included in the export file.
+                                       Check the Preview to see what will be exported.' type="warning" showIcon />}
+
+
             <p className={styles.text}>Export to a CSV file containing the columns of data currently displayed.</p>
 
             <Form.Item
