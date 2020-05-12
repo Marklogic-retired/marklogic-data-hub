@@ -31,8 +31,7 @@ const App: React.FC<Props> = ({history, location}) => {
   const {
     user,
     clearRedirect,
-    handleError,
-    resetSessionTime
+    handleError
   } = useContext(UserContext);
 
   const PrivateRoute = ({ children, ...rest }) => (
