@@ -17,10 +17,19 @@
 package com.marklogic.hub.central.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.admin.QueryOptionsManager;
+import com.marklogic.client.io.Format;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.central.managers.ModelManager;
 import com.marklogic.hub.central.schemas.ModelDescriptor;
 import com.marklogic.hub.central.schemas.PrimaryEntityType;
 import com.marklogic.hub.dataservices.ModelsService;
+import com.marklogic.hub.util.QueryRolesetUtil;
+import com.marklogic.mgmt.ManageClient;
+import com.marklogic.rest.util.JsonNodeUtil;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -28,10 +37,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Controller
 @RequestMapping("/api/models")
@@ -76,10 +84,136 @@ public class ModelController extends BaseController {
     @RequestMapping(value = "/{modelName}/entityTypes", method = RequestMethod.PUT)
     @ApiImplicitParam(required = true, paramType = "body", dataType = "ModelDefinitions")
     public ResponseEntity<Void> updateModelEntityTypes(@ApiParam(hidden = true) @RequestBody JsonNode entityTypes, @PathVariable String modelName) {
+        // update the model
         newService().updateModelEntityTypes(modelName, entityTypes);
+
+        //deploy updated configs
+        deployModelConfigs();
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+
+    void deployModelConfigs() {
+        ManageClient manageClient = hubClientProvider.getHubClient().getManageClient();
+
+        long start = System.currentTimeMillis();
+        logger.info("Generating model-based resource configurations");
+
+        JsonNode modelConfigNode = newService().generateModelConfig();
+
+        logger.info("Deploying search options");
+        deploySearchOptions(modelConfigNode);
+
+        logger.info("Deploying protected paths");
+        deployProtectedPaths(modelConfigNode, manageClient);
+
+        logger.info("Deploying query rolesets");
+        deployQueryRolesets(modelConfigNode, manageClient);
+
+        logger.info("Deploying database indexes");
+        deployIndexConfig(modelConfigNode, manageClient);
+
+        logger.info("Finished generating and deploying model-based resource configurations, time: " + (System.currentTimeMillis() - start));
+    }
+
+    private void deployIndexConfig(JsonNode modelConfigNode, ManageClient manageClient) {
+        try {
+            for (String databaseName : Arrays.asList(getHubClient().getDbName(DatabaseKind.STAGING), getHubClient().getDbName(DatabaseKind.FINAL))) {
+                final ObjectNode modelBasedProperties = (ObjectNode)modelConfigNode.get("indexConfig");
+                final ObjectNode existingProperties = (ObjectNode)new ObjectMapper().readTree(manageClient.getJson("/manage/v2/databases/" + databaseName + "/properties"));
+                JsonNode mergedProperties = mergeDatabaseProperties(existingProperties, modelBasedProperties);
+                manageClient.putJson("/manage/v2/databases/" + databaseName + "/properties", mergedProperties.toString());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to deploy database indexes after updating entity models; cause: " + e.getMessage(), e);
+        }
+    }
+
+    private void deployQueryRolesets(JsonNode modelConfigNode, ManageClient manageClient) {
+        try {
+            modelConfigNode.get("queryRolesets").forEach(jsonNode -> {
+                try {
+                    manageClient.postJson("/manage/v2/query-rolesets", jsonNode.toString());
+                }
+                catch (HttpClientErrorException ex) {
+                    QueryRolesetUtil.handleSaveException(ex);
+                }
+            });
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Unable to deploy query-rolesets after updating entity models; cause: " + e.getMessage(), e);
+        }
+    }
+
+    private void deployProtectedPaths(JsonNode modelConfigNode, ManageClient manageClient) {
+        try {
+            modelConfigNode.get("protectedPaths").forEach(jsonNode -> manageClient.postJson("/manage/v2/protected-paths", jsonNode.toString()));
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Unable to deploy protected-paths after updating entity models; cause: " + e.getMessage(), e);
+        }
+    }
+
+    private void deploySearchOptions(JsonNode modelConfigNode) {
+        DatabaseClient finalDatabaseClient = hubClientProvider.getHubClient().getFinalClient();
+        DatabaseClient stagingDatabaseClient = hubClientProvider.getHubClient().getStagingClient();
+
+        String explorerOptions = modelConfigNode.get("searchOptions").get("explorer").asText();
+        String defaultOptions = modelConfigNode.get("searchOptions").get("default").asText();
+        Map<String, DatabaseClient> clientMap = new HashMap<>();
+        clientMap.put("staging", stagingDatabaseClient);
+        clientMap.put("final", finalDatabaseClient);
+        clientMap.forEach((databaseKind, databaseClient) -> {
+            QueryOptionsManager queryOptionsManager = databaseClient.newServerConfigManager().newQueryOptionsManager();
+            writeOptions(databaseKind, queryOptionsManager, "exp-" + databaseKind + "-entity-options", explorerOptions);
+            writeOptions(databaseKind, queryOptionsManager, databaseKind + "-entity-options", defaultOptions);
+        });
+    }
+
+    private void writeOptions(String databaseKind, QueryOptionsManager queryOptionsManager, String optionName, String options) {
+        try {
+            queryOptionsManager.writeOptionsAs(optionName, Format.XML, options);
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to deploy search options file " + optionName + " to " + databaseKind + " database after updating entity models; cause: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * @param existingProperties
+     * @param modelBasedProperties
+     * @return the results of merging the model-based properties into the existing properties, after first removing
+     * properties from the existing properties object that are not found in the model-based properties object
+     */
+    protected JsonNode mergeDatabaseProperties(ObjectNode existingProperties, ObjectNode modelBasedProperties) {
+        removeUnaffectedPropertiesFromExistingProperties(existingProperties, modelBasedProperties);
+
+        // Merge the model-based properties into the existing properties so that merges occur, model-based properties "win",
+        // and nothing is removed from the existing properties
+        return JsonNodeUtil.mergeObjectNodes(modelBasedProperties, existingProperties);
+    }
+
+    /**
+     * Removes "unaffected" properties - i.e. those that are not present in modelBasedProperties and thus don't need
+     * to be overwritten or merged together. This allows us to submit a payload containing only the results of merging
+     * the new database properties into the existing database properties.
+     *
+     * @param existingProperties
+     * @param modelBasedProperties
+     * @return
+     */
+    private void removeUnaffectedPropertiesFromExistingProperties(ObjectNode existingProperties, ObjectNode modelBasedProperties) {
+        Set<String> fieldNameSet = new HashSet<>();
+        modelBasedProperties.fieldNames().forEachRemaining(fieldNameSet::add);
+
+        Iterator<String> iterator = existingProperties.fieldNames();
+        while (iterator.hasNext()) {
+            String fieldName = iterator.next();
+            if (!fieldNameSet.contains(fieldName)) {
+                iterator.remove();
+            }
+        }
+    }
 
     private ModelManager newModelManager() {
         return new ModelManager(getHubClient());

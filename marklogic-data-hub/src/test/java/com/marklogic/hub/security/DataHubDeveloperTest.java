@@ -280,7 +280,7 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
             task.setTaskPeriod(2);
             task.save();
         } finally {
-            new TaskManager(adminUserClient).deleteTaskWithPath(task.getTaskPath());
+            new TaskManager(adminUserClient).delete(task.getJson());
         }
     }
 

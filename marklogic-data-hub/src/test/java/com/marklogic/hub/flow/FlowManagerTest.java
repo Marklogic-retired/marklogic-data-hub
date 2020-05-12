@@ -56,6 +56,7 @@ class FlowManagerTest extends HubTestBase {
 
     @BeforeEach
     void setUp() throws IOException {
+        deleteProjectDir();
         basicSetup();
         getDataHubAdminConfig();
         ObjectMapper mapper = new ObjectMapper();

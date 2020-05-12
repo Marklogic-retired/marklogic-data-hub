@@ -33,7 +33,8 @@ ext.junitJupiterVersion  = '5.4.0'
 
 dependencies {
     compile 'com.marklogic:marklogic-client-api:5.1.0'
-    compile('com.marklogic:ml-app-deployer:4.0.0'){
+
+    compile('com.marklogic:ml-app-deployer:4.0.1'){
         exclude group: 'org.springframework', module: 'http'
     }
 
