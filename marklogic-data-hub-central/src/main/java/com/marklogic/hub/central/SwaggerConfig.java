@@ -72,8 +72,6 @@ public class SwaggerConfig {
             EntitySearchController.SavedQueries.class,
             FlowController.Flows.class,
             FlowSchema.class,
-            FlowController.Steps.class,
-            FlowController.StepSchema.class,
             LoadDataController.LoadDataArtifact.class,
             LoadDataController.LoadDataArtifacts.class,
             MappingController.MappingArtifacts.class,
@@ -85,6 +83,7 @@ public class SwaggerConfig {
             ModelDefinitions.class,
             ModelDescriptor.class,
             PrimaryEntityType.class,
+            StepSchema.class,
             StepSettingsSchema.class
         ).map(type -> typeResolver.resolve(type)).collect(Collectors.toList());
     }

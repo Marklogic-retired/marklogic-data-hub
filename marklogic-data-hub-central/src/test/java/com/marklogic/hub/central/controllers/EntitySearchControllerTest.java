@@ -85,7 +85,7 @@ public class EntitySearchControllerTest extends AbstractMvcTest {
             });
 
         // testing delete savedQuery document
-        deleteJson(SAVED_QUERIES_PATH + "/query", params)
+        delete(SAVED_QUERIES_PATH + "/query", params)
             .andExpect(status().isNoContent());
 
         getJson(SAVED_QUERIES_PATH + "/query", params)

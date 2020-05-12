@@ -34,27 +34,33 @@ import com.fasterxml.jackson.annotation.JsonValue;
     "stepId",
     "headers",
     "validateEntity",
-    "outputDatabase",
-    "inputDatabase",
+    "targetDatabase",
+    "sourceDatabase",
     "outputFormat",
-    "outputPermissions",
-    "outputCollections",
-    "defaultOutputCollections",
+    "permissions",
+    "collections",
+    "additionalCollections",
     "acceptsBatch",
     "stepUpdate",
     "provenanceGranularityLevel",
     "constrainSourceQueryToJob",
     "sourceQueryIsScript",
     "sourceQuery",
-    "targetEntityTypeId",
+    "targetEntityType",
     "name"
 })
-public class StepV1 {
+public class StepSchema {
 
     @JsonProperty("processors")
     private List<Processor> processors = new ArrayList<Processor>();
+    /**
+     * CustomHook
+     * <p>
+     * 
+     * 
+     */
     @JsonProperty("customHook")
-    private CustomHook customHook;
+    private CustomHookSchema customHook;
     /**
      * If set, overrides the threadCount defined at the flow level and in the step definition
      * 
@@ -101,33 +107,33 @@ public class StepV1 {
     @JsonProperty("validateEntity")
     @JsonPropertyDescription("Applicable to mapping steps only")
     private Boolean validateEntity;
-    @JsonProperty("outputDatabase")
-    private String outputDatabase;
-    @JsonProperty("inputDatabase")
-    private String inputDatabase;
+    @JsonProperty("targetDatabase")
+    private String targetDatabase;
+    @JsonProperty("sourceDatabase")
+    private String sourceDatabase;
     @JsonProperty("outputFormat")
-    private StepV1 .OutputFormat outputFormat;
+    private StepSchema.OutputFormat outputFormat;
     /**
      * Comma-delimited string of role,capability,role,capability,etc
      * 
      */
-    @JsonProperty("outputPermissions")
+    @JsonProperty("permissions")
     @JsonPropertyDescription("Comma-delimited string of role,capability,role,capability,etc")
-    private String outputPermissions;
+    private String permissions;
     /**
      * additional collections provided by the user that get applied to the step output
      * 
      */
-    @JsonProperty("outputCollections")
+    @JsonProperty("collections")
     @JsonPropertyDescription("additional collections provided by the user that get applied to the step output")
-    private List<String> outputCollections = new ArrayList<String>();
+    private List<String> collections = new ArrayList<String>();
     /**
      * default collections associated with a step that are applied to the step output
      * 
      */
-    @JsonProperty("defaultOutputCollections")
+    @JsonProperty("additionalCollections")
     @JsonPropertyDescription("default collections associated with a step that are applied to the step output")
-    private List<String> defaultOutputCollections = new ArrayList<String>();
+    private List<String> additionalCollections = new ArrayList<String>();
     /**
      * If true, the step module is invoked once with all records in the batch passed to it
      * 
@@ -148,7 +154,7 @@ public class StepV1 {
      */
     @JsonProperty("provenanceGranularityLevel")
     @JsonPropertyDescription("The granularity of the provenance tracking information: coarse (default) to store document-level provenance information only, fine to store document-level and property-level provenance information, or off to disable provenance tracking in future job runs. Applies only to mapping, matching, merging, mastering, and custom steps.")
-    private StepV1 .ProvenanceGranularityLevel provenanceGranularityLevel;
+    private StepSchema.ProvenanceGranularityLevel provenanceGranularityLevel;
     /**
      * If true, the query is applied to the documents that were created or modified in the same job that executes the step
      * 
@@ -174,9 +180,9 @@ public class StepV1 {
      * The identifier of an Entity Type. (IRI, with title as fallback)
      * 
      */
-    @JsonProperty("targetEntityTypeId")
+    @JsonProperty("targetEntityType")
     @JsonPropertyDescription("The identifier of an Entity Type. (IRI, with title as fallback)")
-    private String targetEntityTypeId;
+    private String targetEntityType;
     @JsonProperty("name")
     private String name;
     @JsonIgnore
@@ -192,13 +198,25 @@ public class StepV1 {
         this.processors = processors;
     }
 
+    /**
+     * CustomHook
+     * <p>
+     * 
+     * 
+     */
     @JsonProperty("customHook")
-    public CustomHook getCustomHook() {
+    public CustomHookSchema getCustomHook() {
         return customHook;
     }
 
+    /**
+     * CustomHook
+     * <p>
+     * 
+     * 
+     */
     @JsonProperty("customHook")
-    public void setCustomHook(CustomHook customHook) {
+    public void setCustomHook(CustomHookSchema customHook) {
         this.customHook = customHook;
     }
 
@@ -330,33 +348,33 @@ public class StepV1 {
         this.validateEntity = validateEntity;
     }
 
-    @JsonProperty("outputDatabase")
-    public String getOutputDatabase() {
-        return outputDatabase;
+    @JsonProperty("targetDatabase")
+    public String getTargetDatabase() {
+        return targetDatabase;
     }
 
-    @JsonProperty("outputDatabase")
-    public void setOutputDatabase(String outputDatabase) {
-        this.outputDatabase = outputDatabase;
+    @JsonProperty("targetDatabase")
+    public void setTargetDatabase(String targetDatabase) {
+        this.targetDatabase = targetDatabase;
     }
 
-    @JsonProperty("inputDatabase")
-    public String getInputDatabase() {
-        return inputDatabase;
+    @JsonProperty("sourceDatabase")
+    public String getSourceDatabase() {
+        return sourceDatabase;
     }
 
-    @JsonProperty("inputDatabase")
-    public void setInputDatabase(String inputDatabase) {
-        this.inputDatabase = inputDatabase;
+    @JsonProperty("sourceDatabase")
+    public void setSourceDatabase(String sourceDatabase) {
+        this.sourceDatabase = sourceDatabase;
     }
 
     @JsonProperty("outputFormat")
-    public StepV1 .OutputFormat getOutputFormat() {
+    public StepSchema.OutputFormat getOutputFormat() {
         return outputFormat;
     }
 
     @JsonProperty("outputFormat")
-    public void setOutputFormat(StepV1 .OutputFormat outputFormat) {
+    public void setOutputFormat(StepSchema.OutputFormat outputFormat) {
         this.outputFormat = outputFormat;
     }
 
@@ -364,54 +382,54 @@ public class StepV1 {
      * Comma-delimited string of role,capability,role,capability,etc
      * 
      */
-    @JsonProperty("outputPermissions")
-    public String getOutputPermissions() {
-        return outputPermissions;
+    @JsonProperty("permissions")
+    public String getPermissions() {
+        return permissions;
     }
 
     /**
      * Comma-delimited string of role,capability,role,capability,etc
      * 
      */
-    @JsonProperty("outputPermissions")
-    public void setOutputPermissions(String outputPermissions) {
-        this.outputPermissions = outputPermissions;
+    @JsonProperty("permissions")
+    public void setPermissions(String permissions) {
+        this.permissions = permissions;
     }
 
     /**
      * additional collections provided by the user that get applied to the step output
      * 
      */
-    @JsonProperty("outputCollections")
-    public List<String> getOutputCollections() {
-        return outputCollections;
+    @JsonProperty("collections")
+    public List<String> getCollections() {
+        return collections;
     }
 
     /**
      * additional collections provided by the user that get applied to the step output
      * 
      */
-    @JsonProperty("outputCollections")
-    public void setOutputCollections(List<String> outputCollections) {
-        this.outputCollections = outputCollections;
+    @JsonProperty("collections")
+    public void setCollections(List<String> collections) {
+        this.collections = collections;
     }
 
     /**
      * default collections associated with a step that are applied to the step output
      * 
      */
-    @JsonProperty("defaultOutputCollections")
-    public List<String> getDefaultOutputCollections() {
-        return defaultOutputCollections;
+    @JsonProperty("additionalCollections")
+    public List<String> getAdditionalCollections() {
+        return additionalCollections;
     }
 
     /**
      * default collections associated with a step that are applied to the step output
      * 
      */
-    @JsonProperty("defaultOutputCollections")
-    public void setDefaultOutputCollections(List<String> defaultOutputCollections) {
-        this.defaultOutputCollections = defaultOutputCollections;
+    @JsonProperty("additionalCollections")
+    public void setAdditionalCollections(List<String> additionalCollections) {
+        this.additionalCollections = additionalCollections;
     }
 
     /**
@@ -455,7 +473,7 @@ public class StepV1 {
      * 
      */
     @JsonProperty("provenanceGranularityLevel")
-    public StepV1 .ProvenanceGranularityLevel getProvenanceGranularityLevel() {
+    public StepSchema.ProvenanceGranularityLevel getProvenanceGranularityLevel() {
         return provenanceGranularityLevel;
     }
 
@@ -464,7 +482,7 @@ public class StepV1 {
      * 
      */
     @JsonProperty("provenanceGranularityLevel")
-    public void setProvenanceGranularityLevel(StepV1 .ProvenanceGranularityLevel provenanceGranularityLevel) {
+    public void setProvenanceGranularityLevel(StepSchema.ProvenanceGranularityLevel provenanceGranularityLevel) {
         this.provenanceGranularityLevel = provenanceGranularityLevel;
     }
 
@@ -526,18 +544,18 @@ public class StepV1 {
      * The identifier of an Entity Type. (IRI, with title as fallback)
      * 
      */
-    @JsonProperty("targetEntityTypeId")
-    public String getTargetEntityTypeId() {
-        return targetEntityTypeId;
+    @JsonProperty("targetEntityType")
+    public String getTargetEntityType() {
+        return targetEntityType;
     }
 
     /**
      * The identifier of an Entity Type. (IRI, with title as fallback)
      * 
      */
-    @JsonProperty("targetEntityTypeId")
-    public void setTargetEntityTypeId(String targetEntityTypeId) {
-        this.targetEntityTypeId = targetEntityTypeId;
+    @JsonProperty("targetEntityType")
+    public void setTargetEntityType(String targetEntityType) {
+        this.targetEntityType = targetEntityType;
     }
 
     @JsonProperty("name")
@@ -563,7 +581,7 @@ public class StepV1 {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(StepV1 .class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+        sb.append(StepSchema.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
         sb.append("processors");
         sb.append('=');
         sb.append(((this.processors == null)?"<null>":this.processors));
@@ -604,29 +622,29 @@ public class StepV1 {
         sb.append('=');
         sb.append(((this.validateEntity == null)?"<null>":this.validateEntity));
         sb.append(',');
-        sb.append("outputDatabase");
+        sb.append("targetDatabase");
         sb.append('=');
-        sb.append(((this.outputDatabase == null)?"<null>":this.outputDatabase));
+        sb.append(((this.targetDatabase == null)?"<null>":this.targetDatabase));
         sb.append(',');
-        sb.append("inputDatabase");
+        sb.append("sourceDatabase");
         sb.append('=');
-        sb.append(((this.inputDatabase == null)?"<null>":this.inputDatabase));
+        sb.append(((this.sourceDatabase == null)?"<null>":this.sourceDatabase));
         sb.append(',');
         sb.append("outputFormat");
         sb.append('=');
         sb.append(((this.outputFormat == null)?"<null>":this.outputFormat));
         sb.append(',');
-        sb.append("outputPermissions");
+        sb.append("permissions");
         sb.append('=');
-        sb.append(((this.outputPermissions == null)?"<null>":this.outputPermissions));
+        sb.append(((this.permissions == null)?"<null>":this.permissions));
         sb.append(',');
-        sb.append("outputCollections");
+        sb.append("collections");
         sb.append('=');
-        sb.append(((this.outputCollections == null)?"<null>":this.outputCollections));
+        sb.append(((this.collections == null)?"<null>":this.collections));
         sb.append(',');
-        sb.append("defaultOutputCollections");
+        sb.append("additionalCollections");
         sb.append('=');
-        sb.append(((this.defaultOutputCollections == null)?"<null>":this.defaultOutputCollections));
+        sb.append(((this.additionalCollections == null)?"<null>":this.additionalCollections));
         sb.append(',');
         sb.append("acceptsBatch");
         sb.append('=');
@@ -652,9 +670,9 @@ public class StepV1 {
         sb.append('=');
         sb.append(((this.sourceQuery == null)?"<null>":this.sourceQuery));
         sb.append(',');
-        sb.append("targetEntityTypeId");
+        sb.append("targetEntityType");
         sb.append('=');
-        sb.append(((this.targetEntityTypeId == null)?"<null>":this.targetEntityTypeId));
+        sb.append(((this.targetEntityType == null)?"<null>":this.targetEntityType));
         sb.append(',');
         sb.append("name");
         sb.append('=');
@@ -678,25 +696,25 @@ public class StepV1 {
         result = ((result* 31)+((this.stepUpdate == null)? 0 :this.stepUpdate.hashCode()));
         result = ((result* 31)+((this.sourceQuery == null)? 0 :this.sourceQuery.hashCode()));
         result = ((result* 31)+((this.provenanceGranularityLevel == null)? 0 :this.provenanceGranularityLevel.hashCode()));
-        result = ((result* 31)+((this.outputCollections == null)? 0 :this.outputCollections.hashCode()));
         result = ((result* 31)+((this.acceptsBatch == null)? 0 :this.acceptsBatch.hashCode()));
         result = ((result* 31)+((this.customHook == null)? 0 :this.customHook.hashCode()));
         result = ((result* 31)+((this.validateEntity == null)? 0 :this.validateEntity.hashCode()));
         result = ((result* 31)+((this.stepId == null)? 0 :this.stepId.hashCode()));
-        result = ((result* 31)+((this.targetEntityTypeId == null)? 0 :this.targetEntityTypeId.hashCode()));
         result = ((result* 31)+((this.description == null)? 0 :this.description.hashCode()));
         result = ((result* 31)+((this.processors == null)? 0 :this.processors.hashCode()));
-        result = ((result* 31)+((this.inputDatabase == null)? 0 :this.inputDatabase.hashCode()));
+        result = ((result* 31)+((this.sourceDatabase == null)? 0 :this.sourceDatabase.hashCode()));
+        result = ((result* 31)+((this.collections == null)? 0 :this.collections.hashCode()));
+        result = ((result* 31)+((this.permissions == null)? 0 :this.permissions.hashCode()));
         result = ((result* 31)+((this.stepDefinitionName == null)? 0 :this.stepDefinitionName.hashCode()));
         result = ((result* 31)+((this.outputFormat == null)? 0 :this.outputFormat.hashCode()));
-        result = ((result* 31)+((this.outputPermissions == null)? 0 :this.outputPermissions.hashCode()));
+        result = ((result* 31)+((this.additionalCollections == null)? 0 :this.additionalCollections.hashCode()));
         result = ((result* 31)+((this.headers == null)? 0 :this.headers.hashCode()));
-        result = ((result* 31)+((this.defaultOutputCollections == null)? 0 :this.defaultOutputCollections.hashCode()));
         result = ((result* 31)+((this.threadCount == null)? 0 :this.threadCount.hashCode()));
         result = ((result* 31)+((this.stepDefinitionType == null)? 0 :this.stepDefinitionType.hashCode()));
         result = ((result* 31)+((this.constrainSourceQueryToJob == null)? 0 :this.constrainSourceQueryToJob.hashCode()));
-        result = ((result* 31)+((this.outputDatabase == null)? 0 :this.outputDatabase.hashCode()));
+        result = ((result* 31)+((this.targetDatabase == null)? 0 :this.targetDatabase.hashCode()));
         result = ((result* 31)+((this.sourceQueryIsScript == null)? 0 :this.sourceQueryIsScript.hashCode()));
+        result = ((result* 31)+((this.targetEntityType == null)? 0 :this.targetEntityType.hashCode()));
         result = ((result* 31)+((this.name == null)? 0 :this.name.hashCode()));
         result = ((result* 31)+((this.additionalProperties == null)? 0 :this.additionalProperties.hashCode()));
         result = ((result* 31)+((this.batchSize == null)? 0 :this.batchSize.hashCode()));
@@ -708,11 +726,11 @@ public class StepV1 {
         if (other == this) {
             return true;
         }
-        if ((other instanceof StepV1) == false) {
+        if ((other instanceof StepSchema) == false) {
             return false;
         }
-        StepV1 rhs = ((StepV1) other);
-        return ((((((((((((((((((((((((((this.stepUpdate == rhs.stepUpdate)||((this.stepUpdate!= null)&&this.stepUpdate.equals(rhs.stepUpdate)))&&((this.sourceQuery == rhs.sourceQuery)||((this.sourceQuery!= null)&&this.sourceQuery.equals(rhs.sourceQuery))))&&((this.provenanceGranularityLevel == rhs.provenanceGranularityLevel)||((this.provenanceGranularityLevel!= null)&&this.provenanceGranularityLevel.equals(rhs.provenanceGranularityLevel))))&&((this.outputCollections == rhs.outputCollections)||((this.outputCollections!= null)&&this.outputCollections.equals(rhs.outputCollections))))&&((this.acceptsBatch == rhs.acceptsBatch)||((this.acceptsBatch!= null)&&this.acceptsBatch.equals(rhs.acceptsBatch))))&&((this.customHook == rhs.customHook)||((this.customHook!= null)&&this.customHook.equals(rhs.customHook))))&&((this.validateEntity == rhs.validateEntity)||((this.validateEntity!= null)&&this.validateEntity.equals(rhs.validateEntity))))&&((this.stepId == rhs.stepId)||((this.stepId!= null)&&this.stepId.equals(rhs.stepId))))&&((this.targetEntityTypeId == rhs.targetEntityTypeId)||((this.targetEntityTypeId!= null)&&this.targetEntityTypeId.equals(rhs.targetEntityTypeId))))&&((this.description == rhs.description)||((this.description!= null)&&this.description.equals(rhs.description))))&&((this.processors == rhs.processors)||((this.processors!= null)&&this.processors.equals(rhs.processors))))&&((this.inputDatabase == rhs.inputDatabase)||((this.inputDatabase!= null)&&this.inputDatabase.equals(rhs.inputDatabase))))&&((this.stepDefinitionName == rhs.stepDefinitionName)||((this.stepDefinitionName!= null)&&this.stepDefinitionName.equals(rhs.stepDefinitionName))))&&((this.outputFormat == rhs.outputFormat)||((this.outputFormat!= null)&&this.outputFormat.equals(rhs.outputFormat))))&&((this.outputPermissions == rhs.outputPermissions)||((this.outputPermissions!= null)&&this.outputPermissions.equals(rhs.outputPermissions))))&&((this.headers == rhs.headers)||((this.headers!= null)&&this.headers.equals(rhs.headers))))&&((this.defaultOutputCollections == rhs.defaultOutputCollections)||((this.defaultOutputCollections!= null)&&this.defaultOutputCollections.equals(rhs.defaultOutputCollections))))&&((this.threadCount == rhs.threadCount)||((this.threadCount!= null)&&this.threadCount.equals(rhs.threadCount))))&&((this.stepDefinitionType == rhs.stepDefinitionType)||((this.stepDefinitionType!= null)&&this.stepDefinitionType.equals(rhs.stepDefinitionType))))&&((this.constrainSourceQueryToJob == rhs.constrainSourceQueryToJob)||((this.constrainSourceQueryToJob!= null)&&this.constrainSourceQueryToJob.equals(rhs.constrainSourceQueryToJob))))&&((this.outputDatabase == rhs.outputDatabase)||((this.outputDatabase!= null)&&this.outputDatabase.equals(rhs.outputDatabase))))&&((this.sourceQueryIsScript == rhs.sourceQueryIsScript)||((this.sourceQueryIsScript!= null)&&this.sourceQueryIsScript.equals(rhs.sourceQueryIsScript))))&&((this.name == rhs.name)||((this.name!= null)&&this.name.equals(rhs.name))))&&((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&&this.additionalProperties.equals(rhs.additionalProperties))))&&((this.batchSize == rhs.batchSize)||((this.batchSize!= null)&&this.batchSize.equals(rhs.batchSize))));
+        StepSchema rhs = ((StepSchema) other);
+        return ((((((((((((((((((((((((((this.stepUpdate == rhs.stepUpdate)||((this.stepUpdate!= null)&&this.stepUpdate.equals(rhs.stepUpdate)))&&((this.sourceQuery == rhs.sourceQuery)||((this.sourceQuery!= null)&&this.sourceQuery.equals(rhs.sourceQuery))))&&((this.provenanceGranularityLevel == rhs.provenanceGranularityLevel)||((this.provenanceGranularityLevel!= null)&&this.provenanceGranularityLevel.equals(rhs.provenanceGranularityLevel))))&&((this.acceptsBatch == rhs.acceptsBatch)||((this.acceptsBatch!= null)&&this.acceptsBatch.equals(rhs.acceptsBatch))))&&((this.customHook == rhs.customHook)||((this.customHook!= null)&&this.customHook.equals(rhs.customHook))))&&((this.validateEntity == rhs.validateEntity)||((this.validateEntity!= null)&&this.validateEntity.equals(rhs.validateEntity))))&&((this.stepId == rhs.stepId)||((this.stepId!= null)&&this.stepId.equals(rhs.stepId))))&&((this.description == rhs.description)||((this.description!= null)&&this.description.equals(rhs.description))))&&((this.processors == rhs.processors)||((this.processors!= null)&&this.processors.equals(rhs.processors))))&&((this.sourceDatabase == rhs.sourceDatabase)||((this.sourceDatabase!= null)&&this.sourceDatabase.equals(rhs.sourceDatabase))))&&((this.collections == rhs.collections)||((this.collections!= null)&&this.collections.equals(rhs.collections))))&&((this.permissions == rhs.permissions)||((this.permissions!= null)&&this.permissions.equals(rhs.permissions))))&&((this.stepDefinitionName == rhs.stepDefinitionName)||((this.stepDefinitionName!= null)&&this.stepDefinitionName.equals(rhs.stepDefinitionName))))&&((this.outputFormat == rhs.outputFormat)||((this.outputFormat!= null)&&this.outputFormat.equals(rhs.outputFormat))))&&((this.additionalCollections == rhs.additionalCollections)||((this.additionalCollections!= null)&&this.additionalCollections.equals(rhs.additionalCollections))))&&((this.headers == rhs.headers)||((this.headers!= null)&&this.headers.equals(rhs.headers))))&&((this.threadCount == rhs.threadCount)||((this.threadCount!= null)&&this.threadCount.equals(rhs.threadCount))))&&((this.stepDefinitionType == rhs.stepDefinitionType)||((this.stepDefinitionType!= null)&&this.stepDefinitionType.equals(rhs.stepDefinitionType))))&&((this.constrainSourceQueryToJob == rhs.constrainSourceQueryToJob)||((this.constrainSourceQueryToJob!= null)&&this.constrainSourceQueryToJob.equals(rhs.constrainSourceQueryToJob))))&&((this.targetDatabase == rhs.targetDatabase)||((this.targetDatabase!= null)&&this.targetDatabase.equals(rhs.targetDatabase))))&&((this.sourceQueryIsScript == rhs.sourceQueryIsScript)||((this.sourceQueryIsScript!= null)&&this.sourceQueryIsScript.equals(rhs.sourceQueryIsScript))))&&((this.targetEntityType == rhs.targetEntityType)||((this.targetEntityType!= null)&&this.targetEntityType.equals(rhs.targetEntityType))))&&((this.name == rhs.name)||((this.name!= null)&&this.name.equals(rhs.name))))&&((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&&this.additionalProperties.equals(rhs.additionalProperties))))&&((this.batchSize == rhs.batchSize)||((this.batchSize!= null)&&this.batchSize.equals(rhs.batchSize))));
     }
 
     public enum OutputFormat {
@@ -720,10 +738,10 @@ public class StepV1 {
         JSON("json"),
         XML("xml");
         private final String value;
-        private final static Map<String, StepV1 .OutputFormat> CONSTANTS = new HashMap<String, StepV1 .OutputFormat>();
+        private final static Map<String, StepSchema.OutputFormat> CONSTANTS = new HashMap<String, StepSchema.OutputFormat>();
 
         static {
-            for (StepV1 .OutputFormat c: values()) {
+            for (StepSchema.OutputFormat c: values()) {
                 CONSTANTS.put(c.value, c);
             }
         }
@@ -743,8 +761,8 @@ public class StepV1 {
         }
 
         @JsonCreator
-        public static StepV1 .OutputFormat fromValue(String value) {
-            StepV1 .OutputFormat constant = CONSTANTS.get(value);
+        public static StepSchema.OutputFormat fromValue(String value) {
+            StepSchema.OutputFormat constant = CONSTANTS.get(value);
             if (constant == null) {
                 throw new IllegalArgumentException(value);
             } else {
@@ -765,10 +783,10 @@ public class StepV1 {
         COARSE("coarse"),
         FINE("fine");
         private final String value;
-        private final static Map<String, StepV1 .ProvenanceGranularityLevel> CONSTANTS = new HashMap<String, StepV1 .ProvenanceGranularityLevel>();
+        private final static Map<String, StepSchema.ProvenanceGranularityLevel> CONSTANTS = new HashMap<String, StepSchema.ProvenanceGranularityLevel>();
 
         static {
-            for (StepV1 .ProvenanceGranularityLevel c: values()) {
+            for (StepSchema.ProvenanceGranularityLevel c: values()) {
                 CONSTANTS.put(c.value, c);
             }
         }
@@ -788,8 +806,8 @@ public class StepV1 {
         }
 
         @JsonCreator
-        public static StepV1 .ProvenanceGranularityLevel fromValue(String value) {
-            StepV1 .ProvenanceGranularityLevel constant = CONSTANTS.get(value);
+        public static StepSchema.ProvenanceGranularityLevel fromValue(String value) {
+            StepSchema.ProvenanceGranularityLevel constant = CONSTANTS.get(value);
             if (constant == null) {
                 throw new IllegalArgumentException(value);
             } else {

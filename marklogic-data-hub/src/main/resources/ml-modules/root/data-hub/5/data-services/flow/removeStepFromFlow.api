@@ -1,0 +1,18 @@
+{
+    "functionName": "removeStepFromFlow",
+    "params": [
+        {
+            "name": "flowName",
+            "datatype": "string"
+        },
+        {
+            "name": "stepNumber",
+            "datatype": "string"
+        }
+    ],
+    "return": {
+        "desc": "Return the updated flow document",
+        "datatype": "jsonDocument",
+        "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
+}

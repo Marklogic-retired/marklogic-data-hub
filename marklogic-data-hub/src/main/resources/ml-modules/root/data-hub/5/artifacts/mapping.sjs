@@ -22,7 +22,7 @@ const dataHub = DataHubSingleton.instance();
 const hubEs = require("/data-hub/5/impl/hub-es.sjs");
 
 
-const collections = ['http://marklogic.com/data-hub/mappings'];
+const collections = ['http://marklogic.com/data-hub/mappings', 'http://marklogic.com/data-hub/steps', 'http://marklogic.com/data-hub/steps/mapping'];
 const databases = [dataHub.config.STAGINGDATABASE, dataHub.config.FINALDATABASE];
 const permissions = [xdmp.permission(dataHub.consts.DATA_HUB_MAPPING_WRITE_ROLE, 'update'), xdmp.permission(dataHub.consts.DATA_HUB_MAPPING_READ_ROLE, 'read')];
 const requiredProperties = ['name', 'targetEntityType', 'selectedSource'];

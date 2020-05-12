@@ -1,0 +1,13 @@
+{
+    "functionName": "deleteStep",
+    "params": [
+        {
+            "name": "stepDefinitionType",
+            "datatype": "string"
+        },
+        {
+            "name": "stepName",
+            "datatype": "string"
+        }
+    ]
+}

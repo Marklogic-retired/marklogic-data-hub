@@ -1,0 +1,24 @@
+{
+    "functionName": "updateStep",
+    "desc": "Update the step by assigning the given properties on top of the existing step",
+    "params": [
+        {
+            "name": "stepDefinitionType",
+            "datatype": "string"
+        },
+        {
+            "name": "stepName",
+            "datatype": "string"
+        },
+        {
+            "name": "propertiesToAssign",
+            "datatype": "jsonDocument",
+            "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+        }
+    ],
+    "return": {
+        "desc": "Return the updated step document",
+        "datatype": "jsonDocument",
+        "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
+}

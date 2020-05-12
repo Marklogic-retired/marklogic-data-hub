@@ -1,0 +1,19 @@
+{
+  "title": "CustomHook",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "module": {
+      "type": "string"
+    },
+    "parameters": {
+      "type": "object"
+    },
+    "user": {
+      "type": "string"
+    },
+    "runBefore": {
+      "type": "boolean"
+    }
+  }
+}

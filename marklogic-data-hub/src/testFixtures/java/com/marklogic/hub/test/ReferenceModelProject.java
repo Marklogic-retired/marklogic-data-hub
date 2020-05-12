@@ -14,6 +14,8 @@ import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 
 public class ReferenceModelProject extends TestObject {
 
+    public final static String INPUT_COLLECTION = "customer-input";
+
     private HubClient hubClient;
 
     public ReferenceModelProject(HubClient hubClient) {
@@ -26,7 +28,7 @@ public class ReferenceModelProject extends TestObject {
         customer.put("customerId", customerId);
         customer.put("name", name);
         DocumentMetadataHandle metadata = new DocumentMetadataHandle()
-            .withCollections("customer-input")
+            .withCollections(INPUT_COLLECTION)
             .withPermission("data-hub-operator", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE);
         mgr.write("/customer" + customerId + ".json", metadata, new JacksonHandle(customer));
     }

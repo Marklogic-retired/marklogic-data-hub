@@ -5,10 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -25,44 +22,60 @@ import com.fasterxml.jackson.annotation.JsonValue;
 @JsonPropertyOrder({
     "customHook",
     "provenanceGranularityLevel",
-    "outputPermissions",
+    "permissions",
     "targetFormat",
     "targetDatabase",
     "sourceDatabase",
-    "outputCollections",
-    "defaultOutputCollections",
+    "collections",
+    "additionalCollections",
     "targetCollections"
 })
 public class StepSettingsSchema {
 
+    /**
+     * CustomHook
+     * <p>
+     * 
+     * 
+     */
     @JsonProperty("customHook")
-    private CustomHook__1 customHook;
+    private CustomHookSchema customHook;
     @JsonProperty("provenanceGranularityLevel")
     private StepSettingsSchema.ProvenanceGranularityLevel provenanceGranularityLevel;
-    @JsonProperty("outputPermissions")
-    private String outputPermissions;
+    @JsonProperty("permissions")
+    private String permissions;
     @JsonProperty("targetFormat")
     private StepSettingsSchema.TargetFormat targetFormat;
     @JsonProperty("targetDatabase")
     private String targetDatabase;
     @JsonProperty("sourceDatabase")
     private String sourceDatabase;
-    @JsonProperty("outputCollections")
-    private List<String> outputCollections = new ArrayList<String>();
-    @JsonProperty("defaultOutputCollections")
-    private List<String> defaultOutputCollections = new ArrayList<String>();
+    @JsonProperty("collections")
+    private List<String> collections = new ArrayList<String>();
+    @JsonProperty("additionalCollections")
+    private List<String> additionalCollections = new ArrayList<String>();
     @JsonProperty("targetCollections")
     private TargetCollections targetCollections;
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
+    /**
+     * CustomHook
+     * <p>
+     * 
+     * 
+     */
     @JsonProperty("customHook")
-    public CustomHook__1 getCustomHook() {
+    public CustomHookSchema getCustomHook() {
         return customHook;
     }
 
+    /**
+     * CustomHook
+     * <p>
+     * 
+     * 
+     */
     @JsonProperty("customHook")
-    public void setCustomHook(CustomHook__1 customHook) {
+    public void setCustomHook(CustomHookSchema customHook) {
         this.customHook = customHook;
     }
 
@@ -76,14 +89,14 @@ public class StepSettingsSchema {
         this.provenanceGranularityLevel = provenanceGranularityLevel;
     }
 
-    @JsonProperty("outputPermissions")
-    public String getOutputPermissions() {
-        return outputPermissions;
+    @JsonProperty("permissions")
+    public String getPermissions() {
+        return permissions;
     }
 
-    @JsonProperty("outputPermissions")
-    public void setOutputPermissions(String outputPermissions) {
-        this.outputPermissions = outputPermissions;
+    @JsonProperty("permissions")
+    public void setPermissions(String permissions) {
+        this.permissions = permissions;
     }
 
     @JsonProperty("targetFormat")
@@ -116,24 +129,24 @@ public class StepSettingsSchema {
         this.sourceDatabase = sourceDatabase;
     }
 
-    @JsonProperty("outputCollections")
-    public List<String> getOutputCollections() {
-        return outputCollections;
+    @JsonProperty("collections")
+    public List<String> getCollections() {
+        return collections;
     }
 
-    @JsonProperty("outputCollections")
-    public void setOutputCollections(List<String> outputCollections) {
-        this.outputCollections = outputCollections;
+    @JsonProperty("collections")
+    public void setCollections(List<String> collections) {
+        this.collections = collections;
     }
 
-    @JsonProperty("defaultOutputCollections")
-    public List<String> getDefaultOutputCollections() {
-        return defaultOutputCollections;
+    @JsonProperty("additionalCollections")
+    public List<String> getAdditionalCollections() {
+        return additionalCollections;
     }
 
-    @JsonProperty("defaultOutputCollections")
-    public void setDefaultOutputCollections(List<String> defaultOutputCollections) {
-        this.defaultOutputCollections = defaultOutputCollections;
+    @JsonProperty("additionalCollections")
+    public void setAdditionalCollections(List<String> additionalCollections) {
+        this.additionalCollections = additionalCollections;
     }
 
     @JsonProperty("targetCollections")
@@ -144,16 +157,6 @@ public class StepSettingsSchema {
     @JsonProperty("targetCollections")
     public void setTargetCollections(TargetCollections targetCollections) {
         this.targetCollections = targetCollections;
-    }
-
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
     }
 
     @Override
@@ -168,9 +171,9 @@ public class StepSettingsSchema {
         sb.append('=');
         sb.append(((this.provenanceGranularityLevel == null)?"<null>":this.provenanceGranularityLevel));
         sb.append(',');
-        sb.append("outputPermissions");
+        sb.append("permissions");
         sb.append('=');
-        sb.append(((this.outputPermissions == null)?"<null>":this.outputPermissions));
+        sb.append(((this.permissions == null)?"<null>":this.permissions));
         sb.append(',');
         sb.append("targetFormat");
         sb.append('=');
@@ -184,21 +187,17 @@ public class StepSettingsSchema {
         sb.append('=');
         sb.append(((this.sourceDatabase == null)?"<null>":this.sourceDatabase));
         sb.append(',');
-        sb.append("outputCollections");
+        sb.append("collections");
         sb.append('=');
-        sb.append(((this.outputCollections == null)?"<null>":this.outputCollections));
+        sb.append(((this.collections == null)?"<null>":this.collections));
         sb.append(',');
-        sb.append("defaultOutputCollections");
+        sb.append("additionalCollections");
         sb.append('=');
-        sb.append(((this.defaultOutputCollections == null)?"<null>":this.defaultOutputCollections));
+        sb.append(((this.additionalCollections == null)?"<null>":this.additionalCollections));
         sb.append(',');
         sb.append("targetCollections");
         sb.append('=');
         sb.append(((this.targetCollections == null)?"<null>":this.targetCollections));
-        sb.append(',');
-        sb.append("additionalProperties");
-        sb.append('=');
-        sb.append(((this.additionalProperties == null)?"<null>":this.additionalProperties));
         sb.append(',');
         if (sb.charAt((sb.length()- 1)) == ',') {
             sb.setCharAt((sb.length()- 1), ']');
@@ -211,14 +210,13 @@ public class StepSettingsSchema {
     @Override
     public int hashCode() {
         int result = 1;
-        result = ((result* 31)+((this.outputPermissions == null)? 0 :this.outputPermissions.hashCode()));
-        result = ((result* 31)+((this.defaultOutputCollections == null)? 0 :this.defaultOutputCollections.hashCode()));
+        result = ((result* 31)+((this.additionalCollections == null)? 0 :this.additionalCollections.hashCode()));
         result = ((result* 31)+((this.provenanceGranularityLevel == null)? 0 :this.provenanceGranularityLevel.hashCode()));
-        result = ((result* 31)+((this.outputCollections == null)? 0 :this.outputCollections.hashCode()));
         result = ((result* 31)+((this.sourceDatabase == null)? 0 :this.sourceDatabase.hashCode()));
+        result = ((result* 31)+((this.collections == null)? 0 :this.collections.hashCode()));
+        result = ((result* 31)+((this.permissions == null)? 0 :this.permissions.hashCode()));
         result = ((result* 31)+((this.customHook == null)? 0 :this.customHook.hashCode()));
         result = ((result* 31)+((this.targetFormat == null)? 0 :this.targetFormat.hashCode()));
-        result = ((result* 31)+((this.additionalProperties == null)? 0 :this.additionalProperties.hashCode()));
         result = ((result* 31)+((this.targetCollections == null)? 0 :this.targetCollections.hashCode()));
         result = ((result* 31)+((this.targetDatabase == null)? 0 :this.targetDatabase.hashCode()));
         return result;
@@ -233,7 +231,7 @@ public class StepSettingsSchema {
             return false;
         }
         StepSettingsSchema rhs = ((StepSettingsSchema) other);
-        return (((((((((((this.outputPermissions == rhs.outputPermissions)||((this.outputPermissions!= null)&&this.outputPermissions.equals(rhs.outputPermissions)))&&((this.defaultOutputCollections == rhs.defaultOutputCollections)||((this.defaultOutputCollections!= null)&&this.defaultOutputCollections.equals(rhs.defaultOutputCollections))))&&((this.provenanceGranularityLevel == rhs.provenanceGranularityLevel)||((this.provenanceGranularityLevel!= null)&&this.provenanceGranularityLevel.equals(rhs.provenanceGranularityLevel))))&&((this.outputCollections == rhs.outputCollections)||((this.outputCollections!= null)&&this.outputCollections.equals(rhs.outputCollections))))&&((this.sourceDatabase == rhs.sourceDatabase)||((this.sourceDatabase!= null)&&this.sourceDatabase.equals(rhs.sourceDatabase))))&&((this.customHook == rhs.customHook)||((this.customHook!= null)&&this.customHook.equals(rhs.customHook))))&&((this.targetFormat == rhs.targetFormat)||((this.targetFormat!= null)&&this.targetFormat.equals(rhs.targetFormat))))&&((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&&this.additionalProperties.equals(rhs.additionalProperties))))&&((this.targetCollections == rhs.targetCollections)||((this.targetCollections!= null)&&this.targetCollections.equals(rhs.targetCollections))))&&((this.targetDatabase == rhs.targetDatabase)||((this.targetDatabase!= null)&&this.targetDatabase.equals(rhs.targetDatabase))));
+        return ((((((((((this.additionalCollections == rhs.additionalCollections)||((this.additionalCollections!= null)&&this.additionalCollections.equals(rhs.additionalCollections)))&&((this.provenanceGranularityLevel == rhs.provenanceGranularityLevel)||((this.provenanceGranularityLevel!= null)&&this.provenanceGranularityLevel.equals(rhs.provenanceGranularityLevel))))&&((this.sourceDatabase == rhs.sourceDatabase)||((this.sourceDatabase!= null)&&this.sourceDatabase.equals(rhs.sourceDatabase))))&&((this.collections == rhs.collections)||((this.collections!= null)&&this.collections.equals(rhs.collections))))&&((this.permissions == rhs.permissions)||((this.permissions!= null)&&this.permissions.equals(rhs.permissions))))&&((this.customHook == rhs.customHook)||((this.customHook!= null)&&this.customHook.equals(rhs.customHook))))&&((this.targetFormat == rhs.targetFormat)||((this.targetFormat!= null)&&this.targetFormat.equals(rhs.targetFormat))))&&((this.targetCollections == rhs.targetCollections)||((this.targetCollections!= null)&&this.targetCollections.equals(rhs.targetCollections))))&&((this.targetDatabase == rhs.targetDatabase)||((this.targetDatabase!= null)&&this.targetDatabase.equals(rhs.targetDatabase))));
     }
 
     public enum ProvenanceGranularityLevel {

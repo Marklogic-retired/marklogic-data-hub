@@ -209,7 +209,7 @@
       }
     },
     {
-      "$ref": "./Step.v1.json"
+      "$ref": "./Step.schema.json"
     }
   ]
 }

@@ -22,6 +22,7 @@ const Mapping = require('./mapping');
 const Matching = require('./matching');
 const StepDef = require('./stepDefinition');
 
+const ds = require("/data-hub/5/data-services/ds-utils.sjs");
 const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
 const dataHub = DataHubSingleton.instance();
 
@@ -29,6 +30,7 @@ const dataHub = DataHubSingleton.instance();
 const cachedArtifacts = {};
 const registeredArtifactTypes = {
     loadData: LoadData,
+  ingestion: LoadData,
     flow: Flow,
     stepDefinition: StepDef,
     mapping: Mapping,
@@ -68,13 +70,17 @@ function getTypesInfo() {
 }
 
 const entityServiceDrivenArtifactTypes = ['mapping', 'matching', 'merging', 'mastering'];
-const artifactsWithSettings = ['loadData'].concat(entityServiceDrivenArtifactTypes)
+const artifactsWithSettings = ['loadData'].concat(entityServiceDrivenArtifactTypes);
 
 function getArtifacts(artifactType) {
     const queries = [];
     const artifactLibrary =  getArtifactTypeLibrary(artifactType);
-    for (const coll of artifactLibrary.getCollections()) {
-        queries.push(cts.collectionQuery(coll));
+
+    // This is a temporary hack during the shift to mapping steps; it ensures that mapping.sjs can specify multiple
+    // collections, but only the first one is used for finding artifacts so that ./mappings mappings are still found.
+    const artifactCollections = artifactLibrary.getCollections();
+    if (artifactCollections != null && artifactCollections.length > 0) {
+      queries.push(cts.collectionQuery(artifactCollections[0]));
     }
 
     if (queries.length) {
@@ -98,7 +104,7 @@ function getEntityTitles() {
  * To keep things interesting, this needs to support finding artifacts associated with entities where targetEntityType
  * on an artifact can either be an entityName - e.g. "Customer" - or an entityTypeId - "http://example.org/Customer-0.0.1/Customer".
  * That's because mappings require entityTypeId, but other artifacts will accept an entityName.
- * 
+ *
  * @param queries
  * @returns {*[]}
  */
@@ -393,40 +399,39 @@ function deleteArtifactSettings(artifactType, artifactName, artifactVersion = 'l
 }
 
 function getFullFlow(flowName, artifactVersion = 'latest') {
-  let flowNode = getArtifact('flow', flowName);
-  flowNode = createFullFlow(flowName, flowNode);
-  return flowNode;
-}
-
-function createFullFlow(flowName, flowNode){
-  const steps = flowNode["steps"];
-  Object.keys(steps).forEach(key => {
-    let stepValue = steps[key];
-    let artifactInStepType = stepValue['stepDefinitionType'].toLowerCase() === "ingestion" ? "loadData" : stepValue['stepDefinitionType'].toLowerCase();
-    if(stepValue.options[artifactInStepType]){
-      let artifactInStep =  stepValue.options[artifactInStepType].name;
-      try {
-        let settingsNode = getArtifactSettings(artifactInStepType, artifactInStep)
-        delete settingsNode["artifactName"];
-        settingsNode = clean(settingsNode);
-        let artifactNode = getArtifact(artifactInStepType, artifactInStep);
-        stepValue = addToStep(artifactInStepType,stepValue, artifactNode, settingsNode);
-        stepValue = addToStepOptions(artifactInStepType, stepValue, artifactNode, settingsNode);
-      }
-      catch (ex) {
-        if(artifactInStepType == 'mapping') {
-          dataHub.debug.log({message: 'This flow ' + flowName + ' runs older version of  mapping: ' + artifactInStep , type: 'warning'})
+  const flow = getArtifact('flow', flowName);
+  const steps = flow["steps"];
+  Object.keys(steps).forEach(stepNumber => {
+    if (steps[stepNumber].stepId) {
+      steps[stepNumber] = convertStepReferenceToInlineStep(steps[stepNumber].stepId);
+    }
+    else {
+      let stepValue = steps[stepNumber];
+      let artifactInStepType = stepValue['stepDefinitionType'].toLowerCase() === "ingestion" ? "loadData" : stepValue['stepDefinitionType'].toLowerCase();
+      if(stepValue.options[artifactInStepType]){
+        let artifactInStep =  stepValue.options[artifactInStepType].name;
+        try {
+          let settingsNode = getArtifactSettings(artifactInStepType, artifactInStep)
+          delete settingsNode["artifactName"];
+          settingsNode = clean(settingsNode);
+          let artifactNode = getArtifact(artifactInStepType, artifactInStep);
+          stepValue = addToStep(artifactInStepType,stepValue, artifactNode, settingsNode);
+          stepValue = addToStepOptions(artifactInStepType, stepValue, artifactNode, settingsNode);
         }
-        else {
-          throw Error('Getting flow ' + flowName + ' failed: Unable to get settings for the artifact : ' +  artifactInStep);
+        catch (ex) {
+          if(artifactInStepType == 'mapping') {
+            dataHub.debug.log({message: 'This flow ' + flowName + ' runs older version of  mapping: ' + artifactInStep , type: 'warning'})
+          }
+          else {
+            throw Error('Getting flow ' + flowName + ' failed: Unable to get settings for the artifact : ' +  artifactInStep);
+          }
         }
       }
     }
   });
-  return flowNode;
+  return flow;
 }
 
-//TODO: Add 'processors' to step once it is known where they will go into (artifact or settings)
 function addToStep(artifactInStepType, stepValue, artifactNode,  settingsNode){
   if(artifactInStepType === 'loadData') {
     stepValue.fileLocations = {};
@@ -436,8 +441,8 @@ function addToStep(artifactInStepType, stepValue, artifactNode,  settingsNode){
     stepValue.fileLocations.separator =   artifactNode["separator"];
   }
   else {
-      stepValue.options["sourceQuery"] = artifactNode["sourceQuery"];
-    }
+    stepValue.options["sourceQuery"] = artifactNode["sourceQuery"];
+  }
   stepValue.customHook = settingsNode.customHook;
   delete settingsNode.customHook;
   return stepValue;
@@ -466,6 +471,86 @@ function clean(obj) {
     }
   }
   return obj
+}
+
+function convertStepReferenceToInlineStep(stepId) {
+  const stepDoc = fn.head(cts.search(cts.andQuery([
+    cts.collectionQuery("http://marklogic.com/data-hub/steps"),
+    cts.jsonPropertyValueQuery("stepId", stepId, "case-insensitive")
+  ])));
+  if (!stepDoc) {
+    ds.throwServerError(`Could not find a step with ID ${stepId}, which was referenced in flow ${flowName}`);
+  }
+  const referencedStep = stepDoc.toObject();
+
+  const newFlowStep = {};
+
+  // Convert ingestion-specific properties into a fileLocations object
+  if ("ingestion" === referencedStep.stepDefinitionType.toLowerCase()) {
+    const fileLocations = {};
+    if (referencedStep.sourceFormat) {
+      fileLocations.inputFileType = referencedStep.sourceFormat;
+      delete referencedStep.sourceFormat;
+    }
+    ["inputFilePath", "outputURIReplacement", "separator"].forEach(prop => {
+      if (referencedStep[prop]) {
+        fileLocations[prop] = referencedStep[prop];
+        delete referencedStep[prop];
+      }
+    });
+    if (Object.keys(fileLocations).length > 0) {
+      newFlowStep.fileLocations = fileLocations;
+    }
+  }
+
+  // Transfer mapping properties into a mapping reference
+  if (referencedStep.stepDefinitionType && "mapping" == referencedStep.stepDefinitionType.toLowerCase()) {
+    const mapping = {
+      name: referencedStep.name
+    };
+    if (referencedStep.version) {
+      mapping.version = referencedStep.version;
+      delete referencedStep.version;
+    }
+    referencedStep.mapping = mapping;
+    delete referencedStep.properties;
+  }
+
+  // Copy all known non-options properties over
+  [
+    "name", "description", "stepDefinitionName", "stepDefinitionType", "stepId",
+    "customHook", "processors", "batchSize", "threadCount"
+  ].forEach(key => {
+    if (referencedStep[key]) {
+      newFlowStep[key] = referencedStep[key];
+      delete referencedStep[key];
+    }
+  });
+
+  // Convert targetFormat into outputFormat
+  // TODO Ideally, HC will adopt the term "outputFormat" so that this is not needed
+  if (referencedStep.targetFormat) {
+    referencedStep.outputFormat = referencedStep.targetFormat;
+    delete referencedStep.targetFormat;
+  }
+
+  // Combine collections and additionalCollections
+  let collections = referencedStep.collections || [];
+  if (referencedStep.additionalCollections) {
+    collections = collections.concat(referencedStep.additionalCollections);
+    delete referencedStep.additionalCollections;
+  }
+  if (collections.length > 0) {
+    referencedStep.collections = collections;
+  }
+
+  // Copy all remaining properties on the referenced step over as options
+  newFlowStep.options = {};
+  Object.keys(referencedStep).forEach(key => {
+    newFlowStep.options[key] = referencedStep[key];
+  });
+
+  return newFlowStep;
 }
 
 module.exports = {

@@ -86,5 +86,8 @@ module.exports = {
     MATCHING_ARTIFACT_COLLECTION,
     MATCHING_SETTINGS_COLLECTION,
     STEP_DEFINITION_COLLECTION
-  ]
+  ],
+
+  // Define all DH trace events here
+  TRACE_STEP: "data-hub-step"
 };

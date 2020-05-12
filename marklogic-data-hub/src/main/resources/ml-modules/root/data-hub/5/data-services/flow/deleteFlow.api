@@ -1,0 +1,9 @@
+{
+    "functionName": "deleteFlow",
+    "params": [
+        {
+            "name": "name",
+            "datatype": "string"
+        }
+    ]
+}

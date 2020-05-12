@@ -1,0 +1,22 @@
+{
+    "functionName": "addStepToFlow",
+    "params": [
+        {
+            "name": "flowName",
+            "datatype": "string"
+        },
+        {
+            "name": "stepName",
+            "datatype": "string"
+        },
+        {
+            "name": "stepDefinitionType",
+            "datatype": "string"
+        }
+    ],
+    "return": {
+        "desc": "Return the updated flow document",
+        "datatype": "jsonDocument",
+        "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
+}
