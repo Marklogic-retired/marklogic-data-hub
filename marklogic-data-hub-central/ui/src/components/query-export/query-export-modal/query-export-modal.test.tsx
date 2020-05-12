@@ -6,24 +6,14 @@ import QueryExportModal from './query-export-modal';
 describe('Query Export Component', () => {
 
   let columns = ['id', 'firstName', 'lastName', 'age']
+  let columnsNested = ['id', 'firstName', 'lastName', 'age', 'phoneNumber.work']
 
   test('Verify Query Export Modal Dialog renders', () => {
-    const { getByTestId, getByText } = render(<QueryExportModal exportModalVisibility={true} columns={columns} />);
+    const { getByTestId, getByText, queryByText } = render(<QueryExportModal exportModalVisibility={true} columns={columns} />);
+    expect(queryByText('export-warning')).toBeNull()
     expect(getByTestId('query-export-form')).toBeInTheDocument();
     expect(getByText('Rows:')).toBeInTheDocument();
-    expect(getByText('All')).toBeInTheDocument();
-    expect(getByText('Limited set of the first rows returned')).toBeInTheDocument();
     expect(getByText('Export to a CSV file containing the columns of data currently displayed.')).toBeInTheDocument();
-  });
-
-  test('Verify able to select All rows', () => {
-    const { getByText } = render(<QueryExportModal exportModalVisibility={true} columns={columns} />);
-    fireEvent.click(getByText('All'));
-  });
-
-  test('Verify able to select Limited number of rows', () => {
-    const { getByText } = render(<QueryExportModal exportModalVisibility={true} columns={columns} />);
-    fireEvent.click(getByText('Limited set of the first rows returned'));
   });
 
   test('Verify able to select Maximum rows', () => {
@@ -68,7 +58,12 @@ describe('Query Export Component', () => {
     const { getByText, getByRole, queryByText } = render(<QueryExportModal exportModalVisibility={true} columns={columns} />);
     fireEvent.click(getByText('Limited set of the first rows returned'));
     getByRole('button', { name: 'Cancel' })
-    expect(queryByText('Limited set of the first rows returned"')).not.toBeInTheDocument();
+    expect(queryByText('Limited set of the first rows returned"')).toBeNull()
+  });
+
+  test('Verify object/array warning displays', () => {
+    const { getByTestId } = render(<QueryExportModal exportModalVisibility={true} columns={columnsNested} />);
+    expect(getByTestId('export-warning')).toBeInTheDocument();
   });
 
 });
