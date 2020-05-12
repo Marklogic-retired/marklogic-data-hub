@@ -62,8 +62,30 @@ describe('Query Export Component', () => {
   });
 
   test('Verify object/array warning displays', () => {
-    const { getByTestId } = render(<QueryExportModal exportModalVisibility={true} columns={columnsNested} />);
+    const { getByTestId } = render(<QueryExportModal exportModalVisibility={true} columns={columnsNested} hasStructured={true}/>);
     expect(getByTestId('export-warning')).toBeInTheDocument();
+  });
+
+  test('Verify export preview renders', () => {
+    const { getByTestId, getByText } = render(<QueryExportModal exportModalVisibility={true} columns={columnsNested} hasStructured={true}/>);
+    fireEvent.click(getByText('Show Preview'));
+    expect(getByTestId('export-preview-table')).toBeInTheDocument();
+  });
+
+  test('Verify onCancel gets called', () => {
+    const { getByText } = render(<QueryExportModal exportModalVisibility={true} columns={columnsNested} hasStructured={true} setExportModalVisibility={jest.fn()}/>);
+    const cancelButton = getByText('Cancel');
+    cancelButton.onclick = jest.fn();
+    fireEvent.click(cancelButton);
+    expect(cancelButton.onclick).toHaveBeenCalledTimes(1);
+  });
+
+  test('Verify onOK gets called', () => {
+    const { getByRole } = render(<QueryExportModal exportModalVisibility={true} columns={columnsNested} hasStructured={true} setExportModalVisibility={jest.fn()}/>);
+    const okButton = getByRole('button', { name: 'Export' });
+    okButton.onclick = jest.fn();
+    fireEvent.click(okButton);
+    expect(okButton.onclick).toHaveBeenCalledTimes(1);
   });
 
 });

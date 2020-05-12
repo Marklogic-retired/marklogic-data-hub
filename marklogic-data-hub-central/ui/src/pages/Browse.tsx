@@ -51,7 +51,8 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [collapse, setCollapsed] = useState(false);
   const [selectedFacets, setSelectedFacets] = useState<any[]>([]);
   const [greyFacets, setGreyFacets] = useState<any[]>([]);
-  const [columns, setColumns] = useState<string>();
+  const [columns, setColumns] = useState<string[]>();
+  const [hasStructured, setStructured] = useState<boolean>(false);
 
   const getEntityModel = async () => {
     try {
@@ -132,7 +133,9 @@ const Browse: React.FC<Props> = ({ location }) => {
   useEffect(() => {
     let entity = entityDefArray.filter(e => e.name === searchOptions.entityTypeIds[0])[0];
     if (entity && entity.hasOwnProperty('properties')) {
-      setColumns(entity.properties.map(e => e.name))
+      let columns = entity.properties.map(e => e.name)
+      setColumns(columns)
+      setStructured(columns && columns.some(column => column.includes('.')))
     }
   }, [searchOptions.entityTypeIds, entityDefArray]);
 
@@ -207,9 +210,10 @@ const Browse: React.FC<Props> = ({ location }) => {
           <>
             {/* TODO Fix searchBar widths, it currently overlaps at narrow browser widths */}
             <div className={styles.searchBar} ref={searchBarRef}
-                  style={{ width: collapse ? '90vw' : '70.5vw',
-                           maxWidth: collapse ? '90vw' : '70.5vw'
-                  }}>
+              style={{
+                width: collapse ? '90vw' : '70.5vw',
+                maxWidth: collapse ? '90vw' : '70.5vw'
+              }}>
               <SearchBar entities={entities} />
               <SearchSummary
                 total={totalDocuments}
@@ -239,7 +243,7 @@ const Browse: React.FC<Props> = ({ location }) => {
                   </div>
                 </div>
               </div>
-              <Query columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={selectedFacets} greyFacets={greyFacets} />
+              <Query hasStructured={hasStructured} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={selectedFacets} greyFacets={greyFacets} />
             </div>
             <div className={styles.fixedView} >
               {tableView ?
@@ -248,6 +252,7 @@ const Browse: React.FC<Props> = ({ location }) => {
                     data={data}
                     entityDefArray={entityDefArray}
                     columns={columns}
+                    hasStructured={hasStructured}
                   />
                 </div>
                 : <SearchResults data={data} entityDefArray={entityDefArray} />
