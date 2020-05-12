@@ -61,6 +61,71 @@ const loadData = {
 
 };
 
+const jsonSourceDataMultipleSiblings = [
+  { rowKey: 1, key: 'proteinId', val: '123EAC' },
+  { rowKey: 2, key: 'proteinType', val: 'home' },
+  {
+    rowKey: 3, key: 'nutFreeName', children: [
+      { rowKey: 4, key: 'FirstNamePreferred', val: 'John' },
+      { rowKey: 5, key: 'LastName', val: 'Smith' , children: [
+        { rowKey: 6, key: 'suffix', val: 'Sr.' }
+      ]}
+    ]
+  },
+  { rowKey: 7, key: 'proteinCat', val: 'commercial' },
+  {
+    rowKey: 8, key: 'withNutsOrganism', children: [
+    { rowKey: 9, key: 'OrganismName', val: 'Frog virus 3' },
+    { rowKey: 10, key: 'OrganismType', val: 'scientific' }
+  ]
+  }
+];
+
+const xmlSourceDataMultipleSiblings = [
+  {
+    rowKey: 1, key: 'sampleProtein', children: [
+      { rowKey: 2, key: 'proteinId', val: '123EAC' },
+      { rowKey: 3, key: '@proteinType', val: 'home' },
+      {
+        rowKey: 4, key: 'nutFree:name', children: [
+        { rowKey: 5, key: 'FirstNamePreferred', val: 'John' },
+        { rowKey: 6, key: 'LastName', val: 'Smith' }
+      ]
+      },
+      { rowKey: 7, key: 'proteinCat', val: 'commercial' },
+      {
+        rowKey: 8, key: 'withNuts:Organism', children: [
+        { rowKey: 9, key: 'OrganismName', val: 'Frog virus 3' },
+        { rowKey: 10, key: 'OrganismType', val: 'scientific' }
+      ]
+      }
+    ]
+  }
+];
+
+const entityTypePropertiesMultipleSiblings = [
+  { key: 1, name: 'propId', type: 'int' },
+  { key: 2, name: 'propName', type: 'string' },
+  { key: 3, name: 'propAttribute', type: 'string' },
+  {
+    key: 4, name: 'items', type: 'parent-ItemType [ ]', children: [
+      { key: 5, name: 'items/itemTypes', type: 'string' },
+      {
+        key: 6, name: 'items/itemCategory', type: 'parent-catItem', children: [
+          { key: 7, name: 'items/itemCategory/artCraft', type: 'string' },
+          { key: 8, name: 'items/itemCategory/automobile', type: 'string' }
+        ]
+      },
+      {
+        key: 9, name: 'items/productCategory', type: 'parent-catProduct', children: [
+          { key: 10, name: 'items/productCategory/speedometer', type: 'string' },
+          { key: 11, name: 'items/productCategory/windscreen', type: 'string' }
+        ]
+      }]
+  },
+  { key: 12, name: 'gender', type: 'string' }
+];
+
 const xmlSourceData = [
   {
     rowKey: 1, key: 'sampleProtein', children: [
@@ -253,7 +318,10 @@ const data = {
   xmlSourceData: xmlSourceData,
   testJSONResponse: testJSONResponse,
   errorJSONResponse: errorJSONResponse,
-  testJSONResponseWithFunctions: testJSONResponseWithFunctions
+  testJSONResponseWithFunctions: testJSONResponseWithFunctions,
+  xmlSourceDataMultipleSiblings: xmlSourceDataMultipleSiblings,
+  entityTypePropertiesMultipleSiblings: entityTypePropertiesMultipleSiblings,
+  jsonSourceDataMultipleSiblings: jsonSourceDataMultipleSiblings
 };
 
 export default data;

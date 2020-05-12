@@ -146,6 +146,10 @@ const SourceToEntityMap = (props) => {
         initializeSourceExpandKeys();
         return (() => {
             setMapExp({});
+            setSearchSourceText('');
+            setSearchedSourceColumn('');
+            setSearchEntityText('');
+            setSearchedEntityColumn('');
         })
     }, [props.mappingVisible]);
 
@@ -406,18 +410,37 @@ const SourceToEntityMap = (props) => {
         if(dataIndex === 'key'){
             setSearchSourceText(selectedKeys[0]);
             setSearchedSourceColumn(dataIndex);
+            
+            if(srcData.length === 1 && srcData[0].hasOwnProperty('children')){
+                setSourceExpandedKeys([1,...getKeysToExpandForFilter(srcData,'rowKey',selectedKeys[0])]);
+            } else {
+                setSourceExpandedKeys([...getKeysToExpandForFilter(srcData,'rowKey',selectedKeys[0])]);
+            }
+            
         } else {
             setSearchEntityText(selectedKeys[0]);
             setSearchedEntityColumn(dataIndex);
+
+            if(props.entityTypeProperties.length === 1 && props.entityTypeProperties[0].hasOwnProperty('children')){
+                setEntityExpandedKeys([1,...getKeysToExpandForFilter(props.entityTypeProperties,'key',selectedKeys[0])]);
+            } else {
+                setEntityExpandedKeys([...getKeysToExpandForFilter(props.entityTypeProperties,'key',selectedKeys[0])]);
+            }
         }
       };
 
     const handleSearchReset = (clearFilters,dataIndex) => {
         clearFilters();
         if(dataIndex === 'key'){
+            if(searchSourceText){
+                setSourceExpandedKeys([...initialSourceKeys]);
+            }
             setSearchSourceText('');
             setSearchedSourceColumn('');
         } else {
+            if(searchEntityText) {
+                setEntityExpandedKeys([...initialEntityKeys]);
+            }
             setSearchEntityText('');
             setSearchedEntityColumn('');
         }
@@ -487,6 +510,26 @@ const SourceToEntityMap = (props) => {
         } else {
             return valueToDisplay;
         }
+    }
+
+    //Get the expandKeys for the tables based on teh applied filter
+    const getKeysToExpandForFilter = (dataArr,rowKey,searchText,allKeysToExpand:any = [],parentRowKey = 0) => {
+        dataArr.map(obj => {
+            if (obj.hasOwnProperty('children')) {
+               
+                if(((rowKey === 'rowKey' ? obj.key : obj.name) + JSON.stringify(obj['children'])).toLowerCase().indexOf(searchText.toLowerCase()) !== -1){
+                    allKeysToExpand.push(obj[rowKey]);
+                }
+                parentRowKey = obj[rowKey];
+                getKeysToExpandForFilter(obj['children'],rowKey,searchText,allKeysToExpand,parentRowKey);
+            } else {
+                if((rowKey === 'rowKey' ? obj.key : obj.name).toLowerCase().indexOf(searchText.toLowerCase()) !== -1){
+                    allKeysToExpand.push(parentRowKey);
+                    
+                }
+            } 
+        });
+        return allKeysToExpand;
     }
 
     const columns = [
