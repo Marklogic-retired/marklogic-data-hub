@@ -273,20 +273,12 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         Modules modules = modulesFinder.findModules(dir.toString());
         for (Resource r : modules.getAssets()) {
             JsonNode artifactJson = objectMapper.readTree(r.getFile());
-            if (r.getFile().getName().endsWith(".settings." + FilenameUtils.getExtension(artifactTypeInfo.getFileExtension()))) {
-                artifactService.setArtifactSettings(
-                    artifactTypeInfo.getType(),
-                    artifactJson.get("artifactName").asText(),
-                    artifactJson);
-                logger.info(String.format("Loaded artifact settings of type '%s' from file %s", artifactTypeInfo.getType(), r.getFilename()));
-            } else {
-                artifactService.setArtifact(
-                    artifactTypeInfo.getType(),
-                    artifactJson.get(artifactTypeInfo.getNameProperty()).asText(),
-                    artifactJson
-                );
-                logger.info(String.format("Loaded artifact of type type '%s' file %s", artifactTypeInfo.getType(), r.getFilename()));
-            }
+            artifactService.setArtifact(
+                artifactTypeInfo.getType(),
+                artifactJson.get(artifactTypeInfo.getNameProperty()).asText(),
+                artifactJson
+            );
+            logger.info(String.format("Loaded artifact of type type '%s' file %s", artifactTypeInfo.getType(), r.getFilename()));
         }
     }
 

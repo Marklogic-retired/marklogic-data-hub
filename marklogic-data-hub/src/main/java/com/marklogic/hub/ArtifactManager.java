@@ -64,48 +64,11 @@ public interface ArtifactManager {
     public void deleteArtifact(String artifactType, String artifactName);
 
     /**
-     * Validates an artifact of a given type and name.
-     *
-     * @param artifactType - type of artifact the operation is dealing with
-     * @param artifactName - identifier of the artifact
-     * @param artifactJson - JSON of artifact to persist
-     * @return ObjectNode with validation details
-     */
-    public ObjectNode validateArtifact(String artifactType, String artifactName, JsonNode artifactJson);
-
-    /**
-     * Retrieves settings of an artifact of a given type and name.
-     *
-     * @param artifactType - type of artifact the operation is dealing with
-     * @param artifactName - identifier of the artifact
-     * @return ObjectNode of the artifact settings matching a type and name
-     */
-    public ObjectNode getArtifactSettings(String artifactType, String artifactName);
-
-    /**
-     * Updates settings of an artifact of a given type and name.
-     *
-     * @param artifactType - type of artifact the operation is dealing with
-     * @param artifactName - identifier of the artifact
-     * @param settings - JSON of artifact settings to persist
-     * @return JsonNode of the artifact settings matching a type and name
-     */
-    public ObjectNode updateArtifactSettings(String artifactType, String artifactName, JsonNode settings);
-
-    /**
      * Provides metadata about the various artifact types
      *
      * @return List&lt;ArtifactTypeInfo&gt; providing information about the various artifact types
      */
     public List<ArtifactTypeInfo> getArtifactTypeInfoList();
-
-    /**
-     * Provides metadata about the a given artifact type
-     *
-     * @param artifactType - type of artifact the operation is dealing with
-     * @return ArtifactTypeInfo providing information about the specified artifact type
-     */
-    ArtifactTypeInfo getArtifactTypeInfo(String artifactType);
 
     /**
      * Provides metadata about the a given artifact type

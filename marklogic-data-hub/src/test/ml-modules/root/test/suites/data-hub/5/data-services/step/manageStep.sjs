@@ -1,8 +1,9 @@
 'use strict';
 
 /**
- * This tests all of the step endpoints via a mapping step, but it's not specific to a mapping step, as none of the step
- * endpoints are specific to a particular step type.
+ * This tests all of the step endpoints via a mapping step, but it's not that specific to a mapping step; its main
+ * intent is to exercise all of the generic functionality for the step endpoints. Logic specific to a spec should be
+ * in a test specific to that step.
  */
 
 const flowService = require("../lib/flowService.sjs");
@@ -38,8 +39,7 @@ expectedStep.permissions = "data-hub-operator,read,data-hub-operator,update";
 hubJsTest.verifyJson(expectedStep, serviceResponse, assertions);
 hubJsTest.verifyJson(expectedStep, stepService.getStep(stepDefinitionType, stepName), assertions);
 
-// Can't yet put mappings under /steps/mapping without breaking the existing mapping endpoints
-const expectedUri = "/mappings/myMapper.mapping.json";
+const expectedUri = "/steps/mapping/myMapper.step.json";
 assertions = assertions
   .concat(hubTest.assertInCollections(expectedUri, ["http://marklogic.com/data-hub/mappings", "http://marklogic.com/data-hub/steps", "http://marklogic.com/data-hub/steps/mapping"]))
   .concat(hubTest.assertHasPermissions(expectedUri, "data-hub-mapping-reader,read,data-hub-mapping-writer,update"));

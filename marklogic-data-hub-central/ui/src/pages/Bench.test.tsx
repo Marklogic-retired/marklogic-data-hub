@@ -24,9 +24,9 @@ describe('Verify errors associated with running a step', () => {
             switch (url) {
                 case '/api/flows':
                     return Promise.resolve(data.flows)
-                case '/api/artifacts/loadData':
+                case '/api/steps/ingestion':
                     return Promise.resolve(data.loads)
-                case '/api/artifacts/mapping':
+                case '/api/steps/mapping':
                     return Promise.resolve(data.mappings)
                 case '/api/jobs/350da405-c1e9-4fa7-8269-d9aefe3b4b9a':
                     return Promise.resolve(data.jobRespFailedWithError)
@@ -36,7 +36,7 @@ describe('Verify errors associated with running a step', () => {
         })
         axiosMock.post['mockImplementationOnce'](jest.fn(() => Promise.resolve(data.response)));
         const {getAllByText, getByText, getByLabelText } = await render(<AuthoritiesContext.Provider value={ mockDevRolesService}><Bench/></AuthoritiesContext.Provider>);
-        
+
         // Click disclosure icon
         fireEvent.click(getByLabelText("icon: right"));
 
@@ -62,9 +62,9 @@ describe('Verify errors associated with running a step', () => {
             switch (url) {
                 case '/api/flows':
                     return Promise.resolve(data.flows)
-                case '/api/artifacts/loadData':
+                case '/api/steps/ingestion':
                     return Promise.resolve(data.loads)
-                case '/api/artifacts/mapping':
+                case '/api/steps/mapping':
                     return Promise.resolve(data.mappings)
                 case '/api/jobs/350da405-c1e9-4fa7-8269-d9aefe3b4b9a':
                     return Promise.resolve(data.jobRespFailed)
@@ -74,7 +74,7 @@ describe('Verify errors associated with running a step', () => {
         })
         axiosMock.post['mockImplementationOnce'](jest.fn(() => Promise.resolve(data.response)));
         const { getByText, getByLabelText } = await render(<AuthoritiesContext.Provider value={ mockDevRolesService}><Bench/></AuthoritiesContext.Provider>);
-        
+
         // Click disclosure icon
         fireEvent.click(getByLabelText("icon: right"));
 
@@ -85,7 +85,7 @@ describe('Verify errors associated with running a step', () => {
         expect(await(waitForElement(() => getByText('Load "failedIngest" failed')))).toBeInTheDocument()
         expect(getByText("Message:")).toBeInTheDocument()
         expect(document.querySelector('#error-list')).toHaveTextContent('Local message: failed to apply resource at documents')
-    
+
         fireEvent.click(getByText('Close'))
     })
 
@@ -103,9 +103,9 @@ describe('Verify step running', () => {
             switch (url) {
                 case '/api/flows':
                     return Promise.resolve(data.flowsWithMapping)
-                case '/api/artifacts/loadData':
+                case '/api/steps/ingestion':
                     return Promise.resolve(data.loads)
-                case '/api/artifacts/mapping':
+                case '/api/steps/mapping':
                     return Promise.resolve(data.mappings)
                 case '/api/jobs/e4590649-8c4b-419c-b6a1-473069186592':
                     return Promise.resolve(data.jobRespSuccess)
@@ -115,10 +115,10 @@ describe('Verify step running', () => {
         })
         axiosMock.post['mockImplementationOnce'](jest.fn(() => Promise.resolve(data.responseForMapping)));
         const { getByText, getByLabelText } = await render(<AuthoritiesContext.Provider value={ mockDevRolesService }><Bench/></AuthoritiesContext.Provider>);
-        
+
         // Click disclosure icon
         fireEvent.click(getByLabelText("icon: right"));
-        
+
         let runButton = await getByLabelText("runStep-1");
         fireEvent.click(runButton);
 
@@ -134,9 +134,9 @@ describe('Verify step running', () => {
             switch (url) {
                 case '/api/flows':
                     return Promise.resolve(data.flowsWithMapping)
-                case '/api/artifacts/loadData':
+                case '/api/steps/ingestion':
                     return Promise.resolve(data.loads)
-                case '/api/artifacts/mapping':
+                case '/api/steps/mapping':
                     return Promise.resolve(data.mappings)
                 case '/api/jobs/e4590649-8c4b-419c-b6a1-473069186592':
                     return Promise.resolve(data.jobRespSuccess)
@@ -146,7 +146,7 @@ describe('Verify step running', () => {
         })
         axiosMock.post['mockImplementationOnce'](jest.fn(() => Promise.resolve(data.responseForMapping)));
         const { getByText, getByLabelText } = await render(<AuthoritiesContext.Provider value={ mockOpRolesService }><Bench/></AuthoritiesContext.Provider>);
-        
+
         // Click disclosure icon
         fireEvent.click(getByLabelText("icon: right"));
 
@@ -174,16 +174,16 @@ describe('Verify step display', () => {
             switch (url) {
                 case '/api/flows':
                     return Promise.resolve(data.flowsXML)
-                case '/api/artifacts/loadData':
+                case '/api/steps/ingestion':
                     return Promise.resolve(data.loadsXML)
-                case '/api/artifacts/mapping':
+                case '/api/steps/mapping':
                     return Promise.resolve(data.mappings)
                 default:
                     return Promise.reject(new Error('not found'))
             }
         })
         const { getByText, getByLabelText } = await render(<AuthoritiesContext.Provider value={ mockDevRolesService }><Bench/></AuthoritiesContext.Provider>);
-        
+
         // Click disclosure icon
         fireEvent.click(getByLabelText("icon: right"));
         expect(await(waitForElement(() => getByText("XML")))).toBeInTheDocument();

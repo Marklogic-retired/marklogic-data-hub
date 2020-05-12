@@ -13,7 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class NewFlowControllerTest extends AbstractMvcTest {
 
-    private final static String PATH = "/api/newFlows";
+    private final static String PATH = "/api/flows";
     private int initialFlowCount;
 
     @Test

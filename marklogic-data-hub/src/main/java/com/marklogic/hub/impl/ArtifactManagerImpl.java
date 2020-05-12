@@ -19,10 +19,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.ArtifactManager;
 import com.marklogic.hub.HubClient;
-import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.artifact.ArtifactTypeInfo;
 import com.marklogic.hub.dataservices.ArtifactService;
 import org.slf4j.Logger;
@@ -58,18 +56,6 @@ public class ArtifactManagerImpl implements ArtifactManager {
         getArtifactService().deleteArtifact(artifactType, artifactName);
     }
 
-    public ObjectNode validateArtifact(String artifactType, String artifactName, JsonNode artifactJson) {
-        return (ObjectNode) getArtifactService().validateArtifact(artifactType, artifactName, artifactJson);
-    }
-
-    public ObjectNode getArtifactSettings(String artifactType, String artifactName) {
-        return (ObjectNode) getArtifactService().getArtifactSettings(artifactType, artifactName);
-    }
-
-    public ObjectNode updateArtifactSettings(String artifactType, String artifactName, JsonNode settings) {
-        return (ObjectNode) getArtifactService().setArtifactSettings(artifactType, artifactName, settings);
-    }
-
     protected ArtifactService getArtifactService() {
         return ArtifactService.on(hubClient.getStagingClient());
     }
@@ -86,16 +72,5 @@ public class ArtifactManagerImpl implements ArtifactManager {
             }
         }
         return allArtifactTypeInfo;
-    }
-
-    public ArtifactTypeInfo getArtifactTypeInfo(String artifactType) {
-        ArtifactTypeInfo artifactTypeInfo = null;
-        for (ArtifactTypeInfo typeInfo: getArtifactTypeInfoList()) {
-            if (typeInfo.getType().equals(artifactType)) {
-                artifactTypeInfo = typeInfo;
-                break;
-            }
-        }
-        return artifactTypeInfo;
     }
 }

@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-@RequestMapping("/api/newFlows")
+@RequestMapping("/api/flows")
 public class NewFlowController extends BaseController {
 
     @RequestMapping(method = RequestMethod.GET)
@@ -115,6 +115,7 @@ public class NewFlowController extends BaseController {
         public String stepNumber;
         public String stepName;
         public String stepDefinitionType;
+        public String sourceFormat;
     }
 
     public static class AddStepInfo {

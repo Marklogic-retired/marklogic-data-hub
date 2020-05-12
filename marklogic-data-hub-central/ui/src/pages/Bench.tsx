@@ -25,8 +25,6 @@ const Bench: React.FC = () => {
 
     const [isLoading, setIsLoading] = useState(false);
     const [flows, setFlows] = useState<any[]>([]);
-    const [loads, setLoads] = useState<any[]>([]);
-    const [mappings, setMappings] = useState<any[]>([]);
     const [runStarted, setRunStarted] = useState<any>({});
     const [runEnded, setRunEnded] = useState<any>({});
     const [running, setRunning] = useState<any[]>([]);
@@ -44,12 +42,8 @@ const Bench: React.FC = () => {
 
     useEffect(() => {
         getFlows();
-        getLoads();
-        getMappings();
         return (() => {
             setFlows([]);
-            setLoads([]);
-            setMappings([]);
         })
     }, [isLoading]);
 
@@ -84,16 +78,10 @@ const Bench: React.FC = () => {
             setIsLoading(true);
             let newFlow = {
                 name: payload.name,
-                description: payload.description,
-                batchSize: 100,
-                threadCount: 4,
-                stopOnError: false,
-                options: {},
-                version: 0,
-                steps: {}
+                description: payload.description
             }
             let response = await axios.post(`/api/flows`, newFlow);
-            if (response.status === 200) {
+            if (response.status === 201) {
                 //console.log('POST flow success', response);
                 setIsLoading(false);
             }
@@ -138,36 +126,6 @@ const Bench: React.FC = () => {
         } catch (error) {
             console.error('Error deleting flow', error);
             setIsLoading(false);
-        }
-    }
-
-    const getLoads = async () => {
-        try {
-            let response = await axios.get('/api/artifacts/loadData');
-            if (response.status === 200) {
-                setLoads(response.data);
-                //console.log('GET loads successful', response);
-            }
-        } catch (error) {
-            let message = error.response.data.message;
-            console.error('Error getting loads', message);
-        } finally {
-          resetSessionTime();
-        }
-    }
-
-    const getMappings = async () => {
-        try {
-            let response = await axios.get('/api/artifacts/mapping');
-            if (response.status === 200) {
-                setMappings(response.data);
-                console.log('GET mappings successful', response);
-            }
-        } catch (error) {
-            let message = error.response.data.message;
-            console.log('Error getting mappings', message);
-        } finally {
-          resetSessionTime();
         }
     }
 
@@ -289,12 +247,15 @@ const Bench: React.FC = () => {
         return new Promise(checkStatus);
     }
 
-    // POST /api/flows/{flowId}/run
-    const runStep = async (flowId, stepId, stepName, stepType) => {
-        setRunStarted({flowId: flowId, stepId: stepId});
+    // POST /flows​/{flowId}​/steps​/{stepId}
+    const runStep = async (flowId, stepDetails) => {
+        const stepNumber = stepDetails.stepNumber;
+        const stepName = stepDetails.stepName;
+        const stepType = stepDetails.stepDefinitionType;
+        setRunStarted({flowId: flowId, stepId: stepNumber});
         try {
             setIsLoading(true);
-            let response = await axios.post('/api/flows/' + flowId + '/run', [stepId]);
+            let response = await axios.post('/api/flows/' + flowId + '/steps/' + stepNumber);
             if (response.status === 200) {
                 //console.log('Flow started: ' + flowId);
                 let jobId = response.data.jobId;
@@ -303,7 +264,7 @@ const Bench: React.FC = () => {
                         return axios.get('/api/jobs/' + jobId);
                     }, pollConfig.interval)
                     .then(function(response: any) {
-                        setRunEnded({flowId: flowId, stepId: stepId});
+                        setRunEnded({flowId: flowId, stepId: stepNumber});
                         if (response['jobStatus'] === Statuses.FINISHED) {
                             //console.log('Flow complete: ' + flowId);
                             showSuccess(stepName, stepType);
@@ -319,21 +280,21 @@ const Bench: React.FC = () => {
                         setIsLoading(false);
                     }).catch(function(error) {
                         console.error('Flow timeout', error);
-                        setRunEnded({flowId: flowId, stepId: stepId});
+                        setRunEnded({flowId: flowId, stepId: stepNumber});
                         setIsLoading(false);
                     });
                 }, pollConfig.interval);
             }
         } catch (error) {
             console.error('Error running step', error);
-            setRunEnded({flowId: flowId, stepId: stepId});
+            setRunEnded({flowId: flowId, stepId: stepNumber});
             setIsLoading(false);
         }
     }
 
     // DELETE /flows​/{flowId}​/steps​/{stepId}
-    const deleteStep = async (flowId, stepId, type) => {
-        let url = '/api/flows/' + flowId + '/steps/' + stepId + '-' + type;
+    const deleteStep = async (flowId, stepNumber) => {
+        let url = '/api/flows/' + flowId + '/steps/' + stepNumber;
         try {
             setIsLoading(true);
             let response = await axios.delete(url);
@@ -352,8 +313,6 @@ const Bench: React.FC = () => {
         <div className={styles.content}>
             <Flows
                 flows={flows}
-                loads={loads}
-                mappings={mappings}
                 deleteFlow={deleteFlow}
                 createFlow={createFlow}
                 updateFlow={updateFlow}

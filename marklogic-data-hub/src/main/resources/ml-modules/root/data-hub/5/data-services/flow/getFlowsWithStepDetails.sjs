@@ -72,6 +72,10 @@ flows.map(flow => {
       }
       stepDetails.stepName = step.name;
       stepDetails.stepDefinitionType = step.stepDefinitionType;
+
+      if (step.sourceFormat) {
+        stepDetails.sourceFormat = step.sourceFormat;
+      }
     });
   }
   return flowWithStepDetails;

@@ -33,10 +33,6 @@ function getEntityNameProperty() {
     return 'targetEntityType';
 }
 
-function getSelectedSourceProperty() {
-    return 'selectedSource';
-}
-
 function getVersionProperty() {
     return null;
 }
@@ -66,18 +62,6 @@ function validateArtifact(artifact) {
     return artifact;
 }
 
-function defaultArtifactSettings(artifactName) {
-  return {
-    artifactName,
-    collections: ['default-mastering'],
-    additionalCollections: [],
-    sourceDatabase: dataHub.config.FINALDATABASE,
-    targetDatabase: dataHub.config.FINALDATABASE,
-    provenanceGranularityLevel: 'coarse',
-    permissions: 'data-hub-operator,read,data-hub-operator,update'
-  };
-}
-
 module.exports = {
     getNameProperty,
     getVersionProperty,
@@ -85,6 +69,5 @@ module.exports = {
     getStorageDatabases,
     getPermissions,
     getArtifactNode,
-    validateArtifact,
-    defaultArtifactSettings
+    validateArtifact
 };

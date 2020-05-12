@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.central.AbstractMvcTest;
 import com.marklogic.hub.central.schemas.CustomHookSchema;
-import com.marklogic.hub.central.schemas.Parameters;
 import com.marklogic.hub.central.schemas.StepSettingsSchema;
 
 import java.util.Iterator;
@@ -68,9 +67,6 @@ public abstract class AbstractStepControllerTest extends AbstractMvcTest {
         hook.setModule("/some/module.sjs");
         hook.setUser("someuser");
         hook.setRunBefore(true);
-        Parameters params = new Parameters();
-        params.setAdditionalProperty("test", "value");
-        hook.setParameters(params);
         settings[0].setCustomHook(hook);
         putJson(settingsPath, settings[0]).andExpect(status().isOk());
 
@@ -82,7 +78,6 @@ public abstract class AbstractStepControllerTest extends AbstractMvcTest {
                 assertEquals(getHubClient().getDbName(DatabaseKind.JOB), updatedSettings.getTargetDatabase());
                 assertEquals("/some/module.sjs", updatedSettings.getCustomHook().getModule());
                 assertEquals("someuser", updatedSettings.getCustomHook().getUser());
-                assertEquals("value", updatedSettings.getCustomHook().getParameters().getAdditionalProperties().get("test"));
                 assertTrue(updatedSettings.getCustomHook().getRunBefore());
             });
 

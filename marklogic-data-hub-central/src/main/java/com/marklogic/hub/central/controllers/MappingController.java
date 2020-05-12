@@ -3,7 +3,6 @@ package com.marklogic.hub.central.controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.hub.central.schemas.StepSettingsSchema;
 import com.marklogic.hub.dataservices.MappingService;
 import com.marklogic.hub.dataservices.ModelsService;
 import com.marklogic.hub.entity.HubEntity;
@@ -17,54 +16,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
 @Controller
 @RequestMapping("/api/artifacts/mapping")
 public class MappingController extends AbstractArtifactController {
-
-    @RequestMapping(method = RequestMethod.GET)
-    @ResponseBody
-    @ApiOperation(value = "Get all mapping artifacts", response = MappingArtifacts.class)
-    public ResponseEntity<ArrayNode> getMappings() {
-        return super.getArtifacts();
-    }
-
-    @RequestMapping(value = "/{artifactName}", method = RequestMethod.GET)
-    @ResponseBody
-    @ApiOperation(value = "Get a single mapping by name", response = MappingArtifact.class)
-    public ResponseEntity<ObjectNode> getMapping(@PathVariable String artifactName) {
-        return super.getArtifact(artifactName);
-    }
-
-    @RequestMapping(value = "/{artifactName}", method = RequestMethod.POST)
-    @ResponseBody
-    @ApiImplicitParam(required = true, paramType = "body", dataType = "MappingArtifact")
-    public ResponseEntity<ObjectNode> updateMapping(@RequestBody @ApiParam(hidden=true) ObjectNode mappingJson, @PathVariable String artifactName) {
-        return super.updateArtifact(artifactName, mappingJson);
-    }
-
-    @RequestMapping(value = "/{artifactName}", method = RequestMethod.DELETE)
-    public void deleteMapping(@PathVariable String artifactName) {
-        super.deleteArtifact(artifactName);
-    }
-
-    @RequestMapping(value = "/{artifactName}/settings", method = RequestMethod.GET)
-    @ResponseBody
-    @ApiOperation(value = "Get the settings for a mapping", response = StepSettingsSchema.class)
-    public ResponseEntity<ObjectNode> getMappingSettings(@PathVariable String artifactName) {
-        return super.getArtifactSettings(artifactName);
-    }
-
-    @RequestMapping(value = "/{artifactName}/settings", method = RequestMethod.POST)
-    @ResponseBody
-    @ApiOperation(value = "Updating the settings for a mapping", response = StepSettingsSchema.class)
-    @ApiImplicitParam(required = true, paramType = "body", dataType = "StepSettingsSchema")
-    public ResponseEntity<ObjectNode> updateMappingSettings(@RequestBody @ApiParam(hidden = true) ObjectNode settings, @PathVariable String artifactName) {
-        return super.updateArtifactSettings(artifactName, settings);
-    }
 
     @Override
     protected String getArtifactType() {
@@ -75,7 +32,7 @@ public class MappingController extends AbstractArtifactController {
     @ResponseBody
     @ApiImplicitParam(required = true, paramType = "body", dataType = "MappingArtifact")
     @ApiOperation(value = "Test a mapping against a source document", response = MappingArtifact.class)
-    public ResponseEntity<ObjectNode> testMapping(@RequestBody @ApiParam(hidden=true) ObjectNode jsonMapping,
+    public ResponseEntity<ObjectNode> testMapping(@RequestBody @ApiParam(hidden = true) ObjectNode jsonMapping,
                                                   @RequestParam(value = "uri", required = true) String uri,
                                                   @RequestParam(value = "db", required = true) String database) {
         return new ResponseEntity<>((ObjectNode) getMappingService().testMapping(uri, database, jsonMapping), HttpStatus.OK);
@@ -84,7 +41,7 @@ public class MappingController extends AbstractArtifactController {
     @RequestMapping(value = "/functions", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<ObjectNode> getMappingFunctions() {
-        return  new ResponseEntity<>((ObjectNode) getMappingService().getMappingFunctions(), HttpStatus.OK);
+        return new ResponseEntity<>((ObjectNode) getMappingService().getMappingFunctions(), HttpStatus.OK);
     }
 
     /**
@@ -117,9 +74,6 @@ public class MappingController extends AbstractArtifactController {
 
     protected MappingService getMappingService() {
         return MappingService.on(getHubClient().getStagingClient());
-    }
-
-    public static class MappingArtifacts extends ArrayList<MappingArtifact> {
     }
 
     public static class MappingArtifact {

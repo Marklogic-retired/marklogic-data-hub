@@ -17,7 +17,7 @@ import Axios from "axios";
 const {Option} = Select;
 
 const ActivitySettingsDialog = (props) => {
-  const { resetSessionTime } = useContext(UserContext); 
+  const { resetSessionTime } = useContext(UserContext);
   const settingsTooltips = Object.assign({}, ActivitySettings, props.tooltipsData);
   const activityType = props.activityType;
   const [defaultCollections, setDefaultCollections] = useState<any[]>([]);
@@ -25,7 +25,7 @@ const ActivitySettingsDialog = (props) => {
   const [isTargetFormatTouched, setTargetFormatTouched] = useState(false);
   const [targetFormat, setTargetFormat] = useState('JSON');
   const targetFormatOptions = ['JSON', 'XML'].map(d => <Option data-testid='targetFormatOptions' key={d}>{d}</Option>);
-  const usesSourceDatabase = activityType !== 'loadData';
+  const usesSourceDatabase = activityType !== 'ingestion';
   const defaultTargetDatabase = !usesSourceDatabase ? 'data-hub-STAGING' : 'data-hub-FINAL';
   const defaultSourceDatabase = usesSourceDatabase ? 'data-hub-STAGING' : 'data-hub-FINAL';
   const [tgtDatabase, setTgtDatabase] = useState(defaultTargetDatabase);
@@ -90,7 +90,7 @@ const createSettingsArtifact = async (settingsObj) => {
   if (props.stepData.name) {
     try {
       setIsLoading(true);
-      let response = await Axios.post(`/api/artifacts/${activityType}/${props.stepData.name}/settings`, settingsObj);
+      let response = await Axios.put(`/api/steps/${activityType}/${props.stepData.name}/settings`, settingsObj);
       if (response.status === 200) {
         setIsLoading(false);
       }
@@ -108,7 +108,7 @@ const createSettingsArtifact = async (settingsObj) => {
 const getSettingsArtifact = async () => {
   if (props.stepData.name) {
     try {
-      let response = await Axios.get(`/api/artifacts/${activityType}/${props.stepData.name}/settings`);
+      let response = await Axios.get(`/api/steps/${activityType}/${props.stepData.name}/settings`);
 
       if (response.status === 200) {
         if (response.data.sourceDatabase) {
@@ -208,7 +208,6 @@ const getSettingsArtifact = async () => {
     if (event) event.preventDefault();
 
     let dataPayload = {
-        artifactName : props.stepData.name,
         collections: defaultCollections,
         additionalCollections : additionalCollections,
         sourceDatabase : usesSourceDatabase ? srcDatabase : null,

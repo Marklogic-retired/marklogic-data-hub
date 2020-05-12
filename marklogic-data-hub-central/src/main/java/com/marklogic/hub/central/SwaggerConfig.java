@@ -2,7 +2,12 @@ package com.marklogic.hub.central;
 
 import com.fasterxml.classmate.ResolvedType;
 import com.fasterxml.classmate.TypeResolver;
-import com.marklogic.hub.central.controllers.*;
+import com.marklogic.hub.central.controllers.EntitySearchController;
+import com.marklogic.hub.central.controllers.MappingController;
+import com.marklogic.hub.central.controllers.MatchingController;
+import com.marklogic.hub.central.controllers.ModelController;
+import com.marklogic.hub.central.controllers.steps.IngestionStepController;
+import com.marklogic.hub.central.controllers.steps.MappingStepController;
 import com.marklogic.hub.central.schemas.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -70,12 +75,10 @@ public class SwaggerConfig {
             EntitySearchController.IndexMinMaxQuery.class,
             EntitySearchController.SavedQueryRequest.class,
             EntitySearchController.SavedQueries.class,
-            FlowController.Flows.class,
             FlowSchema.class,
-            LoadDataController.LoadDataArtifact.class,
-            LoadDataController.LoadDataArtifacts.class,
-            MappingController.MappingArtifacts.class,
+            IngestionStepController.IngestionSteps.class,
             MappingController.MappingArtifact.class,
+            MappingStepController.class,
             MatchingController.MatchingArtifact.class,
             MatchingController.MatchingArtifacts.class,
             ModelController.CreateModelInput.class,

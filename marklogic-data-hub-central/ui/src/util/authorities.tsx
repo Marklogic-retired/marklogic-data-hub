@@ -46,10 +46,10 @@ export class AuthoritiesService implements IAuthoritiesContextInterface {
         return this.authorities.includes('writeMatch');
     };
     public canReadLoadData:() => boolean = () => {
-        return this.authorities.includes('readLoadData');
+        return this.authorities.includes('readIngestion');
     };
     public canWriteLoadData:() => boolean = () => {
-        return this.authorities.includes('writeLoadData');
+        return this.authorities.includes('writeIngestion');
     };
     public canReadEntityModel:() => boolean = () => {
         return this.authorities.includes('readEntityModel');

@@ -8,7 +8,7 @@ function invokeService(artifactType, artifactName, artifact) {
 }
 
 function validArtifact() {
-  const result = invokeService('loadData','validArtifact', { name: 'validArtifact', sourceFormat: 'xml', targetFormat: 'json'});
+  const result = invokeService('ingestion','validArtifact', { name: 'validArtifact', sourceFormat: 'xml', targetFormat: 'json'});
   return [
     test.assertEqual("validArtifact", result.name),
     test.assertEqual("xml", result.sourceFormat),
@@ -18,7 +18,7 @@ function validArtifact() {
 
 function invalidArtifact() {
   try {
-    const result = invokeService('loadData', "invalidArtifact", { name: 'invalidArtifact'});
+    const result = invokeService('ingestion', "invalidArtifact", { name: 'invalidArtifact'});
     return [test.assertTrue(false, 'Should have thrown a validation error')];
   } catch (e) {
     let msg = e.data[2];

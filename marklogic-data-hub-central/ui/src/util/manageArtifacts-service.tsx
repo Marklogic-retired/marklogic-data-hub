@@ -7,8 +7,8 @@ const getMappingValidationResp = async (mapName: string, map, uri:string, dbName
 }
 
 const getSettingsArtifact = async (activityType,artifactName) => {
-    console.log(`GET /api/artifacts/${activityType}/${artifactName}/settings`);
-    let response = await axios.get(`/api/artifacts/${activityType}/${artifactName}/settings`);
+    console.log(`GET /api/steps/${activityType}/${artifactName}/settings`);
+    let response = await axios.get(`/api/steps/${activityType}/${artifactName}/settings`);
     return response;
 }
 

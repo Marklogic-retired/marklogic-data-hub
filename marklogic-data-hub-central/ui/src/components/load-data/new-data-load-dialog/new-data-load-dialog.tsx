@@ -399,19 +399,20 @@ const NewDataLoadDialog = (props) => {
   const deleteUnusedLoadArtifact = async (loadDataName) => {
 
     try {
-      let response = await Axios.delete(`/api/artifacts/loadData/${loadDataName}`);
+      let response = await Axios.delete(`/api/steps/ingestion/${loadDataName}`);
 
       if (response.status === 200) {
         console.log('DELETE API Called successfully!');
       }
     } catch (error) {
         let message = error.response.data.message;
-        console.log('Error while deleting load data artifact.', message);
+        console.log('Error while deleting ingestion artifact.', message);
     }
   }
+
   const createDefaultLoadDataArtifact = async (dataPayload) => {
     try {
-      let response = await Axios.post(`/api/artifacts/loadData/${stepName}`, dataPayload);
+      let response = await Axios.post(`/api/steps/ingestion/${stepName}`, dataPayload);
       if (response.status === 200) {
         console.log('Create default LoadDataArtifact API Called successfully!')
       }
@@ -428,7 +429,7 @@ const NewDataLoadDialog = (props) => {
     const filenames = fileList.map(({name}) => name);
     if (filenames.indexOf(file.name) === (filenames.length - 1)) {
       try {
-        let response = await Axios.get(`/api/artifacts/loadData/${stepName}`);
+        let response = await Axios.get(`/api/steps/ingestion/${stepName}`);
 
         if (response.status === 200) {
           console.log('GET API Called in custom request!');

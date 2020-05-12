@@ -21,21 +21,39 @@ const Step = require("/data-hub/5/impl/step.sjs");
 var stepDefinitionType;
 var info;
 
-// For now, can assume the stepDefinitionName based on the type. Can add stepDefinitionType as a parameter once we need
-// more flexibility.
-const stepDefinitionName = "mapping" === stepDefinitionType.toLowerCase() ? "entity-services-mapping" : "default-ingestion";
-
+/**
+ * This is temporarily acting as a "save" operation because the HC UI expects to be able to create and update a step
+ * via the same endpoint.
+ */
 info = info.toObject();
-info.stepDefinitionName = stepDefinitionName;
-info.stepDefinitionType = stepDefinitionType;
-info.stepId = info.name + "-" + stepDefinitionType;
+const stepName = info.name;
 
-const stepDef = new Step().getStepByNameAndType(stepDefinitionName, stepDefinitionType);
-const stepDefOptions = stepDef.options;
-Object.keys(stepDefOptions).forEach(key => {
-  if (!info[key]) {
-    info[key] = stepDefOptions[key];
-  }
-})
+let existingStep = fn.head(cts.search(cts.andQuery([
+  cts.collectionQuery("http://marklogic.com/data-hub/steps"),
+  cts.jsonPropertyValueQuery("stepDefinitionType", stepDefinitionType, "case-insensitive"),
+  cts.jsonPropertyValueQuery("name", stepName)
+])));
 
-Artifacts.setArtifact(stepDefinitionType, info.name, info);
+if (existingStep) {
+  let updatedStep = Object.assign(existingStep.toObject(), info);
+  Artifacts.setArtifact(stepDefinitionType, stepName, updatedStep);
+} else {
+  // For now, can assume the stepDefinitionName based on the type. Can add stepDefinitionType as a parameter once we need
+  // more flexibility.
+  const stepDefinitionName = "mapping" === stepDefinitionType.toLowerCase() ? "entity-services-mapping" : "default-ingestion";
+
+
+  info.stepDefinitionName = stepDefinitionName;
+  info.stepDefinitionType = stepDefinitionType;
+  info.stepId = info.name + "-" + stepDefinitionType;
+
+  const stepDef = new Step().getStepByNameAndType(stepDefinitionName, stepDefinitionType);
+  const stepDefOptions = stepDef.options;
+  Object.keys(stepDefOptions).forEach(key => {
+    if (!info[key]) {
+      info[key] = stepDefOptions[key];
+    }
+  });
+
+  Artifacts.setArtifact(stepDefinitionType, info.name, info);
+}

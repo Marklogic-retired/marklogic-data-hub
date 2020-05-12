@@ -8,6 +8,7 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonValue;
 
@@ -44,8 +45,13 @@ public class StepSettingsSchema {
     private StepSettingsSchema.ProvenanceGranularityLevel provenanceGranularityLevel;
     @JsonProperty("permissions")
     private String permissions;
+    /**
+     * Should be json or xml, but not using an enum yet because JSON and XML are being used too
+     * 
+     */
     @JsonProperty("targetFormat")
-    private StepSettingsSchema.TargetFormat targetFormat;
+    @JsonPropertyDescription("Should be json or xml, but not using an enum yet because JSON and XML are being used too")
+    private String targetFormat;
     @JsonProperty("targetDatabase")
     private String targetDatabase;
     @JsonProperty("sourceDatabase")
@@ -99,13 +105,21 @@ public class StepSettingsSchema {
         this.permissions = permissions;
     }
 
+    /**
+     * Should be json or xml, but not using an enum yet because JSON and XML are being used too
+     * 
+     */
     @JsonProperty("targetFormat")
-    public StepSettingsSchema.TargetFormat getTargetFormat() {
+    public String getTargetFormat() {
         return targetFormat;
     }
 
+    /**
+     * Should be json or xml, but not using an enum yet because JSON and XML are being used too
+     * 
+     */
     @JsonProperty("targetFormat")
-    public void setTargetFormat(StepSettingsSchema.TargetFormat targetFormat) {
+    public void setTargetFormat(String targetFormat) {
         this.targetFormat = targetFormat;
     }
 
@@ -265,45 +279,6 @@ public class StepSettingsSchema {
         @JsonCreator
         public static StepSettingsSchema.ProvenanceGranularityLevel fromValue(String value) {
             StepSettingsSchema.ProvenanceGranularityLevel constant = CONSTANTS.get(value);
-            if (constant == null) {
-                throw new IllegalArgumentException(value);
-            } else {
-                return constant;
-            }
-        }
-
-    }
-
-    public enum TargetFormat {
-
-        JSON("json"),
-        XML("xml");
-        private final String value;
-        private final static Map<String, StepSettingsSchema.TargetFormat> CONSTANTS = new HashMap<String, StepSettingsSchema.TargetFormat>();
-
-        static {
-            for (StepSettingsSchema.TargetFormat c: values()) {
-                CONSTANTS.put(c.value, c);
-            }
-        }
-
-        private TargetFormat(String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return this.value;
-        }
-
-        @JsonValue
-        public String value() {
-            return this.value;
-        }
-
-        @JsonCreator
-        public static StepSettingsSchema.TargetFormat fromValue(String value) {
-            StepSettingsSchema.TargetFormat constant = CONSTANTS.get(value);
             if (constant == null) {
                 throw new IllegalArgumentException(value);
             } else {

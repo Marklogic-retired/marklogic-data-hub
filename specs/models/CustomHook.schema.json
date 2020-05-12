@@ -7,7 +7,8 @@
       "type": "string"
     },
     "parameters": {
-      "type": "object"
+      "type": "string",
+      "description": "This is temporarily a string until a bug in HC is fixed where HC wants to set it as a string"
     },
     "user": {
       "type": "string"

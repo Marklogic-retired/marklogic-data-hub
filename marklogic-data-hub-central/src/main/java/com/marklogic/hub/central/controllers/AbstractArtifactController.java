@@ -25,18 +25,6 @@ public abstract class AbstractArtifactController extends BaseController {
        newArtifactManager().deleteArtifact(this.getArtifactType(), artifactName);
     }
 
-    protected ResponseEntity<ObjectNode> validateArtifact(String artifactName, JsonNode artifactJson) {
-        return new ResponseEntity<>(newArtifactManager().validateArtifact(this.getArtifactType(), artifactName, artifactJson), HttpStatus.OK);
-    }
-
-    protected ResponseEntity<ObjectNode> getArtifactSettings(String artifactName) {
-        return new ResponseEntity<>(newArtifactManager().getArtifactSettings(this.getArtifactType(), artifactName), HttpStatus.OK);
-    }
-
-    protected ResponseEntity<ObjectNode> updateArtifactSettings(String artifactName, JsonNode settings) {
-        return new ResponseEntity<>(newArtifactManager().updateArtifactSettings(this.getArtifactType(), artifactName, settings), HttpStatus.OK);
-    }
-
     protected abstract String getArtifactType();
 
     protected ArtifactManager newArtifactManager() {

@@ -3,6 +3,7 @@ package com.marklogic.hub.central.schemas;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
@@ -23,8 +24,13 @@ public class CustomHookSchema {
 
     @JsonProperty("module")
     private String module;
+    /**
+     * This is temporarily a string until a bug in HC is fixed where HC wants to set it as a string
+     * 
+     */
     @JsonProperty("parameters")
-    private Parameters parameters;
+    @JsonPropertyDescription("This is temporarily a string until a bug in HC is fixed where HC wants to set it as a string")
+    private String parameters;
     @JsonProperty("user")
     private String user;
     @JsonProperty("runBefore")
@@ -40,13 +46,21 @@ public class CustomHookSchema {
         this.module = module;
     }
 
+    /**
+     * This is temporarily a string until a bug in HC is fixed where HC wants to set it as a string
+     * 
+     */
     @JsonProperty("parameters")
-    public Parameters getParameters() {
+    public String getParameters() {
         return parameters;
     }
 
+    /**
+     * This is temporarily a string until a bug in HC is fixed where HC wants to set it as a string
+     * 
+     */
     @JsonProperty("parameters")
-    public void setParameters(Parameters parameters) {
+    public void setParameters(String parameters) {
         this.parameters = parameters;
     }
 

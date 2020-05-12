@@ -1,20 +1,21 @@
 package com.marklogic.hub.central.controllers.steps;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.marklogic.hub.central.controllers.BaseController;
 import com.marklogic.hub.central.models.AbstractModel;
 import com.marklogic.hub.central.schemas.StepSchema;
 import com.marklogic.hub.central.schemas.StepSettingsSchema;
+import com.marklogic.hub.dataservices.ArtifactService;
 import com.marklogic.hub.dataservices.StepService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
 
 @Controller
 @RequestMapping("/api/steps/mapping")
@@ -22,10 +23,11 @@ public class MappingStepController extends BaseController {
 
     private final static String STEP_DEFINITION_TYPE = "mapping";
 
-    @RequestMapping(method = RequestMethod.POST)
-    @ApiOperation(value = "Create a step", response = StepSchema.class)
-    public ResponseEntity<JsonNode> createStep(@RequestBody MappingInfo info) {
-        return jsonCreated(newService().createStep(STEP_DEFINITION_TYPE, info.toJsonNode()));
+    @RequestMapping(method = RequestMethod.GET)
+    @ResponseBody
+    @ApiOperation(value = "Get all mapping steps", response = MappingSteps.class)
+    public ResponseEntity<ArrayNode> getSteps() {
+        return ResponseEntity.ok((ArrayNode) ArtifactService.on(getHubClient().getStagingClient()).getList(STEP_DEFINITION_TYPE));
     }
 
     @RequestMapping(value = "/{stepName}", method = RequestMethod.GET)
@@ -34,10 +36,10 @@ public class MappingStepController extends BaseController {
         return ResponseEntity.ok(newService().getStep(STEP_DEFINITION_TYPE, stepName));
     }
 
-    @RequestMapping(value = "/{stepName}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{stepName}", method = RequestMethod.POST)
     @ApiImplicitParam(required = true, paramType = "body", dataType = "StepSchema")
-    public ResponseEntity<Void> updateStep(@RequestBody @ApiParam(hidden = true) JsonNode propertiesToAssign, @PathVariable String stepName) {
-        newService().updateStep(STEP_DEFINITION_TYPE, stepName, propertiesToAssign);
+    public ResponseEntity<Void> saveStep(@RequestBody @ApiParam(hidden = true) JsonNode propertiesToAssign, @PathVariable String stepName) {
+        newService().createStep(STEP_DEFINITION_TYPE, propertiesToAssign);
         return emptyOk();
     }
 
@@ -60,6 +62,9 @@ public class MappingStepController extends BaseController {
 
     private StepService newService() {
         return StepService.on(getHubClient().getStagingClient());
+    }
+
+    public static class MappingSteps extends ArrayList<StepSchema> {
     }
 
     public static class MappingInfo extends AbstractModel {

@@ -21,10 +21,7 @@
     },
     "targetFormat": {
       "type": "string",
-      "enum": [
-        "json",
-        "xml"
-      ]
+      "description": "Should be json or xml, but not using an enum yet because JSON and XML are being used too"
     },
     "targetDatabase": {
       "type": "string"

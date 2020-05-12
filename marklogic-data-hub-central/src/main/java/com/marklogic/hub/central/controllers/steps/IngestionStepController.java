@@ -5,6 +5,7 @@ import com.marklogic.hub.central.controllers.BaseController;
 import com.marklogic.hub.central.models.AbstractModel;
 import com.marklogic.hub.central.schemas.StepSchema;
 import com.marklogic.hub.central.schemas.StepSettingsSchema;
+import com.marklogic.hub.dataservices.ArtifactService;
 import com.marklogic.hub.dataservices.StepService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -16,16 +17,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.util.ArrayList;
+
 @Controller
 @RequestMapping("/api/steps/ingestion")
 public class IngestionStepController extends BaseController {
 
     private final static String STEP_DEFINITION_TYPE = "ingestion";
 
-    @RequestMapping(method = RequestMethod.POST)
-    @ApiOperation(value = "Create a step", response = StepSchema.class)
-    public ResponseEntity<JsonNode> createStep(@RequestBody IngestionInfo info) {
-        return jsonCreated(newService().createStep(STEP_DEFINITION_TYPE, info.toJsonNode()));
+    @RequestMapping(method = RequestMethod.GET)
+    @ApiOperation(value = "Get all ingestion steps", response = IngestionSteps.class)
+    public ResponseEntity<JsonNode> getSteps() {
+        return ResponseEntity.ok(ArtifactService.on(getHubClient().getStagingClient()).getList("ingestion"));
     }
 
     @RequestMapping(value = "/{stepName}", method = RequestMethod.GET)
@@ -34,10 +37,10 @@ public class IngestionStepController extends BaseController {
         return ResponseEntity.ok(newService().getStep(STEP_DEFINITION_TYPE, stepName));
     }
 
-    @RequestMapping(value = "/{stepName}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{stepName}", method = RequestMethod.POST)
     @ApiImplicitParam(required = true, paramType = "body", dataType = "StepSchema")
-    public ResponseEntity<Void> updateStep(@RequestBody @ApiParam(hidden = true) JsonNode propertiesToAssign, @PathVariable String stepName) {
-        newService().updateStep(STEP_DEFINITION_TYPE, stepName, propertiesToAssign);
+    public ResponseEntity<Void> saveStep(@RequestBody @ApiParam(hidden = true) JsonNode propertiesToAssign, @PathVariable String stepName) {
+        newService().createStep(STEP_DEFINITION_TYPE, propertiesToAssign);
         return emptyOk();
     }
 
@@ -60,6 +63,9 @@ public class IngestionStepController extends BaseController {
 
     private StepService newService() {
         return StepService.on(getHubClient().getStagingClient());
+    }
+
+    public static class IngestionSteps extends ArrayList<StepSchema> {
     }
 
     public static class IngestionInfo extends AbstractModel {

@@ -50,11 +50,7 @@ public interface ArtifactService {
 
             private BaseProxy.DBFunctionRequest req_setArtifact;
             private BaseProxy.DBFunctionRequest req_getArtifactTypesInfo;
-            private BaseProxy.DBFunctionRequest req_linkToStepOptions;
             private BaseProxy.DBFunctionRequest req_deleteArtifact;
-            private BaseProxy.DBFunctionRequest req_getArtifactSettings;
-            private BaseProxy.DBFunctionRequest req_setArtifactSettings;
-            private BaseProxy.DBFunctionRequest req_removeLinkToStepOptions;
             private BaseProxy.DBFunctionRequest req_downloadConfigurationFiles;
             private BaseProxy.DBFunctionRequest req_validateArtifact;
             private BaseProxy.DBFunctionRequest req_getList;
@@ -68,16 +64,8 @@ public interface ArtifactService {
                     "setArtifact.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_getArtifactTypesInfo = this.baseProxy.request(
                     "getArtifactTypesInfo.sjs", BaseProxy.ParameterValuesKind.NONE);
-                this.req_linkToStepOptions = this.baseProxy.request(
-                    "linkToStepOptions.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_deleteArtifact = this.baseProxy.request(
                     "deleteArtifact.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
-                this.req_getArtifactSettings = this.baseProxy.request(
-                    "getArtifactSettings.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
-                this.req_setArtifactSettings = this.baseProxy.request(
-                    "setArtifactSettings.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
-                this.req_removeLinkToStepOptions = this.baseProxy.request(
-                    "removeLinkToStepOptions.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_downloadConfigurationFiles = this.baseProxy.request(
                     "downloadConfigurationFiles.sjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_validateArtifact = this.baseProxy.request(
@@ -118,25 +106,6 @@ public interface ArtifactService {
             }
 
             @Override
-            public com.fasterxml.jackson.databind.JsonNode linkToStepOptions(String flowName, String stepID, String artifactType, String artifactName, String artifactVersion) {
-                return linkToStepOptions(
-                    this.req_linkToStepOptions.on(this.dbClient), flowName, stepID, artifactType, artifactName, artifactVersion
-                    );
-            }
-            private com.fasterxml.jackson.databind.JsonNode linkToStepOptions(BaseProxy.DBFunctionRequest request, String flowName, String stepID, String artifactType, String artifactName, String artifactVersion) {
-              return BaseProxy.JsonDocumentType.toJsonNode(
-                request
-                      .withParams(
-                          BaseProxy.atomicParam("flowName", false, BaseProxy.StringType.fromString(flowName)),
-                          BaseProxy.atomicParam("stepID", false, BaseProxy.StringType.fromString(stepID)),
-                          BaseProxy.atomicParam("artifactType", false, BaseProxy.StringType.fromString(artifactType)),
-                          BaseProxy.atomicParam("artifactName", false, BaseProxy.StringType.fromString(artifactName)),
-                          BaseProxy.atomicParam("artifactVersion", true, BaseProxy.StringType.fromString(artifactVersion))
-                          ).responseSingle(false, Format.JSON)
-                );
-            }
-
-            @Override
             public com.fasterxml.jackson.databind.JsonNode deleteArtifact(String artifactType, String artifactName) {
                 return deleteArtifact(
                     this.req_deleteArtifact.on(this.dbClient), artifactType, artifactName
@@ -148,58 +117,6 @@ public interface ArtifactService {
                       .withParams(
                           BaseProxy.atomicParam("artifactType", false, BaseProxy.StringType.fromString(artifactType)),
                           BaseProxy.atomicParam("artifactName", false, BaseProxy.StringType.fromString(artifactName))
-                          ).responseSingle(false, Format.JSON)
-                );
-            }
-
-            @Override
-            public com.fasterxml.jackson.databind.JsonNode getArtifactSettings(String artifactType, String artifactName) {
-                return getArtifactSettings(
-                    this.req_getArtifactSettings.on(this.dbClient), artifactType, artifactName
-                    );
-            }
-            private com.fasterxml.jackson.databind.JsonNode getArtifactSettings(BaseProxy.DBFunctionRequest request, String artifactType, String artifactName) {
-              return BaseProxy.JsonDocumentType.toJsonNode(
-                request
-                      .withParams(
-                          BaseProxy.atomicParam("artifactType", false, BaseProxy.StringType.fromString(artifactType)),
-                          BaseProxy.atomicParam("artifactName", false, BaseProxy.StringType.fromString(artifactName))
-                          ).responseSingle(false, Format.JSON)
-                );
-            }
-
-            @Override
-            public com.fasterxml.jackson.databind.JsonNode setArtifactSettings(String artifactType, String artifactName, com.fasterxml.jackson.databind.JsonNode settings) {
-                return setArtifactSettings(
-                    this.req_setArtifactSettings.on(this.dbClient), artifactType, artifactName, settings
-                    );
-            }
-            private com.fasterxml.jackson.databind.JsonNode setArtifactSettings(BaseProxy.DBFunctionRequest request, String artifactType, String artifactName, com.fasterxml.jackson.databind.JsonNode settings) {
-              return BaseProxy.JsonDocumentType.toJsonNode(
-                request
-                      .withParams(
-                          BaseProxy.atomicParam("artifactType", false, BaseProxy.StringType.fromString(artifactType)),
-                          BaseProxy.atomicParam("artifactName", false, BaseProxy.StringType.fromString(artifactName)),
-                          BaseProxy.documentParam("settings", false, BaseProxy.JsonDocumentType.fromJsonNode(settings))
-                          ).responseSingle(false, Format.JSON)
-                );
-            }
-
-            @Override
-            public com.fasterxml.jackson.databind.JsonNode removeLinkToStepOptions(String flowName, String stepID, String artifactType, String artifactName, String artifactVersion) {
-                return removeLinkToStepOptions(
-                    this.req_removeLinkToStepOptions.on(this.dbClient), flowName, stepID, artifactType, artifactName, artifactVersion
-                    );
-            }
-            private com.fasterxml.jackson.databind.JsonNode removeLinkToStepOptions(BaseProxy.DBFunctionRequest request, String flowName, String stepID, String artifactType, String artifactName, String artifactVersion) {
-              return BaseProxy.JsonDocumentType.toJsonNode(
-                request
-                      .withParams(
-                          BaseProxy.atomicParam("flowName", false, BaseProxy.StringType.fromString(flowName)),
-                          BaseProxy.atomicParam("stepID", false, BaseProxy.StringType.fromString(stepID)),
-                          BaseProxy.atomicParam("artifactType", false, BaseProxy.StringType.fromString(artifactType)),
-                          BaseProxy.atomicParam("artifactName", false, BaseProxy.StringType.fromString(artifactName)),
-                          BaseProxy.atomicParam("artifactVersion", true, BaseProxy.StringType.fromString(artifactVersion))
                           ).responseSingle(false, Format.JSON)
                 );
             }
@@ -287,18 +204,6 @@ public interface ArtifactService {
     com.fasterxml.jackson.databind.JsonNode getArtifactTypesInfo();
 
   /**
-   * Invokes the linkToStepOptions operation on the database server
-   *
-   * @param flowName	provides input
-   * @param stepID	provides input
-   * @param artifactType	provides input
-   * @param artifactName	provides input
-   * @param artifactVersion	provides input
-   * @return	as output
-   */
-    com.fasterxml.jackson.databind.JsonNode linkToStepOptions(String flowName, String stepID, String artifactType, String artifactName, String artifactVersion);
-
-  /**
    * Invokes the deleteArtifact operation on the database server
    *
    * @param artifactType	provides input
@@ -306,37 +211,6 @@ public interface ArtifactService {
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode deleteArtifact(String artifactType, String artifactName);
-
-  /**
-   * Invokes the getArtifactSettings operation on the database server
-   *
-   * @param artifactType	provides input
-   * @param artifactName	provides input
-   * @return	as output
-   */
-    com.fasterxml.jackson.databind.JsonNode getArtifactSettings(String artifactType, String artifactName);
-
-  /**
-   * Invokes the setArtifactSettings operation on the database server
-   *
-   * @param artifactType	provides input
-   * @param artifactName	provides input
-   * @param settings	provides input
-   * @return	as output
-   */
-    com.fasterxml.jackson.databind.JsonNode setArtifactSettings(String artifactType, String artifactName, com.fasterxml.jackson.databind.JsonNode settings);
-
-  /**
-   * Invokes the removeLinkToStepOptions operation on the database server
-   *
-   * @param flowName	provides input
-   * @param stepID	provides input
-   * @param artifactType	provides input
-   * @param artifactName	provides input
-   * @param artifactVersion	provides input
-   * @return	as output
-   */
-    com.fasterxml.jackson.databind.JsonNode removeLinkToStepOptions(String flowName, String stepID, String artifactType, String artifactName, String artifactVersion);
 
   /**
    * Invokes the downloadConfigurationFiles operation on the database server

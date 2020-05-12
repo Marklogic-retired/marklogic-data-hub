@@ -65,7 +65,6 @@ const EntityTypes: React.FC = () => {
   const addStepToNew = async () => {
     try {
       setIsLoading(true);
-      //let response = await axios.post(`/api/artifacts/????/${flowName}`);
 
       //if (response.status === 200) {
         setIsLoading(false);
@@ -83,14 +82,8 @@ const EntityTypes: React.FC = () => {
   // POST mapping step to existing flow
   const addStepToFlow = async (mappingArtifactName, flowName) => {
     let stepToAdd = {
-      "name": mappingArtifactName,
-      "stepDefinitionName": "entity-services-mapping",
-      "stepDefinitionType": "MAPPING",
-      options: {
-        "mapping": {
-          "name": mappingArtifactName
-        }
-      }
+      "stepName": mappingArtifactName,
+      "stepDefinitionType": "mapping"
     };
     try {
       setIsLoading(true);
