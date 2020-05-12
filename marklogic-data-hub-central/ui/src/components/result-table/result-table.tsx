@@ -14,6 +14,7 @@ import ColumnSelector from '../../components/column-selector/column-selector';
 import { tableParser, headerParser, deepCopy, reconstructHeader, toStringArray, headerPropsParser } from '../../util/data-conversion';
 import ReactDragListView from 'react-drag-listview'
 import QueryExport from '../../components/query-export/query-export';
+import { AuthoritiesContext } from "../../util/authorities";
 
 
 
@@ -40,6 +41,7 @@ interface Props {
   data: any;
   entityDefArray: any[];
   columns: any;
+  hasStructured: boolean;
 };
 
 const DEFAULT_ALL_ENTITIES_HEADER = [
@@ -92,6 +94,9 @@ const ResultTable: React.FC<Props> = (props) => {
   const [treeColumns, setTreeColumns] = useState<any[]>([]);
   let counter = 0;
   let parsedPayload = tableParser(props);
+
+  const authorityService = useContext(AuthoritiesContext);
+  const canExportQuery = authorityService.canExportEntityInstances();
 
   useEffect(() => {
     if (parsedPayload === null) {
@@ -534,7 +539,7 @@ const ResultTable: React.FC<Props> = (props) => {
   return (
     <>
       <div className={styles.queryExport}>
-        <QueryExport columns={props.columns}/>
+      { canExportQuery && <QueryExport hasStructured={props.hasStructured} columns={props.columns}/> }
       </div>
       <div className={styles.columnSelector} data-cy="column-selector">
         <ColumnSelector title={checkedColumns} tree={treeColumns} headerRender={headerRender} updateTreeColumns={updateTreeColumns} />

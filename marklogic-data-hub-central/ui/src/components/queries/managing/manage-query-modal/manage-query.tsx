@@ -7,9 +7,11 @@ import { queryDateConverter } from '../../../../util/date-conversion';
 import EditQueryDialog from '../edit-query-dialog/edit-query-dialog'
 import { SearchContext } from '../../../../util/search-context';
 import styles from './manage-query.module.scss';
-import { fetchQueries, updateQuery, removeQuery } from '../../../../api/queries'
+import { fetchQueries, removeQuery } from '../../../../api/queries'
 import axios from "axios";
+import { getSavedQueryPreview } from '../../../../api/queries'
 import ExportQueryModal from '../../../query-export/query-export-modal/query-export-modal'
+import { getExportPreview } from '../../../query-export/export-preview/export-preview'
 
 
 const QueryModal = (props) => {
@@ -20,6 +22,8 @@ const QueryModal = (props) => {
     const [deleteModalVisibility, setDeleteModalVisibility] = useState(false);
     const [exportModalVisibility, setExportModalVisibility] = useState(false);
     const [recordID, setRecordID] = useState();
+    const [tableColumns, setTableColumns] = useState<Object[]>();
+    const [tableData, setTableData] = useState<Object[]>();
     const [query, setQuery] = useState({});
 
     const data = new Array();
@@ -28,8 +32,8 @@ const QueryModal = (props) => {
     } = useContext(SearchContext);
 
     useEffect(() => {
-        getQueries();
-    }, [mainModalVisibility, editModalVisibility, deleteModalVisibility]);
+        props.hasStructured && getPreview();
+    }, [exportModalVisibility]);
 
     const getQueries = async () => {
         try {
@@ -203,9 +207,28 @@ const QueryModal = (props) => {
         <span style={{ fontSize: '16px' }}>Are you sure you want to delete '{props.currentQueryName}'?</span>
     </Modal>;
 
+    const getPreview = async () => {
+        if (recordID) {
+            try {
+                const response = await getSavedQueryPreview(recordID);
+                if (response.data) {
+                    const preview = getExportPreview(response.data)
+                    const header = preview[0];
+                    const body = preview[1]
+                    setTableColumns(header)
+                    setTableData(body)
+                }
+            } catch (error) {
+                handleError(error)
+            } finally {
+                resetSessionTime()
+            }
+        }
+    }
+
     return (
         <div>
-            <ExportQueryModal recordID={recordID} exportModalVisibility={exportModalVisibility} setExportModalVisibility={setExportModalVisibility} columns={props.columns} />
+            <ExportQueryModal hasStructured={props.hasStructured} tableColumns={tableColumns} tableData={tableData} recordID={recordID} exportModalVisibility={exportModalVisibility} setExportModalVisibility={setExportModalVisibility} columns={props.columns} />
             <FontAwesomeIcon icon={faListOl} color='#5B69AF' size='lg' onClick={displayModal} style={{ cursor: 'pointer', marginLeft: '-30px', color: '#5B69AF' }} data-testid="manage-queries-modal-icon" />
             <Modal
                 title={null}

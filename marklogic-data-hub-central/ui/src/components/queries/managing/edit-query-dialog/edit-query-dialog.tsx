@@ -89,6 +89,7 @@ const EditQueryDialog = (props) => {
         } finally {
             resetSessionTime();
         }
+        props.getQueries();
     }
 
     return (
