@@ -67,20 +67,7 @@
                 },
                 "customHook": {
                   "type": "object",
-                  "properties": {
-                    "module": {
-                      "type": "string"
-                    },
-                    "parameters": {
-                      "type": "object"
-                    },
-                    "user": {
-                      "type": "string"
-                    },
-                    "runBefore": {
-                      "type": "boolean"
-                    }
-                  }
+                  "$ref": "./CustomHook.schema.json"
                 },
                 "processors": {
                   "type": "array",

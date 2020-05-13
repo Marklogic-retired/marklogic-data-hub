@@ -1,6 +1,7 @@
 package com.marklogic.hub.central;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.central.auth.LoginInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,14 +10,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrint;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -27,11 +28,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * should be applicable to a wide swath of tests, not just a handful.
  */
 /*
-* There is a bug in MockMvc that causes ConcurrentModificationException in the testRowExport() test.
-* This happens when it tries to read the response headers for async requests in
-* order to print the response.
-* Thus, we are switching off the printing of requests/responses on MockMvc test failure.
-* */
+ * There is a bug in MockMvc that causes ConcurrentModificationException in the testRowExport() test.
+ * This happens when it tries to read the response headers for async requests in
+ * order to print the response.
+ * Thus, we are switching off the printing of requests/responses on MockMvc test failure.
+ * */
 @AutoConfigureMockMvc(print = MockMvcPrint.NONE)
 public abstract class AbstractMvcTest extends AbstractHubCentralTest {
 
@@ -81,6 +82,10 @@ public abstract class AbstractMvcTest extends AbstractHubCentralTest {
         }
     }
 
+    protected ResultActions postJson(String url, Object json) throws Exception {
+        return postJson(url, objectMapper.valueToTree(json).toString());
+    }
+
     protected ResultActions postJson(String url, String json) throws Exception {
         MockHttpServletRequestBuilder builder = post(url).contentType(MediaType.APPLICATION_JSON).content(json);
         if (mockHttpSession != null) {
@@ -89,12 +94,20 @@ public abstract class AbstractMvcTest extends AbstractHubCentralTest {
         return mockMvc.perform(builder);
     }
 
+    protected ResultActions putJson(String url, Object json) throws Exception {
+        return putJson(url, objectMapper.valueToTree(json).toString());
+    }
+
     protected ResultActions putJson(String url, String json) throws Exception {
         MockHttpServletRequestBuilder builder = put(url).contentType(MediaType.APPLICATION_JSON).content(json);
         if (mockHttpSession != null) {
             builder.session(mockHttpSession);
         }
         return mockMvc.perform(builder);
+    }
+
+    protected ResultActions getJson(String url) throws Exception {
+        return getJson(url, new LinkedMultiValueMap<>());
     }
 
     protected ResultActions getJson(String url, MultiValueMap<String, String> params) throws Exception {
@@ -113,11 +126,20 @@ public abstract class AbstractMvcTest extends AbstractHubCentralTest {
         return mockMvc.perform(builder);
     }
 
-    protected ResultActions deleteJson(String url, MultiValueMap<String, String> params) throws Exception {
-        MockHttpServletRequestBuilder builder = delete(url).params(params);
+    protected ResultActions delete(String url) throws Exception {
+        return delete(url, new LinkedMultiValueMap<>());
+    }
+
+    protected ResultActions delete(String url, MultiValueMap<String, String> params) throws Exception {
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.delete(url).params(params);
         if (mockHttpSession != null) {
             builder.session(mockHttpSession);
         }
         return mockMvc.perform(builder);
     }
+
+    protected JsonNode parseJsonResponse(MvcResult result) throws Exception {
+        return objectMapper.readTree(result.getResponse().getContentAsString());
+    }
+
 }

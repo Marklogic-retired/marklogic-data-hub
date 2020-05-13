@@ -66,13 +66,10 @@ declare function get-artifact-uris(
   $test-data-path as xs:string
 ) as xs:string*
 {
-  xdmp:invoke-function(
+  invoke-in-db(
     function() {
       cts:uris((), (), cts:directory-query($test-data-path || $artifact-type || "/", "infinity"))
-    },
-    <options xmlns="xdmp:eval">
-      <database>{xdmp:modules-database()}</database>
-    </options>
+    }, xdmp:database-name(xdmp:modules-database())
   )
 };
 
@@ -95,13 +92,7 @@ declare function reset-hub() as empty-sequence()
 
 declare function clear-jobs-database()
 {
-  xdmp:invoke-function(function() {
-    xdmp:collection-delete("Jobs")
-  },
-    <options xmlns="xdmp:eval">
-      <database>{xdmp:database("data-hub-JOBS")}</database>
-    </options>
-  )
+  invoke-in-db(function() {xdmp:collection-delete("Jobs")}, "data-hub-JOBS")
 };
 
 declare function reset-staging-and-final-databases()
@@ -113,29 +104,24 @@ declare function reset-staging-and-final-databases()
 
 declare function invoke-in-staging-and-final($function)
 {
-  ("data-hub-STAGING", "data-hub-FINAL") ! xdmp:invoke-function($function,
-    <options xmlns="xdmp:eval">
-      <database>{xdmp:database(.)}</database>
-    </options>
-  )
+  ("data-hub-STAGING", "data-hub-FINAL") ! invoke-in-db($function, .)
 };
 
 declare function get-first-batch-document()
 {
-  xdmp:invoke-function(function() {
-    collection("Batch")[1]
-  },
-    <options xmlns="xdmp:eval">
-      <database>{xdmp:database("data-hub-JOBS")}</database>
-    </options>
-  )
+  invoke-in-db(function() {collection("Batch")[1]}, "data-hub-JOBS")
 };
 
 declare function get-modules-document($uri as xs:string)
 {
-  xdmp:invoke-function(function() {fn:doc($uri)},
+  invoke-in-db(function() {fn:doc($uri)}, "data-hub-MODULES")
+};
+
+declare function invoke-in-db($function, $database as xs:string)
+{
+  xdmp:invoke-function($function,
     <options xmlns="xdmp:eval">
-      <database>{xdmp:database("data-hub-MODULES")}</database>
+      <database>{xdmp:database($database)}</database>
     </options>
   )
 };
@@ -154,4 +140,46 @@ declare function assert-called-from-test()
   return (
     fn:error(xs:QName('EXTERNAL-AMPED-TEST-ATTEMPT'), "This function shouldn't be called outside of the test framework", $stack-uris)
   )
+};
+
+declare function assert-in-collections($uri as xs:string, $collections as xs:string+)
+{
+  let $actual-collections := invoke-in-db(function(){xdmp:document-get-collections($uri)}, "data-hub-FINAL")
+  for $c in $collections
+  return test:assert-true($actual-collections = $c, "Expected URI " || $uri || " to be in collection " || $c)
+};
+
+(:
+permissions-string is expected to be role,capability,role,capability,etc
+:)
+declare function assert-has-permissions($uri as xs:string, $permissions-string as xs:string)
+{
+  let $actual-perms := invoke-in-db(function(){xdmp:document-get-permissions($uri)}, "data-hub-FINAL")
+  let $tokens := fn:tokenize($permissions-string, ",")
+  for $token at $index in $tokens
+  where math:fmod($index, 2) = 1
+  return
+    let $role := xdmp:role($token)
+    let $capability := $tokens[$index + 1]
+    let $exists := fn:exists($actual-perms[sec:role-id = $role and sec:capability = $capability])
+    return test:assert-true($exists, "Expected URI " || $uri || " to have permission with role " || $role || " and capability " || $capability)
+};
+
+
+(: Copied from https://github.com/marklogic-community/marklogic-unit-test/issues/14 :)
+declare variable $ARRAY-QNAME := fn:QName("http://marklogic.com/xdmp/json", "array");
+declare function assert-arrays-equal($expected as item()*, $actual as item()*)
+{
+  if (xdmp:type(fn:head($expected)) eq $ARRAY-QNAME) then
+    test:assert-same-values(json:array-values($expected), json:array-values($actual))
+  else
+    let $expected-ordered :=
+      for $e in $expected
+      order by $e
+      return $e
+    let $actual-ordered :=
+      for $a in $actual
+      order by $a
+      return $a
+    return test:assert-equal($expected-ordered, $actual-ordered)
 };

@@ -22,7 +22,7 @@ const dataHub = DataHubSingleton.instance();
 const hubEs = require("/data-hub/5/impl/hub-es.sjs");
 
 
-const collections = ['http://marklogic.com/data-hub/mappings'];
+const collections = ['http://marklogic.com/data-hub/mappings', 'http://marklogic.com/data-hub/steps', 'http://marklogic.com/data-hub/steps/mapping'];
 const databases = [dataHub.config.STAGINGDATABASE, dataHub.config.FINALDATABASE];
 const permissions = [xdmp.permission(dataHub.consts.DATA_HUB_MAPPING_WRITE_ROLE, 'update'), xdmp.permission(dataHub.consts.DATA_HUB_MAPPING_READ_ROLE, 'read')];
 const requiredProperties = ['name', 'targetEntityType', 'selectedSource'];
@@ -106,6 +106,18 @@ function defaultArtifactSettings(artifactName, entityTypeId) {
     };
 }
 
+function defaultArtifact(artifactName, entityTypeId) {
+  // TODO Intentionally duplicated from defaultArtifactSettings, which will be removed once we know steps are working correctly
+  const defaultCollections =  [artifactName];
+  if (entityTypeId) {
+    // look for Entity Service Title, if not found will use the ID
+    defaultCollections.push(hubEs.findEntityServiceTitle(entityTypeId) || entityTypeId);
+  }
+  return {
+    collections: defaultCollections
+  };
+}
+
 module.exports = {
     getNameProperty,
     getVersionProperty,
@@ -115,5 +127,6 @@ module.exports = {
     getArtifactNode,
     getDirectory,
     validateArtifact,
-    defaultArtifactSettings
+    defaultArtifactSettings,
+  defaultArtifact
 };

@@ -20,7 +20,7 @@ const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
 // define constants for caching expensive operations
 const dataHub = DataHubSingleton.instance();
 
-const collections = ['http://marklogic.com/data-hub/load-data-artifact'];
+const collections = ['http://marklogic.com/data-hub/load-data-artifact', 'http://marklogic.com/data-hub/steps', 'http://marklogic.com/data-hub/steps/ingestion'];
 const databases = [dataHub.config.STAGINGDATABASE, dataHub.config.FINALDATABASE];
 const permissions = [xdmp.permission(dataHub.consts.DATA_HUB_LOAD_DATA_WRITE_ROLE, 'update'), xdmp.permission(dataHub.consts.DATA_HUB_LOAD_DATA_READ_ROLE, 'read')];
 const requiredProperties = ['name', 'sourceFormat', 'targetFormat'];
@@ -71,13 +71,14 @@ function defaultArtifactSettings(artifactName) {
 }
 
 function defaultArtifact(artifactName) {
-    return {
-        headers: {
-            sources: [{name:  artifactName}],
-            createdOn: "currentDateTime",
-            createdBy: "currentUser"
-        }
-    };
+  return {
+    headers: {
+      sources: [{name: artifactName}],
+      createdOn: "currentDateTime",
+      createdBy: "currentUser"
+    },
+    collections: [artifactName]
+  };
 }
 
 module.exports = {

@@ -29,6 +29,10 @@ function throwForbidden(message) {
   fn.error(null, 'RESTAPI-SRVEXERR', Sequence.from([403, message]));
 }
 
+function throwServerError(message) {
+  fn.error(null, 'RESTAPI-SRVEXERR', Sequence.from([500, message]));
+}
+
 module.exports = {
   throwBadRequest,
   throwForbidden
