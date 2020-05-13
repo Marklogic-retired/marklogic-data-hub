@@ -98,15 +98,17 @@
     > .columnOptionsSelectorContainer {
         display: inline-block;
         margin-bottom: 10px;
-        > .expandCollapseBtn {
-            width: 102px;
-            height: 32px;
-        }
+
         > .columnOptionsSelector{
             float: right;
             margin-top: 10px;
         }
     }
+}
+
+> .expandCollapseBtn {
+    width: 102px;
+    height: 32px;
 }
 
 .DropdownMenuItem {
@@ -378,11 +380,8 @@ hr {
     width: 100%;
     display: inline-block;
     justify-content: space-between;
-    vertical-align: middle;
-    //text-align: center;
-    //padding-bottom: 2px;
-    margin-top: 2px;
-    height: 4.5vh;
+    margin-bottom: -4px;
+    margin-top: 4px;
 }
 
 .navigate_source_uris{
@@ -393,7 +392,7 @@ hr {
     justify-content: space-between;
     text-align: center;
     margin-top: -32px;
-    margin-left: 10vw;
+    margin-left: 45%;
     white-space: nowrap;
   }
  .navigate_uris_left {
