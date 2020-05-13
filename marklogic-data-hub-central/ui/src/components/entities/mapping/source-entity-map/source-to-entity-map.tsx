@@ -1097,11 +1097,11 @@ const SourceToEntityMap = (props) => {
             </div>
             <br/>
             <span className={styles.btn_icons}>
-                    <Button id="Clear-btn" mat-raised-button color="primary" disabled={emptyData} onClick={() => onClear()}>
+                    <Button id="Clear-btn" mat-raised-button="true" color="primary" disabled={emptyData} onClick={() => onClear()}>
                         Clear
                     </Button>
                 &nbsp;&nbsp;
-                <Button id="Test-btn" mat-raised-button type="primary" disabled={emptyData || mapExpTouched} onClick={() => getMapValidationResp(srcURI)}>
+                <Button id="Test-btn" mat-raised-button="true" type="primary" disabled={emptyData || mapExpTouched} onClick={() => getMapValidationResp(srcURI)}>
                         Test
                     </Button>
             </span>

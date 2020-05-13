@@ -60,6 +60,7 @@ public class Installer extends HubTestBase implements InitializingBean {
         dataHubDeveloper.addRole("data-hub-developer");
         // Temporary until we get the hub-central-developer role complete
         dataHubDeveloper.addRole("hub-central-user");
+        dataHubDeveloper.addRole("hub-central-mapping-reader");
         dataHubDeveloper.save();
 
         User dataHubOperator = new User(api, "test-data-hub-operator");
@@ -67,7 +68,13 @@ public class Installer extends HubTestBase implements InitializingBean {
         dataHubOperator.addRole("data-hub-operator");
         // Temporary until we get the hub-central-operator role complete
         dataHubOperator.addRole("hub-central-user");
+        dataHubDeveloper.addRole("hub-central-mapping-reader");
         dataHubOperator.save();
+
+        User hubCentralMappingReader = new User(api, "test-hub-mapping-reader");
+        hubCentralMappingReader.setPassword("password");
+        hubCentralMappingReader.addRole("hub-central-mapping-reader");
+        hubCentralMappingReader.save();
 
         User testAdmin = new User(api, "test-admin-for-data-hub-tests");
         testAdmin.setDescription("This user is intended to be used by DHF tests that require admin or " +

@@ -623,10 +623,10 @@ const MappingCard: React.FC<Props> = (props) => {
                                 {elem.selectedSource === 'collection' ? <div className={styles.sourceQuery}>Collection: {extractCollectionFromSrcQuery(elem.sourceQuery)}</div> : <div className={styles.sourceQuery}>Source Query: {getInitialChars(elem.sourceQuery,32,'...')}</div>}
                                 <br /><br />
                                 <p className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</p>
-                                {props.canWriteFlow ? <div className={styles.cardLinks} style={{display: showLinks === elem.name ? 'block' : 'none'}}>
+                                <div className={styles.cardLinks} style={{display: showLinks === elem.name ? 'block' : 'none'}}>
                                     <div className={styles.cardLink} onClick={() => openSourceToEntityMapping(elem.name,index)}>Open step details</div>
-                                    <div className={styles.cardLink}>Add step to a new flow</div>
-                                    <div className={styles.cardNonLink}>
+                                    { props.canWriteFlow ? <div className={styles.cardLink}>Add step to a new flow</div> : null }
+                                    { props.canWriteFlow ? <div className={styles.cardNonLink}>
                                         Add step to an existing flow
                                         <div className={styles.cardLinkSelect}>
                                             <Select
@@ -640,8 +640,8 @@ const MappingCard: React.FC<Props> = (props) => {
                                                 )) : null}
                                             </Select>
                                         </div>
-                                    </div>
-                                </div> : null}
+                                    </div>: null}
+                                </div>
                             </Card>
                         </div>
                     </Col>

@@ -9,8 +9,10 @@ import MatchingCard from './matching/matching-card';
 const EntityTiles = (props) => {
     const { resetSessionTime } = useContext(UserContext);
     const [viewType, setViewType] = useState('map');
-    const [entityArtifacts, setEntityArtifacts] = useState<any[]>([]);
+    const entityModels = props.entityModels || {};
+    const [mappingArtifacts, setMappingArtifacts] = useState<any[]>([]);
     const [matchingArtifacts, setMatchingArtifacts] = useState<any[]>([]);
+    const { canReadMapping, canWriteMapping } = props;
     //For accordian within entity tiles
     const { Panel } = Collapse;
 
@@ -31,12 +33,14 @@ const EntityTiles = (props) => {
 
     const getMappingArtifacts = async () => {
         try {
-            let response = await axios.get('/api/artifacts/mapping');
+            if (canReadMapping) {
+              let response = await axios.get('/api/artifacts/mapping');
 
-            if (response.status === 200) {
+              if (response.status === 200) {
                 let mapArtifacts = response.data;
                 mapArtifacts.sort((a, b) => (a.entityType > b.entityType) ? 1 : -1)
-                setEntityArtifacts([...mapArtifacts]);
+                setMappingArtifacts([...mapArtifacts]);
+              }
             }
           } catch (error) {
               let message = error;
@@ -126,11 +130,13 @@ const EntityTiles = (props) => {
 
     const getMatchingArtifacts = async () => {
         try {
-            let response = await axios.get('/api/artifacts/matching');
-            if (response.status === 200) {
+            if (props.canReadMatchMerge) {
+              let response = await axios.get('/api/artifacts/matching');
+              if (response.status === 200) {
                 let entArt = response.data;
                 entArt.sort((a, b) => (a.entityType > b.entityType) ? 1 : -1)
                 setMatchingArtifacts([...entArt]);
+              }
             }
           } catch (error) {
               let message = error;
@@ -172,30 +178,30 @@ const EntityTiles = (props) => {
           }
     }
 
-    const outputCards = (entityCardData, matchingCardData) => {
+    const outputCards = (entityType, mappingCardData, matchingCardData) => {
         let output;
 
         if (viewType === 'map') {
             output = <div className={styles.cardView}>
-                <MappingCard data={entityCardData.artifacts}
+                <MappingCard data={mappingCardData ? mappingCardData.artifacts : []}
                     flows={props.flows}
-                    entityTypeTitle={entityCardData.entityType}
+                    entityTypeTitle={entityType}
                     getMappingArtifactByMapName={getMappingArtifactByMapName}
                     deleteMappingArtifact={deleteMappingArtifact}
                     createMappingArtifact={createMappingArtifact}
                     updateMappingArtifact={updateMappingArtifact}
-                    canReadWrite={props.canReadWrite}
-                    canReadOnly={props.canReadOnly}
-                    entityModel={props.entityModels[entityCardData.entityType]}
+                    canReadWrite={canWriteMapping}
+                    canReadOnly={canReadMapping}
+                    entityModel={props.entityModels[entityType]}
                     canWriteFlow={props.canWriteFlow}
                     addStepToFlow={props.addStepToFlow}
                     addStepToNew={props.addStepToNew}/>
             </div>
         }
-        else if (viewType === 'matching'){
+        else if (viewType === 'matching' && mappingCardData){
             output = <div className={styles.cardView}>
-            <MatchingCard data={matchingCardData.artifacts}
-                entityName={matchingCardData.entityType}
+            <MatchingCard data={ matchingCardData ? matchingCardData.artifacts : []}
+                entityName={entityType}
                 deleteMatchingArtifact={deleteMatchingArtifact}
                 createMatchingArtifact={createMatchingArtifact}
                 canReadMatchMerge={props.canReadMatchMerge}
@@ -214,19 +220,19 @@ const EntityTiles = (props) => {
         <div className={styles.entityTilesContainer}>
 
         <Collapse >
-            { entityArtifacts.map((ent,index) => (
-                <Panel header={ent.entityType} key={ent.entityType}>
+            { Object.keys(props.entityModels).sort().map((entityType) => (
+                <Panel header={entityType} key={entityType}>
             <div className={styles.switchMapMaster}>
             <Menu mode="horizontal" defaultSelectedKeys={['map']}>
-                <Menu.Item key='map' onClick={mappingCardsView}>
+                {canReadMapping ? <Menu.Item key='map' onClick={mappingCardsView}>
                     Mapping
-                </Menu.Item>
-                <Menu.Item key='matching' onClick={matchingCardsView}>
+                </Menu.Item>: null}
+               {props.canReadMatchMerge ? <Menu.Item key='matching' onClick={matchingCardsView}>
                     Matching
-                </Menu.Item>
+                </Menu.Item>: null}
             </Menu>
             </div>
-            {outputCards(ent,matchingArtifacts[index])}
+            {outputCards(entityType, mappingArtifacts.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId),matchingArtifacts.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId))}
             </Panel>
             ))}
         </Collapse>

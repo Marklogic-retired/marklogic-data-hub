@@ -13,6 +13,16 @@
       "kind": "execute"
     },
     {
+      "privilege-name": "xdmp:invoke-in",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-invoke-in",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdbc:eval",
+      "action": "http://marklogic.com/xdmp/privileges/xdbc-eval",
+      "kind": "execute"
+    },
+    {
       "privilege-name": "xdbc:eval-in",
       "action": "http://marklogic.com/xdmp/privileges/xdbc-eval-in",
       "kind": "execute"

@@ -17,12 +17,12 @@ const EntityTypes: React.FC = () => {
     const { handleError, resetSessionTime } = useContext(UserContext);
     const [isLoading, setIsLoading] = useState(false);
     const [flows, setFlows] = useState<any[]>([]);
-    const [entityModels, setEntityModels] = useState<any[]>([]);
+    const [entityModels, setEntityModels] = useState<any>({});
 
     //Role based access
     const authorityService = useContext(AuthoritiesContext);
-    const canReadOnly = authorityService.canReadMapping();
-    const canReadWrite = authorityService.canWriteMapping();
+    const canReadMapping = authorityService.canReadMapping();
+    const canWriteMapping = authorityService.canWriteMapping();
     const canReadMatchMerge = authorityService.canReadMatchMerge();
     const canWriteMatchMerge = authorityService.canWriteMatchMerge();
     const canWriteFlow = authorityService.canWriteFlow();
@@ -121,8 +121,8 @@ const EntityTypes: React.FC = () => {
             flows={flows}
             canReadMatchMerge={canReadMatchMerge}
             canWriteMatchMerge={canWriteMatchMerge}
-            canReadWrite={canReadWrite}
-            canReadOnly={canReadOnly}
+            canWriteMapping={canWriteMapping}
+            canReadMapping={canReadMapping}
             entityModels={entityModels}
             getEntityModels={getEntityModels}
             canWriteFlow={canWriteFlow}

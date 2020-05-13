@@ -14,6 +14,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +29,7 @@ public class MappingController extends AbstractArtifactController {
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     @ApiOperation(value = "Get all mapping artifacts", response = MappingArtifacts.class)
+    @Secured("ROLE_readMapping")
     public ResponseEntity<ArrayNode> getMappings() {
         return super.getArtifacts();
     }
@@ -35,6 +37,7 @@ public class MappingController extends AbstractArtifactController {
     @RequestMapping(value = "/{artifactName}", method = RequestMethod.GET)
     @ResponseBody
     @ApiOperation(value = "Get a single mapping by name", response = MappingArtifact.class)
+    @Secured("ROLE_readMapping")
     public ResponseEntity<ObjectNode> getMapping(@PathVariable String artifactName) {
         return super.getArtifact(artifactName);
     }
@@ -54,6 +57,7 @@ public class MappingController extends AbstractArtifactController {
     @RequestMapping(value = "/{artifactName}/settings", method = RequestMethod.GET)
     @ResponseBody
     @ApiOperation(value = "Get the settings for a mapping", response = StepSettingsSchema.class)
+    @Secured("ROLE_readMapping")
     public ResponseEntity<ObjectNode> getMappingSettings(@PathVariable String artifactName) {
         return super.getArtifactSettings(artifactName);
     }
@@ -75,6 +79,7 @@ public class MappingController extends AbstractArtifactController {
     @ResponseBody
     @ApiImplicitParam(required = true, paramType = "body", dataType = "MappingArtifact")
     @ApiOperation(value = "Test a mapping against a source document", response = MappingArtifact.class)
+    @Secured("ROLE_readMapping")
     public ResponseEntity<ObjectNode> testMapping(@RequestBody @ApiParam(hidden=true) ObjectNode jsonMapping,
                                                   @RequestParam(value = "uri", required = true) String uri,
                                                   @RequestParam(value = "db", required = true) String database) {
@@ -83,6 +88,7 @@ public class MappingController extends AbstractArtifactController {
 
     @RequestMapping(value = "/functions", method = RequestMethod.GET)
     @ResponseBody
+    @Secured("ROLE_readMapping")
     public ResponseEntity<ObjectNode> getMappingFunctions() {
         return  new ResponseEntity<>((ObjectNode) getMappingService().getMappingFunctions(), HttpStatus.OK);
     }
@@ -96,6 +102,7 @@ public class MappingController extends AbstractArtifactController {
      */
     @RequestMapping(value = "/entity/{entityName}", method = RequestMethod.GET)
     @ResponseBody
+    @Secured("ROLE_readMapping")
     public JsonNode getEntityForMapping(@PathVariable String entityName) {
         ArrayNode array = (ArrayNode) ModelsService.on(getHubClient().getFinalClient()).getPrimaryEntityTypes();
         JsonNode entityModel = null;
