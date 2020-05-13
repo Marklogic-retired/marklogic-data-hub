@@ -377,6 +377,7 @@ public class HubProjectImpl implements HubProject {
         writeRoleFile(rolesDir, "hub-central-downloader.json");
         writeRoleFile(rolesDir, "hub-central-entity-exporter.json");
         writeRoleFile(rolesDir, "hub-central-mapping-reader.json");
+        writeRoleFile(rolesDir, "hub-central-mapping-writer.json");
         writeRoleFile(rolesDir, "hub-central-user.json");
 
 

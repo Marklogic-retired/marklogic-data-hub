@@ -1,0 +1,16 @@
+{
+  "role-name": "hub-central-mapping-writer",
+  "description": "Permits reading/reviewing mapping steps in Hub Central",
+  "role": [
+    "hub-central-mapping-reader",
+    "data-hub-common-writer",
+    "data-hub-mapping-writer"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "data-hub:writeMapping",
+      "action": "http://marklogic.com/data-hub/privileges/write-mapping",
+      "kind": "execute"
+    }
+  ]
+}

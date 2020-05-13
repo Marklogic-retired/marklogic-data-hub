@@ -93,7 +93,7 @@ public class MappingControllerTest extends AbstractHubCentralTest {
     }
 
     @Test
-    @WithMockUser(roles = "readMapping")
+    @WithMockUser(roles = {"readMapping","writeMapping"})
     void testGetMappingFunctions() {
         ObjectNode result = controller.getMappingFunctions().getBody();
         assertTrue(result.size() > 100, "Should have at least 100 functions");
@@ -109,7 +109,7 @@ public class MappingControllerTest extends AbstractHubCentralTest {
      * life easy for the mapping tool.
      */
     @Test
-    @WithMockUser(roles = "readMapping")
+    @WithMockUser(roles = {"readMapping","writeMapping"})
     void getEntityForMapping() {
         installReferenceModelProject();
 
