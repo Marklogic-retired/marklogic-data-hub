@@ -36,6 +36,7 @@ def dhflinuxTests(String mlVersion,String type){
 def dhfCypressE2ETests(String mlVersion, String type){
     script{
         copyRPM type,mlVersion
+        env.mlVersion=mlVersion;
         setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
         copyArtifacts filter: '**/*central*.war', fingerprintArtifacts: true, flatten: true, projectName: '${JOB_NAME}', selector: specific('${BUILD_NUMBER}')
         sh(script:'''#!/bin/bash
@@ -58,9 +59,11 @@ def dhfCypressE2ETests(String mlVersion, String type){
                     docker run --name cypresstest --env CYPRESS_BASE_URL=http://$HOSTNAME:8080 cypresstest |& tee output/console.log;
                     docker cp cypresstest:results output;
                     docker cp cypresstest:cypress/videos output
+                    mkdir -p ${mlVersion};
+                    mv output ${mlVersion}/;
                  ''')
         junit '**/*.xml'
-        def output=readFile 'data-hub/marklogic-data-hub-central/ui/e2e/output/console.log'
+        def output=readFile 'data-hub/marklogic-data-hub-central/ui/e2e/${mlVersion}/output/console.log'
         def result=false;
         if(output.contains("npm ERR!")){
             result=true;
@@ -74,6 +77,7 @@ def dhfqsLinuxTests(String mlVersion,String type){
 	script{
          copyRPM type,mlVersion
          setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
+         env.mlVersion=mlVersion;
          sh(script:'''#!/bin/bash
             export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;
             export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;
@@ -89,9 +93,13 @@ def dhfqsLinuxTests(String mlVersion,String type){
             sleep 120s;
             cd web;
             ./node_modules/.bin/ng e2e --devServerTarget="" --suite all --base-url http://localhost:4200 || true;
+            mkdir -p ${mlVersion};
+            mv e2e/reports ${mlVersion};
+            mv e2e/screenshoter-plugin ${mlVersion};
+            mv $WORKSPACE/nohup.out ${mlVersion};
          ''')
-         junit '**/web/e2e/reports/*.xml'
-         archiveArtifacts artifacts: 'data-hub/web/e2e/reports/*.html, data-hub/web/e2e/reports/*.xml, data-hub/web/e2e/reports/screenshots/*.png, data-hub/web/e2e/screenshoter-plugin/**/*, nohup.out'
+         junit '**/${mlVersion}/**/*.xml'
+         archiveArtifacts artifacts: 'data-hub/web/${mlVersion}/**/*'
 	     }
 }
 def dhfWinTests(String mlVersion, String type){
