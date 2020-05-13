@@ -3,6 +3,7 @@
   "description": "Generic developer account; will soon be superceded by persona-specific accounts",
   "password": "%%testPassword%%",
   "role": [
-    "data-hub-developer"
+    "data-hub-developer",
+    "hub-central-user"
   ]
 }
