@@ -48,19 +48,21 @@ class Security {
       "authorities": this.getDataHubAuthorities()
     };
 
+    // Blacklist of artifact authorities already implemented the correct way
+    const authorityBlacklist = ['readMapping'];
     // TODO Below logic will go away in favor of privileges
     const typesInfo = Artifacts.getTypesInfo();
     for (const artifactTypeInfo of typesInfo) {
       const type = artifactTypeInfo.type;
       const writeAuthority = `write${type.substr(0,1).toUpperCase()}${type.substr(1)}`;
 
-      if (artifactTypeInfo.userCanUpdate) {
+      if (artifactTypeInfo.userCanUpdate && !authorityBlacklist.includes(writeAuthority)) {
         response.authorities.push(writeAuthority);
       }
 
       const readAuthority = `read${type.substr(0,1).toUpperCase()}${type.substr(1)}`;
 
-      if (artifactTypeInfo.userCanRead) {
+      if (artifactTypeInfo.userCanRead && !authorityBlacklist.includes(readAuthority)) {
         response.authorities.push(readAuthority);
       }
     }

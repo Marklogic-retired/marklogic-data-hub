@@ -2,5 +2,5 @@
     "user-name": "dh-op",
     "description": "A data hub operator user",
     "password": "dh-op",
-    "role": ["data-hub-operator"]
+    "role": ["data-hub-operator", "hub-central-mapping-reader"]
 }

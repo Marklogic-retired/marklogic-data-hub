@@ -572,7 +572,7 @@ describe('RTL Source-to-entity map tests', () => {
     test('Function selector dropdown in entity table', async () => {
 
         axiosMock.post['mockImplementation'](jest.fn(() => Promise.resolve({ status: 200, data: data.testJSONResponseWithFunctions })));
-        const { getByText, getByTestId, getAllByRole, queryByText } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} />);
+        const { getByText, getByTestId, getAllByRole, queryByText, queryByTestId } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} />);
 
         //Prepare the map expression field for function signature later
         let propAttributeExpression = getByTestId('propAttribute-mapexpression')
@@ -607,7 +607,8 @@ describe('RTL Source-to-entity map tests', () => {
         fireEvent.blur(propAttributeExpression);
 
         await (waitForElement(() => (getByTestId('successMessage'))))
-        await (waitForElementToBeRemoved(() => (getByTestId('successMessage'))))
+
+        await (waitForElementToBeRemoved(() => (queryByTestId('successMessage'))))
 
         expect(propAttributeExpression).toHaveTextContent("concat(proteinType,'-NEW')");
 

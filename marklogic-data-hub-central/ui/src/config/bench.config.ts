@@ -87,9 +87,97 @@ const loads = {"data" :
   "status" :200
 };
 
+const primaryEntityTypes = {
+  "data": [
+    {
+      "entityName": "Customer",
+      "entityTypeId": "Customer",
+      "entityInstanceCount": 0,
+      "model": {
+        "info": {
+          "title": "Customer",
+          "version": "0.0.1",
+          "baseUri": "http://example.org/"
+        },
+        "definitions": {
+          "Customer": {
+            "required": [
+              "name"
+            ],
+            "primaryKey": "customerId",
+            "properties": {
+              "customerId": {
+                "datatype": "integer"
+              },
+              "name": {
+                "datatype": "string",
+                "collation": "http://marklogic.com/collation/codepoint"
+              },
+              "shipping": {
+                "$ref": "#/definitions/Address"
+              },
+              "billing": {
+                "$ref": "#/definitions/Address"
+              },
+              "customerSince": {
+                "datatype": "date"
+              },
+              "orders": {
+                "datatype": "array",
+                "items": {
+                  "$ref": "http://example.org/Order-0.0.1/Order"
+                }
+              }
+            }
+          },
+          "Address": {
+            "required": [],
+            "pii": [],
+            "elementRangeIndex": [],
+            "rangeIndex": [],
+            "wordLexicon": [],
+            "properties": {
+              "street": {
+                "datatype": "string",
+                "collation": "http://marklogic.com/collation/codepoint"
+              },
+              "city": {
+                "datatype": "string",
+                "collation": "http://marklogic.com/collation/codepoint"
+              },
+              "state": {
+                "datatype": "string",
+                "collation": "http://marklogic.com/collation/codepoint"
+              },
+              "zip": {
+                "$ref": "#/definitions/Zip"
+              }
+            }
+          },
+          "Zip": {
+            "required": [],
+            "properties": {
+              "fiveDigit": {
+                "datatype": "string",
+                "collation": "http://marklogic.com/collation/codepoint"
+              },
+              "plusFour": {
+                "datatype": "string",
+                "collation": "http://marklogic.com/collation/codepoint"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "status":200
+};
+
 const mappings = {"data" :
 [{
   "entityType": "Customer",
+  "entityTypeId":"Customer",
   "artifacts": [
     {
       "name": "Mapping1",
@@ -107,6 +195,24 @@ const mappings = {"data" :
   ]
 }],
 "status" :200
+};
+
+const matchings = {"data" :
+    [{
+      "entityType": "Customer",
+      "entityTypeId":"Customer",
+      "artifacts": [
+        {
+          "name": "Matching1",
+          "targetEntityType": "Customer",
+          "description": "",
+          "selectedSource": "collection",
+          "sourceQuery": "cts.collectionQuery(['default-mapping'])",
+          "lastUpdated": "2020-04-24T13:21:00.169198-07:00"
+        }
+      ]
+    }],
+  "status" :200
 };
 
 const entityTypes = [
@@ -292,6 +398,7 @@ const loadsXML = {"data" :
 };
 
 const data = {
+    primaryEntityTypes,
     flows: flows,
     entityTypes: entityTypes,
     flowsWithMapping: flowsWithMapping,
@@ -299,6 +406,7 @@ const data = {
     responseForMapping: responseForMapping,
     loads: loads,
     mappings: mappings,
+    matchings: matchings,
     jobRespFailedWithError: jobRespFailedWithError,
     jobRespFailed: jobRespFailed,
     jobRespSuccess: jobRespSuccess,

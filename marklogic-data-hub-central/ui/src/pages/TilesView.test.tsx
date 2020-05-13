@@ -6,6 +6,7 @@ import {AuthoritiesContext} from '../util/authorities';
 import axiosMock from 'axios';
 import curateData from '../config/bench.config';
 import authorities from '../config/authorities.config';
+import data from "../config/bench.config";
 
 jest.mock('axios');
 
@@ -13,13 +14,30 @@ const mockDevRolesService = authorities.DeveloperRolesService;
 
 describe('TilesView component', () => {
 
+    beforeEach(() => {
+        axiosMock.get['mockImplementation']((url) => {
+            switch (url) {
+                case '/api/flows':
+                    return Promise.resolve(data.flows);
+                case '/api/models/primaryEntityTypes':
+                    return Promise.resolve(data.primaryEntityTypes);
+                case '/api/artifacts/mapping':
+                    return Promise.resolve(data.mappings);
+                case '/api/artifacts/matching':
+                    return Promise.resolve(data.matchings);
+                default:
+                    return Promise.reject(new Error('not found'));
+            }
+        })
+    });
+
     afterEach(() => {
         jest.clearAllMocks();
         cleanup();
     })
     
     test('Verify TilesView renders with the toolbar', async () => {
-        const {getByLabelText} = render(<TilesView/>);
+        const { getByLabelText } = render(<AuthoritiesContext.Provider value={mockDevRolesService}><TilesView/></AuthoritiesContext.Provider>);
 
         expect(getByLabelText("toolbar")).toBeInTheDocument();
 
@@ -36,7 +54,7 @@ describe('TilesView component', () => {
     });
 
     test('Verify Curate tile displays from toolbar', async () => {
-        const {getByLabelText, getByText, queryByText} = render(<TilesView/>);
+        const {getByLabelText, getByText, queryByText} = render(<AuthoritiesContext.Provider value={mockDevRolesService}><TilesView/></AuthoritiesContext.Provider>);
 
         // Curate tile not shown initially
         expect(queryByText("icon-curate")).not.toBeInTheDocument();
@@ -47,9 +65,11 @@ describe('TilesView component', () => {
                 case '/api/flows':
                     return Promise.resolve(curateData.flows)
                 case '/api/models/primaryEntityTypes':
-                    return Promise.resolve(curateData.entityTypes)
+                    return Promise.resolve(curateData.primaryEntityTypes)
                 case '/api/artifacts/mapping':
                     return Promise.resolve(curateData.mappings)
+                case '/api/artifacts/matching':
+                    return Promise.resolve(curateData.matchings)
                 default:
                     return Promise.reject(new Error('not found'))
             }

@@ -12,6 +12,7 @@ import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.central.AbstractHubCentralTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -109,6 +110,7 @@ public class MappingControllerTest extends AbstractHubCentralTest {
         "}";
 
     @Test
+    @WithMockUser(roles = "readMapping")
     void testMappingConfigs() {
         installReferenceModelProject();
 
@@ -158,6 +160,7 @@ public class MappingControllerTest extends AbstractHubCentralTest {
     }
 
     @Test
+    @WithMockUser(roles = "readMapping")
     public void testMappingSettings() {
         installReferenceModelProject();
         controller.updateMapping(readJsonObject(MAPPING_CONFIG_1), "TestCustomerMapping");
@@ -187,6 +190,7 @@ public class MappingControllerTest extends AbstractHubCentralTest {
     }
 
     @Test
+    @WithMockUser(roles = "readMapping")
     void testValidateMappings() {
         DatabaseClient databaseClient = getHubClient().getFinalClient();
         databaseClient.newJSONDocumentManager().write(
@@ -209,6 +213,7 @@ public class MappingControllerTest extends AbstractHubCentralTest {
     }
 
     @Test
+    @WithMockUser(roles = "readMapping")
     void testGetMappingFunctions() {
         ObjectNode result = controller.getMappingFunctions().getBody();
         assertTrue(result.size() > 100, "Should have at least 100 functions");
@@ -224,6 +229,7 @@ public class MappingControllerTest extends AbstractHubCentralTest {
      * life easy for the mapping tool.
      */
     @Test
+    @WithMockUser(roles = "readMapping")
     void getEntityForMapping() {
         installReferenceModelProject();
 

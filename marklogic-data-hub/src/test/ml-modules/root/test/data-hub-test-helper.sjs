@@ -7,7 +7,7 @@ Contains helper functions that are best written in SJS instead of XQuery.
 const hubTest = require("/test/data-hub-test-helper.xqy");
 const test = require("/test/test-helper.xqy");
 
-function runWithRolesAndPrivileges(roles, privileges, fun)
+function runWithRolesAndPrivileges(roles, privileges, funOrModule, variables)
 {
     hubTest.assertCalledFromTest();
     const securityOptions = { "defaultXqueryVersion": "1.0-ml", "database": xdmp.securityDatabase() };
@@ -29,7 +29,11 @@ function runWithRolesAndPrivileges(roles, privileges, fun)
     }
     let execute;
     try {
-        execute = xdmp.invokeFunction(fun, {userId});
+        if (funOrModule instanceof Function) {
+            execute = xdmp.invokeFunction(funOrModule, {userId});
+        } else {
+            execute = xdmp.invoke(funOrModule, variables, {userId});
+        }
     } catch (e) {
         cleanUp();
         throw e;
