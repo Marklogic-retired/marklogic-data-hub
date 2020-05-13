@@ -1,6 +1,11 @@
+/*
+Contains helper functions that are best written in SJS instead of XQuery.
+ */
+
 'use strict';
 
 const hubTest = require("/test/data-hub-test-helper.xqy");
+const test = require("/test/test-helper.xqy");
 
 function runWithRolesAndPrivileges(roles, privileges, fun)
 {
@@ -33,4 +38,18 @@ function runWithRolesAndPrivileges(roles, privileges, fun)
     return execute;
 }
 
-exports.runWithRolesAndPrivileges = module.amp(runWithRolesAndPrivileges);
+function verifyJson(expectedObject, actualObject, assertions) {
+  Object.keys(expectedObject).forEach(key => {
+    const expectedValue = expectedObject[key];
+    if (Array.isArray(expectedValue)) {
+      assertions.push(hubTest.assertArraysEqual(expectedValue, actualObject[key]));
+    } else {
+      assertions.push(test.assertEqual(expectedValue, actualObject[key]));
+    }
+  });
+}
+
+module.exports = {
+  verifyJson,
+  runWithRolesAndPrivileges: module.amp(runWithRolesAndPrivileges)
+};

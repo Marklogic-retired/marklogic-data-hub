@@ -1,0 +1,8 @@
+{
+    "functionName": "getFlowsWithStepDetails",
+    "return": {
+        "desc": "Return an array of flow documents, where each step has a few identifying data points and abstracts whether it's inline or referenced",
+        "datatype": "jsonDocument",
+        "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
+}

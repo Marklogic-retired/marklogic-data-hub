@@ -12,11 +12,12 @@
     "inputFileType": "json"
   },
   "options": {
-    "sourceQuery": null,
     "targetDatabase": "data-hub-STAGING",
     "outputFormat": "json",
     "collections": [
       "default-ingestion"
-    ]
+    ],
+    "provenanceGranularityLevel": "coarse",
+    "permissions": "data-hub-operator,read,data-hub-operator,update"
   }
 }

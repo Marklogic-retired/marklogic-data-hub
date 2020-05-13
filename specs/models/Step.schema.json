@@ -24,20 +24,7 @@
     },
     "customHook": {
       "type": "object",
-      "properties": {
-        "module": {
-          "type": "string"
-        },
-        "parameters": {
-          "type": "object"
-        },
-        "user": {
-          "type": "string"
-        },
-        "runBefore": {
-          "type": "boolean"
-        }
-      }
+      "$ref": "./CustomHook.schema.json"
     },
     "threadCount": {
       "type": "number",
@@ -69,10 +56,10 @@
       "type": "boolean",
       "description": "Applicable to mapping steps only"
     },
-    "outputDatabase": {
+    "targetDatabase": {
       "type": "string"
     },
-    "inputDatabase": {
+    "sourceDatabase": {
       "type": "string"
     },
     "outputFormat": {
@@ -82,18 +69,18 @@
         "xml"
       ]
     },
-    "outputPermissions": {
+    "permissions": {
       "type": "string",
       "description": "Comma-delimited string of role,capability,role,capability,etc"
     },
-    "outputCollections": {
+    "collections": {
       "type": "array",
       "description": "additional collections provided by the user that get applied to the step output",
       "items": {
         "type": "string"
       }
     },
-    "defaultOutputCollections": {
+    "additionalCollections": {
       "type": "array",
       "description": "default collections associated with a step that are applied to the step output",
       "items": {
@@ -131,7 +118,7 @@
       "type": "string",
       "description": "Defines the items to be processed by the step; must be a cts.query or cts.uris statement if sourceQueryIsScript is false"
     },
-    "targetEntityTypeId": {
+    "targetEntityType": {
       "type": "string",
       "description": "The identifier of an Entity Type. (IRI, with title as fallback)"
     },

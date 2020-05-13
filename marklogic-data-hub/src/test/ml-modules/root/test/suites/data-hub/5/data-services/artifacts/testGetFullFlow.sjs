@@ -105,7 +105,7 @@ function testGetFullFlow2(resp){
   test.assertEqualJson(flowNode["steps"]["3"], resp["steps"]["3"], "Old mapping step should not be modified"),
 
   test.assertEqual(dataHub.config.FINALDATABASE, resp["steps"]["1"]["options"]["targetDatabase"]),
-  test.assertEqual([ 'TestColl'], resp["steps"]["1"]["options"]["collections"]),
+  test.assertEqual([ 'loadDataTest', 'TestColl'], resp["steps"]["1"]["options"]["collections"]),
   test.assertEqual("/abc.sjs", resp["steps"]["1"]["customHook"]["module"]),
 
 

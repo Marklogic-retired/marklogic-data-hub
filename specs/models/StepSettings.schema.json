@@ -2,23 +2,11 @@
   "title": "StepSettings",
   "type": "object",
   "description": "Settings for a step. This is a logical structure to simplify front-end/middle-tier APIs",
+  "additionalProperties": false,
   "properties": {
     "customHook": {
       "type": "object",
-      "properties": {
-        "module": {
-          "type": "string"
-        },
-        "parameters": {
-          "type": "string"
-        },
-        "user": {
-          "type": "string"
-        },
-        "runBefore": {
-          "type": "boolean"
-        }
-      }
+      "$ref": "./CustomHook.schema.json"
     },
     "provenanceGranularityLevel": {
       "type": "string",
@@ -28,15 +16,12 @@
         "fine"
       ]
     },
-    "outputPermissions": {
+    "permissions": {
       "type": "string"
     },
     "targetFormat": {
       "type": "string",
-      "enum": [
-        "json",
-        "xml"
-      ]
+      "description": "Should be json or xml, but not using an enum yet because JSON and XML are being used too"
     },
     "targetDatabase": {
       "type": "string"
@@ -44,17 +29,20 @@
     "sourceDatabase": {
       "type": "string"
     },
-    "outputCollections": {
+    "collections": {
       "type": "array",
       "items": {
         "type": "string"
       }
     },
-    "defaultOutputCollections": {
+    "additionalCollections": {
       "type": "array",
       "items": {
         "type": "string"
       }
+    },
+    "lastUpdated": {
+      "type": "string"
     },
     "targetCollections": {
       "type": "object",

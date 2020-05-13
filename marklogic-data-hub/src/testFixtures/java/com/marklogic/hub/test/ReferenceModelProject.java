@@ -1,7 +1,6 @@
 package com.marklogic.hub.test;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
@@ -13,6 +12,8 @@ import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 
 public class ReferenceModelProject extends TestObject {
+
+    public final static String INPUT_COLLECTION = "customer-input";
 
     private HubClient hubClient;
 
@@ -26,7 +27,7 @@ public class ReferenceModelProject extends TestObject {
         customer.put("customerId", customerId);
         customer.put("name", name);
         DocumentMetadataHandle metadata = new DocumentMetadataHandle()
-            .withCollections("customer-input")
+            .withCollections(INPUT_COLLECTION)
             .withPermission("data-hub-operator", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE);
         mgr.write("/customer" + customerId + ".json", metadata, new JacksonHandle(customer));
     }

@@ -1,0 +1,20 @@
+{
+  "title": "CustomHook",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "module": {
+      "type": "string"
+    },
+    "parameters": {
+      "type": "string",
+      "description": "This is temporarily a string until a bug in HC is fixed where HC wants to set it as a string"
+    },
+    "user": {
+      "type": "string"
+    },
+    "runBefore": {
+      "type": "boolean"
+    }
+  }
+}

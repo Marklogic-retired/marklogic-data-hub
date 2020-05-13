@@ -1,0 +1,18 @@
+{
+    "functionName": "getStep",
+    "params": [
+        {
+            "name": "stepDefinitionType",
+            "datatype": "string"
+        },
+        {
+            "name": "stepName",
+            "datatype": "string"
+        }
+    ],
+    "return": {
+        "desc": "Return the step document",
+        "datatype": "jsonDocument",
+        "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
+}

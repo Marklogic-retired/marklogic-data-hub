@@ -1,0 +1,19 @@
+{
+    "functionName": "createFlow",
+    "params": [
+        {
+            "name": "name",
+            "datatype": "string"
+        },
+        {
+            "name": "description",
+            "datatype": "string",
+            "nullable": true
+        }
+    ],
+    "return": {
+        "desc": "Return the created flow document",
+        "datatype": "jsonDocument",
+        "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
+}
