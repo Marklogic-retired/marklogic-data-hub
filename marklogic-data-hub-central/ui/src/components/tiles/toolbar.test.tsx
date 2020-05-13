@@ -3,12 +3,17 @@ import { render, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
 import Toolbar from './toolbar';
 import tiles from '../../config/tiles.config'
+import authorities from "../../config/authorities.config";
+import Bench from "../../pages/Bench";
+import {AuthoritiesContext} from "../../util/authorities";
+
+const mockDevRolesService = authorities.DeveloperRolesService;
 
 describe('Toolbar component', () => {
 
     it('renders with clickable tools', () => {
         const mockClick = jest.fn()
-        const {getByLabelText} = render(<Toolbar tiles={tiles} onClick={mockClick} />);
+        const {getByLabelText} = render(<AuthoritiesContext.Provider value={ mockDevRolesService}><Toolbar tiles={tiles} onClick={mockClick} /></AuthoritiesContext.Provider>);
         const tools = Object.keys(tiles);
 
         expect(getByLabelText("toolbar")).toBeInTheDocument();

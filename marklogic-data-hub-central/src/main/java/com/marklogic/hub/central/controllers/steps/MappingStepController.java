@@ -40,6 +40,7 @@ public class MappingStepController extends BaseController {
 
     @RequestMapping(value = "/{stepName}", method = RequestMethod.POST)
     @ApiImplicitParam(required = true, paramType = "body", dataType = "StepSchema")
+    @Secured("ROLE_writeMapping")
     public ResponseEntity<Void> saveStep(@RequestBody @ApiParam(hidden = true) ObjectNode propertiesToAssign, @PathVariable String stepName) {
         propertiesToAssign.put("name", stepName);
         newService().saveStep(STEP_DEFINITION_TYPE, propertiesToAssign);
@@ -53,6 +54,7 @@ public class MappingStepController extends BaseController {
     }
 
     @RequestMapping(value = "/{stepName}/settings", method = RequestMethod.PUT)
+    @Secured("ROLE_writeMapping")
     public ResponseEntity<Void> updateSettings(@PathVariable String stepName, @RequestBody StepSettingsSchema settings) {
         ObjectNode node = StepUtil.valueToTree(settings);
         node.put("name", stepName);
@@ -61,6 +63,7 @@ public class MappingStepController extends BaseController {
     }
 
     @RequestMapping(value = "/{stepName}", method = RequestMethod.DELETE)
+    @Secured("ROLE_writeMapping")
     public ResponseEntity<Void> deleteStep(@PathVariable String stepName) {
         newService().deleteStep(STEP_DEFINITION_TYPE, stepName);
         return emptyOk();

@@ -4,6 +4,7 @@
   "password": "%%testPassword%%",
   "role": [
     "data-hub-developer",
-    "hub-central-user"
+    "hub-central-user",
+    "hub-central-mapping-writer"
   ]
 }

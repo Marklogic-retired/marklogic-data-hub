@@ -3,7 +3,6 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import {fireEvent, render} from '@testing-library/react';
 
 import EntityTiles from './entity-tiles';
-import { entityFromJSON } from '../../util/data-conversion';
 import axiosMock from 'axios'
 import data from "../../config/bench.config";
 import {act} from "react-dom/test-utils";

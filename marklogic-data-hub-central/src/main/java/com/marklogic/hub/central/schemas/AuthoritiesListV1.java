@@ -17,8 +17,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum AuthoritiesListV1 {
 
     LOGIN_TO_HUB_CENTRAL(null),
-    WRITE_LOAD_DATA(null),
-    READ_LOAD_DATA(null),
+    WRITE_INGESTION(null),
+    READ_INGESTION(null),
     WRITE_MAPPING(null),
     READ_MAPPING(null),
     WRITE_FLOW(null),
