@@ -173,7 +173,7 @@ const SourceToEntityMap = (props) => {
 
     //Set the collapse/Expand options for Source table, when mapping opens up.
     const initializeSourceExpandKeys = () => {
-        let initialKeysToExpand:any = []; 
+        let initialKeysToExpand:any = [];
         props.sourceData.map(obj => {
             if (obj.hasOwnProperty('children')) {
                 initialKeysToExpand.push(obj.rowKey);
@@ -410,13 +410,13 @@ const SourceToEntityMap = (props) => {
         if(dataIndex === 'key'){
             setSearchSourceText(selectedKeys[0]);
             setSearchedSourceColumn(dataIndex);
-            
+
             if(srcData.length === 1 && srcData[0].hasOwnProperty('children')){
                 setSourceExpandedKeys([1,...getKeysToExpandForFilter(srcData,'rowKey',selectedKeys[0])]);
             } else {
                 setSourceExpandedKeys([...getKeysToExpandForFilter(srcData,'rowKey',selectedKeys[0])]);
             }
-            
+
         } else {
             setSearchEntityText(selectedKeys[0]);
             setSearchedEntityColumn(dataIndex);
@@ -516,7 +516,7 @@ const SourceToEntityMap = (props) => {
     const getKeysToExpandForFilter = (dataArr,rowKey,searchText,allKeysToExpand:any = [],parentRowKey = 0) => {
         dataArr.map(obj => {
             if (obj.hasOwnProperty('children')) {
-               
+
                 if(((rowKey === 'rowKey' ? obj.key : obj.name) + JSON.stringify(obj['children'])).toLowerCase().indexOf(searchText.toLowerCase()) !== -1){
                     allKeysToExpand.push(obj[rowKey]);
                 }
@@ -525,9 +525,9 @@ const SourceToEntityMap = (props) => {
             } else {
                 if((rowKey === 'rowKey' ? obj.key : obj.name).toLowerCase().indexOf(searchText.toLowerCase()) !== -1){
                     allKeysToExpand.push(parentRowKey);
-                    
+
                 }
-            } 
+            }
         });
         return allKeysToExpand;
     }
@@ -540,6 +540,7 @@ const SourceToEntityMap = (props) => {
             ...getColumnFilterProps('key'),
             sorter: (a: any, b: any) => a.key?.localeCompare(b.key),
             width: '60%',
+            defaultFilteredValue: searchSourceText ? [searchSourceText] : [],
             render: (text) => {
                 let textToSearchInto = text?.split(':').length > 1 ? text?.split(':')[0]+': '+text?.split(':')[1] : text;
                 let valueToDisplay = <span>{text?.split(':').length > 1 ? <span><Tooltip title={text?.split(':')[0]+' = "'+props.namespaces[text?.split(':')[0]]+'"'}><span id="namespace" className={styles.namespace}>{text?.split(':')[0]+': '}</span></Tooltip><span>{text?.split(':')[1]}</span></span> : text}</span>;
@@ -754,7 +755,7 @@ const SourceToEntityMap = (props) => {
         let newExp = mapExp[propName].substr(0, caretPosition) + content +
             mapExp[propName].substr(caretPosition, mapExp[propName].length);
         await setMapExp({ ...mapExp, [propName]: newExp });
-        
+
         setDisplaySelectList(prev => false);
         setDisplayFuncMenu(prev => false);
         //simulate a click event to handle simultaneous event propagation of dropdown and select
@@ -871,7 +872,7 @@ const SourceToEntityMap = (props) => {
         saveMapping(tempMapExp);
         setDisplaySourceList(false);
         setDisplaySourceMenu(false);
-        
+
         //simulate a click event to handle simultaneous event propagation of dropdown and select
         simulateMouseClick(dummyNode.current)
     }
@@ -1003,7 +1004,7 @@ const SourceToEntityMap = (props) => {
     //Collapse all-Expand All button
 
     const getKeysToExpandFromTable = (dataArr,rowKey,allKeysToExpand:any = []) => {
-    
+
         dataArr.map(obj => {
             if (obj.hasOwnProperty('children')) {
                 allKeysToExpand.push(obj[rowKey]);
@@ -1036,7 +1037,7 @@ const SourceToEntityMap = (props) => {
     }
 
     const toggleRowExpanded = (expanded, record, rowKey) => {
- 
+
         if (rowKey === 'key') {
             if (!entityExpandedKeys.includes(record.key)) {
                 setEntityExpandedKeys(prevState => {
@@ -1058,13 +1059,13 @@ const SourceToEntityMap = (props) => {
             if (!sourceExpandedKeys.includes(record.rowKey)) {
                 setSourceExpandedKeys(prevState => {
                     let finalKeys = prevState.concat([record['rowKey']])
- 
+
                     if(allSourceKeys.every(item => finalKeys.includes(item))){
                         setExpandedSourceFlag(true);
                     }
                     return finalKeys;
                 });
-                
+
             } else {
                 setSourceExpandedKeys(prevState => {
                     let finalKeys = prevState.filter(item => item !== record['rowKey']);
@@ -1142,7 +1143,7 @@ const SourceToEntityMap = (props) => {
                             </div>
                             :
                             <div id="dataPresent">
-                                
+
                                 <div className={styles.navigationCollapseButtons}><span><Button data-testid="expandCollapseBtn-source" onClick={() => handleExpandCollapse('rowKey')} className={styles.expandCollapseBtn}>{expandedSourceFlag ? 'Collapse All' : 'Expand All'}</Button></span><span>{navigationButtons}</span></div>
                                     <Table
                                         pagination={false}
