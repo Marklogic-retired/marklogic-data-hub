@@ -111,7 +111,7 @@ const Query = (props) => {
             toggleSaveChangesIcon(true);
             toggleDiscardIcon(true);
         }
-    }, [props.greyFacets, searchOptions.selectedFacets,searchOptions.query])
+    }, [props.greyFacets, searchOptions.query])
 
     return (
         <div>
@@ -222,6 +222,8 @@ const Query = (props) => {
                         currentQuery={currentQuery}
                         currentQueryDescription={currentQueryDescription}
                         setCurrentQueryDescription={setCurrentQueryDescription}
+                        setSaveChangesIconVisibility={(visibility) =>  toggleSaveChangesIcon(visibility)}
+                        setDiscardChangesIconVisibility={(visibility) =>  toggleDiscardIcon(visibility)}
                     />
                     }
                 </div>

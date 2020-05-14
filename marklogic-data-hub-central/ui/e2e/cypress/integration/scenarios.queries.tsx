@@ -124,7 +124,11 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getManageQueriesIcon().click();
         queryComponent.getManageQueryModal().should('be.visible');
         queryComponent.getDeleteQuery().click();
-        queryComponent.getDeleteQueryYesButton().click({force: true})
+        queryComponent.getDeleteQueryYesButton().click({force: true});
+        browsePage.getManageQueryCloseIcon().click();
+        queryComponent.getManageQueryModal().should('not.be.visible');
+        browsePage.getSelectedQuery().should('contain', 'select a query');
+        browsePage.getSelectedQueryDescription().should('contain', '');
     });
 
 

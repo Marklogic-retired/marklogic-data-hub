@@ -306,6 +306,9 @@ class BrowsePage {
      return cy.get('#discard-no-button');
   }
 
+  getManageQueryCloseIcon(){
+      return cy.get('.manage-modal-close-icon');
+  }
 
     //temp query icon
   getManageQueriesIcon(){

@@ -386,7 +386,6 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
             pageLength: searchOptions.pageSize,
             selectedQuery: selectedQuery
         });
-
     }
 
     const setSelectedQuery = (query: string) => {
