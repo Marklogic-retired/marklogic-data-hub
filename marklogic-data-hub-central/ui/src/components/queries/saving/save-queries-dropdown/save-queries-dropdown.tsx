@@ -15,6 +15,8 @@ interface Props {
     setCurrentQueryFn: (query:object) => void;
     currentQuery: any;
     setSaveNewIconVisibility:(visibility:boolean)=> void;
+    setSaveChangesIconVisibility:(visibility:boolean)=> void;
+    setDiscardChangesIconVisibility:(visibility:boolean)=> void;
     currentQueryDescription: string;
     setCurrentQueryDescription: (description: string) => void;
 };
@@ -50,7 +52,9 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
                 break;
             }
         }
-        props.setSaveNewIconVisibility(false)
+        props.setSaveNewIconVisibility(false);
+        props.setDiscardChangesIconVisibility(false);
+        props.setSaveChangesIconVisibility(false);
     };
 
     const getSaveQueryWithId = async (key) => {

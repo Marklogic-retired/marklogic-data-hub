@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Modal, Table } from 'antd';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPencilAlt, faFileExport, faLink, faTrashAlt, faListOl } from "@fortawesome/free-solid-svg-icons";
+import { faPencilAlt, faFileExport, faLink, faTrashAlt, faListOl, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { UserContext } from '../../../../util/user-context';
 import { queryDateConverter } from '../../../../util/date-conversion';
 import EditQueryDialog from '../edit-query-dialog/edit-query-dialog'
@@ -21,8 +21,8 @@ const QueryModal = (props) => {
     const [deleteModalVisibility, setDeleteModalVisibility] = useState(false);
     const [exportModalVisibility, setExportModalVisibility] = useState(false);
     const [recordID, setRecordID] = useState();
-
     const [query, setQuery] = useState({});
+
     const data = new Array();
     const {
         applySaveQuery
@@ -35,7 +35,6 @@ const QueryModal = (props) => {
     const getQueries = async () => {
         try {
             const response = await fetchQueries();
-
             if (response['data']) {
                 props.setQueries(response['data']);
             }
@@ -70,6 +69,7 @@ const QueryModal = (props) => {
         } finally {
             resetSessionTime();
         }
+        getQueries();
     }
 
     const onEdit = () => {
@@ -91,7 +91,8 @@ const QueryModal = (props) => {
     const onOk = (query) => {
         deleteQuery(query)
         setDeleteModalVisibility(false);
-        getQueries();
+        applySaveQuery('', query.savedQuery.query.entityTypeIds,{},'select a query');
+        props.setCurrentQueryDescription('');
     }
 
     const onCancel = () => {
@@ -222,6 +223,7 @@ const QueryModal = (props) => {
                 width={1000}
                 footer={null}
                 maskClosable={false}
+                closeIcon={<FontAwesomeIcon icon={faTimes} className={'manage-modal-close-icon'}/>}
             >
                 <p className={styles.title} data-testid="manage-queries-modal">{"Manage Queries"}</p>
                 <Table columns={columns} dataSource={data}
