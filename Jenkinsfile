@@ -63,7 +63,7 @@ def dhfCypressE2ETests(String mlVersion, String type){
                     mv output ${mlVersion}/;
                  ''')
         junit '**/*.xml'
-        def output=readFile 'data-hub/marklogic-data-hub-central/ui/e2e/${mlVersion}/output/console.log'
+        def output=readFile "data-hub/marklogic-data-hub-central/ui/e2e/${mlVersion}/output/console.log"
         def result=false;
         if(output.contains("npm ERR!")){
             result=true;
@@ -98,8 +98,8 @@ def dhfqsLinuxTests(String mlVersion,String type){
             mv e2e/screenshoter-plugin ${mlVersion};
             mv $WORKSPACE/nohup.out ${mlVersion};
          ''')
-         junit '**/${mlVersion}/**/*.xml'
-         archiveArtifacts artifacts: 'data-hub/web/${mlVersion}/**/*'
+         junit "**/${mlVersion}/**/*.xml"
+         archiveArtifacts artifacts: "data-hub/web/${mlVersion}/**/*"
 	     }
 }
 def dhfWinTests(String mlVersion, String type){
@@ -228,6 +228,9 @@ pipeline{
 				JIRA_ID=env.CHANGE_TITLE.split(':')[0]
 				jiraAddComment comment: 'Jenkins Unit Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
 				}
+				if(!env.CHANGE_URL){
+				    env.CHANGE_URL=" "
+				}
 				}
 			}
 			post{
@@ -244,7 +247,7 @@ pipeline{
                     }else{
                     	email=Email
                     }
-                    sendMail email,'<h3>All the Unit Tests Passed on $BRANCH_NAME and the next stage is Code-review.</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'Unit Tests for  $BRANCH_NAME Passed'
+                    sendMail email,'<h3>All the Unit Tests Passed on <a href=${CHANGE_URL}>$BRANCH_NAME</a> and the next stage is Code-review.</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'Unit Tests for  $BRANCH_NAME Passed'
                     }
                    }
                    unstable {
@@ -259,7 +262,7 @@ pipeline{
                     }else{
                     email=Email
                     }
-                      sendMail email,'<h3>Some of the  Unit Tests Failed on  $BRANCH_NAME. Please look into the issues and fix it.</h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'Unit Tests for $BRANCH_NAME Failed'
+                      sendMail email,'<h3>Some of the  Unit Tests Failed on   <a href=${CHANGE_URL}>$BRANCH_NAME</a>. Please look into the issues and fix it.</h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'Unit Tests for $BRANCH_NAME Failed'
                       }
                   }
                   }
