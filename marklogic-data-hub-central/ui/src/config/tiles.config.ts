@@ -33,7 +33,7 @@ const tiles: Record<TileId, TileItem>  = {
         title: 'Curate',
         iconType: 'fa', 
         icon: faObjectUngroup, 
-        color: '#FFC53D',
+        color: '#BC811D',
         bgColor: '#F8F2E8',
         border: '#dcbd8a',
     },

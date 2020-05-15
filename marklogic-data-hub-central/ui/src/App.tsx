@@ -62,7 +62,7 @@ const App: React.FC<Props> = ({history, location}) => {
         if (location.state && location.state.hasOwnProperty('from')) {
             history.push(location.state['from'].pathname);
         } else {
-            history.push('/home');
+            history.push('/tiles');
         }
       }
     }
