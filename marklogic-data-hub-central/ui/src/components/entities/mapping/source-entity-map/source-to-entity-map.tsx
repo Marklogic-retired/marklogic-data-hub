@@ -520,14 +520,18 @@ const SourceToEntityMap = (props) => {
             if (obj.hasOwnProperty('children')) {
 
                 if(((rowKey === 'rowKey' ? obj.key : obj.name) + JSON.stringify(obj['children'])).toLowerCase().indexOf(searchText.toLowerCase()) !== -1){
-                    allKeysToExpand.push(obj[rowKey]);
+                    if(!allKeysToExpand.includes(obj[rowKey])){
+                        allKeysToExpand.push(obj[rowKey]);
+                    }
                 }
                 parentRowKey = obj[rowKey];
                 getKeysToExpandForFilter(obj['children'],rowKey,searchText,allKeysToExpand,parentRowKey);
+
             } else {
                 if((rowKey === 'rowKey' ? obj.key : obj.name).toLowerCase().indexOf(searchText.toLowerCase()) !== -1){
-                    allKeysToExpand.push(parentRowKey);
-
+                    if(!allKeysToExpand.includes(parentRowKey)){
+                        allKeysToExpand.push(parentRowKey);
+                    }
                 }
             }
         });
