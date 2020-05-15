@@ -24,7 +24,7 @@ describe('TilesView component', () => {
         expect(getByLabelText("tool-model")).toBeInTheDocument();
         expect(getByLabelText('tool-model')).toHaveStyle('color: rgb(34, 7, 94);')
         expect(getByLabelText("tool-curate")).toBeInTheDocument();
-        expect(getByLabelText('tool-curate')).toHaveStyle('color: rgb(255, 197, 61);')
+        expect(getByLabelText('tool-curate')).toHaveStyle('color: rgb(188, 129, 29);')
         expect(getByLabelText("tool-run")).toBeInTheDocument();
         expect(getByLabelText('tool-run')).toHaveStyle('color: rgb(6, 17, 120);')
         expect(getByLabelText("tool-explore")).toBeInTheDocument();     
