@@ -44,6 +44,26 @@ describe('RTL Source-to-entity map tests', () => {
         expect(getByText("concat(name,'-NEW')")).toBeInTheDocument();
     });
 
+    test('Filtering Name column in Source data table for array type data', () => {
+        let arrayData = [ { rowKey: 1, key: 'email', val: 'test1@gmail.com' },
+                          { rowKey: 2, key: 'email', val: 'test2@gmail.com' },
+                          { rowKey: 3, key: 'email', val: 'test3@gmail.com' },
+                          { rowKey: 4, key: 'forSearch', val: 'shouldBeFilteredOut' }
+                        ];
+
+        const { getAllByText, getByTestId, queryByText } = render(<SourceToEntityMap {...data.mapProps}
+            mappingVisible={true}
+            sourceData={arrayData}
+            entityTypeProperties={data.entityTypePropertiesMultipleSiblings}
+        />);
+
+        fireEvent.click(getByTestId('filterIcon-key'));
+        fireEvent.change(getByTestId('searchInput-key'), { target: { value: "email" } });
+        fireEvent.click(getByTestId('submitSearch-key'));
+        expect(getAllByText('email')).toHaveLength(3);
+        expect(queryByText('forSearch')).not.toBeInTheDocument();
+    });
+
     test('Filtering Name column in Source (JSON Source Data) and Entity tables', () => {
 
         const { getByText, getByTestId, queryByText } = render(<SourceToEntityMap {...data.mapProps}

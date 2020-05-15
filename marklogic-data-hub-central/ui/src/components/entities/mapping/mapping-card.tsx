@@ -390,7 +390,9 @@ const MappingCard: React.FC<Props> = (props) => {
 
                     val.forEach(obj => {
                         if (obj.constructor.name == "String") {
+                            sourceTableKeyIndex = sourceTableKeyIndex + 1;
                             let propty = {
+                                rowKey: sourceTableKeyIndex,
                                 key: key,
                                 val: obj
                             };
