@@ -1,6 +1,14 @@
 /*@import '../node_modules/antd/dist/antd.css';*/
 @import '../node_modules/marklogic-ui-library/dist/styles.min.css';
 
+@font-face {
+  font-family: MLCustomFont;
+  src: url(./assets/fonts/ML_IconFont.ttf);
+  font-family: 'MLCustomFont'format('truetype'); 
+  font-weight: normal; 
+  font-style: normal; 
+}
+
 body {
 	font-family: 'Helvetica Neue';
 }

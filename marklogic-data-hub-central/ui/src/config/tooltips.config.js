@@ -92,12 +92,21 @@ const AdvCustomOtherTooltips = {}
 
 const ModelingTooltips = {
   entityTypeName: 'Click to view or edit settings for this entity type.',
+  addNewEntity: 'Click here to add a new entity type.',
   instanceNumber: 'Click to navigate to the Explorer tile showing all instances of this entity type.',
   lastProcessed: 'Click to navigate to the Explorer tile showing all instances of that enttiy processed at the time.',
   addEntityName: 'Names must start with a letter, and can contain letters, numbers, hyphens, and underscores.',
-  enitityDescription: 'Description for the entity'  
+  enitityDescription: 'Description for the entity.',
+  saveIcon: 'Save changes to this entity type.',
+  revertIcon: 'Discard changes made to this entity type since the last Save operation.',
+  identifier: 'Uniquely identifies each instance of this type. Restricted to only one property per entity type.',
+  multiple: 'Allows an array of values.',
+  pii: 'Personally identifiable information, or data this is sensitive in that it can identify a particular person and can be used fraudulent purposes.',
+  sort: 'Enables display in ascending or descending order.',
+  facet: 'Use when searching, for dividing values of properties into counts, aggregating, grouping, and more.',
+  advancedSearch: 'Used when searching, for dividing values of properties into counts, aggregating, grouping, and more.',
+  addStructuredProperty: 'Click to add properties within this structured property.'  
 }
-
 
 export {
     ActivitySettings,

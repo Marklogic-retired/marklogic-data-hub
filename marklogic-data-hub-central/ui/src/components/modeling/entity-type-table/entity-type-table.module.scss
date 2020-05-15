@@ -2,14 +2,29 @@
   margin: 0;
   padding: 0;
 }
-.iconContainer > .icon:first-child, .iconContainer > .icon:nth-child(2) {
-  margin-right: 8px;
-}
-.icon {
+.iconRevert, .iconTrash {
   font-size: 21px;
   cursor: pointer;
+  margin-right: 8px;
+  margin-bottom: 2px;
+  color: #5B69AF;
+}
+.iconTrash {
+  color: #B32424;
+}
+
+.iconSave:before {       
+  content: "\70";
+  cursor: pointer;      
+  font-family: MLCustomFont; 
+  color: #5B69AF;
+  font-size: 22px;
+  padding: 8px;
 }
 th.actions,
 td.actions {
   text-align: center !important;
+}
+.rightHeader {
+  text-align: right !important;
 }
