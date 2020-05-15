@@ -1,11 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Table, Tooltip } from 'antd';
-import { faSave, faUndo, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { faUndo, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from './entity-type-table.module.scss';
 
-import { dateConverter } from '../../../util/date-conversion';
+import PropertyTable from '../property-table/property-table';
+import { queryDateConverter, relativeTimeConverter } from '../../../util/date-conversion';
 import { numberConverter } from '../../../util/number-conversion';
 import { ModelingTooltips } from '../../../config/tooltips.config';
 
@@ -19,7 +20,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     {
       title: 'Name',
       dataIndex: 'name',
-      width: 200,
+      width: 400,
       // TODO - Edit Entity DHFPROD-4452
       render: text => {
         return (
@@ -33,7 +34,8 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     {
       title: 'Instances',
       dataIndex: 'instances',
-      width: 200,
+      className: styles.rightHeader,
+      width: 100,
       render: text => {
         let parseText = text.split(',');
         let instanceCount = numberConverter(parseInt(parseText[1]));
@@ -45,7 +47,6 @@ const EntityTypeTable: React.FC<Props> = (props) => {
                 pathname: "/browse",
                 state: { entity: parseText[0] }
               }}
-              data-cy={parseText[0]+ '-instance-count'}
               data-testid={parseText[0]+ '-instance-count'}
             > 
               {instanceCount}
@@ -65,16 +66,16 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     {
       title: 'Last Processed',
       dataIndex: 'lastProcessed',
-      width: 200,
+      width: 100,
       render: text => {
         let parseText = text.split(',');
-        let displayDate = dateConverter(parseText[2]);
+        let displayDate = relativeTimeConverter(parseText[2]);
 
         if (parseText[1] === 'undefined') {
-          return 'Never been run'
+          return 'n/a'
         } else {
           return (
-            <Tooltip title={ModelingTooltips.lastProcessed}>
+            <Tooltip title={queryDateConverter(parseText[2])+ "\n" + ModelingTooltips.lastProcessed}>
               <Link 
                 to={{
                   pathname: "/browse",
@@ -100,14 +101,18 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       title: 'Actions',
       dataIndex: 'actions',
       className: styles.actions,
-      width: 75,
+      width: 100,
       render: text => {
         // TODO add functionality to icons
         return (
           <div className={styles.iconContainer}>
-            <FontAwesomeIcon className={styles.icon} icon={faSave} size="2x"/>
-            <FontAwesomeIcon className={styles.icon} icon={faUndo} size="2x"/>
-            <FontAwesomeIcon className={styles.icon} icon={faTrashAlt} size="2x"/>
+          <Tooltip title={ModelingTooltips.saveIcon}>
+            <span className={styles.iconSave}></span>
+          </Tooltip>
+          <Tooltip title={ModelingTooltips.revertIcon}>
+            <FontAwesomeIcon className={styles.iconRevert} icon={faUndo} size="2x"/>
+          </Tooltip>
+          <FontAwesomeIcon className={styles.iconTrash} icon={faTrashAlt} size="2x"/>
           </div>
         )
       }
@@ -115,25 +120,30 @@ const EntityTypeTable: React.FC<Props> = (props) => {
   ];
 
   const renderTableData = props.allEntityTypesData.map(( entity, index) => {
-    let parsedEntity = {
+    return {
       name: entity.entityName,
       instances: entity.entityName + ',' + parseInt(entity.entityInstanceCount),
       lastProcessed: entity.entityName + ',' + entity.latestJobId + ',' + entity.latestJobDateTime,
-      actions: entity.entityName
-    }
-    return parsedEntity;
+      actions: entity.entityName,
+      definitions: entity.model.definitions
+    };
   });
+
+  const expandedRowRender = (entity) => {
+    return <PropertyTable entityName={entity.name} definitions={entity.definitions}/>
+  };
 
   return (
     <Table
       rowKey="name"
+      locale={{ emptyText: ' ' }}
       className={styles.table}
       data-cy="entity-type-table"
       data-testid="entity-type-table"
       columns={columns}
-      // expandedRowRender={expandedRowRender}
+      expandedRowRender={expandedRowRender}
       dataSource={renderTableData}
-      pagination={{defaultPageSize: 20, size: 'small'}}
+      pagination={{ defaultPageSize: 20, size: 'small' }}
     />
   );
 }

@@ -646,3 +646,90 @@ export const setTreeVisibility = (ob, str) => {
   }
   return filter(ob);
 }
+
+export const definitionsParser = (definitions: any) => {
+  interface Definition {
+    name: string,
+    primaryKey: string,
+    elementRangeIndex: string[],
+    pii: string[],
+    rangeIndex: string[],
+    required: string[],
+    wordLexicon: string[],
+    properties: Property[]
+  }
+
+  interface Property {
+    name: string,
+    description: string,
+    datatype: string,
+    ref: string,
+    collation: string,
+    multiple: boolean
+  }
+
+  let entityDefinitions: Definition[] = []
+
+  for (let definition in definitions) {
+    let entityDefinition: Definition = {
+      name: '',
+      primaryKey: '',
+      elementRangeIndex: [],
+      pii: [],
+      rangeIndex: [],
+      required: [],
+      wordLexicon: [],
+      properties: []
+    };
+
+    let entityProperties: Property[] = [];
+
+    entityDefinition.name = definition;
+
+    for (let entityKeys in definitions[definition]) {
+      if (entityKeys === 'properties') {
+        for (let properties in definitions[definition][entityKeys]) {
+          let property: Property = {
+            name: '',
+            datatype: '',
+            description: '',
+            ref: '',
+            collation: '',
+            multiple: false
+          }
+          property.name = properties;
+          property.description = definitions[definition][entityKeys][properties]['description'] || '';
+          property.collation = definitions[definition][entityKeys][properties]['collation'] || '';
+
+          if (definitions[definition][entityKeys][properties]['datatype']) {
+            property.datatype = definitions[definition][entityKeys][properties]['datatype'];
+
+            if (definitions[definition][entityKeys][properties]['datatype'] === 'array') {
+              property.multiple = true;
+              
+              if(definitions[definition][entityKeys][properties]['items'].hasOwnProperty('$ref')) {
+                // Array of Structured/Entity type
+                property.datatype = definitions[definition][entityKeys][properties]['items']['$ref'].split('/').pop();
+                property.ref = definitions[definition][entityKeys][properties]['items']['$ref']
+              } else if (definitions[definition][entityKeys][properties]['items'].hasOwnProperty('datatype')) {
+                // Array of datatype
+                property.datatype = definitions[definition][entityKeys][properties]['items']['datatype']
+                property.collation = definitions[definition][entityKeys][properties]['items']['collation']
+              } 
+            }
+          } else if (definitions[definition][entityKeys][properties]['$ref']) {
+            // Structured type
+            property.datatype = 'structured';
+            property.ref = definitions[definition][entityKeys][properties]['$ref'];
+          }
+          entityProperties.push(property);
+        }
+      } else {
+        entityDefinition[entityKeys] = definitions[definition][entityKeys];
+      }
+      entityDefinition.properties = entityProperties;
+    }
+    entityDefinitions.push(entityDefinition);
+  }
+  return entityDefinitions;
+}

@@ -15,11 +15,13 @@ describe('EntityTypeModal Component', () => {
         />
       </Router>);
 
-    expect(getByText(/No Data/i)).toBeInTheDocument();
+    expect(getByText('Name')).toBeInTheDocument();
+    expect(getByText('Instances')).toBeInTheDocument();
+    expect(getByText('Last Processed')).toBeInTheDocument();
   });
 
     test('Table renders with mock data', () => {
-      const { getByText } =  render(
+      const { getByText, getByTestId } =  render(
         <Router>
           <EntityTypeTable 
             allEntityTypesData={getEntityTypes}
@@ -28,11 +30,11 @@ describe('EntityTypeModal Component', () => {
 
       expect(getByText(/Customer/i)).toBeInTheDocument();
       expect(getByText(/1,000/i)).toBeInTheDocument();
-      expect(getByText(/2020-04-09 14:27/i)).toBeInTheDocument();
+      expect(getByTestId('Customer-last-processed')).toBeInTheDocument();
 
       expect(getByText(/Order/i)).toBeInTheDocument();
       expect(getByText(/2,384/i)).toBeInTheDocument();
-      expect(getByText(/2020-04-09 14:28/i)).toBeInTheDocument();
+      expect(getByTestId('Order-last-processed')).toBeInTheDocument();
 
       // Verify sorting doesn't crash the component
       userEvent.click(getByText('Name'));

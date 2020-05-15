@@ -460,3 +460,214 @@ export const editEntityPropertyRequest = { "AnotherModel": {
   }
 }
 }
+
+export const propertyTableEntities = [
+  {
+      "entityName": "Concept",
+      "entityTypeId": "http://example.org/Concept-1.0.0/Concept",
+      "entityInstanceCount": 0,
+      "model": {
+          "info": {
+              "title": "Concept",
+              "version": "1.0.0",
+              "baseUri": "http://example.org/"
+          },
+          "definitions": {
+              "Concept": {
+                  "primaryKey": "concept_name",
+                  "required": [
+                      "concept_id",
+                      "domain",
+                      "concept_name"
+                  ],
+                  "pii": [
+                      "source_concept_code"
+                  ],
+                  "elementRangeIndex": [
+                      "vocabulary",
+                      "domain",
+                      "is_standard",
+                      "invalid_reason"
+                  ],
+                  "rangeIndex": [],
+                  "wordLexicon": [],
+                  "properties": {
+                      "concept_id": {
+                          "datatype": "unsignedLong",
+                          "description": "The CDM-assigned concept id"
+                      },
+                      "vocabulary": {
+                          "datatype": "string",
+                          "description": "The vocabulary to which the concept belongs",
+                          "collation": "http://marklogic.com/collation/codepoint"
+                      },
+                      "domain": {
+                          "datatype": "string",
+                          "description": "The domain to which the real world entity the concept pertains",
+                          "collation": "http://marklogic.com/collation/codepoint"
+                      },
+                      "is_standard": {
+                          "datatype": "boolean",
+                          "description": "T/F Designated by the OHDSI vocabulary group as a standard concept"
+                      },
+                      "concept_class": {
+                          "datatype": "string",
+                          "description": "Class to which the concept pertains or belongs as designated by the OHDSI vcabulary group",
+                          "collation": "http://marklogic.com/collation/codepoint"
+                      },
+                      "synonyms": {
+                          "datatype": "array",
+                          "description": "0 or more synonyms",
+                          "items": {
+                              "datatype": "string",
+                              "collation": "http://marklogic.com/collation/codepoint"
+                          }
+                      },
+                      "source_concept_code": {
+                          "datatype": "string",
+                          "description": "The code from the source vocabulary ",
+                          "collation": "http://marklogic.com/collation/codepoint"
+                      },
+                      "invalid_reason": {
+                          "datatype": "string",
+                          "description": "The reason for invalidation if the concept has been invalidated.",
+                          "collation": "http://marklogic.com/collation/codepoint"
+                      },
+                      "valid_start_date": {
+                          "datatype": "date",
+                          "description": "The start date of this concept, starts as valid"
+                      },
+                      "valid_end_date": {
+                          "datatype": "date",
+                          "description": "The date through which this concept is valid. 20991231 is equivalent to currently valid"
+                      },
+                      "concept_name": {
+                          "datatype": "string",
+                          "description": "The name for the concept",
+                          "collation": "http://marklogic.com/collation/codepoint"
+                      }
+                  }
+              }
+          }
+      }
+  },
+  {
+      "entityName": "Order",
+      "entityTypeId": "http://marklogic.com/example/Order-0.0.1/Order",
+      "entityInstanceCount": 0,
+      "model": {
+          "info": {
+              "title": "Order",
+              "version": "0.0.1",
+              "baseUri": "http://marklogic.com/example/"
+          },
+          "definitions": {
+              "Order": {
+                  "required": [],
+                  "primaryKey": "orderId",
+                  "properties": {
+                      "orderId": {
+                          "datatype": "string"
+                      },
+                      "address": {
+                          "$ref": "#/definitions/Address"
+                      }
+                  }
+              },
+              "Address": {
+                  "properties": {
+                      "city": {
+                          "datatype": "string"
+                      },
+                      "state": {
+                          "datatype": "string"
+                      }
+                  }
+              }
+          }
+      }
+  },
+  {
+      "entityName": "Customer",
+      "entityTypeId": "http://example.org/Customer-0.0.1/Customer",
+      "entityInstanceCount": 5,
+      "model": {
+          "info": {
+              "title": "Customer",
+              "version": "0.0.1",
+              "baseUri": "http://example.org/"
+          },
+          "definitions": {
+              "Customer": {
+                  "required": [
+                      "name"
+                  ],
+                  "primaryKey": "customerId",
+                  "properties": {
+                      "customerId": {
+                          "datatype": "integer"
+                      },
+                      "name": {
+                          "datatype": "string",
+                          "collation": "http://marklogic.com/collation/codepoint"
+                      },
+                      "shipping": {
+                          "$ref": "#/definitions/Address"
+                      },
+                      "billing": {
+                          "$ref": "#/definitions/Address"
+                      },
+                      "customerSince": {
+                          "datatype": "date"
+                      },
+                      "orders": {
+                          "datatype": "array",
+                          "items": {
+                              "$ref": "http://example.org/Order-0.0.1/Order"
+                          }
+                      }
+                  }
+              },
+              "Address": {
+                  "required": [],
+                  "pii": [],
+                  "elementRangeIndex": [],
+                  "rangeIndex": [],
+                  "wordLexicon": [],
+                  "properties": {
+                      "street": {
+                          "datatype": "string",
+                          "collation": "http://marklogic.com/collation/codepoint"
+                      },
+                      "city": {
+                          "datatype": "string",
+                          "collation": "http://marklogic.com/collation/codepoint"
+                      },
+                      "state": {
+                          "datatype": "string",
+                          "collation": "http://marklogic.com/collation/codepoint"
+                      },
+                      "zip": {
+                          "$ref": "#/definitions/Zip"
+                      }
+                  }
+              },
+              "Zip": {
+                  "required": [],
+                  "properties": {
+                      "fiveDigit": {
+                          "datatype": "string",
+                          "collation": "http://marklogic.com/collation/codepoint"
+                      },
+                      "plusFour": {
+                          "datatype": "string",
+                          "collation": "http://marklogic.com/collation/codepoint"
+                      }
+                  }
+              }
+          }
+      },
+      "latestJobDateTime": "2020-05-13T10:37:00.802231-07:00",
+      "latestJobId": "b0ee8653-bf8f-4bbd-956b-9a1471137253"
+  }
+]

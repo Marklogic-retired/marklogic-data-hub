@@ -52,7 +52,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
   const onOk = (event) => {
     event.preventDefault();
     if (!NAME_REGEX.test(name)) {
-      setErrorMessage('Names must start with a letter, and can contain letters, numbers, hyphens, and underscores.')
+      setErrorMessage(ModelingTooltips.addEntityName)
     } else {
       createEntityType(name, description);
     }

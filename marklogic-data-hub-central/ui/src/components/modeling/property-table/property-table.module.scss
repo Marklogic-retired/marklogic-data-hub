@@ -1,0 +1,29 @@
+.icon {
+  font-size: 21px;
+  margin-left: 11px;
+}
+
+.identifierIcon {
+  font-size: 21px;
+  margin-left: 16px;
+}
+
+.addIcon {
+  cursor: pointer;
+  font-size: 21px;
+  margin-left: 6px;
+  color: #5B69AF;
+}
+
+.addButtonContainer {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+
+.iconTrash {
+  cursor: pointer;
+  font-size: 21px;
+  margin-left: 11px;
+  color: #B32424;
+}
