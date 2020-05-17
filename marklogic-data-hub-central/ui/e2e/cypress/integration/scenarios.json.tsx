@@ -18,7 +18,11 @@ describe('json scenario on view entities page', () => {
     cy.visit('/');
     cy.contains('MarkLogic Data Hub');
     cy.loginAsDeveloper();
+    cy.wait(1000);
+    // temporary change as tile is not working
+    homePage.getTitle().click();
     cy.wait(500);
+    // temporary change end here
     homePage.getViewEntities().click();
     //cy.visit('/view');
   });
@@ -55,6 +59,10 @@ describe('json scenario on browse documents page', () => {
     cy.contains('MarkLogic Data Hub');
     cy.loginAsDeveloper();
     cy.wait(500);
+    // temporary change as tile is not working
+    homePage.getTitle().click();
+    cy.wait(500);
+    // temporary change end here
     homePage.getBrowseEntities().click();
     //cy.visit('/browse');
     // cy.get('.ant-menu-item').contains('Browse Documents').click();
@@ -203,6 +211,10 @@ describe('json scenario for table on browse documents page', () => {
     cy.contains('MarkLogic Data Hub');
     cy.loginAsDeveloper();
     cy.wait(500);
+    // temporary change as tile is not working
+    homePage.getTitle().click();
+    cy.wait(500);
+    // temporary change end here
     homePage.getBrowseEntities().click();
     cy.wait(2000);
     browsePage.getTableView();

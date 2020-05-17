@@ -16,6 +16,10 @@ describe('save/manage queries scenarios, developer role', () => {
         cy.contains('MarkLogic Data Hub');
         cy.loginAsDeveloper();
         cy.wait(500);
+        // temporary change as tile is not working
+        homePage.getTitle().click();
+        cy.wait(500);
+        // temporary change end here
         homePage.getBrowseEntities().click();
         cy.wait(1000);
         browsePage.getFacetView();
@@ -63,6 +67,10 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getAppliedFacets('Adams').should('exist');
         cy.reload();
         cy.wait(500);
+        // temporary change as tile is not working
+        homePage.getTitle().click();
+        cy.wait(500);
+        // temporary change end here
         homePage.getBrowseEntities().click();
         cy.wait(1000);
         browsePage.getSelectedQuery().should('contain', 'new-query-2');
