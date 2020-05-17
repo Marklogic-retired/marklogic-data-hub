@@ -20,7 +20,6 @@ describe('xml scenario on view entities page', () => {
     cy.loginAsDeveloper();
     cy.wait(500);
     homePage.getViewEntities().click();
-    //cy.visit('/view');
   });
 
   it('has total entities and documents', () => {
@@ -56,8 +55,6 @@ describe('xml scenario on browse documents page', () => {
     cy.loginAsDeveloper();
     cy.wait(500);
     homePage.getBrowseEntities().click();
-    //cy.visit('/browse');
-    // cy.get('.ant-menu-item').contains('Browse Documents').click();
     cy.wait(2000);
     browsePage.getFacetView();
     browsePage.selectEntity('All Entities');
@@ -200,10 +197,11 @@ describe('xml scenario for table on browse documents page', () => {
     cy.contains('MarkLogic Data Hub');
     cy.loginAsDeveloper();
     cy.wait(500);
-    //cy.contains('Browse Entities');
+    // temporary change as tile is not working
+    //homePage.getTitle().click();
+    cy.wait(500);
+    // temporary change end here
     homePage.getBrowseEntities().click();
-    //cy.visit('/browse');
-    // cy.get('.ant-menu-item').contains('Browse Documents').click();
     cy.wait(1000);
     browsePage.getTableView();
     browsePage.selectEntity('All Entities');
@@ -226,9 +224,6 @@ describe('xml scenario for table on browse documents page', () => {
         browsePage.getTableCell(i, j).should('not.be.empty')
       }
     }
-    /*for (let i = 1; i <= 6; i++) {
-        browsePage.getTablePkCell(i).should('not.be.empty')
-    }*/
   });
 
   it('search for a simple text/query and verify content', () => {

@@ -14,7 +14,6 @@ describe('table test scenarios', () => {
     cy.loginAsDeveloper();
     cy.wait(500);
     homePage.getBrowseEntities().click();
-    //cy.visit('/browse');
   });
 
   it('has table', () => {
@@ -42,7 +41,6 @@ describe('column selector test scenarios', () => {
     cy.loginAsDeveloper();
     cy.wait(500);
     homePage.getBrowseEntities().click();
-    //cy.visit('/browse');
   });
 
   it('has columns selector popover', () => {

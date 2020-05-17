@@ -1,16 +1,21 @@
 import React, {useState, useEffect, useContext} from 'react';
 import { Modal, Form, Input, Button } from 'antd';
 import styles from './edit-query-dialog.module.scss';
-import {SearchContext} from "../../../../util/search-context";
+import {UserContext} from "../../../../util/user-context";
 
 
 const EditQueryDialog = (props) => {
+    const {
+        handleError,
+        resetSessionTime
+    } = useContext(UserContext);
 
     const [query, setQuery] = useState(props.query);
     const [queryName, setQueryName] = useState('');
     const [queryDescription, setQueryDescription] = useState('');
     const [isQueryNameTouched, setQueryNameTouched] = useState(false);
     const [isQueryDescriptionTouched, setQueryDescriptionTouched] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
         if (props.query && JSON.stringify(props.query) != JSON.stringify({}) && props.query.hasOwnProperty('savedQuery') && props.query.savedQuery.hasOwnProperty('name')) {
@@ -37,6 +42,7 @@ const EditQueryDialog = (props) => {
     }
 
     const onCancel = () => {
+        setErrorMessage("");
         props.setEditModalVisibility(false);
     }
 
@@ -64,12 +70,24 @@ const EditQueryDialog = (props) => {
 
     const handleSubmit = async (event: { preventDefault: () => void; }) => {
         if (event) event.preventDefault();
-        query.savedQuery.name = queryName;
+        query.savedQuery.name = queryName.trim();
         query.savedQuery.description = queryDescription;
-        let status = await props.editQuery(query);
+        try {
+            let status = await props.editQuery(query);
 
-        if (status.code === 200) {
-            props.setEditModalVisibility(false);
+            if (status && status.code === 200) {
+                props.setEditModalVisibility(false);
+            }
+        } catch (error) {
+            if (error.response.status === 400) {
+                if (error.response.data.hasOwnProperty('message')) {
+                    setErrorMessage(error['response']['data']['message']);
+                }
+            } else {
+                handleError(error);
+            }
+        } finally {
+            resetSessionTime();
         }
     }
 
@@ -96,8 +114,8 @@ const EditQueryDialog = (props) => {
                             Query Name:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
                         </span>}
                         labelAlign="left"
-                        validateStatus={queryName.length === 0 ? 'error' : ''}
-                        help={queryName.length === 0 ? 'Query Name is required' : ''}
+                        validateStatus={errorMessage ? 'error' : ''}
+                        help={errorMessage}
                     >
                         <Input
                             id="name"
@@ -124,7 +142,7 @@ const EditQueryDialog = (props) => {
                     <Form.Item
                         className={styles.submitButtonsForm}>
                         <div className={styles.submitButtons}>
-                            <Button onClick={() => onCancel()}>Cancel</Button>
+                            <Button id="edit-query-dialog-cancel" onClick={() => onCancel()}>Cancel</Button>
                             &nbsp;&nbsp;
                             <Button type="primary" htmlType="submit" disabled={(!isQueryNameTouched && !isQueryDescriptionTouched) || queryName.length === 0} onClick={handleSubmit}>Save</Button>
                         </div>

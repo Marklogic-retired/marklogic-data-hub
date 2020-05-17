@@ -20,6 +20,10 @@ class ManageQuery {
     return cy.get('button[type=submit]').first();
   }
 
+  getEditCancelButton() {
+    return cy.get('#edit-query-dialog-cancel');
+  }
+
   getQueryByName(query:string) {
     return cy.get(`[data-id=${query}]`).first();
   }
@@ -32,7 +36,9 @@ class ManageQuery {
     return cy.get('[data-icon=file-export]');
   }
 
-  
+  getErrorMessage() {
+    return cy.get('.ant-form-explain');
+  }
 }
 
 export default ManageQuery;

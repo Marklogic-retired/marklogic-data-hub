@@ -8,6 +8,7 @@ import {SearchContext} from "../../../../util/search-context";
 interface Props {
     setEditQueryDetailVisibility: () => void;
     currentQuery: any;
+    setCurrentQuery: (query: any) => void;
     currentQueryName: string;
     setCurrentQueryName: (name: string) => void;
     currentQueryDescription: string;
@@ -29,10 +30,12 @@ const EditQueryDetails: React.FC<Props> = (props) => {
     const [queryName, setQueryName] = useState('');
     const [queryDescription, setQueryDescription] = useState('');
     const [queryEmpty, isQueryEmpty] = useState<any>('');
-
+    const [errorMessage, setErrorMessage] = useState('');
+    const [previousQueryName, setPreviousQueryName] = useState('');
 
     useEffect(() => {
         if (props.currentQuery && JSON.stringify(props.currentQuery) != JSON.stringify({}) && props.currentQuery.hasOwnProperty('savedQuery') && props.currentQuery.savedQuery.hasOwnProperty('name')) {
+            setPreviousQueryName(props.currentQuery.savedQuery.name);
             setQueryName(props.currentQuery.savedQuery.name);
             if (props.currentQuery.savedQuery.hasOwnProperty('description')) {
                 setQueryDescription(props.currentQuery.savedQuery.description);
@@ -51,26 +54,28 @@ const EditQueryDetails: React.FC<Props> = (props) => {
     }
 
     const onOk = async (queryName, queryDescription, currentQuery) => {
-        if (queryName.length > 0 && queryName.trim().length !== 0) {
-            currentQuery.savedQuery.name = queryName;
+        try {
+            currentQuery.savedQuery.name = queryName.trim();
             currentQuery.savedQuery.description = queryDescription;
-            try {
-                //const response = await updateQuery(currentQuery);
-                const response = await axios.put(`/api/entitySearch/savedQueries`, currentQuery);
-                if (response.data) {
-                    props.setEditQueryDetailVisibility()
-                }
-            } catch (error) {
-                handleError(error);
-            } finally {
-                resetSessionTime();
+            const response = await axios.put(`/api/entitySearch/savedQueries`, currentQuery);
+            if (response.data) {
+                props.setEditQueryDetailVisibility();
+                setSelectedQuery(queryName);
+                props.setCurrentQueryDescription(queryDescription);
             }
-        } else {
-            isQueryEmpty('error')
+        } catch (error) {
+            if (error.response.status === 400) {
+                if (error.response.data.hasOwnProperty('message')) {
+                    setErrorMessage(error['response']['data']['message']);
+                    props.currentQuery.savedQuery.name = previousQueryName;
+                }
+            } else {
+                handleError(error);
+            }
+        } finally {
+            resetSessionTime();
         }
-        setSelectedQuery(queryName);
-        props.setCurrentQueryDescription(queryDescription);
-    }
+    };
 
 
     const handleChange = (event) => {
@@ -102,8 +107,8 @@ const EditQueryDetails: React.FC<Props> = (props) => {
                            Name:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
                         </span>}
                     labelAlign="left"
-                    validateStatus={queryEmpty}
-                    help={queryEmpty === 'error' ? 'New query name is required' : ''}
+                    validateStatus={errorMessage ? 'error' : ''}
+                    help={errorMessage}
                 >
                     <Input
                         id="edit-query-detail-name"
@@ -126,7 +131,7 @@ const EditQueryDetails: React.FC<Props> = (props) => {
                 </Form.Item>
                 <Form.Item>
                     <div className={styles.submitButtons}>
-                        <Button onClick={() => onCancel()}>Cancel</Button>
+                        <Button id='edit-query-detail-cancel-button' onClick={() => onCancel()}>Cancel</Button>
                         &nbsp;&nbsp;
                         <Button type="primary"
                                 htmlType="submit"

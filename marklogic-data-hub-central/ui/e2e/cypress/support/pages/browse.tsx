@@ -1,9 +1,5 @@
 class BrowsePage {
 
-  /*getSelectedEntity() {
-    return cy.get('.ant-select-selection').invoke('attr', 'data-cy');
-  }*/
-
   getSelectedEntity() {
     return cy.get('.ant-select-selection-selected-value').invoke('text')
   }
@@ -266,6 +262,10 @@ class BrowsePage {
     return cy.get('#save-query-button');
   }
 
+  getSaveQueryCancelButton(){
+    return cy.get('#save-query-cancel-button');
+  }
+
   getSaveQueriesDropdown(){
     return cy.get('#dropdownList');
   }
@@ -278,6 +278,10 @@ class BrowsePage {
     return cy.get('svg[data-icon="copy"]')
   }
 
+  getEditQueryDetailFormName(){
+    return cy.get('#edit-query-detail-name');
+  }
+
   getEditQueryDetailDesc(){
     return cy.get('#edit-query-detail-description');
   }
@@ -286,12 +290,24 @@ class BrowsePage {
       return cy.get('#edit-query-detail-button');
   }
 
+  getEditQueryDetailCancelButton(){
+    return cy.get('#edit-query-detail-cancel-button');
+  }
+
   getRadioOptionSelected(){
       return cy.get('[type="radio"]').first().check();
   }
 
   getEditSaveChangesButton(){
-      return cy.get('#edit-save-changes-button')
+      return cy.get('#edit-save-changes-button');
+  }
+
+  getEditSaveChangesCancelButton(){
+      return cy.get('#edit-save-changes-cancel-button');
+  }
+
+  getEditSaveChangesFormName(){
+      return cy.get('#save-changes-query-name');
   }
 
   getDiscardChangesIcon(){
@@ -306,6 +322,10 @@ class BrowsePage {
      return cy.get('#discard-no-button');
   }
 
+  getCloseIcon() {
+    return cy.get('svg[data-icon="close"]');
+  }
+
   getManageQueryCloseIcon(){
       return cy.get('.manage-modal-close-icon');
   }
@@ -318,6 +338,19 @@ class BrowsePage {
   //saved query dropdown
   getSelectedQuery(){
     return cy.get('[data-cy=drop-down-list] .ant-select-selection-selected-value').invoke('text');
+  }
+
+  getErrorMessage() {
+    return cy.get('.ant-form-explain');
+  }
+
+  selectQuery(query: string) {
+    cy.get('#dropdownList').click();
+    return cy.get('[data-cy=query-option]').each(function (item) {
+      if (item.text() === query) {
+        return item.click();
+      }
+    });
   }
 
   getSelectedQueryDescription(){

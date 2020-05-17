@@ -1,6 +1,8 @@
 const test = require("/test/test-helper.xqy");
+const entitySearchService = require("/test/suites/data-hub/5/data-services/lib/entitySearchService.sjs");
 
-var saveQuery = JSON.stringify({
+let assertions = [];
+let saveQuery = JSON.stringify({
   "savedQuery": {
     "id": "",
     "name": "some-query",
@@ -38,45 +40,87 @@ var saveQuery = JSON.stringify({
   }
 });
 
-function invokeService(saveQuery) {
-  return fn.head(xdmp.invoke(
-      "/data-hub/5/data-services/entitySearch/saveSavedQuery.sjs",
-      {
-        "saveQuery": saveQuery
-      }
-  ));
-}
+function testSaveAndModifyQuery() {
+  let insertedQuery = entitySearchService.saveQuery(saveQuery);
+  const uri = "/saved-queries/" + insertedQuery.savedQuery.id + ".json";
+  const permissions = JSON.parse(xdmp.invokeFunction(() => {
+    let permissions = {};
+    xdmp.documentGetPermissions(uri).forEach(permission => permissions[xdmp.roleName(permission.roleId)] = permission.capability);
+    return permissions;
+  }, {transactionMode:'update-auto-commit'}));
+  assertions.push(
+      test.assertNotEqual(null, insertedQuery),
+      test.assertNotEqual(null, insertedQuery.savedQuery),
+      test.assertNotEqual(null, insertedQuery.savedQuery.systemMetadata),
+      test.assertNotEqual(null, insertedQuery.savedQuery.id),
+      test.assertEqual("some-query", insertedQuery.savedQuery.name),
+      test.assertEqual(4, Object.keys(insertedQuery.savedQuery.systemMetadata).length),
+      test.assertEqual(xdmp.getCurrentUser(), insertedQuery.savedQuery.owner),
+      test.assertEqual(permissions["data-hub-saved-query-writer"], "update"),
+      test.assertEqual(permissions["data-hub-saved-query-reader"], "read"),
+      test.assertEqual(xdmp.documentGetCollections(uri), ["http://marklogic.com/data-hub/saved-query"])
+  );
 
+  // saving query doc with an already existing query name
+  test.assertThrowsError(xdmp.function(xs.QName('entitySearchService.saveQuery')), saveQuery, null);
 
-function testSaveNewQuery() {
-  const result = invokeService(saveQuery);
-  return [
-    test.assertNotEqual(null, result),
-    test.assertNotEqual(null, result.savedQuery),
-    test.assertNotEqual(null, result.savedQuery.systemMetadata),
-    test.assertNotEqual(null, result.savedQuery.id),
-    test.assertEqual("some-query", result.savedQuery.name),
-    test.assertEqual(4, Object.keys(result.savedQuery.systemMetadata).length),
-    test.assertEqual(xdmp.getCurrentUser(), result.savedQuery.owner)
-  ];
-}
-
-function testModifyQuery() {
-  let insertedQuery = invokeService(saveQuery);
   const id = insertedQuery.savedQuery.id;
   insertedQuery.savedQuery.name = "modified-query";
-  const result = invokeService(JSON.stringify(insertedQuery));
-  return [
-    test.assertNotEqual(null, result),
-    test.assertNotEqual(null, result.savedQuery),
-    test.assertNotEqual(null, result.savedQuery.systemMetadata),
-    test.assertEqual(id, result.savedQuery.id),
-    test.assertEqual("modified-query", result.savedQuery.name),
-    test.assertEqual(4, Object.keys(result.savedQuery.systemMetadata).length),
-    test.assertEqual(xdmp.getCurrentUser(), result.savedQuery.owner)
-  ];
+  const updatedQuery = entitySearchService.updateSavedQuery(JSON.stringify(insertedQuery));
+  assertions.push(
+      test.assertNotEqual(null, updatedQuery),
+      test.assertNotEqual(null, updatedQuery.savedQuery),
+      test.assertNotEqual(null, updatedQuery.savedQuery.systemMetadata),
+      test.assertEqual(id, updatedQuery.savedQuery.id),
+      test.assertEqual("modified-query", updatedQuery.savedQuery.name),
+      test.assertEqual(4, Object.keys(updatedQuery.savedQuery.systemMetadata).length),
+      test.assertEqual(xdmp.getCurrentUser(), updatedQuery.savedQuery.owner),
+      test.assertEqual(permissions["data-hub-saved-query-writer"], "update"),
+      test.assertEqual(permissions["data-hub-saved-query-reader"], "read"),
+      test.assertEqual(xdmp.documentGetCollections(uri), ["http://marklogic.com/data-hub/saved-query"])
+  );
+
+  return assertions;
+}
+
+function testSaveAndModifyQueryExceptions() {
+  let tempQuery = JSON.parse(saveQuery);
+  tempQuery['savedQuery'] = undefined;
+  assertions.push(test.assertThrowsError(xdmp.function(xs.QName('entitySearchService.saveQuery')), JSON.stringify(tempQuery), null));
+
+  tempQuery = JSON.parse(saveQuery);
+  tempQuery['savedQuery']['name'] = undefined;
+  assertions.push(test.assertThrowsError(xdmp.function(xs.QName('entitySearchService.saveQuery')), JSON.stringify(tempQuery), null));
+
+  tempQuery = JSON.parse(saveQuery);
+  tempQuery['savedQuery']['query'] = undefined;
+  assertions.push(test.assertThrowsError(xdmp.function(xs.QName('entitySearchService.saveQuery')), JSON.stringify(tempQuery), null));
+
+  tempQuery = JSON.parse(saveQuery);
+  tempQuery['savedQuery']['propertiesToDisplay'] = undefined;
+  assertions.push(test.assertThrowsError(xdmp.function(xs.QName('entitySearchService.saveQuery')), JSON.stringify(tempQuery), null));
+
+  let insertedQuery = JSON.stringify(entitySearchService.saveQuery(saveQuery));
+
+  tempQuery = JSON.parse(insertedQuery);
+  tempQuery['savedQuery'] = undefined;
+  assertions.push(test.assertThrowsError(xdmp.function(xs.QName('entitySearchService.updateSavedQuery')), JSON.stringify(tempQuery), null));
+
+  tempQuery = JSON.parse(saveQuery);
+  tempQuery['savedQuery']['name'] = undefined;
+  assertions.push(test.assertThrowsError(xdmp.function(xs.QName('entitySearchService.updateSavedQuery')), JSON.stringify(tempQuery), null));
+
+  tempQuery = JSON.parse(saveQuery);
+  tempQuery['savedQuery']['query'] = undefined;
+  assertions.push(test.assertThrowsError(xdmp.function(xs.QName('entitySearchService.updateSavedQuery')), JSON.stringify(tempQuery), null));
+
+  tempQuery = JSON.parse(saveQuery);
+  tempQuery['savedQuery']['propertiesToDisplay'] = undefined;
+  assertions.push(test.assertThrowsError(xdmp.function(xs.QName('entitySearchService.updateSavedQuery')), JSON.stringify(tempQuery), null));
+
+  return assertions;
 }
 
 []
-    .concat(testSaveNewQuery())
-    .concat(testModifyQuery());
+    .concat(testSaveAndModifyQuery())
+    .concat(testSaveAndModifyQueryExceptions());

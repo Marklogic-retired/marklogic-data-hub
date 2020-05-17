@@ -4,6 +4,7 @@ import EditQueryDetails from "./edit-query-details";
 import axiosMock from 'axios'
 import userEvent from "@testing-library/user-event";
 import {putQueryResponse} from "../../../../assets/mock-data/query";
+import {duplicateQueryNameErrorResponse} from "../../../../assets/mock-data/query";
 jest.mock('axios');
 
 
@@ -29,6 +30,7 @@ describe("<EditQueryDetails/>", () => {
         const { getByPlaceholderText } = render(<EditQueryDetails
             setEditQueryDetailVisibility={jest.fn()}
             currentQuery={{}}
+            setCurrentQuery={jest.fn()}
             currentQueryName={''}
             setCurrentQueryName={jest.fn()}
             currentQueryDescription={''}
@@ -48,6 +50,7 @@ describe("<EditQueryDetails/>", () => {
         const { getByPlaceholderText, getByText } = render(<EditQueryDetails
             setEditQueryDetailVisibility={jest.fn()}
             currentQuery={currentQuery}
+            setCurrentQuery={jest.fn()}
             currentQueryName={''}
             setCurrentQueryName={jest.fn()}
             currentQueryDescription={''}
@@ -77,6 +80,44 @@ describe("<EditQueryDetails/>", () => {
                 }}
         expect(axiosMock.put).toHaveBeenCalledWith(url, payload);
         expect(axiosMock.put).toHaveBeenCalledTimes(1);
+    });
+
+    test("Verify Edit Query Details with duplicate name throws error", async () => {
+        axiosMock.put.mockImplementationOnce(jest.fn(() =>
+            Promise.reject({ response: {status: 400, data: duplicateQueryNameErrorResponse } })));
+
+        const { getByPlaceholderText, getByText} = render(<EditQueryDetails
+            setEditQueryDetailVisibility={jest.fn()}
+            currentQuery={currentQuery}
+            setCurrentQuery={jest.fn()}
+            currentQueryName={''}
+            setCurrentQueryName={jest.fn()}
+            currentQueryDescription={''}
+            setCurrentQueryDescription={jest.fn()}
+        />);
+        queryField = getByPlaceholderText("Enter new query name");
+        fireEvent.change(queryField, { target: {value: 'edit new query'} });
+        queryDescription = getByPlaceholderText("Enter new query description");
+        fireEvent.change(queryDescription, { target: {value: ''} });
+        await wait(() => {
+            userEvent.click(getByText('Save'));
+        });
+
+        let url = "/api/entitySearch/savedQueries";
+        let payload = {"savedQuery": {
+                "description": "",
+                "id": "123",
+                "name": "edit new query",
+                "propertiesToDisplay": "['']",
+                "query": {
+                    "entityTypeIds": "",
+                    "searchText": "",
+                    "selectedFacets": ""
+                }
+            }};
+        expect(axiosMock.put).toHaveBeenCalledWith(url, payload);
+        expect(axiosMock.put).toHaveBeenCalledTimes(1);
+        expect(getByText('You already have a saved query with a name of edit new query')).toBeInTheDocument();
     });
 
 });

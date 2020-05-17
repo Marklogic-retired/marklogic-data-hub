@@ -9,7 +9,6 @@ import { SearchContext } from '../../../../util/search-context';
 import styles from './manage-query.module.scss';
 import { fetchQueries, updateQuery, removeQuery } from '../../../../api/queries'
 import axios from "axios";
-import { exportSavedQuery } from '../../../../api/queries'
 import ExportQueryModal from '../../../query-export/query-export-modal/query-export-modal'
 
 
@@ -46,18 +45,10 @@ const QueryModal = (props) => {
     }
 
     const editQuery = async (query) => {
-        try {
-            //const response = await updateQuery(query);
-            const response = await axios.put(`/api/entitySearch/savedQueries`, query);
-            if (response.data) {
-                props.setQueries(response.data);
-                return { code: response.status };
-            }
-
-        } catch (error) {
-            handleError(error);
-        } finally {
-            resetSessionTime();
+        const response = await axios.put(`/api/entitySearch/savedQueries`, query);
+        if (response.data) {
+            props.setQueries(response.data);
+            return { code: response.status };
         }
     }
 
@@ -251,7 +242,8 @@ const QueryModal = (props) => {
                 editQuery={editQuery}
                 getQueries={getQueries}
                 editModalVisibility={editModalVisibility}
-                setEditModalVisibility={setEditModalVisibility} />
+                setEditModalVisibility={setEditModalVisibility}
+            />
             {deleteConfirmation}
         </div>
     )

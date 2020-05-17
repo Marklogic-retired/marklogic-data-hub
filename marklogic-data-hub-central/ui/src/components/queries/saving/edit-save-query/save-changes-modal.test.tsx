@@ -2,7 +2,7 @@ import React from 'react';
 import {fireEvent, render, wait} from "@testing-library/react";
 import SaveChangesModal from "./save-changes-modal";
 import axiosMock from 'axios'
-import {saveQueryResponse, putQueryResponse } from "../../../../assets/mock-data/query";
+import {saveQueryResponse, putQueryResponse, duplicateQueryNameErrorResponse} from "../../../../assets/mock-data/query";
 import userEvent from "@testing-library/user-event";
 jest.mock('axios');
 
@@ -24,6 +24,7 @@ describe("<SaveChangesModal/>", () => {
             toggleApplyClicked={jest.fn()}
             setSaveNewIconVisibility={jest.fn()}
             currentQuery={currentQuery}
+            setCurrentQuery={jest.fn()}
             currentQueryName={''}
             setCurrentQueryName={jest.fn()}
             currentQueryDescription={''}
@@ -48,6 +49,7 @@ describe("<SaveChangesModal/>", () => {
             toggleApplyClicked={jest.fn()}
             setSaveNewIconVisibility={jest.fn()}
             currentQuery={currentQuery}
+            setCurrentQuery={jest.fn()}
             currentQueryName={''}
             setCurrentQueryName={jest.fn()}
             currentQueryDescription={''}
@@ -83,6 +85,52 @@ describe("<SaveChangesModal/>", () => {
         let url = "/api/entitySearch/savedQueries";
         expect(axiosMock.put).toHaveBeenCalledWith(url, payload);
         expect(axiosMock.put).toHaveBeenCalledTimes(1);
+    });
+
+    test("Verify save changes modal throws error with duplicate query name", async () => {
+        axiosMock.put.mockImplementationOnce(jest.fn(() =>
+            Promise.reject({ response: {status: 400, data: duplicateQueryNameErrorResponse } })));
+
+        const { getByPlaceholderText, getByText } = render(<SaveChangesModal
+            setSaveChangesModalVisibility={jest.fn()}
+            greyFacets={[]}
+            toggleApply={jest.fn()}
+            toggleApplyClicked={jest.fn()}
+            setSaveNewIconVisibility={jest.fn()}
+            currentQuery={currentQuery}
+            setCurrentQuery={jest.fn()}
+            currentQueryName={''}
+            setCurrentQueryName={jest.fn()}
+            currentQueryDescription={''}
+            setCurrentQueryDescription={jest.fn()}
+        />)
+        queryField = getByPlaceholderText("Enter query name");
+        fireEvent.change(queryField, { target: {value: 'Edit new query'} });
+        await wait(() => {
+            userEvent.click(getByText('Save'));
+        });
+        let payload = {
+            "savedQuery": {
+                "id": "",
+                "name": "Edit new query",
+                "description": "saved order query",
+                "query": {
+                    "entityTypeIds": [],
+                    "searchText": "",
+                    "selectedFacets": {},
+                },
+                "propertiesToDisplay": [
+                    "facet1",
+                    "EntityTypeProperty1"
+                ]
+            }
+        }
+
+
+        let url = "/api/entitySearch/savedQueries";
+        expect(axiosMock.put).toHaveBeenCalledWith(url, payload);
+        expect(axiosMock.put).toHaveBeenCalledTimes(1);
+        expect(getByText('You already have a saved query with a name of edit new query')).toBeInTheDocument();
     });
 
 });

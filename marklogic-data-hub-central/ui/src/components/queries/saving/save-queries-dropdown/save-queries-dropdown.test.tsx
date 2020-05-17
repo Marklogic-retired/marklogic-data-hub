@@ -10,15 +10,17 @@ describe("<SaveQueryDropdown/>", () => {
     test("Save query dropdown renders without crashing", async () => {
         const { getByTitle } = render(<SaveQueryDropdown
             savedQueryList={[]}
-            greyFacets= {[]}
             toggleApply={jest.fn()}
+            greyFacets= {[]}
             currentQueryName={''}
             setCurrentQueryName={jest.fn()}
-            currentQueryDescription={''}
-            setCurrentQueryDescription={jest.fn()}
             setCurrentQueryFn={jest.fn()}
             currentQuery={{}}
             setSaveNewIconVisibility={jest.fn()}
+            setSaveChangesIconVisibility={jest.fn()}
+            setDiscardChangesIconVisibility={jest.fn()}
+            currentQueryDescription={''}
+            setCurrentQueryDescription={jest.fn()}
         />)
 
         expect(getByTitle("select a query")).toBeInTheDocument();
