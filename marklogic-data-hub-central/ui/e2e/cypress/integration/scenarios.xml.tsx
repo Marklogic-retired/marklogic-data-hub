@@ -19,6 +19,10 @@ describe('xml scenario on view entities page', () => {
     cy.contains('MarkLogic Data Hub');
     cy.loginAsDeveloper();
     cy.wait(500);
+    // temporary change as tile is not working
+    homePage.getTitle().click();
+    cy.wait(500);
+    // temporary change end here
     homePage.getViewEntities().click();
   });
 
@@ -54,6 +58,10 @@ describe('xml scenario on browse documents page', () => {
     cy.contains('MarkLogic Data Hub');
     cy.loginAsDeveloper();
     cy.wait(500);
+    // temporary change as tile is not working
+    homePage.getTitle().click();
+    cy.wait(500);
+    // temporary change end here
     homePage.getBrowseEntities().click();
     cy.wait(2000);
     browsePage.getFacetView();
@@ -198,7 +206,7 @@ describe('xml scenario for table on browse documents page', () => {
     cy.loginAsDeveloper();
     cy.wait(500);
     // temporary change as tile is not working
-    //homePage.getTitle().click();
+    homePage.getTitle().click();
     cy.wait(500);
     // temporary change end here
     homePage.getBrowseEntities().click();

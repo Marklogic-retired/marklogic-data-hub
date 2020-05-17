@@ -13,6 +13,10 @@ describe('table test scenarios', () => {
     cy.contains('MarkLogic Data Hub');
     cy.loginAsDeveloper();
     cy.wait(500);
+    // temporary change as tile is not working
+    homePage.getTitle().click();
+    cy.wait(500);
+    // temporary change end here
     homePage.getBrowseEntities().click();
   });
 
@@ -40,6 +44,10 @@ describe('column selector test scenarios', () => {
     cy.contains('MarkLogic Data Hub');
     cy.loginAsDeveloper();
     cy.wait(500);
+    // temporary change as tile is not working
+    homePage.getTitle().click();
+    cy.wait(500);
+    // temporary change end here
     homePage.getBrowseEntities().click();
   });
 
