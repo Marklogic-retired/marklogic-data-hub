@@ -59,17 +59,10 @@ const Query = (props) => {
                 propertiesToDisplay: props.columns,
             }
         }
-        try {
-            props.setIsLoading(true);
-            await creatNewQuery(query);
-            setOpenSaveModal(false);
-            getSaveQueries();
-        } catch (error) {
-            handleError(error);
-        } finally {
-            props.setIsLoading(false);
-            resetSessionTime();
-        }
+        props.setIsLoading(true);
+        await creatNewQuery(query);
+        setOpenSaveModal(false);
+        getSaveQueries();
     }
 
     const getSaveQueries = async () => {
@@ -175,6 +168,7 @@ const Query = (props) => {
                                     toggleApply={(clicked) => toggleApply(clicked)}
                                     toggleApplyClicked={(clicked) => toggleApplyClicked(clicked)}
                                     currentQuery={currentQuery}
+                                    setCurrentQuery={setCurrentQuery}
                                     currentQueryName={currentQueryName}
                                     setCurrentQueryName={setCurrentQueryName}
                                     currentQueryDescription={currentQueryDescription}
@@ -241,6 +235,7 @@ const Query = (props) => {
                 <EditQueryDetails
                     setEditQueryDetailVisibility={() => setOpenEditDetail(false)}
                     currentQuery={currentQuery}
+                    setCurrentQuery={setCurrentQuery}
                     currentQueryName={currentQueryName}
                     setCurrentQueryName={setCurrentQueryName}
                     currentQueryDescription={currentQueryDescription}

@@ -33,7 +33,7 @@ const DiscardChangesModal: React.FC<Props> = (props) => {
     const onOk = () => {
         for(let key of props.savedQueryList)
         {
-            if(key.savedQuery.name === props.currentQueryName){
+            if(key.savedQuery.name === searchOptions.selectedQuery){
                 getSaveQueryWithId(key);
                 break;
             }

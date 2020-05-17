@@ -155,5 +155,9 @@ export const fetchQueryByResponse = {
 
 };
 
-
-
+export const duplicateQueryNameErrorResponse = {
+  "code": 400,
+  "message": "You already have a saved query with a name of edit new query",
+  "suggestion": "Resend the request in the correct format.",
+  "details": "You already have a saved query with a name of edit new query"
+}

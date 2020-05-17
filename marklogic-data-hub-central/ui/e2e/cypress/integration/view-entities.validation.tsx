@@ -15,7 +15,6 @@ describe('view page validation', () => {
     cy.loginAsDeveloper();
     cy.wait(500);
     homePage.getViewEntities().click();
-    //cy.visit('/view');
   });
 
   it('check last harmonized', () => {

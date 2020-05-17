@@ -11,7 +11,8 @@ interface Props {
     toggleApply: (clicked:boolean) => void;
     toggleApplyClicked: (clicked:boolean) => void;
     setSaveNewIconVisibility: (clicked:boolean) => void;
-    currentQuery: any
+    currentQuery: any,
+    setCurrentQuery: (query: any) => void;
     currentQueryName: string;
     setCurrentQueryName: (name: string) => void;
     currentQueryDescription: string;
@@ -25,7 +26,8 @@ const SaveChangesModal: React.FC<Props> = (props) => {
         greyedOptions,
         setAllSearchFacets,
         searchOptions,
-        applySaveQuery
+        applySaveQuery,
+        setAllGreyedOptions
     } = useContext(SearchContext);
 
     const {
@@ -38,6 +40,8 @@ const SaveChangesModal: React.FC<Props> = (props) => {
     const [queryDescription, setQueryDescription] = useState('');
     const [radioOptionClicked, setRadioOptionClicked] = useState(0);
     const [queryEmpty, isQueryEmpty] = useState<any>('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const [previousQueryName, setPreviousQueryName] = useState('');
 
     const layout = {
         labelCol: { span: 6 },
@@ -50,6 +54,7 @@ const SaveChangesModal: React.FC<Props> = (props) => {
 
     useEffect(() => {
         if (props.currentQuery && JSON.stringify(props.currentQuery) != JSON.stringify({}) && props.currentQuery.hasOwnProperty('savedQuery') && props.currentQuery.savedQuery.hasOwnProperty('name')) {
+            setPreviousQueryName(props.currentQuery.savedQuery.name);
             setQueryName(props.currentQuery.savedQuery.name);
             if (props.currentQuery.savedQuery.hasOwnProperty('description')) {
                 setQueryDescription(props.currentQuery.savedQuery.description);
@@ -58,13 +63,12 @@ const SaveChangesModal: React.FC<Props> = (props) => {
     }, [props.currentQuery]);
 
     const onOk = async (queryName, queryDescription, currentQuery) => {
-        let facets = {...searchOptions.selectedFacets}
+        let facets = {...searchOptions.selectedFacets};
+        let selectedFacets = {...searchOptions.selectedFacets};
+        let greyedFacets = greyedOptions.selectedFacets;
         switch(radioOptionClicked) {
             case 1:
-               // setAllSearchFacets(searchOptions.selectedFacets);
-               // setAllSearchFacets(greyedOptions.selectedFacets);
                 facets = {...facets,...greyedOptions.selectedFacets};
-                setAllSearchFacets(facets);
                 clearAllGreyFacets();
                 props.toggleApplyClicked(true);
                 props.toggleApply(false);
@@ -76,30 +80,36 @@ const SaveChangesModal: React.FC<Props> = (props) => {
                 props.toggleApplyClicked(true);
                 props.toggleApply(false);
         }
-        if (queryName.length > 0 && queryName.trim().length !== 0) {
-            currentQuery.savedQuery.name = queryName;
+
+        try {
+            currentQuery.savedQuery.name = queryName.trim();
             currentQuery.savedQuery.description = queryDescription;
             if(currentQuery.hasOwnProperty('savedQuery') && currentQuery.savedQuery.hasOwnProperty('query')){
                 currentQuery.savedQuery.query.selectedFacets = facets;
                 currentQuery.savedQuery.query.searchText = searchOptions.query;
                 currentQuery.savedQuery.query.entityTypeIds = searchOptions.entityTypeIds;
             }
-            try {
-                //const response = await updateQuery(currentQuery);
-                const response = await axios.put(`/api/entitySearch/savedQueries`, currentQuery);
-                if (response.data) {
-                    props.setSaveChangesModalVisibility()
-                }
-            } catch (error) {
-                handleError(error);
-            } finally {
-                resetSessionTime();
+            const response = await axios.put(`/api/entitySearch/savedQueries`, currentQuery);
+            if (response.data) {
+                setAllSearchFacets(facets);
+                props.setSaveChangesModalVisibility();
+                applySaveQuery(searchOptions.query, searchOptions.entityTypeIds, facets, queryName);
+                props.setCurrentQueryDescription(queryDescription);
             }
-        } else {
-            isQueryEmpty('error')
+        } catch (error) {
+            if (error.response.status === 400) {
+                if (error.response.data.hasOwnProperty('message')) {
+                    setErrorMessage(error['response']['data']['message']);
+                    setAllSearchFacets(selectedFacets);
+                    setAllGreyedOptions(greyedFacets);
+                    props.currentQuery.savedQuery.name = previousQueryName;
+                }
+            } else {
+                handleError(error);
+            }
+        } finally {
+            resetSessionTime();
         }
-        applySaveQuery(searchOptions.query, searchOptions.entityTypeIds, facets, queryName);
-        props.setCurrentQueryDescription(queryDescription);
     }
 
     const handleChange = (event) => {
@@ -135,13 +145,14 @@ const SaveChangesModal: React.FC<Props> = (props) => {
                            Name:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
                         </span>}
                     labelAlign="left"
-                    validateStatus={queryEmpty}
-                    help={ queryEmpty === 'error' ? 'Query name is required' : ''}
+                    validateStatus={errorMessage ? 'error' : ''}
+                    help={errorMessage}
                 >
                     <Input
                         id="save-changes-query-name"
                         value={queryName}
                         placeholder={'Enter query name'}
+                        className={styles.input}
                         onChange={handleChange}
                     />
                 </Form.Item>
@@ -170,7 +181,7 @@ const SaveChangesModal: React.FC<Props> = (props) => {
                 </Form.Item>}
                 <Form.Item>
                     <div className={styles.submitButtons}>
-                        <Button onClick={() => onCancel()}>Cancel</Button>
+                        <Button id='edit-save-changes-cancel-button' onClick={() => onCancel()}>Cancel</Button>
                         &nbsp;&nbsp;
                         <Button type="primary"
                                 htmlType="submit"

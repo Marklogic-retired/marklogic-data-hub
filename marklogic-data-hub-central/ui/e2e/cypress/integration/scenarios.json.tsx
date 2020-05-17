@@ -171,7 +171,6 @@ describe('json scenario on browse documents page', () => {
     cy.wait(500);
     browsePage.search('Bill');
     browsePage.getTotalDocuments().should('be.equal', 1);
-    //browsePage.getDocumentById(0).click();
     browsePage.getInstanceViewIcon().click();
     detailPage.getInstanceView().should('exist');
     detailPage.getDocumentEntity().should('contain', 'Person');
@@ -186,7 +185,6 @@ describe('json scenario on browse documents page', () => {
     cy.wait(500);
     browsePage.search('Bill');
     browsePage.getTotalDocuments().should('be.equal', 1);
-    //browsePage.getDocumentById(0).click();
     browsePage.getSourceViewIcon().click();
     detailPage.getSourceView().click();
     detailPage.getDocumentJSON().should('exist');
@@ -206,8 +204,6 @@ describe('json scenario for table on browse documents page', () => {
     cy.loginAsDeveloper();
     cy.wait(500);
     homePage.getBrowseEntities().click();
-    //cy.visit('/browse');
-    // cy.get('.ant-menu-item').contains('Browse Documents').click();
     cy.wait(2000);
     browsePage.getTableView();
     browsePage.selectEntity('All Entities');
@@ -266,9 +262,6 @@ describe('json scenario for table on browse documents page', () => {
         browsePage.getTableCell(i, j).should('not.be.empty')
       }
     }
-    /*for (let i = 1; i <= 6; i++) {
-        browsePage.getTablePkCell(i).should('not.be.empty')
-    }*/
   });
 
   it('search for a simple text/query and verify content', () => {

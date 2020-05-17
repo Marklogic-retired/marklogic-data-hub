@@ -2,6 +2,7 @@ import React, {useState, useContext, useEffect} from 'react';
 import {Modal, Form, Input, Radio, Button} from 'antd';
 import {SearchContext} from "../../../../util/search-context";
 import styles from './save-query-modal.module.scss';
+import {UserContext} from "../../../../util/user-context";
 
 interface Props {
     setSaveModalVisibility: () => void;
@@ -23,13 +24,20 @@ const SaveQueryModal: React.FC<Props> = (props) => {
         greyedOptions,
         setAllSearchFacets,
         searchOptions,
-        applySaveQuery
+        applySaveQuery,
+        setAllGreyedOptions
     } = useContext(SearchContext);
+
+    const {
+        handleError,
+            resetSessionTime
+    } = useContext(UserContext);
 
     const [queryName, setQueryName] = useState('');
     const [queryDescription, setQueryDescription] = useState('');
     const [radioOptionClicked, setRadioOptionClicked] = useState(0);
     const [queryEmpty, isQueryEmpty] = useState<any>('');
+    const [errorMessage, setErrorMessage] = useState<any>('');
 
     const layout = {
         labelCol: { span: 6 },
@@ -39,8 +47,10 @@ const SaveQueryModal: React.FC<Props> = (props) => {
     const onCancel = () => {
         props.setSaveModalVisibility();
     }
-    const onOk = () => {
-        let facets = {...searchOptions.selectedFacets}
+    const onOk = async () => {
+        let facets = {...searchOptions.selectedFacets};
+        let selectedFacets = facets;
+        let greyedFacets = greyedOptions.selectedFacets;
         switch(radioOptionClicked) {
             case 1:
                 facets = {...facets,...greyedOptions.selectedFacets};
@@ -56,17 +66,28 @@ const SaveQueryModal: React.FC<Props> = (props) => {
                 props.toggleApplyClicked(true);
                 props.toggleApply(false);
         }
-        if(queryName.length > 0 && queryName.trim().length !== 0){
-            props.saveNewQuery(queryName, queryDescription, facets);
+
+        try {
+            await props.saveNewQuery(queryName.trim(), queryDescription, facets);
             props.setSaveNewIconVisibility(false);
             props.setSaveModalVisibility();
-
-        } else {
-            isQueryEmpty('error')
+            applySaveQuery(searchOptions.query, searchOptions.entityTypeIds, facets, queryName);
+            props.setCurrentQueryName(queryName);
+            props.setCurrentQueryDescription(queryDescription);
+        } catch (error) {
+            if (error.response.status === 400) {
+                console.log("here")
+                if (error.response.data.hasOwnProperty('message')) {
+                    setErrorMessage(error['response']['data']['message']);
+                    setAllSearchFacets(selectedFacets);
+                    setAllGreyedOptions(greyedFacets);
+                }
+            } else {
+                handleError(error);
+            }
+        } finally {
+            resetSessionTime();
         }
-        applySaveQuery(searchOptions.query, searchOptions.entityTypeIds, facets, queryName);
-        props.setCurrentQueryName(queryName);
-        props.setCurrentQueryDescription(queryDescription);
     }
 
     const handleChange = (event) => {
@@ -103,8 +124,8 @@ const SaveQueryModal: React.FC<Props> = (props) => {
                            Name:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
                         </span>}
                     labelAlign="left"
-                    validateStatus={queryEmpty}
-                    help={ queryEmpty === 'error' ? 'Query name is required' : ''}
+                    validateStatus={errorMessage ? 'error' : ''}
+                    help={errorMessage}
                 >
                     <Input
                         id="save-query-name"
@@ -138,7 +159,7 @@ const SaveQueryModal: React.FC<Props> = (props) => {
                 </Form.Item>}
                 <Form.Item>
                     <div className={styles.submitButtons}>
-                        <Button onClick={() => onCancel()}>Cancel</Button>
+                        <Button id='save-query-cancel-button' onClick={() => onCancel()}>Cancel</Button>
                         &nbsp;&nbsp;
                         <Button type="primary"
                                 htmlType="submit"

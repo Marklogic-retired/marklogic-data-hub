@@ -39,7 +39,7 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
     const savedQueryOptions = props.savedQueryList.map((key) => key.savedQuery.name);
 
     const options = savedQueryOptions.map((query, index) =>
-        <Option value={query} key={index+1}>{query}</Option>
+        <Option value={query} key={index+1} data-cy="query-option">{query}</Option>
     );
 
     const onItemSelect = (e) => {
