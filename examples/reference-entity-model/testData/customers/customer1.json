@@ -1,0 +1,8 @@
+{
+  "id": 1,
+  "name": "Jane Smith",
+  "shippingStreet": "123 Main St",
+  "shippingCity": "Anytown",
+  "shippingState": "CA",
+  "shippingZip": "12345-6789"
+}

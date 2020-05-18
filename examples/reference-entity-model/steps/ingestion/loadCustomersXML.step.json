@@ -1,0 +1,17 @@
+{
+  "name": "loadCustomersXML",
+  "stepDefinitionName": "default-ingestion",
+  "stepDefinitionType": "ingestion",
+  "stepId": "loadCustomersXML-ingestion",
+  "description": "",
+  "sourceFormat": "xml",
+  "targetFormat": "xml",
+  "collections": [
+    "loadCustomersXML"
+  ],
+  "sourceDatabase": null,
+  "targetDatabase": "data-hub-STAGING",
+  "targetFormat": "JSON",
+  "permissions": "data-hub-operator,read,data-hub-operator,update",
+  "provenanceGranularityLevel": "coarse"
+}

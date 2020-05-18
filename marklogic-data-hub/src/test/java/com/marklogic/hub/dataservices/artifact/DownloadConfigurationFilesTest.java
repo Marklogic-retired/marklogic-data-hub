@@ -23,6 +23,12 @@ public class DownloadConfigurationFilesTest extends AbstractHubCoreTest {
         verifyTestUserIsForbiddenTo(project::downloadProject, "A user must have the data-hub-download-configuration-files privilege");
     }
 
+    /**
+     * For DHFPROD-4952, this also serves as a useful for testing for ensuring that steps are loaded correctly when
+     * user artifacts are loaded.
+     *
+     * @throws IOException
+     */
     @Test
     void permittedUser() throws IOException {
         // Load all artifacts from the test project

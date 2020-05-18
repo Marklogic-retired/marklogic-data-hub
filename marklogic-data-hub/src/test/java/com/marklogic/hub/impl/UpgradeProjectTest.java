@@ -141,9 +141,9 @@ public class UpgradeProjectTest extends HubTestBase {
         assertXMLEqual(expected, actual);
 
         // Check that artifact directories are created
-        assertTrue(hubProject.getProjectDir().resolve("loadData").toFile().exists(), "loadData folder should scaffold out");
-        assertTrue(hubProject.getProjectDir().resolve("matching").toFile().exists(), "matching folder should scaffold out");
-        assertTrue(hubProject.getProjectDir().resolve("merging").toFile().exists(), "merging folder should scaffold out");
+        assertTrue(hubProject.getProjectDir().resolve("entities").toFile().exists());
+        assertTrue(hubProject.getProjectDir().resolve("step-definitions").toFile().exists());
+        assertTrue(hubProject.getProjectDir().resolve("steps").toFile().exists());
 
     }
 
