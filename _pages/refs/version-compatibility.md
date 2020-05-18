@@ -40,7 +40,7 @@ permalink: /refs/version-compatibility/
         <td>4.3.1</td>
         <td>
           <ul class="ul-nobullets">
-            <li>9.0-6 up to the latest 9.x release</li>
+            <li>9.0-6 to 9.0-9</li>
           </ul>
         </td>
         <td>2.x</td>
@@ -51,7 +51,7 @@ permalink: /refs/version-compatibility/
         <td>4.2.x</td>
         <td>
           <ul class="ul-nobullets">
-            <li>9.0-6 up to the latest 9.x release</li>
+            <li>9.0-6 to 9.0-9</li>
           </ul>
         </td>
         <td>2.x</td>
@@ -62,7 +62,7 @@ permalink: /refs/version-compatibility/
         <td>4.1.x</td>
         <td>
           <ul class="ul-nobullets">
-            <li>9.0-5 up to the latest 9.x release</li>
+            <li>9.0-5 to 9.0-9</li>
           </ul>
         </td>
         <td>2.x</td>
@@ -73,7 +73,7 @@ permalink: /refs/version-compatibility/
         <td>4.0.0</td>
         <td>
           <ul class="ul-nobullets">
-            <li>9.0-5 up to the latest 9.x release</li>
+            <li>9.0-5 to 9.0-9</li>
           </ul>
         </td>
         <td>2.x</td>
