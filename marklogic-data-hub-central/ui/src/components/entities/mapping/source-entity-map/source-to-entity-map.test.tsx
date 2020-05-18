@@ -64,6 +64,33 @@ describe('RTL Source-to-entity map tests', () => {
         expect(queryByText('forSearch')).not.toBeInTheDocument();
     });
 
+    test('Mapping expression for a nested entity property with same name should be saved apprpriately', async () => {
+        const nestedEntityWithSameName = [
+            { key: 1, name: 'propId', type: 'int' },
+            { key: 2, name: 'propName', type: 'parent-Name', children: [
+                { key: 3, name: 'propName/propName', type: 'parent-FirstName', children: [
+                    { key: 4, name: 'propName/propName/propName', type: 'string' },
+                    { key: 5, name: 'propPrefix', type: 'string' }
+                ]},
+                { key: 6, name: 'propMiddle', type: 'string' }
+            ]},
+            { key: 7, name: 'gender', type: 'string' }
+          ];
+
+        const { getByTestId, getAllByTestId } = render(<SourceToEntityMap {...data.mapProps}
+            mappingVisible={true}
+            entityTypeProperties={nestedEntityWithSameName}
+        />);
+        
+        fireEvent.change(getAllByTestId('propName-mapexpression')[0], { target: { value: "concat(propName,'-NEW')" } });
+        fireEvent.blur(getAllByTestId('propName-mapexpression')[0])
+        await(waitForElement(() => (getByTestId('successMessage'))))
+
+        //Appropriate field should be saved when there are duplicate property names
+        expect(getAllByTestId('propName-mapexpression')[0]).toHaveTextContent("concat(propName,'-NEW')")
+        expect(getAllByTestId('propName-mapexpression')[1]).toHaveTextContent('')
+    })
+
     test('Filtering Name column in Source (JSON Source Data) and Entity tables', () => {
 
         const { getByText, getByTestId, queryByText } = render(<SourceToEntityMap {...data.mapProps}
