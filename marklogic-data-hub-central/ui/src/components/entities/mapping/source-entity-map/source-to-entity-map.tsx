@@ -633,9 +633,27 @@ const SourceToEntityMap = (props) => {
             width: '20%',
             ellipsis: true,
             sorter: (a: any, b: any) => getDataForValueField(a.name)?.localeCompare(getDataForValueField(b.name)),
-            render: (text, row) => (<div data-testid={row.name.split('/').pop()+'-value'} className={styles.mapValue}><Tooltip title={getDataForValueField(row.name)}>{getInitialChars(getDataForValueField(row.name),25,'...')}</Tooltip></div>)
+            render: (text, row) => (<div data-testid={row.name.split('/').pop()+'-value'} className={styles.mapValue}><Tooltip title={getDataForValueField(row.name)}>{getTextForValueField(row)}</Tooltip></div>)
         }
     ]
+
+    //Response from server already has ellipsis for array values , this method uses '... (X more)' as suffix for
+    //truncation in case array values
+    const getTextForValueField = (row) =>{
+        let respFromServer = getDataForValueField(row.name);
+        let regExp = /(.+),\s(\.\.\.\s\(\d+\smore\))$/g;
+        let match  = regExp.exec(respFromServer);
+        //data type is array and matches pattern '... (X more)'
+        if(match && row.type.includes("[ ]")){
+            if(match[1].length <= 25){
+                return match[1].concat(match[2]);
+            }
+            return getInitialChars(match[1],25, match[2])
+        }
+        else{
+            return getInitialChars(respFromServer,25,'...')
+        }
+    }
 
     const getEntityDataType = (prop) => {
         return prop.startsWith('parent-') ? prop.slice(prop.indexOf('-')+1) : prop;

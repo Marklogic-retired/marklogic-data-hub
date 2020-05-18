@@ -2,7 +2,7 @@ import React from 'react';
 import axiosMock from 'axios';
 import { fireEvent, render, wait, cleanup } from "@testing-library/react";
 import ActivitySettingsDialog from './activity-settings-dialog';
-import data from '../../config/data.config';
+import data from '../../config/test-data.config';
 
 jest.mock('axios');
 

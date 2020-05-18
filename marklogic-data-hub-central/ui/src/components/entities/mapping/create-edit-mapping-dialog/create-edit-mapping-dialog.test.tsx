@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent, cleanup, wait } from '@testing-library/react';
 import CreateEditMappingDialog from './create-edit-mapping-dialog';
-import data from "../../../../config/data.config";
+import data from "../../../../config/test-data.config";
 
 describe('Create/Edit Mapping artifact component', () => {
 
@@ -9,7 +9,7 @@ describe('Create/Edit Mapping artifact component', () => {
 
   test('Verify New Mapping Dialog renders ', () => {
     const { getByText, getByLabelText, getByPlaceholderText } = render(<CreateEditMappingDialog {...data.newMap} />);
-   
+
     expect(getByText('New Mapping')).toBeInTheDocument();
     expect(getByPlaceholderText('Enter name')).toBeInTheDocument();
     expect(getByPlaceholderText('Enter description')).toBeInTheDocument();
@@ -27,7 +27,7 @@ describe('Create/Edit Mapping artifact component', () => {
     const nameInput = getByPlaceholderText('Enter name');
     const saveButton = getByText('Save');
     const collInput = getByPlaceholderText('Please select');
-    
+
     // Enter the value for name input.
     fireEvent.change(nameInput, { target: {value: 'testCreateMap'}});
     expect(nameInput).toHaveValue('testCreateMap');
@@ -74,22 +74,22 @@ describe('Create/Edit Mapping artifact component', () => {
 
   test('Verify able to type in input fields', () => {
     const { getByText, getByLabelText, getByPlaceholderText } = render(<CreateEditMappingDialog {...data.newMap} />);
-    
+
     const descInput = getByPlaceholderText('Enter description');
     const collInput = getByPlaceholderText('Please select');
     const saveButton = getByText('Save');
     saveButton.onclick = jest.fn();
-    
+
     fireEvent.change(descInput, { target: {value: 'test description'}});
     expect(descInput).toHaveValue('test description');
     fireEvent.change(collInput, { target: {value: 'testCollection'}});
     expect(collInput).toHaveValue('testCollection');
-    
+
     fireEvent.click(getByLabelText('Query'));
     const queryInput = getByPlaceholderText('Enter Source Query');
     fireEvent.change(queryInput, { target: {value: 'cts.collectionQuery(["testCollection"])'}});
     expect(queryInput).toHaveTextContent('cts.collectionQuery(["testCollection"])');
-    
+
     fireEvent.click(saveButton);
     expect(saveButton.onclick).toHaveBeenCalled();
 
@@ -97,7 +97,7 @@ describe('Create/Edit Mapping artifact component', () => {
 
   test('Verify new mapping modal closes when Cancel is clicked', () => {
     const { getByText, rerender, queryByText } = render(<CreateEditMappingDialog {...data.newMap} />);
-  
+
     expect(getByText('New Mapping')).toBeInTheDocument();
     fireEvent.click(getByText('Cancel'));
     //setting newMap to false to close the modal
@@ -154,7 +154,7 @@ describe('Create/Edit Mapping artifact component', () => {
 
   test('Verify Edit Mapping dialog renders correctly for a read only user', () => {
     const { getByText, getByPlaceholderText, getByLabelText } = render(<CreateEditMappingDialog {...data.editMap} canReadOnly={true} canReadWrite={false}/>);
-  
+
     expect(getByPlaceholderText('Enter name')).toHaveValue('testMap');
     expect(getByPlaceholderText('Enter name')).toBeDisabled();
     expect(getByPlaceholderText('Enter description')).toHaveValue('Description of testMap');

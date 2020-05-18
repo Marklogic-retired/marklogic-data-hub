@@ -173,16 +173,30 @@ const entityTypeProperties = [
   { key: 9, name: 'gender', type: 'string' }
 ];
 
-const testJSONResponse = { 
-  properties: { 
+const testJSONResponse = {
+  properties: {
     propName: { output: '123EAC', sourcedFrom: 'proteinId' },
     propAttribute: { output: 'home', sourcedFrom: 'proteinType' },
   },
   targetEntityType: 'Person'
 };
 
-const testJSONResponseWithFunctions = { 
-  properties: { 
+const truncatedJSONResponse = {
+  properties: {
+    propName: { output: 'user1@marklogic.com,user2@marklogic.com, ... (300 more)', sourcedFrom: 'proteinId' },
+    propAttribute: { output: 'u@ml.com,v@ml.com, ... (30 more)', sourcedFrom: 'proteinType' },
+  },
+  targetEntityType: 'Person'
+};
+
+const truncatedEntityProps = [
+  { key: 1, name: 'propId', type: 'int' },
+  { key: 2, name: 'propName', type: 'string [ ]' },
+  { key: 3, name: 'propAttribute', type: 'string [ ]' }
+];
+
+const testJSONResponseWithFunctions = {
+  properties: {
     propName: { output: '123EAC', sourcedFrom: 'proteinId' },
     propAttribute: { output: 'home-NEW', sourcedFrom: "concat(proteinType,'NEW')" },
   },
@@ -190,23 +204,23 @@ const testJSONResponseWithFunctions = {
 };
 
 const errorJSONResponse = {
-  properties: { 
+  properties: {
     propId: { errorMessage: 'Invalid lexical value: "123EACtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest"', sourcedFrom: 'proteinId' },
     propAttribute: { output: 'home', sourcedFrom: 'proteinType' },
   },
   targetEntityType: 'Person'
 };
 
-const mapFunctions = { 
-  "echo": { "category": "custom", "signature": "echo(input)" }, 
-  "memoryLookup": { "category": "builtin", "signature": "memoryLookup(input,inputDictionary)" }, 
-  "documentLookup": { "category": "builtin", "signature": "documentLookup(input,inputDictionaryPath)" }, 
-  "parseDate": { "category": "builtin", "signature": "parseDate(value,pattern)" }, 
-  "parseDateTime": { "category": "builtin", "signature": "parseDateTime(value,pattern)" }, 
-  "add-function": { "category": "custom", "signature": "add-function(num1,num2)" }, 
-  "unparsed-text": { "category": "xpath", "signature": "unparsed-text(xs:string)" }, 
-  "month-from-dateTime": { "category": "xpath", "signature": "month-from-dateTime(xs:dateTime?)" }, "seconds-from-dateTime": { "category": "xpath", "signature": "seconds-from-dateTime(xs:dateTime?)" }, 
-  "concat": { "category": "xpath", "signature": "concat(xs:anyAtomicType?)" } 
+const mapFunctions = {
+  "echo": { "category": "custom", "signature": "echo(input)" },
+  "memoryLookup": { "category": "builtin", "signature": "memoryLookup(input,inputDictionary)" },
+  "documentLookup": { "category": "builtin", "signature": "documentLookup(input,inputDictionaryPath)" },
+  "parseDate": { "category": "builtin", "signature": "parseDate(value,pattern)" },
+  "parseDateTime": { "category": "builtin", "signature": "parseDateTime(value,pattern)" },
+  "add-function": { "category": "custom", "signature": "add-function(num1,num2)" },
+  "unparsed-text": { "category": "xpath", "signature": "unparsed-text(xs:string)" },
+  "month-from-dateTime": { "category": "xpath", "signature": "month-from-dateTime(xs:dateTime?)" }, "seconds-from-dateTime": { "category": "xpath", "signature": "seconds-from-dateTime(xs:dateTime?)" },
+  "concat": { "category": "xpath", "signature": "concat(xs:anyAtomicType?)" }
 }
 
 const mapProps = {
@@ -321,7 +335,9 @@ const data = {
   testJSONResponseWithFunctions: testJSONResponseWithFunctions,
   xmlSourceDataMultipleSiblings: xmlSourceDataMultipleSiblings,
   entityTypePropertiesMultipleSiblings: entityTypePropertiesMultipleSiblings,
-  jsonSourceDataMultipleSiblings: jsonSourceDataMultipleSiblings
+  jsonSourceDataMultipleSiblings: jsonSourceDataMultipleSiblings,
+  truncatedJSONResponse: truncatedJSONResponse,
+  truncatedEntityProps: truncatedEntityProps
 };
 
 export default data;
