@@ -20,7 +20,7 @@ export function setEnvironment()  {
 export function getEnvironment():any {
     let env: any;
     env = localStorage.getItem('environment');
-    if (env) {
+    if(env) {
         return JSON.parse(env);
     }
     else{

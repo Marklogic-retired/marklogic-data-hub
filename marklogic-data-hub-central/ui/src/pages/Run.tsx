@@ -82,7 +82,8 @@ const Run = (props) => {
                 setFlows(response.data);
             }
         } catch (error) {
-            console.error('********* ERROR', error);
+            console.error('Error getting flows', error);
+            handleError(error)
         } finally {
           resetSessionTime();
         }
