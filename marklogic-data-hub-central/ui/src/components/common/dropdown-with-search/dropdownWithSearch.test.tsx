@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import DropDownWithSearch from './dropdownWithSearch';
-import data from "../../../config/data.config";
+import data from "../../../config/test-data.config";
 
 describe('DropDownWithSearch component', () => {
 

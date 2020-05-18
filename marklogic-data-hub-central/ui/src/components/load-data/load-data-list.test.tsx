@@ -1,14 +1,14 @@
 import React from 'react';
 import { render, fireEvent, wait, within } from '@testing-library/react';
 import LoadDataList from './load-data-list';
-import data from '../../config/data.config';
+import data from '../../config/test-data.config';
 
 describe('Load data component', () => {
 
   test('Verify loadData list view renders correctly with no data', () => {
     const { getByText } = render(<LoadDataList {...data.loadData} data={[]} />)
     const tableColumns = within(getByText('Name').closest('tr'));
-    
+
     expect(getByText('Add New')).toBeInTheDocument();
     expect(tableColumns.getByText('Name')).toBeInTheDocument();
     expect(tableColumns.getByText('Description')).toBeInTheDocument();
@@ -22,7 +22,7 @@ describe('Load data component', () => {
   test('Verify loadData list view renders correctly with data', () => {
     const { getByText, getAllByLabelText } = render(<LoadDataList {...data.loadData} />)
     const dataRow = within(getByText('load2').closest('tr'));
-    
+
     expect(dataRow.getByText(data.loadData.data[1].name)).toBeInTheDocument();
     expect(dataRow.getByText(data.loadData.data[1].description)).toBeInTheDocument();
     expect(dataRow.getByText(data.loadData.data[1].sourceFormat)).toBeInTheDocument();
