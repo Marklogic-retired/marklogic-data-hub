@@ -34,7 +34,7 @@ const EntityTiles = (props) => {
     const getMappingArtifacts = async () => {
         try {
             if (canReadMapping) {
-              let response = await axios.get('/api/artifacts/mapping');
+              let response = await axios.get('/api/steps/mapping');
 
               if (response.status === 200) {
                 let mapArtifacts = response.data;
@@ -46,13 +46,13 @@ const EntityTiles = (props) => {
               let message = error;
               console.error('Error while fetching the mappings!', message);
             } finally {
-              resetSessionTime();  
+              resetSessionTime();
           }
     }
 
     const getMappingArtifactByMapName = async (entityTypeId,mapName) => {
         try {
-            let response = await axios.get(`/api/artifacts/mapping/${mapName}`);
+            let response = await axios.get(`/api/steps/mapping/${mapName}`);
 
             if (response.status === 200) {
                 let mapArtifacts = response.data;
@@ -73,7 +73,7 @@ const EntityTiles = (props) => {
     const deleteMappingArtifact = async (mapName) => {
         try {
             setIsLoading(true);
-            let response = await axios.delete(`/api/artifacts/mapping/${mapName}`);
+            let response = await axios.delete(`/api/steps/mapping/${mapName}`);
 
             if (response.status === 200) {
               setIsLoading(false);
@@ -89,7 +89,7 @@ const EntityTiles = (props) => {
         try {
             setIsLoading(true);
 
-            let response = await axios.post(`/api/artifacts/mapping/${mapping.name}`, mapping);
+            let response = await axios.post(`/api/steps/mapping/${mapping.name}`, mapping);
             if (response.status === 200) {
               setIsLoading(false);
               return {code: response.status};
@@ -113,7 +113,7 @@ const EntityTiles = (props) => {
     const updateMappingArtifact = async (mapping) => {
         try {
 
-            let response = await axios.post(`/api/artifacts/mapping/${mapping.name}`, mapping);
+            let response = await axios.post(`/api/steps/mapping/${mapping.name}`, mapping);
             if (response.status === 200) {
               return true;
             } else {

@@ -21,7 +21,7 @@ describe('TilesView component', () => {
                     return Promise.resolve(data.flows);
                 case '/api/models/primaryEntityTypes':
                     return Promise.resolve(data.primaryEntityTypes);
-                case '/api/artifacts/mapping':
+                case '/api/steps/mapping':
                     return Promise.resolve(data.mappings);
                 case '/api/artifacts/matching':
                     return Promise.resolve(data.matchings);
@@ -35,7 +35,7 @@ describe('TilesView component', () => {
         jest.clearAllMocks();
         cleanup();
     })
-    
+
     test('Verify TilesView renders with the toolbar', async () => {
         const { getByLabelText } = render(<AuthoritiesContext.Provider value={mockDevRolesService}><TilesView/></AuthoritiesContext.Provider>);
 
@@ -49,8 +49,8 @@ describe('TilesView component', () => {
         expect(getByLabelText('tool-curate')).toHaveStyle('color: rgb(188, 129, 29);')
         expect(getByLabelText("tool-run")).toBeInTheDocument();
         expect(getByLabelText('tool-run')).toHaveStyle('color: rgb(6, 17, 120);')
-        expect(getByLabelText("tool-explore")).toBeInTheDocument();     
-        expect(getByLabelText('tool-explore')).toHaveStyle('color: rgb(0, 71, 79);')   
+        expect(getByLabelText("tool-explore")).toBeInTheDocument();
+        expect(getByLabelText('tool-explore')).toHaveStyle('color: rgb(0, 71, 79);')
     });
 
     test('Verify Curate tile displays from toolbar', async () => {
@@ -66,16 +66,16 @@ describe('TilesView component', () => {
                     return Promise.resolve(curateData.flows)
                 case '/api/models/primaryEntityTypes':
                     return Promise.resolve(curateData.primaryEntityTypes)
-                case '/api/artifacts/mapping':
+                case '/api/steps/mapping':
                     return Promise.resolve(curateData.mappings)
                 case '/api/artifacts/matching':
                     return Promise.resolve(curateData.matchings)
                 default:
                     return Promise.reject(new Error('not found'))
             }
-        }) 
+        })
         fireEvent.click(getByLabelText("tool-curate"));
-        
+
         // Curate tile shown with entityTypes after click
         expect(await(waitForElement(() => getByLabelText("icon-curate")))).toBeInTheDocument();
         expect(getByLabelText("title-curate")).toBeInTheDocument();
@@ -93,16 +93,16 @@ describe('TilesView component', () => {
             switch (url) {
                 case '/api/flows':
                     return Promise.resolve(curateData.flows)
-                case '/api/artifacts/loadData':
+                case '/api/steps/ingestion':
                     return Promise.resolve(curateData.loads)
-                case '/api/artifacts/mapping':
+                case '/api/steps/mapping':
                     return Promise.resolve(curateData.mappings)
                 default:
                     return Promise.reject(new Error('not found'))
             }
-        }) 
+        })
         fireEvent.click(getByLabelText("tool-run"));
-        
+
         // Run tile shown with entityTypes after click
         expect(await(waitForElement(() => getByLabelText("icon-run")))).toBeInTheDocument();
         expect(getByLabelText("title-run")).toBeInTheDocument();

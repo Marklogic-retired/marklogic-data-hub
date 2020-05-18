@@ -1,7 +1,0 @@
-{
-  "name": "testLoadData",
-  "inputFilePath": "input",
-  "sourceFormat": "xml",
-  "outputURIReplacement": ".*/input,''",
-  "targetFormat": "xml"
-}

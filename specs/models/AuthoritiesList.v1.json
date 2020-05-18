@@ -6,8 +6,8 @@
   },
   "enum": [
     "loginToHubCentral",
-    "writeLoadData",
-    "readLoadData",
+    "writeIngestion",
+    "readIngestion",
     "writeMapping",
     "readMapping",
     "writeFlow",
@@ -22,8 +22,8 @@
   "x-examples": {
     "hub-central-load-data-writer": [
       "loginToHubCentral",
-      "readLoadData",
-      "writeLoadData"
+      "readIngestion",
+      "writeIngestion"
     ]
   },
   "description": "List describing the autorites a given user has."

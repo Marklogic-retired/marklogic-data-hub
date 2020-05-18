@@ -9,11 +9,11 @@ function invokeService() {
 }
 
 function accurateLoadDataArtifactType() {
-  const loadDataTypeInfo = invokeService().filter((typeInfo) => typeInfo.type === 'loadData');
+  const ingestionTypeInfo = invokeService().filter((typeInfo) => typeInfo.type === 'ingestion');
   return [
-    test.assertEqual(1, loadDataTypeInfo.length, 'should only be one type for loadData'),
-    test.assertEqual('/loadData/', loadDataTypeInfo[0].directory),
-    test.assertEqual('.loadData.json', loadDataTypeInfo[0].fileExtension)
+    test.assertEqual(1, ingestionTypeInfo.length, 'should only be one type for ingestion'),
+    test.assertEqual('/steps/ingestion/', ingestionTypeInfo[0].directory),
+    test.assertEqual('.step.json', ingestionTypeInfo[0].fileExtension)
   ];
 }
 

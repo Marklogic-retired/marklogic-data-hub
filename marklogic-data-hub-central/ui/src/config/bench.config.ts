@@ -245,32 +245,14 @@ const flows = {
   "data": [{
     "name": "testFlow",
     "description": "",
-    "batchSize": 100,
-    "threadCount": 4,
-    "stopOnError": false,
-    "options": {},
-    "version": 0,
-    "steps": {
-      "1": {
-        "name": "failedIngest",
-        "description": "",
-        "options": {
-          "sourceQuery": null,
-          "collections": ["failedIngest"],
-          "loadData": {
-            "name": "failedIngest"
-          },
-          "outputFormat": "json",
-          "targetDatabase": "data-hub-STAGING"
-        },
-        "customHook": {},
-        "retryLimit": 0,
-        "batchSize": 0,
-        "threadCount": 0,
-        "stepDefinitionName": "default-ingestion",
-        "stepDefinitionType": "INGESTION"
-      }
-    }
+      "steps": [
+          {
+              "stepName": "failedIngest",
+              "stepDefinitionType": "INGESTION",
+              "stepNumber": "1",
+              "sourceFormat": "json"
+          }
+      ]
   }]
   ,
   "status" :200
@@ -280,28 +262,13 @@ const flowsWithMapping = {
   "data": [{
     "name": "Flow1",
     "description": "",
-    "batchSize": 100,
-    "threadCount": 4,
-    "stopOnError": false,
-    "options": {},
-    "version": 0,
-    "steps": {
-      "1": {
-        "name": "Mapping1",
-        "description": "",
-        "options": {
-          "mapping": {
-            "name": "Mapping1"
+      "steps": [
+          {
+              "stepName": "Mapping1",
+              "stepDefinitionType": "MAPPING",
+              "stepNumber": "1"
           }
-        },
-        "customHook": {},
-        "retryLimit": 0,
-        "batchSize": 0,
-        "threadCount": 0,
-        "stepDefinitionName": "entity-services-mapping",
-        "stepDefinitionType": "MAPPING"
-      }
-    }
+      ]
   }]
   ,
   "status" :200
@@ -311,7 +278,7 @@ const responseForMapping = {
   "data": {
     "jobId": "e4590649-8c4b-419c-b6a1-473069186592",
     "flow": "Flow1",
-  }, 
+  },
   "status": 200
 };
 
@@ -352,31 +319,14 @@ const flowsXML = {
   "data": [{
     "name": "testFlow",
     "description": "",
-    "batchSize": 100,
-    "threadCount": 4,
-    "stopOnError": false,
-    "options": {},
-    "version": 0,
-    "steps": {
-      "1": {
-        "name": "loadXML",
-        "description": "",
-        "options": {
-          "sourceQuery": null,
-          "collections": ["loadXML"],
-          "loadData": {
-            "name": "loadXML"
-          },
-          "targetDatabase": "data-hub-STAGING"
-        },
-        "customHook": {},
-        "retryLimit": 0,
-        "batchSize": 0,
-        "threadCount": 0,
-        "stepDefinitionName": "default-ingestion",
-        "stepDefinitionType": "INGESTION"
-      }
-    }
+      "steps": [
+          {
+              "stepName": "loadXML",
+              "stepDefinitionType": "INGESTION",
+              "stepNumber": "1",
+              "sourceFormat": "xml"
+          }
+      ]
   }]
   ,
   "status" :200

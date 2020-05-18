@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,12 +26,14 @@ public class MappingStepController extends BaseController {
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     @ApiOperation(value = "Get all mapping steps", response = MappingSteps.class)
+    @Secured("ROLE_readMapping")
     public ResponseEntity<JsonNode> getSteps() {
         return ResponseEntity.ok(ArtifactService.on(getHubClient().getStagingClient()).getList(STEP_DEFINITION_TYPE));
     }
 
     @RequestMapping(value = "/{stepName}", method = RequestMethod.GET)
     @ApiOperation(value = "Get a step", response = StepSchema.class)
+    @Secured("ROLE_readMapping")
     public ResponseEntity<JsonNode> getStep(@PathVariable String stepName) {
         return ResponseEntity.ok(newService().getStep(STEP_DEFINITION_TYPE, stepName));
     }
@@ -44,6 +47,7 @@ public class MappingStepController extends BaseController {
     }
 
     @RequestMapping(value = "/{stepName}/settings", method = RequestMethod.GET)
+    @Secured("ROLE_readMapping")
     public ResponseEntity<StepSettingsSchema> getSettings(@PathVariable String stepName) {
         return ResponseEntity.ok(StepUtil.settingsFromJson(newService().getStep(STEP_DEFINITION_TYPE, stepName)));
     }

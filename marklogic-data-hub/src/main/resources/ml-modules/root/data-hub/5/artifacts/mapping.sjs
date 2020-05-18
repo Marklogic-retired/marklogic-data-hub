@@ -21,8 +21,7 @@ const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
 const dataHub = DataHubSingleton.instance();
 const hubEs = require("/data-hub/5/impl/hub-es.sjs");
 
-
-const collections = ['http://marklogic.com/data-hub/mappings', 'http://marklogic.com/data-hub/steps', 'http://marklogic.com/data-hub/steps/mapping'];
+const collections = ['http://marklogic.com/data-hub/mappings', 'http://marklogic.com/data-hub/steps/mapping', 'http://marklogic.com/data-hub/steps'];
 const databases = [dataHub.config.STAGINGDATABASE, dataHub.config.FINALDATABASE];
 const permissions = [xdmp.permission(dataHub.consts.DATA_HUB_MAPPING_WRITE_ROLE, 'update'), xdmp.permission(dataHub.consts.DATA_HUB_MAPPING_READ_ROLE, 'read')];
 const requiredProperties = ['name', 'targetEntityType', 'selectedSource'];
@@ -33,10 +32,6 @@ function getNameProperty() {
 
 function getEntityNameProperty() {
     return 'targetEntityType';
-}
-
-function getSelectedSourceProperty() {
-    return 'selectedSource';
 }
 
 function getVersionProperty() {
@@ -55,12 +50,15 @@ function getPermissions() {
     return permissions;
 }
 
+function getFileExtension() {
+  return '.step.json';
+}
+
 function getDirectory() {
-  return "/mappings/";
+  return "/steps/mapping/";
 }
 
 function getArtifactNode(artifactName, artifactVersion) {
-    // Currently there is no versioning for loadData artifacts
     const results = cts.search(cts.andQuery([cts.collectionQuery(collections[0]), cts.jsonPropertyValueQuery('name', artifactName)]));
     return fn.head(results);
 }
@@ -83,38 +81,15 @@ function validateArtifact(artifact) {
   return artifact;
 }
 
-function getArtifactSettingNode(collectionName, artifactName, artifactVersion) {
-  // Currently there is no versioning for loadData artifacts
-  const results = cts.search(cts.andQuery([cts.collectionQuery(collectionName), cts.jsonPropertyValueQuery('artifactName', artifactName)]));
-  return fn.head(results);
-}
-
-function defaultArtifactSettings(artifactName, entityTypeId) {
-    const defaultCollections =  [artifactName];
-    if (entityTypeId) {
-        // look for Entity Service Title, if not found will use the ID
-        defaultCollections.push(hubEs.findEntityServiceTitle(entityTypeId) || entityTypeId);
-    }
-    return {
-        artifactName,
-        collections: defaultCollections,
-        additionalCollections: [],
-        sourceDatabase: dataHub.config.STAGINGDATABASE,
-        targetDatabase: dataHub.config.FINALDATABASE,
-        provenanceGranularityLevel: 'coarse',
-        permissions: 'data-hub-operator,read,data-hub-operator,update'
-    };
-}
-
 function defaultArtifact(artifactName, entityTypeId) {
-  // TODO Intentionally duplicated from defaultArtifactSettings, which will be removed once we know steps are working correctly
   const defaultCollections =  [artifactName];
   if (entityTypeId) {
     // look for Entity Service Title, if not found will use the ID
     defaultCollections.push(hubEs.findEntityServiceTitle(entityTypeId) || entityTypeId);
   }
   return {
-    collections: defaultCollections
+    collections: defaultCollections,
+    additionalCollections: []
   };
 }
 
@@ -127,6 +102,6 @@ module.exports = {
     getArtifactNode,
     getDirectory,
     validateArtifact,
-    defaultArtifactSettings,
-  defaultArtifact
+    defaultArtifact,
+  getFileExtension
 };

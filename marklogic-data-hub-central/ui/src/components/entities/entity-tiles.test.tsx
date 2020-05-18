@@ -18,7 +18,7 @@ describe("Entity Tiles component", () => {
           return Promise.resolve(data.flows);
         case '/api/models/primaryEntityTypes':
           return Promise.resolve(data.primaryEntityTypes);
-        case '/api/artifacts/mapping':
+        case '/api/steps/mapping':
           return Promise.resolve(data.mappings);
         case '/api/artifacts/matching':
           return Promise.resolve(data.matchings);

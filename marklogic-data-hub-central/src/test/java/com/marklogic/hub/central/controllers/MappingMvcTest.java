@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 public class MappingMvcTest  extends AbstractMvcTest {
-    private final static String PATH = "/api/artifacts/mapping";
+    private final static String PATH = "/api/steps/mapping";
 
     @Test
     void permittedReadUser() throws Exception {
