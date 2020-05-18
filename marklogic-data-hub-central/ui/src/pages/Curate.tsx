@@ -39,8 +39,8 @@ const Curate: React.FC = () => {
               setEntityModels({...models});
           }
         } catch (error) {
-            let message = error;
-            console.error('Error while fetching entities Info', message);
+            console.error('Error fetching entities', error);
+            handleError(error);
         } finally {
           resetSessionTime();
         }
