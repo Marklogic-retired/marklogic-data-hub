@@ -29,7 +29,6 @@ const dataHub = DataHubSingleton.instance();
 // define constants for caching expensive operations
 const cachedArtifacts = {};
 const registeredArtifactTypes = {
-    loadData: LoadData,
   ingestion: LoadData,
     flow: Flow,
     stepDefinition: StepDef,
@@ -70,7 +69,7 @@ function getTypesInfo() {
 }
 
 const entityServiceDrivenArtifactTypes = ['mapping', 'matching', 'merging', 'mastering'];
-const artifactsWithSettings = ['loadData'].concat(entityServiceDrivenArtifactTypes);
+const artifactsWithSettings = ['matching', 'merging', 'mastering'];
 
 function getArtifacts(artifactType) {
     const queries = [];
@@ -197,9 +196,6 @@ function setArtifact(artifactType, artifactName, artifact) {
     if (fn.empty(existingArtifact) && artifactLibrary.defaultArtifact) {
         artifact = Object.assign({}, artifactLibrary.defaultArtifact(artifactName, artifact.targetEntityType), artifact);
     }
-    if (fn.exists(existingArtifact)) {
-        artifact = Object.assign({}, existingArtifact.toObject(), artifact);
-    }
     artifact.lastUpdated = fn.string(fn.currentDateTime());
     dataHub.hubUtils.replaceLangWithLanguage(artifact);
     for (const db of artifactDatabases) {
@@ -207,11 +203,11 @@ function setArtifact(artifactType, artifactName, artifact) {
     }
     cachedArtifacts[artifactKey] = artifact;
 
-    //Create settings artifact if they are not present, happens only when creating the artifact.
-    if (artifactsWithSettings.includes(artifactType) && fn.empty(getArtifactSettingsNode(artifactType,artifactName))) {
-        let settings = artifactLibrary.defaultArtifactSettings(artifactName, artifact.targetEntityType);
-        setArtifactSettings(artifactType, artifactName, settings);
-    }
+  //Create settings artifact if they are not present, happens only when creating the artifact.
+  if (artifactsWithSettings.includes(artifactType) && fn.empty(getArtifactSettingsNode(artifactType,artifactName))) {
+    let settings = artifactLibrary.defaultArtifactSettings(artifactName, artifact.targetEntityType);
+    setArtifactSettings(artifactType, artifactName, settings);
+  }
     return artifact;
 }
 
@@ -405,64 +401,11 @@ function getFullFlow(flowName, artifactVersion = 'latest') {
     if (steps[stepNumber].stepId) {
       steps[stepNumber] = convertStepReferenceToInlineStep(steps[stepNumber].stepId);
     }
-    else {
-      let stepValue = steps[stepNumber];
-      let artifactInStepType = stepValue['stepDefinitionType'].toLowerCase() === "ingestion" ? "loadData" : stepValue['stepDefinitionType'].toLowerCase();
-      if(stepValue.options[artifactInStepType]){
-        let artifactInStep =  stepValue.options[artifactInStepType].name;
-        try {
-          let settingsNode = getArtifactSettings(artifactInStepType, artifactInStep)
-          delete settingsNode["artifactName"];
-          settingsNode = clean(settingsNode);
-          let artifactNode = getArtifact(artifactInStepType, artifactInStep);
-          stepValue = addToStep(artifactInStepType,stepValue, artifactNode, settingsNode);
-          stepValue = addToStepOptions(artifactInStepType, stepValue, artifactNode, settingsNode);
-        }
-        catch (ex) {
-          if(artifactInStepType == 'mapping') {
-            dataHub.debug.log({message: 'This flow ' + flowName + ' runs older version of  mapping: ' + artifactInStep , type: 'warning'})
-          }
-          else {
-            throw Error('Getting flow ' + flowName + ' failed: Unable to get settings for the artifact : ' +  artifactInStep);
-          }
-        }
-      }
-    }
   });
   return flow;
 }
 
-function addToStep(artifactInStepType, stepValue, artifactNode,  settingsNode){
-  if(artifactInStepType === 'loadData') {
-    stepValue.fileLocations = {};
-    stepValue.fileLocations.inputFilePath =   artifactNode["inputFilePath"];
-    stepValue.fileLocations.outputURIReplacement =   artifactNode["outputURIReplacement"];
-    stepValue.fileLocations.inputFileType =   artifactNode["sourceFormat"];
-    stepValue.fileLocations.separator =   artifactNode["separator"];
-  }
-  else {
-    stepValue.options["sourceQuery"] = artifactNode["sourceQuery"];
-  }
-  stepValue.customHook = settingsNode.customHook;
-  delete settingsNode.customHook;
-  return stepValue;
-}
-
-function addToStepOptions(artifactInStepType, stepValue, artifactNode,  settingsNode) {
-  if(artifactInStepType === 'loadData') {
-    stepValue.options["outputFormat"] = artifactNode["targetFormat"];
-  }
-  else {
-    stepValue.options["outputFormat"] = settingsNode["targetFormat"];
-    delete settingsNode['targetFormat'];
-  }
-  stepValue.options = Object.assign(stepValue.options, artifactNode, settingsNode);
-  stepValue.options.collections = stepValue.options.collections ? stepValue.options.collections : [];
-  stepValue.options.collections = stepValue.options.additionalCollections ? stepValue.options.collections.concat(stepValue.options.additionalCollections) : stepValue.options.collections
-  return stepValue;
-}
-
-function clean(obj) {
+function removeNullProperties(obj) {
   var propNames = Object.getOwnPropertyNames(obj);
   for (var i = 0; i < propNames.length; i++) {
     var propName = propNames[i];
@@ -481,7 +424,8 @@ function convertStepReferenceToInlineStep(stepId) {
   if (!stepDoc) {
     ds.throwServerError(`Could not find a step with ID ${stepId}, which was referenced in flow ${flowName}`);
   }
-  const referencedStep = stepDoc.toObject();
+
+  const referencedStep = removeNullProperties(stepDoc.toObject());
 
   const newFlowStep = {};
 

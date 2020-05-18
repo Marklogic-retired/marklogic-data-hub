@@ -4,17 +4,19 @@
   "stopOnError": "true",
   "steps": {
     "1": {
-      "stepDefinitionName": "default-ingestion",
       "name": "e2e-xml",
+      "stepDefinitionName": "default-ingestion",
       "stepDefinitionType": "INGESTION",
-      "customHook": {},
-      "retryLimit" : null,
-      "batchSize" : null,
-      "threadCount" : null,
+      "fileLocations": {
+        "inputFilePath": "input",
+        "inputFileType": "xml",
+        "outputURIReplacement": ".*/input,''"
+      },
       "options": {
-        "loadData": {
-          "name": "testLoadData"
-        }
+        "collections": ["xml-coll"],
+        "targetDatabase": "data-hub-STAGING",
+        "permissions": "data-hub-operator,read,data-hub-operator,update",
+        "outputFormat": "xml"
       }
     },
     "2": {

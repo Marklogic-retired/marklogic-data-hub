@@ -1128,8 +1128,6 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
             FileUtils.copyDirectory(getResourceFile("flow-runner-test/flows"), adminHubConfig.getFlowsDir().toFile());
             FileUtils.copyDirectory(getResourceFile("flow-runner-test/input"),
                 adminHubConfig.getHubProjectDir().resolve("input").toFile());
-            FileUtils.copyDirectory(getResourceFile("flow-runner-test/loadData"),
-                adminHubConfig.getHubProjectDir().resolve("loadData").toFile());
             FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/step-definitions/json-ingestion.step.json"),
                 adminHubConfig.getStepsDirByType(StepDefinition.StepDefinitionType.INGESTION).resolve("json-ingestion").toFile());
             FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/step-definitions/json-mapping.step.json"),
@@ -1169,26 +1167,6 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
         }
     }
 
-    protected void makeInputFilePathsAbsoluteInLoadDataArtifact(String loadDataArtifactName) {
-        final String loadDataArtifactFileName = loadDataArtifactName + ".loadData.json";
-        try {
-            Path projectDir = adminHubConfig.getHubProject().getProjectDir();
-            final File loadDataArtifactFile = projectDir.resolve("loadData").resolve(loadDataArtifactFileName).toFile();
-            JsonNode loadDataArtifact = objectMapper.readTree(loadDataArtifactFile);
-            makeInputFilePathsAbsoluteForLoadDataArtifact(loadDataArtifact, projectDir.toFile().getAbsolutePath());
-            objectMapper.writeValue(loadDataArtifactFile, loadDataArtifact);
-
-            JSONDocumentManager mgr = stagingClient.newJSONDocumentManager();
-            final String uri = "/loadData/" + loadDataArtifactFileName;
-            if (mgr.exists(uri) != null) {
-                DocumentMetadataHandle metadata = mgr.readMetadata(uri, new DocumentMetadataHandle());
-                mgr.write(uri, metadata, new JacksonHandle(loadDataArtifact));
-            }
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
     protected void makeInputFilePathsAbsoluteForFlow(JsonNode flow, String projectDir) {
         JsonNode steps = flow.get("steps");
         steps.fieldNames().forEachRemaining(name -> {
@@ -1196,9 +1174,6 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
             if (step.has("fileLocations")) {
                 ObjectNode fileLocations = (ObjectNode) step.get("fileLocations");
                 makeInputFilePathsAbsolute(fileLocations, projectDir);
-            } else if (step.has("options") && step.get("options").has("loadData")) {
-                String loadDataArtifactName = step.get("options").get("loadData").get("name").asText();
-                makeInputFilePathsAbsoluteInLoadDataArtifact(loadDataArtifactName);
             }
         });
     }

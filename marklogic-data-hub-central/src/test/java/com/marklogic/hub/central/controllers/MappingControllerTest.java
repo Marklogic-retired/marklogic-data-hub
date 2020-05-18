@@ -21,46 +21,6 @@ public class MappingControllerTest extends AbstractHubCentralTest {
     @Autowired
     MappingController controller;
 
-    static final String MAPPING_CONFIG_1 = "{\n" +
-        "  \"name\": \"TestCustomerMapping\",\n" +
-        "  \"targetEntityType\": \"http://example.org/Customer-0.0.1/Customer\",\n" +
-        "  \"description\": \"TestCustomerMapping does ...\",\n" +
-        "  \"selectedSource\":\"query\",\n" +
-        "  \"sourceQuery\": \"cts.CollectionQuery('RAW-CUSTOMER')\",\n" +
-        "  \"collections\": []\n" +
-        "}";
-
-    static final String MAPPING_CONFIG_2 = "{\n" +
-        "  \"name\": \"TestOrderMapping1\",\n" +
-        "  \"targetEntityType\": \"http://marklogic.com/example/Order-0.0.1/Order\",\n" +
-        "  \"description\": \"TestOrderMapping1 does ...\",\n" +
-        "  \"selectedSource\": \"collection\",\n" +
-        "  \"sourceQuery\": \"\",\n" +
-        "  \"collections\": [\"RAW-ORDER\"]\n" +
-        "}";
-
-    static final String MAPPING_CONFIG_3 = "{\n" +
-        "  \"name\" : \"TestOrderMapping2\",\n" +
-        "  \"targetEntityType\" : \"http://marklogic.com/example/Order-0.0.1/Order\",\n" +
-        "  \"description\" : \"TestOrderMapping2 does ...\",\n" +
-        "  \"selectedSource\": \"query\",\n" +
-        "  \"sourceQuery\": \"cts.CollectionQuery('RAW-ORDER')\",\n" +
-        "  \"collections\": []\n" +
-        "}";
-
-    static final String MAPPING_SETTINGS = "{\n"
-        + "    \"artifactName\" : \"TestCustomerMapping\",\n"
-        + "    \"additionalCollections\" : [ \"Collection1\", \"Collection2\" ],\n"
-        + "    \"targetDatabase\" : \"data-hub-STAGING\",\n"
-        + "    \"permissions\" : \"data-hub-load-data-reader,read,data-hub-load-data-writer,update\",\n"
-        + "     \"provenanceGranularity\": \"coarse-grained\",\n"
-        + "    \"customHook\" : {\n"
-        + "          \"module\" : \"\",\n"
-        + "          \"parameters\" : \"\",\n"
-        + "          \"user\" : \"\",\n"
-        + "          \"runBefore\" : false\n"
-        + "    }}";
-
     static final String VALID_MAPPING = "{\n" +
         "    \"targetEntityType\": \"http://marklogic.com/data-hub/example/Customer-0.0.1/Customer\",\n" +
         "    \"properties\": {\n" +
@@ -108,86 +68,6 @@ public class MappingControllerTest extends AbstractHubCentralTest {
         "        \"attachments\": null\n" +
         "    }\n" +
         "}";
-
-    @Test
-    @WithMockUser(roles = "readMapping")
-    void testMappingConfigs() {
-        installReferenceModelProject();
-
-        controller.updateMapping(readJsonObject(MAPPING_CONFIG_1), "TestCustomerMapping");
-        controller.updateMapping(readJsonObject(MAPPING_CONFIG_2), "TestOrderMapping1");
-        controller.updateMapping(readJsonObject(MAPPING_CONFIG_3), "TestOrderMapping2");
-
-        ArrayNode configsGroupbyEntity = controller.getMappings().getBody();
-
-        assertEquals(2, configsGroupbyEntity.size(), "Should have two entries - one for Customer, one for Order.");
-
-        configsGroupbyEntity.forEach(e -> {
-            if ("Order".equals(e.get("entityType").asText())) {
-                verifyOrderMappings(e);
-            } else {
-                verifyCustomerMappings(e);
-            }
-        });
-    }
-
-    private void verifyOrderMappings(JsonNode node) {
-        assertEquals("Order", node.get("entityType").asText());
-        assertEquals("http://marklogic.com/example/Order-0.0.1/Order", node.get("entityTypeId").asText());
-        assertEquals(2, node.get("artifacts").size());
-        node.get("artifacts").forEach(mapping -> {
-            if ("TestOrderMapping1".equals(mapping.get("name").asText())) {
-                assertEquals("http://marklogic.com/example/Order-0.0.1/Order", mapping.get("targetEntityType").asText());
-            } else {
-                assertEquals("TestOrderMapping2", mapping.get("name").asText());
-                assertEquals("http://marklogic.com/example/Order-0.0.1/Order", mapping.get("targetEntityType").asText());
-            }
-        });
-    }
-
-    private void verifyCustomerMappings(JsonNode node) {
-        assertEquals("Customer", node.get("entityType").asText());
-        assertEquals("http://example.org/Customer-0.0.1/Customer", node.get("entityTypeId").asText());
-        assertEquals(2, node.get("artifacts").size());
-        node.get("artifacts").forEach(mapping -> {
-            if ("SimpleCustomerMapping".equals(mapping.get("name").asText())) {
-                assertEquals("http://example.org/Customer-0.0.1/Customer", mapping.get("targetEntityType").asText());
-            } else {
-                assertEquals("TestCustomerMapping", mapping.get("name").asText());
-                assertEquals("http://example.org/Customer-0.0.1/Customer", mapping.get("targetEntityType").asText());
-            }
-        });
-    }
-
-    @Test
-    @WithMockUser(roles = "readMapping")
-    public void testMappingSettings() {
-        installReferenceModelProject();
-        controller.updateMapping(readJsonObject(MAPPING_CONFIG_1), "TestCustomerMapping");
-
-        JsonNode result = controller.getMappingSettings("TestCustomerMapping").getBody();
-        // Check for defaults
-        assertEquals("TestCustomerMapping", result.get("artifactName").asText());
-        assertEquals(2, result.get("collections").size());
-        assertEquals("TestCustomerMapping", result.get("collections").get(0).asText());
-        assertEquals("Customer", result.get("collections").get(1).asText());
-
-        ObjectNode settings = readJsonObject(MAPPING_SETTINGS);
-
-        controller.updateMappingSettings(settings, "TestCustomerMapping");
-
-        result = controller.getMappingSettings("TestCustomerMapping").getBody();
-        assertEquals("TestCustomerMapping", result.get("artifactName").asText());
-        assertEquals(2, result.get("additionalCollections").size());
-        assertEquals("Collection2", result.get("additionalCollections").get(1).asText());
-        assertEquals("data-hub-STAGING", result.get("targetDatabase").asText());
-        assertTrue(result.has("permissions"), "missing permissions");
-        assertTrue(result.has("customHook"), "missing customHook");
-
-        controller.deleteMapping("TestCustomerMapping");
-
-        assertThrows(FailedRequestException.class, () -> controller.getMapping("TestCustomerMapping"));
-    }
 
     @Test
     @WithMockUser(roles = "readMapping")

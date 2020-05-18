@@ -50,14 +50,15 @@ public class AllArtifactsProject extends TestObject {
     public void verifyZipEntries() {
         // Verify artifact files
         verifyEntryExists("/flows/testFlow.flow.json", "testFlow");
-        verifyEntryExists("/mappings/TestOrderMapping1.mapping.json", "TestOrderMapping1");
-        verifyEntryExists("/loadData/validArtifact.loadData.json", "validArtifact");
-        verifyEntryExists("/loadData/validArtifact.settings.json", "artifactName", "validArtifact");
+
+        // Temporarily ignoring these until DHFPROD-4952
+//        verifyEntryExists("/mappings/TestOrderMapping1.mapping.json", "TestOrderMapping1");
+//        verifyEntryExists("/loadData/validArtifact.loadData.json", "validArtifact");
+
         verifyEntryExists("/step-definitions/custom/testStep/testStep.step.json", "testStep");
         verifyEntryExists("/matching/TestOrderMatching1.settings.json", "artifactName", "TestOrderMatching1");
         verifyEntryExists("/mappings/OrderMappingJson/OrderMappingJson-1.mapping.json", "OrderMappingJson");
         assertEquals("Order", zipEntries.get("/entities/Order.entity.json").get("info").get("title").asText());
-        verifyEntryExists("/mappings/TestOrderMapping1.settings.json", "artifactName", "TestOrderMapping1");
         verifyEntryExists("/matching/TestOrderMatching1.matching.json", "TestOrderMatching1");
 
         // Verify PII stuff
@@ -82,12 +83,12 @@ public class AllArtifactsProject extends TestObject {
             hubClient.getDbName(DatabaseKind.FINAL));
         assertEquals(expectedPathIndex, dbProps.get("range-path-index").get(0).get("path-expression").asText());
 
-        assertEquals(19, zipEntries.size(), "Expecting 17 entries: " +
+        assertEquals(15, zipEntries.size(), "Expecting the following entries: " +
             "1 flow; " +
             "1 entity model; " +
-            "3 mapping docs (including 1 settings); " +
+            "1 mapping doc; " +
             "2 matching docs (including 1 settings); " +
-            "2 loadData docs (including 1 settings); " +
+//            "2 loadData docs (including 1 settings); " +
             "1 custom step definition; " +
             "2 protected path files (for PII); " +
             "1 query roleset file (for PII); " +

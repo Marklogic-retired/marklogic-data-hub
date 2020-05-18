@@ -11,8 +11,6 @@ const { Panel } = Collapse;
 
 interface Props {
     flows: any;
-    loads: any;
-    mappings: any;
     deleteFlow: any;
     createFlow: any;
     updateFlow: any;
@@ -26,11 +24,17 @@ interface Props {
 
 const StepDefinitionTypeTitles = {
     'INGESTION': 'Load',
+    'ingestion': 'Load',
     'MAPPING': 'Map',
+    'mapping': 'Map',
     'MASTERING': 'Master',
+    'mastering': 'Master',
     'MATCHING': 'Match',
+    'matching': 'Match',
     'MERGING': 'Merge',
-    'CUSTOM': 'Custom'
+    'merging': 'Merge',
+    'CUSTOM': 'Custom',
+    'custom': 'Custom'
 }
 
 const Flows: React.FC<Props> = (props) => {
@@ -42,18 +46,11 @@ const Flows: React.FC<Props> = (props) => {
     const [flowName, setFlowName] = useState('');
     const [stepName, setStepName] = useState('');
     const [stepType, setStepType] = useState('');
+    const [stepNumber, setStepNumber] = useState('');
 
     const OpenAddNewDialog = () => {
         setTitle('New Flow');
         setNewFlow(true);
-    }
-
-    const getSourceFormat = (id) => {
-        // TODO handle non-load steps after source format is added
-        let found = props.loads.find(load => {
-            return load.name === id;
-        });
-        return found ? found.sourceFormat : 'json';
     }
 
     //Custom CSS for source Format
@@ -85,11 +82,12 @@ const Flows: React.FC<Props> = (props) => {
         setFlowName(name);
     }
 
-    const handleStepDelete = (fName, sName, sType) => {
+    const handleStepDelete = (flowName, stepDetails) => {
         setStepDialogVisible(true);
-        setFlowName(fName);
-        setStepName(sName);
-        setStepType(sType);
+        setFlowName(flowName);
+        setStepName(stepDetails.stepName);
+        setStepType(stepDetails.stepDefinitionType);
+        setStepNumber(stepDetails.stepNumber);
     }
 
     const onOk = (name) => {
@@ -97,15 +95,15 @@ const Flows: React.FC<Props> = (props) => {
         setDialogVisible(false);
     }
 
-    const onStepOk = (fName, sName, sType) => {
-        props.deleteStep(fName, sName, sType)
+    const onStepOk = (flowName, stepNumber) => {
+        props.deleteStep(flowName, stepNumber)
         setStepDialogVisible(false);
     }
 
     const onCancel = () => {
         setDialogVisible(false);
         setStepDialogVisible(false);
-    }  
+    }
 
     const deleteConfirmation = (
         <Modal
@@ -127,7 +125,7 @@ const Flows: React.FC<Props> = (props) => {
             okText='Yes'
             okType='primary'
             cancelText='No'
-            onOk={() => onStepOk(flowName, stepName, stepType)}
+            onOk={() => onStepOk(flowName, stepNumber)}
             onCancel={() => onCancel()}
             width={350}
         >
@@ -140,25 +138,25 @@ const Flows: React.FC<Props> = (props) => {
             {props.canWriteFlow ?
                 <Tooltip title={'Delete Flow'} placement="bottom">
                     <i aria-label={'deleteFlow-' + i}>
-                        <FontAwesomeIcon 
-                            icon={faTrashAlt} 
+                        <FontAwesomeIcon
+                            icon={faTrashAlt}
                             onClick={event => {
                                 event.stopPropagation(); // Do not trigger collapse
                                 handleFlowDelete(name);
                             }}
-                            className={styles.deleteIcon} 
+                            className={styles.deleteIcon}
                             size="lg"/>
                     </i>
                 </Tooltip> :
                 <Tooltip title={'Delete'} placement="bottom">
                     <i aria-label={'deleteStep-' + i}>
-                        <FontAwesomeIcon 
-                            icon={faTrashAlt} 
-                            onClick={(event) => { 
-                                event.stopPropagation(); 
-                                event.preventDefault(); 
+                        <FontAwesomeIcon
+                            icon={faTrashAlt}
+                            onClick={(event) => {
+                                event.stopPropagation();
+                                event.preventDefault();
                             }}
-                            className={styles.disabledDeleteIcon} 
+                            className={styles.disabledDeleteIcon}
                             size="lg"/>
                     </i>
                 </Tooltip> }
@@ -178,7 +176,7 @@ const Flows: React.FC<Props> = (props) => {
         setTitle('Edit Flow');
         setFlowData(prevState => ({ ...prevState, ...props.flows[index]}));
         setNewFlow(true);
-    }  
+    }
 
     const StepDefToTitle = (stepDef) => {
         return (StepDefinitionTypeTitles[stepDef]) ? StepDefinitionTypeTitles[stepDef] : 'Unknown';
@@ -192,55 +190,53 @@ const Flows: React.FC<Props> = (props) => {
     let panels;
     if (props.flows) {
         panels = props.flows.map((flow, i) => {
-            let name = flow.name;
-            let indexes = Object.keys(flow.steps);
-            let cards = indexes.map((i) => {
-                let step = flow.steps[i];
-                // TODO Handle steps that don't have input formats
-                let stepFormat = (step.stepDefinitionType === 'INGESTION') ? getSourceFormat(step.name) : null;
+            let flowName = flow.name;
+            let cards = flow.steps.map(step => {
+                let sourceFormat = step.sourceFormat;
+                let stepNumber = step.stepNumber;
                 return (
                     <Card 
                         style={{ width: 300, marginRight: 20 }} 
                         title={StepDefToTitle(step.stepDefinitionType)} 
-                        key={i}
+                        key={stepNumber}
                         size="small"
                         extra={
                             <div className={styles.actions}>
-                                {props.hasOperatorRole ?            
-                                    <div 
-                                        className={styles.run} 
-                                        onClick={() => props.runStep(name, step.name + '-' + step.stepDefinitionType, step.name, StepDefToTitle(step.stepDefinitionType))}
-                                        aria-label={'runStep-' + i}
+                                {props.hasOperatorRole ?
+                                    <div
+                                        className={styles.run}
+                                        onClick={() => props.runStep(flowName, step)}
+                                        aria-label={'runStep-' + stepNumber}
                                     >
                                         <Icon type="play-circle" theme="filled" />
                                     </div>
                                      :
-                                    <div 
-                                        className={styles.disabledRun} 
+                                    <div
+                                        className={styles.disabledRun}
                                         onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}
-                                        aria-label={'runStepDisabled-' + i}
+                                        aria-label={'runStepDisabled-' + stepNumber}
                                     >
                                         <Icon type="play-circle" theme="filled" />
                                     </div>
                                 }
                                 {props.canWriteFlow ?
                                     <Tooltip title={'Delete Step'} placement="bottom">
-                                        <div className={styles.delete} aria-label={'deleteStep-' + i} onClick={() => handleStepDelete(flow.name, step.name, step.stepDefinitionType)}><Icon type="close" /></div>
+                                        <div className={styles.delete} aria-label={'deleteStep-' + stepNumber} onClick={() => handleStepDelete(flowName, step)}><Icon type="close" /></div>
                                     </Tooltip> :
                                     <Tooltip title={'Delete Step'} placement="bottom">
-                                        <div className={styles.disabledDelete} aria-label={'deleteStepDisabled-' + i} onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}><Icon type="close" /></div>
-                                    </Tooltip> 
+                                        <div className={styles.disabledDelete} aria-label={'deleteStepDisabled-' + stepNumber} onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}><Icon type="close" /></div>
+                                    </Tooltip>
                                 }
                             </div>
                         }
                     >
                         <div className={styles.cardContent}>
-                            { stepFormat ?
-                                <div className={styles.format} style={sourceFormatStyle(stepFormat)}>{stepFormat.toUpperCase()}</div>
+                            { sourceFormat ?
+                                <div className={styles.format} style={sourceFormatStyle(sourceFormat)}>{sourceFormat.toUpperCase()}</div>
                                 : null }
-                            <div className={styles.name}>{step.name}</div>
+                            <div className={styles.name}>{step.stepName}</div>
                         </div>
-                        <div className={styles.running} style={{display: isRunning(name, step.name + '-' + step.stepDefinitionType)  ? 'block' : 'none'}}>
+                        <div className={styles.running} style={{display: isRunning(flowName, stepNumber)  ? 'block' : 'none'}}>
                             <div><Spin /></div>
                             <div className={styles.runningLabel}>Running...</div>
                         </div>
@@ -248,7 +244,7 @@ const Flows: React.FC<Props> = (props) => {
                 )
             });
             return (
-                <Panel header={flowHeader(flow.name, i)} key={i} extra={deleteIcon(name, i)}>
+                <Panel header={flowHeader(flowName, i)} key={i} extra={deleteIcon(flowName, i)}>
                     <div className={styles.panelContent}>
                         {cards}
                     </div>
@@ -262,21 +258,21 @@ const Flows: React.FC<Props> = (props) => {
         {props.canReadFlow || props.canWriteFlow ?
             <>
                 <div className={styles.createContainer}>
-                    <MlButton 
+                    <MlButton
                         className={styles.createButton} size="default"
-                        type="primary" onClick={OpenAddNewDialog} 
+                        type="primary" onClick={OpenAddNewDialog}
                         disabled={!props.canWriteFlow}
                     >Create Flow</MlButton>
                 </div>
-                <Collapse 
+                <Collapse
                     className={styles.collapseFlows}
                 >
                     {panels}
                 </Collapse>
-                <NewFlowDialog 
-                    newFlow={newFlow} 
-                    title={title} 
-                    setNewFlow={setNewFlow} 
+                <NewFlowDialog
+                    newFlow={newFlow}
+                    title={title}
+                    setNewFlow={setNewFlow}
                     createFlow={props.createFlow}
                     updateFlow={props.updateFlow}
                     flowData={flowData}
@@ -285,7 +281,7 @@ const Flows: React.FC<Props> = (props) => {
                 {deleteConfirmation}
                 {deleteStepConfirmation}
             </> :
-            <div></div> 
+            <div></div>
         }
     </div>
    );

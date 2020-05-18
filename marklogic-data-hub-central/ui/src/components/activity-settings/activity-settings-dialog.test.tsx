@@ -27,7 +27,7 @@ describe('Update data load settings component', () => {
     expect(getByPlaceholderText('Please enter target permissions')).toHaveValue('data-hub-operator,read,data-hub-operator,update');
     expect(getByText('Provenance Granularity:')).toBeInTheDocument();
     expect(getByText('coarse')).toBeInTheDocument();
-    expect(getByText('Custom Hook')).toBeInTheDocument();    
+    expect(getByText('Custom Hook')).toBeInTheDocument();
     fireEvent.click(getByText('Custom Hook'));
     expect(getByPlaceholderText('Please enter module')).toBeInTheDocument();
     expect(getByPlaceholderText('Please enter parameters')).toHaveValue('{}');
@@ -37,7 +37,7 @@ describe('Update data load settings component', () => {
   });
 
   test('Verify settings dialog renders for Load Data', () => {
-    const { queryByText, getByText, getByPlaceholderText, getByRole } = render(<ActivitySettingsDialog {...data.activitySettings} activityType={'loadData'} />);
+    const { queryByText, getByText, getByPlaceholderText, getByRole } = render(<ActivitySettingsDialog {...data.activitySettings} activityType={'ingestion'} />);
     expect(getByText('Activity Settings')).toBeInTheDocument();
     expect(queryByText('Source Database:')).not.toBeInTheDocument();
     expect(getByText('Target Database:')).toBeInTheDocument();
@@ -47,7 +47,7 @@ describe('Update data load settings component', () => {
     expect(getByPlaceholderText('Please enter target permissions')).toHaveValue('data-hub-operator,read,data-hub-operator,update');
     expect(getByText('Provenance Granularity:')).toBeInTheDocument();
     expect(getByText('coarse')).toBeInTheDocument();
-    expect(getByText('Custom Hook')).toBeInTheDocument();    
+    expect(getByText('Custom Hook')).toBeInTheDocument();
     fireEvent.click(getByText('Custom Hook'));
     expect(getByPlaceholderText('Please enter module')).toBeInTheDocument();
     expect(getByPlaceholderText('Please enter parameters')).toHaveValue('{}');
@@ -57,8 +57,8 @@ describe('Update data load settings component', () => {
   });
 
   test('Verify all form fields can be input/selected by user', () => {
-    const { getByText, getByTitle, container, getAllByTestId, getAllByRole, getByPlaceholderText, getByRole } = render(<ActivitySettingsDialog {...data.activitySettings} activityType={'loadData'} />);
-   
+    const { getByText, getByTitle, container, getAllByTestId, getAllByRole, getByPlaceholderText, getByRole } = render(<ActivitySettingsDialog {...data.activitySettings} activityType={'ingestion'} />);
+
     //Verifying database options select field
     fireEvent.click(getByText('data-hub-STAGING'));
     const dbOptions = getAllByTestId('dbOptions').map(li => li);
@@ -144,23 +144,23 @@ describe('Update data load settings component', () => {
 
   test('Verify post is called when Mapping configuration is saved', async () => {
     //Enhance this test once DHFPROD-4712 is fixed
-    axiosMock.post.mockImplementationOnce(jest.fn(() => Promise.resolve({ status: 200, data: {} })));
+    axiosMock.put.mockImplementationOnce(jest.fn(() => Promise.resolve({ status: 200, data: {} })));
     const { getByText } = render(<ActivitySettingsDialog {...data.activitySettings} />);
     expect(getByText('Save')).toBeInTheDocument();
     await wait(() => {
       fireEvent.click(getByText('Save'));
     });
-    expect(axiosMock.post).toHaveBeenCalledTimes(1);
+    expect(axiosMock.put).toHaveBeenCalledTimes(1);
   });
 
   test('Verify post is called when Load Data configuration is saved', async () => {
-    axiosMock.post.mockImplementationOnce(jest.fn(() => Promise.resolve({ status: 200, data: {} })));
-    const { getByText } = render(<ActivitySettingsDialog {...data.activitySettings} activityType={'loadData'} />);
+    axiosMock.put.mockImplementationOnce(jest.fn(() => Promise.resolve({ status: 200, data: {} })));
+    const { getByText } = render(<ActivitySettingsDialog {...data.activitySettings} activityType={'ingestion'} />);
     expect(getByText('Save')).toBeInTheDocument();
     await wait(() => {
       fireEvent.click(getByText('Save'));
     });
-    expect(axiosMock.post).toHaveBeenCalledTimes(1);
+    expect(axiosMock.put).toHaveBeenCalledTimes(1);
   });
 
   test('Verify discard dialog is not opened when Cancel is clicked with no changes to the Mapping settings', () => {
@@ -171,7 +171,7 @@ describe('Update data load settings component', () => {
   });
 
   test('Verify discard dialog is not opened when Cancel is clicked with no changes to the Load Data settings', () => {
-    const { getByText, queryByText } = render(<ActivitySettingsDialog {...data.activitySettings} activityType={'loadData'} />);
+    const { getByText, queryByText } = render(<ActivitySettingsDialog {...data.activitySettings} activityType={'ingestion'} />);
     expect(getByText('Activity Settings')).toBeInTheDocument();
     fireEvent.click(getByText('Cancel'));
     expect(queryByText('Discard changes?')).not.toBeInTheDocument();

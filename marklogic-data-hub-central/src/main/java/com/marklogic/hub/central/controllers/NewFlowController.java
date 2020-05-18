@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-@RequestMapping("/api/newFlows")
+@RequestMapping("/api/flows")
 public class NewFlowController extends BaseController {
 
     @RequestMapping(method = RequestMethod.GET)

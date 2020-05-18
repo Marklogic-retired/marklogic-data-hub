@@ -20,7 +20,7 @@ const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
 // define constants for caching expensive operations
 const dataHub = DataHubSingleton.instance();
 
-const collections = ['http://marklogic.com/data-hub/load-data-artifact', 'http://marklogic.com/data-hub/steps', 'http://marklogic.com/data-hub/steps/ingestion'];
+const collections = ['http://marklogic.com/data-hub/steps/ingestion', 'http://marklogic.com/data-hub/steps'];
 const databases = [dataHub.config.STAGINGDATABASE, dataHub.config.FINALDATABASE];
 const permissions = [xdmp.permission(dataHub.consts.DATA_HUB_LOAD_DATA_WRITE_ROLE, 'update'), xdmp.permission(dataHub.consts.DATA_HUB_LOAD_DATA_READ_ROLE, 'read')];
 const requiredProperties = ['name', 'sourceFormat', 'targetFormat'];
@@ -59,17 +59,6 @@ function validateArtifact(artifact) {
     return artifact;
 }
 
-function defaultArtifactSettings(artifactName) {
-    return {
-        artifactName,
-        collections: [artifactName],
-        additionalCollections: [],
-        targetDatabase: dataHub.config.STAGINGDATABASE,
-        provenanceGranularityLevel: 'coarse',
-        permissions: 'data-hub-operator,read,data-hub-operator,update'
-    };
-}
-
 function defaultArtifact(artifactName) {
   return {
     headers: {
@@ -81,6 +70,14 @@ function defaultArtifact(artifactName) {
   };
 }
 
+function getFileExtension() {
+  return '.step.json';
+}
+
+function getDirectory() {
+  return "/steps/ingestion/";
+}
+
 module.exports = {
   getNameProperty,
   getVersionProperty,
@@ -89,6 +86,7 @@ module.exports = {
   getPermissions,
   getArtifactNode,
   validateArtifact,
-  defaultArtifactSettings,
-  defaultArtifact
+  defaultArtifact,
+  getFileExtension,
+  getDirectory
 };

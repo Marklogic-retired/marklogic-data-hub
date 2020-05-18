@@ -39,8 +39,7 @@ expectedStep.permissions = "data-hub-operator,read,data-hub-operator,update";
 hubJsTest.verifyJson(expectedStep, serviceResponse, assertions);
 hubJsTest.verifyJson(expectedStep, stepService.getStep(stepDefinitionType, stepName), assertions);
 
-// Can't yet put mappings under /steps/mapping without breaking the existing mapping endpoints
-const expectedUri = "/mappings/myMapper.mapping.json";
+const expectedUri = "/steps/mapping/myMapper.step.json";
 assertions = assertions
   .concat(hubTest.assertInCollections(expectedUri, ["http://marklogic.com/data-hub/mappings", "http://marklogic.com/data-hub/steps", "http://marklogic.com/data-hub/steps/mapping"]))
   .concat(hubTest.assertHasPermissions(expectedUri, "data-hub-mapping-reader,read,data-hub-mapping-writer,update"));

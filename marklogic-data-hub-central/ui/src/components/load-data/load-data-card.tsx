@@ -27,7 +27,7 @@ interface Props {
 }
 
 const LoadDataCard: React.FC<Props> = (props) => {
-    const activityType = 'loadData';
+    const activityType = 'ingestion';
     const authorityService = useContext(AuthoritiesContext);
     const [newDataLoad, setNewDataLoad] = useState(false);
     const [title, setTitle] = useState('');

@@ -19,7 +19,7 @@ interface Props {
   }
 
 const LoadDataList: React.FC<Props> = (props) => {
-    const activityType = 'loadData';
+    const activityType = 'ingestion';
     const [newDataLoad, setNewDataLoad] = useState(false);
     const [title, setTitle] = useState('');
     const [dialogVisible, setDialogVisible] = useState(false);

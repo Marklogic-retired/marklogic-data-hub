@@ -15,7 +15,7 @@ function invokeGetService(artifactType, artifactName) {
 }
 
 function insertValidArtifact() {
-  const result = invokeSetService('loadData','validArtifact', { name: 'validArtifact', sourceFormat: 'xml', targetFormat: 'json'});
+  const result = invokeSetService('ingestion','validArtifact', { name: 'validArtifact', sourceFormat: 'xml', targetFormat: 'json'});
   return [
     test.assertEqual("validArtifact", result.name),
     test.assertEqual("xml", result.sourceFormat),
@@ -24,7 +24,7 @@ function insertValidArtifact() {
 }
 
 function getArtifact() {
-  const result = invokeGetService('loadData','validArtifact');
+  const result = invokeGetService('ingestion','validArtifact');
   return [
     test.assertEqual("validArtifact", result.name),
     test.assertEqual("xml", result.sourceFormat),
@@ -36,7 +36,7 @@ function getArtifact() {
 function deleteArtifact() {
   return fn.head(xdmp.invoke(
     "/data-hub/5/data-services/artifacts/deleteArtifact.sjs",
-    {artifactType: 'loadData', artifactName: 'validArtifact'}
+    {artifactType: 'ingestion', artifactName: 'validArtifact'}
   ));
 }
 

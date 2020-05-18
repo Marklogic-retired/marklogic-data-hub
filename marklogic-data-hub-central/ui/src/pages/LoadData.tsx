@@ -36,11 +36,11 @@ const LoadData: React.FC = () => {
   }, [isLoading]);
 
   //CREATE/POST load data Artifact
-  const createLoadDataArtifact = async (loadDataObj) => {
+  const createLoadDataArtifact = async (ingestionStep) => {
     try {
       setIsLoading(true);
 
-      let response = await axios.post(`/api/artifacts/loadData/${loadDataObj.name}`, loadDataObj);
+      let response = await axios.post(`/api/steps/ingestion/${ingestionStep.name}`, ingestionStep);
       if (response.status === 200) {
         setIsLoading(false);
       }
@@ -58,11 +58,11 @@ const LoadData: React.FC = () => {
   //GET all the data load artifacts
   const getLoadDataArtifacts = async () => {
     try {
-      let response = await axios.get('/api/artifacts/loadData');
-      
+      let response = await axios.get('/api/steps/ingestion');
+
       if (response.status === 200) {
         setLoadDataArtifacts([...response.data]);
-      } 
+      }
     } catch (error) {
         let message = error.response.data.message;
         console.error('Error while fetching load data artifacts', message);
@@ -74,11 +74,11 @@ const LoadData: React.FC = () => {
   const deleteLoadDataArtifact = async (loadDataName) => {
     try {
       setIsLoading(true);
-      let response = await axios.delete(`/api/artifacts/loadData/${loadDataName}`);
-      
+      let response = await axios.delete(`/api/steps/ingestion/${loadDataName}`);
+
       if (response.status === 200) {
         setIsLoading(false);
-      } 
+      }
     } catch (error) {
         let message = error.response.data.message;
         console.error('Error while deleting load data artifact.', message);
@@ -95,7 +95,7 @@ const LoadData: React.FC = () => {
         let response = await axios.get('/api/flows');
         if (response.status === 200) {
             setFlows(response.data);
-        } 
+        }
     } catch (error) {
         let message = error.response.data.message;
         console.error('Error getting flows', message);
@@ -108,12 +108,11 @@ const LoadData: React.FC = () => {
   const addStepToNew = async () => {
     try {
       setIsLoading(true);
-      //let response = await axios.post(`/api/artifacts/????/${flowName}`);
-      
+
       //if (response.status === 200) {
         console.log('POST addStepToNew');
         setIsLoading(false);
-      //} 
+      //}
     } catch (error) {
         let message = error.response.data.message;
         console.error('Error while adding load data step to new flow.', message);
@@ -127,14 +126,8 @@ const LoadData: React.FC = () => {
   // POST load data step to existing flow
   const addStepToFlow = async (loadArtifactName, flowName) => {
     let stepToAdd = {
-      "name": loadArtifactName,
-      "stepDefinitionName": "default-ingestion",
-      "stepDefinitionType": "INGESTION",
-      options: {
-        "loadData": { 
-          "name": loadArtifactName
-        }
-      }
+      "stepName": loadArtifactName,
+      "stepDefinitionType": "ingestion"
     };
     try {
       setIsLoading(true);
@@ -143,7 +136,7 @@ const LoadData: React.FC = () => {
       let response = await axios.post(url, body);
       if (response.status === 200) {
         setIsLoading(false);
-      } 
+      }
     } catch (error) {
         let message = error.response.data.message;
         console.error('Error while adding load data step to flow.', message);
@@ -158,7 +151,7 @@ const LoadData: React.FC = () => {
   }
 
   //Setting the value of switch view output
-  let output; 
+  let output;
 
   if (viewType === 'table') {
     output = <LoadDataList
@@ -171,11 +164,11 @@ const LoadData: React.FC = () => {
   }
   else {
     output = <div className={styles.cardView}>
-      <LoadDataCard 
-        data={loadDataArtifacts} 
+      <LoadDataCard
+        data={loadDataArtifacts}
         flows={flows}
-        deleteLoadDataArtifact={deleteLoadDataArtifact} 
-        createLoadDataArtifact={createLoadDataArtifact} 
+        deleteLoadDataArtifact={deleteLoadDataArtifact}
+        createLoadDataArtifact={createLoadDataArtifact}
         canReadWrite={canReadWrite}
         canReadOnly={canReadOnly}
         canWriteFlow={canWriteFlow}
