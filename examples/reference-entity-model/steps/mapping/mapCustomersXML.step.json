@@ -1,0 +1,13 @@
+{
+  "name": "mapCustomersXML",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "mapCustomersXML-mapping",
+  "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+  "description": "",
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['customerXML'])",
+  "namespaces": {
+    "entity-services": "http://marklogic.com/entity-services"
+  }
+}

@@ -4,6 +4,7 @@
   "version": 1,
   "targetEntityType": "Order",
   "sourceContext": "/",
+  "selectedSource": "collection",
   "properties": {
   }
 }

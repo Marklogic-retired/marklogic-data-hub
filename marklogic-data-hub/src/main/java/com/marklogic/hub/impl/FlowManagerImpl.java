@@ -145,20 +145,12 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
 
     @Override
     public Flow getFullFlow(String flowName) {
-        Flow flow;
         try {
             JsonNode jsonFlow = getFlowService().getFullFlow(flowName);
-            flow = new FlowImpl().deserialize(jsonFlow);
-        } catch (FailedRequestException ex) {
-            if (HttpStatus.valueOf(ex.getServerStatusCode()) == HttpStatus.NOT_FOUND) {
-                flow = null;
-            } else {
-                throw new RuntimeException("Unable to retrieve flow with name: " + flowName, ex);
-            }
+            return new FlowImpl().deserialize(jsonFlow);
         } catch (Exception ex) {
-            throw new RuntimeException("Unable to retrieve flow with name: " + flowName, ex);
+            throw new RuntimeException("Unable to retrieve flow with name: " + flowName + "; cause: " + ex.getMessage(), ex);
         }
-        return flow;
     }
 
     @Override

@@ -4,6 +4,12 @@
   "description": "",
   "selectedSource": "collection",
   "sourceQuery": "cts.collectionQuery(['default-ingestion'])",
+  "collections": ["default-mapping"],
+  "additionalCollections": ["mapInput"],
+  "sourceDatabase": "data-hub-STAGING",
+  "targetDatabase": "data-hub-STAGING",
+  "permissions": "data-hub-operator,read,data-hub-operator,update",
+  "provenanceGranularity": "coarse",
   "properties": {
     "name": {
       "sourcedFrom": "Region"

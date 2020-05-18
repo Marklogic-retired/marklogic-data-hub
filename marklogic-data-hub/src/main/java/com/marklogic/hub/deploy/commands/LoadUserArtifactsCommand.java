@@ -39,6 +39,7 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.artifact.ArtifactTypeInfo;
 import com.marklogic.hub.dataservices.ArtifactService;
 import com.marklogic.hub.dataservices.ModelsService;
+import com.marklogic.hub.dataservices.StepService;
 import com.marklogic.hub.impl.ArtifactManagerImpl;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
 import org.apache.commons.io.FilenameUtils;
@@ -46,6 +47,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileVisitResult;
@@ -114,13 +117,25 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         DatabaseClient stagingClient = hubConfig.newStagingClient(null);
 
         try {
+            // Models are loaded via their own DS endpoint
             loadModels(stagingClient);
+
+            // Supports pre-5.3 mappings
             loadMappingsViaRestApi(stagingClient);
 
-            ArtifactManager artifactManager = ArtifactManager.on(hubConfig.newHubClient());
             ArtifactService artifactService = ArtifactService.on(stagingClient);
+
+            // Then load steps
+            loadSteps(artifactService);
+
+            // TODO Can simplify this to just having a method for flows and a method for step definitions once
+            // we're no longer creating matching settings
+            ArtifactManager artifactManager = ArtifactManager.on(hubConfig.newHubClient());
             for (ArtifactTypeInfo typeInfo: artifactManager.getArtifactTypeInfoList()) {
                 final String artifactType = typeInfo.getType();
+                if ("ingestion".equals(artifactType) || "mapping".equals(artifactType)) {
+                    continue;
+                }
                 final Path artifactPath = hubConfig.getHubProject().getArtifactTypePath(typeInfo);
                 if (!artifactPath.toFile().exists()) {
                     logger.debug("Artifact directory '"+ artifactPath + "' does not exist, so will not load any artifacts from it." );
@@ -287,6 +302,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                 );
                 logger.info(String.format("Loaded artifact of type type '%s' file %s", artifactTypeInfo.getType(), r.getFilename()));
             }
+            logger.info(String.format("Loaded artifact of type type '%s' file %s", artifactTypeInfo.getType(), r.getFilename()));
         }
     }
 
@@ -336,6 +352,34 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                 writeSet.add(docId, meta, new JacksonHandle(json));
             }
             propertiesModuleManager.saveLastLoadedTimestamp(r.getFile(), new Date());
+        }
+    }
+
+    /**
+     * Loads steps, where the assumption is that the name of each directory under the steps path corresponds to a step
+     * definition type. And thus each .step.json file in that directory should be loaded as a step.
+     *
+     * @param artifactService
+     * @throws IOException
+     */
+    private void loadSteps(ArtifactService artifactService) throws IOException {
+        final Path stepsPath = hubConfig.getHubProject().getStepsPath();
+        if (stepsPath.toFile().exists()) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            for (File stepTypeDir : stepsPath.toFile().listFiles(file -> file.isDirectory())) {
+                final String stepType = stepTypeDir.getName();
+                for (File stepFile : stepTypeDir.listFiles((File d, String name) -> name.endsWith(".step.json"))) {
+                    JsonNode step = objectMapper.readTree(stepFile);
+                    if (!step.has("name")) {
+                        throw new RuntimeException("Unable to load step from file: " + stepFile + "; no 'name' property found");
+                    }
+                    final String stepName = step.get("name").asText();
+                    if (logger.isInfoEnabled()) {
+                        logger.info(format("Loading step of type '%s' with name '%s'", stepType, stepName));
+                    }
+                    artifactService.setArtifact(stepType, stepName, step);
+                }
+            }
         }
     }
 

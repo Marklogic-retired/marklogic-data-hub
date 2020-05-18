@@ -35,5 +35,6 @@ function throwServerError(message) {
 
 module.exports = {
   throwBadRequest,
-  throwForbidden
+  throwForbidden,
+  throwServerError
 };

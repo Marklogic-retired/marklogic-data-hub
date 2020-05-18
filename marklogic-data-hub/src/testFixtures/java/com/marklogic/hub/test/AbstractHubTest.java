@@ -191,11 +191,6 @@ public abstract class AbstractHubTest extends TestObject {
                 FileUtils.copyDirectory(flowsDir, hubProject.getFlowsDir().toFile());
             }
 
-            File loadDataDir = new File(testProjectDir, "loadData");
-            if (loadDataDir.exists()) {
-                FileUtils.copyDirectory(loadDataDir, new File(hubProject.getProjectDir().toFile(), "loadData"));
-            }
-
             File mappingsDir = new File(testProjectDir, "mappings");
             if (mappingsDir.exists()) {
                 FileUtils.copyDirectory(mappingsDir, hubProject.getHubMappingsDir().toFile());
@@ -209,6 +204,11 @@ public abstract class AbstractHubTest extends TestObject {
             File stepDefinitionsDir = new File(testProjectDir, "step-definitions");
             if (stepDefinitionsDir.exists()) {
                 FileUtils.copyDirectory(stepDefinitionsDir, hubProject.getStepDefinitionsDir().toFile());
+            }
+
+            File stepsDir = new File(testProjectDir, "steps");
+            if (stepsDir.exists()) {
+                FileUtils.copyDirectory(stepsDir, hubProject.getStepsPath().toFile());
             }
 
             File modulesDir = new File(testProjectDir, "modules");

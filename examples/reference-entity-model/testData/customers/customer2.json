@@ -1,0 +1,8 @@
+{
+  "id": 2,
+  "name": "John Smith",
+  "shippingStreet": "456 Main St",
+  "shippingCity": "Anytown",
+  "shippingState": "VA",
+  "shippingZip": "22222"
+}
