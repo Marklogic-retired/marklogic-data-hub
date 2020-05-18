@@ -114,10 +114,10 @@ const App: React.FC<Props> = ({history, location}) => {
         <PrivateRoute path="/bench" exact>
           <Bench/>
         </PrivateRoute>
-        <PrivateRoute path="/tiles" exact>
-          <TilesView/>
-        </PrivateRoute>
         <SearchProvider>
+          <PrivateRoute path="/tiles" exact>
+            <TilesView/>
+          </PrivateRoute>        
           <PrivateRoute path="/view" exact>
               <View/>
           </PrivateRoute>
