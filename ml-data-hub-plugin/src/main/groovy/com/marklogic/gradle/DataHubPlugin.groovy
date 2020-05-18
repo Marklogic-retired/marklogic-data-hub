@@ -96,6 +96,8 @@ class DataHubPlugin implements Plugin<Project> {
         project.task("hubVersion", group: deployGroup, type: HubVersionTask,
             description: "Prints the versions of Data Hub and MarkLogic associated with the value of mlHost, and also prints the version of " +
                 "Data Hub associated with this Gradle task")
+        project.task("hubMigrateFlows", group: deployGroup, type: FlowMigrationTask,
+            description: "Migrate flows and mappings created before version 5.3.0 into the new format required for usage within Hub Central")
 
         String scaffoldGroup = "MarkLogic Data Hub Scaffolding"
         project.task("hubInit", group: scaffoldGroup, type: InitProjectTask)

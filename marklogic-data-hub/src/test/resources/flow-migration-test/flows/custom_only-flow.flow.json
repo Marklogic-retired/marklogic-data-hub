@@ -1,0 +1,39 @@
+{
+  "name": "custom_only-flow",
+  "steps": {
+    "1": {
+      "name": "testStep",
+      "stepDefinitionName": "testStep",
+      "stepDefinitionType": "CUSTOM",
+      "options": {
+        "sourceQuery": "cts.collectionQuery('doesnt-matter')",
+        "sourceDatabase": "data-hub-FINAL",
+        "targetDatabase": "data-hub-FINAL"
+      }
+    },
+    "2": {
+      "name": "custom-ingest",
+      "description": "ingests json docs to data-hub-STAGING",
+      "stepDefinitionName": "custom-ingestion",
+      "stepDefinitionType": "INGESTION",
+      "options": {
+        "sourceQuery": null,
+        "collections": [
+          "custom-ingest-json"
+        ],
+        "permissions": "rest-reader,read,rest-writer,update",
+        "outputFormat": "json",
+        "targetDatabase": "data-hub-STAGING"
+      },
+      "customHook": {},
+      "retryLimit": 0,
+      "batchSize": 100,
+      "threadCount": 4,
+      "fileLocations": {
+        "inputFilePath": "mastering-input",
+        "inputFileType": "json",
+        "outputURIReplacement": ".*input*.,'/mastering-flow/json/'"
+      }
+    }
+  }
+}
