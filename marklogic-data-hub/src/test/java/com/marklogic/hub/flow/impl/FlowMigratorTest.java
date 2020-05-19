@@ -77,7 +77,9 @@ class FlowMigratorTest extends AbstractHubCoreTest {
         verifyOptions(mapStep2, mapper.valueToTree(ingMapMasterFlow.getStep("2").getOptions()));
 
         Assertions.assertEquals("collection", mapStep1.get("selectedSource").asText());
+        Assertions.assertEquals("mapping-step-json-mapping", mapStep1.get("stepId").asText());
         Assertions.assertEquals("collection", mapStep2.get("selectedSource").asText());
+        Assertions.assertEquals("mapXmlToXml-mapping", mapStep2.get("stepId").asText());
 
         Assertions.assertNull(mapStep1.get("mapping"));
         Assertions.assertNull(mapStep2.get("mapping"));
@@ -111,6 +113,9 @@ class FlowMigratorTest extends AbstractHubCoreTest {
             Assertions.assertEquals(".*input*.,'/mapping-flow/json/'", ingStep1.get("outputURIReplacement").asText());
             Assertions.assertEquals("mastering-input", ingStep2.get("inputFilePath").asText());
             Assertions.assertEquals(".*input*.,'/mastering-flow/json/'", ingStep2.get("outputURIReplacement").asText());
+
+            Assertions.assertEquals("ingestion_mapping-flow-ingest-step-json-ingestion", ingStep1.get("stepId").asText());
+            Assertions.assertEquals("ingest-step-json-ingestion", ingStep2.get("stepId").asText());
         }
         else{
             verifyOptions(ingStep1, mapper.valueToTree(ingMapMasterFlow.getStep("1").getOptions()));
@@ -120,9 +125,13 @@ class FlowMigratorTest extends AbstractHubCoreTest {
             Assertions.assertEquals(".*input*.,'/mapping-flow/json/'", ingStep2.get("outputURIReplacement").asText());
             Assertions.assertEquals("mastering-input", ingStep1.get("inputFilePath").asText());
             Assertions.assertEquals(".*input*.,'/mastering-flow/json/'", ingStep1.get("outputURIReplacement").asText());
+
+            Assertions.assertEquals("ingestion_mapping-flow-ingest-step-json-ingestion", ingStep2.get("stepId").asText());
+            Assertions.assertEquals("ingest-step-json-ingestion", ingStep1.get("stepId").asText());
         }
         verifyOptions(ingStep3, mapper.valueToTree(ingMapFlow.getStep("3").getOptions()));
 
+        Assertions.assertEquals("ingest-step-xml-ingestion", ingStep3.get("stepId").asText());
         Assertions.assertEquals("xml", ingStep3.get("sourceFormat").asText());
         Assertions.assertEquals("xml", ingStep3.get("targetFormat").asText());
         Assertions.assertEquals("input", ingStep3.get("inputFilePath").asText());
