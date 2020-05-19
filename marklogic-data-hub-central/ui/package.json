@@ -4,11 +4,11 @@
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^4.0.2",
-    "@fortawesome/fontawesome-common-types": "^0.2.26",
-    "@fortawesome/fontawesome-svg-core": "^1.2.25",
-    "@fortawesome/free-regular-svg-icons": "^5.12.0",
-    "@fortawesome/free-solid-svg-icons": "^5.11.2",
-    "@fortawesome/react-fontawesome": "^0.1.7",
+    "@fortawesome/fontawesome-svg-core": "^1.2.28",
+    "@fortawesome/free-regular-svg-icons": "^5.13.0",
+    "@fortawesome/free-solid-svg-icons": "^5.13.0",
+    "@fortawesome/react-fontawesome": "^0.1.9",
+    "@marklogic/design-system": "^0.2.4",
     "@types/enzyme": "^3.10.3",
     "@types/jest": "24.0.23",
     "@types/node": "12.12.11",
@@ -27,7 +27,6 @@
     "jest-junit": "^9.0.0",
     "less": "^3.10.3",
     "less-loader": "^5.0.0",
-    "marklogic-ui-library": "^0.2.1",
     "node-sass": "^4.13.1",
     "react": "^16.12.0",
     "react-app-rewired": "^2.1.5",
@@ -37,8 +36,8 @@
     "react-highlight-words": "^0.16.0",
     "react-html-parser": "^2.0.2",
     "react-json-view": "^1.19.1",
-    "react-resizable": "^1.10.1",
     "react-mosaic-component": "^4.0.0",
+    "react-resizable": "^1.10.1",
     "react-router-dom": "^5.1.2",
     "react-scripts": "^3.3.0",
     "react-split-pane": "^0.1.91",
@@ -70,7 +69,10 @@
     "reporters": [
       "default",
       "jest-junit"
-    ]
+    ],
+    "moduleNameMapper": {
+      "^lodash-es$": "lodash"
+    }
   },
   "jest-junit": {
     "outputName": "TEST-UI_Unit.xml"
@@ -100,6 +102,7 @@
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^10.0.0",
     "customize-cra": "^0.9.1",
-    "nock": "^12.0.1"
+    "nock": "^12.0.1",
+    "path": "^0.12.7"
   }
 }

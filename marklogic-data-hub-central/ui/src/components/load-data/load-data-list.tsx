@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
 import NewDataLoadDialog from './new-data-load-dialog/new-data-load-dialog';
-import { MlButton } from 'marklogic-ui-library';
+import { MLButton } from '@marklogic/design-system';
 import { convertDateFromISO } from '../../util/conversionFunctions';
 import ActivitySettingsDialog from "../activity-settings/activity-settings-dialog";
 import {AdvLoadTooltips} from "../../config/tooltips.config";
@@ -141,7 +141,7 @@ const LoadDataList: React.FC<Props> = (props) => {
     <div className={styles.loadDataList}>
         <div className={styles.addNewContainer}>
             {props.canReadWrite ? <div>
-                <MlButton type="primary" size="default" className={styles.addNewButton} onClick={OpenAddNewDialog}>Add New</MlButton>
+                <MLButton type="primary" size="default" className={styles.addNewButton} onClick={OpenAddNewDialog}>Add New</MLButton>
             </div> : ''}
         </div>
         <Table

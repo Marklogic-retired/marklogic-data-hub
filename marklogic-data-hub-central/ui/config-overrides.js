@@ -1,6 +1,12 @@
-const { override, fixBabelImports, addLessLoader } = require('customize-cra');
+const { override, fixBabelImports, addLessLoader, babelInclude } = require('customize-cra');
+const path = require('path')
+const themeVariables = require('@marklogic/design-system/src/theme-variables.json')
 
 module.exports = override(
+  babelInclude([
+    path.resolve(__dirname, 'src'),
+    /@marklogic\/design-system/
+  ]),
   fixBabelImports('import', {
     libraryName: 'antd',
     libraryDirectory: 'es',
@@ -8,17 +14,6 @@ module.exports = override(
   }),
  addLessLoader({
    javascriptEnabled: true,
-   modifyVars: { 
-    '@primary-color': '#44499C',
-    '@menu-item-color': '#A8A8A8',
-    '@menu-highlight-color': '#7F86B5',
-    '@background-color-light': '#ffffff',
-    '@card-actions-background': '#f7f9fa',
-    '@table-row-hover-bg': '#E9F7FE',
-    '@item-hover-bg': '#E9F7FE',
-    '@error-color' : '#B32424'
-    },
+   modifyVars: themeVariables
  }),
 );
-// Refer to theme vars below
-// https://github.com/ant-design/ant-design/blob/master/components/style/themes/default.less
