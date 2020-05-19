@@ -184,7 +184,7 @@ public class FlowMigrator {
                 if(mapping.getNamespaces() != null){
                     newStepArtifact.set("namespaces", mapper.valueToTree(mapping.getNamespaces()));
                 }
-                newStepArtifact.put("selectedSource", "collection");
+                newStepArtifact.put("selectedSource", "query");
             }
             catch (DataHubProjectException e){
                 logger.error("Mapping '" + mappingName + "' with version " + mappingVersion + " is not found. The mapping properties will" +
