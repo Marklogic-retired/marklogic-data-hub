@@ -118,10 +118,12 @@ public class FlowMigrator {
                             stepFileName = new StringBuilder(flow.getName()).append("-").append(stepFileName).toString();
                             stepFile = targetDir.resolve(stepFileName).toFile();
                             logger.info(msg + stepFile.toString()) ;
-
+                            stepId = String.join("-", flow.getName(), stepId);
                             //Update the pointer in the flow
-                            ((ObjectNode)newSteps.get(entry.getKey())).put("stepId", String.join("-", flow.getName(), stepId));
+                            ((ObjectNode)newSteps.get(entry.getKey())).put("stepId", stepId);
                         }
+                        //'stepId' should be included in every step
+                        newStepArtifact.put("stepId", stepId);
                         try{
                             writer.writeValue(stepFile, newStepArtifact);
                             logger.info("Step artifact " + stepFile.toString() + " successfully created.");
