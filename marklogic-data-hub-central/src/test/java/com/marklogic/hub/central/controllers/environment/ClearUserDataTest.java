@@ -4,10 +4,8 @@ import com.marklogic.hub.central.AbstractMvcTest;
 import com.marklogic.hub.deploy.commands.LoadHubArtifactsCommand;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.security.access.AccessDeniedException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 public class ClearUserDataTest extends AbstractMvcTest {
@@ -41,11 +39,7 @@ public class ClearUserDataTest extends AbstractMvcTest {
             return;
         }
         loginAsTestUserWithRoles("hub-central-user","data-hub-developer");
-
-        mockMvc.perform(post(PATH).session(mockHttpSession))
-            .andDo(result -> {
-                assertTrue(result.getResolvedException() instanceof AccessDeniedException);
-            });
+        verifyRequestIsForbidden(post(PATH));
     }
 }
 

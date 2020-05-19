@@ -35,6 +35,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
+import org.springframework.util.FileCopyUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -326,106 +327,22 @@ public class HubProjectImpl implements HubProject {
         Path userDatabaseFieldsDir = getUserConfigDir().resolve("database-fields");
         userDatabaseFieldsDir.toFile().mkdirs();
         writeResourceFile("ml-config/database-fields/final-database.xml", userDatabaseFieldsDir.resolve("final-database.xml"), overwriteUserConfigFiles);
-        // the following config has to do with ordering of initialization.
-        // users and roles must be present to install the hub.
-        // amps cannot be installed until after staging modules db exists.
-        Path hubSecurityDir = getHubSecurityDir();
-        Path userSecurityDir = getUserSecurityDir();
-        Path rolesDir = hubSecurityDir.resolve("roles");
-        Path usersDir = hubSecurityDir.resolve("users");
-        Path ampsDir = hubSecurityDir.resolve("amps");
-        Path privilegesDir = hubSecurityDir.resolve("privileges");
-
-        Path userRolesDir = userSecurityDir.resolve("roles");
-        Path userUsersDir = userSecurityDir.resolve("users");
-        Path userPrivilegesDir = userSecurityDir.resolve("privileges");
-
-        rolesDir.toFile().mkdirs();
-        usersDir.toFile().mkdirs();
-        privilegesDir.toFile().mkdirs();
-
-        userRolesDir.toFile().mkdirs();
-        userUsersDir.toFile().mkdirs();
-        userPrivilegesDir.toFile().mkdirs();
 
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-
-        // Ant-style path matching
-        Resource[] resources = new Resource[0];
-        InputStream is = null;
         try {
-            resources = resolver.getResources("classpath:hub-internal-config/security/amps/*.json");
-            for (Resource resource : resources) {
-                is = resource.getInputStream();
-                FileUtil.copy(is, ampsDir.resolve(resource.getFilename()).toFile());
-            }
+            writeResources(resolver, "classpath:hub-internal-config/security/amps/*.json", getHubSecurityDir().resolve("amps"));
+            writeResources(resolver, "classpath:hub-internal-config/security/privileges/*.json", getHubSecurityDir().resolve("privileges"));
+            writeResources(resolver, "classpath:hub-internal-config/security/roles/*.json", getHubSecurityDir().resolve("roles"));
+            writeResources(resolver, "classpath:hub-internal-config/security/users/*.json", getHubSecurityDir().resolve("users"));
+            writeResources(resolver, "classpath:hub-internal-config/triggers/*.json", getHubTriggersDir());
         } catch (IOException e) {
-            logger.error("Failed to load amp resource", e);
-        } finally {
-            IOUtils.closeQuietly(is);
+            throw new RuntimeException("Unable to write project resources to project filesystem; cause: " + e.getMessage(), e);
         }
 
-        //New 5.3.0 roles
-        writeRoleFile(rolesDir, "data-hub-common.json");
-        writeRoleFile(rolesDir, "data-hub-common-writer.json");
-        writeRoleFile(rolesDir, "data-hub-security-internal.json");
-        writeRoleFile(rolesDir, "data-hub-load-data-reader.json");
-        writeRoleFile(rolesDir, "data-hub-load-data-writer.json");
-        writeRoleFile(rolesDir, "data-hub-saved-query-reader.json");
-        writeRoleFile(rolesDir, "data-hub-saved-query-writer.json");
-        writeRoleFile(rolesDir, "hub-central-clear-user-data.json");
-        writeRoleFile(rolesDir, "hub-central-downloader.json");
-        writeRoleFile(rolesDir, "hub-central-entity-exporter.json");
-        writeRoleFile(rolesDir, "hub-central-mapping-reader.json");
-        writeRoleFile(rolesDir, "hub-central-user.json");
-
-
-        // New 5.2.0 roles
-        writeRoleFile(rolesDir, "data-hub-admin.json");
-        writeRoleFile(rolesDir, "data-hub-developer.json");
-        writeRoleFile(rolesDir, "data-hub-environment-manager.json");
-        writeRoleFile(rolesDir, "data-hub-job-internal.json");
-        writeRoleFile(rolesDir, "data-hub-job-reader.json");
-        writeRoleFile(rolesDir, "data-hub-monitor.json");
-        writeRoleFile(rolesDir, "data-hub-operator.json");
-        writeRoleFile(rolesDir, "data-hub-portal-security-admin.json");
-        writeRoleFile(rolesDir, "data-hub-security-admin.json");
-        writeRoleFile(rolesDir, "data-hub-flow-reader.json");
-        writeRoleFile(rolesDir, "data-hub-flow-writer.json");
-        writeRoleFile(rolesDir, "data-hub-mapping-reader.json");
-        writeRoleFile(rolesDir, "data-hub-mapping-writer.json");
-        writeRoleFile(rolesDir, "data-hub-match-merge-reader.json");
-        writeRoleFile(rolesDir, "data-hub-match-merge-writer.json");
-        writeRoleFile(rolesDir, "data-hub-step-definition-reader.json");
-        writeRoleFile(rolesDir, "data-hub-step-definition-writer.json");
-        writeRoleFile(rolesDir, "data-hub-entity-model-writer.json");
-        writeRoleFile(rolesDir, "data-hub-module-reader.json");
-        writeRoleFile(rolesDir, "data-hub-module-writer.json");
-
-
-        // New 5.1.0 roles
-        writeRoleFile(rolesDir, "data-hub-entity-model-reader.json");
-        writeRoleFile(rolesDir, "data-hub-explorer-architect.json");
-
-        // Legacy roles
-        writeRoleFile(rolesDir, "data-hub-admin-role.json");
-        writeRoleFile(rolesDir, "flow-developer-role.json");
-        writeRoleFile(rolesDir, "flow-operator-role.json");
-
-        writeResourceFile("hub-internal-config/security/users/flow-developer-user.json", usersDir.resolve("flow-developer-user.json"), true);
-        writeResourceFile("hub-internal-config/security/users/flow-operator-user.json", usersDir.resolve("flow-operator-user.json"), true);
-
-        // New 5.3.0 privileges
-        writeResourceFile("hub-internal-config/security/privileges/data-hub-download-configuration-files.json", privilegesDir.resolve("data-hub-download-configuration-files.json"), true);
-
-        // New 5.2.0 privileges
-        writeResourceFile("hub-internal-config/security/privileges/data-hub-create-custom-privilege.json", privilegesDir.resolve("data-hub-create-custom-privilege.json"), true);
-
-        writeResourceFile("hub-internal-config/security/privileges/dhf-internal-data-hub.json", privilegesDir.resolve("dhf-internal-data-hub.json"), true);
-        writeResourceFile("hub-internal-config/security/privileges/dhf-internal-entities.json", privilegesDir.resolve("dhf-internal-entities.json"), true);
-        writeResourceFile("hub-internal-config/security/privileges/dhf-internal-mappings.json", privilegesDir.resolve("dhf-internal-mappings.json"), true);
-        writeResourceFile("hub-internal-config/security/privileges/dhf-internal-trace-ui.json", privilegesDir.resolve("dhf-internal-trace-ui.json"), true);
-
+        Path userSecurityDir = getUserSecurityDir();
+        userSecurityDir.resolve("roles").toFile().mkdirs();
+        userSecurityDir.resolve("users").toFile().mkdirs();
+        userSecurityDir.resolve("privileges").toFile().mkdirs();
         getUserServersDir().toFile().mkdirs();
         getUserDatabaseDir().toFile().mkdirs();
 
@@ -438,20 +355,6 @@ public class HubProjectImpl implements HubProject {
 
         //create flow dir
         getFlowsDir().toFile().mkdirs();
-
-        //create hub triggers
-        Path hubTriggersDir = getHubTriggersDir();
-        hubTriggersDir.toFile().mkdirs();
-        writeResourceFile("hub-internal-config/triggers/ml-dh-entity-validate-create.json", hubTriggersDir.resolve("ml-dh-entity-validate-create.json"), true);
-        writeResourceFile("hub-internal-config/triggers/ml-dh-entity-validate-modify.json", hubTriggersDir.resolve("ml-dh-entity-validate-modify.json"), true);
-        writeResourceFile("hub-internal-config/triggers/ml-dh-entity-create.json", hubTriggersDir.resolve("ml-dh-entity-create.json"), true);
-        writeResourceFile("hub-internal-config/triggers/ml-dh-entity-modify.json", hubTriggersDir.resolve("ml-dh-entity-modify.json"), true);
-        writeResourceFile("hub-internal-config/triggers/ml-dh-entity-delete.json", hubTriggersDir.resolve("ml-dh-entity-delete.json"), true);
-
-        // triggers for JSON mapping conversion to Entity Services mapping XML
-        writeResourceFile("hub-internal-config/triggers/ml-dh-json-mapping-create.json", hubTriggersDir.resolve("ml-dh-json-mapping-create.json"), true);
-        writeResourceFile("hub-internal-config/triggers/ml-dh-json-mapping-modify.json", hubTriggersDir.resolve("ml-dh-json-mapping-modify.json"), true);
-        writeResourceFile("hub-internal-config/triggers/ml-dh-json-mapping-delete.json", hubTriggersDir.resolve("ml-dh-json-mapping-delete.json"), true);
 
         Path gradlew = projectDir.resolve("gradlew");
         writeResourceFile("scaffolding/gradlew", gradlew);
@@ -472,8 +375,11 @@ public class HubProjectImpl implements HubProject {
         writeResourceFile("scaffolding/gradle-local_properties", projectDir.resolve("gradle-local.properties"));
     }
 
-    private void writeRoleFile(Path rolesDir, String filename) {
-        writeResourceFile("hub-internal-config/security/roles/" + filename, rolesDir.resolve(filename), true);
+    private void writeResources(PathMatchingResourcePatternResolver resolver, String pattern, Path projectTargetPath) throws IOException {
+        projectTargetPath.toFile().mkdirs();
+        for (Resource resource : resolver.getResources(pattern)) {
+            FileCopyUtils.copy(resource.getInputStream(), new FileOutputStream(projectTargetPath.resolve(resource.getFilename()).toFile()));
+        }
     }
 
     private void makeExecutable(Path file) {
