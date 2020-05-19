@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrint;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
@@ -17,6 +18,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -86,24 +88,32 @@ public abstract class AbstractMvcTest extends AbstractHubCentralTest {
         return postJson(url, objectMapper.valueToTree(json).toString());
     }
 
-    protected ResultActions postJson(String url, String json) throws Exception {
+    protected MockHttpServletRequestBuilder buildJsonPost(String url, String json) {
         MockHttpServletRequestBuilder builder = post(url).contentType(MediaType.APPLICATION_JSON).content(json);
         if (mockHttpSession != null) {
             builder.session(mockHttpSession);
         }
-        return mockMvc.perform(builder);
+        return builder;
+    }
+
+    protected ResultActions postJson(String url, String json) throws Exception {
+        return mockMvc.perform(buildJsonPost(url, json));
     }
 
     protected ResultActions putJson(String url, Object json) throws Exception {
         return putJson(url, objectMapper.valueToTree(json).toString());
     }
 
-    protected ResultActions putJson(String url, String json) throws Exception {
+    protected MockHttpServletRequestBuilder buildJsonPut(String url, String json) {
         MockHttpServletRequestBuilder builder = put(url).contentType(MediaType.APPLICATION_JSON).content(json);
         if (mockHttpSession != null) {
             builder.session(mockHttpSession);
         }
-        return mockMvc.perform(builder);
+        return builder;
+    }
+
+    protected ResultActions putJson(String url, String json) throws Exception {
+        return mockMvc.perform(buildJsonPut(url, json));
     }
 
     protected ResultActions getJson(String url) throws Exception {
@@ -142,4 +152,12 @@ public abstract class AbstractMvcTest extends AbstractHubCentralTest {
         return objectMapper.readTree(result.getResponse().getContentAsString());
     }
 
+    protected void verifyRequestIsForbidden(MockHttpServletRequestBuilder builder) throws Exception {
+        mockMvc.perform(builder.session(mockHttpSession))
+            .andDo(result -> {
+                assertTrue(result.getResolvedException() instanceof AccessDeniedException,
+                    "Expected an AccessDeniedException but instead got: " + result.getResolvedException());
+            })
+            .andExpect(status().isForbidden());
+    }
 }

@@ -1,0 +1,15 @@
+{
+  "role-name": "hub-central-entity-model-writer",
+  "description": "Permits writing entity models in Hub Central",
+  "role": [
+    "hub-central-entity-model-reader",
+    "data-hub-entity-model-writer"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "data-hub:writeEntityModel",
+      "action": "http://marklogic.com/data-hub/privileges/write-entity-model",
+      "kind": "execute"
+    }
+  ]
+}

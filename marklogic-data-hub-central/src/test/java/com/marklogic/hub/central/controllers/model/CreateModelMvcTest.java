@@ -16,6 +16,7 @@ public class CreateModelMvcTest extends AbstractMvcTest {
      */
     @Test
     void missingName() throws Exception {
+        loginAsTestUserWithRoles("hub-central-entity-model-writer");
         postJson("/api/models", "{}")
             .andExpect(status().isBadRequest())
             .andDo(result -> {
