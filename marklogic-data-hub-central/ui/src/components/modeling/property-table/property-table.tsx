@@ -1,6 +1,6 @@
 import React from 'react';
 import { Table, Tooltip } from 'antd';
-import { MlButton } from 'marklogic-ui-library'
+import { MLButton } from '@marklogic/design-system';
 import { faCircle, faCheck, faTrashAlt, faPlusSquare } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from './property-table.module.scss';
@@ -186,7 +186,7 @@ const PropertyTable: React.FC<Props> = (props) => {
   return (
     <div>
       <div className={styles.addButtonContainer}>
-        <MlButton type="primary" disabled>Add Property</MlButton>
+        <MLButton type="primary" disabled>Add Property</MLButton>
       </div>
       <Table
         locale={{ emptyText: ' ' }}

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Tooltip } from 'antd';
 import { faUndo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { MlButton } from 'marklogic-ui-library';
+import { MLButton } from '@marklogic/design-system';
 
 import EntityTypeModal from '../components/modeling/entity-type-modal/entity-type-modal';
 import EntityTypeTable from '../components/modeling/entity-type-table/entity-type-table';
@@ -46,33 +46,33 @@ const Modeling: React.FC = () => {
         <div className={styles.buttonContainer}>
           { entityTypes.length == 0 ? 
             <Tooltip title={ModelingTooltips.addNewEntity}>
-              <MlButton 
+              <MLButton 
                 type="primary"
                 data-testid="add-btn" 
                 onClick={()=> toggleShowEntityModal(true)}
               >
-                Add</MlButton>
+                Add</MLButton>
             </Tooltip>
             :     
-            <MlButton 
+            <MLButton 
               type="primary"
               data-testid="add-btn" 
               onClick={()=> toggleShowEntityModal(true)}
             >
-              Add</MlButton>
+              Add</MLButton>
           }
-          <MlButton disabled>
+          <MLButton disabled>
             <span className={styles.publishIcon}></span>
             Save All
-          </MlButton>
-          <MlButton disabled>
+          </MLButton>
+          <MLButton disabled>
             <FontAwesomeIcon 
               className={styles.icon} 
               icon={faUndo} 
               size="sm"
             />
             Revert All
-          </MlButton>
+          </MLButton>
         </div>
       </div>
       <EntityTypeModal 
