@@ -3,6 +3,7 @@ package com.marklogic.hub.flow.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.*;
+import com.marklogic.hub.dataservices.FlowService;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.impl.FlowManagerImpl;
 import com.marklogic.hub.impl.MappingManagerImpl;
@@ -60,6 +61,18 @@ class FlowMigratorTest extends AbstractHubCoreTest {
         verifyFlows(hubProject);
         verifyIngestionSteps(hubProject, flowMap);
         verifyMappingSteps(hubProject, mappingMap, flowMap);
+
+        //Deploy artifacts to server
+        installUserArtifacts();
+        FlowService flowService = FlowService.on(hubConfig.newStagingClient(null));
+        JsonNode flows = flowService.getFlowsWithStepDetails();
+        //Confirms that endpoint returns 3 flows.
+        Assertions.assertEquals(3, flows.size());
+        for(JsonNode flow: flows){
+            String flowName = flow.get("name").asText();
+            //Checks the number of steps is same in the original flow and the flow returned by the ds endpoint
+            Assertions.assertEquals(flowMap.get(flowName).getSteps().size(), flow.get("steps").size());
+        }
     }
 
     private void verifyMappingSteps(HubProject hubProject, Map<String, Mapping> mappingMap, Map<String, Flow> flowMap) throws IOException {
@@ -76,9 +89,9 @@ class FlowMigratorTest extends AbstractHubCoreTest {
         verifyOptions(mapStep1, mapper.valueToTree(ingMapFlow.getStep("2").getOptions()));
         verifyOptions(mapStep2, mapper.valueToTree(ingMapMasterFlow.getStep("2").getOptions()));
 
-        Assertions.assertEquals("collection", mapStep1.get("selectedSource").asText());
+        Assertions.assertEquals("query", mapStep1.get("selectedSource").asText());
         Assertions.assertEquals("mapping-step-json-mapping", mapStep1.get("stepId").asText());
-        Assertions.assertEquals("collection", mapStep2.get("selectedSource").asText());
+        Assertions.assertEquals("query", mapStep2.get("selectedSource").asText());
         Assertions.assertEquals("mapXmlToXml-mapping", mapStep2.get("stepId").asText());
 
         Assertions.assertNull(mapStep1.get("mapping"));
