@@ -25,6 +25,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.HashMap;
 import java.util.List;
@@ -53,6 +54,7 @@ public class ModelControllerTest extends AbstractHubCentralTest {
     }
 
     @Test
+    @WithMockUser(roles = {"writeEntityModel"})
     void testModelsServicesEndpoints() {
         createModel();
         updateModelInfo();

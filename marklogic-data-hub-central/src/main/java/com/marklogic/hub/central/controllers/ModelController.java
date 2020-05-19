@@ -35,6 +35,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
@@ -59,6 +60,12 @@ public class ModelController extends BaseController {
         return ResponseEntity.ok(newModelManager().getLatestJobInfoForAllModels());
     }
 
+    /**
+     * We don't have an authority to secure this yet because this is used for the "Curate" tile, and there's no generic
+     * "canViewCurate" authority yet.
+     *
+     * @return
+     */
     @RequestMapping(value = "/primaryEntityTypes", method = RequestMethod.GET)
     @ResponseBody
     @ApiOperation(value = "Get primary entity types; does not include entity definitions that are considered 'structured' types", response = PrimaryEntityTypeList.class)
@@ -71,11 +78,13 @@ public class ModelController extends BaseController {
     @ResponseBody
     @ApiOperation(value = "Create a new model and return the persisted model descriptor", response = ModelDescriptor.class)
     @ApiImplicitParam(required = true, paramType = "body", dataType = "CreateModelInput")
+    @Secured("ROLE_writeEntityModel")
     public ResponseEntity<JsonNode> createModel(@RequestBody @ApiParam(hidden = true) JsonNode input) {
         return new ResponseEntity<>(newService().createModel(input), HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/{modelName}/info", method = RequestMethod.PUT)
+    @Secured("ROLE_writeEntityModel")
     public ResponseEntity<Void> updateModelInfo(@PathVariable String modelName, @RequestBody UpdateModelInfoInput input) {
         newService().updateModelInfo(modelName, input.description);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -83,6 +92,7 @@ public class ModelController extends BaseController {
 
     @RequestMapping(value = "/{modelName}/entityTypes", method = RequestMethod.PUT)
     @ApiImplicitParam(required = true, paramType = "body", dataType = "ModelDefinitions")
+    @Secured("ROLE_writeEntityModel")
     public ResponseEntity<Void> updateModelEntityTypes(@ApiParam(hidden = true) @RequestBody JsonNode entityTypes, @PathVariable String modelName) {
         // update the model
         newService().updateModelEntityTypes(modelName, entityTypes);
