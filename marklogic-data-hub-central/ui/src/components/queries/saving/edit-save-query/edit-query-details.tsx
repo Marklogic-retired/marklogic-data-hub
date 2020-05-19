@@ -8,7 +8,6 @@ import {SearchContext} from "../../../../util/search-context";
 interface Props {
     setEditQueryDetailVisibility: () => void;
     currentQuery: any;
-    setCurrentQuery: (query: any) => void;
     currentQueryName: string;
     setCurrentQueryName: (name: string) => void;
     currentQueryDescription: string;

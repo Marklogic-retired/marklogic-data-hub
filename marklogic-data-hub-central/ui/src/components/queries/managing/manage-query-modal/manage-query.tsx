@@ -28,7 +28,8 @@ const QueryModal = (props) => {
 
     const data = new Array();
     const {
-        applySaveQuery
+        applySaveQuery,
+        clearAllGreyFacets
     } = useContext(SearchContext);
 
     useEffect(() => {
@@ -87,6 +88,7 @@ const QueryModal = (props) => {
         deleteQuery(query)
         setDeleteModalVisibility(false);
         applySaveQuery('', query.savedQuery.query.entityTypeIds,{},'select a query');
+        clearAllGreyFacets();
         props.setCurrentQueryDescription('');
     }
 

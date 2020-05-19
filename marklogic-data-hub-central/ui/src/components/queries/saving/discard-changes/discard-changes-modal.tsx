@@ -1,11 +1,10 @@
 import React, { useContext } from 'react';
-import {Button, Modal} from 'antd';
+import { Modal} from 'antd';
 import { SearchContext } from "../../../../util/search-context";
-import { fetchQueryById } from "../../../../api/queries";
 import { UserContext } from "../../../../util/user-context";
+import axios from "axios";
 
 interface Props {
-    currentQueryName: string;
     setDiscardChangesModalVisibility: () => void;
     savedQueryList: any[];
     toggleApply: (clicked:boolean) => void;
@@ -45,7 +44,7 @@ const DiscardChangesModal: React.FC<Props> = (props) => {
         let entityTypeIds:string[] = [];
         let selectedFacets:{} = {};
         try {
-            const response = await fetchQueryById(key);
+            const response = await axios.get(`/api/entitySearch/savedQueries/query`, {params: {id: key.savedQuery.id}});
             if (response.data) {
                 searchText = response.data.savedQuery.query.searchText;
                 entityTypeIds = response.data.savedQuery.query.entityTypeIds;
@@ -75,7 +74,7 @@ const DiscardChangesModal: React.FC<Props> = (props) => {
             cancelText={'No'}
             cancelButtonProps={{id:'discard-no-button'}}
         >
-            <p>Are you sure you want to discard all changes made to <strong>{props.currentQueryName} ?</strong></p>
+            <p>Are you sure you want to discard all changes made to <strong>{searchOptions.selectedQuery} ?</strong></p>
         </Modal>
         </>
     )

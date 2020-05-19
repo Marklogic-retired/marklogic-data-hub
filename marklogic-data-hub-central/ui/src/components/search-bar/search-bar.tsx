@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Select, Input } from 'antd';
+import {Select, Input, Modal} from 'antd';
 import styles from './search-bar.module.scss';
 import { SearchContext } from '../../util/search-context';
 
@@ -10,16 +10,18 @@ interface Props {
 const SearchBar: React.FC<Props> = props => {
     const { Search } = Input;
     const { Option } = Select;
-    const { searchOptions, setQuery, setEntity } = useContext(SearchContext);
+    const { searchOptions, setQuery, setEntity, setNextEntity } = useContext(SearchContext);
     const [ searchString, setSearchString] = useState(searchOptions.query);
     const [dropDownValue, setDropdownValue] = useState('All Entities');
     const dropdownOptions = ['All Entities', ...props.entities];
+
 
     const options = dropdownOptions.map((entity, index) =>
       <Option value={entity} key={index} data-cy="entity-option">{entity}</Option>
     );
 
     const entityMenu = (
+        <div>
       <Select
         id="entity-select"
         data-testid="entity-select"
@@ -30,10 +32,11 @@ const SearchBar: React.FC<Props> = props => {
       >
         {options}
       </Select>
+      </div>
     );
 
     const handleOptionSelect = (option: any) => {
-      option === 'All Entities' ?  setEntity('') :  setEntity(option);
+        setNextEntity(option);
     }
 
     const handleSearch = (searchString: string) => {

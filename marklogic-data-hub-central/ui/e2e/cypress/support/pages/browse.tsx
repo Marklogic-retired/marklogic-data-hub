@@ -357,6 +357,34 @@ class BrowsePage {
     return cy.get('#selected-query-description').invoke('text');
   }
 
+  // Switching queries confirmation buttons
+
+  getQueryConfirmationCancelClick(){
+    return cy.get('#query-confirmation-cancel-button');
+  }
+
+  getQueryConfirmationNoClick(){
+    return cy.get('#query-confirmation-no-button');
+  }
+
+  getQueryConfirmationYesClick(){
+    return cy.get('#query-confirmation-yes-button');
+  }
+
+  // Switching entities confirmation buttons
+
+  getEntityConfirmationCancelClick(){
+    return cy.get('#entity-confirmation-cancel-button');
+  }
+
+  getEntityConfirmationNoClick(){
+    return cy.get('#entity-confirmation-no-button');
+  }
+
+  getEntityConfirmationYesClick(){
+    return cy.get('#entity-confirmation-yes-button');
+  }
+
 }
 
 export default BrowsePage;

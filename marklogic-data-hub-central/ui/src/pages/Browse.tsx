@@ -124,7 +124,7 @@ const Browse: React.FC<Props> = ({ location }) => {
     // if (entities.length && !user.error.type) {
     //   getSearchResults(entities);
     // }
-    if (entities.length) {
+    if (entities.length  && (!searchOptions.nextEntityType || searchOptions.nextEntityType === 'All Entities' || (searchOptions.entityTypeIds[0] == searchOptions.nextEntityType))) {
       getSearchResults(entities);
     }
 
