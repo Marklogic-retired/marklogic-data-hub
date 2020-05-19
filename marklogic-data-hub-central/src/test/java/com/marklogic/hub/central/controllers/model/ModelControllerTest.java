@@ -12,6 +12,7 @@ import com.marklogic.hub.test.Customer;
 import com.marklogic.hub.test.ReferenceModelProject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -23,6 +24,7 @@ public class ModelControllerTest extends AbstractHubCentralTest {
     ModelController controller;
 
     @Test
+    @WithMockUser(roles = {"readEntityModel", "writeEntityModel"})
     void testModelsServicesEndpoints() {
         createModel();
         updateModelInfo();

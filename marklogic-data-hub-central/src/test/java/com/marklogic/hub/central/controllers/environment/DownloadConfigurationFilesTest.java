@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.zip.ZipInputStream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class DownloadConfigurationFilesTest extends AbstractMvcTest {
 
@@ -24,9 +26,7 @@ public class DownloadConfigurationFilesTest extends AbstractMvcTest {
     void permittedUser() throws Exception {
         installReferenceModelProject();
 
-        setTestUserRoles("hub-central-downloader");
-
-        loginAsTestUser();
+        loginAsTestUserWithRoles("hub-central-downloader");
 
         mockMvc.perform(get(PATH).session(mockHttpSession))
             .andDo(result -> {
@@ -51,11 +51,7 @@ public class DownloadConfigurationFilesTest extends AbstractMvcTest {
 
     @Test
     void forbiddenUser() throws Exception {
-        setTestUserRoles("hub-central-user");
-        loginAsTestUser();
-        mockMvc.perform(get(PATH).session(mockHttpSession))
-            .andDo(result -> {
-                assertTrue(result.getResolvedException() instanceof AccessDeniedException);
-            });
+        loginAsTestUserWithRoles("hub-central-user");
+        verifyRequestIsForbidden(get(PATH));
     }
 }

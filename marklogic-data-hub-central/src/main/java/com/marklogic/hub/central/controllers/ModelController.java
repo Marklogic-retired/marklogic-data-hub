@@ -26,6 +26,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,6 +41,7 @@ public class ModelController extends BaseController {
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     @ApiOperation("This should no longer be used, use /primaryEntityTypes instead")
+    @Secured("ROLE_readEntityModel")
     public ResponseEntity<?> getModels() {
         return ResponseEntity.ok(newModelManager().getModels());
     }
@@ -47,6 +49,7 @@ public class ModelController extends BaseController {
     @RequestMapping(value = "/job-info", method = RequestMethod.GET)
     @ResponseBody
     @ApiOperation(value = "Get info about the latest job info for each model", response = LatestJobInfoList.class)
+    @Secured("ROLE_readEntityModel")
     public ResponseEntity<List<JsonNode>> getLatestJobInfoForAllModels() {
         return ResponseEntity.ok(newModelManager().getLatestJobInfoForAllModels());
     }
@@ -54,6 +57,7 @@ public class ModelController extends BaseController {
     @RequestMapping(value = "/primaryEntityTypes", method = RequestMethod.GET)
     @ResponseBody
     @ApiOperation(value = "Get primary entity types; does not include entity definitions that are considered 'structured' types", response = PrimaryEntityTypeList.class)
+    @Secured("ROLE_readEntityModel")
     public ResponseEntity<JsonNode> getPrimaryEntityTypes() {
         // This must use the final client instead of staging so that the entityInstanceCount is derived from final
         return ResponseEntity.ok(ModelsService.on(getHubClient().getFinalClient()).getPrimaryEntityTypes());
@@ -63,11 +67,13 @@ public class ModelController extends BaseController {
     @ResponseBody
     @ApiOperation(value = "Create a new model and return the persisted model descriptor", response = ModelDescriptor.class)
     @ApiImplicitParam(required = true, paramType = "body", dataType = "CreateModelInput")
+    @Secured("ROLE_writeEntityModel")
     public ResponseEntity<JsonNode> createModel(@RequestBody @ApiParam(hidden = true) JsonNode input) {
         return new ResponseEntity<>(newService().createModel(input), HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/{modelName}/info", method = RequestMethod.PUT)
+    @Secured("ROLE_writeEntityModel")
     public ResponseEntity<Void> updateModelInfo(@PathVariable String modelName, @RequestBody UpdateModelInfoInput input) {
         newService().updateModelInfo(modelName, input.description);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -75,11 +81,11 @@ public class ModelController extends BaseController {
 
     @RequestMapping(value = "/{modelName}/entityTypes", method = RequestMethod.PUT)
     @ApiImplicitParam(required = true, paramType = "body", dataType = "ModelDefinitions")
+    @Secured("ROLE_writeEntityModel")
     public ResponseEntity<Void> updateModelEntityTypes(@ApiParam(hidden = true) @RequestBody JsonNode entityTypes, @PathVariable String modelName) {
         newService().updateModelEntityTypes(modelName, entityTypes);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
 
     private ModelManager newModelManager() {
         return new ModelManager(getHubClient());

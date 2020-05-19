@@ -1,4 +1,11 @@
 {
   "role-name": "data-hub-entity-model-writer",
-  "description": "Permits updating entity model documents"
+  "description": "Permits updating entity model documents",
+  "privilege": [
+    {
+      "privilege-name": "data-hub:writeEntityModel",
+      "action": "http://marklogic.com/data-hub/privileges/write-entity-model",
+      "kind": "execute"
+    }
+  ]
 }
