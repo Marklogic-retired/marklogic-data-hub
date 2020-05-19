@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Tooltip } from 'antd';
+import {Button, Modal, Tooltip} from 'antd';
 import { UserContext } from '../../util/user-context';
 import { SearchContext } from '../../util/search-context';
 import SelectedFacets from '../../components/selected-facets/selected-facets';
@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPencilAlt, faSave, faCopy, faUndo } from '@fortawesome/free-solid-svg-icons'
 import SaveQueryModal from "../../components/queries/saving/save-query-modal/save-query-modal";
 import SaveQueriesDropdown from "../../components/queries/saving/save-queries-dropdown/save-queries-dropdown";
-import { fetchQueries, creatNewQuery, updateQuery } from '../../api/queries'
+import { fetchQueries, creatNewQuery, fetchQueryById } from '../../api/queries'
 import styles from './queries.module.scss';
 import QueryModal from '../../components/queries/managing/manage-query-modal/manage-query';
 import { AuthoritiesContext } from "../../util/authorities";
@@ -23,7 +23,11 @@ const Query = (props) => {
         resetSessionTime
     } = useContext(UserContext);
     const {
-        searchOptions
+        searchOptions,
+        applySaveQuery,
+        clearAllGreyFacets,
+        setEntity,
+        setNextEntity
     } = useContext(SearchContext);
 
     const [openSaveModal, setOpenSaveModal] = useState(false);
@@ -31,7 +35,7 @@ const Query = (props) => {
     const [showApply, toggleApply] = useState(false);
     const [applyClicked, toggleApplyClicked] = useState(false);
     const [openEditDetail, setOpenEditDetail] = useState(false);
-    const [currentQuery, setCurrentQuery] = useState({});
+    const [currentQuery, setCurrentQuery] = useState<any>({});
     const [hoverOverDropdown, setHoverOverDropdown] = useState(false);
     const [showSaveNewIcon, toggleSaveNewIcon] = useState(true);
     const [showSaveChangesIcon, toggleSaveChangesIcon] = useState(false);
@@ -40,7 +44,11 @@ const Query = (props) => {
     const [openSaveCopyModal, setOpenSaveCopyModal] = useState(false);
     const [openDiscardChangesModal, setOpenDiscardChangesModal] = useState(false);
     const [currentQueryName, setCurrentQueryName] = useState(searchOptions.selectedQuery);
+    const [nextQueryName, setNextQueryName] = useState('');
     const [currentQueryDescription, setCurrentQueryDescription] = useState('');
+    const [showEntityConfirmation, toggleEntityConfirmation] = useState(false);
+    const [entityQueryUpdate, toggleEntityQueryUpdate] = useState(false);
+    const [entityCancelClicked, toggleEntityCancelClicked] = useState(false);
 
     const authorityService = useContext(AuthoritiesContext);
     const canExportQuery = authorityService.canExportEntityInstances();
@@ -69,7 +77,7 @@ const Query = (props) => {
         try {
             const response = await fetchQueries();
             if (response.data) {
-                setQueries(response.data);
+               setQueries(response.data);
             }
         } catch (error) {
             handleError(error)
@@ -78,12 +86,51 @@ const Query = (props) => {
         }
     }
 
+
+    const getSaveQueryWithId = async (key) => {
+       let searchText:string = '';
+       let entityTypeIds:string[] = [];
+       let selectedFacets:{} = {};
+       try {
+           const response = await fetchQueryById(key);
+           if (response.data) {
+               searchText = response.data.savedQuery.query.searchText;
+               entityTypeIds = response.data.savedQuery.query.entityTypeIds;
+               selectedFacets = response.data.savedQuery.query.selectedFacets;
+               applySaveQuery(searchText, entityTypeIds, selectedFacets, response.data.savedQuery.name);
+               setCurrentQuery(response.data);
+               if(props.greyFacets.length > 0){
+                   clearAllGreyFacets();
+               }
+               toggleApply(false);
+               if(response.data.savedQuery.hasOwnProperty('description') && response.data.savedQuery.description){
+                   setCurrentQueryDescription(response.data.savedQuery.description);
+               } else{
+                   setCurrentQueryDescription('');
+               }
+           }
+       } catch (error) {
+           handleError(error)
+       } finally {
+           resetSessionTime()
+       }
+   }
+
+    const isSaveQueryChanged = () => {
+        if (currentQuery && currentQuery.hasOwnProperty('savedQuery') && currentQuery.savedQuery.hasOwnProperty('query')) {
+            if ((JSON.stringify(currentQuery.savedQuery.query.selectedFacets) !== JSON.stringify(searchOptions.selectedFacets)) ||
+                (currentQuery.savedQuery.query.searchText !== searchOptions.query) || (props.greyFacets.length > 0)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     useEffect(() => {
         if (queries.length > 0) {
             for (let key of queries) {
                 if (key.savedQuery.name === currentQueryName) {
                     setCurrentQuery(key);
-                    break;
                 }
             }
         }
@@ -91,25 +138,70 @@ const Query = (props) => {
 
     useEffect(() => {
         getSaveQueries();
-    }, []);
+    }, [searchOptions.entityTypeIds]);
 
     useEffect(() => {
-        if (Object.entries(currentQuery).length !== 0) {
+            if(!entityCancelClicked && searchOptions.nextEntityType !== searchOptions.entityTypeIds[0]) {     // TO CHECK IF THERE HAS BEEN A CANCEL CLICKED WHILE CHANGING ENTITY
+                if (isSaveQueryChanged()) {
+                    toggleEntityConfirmation(true);
+                } else {
+                    setCurrentQueryOnEntityChange();
+                }
+            }else{
+                toggleEntityCancelClicked(false); // RESETTING THE STATE TO FALSE
+            }
+    }, [searchOptions.nextEntityType]);
+
+
+    const onCancel = () => {
+        toggleEntityConfirmation(false);
+        toggleEntityCancelClicked(true);
+        setNextEntity(searchOptions.entityTypeIds[0]);
+    }
+
+    const onNoClick  = () => {
+        setCurrentQueryOnEntityChange();
+    }
+
+    const onOk = () => {
+        setOpenSaveChangesModal(true);
+        toggleEntityConfirmation(false);
+        toggleEntityQueryUpdate(true);
+    }
+
+    const setCurrentQueryOnEntityChange = () => {
+         setEntity(searchOptions.nextEntityType);
+         setCurrentQuery({});
+         setCurrentQueryName('select a query');
+         setCurrentQueryDescription('');
+         toggleEntityConfirmation(false);
+    }
+
+    useEffect(() => {
+        if (Object.entries(currentQuery).length !== 0 && searchOptions.selectedQuery !== 'select a query') {
             setHoverOverDropdown(true);
+        }
+        else{
+            setHoverOverDropdown(false);
         }
     }, [currentQuery]);
 
+
     useEffect(() => {
-        if (!showSaveNewIcon) {
+        if (!showSaveNewIcon && isSaveQueryChanged()) {
             toggleSaveChangesIcon(true);
             toggleDiscardIcon(true);
         }
-    }, [props.greyFacets, searchOptions.query])
+        else{
+            toggleSaveChangesIcon(false);
+            toggleDiscardIcon(false);
+        }
+    }, [searchOptions, props.greyFacets, isSaveQueryChanged()])
 
     return (
         <div>
             <div>
-                {props.selectedFacets.length > 0 && showSaveNewIcon &&
+                {(props.selectedFacets.length > 0 || searchOptions.query) && showSaveNewIcon && searchOptions.entityTypeIds.length > 0 &&
                     <div style={{ marginTop: '-22px' }}>
                         <Tooltip title={'Save the current query'}>
                             <FontAwesomeIcon
@@ -119,10 +211,12 @@ const Query = (props) => {
                                 style={queries.length > 0 ? {
                                     color: '#5b69af',
                                     marginLeft: '170px',
-                                    marginBottom: '9px'
+                                    marginBottom: '9px',
+                                    cursor:'pointer'
                                 } : {
                                         color: '#5b69af', marginLeft: '18px',
-                                        marginBottom: '9px'
+                                        marginBottom: '9px',
+                                        cursor:'pointer'
                                     }}
                                 size="lg" />
                         </Tooltip>
@@ -152,15 +246,17 @@ const Query = (props) => {
                                 style={queries.length > 0 ? {
                                     color: '#5b69af',
                                     marginLeft: '170px',
-                                    marginBottom: '9px'
+                                    marginBottom: '9px',
+                                    cursor:'pointer'
                                 } : {
                                         color: '#5b69af', marginLeft: '18px',
-                                        marginBottom: '9px'
+                                        marginBottom: '9px',
+                                        cursor:'pointer'
                                     }}
                                 size="lg" />
                         </Tooltip>
                         <div id={'saveChangedQueries'}>
-                            {openSaveChangesModal &&
+                            {openSaveChangesModal  &&
                                 <SaveChangesModal
                                     setSaveChangesModalVisibility={() => setOpenSaveChangesModal(false)}
                                     setSaveNewIconVisibility={(visibility) => toggleSaveNewIcon(visibility)}
@@ -168,11 +264,16 @@ const Query = (props) => {
                                     toggleApply={(clicked) => toggleApply(clicked)}
                                     toggleApplyClicked={(clicked) => toggleApplyClicked(clicked)}
                                     currentQuery={currentQuery}
-                                    setCurrentQuery={setCurrentQuery}
                                     currentQueryName={currentQueryName}
-                                    setCurrentQueryName={setCurrentQueryName}
-                                    currentQueryDescription={currentQueryDescription}
-                                    setCurrentQueryDescription={setCurrentQueryDescription}
+                                    setCurrentQueryDescription={(description) => setCurrentQueryDescription(description)}
+                                    setCurrentQueryName={(name) => setCurrentQueryName(name)}
+                                    nextQueryName = {nextQueryName}
+                                    savedQueryList={queries}
+                                    setCurrentQueryOnEntityChange = {setCurrentQueryOnEntityChange}
+                                    getSaveQueryWithId={(key)=>getSaveQueryWithId(key)}
+                                    isSaveQueryChanged={isSaveQueryChanged}
+                                    entityQueryUpdate={entityQueryUpdate}
+                                    toggleEntityQueryUpdate={()=>toggleEntityQueryUpdate(false)}
                                 />}
                         </div>
                     </div>}
@@ -185,17 +286,18 @@ const Query = (props) => {
                                 style={queries.length > 0 ? {
                                     color: '#5b69af',
                                     marginLeft: '192px',
-                                    marginBottom: '9px'
+                                    marginBottom: '9px',
+                                    cursor:'pointer'
                                 } : {
                                         color: '#5b69af', marginLeft: '192px',
-                                        marginBottom: '9px'
+                                        marginBottom: '9px',
+                                        cursor:'pointer'
                                     }}
                                 size="lg" />
                         </Tooltip>
                         <div>
                             {openDiscardChangesModal &&
                                 <DiscardChangesModal
-                                    currentQueryName={currentQueryName}
                                     setDiscardChangesModalVisibility={() => setOpenDiscardChangesModal(false)}
                                     savedQueryList={queries}
                                     toggleApply={(clicked) => toggleApply(clicked)}
@@ -212,12 +314,13 @@ const Query = (props) => {
                         toggleApply={(clicked) => toggleApply(clicked)}
                         currentQueryName={currentQueryName}
                         setCurrentQueryName={setCurrentQueryName}
-                        setCurrentQueryFn={(query)=> setCurrentQuery(query)}
                         currentQuery={currentQuery}
-                        currentQueryDescription={currentQueryDescription}
-                        setCurrentQueryDescription={setCurrentQueryDescription}
                         setSaveChangesIconVisibility={(visibility) =>  toggleSaveChangesIcon(visibility)}
                         setDiscardChangesIconVisibility={(visibility) =>  toggleDiscardIcon(visibility)}
+                        setSaveChangesModal={(visiblity)=> setOpenSaveChangesModal(visiblity)}
+                        setNextQueryName={(nextQueryName) => setNextQueryName(nextQueryName)}
+                        getSaveQueryWithId={getSaveQueryWithId}
+                        isSaveQueryChanged={isSaveQueryChanged}
                     />
                     }
                 </div>
@@ -228,14 +331,13 @@ const Query = (props) => {
                         icon={faPencilAlt}
                         size="lg"
                         onClick={() => setOpenEditDetail(true)}
-                        style={{ width: '16px', color: '#5b69af' }}
+                        style={{ width: '16px', color: '#5b69af', cursor:'pointer' }}
                     />}
                 </Tooltip>
                 {openEditDetail &&
                 <EditQueryDetails
                     setEditQueryDetailVisibility={() => setOpenEditDetail(false)}
                     currentQuery={currentQuery}
-                    setCurrentQuery={setCurrentQuery}
                     currentQueryName={currentQueryName}
                     setCurrentQueryName={setCurrentQueryName}
                     currentQueryDescription={currentQueryDescription}
@@ -250,7 +352,7 @@ const Query = (props) => {
                             icon={faCopy}
                             size="lg"
                             onClick={() => setOpenSaveCopyModal(true)}
-                            style={{ width: '15px', color: '#5b69af' }}
+                            style={{ width: '15px', color: '#5b69af',  cursor:'pointer' }}
                         />}
                     </Tooltip>
                     {openSaveCopyModal &&
@@ -285,7 +387,6 @@ const Query = (props) => {
                     toggleApplyClicked={(clicked) => toggleApplyClicked(clicked)}
                 />
             </div>
-
             <QueryModal
                 hasStructured={props.hasStructured}
                 canExportQuery={canExportQuery}
@@ -298,6 +399,21 @@ const Query = (props) => {
                 currentQueryDescription={currentQueryDescription}
                 setCurrentQueryDescription={setCurrentQueryDescription}
             />
+            <Modal
+                visible={showEntityConfirmation}
+                title={'Existing Query'}
+                onCancel={()=> onCancel()}
+                footer={[
+                    <Button key='cancel' id='entity-confirmation-cancel-button' onClick={() => onCancel()}>Cancel</Button>,
+                    <Button key="back" id='entity-confirmation-no-button' onClick={() => onNoClick()}>
+                        No
+                    </Button>,
+                    <Button key="submit"  id='entity-confirmation-yes-button' type="primary"  onClick={()=> onOk()}>
+                        Yes
+                    </Button>
+                    ]}>
+                <p>Changing the entity selection starts a new query. Would you like to save the existing query before changing the selection?</p>
+            </Modal>
         </div>
     )
 

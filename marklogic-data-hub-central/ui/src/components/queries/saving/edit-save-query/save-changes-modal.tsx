@@ -7,16 +7,21 @@ import {UserContext} from "../../../../util/user-context";
 
 interface Props {
     setSaveChangesModalVisibility: () => void;
+    savedQueryList: any[];
+    getSaveQueryWithId: (key:{}) => void;
     greyFacets:any[];
     toggleApply: (clicked:boolean) => void;
     toggleApplyClicked: (clicked:boolean) => void;
     setSaveNewIconVisibility: (clicked:boolean) => void;
     currentQuery: any,
-    setCurrentQuery: (query: any) => void;
     currentQueryName: string;
-    setCurrentQueryName: (name: string) => void;
-    currentQueryDescription: string;
     setCurrentQueryDescription: (description: string) => void;
+    setCurrentQueryName: (name: string) => void;
+    nextQueryName: string;
+    setCurrentQueryOnEntityChange: () => void;
+    isSaveQueryChanged:() => boolean;
+    entityQueryUpdate: boolean;
+    toggleEntityQueryUpdate:() => void;
 }
 
 const SaveChangesModal: React.FC<Props> = (props) => {
@@ -27,7 +32,8 @@ const SaveChangesModal: React.FC<Props> = (props) => {
         setAllSearchFacets,
         searchOptions,
         applySaveQuery,
-        setAllGreyedOptions
+        setAllGreyedOptions,
+        setSelectedQuery
     } = useContext(SearchContext);
 
     const {
@@ -39,7 +45,6 @@ const SaveChangesModal: React.FC<Props> = (props) => {
     const [queryName, setQueryName] = useState('');
     const [queryDescription, setQueryDescription] = useState('');
     const [radioOptionClicked, setRadioOptionClicked] = useState(0);
-    const [queryEmpty, isQueryEmpty] = useState<any>('');
     const [errorMessage, setErrorMessage] = useState('');
     const [previousQueryName, setPreviousQueryName] = useState('');
 
@@ -52,6 +57,7 @@ const SaveChangesModal: React.FC<Props> = (props) => {
         props.setSaveChangesModalVisibility();
     }
 
+    // TO EXTRACT NAME AND DESCRIPTION FROM CURRENT QUERY
     useEffect(() => {
         if (props.currentQuery && JSON.stringify(props.currentQuery) != JSON.stringify({}) && props.currentQuery.hasOwnProperty('savedQuery') && props.currentQuery.savedQuery.hasOwnProperty('name')) {
             setPreviousQueryName(props.currentQuery.savedQuery.name);
@@ -60,7 +66,7 @@ const SaveChangesModal: React.FC<Props> = (props) => {
                 setQueryDescription(props.currentQuery.savedQuery.description);
             }
         }
-    }, [props.currentQuery]);
+    }, [props.currentQuery, props.nextQueryName]);
 
     const onOk = async (queryName, queryDescription, currentQuery) => {
         let facets = {...searchOptions.selectedFacets};
@@ -74,13 +80,13 @@ const SaveChangesModal: React.FC<Props> = (props) => {
                 props.toggleApply(false);
                 break;
             case 2:
+                setAllGreyedOptions(greyedFacets);
                 break;
             case 3:
                 clearAllGreyFacets();
                 props.toggleApplyClicked(true);
                 props.toggleApply(false);
         }
-
         try {
             currentQuery.savedQuery.name = queryName.trim();
             currentQuery.savedQuery.description = queryDescription;
@@ -91,10 +97,25 @@ const SaveChangesModal: React.FC<Props> = (props) => {
             }
             const response = await axios.put(`/api/entitySearch/savedQueries`, currentQuery);
             if (response.data) {
-                setAllSearchFacets(facets);
                 props.setSaveChangesModalVisibility();
-                applySaveQuery(searchOptions.query, searchOptions.entityTypeIds, facets, queryName);
+                if(props.currentQueryName && !props.entityQueryUpdate){
+                    applySaveQuery(searchOptions.query, searchOptions.entityTypeIds, facets, queryName);
+                }
+                if(props.nextQueryName && !props.entityQueryUpdate){
+                    for(let key of props.savedQueryList)
+                    {
+                        if(key.savedQuery.name === props.nextQueryName){
+                            props.getSaveQueryWithId(key);
+                            break;
+                        }
+                    }
+                    props.setCurrentQueryName(props.nextQueryName);
+                }
                 props.setCurrentQueryDescription(queryDescription);
+                if(props.entityQueryUpdate){
+                    props.setCurrentQueryOnEntityChange();
+                    props.toggleEntityQueryUpdate();
+                }
             }
         } catch (error) {
             if (error.response.status === 400) {
@@ -112,6 +133,7 @@ const SaveChangesModal: React.FC<Props> = (props) => {
         }
     }
 
+
     const handleChange = (event) => {
         if (event.target.id === 'save-changes-query-name') {
             setQueryName(event.target.value);
@@ -124,7 +146,6 @@ const SaveChangesModal: React.FC<Props> = (props) => {
     const unAppliedFacets = (e) => {
         setRadioOptionClicked(e.target.value)
     }
-
 
     return (
         <Modal

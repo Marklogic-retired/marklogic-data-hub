@@ -1,40 +1,37 @@
-import {Select, Input} from "antd"
-import React, {useContext, useEffect, useState} from 'react';
+import {Select, Modal, Button} from "antd"
+import React, {useContext, useState} from 'react';
 import styles from './save-queries-dropdown.module.scss';
-import { UserContext } from "../../../../util/user-context";
 import { SearchContext } from "../../../../util/search-context";
-import {fetchQueryById} from "../../../../api/queries";
-
 
 interface Props {
     savedQueryList: any[];
     toggleApply: (clicked:boolean) => void;
+    getSaveQueryWithId: (key:string) => void;
     greyFacets: any[];
     currentQueryName: string;
     setCurrentQueryName: (name: string) => void;
-    setCurrentQueryFn: (query:object) => void;
     currentQuery: any;
     setSaveNewIconVisibility:(visibility:boolean)=> void;
     setSaveChangesIconVisibility:(visibility:boolean)=> void;
     setDiscardChangesIconVisibility:(visibility:boolean)=> void;
-    currentQueryDescription: string;
-    setCurrentQueryDescription: (description: string) => void;
+    setSaveChangesModal:(visiblity:boolean) => void;
+    setNextQueryName: (name: string) => void;
+    isSaveQueryChanged:() => boolean;
+
 };
 
 
 const SaveQueriesDropdown: React.FC<Props> = (props) => {
 
     const {Option} = Select;
+    const [showConfirmation, toggleConfirmation] = useState(false);
+
 
     const {
-        handleError,
-        resetSessionTime
-    } = useContext(UserContext);
-    const {
-        applySaveQuery,
-        clearAllGreyFacets,
         searchOptions
     } = useContext(SearchContext);
+
+    const [switchedQueryName, setSwitchedQueryName] = useState(searchOptions.selectedQuery);
 
     const savedQueryOptions = props.savedQueryList.map((key) => key.savedQuery.name);
 
@@ -42,55 +39,53 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
         <Option value={query} key={index+1} data-cy="query-option">{query}</Option>
     );
 
+    const checkCurrentQueryChange = (e) => {
+        if(props.isSaveQueryChanged()){
+           toggleConfirmation(true);
+           setSwitchedQueryName(e);
+       }
+       else{
+           onItemSelect(e)
+       }
+    }
+
     const onItemSelect = (e) => {
         props.setCurrentQueryName(e);
-
         for(let key of props.savedQueryList)
         {
             if(key.savedQuery.name === e){
-                getSaveQueryWithId(key);
+                props.getSaveQueryWithId(key);
                 break;
             }
         }
         props.setSaveNewIconVisibility(false);
         props.setDiscardChangesIconVisibility(false);
         props.setSaveChangesIconVisibility(false);
-    };
+     }
 
-    const getSaveQueryWithId = async (key) => {
-        let searchText:string = '';
-        let entityTypeIds:string[] = [];
-        let selectedFacets:{} = {};
-        try {
-            const response = await fetchQueryById(key);
-            if (response.data) {
-                searchText = response.data.savedQuery.query.searchText;
-                entityTypeIds = response.data.savedQuery.query.entityTypeIds;
-                selectedFacets = response.data.savedQuery.query.selectedFacets;
-                applySaveQuery(searchText, entityTypeIds, selectedFacets, response.data.savedQuery.name);
-                props.setCurrentQueryFn(key);
-                if(props.greyFacets.length > 0){
-                    clearAllGreyFacets();
-                }
-                props.toggleApply(false);
-                props.setCurrentQueryDescription(response.data.savedQuery.description);
-            }
-        } catch (error) {
-            handleError(error)
-        } finally {
-            resetSessionTime()
-        }
+    const onNoClick = () => {
+        toggleConfirmation(false);
+        onItemSelect(switchedQueryName);
     }
 
+    const onCancel = () => {
+        toggleConfirmation(false);
+    }
+
+    const onOk = () => {
+        props.setSaveChangesModal(true);
+        toggleConfirmation(false);
+        props.setNextQueryName(switchedQueryName);
+    }
 
     return (
+        <div>
         <Select
             id="dropdownList"
             placeholder={'select a query'}
             className={styles.dropDownStyle}
-            onChange={onItemSelect}
+            onChange={checkCurrentQueryChange}
             data-cy={'drop-down-list'}
-            allowClear={true}
             value={(() => {
                     if(props.currentQueryName !== searchOptions.selectedQuery && props.currentQueryName === 'select a query') {
                         onItemSelect(searchOptions.selectedQuery);
@@ -101,6 +96,25 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
         >
             {options}
         </Select>
+            <Modal
+                visible={showConfirmation}
+                title={'Confirmation'}
+                onCancel={()=> onCancel()}
+                footer={[
+                    <Button key='cancel' id='query-confirmation-cancel-button' onClick={() => onCancel()}>Cancel</Button>,
+                    <Button key="back" id='query-confirmation-no-button' onClick={() => onNoClick()}>
+                        No
+                    </Button>,
+                    <Button key="submit" id='query-confirmation-yes-button' type="primary"  onClick={()=> onOk()}>
+                        Yes
+                    </Button>
+                ]}>
+            <p><strong>{props.currentQueryName}</strong> has been edited since it was last saved.</p>
+                <br/>
+                <p>Would you like to save the changes to <strong>{props.currentQueryName}</strong> before switching to the new query</p>
+            </Modal>
+    </div>
+
     );
 }
 

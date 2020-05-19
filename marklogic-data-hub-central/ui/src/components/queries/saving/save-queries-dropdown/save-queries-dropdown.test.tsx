@@ -11,16 +11,17 @@ describe("<SaveQueryDropdown/>", () => {
         const { getByTitle } = render(<SaveQueryDropdown
             savedQueryList={[]}
             toggleApply={jest.fn()}
+            getSaveQueryWithId ={jest.fn()}
             greyFacets= {[]}
             currentQueryName={''}
             setCurrentQueryName={jest.fn()}
-            setCurrentQueryFn={jest.fn()}
             currentQuery={{}}
             setSaveNewIconVisibility={jest.fn()}
             setSaveChangesIconVisibility={jest.fn()}
             setDiscardChangesIconVisibility={jest.fn()}
-            currentQueryDescription={''}
-            setCurrentQueryDescription={jest.fn()}
+            setSaveChangesModal={jest.fn()}
+            setNextQueryName={jest.fn()}
+            isSaveQueryChanged={jest.fn()}
         />)
 
         expect(getByTitle("select a query")).toBeInTheDocument();

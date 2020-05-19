@@ -18,17 +18,22 @@ describe("<SaveChangesModal/>", () => {
     test("Verify Save Changes modal fields are rendered with previous saved query values", async () => {
         const { getByPlaceholderText,getByText } = render(<SaveChangesModal
             setSaveChangesModalVisibility={jest.fn()}
+            savedQueryList={[]}
+            getSaveQueryWithId ={jest.fn()}
             greyFacets= { [{constraint: "lastname", facet: "Adams", displayName: ''},
                 {constraint: "lastname", facet: "Coleman", displayName: ''}]}
             toggleApply={jest.fn()}
             toggleApplyClicked={jest.fn()}
             setSaveNewIconVisibility={jest.fn()}
             currentQuery={currentQuery}
-            setCurrentQuery={jest.fn()}
             currentQueryName={''}
             setCurrentQueryName={jest.fn()}
-            currentQueryDescription={''}
             setCurrentQueryDescription={jest.fn()}
+            nextQueryName = {''}
+            setCurrentQueryOnEntityChange={jest.fn()}
+            toggleEntityQueryUpdate={jest.fn()}
+            entityQueryUpdate={false}
+            isSaveQueryChanged={jest.fn()}
         />)
         queryField = getByPlaceholderText("Enter query name");
         expect(queryField).toHaveAttribute('value', 'Order query');
@@ -44,16 +49,21 @@ describe("<SaveChangesModal/>", () => {
 
         const { getByPlaceholderText, getByText } = render(<SaveChangesModal
             setSaveChangesModalVisibility={jest.fn()}
-            greyFacets={[]}
+            savedQueryList={[]}
+            getSaveQueryWithId ={jest.fn()}
+            greyFacets= { []}
             toggleApply={jest.fn()}
             toggleApplyClicked={jest.fn()}
             setSaveNewIconVisibility={jest.fn()}
             currentQuery={currentQuery}
-            setCurrentQuery={jest.fn()}
             currentQueryName={''}
             setCurrentQueryName={jest.fn()}
-            currentQueryDescription={''}
             setCurrentQueryDescription={jest.fn()}
+            nextQueryName = {''}
+            setCurrentQueryOnEntityChange={jest.fn()}
+            toggleEntityQueryUpdate={jest.fn()}
+            entityQueryUpdate={false}
+            isSaveQueryChanged={jest.fn()}
         />)
         queryField = getByPlaceholderText("Enter query name");
         fireEvent.change(queryField, { target: {value: ''} });
@@ -93,16 +103,22 @@ describe("<SaveChangesModal/>", () => {
 
         const { getByPlaceholderText, getByText } = render(<SaveChangesModal
             setSaveChangesModalVisibility={jest.fn()}
-            greyFacets={[]}
+            savedQueryList={[]}
+            getSaveQueryWithId ={jest.fn()}
+            greyFacets= { [{constraint: "lastname", facet: "Adams", displayName: ''},
+                {constraint: "lastname", facet: "Coleman", displayName: ''}]}
             toggleApply={jest.fn()}
             toggleApplyClicked={jest.fn()}
             setSaveNewIconVisibility={jest.fn()}
             currentQuery={currentQuery}
-            setCurrentQuery={jest.fn()}
             currentQueryName={''}
             setCurrentQueryName={jest.fn()}
-            currentQueryDescription={''}
             setCurrentQueryDescription={jest.fn()}
+            nextQueryName = {''}
+            setCurrentQueryOnEntityChange={jest.fn()}
+            toggleEntityQueryUpdate={jest.fn()}
+            entityQueryUpdate={false}
+            isSaveQueryChanged={jest.fn()}
         />)
         queryField = getByPlaceholderText("Enter query name");
         fireEvent.change(queryField, { target: {value: 'Edit new query'} });

@@ -36,7 +36,6 @@ const SaveQueryModal: React.FC<Props> = (props) => {
     const [queryName, setQueryName] = useState('');
     const [queryDescription, setQueryDescription] = useState('');
     const [radioOptionClicked, setRadioOptionClicked] = useState(0);
-    const [queryEmpty, isQueryEmpty] = useState<any>('');
     const [errorMessage, setErrorMessage] = useState<any>('');
 
     const layout = {
@@ -66,7 +65,6 @@ const SaveQueryModal: React.FC<Props> = (props) => {
                 props.toggleApplyClicked(true);
                 props.toggleApply(false);
         }
-
         try {
             await props.saveNewQuery(queryName.trim(), queryDescription, facets);
             props.setSaveNewIconVisibility(false);
@@ -76,7 +74,6 @@ const SaveQueryModal: React.FC<Props> = (props) => {
             props.setCurrentQueryDescription(queryDescription);
         } catch (error) {
             if (error.response.status === 400) {
-                console.log("here")
                 if (error.response.data.hasOwnProperty('message')) {
                     setErrorMessage(error['response']['data']['message']);
                     setAllSearchFacets(selectedFacets);

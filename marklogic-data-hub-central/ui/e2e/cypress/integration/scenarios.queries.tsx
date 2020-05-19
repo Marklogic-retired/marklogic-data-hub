@@ -4,6 +4,8 @@ import BrowsePage from '../support/pages/browse';
 import HomePage from "../support/pages/home";
 import QueryComponent from '../support/components/query/manage-queries-modal'
 import { Application } from '../support/application.config';
+import {forEachResolvedProjectReference} from "ts-loader/dist/types/instances";
+
 
 const browsePage = new BrowsePage();
 const homePage = new HomePage();
@@ -213,6 +215,88 @@ describe('save/manage queries scenarios, developer role', () => {
     });
 
 
+    it('Switching between queries when making changes to saved query', () => {
+        // creating query 1 with customer entity
+        browsePage.selectEntity('Customer');
+        browsePage.getSelectedEntity().should('contain', 'Customer');
+        cy.wait(500);
+        browsePage.getFacetItemCheckbox('email', 'abbottwalton@emoltra.com').click();
+        browsePage.getFacetItemCheckbox('lastname', 'Abbott').click();
+        browsePage.getFacetApplyButton().click();
+        browsePage.getSaveModalIcon().click();
+        cy.wait(500);
+        browsePage.getSaveQueryName().type('query-1');
+        browsePage.getSaveQueryDescription().type('query-1 description');
+        browsePage.getSaveQueryButton().click();
+        cy.wait(500);
+        browsePage.getSelectedQuery().should('contain', 'query-1');
+        browsePage.getSelectedQueryDescription().should('contain', 'query-1 description');
+        // creating query 2 using save a copy
+        browsePage.getSaveACopyModalIcon().click();
+        browsePage.getSaveQueryName().type("query-2");
+        browsePage.getSaveQueryButton().click();
+        // Making changes to query-2 and switching to query-1
+        browsePage.getClearFacetSearchSelection('Abbott').click();
+        browsePage.selectQuery("query-1");
+        browsePage.getQueryConfirmationCancelClick().click();
+        browsePage.selectQuery("query-1");
+        browsePage.getQueryConfirmationNoClick().click();
+        browsePage.getSelectedQuery().should('contain', 'query-1');
+        browsePage.getClearFacetSearchSelection('Abbott').click();
+        browsePage.selectQuery("query-2");
+        browsePage.getQueryConfirmationYesClick().click();
+        browsePage.getEditSaveChangesButton().click();
+        browsePage.getSelectedQuery().should('contain', 'query-2');
+        browsePage.selectQuery("query-1");
+        browsePage.getClearAllButton().should('exist');
+    });
+
+    it('Switching between entities when making changes to saved query', () => {
+        browsePage.selectQuery("new-query");
+        browsePage.getClearFacetSearchSelection('Kelley').click();
+        browsePage.selectEntity('Person');
+        browsePage.getEntityConfirmationCancelClick().click();
+        browsePage.getSelectedQuery().should('contain', 'new-query');
+        browsePage.getSelectedEntity().should('contain', 'Customer');
+        browsePage.getAppliedFacets('Lara').should('exist');
+        browsePage.selectEntity('Person');
+        browsePage.getEntityConfirmationNoClick().click();
+        browsePage.getSelectedEntity().should('contain', 'Person');
+        browsePage.selectEntity('Customer');
+        browsePage.getSelectedQuery().should('contain', 'select a query');
+        browsePage.selectQuery('new-query');
+        browsePage.getAppliedFacets('Lara').should('exist');
+        browsePage.getClearFacetSearchSelection('Lara').click();
+        browsePage.selectEntity('Person');
+        browsePage.getEntityConfirmationYesClick().click();
+        browsePage.getEditSaveChangesButton().click();
+        browsePage.getSelectedEntity().should('contain', 'Person');
+        browsePage.selectEntity('Customer');
+        browsePage.selectQuery('new-query');
+        browsePage.getAppliedFacets('Kelley').should('exist');
+    });
+
+    it('Switching between entities when there are saved queries', () => {
+        browsePage.selectEntity('Customer');
+        browsePage.selectEntity('Person');
+        browsePage.getSaveQueriesDropdown().should('be.visible');
+        browsePage.getSelectedQuery().should('contain', 'select a query');
+        //Checking if you are in person entity,select a saved query related to customer and shifting back to person
+        browsePage.selectQuery('new-query');
+        browsePage.getSelectedEntity().should('contain', 'Customer');
+        browsePage.selectEntity('Person');
+        browsePage.getSelectedEntity().should('contain', 'Person');
+    });
+
+    it('Save query button should not show up in all entities view', () => {
+        browsePage.selectEntity('All Entities');
+        browsePage.getSaveQueriesDropdown().should('be.visible');
+        browsePage.getSelectedQuery().should('contain', 'select a query');
+        browsePage.getHubPropertiesExpanded();
+        browsePage.getFacetItemCheckbox('collection', 'Person').click();
+        browsePage.getFacetApplyButton().click();
+        browsePage.getSaveModalIcon().should('not.be.visible')
+    });
 
     it('open manage queries, edit query', () => {
         browsePage.getManageQueriesIcon().click();
@@ -234,7 +318,7 @@ describe('save/manage queries scenarios, developer role', () => {
     it('open manage queries, delete query', () => {
         browsePage.getManageQueriesIcon().click();
         queryComponent.getManageQueryModal().should('be.visible');
-        queryComponent.getDeleteQuery().click();
+        queryComponent.getDeleteQuery().first().click();
         queryComponent.getDeleteQueryYesButton().click({force: true});
         browsePage.getManageQueryCloseIcon().click();
         queryComponent.getManageQueryModal().should('not.be.visible');

@@ -5,6 +5,7 @@ import { UserContext } from './user-context';
 type SearchContextInterface = {
   query: string,
   entityTypeIds: string[],
+  nextEntityType: string,
   start: number,
   pageNumber: number,
   pageLength: number,
@@ -17,6 +18,7 @@ type SearchContextInterface = {
 const defaultSearchOptions = {
   query: '',
   entityTypeIds: [],
+  nextEntityType: '',
   start: 1,
   pageNumber: 1,
   pageLength: 20,
@@ -34,9 +36,9 @@ interface ISearchContextInterface {
   setPageLength: (current: number, pageSize: number) => void;
   setSearchFacets: (constraint: string, vals: string[]) => void;
   setEntity: (option: string) => void;
+  setNextEntity: (option: string) => void;
   setEntityClearQuery: (option: string) => void;
   setLatestJobFacet: (vals: string, option: string) => void;
-  applyQuery: (searchText: string, entityTypeIds: string[], selectedFacets: {}) => void;
   clearFacet: (constraint: string, val: string) => void;
   clearAllFacets: () => void;
   clearDateFacet: () => void;
@@ -63,8 +65,8 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setPageLength: () => { },
   setSearchFacets: () => { },
   setEntity: () => { },
+  setNextEntity: () => { },
   setEntityClearQuery: () => { },
-  applyQuery: () => { },
   setLatestJobFacet: () => { },
   clearFacet: () => { },
   clearAllFacets: () => { },
@@ -158,13 +160,14 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
   }
 
   const setEntity = (option: string) => {
-    let entityOptions = option ? [option] : [];
-    setSearchOptions({
+      let entityOptions = (option === 'All Entities') ? [] : [option];
+      setSearchOptions({
       ...searchOptions,
       start: 1,
       selectedFacets: {},
       entityTypeIds: entityOptions,
-      pageLength: searchOptions.pageSize
+      pageLength: searchOptions.pageSize,
+      selectedQuery: 'select a query',
     });
       setGreyedOptions({
           ...greyedOptions,
@@ -174,6 +177,17 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
           pageLength: greyedOptions.pageSize
       });
   }
+
+    const setNextEntity = (option: string) => {
+        setSearchOptions({
+            ...searchOptions,
+            nextEntityType: option,
+        });
+        setGreyedOptions({
+            ...greyedOptions,
+            nextEntityType: option,
+        });
+    }
 
   const setEntityClearQuery = (option: string) => {
     setSearchOptions({
@@ -363,18 +377,6 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
     });
   }
 
-  const applyQuery = (searchText: string, entityTypeIds: string[], selectedFacets: {}) => {
-    setSearchOptions({
-      ...searchOptions,
-      start: 1,
-      selectedFacets: selectedFacets,
-      query: searchText,
-      entityTypeIds: entityTypeIds,
-      pageNumber: 1,
-      pageLength: searchOptions.pageSize
-    });
-  }
-
     const applySaveQuery = (searchText: string, entityTypeIds: string[], selectedFacets: {}, selectedQuery: string) => {
         setSearchOptions({
             ...searchOptions,
@@ -382,6 +384,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
             selectedFacets: selectedFacets,
             query: searchText,
             entityTypeIds: entityTypeIds,
+            nextEntityType: entityTypeIds[0],
             pageNumber: 1,
             pageLength: searchOptions.pageSize,
             selectedQuery: selectedQuery
@@ -414,6 +417,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       setPageLength,
       setSearchFacets,
       setEntity,
+      setNextEntity,
       setEntityClearQuery,
       clearFacet,
       clearAllFacets,
@@ -428,7 +432,6 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       clearGreyFacet,
       clearAllGreyFacets,
       resetGreyedOptions,
-      applyQuery,
       applySaveQuery,
       setSelectedQuery
     }}>

@@ -38,7 +38,6 @@ describe("<NumericFacet/>", () => {
         await act(async () => {
             setTimeout(() => {
                 //verify range slider renders
-                debug()
                 expect(getByTestId("numeric-slider")).toBeInTheDocument();
                 //verify range slider min value
                 expect(getByDisplayValue("11")).toBeInTheDocument();
