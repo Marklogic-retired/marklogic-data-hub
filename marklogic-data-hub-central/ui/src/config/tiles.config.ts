@@ -3,6 +3,8 @@ import { faLongArrowAltRight, faCube, faCubes, faObjectUngroup, faProjectDiagram
 export type TileId =  'load' | 'model' | 'curate' | 'run' | 'explore';
 export type IconType = 'fa' | 'custom';
 
+export const enabled = ['Load','Model','Curate','Run','Explore'];
+
 interface TileItem {
     title: string;
     iconType: IconType;

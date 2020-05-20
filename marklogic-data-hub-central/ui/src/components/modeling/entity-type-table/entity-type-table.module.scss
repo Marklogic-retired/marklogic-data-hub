@@ -13,6 +13,18 @@
   color: #B32424;
 }
 
+.iconRevertReadOnly, .iconTrashReadOnly {
+  font-size: 21px;
+  cursor: not-allowed;
+  margin-right: 8px;
+  margin-bottom: 2px;
+  opacity: 0.5;
+  color: #5B69AF;
+}
+.iconTrashReadOnly {
+  color: #B32424;
+}
+
 .iconSave:before {       
   content: "\70";
   cursor: pointer;      
@@ -20,6 +32,16 @@
   color: #5B69AF;
   font-size: 22px;
   padding: 8px;
+}
+
+.iconSaveReadOnly:before {       
+  content: "\70";
+  cursor: not-allowed;      
+  font-family: MLCustomFont; 
+  color: #5B69AF;
+  font-size: 22px;
+  padding: 8px;
+  opacity: 0.5;
 }
 th.actions,
 td.actions {
