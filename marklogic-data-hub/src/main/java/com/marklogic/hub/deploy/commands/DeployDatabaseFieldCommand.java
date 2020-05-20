@@ -19,12 +19,15 @@ package com.marklogic.hub.deploy.commands;
 import com.marklogic.appdeployer.command.AbstractResourceCommand;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.SortOrderConstants;
+import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.resource.ResourceManager;
 import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import com.marklogic.rest.util.Fragment;
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
+import org.jdom2.output.XMLOutputter;
+import org.springframework.http.ResponseEntity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -52,7 +55,7 @@ public class DeployDatabaseFieldCommand extends AbstractResourceCommand {
 
     @Override
     protected ResourceManager getResourceManager(CommandContext commandContext) {
-        return new DatabaseManager(commandContext.getManageClient());
+        return new HubDatabaseManager(commandContext.getManageClient());
     }
 
     @Override
@@ -135,6 +138,42 @@ public class DeployDatabaseFieldCommand extends AbstractResourceCommand {
                     newRangePathIndexes.addContent(index.detach());
                 }
             }
+        }
+    }
+
+    public static class HubDatabaseManager extends DatabaseManager {
+
+        public HubDatabaseManager(ManageClient manageClient) {
+            super(manageClient);
+        }
+
+        protected String getResourceName() {
+            return "database";
+        }
+
+        @Override
+        protected ResponseEntity<String> putPayload(ManageClient client, String path, String payload) {
+            if (!payloadParser.isJsonPayload(payload)) {
+                payload = removeDatabaseNameFromXmlPayload(payload);
+            }
+            return super.putPayload(client, path, payload);
+        }
+
+        /**
+         * The database-name is not required, and for a data-hub-developer, the inclusion of it will cause a
+         * Forbidden error from the Manage API.
+         *
+         * @param payload
+         * @return
+         */
+        protected String removeDatabaseNameFromXmlPayload(String payload) {
+            Fragment frag = new Fragment(payload);
+            List<Element> elements = frag.getElements("/node()/m:database-name");
+            if (elements != null) {
+                // Should only be one of these, of course
+                elements.forEach(el -> el.detach());
+            }
+            return new XMLOutputter().outputString(frag.getInternalDoc());
         }
     }
 }
