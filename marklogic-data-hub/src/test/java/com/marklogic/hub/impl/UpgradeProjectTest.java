@@ -172,8 +172,8 @@ public class UpgradeProjectTest extends HubTestBase {
             FileUtils.copyFileToDirectory(getResourceFile("mapping-test/flows/CustomerXML.flow.json"), adminHubConfig.getFlowsDir().toFile());
             FileUtils.copyDirectory(getResourceFile("flow-runner-test/flows"), adminHubConfig.getFlowsDir().toFile());
             project.upgradeFlows();
-            Assertions.assertEquals("entity-services-mapping", flowManager.getFlow("testFlow").getStep("6").getStepDefinitionName());
-            Assertions.assertEquals("entity-services-mapping", flowManager.getFlow("CustomerXML").getStep("2").getStepDefinitionName());
+            Assertions.assertEquals("entity-services-mapping", flowManager.getLocalFlow("testFlow").getStep("6").getStepDefinitionName());
+            Assertions.assertEquals("entity-services-mapping", flowManager.getLocalFlow("CustomerXML").getStep("2").getStepDefinitionName());
         });
     }
 
