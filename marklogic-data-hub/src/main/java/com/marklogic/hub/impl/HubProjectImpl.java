@@ -735,7 +735,7 @@ public class HubProjectImpl implements HubProject {
                         step.setStepDefinitionName("entity-services-mapping");
                     }
                 });
-                flowManager.saveFlow(flow);
+                flowManager.saveLocalFlow(flow);
             });
         }
     }
