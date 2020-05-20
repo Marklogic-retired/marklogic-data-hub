@@ -222,6 +222,10 @@ public abstract class AbstractHubTest extends TestObject {
                 loadModules = true;
             }
 
+            File configDir = new File(testProjectDir, "ml-config");
+            if (configDir.exists()) {
+                FileUtils.copyDirectory(configDir, hubProject.getUserConfigDir().toFile());
+            }
         } catch (IOException e) {
             throw new RuntimeException("Unable to load project files: " + e.getMessage(), e);
         }
