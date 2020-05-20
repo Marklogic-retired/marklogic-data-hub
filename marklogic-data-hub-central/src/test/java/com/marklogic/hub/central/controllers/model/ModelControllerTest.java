@@ -22,6 +22,7 @@ import com.marklogic.mgmt.api.database.PathNamespace;
 import com.marklogic.mgmt.mapper.DefaultResourceMapper;
 import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -46,7 +47,9 @@ public class ModelControllerTest extends AbstractHubCentralTest {
 
     @AfterEach
     void cleanUp() {
-        applyDatabasePropertiesForTests(getHubConfig());
+        if (isVersionCompatibleWith520Roles()) {
+            applyDatabasePropertiesForTests(getHubConfig());
+        }
     }
 
     @Test
@@ -87,6 +90,8 @@ public class ModelControllerTest extends AbstractHubCentralTest {
     }
 
     private void updateModelEntityTypes() {
+        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
+
         // Loading unrelated indexes so that we can check for them after updating entity model
         loadUnrelatedIndexes();
 
