@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import { Table, Tooltip } from 'antd';
 import { MLButton } from '@marklogic/design-system';
 import { faCircle, faCheck, faTrashAlt, faPlusSquare } from "@fortawesome/free-solid-svg-icons";
@@ -11,6 +11,8 @@ import { ModelingTooltips } from '../../../config/tooltips.config';
 type Props = {
   entityName: string;
   definitions: any;
+  canReadEntityModel: boolean;
+  canWriteEntityModel: boolean;
 }
 
 const PropertyTable: React.FC<Props> = (props) => {
@@ -106,7 +108,14 @@ const PropertyTable: React.FC<Props> = (props) => {
       dataIndex: 'delete',
       width: 75,
       render: text => {
-        return <FontAwesomeIcon className={styles.iconTrash} icon={faTrashAlt} size="2x"/>
+        return <FontAwesomeIcon className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconTrashReadOnly : styles.iconTrash} icon={faTrashAlt} size="2x"
+        onClick={(event) => {
+          if (!props.canWriteEntityModel && props.canReadEntityModel) {
+            return event.preventDefault()
+          } else {
+            return '' //TODO - Functionality for Delete Icon can be added here
+          }
+        }}/>
       }
     },
     {
@@ -116,7 +125,14 @@ const PropertyTable: React.FC<Props> = (props) => {
       render: text => {
         return ( text && 
           <Tooltip title={ModelingTooltips.addStructuredProperty}>
-            <FontAwesomeIcon className={styles.addIcon} icon={faPlusSquare} data-testid={'add-struct-'+ text}/>
+            <FontAwesomeIcon className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.addIconReadOnly : styles.addIcon} icon={faPlusSquare} data-testid={'add-struct-'+ text}
+            onClick={(event) => {
+              if (!props.canWriteEntityModel && props.canReadEntityModel) {
+                return event.preventDefault()
+              } else {
+                return '' //TODO - Functionality for Add Icon can be added here
+              }
+            }}/>
           </Tooltip>
         )
       }
@@ -186,7 +202,7 @@ const PropertyTable: React.FC<Props> = (props) => {
   return (
     <div>
       <div className={styles.addButtonContainer}>
-        <MLButton type="primary" disabled>Add Property</MLButton>
+        <MLButton type="primary" disabled={!props.canWriteEntityModel}>Add Property</MLButton>
       </div>
       <Table
         locale={{ emptyText: ' ' }}
