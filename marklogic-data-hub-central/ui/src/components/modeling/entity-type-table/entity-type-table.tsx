@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
 import { Table, Tooltip } from 'antd';
 import { faUndo, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
@@ -12,6 +12,8 @@ import { ModelingTooltips } from '../../../config/tooltips.config';
 
 type Props = {
   allEntityTypesData: any[];
+  canReadEntityModel: boolean;
+  canWriteEntityModel: boolean;
 }
 
 const EntityTypeTable: React.FC<Props> = (props) => {
@@ -107,12 +109,28 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         return (
           <div className={styles.iconContainer}>
           <Tooltip title={ModelingTooltips.saveIcon}>
-            <span className={styles.iconSave}></span>
+            <span className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconSaveReadOnly : styles.iconSave}></span>
           </Tooltip>
           <Tooltip title={ModelingTooltips.revertIcon}>
-            <FontAwesomeIcon className={styles.iconRevert} icon={faUndo} size="2x"/>
+            <FontAwesomeIcon className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconRevertReadOnly : styles.iconRevert} icon={faUndo} 
+            onClick={(event) => {
+              if (!props.canWriteEntityModel && props.canReadEntityModel) {
+                return event.preventDefault()
+              } else {
+                return '' //TODO - Add functionality for Revert Icon here
+              }
+            }}
+            size="2x"/>
           </Tooltip>
-          <FontAwesomeIcon className={styles.iconTrash} icon={faTrashAlt} size="2x"/>
+            <FontAwesomeIcon className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconTrashReadOnly : styles.iconTrash} icon={faTrashAlt}
+              onClick={(event) => {
+                if (!props.canWriteEntityModel && props.canReadEntityModel) {
+                  return event.preventDefault()
+                } else {
+                  return '' //TODO - Add functionality for delete Icon here
+                }
+              }}
+              size="2x" />
           </div>
         )
       }
@@ -130,7 +148,8 @@ const EntityTypeTable: React.FC<Props> = (props) => {
   });
 
   const expandedRowRender = (entity) => {
-    return <PropertyTable entityName={entity.name} definitions={entity.definitions}/>
+    return <PropertyTable entityName={entity.name} definitions={entity.definitions}
+              canReadEntityModel={props.canReadEntityModel} canWriteEntityModel={props.canWriteEntityModel}/>
   };
 
   return (

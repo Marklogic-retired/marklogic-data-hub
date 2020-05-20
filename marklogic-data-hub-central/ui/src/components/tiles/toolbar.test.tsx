@@ -2,13 +2,13 @@ import React from 'react';
 import { render, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
 import Toolbar from './toolbar';
-import tiles from '../../config/tiles.config'
+import tiles,{enabled} from '../../config/tiles.config'
 
 describe('Toolbar component', () => {
 
     it('renders with clickable tools', () => {
         const mockClick = jest.fn()
-        const {getByLabelText} = render(<Toolbar tiles={tiles} onClick={mockClick} />);
+        const {getByLabelText} = render(<Toolbar tiles={tiles} onClick={mockClick} enabled={enabled}/>);
         const tools = Object.keys(tiles);
 
         expect(getByLabelText("toolbar")).toBeInTheDocument();

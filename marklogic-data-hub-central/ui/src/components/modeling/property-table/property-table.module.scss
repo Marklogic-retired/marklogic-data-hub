@@ -15,6 +15,14 @@
   color: #5B69AF;
 }
 
+.addIconReadOnly {
+  cursor: not-allowed;
+  font-size: 21px;
+  margin-left: 6px;
+  color: #5B69AF;
+  opacity: 0.5
+}
+
 .addButtonContainer {
   display: flex;
   justify-content: flex-end;
@@ -26,4 +34,12 @@
   font-size: 21px;
   margin-left: 11px;
   color: #B32424;
+}
+
+.iconTrashReadOnly {
+  cursor: not-allowed;
+  font-size: 21px;
+  margin-left: 11px;
+  color: #B32424;
+  opacity: 0.5
 }

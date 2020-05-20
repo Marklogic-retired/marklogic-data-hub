@@ -11,11 +11,17 @@ import styles from './Modeling.module.scss';
 import { primaryEntityTypes } from '../api/modeling';
 import { UserContext } from '../util/user-context';
 import { ModelingTooltips } from '../config/tooltips.config';
+import { AuthoritiesContext } from '../util/authorities';
 
 const Modeling: React.FC = () => {
   const { handleError, resetSessionTime } = useContext(UserContext);
   const [entityTypes, setEntityTypes] = useState<any[]>([]);
   const [showEntityModal, toggleShowEntityModal] = useState(false);
+
+  //Role based access
+  const authorityService = useContext(AuthoritiesContext);
+  const canReadEntityModel = authorityService.canReadEntityModel();
+  const canWriteEntityModel = authorityService.canWriteEntityModel();
 
   useEffect(() => {
     getPrimaryEntityTypes();
@@ -50,6 +56,7 @@ const Modeling: React.FC = () => {
                 type="primary"
                 data-testid="add-btn" 
                 onClick={()=> toggleShowEntityModal(true)}
+                disabled={!canWriteEntityModel}
               >
                 Add</MlButton>
             </Tooltip>
@@ -58,6 +65,7 @@ const Modeling: React.FC = () => {
               type="primary"
               data-testid="add-btn" 
               onClick={()=> toggleShowEntityModal(true)}
+              disabled={!canWriteEntityModel}
             >
               Add</MlButton>
           }
@@ -80,7 +88,9 @@ const Modeling: React.FC = () => {
         toggleModal={toggleShowEntityModal}
         newEntityAdded={newEntityAdded}
       />
-      <EntityTypeTable data-test-id="entity-type-table" allEntityTypesData={entityTypes}/>
+      <EntityTypeTable data-test-id="entity-type-table" allEntityTypesData={entityTypes}
+              canReadEntityModel={canReadEntityModel}
+              canWriteEntityModel={canWriteEntityModel}/>
     </div>
   );
 }
