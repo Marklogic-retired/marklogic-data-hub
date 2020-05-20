@@ -9,10 +9,10 @@
   "collections": [
     "loadCustomersJSON"
   ],
-  "inputFilePath": "testData/customers",
-  "outputURIReplacement": ".*testData,''",
+  "inputFilePath": "input/json",
+  "outputURIReplacement": ".*input/json,'/Customer'",
   "sourceDatabase": null,
   "targetDatabase": "data-hub-STAGING",
-  "permissions": "data-hub-operator,read,data-hub-operator,update",
+  "permissions": "data-hub-common,read,data-hub-common-writer,update",
   "provenanceGranularityLevel": "coarse"
 }
