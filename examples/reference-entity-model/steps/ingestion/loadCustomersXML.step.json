@@ -5,13 +5,14 @@
   "stepId": "loadCustomersXML-ingestion",
   "description": "",
   "sourceFormat": "xml",
-  "targetFormat": "xml",
+  "targetFormat": "json",
   "collections": [
     "loadCustomersXML"
   ],
+  "inputFilePath": "input/xml",
+  "outputURIReplacement": ".*input/xml,'/Customer'",
   "sourceDatabase": null,
   "targetDatabase": "data-hub-STAGING",
-  "targetFormat": "JSON",
-  "permissions": "data-hub-operator,read,data-hub-operator,update",
+  "permissions": "data-hub-common,read,data-hub-common-writer,update",
   "provenanceGranularityLevel": "coarse"
 }

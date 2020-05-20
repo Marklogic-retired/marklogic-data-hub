@@ -6,7 +6,7 @@
   "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
   "description": "",
   "selectedSource": "collection",
-  "sourceQuery": "cts.collectionQuery(['customerJSON'])",
+  "sourceQuery": "cts.collectionQuery(['loadCustomersJSON'])",
   "collections": [
     "default-mapping"
   ],
@@ -14,7 +14,7 @@
   "sourceDatabase": "data-hub-STAGING",
   "targetDatabase": "data-hub-FINAL",
   "targetFormat": "JSON",
-  "permissions": "data-hub-operator,read,data-hub-operator,update",
+  "permissions": "data-hub-common,read,data-hub-operator,update",
   "provenanceGranularityLevel": "coarse",
   "properties": {
     "customerId": {

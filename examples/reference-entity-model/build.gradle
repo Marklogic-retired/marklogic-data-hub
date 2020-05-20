@@ -22,6 +22,6 @@ apply plugin: "com.marklogic.ml-data-hub"
 task loadCustomers(type: com.marklogic.gradle.task.RunFlowTask) {
     description = "Used to populate the application with some customer data for testing"
     flowName = "CustomerFlow"
-    steps = ["1"]
+    steps = ["1","2"]
 }
 mlDeploy.finalizedBy loadCustomers
