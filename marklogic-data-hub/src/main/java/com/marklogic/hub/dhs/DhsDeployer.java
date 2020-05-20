@@ -1,6 +1,7 @@
 package com.marklogic.hub.dhs;
 
 import com.marklogic.appdeployer.AppConfig;
+import com.marklogic.appdeployer.CmaConfig;
 import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.alert.DeployAlertActionsCommand;
@@ -21,11 +22,8 @@ import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.deploy.HubAppDeployer;
-import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand;
+import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.dhs.installer.deploy.DeployHubQueryRolesetsCommand;
-import com.marklogic.hub.deploy.commands.HubDeployDatabaseCommandFactory;
-import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
-import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.impl.HubConfigImpl;
 
 import java.util.ArrayList;
@@ -97,6 +95,10 @@ public class DhsDeployer extends LoggingObject {
             logger.info("Setting security context type for App-Services to: " + authMethod);
             appConfig.setAppServicesSecurityContextType(SecurityContextType.valueOf(authMethod.toUpperCase()));
         }
+
+        // As part of the fix for DHFPROD-5073, disabling all CMA usage, as data-hub-developer/operator are not allowed
+        // to use CMA
+        appConfig.setCmaConfig(new CmaConfig(false));
     }
 
     /**
@@ -171,6 +173,9 @@ public class DhsDeployer extends LoggingObject {
         deployOtherDatabasesCommand.setDeployDatabaseCommandFactory(new HubDeployDatabaseCommandFactory(hubConfig));
         deployOtherDatabasesCommand.setResourceFilenamesIncludePattern(buildPatternForDatabasesToUpdateIndexesFor());
         commands.add(deployOtherDatabasesCommand);
+
+        // Per DHFPROD-5073, need this so that OOTB DH fields/indexes can be restored in case they're removed by the user
+        commands.add(new DeployDatabaseFieldCommand());
 
         commands.add(new DeployAlertConfigsCommand());
         commands.add(new DeployAlertActionsCommand());
