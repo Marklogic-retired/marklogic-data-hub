@@ -133,7 +133,7 @@ const getSettingsArtifact = async () => {
       }
     } catch (error) {
       let message = error.response;
-      console.error('Error while fetching load data settings artifacts', message || error);
+      console.error('Error while fetching load settings artifacts', message || error);
       setSrcDatabase(defaultSourceDatabase);
       setTgtDatabase(defaultTargetDatabase);
       setAdditionalCollections([]);
@@ -419,7 +419,7 @@ const getSettingsArtifact = async () => {
     <p className={styles.title}>Advanced Settings</p>
     <p className={styles.stepName}>{props.stepData.name}</p>
     <br/>
-    <div className={styles.newDataLoadForm}>
+    <div className={styles.newDataForm}>
       <Form {...formItemLayout} onSubmit={handleSubmit} colon={false}>
         {usesSourceDatabase ? <Form.Item label={<span>
             Source Database:&nbsp;
@@ -484,7 +484,7 @@ const getSettingsArtifact = async () => {
             Default Collections:&nbsp;
        &nbsp;
         </span>} labelAlign="left" className={styles.formItem}>
-        <div className={styles.defaultCollections}>{defaultCollections.map(collection => {return <div data-testid={`defCollections-${collection}`}>{collection}</div>})}</div>
+        <div className={styles.defaultCollections}>{defaultCollections.map((collection, i) => {return <div data-testid={`defCollections-${collection}`} key={i}>{collection}</div>})}</div>
         </Form.Item>
         <Form.Item label={<span>
             Target Permissions:&nbsp;

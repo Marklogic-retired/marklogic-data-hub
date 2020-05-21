@@ -1,8 +1,8 @@
-.loadDataCard{
+.loadCard{
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    padding-top: 30px;
+    padding-top: 20px;
 }
 .cardStyle{
     width: 300px;
@@ -24,25 +24,9 @@
     margin-bottom: 0px;
 }
 
-.formatFileContainer {
-    position:absolute;
-    width: 100%;
-    width: 273px
-}
-.files {
-    float: right;
-    text-align: right;
-    align-content: right;
-    margin-right: 0;
-    color: #808080;
-}
-.fileCount{
-    display: block;
-    text-align: right;
-    font-size: 24px;
-    padding: 0;
-    margin-bottom: 0px;
-    margin-right: 0px;
+.formatContainer {
+    width: 273px;
+    height: 53px;
 }
 
 .popover {

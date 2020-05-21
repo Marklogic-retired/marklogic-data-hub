@@ -1,7 +1,7 @@
 import React from 'react';
 import { act, render, fireEvent, waitForElement } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
-import NewDataLoadDialog from './new-data-load-dialog';
+import NewLoadDialog from './new-load-dialog';
 import {BrowserRouter} from "react-router-dom";
 import axiosMock from 'axios'
 
@@ -18,10 +18,10 @@ describe('New/edit load data configuration', () => {
   });
 
   test('fields non-Delimited Text render', async () => {
-    const { debug, baseElement, queryAllByText, getAllByLabelText, queryAllByPlaceholderText, getByText } = render(<BrowserRouter><NewDataLoadDialog newLoad={true}
+    const { debug, baseElement, queryAllByText, getAllByLabelText, queryAllByPlaceholderText, getByText } = render(<BrowserRouter><NewLoadDialog newLoad={true}
                                                            title={'Title'}
                                                            setNewLoad={() => {}}
-                                                           createLoadDataArtifact={() => {}}
+                                                           createLoadArtifact={() => {}}
                                                            stepData={{}}
                                                            canReadWrite={true}
                                                            canReadOnly={false}/></BrowserRouter>);
@@ -40,16 +40,16 @@ describe('New/edit load data configuration', () => {
     //should be the last field in the form
     fireEvent.mouseOver(tooltip[tooltip.length-1]);
     await waitForElement(() => getByText("The prefix you want for the URIs of the loaded documents. Example: If your prefix is /rawData/ and you load a file called customer1.json, the URI of the loaded document becomes /rawData/customer1.json."))
-    expect(getByText("Target Format:")).toHaveTextContent('Target Format: *')
-    expect(getByText("Output URI Prefix:")).toHaveTextContent('Output URI Prefix:')
+    expect(getByText("Target Format:")).toHaveTextContent('Target Format: *');
+    expect(getByText("Output URI Prefix:")).toHaveTextContent('Output URI Prefix:');
   });
 
   test('fields with Delimited Text render', () => {
     const stepData = { sourceFormat: 'csv', separator: '||', targetFormat: 'json'};
-    const { baseElement, queryAllByPlaceholderText } = render(<BrowserRouter><NewDataLoadDialog newLoad={true}
+    const { baseElement, queryAllByPlaceholderText } = render(<BrowserRouter><NewLoadDialog newLoad={true}
                                                                                                 title={'Edit Data Load'}
                                                                                                 setNewLoad={() => {}}
-                                                                                                createLoadDataArtifact={() => {}}
+                                                                                                createLoadArtifact={() => {}}
                                                                                                 stepData={stepData}
                                                                                                 canReadWrite={true}
                                                                                                 canReadOnly={false}/></BrowserRouter>);
@@ -69,10 +69,10 @@ describe('New/edit load data configuration', () => {
     const stepData = { name: 'testSetData', sourceFormat: 'json', targetFormat: 'json'};
     let baseElement, findByPlaceholderText;
     await act(async () => {
-      const renderResults = render(<BrowserRouter><NewDataLoadDialog newLoad={true}
+      const renderResults = render(<BrowserRouter><NewLoadDialog newLoad={true}
                                                               title={'Edit Data Load'}
                                                               setNewLoad={() => {}}
-                                                              createLoadDataArtifact={() => {}}
+                                                              createLoadArtifact={() => {}}
                                                               stepData={stepData}
                                                               canReadWrite={true}
                                                               canReadOnly={false}/></BrowserRouter>);

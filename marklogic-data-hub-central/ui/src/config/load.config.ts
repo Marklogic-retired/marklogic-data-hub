@@ -1,0 +1,66 @@
+const loads = {"data" :
+    [{
+      "name": "testLoad",
+      "description": "Test JSON.",
+      "sourceFormat": "json",
+      "targetFormat": "json",
+      "outputURIReplacement": "",
+      "inputFilePath": "/json-test/data-sets/testLoad",
+      "lastUpdated": "2000-01-01T12:00:00.000000-00:00",
+    }],
+  "status" :200
+};
+
+const flows = {
+  "data": [{
+    "name": "testFlow",
+    "description": "",
+      "steps": [
+          {
+              "stepName": "testLoad",
+              "stepDefinitionType": "INGESTION",
+              "stepNumber": "1",
+              "sourceFormat": "json"
+          }
+      ]
+  }]
+  ,
+  "status" :200
+}
+
+const loadsXML = {"data" :
+    [{
+      "name": "testLoadXML",
+      "description": "Test XML.",
+      "sourceFormat": "xml",
+      "targetFormat": "xml",
+      "outputURIReplacement": "",
+      "inputFilePath": "/xml-test/data-sets/testLoadXML",
+      "lastUpdated": "2020-04-02T23:08:28.287065-07:00",
+    }],
+  "status" :200
+};
+
+const loadSettings = {"data" :
+    {
+        "provenanceGranularityLevel": "coarse",
+        "permissions": "data-hub-operator,read,data-hub-operator,update",
+        "targetFormat": "json",
+        "targetDatabase": "data-hub-STAGING",
+        "collections": [
+          "testLoad"
+        ],
+        "additionalCollections": [],
+        "lastUpdated": "2020-05-27T12:19:02.446622-07:00"
+    },
+    "status" :200
+};
+
+const data = {
+    flows: flows,
+    loads: loads,
+    loadsXML: loadsXML,
+    loadSettings: loadSettings,
+};
+
+export default data;

@@ -1,4 +1,4 @@
-.loadDataList{
+.loadList{
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -8,10 +8,10 @@
     display: flex;
     flex-direction: row-reverse;
     width: 100%;
-    padding-top: 30px;
+    padding-top: 20px;
 }
 
-.loadDataTable {
+.loadTable {
     padding-top: 20px;
     & thead > tr > th {
         color: #44499C;

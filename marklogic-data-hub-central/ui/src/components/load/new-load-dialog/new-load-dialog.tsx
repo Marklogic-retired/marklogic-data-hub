@@ -1,12 +1,12 @@
 import { Modal, Form, Input, Button, Tooltip, Icon, Progress, Upload, Select } from "antd";
 import React, { useState, useEffect, useContext, CSSProperties } from "react";
-import styles from './new-data-load-dialog.module.scss';
+import styles from './new-load-dialog.module.scss';
 import { srcOptions, tgtOptions, fieldSeparatorOptions } from '../../../config/formats.config';
 import {NewLoadTooltips} from '../../../config/tooltips.config';
 import { UserContext } from '../../../util/user-context';
 import Axios from "axios";
 
-const NewDataLoadDialog = (props) => {
+const NewLoadDialog = (props) => {
   const [fileUploadCount, setFileUploadCount] = useState(0);
   const { resetSessionTime } = useContext(UserContext);
   const [stepName, setStepName] = useState('');
@@ -254,7 +254,7 @@ const NewDataLoadDialog = (props) => {
 
     //Call create data load artifact API function
 
-    props.createLoadDataArtifact(dataPayload);
+    props.createLoadArtifact(dataPayload);
 
     props.setNewLoad(false);
   }
@@ -370,13 +370,9 @@ const NewDataLoadDialog = (props) => {
   const deleteFilesFromDirectory = async (loadDataName) => {
     try {
       let response = await Axios.delete(`/api/artifacts/loadData/${loadDataName}/setData`);
-
-      if (response.status === 200) {
-        console.log('DELETE API Called successfully!');
-      }
     } catch (error) {
         let message = error.response.data.message;
-        console.log('Error while deleting load data artifact.', message);
+        console.error('Error while deleting load data artifact.', message);
     } finally {
       resetSessionTime();
     }
@@ -387,25 +383,18 @@ const NewDataLoadDialog = (props) => {
 
     try {
       let response = await Axios.delete(`/api/steps/ingestion/${loadDataName}`);
-
-      if (response.status === 200) {
-        console.log('DELETE API Called successfully!');
-      }
     } catch (error) {
         let message = error.response.data.message;
-        console.log('Error while deleting ingestion artifact.', message);
+        console.error('Error while deleting ingestion artifact.', message);
     }
   }
 
   const createDefaultLoadDataArtifact = async (dataPayload) => {
     try {
       let response = await Axios.post(`/api/steps/ingestion/${stepName}`, dataPayload);
-      if (response.status === 200) {
-        console.log('Create default LoadDataArtifact API Called successfully!')
-      }
     } catch (error) {
       let message = error.response.data.message;
-      console.log('Error While creating the default Load Data artifact!', message)
+      console.error('Error While creating the default Load Data artifact!', message)
     } finally {
       resetSessionTime();
     }
@@ -417,14 +406,10 @@ const NewDataLoadDialog = (props) => {
     if (filenames.indexOf(file.name) === (filenames.length - 1)) {
       try {
         let response = await Axios.get(`/api/steps/ingestion/${stepName}`);
-
-        if (response.status === 200) {
-          console.log('GET API Called in custom request!');
-        }
       } catch (error) {
         let errorCode = error.response.data.code;
         let message = error.response.data.message;
-        console.log('Error while fetching load data artifacts from custom request', message);
+        console.error('Error while fetching load data artifacts from custom request', message);
 
         if (errorCode === 404) {
           setToDelete(true);
@@ -446,9 +431,6 @@ const NewDataLoadDialog = (props) => {
         formData.append('files', file);
       });
 
-
-      //API call for
-
       const url = `/api/artifacts/loadData/${stepName}/setData`;
 
       await Axios({
@@ -466,7 +448,6 @@ const NewDataLoadDialog = (props) => {
           crossorigin: true
         }
       }).then(resp => {
-        console.log('responses.status', resp);
         if (resp.data && resp.data.message) {
           if (resp.data.message.startsWith('Maximum upload size exceeded') || resp.data.message.includes('Network Error')) {
             setDisplayUploadError(true);
@@ -479,7 +460,7 @@ const NewDataLoadDialog = (props) => {
         setFileUploadCount(fileList.length);
         setFileList([]);
       }).catch(err => {
-        console.log('Error while uploading the files', err)
+        console.error('Error while uploading the files', err)
         if (err.message && (err.message.startsWith('Maximum upload size exceeded') || err.message.includes('Network Error') || err.message.includes('Request failed with status code 500'))) {
           setDisplayUploadError(true);
         }
@@ -692,5 +673,5 @@ const NewDataLoadDialog = (props) => {
   </Modal>)
 }
 
-export default NewDataLoadDialog;
+export default NewLoadDialog;
 

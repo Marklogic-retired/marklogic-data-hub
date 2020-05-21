@@ -1,9 +1,9 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import EntityTypes from './EntityTypes';
+import Curate from './Curate';
 
 describe('Install component', () => {
   it('should render correctly', () => {
-    shallow(<EntityTypes />);
+    shallow(<Curate />);
   });
 });

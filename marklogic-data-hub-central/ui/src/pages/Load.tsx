@@ -1,17 +1,21 @@
 import React, { useState, useEffect, useContext } from 'react';
 import {Modal} from 'antd';
-import styles from './LoadData.module.scss';
-import LoadDataList from '../components/load-data/load-data-list';
-import SwitchView from '../components/load-data/switch-view';
-import LoadDataCard from '../components/load-data/load-data-card';
+import styles from './Load.module.scss';
+import SwitchView from '../components/load/switch-view';
+import LoadList from '../components/load/load-list';
+import LoadCard from '../components/load/load-card';
 import { UserContext } from '../util/user-context';
 import axios from 'axios'
 import { AuthoritiesContext } from "../util/authorities";
 
-const LoadData: React.FC = () => {
-  let [viewType, setViewType] = useState('table');
+export type ViewType =  'card' | 'list';
+
+const INITIAL_VIEW: ViewType = 'list';
+
+const Load: React.FC = () => {
+  let [view, setView] = useState(INITIAL_VIEW);
   const [isLoading, setIsLoading] = useState(false);
-  const [loadDataArtifacts, setLoadDataArtifacts] = useState<any[]>([]);
+  const [loadArtifacts, setLoadArtifacts] = useState<any[]>([]);
   const [flows, setFlows] = useState<any[]>([]);
   const { handleError, resetSessionTime } = useContext(UserContext);
 
@@ -22,21 +26,21 @@ const LoadData: React.FC = () => {
   const canWriteFlow = authorityService.canWriteFlow();
 
   //Set context for switching views
-  const handleViewTypeSelection = (vtype) => {
-    setViewType(vtype);
+  const handleViewSelection = (view) => {
+    setView(view);
   }
 
   useEffect(() => {
-      getLoadDataArtifacts();
+      getLoadArtifacts();
       getFlows();
       return (() => {
-        setLoadDataArtifacts([]);
+        setLoadArtifacts([]);
         setFlows([]);
       })
   }, [isLoading]);
 
   //CREATE/POST load data Artifact
-  const createLoadDataArtifact = async (ingestionStep) => {
+  const createLoadArtifact = async (ingestionStep) => {
     try {
       setIsLoading(true);
 
@@ -56,12 +60,12 @@ const LoadData: React.FC = () => {
   }
 
   //GET all the data load artifacts
-  const getLoadDataArtifacts = async () => {
+  const getLoadArtifacts = async () => {
     try {
       let response = await axios.get('/api/steps/ingestion');
 
       if (response.status === 200) {
-        setLoadDataArtifacts([...response.data]);
+        setLoadArtifacts([...response.data]);
       }
     } catch (error) {
         let message = error.response.data.message;
@@ -71,10 +75,10 @@ const LoadData: React.FC = () => {
   }
 
   //DELETE Load Data Artifact
-  const deleteLoadDataArtifact = async (loadDataName) => {
+  const deleteLoadArtifact = async (loadName) => {
     try {
       setIsLoading(true);
-      let response = await axios.delete(`/api/steps/ingestion/${loadDataName}`);
+      let response = await axios.delete(`/api/steps/ingestion/${loadName}`);
 
       if (response.status === 200) {
         setIsLoading(false);
@@ -153,22 +157,22 @@ const LoadData: React.FC = () => {
   //Setting the value of switch view output
   let output;
 
-  if (viewType === 'table') {
-    output = <LoadDataList
-      data={loadDataArtifacts}
-      deleteLoadDataArtifact={deleteLoadDataArtifact}
-      createLoadDataArtifact={createLoadDataArtifact}
+  if (view === 'list') {
+    output = <LoadList
+      data={loadArtifacts}
+      deleteLoadArtifact={deleteLoadArtifact}
+      createLoadArtifact={createLoadArtifact}
       canReadWrite={canReadWrite}
       canReadOnly={canReadOnly}
     />
   }
   else {
     output = <div className={styles.cardView}>
-      <LoadDataCard
-        data={loadDataArtifacts}
+      <LoadCard
+        data={loadArtifacts}
         flows={flows}
-        deleteLoadDataArtifact={deleteLoadDataArtifact}
-        createLoadDataArtifact={createLoadDataArtifact}
+        deleteLoadArtifact={deleteLoadArtifact}
+        createLoadArtifact={createLoadArtifact}
         canReadWrite={canReadWrite}
         canReadOnly={canReadOnly}
         canWriteFlow={canWriteFlow}
@@ -182,9 +186,9 @@ const LoadData: React.FC = () => {
   return (
     <div>
       {canReadWrite || canReadOnly ?
-      <div className={styles.loadDataContainer}>
+      <div className={styles.loadContainer}>
         <div className={styles.switchViewContainer}>
-          <SwitchView handleSelection={handleViewTypeSelection}/>
+          <SwitchView handleSelection={handleViewSelection} defaultView={view}/>
         </div>
         {output}
       </div> : ''
@@ -193,4 +197,4 @@ const LoadData: React.FC = () => {
   );
 }
 
-export default LoadData;
+export default Load;

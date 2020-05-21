@@ -1,11 +1,11 @@
 import React, {CSSProperties, useContext, useState} from 'react';
-import styles from './load-data-card.module.scss';
+import styles from './load-card.module.scss';
 import {Card, Icon, Tooltip, Popover, Row, Col, Modal, Select} from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
 import sourceFormatOptions from '../../config/formats.config';
-import NewDataLoadDialog from './new-data-load-dialog/new-data-load-dialog';
+import NewLoadDialog from './new-load-dialog/new-load-dialog';
 import { convertDateFromISO } from '../../util/conversionFunctions';
 import AdvancedSettingsDialog from "../advanced-settings/advanced-settings-dialog";
 import { AdvLoadTooltips } from '../../config/tooltips.config';
@@ -17,8 +17,8 @@ const { Option } = Select;
 interface Props {
     data: any;
     flows: any;
-    deleteLoadDataArtifact: any;
-    createLoadDataArtifact: any;
+    deleteLoadArtifact: any;
+    createLoadArtifact: any;
     canReadOnly: any;
     canReadWrite: any;
     canWriteFlow: any;
@@ -26,7 +26,7 @@ interface Props {
     addStepToNew: any;
 }
 
-const LoadDataCard: React.FC<Props> = (props) => {
+const LoadCard: React.FC<Props> = (props) => {
     const activityType = 'ingestion';
     const authorityService = useContext(AuthoritiesContext);
     const [newDataLoad, setNewDataLoad] = useState(false);
@@ -38,7 +38,7 @@ const LoadDataCard: React.FC<Props> = (props) => {
     const [flowName, setFlowName] = useState('');
     const [showLinks, setShowLinks] = useState('');
 
-    const [openLoadDataSettings, setOpenLoadDataSettings] = useState(false);
+    const [openLoadSettings, setOpenLoadSettings] = useState(false);
 
     const OpenAddNewDialog = () => {
         setTitle('New Data Load');
@@ -51,11 +51,9 @@ const LoadDataCard: React.FC<Props> = (props) => {
         setNewDataLoad(true);
     }
 
-    const OpenLoadDataSettingsDialog = (index) => {
+    const OpenLoadSettingsDialog = (index) => {
         setStepData(prevState => ({ ...prevState, ...props.data[index]}));
-        //openLoadDataSettings = true;
-        setOpenLoadDataSettings(true);
-        console.log('Open settings', openLoadDataSettings)
+        setOpenLoadSettings(true);
     }
 
     // Custom CSS for source Format
@@ -88,7 +86,7 @@ const LoadDataCard: React.FC<Props> = (props) => {
     }
 
     const onDeleteOk = (name) => {
-        props.deleteLoadDataArtifact(name)
+        props.deleteLoadArtifact(name)
         setDialogVisible(false);
     }
 
@@ -96,9 +94,9 @@ const LoadDataCard: React.FC<Props> = (props) => {
         // Handle all possible events from mouseover of card body
         if (typeof e.target.className === 'string' &&
             (e.target.className === 'ant-card-body' ||
-             e.target.className.startsWith('load-data-card_formatFileContainer') ||
-             e.target.className.startsWith('load-data-card_stepNameStyle') ||
-             e.target.className.startsWith('load-data-card_fileCount'))
+             e.target.className.startsWith('load-card_formatFileContainer') ||
+             e.target.className.startsWith('load-card_stepNameStyle') ||
+             e.target.className.startsWith('load-card_fileCount'))
         ) {
             setShowLinks(name);
         }
@@ -108,9 +106,9 @@ const LoadDataCard: React.FC<Props> = (props) => {
         handleStepAdd(obj.loadName, obj.flowName);
     }
 
-    const handleStepAdd = (loadDataName, flowName) => {
+    const handleStepAdd = (loadName, flowName) => {
         setAddDialogVisible(true);
-        setLoadArtifactName(loadDataName);
+        setLoadArtifactName(loadName);
         setFlowName(flowName);
     }
 
@@ -157,13 +155,13 @@ const LoadDataCard: React.FC<Props> = (props) => {
     );
 
     return (
-        <div id="load-data-card-view" className={styles.loadDataCard}>
+        <div id="load-card" aria-label="load-card" className={styles.loadCard}>
             <Row gutter={16} type="flex" >
                 {props.canReadWrite ? <Col >
                     <Card
                         size="small"
                         className={styles.addNewCard}>
-                        <div><Icon type="plus-circle" className={styles.plusIcon} theme="filled" onClick={OpenAddNewDialog}/></div>
+                        <div aria-label="add-new-card"><Icon type="plus-circle" className={styles.plusIcon} theme="filled" onClick={OpenAddNewDialog}/></div>
                         <br />
                         <p className={styles.addNewContent}>Add New</p>
                     </Card>
@@ -181,20 +179,18 @@ const LoadDataCard: React.FC<Props> = (props) => {
                                         trigger="click"
                                         placement="bottom"
                                     ><i><FontAwesomeIcon icon={faExclamationCircle} className={styles.popover} size="lg" /></i></Popover>) : ''}</span>,
-                                <Tooltip title={'Settings'} placement="bottom"><Icon type="setting" key="setting" onClick={() => OpenLoadDataSettingsDialog(index)}/></Tooltip>,
+                                <Tooltip title={'Settings'} placement="bottom"><Icon type="setting" key="setting" onClick={() => OpenLoadSettingsDialog(index)}/></Tooltip>,
                                 <Tooltip title={'Edit'} placement="bottom"><Icon type="edit" key="edit" onClick={() => OpenEditStepDialog(index)}/></Tooltip>,
-                                props.canReadWrite ? <Tooltip title={'Delete'} placement="bottom"><i><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg" onClick={() => handleCardDelete(elem.name)}/></i></Tooltip> : <i><FontAwesomeIcon icon={faTrashAlt} onClick={(event) => event.preventDefault()} className={styles.disabledDeleteIcon} size="lg"/></i>,
+                                props.canReadWrite ? <Tooltip title={'Delete'} placement="bottom"><i aria-label="icon: delete"><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg" onClick={() => handleCardDelete(elem.name)}/></i></Tooltip> : <i><FontAwesomeIcon icon={faTrashAlt} onClick={(event) => event.preventDefault()} className={styles.disabledDeleteIcon} size="lg"/></i>,
                             ]}
                             className={styles.cardStyle}
                             size="small"
                         >
-                            <div className={styles.formatFileContainer}>
-                                <span style={sourceFormatStyle(elem.sourceFormat)}>{elem.sourceFormat.toUpperCase()}</span>
-                                <span className={styles.files}>Files</span>
-                            </div><br />
-                            <div className={styles.fileCount}>{elem.fileCount}</div>
-                            <span className={styles.stepNameStyle}>{getInitialChars(elem.name, 27, '...')}</span>
-                            <p className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</p>
+                            <div className={styles.formatContainer}>
+                                <div style={sourceFormatStyle(elem.sourceFormat)}>{elem.sourceFormat.toUpperCase()}</div>
+                            </div>
+                            <div className={styles.stepNameStyle}>{getInitialChars(elem.name, 25, '...')}</div>
+                            <div className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</div>
                             {props.canWriteFlow ? <div className={styles.cardLinks} style={{display: showLinks === elem.name ? 'block' : 'none'}}>
                                 <div className={styles.cardLink}>Add step to a new flow</div>
                                 <div className={styles.cardNonLink}>
@@ -217,11 +213,11 @@ const LoadDataCard: React.FC<Props> = (props) => {
                     </div>
                 </Col>)) : <span></span> }
             </Row>
-            <NewDataLoadDialog
+            <NewLoadDialog
                 newLoad={newDataLoad}
                 title={title}
                 setNewLoad={setNewDataLoad}
-                createLoadDataArtifact={props.createLoadDataArtifact}
+                createLoadArtifact={props.createLoadArtifact}
                 stepData={stepData}
                 canReadWrite={props.canReadWrite}
                 canReadOnly={props.canReadOnly}
@@ -230,8 +226,8 @@ const LoadDataCard: React.FC<Props> = (props) => {
             {addConfirmation}
             <AdvancedSettingsDialog
                 tooltipData={AdvLoadTooltips}
-                openAdvancedSettings={openLoadDataSettings}
-                setOpenAdvancedSettings={setOpenLoadDataSettings}
+                openAdvancedSettings={openLoadSettings}
+                setOpenAdvancedSettings={setOpenLoadSettings}
                 stepData={stepData}
                 activityType={activityType}
                 canWrite={authorityService.canWriteLoad()}
@@ -241,4 +237,4 @@ const LoadDataCard: React.FC<Props> = (props) => {
 
 }
 
-export default LoadDataCard;
+export default LoadCard;
