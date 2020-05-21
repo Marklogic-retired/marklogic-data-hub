@@ -5,6 +5,7 @@
   "role": [
     "data-hub-operator",
     "hub-central-user",
+    "hub-central-load-reader",
     "hub-central-mapping-reader"
   ]
 }

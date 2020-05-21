@@ -6,7 +6,7 @@
     "data-hub-developer",
     "data-hub-entity-model-reader",
     "data-hub-flow-reader",
-    "data-hub-load-data-reader",
+    "data-hub-ingestion-reader",
     "data-hub-mapping-reader",
     "data-hub-match-merge-reader",
     "data-hub-step-definition-reader"

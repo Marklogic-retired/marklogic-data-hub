@@ -17,8 +17,8 @@ const LoadData: React.FC = () => {
 
   //For role based privileges
   const authorityService = useContext(AuthoritiesContext);
-  const canReadOnly = authorityService.canReadLoadData();
-  const canReadWrite = authorityService.canWriteLoadData();
+  const canReadOnly = authorityService.canReadLoad();
+  const canReadWrite = authorityService.canWriteLoad();
   const canWriteFlow = authorityService.canWriteFlow();
 
   //Set context for switching views

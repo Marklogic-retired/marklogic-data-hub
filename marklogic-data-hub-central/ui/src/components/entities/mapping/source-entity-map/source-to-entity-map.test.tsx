@@ -405,7 +405,7 @@ describe('RTL Source-to-entity map tests', () => {
 
     test('Verify evaluation of valid expression for mapping writer user', async () => {
         axiosMock.post['mockImplementation'](jest.fn(() => Promise.resolve({ status: 200, data: data.testJSONResponse })));
-        const { getByText, getByTestId } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} />)
+        const { getByText, getByTestId, queryByTestId } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} />)
         let propNameExpression = getByText('testNameInExp');
         let propAttributeExpression = getByText('placeholderAttribute')
 
@@ -419,7 +419,10 @@ describe('RTL Source-to-entity map tests', () => {
 
         // waiting for success message before clicking on Test button
         await(waitForElement(() => (getByTestId('successMessage'))))
-        await(waitForElementToBeRemoved(() => (getByTestId('successMessage'))))
+        // checking successMessage is still there before waitForElementToBeRemoved as this would occasionally fail under load
+        if (queryByTestId('successMessage')) {
+            await (waitForElementToBeRemoved(() => (queryByTestId('successMessage'))))
+        }
 
         // Test button should be enabled after mapping expression is saved
         expect(document.querySelector('#Test-btn')).toBeEnabled()
@@ -441,7 +444,7 @@ describe('RTL Source-to-entity map tests', () => {
 
     test('Truncation in case of responses for Array datatype', async () => {
         axiosMock.post['mockImplementation'](jest.fn(() => Promise.resolve({ status: 200, data: data.truncatedJSONResponse })));
-        const { getByText, getByTestId } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} entityTypeProperties={data.truncatedEntityProps} />)
+        const { getByText, getByTestId, queryByTestId } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} entityTypeProperties={data.truncatedEntityProps} />)
         let propNameExpression = getByText('testNameInExp');
         let propAttributeExpression = getByText('placeholderAttribute')
 
@@ -455,7 +458,9 @@ describe('RTL Source-to-entity map tests', () => {
 
         // waiting for success message before clicking on Test button
         await(waitForElement(() => (getByTestId('successMessage'))))
-        await(waitForElementToBeRemoved(() => (getByTestId('successMessage'))))
+        if (queryByTestId('successMessage')) {
+            await (waitForElementToBeRemoved(() => (queryByTestId('successMessage'))))
+        }
 
         // Test button should be enabled after mapping expression is saved
         expect(document.querySelector('#Test-btn')).toBeEnabled()
@@ -683,8 +688,9 @@ describe('RTL Source-to-entity map tests', () => {
         fireEvent.blur(propAttributeExpression);
 
         await (waitForElement(() => (getByTestId('successMessage'))))
-
-        await (waitForElementToBeRemoved(() => (queryByTestId('successMessage'))))
+        if (queryByTestId('successMessage')) {
+            await (waitForElementToBeRemoved(() => (queryByTestId('successMessage'))))
+        }
 
         expect(propAttributeExpression).toHaveTextContent("concat(proteinType,'-NEW')");
 
@@ -909,7 +915,7 @@ describe('RTL Source Selector/Source Search tests', () => {
 
     test('Right XPATH with source context',  async() => {
         axiosMock.post.mockImplementation(data.mapProps.updateMappingArtifact);
-        const {getAllByText, getAllByRole,getByTestId } = render(<SourceToEntityMap {...data.mapProps}  mappingVisible={true}/>);
+        const {getAllByText, getAllByRole,getByTestId,queryByTestId } = render(<SourceToEntityMap {...data.mapProps}  mappingVisible={true}/>);
 
         let sourceSelector = getByTestId("items-listIcon");
 
@@ -934,7 +940,9 @@ describe('RTL Source Selector/Source Search tests', () => {
         fireEvent.click(firstName[2]);
         //mapping is saved
         await (waitForElement(() => getByTestId("successMessage")))
-        await (waitForElementToBeRemoved(() => (getByTestId('successMessage'))))
+        if (queryByTestId('successMessage')) {
+            await (waitForElementToBeRemoved(() => (queryByTestId('successMessage'))))
+        }
 
         mapExp = getByTestId("itemTypes-mapexpression");
 

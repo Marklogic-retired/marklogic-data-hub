@@ -10,7 +10,7 @@
     "data-hub-mapping-reader",
     "data-hub-entity-model-reader",
     "data-hub-step-definition-reader",
-    "data-hub-load-data-reader",
+    "data-hub-ingestion-reader",
     "data-hub-match-merge-reader",
     "tde-view",
     "data-hub-saved-query-reader",

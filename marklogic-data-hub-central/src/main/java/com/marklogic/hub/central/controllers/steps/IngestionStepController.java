@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,12 +28,14 @@ public class IngestionStepController extends BaseController {
 
     @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(value = "Get all ingestion steps", response = IngestionSteps.class)
+    @Secured("ROLE_readIngestion")
     public ResponseEntity<JsonNode> getSteps() {
         return ResponseEntity.ok(ArtifactService.on(getHubClient().getStagingClient()).getList("ingestion"));
     }
 
     @RequestMapping(value = "/{stepName}", method = RequestMethod.GET)
     @ApiOperation(value = "Get a step", response = StepSchema.class)
+    @Secured("ROLE_readIngestion")
     public ResponseEntity<JsonNode> getStep(@PathVariable String stepName) {
         return ResponseEntity.ok(newService().getStep(STEP_DEFINITION_TYPE, stepName));
     }
@@ -52,6 +55,7 @@ public class IngestionStepController extends BaseController {
     }
 
     @RequestMapping(value = "/{stepName}/settings", method = RequestMethod.GET)
+    @Secured("ROLE_readIngestion")
     public ResponseEntity<StepSettingsSchema> getSettings(@PathVariable String stepName) {
         return ResponseEntity.ok(StepUtil.settingsFromJson(newService().getStep(STEP_DEFINITION_TYPE, stepName)));
     }

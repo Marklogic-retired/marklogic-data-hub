@@ -49,7 +49,7 @@ class Security {
     };
 
     // Blacklist of artifact authorities already implemented the correct way
-    const authorityBlacklist = ['readMapping'];
+    const authorityBlacklist = ['readMapping', 'writeMapping', 'readIngestion'];
     // TODO Below logic will go away in favor of privileges
     const typesInfo = Artifacts.getTypesInfo();
     for (const artifactTypeInfo of typesInfo) {

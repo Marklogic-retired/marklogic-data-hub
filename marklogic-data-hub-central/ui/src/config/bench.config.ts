@@ -347,6 +347,25 @@ const loadsXML = {"data" :
   "status" :200
 };
 
+const setupMockAPIs = (axiosMock) => {
+  return axiosMock.get['mockImplementation']((url) => {
+    switch (url) {
+      case '/api/flows':
+        return Promise.resolve(flows)
+      case '/api/models/primaryEntityTypes':
+        return Promise.resolve(primaryEntityTypes)
+      case '/api/steps/ingestion':
+        return Promise.resolve(loads)
+      case '/api/steps/mapping':
+        return Promise.resolve(mappings);
+      case '/api/artifacts/matching':
+        return Promise.resolve(matchings)
+      default:
+        return Promise.reject(new Error('not found'))
+    }
+  })
+};
+
 const data = {
     primaryEntityTypes,
     flows: flows,
@@ -361,7 +380,8 @@ const data = {
     jobRespFailed: jobRespFailed,
     jobRespSuccess: jobRespSuccess,
     flowsXML: flowsXML,
-    loadsXML: loadsXML
+    loadsXML: loadsXML,
+    setupMockAPIs: setupMockAPIs
 };
 
 export default data;

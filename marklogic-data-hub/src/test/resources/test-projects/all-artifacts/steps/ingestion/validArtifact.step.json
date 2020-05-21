@@ -3,6 +3,6 @@
   "sourceFormat": "xml",
   "targetFormat": "json",
   "targetDatabase": "data-hub-STAGING",
-  "permissions": "data-hub-load-data-reader,read,data-hub-load-data-writer,update",
+  "permissions": "data-hub-ingestion-reader,read,data-hub-ingestion-writer,update",
   "provenanceGranularity": "coarse-grained"
 }

@@ -126,7 +126,7 @@ Can run steps through Hub Central
  - hub-central-user
  - data-hub-common-writer
  - data-hub-flow-reader
- - data-hub-load-data-reader
+ - data-hub-ingestion-reader
  - data-hub-mapping-reader
  - data-hub-match-merge-reader
  - data-hub-step-definition-reader
@@ -148,23 +148,23 @@ Can create and run steps though Hub Central
 Can read load data artifacts through Hub Central
 
 #### Associate Authorities
- - readLoadData
+ - readIngestion
 
 #### Inherited Roles
  - hub-central-user
- - data-hub-load-data-reader
+ - data-hub-ingestion-reader
 
 ### hub-central-load-writer
 
 Can read and write load data artifacts through Hub Central
 
 #### Associate Authorities
- - writeLoadData
+ - writeIngestion
 
 #### Inherited Roles
  - hub-central-load-reader
  - data-hub-common-writer
- - data-hub-load-data-writer
+ - data-hub-ingestion-writer
 
 ### hub-central-mapping-reader
 

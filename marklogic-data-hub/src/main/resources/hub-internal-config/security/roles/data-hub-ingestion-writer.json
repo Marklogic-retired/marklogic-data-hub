@@ -1,4 +1,4 @@
 {
-  "role-name": "data-hub-load-data-reader",
+  "role-name": "data-hub-ingestion-writer",
   "description": "Permits reading a load data configuration"
 }
