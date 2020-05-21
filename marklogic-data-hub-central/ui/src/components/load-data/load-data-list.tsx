@@ -41,10 +41,8 @@ const LoadDataList: React.FC<Props> = (props) => {
     }
 
     const OpenLoadDataSettingsDialog = (record) => {
-        console.log('Open record', record);
         setStepData(prevState => ({ ...prevState, ...record}));
         setOpenLoadDataSettings(true);
-        console.log('Open settings', openLoadDataSettings)
     }
 
     const showDeleteConfirm = (name) => {
@@ -138,10 +136,10 @@ const LoadDataList: React.FC<Props> = (props) => {
     ];
 
    return (
-    <div className={styles.loadDataList}>
+    <div id="load-data-list" className={styles.loadDataList}>
         <div className={styles.addNewContainer}>
             {props.canReadWrite ? <div>
-                <MLButton type="primary" size="default" className={styles.addNewButton} onClick={OpenAddNewDialog}>Add New</MLButton>
+                <MLButton aria-label="add-new-list" type="primary" size="default" className={styles.addNewButton} onClick={OpenAddNewDialog}>Add New</MLButton>
             </div> : ''}
         </div>
         <Table

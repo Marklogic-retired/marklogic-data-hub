@@ -157,13 +157,13 @@ const LoadDataCard: React.FC<Props> = (props) => {
     );
 
     return (
-        <div id="load-data-card-view" className={styles.loadDataCard}>
+        <div id="load-data-card" className={styles.loadDataCard}>
             <Row gutter={16} type="flex" >
                 {props.canReadWrite ? <Col >
                     <Card
                         size="small"
                         className={styles.addNewCard}>
-                        <div><Icon type="plus-circle" className={styles.plusIcon} theme="filled" onClick={OpenAddNewDialog}/></div>
+                        <div aria-label="add-new-card"><Icon type="plus-circle" className={styles.plusIcon} theme="filled" onClick={OpenAddNewDialog}/></div>
                         <br />
                         <p className={styles.addNewContent}>Add New</p>
                     </Card>
@@ -188,13 +188,11 @@ const LoadDataCard: React.FC<Props> = (props) => {
                             className={styles.cardStyle}
                             size="small"
                         >
-                            <div className={styles.formatFileContainer}>
-                                <span style={sourceFormatStyle(elem.sourceFormat)}>{elem.sourceFormat.toUpperCase()}</span>
-                                <span className={styles.files}>Files</span>
-                            </div><br />
-                            <div className={styles.fileCount}>{elem.fileCount}</div>
-                            <span className={styles.stepNameStyle}>{getInitialChars(elem.name, 27, '...')}</span>
-                            <p className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</p>
+                            <div className={styles.formatContainer}>
+                                <div style={sourceFormatStyle(elem.sourceFormat)}>{elem.sourceFormat.toUpperCase()}</div>
+                            </div>
+                            <div className={styles.stepNameStyle}>{getInitialChars(elem.name, 25, '...')}</div>
+                            <div className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</div>
                             {props.canWriteFlow ? <div className={styles.cardLinks} style={{display: showLinks === elem.name ? 'block' : 'none'}}>
                                 <div className={styles.cardLink}>Add step to a new flow</div>
                                 <div className={styles.cardNonLink}>

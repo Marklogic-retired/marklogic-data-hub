@@ -8,8 +8,12 @@ import { UserContext } from '../util/user-context';
 import axios from 'axios'
 import { AuthoritiesContext } from "../util/authorities";
 
+export type ViewType =  'card' | 'list';
+
+const INITIAL_VIEW: ViewType = 'list';
+
 const LoadData: React.FC = () => {
-  let [viewType, setViewType] = useState('table');
+  let [view, setView] = useState(INITIAL_VIEW);
   const [isLoading, setIsLoading] = useState(false);
   const [loadDataArtifacts, setLoadDataArtifacts] = useState<any[]>([]);
   const [flows, setFlows] = useState<any[]>([]);
@@ -22,8 +26,8 @@ const LoadData: React.FC = () => {
   const canWriteFlow = authorityService.canWriteFlow();
 
   //Set context for switching views
-  const handleViewTypeSelection = (vtype) => {
-    setViewType(vtype);
+  const handleViewSelection = (view) => {
+    setView(view);
   }
 
   useEffect(() => {
@@ -153,7 +157,7 @@ const LoadData: React.FC = () => {
   //Setting the value of switch view output
   let output;
 
-  if (viewType === 'table') {
+  if (view === 'list') {
     output = <LoadDataList
       data={loadDataArtifacts}
       deleteLoadDataArtifact={deleteLoadDataArtifact}
@@ -182,9 +186,9 @@ const LoadData: React.FC = () => {
   return (
     <div>
       {canReadWrite || canReadOnly ?
-      <div className={styles.loadDataContainer}>
+      <div id="load-data" className={styles.loadDataContainer}>
         <div className={styles.switchViewContainer}>
-          <SwitchView handleSelection={handleViewTypeSelection}/>
+          <SwitchView handleSelection={handleViewSelection} defaultView={view}/>
         </div>
         {output}
       </div> : ''

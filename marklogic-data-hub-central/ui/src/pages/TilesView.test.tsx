@@ -5,6 +5,7 @@ import TilesView from './TilesView';
 import {AuthoritiesContext} from '../util/authorities';
 import axiosMock from 'axios';
 import curateData from '../config/bench.config';
+import loadData from '../config/load.config';
 import authorities from '../config/authorities.config';
 import data from "../config/bench.config";
 
@@ -109,6 +110,35 @@ describe('TilesView component', () => {
         expect(document.querySelector('#flows-container')).toBeInTheDocument();
         expect(getByText('Create Flow')).toBeInTheDocument();
         expect(getByText('testFlow')).toBeInTheDocument();
+    });
+
+    test('Verify Load tile displays from toolbar', async () => {
+        const {getByLabelText, getByText, queryByText} = render(<AuthoritiesContext.Provider value={mockDevRolesService}><TilesView/></AuthoritiesContext.Provider>);
+
+        // Load tile not shown initially
+        expect(queryByText("icon-load")).not.toBeInTheDocument();
+        expect(queryByText("title-load")).not.toBeInTheDocument();
+
+        await axiosMock.get['mockImplementation']((url) => {
+            switch (url) {
+                case '/api/flows':
+                    return Promise.resolve(data.flows)
+                case '/api/steps/ingestion':
+                    return Promise.resolve(data.loads)
+                default:
+                    return Promise.reject(new Error('not found'))
+            }
+        })
+        fireEvent.click(getByLabelText("tool-load"));
+
+        // Load tile shown after click
+        expect(await(waitForElement(() => getByLabelText("icon-load")))).toBeInTheDocument();
+        expect(getByLabelText("title-load")).toBeInTheDocument();
+        // Default list view
+        expect(getByLabelText("switch-view")).toBeInTheDocument();
+        expect(getByLabelText("switch-view-card")).toBeInTheDocument();
+        expect(getByLabelText("switch-view-list")).toBeInTheDocument();
+        expect(getByLabelText("add-new-list")).toBeInTheDocument();
     });
 
 });
