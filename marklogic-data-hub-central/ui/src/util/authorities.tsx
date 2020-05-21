@@ -7,8 +7,8 @@ export interface IAuthoritiesContextInterface {
     canWriteMapping: () => boolean;
     canReadMatchMerge: () => boolean;
     canWriteMatchMerge: () => boolean;
-    canReadLoadData: () => boolean;
-    canWriteLoadData: () => boolean;
+    canReadLoad: () => boolean;
+    canWriteLoad: () => boolean;
     canReadEntityModel: () => boolean;
     canWriteEntityModel: () => boolean;
     canReadFlow: () => boolean;
@@ -45,10 +45,10 @@ export class AuthoritiesService implements IAuthoritiesContextInterface {
         // As of the moment writeMatch and writeMerge are connected
         return this.authorities.includes('writeMatch');
     };
-    public canReadLoadData:() => boolean = () => {
+    public canReadLoad:() => boolean = () => {
         return this.authorities.includes('readIngestion');
     };
-    public canWriteLoadData:() => boolean = () => {
+    public canWriteLoad:() => boolean = () => {
         return this.authorities.includes('writeIngestion');
     };
     public canReadEntityModel:() => boolean = () => {

@@ -35,9 +35,9 @@
                 "examples": {
                   "hub-central-load-data-writer": {
                     "value": [
-                      "canLoginToDataHub",
-                      "canReadLoadData",
-                      "canWriteLoadData"
+                      "loginToHubCentral",
+                      "readIngestion",
+                      "writeIngestion"
                     ]
                   }
                 }

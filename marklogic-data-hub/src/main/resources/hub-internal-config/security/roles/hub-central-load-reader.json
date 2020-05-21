@@ -1,0 +1,15 @@
+{
+  "role-name": "hub-central-load-reader",
+  "description": "Permits reading/reviewing load steps in Hub Central",
+  "role": [
+    "hub-central-user",
+    "data-hub-ingestion-reader"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "data-hub:readIngestion",
+      "action": "http://marklogic.com/data-hub/privileges/read-ingestion",
+      "kind": "execute"
+    }
+  ]
+}

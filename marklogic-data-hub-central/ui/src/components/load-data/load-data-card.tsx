@@ -234,7 +234,7 @@ const LoadDataCard: React.FC<Props> = (props) => {
                 setOpenActivitySettings={setOpenLoadDataSettings}
                 stepData={stepData}
                 activityType={activityType}
-                canWrite={authorityService.canWriteLoadData()}
+                canWrite={authorityService.canWriteLoad()}
             />
         </div>
     );

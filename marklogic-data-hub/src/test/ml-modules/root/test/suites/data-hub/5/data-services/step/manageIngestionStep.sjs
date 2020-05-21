@@ -32,6 +32,6 @@ hubJsTest.verifyJson(expectedStep, stepService.getStep(stepDefinitionType, stepN
 const expectedUri = "/steps/ingestion/myIngester.step.json";
 assertions = assertions
   .concat(hubTest.assertInCollections(expectedUri, ["http://marklogic.com/data-hub/steps", "http://marklogic.com/data-hub/steps/ingestion"]))
-  .concat(hubTest.assertHasPermissions(expectedUri, "data-hub-load-data-reader,read,data-hub-load-data-writer,update"));
+  .concat(hubTest.assertHasPermissions(expectedUri, "data-hub-ingestion-reader,read,data-hub-ingestion-writer,update"));
 
 assertions;

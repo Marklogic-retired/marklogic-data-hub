@@ -26,10 +26,10 @@ const SwitchView: React.FC<Props> = (props) => {
         <div className={styles.switchView}>
             <Menu mode="horizontal" defaultSelectedKeys={['table']}>
                 <Menu.Item key='card' className={styles.cardViewOption} >
-                    <i><FontAwesomeIcon icon={faThLarge} onClick={cardsView} className={styles.iconStyle} size="2x" /></i>
+                    <i><FontAwesomeIcon title='card' icon={faThLarge} onClick={cardsView} className={styles.iconStyle} size="2x" /></i>
                 </Menu.Item>
                 <Menu.Item key='table' className={styles.tableViewOption}>
-                    <i><FontAwesomeIcon icon={faTh} onClick={tableView} className={styles.iconStyle} size="2x" /></i>
+                    <i><FontAwesomeIcon title='table' icon={faTh} onClick={tableView} className={styles.iconStyle} size="2x" /></i>
                 </Menu.Item>
             </Menu>
         </div>

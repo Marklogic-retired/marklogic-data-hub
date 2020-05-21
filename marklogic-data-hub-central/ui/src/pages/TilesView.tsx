@@ -42,7 +42,7 @@ const TilesView: React.FC  = (props) => {
     // For role-based privileges
     const auth = useContext(AuthoritiesContext);
     const enabledViews: Record<TileId, boolean> = {
-        load: auth.canReadLoadData() || auth.canWriteLoadData(),
+        load: auth.canReadLoad() || auth.canWriteLoad(),
         model: auth.canReadEntityModel() || auth.canWriteEntityModel(),
         curate: auth.canReadMapping() || auth.canWriteMapping() || auth.canReadMatchMerge() || auth.canWriteMatchMerge(),
         run: auth.canReadFlow() || auth.canWriteFlow(),

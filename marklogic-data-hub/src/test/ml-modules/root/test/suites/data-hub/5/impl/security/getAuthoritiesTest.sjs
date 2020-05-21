@@ -36,6 +36,15 @@ hubTest.runWithRolesAndPrivileges(['hub-central-user'], [], function() {
     assertions.push(test.assertTrue(authorities.includes('loginToHubCentral'), 'hub-central-user should only have "loginToHubCentral"'));
 });
 
+// Test hub-central-load-reader
+hubTest.runWithRolesAndPrivileges(['hub-central-load-reader'], [], function() {
+    const Security = require('/data-hub/5/impl/security.sjs');
+    const authorities = new Security().getDataHubAuthorities();
+    assertions.push(test.assertTrue(authorities.includes('loginToHubCentral'), 'hub-central-load-reader should have "loginToHubCentral"'));
+    assertions.push(test.assertTrue(authorities.includes('readIngestion'), 'hub-central-load-reader should have "readIngestion"'));
+    assertions.push(test.assertFalse(authorities.includes('writeIngestion'), 'hub-central-load-reader should not have "writeIngestion"'));
+});
+
 // Test hub-central-mapping-reader
 hubTest.runWithRolesAndPrivileges(['hub-central-mapping-reader'], [], function() {
     const Security = require('/data-hub/5/impl/security.sjs');

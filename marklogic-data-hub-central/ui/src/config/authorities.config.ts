@@ -19,10 +19,10 @@ class DeveloperRolesService implements IAuthoritiesContextInterface{
     public canWriteMatchMerge:() => boolean = () => {
         return true;
     };
-    public canReadLoadData:() => boolean = () => {
+    public canReadLoad:() => boolean = () => {
         return true;
     };
-    public canWriteLoadData:() => boolean = () => {
+    public canWriteLoad:() => boolean = () => {
         return true;
     };
     public canReadEntityModel:() => boolean = () => {
@@ -70,10 +70,10 @@ class OperatorRolesService implements IAuthoritiesContextInterface{
     public canWriteMatchMerge:() => boolean = () => {
         return false;
     };
-    public canReadLoadData:() => boolean = () => {
+    public canReadLoad:() => boolean = () => {
         return true;
     };
-    public canWriteLoadData:() => boolean = () => {
+    public canWriteLoad:() => boolean = () => {
         return false;
     };
     public canReadEntityModel:() => boolean = () => {

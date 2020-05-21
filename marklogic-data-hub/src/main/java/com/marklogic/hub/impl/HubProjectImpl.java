@@ -16,7 +16,6 @@
 package com.marklogic.hub.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.HubProject;
@@ -25,8 +24,6 @@ import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
-import com.marklogic.rest.util.JsonNodeUtil;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,8 +53,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFilePermission;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -343,6 +341,7 @@ public class HubProjectImpl implements HubProject {
         userSecurityDir.resolve("roles").toFile().mkdirs();
         userSecurityDir.resolve("users").toFile().mkdirs();
         userSecurityDir.resolve("privileges").toFile().mkdirs();
+
         getUserServersDir().toFile().mkdirs();
         getUserDatabaseDir().toFile().mkdirs();
 
