@@ -9,8 +9,8 @@ import Footer from './components/footer/footer';
 import Login from './pages/Login';
 import Home from './pages/Home';
 import ProjectInfo from './pages/ProjectInfo';
-import LoadData from './pages/LoadData';
-import Bench from './pages/Bench';
+import Load from './pages/Load';
+import Run from './pages/Run';
 import TilesView from './pages/TilesView';
 import NoMatchRedirect from './pages/noMatchRedirect';
 import View from './pages/View';
@@ -22,7 +22,7 @@ import './App.scss';
 import { Application } from './config/application.config';
 import { themes, themeMap } from './config/themes.config';
 import axios from 'axios';
-import EntityTypes from './pages/EntityTypes';
+import Curate from './pages/Curate';
 import ModalStatus from './components/modal-status/modal-status';
 
 
@@ -105,14 +105,14 @@ const App: React.FC<Props> = ({history, location}) => {
         <PrivateRoute path="/project-info" exact>
           <ProjectInfo/>
         </PrivateRoute>
-        <PrivateRoute path="/load-data" exact>
-          <LoadData/>
+        <PrivateRoute path="/load" exact>
+          <Load/>
         </PrivateRoute>
-        <PrivateRoute path="/entity-tiles" exact>
-          <EntityTypes/>
+        <PrivateRoute path="/curate" exact>
+          <Curate/>
         </PrivateRoute>
-        <PrivateRoute path="/bench" exact>
-          <Bench/>
+        <PrivateRoute path="/run" exact>
+          <Run/>
         </PrivateRoute>
         <SearchProvider>
           <PrivateRoute path="/tiles" exact>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import styles from './Bench.module.scss';
+import styles from './Run.module.scss';
 import Flows from '../components/flows/flows';
 import { Modal, Collapse } from 'antd';
 import axios from 'axios'
@@ -20,8 +20,7 @@ const Statuses = {
     'FINISHED_WITH_ERRORS': 'finished_with_errors'
 }
 
-// TODO Rename Bench component to Run
-const Bench: React.FC = () => {
+const Run: React.FC = () => {
    const { resetSessionTime } = useContext(UserContext)
 
     const [isLoading, setIsLoading] = useState(false);
@@ -334,4 +333,4 @@ const Bench: React.FC = () => {
   );
 }
 
-export default Bench;
+export default Run;

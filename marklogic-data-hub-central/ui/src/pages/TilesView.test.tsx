@@ -4,9 +4,9 @@ import '@testing-library/jest-dom/extend-expect'
 import TilesView from './TilesView';
 import {AuthoritiesContext, AuthoritiesService} from '../util/authorities';
 import axiosMock from 'axios';
-import curateData from '../config/bench.config';
+import mocks from '../config/mocks.config';
 import authorities from '../config/authorities.config';
-import data from "../config/bench.config";
+import data from "../config/run.config";
 
 jest.mock('axios');
 
@@ -15,7 +15,7 @@ const mockDevRolesService = authorities.DeveloperRolesService;
 describe('TilesView component', () => {
 
     beforeEach(() => {
-        curateData.setupMockAPIs(axiosMock);
+        mocks.curateAPI(axiosMock);
     });
 
     afterEach(() => {
@@ -47,7 +47,6 @@ describe('TilesView component', () => {
         expect(queryByText("icon-curate")).not.toBeInTheDocument();
         expect(queryByText("title-curate")).not.toBeInTheDocument();
 
-        await curateData.setupMockAPIs(axiosMock);
         fireEvent.click(getByLabelText("tool-curate"));
 
         // Curate tile shown with entityTypes after click
@@ -65,7 +64,6 @@ describe('TilesView component', () => {
         expect(queryByText("icon-load")).not.toBeInTheDocument();
         expect(queryByText("title-load")).not.toBeInTheDocument();
 
-        await curateData.setupMockAPIs(axiosMock);
         fireEvent.click(getByLabelText("tool-load"));
 
         // Load tile shown with entityTypes after click
@@ -83,7 +81,6 @@ describe('TilesView component', () => {
         expect(queryByText("icon-load")).not.toBeInTheDocument();
         expect(queryByText("title-load")).not.toBeInTheDocument();
 
-        await curateData.setupMockAPIs(axiosMock);
         await fireEvent.click(getByLabelText("tool-load"));
 
         // Load tile shown with entityTypes after click
@@ -95,7 +92,7 @@ describe('TilesView component', () => {
         const authorityService = new AuthoritiesService();
         authorityService.setAuthorities(['readIngestion']);
         const {getByLabelText, queryByLabelText, queryByText} = render(<AuthoritiesContext.Provider value={authorityService}><TilesView/></AuthoritiesContext.Provider>);
-        await curateData.setupMockAPIs(axiosMock);
+
         ['model', 'curate', 'run'].forEach((tileId) => {
             // Curate tile not shown initially
             expect(queryByText("icon-"+tileId)).not.toBeInTheDocument();
@@ -116,7 +113,6 @@ describe('TilesView component', () => {
         expect(queryByText("icon-run")).not.toBeInTheDocument();
         expect(queryByText("title-run")).not.toBeInTheDocument();
 
-        await curateData.setupMockAPIs(axiosMock);
         fireEvent.click(getByLabelText("tool-run"));
 
         // Run tile shown with entityTypes after click
@@ -125,6 +121,25 @@ describe('TilesView component', () => {
         expect(document.querySelector('#flows-container')).toBeInTheDocument();
         expect(getByText('Create Flow')).toBeInTheDocument();
         expect(getByText('testFlow')).toBeInTheDocument();
+    });
+
+    test('Verify Load tile displays from toolbar', async () => {
+        const {getByLabelText, getByText, queryByText} = render(<AuthoritiesContext.Provider value={mockDevRolesService}><TilesView/></AuthoritiesContext.Provider>);
+
+        // Load tile not shown initially
+        expect(queryByText("icon-load")).not.toBeInTheDocument();
+        expect(queryByText("title-load")).not.toBeInTheDocument();
+
+        fireEvent.click(getByLabelText("tool-load"));
+
+        // Load tile shown after click
+        expect(await(waitForElement(() => getByLabelText("icon-load")))).toBeInTheDocument();
+        expect(getByLabelText("title-load")).toBeInTheDocument();
+        // Default list view
+        expect(getByLabelText("switch-view")).toBeInTheDocument();
+        expect(getByLabelText("switch-view-card")).toBeInTheDocument();
+        expect(getByLabelText("switch-view-list")).toBeInTheDocument();
+        expect(getByLabelText("add-new-list")).toBeInTheDocument();
     });
 
 });

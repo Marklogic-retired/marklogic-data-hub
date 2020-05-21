@@ -591,7 +591,7 @@ const MappingCard: React.FC<Props> = (props) => {
     );
 
     return (
-        <div className={styles.loaddataContainer}>
+        <div className={styles.loadContainer}>
             <Row gutter={16} type="flex" >
                 {props.canReadWrite ? <Col >
                     <Card

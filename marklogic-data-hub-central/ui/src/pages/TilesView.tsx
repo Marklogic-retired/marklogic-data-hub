@@ -5,10 +5,10 @@ import Tiles from '../components/tiles/tiles';
 import styles from './TilesView.module.scss';
 import './TilesView.scss';
 
-import LoadData from './LoadData';
+import Load from './Load';
 import Modeling from './Modeling';
-import EntityTypes from './EntityTypes';
-import Bench from './Bench';
+import Curate from './Curate';
+import Run from './Run';
 import Browse from './Browse';
 import { AuthoritiesContext } from "../util/authorities";
 
@@ -24,10 +24,10 @@ interface TileItem {
 }
 
 const views: Record<TileId, JSX.Element>  = {
-    load: <LoadData/>,
+    load: <Load/>,
     model: <Modeling/>,
-    curate: <EntityTypes/>,
-    run: <Bench/>,
+    curate: <Curate/>,
+    run: <Run/>,
     explore: <Browse/>,
 };
 

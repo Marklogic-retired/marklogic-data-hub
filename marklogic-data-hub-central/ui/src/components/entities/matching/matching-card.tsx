@@ -98,7 +98,7 @@ const MatchingCard: React.FC<Props> = (props) => {
         </Modal>;
 
     return (
-        <div className={styles.loaddataContainer}>
+        <div className={styles.matchingContainer}>
             <Row gutter={16} type="flex" >
                 {props.canWriteMatchMerge ? <Col >
                     <Card

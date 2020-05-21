@@ -58,8 +58,8 @@ const loadData = {
       lastUpdated: "2020-04-15T14:22:54.057519-07:00"
     }
   ],
-  deleteLoadDataArtifact: jest.fn(),
-  createLoadDataArtifact: jest.fn(),
+  deleteLoadArtifact: jest.fn(),
+  createLoadArtifact: jest.fn(),
   canReadWrite: true,
   canReadOnly: false,
 

@@ -1,12 +1,12 @@
 import React from 'react';
 import { render, fireEvent, wait, within } from '@testing-library/react';
-import LoadDataList from './load-data-list';
+import LoadList from './load-list';
 import data from '../../config/test-data.config';
 
 describe('Load data component', () => {
 
-  test('Verify loadData list view renders correctly with no data', () => {
-    const { getByText } = render(<LoadDataList {...data.loadData} data={[]} />)
+  test('Verify Load list view renders correctly with no data', () => {
+    const { getByText } = render(<LoadList {...data.loadData} data={[]} />)
     const tableColumns = within(getByText('Name').closest('tr'));
 
     expect(getByText('Add New')).toBeInTheDocument();
@@ -19,8 +19,8 @@ describe('Load data component', () => {
     expect(getByText('No Data')).toBeInTheDocument();
   })
 
-  test('Verify loadData list view renders correctly with data', () => {
-    const { getByText, getAllByLabelText } = render(<LoadDataList {...data.loadData} />)
+  test('Verify Load list view renders correctly with data', () => {
+    const { getByText, getAllByLabelText } = render(<LoadList {...data.loadData} />)
     const dataRow = within(getByText('load2').closest('tr'));
 
     expect(dataRow.getByText(data.loadData.data[1].name)).toBeInTheDocument();
@@ -34,8 +34,8 @@ describe('Load data component', () => {
     expect(getAllByLabelText('icon: setting').length).toBe(2);
   })
 
-  test('Verify loadData settings from list view renders correctly', async () => {
-    const { getByText, getByTestId } = render(<LoadDataList {...data.loadData} />)
+  test('Verify Load settings from list view renders correctly', async () => {
+    const { getByText, getByTestId } = render(<LoadList {...data.loadData} />)
 
     await wait(() => {
       fireEvent.click(getByTestId(data.loadData.data[0].name+'-settings'));

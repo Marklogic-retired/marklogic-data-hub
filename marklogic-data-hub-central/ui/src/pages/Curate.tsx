@@ -1,13 +1,12 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Modal } from 'antd';
-import styles from './EntityTypes.module.scss';
+import styles from './Curate.module.scss';
 import { AuthoritiesContext } from '../util/authorities';
 import { UserContext } from '../util/user-context';
 import axios from 'axios'
 import EntityTiles from '../components/entities/entity-tiles';
 
-// TODO Rename EntityTypes component to Curate
-const EntityTypes: React.FC = () => {
+const Curate: React.FC = () => {
 
     useEffect(() => {
         getEntityModels();
@@ -127,4 +126,4 @@ const EntityTypes: React.FC = () => {
 
 }
 
-export default EntityTypes;
+export default Curate;

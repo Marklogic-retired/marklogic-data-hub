@@ -4,7 +4,7 @@ import {fireEvent, render} from '@testing-library/react';
 
 import EntityTiles from './entity-tiles';
 import axiosMock from 'axios'
-import data from "../../config/bench.config";
+import data from "../../config/run.config";
 import {act} from "react-dom/test-utils";
 
 jest.mock('axios');
