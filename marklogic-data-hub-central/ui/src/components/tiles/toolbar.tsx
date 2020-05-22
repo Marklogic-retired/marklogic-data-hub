@@ -15,37 +15,32 @@ const Toolbar: React.FC<Props>  = (props) => {
 
     const tiles = props.tiles; // config/tiles.config.ts
 
-    const onClick = (e,id) => {
-        if(props.enabled && props.enabled.includes(tiles[id]['title'])){
+    const onClick = (e, id) => {
+        if (props.enabled && props.enabled.includes(id)){
             props.onClick(id);
         } else {
-            e.preventDefault()
+            e.preventDefault();
         }
     }
 
     const getTooltip = (id) => {
-        if(props.enabled && props.enabled.includes(tiles[id]['title'])){
+        if (props.enabled && props.enabled.includes(id)){
             return tiles[id]['title'];
         } else {
-            return `${tiles[id]['title']}: Contact your security administrator to get the roles and permissions required to access this functionality.` 
+            return `${tiles[id]['title']}: Contact your security administrator to get the roles and permissions required to access this functionality.`;
         }
     }
 
     const getIconStyle = (tileId) => {
-        let styleDisabledIcon: CSSProperties = {
+        let disabled: CSSProperties = {
                 color: 'grey',
                 opacity: '0.5',
                 cursor: 'not-allowed'
         }
-
-        let styleEnabledIcon: CSSProperties = {
-            color: tileId['color']
+        let enabled: CSSProperties = {
+            color: tiles[tileId]['color']
         }
-        if(props.enabled && props.enabled.includes(tileId['title'])){
-            return styleEnabledIcon;
-        } else {
-            return styleDisabledIcon
-        }
+        return (props.enabled && props.enabled.includes(tileId)) ? enabled : disabled;
     }    
     return (
         <div id={styles.toolbar} aria-label={'toolbar'}>
@@ -53,14 +48,14 @@ const Toolbar: React.FC<Props>  = (props) => {
                 if (tiles[id]['iconType'] === 'custom') {
                     return (
                         <Tooltip title={getTooltip(id)} placement="left" key={i}>
-                            <div className={tiles[id]['icon']} aria-label={'tool-' + id} style={getIconStyle(tiles[id])} 
+                            <div className={tiles[id]['icon']} aria-label={'tool-' + id} style={getIconStyle(id)} 
                             onClick={(e) => onClick(e,id)}></div>
                         </Tooltip>
                     )
                 } else {
                     return (
                         <Tooltip title={getTooltip(id)} placement="left" key={i}>
-                            <i className={styles.tool} aria-label={'tool-' + id} style={getIconStyle(tiles[id])}
+                            <i className={styles.tool} aria-label={'tool-' + id} style={getIconStyle(id)}
                             onClick={(e) => onClick(e,id)}>
                                 <FontAwesomeIcon icon={tiles[id]['icon']} size="lg" />
                             </i>
