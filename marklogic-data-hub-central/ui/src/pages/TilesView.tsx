@@ -40,22 +40,17 @@ const TilesView: React.FC  = (props) => {
     const [view, setView] = useState<JSX.Element|null>(null);
 
     // For role-based privileges
-    const authorityService = useContext(AuthoritiesContext);
-    const canViewLoad = authorityService.canReadLoadData() || authorityService.canWriteLoadData();
-    const canViewModel = authorityService.canReadEntityModel() || authorityService.canWriteEntityModel();
-    const canViewCurate = authorityService.canReadMapping() || authorityService.canWriteMapping() || authorityService.canReadMatchMerge() || authorityService.canWriteMatchMerge();
-    const canViewRun = authorityService.canReadFlow() || authorityService.canWriteFlow();
-    //const canViewExplore = authorityService.canReadFlow() || authorityService.canWriteFlow(); //Pending
-
-    const enabledViews = {
-        Load: canViewLoad ? 'enabled' : 'disabled',
-        Model: canViewModel ? 'enabled' : 'disabled',
-        Curate: canViewCurate ? 'enabled' : 'disabled',
-        Run: canViewRun ? 'enabled' : 'disabled',
-        Explore: 'enabled'
-    }; //TODO - Needs to be updated if there are any changes in authorities for Explorer
-
-    const enabled = Object.keys(enabledViews).filter(key => enabledViews[key] === 'enabled');
+    const auth = useContext(AuthoritiesContext);
+    const enabledViews: Record<TileId, boolean> = {
+        load: auth.canReadLoadData() || auth.canWriteLoadData(),
+        model: auth.canReadEntityModel() || auth.canWriteEntityModel(),
+        curate: auth.canReadMapping() || auth.canWriteMapping() || auth.canReadMatchMerge() || auth.canWriteMatchMerge(),
+        run: auth.canReadFlow() || auth.canWriteFlow(),
+        explore: true, 
+        // TODO - Needs to be updated if there are any changes in authorities for Explorer
+        // explore: auth.canReadFlow() || auth.canWriteFlow(),
+    };
+    const enabled = Object.keys(enabledViews).filter(key => enabledViews[key]);
 
     const onSelect = (id) => {
         setSelection(id);
