@@ -417,7 +417,7 @@ public class HubProjectImpl implements HubProject {
         writeResourceFile("hub-internal-config/security/users/flow-operator-user.json", usersDir.resolve("flow-operator-user.json"), true);
 
         // New 5.3.0 privileges
-        writeResourceFile("hub-internal-config/security/privileges/data-hub-download-configuration-files.json", privilegesDir.resolve("data-hub-download-configuration-files.json"), true);
+        writeResourceFile("hub-internal-config/security/privileges/data-hub-download-project-files.json", privilegesDir.resolve("data-hub-download-project-files.json"), true);
 
         // New 5.2.0 privileges
         writeResourceFile("hub-internal-config/security/privileges/data-hub-create-custom-privilege.json", privilegesDir.resolve("data-hub-create-custom-privilege.json"), true);

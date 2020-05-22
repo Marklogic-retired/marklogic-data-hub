@@ -4,15 +4,15 @@ import com.marklogic.hub.AbstractHubCoreTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.FileCopyUtils;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.util.zip.ZipFile;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DownloadConfigurationFilesTest extends AbstractHubCoreTest {
+public class GetProjectFilesAsZipTest extends AbstractHubCoreTest {
 
     private AllArtifactsProject project;
 
@@ -20,7 +20,7 @@ public class DownloadConfigurationFilesTest extends AbstractHubCoreTest {
     void forbiddenUser() {
         runAsTestUserWithRoles("data-hub-operator");
         project = new AllArtifactsProject(getHubClient());
-        verifyTestUserIsForbiddenTo(project::downloadProject, "A user must have the data-hub-download-configuration-files privilege");
+        verifyTestUserIsForbiddenTo(project::writeProjectArtifactsToZipFile, "A user must have the data-hub-download-project-files privilege");
     }
 
     /**
@@ -38,7 +38,8 @@ public class DownloadConfigurationFilesTest extends AbstractHubCoreTest {
         // Download, verify the zip is correct
         runAsTestUserWithRoles("hub-central-downloader");
         project = new AllArtifactsProject(getHubClient());
-        project.downloadProject();
+
+        project.writeProjectArtifactsToZipFile();
         project.verifyZipEntries();
 
         // Clear out the test project directory and the user files in the database
@@ -50,7 +51,7 @@ public class DownloadConfigurationFilesTest extends AbstractHubCoreTest {
 
         // Verify that downloading returns an empty zip, since the database was cleared of user files
         runAsTestUser();
-        project.downloadProject();
+        project.writeProjectArtifactsToZipFile();
         assertEquals(0, project.getZipEntries().size(), "The zip should be empty since the project was reset, and thus there are " +
             "no user artifacts to download; zipEntries: " + project.getZipEntries());
 
@@ -59,23 +60,22 @@ public class DownloadConfigurationFilesTest extends AbstractHubCoreTest {
         installUserArtifacts();
 
         runAsTestUser();
-        project.downloadProject();
+        project.writeProjectArtifactsToZipFile();
         project.verifyZipEntries();
     }
 
     private void extractZipToProjectDirectory() throws IOException {
-        ZipInputStream zip = new ZipInputStream(new ByteArrayInputStream(project.getZipBytes()));
-        ZipEntry entry = zip.getNextEntry();
-        while (entry != null) {
+        ZipFile zip = new ZipFile(project.getZipFile());
+        Enumeration<?> entries = zip.entries();
+        while (entries.hasMoreElements()) {
+            ZipEntry entry = (ZipEntry) entries.nextElement();
             int entrySize = (int) entry.getSize();
             byte[] buffer = new byte[entrySize];
-            zip.read(buffer, 0, entrySize);
+            zip.getInputStream(entry).read(buffer, 0, entrySize);
+
             File file = new File(PROJECT_PATH, entry.getName());
             file.getParentFile().mkdirs();
             FileCopyUtils.copy(buffer, file);
-            zip.closeEntry();
-            entry = zip.getNextEntry();
         }
-        zip.close();
     }
 }

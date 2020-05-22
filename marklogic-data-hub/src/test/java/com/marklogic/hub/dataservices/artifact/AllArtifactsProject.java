@@ -3,19 +3,18 @@ package com.marklogic.hub.dataservices.artifact;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubClient;
-import com.marklogic.hub.dataservices.ArtifactService;
+import com.marklogic.hub.impl.ArtifactManagerImpl;
 import com.marklogic.hub.test.TestObject;
-import org.springframework.util.FileCopyUtils;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.util.zip.ZipFile;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,22 +25,22 @@ public class AllArtifactsProject extends TestObject {
 
     private HubClient hubClient;
     private Map<String, JsonNode> zipEntries;
-    private byte[] zipBytes;
+    private File zipFile;
 
     public AllArtifactsProject(HubClient hubClient) {
         this.hubClient = hubClient;
     }
 
     /**
-     * Downloads the project, capturing it as a byte array so we can do useful stuff with it.
+     * Writes the zip to a file and reads all the entries into memory.
      */
-    public void downloadProject() {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        InputStream stream = ArtifactService.on(hubClient.getStagingClient()).downloadConfigurationFiles();
+    public void writeProjectArtifactsToZipFile() {
         try {
-            FileCopyUtils.copy(stream, baos);
-            zipBytes = baos.toByteArray();
-            readZipEntries(new ZipInputStream(new ByteArrayInputStream(zipBytes)));
+            zipFile = new File("build/allArtifactsProject.zip");
+            FileOutputStream fos = new FileOutputStream(zipFile);
+            new ArtifactManagerImpl(hubClient).writeProjectArtifactsAsZip(fos);
+            fos.close();
+            readZipEntries();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -103,37 +102,48 @@ public class AllArtifactsProject extends TestObject {
     private JsonNode verifyEntryExists(String path, String namePropertyName, String name) {
         JsonNode node = zipEntries.get(path);
         assertNotNull(node, "Did not find entry for path: " + path);
+        assertTrue(node.has(namePropertyName),
+            format("Could not find name property '%s' in zip entry '%s'; JSON: " + node, namePropertyName, name));
         assertEquals(name, node.get(namePropertyName).asText());
         return node;
     }
 
-    private void readZipEntries(ZipInputStream zip) throws IOException {
+    private void readZipEntries() throws IOException {
         zipEntries = new HashMap<>();
 
-        ZipEntry entry = zip.getNextEntry();
-        while (entry != null) {
+        ZipFile zip = new ZipFile(zipFile);
+        Enumeration<?> entries = zip.entries();
+        while (entries.hasMoreElements()) {
+            ZipEntry entry = (ZipEntry) entries.nextElement();
             int entrySize = (int) entry.getSize();
             byte[] buffer = new byte[entrySize];
-            zip.read(buffer, 0, entrySize);
+            zip.getInputStream(entry).read(buffer, 0, entrySize);
             if (entry.getName().endsWith(".xml")) {
                 // To allow for easily verifying the count, just toss an empty JSON object into zipEntries for XML documents
                 zipEntries.put(entry.getName(), objectMapper.createObjectNode());
-                assertTrue(new String(buffer).startsWith("<search:options"), "Entries ending in XML are expected to be " +
-                    "XML search options documents; actual content: " + new String(buffer));
+                String xml = new String(buffer);
+                assertTrue(xml.startsWith("<search:options"), "Entries ending in XML are expected to be " +
+                    "XML search options documents; actual content: " + new String(xml));
+                assertContentIsPrettyPrinted(xml);
             } else {
+                assertContentIsPrettyPrinted(new String(buffer));
                 zipEntries.put(entry.getName(), objectMapper.readTree(buffer));
             }
-            zip.closeEntry();
-            entry = zip.getNextEntry();
         }
         zip.close();
+    }
+
+    private void assertContentIsPrettyPrinted(String xmlOrJson) {
+        assertTrue(xmlOrJson.split("\n").length > 1, "Expecting the artifact content to have multiple newline symbols, which indicates " +
+            "that the content is being pretty-printed as opposed to all being on one line, which would be lousy for " +
+            "submitting into version control; actual content: " + xmlOrJson);
     }
 
     public Map<String, JsonNode> getZipEntries() {
         return zipEntries;
     }
 
-    public byte[] getZipBytes() {
-        return zipBytes;
+    public File getZipFile() {
+        return zipFile;
     }
 }

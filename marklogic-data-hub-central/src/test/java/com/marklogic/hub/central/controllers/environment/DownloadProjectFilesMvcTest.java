@@ -16,17 +16,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
-public class DownloadConfigurationFilesTest extends AbstractMvcTest {
+public class DownloadProjectFilesMvcTest extends AbstractMvcTest {
 
-    private final static String PATH = "/api/environment/downloadConfigurationFiles";
+    private final static String PATH = "/api/environment/downloadProjectFiles";
 
     @Test
     void permittedUser() throws Exception {
         installReferenceModelProject();
 
-        setTestUserRoles("hub-central-downloader");
-
-        loginAsTestUser();
+        loginAsTestUserWithRoles("hub-central-downloader");
 
         mockMvc.perform(get(PATH).session(mockHttpSession))
             .andDo(result -> {
