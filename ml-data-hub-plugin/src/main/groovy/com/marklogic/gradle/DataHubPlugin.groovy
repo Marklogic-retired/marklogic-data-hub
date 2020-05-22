@@ -104,7 +104,9 @@ class DataHubPlugin implements Plugin<Project> {
         project.task("hubCreateMapping", group: scaffoldGroup, type: CreateMappingTask)
         project.task("hubCreateStepDefinition", group: scaffoldGroup, type: CreateStepDefinitionTask)
         project.task("hubCreateEntity", group: scaffoldGroup, type: CreateEntityTask)
-        project.task("hubCreateFlow", group: scaffoldGroup, type: CreateFlowTask)
+        project.task("hubCreateFlow", group: scaffoldGroup, type: CreateFlowTask,
+            description: "Create a new flow file in your project; specify a flow name with -PflowName=YourFlowName, and " +
+                "optionally generate a default set of inline steps by including -PwithInlineSteps=true")
         project.task("hubCreateHarmonizeFlow", group: scaffoldGroup, type: CreateHarmonizeLegacyFlowTask)
         project.task("hubCreateInputFlow", group: scaffoldGroup, type: CreateInputLegacyFlowTask)
         project.task("hubGenerateExplorerOptions", group: scaffoldGroup, type: GenerateExplorerQueryOptions,

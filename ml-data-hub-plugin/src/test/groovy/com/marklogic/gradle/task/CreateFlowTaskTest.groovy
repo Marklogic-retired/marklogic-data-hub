@@ -27,11 +27,35 @@ class CreateFlowTaskTest extends BaseTest {
         result.task(":hubCreateFlow").outcome == FAILED
     }
 
-    def "create flow with valid name only"() {
+    def "create default empty flow"() {
+        given:
+        propertiesFile << """
+            ext {
+                flowName=mySimpleFlow
+            }
+        """
+
+        when:
+        def result = runTask('hubCreateFlow')
+
+        then:
+        notThrown(UnexpectedBuildFailure)
+        result.task(":hubCreateFlow").outcome == SUCCESS
+
+        File flowDir = Paths.get(testProjectDir.root.toString(), "flows").toFile()
+        flowDir.isDirectory()
+        def jsonSlurper = new JsonSlurper()
+        def data = jsonSlurper.parse(Paths.get(testProjectDir.root.toString(), "flows", "mySimpleFlow.flow.json").toFile());
+        data.name == "mySimpleFlow"
+        data.description == "Flow description"
+    }
+
+    def "create flow with inline steps"() {
         given:
         propertiesFile << """
             ext {
                 flowName=myTestFlow
+                withInlineSteps=true
             }
         """
 
@@ -46,9 +70,15 @@ class CreateFlowTaskTest extends BaseTest {
         flowDir.isDirectory()
         def jsonSlurper = new JsonSlurper()
         def data = jsonSlurper.parse(Paths.get(testProjectDir.root.toString(), "flows", "myTestFlow.flow.json").toFile());
-        data.steps.'1'.options.permissions == "data-hub-operator,read,data-hub-operator,update";//ingestion
-        data.steps.'2'.options.permissions == "data-hub-operator,read,data-hub-operator,update";//mapping
-        data.steps.'3'.options.permissions == "data-hub-operator,read,data-hub-operator,update";//mastering
+        def expectedPermissions = 'data-hub-operator,read,data-hub-operator,update'
+        data.steps.'1'.name == 'ingestion-step'
+        data.steps.'1'.options.permissions == expectedPermissions
+        data.steps.'2'.name == 'mapping-step'
+        data.steps.'2'.options.permissions == expectedPermissions
+        data.steps.'3'.name == 'matching-step'
+        data.steps.'3'.options.permissions == expectedPermissions
+        data.steps.'4'.name == 'merging-step'
+        data.steps.'4'.options.permissions == expectedPermissions
     }
 
     def "create flow with existing name"() {
@@ -65,7 +95,7 @@ class CreateFlowTaskTest extends BaseTest {
 
         then:
         notThrown(UnexpectedBuildSuccess)
-        failedResult.output.contains('Flow with the same name is already present')
+        failedResult.output.contains("A flow with a name of \'myDuplicateFlow\' already exists")
         failedResult.task(":hubCreateFlow").outcome == FAILED
     }
 }
