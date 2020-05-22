@@ -1227,7 +1227,7 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
         runAsTestUser();
         try {
             r.run();
-            fail("The download call should have failed because the user doesn't have the data-hub-download-configuration-files privilege");
+            fail("Expected a failure because the user was forbidden to perform the given action");
         } catch (FailedRequestException ex) {
             assertEquals(403, ex.getServerStatusCode(), "MarkLogic was expected to throw a 403 Forbidden response for " +
                 "the following reason: " + reason);

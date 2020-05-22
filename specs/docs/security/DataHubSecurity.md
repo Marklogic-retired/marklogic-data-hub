@@ -99,7 +99,7 @@ All Data Hub roles intended for Hub Central users inherit this role.
 Role to determine if a user can download the Hub Central project.
 
 #### Associate Authorities
- - downloadConfigurationFiles
+ - downloadProjectFiles
 
 #### Inherited Roles
  - data-hub-common

@@ -21,7 +21,7 @@ const ProjectInfo: React.FC = () => {
 
     const download = () => {
         axios({
-            url: '/api/environment/downloadConfigurationFiles',
+            url: '/api/environment/downloadProjectFiles',
             method: 'GET',
             responseType: 'blob'
         })

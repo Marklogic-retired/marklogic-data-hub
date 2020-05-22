@@ -1,0 +1,10 @@
+{
+    "functionName": "getArtifactsWithProjectPaths",
+    "desc": "Returns a JSON array with an entry for each project artifact and its file path within a project",
+    "params": [
+    ],
+    "return": {
+        "datatype": "jsonDocument",
+        "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
+}

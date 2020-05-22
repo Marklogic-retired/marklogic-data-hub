@@ -15,14 +15,11 @@
  */
 package com.marklogic.hub.central.controllers;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.central.HubCentral;
-import com.marklogic.hub.dataservices.ArtifactService;
+import com.marklogic.hub.impl.ArtifactManagerImpl;
 import com.marklogic.hub.impl.DataHubImpl;
 import com.marklogic.hub.impl.Versions;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -30,7 +27,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -58,13 +54,13 @@ public class EnvironmentController extends BaseController {
         return info;
     }
 
-    @RequestMapping(value = "/api/environment/downloadConfigurationFiles", produces = "application/zip", method = RequestMethod.GET)
-    @Secured("ROLE_downloadConfigurationFiles")
-    public void downloadConfigurationFiles(HttpServletResponse response) {
+    @RequestMapping(value = "/api/environment/downloadProjectFiles", produces = "application/zip", method = RequestMethod.GET)
+    @Secured("ROLE_downloadProjectFiles")
+    public void downloadProjectFilesAsZip(HttpServletResponse response) {
         response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
         response.addHeader("Content-Disposition", "attachment; filename=datahub-project.zip");
         try (OutputStream out = response.getOutputStream()) {
-            FileCopyUtils.copy(ArtifactService.on(getHubClient().getStagingClient()).downloadConfigurationFiles(), out);
+            new ArtifactManagerImpl(getHubClient()).writeProjectArtifactsAsZip(out);
             response.flushBuffer();
         } catch (IOException e) {
             throw new RuntimeException("Unable to download project; cause: " + e.getMessage());

@@ -53,7 +53,7 @@ public class ClearUserDataTest extends AbstractHubCoreTest {
         // Verify the download first
         runAsTestUserWithRoles("hub-central-downloader");
         project = new AllArtifactsProject(getHubClient());
-        project.downloadProject();
+        project.writeProjectArtifactsToZipFile();
         project.verifyZipEntries();
 
         // Now clear the data
@@ -73,7 +73,7 @@ public class ClearUserDataTest extends AbstractHubCoreTest {
         // And do another download and verify the zip is still correct
         runAsTestUserWithRoles("hub-central-downloader");
         project = new AllArtifactsProject(getHubClient());
-        project.downloadProject();
+        project.writeProjectArtifactsToZipFile();
         project.verifyZipEntries();
     }
 
