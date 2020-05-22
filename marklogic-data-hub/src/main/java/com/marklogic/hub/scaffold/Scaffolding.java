@@ -22,6 +22,7 @@ import com.marklogic.hub.legacy.flow.CodeFormat;
 import com.marklogic.hub.legacy.flow.DataFormat;
 import com.marklogic.hub.legacy.flow.FlowType;
 
+import java.io.File;
 import java.nio.file.Path;
 
 /**
@@ -88,8 +89,9 @@ public interface Scaffolding {
     /**
      * Create default flow with all the default steps
      * @param flowName - the name of the flow
+     * @return the File that the flow was written to
      */
-    void createDefaultFlow(String flowName);
+    File createDefaultFlow(String flowName);
 
     /**
      * Creates a flow for an entity with Entity Services model as default

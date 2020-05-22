@@ -40,18 +40,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -296,23 +288,23 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
 
     @Override
     public void saveLocalFlow(Flow flow) {
+        File file = getFileForLocalFlow(flow.getName());
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            JSONStreamWriter writer = new JSONStreamWriter(fileOutputStream);
+            writer.write(flow);
+        } catch (Exception ex) {
+            throw new DataHubProjectException("Could not save flow to project filesystem; cause: " + ex.getMessage(), ex);
+        }
+    }
+
+    public File getFileForLocalFlow(String flowName) {
         File flowsDir = hubConfig.getFlowsDir().toFile();
         if (!flowsDir.exists()) {
             flowsDir.mkdirs();
         }
-        try {
-            String flowFileName = flow.getName() + FLOW_FILE_EXTENSION;
-            File file = Paths.get(hubConfig.getFlowsDir().toString(), flowFileName).toFile();
-
-            FileOutputStream fileOutputStream = new FileOutputStream(file);
-            JSONStreamWriter writer = new JSONStreamWriter(fileOutputStream);
-            writer.write(flow);
-
-        } catch (JsonProcessingException e) {
-            throw new DataHubProjectException("Could not serialize flow.");
-        } catch (IOException e) {
-            throw new DataHubProjectException("Could not save flow to disk.");
-        }
+        String flowFileName = flowName + FLOW_FILE_EXTENSION;
+        return Paths.get(hubConfig.getFlowsDir().toString(), flowFileName).toFile();
     }
 
     @Override

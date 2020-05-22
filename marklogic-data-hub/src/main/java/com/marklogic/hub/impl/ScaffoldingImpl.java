@@ -145,7 +145,7 @@ public class ScaffoldingImpl implements Scaffolding {
     }
 
     @Override
-    public void createDefaultFlow(String flowName) {
+    public File createDefaultFlow(String flowName) {
         Path flowsDir = hubConfig.getHubProject().getFlowsDir();
         flowsDir.toFile().mkdirs();
         File flowFile = flowsDir.resolve(flowName + ".flow.json").toFile();
@@ -168,6 +168,7 @@ public class ScaffoldingImpl implements Scaffolding {
                 throw new RuntimeException(e);
             }
         }
+        return flowFile;
     }
 
     protected String buildFlowFromDefaultFlow(Map<String, String> customTokens, boolean supportsEntityServicesMapping) throws IOException {
