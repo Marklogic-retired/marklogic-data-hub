@@ -62,7 +62,7 @@ def dhfCypressE2ETests(String mlVersion, String type){
                     mkdir -p ${mlVersion};
                     mv output ${mlVersion}/;
                  ''')
-        junit '**/*.xml'
+        junit '**/e2e/**/*.xml'
         def output=readFile "data-hub/marklogic-data-hub-central/ui/e2e/${mlVersion}/output/console.log"
         def result=false;
         if(output.contains("npm ERR!")){
@@ -216,6 +216,8 @@ pipeline{
 				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
 				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;set +e;./gradlew clean;./gradlew marklogic-data-hub:testAcceptance -i --stacktrace;sleep 10s;./gradlew marklogic-data-hub-central:test -i --stacktrace |& tee console.log;sleep 10s;./gradlew ml-data-hub:test -i --stacktrace;./gradlew web:test -i --stacktrace;'
 				junit '**/TEST-*.xml'
+				cobertura coberturaReportFile: '**/cobertura-coverage.xml'
+				jacoco()
 				def output=readFile 'data-hub/console.log'
 				def result=false;
                 if(output.contains("npm ERR!")){
