@@ -30,6 +30,8 @@ You might use DHF in two typical environments:
       - All code and settings are already deployed to the production server.
       - The user account only needs to be able to write documents and to evaluate data across databases. It does NOT need to deploy modules or reconfigure MarkLogic.
 
+**NOTE:** DHF 4.x supports only basic and digest authentication.
+
 
 ## Security Roles and Users
 
