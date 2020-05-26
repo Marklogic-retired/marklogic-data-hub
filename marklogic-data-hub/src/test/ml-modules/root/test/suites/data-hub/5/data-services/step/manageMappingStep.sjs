@@ -34,7 +34,7 @@ expectedStep.targetDatabase = "data-hub-FINAL";
 expectedStep.collections = [stepName, "Customer"];
 expectedStep.validateEntity = false;
 expectedStep.provenanceGranularityLevel = "coarse";
-expectedStep.permissions = "data-hub-operator,read,data-hub-operator,update";
+expectedStep.permissions = "data-hub-common,read,data-hub-common,update";
 
 hubJsTest.verifyJson(expectedStep, serviceResponse, assertions);
 hubJsTest.verifyJson(expectedStep, stepService.getStep(stepDefinitionType, stepName), assertions);

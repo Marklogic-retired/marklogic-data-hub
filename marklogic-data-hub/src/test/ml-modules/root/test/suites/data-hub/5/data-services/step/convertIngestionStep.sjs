@@ -81,7 +81,7 @@ assertions.push(
 
   test.assertEqual("data-hub-STAGING", options.targetDatabase),
   test.assertEqual("coarse", options.provenanceGranularityLevel),
-  test.assertEqual("data-hub-operator,read,data-hub-operator,update", options.permissions),
+  test.assertEqual("data-hub-common,read,data-hub-common,update", options.permissions),
 
   // TODO targetFormat should be renamed to outputFormat
   test.assertEqual("xml", options.outputFormat),

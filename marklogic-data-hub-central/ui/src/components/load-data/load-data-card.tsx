@@ -7,7 +7,7 @@ import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
 import sourceFormatOptions from '../../config/formats.config';
 import NewDataLoadDialog from './new-data-load-dialog/new-data-load-dialog';
 import { convertDateFromISO } from '../../util/conversionFunctions';
-import ActivitySettingsDialog from "../activity-settings/activity-settings-dialog";
+import AdvancedSettingsDialog from "../advanced-settings/advanced-settings-dialog";
 import { AdvLoadTooltips } from '../../config/tooltips.config';
 
 import { AuthoritiesContext } from "../../util/authorities";
@@ -228,10 +228,10 @@ const LoadDataCard: React.FC<Props> = (props) => {
             />
             {deleteConfirmation}
             {addConfirmation}
-            <ActivitySettingsDialog
+            <AdvancedSettingsDialog
                 tooltipData={AdvLoadTooltips}
-                openActivitySettings={openLoadDataSettings}
-                setOpenActivitySettings={setOpenLoadDataSettings}
+                openAdvancedSettings={openLoadDataSettings}
+                setOpenAdvancedSettings={setOpenLoadDataSettings}
                 stepData={stepData}
                 activityType={activityType}
                 canWrite={authorityService.canWriteLoad()}

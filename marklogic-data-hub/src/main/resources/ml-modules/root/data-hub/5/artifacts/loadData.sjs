@@ -65,13 +65,15 @@ function validateArtifact(artifact) {
 }
 
 function defaultArtifact(artifactName) {
+  const defaultPermissions = 'data-hub-common,read,data-hub-common,update';
   return {
     headers: {
       sources: [{name: artifactName}],
       createdOn: "currentDateTime",
       createdBy: "currentUser"
     },
-    collections: [artifactName]
+    collections: [artifactName],
+    permissions: defaultPermissions
   };
 }
 

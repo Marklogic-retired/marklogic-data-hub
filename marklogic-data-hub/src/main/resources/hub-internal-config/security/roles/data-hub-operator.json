@@ -2,6 +2,7 @@
   "role-name": "data-hub-operator",
   "description": "Permits operating a Data Hub application, such as running flows and viewing job data; this role is intended to replace flow-operator-role, and thus it inherits all of the privileges that flow-operator-role does",
   "role": [
+    "data-hub-common",
     "rest-extension-user",
     "rest-reader",
     "data-hub-module-reader",

@@ -40,6 +40,6 @@ describe('Load data component', () => {
     await wait(() => {
       fireEvent.click(getByTestId(data.loadData.data[0].name+'-settings'));
     })
-    expect(getByText('Activity Settings'));
+    expect(getByText('Advanced Settings'));
   })
 });

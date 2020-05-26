@@ -8,7 +8,7 @@ import { convertDateFromISO, getInitialChars } from '../../../util/conversionFun
 import CreateEditMappingDialog from './create-edit-mapping-dialog/create-edit-mapping-dialog';
 import SourceToEntityMap from './source-entity-map/source-to-entity-map';
 import {getResultsByQuery, getDoc} from '../../../util/search-service'
-import ActivitySettingsDialog from "../../activity-settings/activity-settings-dialog";
+import AdvancedSettingsDialog from "../../advanced-settings/advanced-settings-dialog";
 import { AdvMapTooltips } from '../../../config/tooltips.config';
 import {AuthoritiesContext} from "../../../util/authorities";
 import { getSettingsArtifact, getNestedEntities } from '../../../util/manageArtifacts-service';
@@ -685,10 +685,10 @@ const MappingCard: React.FC<Props> = (props) => {
                 namespaces={namespaces}
                 mapIndex={mapIndex}
                 tgtEntityReferences={tgtEntityReferences}/>
-            <ActivitySettingsDialog
+            <AdvancedSettingsDialog
                 tooltipsData={AdvMapTooltips}
-                openActivitySettings={openMappingSettings}
-                setOpenActivitySettings={setOpenMappingSettings}
+                openAdvancedSettings={openMappingSettings}
+                setOpenAdvancedSettings={setOpenMappingSettings}
                 stepData={mapData}
                 activityType={activityType}
                 canWrite={authorityService.canWriteMapping()}

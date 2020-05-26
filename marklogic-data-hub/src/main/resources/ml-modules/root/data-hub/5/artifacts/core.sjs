@@ -69,7 +69,6 @@ function getTypesInfo() {
 }
 
 const entityServiceDrivenArtifactTypes = ['mapping', 'matching', 'merging', 'mastering'];
-const artifactsWithSettings = ['matching', 'merging', 'mastering'];
 
 function getArtifacts(artifactType) {
     const queries = [];
@@ -161,9 +160,6 @@ function deleteArtifact(artifactType, artifactName, artifactVersion = 'latest') 
         dataHub.hubUtils.deleteDocument(xdmp.nodeUri(node), db);
     }
     delete cachedArtifacts[artifactKey];
-    if (artifactLibrary.getArtifactSettingNode) {
-        return deleteArtifactSettings(artifactType, artifactName, artifactVersion);
-    }
     return { success: true };
 }
 
@@ -203,53 +199,7 @@ function setArtifact(artifactType, artifactName, artifact) {
     }
     cachedArtifacts[artifactKey] = artifact;
 
-  //Create settings artifact if they are not present, happens only when creating the artifact.
-  if (artifactsWithSettings.includes(artifactType) && fn.empty(getArtifactSettingsNode(artifactType,artifactName))) {
-    let settings = artifactLibrary.defaultArtifactSettings(artifactName, artifact.targetEntityType);
-    setArtifactSettings(artifactType, artifactName, settings);
-  }
     return artifact;
-}
-
-function getArtifactSettings(artifactType, artifactName, artifactVersion = 'latest') {
-    const artifactSettingKey = generateArtifactKey(artifactType + 'Settings', artifactName);
-    if (!cachedArtifacts[artifactSettingKey]) {
-        const settingNode = getArtifactSettingsNode(artifactType, artifactName, artifactVersion);
-
-        if (fn.empty(settingNode)) {
-          returnErrToClient(404, 'NOT FOUND');
-        }
-        cachedArtifacts[artifactSettingKey] = settingNode.toObject();
-    }
-    return cachedArtifacts[artifactSettingKey];
-}
-
-function getArtifactSettingsNode(artifactType, artifactName, artifactVersion = 'latest') {
-    const settingCollection = `http://marklogic.com/data-hub/${artifactType}/settings`;
-    const results = cts.search(cts.andQuery([cts.collectionQuery(settingCollection), cts.jsonPropertyValueQuery('artifactName', artifactName)]));
-    return fn.head(results);
-}
-
-function setArtifactSettings(artifactType, artifactName, settings) {
-    const requiredProperties = ['artifactName', 'targetDatabase'];
-    let validSettings = validateArtifactSettings(settings, requiredProperties);
-    if (validSettings instanceof Error) {
-        throw new Error(`Invalid artifact settings with error message: ${validSettings.message}`);
-    }
-    const artifactLibrary =  getArtifactTypeLibrary(artifactType);
-    const artifactDatabases = artifactLibrary.getStorageDatabases();
-    const artifactDirectory = getArtifactDirectory(artifactType, artifactName, settings);
-    const artifactFileExtension = '.settings.json';
-    const artifactPermissions = artifactLibrary.getPermissions();
-    const settingCollections = [`http://marklogic.com/data-hub/${artifactType}/settings`];
-    settings.lastUpdated = fn.string(fn.currentDateTime());
-
-    for (const db of artifactDatabases) {
-        dataHub.hubUtils.writeDocument(`${artifactDirectory}${xdmp.urlEncode(artifactName)}${artifactFileExtension}`, settings, artifactPermissions, settingCollections, db);
-    }
-    const artifactSettingKey = generateArtifactKey(artifactType + 'Settings', artifactName);
-    cachedArtifacts[artifactSettingKey] = settings;
-    return settings;
 }
 
 function validateArtifact(artifactType, artifactName, artifact) {
@@ -373,27 +323,6 @@ function validateArtifactSettings(settings, requiredProperties) {
     return settings;
 }
 
-function deleteArtifactSettings(artifactType, artifactName, artifactVersion = 'latest') {
-    const artifactLibrary =  getArtifactTypeLibrary(artifactType);
-    const settingCollection = `http://marklogic.com/data-hub/${artifactType}/settings`;
-
-    const settingNode = artifactLibrary.getArtifactSettingNode(settingCollection, artifactName,
-        artifactVersion);
-
-    if (!fn.empty(settingNode)) {
-        for (const db of artifactLibrary.getStorageDatabases()) {
-            dataHub.hubUtils.deleteDocument(xdmp.nodeUri(settingNode), db);
-        }
-    }
-
-    const artifactSettingKey = generateArtifactKey(artifactType + 'Settings',
-        artifactName);
-    if (cachedArtifacts[artifactSettingKey]) {
-        delete cachedArtifacts[artifactSettingKey];
-    }
-    return { success: true };
-}
-
 function getFullFlow(flowName, artifactVersion = 'latest') {
   const flow = getArtifact('flow', flowName);
   const steps = flow["steps"];
@@ -503,8 +432,6 @@ module.exports = {
     deleteArtifact,
     getArtifact,
     setArtifact,
-    getArtifactSettings,
-    setArtifactSettings,
     validateArtifact,
     linkToStepOptions,
     removeLinkToStepOptions,

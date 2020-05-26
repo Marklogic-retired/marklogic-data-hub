@@ -15,6 +15,7 @@
     "sourceQuery": "cts.collectionQuery('default-mapping')",
     "collections": [
       "default-mastering","mastered"
-    ]
+    ],
+    "permissions": "data-hub-common,read,data-hub-common,update"
   }
 }

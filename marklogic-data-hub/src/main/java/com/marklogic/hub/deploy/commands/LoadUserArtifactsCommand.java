@@ -39,16 +39,12 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.artifact.ArtifactTypeInfo;
 import com.marklogic.hub.dataservices.ArtifactService;
 import com.marklogic.hub.dataservices.ModelsService;
-import com.marklogic.hub.dataservices.StepService;
-import com.marklogic.hub.impl.ArtifactManagerImpl;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileVisitResult;
@@ -148,14 +144,13 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                 }
                 logger.info("Loading artifacts of type '" + artifactType + "' from directory " + artifactPath);
                 final String fileExtension = "*" + typeInfo.getFileExtension();
-                final String settingFileExtension = "*.settings." + FilenameUtils.getExtension(typeInfo.getFileExtension());
                 BaseModulesFinder modulesFinder = new BaseModulesFinder(){
                     @Override
                     protected Modules findModulesWithResolvedBaseDir(String resolvedBaseDir) {
                         Modules modules = new Modules();
                         /* First write settings and then the artifact to prevent creation of default artifacts
                          */
-                        modules.setAssets(findResources(artifactType + " Artifact", resolvedBaseDir, settingFileExtension, fileExtension));
+                        modules.setAssets(findResources(artifactType + " Artifact", resolvedBaseDir, fileExtension));
                         return modules;
                     }
                 };
@@ -288,20 +283,11 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         Modules modules = modulesFinder.findModules(dir.toString());
         for (Resource r : modules.getAssets()) {
             JsonNode artifactJson = objectMapper.readTree(r.getFile());
-            if (r.getFile().getName().endsWith(".settings." + FilenameUtils.getExtension(artifactTypeInfo.getFileExtension()))) {
-                artifactService.setArtifactSettings(
-                    artifactTypeInfo.getType(),
-                    artifactJson.get("artifactName").asText(),
-                    artifactJson);
-                logger.info(String.format("Loaded artifact settings of type '%s' from file %s", artifactTypeInfo.getType(), r.getFilename()));
-            } else {
-                artifactService.setArtifact(
-                    artifactTypeInfo.getType(),
-                    artifactJson.get(artifactTypeInfo.getNameProperty()).asText(),
-                    artifactJson
-                );
-                logger.info(String.format("Loaded artifact of type type '%s' file %s", artifactTypeInfo.getType(), r.getFilename()));
-            }
+            artifactService.setArtifact(
+                artifactTypeInfo.getType(),
+                artifactJson.get(artifactTypeInfo.getNameProperty()).asText(),
+                artifactJson
+            );
             logger.info(String.format("Loaded artifact of type type '%s' file %s", artifactTypeInfo.getType(), r.getFilename()));
         }
     }

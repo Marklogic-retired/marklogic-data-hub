@@ -83,13 +83,15 @@ function validateArtifact(artifact) {
 
 function defaultArtifact(artifactName, entityTypeId) {
   const defaultCollections =  [artifactName];
+  const defaultPermissions = 'data-hub-common,read,data-hub-common,update';
   if (entityTypeId) {
     // look for Entity Service Title, if not found will use the ID
     defaultCollections.push(hubEs.findEntityServiceTitle(entityTypeId) || entityTypeId);
   }
   return {
     collections: defaultCollections,
-    additionalCollections: []
+    additionalCollections: [],
+    permissions: defaultPermissions
   };
 }
 
