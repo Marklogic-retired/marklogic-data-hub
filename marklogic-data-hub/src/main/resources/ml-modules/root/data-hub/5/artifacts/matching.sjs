@@ -66,7 +66,8 @@ function validateArtifact(artifact) {
     return artifact;
 }
 
-function defaultArtifactSettings(artifactName) {
+function defaultArtifact(artifactName) {
+  const defaultPermissions = 'data-hub-common,read,data-hub-common,update';
   return {
     artifactName,
     collections: ['default-mastering'],
@@ -74,7 +75,7 @@ function defaultArtifactSettings(artifactName) {
     sourceDatabase: dataHub.config.FINALDATABASE,
     targetDatabase: dataHub.config.FINALDATABASE,
     provenanceGranularityLevel: 'coarse',
-    permissions: 'data-hub-operator,read,data-hub-operator,update'
+    permissions: defaultPermissions
   };
 }
 
@@ -86,5 +87,5 @@ module.exports = {
     getPermissions,
     getArtifactNode,
     validateArtifact,
-    defaultArtifactSettings
+    defaultArtifact
 };

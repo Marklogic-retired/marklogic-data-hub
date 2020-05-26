@@ -15,6 +15,7 @@
       "default-mapping",
       "mdm-content"
     ],
-    "validateEntity": false
+    "validateEntity": false,
+    "permissions": "data-hub-common,read,data-hub-common,update"
   }
 }

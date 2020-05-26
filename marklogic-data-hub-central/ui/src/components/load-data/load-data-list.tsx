@@ -7,7 +7,7 @@ import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
 import NewDataLoadDialog from './new-data-load-dialog/new-data-load-dialog';
 import { MLButton } from '@marklogic/design-system';
 import { convertDateFromISO } from '../../util/conversionFunctions';
-import ActivitySettingsDialog from "../activity-settings/activity-settings-dialog";
+import AdvancedSettingsDialog from "../advanced-settings/advanced-settings-dialog";
 import {AdvLoadTooltips} from "../../config/tooltips.config";
 
 interface Props {
@@ -160,11 +160,11 @@ const LoadDataList: React.FC<Props> = (props) => {
             canReadOnly={props.canReadOnly}
         />
         {deleteConfirmation}
-        <ActivitySettingsDialog 
+        <AdvancedSettingsDialog 
             tooltipData={AdvLoadTooltips} 
             activityType={activityType} 
-            openActivitySettings={openLoadDataSettings} 
-            setOpenActivitySettings={setOpenLoadDataSettings} 
+            openAdvancedSettings={openLoadDataSettings} 
+            setOpenAdvancedSettings={setOpenLoadDataSettings} 
             stepData={stepData} 
             canWrite={props.canReadWrite}
         />

@@ -55,7 +55,6 @@ public class AllArtifactsProject extends TestObject {
         verifyEntryExists("/steps/ingestion/validArtifact.step.json", "validArtifact");
 
         verifyEntryExists("/step-definitions/custom/testStep/testStep.step.json", "testStep");
-        verifyEntryExists("/matching/TestOrderMatching1.settings.json", "artifactName", "TestOrderMatching1");
         verifyEntryExists("/matching/TestOrderMatching1.matching.json", "TestOrderMatching1");
 
         assertEquals("Order", zipEntries.get("/entities/Order.entity.json").get("info").get("title").asText());
@@ -82,11 +81,11 @@ public class AllArtifactsProject extends TestObject {
             hubClient.getDbName(DatabaseKind.FINAL));
         assertEquals(expectedPathIndex, dbProps.get("range-path-index").get(0).get("path-expression").asText());
 
-        assertEquals(17, zipEntries.size(), "Expecting the following entries: " +
+        assertEquals(16, zipEntries.size(), "Expecting the following entries: " +
             "1 flow; " +
             "1 entity model; " +
             "2 mapping steps; " +
-            "2 matching docs (including 1 settings); " +
+            "1 matching doc; " +
             "1 ingestion step; " +
             "1 custom step definition; " +
             "2 protected path files (for PII); " +

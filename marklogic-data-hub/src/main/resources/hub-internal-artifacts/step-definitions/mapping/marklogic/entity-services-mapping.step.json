@@ -17,6 +17,6 @@
     ],
     "validateEntity": false,
     "provenanceGranularityLevel": "coarse",
-    "permissions": "data-hub-operator,read,data-hub-operator,update"
+    "permissions": "data-hub-common,read,data-hub-common,update"
   }
 }

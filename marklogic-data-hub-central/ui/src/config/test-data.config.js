@@ -44,13 +44,17 @@ const loadData = {
       name: "load1",
       description: "description for load1",
       sourceFormat: "json",
-      targetFormat: "json"
+      targetFormat: "json",
+      provenanceGranularityLevel: "coarse", 
+      permissions: "data-hub-common,read,data-hub-common,update", 
     },
     {
       name: "load2",
       description: "description for load2",
       sourceFormat: "json",
       targetFormat: "xml",
+      provenanceGranularityLevel: "coarse", 
+      permissions: "data-hub-common,read,data-hub-common,update", 
       lastUpdated: "2020-04-15T14:22:54.057519-07:00"
     }
   ],
@@ -299,14 +303,14 @@ const editMap = {
   canReadWrite: true
 };
 
-const activitySettings = {
+const advancedSettings = {
   activityType: 'mapping',
   canWrite: true,
-  openActivitySettings: true,
+  openAdvancedSettings: true,
   stepData: {
-    name: 'testActivitySettings'
+    name: 'testAdvancedSettings'
   },
-  setOpenActivitySettings: jest.fn()
+  setOpenAdvancedSettings: jest.fn()
 };
 
 const dropDownWithSearch = {
@@ -327,7 +331,7 @@ const data = {
   mapProps: mapProps,
   newMap: newMap,
   editMap: editMap,
-  activitySettings: activitySettings,
+  advancedSettings: advancedSettings,
   dropDownWithSearch: dropDownWithSearch,
   xmlSourceData: xmlSourceData,
   testJSONResponse: testJSONResponse,

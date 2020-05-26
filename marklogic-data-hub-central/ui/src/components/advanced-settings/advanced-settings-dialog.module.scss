@@ -1,6 +1,13 @@
 
 .title {
-    font-size :23px;
+    font-size :24px;
+    font-weight: 500;
+}
+
+.stepName {
+    font-size :18px;
+    color: #777777;
+    margin-top: -22px;
 }
 
 .newDataLoadForm {
@@ -74,6 +81,18 @@ span.readOnlyLabel {
 
 .formItem { 
     margin-bottom: 8px !important;
+}
+
+.formItemTargetCollections { 
+    margin-bottom: 5px !important;
+}
+
+.defaultCollections {
+    display: inline-block;
+    line-height: 160%;
+    //margin-top: -2px;
+    padding-bottom: 2px;
+    vertical-align: middle;
 }
 
 .cHookLabel{

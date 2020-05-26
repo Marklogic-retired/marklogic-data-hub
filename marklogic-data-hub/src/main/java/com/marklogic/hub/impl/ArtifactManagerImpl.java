@@ -69,14 +69,6 @@ public class ArtifactManagerImpl implements ArtifactManager {
         return (ObjectNode) getArtifactService().validateArtifact(artifactType, artifactName, artifactJson);
     }
 
-    public ObjectNode getArtifactSettings(String artifactType, String artifactName) {
-        return (ObjectNode) getArtifactService().getArtifactSettings(artifactType, artifactName);
-    }
-
-    public ObjectNode updateArtifactSettings(String artifactType, String artifactName, JsonNode settings) {
-        return (ObjectNode) getArtifactService().setArtifactSettings(artifactType, artifactName, settings);
-    }
-
     protected ArtifactService getArtifactService() {
         return ArtifactService.on(hubClient.getStagingClient());
     }

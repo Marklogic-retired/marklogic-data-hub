@@ -1,4 +1,4 @@
-const ActivitySettings = {
+const AdvancedSettings = {
     'name': 'The name of this step definition.',
     'description': 'The description of this step definition.',
     'sourceQuery' : 'The collection tag or CTS query that selects the source data to process in this step.',
@@ -108,7 +108,7 @@ const ModelingTooltips = {
 }
 
 export {
-    ActivitySettings,
+    AdvancedSettings,
     NewFlowTooltips,
     NewLoadTooltips,
     AdvLoadTooltips,

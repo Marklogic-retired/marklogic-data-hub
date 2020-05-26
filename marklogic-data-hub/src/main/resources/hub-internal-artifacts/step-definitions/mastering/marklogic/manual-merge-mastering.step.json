@@ -10,6 +10,7 @@
   "options": {
     "stepUpdate": true,
     "sourceDatabase": "data-hub-FINAL",
-    "targetDatabase": "data-hub-FINAL"
+    "targetDatabase": "data-hub-FINAL",
+    "permissions": "data-hub-common,read,data-hub-common,update"
   }
 }

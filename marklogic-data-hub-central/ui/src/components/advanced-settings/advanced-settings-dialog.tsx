@@ -9,16 +9,16 @@ import {
   Switch
 } from "antd";
 import React, { useState, useEffect, useContext } from "react";
-import styles from './activity-settings-dialog.module.scss';
-import { ActivitySettings } from '../../config/tooltips.config';
+import styles from './advanced-settings-dialog.module.scss';
+import { AdvancedSettings } from '../../config/tooltips.config';
 import { UserContext } from '../../util/user-context';
 import Axios from "axios";
 
 const {Option} = Select;
 
-const ActivitySettingsDialog = (props) => {
+const AdvancedSettingsDialog = (props) => {
   const { resetSessionTime } = useContext(UserContext);
-  const settingsTooltips = Object.assign({}, ActivitySettings, props.tooltipsData);
+  const settingsTooltips = Object.assign({}, AdvancedSettings, props.tooltipsData);
   const activityType = props.activityType;
   const [defaultCollections, setDefaultCollections] = useState<any[]>([]);
   const usesTargetFormat = activityType === 'mapping';
@@ -34,8 +34,7 @@ const ActivitySettingsDialog = (props) => {
   const [isAddCollTouched, setAddCollTouched] = useState(false);
   const [isSrcDatabaseTouched, setSrcDatabaseTouched] = useState(false);
   const [isTgtDatabaseTouched, setTgtDatabaseTouched] = useState(false);
-  const defaultPermissions = 'data-hub-operator,read,data-hub-operator,update';
-  const [targetPermissions, setTargetPermissions] = useState(defaultPermissions);
+  const [targetPermissions, setTargetPermissions] = useState('');
   const [isTgtPermissionsTouched, setIsTgtPermissionsTouched] = useState(false);
   const [provGranularity, setProvGranularity] = useState('coarse');
   const [isProvGranTouched, setIsProvGranTouched] = useState(false);
@@ -56,7 +55,10 @@ const ActivitySettingsDialog = (props) => {
 
   const tgtDatabaseOptions = ['data-hub-STAGING','data-hub-FINAL'];
 
-  const provGranOptions = ['coarse', 'off'];
+  const provenanceGranularityOptions = {
+    'Coarse-grained': 'coarse',
+    'Off': 'off'
+  };
 
   useEffect(() => {
     getSettingsArtifact();
@@ -75,7 +77,7 @@ const ActivitySettingsDialog = (props) => {
       setSrcDatabase(defaultSourceDatabase);
       setTgtDatabase(defaultTargetDatabase);
       setAdditionalCollections([]);
-      setTargetPermissions(defaultPermissions);
+      setTargetPermissions('');
       setModule('');
       setCHparameters(JSON.stringify({}, null, 4));
       setProvGranularity('coarse');
@@ -83,7 +85,7 @@ const ActivitySettingsDialog = (props) => {
       setRunBefore(false);
 
     };
-  },[props.openActivitySettings  ,isLoading])
+  },[props.openAdvancedSettings  ,isLoading])
 
 //CREATE/POST settings Artifact
 const createSettingsArtifact = async (settingsObj) => {
@@ -121,19 +123,21 @@ const getSettingsArtifact = async () => {
         setAdditionalCollections([...response.data.additionalCollections]);
         setTargetPermissions(response.data.permissions);
         setTargetFormat(response.data.targetFormat);
-        setModule(response.data.customHook.module);
-        setCHparameters(response.data.customHook.parameters);
+        if (response.data.customHook) {
+          setModule(response.data.customHook.module);
+          setCHparameters(response.data.customHook.parameters);
+          setUser(response.data.customHook.user);
+          setRunBefore(response.data.customHook.runBefore);
+        }
         setProvGranularity(response.data.provenanceGranularityLevel);
-        setUser(response.data.customHook.user);
-        setRunBefore(response.data.customHook.runBefore);
       }
     } catch (error) {
       let message = error.response;
-      console.error('Error while fetching load data settings artifacts', message);
+      console.error('Error while fetching load data settings artifacts', message || error);
       setSrcDatabase(defaultSourceDatabase);
       setTgtDatabase(defaultTargetDatabase);
       setAdditionalCollections([]);
-      setTargetPermissions(defaultPermissions);
+      setTargetPermissions('');
       setTargetFormat('JSON');
       setModule('');
       setCHparameters(JSON.stringify({}, null, 4));
@@ -150,12 +154,12 @@ const getSettingsArtifact = async () => {
     if(checkDeleteOpenEligibility()){
       setDeleteDialogVisible(true);
     } else {
-      props.setOpenActivitySettings(false)
+      props.setOpenAdvancedSettings(false)
     }
   }
 
   const onOk = () => {
-    props.setOpenActivitySettings(false)
+    props.setOpenAdvancedSettings(false)
   }
 
   //Check if Delete Confirmation dialog should be opened or not.
@@ -179,7 +183,7 @@ const getSettingsArtifact = async () => {
   }
 
   const onDelOk = () => {
-    props.setOpenActivitySettings(false)
+    props.setOpenAdvancedSettings(false)
     setDeleteDialogVisible(false)
   }
 
@@ -224,7 +228,7 @@ const getSettingsArtifact = async () => {
       }
 
     createSettingsArtifact(dataPayload);
-    props.setOpenActivitySettings(false)
+    props.setOpenAdvancedSettings(false)
   }
 
   const handleChange = (event) => {
@@ -400,10 +404,10 @@ const getSettingsArtifact = async () => {
   const tgtDbOptions = tgtDatabaseOptions.map(d => <Option data-testid='dbOptions' key={d}>{d}</Option>);
   const srcDbOptions = tgtDatabaseOptions.map(d => <Option data-testid='srcDbOptions' key={d}>{d}</Option>);
 
-  const provGranOpt = provGranOptions.map(d => <Option data-testid='provOptions' key={d}>{d}</Option>);
+  const provGranOpt = Object.keys(provenanceGranularityOptions).map(d => <Option data-testid='provOptions' key={provenanceGranularityOptions[d]}>{d}</Option>);
 
   return <Modal
-    visible={props.openActivitySettings}
+    visible={props.openAdvancedSettings}
     title={null}
     width="700px"
     onCancel={() => onCancel()}
@@ -412,7 +416,8 @@ const getSettingsArtifact = async () => {
     className={styles.SettingsModal}
     footer={null}
     maskClosable={false}>
-    <p className={styles.title}>Activity Settings</p>
+    <p className={styles.title}>Advanced Settings</p>
+    <p className={styles.stepName}>{props.stepData.name}</p>
     <br/>
     <div className={styles.newDataLoadForm}>
       <Form {...formItemLayout} onSubmit={handleSubmit} colon={false}>
@@ -454,22 +459,19 @@ const getSettingsArtifact = async () => {
         </Tooltip>
       </Form.Item>
         <Form.Item label={<span>
-            Additional Collections:
+            Target Collections:
           &nbsp;
-            </span>} labelAlign="left" className={styles.formItem}>
+            </span>} labelAlign="left" className={styles.formItemTargetCollections}>
           <Select
             id="additionalColl"
             mode="tags"
             style={{width: '100%'}}
-            placeholder="Please select additional collections"
+            placeholder="Please select target collections"
             value={defaultCollections.concat(additionalCollections)}
             disabled={!canReadWrite}
             onChange={handleAddColl}
             className={styles.inputWithTooltip}
           >
-            {defaultCollections.map((col) => {
-              return <Option value={col} key={col} disabled={true} label={col}>{col}</Option>;
-            })}
             {additionalCollections.map((col) => {
               return <Option value={col} key={col} label={col}>{col}</Option>;
             })}
@@ -477,6 +479,12 @@ const getSettingsArtifact = async () => {
           <Tooltip title={settingsTooltips.additionalCollections}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
           </Tooltip>
+        </Form.Item>
+        <Form.Item label={<span className={styles.cHItemLabel}>
+            Default Collections:&nbsp;
+       &nbsp;
+        </span>} labelAlign="left" className={styles.formItem}>
+        <div className={styles.defaultCollections}>{defaultCollections.map(collection => {return <div data-testid={`defCollections-${collection}`}>{collection}</div>})}</div>
         </Form.Item>
         <Form.Item label={<span>
             Target Permissions:&nbsp;
@@ -553,4 +561,4 @@ const getSettingsArtifact = async () => {
   </Modal>;
 }
 
-export default ActivitySettingsDialog;
+export default AdvancedSettingsDialog;
