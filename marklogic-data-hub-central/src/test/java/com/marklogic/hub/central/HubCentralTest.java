@@ -12,7 +12,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.env.MockEnvironment;
 
 import java.util.Properties;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -39,20 +38,8 @@ public class HubCentralTest {
         assertEquals("anyword", props.getProperty("mlPassword"));
         assertEquals("localhost", props.getProperty("mlHost"),
             "For convenience while doing local development, mlHost still defaults to localhost");
-        assertEquals("anyone", props.getProperty("mlAppServicesUsername"));
-        assertEquals("anyword", props.getProperty("mlAppServicesPassword"));
-        assertEquals("true", props.getProperty("mlIsHostLoadBalancer"));
-        assertEquals("true", props.getProperty("mlIsProvisionedEnvironment"));
-        assertEquals("https", props.getProperty("mlManageScheme"));
-        assertEquals("true", props.getProperty("mlManageSimpleSsl"));
-        assertEquals("8010", props.getProperty("mlAppServicesPort"));
-
-        Stream.of("mlAppServicesAuthentication", "mlFinalAuth", "mlStagingAuth", "mlJobAuth").forEach(name -> {
-            assertEquals("basic", props.getProperty(name));
-        });
-        Stream.of("mlAppServicesSimpleSsl", "mlFinalSimpleSsl", "mlStagingSimpleSsl", "mlJobSimpleSsl").forEach(name -> {
-            assertEquals("true", props.getProperty(name));
-        });
+        assertEquals("true", props.getProperty("hubDhs"));
+        assertEquals("true", props.getProperty("hubSsl"));
     }
 
     /**
@@ -65,20 +52,8 @@ public class HubCentralTest {
         assertEquals("anyone", props.getProperty("mlUsername"));
         assertEquals("anyword", props.getProperty("mlPassword"));
         assertEquals("localhost", props.getProperty("mlHost"));
-        assertEquals("anyone", props.getProperty("mlAppServicesUsername"));
-        assertEquals("anyword", props.getProperty("mlAppServicesPassword"));
-        assertEquals("false", props.getProperty("mlIsHostLoadBalancer"));
-        assertEquals("false", props.getProperty("mlIsProvisionedEnvironment"));
-        assertEquals("http", props.getProperty("mlManageScheme"));
-        assertEquals("false", props.getProperty("mlManageSimpleSsl"));
-        assertEquals("8000", props.getProperty("mlAppServicesPort"));
-
-        Stream.of("mlAppServicesAuthentication", "mlFinalAuth", "mlStagingAuth", "mlJobAuth").forEach(name -> {
-            assertEquals("digest", props.getProperty(name));
-        });
-        Stream.of("mlAppServicesSimpleSsl", "mlFinalSimpleSsl", "mlStagingSimpleSsl", "mlJobSimpleSsl").forEach(name -> {
-            assertEquals("false", props.getProperty(name));
-        });
+        assertEquals("false", props.getProperty("hubDhs"));
+        assertEquals("false", props.getProperty("hubSsl"));
     }
 
     @Test

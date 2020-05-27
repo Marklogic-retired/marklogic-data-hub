@@ -48,44 +48,37 @@ public class HubCentral extends LoggingObject implements InitializingBean {
         logger.info("Hub Central is available at port: " + environment.getProperty("server.port"));
     }
 
+    /**
+     * This constructs a HubConfigImpl by starting with the default property values in HubConfigImpl, and then applying
+     * properties based on the Spring environment of this application plus the username/password provided by the user
+     * logging in.
+     *
+     * @param username
+     * @param password
+     * @return
+     */
     public HubConfigImpl newHubConfig(String username, String password) {
-        // Shouldn't have any need for a Spring environment to be passed in, as buildPropertySource accounts for it
         HubConfigImpl hubConfig = new HubConfigImpl();
         hubConfig.applyProperties(buildPropertySource(username, password));
         return hubConfig;
     }
 
     /**
-     * Construct a PropertySource based on the DHF default properties, the properties in the Spring Boot environment,
-     * and the given username and password, which are supplied when a user authenticates.
+     * Construct a PropertySource based on the properties in the Spring Boot environment plus the given username and
+     * password, which are supplied when a user authenticates.
      *
      * @param username
      * @param password
      * @return
      */
     protected PropertySource buildPropertySource(String username, String password) {
-        Properties hubDefaultProperties = HubConfigImpl.newDefaultProperties();
-
         Properties primaryProperties = new Properties();
         primaryProperties.setProperty("mlUsername", username);
         primaryProperties.setProperty("mlPassword", password);
-        primaryProperties.setProperty("mlAppServicesUsername", username);
-        primaryProperties.setProperty("mlAppServicesPassword", password);
 
         if (useLocalDefaults) {
-            primaryProperties.setProperty("mlIsHostLoadBalancer", "false");
-            primaryProperties.setProperty("mlIsProvisionedEnvironment", "false");
-            primaryProperties.setProperty("mlAppServicesPort", "8000");
-            primaryProperties.setProperty("mlAppServicesAuthentication", "digest");
-            primaryProperties.setProperty("mlFinalAuth", "digest");
-            primaryProperties.setProperty("mlJobAuth", "digest");
-            primaryProperties.setProperty("mlStagingAuth", "digest");
-            primaryProperties.setProperty("mlAppServicesSimpleSsl", "false");
-            primaryProperties.setProperty("mlFinalSimpleSsl", "false");
-            primaryProperties.setProperty("mlJobSimpleSsl", "false");
-            primaryProperties.setProperty("mlStagingSimpleSsl", "false");
-            primaryProperties.setProperty("mlManageScheme", "http");
-            primaryProperties.setProperty("mlManageSimpleSsl", "false");
+            primaryProperties.setProperty("hubDhs", "false");
+            primaryProperties.setProperty("hubSsl", "false");
         }
 
         return propertyName -> {
@@ -93,11 +86,7 @@ public class HubCentral extends LoggingObject implements InitializingBean {
             if (value != null) {
                 return value;
             }
-            value = environment.getProperty(propertyName);
-            if (value != null && value.trim().length() > 0) {
-                return value;
-            }
-            return hubDefaultProperties.getProperty(propertyName);
+            return environment.getProperty(propertyName);
         };
     }
 

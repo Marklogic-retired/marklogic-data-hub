@@ -117,16 +117,17 @@ public abstract class AbstractHubTest extends TestObject {
     }
 
     /**
-     * The "runAs" methods do not modify the user associated with the ManageClient that is owned by the HubConfig
-     * object. So if you have a test that needs the ManageClient to run as a different user, call this - though you'll
-     * need to be sure to undo your change (this will be taken care of if you're extending AbstractHubCoreTest).
+     * Convenience method for updating the username/password on all configuration objects in HubConfig - specifically,
+     * the ones in manageConfig, adminConfig, and the restAdmin* and appServices* ones in appConfig.
+     *
+     * @param mlUsername
+     * @param mlPassword
      */
-    protected void applyCurrentUserToManageClient() {
-        HubConfigImpl hubConfig = getHubConfig();
+    protected void applyMlUsernameAndMlPassword(String mlUsername, String mlPassword) {
         Properties props = new Properties();
-        props.setProperty("mlManageUsername", hubConfig.getMlUsername());
-        props.setProperty("mlManagePassword", hubConfig.getMlPassword());
-        hubConfig.applyProperties(new SimplePropertySource(props));
+        props.setProperty("mlUsername", mlUsername);
+        props.setProperty("mlPassword", mlPassword);
+        getHubConfig().applyProperties(new SimplePropertySource(props));
     }
 
     /**
@@ -162,6 +163,7 @@ public abstract class AbstractHubTest extends TestObject {
 
     /**
      * Installs a project for a particular test but will not load query options.
+     *
      * @param folderInClasspath
      */
     protected void installProjectInFolder(String folderInClasspath) {
@@ -239,6 +241,7 @@ public abstract class AbstractHubTest extends TestObject {
 
     /**
      * Installs user modules and artifacts without loading query options.
+     *
      * @param hubConfig
      * @param forceLoad
      */

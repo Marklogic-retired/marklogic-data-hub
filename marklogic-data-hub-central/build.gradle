@@ -44,6 +44,7 @@ bootJar {
 bootRun.doFirst {
     environment "mlHost", mlHost
     environment "hubUseLocalDefaults", hubUseLocalDefaults
+    environment "hubSsl", hubSsl
     environment "spring.profiles.active", springProfiles
 }
 

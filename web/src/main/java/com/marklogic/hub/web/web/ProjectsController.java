@@ -40,16 +40,12 @@ public class ProjectsController {
     @Autowired
     private ProjectManagerService pm;
 
-
     @Autowired
     // this field wires quick-start to the main application context
     private HubConfigImpl hubConfig;
 
     @Autowired
     private DataHub dataHub;
-
-    @Autowired
-    private HubSettings hubSettings;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     @ResponseBody
@@ -110,8 +106,8 @@ public class ProjectsController {
     @ResponseBody
     public synchronized HubSettings getDefaults(@PathVariable int projectId) {
         Project project = pm.getProject(projectId);
-        // This method is synchronized since it's modifying hubSettings
-        hubSettings.setProjectDir(project.path);
-        return hubSettings;
+        HubSettings settings = new HubSettings();
+        settings.setProjectDir(project.path);
+        return settings;
     }
 }

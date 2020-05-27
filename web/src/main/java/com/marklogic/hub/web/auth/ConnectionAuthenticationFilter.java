@@ -108,11 +108,8 @@ public class ConnectionAuthenticationFilter extends
 
         hubConfig.setMlUsername(username);
         hubConfig.setMlPassword(password);
-        hubConfig.resetAppConfigs();
         hubConfig.withPropertiesFromEnvironment(loginInfo.environment);
-        if (loginInfo.projectId != pm.getLastProject()) {
-            hubConfig.resetHubConfigs();
-        }
+        hubConfig.applyDefaultPropertyValues();
         hubConfig.refreshProject();
 
         hubConfig.getAppConfig().setAppServicesUsername(username);

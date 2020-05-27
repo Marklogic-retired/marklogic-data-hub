@@ -61,7 +61,7 @@ public abstract class AbstractHubCentralTest extends AbstractHubTest {
         long start = System.currentTimeMillis();
 
         testHubProject = new HubProjectImpl();
-        testHubConfig = new HubConfigImpl(testHubProject, null);
+        testHubConfig = new HubConfigImpl(testHubProject);
 
         resetHubProject();
         // By default, a test should run as a data-hub-developer
