@@ -6,6 +6,7 @@
     "data-hub-developer",
     "hub-central-user",
     "hub-central-entity-model-writer",
+    "hub-central-load-writer",
     "hub-central-mapping-writer"
   ]
 }

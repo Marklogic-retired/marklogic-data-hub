@@ -29,6 +29,11 @@
       "privilege-name": "rest-writer",
       "action": "http://marklogic.com/xdmp/privileges/rest-writer",
       "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:invoke",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-invoke",
+      "kind": "execute"
     }
   ]
 }

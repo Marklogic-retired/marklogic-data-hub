@@ -56,7 +56,13 @@ const loadSettings = {"data" :
     "status" :200
 };
 
+const genericSuccess = {
+  data: {},
+  status: 200
+};
+
 const data = {
+    genericSuccess: genericSuccess,
     flows: flows,
     loads: loads,
     loadsXML: loadsXML,
