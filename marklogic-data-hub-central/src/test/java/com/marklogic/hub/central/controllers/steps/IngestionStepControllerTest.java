@@ -79,4 +79,27 @@ public class IngestionStepControllerTest extends AbstractStepControllerTest {
                 });
     }
 
+    @Test
+    void permittedWriteUser() throws Exception {
+        installReferenceModelProject();
+
+        loginAsTestUserWithRoles("hub-central-load-writer");
+
+        postJson(PATH + "/firstStep", newDefaultIngestionStep("firstStep"))
+                .andDo(result -> {
+                    MockHttpServletResponse response = result.getResponse();
+                    assertEquals(HttpStatus.OK.value(), response.getStatus());
+                });
+    }
+
+    @Test
+    void forbiddenWriteUser() throws Exception {
+        installReferenceModelProject();
+
+        loginAsTestUserWithRoles("hub-central-load-reader");
+        postJson(PATH + "/firstStep", newDefaultIngestionStep("firstStep"))
+                .andDo(result -> {
+                    assertTrue(result.getResolvedException() instanceof AccessDeniedException);
+                });
+    }
 }

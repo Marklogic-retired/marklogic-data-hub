@@ -1,0 +1,15 @@
+{
+  "role-name": "hub-central-load-writer",
+  "description": "Permits reading and writing load steps in Hub Central",
+  "role": [
+    "hub-central-load-reader",
+    "data-hub-ingestion-writer"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "data-hub:writeIngestion",
+      "action": "http://marklogic.com/data-hub/privileges/write-ingestion",
+      "kind": "execute"
+    }
+  ]
+}

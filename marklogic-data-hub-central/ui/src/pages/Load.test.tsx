@@ -27,9 +27,9 @@ describe('Load component', () => {
         const authorityService = new AuthoritiesService();
         authorityService.setAuthorities(['readIngestion']);
 
-        const { getByText, getByLabelText, getByTestId, debug } = render(<AuthoritiesContext.Provider value={authorityService}><Load/></AuthoritiesContext.Provider>);
-            debug();
-        expect(await(waitForElement(() => getByLabelText('load-list')))).toBeInTheDocument();
+        const { getByText, getByTitle, getByLabelText, getByTestId, queryByTestId, queryByText, queryByTitle } = render(<AuthoritiesContext.Provider value={authorityService}><Load/></AuthoritiesContext.Provider>);
+
+        expect(await(waitForElement(() => getByLabelText('switch-view-list')))).toBeInTheDocument();
 
         // Check for steps to be populated
         expect(axiosMock.get).toBeCalledWith('/api/steps/ingestion');
@@ -37,28 +37,40 @@ describe('Load component', () => {
 
         // Check list view
         await fireEvent.click(getByLabelText('switch-view-list'));
+        // test 'Add New' button
+        expect(queryByText('Add New')).not.toBeInTheDocument();
 
         await fireEvent.click(getByTestId('testLoad-settings'));
         expect(await(waitForElement(() => getByText('Target Database:')))).toBeInTheDocument();
 
         expect(getByText('Save')).toBeDisabled();
         await fireEvent.click(getByText('Cancel'));
-        // Check card view
+        // test delete
+        expect(queryByTestId('testLoad-delete')).not.toBeInTheDocument();
+
+        // Check card layout
         await fireEvent.click(getByLabelText('switch-view-card'));
 
+        // test 'Add New' button
+        expect(queryByText('Add New')).not.toBeInTheDocument();
+
+        // test settings
         await fireEvent.click(getByLabelText('icon: setting'));
         expect(await(waitForElement(() => getByText('Target Database:')))).toBeInTheDocument();
         expect(getByText('Save')).toBeDisabled();
         await fireEvent.click(getByText('Cancel'));
+
+        // test delete
+        expect(queryByTitle('delete')).not.toBeInTheDocument();
     });
 
-    test('Verify can edit with readIngestion and writeIngestion authorities', async () => {
+    test('Verify edit with readIngestion and writeIngestion authorities', async () => {
         const authorityService = new AuthoritiesService();
         authorityService.setAuthorities(['readIngestion','writeIngestion']);
 
-        const { getByText, getByLabelText, getByTestId } = render(<AuthoritiesContext.Provider value={authorityService}><Load/></AuthoritiesContext.Provider>);
+        const { getByText, getByTitle, getByLabelText, getByTestId } = render(<AuthoritiesContext.Provider value={authorityService}><Load/></AuthoritiesContext.Provider>);
 
-        expect(await(waitForElement(() => getByLabelText('load-list')))).toBeInTheDocument();
+        expect(await(waitForElement(() => getByLabelText('switch-view-list')))).toBeInTheDocument();
 
         // Check for steps to be populated
         expect(axiosMock.get).toBeCalledWith('/api/steps/ingestion');
@@ -66,19 +78,31 @@ describe('Load component', () => {
 
         // Check list view
         await fireEvent.click(getByLabelText('switch-view-list'));
-
+        // test 'Add New' button
+        expect(getByText('Add New')).toBeInTheDocument();
+        // test settings
         await fireEvent.click(getByTestId('testLoad-settings'));
         expect(await(waitForElement(() => getByText('Target Database:')))).toBeInTheDocument();
 
         expect(getByText('Save')).not.toBeDisabled();
         await fireEvent.click(getByText('Cancel'));
-        // Check card view
-        await fireEvent.click(getByLabelText('switch-view-card'));
+        // test delete
+        await fireEvent.click(getByTestId('testLoad-delete'));
+        await fireEvent.click(getByText('No'));
 
-        await fireEvent.click(getByLabelText('icon: setting'));
+        // Check card layout
+        await fireEvent.click(getByLabelText('switch-view-card'));
+        // test 'Add New' button
+        expect(getByText('Add New')).toBeInTheDocument();
+
+        await fireEvent.click(getByTestId('testLoad-settings'));
         expect(await(waitForElement(() => getByText('Target Database:')))).toBeInTheDocument();
         expect(getByText('Save')).not.toBeDisabled();
         await fireEvent.click(getByText('Cancel'));
+        // test delete
+        await fireEvent.click(getByTestId('testLoad-delete'));
+        await fireEvent.click(getByText('Yes'));
+        expect(axiosMock.delete).toHaveBeenNthCalledWith(1,'/api/steps/ingestion/testLoad');
     });
 
     test('Verify list and card views', async () => {
@@ -87,7 +111,7 @@ describe('Load component', () => {
 
         const { getByText, getAllByText, getByLabelText } = render(<AuthoritiesContext.Provider value={authorityService}><Load/></AuthoritiesContext.Provider>);
 
-        expect(await(waitForElement(() => getByLabelText('load-list')))).toBeInTheDocument();
+        expect(await(waitForElement(() => getByLabelText('switch-view-list')))).toBeInTheDocument();
 
         // Check for steps to be populated in default view
         expect(axiosMock.get).toBeCalledWith('/api/steps/ingestion');

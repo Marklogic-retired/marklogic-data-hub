@@ -1,7 +1,16 @@
 import loadData from "./load.config";
 import curateData from "./run.config";
+import axiosMock from "axios";
 
 const loadAPI = (axiosMock) => {
+    axiosMock.delete['mockImplementation']((url) => {
+      switch (url) {
+        case '/api/steps/ingestion/' + loadData.loads.data[0].name:
+          return Promise.resolve(loadData.genericSuccess);
+        default:
+          return Promise.reject(new Error('not found'))
+      }
+    });
     return axiosMock.get['mockImplementation']((url) => {
       switch (url) {
         case '/api/flows':

@@ -45,6 +45,15 @@ hubTest.runWithRolesAndPrivileges(['hub-central-load-reader'], [], function() {
     assertions.push(test.assertFalse(authorities.includes('writeIngestion'), 'hub-central-load-reader should not have "writeIngestion"'));
 });
 
+// Test hub-central-load-writer
+hubTest.runWithRolesAndPrivileges(['hub-central-load-writer'], [], function() {
+    const Security = require('/data-hub/5/impl/security.sjs');
+    const authorities = new Security().getDataHubAuthorities();
+    assertions.push(test.assertTrue(authorities.includes('loginToHubCentral'), 'hub-central-load-writer should have "loginToHubCentral"'));
+    assertions.push(test.assertTrue(authorities.includes('readIngestion'), 'hub-central-load-writer should have "readIngestion"'));
+    assertions.push(test.assertTrue(authorities.includes('writeIngestion'), 'hub-central-load-writer should  have "writeIngestion"'));
+});
+
 // Test hub-central-mapping-reader
 hubTest.runWithRolesAndPrivileges(['hub-central-mapping-reader'], [], function() {
     const Security = require('/data-hub/5/impl/security.sjs');
@@ -60,6 +69,6 @@ hubTest.runWithRolesAndPrivileges(['hub-central-mapping-writer'], [], function()
     const authorities = new Security().getDataHubAuthorities();
     assertions.push(test.assertTrue(authorities.includes('loginToHubCentral'), 'hub-central-mapping-writer should have "loginToHubCentral"'));
     assertions.push(test.assertTrue(authorities.includes('readMapping'), 'hub-central-mapping-writer should have "readMapping"'));
-    assertions.push(test.assertTrue(authorities.includes('writeMapping'), 'hub-central-mapping-writer should not have "writeMapping"'));
+    assertions.push(test.assertTrue(authorities.includes('writeMapping'), 'hub-central-mapping-writer should have "writeMapping"'));
 });
 assertions;

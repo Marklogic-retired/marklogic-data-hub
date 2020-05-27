@@ -1,4 +1,4 @@
 {
   "role-name": "data-hub-ingestion-reader",
-  "description": "Permits reading a load data configuration"
+  "description": "Permits reading an ingestion step"
 }
