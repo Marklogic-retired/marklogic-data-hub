@@ -17,6 +17,7 @@
 
 package com.marklogic.gradle
 
+import com.marklogic.appdeployer.AppConfig
 import com.marklogic.appdeployer.command.Command
 import com.marklogic.appdeployer.command.CommandContext
 import com.marklogic.appdeployer.impl.SimpleAppDeployer
@@ -32,6 +33,10 @@ import com.marklogic.hub.deploy.commands.*
 import com.marklogic.hub.deploy.util.ModuleWatchingConsumer
 import com.marklogic.hub.impl.*
 import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl
+import com.marklogic.mgmt.ManageClient
+import com.marklogic.mgmt.ManageConfig
+import com.marklogic.mgmt.admin.AdminConfig
+import com.marklogic.mgmt.admin.AdminManager
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -250,28 +255,24 @@ class DataHubPlugin implements Plugin<Project> {
         }
 
         else {
-
             // By default, DHF uses gradle-local.properties for your local environment.
             def envNameProp = project.hasProperty("environmentName") ? project.property("environmentName") : "local"
             hubConfig.withPropertiesFromEnvironment(envNameProp.toString())
 
-            // Assign the AppConfig created by ml-gradle to hubConfig so that when it updates its instance of AppConfig
-            // with DHF-specific values, it's updating the instance that's used by all the ml-gradle tasks as well.
-            // Can skip updating the AppConfig as it will be updated via the call to loadConfigurationFromProperties.
-            hubConfig.setAppConfig(extensions.getByName("mlAppConfig"), true)
+            AppConfig mlGradleAppConfig = extensions.getByName("mlAppConfig")
+            ManageConfig mlGradleManageConfig = extensions.getByName("mlManageConfig")
+            AdminConfig mlGradleAdminConfig = extensions.getByName("mlAdminConfig")
 
-            // Create a Properties object containing all of the properties loaded by Gradle
-            Properties projectProperties = new ProjectPropertySource(project).getProperties()
-            // Populate hubConfig properties, telling hubConfig not to load from gradle.properties as that's already happened
-            hubConfig.loadConfigurationFromProperties(projectProperties, false)
+            // Apply all of the properties loaded by Gradle to hubConfig
+            // Have to reuse the Config objects created by ml-gradle so that they're updated based on DHF properties
+            hubConfig.applyProperties(new ProjectPropertySource(project), mlGradleAppConfig, mlGradleManageConfig, mlGradleAdminConfig)
 
-            // Ensure that hubConfig is using the same admin/manage objects that ml-gradle created. DHF doesn't have
-            // any additional properties for customizing these objects, so whatever was created by ml-gradle is what
-            // DHF should use as well.
-            hubConfig.setAdminConfig(extensions.getByName("mlAdminConfig"))
-            hubConfig.setAdminManager(extensions.getByName("mlAdminManager"))
-            hubConfig.setManageConfig(extensions.getByName("mlManageConfig"))
-            hubConfig.setManageClient(extensions.getByName("mlManageClient"))
+            // Because applying DHF properties may have modified the ManageConfig/AdminConfig objects, we need to re-set
+            // those to force the underlying connection objects to be rebuilt
+            ManageClient mlGradleManageClient = extensions.getByName("mlManageClient")
+            mlGradleManageClient.setManageConfig(mlGradleManageConfig)
+            AdminManager mlGradleAdminManager = extensions.getByName("mlAdminManager")
+            mlGradleAdminManager.setAdminConfig(mlGradleAdminConfig)
 
             // Turning off CMA for resources that have bugs in ML 9.0-7/8
             // TODO This can likely be removed now that DHF requires a version higher than those, but will need to test

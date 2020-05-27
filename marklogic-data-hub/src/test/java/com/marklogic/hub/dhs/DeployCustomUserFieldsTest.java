@@ -26,8 +26,7 @@ public class DeployCustomUserFieldsTest extends AbstractHubCoreTest {
     @AfterEach
     void afterEach() {
         // dhsDeployer mucks around with appConfig, so gotta reset everything
-        adminHubConfig.resetAppConfigs();
-        adminHubConfig.resetHubConfigs();
+        adminHubConfig.applyDefaultPropertyValues();
         adminHubConfig.refreshProject();
 
         resetFieldsAndIndexes();

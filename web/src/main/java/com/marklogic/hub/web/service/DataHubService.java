@@ -26,11 +26,9 @@ import com.marklogic.hub.deploy.commands.LoadHubArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
-import com.marklogic.hub.error.CantUpgradeException;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.legacy.validate.EntitiesValidator;
 import com.marklogic.hub.util.PerformanceLogger;
-import com.marklogic.hub.web.auth.ConnectionAuthenticationToken;
 import com.marklogic.hub.web.exception.DataHubException;
 import com.marklogic.hub.web.listeners.DeployUserModulesListener;
 import com.marklogic.hub.web.listeners.ValidateListener;
@@ -38,11 +36,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.DateFormat;
@@ -161,15 +157,6 @@ public class DataHubService {
         df.setTimeZone(tz);
 
         return "{\"deployed\":" + tsFile.exists() + ", \"lastModified\":\"" + df.format(lastModified) + "\"}";
-    }
-
-    public boolean updateHub(HubConfig config) throws IOException, CantUpgradeException {
-        boolean result = dataHub.upgradeHub();
-        if (result) {
-            ConnectionAuthenticationToken authenticationToken = (ConnectionAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-        }
-        return result;
-
     }
 
     public void clearContent(HubConfig config, String database) {

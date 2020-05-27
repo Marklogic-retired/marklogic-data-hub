@@ -58,6 +58,7 @@ import com.marklogic.hub.util.ComboListener;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
+import com.marklogic.mgmt.util.SimplePropertySource;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -72,7 +73,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ReflectionUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -81,7 +81,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
-import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -89,9 +88,10 @@ import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -218,9 +218,9 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
      * back to that user.
      */
     @AfterEach
-    void resetManagerClientBackToFlowDeveloper() {
+    void resetManageClientBackToFlowDeveloper() {
         if (adminHubConfig != null) {
-            adminHubConfig.applyMlUsernameAndMlPassword(user, password);
+            applyMlUsernameAndMlPassword(user, password);
         }
     }
 
@@ -346,7 +346,8 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
         jobDocMgr = jobClient.newJSONDocumentManager();
         modMgr = stagingModulesClient.newDocumentManager();
 
-        adminHubConfig.refreshProject();
+        adminHubConfig.applyProperties(new SimplePropertySource(properties));
+
         if(isSslRun() || isCertAuth()) {
             certInit();
         }
@@ -490,7 +491,7 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
 
     @Override
     protected HubConfigImpl runAsUser(String mlUsername, String mlPassword) {
-        adminHubConfig.applyMlUsernameAndMlPassword(mlUsername, mlPassword);
+        applyMlUsernameAndMlPassword(mlUsername, mlPassword);
 
         appConfig = adminHubConfig.getAppConfig();
         manageConfig = adminHubConfig.getManageConfig();
@@ -1096,17 +1097,8 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
     }
 
 
-    //Use this method sparingly as it slows down the test
     public void resetProperties() {
-        Field[] fields = HubConfigImpl.class.getDeclaredFields();
-        Set<String> s =  Stream.of("hubProject", "environment", "logger", "objmapper", "projectProperties").collect(Collectors.toSet());
-
-        for(Field f : fields){
-            if(! s.contains(f.getName())) {
-                ReflectionUtils.makeAccessible(f);
-                ReflectionUtils.setField(f, adminHubConfig, null);
-            }
-        }
+        adminHubConfig.applyDefaultPropertyValues();
     }
 
     protected String getTimezoneString() {

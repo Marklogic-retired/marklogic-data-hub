@@ -84,15 +84,12 @@ public class ClearUserDataTest extends AbstractHubCoreTest {
         }
 
         runAsDataHubDeveloper();
-        applyCurrentUserToManageClient();
         try {
             new DataHubImpl(getHubClient()).clearUserData();
             fail("This should have failed because a data-hub-developer does not have the privileges for clearing a database");
         } catch (Exception e) {
             assertTrue(e instanceof HttpClientErrorException);
             HttpClientErrorException ex = (HttpClientErrorException) e;
-            System.out.println(ex.getMessage());
-            System.out.println(ex.getResponseBodyAsString());
             assertEquals(HttpStatus.FORBIDDEN, ex.getStatusCode(), "A 403 should have been returned because the user " +
                 "does not have a privilege that allows for clearing the database");
         }

@@ -32,23 +32,15 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorCompletionService;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.stream.IntStream;
 
 @Service
-@PropertySource({"classpath:dhf-defaults.properties"})
 public class AsyncFlowService implements InitializingBean, DisposableBean {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -71,7 +63,7 @@ public class AsyncFlowService implements InitializingBean, DisposableBean {
 
     ExecutorService executor;
 
-    @Value("${JaegerServiceName}")
+    @Value("${JaegerServiceName:null}")
     private String jaegerServiceName;
 
     public void init() {

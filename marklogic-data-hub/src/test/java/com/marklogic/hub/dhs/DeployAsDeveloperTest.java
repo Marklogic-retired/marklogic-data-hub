@@ -29,8 +29,6 @@ import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.impl.HubProjectImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.env.StandardEnvironment;
-import org.springframework.mock.env.MockEnvironment;
 
 import java.io.File;
 import java.util.Collections;
@@ -48,8 +46,7 @@ public class DeployAsDeveloperTest {
     void setup() {
         HubProjectImpl project = new HubProjectImpl();
         project.createProject(HubTestBase.PROJECT_PATH);
-        hubConfig = new HubConfigImpl(project, new MockEnvironment());
-        hubConfig.applyDefaultProperties();
+        hubConfig = new HubConfigImpl(project);
     }
 
     @Test
@@ -100,7 +97,7 @@ public class DeployAsDeveloperTest {
     public void knownPropertyValuesShouldBeFixed() {
         HubProjectImpl project = new HubProjectImpl();
         project.createProject(HubTestBase.PROJECT_PATH);
-        HubConfigImpl hubConfig = new HubConfigImpl(project, new StandardEnvironment());
+        HubConfigImpl hubConfig = new HubConfigImpl(project);
 
         // Set these to custom values that a user may use on-premise
         hubConfig.setHttpName(DatabaseKind.STAGING, "my-staging-server");

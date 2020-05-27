@@ -3,18 +3,16 @@ package com.marklogic.hub.cli.client;
 import com.beust.jcommander.DynamicParameter;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.mgmt.util.SimplePropertySource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Stream;
+import java.util.Properties;
 
 @Parameters(commandDescription = "Run a flow defined by a flow artifact in a MarkLogic server. " +
     "Parameter names and values are space-delimited - e.g. -host myHost -username myUsername. " +
@@ -56,23 +54,34 @@ public class RunFlowCommand extends CommandLineFlowInputs implements Runnable {
     }
 
     protected HubConfigImpl buildHubConfig() {
-        HubConfigImpl hubConfig = new HubConfigImpl(host, username, password);
+        final Properties props = new Properties();
+        if (host != null) {
+            props.setProperty("mlHost", host);
+        }
+        if (username != null) {
+            props.setProperty("mlUsername", username);
+        }
+        if (password != null) {
+            props.setProperty("mlPassword", password);
+        }
 
         if (ssl != null && ssl) {
-            Stream.of(DatabaseKind.STAGING, DatabaseKind.FINAL, DatabaseKind.JOB).forEach(kind -> hubConfig.setSimpleSsl(kind, true));
+            props.setProperty("mlStagingSimpleSsl", "true");
+            props.setProperty("mlFinalSimpleSsl", "true");
+            props.setProperty("mlJobSimpleSsl", "true");
         }
 
         if (StringUtils.isNotEmpty(auth)) {
-            Stream.of(DatabaseKind.STAGING, DatabaseKind.FINAL, DatabaseKind.JOB).forEach(kind -> hubConfig.setAuthMethod(kind, auth));
+            props.setProperty("mlStagingAuth", auth);
+            props.setProperty("mlFinalAuth", auth);
+            props.setProperty("mlJobAuth", auth);
         }
 
         if (params != null && !params.isEmpty()) {
-            hubConfig.applyProperties(params::get);
-        } else {
-            hubConfig.applyProperties(new SimplePropertySource());
+            params.keySet().forEach(key -> props.setProperty(key, params.get(key)));
         }
 
-        return hubConfig;
+        return HubConfigImpl.withProperties(props);
     }
 
     public String getHost() {

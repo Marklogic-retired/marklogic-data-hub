@@ -2,48 +2,12 @@ package com.marklogic.hub.web.model;
 
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.stereotype.Component;
+import com.marklogic.hub.impl.HubConfigImpl;
 
 /**
  * A transport object that matches up with the Hubsettings typescript model
  */
-@Component
-@PropertySource({"classpath:dhf-defaults.properties"})
 public class HubSettings {
-
-    public static HubSettings fromHubConfig(HubConfig config) {
-        HubSettings settings = new HubSettings();
-        settings.host = config.getHost();
-        settings.stagingDbName = config.getDbName(DatabaseKind.STAGING);
-        settings.stagingTriggersDbName = config.getDbName(DatabaseKind.STAGING_TRIGGERS);
-        settings.stagingSchemasDbName = config.getDbName(DatabaseKind.STAGING_SCHEMAS);
-        settings.stagingHttpName = config.getHttpName(DatabaseKind.STAGING);
-        settings.stagingForestsPerHost = config.getForestsPerHost(DatabaseKind.STAGING);
-        settings.stagingPort = config.getPort(DatabaseKind.STAGING);
-        settings.stagingAuthMethod = config.getAuthMethod(DatabaseKind.STAGING);
-
-        settings.finalDbName = config.getDbName(DatabaseKind.FINAL);
-        settings.finalTriggersDbName = config.getDbName(DatabaseKind.FINAL_TRIGGERS);
-        settings.finalSchemasDbName = config.getDbName(DatabaseKind.FINAL_SCHEMAS);
-        settings.finalHttpName = config.getHttpName(DatabaseKind.FINAL);
-        settings.finalForestsPerHost = config.getForestsPerHost(DatabaseKind.FINAL);
-        settings.finalPort = config.getPort(DatabaseKind.FINAL);
-        settings.finalAuthMethod = config.getAuthMethod(DatabaseKind.FINAL);
-
-        settings.jobDbName = config.getDbName(DatabaseKind.JOB);
-        settings.jobHttpName = config.getHttpName(DatabaseKind.JOB);
-        settings.jobForestsPerHost = config.getForestsPerHost(DatabaseKind.JOB);
-        settings.jobPort = config.getPort(DatabaseKind.JOB);
-        settings.jobAuthMethod = config.getAuthMethod(DatabaseKind.JOB);
-
-        settings.modulesDbName = config.getDbName(DatabaseKind.MODULES);
-
-        settings.username = config.getFlowOperatorUserName();
-        settings.projectDir = config.getHubProject().getProjectDirString();
-        return settings;
-    }
 
     public String getHost() {
         return host;
@@ -238,73 +202,63 @@ public class HubSettings {
         this.projectDir = projectDir;
     }
 
-    @Value("${mlHost}")
-    String host = null;
+    public HubSettings() {
+        HubConfig config = new HubConfigImpl();
+        host = config.getHost();
+        stagingDbName = config.getDbName(DatabaseKind.STAGING);
+        stagingTriggersDbName = config.getDbName(DatabaseKind.STAGING_TRIGGERS);
+        stagingSchemasDbName = config.getDbName(DatabaseKind.STAGING_SCHEMAS);
+        stagingHttpName = config.getHttpName(DatabaseKind.STAGING);
+        stagingForestsPerHost = config.getForestsPerHost(DatabaseKind.STAGING);
+        stagingPort = config.getPort(DatabaseKind.STAGING);
+        stagingAuthMethod = config.getAuthMethod(DatabaseKind.STAGING);
 
+        finalDbName = config.getDbName(DatabaseKind.FINAL);
+        finalTriggersDbName = config.getDbName(DatabaseKind.FINAL_TRIGGERS);
+        finalSchemasDbName = config.getDbName(DatabaseKind.FINAL_SCHEMAS);
+        finalHttpName = config.getHttpName(DatabaseKind.FINAL);
+        finalForestsPerHost = config.getForestsPerHost(DatabaseKind.FINAL);
+        finalPort = config.getPort(DatabaseKind.FINAL);
+        finalAuthMethod = config.getAuthMethod(DatabaseKind.FINAL);
+
+        jobDbName = config.getDbName(DatabaseKind.JOB);
+        jobHttpName = config.getHttpName(DatabaseKind.JOB);
+        jobForestsPerHost = config.getForestsPerHost(DatabaseKind.JOB);
+        jobPort = config.getPort(DatabaseKind.JOB);
+        jobAuthMethod = config.getAuthMethod(DatabaseKind.JOB);
+
+        modulesDbName = config.getDbName(DatabaseKind.MODULES);
+
+        username = config.getFlowOperatorUserName();
+    }
+
+    String host;
     String name = "data-hub";
+    String stagingDbName;
+    String stagingTriggersDbName;
+    String stagingSchemasDbName;
+    String stagingHttpName;
+    Integer stagingForestsPerHost;
+    Integer stagingPort;
+    String stagingAuthMethod;
 
-    @Value("${mlStagingDbName}")
-    String stagingDbName = null;
+    String finalDbName;
+    String finalTriggersDbName;
+    String finalSchemasDbName;
+    String finalHttpName;
+    Integer finalForestsPerHost;
+    Integer finalPort;
+    String finalAuthMethod;
 
-    @Value("${mlStagingTriggersDbName}")
-    String stagingTriggersDbName = null;
+    String jobDbName;
+    String jobHttpName;
+    Integer jobForestsPerHost;
+    Integer jobPort;
+    String jobAuthMethod;
 
-    @Value("${mlStagingSchemasDbName}")
-    String stagingSchemasDbName = null;
+    String modulesDbName;
 
-    @Value("${mlStagingAppserverName}")
-    String stagingHttpName = null;
-
-    @Value("${mlStagingForestsPerHost}")
-    Integer stagingForestsPerHost = null;
-
-    @Value("${mlStagingPort}")
-    Integer stagingPort = null;
-
-    @Value("${mlStagingAuth}")
-    String stagingAuthMethod = null;
-
-    @Value("${mlFinalDbName}")
-    String finalDbName = null;
-
-    @Value("${mlFinalTriggersDbName}")
-    String finalTriggersDbName = null;
-
-    @Value("${mlFinalSchemasDbName}")
-    String finalSchemasDbName = null;
-
-    @Value("${mlFinalAppserverName}")
-    String finalHttpName = null;
-
-    @Value("${mlFinalForestsPerHost}")
-    Integer finalForestsPerHost = null;
-
-    @Value("${mlFinalPort}")
-    Integer finalPort = null;
-
-    @Value("${mlFinalAuth}")
-    String finalAuthMethod = null;
-
-    @Value("${mlJobDbName}")
-    String jobDbName = null;
-
-    @Value("${mlJobAppserverName}")
-    String jobHttpName = null;
-
-    @Value("${mlJobForestsPerHost}")
-    Integer jobForestsPerHost = null;
-
-    @Value("${mlJobPort}")
-    Integer jobPort = null;
-
-    @Value("${mlJobAuth}")
-    String jobAuthMethod = null;
-
-    @Value("${mlModulesDbName}")
-    String modulesDbName = null;
-
-    @Value("${mlFlowOperatorUserName}")
-    String username = null;
+    String username;
 
     String projectDir = null;
 }

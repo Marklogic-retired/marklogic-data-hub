@@ -1,38 +1,40 @@
 package com.marklogic.hub.impl;
 
+import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.mgmt.util.SimplePropertySource;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.mock.env.MockEnvironment;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.util.Properties;
+import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class HubConfigImplTest {
 
+    /**
+     * Verifies that mlUsername/mlPassword will be correctly applied as the username/password for each connection
+     * configuration in HubConfig.
+     */
     @Test
-    void applyMlUsernameAndMlPassword() {
-        HubConfigImpl config = HubConfigImpl.withDefaultProperties();
-        assertTrue(StringUtils.isEmpty(config.getMlUsername()), "These username and password values are empty " +
-            "because dhf-defaults.properties declares the properties with no value");
+    void applyUsernameAndPasswordToAllConfigs() {
+        HubConfigImpl config = new HubConfigImpl();
+        assertTrue(StringUtils.isEmpty(config.getMlUsername()));
         assertTrue(StringUtils.isEmpty(config.getMlPassword()));
-        assertTrue(StringUtils.isEmpty(config.getManageConfig().getUsername()));
-        assertTrue(StringUtils.isEmpty(config.getManageConfig().getPassword()));
-        assertTrue(StringUtils.isEmpty(config.getAdminConfig().getUsername()));
-        assertTrue(StringUtils.isEmpty(config.getAdminConfig().getPassword()));
-        assertTrue(StringUtils.isEmpty(config.getAppConfig().getAppServicesUsername()));
-        assertTrue(StringUtils.isEmpty(config.getAppConfig().getRestAdminUsername()));
+        assertNull(config.getManageConfig());
+        assertNull(config.getManageClient());
+        assertNull(config.getAdminConfig());
+        assertNull(config.getAdminManager());
+        assertNull(config.getAppConfig());
 
-        config.applyMlUsernameAndMlPassword("someone", "someword");
+        Properties props = new Properties();
+        props.setProperty("mlUsername", "someone");
+        props.setProperty("mlPassword", "someword");
+        config.applyProperties(new SimplePropertySource(props));
 
         assertEquals("someone", config.getMlUsername());
         assertEquals("someword", config.getMlPassword());
@@ -48,7 +50,7 @@ public class HubConfigImplTest {
 
     @Test
     void withDefaultValues() {
-        HubConfigImpl config = HubConfigImpl.withDefaultProperties();
+        HubConfigImpl config = new HubConfigImpl();
         assertEquals("localhost", config.getHost());
         assertTrue(StringUtils.isEmpty(config.getMlUsername()));
         assertTrue(StringUtils.isEmpty(config.getMlPassword()));
@@ -64,33 +66,68 @@ public class HubConfigImplTest {
         verifyDefaultValues(config);
     }
 
+    @Test
+    void hubSslIsTrue() {
+        verifySslIsntUsed(HubConfigImpl.withProperties(new Properties()));
+
+        Properties props = new Properties();
+        props.setProperty("hubSsl", "true");
+        verifySslIsUsed(HubConfigImpl.withProperties(props));
+    }
+
+    @Test
+    void hubSslIsTrueViaLoadConfigurationFromProperties() {
+        HubConfigImpl config = new HubConfigImpl();
+        config.loadConfigurationFromProperties(null, false);
+        verifySslIsntUsed(config);
+
+        Properties props = new Properties();
+        props.setProperty("hubSsl", "true");
+        config = new HubConfigImpl();
+        config.loadConfigurationFromProperties(props, false);
+        verifySslIsUsed(config);
+    }
+
+    @Test
+    void hubDhsIsTrue() {
+        verifyDhsConfigIsntSet(HubConfigImpl.withProperties(new Properties()));
+
+        Properties props = new Properties();
+        props.setProperty("hubDhs", "true");
+        verifyDhsConfigIsSet(HubConfigImpl.withProperties(props));
+    }
+
+    @Test
+    void hubDhsIsTrueViaLoadConfigurationFromProperties() {
+        HubConfigImpl config = new HubConfigImpl();
+        config.loadConfigurationFromProperties(null, false);
+        verifyDhsConfigIsntSet(config);
+
+        Properties props = new Properties();
+        props.setProperty("hubDhs", "true");
+        config = new HubConfigImpl();
+        config.loadConfigurationFromProperties(props, false);
+        verifyDhsConfigIsSet(config);
+    }
+
     /**
      * Verifies that when mlHost is processed when refreshing a HubConfigImpl, the underlying AppConfig object is
      * updated as well.
-     *
-     * @throws Exception
      */
     @Test
-    void hostOnAppConfigShouldBeUpdated() throws Exception {
+    void hostOnAppConfigShouldBeUpdated() {
         HubProjectImpl project = new HubProjectImpl();
         project.createProject(HubTestBase.PROJECT_PATH);
 
-        // Construct a mock Environment based on the DHF default properties, but with a custom mlHost value
-        Properties props = new Properties();
-        props.load(new ClassPathResource("dhf-defaults.properties").getInputStream());
-        MockEnvironment env = new MockEnvironment();
-        for (Object key : props.keySet()) {
-            env.setProperty((String) key, (String) props.get(key));
-        }
-        env.setProperty("mlHost", "somehost");
+        HubConfigImpl config = new HubConfigImpl(project);
+        Properties userProperties = new Properties();
+        userProperties.setProperty("mlHost", "somehost");
 
-        HubConfigImpl config = new HubConfigImpl(project, env);
-        config.loadConfigurationFromProperties(new Properties(), false);
+        config.loadConfigurationFromProperties(userProperties, false);
         assertEquals("somehost", config.getHost());
         assertEquals("somehost", config.getAppConfig().getHost());
         assertTrue(new File(config.getAppConfig().getSchemaPaths().get(0)).isAbsolute(),
-            "LoadSchemasCommand requires that the schemas path be absolute ");
-
+            "LoadSchemasCommand requires that the schemas path be absolute; path: " + config.getAppConfig().getSchemaPaths());
     }
 
     private void verifyDefaultValues(HubConfigImpl config) {
@@ -148,5 +185,57 @@ public class HubConfigImplTest {
         assertEquals("data-hub-job-reader,read,data-hub-job-internal,update", config.getJobPermissions());
 
         assertFalse(config.getIsProvisionedEnvironment());
+    }
+
+    private void verifySslIsntUsed(HubConfigImpl config) {
+        Stream.of(DatabaseKind.FINAL, DatabaseKind.STAGING, DatabaseKind.JOB).forEach(db -> {
+            assertNull(config.getSslHostnameVerifier(db));
+            assertNull(config.getSslContext(db));
+            assertNull(config.getTrustManager(db));
+        });
+
+        assertEquals("http", config.getManageClient().getManageConfig().getScheme());
+        assertFalse(config.getManageClient().getManageConfig().isConfigureSimpleSsl());
+
+        assertNull(config.getAppConfig().getRestSslContext());
+        assertNull(config.getAppConfig().getRestSslHostnameVerifier());
+        assertNull(config.getAppConfig().getAppServicesSslContext());
+        assertNull(config.getAppConfig().getAppServicesSslHostnameVerifier());
+    }
+
+    private void verifySslIsUsed(HubConfig config) {
+        Stream.of(DatabaseKind.FINAL, DatabaseKind.STAGING, DatabaseKind.JOB).forEach(db -> {
+            assertNotNull(config.getSslHostnameVerifier(db));
+            assertNotNull(config.getSslContext(db));
+            assertNotNull(config.getTrustManager(db));
+        });
+
+        assertEquals("https", config.getManageClient().getManageConfig().getScheme());
+        assertTrue(config.getManageClient().getManageConfig().isConfigureSimpleSsl());
+
+        assertNotNull(config.getAppConfig().getRestSslContext());
+        assertNotNull(config.getAppConfig().getRestSslHostnameVerifier());
+        assertNotNull(config.getAppConfig().getAppServicesSslContext());
+        assertNotNull(config.getAppConfig().getAppServicesSslHostnameVerifier());
+    }
+
+    private void verifyDhsConfigIsSet(HubConfigImpl config) {
+        assertTrue(config.getIsProvisionedEnvironment());
+        assertTrue(config.getIsHostLoadBalancer());
+        assertEquals(8010, config.getAppConfig().getAppServicesPort());
+        assertEquals(SecurityContextType.BASIC, config.getAppConfig().getAppServicesSecurityContextType());
+        assertEquals("basic", config.getAuthMethod(DatabaseKind.FINAL));
+        assertEquals("basic", config.getAuthMethod(DatabaseKind.STAGING));
+        assertEquals("basic", config.getAuthMethod(DatabaseKind.JOB));
+    }
+
+    private void verifyDhsConfigIsntSet(HubConfigImpl config) {
+        assertFalse(config.getIsProvisionedEnvironment());
+        assertFalse(config.getIsHostLoadBalancer());
+        assertEquals(8000, config.getAppConfig().getAppServicesPort());
+        assertEquals(SecurityContextType.DIGEST, config.getAppConfig().getAppServicesSecurityContextType());
+        assertEquals("digest", config.getAuthMethod(DatabaseKind.FINAL));
+        assertEquals("digest", config.getAuthMethod(DatabaseKind.STAGING));
+        assertEquals("digest", config.getAuthMethod(DatabaseKind.JOB));
     }
 }
