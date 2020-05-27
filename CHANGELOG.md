@@ -1,4 +1,11 @@
 # Change Log
+## [v5.2.2](https://github.com/marklogic/marklogic-data-hub/releases/tag/v5.2.2) (2020-05-27)
+
+**Fixed Bugs:**
+- [DHFPROD-4830] - Merging step finishes with errors:  "Message: Cannot read property 'toObject' of undefined"  [\#3859](https://github.com/marklogic/marklogic-data-hub/issues/3859)
+- [DHFPROD-5037] - DH fields/range-field-indexes/range-path-indexes can be overwritten by user in DHS
+
+
 ## [v5.2.1](https://github.com/marklogic/marklogic-data-hub/releases/tag/v5.2.1) (2020-04-02)
 
 **Fixed Bugs:**
