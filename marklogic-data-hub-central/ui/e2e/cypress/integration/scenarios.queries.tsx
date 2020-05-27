@@ -3,6 +3,7 @@
 import BrowsePage from '../support/pages/browse';
 import HomePage from "../support/pages/home";
 import QueryComponent from '../support/components/query/manage-queries-modal'
+import { Application } from '../support/application.config';
 
 const browsePage = new BrowsePage();
 const homePage = new HomePage();
@@ -13,7 +14,7 @@ describe('save/manage queries scenarios, developer role', () => {
 
     beforeEach(() => {
         cy.visit('/');
-        cy.contains('MarkLogic Data Hub');
+        cy.contains(Application.title);
         cy.loginAsDeveloper().withRequest();
         // temporary change as tile is not working
         homePage.getTitle().click();

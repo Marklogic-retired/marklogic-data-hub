@@ -5,6 +5,7 @@ import ViewPage from '../support/pages/view';
 import BrowsePage from '../support/pages/browse';
 import DetailPage from '../support/pages/detail';
 import HomePage from "../support/pages/home";
+import { Application } from '../support/application.config';
 
 const viewPage = new ViewPage();
 const browsePage = new BrowsePage();
@@ -16,7 +17,7 @@ describe('xml scenario on view entities page', () => {
   //login with valid account
   beforeEach(() => {
     cy.visit('/');
-    cy.contains('MarkLogic Data Hub');
+    cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
     // temporary change as tile is not working
     homePage.getTitle().click();
@@ -54,7 +55,7 @@ describe('xml scenario on browse documents page', () => {
   //login with valid account and go to /browse page
   beforeEach(() => {
     cy.visit('/');
-    cy.contains('MarkLogic Data Hub');
+    cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
     // temporary change as tile is not working
     homePage.getTitle().click();
@@ -200,7 +201,7 @@ describe('xml scenario for table on browse documents page', () => {
   //login with valid account and go to /browse page
   beforeEach(() => {
     cy.visit('/');
-    cy.contains('MarkLogic Data Hub');
+    cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
     // temporary change as tile is not working
     homePage.getTitle().click();

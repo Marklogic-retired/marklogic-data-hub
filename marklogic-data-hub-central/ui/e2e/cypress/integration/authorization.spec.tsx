@@ -1,6 +1,7 @@
 /// <reference types="cypress"/>
 
 import LoginPage from '../support/pages/login';
+import { Application } from '../support/application.config';
 
 const loginPage = new LoginPage();
 
@@ -9,8 +10,8 @@ describe('login', () => {
     cy.visit('/');
   });
 
-  it('greets with MarkLogic Data Hub', () => {
-    cy.contains('MarkLogic Data Hub');
+  it('greets with Data Hub Central', () => {
+    cy.contains(Application.title);
   });
 
   it('has links to privacy statement/policies', () => {

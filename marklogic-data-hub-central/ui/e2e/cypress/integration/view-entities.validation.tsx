@@ -3,6 +3,7 @@
 import ViewPage from '../support/pages/view';
 import LoginPage from "../support/pages/login";
 import HomePage from "../support/pages/home";
+import { Application } from '../support/application.config';
 
 const viewPage = new ViewPage();
 const homePage = new HomePage();
@@ -11,7 +12,7 @@ describe('view page validation', () => {
   //login with valid account
   beforeEach(() => {
     cy.visit('/');
-    cy.contains('MarkLogic Data Hub');
+    cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
     // temporary change as tile is not working
     homePage.getTitle().click();
