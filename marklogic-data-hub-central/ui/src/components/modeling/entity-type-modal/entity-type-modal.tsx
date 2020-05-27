@@ -1,15 +1,19 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios'
-import { Modal, Form, Input, Tooltip, Icon } from 'antd';
+import { Form, Icon, Input, Modal, Tooltip } from 'antd';
 import styles from './entity-type-modal.module.scss'
 
 import { UserContext } from '../../../util/user-context';
 import { ModelingTooltips } from '../../../config/tooltips.config';
+import { updateModelInfo } from "../../../api/modeling";
 
 type Props = {
   isVisible: boolean;
   toggleModal: (isVisible: boolean) => void;
-  newEntityAdded: () => void;
+  updateEntityTypesAndHideModal: () => void;
+  isEditModal: boolean;
+  name: string;
+  description: string;
 };
 
 const EntityTypeModal: React.FC<Props> = (props) => {
@@ -18,7 +22,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
   const layout = {
     labelCol: { span: 6 },
     wrapperCol: { span: 18 },
-};
+  };
 
   const [name, setName] = useState('');
   const [isNameDisabled, toggleIsNameDisabled] = useState(true);
@@ -26,9 +30,15 @@ const EntityTypeModal: React.FC<Props> = (props) => {
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
-    if (props.isVisible){
-      setName('');
-      setDescription('');
+    if (props.isVisible) {
+      if (props.isEditModal) {
+        setName(props.name);
+        setDescription(props.description);
+      } else {
+        // Add Modal
+        setName('');
+        setDescription('');
+      }
       setErrorMessage('');
       toggleIsNameDisabled(true);
     }
@@ -47,14 +57,37 @@ const EntityTypeModal: React.FC<Props> = (props) => {
     if (event.target.id === 'description') {
       setDescription(event.target.value);
     }
-  }
+  };
 
   const onOk = (event) => {
     event.preventDefault();
-    if (!NAME_REGEX.test(name)) {
-      setErrorMessage(ModelingTooltips.addEntityName)
+    if (props.isEditModal) {
+      updateEntityDescription(name, description);
     } else {
-      createEntityType(name, description);
+      if (!NAME_REGEX.test(name)) {
+        setErrorMessage(ModelingTooltips.addEntityName)
+      } else {
+        createEntityType(name, description);
+      }
+    }
+  };
+
+  const updateEntityDescription = async (name: string, description: string) => {
+    try {
+      const response = await updateModelInfo(name, description);
+      if (response['status'] === 200) {
+        props.updateEntityTypesAndHideModal();
+      }
+    } catch (error) {
+      if (error.response.status === 400) {
+        if (error.response.data.hasOwnProperty('message')) {
+          setErrorMessage(error['response']['data']['message']);
+        }
+      } else {
+        handleError(error);
+      }
+    } finally {
+      resetSessionTime();
     }
   };
 
@@ -62,36 +95,36 @@ const EntityTypeModal: React.FC<Props> = (props) => {
     try {
       const response = await axios.post('/api/models', { name, description });
       if (response['status'] === 201) {
-        props.newEntityAdded();
+        props.updateEntityTypesAndHideModal();
       }
     } catch (error) {
-      if (error.response.status === 400) { 
+      if (error.response.status === 400) {
         if (error.response.data.hasOwnProperty('message')) {
           setErrorMessage(error['response']['data']['message']);
-        } 
+        }
       } else {
         handleError(error);
-      } 
+      }
     } finally {
       resetSessionTime();
     }
   }
 
   const onCancel = () => {
-    props.toggleModal(false)
+    props.toggleModal(false);
   };
 
   return (
     <Modal
       className={styles.modal}
-      visible={props.isVisible} 
+      visible={props.isVisible}
       closable={true}
-      title={"Add Entity Type"} 
+      title={props.isEditModal ? "Edit Entity Type" : "Add Entity Type"}
       cancelText="Cancel"
-      onCancel={() => onCancel()} 
-      okText="Add"
+      onCancel={() => onCancel()}
+      okText={props.isEditModal ? "OK" : "Add"}
       onOk={onOk}
-      okButtonProps={{ form:'entity-type-form', htmlType: 'submit' }}
+      okButtonProps={{ form: 'entity-type-form', htmlType: 'submit' }}
       maskClosable={false}
     >
       <Form
@@ -102,7 +135,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
         <Form.Item
           className={styles.formItem}
           label={<span>
-            Name:&nbsp;<span className={styles.asterisk}>*</span>
+            Name:&nbsp;{props.isEditModal ? null : <span className={styles.asterisk}>*</span>}
             &nbsp;
               </span>}
           colon={false}
@@ -111,25 +144,25 @@ const EntityTypeModal: React.FC<Props> = (props) => {
           validateStatus={errorMessage ? 'error' : ''}
           help={errorMessage}
         >
-          <Input
+          {props.isEditModal ? <span>{name}</span> : <Input
             id="name"
             placeholder="Enter name"
             className={styles.input}
             value={name}
             onChange={handleChange}
             onBlur={handleChange}
-          />
-          <Tooltip title={ModelingTooltips.addEntityName}>
+          />}
+          {props.isEditModal ? null : <Tooltip title={ModelingTooltips.addEntityName}>
             <Icon type="question-circle" className={styles.icon} theme="filled" />
-          </Tooltip> 
+          </Tooltip>}
         </Form.Item>
 
-        <Form.Item 
-          label={<span className={styles.label}>Description:</span>} 
+        <Form.Item
+          label={<span className={styles.label}>Description:</span>}
           labelAlign="left"
-          className={styles.formItem} 
+          className={styles.formItem}
           colon={false}
-          >
+        >
           <Input
             id="description"
             placeholder="Enter description"
@@ -138,7 +171,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
             onChange={handleChange}
             onBlur={handleChange}
           />
-          <Tooltip title={ModelingTooltips.enitityDescription}>
+          <Tooltip title={ModelingTooltips.entityDescription}>
             <Icon type="question-circle" className={styles.icon} theme="filled" />
           </Tooltip>
         </Form.Item>
