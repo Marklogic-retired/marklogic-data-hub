@@ -1,7 +1,7 @@
-import React, { CSSProperties } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Table, Tooltip } from 'antd';
-import { faUndo, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { faTrashAlt, faUndo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from './entity-type-table.module.scss';
 
@@ -14,6 +14,7 @@ type Props = {
   allEntityTypesData: any[];
   canReadEntityModel: boolean;
   canWriteEntityModel: boolean;
+  editEntityTypeDescription: (entityTypeName: string, entityTypeDescription: string) => void;
 }
 
 const EntityTypeTable: React.FC<Props> = (props) => {
@@ -23,15 +24,24 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       title: 'Name',
       dataIndex: 'name',
       width: 400,
-      // TODO - Edit Entity DHFPROD-4452
       render: text => {
+        let parseText = text.split(',');
+        let entityName = parseText[0];
+        let entityDescription = parseText[1];
+
         return (
           <Tooltip title={ModelingTooltips.entityTypeName}>
-            <span data-testid={text + '-span'}>{text}</span>
+            <span data-testid={text + '-span'} className={styles.link}
+              onClick={() => {
+                props.editEntityTypeDescription(entityName, entityDescription);
+              }}>
+              {entityName}</span>
           </Tooltip>
         )
       },
-      sorter: (a, b) => { return a.name.localeCompare(b.name) }
+      sorter: (a, b) => {
+        return a.name.localeCompare(b.name)
+      }
     },
     {
       title: 'Instances',
@@ -44,13 +54,13 @@ const EntityTypeTable: React.FC<Props> = (props) => {
 
         return (
           <Tooltip title={ModelingTooltips.instanceNumber}>
-            <Link 
+            <Link
               to={{
                 pathname: "/browse",
                 state: { entity: parseText[0] }
               }}
-              data-testid={parseText[0]+ '-instance-count'}
-            > 
+              data-testid={parseText[0] + '-instance-count'}
+            >
               {instanceCount}
             </Link>
           </Tooltip>
@@ -77,14 +87,14 @@ const EntityTypeTable: React.FC<Props> = (props) => {
           return 'n/a'
         } else {
           return (
-            <Tooltip title={queryDateConverter(parseText[2])+ "\n" + ModelingTooltips.lastProcessed}>
-              <Link 
+            <Tooltip title={queryDateConverter(parseText[2]) + "\n" + ModelingTooltips.lastProcessed}>
+              <Link
                 to={{
                   pathname: "/browse",
                   state: { entityName: parseText[0], jobId: parseText[1] }
                 }}
-                data-cy={parseText[0]+ '-last-processed'}
-                data-testid={parseText[0]+ '-last-processed'}
+                data-cy={parseText[0] + '-last-processed'}
+                data-testid={parseText[0] + '-last-processed'}
               >
                 {displayDate}
               </Link>
@@ -108,21 +118,26 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         // TODO add functionality to icons
         return (
           <div className={styles.iconContainer}>
-          <Tooltip title={ModelingTooltips.saveIcon}>
-            <span className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconSaveReadOnly : styles.iconSave}></span>
-          </Tooltip>
-          <Tooltip title={ModelingTooltips.revertIcon}>
-            <FontAwesomeIcon className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconRevertReadOnly : styles.iconRevert} icon={faUndo} 
-            onClick={(event) => {
-              if (!props.canWriteEntityModel && props.canReadEntityModel) {
-                return event.preventDefault()
-              } else {
-                return '' //TODO - Add functionality for Revert Icon here
-              }
-            }}
-            size="2x"/>
-          </Tooltip>
-            <FontAwesomeIcon className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconTrashReadOnly : styles.iconTrash} icon={faTrashAlt}
+            <Tooltip title={ModelingTooltips.saveIcon}>
+              <span
+                className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconSaveReadOnly : styles.iconSave} />
+            </Tooltip>
+            <Tooltip title={ModelingTooltips.revertIcon}>
+              <FontAwesomeIcon
+                className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconRevertReadOnly : styles.iconRevert}
+                icon={faUndo}
+                onClick={(event) => {
+                  if (!props.canWriteEntityModel && props.canReadEntityModel) {
+                    return event.preventDefault()
+                  } else {
+                    return '' //TODO - Add functionality for Revert Icon here
+                  }
+                }}
+                size="2x" />
+            </Tooltip>
+            <FontAwesomeIcon
+              className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconTrashReadOnly : styles.iconTrash}
+              icon={faTrashAlt}
               onClick={(event) => {
                 if (!props.canWriteEntityModel && props.canReadEntityModel) {
                   return event.preventDefault()
@@ -137,9 +152,16 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     }
   ];
 
-  const renderTableData = props.allEntityTypesData.map(( entity, index) => {
+  const getEntityTypeDescription = (entity: any) => {
+    return (entity.hasOwnProperty("model") &&
+      entity.model.hasOwnProperty("definitions") &&
+      entity.model.definitions.hasOwnProperty(entity.entityName) &&
+      entity.model.definitions[entity.entityName].hasOwnProperty("description")) ? entity.model.definitions[entity.entityName].description : '';
+  };
+
+  const renderTableData = props.allEntityTypesData.map((entity) => {
     return {
-      name: entity.entityName,
+      name: entity.entityName + ',' + getEntityTypeDescription(entity),
       instances: entity.entityName + ',' + parseInt(entity.entityInstanceCount),
       lastProcessed: entity.entityName + ',' + entity.latestJobId + ',' + entity.latestJobDateTime,
       actions: entity.entityName,
@@ -149,7 +171,8 @@ const EntityTypeTable: React.FC<Props> = (props) => {
 
   const expandedRowRender = (entity) => {
     return <PropertyTable entityName={entity.name} definitions={entity.definitions}
-              canReadEntityModel={props.canReadEntityModel} canWriteEntityModel={props.canWriteEntityModel}/>
+      canReadEntityModel={props.canReadEntityModel}
+      canWriteEntityModel={props.canWriteEntityModel} />
   };
 
   return (
@@ -167,4 +190,4 @@ const EntityTypeTable: React.FC<Props> = (props) => {
   );
 }
 
-export default EntityTypeTable; 
+export default EntityTypeTable;
