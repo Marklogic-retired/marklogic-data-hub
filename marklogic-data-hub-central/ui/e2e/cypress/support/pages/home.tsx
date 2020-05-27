@@ -1,3 +1,5 @@
+import { Application } from '../../support/application.config';
+
 class HomePage{
 
     getViewEntities() {
@@ -10,7 +12,7 @@ class HomePage{
 
     // temporary change as tile is not working
     getTitle() {
-        return cy.contains('MarkLogic Data Hub');
+        return cy.contains(Application.title);
     }
 
     getModeling() {

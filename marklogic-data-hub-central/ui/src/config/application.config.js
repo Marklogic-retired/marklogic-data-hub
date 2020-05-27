@@ -1,5 +1,5 @@
 export const Application = { 
-    title: "MarkLogic Data Hub"
+    title: "Data Hub Central"
 }
 
 // Time when session warning pop up shows up
