@@ -49,6 +49,9 @@ class RunFlowTask extends HubTask {
     public String outputURIReplacement
 
     @Input
+    public String outputURIPrefix
+
+    @Input
     public String separator
 
     @Input
@@ -109,6 +112,11 @@ class RunFlowTask extends HubTask {
             outputURIReplacement = project.hasProperty("outputURIReplacement") ? project.property("outputURIReplacement") : null
         }
         inputs.setOutputURIReplacement(outputURIReplacement)
+
+        if (outputURIPrefix == null) {
+            outputURIPrefix = project.hasProperty("outputURIPrefix") ? project.property("outputURIPrefix") : null
+        }
+        inputs.setOutputURIPrefix(outputURIPrefix)
 
         if (showOptions == null) {
             showOptions = project.hasProperty("showOptions") ? Boolean.parseBoolean(project.property("showOptions")) : false

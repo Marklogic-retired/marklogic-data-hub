@@ -2,6 +2,7 @@ package com.marklogic.hub.cli.client;
 
 import com.marklogic.hub.flow.FlowInputs;
 import org.apache.commons.lang3.tuple.Pair;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 
@@ -30,6 +31,7 @@ public class CommandLineFlowInputsTest {
         inputs.setShowOptions(true);
         inputs.setSteps(Arrays.asList("2", "3"));
         inputs.setThreadCount(3);
+        inputs.setOutputURIPrefix("/user");
 
         Pair<FlowInputs, String> pair = inputs.buildFlowInputs();
         assertNotNull(pair.getRight());
@@ -56,6 +58,7 @@ public class CommandLineFlowInputsTest {
         assertEquals(";", fileLocations.get("separator"));
         assertEquals("/some/path", fileLocations.get("inputFilePath"));
         assertEquals(".*data,'/something'", fileLocations.get("outputURIReplacement"));
+        assertEquals("/user", fileLocations.get("outputURIPrefix"));
     }
 
     @Test

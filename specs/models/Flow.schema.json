@@ -166,6 +166,9 @@
                         "outputURIReplacement": {
                           "type": "string"
                         },
+                        "outputURIPrefix": {
+                          "type": "string"
+                        },
                         "separator": {
                           "type": "string"
                         }

@@ -121,6 +121,7 @@ public class WriteStepRunner implements StepRunner {
     protected String outputFormat;
     protected String inputFileType;
     protected String outputURIReplacement;
+    protected String outputURIPrefix;
     protected String separator = ",";
     protected AtomicBoolean isStopped = new AtomicBoolean(false);
     private IngestionStepDefinitionImpl stepDef;
@@ -382,6 +383,7 @@ public class WriteStepRunner implements StepRunner {
             inputFilePath = (String)fileLocations.get("inputFilePath");
             inputFileType = (String)fileLocations.get("inputFileType");
             outputURIReplacement = (String)fileLocations.get("outputURIReplacement");
+            outputURIPrefix = (String)fileLocations.get("outputURIPrefix");
             if (inputFileType.equalsIgnoreCase("csv") && fileLocations.get("separator") != null) {
                 this.separator =((String) fileLocations.get("separator"));
                 if (!"\t".equals(this.separator)) {
@@ -396,6 +398,10 @@ public class WriteStepRunner implements StepRunner {
 
         if(stepConfig.get("stopOnFailure") != null){
             this.withStopOnFailure(Boolean.parseBoolean(stepConfig.get("stopOnFailure").toString()));
+        }
+
+        if(StringUtils.isNotEmpty(outputURIPrefix) && StringUtils.isNotEmpty(outputURIReplacement)){
+            throw new RuntimeException("'outputURIPrefix' and 'outputURIReplacement' cannot be set simultaneously");
         }
 
         if (inputFilePath == null || inputFileType == null) {
@@ -652,15 +658,6 @@ public class WriteStepRunner implements StepRunner {
     }
 
     private void processCsv(JacksonHandle jacksonHandle, File file) {
-        String uri = file.getParent();
-        if(SystemUtils.OS_NAME.toLowerCase().contains("windows")){
-            uri = "/" + FilenameUtils.separatorsToUnix(StringUtils.replaceOnce(uri, ":", ""));
-        }
-        try {
-            uri =  generateAndEncodeURI(outputURIReplace(uri)).replace("%", "%%");
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
         ObjectMapper mapper = jacksonHandle.getMapper();
         JsonNode originalContent = jacksonHandle.get();
         ObjectNode node = mapper.createObjectNode();
@@ -668,7 +665,7 @@ public class WriteStepRunner implements StepRunner {
         node.put("file", file.getAbsolutePath());
         jacksonHandle.set(node);
         try {
-            writeBatcher.add(String.format(uri +"/%s." + ("xml".equalsIgnoreCase(outputFormat) ? "xml":"json"), UUID.randomUUID()), jacksonHandle);
+            writeBatcher.add(generateUriForCsv(file.getParent(), SystemUtils.OS_NAME.toLowerCase()), jacksonHandle);
         }
         catch (IllegalStateException e) {
             logger.error("WriteBatcher has been stopped");
@@ -677,6 +674,29 @@ public class WriteStepRunner implements StepRunner {
             currentCsvFile = file.getAbsolutePath();
             ++csvFilesProcessed;
         }
+    }
+
+    protected String generateUriForCsv(String parentPath, String os){
+        String uri;
+        if(StringUtils.isNotEmpty(outputURIPrefix)){
+            try {
+                uri = generateAndEncodeURI(outputURIPrefix).replace("%", "%%");
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        else {
+            uri = parentPath;
+            if(os.contains("windows")){
+                uri = "/" + FilenameUtils.separatorsToUnix(StringUtils.replaceOnce(uri, ":", ""));
+            }
+            try {
+                uri =  generateAndEncodeURI(outputURIReplace(uri)).replace("%", "%%");
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return String.format(uri +"/%s." + ("xml".equalsIgnoreCase(outputFormat) ? "xml":"json"), UUID.randomUUID());
     }
 
     private void addToBatcher(File file, Format fileFormat) throws IOException {
@@ -706,12 +726,19 @@ public class WriteStepRunner implements StepRunner {
                 handle.setFormat(fileFormat);
                 if (!writeBatcher.isStopped()) {
                     try {
-                        String uri = file.getAbsolutePath();
-                        //In case of Windows, C:\\Documents\\abc.json will be converted to /c/Documents/abc.json
-                        if (SystemUtils.OS_NAME.toLowerCase().contains("windows")) {
-                            uri = "/" + FilenameUtils.separatorsToUnix(StringUtils.replaceOnce(uri, ":", ""));
+                        String uri;
+                        if(StringUtils.isNotEmpty(outputURIPrefix)){
+                            uri = getPrefixedEncodedURI(file.getName());
                         }
-                        writeBatcher.add(generateAndEncodeURI(outputURIReplace(uri)), handle);
+                        else {
+                            uri = file.getAbsolutePath();
+                            //In case of Windows, C:\\Documents\\abc.json will be converted to /c/Documents/abc.json
+                            if (SystemUtils.OS_NAME.toLowerCase().contains("windows")) {
+                                uri = "/" + FilenameUtils.separatorsToUnix(StringUtils.replaceOnce(uri, ":", ""));
+                            }
+                            uri = generateAndEncodeURI(outputURIReplace(uri));
+                        }
+                        writeBatcher.add(uri, handle);
                     } catch (IllegalStateException e) {
                         logger.error("WriteBatcher has been stopped");
                     }
@@ -721,6 +748,10 @@ public class WriteStepRunner implements StepRunner {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    protected String getPrefixedEncodedURI(String filename) throws  URISyntaxException{
+        return generateAndEncodeURI(new StringBuilder().append(outputURIPrefix).append(filename).toString());
     }
 
     private String generateAndEncodeURI(String path) throws  URISyntaxException {

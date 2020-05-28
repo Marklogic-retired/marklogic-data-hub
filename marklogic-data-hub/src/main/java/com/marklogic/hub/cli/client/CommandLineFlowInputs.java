@@ -39,6 +39,9 @@ public class CommandLineFlowInputs {
     @Parameter(names = "-outputURIReplacement", description = "The pattern for replacing a portion of a file-based URI during an ingestion step")
     private String outputURIReplacement;
 
+    @Parameter(names = "-outputURIPrefix", description = "The prefix of the URIs of documents during an ingestion step. It shouldn't be used if 'outputURIReplacement' is set")
+    private String outputURIPrefix;
+
     @Parameter(names = "-separator", description = "The separator value to use when processing a file during an ingestion step")
     private String separator;
 
@@ -100,7 +103,7 @@ public class CommandLineFlowInputs {
             stepConfig.put("stopOnFailure", failHard);
         }
 
-        if (inputFileType != null || inputFilePath != null || outputURIReplacement != null || separator != null) {
+        if (inputFileType != null || inputFilePath != null || outputURIReplacement != null || separator != null || outputURIPrefix != null) {
             runFlowString.append("\n\tWith File Locations Settings:");
             Map<String, String> fileLocations = new HashMap<>();
             if (inputFileType != null) {
@@ -111,6 +114,12 @@ public class CommandLineFlowInputs {
                 runFlowString.append("\n\t\tInput File Path: " + inputFilePath);
                 fileLocations.put("inputFilePath", inputFilePath);
             }
+
+            if (outputURIPrefix != null) {
+                runFlowString.append("\n\t\tOutput URI Prefix: " + outputURIPrefix);
+                fileLocations.put("outputURIPrefix", outputURIPrefix);
+            }
+
             if (outputURIReplacement != null) {
                 runFlowString.append("\n\t\tOutput URI Replacement: " + outputURIReplacement);
                 fileLocations.put("outputURIReplacement", outputURIReplacement);
@@ -198,6 +207,14 @@ public class CommandLineFlowInputs {
 
     public void setOutputURIReplacement(String outputURIReplacement) {
         this.outputURIReplacement = outputURIReplacement;
+    }
+
+    public String getOutputURIPrefix() {
+        return outputURIPrefix;
+    }
+
+    public void setOutputURIPrefix(String outputURIPrefix) {
+        this.outputURIPrefix = outputURIPrefix;
     }
 
     public String getSeparator() {

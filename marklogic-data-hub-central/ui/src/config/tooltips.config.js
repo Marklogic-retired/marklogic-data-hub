@@ -22,13 +22,12 @@ const NewFlowTooltips = {
 }
 
 const NewLoadTooltips = {
-    'name': 'The name of this data load configuration.',	
+    'name': 'The name of this data load configuration.',
     'description': 'The description of this data load configuration.',
     'files' : 'Click *Upload* to select the source files. The total size of the files must be 100MB or less.',
     'sourceFormat': 'The format of the source files to load.',
     'fieldSeparator': 'The delimiter in source files. Required if *Source Format* is *Delimited Text*.',
-    'outputURIReplacement': 'A comma-separated list of replacements used to customize the URIs of the new records created when loading data.',
-    'targetURIPreview': 'The URI of an example record.'
+    'outputURIPrefix': 'The prefix you want for the URIs of the loaded documents. Example: If your prefix is /rawData/ and you load a file called customer1.json, the URI of the loaded document becomes /rawData/customer1.json.'
 }
 
 const AdvLoadTooltips = {
@@ -105,7 +104,7 @@ const ModelingTooltips = {
   sort: 'Enables display in ascending or descending order.',
   facet: 'Use when searching, for dividing values of properties into counts, aggregating, grouping, and more.',
   advancedSearch: 'Used when searching, for dividing values of properties into counts, aggregating, grouping, and more.',
-  addStructuredProperty: 'Click to add properties within this structured property.'  
+  addStructuredProperty: 'Click to add properties within this structured property.'
 }
 
 export {
