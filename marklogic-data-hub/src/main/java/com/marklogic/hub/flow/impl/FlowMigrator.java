@@ -19,8 +19,10 @@ package com.marklogic.hub.flow.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
@@ -33,46 +35,55 @@ import com.marklogic.hub.mapping.Mapping;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.step.impl.Step;
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 
 /**
  * Class for migrating pre-5.3.0 flows to  5.3.0 and above versions
  */
-
-public class FlowMigrator {
+public class FlowMigrator extends LoggingObject {
 
     private HubProject hubProject;
     private MappingManager mappingManager;
     private FlowManager flowManager;
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     ObjectMapper mapper = new ObjectMapper();
 
-    public FlowMigrator(HubConfig hubConfig){
+    public FlowMigrator(HubConfig hubConfig) {
         hubProject = hubConfig.getHubProject();
         mappingManager = new MappingManagerImpl(hubConfig);
         flowManager = new FlowManagerImpl(hubConfig, mappingManager);
     }
 
-    public void migrateFlows(){
+    public void migrateFlows() {
+        final File flowsDir = hubProject.getFlowsDir().toFile();
+        if (!flowsDir.exists()) {
+            logger.warn("No flows directory exists, so no flows will be migrated");
+            return;
+        }
+
+        logger.warn("Beginning migration of flows containing ingestion and/or migration steps");
+
         //Backup flows and mappings
-        Path migratedFlows = hubProject.getProjectDir().resolve("migrated-flows");
+        Path migratedFlowsPath = hubProject.getProjectDir().resolve("migrated-flows");
         try {
-            migratedFlows.toFile().mkdirs();
-            FileUtils.copyDirectory(hubProject.getFlowsDir().toFile(), migratedFlows.resolve("flows").toFile());
-            FileUtils.copyDirectory(hubProject.getHubMappingsDir().toFile(), migratedFlows.resolve("mappings").toFile());
-            logger.info("The original flows and mappings are backed up in migrated-flows/flows and migrated-flows/mappings"+
-                " directory respectively.");
+            migratedFlowsPath.toFile().mkdirs();
+            FileUtils.copyDirectory(flowsDir, migratedFlowsPath.resolve("flows").toFile());
+            File mappingsDir = hubProject.getHubMappingsDir().toFile();
+            if (mappingsDir.exists()) {
+                FileUtils.copyDirectory(mappingsDir, migratedFlowsPath.resolve("mappings").toFile());
+            }
         } catch (Exception e) {
-            throw new RuntimeException("Couldn't migrate flows as backing up flows failed : " + e.getMessage());
+            throw new RuntimeException("Couldn't migrate flows as backing up flows failed : " + e.getMessage(), e);
         }
 
         Path stepsDir = hubProject.getProjectDir().resolve("steps");
@@ -83,78 +94,94 @@ public class FlowMigrator {
             ingestionDir.toFile().mkdirs();
             mappingDir.toFile().mkdirs();
         } catch (Exception e) {
-            throw new RuntimeException("Couldn't migrate flows as creation of step artifact directories  failed : " + e.getMessage());
+            throw new RuntimeException("Couldn't migrate flows as creation of step artifact directories failed : " + e.getMessage(), e);
         }
 
         ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
         JsonNodeFactory nodeFactory = mapper.getNodeFactory();
 
-        flowManager.getLocalFlows().forEach(flow ->{
+        boolean atLeastOneFlowWasMigrated = false;
+
+        for (Flow flow : flowManager.getLocalFlows()) {
             Map<String, Step> steps = flow.getSteps();
             boolean flowRequiresMigration = flowRequiresMigration(flow);
-            logger.info(flowRequiresMigration(flow) ? "Migrating flow " + flow.getName() :
-                "Flow " + flow.getName() + " contains no ingestion or mapping step. It doesn't require migration");
-            if(flowRequiresMigration){
+            logger.warn(flowRequiresMigration(flow) ? format("Migrating flow '%s'", flow.getName()) :
+                format("Flow '%s' does not contain any ingestion or mapping steps and thus will not be migrated", flow.getName()));
+
+            if (flowRequiresMigration) {
+                atLeastOneFlowWasMigrated = true;
                 ObjectNode newFlow = nodeFactory.objectNode();
                 newFlow.put("name", flow.getName());
-                ObjectNode newSteps = nodeFactory.objectNode();;
+                ObjectNode newSteps = nodeFactory.objectNode();
                 for (Map.Entry<String, Step> entry : steps.entrySet()) {
                     Step step = entry.getValue();
-                    if(stepRequiresMigration(step)){
+                    if (stepRequiresMigration(step)) {
                         String stepId = String.join("-", step.getName(), step.getStepDefinitionType().toString());
                         newSteps.set(entry.getKey(),
-                            nodeFactory.objectNode().put("stepId",stepId));
-                        ObjectNode newStepArtifact = createStepArtifact(flow, step);
+                            nodeFactory.objectNode().put("stepId", stepId));
+                        ObjectNode newStepArtifact = createStepArtifact(flow.getName(), step);
                         Path targetDir = step.getStepDefinitionType().equals(StepDefinition.StepDefinitionType.INGESTION) ? ingestionDir : mappingDir;
                         String stepFileName = new StringBuilder(step.getName()).append(".step.json").toString();
                         File stepFile = targetDir.resolve(stepFileName).toFile();
-                        logger.info("Creating step artifact "+ stepFile.toString());
+                        logger.info(format("Creating step artifact '%s'", stepFile.toString()));
                         if (stepFile.exists()) {
-                            String msg = "Step artifact " + stepFile.toString() + " already exists. The step artifact will be written to ";
+                            String msg = "Step artifact '" + stepFile.toString() + "' already exists. The step artifact will be written to ";
                             //Update step artifact with new name
                             String stepName = new StringBuilder(flow.getName()).append("-").append(step.getName()).toString();
                             newStepArtifact.put("name", stepName);
                             //Update the filename
                             stepFileName = new StringBuilder(flow.getName()).append("-").append(stepFileName).toString();
                             stepFile = targetDir.resolve(stepFileName).toFile();
-                            logger.info(msg + stepFile.toString()) ;
+                            logger.warn(msg + stepFile.toString());
                             stepId = String.join("-", flow.getName(), stepId);
                             //Update the pointer in the flow
-                            ((ObjectNode)newSteps.get(entry.getKey())).put("stepId", stepId);
+                            ((ObjectNode) newSteps.get(entry.getKey())).put("stepId", stepId);
                         }
                         //'stepId' should be included in every step
                         newStepArtifact.put("stepId", stepId);
-                        try{
+                        try {
                             writer.writeValue(stepFile, newStepArtifact);
-                            logger.info("Step artifact " + stepFile.toString() + " successfully created.");
+                            logger.warn(format("Step artifact '%s' successfully created", stepFile));
+                        } catch (IOException e) {
+                            logger.error(format("Step artifact '%s' creation failed; cause: %s.", stepFile, e.getMessage(), e));
                         }
-                        catch(IOException e){
-                            logger.error("Step artifact " + stepFile.toString() + " creation failed: " + e.getMessage());
-                        }
-                    }
-                    else {
-                        logger.info("Step " + step.getName() + " is not an out of the box ingestion or mapping step. It will remain inline inside the flow artifact");
+                    } else {
                         newSteps.set(entry.getKey(), mapper.valueToTree(step));
                     }
                 }
-                newFlow.set("steps",newSteps);
+                newFlow.set("steps", newSteps);
                 File flowFile = Paths.get(hubProject.getFlowsDir().toString(), flow.getName() + FlowManager.FLOW_FILE_EXTENSION).toFile();
-                try{
+                try {
                     writer.writeValue(flowFile, newFlow);
-                    logger.info("Flow " + flowFile.toString() + " successfully migrated.");
-                }
-                catch(IOException e){
-                    logger.error("Flow artifact " + flowFile.toString() + " creation failed: " + e.getMessage());
+                    logger.warn(format("Flow '%s' was successfully migrated", flowFile));
+                } catch (IOException e) {
+                    logger.error(format("Flow '%s' migration failed; cause: %s", flowFile, e.getMessage()), e);
                 }
             }
-        });
-        //Finally remove the 'mappings' directory
-        try{
-            FileUtils.deleteDirectory(hubProject.getHubMappingsDir().toFile());
-            logger.info("Removing 'mappings' directory from the project as it is no longer needed");
         }
-        catch(IOException e){
-            logger.error("Removing 'mappings' directory from the project failed");
+
+        if (atLeastOneFlowWasMigrated) {
+            logger.warn("The original flows and mappings have been backed up to the migrated-flows/flows and migrated-flows/mappings directories respectively");
+            if (hubProject.getHubMappingsDir().toFile().exists()) {
+                try {
+                    logger.warn("Removing 'mappings' directory from the project as it is no longer needed");
+                    FileUtils.deleteDirectory(hubProject.getHubMappingsDir().toFile());
+                } catch (IOException e) {
+                    logger.error("Removing 'mappings' directory from the project failed; cause: " + e, e);
+                }
+            }
+            logger.warn("");
+            logger.warn("Finished migrating flows containing ingestion and/or mapping steps.");
+            logger.warn("Please examine the migrated flow and step artifact to verify their contents, particularly the collections of each step.");
+            logger.warn("The migration process ensures that ingestion and mapping steps have their step name as a collection, and that a mapping step has its entity name as a collection.");
+        } else {
+            try {
+                FileUtils.deleteDirectory(migratedFlowsPath.toFile());
+            } catch (IOException ex) {
+                logger.error("Unable to delete directory containing backed up flows, cause: " + ex.getMessage(), ex);
+            }
+
+            logger.warn("No flows required migration, so no project files were modified");
         }
     }
 
@@ -162,55 +189,190 @@ public class FlowMigrator {
     // will be inline
     protected boolean stepRequiresMigration(Step step) {
         return (StepDefinition.StepDefinitionType.MAPPING.equals(step.getStepDefinitionType()) && "entity-services-mapping".equalsIgnoreCase(step.getStepDefinitionName())) ||
-            (StepDefinition.StepDefinitionType.INGESTION.equals(step.getStepDefinitionType()) &&  "default-ingestion".equalsIgnoreCase(step.getStepDefinitionName()));
+            (StepDefinition.StepDefinitionType.INGESTION.equals(step.getStepDefinitionType()) && "default-ingestion".equalsIgnoreCase(step.getStepDefinitionName()));
     }
 
-    protected boolean flowRequiresMigration(Flow flow){
+    protected boolean flowRequiresMigration(Flow flow) {
         return flow.getSteps().values().stream().anyMatch(step -> stepRequiresMigration(step));
     }
 
-    private ObjectNode createStepArtifact(Flow flow, Step step) {
-        JsonNode options = mapper.valueToTree(step.getOptions());
-        ObjectNode newStepArtifact = mapper.valueToTree(step);
-
-        if(StepDefinition.StepDefinitionType.MAPPING.equals(step.getStepDefinitionType())){
-            JsonNode mappingNode = (JsonNode) step.getOptions().get("mapping");
-            String mappingName = mappingNode.get("name").asText();
-            String mappingVersion = mappingNode.get("version").asText();
-            try{
-                Mapping mapping = mappingManager.getMapping(mappingName, Integer.valueOf(mappingVersion), false);
-                newStepArtifact.put("targetEntityType", mapping.getTargetEntityType());
-                newStepArtifact.set("properties", mapper.valueToTree(mapping.getProperties()));
-                if(mapping.getNamespaces() != null){
-                    newStepArtifact.set("namespaces", mapper.valueToTree(mapping.getNamespaces()));
+    protected ObjectNode createStepArtifact(String flowName, Step inlineStep) {
+        Mapping mapping = null;
+        if (StepDefinition.StepDefinitionType.MAPPING.equals(inlineStep.getStepDefinitionType())) {
+            JsonNode mappingNode = (JsonNode) inlineStep.getOptions().get("mapping");
+            if (!mappingNode.has("name")) {
+                logger.warn(format("Unable to migrate mapping in flow '%s' because it does not have a 'name' property"));
+            } else {
+                String mappingName = mappingNode.get("name").asText();
+                int version = 0;
+                if (mappingNode.has("version")) {
+                    String versionText = mappingNode.get("version").asText();
+                    try {
+                        version = Integer.parseInt(versionText);
+                    } catch (Exception ex) {
+                        logger.warn(format("Unable to parse version '%s' from step '%s' in flow '%s'; will use zero as the version instead",
+                            versionText, inlineStep.getName(), flowName));
+                    }
                 }
-                newStepArtifact.put("selectedSource", "query");
-            }
-            catch (DataHubProjectException e){
-                logger.error("Mapping '" + mappingName + "' with version " + mappingVersion + " is not found. The mapping properties will" +
-                    " not be written into the step artifact " + step.getName() + " which is part of the flow " + flow.getName() );
+                try {
+                    mapping = mappingManager.getMapping(mappingName, version, false);
+                } catch (DataHubProjectException e) {
+                    logger.warn(format("Mapping '%s' with version '%s' was not found; the mapping properties will not be written to the " +
+                        "step artifact named '%s' which was extracted from flow '%s'", mappingName, version, inlineStep.getName(), flowName));
+                }
             }
         }
-        else{
-            JsonNode fileLocations = step.getFileLocations();
-            fileLocations.fields().forEachRemaining(field -> newStepArtifact.set(field.getKey(), field.getValue()));
-            newStepArtifact.remove("fileLocations");
-            newStepArtifact.put("sourceFormat", newStepArtifact.get("inputFileType") != null ? newStepArtifact.get("inputFileType").asText() : "json");
-            newStepArtifact.remove("inputFileType");
+        return buildStepArtifact(inlineStep, mapping, flowName);
+    }
+
+    /**
+     * Extracted for easy unit testing; has no dependencies on anything other than the inputs.
+     *
+     * @param inlineStep
+     * @param mapping
+     * @param flowName
+     * @return
+     */
+    protected ObjectNode buildStepArtifact(Step inlineStep, Mapping mapping, String flowName) {
+        ObjectNode stepArtifact = mapper.valueToTree(inlineStep);
+
+        // Migrate all options to top-level properties in the step
+        stepArtifact.remove("options");
+        JsonNode options = mapper.valueToTree(inlineStep.getOptions());
+        if (options != null) {
+            Set<String> fieldsNotToBeCopied = Set.of("mapping", "sourceCollection");
+            options.fields().forEachRemaining(kv -> {
+                if (!fieldsNotToBeCopied.contains(kv.getKey())) {
+                    JsonNode value = kv.getValue();
+                    if (value != null) {
+                        stepArtifact.set(kv.getKey(), value);
+                    }
+                }
+            });
         }
-        newStepArtifact.remove("options");
 
-        Set<String> fieldsNotToBeCopied = Set.of("mapping");
+        // Convert outputFormat->targetFormat
+        stepArtifact.put("targetFormat", stepArtifact.get("outputFormat") != null ? stepArtifact.get("outputFormat").asText() : "json");
+        stepArtifact.remove("outputFormat");
 
-        options.fields().forEachRemaining(kv -> {
-            if(!fieldsNotToBeCopied.contains(kv.getKey())){
-                newStepArtifact.set(kv.getKey(), kv.getValue());
+        // Remove customHook if module isn't set
+        if (stepArtifact.has("customHook")) {
+            JsonNode hook = stepArtifact.get("customHook");
+            boolean removeHook = false;
+            if (!hook.has("module")) {
+                removeHook = true;
+            }
+            if (hook.has("module") && StringUtils.isEmpty(hook.get("module").asText().trim())) {
+                removeHook = true;
+            }
+            if (removeHook) {
+                stepArtifact.remove("customHook");
+            }
+        }
+
+        // Remove retryLimit, as it has no impact and is thus confusing
+        stepArtifact.remove("retryLimit");
+
+        // Convert fileLocations for ingestion steps
+        JsonNode fileLocations = inlineStep.getFileLocations();
+        if (fileLocations != null) {
+            fileLocations.fields().forEachRemaining(field -> stepArtifact.set(field.getKey(), field.getValue()));
+            stepArtifact.remove("fileLocations");
+            stepArtifact.put("sourceFormat", stepArtifact.get("inputFileType") != null ? stepArtifact.get("inputFileType").asText() : "json");
+            stepArtifact.remove("inputFileType");
+        }
+
+        // Convert stuff from the separate mapping artifact if it exists
+        if (mapping != null) {
+            stepArtifact.put("targetEntityType", mapping.getTargetEntityType());
+            stepArtifact.set("properties", mapper.valueToTree(mapping.getProperties()));
+            if (mapping.getNamespaces() != null) {
+                stepArtifact.set("namespaces", mapper.valueToTree(mapping.getNamespaces()));
+            }
+            stepArtifact.put("selectedSource", "query");
+        }
+
+        // Convert and/or get rid of targetEntity for a mapping step
+        if (StepDefinition.StepDefinitionType.MAPPING.equals(inlineStep.getStepDefinitionType())) {
+            if (stepArtifact.has("targetEntity")) {
+                if (!stepArtifact.has("targetEntityType")) {
+                    stepArtifact.put("targetEntityType", stepArtifact.get("targetEntity").asText());
+                }
+                stepArtifact.remove("targetEntity");
+            }
+        }
+
+        Stream.of("batchSize", "threadCount").forEach(prop -> {
+            if (stepArtifact.has(prop) && "0".equals(stepArtifact.get(prop).asText())) {
+                stepArtifact.remove(prop);
             }
         });
 
-        newStepArtifact.put("targetFormat", newStepArtifact.get("outputFormat") != null ? newStepArtifact.get("outputFormat").asText() : "json");
-        newStepArtifact.remove("outputFormat");
+        addToCollections(stepArtifact, inlineStep, flowName);
 
-        return newStepArtifact;
+        return stepArtifact;
+    }
+
+    /**
+     * For any step, ensure that the stepName is in the collections array. For a mapping step, also include the
+     * value of targetEntityType.
+     *
+     * @param stepArtifact
+     * @param inlineStep
+     * @param flowName
+     */
+    protected void addToCollections(ObjectNode stepArtifact, Step inlineStep, String flowName) {
+        ArrayNode collections;
+        if (stepArtifact.has("collections")) {
+            JsonNode node = stepArtifact.get("collections");
+            if (node instanceof ArrayNode) {
+                collections = (ArrayNode) node;
+            } else {
+                collections = mapper.createArrayNode();
+                collections.add(node.asText());
+            }
+        } else {
+            collections = mapper.createArrayNode();
+        }
+
+        final String stepName = inlineStep.getName();
+        final String targetEntityName = stepArtifact.has("targetEntityType") ? getEntityNameFromEntityType(stepArtifact.get("targetEntityType").asText()) : null;
+
+        boolean stepNameExists = false;
+        boolean targetEntityNameExists = false;
+        Iterator<JsonNode> arrayItems = collections.elements();
+        while (arrayItems.hasNext()) {
+            String collection = arrayItems.next().asText();
+            if (stepName.equals(collection)) {
+                stepNameExists = true;
+            }
+            if (targetEntityName != null && targetEntityName.equals(collection)) {
+                targetEntityNameExists = true;
+            }
+        }
+        if (!stepNameExists) {
+            logger.warn(format("Adding step name as a collection to step '%s' in flow '%s'", stepName, flowName));
+            collections.add(stepName);
+        }
+        if (targetEntityName != null && !targetEntityNameExists) {
+            logger.warn(format("Adding entity name '%s' as a collection to step '%s' in flow '%s'", targetEntityName, stepName, flowName));
+            collections.add(targetEntityName);
+        }
+
+        stepArtifact.set("collections", collections);
+    }
+
+    /**
+     * To avoid making flow migration depend on connecting to ML, we're implementing a simple approach here to try to
+     * extract the entity name that should work most of the time. Since the user will be instructed to inspect the
+     * mapping collections after the flow migration is performed, we assume that the user will verify that the
+     * collections are correct after the migration is completed.
+     *
+     * @param targetEntityType
+     * @return
+     */
+    protected String getEntityNameFromEntityType(String targetEntityType) {
+        int index = targetEntityType.lastIndexOf("/");
+        return index > -1 ? targetEntityType.substring(index + 1) : targetEntityType;
     }
 }

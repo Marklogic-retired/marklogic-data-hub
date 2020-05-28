@@ -6,7 +6,6 @@ class FlowMigrationTask extends AbstractConfirmableTask {
 
     @Override
     void executeIfConfirmed() {
-        FlowMigrator flowMigrator = new FlowMigrator(getProject().property("hubConfig"))
-        flowMigrator.migrateFlows()
+        new FlowMigrator(getProject().property("hubConfig")).migrateFlows()
     }
 }
