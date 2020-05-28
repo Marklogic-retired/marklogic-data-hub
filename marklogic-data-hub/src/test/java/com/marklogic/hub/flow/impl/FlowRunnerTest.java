@@ -189,15 +189,16 @@ public class FlowRunnerTest extends HubTestBase {
         Map<String,Object> stepConfig = new HashMap<>();
         Map<String,String> stepDetails = new HashMap<>();
 
-        stepDetails.put("outputURIReplacement" ,".*/input,'/output'");
+        stepDetails.put("outputURIPrefix" ,"/prefix-output");
         stepConfig.put("fileLocations", stepDetails);
+        stepDetails.put("outputURIReplacement" ,null);
 
         runAsDataHubOperator();
         RunFlowResponse resp = runFlow("testFlow", "3", UUID.randomUUID().toString(),opts, stepConfig);
         flowRunner.awaitCompletion();
         Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "csv-coll") == 25);
         Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
-        EvalResultIterator resultItr = runInDatabase("fn:count(cts:uri-match(\"/output/*.xml\"))", HubConfig.DEFAULT_STAGING_NAME);
+        EvalResultIterator resultItr = runInDatabase("fn:count(cts:uri-match(\"/prefix-output/*.xml\"))", HubConfig.DEFAULT_STAGING_NAME);
         EvalResult res = resultItr.next();
         long count = Math.toIntExact((long) res.getNumber());
         Assertions.assertEquals(count, 25);

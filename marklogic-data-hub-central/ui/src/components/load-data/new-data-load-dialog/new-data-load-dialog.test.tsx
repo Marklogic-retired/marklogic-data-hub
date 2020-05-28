@@ -17,8 +17,8 @@ describe('New/edit load data configuration', () => {
     jest.clearAllMocks();
   });
 
-  test('fields non-Delimited Text render', () => {
-    const { baseElement, container, debug, queryAllByPlaceholderText } = render(<BrowserRouter><NewDataLoadDialog newLoad={true}
+  test('fields non-Delimited Text render', async () => {
+    const { debug, baseElement, queryAllByText, getAllByLabelText, queryAllByPlaceholderText, getByText } = render(<BrowserRouter><NewDataLoadDialog newLoad={true}
                                                            title={'Title'}
                                                            setNewLoad={() => {}}
                                                            createLoadDataArtifact={() => {}}
@@ -33,7 +33,15 @@ describe('New/edit load data configuration', () => {
     expect(baseElement.querySelector('#otherSeparator')).not.toBeInTheDocument();
     expect(baseElement.querySelector('#fileUpload')).toBeInTheDocument();
     expect(baseElement.querySelector('#targetFormat')).toBeInTheDocument();
-    expect(baseElement.querySelector('#outputUriReplacement')).toBeInTheDocument();
+    expect(baseElement.querySelector('#outputUriPrefix')).toBeInTheDocument();
+    expect(queryAllByText("Target URI Preview:").length ).toEqual(0);
+    expect(queryAllByPlaceholderText('Enter URI Prefix')[0]).toBeInTheDocument();
+    let tooltip  = getAllByLabelText('icon: question-circle');
+    //should be the last field in the form
+    fireEvent.mouseOver(tooltip[tooltip.length-1]);
+    await waitForElement(() => getByText("The prefix you want for the URIs of the loaded documents. Example: If your prefix is /rawData/ and you load a file called customer1.json, the URI of the loaded document becomes /rawData/customer1.json."))
+    expect(getByText("Target Format:")).toHaveTextContent('Target Format: *')
+    expect(getByText("Output URI Prefix:")).toHaveTextContent('Output URI Prefix:')
   });
 
   test('fields with Delimited Text render', () => {
@@ -53,7 +61,8 @@ describe('New/edit load data configuration', () => {
     expect(baseElement.querySelector('#otherSeparator')).toBeInTheDocument();
     expect(baseElement.querySelector('#fileUpload')).toBeInTheDocument();
     expect(baseElement.querySelector('#targetFormat')).toBeInTheDocument();
-    expect(baseElement.querySelector('#outputUriReplacement')).toBeInTheDocument();
+    expect(baseElement.querySelector('#outputUriReplacement')).not.toBeInTheDocument();
+    expect(baseElement.querySelector('#outputUriPrefix')).toBeInTheDocument();
   });
 
   test('set data should only be called once when adding multiple files', async () => {

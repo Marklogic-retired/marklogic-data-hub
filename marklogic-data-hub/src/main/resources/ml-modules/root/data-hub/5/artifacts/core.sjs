@@ -436,7 +436,7 @@ function convertStepReferenceToInlineStep(stepId) {
       fileLocations.inputFileType = referencedStep.sourceFormat;
       delete referencedStep.sourceFormat;
     }
-    ["inputFilePath", "outputURIReplacement", "separator"].forEach(prop => {
+    ["inputFilePath", "outputURIReplacement", "outputURIPrefix", "separator"].forEach(prop => {
       if (referencedStep[prop]) {
         fileLocations[prop] = referencedStep[prop];
         delete referencedStep[prop];

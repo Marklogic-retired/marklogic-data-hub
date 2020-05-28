@@ -14,11 +14,9 @@ const NewDataLoadDialog = (props) => {
   const [inputFilePath, setInputFilePath] = useState(props.stepData && props.stepData.inputFilePath ? props.stepData.inputFilePath : '');
   const [srcFormat, setSrcFormat] = useState(props.stepData && props.stepData != {} ? props.stepData.sourceFormat : 'json');
   const [tgtFormat, setTgtFormat] = useState(props.stepData && props.stepData != {} ? props.stepData.targetFormat : 'json');
-  const [outUriReplacement, setOutUriReplacement] = useState(props.stepData && props.stepData != {} ? props.stepData.outputURIReplacement : '');
+  const [outputUriPrefix, setOutputUriPrefix] = useState(props.stepData && props.stepData != {} ? props.stepData.outputURIPrefix : '');
   const [fieldSeparator, setFieldSeparator] = useState(props.stepData && props.stepData != {} ? props.stepData.fieldSeparator : ',');
   const [otherSeparator, setOtherSeparator] = useState('');
-
-
 
   const [isStepNameTouched, setStepNameTouched] = useState(false);
   const [isSrcFormatTouched, setSrcFormatTouched] = useState(false);
@@ -27,7 +25,6 @@ const NewDataLoadDialog = (props) => {
   const [isOtherSeparatorTouched, setOtherSeparatorTouched] = useState(false);
   const [isValid, setIsValid] = useState(false);
   const [fileList, setFileList] = useState<any[]>([]);
-  const [previewURI, setPreviewURI] = useState('');
   const [uploadPercent, setUploadPercent] = useState();
   const [toDelete, setToDelete] = useState(false);
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
@@ -52,8 +49,7 @@ const NewDataLoadDialog = (props) => {
       }
 
       setTgtFormat(props.stepData.targetFormat);
-      setOutUriReplacement(props.stepData.outputURIReplacement);
-      buildURIPreview(props.stepData);
+      setOutputUriPrefix(props.stepData.outputURIPrefix);
       setFileList([]);
       setIsValid(true);
       setTobeDisabled(true);
@@ -65,10 +61,9 @@ const NewDataLoadDialog = (props) => {
       setFieldSeparator(',');
       setOtherSeparator('');
       setTgtFormat('json');
-      setOutUriReplacement('');
+      setOutputUriPrefix('');
       setUploadPercent(0);
       setFileList([]);
-      setPreviewURI('');
       setIsValid(false);
     }
 
@@ -81,10 +76,9 @@ const NewDataLoadDialog = (props) => {
       setFieldSeparator(',');
       setOtherSeparator('');
       setTgtFormat('json');
-      setOutUriReplacement('');
+      setOutputUriPrefix('');
       setUploadPercent(0);
       setFileList([]);
-      setPreviewURI('');
       setInputFilePath('');
       setTobeDisabled(false);
       setDisplayUploadError(false);
@@ -110,7 +104,7 @@ const NewDataLoadDialog = (props) => {
       && description === props.stepData.description
       && srcFormat === props.stepData.sourceFormat
       && tgtFormat === props.stepData.targetFormat
-      && outUriReplacement === props.stepData.outputURIReplacement
+      && outputUriPrefix === props.stepData.outputURIPrefix
       ) {
 
         if((props.stepData.separator && fieldSeparator === 'Other' && otherSeparator === props.stepData.separator) ||
@@ -136,7 +130,7 @@ const NewDataLoadDialog = (props) => {
         && description === ''
         && srcFormat === 'json'
         && tgtFormat === 'json'
-        && outUriReplacement === ''
+        && outputUriPrefix === ''
         ) {
           if(fieldSeparator === ',' && otherSeparator === '')
               {
@@ -204,7 +198,7 @@ const NewDataLoadDialog = (props) => {
           sourceFormat: srcFormat,
           separator: null,
           targetFormat: tgtFormat,
-          outputURIReplacement: outUriReplacement,
+          outputURIPrefix: outputUriPrefix,
           inputFilePath: props.stepData.inputFilePath
         };
         // cannot set separator unless using the CSV source format
@@ -219,7 +213,7 @@ const NewDataLoadDialog = (props) => {
            sourceFormat: srcFormat,
            separator: fieldSeparator === 'Other'? otherSeparator : fieldSeparator,
            targetFormat: tgtFormat,
-           outputURIReplacement: outUriReplacement
+           outputURIPrefix: outputUriPrefix,
          }
        } else {
           dataPayload = {
@@ -227,7 +221,7 @@ const NewDataLoadDialog = (props) => {
            description: description,
            sourceFormat: srcFormat,
            targetFormat: tgtFormat,
-           outputURIReplacement: outUriReplacement
+           outputURIPrefix: outputUriPrefix,
          }
        }
       }
@@ -240,7 +234,7 @@ const NewDataLoadDialog = (props) => {
          sourceFormat: srcFormat,
          separator: fieldSeparator === 'Other'? otherSeparator : fieldSeparator,
          targetFormat: tgtFormat,
-         outputURIReplacement: outUriReplacement,
+         outputURIPrefix: outputUriPrefix,
          inputFilePath: inputFilePath
        }
      } else {
@@ -249,7 +243,7 @@ const NewDataLoadDialog = (props) => {
          description: description,
          sourceFormat: srcFormat,
          targetFormat: tgtFormat,
-         outputURIReplacement: outUriReplacement,
+         outputURIPrefix: outputUriPrefix,
          inputFilePath: inputFilePath
        }
      }
@@ -278,9 +272,8 @@ const NewDataLoadDialog = (props) => {
           description: description,
           sourceFormat: srcFormat,
           targetFormat: tgtFormat,
-          outputURIReplacement: outUriReplacement
+          outputURIPrefix: outputUriPrefix,
         };
-        buildURIPreview(dataPayload);
 
         if (event.target.value.length == 0) {
           setIsValid(false);
@@ -296,18 +289,16 @@ const NewDataLoadDialog = (props) => {
 
   }
 
-  const handleOutURIReplacement = (event) => {
-    if (event.target.id === 'outputUriReplacement') {
-      setOutUriReplacement(event.target.value);
+  const handleOutputUriPrefix = (event) => {
+    if (event.target.id === 'outputUriPrefix') {
+      setOutputUriPrefix(event.target.value);
       let dataPayload = {
         name: stepName,
         description: description,
         sourceFormat: srcFormat,
         targetFormat: tgtFormat,
-        outputURIReplacement: event.target.value
+        outputURIPrefix: event.target.value
       };
-
-      buildURIPreview(dataPayload);
     }
   }
 
@@ -328,10 +319,8 @@ const NewDataLoadDialog = (props) => {
         description: description,
         sourceFormat: value,
         targetFormat: tgtFormat,
-        outputURIReplacement: outUriReplacement
+        outputURIPrefix: outputUriPrefix,
       }
-
-      buildURIPreview(dataPayload);
     }
   }
 
@@ -373,10 +362,8 @@ const NewDataLoadDialog = (props) => {
         description: description,
         sourceFormat: srcFormat,
         targetFormat: value,
-        outputURIReplacement: outUriReplacement
+        outputURIPrefix: outputUriPrefix,
       }
-
-      buildURIPreview(dataPayload);
     }
   }
 
@@ -446,7 +433,7 @@ const NewDataLoadDialog = (props) => {
             description: description,
             sourceFormat: srcFormat,
             targetFormat: tgtFormat,
-            outputURIReplacement: outUriReplacement
+            outputURIPrefix: outputUriPrefix,
           }
           await createDefaultLoadDataArtifact(dataPayload);
         }
@@ -487,9 +474,6 @@ const NewDataLoadDialog = (props) => {
         }
         if (resp.data && resp.data.inputFilePath) {
           setInputFilePath(resp.data.inputFilePath);
-        }
-        if (stepName && srcFormat && tgtFormat && resp.data.inputFilePath) {
-          buildURIPreview(resp.data);
         }
         // reset files on successful upload
         setFileUploadCount(fileList.length);
@@ -541,74 +525,6 @@ const NewDataLoadDialog = (props) => {
     border: '1px solid #DB4f59'
   } : {}
 
-  const buildURIPreview = (stepData) => {
-    let uri;
-    let input_file_type = stepData.sourceFormat;
-    let document_type = stepData.targetFormat.toLowerCase();
-    let output_uri_replace = stepData.outputURIReplacement;
-    let loadDataName = stepData.name;
-    var formatMap = new Map();
-
-    formatMap.set("xml", ".xml");
-    formatMap.set("json", ".json");
-    formatMap.set("text", ".txt");
-    formatMap.set("binary", ".pdf");
-
-    uri = "/" + loadDataName;
-
-    if(input_file_type !== "csv") {
-      uri = uri + "/example" + formatMap.get(document_type);
-    }
-
-    if (output_uri_replace) {
-      let replace = output_uri_replace.split(",");
-      if (replace.length % 2 !== 0) {
-        uri = "Error: Missing one (or more) replacement strings";
-        setPreviewURI(uri);
-        return;
-      }
-      for (var i = 0; i < replace.length - 1; i++) {
-        let replacement = replace[++i].trim();
-        if (!replacement.startsWith("'") ||
-            !replacement.endsWith("'") || replacement.split("'").length % 2 === 0) {
-          uri = "Error: The replacement string must be enclosed in single quotes";
-          setPreviewURI(uri);
-          return;
-        }
-      }
-      for (var i = 0; i < replace.length - 1; i += 2) {
-        let replacement = replace[i + 1].trim();
-        replacement = replacement.substring(1, replacement.length - 1);
-        try{
-          uri = uri.replace(new RegExp(replace[i], 'g'), replacement);
-        }
-        catch(ex) {
-          uri = ex;
-          setPreviewURI(uri);
-          return;
-        }
-      }
-    }
-
-    if(input_file_type.toLowerCase() === "delimited text") {
-      uri = uri + "/" + uuid() + formatMap.get(document_type);
-    }
-
-    setPreviewURI(uri);
-  }
-
-  const uuid = () => {
-    var uuid = "", i, random;
-    for (i = 0; i < 32; i++) {
-      random = Math.random() * 16 | 0;
-
-      if (i == 8 || i == 12 || i == 16 || i == 20) {
-        uuid += "-"
-      }
-      uuid += (i == 12 ? 4 : (i == 16 ? (random & 3 | 8) : random)).toString(16);
-    }
-    return uuid;
-  }
 
   const resetUploadError = () => {
     if(displayUploadError) {
@@ -749,30 +665,19 @@ const NewDataLoadDialog = (props) => {
           </Tooltip>
         </Form.Item>
         <Form.Item label={<span>
-          Output URI Replacement:&nbsp;
+          Output URI Prefix:&nbsp;
             </span>} labelAlign="left">
           <Input
-            id="outputUriReplacement"
-            placeholder="Enter comma-separated list of replacements"
-            value={outUriReplacement}
-            onChange={handleOutURIReplacement}
+            id="outputUriPrefix"
+            placeholder="Enter URI Prefix"
+            value={outputUriPrefix}
+            onChange={handleOutputUriPrefix}
             disabled={props.canReadOnly && !props.canReadWrite}
             className={styles.input}
           />&nbsp;&nbsp;
-          <Tooltip title={NewLoadTooltips.outputURIReplacement}>
+          <Tooltip title={NewLoadTooltips.outputURIPrefix}>
         <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
       </Tooltip>
-        </Form.Item>
-        <Form.Item label={<span>
-          Target URI Preview:&nbsp;
-
-          <span className={styles.readOnlyLabel}>(Read-only)</span>
-          <br className={styles.lineBreak} />
-        </span>} labelAlign="left">
-          <span>{previewURI}</span>&nbsp;&nbsp;
-          <Tooltip title={NewLoadTooltips.targetURIPreview}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
         </Form.Item>
         <Form.Item className={styles.submitButtonsForm}>
           <div className={styles.submitButtons}>

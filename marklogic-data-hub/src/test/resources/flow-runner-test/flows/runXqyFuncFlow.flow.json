@@ -32,9 +32,9 @@
       "stepDefinitionName" : "default-ingestion",
       "stepDefinitionType" : "INGESTION",
       "fileLocations" : {
-        "inputFilePath" : "/Users/ssambasu/source/marklogic-data-hub/marklogic-data-hub/ye-olde-project/input",
+        "inputFilePath" : "input",
         "inputFileType" : "xml",
-        "outputURIReplacement" : ".*/input,'/xqyfunc'",
+        "outputURIPrefix" : "/input/'",
         "separator" : ""
       }
     },
