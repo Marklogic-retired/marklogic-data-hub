@@ -19,7 +19,7 @@
       "options": {
         "sourceQuery": null,
         "collections": [
-          "custom-ingest-json"
+          "custom-ingest-json", "custom-ingest"
         ],
         "permissions": "rest-reader,read,rest-writer,update",
         "outputFormat": "json",

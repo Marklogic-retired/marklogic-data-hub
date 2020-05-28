@@ -168,8 +168,8 @@ class FlowMigratorTest extends AbstractHubCoreTest {
 
         options.fields().forEachRemaining(kv -> {
             if(!fieldNotExpected.contains(kv.getKey())){
-                Assertions.assertNotNull(step.get(kv.getKey()));
-                Assertions.assertEquals(options.get(kv.getKey()),step.get(kv.getKey()));
+                Assertions.assertNotNull(step.get(kv.getKey()), "Expected property to exist: " + kv.getKey());
+                Assertions.assertEquals(options.get(kv.getKey()),step.get(kv.getKey()), "Unexpected value for property: " + kv.getKey());
             }
         });
     }
