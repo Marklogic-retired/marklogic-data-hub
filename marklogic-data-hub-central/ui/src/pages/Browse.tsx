@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useRef, useLayoutEffect } from 'react';
 import axios from 'axios';
-import { Layout, Tooltip, Spin } from 'antd';
+import { Layout, Tooltip, Spin, Select } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { UserContext } from '../util/user-context';
 import { SearchContext } from '../util/search-context';
@@ -18,8 +18,9 @@ import styles from './Browse.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStream, faTable } from '@fortawesome/free-solid-svg-icons'
 import Query from '../components/queries/queries'
-import {AuthoritiesContext} from "../util/authorities";
-
+import { AuthoritiesContext } from "../util/authorities";
+import { fetchQueries } from '../api/queries';
+import ZeroStateExplorer from '../components/zero-state-explorer/zero-state-explorer';
 
 interface Props extends RouteComponentProps<any> {
 }
@@ -37,10 +38,13 @@ const Browse: React.FC<Props> = ({ location }) => {
     searchOptions,
     setEntityClearQuery,
     setLatestJobFacet,
-    resetSearchOptions
+    resetSearchOptions,
+    setEntity,
+    applySaveQuery,
   } = useContext(SearchContext);
   const searchBarRef = useRef<HTMLDivElement>(null);
   const authorityService = useContext(AuthoritiesContext);
+
 
   const [data, setData] = useState<any[]>([]);
   const [entities, setEntites] = useState<any[]>([]);
@@ -56,6 +60,7 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [columns, setColumns] = useState<string[]>();
   const [hasStructured, setStructured] = useState<boolean>(false);
   const [isSavedQueryUser, setIsSavedQueryUser] = useState<boolean>(authorityService.isSavedQueryUser());
+  const [queries, setQueries] = useState<any>([]);
 
   const getEntityModel = async () => {
     try {
@@ -116,7 +121,7 @@ const Browse: React.FC<Props> = ({ location }) => {
     //   getEntityModel();
     // }
     getEntityModel();
-
+    getSaveQueries();
     return () => {
       componentIsMounted.current = false
     }
@@ -127,10 +132,9 @@ const Browse: React.FC<Props> = ({ location }) => {
     // if (entities.length && !user.error.type) {
     //   getSearchResults(entities);
     // }
-    if (entities.length  && (!searchOptions.nextEntityType || searchOptions.nextEntityType === 'All Entities' || (searchOptions.entityTypeIds[0] == searchOptions.nextEntityType))) {
+    if (entities.length && (!searchOptions.nextEntityType || searchOptions.nextEntityType === 'All Entities' || (searchOptions.entityTypeIds[0] == searchOptions.nextEntityType))) {
       getSearchResults(entities);
     }
-
   }, [searchOptions, entities, user.error.type]);
 
   useEffect(() => {
@@ -141,6 +145,13 @@ const Browse: React.FC<Props> = ({ location }) => {
       setStructured(columns && columns.some(column => column.includes('.')))
     }
   }, [searchOptions.entityTypeIds, entityDefArray]);
+
+
+  useEffect(() => {
+    if (searchOptions.zeroState === true) {
+      applySaveQuery('', [], {}, 'select a query', true);
+    }
+  }, [searchOptions.zeroState]);
 
   const handleUserPreferences = () => {
     let preferencesObject = {
@@ -195,93 +206,115 @@ const Browse: React.FC<Props> = ({ location }) => {
     setGreyFacets(facets);
   }
 
-  return (
-    <Layout>
-      <Sider className={styles.sideBarFacets} collapsedWidth={0} collapsible onCollapse={onCollapse} width={'20vw'}>
-        <Sidebar
-          facets={facets}
-          selectedEntities={searchOptions.entityTypeIds}
-          entityDefArray={entityDefArray}
-          facetRender={updateSelectedFacets}
-          checkFacetRender={updateCheckedFacets}
-        />
-      </Sider>
-      <Content className={styles.content}>
-        {user.error.type === 'ALERT' ?
-          <AsyncLoader />
-          :
-          <>
-            {/* TODO Fix searchBar widths, it currently overlaps at narrow browser widths */}
-            <div className={styles.searchBar} ref={searchBarRef}
-              style={{
-                width: collapse ? '90vw' : '70.5vw',
-                maxWidth: collapse ? '90vw' : '70.5vw'
-              }}>
-              <SearchBar entities={entities} />
-              <SearchSummary
-                total={totalDocuments}
-                start={searchOptions.start}
-                length={searchOptions.pageLength}
-                pageSize={searchOptions.pageSize}
-              />
-              <SearchPagination
-                total={totalDocuments}
-                pageNumber={searchOptions.pageNumber}
-                pageSize={searchOptions.pageSize}
-                pageLength={searchOptions.pageLength}
-                maxRowsPerPage={searchOptions.maxRowsPerPage}
-              />
-              <div className={styles.spinViews}>
-                {isLoading && <Spin data-testid="spinner" className={styles.overlay} />}
-                <div className={styles.switchViews}>
-                  <div className={!tableView ? styles.toggled : styles.toggleView}
-                    data-cy="facet-view" id={'snippetView'}
-                    onClick={() => toggleTableView(false)}>
-                    <Tooltip title={'Snippet View'}><FontAwesomeIcon icon={faStream} size="lg" /></Tooltip>
-                  </div>
-                  <div className={tableView ? styles.toggled : styles.toggleView}
-                    data-cy="table-view" id={'tableView'}
-                    onClick={() => toggleTableView(true)}>
-                    <Tooltip title={'Table View'}><FontAwesomeIcon className={styles.tableIcon} icon={faTable} size="lg" /></Tooltip>
+  const getSaveQueries = async () => {
+    try {
+      const response = await fetchQueries();
+      if (response.data) {
+        setQueries(response.data);
+      }
+    } catch (error) {
+      handleError(error)
+    } finally {
+      resetSessionTime()
+    }
+  }
+
+  if (searchOptions.zeroState) {
+    return (
+      <>
+        <Query isSavedQueryUser={isSavedQueryUser} hasStructured={hasStructured} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={[]} greyFacets={[]} />
+        <ZeroStateExplorer entities={entities} setEntity={setEntity} queries={queries} hasStructured={hasStructured} columns={columns} setIsLoading={setIsLoading} tableView={tableView} toggleTableView={toggleTableView} />
+      </>
+    );
+  } else {
+    return (
+      <Layout>
+        <Sider className={styles.sideBarFacets} collapsedWidth={0} collapsible onCollapse={onCollapse} width={'20vw'}>
+          <Sidebar
+            facets={facets}
+            selectedEntities={searchOptions.entityTypeIds}
+            entityDefArray={entityDefArray}
+            facetRender={updateSelectedFacets}
+            checkFacetRender={updateCheckedFacets}
+          />
+        </Sider>
+        <Content className={styles.content}>
+          {user.error.type === 'ALERT' ?
+            <AsyncLoader />
+            :
+            <>
+              {/* TODO Fix searchBar widths, it currently overlaps at narrow browser widths */}
+              <div className={styles.searchBar} ref={searchBarRef}
+                style={{
+                  width: collapse ? '90vw' : '70.5vw',
+                  maxWidth: collapse ? '90vw' : '70.5vw'
+                }}>
+                <SearchBar entities={entities} />
+                <SearchSummary
+                  total={totalDocuments}
+                  start={searchOptions.start}
+                  length={searchOptions.pageLength}
+                  pageSize={searchOptions.pageSize}
+                />
+                <SearchPagination
+                  total={totalDocuments}
+                  pageNumber={searchOptions.pageNumber}
+                  pageSize={searchOptions.pageSize}
+                  pageLength={searchOptions.pageLength}
+                  maxRowsPerPage={searchOptions.maxRowsPerPage}
+                />
+                <div className={styles.spinViews}>
+                  {isLoading && <Spin data-testid="spinner" className={styles.overlay} />}
+                  <div className={styles.switchViews}>
+                    <div className={!tableView ? styles.toggled : styles.toggleView}
+                      data-cy="facet-view" id={'snippetView'}
+                      onClick={() => toggleTableView(false)}>
+                      <Tooltip title={'Snippet View'}><FontAwesomeIcon icon={faStream} size="lg" /></Tooltip>
+                    </div>
+                    <div className={tableView ? styles.toggled : styles.toggleView}
+                      data-cy="table-view" id={'tableView'}
+                      onClick={() => toggleTableView(true)}>
+                      <Tooltip title={'Table View'}><FontAwesomeIcon className={styles.tableIcon} icon={faTable} size="lg" /></Tooltip>
+                    </div>
                   </div>
                 </div>
+                <Query isSavedQueryUser={isSavedQueryUser} hasStructured={hasStructured} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={selectedFacets} greyFacets={greyFacets} />
               </div>
-              <Query isSavedQueryUser={isSavedQueryUser} hasStructured={hasStructured} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={selectedFacets} greyFacets={greyFacets} />
-            </div>
-            <div className={styles.fixedView} >
-              {tableView ?
-                <div>
-                  <ResultTable
-                    data={data}
-                    entityDefArray={entityDefArray}
-                    columns={columns}
-                    hasStructured={hasStructured}
-                  />
-                </div>
-                : <SearchResults data={data} entityDefArray={entityDefArray} />
-              }
-            </div>
-            <br />
-            <div>
-              <SearchSummary
-                total={totalDocuments}
-                start={searchOptions.start}
-                length={searchOptions.pageLength}
-                pageSize={searchOptions.pageSize}
-              />
-              <SearchPagination
-                total={totalDocuments}
-                pageNumber={searchOptions.pageNumber}
-                pageSize={searchOptions.pageSize}
-                pageLength={searchOptions.pageLength}
-                maxRowsPerPage={searchOptions.maxRowsPerPage}
-              />
-            </div>
-          </>
-        }
-      </Content>
-    </Layout>
-  );
+              <div className={styles.fixedView} >
+                {tableView ?
+                  <div>
+                    <ResultTable
+                      data={data}
+                      entityDefArray={entityDefArray}
+                      columns={columns}
+                      hasStructured={hasStructured}
+                    />
+                  </div>
+                  : <SearchResults data={data} entityDefArray={entityDefArray} />
+                }
+              </div>
+              <br />
+              <div>
+                <SearchSummary
+                  total={totalDocuments}
+                  start={searchOptions.start}
+                  length={searchOptions.pageLength}
+                  pageSize={searchOptions.pageSize}
+                />
+                <SearchPagination
+                  total={totalDocuments}
+                  pageNumber={searchOptions.pageNumber}
+                  pageSize={searchOptions.pageSize}
+                  pageLength={searchOptions.pageLength}
+                  maxRowsPerPage={searchOptions.maxRowsPerPage}
+                />
+              </div>
+            </>
+          }
+        </Content>
+      </Layout>
+    );
+  }
 }
 
 export default withRouter(Browse);

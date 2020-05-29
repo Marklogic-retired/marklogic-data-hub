@@ -12,7 +12,9 @@ type SearchContextInterface = {
   pageSize: number,
   selectedFacets: any,
   maxRowsPerPage: number,
-  selectedQuery: string
+  selectedQuery: string,
+  zeroState: boolean,
+  manageQueryModal: boolean,
 }
 
 const defaultSearchOptions = {
@@ -25,7 +27,9 @@ const defaultSearchOptions = {
   pageSize: 20,
   selectedFacets: {},
   maxRowsPerPage: 100,
-  selectedQuery: 'select a query'
+  selectedQuery: 'select a query',
+  zeroState: false,
+  manageQueryModal: false,
 }
 
 interface ISearchContextInterface {
@@ -52,8 +56,10 @@ interface ISearchContextInterface {
   clearGreyFacet: (constraint: string, val: string) => void;
   clearAllGreyFacets: () => void;
   resetGreyedOptions: () => void;
-  applySaveQuery: (searchText: string, entityTypeIds: string[], selectedFacets: {}, selectedQuery: string) => void;
+  applySaveQuery: (searchText: string, entityTypeIds: string[], selectedFacets: {}, selectedQuery: string, zeroState?: boolean, manageQueryModal?: boolean) => void;
   setSelectedQuery: (query: string) => void;
+  setZeroState: (zeroState: boolean) => void;
+  setManageQueryModal: (visibility: boolean) => void;
 }
 
 export const SearchContext = React.createContext<ISearchContextInterface>({
@@ -81,7 +87,9 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   clearAllGreyFacets: () => { },
   resetGreyedOptions: () => { },
   applySaveQuery: () => { },
-  setSelectedQuery: () => { }
+  setSelectedQuery: () => { },
+  setZeroState: () => { },
+  setManageQueryModal: () => { },
 });
 
 const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
@@ -377,7 +385,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
     });
   }
 
-    const applySaveQuery = (searchText: string, entityTypeIds: string[], selectedFacets: {}, selectedQuery: string) => {
+    const applySaveQuery = (searchText: string, entityTypeIds: string[], selectedFacets: {}, selectedQuery: string, zeroState = false, manageQueryModal = false) => {
         setSearchOptions({
             ...searchOptions,
             start: 1,
@@ -387,7 +395,9 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
             nextEntityType: entityTypeIds[0],
             pageNumber: 1,
             pageLength: searchOptions.pageSize,
-            selectedQuery: selectedQuery
+            selectedQuery: selectedQuery,
+            zeroState: zeroState,
+            manageQueryModal: manageQueryModal
         });
     }
 
@@ -398,6 +408,20 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
         pageNumber: 1,
         pageLength: searchOptions.pageSize,
         selectedQuery: query
+      });
+    }
+
+    const setZeroState = (zeroState: boolean) => {
+      setSearchOptions({
+        ...searchOptions,
+        zeroState: zeroState
+      });
+    }
+
+    const setManageQueryModal = (visibility: boolean) => {
+      setSearchOptions({
+        ...searchOptions,
+        manageQueryModal: visibility
       });
     }
 
@@ -433,7 +457,9 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       clearAllGreyFacets,
       resetGreyedOptions,
       applySaveQuery,
-      setSelectedQuery
+      setSelectedQuery,
+      setZeroState,
+      setManageQueryModal,
     }}>
       {children}
     </SearchContext.Provider>

@@ -2,5 +2,5 @@
     "user-name": "hc-developer",
     "description": "A data hub dev user",
     "password": "password",
-    "role": ["data-hub-developer", "hub-central-mapping-reader"]
+    "role": ["data-hub-developer", "hub-central-mapping-reader", "hub-central-saved-query-user"]
 }

@@ -11,6 +11,7 @@ import Curate from './Curate';
 import Run from './Run';
 import Browse from './Browse';
 import { AuthoritiesContext } from "../util/authorities";
+import { SearchContext } from '../util/search-context';
 
 export type TileId =  'load' | 'model' | 'curate' | 'run' | 'explore';
 export type IconType = 'fa' | 'custom';
@@ -38,6 +39,16 @@ const TilesView: React.FC  = (props) => {
     const [currentNode, setCurrentNode] = useState<any>(INITIAL_SELECTION);
     const [options, setOptions] = useState<TileItem|null>(null);
     const [view, setView] = useState<JSX.Element|null>(null);
+    const [controls, setControls] = useState<any>([]);
+
+    const {
+        setZeroState,
+        setManageQueryModal,
+      } = useContext(SearchContext);
+
+    const onMenuClick = () => {
+        setManageQueryModal(true)
+    }
 
     // For role-based privileges
     const auth = useContext(AuthoritiesContext);
@@ -51,8 +62,18 @@ const TilesView: React.FC  = (props) => {
         // explore: auth.canReadFlow() || auth.canWriteFlow(),
     };
     const enabled = Object.keys(enabledViews).filter(key => enabledViews[key]);
-
+    
     const onSelect = (id) => {
+
+        if (id === 'explore') {
+            setControls('menu')
+            if (selection !== 'explore') {
+                setZeroState(true)
+            } 
+        } else {
+            setControls([])
+        }
+
         setSelection(id);
         setCurrentNode(id); // TODO Handle multiple with nested objects
         setOptions(tiles[id]);
@@ -68,9 +89,11 @@ const TilesView: React.FC  = (props) => {
                     id={selection}
                     view={view}
                     currentNode={currentNode}
-                    controls={[]} // TODO Turn on tile header controls
+                    controls={controls} // TODO Turn on tile header controls
                     options={options}
-                />) : null }
+                    onMenuClick={onMenuClick}
+                />
+                ) : null }
             </div>
         </>
     );

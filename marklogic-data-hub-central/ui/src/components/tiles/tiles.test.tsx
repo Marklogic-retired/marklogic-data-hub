@@ -24,6 +24,7 @@ describe('Tiles component', () => {
                 currentNode={text}
                 controls={[]}
                 options={options}
+                onMenuClick={jest.fn()}
             />
         );
         expect(getByLabelText('icon-' + text)).toBeInTheDocument();
@@ -47,6 +48,7 @@ describe('Tiles component', () => {
                 currentNode={text}
                 controls={[]}
                 options={options}
+                onMenuClick={jest.fn()}
             />
         );
         expect(getByLabelText('icon-' + text)).toBeInTheDocument();
