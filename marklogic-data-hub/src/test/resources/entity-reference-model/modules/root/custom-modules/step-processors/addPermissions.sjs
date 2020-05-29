@@ -6,5 +6,3 @@ contentArray.forEach(content => {
     content.context.permissions.push(xdmp.permission("qconsole-user", "read"));
   }
 });
-
-contentArray;

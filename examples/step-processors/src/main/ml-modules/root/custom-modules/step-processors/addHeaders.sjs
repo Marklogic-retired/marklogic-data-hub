@@ -17,5 +17,3 @@ contentArray.forEach(content => {
 
   content.value = contentValue;
 });
-
-contentArray;
