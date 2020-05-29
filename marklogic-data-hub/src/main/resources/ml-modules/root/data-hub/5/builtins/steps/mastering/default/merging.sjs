@@ -55,10 +55,16 @@ function main(content, options) {
         uriRangeQuery
       ),
       ['unfiltered',cts.indexOrder(datahubCreatedOnRef, 'descending')]
-    ).toArray().map(
-      (result) => result.xpath(`/matchSummary/actionDetails/*[action = 'merge']`).toArray()
-        .filter((actionNode) => cts.contains(actionNode, urisQuery))[0].toObject()
-    );
+    ).toArray()
+        // get the actionNode for the URI
+        .map(
+          (result) => result.xpath(`/matchSummary/actionDetails/*[action = 'merge']`).toArray()
+            .filter((actionNode) => cts.contains(actionNode, urisQuery))[0]
+        )
+        // filter out false positives that don't have merge actions for the given URI
+        .filter((actionNode) => !!actionNode)
+        // convert node to JSON object
+        .map((actionNode) => actionNode.toObject());
     if (otherMergesForURI.some((otherMerge) => otherMerge.uris.length > uriActionDetails.uris.length)) {
       return Sequence.from([]);
     }

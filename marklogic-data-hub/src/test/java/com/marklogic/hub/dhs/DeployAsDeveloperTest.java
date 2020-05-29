@@ -1,6 +1,7 @@
 package com.marklogic.hub.dhs;
 
 import com.marklogic.appdeployer.AppConfig;
+import com.marklogic.appdeployer.CmaConfig;
 import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.ResourceFilenameFilter;
@@ -19,6 +20,7 @@ import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
 import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand;
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
@@ -60,6 +62,9 @@ public class DeployAsDeveloperTest {
         appConfig.getConfigDirs().add(new ConfigDir(new File("my-dhs-config")));
         assertEquals(3, appConfig.getConfigDirs().size(), "Should have 3, including ml-config which is added by default");
 
+        // Enable all CMA usage so we can verify that it's disabled below
+        appConfig.setCmaConfig(new CmaConfig(true));
+
         hubConfig.setAppConfig(appConfig);
 
         assertFalse(hubConfig.getIsProvisionedEnvironment());
@@ -82,6 +87,13 @@ public class DeployAsDeveloperTest {
         assertEquals("ml-config", appConfig.getConfigDirs().get(0).getBaseDir().getName());
         assertEquals("my-dhs-config", appConfig.getConfigDirs().get(1).getBaseDir().getName(), "A user is still " +
             "permitted to deploy their own resources from multiple configuration directories");
+
+        CmaConfig cmaConfig = appConfig.getCmaConfig();
+        assertFalse(cmaConfig.isDeployDatabases());
+        assertFalse(cmaConfig.isDeployPrivileges());
+        assertFalse(cmaConfig.isDeployProtectedPaths());
+        assertFalse(cmaConfig.isDeployQueryRolesets());
+        assertFalse(cmaConfig.isDeployRoles());
     }
 
     @Test
@@ -177,6 +189,7 @@ public class DeployAsDeveloperTest {
         int index = 0;
         assertTrue(commands.get(index++) instanceof DeployHubQueryRolesetsCommand);
         assertTrue(commands.get(index++) instanceof DeployOtherDatabasesCommand);
+        assertTrue(commands.get(index++) instanceof DeployDatabaseFieldCommand);
         assertTrue(commands.get(index++) instanceof LoadSchemasCommand);
         assertTrue(commands.get(index++) instanceof LoadUserModulesCommand);
         assertTrue(commands.get(index++) instanceof DeployTriggersCommand);
@@ -191,11 +204,7 @@ public class DeployAsDeveloperTest {
         assertTrue(commands.get(index++) instanceof GenerateFunctionMetadataCommand);
         assertTrue(commands.get(index++) instanceof DeployProtectedPathsCommand);
 
-        assertEquals(15, commands.size(),
-            "As of ML 10.0-3, the granular privilege for indexes doesn't seem to work with XML payloads. " +
-                "Bug https://bugtrack.marklogic.com/54231 has been created to track that. Thus, " +
-                "DeployDatabaseFieldCommand cannot be included and ml-config/database-fields/final-database.xml " +
-                "cannot be processed.");
+        assertEquals(16, commands.size(), "Per DHFPROD-5037, DeployDatabaseFieldsCommand now exists");
 
         DeployOtherDatabasesCommand dodc = (DeployOtherDatabasesCommand) commands.get(1);
         ResourceFilenameFilter filter = (ResourceFilenameFilter) dodc.getResourceFilenameFilter();

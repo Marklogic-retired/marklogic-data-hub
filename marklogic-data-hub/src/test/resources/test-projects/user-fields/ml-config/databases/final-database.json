@@ -1,0 +1,32 @@
+{
+  "database-name": "%%mlFinalDbName%%",
+  "schema-database": "%%mlFinalSchemasDbName%%",
+  "triggers-database": "%%mlFinalTriggersDbName%%",
+  "triple-index": true,
+  "collection-lexicon": true,
+  "uri-lexicon": true,
+  "field": [
+    {
+      "field-name": "exampleField",
+      "include-root": false
+    }
+  ],
+  "range-field-index": [
+    {
+      "scalar-type": "string",
+      "field-name": "exampleField",
+      "invalid-values": "reject",
+      "range-value-positions": false,
+      "collation": "http://marklogic.com/collation/"
+    }
+  ],
+  "range-path-index": [
+    {
+      "scalar-type": "int",
+      "path-expression": "/examplePathIndex",
+      "collation": "",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    }
+  ]
+}
