@@ -5,6 +5,7 @@
   "role": [
     "data-hub-developer",
     "hub-central-user",
+    "hub-central-entity-model-writer",
     "hub-central-load-reader",
     "hub-central-mapping-writer"
   ]
