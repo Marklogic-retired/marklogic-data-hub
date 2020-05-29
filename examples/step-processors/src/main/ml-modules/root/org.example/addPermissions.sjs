@@ -10,8 +10,7 @@ contentArray.forEach(content => {
   }
 
   // Also, note that in order to modify permissions via a step processor during ingestion, you must use MLCP to ingest
-  // the data, as a REST transform does not allow you to modify everything about the data to be ingested, such as URI,
-  // collections, and permissions.
+  // the data, as a REST transform does not allow you to modify everything about the data to be ingested, such as
+  // permissions or collections. See https://docs.marklogic.com/guide/rest-dev/transforms#id_23889 for more information
+  // on what's available in the context passed to a REST transform.
 });
-
-contentArray;

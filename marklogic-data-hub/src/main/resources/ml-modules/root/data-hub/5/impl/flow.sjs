@@ -363,16 +363,24 @@ class Flow {
     }
   }
 
+  /**
+   * Applies processors to the given content array. Processors can make any changes they wish to the items in the
+   * content array, including adding and removing items, but the array itself cannot be changed - i.e. a processor may
+   * not return a new instance of an array.
+   *
+   * @param flowStep
+   * @param contentArray
+   * @param combinedOptions
+   */
   applyProcessorsBeforeContentPersisted(flowStep, contentArray, combinedOptions) {
     if (flowStep.processors) {
       flowStep.processors.filter((processor => "beforeContentPersisted" == processor.when)).forEach(processor => {
         const vars = Object.assign({}, processor.vars);
         vars.contentArray = contentArray;
         vars.options = combinedOptions;
-        contentArray = fn.head(xdmp.invoke(processor.path, vars));
+        xdmp.invoke(processor.path, vars);
       });
     }
-    return contentArray;
   }
 
   addMetadataToContent(content, combinedOptions, flowName, flowStep) {

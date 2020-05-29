@@ -7,5 +7,3 @@ var headerValueToAdd;
 contentArray.forEach(content => {
   content.value.envelope.headers.hello = headerValueToAdd;
 });
-
-contentArray;
