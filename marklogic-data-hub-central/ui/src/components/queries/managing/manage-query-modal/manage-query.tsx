@@ -15,9 +15,14 @@ import { getExportPreview } from '../../../query-export/export-preview/export-pr
 
 
 const QueryModal = (props) => {
+    const {
+        applySaveQuery,
+        searchOptions,
+        setManageQueryModal,
+        clearAllGreyFacets
+    } = useContext(SearchContext);
 
     const { handleError, resetSessionTime } = useContext(UserContext);
-    const [mainModalVisibility, setMainModalVisibility] = useState(false);
     const [editModalVisibility, setEditModalVisibility] = useState(false);
     const [deleteModalVisibility, setDeleteModalVisibility] = useState(false);
     const [exportModalVisibility, setExportModalVisibility] = useState(false);
@@ -25,12 +30,7 @@ const QueryModal = (props) => {
     const [tableColumns, setTableColumns] = useState<Object[]>();
     const [tableData, setTableData] = useState<Object[]>();
     const [query, setQuery] = useState({});
-
     const data = new Array();
-    const {
-        applySaveQuery,
-        clearAllGreyFacets
-    } = useContext(SearchContext);
 
     useEffect(() => {
         props.hasStructured && getPreview();
@@ -76,19 +76,15 @@ const QueryModal = (props) => {
         setDeleteModalVisibility(true);
     }
 
-    const displayModal = () => {
-        setMainModalVisibility(true);
-    };
-
     const onClose = () => {
-        setMainModalVisibility(false);
+        setManageQueryModal(false)
     };
 
     const onOk = (query) => {
         deleteQuery(query)
         setDeleteModalVisibility(false);
-        applySaveQuery('', query.savedQuery.query.entityTypeIds,{},'select a query');
         clearAllGreyFacets();
+        applySaveQuery('', query.savedQuery.query.entityTypeIds,{},'select a query', searchOptions.zeroState, true);
         props.setCurrentQueryDescription('');
     }
 
@@ -103,10 +99,9 @@ const QueryModal = (props) => {
                 props.setCurrentQueryDescription(query['savedQuery']['description'])
             }
         })
-        setMainModalVisibility(false)
         props.toggleApply(false)
     }
-
+ 
     const displayExportModal = (id) => {
         setExportModalVisibility(true);
         setRecordID(id)
@@ -241,13 +236,12 @@ const QueryModal = (props) => {
         }
     }
 
-    return (
+    return ( 
         <div>
             <ExportQueryModal hasStructured={props.hasStructured} tableColumns={tableColumns} tableData={tableData} recordID={recordID} exportModalVisibility={exportModalVisibility} setExportModalVisibility={setExportModalVisibility} columns={props.columns} />
-            <FontAwesomeIcon icon={faListOl} color='#5B69AF' size='lg' onClick={displayModal} style={{ cursor: 'pointer', marginLeft: '-30px', color: '#5B69AF' }} data-testid="manage-queries-modal-icon" />
             <Modal
                 title={null}
-                visible={mainModalVisibility}
+                visible={props.modalVisibility}
                 onCancel={onClose}
                 width={1000}
                 footer={null}

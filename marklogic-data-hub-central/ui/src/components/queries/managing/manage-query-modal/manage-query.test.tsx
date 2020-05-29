@@ -13,18 +13,13 @@ describe('Query Modal Component', () => {
   });
 
   test('Verify export button is visible', () => {
-    const { getByTestId } =  render(<ManageQuery canExportQuery={true} queries={query} setQueries={jest.fn()} toggleApply={jest.fn()} queryName={'Lee'} setQueryName={jest.fn()} />);    
-    expect(getByTestId('manage-queries-modal-icon')).toBeInTheDocument();
-    fireEvent.click(getByTestId('manage-queries-modal-icon'));
+    const { getByTestId } =  render(<ManageQuery modalVisibility={true} canExportQuery={true} queries={query} setQueries={jest.fn()} toggleApply={jest.fn()} queryName={'Lee'} setQueryName={jest.fn()} />);    
     expect(getByTestId('manage-queries-modal')).toBeInTheDocument();
     expect(getByTestId('export')).toBeInTheDocument();
   });
 
-
   test('Verify export button is not visible', () => {
-    const { getByTestId, queryByTestId } = render(<ManageQuery canExportQuery={false} queries={query} setQueries={jest.fn()} toggleApply={jest.fn()} queryName={'Lee'} setQueryName={jest.fn()} />);
-    expect(getByTestId('manage-queries-modal-icon')).toBeInTheDocument();
-    fireEvent.click(getByTestId('manage-queries-modal-icon'));
+    const { getByTestId, queryByTestId } = render(<ManageQuery modalVisibility={true} canExportQuery={false} queries={query} setQueries={jest.fn()} toggleApply={jest.fn()} queryName={'Lee'} setQueryName={jest.fn()} />);
     expect(getByTestId('manage-queries-modal')).toBeInTheDocument();
     expect(queryByTestId('export')).toBeNull()
   });

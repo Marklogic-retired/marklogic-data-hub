@@ -16,6 +16,7 @@ import TilesView from './pages/TilesView';
 import NoMatchRedirect from './pages/noMatchRedirect';
 import View from './pages/View';
 import Browse from './pages/Browse';
+
 import Detail from './pages/Detail';
 import Modeling from './pages/Modeling';
 

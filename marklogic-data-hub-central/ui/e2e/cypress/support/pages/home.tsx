@@ -21,6 +21,10 @@ class HomePage{
     getEntitiesTile() {
         return cy.get('button[aria-label="Entity"]');
     }
+
+    getExploreTile() {
+        return cy.get('div[aria-label="tool-explore"]');
+    }
 }
 
 export default HomePage;

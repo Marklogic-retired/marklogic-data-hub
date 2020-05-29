@@ -335,6 +335,11 @@ class BrowsePage {
     return cy.get('[data-testid=manage-queries-modal-icon]');
   }
 
+  getManageQueriesModalOpened(){
+    cy.get('.fa-cog').click();
+    cy.get('.ant-dropdown-menu-item').click();
+  }
+
   //saved query dropdown
   getSelectedQuery(){
     return cy.get('[data-cy=drop-down-list] .ant-select-selection-selected-value').invoke('text');
@@ -384,6 +389,12 @@ class BrowsePage {
   getEntityConfirmationYesClick(){
     return cy.get('#entity-confirmation-yes-button');
   }
+
+
+  // Zero state Explorer
+  getExploreButton() {
+    return cy.get('[data-cy=explore]');
+}
 
 }
 
