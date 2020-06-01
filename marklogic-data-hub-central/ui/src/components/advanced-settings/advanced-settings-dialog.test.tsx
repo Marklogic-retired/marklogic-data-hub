@@ -17,7 +17,8 @@ describe('Update data load settings component', () => {
 
     const { getByText, getByPlaceholderText, getByRole } = render(<AdvancedSettingsDialog {...data.advancedSettings} />);
     expect(getByText('Advanced Settings')).toBeInTheDocument();
-    expect(getByText(data.advancedSettings.stepData.name)).toBeInTheDocument(); //Verify if the step name is available in the settings dialog
+    //Verify if the step name is available in the settings dialog
+    expect(document.querySelector('div p:nth-child(2)').textContent).toEqual(data.advancedSettings.stepData.name);
     expect(getByText('Source Database:')).toBeInTheDocument();
     expect(getByText('data-hub-STAGING')).toBeInTheDocument();
     expect(getByText('Target Database:')).toBeInTheDocument();
@@ -42,7 +43,8 @@ describe('Update data load settings component', () => {
   test('Verify settings dialog renders for Load Data', () => {
     const { queryByText, getByText, getByPlaceholderText, getByRole } = render(<AdvancedSettingsDialog {...data.advancedSettings} activityType={'ingestion'} />);
     expect(getByText('Advanced Settings')).toBeInTheDocument();
-    expect(getByText(data.advancedSettings.stepData.name)).toBeInTheDocument(); //Verify if the step name is available in the settings dialog
+    //Verify if the step name is available in the settings dialog
+    expect(document.querySelector('div p:nth-child(2)').textContent).toEqual(data.advancedSettings.stepData.name);
     expect(queryByText('Source Database:')).not.toBeInTheDocument();
     expect(getByText('Target Database:')).toBeInTheDocument();
     expect(getByText('data-hub-STAGING')).toBeInTheDocument();
