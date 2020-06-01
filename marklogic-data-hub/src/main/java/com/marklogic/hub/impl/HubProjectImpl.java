@@ -769,4 +769,10 @@ public class HubProjectImpl implements HubProject {
     public Path getStepsPath() {
         return this.projectDir.resolve("steps");
     }
+
+    @Override
+    public File getStepFile(StepDefinition.StepDefinitionType stepType, String stepName) {
+        // Have to use toString instead of name so we get lowercase
+        return getStepsPath().resolve(stepType.toString()).resolve(stepName + ".step.json").toFile();
+    }
 }

@@ -301,4 +301,10 @@ public interface HubProject {
      */
     Path getStepsPath();
 
+    /**
+     * @param stepType
+     * @param stepName
+     * @return a File corresponding to a step of the given type and name
+     */
+    File getStepFile(StepDefinition.StepDefinitionType stepType, String stepName);
 }
