@@ -4,7 +4,6 @@
   "password": "%%testPassword%%",
   "role": [
     "data-hub-operator",
-    "hub-central-load-reader",
     "hub-central-mapping-reader",
     "hub-central-entity-exporter"
   ]

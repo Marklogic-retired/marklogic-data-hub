@@ -5,7 +5,6 @@
   "role": [
     "data-hub-developer",
     "hub-central-downloader",
-    "hub-central-load-reader",
     "hub-central-mapping-writer"
   ]
 }
