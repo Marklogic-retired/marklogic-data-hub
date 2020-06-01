@@ -59,7 +59,6 @@ public class HubConfigJsonTest {
 
         hubConfig.setMlUsername("mluser");
         hubConfig.setMlPassword("mlpassword");
-        hubConfig.setLoadBalancerHost("somehost");
 
         String expected = "{\n" +
             "  \"stagingDbName\": \"data-hub-STAGING\",\n" +
@@ -101,7 +100,5 @@ public class HubConfigJsonTest {
             "had public getters in HubConfigImpl, but this seems like an unintended error, as we wouldn't want to " +
             "serialize passwords out into a JSON string");
         assertFalse(actualJson.has("mlPassword"));
-        assertFalse(actualJson.has("loadBalancerHost"), "It is not known why this is JsonIgnore'd, but that was the " +
-            "case with HubConfigImpl, so it's expected to be enforced by AbstractHubConfig as well");
     }
 }

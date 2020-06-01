@@ -149,7 +149,6 @@ public class FunctionDataHubFlow {
             hubConfig.applyProperties(new SimplePropertySource(props));
 
             hubConfig.setHost(host);
-            hubConfig.setLoadBalancerHost(host);
             hubConfig.setMlUsername(username);
             hubConfig.setMlPassword(password);
             hubConfig.setAuthMethod(DatabaseKind.STAGING, "basic");

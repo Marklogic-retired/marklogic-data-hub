@@ -331,12 +331,6 @@ public interface HubConfig {
     void setFlowDeveloperUserName(String flowDeveloperUserName);
 
     /**
-     * Gets a string of load balancer host
-     * @return String of load balancer host
-     */
-    String getLoadBalancerHost();
-
-    /**
      * Signifies if the host is a load balancer host.
      * @return a Boolean.
      */

@@ -9,9 +9,8 @@ import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.error.DataHubConfigurationException;
-
-import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -99,54 +98,21 @@ public class HubConfigTest extends HubTestBase {
         props.put("mlFinalPort", port);
 
         //these values not set by dhf-default, so checking for null
-        if(certFile != null)
+        if (certFile != null)
             props.put("mlFinalCertFile", certFile);
-        if(certPassword !=null)
+        if (certPassword != null)
             props.put("mlFinalCertPassword", certPassword);
-        if(extName != null)
+        if (extName != null)
             props.put("mlFinalExternalName", extName);
         props.put("mlFinalSimpleSsl", sslMethod);
         //if sslContext is set , it is assumed that it is a secure connection, hence unsetting them
-        if(! sslMethod) {
+        if (!sslMethod) {
             adminHubConfig.setSslContext(DatabaseKind.FINAL, null);
             adminHubConfig.setSslHostnameVerifier(DatabaseKind.FINAL, null);
             adminHubConfig.setTrustManager(DatabaseKind.FINAL, null);
         }
 
 
-    }
-
-    @Test
-    public void testLoadBalancerProps() {
-        deleteProp("mlLoadBalancerHosts");
-        resetProperties();
-        adminHubConfig.refreshProject();
-        assertNull(adminHubConfig.getLoadBalancerHost());
-
-        writeProp("mlIsHostLoadBalancer", "true");
-        resetProperties();
-        adminHubConfig.refreshProject();
-        assertTrue(adminHubConfig.getIsHostLoadBalancer());
-
-        writeProp("mlLoadBalancerHosts", adminHubConfig.getHost());
-        resetProperties();
-        adminHubConfig.refreshProject();
-        assertEquals(adminHubConfig.getHost(), adminHubConfig.getLoadBalancerHost());
-
-        try {
-            writeProp("mlLoadBalancerHosts", "host1");
-            resetProperties();
-            adminHubConfig.refreshProject();
-        }
-        catch (DataHubConfigurationException e){
-            assertEquals( "\"mlLoadBalancerHosts\" must be the same as \"mlHost\"", e.getMessage());
-        }
-
-        deleteProp("mlLoadBalancerHosts");
-        deleteProp("mlIsHostLoadBalancer");
-        resetProperties();
-        adminHubConfig.refreshProject();
-        assertFalse(adminHubConfig.getIsHostLoadBalancer());
     }
 
     @Test
@@ -183,9 +149,7 @@ public class HubConfigTest extends HubTestBase {
 
             assertEquals(jsonNode.get("finalPort").asInt(), (int) config.getPort(DatabaseKind.FINAL));
 
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             throw new DataHubConfigurationException("Your datahub configuration could not serialize");
         }
     }
