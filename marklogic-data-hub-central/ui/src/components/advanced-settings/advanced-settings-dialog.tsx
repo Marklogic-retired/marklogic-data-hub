@@ -484,7 +484,7 @@ const getSettingsArtifact = async () => {
             Default Collections:&nbsp;
        &nbsp;
         </span>} labelAlign="left" className={styles.formItem}>
-        <div className={styles.defaultCollections}>{defaultCollections.map((collection, i) => {return <div data-testid={`defCollections-${collection}`} key={i}>{collection}</div>})}</div>
+        <div className={styles.defaultCollections}>{defaultCollections.map((collection, i) => {return <div data-testid={`defaultCollections-${collection}`} key={i}>{collection}</div>})}</div>
         </Form.Item>
         <Form.Item label={<span>
             Target Permissions:&nbsp;

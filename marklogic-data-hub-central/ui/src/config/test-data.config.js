@@ -41,20 +41,21 @@ const flows = [
 const loadData = {
   data: [
     {
-      name: "load1",
-      description: "description for load1",
+      name: "testLoad",
+      description: "description for JSON load",
       sourceFormat: "json",
       targetFormat: "json",
-      provenanceGranularityLevel: "coarse", 
-      permissions: "data-hub-common,read,data-hub-common,update", 
+      outputURIReplacement: "",
+      inputFilePath: "/json-test/data-sets/testLoad",
+      lastUpdated: "2000-01-01T12:00:00.000000-00:00"
     },
     {
-      name: "load2",
-      description: "description for load2",
+      name: "testLoadXML",
+      description: "description for XML load",
       sourceFormat: "json",
       targetFormat: "xml",
-      provenanceGranularityLevel: "coarse", 
-      permissions: "data-hub-common,read,data-hub-common,update", 
+      outputURIReplacement: "",
+      inputFilePath: "/xml-test/data-sets/testLoad",
       lastUpdated: "2020-04-15T14:22:54.057519-07:00"
     }
   ],
