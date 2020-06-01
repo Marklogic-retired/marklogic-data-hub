@@ -1,3 +1,9 @@
+const headerContentDefault = `[ "headers": [
+  "validationEnabled": true,
+  "validationParameters": [
+    "min": 0,
+    "max": 10]]]`;
+
 const loads = {"data" :
     [{
       "name": "testLoad",
@@ -51,8 +57,17 @@ const loadSettings = {"data" :
         "collections": [
           "testLoad"
         ],
-        "additionalCollections": ['customerCollection'],
-        "lastUpdated": "2020-05-27T12:19:02.446622-07:00"
+        "additionalCollections": ['addedCollection'],
+        "lastUpdated": "2020-05-27T12:19:02.446622-07:00",
+        "headers": {
+          "header": true
+        },
+        "processors": {
+            "processor": true
+        },
+        "customHook": {
+            "hook": true
+        }
     },
     "status" :200
 };
@@ -64,6 +79,7 @@ const genericSuccess = {
 
 const data = {
     genericSuccess: genericSuccess,
+    headerContentDefault: headerContentDefault,
     flows: flows,
     loads: loads,
     loadsXML: loadsXML,

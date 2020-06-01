@@ -25,14 +25,13 @@
     color: #DB4f59;
 }
 
-.submitButtonsForm{
+.submitButtonsForm {
     text-align: right;
-    top: -15px;
     margin-bottom: -15px;
     margin-right: 5px;
 }
 
-.submitButtons{
+.submitButtons {
     text-align: right;
     width: 162%;
 }
@@ -46,33 +45,6 @@ span.readOnlyLabel {
     color: #999;
 }
 
-.accordianPanel {
-    border: 0px;
-    //border-bottom: 1px solid #ffffff;
-    overflow: hidden;
-    border-radius: 4px;
-    margin-bottom: 24px;
-    background-color: #f7f7f7;
-    //margin-left: -20px;
-}
-
-.accordian{
-    border: none;
-    margin: 0px;
-}
-
-.mlcpCmd {
-  font-family: monospace;
-  margin-top: 10px;
-
-  p {
-    white-space: pre-wrap;
-    font-size: 13px;
-    word-wrap: normal;
-    line-height:20px;
-  }
-}
-
 .copyIcon {
     color: #44499C;
     cursor: pointer;
@@ -83,26 +55,57 @@ span.readOnlyLabel {
     margin-bottom: 8px !important;
 }
 
-.formItemTargetCollections {
+.defaultCollectionsLabel {
+    margin-left: 25px !important;
+}
+
+.formItemTargetCollections { 
     margin-bottom: 5px !important;
 }
 
 .defaultCollections {
     display: inline-block;
     line-height: 160%;
-    //margin-top: -2px;
     padding-bottom: 2px;
     vertical-align: middle;
 }
 
-.cHookLabel{
+.inputWithTooltip {
+    width: 95% !important;
+}
+.inputBatchSize {
+    width: 60px;
+}
+.selectTooltip, .inputTooltip {
+    position: absolute;
+    top: -4px;
+    right: -20px;
+}
+
+.textarea {
+    width: 95% !important;
+    margin-top: 6px;
+}
+.textareaTooltip {
+    position: absolute;
+    display: inline-block;
+    right: 79px;
+    margin-top: 8px;
+    z-index: 100;
+}
+
+// Expandable form areas
+.expandContainer {
+    position: relative;
+    margin-top: -5px;
+}
+.expandLabel {
+    display: inline-block;
     color: #44499C;
     cursor: pointer;
+    padding-left: 10px;
 }
-.cHItemLabel{
-    padding-left: 2vw;
-}
-.rightArrow{
+.rightArrow {
     font-size: 13px;
     color: #44499C;
     cursor: pointer;
@@ -116,4 +119,25 @@ span.readOnlyLabel {
     padding-left: 1px;
     padding-bottom: 1px;
     color: #DB4f59;
+}
+.textareaExpand {
+    width: 85% !important;
+    margin-left: 24px;
+}
+.textareaExpandTooltip {
+    position: absolute;
+    display: inline-block;
+    top: 0px;
+    right: 54px;
+
+}
+
+.invalid {
+    color: #C00;
+    margin-top: -10px;
+    margin-left: 1px;
+}
+.invalidExpand {
+    color: #C00;
+    margin-left: 24px;
 }

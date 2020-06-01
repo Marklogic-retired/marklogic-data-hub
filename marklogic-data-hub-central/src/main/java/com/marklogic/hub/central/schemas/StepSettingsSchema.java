@@ -25,6 +25,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
     "provenanceGranularityLevel",
     "permissions",
     "batchSize",
+    "headers",
+    "processors",
     "targetFormat",
     "targetDatabase",
     "sourceDatabase",
@@ -49,6 +51,15 @@ public class StepSettingsSchema {
     private String permissions;
     @JsonProperty("batchSize")
     private Integer batchSize;
+    /**
+     * Any properties in this object will be copied into the headers of each document processed by the step
+     * 
+     */
+    @JsonProperty("headers")
+    @JsonPropertyDescription("Any properties in this object will be copied into the headers of each document processed by the step")
+    private Headers__1 headers;
+    @JsonProperty("processors")
+    private List<Processor__1> processors = new ArrayList<Processor__1>();
     /**
      * Should be json or xml, but not using an enum yet because JSON and XML are being used too
      * 
@@ -119,6 +130,34 @@ public class StepSettingsSchema {
     @JsonProperty("batchSize")
     public void setBatchSize(Integer batchSize) {
         this.batchSize = batchSize;
+    }
+
+    /**
+     * Any properties in this object will be copied into the headers of each document processed by the step
+     * 
+     */
+    @JsonProperty("headers")
+    public Headers__1 getHeaders() {
+        return headers;
+    }
+
+    /**
+     * Any properties in this object will be copied into the headers of each document processed by the step
+     * 
+     */
+    @JsonProperty("headers")
+    public void setHeaders(Headers__1 headers) {
+        this.headers = headers;
+    }
+
+    @JsonProperty("processors")
+    public List<Processor__1> getProcessors() {
+        return processors;
+    }
+
+    @JsonProperty("processors")
+    public void setProcessors(List<Processor__1> processors) {
+        this.processors = processors;
     }
 
     /**
@@ -219,6 +258,14 @@ public class StepSettingsSchema {
         sb.append('=');
         sb.append(((this.batchSize == null)?"<null>":this.batchSize));
         sb.append(',');
+        sb.append("headers");
+        sb.append('=');
+        sb.append(((this.headers == null)?"<null>":this.headers));
+        sb.append(',');
+        sb.append("processors");
+        sb.append('=');
+        sb.append(((this.processors == null)?"<null>":this.processors));
+        sb.append(',');
         sb.append("targetFormat");
         sb.append('=');
         sb.append(((this.targetFormat == null)?"<null>":this.targetFormat));
@@ -259,16 +306,18 @@ public class StepSettingsSchema {
     public int hashCode() {
         int result = 1;
         result = ((result* 31)+((this.additionalCollections == null)? 0 :this.additionalCollections.hashCode()));
-        result = ((result* 31)+((this.lastUpdated == null)? 0 :this.lastUpdated.hashCode()));
+        result = ((result* 31)+((this.headers == null)? 0 :this.headers.hashCode()));
         result = ((result* 31)+((this.provenanceGranularityLevel == null)? 0 :this.provenanceGranularityLevel.hashCode()));
+        result = ((result* 31)+((this.customHook == null)? 0 :this.customHook.hashCode()));
+        result = ((result* 31)+((this.processors == null)? 0 :this.processors.hashCode()));
+        result = ((result* 31)+((this.targetCollections == null)? 0 :this.targetCollections.hashCode()));
+        result = ((result* 31)+((this.targetDatabase == null)? 0 :this.targetDatabase.hashCode()));
+        result = ((result* 31)+((this.lastUpdated == null)? 0 :this.lastUpdated.hashCode()));
         result = ((result* 31)+((this.sourceDatabase == null)? 0 :this.sourceDatabase.hashCode()));
         result = ((result* 31)+((this.collections == null)? 0 :this.collections.hashCode()));
         result = ((result* 31)+((this.permissions == null)? 0 :this.permissions.hashCode()));
-        result = ((result* 31)+((this.customHook == null)? 0 :this.customHook.hashCode()));
         result = ((result* 31)+((this.targetFormat == null)? 0 :this.targetFormat.hashCode()));
         result = ((result* 31)+((this.batchSize == null)? 0 :this.batchSize.hashCode()));
-        result = ((result* 31)+((this.targetCollections == null)? 0 :this.targetCollections.hashCode()));
-        result = ((result* 31)+((this.targetDatabase == null)? 0 :this.targetDatabase.hashCode()));
         return result;
     }
 
@@ -281,7 +330,7 @@ public class StepSettingsSchema {
             return false;
         }
         StepSettingsSchema rhs = ((StepSettingsSchema) other);
-        return ((((((((((((this.additionalCollections == rhs.additionalCollections)||((this.additionalCollections!= null)&&this.additionalCollections.equals(rhs.additionalCollections)))&&((this.lastUpdated == rhs.lastUpdated)||((this.lastUpdated!= null)&&this.lastUpdated.equals(rhs.lastUpdated))))&&((this.provenanceGranularityLevel == rhs.provenanceGranularityLevel)||((this.provenanceGranularityLevel!= null)&&this.provenanceGranularityLevel.equals(rhs.provenanceGranularityLevel))))&&((this.sourceDatabase == rhs.sourceDatabase)||((this.sourceDatabase!= null)&&this.sourceDatabase.equals(rhs.sourceDatabase))))&&((this.collections == rhs.collections)||((this.collections!= null)&&this.collections.equals(rhs.collections))))&&((this.permissions == rhs.permissions)||((this.permissions!= null)&&this.permissions.equals(rhs.permissions))))&&((this.customHook == rhs.customHook)||((this.customHook!= null)&&this.customHook.equals(rhs.customHook))))&&((this.targetFormat == rhs.targetFormat)||((this.targetFormat!= null)&&this.targetFormat.equals(rhs.targetFormat))))&&((this.batchSize == rhs.batchSize)||((this.batchSize!= null)&&this.batchSize.equals(rhs.batchSize))))&&((this.targetCollections == rhs.targetCollections)||((this.targetCollections!= null)&&this.targetCollections.equals(rhs.targetCollections))))&&((this.targetDatabase == rhs.targetDatabase)||((this.targetDatabase!= null)&&this.targetDatabase.equals(rhs.targetDatabase))));
+        return ((((((((((((((this.additionalCollections == rhs.additionalCollections)||((this.additionalCollections!= null)&&this.additionalCollections.equals(rhs.additionalCollections)))&&((this.headers == rhs.headers)||((this.headers!= null)&&this.headers.equals(rhs.headers))))&&((this.provenanceGranularityLevel == rhs.provenanceGranularityLevel)||((this.provenanceGranularityLevel!= null)&&this.provenanceGranularityLevel.equals(rhs.provenanceGranularityLevel))))&&((this.customHook == rhs.customHook)||((this.customHook!= null)&&this.customHook.equals(rhs.customHook))))&&((this.processors == rhs.processors)||((this.processors!= null)&&this.processors.equals(rhs.processors))))&&((this.targetCollections == rhs.targetCollections)||((this.targetCollections!= null)&&this.targetCollections.equals(rhs.targetCollections))))&&((this.targetDatabase == rhs.targetDatabase)||((this.targetDatabase!= null)&&this.targetDatabase.equals(rhs.targetDatabase))))&&((this.lastUpdated == rhs.lastUpdated)||((this.lastUpdated!= null)&&this.lastUpdated.equals(rhs.lastUpdated))))&&((this.sourceDatabase == rhs.sourceDatabase)||((this.sourceDatabase!= null)&&this.sourceDatabase.equals(rhs.sourceDatabase))))&&((this.collections == rhs.collections)||((this.collections!= null)&&this.collections.equals(rhs.collections))))&&((this.permissions == rhs.permissions)||((this.permissions!= null)&&this.permissions.equals(rhs.permissions))))&&((this.targetFormat == rhs.targetFormat)||((this.targetFormat!= null)&&this.targetFormat.equals(rhs.targetFormat))))&&((this.batchSize == rhs.batchSize)||((this.batchSize!= null)&&this.batchSize.equals(rhs.batchSize))));
     }
 
     public enum ProvenanceGranularityLevel {
