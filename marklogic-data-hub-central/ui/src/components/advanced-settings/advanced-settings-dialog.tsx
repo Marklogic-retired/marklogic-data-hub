@@ -11,10 +11,14 @@ import {
 import React, { useState, useEffect, useContext } from "react";
 import styles from './advanced-settings-dialog.module.scss';
 import { AdvancedSettings } from '../../config/tooltips.config';
+import load from '../../config/load.config';
 import { UserContext } from '../../util/user-context';
 import Axios from "axios";
 
-const {Option} = Select;
+const headerContentDefault = load.headerContentDefault;
+
+const { TextArea } = Input;
+const { Option } = Select;
 
 const AdvancedSettingsDialog = (props) => {
   const { resetSessionTime } = useContext(UserContext);
@@ -22,6 +26,7 @@ const AdvancedSettingsDialog = (props) => {
   const activityType = props.activityType;
   const [defaultCollections, setDefaultCollections] = useState<any[]>([]);
   const usesTargetFormat = activityType === 'mapping';
+  const usesHeaderContent = activityType === 'ingestion' || activityType === 'mapping';
   const [isTargetFormatTouched, setTargetFormatTouched] = useState(false);
   const [targetFormat, setTargetFormat] = useState('JSON');
   const targetFormatOptions = ['JSON', 'XML'].map(d => <Option data-testid='targetFormatOptions' key={d}>{d}</Option>);
@@ -30,12 +35,14 @@ const AdvancedSettingsDialog = (props) => {
   const defaultSourceDatabase = usesSourceDatabase ? 'data-hub-STAGING' : 'data-hub-FINAL';
   const [tgtDatabase, setTgtDatabase] = useState(defaultTargetDatabase);
   const [srcDatabase, setSrcDatabase] = useState(defaultSourceDatabase);
-  const[ additionalCollections, setAdditionalCollections ] = useState<any[]>([]);
+  const [ additionalCollections, setAdditionalCollections ] = useState<any[]>([]);
   const [isAddCollTouched, setAddCollTouched] = useState(false);
   const [isSrcDatabaseTouched, setSrcDatabaseTouched] = useState(false);
   const [isTgtDatabaseTouched, setTgtDatabaseTouched] = useState(false);
   const [targetPermissions, setTargetPermissions] = useState('');
   const [isTgtPermissionsTouched, setIsTgtPermissionsTouched] = useState(false);
+  const [headerContent, setHeaderContent] = useState(headerContentDefault);
+  const [isHeaderContentTouched, setIsHeaderContentTouched] = useState(false);
   const [provGranularity, setProvGranularity] = useState('coarse');
   const [isProvGranTouched, setIsProvGranTouched] = useState(false);
   const [module, setModule] = useState('');
@@ -78,6 +85,7 @@ const AdvancedSettingsDialog = (props) => {
       setTgtDatabase(defaultTargetDatabase);
       setAdditionalCollections([]);
       setTargetPermissions('');
+      setHeaderContent('');
       setModule('');
       setCHparameters(JSON.stringify({}, null, 4));
       setProvGranularity('coarse');
@@ -122,6 +130,7 @@ const getSettingsArtifact = async () => {
         setTgtDatabase(response.data.targetDatabase);
         setAdditionalCollections([...response.data.additionalCollections]);
         setTargetPermissions(response.data.permissions);
+        setHeaderContent(response.data.headerContent);
         setTargetFormat(response.data.targetFormat);
         if (response.data.customHook) {
           setModule(response.data.customHook.module);
@@ -138,6 +147,7 @@ const getSettingsArtifact = async () => {
       setTgtDatabase(defaultTargetDatabase);
       setAdditionalCollections([]);
       setTargetPermissions('');
+      setHeaderContent(headerContentDefault);
       setTargetFormat('JSON');
       setModule('');
       setCHparameters(JSON.stringify({}, null, 4));
@@ -169,6 +179,7 @@ const getSettingsArtifact = async () => {
       &&!isTgtDatabaseTouched
       && !isAddCollTouched
       && !isTgtPermissionsTouched
+      && !isHeaderContentTouched
       && !isModuleTouched
       && !isCHParamTouched
       && !isTargetFormatTouched
@@ -218,6 +229,7 @@ const getSettingsArtifact = async () => {
         targetDatabase : tgtDatabase,
         targetFormat: targetFormat,
         permissions : targetPermissions,
+        // headerContent : headerContent, // TODO
         provenanceGranularityLevel: provGranularity,
         customHook : {
             module : module,
@@ -236,6 +248,11 @@ const getSettingsArtifact = async () => {
     if (event.target.id === 'targetPermissions') {
       setTargetPermissions(event.target.value);
       setIsTgtPermissionsTouched(true);
+    }
+
+    if (event.target.id === 'headerContent') {
+      setHeaderContent(event.target.value);
+      setIsHeaderContentTouched(true);
     }
 
     if (event.target.id === 'module') {
@@ -503,6 +520,25 @@ const getSettingsArtifact = async () => {
             <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
           </Tooltip>
         </Form.Item>
+        {usesHeaderContent ? <Form.Item label={<span>
+            Header Content:&nbsp;
+          &nbsp;
+            </span>} labelAlign="left"
+                   className={styles.formItem}>
+          <TextArea 
+            id="headerContent"
+            placeholder="Please enter header content"
+            value={headerContent}
+            onChange={handleChange}
+            disabled={!canReadWrite}
+            className={styles.inputWithTooltip}
+            rows={4} 
+          />&nbsp;&nbsp;
+          <Tooltip title={settingsTooltips.headerContent}>
+            <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
+          </Tooltip>
+        </Form.Item> : null
+        }
         {usesTargetFormat ? <Form.Item label={<span>
             Target Format: &nbsp;
             </span>} labelAlign="left"

@@ -5,6 +5,7 @@ const AdvancedSettings = {
     'targetFormat': 'The format of the documents in the target database.',
     'additionalCollections': 'The collection tags to add to the default tags assigned to the processed document.',
     'targetPermissions': 'The comma-separated permissions required to access the processed document.',
+    'headerContent': 'A JSON object that represents additional metadata to add to the header section of the envelope of each document.',
     'module': 'The path to your custom hook module.',
     'cHParameters': 'Parameters, as key-value pairs, to pass to your custom hook module.',
     'user': 'The user account to use to run the module. The default is the user running the flow; e.g., data-hub-operator.',
