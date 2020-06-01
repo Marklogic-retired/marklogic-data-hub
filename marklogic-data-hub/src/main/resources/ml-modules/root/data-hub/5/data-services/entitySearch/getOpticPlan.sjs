@@ -17,6 +17,8 @@
 
 const op = require('/MarkLogic/optic');
 const search = require('/MarkLogic/appservices/search/search');
+const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
+const ds = require("/data-hub/5/data-services/ds-utils.sjs");
 
 const returnFlags = `<return-aggregates xmlns="http://marklogic.com/appservices/search">false</return-aggregates>
   <return-constraints xmlns="http://marklogic.com/appservices/search">false</return-constraints>
@@ -45,6 +47,26 @@ const stylesheet = fn.head(xdmp.unquote(`<xsl:stylesheet xmlns:xsl="http://www.w
    </xsl:template>
 </xsl:stylesheet>`));
 
+const replaceHyphenWithUnderscore = (str) => {
+  return str.replace(/-/g, '_');
+};
+
+const filterObjectAndArrayTypeProperties = (name) => {
+  const entityType = entityLib.findEntityTypeByEntityName(name);
+  if (!entityType) {
+    ds.throwServerError(`Could not find an Entity Model document with name: ${name}`);
+  }
+  const filteredProperties = new Set();
+  const properties = entityType.properties;
+
+  Object.keys(properties).forEach((property) => {
+    if (!properties[property].hasOwnProperty("$ref") && properties[property].datatype !== "array") {
+      filteredProperties.add(property);
+    }
+  });
+
+  return filteredProperties;
+};
 
 var viewName;
 var schemaName;
@@ -57,6 +79,15 @@ var columns = xdmp.getRequestField('columns');
 structuredQuery = fn.head(xdmp.unquote(structuredQuery)).root;
 searchText = searchText || '';
 queryOptions = fn.head(xdmp.unquote(queryOptions)).root;
+
+/*
+ * Filtering out columns (properties) that are of object/array type since we don't support them for now.
+ * Also replacing hyphen with underscore for column names (entity property names), schema names and view names since TDE's do the same.
+ */
+const simplePropertySet = filterObjectAndArrayTypeProperties(schemaName);
+columns = columns.filter(column => simplePropertySet.has(column)).map(column => replaceHyphenWithUnderscore(column));
+viewName = replaceHyphenWithUnderscore(viewName);
+schemaName = replaceHyphenWithUnderscore(schemaName);
 
 const newOptions = fn.head(xdmp.xsltEval(stylesheet, queryOptions)).root;
 

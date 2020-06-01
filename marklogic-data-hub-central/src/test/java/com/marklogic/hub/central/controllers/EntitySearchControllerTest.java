@@ -145,20 +145,22 @@ public class EntitySearchControllerTest extends AbstractMvcTest {
             "        \"propertiesToDisplay\": [\n" +
             "            \"customerId\",\n" +
             "            \"name\",\n" +
-            "            \"customerNumber\"\n" +
+            "            \"customerNumber\",\n" +
+            "            \"shipping\",\n" +
+            "            \"orders\"\n" +
             "        ]\n" +
             "    }\n" +
             "}";
 
-        int limit = 2;
+        // Even though "propertiesToDisplay" has 5 columns we only export 3 since we dont export object and array type properties for now.
         int totalColumns = 3;
+        int limit = 2;
         Object[] customer1Info = {customer1.getCustomerId(), customer1.getName(), customer1.getCustomerNumber()};
         Object[] customer2Info = {customer2.getCustomerId(), customer2.getName(), customer2.getCustomerNumber()};
 
 
         // Try exporting without the required role "hub-central-entity-exporter"
-        setTestUserRoles("hub-central-user","data-hub-operator");
-        loginAsTestUser();
+        loginAsTestUserWithRoles("hub-central-user","data-hub-operator");
         postWithParams(EXPORT_PATH, getRequestParams(limit, json))
             .andExpect(status().isForbidden());
         getJson(EXPORT_PATH + "/query/non-existent-query-id", getRequestParams(limit, null))
@@ -166,8 +168,7 @@ public class EntitySearchControllerTest extends AbstractMvcTest {
 
 
         // Set the required role and re-login
-        setTestUserRoles("data-hub-operator", "hub-central-entity-exporter", "hub-central-saved-query-user");
-        loginAsTestUser();
+        loginAsTestUserWithRoles("data-hub-operator", "hub-central-entity-exporter", "hub-central-saved-query-user");
 
         // Export using query document
         postWithParams(EXPORT_PATH, getRequestParams(limit, json))

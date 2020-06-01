@@ -161,6 +161,20 @@ function getLatestJobData(entityName) {
   return null;
 }
 
+/**
+ * Use this to get the EntityType from a definitions object when all you have is an entity name - e.g. Customer.
+ *
+ * @param entityName
+ * @returns {null|*}
+ */
+function findEntityTypeByEntityName(entityName) {
+  const uri = entityLib.getModelUri(entityName);
+  if (!fn.docAvailable(uri)) {
+    return null;
+  }
+  return cts.doc(uri).toObject().definitions[entityName];
+}
+
 function getModelUri(entityName) {
   return "/entities/" + xdmp.urlEncode(entityName) + ".entity.json";
 }
@@ -232,6 +246,7 @@ module.exports = {
   getEntityTypeIdParts,
   getLatestJobData,
   getModelCollection,
+  findEntityTypeByEntityName,
   getModelUri,
   validateModelDefinitions,
   writeModel

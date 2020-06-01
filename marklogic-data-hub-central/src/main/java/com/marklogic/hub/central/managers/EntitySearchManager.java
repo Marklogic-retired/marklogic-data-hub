@@ -84,7 +84,6 @@ public class EntitySearchManager {
 
 
     public static String QUERY_OPTIONS = "exp-final-entity-options";
-    private static Function<String, String> replaceHyphenWithUnderscore = str -> str.replaceAll("-", "_");
     private DatabaseClient finalDatabaseClient;
     private ModelManager modelManager;
 
@@ -190,33 +189,35 @@ public class EntitySearchManager {
         searchQuery.getQuery().getSelectedFacets().forEach((facetType, data) -> {
             StructuredQueryDefinition facetDef = null;
 
-            if (facetType.equals(COLLECTION_CONSTRAINT_NAME)) {
-                facetDef = queryBuilder
-                    .collectionConstraint(facetType, data.getStringValues().toArray(new String[0]));
-            }
-            else if (facetType.equals(JOB_RANGE_CONSTRAINT_NAME)) {
-                facetDef = queryBuilder
-                    .wordConstraint(JOB_WORD_CONSTRAINT_NAME,
-                        data.getStringValues().toArray(new String[0]));
-            }
-            else if (facetType.equals(CREATED_ON_CONSTRAINT_NAME)) {
-                // Converting the date in string format from yyyy-MM-dd format to yyyy-MM-dd HH:mm:ss format
-                LocalDate startDate = LocalDate.parse(data.getRangeValues().getLowerBound(), DATE_FORMAT);
-                String startDateTime = startDate.atStartOfDay(ZoneId.systemDefault())
-                    .format(DATE_TIME_FORMAT);
+            switch (facetType) {
+                case COLLECTION_CONSTRAINT_NAME:
+                    facetDef = queryBuilder
+                            .collectionConstraint(facetType, data.getStringValues().toArray(new String[0]));
+                    break;
+                case JOB_RANGE_CONSTRAINT_NAME:
+                    facetDef = queryBuilder
+                            .wordConstraint(JOB_WORD_CONSTRAINT_NAME,
+                                    data.getStringValues().toArray(new String[0]));
+                    break;
+                case CREATED_ON_CONSTRAINT_NAME:
+                    // Converting the date in string format from yyyy-MM-dd format to yyyy-MM-dd HH:mm:ss format
+                    LocalDate startDate = LocalDate.parse(data.getRangeValues().getLowerBound(), DATE_FORMAT);
+                    String startDateTime = startDate.atStartOfDay(ZoneId.systemDefault())
+                            .format(DATE_TIME_FORMAT);
 
-                // Converting the date in string format from yyyy-MM-dd format to yyyy-MM-dd HH:mm:ss format
-                // Adding 1 day to end date to get docs harmonized on the end date as well.
-                LocalDate endDate = LocalDate.parse(data.getRangeValues().getUpperBound(), DATE_FORMAT)
-                    .plusDays(1);
-                String endDateTime = endDate.atStartOfDay(ZoneId.systemDefault()).format(DATE_TIME_FORMAT);
+                    // Converting the date in string format from yyyy-MM-dd format to yyyy-MM-dd HH:mm:ss format
+                    // Adding 1 day to end date to get docs harmonized on the end date as well.
+                    LocalDate endDate = LocalDate.parse(data.getRangeValues().getUpperBound(), DATE_FORMAT)
+                            .plusDays(1);
+                    String endDateTime = endDate.atStartOfDay(ZoneId.systemDefault()).format(DATE_TIME_FORMAT);
 
-                facetDef = queryBuilder
-                    .and(queryBuilder.rangeConstraint(facetType, Operator.GE, startDateTime),
-                        queryBuilder.rangeConstraint(facetType, Operator.LT, endDateTime));
-            }
-            else { // If a property is not a Hub property, then it is an Entity Property
-                facetDef = getEntityPropertyConstraints(facetType, data, queryBuilder);
+                    facetDef = queryBuilder
+                            .and(queryBuilder.rangeConstraint(facetType, Operator.GE, startDateTime),
+                                    queryBuilder.rangeConstraint(facetType, Operator.LT, endDateTime));
+                    break;
+                default:  // If a property is not a Hub property, then it is an Entity Property
+                    facetDef = getEntityPropertyConstraints(facetType, data, queryBuilder);
+                    break;
             }
 
             if (facetDef != null) {
@@ -348,7 +349,6 @@ public class EntitySearchManager {
             .orElseThrow(() -> new DataHubException("Valid query required"));
     }
 
-    // Replacing hyphen with underscore for entityTypeId since TDE's do the same.
     protected String getEntityTypeIdForRowExport(JsonNode queryDocument) {
         return Optional.of(queryDocument)
             .map(node -> node.get("savedQuery"))
@@ -356,25 +356,15 @@ public class EntitySearchManager {
             .map(node -> node.get("entityTypeIds"))
             .map(node -> node.get(0))
             .map(JsonNode::textValue)
-            .map(replaceHyphenWithUnderscore)
             .orElse(null);
     }
 
-    /*
-     * Replacing hyphen with underscore for column name (entity property names) since TDE's do the same.
-     * Also filtering out columns that have a "." since we dont support object/array type properties for now.
-     */
     protected List<String> getColumnNamesForRowExport(JsonNode queryDocument) {
         List<String> columns = new ArrayList<>();
         Optional.of(queryDocument)
             .map(node -> node.get("savedQuery"))
             .map(node -> node.get("propertiesToDisplay"))
-            .ifPresent(node -> node.forEach(colNode -> {
-                String colName = colNode.textValue();
-                if (!colName.contains(".")) {
-                    columns.add(replaceHyphenWithUnderscore.apply(colName));
-                }
-            }));
+            .ifPresent(node -> node.forEach(colNode -> columns.add(colNode.textValue())));
         return columns;
     }
 
