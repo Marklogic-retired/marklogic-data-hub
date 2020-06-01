@@ -125,11 +125,11 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
             "        \"Entity1\"\n" +
             "      ]\n" +
             "    },\n" +
-            "    \"propertiesToDisplay\": [\"facet1\", \"EntityTypeProperty1\", \"facet1.facet\", \"EntityTypeProperty1.property\", \"EntityType-Property\"]\n" +
+            "    \"propertiesToDisplay\": [\"facet1\", \"EntityTypeProperty1\"]\n" +
             "  }\n" +
             "}";
         JsonNode queryDocument = new ObjectMapper().readTree(json);
-        List<String> expectedCols = Arrays.asList("facet1", "EntityTypeProperty1", "EntityType_Property");
+        List<String> expectedCols = Arrays.asList("facet1", "EntityTypeProperty1");
 
         List<String> actualCols = entitySearchManager.getColumnNamesForRowExport(queryDocument);
 
@@ -174,7 +174,7 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
             "    \"propertiesToDisplay\": [\"facet1\", \"EntityTypeProperty1\", \"facet1.facet\", \"EntityTypeProperty1.property\", \"EntityType-Property\"]\n" +
             "  }\n" +
             "}";
-        String expectedEntityTypeId = "Entity_1";
+        String expectedEntityTypeId = "Entity-1";
         JsonNode queryDocument = new ObjectMapper().readTree(json);
 
         String actualEntityTypeId = entitySearchManager.getEntityTypeIdForRowExport(queryDocument);
