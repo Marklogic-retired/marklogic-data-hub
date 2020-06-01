@@ -5,12 +5,12 @@ const AdvancedSettings = {
     'targetFormat': 'The format of the documents in the target database.',
     'additionalCollections': 'The collection tags to add to the default tags assigned to the processed document.',
     'targetPermissions': 'A comma-delimited string that defines permissions required to access the processed document. ' +
-      'The string must be in the format role,capability,role,capability,..., where capability can be read, insert, update, or execute.',
-    'module': 'The path to your custom hook module.',
-    'cHParameters': 'Parameters, as key-value pairs, to pass to your custom hook module.',
-    'user': 'The user account to use to run the module. The default is the user running the flow; e.g., data-hub-operator.',
-    'runBefore': 'Choose whether to run the module before or after the core processes of the step.',
-    /* The following are for *Custom*Tooltips. */
+    'The string must be in the format role,capability,role,capability,..., where capability can be read, insert, update, or execute.',
+    'headers': 'A JSON object that represents additional metadata to add to the header section of the envelope of each document.',
+    'provGranularity': 'The level of detail logged for provenance. Choose *coarse* for the default level or *off* for no provenance logging.',
+    'processors': 'Custom modules that perform additional processes after the core step processes are completed and before the results are saved.',
+    'customHook': 'A custom module that performs additional processes in its own transaction before or after the core step transaction. Results are saved within a transaction.',
+    /* The following are for *Custom* Tooltips. */
     'sourceDatabase': 'The database where the input data is read from.',
     'targetDatabase': 'The database where to store the processed data.',
     'options': 'Key-value pairs to pass as parameters to the custom module.',

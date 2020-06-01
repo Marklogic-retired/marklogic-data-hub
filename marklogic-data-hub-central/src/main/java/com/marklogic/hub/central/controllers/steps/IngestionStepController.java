@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.central.controllers.BaseController;
 import com.marklogic.hub.central.schemas.StepSchema;
-import com.marklogic.hub.central.schemas.StepSettingsSchema;
 import com.marklogic.hub.dataservices.ArtifactService;
 import com.marklogic.hub.dataservices.StepService;
 import io.swagger.annotations.ApiImplicitParam;
@@ -53,21 +52,6 @@ public class IngestionStepController extends BaseController {
     @Secured("ROLE_writeIngestion")
     public ResponseEntity<Void> deleteStep(@PathVariable String stepName) {
         newService().deleteStep(STEP_DEFINITION_TYPE, stepName);
-        return emptyOk();
-    }
-
-    @RequestMapping(value = "/{stepName}/settings", method = RequestMethod.GET)
-    @Secured("ROLE_readIngestion")
-    public ResponseEntity<StepSettingsSchema> getSettings(@PathVariable String stepName) {
-        return ResponseEntity.ok(StepUtil.settingsFromJson(newService().getStep(STEP_DEFINITION_TYPE, stepName)));
-    }
-
-    @RequestMapping(value = "/{stepName}/settings", method = RequestMethod.PUT)
-    @Secured("ROLE_writeIngestion")
-    public ResponseEntity<Void> updateSettings(@PathVariable String stepName, @RequestBody StepSettingsSchema settings) {
-        ObjectNode node = StepUtil.valueToTree(settings);
-        node.put("name", stepName);
-        newService().saveStep(STEP_DEFINITION_TYPE, node);
         return emptyOk();
     }
 

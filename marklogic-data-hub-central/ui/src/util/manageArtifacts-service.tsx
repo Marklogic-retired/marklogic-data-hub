@@ -6,12 +6,6 @@ const getMappingValidationResp = async (mapName: string, map, uri:string, dbName
     return resp;
 }
 
-const getSettingsArtifact = async (activityType,artifactName) => {
-    console.log(`GET /api/steps/${activityType}/${artifactName}/settings`);
-    let response = await axios.get(`/api/steps/${activityType}/${artifactName}/settings`);
-    return response;
-}
-
 const getNestedEntities = async (entityTypeTitle) => {
     const path = `/api/artifacts/mapping/entity/${entityTypeTitle}`;
     console.log(`GET ${path}`);
@@ -21,6 +15,5 @@ const getNestedEntities = async (entityTypeTitle) => {
 
 export {
     getMappingValidationResp,
-    getSettingsArtifact,
     getNestedEntities
 }

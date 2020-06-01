@@ -87,8 +87,7 @@ public class SwaggerConfig {
             ModelDefinitions.class,
             ModelDescriptor.class,
             PrimaryEntityType.class,
-            StepSchema.class,
-            StepSettingsSchema.class
+            StepSchema.class
         ).map(type -> typeResolver.resolve(type)).collect(Collectors.toList());
     }
 }

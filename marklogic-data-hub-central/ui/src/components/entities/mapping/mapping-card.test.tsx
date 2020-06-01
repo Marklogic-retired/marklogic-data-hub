@@ -131,13 +131,14 @@ describe("Entity Tiles component", () => {
       await wait(() => {
           fireEvent.click(saveButton);
       });
-      expect(axiosMock.put).toHaveBeenCalledTimes(1);
+      expect(axiosMock.post).toHaveBeenCalledTimes(1);
 
       //Open settings again
       await wait(() => {
           fireEvent.click(getByRole("settings-mapping"));
       })
-      expect(getByText('Batch Size:')).toBeInTheDocument();
+
+      expect(getByText('Batch Size')).toBeInTheDocument();
       expect(getByPlaceholderText('Please enter batch size')).toHaveValue('50');
 
       targetPermissions = getByPlaceholderText("Please enter target permissions");

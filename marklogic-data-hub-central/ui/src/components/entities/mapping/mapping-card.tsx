@@ -11,7 +11,7 @@ import {getResultsByQuery, getDoc} from '../../../util/search-service'
 import AdvancedSettingsDialog from "../../advanced-settings/advanced-settings-dialog";
 import { AdvMapTooltips } from '../../../config/tooltips.config';
 import {AuthoritiesContext} from "../../../util/authorities";
-import { getSettingsArtifact, getNestedEntities } from '../../../util/manageArtifacts-service';
+import { getNestedEntities } from '../../../util/manageArtifacts-service';
 import axios from 'axios';
 import { xmlParserForMapping } from '../../../util/xml-parser';
 import { Link, useHistory } from 'react-router-dom';
@@ -102,23 +102,6 @@ const MappingCard: React.FC<Props> = (props) => {
         setMapData(prevState => ({ ...prevState, ...props.data[index]}));
         setOpenMappingSettings(true);
         console.log('Open settings')
-    }
-
-    const getDatabaseFromSettingsArtifact = async (mapName) => {
-        try{
-        let response = await getSettingsArtifact(activityType,mapName)
-        if (response.status === 200) {
-            if(response.data.sourceDatabase){
-                await setSourceDatabaseName(response.data.sourceDatabase)
-            } else {
-                await setSourceDatabaseName('data-hub-STAGING')
-            }
-        }
-      } catch(error) {
-        let message = error;
-        console.log('Error While fetching the mapping setting!', message);
-        setDocNotFound(true);
-    }
     }
 
     //Custom CSS for source Format
@@ -553,7 +536,7 @@ const MappingCard: React.FC<Props> = (props) => {
             await getSourceData(index);
             extractEntityInfoForTable();
             setMapName(name);
-            await getDatabaseFromSettingsArtifact(name);
+            setSourceDatabaseName(mData.sourceDatabase);
             getMappingFunctions();
             setMappingVisible(true);
       }

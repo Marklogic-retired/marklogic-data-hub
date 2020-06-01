@@ -6,158 +6,202 @@ import {
   Tooltip,
   Icon,
   Select,
-  Switch
-} from "antd";
-import React, { useState, useEffect, useContext } from "react";
+} from 'antd';
+import React, { useState, useEffect, useContext } from 'react';
 import styles from './advanced-settings-dialog.module.scss';
 import { AdvancedSettings } from '../../config/tooltips.config';
 import { AdvancedSettingsMessages } from '../../config/messages.config';
 import { UserContext } from '../../util/user-context';
-import Axios from "axios";
+import Axios from 'axios';
 
-const {Option} = Select;
+const { TextArea } = Input;
+const { Option } = Select;
 
 const AdvancedSettingsDialog = (props) => {
   const { resetSessionTime } = useContext(UserContext);
-  const settingsTooltips = Object.assign({}, AdvancedSettings, props.tooltipsData);
-  const activityType = props.activityType;
-  const [defaultCollections, setDefaultCollections] = useState<any[]>([]);
-  const usesTargetFormat = activityType === 'mapping';
-  const [isTargetFormatTouched, setTargetFormatTouched] = useState(false);
-  const [targetFormat, setTargetFormat] = useState('JSON');
-  const targetFormatOptions = ['JSON', 'XML'].map(d => <Option data-testid='targetFormatOptions' key={d}>{d}</Option>);
-  const usesSourceDatabase = activityType !== 'ingestion';
-  const defaultTargetDatabase = !usesSourceDatabase ? 'data-hub-STAGING' : 'data-hub-FINAL';
+  const tooltips = Object.assign({}, AdvancedSettings, props.tooltipsData);
+  const stepType = props.activityType;
+  const invalidJSONMessage = 'Invalid JSON';
+
+  const usesSourceDatabase = stepType !== 'ingestion';
   const defaultSourceDatabase = usesSourceDatabase ? 'data-hub-STAGING' : 'data-hub-FINAL';
-  const defaultBatchSize = 100;
-  const [tgtDatabase, setTgtDatabase] = useState(defaultTargetDatabase);
-  const [srcDatabase, setSrcDatabase] = useState(defaultSourceDatabase);
-  const[ additionalCollections, setAdditionalCollections ] = useState<any[]>([]);
-  const [isAddCollTouched, setAddCollTouched] = useState(false);
-  const [isSrcDatabaseTouched, setSrcDatabaseTouched] = useState(false);
-  const [isTgtDatabaseTouched, setTgtDatabaseTouched] = useState(false);
+
+  const [sourceDatabase, setSourceDatabase] = useState(defaultSourceDatabase);
+  const [sourceDatabaseTouched, setSourceDatabaseTouched] = useState(false);
+
+  const defaultTargetDatabase = !usesSourceDatabase ? 'data-hub-STAGING' : 'data-hub-FINAL';
+  const databaseOptions = ['data-hub-STAGING','data-hub-FINAL'];
+  const [targetDatabase, setTargetDatabase] = useState(defaultTargetDatabase);
+  const [targetDatabaseTouched, setTargetDatabaseTouched] = useState(false);
+
+  const [defaultCollections, setDefaultCollections] = useState<any[]>([]);
+  const [additionalCollections, setAdditionalCollections ] = useState<any[]>([]);
+  const [addCollTouched, setAddCollTouched] = useState(false);
+
   const [targetPermissions, setTargetPermissions] = useState('');
-  const [isTgtPermissionsTouched, setIsTgtPermissionsTouched] = useState(false);
-  const [provGranularity, setProvGranularity] = useState('coarse');
-  const [isProvGranTouched, setIsProvGranTouched] = useState(false);
-  const [batchSize, setBatchSize] = useState(defaultBatchSize);
-  const [isBatchSizeTouched, setBatchSizeTouched] = useState(false);
-  const [module, setModule] = useState('');
-  const [isModuleTouched, setIsModuleTouched] = useState(false);
-  const [cHparameters, setCHparameters] = useState(JSON.stringify({}, null, 4));
-  const [isCHParamTouched, setIsCHParamTouched] = useState(false);
-  const [user, setUser] = useState('');
-  const [isUserTouched, setIsUserTouched] = useState(false);
-  const [runBefore, setRunBefore] = useState(false);
-  const [isRunBeforeTouched, setIsRunBeforeTouched] = useState(false);
-  //const [mlcpCommand, setMLCPCommand] = useState('');
-  const [toExpand, setToExpand] = useState(false);
-  const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
-  const [isLoading,setIsLoading] = useState(false);
+  const validCapabilities = ['read', 'update', 'insert', 'execute'];
+  const [targetPermissionsTouched, setTargetPermissionsTouched] = useState(false);
   const [permissionValidationError, setPermissionValidationError] = useState('');
+
+  const usesTargetFormat = stepType === 'mapping';
+  const defaultTargetFormat = 'JSON';
+  const targetFormatOptions = ['JSON', 'XML'].map(d => <Option data-testid='targetFormatOptions' key={d}>{d}</Option>);
+  const [targetFormat, setTargetFormat] = useState('JSON');
+  const [targetFormatTouched, setTargetFormatTouched] = useState(false);
+
+  const defaultprovGranularity = 'coarse';
+  const provGranularityOptions = { 'Coarse-grained': 'coarse', 'Off': 'off' };
+  const [provGranularity, setProvGranularity] = useState('coarse');
+  const [provGranularityTouched, setProvGranularityTouched] = useState(false);
+
+  const defaultBatchSize = 100;
+  const [batchSize, setBatchSize] = useState(defaultBatchSize);
+  const [batchSizeTouched, setBatchSizeTouched] = useState(false);
+
+  const usesHeaders = stepType === 'ingestion' || stepType === 'mapping';
+  const [headers, setHeaders] = useState('');
+  const [headersTouched, setHeadersTouched] = useState(false);
+  const [headersValid, setHeadersValid] = useState(true);
+
+  const [processors, setProcessors] = useState('');
+  const [processorsTouched, setProcessorsTouched] = useState(false);
+  const [processorsExpanded, setProcessorsExpanded] = useState(false);
+  const [processorsValid, setProcessorsValid] = useState(true);
+
+  const [customHook, setCustomHook] = useState('');
+  const [customHookTouched, setCustomHookTouched] = useState(false);  
+  const [customHookExpanded, setCustomHookExpanded] = useState(false);
+  const [customHookValid, setCustomHookValid] = useState(true);
+  
+  const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
+  const [loading,setLoading] = useState(false);
 
   const canReadWrite = props.canWrite;
 
-  const tgtDatabaseOptions = ['data-hub-STAGING','data-hub-FINAL'];
-
-  const provenanceGranularityOptions = {
-    'Coarse-grained': 'coarse',
-    'Off': 'off'
-  };
-  const validCapabilities = ['read', 'update', 'insert', 'execute'];
   useEffect(() => {
     getSettingsArtifact();
 
     return () => {
-      setSrcDatabaseTouched(false);
-      setTgtDatabaseTouched(false);
+      setSourceDatabaseTouched(false);
+      setTargetDatabaseTouched(false);
       setAddCollTouched(false);
-      setIsTgtPermissionsTouched(false);
-      setIsModuleTouched(false);
-      setIsCHParamTouched(false);
-      setIsProvGranTouched(false);
-      setIsUserTouched(false);
-      setIsRunBeforeTouched(false);
+      setTargetPermissionsTouched(false);
       setTargetFormatTouched(false);
-      setSrcDatabase(defaultSourceDatabase);
-      setTgtDatabase(defaultTargetDatabase);
-      setAdditionalCollections([]);
-      setTargetPermissions('');
-      setModule('');
-      setCHparameters(JSON.stringify({}, null, 4));
-      setProvGranularity('coarse');
+      setProvGranularityTouched(false);
       setBatchSizeTouched(false);
-      setUser('');
-      setRunBefore(false);
-      setPermissionValidationError('');
+      setHeadersTouched(false);
+      setProcessorsTouched(false);
+      setCustomHookTouched(false);
 
-    };
-  },[props.openAdvancedSettings  ,isLoading])
-
-//CREATE/POST settings Artifact
-const createSettingsArtifact = async (settingsObj) => {
-  if (props.stepData.name) {
-    try {
-      setIsLoading(true);
-      let response = await Axios.put(`/api/steps/${activityType}/${props.stepData.name}/settings`, settingsObj);
-      if (response.status === 200) {
-        setIsLoading(false);
-      }
-    } catch (error) {
-      let message = error.response.data.message;
-      console.error('Error while creating the activity settings artifact', message)
-      setIsLoading(false);
-    } finally {
-      resetSessionTime();
-    }
-  }
-}
-
-//GET the settings artifact
-const getSettingsArtifact = async () => {
-  if (props.stepData.name) {
-    try {
-      let response = await Axios.get(`/api/steps/${activityType}/${props.stepData.name}/settings`);
-
-      if (response.status === 200) {
-        if (response.data.sourceDatabase) {
-          setSrcDatabase(response.data.sourceDatabase);
-        }
-        if (response.data.collections) {
-          setDefaultCollections(response.data.collections);
-        }
-        setTgtDatabase(response.data.targetDatabase);
-        setAdditionalCollections([...response.data.additionalCollections]);
-        setTargetPermissions(response.data.permissions);
-        setTargetFormat(response.data.targetFormat);
-        if (response.data.customHook) {
-          setModule(response.data.customHook.module);
-          setCHparameters(response.data.customHook.parameters);
-          setUser(response.data.customHook.user);
-          setRunBefore(response.data.customHook.runBefore);
-        }
-        setProvGranularity(response.data.provenanceGranularityLevel);
-        setBatchSize(response.data.batchSize);
-      }
-    } catch (error) {
-      let message = error.response;
-      console.error('Error while fetching load settings artifacts', message || error);
-      setSrcDatabase(defaultSourceDatabase);
-      setTgtDatabase(defaultTargetDatabase);
+      setSourceDatabase(defaultSourceDatabase);
+      setTargetDatabase(defaultTargetDatabase);
       setAdditionalCollections([]);
       setTargetPermissions('');
-      setTargetFormat('JSON');
-      setModule('');
-      setCHparameters(JSON.stringify({}, null, 4));
-      setProvGranularity('coarse');
+      setPermissionValidationError('');
+      setTargetFormat(defaultTargetFormat);
+      setProvGranularity(defaultprovGranularity);
       setBatchSize(defaultBatchSize);
-      setUser('');
-      setRunBefore(false);
-    } finally {
-      resetSessionTime();
+      setHeaders('');
+      setProcessors('');
+      setCustomHook('');
+
+      setProcessorsExpanded(false);
+      setCustomHookExpanded(false);
+
+      setHeadersValid(true);
+      setProcessorsValid(true);
+      setCustomHookValid(true);
+    };
+  },[props.openAdvancedSettings  ,loading])
+
+  const isFormValid = () => {
+    return headersValid && processorsValid && customHookValid;
+  }
+
+  // Convert JSON from JavaScript object to formatted string
+  const formatJSON = (json) => {
+    try {
+      const result = JSON.stringify(json, null, 2);
+      return (result.trim() == '""') ? null : result;
+    } catch (error) {
+      console.error(error);
+      return json;
     }
   }
-}
+
+  // Convert JSON from string to JavaScript object
+  const parseJSON = (json) => {
+    try {
+      const result = JSON.parse(json);
+      return result;
+    } catch (error) {
+      console.error(error);
+      return json;
+    }
+  }
+
+  // CREATE/POST settings Artifact
+  const createSettingsArtifact = async (settingsObj) => {
+    if (props.stepData.name) {
+      try {
+        setLoading(true);
+        let response = await Axios.post(`/api/steps/${stepType}/${props.stepData.name}`, settingsObj);
+        if (response.status === 200) {
+          setLoading(false);
+        }
+      } catch (error) {
+        let message = error.response.data.message;
+        console.error('Error while creating the activity settings artifact', message)
+        setLoading(false);
+      } finally {
+        resetSessionTime();
+      }
+    }
+  }
+
+  // GET the settings artifact
+  const getSettingsArtifact = async () => {
+    if (props.stepData.name) {
+      try {
+        let response = await Axios.get(`/api/steps/${stepType}/${props.stepData.name}`);
+
+        if (response.status === 200) {
+          if (response.data.sourceDatabase) {
+            setSourceDatabase(response.data.sourceDatabase);
+          }
+          if (response.data.collections) {
+            setDefaultCollections(response.data.collections);
+          }
+          setTargetDatabase(response.data.targetDatabase);
+          if (response.data.additionalCollections) {
+            setAdditionalCollections([...response.data.additionalCollections]);
+          }
+          setTargetPermissions(response.data.permissions);
+          setTargetFormat(response.data.targetFormat);
+          setProvGranularity(response.data.provenanceGranularityLevel);
+          setBatchSize(response.data.batchSize);
+          setHeaders(formatJSON(response.data.headers));
+          setProcessors(formatJSON(response.data.processors));
+          setCustomHook(formatJSON(response.data.customHook));
+        }
+      } catch (error) {
+        let message = error.response;
+        console.error('Error while fetching load settings artifacts', message || error);
+        setSourceDatabase(defaultSourceDatabase);
+        setTargetDatabase(defaultTargetDatabase);
+        setAdditionalCollections([]);
+        setTargetPermissions('');
+        setTargetFormat(defaultTargetFormat);
+        setProvGranularity(defaultprovGranularity);
+        setBatchSize(defaultBatchSize);
+        setHeaders('');
+        setProcessors('');
+        setCustomHook('');
+      } finally {
+        resetSessionTime();
+      }
+    }
+  }
 
   const onCancel = () => {
     if(checkDeleteOpenEligibility()){
@@ -173,23 +217,21 @@ const getSettingsArtifact = async () => {
 
   //Check if Delete Confirmation dialog should be opened or not.
   const checkDeleteOpenEligibility = () => {
-
-      if(!isSrcDatabaseTouched
-      &&!isTgtDatabaseTouched
-      && !isAddCollTouched
-      && !isTgtPermissionsTouched
-      && !isModuleTouched
-      && !isCHParamTouched
-      && !isTargetFormatTouched
-      && !isProvGranTouched
-      && !isBatchSizeTouched
-      && !isUserTouched
-      && !isRunBeforeTouched
+      if ( !sourceDatabaseTouched
+        && !targetDatabaseTouched
+        && !addCollTouched
+        && !targetPermissionsTouched
+        && !headersTouched
+        && !targetFormatTouched
+        && !provGranularityTouched
+        && !batchSizeTouched
+        && !processorsTouched
+        && !customHookTouched
       ) {
-              return false;
-        } else {
-          return true;
-         }
+        return false;
+      } else {
+        return true;
+      }
   }
 
   const onDelOk = () => {
@@ -202,40 +244,35 @@ const getSettingsArtifact = async () => {
   }
 
   const deleteConfirmation = <Modal
-        visible={deleteDialogVisible}
-        bodyStyle={{textAlign: 'center'}}
-        width={250}
-        maskClosable={false}
-        closable={false}
-        footer={null}
-    >
-        <span className={styles.ConfirmationMessage}>Discard changes?</span><br/><br/>
-
-        <div >
-            <Button onClick={() => onDelCancel()}>No</Button>
-            &nbsp;&nbsp;
-            <Button type="primary" htmlType="submit" onClick={onDelOk}>Yes</Button>
-          </div>
-    </Modal>;
+      visible={deleteDialogVisible}
+      bodyStyle={{textAlign: 'center'}}
+      width={250}
+      maskClosable={false}
+      closable={false}
+      footer={null}
+  >
+      <span className={styles.ConfirmationMessage}>Discard changes?</span><br/><br/>
+      <div >
+          <Button onClick={() => onDelCancel()}>No</Button>&nbsp;&nbsp;
+          <Button type="primary" htmlType="submit" onClick={onDelOk}>Yes</Button>
+        </div>
+  </Modal>;
 
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
     if (event) event.preventDefault();
 
     let dataPayload = {
         collections: defaultCollections,
-        additionalCollections : additionalCollections,
-        sourceDatabase : usesSourceDatabase ? srcDatabase : null,
-        targetDatabase : tgtDatabase,
+        additionalCollections: additionalCollections,
+        sourceDatabase: usesSourceDatabase ? sourceDatabase: null,
+        targetDatabase: targetDatabase,
         targetFormat: targetFormat,
-        permissions : targetPermissions,
+        permissions: targetPermissions,
+        headers: parseJSON(headers),
+        processors: parseJSON(processors),
         provenanceGranularityLevel: provGranularity,
         batchSize: batchSize,
-        customHook : {
-            module : module,
-            parameters : cHparameters,
-            user : user,
-            runBefore : runBefore
-        }
+        customHook: parseJSON(customHook),
       }
     if (isPermissionsValid()) {
         createSettingsArtifact(dataPayload);
@@ -267,30 +304,98 @@ const getSettingsArtifact = async () => {
     return true;
   }
 
+  const isValidJSON = (json) => {
+    try {
+      JSON.parse(json);
+      return true;
+    } catch (error) {
+      return json.trim() === '';
+    }
+  }
+
   const handleChange = (event) => {
     if (event.target.id === 'targetPermissions') {
       setTargetPermissions(event.target.value);
-      setIsTgtPermissionsTouched(true);
+      setTargetPermissionsTouched(true);
     }
 
-    if (event.target.id === 'module') {
-      setModule(event.target.value);
-      setIsModuleTouched(true);
+    if (event.target.id === 'headers') {
+      setHeaders(event.target.value);
+      setHeadersTouched(true);
+      if (!headersValid && isValidJSON(event.target.value)) {
+        setHeadersValid(true);
+      }
     }
 
-    if (event.target.id === 'cHparameters') {
-      setCHparameters(event.target.value);
-      setIsCHParamTouched(true);
+    if (event.target.id === 'processors') {
+      setProcessors(event.target.value);
+      setProcessorsTouched(true);
+      if (!processorsValid && isValidJSON(event.target.value)) {
+        setProcessorsValid(true);
+      }
     }
 
-    if (event.target.id === 'user') {
-      setUser(event.target.value);
-      setIsUserTouched(true);
+    if (event.target.id === 'customHook') {
+      setCustomHook(event.target.value);
+      setCustomHookTouched(true);
+      if (!customHookValid && isValidJSON(event.target.value)) {
+        setCustomHookValid(true);
+      }
     }
 
     if (event.target.id === 'batchSize'){
       setBatchSize(event.target.value);
       setBatchSizeTouched(true);
+    }
+  }
+
+  const handleBlur = (event) => {
+    if (event.target.id === 'headers') {
+      setHeadersValid(isValidJSON(event.target.value));
+    }
+
+    if (event.target.id === 'processors') {
+      setProcessorsValid(isValidJSON(event.target.value));
+    }
+
+    if (event.target.id === 'customHook') {
+      setCustomHookValid(isValidJSON(event.target.value));
+    }
+
+    if (event.target.id === 'batchSize'){
+      setBatchSize(event.target.value);
+      setBatchSizeTouched(true);
+    }
+  }
+
+  const handleSourceDatabase = (value) => {
+    if (value === ' ') {
+        setSourceDatabaseTouched(false);
+    }
+    else {
+        setSourceDatabaseTouched(true);
+        setSourceDatabase(value);
+    }
+  }
+
+  const handleTargetDatabase = (value) => {
+    if (value === ' ') {
+      setTargetDatabaseTouched(false);
+    }
+    else {
+      setTargetDatabaseTouched(true);
+      setTargetDatabase(value);
+    }
+  }
+
+  const handleAddColl = (value) => {
+    if (value === ' ') {
+      setAddCollTouched(false);
+    }
+    else {
+      setAddCollTouched(true);
+      // default collections will come from default settings retrieved. Don't want them to be added to additionalCollections property
+      setAdditionalCollections(value.filter((col) => !defaultCollections.includes(col)));
     }
   }
 
@@ -304,59 +409,13 @@ const getSettingsArtifact = async () => {
     }
   }
 
-  const handleTgtDatabase = (value) => {
-
-    if (value === ' ') {
-      setTgtDatabaseTouched(false);
-    }
-    else {
-      setTgtDatabaseTouched(true);
-      setTgtDatabase(value);
-    }
-  }
-
-
-    const handleSrcDatabase = (value) => {
-
-        if (value === ' ') {
-            setSrcDatabaseTouched(false);
-        }
-        else {
-            setSrcDatabaseTouched(true);
-            setSrcDatabase(value);
-        }
-    }
-
-  const handleAddColl = (value) => {
-
-    if (value === ' ') {
-      setAddCollTouched(false);
-    }
-    else {
-      setAddCollTouched(true);
-      // default collections will come from default settings retrieved. Don't want them to be added to additionalCollections property
-      setAdditionalCollections(value.filter((col) => !defaultCollections.includes(col)));
-    }
-  }
-
   const handleProvGranularity = (value) => {
-
     if (value === ' ') {
-      setIsProvGranTouched(false);
+      setProvGranularityTouched(false);
     }
     else {
-      setIsProvGranTouched(true);
+      setProvGranularityTouched(true);
       setProvGranularity(value);
-    }
-  }
-
-  const handleRunBefore = (checked, event) => {
-    if (checked) {
-      setRunBefore(true);
-      setIsRunBeforeTouched(true);
-    } else {
-      setRunBefore(false);
-      setIsRunBeforeTouched(true);
     }
   }
 
@@ -371,80 +430,10 @@ const getSettingsArtifact = async () => {
     },
   };
 
-  const toggleCustomHook = () => {
-    if (!toExpand) {
-      setToExpand(true);
-    } else {
-      setToExpand(false);
-    }
-  }
+  const sourceDbOptions = databaseOptions.map(d => <Option data-testid='sourceDbOptions' key={d}>{d}</Option>);
+  const targetDbOptions = databaseOptions.map(d => <Option data-testid='targetDbOptions' key={d}>{d}</Option>);
 
-  const customHookProperties = <div><Form.Item label={<span className={styles.cHItemLabel}>
-    Module:&nbsp;
-    &nbsp;
-</span>} labelAlign="left"
-    className={styles.formItem}>
-    <Input
-      id="module"
-      placeholder="Please enter module"
-      value={module}
-      onChange={handleChange}
-      disabled={!canReadWrite}
-      className={styles.inputWithTooltip}
-    />&nbsp;&nbsp;
-    <Tooltip title={settingsTooltips.module}>
-      <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-    </Tooltip>
-  </Form.Item>
-    <Form.Item label={<span className={styles.cHItemLabel}>
-      Parameters:&nbsp;
-      &nbsp;
-</span>} labelAlign="left"
-      className={styles.formItem}>
-      <Input
-        id="cHparameters"
-        placeholder="Please enter parameters"
-        value={cHparameters}
-        onChange={handleChange}
-        disabled={!canReadWrite}
-        className={styles.inputWithTooltip}
-      />&nbsp;&nbsp;
-      <Tooltip title={settingsTooltips.cHParameters}>
-        <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-      </Tooltip>
-    </Form.Item>
-    <Form.Item label={<span className={styles.cHItemLabel}>
-      User:&nbsp;
-      &nbsp;
-</span>} labelAlign="left"
-      className={styles.formItem}>
-      <Input
-        id="user"
-        placeholder="Please enter user information"
-        value={user}
-        onChange={handleChange}
-        disabled={!canReadWrite}
-        className={styles.inputWithTooltip}
-      />&nbsp;&nbsp;
-      <Tooltip title={settingsTooltips.user}>
-        <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-      </Tooltip>
-    </Form.Item>
-    <Form.Item label={<span className={styles.cHItemLabel}>
-      RunBefore:
-      &nbsp;
-</span>} labelAlign="left"
-      className={styles.formItem}>
-      <Switch checked={runBefore} checkedChildren="ON" unCheckedChildren="OFF" onChange={handleRunBefore} disabled={!canReadWrite} />&nbsp;&nbsp;
-      <Tooltip title={settingsTooltips.runBefore} placement={'right'}>
-        <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-      </Tooltip>
-    </Form.Item></div>
-
-  const tgtDbOptions = tgtDatabaseOptions.map(d => <Option data-testid='dbOptions' key={d}>{d}</Option>);
-  const srcDbOptions = tgtDatabaseOptions.map(d => <Option data-testid='srcDbOptions' key={d}>{d}</Option>);
-
-  const provGranOpt = Object.keys(provenanceGranularityOptions).map(d => <Option data-testid='provOptions' key={provenanceGranularityOptions[d]}>{d}</Option>);
+  const provGranOpts = Object.keys(provGranularityOptions).map(d => <Option data-testid='provOptions' key={provGranularityOptions[d]}>{d}</Option>);
 
   return <Modal
     visible={props.openAdvancedSettings}
@@ -455,53 +444,61 @@ const getSettingsArtifact = async () => {
     okText="Save"
     className={styles.SettingsModal}
     footer={null}
-    maskClosable={false}>
+    maskClosable={false}
+  >
     <p className={styles.title}>Advanced Settings</p>
-    <p className={styles.stepName}>{props.stepData.name}</p>
-    <br/>
+    <p className={styles.stepName}>{props.stepData.name}</p><br/>
     <div className={styles.newDataForm}>
-      <Form {...formItemLayout} onSubmit={handleSubmit} colon={false}>
-        {usesSourceDatabase ? <Form.Item label={<span>
-            Source Database:&nbsp;
-            </span>} labelAlign="left"
-                                         className={styles.formItem}>
+      <Form {...formItemLayout} onSubmit={handleSubmit} colon={true}>
+        { usesSourceDatabase ? <Form.Item 
+          label={<span>Source Database</span>} 
+          labelAlign="left"
+          className={styles.formItem}
+        >
           <Select
             id="sourceDatabase"
             placeholder="Please select source database"
-            value={srcDatabase}
-            onChange={handleSrcDatabase}
+            value={sourceDatabase}
+            onChange={handleSourceDatabase}
             disabled={!canReadWrite}
             className={styles.inputWithTooltip}
+            aria-label="sourceDatabase-select"
           >
-            {srcDbOptions}
+            {sourceDbOptions}
           </Select>&nbsp;&nbsp;
-          <Tooltip title={settingsTooltips.sourceDatabase}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-          </Tooltip>
+          <div className={styles.selectTooltip}>
+            <Tooltip title={tooltips.sourceDatabase}>
+              <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
+            </Tooltip>
+          </div>
         </Form.Item> : null
-        }<Form.Item label={<span>
-            Target Database:
-        &nbsp;
-            </span>} labelAlign="left"
-                    className={styles.formItem}>
-        <Select
-          id="targetDatabase"
-          placeholder="Please select target database"
-          value={tgtDatabase}
-          onChange={handleTgtDatabase}
-          disabled={!canReadWrite}
-          className={styles.inputWithTooltip}
+        }<Form.Item 
+          label={<span>Target Database</span>} 
+          labelAlign="left"
+          className={styles.formItem}
         >
-          {tgtDbOptions}
-        </Select>&nbsp;&nbsp;
-        <Tooltip title={settingsTooltips.targetDatabase}>
-          <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-        </Tooltip>
-      </Form.Item>
-        <Form.Item label={<span>
-            Target Collections:
-          &nbsp;
-            </span>} labelAlign="left" className={styles.formItemTargetCollections}>
+          <Select
+            id="targetDatabase"
+            placeholder="Please select target database"
+            value={targetDatabase}
+            onChange={handleTargetDatabase}
+            disabled={!canReadWrite}
+            className={styles.inputWithTooltip}
+            aria-label="targetDatabase-select"
+          >
+            {targetDbOptions}
+          </Select>
+          <div className={styles.selectTooltip}>
+            <Tooltip title={tooltips.targetDatabase}>
+              <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
+            </Tooltip>
+          </div>
+        </Form.Item>
+        <Form.Item 
+          label={<span>Target Collections</span>} 
+          labelAlign="left" 
+          className={styles.formItemTargetCollections}
+        >
           <Select
             id="additionalColl"
             mode="tags"
@@ -511,26 +508,30 @@ const getSettingsArtifact = async () => {
             disabled={!canReadWrite}
             onChange={handleAddColl}
             className={styles.inputWithTooltip}
+            aria-label="additionalColl-select"
           >
             {additionalCollections.map((col) => {
               return <Option value={col} key={col} label={col}>{col}</Option>;
             })}
-          </Select>&nbsp;&nbsp;
-          <Tooltip title={settingsTooltips.additionalCollections}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-          </Tooltip>
+          </Select>
+          <div className={styles.inputTooltip}>
+            <Tooltip title={tooltips.additionalCollections}>
+              <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
+            </Tooltip>
+          </div>
         </Form.Item>
-        <Form.Item label={<span className={styles.cHItemLabel}>
-            Default Collections:&nbsp;
-       &nbsp;
-        </span>} labelAlign="left" className={styles.formItem}>
+        <Form.Item 
+          label={<span className={styles.defaultCollectionsLabel}>Default Collections</span>} 
+          labelAlign="left" 
+          className={styles.formItem}
+        >
         <div className={styles.defaultCollections}>{defaultCollections.map((collection, i) => {return <div data-testid={`defaultCollections-${collection}`} key={i}>{collection}</div>})}</div>
         </Form.Item>
-        <Form.Item label={<span>
-            Target Permissions:&nbsp;
-          &nbsp;
-            </span>} labelAlign="left"
-                   className={styles.formItem}>
+        <Form.Item 
+          label={<span>Target Permissions</span>} 
+          labelAlign="left"
+          className={styles.formItem}
+        >
           <Input
             id="targetPermissions"
             placeholder="Please enter target permissions"
@@ -538,18 +539,21 @@ const getSettingsArtifact = async () => {
             onChange={handleChange}
             disabled={!canReadWrite}
             className={styles.inputWithTooltip}
-          />&nbsp;&nbsp;
-          <Tooltip title={settingsTooltips.targetPermissions}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-          </Tooltip>
+          />
+          <div className={styles.inputTooltip}>
+            <Tooltip title={tooltips.targetPermissions}>
+              <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
+            </Tooltip>
+          </div>
           <div className={styles.validationError}>
               {permissionValidationError}
           </div>
         </Form.Item>
-        {usesTargetFormat ? <Form.Item label={<span>
-            Target Format: &nbsp;
-            </span>} labelAlign="left"
-                                       className={styles.formItem}>
+        { usesTargetFormat ? <Form.Item 
+          label={<span>Target Format</span>} 
+          labelAlign="left"
+          className={styles.formItem}
+        >
           <Select
             id="targetFormat"
             placeholder="Please select target format"
@@ -557,18 +561,21 @@ const getSettingsArtifact = async () => {
             onChange={handleTargetFormat}
             disabled={!canReadWrite}
             className={styles.inputWithTooltip}
+            aria-label="targetFormat-select"
           >
             {targetFormatOptions}
-          </Select>&nbsp;&nbsp;
-          <Tooltip title={settingsTooltips.targetFormat} placement={'right'}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-          </Tooltip>
-        </Form.Item> : null
-        }
-        <Form.Item label={<span>
-            Provenance Granularity: &nbsp;
-            </span>} labelAlign="left"
-                   className={styles.formItem}>
+          </Select>
+          <div className={styles.inputTooltip}>
+            <Tooltip title={tooltips.targetFormat} placement={'right'}>
+              <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
+            </Tooltip>
+          </div>
+        </Form.Item> : null }
+        <Form.Item 
+          label={<span>Provenance Granularity</span>} 
+          labelAlign="left"
+          className={styles.formItem}
+        >
           <Select
             id="provGranularity"
             placeholder="Please select provenance granularity"
@@ -576,44 +583,132 @@ const getSettingsArtifact = async () => {
             onChange={handleProvGranularity}
             disabled={!canReadWrite}
             className={styles.inputWithTooltip}
+            aria-label="provGranularity-select"
           >
-            {provGranOpt}
-          </Select>&nbsp;&nbsp;
-          <Tooltip title={settingsTooltips.provGranularity} placement={'right'}>
+            {provGranOpts}
+          </Select>
+          <div className={styles.selectTooltip}>
+            <Tooltip title={tooltips.provGranularity} placement={'right'}>
+              <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
+            </Tooltip>
+          </div>
+        </Form.Item>
+        <Form.Item 
+          label={<span>Batch Size</span>} 
+          labelAlign="left"
+          className={styles.formItem}
+        >
+          <Input
+              id="batchSize"
+              placeholder="Please enter batch size"
+              value={batchSize}
+              onChange={handleChange}
+              disabled={!canReadWrite}
+              className={styles.inputBatchSize}
+          />
+          <div className={styles.inputTooltip}>
+            <Tooltip title={tooltips.batchSize} placement={'right'}>
+                <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
+            </Tooltip>
+          </div>
+        </Form.Item>
+        { usesHeaders ? <>
+        <div className={styles.textareaTooltip}>
+          <Tooltip title={tooltips.headers}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
           </Tooltip>
-        </Form.Item>
-
-          <Form.Item label={<span>
-            Batch Size: &nbsp;
-            </span>} labelAlign="left"
-                     className={styles.formItem}>
-              <Input
-                  id="batchSize"
-                  placeholder="Please enter batch size"
-                  value={batchSize}
-                  onChange={handleChange}
-                  disabled={!canReadWrite}
-                  className={styles.inputWithTooltip}
-              >
-              </Input>&nbsp;&nbsp;
-              <Tooltip title={settingsTooltips.batchSize} placement={'right'}>
-                  <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-              </Tooltip>
-          </Form.Item>
-        <Form.Item label={<span>
-            <span className={styles.cHookLabel} onClick={toggleCustomHook}>Custom Hook</span>&nbsp;&nbsp;
-          <Icon type="right" className={styles.rightArrow} onClick={toggleCustomHook} rotate={toExpand ? 90 : 0}/>
-          </span>} labelAlign="left"
-                   className={styles.formItem}/>
-        {toExpand ? customHookProperties : ''}
-
+        </div>
+        <Form.Item 
+          label={<span>Header Content</span>} 
+          labelAlign="left"
+          className={styles.formItem}
+        >
+          <TextArea 
+            id="headers"
+            placeholder="Please enter header content"
+            value={headers}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            disabled={!canReadWrite}
+            className={styles.textarea}
+            rows={6}
+            aria-label="headers-textarea"
+            style={!headersValid ? {border: 'solid 1px #C00'} : {}}
+          />
+          { !headersValid ? <div className={styles.invalid}>{invalidJSONMessage}</div> : null }
+        </Form.Item></> : null }
+        <Form.Item 
+          label={<span>
+            <Icon 
+              type="right" 
+              className={styles.rightArrow} 
+              onClick={() => setProcessorsExpanded(!processorsExpanded)} 
+              rotate={processorsExpanded ? 90 : 0}
+            />
+            <span className={styles.expandLabel} onClick={() => setProcessorsExpanded(!processorsExpanded)}>Processors</span>
+          </span>} 
+          labelAlign="left"
+          className={styles.formItem}
+          colon={false}
+        />
+        { processorsExpanded ? <div className={styles.expandContainer}>
+          <div className={styles.textareaExpandTooltip}>
+            <Tooltip title={tooltips.processors}>
+              <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
+            </Tooltip>
+          </div>
+          <TextArea 
+            id="processors"
+            placeholder="Please enter processor content"
+            value={processors}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            disabled={!canReadWrite}
+            className={styles.textareaExpand}
+            rows={6}
+            aria-label="processors-textarea"
+            style={!processorsValid ? {border: 'solid 1px #C00'} : {}}
+          />
+          { !processorsValid ? <div className={styles.invalidExpand}>{invalidJSONMessage}</div> : null }
+        </div> : ''}
+        <Form.Item 
+          label={<span>
+            <Icon 
+              type="right" 
+              className={styles.rightArrow} 
+              onClick={() => setCustomHookExpanded(!customHookExpanded)} 
+              rotate={customHookExpanded ? 90 : 0}
+            />
+            <span className={styles.expandLabel} onClick={() => setCustomHookExpanded(!customHookExpanded)}>Custom Hook</span>
+          </span>} 
+          labelAlign="left"
+          className={styles.formItem}
+          colon={false}
+        />
+        { customHookExpanded ? <div className={styles.expandContainer}>
+          <div className={styles.textareaExpandTooltip}>
+            <Tooltip title={tooltips.customHook}>
+              <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
+            </Tooltip>
+          </div>
+          <TextArea 
+            id="customHook"
+            placeholder="Please enter custom hook content"
+            value={customHook}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            disabled={!canReadWrite}
+            className={styles.textareaExpand}
+            rows={6}
+            aria-label="customHook-textarea"
+            style={!customHookValid ? {border: 'solid 1px #C00'} : {}}
+          />
+          { !customHookValid ? <div className={styles.invalidExpand}>{invalidJSONMessage}</div> : null }
+        </div> : ''}
         <Form.Item className={styles.submitButtonsForm}>
           <div className={styles.submitButtons}>
-            <Button data-testid={`${props.stepData.name}-cancel-settings`} onClick={() => onCancel()}>Cancel</Button>
-            &nbsp;&nbsp;
-            <Button id={'saveButton'} data-testid={`${props.stepData.name}-save-settings`} type="primary" htmlType="submit" onClick={handleSubmit}
-                    disabled={!canReadWrite}>Save</Button>
+            <Button data-testid={`${props.stepData.name}-cancel-settings`} onClick={() => onCancel()}>Cancel</Button>&nbsp;&nbsp;
+            <Button id={'saveButton'} data-testid={`${props.stepData.name}-save-settings`} type="primary" htmlType="submit" onClick={handleSubmit} disabled={!canReadWrite || !isFormValid()}>Save</Button>
           </div>
         </Form.Item>
       </Form>
