@@ -12,6 +12,7 @@ import Run from './Run';
 import Browse from './Browse';
 import { AuthoritiesContext } from "../util/authorities";
 import { SearchContext } from '../util/search-context';
+import { useLocation } from 'react-router-dom';
 
 export type TileId =  'load' | 'model' | 'curate' | 'run' | 'explore';
 export type IconType = 'fa' | 'custom';
@@ -34,7 +35,7 @@ const views: Record<TileId, JSX.Element>  = {
 
 const INITIAL_SELECTION = ''; // '' for no tile initially
 
-const TilesView: React.FC  = (props) => {
+const TilesView = (props) => {
     const [selection, setSelection] = useState<TileId|string>(INITIAL_SELECTION);
     const [currentNode, setCurrentNode] = useState<any>(INITIAL_SELECTION);
     const [options, setOptions] = useState<TileItem|null>(null);
@@ -73,12 +74,31 @@ const TilesView: React.FC  = (props) => {
         } else {
             setControls([])
         }
-
+        setNewStepToFlowOptions({ addingStepToFlow: false });
         setSelection(id);
         setCurrentNode(id); // TODO Handle multiple with nested objects
         setOptions(tiles[id]);
         setView(views[id]);
     }
+
+    const location: any = useLocation();
+
+    useEffect(() => {
+        if(props.id){
+            setSelection(props.id);
+            setCurrentNode(props.id); // TODO Handle multiple with nested objects
+            setOptions(tiles[props.id]);
+            setView(views[props.id]);
+        }
+    },[])
+
+    const [newStepToFlowOptions, setNewStepToFlowOptions] = useState(!props.id ? { addingStepToFlow: false } : {
+        addingStepToFlow: true,
+        newStepName: location.state?.stepToAdd,
+        stepDefinitionType: location.state?.stepDefinitionType,
+        existingFlow: location.state?.existingFlow || false,
+        flowsDefaultKey: location.state?.flowsDefaultKey || ['-1']
+    })
 
     return (
         <>
@@ -92,6 +112,7 @@ const TilesView: React.FC  = (props) => {
                     controls={controls} // TODO Turn on tile header controls
                     options={options}
                     onMenuClick={onMenuClick}
+                    newStepToFlowOptions={newStepToFlowOptions}
                 />
                 ) : null }
             </div>

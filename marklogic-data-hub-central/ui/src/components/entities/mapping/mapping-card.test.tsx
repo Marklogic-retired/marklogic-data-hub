@@ -1,15 +1,24 @@
 import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
-import {fireEvent, render, wait} from '@testing-library/react';
+import { BrowserRouter as Router, MemoryRouter } from 'react-router-dom';
+import {fireEvent, render, waitForElement, wait} from '@testing-library/react';
 import { AdvancedSettingsMessages } from '../../../config/messages.config';
 import MappingCard from './mapping-card';
 import axiosMock from 'axios'
 import data from "../../../config/run.config";
 import {act} from "react-dom/test-utils";
-import mocks from "../../../config/mocks.config";
-import {AuthoritiesService, AuthoritiesContext} from "../../../util/authorities";
+import { AuthoritiesService, AuthoritiesContext } from '../../../util/authorities';
+import mocks from '../../../config/mocks.config';
 
 jest.mock('axios');
+
+const mockHistoryPush = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useHistory: () => ({
+    push: mockHistoryPush,
+  }),
+}));
 
 describe("Entity Tiles component", () => {
   beforeEach(() => {
@@ -152,5 +161,121 @@ describe("Entity Tiles component", () => {
            fireEvent.click(saveButton);
        });
        expect(getByText(AdvancedSettingsMessages.targetPermissions.incorrectFormat)).toBeInTheDocument();
+  });
+
+  test('Adding the step to an existing flow', async () => {
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(['readMapping', 'writeMapping', 'writeFlow']);
+    let entityModel = data.primaryEntityTypes.data[0];
+    let mapping = data.mappings.data[0].artifacts;
+    const noopFun = () => {};
+    let getByText, getByLabelText, getByTestId;
+    await act(async () => {
+      const renderResults = render(
+        <MemoryRouter>
+          <AuthoritiesContext.Provider value={authorityService}>
+            <MappingCard
+              data={mapping}
+              flows={data.flows.data}
+              entityTypeTitle={entityModel.entityName}
+              getMappingArtifactByMapName={noopFun}
+              deleteMappingArtifact={noopFun}
+              createMappingArtifact={noopFun}
+              updateMappingArtifact={noopFun}
+              canReadOnly={false}
+              canReadWrite={true}
+              canWriteFlow={true}
+              entityModel={entityModel}
+              addStepToFlow={noopFun}
+              addStepToNew={noopFun} />
+          </AuthoritiesContext.Provider>
+        </MemoryRouter>
+      );
+      getByText = renderResults.getByText;
+      getByLabelText = renderResults.getByLabelText;
+      getByTestId = renderResults.getByTestId
+    })
+
+    //Check if the card is rendered properly
+    expect(getByText('Add New')).toBeInTheDocument();
+    expect(getByText('Mapping1')).toBeInTheDocument();
+    //expect(getByLabelText('testLoadXML-sourceFormat')).toBeInTheDocument();
+    expect(getByText('Last Updated: 04/24/2020 1:21PM')).toBeInTheDocument();
+
+    fireEvent.mouseOver(getByText('Mapping1')); // Hover over the Load Card to get more options
+
+    //Verify if the flow related options are availble on mouseOver
+    expect(getByTestId('Mapping1-toNewFlow')).toBeInTheDocument(); // check if option 'Add to a new Flow' is visible
+    expect(getByTestId('Mapping1-toExistingFlow')).toBeInTheDocument(); // check if option 'Add to an existing Flow' is visible
+
+    //Click on the select field to open the list of existing flows.
+    fireEvent.click(getByTestId('Mapping1-flowsList')); 
+
+    //Choose testFlow from the dropdown
+    fireEvent.click(getByText('testFlow'));
+    
+    //Click on 'Yes' button
+    fireEvent.click(getByTestId('Mapping1-to-testFlow-Confirm'));
+
+    //Check if the tiles-run route has been called
+    wait(() => {
+      expect(mockHistoryPush).toHaveBeenCalledWith('/tiles-run');
+    })
+    //TODO- E2E test to check if the Run tile is loaded or not.
+
+  });
+
+  test('Adding the step to a new flow', async () => {
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(['readMapping', 'writeMapping', 'writeFlow']);
+    let entityModel = data.primaryEntityTypes.data[0];
+    let mapping = data.mappings.data[0].artifacts;
+    const noopFun = () => {};
+    let getByText, getByLabelText, getByTestId;
+    await act(async () => {
+      const renderResults = render(
+        <MemoryRouter>
+          <AuthoritiesContext.Provider value={authorityService}>
+            <MappingCard
+              data={mapping}
+              flows={data.flows.data}
+              entityTypeTitle={entityModel.entityName}
+              getMappingArtifactByMapName={noopFun}
+              deleteMappingArtifact={noopFun}
+              createMappingArtifact={noopFun}
+              updateMappingArtifact={noopFun}
+              canReadOnly={false}
+              canReadWrite={true}
+              canWriteFlow={true}
+              entityModel={entityModel}
+              addStepToFlow={noopFun}
+              addStepToNew={noopFun} />
+          </AuthoritiesContext.Provider>
+        </MemoryRouter>
+      );
+      getByText = renderResults.getByText;
+      getByLabelText = renderResults.getByLabelText;
+      getByTestId = renderResults.getByTestId
+    })
+
+    //Check if the card is rendered properly
+    expect(getByText('Add New')).toBeInTheDocument();
+    expect(getByText('Mapping1')).toBeInTheDocument();
+    expect(getByText('Last Updated: 04/24/2020 1:21PM')).toBeInTheDocument();
+
+    fireEvent.mouseOver(getByText('Mapping1')); // Hover over the Load Card to get more options
+
+    //Verify if the flow related options are availble on mouseOver
+    expect(getByTestId('Mapping1-toNewFlow')).toBeInTheDocument(); // check if option 'Add to a new Flow' is visible
+    expect(getByTestId('Mapping1-toExistingFlow')).toBeInTheDocument(); // check if option 'Add to an existing Flow' is visible
+
+    //Click on the link 'Add step to a new Flow'.
+    fireEvent.click(getByTestId('Mapping1-toNewFlow')); 
+
+    //Wait for the route to be pushed into History( which means that the route is working fine. Remaining can be verified in E2E test)
+    wait(() => {
+      expect(mockHistoryPush).toHaveBeenCalledWith('/tiles-run');
+    })
+
   });
 });

@@ -36,10 +36,16 @@ const NewFlowDialog = (props) => {
 
   const onCancel = () => {
     props.setNewFlow(false);
+    if(props.newStepToFlowOptions && props.newStepToFlowOptions.addingStepToFlow){
+      props.setOpenNewFlow(false);
+    }
   }
 
   const onOk = () => {
     props.setNewFlow(false);
+    if(props.newStepToFlowOptions && props.newStepToFlowOptions.addingStepToFlow){
+      props.setOpenNewFlow(false);
+    }
   }
 
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
@@ -50,9 +56,13 @@ const NewFlowDialog = (props) => {
       }
     setIsLoading(true);
     if (props.title === 'Edit Flow') {
-      props.updateFlow(dataPayload, flowName);
+      await props.updateFlow(dataPayload, flowName);
     } else {
-      props.createFlow(dataPayload);
+      await props.createFlow(dataPayload);
+      if(props.newStepToFlowOptions && props.newStepToFlowOptions.addingStepToFlow){
+        await props.addStepToFlow(props.newStepToFlowOptions.newStepName, flowName, props.newStepToFlowOptions.stepDefinitionType);
+        props.setOpenNewFlow(false);
+      }
     }
     props.setNewFlow(false);
   }
@@ -68,7 +78,6 @@ const NewFlowDialog = (props) => {
       }
     }
     if (event.target.id === 'name' && event.target.value.length == 0) {
-      console.log('setIsLoading(false);');
       setIsLoading(false);
     }
 
@@ -97,7 +106,7 @@ const NewFlowDialog = (props) => {
     className={styles.modal}
     footer={null}>
 
-    <p className={styles.title}>{props.title}</p>
+    <p className={styles.title}>{props.title || 'New Flow'}</p>
     <br />
     <div className={styles.newFlowForm}>
       <Form {...formItemLayout} onSubmit={handleSubmit} colon={false}>
@@ -133,6 +142,7 @@ const NewFlowDialog = (props) => {
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </Tooltip>
         </Form.Item>
+        <br /><br />
         <Form.Item className={styles.submitButtonsForm}>
           <div className={styles.submitButtons}>
             {props.canWriteFlow ?

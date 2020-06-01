@@ -132,7 +132,10 @@ const App: React.FC<Props> = ({history, location}) => {
             </PrivateRoute>
             <PrivateRoute path="/tiles" exact>
               <TilesView/>
-            </PrivateRoute>  
+            </PrivateRoute>
+            <PrivateRoute path="/tiles-run" exact>
+              <TilesView id='run'/>
+            </PrivateRoute>
           </ModelingProvider>
         </SearchProvider>
         <Route component={NoMatchRedirect}/>
