@@ -15,6 +15,8 @@
  */
 package com.marklogic.hub.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices;
@@ -26,13 +28,16 @@ import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.error.ScaffoldingValidationException;
 import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
+import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -69,6 +74,50 @@ public class ScaffoldingImpl implements Scaffolding {
             absolutePath.append(path);
         }
         return absolutePath.toString();
+    }
+
+    /**
+     * Create a step file  based on the given name and type.
+     *
+     * @param name
+     * @param type
+     * @return a Pair with a File representing the created file, and a String representing an optional message that,
+     * if not null, should likely be presented to the caller
+     */
+    public Pair<File, String> createStepFile(String name, String type) {
+        StepDefinition.StepDefinitionType stepType = StepDefinition.StepDefinitionType.getStepDefinitionType(type);
+        Assert.notNull(stepType, "Unrecognized step type: " + type);
+        Assert.isTrue(stepType.equals(StepDefinition.StepDefinitionType.INGESTION) || stepType.equals(StepDefinition.StepDefinitionType.MAPPING),
+            "Can only create a step of type 'ingestion' or 'mapping'");
+
+        File stepFile = hubConfig.getHubProject().getStepFile(stepType, name);
+        if (stepFile.exists()) {
+            throw new IllegalArgumentException("Cannot create step; a step file already exists at: " + stepFile.getAbsolutePath() + ". Please choose a different name for your step.");
+        }
+        stepFile.getParentFile().mkdirs();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode step = objectMapper.createObjectNode();
+        step.put("name", name);
+        step.put("description", "");
+
+        String message = null;
+        if (StepDefinition.StepDefinitionType.INGESTION.equals(stepType)) {
+            step.put("sourceFormat", "json");
+            step.put("targetFormat", "json");
+        } else {
+            step.put("targetEntityType", "http://example.org/EntityName-1.0.0/EntityName");
+            step.put("selectedSource", "query");
+            step.put("sourceQuery", "cts.collectionQuery('changeme')");
+            message = "The mapping step file will need to be modified before usage, as it has example values for targetEntityType and sourceQuery.";
+        }
+
+        try {
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(stepFile, step);
+            return Pair.of(stepFile, message);
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to write step to file: " + stepFile.getAbsolutePath() + "; cause: " + e.getMessage(), e);
+        }
     }
 
     @Override public Path getLegacyFlowDir(String entityName, String flowName, FlowType flowType) {
@@ -422,10 +471,6 @@ public class ScaffoldingImpl implements Scaffolding {
         public ContentPlugin(DatabaseClient client) {
             super();
             client.init(NAME, this);
-        }
-
-        public String getContents(String entityName, CodeFormat codeFormat, FlowType flowType) {
-            return getContents(entityName, codeFormat, flowType, null);
         }
 
         public String getContents(String entityName, CodeFormat codeFormat, FlowType flowType, String mappingName) {
