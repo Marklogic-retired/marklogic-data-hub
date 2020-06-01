@@ -5,6 +5,7 @@
   "role": [
     "hub-central-load-reader",
     "hub-central-mapping-reader",
-    "hub-central-downloader"
+    "hub-central-downloader",
+    "hub-central-entity-model-writer"
   ]
 }
