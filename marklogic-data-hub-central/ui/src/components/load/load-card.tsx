@@ -1,5 +1,6 @@
 import React, {CSSProperties, useContext, useState} from 'react';
 import styles from './load-card.module.scss';
+import { useHistory } from 'react-router-dom';
 import {Card, Icon, Tooltip, Popover, Row, Col, Modal, Select} from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
@@ -11,6 +12,7 @@ import AdvancedSettingsDialog from "../advanced-settings/advanced-settings-dialo
 import { AdvLoadTooltips } from '../../config/tooltips.config';
 
 import { AuthoritiesContext } from "../../util/authorities";
+import { Link } from 'react-router-dom';
 
 const { Option } = Select;
 
@@ -39,6 +41,9 @@ const LoadCard: React.FC<Props> = (props) => {
     const [showLinks, setShowLinks] = useState('');
 
     const [openLoadSettings, setOpenLoadSettings] = useState(false);
+
+    //To navigate to bench view with parameters
+    let history = useHistory();
 
     const OpenAddNewDialog = () => {
         setTitle('New Data Load');
@@ -111,9 +116,18 @@ const LoadCard: React.FC<Props> = (props) => {
         setFlowName(flowName);
     }
 
-    const onAddOk = (lName, fName) => {
-        props.addStepToFlow(lName, fName)
+    const onAddOk = async (lName, fName) => {
+        await props.addStepToFlow(lName, fName)
         setAddDialogVisible(false);
+
+        history.push({
+            pathname: '/tiles-run',
+            state: {
+                flowName: fName,
+                flowsDefaultKey: [props.flows.findIndex(el => el.name === fName)],
+                existingFlow: true
+            }
+        })
     }
 
     const onCancel = () => {
@@ -140,7 +154,7 @@ const LoadCard: React.FC<Props> = (props) => {
     const addConfirmation = (
         <Modal
             visible={addDialogVisible}
-            okText='Yes'
+            okText={<div data-testid={`${loadArtifactName}-to-${flowName}-Confirm`}>Yes</div>}
             cancelText='No'
             onOk={() => onAddOk(loadArtifactName, flowName)}
             onCancel={() => onCancel()}
@@ -180,13 +194,19 @@ const LoadCard: React.FC<Props> = (props) => {
                             size="small"
                         >
                             <div className={styles.formatContainer}>
-                                <div style={sourceFormatStyle(elem.sourceFormat)}>{elem.sourceFormat.toUpperCase()}</div>
+                                <div style={sourceFormatStyle(elem.sourceFormat)} aria-label={`${elem.name}-sourceFormat`}>{elem.sourceFormat.toUpperCase()}</div>
                             </div>
                             <div className={styles.stepNameStyle}>{getInitialChars(elem.name, 25, '...')}</div>
                             <div className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</div>
                             {props.canWriteFlow ? <div className={styles.cardLinks} style={{display: showLinks === elem.name ? 'block' : 'none'}}>
-                                <div className={styles.cardLink}>Add step to a new flow</div>
-                                <div className={styles.cardNonLink}>
+                                <Link id="tiles-run" to={
+                                    {pathname: '/tiles-run',
+                                    state: {
+                                        stepToAdd : elem.name,
+                                        stepDefinitionType : 'ingestion',
+                                        existingFlow: false
+                                    }}}><div className={styles.cardLink} data-testid={`${elem.name}-toNewFlow`}>Add step to a new flow</div></Link>
+                                <div className={styles.cardNonLink} data-testid={`${elem.name}-toExistingFlow`}>
                                     Add step to an existing flow
                                     <div className={styles.cardLinkSelect}>
                                         <Select
@@ -194,6 +214,7 @@ const LoadCard: React.FC<Props> = (props) => {
                                             onChange={(flowName) => handleSelect({flowName: flowName, loadName: elem.name})}
                                             placeholder="Select Flow"
                                             defaultActiveFirstOption={false}
+                                            data-testid={`${elem.name}-flowsList`}
                                         >
                                             { props.flows && props.flows.length > 0 ? props.flows.map((f,i) => (
                                                 <Option value={f.name} key={i}>{f.name}</Option>

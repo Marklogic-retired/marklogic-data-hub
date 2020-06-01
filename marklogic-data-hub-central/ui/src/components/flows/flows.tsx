@@ -1,4 +1,4 @@
-import React, { useState, CSSProperties } from 'react';
+import React, { useState, CSSProperties, useEffect } from 'react';
 import { Collapse, Spin, Icon, Card, Tooltip, Modal, Upload, message } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
@@ -22,6 +22,9 @@ interface Props {
     hasOperatorRole: boolean;
     running: any;
     uploadError:string;
+    newStepToFlowOptions: any;
+    addStepToFlow: any;
+    flowsDefaultActiveKey: any;
 }
 
 const StepDefinitionTypeTitles = {
@@ -53,6 +56,14 @@ const Flows: React.FC<Props> = (props) => {
     const [runningFlow, setRunningFlow] = useState<any>('');
     const [fileList, setFileList] = useState<any[]>([]);
     const [showUploadError, setShowUploadError] = useState(false);
+    const [openNewFlow, setOpenNewFlow] = useState(props.newStepToFlowOptions?.addingStepToFlow && !props.newStepToFlowOptions?.existingFlow);
+    const [activeKeys, setActiveKeys] = useState(JSON.stringify(props.newStepToFlowOptions?.flowsDefaultKey) !== JSON.stringify(["-1"]) ? props.newStepToFlowOptions?.flowsDefaultKey : ['-1']);
+
+    useEffect(() => {
+        if (JSON.stringify(props.flowsDefaultActiveKey) !== JSON.stringify([])) {
+            setActiveKeys([...props.flowsDefaultActiveKey]);
+        }
+    }, [props.flows])
 
     const OpenAddNewDialog = () => {
         setTitle('New Flow');
@@ -331,6 +342,11 @@ const Flows: React.FC<Props> = (props) => {
         })
     }
 
+    //Update activeKeys on Collapse Panel interactions
+    const handlePanelInteraction = (key) => {
+        setActiveKeys([...key])
+    }
+
    return (
     <div id="flows-container" className={styles.flowsContainer}>
         {props.canReadFlow || props.canWriteFlow ?
@@ -344,17 +360,22 @@ const Flows: React.FC<Props> = (props) => {
                 </div>
                 <Collapse
                     className={styles.collapseFlows}
+                    activeKey={activeKeys}
+                    onChange={handlePanelInteraction}
                 >
                     {panels}
                 </Collapse>
                 <NewFlowDialog
-                    newFlow={newFlow}
+                    newFlow={newFlow || openNewFlow}
                     title={title}
                     setNewFlow={setNewFlow}
                     createFlow={props.createFlow}
                     updateFlow={props.updateFlow}
                     flowData={flowData}
                     canWriteFlow={props.canWriteFlow}
+                    addStepToFlow={props.addStepToFlow}
+                    newStepToFlowOptions={props.newStepToFlowOptions}
+                    setOpenNewFlow={setOpenNewFlow}
                 />
                 {deleteConfirmation}
                 {deleteStepConfirmation}

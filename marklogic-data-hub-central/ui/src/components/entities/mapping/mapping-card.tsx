@@ -14,6 +14,7 @@ import {AuthoritiesContext} from "../../../util/authorities";
 import { getSettingsArtifact, getNestedEntities } from '../../../util/manageArtifacts-service';
 import axios from 'axios';
 import { xmlParserForMapping } from '../../../util/xml-parser';
+import { Link, useHistory } from 'react-router-dom';
 
 const { Option } = Select;
 
@@ -77,6 +78,9 @@ const MappingCard: React.FC<Props> = (props) => {
     let mapIndexLocal: number = -1;
     const [mapIndex, setMapIndex] = useState(-1);
     let namespaceString = '';
+
+        //To navigate to bench view with parameters
+    let history = useHistory();
 
     useEffect(() => {
         setSourceData([]);
@@ -569,15 +573,24 @@ const MappingCard: React.FC<Props> = (props) => {
         setFlowName(flowName);
     }
 
-    const onAddOk = (lName, fName) => {
-        props.addStepToFlow(lName, fName, 'mapping')
+    const onAddOk = async (lName, fName) => {
+        await props.addStepToFlow(lName, fName, 'mapping')
         setAddDialogVisible(false);
+
+        history.push({
+            pathname: '/tiles-run',
+            state: {
+                flowName: fName,
+                flowsDefaultKey: [props.flows.findIndex(el => el.name === fName)],
+                existingFlow: true
+            }
+        })
     }
 
     const addConfirmation = (
         <Modal
             visible={addDialogVisible}
-            okText='Yes'
+            okText={<div data-testid={`${mappingArtifactName}-to-${flowName}-Confirm`}>Yes</div>}
             cancelText='No'
             onOk={() => onAddOk(mappingArtifactName, flowName)}
             onCancel={() => onCancel()}
@@ -627,8 +640,13 @@ const MappingCard: React.FC<Props> = (props) => {
                                 <p className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</p>
                                 <div className={styles.cardLinks} style={{display: showLinks === elem.name ? 'block' : 'none'}}>
                                     <div className={styles.cardLink} onClick={() => openSourceToEntityMapping(elem.name,index)}>Open step details</div>
-                                    { props.canWriteFlow ? <div className={styles.cardLink}>Add step to a new flow</div> : null }
-                                    { props.canWriteFlow ? <div className={styles.cardNonLink}>
+                                    { props.canWriteFlow ? <Link id="tiles-run" to={
+                                    {pathname: '/tiles-run',
+                                    state: {
+                                        stepToAdd : elem.name,
+                                        stepDefinitionType : 'mapping'
+                                    }}}><div className={styles.cardLink} data-testid={`${elem.name}-toNewFlow`}> Add step to a new flow</div></Link> : null }
+                                    { props.canWriteFlow ? <div className={styles.cardNonLink} data-testid={`${elem.name}-toExistingFlow`}>
                                         Add step to an existing flow
                                         <div className={styles.cardLinkSelect}>
                                             <Select
@@ -636,6 +654,7 @@ const MappingCard: React.FC<Props> = (props) => {
                                                 onChange={(flowName) => handleSelect({flowName: flowName, mappingName: elem.name})}
                                                 placeholder="Select Flow"
                                                 defaultActiveFirstOption={false}
+                                                data-testid={`${elem.name}-flowsList`}
                                             >
                                                 { props.flows && props.flows.length > 0 ? props.flows.map((f,i) => (
                                                     <Option value={f.name} key={i}>{f.name}</Option>

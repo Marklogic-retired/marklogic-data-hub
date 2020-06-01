@@ -20,8 +20,8 @@ const Statuses = {
     'FINISHED_WITH_ERRORS': 'finished_with_errors'
 }
 
-const Run: React.FC = () => {
-   const { resetSessionTime } = useContext(UserContext)
+const Run = (props) => {
+   const { handleError, resetSessionTime } = useContext(UserContext)
 
     const [isLoading, setIsLoading] = useState(false);
     const [flows, setFlows] = useState<any[]>([]);
@@ -35,6 +35,10 @@ const Run: React.FC = () => {
     const canReadFlow = authorityService.canReadStep();
     const canWriteFlow = authorityService.canWriteStep();
     const hasOperatorRole = authorityService.hasOperatorRole();
+
+    //For handling flows expand and collapse within Run tile
+    const [newFlowName, setNewFlowName] = useState('');
+    const [flowsDefaultActiveKey, setFlowsDefaultActiveKey] = useState<any []>([]);
 
     const pollConfig: PollConfig = {
         interval: 1000, // In millseconds
@@ -62,7 +66,12 @@ const Run: React.FC = () => {
         try {
             let response = await axios.get('/api/flows');
             if (response.status === 200) {
+                if(newFlowName){
+                    let key = [response.data.findIndex(el => el.name === newFlowName)]
+                    setFlowsDefaultActiveKey(key);
+                }
                 setFlows(response.data);
+                
                 //console.log('GET flows successful', response);
             }
         } catch (error) {
@@ -85,6 +94,7 @@ const Run: React.FC = () => {
             if (response.status === 201) {
                 //console.log('POST flow success', response);
                 setIsLoading(false);
+                setNewFlowName(payload.name);
             }
         }
         catch (error) {
@@ -113,6 +123,34 @@ const Run: React.FC = () => {
             setIsLoading(false);
         } finally {
           resetSessionTime();
+        }
+    }
+
+    // POST a step to existing flow
+    const addStepToFlow = async (artifactName, flowName, stepDefinitionType) => {
+        let step = {
+            "stepName": artifactName,
+            "stepDefinitionType": stepDefinitionType
+        };
+        try {
+            setIsLoading(true);
+            let url = '/api/flows/' + flowName + '/steps';
+            let body = step;
+            let response = await axios.post(url, body);
+            if (response.status === 200) {
+                setIsLoading(false);
+                return 1;
+            }
+        } catch (error) {
+            let message = error.response.data.message;
+            console.error('Error while adding load data step to flow.', message);
+            setIsLoading(false);
+            Modal.error({
+                content: 'Error adding step "' + artifactName + '" to flow "' + flowName + '."',
+            });
+            handleError(error);
+        } finally {
+            resetSessionTime();
         }
     }
 
@@ -342,6 +380,9 @@ const Run: React.FC = () => {
                 hasOperatorRole={hasOperatorRole}
                 running={running}
                 uploadError={uploadError}
+                newStepToFlowOptions={props.newStepToFlowOptions}
+                addStepToFlow={addStepToFlow}
+                flowsDefaultActiveKey={flowsDefaultActiveKey}
             />
         </div>
     </div>

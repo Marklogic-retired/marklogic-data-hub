@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Mosaic, MosaicWindow } from 'react-mosaic-component';
 import 'react-mosaic-component/react-mosaic-component.css';
 import { Tooltip, Menu, Dropdown } from 'antd';
@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faExternalLinkAlt, faCog } from "@fortawesome/free-solid-svg-icons";
 import styles from './tiles.module.scss';
 import './tiles.scss';
+import Run from '../../pages/Run';
 
 interface Props {
     id: string;
@@ -15,6 +16,7 @@ interface Props {
     controls: string[];
     options: any;
     onMenuClick: any
+    newStepToFlowOptions: any;
 }
 
 const Tiles: React.FC<Props> = (props) => {
@@ -120,7 +122,7 @@ const Tiles: React.FC<Props> = (props) => {
                         title={options['title']}
                         renderToolbar={renderHeader}
                     >
-                        {props.view}
+                        {!props.newStepToFlowOptions?.addingStepToFlow ? props.view : <Run newStepToFlowOptions={props.newStepToFlowOptions}/>}
                     </MosaicWindow>
                 )
             }}
