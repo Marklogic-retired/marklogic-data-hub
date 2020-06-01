@@ -1,6 +1,8 @@
 package com.marklogic.hub.central.controllers.steps;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -13,6 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class IngestionStepControllerTest extends AbstractStepControllerTest {
 
     private final static String PATH = "/api/steps/ingestion";
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public static class IngestionStep {
         public String name;
@@ -20,6 +23,8 @@ public class IngestionStepControllerTest extends AbstractStepControllerTest {
         public String sourceFormat;
         public String targetFormat;
         public String outputURIReplacement;
+        public ArrayNode processors;
+        public ObjectNode headers;
     }
 
     public static IngestionStep newDefaultIngestionStep(String name) {
@@ -28,6 +33,8 @@ public class IngestionStepControllerTest extends AbstractStepControllerTest {
         step.description = "the description";
         step.sourceFormat = "json";
         step.targetFormat = "json";
+        step.headers = objectMapper.createObjectNode();
+        step.processors = objectMapper.createArrayNode();
         return step;
     }
 

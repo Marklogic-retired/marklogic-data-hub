@@ -4,15 +4,16 @@ import LoadList from './load-list';
 import data from '../../config/test-data.config';
 import axiosMock from 'axios';
 import mocks from '../../config/mocks.config';
+import loadData from "../../config/load.config";
 import { AdvancedSettingsMessages } from '../../config/messages.config';
 
 jest.mock('axios');
 
 describe('Load data component', () => {
 
-    beforeEach(() => {
-        mocks.loadAPI(axiosMock);
-    })
+  beforeEach(() => {
+      mocks.loadAPI(axiosMock);
+  })
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -51,6 +52,7 @@ describe('Load data component', () => {
   test('Verify Load settings from list view renders correctly', async () => {
     const {getByText, getByTestId, getByTitle,queryByTitle, getByPlaceholderText} = render(<LoadList {...data.loadData} />)
 
+    // NOTE see config/advanced-settings.config.ts for test data
     await wait(() => {
       fireEvent.click(getByTestId(data.loadData.data[0].name+'-settings'));
     })
@@ -62,25 +64,26 @@ describe('Load data component', () => {
     await wait(() => {
         fireEvent.click(saveButton);
     });
-    expect(axiosMock.put).toHaveBeenCalledTimes(1);
+    expect(axiosMock.post).toHaveBeenCalledTimes(1);
 
     //open settings again
 
     await wait(() => {
         fireEvent.click(getByTestId(data.loadData.data[0].name+'-settings'));
     })
-    let targetCollection = getByTitle('customerCollection'); // Additional target collection (Added by user)
+    let targetCollection = getByTitle('addedCollection'); // Additional target collection (Added by user)
+    let stepName = loadData.loads.data[0].name;
 
     expect(getByText('Advanced Settings')).toBeInTheDocument();
     // Check if the settings API is being called.
-    expect(axiosMock.get).toBeCalledWith('/api/steps/ingestion/' + data.loadData.data[0].name + '/settings');
-    expect(getByText('Target Collections:')).toBeInTheDocument();
+    expect(axiosMock.get).toBeCalledWith('/api/steps/ingestion/' + data.loadData.data[0].name);
+    expect(getByText('Target Collections')).toBeInTheDocument();
     expect(targetCollection).toBeInTheDocument(); //Should be available in the document
-    expect(targetCollection).not.toBe(data.loadData.data[0].name); //Should not be same as the default collection
-    expect(getByText('Default Collections:')).toBeInTheDocument();
-    expect(getByTestId(`defaultCollections-${data.loadData.data[0].name}`)).toBeInTheDocument();
-    expect(queryByTitle(data.loadData.data[0].name)).not.toBeInTheDocument();  // The default collection should not be a part of the Target Collection list
-    expect(getByText('Batch Size:')).toBeInTheDocument();
+    expect(targetCollection).not.toBe(stepName); //Should not be same as the default collection
+    expect(getByText('Default Collections')).toBeInTheDocument();
+    expect(getByTestId('defaultCollections-' + stepName)).toBeInTheDocument();
+    expect(queryByTitle(stepName)).not.toBeInTheDocument();  // The default collection should not be a part of the Target Collection list
+    expect(getByText('Batch Size')).toBeInTheDocument();
     expect(getByPlaceholderText('Please enter batch size')).toHaveValue('35');
 
     targetPermissions = getByPlaceholderText("Please enter target permissions");

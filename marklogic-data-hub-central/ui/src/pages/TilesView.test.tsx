@@ -85,7 +85,7 @@ describe('Tiles View component tests for Developer user', () => {
         // Load tile shown with entityTypes after click
         expect(await(waitForElement(() => getByLabelText("icon-load")))).toBeInTheDocument();
         expect(getByLabelText("title-load")).toBeInTheDocument();
-        expect(getByText('failedIngest')).toBeInTheDocument();
+        expect(getByText('testLoad')).toBeInTheDocument();
     });
 
     test('Verify Load tile does not load from toolbar without readIngestion authority', async () => {
@@ -103,7 +103,7 @@ describe('Tiles View component tests for Developer user', () => {
 
         // Load tile shown with entityTypes after click
         expect(queryByLabelText("title-load")).not.toBeInTheDocument();
-        expect(queryByText('failedIngest')).not.toBeInTheDocument();
+        expect(queryByText('testLoad')).not.toBeInTheDocument();
     });
 
     test('Verify readIngestion authority cannot access other tiles', async () => {
