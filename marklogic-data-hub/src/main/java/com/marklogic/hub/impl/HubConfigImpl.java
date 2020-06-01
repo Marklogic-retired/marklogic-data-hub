@@ -143,8 +143,6 @@ public class HubConfigImpl implements HubConfig
     private String mlUsername = null;
     private String mlPassword = null;
 
-    private String loadBalancerHost;
-
     // This name makes it sound like it's more important than it is; as of 5.3.0, it only impacts the legacy MlcpRunner
     // and thus only impacts running DHF 4 input flows. Otherwise, it is ignored.
     private Boolean isHostLoadBalancer;
@@ -933,12 +931,6 @@ public class HubConfigImpl implements HubConfig
     }
 
 
-
-    @JsonIgnore
-    @Override  public String getLoadBalancerHost() {
-        return loadBalancerHost;
-    }
-
     @Override
     public Boolean getIsHostLoadBalancer(){
         return isHostLoadBalancer;
@@ -952,10 +944,6 @@ public class HubConfigImpl implements HubConfig
     @Override
     public void setIsProvisionedEnvironment(boolean isProvisionedEnvironment) {
         this.isProvisionedEnvironment = isProvisionedEnvironment;
-    }
-
-    public void setLoadBalancerHost(String loadBalancerHost) {
-        this.loadBalancerHost = loadBalancerHost;
     }
 
     @Override public String getCustomForestPath() {
@@ -1078,39 +1066,6 @@ public class HubConfigImpl implements HubConfig
             jobSslContext = SimpleX509TrustManager.newSSLContext();
             jobSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
             jobTrustManager = new SimpleX509TrustManager();
-        }
-
-        if (isHostLoadBalancer != null){
-            if (isHostLoadBalancer) {
-                if (host != null && loadBalancerHost != null){
-                    logger.warn("\"mlLoadBalancerHosts\" is a deprecated property. When \"mlIsHostLoadBalancer\" is set to \"true\"properties, the value specified for \"mlHost\" will be used as the load balancer.");
-                    if (!host.equals(loadBalancerHost)) {
-                        throw new DataHubConfigurationException("\"mlLoadBalancerHosts\" must be the same as \"mlHost\"");
-                    }
-                    else {
-                        loadBalancerHost = host;
-                    }
-                }
-            }
-            else {
-                if (loadBalancerHost != null){
-                    throw new DataHubConfigurationException("\"mlIsHostLoadBalancer\" must not be false if you are using \"mlLoadBalancerHosts\"");
-                }
-            }
-        }
-        else{
-            if (host != null && loadBalancerHost != null){
-                if (!host.equals(loadBalancerHost)) {
-                    throw new DataHubConfigurationException("\"mlLoadBalancerHosts\" must be the same as \"mlHost\"");
-                }
-                else {
-                    isHostLoadBalancer = true;
-                    loadBalancerHost = host;
-                }
-            }
-            else {
-                isHostLoadBalancer = false;
-            }
         }
     }
 
@@ -1680,7 +1635,6 @@ public class HubConfigImpl implements HubConfig
         DHFVersion = "2.0.0";
         host = "localhost";
         hubLogLevel = "default";
-        loadBalancerHost = null;
         isHostLoadBalancer = false;
         isProvisionedEnvironment = false;
 
@@ -1793,7 +1747,9 @@ public class HubConfigImpl implements HubConfig
         propertyConsumerMap.put("mlDHFVersion", prop -> DHFVersion = prop);
         propertyConsumerMap.put("mlHost", prop -> setHost(prop));
         propertyConsumerMap.put("mlIsHostLoadBalancer", prop -> isHostLoadBalancer = Boolean.parseBoolean(prop));
-        propertyConsumerMap.put("mlLoadBalancerHosts", prop -> loadBalancerHost = prop);
+        propertyConsumerMap.put("mlLoadBalancerHosts", prop ->
+            logger.warn("mlLoadBalancerHosts was deprecated in version 4.0.1 and does not have any impact on Data Hub functionality. " +
+                "It can be safely removed from your set of properties."));
         propertyConsumerMap.put("mlIsProvisionedEnvironment", prop -> isProvisionedEnvironment = Boolean.parseBoolean(prop));
 
         propertyConsumerMap.put("mlStagingAppserverName", prop -> stagingHttpName = prop);
