@@ -48,6 +48,12 @@
                 font-size: 20px;
                 cursor: pointer;
             }
+
+            .upload  {
+                position: relative;
+                display: inline-block;
+            }
+
             .disabledRun {
                 position: relative;
                 top: 1px;
@@ -84,6 +90,13 @@
                 margin-right: 10px;
             }
         }
+        .uploadError {
+            line-height: normal;
+            padding-top: 2px;
+            padding-left: 1px;
+            padding-bottom: 1px;
+            color: #DB4f59;
+        }
     }
 
     .running {
@@ -100,6 +113,6 @@
             margin-top: 5px;
             color: #3b458f;
         }
-    }    
+    }
 
 }

@@ -27,8 +27,6 @@ public class HubCentral extends LoggingObject implements InitializingBean {
     @Value("${hubUseLocalDefaults:false}")
     boolean useLocalDefaults;
 
-    private File temporaryLoadDataDirectory;
-
     /**
      * When the application starts up, initialize a project at the configured project path. This will go away before
      * 5.3.0, once Hub Central no longer depends on a HubProject. In the meantime, we need this as a bridge.
@@ -40,11 +38,6 @@ public class HubCentral extends LoggingObject implements InitializingBean {
         if (useLocalDefaults) {
             logger.info("Local defaults of digest authentication and no SSL will be used when connecting to MarkLogic");
         }
-
-        temporaryLoadDataDirectory = new File("build/data-sets");
-        temporaryLoadDataDirectory.mkdirs();
-        logger.info("LoadData files will be uploaded to: " + temporaryLoadDataDirectory.getAbsolutePath());
-
         logger.info("Hub Central is available at port: " + environment.getProperty("server.port"));
     }
 
@@ -96,9 +89,5 @@ public class HubCentral extends LoggingObject implements InitializingBean {
 
     public String getProjectName() {
         return "Data Hub Project";
-    }
-
-    public File getTemporaryLoadDataDirectory() {
-        return temporaryLoadDataDirectory;
     }
 }

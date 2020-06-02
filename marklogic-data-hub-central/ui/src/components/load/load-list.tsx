@@ -77,12 +77,7 @@ const LoadList: React.FC<Props> = (props) => {
           dataIndex: 'name',
           key: 'name',
           render: (text: any,record: any) => (
-              <span><span onClick={() => OpenEditStepDialog(record)} className={styles.editLoadConfig}>{text}</span> {record.filesNeedReuploaded ? (
-                <Popover
-                content={"Files must be reuploaded"}
-                trigger="click"
-              placement="bottom"
-              ><i><FontAwesomeIcon icon={faExclamationCircle} className={styles.popover} size="lg"/></i></Popover>) : ''}</span>
+              <span><span onClick={() => OpenEditStepDialog(record)} className={styles.editLoadConfig}>{text}</span> </span>
           ),
           sorter: (a:any, b:any) => a.name.length - b.name.length,
         },
@@ -149,7 +144,7 @@ const LoadList: React.FC<Props> = (props) => {
             dataSource={props.data}
             rowKey="name"
         />
-        <NewLoadDialog 
+        <NewLoadDialog
             newLoad={newDataLoad}
             title={title} setNewLoad={setNewDataLoad}
             createLoadArtifact={props.createLoadArtifact}
@@ -158,12 +153,12 @@ const LoadList: React.FC<Props> = (props) => {
             canReadOnly={props.canReadOnly}
         />
         {deleteConfirmation}
-        <AdvancedSettingsDialog 
-            tooltipData={AdvLoadTooltips} 
-            activityType={activityType} 
-            openAdvancedSettings={openLoadSettings} 
-            setOpenAdvancedSettings={setOpenLoadSettings} 
-            stepData={stepData} 
+        <AdvancedSettingsDialog
+            tooltipData={AdvLoadTooltips}
+            activityType={activityType}
+            openAdvancedSettings={openLoadSettings}
+            setOpenAdvancedSettings={setOpenLoadSettings}
+            stepData={stepData}
             canWrite={props.canReadWrite}
         />
     </div>

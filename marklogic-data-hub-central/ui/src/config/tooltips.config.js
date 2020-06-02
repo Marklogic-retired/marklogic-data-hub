@@ -69,6 +69,11 @@ const AdvMergeTooltips = {
     'provGranularity': 'The level of detail logged for provenance. Choose *fine* for more detailed logging, *coarse* for the default level, or *off* for no provenance logging.',
 }
 
+const RunToolTips =  {
+  'ingestionStep' : 'Run this step to select and ingest files, up to a total of 100MB.',
+  'otherSteps' : 'Run this step.'
+}
+
 const NewCustomLoadTooltips = {}
 
 const AdvCustomLoadTooltips = {}
@@ -123,5 +128,6 @@ export {
     AdvMatchTooltips,
     NewMergeTooltips,
     AdvMergeTooltips,
-    ModelingTooltips
+    ModelingTooltips,
+    RunToolTips
 }

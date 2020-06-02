@@ -1,10 +1,11 @@
 import React, { useState, CSSProperties } from 'react';
-import { Collapse, Spin, Icon, Card, Tooltip, Modal } from 'antd';
+import { Collapse, Spin, Icon, Card, Tooltip, Modal, Upload, message } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { MLButton } from '@marklogic/design-system';
 import NewFlowDialog from './new-flow-dialog/new-flow-dialog';
 import sourceFormatOptions from '../../config/formats.config';
+import {RunToolTips} from '../../config/tooltips.config';
 import styles from './flows.module.scss';
 
 const { Panel } = Collapse;
@@ -20,6 +21,7 @@ interface Props {
     canWriteFlow: boolean;
     hasOperatorRole: boolean;
     running: any;
+    uploadError:string;
 }
 
 const StepDefinitionTypeTitles = {
@@ -47,6 +49,10 @@ const Flows: React.FC<Props> = (props) => {
     const [stepName, setStepName] = useState('');
     const [stepType, setStepType] = useState('');
     const [stepNumber, setStepNumber] = useState('');
+    const [runningStep, setRunningStep] = useState<any>({});
+    const [runningFlow, setRunningFlow] = useState<any>('');
+    const [fileList, setFileList] = useState<any[]>([]);
+    const [showUploadError, setShowUploadError] = useState(false);
 
     const OpenAddNewDialog = () => {
         setTitle('New Flow');
@@ -182,6 +188,41 @@ const Flows: React.FC<Props> = (props) => {
         return (StepDefinitionTypeTitles[stepDef]) ? StepDefinitionTypeTitles[stepDef] : 'Unknown';
     }
 
+    const uploadProps = {
+        onRemove: file => {
+            setFileList(prevState => {
+                const index = prevState.indexOf(file);
+                const newFileList = prevState.slice();
+                newFileList.splice(index, 1);
+                return newFileList;
+            });
+        },
+        beforeUpload: (file: any) => {
+            setFileList(prevState => ([...prevState , file]));
+            return true;
+        },
+        showUploadList:false,
+        fileList,
+    }
+
+    const customRequest = async option => {
+        const {file} = option;
+        const filenames = fileList.map(({name}) => name);
+        if (filenames.indexOf(file.name) === (filenames.length - 1)) {
+            let fl = fileList;
+            const formData = new FormData();
+
+            fl.forEach(file => {
+                formData.append('files', file);
+            });
+            await props.runStep(runningFlow, runningStep, formData)
+                .then(resp => {
+                    setShowUploadError(true);
+                    setFileList([]);
+                });
+        }
+    };
+
     const isRunning = (flowId, stepId) => {
         let result = props.running.find(r => (r.flowId === flowId && r.stepId === stepId));
         return result !== undefined;
@@ -195,22 +236,51 @@ const Flows: React.FC<Props> = (props) => {
                 let sourceFormat = step.sourceFormat;
                 let stepNumber = step.stepNumber;
                 return (
-                    <Card 
-                        style={{ width: 300, marginRight: 20 }} 
-                        title={StepDefToTitle(step.stepDefinitionType)} 
+                    <Card
+                        style={{ width: 300, marginRight: 20 }}
+                        title={StepDefToTitle(step.stepDefinitionType)}
                         key={stepNumber}
                         size="small"
                         extra={
                             <div className={styles.actions}>
                                 {props.hasOperatorRole ?
-                                    <div
-                                        className={styles.run}
-                                        onClick={() => props.runStep(flowName, step)}
-                                        aria-label={'runStep-' + stepNumber}
-                                    >
-                                        <Icon type="play-circle" theme="filled" />
-                                    </div>
-                                     :
+                                    step.stepDefinitionType.toLowerCase() === "ingestion" ?
+                                        <Upload id="fileUpload"
+                                                multiple={true}
+                                                className={styles.upload}
+                                                customRequest={customRequest}
+                                                showUploadList = {false}
+                                                {...uploadProps}
+                                        >
+                                        <Tooltip title={RunToolTips.ingestionStep} placement="bottom">
+                                        <div
+                                            className={styles.run}
+                                            aria-label={'runStep-' + stepNumber}
+                                            onClick={()=>{
+                                                setShowUploadError(false);
+                                                setRunningStep(step)
+                                                setRunningFlow(flowName)
+                                            }}
+                                        >
+                                            <Icon type="play-circle" theme="filled" />
+                                        </div>
+                                        </Tooltip>
+
+                                        </Upload>
+                                        :
+                                        <Tooltip title={RunToolTips.otherSteps} placement="bottom">
+                                        <div
+                                            className={styles.run}
+                                            onClick={() =>{
+                                                setShowUploadError(false);
+                                                props.runStep(flowName, step)
+                                            }}
+                                            aria-label={'runStep-' + stepNumber}
+                                        >
+                                            <Icon type="play-circle" theme="filled" />
+                                        </div>
+                                        </Tooltip>
+                                    :
                                     <div
                                         className={styles.disabledRun}
                                         onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}
@@ -236,6 +306,10 @@ const Flows: React.FC<Props> = (props) => {
                                 : null }
                             <div className={styles.name}>{step.stepName}</div>
                         </div>
+
+                        <div className = {styles.uploadError}>
+                            { showUploadError && flowName == runningFlow && stepNumber == runningStep.stepNumber ? props.uploadError : ''}
+                        </div>
                         <div className={styles.running} style={{display: isRunning(flowName, stepNumber)  ? 'block' : 'none'}}>
                             <div><Spin /></div>
                             <div className={styles.runningLabel}>Running...</div>
@@ -256,9 +330,9 @@ const Flows: React.FC<Props> = (props) => {
    return (
     <div id="flows-container" className={styles.flowsContainer}>
         {props.canReadFlow || props.canWriteFlow ?
-            <>  
+            <>
                 <div className={styles.createContainer}>
-                    <MLButton 
+                    <MLButton
                         className={styles.createButton} size="default"
                         type="primary" onClick={OpenAddNewDialog}
                         disabled={!props.canWriteFlow}

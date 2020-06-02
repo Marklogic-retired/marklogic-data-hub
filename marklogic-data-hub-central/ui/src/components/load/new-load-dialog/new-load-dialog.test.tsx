@@ -1,5 +1,5 @@
 import React from 'react';
-import { act, render, fireEvent, waitForElement } from '@testing-library/react';
+import { render, fireEvent, waitForElement } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import NewLoadDialog from './new-load-dialog';
 import {BrowserRouter} from "react-router-dom";
@@ -31,7 +31,6 @@ describe('New/edit load data configuration', () => {
     // Field separator and other separator shouldn't show unless it is csv and "Other" field separator
     expect(baseElement.querySelector('#fieldSeparator')).not.toBeInTheDocument();
     expect(baseElement.querySelector('#otherSeparator')).not.toBeInTheDocument();
-    expect(baseElement.querySelector('#fileUpload')).toBeInTheDocument();
     expect(baseElement.querySelector('#targetFormat')).toBeInTheDocument();
     expect(baseElement.querySelector('#outputUriPrefix')).toBeInTheDocument();
     expect(queryAllByText("Target URI Preview:").length ).toEqual(0);
@@ -59,44 +58,9 @@ describe('New/edit load data configuration', () => {
     // Field separator and other separator should show, since we've provided step data with Delimited Text and other separator
     expect(baseElement.querySelector('#fieldSeparator')).toBeInTheDocument();
     expect(baseElement.querySelector('#otherSeparator')).toBeInTheDocument();
-    expect(baseElement.querySelector('#fileUpload')).toBeInTheDocument();
     expect(baseElement.querySelector('#targetFormat')).toBeInTheDocument();
     expect(baseElement.querySelector('#outputUriReplacement')).not.toBeInTheDocument();
     expect(baseElement.querySelector('#outputUriPrefix')).toBeInTheDocument();
   });
 
-  test('set data should only be called once when adding multiple files', async () => {
-    const stepData = { name: 'testSetData', sourceFormat: 'json', targetFormat: 'json'};
-    let baseElement, findByPlaceholderText;
-    await act(async () => {
-      const renderResults = render(<BrowserRouter><NewLoadDialog newLoad={true}
-                                                              title={'Edit Data Load'}
-                                                              setNewLoad={() => {}}
-                                                              createLoadArtifact={() => {}}
-                                                              stepData={stepData}
-                                                              canReadWrite={true}
-                                                              canReadOnly={false}/></BrowserRouter>);
-      baseElement = renderResults.baseElement;
-      findByPlaceholderText = renderResults.findByPlaceholderText;
-    });
-    const fileUpload = await baseElement.querySelector('#fileUpload');
-    expect(fileUpload).toBeInTheDocument();
-    await act(async () => {
-      const files = [new File(["text1"], "test1.txt", {
-        type: "text/plain"
-      }),new File(["text2"], "test2.txt", {
-        type: "text/plain"
-      })];
-
-      Object.defineProperty(fileUpload, "files", {
-        value: files
-      });
-      // @ts-ignore We test for fileUpload to exist before hitting this call.
-      fireEvent.change(fileUpload);
-    });
-    await findByPlaceholderText('Enter name');
-
-    expect(axiosMock).toHaveBeenCalledTimes(1);
-    expect(axiosMock.get).toHaveBeenCalledTimes(1);
-  });
 });

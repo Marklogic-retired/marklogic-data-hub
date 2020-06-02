@@ -25,14 +25,12 @@ const NewLoadDialog = (props) => {
   const [isOtherSeparatorTouched, setOtherSeparatorTouched] = useState(false);
   const [isValid, setIsValid] = useState(false);
   const [fileList, setFileList] = useState<any[]>([]);
-  const [uploadPercent, setUploadPercent] = useState();
+
   const [toDelete, setToDelete] = useState(false);
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [tobeDisabled, setTobeDisabled] = useState(false);
   const [displayUploadError, setDisplayUploadError] = useState(false);
 
-  //tooltip text for the upload button help icon
-  const uploadButtonTooltip = <p>Click <b>Upload</b> to select the source files. The total size of the files must be 100MB or less.</p>
 
   useEffect(() => {
     if (props.stepData && JSON.stringify(props.stepData) != JSON.stringify({}) && props.title === 'Edit Data Load') {
@@ -62,7 +60,6 @@ const NewLoadDialog = (props) => {
       setOtherSeparator('');
       setTgtFormat('json');
       setOutputUriPrefix('');
-      setUploadPercent(0);
       setFileList([]);
       setIsValid(false);
     }
@@ -77,7 +74,6 @@ const NewLoadDialog = (props) => {
       setOtherSeparator('');
       setTgtFormat('json');
       setOutputUriPrefix('');
-      setUploadPercent(0);
       setFileList([]);
       setInputFilePath('');
       setTobeDisabled(false);
@@ -93,7 +89,6 @@ const NewLoadDialog = (props) => {
     } else {
       props.setNewLoad(false);
     setFileList([]);
-    setUploadPercent(0);
     }
   }
 
@@ -156,7 +151,6 @@ const NewLoadDialog = (props) => {
   const onDelOk = () => {
     props.setNewLoad(false);
     setFileList([]);
-    setUploadPercent(0);
     if(toDelete){
       deleteUnusedLoadArtifact(stepName);
       deleteFilesFromDirectory(stepName);
@@ -400,93 +394,6 @@ const NewLoadDialog = (props) => {
     }
   }
 
-  const customRequest = async option => {
-    const { onSuccess, onError, file, action, onProgress } = option;
-    const filenames = fileList.map(({name}) => name);
-    if (filenames.indexOf(file.name) === (filenames.length - 1)) {
-      try {
-        let response = await Axios.get(`/api/steps/ingestion/${stepName}`);
-      } catch (error) {
-        let errorCode = error.response.data.code;
-        let message = error.response.data.message;
-        console.error('Error while fetching load data artifacts from custom request', message);
-
-        if (errorCode === 404) {
-          setToDelete(true);
-          let dataPayload = {
-            name: stepName,
-            description: description,
-            sourceFormat: srcFormat,
-            targetFormat: tgtFormat,
-            outputURIPrefix: outputUriPrefix,
-          }
-          await createDefaultLoadDataArtifact(dataPayload);
-        }
-      }
-
-      let fl = fileList;
-      const formData = new FormData();
-
-      fl.forEach(file => {
-        formData.append('files', file);
-      });
-
-      const url = `/api/artifacts/loadData/${stepName}/setData`;
-
-      await Axios({
-        method: 'post',
-        url: url,
-        data: formData,
-        onUploadProgress: e => {
-          onProgress({percent: (e.loaded / e.total) * 100});
-          let percent = (e.loaded / e.total) * 100;
-          percent = Math.round(percent * 100 + Number.EPSILON) / 100;
-          setUploadPercent(percent);
-        },
-        headers: {
-          'Content-Type': 'multipart/form-data; boundary=${formData._boundary}',
-          crossorigin: true
-        }
-      }).then(resp => {
-        if (resp.data && resp.data.message) {
-          if (resp.data.message.startsWith('Maximum upload size exceeded') || resp.data.message.includes('Network Error')) {
-            setDisplayUploadError(true);
-          }
-        }
-        if (resp.data && resp.data.inputFilePath) {
-          setInputFilePath(resp.data.inputFilePath);
-        }
-        // reset files on successful upload
-        setFileUploadCount(fileList.length);
-        setFileList([]);
-      }).catch(err => {
-        console.error('Error while uploading the files', err)
-        if (err.message && (err.message.startsWith('Maximum upload size exceeded') || err.message.includes('Network Error') || err.message.includes('Request failed with status code 500'))) {
-          setDisplayUploadError(true);
-        }
-        /*......*/
-        onError(err);
-      });
-    }
-  };
-
-  const uploadProps = {
-    showUploadList:false,
-    onRemove: file => {
-      setFileList(prevState => {
-        const index = prevState.indexOf(file);
-        const newFileList = prevState.slice();
-        newFileList.splice(index, 1);
-        return newFileList;
-      });
-    },
-    beforeUpload: (file: any) => {
-      setFileList(prevState => ([...prevState , file]));
-      return true;
-    },
-    fileList,
-  }
-
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -502,18 +409,6 @@ const NewLoadDialog = (props) => {
   const fsoptions = Object.keys(fieldSeparatorOptions).map(d => <Select.Option key={fieldSeparatorOptions[d]}>{d}</Select.Option>);
   const toptions = Object.keys(tgtOptions).map(d => <Select.Option key={tgtOptions[d]}>{d}</Select.Option>);
 
-  const uploadButton: CSSProperties = displayUploadError ? {
-    border: '1px solid #DB4f59'
-  } : {}
-
-
-  const resetUploadError = () => {
-    if(displayUploadError) {
-      setDisplayUploadError(false);
-      setUploadPercent(0);
-      setFileList([]);
-    }
-  }
 
   return (<Modal visible={props.newLoad}
     title={null}
@@ -561,26 +456,6 @@ const NewLoadDialog = (props) => {
           />&nbsp;&nbsp;<Tooltip title={NewLoadTooltips.description}>
           <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
         </Tooltip>
-        </Form.Item>
-        <Form.Item label={<span>
-          Files:&nbsp;
-            </span>} labelAlign="left">
-          <span className={styles.upload}><Upload
-          id="fileUpload"
-          {...uploadProps}
-          multiple={true}
-          disabled={!props.canReadWrite}
-          customRequest={customRequest}
-          //onChange={handleUpload}
-          >
-            <Button disabled={!props.canReadWrite} onClick={resetUploadError} style={uploadButton}>Upload</Button>
-          </Upload>&nbsp;&nbsp;<Tooltip title={uploadButtonTooltip}>
-          <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-        </Tooltip>&nbsp;&nbsp;
-                {props.canReadWrite && !displayUploadError ? (uploadPercent > 0 && uploadPercent < 100 ? <Progress type="circle" percent={uploadPercent} width={50} /> : '') : ''}
-                {props.canReadWrite && !displayUploadError ? (uploadPercent === 100 ? <span>{fileUploadCount} files uploaded</span> : '') : ''}
-                </span>
-                {displayUploadError ? <div className={styles.fileUploadErrorContainer}> The upload was unsuccessful. </div> : ''}
         </Form.Item>
         <Form.Item label={<span>
           Source Format:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
