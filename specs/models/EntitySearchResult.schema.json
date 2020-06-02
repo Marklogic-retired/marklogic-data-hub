@@ -1,0 +1,19 @@
+{
+  "title": "EntitySearchResult",
+  "description": "Defines a search result for an entity instance",
+  "type": "object",
+  "properties": {
+    "index": {
+      "type": "number"
+    },
+    "uri": {
+      "type": "string"
+    },
+    "entityProperties": {
+      "type": "array",
+      "items": {
+        "$ref": "./EntitySearchResultProperty.schema.json"
+      }
+    }
+  }
+}

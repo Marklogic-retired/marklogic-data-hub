@@ -1,0 +1,39 @@
+{
+  "title": "EntitySearchResponse",
+  "description": "Defines a MarkLogic JSON search response that includes entity-specific data needed by the UI. Note that some things - like facets and matches - are explicitly omitted because they're already defined by the ML docs.",
+  "type": "object",
+  "properties": {
+    "snippet-format": {
+      "type": "string"
+    },
+    "total": {
+      "type": "number"
+    },
+    "start": {
+      "type": "number"
+    },
+    "page-length": {
+      "type": "number"
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "$ref": "./EntitySearchResult.schema.json"
+      }
+    },
+    "selectedPropertyDefinitions": {
+      "description": "Defines the array of selected properties, which will either be a default set based on the entity type, or chosen by a client",
+      "type" : "array",
+      "items": {
+        "$ref": "./EntitySearchPropertyDefinition.schema.json"
+      }
+    },
+    "entityPropertyDefinitions": {
+      "description": "Defines the entire set of properties for an entity type, including structured properties",
+      "type" : "array",
+      "items": {
+        "$ref": "./EntitySearchPropertyDefinition.schema.json"
+      }
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "title": "EntitySearchPropertyDefinition",
+  "description": "Defines a property definition of an entity instance; may refer to a structured property too",
+  "type": "object",
+  "properties": {
+    "propertyPath": {
+      "description": "The unique path to this property. For a structured property, uses dot notation - e.g. billing.street.fiveDigit",
+      "type": "string"
+    },
+    "propertyLabel": {
+      "description": "This is equivalent to the property path, with dots being converted into spaces for structured properties",
+      "type": "string"
+    },
+    "datatype": {
+      "type": "string"
+    },
+    "multiple": {
+      "description": "true if the property allows for an array of values",
+      "type": "boolean"
+    },
+    "properties": {
+      "type": "array",
+      "description": "For a structured property, this will be an array of EntitySearchPropertyDefinition objects",
+      "items": {
+        "$ref": "./EntitySearchPropertyDefinition.schema.json"
+      }
+    }
+  }
+}
