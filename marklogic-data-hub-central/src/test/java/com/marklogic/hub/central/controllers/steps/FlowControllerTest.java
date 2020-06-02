@@ -2,7 +2,7 @@ package com.marklogic.hub.central.controllers.steps;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.central.AbstractMvcTest;
-import com.marklogic.hub.central.controllers.NewFlowController;
+import com.marklogic.hub.central.controllers.FlowController;
 import com.marklogic.hub.dataservices.StepService;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MvcResult;
@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class NewFlowControllerTest extends AbstractMvcTest {
+public class FlowControllerTest extends AbstractMvcTest {
 
     private final static String PATH = "/api/flows";
     private int initialFlowCount;
@@ -23,13 +23,13 @@ public class NewFlowControllerTest extends AbstractMvcTest {
         // Get the initial count of flows
         getJson(PATH).andExpect(status().isOk())
             .andDo(result -> {
-                NewFlowController.FlowsWithStepDetails flows = parseFlowsWithStepDetails(result);
+                FlowController.FlowsWithStepDetails flows = parseFlowsWithStepDetails(result);
                 initialFlowCount = flows.size();
             });
 
         // Create a flow
         final String flowName = "myTestFlow";
-        NewFlowController.FlowInfo info = new NewFlowController.FlowInfo();
+        FlowController.FlowInfo info = new FlowController.FlowInfo();
         info.name = flowName;
         info.description = "the description";
         postJson(PATH, info).andExpect(status().isCreated())
@@ -42,9 +42,9 @@ public class NewFlowControllerTest extends AbstractMvcTest {
         // Get flows and verify
         getJson(PATH).andExpect(status().isOk())
             .andDo(result -> {
-                NewFlowController.FlowsWithStepDetails flows = parseFlowsWithStepDetails(result);
+                FlowController.FlowsWithStepDetails flows = parseFlowsWithStepDetails(result);
                 assertEquals(initialFlowCount + 1, flows.size());
-                for (NewFlowController.FlowWithStepDetails flow : flows) {
+                for (FlowController.FlowWithStepDetails flow : flows) {
                     if (info.name.equals(flow.name)) {
                         assertEquals(info.description, flow.description);
                         assertEquals(0, flow.steps.size());
@@ -69,14 +69,14 @@ public class NewFlowControllerTest extends AbstractMvcTest {
         StepService.on(getHubClient().getStagingClient()).saveStep(stepDefinitionType, objectMapper.valueToTree(mappingInfo));
 
         // Add the mapping step to the flow
-        postJson(flowPath + "/steps", new NewFlowController.AddStepInfo(mappingInfo.name, stepDefinitionType))
+        postJson(flowPath + "/steps", new FlowController.AddStepInfo(mappingInfo.name, stepDefinitionType))
             .andExpect(status().isOk());
 
         // Get the flows, verify the step is there
         getJson(PATH).andExpect(status().isOk())
             .andDo(result -> {
-                NewFlowController.FlowsWithStepDetails flows = parseFlowsWithStepDetails(result);
-                for (NewFlowController.FlowWithStepDetails flow : flows) {
+                FlowController.FlowsWithStepDetails flows = parseFlowsWithStepDetails(result);
+                for (FlowController.FlowWithStepDetails flow : flows) {
                     if (info.name.equals(flow.name)) {
                         assertEquals(1, flow.steps.size());
                         assertEquals("1", flow.steps.get(0).stepNumber);
@@ -102,8 +102,8 @@ public class NewFlowControllerTest extends AbstractMvcTest {
         // Verify the flow has no steps now
         getJson(PATH).andExpect(status().isOk())
             .andDo(result -> {
-                NewFlowController.FlowsWithStepDetails flows = parseFlowsWithStepDetails(result);
-                for (NewFlowController.FlowWithStepDetails flow : flows) {
+                FlowController.FlowsWithStepDetails flows = parseFlowsWithStepDetails(result);
+                for (FlowController.FlowWithStepDetails flow : flows) {
                     if (info.name.equals(flow.name)) {
                         assertEquals(0, flow.steps.size(), "The step should have been removed");
                     }
@@ -116,13 +116,13 @@ public class NewFlowControllerTest extends AbstractMvcTest {
         // Verify we're back to the initial count of flows
         getJson(PATH).andExpect(status().isOk())
             .andDo(result -> {
-                NewFlowController.FlowsWithStepDetails flows = parseFlowsWithStepDetails(result);
+                FlowController.FlowsWithStepDetails flows = parseFlowsWithStepDetails(result);
                 assertEquals(initialFlowCount, flows.size());
             });
     }
 
-    private NewFlowController.FlowsWithStepDetails parseFlowsWithStepDetails(MvcResult result) throws Exception {
-        return objectMapper.readerFor(NewFlowController.FlowsWithStepDetails.class)
+    private FlowController.FlowsWithStepDetails parseFlowsWithStepDetails(MvcResult result) throws Exception {
+        return objectMapper.readerFor(FlowController.FlowsWithStepDetails.class)
             .readValue(result.getResponse().getContentAsString());
     }
 }

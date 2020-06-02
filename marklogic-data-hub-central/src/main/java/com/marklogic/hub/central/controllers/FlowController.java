@@ -26,13 +26,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 @Controller
 @RequestMapping("/api/flows")
-public class NewFlowController extends BaseController {
+public class FlowController extends BaseController {
+
+    private Consumer<FlowRunner> flowRunnerConsumer;
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
@@ -77,9 +84,31 @@ public class NewFlowController extends BaseController {
 
     @RequestMapping(value = "/{flowName}/steps/{stepNumber}", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<RunFlowResponse> runStep(@PathVariable String flowName, @PathVariable String stepNumber) {
+    public ResponseEntity<RunFlowResponse> runStep(@PathVariable String flowName, @PathVariable String stepNumber, @RequestPart(value = "files", required = false) MultipartFile[] uploadedFiles) {
         FlowInputs inputs = new FlowInputs(flowName, stepNumber);
-        return ResponseEntity.ok(newFlowRunner().runFlow(inputs));
+        try{
+            if(uploadedFiles != null && uploadedFiles.length > 0){
+                Path tempDir = Files.createTempDirectory("ingestion-");
+                logger.info("Uploading files to " + tempDir.toAbsolutePath().toString() + " in the server. If 'inputFilePath' " +
+                    " is specified in the ingestion step, this path overrides it.");
+                for (MultipartFile file : uploadedFiles) {
+                    Path newFilePath = Paths.get(tempDir.toAbsolutePath().toString(), file.getOriginalFilename());
+                    file.transferTo(newFilePath);
+                }
+                logger.info("Files successfully uploaded");
+                inputs.setInputFilePath(tempDir.toAbsolutePath().toString());
+            }
+        }
+        catch (Exception e) {
+            logger.error("Uploading files to server failed: " + e.getMessage());
+            throw new RuntimeException("Uploading files to server failed; cause: " + e.getMessage(), e);
+        }
+        FlowRunner flowRunner = newFlowRunner();
+        RunFlowResponse runFlowResponse = flowRunner.runFlow(inputs);
+        if(flowRunnerConsumer != null){
+            flowRunnerConsumer.accept(flowRunner);
+        }
+        return ResponseEntity.ok(runFlowResponse);
     }
 
     /**
@@ -87,6 +116,11 @@ public class NewFlowController extends BaseController {
      *
      * @return
      */
+
+    public void setFlowRunnerConsumer(Consumer<FlowRunner> flowRunnerConsumer) {
+        this.flowRunnerConsumer = flowRunnerConsumer;
+    }
+
     protected FlowRunner newFlowRunner() {
         return new FlowRunnerImpl(getHubClient());
     }

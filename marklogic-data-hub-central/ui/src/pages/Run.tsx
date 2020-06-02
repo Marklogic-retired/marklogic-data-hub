@@ -28,6 +28,7 @@ const Run: React.FC = () => {
     const [runStarted, setRunStarted] = useState<any>({});
     const [runEnded, setRunEnded] = useState<any>({});
     const [running, setRunning] = useState<any[]>([]);
+    const [uploadError, setUploadError] = useState('');
 
     // For role-based privileges
     const authorityService = useContext(AuthoritiesContext);
@@ -253,14 +254,23 @@ const Run: React.FC = () => {
     }
 
     // POST /flows​/{flowId}​/steps​/{stepId}
-    const runStep = async (flowId, stepDetails) => {
+    const runStep = async (flowId, stepDetails, formData) => {
         const stepNumber = stepDetails.stepNumber;
         const stepName = stepDetails.stepName;
         const stepType = stepDetails.stepDefinitionType;
         setRunStarted({flowId: flowId, stepId: stepNumber});
+        let response;
         try {
+            setUploadError('');
             setIsLoading(true);
-            let response = await axios.post('/api/flows/' + flowId + '/steps/' + stepNumber);
+            if (formData){
+                response = await axios.post('/api/flows/' + flowId + '/steps/' + stepNumber, formData, {headers: {
+                    'Content-Type': 'multipart/form-data; boundary=${formData._boundary}', crossorigin: true
+                }} )
+            }
+            else {
+                response = await axios.post('/api/flows/' + flowId + '/steps/' + stepNumber);
+            }
             if (response.status === 200) {
                 //console.log('Flow started: ' + flowId);
                 let jobId = response.data.jobId;
@@ -294,6 +304,10 @@ const Run: React.FC = () => {
             console.error('Error running step', error);
             setRunEnded({flowId: flowId, stepId: stepNumber});
             setIsLoading(false);
+            if (error.response && error.response.data && ( error.response.data.message.includes('The total size of all files in a single upload must be 100MB or less.') ||  error.response.data.message.includes('Uploading files to server failed') )) {
+                setUploadError(error.response.data.message)
+                console.log(error.response.data.message);
+            }
         }
     }
 
@@ -327,6 +341,7 @@ const Run: React.FC = () => {
                 canWriteFlow={canWriteFlow}
                 hasOperatorRole={hasOperatorRole}
                 running={running}
+                uploadError={uploadError}
             />
         </div>
     </div>

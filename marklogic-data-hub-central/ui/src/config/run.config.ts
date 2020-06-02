@@ -80,9 +80,7 @@ const loads = {"data" :
       "targetFormat": "json",
       "outputURIReplacement": "",
       "inputFilePath": "/xml-test/data-sets/failedIngest",
-      "lastUpdated": "2020-04-02T23:08:28.287065-07:00",
-      "fileCount": 1,
-      "filesNeedReuploaded": false
+      "lastUpdated": "2020-04-02T23:08:28.287065-07:00"
     }],
   "status" :200
 };
@@ -340,9 +338,7 @@ const loadsXML = {"data" :
       "targetFormat": "xml",
       "outputURIReplacement": "",
       "inputFilePath": "/xml-test/data-sets/failedIngest",
-      "lastUpdated": "2020-04-02T23:08:28.287065-07:00",
-      "fileCount": 1,
-      "filesNeedReuploaded": false
+      "lastUpdated": "2020-04-02T23:08:28.287065-07:00"
     }],
   "status" :200
 };

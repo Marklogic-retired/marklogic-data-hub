@@ -95,8 +95,7 @@ const LoadCard: React.FC<Props> = (props) => {
         if (typeof e.target.className === 'string' &&
             (e.target.className === 'ant-card-body' ||
              e.target.className.startsWith('load-card_formatFileContainer') ||
-             e.target.className.startsWith('load-card_stepNameStyle') ||
-             e.target.className.startsWith('load-card_fileCount'))
+             e.target.className.startsWith('load-card_stepNameStyle'))
         ) {
             setShowLinks(name);
         }
@@ -173,12 +172,6 @@ const LoadCard: React.FC<Props> = (props) => {
                     >
                         <Card
                             actions={[
-                                <span>{elem.filesNeedReuploaded ? (
-                                    <Popover
-                                        content={"Files must be reuploaded"}
-                                        trigger="click"
-                                        placement="bottom"
-                                    ><i><FontAwesomeIcon icon={faExclamationCircle} className={styles.popover} size="lg" /></i></Popover>) : ''}</span>,
                                 <Tooltip title={'Settings'} placement="bottom"><Icon type="setting" key="setting" data-testid={elem.name+'-settings'} onClick={() => OpenLoadSettingsDialog(index)}/></Tooltip>,
                                 <Tooltip title={'Edit'} placement="bottom"><Icon type="edit" key="edit" onClick={() => OpenEditStepDialog(index)}/></Tooltip>,
                                 props.canReadWrite ? <Tooltip title={'Delete'} placement="bottom"><i aria-label="icon: delete"><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"  data-testid={elem.name+'-delete'} onClick={() => handleCardDelete(elem.name)}/></i></Tooltip> : <i><FontAwesomeIcon icon={faTrashAlt} onClick={(event) => event.preventDefault()} className={styles.disabledDeleteIcon} size="lg"/></i>,

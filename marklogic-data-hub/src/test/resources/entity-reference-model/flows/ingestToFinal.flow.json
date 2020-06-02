@@ -15,7 +15,7 @@
       "fileLocations": {
         "inputFilePath": "data/customers",
         "inputFileType": "json",
-        "outputURIReplacement": ".*data*.,'/'"
+        "outputURIPrefix": "/customers/"
       }
     },
     "2": {

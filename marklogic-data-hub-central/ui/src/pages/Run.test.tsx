@@ -7,6 +7,7 @@ import  Run from '../pages/Run';
 import {AuthoritiesContext} from '../util/authorities';
 import data from '../config/run.config';
 import authorities from '../config/authorities.config';
+import {RunToolTips} from "../config/tooltips.config";
 
 jest.mock('axios');
 
@@ -28,7 +29,24 @@ describe('Verify errors associated with running a step', () => {
         // Click disclosure icon
         fireEvent.click(getByLabelText("icon: right"));
 
-        let runButton = await getByLabelText("runStep-1");
+        let runButton  = getByLabelText("runStep-1");
+        fireEvent.mouseOver(runButton);
+        await waitForElement(() => getByText(RunToolTips.ingestionStep));
+
+        let upload;
+        upload = document.querySelector('#fileUpload');
+        const files = [new File(["text1"], "test1.txt", {
+            type: "text/plain"
+        }),new File(["text2"], "test2.txt", {
+            type: "text/plain"
+        })];
+
+        Object.defineProperty(upload, "files", {
+            value: files
+        });
+        fireEvent.change(upload);
+
+
         fireEvent.click(runButton);
 
         // New Modal with Error message, uri and details is opened
@@ -53,10 +71,19 @@ describe('Verify errors associated with running a step', () => {
         // Click disclosure icon
         fireEvent.click(getByLabelText("icon: right"));
 
-        let runButton = await getByLabelText("runStep-1");
-        fireEvent.click(runButton);
+        let upload;
+        upload = document.querySelector('#fileUpload');
+        const files = [new File(["text1"], "test1.txt", {
+            type: "text/plain"
+        })];
 
-        expect(await(waitForElement(() => getByText("Running...")))).toBeInTheDocument();
+        Object.defineProperty(upload, "files", {
+            value: files
+        });
+        fireEvent.change(upload);
+
+        fireEvent.click(getByLabelText("runStep-1"));
+
         expect(await(waitForElement(() => getByText('Ingestion "failedIngest" failed')))).toBeInTheDocument()
         expect(getByText("Message:")).toBeInTheDocument()
         expect(document.querySelector('#error-list')).toHaveTextContent('Local message: failed to apply resource at documents')
@@ -85,6 +112,8 @@ describe('Verify step running', () => {
         fireEvent.click(getByLabelText("icon: right"));
 
         let runButton = await getByLabelText("runStep-1");
+        fireEvent.mouseOver(runButton);
+        await waitForElement(() => getByText(RunToolTips.otherSteps))
         fireEvent.click(runButton);
 
         expect(await(waitForElement(() => getByText("Running...")))).toBeInTheDocument();

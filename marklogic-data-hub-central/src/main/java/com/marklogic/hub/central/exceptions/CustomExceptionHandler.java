@@ -27,7 +27,11 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
@@ -66,6 +70,14 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errJson, HttpStatus.FORBIDDEN);
     }
 
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<JsonNode> handleMaxSizeException(MaxUploadSizeExceededException exc, HttpServletRequest request, HttpServletResponse response) {
+        ObjectNode errJson = mapper.createObjectNode();
+        errJson.put("code", 400);
+        errJson.put("message", "The total size of all files in a single upload must be 100MB or less.");
+        errJson.put("suggestion", "Upload files of size < 100 MB");
+        return new ResponseEntity<>(errJson, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<JsonNode> handleExceptionRequest(
         Exception exception) {
