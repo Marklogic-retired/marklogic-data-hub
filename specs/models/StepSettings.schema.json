@@ -19,6 +19,30 @@
     "permissions": {
       "type": "string"
     },
+    "headers": {
+      "type": "object",
+      "description": "Any properties in this object will be copied into the headers of each document processed by the step"
+    },
+    "processors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Path to a module in the modules database that will be invoked via xdmp.invoke"
+          },
+          "when": {
+            "type": "string",
+            "description": "When the processor should be invoked. Only 'beforeContentPersisted' is supported."
+          },
+          "vars": {
+            "type": "object",
+            "description": "Any properties defined in this object are passed to the invoked module"
+          }
+        }
+      }
+    },
     "targetFormat": {
       "type": "string",
       "description": "Should be json or xml, but not using an enum yet because JSON and XML are being used too"
