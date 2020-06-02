@@ -6,7 +6,7 @@ import ProjectName from './project-name';
 import { UserContext } from '../../util/user-context';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faRoute } from '@fortawesome/free-solid-svg-icons'
-import logo from './logo.png';
+import logo from './logo.jpg';
 import styles from './header.module.scss';
 import { Application } from '../../config/application.config';
 import { MLButton } from '@marklogic/design-system';
@@ -99,7 +99,8 @@ const Header:React.FC<Props> = ({ history, location }) => {
     <>
       <Layout.Header className={styles.container}>
         <div className={styles.logoContainer} onClick={handleHomeClick}>
-          <Avatar size={48} className={styles.logo} src={logo} />
+          <Avatar className={styles.logo} src={logo} />
+            <div className={styles.vertical}></div>
         </div>
         <div id="title" className={styles.title} onClick={handleHomeClick}>
           {Application.title}
