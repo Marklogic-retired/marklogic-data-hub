@@ -201,11 +201,12 @@ const Query = (props) => {
     return (
         <div>
             <div>
-                {(props.selectedFacets.length > 0 || searchOptions.query) && showSaveNewIcon && searchOptions.entityTypeIds.length > 0 &&
+                {props.isSavedQueryUser && (props.selectedFacets.length > 0 || searchOptions.query) && showSaveNewIcon && searchOptions.entityTypeIds.length > 0 &&
                     <div style={{ marginTop: '-22px' }}>
                         <Tooltip title={'Save the current query'}>
                             <FontAwesomeIcon
                                 icon={faSave}
+                                title="save-query"
                                 onClick={() => setOpenSaveModal(true)}
                                 data-testid='save-modal'
                                 style={queries.length > 0 ? {
@@ -236,11 +237,12 @@ const Query = (props) => {
                                 />}
                         </div>
                     </div>}
-                {showSaveChangesIcon && queries.length > 0 &&
+                {props.isSavedQueryUser && showSaveChangesIcon && queries.length > 0 &&
                     <div style={{ marginTop: '-22px' }}>
                         <Tooltip title={'Save changes'}>
                             <FontAwesomeIcon
                                 icon={faSave}
+                                title="save-changes"
                                 onClick={() => setOpenSaveChangesModal(true)}
                                 data-testid='save-changes-modal'
                                 style={queries.length > 0 ? {
@@ -277,11 +279,12 @@ const Query = (props) => {
                                 />}
                         </div>
                     </div>}
-                {showDiscardIcon && queries.length > 0 &&
+                {props.isSavedQueryUser && showDiscardIcon && queries.length > 0 &&
                     <div style={{ marginTop: '-30px', maxWidth: '100px' }}>
                         <Tooltip title={'Discard changes'}>
                             <FontAwesomeIcon
                                 icon={faUndo}
+                                title="discard-changes"
                                 onClick={() => setOpenDiscardChangesModal(true)}
                                 style={queries.length > 0 ? {
                                     color: '#5b69af',
@@ -325,10 +328,11 @@ const Query = (props) => {
                     }
                 </div>
             </div>
-            {queries.length > 0 && <div style={hoverOverDropdown ? { marginLeft: '214px', marginTop: '-66px' } : { marginLeft: '214px' }}>
+            {props.isSavedQueryUser && queries.length > 0 && <div style={hoverOverDropdown ? { marginLeft: '214px', marginTop: '-66px' } : { marginLeft: '214px' }}>
                 <Tooltip title={'Edit query details'}>
                     {hoverOverDropdown && <FontAwesomeIcon
                         icon={faPencilAlt}
+                        title="edit-query"
                         size="lg"
                         onClick={() => setOpenEditDetail(true)}
                         style={{ width: '16px', color: '#5b69af', cursor:'pointer' }}
@@ -345,7 +349,7 @@ const Query = (props) => {
                 />
                 }
             </div>}
-            {queries.length > 0 &&
+            {props.isSavedQueryUser && queries.length > 0 &&
                 <div style={{ marginLeft: '234px', marginTop: '-23px' }}>
                     <Tooltip title={'Save a copy'}>
                         {hoverOverDropdown && <FontAwesomeIcon
@@ -369,7 +373,8 @@ const Query = (props) => {
                             setCurrentQueryDescription={setCurrentQueryDescription}
                         />}
                 </div>}
-            <div id="selected-query-description" className={currentQueryDescription.length > 50 ? styles.longDescription : styles.description}>
+            <div id="selected-query-description" style={props.isSavedQueryUser ? {marginTop: '10px'} : {marginTop: '-36px'}}
+                 className={currentQueryDescription.length > 50 ? styles.longDescription : styles.description}>
                 <Tooltip title={currentQueryDescription}>
                     {
                         searchOptions.selectedQuery && searchOptions.selectedQuery !== 'select a query' &&
@@ -398,6 +403,7 @@ const Query = (props) => {
                 setCurrentQueryName={setCurrentQueryName}
                 currentQueryDescription={currentQueryDescription}
                 setCurrentQueryDescription={setCurrentQueryDescription}
+                isSavedQueryUser={props.isSavedQueryUser}
             />
             <Modal
                 visible={showEntityConfirmation}

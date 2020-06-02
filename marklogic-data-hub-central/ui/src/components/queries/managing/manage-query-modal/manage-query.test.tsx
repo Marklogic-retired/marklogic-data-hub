@@ -29,4 +29,14 @@ describe('Query Modal Component', () => {
     expect(queryByTestId('export')).toBeNull()
   });
 
+  test('Verify edit button is not visible', () => {
+    const { queryByTitle } = render(<ManageQuery isSavedQueryUser={false} canExportQuery={false} queries={query} setQueries={jest.fn()} toggleApply={jest.fn()} queryName={'Lee'} setQueryName={jest.fn()} />);
+    expect(queryByTitle('Edit')).not.toBeInTheDocument();
+  });
+
+  test('Verify delete button is not visible', () => {
+    const { queryByTitle } = render(<ManageQuery isSavedQueryUser={false} canExportQuery={false} queries={query} setQueries={jest.fn()} toggleApply={jest.fn()} queryName={'Lee'} setQueryName={jest.fn()} />);
+    expect(queryByTitle('Delete')).not.toBeInTheDocument();
+  });
+
 });

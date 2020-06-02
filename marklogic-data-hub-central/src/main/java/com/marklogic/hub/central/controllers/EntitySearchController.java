@@ -89,6 +89,7 @@ public class EntitySearchController extends BaseController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/savedQueries")
     @ResponseBody
+    @Secured("ROLE_savedQueryUser")
     @ApiImplicitParam(required = true, paramType = "body", dataType = "SavedQueryRequest")
     @ApiOperation(value = "Create a search query", response = SavedQuery.class)
     public ResponseEntity<JsonNode> saveQueryDocument(@RequestBody @ApiParam(hidden = true) JsonNode queryDocument) {
@@ -97,6 +98,7 @@ public class EntitySearchController extends BaseController {
 
     @RequestMapping(method = RequestMethod.PUT, value = "/savedQueries")
     @ResponseBody
+    @Secured("ROLE_savedQueryUser")
     @ApiImplicitParam(required = true, paramType = "body", dataType = "SavedQueryRequest")
     @ApiOperation(value = "Update a search query", response = SavedQuery.class)
     public ResponseEntity<JsonNode> updateQueryDocument(@RequestBody @ApiParam(hidden = true) JsonNode queryDocument) {
@@ -119,6 +121,7 @@ public class EntitySearchController extends BaseController {
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/savedQueries/query")
     @ResponseBody
+    @Secured("ROLE_savedQueryUser")
     public ResponseEntity<Void> deleteQueryDocument(@RequestParam String id) {
         getEntitySearchService().deleteSavedQuery(id);
         return new ResponseEntity(HttpStatus.NO_CONTENT);

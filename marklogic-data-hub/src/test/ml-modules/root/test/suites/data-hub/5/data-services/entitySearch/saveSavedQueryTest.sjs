@@ -45,7 +45,13 @@ function testSaveAndModifyQuery() {
   const uri = "/saved-queries/" + insertedQuery.savedQuery.id + ".json";
   const permissions = JSON.parse(xdmp.invokeFunction(() => {
     let permissions = {};
-    xdmp.documentGetPermissions(uri).forEach(permission => permissions[xdmp.roleName(permission.roleId)] = permission.capability);
+    xdmp.documentGetPermissions(uri).forEach((permission) => {
+      if(permissions[xdmp.roleName(permission.roleId)]) {
+        permissions[xdmp.roleName(permission.roleId)].push(permission.capability);
+      } else {
+        permissions[xdmp.roleName(permission.roleId)] = [permission.capability];
+      }
+    });
     return permissions;
   }, {transactionMode:'update-auto-commit'}));
   assertions.push(
@@ -56,8 +62,8 @@ function testSaveAndModifyQuery() {
       test.assertEqual("some-query", insertedQuery.savedQuery.name),
       test.assertEqual(4, Object.keys(insertedQuery.savedQuery.systemMetadata).length),
       test.assertEqual(xdmp.getCurrentUser(), insertedQuery.savedQuery.owner),
-      test.assertEqual(permissions["data-hub-saved-query-writer"], "update"),
-      test.assertEqual(permissions["data-hub-saved-query-reader"], "read"),
+      test.assertTrue((permissions["data-hub-saved-query-user"]).includes("update")),
+      test.assertTrue((permissions["data-hub-saved-query-user"]).includes("read")),
       test.assertEqual(xdmp.documentGetCollections(uri), ["http://marklogic.com/data-hub/saved-query"])
   );
 
@@ -75,8 +81,8 @@ function testSaveAndModifyQuery() {
       test.assertEqual("modified-query", updatedQuery.savedQuery.name),
       test.assertEqual(4, Object.keys(updatedQuery.savedQuery.systemMetadata).length),
       test.assertEqual(xdmp.getCurrentUser(), updatedQuery.savedQuery.owner),
-      test.assertEqual(permissions["data-hub-saved-query-writer"], "update"),
-      test.assertEqual(permissions["data-hub-saved-query-reader"], "read"),
+      test.assertTrue((permissions["data-hub-saved-query-user"]).includes("update")),
+      test.assertTrue((permissions["data-hub-saved-query-user"]).includes("read")),
       test.assertEqual(xdmp.documentGetCollections(uri), ["http://marklogic.com/data-hub/saved-query"])
   );
 

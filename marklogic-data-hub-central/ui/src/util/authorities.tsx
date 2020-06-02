@@ -16,6 +16,7 @@ export interface IAuthoritiesContextInterface {
     canReadStepDefinition: () => boolean;
     canWriteStepDefinition: () => boolean;
     canExportEntityInstances: () => boolean;
+    isSavedQueryUser: () => boolean;
     hasOperatorRole: () => boolean;
 }
 
@@ -74,6 +75,9 @@ export class AuthoritiesService implements IAuthoritiesContextInterface {
     };
     public hasOperatorRole:() => boolean = () => {
         return this.authorities.includes('operator');
+    };
+    public isSavedQueryUser:() => boolean = () => {
+        return this.authorities.includes('savedQueryUser');
     };
 }
 

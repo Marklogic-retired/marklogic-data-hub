@@ -18,6 +18,7 @@ import styles from './Browse.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStream, faTable } from '@fortawesome/free-solid-svg-icons'
 import Query from '../components/queries/queries'
+import {AuthoritiesContext} from "../util/authorities";
 
 
 interface Props extends RouteComponentProps<any> {
@@ -39,6 +40,7 @@ const Browse: React.FC<Props> = ({ location }) => {
     resetSearchOptions
   } = useContext(SearchContext);
   const searchBarRef = useRef<HTMLDivElement>(null);
+  const authorityService = useContext(AuthoritiesContext);
 
   const [data, setData] = useState<any[]>([]);
   const [entities, setEntites] = useState<any[]>([]);
@@ -53,6 +55,7 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [greyFacets, setGreyFacets] = useState<any[]>([]);
   const [columns, setColumns] = useState<string[]>();
   const [hasStructured, setStructured] = useState<boolean>(false);
+  const [isSavedQueryUser, setIsSavedQueryUser] = useState<boolean>(authorityService.isSavedQueryUser());
 
   const getEntityModel = async () => {
     try {
@@ -243,7 +246,7 @@ const Browse: React.FC<Props> = ({ location }) => {
                   </div>
                 </div>
               </div>
-              <Query hasStructured={hasStructured} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={selectedFacets} greyFacets={greyFacets} />
+              <Query isSavedQueryUser={isSavedQueryUser} hasStructured={hasStructured} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={selectedFacets} greyFacets={greyFacets} />
             </div>
             <div className={styles.fixedView} >
               {tableView ?
