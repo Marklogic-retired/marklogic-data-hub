@@ -34,6 +34,11 @@
       "privilege-name": "xdmp:invoke",
       "action": "http://marklogic.com/xdmp/privileges/xdmp-invoke",
       "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:xslt-invoke",
+      "action": "http://marklogic.com/xdmp/privileges/xslt-invoke",
+      "kind": "execute"
     }
   ]
 }
