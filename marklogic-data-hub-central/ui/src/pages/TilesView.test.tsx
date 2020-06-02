@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import { render, fireEvent, waitForElement, cleanup } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
 import TilesView from './TilesView';
@@ -6,13 +6,13 @@ import {AuthoritiesContext, AuthoritiesService} from '../util/authorities';
 import axiosMock from 'axios';
 import mocks from '../config/mocks.config';
 import authorities from '../config/authorities.config';
-import data from "../config/run.config";
 
 jest.mock('axios');
 
 const mockDevRolesService = authorities.DeveloperRolesService;
+const testWithOperator = authorities.OperatorRolesService;
 
-describe('TilesView component', () => {
+describe('Tiles View component tests for Developer user', () => {
 
     beforeEach(() => {
         mocks.curateAPI(axiosMock);
@@ -53,6 +53,13 @@ describe('TilesView component', () => {
         expect(await(waitForElement(() => getByLabelText("icon-curate")))).toBeInTheDocument();
         expect(getByLabelText("title-curate")).toBeInTheDocument();
         expect(getByText('Customer')).toBeInTheDocument();
+
+        fireEvent.click(getByText('Customer'));
+        fireEvent.mouseOver(getByText('Mapping1'));
+
+        expect(getByText('Open step details'));
+        expect(getByText('Add step to a new flow'));
+        expect(getByText('Add step to an existing flow'));
     });
 
     test('Verify Load tile displays from toolbar with readIngestion authority', async () => {
@@ -205,4 +212,35 @@ describe('TilesView component', () => {
         expect(getByLabelText("add-new-list")).toBeInTheDocument();
     });
 
+});
+
+describe('Tiles View component tests for Operator user', () => {
+
+    beforeEach(() => {
+        mocks.curateAPI(axiosMock);
+    });
+
+    afterEach(() => {
+        jest.clearAllMocks();
+        cleanup();
+    })
+
+    test('Verify Curate tile', async () => {
+        const { getByLabelText, queryByText, getByText } = render(<AuthoritiesContext.Provider value={testWithOperator}><TilesView/></AuthoritiesContext.Provider>);
+
+        // Curate tile not shown initially
+        expect(queryByText("icon-curate")).not.toBeInTheDocument();
+        expect(queryByText("title-curate")).not.toBeInTheDocument();
+
+        fireEvent.click(getByLabelText("tool-curate"));
+
+        // Curate tile shown with entityTypes after click
+        expect(await(waitForElement(() => getByLabelText("icon-curate")))).toBeInTheDocument();
+        expect(getByLabelText("title-curate")).toBeInTheDocument();
+
+        fireEvent.click(getByText('Customer'));
+        fireEvent.mouseOver(getByText('Mapping1'));
+
+        expect(getByText('Open step details'));
+    });
 });

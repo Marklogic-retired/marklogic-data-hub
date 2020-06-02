@@ -4,8 +4,6 @@ import '@testing-library/jest-dom/extend-expect'
 import {AuthoritiesContext, AuthoritiesService} from '../util/authorities';
 import axiosMock from 'axios';
 import mocks from '../config/mocks.config';
-import authorities from '../config/authorities.config';
-import data from "../config/run.config";
 import Load from "./Load";
 
 jest.mock('axios');
