@@ -23,6 +23,7 @@ import com.marklogic.hub.central.managers.EntitySearchManager;
 import com.marklogic.hub.central.models.DocSearchQueryInfo;
 import com.marklogic.hub.central.models.Document;
 import com.marklogic.hub.central.models.SearchQuery;
+import com.marklogic.hub.central.schemas.EntitySearchResponseSchema;
 import com.marklogic.hub.dataservices.EntitySearchService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -49,7 +50,8 @@ public class EntitySearchController extends BaseController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    @ApiOperation("Response is a MarkLogic JSON search response")
+    @ApiOperation(value = "Response is a MarkLogic JSON search response. Please see ./specs/EntitySearchResponse.schema.json for complete information, as swagger-ui does not capture all the details",
+        response = EntitySearchResponseSchema.class)
     public String search(@RequestBody SearchQuery searchQuery) {
         return newEntitySearchManager().search(searchQuery).get();
     }

@@ -1,0 +1,48 @@
+{
+  "title": "EntitySearchResultProperty",
+  "description": "Defines a property of an entity instance within a search result",
+  "type": "object",
+  "properties": {
+    "propertyPath": {
+      "type": "number"
+    },
+    "propertyValue": {
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "This will be present for a single-value property"
+        },
+        {
+          "type": "array",
+          "description": "This will be present for a multi-value property that is an array of simple types",
+          "items": {
+            "type": "string"
+          }
+        },
+        {
+          "type": "array",
+          "description": "This will be present for a single-value structured property, where each item in the array is an EntitySearchResultProperty for the structured property",
+          "items": {
+            "type": "./EntitySearchResultProperty.schema.json"
+          }
+        },
+        {
+          "type": "array",
+          "description": "This will be present for a multi-value structured property, where each item corresponds to a structured type instance",
+          "items": {
+            "type": "object",
+            "properties": {
+              "properties": {
+                "type": "array",
+                "description": "An array of property values for the structured type instance",
+                "items": {
+                  "type": "./EntitySearchResultProperty.schema.json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
