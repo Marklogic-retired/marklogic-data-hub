@@ -32,8 +32,8 @@ const Run: React.FC = () => {
 
     // For role-based privileges
     const authorityService = useContext(AuthoritiesContext);
-    const canReadFlow = authorityService.canReadFlow();
-    const canWriteFlow = authorityService.canWriteFlow();
+    const canReadFlow = authorityService.canReadStep();
+    const canWriteFlow = authorityService.canWriteStep();
     const hasOperatorRole = authorityService.hasOperatorRole();
 
     const pollConfig: PollConfig = {

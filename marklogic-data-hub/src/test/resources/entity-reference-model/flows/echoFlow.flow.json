@@ -9,7 +9,8 @@
         "sourceQuery": "cts.collectionQuery('customer-input')",
         "sourceDatabase": "data-hub-STAGING",
         "targetDatabase": "data-hub-FINAL",
-        "collections": ["Customer"]
+        "collections": ["Customer"],
+        "permissions": "data-hub-common,read,data-hub-common,update"
       }
     }
   }

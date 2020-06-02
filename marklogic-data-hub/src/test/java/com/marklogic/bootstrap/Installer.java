@@ -53,6 +53,7 @@ public class Installer extends HubTestBase implements InitializingBean {
         dataHubDeveloper.addRole("hub-central-load-writer");
         dataHubDeveloper.addRole("hub-central-mapping-reader");
         dataHubDeveloper.addRole("hub-central-mapping-writer");
+        dataHubDeveloper.addRole("hub-central-step-runner");
         dataHubDeveloper.save();
 
         User dataHubOperator = new User(api, "test-data-hub-operator");
@@ -62,6 +63,7 @@ public class Installer extends HubTestBase implements InitializingBean {
         dataHubOperator.addRole("hub-central-user");
         dataHubOperator.addRole("hub-central-load-reader");
         dataHubOperator.addRole("hub-central-mapping-reader");
+        dataHubOperator.addRole("hub-central-step-runner");
         dataHubOperator.save();
 
         User hubCentralMappingReader = new User(api, "test-hub-mapping-reader");

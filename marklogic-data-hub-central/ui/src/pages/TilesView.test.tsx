@@ -107,7 +107,7 @@ describe('TilesView component', () => {
     });
 
     test('Verify Run tile displays from toolbar', async () => {
-        const {getByLabelText, getByText, queryByText} = await render(<AuthoritiesContext.Provider value={ mockDevRolesService}><TilesView/></AuthoritiesContext.Provider>);
+        const {getByLabelText, getByText, queryByText, getByTestId} = await render(<AuthoritiesContext.Provider value={ mockDevRolesService}><TilesView/></AuthoritiesContext.Provider>);
 
         // Run tile not shown initially
         expect(queryByText("icon-run")).not.toBeInTheDocument();
@@ -121,6 +121,69 @@ describe('TilesView component', () => {
         expect(document.querySelector('#flows-container')).toBeInTheDocument();
         expect(getByText('Create Flow')).toBeInTheDocument();
         expect(getByText('testFlow')).toBeInTheDocument();
+        // delete should work
+        fireEvent.click(getByTestId('deleteFlow-0'));
+        // testing that confirmation modal appears
+        expect(queryByText('Yes')).toBeInTheDocument();
+        fireEvent.click(getByText('No'));
+
+        // test description
+        fireEvent.click(getByText('testFlow'));
+        expect(getByText('Save')).not.toBeDisabled();
+        fireEvent.click(getByText('Cancel'));
+        // test run
+        fireEvent.click(getByLabelText('icon: right'));
+        expect(getByTestId('runStep-1')).toBeInTheDocument();
+    });
+
+    test('Verify run tile cannot edit with only readStep authority', async () => {
+        const authorityService = new AuthoritiesService();
+        authorityService.setAuthorities(['readStep']);
+        const {getByLabelText, getByText, queryByText, getByTestId} = render(<AuthoritiesContext.Provider value={authorityService}><TilesView/></AuthoritiesContext.Provider>);
+
+
+        // Run tile not shown initially
+        expect(queryByText("icon-run")).not.toBeInTheDocument();
+        expect(queryByText("title-run")).not.toBeInTheDocument();
+
+        fireEvent.click(getByLabelText("tool-run"));
+
+        // Run tile shown with entityTypes after click
+        expect(await(waitForElement(() => getByLabelText("icon-run")))).toBeInTheDocument();
+        expect(getByLabelText("title-run")).toBeInTheDocument();
+        expect(document.querySelector('#flows-container')).toBeInTheDocument();
+        expect(getByText('testFlow')).toBeInTheDocument();
+        // create flow shouldn't be provided
+        expect(queryByText('Create Flow')).toBeDisabled();
+        // delete should not work
+        fireEvent.click(getByTestId('deleteFlow-0'));
+        // testing that confirmation modal didn't appear
+        expect(queryByText('Yes')).not.toBeInTheDocument();
+        // test description
+        fireEvent.click(getByText('testFlow'));
+        expect(queryByText('Save')).not.toBeInTheDocument();
+        fireEvent.click(getByText('Close'));
+
+        // test run
+        fireEvent.click(getByLabelText('icon: right'));
+        expect(getByTestId('runStepDisabled-1')).toBeInTheDocument();
+
+    });
+
+    test('Verify run tile does not load from toolbar without readStep authority', async () => {
+        const authorityService = new AuthoritiesService();
+        authorityService.setAuthorities([]);
+        const {getByLabelText, queryByLabelText, queryByText} = render(<AuthoritiesContext.Provider value={authorityService}><TilesView/></AuthoritiesContext.Provider>);
+
+        // Curate tile not shown initially
+        expect(queryByText("icon-run")).not.toBeInTheDocument();
+        expect(queryByText("title-run")).not.toBeInTheDocument();
+
+        await fireEvent.click(getByLabelText("tool-run"));
+
+        // Load tile shown with entityTypes after click
+        expect(queryByLabelText("title-run")).not.toBeInTheDocument();
+        expect(queryByText('testFlow')).not.toBeInTheDocument();
     });
 
     test('Verify Load tile displays from toolbar', async () => {

@@ -48,6 +48,6 @@ return
   xdmp:document-insert(
     $uri,
     $doc,
-    xdmp:default-permissions(),
+    (xdmp:default-permissions(), xdmp:permission("data-hub-common","read")),
     "test-data"
   )

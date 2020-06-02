@@ -20,7 +20,7 @@ const dataHub = DataHubSingleton.instance();
 
 const collections = ['http://marklogic.com/data-hub/flow'];
 const databases = [dataHub.config.STAGINGDATABASE, dataHub.config.FINALDATABASE];
-const permissions = [xdmp.permission(dataHub.consts.DATA_HUB_DEVELOPER_ROLE, 'update'), xdmp.permission(dataHub.consts.DATA_HUB_OPERATOR_ROLE, 'read')];
+const permissions = [xdmp.permission(dataHub.consts.DATA_HUB_FLOW_WRITE_ROLE, 'update'), xdmp.permission(dataHub.consts.DATA_HUB_FLOW_READ_ROLE, 'read')];
 const requiredProperties = ['name'];
 
 function getNameProperty() {

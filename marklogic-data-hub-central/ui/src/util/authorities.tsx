@@ -11,8 +11,8 @@ export interface IAuthoritiesContextInterface {
     canWriteLoad: () => boolean;
     canReadEntityModel: () => boolean;
     canWriteEntityModel: () => boolean;
-    canReadFlow: () => boolean;
-    canWriteFlow: () => boolean;
+    canReadStep: () => boolean;
+    canWriteStep: () => boolean;
     canReadStepDefinition: () => boolean;
     canWriteStepDefinition: () => boolean;
     canExportEntityInstances: () => boolean;
@@ -58,11 +58,11 @@ export class AuthoritiesService implements IAuthoritiesContextInterface {
     public canWriteEntityModel:() => boolean = () => {
         return this.authorities.includes('writeEntityModel');
     };
-    public canReadFlow:() => boolean = () => {
-        return this.authorities.includes('readFlow');
+    public canReadStep:() => boolean = () => {
+        return this.authorities.includes('readStep');
     };
-    public canWriteFlow:() => boolean = () => {
-        return this.authorities.includes('writeFlow');
+    public canWriteStep:() => boolean = () => {
+        return this.authorities.includes('writeStep');
     };
     public canReadStepDefinition:() => boolean = () => {
         return this.authorities.includes('readStepDefinition');
@@ -74,7 +74,7 @@ export class AuthoritiesService implements IAuthoritiesContextInterface {
         return this.authorities.includes('exportEntityInstances');
     };
     public hasOperatorRole:() => boolean = () => {
-        return this.authorities.includes('operator');
+        return this.authorities.includes('operator') || this.authorities.includes('runStep');
     };
     public isSavedQueryUser:() => boolean = () => {
         return this.authorities.includes('savedQueryUser');

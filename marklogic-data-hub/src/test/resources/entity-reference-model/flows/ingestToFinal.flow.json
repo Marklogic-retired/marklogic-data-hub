@@ -10,7 +10,8 @@
           "customer-input"
         ],
         "outputFormat": "json",
-        "targetDatabase": "data-hub-FINAL"
+        "targetDatabase": "data-hub-FINAL",
+        "permissions": "data-hub-common,read,data-hub-common,update"
       },
       "fileLocations": {
         "inputFilePath": "data/customers",
@@ -33,7 +34,8 @@
           "mastering-flow-mapping-json"
         ],
         "outputFormat": "json",
-        "targetDatabase": "data-hub-STAGING"
+        "targetDatabase": "data-hub-STAGING",
+        "permissions": "data-hub-common,read,data-hub-common,update"
       }
     }
   }

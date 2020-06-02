@@ -150,6 +150,7 @@ const Flows: React.FC<Props> = (props) => {
                                 event.stopPropagation(); // Do not trigger collapse
                                 handleFlowDelete(name);
                             }}
+                            data-testid={'deleteFlow-' + i}
                             className={styles.deleteIcon}
                             size="lg"/>
                     </i>
@@ -162,6 +163,7 @@ const Flows: React.FC<Props> = (props) => {
                                 event.stopPropagation();
                                 event.preventDefault();
                             }}
+                            data-testid={'deleteFlow-' + i}
                             className={styles.disabledDeleteIcon}
                             size="lg"/>
                     </i>
@@ -256,6 +258,7 @@ const Flows: React.FC<Props> = (props) => {
                                         <div
                                             className={styles.run}
                                             aria-label={'runStep-' + stepNumber}
+                                            data-testid={'runStep-' + stepNumber}
                                             onClick={()=>{
                                                 setShowUploadError(false);
                                                 setRunningStep(step)
@@ -276,6 +279,7 @@ const Flows: React.FC<Props> = (props) => {
                                                 props.runStep(flowName, step)
                                             }}
                                             aria-label={'runStep-' + stepNumber}
+                                            data-testid={'runStep-' + stepNumber}
                                         >
                                             <Icon type="play-circle" theme="filled" />
                                         </div>
@@ -285,6 +289,7 @@ const Flows: React.FC<Props> = (props) => {
                                         className={styles.disabledRun}
                                         onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}
                                         aria-label={'runStepDisabled-' + stepNumber}
+                                        data-testid={'runStepDisabled-' + stepNumber}
                                     >
                                         <Icon type="play-circle" theme="filled" />
                                     </div>

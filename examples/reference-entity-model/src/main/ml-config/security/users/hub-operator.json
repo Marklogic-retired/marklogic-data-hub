@@ -7,6 +7,7 @@
     "hub-central-user",
     "hub-central-load-reader",
     "hub-central-mapping-reader",
-    "hub-central-entity-model-reader"
+    "hub-central-entity-model-reader",
+    "hub-central-step-runner"
   ]
 }

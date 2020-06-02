@@ -6,6 +6,7 @@
     "data-hub-developer",
     "hub-central-downloader",
     "hub-central-load-writer",
-    "hub-central-mapping-writer"
+    "hub-central-mapping-writer",
+    "hub-central-step-runner"
   ]
 }
