@@ -50,7 +50,7 @@ const loadSettings = {"data" :
         "collections": [
           "testLoad"
         ],
-        "additionalCollections": [],
+        "additionalCollections": ['customerCollection'],
         "lastUpdated": "2020-05-27T12:19:02.446622-07:00"
     },
     "status" :200

@@ -26,7 +26,7 @@ describe('Update data load settings component', () => {
     //Add a check for target format once implemented
     //Should show default collections applied???
     expect(getByText('Target Collections:')).toBeInTheDocument();
-    expect(getByText('Please select target collections')).toBeInTheDocument();
+    expect(getByText('Please add target collections')).toBeInTheDocument();
     expect(getByText('Default Collections:')).toBeInTheDocument();
     expect(getByText('Target Permissions:')).toBeInTheDocument();
     expect(getByText('Provenance Granularity:')).toBeInTheDocument();
@@ -49,7 +49,7 @@ describe('Update data load settings component', () => {
     expect(getByText('Target Database:')).toBeInTheDocument();
     expect(getByText('data-hub-STAGING')).toBeInTheDocument();
     expect(getByText('Target Collections:')).toBeInTheDocument();
-    expect(getByText('Please select target collections')).toBeInTheDocument();
+    expect(getByText('Please add target collections')).toBeInTheDocument();
     expect(getByText('Default Collections:')).toBeInTheDocument();
     expect(getByText('Target Permissions:')).toBeInTheDocument();
     expect(getByText('Provenance Granularity:')).toBeInTheDocument();
@@ -186,7 +186,7 @@ describe('Update data load settings component', () => {
 
   test('Verify discard dialog modal when Cancel is clicked', () => {
     const { rerender, queryByText, getByPlaceholderText, getByText } = render(<AdvancedSettingsDialog {...data.advancedSettings} />);
-    //fireEvent.change(getByText('Please select target collections'), { target: { value: 'test-collection' }});
+    //fireEvent.change(getByText('Please add target collections'), { target: { value: 'test-collection' }});
     fireEvent.click(getByText('Custom Hook'));
     fireEvent.change(getByPlaceholderText('Please enter module'), { target: { value: 'test-module' }});
     expect(getByPlaceholderText('Please enter module')).toHaveValue('test-module');

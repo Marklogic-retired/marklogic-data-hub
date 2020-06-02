@@ -466,8 +466,8 @@ const getSettingsArtifact = async () => {
             id="additionalColl"
             mode="tags"
             style={{width: '100%'}}
-            placeholder="Please select target collections"
-            value={defaultCollections.concat(additionalCollections)}
+            placeholder="Please add target collections"
+            value={additionalCollections}
             disabled={!canReadWrite}
             onChange={handleAddColl}
             className={styles.inputWithTooltip}
