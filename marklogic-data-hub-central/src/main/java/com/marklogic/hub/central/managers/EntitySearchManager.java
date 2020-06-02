@@ -24,6 +24,7 @@ import com.marklogic.client.ForbiddenUserException;
 import com.marklogic.client.MarkLogicServerException;
 import com.marklogic.client.ResourceNotFoundException;
 import com.marklogic.client.document.GenericDocumentManager;
+import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.ReaderHandle;
@@ -105,6 +106,14 @@ public class EntitySearchManager {
             String query = queryDef.serialize();
             StructureWriteHandle handle = new StringHandle(buildSearchOptions(query, searchQuery)).withMimetype("application/xml");
             RawCombinedQueryDefinition rcQueryDef = queryMgr.newRawCombinedQueryDefinition(handle, queryDef.getOptionsName());
+
+            // If an entity has been selected, then apply this transform
+            List<String> entityTypeIds = searchQuery.getQuery().getEntityTypeIds();
+            if (entityTypeIds != null && entityTypeIds.size() > 0) {
+                rcQueryDef.setResponseTransform(new ServerTransform("hubEntitySearchTransform")
+                    .addParameter("entityName", entityTypeIds.get(0)));
+            }
+
             return queryMgr.search(rcQueryDef, resultHandle, searchQuery.getStart());
         }
         catch (MarkLogicServerException e) {

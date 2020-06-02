@@ -1,0 +1,14 @@
+{
+  "envelope": {
+    "instance": {
+      "Customer": {
+        "firstProp": "firstValue",
+        "secondProp": "secondValue",
+        "thirdProp": "thirdValue",
+        "fourthProp": "fourthValue",
+        "fifthProp": "fifthValue",
+        "sixthProp": "sixthValue"
+      }
+    }
+  }
+}

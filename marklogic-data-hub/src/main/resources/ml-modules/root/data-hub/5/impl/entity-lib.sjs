@@ -73,6 +73,20 @@ function findEntityType(entityTypeId) {
 }
 
 /**
+ * Use this to get the EntityType from a definitions object when all you have is an entity name - e.g. Customer.
+ *
+ * @param entityName
+ * @returns {null|*}
+ */
+function findEntityTypeByEntityName(entityName) {
+  const assumedUri = "/entities/" + entityName + ".entity.json";
+  if (!fn.docAvailable(assumedUri)) {
+    return null;
+  }
+  return cts.doc(assumedUri).toObject().definitions[entityName];
+}
+
+/**
  * @param entityTypeId sem.iri or string
  * @return {{entityTypeTitle: string, baseUri: string, modelTitle: string, version: string}}
  */
@@ -224,8 +238,9 @@ function validateModelDefinitions(definitions) {
 }
 
 module.exports = {
-  findEntityTypeIds,
   findEntityType,
+  findEntityTypeByEntityName,
+  findEntityTypeIds,
   findEntityTypesAsMap,
   findModelForEntityTypeId,
   getEntityTypeId,

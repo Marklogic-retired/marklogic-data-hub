@@ -1,0 +1,40 @@
+{
+  "info": {
+    "title": "Customer",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "Customer": {
+      "properties": {
+        "firstProp": {
+          "datatype": "string"
+        },
+        "arrayPropToIgnore": {
+          "datatype": "array",
+          "items": {
+            "datatype": "string"
+          }
+        },
+        "secondProp": {
+          "datatype": "string"
+        },
+        "thirdProp": {
+          "datatype": "string"
+        },
+        "refPropertyToIgnore": {
+          "$ref": "#/definitions/Address"
+        },
+        "fourthProp": {
+          "datatype": "string"
+        },
+        "fifthProp": {
+          "datatype": "string"
+        },
+        "sixthProp": {
+          "datatype": "string"
+        }
+      }
+    }
+  }
+}
