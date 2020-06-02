@@ -4,21 +4,37 @@
     "FirstName": "Holland",
     "LastName": "Wells"
   },
+  "nicknames": [
+    "holly",
+    "well"
+  ],
   "Email": "hollandwells@nutralab.com",
-  "Address": {
-    "Shipping": {
-      "Street": "Hanover Place",
-      "City": "Marshall",
-      "State": "Oklahoma",
-      "Postal": "19111-1001"
+  "Address": [
+    {
+      "Shipping": {
+        "Street": "Hanover Place",
+        "City": "Marshall",
+        "State": "Oklahoma",
+        "Postal": "19111-1001"
+      }
     },
-    "Billing": {
-      "Street": "Sunnyside Avenue",
-      "City": "Brutus",
-      "State": "Wisconsin",
-      "Postal": "30706-8854"
+    {
+      "Shipping": {
+        "Street": "1800 Tysons Blvd",
+        "City": "McLean",
+        "State": "Virginia",
+        "Postal": "22102-2021"
+      }
+    },
+    {
+      "Billing": {
+        "Street": "Sunnyside Avenue",
+        "City": "Brutus",
+        "State": "Wisconsin",
+        "Postal": "30706-8854"
+      }
     }
-  },
+  ],
   "Phone": "(887) 571-2692",
   "PIN": 1772,
   "Created": "05/06/2016"

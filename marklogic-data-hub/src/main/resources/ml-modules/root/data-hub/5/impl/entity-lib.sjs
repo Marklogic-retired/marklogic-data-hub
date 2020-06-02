@@ -59,6 +59,21 @@ function findModelForEntityTypeId(entityTypeId) {
 }
 
 /**
+ * Use this for retrieving an entity model when all you have is the name of the entity that is assumed to be the
+ * "primary" entity in the model.
+ *
+ * @param entityName
+ * @returns {null|*}
+ */
+function findModelByEntityName(entityName) {
+  const assumedUri = "/entities/" + entityName + ".entity.json";
+  if (!fn.docAvailable(assumedUri)) {
+    return null;
+  }
+  return cts.doc(assumedUri).toObject();
+}
+
+/**
  * @param entityTypeId string or a sem.iri
  * @return null if a model can't be found matching the given EntityTypeId, or if a model is found but there's no an entity type
  * with a title matching the entity title in the EntityTypeId. Otherwise, the entity type from the definitions array in the model
@@ -238,15 +253,16 @@ function validateModelDefinitions(definitions) {
 }
 
 module.exports = {
-  findEntityTypeIds,
   findEntityType,
+  findEntityTypeByEntityName,
+  findEntityTypeIds,
   findEntityTypesAsMap,
+  findModelByEntityName,
   findModelForEntityTypeId,
   getEntityTypeId,
   getEntityTypeIdParts,
   getLatestJobData,
   getModelCollection,
-  findEntityTypeByEntityName,
   getModelUri,
   validateModelDefinitions,
   writeModel

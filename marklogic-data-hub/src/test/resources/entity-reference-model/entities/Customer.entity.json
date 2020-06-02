@@ -18,20 +18,39 @@
           "datatype": "string",
           "collation": "http://marklogic.com/collation/codepoint"
         },
+        "nicknames": {
+          "datatype": "array",
+          "description": "Example of a multi-value property of simple values",
+          "items": {
+            "datatype": "string"
+          }
+        },
         "shipping": {
-          "$ref": "#/definitions/Address"
+          "datatype": "array",
+          "description": "Example of a multi-value property of structured values",
+          "items": {
+            "$ref": "#/definitions/Address"
+          }
         },
         "billing": {
+          "description": "Example of a single-value structured property",
           "$ref": "#/definitions/Address"
         },
-        "customerNumber": {
-          "datatype": "integer"
+        "birthDate": {
+          "datatype": "date"
+        },
+        "status": {
+          "datatype": "string"
         },
         "customerSince": {
           "datatype": "date"
         },
+        "customerNumber": {
+          "datatype": "integer"
+        },
         "orders": {
           "datatype": "array",
+          "description": "Example of a relationship to another entity type",
           "items": {
             "$ref": "http://example.org/Order-0.0.1/Order"
           }
@@ -39,11 +58,11 @@
       }
     },
     "Address": {
-      "required": [],
-      "pii": [],
-      "elementRangeIndex": [],
-      "rangeIndex": [],
-      "wordLexicon": [],
+      "required": [ ],
+      "pii": [ ],
+      "elementRangeIndex": [ ],
+      "rangeIndex": [ ],
+      "wordLexicon": [ ],
       "properties": {
         "street": {
           "datatype": "string",
@@ -63,7 +82,7 @@
       }
     },
     "Zip": {
-      "required": [],
+      "required": [ ],
       "properties": {
         "fiveDigit": {
           "datatype": "string",

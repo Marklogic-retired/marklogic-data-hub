@@ -24,6 +24,7 @@ import com.marklogic.client.ForbiddenUserException;
 import com.marklogic.client.MarkLogicServerException;
 import com.marklogic.client.ResourceNotFoundException;
 import com.marklogic.client.document.GenericDocumentManager;
+import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.ReaderHandle;
@@ -96,6 +97,16 @@ public class EntitySearchManager {
             String query = queryDef.serialize();
             StructureWriteHandle handle = new StringHandle(buildSearchOptions(query, searchQuery)).withMimetype("application/xml");
             RawCombinedQueryDefinition rcQueryDef = queryMgr.newRawCombinedQueryDefinition(handle, queryDef.getOptionsName());
+
+            // If an entity has been selected, then apply this transform
+            String[] entityTypeCollections = searchQuery.getQuery().getEntityTypeCollections();
+            if (entityTypeCollections != null && entityTypeCollections.length > 0) {
+                // We have some awkwardness here where the input is 'entityName', but as of 5.3.0, the "entityTypeIds"
+                // property is capturing entity names, which are expected to double as collection names as well
+                rcQueryDef.setResponseTransform(new ServerTransform("hubEntitySearchTransform")
+                    .addParameter("entityName", entityTypeCollections[0]));
+            }
+
             return queryMgr.search(rcQueryDef, resultHandle, searchQuery.getStart());
         }
         catch (MarkLogicServerException e) {

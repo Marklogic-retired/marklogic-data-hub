@@ -20,10 +20,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.central.AbstractHubCentralTest;
 import com.marklogic.hub.central.entities.search.models.DocSearchQueryInfo;
 import com.marklogic.hub.central.entities.search.models.SearchQuery;
 import com.marklogic.hub.central.exceptions.DataHubException;
+import com.marklogic.hub.test.Customer;
+import com.marklogic.hub.test.ReferenceModelProject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,6 +50,32 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
     @AfterEach
     public void resetData() {
         EntitySearchManager.QUERY_OPTIONS = ACTUAL_QUERY_OPTIONS;
+    }
+
+    /**
+     * Smoke test for entityProperties being added. We expect the marklogic-unit-test tests to verify this
+     * exhaustively, so just checking a few things here.
+     */
+    @Test
+    void searchWithTransform() {
+        ReferenceModelProject project = installReferenceModelProject(true);
+        project.createCustomerInstance(new Customer(1, "Jane"));
+        project.createCustomerInstance(new Customer(2, "Sally"));
+
+        SearchQuery query = new SearchQuery();
+        DocSearchQueryInfo info = new DocSearchQueryInfo();
+        info.setEntityTypeIds(Arrays.asList("Customer"));
+        query.setQuery(info);
+
+        StringHandle results = entitySearchManager.search(query);
+        ObjectNode node = readJsonObject(results.get());
+        assertTrue(node.has("selectedPropertyDefinitions"), "Including this makes life easy on the UI so it knows what " +
+            "columns to display");
+        assertTrue(node.has("entityPropertyDefinitions"), "Including this means the UI doesn't need to make a separate call " +
+            "to /api/models to get the property names and also traverse the entity definition itself");
+        assertTrue(node.get("results").get(0).has("entityProperties"), "Each result is expected to have " +
+            "entityProperties so that the UI knows what structured values to show for each entity instance");
+        assertTrue(node.get("results").get(1).has("entityProperties"));
     }
 
     @Test

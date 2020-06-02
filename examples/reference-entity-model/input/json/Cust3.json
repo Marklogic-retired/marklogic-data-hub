@@ -4,21 +4,37 @@
     "FirstName": "Adams",
     "LastName": "Cole"
   },
+  "nicknames": [
+    "ad",
+    "coley"
+  ],
   "Email": "coleadams39@nutralab.com",
-  "Address": {
-    "Shipping": {
-      "Street": "Verona Place",
-      "City": "Keyport",
-      "State": "Ohio",
-      "Postal": "14391-1362"
+  "Address": [
+    {
+      "Shipping": {
+        "Street": "Verona Place",
+        "City": "Keyport",
+        "State": "Ohio",
+        "Postal": "14391-1362"
+      }
     },
-    "Billing": {
-      "Street": "Ellery Street",
-      "City": "Fillmore",
-      "State": "Missouri",
-      "Postal": "85554-2762"
+    {
+      "Shipping": {
+        "Street": "One Penn Plaza",
+        "City": "New York",
+        "State": "New York",
+        "Postal": "10119-1435"
+      }
+    },
+    {
+      "Billing": {
+        "Street": "Ellery Street",
+        "City": "Fillmore",
+        "State": "Missouri",
+        "Postal": "85554-2762"
+      }
     }
-  },
+  ],
   "Phone": "(913) 467-3136",
   "PIN": 5749,
   "Created": "04/22/2018"
