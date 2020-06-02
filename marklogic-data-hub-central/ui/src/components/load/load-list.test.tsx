@@ -48,17 +48,22 @@ describe('Load data component', () => {
   })
 
   test('Verify Load settings from list view renders correctly', async () => {
-    const { getByText, getByTestId, getByTitle } = render(<LoadList {...data.loadData} />)
+    const { getByText, getByTestId, getByTitle,queryByTitle } = render(<LoadList {...data.loadData} />)
 
     await wait(() => {
       fireEvent.click(getByTestId(data.loadData.data[0].name+'-settings'));
     })
+
+    let targetCollection = getByTitle('customerCollection'); // Additional target collection (Added by user)
+
     expect(getByText('Advanced Settings')).toBeInTheDocument();
     // Check if the settings API is being called.
     expect(axiosMock.get).toBeCalledWith('/api/steps/ingestion/' + data.loadData.data[0].name + '/settings');
     expect(getByText('Target Collections:')).toBeInTheDocument();
-    expect(getByTitle(data.loadData.data[0].name)).toBeInTheDocument();
+    expect(targetCollection).toBeInTheDocument(); //Should be available in the document
+    expect(targetCollection).not.toBe(data.loadData.data[0].name); //Should not be same as the default collection
     expect(getByText('Default Collections:')).toBeInTheDocument();
     expect(getByTestId(`defaultCollections-${data.loadData.data[0].name}`)).toBeInTheDocument();
+    expect(queryByTitle(data.loadData.data[0].name)).not.toBeInTheDocument();  // The default collection should not be a part of the Target Collection list
   })
 });
