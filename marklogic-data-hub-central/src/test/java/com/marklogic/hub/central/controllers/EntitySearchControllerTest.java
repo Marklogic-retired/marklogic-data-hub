@@ -7,6 +7,7 @@ import com.marklogic.hub.test.Customer;
 import com.marklogic.hub.test.ReferenceModelProject;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -46,6 +47,7 @@ public class EntitySearchControllerTest extends AbstractMvcTest {
             "}";
 
         // testing save query document
+        loginAsTestUserWithRoles("hub-central-saved-query-user");
         postJson(SAVED_QUERIES_PATH, json)
             .andExpect(status().isCreated())
             .andDo(result -> {
@@ -94,6 +96,12 @@ public class EntitySearchControllerTest extends AbstractMvcTest {
                 ObjectNode response = readJsonObject(result.getResponse().getContentAsString());
                 assertTrue(response.isEmpty());
             });
+
+        // Try saving queries without the required role "hub-central-saved-query-user"
+        loginAsTestUserWithRoles("hub-central-user");
+        verifyRequestIsForbidden(buildJsonPost(SAVED_QUERIES_PATH, json));
+        verifyRequestIsForbidden(buildJsonPut(SAVED_QUERIES_PATH, savedQueryResponse.toString()));
+        verifyRequestIsForbidden(MockMvcRequestBuilders.delete(SAVED_QUERIES_PATH+ "/query").param("id", "some-id"));
     }
 
 
@@ -158,7 +166,7 @@ public class EntitySearchControllerTest extends AbstractMvcTest {
 
 
         // Set the required role and re-login
-        setTestUserRoles("data-hub-operator", "hub-central-entity-exporter");
+        setTestUserRoles("data-hub-operator", "hub-central-entity-exporter", "hub-central-saved-query-user");
         loginAsTestUser();
 
         // Export using query document

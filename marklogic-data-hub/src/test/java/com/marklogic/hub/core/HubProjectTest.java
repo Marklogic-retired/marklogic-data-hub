@@ -92,8 +92,6 @@ public class HubProjectTest extends HubTestBase {
         assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-step-definition-writer.json").exists());
         assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-entity-model-reader.json").exists());
         assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-entity-model-writer.json").exists());
-        assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-saved-query-reader.json").exists());
-        assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-saved-query-writer.json").exists());
         assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/hub-central-entity-exporter.json").exists());
 
 

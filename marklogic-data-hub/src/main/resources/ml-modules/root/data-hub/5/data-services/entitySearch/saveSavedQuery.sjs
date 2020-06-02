@@ -24,9 +24,6 @@ var saveQuery;
 var userCollections = ["http://marklogic.com/data-hub/saved-query"];
 var queryDocument = JSON.parse(saveQuery);
 
-const hubsec = new Security();
-hubsec.dataHubAuthorityAssert('manageSavedQuery', `${xdmp.getCurrentUser()} user doesn't have authority to save or update query`);
-
 if (queryDocument == null || queryDocument.savedQuery == null) {
     ds.throwBadRequest("The request is empty or malformed");
 }
@@ -70,8 +67,8 @@ if (cts.doc("/saved-queries/" + id + ".json")) {
 
 function insertDocument(queryDocument) {
     let docUri = "/saved-queries/" + queryDocument.savedQuery.id + ".json";
-    let permissions = [xdmp.permission('data-hub-saved-query-reader', 'read'),
-        xdmp.permission('data-hub-saved-query-writer', 'update'),
+    let permissions = [xdmp.permission('data-hub-saved-query-user', 'read'),
+        xdmp.permission('data-hub-saved-query-user', 'update'),
         xdmp.defaultPermissions()];
     xdmp.documentInsert(docUri, queryDocument, {
         permissions: permissions,

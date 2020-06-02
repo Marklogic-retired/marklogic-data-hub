@@ -14,8 +14,7 @@
     "data-hub-ingestion-reader",
     "data-hub-match-merge-reader",
     "tde-view",
-    "data-hub-saved-query-reader",
-    "data-hub-saved-query-writer"
+    "data-hub-saved-query-user"
   ],
   "privilege": [
     {

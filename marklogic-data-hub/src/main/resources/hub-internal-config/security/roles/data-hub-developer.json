@@ -12,7 +12,8 @@
     "data-hub-step-definition-writer",
     "data-hub-entity-model-writer",
     "data-hub-match-merge-writer",
-    "data-hub-ingestion-writer"
+    "data-hub-ingestion-writer",
+    "data-hub-saved-query-user"
   ],
   "privilege": [
     {

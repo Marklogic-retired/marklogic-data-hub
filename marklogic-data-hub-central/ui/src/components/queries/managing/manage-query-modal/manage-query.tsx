@@ -135,31 +135,35 @@ const QueryModal = (props) => {
             sorter: (a, b) => a.edited.localeCompare(b.edited),
             width: 200,
             render: text => <div className={styles.cell}>{text}</div>,
-        },
-        {
-            title: 'Edit',
-            dataIndex: 'edit',
-            key: 'edit',
-            align: 'center' as 'center',
-            render: text => <a data-testid={'edit'} onClick={onEdit}>{text}</a>,
-            width: 75,
-        },
-        {
-            title: 'Link',
-            dataIndex: 'link',
-            key: 'link',
-            align: 'center' as 'center',
-            width: 75,
-        },
-        {
-            title: 'Delete',
-            dataIndex: 'delete',
-            key: 'delete',
-            align: 'center' as 'center',
-            render: text => <a data-testid={'delete'} onClick={onDelete}>{text}</a>,
-            width: 75,
         }
     ];
+
+    const editObj = {
+        title: 'Edit',
+        dataIndex: 'edit',
+        key: 'edit',
+        align: 'center' as 'center',
+        render: text => <a data-testid={'edit'} onClick={onEdit}>{text}</a>,
+        width: 75
+    };
+
+    const linkObj = {
+        title: 'Link',
+        dataIndex: 'link',
+        key: 'link',
+        align: 'center' as 'center',
+        width: 75,
+        render: text => <a data-testid={'link'}>{text}</a>
+    };
+
+    const deleteObj = {
+        title: 'Delete',
+        dataIndex: 'delete',
+        key: 'delete',
+        align: 'center' as 'center',
+        render: text => <a data-testid={'delete'} onClick={onDelete}>{text}</a>,
+        width: 75
+    };
 
     const exportObj = {
         title: 'Export',
@@ -174,11 +178,20 @@ const QueryModal = (props) => {
                 }
             }
         },
-        width: 75,
+        width: 75
+    };
+
+    if(props.isSavedQueryUser) {
+        columns.push(editObj);
     }
 
     if (props.canExportQuery) {
-        columns.splice(4, 0, exportObj)
+        columns.push(exportObj);
+    }
+
+    if(props.isSavedQueryUser) {
+        columns.push(linkObj);
+        columns.push(deleteObj);
     }
 
     props.queries && props.queries.length > 0 && props.queries.forEach(query => {

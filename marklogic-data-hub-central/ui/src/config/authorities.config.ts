@@ -46,6 +46,9 @@ class DeveloperRolesService implements IAuthoritiesContextInterface{
     public canExportEntityInstances:() => boolean = () => {
         return true;
     };
+    public isSavedQueryUser:() => boolean = () => {
+        return true;
+    };
     public hasOperatorRole:() => boolean = () => {
         return true;
     };
@@ -95,6 +98,9 @@ class OperatorRolesService implements IAuthoritiesContextInterface{
         return false;
     };
     public canExportEntityInstances:() => boolean = () => {
+        return false;
+    };
+    public isSavedQueryUser:() => boolean = () => {
         return false;
     };
     public hasOperatorRole:() => boolean = () => {
