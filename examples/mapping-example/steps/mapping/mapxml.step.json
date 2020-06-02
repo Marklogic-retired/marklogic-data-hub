@@ -1,11 +1,18 @@
 {
-  "lang" : "zxx",
-  "name" : "xmlToJson-mapxml",
+  "name" : "mapxml",
   "description" : "",
-  "version" : 1,
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stepDefinitionName" : "entity-services-mapping",
+  "stepDefinitionType" : "MAPPING",
+  "additionalCollections" : [ ],
+  "sourceQuery" : "cts.collectionQuery([\"ingestxml\"])",
+  "sourceDatabase" : "data-hub-STAGING",
+  "collections" : [ "mapxml", "Person" ],
+  "validateEntity" : false,
+  "targetDatabase" : "data-hub-FINAL",
+  "targetFormat" : "json",
   "targetEntityType" : "http://example.org/Person-0.0.1/Person",
-  "sourceContext" : "/",
-  "sourceURI" : "/person/xmlPerson1.xml",
   "properties" : {
     "names" : {
       "sourcedFrom" : "*:person/*:names/*:name",
@@ -29,5 +36,7 @@
       "sourcedFrom" : "*:person/*:socialSecurityNumber"
     }
   },
-  "namespaces" : { }
+  "namespaces" : { },
+  "selectedSource" : "query",
+  "stepId" : "mapxml-mapping"
 }

@@ -1,11 +1,18 @@
 {
-  "lang" : "zxx",
-  "name" : "jsonToXml-mapJsonToXml",
-  "description" : "Default description",
-  "version" : 1,
+  "name" : "mapJsonToXml",
+  "description" : "",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stepDefinitionName" : "entity-services-mapping",
+  "stepDefinitionType" : "MAPPING",
+  "additionalCollections" : [ ],
+  "sourceQuery" : "cts.collectionQuery([\"jsonIngest\"])",
+  "sourceDatabase" : "data-hub-STAGING",
+  "collections" : [ "mapJsonToXml", "Person" ],
+  "validateEntity" : false,
+  "targetDatabase" : "data-hub-FINAL",
+  "targetFormat" : "xml",
   "targetEntityType" : "http://example.org/Person-0.0.1/Person",
-  "sourceContext" : "/",
-  "sourceURI" : "/xmlExample/jsonPerson1.json",
   "properties" : {
     "lastUpdated" : {
       "sourcedFrom" : "parseDateTime(lastUpdated, 'DD/MM/YYYY hh:mm:ss')"
@@ -53,5 +60,7 @@
       "sourcedFrom" : "remove-hyphens(social)"
     }
   },
-  "namespaces" : { }
+  "namespaces" : { },
+  "selectedSource" : "query",
+  "stepId" : "mapJsonToXml-mapping"
 }

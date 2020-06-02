@@ -1,0 +1,26 @@
+{
+  "name" : "insuranceApplicationIngestion",
+  "description" : "",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stepDefinitionName" : "default-ingestion",
+  "stepDefinitionType" : "INGESTION",
+  "additionalCollections" : [ ],
+  "headers" : {
+    "sources" : [ {
+      "name" : "insurance_application"
+    } ],
+    "createdOn" : "currentDateTime",
+    "createdBy" : "currentUser"
+  },
+  "sourceQuery" : "cts.collectionQuery([])",
+  "collections" : [ "insuranceApplicationIngestion" ],
+  "permissions" : "data-hub-common,read,data-hub-common,update",
+  "targetDatabase" : "data-hub-STAGING",
+  "targetFormat" : "xml",
+  "inputFilePath" : "pharmaData/insuranceApplication",
+  "outputURIReplacement" : ".*-example,''",
+  "separator" : "",
+  "sourceFormat" : "xml",
+  "stepId" : "insuranceApplicationIngestion-ingestion"
+}

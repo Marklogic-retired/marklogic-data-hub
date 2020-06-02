@@ -1,11 +1,19 @@
 {
-  "lang" : "zxx",
-  "name" : "medical_journal-medicalJournalMapping",
+  "name" : "medicalJournalMapping",
   "description" : "",
-  "version" : 0,
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stepDefinitionName" : "entity-services-mapping",
+  "stepDefinitionType" : "MAPPING",
+  "additionalCollections" : [ ],
+  "sourceQuery" : "cts.collectionQuery([\"medicalJournalIngestion\"])",
+  "sourceDatabase" : "data-hub-STAGING",
+  "collections" : [ "medicalJournalMapping", "Medical_Journal" ],
+  "permissions" : "data-hub-common,read,data-hub-common,update",
+  "validateEntity" : false,
+  "targetDatabase" : "data-hub-FINAL",
+  "targetFormat" : "xml",
   "targetEntityType" : "http://example.org/medical_journal-0.0.1/Medical_Journal",
-  "sourceContext" : "/",
-  "sourceURI" : "/pharmaData/medicalJournal/Medical_Journal.xml",
   "properties" : {
     "article_type" : {
       "sourcedFrom" : "article/front/journal-meta/journal-id/@journal-id-type"
@@ -22,5 +30,7 @@
   },
   "namespaces" : {
     "xlink" : "http://www.w3.org/1999/xlink"
-  }
+  },
+  "selectedSource" : "query",
+  "stepId" : "medicalJournalMapping-mapping"
 }

@@ -1,0 +1,34 @@
+{
+  "name" : "geneSampleMapping",
+  "description" : "",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stepDefinitionName" : "entity-services-mapping",
+  "stepDefinitionType" : "MAPPING",
+  "additionalCollections" : [ ],
+  "sourceQuery" : "cts.collectionQuery([\"geneSampleIngestion\"])",
+  "sourceDatabase" : "data-hub-STAGING",
+  "collections" : [ "geneSampleMapping", "Gene_Sample" ],
+  "permissions" : "data-hub-common,read,data-hub-common,update",
+  "validateEntity" : false,
+  "targetDatabase" : "data-hub-FINAL",
+  "targetFormat" : "xml",
+  "targetEntityType" : "http://example.org/Gene_Sample-0.0.1/Gene_Sample",
+  "properties" : {
+    "gene_type" : {
+      "sourcedFrom" : "root/type_of_gene"
+    },
+    "Gene_id" : {
+      "sourcedFrom" : "root/GeneID"
+    },
+    "chromosome" : {
+      "sourcedFrom" : "root/chromosome"
+    },
+    "tax_id" : {
+      "sourcedFrom" : "root/__tax_id"
+    }
+  },
+  "namespaces" : { },
+  "selectedSource" : "query",
+  "stepId" : "geneSampleMapping-mapping"
+}

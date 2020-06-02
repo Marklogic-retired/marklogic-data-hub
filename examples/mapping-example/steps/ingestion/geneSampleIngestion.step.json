@@ -1,0 +1,26 @@
+{
+  "name" : "geneSampleIngestion",
+  "description" : "",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stepDefinitionName" : "default-ingestion",
+  "stepDefinitionType" : "INGESTION",
+  "additionalCollections" : [ ],
+  "headers" : {
+    "sources" : [ {
+      "name" : "gene_sample"
+    } ],
+    "createdOn" : "currentDateTime",
+    "createdBy" : "currentUser"
+  },
+  "sourceQuery" : "cts.collectionQuery([])",
+  "collections" : [ "geneSampleIngestion" ],
+  "permissions" : "data-hub-common,read,data-hub-common,update",
+  "targetDatabase" : "data-hub-STAGING",
+  "targetFormat" : "xml",
+  "inputFilePath" : "pharmaData/sampleGene",
+  "outputURIReplacement" : ".*-example,''",
+  "separator" : "",
+  "sourceFormat" : "xml",
+  "stepId" : "geneSampleIngestion-ingestion"
+}

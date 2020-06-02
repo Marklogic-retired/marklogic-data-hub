@@ -1,0 +1,28 @@
+{
+  "name" : "applicationMemberMapping",
+  "description" : "",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stepDefinitionName" : "entity-services-mapping",
+  "stepDefinitionType" : "MAPPING",
+  "additionalCollections" : [ ],
+  "sourceQuery" : "cts.collectionQuery([\"applicationMemberIngest\"])",
+  "sourceDatabase" : "data-hub-STAGING",
+  "collections" : [ "applicationMemberMapping", "Application_Member" ],
+  "permissions" : "data-hub-common,read,data-hub-common,update",
+  "validateEntity" : false,
+  "targetDatabase" : "data-hub-FINAL",
+  "targetFormat" : "json",
+  "targetEntityType" : "http://example.org/Application_Member-0.0.1/Application_Member",
+  "properties" : {
+    "medicaid_eventID" : {
+      "sourcedFrom" : "node(\"10000011028\")/calculation/Medicaid/eventIdentifier"
+    },
+    "medicaid_eventDate" : {
+      "sourcedFrom" : "node(\"10000011028\")/calculation/Medicaid/eventDateTime"
+    }
+  },
+  "namespaces" : { },
+  "selectedSource" : "query",
+  "stepId" : "applicationMemberMapping-mapping"
+}

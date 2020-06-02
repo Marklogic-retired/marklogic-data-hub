@@ -1,0 +1,26 @@
+{
+  "name" : "applicationMemberIngest",
+  "description" : "",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stepDefinitionName" : "default-ingestion",
+  "stepDefinitionType" : "INGESTION",
+  "additionalCollections" : [ ],
+  "headers" : {
+    "sources" : [ {
+      "name" : "application_member"
+    } ],
+    "createdOn" : "currentDateTime",
+    "createdBy" : "currentUser"
+  },
+  "sourceQuery" : "cts.collectionQuery([])",
+  "collections" : [ "applicationMemberIngest" ],
+  "permissions" : "data-hub-common,read,data-hub-common,update",
+  "targetDatabase" : "data-hub-STAGING",
+  "targetFormat" : "json",
+  "inputFilePath" : "pharmaData/applicationMember",
+  "outputURIReplacement" : ".*-example,''",
+  "separator" : "",
+  "sourceFormat" : "json",
+  "stepId" : "applicationMemberIngest-ingestion"
+}

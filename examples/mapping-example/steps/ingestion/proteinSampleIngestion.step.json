@@ -1,0 +1,26 @@
+{
+  "name" : "proteinSampleIngestion",
+  "description" : "",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stepDefinitionName" : "default-ingestion",
+  "stepDefinitionType" : "INGESTION",
+  "additionalCollections" : [ ],
+  "headers" : {
+    "sources" : [ {
+      "name" : "protein_sample"
+    } ],
+    "createdOn" : "currentDateTime",
+    "createdBy" : "currentUser"
+  },
+  "sourceQuery" : "cts.collectionQuery([])",
+  "collections" : [ "proteinSampleIngestion" ],
+  "permissions" : "data-hub-common,read,data-hub-common,update",
+  "targetDatabase" : "data-hub-STAGING",
+  "targetFormat" : "xml",
+  "inputFilePath" : "pharmaData/sampleProtein",
+  "outputURIReplacement" : ".*-example,''",
+  "separator" : "",
+  "sourceFormat" : "xml",
+  "stepId" : "proteinSampleIngestion-ingestion"
+}

@@ -1,11 +1,19 @@
 {
-  "lang" : "zxx",
-  "name" : "insurance_application-insuranceApplicationMapping",
+  "name" : "insuranceApplicationMapping",
   "description" : "",
-  "version" : 0,
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stepDefinitionName" : "entity-services-mapping",
+  "stepDefinitionType" : "MAPPING",
+  "additionalCollections" : [ ],
+  "sourceQuery" : "cts.collectionQuery([\"insuranceApplicationIngestion\"])",
+  "sourceDatabase" : "data-hub-STAGING",
+  "collections" : [ "insuranceApplicationMapping", "Insurance_Application" ],
+  "permissions" : "data-hub-common,read,data-hub-common,update",
+  "validateEntity" : false,
+  "targetDatabase" : "data-hub-FINAL",
+  "targetFormat" : "xml",
   "targetEntityType" : "http://example.org/Insurance_Application-0.0.1/Insurance_Application",
-  "sourceContext" : "/",
-  "sourceURI" : "/pharmaData/insuranceApplication/Insurance_Application.xml",
   "properties" : {
     "member_dob" : {
       "sourcedFrom" : "persistence.ffe.cms.hhs.gov:insuranceApplication/persistence.ffe.cms.hhs.gov:applicationMember/persistence.ffe.cms.hhs.gov:member/persistence.ffe.cms.hhs.gov:birthDate"
@@ -26,5 +34,7 @@
     "base.persistence.base.cms.hhs.gov" : "http://base.persistence.base.cms.hhs.gov",
     "base" : "http://base.persistence.base.cms.hhs.gov",
     "ns3" : "http://base.persistence.base.cms.hhs.gov"
-  }
+  },
+  "selectedSource" : "query",
+  "stepId" : "insuranceApplicationMapping-mapping"
 }

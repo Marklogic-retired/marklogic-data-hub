@@ -1,11 +1,18 @@
 {
-  "lang" : "zxx",
-  "name" : "xmlToXml-mapXmlToXml",
+  "name" : "mapXmlToXml",
   "description" : "",
-  "version" : 1,
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stepDefinitionName" : "entity-services-mapping",
+  "stepDefinitionType" : "MAPPING",
+  "additionalCollections" : [ ],
+  "sourceQuery" : "cts.collectionQuery([\"xmlIngest\"])",
+  "sourceDatabase" : "data-hub-STAGING",
+  "collections" : [ "mapXmlToXml", "Person" ],
+  "validateEntity" : false,
+  "targetDatabase" : "data-hub-FINAL",
+  "targetFormat" : "xml",
   "targetEntityType" : "http://example.org/Person-0.0.1/Person",
-  "sourceContext" : "/",
-  "sourceURI" : "/xmlExample/xmlPerson1.xml",
   "properties" : {
     "emails" : {
       "sourcedFrom" : "example.org:person/example.org:emails/example.org:email"
@@ -54,5 +61,7 @@
     "example.org" : "http://example.org",
     "name.example.org" : "http://name.example.org",
     "nm" : "http://name.example.org"
-  }
+  },
+  "selectedSource" : "query",
+  "stepId" : "mapXmlToXml-mapping"
 }

@@ -1,11 +1,18 @@
 {
-  "lang" : "zxx",
-  "name" : "jsonToJson-mapjson",
+  "name" : "mapjson",
   "description" : "",
-  "version" : 1,
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stepDefinitionName" : "entity-services-mapping",
+  "stepDefinitionType" : "MAPPING",
+  "additionalCollections" : [ ],
+  "sourceQuery" : "cts.collectionQuery([\"ingestjson\"])",
+  "sourceDatabase" : "data-hub-STAGING",
+  "collections" : [ "mapjson", "Person" ],
+  "validateEntity" : false,
+  "targetDatabase" : "data-hub-FINAL",
+  "targetFormat" : "json",
   "targetEntityType" : "http://example.org/Person-0.0.1/Person",
-  "sourceContext" : "/",
-  "sourceURI" : "/person/jsonPerson1.json",
   "properties" : {
     "lastUpdated" : {
       "sourcedFrom" : "parseDateTime(lastUpdated, 'DD/MM/YYYY hh:mm:ss')"
@@ -53,5 +60,7 @@
       "sourcedFrom" : "remove-hyphens(social)"
     }
   },
-  "namespaces" : { }
+  "namespaces" : { },
+  "selectedSource" : "query",
+  "stepId" : "mapjson-mapping"
 }
