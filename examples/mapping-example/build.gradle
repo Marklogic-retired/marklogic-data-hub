@@ -21,5 +21,43 @@ apply plugin: "com.marklogic.ml-data-hub"
 ext {
     // Configuration for loading the reference data documents under src/main/ml-data
     mlAppConfig.dataConfig.databaseName = "data-hub-STAGING"
-    mlAppConfig.dataConfig.permissions = "flow-operator-role,read,flow-developer-role,update"
+    mlAppConfig.dataConfig.permissions = "data-hub-common,read,data-hub-common,update"
+}
+
+task extractPharmaData(type: Copy) {
+    from zipTree('pharmaData.zip')
+    destinationDir = file(".")
+}
+mlDeploy.dependsOn extractPharmaData
+
+// Generate a task for running the ingestion step in each flow
+new File("flows").eachFile (groovy.io.FileType.FILES) { file ->
+    def theFlowName = file.getName().replace(".flow.json", "")
+    task "ingest${theFlowName}Data"(type: com.marklogic.gradle.task.RunFlowTask, group: "Ingest Data") {
+        flowName = theFlowName
+        steps = ["1"]
+    }
+}
+
+// Generate a task for running the mapping step in each flow
+new File("flows").eachFile (groovy.io.FileType.FILES) { file ->
+    def theFlowName = file.getName().replace(".flow.json", "")
+    task "map${theFlowName}Data"(type: com.marklogic.gradle.task.RunFlowTask, group: "Map Data") {
+        flowName = theFlowName
+        steps = ["2"]
+    }
+}
+
+task ingestData {
+    description = "Run the ingestion step of each flow in this project"
+    dependsOn {
+        tasks.findAll { task -> "Ingest Data".equals(task.group) }
+    }
+}
+
+task mapData {
+    description = "Run the mapping step of each flow in this project"
+    dependsOn {
+        tasks.findAll { task -> "Map Data".equals(task.group) }
+    }
 }

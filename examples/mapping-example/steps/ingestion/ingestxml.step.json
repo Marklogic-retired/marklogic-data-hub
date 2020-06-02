@@ -1,0 +1,26 @@
+{
+  "name" : "ingestxml",
+  "description" : "",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stepDefinitionName" : "default-ingestion",
+  "stepDefinitionType" : "INGESTION",
+  "additionalCollections" : [ ],
+  "headers" : {
+    "sources" : [ {
+      "name" : "xmlToJson"
+    } ],
+    "createdOn" : "currentDateTime",
+    "createdBy" : "currentUser"
+  },
+  "sourceQuery" : "cts.collectionQuery([])",
+  "collections" : [ "ingestxml" ],
+  "permissions" : "data-hub-common,read,data-hub-common,update",
+  "targetDatabase" : "data-hub-STAGING",
+  "targetFormat" : "xml",
+  "inputFilePath" : "data",
+  "outputURIReplacement" : ".*data,'/person'",
+  "separator" : "",
+  "sourceFormat" : "xml",
+  "stepId" : "ingestxml-ingestion"
+}

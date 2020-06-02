@@ -1,9 +1,12 @@
 This example project demonstrates the new mapping features in Data Hub 5.1.0. Note that it requires the use of MarkLogic 
 10 because it demonstrates usage of a [JavaScript module](https://docs.marklogic.com/guide/jsref/modules).
 
+This project has been updated for the 5.3.0 release so that it can be deployed to a DHS instance and accessed via 
+Hub Central.
+
 ## How to install
 
-To try this project out using QuickStart, start with a clean MarkLogic instance - i.e. without an existing Data hub installation.
+To try this project out, start with a clean DHS or MarkLogic instance - i.e. without an existing Data hub installation.
 Then, install the project's application via Gradle. 
 
 First, initialize the project:
@@ -12,12 +15,11 @@ First, initialize the project:
     
 Then modify the gradle-local.properties file and either un-comment the mlUsername and mlPassword properties and set the
 password for your admin user, or set the properties to a different MarkLogic user that is able to deploy applications. 
+If you are deploying to DHS, you likely should modify gradle-dhs.properties instead.  
 
 Then deploy the application:
 
     ./gradlew -i mlDeploy
-
-Next, start up QuickStart and browse to this project folder and login to QuickStart. 
 
 ## How to test the flows
 
@@ -36,21 +38,23 @@ This project has nine flows:
 The jsonToJson and jsonToXml flows demonstrate a wide array of mapping features, while the xmlToJson and xmlToXml flows are more focused on a few
 features specific to XML like attributes and namespaces. All the remaining flows demonstrate a similar mapping feature and uses the sample data from "Pharma Hub" project.
 
-The flows can be run from the "Flows" page in QuickStart. Each will ingest one document into the staging database and then
-write one entity instance - a Person - to the final database. The Person entity definition contains two nested entity 
-properties to demonstrate mapping data from a source document to nested entities:
+### How to run the flows
 
-- The "names" property is an array of Name entities
-- The "address" property is an Address entity (it is likely that this Address entity could be used by other entity 
-definitions and is thus worth defining as its own entity instead of as a set of properties on a Person)
+To see the results of the flows, the easiest way to run them is to run the following Gradle tasks:
 
-Each of the mapping expressions is then described below. Please run each of the flows first to ensure that the mapping step in each flow can be tested.
+    ./gradlew -i ingestData
+    ./gradlew -i mapData
 
-### Mapping features in the jsonToJson flow
+Those tasks will run the ingestion and mapping steps in each of the flows. 
 
-From the "Flows" view in QuickStart, open the jsonToJson flow and select the mapping step. QuickStart will display the 
-JSON document in staging in the "Source Data" panel and the mapping in the "Entity" panel. The mapping displays all of 
-the properties of the Person entity along with its nested Name and Address entities. Each row in the mapping is described below:
+You can then use Hub Central or qconsole to explore the curated entities. 
+
+## Inspecting the mapping steps
+
+You can use Hub Central to inspect the mapping steps, or you can simply open each file - the mapping steps are in the 
+./steps/mapping directory. The sections below call out items of interest in each mapping.
+
+### Mapping features in the mapjson step
 
 1. The "ssn" property demonstrates usage of a custom XQuery mapping function - "remove-hyphens". The function is defined
 in src/main/ml-modules/root/custom-modules/mapping-functions/custom-xquery-functions.xqy. The functions in that library 
@@ -80,10 +84,7 @@ document in the staging database.
 1. The "zip" property demonstrates usage of another "fn" function - substring is used to select the first five characters
 of the "zipCode" in the source document.
 
-### Mapping features in the xmlToJson flow
-
-From the "Flows" view in QuickStart, open the xmlToJson flow and select the mapping step. QuickStart will display the XML 
-document in staging in the "Source Data" panel and the mapping in the "Entity" panel. 
+### Mapping features in the mapxml step
 
 The xmlToJson mapping is intended to highlight a few differences from mapping JSON to JSON:
 
@@ -95,16 +96,12 @@ occur multiple times under "*:/person/*:names".
 
 Otherwise, all of the features used in the jsonToJsonFlow can be used in this mapping as well. 
 
-### Mapping features in the jsonToXml flow
+### Mapping features in the mapJsonToXml step
 
-From the "Flows" view in QuickStart, open the jsonToXml flow and select the mapping step. QuickStart will display the
-JSON document in staging in the "Source Data" panel and the mapping in the "Entity" panel. The mapping displays all of
-the properties of the Person entity along with its nested Name and Address entities. Each row in the mapping is similar to the jsonToJson flow.
+Each row in this mapping is similar to the mapjson step.
 
-### Mapping features in the xmlToXml flow
+### Mapping features in the mapXmlToXml step
 
-From the "Flows" view in QuickStart, open the xmlToXml flow and select the mapping step. QuickStart will display the XML
-document in staging in the "Source Data" panel and the mapping in the "Entity" panel.
 The xmlToXml mapping is intended to highlight usage of namespace and namespace prefix in the mapping.
 
 1. The properties in the expression have a namespace defined for the "person" element. The mapping also shows usage of a namespace prefix. The source document has a namespace prefix and the same is reflected in the source table and element selector.

@@ -1,78 +1,11 @@
 {
   "name" : "insurance_application",
-  "description" : "",
-  "batchSize" : 100,
-  "threadCount" : 4,
-  "stopOnError" : false,
-  "options" : { },
-  "version" : 0,
   "steps" : {
     "1" : {
-      "name" : "insuranceApplicationIngestion",
-      "description" : "",
-      "options" : {
-        "additionalCollections" : [ ],
-        "headers" : {
-          "sources" : [ {
-            "name" : "insurance_application"
-          } ],
-          "createdOn" : "currentDateTime",
-          "createdBy" : "currentUser"
-        },
-        "sourceQuery" : "cts.collectionQuery([])",
-        "collections" : [ "insuranceApplicationIngestion" ],
-        "permissions" : "data-hub-operator,read,data-hub-operator,update",
-        "outputFormat" : "xml",
-        "targetDatabase" : "data-hub-STAGING"
-      },
-      "customHook" : {
-        "module" : "",
-        "parameters" : { },
-        "user" : "",
-        "runBefore" : false
-      },
-      "retryLimit" : 0,
-      "batchSize" : 100,
-      "threadCount" : 4,
-      "stepDefinitionName" : "default-ingestion",
-      "stepDefinitionType" : "INGESTION",
-      "fileLocations" : {
-        "inputFilePath" : "/Users/sbalasub/Desktop/ML/DHF/QA/json-mapping-example/pharmaData/insuranceApplication",
-        "inputFileType" : "xml",
-        "outputURIReplacement" : ".*-example,''",
-        "separator" : ""
-      }
+      "stepId" : "insuranceApplicationIngestion-ingestion"
     },
     "2" : {
-      "name" : "insuranceApplicationMapping",
-      "description" : "",
-      "options" : {
-        "additionalCollections" : [ ],
-        "sourceQuery" : "cts.collectionQuery([\"insuranceApplicationIngestion\"])",
-        "mapping" : {
-          "name" : "insurance_application-insuranceApplicationMapping",
-          "version" : 0
-        },
-        "targetEntity" : "Insurance_Application",
-        "sourceDatabase" : "data-hub-STAGING",
-        "collections" : [ "insuranceApplicationMapping", "Insurance_Application" ],
-        "permissions" : "data-hub-operator,read,data-hub-operator,update",
-        "validateEntity" : false,
-        "sourceCollection" : "insuranceApplicationIngestion",
-        "outputFormat" : "xml",
-        "targetDatabase" : "data-hub-FINAL"
-      },
-      "customHook" : {
-        "module" : "",
-        "parameters" : { },
-        "user" : "",
-        "runBefore" : false
-      },
-      "retryLimit" : null,
-      "batchSize" : 100,
-      "threadCount" : 4,
-      "stepDefinitionName" : "entity-services-mapping",
-      "stepDefinitionType" : "MAPPING"
+      "stepId" : "insuranceApplicationMapping-mapping"
     }
   }
 }

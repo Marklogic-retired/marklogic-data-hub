@@ -1,0 +1,26 @@
+{
+  "name" : "medicalJournalIngestion",
+  "description" : "",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stepDefinitionName" : "default-ingestion",
+  "stepDefinitionType" : "INGESTION",
+  "additionalCollections" : [ ],
+  "headers" : {
+    "sources" : [ {
+      "name" : "medical_journal"
+    } ],
+    "createdOn" : "currentDateTime",
+    "createdBy" : "currentUser"
+  },
+  "sourceQuery" : "cts.collectionQuery([])",
+  "collections" : [ "medicalJournalIngestion" ],
+  "permissions" : "data-hub-common,read,data-hub-common,update",
+  "targetDatabase" : "data-hub-STAGING",
+  "targetFormat" : "xml",
+  "inputFilePath" : "pharmaData/medicalJournal",
+  "outputURIReplacement" : ".*-example,''",
+  "separator" : "",
+  "sourceFormat" : "xml",
+  "stepId" : "medicalJournalIngestion-ingestion"
+}

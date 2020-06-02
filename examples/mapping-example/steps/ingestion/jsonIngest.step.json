@@ -1,0 +1,26 @@
+{
+  "name" : "jsonIngest",
+  "description" : "",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stepDefinitionName" : "default-ingestion",
+  "stepDefinitionType" : "INGESTION",
+  "additionalCollections" : [ ],
+  "headers" : {
+    "sources" : [ {
+      "name" : "jsonToXml"
+    } ],
+    "createdOn" : "currentDateTime",
+    "createdBy" : "currentUser"
+  },
+  "sourceQuery" : "cts.collectionQuery([])",
+  "collections" : [ "jsonIngest" ],
+  "permissions" : "data-hub-common,read,data-hub-common,update",
+  "targetDatabase" : "data-hub-STAGING",
+  "targetFormat" : "json",
+  "inputFilePath" : "data",
+  "outputURIReplacement" : ".*data,'/xmlExample'",
+  "separator" : "",
+  "sourceFormat" : "json",
+  "stepId" : "jsonIngest-ingestion"
+}

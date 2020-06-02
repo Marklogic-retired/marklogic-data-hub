@@ -1,0 +1,33 @@
+{
+  "name" : "proteinSampleMapping",
+  "description" : "",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stepDefinitionName" : "entity-services-mapping",
+  "stepDefinitionType" : "MAPPING",
+  "additionalCollections" : [ ],
+  "sourceQuery" : "cts.collectionQuery([\"proteinSampleIngestion\"])",
+  "sourceDatabase" : "data-hub-STAGING",
+  "collections" : [ "proteinSampleMapping", "Protein_Sample" ],
+  "permissions" : "data-hub-common,read,data-hub-common,update",
+  "validateEntity" : false,
+  "targetDatabase" : "data-hub-FINAL",
+  "targetFormat" : "xml",
+  "targetEntityType" : "http://example.org/Protein_sample-0.0.1/Protein_Sample",
+  "properties" : {
+    "organism" : {
+      "sourcedFrom" : "uniprot:entry/uniprot:organism/uniprot:name"
+    },
+    "protein_name" : {
+      "sourcedFrom" : "uniprot:entry/uniprot:gene/uniprot:name"
+    },
+    "host_name" : {
+      "sourcedFrom" : "uniprot:entry/uniprot:organismHost/uniprot:name"
+    }
+  },
+  "namespaces" : {
+    "uniprot" : "http://uniprot.org/uniprot"
+  },
+  "selectedSource" : "query",
+  "stepId" : "proteinSampleMapping-mapping"
+}
