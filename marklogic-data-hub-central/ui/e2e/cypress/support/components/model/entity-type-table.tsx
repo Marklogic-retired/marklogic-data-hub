@@ -1,27 +1,4 @@
-class ModelingPage {
-
-  // Entity Type Modal
-  addEntityType() {
-    return cy.get('[data-testid=add-btn').click();
-  }
-
-  newEntityName(str: string) {
-    cy.get('#name').type(str);
-  }
-
-  newEntityDescription(str: string) {
-    cy.get('#description').type(str);
-  }
-
-  submitNewEntityForm() {
-    cy.get('#entity-type-form').submit()
-  }
-
-  nameValidationMessage() {
-    return cy.get('.ant-form-explain');
-  }
-
-  // Entity Type Table
+class EntityTypeTable {
   getEntity(entityName: string) {
     return cy.get('[data-testid=' + entityName + '-span]');
   }
@@ -34,6 +11,10 @@ class ModelingPage {
 
   getEntityLastProcessed(entityName: string) {
     return cy.get('[data-testid=' + entityName + '-last-processed]');
+  }
+
+  expandEntityRow(index: number) {
+    return cy.get('[role=button]').eq(index).click();
   }
 
   sortByEntityName() {
@@ -49,4 +30,4 @@ class ModelingPage {
   }
 }
 
-export default ModelingPage;
+export default EntityTypeTable

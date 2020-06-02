@@ -1,0 +1,38 @@
+.formItem, .formItemEntityType {
+  display: flex;
+  margin-left: 7px;
+  margin-bottom: 16px;
+}
+
+.formItemEntityType {
+  margin-bottom: 6px;
+}
+
+.formItemCheckbox {
+  margin-bottom: 0;
+}
+
+.input {
+  position: relative;
+  width: 320px;
+}
+
+.icon, .radioQuestionIcon, .checkboxQuestionIcon {
+  position: absolute;
+  top: 0px;
+  right: -20px;
+  font-size: 12px;
+  color: #5B69AF;
+}
+
+.radioQuestionIcon {
+  right: 0px;
+}
+
+.checkboxQuestionIcon {
+  right: -7px;
+}
+
+.asterisk {
+  color: #B32424;
+}

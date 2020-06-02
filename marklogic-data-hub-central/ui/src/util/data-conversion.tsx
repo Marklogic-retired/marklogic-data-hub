@@ -1,4 +1,5 @@
 import { xmlParser } from './../util/xml-parser';
+import { Definition, Property } from '../types/modeling-types';
 
 export const entityFromJSON = (data: any) => {
   interface EntityModel {
@@ -647,26 +648,7 @@ export const setTreeVisibility = (ob, str) => {
   return filter(ob);
 }
 
-export const definitionsParser = (definitions: any) => {
-  interface Definition {
-    name: string,
-    primaryKey: string,
-    elementRangeIndex: string[],
-    pii: string[],
-    rangeIndex: string[],
-    required: string[],
-    wordLexicon: string[],
-    properties: Property[]
-  }
-
-  interface Property {
-    name: string,
-    description: string,
-    datatype: string,
-    ref: string,
-    collation: string,
-    multiple: boolean
-  }
+export const definitionsParser = (definitions: any): Definition[] => {
 
   let entityDefinitions: Definition[] = []
 
@@ -718,8 +700,16 @@ export const definitionsParser = (definitions: any) => {
               } 
             }
           } else if (definitions[definition][entityKeys][properties]['$ref']) {
-            // Structured type
-            property.datatype = 'structured';
+            let refSplit = definitions[definition][entityKeys][properties]['$ref'].split('/');
+            console.log('ref split', refSplit)
+            if (refSplit[1] === 'definitions') {
+              // Structured type
+              property.datatype = 'structured';
+            } else {
+              // External Entity type
+              property.datatype = refSplit[refSplit.length-1];
+            }
+
             property.ref = definitions[definition][entityKeys][properties]['$ref'];
           }
           entityProperties.push(property);

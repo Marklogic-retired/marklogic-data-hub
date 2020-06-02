@@ -1,16 +1,21 @@
 import React from 'react';
-import { render, wait } from '@testing-library/react';
+import { render, wait, screen, fireEvent } from '@testing-library/react';
 import userEvent from "@testing-library/user-event";
 import PropertyTable from './property-table';
 
 import { propertyTableEntities } from '../../../assets/mock-data/modeling';
 
 describe('Entity Modeling Property Table Component', () => {
-  test('Property Table renders an Entity with no properties', () => {
+  test('Property Table renders an Entity with no properties, no writer role', () => {
     let entityName = 'NewEntity';
     let definitions = { NewEntity : { properties: {} } };
-    const { getByText } =  render(
-      <PropertyTable entityName={entityName} definitions={definitions}/>
+    const { getByText, getByLabelText } =  render(
+      <PropertyTable
+        canReadEntityModel={true}
+        canWriteEntityModel={false}
+        entityName={entityName} 
+        definitions={definitions}
+      />
     )
 
     expect(getByText('Add Property')).toBeInTheDocument();
@@ -18,13 +23,19 @@ describe('Entity Modeling Property Table Component', () => {
     expect(getByText('Multiple')).toBeInTheDocument();
     expect(getByText('Sort')).toBeInTheDocument();
     expect(getByText('Advanced Search')).toBeInTheDocument();
+    expect(getByLabelText('NewEntity-add-property')).toBeDisabled();
   });
 
-  test('Property Table renders with basic datatypes', () => {
+  test('Property Table renders with basic datatypes, with writer role', () => {
     let entityName = propertyTableEntities[0].entityName;
     let definitions = propertyTableEntities[0].model.definitions;
-    const { getByText, getByTestId } =  render(
-      <PropertyTable entityName={entityName} definitions={definitions}/>
+    const { getByText, getByTestId, getByLabelText, debug } =  render(
+      <PropertyTable 
+        canReadEntityModel={true}
+        canWriteEntityModel={true}
+        entityName={entityName} 
+        definitions={definitions}
+      />
     )
 
     expect(getByTestId('identifier-concept_name')).toBeInTheDocument();
@@ -35,15 +46,27 @@ describe('Entity Modeling Property Table Component', () => {
     expect(getByText('vocabulary')).toBeInTheDocument();
     expect(getByText('synonyms')).toBeInTheDocument();
     expect(getByText('unsignedLong')).toBeInTheDocument();
+
+    userEvent.click(getByLabelText('Concept-add-property'));
+    expect(getByText('Entity Type:')).toBeInTheDocument();
+    expect(getByText('Add')).toBeInTheDocument();
+    expect(getByText('Cancel')).toBeInTheDocument();
+
   });
 
-  test('Property Table renders with structured and external datatypes', async () => {
+  test('Property Table renders with structured and external datatypes, no writer role', () => {
     let entityName = propertyTableEntities[2].entityName;
     let definitions = propertyTableEntities[2].model.definitions;
-    const { getByText, getByTestId, getAllByText, getAllByTestId, getAllByRole } =  render(
-      <PropertyTable entityName={entityName} definitions={definitions}/>
+    const { getByText, getByTestId, getAllByText, getAllByTestId, getAllByRole, getByLabelText } =  render(
+      <PropertyTable 
+        canReadEntityModel={true}
+        canWriteEntityModel={false}
+        entityName={entityName} 
+        definitions={definitions}
+      />
     )
 
+    expect(getByLabelText('Customer-add-property')).toBeDisabled();
     expect(getByTestId('identifier-customerId')).toBeInTheDocument();
     expect(getByTestId('multiple-orders')).toBeInTheDocument();
     expect(getAllByTestId('add-struct-Address')).toHaveLength(2); 
@@ -58,9 +81,7 @@ describe('Entity Modeling Property Table Component', () => {
     expect(getAllByText('Address')).toHaveLength(2);
     
     // Table expansion shipping property -> Address Structure type
-    await wait(() => {
-      userEvent.click(getAllByRole('button')[1]);
-    });
+    userEvent.click(getAllByRole('button')[1]);
 
     expect(getByTestId('add-struct-Zip')).toBeInTheDocument();
     expect(getAllByText(/zip/i)).toHaveLength(2);
@@ -68,17 +89,13 @@ describe('Entity Modeling Property Table Component', () => {
     expect(getAllByText('state')).toHaveLength(1);
 
     // Table expansion for shipping property -> Zip structure type
-    await wait(() => {
-      userEvent.click(getAllByRole('button')[2]);
-    });
+    userEvent.click(getAllByRole('button')[2]);
 
     expect(getByText('fiveDigit')).toBeInTheDocument();
     expect(getByText('plusFour')).toBeInTheDocument();
 
     // Table expansion for billing property, Address structure type
-    await wait(() => {
-      userEvent.click(getAllByRole('button')[3]);
-    });
+    userEvent.click(getAllByRole('button')[3]);
 
     expect(getAllByTestId('add-struct-Zip')).toHaveLength(2); 
     expect(getAllByText(/zip/i)).toHaveLength(4);
@@ -86,9 +103,7 @@ describe('Entity Modeling Property Table Component', () => {
     expect(getAllByText('state')).toHaveLength(2);
 
     // Table expansion for billing property -> Zip structure type
-    await wait(() => {
-      userEvent.click(getAllByRole('button')[4]);
-    });
+    userEvent.click(getAllByRole('button')[4]);
 
     expect(getAllByText('fiveDigit')).toHaveLength(2);
     expect(getAllByText('plusFour')).toHaveLength(2);

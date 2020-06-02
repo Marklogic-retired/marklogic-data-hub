@@ -2,7 +2,9 @@ import React from 'react';
 import axios from 'axios'
 import { render, wait } from '@testing-library/react';
 import userEvent from "@testing-library/user-event";
+
 import EntityTypeModal from './entity-type-modal';
+import { ModelingTooltips } from '../../../config/tooltips.config';
 import { createModelErrorResponse, createModelResponse } from '../../../assets/mock-data/modeling';
 
 jest.mock('axios');
@@ -28,7 +30,7 @@ describe('EntityTypeModal Component', () => {
   });
 
   test('Valid Entity name is used', async () => {
-    axiosMock.post.mockImplementationOnce(jest.fn(() => Promise.resolve({ status: 201, data: createModelResponse })));
+    axiosMock.post['mockImplementationOnce'](jest.fn(() => Promise.resolve({status: 201, data: createModelResponse})));
 
     const { getByText, getByPlaceholderText } = render(
       <EntityTypeModal
@@ -72,12 +74,12 @@ describe('EntityTypeModal Component', () => {
       userEvent.click(getByText('Add'));
     });
 
-    expect(getByText('Names must start with a letter, and can contain letters, numbers, hyphens, and underscores.')).toBeInTheDocument();
+    expect(getByText(ModelingTooltips.nameRegex)).toBeInTheDocument();
   });
 
   test('Creating duplicate entity shows error message', async () => {
-    axiosMock.post.mockImplementationOnce(jest.fn(() =>
-      Promise.reject({ response: { status: 400, data: createModelErrorResponse } })));
+    axiosMock.post['mockImplementationOnce'](jest.fn(() => 
+      Promise.reject({ response: {status: 400, data: createModelErrorResponse } })));
 
     const { getByText, getByPlaceholderText } = render(
       <EntityTypeModal

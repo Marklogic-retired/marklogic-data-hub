@@ -1,6 +1,6 @@
 @font-face {
   font-family: MLCustomFont;
-  src: url(./assets/fonts/ML_IconFont.ttf);
+  src: url(./fonts/ML_IconFont.ttf);
   font-family: 'MLCustomFont'format('truetype'); 
   font-weight: normal; 
   font-style: normal; 
@@ -154,4 +154,14 @@ div#error-list div.ant-collapse div.ant-collapse-item div.ant-collapse-content d
   font-family: "helvetica neue";
   font-size: 14px;
   color: #5b69af;
+}
+
+.ant-cascader-menu-item-disabled {
+  cursor: default;
+  color: #333333;
+}
+
+ul.ant-cascader-menu {
+  height: auto;
+  max-height: 500px;
 }

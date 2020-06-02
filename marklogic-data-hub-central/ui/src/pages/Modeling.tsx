@@ -1,5 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Tooltip } from 'antd';
+import React, { useState, useEffect, useContext } from 'react';
+import axios from 'axios';
+import { Tooltip, Alert } from 'antd';
 import { faUndo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { MLButton } from '@marklogic/design-system';
@@ -10,16 +11,19 @@ import styles from './Modeling.module.scss';
 
 import { primaryEntityTypes } from '../api/modeling';
 import { UserContext } from '../util/user-context';
+import { ModelingContext } from '../util/modeling-context';
 import { ModelingTooltips } from '../config/tooltips.config';
 import { AuthoritiesContext } from '../util/authorities';
 
 const Modeling: React.FC = () => {
   const { handleError, resetSessionTime } = useContext(UserContext);
+  const { modelingOptions, setEntityTypeNamesArray } = useContext(ModelingContext);
   const [entityTypes, setEntityTypes] = useState<any[]>([]);
   const [showEntityModal, toggleShowEntityModal] = useState(false);
   const [isEditModal, toggleIsEditModal] = useState(false);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [autoExpand, setAutoExpand] = useState('');
 
   //Role based access
   const authorityService = useContext(AuthoritiesContext);
@@ -35,6 +39,9 @@ const Modeling: React.FC = () => {
       const response = await primaryEntityTypes();
       if (response['data']) {
         setEntityTypes(response['data']);
+        if (response['data'].length > 0 ) {
+          setEntityTypeNamesArray(response['data'].map(entity => { return { name: entity.entityName, entityTypeId: entity.entityTypeId} }));
+        }
       }
     } catch (error) {
       handleError(error)
@@ -43,7 +50,10 @@ const Modeling: React.FC = () => {
     }
   }
 
-  const updateEntityTypesAndHideModal = () => {
+  const updateEntityTypesAndHideModal = (entityName: string, description: string) => {
+    if (!isEditModal) {
+      setAutoExpand(entityName + ',' + description);
+    }
     toggleShowEntityModal(false);
     getPrimaryEntityTypes();
   }
@@ -57,44 +67,45 @@ const Modeling: React.FC = () => {
     }
   };
 
+  const addButton = <MLButton 
+    type="primary"
+    aria-label="add-entity"
+    onClick={() => {
+      toggleIsEditModal(false);
+      toggleShowEntityModal(true);
+    }}
+    disabled={!canWriteEntityModel}
+    className={!canWriteEntityModel && styles.disabledButton}
+  >Add</MLButton>
+
   return (
     <div className={styles.modelContainer}>
+      { modelingOptions.isModified && (
+        <Alert type="info" showIcon message={ModelingTooltips.entityEditedAlert}/>
+      )}
       <div className={styles.header}>
         <h1>Entity Types</h1>
         <div className={styles.buttonContainer}>
           {entityTypes.length == 0 ?
             <Tooltip title={ModelingTooltips.addNewEntity}>
-              <MLButton
-                type="primary"
-                data-testid="add-btn"
-                onClick={() => {
-                  toggleIsEditModal(false);
-                  toggleShowEntityModal(true);
-                }}
-                disabled={!canWriteEntityModel}
-              >
-                Add</MLButton>
+              {addButton}
             </Tooltip>
-            :
-            <MLButton
-              type="primary"
-              data-testid="add-btn"
-              onClick={() => {
-                toggleIsEditModal(false);
-                toggleShowEntityModal(true);
-              }}
-              disabled={!canWriteEntityModel}
-            >
-              Add</MLButton>
+            : 
+            canWriteEntityModel ?
+              addButton
+              :
+              <Tooltip title={'Add Entity Type: ' + ModelingTooltips.noWriteAccess}>
+                <span>{addButton}</span>
+              </Tooltip>
           }
-          <MLButton disabled>
+          <MLButton disabled aria-label="save-all">
             <span className={styles.publishIcon}></span>
             Save All
           </MLButton>
-          <MLButton disabled>
-            <FontAwesomeIcon
-              className={styles.icon}
-              icon={faUndo}
+          <MLButton disabled aria-label="revert-all">
+            <FontAwesomeIcon 
+              className={styles.icon} 
+              icon={faUndo} 
               size="sm"
             />
             Revert All
@@ -109,10 +120,13 @@ const Modeling: React.FC = () => {
         name={name}
         description={description}
       />
-      <EntityTypeTable data-test-id="entity-type-table" allEntityTypesData={entityTypes}
+      <EntityTypeTable 
         canReadEntityModel={canReadEntityModel}
         canWriteEntityModel={canWriteEntityModel}
-        editEntityTypeDescription={editEntityTypeDescription} />
+        allEntityTypesData={entityTypes}
+        editEntityTypeDescription={editEntityTypeDescription}
+        autoExpand={autoExpand}
+      />
     </div>
   );
 }
