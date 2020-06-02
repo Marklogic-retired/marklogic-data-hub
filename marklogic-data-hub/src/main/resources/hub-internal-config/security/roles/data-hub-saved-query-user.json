@@ -1,31 +1,8 @@
 {
   "role-name": "data-hub-saved-query-user",
   "description": "Permits read, update and delete saved query documents",
-  "privilege": [
-    {
-      "privilege-name": "xdmp:document-load",
-      "action": "http://marklogic.com/xdmp/privileges/xdmp-document-load",
-      "kind": "execute"
-    },
-    {
-      "privilege-name": "unprotected-collections",
-      "action": "http://marklogic.com/xdmp/privileges/unprotected-collections",
-      "kind": "execute"
-    },
-    {
-      "privilege-name": "unprotected-uri",
-      "action": "http://marklogic.com/xdmp/privileges/unprotected-uri",
-      "kind": "execute"
-    },
-    {
-      "privilege-name": "rest-writer",
-      "action": "http://marklogic.com/xdmp/privileges/rest-writer",
-      "kind": "execute"
-    },
-    {
-      "privilege-name": "xdmp:invoke",
-      "action": "http://marklogic.com/xdmp/privileges/xdmp-invoke",
-      "kind": "execute"
-    }
-  ]
+  "role": [
+    "data-hub-common-writer"
+  ],
+  "privilege": []
 }

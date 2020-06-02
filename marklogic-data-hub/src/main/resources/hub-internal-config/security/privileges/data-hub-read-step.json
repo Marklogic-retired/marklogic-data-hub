@@ -1,0 +1,5 @@
+{
+  "privilege-name": "data-hub:readStep",
+  "action": "http://marklogic.com/data-hub/privileges/read-step",
+  "kind": "execute"
+}

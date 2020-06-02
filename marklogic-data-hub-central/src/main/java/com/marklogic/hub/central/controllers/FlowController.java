@@ -24,6 +24,7 @@ import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,6 +46,7 @@ public class FlowController extends BaseController {
     @ResponseBody
     @ApiOperation(value = "Get all user flows with a few key data points for each step, " +
         "regardless of whether it's referenced or inline", response = FlowsWithStepDetails.class)
+    @Secured("ROLE_readStep")
     public ResponseEntity<JsonNode> getFlowsWithStepDetails() {
         return ResponseEntity.ok(newFlowService().getFlowsWithStepDetails());
     }
@@ -84,6 +86,7 @@ public class FlowController extends BaseController {
 
     @RequestMapping(value = "/{flowName}/steps/{stepNumber}", method = RequestMethod.POST)
     @ResponseBody
+    @Secured("ROLE_runStep")
     public ResponseEntity<RunFlowResponse> runStep(@PathVariable String flowName, @PathVariable String stepNumber, @RequestPart(value = "files", required = false) MultipartFile[] uploadedFiles) {
         FlowInputs inputs = new FlowInputs(flowName, stepNumber);
         try{

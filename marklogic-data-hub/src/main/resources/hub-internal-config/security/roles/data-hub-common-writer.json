@@ -16,8 +16,8 @@
       "kind": "execute"
     },
     {
-      "privilege-name": "any-uri",
-      "action": "http://marklogic.com/xdmp/privileges/any-uri",
+      "privilege-name": "unprotected-uri",
+      "action": "http://marklogic.com/xdmp/privileges/unprotected-uri",
       "kind": "execute"
     },
     {
@@ -38,6 +38,16 @@
     {
       "privilege-name": "xdmp:xslt-invoke",
       "action": "http://marklogic.com/xdmp/privileges/xslt-invoke",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdbc:insert",
+      "action": "http://marklogic.com/xdmp/privileges/xdbc-insert",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdbc:insert-in",
+      "action": "http://marklogic.com/xdmp/privileges/xdbc-insert-in",
       "kind": "execute"
     }
   ]

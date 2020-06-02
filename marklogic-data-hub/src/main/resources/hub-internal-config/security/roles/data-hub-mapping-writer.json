@@ -5,5 +5,11 @@
     "data-hub-common-writer",
     "data-hub-step-definition-reader"
   ],
-  "privilege": []
+  "privilege": [
+    {
+      "privilege-name": "any-uri",
+      "action": "http://marklogic.com/xdmp/privileges/any-uri",
+      "kind": "execute"
+    }
+  ]
 }

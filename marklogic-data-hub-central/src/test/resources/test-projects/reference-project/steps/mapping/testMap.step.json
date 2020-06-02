@@ -8,7 +8,7 @@
   "additionalCollections": ["mapInput"],
   "sourceDatabase": "data-hub-STAGING",
   "targetDatabase": "data-hub-STAGING",
-  "permissions": "data-hub-operator,read,data-hub-operator,update",
+  "permissions": "data-hub-common,read,data-hub-common,update",
   "provenanceGranularity": "coarse",
   "properties": {
     "name": {

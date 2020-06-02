@@ -4,5 +4,6 @@
   "sourceFormat": "json",
   "separator": null,
   "targetFormat": "json",
-  "outputURIReplacement": ".*/data-sets,'/data'"
+  "outputURIReplacement": ".*/data-sets,'/data'",
+  "permissions": "data-hub-common,read,data-hub-common,update"
 }

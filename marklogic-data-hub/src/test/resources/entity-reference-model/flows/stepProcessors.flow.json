@@ -6,7 +6,8 @@
       "stepDefinitionName": "echoStep",
       "stepDefinitionType": "CUSTOM",
       "options": {
-        "sourceQuery": "cts.collectionQuery('customer-input')"
+        "sourceQuery": "cts.collectionQuery('customer-input')",
+        "permissions": "data-hub-common,read,data-hub-common,update"
       },
       "processors": [
         {
@@ -27,7 +28,8 @@
       "stepDefinitionName": "echoStep",
       "stepDefinitionType": "CUSTOM",
       "options": {
-        "sourceQuery": "cts.collectionQuery('customer-input')"
+        "sourceQuery": "cts.collectionQuery('customer-input')",
+        "permissions": "data-hub-common,read,data-hub-common,update"
       },
       "processors": [
         {
@@ -41,7 +43,8 @@
       "stepDefinitionName": "echoStep",
       "stepDefinitionType": "CUSTOM",
       "options": {
-        "sourceQuery": "cts.collectionQuery('customer-input')"
+        "sourceQuery": "cts.collectionQuery('customer-input')",
+        "permissions": "data-hub-common,read,data-hub-common,update"
       },
       "processors": [
         {

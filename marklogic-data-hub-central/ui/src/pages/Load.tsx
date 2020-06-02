@@ -23,7 +23,7 @@ const Load: React.FC = () => {
   const authorityService = useContext(AuthoritiesContext);
   const canReadOnly = authorityService.canReadLoad();
   const canReadWrite = authorityService.canWriteLoad();
-  const canWriteFlow = authorityService.canWriteFlow();
+  const canWriteFlow = authorityService.canWriteStep();
 
   //Set context for switching views
   const handleViewSelection = (view) => {

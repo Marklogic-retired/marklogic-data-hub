@@ -121,6 +121,40 @@ public class FlowControllerTest extends AbstractMvcTest {
             });
     }
 
+    @Test
+    void permittedReadRunUser() throws Exception {
+        installReferenceModelProject();
+
+        loginAsTestUserWithRoles("hub-central-step-runner");
+
+        // read flows
+        getJson(PATH).andExpect(status().isOk());
+
+        final String flowPath = PATH + "/ingestToFinal";
+        // run ingestion step
+        postJson(flowPath + "/steps/1", "{}")
+                .andExpect(status().isOk());
+
+        // run mapping step
+        postJson(flowPath + "/steps/2", "{}")
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void forbiddenReadRunUser() throws Exception {
+        installReferenceModelProject();
+
+        loginAsTestUserWithRoles("hub-central-user");
+        // read flows
+        getJson(PATH).andExpect(status().isForbidden());
+
+        final String flowPath = PATH + "/ingestToFinal";
+        // run step
+        postJson(flowPath + "/steps/1", "{}")
+                .andExpect(status().isForbidden());
+
+    }
+
     private FlowController.FlowsWithStepDetails parseFlowsWithStepDetails(MvcResult result) throws Exception {
         return objectMapper.readerFor(FlowController.FlowsWithStepDetails.class)
             .readValue(result.getResponse().getContentAsString());

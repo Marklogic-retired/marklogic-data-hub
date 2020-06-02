@@ -1,4 +1,8 @@
 {
   "role-name": "data-hub-flow-writer",
-  "description": "Permits updating flow documents"
+  "description": "Permits updating flow documents",
+  "role": [
+    "data-hub-flow-reader",
+    "data-hub-common-writer"
+  ]
 }

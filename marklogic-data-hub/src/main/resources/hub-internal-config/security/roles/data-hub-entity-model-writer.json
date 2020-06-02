@@ -3,5 +3,12 @@
   "description": "Permits updating entity model documents",
   "role": [
     "data-hub-common-writer"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "any-uri",
+      "action": "http://marklogic.com/xdmp/privileges/any-uri",
+      "kind": "execute"
+    }
   ]
 }

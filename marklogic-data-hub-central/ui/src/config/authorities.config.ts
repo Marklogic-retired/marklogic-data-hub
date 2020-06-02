@@ -31,10 +31,10 @@ class DeveloperRolesService implements IAuthoritiesContextInterface{
     public canWriteEntityModel:() => boolean = () => {
         return true;
     };
-    public canReadFlow:() => boolean = () => {
+    public canReadStep:() => boolean = () => {
         return true;
     };
-    public canWriteFlow:() => boolean = () => {
+    public canWriteStep:() => boolean = () => {
         return true;
     };
     public canReadStepDefinition:() => boolean = () => {
@@ -85,10 +85,10 @@ class OperatorRolesService implements IAuthoritiesContextInterface{
     public canWriteEntityModel:() => boolean = () => {
         return false;
     };
-    public canReadFlow:() => boolean = () => {
+    public canReadStep:() => boolean = () => {
         return true;
     };
-    public canWriteFlow:() => boolean = () => {
+    public canWriteStep:() => boolean = () => {
         return false;
     };
     public canReadStepDefinition:() => boolean = () => {

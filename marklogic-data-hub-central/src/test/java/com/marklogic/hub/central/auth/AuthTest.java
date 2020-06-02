@@ -48,7 +48,6 @@ class AuthTest extends AbstractMvcTest {
                 String strResponse = result.getResponse().getContentAsString();
                 JsonNode jsonResponse = objectMapper.readTree(strResponse);
                 assertTrue(jsonResponse.get("authorities").isArray());
-                assertTrue(jsonResponse.get("authorities").toString().contains("writeIngestion"));
             })
             .andExpect(status().isOk());
 

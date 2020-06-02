@@ -59,4 +59,14 @@ hubTest.runWithRolesAndPrivileges(['hub-central-mapping-writer'], [], function()
     assertions.push(test.assertTrue(authorities.includes('readMapping'), 'hub-central-mapping-writer should have "readMapping"'));
     assertions.push(test.assertTrue(authorities.includes('writeMapping'), 'hub-central-mapping-writer should have "writeMapping"'));
 });
+
+// Test hub-central-step-runner
+hubTest.runWithRolesAndPrivileges(['hub-central-step-runner'], [], function() {
+    const Security = require('/data-hub/5/impl/security.sjs');
+    const authorities = new Security().getDataHubAuthorities();
+    assertions.push(test.assertTrue(authorities.includes('loginToHubCentral'), 'hub-central-step-runner should have "loginToHubCentral"'));
+    assertions.push(test.assertTrue(authorities.includes('readStep'), 'hub-central-step-runner should have "readStep"'));
+    assertions.push(test.assertTrue(authorities.includes('runStep'), 'hub-central-step-runner should have "runStep"'));
+    assertions.push(test.assertFalse(authorities.includes('writeStep'), 'hub-central-step-runner should not have "writeStep"'));
+});
 assertions;

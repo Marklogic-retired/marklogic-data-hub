@@ -283,7 +283,7 @@ function getArtifactNode(artifactType, artifactName, artifactVersion = 'latest')
     const artifactLibrary = getArtifactTypeLibrary(artifactType);
     const node = artifactLibrary.getArtifactNode(artifactName, artifactVersion);
     if (fn.empty(node)) {
-        returnErrToClient(404, 'NOT FOUND');
+        returnErrToClient(404, 'NOT FOUND', `${artifactType} with name '${artifactName}' not found.`);
     }
     return node;
 }

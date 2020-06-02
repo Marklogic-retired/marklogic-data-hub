@@ -45,7 +45,7 @@ const TilesView: React.FC  = (props) => {
         load: auth.canReadLoad() || auth.canWriteLoad(),
         model: auth.canReadEntityModel() || auth.canWriteEntityModel(),
         curate: auth.canReadMapping() || auth.canWriteMapping() || auth.canReadMatchMerge() || auth.canWriteMatchMerge(),
-        run: auth.canReadFlow() || auth.canWriteFlow(),
+        run: auth.canReadStep() || auth.canWriteStep(),
         explore: true, 
         // TODO - Needs to be updated if there are any changes in authorities for Explorer
         // explore: auth.canReadFlow() || auth.canWriteFlow(),
