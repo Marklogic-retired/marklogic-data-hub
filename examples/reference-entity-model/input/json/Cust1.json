@@ -4,21 +4,38 @@
       "FirstName": "Carmella",
       "LastName": "Hardin"
     },
+    "nicknames": [
+      "Carm",
+      "din"
+    ],
     "Email": "carmellahardin@nutralab.com",
-    "Address": {
-      "Shipping": {
+    "Address": [
+      {
+        "Shipping": {
         "Street": "Whitwell Place",
+        "Street2": "More info",
         "City": "Ellerslie",
         "State": "Georgia",
         "Postal": "52239-1718"
+        }
       },
-      "Billing": {
-        "Street": "Anna Court",
-        "City": "Stewart",
-        "State": "Kansas",
-        "Postal": "62601-6783"
+      {
+        "Shipping": {
+          "Street": "999 Skyway Road",
+          "City": "San carlos",
+          "State": "California",
+          "Postal": "94070-1851"
+        }
+      },
+      {
+        "Billing": {
+          "Street": "Anna Court",
+          "City": "Stewart",
+          "State": "Kansas",
+          "Postal": "62601-6783"
+        }
       }
-    },
+    ],
     "Phone": "(910) 407-2081",
     "PIN": 2172,
     "Created": "04/03/2017"

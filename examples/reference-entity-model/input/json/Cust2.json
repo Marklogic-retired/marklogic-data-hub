@@ -4,21 +4,37 @@
     "FirstName": "Adams",
     "LastName": "Cole"
   },
+  "nicknames": [
+    "ad",
+    "coley"
+  ],
   "Email": "adamscole@nutralab.com",
-  "Address": {
-    "Shipping": {
-      "Street": "Lefferts Place",
-      "City": "Marenisco",
-      "State": "Maryland",
-      "Postal": "44582-8427"
+  "Address": [
+    {
+      "Shipping": {
+        "Street": "Lefferts Place",
+        "City": "Marenisco",
+        "State": "Maryland",
+        "Postal": "44582-8427"
+      }
     },
-    "Billing": {
-      "Street": "Varick Avenue",
-      "City": "Mooresburg",
-      "State": "Delaware",
-      "Postal": "17654-1292"
+    {
+      "Shipping": {
+        "Street": "John Hancock Center",
+        "City": "Chicago",
+        "State": "Illinois",
+        "Postal": "60611-2486"
+      }
+    },
+    {
+      "Billing": {
+        "Street": "Varick Avenue",
+        "City": "Mooresburg",
+        "State": "Delaware",
+        "Postal": "17654-1292"
+      }
     }
-  },
+  ],
   "Phone": "(870) 495-2539",
   "PIN": 2288,
   "Created": "01/05/2014"

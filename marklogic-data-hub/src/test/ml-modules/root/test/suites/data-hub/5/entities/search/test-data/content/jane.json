@@ -1,0 +1,14 @@
+{
+  "envelope": {
+    "instance": {
+      "Customer": {
+        "customerId": 101,
+        "name": "Jane Foster",
+        "nicknames": [
+          "jane",
+          "foster"
+        ]
+      }
+    }
+  }
+}
