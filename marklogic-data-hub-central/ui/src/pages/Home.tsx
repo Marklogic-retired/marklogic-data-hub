@@ -26,7 +26,7 @@ const Home: React.FC = () => {
         <Link to="/view" className={styles.text}>View Entities</Link>
         <Link to="/browse" className={styles.text}>Browse Entities</Link>
         <Tooltip title="Click to navigate to Model Screen" placement="left">
-          <button className={styles.modelIcon}>
+          <button aria-label="Model" className={styles.modelIcon}>
             <Link to="/model"><i><FontAwesomeIcon icon={faCube } size="2x"/></i></Link>
           </button>
         </Tooltip>

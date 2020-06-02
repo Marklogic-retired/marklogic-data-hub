@@ -9,11 +9,11 @@ import { updateModelInfo } from "../../../api/modeling";
 
 type Props = {
   isVisible: boolean;
-  toggleModal: (isVisible: boolean) => void;
-  updateEntityTypesAndHideModal: () => void;
   isEditModal: boolean;
   name: string;
   description: string;
+  toggleModal: (isVisible: boolean) => void;
+  updateEntityTypesAndHideModal: (entityName: string, description: string) => void;
 };
 
 const EntityTypeModal: React.FC<Props> = (props) => {
@@ -59,24 +59,11 @@ const EntityTypeModal: React.FC<Props> = (props) => {
     }
   };
 
-  const onOk = (event) => {
-    event.preventDefault();
-    if (props.isEditModal) {
-      updateEntityDescription(name, description);
-    } else {
-      if (!NAME_REGEX.test(name)) {
-        setErrorMessage(ModelingTooltips.addEntityName)
-      } else {
-        createEntityType(name, description);
-      }
-    }
-  };
-
   const updateEntityDescription = async (name: string, description: string) => {
     try {
       const response = await updateModelInfo(name, description);
       if (response['status'] === 200) {
-        props.updateEntityTypesAndHideModal();
+        props.updateEntityTypesAndHideModal(name, description);
       }
     } catch (error) {
       if (error.response.status === 400) {
@@ -95,7 +82,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
     try {
       const response = await axios.post('/api/models', { name, description });
       if (response['status'] === 201) {
-        props.updateEntityTypesAndHideModal();
+        props.updateEntityTypesAndHideModal(name, description);
       }
     } catch (error) {
       if (error.response.status === 400) {
@@ -110,6 +97,19 @@ const EntityTypeModal: React.FC<Props> = (props) => {
     }
   }
 
+  const onOk = (event) => {
+    event.preventDefault();
+    if (props.isEditModal) {
+      updateEntityDescription(name, description);
+    } else {
+      if (!NAME_REGEX.test(name)) {
+        setErrorMessage(ModelingTooltips.nameRegex)
+      } else {
+        createEntityType(name, description);
+      }
+    }
+  };
+
   const onCancel = () => {
     props.toggleModal(false);
   };
@@ -121,10 +121,11 @@ const EntityTypeModal: React.FC<Props> = (props) => {
       closable={true}
       title={props.isEditModal ? "Edit Entity Type" : "Add Entity Type"}
       cancelText="Cancel"
-      onCancel={() => onCancel()}
+      cancelButtonProps={{ id: 'entity-modal-cancel' }}
+      onCancel={() => onCancel()} 
       okText={props.isEditModal ? "OK" : "Add"}
       onOk={onOk}
-      okButtonProps={{ form: 'entity-type-form', htmlType: 'submit' }}
+      okButtonProps={{ id: 'entity-modal-add', form:'entity-type-form', htmlType: 'submit' }}
       maskClosable={false}
     >
       <Form
@@ -140,7 +141,6 @@ const EntityTypeModal: React.FC<Props> = (props) => {
               </span>}
           colon={false}
           labelAlign="left"
-
           validateStatus={errorMessage ? 'error' : ''}
           help={errorMessage}
         >

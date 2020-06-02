@@ -3,6 +3,7 @@ import { Switch } from 'react-router';
 import { Route, Redirect, RouteComponentProps, withRouter } from 'react-router-dom';
 import { UserContext } from './util/user-context';
 import SearchProvider from './util/search-context';
+import ModelingProvider from './util/modeling-context';
 
 import Header from './components/header/header';
 import Footer from './components/footer/footer';
@@ -115,9 +116,6 @@ const App: React.FC<Props> = ({history, location}) => {
           <Run/>
         </PrivateRoute>
         <SearchProvider>
-          <PrivateRoute path="/tiles" exact>
-            <TilesView/>
-          </PrivateRoute>        
           <PrivateRoute path="/view" exact>
               <View/>
           </PrivateRoute>
@@ -127,9 +125,14 @@ const App: React.FC<Props> = ({history, location}) => {
           <PrivateRoute path="/detail/:pk/:uri">
             <Detail/>
           </PrivateRoute>
-          <PrivateRoute path="/model" exact>
-            <Modeling/>
-          </PrivateRoute>
+          <ModelingProvider>
+            <PrivateRoute path="/model" exact>
+              <Modeling/>
+            </PrivateRoute>
+            <PrivateRoute path="/tiles" exact>
+              <TilesView/>
+            </PrivateRoute>  
+          </ModelingProvider>
         </SearchProvider>
         <Route component={NoMatchRedirect}/>
       </Switch>

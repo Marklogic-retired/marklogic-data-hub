@@ -1,0 +1,2 @@
+export const identifierPrimary = primaryKey => `Each entity type is allowed a maximum of one identifier. The current identifier is ${primaryKey}. Choosing a different identifier could affect custom applications and other code that uses ${primaryKey} for searching.`;
+export const identifierSecondary = (primaryKey, newPropertyName) =>`Are you sure you want to change the identifier from ${primaryKey} to ${newPropertyName}?`;

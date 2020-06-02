@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect, CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
 import { Table, Tooltip } from 'antd';
-import { faTrashAlt, faUndo } from "@fortawesome/free-solid-svg-icons";
+//import { MLTable, MLTooltip } from '@marklogic/design-system';
+import { faUndo, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from './entity-type-table.module.scss';
 
@@ -14,10 +15,20 @@ type Props = {
   allEntityTypesData: any[];
   canReadEntityModel: boolean;
   canWriteEntityModel: boolean;
+  autoExpand: string;
   editEntityTypeDescription: (entityTypeName: string, entityTypeDescription: string) => void;
 }
 
 const EntityTypeTable: React.FC<Props> = (props) => {
+  const [expandedRows, setExpandedRows] = useState<string[]>([]);
+  // Disabling all action icons for now
+  const [disabled, setDisabled] = useState(true);
+
+  useEffect(() => {
+    if (props.autoExpand){
+      setExpandedRows([props.autoExpand])
+    }
+  }, [props.autoExpand]);
 
   const columns = [
     {
@@ -31,7 +42,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
 
         return (
           <Tooltip title={ModelingTooltips.entityTypeName}>
-            <span data-testid={text + '-span'} className={styles.link}
+            <span data-testid={parseText[0] + '-span'} className={styles.link}
               onClick={() => {
                 props.editEntityTypeDescription(entityName, entityDescription);
               }}>
@@ -81,11 +92,10 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       width: 100,
       render: text => {
         let parseText = text.split(',');
-        let displayDate = relativeTimeConverter(parseText[2]);
-
         if (parseText[1] === 'undefined') {
           return 'n/a'
         } else {
+          let displayDate = relativeTimeConverter(parseText[2]);
           return (
             <Tooltip title={queryDateConverter(parseText[2]) + "\n" + ModelingTooltips.lastProcessed}>
               <Link
@@ -93,8 +103,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
                   pathname: "/browse",
                   state: { entityName: parseText[0], jobId: parseText[1] }
                 }}
-                data-cy={parseText[0] + '-last-processed'}
-                data-testid={parseText[0] + '-last-processed'}
+                data-testid={parseText[0]+ '-last-processed'}
               >
                 {displayDate}
               </Link>
@@ -118,25 +127,30 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         // TODO add functionality to icons
         return (
           <div className={styles.iconContainer}>
-            <Tooltip title={ModelingTooltips.saveIcon}>
-              <span
-                className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconSaveReadOnly : styles.iconSave} />
-            </Tooltip>
-            <Tooltip title={ModelingTooltips.revertIcon}>
-              <FontAwesomeIcon
-                className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconRevertReadOnly : styles.iconRevert}
-                icon={faUndo}
-                onClick={(event) => {
-                  if (!props.canWriteEntityModel && props.canReadEntityModel) {
-                    return event.preventDefault()
-                  } else {
-                    return '' //TODO - Add functionality for Revert Icon here
-                  }
-                }}
-                size="2x" />
-            </Tooltip>
-            <FontAwesomeIcon
-              className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconTrashReadOnly : styles.iconTrash}
+          <Tooltip title={ModelingTooltips.saveIcon}>
+            <span
+              data-testid={text + '-save-icon'} 
+              className={!props.canWriteEntityModel && props.canReadEntityModel || disabled ? styles.iconSaveReadOnly : styles.iconSave}
+            ></span>
+          </Tooltip>
+          <Tooltip title={ModelingTooltips.revertIcon}>
+            <FontAwesomeIcon 
+              data-testid={text + '-revert-icon'} 
+              className={!props.canWriteEntityModel && props.canReadEntityModel || disabled ? styles.iconRevertReadOnly : styles.iconRevert} 
+              icon={faUndo}
+              onClick={(event) => {
+                if (!props.canWriteEntityModel && props.canReadEntityModel) {
+                  return event.preventDefault()
+                } else {
+                  return '' //TODO - Add functionality for Revert Icon here
+                }
+              }}
+              size="2x"
+            />
+          </Tooltip>
+            <FontAwesomeIcon 
+              data-testid={text + '-trash-icon'}
+              className={!props.canWriteEntityModel && props.canReadEntityModel || disabled ? styles.iconTrashReadOnly : styles.iconTrash} 
               icon={faTrashAlt}
               onClick={(event) => {
                 if (!props.canWriteEntityModel && props.canReadEntityModel) {
@@ -145,7 +159,8 @@ const EntityTypeTable: React.FC<Props> = (props) => {
                   return '' //TODO - Add functionality for delete Icon here
                 }
               }}
-              size="2x" />
+              size="2x" 
+            />
           </div>
         )
       }
@@ -159,6 +174,27 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       entity.model.definitions[entity.entityName].hasOwnProperty("description")) ? entity.model.definitions[entity.entityName].description : '';
   };
 
+  const expandedRowRender = (entity) => {
+    return <PropertyTable 
+              entityName={entity.name.split(',')[0]} 
+              definitions={entity.definitions}
+              canReadEntityModel={props.canReadEntityModel} 
+              canWriteEntityModel={props.canWriteEntityModel}
+            />
+  };
+
+  const onExpand = (expanded, record) => {
+    let newExpandedRows =  [...expandedRows]
+    if (expanded) {
+      if ( newExpandedRows.indexOf(record.name) === -1) {
+        newExpandedRows.push(record.name);
+      }
+    } else {
+      newExpandedRows = newExpandedRows.filter(row => row !== record.name);
+    }
+    setExpandedRows(newExpandedRows);
+  }
+
   const renderTableData = props.allEntityTypesData.map((entity) => {
     return {
       name: entity.entityName + ',' + getEntityTypeDescription(entity),
@@ -169,23 +205,18 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     };
   });
 
-  const expandedRowRender = (entity) => {
-    return <PropertyTable entityName={entity.name} definitions={entity.definitions}
-      canReadEntityModel={props.canReadEntityModel}
-      canWriteEntityModel={props.canWriteEntityModel} />
-  };
-
   return (
     <Table
       rowKey="name"
       locale={{ emptyText: ' ' }}
       className={styles.table}
-      data-cy="entity-type-table"
-      data-testid="entity-type-table"
       columns={columns}
       expandedRowRender={expandedRowRender}
+      onExpand={onExpand}
+      expandedRowKeys={expandedRows}
       dataSource={renderTableData}
       pagination={{ defaultPageSize: 20, size: 'small' }}
+      size="middle"
     />
   );
 }

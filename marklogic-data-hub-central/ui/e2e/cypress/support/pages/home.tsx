@@ -15,8 +15,8 @@ class HomePage{
         return cy.contains(Application.title);
     }
 
-    getModeling() {
-      return cy.contains('Modeling');
+    getModelTile() {
+      return cy.get('button[aria-label="Model"]');
   }
     getEntitiesTile() {
         return cy.get('button[aria-label="Entity"]');

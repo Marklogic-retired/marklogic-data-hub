@@ -9,7 +9,7 @@
 
 .header {
   display: flex;
-  margin: 0 auto;
+  margin: 5px auto 0 auto;
   width: 100%;
   justify-content: space-between;
 }
@@ -31,4 +31,8 @@
   font-family: MLCustomFont; 
   font-size: 15px;
   margin-right: 5px;
+}
+
+.disabledButton {
+  pointer-events: none;
 }

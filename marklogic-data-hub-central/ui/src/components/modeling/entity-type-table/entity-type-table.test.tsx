@@ -12,6 +12,10 @@ describe('EntityTypeModal Component', () => {
       <Router>
         <EntityTypeTable 
           allEntityTypesData={[]}
+          canReadEntityModel={true}
+          canWriteEntityModel={true}
+          autoExpand=''
+          editEntityTypeDescription={jest.fn()}
         />
       </Router>);
 
@@ -20,17 +24,25 @@ describe('EntityTypeModal Component', () => {
     expect(getByText('Last Processed')).toBeInTheDocument();
   });
 
-    test('Table renders with mock data', () => {
-      const { getByText, getByTestId } =  render(
+    test('Table renders with mock data, no writer role', () => {
+      const { getByText, getByTestId, getAllByRole, getByLabelText } =  render(
         <Router>
           <EntityTypeTable 
             allEntityTypesData={getEntityTypes}
+            canReadEntityModel={true}
+            canWriteEntityModel={false}
+            autoExpand=''
+            editEntityTypeDescription={jest.fn()}
           />
         </Router>);
 
       expect(getByText(/Customer/i)).toBeInTheDocument();
       expect(getByText(/1,000/i)).toBeInTheDocument();
       expect(getByTestId('Customer-last-processed')).toBeInTheDocument();
+
+      expect(getByTestId('Customer-save-icon')).toHaveClass('iconSaveReadOnly');
+      expect(getByTestId('Customer-revert-icon')).toHaveClass('iconRevertReadOnly');
+      expect(getByTestId('Customer-trash-icon')).toHaveClass('iconTrashReadOnly');
 
       expect(getByText(/Order/i)).toBeInTheDocument();
       expect(getByText(/2,384/i)).toBeInTheDocument();
@@ -40,6 +52,32 @@ describe('EntityTypeModal Component', () => {
       userEvent.click(getByText('Name'));
       userEvent.click(getByText('Last Processed'));
       userEvent.click(getByText('Instances'));
-      });
+
+      userEvent.click(getAllByRole('button')[0]);
+
+      expect(getByLabelText('AnotherModel-add-property')).toBeDisabled();
+    });
+
+    test('Table renders with mock data, with writer role, with auto expanded entity, and can click edit', () => {
+      const editMock = jest.fn();
+      const { getByTestId, getByLabelText } =  render(
+        <Router>
+          <EntityTypeTable 
+            allEntityTypesData={getEntityTypes}
+            canReadEntityModel={true}
+            canWriteEntityModel={true}
+            autoExpand='Order'
+            editEntityTypeDescription={editMock}
+          />
+        </Router>);
+
+      // Add back once functionality is added
+      // expect(getByTestId('Order-save-icon')).toHaveClass('iconSave');
+      // expect(getByTestId('Order-revert-icon')).toHaveClass('iconRevert');
+      // expect(getByTestId('Order-trash-icon')).toHaveClass('iconTrash');
+
+      userEvent.click(getByTestId('Order-span'));
+      expect(editMock).toBeCalledTimes(1);
+    });
 });
 

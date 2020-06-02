@@ -1,11 +1,20 @@
-.icon {
-  font-size: 21px;
-  margin-left: 11px;
+.icon, .multipleIcon, .advancedSearchIcon {
+  font-size: 20px;
+  color: #333;
+}
+
+.multipleIcon {
+  margin-left: 15px;
+}
+
+.advancedSearchIcon {
+  margin-left: 45px;
 }
 
 .identifierIcon {
-  font-size: 21px;
-  margin-left: 16px;
+  color: #333;
+  font-size: 16px;
+  margin-left: 19px;
 }
 
 .addIcon {
@@ -42,4 +51,8 @@
   margin-left: 11px;
   color: #B32424;
   opacity: 0.5
+}
+
+.disabledButton {
+  pointer-events: none;
 }
