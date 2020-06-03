@@ -6,6 +6,7 @@
     "data-hub-common-writer",
     "data-hub-flow-reader",
     "data-hub-ingestion-reader",
+    "data-hub-job-internal",
     "data-hub-job-reader",
     "data-hub-mapping-reader",
     "data-hub-match-merge-reader",
@@ -19,8 +20,8 @@
       "kind": "execute"
     },
     {
-      "privilege-name": "data-hub:readStep",
-      "action": "http://marklogic.com/data-hub/privileges/read-step",
+      "privilege-name": "data-hub:readFlow",
+      "action": "http://marklogic.com/data-hub/privileges/read-flow",
       "kind": "execute"
     },
     {

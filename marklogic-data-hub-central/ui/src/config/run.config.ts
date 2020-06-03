@@ -264,6 +264,18 @@ const flows = {
               "stepDefinitionType": "INGESTION",
               "stepNumber": "1",
               "sourceFormat": "json"
+          },
+          {
+            "stepName": "mapping1",
+            "stepDefinitionType": "MAPPING",
+            "stepNumber": "2",
+            "sourceFormat": "json"
+          },
+          {
+            "stepName": "custom1",
+            "stepDefinitionType": "CUSTOM",
+            "stepNumber": "3",
+            "sourceFormat": "json"
           }
       ]
   }]
@@ -280,6 +292,11 @@ const flowsWithMapping = {
               "stepName": "Mapping1",
               "stepDefinitionType": "MAPPING",
               "stepNumber": "1"
+          },
+          {
+            "stepName": "Custom1",
+            "stepDefinitionType": "CUSTOM",
+            "stepNumber": "2"
           }
       ]
   }]

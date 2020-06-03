@@ -32,9 +32,9 @@ const Run = (props) => {
 
     // For role-based privileges
     const authorityService = useContext(AuthoritiesContext);
-    const canReadFlow = authorityService.canReadStep();
-    const canWriteFlow = authorityService.canWriteStep();
-    const hasOperatorRole = authorityService.hasOperatorRole();
+    const canReadFlow = authorityService.canReadFlow();
+    const canWriteFlow = authorityService.canWriteFlow();
+    const hasOperatorRole = authorityService.canRunStep();
 
     //For handling flows expand and collapse within Run tile
     const [newFlowName, setNewFlowName] = useState('');

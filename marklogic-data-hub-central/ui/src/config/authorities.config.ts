@@ -31,10 +31,10 @@ class DeveloperRolesService implements IAuthoritiesContextInterface{
     public canWriteEntityModel:() => boolean = () => {
         return true;
     };
-    public canReadStep:() => boolean = () => {
+    public canReadFlow:() => boolean = () => {
         return true;
     };
-    public canWriteStep:() => boolean = () => {
+    public canWriteFlow:() => boolean = () => {
         return true;
     };
     public canReadStepDefinition:() => boolean = () => {
@@ -49,7 +49,7 @@ class DeveloperRolesService implements IAuthoritiesContextInterface{
     public isSavedQueryUser:() => boolean = () => {
         return true;
     };
-    public hasOperatorRole:() => boolean = () => {
+    public canRunStep:() => boolean = () => {
         return true;
     };
 }
@@ -85,10 +85,10 @@ class OperatorRolesService implements IAuthoritiesContextInterface{
     public canWriteEntityModel:() => boolean = () => {
         return false;
     };
-    public canReadStep:() => boolean = () => {
+    public canReadFlow:() => boolean = () => {
         return true;
     };
-    public canWriteStep:() => boolean = () => {
+    public canWriteFlow:() => boolean = () => {
         return false;
     };
     public canReadStepDefinition:() => boolean = () => {
@@ -103,7 +103,7 @@ class OperatorRolesService implements IAuthoritiesContextInterface{
     public isSavedQueryUser:() => boolean = () => {
         return false;
     };
-    public hasOperatorRole:() => boolean = () => {
+    public canRunStep:() => boolean = () => {
         return true;
     };
   }

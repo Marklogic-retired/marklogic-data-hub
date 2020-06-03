@@ -113,4 +113,68 @@ describe('Load Card component', () => {
 
   });
 
+  test('Verify Load card allows step to be added to flow with writeFlow authority', async () => {
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(['readIngestion','writeFlow']);
+    const mockAddStepToFlow = jest.fn();
+    const mockAddStepToNew = jest.fn();
+    const mockCreateLoadArtifact = jest.fn();
+    const mockDeleteLoadArtifact = jest.fn();
+    const {getByText, getByTestId} = render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><LoadCard
+      addStepToFlow={mockAddStepToFlow}
+      addStepToNew={mockAddStepToNew}
+      canReadOnly={authorityService.canReadLoad()}
+      canReadWrite={authorityService.canWriteLoad()}
+      canWriteFlow={authorityService.canWriteFlow()}
+      createLoadArtifact={mockCreateLoadArtifact}
+      data={data.loadData.data}
+      deleteLoadArtifact={mockDeleteLoadArtifact}
+      flows={data.flows}/>
+    </AuthoritiesContext.Provider></MemoryRouter>);
+
+    const loadStepName = data.loadData.data[0].name;
+    fireEvent.mouseOver(getByText(loadStepName));
+
+    // test adding to existing flow
+    expect(getByTestId(`${loadStepName}-toExistingFlow`)).toBeInTheDocument();
+    fireEvent.click(getByTestId(`${loadStepName}-flowsList`));
+    fireEvent.click(getByText(data.flows[0].name));
+    fireEvent.click(getByText('Yes'));
+    expect(mockAddStepToFlow).toBeCalledTimes(1);
+    // adding to new flow
+    fireEvent.mouseOver(getByText(loadStepName));
+    expect(getByTestId(`${loadStepName}-toNewFlow`)).toBeInTheDocument();
+    // TODO calling addStepToNew not implemented yet
+  });
+
+  test('Verify Load card does not allow a step to be added to flow with readFlow authority only', async () => {
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(['readIngestion','readFlow']);
+    const mockAddStepToFlow = jest.fn();
+    const mockAddStepToNew = jest.fn();
+    const mockCreateLoadArtifact = jest.fn();
+    const mockDeleteLoadArtifact = jest.fn();
+    const {getByText, queryByTestId, queryByText} = render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><LoadCard
+      addStepToFlow={mockAddStepToFlow}
+      addStepToNew={mockAddStepToNew}
+      canReadOnly={authorityService.canReadLoad()}
+      canReadWrite={authorityService.canWriteLoad()}
+      canWriteFlow={authorityService.canWriteFlow()}
+      createLoadArtifact={mockCreateLoadArtifact}
+      data={data.loadData.data}
+      deleteLoadArtifact={mockDeleteLoadArtifact}
+      flows={data.flows}/>
+    </AuthoritiesContext.Provider></MemoryRouter>);
+
+    fireEvent.mouseOver(getByText(data.loadData.data[0].name));
+
+    const loadStepName = data.loadData.data[0].name;
+    // adding to new flow
+    fireEvent.mouseOver(getByText(loadStepName));
+    // test adding to existing flow
+    expect(queryByTestId(`${loadStepName}-toExistingFlow`)).not.toBeInTheDocument();
+
+    // test adding to new flow
+    expect(queryByTestId(`${loadStepName}-toNewFlow`)).not.toBeInTheDocument();
+  });
 });

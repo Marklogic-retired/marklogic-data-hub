@@ -127,8 +127,10 @@ describe('Tiles View component tests for Developer user', () => {
     });
 
     test('Verify Run tile displays from toolbar', async () => {
+        const authorityService = new AuthoritiesService();
+        authorityService.setAuthorities(['readFlow','writeFlow','runStep']);
         const {getByLabelText, getByText, queryByText, getByTestId} = await render(<Router history={history}>
-            <AuthoritiesContext.Provider value={ mockDevRolesService}><TilesView/></AuthoritiesContext.Provider>
+            <AuthoritiesContext.Provider value={ authorityService}><TilesView/></AuthoritiesContext.Provider>
             </Router>);
 
         // Run tile not shown initially
@@ -158,11 +160,10 @@ describe('Tiles View component tests for Developer user', () => {
         expect(getByTestId('runStep-1')).toBeInTheDocument();
     });
 
-    test('Verify run tile cannot edit with only readStep authority', async () => {
+    test('Verify run tile cannot edit or run with only readFlow authority', async () => {
         const authorityService = new AuthoritiesService();
-        authorityService.setAuthorities(['readStep']);
+        authorityService.setAuthorities(['readFlow']);
         const {getByLabelText, getByText, queryByText, getByTestId} = render(<Router history={history}><AuthoritiesContext.Provider value={authorityService}><TilesView/></AuthoritiesContext.Provider></Router>);
-
 
         // Run tile not shown initially
         expect(queryByText("icon-run")).not.toBeInTheDocument();
@@ -189,10 +190,31 @@ describe('Tiles View component tests for Developer user', () => {
         // test run
         fireEvent.click(getByLabelText('icon: right'));
         expect(getByTestId('runStepDisabled-1')).toBeInTheDocument();
-
+        expect(getByTestId('runStepDisabled-2')).toBeInTheDocument();
+        expect(getByTestId('runStepDisabled-3')).toBeInTheDocument();
     });
 
-    test('Verify run tile does not load from toolbar without readStep authority', async () => {
+    test('Verify run tile can read/run with readFlow and runStep authority', async () => {
+        const authorityService = new AuthoritiesService();
+        authorityService.setAuthorities(['readFlow','runStep']);
+        const {getByLabelText, getByText, queryByText, getByTestId} = render(<Router history={history}><AuthoritiesContext.Provider value={authorityService}><TilesView/></AuthoritiesContext.Provider></Router>);
+
+
+        // Run tile not shown initially
+        expect(queryByText("icon-run")).not.toBeInTheDocument();
+        expect(queryByText("title-run")).not.toBeInTheDocument();
+
+        fireEvent.click(getByLabelText("tool-run"));
+
+        expect(await(waitForElement(() => getByLabelText("icon-run")))).toBeInTheDocument();
+        // test run
+        fireEvent.click(getByLabelText('icon: right'));
+        expect(getByTestId('runStep-1')).toBeInTheDocument();
+        expect(getByTestId('runStep-2')).toBeInTheDocument();
+        expect(getByTestId('runStep-3')).toBeInTheDocument();
+    });
+
+    test('Verify run tile does not load from toolbar without readFlow authority', async () => {
         const authorityService = new AuthoritiesService();
         authorityService.setAuthorities([]);
         const {getByLabelText, queryByLabelText, queryByText} = render(<Router history={history}><AuthoritiesContext.Provider value={authorityService}><TilesView/></AuthoritiesContext.Provider></Router>);

@@ -95,6 +95,36 @@ const loadAPI = (axiosMock) => {
     })
   };
 
+  const runCrudAPI = (axiosMock) => {
+    // call Run API for the GET operations
+    runAPI(axiosMock);
+    axiosMock.post['mockImplementation']((url) => {
+      switch (url) {
+        case '/api/flows':
+          return Promise.resolve({status: 201, data: {}});
+        default:
+          return Promise.reject(new Error('not found'));
+      }
+    })
+    const updateURL = `/api/flows/${curateData.flowsWithMapping.data[0].name}`;
+    axiosMock.put['mockImplementation']((url) => {
+      switch (url) {
+        case updateURL:
+          return Promise.resolve({status: 200, data: {}});
+        default:
+          return Promise.reject(new Error('not found'));
+      }
+    })
+    return axiosMock.delete['mockImplementation']((url) => {
+      switch (url) {
+        case updateURL:
+          return Promise.resolve({status: 200, data: {}});
+        default:
+          return Promise.reject(new Error('not found'));
+      }
+    })
+  };
+
   const runErrorsAPI = (axiosMock) => {
     return axiosMock.get['mockImplementation']((url) => {
       switch (url) {
@@ -148,6 +178,7 @@ const loadAPI = (axiosMock) => {
     loadAPI: loadAPI,
     curateAPI: curateAPI,
     runAPI: runAPI,
+    runCrudAPI: runCrudAPI,
     runErrorsAPI: runErrorsAPI,
     runFailedAPI: runFailedAPI,
     runXMLAPI: runXMLAPI,

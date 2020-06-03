@@ -5,6 +5,7 @@
   "role": [
     "hub-central-load-writer",
     "hub-central-mapping-writer",
+    "hub-central-step-runner",
     "hub-central-downloader"
   ]
 }

@@ -278,4 +278,74 @@ describe("Entity Tiles component", () => {
     })
 
   });
+
+  test('Verify Mapping card allows step to be added to flow with writeFlow authority', async () => {
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(['readMapping','writeFlow']);
+    let entityModel = data.primaryEntityTypes.data[0];
+    let mapping = data.mappings.data[0].artifacts;
+    const mockAddStepToFlow = jest.fn();
+    const noopFun = jest.fn();
+    const {getByText} = render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><MappingCard
+      data={mapping}
+      flows={data.flows.data}
+      entityTypeTitle={entityModel.entityName}
+      getMappingArtifactByMapName={noopFun}
+      deleteMappingArtifact={noopFun}
+      createMappingArtifact={noopFun}
+      updateMappingArtifact={noopFun}
+      canReadOnly={authorityService.canReadMapping()}
+      canReadWrite={authorityService.canWriteMapping()}
+      canWriteFlow={authorityService.canWriteFlow()}
+      entityModel={entityModel}
+      addStepToFlow={mockAddStepToFlow}
+      addStepToNew={noopFun}/>
+    </AuthoritiesContext.Provider></MemoryRouter>);
+
+    fireEvent.mouseOver(getByText(mapping[0].name));
+
+    // test adding to existing flow
+    expect(getByText('Add step to an existing flow')).toBeInTheDocument();
+    fireEvent.click(getByText('Select Flow'));
+    fireEvent.click(getByText(data.flows.data[0].name));
+    fireEvent.click(getByText('Yes'));
+    expect(mockAddStepToFlow).toBeCalledTimes(1);
+
+    // adding to new flow
+    fireEvent.mouseOver(getByText(mapping[0].name));
+    expect(getByText('Add step to a new flow')).toBeInTheDocument();
+    // TODO calling addStepToNew not implemented yet
+  });
+
+  test('Verify Mapping card does not allow a step to be added to flow with readFlow authority only', async () => {
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(['readMapping','readFlow']);
+    let entityModel = data.primaryEntityTypes.data[0];
+    let mapping = data.mappings.data[0].artifacts;
+    const mockAddStepToFlow = jest.fn();
+    const noopFun = jest.fn();
+    const {getByText, queryByText} = render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><MappingCard
+      data={mapping}
+      flows={data.flows}
+      entityTypeTitle={entityModel.entityName}
+      getMappingArtifactByMapName={noopFun}
+      deleteMappingArtifact={noopFun}
+      createMappingArtifact={noopFun}
+      updateMappingArtifact={noopFun}
+      canReadOnly={authorityService.canReadMapping()}
+      canReadWrite={authorityService.canWriteMapping()}
+      canWriteFlow={authorityService.canWriteFlow()}
+      entityModel={entityModel}
+      addStepToFlow={mockAddStepToFlow}
+      addStepToNew={noopFun}/>
+    </AuthoritiesContext.Provider></MemoryRouter>);
+
+    fireEvent.mouseOver(getByText(mapping[0].name));
+
+    // test adding to existing flow
+    expect(queryByText('Add step to an existing flow')).not.toBeInTheDocument();
+
+    // test adding to new flow
+    expect(queryByText('Add step to a new flow')).not.toBeInTheDocument();
+  });
 });
