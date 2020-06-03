@@ -110,13 +110,6 @@ public class DataHubInstallTest extends HubTestBase {
     }
 
     @Test
-    public void getHubModulesVersion() throws IOException {
-        String version = runAsFlowOperator().getJarVersion();
-        assertEquals(version, versions.getHubVersion());
-        getDataHubAdminConfig();
-    }
-
-    @Test
     public void testInstallUserModules() throws IOException, ParserConfigurationException, SAXException, URISyntaxException {
         Assumptions.assumeFalse(getDataHubAdminConfig().getIsProvisionedEnvironment());
         URL url = DataHubInstallTest.class.getClassLoader().getResource("data-hub-test");
