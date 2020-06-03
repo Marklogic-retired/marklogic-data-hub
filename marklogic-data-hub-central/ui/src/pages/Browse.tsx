@@ -21,6 +21,7 @@ import Query from '../components/queries/queries'
 import { AuthoritiesContext } from "../util/authorities";
 import { fetchQueries } from '../api/queries';
 import ZeroStateExplorer from '../components/zero-state-explorer/zero-state-explorer';
+import ResultsTabularView from "../components/results-tabular-view/results-tabular-view";
 
 interface Props extends RouteComponentProps<any> {
 }
@@ -61,6 +62,8 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [hasStructured, setStructured] = useState<boolean>(false);
   const [isSavedQueryUser, setIsSavedQueryUser] = useState<boolean>(authorityService.isSavedQueryUser());
   const [queries, setQueries] = useState<any>([]);
+  const [entityPropertyDefinitions, setEntityPropertyDefinitions]= useState<any[]>([]);
+  const [selectedPropertyDefinitions,setSelectedPropertyDefinitions] = useState<any[]>([]);
 
   const getEntityModel = async () => {
     try {
@@ -97,7 +100,13 @@ const Browse: React.FC<Props> = ({ location }) => {
         }
       });
       if (componentIsMounted.current) {
-        setData(response.data.results);
+         setData(response.data.results);
+        if(response.data.hasOwnProperty('entityPropertyDefinitions')){
+          setEntityPropertyDefinitions(response.data.entityPropertyDefinitions);
+        }
+        if(response.data.hasOwnProperty('selectedPropertyDefinitions')){
+          setSelectedPropertyDefinitions(response.data.selectedPropertyDefinitions);
+        }
         setFacets(response.data.facets);
         setTotalDocuments(response.data.total);
       }
@@ -219,6 +228,7 @@ const Browse: React.FC<Props> = ({ location }) => {
     }
   }
 
+
   if (searchOptions.zeroState) {
     return (
       <>
@@ -283,12 +293,13 @@ const Browse: React.FC<Props> = ({ location }) => {
               <div className={styles.fixedView} >
                 {tableView ?
                   <div>
-                    <ResultTable
-                      data={data}
-                      entityDefArray={entityDefArray}
-                      columns={columns}
-                      hasStructured={hasStructured}
-                    />
+                      <ResultsTabularView
+                          data={data}
+                          entityPropertyDefinitions = {entityPropertyDefinitions}
+                          selectedPropertyDefinitions = {selectedPropertyDefinitions}
+                          columns={columns}
+                          hasStructured={hasStructured}
+                      />
                   </div>
                   : <SearchResults data={data} entityDefArray={entityDefArray} />
                 }

@@ -18,8 +18,9 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getExploreButton().should('exist');
         browsePage.getExploreButton().click();
         cy.wait(200);
+        browsePage.getFacetView();
         browsePage.selectEntity('All Entities');
-        
+
     });
 
     it('apply facet search,open save modal, save new query, edit query details, save a copy of current query', () => {
