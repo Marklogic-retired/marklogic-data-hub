@@ -161,7 +161,6 @@ class SslTest extends BaseTest {
             new File("src/test/resources/ssl-test/ssl-server.json"))
 
         createProperties()
-        resetProperties()
         hubConfig().refreshProject()
         try {
             clearDatabases(hubConfig().DEFAULT_MODULES_DB_NAME)
