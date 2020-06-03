@@ -19,9 +19,12 @@ package com.marklogic.hub.central.managers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.central.AbstractHubCentralTest;
 import com.marklogic.hub.central.exceptions.DataHubException;
+import com.marklogic.hub.central.models.DocSearchQueryInfo;
 import com.marklogic.hub.central.models.SearchQuery;
+import com.marklogic.hub.test.ReferenceModelProject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,6 +48,22 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
     @AfterEach
     public void resetData() {
         EntitySearchManager.QUERY_OPTIONS = ACTUAL_QUERY_OPTIONS;
+    }
+
+    @Test
+    void noEntityTypesSelected() {
+        // Need at least one entity model to exist for this scenario
+        installReferenceModelProject(true);
+
+        SearchQuery query = new SearchQuery();
+        DocSearchQueryInfo info = new DocSearchQueryInfo();
+        info.setEntityTypeIds(Arrays.asList(" "));
+        query.setQuery(info);
+
+        String results = entitySearchManager.search(query).get();
+        ObjectNode node = readJsonObject(results);
+        assertEquals(0, node.get("total").asInt(), "When entityTypeIds has values, but they're all empty strings, the " +
+            "backend should return no results, and not throw an error");
     }
 
     @Test
