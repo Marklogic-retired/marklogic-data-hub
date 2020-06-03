@@ -76,7 +76,23 @@ public class FlowMigratorUnitTest {
             "as it doesn't impact the source query; step: " + step);
     }
 
-    // TODO Test mapping without a version
+    @Test
+    void mappingWithoutAVersion() {
+        //New mapping step doesnt have a version. Sp using that to test "mapping without a version" scenario
+        mapping = new MappingImpl("MappingNoVersion");
+        inlineStep.setStepDefinitionType(StepDefinition.StepDefinitionType.MAPPING);
+        ObjectNode step = buildStepArtifact();
+        assertFalse(step.has("version"), "a 5.3 mapping step does not include version; step: " + step);
+    }
+
+    @Test
+    void migrateMappingWithVersion0() {
+        mapping = new MappingImpl("MappingVersion0");
+        mapping.setVersion(0);
+        inlineStep.setStepDefinitionType(StepDefinition.StepDefinitionType.MAPPING);
+        ObjectNode step = buildStepArtifact();
+        assertFalse(step.has("version"), "a 5.3 mapping step does not include version; step: " + step);
+    }
 
     @Test
     void sourceContext() {
@@ -96,6 +112,26 @@ public class FlowMigratorUnitTest {
         ObjectNode step = buildStepArtifact();
         assertFalse(step.has("targetEntity"), "targetEntity should have been converted to targetEntityType for mappings");
         assertEquals("something", step.get("targetEntityType").asText());
+    }
+
+    @Test
+    void emptyTargetEntityExistsInsteadOfTargetEntityType() {
+        inlineStep.setStepDefinitionType(StepDefinition.StepDefinitionType.MAPPING);
+        inlineStep.getOptions().put("targetEntity", "");
+
+        ObjectNode step = buildStepArtifact();
+        assertFalse(step.has("targetEntity"), "targetEntity should have been converted to targetEntityType for mappings");
+        assertEquals("", step.get("targetEntityType").asText());
+    }
+
+    @Test
+    void emptyTargetEntityExistsInACustomStep() {
+        inlineStep.setStepDefinitionType(StepDefinition.StepDefinitionType.CUSTOM);
+        inlineStep.getOptions().put("targetEntity", "");
+
+        ObjectNode step = buildStepArtifact();
+        assertFalse(step.has("targetEntityType"), "targetEntity should not have been converted to targetEntityType since custom steps are not being migrated yet");
+        assertEquals("", step.get("targetEntity").asText());
     }
 
     @Test
