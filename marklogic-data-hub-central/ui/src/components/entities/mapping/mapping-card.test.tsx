@@ -6,25 +6,13 @@ import MappingCard from './mapping-card';
 import axiosMock from 'axios'
 import data from "../../../config/run.config";
 import {act} from "react-dom/test-utils";
+import mocks from "../../../config/mocks.config";
 
 jest.mock('axios');
 
 describe("Entity Tiles component", () => {
   beforeEach(() => {
-    axiosMock.get['mockImplementation']((url) => {
-      switch (url) {
-        case '/api/flows':
-          return Promise.resolve(data.flows);
-        case '/api/models/primaryEntityTypes':
-          return Promise.resolve(data.primaryEntityTypes);
-        case '/api/artifacts/mapping':
-          return Promise.resolve(data.mappings);
-        case '/api/steps/mapping/' + data.mappings.data[0].artifacts[0].name + '/settings':
-            return Promise.resolve(data.mappingSettings);
-        default:
-          return Promise.reject(new Error('not found'));
-      }
-    })
+    mocks.curateAPI(axiosMock);
   });
 
   afterEach(() => {

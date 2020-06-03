@@ -173,7 +173,7 @@ const LoadCard: React.FC<Props> = (props) => {
                         <Card
                             actions={[
                                 <Tooltip title={'Settings'} placement="bottom"><Icon type="setting" key="setting" data-testid={elem.name+'-settings'} onClick={() => OpenLoadSettingsDialog(index)}/></Tooltip>,
-                                <Tooltip title={'Edit'} placement="bottom"><Icon type="edit" key="edit" onClick={() => OpenEditStepDialog(index)}/></Tooltip>,
+                                <Tooltip title={'Edit'} placement="bottom"><Icon type="edit" key="edit" data-testid={elem.name+'-edit'} onClick={() => OpenEditStepDialog(index)}/></Tooltip>,
                                 props.canReadWrite ? <Tooltip title={'Delete'} placement="bottom"><i aria-label="icon: delete"><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"  data-testid={elem.name+'-delete'} onClick={() => handleCardDelete(elem.name)}/></i></Tooltip> : <i><FontAwesomeIcon icon={faTrashAlt} onClick={(event) => event.preventDefault()} className={styles.disabledDeleteIcon} size="lg"/></i>,
                             ]}
                             className={styles.cardStyle}

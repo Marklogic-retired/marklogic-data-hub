@@ -200,17 +200,15 @@ const mappingSettings = {"data" :
         "provenanceGranularityLevel": "coarse",
         "batchSize": 50,
         "permissions": "data-hub-common,read,data-hub-common,update",
-        "targetFormat": "json",
+        "sourceDatabase": "data-hub-STAGING",
         "targetDatabase": "data-hub-FINAL",
-        "collections": [
-            "Customer"
-        ],
+        "collections": ["Mapping1", "Customer"],
         "additionalCollections": ['customerCollection'],
+        "validateEntity": false,
         "lastUpdated": "2020-05-27T12:19:02.446622-07:00"
     },
     "status" :200
 };
-
 
 const matchings = {"data" :
     [{
