@@ -7,6 +7,6 @@
     "hub-central-downloader",
     "hub-central-load-writer",
     "hub-central-mapping-writer",
-    "hub-central-step-runner"
+    "hub-central-flow-writer"
   ]
 }

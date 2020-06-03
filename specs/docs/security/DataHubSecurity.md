@@ -119,7 +119,7 @@ Role to determine if a user can clear their data through Hub Central.
 Can run steps through Hub Central
 
 #### Associate Authorities
- - readStep
+ - readFlow
  - runStep
 
 #### Inherited Roles
@@ -136,7 +136,7 @@ Can run steps through Hub Central
 Can create and run steps though Hub Central
 
 #### Associate Authorities
- - writeStep
+ - writeFlow
 
 #### Inherited Roles
  - hub-central-step-runner

@@ -25,12 +25,7 @@ public class FlowMvcTest extends AbstractMvcTest {
     @Test
     void runIngestionStep() throws Exception {
         installReferenceModelProject();
-        if(isVersionCompatibleWith520Roles()) {
-            loginAsTestUserWithRoles("hub-central-step-runner");
-        }
-        else {
-            loginAsTestUserWithRoles("hub-central-step-runner", "flow-operator-role");
-        }
+        loginAsTestUserWithRoles("hub-central-step-runner");
 
         MockMultipartFile file1 = new MockMultipartFile("files","file1.json", MediaType.APPLICATION_JSON, "{\"name\": \"Joe\"}".getBytes(StandardCharsets.UTF_8));
         MockMultipartFile file2 = new MockMultipartFile("files","file2.json", MediaType.APPLICATION_JSON, "{\"name\": \"John\"}".getBytes(StandardCharsets.UTF_8));

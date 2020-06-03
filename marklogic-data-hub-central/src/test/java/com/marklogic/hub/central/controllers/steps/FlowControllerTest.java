@@ -20,6 +20,8 @@ public class FlowControllerTest extends AbstractMvcTest {
     void test() throws Exception {
         installReferenceModelProject();
 
+        loginAsTestUserWithRoles("hub-central-flow-writer");
+
         // Get the initial count of flows
         getJson(PATH).andExpect(status().isOk())
             .andDo(result -> {

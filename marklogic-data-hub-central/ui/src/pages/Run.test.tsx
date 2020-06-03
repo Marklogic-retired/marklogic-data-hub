@@ -1,10 +1,10 @@
 import React from 'react';
-import { render, fireEvent, waitForElement, cleanup } from '@testing-library/react';
+import { render, fireEvent, waitForElement, waitForElementToBeRemoved, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect'
 import axiosMock from 'axios';
 import mocks from '../config/mocks.config';
 import  Run from '../pages/Run';
-import {AuthoritiesContext} from '../util/authorities';
+import {AuthoritiesContext, AuthoritiesService} from '../util/authorities';
 import data from '../config/run.config';
 import authorities from '../config/authorities.config';
 import {RunToolTips} from "../config/tooltips.config";
@@ -24,12 +24,12 @@ describe('Verify errors associated with running a step', () => {
     test('Verify errors when flow with Load step fails with jobStatus finished_with_errors', async() => {
         mocks.runErrorsAPI(axiosMock);
         axiosMock.post['mockImplementationOnce'](jest.fn(() => Promise.resolve(data.response)));
-        const {getAllByText, getByText, getByLabelText } = await render(<AuthoritiesContext.Provider value={ mockDevRolesService}><Run/></AuthoritiesContext.Provider>);
+        const {getAllByText, getByText, getByLabelText, getAllByLabelText } = await render(<AuthoritiesContext.Provider value={ mockDevRolesService}><Run/></AuthoritiesContext.Provider>);
 
         // Click disclosure icon
         fireEvent.click(getByLabelText("icon: right"));
         let runButton = await getByLabelText("runStep-1");
-        fireEvent.mouseOver(getByLabelText("icon: play-circle"));
+        fireEvent.mouseOver(getAllByLabelText("icon: play-circle")[0]);
         await waitForElement(() => getByText(RunToolTips.ingestionStep));
 
         let upload;
@@ -105,17 +105,17 @@ describe('Verify step running', () => {
 
     test('Verify a mapping step can be run from a flow as data-hub-developer', async () => {
         axiosMock.post['mockImplementationOnce'](jest.fn(() => Promise.resolve(data.responseForMapping)));
-        const { getByText, getByLabelText } = await render(<AuthoritiesContext.Provider value={ mockDevRolesService }><Run/></AuthoritiesContext.Provider>);
+        const { getByText, getAllByText, getByLabelText, getAllByLabelText } = await render(<AuthoritiesContext.Provider value={ mockDevRolesService }><Run/></AuthoritiesContext.Provider>);
 
         // Click disclosure icon
         fireEvent.click(getByLabelText("icon: right"));
 
         let runButton = await getByLabelText("runStep-1");
-        fireEvent.mouseOver(getByLabelText("icon: play-circle"));
+        fireEvent.mouseOver(getAllByLabelText("icon: play-circle")[0]);
         await waitForElement(() => getByText(RunToolTips.otherSteps))
         fireEvent.click(runButton);
 
-        expect(await(waitForElement(() => getByText("Running...")))).toBeInTheDocument();
+        expect(await(waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
         expect(await(waitForElement(() => getByText('Mapping "Mapping1" ran successfully')))).toBeInTheDocument();
 
         fireEvent.click(getByText('Close'));
@@ -124,7 +124,7 @@ describe('Verify step running', () => {
 
     test('Verify a mapping step can be run from a flow as data-hub-operator', async () => {
         axiosMock.post['mockImplementationOnce'](jest.fn(() => Promise.resolve(data.responseForMapping)));
-        const { getByText, getByLabelText } = await render(<AuthoritiesContext.Provider value={ mockOpRolesService }><Run/></AuthoritiesContext.Provider>);
+        const { getByText, getAllByText, getByLabelText } = await render(<AuthoritiesContext.Provider value={ mockOpRolesService }><Run/></AuthoritiesContext.Provider>);
 
         // Click disclosure icon
         fireEvent.click(getByLabelText("icon: right"));
@@ -132,7 +132,7 @@ describe('Verify step running', () => {
         let runButton = await getByLabelText("runStep-1");
         fireEvent.click(runButton);
 
-        expect(await(waitForElement(() => getByText("Running...")))).toBeInTheDocument();
+        expect(await(waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
         expect(await(waitForElement(() => getByText('Mapping "Mapping1" ran successfully')))).toBeInTheDocument();
 
         fireEvent.click(getByText('Close'));
@@ -159,4 +159,88 @@ describe('Verify step display', () => {
 
     })
 
+});
+
+describe('Verify Run CRUD operations', () => {
+
+    afterEach(() => {
+        jest.clearAllMocks();
+        cleanup();
+    });
+
+    beforeEach(() => {
+       mocks.runCrudAPI(axiosMock);
+    });
+
+    test('Verify a user with writeFlow authority can create', async () => {
+        const authorityService = new AuthoritiesService();
+        authorityService.setAuthorities(['readFlow','writeFlow']);
+        const { getByText, getByPlaceholderText } = await render(<AuthoritiesContext.Provider value={ authorityService }><Run/></AuthoritiesContext.Provider>);
+
+        const newFlowValues = { name: 'newFlow', description: 'newFlow description'};
+        fireEvent.click(getByText('Create Flow'));
+        await(waitForElement(() => getByText('Name:')));
+        fireEvent.change(getByPlaceholderText('Enter name'), { target: { value: newFlowValues.name }});
+        fireEvent.change(getByPlaceholderText('Enter description'), { target: { value: newFlowValues.description }});
+        fireEvent.click(getByText('Save'));
+
+        expect(axiosMock.post).toHaveBeenNthCalledWith(1, '/api/flows', newFlowValues);
+
+    })
+
+    test('Verify a user with writeFlow authority can update', async () => {
+        const authorityService = new AuthoritiesService();
+        authorityService.setAuthorities(['readFlow','writeFlow']);
+        const { getByText, getByPlaceholderText } = await render(<AuthoritiesContext.Provider value={ authorityService }><Run/></AuthoritiesContext.Provider>);
+
+        const existingFlowName = data.flowsWithMapping.data[0].name;
+        const updateFlowURL = `/api/flows/${existingFlowName}`;
+
+        const updatedFlow = { name: existingFlowName, description: `updated ${existingFlowName} description`};
+        fireEvent.click(getByText(existingFlowName));
+        await(waitForElement(() => getByText("Name:")));
+        expect(getByPlaceholderText('Enter name')).toBeDisabled();
+        fireEvent.change(getByPlaceholderText('Enter description'), { target: { value: updatedFlow.description }});
+        fireEvent.click(getByText('Save'));
+
+        expect(axiosMock.put).toHaveBeenNthCalledWith(1, updateFlowURL, updatedFlow);
+    })
+
+    test('Verify a user with writeFlow authority can delete', async () => {
+        const authorityService = new AuthoritiesService();
+        authorityService.setAuthorities(['readFlow','writeFlow']);
+        const { getByText, getByTestId } = await render(<AuthoritiesContext.Provider value={ authorityService }><Run/></AuthoritiesContext.Provider>);
+
+        const existingFlowName = data.flowsWithMapping.data[0].name;
+        const updateFlowURL = `/api/flows/${existingFlowName}`;
+
+        fireEvent.click(getByTestId('deleteFlow-0'));
+        fireEvent.click(getByText('Yes'));
+
+        expect(axiosMock.delete).toHaveBeenNthCalledWith(1, updateFlowURL);
+
+    })
+
+    test('Verify a user with readFlow authority only cannot create/update/delete', async () => {
+        const authorityService = new AuthoritiesService();
+        authorityService.setAuthorities(['readFlow']);
+        const { getByPlaceholderText, getByText, getByTestId, queryByText } = await render(<AuthoritiesContext.Provider value={ authorityService }><Run/></AuthoritiesContext.Provider>);
+
+        const existingFlowName = data.flowsWithMapping.data[0].name;
+
+        expect(getByText(existingFlowName)).toBeInTheDocument();
+        // create flow shouldn't be provided
+        expect(queryByText('Create Flow')).toBeDisabled();
+        // delete should not work
+        fireEvent.click(getByTestId('deleteFlow-0'));
+        // testing that confirmation modal didn't appear
+        expect(queryByText('Yes')).not.toBeInTheDocument();
+        // test description
+        fireEvent.click(getByText(existingFlowName));
+        expect(getByPlaceholderText('Enter name')).toBeDisabled();
+        expect(getByPlaceholderText('Enter description')).toBeDisabled();
+        expect(queryByText('Save')).not.toBeInTheDocument();
+        fireEvent.click(getByText('Close'));
+
+    })
 });

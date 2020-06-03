@@ -13,6 +13,11 @@
       "kind": "execute"
     },
     {
+      "privilege-name": "xdmp:invoke",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-invoke",
+      "kind": "execute"
+    },
+    {
       "privilege-name": "xdmp:invoke-in",
       "action": "http://marklogic.com/xdmp/privileges/xdmp-invoke-in",
       "kind": "execute"

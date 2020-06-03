@@ -1,0 +1,15 @@
+{
+  "role-name": "hub-central-flow-writer",
+  "description": "Permits reading and writing to flows in Hub Central",
+  "role": [
+    "hub-central-step-runner",
+    "data-hub-flow-writer"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "data-hub:writeFlow",
+      "action": "http://marklogic.com/data-hub/privileges/write-flow",
+      "kind": "execute"
+    }
+  ]
+}

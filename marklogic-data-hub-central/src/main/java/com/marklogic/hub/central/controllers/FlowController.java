@@ -46,7 +46,7 @@ public class FlowController extends BaseController {
     @ResponseBody
     @ApiOperation(value = "Get all user flows with a few key data points for each step, " +
         "regardless of whether it's referenced or inline", response = FlowsWithStepDetails.class)
-    @Secured("ROLE_readStep")
+    @Secured("ROLE_readFlow")
     public ResponseEntity<JsonNode> getFlowsWithStepDetails() {
         return ResponseEntity.ok(newFlowService().getFlowsWithStepDetails());
     }
@@ -54,6 +54,7 @@ public class FlowController extends BaseController {
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     @ApiOperation(value = "Create a flow", response = FlowInfo.class)
+    @Secured("ROLE_writeFlow")
     public ResponseEntity<JsonNode> createFlow(@RequestBody FlowInfo info) {
         return jsonCreated(newFlowService().createFlow(info.name, info.description));
     }
@@ -61,12 +62,14 @@ public class FlowController extends BaseController {
     @RequestMapping(value = "/{flowName}", method = RequestMethod.PUT)
     @ResponseBody
     @ApiOperation(value = "Update a flow", response = FlowInfo.class)
+    @Secured("ROLE_writeFlow")
     public ResponseEntity<JsonNode> updateFlowInfo(@PathVariable String flowName, @RequestBody UpdateFlowInfo info) {
         return ResponseEntity.ok(newFlowService().updateFlowInfo(flowName, info.description));
     }
 
     @RequestMapping(value = "/{flowName}", method = RequestMethod.DELETE)
     @ResponseBody
+    @Secured("ROLE_writeFlow")
     public ResponseEntity<Void> deleteFlow(@PathVariable String flowName) {
         newFlowService().deleteFlow(flowName);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -74,12 +77,14 @@ public class FlowController extends BaseController {
 
     @RequestMapping(value = "/{flowName}/steps", method = RequestMethod.POST)
     @ApiOperation(value = "Add a step to a flow", response = FlowWithStepDetails.class)
+    @Secured("ROLE_writeFlow")
     public ResponseEntity<JsonNode> addStepToFlow(@PathVariable String flowName, @RequestBody AddStepInfo info) {
         return ResponseEntity.ok(newFlowService().addStepToFlow(flowName, info.stepName, info.stepDefinitionType));
     }
 
     @RequestMapping(value = "/{flowName}/steps/{stepNumber}", method = RequestMethod.DELETE)
     @ApiOperation(value = "Remove a step from a flow", response = FlowWithStepDetails.class)
+    @Secured("ROLE_writeFlow")
     public ResponseEntity<JsonNode> removeStepFromFlow(@PathVariable String flowName, @PathVariable String stepNumber) {
         return ResponseEntity.ok(newFlowService().removeStepFromFlow(flowName, stepNumber));
     }
