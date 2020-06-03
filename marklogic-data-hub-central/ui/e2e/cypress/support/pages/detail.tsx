@@ -42,4 +42,5 @@ class DetailPage {
 
 }
 
-export default DetailPage;
+const detailPage = new DetailPage();
+export default detailPage;

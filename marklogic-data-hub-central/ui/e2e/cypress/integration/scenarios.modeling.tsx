@@ -1,25 +1,14 @@
 /// <reference types="cypress"/>
 
-import ModelPage from '../support/pages/model';
+import modelPage from '../support/pages/model';
 import {
-  EntityTypeModal,
-  EntityTypeTable,
-  PropertyModal,
-  PropertyTable
+  entityTypeModal,
+  entityTypeTable,
+  propertyModal,
+  propertyTable
 } from '../support/components/model/index'; 
-import { ConfirmationModal, Toolbar, Tiles } from '../support/components/common/index';
+import { confirmationModal, toolbar, tiles } from '../support/components/common/index';
 import { Application } from '../support/application.config';
-
-const modelPage = new ModelPage();
-
-const entityTypeModal = new EntityTypeModal();
-const entityTypeTable = new EntityTypeTable();
-const propertyModal = new PropertyModal();
-const propertyTable = new PropertyTable();
-
-const confirmationModal = new ConfirmationModal();
-const toolbar = new Toolbar();
-const tiles = new Tiles();
 
 
 describe('Entity Modeling', () => {
@@ -33,6 +22,11 @@ describe('Entity Modeling', () => {
     toolbar.getModelToolbarIcon().should('exist');
     toolbar.getModelToolbarIcon().click();
     tiles.getModelTile().should('exist');
+  });
+
+  after(() => {
+      //resetting the test user back to only have 'hub-central-user' role
+      cy.resetTestUser();
   });
 
   it('can add a new property to an existing Entity', () => {

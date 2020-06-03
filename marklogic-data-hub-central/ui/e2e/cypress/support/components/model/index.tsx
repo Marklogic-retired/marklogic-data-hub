@@ -1,11 +1,11 @@
-import EntityTypeModal from './entity-type-modal';
-import EntityTypeTable from './entity-type-table';
-import PropertyModal from './property-modal';
-import PropertyTable from './property-table';
+import entityTypeModal from './entity-type-modal';
+import entityTypeTable from './entity-type-table';
+import propertyModal from './property-modal';
+import propertyTable from './property-table';
 
 export {
-  EntityTypeModal,
-  EntityTypeTable,
-  PropertyModal,
-  PropertyTable
+  entityTypeModal,
+  entityTypeTable,
+  propertyModal,
+  propertyTable
 }

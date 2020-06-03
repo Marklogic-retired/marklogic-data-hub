@@ -21,4 +21,5 @@ class Tiles {
   }
 }
 
-export default Tiles;
+const tiles = new Tiles();
+export default tiles;

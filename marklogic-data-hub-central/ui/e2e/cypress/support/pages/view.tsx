@@ -54,4 +54,5 @@ class ViewPage {
 
 }
 
-export default ViewPage;
+const viewPage = new ViewPage();
+export default viewPage;

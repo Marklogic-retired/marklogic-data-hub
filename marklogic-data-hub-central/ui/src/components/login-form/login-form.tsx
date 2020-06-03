@@ -79,7 +79,7 @@ const LoginForm: React.FC = () => {
     </div>
 
     <div className={styles.loginForm}>
-      <Form onSubmit={handleSubmit} className={styles.loginForm} data-cy='login'>
+      <Form onSubmit={handleSubmit} className={styles.loginForm}>
 
         <Form.Item
           className={styles.username}

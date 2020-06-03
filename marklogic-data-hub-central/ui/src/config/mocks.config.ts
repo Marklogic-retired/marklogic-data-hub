@@ -101,7 +101,7 @@ const loadAPI = (axiosMock) => {
     return axiosMock.get['mockImplementation']((url) => {
       switch (url) {
         case '/api/flows':
-          return Promise.resolve(curateData.flowsXML)
+          return Promise.resolve(curateData.flowsXML);
         case '/api/steps/ingestion':
           return Promise.resolve(curateData.loadsXML);
         case '/api/steps/mapping':

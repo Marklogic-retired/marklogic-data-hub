@@ -1,11 +1,9 @@
 /// <reference types="cypress"/>
 
-import BrowsePage from '../support/pages/browse';
-import HomePage from "../support/pages/home";
+import browsePage from '../support/pages/browse';
+import homePage from "../support/pages/home";
 import { Application } from '../support/application.config';
 
-const browsePage = new BrowsePage();
-const homePage = new HomePage();
 
 describe('table test scenarios', () => {
 

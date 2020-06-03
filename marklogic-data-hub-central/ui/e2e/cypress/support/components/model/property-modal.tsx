@@ -37,4 +37,5 @@ class PropertyModal {
 
 }
 
-export default PropertyModal
+const propertyModal = new PropertyModal();
+export default propertyModal

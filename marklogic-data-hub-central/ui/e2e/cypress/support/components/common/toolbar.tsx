@@ -19,6 +19,10 @@ class Toolbar {
   getExploreToolbarIcon() {
     return cy.get('[aria-label=tool-explore]');
   }
-}
 
-export default Toolbar;
+  getToolBarIcon(tile: string) {
+      return cy.get(`[aria-label=tool-${tile.toLowerCase()}]`);
+  }
+}
+const toolbar = new Toolbar();
+export default toolbar;

@@ -43,4 +43,5 @@ class PropertyTable {
   }
 }
 
-export default PropertyTable
+const propertyTable = new PropertyTable();
+export default propertyTable

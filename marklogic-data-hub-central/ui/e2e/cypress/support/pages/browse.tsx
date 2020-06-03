@@ -398,4 +398,5 @@ class BrowsePage {
 
 }
 
-export default BrowsePage;
+const browsePage = new BrowsePage();
+export default browsePage;

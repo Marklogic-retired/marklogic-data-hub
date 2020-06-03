@@ -1,16 +1,10 @@
 /// <reference types="cypress"/>
 
-import BrowsePage from '../support/pages/browse';
-import HomePage from "../support/pages/home";
-import QueryComponent from '../support/components/query/manage-queries-modal'
+import browsePage from '../support/pages/browse';
+import homePage from "../support/pages/home";
+import queryComponent from '../support/components/query/manage-queries-modal'
 import { Application } from '../support/application.config';
-import { Toolbar } from '../support/components/common/index';
-
-
-const browsePage = new BrowsePage();
-const homePage = new HomePage();
-const queryComponent = new QueryComponent();
-const toolbar = new Toolbar();
+import { toolbar } from '../support/components/common/index';
 
 
 describe('save/manage queries scenarios, developer role', () => {
