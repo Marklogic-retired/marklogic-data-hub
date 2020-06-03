@@ -166,17 +166,17 @@ public class EntitySearchManager {
         // Creating queries object
         List<StructuredQueryDefinition> queries = new ArrayList<>();
 
+        final String[] entityTypeCollections = searchQuery.getQuery().getEntityTypeCollections();
+
         // Filtering search results for docs related to an entity
-        if (!CollectionUtils.isEmpty(searchQuery.getQuery().getEntityTypeIds())) {
-            // Collections to search
-            String[] collections = searchQuery.getQuery().getEntityTypeIds().toArray(new String[0]);
+        if (entityTypeCollections != null && entityTypeCollections.length > 0) {
             // Collections that have the mastering audit and notification docs. Excluding docs from
             // these collection in search results
             String[] excludedCollections = getExcludedCollections(
                 searchQuery.getQuery().getEntityTypeIds());
 
             StructuredQueryDefinition finalCollQuery = queryBuilder
-                .andNot(queryBuilder.collection(collections),
+                .andNot(queryBuilder.collection(entityTypeCollections),
                     queryBuilder.collection(excludedCollections));
 
             queries.add(finalCollQuery);

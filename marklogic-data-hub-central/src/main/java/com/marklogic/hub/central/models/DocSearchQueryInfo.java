@@ -33,6 +33,23 @@ public class DocSearchQueryInfo {
     this.selectedFacets = new HashMap<>();
   }
 
+    /**
+     * @return an array of non-empty entityTypeIds; this is used to handle empty strings being passed in by the UI,
+     * which seems like a bug, but we don't want it to cause a problem
+     */
+  public String[] getEntityTypeCollections() {
+      if (entityTypeIds != null && !entityTypeIds.isEmpty()) {
+          List<String> filteredTypes = new ArrayList<>();
+          entityTypeIds.forEach(type -> {
+              if (type != null && type.trim().length() > 0) {
+                  filteredTypes.add(type);
+              }
+          });
+          return filteredTypes.toArray(new String[]{});
+      }
+      return null;
+  }
+
   public String getSearchText() {
     return searchText;
   }
