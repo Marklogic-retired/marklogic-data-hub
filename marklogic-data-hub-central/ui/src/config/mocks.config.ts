@@ -26,6 +26,14 @@ const loadAPI = (axiosMock) => {
   };
 
   const curateAPI = (axiosMock) => {
+    axiosMock.delete['mockImplementation']((url) => {
+        switch (url) {
+            case '/api/steps/mapping/' + curateData.mappings.data[0].artifacts[0].name:
+                return Promise.resolve(loadData.genericSuccess);
+            default:
+                return Promise.reject(new Error('not found'))
+        }
+    });
     return axiosMock.get['mockImplementation']((url) => {
       switch (url) {
         case '/api/flows':
@@ -38,6 +46,8 @@ const loadAPI = (axiosMock) => {
           return Promise.resolve(curateData.loadSettings);
         case '/api/steps/mapping':
           return Promise.resolve(curateData.mappings);
+        case '/api/steps/mapping/' + curateData.mappings.data[0].artifacts[0].name + '/settings':
+          return Promise.resolve(curateData.mappingSettings);
         case '/api/artifacts/matching':
           return Promise.resolve(curateData.matchings);
         default:

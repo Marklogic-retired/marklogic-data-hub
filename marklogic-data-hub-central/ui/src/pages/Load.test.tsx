@@ -25,7 +25,7 @@ describe('Load component', () => {
         const authorityService = new AuthoritiesService();
         authorityService.setAuthorities(['readIngestion']);
 
-        const { getByText, getByTitle, getByLabelText, getByTestId, queryByTestId, queryByText, queryByTitle } = render(<AuthoritiesContext.Provider value={authorityService}><Load/></AuthoritiesContext.Provider>);
+        const { getByText, getAllByText, getByLabelText, getByTestId, queryByTestId, queryByText, queryByTitle } = await render(<AuthoritiesContext.Provider value={authorityService}><Load/></AuthoritiesContext.Provider>);
 
         expect(await(waitForElement(() => getByLabelText('switch-view-list')))).toBeInTheDocument();
 
@@ -34,29 +34,42 @@ describe('Load component', () => {
         expect(getByText('testLoad')).toBeInTheDocument();
 
         // Check list view
-        await fireEvent.click(getByLabelText('switch-view-list'));
+        fireEvent.click(getByLabelText('switch-view-list'));
         // test 'Add New' button
         expect(queryByText('Add New')).not.toBeInTheDocument();
 
-        await fireEvent.click(getByTestId('testLoad-settings'));
+        //test settings
+        fireEvent.click(getByTestId('testLoad-settings'));
         expect(await(waitForElement(() => getByText('Target Database:')))).toBeInTheDocument();
+        expect(getAllByText('Save')[0]).toBeDisabled();
+        fireEvent.click(getAllByText('Cancel')[0]);
 
-        expect(getByText('Save')).toBeDisabled();
-        await fireEvent.click(getByText('Cancel'));
+        //test edit
+        fireEvent.click(getAllByText('testLoad')[0]);
+        expect(await(waitForElement(() => getByText('Edit Data Load')))).toBeInTheDocument();
+        expect(getAllByText('Save')[0]).toBeDisabled();
+        fireEvent.click(getAllByText('Cancel')[0]);
+
         // test delete
         expect(queryByTestId('testLoad-delete')).not.toBeInTheDocument();
 
         // Check card layout
-        await fireEvent.click(getByLabelText('switch-view-card'));
+        fireEvent.click(getByLabelText('switch-view-card'));
 
         // test 'Add New' button
         expect(queryByText('Add New')).not.toBeInTheDocument();
 
         // test settings
-        await fireEvent.click(getByLabelText('icon: setting'));
+        fireEvent.click(getByLabelText('icon: setting'));
         expect(await(waitForElement(() => getByText('Target Database:')))).toBeInTheDocument();
-        expect(getByText('Save')).toBeDisabled();
-        await fireEvent.click(getByText('Cancel'));
+        expect(getAllByText('Save')[0]).toBeDisabled();
+        fireEvent.click(getAllByText('Cancel')[0]);
+
+        //test edit
+        fireEvent.click(getByTestId('testLoad-edit'));
+        expect(await(waitForElement(() => getByText('Edit Data Load')))).toBeInTheDocument();
+        expect(getAllByText('Save')[0]).toBeDisabled();
+        fireEvent.click(getAllByText('Cancel')[0]);
 
         // test delete
         expect(queryByTitle('delete')).not.toBeInTheDocument();
@@ -66,7 +79,7 @@ describe('Load component', () => {
         const authorityService = new AuthoritiesService();
         authorityService.setAuthorities(['readIngestion','writeIngestion']);
 
-        const { getByText, getByTitle, getByLabelText, getByTestId } = render(<AuthoritiesContext.Provider value={authorityService}><Load/></AuthoritiesContext.Provider>);
+        const { getByText, getAllByText, getByLabelText, getByTestId } = await render(<AuthoritiesContext.Provider value={authorityService}><Load/></AuthoritiesContext.Provider>);
 
         expect(await(waitForElement(() => getByLabelText('switch-view-list')))).toBeInTheDocument();
 
@@ -75,31 +88,45 @@ describe('Load component', () => {
         expect(getByText('testLoad')).toBeInTheDocument();
 
         // Check list view
-        await fireEvent.click(getByLabelText('switch-view-list'));
+        fireEvent.click(getByLabelText('switch-view-list'));
         // test 'Add New' button
         expect(getByText('Add New')).toBeInTheDocument();
         // test settings
-        await fireEvent.click(getByTestId('testLoad-settings'));
+        fireEvent.click(getByTestId('testLoad-settings'));
         expect(await(waitForElement(() => getByText('Target Database:')))).toBeInTheDocument();
-
         expect(getByText('Save')).not.toBeDisabled();
-        await fireEvent.click(getByText('Cancel'));
+        fireEvent.click(getByText('Cancel'));
+
+        //test edit
+        fireEvent.click(getAllByText('testLoad')[0]);
+        expect(await(waitForElement(() => getByText('Edit Data Load')))).toBeInTheDocument();
+        expect(getAllByText('Save')[0]).not.toBeDisabled();
+        fireEvent.click(getAllByText('Cancel')[0]);
+
         // test delete
-        await fireEvent.click(getByTestId('testLoad-delete'));
-        await fireEvent.click(getByText('No'));
+        fireEvent.click(getByTestId('testLoad-delete'));
+        fireEvent.click(getByText('No'));
 
         // Check card layout
-        await fireEvent.click(getByLabelText('switch-view-card'));
+        fireEvent.click(getByLabelText('switch-view-card'));
         // test 'Add New' button
         expect(getByText('Add New')).toBeInTheDocument();
 
-        await fireEvent.click(getByTestId('testLoad-settings'));
+        //test settings
+        fireEvent.click(getByTestId('testLoad-settings'));
         expect(await(waitForElement(() => getByText('Target Database:')))).toBeInTheDocument();
         expect(getByText('Save')).not.toBeDisabled();
-        await fireEvent.click(getByText('Cancel'));
+        fireEvent.click(getByText('Cancel'));
+
+        //test edit
+        fireEvent.click(getByTestId('testLoad-edit'));
+        expect(await(waitForElement(() => getByText('Edit Data Load')))).toBeInTheDocument();
+        expect(getAllByText('Save')[0]).not.toBeDisabled();
+        fireEvent.click(getAllByText('Cancel')[0]);
+
         // test delete
-        await fireEvent.click(getByTestId('testLoad-delete'));
-        await fireEvent.click(getByText('Yes'));
+        fireEvent.click(getByTestId('testLoad-delete'));
+        fireEvent.click(getByText('Yes'));
         expect(axiosMock.delete).toHaveBeenNthCalledWith(1,'/api/steps/ingestion/testLoad');
     });
 
@@ -107,7 +134,7 @@ describe('Load component', () => {
         const authorityService = new AuthoritiesService();
         authorityService.setAuthorities(['readIngestion','writeIngestion']);
 
-        const { getByText, getAllByText, getByLabelText } = render(<AuthoritiesContext.Provider value={authorityService}><Load/></AuthoritiesContext.Provider>);
+        const { getByText, getAllByText, getByLabelText } = await render(<AuthoritiesContext.Provider value={authorityService}><Load/></AuthoritiesContext.Provider>);
 
         expect(await(waitForElement(() => getByLabelText('switch-view-list')))).toBeInTheDocument();
 
@@ -117,7 +144,7 @@ describe('Load component', () => {
         expect(getByLabelText('load-' + DEFAULT_VIEW)).toBeInTheDocument();
 
         // Check list view
-        await fireEvent.click(getByLabelText('switch-view-list'));
+        fireEvent.click(getByLabelText('switch-view-list'));
         expect(getByText('testLoad')).toBeInTheDocument();
         expect(getByText('Test JSON.')).toBeInTheDocument();
         expect(getAllByText('json').length > 0);
@@ -126,7 +153,7 @@ describe('Load component', () => {
         expect(getByLabelText('icon: delete')).toBeInTheDocument();
 
         // Check card view
-        await fireEvent.click(getByLabelText('switch-view-card'));
+        fireEvent.click(getByLabelText('switch-view-card'));
         expect(getByText('testLoad')).toBeInTheDocument();
         expect(getByText('JSON')).toBeInTheDocument();
         expect(getByText('Last Updated: 01/01/2000 4:00AM')).toBeInTheDocument();

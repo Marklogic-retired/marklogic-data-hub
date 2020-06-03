@@ -610,9 +610,9 @@ const MappingCard: React.FC<Props> = (props) => {
                             <Card
                                 actions={[
                                     <span></span>,
-                                    <Tooltip title={'Settings'} placement="bottom"><Icon type="setting" key="setting" role="settings-mapping button" onClick={() => OpenMappingSettingsDialog(index)}/></Tooltip>,
-                                    <Tooltip title={'Edit'} placement="bottom"><Icon type="edit" key="edit" role="edit-mapping button" onClick={() => OpenEditStepDialog(index)}/></Tooltip>,
-                                    props.canReadWrite ? <Tooltip title={'Delete'} placement="bottom"><i role="delete-mapping button" onClick={() => handleCardDelete(elem.name)}><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"/></i></Tooltip> : <i role="disabled-delete-mapping button" onClick={(event) => event.preventDefault()}><FontAwesomeIcon icon={faTrashAlt} className={styles.disabledDeleteIcon} size="lg"/></i>,
+                                    <Tooltip title={'Settings'} placement="bottom"><Icon type="setting" key="setting" role="settings-mapping button" data-testid={elem.name+'-settings'} onClick={() => OpenMappingSettingsDialog(index)}/></Tooltip>,
+                                    <Tooltip title={'Edit'} placement="bottom"><Icon type="edit" key="edit" role="edit-mapping button" data-testid={elem.name+'-edit'} onClick={() => OpenEditStepDialog(index)}/></Tooltip>,
+                                    props.canReadWrite ? <Tooltip title={'Delete'} placement="bottom"><i role="delete-mapping button" data-testid={elem.name+'-delete'} onClick={() => handleCardDelete(elem.name)}><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"/></i></Tooltip> : <i role="disabled-delete-mapping button" onClick={(event) => event.preventDefault()}><FontAwesomeIcon icon={faTrashAlt} className={styles.disabledDeleteIcon} size="lg"/></i>,
                                 ]}
                                 className={styles.cardStyle}
                                 size="small"
