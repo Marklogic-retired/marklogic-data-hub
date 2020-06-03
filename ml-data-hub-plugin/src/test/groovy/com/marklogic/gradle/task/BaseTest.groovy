@@ -296,20 +296,6 @@ class BaseTest extends Specification {
         return databseFragment.getElementValues(namespace).size();
     }
 
-    //Use this method sparingly as it slows down the test
-    public void resetProperties() {
-        Field[] fields = HubConfigImpl.class.getDeclaredFields();
-        Set<String> s =  Stream.of("hubProject", "environment", "logger", "objmapper", "projectProperties").collect(Collectors.toSet());
-
-        for(Field f : fields){
-            if(! s.contains(f.getName())) {
-                ReflectionUtils.makeAccessible(f);
-                ReflectionUtils.setField(f, _hubConfig, null);
-            }
-
-        }
-    }
-
     public MappingManager getMappingManager() {
         return new MappingManagerImpl(hubConfig());
     }

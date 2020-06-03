@@ -182,6 +182,7 @@ class TlsTest extends BaseTest {
                 }
 
                 mlManageConfig {
+                    securitySslContext = newSslContext
                     sslContext = newSslContext
                     hostnameVerifier = verifier
                 }
@@ -207,8 +208,11 @@ class TlsTest extends BaseTest {
 
                 mlManageClient.setManageConfig(mlManageConfig)
                 mlAdminManager.setAdminConfig(mlAdminConfig)
-                hubConfig.setAppConfig(mlAppConfig, true)
                 hubConfig.refreshProject()
+                //Update  HubConfig's AppConfig and ManageClient/Config
+                hubConfig.setAppConfig(mlAppConfig, true)
+                hubConfig.setManageClient(mlManageClient)
+
             }
         '''
 
@@ -240,10 +244,6 @@ class TlsTest extends BaseTest {
         BaseTest.propertiesFile << """
         mlAdminScheme=https
         mlManageScheme=https
-        # mlAdminSimpleSsl=true
-        # mlManageSimpleSsl=true
-        # mlAppServicesSimpleSsl=true
-
         mlStagingSimpleSsl=false
         mlFinalSimpleSsl=false
         mlJobSimpleSsl=false
