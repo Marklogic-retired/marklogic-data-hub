@@ -131,6 +131,7 @@ public class HubConfigImplTest {
     }
 
     private void verifyDefaultValues(HubConfigImpl config) {
+        assertEquals("2.0.0", config.getDHFVersion());
         assertFalse(config.getIsHostLoadBalancer());
 
         assertEquals("data-hub-STAGING", config.getHttpName(DatabaseKind.STAGING));

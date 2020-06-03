@@ -80,7 +80,7 @@ public class EnvironmentController extends BaseController {
         Versions versions = new Versions(getHubClient());
         ProjectInfo info = new ProjectInfo();
         info.projectName = hubCentral.getProjectName();
-        info.dataHubVersion = versions.getInstalledVersion();
+        info.dataHubVersion = versions.getHubVersion();
         info.marklogicVersion = versions.getMarkLogicVersion();
         info.host = hubCentral.getHost();
         return info;

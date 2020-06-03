@@ -2,7 +2,9 @@ package com.marklogic.hub.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.hub.AbstractHubCoreTest;
+import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubTestBase;
 import com.marklogic.mgmt.api.database.Database;
 import com.marklogic.mgmt.api.database.ElementIndex;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
@@ -12,7 +14,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.w3c.dom.Document;
 
 import java.io.File;
@@ -20,6 +25,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,7 +35,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * src/test/resources/upgrade-projects into the build directory (a non-version-controlled area) where it
  * can then be upgraded and verified.
  */
-public class UpgradeProjectTest extends AbstractHubCoreTest {
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = ApplicationConfig.class)
+public class UpgradeProjectTest extends HubTestBase {
 
     @Autowired
     FlowManagerImpl flowManager;
@@ -46,32 +54,18 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
     }
 
     @Test
-    void localProjectIsPre430() {
-        copyTestProjectToTempDirectory("pre430");
-        try {
-            new DataHubImpl(getHubConfig()).verifyLocalProjectIs430OrGreater();
-            fail("Expected an error because the internal triggers directory indicates that the project is before version 4.3.0");
-        } catch (RuntimeException ex) {
-            assertTrue(ex.getMessage().contains("version is less than 4.3.0"), "Unexpected error message: " + ex.getMessage());
-        }
-    }
-
-    @Test
-    void localProjectIs430() {
-        copyTestProjectToTempDirectory("version430");
-        // No exception is expected because the internal triggers directory indicates that the project is version
-        // 4.3.0 or greater
-        new DataHubImpl(getHubConfig()).verifyLocalProjectIs430OrGreater();
-    }
-
-    @Test
     public void upgrade43xToCurrentVersion() throws IOException {
-        final File projectDir = copyTestProjectToTempDirectory("dhf43x");
+        final String projectPath = "build/tmp/upgrade-projects/dhf43x";
+        final File projectDir = Paths.get(projectPath).toFile();
+        FileUtils.deleteDirectory(projectDir);
+        FileUtils.copyDirectory(Paths.get("src/test/resources/upgrade-projects/dhf43x").toFile(), projectDir);
+
+        hubProject.createProject(projectPath);
 
         // This test is a little awkward because it's not clear if dataHub.upgradeProject can just be called in the
         // context of this test. So instead, some of the methods called by that method are called directly here.
         dataHub.prepareProjectBeforeUpgrading(hubProject, "5.0.3");
-        hubProject.init(new HashMap<>());
+        hubProject.init(createMap());
         hubProject.upgradeProject();
 
         File mappingDir = new File(projectDir, "mappings");
@@ -87,7 +81,7 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         assertEquals("Parent", db.get("range-element-attribute-index").get(0).get("parent-localname").asText(),
             "Other existing indexes should have been retained though; only range-element-index should have been removed");
 
-        File internalConfigBackupDir = hubProject.getProjectDir().resolve("src").resolve("main").resolve("hub-internal-config-pre-5.0.3").toFile();
+        File internalConfigBackupDir = hubProject.getProjectDir().resolve("src").resolve("main").resolve("hub-internal-config-5.0.3").toFile();
         assertTrue(internalConfigBackupDir.exists(), "The prepareProjectBeforeUpgrading method should backup the " +
             "hub-internal-config directory in the rare event that a user has made changes to this directory and doesn't want to " +
             "lose them (though a user really shouldn't be doing that)");
@@ -142,7 +136,7 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
 
         //Ensure the path index from DHFPROD-3911 is added to xml payload
         XMLUnit.setIgnoreWhitespace(true);
-        Document expected = getXmlFromResource("upgrade-projects/dhf43x/key/final-database.xml");
+        Document expected = getXmlFromResource("upgrade-projects/dhf43x/key/final-database.xml" );
         Document actual = getXmlFromInputStream(FileUtils.openInputStream(hubProject.getUserConfigDir().resolve("database-fields").resolve("final-database.xml").toFile()));
         assertXMLEqual(expected, actual);
 
@@ -183,20 +177,13 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         });
     }
 
-    private void verifyDirContents(File dir, int expectedCount) {
-        assertEquals(expectedCount, dir.listFiles().length);
+    private Map<String, String> createMap() {
+        Map<String, String> myMap = new HashMap<>();
+        myMap.put("%%mlStagingSchemasDbName%%", HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME);
+        return myMap;
     }
 
-    private File copyTestProjectToTempDirectory(String projectName) {
-        final String projectPath = "build/tmp/upgrade-projects/" + projectName;
-        final File projectDir = Paths.get(projectPath).toFile();
-        try {
-            FileUtils.deleteDirectory(projectDir);
-            FileUtils.copyDirectory(Paths.get("src/test/resources/upgrade-projects/" + projectName).toFile(), projectDir);
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-        hubProject.createProject(projectPath);
-        return projectDir;
+    private void verifyDirContents(File dir, int expectedCount) {
+        assertEquals(expectedCount, dir.listFiles().length);
     }
 }

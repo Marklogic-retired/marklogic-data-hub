@@ -15,32 +15,27 @@
  */
 package com.marklogic.hub.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
-import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubProject;
 import com.marklogic.hub.error.ServerValidationException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
 @Component
-public class Versions extends LoggingObject {
+public class Versions {
 
     private AppConfig appConfig;
 
@@ -98,73 +93,26 @@ public class Versions extends LoggingObject {
         this.appConfig = appConfig;
     }
 
-    /**
-     * Depends on being able to obtain the version from an installed DH.
-     *
-     * @return
-     */
-    public String getInstalledVersion() {
-        return getInstalledVersion(false);
+    public String getDHFVersion() {
+        return (hubConfig != null) ? hubConfig.getDHFVersion() : null;
     }
 
-    /**
-     *
-     * @param fallbackToLocalProject if true, and the version cannot be determined from the installed DH, will try to
-     *                               determine the version of the local project
-     * @return
-     */
-    public String getInstalledVersion(boolean fallbackToLocalProject) {
+    public String getHubVersion() {
         try {
             DatabaseClient stagingClient = hubClient != null ? hubClient.getStagingClient() : hubConfig.newStagingClient();
             return new HubVersionManager(stagingClient).getHubVersion();
-        } catch (Exception ex) {
-            if (fallbackToLocalProject) {
-                logger.info("Unable to determine installed version, likely because DH is not yet installed: " + ex.getMessage());
-                logger.info("Will try to determine version from local project");
-                String version = hubConfig != null ? determineVersionFromLocalProject(hubConfig.getHubProject()) : null;
-                if (version == null) {
-                    version = "2.0.0";
-                    logger.warn("Unable to determine version from local project, will fallback to earliest known version: " + version);
-                } else {
-                    logger.info("Local project version: " + version);
-                }
-                return version;
-            } else {
-                throw ex;
-            }
+        } catch (Exception e) {
         }
-    }
 
-    /**
-     * As of 5.3.0, the only time this is needed is when QuickStart tries to determine if an upgrade is needed, but
-     * DH is not installed yet. Previously, it was using mlDHFVersion, which depend on the user setting that property
-     * correctly - though that still didn't guarantee that the project was updated. We now instead depend on the
-     * project version being captured in the data-hub-admin.json file.
-     *
-     * @param hubProject
-     * @return
-     */
-    protected String determineVersionFromLocalProject(HubProject hubProject) {
-        File securityDir = hubProject.getHubSecurityDir().toFile();
-        if (securityDir.exists()) {
-            File rolesDir = new File(securityDir, "roles");
-            if (rolesDir.exists()) {
-                File roleFile = new File(rolesDir, "data-hub-admin.json");
-                if (roleFile.exists()) {
-                    try {
-                        JsonNode role = new ObjectMapper().readTree(roleFile);
-                        String description = role.get("description").asText();
-                        int pos = description.indexOf(": Permits");
-                        if (pos > -1) {
-                            return description.substring(0, pos);
-                        }
-                    } catch (Exception ex) {
-                        logger.warn("Unexpected error when trying to read local project version from data-hub-admin.json; cause: " + ex.getMessage());
-                    }
-                }
-            }
+        /* 2.0.0 is the version at which we started using this method. First we'll check the version gradle properties.
+         * If the version isn't there, we'll assume 2.0.0
+         */
+        String dhfVersion = this.getDHFVersion();
+        if (dhfVersion == null || "".equals(dhfVersion)) {
+            return "2.0.0";
+        } else {
+            return dhfVersion;
         }
-        return null;
     }
 
     public String getMarkLogicVersion() {

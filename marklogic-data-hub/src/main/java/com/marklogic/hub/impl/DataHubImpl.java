@@ -16,7 +16,6 @@
 package com.marklogic.hub.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.CommandMapBuilder;
@@ -26,8 +25,18 @@ import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
 import com.marklogic.appdeployer.command.forests.DeployCustomForestsCommand;
 import com.marklogic.appdeployer.command.modules.DeleteTestModulesCommand;
 import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
-import com.marklogic.appdeployer.command.security.*;
+import com.marklogic.appdeployer.command.security.DeployCertificateAuthoritiesCommand;
+import com.marklogic.appdeployer.command.security.DeployCertificateTemplatesCommand;
+import com.marklogic.appdeployer.command.security.DeployExternalSecurityCommand;
+import com.marklogic.appdeployer.command.security.DeployPrivilegesCommand;
+import com.marklogic.appdeployer.command.security.DeployProtectedCollectionsCommand;
+import com.marklogic.appdeployer.command.security.DeployProtectedPathsCommand;
+import com.marklogic.appdeployer.command.security.DeployQueryRolesetsCommand;
+import com.marklogic.appdeployer.command.security.DeployRolesCommand;
+import com.marklogic.appdeployer.command.security.DeployUsersCommand;
+import com.marklogic.appdeployer.command.security.InsertCertificateHostsTemplateCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.admin.QueryOptionsManager;
 import com.marklogic.client.admin.ResourceExtensionsManager;
 import com.marklogic.client.admin.ServerConfigurationManager;
@@ -42,9 +51,22 @@ import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.QueryOptionsListHandle;
 import com.marklogic.hub.*;
 import com.marklogic.hub.deploy.HubAppDeployer;
-import com.marklogic.hub.deploy.commands.*;
+import com.marklogic.hub.deploy.commands.CreateGranularPrivilegesCommand;
+import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
+import com.marklogic.hub.deploy.commands.DeployHubOtherServersCommand;
+import com.marklogic.hub.deploy.commands.DeployHubTriggersCommand;
+import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand;
+import com.marklogic.hub.deploy.commands.HubDeployDatabaseCommandFactory;
+import com.marklogic.hub.deploy.commands.LoadHubArtifactsCommand;
+import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
+import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
+import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
-import com.marklogic.hub.error.*;
+import com.marklogic.hub.error.CantUpgradeException;
+import com.marklogic.hub.error.DataHubConfigurationException;
+import com.marklogic.hub.error.DataHubSecurityNotInstalledException;
+import com.marklogic.hub.error.InvalidDBOperationError;
+import com.marklogic.hub.error.ServerValidationException;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.admin.AdminManager;
@@ -66,10 +88,17 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 
-import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -476,6 +505,9 @@ public class DataHubImpl implements DataHub, InitializingBean {
         response.put("jobPortInUse", jobPortInUse);
         response.put("jobPortInUseBy", jobPortInUseBy);
         response.put("safeToInstall", isSafeToInstall());
+        if ((boolean) response.get("safeToInstall")) {
+            response.put("dhfVersion", versions.getHubVersion());
+        }
         return response;
     }
 
@@ -856,30 +888,40 @@ public class DataHubImpl implements DataHub, InitializingBean {
         this.serverVersion = serverVersion;
     }
 
+    //DataHubUpgrader stuff
+    public static String MIN_UPGRADE_VERSION = "4.3.0";
+
     @Override
-    public boolean upgradeHub() {
+    public boolean upgradeHub() throws CantUpgradeException {
         boolean isHubInstalled;
         try {
             isHubInstalled = this.isInstalled().isInstalled();
         } catch (ResourceAccessException e) {
             isHubInstalled = false;
         }
-
+        String currentVersion;
         if (isHubInstalled) {
-            final String minUpgradeVersion = "4.3.0";
-            final String installedVersion = versions.getInstalledVersion();
-            if (Versions.compare(installedVersion, minUpgradeVersion) == -1) {
-                throw new RuntimeException("Cannot upgrade installed Data Hub; its version is " + installedVersion + ", and must be at least version " + minUpgradeVersion + " or higher");
+            currentVersion = versions.getHubVersion();
+        } else {
+            currentVersion = versions.getDHFVersion();
+        }
+        int compare = Versions.compare(currentVersion, MIN_UPGRADE_VERSION);
+        if (compare == -1) {
+            throw new CantUpgradeException(currentVersion, MIN_UPGRADE_VERSION);
+        }
+        // make a second check against local version, if we checked the server
+        if (isHubInstalled) {
+            compare = Versions.compare(versions.getDHFVersion(), MIN_UPGRADE_VERSION);
+            if (compare == -1) {
+                throw new CantUpgradeException(versions.getDHFVersion(), MIN_UPGRADE_VERSION);
             }
         }
-
-        verifyLocalProjectIs430OrGreater();
 
         boolean result = false;
 
         try {
             if (hubConfig.getHubProject().isInitialized()) {
-                prepareProjectBeforeUpgrading(hubConfig.getHubProject(), hubConfig.getJarVersion());
+                prepareProjectBeforeUpgrading(hubConfig.getHubProject(), versions.getDHFVersion());
                 hubConfig.getHubSecurityDir().resolve("roles").resolve("flow-operator.json").toFile().delete();
             }
 
@@ -897,48 +939,16 @@ public class DataHubImpl implements DataHub, InitializingBean {
     }
 
     /**
-     * Per DHFPROD-4912, instead of depending on mlDHFVersion, this logic takes advantage of the fact that the
-     * hub-internal-config triggers - including ml-dh-entity-create.json - had their permissions modified in the 4.3.0
-     * release.
-     */
-    protected void verifyLocalProjectIs430OrGreater() {
-        File triggersDir = hubConfig.getHubProject().getHubTriggersDir().toFile();
-        if (!triggersDir.exists()) {
-            // If the internal triggers dir doesn't exist, then the project hasn't been initialized yet. That means
-            // we aren't trying to upgrade a pre-4.3.0 project, so the "upgrade" is safe to proceed.
-            return;
-        }
-
-        File triggerFile = new File(triggersDir, "ml-dh-entity-create.json");
-        boolean canBeUpgraded = true;
-        try {
-            JsonNode trigger = new ObjectMapper().readTree(triggerFile);
-            final String roleName = trigger.get("permission").get(0).get("role-name").asText();
-            if ("%%mlHubAdminRole%%".equals(roleName) || "%%mlHubUserRole%%".equals(roleName)) {
-                canBeUpgraded = false;
-            }
-        } catch (Exception ex) {
-            throw new RuntimeException("Unable to upgrade project; while trying to verify that the local project is of " +
-                "version 4.3.0 or greater, was unable to read JSON from ml-dh-entity-create.json file; cause: " + ex.getMessage(), ex);
-        }
-
-        if (!canBeUpgraded) {
-            throw new RuntimeException("Unable to upgrade current project, as its version is less than 4.3.0. Please " +
-                "first upgrade this project to 4.3.0. Consult the Data Hub documentation on performing this upgrade.");
-        }
-    }
-
-    /**
      * The expectation is that a user has upgraded build.gradle to use a newer version of DHF but has not yet updated
      * mlDHFVersion in gradle.properties. Thus, the value of mlDHFVersion is expected to be passed in here so that the
      * backup path of hub-internal-config has the current version of DHF in its name.
      *
      * @param hubProject
-     * @param newDataHubVersion
+     * @param currentDhfVersion
      * @throws IOException
      */
-    protected void prepareProjectBeforeUpgrading(HubProject hubProject, String newDataHubVersion) throws IOException {
-        final String backupPath = HubProject.HUB_CONFIG_DIR + "-pre-" + newDataHubVersion;
+    protected void prepareProjectBeforeUpgrading(HubProject hubProject, String currentDhfVersion) throws IOException {
+        final String backupPath = HubProject.HUB_CONFIG_DIR + "-" + currentDhfVersion;
         FileUtils.copyDirectory(hubProject.getHubConfigDir().toFile(), hubProject.getProjectDir().resolve(backupPath).toFile());
         logger.warn("The " + HubProject.HUB_CONFIG_DIR + " directory has been moved to " + backupPath + " so that it can be re-initialized using the new version of Data Hub");
     }
