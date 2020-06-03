@@ -17,12 +17,10 @@
 package com.marklogic.hub;
 
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
-import com.marklogic.hub.error.CantUpgradeException;
 import com.marklogic.hub.error.ServerValidationException;
 import com.marklogic.hub.flow.FlowRunner;
 
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Handles creation and orchastration of DHF with a MarkLogic server.
@@ -166,9 +164,8 @@ public interface DataHub {
      * Upgrades the installed datahub on the server to this version of the DataHub
      * Must be run as a user with sufficient privileges to install a data hub.
      * @return true or false based on success of the upgrade
-     * @throws CantUpgradeException - exception thrown when an upgrade can't happen
      */
-    boolean upgradeHub() throws CantUpgradeException;
+    boolean upgradeHub();
 
     /**
      * Creates and returns the FlowRunner object using the datahub's autowired hubconfig

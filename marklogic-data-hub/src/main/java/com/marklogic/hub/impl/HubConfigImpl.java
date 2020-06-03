@@ -135,8 +135,6 @@ public class HubConfigImpl implements HubConfig
     private String flowDeveloperRoleName;
     private String flowDeveloperUserName;
 
-    private String DHFVersion;
-
     private String hubLogLevel;
 
     // these hold runtime credentials for flows.
@@ -1342,11 +1340,6 @@ public class HubConfigImpl implements HubConfig
         return VersionInfo.getBuildVersion();
     }
 
-    @Override public String getDHFVersion() {
-
-        return this.DHFVersion;
-    }
-
     @Override public String getHubLogLevel() {
 
         return this.hubLogLevel;
@@ -1417,9 +1410,6 @@ public class HubConfigImpl implements HubConfig
         customTokens.put("%%mlJobPermissions%%", jobPermissions);
 
         customTokens.put("%%mlCustomForestPath%%", customForestPath);
-
-        //version of DHF the user INTENDS to use
-        customTokens.put("%%mlDHFVersion%%", getJarVersion());
 
         //logging level of hub debug messages
         customTokens.put("%%mlHubLogLevel%%", hubLogLevel);
@@ -1632,7 +1622,6 @@ public class HubConfigImpl implements HubConfig
         adminManager = null;
         manageClient = null;
 
-        DHFVersion = "2.0.0";
         host = "localhost";
         hubLogLevel = "default";
         isHostLoadBalancer = false;
@@ -1744,7 +1733,10 @@ public class HubConfigImpl implements HubConfig
         propertyConsumerMap.put("mlUsername", prop -> mlUsername = prop);
         propertyConsumerMap.put("mlPassword", prop -> mlPassword = prop);
 
-        propertyConsumerMap.put("mlDHFVersion", prop -> DHFVersion = prop);
+        propertyConsumerMap.put("mlDHFVersion", prop -> {
+            logger.warn("mlDHFVersion no longer has any impact starting in version 5.3.0. You may safely remove this from your properties file.");
+        });
+
         propertyConsumerMap.put("mlHost", prop -> setHost(prop));
         propertyConsumerMap.put("mlIsHostLoadBalancer", prop -> isHostLoadBalancer = Boolean.parseBoolean(prop));
         propertyConsumerMap.put("mlLoadBalancerHosts", prop ->

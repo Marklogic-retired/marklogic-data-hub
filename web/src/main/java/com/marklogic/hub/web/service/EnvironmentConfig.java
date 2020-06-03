@@ -52,8 +52,6 @@ public class EnvironmentConfig {
 
     private String marklogicVersion;
 
-    private String DHFVersion;
-
     private boolean isVersionCompatibleWithES;
 
     public InstallInfo getInstallInfo() {
@@ -88,10 +86,6 @@ public class EnvironmentConfig {
         return marklogicVersion;
     }
 
-    public String getDHFVersion() {
-        return DHFVersion;
-    }
-
     public boolean isVersionCompatibleWithES() {
         return isVersionCompatibleWithES;
     }
@@ -100,16 +94,16 @@ public class EnvironmentConfig {
     public void checkIfInstalled() {
         projectDir = mlSettings.getHubProject().getProjectDirString();
         this.installInfo = dataHub.isInstalled();
-        this.installedVersion = versions.getHubVersion();
+        // As of 5.3.0, per DHFPROD-4912, we want this to fallback to the local project if the version can't be
+        // determined from an installed DH (likely because DH is not yet installed)
+        this.installedVersion = versions.getInstalledVersion(true);
         this.marklogicVersion = versions.getMarkLogicVersion();
         this.runningVersion = this.mlSettings.getJarVersion();
-        this.DHFVersion = versions.getDHFVersion();
         this.isVersionCompatibleWithES = versions.isVersionCompatibleWithES();
 
         // Replace "-SNAPSHOT" in version with ".0" as QS compares versions and fails if version number contains text
         installedVersion = installedVersion.replace("-SNAPSHOT", ".0");
         runningVersion = runningVersion.replace("-SNAPSHOT", ".0");
-        DHFVersion = DHFVersion.replace("-SNAPSHOT", ".0");
     }
 
     private DatabaseClient _stagingClient = null;
