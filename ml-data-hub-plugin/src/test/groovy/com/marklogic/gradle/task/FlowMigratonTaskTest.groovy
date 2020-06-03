@@ -36,4 +36,15 @@ class FlowMigratonTaskTest extends BaseTest {
         notThrown(UnexpectedBuildFailure)
         result.task(":hubMigrateFlows").outcome == SUCCESS
     }
+
+    def "run hubMigrateFlows should not throw NPE"() {
+        when:
+        def result
+        runTask("hubMigrateFlows", '-Pconfirm=true')
+        result = runTask("hubMigrateFlows", '-Pconfirm=true')
+
+        then:
+        notThrown(UnexpectedBuildFailure)
+        result.task(":hubMigrateFlows").outcome == SUCCESS
+    }
 }
