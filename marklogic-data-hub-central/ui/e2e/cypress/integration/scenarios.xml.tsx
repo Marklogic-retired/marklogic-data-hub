@@ -191,7 +191,8 @@ describe('xml scenario on browse documents page', () => {
 
 });
 
-describe('xml scenario for table on browse documents page', () => {
+
+xdescribe('xml scenario for table on browse documents page', () => {
 
   //login with valid account and go to /browse page
   beforeEach(() => {
@@ -261,3 +262,4 @@ describe('xml scenario for table on browse documents page', () => {
   });
 
 });
+

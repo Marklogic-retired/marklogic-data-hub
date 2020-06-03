@@ -6,7 +6,6 @@ import detailPage from '../support/pages/detail';
 import homePage from "../support/pages/home";
 import { Application } from '../support/application.config';
 
-
 xdescribe('json scenario on view entities page', () => {
 
   //login with valid account
@@ -20,7 +19,7 @@ xdescribe('json scenario on view entities page', () => {
     cy.wait(500);
     // temporary change end here
     homePage.getViewEntities().click();
-    //cy.visit('/view');
+    cy.visit('/view');
   });
 
   it('has total entities and documents', () => {
@@ -196,7 +195,7 @@ describe('json scenario on browse documents page', () => {
 });
 
 
-describe('json scenario for table on browse documents page', () => {
+xdescribe('json scenario for table on browse documents page', () => {
 
   var facets: string[] = ['collection', 'flow'];
 

@@ -5,7 +5,7 @@ import homePage from "../support/pages/home";
 import { Application } from '../support/application.config';
 
 
-describe('table test scenarios', () => {
+xdescribe('table test scenarios', () => {
 
   beforeEach(() => {
     cy.visit('/');
@@ -22,20 +22,21 @@ describe('table test scenarios', () => {
     browsePage.getSelectedEntity().should('contain', 'All Entities');
     cy.wait(2000);
     browsePage.getHubPropertiesExpanded();
-    browsePage.getTotalDocuments().should('be.greaterThan', 1008)
+    /*browsePage.getTotalDocuments().should('be.greaterThan', 1008)
     browsePage.getTableRows().should('be.visible');
-    browsePage.getTableColumns().should('be.visible');
+    browsePage.getTableColumns().should('be.visible');*/
   });
 
-  it('has expandable rows', () => {
+  /*it('has expandable rows', () => {
     browsePage.getSelectedEntity().should('contain', 'All Entities');
     cy.wait(2000);
     browsePage.getExpandable().should('be.visible');
-  });
+  });*/
 
 });
 
-describe('column selector test scenarios', () => {
+
+xdescribe('column selector test scenarios', () => {
 
   beforeEach(() => {
     cy.visit('/');
@@ -78,3 +79,4 @@ describe('column selector test scenarios', () => {
   });
 
 });
+
