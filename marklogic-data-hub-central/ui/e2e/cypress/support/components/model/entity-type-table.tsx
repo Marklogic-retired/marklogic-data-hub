@@ -30,4 +30,5 @@ class EntityTypeTable {
   }
 }
 
-export default EntityTypeTable
+const entityTypeTable = new EntityTypeTable();
+export default entityTypeTable

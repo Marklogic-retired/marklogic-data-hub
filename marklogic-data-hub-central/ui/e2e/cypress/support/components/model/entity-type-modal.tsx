@@ -17,4 +17,5 @@ class EntityTypeModal {
 
 }
 
-export default EntityTypeModal
+const entityTypeModal = new EntityTypeModal();
+export default entityTypeModal

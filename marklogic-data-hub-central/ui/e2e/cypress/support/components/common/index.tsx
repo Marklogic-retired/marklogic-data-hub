@@ -1,9 +1,11 @@
-import ConfirmationModal from './confirmation-modal';
-import Toolbar from './toolbar';
-import Tiles from './tiles';
+import confirmationModal from './confirmation-modal';
+import toolbar from './toolbar';
+import tiles from './tiles';
+import projectInfo from './projectInfo';
 
 export {
-  ConfirmationModal,
-  Toolbar,
-  Tiles
+  confirmationModal,
+  toolbar,
+  tiles,
+  projectInfo
 }

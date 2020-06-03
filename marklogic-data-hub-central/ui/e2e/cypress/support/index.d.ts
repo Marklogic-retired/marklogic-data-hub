@@ -39,6 +39,11 @@ declare namespace Cypress {
       loginAsTestUserWithRoles(...roles: string[]): Chainable<Element>
 
       /**
+       * Resets the test user so it only has 'hub-central-user' role
+       */
+      resetTestUser(): Chainable<Element>
+
+      /**
        * Custom command to login via api request call.
        * @example
        *  cy.loginAsTestUser().withRequest()

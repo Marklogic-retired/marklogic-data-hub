@@ -41,4 +41,5 @@ class ManageQuery {
   }
 }
 
-export default ManageQuery;
+const queryComponent = new ManageQuery();
+export default queryComponent;

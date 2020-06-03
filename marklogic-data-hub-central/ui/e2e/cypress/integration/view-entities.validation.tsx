@@ -1,12 +1,9 @@
 /// <reference types="cypress"/>
 
-import ViewPage from '../support/pages/view';
-import LoginPage from "../support/pages/login";
-import HomePage from "../support/pages/home";
+import viewPage from '../support/pages/view';
+import homePage from "../support/pages/home";
 import { Application } from '../support/application.config';
 
-const viewPage = new ViewPage();
-const homePage = new HomePage();
 
 describe('view page validation', () => {
   //login with valid account

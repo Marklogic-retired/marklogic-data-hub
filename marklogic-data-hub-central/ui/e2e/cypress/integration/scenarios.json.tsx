@@ -1,17 +1,11 @@
 /// <reference types="cypress"/>
 
-import LoginPage from '../support/pages/login';
-import ViewPage from '../support/pages/view';
-import BrowsePage from '../support/pages/browse';
-import DetailPage from '../support/pages/detail';
-import HomePage from "../support/pages/home";
+import viewPage from '../support/pages/view';
+import browsePage from '../support/pages/browse';
+import detailPage from '../support/pages/detail';
+import homePage from "../support/pages/home";
 import { Application } from '../support/application.config';
 
-
-const viewPage = new ViewPage();
-const browsePage = new BrowsePage();
-const detailPage = new DetailPage();
-const homePage = new HomePage();
 
 xdescribe('json scenario on view entities page', () => {
 

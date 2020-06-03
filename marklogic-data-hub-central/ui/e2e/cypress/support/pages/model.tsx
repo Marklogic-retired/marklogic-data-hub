@@ -13,4 +13,5 @@ class ModelPage {
   }
 }
 
-export default ModelPage;
+const modelPage = new ModelPage();
+export default modelPage;
