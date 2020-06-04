@@ -79,14 +79,14 @@ describe('Curate component', () => {
         // test settings
         fireEvent.click(getByTestId('Mapping1-settings'));
         expect(await(waitForElement(() => getByText('Target Database:')))).toBeInTheDocument();
-        expect(getAllByText('Save')[0]).not.toBeDisabled();
-        fireEvent.click(getAllByText('Cancel')[0]);
+        expect(getByTestId('Mapping1-save-settings')).not.toBeDisabled();
+        fireEvent.click(getByTestId('Mapping1-cancel-settings'));
 
         //test edit
         fireEvent.click(getByTestId('Mapping1-edit'));
         expect(await(waitForElement(() => getByText('Edit Mapping')))).toBeInTheDocument();
-        expect(getAllByText('Save')[0]).not.toBeDisabled();
-        fireEvent.click(getAllByText('Cancel')[0]);
+        expect(getByTestId('Mapping1-edit-save')).not.toBeDisabled();
+        fireEvent.click(getByTestId('Mapping1-edit-cancel'));
 
         // test delete
         fireEvent.click(getByTestId('Mapping1-delete'));
