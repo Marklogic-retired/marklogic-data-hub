@@ -1,9 +1,10 @@
 FROM cypress/base:10
+RUN mkdir -p e2e
+COPY package.json e2e/package.json
+COPY ./cypress e2e/cypress
+COPY ./qa-project e2e/qa-project
+COPY ./cypress.json e2e/cypress.json
+COPY ./tsconfig.json e2e/tsconfig.json
+COPY ../src/services/user-preferences ./src/services/user-preferences
 
-COPY package.json package.json
-COPY ./cypress ./cypress
-COPY ./qa-project ./qa-project
-COPY ./cypress.json ./cypress.json
-COPY ./tsconfig.json ./tsconfig.json
-
-CMD  npm run cypress:run ; chmod -R 777 cypress results ; rm -rf node_modules;
+CMD  cd e2e;npm run cypress:run ; chmod -R 777 cypress results ; rm -rf node_modules;
