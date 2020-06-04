@@ -579,9 +579,9 @@ const getSettingsArtifact = async () => {
 
         <Form.Item className={styles.submitButtonsForm}>
           <div className={styles.submitButtons}>
-            <Button onClick={() => onCancel()}>Cancel</Button>
+            <Button data-testid={`${props.stepData.name}-cancel-settings`} onClick={() => onCancel()}>Cancel</Button>
             &nbsp;&nbsp;
-            <Button id={'saveButton'} type="primary" htmlType="submit" onClick={handleSubmit}
+            <Button id={'saveButton'} data-testid={`${props.stepData.name}-save-settings`} type="primary" htmlType="submit" onClick={handleSubmit}
                     disabled={!canReadWrite}>Save</Button>
           </div>
         </Form.Item>
