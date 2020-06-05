@@ -19,10 +19,10 @@ package com.marklogic.hub.central.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.marklogic.hub.central.managers.EntitySearchManager;
-import com.marklogic.hub.central.models.DocSearchQueryInfo;
-import com.marklogic.hub.central.models.Document;
-import com.marklogic.hub.central.models.SearchQuery;
+import com.marklogic.hub.central.entities.search.EntitySearchManager;
+import com.marklogic.hub.central.entities.search.models.DocSearchQueryInfo;
+import com.marklogic.hub.central.entities.search.models.Document;
+import com.marklogic.hub.central.entities.search.models.SearchQuery;
 import com.marklogic.hub.central.schemas.EntitySearchResponseSchema;
 import com.marklogic.hub.dataservices.EntitySearchService;
 import io.swagger.annotations.ApiImplicitParam;
@@ -51,7 +51,7 @@ public class EntitySearchController extends BaseController {
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     @ApiOperation(value = "Response is a MarkLogic JSON search response. Please see ./specs/EntitySearchResponse.schema.json for complete information, as swagger-ui does not capture all the details",
-        response = EntitySearchResponseSchema.class)
+            response = EntitySearchResponseSchema.class)
     public String search(@RequestBody SearchQuery searchQuery) {
         return newEntitySearchManager().search(searchQuery).get();
     }

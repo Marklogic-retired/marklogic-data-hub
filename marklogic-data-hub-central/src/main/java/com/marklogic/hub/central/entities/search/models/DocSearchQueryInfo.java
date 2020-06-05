@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-package com.marklogic.hub.central.models;
+package com.marklogic.hub.central.entities.search.models;
 
 import java.util.ArrayList;
 import java.util.HashMap;
