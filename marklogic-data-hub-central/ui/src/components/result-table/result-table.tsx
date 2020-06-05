@@ -17,7 +17,6 @@ import QueryExport from '../../components/query-export/query-export';
 import { AuthoritiesContext } from "../../util/authorities";
 
 
-
 const ResizeableTitle = props => {
   const { onResize, width, ...restProps } = props;
 
@@ -41,7 +40,6 @@ interface Props {
   data: any;
   entityDefArray: any[];
   columns: any;
-  hasStructured: boolean;
 };
 
 const DEFAULT_ALL_ENTITIES_HEADER = [
@@ -539,7 +537,7 @@ const ResultTable: React.FC<Props> = (props) => {
   return (
     <>
       <div className={styles.queryExport}>
-      { canExportQuery && <QueryExport hasStructured={props.hasStructured} columns={props.columns}/> }
+      { canExportQuery && <QueryExport columns={props.columns}/> }
       </div>
       <div className={styles.columnSelector} data-cy="column-selector">
         <ColumnSelector title={checkedColumns} tree={treeColumns} headerRender={headerRender} updateTreeColumns={updateTreeColumns} />

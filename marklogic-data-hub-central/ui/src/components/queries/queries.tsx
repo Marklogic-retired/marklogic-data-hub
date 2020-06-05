@@ -76,6 +76,7 @@ const Query = (props) => {
     const getSaveQueries = async () => {
         try {
             const response = await fetchQueries();
+
             if (response.data) {
                setQueries(response.data);
             }
@@ -84,8 +85,8 @@ const Query = (props) => {
         } finally {
             resetSessionTime()
         }
-    }
 
+    }
 
     const getSaveQueryWithId = async (key) => {
        let searchText:string = '';
@@ -97,7 +98,7 @@ const Query = (props) => {
                searchText = response.data.savedQuery.query.searchText;
                entityTypeIds = response.data.savedQuery.query.entityTypeIds;
                selectedFacets = response.data.savedQuery.query.selectedFacets;
-               applySaveQuery(searchText, entityTypeIds, selectedFacets, response.data.savedQuery.name);
+               applySaveQuery(searchText, entityTypeIds, selectedFacets, response.data.savedQuery.name, response.data.savedQuery.propertiesToDisplay);
                setCurrentQuery(response.data);
                if(props.greyFacets.length > 0){
                    clearAllGreyFacets();

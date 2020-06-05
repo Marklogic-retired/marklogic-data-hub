@@ -58,7 +58,8 @@ const ZeroStateExplorer = (props) => {
           query['savedQuery']['query']['searchText'],
           query['savedQuery']['query']['entityTypeIds'],
           query['savedQuery']['query']['selectedFacets'],
-          query['savedQuery']['name']);
+          query['savedQuery']['name'],
+          query.savedQuery.propertiesToDisplay);
       }
     })
   };

@@ -95,11 +95,13 @@ const SaveChangesModal: React.FC<Props> = (props) => {
                 currentQuery.savedQuery.query.searchText = searchOptions.query;
                 currentQuery.savedQuery.query.entityTypeIds = searchOptions.entityTypeIds;
             }
+            currentQuery.savedQuery.propertiesToDisplay = searchOptions.selectedTableProperties;
+
             const response = await axios.put(`/api/entitySearch/savedQueries`, currentQuery);
             if (response.data) {
                 props.setSaveChangesModalVisibility();
                 if(props.currentQueryName && !props.entityQueryUpdate){
-                    applySaveQuery(searchOptions.query, searchOptions.entityTypeIds, facets, queryName);
+                    applySaveQuery(searchOptions.query, searchOptions.entityTypeIds, facets, queryName, searchOptions.selectedTableProperties);
                 }
                 if(props.nextQueryName && !props.entityQueryUpdate){
                     for(let key of props.savedQueryList)

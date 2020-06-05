@@ -10,9 +10,10 @@ import { getExportQueryPreview } from '../../api/queries'
 
 
 const QueryExport = (props) => {
-    const [tableColumns, setTableColumns] = useState<Object[]>();
+    const [tableColumns, setTableColumns] = useState<Object[]>([]);
     const [tableData, setTableData] = useState<Object[]>();
     const [exportModalVisibility, setExportModalVisibility] = useState(false);
+    const [hasStructured, setStructured] = useState<boolean>(false);
     const {
         handleError,
         resetSessionTime
@@ -24,10 +25,14 @@ const QueryExport = (props) => {
 
     const displayModal = () => {
         props.hasStructured && getPreview();
+        let isStructured = props.columns && props.columns.some(column => column.includes('.'));
+        setStructured(isStructured);
+        isStructured && getPreview();
         setExportModalVisibility(true);
     };
 
-const getPreview = async () => {
+
+    const getPreview = async () => {
         let query = {
             savedQuery: {
                 id: '',
@@ -45,11 +50,14 @@ const getPreview = async () => {
         try {
             const response = await getExportQueryPreview(query);
             if (response) {
-                const preview = getExportPreview(response)
+                const preview = getExportPreview(response);
                 const header = preview[0];
                 const body = preview[1]
-                setTableColumns(header)
-                setTableData(body)
+                setTableColumns(header);
+                setTableData(body);
+            } else {
+                setTableColumns([]);
+                setTableData([]);
             }
         } catch (error) {
             handleError(error);
@@ -58,10 +66,10 @@ const getPreview = async () => {
         }
 
     }
-    
+
     return (
-        <div >
-            <ExportQueryModal hasStructured={props.hasStructured} tableColumns={tableColumns} tableData={tableData} exportModalVisibility={exportModalVisibility} setExportModalVisibility={setExportModalVisibility} columns={props.columns} />
+        <div>
+            <ExportQueryModal hasStructured={hasStructured} getPreview={getPreview} tableColumns={tableColumns} tableData={tableData} exportModalVisibility={exportModalVisibility} setExportModalVisibility={setExportModalVisibility} columns={props.columns} />
             {searchOptions.entityTypeIds.length > 0 &&
                 <Tooltip title='export this query to CSV'>
                     <FontAwesomeIcon style={{ position: 'fixed', zIndex: 1, cursor: 'pointer' }} icon={faFileExport} size="lg" onClick={displayModal} />
