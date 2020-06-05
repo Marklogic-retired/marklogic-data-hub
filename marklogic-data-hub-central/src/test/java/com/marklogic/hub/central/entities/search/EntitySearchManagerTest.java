@@ -14,17 +14,16 @@
  *  limitations under the License.
  *
  */
-package com.marklogic.hub.central.managers;
+package com.marklogic.hub.central.entities.search;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.central.AbstractHubCentralTest;
+import com.marklogic.hub.central.entities.search.models.DocSearchQueryInfo;
+import com.marklogic.hub.central.entities.search.models.SearchQuery;
 import com.marklogic.hub.central.exceptions.DataHubException;
-import com.marklogic.hub.central.models.DocSearchQueryInfo;
-import com.marklogic.hub.central.models.SearchQuery;
-import com.marklogic.hub.test.ReferenceModelProject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -63,7 +62,7 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
         String results = entitySearchManager.search(query).get();
         ObjectNode node = readJsonObject(results);
         assertEquals(0, node.get("total").asInt(), "When entityTypeIds has values, but they're all empty strings, the " +
-            "backend should return no results, and not throw an error");
+                "backend should return no results, and not throw an error");
     }
 
     @Test
@@ -99,7 +98,7 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
         sortOrderList.add(sortOrder);
         searchQuery.setSortOrder(sortOrderList);
         String expectedResult = "<search xmlns=\"http://marklogic.com/appservices/search\">\n<options><sort-order type=\"xs:string\" direction=\"ascending\"><element ns=\"\" name=\"entityTypeProperty1\"/>\n" +
-            "</sort-order><sort-order direction=\"descending\"><field name=\"datahubCreatedOn\"/>\n</sort-order></options><query><collection-query><uri>collection1</uri></collection-query></query></search>";
+                "</sort-order><sort-order direction=\"descending\"><field name=\"datahubCreatedOn\"/>\n</sort-order></options><query><collection-query><uri>collection1</uri></collection-query></query></search>";
         assertTrue(entitySearchManager.buildSearchOptions(query, searchQuery).equals(expectedResult));
     }
 
@@ -116,18 +115,18 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
     @Test
     void testGetColumnNamesForRowExport() throws JsonProcessingException {
         String json = "{\n" +
-            "  \"savedQuery\": {\n" +
-            "    \"name\": \"some-query\",\n" +
-            "    \"description\": \"some-query-description\",\n" +
-            "    \"query\": {\n" +
-            "      \"searchText\": \"some-string\",\n" +
-            "      \"entityTypeIds\": [\n" +
-            "        \"Entity1\"\n" +
-            "      ]\n" +
-            "    },\n" +
-            "    \"propertiesToDisplay\": [\"facet1\", \"EntityTypeProperty1\"]\n" +
-            "  }\n" +
-            "}";
+                "  \"savedQuery\": {\n" +
+                "    \"name\": \"some-query\",\n" +
+                "    \"description\": \"some-query-description\",\n" +
+                "    \"query\": {\n" +
+                "      \"searchText\": \"some-string\",\n" +
+                "      \"entityTypeIds\": [\n" +
+                "        \"Entity1\"\n" +
+                "      ]\n" +
+                "    },\n" +
+                "    \"propertiesToDisplay\": [\"facet1\", \"EntityTypeProperty1\"]\n" +
+                "  }\n" +
+                "}";
         JsonNode queryDocument = new ObjectMapper().readTree(json);
         List<String> expectedCols = Arrays.asList("facet1", "EntityTypeProperty1");
 
@@ -140,18 +139,18 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
     void testGetQueryName() throws JsonProcessingException {
         String expectedQueryName = "query123";
         String json = "{\n" +
-            "  \"savedQuery\": {\n" +
-            "    \"name\": \"" + expectedQueryName + "\",\n" +
-            "    \"description\": \"some-query-description\",\n" +
-            "    \"query\": {\n" +
-            "      \"searchText\": \"some-string\",\n" +
-            "      \"entityTypeIds\": [\n" +
-            "        \"Entity1\"\n" +
-            "      ]\n" +
-            "    },\n" +
-            "    \"propertiesToDisplay\": [\"facet1\", \"EntityTypeProperty1\", \"facet1.facet\", \"EntityTypeProperty1.property\", \"EntityType-Property\"]\n" +
-            "  }\n" +
-            "}";
+                "  \"savedQuery\": {\n" +
+                "    \"name\": \"" + expectedQueryName + "\",\n" +
+                "    \"description\": \"some-query-description\",\n" +
+                "    \"query\": {\n" +
+                "      \"searchText\": \"some-string\",\n" +
+                "      \"entityTypeIds\": [\n" +
+                "        \"Entity1\"\n" +
+                "      ]\n" +
+                "    },\n" +
+                "    \"propertiesToDisplay\": [\"facet1\", \"EntityTypeProperty1\", \"facet1.facet\", \"EntityTypeProperty1.property\", \"EntityType-Property\"]\n" +
+                "  }\n" +
+                "}";
         JsonNode queryDocument = new ObjectMapper().readTree(json);
 
         String actualQueryName = entitySearchManager.getQueryName(queryDocument);
@@ -162,18 +161,18 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
     @Test
     void testGetEntityTypeForRowExport() throws JsonProcessingException {
         String json = "{\n" +
-            "  \"savedQuery\": {\n" +
-            "    \"name\": \"some-query\",\n" +
-            "    \"description\": \"some-query-description\",\n" +
-            "    \"query\": {\n" +
-            "      \"searchText\": \"some-string\",\n" +
-            "      \"entityTypeIds\": [\n" +
-            "        \"Entity-1\"\n" +
-            "      ]\n" +
-            "    },\n" +
-            "    \"propertiesToDisplay\": [\"facet1\", \"EntityTypeProperty1\", \"facet1.facet\", \"EntityTypeProperty1.property\", \"EntityType-Property\"]\n" +
-            "  }\n" +
-            "}";
+                "  \"savedQuery\": {\n" +
+                "    \"name\": \"some-query\",\n" +
+                "    \"description\": \"some-query-description\",\n" +
+                "    \"query\": {\n" +
+                "      \"searchText\": \"some-string\",\n" +
+                "      \"entityTypeIds\": [\n" +
+                "        \"Entity-1\"\n" +
+                "      ]\n" +
+                "    },\n" +
+                "    \"propertiesToDisplay\": [\"facet1\", \"EntityTypeProperty1\", \"facet1.facet\", \"EntityTypeProperty1.property\", \"EntityType-Property\"]\n" +
+                "  }\n" +
+                "}";
         String expectedEntityTypeId = "Entity-1";
         JsonNode queryDocument = new ObjectMapper().readTree(json);
 
