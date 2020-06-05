@@ -27,11 +27,11 @@
       "$ref": "./CustomHook.schema.json"
     },
     "threadCount": {
-      "type": "number",
+      "type": "integer",
       "description": "If set, overrides the threadCount defined at the flow level and in the step definition"
     },
     "batchSize": {
-      "type": "number",
+      "type": "integer",
       "description": "If set, overrides the batchSize defined at the flow level and in the step definition"
     },
     "stepDefinitionType": {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import {fireEvent, render} from '@testing-library/react';
+import {fireEvent, render, wait} from '@testing-library/react';
 
 import MappingCard from './mapping-card';
 import axiosMock from 'axios'
@@ -19,6 +19,8 @@ describe("Entity Tiles component", () => {
           return Promise.resolve(data.primaryEntityTypes);
         case '/api/artifacts/mapping':
           return Promise.resolve(data.mappings);
+        case '/api/steps/mapping/' + data.mappings.data[0].artifacts[0].name + '/settings':
+            return Promise.resolve(data.mappingSettings);
         default:
           return Promise.reject(new Error('not found'));
       }
@@ -97,5 +99,31 @@ describe("Entity Tiles component", () => {
     await fireEvent.click(getByRole('delete-mapping'));
     await fireEvent.click(getByText('Yes'));
     expect(deleteMappingArtifact).toBeCalled();
+  });
+
+  test('Open advanced settings', async () => {
+      let entityModel = data.primaryEntityTypes.data[0];
+      let mapping = data.mappings.data[0].artifacts;
+      const noopFun = () => {};
+      const deleteMappingArtifact = jest.fn(() => {});
+      const {getByText,getByRole, getByPlaceholderText} = render(
+          <Router><MappingCard data={mapping}
+                               flows={data.flows}
+                               entityTypeTitle={entityModel.entityName}
+                               getMappingArtifactByMapName={noopFun}
+                               deleteMappingArtifact={deleteMappingArtifact}
+                               createMappingArtifact={noopFun}
+                               updateMappingArtifact={noopFun}
+                               canReadOnly={true}
+                               canReadWrite={true}
+                               canWriteFlow={false}
+                               entityModel={entityModel}
+                               addStepToFlow={noopFun}
+                               addStepToNew={noopFun}/></Router>);
+      await wait(() => {
+          fireEvent.click(getByRole("settings-mapping"));
+      })
+      expect(getByText('Batch Size:')).toBeInTheDocument();
+      expect(getByPlaceholderText('Please enter batch size')).toHaveValue('50');
   });
 });

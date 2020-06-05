@@ -28,6 +28,7 @@ const AdvancedSettingsDialog = (props) => {
   const usesSourceDatabase = activityType !== 'ingestion';
   const defaultTargetDatabase = !usesSourceDatabase ? 'data-hub-STAGING' : 'data-hub-FINAL';
   const defaultSourceDatabase = usesSourceDatabase ? 'data-hub-STAGING' : 'data-hub-FINAL';
+  const defaultBatchSize = 100;
   const [tgtDatabase, setTgtDatabase] = useState(defaultTargetDatabase);
   const [srcDatabase, setSrcDatabase] = useState(defaultSourceDatabase);
   const[ additionalCollections, setAdditionalCollections ] = useState<any[]>([]);
@@ -38,6 +39,8 @@ const AdvancedSettingsDialog = (props) => {
   const [isTgtPermissionsTouched, setIsTgtPermissionsTouched] = useState(false);
   const [provGranularity, setProvGranularity] = useState('coarse');
   const [isProvGranTouched, setIsProvGranTouched] = useState(false);
+  const [batchSize, setBatchSize] = useState(defaultBatchSize);
+  const [isBatchSizeTouched, setBatchSizeTouched] = useState(false);
   const [module, setModule] = useState('');
   const [isModuleTouched, setIsModuleTouched] = useState(false);
   const [cHparameters, setCHparameters] = useState(JSON.stringify({}, null, 4));
@@ -81,6 +84,7 @@ const AdvancedSettingsDialog = (props) => {
       setModule('');
       setCHparameters(JSON.stringify({}, null, 4));
       setProvGranularity('coarse');
+      setBatchSizeTouched(false);
       setUser('');
       setRunBefore(false);
 
@@ -130,6 +134,7 @@ const getSettingsArtifact = async () => {
           setRunBefore(response.data.customHook.runBefore);
         }
         setProvGranularity(response.data.provenanceGranularityLevel);
+        setBatchSize(response.data.batchSize);
       }
     } catch (error) {
       let message = error.response;
@@ -142,6 +147,7 @@ const getSettingsArtifact = async () => {
       setModule('');
       setCHparameters(JSON.stringify({}, null, 4));
       setProvGranularity('coarse');
+      setBatchSize(defaultBatchSize);
       setUser('');
       setRunBefore(false);
     } finally {
@@ -173,6 +179,7 @@ const getSettingsArtifact = async () => {
       && !isCHParamTouched
       && !isTargetFormatTouched
       && !isProvGranTouched
+      && !isBatchSizeTouched
       && !isUserTouched
       && !isRunBeforeTouched
       ) {
@@ -219,6 +226,7 @@ const getSettingsArtifact = async () => {
         targetFormat: targetFormat,
         permissions : targetPermissions,
         provenanceGranularityLevel: provGranularity,
+        batchSize: batchSize,
         customHook : {
             module : module,
             parameters : cHparameters,
@@ -232,7 +240,6 @@ const getSettingsArtifact = async () => {
   }
 
   const handleChange = (event) => {
-
     if (event.target.id === 'targetPermissions') {
       setTargetPermissions(event.target.value);
       setIsTgtPermissionsTouched(true);
@@ -251,6 +258,11 @@ const getSettingsArtifact = async () => {
     if (event.target.id === 'user') {
       setUser(event.target.value);
       setIsUserTouched(true);
+    }
+
+    if (event.target.id === 'batchSize'){
+      setBatchSize(event.target.value);
+      setBatchSizeTouched(true);
     }
   }
 
@@ -540,6 +552,24 @@ const getSettingsArtifact = async () => {
             <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
           </Tooltip>
         </Form.Item>
+
+          <Form.Item label={<span>
+            Batch Size: &nbsp;
+            </span>} labelAlign="left"
+                     className={styles.formItem}>
+              <Input
+                  id="batchSize"
+                  placeholder="Please enter batch size"
+                  value={batchSize}
+                  onChange={handleChange}
+                  disabled={!canReadWrite}
+                  className={styles.inputWithTooltip}
+              >
+              </Input>&nbsp;&nbsp;
+              <Tooltip title={settingsTooltips.batchSize} placement={'right'}>
+                  <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
+              </Tooltip>
+          </Form.Item>
         <Form.Item label={<span>
             <span className={styles.cHookLabel} onClick={toggleCustomHook}>Custom Hook</span>&nbsp;&nbsp;
           <Icon type="right" className={styles.rightArrow} onClick={toggleCustomHook} rotate={toExpand ? 90 : 0}/>

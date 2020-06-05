@@ -1,8 +1,9 @@
 import React from 'react';
 import axiosMock from 'axios';
-import { fireEvent, render, wait, cleanup } from "@testing-library/react";
+import {fireEvent, render, wait, cleanup, waitForElement} from "@testing-library/react";
 import AdvancedSettingsDialog from './advanced-settings-dialog';
 import data from '../../config/test-data.config';
+import {AdvancedSettings} from "../../config/tooltips.config";
 
 jest.mock('axios');
 
@@ -13,9 +14,9 @@ describe('Update data load settings component', () => {
     cleanup();
   });
 
-  test('Verify settings dialog renders for Mapping', () => {
+  test('Verify settings dialog renders for Mapping', async() => {
 
-    const { getByText, getByPlaceholderText, getByRole } = render(<AdvancedSettingsDialog {...data.advancedSettings} />);
+    const {getAllByLabelText, getByText, getByPlaceholderText, getByRole } = render(<AdvancedSettingsDialog {...data.advancedSettings} />);
     expect(getByText('Advanced Settings')).toBeInTheDocument();
     //Verify if the step name is available in the settings dialog
     expect(document.querySelector('div p:nth-child(2)').textContent).toEqual(data.advancedSettings.stepData.name);
@@ -31,6 +32,10 @@ describe('Update data load settings component', () => {
     expect(getByText('Target Permissions:')).toBeInTheDocument();
     expect(getByText('Provenance Granularity:')).toBeInTheDocument();
     expect(getByText('Coarse-grained')).toBeInTheDocument();
+    let tooltip  = getAllByLabelText('icon: question-circle');
+    //should be the last field in the form
+    fireEvent.mouseOver(tooltip[tooltip.length-1]);
+    await waitForElement(() => getByText(AdvancedSettings.batchSize))
     expect(getByText('Custom Hook')).toBeInTheDocument();
     fireEvent.click(getByText('Custom Hook'));
     expect(getByPlaceholderText('Please enter module')).toBeInTheDocument();
@@ -52,6 +57,7 @@ describe('Update data load settings component', () => {
     expect(getByText('Please add target collections')).toBeInTheDocument();
     expect(getByText('Default Collections:')).toBeInTheDocument();
     expect(getByText('Target Permissions:')).toBeInTheDocument();
+    expect(getByText('Batch Size:')).toBeInTheDocument();
     expect(getByText('Provenance Granularity:')).toBeInTheDocument();
     expect(getByText('Coarse-grained')).toBeInTheDocument();
     expect(getByText('Custom Hook')).toBeInTheDocument();
@@ -80,6 +86,9 @@ describe('Update data load settings component', () => {
     fireEvent.change(getByPlaceholderText('Please enter target permissions'), { target: { value: 'data-hub-monitor,update' }});
     expect(getByPlaceholderText('Please enter target permissions')).toHaveValue('data-hub-monitor,update');
 
+    fireEvent.change(getByPlaceholderText('Please enter batch size'), { target: { value: '50' }});
+    expect(getByPlaceholderText('Please enter batch size')).toHaveValue('50');
+
     //Verifying provenance options select field
     fireEvent.click(getByText('Coarse-grained'));
     const provOptions = getAllByTestId('provOptions').map(li => li);
@@ -107,6 +116,9 @@ describe('Update data load settings component', () => {
 
     fireEvent.change(getByPlaceholderText('Please enter target permissions'), { target: { value: 'data-hub-monitor,update' }});
     expect(getByPlaceholderText('Please enter target permissions')).toHaveValue('data-hub-monitor,update');
+
+    fireEvent.change(getByPlaceholderText('Please enter batch size'), { target: { value: '25' }});
+    expect(getByPlaceholderText('Please enter batch size')).toHaveValue('25');
 
     // Verify targetFormat options select field
     expect(getByText('JSON')).toBeInTheDocument();
@@ -140,6 +152,7 @@ describe('Update data load settings component', () => {
     expect(document.querySelector('#targetDatabase')).toHaveClass('ant-select-disabled');
     expect(document.querySelector('#additionalColl')).toHaveClass('ant-select-disabled');
     expect(getByPlaceholderText('Please enter target permissions')).toBeDisabled();
+    expect(getByPlaceholderText('Please enter batch size')).toBeDisabled();
     expect(document.querySelector('#provGranularity')).toHaveClass('ant-select-disabled');
 
     fireEvent.click(getByText('Custom Hook'));

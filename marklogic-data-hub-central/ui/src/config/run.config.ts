@@ -195,6 +195,23 @@ const mappings = {"data" :
 "status" :200
 };
 
+const mappingSettings = {"data" :
+    {
+        "provenanceGranularityLevel": "coarse",
+        "batchSize": 50,
+        "permissions": "data-hub-common,read,data-hub-common,update",
+        "targetFormat": "json",
+        "targetDatabase": "data-hub-FINAL",
+        "collections": [
+            "Customer"
+        ],
+        "additionalCollections": ['customerCollection'],
+        "lastUpdated": "2020-05-27T12:19:02.446622-07:00"
+    },
+    "status" :200
+};
+
+
 const matchings = {"data" :
     [{
       "entityType": "Customer",
@@ -374,6 +391,7 @@ const data = {
     flowsXML: flowsXML,
     loadsXML: loadsXML,
     loadSettings: loadSettings,
+    mappingSettings: mappingSettings
 };
 
 export default data;
