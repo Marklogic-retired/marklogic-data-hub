@@ -17,7 +17,7 @@ describe('Load data component', () => {
     jest.clearAllMocks();
     cleanup();
   })
-  
+
   test('Verify Load list view renders correctly with no data', () => {
     const { getByText } = render(<LoadList {...data.loadData} data={[]} />)
     const tableColumns = within(getByText('Name').closest('tr'));
@@ -48,7 +48,7 @@ describe('Load data component', () => {
   })
 
   test('Verify Load settings from list view renders correctly', async () => {
-    const { getByText, getByTestId, getByTitle,queryByTitle } = render(<LoadList {...data.loadData} />)
+    const {getByText, getByTestId, getByTitle,queryByTitle, getByPlaceholderText } = render(<LoadList {...data.loadData} />)
 
     await wait(() => {
       fireEvent.click(getByTestId(data.loadData.data[0].name+'-settings'));
@@ -65,5 +65,7 @@ describe('Load data component', () => {
     expect(getByText('Default Collections:')).toBeInTheDocument();
     expect(getByTestId(`defaultCollections-${data.loadData.data[0].name}`)).toBeInTheDocument();
     expect(queryByTitle(data.loadData.data[0].name)).not.toBeInTheDocument();  // The default collection should not be a part of the Target Collection list
+    expect(getByText('Batch Size:')).toBeInTheDocument();
+    expect(getByPlaceholderText('Please enter batch size')).toHaveValue('35');
   })
 });

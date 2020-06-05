@@ -73,7 +73,8 @@ function defaultArtifact(artifactName) {
       createdBy: "currentUser"
     },
     collections: [artifactName],
-    permissions: defaultPermissions
+    permissions: defaultPermissions,
+    batchSize: 100
   };
 }
 

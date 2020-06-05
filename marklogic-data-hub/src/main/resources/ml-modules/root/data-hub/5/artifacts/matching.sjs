@@ -75,7 +75,8 @@ function defaultArtifact(artifactName) {
     sourceDatabase: dataHub.config.FINALDATABASE,
     targetDatabase: dataHub.config.FINALDATABASE,
     provenanceGranularityLevel: 'coarse',
-    permissions: defaultPermissions
+    permissions: defaultPermissions,
+    batchSize: 100
   };
 }
 

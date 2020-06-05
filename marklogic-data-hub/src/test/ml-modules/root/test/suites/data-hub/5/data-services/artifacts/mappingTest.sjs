@@ -26,7 +26,8 @@ function updateMappingConfig(artifactName) {
     const result = invokeSetService('mapping', artifactName, {'name': `${artifactName}`, 'targetEntityType': 'TestEntity-hasMappingConfig', 'description': 'Mapping does ...', 'selectedSource': 'query', 'sourceQuery': 'cts.collectionQuery(\"default-ingestion\")', 'collections': ['RAW-COL']});
     return [
         test.assertEqual(artifactName, result.name),
-        test.assertEqual("TestEntity-hasMappingConfig", result.targetEntityType)
+        test.assertEqual("TestEntity-hasMappingConfig", result.targetEntityType),
+        test.assertEqual(100, result.batchSize)
     ];
 }
 

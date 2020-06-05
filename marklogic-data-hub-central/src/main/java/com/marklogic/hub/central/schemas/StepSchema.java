@@ -67,14 +67,14 @@ public class StepSchema {
      */
     @JsonProperty("threadCount")
     @JsonPropertyDescription("If set, overrides the threadCount defined at the flow level and in the step definition")
-    private Double threadCount;
+    private Integer threadCount;
     /**
      * If set, overrides the batchSize defined at the flow level and in the step definition
      * 
      */
     @JsonProperty("batchSize")
     @JsonPropertyDescription("If set, overrides the batchSize defined at the flow level and in the step definition")
-    private Double batchSize;
+    private Integer batchSize;
     @JsonProperty("stepDefinitionType")
     private String stepDefinitionType;
     @JsonProperty("stepDefinitionName")
@@ -225,7 +225,7 @@ public class StepSchema {
      * 
      */
     @JsonProperty("threadCount")
-    public Double getThreadCount() {
+    public Integer getThreadCount() {
         return threadCount;
     }
 
@@ -234,7 +234,7 @@ public class StepSchema {
      * 
      */
     @JsonProperty("threadCount")
-    public void setThreadCount(Double threadCount) {
+    public void setThreadCount(Integer threadCount) {
         this.threadCount = threadCount;
     }
 
@@ -243,7 +243,7 @@ public class StepSchema {
      * 
      */
     @JsonProperty("batchSize")
-    public Double getBatchSize() {
+    public Integer getBatchSize() {
         return batchSize;
     }
 
@@ -252,7 +252,7 @@ public class StepSchema {
      * 
      */
     @JsonProperty("batchSize")
-    public void setBatchSize(Double batchSize) {
+    public void setBatchSize(Integer batchSize) {
         this.batchSize = batchSize;
     }
 

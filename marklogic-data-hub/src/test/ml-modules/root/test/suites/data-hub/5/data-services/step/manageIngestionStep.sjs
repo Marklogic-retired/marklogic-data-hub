@@ -27,6 +27,7 @@ expectedStep.collections = [stepName];
 expectedStep.provenanceGranularityLevel = "coarse";
 expectedStep.permissions = "data-hub-common,read,data-hub-common,update";
 expectedStep.outputURIReplacement= "abc,'def'";
+expectedStep.batchSize = 100;
 
 hubJsTest.verifyJson(expectedStep, serviceResponse, assertions);
 hubJsTest.verifyJson(expectedStep, stepService.getStep(stepDefinitionType, stepName), assertions);

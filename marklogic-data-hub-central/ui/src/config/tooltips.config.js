@@ -13,7 +13,8 @@ const AdvancedSettings = {
     'sourceDatabase': 'The database where the input data is read from.',
     'targetDatabase': 'The database where to store the processed data.',
     'options': 'Key-value pairs to pass as parameters to the custom module.',
-    'customModuleURI': "The path to your custom step module."
+    'customModuleURI': "The path to your custom step module.",
+    'batchSize' : "The maximum number of items to process in a batch."
 }
 
 const NewFlowTooltips = {
@@ -110,7 +111,7 @@ const ModelingTooltips = {
   facet: 'Use when searching, for dividing values of properties into counts, aggregating, grouping, and more.',
   advancedSearch: 'Enables wildcard search, search suggestions, and type-ahead.',
   addStructuredProperty: 'Click to add properties within this structured property.',
-  entityEditedAlert: 'You have edited some of the entity types and/or properties. This information has not been saved. ' 
+  entityEditedAlert: 'You have edited some of the entity types and/or properties. This information has not been saved. '
   + 'Be sure to Save your changes (by entity type or all together) to make the changes which may include updating indexes. '
   + 'The Save operation will make live changes that may impact everyone else using Hub Central right now, '
   + 'so we recommend that as you make changes, you notify your teammates ahead of time.',

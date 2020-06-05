@@ -19,6 +19,9 @@
     "permissions": {
       "type": "string"
     },
+    "batchSize" : {
+      "type": "integer"
+    },
     "targetFormat": {
       "type": "string",
       "description": "Should be json or xml, but not using an enum yet because JSON and XML are being used too"

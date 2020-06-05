@@ -91,7 +91,8 @@ function defaultArtifact(artifactName, entityTypeId) {
   return {
     collections: defaultCollections,
     additionalCollections: [],
-    permissions: defaultPermissions
+    permissions: defaultPermissions,
+    batchSize: 100
   };
 }
 

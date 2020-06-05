@@ -44,6 +44,7 @@ const loadsXML = {"data" :
 const loadSettings = {"data" :
     {
         "provenanceGranularityLevel": "coarse",
+        "batchSize": 35,
         "permissions": "data-hub-operator,read,data-hub-operator,update",
         "targetFormat": "json",
         "targetDatabase": "data-hub-STAGING",

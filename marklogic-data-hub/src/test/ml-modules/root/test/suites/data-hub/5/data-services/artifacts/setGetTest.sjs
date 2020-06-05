@@ -19,7 +19,8 @@ function insertValidArtifact() {
   return [
     test.assertEqual("validArtifact", result.name),
     test.assertEqual("xml", result.sourceFormat),
-    test.assertEqual("json", result.targetFormat)
+    test.assertEqual("json", result.targetFormat),
+    test.assertEqual(100, result.batchSize)
   ];
 }
 
