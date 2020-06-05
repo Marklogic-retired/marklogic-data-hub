@@ -85,8 +85,6 @@ describe("<SaveChangesModal/>", () => {
                          "selectedFacets": {},
                     },
                     "propertiesToDisplay": [
-                        "facet1",
-                        "EntityTypeProperty1"
                     ]
                 }
         }
@@ -136,8 +134,6 @@ describe("<SaveChangesModal/>", () => {
                     "selectedFacets": {},
                 },
                 "propertiesToDisplay": [
-                    "facet1",
-                    "EntityTypeProperty1"
                 ]
             }
         }

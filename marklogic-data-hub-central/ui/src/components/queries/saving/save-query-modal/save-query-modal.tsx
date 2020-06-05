@@ -69,7 +69,7 @@ const SaveQueryModal: React.FC<Props> = (props) => {
             await props.saveNewQuery(queryName.trim(), queryDescription, facets);
             props.setSaveNewIconVisibility(false);
             props.setSaveModalVisibility();
-            applySaveQuery(searchOptions.query, searchOptions.entityTypeIds, facets, queryName);
+            applySaveQuery(searchOptions.query, searchOptions.entityTypeIds, facets, queryName,searchOptions.selectedTableProperties);
             props.setCurrentQueryName(queryName);
             props.setCurrentQueryDescription(queryDescription);
         } catch (error) {

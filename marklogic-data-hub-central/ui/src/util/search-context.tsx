@@ -15,6 +15,7 @@ type SearchContextInterface = {
   selectedQuery: string,
   zeroState: boolean,
   manageQueryModal: boolean,
+  selectedTableProperties: any,
 }
 
 const defaultSearchOptions = {
@@ -30,6 +31,7 @@ const defaultSearchOptions = {
   selectedQuery: 'select a query',
   zeroState: false,
   manageQueryModal: false,
+  selectedTableProperties: [],
 }
 
 interface ISearchContextInterface {
@@ -56,10 +58,11 @@ interface ISearchContextInterface {
   clearGreyFacet: (constraint: string, val: string) => void;
   clearAllGreyFacets: () => void;
   resetGreyedOptions: () => void;
-  applySaveQuery: (searchText: string, entityTypeIds: string[], selectedFacets: {}, selectedQuery: string, zeroState?: boolean, manageQueryModal?: boolean) => void;
+  applySaveQuery: (searchText: string, entityTypeIds: string[], selectedFacets: {}, selectedQuery: string, propertiesToDisplay: string[], zeroState?: boolean, manageQueryModal?: boolean) => void;
   setSelectedQuery: (query: string) => void;
   setZeroState: (zeroState: boolean) => void;
   setManageQueryModal: (visibility: boolean) => void;
+  setSelectedTableProperties: (propertiesToDisplay: string[]) => void;
 }
 
 export const SearchContext = React.createContext<ISearchContextInterface>({
@@ -90,6 +93,7 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setSelectedQuery: () => { },
   setZeroState: () => { },
   setManageQueryModal: () => { },
+  setSelectedTableProperties: () => { },
 });
 
 const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
@@ -385,7 +389,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
     });
   }
 
-    const applySaveQuery = (searchText: string, entityTypeIds: string[], selectedFacets: {}, selectedQuery: string, zeroState = false, manageQueryModal = false) => {
+    const applySaveQuery = (searchText: string, entityTypeIds: string[], selectedFacets: {}, selectedQuery: string, propertiesToDisplay: string[], zeroState = false, manageQueryModal = false) => {
         setSearchOptions({
             ...searchOptions,
             start: 1,
@@ -396,9 +400,19 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
             pageNumber: 1,
             pageLength: searchOptions.pageSize,
             selectedQuery: selectedQuery,
+            selectedTableProperties: propertiesToDisplay,
             zeroState: zeroState,
-            manageQueryModal: manageQueryModal
+            manageQueryModal: manageQueryModal,
         });
+    }
+
+    const setSelectedTableProperties = (propertiesToDisplay: string[]) => {
+      setSearchOptions({
+        ...searchOptions,
+        start: 1,
+        pageNumber: 1,
+        selectedTableProperties: propertiesToDisplay
+      });
     }
 
     const setSelectedQuery = (query: string) => {
@@ -460,6 +474,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       setSelectedQuery,
       setZeroState,
       setManageQueryModal,
+      setSelectedTableProperties
     }}>
       {children}
     </SearchContext.Provider>

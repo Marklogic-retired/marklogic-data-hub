@@ -726,3 +726,18 @@ export const definitionsParser = (definitions: any): Definition[] => {
   }
   return entityDefinitions;
 }
+
+export const getTableProperties = (object: Array<Object>) => {
+  let labels = new Array();
+  const getProperties = (obj) => {
+    for (let i = 0; i < obj.length; i++) {
+      if (obj[i] !== null && (obj[i]).hasOwnProperty('properties')) {
+        getProperties(obj[i].properties)
+      } else {
+        labels.indexOf(obj[i].propertyPath) === -1 && labels.push(obj[i].propertyPath)
+      }
+    }
+    return labels;
+  }
+  return getProperties(object);
+}

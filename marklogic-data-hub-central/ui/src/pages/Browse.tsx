@@ -13,7 +13,7 @@ import SearchSummary from '../components/search-summary/search-summary';
 import SearchResults from '../components/search-results/search-results';
 import ResultTable from '../components/result-table/result-table';
 import { updateUserPreferences, createUserPreferences } from '../services/user-preferences';
-import { entityFromJSON, entityParser } from '../util/data-conversion';
+import { entityFromJSON, entityParser, getTableProperties } from '../util/data-conversion';
 import styles from './Browse.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStream, faTable } from '@fortawesome/free-solid-svg-icons'
@@ -42,11 +42,10 @@ const Browse: React.FC<Props> = ({ location }) => {
     resetSearchOptions,
     setEntity,
     applySaveQuery,
+    setSelectedTableProperties,
   } = useContext(SearchContext);
   const searchBarRef = useRef<HTMLDivElement>(null);
   const authorityService = useContext(AuthoritiesContext);
-
-
   const [data, setData] = useState<any[]>([]);
   const [entities, setEntites] = useState<any[]>([]);
   const [entityDefArray, setEntityDefArray] = useState<any[]>([]);
@@ -59,7 +58,6 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [selectedFacets, setSelectedFacets] = useState<any[]>([]);
   const [greyFacets, setGreyFacets] = useState<any[]>([]);
   const [columns, setColumns] = useState<string[]>();
-  const [hasStructured, setStructured] = useState<boolean>(false);
   const [isSavedQueryUser, setIsSavedQueryUser] = useState<boolean>(authorityService.isSavedQueryUser());
   const [queries, setQueries] = useState<any>([]);
   const [entityPropertyDefinitions, setEntityPropertyDefinitions]= useState<any[]>([]);
@@ -95,6 +93,8 @@ const Browse: React.FC<Props> = ({ location }) => {
             entityTypeIds: searchOptions.entityTypeIds.length ? searchOptions.entityTypeIds : allEntities,
             selectedFacets: searchOptions.selectedFacets,
           },
+          //propertiesToDisplay: searchOptions.selectedTableProperties, // empty for default values. TODO, BE will be implemented in Jira 5100
+
           start: searchOptions.start,
           pageLength: searchOptions.pageLength,
         }
@@ -109,6 +109,11 @@ const Browse: React.FC<Props> = ({ location }) => {
         }
         setFacets(response.data.facets);
         setTotalDocuments(response.data.total);
+
+        if (response.data.selectedPropertyDefinitions && response.data.selectedPropertyDefinitions.length) {
+          let properties = getTableProperties(response.data.selectedPropertyDefinitions);
+          setColumns(properties)
+        }
       }
     } catch (error) {
       handleError(error);
@@ -147,18 +152,8 @@ const Browse: React.FC<Props> = ({ location }) => {
   }, [searchOptions, entities, user.error.type]);
 
   useEffect(() => {
-    let entity = entityDefArray.filter(e => e.name === searchOptions.entityTypeIds[0])[0];
-    if (entity && entity.hasOwnProperty('properties')) {
-      let columns = entity.properties.map(e => e.name)
-      setColumns(columns)
-      setStructured(columns && columns.some(column => column.includes('.')))
-    }
-  }, [searchOptions.entityTypeIds, entityDefArray]);
-
-
-  useEffect(() => {
     if (searchOptions.zeroState === true) {
-      applySaveQuery('', [], {}, 'select a query', true);
+      applySaveQuery('', [], {}, 'select a query',[], true);
     }
   }, [searchOptions.zeroState]);
 
@@ -232,8 +227,8 @@ const Browse: React.FC<Props> = ({ location }) => {
   if (searchOptions.zeroState) {
     return (
       <>
-        <Query isSavedQueryUser={isSavedQueryUser} hasStructured={hasStructured} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={[]} greyFacets={[]} />
-        <ZeroStateExplorer entities={entities} setEntity={setEntity} queries={queries} hasStructured={hasStructured} columns={columns} setIsLoading={setIsLoading} tableView={tableView} toggleTableView={toggleTableView} />
+        <Query isSavedQueryUser={isSavedQueryUser} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={[]} greyFacets={[]} />
+        <ZeroStateExplorer entities={entities} setEntity={setEntity} queries={queries} columns={columns} setIsLoading={setIsLoading} tableView={tableView} toggleTableView={toggleTableView} />
       </>
     );
   } else {
@@ -288,7 +283,7 @@ const Browse: React.FC<Props> = ({ location }) => {
                     </div>
                   </div>
                 </div>
-                <Query isSavedQueryUser={isSavedQueryUser} hasStructured={hasStructured} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={selectedFacets} greyFacets={greyFacets} />
+                <Query isSavedQueryUser={isSavedQueryUser} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={selectedFacets} greyFacets={greyFacets} />
               </div>
               <div className={styles.fixedView} >
                 {tableView ?
@@ -298,7 +293,6 @@ const Browse: React.FC<Props> = ({ location }) => {
                           entityPropertyDefinitions = {entityPropertyDefinitions}
                           selectedPropertyDefinitions = {selectedPropertyDefinitions}
                           columns={columns}
-                          hasStructured={hasStructured}
                       />
                   </div>
                   : <SearchResults data={data} entityDefArray={entityDefArray} />

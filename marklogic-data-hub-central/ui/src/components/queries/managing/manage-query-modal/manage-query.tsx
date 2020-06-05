@@ -30,11 +30,9 @@ const QueryModal = (props) => {
     const [tableColumns, setTableColumns] = useState<Object[]>();
     const [tableData, setTableData] = useState<Object[]>();
     const [query, setQuery] = useState({});
-    const data = new Array();
+    const [hasStructured, setStructured] = useState<boolean>(false);
 
-    useEffect(() => {
-        props.hasStructured && getPreview();
-    }, [exportModalVisibility]);
+    const data = new Array();
 
     const getQueries = async () => {
         try {
@@ -84,7 +82,7 @@ const QueryModal = (props) => {
         deleteQuery(query)
         setDeleteModalVisibility(false);
         clearAllGreyFacets();
-        applySaveQuery('', query.savedQuery.query.entityTypeIds,{},'select a query', searchOptions.zeroState, true);
+        applySaveQuery('', query.savedQuery.query.entityTypeIds, {}, 'select a query', [], searchOptions.zeroState, true);
         props.setCurrentQueryDescription('');
     }
 
@@ -95,16 +93,30 @@ const QueryModal = (props) => {
     const onApply = (e) => {
         props.queries && props.queries.length > 0 && props.queries.forEach(query => {
             if (e.currentTarget.dataset.id === query['savedQuery']['name']) {
-                applySaveQuery(query['savedQuery']['query']['searchText'], query['savedQuery']['query']['entityTypeIds'], query['savedQuery']['query']['selectedFacets'], query['savedQuery']['name']);
-                props.setCurrentQueryDescription(query['savedQuery']['description'])
+                applySaveQuery(
+                    query['savedQuery']['query']['searchText'],
+                    query['savedQuery']['query']['entityTypeIds'],
+                    query['savedQuery']['query']['selectedFacets'],
+                    query['savedQuery']['name'],
+                    query.savedQuery.propertiesToDisplay);
+                props.setCurrentQueryDescription(query['savedQuery']['description']);
             }
         })
         props.toggleApply(false)
     }
- 
+
     const displayExportModal = (id) => {
+        setRecordID(id);
+        let query;
+        props.queries.map((selectedQuery) => {
+            if (selectedQuery['savedQuery']['id'] === id) {
+                query = selectedQuery;
+            }
+        })
+        let isStructured = query && query.savedQuery.propertiesToDisplay && query.savedQuery.propertiesToDisplay.some(column => column.includes('.'));
+        setStructured(isStructured);
+        isStructured && getPreview(id);
         setExportModalVisibility(true);
-        setRecordID(id)
     };
 
     const columns = [
@@ -176,7 +188,7 @@ const QueryModal = (props) => {
         width: 75
     };
 
-    if(props.isSavedQueryUser) {
+    if (props.isSavedQueryUser) {
         columns.push(editObj);
     }
 
@@ -184,7 +196,7 @@ const QueryModal = (props) => {
         columns.push(exportObj);
     }
 
-    if(props.isSavedQueryUser) {
+    if (props.isSavedQueryUser) {
         columns.push(linkObj);
         columns.push(deleteObj);
     }
@@ -217,28 +229,29 @@ const QueryModal = (props) => {
         <span style={{ fontSize: '16px' }}>Are you sure you want to delete '{props.currentQueryName}'?</span>
     </Modal>;
 
-    const getPreview = async () => {
-        if (recordID) {
-            try {
-                const response = await getSavedQueryPreview(recordID);
-                if (response.data) {
-                    const preview = getExportPreview(response.data)
-                    const header = preview[0];
-                    const body = preview[1]
-                    setTableColumns(header)
-                    setTableData(body)
-                }
-            } catch (error) {
-                handleError(error)
-            } finally {
-                resetSessionTime()
+    const getPreview = async (id) => {
+        try {
+            const response = await getSavedQueryPreview(id);
+            if (response.data) {
+                const preview = getExportPreview(response.data)
+                const header = preview[0];
+                const body = preview[1];
+                setTableColumns(header);
+                setTableData(body);
+            } else {
+                setTableColumns([]);
+                setTableData([]);
             }
+        } catch (error) {
+            handleError(error)
+        } finally {
+            resetSessionTime()
         }
     }
 
-    return ( 
+    return (
         <div>
-            <ExportQueryModal hasStructured={props.hasStructured} tableColumns={tableColumns} tableData={tableData} recordID={recordID} exportModalVisibility={exportModalVisibility} setExportModalVisibility={setExportModalVisibility} columns={props.columns} />
+            <ExportQueryModal hasStructured={hasStructured} queries={props.queries} tableColumns={tableColumns} tableData={tableData} recordID={recordID} exportModalVisibility={exportModalVisibility} setExportModalVisibility={setExportModalVisibility} columns={props.columns} />
             <Modal
                 title={null}
                 visible={props.modalVisibility}
@@ -246,7 +259,7 @@ const QueryModal = (props) => {
                 width={1000}
                 footer={null}
                 maskClosable={false}
-                closeIcon={<FontAwesomeIcon icon={faTimes} className={'manage-modal-close-icon'}/>}
+                closeIcon={<FontAwesomeIcon icon={faTimes} className={'manage-modal-close-icon'} />}
             >
                 <p className={styles.title} data-testid="manage-queries-modal">{"Manage Queries"}</p>
                 <Table columns={columns} dataSource={data}
