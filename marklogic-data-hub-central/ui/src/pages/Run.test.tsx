@@ -28,9 +28,8 @@ describe('Verify errors associated with running a step', () => {
 
         // Click disclosure icon
         fireEvent.click(getByLabelText("icon: right"));
-
-        let runButton  = getByLabelText("runStep-1");
-        fireEvent.mouseOver(runButton);
+        let runButton = await getByLabelText("runStep-1");
+        fireEvent.mouseOver(getByLabelText("icon: play-circle"));
         await waitForElement(() => getByText(RunToolTips.ingestionStep));
 
         let upload;
@@ -112,7 +111,7 @@ describe('Verify step running', () => {
         fireEvent.click(getByLabelText("icon: right"));
 
         let runButton = await getByLabelText("runStep-1");
-        fireEvent.mouseOver(runButton);
+        fireEvent.mouseOver(getByLabelText("icon: play-circle"));
         await waitForElement(() => getByText(RunToolTips.otherSteps))
         fireEvent.click(runButton);
 

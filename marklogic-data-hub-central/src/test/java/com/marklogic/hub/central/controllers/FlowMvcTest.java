@@ -1,7 +1,6 @@
 package com.marklogic.hub.central.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.central.AbstractMvcTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +21,16 @@ public class FlowMvcTest extends AbstractMvcTest {
     FlowController flowController;
 
     private final static String PATH = "/api/flows";
-    private ObjectMapper mapper = new ObjectMapper();
 
     @Test
     void runIngestionStep() throws Exception {
         installReferenceModelProject();
-        loginAsTestUserWithRoles("hub-central-step-runner");
+        if(isVersionCompatibleWith520Roles()) {
+            loginAsTestUserWithRoles("hub-central-step-runner");
+        }
+        else {
+            loginAsTestUserWithRoles("hub-central-step-runner", "flow-operator-role");
+        }
 
         MockMultipartFile file1 = new MockMultipartFile("files","file1.json", MediaType.APPLICATION_JSON, "{\"name\": \"Joe\"}".getBytes(StandardCharsets.UTF_8));
         MockMultipartFile file2 = new MockMultipartFile("files","file2.json", MediaType.APPLICATION_JSON, "{\"name\": \"John\"}".getBytes(StandardCharsets.UTF_8));
