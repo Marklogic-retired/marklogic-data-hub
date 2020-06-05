@@ -6,7 +6,7 @@
   },
   "definitions": {
     "Order": {
-      "required": [],
+      "required": [ ],
       "primaryKey": "orderId",
       "properties": {
         "orderId": {

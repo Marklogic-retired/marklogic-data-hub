@@ -20,16 +20,6 @@
     }
   },
   "Phone": "(887) 571-2692",
-  "Orders": [
-    {
-      "OrderID": "EO-5403",
-      "Status" : "Pending"
-    },
-    {
-      "OrderID": "EO-7108",
-      "Status" : "Completed"
-    }
-  ],
   "PIN": 1772,
   "Created": "05/06/2016"
 }

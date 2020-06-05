@@ -8,11 +8,10 @@
   "selectedSource": "collection",
   "sourceQuery": "cts.collectionQuery(['loadCustomersJSON'])",
   "collections": [
-    "default-mapping",
     "Customer",
     "mapCustomersJSON"
   ],
-  "additionalCollections": [],
+  "additionalCollections": [ ],
   "sourceDatabase": "data-hub-STAGING",
   "targetDatabase": "data-hub-FINAL",
   "targetFormat": "JSON",
@@ -38,10 +37,13 @@
           "sourcedFrom": "State"
         },
         "zip": {
-          "sourcedFrom": "",
+          "sourcedFrom": ".",
           "properties": {
             "fiveDigit": {
-              "sourcedFrom": ""
+              "sourcedFrom": "substring(Postal, 1, 5)"
+            },
+            "plusFour": {
+              "sourcedFrom": "substring(Postal, 7)"
             }
           },
           "targetEntityType": "#/definitions/Zip"
@@ -60,6 +62,18 @@
         },
         "state": {
           "sourcedFrom": "State"
+        },
+        "zip": {
+          "sourcedFrom": ".",
+          "properties": {
+            "fiveDigit": {
+              "sourcedFrom": "substring(Postal, 1, 5)"
+            },
+            "plusFour": {
+              "sourcedFrom": "substring(Postal, 7)"
+            }
+          },
+          "targetEntityType": "#/definitions/Zip"
         }
       },
       "targetEntityType": "#/definitions/Address"
@@ -67,5 +81,12 @@
     "customerSince": {
       "sourcedFrom": ""
     }
+  },
+  "lastUpdated": "2020-06-05T00:34:51.96953Z",
+  "customHook": {
+    "module": "",
+    "parameters": "{}",
+    "user": "",
+    "runBefore": false
   }
 }
