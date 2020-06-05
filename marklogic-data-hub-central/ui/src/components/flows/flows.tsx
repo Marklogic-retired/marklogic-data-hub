@@ -254,7 +254,6 @@ const Flows: React.FC<Props> = (props) => {
                                                 showUploadList = {false}
                                                 {...uploadProps}
                                         >
-                                        <Tooltip title={RunToolTips.ingestionStep} placement="bottom">
                                         <div
                                             className={styles.run}
                                             aria-label={'runStep-' + stepNumber}
@@ -265,13 +264,12 @@ const Flows: React.FC<Props> = (props) => {
                                                 setRunningFlow(flowName)
                                             }}
                                         >
-                                            <Icon type="play-circle" theme="filled" />
+                                            <Tooltip title={RunToolTips.ingestionStep} placement="bottom">
+                                                <Icon type="play-circle" theme="filled" />
+                                            </Tooltip>
                                         </div>
-                                        </Tooltip>
-
                                         </Upload>
                                         :
-                                        <Tooltip title={RunToolTips.otherSteps} placement="bottom">
                                         <div
                                             className={styles.run}
                                             onClick={() =>{
@@ -281,9 +279,10 @@ const Flows: React.FC<Props> = (props) => {
                                             aria-label={'runStep-' + stepNumber}
                                             data-testid={'runStep-' + stepNumber}
                                         >
-                                            <Icon type="play-circle" theme="filled" />
+                                            <Tooltip title={RunToolTips.otherSteps} placement="bottom">
+                                                <Icon type="play-circle" theme="filled" />
+                                            </Tooltip>
                                         </div>
-                                        </Tooltip>
                                     :
                                     <div
                                         className={styles.disabledRun}
