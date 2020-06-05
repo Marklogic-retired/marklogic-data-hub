@@ -55,11 +55,11 @@
       }
     },
     "Address": {
-      "required": [],
-      "pii": [],
-      "elementRangeIndex": [],
-      "rangeIndex": [],
-      "wordLexicon": [],
+      "required": [ ],
+      "pii": [ ],
+      "elementRangeIndex": [ ],
+      "rangeIndex": [ ],
+      "wordLexicon": [ ],
       "properties": {
         "street": {
           "datatype": "string",
@@ -79,7 +79,7 @@
       }
     },
     "Zip": {
-      "required": [],
+      "required": [ ],
       "properties": {
         "fiveDigit": {
           "datatype": "string",

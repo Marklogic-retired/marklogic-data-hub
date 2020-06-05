@@ -14,5 +14,6 @@
   "sourceDatabase": null,
   "targetDatabase": "data-hub-STAGING",
   "permissions": "data-hub-common,read,data-hub-common-writer,update",
-  "provenanceGranularityLevel": "coarse"
+  "provenanceGranularityLevel": "coarse",
+  "lastUpdated": "2020-06-04T23:01:35.540012Z"
 }

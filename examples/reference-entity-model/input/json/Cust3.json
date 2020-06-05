@@ -20,16 +20,6 @@
     }
   },
   "Phone": "(913) 467-3136",
-  "Orders": [
-    {
-      "OrderID": "EO-3333",
-      "Status" : "Shipped"
-    },
-    {
-      "OrderID": "EO-6736",
-      "Status" : "New"
-    }
-  ],
   "PIN": 5749,
   "Created": "04/22/2018"
 }

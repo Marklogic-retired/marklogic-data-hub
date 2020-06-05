@@ -19,9 +19,18 @@ plugins {
 }
 apply plugin: "com.marklogic.ml-data-hub"
 
-task loadCustomers(type: com.marklogic.gradle.task.RunFlowTask) {
-    description = "Used to populate the application with some customer data for testing"
-    flowName = "CustomerFlow"
-    steps = ["1","2"]
+["CurateCustomerJSON", "CurateCustomerXML"].each {theFlowName ->
+    task "run${theFlowName}" (type: com.marklogic.gradle.task.RunFlowTask, group: "Run flow") {
+        description = "Run the ingestion and mapping steps for flow ${theFlowName}"
+        flowName = theFlowName
+        steps = ["1", "2"]
+    }
 }
-mlDeploy.finalizedBy loadCustomers
+
+task runFlows {
+    dependsOn {
+        tasks.findAll { task -> "Run flow".equals(task.group) }
+    }
+}
+
+mlDeploy.finalizedBy runFlows

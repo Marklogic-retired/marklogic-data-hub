@@ -1,14 +1,12 @@
 {
-  "name": "CustomerFlow",
+  "name": "CurateCustomerJSON",
   "steps": {
     "1": {
       "stepId": "loadCustomersJSON-ingestion"
     },
     "2": {
-      "stepId": "loadCustomersXML-ingestion"
-    },
-    "3": {
       "stepId": "mapCustomersJSON-mapping"
     }
-  }
+  },
+  "lastUpdated": "2020-06-04T23:01:35.566392Z"
 }
