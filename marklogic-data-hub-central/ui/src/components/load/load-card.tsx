@@ -64,13 +64,18 @@ const LoadCard: React.FC<Props> = (props) => {
     // Custom CSS for source Format
     const sourceFormatStyle = (sourceFmt) => {
         let customStyles: CSSProperties = {
-            float: 'left',
-            backgroundColor: (sourceFmt.toUpperCase() === 'XML' ? sourceFormatOptions.xml.color : (sourceFmt.toUpperCase() === 'JSON' ? sourceFormatOptions.json.color : (sourceFmt.toUpperCase() === 'CSV' ? sourceFormatOptions.csv.color : sourceFormatOptions.default.color))),
-            fontSize: '12px',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '35px',
+            width: '35px',
+            lineHeight: '35px',
+            backgroundColor: sourceFormatOptions[sourceFmt].color,
+            fontSize: sourceFmt === 'json' ? '12px' : '13px',
             borderRadius: '50%',
-            textAlign: 'left',
+            textAlign: 'center',
             color: '#ffffff',
-            padding: '5px'
+            verticalAlign: 'middle'
         }
         return customStyles;
     }
@@ -194,7 +199,7 @@ const LoadCard: React.FC<Props> = (props) => {
                             size="small"
                         >
                             <div className={styles.formatContainer}>
-                                <div style={sourceFormatStyle(elem.sourceFormat)} aria-label={`${elem.name}-sourceFormat`}>{elem.sourceFormat.toUpperCase()}</div>
+                                <div className={styles.sourceFormat} style={sourceFormatStyle(elem.sourceFormat)} aria-label={`${elem.name}-sourceFormat`}>{sourceFormatOptions[elem.sourceFormat].label}</div>
                             </div>
                             <div className={styles.stepNameStyle}>{getInitialChars(elem.name, 25, '...')}</div>
                             <div className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</div>
