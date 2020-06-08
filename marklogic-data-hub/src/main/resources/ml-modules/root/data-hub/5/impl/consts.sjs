@@ -54,6 +54,8 @@ module.exports = {
 
   DATA_HUB_OPERATOR_ROLE: "data-hub-operator",
   DATA_HUB_DEVELOPER_ROLE: "data-hub-developer",
+  DATA_HUB_MODULE_READER_ROLE: "data-hub-module-reader",
+  DATA_HUB_MODULE_WRITER_ROLE: "data-hub-module-writer",
   DATA_HUB_FLOW_READ_ROLE: "data-hub-flow-reader",
   DATA_HUB_FLOW_WRITE_ROLE: "data-hub-flow-writer",
   DATA_HUB_LOAD_DATA_READ_ROLE: "data-hub-ingestion-reader",
