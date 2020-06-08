@@ -61,9 +61,9 @@ class CreateMappingTaskTest extends BaseTest {
         result.task(":hubDeployUserArtifacts").outcome == SUCCESS
 
         File mappingDir = Paths.get(testProjectDir.root.toString(), "mappings", "my-new-mapping").toFile()
-        mappingDir.isDirectory() == true
+        mappingDir.isDirectory()
         getStagingDocCount("http://marklogic.com/data-hub/mappings") == 1
-        getMappingManager().getMapping("my-new-mapping").getTargetEntityType().equals("http://example.com/my-new-entity-0.0.1/my-new-entity")
+        getMappingManager().getMapping("my-new-mapping").getTargetEntityType().equals("http://example.org/my-new-entity-1.0.0/my-new-entity")
     }
 
 }

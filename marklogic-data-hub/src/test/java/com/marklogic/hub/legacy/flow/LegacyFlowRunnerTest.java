@@ -282,7 +282,7 @@ public class LegacyFlowRunnerTest extends HubTestBase {
         Mapping testMap = Mapping.create("test");
         testMap.setDescription("This is a test.");
         testMap.setSourceContext("/");
-        testMap.setTargetEntityType("http://marklogic.com/" + ENTITY + "-0.0.1/" + ENTITY);
+        testMap.setTargetEntityType("http://marklogic.org/" + ENTITY + "-1.0.0/" + ENTITY);
         // We don't need any mapping properties for the purpose of this test
         testMap.getProperties().clear();
         mappingManager.saveMapping(testMap);
