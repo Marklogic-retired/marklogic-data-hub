@@ -11,6 +11,17 @@ const loadAPI = (axiosMock) => {
           return Promise.reject(new Error('not found'))
       }
     });
+    axiosMock.put['mockImplementation']((url) => {
+        switch (url) {
+            case '/api/steps/ingestion/' + loadData.loads.data[0].name + '/settings':
+                return Promise.resolve({
+                    "data": {},
+                    "status": 200
+                });
+            default:
+                return Promise.reject(new Error('not found'));
+        }
+    })
     return axiosMock.get['mockImplementation']((url) => {
       switch (url) {
         case '/api/flows':
@@ -32,6 +43,17 @@ const loadAPI = (axiosMock) => {
                 return Promise.resolve(loadData.genericSuccess);
             default:
                 return Promise.reject(new Error('not found'))
+        }
+    });
+    axiosMock.put['mockImplementation']((url) => {
+        switch (url) {
+            case '/api/steps/mapping/' + curateData.mappings.data[0].artifacts[0].name + '/settings':
+                return Promise.resolve({
+                    "data": {},
+                    "status": 200
+                });
+            default:
+                return Promise.reject(new Error('not found'));
         }
     });
     return axiosMock.get['mockImplementation']((url) => {
@@ -121,7 +143,7 @@ const loadAPI = (axiosMock) => {
       }
     })
   };
-  
+
   const mocks = {
     loadAPI: loadAPI,
     curateAPI: curateAPI,
@@ -130,5 +152,5 @@ const loadAPI = (axiosMock) => {
     runFailedAPI: runFailedAPI,
     runXMLAPI: runXMLAPI,
   };
-  
+
   export default mocks;

@@ -4,6 +4,7 @@ import LoadList from './load-list';
 import data from '../../config/test-data.config';
 import axiosMock from 'axios';
 import mocks from '../../config/mocks.config';
+import { AdvancedSettingsMessages } from '../../config/messages.config';
 
 jest.mock('axios');
 
@@ -48,12 +49,26 @@ describe('Load data component', () => {
   })
 
   test('Verify Load settings from list view renders correctly', async () => {
-    const {getByText, getByTestId, getByTitle,queryByTitle, getByPlaceholderText } = render(<LoadList {...data.loadData} />)
+    const {getByText, getByTestId, getByTitle,queryByTitle, getByPlaceholderText} = render(<LoadList {...data.loadData} />)
 
     await wait(() => {
       fireEvent.click(getByTestId(data.loadData.data[0].name+'-settings'));
     })
+    //set permissions without any errors and hit 'Save'
+    let targetPermissions = getByPlaceholderText("Please enter target permissions");
+    fireEvent.change(targetPermissions, { target: { value: 'role1,read' }});
+    let saveButton = getByText('Save');
 
+    await wait(() => {
+        fireEvent.click(saveButton);
+    });
+    expect(axiosMock.put).toHaveBeenCalledTimes(1);
+
+    //open settings again
+
+    await wait(() => {
+        fireEvent.click(getByTestId(data.loadData.data[0].name+'-settings'));
+    })
     let targetCollection = getByTitle('customerCollection'); // Additional target collection (Added by user)
 
     expect(getByText('Advanced Settings')).toBeInTheDocument();
@@ -67,5 +82,27 @@ describe('Load data component', () => {
     expect(queryByTitle(data.loadData.data[0].name)).not.toBeInTheDocument();  // The default collection should not be a part of the Target Collection list
     expect(getByText('Batch Size:')).toBeInTheDocument();
     expect(getByPlaceholderText('Please enter batch size')).toHaveValue('35');
+
+    targetPermissions = getByPlaceholderText("Please enter target permissions");
+    saveButton = getByText('Save');
+
+    fireEvent.change(targetPermissions, { target: { value: 'role1' }});
+    await wait(() => {
+        fireEvent.click(saveButton);
+    });
+    expect(getByText(AdvancedSettingsMessages.targetPermissions.incorrectFormat)).toBeInTheDocument();
+
+    fireEvent.change(targetPermissions, { target: { value: 'role1,reader' }});
+    await wait(() => {
+        fireEvent.click(saveButton);
+    });
+    expect(getByText(AdvancedSettingsMessages.targetPermissions.invalidCapabilities)).toBeInTheDocument();
+
+    fireEvent.change(targetPermissions, { target: { value: ' ' }});
+    await wait(() => {
+        fireEvent.click(saveButton);
+    });
+    expect(getByText(AdvancedSettingsMessages.targetPermissions.incorrectFormat)).toBeInTheDocument();
+
   })
 });
