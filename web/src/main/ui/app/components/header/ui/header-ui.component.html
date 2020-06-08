@@ -1,7 +1,7 @@
 <header class="mdl-layout__header">
   <div class="mdl-layout__header-row">
     <a class="isActive('/')" [routerLink]="['']"><img src="/img/odh.svg"></a>
-    <span class="mdl-layout-title">Data Hub QuickStart    <span class="version-link">v{{settings.dhfversion}}</span></span>
+    <span class="mdl-layout-title">Data Hub QuickStart    <span class="version-link">v{{settings.runningVersion}}</span></span>
     <!-- Add spacer, to align navigation to the right -->
     <div class="mdl-layout-spacer"></div>
     <div *ngIf="runningJobs !== 0" layout="row" layout-align="center center" class="job-progress" [routerLink]="['jobs']">
