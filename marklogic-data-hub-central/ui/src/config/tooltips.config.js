@@ -102,7 +102,7 @@ const ModelingTooltips = {
   instanceNumber: 'Click to navigate to the Explorer tile showing all instances of this entity type.',
   lastProcessed: 'Click to navigate to the Explorer tile showing all instances of that enttiy processed at the time.',
   nameRegex: 'Names must start with a letter, and can contain letters, numbers, hyphens, and underscores.',
-  enitityDescription: 'Description for the entity.',
+  entityDescription: 'Description for the entity.',
   saveIcon: 'Save changes to this entity type.',
   revertIcon: 'Discard changes made to this entity type since the last Save operation.',
   identifier: 'Uniquely identifies each instance of this type. Restricted to only one property per entity type.',
@@ -116,7 +116,8 @@ const ModelingTooltips = {
   + 'Be sure to Save your changes (by entity type or all together) to make the changes which may include updating indexes. '
   + 'The Save operation will make live changes that may impact everyone else using Hub Central right now, '
   + 'so we recommend that as you make changes, you notify your teammates ahead of time.',
-  noWriteAccess: 'Contact your security administrator to get the roles and permissions required to access this functionality.'
+  noWriteAccess: 'Contact your security administrator to get the roles and permissions required to access this functionality.',
+  addProperty: 'Click to add properties to this entity type.'
 }
 
 export {

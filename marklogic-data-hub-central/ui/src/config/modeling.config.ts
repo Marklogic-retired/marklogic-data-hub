@@ -1,7 +1,7 @@
 export const COMMON_PROPERTY_TYPES = [
   {
     label: 'integer',
-    value: 'int'
+    value: 'integer'
   },
   {
     label: 'string',

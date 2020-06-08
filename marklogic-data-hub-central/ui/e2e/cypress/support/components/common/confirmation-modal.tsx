@@ -7,4 +7,5 @@ class ConfirmationModal {
   }
 }
 
-export default ConfirmationModal
+const confirmationModal = new ConfirmationModal();
+export default confirmationModal

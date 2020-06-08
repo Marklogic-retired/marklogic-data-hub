@@ -18,6 +18,23 @@ export interface Property {
   multiple: boolean
 }
 
+export interface EntityDefinitionPayload {
+  [entityName: string]: {
+    primaryKey: string,
+    elementRangeIndex: string[],
+    pii: string[],
+    rangeIndex: string[],
+    required: string[],
+    wordLexicon: string[],
+    properties: any
+  }
+}
+
+export interface StructuredTypeOptions {
+  name: string,
+  isStructured: boolean
+}
+
 export enum ConfirmationType {
   identifer = 'IDENTIFIER'
 }

@@ -691,7 +691,11 @@ export const definitionsParser = (definitions: any): Definition[] => {
               
               if(definitions[definition][entityKeys][properties]['items'].hasOwnProperty('$ref')) {
                 // Array of Structured/Entity type
-                property.datatype = definitions[definition][entityKeys][properties]['items']['$ref'].split('/').pop();
+                if (definitions[definition][entityKeys][properties]['items']['$ref'].split('/')[1] === 'definitions' ) {
+                  property.datatype = 'structured';
+                } else {
+                  property.datatype = definitions[definition][entityKeys][properties]['items']['$ref'].split('/').pop();
+                }
                 property.ref = definitions[definition][entityKeys][properties]['items']['$ref']
               } else if (definitions[definition][entityKeys][properties]['items'].hasOwnProperty('datatype')) {
                 // Array of datatype
@@ -701,7 +705,6 @@ export const definitionsParser = (definitions: any): Definition[] => {
             }
           } else if (definitions[definition][entityKeys][properties]['$ref']) {
             let refSplit = definitions[definition][entityKeys][properties]['$ref'].split('/');
-            console.log('ref split', refSplit)
             if (refSplit[1] === 'definitions') {
               // Structured type
               property.datatype = 'structured';

@@ -41,6 +41,10 @@ class PropertyTable {
   getPiiIcon(propertyName: string) {
     return cy.get(`[data-testid=pii-${propertyName}]`);
   }
+
+  getAddPropertyToStructureType(structureTypeName: string) {
+    return cy.get(`[data-testid=add-struct-${structureTypeName}]`);
+  }
 }
 
 const propertyTable = new PropertyTable();
