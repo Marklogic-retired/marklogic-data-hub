@@ -1,13 +1,13 @@
 {
   "info" : {
     "title" : "my-new-entity",
-    "version" : "0.0.1",
-    "baseUri" : "http://example.com/",
-    "description" : "An my-new-entity entity"
+    "version" : "1.0.0",
+    "baseUri" : "http://example.org",
+    "description" : ""
   },
   "definitions" : {
     "my-new-entity" : {
-      "description" : "The my-new-entity entity root.",
+      "description" : "",
       "required" : [ ],
       "rangeIndex" : [ ],
       "elementRangeIndex" : [ ],

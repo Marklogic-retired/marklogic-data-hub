@@ -1,13 +1,13 @@
 {
   "info" : {
     "title" : "placeholder",
-    "version" : "0.0.1",
-    "baseUri" : "http://example.com/",
-    "description" : "An placeholder entity"
+    "version" : "1.0.0",
+    "baseUri" : "http://example.org",
+    "description" : ""
   },
   "definitions" : {
     "placeholder" : {
-      "description" : "The placeholder entity root.",
+      "description" : "",
       "required" : [ ],
       "rangeIndex" : [ ],
       "elementRangeIndex" : [ ],
