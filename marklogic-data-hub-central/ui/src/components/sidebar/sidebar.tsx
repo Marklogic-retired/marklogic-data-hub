@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Collapse, Icon, DatePicker, Tooltip } from 'antd';
+import {Collapse, Icon, DatePicker, Tooltip, Select} from 'antd';
 import moment from 'moment';
 import Facet from '../facet/facet';
 import { SearchContext } from '../../util/search-context';
@@ -16,6 +16,7 @@ import DateTimeFacet from '../date-time-facet/date-time-facet';
 
 const { Panel } = Collapse;
 const { RangePicker } = DatePicker;
+const { Option } = Select;
 const tooltips = tooltipsConfig.browseDocuments;
 
 interface Props {
@@ -37,8 +38,10 @@ const Sidebar: React.FC<Props> = (props) => {
   const [hubFacets, setHubFacets] = useState<any[]>([]);
   const [allSelectedFacets, setAllSelectedFacets] = useState<any>(searchOptions.selectedFacets);
   const [datePickerValue, setDatePickerValue] = useState<any[]>([null, null]);
+  const [dateRangeValue, setDateRangeValue] = useState<string>();
   let integers = ['int', 'integer', 'short', 'long'];
   let decimals = ['decimal', 'double', 'float'];
+  const dateRangeOptions = ['Today', 'This Week', 'This Month', 'Custom'];
 
   useEffect(() => {
     if (props.facets) {
@@ -80,8 +83,12 @@ const Sidebar: React.FC<Props> = (props) => {
           }
 
           if (constraint === 'createdOnRange') {
-            selectedFacets.push({ constraint, facet: searchOptions.selectedFacets[constraint]['rangeValues'], displayName });
+            if(searchOptions.selectedFacets && searchOptions.selectedFacets[constraint]) {
+              setDateRangeValue(searchOptions.selectedFacets[constraint]['stringValues'][0]);
+            }
+            selectedFacets.push({ constraint, facet: searchOptions.selectedFacets[constraint], displayName });
           } else {
+            setDateRangeValue("select time");
             let datatype = searchOptions.selectedFacets[constraint].dataType;
             if (datatype === 'xs:string' || datatype === 'string') {
               searchOptions.selectedFacets[constraint]['stringValues'].map(facet => {
@@ -104,6 +111,7 @@ const Sidebar: React.FC<Props> = (props) => {
           setDatePickerValue([null, null]);
         }
       } else {
+        setDateRangeValue("select time");
         props.facetRender([]);
         setAllSelectedFacets({});
         setDatePickerValue([null, null]);
@@ -123,7 +131,7 @@ const Sidebar: React.FC<Props> = (props) => {
                 displayName = pathIndex.entityPath;
               }
               if (constraint === 'createdOnRange') {
-                  checkedFacets.push({constraint, facet: greyedOptions.selectedFacets[constraint]['rangeValues'], displayName });
+                  checkedFacets.push({constraint, facet: greyedOptions.selectedFacets[constraint], displayName });
               } else {
                   let datatype = greyedOptions.selectedFacets[constraint].dataType;
                   if (datatype === 'xs:string' || datatype === 'string') {
@@ -156,7 +164,6 @@ const Sidebar: React.FC<Props> = (props) => {
           props.checkFacetRender([]);
       }
   }, [greyedOptions]);
-
 
   const updateSelectedFacets = (constraint: string, vals: string[], datatype: string, isNested: boolean) => {
     let facets = { ...allSelectedFacets };
@@ -272,6 +279,41 @@ const Sidebar: React.FC<Props> = (props) => {
     setAllGreyedOptions(newAllSelectedfacets);
   }
 
+  const handleOptionSelect = (option: any) => {
+    setDateRangeValue(option);
+    if(option === 'Custom') {
+      setDatePickerValue([null, null]);
+    }
+    let updateFacets = { ...allSelectedFacets };
+    updateFacets = {
+      ...updateFacets, createdOnRange:
+          {
+            dataType: 'date',
+            stringValues: [option, (-1 * new Date().getTimezoneOffset())],
+            rangeValues: { lowerBound: "", upperBound: "" }
+          }
+    };
+    setAllSelectedFacets(updateFacets);
+    setAllGreyedOptions(updateFacets);
+  };
+
+  const timeWindow = (selectedDateRangeValue) => {
+    let date = "";
+    if(selectedDateRangeValue === 'This Week') {
+      const startOfWeek = moment().startOf('week').format("MMM DD");
+      const endOfWeek = moment().format("MMM DD");
+      date = "(" + startOfWeek + " - " + endOfWeek + ")";
+    }
+
+    if(selectedDateRangeValue === 'This Month') {
+      const startOfMonth = moment().startOf('month').format("MMM DD");
+      const endOfMonth   = moment().format("MMM DD");
+      date = "(" + startOfMonth + " - " + endOfMonth + ")";
+    }
+
+    return date;
+  };
+
   const onDateChange = (dateVal, dateArray) => {
     let updateFacets = { ...allSelectedFacets };
     if (dateVal.length > 1) {
@@ -279,9 +321,11 @@ const Sidebar: React.FC<Props> = (props) => {
             ...updateFacets, createdOnRange:
                 {
                     dataType: 'date',
-                    rangeValues: { lowerBound: dateArray[0], upperBound: dateArray[1] }
+                    stringValues: ["Custom", (-1 * new Date().getTimezoneOffset())],
+                    rangeValues: { lowerBound: moment(dateArray[0]).format(), upperBound: moment(dateArray[1]).format() }
                 }
         }
+
         setDatePickerValue([moment(dateArray[0]), moment(dateArray[1])]);
     } else {
         delete updateFacets.createdOnRange;
@@ -459,12 +503,30 @@ const Sidebar: React.FC<Props> = (props) => {
         <Panel id="hub-properties" header={<div className={styles.title}>Hub Properties</div>} key="hubProperties" style={{ borderBottom: 'none' }}>
           <div className={styles.facetName} data-cy='created-on-facet'>Created On<Tooltip title={tooltips.createdOn} placement="topLeft">
             <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" /></Tooltip></div>
-          <RangePicker
+          <div>
+            <Select
+                style={{ width: 150 }}
+                placeholder="Select time"
+                id="date-select"
+                value={dateRangeValue}
+                onChange={value => handleOptionSelect(value)}
+            >{
+              dateRangeOptions.map((timeBucket, index) => {
+                return <Option key={index} value={timeBucket}>
+                  {timeBucket}
+                </Option>
+              })
+            }</Select>
+          </div>
+          <div className={styles.dateTimeWindow} >
+            {timeWindow(dateRangeValue)}
+          </div>
+          {dateRangeValue === 'Custom' && <RangePicker
             id="range-picker"
             className={styles.datePicker}
             onChange={onDateChange}
             value={datePickerValue}
-          />
+          />}
           {hubFacets.map(facet => {
             return facet && (
               <Facet

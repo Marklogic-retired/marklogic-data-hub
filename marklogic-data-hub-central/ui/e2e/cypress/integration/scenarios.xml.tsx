@@ -7,7 +7,7 @@ import homePage from "../support/pages/home";
 import { Application } from '../support/application.config';
 
 
-describe('xml scenario on view entities page', () => {
+xdescribe('xml scenario on view entities page', () => {
 
   //login with valid account
   beforeEach(() => {
