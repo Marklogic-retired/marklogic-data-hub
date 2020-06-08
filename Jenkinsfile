@@ -217,7 +217,7 @@ pipeline{
 				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;set +e;./gradlew clean;./gradlew marklogic-data-hub:testAcceptance -i --stacktrace;sleep 10s;./gradlew marklogic-data-hub-central:test -i --stacktrace |& tee console.log;sleep 10s;./gradlew ml-data-hub:test -i --stacktrace;./gradlew web:test -i --stacktrace;'
 				junit '**/TEST-*.xml'
 				cobertura coberturaReportFile: '**/cobertura-coverage.xml'
-				jacoco()
+				jacoco execPattern: '**/marklogic-data-hub/**/**.exec,**/marklogic-data-hub-central/**/*.exec', sourcePattern: '**/marklogic-data-hub/src/main/java/com/marklogic/hub/,**/marklogic-data-hub-central/src/main/java/com/marklogic/hub/central/'
 				def output=readFile 'data-hub/console.log'
 				def result=false;
                 if(output.contains("npm ERR!")){
