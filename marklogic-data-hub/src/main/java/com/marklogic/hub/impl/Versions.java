@@ -121,18 +121,22 @@ public class Versions extends LoggingObject {
             if (fallbackToLocalProject) {
                 logger.info("Unable to determine installed version, likely because DH is not yet installed: " + ex.getMessage());
                 logger.info("Will try to determine version from local project");
-                String version = hubConfig != null ? determineVersionFromLocalProject(hubConfig.getHubProject()) : null;
-                if (version == null) {
-                    version = "2.0.0";
-                    logger.warn("Unable to determine version from local project, will fallback to earliest known version: " + version);
-                } else {
-                    logger.info("Local project version: " + version);
-                }
-                return version;
+                return getLocalProjectVersion();
             } else {
                 throw ex;
             }
         }
+    }
+
+    public String getLocalProjectVersion() {
+        String version = hubConfig != null ? determineVersionFromLocalProject(hubConfig.getHubProject()) : null;
+        if (version == null) {
+            version = "2.0.0";
+            logger.warn("Unable to determine version from local project, will fallback to earliest known version: " + version);
+        } else {
+            logger.info("Local project version: " + version);
+        }
+        return version;
     }
 
     /**
