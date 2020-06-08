@@ -82,8 +82,10 @@ public class FlowRunnerTest extends HubTestBase {
         XMLDocumentManager docMgr = stagingClient.newXMLDocumentManager();
         DocumentMetadataHandle metadataHandle = new DocumentMetadataHandle();
         docMgr.readMetadata("/ingest-xml.xml", metadataHandle);
-        DocumentMetadataHandle.DocumentPermissions perms = metadataHandle.getPermissions();
-        Assertions.assertEquals(2, perms.get("data-hub-operator").size());
+        DocumentMetadataHandle.DocumentPermissions permissions = metadataHandle.getPermissions();
+        Assertions.assertEquals(2, permissions.get("data-hub-operator").size());
+        Assertions.assertTrue(permissions.get("data-hub-operator").contains(DocumentMetadataHandle.Capability.READ));
+        Assertions.assertTrue(permissions.get("data-hub-operator").contains(DocumentMetadataHandle.Capability.UPDATE));
         RunStepResponse stepResp = resp.getStepResponses().get("1");
         Assertions.assertNotNull(stepResp.getStepStartTime());
         Assertions.assertNotNull(stepResp.getStepEndTime());

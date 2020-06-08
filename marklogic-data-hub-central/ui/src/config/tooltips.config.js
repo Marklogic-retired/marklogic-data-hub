@@ -4,7 +4,8 @@ const AdvancedSettings = {
     'sourceQuery' : 'The collection tag or CTS query that selects the source data to process in this step.',
     'targetFormat': 'The format of the documents in the target database.',
     'additionalCollections': 'The collection tags to add to the default tags assigned to the processed document.',
-    'targetPermissions': 'The comma-separated permissions required to access the processed document.',
+    'targetPermissions': 'A comma-delimited string that defines permissions required to access the processed document. ' +
+      'The string must be in the format role,capability,role,capability,..., where capability can be read, insert, update, or execute.',
     'module': 'The path to your custom hook module.',
     'cHParameters': 'Parameters, as key-value pairs, to pass to your custom hook module.',
     'user': 'The user account to use to run the module. The default is the user running the flow; e.g., data-hub-operator.',

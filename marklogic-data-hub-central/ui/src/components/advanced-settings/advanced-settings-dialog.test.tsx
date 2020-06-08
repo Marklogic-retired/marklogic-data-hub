@@ -36,6 +36,8 @@ describe('Update data load settings component', () => {
     //should be the last field in the form
     fireEvent.mouseOver(tooltip[tooltip.length-1]);
     await waitForElement(() => getByText(AdvancedSettings.batchSize))
+    fireEvent.mouseOver(tooltip[tooltip.length-4]);
+    await waitForElement(() => getByText(AdvancedSettings.targetPermissions))
     expect(getByText('Custom Hook')).toBeInTheDocument();
     fireEvent.click(getByText('Custom Hook'));
     expect(getByPlaceholderText('Please enter module')).toBeInTheDocument();
@@ -162,7 +164,7 @@ describe('Update data load settings component', () => {
     expect(getByRole('switch')).toBeDisabled();
   });
 
-  test('Verify post is called when Mapping configuration is saved', async () => {
+  test('Verify put is called when Mapping configuration is saved', async () => {
     //Enhance this test once DHFPROD-4712 is fixed
     axiosMock.put.mockImplementationOnce(jest.fn(() => Promise.resolve({ status: 200, data: {} })));
     const { getByText } = render(<AdvancedSettingsDialog {...data.advancedSettings} />);
@@ -173,7 +175,7 @@ describe('Update data load settings component', () => {
     expect(axiosMock.put).toHaveBeenCalledTimes(1);
   });
 
-  test('Verify post is called when Load Data configuration is saved', async () => {
+  test('Verify put is called when Load Data configuration is saved', async () => {
     axiosMock.put.mockImplementationOnce(jest.fn(() => Promise.resolve({ status: 200, data: {} })));
     const { getByText } = render(<AdvancedSettingsDialog {...data.advancedSettings} activityType={'ingestion'} />);
     expect(getByText('Save')).toBeInTheDocument();

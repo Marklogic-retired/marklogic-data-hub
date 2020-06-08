@@ -11,6 +11,7 @@ import {
 import React, { useState, useEffect, useContext } from "react";
 import styles from './advanced-settings-dialog.module.scss';
 import { AdvancedSettings } from '../../config/tooltips.config';
+import { AdvancedSettingsMessages } from '../../config/messages.config';
 import { UserContext } from '../../util/user-context';
 import Axios from "axios";
 
@@ -53,6 +54,7 @@ const AdvancedSettingsDialog = (props) => {
   const [toExpand, setToExpand] = useState(false);
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [isLoading,setIsLoading] = useState(false);
+  const [permissionValidationError, setPermissionValidationError] = useState('');
 
   const canReadWrite = props.canWrite;
 
@@ -62,7 +64,7 @@ const AdvancedSettingsDialog = (props) => {
     'Coarse-grained': 'coarse',
     'Off': 'off'
   };
-
+  const validCapabilities = ['read', 'update', 'insert', 'execute'];
   useEffect(() => {
     getSettingsArtifact();
 
@@ -87,6 +89,7 @@ const AdvancedSettingsDialog = (props) => {
       setBatchSizeTouched(false);
       setUser('');
       setRunBefore(false);
+      setPermissionValidationError('');
 
     };
   },[props.openAdvancedSettings  ,isLoading])
@@ -234,9 +237,34 @@ const getSettingsArtifact = async () => {
             runBefore : runBefore
         }
       }
+    if (isPermissionsValid()) {
+        createSettingsArtifact(dataPayload);
+        props.setOpenAdvancedSettings(false)
+    }
+  }
 
-    createSettingsArtifact(dataPayload);
-    props.setOpenAdvancedSettings(false)
+  const isPermissionsValid = () => {
+    if (targetPermissions && targetPermissions.trim().length === 0) {
+        setPermissionValidationError(AdvancedSettingsMessages.targetPermissions.incorrectFormat)
+        return false;
+    }
+
+    if (targetPermissions && targetPermissions.trim().length > 0) {
+        let permissionArray = targetPermissions.split(",");
+        for (var i = 0; i < permissionArray.length; i += 2) {
+            let role = permissionArray[i];
+            if (i + 1 >= permissionArray.length || (!role ||!role.trim())) {
+                setPermissionValidationError(AdvancedSettingsMessages.targetPermissions.incorrectFormat)
+                return false;
+            }
+            let capability = permissionArray[i + 1];
+            if(!validCapabilities.includes(capability)){
+                setPermissionValidationError(AdvancedSettingsMessages.targetPermissions.invalidCapabilities);
+                return false;
+            }
+        }
+    }
+    return true;
   }
 
   const handleChange = (event) => {
@@ -514,6 +542,9 @@ const getSettingsArtifact = async () => {
           <Tooltip title={settingsTooltips.targetPermissions}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
           </Tooltip>
+          <div className={styles.validationError}>
+              {permissionValidationError}
+          </div>
         </Form.Item>
         {usesTargetFormat ? <Form.Item label={<span>
             Target Format: &nbsp;

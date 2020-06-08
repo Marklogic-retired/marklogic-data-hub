@@ -79,11 +79,11 @@ span.readOnlyLabel {
     vertical-align: bottom;
 }
 
-.formItem { 
+.formItem {
     margin-bottom: 8px !important;
 }
 
-.formItemTargetCollections { 
+.formItemTargetCollections {
     margin-bottom: 5px !important;
 }
 
@@ -109,4 +109,11 @@ span.readOnlyLabel {
 }
 .inputWithTooltip{
     width: 95% !important;
+}
+.validationError {
+    line-height: normal;
+    padding-top: 5px;
+    padding-left: 1px;
+    padding-bottom: 1px;
+    color: #DB4f59;
 }
