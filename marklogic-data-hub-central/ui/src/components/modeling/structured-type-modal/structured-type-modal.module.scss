@@ -1,0 +1,22 @@
+.formItem {
+  display: flex;
+  margin-left: 7px;
+  margin-bottom: 0px;
+}
+
+.input {
+  position: relative;
+  width: 320px;
+}
+
+.icon {
+  position: absolute;
+  top: 0px;
+  right: -20px;
+  font-size: 12px;
+  color: #5B69AF;
+}
+
+.asterisk {
+  color: #B32424;
+}

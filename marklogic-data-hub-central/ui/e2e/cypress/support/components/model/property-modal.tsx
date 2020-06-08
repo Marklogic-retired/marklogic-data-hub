@@ -3,6 +3,10 @@ class PropertyModal {
     cy.get('#property-name').type(str);
   }
 
+  getStructuredTypeName() {
+    return cy.get('#structured-label');
+  }
+
   openPropertyDropdown() {
     return cy.get('.ant-cascader-picker').click();
   }

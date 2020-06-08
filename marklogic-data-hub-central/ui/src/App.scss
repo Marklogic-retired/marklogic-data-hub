@@ -156,6 +156,7 @@ div#error-list div.ant-collapse div.ant-collapse-item div.ant-collapse-content d
   color: #5b69af;
 }
 
+/* Modeling - Property table type dropdown */
 .ant-cascader-menu-item-disabled {
   cursor: default;
   color: #333333;
@@ -163,5 +164,11 @@ div#error-list div.ant-collapse div.ant-collapse-item div.ant-collapse-content d
 
 ul.ant-cascader-menu {
   height: auto;
+  width: 165px;
   max-height: 500px;
+}
+
+ul.ant-cascader-menu:nth-child(2) {
+  min-width: 150px;
+  width: auto;
 }

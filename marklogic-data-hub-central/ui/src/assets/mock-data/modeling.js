@@ -671,3 +671,143 @@ export const propertyTableEntities = [
       "latestJobId": "b0ee8653-bf8f-4bbd-956b-9a1471137253"
   }
 ]
+
+export const entityDefinitionsArray = [
+  {
+    name: 'Customer',
+    primaryKey: 'customerId',
+    elementRangeIndex: [],
+    pii: [],
+    rangeIndex: [],
+    required: [],
+    wordLexicon: [],
+    properties: [
+      {
+        name: 'customerId',
+        datatype: 'integer',
+        description: '',
+        ref: '',
+        collation: '',
+        multiple: false
+      },
+      {
+        name: 'name',
+        datatype: 'string',
+        description: '',
+        ref: '',
+        collation: 'http://marklogic.com/collation/codepoint',
+        multiple: false
+      },
+      {
+        collation: "",
+        datatype: "structured",
+        description: "Example of a single-value structured property",
+        multiple: false,
+        name: "billing",
+        ref: "#/definitions/Address",
+      },
+      {
+        collation: "",
+        datatype: "date",
+        description: "",
+        multiple: false,
+        name: "birthDate",
+        ref: ""
+      },
+      {
+        collation: "",
+        datatype: "string",
+        description: "",
+        multiple: false,
+        name: "status",
+        ref: ""
+      },
+      {
+        collation: "",
+        datatype: "date",
+        description: "",
+        multiple: false,
+        name: "customerSince",
+        ref: ""
+      },
+      {
+        collation: "",
+        datatype: "Order",
+        description: "Example of a relationship to another entity type",
+        multiple: true,
+        name: "orders",
+        ref: "http://example.org/Order-0.0.1/Order"
+      }
+    ]
+  },
+  {
+    name: 'Address',
+    primaryKey: '',
+    elementRangeIndex: [],
+    pii: [],
+    rangeIndex: [],
+    required: [],
+    wordLexicon: [],
+    properties: [
+      {
+        collation: "http://marklogic.com/collation/codepoint",
+        datatype: "string",
+        description: "",
+        multiple: false,
+        name: "street",
+        ref: ""
+      },
+      {
+        collation: "http://marklogic.com/collation/codepoint",
+        datatype: "string",
+        description: "",
+        multiple: false,
+        name: "city",
+        ref: ""
+      },
+      {
+        collation: "http://marklogic.com/collation/codepoint",
+        datatype: "string",
+        description: "",
+        multiple: false,
+        name: "state",
+        ref: ""
+      },
+      {
+        collation: "",
+        datatype: "structured",
+        description: "",
+        multiple: false,
+        name: "zip",
+        ref: "#/definitions/Zip"
+      }
+    ]
+  },
+  {
+    name: 'Zip',
+    primaryKey: '',
+    elementRangeIndex: [],
+    pii: [],
+    rangeIndex: [],
+    required: [],
+    wordLexicon: [],
+    properties: [
+      {
+        collation: "http://marklogic.com/collation/codepoint",
+        datatype: "string",
+        description: "",
+        multiple: false,
+        name: "fiveDigit",
+        ref: ""
+      },
+      {
+        collation: "http://marklogic.com/collation/codepoint",
+        datatype: "string",
+        description: "",
+        multiple: false,
+        name: "plusFour",
+        ref: ""
+      }
+    ]
+  }
+]

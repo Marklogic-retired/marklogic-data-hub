@@ -152,7 +152,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
             onChange={handleChange}
             onBlur={handleChange}
           />}
-          {props.isEditModal ? null : <Tooltip title={ModelingTooltips.addEntityName}>
+          {props.isEditModal ? null : <Tooltip title={ModelingTooltips.nameRegex}>
             <Icon type="question-circle" className={styles.icon} theme="filled" />
           </Tooltip>}
         </Form.Item>
