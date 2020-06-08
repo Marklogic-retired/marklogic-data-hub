@@ -1,10 +1,8 @@
 package com.marklogic.hub.central.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
@@ -14,7 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MappingControllerTest extends AbstractHubCentralTest {
 
@@ -101,6 +100,7 @@ public class MappingControllerTest extends AbstractHubCentralTest {
         assertEquals("sum(xs:anyAtomicType*)", result.get("sum").get("signature").asText(), "Signature should be sum(xs:anyAtomicType*)");
         assertTrue(result.get("doc") != null, "Should have function 'doc'");
         assertTrue(result.get("current-dateTime") != null, "Should have function 'current-dateTime'");
+        assertTrue(result.get("parseDateTime") != null, "Should have function 'parseDateTime'");
         assertTrue(result.get("fn:sum") == null, "'fn:' has been stripped from the function name and signature");
     }
 

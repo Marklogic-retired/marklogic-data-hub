@@ -91,9 +91,9 @@ public class GenerateFunctionMetadataCommandTest extends HubTestBase {
             BytesHandle handle = modMgr.read(uri, metadata, new BytesHandle());
             Assertions.assertNotEquals(0, handle.get().length);
             DocumentMetadataHandle.DocumentPermissions permissions = metadata.getPermissions();
-            Assertions.assertTrue(permissions.get("data-hub-operator").contains(READ));
-            Assertions.assertTrue(permissions.get("data-hub-operator").contains(EXECUTE));
-            Assertions.assertTrue(permissions.get("data-hub-developer").contains(UPDATE));
+            Assertions.assertTrue(permissions.get("data-hub-module-reader").contains(READ));
+            Assertions.assertTrue(permissions.get("data-hub-module-reader").contains(EXECUTE));
+            Assertions.assertTrue(permissions.get("data-hub-module-writer").contains(UPDATE));
         }
     }
 }

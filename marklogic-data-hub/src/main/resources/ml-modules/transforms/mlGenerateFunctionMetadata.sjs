@@ -27,9 +27,9 @@ function mlGenerateFunctionMetadata(context, params, content) {
         xdmp.permission(datahub.config.FLOWDEVELOPERROLE, 'update'),
         xdmp.permission(datahub.config.FLOWOPERATORROLE, 'read'),
         xdmp.permission(datahub.config.FLOWDEVELOPERROLE, 'read'),
-        xdmp.permission(datahub.consts.DATA_HUB_OPERATOR_ROLE, 'execute'),
-        xdmp.permission(datahub.consts.DATA_HUB_DEVELOPER_ROLE, 'update'),
-        xdmp.permission(datahub.consts.DATA_HUB_OPERATOR_ROLE, 'read'),
+        xdmp.permission(datahub.consts.DATA_HUB_MODULE_READER_ROLE, 'execute'),
+        xdmp.permission(datahub.consts.DATA_HUB_MODULE_WRITER_ROLE, 'update'),
+        xdmp.permission(datahub.consts.DATA_HUB_MODULE_READER_ROLE, 'read'),
         xdmp.permission("data-hub-module-reader", "execute"),
         // In the absence of this, ML will report an error about standard-library.xqy not being found. This is misleading; the
         // actual problem is that a mapping will fail if the XML or XSLT representation of a custom mapping function library

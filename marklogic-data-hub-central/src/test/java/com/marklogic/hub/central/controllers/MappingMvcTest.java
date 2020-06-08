@@ -1,5 +1,6 @@
 package com.marklogic.hub.central.controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.central.AbstractMvcTest;
 import com.marklogic.hub.central.controllers.steps.MappingStepControllerTest;
 import org.junit.jupiter.api.Test;
@@ -25,11 +26,19 @@ public class MappingMvcTest  extends AbstractMvcTest {
 
         loginAsTestUser();
 
-        mockMvc.perform(get(PATH).session(mockHttpSession))
+        getJson(PATH)
                 .andDo(result -> {
                     MockHttpServletResponse response = result.getResponse();
                     assertEquals(MediaType.APPLICATION_JSON, response.getContentType());
                     assertEquals(HttpStatus.OK.value(), response.getStatus());
+                });
+        getJson("/api/artifacts/mapping/functions")
+                .andDo(result -> {
+                    MockHttpServletResponse response = result.getResponse();
+                    assertEquals(MediaType.APPLICATION_JSON, response.getContentType());
+                    assertEquals(HttpStatus.OK.value(), response.getStatus());
+                    JsonNode functionsJson = parseJsonResponse(result);
+                    assertTrue(functionsJson.has("parseDateTime"), "List of functions should contain parseDateTime");
                 });
     }
 

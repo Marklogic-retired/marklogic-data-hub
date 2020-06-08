@@ -13,7 +13,7 @@ declare variable $HUB-VERSION := "%%mlHubVersion%%";
 declare variable $HUB-LOG-LEVEL := "%%mlHubLogLevel%%";
 declare variable $FLOW-OPERATOR-ROLE := "%%mlFlowOperatorRole%%";
 declare variable $FLOW-DEVELOPER-ROLE := "%%mlFlowDeveloperRole%%";
-declare variable $DEFAULT-DATA-HUB-PERMISSIONS := "data-hub-operator,read,data-hub-operator,update";
+declare variable $DEFAULT-DATA-HUB-PERMISSIONS := "data-hub-common,read,data-hub-common-writer,update";
 
 (:
 This function is intended for usage where Data Hub must insert a document, and there's not yet a way for a user to
