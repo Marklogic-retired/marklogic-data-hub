@@ -37,7 +37,11 @@ test('Selected Facets: String facet selected', () => {
 test('Selected Facets: Date facet selected', () => {
   const { getByTestId, getByText } = render(
     <SelectedFacets
-      selectedFacets={[{constraint: 'createdOnRange', facet: { lowerBound: "2019-10-15", upperBound: "2019-11-10" }}]}
+      selectedFacets={[{constraint: 'createdOnRange', facet: {
+        rangeValues : {
+          lowerBound: "2019-10-15",
+          upperBound: "2019-11-10"
+        }, stringValues: ["Custom"]}}]}
       greyFacets={[]}
       toggleApplyClicked={jest.fn()}
       toggleApply={jest.fn()}

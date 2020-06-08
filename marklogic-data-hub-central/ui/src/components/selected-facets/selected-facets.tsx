@@ -100,7 +100,13 @@ const SelectedFacets: React.FC<Props> = (props) => {
         let facetName = item.displayName ? item.displayName : item.constraint;
         if (facetName === 'createdOnRange') {
           let dateValues:any = [];
-          dateValues.push(item.facet.lowerBound, item.facet.upperBound);
+            if(item.facet.rangeValues.lowerBound && item.facet.rangeValues.upperBound) {
+                const startDate = moment(item.facet.rangeValues.lowerBound).format('YYYY-MM-DD');
+                const endDate = moment(item.facet.rangeValues.upperBound).format('YYYY-MM-DD');
+                dateValues.push(startDate, endDate);
+            } else {
+                dateValues.push(item.facet.stringValues[0]);
+            }
           return (
             <MLButton
               size="small"
@@ -163,7 +169,13 @@ const SelectedFacets: React.FC<Props> = (props) => {
             let facetName = item.displayName ? item.displayName : item.constraint;
             if (item.constraint === 'createdOnRange') {
                 let dateValues: any = [];
-                dateValues.push(item.facet.lowerBound, item.facet.upperBound);
+                if(item.facet.rangeValues.lowerBound && item.facet.rangeValues.upperBound) {
+                    const startDate = moment(item.facet.rangeValues.lowerBound).format('YYYY-MM-DD');
+                    const endDate = moment(item.facet.rangeValues.upperBound).format('YYYY-MM-DD');
+                    dateValues.push(startDate, endDate);
+                } else {
+                    dateValues.push(item.facet.stringValues[0]);
+                }
                 return ((unCheckRest(item.constraint, item.facet)) &&
                     <MLButton
                         size="small"
