@@ -54,6 +54,25 @@
           }
         }
       ]
+    },
+    "4": {
+      "name": "ingester",
+      "stepDefinitionName": "default-ingestion",
+      "stepDefinitionType": "INGESTION",
+      "options": {
+        "outputFormat": "json",
+        "targetDatabase": "data-hub-STAGING"
+      },
+      "fileLocations": {
+        "inputFilePath": "data/customers",
+        "inputFileType": "json"
+      },
+      "processors": [
+        {
+          "path": "/custom-modules/step-processors/onIngest.sjs",
+          "when": "beforeContentPersisted"
+        }
+      ]
     }
   }
 }

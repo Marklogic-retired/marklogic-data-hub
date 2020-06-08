@@ -5,8 +5,8 @@ import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
-import com.marklogic.hub.test.ReferenceModelProject;
 import com.marklogic.hub.job.JobStatus;
+import com.marklogic.hub.test.ReferenceModelProject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -27,6 +27,20 @@ public class RunStepWithProcessorsTest extends AbstractHubCoreTest {
         runAsDataHubOperator();
         project.createRawCustomer(1, "Jane");
         project.createRawCustomer(2, "John");
+    }
+
+    @Test
+    void overrideUriViaIngestionStep() {
+        makeInputFilePathsAbsoluteInFlow("stepProcessors");
+        RunFlowResponse response = project.runFlow(new FlowInputs("stepProcessors", "4"));
+        assertEquals(JobStatus.FINISHED.toString(), response.getJobStatus());
+
+        final String expectedUri = "/overridden/1.json";
+        JSONDocumentManager mgr = adminHubConfig.newStagingClient().newJSONDocumentManager();
+        assertNotNull(mgr.exists(expectedUri), "The URI should have been overridden by the step processor");
+
+        JsonNode doc = mgr.read(expectedUri, new JacksonHandle()).get();
+        assertEquals("1", doc.get("envelope").get("instance").get("CustomerID").asText());
     }
 
     @Test

@@ -31,7 +31,7 @@ public class FileCollector {
 
     public DiskQueue<String> run(Path dirPath) {
         if (!(Files.exists(dirPath)) || !(Files.isDirectory(dirPath))) {
-            throw new RuntimeException("The path doesn't exist or is not a directory");
+            throw new RuntimeException("The path doesn't exist or is not a directory: " + dirPath);
         }
 
         DiskQueue<String> results;

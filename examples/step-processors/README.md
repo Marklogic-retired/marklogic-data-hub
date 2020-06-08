@@ -80,12 +80,15 @@ then you will have access to everything that [MLCP provides in the context objec
 thus allowing you to modify like collections and permissions.
 
 But if you are executing an ingestion step via QuickStart or Gradle, you'll use a REST transform, and REST transforms
-are very limited in what you can modify. The [context object in a REST transform](https://docs.marklogic.com/guide/rest-dev/transforms#id_23889) 
-does not provide access to collections and permissions. And while "uri" is provided, a REST transform does not allow you
-to modify that. 
+are limited in what you can modify. The [context object in a REST transform](https://docs.marklogic.com/guide/rest-dev/transforms#id_23889) 
+does not provide access to collections and permissions.
 
-So while you can apply step processors to ingestion steps, you may not be able to achieve what you want to do if you 
-are using a REST transform.  
+In addition, if you'd like to set the URI for a document while ingesting it, you should do so via the following mechanism:
+
+    content.context.uri = "/your/custom/uri.json";
+    
+Within the context of an ingestion step, Data Hub allows for the URI to be modified in the above fashion, but not by 
+setting "content.uri" directly, which will not have an impact.
 
 ## Understanding each step processor in this example
 
