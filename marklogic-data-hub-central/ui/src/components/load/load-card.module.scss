@@ -98,3 +98,10 @@
 .cardLinkSelect {
     margin-top: 7px;
 }
+
+.sourceFormat:before {
+    content:'';
+    float: left;
+    width: auto;
+    padding-bottom: 100%;
+}
