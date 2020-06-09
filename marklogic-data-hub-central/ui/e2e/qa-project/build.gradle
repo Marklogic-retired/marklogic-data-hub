@@ -1,26 +1,16 @@
 buildscript {
   repositories {
-maven {url 'http://distro.marklogic.com/nexus/repository/maven-snapshots/'}
+    maven {url 'http://distro.marklogic.com/nexus/repository/maven-snapshots/'}
     mavenLocal()
     jcenter()
 }
 dependencies {
-classpath "com.marklogic:ml-data-hub:5.3-SNAPSHOT"
-classpath "com.marklogic:marklogic-data-hub:5.3-SNAPSHOT"
+    classpath "net.saliman:gradle-properties-plugin:1.5.1"
+    classpath "com.marklogic:ml-data-hub:5.3-SNAPSHOT"
   }
 }
 
-plugins {
-    // this plugin lets you create properties files
-    // for multiple environments... like dev, qa, prod
-    id 'net.saliman.properties' version '1.4.6'
-
-    // this is the data hub framework gradle plugin
-    // it includes ml-gradle. This plugin is what lets you
-    // run DHF (Data Hub Framework) tasks from the
-    // command line
-}
-
+apply plugin: "net.saliman.properties"
 apply plugin: "com.marklogic.ml-data-hub"
 
 task extractZip(type: Copy) {
