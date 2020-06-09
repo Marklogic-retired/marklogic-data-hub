@@ -9,7 +9,6 @@ import Header from './components/header/header';
 import Footer from './components/footer/footer';
 import Login from './pages/Login';
 import Home from './pages/Home';
-import ProjectInfo from './pages/ProjectInfo';
 import Load from './pages/Load';
 import Run from './pages/Run';
 import TilesView from './pages/TilesView';
@@ -103,9 +102,6 @@ const App: React.FC<Props> = ({history, location}) => {
         <Route path="/" exact component={Login}/>
         <PrivateRoute path="/home" exact>
           <Home/>
-        </PrivateRoute>
-        <PrivateRoute path="/project-info" exact>
-          <ProjectInfo/>
         </PrivateRoute>
         <PrivateRoute path="/load" exact>
           <Load/>

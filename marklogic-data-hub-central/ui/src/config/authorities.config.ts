@@ -43,6 +43,9 @@ class DeveloperRolesService implements IAuthoritiesContextInterface{
     public canWriteStepDefinition:() => boolean = () => {
         return true;
     };
+    public canDownloadProjectFiles:() => boolean = () => {
+        return true;
+    };
     public canExportEntityInstances:() => boolean = () => {
         return true;
     };
@@ -95,6 +98,9 @@ class OperatorRolesService implements IAuthoritiesContextInterface{
         return true;
     };
     public canWriteStepDefinition:() => boolean = () => {
+        return false;
+    };
+    public canDownloadProjectFiles:() => boolean = () => {
         return false;
     };
     public canExportEntityInstances:() => boolean = () => {

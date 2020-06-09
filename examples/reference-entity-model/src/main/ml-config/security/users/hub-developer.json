@@ -8,6 +8,7 @@
     "hub-central-entity-model-writer",
     "hub-central-load-writer",
     "hub-central-mapping-writer",
-    "hub-central-flow-writer"
+    "hub-central-flow-writer",
+    "hub-central-downloader"
   ]
 }

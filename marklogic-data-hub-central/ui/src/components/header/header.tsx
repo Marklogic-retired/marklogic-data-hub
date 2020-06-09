@@ -2,21 +2,18 @@ import React, { useContext, useState } from 'react';
 import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
 import axios from 'axios';
 import { Layout, Icon, Avatar, Menu, Tooltip, Dropdown } from 'antd';
-import ProjectName from './project-name';
 import { UserContext } from '../../util/user-context';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faRoute } from '@fortawesome/free-solid-svg-icons'
 import logo from './logo.jpg';
 import styles from './header.module.scss';
 import { Application } from '../../config/application.config';
 import { MLButton } from '@marklogic/design-system';
-
-const { SubMenu } = Menu;
+import ProjectPage from '../project-page/project-page';
 
 interface Props extends RouteComponentProps<any> {}
 
 const Header:React.FC<Props> = ({ history, location }) => {
   const { user, userNotAuthenticated, handleError } = useContext(UserContext);
+  const [projectPageVisible, setProjectPageVisible] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -30,6 +27,10 @@ const Header:React.FC<Props> = ({ history, location }) => {
     }
   };
 
+  const handleProjectPageDisplay = () => {
+      setProjectPageVisible(true);
+  }
+
   let userMenu = <div className={styles.userMenu}>
     <div className={styles.username}>{localStorage.getItem('dataHubUser')}</div>
     <div className={styles.logout}>
@@ -38,6 +39,8 @@ const Header:React.FC<Props> = ({ history, location }) => {
       </MLButton>
     </div>
   </div>;
+
+    const projectName = localStorage.getItem('projectName');
 
   let globalIcons;
   if (user.authenticated) {
@@ -50,7 +53,7 @@ const Header:React.FC<Props> = ({ history, location }) => {
         theme="dark"
       >
         <Menu.Item>
-          <Tooltip title="Tour"><i className="tour"><FontAwesomeIcon icon={faRoute} /></i></Tooltip>
+            <i className={styles.projectInfo} onClick={handleProjectPageDisplay}>{projectName}</i>
         </Menu.Item>
         <div className={styles.vertical}></div>
         <Menu.Item>
@@ -85,12 +88,6 @@ const Header:React.FC<Props> = ({ history, location }) => {
     </div>
   }
 
-  const showProjectName = (
-    user.authenticated &&
-    localStorage.getItem('projectName') != ''
-  );
-  const projectName = localStorage.getItem('projectName');
-
   const handleHomeClick = () => {
       history.push('/home');
   };
@@ -107,7 +104,10 @@ const Header:React.FC<Props> = ({ history, location }) => {
         </div>
         {globalIcons}
       </Layout.Header>
-      {showProjectName &&(<ProjectName name={projectName}/>)}
+       <ProjectPage
+           projectPageVisible={projectPageVisible}
+           setProjectPageVisible={setProjectPageVisible}
+       />
     </>
   )
 }
