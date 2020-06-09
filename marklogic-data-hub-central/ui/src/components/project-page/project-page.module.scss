@@ -1,7 +1,6 @@
 .projectPageContainer{
     top: 6.5em;
     left: -1.5em;
-    //right: 300em;
 }
 
 .projectName{
@@ -40,7 +39,7 @@
 
 .aligncenterDownload {
     float: center;
-    font-family: HelveticaNeue;
+    font-family: 'HelveticaNeue-Light', 'Helvetica Neue', sans-serif;
     font-size: 14px;
     font-weight: 300;
     color: black;
@@ -49,15 +48,19 @@
 
   .aligncenterClearAll {
     float: center;
-    font-family: HelveticaNeue;
+    font-family: 'HelveticaNeue-Light', 'Helvetica Neue', sans-serif;
     font-size: 14px;
     font-weight: 300;
     color: black;
     text-align: center;
   }
 
+  .alignleft {
+      font-family: 'HelveticaNeue-Light', 'Helvetica Neue', sans-serif;
+  }
+
   .dataHubVersion {
-    font-family: HelveticaNeue;
+    font-family: 'HelveticaNeue-Light', 'Helvetica Neue', sans-serif;
     font-size: 14px;
     font-weight: 600;
     color: black;
@@ -65,7 +68,7 @@
   }
 
   .marklogicVersion {
-    font-family: HelveticaNeue;
+    font-family: 'HelveticaNeue-Light', 'Helvetica Neue', sans-serif;
     font-size: 14px;
     font-weight: 600;
     color: black;
@@ -74,7 +77,7 @@
 
   .addNewButton {
     width:120px;
-    font-family: HelveticaNeue;
+    font-family: 'HelveticaNeue-Light', 'Helvetica Neue', sans-serif;
     font-weight: 500;
     background-color: #44499C;
     align-items: center;
@@ -85,7 +88,7 @@
 
   .cardTitle{
     float: center;
-    font-family: HelveticaNeue;
+    font-family: 'HelveticaNeue-Light', 'Helvetica Neue', sans-serif;
     font-size: 16px;
     font-weight: 600;
     color: black;
