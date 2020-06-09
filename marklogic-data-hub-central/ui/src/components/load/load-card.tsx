@@ -203,14 +203,14 @@ const LoadCard: React.FC<Props> = (props) => {
                             </div>
                             <div className={styles.stepNameStyle}>{getInitialChars(elem.name, 25, '...')}</div>
                             <div className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</div>
-                            {props.canWriteFlow ? <div className={styles.cardLinks} style={{display: showLinks === elem.name ? 'block' : 'none'}}>
-                                <Link id="tiles-run" to={
+                            <div className={styles.cardLinks} style={{display: showLinks === elem.name ? 'block' : 'none'}}>
+                                {props.canWriteFlow ? <Link id="tiles-run" to={
                                     {pathname: '/tiles-run',
                                     state: {
                                         stepToAdd : elem.name,
                                         stepDefinitionType : 'ingestion',
                                         existingFlow: false
-                                    }}}><div className={styles.cardLink} data-testid={`${elem.name}-toNewFlow`}>Add step to a new flow</div></Link>
+                                    }}}><div className={styles.cardLink} data-testid={`${elem.name}-toNewFlow`}>Add step to a new flow</div></Link>: <div className={styles.cardDisabledLink} data-testid={`${elem.name}-disabledToNewFlow`}> Add step to a new flow</div>}
                                 <div className={styles.cardNonLink} data-testid={`${elem.name}-toExistingFlow`}>
                                     Add step to an existing flow
                                     <div className={styles.cardLinkSelect}>
@@ -220,6 +220,7 @@ const LoadCard: React.FC<Props> = (props) => {
                                             placeholder="Select Flow"
                                             defaultActiveFirstOption={false}
                                             data-testid={`${elem.name}-flowsList`}
+                                            disabled={!props.canWriteFlow}
                                         >
                                             { props.flows && props.flows.length > 0 ? props.flows.map((f,i) => (
                                                 <Option value={f.name} key={i}>{f.name}</Option>
@@ -227,7 +228,7 @@ const LoadCard: React.FC<Props> = (props) => {
                                         </Select>
                                     </div>
                                 </div>
-                            </div> : null}
+                            </div>
                         </Card>
                     </div>
                 </Col>)) : <span></span> }

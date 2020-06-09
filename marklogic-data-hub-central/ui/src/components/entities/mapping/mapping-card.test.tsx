@@ -20,7 +20,7 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-describe("Entity Tiles component", () => {
+describe("Mapping Card component", () => {
   beforeEach(() => {
     mocks.curateAPI(axiosMock);
   });
@@ -287,7 +287,7 @@ describe("Entity Tiles component", () => {
     let mapping = data.mappings.data[0].artifacts;
     const mockAddStepToFlow = jest.fn();
     const noopFun = jest.fn();
-    const {getByText} = render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><MappingCard
+    const {getByText, getByTestId} = render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><MappingCard
       data={mapping}
       flows={data.flows.data}
       entityTypeTitle={entityModel.entityName}
@@ -303,18 +303,19 @@ describe("Entity Tiles component", () => {
       addStepToNew={noopFun}/>
     </AuthoritiesContext.Provider></MemoryRouter>);
 
-    fireEvent.mouseOver(getByText(mapping[0].name));
+    const mappingStepName = mapping[0].name;
+    fireEvent.mouseOver(getByText(mappingStepName));
 
     // test adding to existing flow
-    expect(getByText('Add step to an existing flow')).toBeInTheDocument();
-    fireEvent.click(getByText('Select Flow'));
+    expect(getByTestId(`${mappingStepName}-toExistingFlow`)).toBeInTheDocument();
+    fireEvent.click(getByTestId(`${mappingStepName}-flowsList`));
     fireEvent.click(getByText(data.flows.data[0].name));
     fireEvent.click(getByText('Yes'));
     expect(mockAddStepToFlow).toBeCalledTimes(1);
 
     // adding to new flow
-    fireEvent.mouseOver(getByText(mapping[0].name));
-    expect(getByText('Add step to a new flow')).toBeInTheDocument();
+    fireEvent.mouseOver(getByText(mappingStepName));
+    expect(getByTestId(`${mappingStepName}-toNewFlow`)).toBeInTheDocument();
     // TODO calling addStepToNew not implemented yet
   });
 
@@ -325,7 +326,7 @@ describe("Entity Tiles component", () => {
     let mapping = data.mappings.data[0].artifacts;
     const mockAddStepToFlow = jest.fn();
     const noopFun = jest.fn();
-    const {getByText, queryByText} = render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><MappingCard
+    const {getByText, queryByText, queryByTestId} = render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><MappingCard
       data={mapping}
       flows={data.flows}
       entityTypeTitle={entityModel.entityName}
@@ -340,13 +341,18 @@ describe("Entity Tiles component", () => {
       addStepToFlow={mockAddStepToFlow}
       addStepToNew={noopFun}/>
     </AuthoritiesContext.Provider></MemoryRouter>);
+    const mappingStepName = mapping[0].name;
 
-    fireEvent.mouseOver(getByText(mapping[0].name));
+    fireEvent.mouseOver(getByText(mappingStepName));
 
     // test adding to existing flow
-    expect(queryByText('Add step to an existing flow')).not.toBeInTheDocument();
+    expect(queryByTestId(`${mappingStepName}-toExistingFlow`)).toBeInTheDocument();
+    fireEvent.click(queryByTestId(`${mappingStepName}-flowsList`));
+    expect(queryByText(data.flows.data[0].name)).not.toBeInTheDocument();
+
 
     // test adding to new flow
-    expect(queryByText('Add step to a new flow')).not.toBeInTheDocument();
+    expect(queryByTestId(`${mappingStepName}-toNewFlow`)).not.toBeInTheDocument();
+    expect(queryByTestId(`${mappingStepName}-disabledToNewFlow`)).toBeInTheDocument();
   });
 });

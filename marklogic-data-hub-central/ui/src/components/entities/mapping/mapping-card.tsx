@@ -628,8 +628,8 @@ const MappingCard: React.FC<Props> = (props) => {
                                     state: {
                                         stepToAdd : elem.name,
                                         stepDefinitionType : 'mapping'
-                                    }}}><div className={styles.cardLink} data-testid={`${elem.name}-toNewFlow`}> Add step to a new flow</div></Link> : null }
-                                    { props.canWriteFlow ? <div className={styles.cardNonLink} data-testid={`${elem.name}-toExistingFlow`}>
+                                    }}}><div className={styles.cardLink} data-testid={`${elem.name}-toNewFlow`}> Add step to a new flow</div></Link> : <div className={styles.cardDisabledLink} data-testid={`${elem.name}-disabledToNewFlow`}> Add step to a new flow</div> }
+                                    <div className={styles.cardNonLink} data-testid={`${elem.name}-toExistingFlow`}>
                                         Add step to an existing flow
                                         <div className={styles.cardLinkSelect}>
                                             <Select
@@ -637,6 +637,7 @@ const MappingCard: React.FC<Props> = (props) => {
                                                 onChange={(flowName) => handleSelect({flowName: flowName, mappingName: elem.name})}
                                                 placeholder="Select Flow"
                                                 defaultActiveFirstOption={false}
+                                                disabled={!props.canWriteFlow}
                                                 data-testid={`${elem.name}-flowsList`}
                                             >
                                                 { props.flows && props.flows.length > 0 ? props.flows.map((f,i) => (
@@ -644,7 +645,7 @@ const MappingCard: React.FC<Props> = (props) => {
                                                 )) : null}
                                             </Select>
                                         </div>
-                                    </div>: null}
+                                    </div>
                                 </div>
                             </Card>
                         </div>

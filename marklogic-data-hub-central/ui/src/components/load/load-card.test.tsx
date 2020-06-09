@@ -172,9 +172,12 @@ describe('Load Card component', () => {
     // adding to new flow
     fireEvent.mouseOver(getByText(loadStepName));
     // test adding to existing flow
-    expect(queryByTestId(`${loadStepName}-toExistingFlow`)).not.toBeInTheDocument();
+    expect(queryByTestId(`${loadStepName}-toExistingFlow`)).toBeInTheDocument();
+    fireEvent.click(queryByTestId(`${loadStepName}-flowsList`));
+    expect(queryByText(data.flows[0].name)).not.toBeInTheDocument();
 
     // test adding to new flow
     expect(queryByTestId(`${loadStepName}-toNewFlow`)).not.toBeInTheDocument();
+    expect(queryByTestId(`${loadStepName}-disabledToNewFlow`)).toBeInTheDocument();
   });
 });

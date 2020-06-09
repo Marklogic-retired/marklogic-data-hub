@@ -94,6 +94,15 @@
     cursor: pointer;
 }
 
+.cardDisabledLink {
+    color: #3f4692;
+    background-color: #ecf6fe;
+    margin-bottom: 13px;
+    padding: 8px;
+    font-size: 14px;
+    cursor: not-allowed;
+}
+
 .cardNonLink {
     color: rgba(0, 0, 0, 0.65);
     background-color: #ecf6fe;
