@@ -1,9 +1,9 @@
 @font-face {
   font-family: MLCustomFont;
   src: url(./fonts/ML_IconFont.ttf);
-  font-family: 'MLCustomFont'format('truetype'); 
-  font-weight: normal; 
-  font-style: normal; 
+  font-family: 'MLCustomFont'format('truetype');
+  font-weight: normal;
+  font-style: normal;
 }
 
 body {
@@ -171,4 +171,54 @@ ul.ant-cascader-menu {
 ul.ant-cascader-menu:nth-child(2) {
   min-width: 150px;
   width: auto;
+}
+
+/* Styles for MLtable */
+
+.ml-header-table table {
+    border-collapse: collapse; /* Hack to get borders between header-rows to show up */
+}
+
+.ml-table {
+    td:not(.ant-table-row-expand-icon-cell) {
+        vertical-align: top;
+    }
+
+    .ml-table .ant-table {
+        margin-left: -16px;
+    }
+
+    .ant-table-row > td {
+        .ml-header-table, .ml-table .ant-table {
+            margin: -16px;
+        }
+    }
+
+    .ant-table-middle {
+        .ant-table-row > td {
+            .ml-header-table, .ml-table .ant-table {
+                margin: -12px -8px;
+            }
+        }
+    }
+
+    .ant-table-small {
+        .ant-table-row > td {
+            .ml-header-table, .ml-table .ant-table {
+                margin: -8px;
+            }
+        }
+    }
+
+    // If the row-nested table has anything around it, don't set its margin-top
+    .ant-table-expanded-row > td > .ml-table:not(first-child), .ant-table-expanded-row > td > * .ml-table {
+        .ant-table {
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+    }
+
+    .ml-header-table .ant-descriptions-item-label + td {
+        display: none;
+    }
 }
