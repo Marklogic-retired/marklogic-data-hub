@@ -75,7 +75,6 @@ describe('Header component', () => {
 
     it('should render correctly', () => {
       expect(wrapper.exists('#title')).toBe(true);
-      expect(wrapper.exists('.tour')).toBe(true);
       expect(wrapper.exists('.anticon-search')).toBe(true);
       expect(wrapper.exists('.anticon-question-circle')).toBe(true);
       expect(wrapper.exists('.anticon-setting')).toBe(true);

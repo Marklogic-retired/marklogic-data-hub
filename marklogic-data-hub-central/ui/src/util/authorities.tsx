@@ -15,6 +15,7 @@ export interface IAuthoritiesContextInterface {
     canWriteFlow: () => boolean;
     canReadStepDefinition: () => boolean;
     canWriteStepDefinition: () => boolean;
+    canDownloadProjectFiles: () => boolean;
     canExportEntityInstances: () => boolean;
     isSavedQueryUser: () => boolean;
     canRunStep: () => boolean;
@@ -69,6 +70,9 @@ export class AuthoritiesService implements IAuthoritiesContextInterface {
     };
     public canWriteStepDefinition:() => boolean = () => {
         return this.authorities.includes('writeStepDefinition');
+    };
+    public canDownloadProjectFiles:() => boolean = () => {
+        return this.authorities.includes('downloadProjectFiles');
     };
     public canExportEntityInstances:() => boolean = () => {
         return this.authorities.includes('exportEntityInstances');
