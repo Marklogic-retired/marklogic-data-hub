@@ -70,14 +70,6 @@ public class IngestionStepControllerTest extends AbstractStepControllerTest {
                     MockHttpServletResponse response = result.getResponse();
                     assertEquals(HttpStatus.OK.value(), response.getStatus());
                 });
-        getJson(PATH + "/firstStep/settings")
-                .andDo(result -> {
-                    MockHttpServletResponse response = result.getResponse();
-                    assertEquals(HttpStatus.OK.value(), response.getStatus());
-                    ObjectNode obj = (ObjectNode) parseJsonResponse(result);
-                    assertTrue(obj.has("headers"));
-                    assertTrue(obj.has("processors"));
-                });
     }
 
     @Test

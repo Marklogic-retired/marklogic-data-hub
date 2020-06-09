@@ -66,14 +66,10 @@ const curateAPI = (axiosMock) => {
         return Promise.resolve(curateData.primaryEntityTypes);
       case '/api/steps/ingestion':
         return Promise.resolve(loadData.loads);
-      // case '/api/steps/ingestion/' + loadData.loads.data[0].name + '/settings':
-      //   return Promise.resolve(loadData.loadSettings);
       case '/api/steps/ingestion/' + loadData.loads.data[0].name:
         return Promise.resolve(loadData.loadSettings);    
       case '/api/steps/mapping':
         return Promise.resolve(curateData.mappings);
-      // case '/api/steps/mapping/' + curateData.mappings.data[0].artifacts[0].name + '/settings':
-      //   return Promise.resolve(curateData.mappingSettings);
       case '/api/steps/mapping/' + curateData.mappings.data[0].artifacts[0].name:
         return Promise.resolve(curateData.mappingSettings);
       case '/api/artifacts/matching':
