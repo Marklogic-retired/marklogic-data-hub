@@ -12,6 +12,9 @@ jest.mock('axios');
 
 describe('RTL Source-to-entity map tests', () => {
     afterEach(cleanup);
+
+    beforeEach(() => jest.setTimeout(20000));
+
     test('RTL tests with no source data', () => {
         const { getByTestId,  getByText, getByRole } = render(<SourceToEntityMap {... {mapData: data.mapProps.mapData,entityTypeProperties:data.mapProps.entityTypeProperties, entityTypeTitle : data.mapProps.entityTypeTitle, sourceData: [], extractCollectionFromSrcQuery: jest.fn()}} mappingVisible={true}/>);
         expect(getByText('Source Data')).toBeInTheDocument();
