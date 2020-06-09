@@ -31,7 +31,6 @@
         "user" : "",
         "runBefore" : false
       },
-      "retryLimit" : null,
       "batchSize" : 100,
       "threadCount" : 4,
       "stepDefinitionName" : "default-ingestion",
@@ -68,10 +67,9 @@
         "user" : "",
         "runBefore" : false
       },
-      "retryLimit" : 0,
       "batchSize" : 100,
       "threadCount" : 4,
-      "stepDefinitionName" : "default-mapping",
+      "stepDefinitionName" : "entity-services-mapping",
       "stepDefinitionType" : "MAPPING"
     }
   }

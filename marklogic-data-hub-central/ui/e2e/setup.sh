@@ -14,6 +14,7 @@ env='local'
 credentials='-PmlUsername=hc-developer -PmlPassword=password'
 
 ./gradlew hubInit
+./gradlew hubMigrateFlows -Pconfirm=true
 
 if $DHS
 then
