@@ -1012,7 +1012,9 @@ public class DataHubImpl implements DataHub, InitializingBean {
         List<DocumentWriteOperation> docs = new ArrayList<>();
         JSONDocumentManager mgr = hubClientToUse.getStagingClient().newJSONDocumentManager();
         final String script = "const consts = require('/data-hub/5/impl/consts.sjs');\n" +
-            "cts.uris(null, null, cts.collectionQuery(consts.USER_ARTIFACT_COLLECTIONS.concat(consts.HUB_ARTIFACT_COLLECTION)))";
+            "cts.uris(null, null, " +
+            "   cts.collectionQuery(consts.USER_ARTIFACT_COLLECTIONS.concat(consts.HUB_ARTIFACT_COLLECTION).concat('http://marklogic.com/data-hub/mappings'))" +
+            ")";
         hubClientToUse.getStagingClient().newServerEval().javascript(script).eval().iterator().forEachRemaining(item -> {
             final String uri = item.getString();
             DocumentMetadataHandle metadata = new DocumentMetadataHandle();

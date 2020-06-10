@@ -183,7 +183,8 @@ class DataHubPlugin implements Plugin<Project> {
 
         project.task("hubClearUserData", type: ClearUserDataTask, group: deployGroup,
             description: "Clears user data in the staging, final, and job databases, only leaving behind hub and user " +
-                "artifacts. Requires sufficient privilege to be able to clear each of the databases.")
+                "artifacts. Requires sufficient privilege to be able to clear each of the databases. " +
+                "Requires -Pconfirm=true to be set so this isn't accidentally executed.")
 
         /**
          * mlDeploySecurity can't be used here because it will deploy amps under src/main/ml-config, and those will fail
