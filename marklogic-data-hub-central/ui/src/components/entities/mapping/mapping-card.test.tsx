@@ -4,10 +4,10 @@ import {fireEvent, render, waitForElement, wait} from '@testing-library/react';
 import { AdvancedSettingsMessages } from '../../../config/messages.config';
 import MappingCard from './mapping-card';
 import axiosMock from 'axios'
-import data from "../../../config/run.config";
+import data from "../../../assets/mock-data/flows.data";
 import {act} from "react-dom/test-utils";
 import { AuthoritiesService, AuthoritiesContext } from '../../../util/authorities';
-import mocks from '../../../config/mocks.config';
+import mocks from '../../../api/__mocks__/mocks.data';
 
 jest.mock('axios');
 

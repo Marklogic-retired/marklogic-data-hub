@@ -1,6 +1,6 @@
-import loadData from "./load.config";
-import curateData from "./run.config";
-import advancedData from "./advanced-settings.config";
+import loadData from "../../assets/mock-data/ingestion.data";
+import curateData from "../../assets/mock-data/flows.data";
+import advancedData from "../../assets/mock-data/advanced-settings.data";
 
 const loadAPI = (axiosMock) => {
   axiosMock.delete['mockImplementation']((url) => {

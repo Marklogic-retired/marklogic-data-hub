@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent, cleanup, wait } from '@testing-library/react';
 import CreateEditMatchingDialog from './create-edit-matching-dialog';
-import data from "../../../../config/matching-data.config";
+import data from "../../../../assets/mock-data/matching.data";
 
 describe('Create/Edit Matching artifact component', () => {
 

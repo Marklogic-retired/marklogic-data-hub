@@ -3,7 +3,7 @@ import { render, fireEvent, waitForElement, act, cleanup } from '@testing-librar
 import '@testing-library/jest-dom/extend-expect'
 import {AuthoritiesContext, AuthoritiesService} from '../util/authorities';
 import axiosMock from 'axios';
-import mocks from '../config/mocks.config';
+import mocks from '../api/__mocks__/mocks.data';
 import Load from "./Load";
 
 jest.mock('axios');

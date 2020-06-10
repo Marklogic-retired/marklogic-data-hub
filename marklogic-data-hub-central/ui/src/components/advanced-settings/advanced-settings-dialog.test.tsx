@@ -2,8 +2,8 @@ import React from 'react';
 import axiosMock from 'axios';
 import { fireEvent, render, wait, waitForElement, act, cleanup } from "@testing-library/react";
 import AdvancedSettingsDialog from './advanced-settings-dialog';
-import mocks from '../../config/mocks.config';
-import data from '../../config/advanced-settings.config';
+import mocks from '../../api/__mocks__/mocks.data';
+import data from '../../assets/mock-data/advanced-settings.data';
 import {AdvancedSettings} from "../../config/tooltips.config";
 
 jest.mock('axios');

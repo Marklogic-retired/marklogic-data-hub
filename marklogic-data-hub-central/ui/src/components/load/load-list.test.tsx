@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, fireEvent, wait, within, cleanup } from '@testing-library/react';
 import LoadList from './load-list';
-import data from '../../config/test-data.config';
+import data from '../../assets/mock-data/common.data';
 import axiosMock from 'axios';
-import mocks from '../../config/mocks.config';
-import loadData from "../../config/load.config";
+import mocks from '../../api/__mocks__/mocks.data';
+import loadData from "../../assets/mock-data/ingestion.data";
 import { AdvancedSettingsMessages } from '../../config/messages.config';
 
 jest.mock('axios');
@@ -52,7 +52,7 @@ describe('Load data component', () => {
   test('Verify Load settings from list view renders correctly', async () => {
     const {getByText, getByTestId, getByTitle,queryByTitle, getByPlaceholderText} = render(<LoadList {...data.loadData} />)
 
-    // NOTE see config/advanced-settings.config.ts for test data
+    // NOTE see config/advanced-settings.data.ts for test data
     await wait(() => {
       fireEvent.click(getByTestId(data.loadData.data[0].name+'-settings'));
     })
