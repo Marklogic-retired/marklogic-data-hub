@@ -2,11 +2,11 @@
 const viewSteps = [
   {
     selector: '[class*="View_statsContainer"]',
-    content: 'Here are the number of entities and total number of documents.'
+    content: 'Here are the number of entities and total number of records.'
   },
   {
     selector: '.ant-table-body',
-    content: 'The table shows each entity, total documents per entity, and last harmonized date per entity.'
+    content: 'The table shows each entity, total records per entity, and last harmonized date per entity.'
   },
   {
     selector: '.ant-table-row-expand-icon',
@@ -21,7 +21,7 @@ const browseTableViewSteps = [
   },
   {
     selector: '[id*="sideBarContainer"]',
-    content: 'Here are the available faceted search options. Entity Properties are per selected entity. Hub Properties are per document.'
+    content: 'Here are the available faceted search options. Entity Properties are per selected entity. Hub Properties are per record.'
   },
   {
     selector: '[id*="snippetView"]',
@@ -29,19 +29,19 @@ const browseTableViewSteps = [
   },
   {
     selector: '.ant-table-row',
-    content: 'Document results include entity name, primary key (or document URI), table information, and metadata'
+    content: 'Record results include entity name, primary key (or record URI), table information, and metadata'
   },
   {
     selector: '.ant-table-row-expand-icon-cell',
-    content: 'Expansion button will show all the properties of each document'
+    content: 'Expansion button will show all the properties of each record'
   },
   {
     selector: '[id*="instance"]',
-    content: 'Click on this to see instance view of the document on a separate page'
+    content: 'Click on this to see instance view of the record on a separate page'
   },
   {
     selector: '[id*="source"]',
-    content: 'Click on this to see source view of the document on a separate page'
+    content: 'Click on this to see source view of the record on a separate page'
   }
 
 ];
@@ -53,7 +53,7 @@ const browseSnippetViewSteps = [
   },
   {
     selector: '[id*="sideBarContainer"]',
-    content: 'Here are the available faceted search options. Entity Properties are per selected entity. Hub Properties are per document.'
+    content: 'Here are the available faceted search options. Entity Properties are per selected entity. Hub Properties are per record.'
   },
   {
     selector: '[id*="tableView"]',
@@ -61,19 +61,19 @@ const browseSnippetViewSteps = [
   },
   {
     selector: '.ant-list-item',
-    content: 'Document results include entity name, primary key (or document URI), snippet information, and metadata'
+    content: 'Record results include entity name, primary key (or record URI), snippet information, and metadata'
   },
   {
     selector: '[class*="search-result_title"]',
-    content: 'Expansion button will show all the properties of each document'
+    content: 'Expansion button will show all the properties of each record'
   },
   {
     selector: '[id*="instance"]',
-    content: 'Click on this to see instance view of the document on a separate page'
+    content: 'Click on this to see instance view of the record on a separate page'
   },
   {
     selector: '[id*="source"]',
-    content: 'Click on this to see source view of the document on a separate page'
+    content: 'Click on this to see source view of the record on a separate page'
   }
 
 ];
@@ -81,7 +81,7 @@ const browseSnippetViewSteps = [
 const detailSteps = [
   {
     selector: '#header',
-    content: 'Here is the entity name, primary key (or document URI), and metadata.'
+    content: 'Here is the entity name, primary key (or record URI), and metadata.'
   },
   {
     selector: '#subMenu',

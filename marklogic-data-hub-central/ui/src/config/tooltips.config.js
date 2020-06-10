@@ -2,11 +2,11 @@ const AdvancedSettings = {
     'name': 'The name of this step definition.',
     'description': 'The description of this step definition.',
     'sourceQuery' : 'The collection tag or CTS query that selects the source data to process in this step.',
-    'targetFormat': 'The format of the documents in the target database.',
-    'additionalCollections': 'The collection tags to add to the default tags assigned to the processed document.',
-    'targetPermissions': 'A comma-delimited string that defines permissions required to access the processed document. ' +
+    'targetFormat': 'The format of the records in the target database.',
+    'additionalCollections': 'The collection tags to add to the default tags assigned to the processed record.',
+    'targetPermissions': 'A comma-delimited string that defines permissions required to access the processed record. ' +
     'The string must be in the format role,capability,role,capability,..., where capability can be read, insert, update, or execute.',
-    'headers': 'A JSON object that represents additional metadata to add to the header section of the envelope of each document.',
+    'headers': 'A JSON object that represents additional metadata to add to the header section of the envelope of each record.',
     'provGranularity': 'The level of detail logged for provenance. Choose *coarse* for the default level or *off* for no provenance logging.',
     'processors': 'Custom modules that perform additional processes after the core step processes are completed and before the results are saved.',
     'customHook': 'A custom module that performs additional processes in its own transaction before or after the core step transaction. Results are saved within a transaction.',
@@ -29,7 +29,7 @@ const NewLoadTooltips = {
     'files' : 'Click *Upload* to select the source files. The total size of the files must be 100MB or less.',
     'sourceFormat': 'The format of the source files to load.',
     'fieldSeparator': 'The delimiter in source files. Required if *Source Format* is *Delimited Text*.',
-    'outputURIPrefix': 'The prefix you want for the URIs of the loaded documents. Example: If your prefix is /rawData/ and you load a file called customer1.json, the URI of the loaded document becomes /rawData/customer1.json.'
+    'outputURIPrefix': 'The prefix you want for the URIs of the loaded records. Example: If your prefix is /rawData/ and you load a file called customer1.json, the URI of the loaded record becomes /rawData/customer1.json.'
 }
 
 const AdvLoadTooltips = {

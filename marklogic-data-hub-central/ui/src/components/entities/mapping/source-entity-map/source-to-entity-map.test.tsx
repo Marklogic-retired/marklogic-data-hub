@@ -22,7 +22,7 @@ describe('RTL Source-to-entity map tests', () => {
         expect(getByText('Clear')).toBeDisabled;
         expect(getByTestId("entityContainer")).toBeInTheDocument();
         expect(getByTestId("srcContainer")).toBeInTheDocument();
-        expect(getByText("Unable to find source documents using the specified collection or query.")).toBeInTheDocument;
+        expect(getByText("Unable to find source records using the specified collection or query.")).toBeInTheDocument;
         expect(getByTestId("srcContainer")).toHaveClass("sourceContainer");
         expect(getByText('Entity: Person')).toBeInTheDocument();
         expect(getByRole('presentation').className).toEqual("Resizer vertical ");
@@ -37,7 +37,7 @@ describe('RTL Source-to-entity map tests', () => {
         expect(getByTestId("srcContainer")).toHaveClass("sourceContainer");
         expect(getByText('Entity: Person')).toBeInTheDocument();
         expect(getByText('Test')).toBeEnabled();
-        expect(queryByText("Unable to find source documents using the specified collection or query.")).not.toBeInTheDocument();
+        expect(queryByText("Unable to find source records using the specified collection or query.")).not.toBeInTheDocument();
         let exp = getByText('testNameInExp');
         expect(exp).toBeInTheDocument();
         fireEvent.change(exp, { target: {value: "concat(name,'-NEW')" }});
@@ -84,7 +84,7 @@ describe('RTL Source-to-entity map tests', () => {
             mappingVisible={true}
             entityTypeProperties={nestedEntityWithSameName}
         />);
-        
+
         fireEvent.change(getAllByTestId('propName-mapexpression')[0], { target: { value: "concat(propName,'-NEW')" } });
         fireEvent.blur(getAllByTestId('propName-mapexpression')[0])
         await(waitForElement(() => (getByTestId('successMessage'))))
@@ -754,7 +754,7 @@ describe('Enzyme Source-to-entity map tests', () => {
     });
 
     test('Enzyme tests with no source data', () => {
-        let noDataMessage = "Unable to find source documents using the specified collection or query." +
+        let noDataMessage = "Unable to find source records using the specified collection or query." +
             "Load some data that mapping can use as reference and/or edit the step settings to use a " +
             "source collection or query that will return some results.";
         wrapper.setProps({sourceData: []} );
