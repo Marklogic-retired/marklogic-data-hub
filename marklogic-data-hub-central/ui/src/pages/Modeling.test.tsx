@@ -5,7 +5,7 @@ import userEvent from "@testing-library/user-event";
 
 import Modeling from './Modeling';
 import {AuthoritiesContext} from '../util/authorities';
-import authorities from '../config/authorities.config';
+import authorities from '../assets/authorities.testutils';
 import { ModelingContext } from '../util/modeling-context';
 import { ModelingTooltips } from '../config/tooltips.config';
 import { getEntityTypes } from '../assets/mock-data/modeling';

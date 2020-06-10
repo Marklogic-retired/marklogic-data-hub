@@ -2,11 +2,11 @@ import React from 'react';
 import { render, fireEvent, waitForElement, waitForElementToBeRemoved, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect'
 import axiosMock from 'axios';
-import mocks from '../config/mocks.config';
+import mocks from '../api/__mocks__/mocks.data';
 import  Run from '../pages/Run';
 import {AuthoritiesContext, AuthoritiesService} from '../util/authorities';
-import data from '../config/run.config';
-import authorities from '../config/authorities.config';
+import data from '../assets/mock-data/flows.data';
+import authorities from '../assets/authorities.testutils';
 import {RunToolTips} from "../config/tooltips.config";
 
 jest.mock('axios');

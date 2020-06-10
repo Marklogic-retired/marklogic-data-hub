@@ -2,9 +2,9 @@ import React from 'react';
 import { render, fireEvent, wait, cleanup, waitForElement } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import LoadCard from './load-card';
-import data from '../../config/test-data.config';
+import data from '../../assets/mock-data/common.data';
 import axiosMock from 'axios';
-import mocks from '../../config/mocks.config';
+import mocks from '../../api/__mocks__/mocks.data';
 import { AuthoritiesService, AuthoritiesContext } from '../../util/authorities';
 
 jest.mock('axios');

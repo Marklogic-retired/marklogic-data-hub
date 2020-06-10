@@ -1,7 +1,7 @@
 import React from 'react';
 import { waitForElement, waitForElementToBeRemoved, render, cleanup, fireEvent, within } from '@testing-library/react';
 import SourceToEntityMap from './source-to-entity-map';
-import data from '../../../../config/test-data.config';
+import data from '../../../../assets/mock-data/common.data';
 import { shallow } from 'enzyme';
 import SplitPane from 'react-split-pane';
 import axiosMock from 'axios';

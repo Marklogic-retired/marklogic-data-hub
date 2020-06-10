@@ -7,8 +7,8 @@ import '@testing-library/jest-dom/extend-expect'
 import TilesView from './TilesView';
 import {AuthoritiesContext, AuthoritiesService} from '../util/authorities';
 import axiosMock from 'axios';
-import mocks from '../config/mocks.config';
-import authorities from '../config/authorities.config';
+import mocks from '../api/__mocks__/mocks.data';
+import authorities from '../assets/authorities.testutils';
 
 jest.mock('axios');
 

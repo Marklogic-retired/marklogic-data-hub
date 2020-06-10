@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import DropDownWithSearch from './dropdownWithSearch';
-import data from "../../../config/test-data.config";
+import data from "../../../assets/mock-data/common.data";
 
 describe('DropDownWithSearch component', () => {
 
