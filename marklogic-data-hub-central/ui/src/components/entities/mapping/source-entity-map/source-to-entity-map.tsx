@@ -1159,7 +1159,7 @@ const SourceToEntityMap = (props) => {
                                 <br/><br/>
                                 <Card className={styles.emptyCard} size="small">
                                     <div className={styles.emptyText}>
-                                        <p>Unable to find source documents using the specified collection or query.</p>
+                                        <p>Unable to find source records using the specified collection or query.</p>
                                         <p>Load some data that mapping can use as reference and/or edit the step
                                             settings to use a source collection or query that will return some results.</p>
                                     </div>
