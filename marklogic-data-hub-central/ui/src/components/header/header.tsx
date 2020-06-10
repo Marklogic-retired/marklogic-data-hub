@@ -53,7 +53,7 @@ const Header:React.FC<Props> = ({ history, location }) => {
         theme="dark"
       >
         <Menu.Item>
-            <i className={styles.projectInfo} onClick={handleProjectPageDisplay}>{projectName}</i>
+            <i id="project-name" className={styles.projectInfo} onClick={handleProjectPageDisplay}>{projectName}</i>
         </Menu.Item>
         <div className={styles.vertical}></div>
         <Menu.Item>

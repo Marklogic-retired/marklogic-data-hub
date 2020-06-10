@@ -25,6 +25,7 @@
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 //import { defaultUserPreferences as userPreference } from "../../../src/services/user-preferences"
 import loginPage from '../support/pages/login';
+import '@testing-library/cypress/add-commands'
 
 //cy.fixture('users/developer.json').as('developer')
 
