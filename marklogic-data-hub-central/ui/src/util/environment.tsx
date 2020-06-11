@@ -14,14 +14,13 @@ export function setEnvironment()  {
                 localStorage.setItem('environment', JSON.stringify(res.data)) ;
             })
             .catch(err => {
-                console.log(err);
+                console.error(err);
             })
 }
 
 export function getEnvironment():any {
     let env: any;
     env = localStorage.getItem('environment');
-    console.log(env);
     if(env) {
         return JSON.parse(env);
     }

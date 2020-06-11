@@ -5,6 +5,7 @@ import Tiles from '../components/tiles/tiles';
 import styles from './TilesView.module.scss';
 import './TilesView.scss';
 
+import Overview from './Overview';
 import Load from './Load';
 import Modeling from './Modeling';
 import Curate from './Curate';
@@ -40,7 +41,6 @@ const TilesView = (props) => {
     const [currentNode, setCurrentNode] = useState<any>(INITIAL_SELECTION);
     const [options, setOptions] = useState<TileItem|null>(null);
     const [view, setView] = useState<JSX.Element|null>(null);
-    const [controls, setControls] = useState<any>([]);
 
     const {
         setZeroState,
@@ -49,6 +49,13 @@ const TilesView = (props) => {
 
     const onMenuClick = () => {
         setManageQueryModal(true)
+    }
+
+    const onTileClose = () => {
+        setSelection(INITIAL_SELECTION);
+        setCurrentNode(INITIAL_SELECTION); // TODO Handle multiple with nested objects
+        setOptions(null);
+        setView(null);
     }
 
     // For role-based privileges
@@ -65,16 +72,6 @@ const TilesView = (props) => {
     const enabled = Object.keys(enabledViews).filter(key => enabledViews[key]);
     
     const onSelect = (id) => {
-
-        if (id === 'explore') {
-            setControls('menu')
-            if (selection !== 'explore') {
-                setZeroState(true)
-            } 
-        } else {
-            setControls([])
-        }
-        setNewStepToFlowOptions({ addingStepToFlow: false });
         setSelection(id);
         setCurrentNode(id); // TODO Handle multiple with nested objects
         setOptions(tiles[id]);
@@ -90,6 +87,12 @@ const TilesView = (props) => {
             setOptions(tiles[props.id]);
             setView(views[props.id]);
         }
+        return (() => {
+            setSelection(INITIAL_SELECTION);
+            setCurrentNode(INITIAL_SELECTION); // TODO Handle multiple with nested objects
+            setOptions(null);
+            setView(null);
+        })
     },[])
 
     const [newStepToFlowOptions, setNewStepToFlowOptions] = useState(!props.id ? { addingStepToFlow: false } : {
@@ -103,19 +106,22 @@ const TilesView = (props) => {
     return (
         <>
             <Toolbar tiles={tiles} onClick={onSelect} enabled={enabled}/>
-            <div className={styles.tilesViewContainer}>
-                { (selection !== '') ?  (
-                <Tiles 
-                    id={selection}
-                    view={view}
-                    currentNode={currentNode}
-                    controls={controls} // TODO Turn on tile header controls
-                    options={options}
-                    onMenuClick={onMenuClick}
-                    newStepToFlowOptions={newStepToFlowOptions}
-                />
-                ) : null }
-            </div>
+            { (view !== null) ?  (
+                <div className={styles.tilesViewContainer}>
+                    { (selection !== '') ?  (
+                    <Tiles 
+                        id={selection}
+                        view={view}
+                        currentNode={currentNode}
+                        options={options}
+                        onMenuClick={onMenuClick}
+                        onTileClose={onTileClose}
+                        newStepToFlowOptions={newStepToFlowOptions}
+                    />
+                    ) : null }
+                </div> ) : 
+                <Overview/> 
+            }
         </>
     );
 }

@@ -15,16 +15,18 @@ describe('Tiles component', () => {
             icon: faCube, 
             color: color, 
             bgColor: color, 
-            border: color
+            border: color,
+            controls: []
         };
         const {getByLabelText} = render(
             <Tiles 
                 id={text}
                 view={<TestComponent/>}
                 currentNode={text}
-                controls={[]}
                 options={options}
                 onMenuClick={jest.fn()}
+                onTileClose={jest.fn()}
+                newStepToFlowOptions={jest.fn()}
             />
         );
         expect(getByLabelText('icon-' + text)).toBeInTheDocument();
@@ -39,16 +41,18 @@ describe('Tiles component', () => {
             icon: 'exploreIcon', 
             color: color, 
             bgColor: color, 
-            border: color
+            border: color,
+            controls: []
         };
         const {getByLabelText} = render(
             <Tiles 
                 id={text}
                 view={<TestComponent/>}
                 currentNode={text}
-                controls={[]}
                 options={options}
                 onMenuClick={jest.fn()}
+                onTileClose={jest.fn()}
+                newStepToFlowOptions={jest.fn()}
             />
         );
         expect(getByLabelText('icon-' + text)).toBeInTheDocument();

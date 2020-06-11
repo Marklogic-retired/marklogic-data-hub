@@ -61,3 +61,17 @@ export const userHasModalErrorHasSessionWarning = {
   resetSessionTime: jest.fn(),
   getSessionTime: jest.fn().mockReturnValue(29)
 }
+
+export const userAuthenticated = {
+  user: {
+    error : {
+      type: ''
+    },
+    authenticated: true,
+    redirect: true
+  },
+  handleError: jest.fn(),
+  resetSessionTime: jest.fn(),
+  clearRedirect: jest.fn(),
+  getSessionTime: jest.fn().mockReturnValue(300)
+}

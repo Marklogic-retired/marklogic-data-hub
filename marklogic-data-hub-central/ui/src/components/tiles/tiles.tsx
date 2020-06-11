@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Mosaic, MosaicWindow } from 'react-mosaic-component';
 import 'react-mosaic-component/react-mosaic-component.css';
 import { Tooltip, Menu, Dropdown } from 'antd';
-import { ArrowsAltOutlined, ShrinkOutlined } from '@ant-design/icons';
+import { ArrowsAltOutlined, ShrinkOutlined, CloseOutlined } from '@ant-design/icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faExternalLinkAlt, faCog } from "@fortawesome/free-solid-svg-icons";
 import styles from './tiles.module.scss';
@@ -13,19 +13,20 @@ interface Props {
     id: string;
     view: any;
     currentNode: any;
-    controls: string[];
     options: any;
-    onMenuClick: any
+    onMenuClick: any;
+    onTileClose: any;
     newStepToFlowOptions: any;
 }
 
 const Tiles: React.FC<Props> = (props) => {
 
     const options = props.options;
+    const controls = props.options.controls;
     const viewId = props.id;
 
     const showControl = (control) => {
-        return props.controls.indexOf(control) !== -1;
+        return controls.indexOf(control) !== -1;
     }
 
     const onChange = (event) => {
@@ -49,6 +50,10 @@ const Tiles: React.FC<Props> = (props) => {
     // TODO Implement minimize feature
     const onClickMinimize = (event) => {
         console.log('onClickMinimize', event);
+    }
+
+    const onClickClose = () => {
+        props.onTileClose();
     }
 
     const menu = (
@@ -82,7 +87,7 @@ const Tiles: React.FC<Props> = (props) => {
                             <Dropdown overlay={menu} trigger={['click']} placement="bottomLeft">
                                 <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
                                     <Tooltip title={'Menu'} placement="top">
-                                        <i className={styles.faCog} aria-label={'menu'}>
+                                        <i className={styles.faCog} aria-label={'menu'} style={{ color: options['color'] }}>
                                             <FontAwesomeIcon icon={faCog} />
                                         </i>
                                     </Tooltip>
@@ -91,21 +96,27 @@ const Tiles: React.FC<Props> = (props) => {
                         </div>
                     ) : null}
                     {showControl('newTab') ? (
-                        <Tooltip title={'Open in New Tab'} placement="bottom">
-                            <i className={styles.fa} aria-label={'newTab'} onClick={onClickNewTab}>
+                        <Tooltip title={'Open in New Tab'} placement="top">
+                            <i className={styles.fa} aria-label={'newTab'} style={{ color: options['color'] }} onClick={onClickNewTab}>
                                 <FontAwesomeIcon icon={faExternalLinkAlt} />
                             </i>
                         </Tooltip>) : null}
                     {showControl('maximize') ? (
-                        <Tooltip title={'Maximize'} placement="bottom">
-                            <i className={styles.ant} aria-label={'maximize'} onClick={onClickMaximize}>
+                        <Tooltip title={'Maximize'} placement="top">
+                            <i className={styles.ant} aria-label={'maximize'} style={{ color: options['color'] }} onClick={onClickMaximize}>
                                 <ArrowsAltOutlined />
                             </i>
                         </Tooltip>) : null}
                     {showControl('minimize') ? (
-                        <Tooltip title={'Minimize'} placement="bottom">
-                            <i className={styles.ant} aria-label={'minimize'} onClick={onClickMinimize}>
+                        <Tooltip title={'Minimize'} placement="top">
+                            <i className={styles.ant} aria-label={'minimize'} style={{ color: options['color'] }} onClick={onClickMinimize}>
                                 <ShrinkOutlined />
+                            </i>
+                        </Tooltip>) : null}
+                    {showControl('close') ? (
+                        <Tooltip title={'Close'} placement="top">
+                            <i className={styles.close} aria-label={'close'} style={{ color: options['color'] }} onClick={onClickClose}>
+                                <CloseOutlined />
                             </i>
                         </Tooltip>) : null}
                 </div>

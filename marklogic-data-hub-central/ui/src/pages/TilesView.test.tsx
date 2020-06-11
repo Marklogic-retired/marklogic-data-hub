@@ -9,6 +9,7 @@ import {AuthoritiesContext, AuthoritiesService} from '../util/authorities';
 import axiosMock from 'axios';
 import mocks from '../api/__mocks__/mocks.data';
 import authorities from '../assets/authorities.testutils';
+import tiles from '../config/tiles.config'
 
 jest.mock('axios');
 
@@ -43,12 +44,35 @@ describe('Tiles View component tests for Developer user', () => {
         expect(getByLabelText('tool-run')).toHaveStyle('color: rgb(6, 17, 120);')
         expect(getByLabelText("tool-explore")).toBeInTheDocument();
         expect(getByLabelText('tool-explore')).toHaveStyle('color: rgb(0, 71, 79);')
+
+        expect(getByLabelText("overview")).toBeInTheDocument();
+
+    });
+
+    test('Verify tiles can be closed', async () => {
+        const tools = Object.keys(tiles);
+        const { getByLabelText } = render(<Router history={history}>
+            <AuthoritiesContext.Provider value={mockDevRolesService}><TilesView/></AuthoritiesContext.Provider> />
+        </Router>);
+
+        expect(getByLabelText("overview")).toBeInTheDocument();
+
+        // Click close icon for each tile to return to overview
+        tools.forEach(async (tool, i) => {
+            expect(getByLabelText("tool-" + tool)).toBeInTheDocument();
+            fireEvent.click(getByLabelText("tool-" + tool));
+            expect(getByLabelText("icon-" + tool)).toBeInTheDocument();
+            expect(await(waitForElement(() => getByLabelText("close")))).toBeInTheDocument();
+            fireEvent.click(getByLabelText("close"));
+            expect(getByLabelText("overview")).toBeInTheDocument();
+        })
+
     });
 
     test('Verify Curate tile displays from toolbar', async () => {
         const {getByLabelText, getByText, queryByText} = render(<Router history={history}>
             <AuthoritiesContext.Provider value={mockDevRolesService}><TilesView/></AuthoritiesContext.Provider>
-            </Router>);
+        </Router>);
 
         // Curate tile not shown initially
         expect(queryByText("icon-curate")).not.toBeInTheDocument();
