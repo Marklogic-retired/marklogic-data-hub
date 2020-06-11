@@ -58,7 +58,7 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
      */
     @Test
     void searchWithTransform() {
-        ReferenceModelProject project = installReferenceModelProject(true);
+        ReferenceModelProject project = installOnlyReferenceModelEntities(true);
         project.createCustomerInstance(new Customer(1, "Jane"));
         project.createCustomerInstance(new Customer(2, "Sally"));
 
@@ -81,7 +81,7 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
     @Test
     void noEntityTypesSelected() {
         // Need at least one entity model to exist for this scenario
-        installReferenceModelProject(true);
+        installOnlyReferenceModelEntities(true);
 
         SearchQuery query = new SearchQuery();
         DocSearchQueryInfo info = new DocSearchQueryInfo();

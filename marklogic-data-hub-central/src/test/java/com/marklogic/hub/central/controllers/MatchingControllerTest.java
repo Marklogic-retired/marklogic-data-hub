@@ -4,15 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.central.AbstractHubCentralTest;
-import com.marklogic.hub.central.controllers.MatchingController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.IOException;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MatchingControllerTest extends AbstractHubCentralTest {
 
@@ -48,7 +43,7 @@ public class MatchingControllerTest extends AbstractHubCentralTest {
 
     @Test
     void testMatchingConfigs() {
-        installReferenceModelProject();
+        installOnlyReferenceModelEntities();
 
         controller.updateMatching(readJsonObject(MATCHING_CONFIG_1), "TestCustomerMatching");
         controller.updateMatching(readJsonObject(MATCHING_CONFIG_2), "TestOrderMatching1");

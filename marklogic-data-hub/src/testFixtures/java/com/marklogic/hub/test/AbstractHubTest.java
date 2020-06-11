@@ -154,6 +154,33 @@ public abstract class AbstractHubTest extends TestObject {
     }
 
     /**
+     * Sometimes your test only needs the entity models in the reference project, in which case you should use this
+     * method as it's quite a bit faster than installing the entire project.
+     *
+     * @return
+     */
+    protected ReferenceModelProject installOnlyReferenceModelEntities() {
+        return installOnlyReferenceModelEntities(false);
+    }
+
+    protected ReferenceModelProject installOnlyReferenceModelEntities(boolean loadQueryOptions) {
+        long start = System.currentTimeMillis();
+        HubProject hubProject = getHubConfig().getHubProject();
+        try {
+            File testProjectDir = new ClassPathResource("entity-reference-model").getFile();
+            File entitiesDir = new File(testProjectDir, "entities");
+            if (entitiesDir.exists()) {
+                FileUtils.copyDirectory(entitiesDir, hubProject.getHubEntitiesDir().toFile());
+            }
+            installUserModulesAndArtifacts(getHubConfig(), false, loadQueryOptions);
+            logger.info("Installed only reference model entities, time: " + (System.currentTimeMillis() - start));
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+        return new ReferenceModelProject(getHubClient());
+    }
+
+    /**
      * Load the files associated with the entity reference model with an option to load query options.
      */
     protected ReferenceModelProject installReferenceModelProject(boolean loadQueryOptions) {
@@ -178,6 +205,7 @@ public abstract class AbstractHubTest extends TestObject {
      * @param loadQueryOptions
      */
     protected void installProjectInFolder(String folderInClasspath, boolean loadQueryOptions) {
+        long start = System.currentTimeMillis();
         boolean loadModules = false;
         HubProject hubProject = getHubConfig().getHubProject();
         try {
@@ -237,6 +265,9 @@ public abstract class AbstractHubTest extends TestObject {
         } else {
             installUserArtifacts();
         }
+
+        logger.info("Installed project from folder in classpath: " + folderInClasspath + "; time: " +
+            (System.currentTimeMillis() - start));
     }
 
     /**

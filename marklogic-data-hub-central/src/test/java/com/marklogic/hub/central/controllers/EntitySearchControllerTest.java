@@ -107,7 +107,7 @@ public class EntitySearchControllerTest extends AbstractMvcTest {
 
     @Test
     void testRowExport() throws Exception {
-        ReferenceModelProject project = installReferenceModelProject(true);
+        ReferenceModelProject project = installOnlyReferenceModelEntities(true);
 
         Customer customer1 = new Customer();
         customer1.setCustomerId(1);

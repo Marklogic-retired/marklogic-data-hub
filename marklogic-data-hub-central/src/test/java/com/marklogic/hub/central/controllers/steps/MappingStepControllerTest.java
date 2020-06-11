@@ -2,9 +2,18 @@ package com.marklogic.hub.central.controllers.steps;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.access.AccessDeniedException;
+
+import javax.ws.rs.core.MediaType;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class MappingStepControllerTest extends AbstractStepControllerTest {
@@ -31,13 +40,15 @@ public class MappingStepControllerTest extends AbstractStepControllerTest {
 
     @Test
     void test() throws Exception {
-        installReferenceModelProject();
+        installOnlyReferenceModelEntities();
+        loginAsTestUserWithRoles("hub-central-mapping-writer");
         verifyCommonStepEndpoints(PATH, objectMapper.valueToTree(newDefaultMappingStep("myMapper")), "entity-services-mapping", "mapping");
     }
 
     @Test
     void getMappingStepsByEntity() throws Exception {
-        installReferenceModelProject();
+        installOnlyReferenceModelEntities();
+        loginAsTestUserWithRoles("hub-central-mapping-writer");
 
         postJson(PATH + "/firstStep", newDefaultMappingStep("firstStep")).andExpect(status().isOk());
         postJson(PATH + "/secondStep", newDefaultMappingStep("secondStep")).andExpect(status().isOk());
@@ -56,6 +67,47 @@ public class MappingStepControllerTest extends AbstractStepControllerTest {
             });
     }
 
+    @Test
+    void permittedReadUser() throws Exception {
+        loginAsTestUserWithRoles("hub-central-mapping-reader");
+
+        getJson(PATH)
+            .andDo(result -> {
+                MockHttpServletResponse response = result.getResponse();
+                assertEquals(MediaType.APPLICATION_JSON, response.getContentType());
+                assertEquals(HttpStatus.OK.value(), response.getStatus());
+            });
+        getJson("/api/artifacts/mapping/functions")
+            .andDo(result -> {
+                MockHttpServletResponse response = result.getResponse();
+                assertEquals(MediaType.APPLICATION_JSON, response.getContentType());
+                assertEquals(HttpStatus.OK.value(), response.getStatus());
+                JsonNode functionsJson = parseJsonResponse(result);
+                assertTrue(functionsJson.has("parseDateTime"), "List of functions should contain parseDateTime");
+            });
+    }
+
+    @Test
+    void forbiddenReadUser() throws Exception {
+        loginAsTestUserWithRoles("hub-central-user");
+        mockMvc.perform(get(PATH).session(mockHttpSession))
+            .andDo(result -> {
+                assertTrue(result.getResolvedException() instanceof AccessDeniedException);
+            });
+    }
+
+    @Test
+    void forbiddenWriteUser() throws Exception {
+        loginAsTestUserWithRoles("hub-central-mapping-reader");
+        mockMvc.perform(post(PATH + "/{artifactName}", "TestCustomerMapping")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.valueToTree(MappingStepControllerTest.newDefaultMappingStep("TestCustomerMapping")).toString())
+            .session(mockHttpSession))
+            .andDo(result -> {
+                assertTrue(result.getResolvedException() instanceof AccessDeniedException);
+            });
+    }
+
     private void verifyOrderMappings(JsonNode node) {
         assertEquals("Order", node.get("entityType").asText());
         assertEquals("http://marklogic.com/example/Order-0.0.1/Order", node.get("entityTypeId").asText());
@@ -65,6 +117,6 @@ public class MappingStepControllerTest extends AbstractStepControllerTest {
     private void verifyCustomerMappings(JsonNode node) {
         assertEquals("Customer", node.get("entityType").asText());
         assertEquals("http://example.org/Customer-0.0.1/Customer", node.get("entityTypeId").asText());
-        assertEquals(3, node.get("artifacts").size(), "Expecting 3 mappings - a 'legacy' one, and the 2 created in this test");
+        assertEquals(2, node.get("artifacts").size(), "Expecting the 2 mappings created by this test");
     }
 }

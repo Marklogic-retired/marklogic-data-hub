@@ -3,6 +3,7 @@ package com.marklogic.hub.central.controllers.steps;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -22,7 +23,6 @@ public class IngestionStepControllerTest extends AbstractStepControllerTest {
         public String description;
         public String sourceFormat;
         public String targetFormat;
-        public String outputURIReplacement;
         public ArrayNode processors;
         public ObjectNode headers;
     }
@@ -36,6 +36,11 @@ public class IngestionStepControllerTest extends AbstractStepControllerTest {
         step.headers = objectMapper.createObjectNode();
         step.processors = objectMapper.createArrayNode();
         return step;
+    }
+
+    @BeforeEach
+    void beforeEach() {
+        loginAsTestUserWithRoles("hub-central-load-writer");
     }
 
     @Test
@@ -60,21 +65,19 @@ public class IngestionStepControllerTest extends AbstractStepControllerTest {
 
     @Test
     void permittedReadUser() throws Exception {
-        installReferenceModelProject();
         postJson(PATH + "/firstStep", newDefaultIngestionStep("firstStep"));
 
         loginAsTestUserWithRoles("hub-central-load-reader");
 
         getJson(PATH + "/firstStep")
-                .andDo(result -> {
-                    MockHttpServletResponse response = result.getResponse();
-                    assertEquals(HttpStatus.OK.value(), response.getStatus());
-                });
+            .andDo(result -> {
+                MockHttpServletResponse response = result.getResponse();
+                assertEquals(HttpStatus.OK.value(), response.getStatus());
+            });
     }
 
     @Test
     void forbiddenReadUser() throws Exception {
-        installReferenceModelProject();
         postJson(PATH + "/firstStep", newDefaultIngestionStep("firstStep"));
 
         setTestUserRoles("hub-central-user");
@@ -87,22 +90,7 @@ public class IngestionStepControllerTest extends AbstractStepControllerTest {
     }
 
     @Test
-    void permittedWriteUser() throws Exception {
-        installReferenceModelProject();
-
-        loginAsTestUserWithRoles("hub-central-load-writer");
-
-        postJson(PATH + "/firstStep", newDefaultIngestionStep("firstStep"))
-                .andDo(result -> {
-                    MockHttpServletResponse response = result.getResponse();
-                    assertEquals(HttpStatus.OK.value(), response.getStatus());
-                });
-    }
-
-    @Test
     void forbiddenWriteUser() throws Exception {
-        installReferenceModelProject();
-
         loginAsTestUserWithRoles("hub-central-load-reader");
         postJson(PATH + "/firstStep", newDefaultIngestionStep("firstStep"))
                 .andDo(result -> {
