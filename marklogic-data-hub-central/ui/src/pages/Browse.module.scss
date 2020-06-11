@@ -13,13 +13,7 @@
 }
 
 .searchBar {
-  position: fixed;
-  z-index: 1;
   background-color: white;
-}
-
-.fixedView {
-  margin-top: 200px;
 }
 
 .selectedFacets {
@@ -59,4 +53,8 @@
   left: 0;
   right: 0;
   z-index: 999;
+}
+
+.ant-table-content {
+  height: 400px;
 }

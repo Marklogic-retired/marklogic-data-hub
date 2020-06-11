@@ -182,18 +182,6 @@ const Browse: React.FC<Props> = ({ location }) => {
     setCollapsed(!collapse);
   }
 
-  useLayoutEffect(() => {
-    if (endScroll && data.length) {
-      if (searchBarRef.current) {
-        searchBarRef.current['style']['boxShadow'] = '0px 8px 4px -4px #999'
-      }
-    } else if (!endScroll) {
-      if (searchBarRef.current) {
-        searchBarRef.current['style']['boxShadow'] = 'none'
-      }
-    }
-  }, [endScroll])
-
   useScrollPosition(({ currPos }) => {
     if (currPos.endOfScroll && !endScroll) {
       setEndScroll(true);
@@ -249,11 +237,7 @@ const Browse: React.FC<Props> = ({ location }) => {
             :
             <>
               {/* TODO Fix searchBar widths, it currently overlaps at narrow browser widths */}
-              <div className={styles.searchBar} ref={searchBarRef}
-                style={{
-                  width: collapse ? '90vw' : '70.5vw',
-                  maxWidth: collapse ? '90vw' : '70.5vw'
-                }}>
+              <div className={styles.searchBar} ref={searchBarRef}>
                 <SearchBar entities={entities} />
                 <SearchSummary
                   total={totalDocuments}

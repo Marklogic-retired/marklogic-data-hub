@@ -1,9 +1,8 @@
 import React, { useContext } from 'react';
-import {MLTable} from '@marklogic/design-system';
+import { MLTable } from '@marklogic/design-system';
 import QueryExport from "../query-export/query-export";
-import {AuthoritiesContext} from "../../util/authorities";
+import { AuthoritiesContext } from "../../util/authorities";
 import styles from './results-tabular-view.module.scss';
-
 
 
 interface Props {
@@ -67,30 +66,30 @@ const ResultsTabularView = (props) => {
 
 
     /* Temporary array to make it work with xml documents */
-    const dataSourceWithoutXml = props.data.filter((item:any) => {
-        if(item.hasOwnProperty('entityProperties') && item.format === 'json'){
+    const dataSourceWithoutXml = props.data.filter((item: any) => {
+        if (item.hasOwnProperty('entityProperties') && item.format === 'json') {
             return item;
         }
     });
 
     const dataSource = dataSourceWithoutXml.map((item) => {
         //if(item.hasOwnProperty('entityProperties') && item.format === 'json'){
-          return tableDataRender(item.entityProperties);
+        return tableDataRender(item.entityProperties);
         //}
     });
 
     return (
         <>
-        <div className={styles.queryExport}>
-            { canExportQuery && <QueryExport hasStructured={props.hasStructured} columns={props.columns}/> }
-        </div>
+            <div className={styles.queryExport}>
+                {canExportQuery && <QueryExport hasStructured={props.hasStructured} columns={props.columns} />}
+            </div>
             <div className={styles.tabular}>
-        <MLTable bordered
-           data-testid='result-table'
-           dataSource={dataSource}
-           columns={tableHeaders}
-           pagination={false}
-        />
+                <MLTable bordered
+                    data-testid='result-table'
+                    dataSource={dataSource}
+                    columns={tableHeaders}
+                    pagination={false}
+                />
             </div>
         </>
     )
