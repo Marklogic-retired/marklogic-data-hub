@@ -1,0 +1,42 @@
+{
+  "CustomerID": 107,
+  "Name": {
+    "FirstName": "Alexandria",
+    "LastName": "Wilson"
+  },
+  "nicknames": [
+    "Alex",
+    "willy"
+  ],
+  "Email": "walexandria@nutralab.com",
+  "Address": [
+    {
+      "Shipping": {
+        "Street": "Camden Place",
+        "Street2": "First floor",
+        "City": "Whosville",
+        "State": "Georgia",
+        "Postal": "52439-1618"
+      }
+    },
+    {
+      "Shipping": {
+        "Street": "St 200 Broadway",
+        "City": "San Diego",
+        "State": "California",
+        "Postal": "96900-2851"
+      }
+    },
+    {
+      "Billing": {
+        "Street": "101 Data Court",
+        "City": "Lake",
+        "State": "Kansas",
+        "Postal": "82601-6793"
+      }
+    }
+  ],
+  "Phone": "(110) 407-2081",
+  "PIN": 2162,
+  "Created": "04/03/2017"
+}
