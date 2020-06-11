@@ -1,5 +1,0 @@
-{
-  "privilege-name": "data-hub:readMapping",
-  "action": "http://marklogic.com/data-hub/privileges/read-mapping",
-  "kind": "execute"
-}

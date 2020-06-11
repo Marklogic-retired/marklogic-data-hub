@@ -15,7 +15,7 @@
  */
 'use strict';
 
-xdmp.securityAssert("http://marklogic.com/data-hub/privileges/download-project-files", "execute");
+xdmp.securityAssert("http://marklogic.com/data-hub/hub-central/privileges/download-project-files", "execute");
 
 const config = require("/com.marklogic.hub/config.sjs");
 const consts = require("/data-hub/5/impl/consts.sjs");

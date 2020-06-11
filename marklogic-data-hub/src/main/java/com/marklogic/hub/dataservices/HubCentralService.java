@@ -13,9 +13,9 @@ import com.marklogic.client.impl.BaseProxy;
 /**
  * Provides a set of operations on the database server
  */
-public interface SecurityService {
+public interface HubCentralService {
     /**
-     * Creates a SecurityService object for executing operations on the database server.
+     * Creates a HubCentralService object for executing operations on the database server.
      *
      * The DatabaseClientFactory class can create the DatabaseClient parameter. A single
      * client object can be used for any number of requests and in multiple threads.
@@ -23,11 +23,11 @@ public interface SecurityService {
      * @param db	provides a client for communicating with the database server
      * @return	an object for executing database operations
      */
-    static SecurityService on(DatabaseClient db) {
+    static HubCentralService on(DatabaseClient db) {
       return on(db, null);
     }
     /**
-     * Creates a SecurityService object for executing operations on the database server.
+     * Creates a HubCentralService object for executing operations on the database server.
      *
      * The DatabaseClientFactory class can create the DatabaseClient parameter. A single
      * client object can be used for any number of requests and in multiple threads.
@@ -42,16 +42,16 @@ public interface SecurityService {
      * @param serviceDeclaration	substitutes a custom implementation of the service
      * @return	an object for executing database operations
      */
-    static SecurityService on(DatabaseClient db, JSONWriteHandle serviceDeclaration) {
-        final class SecurityServiceImpl implements SecurityService {
+    static HubCentralService on(DatabaseClient db, JSONWriteHandle serviceDeclaration) {
+        final class HubCentralServiceImpl implements HubCentralService {
             private DatabaseClient dbClient;
             private BaseProxy baseProxy;
 
             private BaseProxy.DBFunctionRequest req_getAuthorities;
 
-            private SecurityServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
+            private HubCentralServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
-                this.baseProxy = new BaseProxy("/data-hub/5/data-services/security/", servDecl);
+                this.baseProxy = new BaseProxy("/data-hub/5/data-services/hubCentral/", servDecl);
 
                 this.req_getAuthorities = this.baseProxy.request(
                     "getAuthorities.sjs", BaseProxy.ParameterValuesKind.NONE);
@@ -70,7 +70,7 @@ public interface SecurityService {
             }
         }
 
-        return new SecurityServiceImpl(db, serviceDeclaration);
+        return new HubCentralServiceImpl(db, serviceDeclaration);
     }
 
   /**

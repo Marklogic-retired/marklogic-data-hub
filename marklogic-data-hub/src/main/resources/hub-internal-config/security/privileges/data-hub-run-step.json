@@ -1,5 +1,0 @@
-{
-  "privilege-name": "data-hub:runStep",
-  "action": "http://marklogic.com/data-hub/privileges/run-step",
-  "kind": "execute"
-}

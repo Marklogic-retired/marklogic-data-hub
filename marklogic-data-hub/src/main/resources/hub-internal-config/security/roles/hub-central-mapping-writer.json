@@ -8,8 +8,8 @@
   ],
   "privilege": [
     {
-      "privilege-name": "data-hub:writeMapping",
-      "action": "http://marklogic.com/data-hub/privileges/write-mapping",
+      "privilege-name": "hub-central:writeMapping",
+      "action": "http://marklogic.com/data-hub/hub-central/privileges/write-mapping",
       "kind": "execute"
     }
   ]

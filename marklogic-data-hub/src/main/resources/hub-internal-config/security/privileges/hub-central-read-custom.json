@@ -1,0 +1,5 @@
+{
+  "privilege-name": "hub-central:readCustom",
+  "action": "http://marklogic.com/data-hub/hub-central/privileges/read-custom",
+  "kind": "execute"
+}

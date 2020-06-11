@@ -1,0 +1,5 @@
+{
+  "privilege-name": "hub-central:readEntityModel",
+  "action": "http://marklogic.com/data-hub/hub-central/privileges/read-entity-model",
+  "kind": "execute"
+}

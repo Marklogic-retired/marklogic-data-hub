@@ -1,0 +1,5 @@
+{
+  "privilege-name": "hub-central:loginToHubCentral",
+  "action": "http://marklogic.com/data-hub/hub-central/privileges/login-to-hub-central",
+  "kind": "execute"
+}

@@ -2,7 +2,7 @@ const test = require("/test/test-helper.xqy");
 
 function invokeService() {
     return fn.head(xdmp.invoke(
-        "/data-hub/5/data-services/security/getAuthorities.sjs",
+        "/data-hub/5/data-services/hubCentral/getAuthorities.sjs",
         {}
     ));
 }

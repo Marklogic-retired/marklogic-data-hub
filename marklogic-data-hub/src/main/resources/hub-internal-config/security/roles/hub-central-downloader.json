@@ -13,8 +13,8 @@
   ],
   "privilege": [
     {
-      "privilege-name": "data-hub:downloadProjectFiles",
-      "action": "http://marklogic.com/data-hub/privileges/download-project-files",
+      "privilege-name": "hub-central:downloadProjectFiles",
+      "action": "http://marklogic.com/data-hub/hub-central/privileges/download-project-files",
       "kind": "execute"
     }
   ]

@@ -1,5 +1,0 @@
-{
-  "privilege-name": "data-hub:manageSavedQuery",
-  "action": "http://marklogic.com/data-hub/privileges/manage-saved-query",
-  "kind": "execute"
-}
