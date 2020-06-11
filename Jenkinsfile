@@ -56,7 +56,7 @@ def dhfCypressE2ETests(String mlVersion, String type){
                     sleep 10s;
                     mkdir -p output;
                     docker build . -t cypresstest;
-                    docker run --name cypresstest --env CYPRESS_BASE_URL=http://$HOSTNAME:8080 cypresstest |& tee output/console.log;
+                    docker run --name cypresstest --env CYPRESS_BASE_URL=http://$HOSTNAME:8080 --env cypress_mlHost=$HOSTNAME cypresstest |& tee output/console.log;
                     docker cp cypresstest:results output;
                     docker cp cypresstest:cypress/videos output
                     mkdir -p ${mlVersion};
