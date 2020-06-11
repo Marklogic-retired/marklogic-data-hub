@@ -521,7 +521,7 @@ const NewLoadDialog = (props) => {
           </Tooltip>
         </Form.Item>
         <Form.Item label={<span>
-          Output URI Prefix:&nbsp;
+          Target URI Prefix:&nbsp;
             </span>} labelAlign="left">
           <Input
             id="outputUriPrefix"

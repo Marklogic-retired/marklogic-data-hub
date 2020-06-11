@@ -40,7 +40,7 @@ describe('New/edit load data configuration', () => {
     fireEvent.mouseOver(tooltip[tooltip.length-1]);
     await waitForElement(() => getByText("The prefix you want for the URIs of the loaded documents. Example: If your prefix is /rawData/ and you load a file called customer1.json, the URI of the loaded document becomes /rawData/customer1.json."))
     expect(getByText("Target Format:")).toHaveTextContent('Target Format: *');
-    expect(getByText("Output URI Prefix:")).toHaveTextContent('Output URI Prefix:');
+    expect(getByText("Target URI Prefix:")).toHaveTextContent('Target URI Prefix:');
   });
 
   test('fields with Delimited Text render', () => {
