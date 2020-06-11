@@ -583,21 +583,21 @@ describe('RTL Source-to-entity map tests', () => {
 
         let expandCollapseBtn = getByTestId('expandCollapseBtn-source');
 
-        expect(expandCollapseBtn.textContent).toBe('Expand All'); // Validating the button label
+        expect(expandCollapseBtn.textContent).toBe('Expand'); // Validating the button label
 
         fireEvent.click(expandCollapseBtn); //Expanding all nested levels
-        expect(expandCollapseBtn.textContent).toBe('Collapse All'); // Validating the button label
+        expect(expandCollapseBtn.textContent).toBe('Collapse'); // Validating the button label
         expect(getByText('suffix')).toBeInTheDocument();
 
         //Check if indentation is right
         expect(getByText('suffix').closest('td')?.firstElementChild).toHaveStyle("padding-left: 28px;");
 
         fireEvent.click(expandCollapseBtn); //Collapsing back to the default view (root and 1st level)
-        expect(expandCollapseBtn.textContent).toBe('Expand All'); // Validating the button label
+        expect(expandCollapseBtn.textContent).toBe('Expand'); // Validating the button label
         expect(onClosestTableRow(getByText('suffix'))?.style.display).toBe('none'); // Checking if the row is marked hidden in DOM. All collapsed rows are marked hidden(display: none) once you click on Collapse All button.
 
         /* Validate collapse-expand in Entity table */
-        //Check if the expected Entity table elements are present in the DOM before hittting the Expan/Collapse button
+        //Check if the expected Entity table elements are present in the DOM before hittting the Expand/Collapse button
         expect(queryByText('artCraft')).not.toBeInTheDocument();
         expect(getByText('items')).toBeInTheDocument();
         expect(getByText('itemTypes')).toBeInTheDocument();
@@ -605,17 +605,17 @@ describe('RTL Source-to-entity map tests', () => {
 
         expandCollapseBtn = getByTestId('expandCollapseBtn-entity');
 
-        expect(expandCollapseBtn.textContent).toBe('Expand All');
+        expect(expandCollapseBtn.textContent).toBe('Expand');
 
         fireEvent.click(expandCollapseBtn); //Expanding all nested levels
-        expect(expandCollapseBtn.textContent).toBe('Collapse All');
+        expect(expandCollapseBtn.textContent).toBe('Collapse');
         expect(getByText('artCraft')).toBeInTheDocument();
 
         //Check if indentation is right
         expect(getByText('artCraft').closest('td')?.firstElementChild).toHaveStyle("padding-left: 28px;");
 
         fireEvent.click(expandCollapseBtn); //Collapsing back to the default view (root and 1st level)
-        expect(expandCollapseBtn.textContent).toBe('Expand All');
+        expect(expandCollapseBtn.textContent).toBe('Expand');
         expect(onClosestTableRow(getByText('artCraft'))?.style.display).toBe('none'); // Checking if the row is marked hidden(collapsed) in DOM. All collapsed rows are marked hidden(display: none) once you click on Collapse All button.
     });
 
@@ -635,10 +635,10 @@ describe('RTL Source-to-entity map tests', () => {
 
         let expandCollapseBtn = getByTestId('expandCollapseBtn-source');
 
-        expect(expandCollapseBtn.textContent).toBe('Expand All');
+        expect(expandCollapseBtn.textContent).toBe('Expand');
 
         fireEvent.click(expandCollapseBtn); //Expanding all nested levels
-        expect(expandCollapseBtn.textContent).toBe('Collapse All');
+        expect(expandCollapseBtn.textContent).toBe('Collapse');
         let firstName = getByText('FirstNamePreferred');
         let lastName = getByText('LastName');
         expect(firstName).toBeInTheDocument();
@@ -648,7 +648,7 @@ describe('RTL Source-to-entity map tests', () => {
         expect(lastName.closest('td')?.firstElementChild).toHaveStyle("padding-left: 28px;"); // Check if the indentation is right
 
         fireEvent.click(expandCollapseBtn); //Collapsing back to the default view (root and 1st level)
-        expect(expandCollapseBtn.textContent).toBe('Expand All');
+        expect(expandCollapseBtn.textContent).toBe('Expand');
         expect(onClosestTableRow(firstName)?.style.display).toBe('none');
         expect(onClosestTableRow(lastName)?.style.display).toBe('none');
     });

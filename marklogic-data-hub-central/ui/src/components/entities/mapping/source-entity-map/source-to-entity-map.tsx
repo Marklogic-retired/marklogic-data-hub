@@ -1168,7 +1168,7 @@ const SourceToEntityMap = (props) => {
                             :
                             <div id="dataPresent">
 
-                                <div className={styles.navigationCollapseButtons}><span><Button data-testid="expandCollapseBtn-source" onClick={() => handleExpandCollapse('rowKey')} className={styles.expandCollapseBtn}>{expandedSourceFlag ? 'Collapse All' : 'Expand All'}</Button></span><span>{navigationButtons}</span></div>
+                                <div className={styles.navigationCollapseButtons}><span><Button data-testid="expandCollapseBtn-source" onClick={() => handleExpandCollapse('rowKey')} className={styles.expandCollapseBtn}>{expandedSourceFlag ? 'Collapse' : 'Expand'}</Button></span><span>{navigationButtons}</span></div>
                                     <Table
                                         pagination={false}
                                         expandIcon={(props) => customExpandIcon(props)}
@@ -1196,7 +1196,7 @@ const SourceToEntityMap = (props) => {
                         </div>
                         <div ref={dummyNode}></div>
                         <div className={styles.columnOptionsSelectorContainer}>
-                            <span><Button data-testid="expandCollapseBtn-entity" onClick={() => handleExpandCollapse('key')} className={styles.expandCollapseBtn}>{expandedEntityFlag ? 'Collapse All' : 'Expand All'}</Button></span><span className={styles.columnOptionsSelector}>{columnOptionsSelector}</span></div>
+                            <span><Button data-testid="expandCollapseBtn-entity" onClick={() => handleExpandCollapse('key')} className={styles.expandCollapseBtn}>{expandedEntityFlag ? 'Collapse' : 'Expand'}</Button></span><span className={styles.columnOptionsSelector}>{columnOptionsSelector}</span></div>
                         <Table
                             pagination={false}
                             className={styles.entityTable}
