@@ -1,0 +1,13 @@
+{
+  "user-name": "hub-operator",
+  "description": "Generic operator account; will soon be superceded by persona-specific accounts",
+  "password": "%%testPassword%%",
+  "role": [
+    "data-hub-operator",
+    "hub-central-user",
+    "hub-central-load-reader",
+    "hub-central-mapping-reader",
+    "hub-central-entity-model-reader",
+    "hub-central-step-runner"
+  ]
+}

@@ -1,0 +1,49 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        maven { url "https://plugins.gradle.org/m2/" }
+        jcenter()
+    }
+    dependencies {
+        if (project.hasProperty("testing")) {
+            classpath "com.marklogic:ml-data-hub:5.3-SNAPSHOT"
+        } else {
+            classpath "gradle.plugin.com.marklogic:ml-data-hub:5.3.0"
+        }
+    }
+}
+
+plugins {
+    id "net.saliman.properties" version "1.5.1"
+    id "java"
+}
+apply plugin: "com.marklogic.ml-data-hub"
+
+repositories {
+    jcenter()
+    maven { url "http://developer.marklogic.com/maven2/" }
+}
+
+configurations {
+    mlcp
+}
+
+dependencies {
+    mlcp "com.marklogic:mlcp:10.0.2"
+    mlcp files("lib")
+}
+
+task loadThesaurus(type: com.marklogic.gradle.task.MlcpTask) {
+    classpath = configurations.mlcp
+    username = project.findProperty("mlUsername")
+    password = project.findProperty("mlPassword")
+    command = "IMPORT"
+    database = "data-hub-FINAL"
+    input_file_path = "input/thesaurus"
+    output_collections = "http://marklogic.com/xdmp/thesaurus,http://marklogic.com/xdmp/documents"
+    output_permissions = "data-hub-common,read,data-hub-common-writer,update"
+    output_uri_replace = ".*input,''"
+    host = project.findProperty("mlHost")
+}
+
+hubDeployAsDeveloper.finalizedBy("loadThesaurus")

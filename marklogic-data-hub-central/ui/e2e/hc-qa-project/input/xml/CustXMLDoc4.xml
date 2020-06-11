@@ -1,0 +1,25 @@
+<CustOrders xmlns="custOrderInfo">
+  <CustomerID>204</CustomerID>
+  <Name type="preferred">
+    <FirstName>Jacqueline</FirstName>
+    <LastName>Knowles</LastName>
+  </Name>
+  <Email>jacquelineknowles@nutralab.com</Email>
+  <Address>
+    <Shipping>
+      <Street>Provost Street</Street>
+      <City>Westerville</City>
+      <State>Wyoming</State>
+      <Postal>10519-8400</Postal>
+    </Shipping>
+    <Billing>
+      <Street>Manor Court</Street>
+      <City>Condon</City>
+      <State>Kansas</State>
+      <Postal>18115-4799</Postal>
+    </Billing>
+  </Address>
+  <Phone>(963) 489-3444</Phone>
+  <PIN>4985</PIN>
+  <Created>2014-07-29T19:02:47</Created>
+</CustOrders>

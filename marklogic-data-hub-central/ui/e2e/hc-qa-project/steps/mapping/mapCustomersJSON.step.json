@@ -1,0 +1,95 @@
+{
+  "name": "mapCustomersJSON",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "mapCustomersJSON-mapping",
+  "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+  "description": "",
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadCustomersJSON'])",
+  "collections": [
+    "Customer",
+    "mapCustomersJSON"
+  ],
+  "additionalCollections": [ ],
+  "sourceDatabase": "data-hub-STAGING",
+  "targetDatabase": "data-hub-FINAL",
+  "targetFormat": "JSON",
+  "permissions": "data-hub-common,read,data-hub-operator,update",
+  "provenanceGranularityLevel": "coarse",
+  "properties": {
+    "customerId": {
+      "sourcedFrom": "CustomerID"
+    },
+    "name": {
+      "sourcedFrom": "concat(Name/FirstName, ' ', Name/LastName)"
+    },
+    "birthDate": {
+      "sourcedFrom": "birthDate"
+    },
+    "shipping": {
+      "sourcedFrom": "/Address/Shipping",
+      "properties": {
+        "street": {
+          "sourcedFrom": "Street"
+        },
+        "city": {
+          "sourcedFrom": "City"
+        },
+        "state": {
+          "sourcedFrom": "State"
+        },
+        "zip": {
+          "sourcedFrom": ".",
+          "properties": {
+            "fiveDigit": {
+              "sourcedFrom": "substring(Postal, 1, 5)"
+            },
+            "plusFour": {
+              "sourcedFrom": "substring(Postal, 7)"
+            }
+          },
+          "targetEntityType": "#/definitions/Zip"
+        }
+      },
+      "targetEntityType": "#/definitions/Address"
+    },
+    "billing": {
+      "sourcedFrom": "/Address/Billing",
+      "properties": {
+        "street": {
+          "sourcedFrom": "Street"
+        },
+        "city": {
+          "sourcedFrom": "City"
+        },
+        "state": {
+          "sourcedFrom": "State"
+        },
+        "zip": {
+          "sourcedFrom": ".",
+          "properties": {
+            "fiveDigit": {
+              "sourcedFrom": "substring(Postal, 1, 5)"
+            },
+            "plusFour": {
+              "sourcedFrom": "substring(Postal, 7)"
+            }
+          },
+          "targetEntityType": "#/definitions/Zip"
+        }
+      },
+      "targetEntityType": "#/definitions/Address"
+    },
+    "customerSince": {
+      "sourcedFrom": ""
+    }
+  },
+  "lastUpdated": "2020-06-05T00:34:51.96953Z",
+  "customHook": {
+    "module": "",
+    "parameters": "{}",
+    "user": "",
+    "runBefore": false
+  }
+}

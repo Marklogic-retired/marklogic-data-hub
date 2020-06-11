@@ -1,0 +1,11 @@
+<thesaurus xmlns="http://marklogic.com/xdmp/thesaurus">
+  <!--
+  Each entry is lower-cased, as the thesaurus.xqy algorithm lower-cases a value before doing a thesaurus lookup.
+  -->
+  <entry>
+    <term>robert bates</term>
+    <synonym>
+      <term>bob bates</term>
+    </synonym>
+  </entry>
+</thesaurus>

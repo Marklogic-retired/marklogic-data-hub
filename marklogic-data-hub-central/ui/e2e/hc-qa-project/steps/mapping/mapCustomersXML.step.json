@@ -1,0 +1,89 @@
+{
+  "name": "mapCustomersXML",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "mapCustomersXML-mapping",
+  "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+  "description": "",
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadCustomersXML'])",
+  "collections": [
+    "Customer",
+    "mapCustomersXML"
+  ],
+  "namespaces": {
+    "entity-services": "http://marklogic.com/entity-services",
+    "custOrderInfo": "custOrderInfo"
+  },
+  "lastUpdated": "2020-06-05T00:36:36.930653Z",
+  "sourceDatabase": "data-hub-STAGING",
+  "targetDatabase": "data-hub-FINAL",
+  "targetFormat": "XML",
+  "permissions": "data-hub-common,read,data-hub-operator,update",
+  "provenanceGranularityLevel": "coarse",
+  "properties": {
+    "customerId": {
+      "sourcedFrom": "/node()/custOrderInfo:CustomerID"
+    },
+    "shipping": {
+      "sourcedFrom": "//*:Shipping",
+      "properties": {
+        "street": {
+          "sourcedFrom": "*:Street"
+        },
+        "city": {
+          "sourcedFrom": "*:City"
+        },
+        "zip": {
+          "sourcedFrom": ".",
+          "properties": {
+            "fiveDigit": {
+              "sourcedFrom": "substring(*:Postal, 1, 5)"
+            },
+            "plusFour": {
+              "sourcedFrom": "substring(*:Postal, 7)"
+            }
+          },
+          "targetEntityType": "#/definitions/Zip"
+        },
+        "state": {
+          "sourcedFrom": "*:State"
+        }
+      },
+      "targetEntityType": "#/definitions/Address"
+    },
+    "billing": {
+      "sourcedFrom": "//*:Billing",
+      "properties": {
+        "street": {
+          "sourcedFrom": "*:Street"
+        },
+        "zip": {
+          "sourcedFrom": ".",
+          "properties": {
+            "fiveDigit": {
+              "sourcedFrom": "substring(*:Postal, 1, 5)"
+            },
+            "plusFour": {
+              "sourcedFrom": "substring(*:Postal, 7)"
+            }
+          },
+          "targetEntityType": "#/definitions/Zip"
+        },
+        "city": {
+          "sourcedFrom": "*:City"
+        },
+        "state": {
+          "sourcedFrom": "*:State"
+        }
+      },
+      "targetEntityType": "#/definitions/Address"
+    },
+    "name": {
+      "sourcedFrom": "string-join(//*:Name/node(), \"\")"
+    },
+    "nicknames": {
+      "sourcedFrom": "//*:Name/*:FirstName"
+    }
+  }
+}
