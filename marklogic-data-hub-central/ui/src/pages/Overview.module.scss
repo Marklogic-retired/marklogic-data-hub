@@ -1,0 +1,197 @@
+@font-face {
+    font-family: 'MLCustomFont';
+    src: url('../fonts/ML_IconFont.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.overviewContainer {
+    line-height: 1.7;
+    color: #333;
+    background: #fff;
+    margin: 20px 70px 20px 40px;
+    .title {
+        font-size: 28px;
+    }
+    .introText {
+        margin: 20px 0 60px 0;
+    }
+    .spacer {
+        margin-top: 20px;
+    }
+    .note {
+        color:#777777;
+        font-weight: 600;
+    }
+    .cardsContainer {
+        min-width: 700px;
+        overflow: scroll;
+        .cards {
+            display: grid;
+            grid-template-columns: 20% 20% 20% 25%;
+            grid-gap: 40px;
+            .subtitle {
+                padding: 10px;
+                font-size: 16pt;
+            }
+            .body {
+                padding: 0px 20px 10px 48px;
+            }
+            i {
+                position: relative;
+                top: 1px;
+                padding-right: 10px;
+                font-size: 24px;
+            }
+            .cardLoad {
+                position: relative;
+                border-radius: 4px;
+                border: 1px solid #a8819c;
+                background-color: #eee6eb;
+                .head {
+                    min-height: 21vh;
+                    border-bottom: 1px solid #a8819c;
+                    background-image: url("../assets/load_visual_big.png");
+                    background-color: #FFF;
+                    background-size: 60%;
+                    background-repeat:no-repeat;
+                    background-position:center;
+                }
+                .subtitle {
+                    i {
+                        color: #520339;
+                        padding-right: 12px;
+                        padding-left: 4px;
+                    }
+                }
+            }
+            
+            .cardModel {
+                position: relative;
+                border-radius: 4px;
+                border: 1px solid #7f9cc5;
+                background-color: #e6ebf4;
+                .head {
+                    min-height: 21vh;
+                    border-bottom: 1px solid #7f9cc5;
+                    background-image: url("../assets/model_visual_big.png");
+                    background-color: #FFF;
+                    background-size: 50%;
+                    background-repeat:no-repeat;
+                    background-position:center;
+                }
+                .subtitle {
+                    i {
+                        color: #003A8C;
+                        padding-right: 11px;
+                        padding-left: 2px;
+                    }
+                }
+            }
+            
+            .cardCurate {
+                position: relative;
+                border-radius: 4px;
+                border: 1px solid #dcbd8a;
+                background-color: #f8f2e8;
+                .head {
+                    min-height: 21vh;
+                    border-bottom: 1px solid #dcbd8a;
+                    background-image: url("../assets/curate_visual_map.png");
+                    background-color: #FFF;
+                    background-size: 60%;
+                    background-repeat:no-repeat;
+                    background-position:center;
+                }
+                .subtitle {
+                    i {
+                        color: #BC811D;
+                    }
+                }
+            }
+            
+            .cardExplore {
+                grid-row: span 2;
+                border: 1px solid #90aeb2;
+                background-color: #FFF;
+                background-image: url("../assets/explore_visual_big.png");
+                background-size: 60%;
+                background-repeat:no-repeat;
+                background-position: 50% 25%;
+                position: relative;
+                .head {
+                    min-height: 22vh;
+                    width: 100%;
+                    border-top: 1px solid #90aeb2;
+                    background-color: #e6eded;
+                    position: absolute;
+                    bottom: 0px;
+                    .icon:before {
+                        color: #00474F;  
+                        content: "\68";  
+                        font-family: MLCustomFont;
+                        font-size: 24px;
+                        float: left;
+                        padding: 10px;
+                        padding-left: 13px;
+                    }
+                }
+            }
+            
+            .cardRun {
+                position: relative;
+                border-radius: 4px;
+                grid-column: span 3;
+                border: 1px solid #8288bb;
+                background-color: #ffffff;
+                background-image: url("../assets/run_visual_big.png");
+                background-repeat:no-repeat;
+                background-position: 85% 45%;
+                background-size: 55%;
+                .head {
+                    width: 30%;
+                    border-right: 1px solid #8288bb;
+                    min-height: 23vh;
+                    background-color: #e6e7f2;
+                }
+                .subtitle {
+                    i {
+                        color: #061178;
+                        padding-right: 11px;
+                        padding-left: 2px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.active {
+	background-color: #FFF;
+}
+.inactive {
+	background-color: #EEE;
+}
+
+a {
+	text-decoration: none;
+	color: #5B69AF;
+}
+
+.links {
+	padding: 0px 20px 5px 45px;
+}
+.docicon:before {
+    content: "\f0f6";  
+    font-family: FontAwesome;
+	font-size: 18px;
+	padding: 0 5px 0 0;
+	color:  #333333;
+ }
+.videoicon:before {
+    content: "\f03d";  
+    font-family: FontAwesome;
+	font-size: 18px;
+	padding: 0 5px 0 0;
+	color:  #333333;
+ }

@@ -89,17 +89,17 @@ const Header:React.FC<Props> = ({ history, location }) => {
   }
 
   const handleHomeClick = () => {
-      history.push('/home');
+      history.push('/tiles');
   };
 
   return (
     <>
       <Layout.Header className={styles.container}>
         <div className={styles.logoContainer} onClick={handleHomeClick}>
-          <Avatar className={styles.logo} src={logo} />
+          <Avatar className={styles.logo} src={logo} aria-label="header-avatar" />
             <div className={styles.vertical}></div>
         </div>
-        <div id="title" className={styles.title} onClick={handleHomeClick}>
+        <div id="title" className={styles.title} aria-label="header-title" onClick={handleHomeClick}>
           {Application.title}
         </div>
         {globalIcons}
