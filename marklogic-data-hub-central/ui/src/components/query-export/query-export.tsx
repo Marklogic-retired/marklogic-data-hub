@@ -72,7 +72,7 @@ const QueryExport = (props) => {
             <ExportQueryModal hasStructured={hasStructured} getPreview={getPreview} tableColumns={tableColumns} tableData={tableData} exportModalVisibility={exportModalVisibility} setExportModalVisibility={setExportModalVisibility} columns={props.columns} />
             {searchOptions.entityTypeIds.length > 0 &&
                 <Tooltip title='export this query to CSV'>
-                    <FontAwesomeIcon style={{ position: 'fixed', zIndex: 1, cursor: 'pointer' }} icon={faFileExport} size="lg" onClick={displayModal} />
+                    <FontAwesomeIcon style={{ cursor: 'pointer' }} icon={faFileExport} size="lg" onClick={displayModal} />
                 </Tooltip>
             }
         </div>
