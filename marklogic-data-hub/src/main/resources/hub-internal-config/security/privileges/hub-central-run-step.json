@@ -1,0 +1,5 @@
+{
+  "privilege-name": "hub-central:runStep",
+  "action": "http://marklogic.com/data-hub/hub-central/privileges/run-step",
+  "kind": "execute"
+}

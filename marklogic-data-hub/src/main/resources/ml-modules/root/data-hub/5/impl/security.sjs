@@ -14,15 +14,14 @@
   limitations under the License.
 */
 'use strict';
-const Artifacts = require('/data-hub/5/artifacts/core.sjs');
 const ds = require("/data-hub/5/data-services/ds-utils.sjs");
 
-const dataHubPrivilegePrefix = 'data-hub:';
+const hubCentralPrivilegePrefix = 'hub-central:';
 
 const ampedGetDataHubPrivileges = module.amp(function ampedGetDataHubPrivileges() {
   const userName = xdmp.getCurrentUser();
   const dataHubPrivilegeNames = xdmp.userPrivileges(userName).toArray().map((priv) => xdmp.privilegeName(priv))
-      .filter((privName) => fn.startsWith(privName, dataHubPrivilegePrefix));
+      .filter((privName) => fn.startsWith(privName, hubCentralPrivilegePrefix));
   return dataHubPrivilegeNames;
 });
 
@@ -30,11 +29,11 @@ class Security {
 
   getDataHubAuthorities() {
     return ampedGetDataHubPrivileges()
-        .map((privName) => fn.substringAfter(privName,dataHubPrivilegePrefix));
+        .map((privName) => fn.substringAfter(privName,hubCentralPrivilegePrefix));
   }
 
   dataHubAuthorityAssert(dataHubAuthority, msg = `${xdmp.getCurrentUser()} user doesn't have authority ${dataHubAuthority}`) {
-    const dataHubPrivilege = `http://marklogic.com/data-hub/privileges/${fn.lowerCase(fn.replace(dataHubAuthority, '([a-z])([A-Z])', '$1-$2'))}`;
+    const dataHubPrivilege = `http://marklogic.com/data-hub/hub-central/privileges/${fn.lowerCase(fn.replace(dataHubAuthority, '([a-z])([A-Z])', '$1-$2'))}`;
     try {
       xdmp.securityAssert(dataHubPrivilege,'execute');
     } catch (e) {

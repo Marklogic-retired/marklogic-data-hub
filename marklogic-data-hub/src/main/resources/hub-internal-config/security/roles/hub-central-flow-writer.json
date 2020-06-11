@@ -7,8 +7,8 @@
   ],
   "privilege": [
     {
-      "privilege-name": "data-hub:writeFlow",
-      "action": "http://marklogic.com/data-hub/privileges/write-flow",
+      "privilege-name": "hub-central:writeFlow",
+      "action": "http://marklogic.com/data-hub/hub-central/privileges/write-flow",
       "kind": "execute"
     }
   ]

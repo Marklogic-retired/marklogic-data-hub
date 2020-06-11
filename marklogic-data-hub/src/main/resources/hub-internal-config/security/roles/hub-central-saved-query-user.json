@@ -7,8 +7,8 @@
   ],
   "privilege": [
     {
-      "privilege-name": "data-hub:savedQueryUser",
-      "action": "http://marklogic.com/data-hub/privileges/saved-query-user",
+      "privilege-name": "hub-central:savedQueryUser",
+      "action": "http://marklogic.com/data-hub/hub-central/privileges/saved-query-user",
       "kind": "execute"
     }
   ]

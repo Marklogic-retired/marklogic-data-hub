@@ -7,8 +7,8 @@
   ],
   "privilege": [
     {
-      "privilege-name": "data-hub:writeIngestion",
-      "action": "http://marklogic.com/data-hub/privileges/write-ingestion",
+      "privilege-name": "hub-central:writeIngestion",
+      "action": "http://marklogic.com/data-hub/hub-central/privileges/write-ingestion",
       "kind": "execute"
     }
   ]

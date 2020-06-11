@@ -1,0 +1,5 @@
+{
+  "privilege-name": "hub-central:manageSavedQuery",
+  "action": "http://marklogic.com/data-hub/hub-central/privileges/manage-saved-query",
+  "kind": "execute"
+}

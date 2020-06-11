@@ -7,8 +7,8 @@
   ],
   "privilege": [
     {
-      "privilege-name": "data-hub:readEntityModel",
-      "action": "http://marklogic.com/data-hub/privileges/read-entity-model",
+      "privilege-name": "hub-central:readEntityModel",
+      "action": "http://marklogic.com/data-hub/hub-central/privileges/read-entity-model",
       "kind": "execute"
     }
   ]

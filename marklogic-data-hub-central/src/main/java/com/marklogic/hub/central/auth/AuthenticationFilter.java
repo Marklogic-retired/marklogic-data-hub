@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.hub.central.HttpSessionHubClientProvider;
 import com.marklogic.hub.central.HubCentral;
-import com.marklogic.hub.dataservices.SecurityService;
+import com.marklogic.hub.dataservices.HubCentralService;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
@@ -89,7 +89,7 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
 
         JsonNode response;
         try {
-            response = SecurityService.on(hubClientProvider.getHubClient().getStagingClient()).getAuthorities();
+            response = HubCentralService.on(hubClientProvider.getHubClient().getStagingClient()).getAuthorities();
         } catch (Exception e) {
             if (e instanceof FailedRequestException) {
                 FailedRequestException fre = (FailedRequestException) e;

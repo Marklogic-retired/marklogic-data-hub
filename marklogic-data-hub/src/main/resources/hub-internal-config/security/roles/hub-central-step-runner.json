@@ -1,6 +1,6 @@
 {
   "role-name": "hub-central-step-runner",
-  "description": "Permits reading/reviewing mapping steps in Hub Central",
+  "description": "Permits reading flows and running steps in Hub Central",
   "role": [
     "hub-central-user",
     "data-hub-common-writer",
@@ -15,13 +15,13 @@
   ],
   "privilege": [
     {
-      "privilege-name": "data-hub:runStep",
-      "action": "http://marklogic.com/data-hub/privileges/run-step",
+      "privilege-name": "hub-central:runStep",
+      "action": "http://marklogic.com/data-hub/hub-central/privileges/run-step",
       "kind": "execute"
     },
     {
-      "privilege-name": "data-hub:readFlow",
-      "action": "http://marklogic.com/data-hub/privileges/read-flow",
+      "privilege-name": "hub-central:readFlow",
+      "action": "http://marklogic.com/data-hub/hub-central/privileges/read-flow",
       "kind": "execute"
     },
     {

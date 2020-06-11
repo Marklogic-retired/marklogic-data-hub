@@ -56,7 +56,7 @@ const TilesView = (props) => {
     const enabledViews: Record<TileId, boolean> = {
         load: auth.canReadLoad() || auth.canWriteLoad(),
         model: auth.canReadEntityModel() || auth.canWriteEntityModel(),
-        curate: auth.canReadMapping() || auth.canWriteMapping() || auth.canReadMatchMerge() || auth.canWriteMatchMerge(),
+        curate: auth.canReadMapping() || auth.canWriteMapping() || auth.canReadMatchMerge() || auth.canWriteMatchMerge() || auth.canReadCustom(),
         run: auth.canReadFlow() || auth.canWriteFlow(),
         explore: true, 
         // TODO - Needs to be updated if there are any changes in authorities for Explorer

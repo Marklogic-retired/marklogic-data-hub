@@ -1,0 +1,5 @@
+{
+  "privilege-name": "hub-central:writeMapping",
+  "action": "http://marklogic.com/data-hub/hub-central/privileges/write-mapping",
+  "kind": "execute"
+}

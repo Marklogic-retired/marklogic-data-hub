@@ -7,8 +7,8 @@
   ],
   "privilege": [
     {
-      "privilege-name": "data-hub:writeEntityModel",
-      "action": "http://marklogic.com/data-hub/privileges/write-entity-model",
+      "privilege-name": "hub-central:writeEntityModel",
+      "action": "http://marklogic.com/data-hub/hub-central/privileges/write-entity-model",
       "kind": "execute"
     }
   ]

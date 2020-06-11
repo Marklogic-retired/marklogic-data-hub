@@ -37,10 +37,10 @@ class DeveloperRolesService implements IAuthoritiesContextInterface{
     public canWriteFlow:() => boolean = () => {
         return true;
     };
-    public canReadStepDefinition:() => boolean = () => {
+    public canReadCustom:() => boolean = () => {
         return true;
     };
-    public canWriteStepDefinition:() => boolean = () => {
+    public canWriteCustom:() => boolean = () => {
         return true;
     };
     public canDownloadProjectFiles:() => boolean = () => {
@@ -94,10 +94,10 @@ class OperatorRolesService implements IAuthoritiesContextInterface{
     public canWriteFlow:() => boolean = () => {
         return false;
     };
-    public canReadStepDefinition:() => boolean = () => {
+    public canReadCustom:() => boolean = () => {
         return true;
     };
-    public canWriteStepDefinition:() => boolean = () => {
+    public canWriteCustom:() => boolean = () => {
         return false;
     };
     public canDownloadProjectFiles:() => boolean = () => {
