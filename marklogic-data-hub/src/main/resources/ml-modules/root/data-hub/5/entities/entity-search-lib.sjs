@@ -31,55 +31,41 @@ const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
  */
 function addPropertiesToSearchResponse(entityName, searchResponse, propertiesToDisplay) {
   const maxDefaultProperties = 5;
-  const selectedPropertyNames = typeof propertiesToDisplay === 'string' ? propertiesToDisplay.split(",") :  propertiesToDisplay;
-  const entityModel = entityLib.findModelByEntityName(entityName);
-  if (!entityModel) {
-    ds.throwServerError(`Could not add entity properties to search response; could not find an entity model for entity name: ${entityName}`);
-  }
-
-  const allMetadata = buildAllMetadata("", entityModel, entityName);
-  const propertyMetadata = allMetadata["allPropertiesMetadata"];
-
+  const selectedPropertyNames = typeof propertiesToDisplay === 'string' ? propertiesToDisplay.split(",") : propertiesToDisplay;
   let selectedPropertyMetadata = [];
-  if(selectedPropertyNames) {
-    selectedPropertyMetadata = buildSelectedPropertiesMetadata(allMetadata, selectedPropertyNames);
+  let propertyMetadata = [];
+
+  if (entityName != null) {
+    //Single Entity is selected
+
+    const entityModel = entityLib.findModelByEntityName(entityName);
+    const entityInfo = {
+      "entityName": entityName,
+      "entityModel": entityModel
+    };
+    if (!entityModel) {
+      ds.throwServerError(`Could not add entity properties to search response; could not find an entity model for entity name: ${entityName}`);
+    }
+
+    const allMetadata = buildAllMetadata("", entityModel, entityName);
+    propertyMetadata = allMetadata["allPropertiesMetadata"];
+
+    if (selectedPropertyNames) {
+      selectedPropertyMetadata = buildSelectedPropertiesMetadata(allMetadata, selectedPropertyNames);
+    }
+    selectedPropertyMetadata = selectedPropertyMetadata.length > 0 ? selectedPropertyMetadata : propertyMetadata.slice(0, maxDefaultProperties);
+    // Add entityProperties to each search result
+    searchResponse.results.forEach(result => {
+      addEntitySpecificProperties(result, entityInfo, selectedPropertyMetadata)
+    });
+
+  } else {
+    //'All Entities' option is selected
+    searchResponse.results.forEach(result => {
+      addGenericEntityProperties(result);
+    });
   }
-  selectedPropertyMetadata = selectedPropertyMetadata.length > 0 ? selectedPropertyMetadata : propertyMetadata.slice(0, maxDefaultProperties);
 
-  // Add entityProperties and primaryKey to each search result
-  searchResponse.results.forEach(result => {
-    result.entityProperties = [];
-    result.primaryKey = {};
-
-    let instance = null;
-    try {
-      instance = getEntityInstance(result.uri);
-    } catch (error) {
-      console.log(`Unable to obtain entity instance from document with URI '${result.uri}'; will not add entity properties to its search result`);
-    }
-
-    let entityDef = entityModel.definitions[entityName];
-    if (instance != null) {
-      const entityInstance = instance[entityName];
-      if (!entityInstance) {
-        console.log(`Unable to obtain entity instance from document with URI '${result.uri}' and entity name '${entityName}'; will not add entity properties to its search result`);
-      } else {
-        selectedPropertyMetadata.forEach(parentProperty => {
-            result.entityProperties.push(getPropertyValues(parentProperty, entityInstance));
-            result.primaryKey = getPrimaryValue(entityInstance, entityDef);
-
-            // no primaryKey in entityInst / entityDef, so use URI
-            if (result.primaryKey === null) {
-              result.primaryKey = {
-                "propertyPath": "uri",
-                "propertyValue": result.uri
-              }
-            }
-          }
-        );
-      }
-    }
-  });
   // Make it easy for the client to know which property names were used, and which ones exist
   searchResponse.selectedPropertyDefinitions = selectedPropertyMetadata;
   searchResponse.entityPropertyDefinitions = propertyMetadata;
@@ -313,6 +299,86 @@ function getPrimaryValue(entityInstance, entityDefinition) {
   } else { // no primaryKey in entityDef, so use uri
     return null;
   }
+}
+
+//Helper function to add properties to each result instance under results array in searchReponse
+function addEntitySpecificProperties(result, entityInfo, selectedPropertyMetadata) {
+  let instance = null;
+  let entityTitle = entityInfo.entityName;
+  result.entityProperties = [];
+
+  try {
+    instance = getEntityInstance(result.uri);
+  } catch (error) {
+    console.log(`Unable to obtain entity instance from document with URI '${result.uri}'; will not add entity properties to its search result`);
+  }
+
+  if (instance != null) {
+    let entityDef = entityInfo.entityModel.definitions[entityTitle];
+    const entityInstance = instance[entityTitle];
+    if (!entityInstance) {
+      console.log(`Unable to obtain entity instance from document with URI '${result.uri}' and entity name '${entityTitle}'; will not add entity properties to its search result`);
+    } else {
+      selectedPropertyMetadata.forEach(parentProperty => {
+        result.entityProperties.push(getPropertyValues(parentProperty, entityInstance));
+      });
+
+      addPrimaryKeyToResult(result, entityInstance, entityDef);
+    }
+  }
+}
+
+function addGenericEntityProperties(result) {
+  let instance = null;
+  let entityTitle = "";
+  let createdOnDate = "";
+  let entityModel = {};
+  result.primaryKey = {};
+  result.identifier = {};
+  result.entityName = "";
+  result.createdOn = "";
+
+  try {
+    instance = getEntityInstance(result.uri);
+  } catch (error) {
+    console.log(`Unable to obtain entity instance from document with URI '${result.uri}'; will not add entity properties to its search result`);
+  }
+
+  if (instance != null) {
+    entityTitle = instance.hasOwnProperty("info") ? instance.info.title : Object.keys(instance)[0];
+    entityModel = entityLib.findModelByEntityName(entityTitle);
+    let entityDef = entityModel.definitions[entityTitle];
+    const entityInstance = instance[entityTitle];
+    if (!entityInstance) {
+      console.log(`Unable to obtain entity instance from document with URI '${result.uri}' and entity name '${entityTitle}'; will not add entity properties to its search result`);
+    } else {
+        addPrimaryKeyToResult(result, entityInstance, entityDef);
+    }
+  }
+  try {
+    createdOnDate = xdmp.documentGetMetadata(result.uri).datahubCreatedOn;
+  } catch (error) {
+    console.log(`Unable to obtain document with URI '${result.uri}'; will not add createdOn date to its search result`);
+  }
+  let identifierValue = result.primaryKey.propertyPath === "uri" ? result.uri : result.primaryKey.propertyValue;
+  result.identifier = {
+    "propertyPath": "identifier",
+    "propertyValue": identifierValue
+  };
+  result.entityName = entityTitle;
+  result.createdOn = createdOnDate;
+}
+
+function addPrimaryKeyToResult(result, entityInstance, entityDef) {
+      result.primaryKey = getPrimaryValue(entityInstance, entityDef);
+
+      // no primaryKey in entity instance, so use URI
+      if (result.primaryKey === null) {
+        result.primaryKey = {
+          "propertyPath": "uri",
+          "propertyValue": result.uri
+        }
+      }
 }
 
 module.exports = {

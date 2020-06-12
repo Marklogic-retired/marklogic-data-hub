@@ -8,6 +8,10 @@ export const entitySearch = {
     {
       "index": 1,
       "uri": "/Customer/Cust1.json",
+      "primaryKey": {
+        "propertyPath": "customerId",
+        "propertyValue": 101
+      },
       "path": "fn:doc(\"/Customer/Cust1.json\")",
       "score": 0,
       "confidence": 0,
@@ -230,6 +234,10 @@ export const entitySearch = {
     {
       "index": 2,
       "uri": "/Customer/Cust2.json",
+      "primaryKey": {
+        "propertyPath": "customerId",
+        "propertyValue": 102
+      },
       "path": "fn:doc(\"/Customer/Cust2.json\")",
       "score": 0,
       "confidence": 0,
@@ -452,6 +460,10 @@ export const entitySearch = {
     {
       "index": 3,
       "uri": "/Customer/Cust3.json",
+      "primaryKey": {
+        "propertyPath": "customerId",
+        "propertyValue": 103
+      },
       "path": "fn:doc(\"/Customer/Cust3.json\")",
       "score": 0,
       "confidence": 0,
@@ -674,6 +686,10 @@ export const entitySearch = {
     {
       "index": 4,
       "uri": "/Customer/Cust4.json",
+      "primaryKey": {
+        "propertyPath": "customerId",
+        "propertyValue": 104
+      },
       "path": "fn:doc(\"/Customer/Cust4.json\")",
       "score": 0,
       "confidence": 0,
@@ -898,6 +914,10 @@ export const entitySearch = {
     {
       "index": 5,
       "uri": "/Customer/Cust5.json",
+      "primaryKey": {
+        "propertyPath": "customerId",
+        "propertyValue": 105
+      },
       "path": "fn:doc(\"/Customer/Cust5.json\")",
       "score": 0,
       "confidence": 0,
@@ -1695,6 +1715,200 @@ export const entityPropertyDefinitions =  [
   }
 ]
 
+export const entitySearchAllEntities = {
+  "snippet-format": "snippet",
+  "total": 5,
+  "start": 1,
+  "page-length": 10,
+  "selected": "include",
+  "results": [
+    {
+      "index": 1,
+      "identifier": {
+        "propertyPath": "identifier",
+        "propertyValue": 101
+      },
+      "primaryKey": {
+        "propertyPath": "customerId",
+        "propertyValue": 101
+      },
+      "uri": "/Customer/Cust1.json",
+      "entityName": "Customer",
+      "createdOn": "2020-06-21T23:44:46.225063-07:00",
+      "path": "fn:doc(\"/Customer/Cust1.json\")",
+      "score": 0,
+      "confidence": 0,
+      "fitness": 0,
+      "href": "/v1/documents?uri=%2FCustomer%2FCust1.json",
+      "mimetype": "application/json",
+      "format": "json",
+      "matches": [
+        {
+          "path": "fn:doc(\"/Customer/Cust1.json\")/object-node()",
+          "match-text": [
+            "Customer 0.0.1 http://example.org/ Carmella Hardin Carm din Whitwell Place Ellerslie Georgia 52239 1718 Whitwell Place2 Ellerslie2 Georgia 52239 1718 Anna Court Stewart Kansas 62601"
+          ]
+        }
+      ],
+      "extracted": {
+        "kind": "array",
+        "content": [
+          {
+            "headers": {}
+          },
+          {
+            "Customer": {
+              "customerId": 101,
+              "name": "Carmella Hardin",
+              "nicknames": [
+                "Carm",
+                "din"
+              ],
+              "shipping": [
+                {
+                  "Address": {
+                    "street": "Whitwell Place",
+                    "city": "Ellerslie",
+                    "state": "Georgia",
+                    "zip": {
+                      "Zip": {
+                        "fiveDigit": "52239",
+                        "plusFour": "1718"
+                      }
+                    }
+                  }
+                },
+                {
+                  "Address": {
+                    "street": "Whitwell Place2",
+                    "city": "Ellerslie2",
+                    "state": "Georgia",
+                    "zip": {
+                      "Zip": {
+                        "fiveDigit": "52239",
+                        "plusFour": "1718"
+                      }
+                    }
+                  }
+                }
+              ],
+              "billing": {
+                "Address": {
+                  "street": "Anna Court",
+                  "city": "Stewart",
+                  "state": "Kansas",
+                  "zip": {
+                    "Zip": {
+                      "fiveDigit": "62601",
+                      "plusFour": "6783"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "Address": {
+              "Shipping": {
+                "Street": "Whitwell Place",
+                "City": "Ellerslie",
+                "State": "Georgia",
+                "Postal": "52239-1718"
+              }
+            }
+          },
+          {
+            "Address": {
+              "Shipping": {
+                "Street": "Whitwell Place2",
+                "City": "Ellerslie2",
+                "State": "Georgia",
+                "Postal": "52239-1718"
+              }
+            }
+          },
+          {
+            "Address": {
+              "Billing": {
+                "Street": "Anna Court",
+                "City": "Stewart",
+                "State": "Kansas",
+                "Postal": "62601-6783"
+              }
+            }
+          }
+        ]
+      }
+    }]}
+
+
+export const entityDefArray = [{
+  info: {
+    baseUri: "http://example.org/",
+    title: "Customer",
+    version: "0.0.1"
+  },
+  name: "Customer",
+  pathIndex: [],
+  primaryKey: "customerId",
+  properties: [
+    {
+      collation: undefined,
+      datatype: "integer",
+      name: "customerId",
+      ref: ""
+    },
+    {
+      collation: "http://marklogic.com/collation/codepoint",
+      datatype: "string",
+      name: "name",
+      ref: ""
+    },
+    {
+      collation: undefined,
+      datatype: "array",
+      name: "nicknames",
+      ref: ""
+    },
+    {
+      collation: undefined,
+      datatype: "array",
+      name: "shipping",
+      ref: "Address"
+    },
+    {
+      collation: undefined,
+      datatype: "entity",
+      name: "billing",
+      ref: "Address"
+    },
+    {
+      collation: undefined,
+      datatype: "date",
+      name: "birthDate",
+      ref: ""
+    },
+    {
+      collation: undefined,
+      datatype: "string",
+      name: "status",
+      ref: ""
+    },
+    {
+      collation: undefined,
+      datatype: "date",
+      name: "customerSince",
+      ref: ""
+    },
+    {
+      collation: undefined,
+      datatype: "array",
+      name: "orders",
+      ref: "Order"
+    }],
+  rangeIndex: []
+}]
+  
 
 
 
