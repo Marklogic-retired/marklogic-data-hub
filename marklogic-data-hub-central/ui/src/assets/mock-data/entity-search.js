@@ -1695,6 +1695,73 @@ export const entityPropertyDefinitions =  [
   }
 ]
 
+export const entityDefArray = [{
+  info: {
+    baseUri: "http://example.org/",
+    title: "Customer",
+    version: "0.0.1"
+  },
+  name: "Customer",
+  pathIndex: [],
+  primaryKey: "customerId",
+  properties: [
+    {
+      collation: undefined,
+      datatype: "integer",
+      name: "customerId",
+      ref: ""
+    },
+    {
+      collation: "http://marklogic.com/collation/codepoint",
+      datatype: "string",
+      name: "name",
+      ref: ""
+    },
+    {
+      collation: undefined,
+      datatype: "array",
+      name: "nicknames",
+      ref: ""
+    },
+    {
+      collation: undefined,
+      datatype: "array",
+      name: "shipping",
+      ref: "Address"
+    },
+    {
+      collation: undefined,
+      datatype: "entity",
+      name: "billing",
+      ref: "Address"
+    },
+    {
+      collation: undefined,
+      datatype: "date",
+      name: "birthDate",
+      ref: ""
+    },
+    {
+      collation: undefined,
+      datatype: "string",
+      name: "status",
+      ref: ""
+    },
+    {
+      collation: undefined,
+      datatype: "date",
+      name: "customerSince",
+      ref: ""
+    },
+    {
+      collation: undefined,
+      datatype: "array",
+      name: "orders",
+      ref: "Order"
+    }],
+  rangeIndex: []
+}]
+  
 
 
 

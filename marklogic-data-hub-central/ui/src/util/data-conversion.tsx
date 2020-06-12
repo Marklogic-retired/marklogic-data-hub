@@ -306,12 +306,12 @@ export const tableParser = (props) => {
 
       // Parameters for both JSON and XML.
       //Get entity definition.
-      if (itemEntityName.length && props.entityDefArray.length) {
+      if (itemEntityName.length && props.entityDefArray?.length) {
         entityDef = props.entityDefArray.find(entity => entity.name === itemEntityName[0]);
       }
 
       //Get primary key if exists or set it to undefined.
-      if (entityDef.primaryKey.length !== 0) {
+      if (entityDef.primaryKey?.length !== 0) {
         primaryKeyValue = encodeURIComponent(itemEntityProperties[0][entityDef.primaryKey]);
         primaryKeys.indexOf(entityDef.primaryKey) === -1 && primaryKeys.push(entityDef.primaryKey);
       } else {

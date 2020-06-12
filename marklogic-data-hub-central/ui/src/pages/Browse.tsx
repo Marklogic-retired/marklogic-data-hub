@@ -292,6 +292,7 @@ const Browse: React.FC<Props> = ({ location }) => {
                           data={data}
                           entityPropertyDefinitions = {entityPropertyDefinitions}
                           selectedPropertyDefinitions = {selectedPropertyDefinitions}
+                          entityDefArray={entityDefArray}
                           columns={columns}
                       />
                   </div>
