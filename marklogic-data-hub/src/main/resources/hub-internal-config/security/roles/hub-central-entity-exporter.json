@@ -2,12 +2,24 @@
   "role-name": "hub-central-entity-exporter",
   "description": "Permits exporting entity instance documents",
   "role": [
-    "hub-central-user"
+    "hub-central-user",
+    "data-hub-entity-model-reader",
+    "tde-view"
   ],
   "privilege": [
     {
       "privilege-name": "hub-central:exportEntityInstances",
       "action": "http://marklogic.com/data-hub/hub-central/privileges/export-entity-instances",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:xslt-eval",
+      "action": "http://marklogic.com/xdmp/privileges/xslt-eval",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:value",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-value",
       "kind": "execute"
     }
   ]
