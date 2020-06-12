@@ -20,10 +20,10 @@ const entitySearchLib = require("/data-hub/5/entities/entity-search-lib.sjs");
 
 // Expects JSON content
 function transform(context, params, content) {
-  if(!params.entityName) {
-    ds.throwBadRequest("entityName is required to generate search results containing entity properties");
+  let entityName = null;
+  if(params.entityName) {
+    entityName = params.entityName;
   }
-  const entityName = params.entityName;
   const propertiesToDisplay = params.propertiesToDisplay;
 
   const contentObject = content.toObject();

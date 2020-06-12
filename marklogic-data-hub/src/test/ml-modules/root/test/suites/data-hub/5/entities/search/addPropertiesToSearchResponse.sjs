@@ -464,10 +464,69 @@ function verifyPrimaryKeyWithoutDefinedEntities() {
   ];
 }
 
+function verifyPropertiesForAllEntitiesOption() {
+  const response = {
+    "snippet-format": "snippet",
+    "total": 2,
+    "results": [
+      {
+        "index": 1,
+        "uri": "/content/jane.json",
+      },
+      {
+        "index": 2,
+        "uri": "/content/sally.json",
+      }
+    ]
+  };
+  const entityName = null; //Indicates that user has chosen 'All Entities' option
+  
+  entitySearchLib.addPropertiesToSearchResponse(entityName, response);
+  const allEntitiesProps = response.results[0];
+  return([
+  test.assertEqual(true, allEntitiesProps.hasOwnProperty('identifier')),
+  test.assertEqual(true, allEntitiesProps.hasOwnProperty('primaryKey')),
+  test.assertEqual(true, allEntitiesProps.hasOwnProperty('entityName')),
+  test.assertEqual(true, allEntitiesProps.hasOwnProperty('createdOn')),
+  test.assertEqual("identifier", allEntitiesProps.identifier.propertyPath),
+  test.assertEqual(101, allEntitiesProps.identifier.propertyValue),
+  test.assertEqual("Customer", allEntitiesProps.entityName)
+  ]);
+}
+
+function verifyIdentifierWithoutDefinedPrimaryKey() {
+  const response = {
+    "snippet-format": "snippet",
+    "total": 2,
+    "results": [
+      {
+        "index": 1,
+        "uri": "/content/sallyAddress.json",
+      },
+      {
+        "index": 2,
+        "uri": "/content/janeAddress.json",
+      }
+    ]
+  };
+  const entityName = null;  //Indicates that user has chosen 'All Entities' option
+  entitySearchLib.addPropertiesToSearchResponse(entityName, response);
+  return([
+    test.assertEqual("/content/sallyAddress.json", response.results[0].identifier.propertyValue),
+    test.assertEqual("identifier", response.results[0].identifier.propertyPath),
+    test.assertEqual("uri", response.results[0].primaryKey.propertyPath),
+    test.assertEqual("/content/janeAddress.json", response.results[1].identifier.propertyValue),
+    test.assertEqual("identifier", response.results[1].identifier.propertyPath),
+    test.assertEqual("uri", response.results[1].primaryKey.propertyPath)
+  ]);
+}
+
 []
   .concat(verifySimpleSelectedPropertiesResults())
   .concat(verifyStructuredFirstLevelSelectedPropertiesResults())
   .concat(verifyStructuredSelectedPropertiesResults())
   .concat(verifyResultsWithoutSelectedProperties())
   .concat(verifyPrimaryKeyWithDefinedEntities())
-  .concat(verifyPrimaryKeyWithoutDefinedEntities());
+  .concat(verifyPrimaryKeyWithoutDefinedEntities())
+  .concat(verifyPropertiesForAllEntitiesOption())
+  .concat(verifyIdentifierWithoutDefinedPrimaryKey());

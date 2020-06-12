@@ -282,13 +282,15 @@ const Browse: React.FC<Props> = ({ location }) => {
               <div className={styles.fixedView} >
                 {tableView ?
                   <div>
-                    <ResultsTabularView
-                      data={data}
-                      entityPropertyDefinitions={entityPropertyDefinitions}
-                      selectedPropertyDefinitions={selectedPropertyDefinitions}
-                      columns={columns}
-                      setColumnSelectorTouched={setColumnSelectorTouched}
-                    />
+                      <ResultsTabularView
+                          data={data}
+                          entityPropertyDefinitions = {entityPropertyDefinitions}
+                          selectedPropertyDefinitions = {selectedPropertyDefinitions}
+                          entityDefArray={entityDefArray}
+                          columns={columns}
+                          selectedEntities={searchOptions.entityTypeIds}
+                          setColumnSelectorTouched={setColumnSelectorTouched}
+                      />
                   </div>
                   : <SearchResults data={data} entityDefArray={entityDefArray} />
                 }

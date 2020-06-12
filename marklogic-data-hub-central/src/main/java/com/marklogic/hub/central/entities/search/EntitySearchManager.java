@@ -104,7 +104,9 @@ public class EntitySearchManager {
                 // We have some awkwardness here where the input is 'entityName', but as of 5.3.0, the "entityTypeIds"
                 // property is capturing entity names, which are expected to double as collection names as well
                 ServerTransform searchResultsTransform = new ServerTransform("hubEntitySearchTransform");
-                searchResultsTransform.put("entityName", entityTypeCollections[0]);
+                if(entityTypeCollections.length == 1) {
+                    searchResultsTransform.put("entityName", entityTypeCollections);
+                }
                 searchResultsTransform.put("propertiesToDisplay", searchQuery.getPropertiesToDisplay());
                 rcQueryDef.setResponseTransform(searchResultsTransform);
             }
