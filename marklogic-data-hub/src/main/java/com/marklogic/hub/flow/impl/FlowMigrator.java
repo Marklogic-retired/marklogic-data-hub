@@ -22,11 +22,14 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.client.datamovement.DataMovementManager;
+import com.marklogic.client.datamovement.DeleteListener;
+import com.marklogic.client.datamovement.QueryBatcher;
 import com.marklogic.client.ext.helper.LoggingObject;
-import com.marklogic.hub.FlowManager;
-import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubProject;
-import com.marklogic.hub.MappingManager;
+import com.marklogic.client.query.QueryManager;
+import com.marklogic.client.query.StructuredQueryBuilder;
+import com.marklogic.client.query.StructuredQueryDefinition;
+import com.marklogic.hub.*;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.impl.FlowManagerImpl;
@@ -52,19 +55,48 @@ import java.util.stream.Stream;
  */
 public class FlowMigrator extends LoggingObject {
 
-    private HubProject hubProject;
     private MappingManager mappingManager;
     private FlowManager flowManager;
-
-    ObjectMapper mapper = new ObjectMapper();
+    private HubConfig hubConfig;
+    private ObjectMapper mapper = new ObjectMapper();
 
     public FlowMigrator(HubConfig hubConfig) {
-        hubProject = hubConfig.getHubProject();
-        mappingManager = new MappingManagerImpl(hubConfig);
-        flowManager = new FlowManagerImpl(hubConfig, mappingManager);
+        this.hubConfig = hubConfig;
+        this.mappingManager = new MappingManagerImpl(hubConfig);
+        this.flowManager = new FlowManagerImpl(hubConfig, mappingManager);
     }
 
+    /**
+     * After flows have been migrated, a user needs to delete any legacy mappings that exist, as these have now been
+     * converted to mapping steps. Fortunately, a delete trigger exists on these to also delete the xml/xslt documents
+     * associated with them.
+     */
+    public void deleteInstalledLegacyMappings() {
+        logger.info("Deleting installed legacy mappings in staging and final databases");
+        HubClient hubClient = hubConfig.newHubClient();
+        Stream.of(hubClient.getStagingClient(), hubClient.getFinalClient()).forEach(client -> {
+            DataMovementManager dmm = client.newDataMovementManager();
+            QueryManager queryManager = client.newQueryManager();
+            StructuredQueryBuilder queryBuilder = queryManager.newStructuredQueryBuilder();
+            StructuredQueryDefinition query = queryBuilder.andNot(
+                queryBuilder.collection("http://marklogic.com/data-hub/mappings"),
+                queryBuilder.collection("http://marklogic.com/data-hub/steps")
+            );
+            QueryBatcher queryBatcher = dmm.newQueryBatcher(query)
+                .withConsistentSnapshot()
+                .withThreadCount(4) // If not set, DMSDK logs an unattractive warning
+                .onUrisReady(new DeleteListener());
+            dmm.startJob(queryBatcher);
+            queryBatcher.awaitCompletion();
+            dmm.stopJob(queryBatcher);
+        });
+    }
+
+    /**
+     * Migrate the flow files in a user's local project. Does not make any changes to what's stored in MarkLogic.
+     */
     public void migrateFlows() {
+        HubProject hubProject = hubConfig.getHubProject();
         final File flowsDir = hubProject.getFlowsDir().toFile();
         if (!flowsDir.exists()) {
             logger.warn("No flows directory exists, so no flows will be migrated");

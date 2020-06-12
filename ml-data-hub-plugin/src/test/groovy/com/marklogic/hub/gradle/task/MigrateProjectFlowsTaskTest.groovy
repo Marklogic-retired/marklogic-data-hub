@@ -1,50 +1,51 @@
-package com.marklogic.gradle.task
+package com.marklogic.hub.gradle.task
 
+import com.marklogic.gradle.task.BaseTest
 import org.gradle.testkit.runner.UnexpectedBuildFailure
 import org.gradle.testkit.runner.UnexpectedBuildSuccess
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 //This is a smoke test to ensure the tasks run fine
 
-class FlowMigratonTaskTest extends BaseTest {
+class MigrateProjectFlowsTaskTest extends BaseTest {
 
     def setupSpec() {
         createGradleFiles()
         runTask('hubInit')
         //hubInit doesn't create mappings dir any more.
-        if(! new File(testProjectDir.getRoot(),'mappings').exists()){
-            testProjectDir.newFolder("mappings")
+        if(! new File(BaseTest.testProjectDir.getRoot(),'mappings').exists()){
+            BaseTest.testProjectDir.newFolder("mappings")
         }
     }
 
-    def "run hubMigrateFlows without confirm"() {
+    def "run without confirm"() {
         when:
         def result
-        result = runFailTask("hubMigrateFlows")
+        result = runFailTask("hubMigrateProjectFlows")
 
         then:
         notThrown(UnexpectedBuildSuccess)
         result.output.contains("To execute this task, set the 'confirm' property to 'true'; e.g. '-Pconfirm=true'")
     }
 
-    def "run hubMigrateFlows with confirm"() {
+    def "run with confirm"() {
         when:
         def result
-        result = runTask("hubMigrateFlows", '-Pconfirm=true')
+        result = runTask("hubMigrateProjectFlows", '-Pconfirm=true')
 
         then:
         notThrown(UnexpectedBuildFailure)
-        result.task(":hubMigrateFlows").outcome == SUCCESS
+        result.task(":hubMigrateProjectFlows").outcome == SUCCESS
     }
 
-    def "run hubMigrateFlows should not throw NPE"() {
+    def "run should not throw NPE"() {
         when:
         def result
-        runTask("hubMigrateFlows", '-Pconfirm=true')
-        result = runTask("hubMigrateFlows", '-Pconfirm=true')
+        runTask("hubMigrateProjectFlows", '-Pconfirm=true')
+        result = runTask("hubMigrateProjectFlows", '-Pconfirm=true')
 
         then:
         notThrown(UnexpectedBuildFailure)
-        result.task(":hubMigrateFlows").outcome == SUCCESS
+        result.task(":hubMigrateProjectFlows").outcome == SUCCESS
     }
 }

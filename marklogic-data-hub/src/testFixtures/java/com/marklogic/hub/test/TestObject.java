@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.ext.helper.LoggingObject;
 
+import java.io.File;
+
 /**
  * Base class for any object that helps with writing tests. Should only contain the most generic helper methods.
  */
@@ -23,6 +25,14 @@ public abstract class TestObject extends LoggingObject {
     protected ObjectNode readJsonObject(String json) {
         try {
             return (ObjectNode) objectMapper.readTree(json);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    protected ObjectNode readJsonObject(File file) {
+        try {
+            return (ObjectNode) objectMapper.readTree(file);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
