@@ -1,8 +1,9 @@
-package com.marklogic.gradle.task
+package com.marklogic.hub.gradle.task
 
+import com.marklogic.gradle.task.AbstractConfirmableTask
 import com.marklogic.hub.flow.impl.FlowMigrator
 
-class FlowMigrationTask extends AbstractConfirmableTask {
+class MigrateProjectFlowsTask extends AbstractConfirmableTask {
 
     @Override
     void executeIfConfirmed() {

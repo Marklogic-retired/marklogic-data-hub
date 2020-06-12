@@ -91,6 +91,7 @@ test {
     // TODO put fullcycle tests in another project?
     //include 'com/marklogic/gradle/fullcycle/**'
     include 'com/marklogic/gradle/task/**'
+    include 'com/marklogic/hub/gradle/task/**'
     classpath = project.sourceSets.main.runtimeClasspath + project.sourceSets.test.runtimeClasspath
 }
 
