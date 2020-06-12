@@ -160,15 +160,15 @@ public class EntitySearchControllerTest extends AbstractMvcTest {
 
 
         // Try exporting without the required role "hub-central-entity-exporter"
-        loginAsTestUserWithRoles("hub-central-user","data-hub-operator");
+        loginAsTestUserWithRoles("hub-central-user");
         postWithParams(EXPORT_PATH, getRequestParams(limit, json))
             .andExpect(status().isForbidden());
         getJson(EXPORT_PATH + "/query/non-existent-query-id", getRequestParams(limit, null))
             .andExpect(status().isForbidden());
 
 
-        // Set the required role and re-login
-        loginAsTestUserWithRoles("data-hub-operator", "hub-central-entity-exporter", "hub-central-saved-query-user");
+        // Log in with role "hub-central-entity-exporter"
+        loginAsTestUserWithRoles("hub-central-entity-exporter");
 
         // Export using query document
         postWithParams(EXPORT_PATH, getRequestParams(limit, json))
@@ -182,6 +182,10 @@ public class EntitySearchControllerTest extends AbstractMvcTest {
                 assertTrue(actualRowSet.contains(getHashCode(customer1Info)));
                 assertTrue(actualRowSet.contains(getHashCode(customer2Info)));
             });
+
+
+        // Log in with exporter and saved-query roles
+        loginAsTestUserWithRoles("hub-central-entity-exporter", "hub-central-saved-query-user");
 
         // Save the query document
         postJson(SAVED_QUERIES_PATH, json)

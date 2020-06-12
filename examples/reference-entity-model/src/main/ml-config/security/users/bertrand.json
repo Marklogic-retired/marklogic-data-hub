@@ -5,6 +5,7 @@
   "role": [
     "data-hub-operator",
     "hub-central-mapping-reader",
-    "hub-central-entity-exporter"
+    "hub-central-entity-exporter",
+    "hub-central-saved-query-user"
   ]
 }
