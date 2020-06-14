@@ -20,7 +20,7 @@ then
 else
         cd qa-project
         ./gradlew hubInit
-        ./gradlew hubMigrateFlows -Pconfirm=true
+        ./gradlew hubMigrateProjectFlows -Pconfirm=true
         cp ../cypress/fixtures/users/* src/main/ml-config/security/users/
 
         ./gradlew mlDeploy -PmlHost=$mlHost --info --stacktrace
