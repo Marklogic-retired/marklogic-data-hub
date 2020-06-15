@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Table, Tooltip } from 'antd';
-import { MLButton, MLTable } from '@marklogic/design-system';
+import { MLButton, MLTable, MLTooltip } from '@marklogic/design-system';
 import { faCircle, faCheck, faTrashAlt, faPlusSquare } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import scrollIntoView from 'scroll-into-view';
@@ -36,7 +35,10 @@ const PropertyTable: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (newRowKey) {
-      scrollIntoView(document.querySelector(`.${newRowKey}`));
+      let element = document.querySelector(`.${newRowKey}`)
+      if (element) {
+        scrollIntoView(element);
+      }
     }
   }, [newRowKey]);
 
@@ -53,9 +55,9 @@ const PropertyTable: React.FC<Props> = (props) => {
     },
     {
       title: (
-        <Tooltip title={ModelingTooltips.identifier}>
+        <MLTooltip title={ModelingTooltips.identifier}>
           <span>Identifier</span>
-        </Tooltip>
+        </MLTooltip>
       ),
       dataIndex: 'identifier',
       width: 100,
@@ -65,9 +67,9 @@ const PropertyTable: React.FC<Props> = (props) => {
     },
     {
       title: (
-        <Tooltip title={ModelingTooltips.multiple}>
+        <MLTooltip title={ModelingTooltips.multiple}>
           <span>Multiple</span>
-        </Tooltip>
+        </MLTooltip>
       ),
       dataIndex: 'multiple',
       width: 100,
@@ -77,9 +79,9 @@ const PropertyTable: React.FC<Props> = (props) => {
     },
     {
       title: (
-        <Tooltip title={ModelingTooltips.sort}>
+        <MLTooltip title={ModelingTooltips.sort}>
           <span>Sort</span>
-        </Tooltip>
+        </MLTooltip>
       ),
       dataIndex: 'sort',
       width: 75,
@@ -89,9 +91,9 @@ const PropertyTable: React.FC<Props> = (props) => {
     },
     {
       title: (
-        <Tooltip title={ModelingTooltips.facet}>
+        <MLTooltip title={ModelingTooltips.facet}>
           <span>Facet</span>
-        </Tooltip>
+        </MLTooltip>
       ),
       dataIndex: 'facet',
       width: 100,
@@ -101,9 +103,9 @@ const PropertyTable: React.FC<Props> = (props) => {
     },
     {
       title: (
-        <Tooltip title={ModelingTooltips.advancedSearch}>
+        <MLTooltip title={ModelingTooltips.advancedSearch}>
           <span>Advanced Search</span>
-        </Tooltip>
+        </MLTooltip>
       ),
       dataIndex: 'advancedSearch',
       width: 150,
@@ -113,9 +115,9 @@ const PropertyTable: React.FC<Props> = (props) => {
     },
     {
       title: (
-        <Tooltip title={ModelingTooltips.pii}>
+        <MLTooltip title={ModelingTooltips.pii}>
           <span>PII</span>
-        </Tooltip>
+        </MLTooltip>
       ),
       dataIndex: 'pii',
       width: 75,
@@ -147,7 +149,7 @@ const PropertyTable: React.FC<Props> = (props) => {
         let structuredTypeName = Array.isArray(textParse) ? textParse[textParse.length-1] : text
 
         return ( text && 
-          <Tooltip title={ModelingTooltips.addStructuredProperty}>
+          <MLTooltip title={ModelingTooltips.addStructuredProperty}>
             <FontAwesomeIcon 
               data-testid={'add-struct-'+ structuredTypeName}
               className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.addIconReadOnly : styles.addIcon} 
@@ -161,7 +163,7 @@ const PropertyTable: React.FC<Props> = (props) => {
                 }
               }}
             />
-          </Tooltip>
+          </MLTooltip>
         )
       }
     }
@@ -176,16 +178,19 @@ const PropertyTable: React.FC<Props> = (props) => {
     } else if (entityDefinitionsArray.length > 1) {
       setHeaderColumns(columns);
     }
-
     // Expand structured type
     if (structuredTypeOptions.isStructured) {
-      let row = renderTableData.find(row => row.type === structuredTypeOptions.name)
+      let propertyName = structuredTypeOptions.name.split(',')[0];
+      let row = renderTableData.find(row => row.propertyName === propertyName)
       if (!row) {
-        let parseName = structuredTypeOptions.name.split(',');
-        row = renderTableData.find(row => row.type === parseName[0])  
-
-        let childRow = row['children'].find( childRow => childRow.type === parseName[1] );
-        setExpandedRows([row.key, childRow.key])
+        let structuredNames = structuredTypeOptions.name.split(',').slice(1);
+        row = renderTableData.find(row => row.type === structuredNames[0])  
+  
+        if (row) {
+          let childRow = row['children'].find( childRow => childRow.type === structuredNames[1] );
+          setExpandedRows([row.key, childRow.key])
+        }
+       
       } else {
         setExpandedRows([row.key]);
       }
@@ -214,6 +219,7 @@ const PropertyTable: React.FC<Props> = (props) => {
   
   // Covers both Entity Type and Structured Type
   const addPropertyToDefinition = (definitionName: string, propertyName: string, propertyOptions: any) => {
+    
     let parseName = definitionName.split(',');
     let parseDefinitionName = parseName[parseName.length-1]
     let updatedDefinitions = {...definitions};
@@ -287,7 +293,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     entityTypeDefinition['properties'][propertyName] = newProperty;
     updatedDefinitions[parseDefinitionName] = entityTypeDefinition;
     updateEntityDefinitionsAndRenderTable(updatedDefinitions);
-    setNewRowKey(propertyName);
+    setNewRowKey(props.entityName + propertyName);
     toggleIsModified(true);
   }
 
@@ -329,7 +335,7 @@ const PropertyTable: React.FC<Props> = (props) => {
               type: property.ref.split('/').pop(),
               pii: entityTypeDefinition?.pii.includes(property.name) ? property.name : '',
               children: structuredTypeProperties,
-              add: parentDefinitionName ? parentDefinitionName + ',' + structuredType.name : structuredType.name
+              add: parentDefinitionName ? property.name + ',' + parentDefinitionName + ',' + structuredType.name : property.name + ',' + structuredType.name
             }
           }
         }
@@ -380,16 +386,16 @@ const PropertyTable: React.FC<Props> = (props) => {
       <div className={styles.addButtonContainer}>
         { props.canWriteEntityModel ? 
           Object.keys(props.definitions[props.entityName]['properties']).length === 0 ? (
-            <Tooltip title={ModelingTooltips.addProperty}>
+            <MLTooltip title={ModelingTooltips.addProperty}>
               <span>{addPropertyButton}</span>
-            </Tooltip>
+            </MLTooltip>
          ) :
           addPropertyButton
         :  
         (
-          <Tooltip title={'Add Property: ' + ModelingTooltips.noWriteAccess}>
+          <MLTooltip title={'Add Property: ' + ModelingTooltips.noWriteAccess}>
             <span>{addPropertyButton}</span>
-          </Tooltip>
+          </MLTooltip>
         )
       }
 
@@ -403,15 +409,14 @@ const PropertyTable: React.FC<Props> = (props) => {
         addPropertyToDefinition={addPropertyToDefinition}
         addStructuredTypeToDefinition={addStructuredTypeToDefinition}
       />
-      <Table
-        rowClassName={(record) => record.propertyName}
+      <MLTable
+        rowClassName={(record) => props.entityName + record.propertyName}
         locale={{ emptyText: ' ' }}
         columns={headerColumns}
         dataSource={tableData}
         onExpand={onExpand}
         expandedRowKeys={expandedRows}
         pagination={false}
-        size="middle"
       />
     </div>
   );

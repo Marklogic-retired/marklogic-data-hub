@@ -53,7 +53,7 @@ describe('EntityTypeModal Component', () => {
       userEvent.click(getByText('Last Processed'));
       userEvent.click(getByText('Instances'));
 
-      userEvent.click(getAllByRole('button')[0]);
+      userEvent.click(getAllByRole('img')[0]);
 
       expect(getByLabelText('AnotherModel-add-property')).toBeDisabled();
     });

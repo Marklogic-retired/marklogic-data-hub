@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, wait, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from "@testing-library/user-event";
 import PropertyTable from './property-table';
 
@@ -81,7 +81,7 @@ describe('Entity Modeling Property Table Component', () => {
     expect(getAllByText('Address')).toHaveLength(2);
     
     // Table expansion shipping property -> Address Structure type
-    userEvent.click(getAllByRole('button')[1]);
+    userEvent.click(getAllByRole('img')[0]);
 
     expect(getByTestId('add-struct-Zip')).toBeInTheDocument();
     expect(getAllByText(/zip/i)).toHaveLength(2);
@@ -89,13 +89,13 @@ describe('Entity Modeling Property Table Component', () => {
     expect(getAllByText('state')).toHaveLength(1);
 
     // Table expansion for shipping property -> Zip structure type
-    userEvent.click(getAllByRole('button')[2]);
+    userEvent.click(getAllByRole('img')[1]);
 
     expect(getByText('fiveDigit')).toBeInTheDocument();
     expect(getByText('plusFour')).toBeInTheDocument();
 
     // Table expansion for billing property, Address structure type
-    userEvent.click(getAllByRole('button')[3]);
+    userEvent.click(getAllByRole('img')[2]);
 
     expect(getAllByTestId('add-struct-Zip')).toHaveLength(2); 
     expect(getAllByText(/zip/i)).toHaveLength(4);
@@ -103,11 +103,62 @@ describe('Entity Modeling Property Table Component', () => {
     expect(getAllByText('state')).toHaveLength(2);
 
     // Table expansion for billing property -> Zip structure type
-    userEvent.click(getAllByRole('button')[4]);
+    userEvent.click(getAllByRole('img')[3]);
 
     expect(getAllByText('fiveDigit')).toHaveLength(2);
     expect(getAllByText('plusFour')).toHaveLength(2);
     expect(getAllByText('string')).toHaveLength(11);
+  });
+
+  test('can add a Property to the table', async () => {
+    let entityName = propertyTableEntities[0].entityName;
+    let definitions = propertyTableEntities[0].model.definitions;
+    const { getByText, getByTestId, getByLabelText, debug } =  render(
+      <PropertyTable 
+        canReadEntityModel={true}
+        canWriteEntityModel={true}
+        entityName={entityName} 
+        definitions={definitions}
+      />
+    )
+
+    userEvent.click(screen.getByLabelText('Concept-add-property'));
+
+    await userEvent.type(screen.getByLabelText('input-name'), 'conceptDate');
+    userEvent.click(screen.getByPlaceholderText('Select the property type'));
+    userEvent.click(screen.getByText('dateTime'));
+
+    fireEvent.submit(screen.getByLabelText('input-name'));
+
+    expect(getByText('conceptDate')).toBeInTheDocument();
+  });
+
+  test('can add a new structured type property to the table', async () => {
+    let entityName = propertyTableEntities[0].entityName;
+    let definitions = propertyTableEntities[0].model.definitions;
+    const { getByText, getByTestId, getByLabelText, debug } =  render(
+      <PropertyTable 
+        canReadEntityModel={true}
+        canWriteEntityModel={true}
+        entityName={entityName} 
+        definitions={definitions}
+      />
+    )
+
+    userEvent.click(screen.getByLabelText('Concept-add-property'));
+
+    await userEvent.type(screen.getByLabelText('input-name'), 'newStructure');
+    userEvent.click(screen.getByPlaceholderText('Select the property type'));
+    userEvent.click(screen.getByText('Structured'));
+    userEvent.click(screen.getByText('New Property Type'));
+
+    expect(screen.getByText('Add New Structured Property Type')).toBeInTheDocument();
+    await userEvent.type(screen.getByLabelText('structured-input-name'), 'Product');
+    fireEvent.submit(screen.getByLabelText('structured-input-name'));
+
+    fireEvent.submit(screen.getByLabelText('input-name'));
+
+    expect(getByText('newStructure')).toBeInTheDocument();
   });
 });
 
