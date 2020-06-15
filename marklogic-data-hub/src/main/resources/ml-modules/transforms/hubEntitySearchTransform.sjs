@@ -24,9 +24,10 @@ function transform(context, params, content) {
     ds.throwBadRequest("entityName is required to generate search results containing entity properties");
   }
   const entityName = params.entityName;
+  const propertiesToDisplay = params.propertiesToDisplay;
 
   const contentObject = content.toObject();
-  entitySearchLib.addPropertiesToSearchResponse(entityName, contentObject);
+  entitySearchLib.addPropertiesToSearchResponse(entityName, contentObject, propertiesToDisplay);
   return contentObject;
 }
 

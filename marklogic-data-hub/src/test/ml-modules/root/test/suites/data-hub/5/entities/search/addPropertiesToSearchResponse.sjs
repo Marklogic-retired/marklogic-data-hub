@@ -18,167 +18,363 @@
 const entitySearchLib = require("/data-hub/5/entities/entity-search-lib.sjs");
 const test = require("/test/test-helper.xqy");
 
-// This search response has been simplified down to only what we really need for testing
-const response = {
-  "snippet-format": "snippet",
-  "total": 2,
-  "results": [
-    {
-      "index": 1,
-      "uri": "/content/jane.json",
-    },
-    {
-      "index": 2,
-      "uri": "/content/sally.json",
-    }
-  ]
-};
-
-// This will need to be provided via a transform parameter; we don't want to try to guess it from
-// the query or from the results
 const entityName = "Customer";
 
-entitySearchLib.addPropertiesToSearchResponse(entityName, response);
-
-const shippingProperties = [
-  {
-    "propertyPath": "shipping.street",
-    "propertyLabel": "street",
-    "datatype": "string",
-    "multiple": false
-  },
-  {
-    "propertyPath": "shipping.city",
-    "propertyLabel": "city",
-    "datatype": "string",
-    "multiple": false
-  },
-  {
-    "propertyPath": "shipping.state",
-    "propertyLabel": "state",
-    "datatype": "string",
-    "multiple": false
-  },
-  {
-    "propertyPath": "shipping.zip",
-    "propertyLabel": "zip",
-    "datatype": "object",
-    "multiple": false,
-    "properties": [
+function verifySimpleSelectedPropertiesResults() {
+  const response = {
+    "snippet-format": "snippet",
+    "total": 2,
+    "results": [
       {
-        "propertyPath": "shipping.zip.fiveDigit",
-        "propertyLabel": "fiveDigit",
-        "datatype": "string",
-        "multiple": false
+        "index": 1,
+        "uri": "/content/jane.json",
       },
       {
-        "propertyPath": "shipping.zip.plusFour",
-        "propertyLabel": "plusFour",
-        "datatype": "string",
-        "multiple": false
+        "index": 2,
+        "uri": "/content/sally.json",
       }
     ]
-  }
-];
+  };
+  const selectedProperties = ["name", "nicknames"];
+  let janeExpectedResult = [
+    {
+      "propertyPath": "name",
+      "propertyValue": "Jane Foster"
+    },
+    {
+      "propertyPath": "nicknames",
+      "propertyValue": [
+        "jane",
+        "foster"
+      ]
+    }
+  ];
 
-const sallyShippingResults = [
-  [
+  let sallyExpectedResult = [
     {
-      "propertyPath": "shipping.street",
-      "propertyValue": "Whitwell Place"
+      "propertyPath": "name",
+      "propertyValue": "Sally Hardin"
     },
     {
-      "propertyPath": "shipping.city",
-      "propertyValue": "Ellerslie"
-    },
+      "propertyPath": "nicknames",
+      "propertyValue": [
+        "Sal",
+        "din",
+        "shh"
+      ]
+    }
+  ];
+
+  entitySearchLib.addPropertiesToSearchResponse(entityName, response, selectedProperties);
+  test.assertEqual(janeExpectedResult, response.results[0].entityProperties);
+  test.assertEqual(sallyExpectedResult, response.results[1].entityProperties);
+  test.assertEqual(2, response.selectedPropertyDefinitions.length);
+  test.assertEqual(7, response.entityPropertyDefinitions.length);
+}
+
+function verifyStructuredFirstLevelSelectedPropertiesResults() {
+  const response = {
+    "snippet-format": "snippet",
+    "total": 2,
+    "results": [
+      {
+        "index": 1,
+        "uri": "/content/jane.json",
+      },
+      {
+        "index": 2,
+        "uri": "/content/sally.json",
+      }
+    ]
+  };
+  const selectedProperties = ["shipping", "billing"];
+  const sallyExpectedResult = [
     {
-      "propertyPath": "shipping.state",
-      "propertyValue": "Georgia"
-    },
-    {
-      "propertyPath": "shipping.zip",
+      "propertyPath": "shipping",
       "propertyValue": [
         [
           {
-            "propertyPath": "shipping.zip.fiveDigit",
-            "propertyValue": "52239"
+            "propertyPath": "shipping.street",
+            "propertyValue": "Whitwell Place"
           },
           {
-            "propertyPath": "shipping.zip.plusFour",
-            "propertyValue": "1718"
+            "propertyPath": "shipping.city",
+            "propertyValue": "Ellerslie"
+          },
+          {
+            "propertyPath": "shipping.state",
+            "propertyValue": "Georgia"
+          },
+          {
+            "propertyPath": "shipping.zip",
+            "propertyValue": [
+              [
+                {
+                  "propertyPath": "shipping.zip.fiveDigit",
+                  "propertyValue": "52239"
+                },
+                {
+                  "propertyPath": "shipping.zip.plusFour",
+                  "propertyValue": "1718"
+                }
+              ]
+            ]
+          }
+        ],
+        [
+          {
+            "propertyPath": "shipping.street",
+            "propertyValue": "Skyway road"
+          },
+          {
+            "propertyPath": "shipping.city",
+            "propertyValue": "San carlos"
+          },
+          {
+            "propertyPath": "shipping.state",
+            "propertyValue": "California"
+          },
+          {
+            "propertyPath": "shipping.zip",
+            "propertyValue": [
+              [
+                {
+                  "propertyPath": "shipping.zip.fiveDigit",
+                  "propertyValue": "94070"
+                },
+                {
+                  "propertyPath": "shipping.zip.plusFour",
+                  "propertyValue": "1234"
+                }
+              ]
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "propertyPath": "billing",
+      "propertyValue": [
+        [
+          {
+            "propertyPath": "billing.street",
+            "propertyValue": "Anna Court"
+          },
+          {
+            "propertyPath": "billing.city",
+            "propertyValue": "Stewart"
+          },
+          {
+            "propertyPath": "billing.state",
+            "propertyValue": "Kansas"
+          },
+          {
+            "propertyPath": "billing.zip",
+            "propertyValue": [
+              [
+                {
+                  "propertyPath": "billing.zip.fiveDigit",
+                  "propertyValue": "62601"
+                },
+                {
+                  "propertyPath": "billing.zip.plusFour",
+                  "propertyValue": "6783"
+                }
+              ]
+            ]
           }
         ]
       ]
     }
-  ],
-  [
+  ];
+  entitySearchLib.addPropertiesToSearchResponse(entityName, response, selectedProperties);
+  test.assertEqual(sallyExpectedResult, response.results[1].entityProperties);
+  test.assertEqual(2, response.selectedPropertyDefinitions.length);
+  test.assertEqual(7, response.entityPropertyDefinitions.length);
+}
+
+function verifyStructuredSelectedPropertiesResults() {
+  const response = {
+    "snippet-format": "snippet",
+    "total": 2,
+    "results": [
+      {
+        "index": 1,
+        "uri": "/content/jane.json",
+      },
+      {
+        "index": 2,
+        "uri": "/content/sally.json",
+      }
+    ]
+  };
+  const sallyExpectedResult = [
     {
-      "propertyPath": "shipping.street",
-      "propertyValue": "Skyway road"
-    },
-    {
-      "propertyPath": "shipping.city",
-      "propertyValue": "San carlos"
-    },
-    {
-      "propertyPath": "shipping.state",
-      "propertyValue": "California"
-    },
-    {
-      "propertyPath": "shipping.zip",
+      "propertyPath": "shipping",
       "propertyValue": [
         [
           {
-            "propertyPath": "shipping.zip.fiveDigit",
-            "propertyValue": "94070"
+            "propertyPath": "shipping.street",
+            "propertyValue": "Whitwell Place"
           },
           {
-            "propertyPath": "shipping.zip.plusFour",
-            "propertyValue": "1234"
+            "propertyPath": "shipping.zip",
+            "propertyValue": [
+              [
+                {
+                  "propertyPath": "shipping.zip.fiveDigit",
+                  "propertyValue": "52239"
+                }
+              ]
+            ]
+          }
+        ],
+        [
+          {
+            "propertyPath": "shipping.street",
+            "propertyValue": "Skyway road"
+          },
+          {
+            "propertyPath": "shipping.zip",
+            "propertyValue": [
+              [
+                {
+                  "propertyPath": "shipping.zip.fiveDigit",
+                  "propertyValue": "94070"
+                }
+              ]
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "propertyPath": "billing",
+      "propertyValue": [
+        [
+          {
+            "propertyPath": "billing.zip",
+            "propertyValue": [
+              [
+                {
+                  "propertyPath": "billing.zip.fiveDigit",
+                  "propertyValue": "62601"
+                }
+              ]
+            ]
+          },
+          {
+            "propertyPath": "billing.street",
+            "propertyValue": "Anna Court"
           }
         ]
       ]
     }
-  ]
-];
+  ];
+  const selectedProperties = ["shipping.street", "shipping.zip.fiveDigit", "billing.zip.fiveDigit", "billing.street"];
+  entitySearchLib.addPropertiesToSearchResponse(entityName, response, selectedProperties);
+  test.assertEqual(sallyExpectedResult, response.results[1].entityProperties);
+  test.assertEqual(2, response.selectedPropertyDefinitions.length);
+  test.assertEqual(7, response.entityPropertyDefinitions.length);
 
-const assertions = [
-  test.assertEqual(5, response.selectedPropertyDefinitions.length, "There are 6 total simple properties in Customer, but " +
-    "we'll only grab the first 5 by default"),
-  test.assertEqual("customerId", response.selectedPropertyDefinitions[0].propertyPath),
-  test.assertEqual("name", response.selectedPropertyDefinitions[1].propertyPath),
-  test.assertEqual("nicknames", response.selectedPropertyDefinitions[2].propertyPath),
-  test.assertEqual("shipping", response.selectedPropertyDefinitions[3].propertyPath),
-  test.assertEqual(shippingProperties, response.selectedPropertyDefinitions[3].properties),
-  test.assertEqual("billing", response.selectedPropertyDefinitions[4].propertyPath),
+  const selectedMetadata = response.selectedPropertyDefinitions;
+  test.assertEqual("shipping", selectedMetadata[0].propertyPath);
+  test.assertEqual("shipping.street", selectedMetadata[0].properties[0].propertyPath);
+  test.assertEqual("shipping.zip", selectedMetadata[0].properties[1].propertyPath);
+  test.assertEqual("shipping.zip.fiveDigit", selectedMetadata[0].properties[1].properties[0].propertyPath);
+  test.assertEqual("billing", selectedMetadata[1].propertyPath);
+  test.assertEqual("billing.zip", selectedMetadata[1].properties[0].propertyPath);
+  test.assertEqual("billing.zip.fiveDigit", selectedMetadata[1].properties[0].properties[0].propertyPath);
+  test.assertEqual("billing.street", selectedMetadata[1].properties[1].propertyPath);
+}
 
-  test.assertEqual(7, response.entityPropertyDefinitions.length),
-  test.assertEqual("customerId", response.entityPropertyDefinitions[0].propertyPath),
-  test.assertEqual("name", response.entityPropertyDefinitions[1].propertyPath),
-  test.assertEqual("nicknames", response.entityPropertyDefinitions[2].propertyPath),
-  test.assertEqual("shipping", response.entityPropertyDefinitions[3].propertyPath),
-  test.assertEqual("billing", response.entityPropertyDefinitions[4].propertyPath),
-  test.assertEqual("status", response.entityPropertyDefinitions[5].propertyPath),
-  test.assertEqual("customerSince", response.entityPropertyDefinitions[6].propertyPath),
-];
+function verifyResultsWithoutSelectedProperties() {
+  const response = {
+    "snippet-format": "snippet",
+    "total": 2,
+    "results": [
+      {
+        "index": 1,
+        "uri": "/content/jane.json",
+      },
+      {
+        "index": 2,
+        "uri": "/content/sally.json",
+      }
+    ]
+  };
+  const sallyShippingResults = [
+    [
+      {
+        "propertyPath": "shipping.street",
+        "propertyValue": "Whitwell Place"
+      },
+      {
+        "propertyPath": "shipping.city",
+        "propertyValue": "Ellerslie"
+      },
+      {
+        "propertyPath": "shipping.state",
+        "propertyValue": "Georgia"
+      },
+      {
+        "propertyPath": "shipping.zip",
+        "propertyValue": [
+          [
+            {
+              "propertyPath": "shipping.zip.fiveDigit",
+              "propertyValue": "52239"
+            },
+            {
+              "propertyPath": "shipping.zip.plusFour",
+              "propertyValue": "1718"
+            }
+          ]
+        ]
+      }
+    ],
+    [
+      {
+        "propertyPath": "shipping.street",
+        "propertyValue": "Skyway road"
+      },
+      {
+        "propertyPath": "shipping.city",
+        "propertyValue": "San carlos"
+      },
+      {
+        "propertyPath": "shipping.state",
+        "propertyValue": "California"
+      },
+      {
+        "propertyPath": "shipping.zip",
+        "propertyValue": [
+          [
+            {
+              "propertyPath": "shipping.zip.fiveDigit",
+              "propertyValue": "94070"
+            },
+            {
+              "propertyPath": "shipping.zip.plusFour",
+              "propertyValue": "1234"
+            }
+          ]
+        ]
+      }
+    ]
+  ];
+  entitySearchLib.addPropertiesToSearchResponse(entityName, response);
+  test.assertEqual(5, Object.keys(response.results[1].entityProperties).length, "Sally has all 7 props populated, but we only want the first 5");
+  test.assertEqual(101, response.results[1].entityProperties[0].propertyValue);
+  test.assertEqual("Sally Hardin", response.results[1].entityProperties[1].propertyValue);
+  test.assertEqual(["Sal", "din", "shh"], response.results[1].entityProperties[2].propertyValue);
+  test.assertEqual(sallyShippingResults, response.results[1].entityProperties[3].propertyValue);
+  test.assertEqual(5, response.selectedPropertyDefinitions.length);
+  test.assertEqual(7, response.entityPropertyDefinitions.length);
+}
 
-const janeProps = response.results[0].entityProperties;
-assertions.push(
-  test.assertEqual(5, Object.keys(janeProps).length, "jane has first five values populated as expected, ever when two are empty"),
-  test.assertEqual(101, janeProps[0].propertyValue),
-  test.assertEqual("Jane Foster", janeProps[1].propertyValue),
-  test.assertEqual(["jane", "foster"], janeProps[2].propertyValue),
-  test.assertEqual(0, janeProps[3].propertyValue.length),
-  test.assertEqual(0, janeProps[4].propertyValue.length)
-);
-
-const sallyProps = response.results[1].entityProperties;
-assertions.push(
-  test.assertEqual(5, Object.keys(sallyProps).length, "Sally has all 7 props populated, but we only want the first 5"),
-  test.assertEqual(101, sallyProps[0].propertyValue),
-  test.assertEqual("Sally Hardin", sallyProps[1].propertyValue),
-  test.assertEqual(["Sal", "din", "shh"], sallyProps[2].propertyValue),
-  test.assertEqual(sallyShippingResults, sallyProps[3].propertyValue)
-);
-
-assertions;
+[]
+    .concat(verifySimpleSelectedPropertiesResults())
+    .concat(verifyStructuredFirstLevelSelectedPropertiesResults())
+    .concat(verifyStructuredSelectedPropertiesResults())
+    .concat(verifyResultsWithoutSelectedProperties());
