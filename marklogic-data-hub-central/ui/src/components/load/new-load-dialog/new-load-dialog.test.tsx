@@ -19,7 +19,7 @@ describe('New/edit load data configuration', () => {
 
   test('fields non-Delimited Text render', async () => {
     const { debug, baseElement, queryAllByText, getAllByLabelText, queryAllByPlaceholderText, getByText } = render(<BrowserRouter><NewLoadDialog newLoad={true}
-                                                           title={'Title'}
+                                                           title={'Edit Loading Step'}
                                                            setNewLoad={() => {}}
                                                            createLoadArtifact={() => {}}
                                                            stepData={{}}
@@ -46,7 +46,7 @@ describe('New/edit load data configuration', () => {
   test('fields with Delimited Text render', () => {
     const stepData = { sourceFormat: 'csv', separator: '||', targetFormat: 'json'};
     const { baseElement, queryAllByPlaceholderText } = render(<BrowserRouter><NewLoadDialog newLoad={true}
-                                                                                                title={'Edit Data Load'}
+                                                                                                title={'Edit Loading Step'}
                                                                                                 setNewLoad={() => {}}
                                                                                                 createLoadArtifact={() => {}}
                                                                                                 stepData={stepData}

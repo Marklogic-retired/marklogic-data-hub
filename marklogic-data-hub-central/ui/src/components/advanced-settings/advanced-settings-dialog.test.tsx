@@ -8,7 +8,7 @@ import {AdvancedSettings} from "../../config/tooltips.config";
 
 jest.mock('axios');
 
-describe('Advanced Settings dialog', () => {
+describe('Advanced Step Settings dialog', () => {
 
   beforeEach(() => {
     mocks.advancedAPI(axiosMock);
@@ -24,7 +24,7 @@ describe('Advanced Settings dialog', () => {
       <AdvancedSettingsDialog {...data.advancedLoad} />
     );
 
-    expect(getByText('Advanced Settings')).toBeInTheDocument();
+    expect(getByText('Advanced Step Settings')).toBeInTheDocument();
 
     //Verify if the step name is available in the settings dialog
     expect(document.querySelector('div p:nth-child(2)').textContent).toEqual(data.advancedLoad.stepData.name);
@@ -64,7 +64,7 @@ describe('Advanced Settings dialog', () => {
       <AdvancedSettingsDialog {...data.advancedMapping} />
     );
 
-    expect(getByText('Advanced Settings')).toBeInTheDocument();
+    expect(getByText('Advanced Step Settings')).toBeInTheDocument();
 
     //Verify if the step name is available in the settings dialog
     expect(document.querySelector('div p:nth-child(2)').textContent).toEqual(data.advancedMapping.stepData.name);
@@ -272,7 +272,7 @@ describe('Advanced Settings dialog', () => {
       queryByText = renderResults.queryByText;
     });
 
-    expect(getByText('Advanced Settings')).toBeInTheDocument();
+    expect(getByText('Advanced Step Settings')).toBeInTheDocument();
     fireEvent.click(getByText('Cancel'));
     expect(queryByText('Discard changes?')).not.toBeInTheDocument();
   });
@@ -287,7 +287,7 @@ describe('Advanced Settings dialog', () => {
       queryByText = renderResults.queryByText;
     });
 
-    expect(getByText('Advanced Settings')).toBeInTheDocument();
+    expect(getByText('Advanced Step Settings')).toBeInTheDocument();
     fireEvent.click(getByText('Cancel'));
     expect(queryByText('Discard changes?')).not.toBeInTheDocument();
   });

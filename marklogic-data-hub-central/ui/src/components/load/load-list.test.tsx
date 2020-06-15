@@ -74,7 +74,7 @@ describe('Load data component', () => {
     let targetCollection = getByTitle('addedCollection'); // Additional target collection (Added by user)
     let stepName = loadData.loads.data[0].name;
 
-    expect(getByText('Advanced Settings')).toBeInTheDocument();
+    expect(getByText('Advanced Step Settings')).toBeInTheDocument();
     // Check if the settings API is being called.
     expect(axiosMock.get).toBeCalledWith('/api/steps/ingestion/' + data.loadData.data[0].name);
     expect(getByText('Target Collections')).toBeInTheDocument();

@@ -99,7 +99,7 @@ describe("Mapping Card component", () => {
     expect(deleteMappingArtifact).toBeCalled();
   });
 
-  test('Open advanced settings', async () => {
+  test('Open Advanced Step settings', async () => {
       const authorityService = new AuthoritiesService();
       authorityService.setAuthorities(['writeMapping', 'readMapping']);
       let entityModel = data.primaryEntityTypes.data[0];

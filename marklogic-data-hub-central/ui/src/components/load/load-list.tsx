@@ -31,11 +31,11 @@ const LoadList: React.FC<Props> = (props) => {
 
     const OpenAddNewDialog = () => {
         setNewDataLoad(true);
-        setTitle('New Data Load');
+        setTitle('New Loading Step');
     }
 
     const OpenEditStepDialog = (record) => {
-        setTitle('Edit Data Load');
+        setTitle('Edit Loading Step');
         setStepData(prevState => ({ ...prevState, ...record}));
         setNewDataLoad(true);
     }

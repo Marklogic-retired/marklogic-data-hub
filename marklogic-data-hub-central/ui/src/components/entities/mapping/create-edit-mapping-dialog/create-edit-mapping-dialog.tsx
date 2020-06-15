@@ -29,7 +29,7 @@ const CreateEditMappingDialog = (props) => {
   const colList = ['Provider', 'Claims', 'Students', 'Customer']; //To be removed once integrated with EndPoints.
 
   useEffect(() => {
-    if (props.mapData && JSON.stringify(props.mapData) != JSON.stringify({}) && props.title === 'Edit Mapping') {
+    if (props.mapData && JSON.stringify(props.mapData) != JSON.stringify({}) && props.title === 'Edit Mapping Step') {
       setMapName(props.mapData.name);
       setDescription(props.mapData.description);
       setSrcQuery(props.mapData.sourceQuery);
@@ -190,7 +190,7 @@ const CreateEditMappingDialog = (props) => {
             setDescriptionTouched(false);
           }
         }
-        if (props.title === 'New Mapping') {
+        if (props.title === 'New Mapping Step') {
           if (event.target.value === '') {
             setDescriptionTouched(false);
           }

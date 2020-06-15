@@ -225,10 +225,10 @@ const EntityTiles = (props) => {
             <div className={styles.switchMapMaster}>
             <Menu mode="horizontal" defaultSelectedKeys={['map']}>
                 {canReadMapping ? <Menu.Item key='map' onClick={mappingCardsView}>
-                    Mapping
+                    Map
                 </Menu.Item>: null}
                {props.canReadMatchMerge ? <Menu.Item key='matching' onClick={matchingCardsView}>
-                    Matching
+                    Match
                 </Menu.Item>: null}
             </Menu>
             </div>

@@ -33,7 +33,7 @@ const NewLoadDialog = (props) => {
 
 
   useEffect(() => {
-    if (props.stepData && JSON.stringify(props.stepData) != JSON.stringify({}) && props.title === 'Edit Data Load') {
+    if (props.stepData && JSON.stringify(props.stepData) != JSON.stringify({}) && props.title === 'Edit Loading Step') {
       setStepName(props.stepData.name);
       setDescription(props.stepData.description);
       setSrcFormat(props.stepData.sourceFormat);
@@ -93,7 +93,7 @@ const NewLoadDialog = (props) => {
   }
 
   const checkDeleteOpenEligibility = () => {
-    if (props.stepData && JSON.stringify(props.stepData) != JSON.stringify({}) && props.title === 'Edit Data Load'){
+    if (props.stepData && JSON.stringify(props.stepData) != JSON.stringify({}) && props.title === 'Edit Loading Step'){
 
       if(stepName === props.stepData.name
       && description === props.stepData.description

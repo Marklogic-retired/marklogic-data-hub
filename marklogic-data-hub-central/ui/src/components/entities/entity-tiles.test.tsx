@@ -32,7 +32,7 @@ describe("Entity Tiles component", () => {
   });
 
 
-  test('Mapping tab does appear with readMapping authority', async () => {
+  test('Map tab does appear with readMapping authority', async () => {
     let entityModels = {};
     data.primaryEntityTypes.data.forEach((model) => {
       // model has an entityTypeId property, perhaps that should be used instead of entityName?
@@ -62,12 +62,12 @@ describe("Entity Tiles component", () => {
     });
     await fireEvent.click(getByText('Customer'));
     // Check for Mapping tab
-    expect(getByText('Mapping')).toBeInTheDocument();
+    expect(getByText('Map')).toBeInTheDocument();
     // Check for Matching tab
-    expect(queryAllByText('Matching')).toHaveLength(0);
+    expect(queryAllByText('Match')).toHaveLength(0);
   });
 
-  test('Mapping tab does not appear without readMapping authority', async () => {
+  test('Map tab does not appear without readMapping authority', async () => {
     let entityModels = {};
     data.primaryEntityTypes.data.forEach((model) => {
       // model has an entityTypeId property, perhaps that should be used instead of entityName?
@@ -97,6 +97,6 @@ describe("Entity Tiles component", () => {
     });
     //await fireEvent.click(getByText('Customer'));
     // Check for Mapping tab
-    expect(queryAllByText('Mapping')).toHaveLength(0);
+    expect(queryAllByText('Map')).toHaveLength(0);
   });
 })

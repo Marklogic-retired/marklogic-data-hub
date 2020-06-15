@@ -46,12 +46,12 @@ const LoadCard: React.FC<Props> = (props) => {
     let history = useHistory();
 
     const OpenAddNewDialog = () => {
-        setTitle('New Data Load');
+        setTitle('New Loading Step');
         setNewDataLoad(true);
     }
 
     const OpenEditStepDialog = (index) => {
-        setTitle('Edit Data Load');
+        setTitle('Edit Loading Step');
         setStepData(prevState => ({ ...prevState, ...props.data[index]}));
         setNewDataLoad(true);
     }
