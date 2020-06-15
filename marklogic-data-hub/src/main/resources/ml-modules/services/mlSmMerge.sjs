@@ -49,7 +49,8 @@ function post(context, params, input) {
     'success': results.errorCount === 0,
     'errors': results.errors,
     'mergedURIs': uris,
-    'mergedDocument': results.documents.filter((doc) => !uris.includes(doc.uri))[0]
+    // we are using existence of previousUri here to determine the merged document
+    'mergedDocument': results.documents.filter((doc) => !!doc.previousUri)[0]
   };
 }
 

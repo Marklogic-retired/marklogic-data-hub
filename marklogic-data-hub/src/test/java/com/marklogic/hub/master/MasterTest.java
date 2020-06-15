@@ -7,22 +7,16 @@ import com.marklogic.bootstrap.Installer;
 import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubProject;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.LoadTestModules;
-import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.step.RunStepResponse;
 import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -39,9 +33,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ApplicationConfig.class)
@@ -123,7 +115,7 @@ public class MasterTest extends HubTestBase {
 
     @Test
     public void testMatchEndpoint() {
-        flowRunner.runFlow("myNewFlow", Arrays.asList("1","2"));
+        flowRunner.runFlow(new FlowInputs("myNewFlow", "1","2"));
         flowRunner.awaitCompletion();
         JsonNode matchResp = masteringManager.match("/person-1.json", "myNewFlow","3", Boolean.TRUE, new ObjectMapper().createObjectNode()).get("results");
         assertEquals(7, matchResp.get("total").asInt(),"There should 7 match results");
@@ -162,7 +154,7 @@ public class MasterTest extends HubTestBase {
 
     @Test
     public void testMatchMergeSteps() {
-        RunFlowResponse flowResponse = flowRunner.runFlow("myMatchMergeFlow", Arrays.asList("1","2","3"));
+        RunFlowResponse flowResponse = flowRunner.runFlow(new FlowInputs("myMatchMergeFlow", "1","2","3"));
         flowRunner.awaitCompletion();
         RunStepResponse matchJob = flowResponse.getStepResponses().get("3");
         assertTrue(matchJob.isSuccess(), "Matching job failed!");
@@ -193,13 +185,15 @@ public class MasterTest extends HubTestBase {
 
     @Test
     public void testManualMerge() {
-        flowRunner.runFlow("myNewFlow", Arrays.asList("1","2"));
+        flowRunner.runFlow(new FlowInputs("myNewFlow","1","2"));
         flowRunner.awaitCompletion();
         List<String> docsToMerge = Arrays.asList("/person-1.json","/person-1-1.json","/person-1-2.json","/person-1-3.json");
-        masteringManager.merge(docsToMerge, "myNewFlow","3", Boolean.FALSE, new ObjectMapper().createObjectNode());
+        JsonNode mergeResults = masteringManager.merge(docsToMerge, "myNewFlow","3", Boolean.FALSE, new ObjectMapper().createObjectNode());
         assertEquals(1, getFinalDocCount("sm-person-merged"),"One merge should have occurred");
         assertEquals(1, getFinalDocCount("sm-person-auditing"),"One auditing document should have been created");
         assertEquals(docsToMerge.size(), getFinalDocCount("sm-person-archived"),docsToMerge.size() + " documents should have been archived");
+        assertTrue(mergeResults.path("mergedDocument").path("value").path("envelope").has("instance"), "Resulting document should have the merged document instance");
+
     }
 
     private void testUnmerge() {
