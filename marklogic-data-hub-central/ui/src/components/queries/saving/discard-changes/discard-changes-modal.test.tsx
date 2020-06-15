@@ -12,14 +12,14 @@ describe("<DiscardChangesModal/>", () => {
             toggleApplyClicked={jest.fn()}
         />)
 
-        getByText((content, node) => {
+        expect(getByText((content, node) => {
             const hasText = node => node.textContent === "Are you sure you want to discard all changes made to select a query ?";
             const nodeHasText = hasText(node);
             const childrenDontHaveText = Array.from(node.children).every(
                 child => !hasText(child)
             );
             return nodeHasText && childrenDontHaveText;
-        });
+        })).toBeInTheDocument();
         expect(getByText('Yes')).toBeVisible();
         expect(getByText('No')).toBeVisible();
     });

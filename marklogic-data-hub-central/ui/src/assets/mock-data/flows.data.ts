@@ -352,35 +352,35 @@ const flows = {
       "steps": [
           {
               "stepName": "failedIngest",
-              "stepDefinitionType": "INGESTION",
+              "stepDefinitionType": "ingestion",
               "stepNumber": "1",
               "sourceFormat": "json"
           },
           {
             "stepName": "Mapping1",
-            "stepDefinitionType": "MAPPING",
+            "stepDefinitionType": "mapping",
             "stepNumber": "2",
             "targetFormat": "json"
           },
           {
             "stepName": "custom1",
-            "stepDefinitionType": "CUSTOM",
+            "stepDefinitionType": "custom",
             "stepNumber": "3",
           },
           {
               "stepNumber":	"4",
               "stepName": "match-customer",
-              "stepDefinitionType":	"MATCHING"
+              "stepDefinitionType":	"matching"
           },
           {
               "stepNumber": "5",
               "stepName": "merge-customer",
-              "stepDefinitionType": "MERGING"
+              "stepDefinitionType": "merging"
           },
           {
               "stepNumber": "6",
               "stepName": "master-customer",
-              "stepDefinitionType": "MASTERING"
+              "stepDefinitionType": "mastering"
           }
       ]
   }]

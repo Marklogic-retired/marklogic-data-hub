@@ -5,6 +5,7 @@ import browsePage from '../support/pages/browse';
 import detailPage from '../support/pages/detail';
 import homePage from "../support/pages/home";
 import { Application } from '../support/application.config';
+import {toolbar} from "../support/components/common";
 
 
 xdescribe('xml scenario on view entities page', () => {
@@ -43,7 +44,7 @@ xdescribe('xml scenario on view entities page', () => {
 
 });
 
-describe('xml scenario on browse documents page', () => {
+describe('xml scenario for snippet view on browse documents page', () => {
 
   var facets: string[] = ['collection', 'flow'];
 
@@ -52,14 +53,12 @@ describe('xml scenario on browse documents page', () => {
     cy.visit('/');
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
-    // temporary change as tile is not working
-    homePage.getTitle().click();
-    cy.wait(500);
-    // temporary change end here
-    homePage.getBrowseEntities().click();
-    cy.wait(2000);
+    toolbar.getExploreToolbarIcon().should('exist');
+    toolbar.getExploreToolbarIcon().click();
+    browsePage.getExploreButton().should('exist');
+    browsePage.getExploreButton().click();
+    cy.wait(200);
     browsePage.getFacetView();
-    browsePage.selectEntity('All Entities');
   });
 
   it('select "all entities" verify docs, hub/entity properties', () => {

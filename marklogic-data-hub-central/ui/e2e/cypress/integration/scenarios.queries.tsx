@@ -1,7 +1,6 @@
 /// <reference types="cypress"/>
 
 import browsePage from '../support/pages/browse';
-import homePage from "../support/pages/home";
 import queryComponent from '../support/components/query/manage-queries-modal'
 import { Application } from '../support/application.config';
 import { toolbar } from '../support/components/common/index';
@@ -41,15 +40,18 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getSaveQueryDescription().type('new-query description');
         browsePage.getSaveQueryButton().click();
         cy.wait(500);
+        // Creating a new query
         browsePage.getSelectedQuery().should('contain', 'new-query');
         browsePage.getSelectedQueryDescription().should('contain', 'new-query description');
         browsePage.getSaveQueryButton().should('not.be.visible');
         browsePage.getSaveQueriesDropdown().should('be.visible');
+        //Editing a previous query
         browsePage.getEditQueryModalIcon().click();
         browsePage.getEditQueryDetailDesc().clear();
         browsePage.getEditQueryDetailDesc().type('new-query description edited');
         browsePage.getEditQueryDetailButton().click();
         browsePage.getSelectedQueryDescription().should('contain', 'new-query description edited');
+        //saving a copy of previous query
         browsePage.getSaveACopyModalIcon().click();
         browsePage.getSaveQueryName().type('new-query-2');
         browsePage.getSaveQueryDescription().type('new-query-2 description');
@@ -60,17 +62,6 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getSaveModalIcon().click();
         browsePage.getRadioOptionSelected();
         browsePage.getEditSaveChangesButton().click();
-        browsePage.getSelectedQueryDescription().should('contain', 'new-query-2 description');
-        browsePage.getAppliedFacets('Adams').should('exist');
-        cy.reload();
-        cy.wait(500);
-        // temporary change as tile is not working
-        homePage.getTitle().click();
-        cy.wait(500);
-        // temporary change end here
-        homePage.getBrowseEntities().click();
-        cy.wait(1000);
-        browsePage.getSelectedQuery().should('contain', 'new-query-2');
         browsePage.getSelectedQueryDescription().should('contain', 'new-query-2 description');
     });
 
