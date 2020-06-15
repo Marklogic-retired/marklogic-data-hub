@@ -53,7 +53,7 @@ describe('Entity Modeling', () => {
     entityTypeModal.newEntityName('Product');
     entityTypeModal.newEntityDescription('An entity for Products');
     entityTypeModal.getAddButton().click();
-  
+
     propertyTable.getAddPropertyButton('Product').should('exist').trigger('mouseover');
     cy.contains(`Click to add properties to this entity type.`);
     propertyTable.getAddPropertyButton('Product').click();
@@ -168,5 +168,33 @@ describe('Entity Modeling', () => {
     propertyTable.getMultipleIcon('code').should('not.exist');
     propertyTable.getPiiIcon('code').should('not.exist');
     propertyTable.getAdvancedSearchIcon('code').should('not.exist');
+
+    // Test for additional nesting of structured types
+    propertyTable.getAddPropertyToStructureType('Zip').click({ force: true });
+    propertyModal.newPropertyName('extra')
+    propertyModal.openPropertyDropdown();
+    propertyModal.getTypeFromDropdown('Structured').click();    
+    propertyModal.getCascadedTypeFromDropdown('New Property Type').click();
+
+    structuredTypeModal.newName('Extra');
+    structuredTypeModal.getAddButton().click();
+
+    propertyModal.getAddButton().click();
+
+    propertyTable.getAddPropertyToStructureType('Extra').should('exist').trigger('mouseover');
+    cy.contains(`Click to add properties within this structured property.`);
+    propertyTable.getAddPropertyToStructureType('Extra').click({ force: true });
+
+    propertyModal.newPropertyName('fourDigit')
+    propertyModal.openPropertyDropdown();
+    propertyModal.getTypeFromDropdown('integer').click();    
+    propertyModal.getYesRadio('pii').click();
+    propertyModal.clickCheckbox('advancedSearch');
+    propertyModal.getAddButton().click();
+
+    propertyTable.expandNestedPropertyRow('extra0');
+    propertyTable.getMultipleIcon('fourDigit').should('not.exist');
+    propertyTable.getPiiIcon('fourDigit').should('exist');
+    propertyTable.getAdvancedSearchIcon('fourDigit').should('exist');
   })
 });

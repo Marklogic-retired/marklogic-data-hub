@@ -14,7 +14,7 @@ class EntityTypeTable {
   }
 
   expandEntityRow(index: number) {
-    return cy.get('[role=button]').eq(index).click();
+    return cy.get('td.ant-table-row-expand-icon-cell').eq(index).click();
   }
 
   sortByEntityName() {

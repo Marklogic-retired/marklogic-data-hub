@@ -285,7 +285,7 @@ const PropertyModal: React.FC<Props> = (props) => {
         MORE_DATE_TYPES
       ]);
 
-    } else if (modelingOptions.entityTypeNamesArray.length > 1 && structuredDefinitions.length > 0) {
+    } else if (modelingOptions.entityTypeNamesArray.length > 1 && structuredDefinitions.length > 0 && !props.structuredTypeOptions.isStructured) {
       let structuredDropdown = createStructuredDropdown(structuredDefinitions);
       let relationshipDropdown = createRelationshipDropdown();
 
@@ -300,7 +300,7 @@ const PropertyModal: React.FC<Props> = (props) => {
         MORE_DATE_TYPES
       ]);
 
-    } else if (modelingOptions.entityTypeNamesArray.length <= 1 && structuredDefinitions.length > 0) {
+    } else if (props.structuredTypeOptions.isStructured) {
       let structuredDropdown = createStructuredDropdown(structuredDefinitions);
 
       setDropdownOptions([
@@ -434,14 +434,15 @@ const PropertyModal: React.FC<Props> = (props) => {
           <span>{props.entityName}</span>
         </Form.Item>
 
-        { props.structuredTypeOptions.isStructured && (
+        { props.structuredTypeOptions.isStructured && 
+        (
           <Form.Item
             className={styles.formItemEntityType}
             label={<span>Structured Type:</span>}
             colon={false}
             labelAlign="left"
           >
-            <span id="structured-label">{props.structuredTypeOptions.name.split(',').join('.')}</span>
+            <span id="structured-label">{props.structuredTypeOptions.name.split(',').slice(1).join('.')}</span>
           </Form.Item>
         )}
 

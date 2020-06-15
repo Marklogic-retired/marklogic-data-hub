@@ -1,7 +1,6 @@
 import React, { useState, useEffect, CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
-import { Table, Tooltip } from 'antd';
-//import { MLTable, MLTooltip } from '@marklogic/design-system';
+import { MLTable, MLTooltip } from '@marklogic/design-system';
 import { faUndo, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from './entity-type-table.module.scss';
@@ -41,13 +40,13 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         let entityDescription = parseText[1];
 
         return (
-          <Tooltip title={ModelingTooltips.entityTypeName}>
+          <MLTooltip title={ModelingTooltips.entityTypeName}>
             <span data-testid={parseText[0] + '-span'} className={styles.link}
               onClick={() => {
                 props.editEntityTypeDescription(entityName, entityDescription);
               }}>
               {entityName}</span>
-          </Tooltip>
+          </MLTooltip>
         )
       },
       sorter: (a, b) => {
@@ -64,7 +63,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         let instanceCount = numberConverter(parseInt(parseText[1]));
 
         return (
-          <Tooltip title={ModelingTooltips.instanceNumber}>
+          <MLTooltip title={ModelingTooltips.instanceNumber}>
             <Link
               to={{
                 pathname: "/browse",
@@ -74,7 +73,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
             >
               {instanceCount}
             </Link>
-          </Tooltip>
+          </MLTooltip>
         )
       },
       sorter: (a, b) => {
@@ -97,7 +96,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         } else {
           let displayDate = relativeTimeConverter(parseText[2]);
           return (
-            <Tooltip title={queryDateConverter(parseText[2]) + "\n" + ModelingTooltips.lastProcessed}>
+            <MLTooltip title={queryDateConverter(parseText[2]) + "\n" + ModelingTooltips.lastProcessed}>
               <Link
                 to={{
                   pathname: "/browse",
@@ -107,7 +106,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
               >
                 {displayDate}
               </Link>
-            </Tooltip>
+            </MLTooltip>
 
           )
         }
@@ -127,13 +126,13 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         // TODO add functionality to icons
         return (
           <div className={styles.iconContainer}>
-          <Tooltip title={ModelingTooltips.saveIcon}>
+          <MLTooltip title={ModelingTooltips.saveIcon}>
             <span
               data-testid={text + '-save-icon'} 
               className={!props.canWriteEntityModel && props.canReadEntityModel || disabled ? styles.iconSaveReadOnly : styles.iconSave}
             ></span>
-          </Tooltip>
-          <Tooltip title={ModelingTooltips.revertIcon}>
+          </MLTooltip>
+          <MLTooltip title={ModelingTooltips.revertIcon}>
             <FontAwesomeIcon 
               data-testid={text + '-revert-icon'} 
               className={!props.canWriteEntityModel && props.canReadEntityModel || disabled ? styles.iconRevertReadOnly : styles.iconRevert} 
@@ -147,7 +146,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
               }}
               size="2x"
             />
-          </Tooltip>
+          </MLTooltip>
             <FontAwesomeIcon 
               data-testid={text + '-trash-icon'}
               className={!props.canWriteEntityModel && props.canReadEntityModel || disabled ? styles.iconTrashReadOnly : styles.iconTrash} 
@@ -206,7 +205,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
   });
 
   return (
-    <Table
+    <MLTable
       rowKey="name"
       locale={{ emptyText: ' ' }}
       className={styles.table}

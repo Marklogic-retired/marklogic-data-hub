@@ -45,6 +45,11 @@ class PropertyTable {
   getAddPropertyToStructureType(structureTypeName: string) {
     return cy.get(`[data-testid=add-struct-${structureTypeName}]`);
   }
+
+  //propertyName must include rowKey ex. fiveDigit2
+  expandNestedPropertyRow(propertyName: string) {
+    return cy.get(`[data-row-key="${propertyName}"] > td > div > [role=img]`).eq(0).click();
+  }
 }
 
 const propertyTable = new PropertyTable();
