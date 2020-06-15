@@ -1,39 +1,116 @@
 const response = {"data":{"jobId": "350da405-c1e9-4fa7-8269-d9aefe3b4b9a"}, "status": 200};
+
+let stepFailedWithError = [
+    "{\"stack\":\"Error: The given date pattern (null) is not supported.: /*:stylesheet/*:template[4] <xsl:for-each select=\\\"/\\\"> <xsl:call-template name=\\\"Purchase\\\"/></xsl:for-each> -- \\n    at main (/data-hub/5/builtins/steps/mapping/entity-services/main.sjs:72:11)\\n    at Flow.runMain (/data-hub/5/impl/flow.sjs:485:12)\\n    at Flow.runStep (/data-hub/5/impl/flow.sjs:343:58)\\n    at Flow.runFlow (/data-hub/5/impl/flow.sjs:211:12)\\n    at post (/marklogic.rest.resource/mlRunFlow/assets/resource.sjs:60:25)\\n    at callExtension (/MarkLogic/rest-api/lib/extensions-util.sjs:93:30)\\n    at applyOnce (/MarkLogic/rest-api/lib/extensions-util.sjs:111:10)\",\"message\":\"The given date pattern (null) is not supported.: /*:stylesheet/*:template[4] <xsl:for-each select=\\\"/\\\"> <xsl:call-template name=\\\"Purchase\\\"/></xsl:for-each> -- \",\"name\":\"Error\",\"uri\":\"/test/data/nestedPerson1.json\"}",
+    "{\"stack\":\"Error: The given date pattern (null) is not supported.: /*:stylesheet/*:template[4] <xsl:for-each select=\\\"/\\\"> <xsl:call-template name=\\\"Purchase\\\"/></xsl:for-each> -- \\n    at main (/data-hub/5/builtins/steps/mapping/entity-services/main.sjs:72:11)\\n    at Flow.runMain (/data-hub/5/impl/flow.sjs:485:12)\\n    at Flow.runStep (/data-hub/5/impl/flow.sjs:343:58)\\n    at Flow.runFlow (/data-hub/5/impl/flow.sjs:211:12)\\n    at post (/marklogic.rest.resource/mlRunFlow/assets/resource.sjs:60:25)\\n    at callExtension (/MarkLogic/rest-api/lib/extensions-util.sjs:93:30)\\n    at applyOnce (/MarkLogic/rest-api/lib/extensions-util.sjs:111:10)\",\"message\":\"The given date pattern (null) is not supported.: /*:stylesheet/*:template[4] <xsl:for-each select=\\\"/\\\"> <xsl:call-template name=\\\"Purchase\\\"/></xsl:for-each> -- \",\"name\":\"Error\",\"uri\":\"/test/data/nestedPerson1.json\"}"
+];
+
 const jobRespFailedWithError = {
   "data": {
-    "jobId": "350da405-c1e9-4fa7-8269-d9aefe3b4b9a",
-    "flow": "testFlow",
-    "user": "dh-dev",
-    "lastAttemptedStep": "1",
-    "lastCompletedStep": "1",
-    "timeStarted": "2020-04-04T01:17:44.918282-07:00",
-    "timeEnded": "2020-04-04T01:17:45.012137-07:00",
-    "stepResponses": {
-      "1": {
-        "flowName": "testFlow",
-        "stepName": "failedIngest",
-        "stepDefinitionName": "default-ingestion",
-        "stepDefinitionType": "ingestion",
-        "stepOutput": [
-          "{\"stack\":\"Error: The given date pattern (null) is not supported.: /*:stylesheet/*:template[4] <xsl:for-each select=\\\"/\\\"> <xsl:call-template name=\\\"Purchase\\\"/></xsl:for-each> -- \\n    at main (/data-hub/5/builtins/steps/mapping/entity-services/main.sjs:72:11)\\n    at Flow.runMain (/data-hub/5/impl/flow.sjs:485:12)\\n    at Flow.runStep (/data-hub/5/impl/flow.sjs:343:58)\\n    at Flow.runFlow (/data-hub/5/impl/flow.sjs:211:12)\\n    at post (/marklogic.rest.resource/mlRunFlow/assets/resource.sjs:60:25)\\n    at callExtension (/MarkLogic/rest-api/lib/extensions-util.sjs:93:30)\\n    at applyOnce (/MarkLogic/rest-api/lib/extensions-util.sjs:111:10)\",\"message\":\"The given date pattern (null) is not supported.: /*:stylesheet/*:template[4] <xsl:for-each select=\\\"/\\\"> <xsl:call-template name=\\\"Purchase\\\"/></xsl:for-each> -- \",\"name\":\"Error\",\"uri\":\"/test/data/nestedPerson1.json\"}",
-          "{\"stack\":\"Error: The given date pattern (null) is not supported.: /*:stylesheet/*:template[4] <xsl:for-each select=\\\"/\\\"> <xsl:call-template name=\\\"Purchase\\\"/></xsl:for-each> -- \\n    at main (/data-hub/5/builtins/steps/mapping/entity-services/main.sjs:72:11)\\n    at Flow.runMain (/data-hub/5/impl/flow.sjs:485:12)\\n    at Flow.runStep (/data-hub/5/impl/flow.sjs:343:58)\\n    at Flow.runFlow (/data-hub/5/impl/flow.sjs:211:12)\\n    at post (/marklogic.rest.resource/mlRunFlow/assets/resource.sjs:60:25)\\n    at callExtension (/MarkLogic/rest-api/lib/extensions-util.sjs:93:30)\\n    at applyOnce (/MarkLogic/rest-api/lib/extensions-util.sjs:111:10)\",\"message\":\"The given date pattern (null) is not supported.: /*:stylesheet/*:template[4] <xsl:for-each select=\\\"/\\\"> <xsl:call-template name=\\\"Purchase\\\"/></xsl:for-each> -- \",\"name\":\"Error\",\"uri\":\"/test/data/nestedPerson1.json\"}"
-        ],
-        "fullOutput": null,
-        "status": "completed step 2",
-        "totalEvents": 3,
-        "successfulEvents": 1,
-        "failedEvents": 2,
-        "successfulBatches": 1,
-        "failedBatches": 2,
-        "success": false,
-        "stepStartTime": "2020-04-04T01:17:44.936121-07:00",
-        "stepEndTime": "2020-04-04T01:17:45.012137-07:00"
-      }
-    },
-    "jobStatus": "finished_with_errors"
+      "jobId": "350da405-c1e9-4fa7-8269-d9aefe3b4b9a",
+      "flow": "testFlow",
+      "user": "dh-dev",
+      "lastAttemptedStep": "1",
+      "lastCompletedStep": "1",
+      "timeStarted": "2020-04-04T01:17:44.918282-07:00",
+      "timeEnded": "2020-04-04T01:17:45.012137-07:00",
+      "stepResponses": {
+          "1": {
+              "flowName": "testFlow",
+              "stepName": "failedIngest",
+              "stepDefinitionName": "default-ingestion",
+              "stepDefinitionType": "ingestion",
+              "stepOutput": stepFailedWithError,
+              "fullOutput": null,
+              "status": "completed step 1",
+              "totalEvents": 3,
+              "successfulEvents": 1,
+              "failedEvents": 2,
+              "successfulBatches": 1,
+              "failedBatches": 2,
+              "success": false,
+              "stepStartTime": "2020-04-04T01:17:44.936121-07:00",
+              "stepEndTime": "2020-04-04T01:17:45.012137-07:00"
+          },
+          "2": {
+              "flowName": "testFlow",
+              "stepName": "Mapping1",
+              "stepDefinitionName": "entity-services-mapping",
+              "stepDefinitionType": "mapping",
+              "stepOutput": stepFailedWithError,
+              "fullOutput": null,
+              "status": "completed step 2",
+              "totalEvents": 3,
+              "successfulEvents": 1,
+              "failedEvents": 2,
+              "successfulBatches": 1,
+              "failedBatches": 2,
+              "success": false,
+              "stepStartTime": "2020-04-04T01:17:44.936121-07:00",
+              "stepEndTime": "2020-04-04T01:17:45.012137-07:00"
+          },
+          "4": {
+              "flowName": "testFlow",
+              "stepName": "match-customer",
+              "stepDefinitionName": "default-matching",
+              "stepDefinitionType": "matching",
+              "stepOutput": stepFailedWithError,
+              "fullOutput": null,
+              "status": "completed step 4",
+              "totalEvents": 3,
+              "successfulEvents": 1,
+              "failedEvents": 2,
+              "successfulBatches": 1,
+              "failedBatches": 2,
+              "success": false,
+              "stepStartTime": "2020-04-04T01:17:44.936121-07:00",
+              "stepEndTime": "2020-04-04T01:17:45.012137-07:00"
+          },
+          "5": {
+              "flowName": "testFlow",
+              "stepName": "merge-customer",
+              "stepDefinitionName": "default-merging",
+              "stepDefinitionType": "merging",
+              "stepOutput": stepFailedWithError,
+              "fullOutput": null,
+              "status": "completed step 5",
+              "totalEvents": 3,
+              "successfulEvents": 1,
+              "failedEvents": 2,
+              "successfulBatches": 1,
+              "failedBatches": 2,
+              "success": false,
+              "stepStartTime": "2020-04-04T01:17:44.936121-07:00",
+              "stepEndTime": "2020-04-04T01:17:45.012137-07:00"
+          },
+          "6": {
+              "flowName": "testFlow",
+              "stepName": "master-customer",
+              "stepDefinitionName": "default-mastering",
+              "stepDefinitionType": "mastering",
+              "stepOutput": stepFailedWithError,
+              "fullOutput": null,
+              "status": "completed step 6",
+              "totalEvents": 3,
+              "successfulEvents": 1,
+              "failedEvents": 2,
+              "successfulBatches": 1,
+              "failedBatches": 2,
+              "success": false,
+              "stepStartTime": "2020-04-04T01:17:44.936121-07:00",
+              "stepEndTime": "2020-04-04T01:17:45.012137-07:00"
+          }
+      },
+      "jobStatus": "finished_with_errors"
   },
-  "status" : 200
+  "status": 200
 };
+
+let stepFailed = [
+    "Local message: failed to apply resource at documents: Bad Request. Server Message: XDMP-JSONDOC: xdmp:multipart-decode(\"85edd62b-0e89-4373-80ed-64a144bdb9ba\", binary{\"2d2d38356564643632622d306538392d343337332d383065642d363461313434...\"}) -- Document is not JSON",
+    "Local message: failed to apply resource at documents: Bad Request. Server Message: XDMP-JSONDOC: xdmp:multipart-decode(\"9fed61d9-76ed-45e6-8639-66d8631b61d2\", binary{\"2d2d39666564363164392d373665642d343565362d383633392d363664383633...\"}) -- Document is not JSON",
+    "Local message: failed to apply resource at documents: Bad Request. Server Message: XDMP-JSONDOC: xdmp:multipart-decode(\"8d14ada9-d143-429f-b029-4e254828312f\", binary{\"2d2d38643134616461392d643134332d343239662d623032392d346532353438...\"}) -- Document is not JSON"
+];
 
 const jobRespFailed = {
   "data": {
@@ -50,22 +127,36 @@ const jobRespFailed = {
         "stepName": "failedIngest",
         "stepDefinitionName": "default-ingestion",
         "stepDefinitionType": "ingestion",
-        "stepOutput": [
-          "Local message: failed to apply resource at documents: Bad Request. Server Message: XDMP-JSONDOC: xdmp:multipart-decode(\"85edd62b-0e89-4373-80ed-64a144bdb9ba\", binary{\"2d2d38356564643632622d306538392d343337332d383065642d363461313434...\"}) -- Document is not JSON",
-          "Local message: failed to apply resource at documents: Bad Request. Server Message: XDMP-JSONDOC: xdmp:multipart-decode(\"9fed61d9-76ed-45e6-8639-66d8631b61d2\", binary{\"2d2d39666564363164392d373665642d343565362d383633392d363664383633...\"}) -- Document is not JSON",
-          "Local message: failed to apply resource at documents: Bad Request. Server Message: XDMP-JSONDOC: xdmp:multipart-decode(\"8d14ada9-d143-429f-b029-4e254828312f\", binary{\"2d2d38643134616461392d643134332d343239662d623032392d346532353438...\"}) -- Document is not JSON"
-        ],
-        "fullOutput": null,
-        "status": "completed step 2",
-        "totalEvents": 3,
-        "successfulEvents": 0,
-        "failedEvents": 3,
-        "successfulBatches": 0,
-        "failedBatches": 3,
-        "success": false,
-        "stepStartTime": "2020-04-04T01:17:44.936121-07:00",
-        "stepEndTime": "2020-04-04T01:17:45.012137-07:00"
-      }
+        "stepOutput": stepFailed
+      },
+        "2": {
+            "flowName": "testFlow",
+            "stepName": "Mapping1",
+            "stepDefinitionName": "entity-services-mapping",
+            "stepDefinitionType": "mapping",
+            "stepOutput": stepFailed
+        },
+        "4": {
+            "flowName": "testFlow",
+            "stepName": "match-customer",
+            "stepDefinitionName": "default-matching",
+            "stepDefinitionType": "matching",
+            "stepOutput": stepFailed
+        },
+        "5": {
+            "flowName": "testFlow",
+            "stepName": "merge-customer",
+            "stepDefinitionName": "default-merging",
+            "stepDefinitionType": "merging",
+            "stepOutput": stepFailed
+        },
+        "6": {
+            "flowName": "testFlow",
+            "stepName": "master-customer",
+            "stepDefinitionName": "default-mastering",
+            "stepDefinitionType": "mastering",
+            "stepOutput": stepFailed
+        }
     },
     "jobStatus": "failed"
   },
@@ -266,78 +357,70 @@ const flows = {
               "sourceFormat": "json"
           },
           {
-            "stepName": "mapping1",
+            "stepName": "Mapping1",
             "stepDefinitionType": "MAPPING",
             "stepNumber": "2",
-            "sourceFormat": "json"
+            "targetFormat": "json"
           },
           {
             "stepName": "custom1",
             "stepDefinitionType": "CUSTOM",
             "stepNumber": "3",
-            "sourceFormat": "json"
-          }
-      ]
-  }]
-  ,
-  "status" :200
-}
-
-const flowsWithMapping = {
-  "data": [{
-    "name": "Flow1",
-    "description": "",
-      "steps": [
-          {
-              "stepName": "Mapping1",
-              "stepDefinitionType": "MAPPING",
-              "stepNumber": "1"
           },
           {
-            "stepName": "Custom1",
-            "stepDefinitionType": "CUSTOM",
-            "stepNumber": "2"
+              "stepNumber":	"4",
+              "stepName": "match-customer",
+              "stepDefinitionType":	"MATCHING"
+          },
+          {
+              "stepNumber": "5",
+              "stepName": "merge-customer",
+              "stepDefinitionType": "MERGING"
+          },
+          {
+              "stepNumber": "6",
+              "stepName": "master-customer",
+              "stepDefinitionType": "MASTERING"
           }
       ]
   }]
   ,
   "status" :200
 }
-
-const responseForMapping = {
-  "data": {
-    "jobId": "e4590649-8c4b-419c-b6a1-473069186592",
-    "flow": "Flow1",
-  },
-  "status": 200
-};
 
 const jobRespSuccess = {
   "data": {
     "jobId": "e4590649-8c4b-419c-b6a1-473069186592",
-    "flow": "Flow1",
+    "flow": "testFlow",
     "user": "dh-dev",
-    "lastAttemptedStep": "1",
-    "lastCompletedStep": "1",
+    "lastAttemptedStep": "2",
+    "lastCompletedStep": "2",
     "timeStarted": "2020-04-24T14:05:00.31817-07:00",
     "timeEnded": "2020-04-24T14:05:01.019819-07:00",
     "stepResponses": {
-      "1": {
-        "flowName": "Flow1",
+      "2": {
+        "flowName": "testFlow",
         "stepName": "Mapping1",
         "stepDefinitionName": "entity-services-mapping",
         "stepDefinitionType": "mapping",
-        "stepOutput": null,
-        "fullOutput": null,
-        "status": "completed step 1",
-        "totalEvents": 0,
-        "successfulEvents": 0,
-        "failedEvents": 0,
-        "successfulBatches": 0,
-        "failedBatches": 0,
-        "success": true,
-        "stepStartTime": "2020-04-24T14:05:00.35012-07:00",
-        "stepEndTime": "2020-04-24T14:05:01.019819-07:00"
+      },
+      "4": {
+          "flowName": "testFlow",
+          "stepName": "match-customer",
+          "stepDefinitionName": "default-matching",
+          "stepDefinitionType": "matching",
+      },
+      "5": {
+          "flowName": "testFlow",
+          "stepName": "merge-customer",
+          "stepDefinitionName": "default-merging",
+          "stepDefinitionType": "merging",
+      },
+      "6": {
+          "flowName": "testFlow",
+          "stepName": "master-customer",
+          "stepDefinitionName": "default-mastering",
+          "stepDefinitionType": "mastering",
       }
     },
     "jobStatus": "finished"
@@ -394,9 +477,7 @@ const data = {
     primaryEntityTypes,
     flows: flows,
     entityTypes: entityTypes,
-    flowsWithMapping: flowsWithMapping,
     response: response,
-    responseForMapping: responseForMapping,
     loads: loads,
     mappings: mappings,
     matchings: matchings,

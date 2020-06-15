@@ -84,7 +84,7 @@ const runAPI = (axiosMock) => {
   return axiosMock.get['mockImplementation']((url) => {
     switch (url) {
       case '/api/flows':
-        return Promise.resolve(curateData.flowsWithMapping)
+        return Promise.resolve(curateData.flows)
       case '/api/steps/ingestion':
         return Promise.resolve(curateData.loads);
       case '/api/steps/mapping':
@@ -108,7 +108,7 @@ const runAPI = (axiosMock) => {
           return Promise.reject(new Error('not found'));
       }
     })
-    const updateURL = `/api/flows/${curateData.flowsWithMapping.data[0].name}`;
+    const updateURL = `/api/flows/${curateData.flows.data[0].name}`;
     axiosMock.put['mockImplementation']((url) => {
       switch (url) {
         case updateURL:
