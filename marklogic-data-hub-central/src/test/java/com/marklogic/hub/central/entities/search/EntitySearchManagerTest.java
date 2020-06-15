@@ -76,6 +76,20 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
         assertTrue(node.get("results").get(0).has("entityProperties"), "Each result is expected to have " +
             "entityProperties so that the UI knows what structured values to show for each entity instance");
         assertTrue(node.get("results").get(1).has("entityProperties"));
+
+        // Adding propertiesToDisplay to search query which are user selected columns
+        List<String> propertiesToDisplay = Arrays.asList("name", "customerId");
+        query.setPropertiesToDisplay(propertiesToDisplay);
+        results = entitySearchManager.search(query);
+        node = readJsonObject(results.get());
+        assertTrue(node.has("selectedPropertyDefinitions"), "Including this makes life easy on the UI so it knows what " +
+                "columns to display");
+        assertEquals(2, node.get("selectedPropertyDefinitions").size());
+        assertTrue(node.has("entityPropertyDefinitions"), "Including this means the UI doesn't need to make a separate call " +
+                "to /api/models to get the property names and also traverse the entity definition itself");
+        assertTrue(node.get("results").get(0).has("entityProperties"), "Each result is expected to have " +
+                "entityProperties so that the UI knows what structured values to show for each entity instance");
+        assertTrue(node.get("results").get(1).has("entityProperties"));
     }
 
     @Test
