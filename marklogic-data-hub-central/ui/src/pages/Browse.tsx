@@ -22,6 +22,8 @@ import { AuthoritiesContext } from "../util/authorities";
 import { fetchQueries } from '../api/queries';
 import ZeroStateExplorer from '../components/zero-state-explorer/zero-state-explorer';
 import ResultsTabularView from "../components/results-tabular-view/results-tabular-view";
+import { QueryOptions } from '../types/query-types';
+
 
 interface Props extends RouteComponentProps<any> {
 }
@@ -93,8 +95,7 @@ const Browse: React.FC<Props> = ({ location }) => {
             entityTypeIds: searchOptions.entityTypeIds.length ? searchOptions.entityTypeIds : allEntities,
             selectedFacets: searchOptions.selectedFacets,
           },
-          //propertiesToDisplay: searchOptions.selectedTableProperties, // empty for default values. TODO, BE will be implemented in Jira 5100
-
+          propertiesToDisplay: searchOptions.selectedTableProperties,
           start: searchOptions.start,
           pageLength: searchOptions.pageLength,
         }
@@ -153,7 +154,16 @@ const Browse: React.FC<Props> = ({ location }) => {
 
   useEffect(() => {
     if (searchOptions.zeroState === true) {
-      applySaveQuery('', [], {}, 'select a query',[], true);
+      let options: QueryOptions = {
+        searchText: '',
+        entityTypeIds: [],
+        selectedFacets: {},
+        selectedQuery: 'select a query',
+        propertiesToDisplay: [],
+        zeroState: true,
+        manageQueryModal: false,
+    }
+    applySaveQuery(options);
     }
   }, [searchOptions.zeroState]);
 
@@ -210,7 +220,6 @@ const Browse: React.FC<Props> = ({ location }) => {
       resetSessionTime()
     }
   }
-
 
   if (searchOptions.zeroState) {
     return (

@@ -14,6 +14,7 @@ import { AuthoritiesContext } from "../../util/authorities";
 import EditQueryDetails from "./saving/edit-save-query/edit-query-details";
 import SaveChangesModal from "./saving/edit-save-query/save-changes-modal";
 import DiscardChangesModal from "./saving/discard-changes/discard-changes-modal";
+import { QueryOptions } from '../../types/query-types';
 
 
 const Query = (props) => {
@@ -89,17 +90,20 @@ const Query = (props) => {
     }
 
     const getSaveQueryWithId = async (key) => {
-       let searchText:string = '';
-       let entityTypeIds:string[] = [];
-       let selectedFacets:{} = {};
        try {
            const response = await fetchQueryById(key);
-           if (response.data) {
-               searchText = response.data.savedQuery.query.searchText;
-               entityTypeIds = response.data.savedQuery.query.entityTypeIds;
-               selectedFacets = response.data.savedQuery.query.selectedFacets;
-               applySaveQuery(searchText, entityTypeIds, selectedFacets, response.data.savedQuery.name, response.data.savedQuery.propertiesToDisplay);
-               setCurrentQuery(response.data);
+           if (response.data) {               
+            let options: QueryOptions = {
+                searchText: response.data.savedQuery.query.searchText,
+                entityTypeIds: response.data.savedQuery.query.entityTypeIds,
+                selectedFacets: response.data.savedQuery.query.selectedFacets,
+                selectedQuery: response.data.savedQuery.name,
+                propertiesToDisplay: response.data.savedQuery.propertiesToDisplay,
+                zeroState: searchOptions.zeroState,
+                manageQueryModal: searchOptions.manageQueryModal,
+            }
+            applySaveQuery(options);
+            setCurrentQuery(response.data);
                if(props.greyFacets.length > 0){
                    clearAllGreyFacets();
                }
@@ -116,11 +120,12 @@ const Query = (props) => {
            resetSessionTime()
        }
    }
-
     const isSaveQueryChanged = () => {
         if (currentQuery && currentQuery.hasOwnProperty('savedQuery') && currentQuery.savedQuery.hasOwnProperty('query')) {
             if ((JSON.stringify(currentQuery.savedQuery.query.selectedFacets) !== JSON.stringify(searchOptions.selectedFacets)) ||
-                (currentQuery.savedQuery.query.searchText !== searchOptions.query) || (props.greyFacets.length > 0)) {
+                (currentQuery.savedQuery.query.searchText !== searchOptions.query) || 
+                (JSON.stringify(currentQuery.savedQuery.propertiesToDisplay) !== JSON.stringify(searchOptions.selectedTableProperties)) ||
+                (props.greyFacets.length > 0)) {
                 return true;
             }
         }
@@ -202,7 +207,7 @@ const Query = (props) => {
     return (
         <div>
             <div>
-                {props.isSavedQueryUser && (props.selectedFacets.length > 0 || searchOptions.query) && showSaveNewIcon && searchOptions.entityTypeIds.length > 0 &&
+                {props.isSavedQueryUser && (props.selectedFacets.length > 0 || searchOptions.query || searchOptions.selectedTableProperties.length > 0) && showSaveNewIcon && searchOptions.entityTypeIds.length > 0 &&
                     <div style={{ marginTop: '-22px' }}>
                         <Tooltip title={'Save the current query'}>
                             <FontAwesomeIcon

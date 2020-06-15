@@ -1,18 +1,19 @@
-import React, {useState, useContext, useEffect} from 'react';
-import {Modal, Form, Input, Radio, Button} from 'antd';
-import {SearchContext} from "../../../../util/search-context";
+import React, { useState, useContext, useEffect } from 'react';
+import { Modal, Form, Input, Radio, Button } from 'antd';
+import { SearchContext } from "../../../../util/search-context";
 import styles from './save-query-modal.module.scss';
-import {UserContext} from "../../../../util/user-context";
+import { UserContext } from "../../../../util/user-context";
+import { QueryOptions } from '../../../../types/query-types';
 
 interface Props {
     setSaveModalVisibility: () => void;
-    saveNewQuery: (queryName: string, queryDescription: string,facets:{}) => void;
-    greyFacets:any[];
-    toggleApply: (clicked:boolean) => void;
-    toggleApplyClicked: (clicked:boolean) => void;
+    saveNewQuery: (queryName: string, queryDescription: string, facets: {}) => void;
+    greyFacets: any[];
+    toggleApply: (clicked: boolean) => void;
+    toggleApplyClicked: (clicked: boolean) => void;
     currentQueryName: string;
     setCurrentQueryName: (name: string) => void;
-    setSaveNewIconVisibility: (clicked:boolean) => void;
+    setSaveNewIconVisibility: (clicked: boolean) => void;
     currentQueryDescription: string;
     setCurrentQueryDescription: (description: string) => void;
 }
@@ -30,7 +31,7 @@ const SaveQueryModal: React.FC<Props> = (props) => {
 
     const {
         handleError,
-            resetSessionTime
+        resetSessionTime
     } = useContext(UserContext);
 
     const [queryName, setQueryName] = useState('');
@@ -47,12 +48,12 @@ const SaveQueryModal: React.FC<Props> = (props) => {
         props.setSaveModalVisibility();
     }
     const onOk = async () => {
-        let facets = {...searchOptions.selectedFacets};
+        let facets = { ...searchOptions.selectedFacets };
         let selectedFacets = facets;
         let greyedFacets = greyedOptions.selectedFacets;
-        switch(radioOptionClicked) {
+        switch (radioOptionClicked) {
             case 1:
-                facets = {...facets,...greyedOptions.selectedFacets};
+                facets = { ...facets, ...greyedOptions.selectedFacets };
                 setAllSearchFacets(facets);
                 clearAllGreyFacets();
                 props.toggleApplyClicked(true);
@@ -69,7 +70,16 @@ const SaveQueryModal: React.FC<Props> = (props) => {
             await props.saveNewQuery(queryName.trim(), queryDescription, facets);
             props.setSaveNewIconVisibility(false);
             props.setSaveModalVisibility();
-            applySaveQuery(searchOptions.query, searchOptions.entityTypeIds, facets, queryName,searchOptions.selectedTableProperties);
+            let options: QueryOptions = {
+                searchText: searchOptions.query,
+                entityTypeIds: searchOptions.entityTypeIds,
+                selectedFacets: facets,
+                selectedQuery: queryName,
+                propertiesToDisplay: searchOptions.selectedTableProperties,
+                zeroState: searchOptions.zeroState,
+                manageQueryModal: searchOptions.manageQueryModal,
+            }
+            applySaveQuery(options);
             props.setCurrentQueryName(queryName);
             props.setCurrentQueryDescription(queryDescription);
         } catch (error) {
@@ -89,10 +99,10 @@ const SaveQueryModal: React.FC<Props> = (props) => {
 
     const handleChange = (event) => {
         if (event.target.id === 'save-query-name') {
-           setQueryName(event.target.value);
+            setQueryName(event.target.value);
         }
         if (event.target.id === 'save-query-description') {
-           setQueryDescription(event.target.value);
+            setQueryDescription(event.target.value);
         }
     }
 
@@ -118,7 +128,7 @@ const SaveQueryModal: React.FC<Props> = (props) => {
                 <Form.Item
                     colon={false}
                     label={<span className={styles.text}>
-                           Name:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
+                        Name:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
                         </span>}
                     labelAlign="left"
                     validateStatus={errorMessage ? 'error' : ''}
@@ -143,12 +153,12 @@ const SaveQueryModal: React.FC<Props> = (props) => {
                         placeholder={'Enter query description'}
                     />
                 </Form.Item>
-                {props.greyFacets.length > 0  && <Form.Item
+                {props.greyFacets.length > 0 && <Form.Item
                     colon={false}
                     label='Unapplied Facets:'
                     labelAlign="left"
                 >
-                    <Radio.Group onChange={unAppliedFacets} style={{'marginTop': '11px'}} defaultValue={2}>
+                    <Radio.Group onChange={unAppliedFacets} style={{ 'marginTop': '11px' }} defaultValue={2}>
                         <Radio value={1}> Apply before saving</Radio>
                         <Radio value={2}> Save as is, keep unapplied facets</Radio>
                         <Radio value={3}> Discard unapplied facets</Radio>
@@ -159,9 +169,9 @@ const SaveQueryModal: React.FC<Props> = (props) => {
                         <Button id='save-query-cancel-button' onClick={() => onCancel()}>Cancel</Button>
                         &nbsp;&nbsp;
                         <Button type="primary"
-                                htmlType="submit"
-                                disabled={queryName.length === 0}
-                                onClick={()=> onOk()} id='save-query-button'>Save
+                            htmlType="submit"
+                            disabled={queryName.length === 0}
+                            onClick={() => onOk()} id='save-query-button'>Save
                         </Button>
                     </div>
                 </Form.Item>

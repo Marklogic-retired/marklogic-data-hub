@@ -1,9 +1,9 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { MLTable } from '@marklogic/design-system';
 import QueryExport from "../query-export/query-export";
 import { AuthoritiesContext } from "../../util/authorities";
 import styles from './results-tabular-view.module.scss';
-
+import ColumnSelector from '../../components/column-selector/column-selector';
 
 interface Props {
     data: any;
@@ -14,6 +14,7 @@ interface Props {
 }
 
 const ResultsTabularView = (props) => {
+    const [popoverVisibility, setPopoverVisibility] = useState<boolean>(false);
 
     const authorityService = useContext(AuthoritiesContext);
     const canExportQuery = authorityService.canExportEntityInstances();
@@ -80,8 +81,13 @@ const ResultsTabularView = (props) => {
 
     return (
         <>
-            <div className={styles.queryExport}>
-                {canExportQuery && <QueryExport hasStructured={props.hasStructured} columns={props.columns} />}
+            <div className={styles.icon}>
+                <div className={styles.queryExport}>
+                    {canExportQuery && <QueryExport hasStructured={props.hasStructured} columns={props.columns} />}
+                </div>
+                <div className={styles.columnSelector} data-cy="column-selector">
+                    <ColumnSelector popoverVisibility={popoverVisibility} setPopoverVisibility={setPopoverVisibility} entityPropertyDefinitions={props.entityPropertyDefinitions} selectedPropertyDefinitions={props.selectedPropertyDefinitions} />
+                </div>
             </div>
             <div className={styles.tabular}>
                 <MLTable bordered

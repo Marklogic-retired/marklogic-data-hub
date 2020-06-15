@@ -540,7 +540,7 @@ const ResultTable: React.FC<Props> = (props) => {
       { canExportQuery && <QueryExport columns={props.columns}/> }
       </div>
       <div className={styles.columnSelector} data-cy="column-selector">
-        <ColumnSelector title={checkedColumns} tree={treeColumns} headerRender={headerRender} updateTreeColumns={updateTreeColumns} />
+        {/* <ColumnSelector title={checkedColumns} tree={treeColumns} headerRender={headerRender} updateTreeColumns={updateTreeColumns} /> */}
       </div>
       <ReactDragListView.DragColumn {...dragProps}>
         <div className={styles.tabular}>

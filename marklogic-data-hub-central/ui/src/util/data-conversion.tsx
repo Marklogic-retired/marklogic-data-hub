@@ -688,10 +688,10 @@ export const definitionsParser = (definitions: any): Definition[] => {
 
             if (definitions[definition][entityKeys][properties]['datatype'] === 'array') {
               property.multiple = true;
-              
-              if(definitions[definition][entityKeys][properties]['items'].hasOwnProperty('$ref')) {
+
+              if (definitions[definition][entityKeys][properties]['items'].hasOwnProperty('$ref')) {
                 // Array of Structured/Entity type
-                if (definitions[definition][entityKeys][properties]['items']['$ref'].split('/')[1] === 'definitions' ) {
+                if (definitions[definition][entityKeys][properties]['items']['$ref'].split('/')[1] === 'definitions') {
                   property.datatype = 'structured';
                 } else {
                   property.datatype = definitions[definition][entityKeys][properties]['items']['$ref'].split('/').pop();
@@ -701,7 +701,7 @@ export const definitionsParser = (definitions: any): Definition[] => {
                 // Array of datatype
                 property.datatype = definitions[definition][entityKeys][properties]['items']['datatype']
                 property.collation = definitions[definition][entityKeys][properties]['items']['collation']
-              } 
+              }
             }
           } else if (definitions[definition][entityKeys][properties]['$ref']) {
             let refSplit = definitions[definition][entityKeys][properties]['$ref'].split('/');
@@ -710,7 +710,7 @@ export const definitionsParser = (definitions: any): Definition[] => {
               property.datatype = 'structured';
             } else {
               // External Entity type
-              property.datatype = refSplit[refSplit.length-1];
+              property.datatype = refSplit[refSplit.length - 1];
             }
 
             property.ref = definitions[definition][entityKeys][properties]['$ref'];
@@ -741,3 +741,84 @@ export const getTableProperties = (object: Array<Object>) => {
   }
   return getProperties(object);
 }
+
+export const getSelectedTableProperties = (object: Array<Object>, keys: Array<String>) => {
+  let labels = new Array();
+  const getProperties = (obj) => {
+    for (let i = 0; i < obj.length; i++) {
+      if (obj[i] !== null && (obj[i]).hasOwnProperty('children')) {
+        getProperties(obj[i].children)
+      } else {
+        labels.indexOf(obj[i].propertyPath) === -1 && keys.includes(obj[i].key) && labels.push(obj[i].propertyPath)
+      }
+    }
+    return labels;
+  }
+  return getProperties(object);
+}
+
+//constructs array of entity parameter name objects with zero dash keys.
+export const treeConverter = function (obj: Object) {
+  let keys = new Array();
+  let deep = 0;
+  keys.push(0);
+  const parser = (obj: Object, counter) => {
+    let parsedTitle = new Array();
+    for (let i in obj) {
+      if (obj[i].hasOwnProperty('properties')) {
+        deep = counter;
+        keys.push(deep);
+        deep = 0;
+        parsedTitle.push({
+          title: obj[i].propertyLabel,
+          key: keys.join('-'),
+          propertyPath: obj[i].propertyPath,
+          children: parser(obj[i].properties, deep)
+        })
+        keys.pop();
+        counter++;
+      } else {
+        parsedTitle.push({
+          title: obj[i].propertyLabel,
+          key: keys.join('-') + '-' + counter,
+          propertyPath: obj[i].propertyPath,
+        });
+        counter++;
+      }
+    }
+    return parsedTitle;
+  }
+  return parser(obj, keys)
+};
+
+export const getCheckedKeys = (entityPropertyDefinitions: any[], selectedPropertyDefinitions: any[]) => {
+  let keys = new Array();
+  const parser = (selectedPropertyDefinitions: any[]) => {
+    selectedPropertyDefinitions.filter(item => {
+      if (item.hasOwnProperty('properties')) {
+        parser(item.properties)
+      } else {
+        let key = findKey(entityPropertyDefinitions, item.propertyPath);
+        key && keys.push(key)
+      }
+    })
+    return keys;
+  }
+  return parser(selectedPropertyDefinitions)
+};
+
+
+const findKey = (entityPropertyDefinitions: any[], propertyPath: string) => {
+  let key: string;
+  const parser = (entityPropertyDefinitions: any[], propertyPath: string) => {
+    entityPropertyDefinitions.filter(item => {
+      if (item.propertyPath === propertyPath) {
+        key = item.key;
+      } else if (item.hasOwnProperty('children')) {
+        parser(item.children, propertyPath)
+      }
+    })
+    return key;
+  }
+  return parser(entityPropertyDefinitions, propertyPath)
+};

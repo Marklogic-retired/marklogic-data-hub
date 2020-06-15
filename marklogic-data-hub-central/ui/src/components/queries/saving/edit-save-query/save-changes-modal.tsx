@@ -1,27 +1,28 @@
-import React, {useState, useContext, useEffect} from 'react';
-import {Modal, Form, Input, Radio, Button} from 'antd';
-import {SearchContext} from "../../../../util/search-context";
+import React, { useState, useContext, useEffect } from 'react';
+import { Modal, Form, Input, Radio, Button } from 'antd';
+import { SearchContext } from "../../../../util/search-context";
 import styles from '../save-query-modal/save-query-modal.module.scss';
 import axios from 'axios';
-import {UserContext} from "../../../../util/user-context";
+import { UserContext } from "../../../../util/user-context";
+import { QueryOptions } from '../../../../types/query-types';
 
 interface Props {
     setSaveChangesModalVisibility: () => void;
     savedQueryList: any[];
-    getSaveQueryWithId: (key:{}) => void;
-    greyFacets:any[];
-    toggleApply: (clicked:boolean) => void;
-    toggleApplyClicked: (clicked:boolean) => void;
-    setSaveNewIconVisibility: (clicked:boolean) => void;
+    getSaveQueryWithId: (key: {}) => void;
+    greyFacets: any[];
+    toggleApply: (clicked: boolean) => void;
+    toggleApplyClicked: (clicked: boolean) => void;
+    setSaveNewIconVisibility: (clicked: boolean) => void;
     currentQuery: any,
     currentQueryName: string;
     setCurrentQueryDescription: (description: string) => void;
     setCurrentQueryName: (name: string) => void;
     nextQueryName: string;
     setCurrentQueryOnEntityChange: () => void;
-    isSaveQueryChanged:() => boolean;
+    isSaveQueryChanged: () => boolean;
     entityQueryUpdate: boolean;
-    toggleEntityQueryUpdate:() => void;
+    toggleEntityQueryUpdate: () => void;
 }
 
 const SaveChangesModal: React.FC<Props> = (props) => {
@@ -69,12 +70,12 @@ const SaveChangesModal: React.FC<Props> = (props) => {
     }, [props.currentQuery, props.nextQueryName]);
 
     const onOk = async (queryName, queryDescription, currentQuery) => {
-        let facets = {...searchOptions.selectedFacets};
-        let selectedFacets = {...searchOptions.selectedFacets};
+        let facets = { ...searchOptions.selectedFacets };
+        let selectedFacets = { ...searchOptions.selectedFacets };
         let greyedFacets = greyedOptions.selectedFacets;
-        switch(radioOptionClicked) {
+        switch (radioOptionClicked) {
             case 1:
-                facets = {...facets,...greyedOptions.selectedFacets};
+                facets = { ...facets, ...greyedOptions.selectedFacets };
                 clearAllGreyFacets();
                 props.toggleApplyClicked(true);
                 props.toggleApply(false);
@@ -90,7 +91,7 @@ const SaveChangesModal: React.FC<Props> = (props) => {
         try {
             currentQuery.savedQuery.name = queryName.trim();
             currentQuery.savedQuery.description = queryDescription;
-            if(currentQuery.hasOwnProperty('savedQuery') && currentQuery.savedQuery.hasOwnProperty('query')){
+            if (currentQuery.hasOwnProperty('savedQuery') && currentQuery.savedQuery.hasOwnProperty('query')) {
                 currentQuery.savedQuery.query.selectedFacets = facets;
                 currentQuery.savedQuery.query.searchText = searchOptions.query;
                 currentQuery.savedQuery.query.entityTypeIds = searchOptions.entityTypeIds;
@@ -100,13 +101,21 @@ const SaveChangesModal: React.FC<Props> = (props) => {
             const response = await axios.put(`/api/entitySearch/savedQueries`, currentQuery);
             if (response.data) {
                 props.setSaveChangesModalVisibility();
-                if(props.currentQueryName && !props.entityQueryUpdate){
-                    applySaveQuery(searchOptions.query, searchOptions.entityTypeIds, facets, queryName, searchOptions.selectedTableProperties);
+                if (props.currentQueryName && !props.entityQueryUpdate) {
+                    let options: QueryOptions = {
+                        searchText: searchOptions.query,
+                        entityTypeIds: searchOptions.entityTypeIds,
+                        selectedFacets: facets,
+                        selectedQuery: queryName,
+                        propertiesToDisplay: searchOptions.selectedTableProperties,
+                        zeroState: searchOptions.zeroState,
+                        manageQueryModal: searchOptions.manageQueryModal,
+                    }
+                    applySaveQuery(options);
                 }
-                if(props.nextQueryName && !props.entityQueryUpdate){
-                    for(let key of props.savedQueryList)
-                    {
-                        if(key.savedQuery.name === props.nextQueryName){
+                if (props.nextQueryName && !props.entityQueryUpdate) {
+                    for (let key of props.savedQueryList) {
+                        if (key.savedQuery.name === props.nextQueryName) {
                             props.getSaveQueryWithId(key);
                             break;
                         }
@@ -114,7 +123,7 @@ const SaveChangesModal: React.FC<Props> = (props) => {
                     props.setCurrentQueryName(props.nextQueryName);
                 }
                 props.setCurrentQueryDescription(queryDescription);
-                if(props.entityQueryUpdate){
+                if (props.entityQueryUpdate) {
                     props.setCurrentQueryOnEntityChange();
                     props.toggleEntityQueryUpdate();
                 }
@@ -134,7 +143,6 @@ const SaveChangesModal: React.FC<Props> = (props) => {
             resetSessionTime();
         }
     }
-
 
     const handleChange = (event) => {
         if (event.target.id === 'save-changes-query-name') {
@@ -165,7 +173,7 @@ const SaveChangesModal: React.FC<Props> = (props) => {
                 <Form.Item
                     colon={false}
                     label={<span className={styles.text}>
-                           Name:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
+                        Name:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
                         </span>}
                     labelAlign="left"
                     validateStatus={errorMessage ? 'error' : ''}
@@ -191,12 +199,12 @@ const SaveChangesModal: React.FC<Props> = (props) => {
                         placeholder={'Enter query description'}
                     />
                 </Form.Item>
-                {props.greyFacets.length > 0  && <Form.Item
+                {props.greyFacets.length > 0 && <Form.Item
                     colon={false}
                     label='Unapplied Facets:'
                     labelAlign="left"
                 >
-                    <Radio.Group onChange={unAppliedFacets} style={{'marginTop': '11px'}} defaultValue={2}>
+                    <Radio.Group onChange={unAppliedFacets} style={{ 'marginTop': '11px' }} defaultValue={2}>
                         <Radio value={1}> Apply before saving</Radio>
                         <Radio value={2}> Save as is, keep unapplied facets</Radio>
                         <Radio value={3}> Discard unapplied facets</Radio>
@@ -207,9 +215,9 @@ const SaveChangesModal: React.FC<Props> = (props) => {
                         <Button id='edit-save-changes-cancel-button' onClick={() => onCancel()}>Cancel</Button>
                         &nbsp;&nbsp;
                         <Button type="primary"
-                                htmlType="submit"
-                                disabled={queryName.length === 0}
-                                onClick={()=> onOk(queryName, queryDescription, props.currentQuery)} id='edit-save-changes-button'>Save
+                            htmlType="submit"
+                            disabled={queryName.length === 0}
+                            onClick={() => onOk(queryName, queryDescription, props.currentQuery)} id='edit-save-changes-button'>Save
                         </Button>
                     </div>
                 </Form.Item>

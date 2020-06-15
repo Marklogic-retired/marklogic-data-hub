@@ -1,14 +1,15 @@
 import React, { useContext } from 'react';
-import { Modal} from 'antd';
+import { Modal } from 'antd';
 import { SearchContext } from "../../../../util/search-context";
 import { UserContext } from "../../../../util/user-context";
 import axios from "axios";
+import { QueryOptions } from '../../../../types/query-types';
 
 interface Props {
     setDiscardChangesModalVisibility: () => void;
     savedQueryList: any[];
-    toggleApply: (clicked:boolean) => void;
-    toggleApplyClicked: (clicked:boolean) => void;
+    toggleApply: (clicked: boolean) => void;
+    toggleApplyClicked: (clicked: boolean) => void;
 }
 
 const DiscardChangesModal: React.FC<Props> = (props) => {
@@ -30,9 +31,8 @@ const DiscardChangesModal: React.FC<Props> = (props) => {
     }
 
     const onOk = () => {
-        for(let key of props.savedQueryList)
-        {
-            if(key.savedQuery.name === searchOptions.selectedQuery){
+        for (let key of props.savedQueryList) {
+            if (key.savedQuery.name === searchOptions.selectedQuery) {
                 getSaveQueryWithId(key);
                 break;
             }
@@ -40,16 +40,19 @@ const DiscardChangesModal: React.FC<Props> = (props) => {
     }
 
     const getSaveQueryWithId = async (key) => {
-        let searchText:string = '';
-        let entityTypeIds:string[] = [];
-        let selectedFacets:{} = {};
         try {
-            const response = await axios.get(`/api/entitySearch/savedQueries/query`, {params: {id: key.savedQuery.id}});
+            const response = await axios.get(`/api/entitySearch/savedQueries/query`, { params: { id: key.savedQuery.id } });
             if (response.data) {
-                searchText = response.data.savedQuery.query.searchText;
-                entityTypeIds = response.data.savedQuery.query.entityTypeIds;
-                selectedFacets = response.data.savedQuery.query.selectedFacets;
-                applySaveQuery(searchText, entityTypeIds, selectedFacets, searchOptions.selectedQuery, response.data.savedQuery.propertiesToDisplay);
+                let options: QueryOptions = {
+                    searchText: response.data.savedQuery.query.searchText,
+                    entityTypeIds: response.data.savedQuery.query.entityTypeIds,
+                    selectedFacets: response.data.savedQuery.query.selectedFacets,
+                    selectedQuery: searchOptions.selectedQuery,
+                    propertiesToDisplay: response.data.savedQuery.propertiesToDisplay,
+                    zeroState: searchOptions.zeroState,
+                    manageQueryModal: searchOptions.manageQueryModal,
+                }
+                applySaveQuery(options);
                 clearAllGreyFacets();
             }
             props.setDiscardChangesModalVisibility();
@@ -64,18 +67,18 @@ const DiscardChangesModal: React.FC<Props> = (props) => {
 
     return (
         <>
-        <Modal
-            visible={true}
-            title={'Confirmation'}
-            onCancel={() => onCancel()}
-            onOk={() => onOk()}
-            okButtonProps={{ id:'discard-yes-button', htmlType: 'submit' }}
-            okText={'Yes'}
-            cancelText={'No'}
-            cancelButtonProps={{id:'discard-no-button'}}
-        >
-            <p>Are you sure you want to discard all changes made to <strong>{searchOptions.selectedQuery} ?</strong></p>
-        </Modal>
+            <Modal
+                visible={true}
+                title={'Confirmation'}
+                onCancel={() => onCancel()}
+                onOk={() => onOk()}
+                okButtonProps={{ id: 'discard-yes-button', htmlType: 'submit' }}
+                okText={'Yes'}
+                cancelText={'No'}
+                cancelButtonProps={{ id: 'discard-no-button' }}
+            >
+                <p>Are you sure you want to discard all changes made to <strong>{searchOptions.selectedQuery} ?</strong></p>
+            </Modal>
         </>
     )
 }
