@@ -5,7 +5,7 @@ import homePage from "../support/pages/home";
 import { Application } from '../support/application.config';
 
 
-describe('view page validation', () => {
+xdescribe('view page validation', () => {
   //login with valid account
   beforeEach(() => {
     cy.visit('/');

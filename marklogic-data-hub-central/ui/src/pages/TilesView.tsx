@@ -39,14 +39,15 @@ const INITIAL_SELECTION = ''; // '' for no tile initially
 const TilesView = (props) => {
     const [selection, setSelection] = useState<TileId | string>(INITIAL_SELECTION);
     const [currentNode, setCurrentNode] = useState<any>(INITIAL_SELECTION);
-    const [options, setOptions] = useState<TileItem | null>(null);
-    const [view, setView] = useState<JSX.Element | null>(null);
+    const [options, setOptions] = useState<TileItem|null>(null);
 
     const {
         setZeroState,
         setManageQueryModal,
+        setView,
+        searchOptions
     } = useContext(SearchContext);
-
+    
     const onMenuClick = () => {
         setManageQueryModal(true)
     }
@@ -106,23 +107,24 @@ const TilesView = (props) => {
 
     return (
         <>
-            <Toolbar tiles={tiles} onClick={onSelect} enabled={enabled} />
-            {(view !== null) ? (
+            <Toolbar tiles={tiles} onClick={onSelect} enabled={enabled}/>
+            { (searchOptions.view !== null) ?  (
                 <div className={styles.tilesViewContainer}>
-                    {(selection !== '') ? (
-                        <Tiles
-                            id={selection}
-                            view={view}
-                            currentNode={currentNode}
-                            options={options}
-                            onMenuClick={onMenuClick}
-                            onTileClose={onTileClose}
-                            newStepToFlowOptions={newStepToFlowOptions}
-                        />
-                    ) : null}
-                </div>) :
-                <Overview />
+                    { (selection !== '') ?  (
+                    <Tiles
+                        id={selection}
+                        view={searchOptions.view}
+                        currentNode={currentNode}
+                        options={options}
+                        onMenuClick={onMenuClick}
+                        onTileClose={onTileClose}
+                        newStepToFlowOptions={newStepToFlowOptions}
+                    />
+                    ) : null }
+                </div> ) :
+                <Overview/>
             }
+
         </>
     );
 }

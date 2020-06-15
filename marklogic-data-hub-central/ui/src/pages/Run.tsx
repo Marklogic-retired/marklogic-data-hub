@@ -5,6 +5,8 @@ import { Modal, Collapse } from 'antd';
 import axios from 'axios'
 import { AuthoritiesContext } from "../util/authorities";
 import { UserContext } from '../util/user-context';
+import {SearchContext} from "../util/search-context";
+import Browse from './Browse';
 
 const { Panel } = Collapse;
 
@@ -21,7 +23,12 @@ const Statuses = {
 }
 
 const Run = (props) => {
-   const { handleError, resetSessionTime } = useContext(UserContext)
+   const { handleError, resetSessionTime } = useContext(UserContext);
+
+    const {
+        setViewWithEntity,
+        setNextEntity,
+    } = useContext(SearchContext);
 
     const [isLoading, setIsLoading] = useState(false);
     const [flows, setFlows] = useState<any[]>([]);
@@ -71,7 +78,7 @@ const Run = (props) => {
                     setFlowsDefaultActiveKey(key);
                 }
                 setFlows(response.data);
-                
+
                 //console.log('GET flows successful', response);
             }
         } catch (error) {
@@ -173,12 +180,21 @@ const Run = (props) => {
         return stepType[0].toUpperCase() + stepType.substr(1);
     }
 
-    function showSuccess(stepName, stepType) {
-        Modal.success({
-        title: <p>{formatStepType(stepType)} "{stepName}" ran successfully</p>,
-            okText: 'Close',
-            mask: false
-        });
+    const goToExplorer = (entityName) => {
+        setViewWithEntity(<Browse/>, false, entityName)
+    }
+
+    function showSuccess(stepName, stepType, entityName) {
+          Modal.success({
+              title:<div><p style={{fontWeight: 400}}>{formatStepType(stepType)} step <strong>{stepName}</strong> ran successfully</p></div>,
+               okText: 'Close',
+               mask: false,
+               width:650,
+               content: stepType === 'mapping' ? <div onClick={()=> goToExplorer(entityName)} className={styles.exploreCuratedData}>
+                   <span className={styles.exploreIcon}></span>
+                   <span className={styles.exploreText}>Explore Curated Data</span>
+               </div> : ''
+           });
     }
 
     function getErrors(response) {
@@ -209,11 +225,15 @@ const Run = (props) => {
         </span>
     );
 
-    function showErrors(stepName, stepType, errors, response) {
+    function showErrors(stepName, stepType, errors, response, entityName) {
         Modal.error({
-            title: <p>{formatStepType(stepType)} "{stepName}" completed with errors</p>,
+            title: <p style={{fontWeight: 400}}>{formatStepType(stepType)} step <strong>{stepName}</strong> completed with errors</p>,
             content: (
                 <div id="error-list">
+                    {stepType === 'mapping' ? <div onClick={() => goToExplorer(entityName)} className={styles.exploreCuratedData}>
+                        <span className={styles.exploreIcon}></span>
+                        <span className={styles.exploreText}>Explore Curated Data</span>
+                    </div> : ''}
                     <p className={styles.errorSummary}>{getErrorsSummary(response)}</p>
                     <Collapse defaultActiveKey={['0']} bordered={false}>
                         {errors.map((e, i) => {
@@ -232,7 +252,7 @@ const Run = (props) => {
 
     function showFailed(stepName, stepType, errors) {
         Modal.error({
-            title: <p>{formatStepType(stepType)} "{stepName}" failed</p>,
+            title: <div id="error-title"><p style={{fontWeight: 400}}>{formatStepType(stepType)} step <strong>{stepName}</strong> failed</p></div>,
             content: (
                 <div id="error-list">
                     {errors.map((e, i) => {
@@ -262,6 +282,7 @@ const Run = (props) => {
         }
     }
 
+
     // Poll status for running flow
     function poll(fn, interval) {
         let tries = 0;
@@ -286,7 +307,7 @@ const Run = (props) => {
                     // Poll again
                     setTimeout(checkStatus, interval, resolve, reject);
                 }
-            });;
+            });
         };
         return new Promise(checkStatus);
     }
@@ -317,19 +338,25 @@ const Run = (props) => {
                         return axios.get('/api/jobs/' + jobId);
                     }, pollConfig.interval)
                     .then(function(response: any) {
+                        let entityName;
+                        if(response.hasOwnProperty('targetEntityType')){
+                            let splitTargetEntity = response.targetEntityType.split("/");
+                             entityName = splitTargetEntity[splitTargetEntity.length-1];
+                        }
                         setRunEnded({flowId: flowId, stepId: stepNumber});
                         if (response['jobStatus'] === Statuses.FINISHED) {
                             //console.log('Flow complete: ' + flowId);
-                            showSuccess(stepName, stepType);
+                            showSuccess(stepName, stepType, entityName);
                         } else if (response['jobStatus'] === Statuses.FINISHED_WITH_ERRORS) {
                             //console.log('Flow finished with errors: ' + flowId);
                             let errors = getErrors(response);
-                            showErrors(stepName, stepType, errors, response);
+                            showErrors(stepName, stepType, errors, response, entityName);
                         } else if (response['jobStatus'] === Statuses.FAILED) {
                             //console.log('Flow failed: ' + flowId);
                             let errors = getErrors(response);
                             showFailed(stepName, stepType, errors.slice(0,1));
                         }
+                        console.log(response)
                         setIsLoading(false);
                     }).catch(function(error) {
                         console.error('Flow timeout', error);

@@ -1,17 +1,19 @@
+
 @font-face {
     font-family: 'ExploreIcon';
     src: url(../fonts/ML_IconFont.ttf)  format('truetype');
 }
 
-.exploreIconHeader:before { 
+.exploreIconHeader:before {
     content: "\68";
     font-family: ExploreIcon;
-    font-size: 24px; 
+    font-size: 24px;
     position: relative;
     left: -10px;
     display: inline-block;
     padding-left: 10px;
 }
+
 
 div.mosaic-container div.mosaic-tile {
     border: solid 1px;
