@@ -12,6 +12,7 @@ import axios from "axios";
 import { getSavedQueryPreview } from '../../../../api/queries'
 import ExportQueryModal from '../../../query-export/query-export-modal/query-export-modal'
 import { getExportPreview } from '../../../query-export/export-preview/export-preview'
+import { QueryOptions } from '../../../../types/query-types';
 
 
 const QueryModal = (props) => {
@@ -82,7 +83,16 @@ const QueryModal = (props) => {
         deleteQuery(query)
         setDeleteModalVisibility(false);
         clearAllGreyFacets();
-        applySaveQuery('', query.savedQuery.query.entityTypeIds, {}, 'select a query', [], searchOptions.zeroState, true);
+        let options: QueryOptions = {
+            searchText: '',
+            entityTypeIds: query.savedQuery.query.entityTypeIds,
+            selectedFacets: {},
+            selectedQuery: 'select a query',
+            propertiesToDisplay: [],
+            zeroState: searchOptions.zeroState,
+            manageQueryModal: true,
+        }
+        applySaveQuery(options);
         props.setCurrentQueryDescription('');
     }
 
@@ -93,12 +103,16 @@ const QueryModal = (props) => {
     const onApply = (e) => {
         props.queries && props.queries.length > 0 && props.queries.forEach(query => {
             if (e.currentTarget.dataset.id === query['savedQuery']['name']) {
-                applySaveQuery(
-                    query['savedQuery']['query']['searchText'],
-                    query['savedQuery']['query']['entityTypeIds'],
-                    query['savedQuery']['query']['selectedFacets'],
-                    query['savedQuery']['name'],
-                    query.savedQuery.propertiesToDisplay);
+                let options: QueryOptions = {
+                    searchText: query['savedQuery']['query']['searchText'],
+                    entityTypeIds: query['savedQuery']['query']['entityTypeIds'],
+                    selectedFacets: query['savedQuery']['query']['selectedFacets'],
+                    selectedQuery: query['savedQuery']['name'],
+                    propertiesToDisplay: query.savedQuery.propertiesToDisplay,  
+                    zeroState: query.zeroState,
+                    manageQueryModal: query.manageQueryModal,
+                }
+                applySaveQuery(options);
                 props.setCurrentQueryDescription(query['savedQuery']['description']);
             }
         })

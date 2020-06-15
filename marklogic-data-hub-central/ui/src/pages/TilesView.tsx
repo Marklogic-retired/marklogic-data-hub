@@ -15,7 +15,7 @@ import { AuthoritiesContext } from "../util/authorities";
 import { SearchContext } from '../util/search-context';
 import { useLocation } from 'react-router-dom';
 
-export type TileId =  'load' | 'model' | 'curate' | 'run' | 'explore';
+export type TileId = 'load' | 'model' | 'curate' | 'run' | 'explore';
 export type IconType = 'fa' | 'custom';
 interface TileItem {
     title: string;
@@ -26,26 +26,26 @@ interface TileItem {
     border: string;
 }
 
-const views: Record<TileId, JSX.Element>  = {
-    load: <Load/>,
-    model: <Modeling/>,
-    curate: <Curate/>,
-    run: <Run/>,
-    explore: <Browse/>,
+const views: Record<TileId, JSX.Element> = {
+    load: <Load />,
+    model: <Modeling />,
+    curate: <Curate />,
+    run: <Run />,
+    explore: <Browse />,
 };
 
 const INITIAL_SELECTION = ''; // '' for no tile initially
 
 const TilesView = (props) => {
-    const [selection, setSelection] = useState<TileId|string>(INITIAL_SELECTION);
+    const [selection, setSelection] = useState<TileId | string>(INITIAL_SELECTION);
     const [currentNode, setCurrentNode] = useState<any>(INITIAL_SELECTION);
-    const [options, setOptions] = useState<TileItem|null>(null);
-    const [view, setView] = useState<JSX.Element|null>(null);
+    const [options, setOptions] = useState<TileItem | null>(null);
+    const [view, setView] = useState<JSX.Element | null>(null);
 
     const {
         setZeroState,
         setManageQueryModal,
-      } = useContext(SearchContext);
+    } = useContext(SearchContext);
 
     const onMenuClick = () => {
         setManageQueryModal(true)
@@ -65,13 +65,14 @@ const TilesView = (props) => {
         model: auth.canReadEntityModel() || auth.canWriteEntityModel(),
         curate: auth.canReadMapping() || auth.canWriteMapping() || auth.canReadMatchMerge() || auth.canWriteMatchMerge() || auth.canReadCustom(),
         run: auth.canReadFlow() || auth.canWriteFlow(),
-        explore: true, 
+        explore: true,
         // TODO - Needs to be updated if there are any changes in authorities for Explorer
         // explore: auth.canReadFlow() || auth.canWriteFlow(),
     };
     const enabled = Object.keys(enabledViews).filter(key => enabledViews[key]);
-    
+
     const onSelect = (id) => {
+        id === 'explore' && setZeroState(true)
         setSelection(id);
         setCurrentNode(id); // TODO Handle multiple with nested objects
         setOptions(tiles[id]);
@@ -81,7 +82,7 @@ const TilesView = (props) => {
     const location: any = useLocation();
 
     useEffect(() => {
-        if(props.id){
+        if (props.id) {
             setSelection(props.id);
             setCurrentNode(props.id); // TODO Handle multiple with nested objects
             setOptions(tiles[props.id]);
@@ -93,7 +94,7 @@ const TilesView = (props) => {
             setOptions(null);
             setView(null);
         })
-    },[])
+    }, [])
 
     const [newStepToFlowOptions, setNewStepToFlowOptions] = useState(!props.id ? { addingStepToFlow: false } : {
         addingStepToFlow: true,
@@ -105,22 +106,22 @@ const TilesView = (props) => {
 
     return (
         <>
-            <Toolbar tiles={tiles} onClick={onSelect} enabled={enabled}/>
-            { (view !== null) ?  (
+            <Toolbar tiles={tiles} onClick={onSelect} enabled={enabled} />
+            {(view !== null) ? (
                 <div className={styles.tilesViewContainer}>
-                    { (selection !== '') ?  (
-                    <Tiles 
-                        id={selection}
-                        view={view}
-                        currentNode={currentNode}
-                        options={options}
-                        onMenuClick={onMenuClick}
-                        onTileClose={onTileClose}
-                        newStepToFlowOptions={newStepToFlowOptions}
-                    />
-                    ) : null }
-                </div> ) : 
-                <Overview/> 
+                    {(selection !== '') ? (
+                        <Tiles
+                            id={selection}
+                            view={view}
+                            currentNode={currentNode}
+                            options={options}
+                            onMenuClick={onMenuClick}
+                            onTileClose={onTileClose}
+                            newStepToFlowOptions={newStepToFlowOptions}
+                        />
+                    ) : null}
+                </div>) :
+                <Overview />
             }
         </>
     );

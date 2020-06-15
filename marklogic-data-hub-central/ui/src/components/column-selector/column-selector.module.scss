@@ -1,22 +1,33 @@
-.popover {
-  width:250px;
-  height: auto;
-  max-height: 400px;
-  overflow-y: auto;
-}
-
-.footer {
-  text-align: center;
-}
-
 .fixedPopup {
-  position: fixed;
-  z-index: 1;
+  margin-top: 2px;
+  margin-bottom: 3px;
 }
 
 .columnIcon {
   cursor: pointer;
 }
 
+.divider {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
 
+.footer {
+  display: flex;
+  justify-content: space-evenly;
+  height: 20px;
+}
 
+.popover {
+  width: 220px;
+}
+
+.content {
+  height: auto;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+header {
+  height: 40px;
+}

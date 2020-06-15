@@ -1,10 +1,24 @@
 .queryExport {
-    margin-right: 55px;
-    display: flex;
-    justify-content: flex-end;
+    margin-right: 5px;
+    margin-top: 8px;
+    height: 10px;
 }
 .tabular {
     margin-top: 20px;
     overflow-x: auto;
     height: 46vh;
 }
+
+.columnSelector {
+    margin-right: 26px;
+    margin-top: 5px;
+    height: 10px;
+  }
+
+  .icon {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  
+  

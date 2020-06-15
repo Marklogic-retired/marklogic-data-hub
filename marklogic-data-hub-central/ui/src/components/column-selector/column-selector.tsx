@@ -1,33 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import { Popover, Tree, Input } from 'antd';
+import React, { useState, useEffect, useContext } from 'react';
+import { Popover, Tree, Input, Divider } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faColumns } from '@fortawesome/free-solid-svg-icons'
 import styles from './column-selector.module.scss';
-import { updateHeader, reconstructHeader, deepCopy, getKeys, getChildKeys, getParentKey, setTreeVisibility } from '../../util/data-conversion';
+import { treeConverter, getCheckedKeys, getSelectedTableProperties, setTreeVisibility, getParentKey } from '../../util/data-conversion';
+import { MLButton } from '@marklogic/design-system';
+import { SearchContext } from '../../util/search-context';
+
 
 interface Props {
-  title: any[];
-  tree: any[];
-  headerRender: (columns: any) => void;
-  updateTreeColumns: (columns: any) => void;
+  entityPropertyDefinitions: any[];
+  selectedPropertyDefinitions: any[];
+  popoverVisibility: boolean;
+  setPopoverVisibility: (state: boolean) => void;
 };
 
 const ColumnSelector: React.FC<Props> = (props) => {
   const { TreeNode } = Tree;
   const { Search } = Input;
+  const {
+    setSelectedTableProperties,
+  } = useContext(SearchContext);
+
+  let allProperties = treeConverter(props.entityPropertyDefinitions);
+  let selectedPropertyKeys = getCheckedKeys(allProperties, props.selectedPropertyDefinitions);
+
   const [expandedKeys, setExpandedKeys] = useState<any[]>();
   const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
-  const [checkedKeys, setCheckedKeys] = useState<any[]>([]);
-  const [selectedKeys, setSelectedKeys] = useState<any[]>([]);
   const [searchValue, setSearchValue] = useState("");
-  let primaryKey = props.tree[0] && props.tree[0].key && props.tree[0].key;
-  let allKeys = getKeys(props.tree)
+  const [treeColumns, setTreeColumns] = useState<any[]>(allProperties);
+  const [checkedKeys, setCheckedKeys] = useState<any[]>(selectedPropertyKeys);
+
+  let primaryKey = treeColumns[0] && treeColumns[0].key && treeColumns[0].key;
   const dataList = new Array();
-  let prevTree = props.tree;
 
   useEffect(() => {
-    setCheckedKeys(getChildKeys(props.title))
-  }, [props.title])
+    allProperties = treeConverter(props.entityPropertyDefinitions);
+    selectedPropertyKeys = getCheckedKeys(allProperties, props.selectedPropertyDefinitions);
+    setTreeColumns(allProperties);
+    setCheckedKeys(selectedPropertyKeys);
+  }, [props.selectedPropertyDefinitions, props.entityPropertyDefinitions, props.popoverVisibility]);
 
   const onExpand = expandedKeys => {
     setExpandedKeys(expandedKeys);
@@ -36,7 +48,6 @@ const ColumnSelector: React.FC<Props> = (props) => {
 
   const onCheck = checkedKeys => {
     setCheckedKeys(checkedKeys);
-    props.headerRender(reconstructHeader(props.tree, checkedKeys));
   };
 
   const generateList = data => {
@@ -48,7 +59,7 @@ const ColumnSelector: React.FC<Props> = (props) => {
     }
   };
 
-  const renderTreeNodes = data =>
+  const treeRenderer = data =>
     data.map(item => {
       const index = item.title.indexOf(searchValue);
       const beforeStr = item.title.substr(0, index);
@@ -68,14 +79,14 @@ const ColumnSelector: React.FC<Props> = (props) => {
         if (item.visible === false) {
           return (
             <TreeNode style={{ display: 'none' }} key={item.key} title={title} >
-              {renderTreeNodes(item.children)}
+              {treeRenderer(item.children)}
             </TreeNode>
           );
 
         } else {
           return (
             <TreeNode key={item.key} title={title} >
-              {renderTreeNodes(item.children)}
+              {treeRenderer(item.children)}
             </TreeNode>
           );
         }
@@ -85,75 +96,19 @@ const ColumnSelector: React.FC<Props> = (props) => {
 
       } else {
         return <TreeNode title={title} disabled={item.key === primaryKey} disableCheckbox={item.key === primaryKey} key={item.key} />;
-
       }
     });
 
-
-  const onDrop = info => {
-    const dropKey = info.node.props.eventKey;
-    const dragKey = info.dragNode.props.eventKey;
-    const dropPos = info.node.props.pos.split('-');
-    const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]);
-    let data = props.tree;
-
-    if (dragKey.length === dropKey.length) {
-      if (dropPosition !== 0) {
-        const loop = (data, key, callback) => {
-          data.forEach((item, index, arr) => {
-            if (item.key === key) {
-              return callback(item, index, arr);
-            }
-            if (item.children) {
-              return loop(item.children, key, callback);
-            }
-          });
-        };
-
-        let dragObj;
-        loop(data, dragKey, (item, index, arr) => {
-          arr.splice(index, 1);
-          dragObj = item;
-        });
-
-        let ar;
-        let i;
-        loop(data, dropKey, (item, index, arr) => {
-          ar = arr;
-          i = index;
-        });
-        if (dropPosition === -1) {
-          ar.splice(i, 0, dragObj);
-        } else {
-          ar.splice(i + 1, 0, dragObj);
-        }
-      }
-
-      let col = new Array();
-      for (let i of checkedKeys) {
-        for (let j of allKeys) {
-          if (i === j || j.startsWith(i + '-')) {
-            col.push(j)
-          }
-        }
-      }
-
-      props.headerRender(reconstructHeader(deepCopy(data), col));
-      props.updateTreeColumns(data)
-    }
-  };
-
   const onChange = e => {
     const { value } = e.target;
-    let filteredTree = setTreeVisibility(deepCopy(prevTree), value)
-
-    props.updateTreeColumns(filteredTree.ob)
-    generateList(filteredTree.ob);
+    let filteredTree = setTreeVisibility(allProperties, value).ob;
+    setTreeColumns(filteredTree);
+    generateList(filteredTree);
 
     const expandedKeys = dataList
       .map(item => {
         if (item.title.indexOf(value) > -1) {
-          return getParentKey(item.key, props.tree);
+          return getParentKey(item.key, allProperties);
         }
         return null;
       })
@@ -163,31 +118,51 @@ const ColumnSelector: React.FC<Props> = (props) => {
     setAutoExpandParent(true);
   };
 
+  const onClose = () => {
+    props.setPopoverVisibility(false)
+  };
+
+  const onApply = () => {
+    let selectedProperties = getSelectedTableProperties(allProperties, checkedKeys);
+    setSelectedTableProperties(selectedProperties);
+    props.setPopoverVisibility(false);
+  };
+
   const content = (
-    <div className={styles.popover}>
-      <Search style={{ marginBottom: 8 }} placeholder="Search" onChange={onChange} />
-      <Tree
-        className="draggable-tree"
-        draggable
-        blockNode
-        onDrop={onDrop}
-        checkable
-        onExpand={onExpand}
-        expandedKeys={expandedKeys}
-        autoExpandParent={autoExpandParent}
-        onCheck={onCheck}
-        checkedKeys={checkedKeys}
-        selectedKeys={selectedKeys}
-      >
-        {renderTreeNodes(props.tree)}
-      </Tree>
+    <div data-testid="column-selector-popover" className={styles.popover}>
+      <header>
+        <Search style={{ marginBottom: 8 }} placeholder="Search" onChange={onChange} />
+      </header>
+      <div className={styles.content}>
+        <Tree
+          data-testid="popover-tree"
+          className="draggable-tree"
+          draggable
+          blockNode
+          checkable
+          onExpand={onExpand}
+          expandedKeys={expandedKeys}
+          autoExpandParent={autoExpandParent}
+          onCheck={onCheck}
+          checkedKeys={checkedKeys}
+        >
+          {treeRenderer(treeColumns)}
+        </Tree>
+      </div>
+      <footer>
+        <Divider className={styles.divider} />
+        <div className={styles.footer}>
+          <MLButton size="small" onClick={onClose} >Cancel</MLButton>
+          <MLButton size="small" onClick={onApply} >Apply</MLButton>
+        </div>
+      </footer>
     </div>
   )
 
   return (
     <div className={styles.fixedPopup}>
-      <Popover placement="leftTop" content={content} trigger="click" className={styles.fixedPopup}>
-        <FontAwesomeIcon className={styles.columnIcon} icon={faColumns} size="lg" />
+      <Popover placement="leftTop" content={content} trigger="click" visible={props.popoverVisibility} className={styles.fixedPopup}>
+          <FontAwesomeIcon onClick={() => props.setPopoverVisibility(true)} className={styles.columnIcon} icon={faColumns} size="lg" />
       </Popover>
     </div>
   )

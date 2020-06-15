@@ -4,6 +4,7 @@ import styles from './zero-state-explorer.module.scss';
 import { SearchContext } from '../../util/search-context';
 import Query from '../queries/queries'
 import graphic from './explore_visual_big.png';
+import { QueryOptions } from '../../types/query-types';
 
 
 const ZeroStateExplorer = (props) => {
@@ -13,6 +14,7 @@ const ZeroStateExplorer = (props) => {
   const dropdownOptions = ['All Entities', ...props.entities];
 
   const {
+    searchOptions,
     setQuery,
     applySaveQuery,
     setZeroState,
@@ -54,12 +56,16 @@ const ZeroStateExplorer = (props) => {
   const onItemSelect = (e) => {
     props.queries.forEach(query => {
       if (e === query['savedQuery']['name']) {
-        applySaveQuery(
-          query['savedQuery']['query']['searchText'],
-          query['savedQuery']['query']['entityTypeIds'],
-          query['savedQuery']['query']['selectedFacets'],
-          query['savedQuery']['name'],
-          query.savedQuery.propertiesToDisplay);
+        let options: QueryOptions = {
+          searchText: query['savedQuery']['query']['searchText'],
+          entityTypeIds: query['savedQuery']['query']['entityTypeIds'],
+          selectedFacets: query['savedQuery']['query']['selectedFacets'],
+          selectedQuery: query['savedQuery']['name'],
+          propertiesToDisplay: query.savedQuery.propertiesToDisplay,
+          zeroState: false,
+          manageQueryModal: false,
+        }
+        applySaveQuery(options);
       }
     })
   };
