@@ -20,28 +20,43 @@ const masteringStepLib = require("/data-hub/5/builtins/steps/mastering/default/l
 const requiredOptionProperties = ['matchOptions'];
 const emptySequence = Sequence.from([]);
 
-function filterContentAlreadyProcessed(content, summaryCollection) {
+/**
+ * Filters out content that has either already been processed by the running Job or are side-car documents not intended for matching against
+ * @param {Sequence} content Sequnce of content objects to match
+ * @param {string} summaryCollection
+ * @param {{contentCollection: string, mergedCollection: string, notificationCollection: string, archivedCollection: string, auditingCollection: string}} collectionInfo
+ */
+function filterContentAlreadyProcessed(content, summaryCollection, collectionInfo) {
   const jobID = datahub.flow.globalContext.jobId;
   const filteredContent = [];
   const collectionQuery = cts.collectionQuery(summaryCollection);
   const jobIdQuery = cts.fieldWordQuery('datahubCreatedByJob', jobID);
+  let auditingNotificationsInSourceQuery = false;
   for (let item of content) {
-    if (!cts.exists(cts.andQuery([collectionQuery,jobIdQuery,cts.jsonPropertyValueQuery('uris', item.uri, 'exact')]))) {
+    const collections = item.context ? item.context.collections || [] : [];
+    const auditingOrNotificationDoc = collections.includes(collectionInfo.notificationCollection) || collections.includes(collectionInfo.auditingCollection);
+    if (!(cts.exists(cts.andQuery([collectionQuery,jobIdQuery,cts.jsonPropertyValueQuery('uris', item.uri, 'exact')])) ||
+        auditingOrNotificationDoc
+    )) {
       filteredContent.push(item);
     }
+    auditingNotificationsInSourceQuery = auditingNotificationsInSourceQuery || auditingOrNotificationDoc;
+  }
+  if (auditingNotificationsInSourceQuery) {
+    xdmp.log('Mastering auditing and notification documents are included in your source query. For better performance, exclude them from your query.', 'notice');
   }
   return Sequence.from(filteredContent);
 }
 
 function main(content, options) {
-  masteringStepLib.checkOptions(null, options, null, requiredOptionProperties);
-  const matchOptions = new NodeBuilder().addNode({ options: options.matchOptions }).toNode();
+  const collectionInfo = masteringStepLib.checkOptions(null, options, null, requiredOptionProperties);
   const collections = ['datahubMasteringMatchSummary'];
   if (options.targetEntity) {
     collections.push(`datahubMasteringMatchSummary-${options.targetEntity}`);
   }
   const summaryCollection = collections[collections.length - 1];
-  const filteredContent = filterContentAlreadyProcessed(content, summaryCollection);
+  const filteredContent = filterContentAlreadyProcessed(content, summaryCollection, collectionInfo);
+  const matchOptions = new NodeBuilder().addNode({ options: options.matchOptions }).toNode();
   if (fn.count(filteredContent) === 0) {
     return emptySequence;
   }
@@ -74,5 +89,6 @@ function buildResult(matchSummaryJson, options, collections) {
 
 module.exports = {
   main,
-  buildResult
+  buildResult,
+  filterContentAlreadyProcessed
 };

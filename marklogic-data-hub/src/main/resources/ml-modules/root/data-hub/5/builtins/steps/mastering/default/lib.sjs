@@ -48,6 +48,13 @@ function matchDetailsByMergedQuery(mergedQuery) {
   return output;
 }
 
+/**
+ * @param {null, Sequence} content
+ * @param {*} options
+ * @param {null, []} filteredContent
+ * @param {[string, string]} reqOptProperties
+ * @return {{contentCollection: string, mergedCollection: string, notificationCollection: string, archivedCollection: string, auditingCollection: string}} collectionInfo
+ */
 function checkOptions(content, options, filteredContent = [], reqOptProperties = requiredOptionProperties) {
   let hasRequiredOptions = reqOptProperties.every((propName) => !!options[propName]);
   if (!hasRequiredOptions) {
@@ -92,7 +99,7 @@ function checkOptions(content, options, filteredContent = [], reqOptProperties =
     let unlockedURIs = mergeImpl.filterOutLockedUris(Sequence.from(content.toArray().map((item) => item.uri))).toArray();
     for (const item of content) {
       let docCollections = item.context.originalCollections || [];
-      if (!docCollections.includes(archivedCollection) && unlockedURIs.includes(item.uri)) {
+      if (!(docCollections.includes(archivedCollection) || docCollections.includes(auditingCollection) || docCollections.includes(notificationCollection)) && unlockedURIs.includes(item.uri)) {
         mergeImpl.lockForUpdate(item.uri);
         item.context.collections = Sequence.from(docCollections);
         if (filteredContent) {
