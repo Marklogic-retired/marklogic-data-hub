@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, waitForElement, waitForElementToBeRemoved, cleanup } from '@testing-library/react';
+import { render, fireEvent, screen, waitForElement, waitForElementToBeRemoved, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect'
 import axiosMock from 'axios';
 import mocks from '../api/__mocks__/mocks.data';
@@ -14,7 +14,7 @@ jest.mock('axios');
 const mockDevRolesService = authorities.DeveloperRolesService;
 const mockOpRolesService = authorities.OperatorRolesService;
 
-describe('Verify errors associated with running a step', () => {
+describe('Verify load step failures in a flow', () => {
 
     afterEach(() => {
         jest.clearAllMocks();
@@ -24,7 +24,8 @@ describe('Verify errors associated with running a step', () => {
     test('Verify errors when flow with Load step fails with jobStatus finished_with_errors', async() => {
         mocks.runErrorsAPI(axiosMock);
         axiosMock.post['mockImplementationOnce'](jest.fn(() => Promise.resolve(data.response)));
-        const {getAllByText, getByText, getByLabelText, getAllByLabelText } = await render(<AuthoritiesContext.Provider value={ mockDevRolesService}><Run/></AuthoritiesContext.Provider>);
+        const { getByText, getByLabelText, getAllByLabelText} = await render(<AuthoritiesContext.Provider
+            value={mockDevRolesService}><Run/></AuthoritiesContext.Provider>);
 
         // Click disclosure icon
         fireEvent.click(getByLabelText("icon: right"));
@@ -49,15 +50,16 @@ describe('Verify errors associated with running a step', () => {
         fireEvent.click(runButton);
 
         // New Modal with Error message, uri and details is opened
-        expect(await(waitForElement(() => getAllByText("Message:").length,{"timeout":2500}))).toEqual(1)
-        expect(await(waitForElement(() => getAllByText("Details:").length,{"timeout":2500}))).toEqual(1)
-        expect(await(waitForElement(() => getAllByText("URI:").length,{"timeout":2500}))).toEqual(1)
-        expect(await(waitForElement(() => getAllByText("/test/data/nestedPerson1.json").length,{"timeout":2500}))).toEqual(1)
-        expect(await(waitForElement(() => getAllByText("Ingestion \"failedIngest\" completed with errors").length,{"timeout":2500}))).toEqual(1)
+        expect(await(waitForElement(() => getByText("Ingestion \"failedIngest\" completed with errors")))).toBeInTheDocument()
+        expect(getByText("Message:")).toBeInTheDocument()
+        expect(getByText("Details:")).toBeInTheDocument()
+        expect(getByText("URI:")).toBeInTheDocument()
+        expect(getByText("/test/data/nestedPerson1.json")).toBeInTheDocument()
+
         expect(document.querySelector('#error-list')).toHaveTextContent('Out of 3 batches, 1 succeeded and 2 failed. Error messages are displayed below')
 
         // Error 2 is present
-        expect(await(waitForElement(() => getAllByText("Error 2").length,{"timeout":2500}))).toEqual(1)
+        expect(getByText("Error 2")).toBeInTheDocument()
 
         fireEvent.click(getByText('Close'))
     });
@@ -103,38 +105,82 @@ describe('Verify step running', () => {
         cleanup();
     });
 
-    test('Verify a mapping step can be run from a flow as data-hub-developer', async () => {
-        axiosMock.post['mockImplementationOnce'](jest.fn(() => Promise.resolve(data.responseForMapping)));
-        const { getByText, getAllByText, getByLabelText, getAllByLabelText } = await render(<AuthoritiesContext.Provider value={ mockDevRolesService }><Run/></AuthoritiesContext.Provider>);
+    test('Verify a mapping/match/merge/master step can be run from a flow as data-hub-developer', async () => {
+        axiosMock.post['mockImplementation'](jest.fn(() => Promise.resolve(data.jobRespSuccess)));
+        const { getByText, getAllByText, getByLabelText } = await render(<AuthoritiesContext.Provider value={ mockDevRolesService }><Run/></AuthoritiesContext.Provider>);
+
+        let steps = data.flows.data[0].steps;
+        let runButton
 
         // Click disclosure icon
         fireEvent.click(getByLabelText("icon: right"));
 
-        let runButton = await getByLabelText("runStep-1");
-        fireEvent.mouseOver(getAllByLabelText("icon: play-circle")[0]);
-        await waitForElement(() => getByText(RunToolTips.otherSteps))
+        //Run mapping step
+        runButton = await getByLabelText(`runStep-${steps[1].stepNumber}`);
         fireEvent.click(runButton);
-
         expect(await(waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
-        expect(await(waitForElement(() => getByText('Mapping "Mapping1" ran successfully')))).toBeInTheDocument();
+        expect(await(waitForElement(() => getByText(`Mapping "${steps[1].stepName}" ran successfully`)))).toBeInTheDocument();
+        fireEvent.click(getByText('Close'));
 
+        //Run match step
+        runButton = await getByLabelText(`runStep-${steps[3].stepNumber}`);
+        fireEvent.click(runButton);
+        expect(await(waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
+        expect(await(waitForElement(() => getByText(`Matching "${steps[3].stepName}" ran successfully`)))).toBeInTheDocument();
+        fireEvent.click(getByText('Close'));
+
+        //Run merge step
+        runButton = await getByLabelText(`runStep-${steps[4].stepNumber}`);
+        fireEvent.click(runButton);
+        expect(await(waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
+        expect(await(waitForElement(() => getByText(`Merging "${steps[4].stepName}" ran successfully`)))).toBeInTheDocument();
+        fireEvent.click(getByText('Close'));
+
+        //Run master step
+        runButton = await getByLabelText(`runStep-${steps[5].stepNumber}`);
+        fireEvent.click(runButton);
+        expect(await(waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
+        expect(await(waitForElement(() => getByText(`Mastering "${steps[5].stepName}" ran successfully`)))).toBeInTheDocument();
         fireEvent.click(getByText('Close'));
 
     })
 
-    test('Verify a mapping step can be run from a flow as data-hub-operator', async () => {
-        axiosMock.post['mockImplementationOnce'](jest.fn(() => Promise.resolve(data.responseForMapping)));
+    test('Verify a mapping/match/merge/master step can be run from a flow as data-hub-operator', async () => {
+        axiosMock.post['mockImplementation'](jest.fn(() => Promise.resolve(data.jobRespSuccess)));
         const { getByText, getAllByText, getByLabelText } = await render(<AuthoritiesContext.Provider value={ mockOpRolesService }><Run/></AuthoritiesContext.Provider>);
+
+        let steps = data.flows.data[0].steps;
+        let runButton
 
         // Click disclosure icon
         fireEvent.click(getByLabelText("icon: right"));
 
-        let runButton = await getByLabelText("runStep-1");
+        //Run mapping step
+        runButton = await getByLabelText(`runStep-${steps[1].stepNumber}`);
         fireEvent.click(runButton);
-
         expect(await(waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
-        expect(await(waitForElement(() => getByText('Mapping "Mapping1" ran successfully')))).toBeInTheDocument();
+        expect(await(waitForElement(() => getByText(`Mapping "${steps[1].stepName}" ran successfully`)))).toBeInTheDocument();
+        fireEvent.click(getByText('Close'));
 
+        //Run match step
+        runButton = await getByLabelText(`runStep-${steps[3].stepNumber}`);
+        fireEvent.click(runButton);
+        expect(await(waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
+        expect(await(waitForElement(() => getByText(`Matching "${steps[3].stepName}" ran successfully`)))).toBeInTheDocument();
+        fireEvent.click(getByText('Close'));
+
+        //Run merge step
+        runButton = await getByLabelText(`runStep-${steps[4].stepNumber}`);
+        fireEvent.click(runButton);
+        expect(await(waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
+        expect(await(waitForElement(() => getByText(`Merging "${steps[4].stepName}" ran successfully`)))).toBeInTheDocument();
+        fireEvent.click(getByText('Close'));
+
+        //Run master step
+        runButton = await getByLabelText(`runStep-${steps[5].stepNumber}`);
+        fireEvent.click(runButton);
+        expect(await(waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
+        expect(await(waitForElement(() => getByText(`Mastering "${steps[5].stepName}" ran successfully`)))).toBeInTheDocument();
         fireEvent.click(getByText('Close'));
 
     })
@@ -193,7 +239,7 @@ describe('Verify Run CRUD operations', () => {
         authorityService.setAuthorities(['readFlow','writeFlow']);
         const { getByText, getByPlaceholderText } = await render(<AuthoritiesContext.Provider value={ authorityService }><Run/></AuthoritiesContext.Provider>);
 
-        const existingFlowName = data.flowsWithMapping.data[0].name;
+        const existingFlowName = data.flows.data[0].name;
         const updateFlowURL = `/api/flows/${existingFlowName}`;
 
         const updatedFlow = { name: existingFlowName, description: `updated ${existingFlowName} description`};
@@ -211,7 +257,7 @@ describe('Verify Run CRUD operations', () => {
         authorityService.setAuthorities(['readFlow','writeFlow']);
         const { getByText, getByTestId } = await render(<AuthoritiesContext.Provider value={ authorityService }><Run/></AuthoritiesContext.Provider>);
 
-        const existingFlowName = data.flowsWithMapping.data[0].name;
+        const existingFlowName = data.flows.data[0].name;
         const updateFlowURL = `/api/flows/${existingFlowName}`;
 
         fireEvent.click(getByTestId('deleteFlow-0'));
@@ -226,7 +272,7 @@ describe('Verify Run CRUD operations', () => {
         authorityService.setAuthorities(['readFlow']);
         const { getByPlaceholderText, getByText, getByTestId, queryByText } = await render(<AuthoritiesContext.Provider value={ authorityService }><Run/></AuthoritiesContext.Provider>);
 
-        const existingFlowName = data.flowsWithMapping.data[0].name;
+        const existingFlowName = data.flows.data[0].name;
 
         expect(getByText(existingFlowName)).toBeInTheDocument();
         // create flow shouldn't be provided
@@ -244,3 +290,111 @@ describe('Verify Run CRUD operations', () => {
 
     })
 });
+
+describe('Verify map/match/merge/master step failures in a flow', () => {
+
+    afterEach(() => {
+        jest.clearAllMocks();
+        cleanup();
+    });
+
+    test('Verify errors when flow with mapping/matching/merging/mastering step fails with jobStatus failed', async() => {
+        mocks.runFailedAPI(axiosMock);
+        axiosMock.post['mockImplementation'](jest.fn(() => Promise.resolve(data.response)));
+        const { getByText, getByLabelText } = await render(<AuthoritiesContext.Provider value={ mockDevRolesService}><Run/></AuthoritiesContext.Provider>);
+
+        let steps = data.flows.data[0].steps;
+
+        // Click disclosure icon
+        fireEvent.click(getByLabelText("icon: right"));
+
+        //Mapping step failed error
+        fireEvent.click(getByLabelText(`runStep-${steps[1].stepNumber}`));
+        expect(await(waitForElement(() => getByText(`Mapping "${steps[1].stepName}" failed`)))).toBeInTheDocument()
+        expect(getByText("Message:")).toBeInTheDocument()
+        expect(document.querySelector('#error-list')).toHaveTextContent('Local message: failed to apply resource at documents')
+        fireEvent.click(getByText('Close'))
+
+        //Matching step failed error
+        fireEvent.click(getByLabelText(`runStep-${steps[3].stepNumber}`));
+        expect(await(waitForElement(() => getByText(`Matching "${steps[3].stepName}" failed`)))).toBeInTheDocument()
+        expect(getByText("Message:")).toBeInTheDocument()
+        expect(document.querySelector('#error-list')).toHaveTextContent('Local message: failed to apply resource at documents')
+        fireEvent.click(getByText('Close'))
+
+        //Merging step failed error
+        fireEvent.click(getByLabelText(`runStep-${steps[4].stepNumber}`));
+        expect(await(waitForElement(() => getByText(`Merging "${steps[4].stepName}" failed`)))).toBeInTheDocument()
+        expect(getByText("Message:")).toBeInTheDocument()
+        expect(document.querySelector('#error-list')).toHaveTextContent('Local message: failed to apply resource at documents')
+        fireEvent.click(getByText('Close'))
+
+        //Mastering step failed error
+        fireEvent.click(getByLabelText(`runStep-${steps[5].stepNumber}`));
+        expect(await(waitForElement(() => getByText(`Mastering "${steps[5].stepName}" failed`)))).toBeInTheDocument()
+        expect(getByText("Message:")).toBeInTheDocument()
+        expect(document.querySelector('#error-list')).toHaveTextContent('Local message: failed to apply resource at documents')
+        fireEvent.click(getByText('Close'))
+    })
+
+    test('Verify errors when a flow with mapping/match/merge/mastering step fails with jobStatus finished_with_errors', async () => {
+        mocks.runErrorsAPI(axiosMock);
+        axiosMock.post['mockImplementation'](jest.fn(() => Promise.resolve(data.response)));
+        const {getByText, getByLabelText,} = await render(<AuthoritiesContext.Provider value={ mockDevRolesService}><Run/></AuthoritiesContext.Provider>);
+
+        let steps = data.flows.data[0].steps;
+
+        // Click disclosure icon
+        fireEvent.click(getByLabelText("icon: right"));
+
+        //Mapping step error
+        fireEvent.click(await getByLabelText(`runStep-${steps[1].stepNumber}`));
+        // New Modal with Error message, uri and details is opened
+        expect(await (waitForElement(() => getByText(`Mapping "${steps[1].stepName}" completed with errors`)))).toBeInTheDocument()
+        expect(document.querySelector('#error-list')).toHaveTextContent('Out of 3 batches, 1 succeeded and 2 failed. Error messages are displayed below')
+        expect(getByText("Message:")).toBeInTheDocument()
+        expect(getByText("Details:")).toBeInTheDocument()
+        expect(getByText("URI:")).toBeInTheDocument()
+        // Error 2 is present
+        expect(getByText("Error 2")).toBeInTheDocument()
+        fireEvent.click(getByText('Close'))
+
+        //Matching step error
+        fireEvent.click(await getByLabelText(`runStep-${steps[3].stepNumber}`));
+        // New Modal with Error message, uri and details is opened
+        expect(await (waitForElement(() => getByText(`Matching "${steps[3].stepName}" completed with errors`)))).toBeInTheDocument()
+        expect(document.querySelector('#error-list')).toHaveTextContent('Out of 3 batches, 1 succeeded and 2 failed. Error messages are displayed below')
+        expect(getByText("Message:")).toBeInTheDocument()
+        expect(getByText("Details:")).toBeInTheDocument()
+        expect(getByText("URI:")).toBeInTheDocument()
+        // Error 2 is present
+        expect(getByText("Error 2")).toBeInTheDocument()
+        fireEvent.click(getByText('Close'))
+
+        //Merging step error
+        fireEvent.click(await getByLabelText(`runStep-${steps[4].stepNumber}`));
+        // New Modal with Error message, uri and details is opened
+        expect(await (waitForElement(() => getByText(`Merging "${steps[4].stepName}" completed with errors`)))).toBeInTheDocument()
+        expect(document.querySelector('#error-list')).toHaveTextContent('Out of 3 batches, 1 succeeded and 2 failed. Error messages are displayed below')
+        expect(getByText("Message:")).toBeInTheDocument()
+        expect(getByText("Details:")).toBeInTheDocument()
+        expect(getByText("URI:")).toBeInTheDocument()
+        // Error 2 is present
+        expect(getByText("Error 2")).toBeInTheDocument()
+        fireEvent.click(getByText('Close'))
+
+        // //Mastering step error
+        fireEvent.click(await getByLabelText(`runStep-${steps[5].stepNumber}`));
+        // New Modal with Error message, uri and details is opened
+        expect(await (waitForElement(() => getByText(`Mastering "${steps[5].stepName}" completed with errors`)))).toBeInTheDocument()
+        expect(document.querySelector('#error-list')).toHaveTextContent('Out of 3 batches, 1 succeeded and 2 failed. Error messages are displayed below')
+        expect(getByText("Message:")).toBeInTheDocument()
+        expect(getByText("Details:")).toBeInTheDocument()
+        expect(getByText("URI:")).toBeInTheDocument()
+        // Error 2 is present
+        expect(getByText("Error 2")).toBeInTheDocument()
+        fireEvent.click(getByText('Close'))
+
+    })
+
+})

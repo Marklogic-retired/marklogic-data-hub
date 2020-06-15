@@ -258,6 +258,9 @@ describe('Tiles View component tests for Developer user', () => {
         expect(getByTestId('runStep-1')).toBeInTheDocument();
         expect(getByTestId('runStep-2')).toBeInTheDocument();
         expect(getByTestId('runStep-3')).toBeInTheDocument();
+        expect(getByTestId('runStep-4')).toBeInTheDocument();
+        expect(getByTestId('runStep-5')).toBeInTheDocument();
+        expect(getByTestId('runStep-6')).toBeInTheDocument();
     });
 
     test('Verify run tile does not load from toolbar without readFlow authority', async () => {
