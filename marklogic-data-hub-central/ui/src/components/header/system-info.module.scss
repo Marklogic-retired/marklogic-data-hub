@@ -1,0 +1,80 @@
+.systemModal {
+    top: 6.5em;
+    left: -1.5em;
+}
+
+.systemContainer {
+  padding: 10px 20px;
+  font-family: 'HelveticaNeue-Light', 'Helvetica Neue', sans-serif;
+  color: black;
+  
+  .serviceName {
+    font-size: 1.5em;
+    width: fit-content;
+    margin-bottom: 35px;
+  }
+
+  .version {
+    width: 50%;
+    margin-bottom: 10px;
+    div {
+      display: inline-block;
+      font-size: 13px;
+    }
+    .label {
+      width: 125px;
+    }
+    .value {
+      font-weight: 600;
+    }
+  }
+
+  .cardsContainer {
+    width: 100%;
+    text-align: center;
+  }
+
+  .cards {
+    padding-top: 80px;
+    padding-bottom: 100px;
+    margin: auto;
+    width: 56vw;
+    min-width: 700px;
+
+    .download, .clearAll {
+      display: block;
+      min-width: 320px;
+      width: 25vw;
+      height: 18em;
+      padding: 1px;
+      border-color: #44499C;
+    }
+    .clearAll {
+      margin-left: 2em;
+    }
+
+    .title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 30px;
+    }
+
+    p {
+      font-size: 14px;
+      font-weight: 300;
+      height: 100px;
+      text-align: left;
+    }
+
+    .buttonContainer {
+      width: 100%;
+      text-align: center;
+      button {
+        width: 120px;
+        font-weight: 500;
+        background-color: #44499C;
+      }
+    }
+
+  }
+}

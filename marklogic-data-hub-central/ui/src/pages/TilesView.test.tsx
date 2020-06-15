@@ -1,5 +1,5 @@
-import React, {useContext} from 'react';
-import { Router, Route } from 'react-router'
+import React from 'react';
+import { Router } from 'react-router'
 import { createMemoryHistory } from 'history'
 const history = createMemoryHistory()
 import { render, fireEvent, waitForElement, cleanup } from '@testing-library/react'
@@ -12,6 +12,7 @@ import authorities from '../assets/authorities.testutils';
 import tiles from '../config/tiles.config'
 
 jest.mock('axios');
+jest.setTimeout(30000);
 
 const mockDevRolesService = authorities.DeveloperRolesService;
 const testWithOperator = authorities.OperatorRolesService;

@@ -177,7 +177,7 @@ const runXMLAPI = (axiosMock) => {
 };
 
 const advancedAPI = (axiosMock) => {
-  axiosMock.post.mockImplementationOnce(jest.fn(() =>
+  axiosMock.post['mockImplementationOnce'](jest.fn(() =>
       Promise.resolve({ status: 200, data: {} })));
   return axiosMock.get['mockImplementation']((url) => {
       switch (url) {

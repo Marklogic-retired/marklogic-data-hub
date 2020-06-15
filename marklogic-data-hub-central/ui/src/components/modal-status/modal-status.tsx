@@ -74,7 +74,7 @@ const ModalStatus: React.FC<Props> = (props) => {
     } else if (sessionWarning) {
       // refresh session
       try {
-        await axios.get('/api/info');
+        await axios.get('/api/environment/systemInfo');
       } catch (error) {
         handleError(error);
       } finally {

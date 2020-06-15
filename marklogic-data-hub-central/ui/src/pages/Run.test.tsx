@@ -10,6 +10,7 @@ import authorities from '../assets/authorities.testutils';
 import {RunToolTips} from "../config/tooltips.config";
 
 jest.mock('axios');
+jest.setTimeout(30000);
 
 const mockDevRolesService = authorities.DeveloperRolesService;
 const mockOpRolesService = authorities.OperatorRolesService;

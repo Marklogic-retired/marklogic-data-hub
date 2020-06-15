@@ -44,7 +44,7 @@ describe("<EditQueryDetails/>", () => {
     });
 
     test("Verify Edit Query Details can be saved", async () => {
-        axiosMock.put.mockImplementationOnce(jest.fn(() => Promise.resolve({status: 200, data: putQueryResponse})));
+        axiosMock.put['mockImplementationOnce'](jest.fn(() => Promise.resolve({status: 200, data: putQueryResponse})));
 
         const { getByPlaceholderText, getByText } = render(<EditQueryDetails
             setEditQueryDetailVisibility={jest.fn()}
@@ -81,7 +81,7 @@ describe("<EditQueryDetails/>", () => {
     });
 
     test("Verify Edit Query Details with duplicate name throws error", async () => {
-        axiosMock.put.mockImplementationOnce(jest.fn(() =>
+        axiosMock.put['mockImplementationOnce'](jest.fn(() =>
             Promise.reject({ response: {status: 400, data: duplicateQueryNameErrorResponse } })));
 
         const { getByPlaceholderText, getByText} = render(<EditQueryDetails

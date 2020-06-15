@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import axios from 'axios';
 import { Layout, Icon, Avatar, Menu, Tooltip, Dropdown } from 'antd';
 import { UserContext } from '../../util/user-context';
@@ -7,13 +7,15 @@ import logo from './logo.jpg';
 import styles from './header.module.scss';
 import { Application } from '../../config/application.config';
 import { MLButton } from '@marklogic/design-system';
-import ProjectPage from '../project-page/project-page';
+import SystemInfo from './system-info';
 
-interface Props extends RouteComponentProps<any> {}
+interface Props extends RouteComponentProps<any> {
+  environment: any
+}
 
-const Header:React.FC<Props> = ({ history, location }) => {
+const Header:React.FC<Props> = (props) => {
   const { user, userNotAuthenticated, handleError } = useContext(UserContext);
-  const [projectPageVisible, setProjectPageVisible] = useState(false);
+  const [systemInfoVisible, setSystemInfoVisible] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -27,8 +29,8 @@ const Header:React.FC<Props> = ({ history, location }) => {
     }
   };
 
-  const handleProjectPageDisplay = () => {
-      setProjectPageVisible(true);
+  const handleSystemInfoDisplay = () => {
+    setSystemInfoVisible(true);
   }
 
   let userMenu = <div className={styles.userMenu}>
@@ -39,8 +41,6 @@ const Header:React.FC<Props> = ({ history, location }) => {
       </MLButton>
     </div>
   </div>;
-
-    const projectName = localStorage.getItem('projectName');
 
   let globalIcons;
   if (user.authenticated) {
@@ -53,7 +53,7 @@ const Header:React.FC<Props> = ({ history, location }) => {
         theme="dark"
       >
         <Menu.Item>
-            <i id="project-name" className={styles.projectInfo} onClick={handleProjectPageDisplay}>{projectName}</i>
+            <i id="service-name" className={styles.serviceName} onClick={handleSystemInfoDisplay}>{props.environment.serviceName}</i>
         </Menu.Item>
         <div className={styles.vertical}></div>
         <Menu.Item>
@@ -89,24 +89,27 @@ const Header:React.FC<Props> = ({ history, location }) => {
   }
 
   const handleHomeClick = () => {
-      history.push('/tiles');
+      props.history.push('/tiles');
   };
 
   return (
     <>
       <Layout.Header className={styles.container}>
-        <div className={styles.logoContainer} onClick={handleHomeClick}>
-          <Avatar className={styles.logo} src={logo} aria-label="header-avatar" />
-            <div className={styles.vertical}></div>
+        <div className={styles.logoContainer} aria-label="header-logo" onClick={handleHomeClick}>
+          <Avatar className={styles.logo} src={logo} />
+          <div className={styles.vertical}></div>
         </div>
         <div id="title" className={styles.title} aria-label="header-title" onClick={handleHomeClick}>
           {Application.title}
         </div>
         {globalIcons}
       </Layout.Header>
-       <ProjectPage
-           projectPageVisible={projectPageVisible}
-           setProjectPageVisible={setProjectPageVisible}
+       <SystemInfo
+          serviceName={props.environment.serviceName}
+          dataHubVersion={props.environment.dataHubVersion}
+          marklogicVersion={props.environment.marklogicVersion}
+          systemInfoVisible={systemInfoVisible}
+          setSystemInfoVisible={setSystemInfoVisible}
        />
     </>
   )

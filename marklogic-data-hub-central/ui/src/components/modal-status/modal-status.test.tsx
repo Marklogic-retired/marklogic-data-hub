@@ -22,7 +22,7 @@ describe('Modal Status Component', () => {
   });
 
   test('Modal session status renders and click continue session', async () => {
-    axiosMock.get.mockImplementation(() => Promise.resolve({ status: 200 }));
+    axiosMock.get['mockImplementation'](() => Promise.resolve({ status: 200 }));
 
     const { getByText } = render(
       <Router>
@@ -40,7 +40,7 @@ describe('Modal Status Component', () => {
   });
 
   test('Modal session status renders and can click logout', async () => {
-    axiosMock.get.mockImplementation(() => Promise.resolve({ status: 200 }));
+    axiosMock.get['mockImplementation'](() => Promise.resolve({ status: 200 }));
 
     const { getByText } = render(
       <Router>

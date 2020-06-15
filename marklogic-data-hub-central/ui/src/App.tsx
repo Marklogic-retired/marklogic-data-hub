@@ -25,6 +25,7 @@ import { themes, themeMap } from './config/themes.config';
 import axios from 'axios';
 import Curate from './pages/Curate';
 import ModalStatus from './components/modal-status/modal-status';
+import { getEnvironment } from './util/environment';
 
 
 interface Props extends RouteComponentProps<any> {}
@@ -35,6 +36,7 @@ const App: React.FC<Props> = ({history, location}) => {
     clearRedirect,
     handleError
   } = useContext(UserContext);
+  let environment: any = {};
 
   const PrivateRoute = ({ children, ...rest }) => (
     <Route {...rest} render={ props => (
@@ -80,7 +82,7 @@ const App: React.FC<Props> = ({history, location}) => {
 
   useEffect(() => {
     // On route change...
-    axios.get('/api/environment/project-info')
+    axios.get('/api/environment/systemInfo')
         .then(res => {})
         // Timeouts throw 401s and are caught here
         .catch(err => {
@@ -95,7 +97,7 @@ const App: React.FC<Props> = ({history, location}) => {
 
   return (
     <div id="background" style={pageTheme['background']}>
-      <Header/>
+      <Header environment={getEnvironment()} />
       <ModalStatus/>
       <main>
       <Switch>

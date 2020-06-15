@@ -7,9 +7,9 @@ import axiosMock from 'axios'
 
 jest.mock('axios');
 
-axiosMock.mockImplementation(jest.fn(() => Promise.resolve({ status: 200, data: {} })));
-axiosMock.post.mockImplementation(jest.fn(() => Promise.resolve({ status: 200, data: {} })));
-axiosMock.get.mockImplementation(jest.fn(() => Promise.resolve({ status: 200, data: {} })));
+axiosMock['mockImplementation'](jest.fn(() => Promise.resolve({ status: 200, data: {} })));
+axiosMock.post['mockImplementation'](jest.fn(() => Promise.resolve({ status: 200, data: {} })));
+axiosMock.get['mockImplementation'](jest.fn(() => Promise.resolve({ status: 200, data: {} })));
 
 describe('New/edit load data configuration', () => {
 

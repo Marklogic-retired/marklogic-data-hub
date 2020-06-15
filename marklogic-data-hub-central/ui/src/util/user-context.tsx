@@ -5,19 +5,10 @@ import {
   getUserPreferences,
   updateUserPreferences
 } from '../services/user-preferences';
+import { UserContextInterface, IUserContextInterface } from '../types/user-types';
 import { AuthoritiesContext } from './authorities';
 import {setEnvironment, resetEnvironment} from '../util/environment';
 import { useInterval } from '../hooks/use-interval';
-
-type UserContextInterface = {
-  name: string,
-  // email: string,
-  authenticated: boolean,
-  redirect: boolean,
-  error : any,
-  pageRoute: string,
-  maxSessionTime: number
-}
 
 const defaultUserData = {
   name: '',
@@ -31,20 +22,6 @@ const defaultUserData = {
   },
   pageRoute: '/view',
   maxSessionTime: 300
-}
-
-interface IUserContextInterface {
-  user: UserContextInterface;
-  loginAuthenticated: (username: string, authResponse: any) => void;
-  sessionAuthenticated: (username: string) => void;
-  userNotAuthenticated: () => void;
-  handleError: (error:any) => void;
-  clearErrorMessage: () => void;
-  clearRedirect: () => void;
-  setPageRoute: (route: string) => void;
-  setAlertMessage: (title: string, message: string) => void;
-  resetSessionTime: () => void;
-  getSessionTime: () => number;
 }
 
 export const UserContext = React.createContext<IUserContextInterface>({
@@ -71,11 +48,11 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
 
   const loginAuthenticated = async (username: string, authResponse: any) => {
     setEnvironment();
-    let session = await axios('/api/info');
+    let session = await axios('/api/environment/systemInfo');
     sessionCount = parseInt(session.data['sessionTimeout']);
 
     localStorage.setItem('dataHubUser', username);
-    localStorage.setItem('projectName', authResponse.projectName);
+    localStorage.setItem('serviceName', session.data.serviceName);
 
     const authorities: string[] =  authResponse.authorities || [];
     authoritiesService.setAuthorities(authorities);
@@ -123,7 +100,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
 
   const userNotAuthenticated = () => {
     localStorage.setItem('dataHubUser', '');
-    localStorage.setItem('projectName', '');
+    localStorage.setItem('serviceName', '');
     localStorage.setItem('loginResp','');
     authoritiesService.setAuthorities([]);
     resetEnvironment();
