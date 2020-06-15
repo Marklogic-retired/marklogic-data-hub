@@ -3,14 +3,14 @@ import { render, fireEvent, cleanup, wait } from '@testing-library/react';
 import CreateEditMappingDialog from './create-edit-mapping-dialog';
 import data from "../../../../assets/mock-data/common.data";
 
-describe('Create/Edit Mapping artifact component', () => {
+describe('Create/Edit Mapping Step artifact component', () => {
 
   afterEach(cleanup)
 
-  test('Verify New Mapping Dialog renders ', () => {
+  test('Verify New Mapping Step dialog renders ', () => {
     const { getByText, getByLabelText, getByPlaceholderText } = render(<CreateEditMappingDialog {...data.newMap} />);
 
-    expect(getByText('New Mapping')).toBeInTheDocument();
+    expect(getByText('New Mapping Step')).toBeInTheDocument();
     expect(getByPlaceholderText('Enter name')).toBeInTheDocument();
     expect(getByPlaceholderText('Enter description')).toBeInTheDocument();
     expect(getByLabelText('Collection')).toBeInTheDocument();
@@ -95,23 +95,23 @@ describe('Create/Edit Mapping artifact component', () => {
 
   });
 
-  test('Verify new mapping modal closes when Cancel is clicked', () => {
+  test('Verify New Mapping Step modal closes when Cancel is clicked', () => {
     const { getByText, rerender, queryByText } = render(<CreateEditMappingDialog {...data.newMap} />);
 
-    expect(getByText('New Mapping')).toBeInTheDocument();
+    expect(getByText('New Mapping Step')).toBeInTheDocument();
     fireEvent.click(getByText('Cancel'));
     //setting newMap to false to close the modal
     rerender(<CreateEditMappingDialog newMap={false}/>);
     //queryByText returns null and getByText throws an error. So we use queryByText to verify element not present scenarios
-    expect(queryByText('New Mapping')).not.toBeInTheDocument();
+    expect(queryByText('New Mapping Step')).not.toBeInTheDocument();
   });
 
-  test('Verify new mapping modal closes when "x" is clicked', () => {
+  test('Verify New Mapping Step modal closes when "x" is clicked', () => {
     const { getByLabelText, getByText, rerender, queryByText } = render(<CreateEditMappingDialog {...data.newMap} />);
-    expect(getByText('New Mapping')).toBeInTheDocument();
+    expect(getByText('New Mapping Step')).toBeInTheDocument();
     fireEvent.click(getByLabelText('Close'));
     rerender(<CreateEditMappingDialog newMap={false}/>);
-    expect(queryByText('New Mapping')).not.toBeInTheDocument();
+    expect(queryByText('New Mapping Step')).not.toBeInTheDocument();
   });
 
   test('Verify delete dialog modal when Cancel is clicked', () => {
@@ -136,7 +136,7 @@ describe('Create/Edit Mapping artifact component', () => {
     expect(getByText('No')).toBeInTheDocument();
   });
 
-  test('Verify Edit Mapping dialog renders correctly', () => {
+  test('Verify Edit Mapping Step dialog renders correctly', () => {
     const { getByText, getByPlaceholderText, getByLabelText } = render(<CreateEditMappingDialog {...data.editMap} />);
     expect(getByPlaceholderText('Enter name')).toHaveValue('testMap');
     expect(getByPlaceholderText('Enter name')).toBeDisabled();
@@ -152,7 +152,7 @@ describe('Create/Edit Mapping artifact component', () => {
     expect(getByText('Cancel')).toBeEnabled();
   });
 
-  test('Verify Edit Mapping dialog renders correctly for a read only user', () => {
+  test('Verify Edit Mapping Step dialog renders correctly for a read only user', () => {
     const { getByText, getByPlaceholderText, getByLabelText } = render(<CreateEditMappingDialog {...data.editMap} canReadOnly={true} canReadWrite={false}/>);
 
     expect(getByPlaceholderText('Enter name')).toHaveValue('testMap');

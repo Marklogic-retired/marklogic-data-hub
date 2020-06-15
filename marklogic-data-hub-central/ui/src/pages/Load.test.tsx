@@ -59,7 +59,7 @@ describe('Load component', () => {
 
         //test edit
         fireEvent.click(getAllByText('testLoad')[0]);
-        expect(getByText('Edit Data Load')).toBeInTheDocument();
+        expect(getByText('Edit Loading Step')).toBeInTheDocument();
         expect(getAllByText('Save')[0]).toBeDisabled();
         fireEvent.click(getAllByText('Cancel')[0]);
 
@@ -141,7 +141,7 @@ describe('Load component', () => {
 
         //test edit
         fireEvent.click(getAllByText('testLoad')[0]);
-        expect(await(waitForElement(() => getByText('Edit Data Load')))).toBeInTheDocument();
+        expect(await(waitForElement(() => getByText('Edit Loading Step')))).toBeInTheDocument();
         expect(getAllByText('Save')[0]).not.toBeDisabled();
         fireEvent.click(getAllByText('Cancel')[0]);
 
@@ -162,7 +162,7 @@ describe('Load component', () => {
 
         //test edit
         fireEvent.click(getByTestId('testLoad-edit'));
-        expect(await(waitForElement(() => getByText('Edit Data Load')))).toBeInTheDocument();
+        expect(await(waitForElement(() => getByText('Edit Loading Step')))).toBeInTheDocument();
         expect(getAllByText('Save')[0]).not.toBeDisabled();
         fireEvent.click(getAllByText('Cancel')[0]);
 

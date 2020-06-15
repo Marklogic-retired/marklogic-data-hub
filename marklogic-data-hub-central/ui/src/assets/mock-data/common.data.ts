@@ -275,7 +275,7 @@ const mapProps = {
 };
 
 const newMap = {
-  title: 'New Mapping',
+  title: 'New Mapping Step',
   newMap: true,
   setNewMap: jest.fn(),
   canReadWrite: true,
@@ -288,7 +288,7 @@ const newMap = {
 };
 
 const editMap = {
-  title: 'Edit Mapping',
+  title: 'Edit Mapping Step',
   newMap: true,
   mapData: {
     name: 'testMap',

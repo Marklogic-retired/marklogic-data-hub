@@ -31,7 +31,7 @@ describe('Curate component', () => {
         expect(axiosMock.get).toBeCalledWith('/api/steps/mapping');
         fireEvent.click(getByText('Customer'));
         //Mapping tab should show. Match/Merge should not
-        expect(getByText('Mapping')).toBeInTheDocument();
+        expect(getByText('Map')).toBeInTheDocument();
         expect(queryByText('Match')).not.toBeInTheDocument();
         expect(queryByText('Merge')).not.toBeInTheDocument();
 
@@ -48,7 +48,7 @@ describe('Curate component', () => {
 
         //test edit
         fireEvent.click(getByTestId('Mapping1-edit'));
-        expect(await(waitForElement(() => getByText('Edit Mapping')))).toBeInTheDocument();
+        expect(await(waitForElement(() => getByText('Edit Mapping Step')))).toBeInTheDocument();
         expect(getAllByText('Save')[0]).toBeDisabled();
         fireEvent.click(getAllByText('Cancel')[0]);
 
@@ -67,7 +67,7 @@ describe('Curate component', () => {
         expect(axiosMock.get).toBeCalledWith('/api/steps/mapping');
         fireEvent.click(getByText('Customer'));
         //Mapping tab should show. Match/Merge should not
-        expect(getByText('Mapping')).toBeInTheDocument();
+        expect(getByText('Map')).toBeInTheDocument();
         expect(queryByText('Match')).not.toBeInTheDocument();
         expect(queryByText('Merge')).not.toBeInTheDocument();
 
@@ -84,7 +84,7 @@ describe('Curate component', () => {
 
         //test edit
         fireEvent.click(getByTestId('Mapping1-edit'));
-        expect(await(waitForElement(() => getByText('Edit Mapping')))).toBeInTheDocument();
+        expect(await(waitForElement(() => getByText('Edit Mapping Step')))).toBeInTheDocument();
         expect(getByTestId('Mapping1-edit-save')).not.toBeDisabled();
         fireEvent.click(getByTestId('Mapping1-edit-cancel'));
 

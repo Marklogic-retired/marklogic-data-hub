@@ -446,7 +446,7 @@ const AdvancedSettingsDialog = (props) => {
     footer={null}
     maskClosable={false}
   >
-    <p className={styles.title}>Advanced Settings</p>
+    <p className={styles.title}>Advanced Step Settings</p>
     <p className={styles.stepName}>{props.stepData.name}</p><br/>
     <div className={styles.newDataForm}>
       <Form {...formItemLayout} onSubmit={handleSubmit} colon={true}>

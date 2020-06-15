@@ -88,12 +88,12 @@ const MappingCard: React.FC<Props> = (props) => {
 
 
     const OpenAddNewDialog = () => {
-        setTitle('New Mapping');
+        setTitle('New Mapping Step');
         setNewMap(true);
     }
 
     const OpenEditStepDialog = (index) => {
-        setTitle('Edit Mapping');
+        setTitle('Edit Mapping Step');
         setMapData(prevState => ({ ...prevState, ...props.data[index]}));
         setNewMap(true);
     }
