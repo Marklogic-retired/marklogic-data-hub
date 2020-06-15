@@ -1,4 +1,4 @@
-package com.marklogic.hub.dataservices.artifact;
+package com.marklogic.hub.hubcentral;
 
 import com.marklogic.hub.AbstractHubCoreTest;
 import org.junit.jupiter.api.Test;

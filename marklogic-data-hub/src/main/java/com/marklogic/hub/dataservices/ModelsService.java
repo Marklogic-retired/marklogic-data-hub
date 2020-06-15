@@ -51,6 +51,7 @@ public interface ModelsService {
             private BaseProxy.DBFunctionRequest req_saveModel;
             private BaseProxy.DBFunctionRequest req_generateModelConfig;
             private BaseProxy.DBFunctionRequest req_getPrimaryEntityTypes;
+            private BaseProxy.DBFunctionRequest req_deleteModel;
             private BaseProxy.DBFunctionRequest req_createModel;
             private BaseProxy.DBFunctionRequest req_updateModelEntityTypes;
 
@@ -66,6 +67,8 @@ public interface ModelsService {
                     "generateModelConfig.sjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_getPrimaryEntityTypes = this.baseProxy.request(
                     "getPrimaryEntityTypes.sjs", BaseProxy.ParameterValuesKind.NONE);
+                this.req_deleteModel = this.baseProxy.request(
+                    "deleteModel.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_createModel = this.baseProxy.request(
                     "createModel.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_updateModelEntityTypes = this.baseProxy.request(
@@ -123,6 +126,19 @@ public interface ModelsService {
               return BaseProxy.JsonDocumentType.toJsonNode(
                 request.responseSingle(false, Format.JSON)
                 );
+            }
+
+            @Override
+            public void deleteModel(String entityName) {
+                deleteModel(
+                    this.req_deleteModel.on(this.dbClient), entityName
+                    );
+            }
+            private void deleteModel(BaseProxy.DBFunctionRequest request, String entityName) {
+              request
+                      .withParams(
+                          BaseProxy.atomicParam("entityName", false, BaseProxy.StringType.fromString(entityName))
+                          ).responseNone();
             }
 
             @Override
@@ -192,6 +208,14 @@ public interface ModelsService {
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode getPrimaryEntityTypes();
+
+  /**
+   * Delete an entity model
+   *
+   * @param entityName	The name of the primary entity in the model
+   * 
+   */
+    void deleteModel(String entityName);
 
   /**
    * Create a new model, resulting in a new entity descriptor with a primary entity type in it.

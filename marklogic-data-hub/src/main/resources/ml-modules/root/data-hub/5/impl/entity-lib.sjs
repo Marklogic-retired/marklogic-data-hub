@@ -198,6 +198,16 @@ function getModelCollection() {
   return "http://marklogic.com/entity-services/models";
 }
 
+function deleteModel(entityName) {
+  const uri = getModelUri(entityName);
+  if (fn.docAvailable(uri)) {
+    const dataHub = DataHubSingleton.instance();
+    [dataHub.config.STAGINGDATABASE, dataHub.config.FINALDATABASE].forEach(db => {
+      dataHub.hubUtils.deleteDocument(uri, db);
+    });
+  }
+}
+
 /**
  * Handles writing the model to both databases. Will overwrite existing permissions/collections, which is consistent
  * with how DH has been since 5.0.
@@ -253,6 +263,7 @@ function validateModelDefinitions(definitions) {
 }
 
 module.exports = {
+  deleteModel,
   findEntityType,
   findEntityTypeByEntityName,
   findEntityTypeIds,
