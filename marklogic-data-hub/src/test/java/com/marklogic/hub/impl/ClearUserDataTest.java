@@ -5,7 +5,7 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
-import com.marklogic.hub.dataservices.artifact.AllArtifactsProject;
+import com.marklogic.hub.hubcentral.AllArtifactsProject;
 import com.marklogic.hub.deploy.commands.LoadHubArtifactsCommand;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

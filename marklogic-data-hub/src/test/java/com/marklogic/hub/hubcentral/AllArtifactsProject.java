@@ -1,9 +1,8 @@
-package com.marklogic.hub.dataservices.artifact;
+package com.marklogic.hub.hubcentral;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubClient;
-import com.marklogic.hub.impl.ArtifactManagerImpl;
 import com.marklogic.hub.test.TestObject;
 
 import java.io.File;
@@ -38,7 +37,7 @@ public class AllArtifactsProject extends TestObject {
         try {
             zipFile = new File("build/allArtifactsProject.zip");
             FileOutputStream fos = new FileOutputStream(zipFile);
-            new ArtifactManagerImpl(hubClient).writeProjectArtifactsAsZip(fos);
+            new HubCentralManager().writeProjectArtifactsAsZip(hubClient, fos);
             fos.close();
             readZipEntries();
         } catch (IOException e) {
@@ -54,15 +53,12 @@ public class AllArtifactsProject extends TestObject {
         verifyEntryExists("/steps/mapping/OrderMappingJson.step.json", "OrderMappingJson");
         verifyEntryExists("/steps/ingestion/validArtifact.step.json", "validArtifact");
 
-        verifyEntryExists("/step-definitions/custom/testStep/testStep.step.json", "testStep");
-        verifyEntryExists("/matching/TestOrderMatching1.matching.json", "TestOrderMatching1");
-
         assertEquals("Order", zipEntries.get("/entities/Order.entity.json").get("info").get("title").asText());
 
         // Verify PII stuff
-        verifyEntryExists("/src/main/ml-config/security/protected-paths/pii-protected-path-1.json",
+        verifyEntryExists("/src/main/ml-config/security/protected-paths/1-pii-protected-paths.json",
             "path-expression", "/envelope//instance//Order/orderID");
-        verifyEntryExists("/src/main/ml-config/security/protected-paths/pii-protected-path-2.json",
+        verifyEntryExists("/src/main/ml-config/security/protected-paths/2-pii-protected-paths.json",
             "path-expression", "/envelope//instance//Order/orderName");
         assertEquals("pii-reader", zipEntries.get("/src/main/ml-config/security/query-rolesets/pii-reader.json").get("role-name").iterator().next().asText());
 
@@ -81,17 +77,17 @@ public class AllArtifactsProject extends TestObject {
             hubClient.getDbName(DatabaseKind.FINAL));
         assertEquals(expectedPathIndex, dbProps.get("range-path-index").get(0).get("path-expression").asText());
 
-        assertEquals(16, zipEntries.size(), "Expecting the following entries: " +
+        assertEquals(15, zipEntries.size(), "Expecting the following entries: " +
             "1 flow; " +
-            "1 entity model; " +
+            "2 entity models; " +
             "2 mapping steps; " +
-            "1 matching doc; " +
             "1 ingestion step; " +
-            "1 custom step definition; " +
             "2 protected path files (for PII); " +
             "1 query roleset file (for PII); " +
             "4 search options files; " +
-            "2 database properties files");
+            "2 database properties files; " +
+            "Note that step definitions are not included because as of 5.3.0, a user cannot create/modify/delete them " +
+            "via Hub Central");
     }
 
     private JsonNode verifyEntryExists(String path, String name) {

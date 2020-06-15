@@ -3,6 +3,7 @@ package com.marklogic.hub.impl;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.mgmt.resource.security.ProtectedPathManager;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
@@ -49,7 +50,7 @@ public class DeployProtectedPathsWhenUpdatingIndexesTest extends HubTestBase {
         configDir.getSecurityDir().mkdirs();
         File pathsDir = configDir.getProtectedPathsDir();
         pathsDir.mkdirs();
-        File f = new File(pathsDir, "01_pii-protected-paths.json");
+        File f = new File(pathsDir, "01_" + HubConfig.PII_PROTECTED_PATHS_FILE);
         logger.info("Writing protected path to: " + f.getAbsolutePath());
         try {
             ObjectMapperFactory.getObjectMapper().writeValue(f, node);
@@ -60,7 +61,7 @@ public class DeployProtectedPathsWhenUpdatingIndexesTest extends HubTestBase {
 
     private void thenTheProtectedPathIsDeployed() {
         runAsAdmin();
-        
+
         ProtectedPathManager mgr = new ProtectedPathManager(adminHubConfig.getManageClient());
         assertTrue(
             mgr.exists(TEST_PATH_EXPRESSION),

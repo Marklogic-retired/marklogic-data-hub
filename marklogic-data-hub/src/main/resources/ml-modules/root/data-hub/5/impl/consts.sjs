@@ -16,8 +16,6 @@
 
 const FLOW_COLLECTION = "http://marklogic.com/data-hub/flow";
 const ENTITY_MODEL_COLLECTION = "http://marklogic.com/entity-services/models";
-const MATCHING_ARTIFACT_COLLECTION = "http://marklogic.com/data-hub/matching-artifact";
-const MATCHING_SETTINGS_COLLECTION = "http://marklogic.com/data-hub/matching/settings";
 const STEP_DEFINITION_COLLECTION = "http://marklogic.com/data-hub/step-definition";
 const STEP_COLLECTION = "http://marklogic.com/data-hub/steps";
 
@@ -69,16 +67,12 @@ module.exports = {
 
   FLOW_COLLECTION,
   ENTITY_MODEL_COLLECTION,
-  MATCHING_ARTIFACT_COLLECTION,
-  MATCHING_SETTINGS_COLLECTION,
   STEP_DEFINITION_COLLECTION,
   STEP_COLLECTION,
 
   USER_ARTIFACT_COLLECTIONS: [
     FLOW_COLLECTION,
     ENTITY_MODEL_COLLECTION,
-    MATCHING_ARTIFACT_COLLECTION,
-    MATCHING_SETTINGS_COLLECTION,
     STEP_DEFINITION_COLLECTION,
     STEP_COLLECTION
   ],

@@ -24,7 +24,13 @@ const hent = require("/data-hub/5/impl/hub-entities.xqy");
 const artifactsWithProjectPaths = [];
 
 const userArtifactQuery = cts.andQuery([
-  cts.collectionQuery(consts.USER_ARTIFACT_COLLECTIONS),
+  cts.collectionQuery([
+    // Can't use USER_ARTIFACT_COLLECTIONS here as we don't want to include step definitions, which as of 5.3.0
+    // cannot be managed via HC
+    consts.FLOW_COLLECTION,
+    consts.ENTITY_MODEL_COLLECTION,
+    consts.STEP_COLLECTION
+  ]),
   cts.notQuery(
     cts.collectionQuery(consts.HUB_ARTIFACT_COLLECTION)
   )
@@ -42,8 +48,10 @@ if (entityModels.length > 0) {
   const protectedPathsExist = securityConfig.config && securityConfig.config["protected-path"] && securityConfig.config["protected-path"].length > 0;
   if (protectedPathsExist) {
     securityConfig.config["protected-path"].forEach((path, index) => {
+      // This name is intended to be consistent with what's defined in HubConfig.PII_PROTECTED_PATHS_FILE, although
+      // it is not doing leading zero-padding
       artifactsWithProjectPaths.push({
-        path: "/src/main/ml-config/security/protected-paths/pii-protected-path-" + (index + 1) + ".json",
+        path: "/src/main/ml-config/security/protected-paths/" + (index + 1) + "-pii-protected-paths.json",
         json: path
       });
     });

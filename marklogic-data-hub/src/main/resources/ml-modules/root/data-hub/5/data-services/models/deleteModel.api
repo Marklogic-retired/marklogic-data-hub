@@ -1,0 +1,11 @@
+{
+    "functionName": "deleteModel",
+    "desc": "Delete an entity model",
+    "params": [
+        {
+            "name": "entityName",
+            "datatype": "string",
+            "desc": "The name of the primary entity in the model"
+        }
+    ]
+}

@@ -17,8 +17,8 @@ package com.marklogic.hub.central.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.central.HubCentral;
-import com.marklogic.hub.impl.ArtifactManagerImpl;
 import com.marklogic.hub.impl.DataHubImpl;
+import com.marklogic.hub.hubcentral.HubCentralManager;
 import com.marklogic.hub.impl.Versions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -60,7 +60,7 @@ public class EnvironmentController extends BaseController {
         response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
         response.addHeader("Content-Disposition", "attachment; filename=datahub-project.zip");
         try (OutputStream out = response.getOutputStream()) {
-            new ArtifactManagerImpl(getHubClient()).writeProjectArtifactsAsZip(out);
+            new HubCentralManager().writeProjectArtifactsAsZip(getHubClient(), out);
             response.flushBuffer();
         } catch (IOException e) {
             throw new RuntimeException("Unable to download project; cause: " + e.getMessage());
