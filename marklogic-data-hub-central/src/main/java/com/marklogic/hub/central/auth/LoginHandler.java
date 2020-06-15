@@ -56,7 +56,6 @@ public class LoginHandler implements AuthenticationSuccessHandler {
             }
         });
         jsonResponse.putArray("authorities").addAll(authorities);
-        jsonResponse.put("projectName", token.getProjectName());
 
         clearAuthenticationAttributes(request);
 

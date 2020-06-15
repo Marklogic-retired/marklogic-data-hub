@@ -1,16 +1,15 @@
 import axios from 'axios';
 
 const defaultEnv = {
-    projectName: '',
+    serviceName: '',
     dataHubVersion: '',
     markLogicVersion: ''
 }
 
 export function setEnvironment()  {
-    axios.get('/api/environment/project-info')
+    axios.get('/api/environment/systemInfo')
             .then(res => {
-                //'projectName' redundantly set to handle scenario after installation
-                localStorage.setItem('projectName', res.data.projectName);
+                localStorage.setItem('serviceName', res.data.serviceName);
                 localStorage.setItem('environment', JSON.stringify(res.data)) ;
             })
             .catch(err => {
@@ -21,7 +20,7 @@ export function setEnvironment()  {
 export function getEnvironment():any {
     let env: any;
     env = localStorage.getItem('environment');
-    if(env) {
+    if (env) {
         return JSON.parse(env);
     }
     else{

@@ -139,7 +139,7 @@ describe('EntityTypeModal Component', () => {
   });
 
   test('Entity description is updated', async () => {
-    axiosMock.put.mockImplementationOnce(jest.fn(() => Promise.resolve({ status: 200 })));
+    axiosMock.put['mockImplementationOnce'](jest.fn(() => Promise.resolve({ status: 200 })));
 
     const { getByText, getByPlaceholderText } = render(
       <EntityTypeModal

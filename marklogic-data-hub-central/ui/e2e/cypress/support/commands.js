@@ -60,7 +60,7 @@ Cypress.Commands.add('withRequest', { prevSubject: 'optional'}, (subject) => {
       
       cy.request({
         method: 'GET', 
-        url: '/api/environment/project-info'
+        url: '/api/environment/systemInfo'
       }).then(response => {
         window.localStorage.setItem('environment', JSON.stringify(response.body))
       });

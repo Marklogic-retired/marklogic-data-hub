@@ -39,7 +39,7 @@ describe('App component', () => {
       fireEvent.click(getByLabelText("tool-" + firstTool));
       expect(await(waitForElement(() => getByLabelText("icon-" + firstTool)))).toBeInTheDocument();
       expect(queryByText("overview")).not.toBeInTheDocument();
-      fireEvent.click(getByLabelText("header-avatar"));
+      fireEvent.click(getByLabelText("header-logo"));
       expect(getByLabelText("overview")).toBeInTheDocument();
 
       // After switching to non-default, click application name to return to overview

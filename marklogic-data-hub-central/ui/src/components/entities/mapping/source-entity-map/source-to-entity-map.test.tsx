@@ -811,7 +811,7 @@ describe('RTL Source Selector/Source Search tests', () => {
     beforeEach(() => jest.setTimeout(20000));
 
     test('Search source',  async() => {
-        axiosMock.post.mockImplementation(data.mapProps.updateMappingArtifact);
+        axiosMock.post['mockImplementation'](data.mapProps.updateMappingArtifact);
 
         const {getByText,getAllByText, getByTestId, getAllByRole} = render(<SourceToEntityMap {...data.mapProps}  mappingVisible={true}/>);
 
@@ -855,7 +855,7 @@ describe('RTL Source Selector/Source Search tests', () => {
     });
 
     test('Nested JSON source data - Right XPATH expression',  async() => {
-        axiosMock.post.mockImplementation(data.mapProps.updateMappingArtifact);
+        axiosMock.post['mockImplementation'](data.mapProps.updateMappingArtifact);
         const { getByText,getAllByText,getByTestId, getAllByRole} = render(<SourceToEntityMap {...data.mapProps}  mappingVisible={true}/>);
         expect(getByText('Source Data')).toBeInTheDocument();
         expect(getByText('Entity: Person')).toBeInTheDocument();
@@ -886,7 +886,7 @@ describe('RTL Source Selector/Source Search tests', () => {
     });
 
     test('Nested XML source data - Right XPATH expression',  async() => {
-        axiosMock.post.mockImplementation(data.mapProps.updateMappingArtifact);
+        axiosMock.post['mockImplementation'](data.mapProps.updateMappingArtifact);
         const {getAllByText,getByTestId, getAllByRole} = render(<SourceToEntityMap {...data.mapProps}  sourceData={data.xmlSourceData} mappingVisible={true}/>);
 
         //Expanding all the nested levels first
@@ -917,7 +917,7 @@ describe('RTL Source Selector/Source Search tests', () => {
     });
 
     test('Right XPATH with source context',  async() => {
-        axiosMock.post.mockImplementation(data.mapProps.updateMappingArtifact);
+        axiosMock.post['mockImplementation'](data.mapProps.updateMappingArtifact);
         const {getAllByText, getAllByRole,getByTestId,queryByTestId } = render(<SourceToEntityMap {...data.mapProps}  mappingVisible={true}/>);
 
         let sourceSelector = getByTestId("items-listIcon");

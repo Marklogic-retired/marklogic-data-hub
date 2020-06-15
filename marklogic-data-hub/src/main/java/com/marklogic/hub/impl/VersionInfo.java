@@ -16,18 +16,21 @@ public class VersionInfo {
 
     private String hubVersion;
     private String markLogicVersion;
+    private String clusterName;
 
     public static VersionInfo newVersionInfo(HubClient hubClient) {
         JsonNode json = SystemService.on(hubClient.getStagingClient()).getVersions();
         return new VersionInfo(
             json.get("hubVersion").asText(),
-            json.get("markLogicVersion").asText()
+            json.get("markLogicVersion").asText(),
+            json.get("clusterName").asText()
         );
     }
 
-    private VersionInfo(String hubVersion, String markLogicVersion) {
+    private VersionInfo(String hubVersion, String markLogicVersion, String clusterName) {
         this.hubVersion = hubVersion;
         this.markLogicVersion = markLogicVersion;
+        this.clusterName = clusterName;
     }
 
     public String getHubVersion() {
@@ -36,6 +39,10 @@ public class VersionInfo {
 
     public String getMarkLogicVersion() {
         return markLogicVersion;
+    }
+
+    public String getClusterName() {
+        return clusterName;
     }
 
     /**

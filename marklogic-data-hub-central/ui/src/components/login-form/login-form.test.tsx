@@ -54,7 +54,7 @@ describe('Login page test', () => {
   });
 
   test('Verify login with status==200', async () => {
-    axiosMock.post.mockImplementationOnce(jest.fn(() => Promise.resolve({ status: 200, data: {} })));
+    axiosMock.post['mockImplementationOnce'](jest.fn(() => Promise.resolve({ status: 200, data: {} })));
     const { container, getByPlaceholderText, getByText } = await render(<LoginForm />);
     userField = getByPlaceholderText("Enter username");
     passField = getByPlaceholderText("Enter password");
@@ -73,7 +73,7 @@ describe('Login page test', () => {
   });
 
   test('Verify login with error status 401', async () => {
-    axiosMock.post.mockImplementationOnce(jest.fn(() => Promise.reject({ response: {status: 401} })));
+    axiosMock.post['mockImplementationOnce'](jest.fn(() => Promise.reject({ response: {status: 401} })));
 
     const { getByPlaceholderText, getByText } = await render(<LoginForm />);
     userField = getByPlaceholderText("Enter username");
@@ -90,7 +90,7 @@ describe('Login page test', () => {
   });
 
   test('Verify login with error status 403', async () => {
-    axiosMock.post.mockImplementationOnce(jest.fn(() => Promise.reject({ response: {status: 403} })));
+    axiosMock.post['mockImplementationOnce'](jest.fn(() => Promise.reject({ response: {status: 403} })));
 
     const { getByPlaceholderText, getByText } = await render(<LoginForm />);
     userField = getByPlaceholderText("Enter username");

@@ -4,12 +4,12 @@ import com.marklogic.hub.ArtifactManager;
 import com.marklogic.hub.artifact.ArtifactTypeInfo;
 import com.marklogic.hub.central.AbstractHubCentralTest;
 import com.marklogic.hub.central.controllers.EnvironmentController;
+import com.marklogic.hub.impl.VersionInfo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 
 import java.util.List;
-import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -42,18 +42,20 @@ public class EnvironmentControllerTest extends AbstractHubCentralTest {
     }
 
     @Test
-    void testGetProjectInfo() {
-        EnvironmentController.ProjectInfo info = environmentController.getProjectInfo();
-        assertNotNull(info);
-        assertNotNull(info.dataHubVersion);
-        assertNotNull(info.projectName);
-        assertNotNull(info.marklogicVersion);
-    }
+    void getSystemInfo() {
+        final VersionInfo versionInfo = VersionInfo.newVersionInfo(getHubClient());
 
-    @Test
-    public void getInfo() {
-        String expectedTimeout = environment.getProperty("server.servlet.session.timeout");
-        String actualTimeout = Objects.requireNonNull(environmentController.getInfo().sessionTimeout);
-        assertEquals(expectedTimeout, actualTimeout);
+        runAsTestUserWithRoles("hub-central-user");
+
+        EnvironmentController.SystemInfo actualSystemInfo = environmentController.getSystemInfo();
+        assertNotNull(actualSystemInfo);
+        assertEquals(versionInfo.getHubVersion(), actualSystemInfo.dataHubVersion);
+        assertEquals(versionInfo.getMarkLogicVersion(), actualSystemInfo.marklogicVersion);
+        assertEquals(versionInfo.getClusterName(), actualSystemInfo.serviceName,
+            "clusterName is called 'serviceName' in the HC context to provide an abstraction over where the " +
+                "name is actually coming from, as it may not always be the name of the ML cluster");
+
+        final String expectedTimeout = environment.getProperty("server.servlet.session.timeout");
+        assertEquals(expectedTimeout, actualSystemInfo.sessionTimeout, "As part of DHFPROD-5200, this is being added so we can get rid of /api/info");
     }
 }

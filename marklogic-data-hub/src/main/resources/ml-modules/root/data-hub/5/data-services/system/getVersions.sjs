@@ -19,7 +19,8 @@ const config = require("/com.marklogic.hub/config.sjs");
 
 const versions = {
   hubVersion: config.HUBVERSION,
-  markLogicVersion: xdmp.version()
+  markLogicVersion: xdmp.version(),
+  clusterName: xdmp.clusterName()
 };
 
 versions

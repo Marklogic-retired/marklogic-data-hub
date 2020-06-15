@@ -1,84 +1,50 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { render, cleanup } from '@testing-library/react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { UserContext } from '../../util/user-context';
 import Header from './header';
+import data from '../../assets/mock-data/system-info.data';
+import { userAuthenticated, userNotAuthenticated } from '../../assets/mock-data/user-context-mock';
+import { Application } from '../../config/application.config';
 
 describe('Header component', () => {
-  let wrapper;
 
-  describe('when a user is not logged in', () => {
-    const context = {
-      user: {
-        name: '',
-        authenticated: false,
-        redirect: false,
-        error: jest.fn(),
-        tableView: false
-      },
-      userAuthenticated: jest.fn(),
-      userNotAuthenticated: jest.fn(),
-      loginAuthenticated: jest.fn(),
-      sessionAuthenticated: jest.fn(),
-      handleError: jest.fn(),
-      clearErrorMessage: jest.fn(),
-      clearRedirect: jest.fn(),
-      setTableView: jest.fn()
-    }
+  afterEach(cleanup);
 
-    beforeEach(() => {
-      wrapper = mount(
-        <Router>
-          <UserContext.Provider value={context}>
-            <Header/>
-          </UserContext.Provider>
-        </Router>
-      )
-    });
+  test('should render correctly when a user is not logged in', () => {
 
-    it('should render correctly', () => {
-      expect(wrapper.exists('#title')).toBe(true);
-      expect(wrapper.exists('.anticon-question-circle')).toBe(true);
-      expect(wrapper.exists('.anticon-user')).toBe(false);
-    });
+    const { getByText, getByLabelText, queryByText } = render(
+      <Router>
+        <UserContext.Provider value={userNotAuthenticated}>
+          <Header environment={data.environment}/>
+        </UserContext.Provider>
+      </Router>
+    )
+
+    expect(getByLabelText('header-logo')).toBeInTheDocument();
+    expect(getByText(Application.title)).toBeInTheDocument();
+    expect(getByLabelText('icon: question-circle')).toBeInTheDocument();
+    expect(queryByText('icon: user')).not.toBeInTheDocument();
+
   });
 
+  test('should render correctly when a user is logged in', async () => {
 
-  describe('when a user is logged in', () => {
-    const context = {
-      user: {
-        name: 'admin',
-        authenticated: true,
-        redirect: false,
-        error: jest.fn(),
-        tableView: false
-      },
-      userAuthenticated: jest.fn(),
-      userNotAuthenticated: jest.fn(),
-      loginAuthenticated: jest.fn(),
-      sessionAuthenticated: jest.fn(),
-      handleError: jest.fn(),
-      clearErrorMessage: jest.fn(),
-      clearRedirect: jest.fn(),
-      setTableView: jest.fn()
-    }
+    const { getByText, getByLabelText } = render(
+      <Router>
+        <UserContext.Provider value={userAuthenticated}>
+          <Header environment={data.environment}/>
+        </UserContext.Provider>
+      </Router>
+    )
 
-    beforeEach(() => {
-      wrapper = mount(
-        <Router>
-          <UserContext.Provider value={context}>
-            <Header/>
-          </UserContext.Provider>
-        </Router>
-      )
-    });
-
-    it('should render correctly', () => {
-      expect(wrapper.exists('#title')).toBe(true);
-      expect(wrapper.exists('.anticon-search')).toBe(true);
-      expect(wrapper.exists('.anticon-question-circle')).toBe(true);
-      expect(wrapper.exists('.anticon-setting')).toBe(true);
-      expect(wrapper.exists('.anticon-user')).toBe(true);
-    });
+    expect(getByLabelText('header-logo')).toBeInTheDocument();
+    expect(getByText(Application.title)).toBeInTheDocument();
+    expect(getByText(data.environment.serviceName)).toBeInTheDocument();
+    expect(getByLabelText('icon: search')).toBeInTheDocument();
+    expect(getByLabelText('icon: question-circle')).toBeInTheDocument();
+    expect(getByLabelText('icon: setting')).toBeInTheDocument();
+    expect(getByLabelText('icon: user')).toBeInTheDocument();
   });
+
 });

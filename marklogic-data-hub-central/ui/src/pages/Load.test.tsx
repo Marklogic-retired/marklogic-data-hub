@@ -7,6 +7,7 @@ import mocks from '../api/__mocks__/mocks.data';
 import Load from "./Load";
 
 jest.mock('axios');
+jest.setTimeout(30000);
 
 const DEFAULT_VIEW = 'list';
 

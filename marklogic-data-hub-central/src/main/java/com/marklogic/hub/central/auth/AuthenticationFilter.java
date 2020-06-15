@@ -109,6 +109,6 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
         if (!hasLoginAuthority[0]) {
             throw new InsufficientAuthenticationException("User doesn't have necessary privileges to access Hub Central");
         }
-        return new AuthenticationToken(username, password, hubCentral.getProjectName(), authorities);
+        return new AuthenticationToken(username, password, authorities);
     }
 }
