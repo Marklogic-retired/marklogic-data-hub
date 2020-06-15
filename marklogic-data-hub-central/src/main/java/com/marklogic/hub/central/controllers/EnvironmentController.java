@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.central.HubCentral;
 import com.marklogic.hub.impl.ArtifactManagerImpl;
 import com.marklogic.hub.impl.DataHubImpl;
-import com.marklogic.hub.impl.Versions;
+import com.marklogic.hub.impl.VersionInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -46,14 +46,6 @@ public class EnvironmentController extends BaseController {
 
     private ObjectMapper mapper = new ObjectMapper();
 
-    @RequestMapping(value = "/api/info", method = RequestMethod.GET)
-    @ResponseBody
-    public EnvironmentInfo getInfo() {
-        EnvironmentInfo info = new EnvironmentInfo();
-        info.sessionTimeout = environment.getProperty("server.servlet.session.timeout");
-        return info;
-    }
-
     @RequestMapping(value = "/api/environment/downloadProjectFiles", produces = "application/zip", method = RequestMethod.GET)
     @Secured("ROLE_downloadProjectFiles")
     public void downloadProjectFilesAsZip(HttpServletResponse response) {
@@ -74,23 +66,25 @@ public class EnvironmentController extends BaseController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/api/environment/project-info", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/environment/systemInfo", method = RequestMethod.GET)
     @ResponseBody
-    public ProjectInfo getProjectInfo() {
-        Versions versions = new Versions(getHubClient());
-        ProjectInfo info = new ProjectInfo();
-        info.projectName = hubCentral.getProjectName();
-        info.dataHubVersion = versions.getInstalledVersion();
-        info.marklogicVersion = versions.getMarkLogicVersion();
+    public SystemInfo getSystemInfo() {
+        VersionInfo versionInfo = VersionInfo.newVersionInfo(getHubClient());
+        SystemInfo info = new SystemInfo();
+        info.serviceName = versionInfo.getClusterName();
+        info.dataHubVersion = versionInfo.getHubVersion();
+        info.marklogicVersion = versionInfo.getMarkLogicVersion();
         info.host = hubCentral.getHost();
+        info.sessionTimeout = environment.getProperty("server.servlet.session.timeout");
         return info;
     }
 
-    public static class ProjectInfo {
-        public String projectName;
+    public static class SystemInfo {
+        public String serviceName;
         public String dataHubVersion;
         public String marklogicVersion;
         public String host;
+        public String sessionTimeout;
     }
 
     public static class EnvironmentInfo {

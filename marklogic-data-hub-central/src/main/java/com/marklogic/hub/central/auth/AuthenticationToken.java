@@ -30,14 +30,12 @@ public class AuthenticationToken extends AbstractAuthenticationToken {
 
     private final String username;
     private String password;
-    private final String projectName;
 
-    public AuthenticationToken(String username, String password, String projectName, Collection<GrantedAuthority> authorities) {
+    public AuthenticationToken(String username, String password, Collection<GrantedAuthority> authorities) {
         super(authorities);
         super.setAuthenticated(true);
         this.username = username;
         this.password = password;
-        this.projectName = projectName;
     }
 
     public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
@@ -59,10 +57,6 @@ public class AuthenticationToken extends AbstractAuthenticationToken {
 
     public Object getPrincipal() {
         return this.username;
-    }
-
-    public String getProjectName() {
-        return projectName;
     }
 
 }
