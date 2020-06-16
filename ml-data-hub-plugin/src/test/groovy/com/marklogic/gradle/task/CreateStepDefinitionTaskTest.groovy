@@ -31,7 +31,6 @@ class CreateStepDefinitionTaskTest extends BaseTest {
     def setupSpec() {
         createGradleFiles()
         runTask('hubInit')
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
     }
 
     def "create step with no name"() {
@@ -40,7 +39,7 @@ class CreateStepDefinitionTaskTest extends BaseTest {
 
         then:
         notThrown(UnexpectedBuildSuccess)
-        result.output.contains('stepDefName property is required')
+        result.output.contains('stepDefName must be defined via -PstepDefName=YourStepDefName')
         result.task(":hubCreateStepDefinition").outcome == FAILED
     }
 
@@ -73,7 +72,7 @@ class CreateStepDefinitionTaskTest extends BaseTest {
         propertiesFile << """
             ext {
                 stepDefName=my-new-step
-                stepDefType=mapping
+                stepDefType=ingestion
             }
         """
 
@@ -84,14 +83,18 @@ class CreateStepDefinitionTaskTest extends BaseTest {
         notThrown(UnexpectedBuildFailure)
         result.task(":hubCreateStepDefinition").outcome == SUCCESS
 
-        File stepDir = Paths.get(testProjectDir.root.toString(), "step-definitions", "mapping", "my-new-step").toFile()
+        File stepDir = Paths.get(testProjectDir.root.toString(), "step-definitions", "ingestion", "my-new-step").toFile()
         stepDir.isDirectory()
         def jsonSlurper = new JsonSlurper()
-        def data = jsonSlurper.parse(Paths.get(testProjectDir.root.toString(), "step-definitions", "mapping", "my-new-step", "my-new-step.step.json").toFile());
+        def data = jsonSlurper.parse(Paths.get(testProjectDir.root.toString(), "step-definitions", "ingestion", "my-new-step", "my-new-step.step.json").toFile());
         data.options.permissions == "data-hub-operator,read,data-hub-operator,update";
     }
 
-    def "create mastering step with valid name and type"() {
+    /**
+     * Per DHFPROD-5193 and as of 5.3.0, only "ingestion" and "custom" are supported for custom step definitions.
+     * @return
+     */
+    def "create step with invalid type"() {
         given:
         propertiesFile << """
             ext {
@@ -101,16 +104,50 @@ class CreateStepDefinitionTaskTest extends BaseTest {
         """
 
         when:
-        def result = runTask('hubCreateStepDefinition')
+        def result = runFailTask('hubCreateStepDefinition')
 
         then:
-        notThrown(UnexpectedBuildFailure)
-        result.task(":hubCreateStepDefinition").outcome == SUCCESS
+        notThrown(UnexpectedBuildSuccess)
+        result.output.contains("stepDefType must have a value of either 'ingestion' or 'custom'")
+        result.task(":hubCreateStepDefinition").outcome == FAILED
+    }
 
-        File stepDir = Paths.get(testProjectDir.root.toString(), "step-definitions", "mastering", "my-mastering-step").toFile()
-        stepDir.isDirectory()
-        def jsonSlurper = new JsonSlurper()
-        def data = jsonSlurper.parse(Paths.get(stepDir.toString(), "my-mastering-step.step.json").toFile());
-        data.options.permissions == "data-hub-operator,read,data-hub-operator,update";
+    def "create step with invalid format"() {
+        given:
+        propertiesFile << """
+            ext {
+                stepDefName=my-step
+                stepDefType=custom
+                format=java
+            }
+        """
+
+        when:
+        def result = runFailTask('hubCreateStepDefinition')
+
+        then:
+        notThrown(UnexpectedBuildSuccess)
+        result.output.contains("format must have a value of either 'sjs' or 'xqy'")
+        result.task(":hubCreateStepDefinition").outcome == FAILED
+    }
+
+    def "duplicate step definition exists"() {
+        given:
+        propertiesFile << """
+            ext {
+                stepDefName=my-step
+                stepDefType=custom
+                format=sjs
+            }
+        """
+
+        when:
+        runTask('hubCreateStepDefinition')
+        def result = runFailTask('hubCreateStepDefinition')
+
+        then:
+        notThrown(UnexpectedBuildSuccess)
+        result.output.contains("A step definition already exists with the name 'my-step' and type 'custom'")
+        result.task(":hubCreateStepDefinition").outcome == FAILED
     }
 }

@@ -124,7 +124,10 @@ class DataHubPlugin implements Plugin<Project> {
         String scaffoldGroup = "MarkLogic Data Hub Scaffolding"
         project.task("hubInit", group: scaffoldGroup, type: InitProjectTask)
         project.task("hubCreateMapping", group: scaffoldGroup, type: CreateMappingTask)
-        project.task("hubCreateStepDefinition", group: scaffoldGroup, type: CreateStepDefinitionTask)
+        project.task("hubCreateStepDefinition", group: scaffoldGroup, type: CreateStepDefinitionTask,
+            description: "Create a new step definition in your project; specify a name via -PstepDefName=YourStepDefName, " +
+                "a type (either 'ingestion' or 'custom'; defaults to 'custom') via -PstepDefType=ingestion|custom, " +
+                "and a format (either 'sjs' or 'xqy'; defaults to 'sjs') via -Pformat=sjs|xqy")
         project.task("hubCreateStep", group: scaffoldGroup, type: CreateStepTask,
             description: "Create a new step file in your project; specify a step name via -PstepName=YourStepName, and specify " +
                 "a step type via -PstepType=(ingestion|mapping)")

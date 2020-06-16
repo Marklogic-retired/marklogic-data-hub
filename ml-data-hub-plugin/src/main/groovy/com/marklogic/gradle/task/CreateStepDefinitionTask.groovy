@@ -17,12 +17,11 @@
 
 package com.marklogic.gradle.task
 
-import com.marklogic.gradle.exception.StepDefNameRequiredException
-import com.marklogic.gradle.exception.StepDefTypeInvalidException
-import com.marklogic.gradle.exception.StepDefinitionAlreadyPresentException
+
 import com.marklogic.hub.StepDefinitionManager
 import com.marklogic.hub.scaffold.Scaffolding
 import com.marklogic.hub.step.StepDefinition
+import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
 
 class CreateStepDefinitionTask extends HubTask {
@@ -33,40 +32,31 @@ class CreateStepDefinitionTask extends HubTask {
         def propType = "stepDefType"
         def propFormat = "format"
 
-        String stepDefName = project.hasProperty(propName) ? project.property(propName) : null
+        String stepDefName = project.hasProperty(propName) ? project.property(propName).toString() : null
         if (stepDefName == null) {
-            throw new StepDefNameRequiredException()
-        }
-        String stepDefType = project.hasProperty(propType) ? project.property(propType) : StepDefinition.StepDefinitionType.CUSTOM
-
-        String format = project.hasProperty(propFormat) ? project.property(propFormat) : "sjs"
-
-        if(!StepDefinition.StepDefinitionType.getStepDefinitionType(stepDefType)) {
-            throw new StepDefTypeInvalidException()
+            throw new GradleException("stepDefName must be defined via -PstepDefName=YourStepDefName")
         }
 
-        def projectDir = getHubConfig().getHubProject().getProjectDirString()
-        println "stepDefName: " + stepDefName
-        println "stepDefType: " + stepDefType
-        println "projectDir: " + projectDir.toString()
+        String stepDefType = project.hasProperty(propType) ? project.property(propType).toString() : StepDefinition.StepDefinitionType.CUSTOM
+        if (!"ingestion".equalsIgnoreCase(stepDefType) && !"custom".equalsIgnoreCase(stepDefType)) {
+            throw new GradleException("stepDefType must have a value of either 'ingestion' or 'custom'")
+        }
 
         StepDefinitionManager stepDefinitionManager = getStepDefinitionManager()
-        StepDefinition stepDefinition = StepDefinition.create(stepDefName.toString(), StepDefinition.StepDefinitionType.getStepDefinitionType(stepDefType))
+        StepDefinition stepDefinition = StepDefinition.create(stepDefName, StepDefinition.StepDefinitionType.getStepDefinitionType(stepDefType))
 
-        if (stepDefinitionManager.getStepDefinition(stepDefinition.name, stepDefinition.type) == null) {
-            Scaffolding scaffolding = getScaffolding()
-            scaffolding.createCustomModule(stepDefName, stepDefType, format)
-            if("sjs".equalsIgnoreCase(format) || "xqy".equalsIgnoreCase(format)) {
-                stepDefinition.setModulePath("/custom-modules/" + stepDefType.toLowerCase() + "/" + stepDefName + "/main.sjs")
-            }
-            else {
-                throw new IllegalArgumentException("Invalid code format. The allowed formats are 'xqy' or 'sjs'")
-            }
-            stepDefinitionManager.saveStepDefinition(stepDefinition)
-        }
-        else {
-            throw new StepDefinitionAlreadyPresentException()
+        if (stepDefinitionManager.getStepDefinition(stepDefinition.name, stepDefinition.type) != null) {
+            throw new GradleException("A step definition already exists with the name '${stepDefName}' and type '${stepDefType}'")
         }
 
+        String format = project.hasProperty(propFormat) ? project.property(propFormat) : "sjs"
+        if (!"sjs".equalsIgnoreCase(format) && !"xqy".equalsIgnoreCase(format)) {
+            throw new GradleException("format must have a value of either 'sjs' or 'xqy'")
+        }
+
+        Scaffolding scaffolding = getScaffolding()
+        scaffolding.createCustomModule(stepDefName, stepDefType, format)
+        stepDefinition.setModulePath("/custom-modules/" + stepDefType.toLowerCase() + "/" + stepDefName + "/main.sjs")
+        stepDefinitionManager.saveStepDefinition(stepDefinition)
     }
 }
