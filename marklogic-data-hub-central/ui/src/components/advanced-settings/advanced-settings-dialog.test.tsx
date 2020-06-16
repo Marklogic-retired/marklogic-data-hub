@@ -44,6 +44,8 @@ describe('Advanced Step Settings dialog', () => {
     expect(getByText('Provenance Granularity')).toBeInTheDocument();
     expect(getByText('Coarse-grained')).toBeInTheDocument();
 
+    expect(queryByText('Entity Validation')).not.toBeInTheDocument();
+
     expect(getByText('Batch Size')).toBeInTheDocument();
 
     expect(getByText('Header Content')).toBeInTheDocument();
@@ -132,6 +134,9 @@ describe('Advanced Step Settings dialog', () => {
     expect(getByText('Provenance Granularity')).toBeInTheDocument();
     expect(getByText('Coarse-grained')).toBeInTheDocument();
 
+    expect(getByText('Entity Validation')).toBeInTheDocument();
+    expect(getByText('Do not validate')).toBeInTheDocument();
+
     expect(getByText('Processors')).toBeInTheDocument();
     expect(getByText('Custom Hook')).toBeInTheDocument();
 
@@ -179,6 +184,13 @@ describe('Advanced Step Settings dialog', () => {
     expect(provOptions.map(li => li.textContent).toString()).toEqual('Coarse-grained,Off');
     fireEvent.select(provOptions[1]);
     expect(getByText('Off')).toBeInTheDocument();
+
+    //Verifying entity validation options select field
+    fireEvent.click(getByText('Do not validate'));
+    const entValOptions = getAllByTestId('entityValOpts').map(li => li);
+    expect(entValOptions.map(li => li.textContent).toString()).toEqual('Do not validate,Store validation errors in entity headers,Skip documents with validation  errors');
+    fireEvent.select(provOptions[1]);
+    expect(getByText('Store validation errors in entity headers')).toBeInTheDocument();
 
     //Not able to send input to Additional collections. Test via e2e
     //https://github.com/testing-library/react-testing-library/issues/375
@@ -278,6 +290,7 @@ describe('Advanced Step Settings dialog', () => {
     expect(document.querySelector('#headers')).toHaveClass('ant-input-disabled');
     expect(document.querySelector('#targetFormat')).toHaveClass('ant-select-disabled');
     expect(document.querySelector('#provGranularity')).toHaveClass('ant-select-disabled');
+    expect(document.querySelector('#validateEntity')).toHaveClass('ant-select-disabled');
 
     fireEvent.click(getByText('Processors'));
     expect(document.querySelector('#processors')).toHaveClass('ant-input-disabled');
@@ -389,7 +402,7 @@ describe('Advanced Step Settings dialog', () => {
     fireEvent.click(getByText('Custom Hook'));
     let tipIcons  = getAllByLabelText('icon: question-circle');
     const tips = ['sourceDatabase', 'targetDatabase', 'additionalCollections', 'targetPermissions',
-      'targetFormat', 'provGranularity', 'batchSize', 'headers', 'processors', 'customHook'];
+      'targetFormat', 'provGranularity','validateEntity', 'batchSize', 'headers', 'processors', 'customHook'];
     tips.forEach(async (tip, i) => {
       fireEvent.mouseOver(tipIcons[i]);
       await waitForElement(() => getByText(AdvancedSettings[tip]))

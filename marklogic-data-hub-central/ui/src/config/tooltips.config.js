@@ -8,6 +8,7 @@ const AdvancedSettings = {
     'The string must be in the format role,capability,role,capability,..., where capability can be read, insert, update, or execute.',
     'headers': 'A JSON object that represents additional metadata to add to the header section of the envelope of each record.',
     'provGranularity': 'The level of detail logged for provenance. Choose *coarse* for the default level or *off* for no provenance logging.',
+    'validateEntity': 'Choose whether to validate each document against the entity type definition and how to handle documents with errors.',
     'processors': 'Custom modules that perform additional processes after the core step processes are completed and before the results are saved.',
     'customHook': 'A custom module that performs additional processes in its own transaction before or after the core step transaction. Results are saved within a transaction.',
     /* The following are for *Custom* Tooltips. */
@@ -47,7 +48,7 @@ const AdvMapTooltips = {
     'sourceDatabase': 'The database where the input data is read from. For mapping, the default is data-hub-STAGING.',
     'targetDatabase': 'The database where to store the processed data. For mapping, the default is data-hub-FINAL.',
     'provGranularity': 'The level of detail logged for provenance. Choose *coarse* for the default level or *off* for no provenance logging.',
-}
+ }
 
 const NewMatchTooltips = {
     'name': 'The name of this matching configuration.',	    'sourceDatabase': 'The database where the input data is read from. Must be the same as the Matching Step *Source Database*.',

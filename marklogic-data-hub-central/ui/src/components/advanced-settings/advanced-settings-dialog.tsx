@@ -57,6 +57,11 @@ const AdvancedSettingsDialog = (props) => {
   const [provGranularity, setProvGranularity] = useState('coarse');
   const [provGranularityTouched, setProvGranularityTouched] = useState(false);
 
+  const defaultValidateEntity = 'doNotValidate';
+  const validateEntityOptions = { 'Do not validate': 'doNotValidate', 'Store validation errors in entity headers': 'accept','Skip documents with validation  errors': 'reject'};
+  const [validateEntity, setValidateEntity] = useState('doNotValidate');
+  const [validateEntityTouched, setValidateEntityTouched] = useState(false);
+
   const defaultBatchSize = 100;
   const [batchSize, setBatchSize] = useState(defaultBatchSize);
   const [batchSizeTouched, setBatchSizeTouched] = useState(false);
@@ -91,6 +96,7 @@ const AdvancedSettingsDialog = (props) => {
       setTargetPermissionsTouched(false);
       setTargetFormatTouched(false);
       setProvGranularityTouched(false);
+      setValidateEntityTouched(false);
       setBatchSizeTouched(false);
       setHeadersTouched(false);
       setProcessorsTouched(false);
@@ -106,6 +112,7 @@ const AdvancedSettingsDialog = (props) => {
       setPermissionValidationError('');
       setTargetFormat(defaultTargetFormat);
       setProvGranularity(defaultprovGranularity);
+      setValidateEntity(defaultValidateEntity);
       setBatchSize(defaultBatchSize);
       setHeaders('');
       setProcessors('');
@@ -170,7 +177,6 @@ const AdvancedSettingsDialog = (props) => {
     if (props.stepData.name) {
       try {
         let response = await Axios.get(`/api/steps/${stepType}/${props.stepData.name}`);
-
         if (response.status === 200) {
           if(stepType === 'ingestion' && response.data.stepDefinitionName !== 'default-ingestion'){
               setIsCustomIngestion(true);
@@ -190,6 +196,7 @@ const AdvancedSettingsDialog = (props) => {
           setTargetPermissions(response.data.permissions);
           setTargetFormat(response.data.targetFormat);
           setProvGranularity(response.data.provenanceGranularityLevel);
+          setValidateEntity(response.data.validateEntity) ;
           setBatchSize(response.data.batchSize);
           setHeaders(formatJSON(response.data.headers));
           setProcessors(formatJSON(response.data.processors));
@@ -204,6 +211,7 @@ const AdvancedSettingsDialog = (props) => {
         setTargetPermissions('');
         setTargetFormat(defaultTargetFormat);
         setProvGranularity(defaultprovGranularity);
+        setValidateEntity(defaultValidateEntity);
         setBatchSize(defaultBatchSize);
         setHeaders('');
         setProcessors('');
@@ -237,6 +245,7 @@ const AdvancedSettingsDialog = (props) => {
         && !headersTouched
         && !targetFormatTouched
         && !provGranularityTouched
+        && !validateEntityTouched
         && !batchSizeTouched
         && !processorsTouched
         && !customHookTouched
@@ -284,6 +293,7 @@ const AdvancedSettingsDialog = (props) => {
         headers: parseJSON(headers),
         processors: parseJSON(processors),
         provenanceGranularityLevel: provGranularity,
+        validateEntity: validateEntity,
         batchSize: batchSize,
         customHook: parseJSON(customHook),
       }
@@ -432,6 +442,15 @@ const AdvancedSettingsDialog = (props) => {
     }
   }
 
+  const handleValidateEntity = (value) => {
+     if (value === ' ') {
+        setValidateEntityTouched(false);
+      }
+      else {
+        setValidateEntityTouched(true);
+        setValidateEntity(value);
+      }
+  }
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -447,7 +466,7 @@ const AdvancedSettingsDialog = (props) => {
   const targetDbOptions = databaseOptions.map(d => <Option data-testid='targetDbOptions' key={d}>{d}</Option>);
 
   const provGranOpts = Object.keys(provGranularityOptions).map(d => <Option data-testid='provOptions' key={provGranularityOptions[d]}>{d}</Option>);
-
+  const valEntityOpts = Object.keys(validateEntityOptions).map(d => <Option data-testid='entityValOpts' key={validateEntityOptions[d]}>{d}</Option>);
   return <Modal
     visible={props.openAdvancedSettings}
     title={null}
@@ -612,6 +631,28 @@ const AdvancedSettingsDialog = (props) => {
             </Tooltip>
           </div>
         </Form.Item>
+          {   stepType === 'mapping' ? <Form.Item
+              label={<span>Entity Validation</span>}
+              labelAlign="left"
+              className={styles.formItem}
+          >
+          <Select
+              id="validateEntity"
+              placeholder="Please select Entity Validation"
+              value={validateEntity}
+              onChange={handleValidateEntity}
+              disabled={!canReadWrite}
+              className={styles.inputWithTooltip}
+              aria-label="validateEntity-select"
+              >
+              {valEntityOpts}
+          </Select>
+              <div className={styles.selectTooltip}>
+                  <Tooltip title={tooltips.validateEntity} placement={'right'}>
+                      <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
+                  </Tooltip>
+              </div>
+          </Form.Item> : ''}
         <Form.Item
           label={<span>Batch Size</span>}
           labelAlign="left"

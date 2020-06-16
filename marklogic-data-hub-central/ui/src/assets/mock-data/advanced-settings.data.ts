@@ -70,7 +70,7 @@ const stepMapping = { "data" :
         "stepId": "AdvancedMapping-mapping",
         "sourceDatabase": "data-hub-STAGING",
         "targetDatabase": "data-hub-FINAL",
-        "validateEntity": false,
+        "validateEntity": "doNotValidate",
         "provenanceGranularityLevel": "coarse",
         "lastUpdated": "2020-01-01T00:00:00.000001-07:00",
         "headers": {
