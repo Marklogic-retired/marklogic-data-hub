@@ -2,6 +2,7 @@
 import React, { useState, useEffect, CSSProperties, useRef, useLayoutEffect } from "react";
 import { Card, Modal, Table, Icon, Popover, Input, Button, Alert, Tooltip, Dropdown, Menu, Checkbox, Row, AutoComplete} from "antd";
 import styles from './source-to-entity-map.module.scss';
+import './source-to-entity-map.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faObjectUngroup, faList, faPencilAlt, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { getInitialChars, convertDateFromISO, getLastChars } from "../../../../util/conversionFunctions";
@@ -9,6 +10,7 @@ import { getMappingValidationResp } from "../../../../util/manageArtifacts-servi
 import DropDownWithSearch from "../../../common/dropdown-with-search/dropdownWithSearch";
 import SplitPane from 'react-split-pane';
 import Highlighter from 'react-highlight-words';
+import ColumnGroup from "antd/lib/table/ColumnGroup";
 
 const SourceToEntityMap = (props) => {
 
@@ -476,7 +478,7 @@ const SourceToEntityMap = (props) => {
               </Button>
             </div>
         ),
-        filterIcon: filtered => <i><FontAwesomeIcon data-testid={`filterIcon-${dataIndex}`} icon={faSearch} size="lg" style={{ color: filtered ? '#5B69AF' : undefined }} /></i>,
+        filterIcon: filtered => <i><FontAwesomeIcon data-testid={`filterIcon-${dataIndex}`} icon={faSearch} size="lg" className={ filtered ? 'active' : 'inactive' }  /></i>,
         onFilter: (value, record) => {
             let recordString = getPropValueFromDataIndex(record, dataIndex);
             return recordString.toString().toLowerCase().includes(value.toLowerCase());

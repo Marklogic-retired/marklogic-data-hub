@@ -36,21 +36,24 @@
     word-break: break-all;
 }
 
-.sourceTable {
-    & thead > tr > th {
+.sourceTable{
+      & thead > tr > th {
         background-color: #fafafa;
         line-height: 2px;
-      };
-    & tbody > tr > td {
+      };  
+      & tbody > tr > td {
         line-height: 2px;
     }
 }
+
+
+
 .sourceTableRows{
     line-height: 1px;
 }
 
 .filterContainer {
-    padding: 8px
+    padding: 8px;
 }
 .searchInput {
     min-width: 8vw;
