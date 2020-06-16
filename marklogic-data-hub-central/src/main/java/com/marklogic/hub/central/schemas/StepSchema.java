@@ -106,7 +106,7 @@ public class StepSchema {
      */
     @JsonProperty("validateEntity")
     @JsonPropertyDescription("Applicable to mapping steps only")
-    private Boolean validateEntity;
+    private String validateEntity;
     @JsonProperty("targetDatabase")
     private String targetDatabase;
     @JsonProperty("sourceDatabase")
@@ -335,7 +335,7 @@ public class StepSchema {
      * 
      */
     @JsonProperty("validateEntity")
-    public Boolean getValidateEntity() {
+    public String getValidateEntity() {
         return validateEntity;
     }
 
@@ -344,7 +344,7 @@ public class StepSchema {
      * 
      */
     @JsonProperty("validateEntity")
-    public void setValidateEntity(Boolean validateEntity) {
+    public void setValidateEntity(String validateEntity) {
         this.validateEntity = validateEntity;
     }
 

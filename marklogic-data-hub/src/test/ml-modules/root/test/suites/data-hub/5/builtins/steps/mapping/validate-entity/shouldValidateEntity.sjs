@@ -14,6 +14,7 @@ function shouldValidate(validateEntityValue) {
   test.assertTrue(shouldValidate("REJECT")),
   test.assertFalse(shouldValidate(null)),
   test.assertFalse(shouldValidate(undefined)),
+  test.assertFalse(shouldValidate("doNotValidate")),
   test.assertFalse(shouldValidate(false)),
   test.assertFalse(shouldValidate("false")),
   test.assertFalse(shouldValidate(true)),

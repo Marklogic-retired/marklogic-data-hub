@@ -84,6 +84,7 @@ function validateArtifact(artifact) {
 function defaultArtifact(artifactName, entityTypeId) {
   const defaultCollections =  [artifactName];
   const defaultPermissions = 'data-hub-common,read,data-hub-common,update';
+  const defaultValidateEntity = 'doNotValidate';
   if (entityTypeId) {
     // look for Entity Service Title, if not found will use the ID
     defaultCollections.push(hubEs.findEntityServiceTitle(entityTypeId) || entityTypeId);
@@ -92,7 +93,8 @@ function defaultArtifact(artifactName, entityTypeId) {
     collections: defaultCollections,
     additionalCollections: [],
     permissions: defaultPermissions,
-    batchSize: 100
+    batchSize: 100,
+    validateEntity: defaultValidateEntity,
   };
 }
 
@@ -106,5 +108,5 @@ module.exports = {
     getDirectory,
     validateArtifact,
     defaultArtifact,
-  getFileExtension
+    getFileExtension
 };

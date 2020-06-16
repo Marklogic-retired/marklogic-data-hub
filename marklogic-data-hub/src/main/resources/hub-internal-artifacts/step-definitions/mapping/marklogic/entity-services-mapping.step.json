@@ -15,7 +15,7 @@
       "default-mapping",
       "mdm-content"
     ],
-    "validateEntity": false,
+    "validateEntity": "doNotValidate",
     "provenanceGranularityLevel": "coarse",
     "permissions": "data-hub-common,read,data-hub-common,update"
   }

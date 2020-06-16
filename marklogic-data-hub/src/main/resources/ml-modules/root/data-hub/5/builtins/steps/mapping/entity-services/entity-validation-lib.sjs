@@ -22,7 +22,7 @@ function validateEntity(newInstance, options = {}, entityInfo) {
 
 function shouldValidateEntity(options = {}) {
   let value = options.validateEntity;
-  if (value != null && value != undefined) {
+  if (value != null && value != undefined && value != "doNotValidate") {
     value = fn.string(value).toLowerCase();
     return value == "accept" || value == "reject";
   }

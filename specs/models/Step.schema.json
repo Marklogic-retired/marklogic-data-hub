@@ -53,7 +53,7 @@
       "description": "Any properties in this object will be copied into the headers of each document processed by the step"
     },
     "validateEntity": {
-      "type": "boolean",
+      "type": "string",
       "description": "Applicable to mapping steps only"
     },
     "targetDatabase": {
