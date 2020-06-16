@@ -217,11 +217,9 @@ public class FlowMigrator extends LoggingObject {
         }
     }
 
-    // Only create step artifacts for ootb ingestion and mapping steps. Other steps(including custom ingestion and mapping)
-    // will be inline
     protected boolean stepRequiresMigration(Step step) {
         return (StepDefinition.StepDefinitionType.MAPPING.equals(step.getStepDefinitionType()) && "entity-services-mapping".equalsIgnoreCase(step.getStepDefinitionName())) ||
-            (StepDefinition.StepDefinitionType.INGESTION.equals(step.getStepDefinitionType()) && "default-ingestion".equalsIgnoreCase(step.getStepDefinitionName()));
+            (StepDefinition.StepDefinitionType.INGESTION.equals(step.getStepDefinitionType()));
     }
 
     protected boolean flowRequiresMigration(Flow flow) {

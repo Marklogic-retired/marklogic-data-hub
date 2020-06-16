@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.hub.*;
 import com.marklogic.hub.dataservices.FlowService;
+import com.marklogic.hub.dataservices.StepService;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.impl.FlowManagerImpl;
 import com.marklogic.hub.impl.MappingManagerImpl;
@@ -54,11 +55,13 @@ class FlowMigratorTest extends AbstractHubCoreTest {
 
         FlowMigrator flowMigrator = new FlowMigrator(hubConfig);
 
-        //custom_only-flow's steps and hence the flow doesn't need migration
         Flow custFlow = flowManager.getLocalFlow("custom_only-flow");
-        assertFalse(flowMigrator.flowRequiresMigration(flowManager.getLocalFlow("custom_only-flow")));
-        assertFalse(flowMigrator.stepRequiresMigration(custFlow.getStep("1")));
-        assertFalse(flowMigrator.stepRequiresMigration(custFlow.getStep("2")));
+        assertTrue(flowMigrator.flowRequiresMigration(flowManager.getLocalFlow("custom_only-flow")),
+            "Per DHFPROD-5192, the flow needs to be migrated because all ingestion steps are being migrated");
+        assertFalse(flowMigrator.stepRequiresMigration(custFlow.getStep("1")),
+            "Custom steps aren't being migrated in 5.3.0");
+        assertTrue(flowMigrator.stepRequiresMigration(custFlow.getStep("2")),
+            "All ingestion steps are being migrated in 5.3.0");
 
         flowMigrator.migrateFlows();
         verifyLegacyMappingsStillExistInMarkLogic();
@@ -176,6 +179,27 @@ class FlowMigratorTest extends AbstractHubCoreTest {
         assertEquals("json", ingStep2.get("sourceFormat").asText());
         assertEquals("json", ingStep2.get("targetFormat").asText());
 
+        verifyIngestionStepWithCustomStepDefinition(hubProject);
+    }
+
+    private void verifyIngestionStepWithCustomStepDefinition(HubProject hubProject) {
+        Path ingestionSteps = hubProject.getProjectDir().resolve("steps").resolve("ingestion");
+        JsonNode step = readJsonObject(ingestionSteps.resolve("custom-ingest.step.json").toFile());
+        assertEquals("custom-ingest", step.get("name").asText());
+        assertEquals("custom-ingest-ingestion", step.get("stepId").asText());
+        assertEquals("ingests json docs to data-hub-STAGING", step.get("description").asText());
+        assertEquals("100", step.get("batchSize").asText());
+        assertEquals("4", step.get("threadCount").asText());
+        assertEquals("custom-ingestion", step.get("stepDefinitionName").asText());
+        assertEquals("INGESTION", step.get("stepDefinitionType").asText());
+        assertEquals("custom-ingest-json", step.get("collections").get(0).asText());
+        assertEquals("custom-ingest", step.get("collections").get(1).asText());
+        assertEquals("rest-reader,read,rest-writer,update", step.get("permissions").asText());
+        assertEquals("data-hub-STAGING", step.get("targetDatabase").asText());
+        assertEquals("json", step.get("targetFormat").asText());
+        assertEquals("json", step.get("sourceFormat").asText());
+        assertEquals("mastering-input", step.get("inputFilePath").asText());
+        assertEquals(".*input*.,'/mastering-flow/json/'", step.get("outputURIReplacement").asText());
     }
 
     private void verifyOptions(JsonNode step, JsonNode options){
@@ -217,8 +241,8 @@ class FlowMigratorTest extends AbstractHubCoreTest {
         assertNull( getStepId(ingMapMasterFlow,"3"));
         assertNull( getStepId(ingMapMasterFlow,"4"));
 
-        assertNull( getStepId(custFlow,"1"));
-        assertNull( getStepId(custFlow,"2"));
+        assertNull( getStepId(custFlow,"1"), "The custom step should still be defined inline");
+        assertEquals("custom-ingest-ingestion", getStepId(custFlow, "2"));
     }
 
     private String getStepId(JsonNode flowNode, String step){
