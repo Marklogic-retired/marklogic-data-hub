@@ -18,7 +18,6 @@ describe('login', () => {
 
   it('greets with Data Hub Central title and footer links', () => {
       cy.contains(Application.title);
-
       cy.contains('Policies');
       cy.contains('Terms and Conditions');
   });

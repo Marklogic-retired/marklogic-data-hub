@@ -2,7 +2,6 @@ package com.marklogic.hub.central.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.central.AbstractMvcTest;
-import com.marklogic.hub.central.controllers.FlowController;
 import com.marklogic.hub.central.controllers.steps.MappingStepControllerTest;
 import com.marklogic.hub.dataservices.StepService;
 import org.junit.jupiter.api.Test;
@@ -11,7 +10,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MvcResult;
 
 import javax.ws.rs.core.MediaType;
-
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -100,13 +99,26 @@ public class FlowControllerTest extends AbstractMvcTest {
             });
 
         // Run the step
+        flowController.setFlowRunnerConsumer((flowRunner -> {
+            flowRunner.awaitCompletion();
+        }));
+        final String[] jobIds = new String[1];
         postJson(flowPath + "/steps/1", "{}")
             .andExpect(status().isOk())
             .andDo(result -> {
                 JsonNode response = parseJsonResponse(result);
                 assertTrue(response.has("jobId"), "Running a step should result in a response with a jobId so that the " +
                     "client can then query for job status; response: " + response);
+                jobIds[0] = response.get("jobId").asText();
             });
+
+        // Check on the Job
+        getJson("/api/jobs/" + URLEncoder.encode(jobIds[0],"UTF-8"))
+                .andExpect(status().isOk())
+                .andDo(result -> {
+                    JsonNode response = parseJsonResponse(result);
+                    assertEquals(mappingInfo.targetEntityType, response.path("stepResponses").path("1").path("targetEntityType").asText(), "Info for the step should specify the Target Entity Type; response: " + response);
+                });
 
         // Remove the step
         delete(flowPath + "/steps/1")

@@ -8,6 +8,7 @@ import { UserContext } from '../util/user-context';
 import {SearchContext} from "../util/search-context";
 import Browse from './Browse';
 
+
 const { Panel } = Collapse;
 
 interface PollConfig {
@@ -27,7 +28,6 @@ const Run = (props) => {
 
     const {
         setViewWithEntity,
-        setNextEntity,
     } = useContext(SearchContext);
 
     const [isLoading, setIsLoading] = useState(false);
@@ -45,12 +45,14 @@ const Run = (props) => {
 
     //For handling flows expand and collapse within Run tile
     const [newFlowName, setNewFlowName] = useState('');
+    const { success, error } = Modal;
     const [flowsDefaultActiveKey, setFlowsDefaultActiveKey] = useState<any []>([]);
 
     const pollConfig: PollConfig = {
         interval: 1000, // In millseconds
         retryLimit: 10  // Timeout after retries
     }
+
 
     useEffect(() => {
         getFlows();
@@ -78,8 +80,6 @@ const Run = (props) => {
                     setFlowsDefaultActiveKey(key);
                 }
                 setFlows(response.data);
-
-                //console.log('GET flows successful', response);
             }
         } catch (error) {
             console.error('********* ERROR', error);
@@ -99,13 +99,11 @@ const Run = (props) => {
             }
             let response = await axios.post(`/api/flows`, newFlow);
             if (response.status === 201) {
-                //console.log('POST flow success', response);
                 setIsLoading(false);
                 setNewFlowName(payload.name);
             }
         }
         catch (error) {
-            //let message = error.response.data.message;
             console.error('Error posting flow', error)
             setIsLoading(false);
         }
@@ -120,12 +118,10 @@ const Run = (props) => {
             }
             let response = await axios.put(`/api/flows/` + flowId, updatedFlow);
             if (response.status === 200) {
-                //console.log('PUT flow success', response);
                 setIsLoading(false);
             }
         }
         catch (error) {
-            //let message = error.response.data.message;
             console.error('Error updating flow', error)
             setIsLoading(false);
         } finally {
@@ -166,7 +162,6 @@ const Run = (props) => {
             setIsLoading(true);
             let response = await axios.delete(`/api/flows/${name}`);
             if (response.status === 200) {
-                //console.log('DELETE flow success', name);
                 setIsLoading(false);
             }
         } catch (error) {
@@ -181,16 +176,18 @@ const Run = (props) => {
     }
 
     const goToExplorer = (entityName) => {
-        setViewWithEntity(<Browse/>, false, entityName)
+        Modal.destroyAll();
+        setViewWithEntity(<Browse/>, false, entityName);
     }
 
     function showSuccess(stepName, stepType, entityName) {
-          Modal.success({
+         Modal.success({
               title:<div><p style={{fontWeight: 400}}>{formatStepType(stepType)} step <strong>{stepName}</strong> ran successfully</p></div>,
                okText: 'Close',
                mask: false,
                width:650,
-               content: stepType === 'mapping' ? <div onClick={()=> goToExplorer(entityName)} className={styles.exploreCuratedData}>
+               content: stepType.toLowerCase() === 'mapping' ?
+                   <div onClick={()=> goToExplorer(entityName)} className={styles.exploreCuratedData}>
                    <span className={styles.exploreIcon}></span>
                    <span className={styles.exploreText}>Explore Curated Data</span>
                </div> : ''
@@ -226,11 +223,11 @@ const Run = (props) => {
     );
 
     function showErrors(stepName, stepType, errors, response, entityName) {
-        Modal.error({
+         Modal.error({
             title: <p style={{fontWeight: 400}}>{formatStepType(stepType)} step <strong>{stepName}</strong> completed with errors</p>,
             content: (
                 <div id="error-list">
-                    {stepType === 'mapping' ? <div onClick={() => goToExplorer(entityName)} className={styles.exploreCuratedData}>
+                    {stepType.toLowerCase() === 'mapping' ? <div onClick={() => goToExplorer(entityName)} className={styles.exploreCuratedData}>
                         <span className={styles.exploreIcon}></span>
                         <span className={styles.exploreText}>Explore Curated Data</span>
                     </div> : ''}
@@ -277,7 +274,6 @@ const Run = (props) => {
             </div>;
         }
         catch(ex) {
-            //console.log(JSON.stringify(ex))
             return  <div><span className={styles.errorLabel}>Message:</span>  <span style={{whiteSpace:'pre-line'}}> {e}</span> </div>;
         }
     }
@@ -290,7 +286,6 @@ const Run = (props) => {
             let promise = fn();
             promise.then(function(response){
                 let status = response.data.jobStatus;
-                //console.log('Flow status: ', status, response.data);
                 if (status === Statuses.FINISHED || status === Statuses.CANCELED ||
                     status === Statuses.FAILED || status === Statuses.FINISHED_WITH_ERRORS) {
                     // Non-running status, resolve promise
@@ -331,7 +326,6 @@ const Run = (props) => {
                 response = await axios.post('/api/flows/' + flowId + '/steps/' + stepNumber);
             }
             if (response.status === 200) {
-                //console.log('Flow started: ' + flowId);
                 let jobId = response.data.jobId;
                 await setTimeout( function(){
                     poll(function() {
@@ -339,24 +333,24 @@ const Run = (props) => {
                     }, pollConfig.interval)
                     .then(function(response: any) {
                         let entityName;
-                        if(response.hasOwnProperty('targetEntityType')){
-                            let splitTargetEntity = response.targetEntityType.split("/");
-                             entityName = splitTargetEntity[splitTargetEntity.length-1];
+                        if(response.hasOwnProperty("stepResponses")
+                          && response.stepResponses.hasOwnProperty(`${stepNumber}`)
+                          && response.stepResponses[`${stepNumber}`].hasOwnProperty('targetEntityType') &&
+                            (response.stepResponses[`${stepNumber}`].targetEntityType !== null || undefined))
+                        {
+                          let splitTargetEntity = response.stepResponses[`${stepNumber}`].targetEntityType.split("/");
+                          entityName = splitTargetEntity[splitTargetEntity.length-1];
                         }
                         setRunEnded({flowId: flowId, stepId: stepNumber});
                         if (response['jobStatus'] === Statuses.FINISHED) {
-                            //console.log('Flow complete: ' + flowId);
                             showSuccess(stepName, stepType, entityName);
                         } else if (response['jobStatus'] === Statuses.FINISHED_WITH_ERRORS) {
-                            //console.log('Flow finished with errors: ' + flowId);
                             let errors = getErrors(response);
                             showErrors(stepName, stepType, errors, response, entityName);
                         } else if (response['jobStatus'] === Statuses.FAILED) {
-                            //console.log('Flow failed: ' + flowId);
                             let errors = getErrors(response);
                             showFailed(stepName, stepType, errors.slice(0,1));
                         }
-                        console.log(response)
                         setIsLoading(false);
                     }).catch(function(error) {
                         console.error('Flow timeout', error);
@@ -371,7 +365,6 @@ const Run = (props) => {
             setIsLoading(false);
             if (error.response && error.response.data && ( error.response.data.message.includes('The total size of all files in a single upload must be 100MB or less.') ||  error.response.data.message.includes('Uploading files to server failed') )) {
                 setUploadError(error.response.data.message)
-                console.log(error.response.data.message);
             }
         }
     }
@@ -383,7 +376,6 @@ const Run = (props) => {
             setIsLoading(true);
             let response = await axios.delete(url);
             if (response.status === 200) {
-                //console.log('DELETE step success', stepId);
                 setIsLoading(false);
             }
         } catch (error) {
