@@ -174,9 +174,7 @@ public class Step {
 
         //fileLocations should not be null
         if (fileLocations != null && that.fileLocations != null) {
-            if (!fileLocations.equals(that.fileLocations)) {
-                return false;
-            }
+            return fileLocations.equals(that.fileLocations);
         }
         return true;
     }

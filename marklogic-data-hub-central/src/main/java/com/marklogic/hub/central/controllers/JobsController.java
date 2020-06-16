@@ -77,6 +77,8 @@ public class JobsController extends BaseController {
         public String user;
         @ApiModelProperty("Name of the flow being processed")
         public String flow;
+        @ApiModelProperty("ID of Entity Type related to the Job")
+        public String targetEntityType;
         public Integer lastAttemptedStep;
         public Integer lastCompletedStep;
         public String status;

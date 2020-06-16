@@ -47,7 +47,7 @@ const TilesView = (props) => {
         setView,
         searchOptions
     } = useContext(SearchContext);
-    
+
     const onMenuClick = () => {
         setManageQueryModal(true)
     }

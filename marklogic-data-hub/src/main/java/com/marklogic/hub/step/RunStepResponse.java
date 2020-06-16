@@ -16,6 +16,7 @@
 package com.marklogic.hub.step;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.job.JobStatus;
@@ -32,6 +33,7 @@ public class RunStepResponse {
     private String stepName;
     private String stepDefinitionName;
     private String stepDefinitionType;
+    private String targetEntityType;
 
     public List<String> stepOutput;
     private Map<String, Object> fullOutput;
@@ -84,6 +86,10 @@ public class RunStepResponse {
         this.stepName = step.getName();
         this.stepDefinitionName = step.getStepDefinitionName();
         this.stepDefinitionType = step.getStepDefinitionType() != null ? step.getStepDefinitionType().toString() : null;
+        TextNode targetEntityTextNode = (TextNode) step.getOptions().getOrDefault("targetEntityType", step.getOptions().get("targetEntity"));
+        if (targetEntityTextNode != null) {
+            this.targetEntityType = targetEntityTextNode.asText();
+        }
         return this;
     }
 
@@ -186,13 +192,16 @@ public class RunStepResponse {
         return stepEndTime;
     }
 
+    public String getTargetEntityType() {
+        return targetEntityType;
+    }
 
     @Override
     public String toString() {
-        return String.format("[flowName: %s, stepName: %s, stepDefinitionName %s, stepDefinitionType %s, success: %s, " +
+        return String.format("[flowName: %s, stepName: %s, stepDefinitionName: %s, stepDefinitionType: %s, targetEntityType: %s, success: %s, " +
                 "status: %s, totalEvents: %d, successfulEvents: %d, " + "failedEvents: %d, successfulBatches: %d, " +
                 "failedBatches: %d, stepStartTime: %s , stepEndTime: %s]", flowName, stepName, stepDefinitionName,
-            stepDefinitionType, String.valueOf(success), status, totalEvents, successfulEvents, failedEvents,
+            stepDefinitionType, targetEntityType, String.valueOf(success), status, totalEvents, successfulEvents, failedEvents,
             successfulBatches, failedBatches, stepStartTime, stepEndTime);
     }
 }

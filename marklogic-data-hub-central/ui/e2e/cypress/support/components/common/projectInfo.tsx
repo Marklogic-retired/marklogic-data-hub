@@ -1,7 +1,7 @@
 class ProjectInfo {
 
     getAboutProject(){
-        return cy.get('#project-name');
+        return cy.get('#service-name');
     }
 
     getDownloadButton() {
