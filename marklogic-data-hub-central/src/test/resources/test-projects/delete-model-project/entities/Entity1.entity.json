@@ -1,0 +1,29 @@
+{
+  "info": {
+    "title": "Entity1",
+    "version": "1.0.0",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "Entity1": {
+      "properties": {
+        "property1": {
+          "$ref": "#/definitions/Property1"
+        },
+        "entity2": {
+          "datatype": "array",
+          "items": {
+            "$ref": "http://example.org/Entity2-1.0.0/Entity2"
+          }
+        }
+      }
+    },
+    "Property1": {
+      "properties": {
+        "testProperty": {
+          "$ref": "http://example.org/Entity2-1.0.0/Entity2"
+        }
+      }
+    }
+  }
+}

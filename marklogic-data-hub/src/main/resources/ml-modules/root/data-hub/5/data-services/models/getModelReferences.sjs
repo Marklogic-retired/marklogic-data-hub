@@ -15,12 +15,13 @@
 */
 'use strict';
 
-const ds = require("/data-hub/5/data-services/ds-utils.sjs");
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
+const ds = require("/data-hub/5/data-services/ds-utils.sjs");
+
 
 var entityName;
 if (!entityName) {
-  ds.throwBadRequest("Must specify a name in order to delete an entity model");
+  ds.throwBadRequest("Must specify a name in order to get model references");
 }
 
 const entityModel = entityLib.findModelByEntityName(entityName);
@@ -32,9 +33,7 @@ const entityTypeId = entityLib.getEntityTypeId(entityModel, entityName);
 const entityModelUri = entityLib.getModelUri(entityName);
 
 const stepAndMappingNames = entityLib.findModelReferencesInSteps(entityName, entityTypeId);
-if (stepAndMappingNames.length) {
-  ds.throwServerError(`Cannot delete the entity type '${entityName}' because it is referenced by the following step and/or mapping names: ${stepAndMappingNames}`);
-}
+const entityNames = entityLib.findModelReferencesInOtherModels(entityModelUri, entityTypeId);
+const result = {stepAndMappingNames, entityNames};
 
-entityLib.deleteModel(entityName);
-entityLib.deleteModelReferencesInOtherModels(entityModelUri, entityTypeId);
+result;

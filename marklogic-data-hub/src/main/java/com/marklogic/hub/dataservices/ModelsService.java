@@ -53,6 +53,7 @@ public interface ModelsService {
             private BaseProxy.DBFunctionRequest req_getPrimaryEntityTypes;
             private BaseProxy.DBFunctionRequest req_deleteModel;
             private BaseProxy.DBFunctionRequest req_createModel;
+            private BaseProxy.DBFunctionRequest req_getModelReferences;
             private BaseProxy.DBFunctionRequest req_updateModelEntityTypes;
 
             private ModelsServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
@@ -71,6 +72,8 @@ public interface ModelsService {
                     "deleteModel.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_createModel = this.baseProxy.request(
                     "createModel.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                this.req_getModelReferences = this.baseProxy.request(
+                    "getModelReferences.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_updateModelEntityTypes = this.baseProxy.request(
                     "updateModelEntityTypes.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
             }
@@ -157,6 +160,21 @@ public interface ModelsService {
             }
 
             @Override
+            public com.fasterxml.jackson.databind.JsonNode getModelReferences(String entityName) {
+                return getModelReferences(
+                    this.req_getModelReferences.on(this.dbClient), entityName
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode getModelReferences(BaseProxy.DBFunctionRequest request, String entityName) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.atomicParam("entityName", false, BaseProxy.StringType.fromString(entityName))
+                          ).responseSingle(false, Format.JSON)
+                );
+            }
+
+            @Override
             public com.fasterxml.jackson.databind.JsonNode updateModelEntityTypes(String name, com.fasterxml.jackson.databind.JsonNode input) {
                 return updateModelEntityTypes(
                     this.req_updateModelEntityTypes.on(this.dbClient), name, input
@@ -224,6 +242,14 @@ public interface ModelsService {
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode createModel(com.fasterxml.jackson.databind.JsonNode input);
+
+  /**
+   * Returns a json containing the names of the models and steps that reference the given entity model.
+   *
+   * @param entityName	The name of the primary entity in the model
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode getModelReferences(String entityName);
 
   /**
    * Invokes the updateModelEntityTypes operation on the database server

@@ -1,0 +1,19 @@
+{
+  "info": {
+    "title": "Person",
+    "version": "0.0.1",
+    "baseUri": "http://marklogic.com/example/"
+  },
+  "definitions": {
+    "Person": {
+      "required": [],
+      "pii": [],
+      "rangeIndex": ["personID"],
+      "properties": {
+        "personID": {
+          "datatype": "string"
+        }
+      }
+    }
+  }
+}

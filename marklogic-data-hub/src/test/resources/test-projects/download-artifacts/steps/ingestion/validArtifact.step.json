@@ -1,0 +1,8 @@
+{
+  "name": "validArtifact",
+  "sourceFormat": "xml",
+  "targetFormat": "json",
+  "targetDatabase": "data-hub-STAGING",
+  "permissions": "data-hub-ingestion-reader,read,data-hub-ingestion-writer,update",
+  "provenanceGranularity": "coarse-grained"
+}

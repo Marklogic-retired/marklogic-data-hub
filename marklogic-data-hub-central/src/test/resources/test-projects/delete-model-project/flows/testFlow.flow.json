@@ -1,0 +1,27 @@
+{
+  "name": "testFlow",
+  "steps": {
+    "1": {
+      "stepId": "testMap1-mapping"
+    },
+    "2": {
+      "stepId": "testMap2-mapping"
+    },
+    "3": {
+      "name": "matching-step",
+      "stepDefinitionName": "default-matching",
+      "stepDefinitionType": "matching",
+      "options": {
+        "targetEntity": "Entity2"
+      }
+    },
+    "4": {
+      "name": "merging-step",
+      "stepDefinitionName": "default-merging",
+      "stepDefinitionType": "merging",
+      "options": {
+        "targetEntity": "Entity1"
+      }
+    }
+  }
+}

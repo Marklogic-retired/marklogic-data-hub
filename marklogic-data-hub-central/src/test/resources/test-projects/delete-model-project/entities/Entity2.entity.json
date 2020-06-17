@@ -1,0 +1,20 @@
+{
+  "info": {
+    "title": "Entity2",
+    "version": "1.0.0",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "Entity2": {
+      "required": [],
+      "elementRangeIndex": [
+        "property1"
+      ],
+      "properties": {
+        "property1": {
+          "datatype": "string"
+        }
+      }
+    }
+  }
+}

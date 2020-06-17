@@ -36,7 +36,7 @@ public class ApplyDownloadedZipToProjectTest extends AbstractHubCoreTest {
      */
     @Test
     void deleteOneEntityThenDownloadAndApply() {
-        installProjectInFolder("test-projects/all-artifacts");
+        installProjectInFolder("test-projects/download-artifacts");
         generateEntityBasedArtifacts();
         verifyEntityBasedArtifactsExist();
 
@@ -61,7 +61,7 @@ public class ApplyDownloadedZipToProjectTest extends AbstractHubCoreTest {
      */
     @Test
     void deleteAllArtifactsBeforeApplyingZip() {
-        installProjectInFolder("test-projects/all-artifacts");
+        installProjectInFolder("test-projects/download-artifacts");
         generateEntityBasedArtifacts();
         verifyEntityBasedArtifactsExist();
 
@@ -70,8 +70,6 @@ public class ApplyDownloadedZipToProjectTest extends AbstractHubCoreTest {
         ModelsService.on(stagingClient).deleteModel("Person");
         FlowService.on(stagingClient).deleteFlow("testFlow");
         StepService.on(stagingClient).deleteStep("ingestion", "validArtifact");
-        StepService.on(stagingClient).deleteStep("mapping", "OrderMappingJson");
-        StepService.on(stagingClient).deleteStep("mapping", "TestOrderMapping1");
         ArtifactService.on(stagingClient).deleteArtifact("stepDefinition", "testStep");
 
         setTestUserRoles("data-hub-developer", "hub-central-downloader");
@@ -87,7 +85,7 @@ public class ApplyDownloadedZipToProjectTest extends AbstractHubCoreTest {
 
     @Test
     void fileDoesNotExist() {
-        installProjectInFolder("test-projects/all-artifacts");
+        installProjectInFolder("test-projects/download-artifacts");
         generateEntityBasedArtifacts();
         try {
             new HubCentralManager().applyHubCentralZipToProject(getHubConfig().getHubProject(), new File("doesnt-exist.zip"));
@@ -177,8 +175,6 @@ public class ApplyDownloadedZipToProjectTest extends AbstractHubCoreTest {
         assertTrue(new File(project.getFlowsDir().toFile(), "testFlow.flow.json").exists());
         assertTrue(new File(project.getHubEntitiesDir().toFile(), "Person.entity.json").exists());
         assertTrue(project.getStepFile(StepDefinition.StepDefinitionType.INGESTION, "validArtifact").exists());
-        assertTrue(project.getStepFile(StepDefinition.StepDefinitionType.MAPPING, "OrderMappingJson").exists());
-        assertTrue(project.getStepFile(StepDefinition.StepDefinitionType.MAPPING, "TestOrderMapping1").exists());
 
         verifyCustomStepDefinitionExists();
     }

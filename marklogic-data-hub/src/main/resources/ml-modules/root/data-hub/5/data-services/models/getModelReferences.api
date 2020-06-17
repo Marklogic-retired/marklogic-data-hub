@@ -1,0 +1,15 @@
+{
+  "functionName": "getModelReferences",
+  "desc": "Returns a json containing the names of the models and steps that reference the given entity model.",
+  "params": [
+    {
+      "name": "entityName",
+      "datatype": "string",
+      "desc": "The name of the primary entity in the model"
+    }
+  ],
+  "return": {
+    "datatype": "jsonDocument",
+    "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+  }
+}

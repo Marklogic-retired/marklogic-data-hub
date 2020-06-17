@@ -90,6 +90,28 @@ public class ModelController extends BaseController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/{modelName}", method = RequestMethod.DELETE)
+    @Secured("ROLE_writeEntityModel")
+    public ResponseEntity<Void> deleteModel(@PathVariable String modelName) {
+        newService().deleteModel(modelName);
+
+        /*
+        * We're not doing anything with indexes or protected paths here because we don't have a reliable way to
+        * identify the ones to delete and we only expect entity types to be deleted
+        * in a development environment where it's usually fine if some old indexes / protected paths hang around.
+        */
+        logger.info("Deploying search options");
+        deploySearchOptions(newService().generateModelConfig());
+
+        return emptyOk();
+    }
+
+    @RequestMapping(value = "/{modelName}/references", method = RequestMethod.GET)
+    @ApiOperation(value = "Get step and model names that refer to this model.", response = ModelReferencesInfo.class)
+    public ResponseEntity<JsonNode> getModelReferences(@PathVariable String modelName) {
+        return ResponseEntity.ok(newService().getModelReferences(modelName));
+    }
+
     @RequestMapping(value = "/{modelName}/entityTypes", method = RequestMethod.PUT)
     @ApiImplicitParam(required = true, paramType = "body", dataType = "ModelDefinitions")
     @Secured("ROLE_writeEntityModel")
@@ -252,5 +274,10 @@ public class ModelController extends BaseController {
 
     public static class UpdateModelInfoInput {
         public String description;
+    }
+
+    public static class ModelReferencesInfo {
+        public List<String> stepAndMappingNames;
+        public List<String> entityNames;
     }
 }
