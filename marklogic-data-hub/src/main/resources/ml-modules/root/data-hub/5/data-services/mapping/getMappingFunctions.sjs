@@ -12,11 +12,10 @@
  */
 'use strict';
 
-const mappingFunctions = require('/marklogic.rest.resource/mlMappingFunctions/assets/resource.sjs');
 const esMappingLib = require("/data-hub/5/builtins/steps/mapping/entity-services/lib.sjs");
 
 if (esMappingLib.versionIsCompatibleWithES()) {
-    let mlFunctions = mappingFunctions.getMarkLogicFunctions();
-    let xpathFunctions = mappingFunctions.getXpathFunctions();
-    Object.assign({}, mlFunctions, xpathFunctions);
+  let mlFunctions = esMappingLib.getMarkLogicMappingFunctions();
+  let xpathFunctions = esMappingLib.getXpathMappingFunctions();
+  Object.assign({}, mlFunctions, xpathFunctions);
 }

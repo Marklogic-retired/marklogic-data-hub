@@ -17,9 +17,9 @@
 package com.marklogic.hub.web.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.hub.dataservices.MappingService;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.mapping.Mapping;
-import com.marklogic.hub.mapping.MappingFunctions;
 import com.marklogic.hub.web.model.MappingModel;
 import com.marklogic.hub.web.service.MappingManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,7 +96,6 @@ public class MappingController {
     @RequestMapping(value = "/mappings/functions", method = RequestMethod.GET)
     @ResponseBody
     public JsonNode getMappingFunctions() {
-        MappingFunctions mappingFunctions = new MappingFunctions(hubConfig.newStagingClient());
-        return mappingFunctions.getMappingFunctions();
+        return MappingService.on(hubConfig.newStagingClient(null)).getMappingFunctions();
     }
 }

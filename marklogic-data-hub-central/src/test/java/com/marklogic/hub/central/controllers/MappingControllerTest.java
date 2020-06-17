@@ -91,17 +91,15 @@ public class MappingControllerTest extends AbstractHubCentralTest {
         assertEquals("Invalid XPath expression: concat(id, ')", errorResult.get("properties").get("id").get("errorMessage").asText(), "errorMessage should be Invalid XPath expression: concat(id, ')");
     }
 
+    /**
+     * This is just a smoke test to verify we get a response; the real tests are ML unit tests.
+     */
     @Test
-    @WithMockUser(roles = {"readMapping","writeMapping"})
+    @WithMockUser(roles = {"readMapping", "writeMapping"})
     void testGetMappingFunctions() {
         ObjectNode result = controller.getMappingFunctions().getBody();
         assertTrue(result.size() > 100, "Should have at least 100 functions");
         assertTrue(result.get("sum") != null, "Should have function 'sum'");
-        assertEquals("sum(xs:anyAtomicType*)", result.get("sum").get("signature").asText(), "Signature should be sum(xs:anyAtomicType*)");
-        assertTrue(result.get("doc") != null, "Should have function 'doc'");
-        assertTrue(result.get("current-dateTime") != null, "Should have function 'current-dateTime'");
-        assertTrue(result.get("parseDateTime") != null, "Should have function 'parseDateTime'");
-        assertTrue(result.get("fn:sum") == null, "'fn:' has been stripped from the function name and signature");
     }
 
     /**
@@ -109,7 +107,7 @@ public class MappingControllerTest extends AbstractHubCentralTest {
      * life easy for the mapping tool.
      */
     @Test
-    @WithMockUser(roles = {"readMapping","writeMapping"})
+    @WithMockUser(roles = {"readMapping", "writeMapping"})
     void getEntityForMapping() {
         installReferenceModelProject();
 
