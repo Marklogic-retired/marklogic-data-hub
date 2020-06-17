@@ -8,7 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ModelMvcTest extends AbstractMvcTest {
 
     /**
-     * ModelControllerTest verifies that a user can write entity models, just need to verify the inverse here.
+     * DeleteModelTest and CreateAndUpdateModelTest verify that a user can write and delete entity models, just need to verify the inverse here.
      *
      * @throws Exception
      */
@@ -23,5 +23,6 @@ public class ModelMvcTest extends AbstractMvcTest {
         verifyRequestIsForbidden(buildJsonPost("/api/models", "{}"));
         verifyRequestIsForbidden(buildJsonPut("/api/models/doesntMatter/info", "{}"));
         verifyRequestIsForbidden(buildJsonPut("/api/models/doesntMatter/entityTypes", "{}"));
+        delete("/api/models/doesntMatter").andExpect(status().isForbidden());
     }
 }

@@ -61,7 +61,7 @@ public class MappingImpl implements Mapping {
         if (entity != null) {
             InfoType info = entity.getInfo();
             if (info != null) {
-                String prefix = info.getBaseUri() != null ? info.getBaseUri() + "/" : "";
+                String prefix = info.getBaseUri() != null ? info.getBaseUri() : "";
                 this.targetEntityType = prefix + info.getTitle() + "-" + info.getVersion() + "/" + info.getTitle();
                 DefinitionType definition = entity.getDefinitions().getDefinitions().get(info.getTitle());
                 if (definition != null) {

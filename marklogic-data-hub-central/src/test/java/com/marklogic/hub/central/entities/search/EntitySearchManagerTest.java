@@ -76,7 +76,7 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
         // Adding propertiesToDisplay to search query which are user selected columns
         List<String> propertiesToDisplay = Arrays.asList("name", "customerId");
         query.setPropertiesToDisplay(propertiesToDisplay);
-        results = entitySearchManager.search(query);
+        results = new EntitySearchManager(getHubClient()).search(query);
         node = readJsonObject(results.get());
         assertTrue(node.has("selectedPropertyDefinitions"), "Including this makes life easy on the UI so it knows what " +
                 "columns to display");

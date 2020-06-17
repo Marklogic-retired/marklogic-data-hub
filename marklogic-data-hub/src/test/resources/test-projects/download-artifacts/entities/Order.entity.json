@@ -1,0 +1,22 @@
+{
+  "info": {
+    "title": "Order",
+    "version": "0.0.1",
+    "baseUri": "http://marklogic.com/example/"
+  },
+  "definitions": {
+    "Order": {
+      "required": [],
+      "pii": ["orderID", "orderName"],
+      "rangeIndex": ["orderID"],
+      "properties": {
+        "orderID": {
+          "datatype": "string"
+        },
+        "orderName": {
+          "datatype": "string"
+        }
+      }
+    }
+  }
+}

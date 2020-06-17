@@ -1,0 +1,6 @@
+{
+  "name": "testMap1",
+  "selectedSource": "collection",
+  "targetEntityType": "http://example.org/Entity1-1.0.0/Entity1",
+  "properties": {}
+}

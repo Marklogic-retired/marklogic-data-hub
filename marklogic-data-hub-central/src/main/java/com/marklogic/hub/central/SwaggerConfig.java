@@ -70,24 +70,25 @@ public class SwaggerConfig {
      */
     private List<ResolvedType> getResolvedTypes(TypeResolver typeResolver) {
         return Stream.of(
-            EntitySearchController.FacetValues.class,
-            EntitySearchController.FacetValuesQuery.class,
-            EntitySearchController.IndexMinMaxQuery.class,
-            EntitySearchController.SavedQueryRequest.class,
-            EntitySearchController.SavedQueries.class,
-            FlowSchema.class,
-            IngestionStepController.IngestionSteps.class,
-            MappingController.MappingArtifact.class,
-            MappingStepController.class,
-            MatchingController.MatchingArtifact.class,
-            MatchingController.MatchingArtifacts.class,
-            MappingStepController.MappingSteps.class,
-            ModelController.CreateModelInput.class,
-            ModelController.LatestJobInfo.class,
-            ModelDefinitions.class,
-            ModelDescriptor.class,
-            PrimaryEntityType.class,
-            StepSchema.class
+                EntitySearchController.FacetValues.class,
+                EntitySearchController.FacetValuesQuery.class,
+                EntitySearchController.IndexMinMaxQuery.class,
+                EntitySearchController.SavedQueryRequest.class,
+                EntitySearchController.SavedQueries.class,
+                FlowSchema.class,
+                IngestionStepController.IngestionSteps.class,
+                MappingController.MappingArtifact.class,
+                MappingStepController.class,
+                MatchingController.MatchingArtifact.class,
+                MatchingController.MatchingArtifacts.class,
+                MappingStepController.MappingSteps.class,
+                ModelController.CreateModelInput.class,
+                ModelController.LatestJobInfo.class,
+                ModelController.ModelReferencesInfo.class,
+                ModelDefinitions.class,
+                ModelDescriptor.class,
+                PrimaryEntityType.class,
+                StepSchema.class
         ).map(type -> typeResolver.resolve(type)).collect(Collectors.toList());
     }
 }
