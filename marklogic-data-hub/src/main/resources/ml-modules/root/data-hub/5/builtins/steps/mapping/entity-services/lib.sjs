@@ -492,6 +492,76 @@ function getXQueryLib() {
   return xqueryLib;
 }
 
+function getMarkLogicMappingFunctions() {
+  return fn.head(datahub.hubUtils.queryLatest(function() {
+    let fnMetadata = fn.collection("http://marklogic.com/entity-services/function-metadata")
+    let ns = {"m":"http://marklogic.com/entity-services/mapping"};
+    let output = {};
+
+    for (const metaData of fnMetadata){
+      if(metaData.xpath("/m:function-defs",ns)) {
+        let j = 1;
+        let fnLocation = metaData.xpath("/m:function-defs/@location",ns)
+        for (const mlFunction of metaData.xpath("/m:function-defs/m:function-def",ns )){
+          let funcName = metaData.xpath("/m:function-defs/m:function-def["+j+"]/@name", ns);
+          let params = String(metaData.xpath("/m:function-defs/m:function-def["+j+"]/m:parameters/m:parameter/@name",ns)).replace("\n",",");
+          j++;
+          let singleFunction ={};
+          singleFunction["category"] = (String(fnLocation).includes("/data-hub/5/mapping-functions")) ? "builtin" : "custom";
+          singleFunction["signature"] = funcName +"("+params+")";
+          output[funcName] = singleFunction;
+        }
+      }
+    }
+    return output;
+  }, datahub.config.MODULESDATABASE));
+}
+
+/**
+ * Per DHFPROD-5084, these have been identified as functions that do not work in mapping expressions. See the unit
+ * test for this function to see how they have been identified.
+ * @returns {string[]}
+ */
+function getXpathFunctionsThatDoNotWorkInMappingExpressions() {
+  return [
+    "unparsed-text",
+    "nilled",
+    "unparsed-text-available",
+    "in-scope-prefixes",
+    "collection",
+    "type-available",
+    "error",
+    "default-collation",
+    "static-base-uri",
+    "doc"
+  ];
+}
+
+function getXpathMappingFunctions() {
+  const xpathFunctions = xdmp.functions().toObject();
+  // The *-uri functions are excluded because the object being mapped is in memory and these functions won't work on it
+  const excludeFunctions = ["base-uri", "document-uri"].concat(getXpathFunctionsThatDoNotWorkInMappingExpressions());
+  return getFunctionsWithSignatures(xpathFunctions, excludeFunctions);
+}
+
+function getFunctionsWithSignatures(xpathFunctions, excludeFunctions) {
+  const response = {};
+  for (let i = 0; i < xpathFunctions.length; i++) {
+    if (String(xpathFunctions[i]).includes("fn:")) {
+      let signature = xdmp.functionSignature(xpathFunctions[i]).replace("function", xdmp.functionName(xpathFunctions[i]));
+      signature = signature.match(/fn:(.*?) as.*?/)[1];
+      let fn = String(xdmp.functionName(xpathFunctions[i])).replace("fn:", "");
+      if (!excludeFunctions.includes(fn)) {
+        let xpathFunction = {};
+        xpathFunction["category"] = "xpath";
+        xpathFunction["signature"] = signature;
+        response[fn] = xpathFunction;
+      }
+    }
+  }
+  return response;
+}
+
 module.exports = {
   xsltPermissions,
   xmlMappingCollections,
@@ -499,7 +569,11 @@ module.exports = {
   buildEntityTemplate,
   extractInstance,
   getEntityName,
+  getFunctionsWithSignatures,
+  getMarkLogicMappingFunctions,
   getTargetEntity,
+  getXpathFunctionsThatDoNotWorkInMappingExpressions,
+  getXpathMappingFunctions,
   // Exporting retrieveFunctionImports for unit test
   retrieveFunctionImports,
   versionIsCompatibleWithES,
