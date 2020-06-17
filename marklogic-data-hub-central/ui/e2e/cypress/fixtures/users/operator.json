@@ -1,6 +1,16 @@
 {
     "user-name": "hc-operator",
-    "description": "A data hub operator user",
+    "description": "A hub central operator user",
     "password": "password",
-    "role": ["data-hub-operator", "hub-central-mapping-reader"]
+    "role": [
+      "data-hub-operator",
+      "hub-central-user",
+      "hub-central-load-reader",
+      "hub-central-mapping-reader",
+      "hub-central-entity-model-reader",
+      "hub-central-step-runner",
+      "hub-central-saved-query-user",
+      "hub-central-entity-exporter",
+      "hub-central-custom-reader"
+    ]
 }

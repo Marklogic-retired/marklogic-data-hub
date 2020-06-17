@@ -1,6 +1,17 @@
 {
     "user-name": "hc-developer",
-    "description": "A data hub dev user",
+    "description": "A hub central developer user",
     "password": "password",
-    "role": ["data-hub-developer", "hub-central-mapping-reader", "hub-central-saved-query-user"]
+    "role": [
+      "data-hub-developer",
+      "hub-central-user",
+      "hub-central-entity-model-writer",
+      "hub-central-load-writer",
+      "hub-central-mapping-writer",
+      "hub-central-flow-writer",
+      "hub-central-downloader",
+      "hub-central-saved-query-user",
+      "hub-central-entity-exporter",
+      "hub-central-custom-reader"
+    ]
 }
